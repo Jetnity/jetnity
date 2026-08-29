@@ -1,13 +1,30 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166. IMPLEMENTIERT / DOCS-CONTRACT-EVIDENCE. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7. Baseline `main @ 765fc547`. Live-Evidence immer live prüfen.**
+Status: **Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 6083ee63`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – AP-6a Gate 0 Legal Foundation / Trust Boundary
+## Aktueller Arbeitsblock – Visitor Search Country Alias Ranking
+
+1. **Arbeitsblock / Ziel:** Generischer Ranking-/Retrieval-Fix: exaktes Länder-Alias darf für `ziel` nicht von gleichnamigen/präfixgleichen Städten verdeckt werden.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-ranking-2026-08-29`; Draft-PR #168. Task-only Start `d2622e5c`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
+4. **Bereits umgesetzt:** Alias-als-Namenswahrheit für `ziel`; gezielter `typ=country`-Nachzug; ADR-0196; Regressionen Peru/China/Schweiz plus generisches Drittland; Abreise/IATA/Compact-Relevance erhalten.
+5. **Cursor-Agent:** `Visitor search correctness 1`. Exact Run-ID `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`. Beobachteter Titel `Besuchersuche Länder-Alias-Ranking Korrektur`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1.
+6. **Live-`main` / Baseline bei diesem Stamp:** `6083ee63a5da62870ab7ac4f5f91f69230718e44` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, keine Supabase-Mutation, keine Service Role. `public.places` nur gelesen.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** kein Mobile-Safari-/Real-Device-Beweis in dieser Umgebung; Länder-Nachzug limit 12; Import-Langnamen unverändert; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine Product-Owner-Sondergates. Ready/Merge nur Technical Lead.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #168. Kein Ready. Kein Merge. Kein Issue #110.
+12. **Zuerst lesen:** `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0196, `docs/ORTE.md`, Issue #109.
+
+## Historischer Arbeitsblock – AP-6a Gate 0 Legal Foundation / Trust Boundary
+
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der Search-Baseline.** PR #167 ist auf `main @ 6083ee63` gemergt. Ältere „IMPLEMENTIERT / DRAFT / STOP / Kein AP-6a-Runtime“-Zeilen sind Pre-#168-Evidence. Visitor Search Country Alias Ranking ist jetzt der aktive Slice dieses Branches.
 
 1. **Arbeitsblock / Ziel:** Rekonstruktion und Vertrag für die fehlende Legal Foundation. Production `/privacy` und `/terms` sind 404, obwohl die Registrierung dorthin verlinkt. Keine Rechtstexte.
 2. **Authoring-Branch / PR:** `audit/ap6a-gate0-legal-foundation-2026-08-29`; Draft-PR #166. Exact Head vor diesem Stamp: `18516a06`. Actions `33243096002` SUCCESS; GitHub Preview `6153897069` success; Vercel-Check `jFScFBDbxgkwCRv6h5GqpkDzzchb` SUCCESS. Preview-HTML SSO-geschützt. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
@@ -576,7 +593,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #162 / AP-5-S5. Autor-Agent setzt kein Ready, kein Merge, kein AP-6/AP-7, keine Vercel-Setting-Mutation.
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #168 / Issue #109. Autor-Agent setzt kein Ready, kein Merge, kein Issue #110, keine Vercel-Setting-Mutation.
 
 PR #152 Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #156.
 
@@ -588,6 +605,6 @@ P2-TA-06 bleibt integriert (PR #113); Issue #112 ist CLOSED / completed.
 
 **Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit nach S3: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
 
-Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5-S4–S5/AP-7 automatisch starten. S3–S5 ≠ Product-Owner-Gate. Issue #109/#110 bleiben dokumentierte separate Themen. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
+Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-6a-Runtime/AP-6b/AP-7 automatisch starten. Issue #109 ist der aktuelle Draft-PR #168. Issue #110 bleibt ungestartet. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.
