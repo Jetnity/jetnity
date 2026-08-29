@@ -1,15 +1,16 @@
 # Jetnity – PrivacyBee Schweiz Vendor Gate 0 Status
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT / AUDIT + ARCHITECTURE + VENDOR-EVIDENCE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **INTEGRATED / POST-MERGE GREEN / CLOSEOUT / STOP FOR FINAL INDEPENDENT TECHNICAL-LEAD REVIEW OF THIS CLOSEOUT**  
 Workstream: Privacy / External Vendor Evaluation  
 Logical Cursor-Agent: **`Privacy provider integration audit 1`**  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/171  
+Canonical transport: https://github.com/Jetnity/jetnity/pull/175 (MERGED)  
+Superseded author PR: https://github.com/Jetnity/jetnity/pull/171 (OPEN Draft; not canonical)  
 Branch: `audit/privacybee-vendor-gate0-2026-08-29`  
-Issue: [#169](https://github.com/Jetnity/jetnity/issues/169)  
+Issue: [#169](https://github.com/Jetnity/jetnity/issues/169) OPEN — closable after TL review of this closeout  
 Task: `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md`
 
-> Live-Evidence gewinnt. Dieses Dokument ist kein PASS. Kein Ready. Kein Merge. Keine PrivacyBee-Aktivierung. Kein AP-6a-Runtime. Kein AP-6b. Kein Search-Runtime (#168 historisch; #173 live).
+> Live-Evidence gewinnt. Integration des Audit-Docs ≠ PrivacyBee-Aktivierung. Kein Ready. Kein Agent-Merge. Kein Login/Trial/Order/Runtime. AP-6a Legal bleibt geparkt / Release-Trust-Blocker. Kein Search-Runtime (#168 historisch; #173 live).
 
 ## 0. Vendor-Identität (bindend)
 
@@ -42,17 +43,18 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | --- | --- |
 | Repository | `Jetnity/jetnity` |
 | Historical task-baseline / original merge-base | `6083ee63a5da62870ab7ac4f5f91f69230718e44` — **nicht** live `origin/main` |
-| Live `origin/main` (2026-08-29, `5057675638`) | `2241e349f8b3b400963cf1de11e5a8617bdc8e44` |
-| Branch | `audit/privacybee-vendor-gate0-2026-08-29` |
-| Merge-base of this branch vs live `main` | still `6083ee63` (this audit branch was not rebased onto later `main`) |
-| Draft-PR | #171 OPEN / Draft |
-| Search runtime | PR #168 CLOSED/MERGED via #172; current Issue #109 recovery = PR #173 OPEN Draft. **This slice did not touch Search.** |
+| Reviewed content head (transported) | `278138ade951344be539df0767e02fa9fc4e24f8` |
+| Live `origin/main` (post-merge closeout) | `6c5e8c167f3a6b991bd6b6f5e05180ddbe4df7fd` |
+| Transport | PR #175 MERGED 2026-08-29T10:36:21Z |
+| Author PR #171 | OPEN Draft; **superseded** by #175; not canonical |
+| Branch stamp `b9495fa7` | Evidence-stamp only; **not** part of the #175 merge |
+| Search runtime | PR #168 CLOSED/MERGED via #172; current Issue #109 recovery = PR #173 OPEN Draft. **This closeout did not touch Search.** |
 | `main` protected | live `false` |
 | Supabase | nicht abgefragt, nicht mutiert |
 | PrivacyBee Signup / Trial / Zahlung | **keine** |
 | Browser / Real-Device | **nein** |
 
-Production-Alias `https://jetnity-app.vercel.app` (2026-08-29): `/` 200 `data-dpl-id=dpl_GntXsgcdUN8cQKqHPqnpB6jUEfZz`; `/privacy` `/terms` **404**; `/register` 200.
+Production-Alias `https://jetnity-app.vercel.app` (2026-08-29 closeout): `/` 200 `data-dpl-id=dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` on `6c5e8c16`; `/privacy` `/terms` **404**.
 
 ## 3. Jetnity Current Truth
 
@@ -243,9 +245,10 @@ Keine Runtime. Keine Shared Continuity. Kein Search-Runtime (#168/#173).
 
 ## 9. Tests / Gates
 
-TL-Fix `5057675638` invalidiert `2f2d00e3` / `fa393232`. Neue Exact-Head-Gates nach diesem Continuity-Truth-Push. Historische Baseline `6083ee63` bleibt historisch; live `main` ist `2241e349`.
+Post-merge green on exact `6c5e8c16`: Actions push run `33248216109` SUCCESS; Vercel Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` READY (GitHub Production deployment `6154845099`). Reviewed content head `278138ad` is on `main` via #175. Branch-stamp `b9495fa7` was not in that merge. Closeout authoring head `51f38db9`: Actions `33248525684` SUCCESS; Vercel Preview `4se6SDNPJTzwS4oRQNQuX2PCU1G4`; Preview deployment `6154903316`. Dieser Stamp-Commit ist ein neuerer SHA.
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #171.  
-Kein Ready. Kein Merge. Kein Trial. Kein AP-6a-Runtime. Kein AP-6b.
+Unabhängiger ChatGPT Technical-Lead Exact-Head-Review **dieses Closeouts**.  
+Issue #169 kann danach geschlossen werden. #171 bleibt superseded.  
+Kein Ready. Kein Agent-Merge. Kein Trial. Kein AP-6a-Runtime. Kein AP-6b. AP-6a Legal bleibt geparkt.

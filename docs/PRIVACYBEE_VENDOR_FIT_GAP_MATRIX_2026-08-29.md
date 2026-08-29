@@ -5,7 +5,7 @@ Status: **AUDIT EVIDENCE ONLY / KEINE KONFORMITÄTSBEHAUPTUNG / KEIN VENDOR-ACCE
 Logical Cursor-Agent: **`Privacy provider integration audit 1`**  
 First-Party-Abruf: 2026-08-29T09:32Z  
 TARGET: `privacybee.io` / PrivacyBee AG. Nicht `privacybee.com`.  
-Continuity (live 2026-08-29, `5057675638`): historical task-baseline `6083ee63` is **not** live `origin/main`; live `main` is `2241e349`. PR #168 is CLOSED/MERGED via #172; current Issue #109 recovery is PR #173. This matrix does not assert otherwise.
+Continuity (post-merge closeout 2026-08-29): historical task-baseline `6083ee63` is **not** live `origin/main`; live `main` is `6c5e8c16` via transport #175 of `278138ad`. PR #171 is superseded. PR #168 is CLOSED/MERGED via #172; current Issue #109 recovery is PR #173. This matrix does not assert otherwise and is not a vendor activation.
 
 Klassen: `fit` · `partial` · `gap` · `unknown / vendor-confirmation-required` · `nicht relevant`
 

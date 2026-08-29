@@ -1,13 +1,14 @@
 # Jetnity – PrivacyBee Schweiz Vendor Gate 0 Handoff
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **INTEGRATED / POST-MERGE GREEN / CLOSEOUT / STOP FOR FINAL INDEPENDENT TECHNICAL-LEAD REVIEW OF THIS CLOSEOUT**  
 Logical Cursor-Agent: **`Privacy provider integration audit 1`**  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/171  
+Canonical transport: https://github.com/Jetnity/jetnity/pull/175 (MERGED)  
+Superseded author PR: https://github.com/Jetnity/jetnity/pull/171 (OPEN Draft)  
 Branch: `audit/privacybee-vendor-gate0-2026-08-29`  
-Issue: [#169](https://github.com/Jetnity/jetnity/issues/169)
+Issue: [#169](https://github.com/Jetnity/jetnity/issues/169) OPEN — closable after TL review of this closeout
 
-Dieser Handoff übergibt Gate 0. Er startet keine Integration und keinen Trial. Agent-Self-Review ist kein PASS.
+Dieser Handoff schliesst Gate-0-Continuity nach Transport. Er startet keine PrivacyBee-Aktivierung und keinen Trial. Agent-Self-Review ist kein PASS.
 
 ---
 
@@ -21,7 +22,9 @@ Jetnity-Ist: `/privacy` `/terms` Production-404; Register-Zustimmung ohne Persis
 
 Der Product Owner hat bereits ein Konto bei PrivacyBee Schweiz. Das senkt die Signup-Reibung, **nicht** das Vendor-/Security-/Legal-Gate. Konkreter Account-Stand (Domain, Tarif, AVV, Snippets) ist **`account-evidence-required`**. Dieser Agent hat das Konto nicht geöffnet.
 
-**Empfehlung:** Jetzt **nicht** aktivieren und **nicht** einloggen. Native AP-6a (PO/Legal-Texte, inkl. `/terms`) und später AP-6b bleiben der Kernweg. PrivacyBee höchstens später über das bestehende Konto als Website-Widget **plus** schriftlichem Jetnity-Nachtrag für server-seitige Verarbeitungen; Cookie-Banner erst, wenn echte Tracker existieren.
+**Audit-Stand:** integrated / post-merge green. Das ist **keine** Vendor-Aktivierung.
+
+**Empfehlung:** Jetzt **nicht** aktivieren und **nicht** einloggen. AP-6a Legal bleibt geparkt / Release-Trust-Blocker. Native AP-6a (PO/Legal-Texte, inkl. `/terms`) und später AP-6b bleiben der Kernweg. PrivacyBee höchstens später über das bestehende Konto als Website-Widget **plus** schriftlichem Jetnity-Nachtrag für server-seitige Verarbeitungen; Cookie-Banner erst, wenn echte Tracker existieren.
 
 ---
 
@@ -68,7 +71,7 @@ Der Product Owner hat bereits ein Konto bei PrivacyBee Schweiz. Das senkt die Si
 3. PO liefert fehlende Account-Fakten A1–A9 aus Status (`account-evidence-required`) **ohne** Passwörter/Keys an Agenten.
 4. Legal: saubere Account-Kopie AVV/Anlage 2/TOM/TIA lesen und mit öffentlichem VVZ abgleichen; öffentliche de-CH-AVV-Seite nicht als kanonisch behandeln.
 5. PO: Cookie-Banner erst bei echten nicht-essenziellen Scripts.
-6. Technical Lead: Ready/Merge nur nach unabhängigem Exact-Head-Review.
+6. Technical Lead: Closeout dieses Dokuments unabhängig reviewen; #169 danach schliessbar. Agent setzt weder Ready noch Merge. Inhalt ist bereits über #175 auf `main`.
 
 Keine dieser Entscheidungen ist getroffen.
 
@@ -76,8 +79,8 @@ Keine dieser Entscheidungen ist getroffen.
 
 ## 5. Empfohlene nächste Schritte
 
-1. Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #171.
-2. Danach: AP-6a-Content-Gate (`docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`). Das bleibt der Trust-P1.
+1. Unabhängiger ChatGPT Technical-Lead Exact-Head-Review **dieses Closeouts**.
+2. Danach: Issue #169 schliessen; #171 als superseded belassen oder schliessen. AP-6a-Content-Gate (`docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`) bleibt geparkt / Trust-P1.
 3. AP-6b native, nicht PrivacyBee.
 4. Kein Trial, kein Script-Mount, keinen Folgeslice, keinen zweiten Vendor-Audit automatisch starten.
 5. Falls später trotzdem PrivacyBee: Integrationsvertrag einhalten (Nachtrag server-seitiger Verarbeitungen, kein Banner ohne Tracker, `/terms` Jetnity, Kill-Switch, kein Traveller-Dump).
@@ -91,13 +94,13 @@ Keine dieser Entscheidungen ist getroffen.
 | Fakt | Wert |
 | --- | --- |
 | Historical task-baseline / original merge-base | `6083ee63a5da62870ab7ac4f5f91f69230718e44` — **nicht** live `origin/main` |
-| Live `origin/main` (2026-08-29, `5057675638`) | `2241e349f8b3b400963cf1de11e5a8617bdc8e44` |
-| Merge-base of this branch vs live `main` | still `6083ee63` |
-| Task + Vendor-Korrektur | `61014e39` Correct PrivacyBee Gate 0 to Swiss privacybee.io target |
-| Authoring-Head (TL-Fix `5057675638`) | dieser Continuity-Truth-Fix; SHA nach Push |
-| Draft-PR | #171 OPEN Draft |
-| Issue | #169 OPEN |
-| Search | #168 CLOSED/MERGED via #172; current #109 recovery = #173 OPEN Draft; not mutated by this slice |
+| Reviewed content head | `278138ade951344be539df0767e02fa9fc4e24f8` |
+| Live `origin/main` | `6c5e8c167f3a6b991bd6b6f5e05180ddbe4df7fd` |
+| Transport | PR #175 MERGED 2026-08-29T10:36:21Z (`mergeCommit` = live `main`) |
+| Author PR #171 | OPEN Draft; **superseded** by #175 |
+| Branch stamp `b9495fa7` | nicht Teil des #175-Merge |
+| Issue | #169 OPEN; closable after TL review of this closeout |
+| Search | #168 CLOSED/MERGED via #172; current #109 recovery = #173 OPEN Draft; not mutated by this closeout |
 | `main` protected | `false` |
 | Agent | `Privacy provider integration audit 1` / observed `PrivacyBee vendor audit` |
 | Cloud-Run | https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae |
@@ -124,16 +127,18 @@ Keine dieser Entscheidungen ist getroffen.
 | Fakt | Wert |
 | --- | --- |
 | Alias | `https://jetnity-app.vercel.app` |
-| `/` | 200; `dpl_GntXsgcdUN8cQKqHPqnpB6jUEfZz` |
+| `/` | 200; Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` on `6c5e8c16` |
 | `/privacy` `/terms` | **404** |
 
 ### 6.4 Lokale Checks / CI / Vercel / Threads
 
-Vorherige Heads `2f2d00e3` / `fa393232` sind durch TL-Fix `5057675638` (Continuity-Truth) invalidiert. Neue Exact-Head-Gates nach diesem Push nachstempeln.
+Post-merge evidence (live, this closeout):
 
-- Review `5057675638` CHANGES REQUIRED galt für `2f2d00e3`: stale live-`main` / stale PR #168 OPEN. Dieser Slice korrigiert nur das.
-- Lokal vor Push: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
-- Kein TL-PASS behauptet.
+- Reviewed content `278138ad` transported by #175; `main` = `6c5e8c16`.
+- GitHub Actions push run `33248216109` **SUCCESS** on exakt `6c5e8c16`.
+- Vercel Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` READY; GitHub Production deployment `6154845099`.
+- Branch-stamp `b9495fa7` was **not** in the original merge.
+- Closeout authoring head `51f38db9`: Actions `33248525684` SUCCESS; Vercel Preview `4se6SDNPJTzwS4oRQNQuX2PCU1G4`; GitHub Preview deployment `6154903316`. Dieser Stamp ist ein neuerer SHA. Kein TL-PASS für das Closeout behauptet.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 
@@ -171,5 +176,5 @@ Das US-Unternehmen **Privacy Bee, LLC** auf **`privacybee.com` / `business.priva
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #171.  
-Derselbe Agent behebt nur unmittelbare Review-Funde dieses Slices.
+Unabhängiger ChatGPT Technical-Lead Exact-Head-Review **dieses Closeouts**.  
+Issue #169 kann danach geschlossen werden. Agent setzt weder Ready noch Merge.

@@ -8,7 +8,7 @@ Status: AUTHORIZED / PARALLEL AUDIT / DOCS-CONTRACT-EVIDENCE ONLY / NO VENDOR AC
 
 - Repository: `Jetnity/jetnity`
 - Historical task start / original merge-base `main`: `6083ee63a5da62870ab7ac4f5f91f69230718e44` — **historical only**, not current/live `origin/main`
-- Live `origin/main` at TL-review `5057675638` (2026-08-29): `2241e349f8b3b400963cf1de11e5a8617bdc8e44`
+- Live `origin/main` at post-merge closeout (2026-08-29): `6c5e8c167f3a6b991bd6b6f5e05180ddbe4df7fd` (transport PR #175 of reviewed content `278138ad`). Prior live SHA `2241e349` is historical.
 - Branch: `audit/privacybee-vendor-gate0-2026-08-29`
 - Logical Cursor-Agent: `Privacy provider integration audit 1`
 - Original parallel runtime constraint: PR #168 / Issue #109 Visitor Search. **Live:** PR #168 is CLOSED/MERGED via PR #172; current Issue #109 recovery is PR #173. Do not touch Search/Places/Homepage runtime or contracts.
