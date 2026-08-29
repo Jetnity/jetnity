@@ -4,9 +4,9 @@ Stand: 29. August 2026
 Status: **PROPOSED CONTRACT / NICHT IMPLEMENTIERT / NICHT FREIGEGEBEN**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 Evidence: `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_2026-08-29.md`  
-Muster: Skyscanner Flights offline foundation auf `main @ 69ef27b1`
+Muster: Skyscanner Flights offline foundation; Transport später über integriertes ADR-0199 `lib/server/providers/core/*` (`main @ 085c95b2`)
 
-> Vorschlag für den kleinsten zukünftigen `activities`-Adapter, der in den bestehenden provider-neutralen Kern einhängt. Keine Runtime in diesem Slice. Keine Shared-Core-Edits. Grobe Zielwahl ist bereits gesetzt: **Viator first, GetYourGuide später.** Das ist keine Production-Aktivierung.
+> Vorschlag für den kleinsten zukünftigen `activities`-Adapter. Keine Runtime in diesem Slice. Keine Shared-Core-Edits. Grobe Zielwahl ist bereits gesetzt: **Viator first, GetYourGuide später.** Das ist keine Production-Aktivierung. Offline-Foundation braucht keinen Shared-Core-Edit.
 
 ---
 
@@ -26,32 +26,29 @@ Verkauf bleibt Redirect auf die unveränderte `productUrl`. Viator bleibt Mercha
 
 ---
 
-## 2. Shared-Core vs Viator-spezifisch
+## 2. Schichten — Domain, Shared Transport, Viator-Mapping
 
-Shared-Core **nicht in diesem Slice und nicht durch den ersten Foundation-Slice ändern**, sofern der Kern bereits die Naht bietet:
+Drei getrennte Schichten. Keine zweite Transport-Abstraktion vorschlagen. Offline-Foundation ändert keinen Shared-Core.
 
-| Verantwortung | Modul heute | Bleibt provider-neutral |
+| Schicht | Modul | Verantwortung |
 | --- | --- | --- |
-| Suchanfrage / Option / Timeslot | `lib/activities/domain.ts` | ja |
-| Port | `lib/activities/provider.ts` `ActivityProvider.suchen()` | ja; erzeugt keine Deeplinks |
-| Nachweis | `lib/activities/nachweis.ts` | ja; getrennt von Search |
-| Kill-Switch / Production-Aus | `lib/activities/zustand.ts` + `lib/provider-ops` | ja |
-| Ranking / Tageskontext / Konflikt | `lib/activities/ranking.ts` u. a. | ja; provisionsneutral |
-| Commercial Provenance | `lib/commercial-provenance` | ja; Adapter mintet nicht |
-| Konto-Übernahme | `lib/activities/konto-uebernahme.ts` | ja; nur identifiers |
+| Domain / Port | `lib/activities/*` | `ActivitySuchanfrage`, `ActivityOption`, `ActivityProvider.suchen()`, Nachweis, Ranking, Kill-Switch |
+| Shared Server-Transport | `lib/server/providers/core/*` (ADR-0199) | Timeout, Retry, Rate-Limit, Redaction, Observability, `server-only` |
+| Viator-spezifisch | später `lib/providers/viator/activities/*` | Mapping, Parser, Destination-Resolver, Attribution-Semantik, Locale-Fallback |
 
-Viator-spezifisch, später unter `lib/providers/viator/activities/` (Name erst im Implementation-Slice):
+Inbound-Ops bleibt `lib/provider-ops`. Commercial Provenance bleibt `lib/commercial-provenance`; der Adapter mintet nicht.
 
-- Destination-Resolver `placeId`/`destinationName` → `destinationId` (fail-closed)
+Viator-Mapping (nicht in den Transport-Kern):
+
+- Destination-Resolver über v2 `/destinations` (wöchentlicher Cache); `placeId`/`destinationName` → `destinationId` fail-closed
 - Parser/Normalizer für v2 Product Summary / Product / optional Check
 - `productCode` / `productOptionCode`
-- `Accept-Language` + Währung ohne stille Conversion
-- unveränderte `productUrl` als Attribution-Objekt
+- `Accept-Language` nur aus belegter v2-Matrix; Jetnity-PL und andere ununterstützte Locales ⇒ dokumentierter Fallback, kein stilles PL an Viator
+- `productUrl` byte-identisch + server-seitige Host-Allowlist
 - Age-Band-Missing-Facts
-- Error-/429-/503-Mapping
-- Observability: Endpoint, `X-Unique-ID`, RateLimit-Header, kein Secret
+- Error-/429-/503-Mapping auf den ADR-0199-Kern; kein paralleler HTTP-Client
 
-Nicht in den Shared-Core ziehen: Viator-Schemas, destId, campaign-value, RRP/Net-Preisobjekte.
+Ein Domain-Typ-Loch, falls je bewiesen, ist ein eigener kleiner Slice — kein zweiter Transport-Kern und nicht Teil der ersten Foundation.
 
 ---
 
@@ -61,10 +58,10 @@ Strikte Trennung, analog Skyscanner `evidenceMode: 'fixture'`:
 
 | Klasse | Herkunft | Darf werden |
 | --- | --- | --- |
-| `content_preview` | `/products/search` oder Fixture-Äquivalent | Titel, Beschreibung, Tags, Foto-URL, Review-**Summary**, optionales `fromPrice` mit `amountStatus` unbelegt/`unknown` |
-| `schedule_hint` | `/availability/schedules/{product-code}` | Tagesfenster/RRP-Hinweis; **nicht** live availability |
-| `live_check` | `/availability/check` nach echtem Server-Transport | Einzige Kandidat-Quelle für eine spätere `live_api`-Quote; eigener Gate; Basic-Accounts können das nicht |
-| `affiliate_redirect` | unveränderte `productUrl` aus Live-API | Einzige Kandidat-Quelle für `affiliate.status = present` |
+| `content_preview` | `/products/search` oder `/products/{product-code}` oder Fixture-Äquivalent | Titel, Beschreibung, Tags, Foto-URL, Review-**Summary**, optionales `fromPrice` mit `amountStatus` unbelegt/`unknown`. Authenticated HTTP macht das **nicht** zur Current Quote / `live_api`. |
+| `schedule_hint` | `/availability/schedules/{product-code}` | cached/schedule price hint; **nicht** current availability/quote |
+| `live_check` | gültiger Full-access `/availability/check` für **user-selected date + gültiges paxMix** | Einzige Kandidat-Quelle für Real-time Price/Availability Commercial Truth / spätere `live_api`; Basic kann das nicht; kein Bulk/Kalender; keine erfundene TTL; Redirect-Checkout kann abweichen |
+| `affiliate_redirect` | unveränderte `productUrl` aus Live-API, Host auf server-Allowlist | Einzige Kandidat-Quelle für `affiliate.status = present` |
 | `fixture` | Repo-JSON, Tests | **Nie** `live_api`, **nie** `persisted_snapshot`, **nie** Affiliate `present` |
 
 Verboten:
@@ -73,7 +70,8 @@ Verboten:
 - Client-`productUrl` als Attribution
 - LLM/User als Provider-Hard-Truth
 - `partnerNetPrice` als Kundenpreis
-- Search-`fromPrice` als Current Quote ohne Check
+- Search-`fromPrice` oder Product-Detail-Preis als Current Quote ohne gültigen Check
+- Authenticated Transport allein als `live_api`
 
 `ActivityOption.preis` aus Preview/`fromPrice` bleibt darstellbar nur wenn die UI nicht „verbindlich verfügbar“ behauptet. S5-A-Composition ohne `retrievedAt` bleibt erlaubt; das mintet keine Persistenz.
 
@@ -107,8 +105,12 @@ products[]:
     stornierbar          boolean | unknown
     policyType           STANDARD | custom | ALL_SALES_FINAL | unknown
   geo                    optional lat/lon
-  productUrl             optional https URL; fixture URLs are not attribution
+  productUrl             optional; https + allowlisted host later; fixture URLs are not attribution
 ```
+
+Diese `normalized.v1`-Form ist **search/preview only**. Sie beansprucht keine zertifizierte Product Detail Page und keine Redirect-Aktivierung.
+
+Späteres `product_detail`-Gate (nicht Foundation): title, images, description, inclusions, exclusions, additionalInfo, cancellationPolicy, languageGuides, itinerary, ticketInfo, logistics.start/end sowie option-level language-guide/logistics, bevor PDP-UI oder Affiliate-Redirect live geht. Review-Volltexte / `viatorUniqueContent` bleiben separat verboten.
 
 Fail-closed Normalizer (Skyscanner-analog):
 
@@ -116,7 +118,7 @@ Fail-closed Normalizer (Skyscanner-analog):
 - leerer `productCode` → drop
 - Preis ohne Währung oder nicht-finite/negativ → drop price, nicht drop product unless `live_check` requires both
 - `live_check` ohne `retrievedAt` oder ohne belegte `available` → drop
-- `productUrl` nur `https:`; jede Mutation verboten; Fixture-URL setzt kein Affiliate-present
+- `productUrl`: `https:` **und** Host auf server-seitig konfigurierter Viator-/Whitelabel-Allowlist; unbekannter Host ⇒ keine Attribution, kein Redirect; Tracking-Parameter nicht umschreiben; Allowlist nicht aus Client-Daten; Fixture-URL setzt kein Affiliate-present
 - Timeslot nur wenn Start-Datum und lokale Zeit belegt
 
 ---
@@ -138,14 +140,14 @@ Fail-closed Normalizer (Skyscanner-analog):
 
 `ActivityProvider` bleibt schmal: `suchen()` liefert Optionen. Kein Booking. Kein Deeplink im Port (ADR-0078).
 
-Zukünftige optionale Naht, **nicht** im Shared-Core dieses Audits:
+Zukünftige optionale Naht, **nicht** in ADR-0199 und nicht in der ersten Foundation:
 
 ```text
 ActivityAffiliateHinweis {
   providerId: 'viator'
   externalRef: productCode
-  productUrl: https URL
-  attributionIntact: true  // fail-closed if URL rewritten
+  productUrl: https URL on server allowlist
+  attributionIntact: true  // fail-closed if URL rewritten or host unknown
   evidenceMode: 'live_api' | never fixture
 }
 ```
@@ -160,9 +162,9 @@ ActivityAffiliateHinweis {
 
 Ohne belegte Abbildung `Jetnity-Ziel → destinationId` ist die Suche `unavailable` oder `empty` nach ehrlichem Grund, nicht eine geratene Stadt.
 
-Resolver ist Viator-spezifisch. Er darf `destinationName` nicht fuzzy als Wahrheit verkaufen. Unmapped `placeId` → kein Call.
+Resolver ist Viator-spezifisch über v2 **`/destinations`** (Basic/Full/Full+Booking/Merchant; wöchentlicher Cache). Er darf `destinationName` nicht fuzzy als Wahrheit verkaufen. Unmapped `placeId` → kein Call.
 
-Taxonomie-Endpoint (`/destinations` vs P9 `/v1/taxonomy/destinations`) bleibt `VIA-UNK-06` und wird erst nach TL/PO-Klarstand verdrahtet.
+Älteres Golden-Path `/v1/taxonomy/destinations` ist historische Evidence, kein v2-Blocker.
 
 ### Traveller
 
@@ -173,24 +175,30 @@ Taxonomie-Endpoint (`/destinations` vs P9 `/v1/taxonomy/destinations`) bleibt `V
 - Kein Default-`ADULT` für die ganze Gruppe.
 - Booking-Questions (Passport etc.) nicht implementieren.
 
+### Locale
+
+Nie eine nicht unterstützte `Accept-Language` senden. Jetnity-PL liegt außerhalb der belegten v2-Affiliate-Matrix ⇒ dokumentierter unterstützter Fallback/Content-Language-State; kein Claim, Viator habe Polnisch geliefert. Kein stilles Machine-Translation-Claim; `translationInfo` bewahren.
+
 ---
 
 ## 7. Zukünftiger Server-Transport (nicht dieser Slice, nicht die erste Foundation)
 
 Wenn — und nur wenn — ein späterer Task Keys in einer nicht-öffentlichen Server-Umgebung erlaubt:
 
-1. Secret nur server-side
-2. Base URL default Sandbox; Production-Host extra PO-Gate
-3. Header: `exp-api-key`, `Accept-Language`, `Accept: application/json;version=2.0`
-4. Timeout: zunächst Jetnity-Activities 12s fail-closed; 120s nicht still übernehmen
-5. 429/503 nach P2 lesen (`Retry-After` vs Exponential Backoff)
-6. Kein Client als Provider-Proxy
-7. Kill-Switch `JETNITY_ACTIVITY_AKTIV` + Factory-null + Production-Aus bleiben
-8. Cost Guard vor jedem Preview-Live; persistenter Guard vor Production (bestehende Policy)
-9. Observability ohne Secret/PII: endpoint, status, latency, `X-Unique-ID`, rate-limit remaining
+1. HTTP **nur** über `lib/server/providers/core/*` (ADR-0199): Timeout, Retry, Rate-Limit, Redaction, Observability. Kein zweiter Fetch/Retry-Stack.
+2. Secret nur server-side; nie in Observer/Errors
+3. Base URL default Sandbox; Production-Host extra PO-Gate. Ältere Golden-Path-Production-URLs autorisieren keinen Test.
+4. Header: `exp-api-key`, `Accept-Language` nur aus belegter v2-Matrix, `Accept: application/json;version=2.0`
+5. Timeout: zunächst Jetnity-Activities 12s fail-closed über den Kern; 120s nicht still übernehmen
+6. 429/503 über ADR-0199 + P2 (`Retry-After` vs Exponential Backoff)
+7. Kein Client als Provider-Proxy
+8. Kill-Switch `JETNITY_ACTIVITY_AKTIV` + Factory-null + Production-Aus bleiben
+9. Cost Guard vor jedem Preview-Live; persistenter Guard vor Production (bestehende Policy)
 10. Parser toleriert additive Felder (P2 backward-compatible rule)
 
-`/availability/check` erst nach Klärung `VIA-UNK-07` und nur auf Auswahl/Nachweis, nie als Search-Bulk.
+`/products/search` und `/products/{product-code}` bleiben `content_preview`, auch hinter authenticated Transport.
+
+`/availability/check` nur nach **Full-access-Freigabe**, nur nach user-selected date + gültigem paxMix, nie als Search-Bulk/Kalender. Basic-Accounts können das nicht.
 
 Booking-/Payment-Endpoints: dauerhaft außerhalb dieses Affiliate-Vertrags.
 
@@ -228,16 +236,17 @@ Bereits gesetzt — **nicht erneut fragen**:
 Noch offen:
 
 1. Dieser Audit — TL Exact-Head-Re-Review
-2. Offline Adapter Foundation (eigener Task, Proposal separat; startet nicht aus #189)
-3. Shared-core nur, wenn die Foundation eine nachweislich fehlende Naht braucht — eigener Slice
-4. Partner Qualification / Signup / Sandbox-Zugang / Vertrag — PO
-5. Credentials / paid calls — PO
-6. Preview live search behind flags — Cost Guard
-7. `/availability/check` + Nachweis — extra Gate nach `VIA-UNK-07`
-8. Attribution-URL in UI / optional `booking_url` — extra Gate
-9. Production-Aktivierung — bestehendes PROVIDER-ACTIVATION-GATE
-10. Provider-Runtime-Write-Path / Principal-Allokation + echte Provider-Antwort + trusted S5-B-Write — extra Gate
-11. Full+Booking oder Merchant — extra PO-Gate; nicht Teil dieses Affiliate-Vertrags
+2. Offline Adapter Foundation = **search/preview only** (eigener Task, Proposal separat; startet nicht aus #189; kein Shared-Core-Edit)
+3. Partner Qualification / Signup / Sandbox-Zugang / Vertrag — PO
+4. Credentials / paid calls — PO
+5. Full-access-Freigabe (nicht: ob Full-access `/availability/check` rufen darf)
+6. Preview live search behind flags — Cost Guard; bleibt `content_preview`, nicht `live_api`
+7. `/availability/check` + Nachweis — extra Gate nach Full-access; date + gültiges paxMix
+8. `product_detail`-Normalisierung + zertifizierte Essential Product Information — extra Gate vor PDP/Redirect
+9. Attribution-URL in UI / optional `booking_url` — extra Gate; Host-Allowlist; `rel="sponsored"`; `campaign-value` non-PII
+10. Production-Aktivierung — bestehendes PROVIDER-ACTIVATION-GATE
+11. Provider-Runtime-Write-Path / Principal-Allokation + echte Provider-Antwort + trusted S5-B-Write — extra Gate
+12. Full+Booking oder Merchant — extra PO-Gate; nicht Teil dieses Affiliate-Vertrags
 
 TW-8 bleibt geschlossen, solange keine echte Provider Commercial Provenance existiert. Foundation, Fixtures und das bereits angewendete S5-B-Schema öffnen TW-8 nicht.
 
@@ -267,6 +276,8 @@ Leere Trefferliste ≠ Transportfehler.
 - Währungsumrechnung
 - Widgets/Banners
 - GetYourGuide-Adapter oder erneute grobe Providerwahl
-- Shared-Core-Umbau
+- Zweiten Transport-Kern neben ADR-0199
+- Shared-Core-Umbau in der Foundation
 - Commercial-Provenance-Mint
 - S5-B-Persistenz erneut anwenden
+- Zertifizierte PDP/Redirect aus der minimalen Search-Form

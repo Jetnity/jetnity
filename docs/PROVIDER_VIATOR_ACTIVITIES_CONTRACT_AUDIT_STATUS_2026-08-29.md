@@ -1,7 +1,7 @@
 # Provider Viator Activities Contract Audit — Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX FÜR 5463714237 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5464086082 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 Auftrag: `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_TASK_2026-08-29.md`  
 Branch: `audit/provider-viator-activities-contract-2026-08-29`  
@@ -13,113 +13,104 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/189
 
 ## 0. Live-Rekonstruktion
 
-Erneut `origin/main` gefetcht vor diesem Stamp.
+`origin/main` in denselben Branch gemergt vor diesem Stamp.
 
 | Fakt | Wert |
 | --- | --- |
-| Task-Baseline | `69ef27b169780e41ba506a69acb15caafa645517` — `Integrate Skyscanner Flights offline adapter foundation` |
-| Reviewed Head vor diesem Fix | `dbfe76cecc60c8d7b14d3fa72455923b59fea2fe` |
-| TL CHANGES REQUIRED | Kommentar `5463714237` auf Exact Head `dbfe76ce` (Continuity Isolation). Vorher `5463644138` auf `51eac518` bleibt geschlossen. |
-| `origin/main` nach Re-Fetch | `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` — Checkpoint V2 + post-landing stabilize; **nicht** in diesen Branch gemergt |
-| Merge-Base | `69ef27b1` = Task-Baseline |
-| Drift vs Task-Baseline | `origin/main` **ahead 4** (docs-only current-state). Dieser Fix rebased/merged nicht. |
+| Reviewed Head vor diesem Fix | `feb8561a8f67765cd7059633fa4e81829e8b2343` |
+| TL CHANGES REQUIRED | Kommentar `5464086082` auf Exact Head `feb8561a` |
+| `origin/main` gemergt | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` — Provider Adapter Core Post-Merge Checkpoint |
+| Merge-Commit | `40cdce078651901baa5367d1ae43160c0a9bf33e` |
+| Task-Baseline (historisch) | `69ef27b169780e41ba506a69acb15caafa645517` |
 | Draft-PR | #189 OPEN, Draft |
-| Prior Exact-Head CI | Actions Run `33264512282` SUCCESS auf `dbfe76ce` — **gilt nicht für den neuen Head** |
-| Prior Exact-Head Vercel | Preview `CQ5N2KEV1bQKKppj7yg5PGVV44h7` SUCCESS auf `dbfe76ce` — **gilt nicht für den neuen Head** |
+| Prior Exact-Head CI | Actions Run `33264847574` SUCCESS auf `feb8561a` — **gilt nicht für den neuen Head** |
+| Prior Exact-Head Vercel | Preview `EKXMMwBWfBb7EGftqGzZHY4mbgc9` SUCCESS auf `feb8561a` — **gilt nicht für den neuen Head** |
+| ADR-0199 | integriert auf `main`; siehe `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md` und `docs/CHATGPT_PROVIDER_ADAPTER_CORE_POST_MERGE_CHECKPOINT_2026-08-29.md` |
 | Provider / Secrets / paid calls | nicht vorhanden; nicht aufgerufen |
-| Signup / API-Key | nicht ausgeführt |
+| Signup / API-Key / Sandbox-/Production-Call | nicht ausgeführt |
 | Commercial-Provenance-Mint | nicht ausgeführt |
 | Production / Supabase / Vercel-Settings | nicht mutiert |
 
-Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+Exact Head ist der Commit dieses Stamps; live am PR prüfen. ROADMAP-Insertion von #189 entfernt; globale Current-State-Pointer bleiben Checkpoint/TL-Pfad.
 
 ---
 
 ## 1. Arbeitsblock
 
-Rekonstruktion des offiziellen Viator Partner API v2-Vertrags für **affiliate-style** Tours/Activities und kleinster zukünftiger Jetnity-`activities`-Adaptervertrag. Shared-Core bleibt unverändert. **Viator ist das akzeptierte erste Activities-Target**; nicht Production-aktiviert. GetYourGuide später. S5-B-Persistenz ist auf Production angewendet; Runtime-Write-Path bleibt geschlossen.
+Rekonstruktion des offiziellen Viator Partner API v2-Vertrags für **affiliate-style** Tours/Activities und kleinster zukünftiger Jetnity-`activities`-Adaptervertrag. **Viator ist das akzeptierte erste Activities-Target**; GetYourGuide später. Kein erneutes Providerwahl-Gate.
 
 ---
 
 ## 2. Bereits umgesetzt
 
-- Evidence-Audit mit first-party URLs, Titeln, Dokumentdaten
-- Affiliate vs Merchant vs Full+Booking strikt getrennt
-- Endpoint-Matrix, Auth, Sandbox/Production, Search, Availability, IDs, Währung, Storno, Photos/Reviews, Attribution, Rate/Error, Locale, Freshness, Booking-Endpoints die Affiliates nicht brauchen
-- Proposed Adapter Contract inkl. Evidence-Klassen, Fail-closed Fixtures, Transport-/Activation-Gates
-- Future Foundation-Task als **Proposal**, nicht autorisiert
-- Handoff + Self-Review
-- Review-Fix `5463644138`: grobe Viator-first-Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply im **Adapter-Vertrag/Audit** als erledigt führen
-- Review-Fix `5463714237`: `#189` nimmt globale Current-State-Pointer nicht; `docs/ACTIVE_WORK_STATUS.md` auf Task-Baseline zurückgesetzt; ROADMAP nur ein nicht-autoritativer Parallel-Hinweis. Checkpoint V2 bleibt Authority und wird hier nicht umgeschrieben.
+- First-party Evidence inkl. P6/P10/P11/P12 nach `5464086082`
+- `VIA-UNK-01`, `VIA-UNK-06`, `VIA-UNK-07` reklassifiziert (resolved / non-blocking)
+- Commercial-Truth endpoint-spezifisch: Search/Detail ≠ `live_api`; nur Full-access `/availability/check`
+- ADR-0199 als zukünftiger HTTP-Kern; kein zweiter Transport
+- Search-Foundation vs späteres `product_detail`-Gate
+- `productUrl` Allowlist; Locale-Fallback inkl. Jetnity-PL
+- `origin/main` gemergt; ROADMAP-#189-Pointer entfernt
+- Continuity-Isolation bleibt: dieser Audit ist nicht globaler Current-Owner
 
-Keine Runtime-Datei. Keine Shared-Core-Datei. `next-env.d.ts` Working-Tree-Noise nicht committed.
+Keine Runtime-Datei. Keine Shared-Core-Datei in diesem Fix (ADR-0199 kam über Merge von `main`).
 
 ---
 
 ## 3. Nicht umgesetzt / bewusst draußen
 
-- Adapter-Code, Fixtures auf Disk, Tests
-- Shared-Core- oder `lib/activities/*`-Edits
-- ADR als angenommene Entscheidung
-- Signup, Keys, Sandbox-Calls
-- Commercial Provenance write/mint
-- TW-8, Provider-Aktivierung, Production
-- GetYourGuide-Gegenaudit
-- Destination-Resolver-Daten
+- Adapter-Code, Fixtures, Tests, HTTP-Calls
+- Shared-Core-Edits in diesem Slice
+- Signup, Keys, Sandbox-/Production-Calls
+- Commercial Provenance write/mint, TW-8, Provider-Aktivierung
+- Foundation-Start
 
 ---
 
 ## 4. Verbindliche Lesart
 
-1. **Current API Truth = Partner API v2** (`docs.viator.com/partner-api/technical/`, last update 18 Aug 2026).
-2. Affiliate-v1-Spec ist historisch (last update 26 May 2022).
-3. Zielklasse des Vorschlags: **Full-access Affiliate**, nicht Merchant, nicht Full+Booking.
-4. Preview/`fromPrice`/Schedules ≠ Live-Quote.
-5. Fixture ≠ `live_api` / `persisted_snapshot` / Affiliate-present.
-6. `productUrl` unverändert oder gar nicht als Attribution.
-7. ADR-0078 bleibt Domain-Architektur (Search ≠ Booking, kein Vendor-Lock). Die grobe Target-Wahl **Viator first / GetYourGuide später** ist Current-State und kein offenes PO-Gate.
-8. S5-B-Persistenz-Migration `20260829140000_trip_item_commercial_provenance` ist Production-angewendet. Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. TW-8 bleibt geschlossen.
+1. **Current API Truth = Partner API v2** + Technical Guide (P2/P6).
+2. Zielklasse: **Full-access Affiliate**. Basic ohne Check. Merchant/Full+Booking extra.
+3. `/availability/check` ist Full-access-fähig; Gate = Jetnity Full-access-Freigabe.
+4. v2-Destinationen = `/destinations`. Golden-Path-Taxonomie historisch.
+5. Tests nur Sandbox. Ältere Production-URL ist Drift.
+6. Authenticated Search/Detail = `content_preview`, nicht `live_api`.
+7. Nur gültiger Check (Datum + paxMix) ist Real-time-Quote-Kandidat; keine erfundene TTL.
+8. Erste Foundation = search/preview only. PDP/Redirect extra `product_detail`-Gate.
+9. `productUrl` byte-identisch + server-Allowlist; `https:` allein reicht nicht.
+10. Zukünftiger HTTP nur über `lib/server/providers/core/*`.
+11. S5-B Persistenz angewendet; Runtime-Write-Path unallocated; TW-8 geschlossen.
 
 ---
 
 ## 5. Tests / CI / Preview
 
-Dieses Stamp ist docs-only. Vorherige Gates auf `39d083ba` sind nach Push ungültig.
-
-Lokal in diesem Slice **nicht** behauptet: voller Unit-Suite-Lauf, Production-Build. Nicht erforderlich für Docs-only; der neue Head braucht unabhängiges Re-Gating.
+Dieses Stamp ist docs-only plus Merge von `main`. Prior-Gates auf `feb8561a` ungültig. Neuer Head braucht vollständiges Re-Gating.
 
 ---
 
 ## 6. DB / RLS / Production-Grenze
 
-Dieser Slice ändert keine Migration und mutiert Production nicht. Die bereits verifizierte Production-Migration `20260829140000_trip_item_commercial_provenance` wird **nicht** erneut angewendet. `production_write_path_allocated` bleibt `false`.
+Dieser Slice ändert keine Migration und mutiert Production nicht. S5-B Persistence bleibt angewendet. `production_write_path_allocated` bleibt `false`.
 
 ---
 
 ## 7. Kosten / Provider / Secrets
 
-0. Keine neuen laufenden Kosten. Kein Key. Commission-Satz unbekannt (`VIA-UNK-11`). Ob Search-Calls paid sind, unbekannt (`VIA-UNK-12`).
+0. Kein Key. `VIA-UNK-11` / `VIA-UNK-12` bleiben offen.
 
 ---
 
 ## 8. Risiken / Review-Funde
 
-Siehe Audit §19–§20. Höchste fachliche Kanten:
-
-- P2 vs P9 Test-Host-Widerspruch
-- Sprachen zh/ko Affiliate vs Merchant
-- `placeId` → `destinationId` unbelegt
-- `/availability/check` Usage-Rule vs Affiliate-Redirect
-- Währung auf Jetnity ≠ Währung auf viator.com nach Klick
+Siehe Audit §20. Höchste Kanten: Host-Allowlist; Search≠Quote; PDP-Zertifizierung nicht aus Search-Form; zh/ko (`VIA-UNK-02`); `placeId`→`destinationId` (`VIA-UNK-05`).
 
 ---
 
 ## 9. Offene Freigaben
 
-- Unabhängiger Technical-Lead Exact-Head-**Re-Review** dieses Drafts nach `5463714237`
-- Kein erneutes PO-Gate „darf Viator first sein?“
-- Getrennte PO-Gates bleiben: Signup/Zugang/Vertrag, Credentials/paid calls, Production-Aktivierung, Full+Booking/Merchant
-- Foundation-/Key-/Preview-Slices extra; nicht aus #189 starten
+- Unabhängiger Technical-Lead Exact-Head-**Re-Review** nach `5464086082`
+- Getrennte PO-Gates: Signup/Zugang/Vertrag, Credentials/paid calls, Full-access, Production-Aktivierung, Full+Booking/Merchant
+- Foundation nicht aus #189 starten
 
 ---
 
@@ -137,6 +128,7 @@ Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #189 auf dem 
 4. `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_HANDOFF_2026-08-29.md`
 5. `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_SELF_REVIEW_2026-08-29.md`
 6. `docs/PROVIDER_VIATOR_ACTIVITIES_ADAPTER_FOUNDATION_TASK_PROPOSAL_2026-08-29.md`
-7. `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` §7–§9 (auf `origin/main`)
-8. ADR-0078 / `docs/ACTIVITIES.md` als Domain-Architektur-Evidence, nicht als offenes Target-Wahl-Gate
-9. `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`
+7. `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`
+8. `docs/CHATGPT_PROVIDER_ADAPTER_CORE_POST_MERGE_CHECKPOINT_2026-08-29.md`
+9. `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` §7–§9
+10. `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`

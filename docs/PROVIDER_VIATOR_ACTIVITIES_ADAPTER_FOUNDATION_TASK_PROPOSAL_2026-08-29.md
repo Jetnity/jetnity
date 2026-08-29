@@ -20,7 +20,7 @@ Kleinste offline Viator-Activities-Adapter-Foundation, analog zur akzeptierten S
 1. Jetnity besitzt den provider-neutralen Vertrag (`ActivitySuchanfrage`, `ActivityOption`, `ActivityProvider`). Viator-Rohformen dürfen Workspace und `lib/commercial-provenance` nicht importieren.
 2. Fixtures sind Test-Evidence. Sie dürfen weder `live_api` noch `persisted_snapshot` noch Affiliate `present` minten.
 3. Kein Trusted-Live-Konstruktor und keine Commercial-Provenance-Mint-Funktion in der Foundation.
-4. Fail-closed für fehlende `productCode`, widersprüchlichen Preis/Währung, nicht-https/`http` `productUrl`, erfundene Timeslots.
+4. Fail-closed für fehlende `productCode`, widersprüchlichen Preis/Währung, nicht-https/`http` `productUrl`, erfundene Timeslots. Host-Allowlist und Attribution sind **nicht** Foundation-Scope; Fixture-URL beweist keine Attribution. `https:` allein reicht später nicht für Redirect.
 5. Keine erfundene Freshness, Verfügbarkeit, Attribution oder Conversion.
 6. Fixture-`productUrl` darf strukturell geparst werden, ist aber keine Affiliate-Evidence.
 7. Credentials bleiben später server-only.
@@ -39,7 +39,9 @@ Kleinste offline Viator-Activities-Adapter-Foundation, analog zur akzeptierten S
 - Tests: malformed amount, currency, identifiers, timeslots, URLs
 - Docs: Status/Handoff/Self-Review des Foundation-Slice
 
-Optional, nur wenn ohne Shared-Core-Änderung unmöglich: dünner provider-neutraler `activities`-Fixture-Result-Typ **neben** `ActivityProvider`, analog `FlightProviderFixtureSearchResult`. Das wäre ein eigener, begründeter Shared-Core-Minischnitt — **nicht** still in der Foundation verstecken und nicht in diesem Proposal autorisiert.
+Offline-Foundation braucht **keinen** Shared-Core-Edit und **keinen** HTTP-Client. ADR-0199 `lib/server/providers/core/*` bleibt unberührt. Ein späteres Domain-Typ-Loch, falls je bewiesen, ist ein eigener kleiner Slice — kein zweiter Transport-Kern und nicht in diesem Proposal autorisiert.
+
+Erste Foundation = **search/preview only**. Keine zertifizierte PDP, kein Affiliate-Redirect, kein `live_api`.
 
 ---
 
@@ -48,7 +50,9 @@ Optional, nur wenn ohne Shared-Core-Änderung unmöglich: dünner provider-neutr
 - Echte Viator-HTTP-Calls, Sandbox oder Production
 - Trusted/live execution mode
 - `/availability/check` Transport
-- Mapping in eine S5-A-Provider-Quote
+- Mapping Search/Detail in `live_api` oder S5-A-Provider-Quote
+- Zweiten HTTP-Transport neben ADR-0199
+- Zertifizierte PDP / Affiliate-Redirect aus der Search-Form
 - API-Key/Secret-Handling
 - `productUrl` in UI oder `trip_items.booking_url`
 - Destination-Resolver gegen Live-Taxonomie
@@ -78,7 +82,9 @@ Optional, nur wenn ohne Shared-Core-Änderung unmöglich: dünner provider-neutr
 
 ## Suggested later slice after that foundation
 
-Erst nach Foundation-Acceptance **und** PO-Gates: server-only Transport (`/products/search`, `/products/{product-code}`, Timeout/429, Secret-Injection, Response-Validation) hinter Sandbox. Nur dieser Transport darf jemals einen `live_api`-Kandidaten erzeugen. `/availability/check` und Attribution-UI bleiben extra Gates. S5-B Persistence Apply ist bereits erfolgt; verbleibendes Commercial-Gate ist Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. TW-8 bleibt geschlossen, solange keine echte Provider Commercial Provenance existiert.
+Erst nach Foundation-Acceptance **und** PO-Gates: server-only Transport **über ADR-0199** `lib/server/providers/core/*` für `/products/search` und `/products/{product-code}` hinter Sandbox. Dieser Transport erzeugt **`content_preview`**, nicht `live_api`, nur weil er authenticated HTTP ist. Schedules bleiben `schedule_hint`.
+
+Nur ein gültiger Full-access-`/availability/check` für user-selected date + gültiges paxMix ist Kandidat für Real-time Price/Availability Commercial Truth. Keine erfundene TTL; Redirect-Checkout kann abweichen. Basic kann Check nicht. Attribution-UI, Host-Allowlist, `rel="sponsored"`, `product_detail` und Full-access-Freigabe bleiben extra Gates. S5-B Persistence Apply ist bereits erfolgt; verbleibendes Commercial-Gate ist Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. TW-8 bleibt geschlossen, solange keine echte Provider Commercial Provenance existiert.
 
 ---
 

@@ -26,11 +26,14 @@ Aktuelle first-party Dokumentation, abgerufen am 29. August 2026. Keine Drittblo
 | P6 | Technical Guide – Viator Partner API | https://partnerresources.viator.com/travel-commerce/technical-guide/ | undatiert; verweist auf P2 für Endpoint-Zugang | Business-/Onboarding-Überblick |
 | P7 | Viator API Certification | https://partnerresources.viator.com/travel-commerce/certification/ | **15 Jul 2025** | Zertifizierung, Usage-Rules, Full+Booking vs Merchant |
 | P8 | Affiliate Attribution: How It Works | https://partnerresources.viator.com/travel-commerce/affiliate-attribution/ | undatiert; Cookie **30 Tage** | Attribution / `productUrl` |
-| P9 | Golden Path \| Basic Access Affiliate Partners | https://partnerresources.viator.com/travel-commerce/golden-path/ | undatiert | Kleinste Affiliate-on-demand-Integration |
+| P9 | Golden Path \| Basic Access Affiliate Partners | https://partnerresources.viator.com/travel-commerce/golden-path/ | undatiert | Kleinste Affiliate-on-demand-Integration; ältere Production-URL-Beispiele sind Drift |
+| P10 | Managing product availability data | https://partnerresources.viator.com/travel-commerce/managing-product-availability-data/ | undatiert | `/availability/check` nach Datum + Passenger-Mix, vor bookable items |
+| P11 | Front-End Guide for API Partners | https://partnerresources.viator.com/travel-commerce/front-end/ | 17 Mar 2021 | SRP vs PDP; Essential Product Information |
+| P12 | Affiliate attribution guidance (Partner Resource Center) | https://partnerresources.viator.com/blog/attribution/ | first-party Attribution-Hinweis | `rel="sponsored"` / Tracking-Parameter intakt |
 
 Support-Kontakt in P2/P3/P6/P8: `affiliateapi@tripadvisor.com`. Kein Kontakt aufgenommen.
 
-Nicht als Primärquelle verwendet: Blog-Posts, inoffizielle SDKs, erfundene OpenAPI-Kopien.
+Nicht als Primärquelle verwendet: inoffizielle SDKs, erfundene OpenAPI-Kopien. P12 ist first-party Attribution-Guidance, kein Drittblog.
 
 ---
 
@@ -61,9 +64,9 @@ P3 beschreibt **Viator Branded Affiliates (VBAs)** mit älteren Pfaden (`/search
 
 Diese Linie ist Evidence, dass Affiliate-Verkauf **Redirect auf viator.com** ist. Sie ist **nicht** der zukünftige Jetnity-Adaptervertrag.
 
-### 2.3 Dokumentwiderspruch, nicht aufgelöst
+### 2.3 Dokumentwiderspruch, Lesart 2026-08-29
 
-P9 Golden Path zeigt ein Beispiel gegen `https://api.viator.com/partner/products/search` und sagt nach eigenem Test sei derselbe Key production-ready. P2 sagt, Tests dürfen nur Sandbox treffen. **Nicht geraten.** Offen als `VIA-UNK-01`.
+P9 Golden Path zeigt ein älteres Beispiel gegen `https://api.viator.com/partner/products/search`. **Aktueller v2-Vertrag (P2/P6):** All testing must be done in Sandbox; Production endpoints are for live bookings only. `VIA-UNK-01` ist **Dokumentationsdrift / non-blocking**. Ältere Production-URL-Beispiele autorisieren keinen Production-Test. Sandbox fail-closed ist der Binding-Testvertrag.
 
 P2 Localization: `zh-TW`, `zh-CN`, `ko`/`ko-KR` sind **merchant partners only**. P8 Attribution: Affiliates hätten Zugang zu allen gelisteten Sprachen inklusive zh/ko. **Nicht geraten.** Offen als `VIA-UNK-02`.
 
@@ -204,7 +207,7 @@ P2 `/products/search` (Basic und Full):
 
 Destination in v2 ist eine **Viator-`destinationId`** (String/Number, z. B. `"732"`, `"77"` für USA). Das ist **nicht** Jetnitys `placeId`. Mapping ist Viator-spezifisch und heute unbelegt (`VIA-UNK-05`).
 
-P9 nennt zusätzlich `/v1/taxonomy/destinations` für Basic Golden Path. P2-Tabelle führt `/destinations`, nicht `/v1/taxonomy/destinations`. **Nicht zusammengezogen.** Offen als `VIA-UNK-06`.
+P6 Technical Guide dokumentiert `/destinations` für Basic, Full, Full+Booking und Merchant; Destination-Daten wöchentlich cachen. P9 nennt zusätzlich älteres `/v1/taxonomy/destinations`. `VIA-UNK-06` ist **reklassifiziert**: aktueller v2-Adapter nutzt `/destinations`. Legacy-Golden-Path-Taxonomie bleibt historische Evidence, kein Blocker, solange ein Live-Account nichts anderes beweist.
 
 ---
 
@@ -219,13 +222,15 @@ P9 nennt zusätzlich `/v1/taxonomy/destinations` für Basic Golden Path. P2-Tabe
 - Leeres `bookableItems` ⇒ Produkt inaktiv / nicht buchbar
 - Schedules **dürfen nicht** als endgültige Verfügbarkeit vor Booking behandelt werden. P2: immer `/availability/check` für den finalen Check. Basic **kann** `/availability/check` nicht.
 
-### 8.2 Real-time `/availability/check` (Full+, nicht Basic)
+### 8.2 Real-time `/availability/check` (Full-access Affiliate, Full+Booking, Merchant — nicht Basic)
 
 Request: `productCode`, `travelDate`, `currency`, `paxMix[]` (`ageBand` + `numberOfTravelers`); optional `productOptionCode`, `startTime`.
 
 Response: `currency`, `productCode`, `travelDate`, `bookableItems[]` mit `available`, `lineItems` (RRP, `partnerNetPrice`, `bookingFee`, `partnerTotalPrice`).
 
-P2-Nutzungsregel: **nur unmittelbar vor dem Buchen**, nicht für Bulk/Kalender. Für Affiliate-Redirect ohne API-Booking ist „unmittelbar vor Buchen“ **nicht offiziell auf Redirect abgebildet** (`VIA-UNK-07`).
+P6 markiert `/availability/check` ausdrücklich für **Full-access Affiliates**. P10: erst nach gewähltem Travel-Date + Passenger-Mix; in der Regel unmittelbar bevor bookable items (Optionen/Startzeiten) gezeigt werden; nicht für Bulk/Kalender-Ingestion.
+
+`VIA-UNK-07` ist **resolved** für Full-access-Affiliate-Semantik. Offenes Gate: ob Jetnity **Full-access** genehmigt bekommt — nicht, ob ein Full-access-Affiliate den Endpoint rufen darf. Basic bleibt ohne Check. Redirect-Checkout kann danach abweichen; keine erfundene Freshness-TTL.
 
 P2 Booking-Workflow (Merchant/Full+Booking): Check-Währung für Invoice ist eine von **GBP, EUR, USD, CAD, AUD**. Das ist Invoice-Währung, nicht automatisch Anzeige-Währung.
 
@@ -303,17 +308,21 @@ Jetnity Production ist derzeit `noindex`. Das **ersetzt nicht** die Viator-Zerti
 
 P9: Traveler photos empfohlen, nicht Pflicht.
 
+P7/P11 Essential Product Information vor Booking/Redirect-PDP: title, images, description, inclusions, exclusions, additionalInfo, cancellationPolicy, languageGuides, itinerary, ticketInfo, logistics.start, logistics.end — plus option-level language-guide/logistics, wo zutreffend. Die erste offline Search-Foundation ist **search/preview only** und beansprucht keine zertifizierte PDP/Redirect-Aktivierung. Ein späteres `product_detail`-Gate muss diese Felder erhalten, bevor Product-Detail-UI oder Affiliate-Redirect live geht. Review-Volltexte / `viatorUniqueContent` bleiben separat verboten.
+
 ---
 
 ## 13. Affiliate-URL / Tracking
 
 P2 `productUrl` (nur Affiliate-Antworten):
 
-- vollständige URL, **nicht verändern**
+- vollständige URL, **nicht verändern** (Tracking-Parameter byte-identisch erhalten)
 - enthält Attribution (`pid`, `mcid`, `medium=api`, Version)
-- `campaign-value` ≤ 200 Zeichen, nicht-alphanumerisch URL-encoden; P8 rät alphanumerisch + Bindestrich
+- `campaign-value` ≤ 200 Zeichen, nicht-alphanumerisch URL-encoden; P8 rät alphanumerisch + Bindestrich; nur bounded non-PII opaque/campaign token; nie E-Mail, Reisendenname, Pass, Roh-Trip-Titel oder sensible IDs; über den unterstützten API-Request-Parameter senden, damit Viator die attribuierte URL zurückgibt
 - Default: conversion-optimierte Affiliate-Landingpage; `target-lander=NONE` landet auf Standard-PDP
-- Whitelabel: custom domain statt viator.com
+- Whitelabel: custom domain statt viator.com — nur **server-seitig konfigurierte Allowlist** Viator-eigener oder vertraglich freigegebener Hosts; unbekanntes `https:`-Host ⇒ Attribution/Deeplink ablehnen, nicht redirecten; Allowlist nicht aus Browser-/Client-Daten
+- `https:` allein reicht nicht
+- spätere UI: Affiliate-Anchors `rel="sponsored"` plus übliche External-Link-Härtung, ohne die Viator-URL zu mutieren (P12)
 
 P8:
 
@@ -356,6 +365,8 @@ Gzip über `Accept-Encoding`.
 
 P2 `Accept-Language` Pflicht. Alle v2-Partner: en(+Varianten), da, nl, no, es(+LATAM), sv, fr, it, de, pt, ja. Merchant zusätzlich zh-TW, zh-CN, ko. P8 widerspricht teilweise (`VIA-UNK-02`).
 
+**Jetnity-Locale-Regel:** nie eine nicht unterstützte `Accept-Language` senden. Jetnity-PL (und jede andere Locale außerhalb der belegten v2-Matrix) ⇒ dokumentierter unterstützter Fallback/Content-Language-State; kein Claim, Viator habe Polnisch geliefert. Kein stilles Machine-Translation-Claim; `translationInfo` bewahren, wenn vorhanden.
+
 P3 `translationLevel` 0 / 80 / 90 / 100; Machine-translated (80) default aus, Freigabe durch Account Manager. P2 nutzt `translationInfo.containsMachineTranslatedText`. Machine-translated Content nicht still als menschliche Übersetzung ausgeben.
 
 ---
@@ -379,7 +390,7 @@ P3 on-demand Cache-TTL **< 24h** für Taxonomy/Search/Product.
 
 P2: Schedule-Ingestion-Strategie ist **Merchant-Zertifizierungsanforderung**. Affiliates auf Golden-Path (Search on demand, kein Full-Ingest) haben eine andere Last. Jetnity soll **kein** Full-Catalog-Ingest in der ersten Foundation bauen.
 
-Reviews: daily batch. Schedules veralten; deshalb `/availability/check`. Search-`fromPrice` hat **keine** offizielle Freshness-Garantie → Jetnity `unknown`, nicht `live_api`.
+Reviews: daily batch. Schedules veralten; deshalb `/availability/check`. Authenticated `/products/search` und `/products/{product-code}` sind **Content/Search-Evidence**, nicht Current Commercial Quote nur weil der Transport live HTTP ist. Search-`fromPrice` und Schedules haben **keine** offizielle Real-time-Garantie → Jetnity `unknown` / `content_preview` / `schedule_hint`, nicht `live_api`. Nur ein gültiger Full-access-`/availability/check` für gewähltes Datum + gültiges Pax-Mix ist Kandidat für Real-time Price/Availability Commercial Truth; danach keine erfundene TTL; Redirect-Checkout kann abweichen.
 
 ---
 
@@ -409,6 +420,7 @@ Gelesen, nicht geändert:
 - `lib/providers/flights/domain.ts`, `lib/providers/skyscanner/flights/*` — Muster für offline Fixture-Foundation
 - `lib/commercial-provenance/*` — `live_api` / `persisted_snapshot` / Affiliate-Evidence
 - `lib/provider-ops` — Kill-Switch-Form bereits von Activities genutzt
+- `lib/server/providers/core/*` — integrierter ADR-0199 Server-Transport (nach Merge von `origin/main @ 085c95b2`); zukünftiger Viator-HTTP nutzt diesen Kern, nicht eine zweite Transport-Abstraktion
 
 Befund:
 
@@ -420,24 +432,31 @@ Befund:
 | `destinationPlaceId` | `destinationId` | kein Resolver |
 | 12s Timeout, 40 Angebote | 120s Empfehlung, Rate-Limits account-spezifisch | späteres Mapping |
 | `booking_url` immer `null` | Redirect-URL | bleibt null bis gegateter Attribution-Slice |
-| kein `live_api`-Mint im Activities-Pfad | Check/Schedules sind Provider-Wahrheit nur nach Live-Transport | Fixture darf nicht minten |
+| kein `live_api`-Mint im Activities-Pfad | nur gültiger Full-access-`/availability/check` ist Real-time-Quote-Kandidat; Search/Detail/Schedules nicht | Fixture darf nicht minten |
 | Test-Vokabular `providerId: 'viator'` in Commercial-Provenance-Tests | kein Adapter | nur Fixture-String, keine Integration |
 
-Shared-Core-Edits sind in diesem Slice **verboten** und wurden nicht vorgenommen.
+Shared-Core-Edits sind in diesem Slice **verboten** und wurden nicht vorgenommen. Offline-Foundation braucht keinen Shared-Core-Edit. Zukünftiger HTTP-Transport hängt an `lib/server/providers/core/*` (ADR-0199). Ein späterer Domain-Typ-Loch, falls je bewiesen, ist ein eigener kleiner Slice — kein zweiter Transport-Kern.
 
 ---
 
 ## 19. Offene Unknowns
 
+Resolved in Review-Fix `5464086082` (nicht mehr blocker):
+
+| ID | Lesart |
+| --- | --- |
+| VIA-UNK-01 | Dokumentationsdrift. Binding: alle Tests in Sandbox; Production-Endpoints nur live. Ältere P9-Production-URL autorisiert keinen Test. |
+| VIA-UNK-06 | v2-Adapter nutzt `/destinations` (P6, wöchentlicher Cache). `/v1/taxonomy/destinations` ist historische Golden-Path-Evidence. |
+| VIA-UNK-07 | Full-access Affiliates dürfen `/availability/check` nach Datum + gültigem Pax-Mix, vor bookable items. Basic nicht. Offenes Gate = Jetnity Full-access-Freigabe. |
+
+Weiter offen:
+
 | ID | Unknown | Warum es blockt |
 | --- | --- | --- |
-| VIA-UNK-01 | Sandbox-only (P2) vs Golden-Path Production-URL (P9) | Test-/Key-Strategie |
 | VIA-UNK-02 | Affiliate-Sprachen zh/ko | Locale-Matrix |
 | VIA-UNK-03 | Nutzen von `/bookings/modified-since` für Non-Booking-Affiliates | Scope-Creep-Risiko |
-| VIA-UNK-04 | Weg Basic → Full ohne neuen Vertrag | Adapter darf Check nicht voraussetzen |
+| VIA-UNK-04 | Weg Basic → Full ohne neuen Vertrag | Adapter darf Check nicht voraussetzen, bis Full-access belegt ist |
 | VIA-UNK-05 | Mapping Jetnity-`placeId` → Viator-`destinationId` | ohne Map keine ehrliche Suche |
-| VIA-UNK-06 | `/destinations` vs `/v1/taxonomy/destinations` | Taxonomy-Port |
-| VIA-UNK-07 | Darf Affiliate `/availability/check` vor Redirect nutzen? | Live-Quote-Gate |
 | VIA-UNK-08 | v2-Äquivalent zu P3 `/support/terms` | Legal-Link |
 | VIA-UNK-09 | Konkrete Rate-Allowances | Cost Guard |
 | VIA-UNK-10 | Affiliate- vs Merchant-Zertifizierungsumfang | Launch-Gate |
@@ -450,7 +469,7 @@ Shared-Core-Edits sind in diesem Slice **verboten** und wurden nicht vorgenommen
 
 1. **Merchant/Full+Booking still mitbauen** würde Payments, PCI, MoR und PO-Gates auslösen.
 2. **Schedule-`fromPrice` als Live-Preis** verletzt P2 und S5-A.
-3. **`productUrl` mutieren** vernichtet Attribution.
+3. **`productUrl` mutieren** oder auf unbekannten `https:`-Host redirecten macht Jetnity zur beliebigen Redirect-Fläche. Allowlist server-seitig.
 4. **Alle Traveller = ADULT** erfindet Eligibility/Preis.
 5. **Review-Volltexte indexieren** verletzt Zertifizierung.
 6. **Anzeige-Währung ≠ Viator-Checkout-Währung** ohne ehrlichen Hinweis.
