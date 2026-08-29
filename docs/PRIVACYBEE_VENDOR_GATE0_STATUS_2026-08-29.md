@@ -130,6 +130,28 @@ https://www.privacybee.io/de-ch/preis/ HTTP 200, 2026-08-29T09:32Z:
 
 Zusätzliche nicht im Listenpreis genannte Kosten (mehrere Domains/Previews, Custom Legal, Inspektionen): **unknown / vendor-confirmation-required**.
 
+## 4.5 Bestehendes PO-Konto (kein Login in diesem Slice)
+
+Product-Owner-Hinweis an PR #171 (2026-08-29): Es existiert bereits ein Konto bei **PrivacyBee Schweiz (`privacybee.io`)**. Das ist **keine** Integrationsfreigabe, kein Ready und kein Gate-Ersatz.
+
+Dieser Agent hat sich **nicht** angemeldet, keine Zugangsdaten angefordert und keine Domain/Subscription aktiviert.
+
+Ohne Account-Einsicht bleiben die folgenden Punkte **`account-evidence-required`** (nicht raten):
+
+| # | Was der PO/Legal vor einer späteren Anbindung liefern muss | Warum |
+| --- | --- | --- |
+| A1 | Welche Domain(s)/Website-IDs im Cockpit liegen | Jetnity.com vs. Vercel-Alias vs. andere Sites; Preis ist **pro Domain** |
+| A2 | Lizenzstatus: Trial / Active / gekündigt; Periode | Trial schliesst AVV; Active heisst laufendes Abo |
+| A3 | Endkunde CHF 54,90 vs. Partner-/Kickback-Tarif | Öffentlicher Listenpreis gilt nur, wenn der Account Endkunde ist |
+| A4 | Ob AVV 2.0 / ALB im Account als akzeptiert gelten | Automatischer Abschluss ist first-party belegt; der konkrete Account-Stand nicht |
+| A5 | Ob Anlage 2, Anlage 1 TOMs, TIA-2026-001-OpenAI im Account liegen | Öffentlich unvollständig |
+| A6 | Vorhandene Embed-Snippets / `website-id` | Technische Anbindung ohne neues Signup |
+| A7 | Gewählte Rechtsgrundlage DSG und/oder DSGVO; Sprachen | Muss zu Jetnity-UI (`lang=de`) und Zielmärkten passen |
+| A8 | Ob Cookie-Banner und/oder Impressum schon konfiguriert/generiert sind | Impressum-Pflichtfelder und OpenAI-Nutzung sind Residual |
+| A9 | Welche Firmen-/Adressdaten im Impressum stehen | Jetnity-Controller-Identität ist im Repo **fehlend** |
+
+Ein bestehendes Konto ändert **nicht**: Server-Seiten-Lücke, `/terms`-Lücke, Traveller-Grenze, AP-6b-Grenze, Verbot von Trial-durch-Agenten, Verbot von Runtime in diesem Slice.
+
 ## 5. Fit-Entscheidung
 
 Swiss PrivacyBee **passt zur Website-Schicht** (DSE + optionales Impressum + optionaler Cookie-Banner), **nicht** zur Account-/Traveller-/AP-6b-Schicht.
@@ -161,6 +183,7 @@ Ein Website-Scan darf diese Klassen nicht nachträglich einsammeln. Impressum-Ge
 | --- | --- |
 | Dieser Audit | **`Kostenwirkung: keine`** |
 | Öffentlicher Endkundenpreis | **CHF 54,90 / Jahr / Domain zzgl. MWST** (live 2026-08-29) |
+| Bestehendes PO-Konto | **keine** neuen Signup-Kosten; ob Jetnity-Domain schon lizenziert ist = **`account-evidence-required`** |
 | Nicht im Listenpreis | **unknown / vendor-confirmation-required** |
 | Partner-Kickback | nicht Jetnity-Integrationspreis |
 | Aktivierung in diesem Slice | **keine** |

@@ -26,6 +26,17 @@ This distinction is binding for the entire slice:
 
 Any evidence collected from the US service before this correction is invalid for the target-vendor assessment and must not be reused as Swiss PrivacyBee truth.
 
+## Existing Swiss PrivacyBee account (PO clarification, 29 August 2026)
+
+The Product Owner already has a Swiss PrivacyBee customer account. This slice must:
+
+- **not** create a new PrivacyBee signup;
+- **not** log into that account, request credentials, or treat cockpit-only facts as public first-party evidence;
+- evaluate later use of the **existing** account as the intended future path;
+- mark cockpit-/subscription-/domain-/AVV-status facts that are not on the public website as `account-evidence-required`.
+
+An existing account is **not** vendor activation, not integration approval, and not a reason to skip the legal/security/fit review.
+
 ## Objective
 
 Evaluate whether and how the Swiss PrivacyBee service could safely cover Jetnity's website privacy-policy, imprint and cookie/consent-management needs and what remains Jetnity-native. This slice must produce architecture/vendor evidence only. It must not activate PrivacyBee, accept contracts, create accounts, transfer user data or modify runtime.

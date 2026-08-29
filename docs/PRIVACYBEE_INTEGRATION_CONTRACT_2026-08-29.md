@@ -55,7 +55,7 @@ Besucher-Consent-Logs (IP/UA) entstehen erst, wenn der Banner gemountet wird. Da
 
 ## 5. Technische Grenze (falls später gebaut)
 
-1. Kein Trial/Signup in einem Audit- oder Runtime-Slice ohne ausdrückliches Kosten-/AVV-Gate. Trial schliesst den AVV.
+1. Kein neues Signup und kein Trial durch Agenten (Trial schliesst den AVV). Ein **bereits bestehendes PO-Konto** darf später wiederverwendet werden, ändert aber keine Gates. Fehlende Cockpit-Fakten sind `account-evidence-required`, keine Zugangsdaten. Kein Agent-Login, keine Domain-Aktivierung ohne PO+Legal+Security.
 2. Scripts nur über dokumentierte `app.privacybee.io`-URLs; keine `NEXT_PUBLIC_` Secrets.
 3. Cookie-Banner, falls je: erstes Head-Script, aber **nicht** bevor Tracker existieren.
 4. CSP/SRI/Timeout/Kill-Switch. Fail-closed: Vendor down ⇒ Legal-Seite zeigt ehrlichen Fehler, keinen leeren 200.

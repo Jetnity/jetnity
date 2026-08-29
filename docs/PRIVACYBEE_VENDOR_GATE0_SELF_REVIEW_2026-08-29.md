@@ -19,6 +19,7 @@ Ein früherer Irrläufer gegen `privacybee.com` wurde **nicht** als Swiss-Truth 
 | --- | --- |
 | Wurde das US-Produkt als Ziel bewertet? | Nein. TARGET ist PrivacyBee AG / `privacybee.io`. |
 | Wurde ein Trial/Signup/Order/paid call erzeugt? | Nein. AVV entstünde automatisch – deshalb bewusst kein Trial. |
+| Wurde das bestehende PO-Konto geöffnet oder Zugangsdaten angefordert? | Nein. Account-Stand als `account-evidence-required`. Bestehendes Konto ≠ Freigabe. |
 | Wurden ALB/AVV akzeptiert? | Nein. Nur gelesen. |
 | Wurden User-Daten übertragen oder Runtime geändert? | Nein. |
 | Wurde Search #168 / Homepage / AP-7 / DB / Auth angefasst? | Nein. |

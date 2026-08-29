@@ -19,7 +19,9 @@ Live first-party: Scan der öffentlichen Domain, Rescan alle 8 Wochen, Widget/iF
 
 Jetnity-Ist: `/privacy` `/terms` Production-404; Register-Zustimmung ohne Persistenz; CookieConsent-Orphan; keine Tracker; kein Consumer-Export/Delete; Traveller ohne Nummer/Scan/MRZ; Controller-Identität fehlend.
 
-**Empfehlung:** Jetzt **nicht** aktivieren. Native AP-6a (PO/Legal-Texte, inkl. `/terms`) und später AP-6b bleiben der Kernweg. PrivacyBee höchstens später als Website-Widget **plus** schriftlichem Jetnity-Nachtrag für server-seitige Verarbeitungen; Cookie-Banner erst, wenn echte Tracker existieren.
+Der Product Owner hat bereits ein Konto bei PrivacyBee Schweiz. Das senkt die Signup-Reibung, **nicht** das Vendor-/Security-/Legal-Gate. Konkreter Account-Stand (Domain, Tarif, AVV, Snippets) ist **`account-evidence-required`**. Dieser Agent hat das Konto nicht geöffnet.
+
+**Empfehlung:** Jetzt **nicht** aktivieren und **nicht** einloggen. Native AP-6a (PO/Legal-Texte, inkl. `/terms`) und später AP-6b bleiben der Kernweg. PrivacyBee höchstens später über das bestehende Konto als Website-Widget **plus** schriftlichem Jetnity-Nachtrag für server-seitige Verarbeitungen; Cookie-Banner erst, wenn echte Tracker existieren.
 
 ---
 
@@ -50,6 +52,7 @@ Jetnity-Ist: `/privacy` `/terms` Production-404; Register-Zustimmung ohne Persis
 
 - **Dieser Audit: `keine`.** Kein Trial, kein Order, kein paid call.
 - **Öffentlicher Zukunftspreis (belegt 2026-08-29):** CHF **54,90 / Jahr / Domain zzgl. MWST**.
+- Bestehendes PO-Konto: **keine** neuen Signup-Kosten in diesem Audit. Ob eine Jetnity-Domain schon bezahlt/zugeordnet ist: **`account-evidence-required`**.
 - Partner-Kickback bis 25 % ist **nicht** der Jetnity-Preis.
 - Nicht im Listenpreis genannte Posten: **`unknown / vendor-confirmation-required`**.
 - Keine Recurring-Aktivierung in diesem Slice.
@@ -59,10 +62,11 @@ Jetnity-Ist: `/privacy` `/terms` Production-404; Register-Zustimmung ohne Persis
 ## 4. Offene Entscheidungen / Gates
 
 1. PO + Legal: AP-6a-Input-Matrix zuerst (Controller, Adresse, Texte, `/impressum` ja/nein, Konformitätszeile, CookieConsent-Schicksal).
-2. PO + Legal + Security: überhaupt Swiss PrivacyBee später, oder native Texte?
-3. Legal: AVV/Anlage 2/OpenAI-TIA/ALB-8.6 lesen, bevor irgendwer einen Trial startet.
-4. PO: Cookie-Banner erst bei echten nicht-essenziellen Scripts.
-5. Technical Lead: Ready/Merge nur nach unabhängigem Exact-Head-Review.
+2. PO + Legal + Security: überhaupt Swiss PrivacyBee später, oder native Texte? Bestehendes Konto ≠ Ja.
+3. PO liefert fehlende Account-Fakten A1–A9 aus Status (`account-evidence-required`) **ohne** Passwörter/Keys an Agenten.
+4. Legal: AVV/Anlage 2/OpenAI-TIA/ALB-8.6 lesen – auch wenn das Konto schon existiert.
+5. PO: Cookie-Banner erst bei echten nicht-essenziellen Scripts.
+6. Technical Lead: Ready/Merge nur nach unabhängigem Exact-Head-Review.
 
 Keine dieser Entscheidungen ist getroffen.
 
@@ -121,7 +125,14 @@ Keine dieser Entscheidungen ist getroffen.
 
 Vor diesem Stamp: Task-Head-Gates gelten nicht für den neuen Head. Vercel auf frühere Heads (u. a. `GCCuNzhurfhkLrp8XK85pLt9d6xK`) ist invalidiert.
 
-Authoring-Head: lokale Checks und Exact-Head-CI/Vercel nach Push nachstempeln. Review-Auftrag: PR-Kommentar `5461543989`. Kein TL-PASS-Thread.
+Evidence-Head `187bcbd7` (vor diesem Stamp):
+
+- Lokal: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
+- GitHub Actions Run `33245828404` **SUCCESS** auf exakt `187bcbd7` (Typecheck/Lint/Build + Auth-Check).
+- Vercel StatusContext **SUCCESS**; Deployment `GuTQPZ6cUcy5E5bheWiKUS6n67SX`; GitHub Preview deployment `6154400715`.
+- Review-Auftrag `5461543989`; PO-Konto-Hinweis im Issue-Comment (2026-08-29). Reviews: 0. Kein TL-PASS.
+
+Dieser Stamp erzeugt einen neueren Head. Die genannten Gates gelten für `187bcbd7`, nicht automatisch für den Stamp. Live am PR prüfen.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 

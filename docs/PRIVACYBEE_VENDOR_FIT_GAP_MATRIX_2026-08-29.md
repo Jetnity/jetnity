@@ -154,6 +154,7 @@ OpenAI für Impressum: Zweck Impressum-Text, Residual US-Transfer.
 | Partner 25 % Kickback | Preis-Seite | nicht verwenden |
 | Nicht genannt | Custom-Texte, mehrere Vercel-Domains, Inspektion | **unknown / vendor-confirmation-required** |
 | Dieser Audit | — | **keine** |
+| Bestehendes PO-Konto | PR-Hinweis 2026-08-29 | keine neuen Signup-Kosten; Domain/Tarif/AVV-Stand = **`account-evidence-required`** |
 
 ## 16. Was PrivacyBee ausdrücklich nicht ersetzt
 
