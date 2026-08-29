@@ -1,9 +1,16 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
+import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { REGISTRY_COPY, REGISTRY_DOKUMENT_TYP_LABEL } from '@/lib/traveller/account-registry-copy'
+import { DOKUMENT_LEBENSZYKLUS_COPY } from '@/lib/traveller/dokument-lebenszyklus-copy'
+import {
+  dokumentAblaufGegenReferenztag,
+  dokumentKontoAblaufText,
+  dokumentKontoAblaufWarnung,
+} from '@/lib/traveller/dokument-lebenszyklus'
 import {
   registryCitizenshipAnlegen,
   registryCitizenshipLoeschen,
@@ -55,6 +62,11 @@ export default function AccountReisendeKarte({
   const [neueStaatsbuergerschaft, setNeueStaatsbuergerschaft] = useState('')
   const [dokument, setDokument] = useState(registryDokumentFormularAnfang)
   const [dokumentEditId, setDokumentEditId] = useState<string | null>(null)
+  const [heute, setHeute] = useState<string | null>(null)
+
+  useEffect(() => {
+    setHeute(heutigesDatum())
+  }, [])
 
   const citizenships = traveller.facts.citizenships
   const documents = traveller.facts.documents
@@ -254,12 +266,15 @@ export default function AccountReisendeKarte({
       <section className="mt-8">
         <h3 className="text-sm font-semibold text-brand-800">{REGISTRY_COPY.dokumenteTitel}</h3>
         <p className="mt-1 text-sm leading-6 text-ink-700">{REGISTRY_COPY.dokumenteHinweis}</p>
+        <p className="mt-1 text-xs leading-5 text-ink-700">{DOKUMENT_LEBENSZYKLUS_COPY.kontoHinweis}</p>
         {documents.length === 0 ? (
           <p className="mt-3 text-sm text-ink-700">Noch keine Dokument-Metadaten hinterlegt.</p>
         ) : (
           <ul className="mt-3 space-y-3">
             {documents.map((eintrag) => {
               const zugeordnet = citizenships.find((staat) => staat.clientRef === eintrag.citizenshipClientRef)
+              const ablauf = dokumentAblaufGegenReferenztag(eintrag.expiresOn, heute)
+              const ablaufText = dokumentKontoAblaufText(ablauf)
               return (
                 <li key={eintrag.id} className="rounded-2xl bg-surface-50 px-3 py-3">
                   <p className="text-sm font-semibold text-brand-800">
@@ -271,8 +286,21 @@ export default function AccountReisendeKarte({
                     {zugeordnet
                       ? `Zuordnung ${zugeordnet.countryCode}`
                       : REGISTRY_COPY.dokumentKeineZuordnung}
-                    {eintrag.expiresOn ? ` · gültig bis ${eintrag.expiresOn}` : ''}
+                    {eintrag.expiresOn ? ` · Ablaufdatum ${eintrag.expiresOn}` : ''}
                   </p>
+                  {ablauf.art === 'unknown' &&
+                  (ablauf.grund === 'reference_missing' || ablauf.grund === 'reference_invalid') ? null : (
+                    <p
+                      role="status"
+                      className={
+                        dokumentKontoAblaufWarnung(ablauf)
+                          ? 'mt-2 text-sm leading-6 text-red-800'
+                          : 'mt-2 text-sm leading-6 text-ink-700'
+                      }
+                    >
+                      {ablaufText}
+                    </p>
+                  )}
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
                       type="button"
