@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Self-expiring für PR #187 / ADR-0199. Solange #187 offen: Draft auf `feat/provider-adapter-core-foundation-2026-08-29`, STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von `5463847278` (kein Ready, kein Merge, kein Folgeslice). Sobald #187 gemergt: Provider-Adapter-Core integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck, nicht automatisch Skyscanner-Server-Transport. Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck / Continuity Gate (PR #196). `main` live prüfen, keine eingefrorene SHA. S5-B Production-Migration `20260829140000` angewendet/verifiziert; Runtime-Write unallokiert; TW-8 geschlossen. Kosten 0. Live-Evidence gewinnt.**
+Status: **Self-expiring für PR #187 / ADR-0199. Solange #187 offen: Draft auf `feat/provider-adapter-core-foundation-2026-08-29`, STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von `5463879179` (kein Ready, kein Merge, kein Folgeslice). Sobald #187 gemergt: Provider-Adapter-Core integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck, nicht automatisch Skyscanner-Server-Transport. Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck / Continuity Gate (PR #196). `main` live prüfen, keine eingefrorene SHA. S5-B Production-Migration `20260829140000` angewendet/verifiziert; Runtime-Write unallokiert; TW-8 geschlossen. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -401,7 +401,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck / Continuity Gate (PR #196). `main` live prüfen, nicht als eingefrorene SHA. Live-Rekonstruktion zuerst. Kein automatischer Produkt-Slice.
 
-**Self-expiring PR #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463847278` (request-ID secret boundary, eine Rate-Limit-Wahrheit, #196-Sync). Autor-Agent setzt kein Ready, kein Merge, keinen Folgeslice. Sobald gemergt → Core integriert; erster nächster Schritt ist Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Keine erfundene Merge-SHA.
+**Self-expiring PR #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463879179` (custom-sensitive request-ID). Autor-Agent setzt kein Ready, kein Merge, keinen Folgeslice. Sobald gemergt → Core integriert; erster nächster Schritt ist Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Keine erfundene Merge-SHA.
 
 PR #180 / #182 / #183 / #173 / #109 sind integriert bzw. CLOSED. Ältere „#180 offen / #173 aktueller Slice / S5-B Production-Apply pending“-Sätze in diesem Handoff sind historische Pre-Apply-/Pre-Recovery-Evidence. S5-B Production-Migration `20260829140000` ist angewendet und verifiziert; Runtime-Write/Snapshot und TW-8 bleiben gegatet. AP-6a Gate 0 / PR #166 ist integriert; `/privacy`/`terms` Runtime bleiben Legal-/PO-Content-gegatet.
 

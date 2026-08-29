@@ -298,7 +298,7 @@ Abgeschlossen:
 
 Nächster Schritt:
 
-- **Self-expiring #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463847278`. Nach Merge → Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck (PR #196). Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
+- **Self-expiring #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463879179`. Nach Merge → Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck (PR #196). Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
 - S5-B Persistenz und Production-Migration sind integriert/verifiziert. Offener Residual: Runtime-Write-Pfad/Principal und realer Snapshot; TW-8 bleibt geschlossen. PR #180/#182/#183 sind historische Integrations-Evidence, kein offener Apply-Auftrag.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.

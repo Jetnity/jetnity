@@ -16,7 +16,7 @@ Aktuelle operative Evidence:
 - `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md` – verbindliche Current-Governance: kein neuer Slice vor Live-Rekonstruktion; kein Handoff ohne Continuity (PR #196). Live-`main` prüfen
 - `docs/CHATGPT_TL_BINDING_SLICE_PRECHECK_CONTINUITY_CHECKPOINT_2026-08-29.md` – Governance-Checkpoint zu derselben Regel; kein neuer produktiver Feature-Stand
 - `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` – authoritative current-state reconciliation (PR #194/#195); `main` live prüfen
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_STATUS_2026-08-29.md` – self-expiring PR #187 / ADR-0199: solange offen → STOP für TL Exact-Head-Re-Review von `5463847278`; nach Merge → Core integriert, zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner
+- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_STATUS_2026-08-29.md` – self-expiring PR #187 / ADR-0199: solange offen → STOP für TL Exact-Head-Re-Review von `5463879179`; nach Merge → Core integriert, zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner
 - `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` – aktueller New-Chat-Checkpoint; Search #109 + PrivacyBee #169 CLOSED/completed; #178-Träger-Klausel self-expiring auf `main`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md` – PR #173 gemergt; Live Production API smoke PASS; Issue #109 CLOSED / COMPLETED; kein Issue #110
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md` – AP-6a Gate 0 auf `main @ 6083ee63` integriert; ältere Draft-#166-Zeilen sind Pre-#168-Evidence
