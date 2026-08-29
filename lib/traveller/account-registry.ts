@@ -227,6 +227,16 @@ function landOderNull(wert: unknown): string | null | undefined {
   return code ?? undefined
 }
 
+/** Fail-closed Label reader for Registry writes. `undefined` = invalid, `null` = empty. */
+export function accountRegistryLabelLesen(wert: unknown): string | null | undefined {
+  return labelLesen(wert)
+}
+
+/** Fail-closed ISO-2 reader. `undefined` = invalid, `null` = empty. */
+export function accountRegistryLandLesen(wert: unknown): string | null | undefined {
+  return landOderNull(wert)
+}
+
 function citizenshipLesen(kind: unknown): AccountRegistryCitizenship | null {
   if (!kind || typeof kind !== 'object' || Array.isArray(kind)) return null
   const zeile = kind as Record<string, unknown>
