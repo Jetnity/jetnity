@@ -24,8 +24,9 @@ describe('AP-5-S1 Security-UI Semantik', () => {
     assert.equal(security.includes('faktor.id.slice'), false)
     assert.equal(security.includes('Faktor {'), false)
     assert.equal(security.includes('totpFaktorAnzeigename'), true)
-    assert.equal(seite.includes('Gerät'), false)
-    assert.equal(seite.includes('Sitzung'), false)
+    assert.equal(security.includes('Gerät'), false)
+    assert.equal(seite.includes('SecuritySitzung'), true)
+    assert.equal(seite.includes('diese Sitzung'), true)
   })
 
   test('keine rohen GoTrue-Meldungen, Secrets oder Auth-Settings-Copy', () => {
