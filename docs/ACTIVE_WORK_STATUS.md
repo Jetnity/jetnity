@@ -1,26 +1,43 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **AP-5-S4 Account Security MFA Step-up / Draft-PR #159. REVIEW-FIX nach `5056084065`. STOP für unabhängigen Technical-Lead Exact-Head Re-Review. Kein Ready, kein Merge durch den Autor. Kein S5. Baseline `main @ 5920860e`. Live-Evidence immer live prüfen.**
+Status: **AP-5-S5 Honest Current Session / Device View / Draft-PR #162. IMPLEMENTIERT. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein AP-6/AP-7. Baseline `main @ 934d43da`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – AP-5-S4 Account Security MFA Step-up
+## Aktueller Arbeitsblock – AP-5-S5 Honest Current Session / Device View
 
-1. **Arbeitsblock / Ziel:** Nutzerfreundlicher MFA-Step-up vor Unenroll eines verifizierten TOTP-Faktors über `challenge` / `verify`. Kein globales Consumer-AAL2. Keine Auth-Config.
-2. **Authoring-Branch / PR:** `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`; Draft-PR #159. Review-Fix-Gates auf `c503dbf2`: Actions `33224797456` SUCCESS, Vercel `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` READY. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
-3. **Status:** **REVIEW-FIX / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW** nach CHANGES REQUIRED `5056084065`. Kein Ready, kein Merge durch den Autor. Kein S5.
-4. **Bereits umgesetzt:** Domain-Vertrag und Reducer; `challenge`/`verify` plus AAL-Recheck vor Unenroll; nach verified Unenroll `refreshSession` + AAL/Faktoren-Abgleich; Refresh-Fehler fail-closed lokal; anderer verified Challenge-Faktor bevorzugt; Dialog mit Fokus/Busy/`one-time-code`; dichte Fehlercopy; ADR-0193; fokussierte Tests.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 14`. Exact Run-ID `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`. Beobachteter Titel `Ap-5-s4 mfa-step-up abmeldung`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
-6. **Live-`main` / Baseline bei diesem Stamp:** `5920860e164784040118667091ebcaca79f9b33d` – immer live neu prüfen.
+1. **Arbeitsblock / Ziel:** Ehrliche aktuelle Sessionansicht in `/account/security`. Andere Sitzungen bleiben `unsupported`. Keine Fake-Liste, keine Zahl, kein „0 Geräte“.
+2. **Authoring-Branch / PR:** `feat/ap5-s5-honest-current-session-view-2026-08-29`; Draft-PR #162. Gates auf `7a8caea3`: Actions `33226274988` SUCCESS, Vercel `ExFa2X5dNSFgvFJRSYVVsW4nSiqP` READY. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein AP-6/AP-7.
+4. **Bereits umgesetzt:** Domain-Vertrag; `getUser()` als Existenz-Authority; optional Zugangscode-Zeit und AAL; lokaler Browser-/Plattformhinweis; andere Sitzungen fest unsupported; Link zur S3-Aktion `others`; ADR-0194; fokussierte adversariale Tests.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 15`. Exact Run-ID `bc-cccd6820-5dfa-4801-8af9-0659f2e26cf2`. Beobachteter Titel `Ehrliche aktuelle sitzungsansicht`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
+6. **Live-`main` / Baseline bei diesem Stamp:** `934d43dae65235486f1a06a50b592468e3546b1c` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; nach fehlgeschlagenem Refresh wird lokal abgemeldet, andere Geräte nicht aufgezählt; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS. Prior-Gates `6f46a299` / `97a8f7b9` gelten nicht für den Review-Fix. `c503dbf2`-Gates gelten nicht automatisch für diesen Stamp-Head.
-10. **Offene Nutzerentscheidungen / Freigaben:** S4 braucht kein Product-Owner-Sondergate. S5 und P1–P5 starten nicht aus diesem Slice.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #159 nach `5056084065`. Kein Ready. Kein Merge. Kein S5.
-12. **Zuerst lesen:** `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0193, Gate-0-Status, ADR-0182.
+9. **Bekannte Risiken / Review-Funde:** `expires_at` ist Zugangscode-Zeit, nicht Sitzungsende; andere Sitzungen können unsichtbar existieren; kein Browser-/Real-Device-Beweis; vollständige Liste bleibt AP-5-P2; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** S5 braucht kein Product-Owner-Sondergate. Vollständige Sessionliste = AP-5-P2. AP-6/AP-7 und P1–P5 starten nicht aus diesem Slice.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #162. Kein Ready. Kein Merge. Kein AP-6/AP-7.
+12. **Zuerst lesen:** `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0194, Gate-0-Status, ADR-0182.
+
+## Historischer Arbeitsblock – AP-5-S4 Account Security MFA Step-up
+
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der S5-Baseline.** PR #160 ist auf `main @ 934d43da` gemergt. Ältere „REVIEW-FIX / DRAFT / Kein S5“-Zeilen sind Pre-S5-Evidence. S5 ist jetzt der aktive Account-Slice.
+
+1. **Arbeitsblock / Ziel:** Nutzerfreundlicher MFA-Step-up vor Unenroll eines verifizierten TOTP-Faktors über `challenge` / `verify`. Kein globales Consumer-AAL2. Keine Auth-Config.
+2. **Authoring-Branch / PR:** `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`; integriert über PR #160.
+3. **Status:** **INTEGRIERT auf dieser Baseline.**
+4. **Bereits umgesetzt:** Domain-Vertrag und Reducer; `challenge`/`verify` plus AAL-Recheck vor Unenroll; nach verified Unenroll `refreshSession` + AAL/Faktoren-Abgleich; Refresh-Fehler fail-closed lokal; anderer verified Challenge-Faktor bevorzugt; Dialog mit Fokus/Busy/`one-time-code`; dichte Fehlercopy; ADR-0193; fokussierte Tests.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 14`. Exact Run-ID `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`. Generation 14 nicht für S5 wiederverwendet.
+6. **Live-`main` bei Integration:** `934d43dae65235486f1a06a50b592468e3546b1c`.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; `main` `protected=false`.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. S5 ist der aktuelle Account-Slice.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Account-Slice ist Draft-PR #162.
+12. **Zuerst lesen:** ADR-0193, `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md` als historische Evidence.
 
 ## Historischer Arbeitsblock – AP-5-S3 Account Security Logout Scopes
 
@@ -479,6 +496,9 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
+| **#162** AP-5-S5 Honest Current Session | **DRAFT.** STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6/AP-7. |
+| **#160** AP-5-S4 MFA Step-up | **GEMERGT / INTEGRIERT** auf `main @ 934d43da`. Ältere Draft-#159-Zeilen sind Pre-S5-Evidence. |
+| **#157** AP-5-S3 Logout Scopes | **GEMERGT / INTEGRIERT** auf `main @ 5920860e`. |
 | **#150** Next 16 Compatibility Prep S1 | **SELF-EXPIRING.** DRAFT, STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein S2, kein Framework-Bump. |
 | **#149** Next 16 Product Owner approval | **GEMERGT / INTEGRIERT** auf `main @ 2fdf8a18`. Autorisiert das gestufte Compatibility-Programm; kein automatischer Bump. |
 | **#148** Next.js Framework Security Upgrade Gate 0 | **GEMERGT / INTEGRIERT** auf `main @ 2fdf8a18`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
@@ -539,7 +559,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156 / AP-5-S3. Autor-Agent setzt kein Ready, kein Merge, kein S4/S5, keine Vercel-Setting-Mutation und kein AP-7-S2.
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #162 / AP-5-S5. Autor-Agent setzt kein Ready, kein Merge, kein AP-6/AP-7, keine Vercel-Setting-Mutation.
 
 PR #152 Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #156.
 

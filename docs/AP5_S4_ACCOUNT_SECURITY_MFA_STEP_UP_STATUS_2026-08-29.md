@@ -1,6 +1,8 @@
 # Jetnity – AP-5-S4 Account Security MFA Step-up – Status
 
 Stand: 29. August 2026  
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der S5-Baseline.** PR #160 ist auf `main @ 934d43da` gemergt. Ältere „REVIEW-FIX / DRAFT / Kein S5“-Zeilen sind Pre-S5-Evidence. S5 ist jetzt der aktive Account-Slice, nicht ein automatischer Folgeslice aus S4.
+
 Status: **REVIEW-FIX / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN S5**  
 Workstream: Account / Security  
 Cursor-Agent: **`Account plattform audit vorbereitung 14`**  

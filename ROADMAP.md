@@ -110,11 +110,11 @@ Weiterhin gilt:
 
 P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence.
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist durch PR #157 integriert. AP-5-S4 ist auf Draft-PR #159 implementiert und wartet auf unabhängigen Technical-Lead Exact-Head-Review.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist durch PR #157 integriert. AP-5-S4 ist durch PR #160 integriert. AP-5-S5 ist auf Draft-PR #162 implementiert und wartet auf unabhängigen Technical-Lead Exact-Head-Review.
 
 Nicht automatisch starten:
 
-- AP-5-S5 / AP-5-P1–P5
+- AP-6 / AP-7 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract über PR #145 auf `main @ 4ec83f36` integriert, kein automatisches S2, keine Persistenz
 - Node 22 Runtime Consistency — PR #147 integriert auf `main @ 56aff7ff` (`engines.node: "22.x"` + `@types/node@22.20.1`)
 - Next.js Framework Security Upgrade Gate 0 — PR #148 integriert auf `main @ 2fdf8a18`; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`) bleibt Empfehlung, nicht angewendet
@@ -122,7 +122,8 @@ Nicht automatisch starten:
 - Next 16 Compatibility Prep S1 — PR #150 integriert auf `main @ d7f02f77`; async Request-API-Prep; kein automatischer Folgeslice aus S1
 - Next 16 S2 Framework Bump — auf der S3-Baseline über PR #152 / `main @ 3c3079de` integriert; ältere Draft-#151-Zeilen sind Pre-Merge-Evidence
 - AP-5-S3 Account Security Logout Scopes — PR #157 integriert auf `main @ 5920860e`
-- AP-5-S4 Account Security MFA Step-up — Draft-PR #159 / Issue #158; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S5
+- AP-5-S4 Account Security MFA Step-up — PR #160 integriert auf `main @ 934d43da`
+- AP-5-S5 Honest Current Session / Device View — Draft-PR #162 / Issue #161; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein AP-6/AP-7
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -288,18 +289,19 @@ Abgeschlossen:
 40. ✅ Next 16 Compatibility Prep S1 / PR #150 – integriert auf `main @ d7f02f77`; ADR-0190
 41. ✅ Next 16 S2 Framework Bump / PR #152 – integriert auf `main @ 3c3079de`; ältere Draft-#151-Zeilen sind Pre-Merge-Evidence
 42. ✅ AP-5-S3 Account Security Logout Scopes / PR #157 – integriert auf `main @ 5920860e`; explizite `local`/`others`/`global` in `/account/security`
-43. 🟡 AP-5-S4 Account Security MFA Step-up / Draft-PR #159 – `challenge`/`verify` vor verified-factor Unenroll; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S5
+43. ✅ AP-5-S4 Account Security MFA Step-up / PR #160 – integriert auf `main @ 934d43da`
+44. 🟡 AP-5-S5 Honest Current Session / Device View / Draft-PR #162 – aktuelle Sitzung ehrlich; andere Sitzungen `unsupported`; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein AP-6/AP-7
 
 Nächster Schritt:
 
-- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #159. Kein Ready. Kein Merge durch den Autor. Kein S5. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
-- AP-5-S5 bleibt ein normales Technical-Lead-Gate innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated.
-- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #159.
+- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #162. Kein Ready. Kein Merge durch den Autor. Kein AP-6/AP-7. Keine Vercel-Setting-Mutation.
+- AP-6/AP-7 bleiben nicht automatisch gestartet.
+- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #162.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
-- AP-5-S5 / AP-5-P1–P5
-- AP-5-S4 bleibt Draft bis unabhängiger Technical-Lead-Review und Merge; nicht als integriert behaupten
+- AP-6 / AP-7 / AP-5-P1–P5
+- AP-5-S5 bleibt Draft bis unabhängiger Technical-Lead-Review und Merge; nicht als integriert behaupten
 - AP-7
 - Provider S5-B
 - echte Providerphase

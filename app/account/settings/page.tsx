@@ -36,7 +36,8 @@ export default function AccountEinstellungenSeite() {
           <span className="min-w-0">
             <span className="block text-lg font-semibold tracking-[-0.03em] text-brand-800">Sicherheit</span>
             <span className="mt-1 block text-sm leading-6 text-ink-700">
-              Passwort, Abmelden und Zwei-Faktor-Anmeldung für dein Konto prüfen oder ändern.
+              Passwort, aktuelle Sitzung, Abmelden und Zwei-Faktor-Anmeldung für dein Konto prüfen
+              oder ändern.
             </span>
           </span>
         </Link>
