@@ -147,7 +147,7 @@ TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gega
 
 Separate Search-/Homepage-Themen:
 
-- Issue #109 – Country-Alias-Ranking: PR #172 ist auf `main` integriert, Live-Production hat die Abnahme invalidiert. **Recovery in Arbeit** auf Draft-PR #173 / `Visitor search correctness 1` / Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`. Unmittelbarer TL-Fund `5057889604` (Trim-Semantik im selektiven Retrieval) wird im selben Slice behoben. Nicht gemergt. Kein Ready durch den Autor.
+- Issue #109 – Country-Alias-Ranking: PR #172 plus Recovery-PR #173 sind auf `main @ ade03511` integriert. Live Production API smoke 29. August 2026 PASS (Country-first, Shared/Short Aliase, Trim-End-Tokens). Issue bleibt **offen** bis TL/PO Close. Kein #110.
 - Issue #110 – natürliche Homepage-Mehrziel-Eingabe: dokumentiert, **nicht gestartet**.
 
 ## 4. Provider / Commercial Provenance
@@ -310,7 +310,7 @@ Nächster Schritt:
 - Direction A
 - Admin D–K
 - D1 / G1
-- Issue #109
+- Issue #109 — Live Production API smoke PASS nach PR #173; Close nur TL/PO; kein automatischer Folgeslice
 - Issue #110
 - Homepage-Mehrziel-Runtime
 - neue AAL2-Arbeit
