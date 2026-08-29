@@ -2,7 +2,7 @@
 
 ## Status
 
-IN PROGRESS — Technical Lead autonomous slice.
+IMPLEMENTED — PR #185. Exact-head acceptance remains binding; see the PR conversation and CI for the final reviewed SHA.
 
 ## Objective
 
