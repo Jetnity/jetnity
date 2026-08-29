@@ -389,6 +389,8 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 
 Foundation A hat bewusst keinen Mobility-Adapter. `mobilityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_MOBILITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Abdeckung entsteht nur aus vorhandenen Reisedaten. Fahrpläne, Wegezeiten und Anschlussgarantien werden nicht erfunden. Fehlende Graphdaten bleiben unbestimmt.
 
+12Go ist **kein** angebundener Adapter. Draft-PR #190 hält nur Audit-/Contract-Prep fest (ADR-0199 proposed/not accepted). Factory, Suche und Secrets bleiben unverändert aus. 12Go-Flights und 12Go-„Car rent“ gehören nicht in die Mobility-Naht.
+
 Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `MobilityNachweis` gegen Orte, Datum, Modus, Reisende und Währung (`nachweisen({ optionId, kontext })`). Heute ist der Nachweis `null` – fail closed. Der Browser darf nur identifiers senden. Die Workspace-Suche startet nicht automatisch; nur eine ausdrückliche Nutzeraktion darf die geschlossene Suche anfassen. Manuelle Verbindungen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/MOBILITY.md](docs/MOBILITY.md), ADR-0090, ADR-0091 und ADR-0161.
 
 ### Mietwagensuche (Foundation B)

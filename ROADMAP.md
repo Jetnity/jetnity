@@ -165,6 +165,7 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 Weiter offen/gated:
 
 - S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz im Repository Draft-PR #182 / ADR-0198, nicht auf Production; TW-8 geschlossen
+- 12Go Mobility Contract Audit Draft-PR #190 – Docs/Evidence/Contract-Prep only; ADR-0199 proposed/not accepted; kein Signup, keine Runtime, keine Aktivierung
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -294,10 +295,12 @@ Abgeschlossen:
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
+48. 🟡 Provider 12Go Mobility Contract Audit / PR #190 – Docs/Evidence/Adapter-Contract-Prep. ADR-0199 proposed/not accepted. Self-expiring: solange #190 offen → STOP für unabhängigen Technical-Lead Exact-Head-Review; nach Merge → Audit-Evidence integriert, **keine** Aktivierung, kein Signup, kein Folgeslice. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Draft-PR #182.** Unabhängiger Technical-Lead Exact-Head-Re-Review der S5-B-Persistenz nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
+- **Dieser zugewiesene Slice: Draft-PR #190.** Unabhängiger Technical-Lead Exact-Head-Review des 12Go-Mobility-Contract-Audits. Autor setzt kein Ready, kein Merge, kein Signup, keinen API-Antrag, keinen Folgeslice.
+- **Parallel, nicht dieser Agent: Draft-PR #182.** Unabhängiger Technical-Lead Exact-Head-Re-Review der S5-B-Persistenz nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
@@ -307,7 +310,7 @@ Nächster Schritt:
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
 - Provider S5-B Production-Apply und realer Snapshot (Repository-Persistenz ist Draft-PR #182; TW-8 bleibt geschlossen)
-- echte Providerphase
+- echte Providerphase (12Go-Audit #190 ist Contract-Prep, keine Wahl und keine Aktivierung)
 - TW-8
 - TW-9
 - Direction A

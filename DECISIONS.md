@@ -5203,6 +5203,21 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0199 – 12Go Mobility Adapter Contract (proposed)
+
+**Datum:** 29. August 2026  
+**Status:** **Proposed / not accepted.** Audit-Evidence auf Draft-PR #190. Keine Runtime. Keine Providerwahl. Volltext: `docs/ADR_0199_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md`.
+
+**Entscheidung (vorgeschlagen):** Ein späterer 12Go-Adapter bleibt ein provider-spezifischer `mobility`-Adapter. Rental Cars und Flights bleiben eigene Domänen. Live-Suche nur nach genehmigtem server-only API-Pfad; Booking per Affiliate-Redirect. API-Felder hinter Approval bleiben UNKNOWN. Fixtures minten keine `live_api`-/`persisted_snapshot`-Truth.
+
+**Kontext:** Öffentliche Affiliate-/Consumer-Docs belegen Enrollment, Tools, Modi und Redirect-Buchung. Ein öffentliches API-Schema fehlt. Scraping und iframe sind first-party verboten.
+
+**Alternativen:** Nur Deeplink ohne Suche; White Label; Reseller-Portal; Scraping/Wrapper; Domain-Fold.
+
+**Konsequenzen:** Implementation startet nicht aus diesem ADR. Shared-Core unverändert. TW-8 und Provider-Live bleiben geschlossen, bis ein späterer versionierter Task und die besonderen PO-Gates das ausdrücklich ändern.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

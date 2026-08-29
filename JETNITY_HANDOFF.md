@@ -1,9 +1,20 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
+Status: **Aktiver Docs-Slice: 12Go Mobility Contract Audit Draft-PR #190 auf Baseline `main @ 69ef27b1`. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Signup, keine Runtime, kein TW-8. Parallel bleibt S5-B Persistenz Draft-PR #182 unberührt. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
+
+Aktueller Provider-Contract-Prep-Slice (Draft-PR #190; Autor setzt kein Ready/Merge; Implementation-Proposal nicht starten):
+
+- `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`
+- `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_STATUS_2026-08-29.md`
+- `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_EVIDENCE_2026-08-29.md`
+- `docs/PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT_2026-08-29.md`
+- `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_HANDOFF_2026-08-29.md`
+- `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_SELF_REVIEW_2026-08-29.md`
+- ADR-0199 (**proposed / not accepted**)
+- `docs/ACTIVE_WORK_STATUS.md`
 
 Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
 

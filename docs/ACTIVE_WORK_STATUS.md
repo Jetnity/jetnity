@@ -1,13 +1,32 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider S5-B Persistence Draft-PR #182 / TL-182 CHANGES REQUIRED CLOSED IN REPO / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
+Status: **12Go Mobility Contract Audit Draft-PR #190 / IMPLEMENTIERT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW. Baseline `main @ 69ef27b1`. Docs/Evidence/Contract-Prep only. Kein Signup, kein API-Antrag, keine Runtime, kein TW-8. Parallel bleibt #182 S5-B Persistenz unberührt. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+## Aktueller Arbeitsblock – Provider 12Go Mobility Contract Audit
+
+1. **Arbeitsblock / Ziel:** Offiziellen 12Go-Affiliate-/API-Vertrag rekonstruieren und den kleinsten späteren Jetnity-`mobility`-Adaptervertrag vorbereiten. Keine Runtime.
+2. **Authoring-Branch / PR:** `audit/provider-12go-mobility-contract-2026-08-29` / Draft-PR #190.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge, kein Folgeslice, kein Signup, kein API-Approval-Request.
+4. **Bereits umgesetzt:** First-Party-Evidence-Log (Affiliate Terms 16 July 2025, Consumer Terms/FAQ/About/Privacy, Reseller, White Label, Traffic-Regeln); Mapping-Grenzen; UNKNOWN für approval-gated API; Fixture-Verbot `live_api`/`persisted_snapshot`; vorgeschlagener ADR-0199 **nicht angenommen**; Implementation nur als Proposal.
+5. **Cursor-Agent:** `Jetnity provider 12go audit 1`. Observed run title `12Go mobility adapter audit`. Cloud-Run `https://cursor.com/agents/bc-0266753e-bd4f-4c88-9330-5ebe1fb87b88`. Generation 1 bleibt 1. Keine Rename-Fähigkeit behauptet.
+6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. Merge-Base exakt, **0 behind**. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-/Vercel-Mutation, kein Commercial-Provenance-Write.
+8. **Kosten / Provider / Secrets:** 0. Affiliate-Join öffentlich kostenlos, nicht beantragt. API-Kosten UNKNOWN. Keine Keys, keine paid calls.
+9. **Bekannte Risiken / Review-Funde:** kein öffentliches API-Schema; Scraping und iframe verboten; 12Go-Flights/Car-rent nicht in Mobility falten; Fixture ≠ Live-Truth; Passport-PII PO-gated; `main` `protected=false` nicht in diesem Slice re-verifiziert; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** später PO: überhaupt 12Go, Deeplink vs. API-Antrag, sensible Dokumentweitergabe. Nicht aus diesem Slice.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #190. Kein Ready. Kein Merge. Kein Folgeslice. Kein Signup.
+12. **Zuerst lesen:** `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`, Status, Evidence, Adapter-Vertrag, Handoff, Self-Review, ADR-0199 (proposed).
+
+## Parallel offener Block – Provider S5-B Commercial Provenance Persistence (nicht dieser Agent)
+
+Current classification / Nachtrag, 29. August 2026: **PARALLEL OPEN DRAFT / NICHT DIESER SLICE.** Draft-PR #182 bleibt der S5-B-Persistenzträger. Dieser 12Go-Audit hat #182 nicht angefasst und startet kein TW-8.
+
+## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
 2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.
@@ -625,7 +644,9 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #168 / Issue #109. Autor-Agent setzt kein Ready, kein Merge, kein Issue #110, keine Vercel-Setting-Mutation.
+Dieser zugewiesene Slice: unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #190 (12Go Mobility Contract Audit). Autor-Agent setzt kein Ready, kein Merge, kein Signup, keinen API-Antrag, keinen Folgeslice.
+
+Historisch (nicht dieser Slice): Draft-PR #168 / Issue #109 ist durch spätere Search-Recovery überholt; Issue #109 CLOSED / COMPLETED. Issue #110 bleibt ungestartet. Parallel bleibt Draft-PR #182 S5-B Persistenz ein eigener TL-Re-Review, nicht dieser Agent.
 
 PR #152 Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #156.
 
