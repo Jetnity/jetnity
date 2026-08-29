@@ -1,6 +1,8 @@
 # Provider Adapter Core Foundation Task — 2026-08-29
 
-Status: READY FOR IMPLEMENTATION BY CURSOR AGENT
+Status: ASSIGNED TO CURSOR AGENT — DRAFT PR / STOPP FOR TECHNICAL-LEAD REVIEW
+
+Cursor-Agent: `Jetnity provider adapter core 1`
 
 Base main SHA: `69ef27b169780e41ba506a69acb15caafa645517`
 Branch: `feat/provider-adapter-core-foundation-2026-08-29`
@@ -191,6 +193,20 @@ Return:
 6. explicit confirmation that no real provider call, credential, Supabase mutation, runtime activation or Commercial-Provenance mint was introduced
 7. PR number if opened
 
+## Cursor operating constraints
+
+- Work only as `Cursor-Agent: Jetnity provider adapter core 1` for this slice.
+- Re-fetch/re-check `origin/main` before handoff and report ahead/behind/drift.
+- Keep the PR Draft.
+- **Do not mark Ready.**
+- **Do not merge.**
+- **Do not start a follow-up slice.**
+- STOP after implementation, self-review, tests and handoff for independent Technical-Lead review.
+
 ## Next slice after successful merge
 
 After this foundation is accepted, implement Skyscanner Flights server transport using this core: request mapping, `/create`, session token validation, `/poll`, bounded lifecycle, Skyscanner-specific rate-limit semantics, response validation and redacted observability. Only after that should a separate trusted normalization slice be considered for Commercial-Provenance candidate generation.
+
+## STOPP
+
+Draft PR remains Draft. No Ready. No Merge. No follow-up slice. Independent Technical-Lead review is the only next step after Cursor handoff.
