@@ -94,7 +94,7 @@ Keine dieser Entscheidungen ist getroffen.
 | Live `origin/main` (2026-08-29, `5057675638`) | `2241e349f8b3b400963cf1de11e5a8617bdc8e44` |
 | Merge-base of this branch vs live `main` | still `6083ee63` |
 | Task + Vendor-Korrektur | `61014e39` Correct PrivacyBee Gate 0 to Swiss privacybee.io target |
-| Authoring-Head (TL-Fix `5057675638`) | dieser Continuity-Truth-Fix; SHA nach Push |
+| Authoring-Head (TL-Fix `5057675638`) | `278138ade951344be539df0767e02fa9fc4e24f8` |
 | Draft-PR | #171 OPEN Draft |
 | Issue | #169 OPEN |
 | Search | #168 CLOSED/MERGED via #172; current #109 recovery = #173 OPEN Draft; not mutated by this slice |
@@ -129,11 +129,14 @@ Keine dieser Entscheidungen ist getroffen.
 
 ### 6.4 Lokale Checks / CI / Vercel / Threads
 
-Vorherige Heads `2f2d00e3` / `fa393232` sind durch TL-Fix `5057675638` (Continuity-Truth) invalidiert. Neue Exact-Head-Gates nach diesem Push nachstempeln.
+Evidence-Head `278138ade951344be539df0767e02fa9fc4e24f8` (TL-Fix `5057675638`: Continuity-Truth):
 
-- Review `5057675638` CHANGES REQUIRED galt für `2f2d00e3`: stale live-`main` / stale PR #168 OPEN. Dieser Slice korrigiert nur das.
-- Lokal vor Push: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
-- Kein TL-PASS behauptet.
+- Lokal: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
+- GitHub Actions Run `33247702413` **SUCCESS** auf exakt `278138ad`.
+- Vercel StatusContext **SUCCESS**; Deployment `3p5iW4urQ6AJrtKuBsj9Mqvt15oc`; GitHub Preview deployment `6154748564`.
+- Review `5057675638` galt für `2f2d00e3` und ist damit invalidiert. Neuer unabhängiger TL-Review ausstehend. Kein TL-PASS.
+
+Dieser Stamp erzeugt einen neueren Head. Die genannten Gates gelten für `278138ad`, nicht automatisch für den Stamp-Commit. Live an PR #171 prüfen.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 

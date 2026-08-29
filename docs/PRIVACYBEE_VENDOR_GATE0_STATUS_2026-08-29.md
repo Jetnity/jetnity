@@ -243,7 +243,7 @@ Keine Runtime. Keine Shared Continuity. Kein Search-Runtime (#168/#173).
 
 ## 9. Tests / Gates
 
-TL-Fix `5057675638` invalidiert `2f2d00e3` / `fa393232`. Neue Exact-Head-Gates nach diesem Continuity-Truth-Push. Historische Baseline `6083ee63` bleibt historisch; live `main` ist `2241e349`.
+Evidence-Head `278138ad`: lokal 9/9; Actions `33247702413` SUCCESS; Vercel `3p5iW4urQ6AJrtKuBsj9Mqvt15oc` SUCCESS; Preview `6154748564`. Historische Baseline `6083ee63` bleibt historisch; live `main` ist `2241e349`. Dieser Stamp-Commit ist ein neuerer SHA. Review `5057675638` galt für `2f2d00e3`. Neuer TL-Review ausstehend.
 
 ## 10. Exakter nächster Schritt
 
