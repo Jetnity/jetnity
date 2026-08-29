@@ -52,6 +52,7 @@ import {
   type PasskeyLage,
   type TotpListeLage,
 } from "@/lib/auth/account-security-lage";
+import { accountLogoutScopeAction } from "@/app/account/security/logout-action";
 import {
   MFA_STEP_UP_ANFANG,
   MFA_STEP_UP_ERFOLG_TEXT,
@@ -60,12 +61,14 @@ import {
   mfaStepUpDialogOffen,
   mfaStepUpErfolgBehaupten,
   mfaStepUpIstBeschaeftigt,
+  mfaStepUpSollLokalenAuthVerlassen,
   mfaStepUpStatusText,
   mfaStepUpUndUnenroll,
   mfaStepUpWeiter,
   mfaUnenrollDirekt,
   mfaUnenrollVorbereiten,
   type MfaStepUpAuth,
+  type MfaStepUpEreignis,
   type MfaStepUpZustand,
 } from "@/lib/auth/account-mfa-step-up";
 import SecurityMfaStepUp from "@/components/account/SecurityMfaStepUp";
@@ -151,6 +154,12 @@ export default function SecurityMFA({
     void refreshFactors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  React.useEffect(() => {
+    if (mfaStepUpSollLokalenAuthVerlassen(stepUp)) {
+      lokalenAuthVerlassen();
+    }
+  }, [stepUp]);
 
   const totpLage: TotpListeLage = totpListeLage({
     listFactorsVorhanden,
@@ -281,7 +290,53 @@ export default function SecurityMFA({
   }
 
   function stepUpAuth(): MfaStepUpAuth {
-    return supabase.auth;
+    return {
+      getUser: () => supabase.auth.getUser(),
+      refreshSession: () => supabase.auth.refreshSession(),
+      signOut: (options) => supabase.auth.signOut({ scope: options.scope }),
+      mfa: supabase.auth.mfa,
+    };
+  }
+
+  function lokalenAuthVerlassen() {
+    window.location.assign(new URL("/", window.location.origin).toString());
+  }
+
+  async function nachUnenrollErgebnis(
+    fertig: Extract<
+      MfaStepUpEreignis,
+      { typ: "ausfuehren_ok" | "ausfuehren_fehler" | "client_unbekannt" | "client_ohne_sitzung" | "unenroll_ok_sitzung_unbestaetigt" }
+    >,
+    id: string,
+  ) {
+    setStepUp((aktuell) => mfaStepUpWeiter(aktuell, fertig));
+    if (fertig.typ === "ausfuehren_ok") {
+      enrollZustandNachUnenroll(id);
+      await refreshFactors();
+      setMessage({ type: "success", text: MFA_STEP_UP_ERFOLG_TEXT });
+      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "zuruecksetzen" }));
+      return;
+    }
+    if (fertig.typ !== "unenroll_ok_sitzung_unbestaetigt") return;
+
+    enrollZustandNachUnenroll(id);
+    await refreshFactors();
+    setMessage({
+      type: "error",
+      text: mfaStepUpFehler(
+        fertig.lokalBeendet
+          ? "sitzung_unbestaetigt_nach_unenroll"
+          : "sitzung_unbestaetigt_abmelden_fehlgeschlagen",
+      ).text,
+    });
+    const lokal = await accountLogoutScopeAction("local");
+    if (
+      fertig.lokalBeendet ||
+      lokal.typ === "ausfuehren_ok" ||
+      lokal.typ === "client_ohne_sitzung"
+    ) {
+      lokalenAuthVerlassen();
+    }
   }
 
   function enrollZustandNachUnenroll(id: string) {
@@ -303,12 +358,7 @@ export default function SecurityMFA({
       if (vorbereitung.typ !== "plan_direkt") return;
 
       const fertig = await mfaUnenrollDirekt(stepUpAuth(), id);
-      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, fertig));
-      if (fertig.typ !== "ausfuehren_ok") return;
-      enrollZustandNachUnenroll(id);
-      await refreshFactors();
-      setMessage({ type: "success", text: MFA_STEP_UP_ERFOLG_TEXT });
-      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "zuruecksetzen" }));
+      await nachUnenrollErgebnis(fertig, id);
     } finally {
       unenrollLaufend.current = false;
     }
@@ -330,12 +380,7 @@ export default function SecurityMFA({
       }
       setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "code_bereit" }));
       const fertig = await mfaStepUpUndUnenroll(stepUpAuth(), { faktorId, code: otp });
-      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, fertig));
-      if (fertig.typ !== "ausfuehren_ok") return;
-      enrollZustandNachUnenroll(faktorId);
-      await refreshFactors();
-      setMessage({ type: "success", text: MFA_STEP_UP_ERFOLG_TEXT });
-      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "zuruecksetzen" }));
+      await nachUnenrollErgebnis(fertig, faktorId);
     } finally {
       unenrollLaufend.current = false;
     }

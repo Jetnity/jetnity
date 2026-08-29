@@ -21,6 +21,8 @@ import {
   mfaStepUpStatusText,
   mfaStepUpUndUnenroll,
   mfaStepUpWeiter,
+  mfaSitzungNachUnenrollIstSauber,
+  mfaStepUpSollLokalenAuthVerlassen,
   mfaUnenrollDirekt,
   mfaUnenrollPlanen,
   mfaUnenrollVorbereiten,
@@ -42,6 +44,13 @@ const UNVERIFIZIERT = {
   status: 'unverified',
   friendly_name: null,
   created_at: null,
+}
+
+const ANDERER_VERIFIZIERT = {
+  id: 'bbbbbbbb-cccc-dddd-eeee-ffffffffffff',
+  status: 'verified',
+  friendly_name: 'Reserve',
+  created_at: '2026-08-28T11:00:00.000Z',
 }
 
 const ROH = [
@@ -76,17 +85,36 @@ function liste(faktoren: Array<{ id: string; status: string; friendly_name?: str
 }
 
 function authAttrappe(teil: Partial<MfaStepUpAuth> & { mfa?: Partial<NonNullable<MfaStepUpAuth['mfa']>> } = {}): MfaStepUpAuth {
+  const entfernt = new Set<string>()
+  let aalNachRefresh: 'aal1' | 'aal2' = 'aal1'
   return {
     getUser: teil.getUser ?? (async () => ({ data: { user: { id: 'user-1' } }, error: null })),
+    refreshSession:
+      teil.refreshSession ??
+      (async () => ({
+        data: { session: { access_token: 'aufgefrischt' }, user: { id: 'user-1' } },
+        error: null,
+      })),
+    signOut: teil.signOut ?? (async () => ({ error: null })),
     mfa: {
-      listFactors: async () => ({ data: liste([VERIFIZIERT]), error: null }),
+      listFactors: async () => ({
+        data: liste([VERIFIZIERT].filter((faktor) => !entfernt.has(faktor.id))),
+        error: null,
+      }),
       getAuthenticatorAssuranceLevel: async () => ({
-        data: { currentLevel: 'aal1', nextLevel: 'aal2' },
+        data: { currentLevel: aalNachRefresh, nextLevel: 'aal1' },
         error: null,
       }),
       challenge: async () => ({ data: { id: 'challenge-intern' }, error: null }),
-      verify: async () => ({ error: null }),
-      unenroll: async () => ({ error: null }),
+      verify: async () => {
+        aalNachRefresh = 'aal2'
+        return { error: null }
+      },
+      unenroll: async ({ factorId }) => {
+        entfernt.add(factorId)
+        aalNachRefresh = 'aal1'
+        return { error: null }
+      },
       ...teil.mfa,
     },
   }
@@ -138,6 +166,17 @@ describe('AP-5-S4 AAL- und Faktor-Semantik', () => {
       challengeFaktorId: VERIFIZIERT.id,
     })
     assert.equal(nutzbarerChallengeFaktor([VERIFIZIERT, UNVERIFIZIERT], VERIFIZIERT.id), VERIFIZIERT.id)
+    assert.equal(nutzbarerChallengeFaktor([VERIFIZIERT, ANDERER_VERIFIZIERT], VERIFIZIERT.id), ANDERER_VERIFIZIERT.id)
+    assert.equal(mfaSitzungNachUnenrollIstSauber({
+      zielFaktorId: VERIFIZIERT.id,
+      faktoren: [],
+      aal: { currentLevel: 'aal1', nextLevel: 'aal1' },
+    }), true)
+    assert.equal(mfaSitzungNachUnenrollIstSauber({
+      zielFaktorId: VERIFIZIERT.id,
+      faktoren: [],
+      aal: { currentLevel: 'aal2', nextLevel: 'aal2' },
+    }), false)
   })
 
   test('unverified Unenroll bleibt ohne Step-up, auch ohne AAL-API', () => {
@@ -287,11 +326,19 @@ describe('AP-5-S4 Zustände', () => {
 describe('AP-5-S4 Ausführung', () => {
   test('AAL2 unenrollt ohne Challenge und Verify', async () => {
     const aufrufe: string[] = []
+    let vorhanden = [VERIFIZIERT]
+    let aal: 'aal1' | 'aal2' = 'aal2'
     const auth = authAttrappe({
+      refreshSession: async () => {
+        aufrufe.push('refresh')
+        aal = 'aal1'
+        return { data: { session: { access_token: 'neu' }, user: { id: 'user-1' } }, error: null }
+      },
       mfa: {
+        listFactors: async () => ({ data: liste(vorhanden), error: null }),
         getAuthenticatorAssuranceLevel: async () => {
-          aufrufe.push('aal')
-          return { data: { currentLevel: 'aal2', nextLevel: 'aal2' }, error: null }
+          aufrufe.push(`aal:${aal}`)
+          return { data: { currentLevel: aal, nextLevel: aal }, error: null }
         },
         challenge: async () => {
           aufrufe.push('challenge')
@@ -303,6 +350,7 @@ describe('AP-5-S4 Ausführung', () => {
         },
         unenroll: async ({ factorId }) => {
           aufrufe.push(`unenroll:${factorId}`)
+          vorhanden = []
           return { error: null }
         },
       },
@@ -315,13 +363,22 @@ describe('AP-5-S4 Ausführung', () => {
     assert.equal(aufrufe.includes('challenge'), false)
     assert.equal(aufrufe.includes('verify'), false)
     assert.equal(aufrufe.includes(`unenroll:${VERIFIZIERT.id}`), true)
+    assert.equal(aufrufe.includes('refresh'), true)
+    assert.equal(aufrufe.includes('aal:aal1'), true)
   })
 
   test('AAL1 challenge/verify/AAL-Recheck vor Unenroll', async () => {
     const aufrufe: string[] = []
-    let aal = 'aal1'
+    let aal: 'aal1' | 'aal2' = 'aal1'
+    let vorhanden = [VERIFIZIERT]
     const auth = authAttrappe({
+      refreshSession: async () => {
+        aufrufe.push('refresh')
+        aal = 'aal1'
+        return { data: { session: { access_token: 'neu' }, user: { id: 'user-1' } }, error: null }
+      },
       mfa: {
+        listFactors: async () => ({ data: liste(vorhanden), error: null }),
         getAuthenticatorAssuranceLevel: async () => {
           aufrufe.push(`aal:${aal}`)
           return { data: { currentLevel: aal, nextLevel: 'aal2' }, error: null }
@@ -337,6 +394,7 @@ describe('AP-5-S4 Ausführung', () => {
         },
         unenroll: async ({ factorId }) => {
           aufrufe.push(`unenroll:${factorId}`)
+          vorhanden = []
           return { error: null }
         },
       },
@@ -350,6 +408,7 @@ describe('AP-5-S4 Ausführung', () => {
     assert.equal(aufrufe.includes(`verify:${VERIFIZIERT.id}:challenge-intern:123456`), true)
     assert.equal(aufrufe.includes('aal:aal2'), true)
     assert.equal(aufrufe.includes(`unenroll:${VERIFIZIERT.id}`), true)
+    assert.equal(aufrufe.includes('refresh'), true)
   })
 
   test('falscher Code, Challenge-Fehler und Verify-Fehler unenrollen nicht', async () => {
@@ -473,6 +532,180 @@ describe('AP-5-S4 Ausführung', () => {
       'unverified',
     )
     assert.equal(vorbereitung.typ, 'plan_direkt')
+  })
+
+  test('unverified Unenroll refreshs die Sitzung nicht und bleibt clean success', async () => {
+    const aufrufe: string[] = []
+    const fertig = await mfaUnenrollDirekt(
+      authAttrappe({
+        refreshSession: async () => {
+          aufrufe.push('refresh')
+          return { data: { session: { access_token: 'neu' }, user: { id: 'user-1' } }, error: null }
+        },
+        signOut: async () => {
+          aufrufe.push('signOut')
+          return { error: null }
+        },
+        mfa: {
+          listFactors: async () => ({ data: liste([UNVERIFIZIERT]), error: null }),
+          getAuthenticatorAssuranceLevel: undefined,
+          unenroll: async ({ factorId }) => {
+            aufrufe.push(`unenroll:${factorId}`)
+            return { error: null }
+          },
+        },
+      }),
+      UNVERIFIZIERT.id,
+    )
+    assert.deepEqual(fertig, { typ: 'ausfuehren_ok' })
+    assert.equal(aufrufe.includes(`unenroll:${UNVERIFIZIERT.id}`), true)
+    assert.equal(aufrufe.includes('refresh'), false)
+    assert.equal(aufrufe.includes('signOut'), false)
+  })
+
+  test('verified Unenroll bestätigt Sitzung per refresh und AAL-Abgleich', async () => {
+    const aufrufe: string[] = []
+    let vorhanden = [VERIFIZIERT, ANDERER_VERIFIZIERT]
+    const fertig = await mfaUnenrollDirekt(
+      authAttrappe({
+        refreshSession: async () => {
+          aufrufe.push('refresh')
+          return { data: { session: { access_token: 'neu' }, user: { id: 'user-1' } }, error: null }
+        },
+        mfa: {
+          listFactors: async () => ({ data: liste(vorhanden), error: null }),
+          getAuthenticatorAssuranceLevel: async () => ({
+            data: { currentLevel: 'aal2', nextLevel: 'aal2' },
+            error: null,
+          }),
+          unenroll: async ({ factorId }) => {
+            vorhanden = vorhanden.filter((faktor) => faktor.id !== factorId)
+            return { error: null }
+          },
+        },
+      }),
+      VERIFIZIERT.id,
+    )
+    assert.equal(fertig.typ, 'ausfuehren_ok')
+    assert.equal(aufrufe.includes('refresh'), true)
+    assert.equal(mfaStepUpErfolgBehaupten(lauf(MFA_STEP_UP_ANFANG, { typ: 'starte', faktorId: VERIFIZIERT.id }, { typ: 'plan_direkt' }, { typ: 'ausfuehren_ok' })), true)
+  })
+
+  test('Refresh-Fehler nach erfolgreichem Unenroll ist kein clean success und beendet lokal', async () => {
+    const aufrufe: string[] = []
+    let vorhanden = [VERIFIZIERT]
+    const fertig = await mfaUnenrollDirekt(
+      authAttrappe({
+        refreshSession: async () => {
+          aufrufe.push('refresh')
+          return { data: { session: null, user: null }, error: { message: 'refresh failed', status: 500 } }
+        },
+        signOut: async ({ scope }) => {
+          aufrufe.push(`signOut:${scope}`)
+          return { error: null }
+        },
+        mfa: {
+          listFactors: async () => ({ data: liste(vorhanden), error: null }),
+          getAuthenticatorAssuranceLevel: async () => ({
+            data: { currentLevel: 'aal2', nextLevel: 'aal2' },
+            error: null,
+          }),
+          unenroll: async ({ factorId }) => {
+            vorhanden = vorhanden.filter((faktor) => faktor.id !== factorId)
+            aufrufe.push(`unenroll:${factorId}`)
+            return { error: null }
+          },
+        },
+      }),
+      VERIFIZIERT.id,
+    )
+    assert.equal(fertig.typ, 'unenroll_ok_sitzung_unbestaetigt')
+    if (fertig.typ === 'unenroll_ok_sitzung_unbestaetigt') assert.equal(fertig.lokalBeendet, true)
+    assert.equal(aufrufe.includes(`unenroll:${VERIFIZIERT.id}`), true)
+    assert.equal(aufrufe.includes('refresh'), true)
+    assert.equal(aufrufe.includes('signOut:local'), true)
+
+    const zustand = lauf(
+      MFA_STEP_UP_ANFANG,
+      { typ: 'starte', faktorId: VERIFIZIERT.id },
+      { typ: 'plan_direkt' },
+      fertig,
+    )
+    assert.equal(mfaStepUpErfolgBehaupten(zustand), false)
+    assert.equal(mfaStepUpSollLokalenAuthVerlassen(zustand), true)
+    assert.match(mfaStepUpStatusText(zustand), /entfernt.*nicht bestätigt|nicht bestätigt.*entfernt/i)
+    assert.doesNotMatch(mfaStepUpStatusText(zustand), /^Authenticator-App entfernt\.$/)
+  })
+
+  test('stale AAL2 nach letztem verified Unenroll ist kein clean success', async () => {
+    let vorhanden = [VERIFIZIERT]
+    let aal: 'aal1' | 'aal2' = 'aal1'
+    const fertig = await mfaStepUpUndUnenroll(
+      authAttrappe({
+        refreshSession: async () => ({
+          data: { session: { access_token: 'neu' }, user: { id: 'user-1' } },
+          error: null,
+        }),
+        signOut: async () => ({ error: null }),
+        mfa: {
+          listFactors: async () => ({ data: liste(vorhanden), error: null }),
+          getAuthenticatorAssuranceLevel: async () => ({
+            data: { currentLevel: aal, nextLevel: 'aal2' },
+            error: null,
+          }),
+          verify: async () => {
+            aal = 'aal2'
+            return { error: null }
+          },
+          unenroll: async ({ factorId }) => {
+            vorhanden = vorhanden.filter((faktor) => faktor.id !== factorId)
+            return { error: null }
+          },
+        },
+      }),
+      { faktorId: VERIFIZIERT.id, code: '123456' },
+    )
+    assert.equal(fertig.typ, 'unenroll_ok_sitzung_unbestaetigt')
+    if (fertig.typ === 'unenroll_ok_sitzung_unbestaetigt') assert.equal(fertig.lokalBeendet, true)
+  })
+
+  test('bei mehreren verified Faktoren wird ein anderer Challenge-Faktor genutzt', async () => {
+    const aufrufe: string[] = []
+    let vorhanden = [VERIFIZIERT, ANDERER_VERIFIZIERT]
+    let aal: 'aal1' | 'aal2' = 'aal1'
+    const fertig = await mfaStepUpUndUnenroll(
+      authAttrappe({
+        refreshSession: async () => {
+          aal = 'aal1'
+          return { data: { session: { access_token: 'neu' }, user: { id: 'user-1' } }, error: null }
+        },
+        mfa: {
+          listFactors: async () => ({ data: liste(vorhanden), error: null }),
+          getAuthenticatorAssuranceLevel: async () => ({
+            data: { currentLevel: aal, nextLevel: 'aal2' },
+            error: null,
+          }),
+          challenge: async ({ factorId }) => {
+            aufrufe.push(`challenge:${factorId}`)
+            return { data: { id: 'challenge-intern' }, error: null }
+          },
+          verify: async ({ factorId }) => {
+            aufrufe.push(`verify:${factorId}`)
+            aal = 'aal2'
+            return { error: null }
+          },
+          unenroll: async ({ factorId }) => {
+            vorhanden = vorhanden.filter((faktor) => faktor.id !== factorId)
+            return { error: null }
+          },
+        },
+      }),
+      { faktorId: VERIFIZIERT.id, code: '123456' },
+    )
+    assert.equal(fertig.typ, 'ausfuehren_ok')
+    assert.equal(aufrufe.includes(`challenge:${ANDERER_VERIFIZIERT.id}`), true)
+    assert.equal(aufrufe.includes(`challenge:${VERIFIZIERT.id}`), false)
+    assert.equal(aufrufe.includes(`verify:${ANDERER_VERIFIZIERT.id}`), true)
   })
 })
 

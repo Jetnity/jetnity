@@ -3,7 +3,7 @@
 // AP-5-S4: nutzerfreundlicher MFA-Step-up vor Unenroll eines
 // verifizierten TOTP-Faktors. Kein globales Consumer-AAL2.
 // Challenge-ID / Factor-ID / OTP bleiben intern. Erfolg erst nach
-// bestätigtem Unenroll, nicht nach einem UI-Flag oder Verify allein.
+// bestätigtem Unenroll und bestätigtem Sitzungs-/AAL-Abgleich.
 
 import {
   securityFehlerAusUnbekannt,
@@ -44,6 +44,8 @@ export type MfaStepUpFehlerCode =
   | 'kein_verifizierter_totp'
   | 'network'
   | 'rate_limited'
+  | 'sitzung_unbestaetigt_nach_unenroll'
+  | 'sitzung_unbestaetigt_abmelden_fehlgeschlagen'
   | 'unknown'
 
 export type MfaStepUpFehler = {
@@ -57,6 +59,7 @@ export type MfaStepUpZustand = {
   phase: MfaStepUpPhase
   zielFaktorId: string | null
   brauchtStepUp: boolean
+  lokalBeenden: boolean
   fehler: MfaStepUpFehler | null
 }
 
@@ -72,6 +75,7 @@ export type MfaStepUpEreignis =
   | { typ: 'zuruecksetzen' }
   | { typ: 'ausfuehren_ok' }
   | { typ: 'ausfuehren_fehler'; fehler: MfaStepUpFehler }
+  | { typ: 'unenroll_ok_sitzung_unbestaetigt'; lokalBeendet: boolean }
 
 export type MfaUnenrollPlan =
   | { art: 'direkt_unenroll'; grund: 'unverified' | 'bereits_aal2' }
@@ -91,6 +95,11 @@ export type MfaStepUpAuth = {
     data: { user: { id?: string | null } | null }
     error: MfaStepUpAuthFehler | null
   }>
+  refreshSession?: () => Promise<{
+    data: { session: { access_token?: string | null } | null; user: { id?: string | null } | null }
+    error: MfaStepUpAuthFehler | null
+  }>
+  signOut?: (options: { scope: 'local' }) => Promise<{ error: MfaStepUpAuthFehler | null }>
   mfa?: {
     listFactors?: () => Promise<{
       data: MfaListFactorsData | null
@@ -120,6 +129,7 @@ export const MFA_STEP_UP_ANFANG: MfaStepUpZustand = {
   phase: 'idle',
   zielFaktorId: null,
   brauchtStepUp: false,
+  lokalBeenden: false,
   fehler: null,
 }
 
@@ -128,7 +138,7 @@ export const MFA_STEP_UP_ERFOLG_TEXT = 'Authenticator-App entfernt.'
 export const MFA_STEP_UP_DIALOG_TITEL = 'Authenticator-App bestätigen'
 
 export const MFA_STEP_UP_DIALOG_TEXT =
-  'Zum Entfernen einer bestätigten Authenticator-App braucht diese Sitzung eine aktuelle Zwei-Faktor-Bestätigung. Das gilt nur für diesen Vorgang, nicht für alle Kontobereiche.'
+  'Zum Entfernen einer bestätigten Authenticator-App fordert Jetnity für diesen Vorgang eine aktuelle Zwei-Faktor-Bestätigung an. Dadurch kann diese Sitzung technisch auf die Zwei-Faktor-Stufe angehoben werden. Es wird keine globale Zwei-Faktor-Pflicht für alle Kontobereiche aktiviert.'
 
 const FEHLER_TEXTE: Record<MfaStepUpFehlerCode, string> = {
   session_required: 'Die Sitzung ist nicht mehr gültig. Bitte melde dich erneut an.',
@@ -154,11 +164,15 @@ const FEHLER_TEXTE: Record<MfaStepUpFehlerCode, string> = {
     'Es gibt keine bestätigte Authenticator-App, mit der diese Sitzung bestätigt werden kann. Die App wurde nicht entfernt.',
   network: 'Die Verbindung war unterbrochen. Bitte prüfe das Netz und versuche es erneut.',
   rate_limited: 'Zu viele Versuche. Bitte warte kurz und versuche es erneut.',
+  sitzung_unbestaetigt_nach_unenroll:
+    'Die Authenticator-App wurde entfernt. Der Sicherheitsstand dieser Sitzung konnte danach nicht bestätigt werden. Diese Sitzung wird deshalb auf diesem Gerät beendet. Bitte melde dich erneut an.',
+  sitzung_unbestaetigt_abmelden_fehlgeschlagen:
+    'Die Authenticator-App wurde entfernt. Der Sicherheitsstand dieser Sitzung konnte nicht bestätigt werden, und das lokale Abmelden ist fehlgeschlagen. Melde dich bitte selbst ab und erneut an.',
   unknown: 'Das hat gerade nicht geklappt. Bitte versuche es erneut.',
 }
 
 const LAGE_TEXTE: Record<MfaStepUpLage, string> = {
-  idle: 'Bestätigte Authenticator-Apps brauchen eine aktuelle Zwei-Faktor-Bestätigung, bevor sie entfernt werden. Das gilt nicht für alle Kontobereiche.',
+  idle: 'Bestätigte Authenticator-Apps brauchen eine aktuelle Zwei-Faktor-Bestätigung, bevor sie entfernt werden. Jetnity fordert das nur für diesen Vorgang an. Diese Sitzung kann dabei auf die Zwei-Faktor-Stufe angehoben werden; eine globale Pflicht entsteht dadurch nicht.',
   working: 'Bitte warten…',
   success: MFA_STEP_UP_ERFOLG_TEXT,
   error: 'Die Authenticator-App konnte nicht entfernt werden.',
@@ -180,7 +194,9 @@ function erneutFuer(code: MfaStepUpFehlerCode): MfaStepUpFehler['erneut'] {
     code === 'unavailable' ||
     code === 'session_required' ||
     code === 'kein_verifizierter_totp' ||
-    code === 'aal_unbekannt'
+    code === 'aal_unbekannt' ||
+    code === 'sitzung_unbestaetigt_nach_unenroll' ||
+    code === 'sitzung_unbestaetigt_abmelden_fehlgeschlagen'
   ) {
     return null
   }
@@ -225,10 +241,22 @@ export function nutzbarerChallengeFaktor(
   faktoren: Array<Pick<TotpFaktorAnzeige, 'id' | 'status'>>,
   zielFaktorId: string,
 ): string | null {
-  const ziel = faktoren.find((faktor) => faktor.id === zielFaktorId)
-  if (ziel && ziel.status === 'verified' && ziel.id.length > 0) return ziel.id
-  const anderer = faktoren.find((faktor) => faktor.status === 'verified' && faktor.id.length > 0)
-  return anderer?.id ?? null
+  const verifiziert = faktoren.filter((faktor) => faktor.status === 'verified' && faktor.id.length > 0)
+  const anderer = verifiziert.find((faktor) => faktor.id !== zielFaktorId)
+  if (anderer) return anderer.id
+  return verifiziert.find((faktor) => faktor.id === zielFaktorId)?.id ?? null
+}
+
+export function mfaSitzungNachUnenrollIstSauber(eingabe: {
+  zielFaktorId: string
+  faktoren: Array<Pick<TotpFaktorAnzeige, 'id' | 'status'>>
+  aal: MfaAalStand
+}): boolean {
+  if (eingabe.faktoren.some((faktor) => faktor.id === eingabe.zielFaktorId)) return false
+  if (eingabe.aal.currentLevel !== 'aal1' && eingabe.aal.currentLevel !== 'aal2') return false
+  const hatNochVerified = eingabe.faktoren.some((faktor) => faktor.status === 'verified')
+  if (!hatNochVerified && eingabe.aal.currentLevel === 'aal2') return false
+  return true
 }
 
 export function mfaUnenrollPlanen(eingabe: {
@@ -304,6 +332,7 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: 'pruefen',
         zielFaktorId: ereignis.faktorId,
         brauchtStepUp: false,
+        lokalBeenden: false,
         fehler: null,
       }
     case 'plan_direkt':
@@ -315,6 +344,7 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: 'entfernen',
         zielFaktorId: zustand.zielFaktorId,
         brauchtStepUp: false,
+        lokalBeenden: false,
         fehler: null,
       }
     case 'plan_step_up':
@@ -326,6 +356,7 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: 'warte_auf_code',
         zielFaktorId: zustand.zielFaktorId,
         brauchtStepUp: true,
+        lokalBeenden: false,
         fehler: null,
       }
     case 'client_unbekannt':
@@ -335,6 +366,7 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: zustand.phase,
         zielFaktorId: zustand.zielFaktorId,
         brauchtStepUp: zustand.brauchtStepUp,
+        lokalBeenden: false,
         fehler: mfaStepUpFehler('unsupported'),
       }
     case 'client_ohne_sitzung':
@@ -344,6 +376,7 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: zustand.phase,
         zielFaktorId: zustand.zielFaktorId,
         brauchtStepUp: zustand.brauchtStepUp,
+        lokalBeenden: false,
         fehler: mfaStepUpFehler('session_required'),
       }
     case 'plan_fehler':
@@ -356,6 +389,7 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: 'bestaetigen',
         zielFaktorId: zustand.zielFaktorId,
         brauchtStepUp: true,
+        lokalBeenden: false,
         fehler: null,
       }
     case 'abbrechen':
@@ -371,7 +405,23 @@ export function mfaStepUpWeiter(zustand: MfaStepUpZustand, ereignis: MfaStepUpEr
         phase: zustand.phase,
         zielFaktorId: zustand.zielFaktorId,
         brauchtStepUp: zustand.brauchtStepUp,
+        lokalBeenden: false,
         fehler: null,
+      }
+    case 'unenroll_ok_sitzung_unbestaetigt':
+      if (zustand.lage !== 'working') return zustand
+      if (zustand.phase !== 'bestaetigen' && zustand.phase !== 'entfernen') return zustand
+      return {
+        lage: 'error',
+        phase: zustand.phase,
+        zielFaktorId: zustand.zielFaktorId,
+        brauchtStepUp: zustand.brauchtStepUp,
+        lokalBeenden: ereignis.lokalBeendet,
+        fehler: mfaStepUpFehler(
+          ereignis.lokalBeendet
+            ? 'sitzung_unbestaetigt_nach_unenroll'
+            : 'sitzung_unbestaetigt_abmelden_fehlgeschlagen',
+        ),
       }
     case 'ausfuehren_fehler':
       if (zustand.phase === 'warte_auf_code') return lageFuerFehler(zustand, ereignis.fehler)
@@ -396,6 +446,7 @@ function lageFuerFehler(zustand: MfaStepUpZustand, fehler: MfaStepUpFehler): Mfa
       phase: zustand.phase,
       zielFaktorId: zustand.zielFaktorId,
       brauchtStepUp: zustand.brauchtStepUp,
+      lokalBeenden: false,
       fehler,
     }
   }
@@ -405,6 +456,7 @@ function lageFuerFehler(zustand: MfaStepUpZustand, fehler: MfaStepUpFehler): Mfa
       phase: zustand.phase,
       zielFaktorId: zustand.zielFaktorId,
       brauchtStepUp: zustand.brauchtStepUp,
+      lokalBeenden: false,
       fehler,
     }
   }
@@ -413,6 +465,7 @@ function lageFuerFehler(zustand: MfaStepUpZustand, fehler: MfaStepUpFehler): Mfa
     phase: fehler.erneut === 'warte_auf_code' ? 'warte_auf_code' : zustand.phase,
     zielFaktorId: zustand.zielFaktorId,
     brauchtStepUp: zustand.brauchtStepUp,
+    lokalBeenden: false,
     fehler,
   }
 }
@@ -438,7 +491,11 @@ export function mfaStepUpIstBeschaeftigt(zustand: MfaStepUpZustand): boolean {
 }
 
 export function mfaStepUpErfolgBehaupten(zustand: MfaStepUpZustand): boolean {
-  return zustand.lage === 'success'
+  return zustand.lage === 'success' && !zustand.fehler && !zustand.lokalBeenden
+}
+
+export function mfaStepUpSollLokalenAuthVerlassen(zustand: MfaStepUpZustand): boolean {
+  return zustand.lokalBeenden === true && zustand.lage === 'error'
 }
 
 export function mfaStepUpDialogOffen(zustand: MfaStepUpZustand): boolean {
@@ -616,7 +673,19 @@ export async function mfaUnenrollVorbereiten(
 export async function mfaUnenrollDirekt(
   auth: MfaStepUpAuth,
   faktorId: string,
-): Promise<Extract<MfaStepUpEreignis, { typ: 'ausfuehren_ok' | 'ausfuehren_fehler' | 'client_unbekannt' | 'client_ohne_sitzung' }>> {
+): Promise<
+  Extract<
+    MfaStepUpEreignis,
+    {
+      typ:
+        | 'ausfuehren_ok'
+        | 'ausfuehren_fehler'
+        | 'client_unbekannt'
+        | 'client_ohne_sitzung'
+        | 'unenroll_ok_sitzung_unbestaetigt'
+    }
+  >
+> {
   if (!faktorId) {
     return { typ: 'ausfuehren_fehler', fehler: mfaStepUpFehler('faktor_stale') }
   }
@@ -628,8 +697,11 @@ export async function mfaUnenrollDirekt(
     if (sitzung.error) return sitzungAusfuehrenEreignisAusFehler(sitzung.error)
     if (!sitzung.data?.user) return { typ: 'client_ohne_sitzung' }
 
-    const stale = await faktorNochVorhanden(auth, faktorId)
-    if (stale) return stale
+    const bestand = await faktorBestandLesen(auth, faktorId)
+    if (bestand.art === 'fehler') return bestand.ereignis
+    if (bestand.art === 'fehlend' && bestand.verifiziert !== false) {
+      return { typ: 'ausfuehren_fehler', fehler: mfaStepUpFehler('faktor_stale') }
+    }
 
     const { error } = await mfa.unenroll({ factorId: faktorId })
     if (error) {
@@ -641,7 +713,8 @@ export async function mfaUnenrollDirekt(
         }),
       }
     }
-    return { typ: 'ausfuehren_ok' }
+    if (bestand.verifiziert === false) return { typ: 'ausfuehren_ok' }
+    return mfaSitzungNachVerifiedUnenroll(auth, faktorId)
   } catch (fehler) {
     return {
       typ: 'ausfuehren_fehler',
@@ -659,7 +732,7 @@ export async function mfaStepUpUndUnenroll(
 ): Promise<
   Extract<
     MfaStepUpEreignis,
-    { typ: 'ausfuehren_ok' | 'ausfuehren_fehler' | 'client_unbekannt' | 'client_ohne_sitzung' }
+    | { typ: 'ausfuehren_ok' | 'ausfuehren_fehler' | 'client_unbekannt' | 'client_ohne_sitzung' | 'unenroll_ok_sitzung_unbestaetigt' }
   >
 > {
   const codeFehler = mfaStepUpCodePruefen(eingabe.code)
@@ -779,7 +852,8 @@ export async function mfaStepUpUndUnenroll(
         }),
       }
     }
-    return { typ: 'ausfuehren_ok' }
+    if (faktorIstVerifiziert(ziel.status) === false) return { typ: 'ausfuehren_ok' }
+    return mfaSitzungNachVerifiedUnenroll(auth, eingabe.faktorId)
   } catch (fehler) {
     return {
       typ: 'ausfuehren_fehler',
@@ -825,6 +899,104 @@ function ereignisAusPlan(
     case 'fehler':
       if (plan.grund === 'session_required') return { typ: 'client_ohne_sitzung' }
       return { typ: 'plan_fehler', fehler: mfaStepUpFehler('faktor_stale') }
+  }
+}
+
+export async function mfaSitzungNachVerifiedUnenroll(
+  auth: MfaStepUpAuth,
+  faktorId: string,
+): Promise<
+  Extract<MfaStepUpEreignis, { typ: 'ausfuehren_ok' | 'ausfuehren_fehler' | 'unenroll_ok_sitzung_unbestaetigt' }>
+> {
+  if (typeof auth.refreshSession !== 'function') {
+    return sitzungUnbestaetigtNachUnenroll(auth)
+  }
+
+  try {
+    const refresh = await auth.refreshSession()
+    if (refresh.error || !refresh.data?.session || !refresh.data?.user) {
+      return sitzungUnbestaetigtNachUnenroll(auth)
+    }
+
+    const listFactors = auth.mfa?.listFactors
+    const getAal = auth.mfa?.getAuthenticatorAssuranceLevel
+    if (typeof listFactors !== 'function' || typeof getAal !== 'function') {
+      return sitzungUnbestaetigtNachUnenroll(auth)
+    }
+
+    const liste = await listFactors()
+    if (liste.error) return sitzungUnbestaetigtNachUnenroll(auth)
+    const faktoren = totpFaktorenAusAntwort(liste.data)
+
+    const aalAntwort = await getAal()
+    if (aalAntwort.error) return sitzungUnbestaetigtNachUnenroll(auth)
+    const aal = aalStandLesen(aalAntwort.data)
+
+    if (!mfaSitzungNachUnenrollIstSauber({ zielFaktorId: faktorId, faktoren, aal })) {
+      return sitzungUnbestaetigtNachUnenroll(auth)
+    }
+    return { typ: 'ausfuehren_ok' }
+  } catch {
+    return sitzungUnbestaetigtNachUnenroll(auth)
+  }
+}
+
+async function sitzungUnbestaetigtNachUnenroll(
+  auth: MfaStepUpAuth,
+): Promise<Extract<MfaStepUpEreignis, { typ: 'unenroll_ok_sitzung_unbestaetigt' }>> {
+  if (typeof auth.signOut !== 'function') {
+    return { typ: 'unenroll_ok_sitzung_unbestaetigt', lokalBeendet: false }
+  }
+  try {
+    const { error } = await auth.signOut({ scope: 'local' })
+    if (error) return { typ: 'unenroll_ok_sitzung_unbestaetigt', lokalBeendet: false }
+    return { typ: 'unenroll_ok_sitzung_unbestaetigt', lokalBeendet: true }
+  } catch {
+    return { typ: 'unenroll_ok_sitzung_unbestaetigt', lokalBeendet: false }
+  }
+}
+
+async function faktorBestandLesen(
+  auth: MfaStepUpAuth,
+  faktorId: string,
+): Promise<
+  | { art: 'vorhanden'; verifiziert: boolean | 'unbekannt' }
+  | { art: 'fehlend'; verifiziert: boolean | 'unbekannt' }
+  | { art: 'fehler'; ereignis: Extract<MfaStepUpEreignis, { typ: 'ausfuehren_fehler' }> }
+> {
+  const listFactors = auth.mfa?.listFactors
+  if (typeof listFactors !== 'function') {
+    return { art: 'vorhanden', verifiziert: 'unbekannt' }
+  }
+  try {
+    const antwort = await listFactors()
+    if (antwort.error) {
+      return {
+        art: 'fehler',
+        ereignis: {
+          typ: 'ausfuehren_fehler',
+          fehler: mfaStepUpFehlerEinordnen({
+            vorgang: 'list',
+            ...securityFehlerAusUnbekannt(antwort.error),
+          }),
+        },
+      }
+    }
+    const faktoren = totpFaktorenAusAntwort(antwort.data)
+    const ziel = faktoren.find((faktor) => faktor.id === faktorId)
+    if (!ziel) return { art: 'fehlend', verifiziert: 'unbekannt' }
+    return { art: 'vorhanden', verifiziert: faktorIstVerifiziert(ziel.status) }
+  } catch (fehler) {
+    return {
+      art: 'fehler',
+      ereignis: {
+        typ: 'ausfuehren_fehler',
+        fehler: mfaStepUpFehlerEinordnen({
+          vorgang: 'list',
+          ...securityFehlerAusUnbekannt(fehler),
+        }),
+      },
+    }
   }
 }
 
