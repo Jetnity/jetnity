@@ -80,7 +80,7 @@ Trennung bleibt:
 
 ## 4. Swiss PrivacyBee First-Party Current Truth
 
-Abruf 2026-08-29T09:32Z. Nicht Belegtes = `unknown / vendor-confirmation-required`.
+Abruf 2026-08-29T09:32Z; TL-Review-Nachzug VVZ + AVV 2026-08-29T09:49Z (HTTP GET, kein Login). Nicht Belegtes = `unknown / vendor-confirmation-required`. Öffentliche AVV-Aussagen sind zusätzlich `source-integrity/vendor-confirmation-required`, solange kein sauberes kanonisches Dokument bewiesen ist.
 
 ### 4.1 Produkt
 
@@ -106,14 +106,17 @@ Kein öffentliches Next.js-Rezept. Kein serverseitiges Webhook-Produkt für Acco
 
 | Thema | Evidence | Klasse |
 | --- | --- | --- |
-| AVV | öffentlich; Version 2.0, Stand **10. Juni 2026**; schema `dateModified` 2026-06-22; Art. 28 DSGVO + Art. 9 DSG | **belegt**, **nicht akzeptiert** |
-| Rollen | Kunde = Verantwortlicher; PrivacyBee = Auftragsverarbeiter | **belegt** |
-| AVV-Abschluss | automatisch bei Trial oder Active-Lizenz | **belegt** – deshalb **kein Trial in diesem Slice** |
-| Verarbeitungsort | primär CH und/oder EWR; EWR→CH via Angemessenheit | **belegt** |
-| OpenAI | Impressum Use Case B; TIA-2026-001-OpenAI Stand 22. Mai 2026; Restrisiko **mittel**; SCC 2021/914; FISA 702 / CLOUD Act Residual | **belegt** |
-| Anlage 2 Subunternehmer | Version 1.1, Stand 22. Mai 2026; **Liste selbst nicht im öffentlichen Fliesstext** | **unknown / vendor-confirmation-required** ausser OpenAI |
+| AVV als kanonische Rechtsgrundlage | `/de-ch/auftragverarbeitervertrag/` HTTP 200 enthält formalen DE-Text **und** eine Patent-Ochsner-/Mundart-Duplikatsektion (siehe 4.6). `/auftragverarbeitervertrag/` (de-DE) zeigt denselben formalen DE-Text ohne diese Marker. Identität eines sauberen kanonischen Dokuments ist **nicht** bewiesen. | **`source-integrity/vendor-confirmation-required`**; **nicht akzeptiert** |
+| Formaler DE-Fliesstext (beide URLs) | Version 2.0, Stand **10. Juni 2026**; schema `dateModified` 2026-06-22; Art. 28 DSGVO + Art. 9 DSG | **beobachtet als Seiteninhalt**, nicht als saubere Rechtsgrundlage |
+| Rollen im formalen Text | Kunde = Verantwortlicher; PrivacyBee = Auftragsverarbeiter | **beobachtet**; Accept = nein |
+| AVV-Abschluss im formalen Text | automatisch bei Trial oder Active-Lizenz | **beobachtet** – deshalb **kein Trial in diesem Slice** |
+| Verarbeitungsort im formalen Text | primär CH und/oder EWR; EWR→CH via Angemessenheit | **beobachtet** |
+| OpenAI als Subunternehmer | Unabhängig im öffentlichen VVZ: USA, kein EU-Hosting, kein DPF; SCC Modul 2 via OpenAI DPA v.010126 (Unterzeichnung 24.03.2026 genannt); TIA-2026-001-OpenAI „liegt vor“ | **belegt** als VVZ-Eintrag |
+| OpenAI-TIA Residual „mittel“ / FISA/CLOUD | Nur im AVV-Fliesstext (Use Case B, Stand 22. Mai 2026) | **`source-integrity/vendor-confirmation-required`** |
+| Öffentliches Verarbeitungsverzeichnis | https://www.privacybee.io/de-ch/verarbeitungsverzeichnis/ und `/verarbeitungsverzeichnis/` HTTP 200; schema `datePublished` 2026-05-28, `dateModified` 2026-06-10; benannte Subunternehmer inkl. Zweck/Ort/Transfer (siehe 4.5) | **belegt** als öffentliches Register |
+| Identität VVZ = AVV Anlage 2 v1.1 (22. Mai 2026) | AVV nennt Anlage 2 so; VVZ-Seitentitel/Einleitung nennen „genehmigte Subunternehmer“ und AVV-Abschluss. Keine sichtbare VVZ-Versionszeile „1.1 / 22. Mai 2026“. Datumsversatz VVZ-`dateModified` 10. Juni vs. Anlage-2-Stand 22. Mai. | **nicht bewiesen** → **`vendor-confirmation-required`** |
 | Anlage 1 TOMs | nur auf Anfrage | **unknown / vendor-confirmation-required** |
-| Breach-Notice | AVV §9: unverzüglich, **spätestens 48 Stunden** | **belegt** |
+| Breach-Notice im formalen Text | AVV §9: unverzüglich, **spätestens 48 Stunden** | **beobachtet**; kanonisch **`source-integrity/vendor-confirmation-required`** |
 | Consent-Daten | Einwilligungen + IP, Zeitstempel, User-Agent, Gerät/Browser | **belegt** |
 | Retention nach Ende | ALB 7.5: 1 Jahr; auf Wunsch Löschung innert 30 Tagen | **belegt** |
 | Exit-Nutzungsverbot | 5 Jahre auf generierte Inhalte | **belegt** |
@@ -130,7 +133,46 @@ https://www.privacybee.io/de-ch/preis/ HTTP 200, 2026-08-29T09:32Z:
 
 Zusätzliche nicht im Listenpreis genannte Kosten (mehrere Domains/Previews, Custom Legal, Inspektionen): **unknown / vendor-confirmation-required**.
 
-## 4.5 Bestehendes PO-Konto (kein Login in diesem Slice)
+### 4.5 Öffentliches Verarbeitungsverzeichnis (live 2026-08-29T09:49Z)
+
+Beide URLs HTTP 200, gleicher Subunternehmer-Kern; de-CH canonical `https://www.privacybee.io/de-ch/verarbeitungsverzeichnis/`. Einleitung (first-party): das Dokument liste alle Subunternehmer, die PrivacyBee AG als Auftragnehmer einsetzt und personenbezogene Daten im Auftrag der Partner verarbeitet; Genehmigung erfolge mit AVV-Abschluss und gelte für aktive Lizenzen und Testphasen. Kein Patent-Ochsner-Material auf diesen Seiten.
+
+Das ist **nicht** dasselbe wie ein Beweis, die Seite **sei** AVV Anlage 2 Version 1.1 vom 22. Mai 2026.
+
+| Anbieter | Sitz / Hosting laut VVZ | Zweck (gekürzt) | Jetnity-Relevanz falls später angebunden |
+| --- | --- | --- | --- |
+| Bexio AG | CH | Partner-Fakturen | intern PrivacyBee |
+| Pipedrive OÜ | EU (AWS Frankfurt/Irland) | CRM Vertrieb | intern PrivacyBee |
+| Microsoft Corporation | USA / M365 EU Data Boundary verfügbar | interner Workspace | intern PrivacyBee |
+| Google LLC – Looker / BigQuery | USA / EU | interne BI | intern PrivacyBee |
+| Stripe Inc. | USA / EU | Lizenzzahlungen | **ja**, wenn Jetnity zahlt |
+| Slack Technologies LLC | USA / EU | interne Kollaboration | intern PrivacyBee |
+| Heroku Inc. (Salesforce) | USA; EU-Region empfohlen | PaaS; **alle AVV-§2-Daten** inkl. Consent und technische Identifier | **hoch** (Besucher-/Partnerdaten) |
+| Mailchimp (Intuit) | USA | Investor-Mails | nicht Jetnity-Nutzer |
+| Customer.io Inc. | USA / EU | Partner-Lifecycle-Mail | **ja**, als Kunde |
+| Notion Labs Inc. | USA | internes Wissen | intern PrivacyBee |
+| Freshdesk (Freshworks) | USA / EU | Partner-Support | **ja**, als Kunde |
+| Hotjar Ltd. | MT / IE | Heatmaps auf **privacybee.io** (Consent) | nur Vendor-Marketingseite |
+| Amplitude Inc. | USA | A/B auf **privacybee.io** (Consent) | nur Vendor-Marketingseite |
+| Google LLC – Analytics / Ads | USA | GA4/Ads auf **privacybee.io** (Consent) | nur Vendor-Marketingseite |
+| Meta Platforms | US / IE | Pixel auf **privacybee.io** (Consent) | nur Vendor-Marketingseite |
+| OpenAI L.L.C. | USA, kein EU-Hosting | KI-Text + Impressum-Extraktion | **hoch**, wenn Impressum-Widget |
+
+DPF/SCC-Angaben im VVZ sind Vendor-Selbstauskunft, nicht unabhängig geprüft.
+
+### 4.6 AVV-Source-Integrity (live 2026-08-29T09:49Z)
+
+Dieselbe Session, `curl` HTTP/2, kein Login:
+
+| URL | HTTP | Beobachtung |
+| --- | --- | --- |
+| https://www.privacybee.io/de-ch/auftragverarbeitervertrag/ | 200 | Formaler DE-AVV **plus** sichtbare Marker `Offizielle Version` / `Nach Patent Ochsner` (auch in `og:description`) **plus** vollständige Mundart-Duplikatsektion `Uftragsvearbeitigsvertrag` (Stand-Zeile dort 22. Mai 2026 vs. formal 10. Juni 2026), schliesst mit `Merci Patent Ochsner`. Schema `dateModified` 2026-06-22T11:29:58Z. |
+| https://www.privacybee.io/auftragverarbeitervertrag/ | 200 | Formaler DE-AVV **ohne** diese Marker. Schema `dateModified` 2026-06-22T11:29:55Z. Footer „PrivacyBee Deutschland“. |
+| https://www.privacybee.io/de/auftragverarbeitervertrag/ | 404 | kein alternatives DE-Dokument |
+
+Ursache (Crawl/Render/Cache vs. echte Publikation) wird **nicht** geraten. Ein sauberes kanonisches AVV ist **nicht** unabhängig bewiesen. Deshalb gelten öffentliche AVV-/TIA-Aussagen **nicht** als unqualifizierte Rechtsgrundlage. Bestätigungspfad ohne Agent-Login: vom PO gelieferte Account-Kopie (offizielles AVV/TOM/TIA) = `account-evidence-required`.
+
+## 4.7 Bestehendes PO-Konto (kein Login in diesem Slice)
 
 Product-Owner-Hinweis an PR #171 (2026-08-29): Es existiert bereits ein Konto bei **PrivacyBee Schweiz (`privacybee.io`)**. Das ist **keine** Integrationsfreigabe, kein Ready und kein Gate-Ersatz.
 
@@ -143,8 +185,8 @@ Ohne Account-Einsicht bleiben die folgenden Punkte **`account-evidence-required`
 | A1 | Welche Domain(s)/Website-IDs im Cockpit liegen | Jetnity.com vs. Vercel-Alias vs. andere Sites; Preis ist **pro Domain** |
 | A2 | Lizenzstatus: Trial / Active / gekündigt; Periode | Trial schliesst AVV; Active heisst laufendes Abo |
 | A3 | Endkunde CHF 54,90 vs. Partner-/Kickback-Tarif | Öffentlicher Listenpreis gilt nur, wenn der Account Endkunde ist |
-| A4 | Ob AVV 2.0 / ALB im Account als akzeptiert gelten | Automatischer Abschluss ist first-party belegt; der konkrete Account-Stand nicht |
-| A5 | Ob Anlage 2, Anlage 1 TOMs, TIA-2026-001-OpenAI im Account liegen | Öffentlich unvollständig |
+| A4 | Ob AVV 2.0 / ALB im Account als akzeptiert gelten | Öffentlicher AVV ist **kein** sauberes kanonisches Dokument; Account-Stand unbekannt |
+| A5 | Offizielle Account-Kopien: sauberes AVV (ohne Patent-Ochsner-Material), Anlage 2 v1.1, Anlage 1 TOMs, TIA-2026-001-OpenAI; Abgleich mit öffentlichem VVZ | VVZ ist öffentlich, Identität mit Anlage 2 **nicht** bewiesen; TOM/TIA-PDFs nicht öffentlich |
 | A6 | Vorhandene Embed-Snippets / `website-id` | Technische Anbindung ohne neues Signup |
 | A7 | Gewählte Rechtsgrundlage DSG und/oder DSGVO; Sprachen | Muss zu Jetnity-UI (`lang=de`) und Zielmärkten passen |
 | A8 | Ob Cookie-Banner und/oder Impressum schon konfiguriert/generiert sind | Impressum-Pflichtfelder und OpenAI-Nutzung sind Residual |
@@ -200,7 +242,7 @@ Keine Runtime. Keine Shared Continuity. Kein Search-#168.
 
 ## 9. Tests / Gates
 
-Evidence-Head `902efc96`: lokal `ap6a-gate0-legal-foundation-inventory.test.ts` 9/9; Actions `33246013131` SUCCESS; Vercel `26Tuq5edbvMEQ9W9wArzQ5wAHahs` SUCCESS; Preview deployment `6154434744`. Ältere Heads (`f4e0707e`, US-Irrläufer, `187bcbd7`) gelten nicht als aktueller Head. Dieser Stamp-Commit invalidiert die Head-Bindung; live an PR #171 prüfen.
+TL-Review-Fix `5057555199` invalidiert `f97cb97a` / `902efc96`. Neue Exact-Head-Gates nach diesem Push. Lokal vor Push: `ap6a-gate0-legal-foundation-inventory.test.ts` 9/9.
 
 ## 10. Exakter nächster Schritt
 

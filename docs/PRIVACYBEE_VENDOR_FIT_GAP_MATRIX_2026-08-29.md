@@ -73,26 +73,27 @@ Klassen: `fit` · `partial` · `gap` · `unknown / vendor-confirmation-required`
 
 | | |
 | --- | --- |
-| Vendor | Öffentlicher AVV 2.0 (10. Juni 2026). Primär CH/EWR. SCC 2021/914 für Drittland-Subunternehmer. OpenAI TIA, Residual mittel. Anlage 2 nicht im Fliesstext. |
-| Bewertung | **partial** |
-| Lücke | Anlage 2 / TOMs nur referenziert bzw. auf Anfrage. OpenAI-US für Impressum ist ein bewusstes Residual. AVV nicht akzeptiert. |
-| Residual | Vollständige Subunternehmerliste, TIA-Einsicht: **vendor-confirmation-required**. |
+| Vendor | Öffentliche AVV-Seiten zeigen formalen DE-Text Version 2.0 / 10. Juni 2026. de-CH-URL enthält zusätzlich Patent-Ochsner-/Mundart-Material (siehe Status 4.6). Primär CH/EWR und SCC 2021/914 stehen im formalen Text. OpenAI-TIA-Residual „mittel“ nur dort. |
+| Bewertung | **partial** / AVV als Rechtsgrundlage **`source-integrity/vendor-confirmation-required`** |
+| Lücke | Öffentlicher AVV ist kein bewiesen sauberes kanonisches Dokument. Anlage 1 TOMs weiter auf Anfrage. AVV nicht akzeptiert. |
+| Residual | Account-Kopie des offiziellen AVV/TIA: **`account-evidence-required`**. Identität VVZ = Anlage 2 v1.1: **`vendor-confirmation-required`**. |
 
 ## 7. Data Locations / Subprocessors
 
 | | |
 | --- | --- |
-| Belegt | Verarbeitung primär CH und/oder EWR. OpenAI USA für Impressum-KI. Scripts von `app.privacybee.io`. |
-| Nicht belegt | Anlage 2 Namen/Standorte ausser OpenAI. |
-| Bewertung | **partial** / Rest **unknown / vendor-confirmation-required** |
+| Belegt (öffentliches VVZ, 2026-08-29T09:49Z) | Benannte Subunternehmer inkl. Sitz/Hosting, Zweck, Datenarten, Transfer: Bexio, Pipedrive, Microsoft, Google Looker/BigQuery, Stripe, Slack, **Heroku (alle AVV-§2-Daten)**, Mailchimp, Customer.io, Notion, Freshdesk, Hotjar, Amplitude, Google Analytics/Ads, Meta, **OpenAI (USA, kein DPF, SCC Modul 2)**. VVZ-schema `dateModified` 2026-06-10. |
+| Jetnity-relevant bei späterer Anbindung | Heroku (Consent/Identifier), OpenAI (Impressum), Stripe (Zahlung), Freshdesk/Customer.io (Support/Lifecycle). Vendor-Marketing-Tracker gelten für **privacybee.io**, nicht automatisch für Jetnity. |
+| Nicht bewiesen | Dass dieses VVZ **identisch** mit AVV Anlage 2 Version 1.1, Stand 22. Mai 2026 ist (Titel/Einleitung legen Nähe nahe; Versions- und Datumszeilen passen nicht). |
+| Bewertung | Register **belegt**; Identität Anlage 2 **`vendor-confirmation-required`**; AVV-Transferklauseln **`source-integrity/vendor-confirmation-required`** |
 
 ## 8. Security / Incident / Breach
 
 | | |
 | --- | --- |
-| Belegt | AVV §6 TOMs (Anlage 1 auf Anfrage); Breach ≤48 h; ALB 8.6 Hacker: angemessene TOMs, **keine** vertragliche Meldepflicht bei Hack (Widerspruchspotenzial zu AVV §9 – Legal muss das lesen). 99 % Verfügbarkeit. |
+| Beobachtet | Formaler AVV-Text: §6 TOMs (Anlage 1 auf Anfrage); Breach ≤48 h. ALB 8.6 Hacker: angemessene TOMs, **keine** vertragliche Meldepflicht bei Hack (Spannung zu AVV §9). 99 % Verfügbarkeit in ALB. |
 | Bewertung | **partial** |
-| Residual | TOM-Dokument, Pen-Test, Zertifikate, Klärung ALB-8.6 vs. AVV-48h: **vendor-confirmation-required**. |
+| Residual | AVV-Klauseln **`source-integrity/vendor-confirmation-required`**. TOM-Dokument, Pen-Test, Zertifikate, Klärung ALB-8.6 vs. AVV-48h, Account-Kopie: **`account-evidence-required`**. |
 
 ## 9. Consent-Evidence, Retention, Deletion, Exit
 

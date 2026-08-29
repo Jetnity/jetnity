@@ -64,9 +64,12 @@ Prefer current first-party sources from the Swiss PrivacyBee properties. At mini
 - `https://www.privacybee.io/de-ch/preis/`
 - `https://www.privacybee.io/de-ch/integration/`
 - `https://www.privacybee.io/de-ch/auftragverarbeitervertrag/`
+- `https://www.privacybee.io/de-ch/verarbeitungsverzeichnis/` and `https://www.privacybee.io/verarbeitungsverzeichnis/`
 - `https://www.privacybee.io/de-ch/lizenzbedingungen/`
 - `https://www.privacybee.io/de-ch/haeufig-gestellte-fragen/`
 - relevant current `support.privacybee.io` articles when they clarify product behavior
+
+Inventory the public Verarbeitungsverzeichnis as current first-party evidence. Do **not** claim it is identical to AVV Anlage 2 unless identity is independently proven. If a public legal page contains anomalous/duplicated/non-contract material, classify the page as `source-integrity/vendor-confirmation-required` rather than treating it as a clean canonical instrument.
 
 Verify, do not merely repeat, at least these current first-party claims/facts:
 

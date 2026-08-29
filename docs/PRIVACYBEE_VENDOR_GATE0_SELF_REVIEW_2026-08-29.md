@@ -2,65 +2,60 @@
 
 Stand: 29. August 2026  
 Autor-Agent: **`Privacy provider integration audit 1`**  
-Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS  
-Cloud-Run: https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae
+Typ: adversarial Self-Review nach TL `5057555199`, **kein** unabhängiger Technical-Lead-PASS  
+Cloud-Run: https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae  
+Generation: **1** (unmittelbarer Review-Fix, keine neue Arbeitseinheit)
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: korrigierter Task `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md` (Swiss `privacybee.io`) und Issue #169 auf Draft-PR #171. Baseline `6083ee63`.
+Auftrag: nur Review-Fix `5057555199` auf Draft-PR #171 / Head `f97cb97a`. Baseline unverändert `6083ee63`. Swiss `privacybee.io` only.
 
-Geprüft: Status, Fit/Gap, Integrationsvertrag, dieses Self-Review, Handoff. Nur versionierte Audit-Docs. Keine Runtime, keine Shared Continuity, kein Search #168.
-
-Ein früherer Irrläufer gegen `privacybee.com` wurde **nicht** als Swiss-Truth wiederverwendet. Die Disambiguation steht in Status und Handoff.
+Geprüft nach dem Fix: Task, Status, Fit/Gap, Integrationsvertrag, Handoff, dieses Self-Review. Nur versionierte Audit-Docs. Keine Runtime, keine Shared Continuity, kein Search #168, kein Login/Trial.
 
 ## 2. Adversarial Fragen
 
 | Frage | Ergebnis |
 | --- | --- |
-| Wurde das US-Produkt als Ziel bewertet? | Nein. TARGET ist PrivacyBee AG / `privacybee.io`. |
-| Wurde ein Trial/Signup/Order/paid call erzeugt? | Nein. AVV entstünde automatisch – deshalb bewusst kein Trial. |
-| Wurde das bestehende PO-Konto geöffnet oder Zugangsdaten angefordert? | Nein. Account-Stand als `account-evidence-required`. Bestehendes Konto ≠ Freigabe. |
-| Wurden ALB/AVV akzeptiert? | Nein. Nur gelesen. |
-| Wurden User-Daten übertragen oder Runtime geändert? | Nein. |
-| Wurde Search #168 / Homepage / AP-7 / DB / Auth angefasst? | Nein. |
-| Wurden Shared Continuity-Dateien mutiert? | Nein. |
-| Wurden unbelegte Anlage-2-/TOM-/API-Fakten als wahr behauptet? | Nein. `unknown / vendor-confirmation-required`. |
-| Wurde CHF 54.90 live re-verifiziert? | Ja, Preis-Seite HTTP 200 am 2026-08-29. |
-| Wurden Consumer-US-Preise verwendet? | Nein. |
-| Wurden Passport/Scan/MRZ/Biometrie freigegeben? | Nein. |
-| Wurde AP-6b dem Vendor zugeordnet? | Nein. First-Party belegt das nicht. |
-| Wurde `/terms` als PrivacyBee-Lieferung behauptet? | Nein. |
-| Wurde Vendor-„100 % konform“ zu Jetnity-Wahrheit? | Nein. |
-| Wurde Integration oder Folgeslice gestartet? | Nein. |
-| Ready/Merge empfohlen? | Nein. STOPP für TL-Review. |
-| Generation 2 wegen UI-Titel oder Vendor-Korrektur? | Nein. Dieselbe Generation 1 / dieselbe Session. Target-Korrektur (`privacybee.io`, Task-Head `61014e39`) ist bereits in den Deliverables; US-Evidence nicht wiederverwendet. |
+| Wurde das öffentliche VVZ inventarisiert statt als „nicht öffentlich“ belassen? | Ja. `/de-ch/verarbeitungsverzeichnis/` und `/verarbeitungsverzeichnis/` HTTP 200 am 2026-08-29T09:49Z; 16 benannte Einträge. |
+| Wurde das VVZ als identisch mit Anlage 2 v1.1 behauptet? | Nein. Identität **nicht** bewiesen (`vendor-confirmation-required`). |
+| Wurde die de-CH-AVV-Anomalie fail-closed behandelt? | Ja. `Offizielle Version` / `Nach Patent Ochsner` + Mundart-Duplikat live beobachtet. Ursache nicht geraten. Klasse **`source-integrity/vendor-confirmation-required`**. |
+| Wurde die sauberere de-DE-AVV-URL als kanonisches CH-Dokument erklärt? | Nein. Nur als Kontrast beobachtet. |
+| Wurden öffentliche AVV-/TIA-Sätze weiter als unqualifizierte Rechtsgrundlage geführt? | Nein. Herabgestuft auf beobachtet / source-integrity. |
+| Wurde ein Trial gestartet, „um Anlage 2 hinter Login zu sehen“? | Nein. Frühere Self-Review-Zeile war falsch begründet: das VVZ ist öffentlich. Korrigiert. |
+| Wurde das PO-Konto geöffnet? | Nein. Bestätigungspfad = Account-Kopie durch PO (`account-evidence-required`). |
+| Wurde ALB/AVV akzeptiert oder Runtime geändert? | Nein. |
+| Wurde Search #168 / Shared Continuity / US-`privacybee.com` als Ziel angefasst? | Nein. |
+| Ready/Merge empfohlen? | Nein. STOPP für neuen unabhängigen TL-Review. |
 
-## 3. Proaktive Funde, nicht still geschlossen
+## 3. Was vorher falsch war
 
-1. **Server-seitige Lücke ist der eigentliche Fit-Breaker**, nicht der Preis. Jetnity ist kein Durchschnitts-CMS.
-2. **Trial = AVV.** Jeder „nur mal testen“-Schritt ist ein Vertragsschluss.
-3. **OpenAI im Impressum** ist first-party belegt (mittleres TIA-Residual). Extra-Gate, nicht Kleinigkeit.
-4. **ALB 8.6** (keine vertragliche Hack-Meldepflicht) steht in Spannung zu **AVV §9** (48-Stunden-Breach). Legal muss das lesen.
-5. **5-Jahre-Exit-Verbot** macht einen späteren Vendor-Wechsel teuer, weil Texte nicht mitgenommen werden dürfen.
-6. Cookie-Banner ohne Tracker erzeugt neuen Besucher-PII-Fluss (IP/UA). Heute kein Bedarf.
-7. `/terms` bleibt unabhängig vom Vendor eine Legal-Lücke.
+Der Authoring-Stand vor `5057555199` klassifizierte Anlage-2-Namen als „nicht im öffentlichen Fliesstext“ und begründete den fehlenden Trial mit „Anlage 2 hinter Login“. Das öffentliche Verarbeitungsverzeichnis war first-party auffindbar und wurde nicht inventarisiert. Das war ein Evidence-Defekt, kein Runtime-Defekt.
 
-## 4. Bewusst nicht getan
+Die de-CH-AVV-Source-Integrity-Anomalie war ebenfalls nicht als Residual geführt, obwohl der formale Text und das Mundart-Duplikat auf derselben URL liegen (inkl. `og:description`).
 
-- Kein Trial, um hinter Login Anlage 2 zu sehen.
-- Kein zweiter CMP-Vendor-Audit.
-- Kein Browser-Mount der Scripts.
-- Keine TOM-/TIA-PDFs angefordert (wäre Vendor-Kontakt/Aktivierung).
+## 4. Proaktive Funde, nicht still geschlossen
 
-## 5. Residuals
+1. **Heroku** steht im VVZ als Host **aller AVV-§2-Daten** (inkl. Consent/IP). Das ist der wichtigste neue Subprocessor-Residual für eine spätere Anbindung.
+2. Vendor-Marketing-Tracker (Hotjar, Amplitude, GA/Ads, Meta) gelten laut VVZ für **privacybee.io**, nicht automatisch für Jetnity.
+3. TIA-Residual „mittel“ steht nur im AVV-Text und erbt deshalb die Source-Integrity-Klasse. OpenAI als benannter US-Processor ohne DPF bleibt unabhängig über das VVZ belegt.
+4. Server-seitige Jetnity-Lücke, `/terms`, fehlende Controller-Adresse und Trial=AVV bleiben unverändert.
 
-- Authoring-Push invalidiert Prior-Heads.
+## 5. Bewusst nicht getan
+
+- Kein Login, kein Trial, kein Vertrag/DPA-Accept, keine Credentials.
+- Keine Spekulation, ob Patent Ochsner Crawl, CMS-Leak oder absichtliche Publikation ist.
+- Keine Gleichsetzung VVZ = Anlage 2.
+- Kein Folgeslice, kein Ready/Merge.
+
+## 6. Residuals
+
+- Dieser Push invalidiert `f97cb97a` / `902efc96`.
 - `main` `protected=false`.
 - Agent-Self-Review ist kein PASS.
-- Vendor-Copy kann sich nach 2026-08-29T09:32Z ändern.
+- Vendor-Copy kann sich nach 2026-08-29T09:49Z ändern.
 
-## 6. Urteil
+## 7. Urteil
 
-Acceptance aus dem korrigierten Task ist aus Autorensicht erfüllt: Swiss-First-Party datiert, Jetnity-Ist rekonstruiert, 16 Fit/Gap-Achsen, Zukunftsvertrag, sensible Daten nicht freigegeben, Kosten `keine` plus belegter Listenpreis, Disambiguation vorhanden, keine verbotene Grenze verletzt.
+Die beiden Blocking-Findings aus `5057555199` sind aus Autorensicht gegen live First-Party-Evidence korrigiert. Fit-Empfehlung bleibt: **jetzt nicht aktivieren**.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head-Review: erneut ausstehend. Dieses Self-Review ist kein PASS.**

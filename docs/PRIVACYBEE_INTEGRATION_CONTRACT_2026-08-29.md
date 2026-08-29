@@ -68,12 +68,12 @@ Besucher-Consent-Logs (IP/UA) entstehen erst, wenn der Banner gemountet wird. Da
 ## 6. Rechtliche Vorbedingungen
 
 1. PO/Legal schliesst die AP-6a-Input-Matrix mindestens für Controller, Adresse, Kontakt, `/impressum` ja/nein, Konformitätszeile.
-2. AVV 2.0 + Anlage 2 + Anlage 1 + OpenAI-TIA **gelesen und bewusst akzeptiert** – nicht durch Agenten.
+2. PO/Legal legt eine **saubere Account-Kopie** von AVV, Anlage 2, Anlage 1 TOMs und TIA-2026-001-OpenAI vor (`account-evidence-required`) und bestätigt den Abgleich mit dem öffentlichen VVZ. Die öffentlichen AVV-Seiten sind wegen der de-CH Source-Integrity-Anomalie **kein** Accept-Pfad. Kein Agent-Login.
 3. Legal akzeptiert: automatisierte, nicht einzeln geprüfte Texte; Abmahngarantie-Deckel CHF/EUR 5’000; Ausschluss server-seitiger Lücken; 5-Jahre-Exit-Verbot; Jahresabo.
 4. Schweizer Recht / Bern vs. Jetnity-Rechtsraum: Legal.
 5. Keine Übernahme der Vendor-Konformitätsbehauptung in Login/Register.
 
-Dieser Audit akzeptiert ALB und AVV **nicht**.
+Dieser Audit akzeptiert ALB und AVV **nicht**. Öffentliche AVV-/TIA-Aussagen sind `source-integrity/vendor-confirmation-required`, kein unqualifiziertes Legal Basis. Das öffentliche VVZ ist inventarisiert; Identität mit Anlage 2 v1.1 ist **nicht** bewiesen.
 
 ## 7. AP-6a / AP-6b / Vendor
 
