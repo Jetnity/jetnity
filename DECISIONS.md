@@ -4134,7 +4134,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 **Datum:** 26. August 2026  
-**Status:** S5-A Domain-Foundation integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180). S5-B Persistenz ist im Repository über Draft-PR #182 / ADR-0198 implementiert, **nicht** auf Production angewendet. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
+**Status:** S5-A Domain-Foundation integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180). S5-B Persistenz ist über ADR-0198 integriert; Production-Migration `20260829140000_trip_item_commercial_provenance` ist angewendet und verifiziert. Runtime-Write-Pfad bleibt unallokiert. TW-8 bleibt geschlossen. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
 
 **Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust, und provider-scoped. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben. Actor und Source sind fail-closed getrennt: User-Intake/Manual sind keine Provider-Truth; Provider-Live-/Snapshot-Herkunft kommt nur aus einem trusted Adapter- oder Snapshot-Pfad. Untrusted Input defaultet nicht auf `system`.
 
@@ -4156,7 +4156,9 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Nachtrag 26. August 2026 (S5A-TL-09 und S5A-TL-10):** Provider-Refresh braucht identische Domain, identische `providerId` und identische belegte `externalRef`. Gleiche Provider-ID ohne Offer-Ref ist kein Refresh. `providerOfferId` ist in S5-A kein gleichwertiger Identitätsschlüssel. Current-Quote-Display braucht belegte `quotedCurrency`; fehlende Requested-Währung bleibt in der Quote-Währung darstellbar, `requested != quoted` bleibt mismatch ohne Conversion.
 
-**Nachtrag 29. August 2026 – S5-B Zielarchitektur.** ADR-0197 nimmt Option C als Zielarchitektur an (eigene Relation an `trip_item_id`, 1:1 current snapshot). Dieser Nachtrag ändert ADR-0168 nicht: S5-A bleibt der In-Memory-Vertrag. Die Repository-Übersetzung ist ADR-0198 / Draft-PR #182. Production-Apply bleibt TL-kontrolliert. TW-8 bleibt geschlossen.
+**Nachtrag 29. August 2026 – S5-B Zielarchitektur.** ADR-0197 nimmt Option C als Zielarchitektur an (eigene Relation an `trip_item_id`, 1:1 current snapshot). Dieser Nachtrag ändert ADR-0168 nicht: S5-A bleibt der In-Memory-Vertrag. Die Repository-Übersetzung ist ADR-0198.
+
+**Nachtrag 29. August 2026 – S5-B Production-Apply.** Production-Migration `20260829140000_trip_item_commercial_provenance` ist angewendet und verifiziert. Ältere Statuszeilen „nicht auf Production angewendet“ sind Pre-Apply-Evidence. Runtime-Write-Pfad/Principal bleibt unallokiert. Kein realer Snapshot. TW-8 bleibt geschlossen.
 
 ---
 
@@ -5152,7 +5154,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 ## ADR-0197 – Provider S5-B nimmt Option C als Zielarchitektur an
 
 **Datum:** 29. August 2026  
-**Status:** Zielarchitektur angenommen über PR #180 und auf `main` integriert. Persistenzübersetzung ist ADR-0198 / Draft-PR #182: Schema + RLS + Write-Authority im Repository, **keine Production-Anwendung**, kein TW-8. Volltext: `docs/ADR_0197_PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE.md`. Vertrag: `docs/PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE_2026-08-29.md`.
+**Status:** Zielarchitektur angenommen über PR #180 und auf `main` integriert. Persistenzübersetzung ADR-0198 ist integriert; Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write unallokiert. Kein TW-8. Volltext: `docs/ADR_0197_PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE.md`. Vertrag: `docs/PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE_2026-08-29.md`.
 
 **Entscheidung:**
 
@@ -5182,7 +5184,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 ## ADR-0198 – Provider S5-B persistiert Option C mit privilegierter Write-Authority
 
 **Datum:** 29. August 2026  
-**Status:** Implementiert im Repository auf Draft-PR #182. **Keine Production-Anwendung. Kein TW-8. Kein Ready/Merge durch den Autor.** Volltext: `docs/ADR_0198_PROVIDER_S5B_COMMERCIAL_PROVENANCE_PERSISTENCE.md`.
+**Status:** Integriert über PR #182 / Recovery #183. Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. **Kein TW-8.** Volltext: `docs/ADR_0198_PROVIDER_S5B_COMMERCIAL_PROVENANCE_PERSISTENCE.md`.
 
 **Entscheidung:**
 
@@ -5195,11 +5197,42 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 7. Guard-Matrix schließt Stay/Activity/Note und Transfer/Rental-Providerfelder; Flight-Guard bleibt.
 8. Kein Backfill, keine History, keine Provider-Aktivierung.
 
-**Kontext:** PO-Gate `S5B-G0-PO-MIG-01` ist freigegeben. Production-Apply bleibt TL-kontrolliert nach Exact-Head-PASS.
+**Kontext:** PO-Gate `S5B-G0-PO-MIG-01` ist freigegeben. Der Production-Apply ist ausgeführt und verifiziert; ältere Sätze „Apply bleibt TL-kontrolliert nach PASS“ sind Pre-Apply-Evidence.
 
 **Alternativen:** Additive Spalten; EXECUTE an `authenticated`; Service Role.
 
-**Konsequenzen:** Repository-Wahrheit ≠ Production-Wahrheit, bis der Technical Lead anwendet. TW-8 bleibt geschlossen.
+**Konsequenzen:** Schema liegt auf Production. Runtime-Write-Pfad bleibt geschlossen. TW-8 bleibt geschlossen.
+
+**Nachtrag, 29. August 2026 – Production-Apply verifiziert.** Evidence: `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`. Merge `3b684f64`. Ältere Statuszeilen „Keine Production-Anwendung / Repository-Wahrheit ≠ Production-Wahrheit“ sind historische Pre-Apply-Evidence.
+
+---
+
+## ADR-0199 – Provider Adapter Core Foundation
+
+**Datum:** 29. August 2026  
+**Status:** Self-expiring. Solange Draft-PR #187 offen: implementiert im Repository, kein Ready, kein Merge, keine Provideraktivierung. Sobald gemergt: Kern integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+
+**Entscheidung:**
+
+1. Provider-neutraler Server-Transport-Kern unter `lib/server/providers/core/`.
+2. Trust nur über Code-Pfad; keine forgebaren Trust-Flags.
+3. Secrets nur am injizierten HTTP-Client, nie in Errors/Events/Metadaten.
+4. Timeout/Retry/Rate-Limit explizit, begrenzt, fail-closed; Tests vollständig offline.
+5. Kein Commercial-Provenance-Mint, kein `live_api` / `persisted_snapshot`.
+6. `lib/provider-ops` bleibt Inbound; dieser Kern ist Outbound. Nicht vermischen.
+7. Skyscanner-Fixture-Foundation bleibt unverändert fixture-only.
+
+**Kontext:** Gemeinsame Transportgrenze vor einem späteren Skyscanner-Server-Adapter. Create/Poll, Credentials, S5-B-Runtime und TW-8 bleiben ausserhalb.
+
+**Alternativen:** Pro-Adapter-fetch; Outbound in `lib/provider-ops` ziehen; Create/Poll in denselben Slice.
+
+**Konsequenzen:** Nächster zulässiger Folgeslice erst nach Merge und neuem versionierten Auftrag. Autor setzt kein Ready/Merge.
+
+**Nachtrag, 29. August 2026 – Review 5058500841 / 5463627429:** Body-Limit wird während des Stream-Reads erzwungen; `Content-Length` ist nur Early-Reject. `retry_exhausted` nur, wenn der aktuelle Fehler retrybar ist und ein Retry wirklich benutzt wurde; ein späteres `401` oder disabled-429 bleibt die eigene Kind. Observer-Throws werden geschluckt. Ungültiges/werfendes Preflight ist fail-closed `rate_limited` ohne HTTP und ohne Exception-Leak. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt einen lokalen Stub, ohne Stub scheitert der Alternativimport. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+
+**Nachtrag, 29. August 2026 – Review 5463847278:** `requestIdHeaderName` muss ein gültiger, nicht-sensitiver HTTP-Header-Name sein; bekannte Secret-Header sind `invalid_configuration` vor jedem HTTP-Call. Retry-/Retry-After-Semantik gehört nur zu `ProviderRetryPolicy`; Duplikate auf `ProviderRateLimitPolicy` werden abgelehnt. Preflight-`retryAfterMs` nur `null` oder endlich/nichtnegativ/bounded, sonst fail-closed ohne Raw-Leak. PR #196 Governance bleibt erhalten; globale Current-State-Flächen sind self-expiring. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+
+**Nachtrag, 29. August 2026 – Review 5463879179:** Die Request-ID-Quelle wird auch gegen `additionalSensitiveHeaderNames` des konkreten Requests geprüft. Konflikt ist `invalid_request` vor HTTP (Request-Ownership). Default-Secret-Liste bleibt `invalid_configuration` bei Executor-Create. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
 
 ---
 

@@ -1,9 +1,14 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
+Status: **Self-expiring für PR #187 / ADR-0199. Solange #187 offen: Draft auf `feat/provider-adapter-core-foundation-2026-08-29`, STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von `5463879179` (kein Ready, kein Merge, kein Folgeslice). Sobald #187 gemergt: Provider-Adapter-Core integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck, nicht automatisch Skyscanner-Server-Transport. Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck / Continuity Gate (PR #196). `main` live prüfen, keine eingefrorene SHA. S5-B Production-Migration `20260829140000` angewendet/verifiziert; Runtime-Write unallokiert; TW-8 geschlossen. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
+
+Verbindliche Current-Governance (PR #196, auf `main`; Live-Zustand prüfen):
+
+- `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
+- `docs/CHATGPT_TL_BINDING_SLICE_PRECHECK_CONTINUITY_CHECKPOINT_2026-08-29.md`
 
 Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
 
@@ -102,7 +107,7 @@ Zuerst vollständig lesen:
 25. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 26. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
 
-Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. S5-B Zielarchitektur Option C ist über PR #180 angenommen (ADR-0197). Persistenz ist Draft-PR #182 / ADR-0198 im Repository, nicht auf Production. TW-8 bleibt geschlossen. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
+Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. S5-B Zielarchitektur Option C ist über PR #180 angenommen (ADR-0197). S5-B-Persistenz ist integriert; Production-Migration `20260829140000_trip_item_commercial_provenance` ist angewendet und verifiziert. Runtime-Write-Pfad/Principal bleibt unallokiert. Kein realer Provider-Snapshot. TW-8 bleibt geschlossen. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
@@ -130,7 +135,7 @@ Historischer vorheriger Chat-Übergabepunkt (PR #141, bleibt Evidence):
 - Post-Merge GitHub Actions Run `33182424045`: **SUCCESS** auf exakt diesem `main`
 - Post-Merge Vercel Production `dpl_BmpsTYQC3ANoMT1z33pjMVYws2nS`: **READY** auf exakt diesem `main`
 - Branch Protection: unverändert `protected=false`
-- S5-B Persistenz: Repository Draft-PR #182 / ADR-0198; TL-182 Review-Fixes im Repository; Production-Write-Pfad nicht allokiert; **nicht** auf Production angewendet; TW-8 bleibt geschlossen
+- S5-B Persistenz: Repository Draft-PR #182 / ADR-0198; TL-182 Review-Fixes im Repository; Production-Write-Pfad nicht allokiert; **nicht** auf Production angewendet; TW-8 bleibt geschlossen. **Diese Zeile ist historische Pre-Apply-Evidence des PR-#141-Übergabepunkts.** Später: Production-Migration `20260829140000` angewendet und verifiziert.
 - Checkpoint: `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 
 Historischer vorheriger Chat-Übergabepunkt (PR #138, bleibt Evidence):
@@ -247,7 +252,7 @@ Nach AP-5 bleiben gemäß kanonischem Account-Plan AP-6a/6b, AP-7, AP-8, AP-9, A
 - S5-A integriert
 - S5-B Gate 0 integriert (PR #141, docs/readiness only)
 - S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180)
-- S5-B Persistenz im Repository (ADR-0198 / Draft-PR #182); Production-Apply und TW-8 extra gegatet
+- S5-B Persistenz integriert (ADR-0198); Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert; Runtime-Write-Pfad/Principal nicht allokiert; kein realer Snapshot; TW-8 bleibt geschlossen
 - keine echten Provider/Secrets/Verträge/paid calls aktiviert
 - TW-8 bleibt geschlossen
 
@@ -325,11 +330,11 @@ Nach Live-Rekonstruktion neu einordnen:
 
 - `main` Branch Protection zuletzt `protected=false`
 - Issue #20: Future Collaboration für Paare/Familien/Gruppen
-- Issue #109: Country-Alias-Ranking – **aktueller Draft-PR #173**, nicht gemergt; TL-Fund `5057889604` im selben Slice
+- Issue #109: Country-Alias-Ranking – **CLOSED / COMPLETED**; ältere „aktueller Draft-PR #173“-Sätze sind Pre-Recovery-Evidence
 - Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe, nicht gestartet
 - Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
 - `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
-- Provider S5-B Gate 0 integriert (docs/readiness); Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz Draft-PR #182 / ADR-0198, nicht Production; TW-8 geschlossen
+- Provider S5-B Gate 0 integriert (docs/readiness); Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz integriert; Production-Migration `20260829140000` angewendet/verifiziert; Runtime-Write unallokiert; TW-8 geschlossen
 - TW-8 gated
 - TW-9 nicht automatisch starten
 - AP-6a Gate 0 ist auf der Baseline integriert; kein automatisches AP-6a-Runtime / AP-6b / AP-7
@@ -394,7 +399,11 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein automatischer Produkt-Slice. Solange PR #180 offen/unmerged: unabhängiger Technical-Lead Exact-Head-Review der Option-C-Zielarchitektur; nach Merge ist diese Review-Klausel historisch. Autor-Agent setzt kein Ready, kein Merge, kein S5-B-Runtime, kein AP-6a-Runtime, kein AP-6b, kein AP-7, keine Vercel-Setting-Mutation. AP-6a Gate 0 / PR #166 ist integriert; `/privacy`/`terms` Runtime bleiben Legal-/PO-Content-gegatet.
+Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck / Continuity Gate (PR #196). `main` live prüfen, nicht als eingefrorene SHA. Live-Rekonstruktion zuerst. Kein automatischer Produkt-Slice.
+
+**Self-expiring PR #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463879179` (custom-sensitive request-ID). Autor-Agent setzt kein Ready, kein Merge, keinen Folgeslice. Sobald gemergt → Core integriert; erster nächster Schritt ist Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Keine erfundene Merge-SHA.
+
+PR #180 / #182 / #183 / #173 / #109 sind integriert bzw. CLOSED. Ältere „#180 offen / #173 aktueller Slice / S5-B Production-Apply pending“-Sätze in diesem Handoff sind historische Pre-Apply-/Pre-Recovery-Evidence. S5-B Production-Migration `20260829140000` ist angewendet und verifiziert; Runtime-Write/Snapshot und TW-8 bleiben gegatet. AP-6a Gate 0 / PR #166 ist integriert; `/privacy`/`terms` Runtime bleiben Legal-/PO-Content-gegatet.
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
@@ -404,7 +413,7 @@ Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Stand
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
-AP-5-S3–S5 und AP-6a Gate 0 sind auf der Baseline integriert. Der aktuelle Slice dieses Branches ist Draft-PR #173 / Issue #109 / TL-Fund `5057889604`. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
+AP-5-S3–S5 und AP-6a Gate 0 sind integriert. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
 
 Nicht automatisch starten:
 

@@ -164,8 +164,7 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz im Repository Draft-PR #182 / ADR-0198, nicht auf Production; TW-8 geschlossen
-- Parallel, nicht-autoritativ, kein globaler Current-Owner: Draft-PR #189 Viator Activities contract evidence — nur `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_*` / Adapter-Contract. Autoritative Current-State bleibt `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` auf `origin/main`, nicht dieser PR.
+- S5-B Persistenz integriert; Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Provider-Snapshot. TW-8 geschlossen
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -294,11 +293,13 @@ Abgeschlossen:
 44. ✅ AP-5-S5 Honest Current Session / Device View / PR #164 – integriert auf `main @ 765fc547`
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
-47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
+47. ✅ Provider S5-B Persistence / PR #182 + Recovery #183 – Schema + RLS + Write-Authority integriert (ADR-0198). Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Ältere „#182 offen / Production-Apply pending“-Sätze sind Pre-Apply-Evidence.
+48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review-Fixes aus `5463879179` im Repository. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Draft-PR #182.** Unabhängiger Technical-Lead Exact-Head-Re-Review der S5-B-Persistenz nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
+- **Self-expiring #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463879179`. Nach Merge → Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck (PR #196). Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
+- S5-B Persistenz und Production-Migration sind integriert/verifiziert. Offener Residual: Runtime-Write-Pfad/Principal und realer Snapshot; TW-8 bleibt geschlossen. PR #180/#182/#183 sind historische Integrations-Evidence, kein offener Apply-Auftrag.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
@@ -307,7 +308,7 @@ Nächster Schritt:
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
-- Provider S5-B Production-Apply und realer Snapshot (Repository-Persistenz ist Draft-PR #182; TW-8 bleibt geschlossen)
+- Provider-Runtime-Write-Pfad / echter Commercial-Provenance-Snapshot (S5-B-Persistenz und Production-Migration `20260829140000` sind angewendet; TW-8 bleibt geschlossen)
 - echte Providerphase
 - TW-8
 - TW-9
