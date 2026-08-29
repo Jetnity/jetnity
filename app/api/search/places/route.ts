@@ -11,7 +11,10 @@ import { ORT_ROLLEN, type OrtRolle } from '@/lib/places/domain'
 import { ORT_SPALTEN, ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
 import {
   ORT_ABFRAGE,
+  ORT_LAND_ALIAS_ABFRAGE,
+  landAliasNachzugNoetig,
   orteOrdnen,
+  ortLandAliasfilter,
   ortNamensfilter,
   ortSchluesselfilter,
   schluesselErgaenzungNoetig,
@@ -79,6 +82,33 @@ export async function GET(req: Request) {
 
   let orte = orteAus(zeilen)
 
+  const zeilenErgaenzen = (menge: typeof zeilen) => {
+    for (const zeile of menge) {
+      const id = (zeile as OrtZeile).id
+      if (typeof id === 'string' && !ids.has(id)) {
+        ids.add(id)
+        zeilen.push(zeile)
+      }
+    }
+  }
+
+  if (landAliasNachzugNoetig(orte, raw, rolle)) {
+    const landFilter = ortLandAliasfilter(raw)
+    if (landFilter) {
+      const laender = await lese(() =>
+        client
+          .from('places')
+          .select(ORT_SPALTEN)
+          .eq('typ', 'country')
+          .or(landFilter)
+          .limit(ORT_LAND_ALIAS_ABFRAGE),
+      )
+      if (laender.problem) return problemAntwort(laender.problem)
+      zeilenErgaenzen(laender.zeilen)
+      orte = orteAus(zeilen)
+    }
+  }
+
   if (schluesselErgaenzungNoetig(orte, raw, rolle)) {
     const schluessel = ortSchluesselfilter(raw)
     if (schluessel) {
@@ -86,13 +116,7 @@ export async function GET(req: Request) {
         client.from('places').select(ORT_SPALTEN).or(schluessel).limit(ORT_ABFRAGE),
       )
       if (extra.problem) return problemAntwort(extra.problem)
-      for (const zeile of extra.zeilen) {
-        const id = (zeile as OrtZeile).id
-        if (typeof id === 'string' && !ids.has(id)) {
-          ids.add(id)
-          zeilen.push(zeile)
-        }
-      }
+      zeilenErgaenzen(extra.zeilen)
       orte = orteAus(zeilen)
     }
   }

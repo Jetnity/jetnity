@@ -8,7 +8,15 @@ import { FLUGHAFEN_FIXTURES } from '@/lib/places/fixtures/airports'
 import { geoNamesTsvZeile, laenderAusCountryInfo, ortAusFlughafen, orteAusGeoNames } from '@/lib/places/importieren'
 import { eingabeOhneAuswahl, ortAusBestand, ORT_MELDUNG } from '@/lib/places/pruefen'
 import type { Ort } from '@/lib/places/domain'
-import { ORT_TREFFER, orteOrdnen, ortNamensfilter, ortSchluesselfilter } from '@/lib/places/suche'
+import {
+  ORT_TREFFER,
+  landAliasNachzugNoetig,
+  orteOrdnen,
+  ortLandAliasfilter,
+  ortNamensfilter,
+  ortSchluesselfilter,
+  schluesselErgaenzungNoetig,
+} from '@/lib/places/suche'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 
@@ -25,6 +33,21 @@ function bestand(): ReturnType<typeof orteAusGeoNames>['orte'] {
 }
 
 const orte = bestand()
+
+function ortFixture(teil: Partial<Ort> & Pick<Ort, 'id' | 'name' | 'typ'>): Ort {
+  return {
+    source: 'geonames',
+    sourceId: teil.id.replace(/^geonames:/, ''),
+    country: teil.country ?? 'Unknown',
+    countryCode: teil.countryCode ?? 'XX',
+    region: teil.region ?? null,
+    lat: teil.lat ?? 0,
+    lon: teil.lon ?? 0,
+    iata: teil.iata ?? null,
+    keywords: teil.keywords ?? null,
+    ...teil,
+  }
+}
 
 describe('Ortssuche', () => {
   test('Bali ist ein gültiges Reiseziel, obwohl es kein Flughafen ist', () => {
@@ -188,6 +211,217 @@ describe('Ortssuche', () => {
     const optionen = orteOrdnen([amphoe, thailand!], 'Thailand', 'ziel')
     assert.equal(optionen[0]?.id, thailand!.id)
     assert.equal(optionen.some((option) => option.id === amphoe.id), false)
+  })
+
+  test('Japan bleibt als Reiseziel vorn', () => {
+    const optionen = orteOrdnen(orte, 'Japan', 'ziel')
+    assert.equal(optionen[0]?.label, 'Japan')
+    assert.equal(optionen[0]?.typ, 'country')
+  })
+
+  test('ein offizieller Ländername mit exaktem Alias schlägt gleichnamige Städte', () => {
+    const republik = ortFixture({
+      id: 'geonames:3932488',
+      name: 'Republic of Peru',
+      typ: 'country',
+      country: 'Peru',
+      countryCode: 'PE',
+      keywords: 'Peru, Perú, Republic of Peru',
+    })
+    const stadtIllinois = ortFixture({
+      id: 'geonames:4901424',
+      name: 'Peru',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Illinois',
+    })
+    const stadtIndiana = ortFixture({
+      id: 'geonames:4924733',
+      name: 'Peru',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Indiana',
+    })
+    const optionen = orteOrdnen([stadtIllinois, stadtIndiana, republik], 'Peru', 'ziel')
+    assert.equal(optionen[0]?.id, republik.id)
+    assert.equal(optionen[0]?.typ, 'country')
+    assert.ok(optionen.some((option) => option.id === stadtIllinois.id))
+    assert.ok(optionen.some((option) => option.id === stadtIndiana.id))
+    assert.ok(optionen.length <= ORT_TREFFER)
+  })
+
+  test('China als Länder-Alias steht vor gleichnamigen Orten', () => {
+    const republik = ortFixture({
+      id: 'geonames:1814991',
+      name: 'People’s Republic of China',
+      typ: 'country',
+      country: 'China',
+      countryCode: 'CN',
+      keywords: 'China, PRC, People’s Republic of China',
+    })
+    const stadtJapan = ortFixture({
+      id: 'geonames:1864090',
+      name: 'China',
+      typ: 'city',
+      country: 'Japan',
+      countryCode: 'JP',
+      region: 'Kagoshima',
+    })
+    const stadtMexiko = ortFixture({
+      id: 'geonames:4014336',
+      name: 'China',
+      typ: 'city',
+      country: 'Mexico',
+      countryCode: 'MX',
+      region: 'Nuevo León',
+    })
+    const optionen = orteOrdnen([stadtJapan, stadtMexiko, republik], 'China', 'ziel')
+    assert.equal(optionen[0]?.id, republik.id)
+    assert.equal(optionen[0]?.typ, 'country')
+    assert.ok(optionen.some((option) => option.id === stadtJapan.id))
+  })
+
+  test('Schweiz trifft Switzerland über das Alias und schlägt Präfix-Städte', () => {
+    const land = ortFixture({
+      id: 'geonames:2658434',
+      name: 'Switzerland',
+      typ: 'country',
+      country: 'Switzerland',
+      countryCode: 'CH',
+      keywords: 'Schweiz, Suisse, Svizzera, Switzerland',
+    })
+    const praefixStadt = ortFixture({
+      id: 'geonames:956817',
+      name: 'Schweizer-Reneke',
+      typ: 'city',
+      country: 'South Africa',
+      countryCode: 'ZA',
+      region: 'North West',
+    })
+    const optionen = orteOrdnen([praefixStadt, land], 'Schweiz', 'ziel')
+    assert.equal(optionen[0]?.id, land.id)
+    assert.equal(optionen[0]?.label, 'Switzerland')
+    assert.equal(optionen[0]?.typ, 'country')
+    assert.ok(optionen.some((option) => option.id === praefixStadt.id))
+  })
+
+  test('dasselbe Alias-Ranking gilt generisch, nicht nur für einzelne Ländernamen', () => {
+    const land = ortFixture({
+      id: 'geonames:9000001',
+      name: 'Republic of Ruritania',
+      typ: 'country',
+      country: 'Ruritania',
+      countryCode: 'RR',
+      keywords: 'Ruritanien, Ruritania',
+    })
+    const stadt = ortFixture({
+      id: 'geonames:9000002',
+      name: 'Ruritanien Heights',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Ohio',
+    })
+    const optionen = orteOrdnen([stadt, land], 'Ruritanien', 'ziel')
+    assert.equal(optionen[0]?.id, land.id)
+    assert.equal(optionen[0]?.typ, 'country')
+    assert.ok(optionen.some((option) => option.id === stadt.id))
+  })
+
+  test('nur ein exaktes Länder-Alias wird angehoben, kein Keyword-Präfix', () => {
+    const land = ortFixture({
+      id: 'geonames:2658434',
+      name: 'Switzerland',
+      typ: 'country',
+      country: 'Switzerland',
+      countryCode: 'CH',
+      keywords: 'Swiss Confederation, Switzerland',
+    })
+    const stadt = ortFixture({
+      id: 'geonames:9000100',
+      name: 'Swiss',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Missouri',
+    })
+    const optionen = orteOrdnen([land, stadt], 'Swiss', 'ziel')
+    assert.equal(optionen[0]?.id, stadt.id)
+    assert.equal(optionen.some((option) => option.id === land.id), false)
+  })
+
+  test('Abreise behält Stadt- und IATA-Semantik und hebt kein Land an', () => {
+    const land = ortFixture({
+      id: 'geonames:2658434',
+      name: 'Switzerland',
+      typ: 'country',
+      country: 'Switzerland',
+      countryCode: 'CH',
+      keywords: 'Schweiz, Switzerland',
+    })
+    const optionen = orteOrdnen([...orte, land], 'Zürich', 'abreise')
+    assert.equal(optionen.some((option) => option.typ === 'country'), false)
+    assert.equal(optionen[0]?.id, 'geonames:2657896')
+    assert.ok(optionen.some((option) => option.id === 'airport:ZRH'))
+    assert.equal(orteOrdnen([...orte, land], 'ZRH', 'abreise')[0]?.id, 'airport:ZRH')
+    assert.equal(landAliasNachzugNoetig([land], 'Schweiz', 'abreise'), false)
+  })
+
+  test('schwache, fachfremde Keyword-Treffer bleiben ausgefiltert', () => {
+    const land = ortFixture({
+      id: 'geonames:1814991',
+      name: 'People’s Republic of China',
+      typ: 'country',
+      country: 'China',
+      countryCode: 'CN',
+      keywords: 'China',
+    })
+    const rauschen = Array.from({ length: 8 }, (_, index) =>
+      ortFixture({
+        id: `geonames:${9100000 + index}`,
+        name: `China Township ${index + 1}`,
+        typ: 'city',
+        country: 'United States',
+        countryCode: 'US',
+        region: 'Michigan',
+        keywords: 'China',
+      }),
+    )
+    const optionen = orteOrdnen([land, ...rauschen], 'China', 'ziel')
+    assert.equal(optionen[0]?.id, land.id)
+    assert.equal(optionen.some((option) => option.label.includes('Township')), false)
+    assert.ok(optionen.length <= ORT_TREFFER)
+  })
+
+  test('der Länder-Alias-Nachzug läuft, wenn Namens-Städte das Land verdecken', () => {
+    const staedte = Array.from({ length: 4 }, (_, index) =>
+      ortFixture({
+        id: `geonames:${9200000 + index}`,
+        name: 'Peru',
+        typ: 'city',
+        country: 'United States',
+        countryCode: 'US',
+        region: `State ${index + 1}`,
+      }),
+    )
+    assert.equal(schluesselErgaenzungNoetig(staedte, 'Peru', 'ziel'), false)
+    assert.equal(landAliasNachzugNoetig(staedte, 'Peru', 'ziel'), true)
+    const republik = ortFixture({
+      id: 'geonames:3932488',
+      name: 'Republic of Peru',
+      typ: 'country',
+      country: 'Peru',
+      countryCode: 'PE',
+      keywords: 'Peru',
+    })
+    assert.equal(landAliasNachzugNoetig([...staedte, republik], 'Peru', 'ziel'), false)
+    assert.equal(landAliasNachzugNoetig(orte, 'Thailand', 'ziel'), false)
+    const filter = ortLandAliasfilter('Schweiz')
+    assert.ok(filter)
+    assert.equal(filter.includes('keywords.ilike.'), true)
+    assert.equal(filter.includes('name.ilike.Schweiz%'), true)
   })
 })
 
