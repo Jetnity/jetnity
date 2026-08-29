@@ -1,26 +1,26 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Recovery PR #173 GEMERGT auf `main @ ade03511`. Live Production API smoke PASS. Issue #109 CLOSED / COMPLETED. Kein Issue #110. Kein automatischer Folgeslice. Live-Evidence immer live prüfen.**
+Status: **TL-Continuity-Fund `5057974629`. Search #109 CLOSED / COMPLETED. PrivacyBee #169 CLOSED / COMPLETED. `main @ ade03511`. Draft-PR #178 Docs-only, nicht integriert. Kein aktiver Runtime-Agent. Kein #110. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Visitor Search Country Alias Post-Merge Smoke
+## Aktueller Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
 
-1. **Arbeitsblock / Ziel:** Nach Technical-Lead-Merge von PR #173 die verbindliche Live-Production-API-Abnahme für Issue #109 dokumentieren. Kein Runtime-Fix in diesem Stamp.
-2. **Authoring-Branch / PR:** Docs-Nachzug auf `fix/visitor-search-country-alias-production-recovery-2026-08-29` nach Merge. Runtime ist bereits auf `main @ ade03511`.
-3. **Status:** **PRODUCTION API SMOKE PASS / ISSUE #109 CLOSED COMPLETED**. Docs-Nachzug Draft-PR #178. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
-4. **Bereits umgesetzt:** Live `GET /api/search/places` Country-first für Peru/China/Schweiz; Congo CD/CG disambiguiert; LI/AS/SI vollständig; Kokos/Illes/Feroeer; Paris ohne Country-Zeile; abreise stadt-/IATA-geführt.
+1. **Arbeitsblock / Ziel:** Continuity-Wahrheit auf den live verifizierten Stand bringen: #109 CLOSED/completed, #169 CLOSED/completed, versionierter New-Chat-Checkpoint. Kein Runtime-Fix.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29` / Draft-PR #178. **#178 ist nicht integriert.**
+3. **Status:** **DOCS-ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Kein aktiver Runtime-Agent.
+4. **Bereits umgesetzt:** Search-Runtime auf `main @ ade03511`; Live API smoke PASS; #109/#169 CLOSED; New-Chat-Checkpoint `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
 5. **Cursor-Agent:** `Visitor search correctness 1`. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`.
 6. **Live-`main` / Baseline bei diesem Stamp:** `ade03511341433d8d0b6f09b8d8342890381d3d5`.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein Import-Rewrite, keine Supabase-Mutation.
-8. **Kosten / Provider / Secrets:** keine laufenden. Extra-Read bleibt selektiv.
-9. **Bekannte Risiken / Review-Funde:** Preview-GET/SSO; kein Mobile-Safari-Re-Run; kein Browser-Klick-Beweis; Production-keywords haben weiter trailing Whitespace (Retrieval fängt das).
-10. **Offene Nutzerentscheidungen / Freigaben:** keine für #109. Residual P2 Mobile Safari für den nächsten Search-/Homepage-UX-Slice.
-11. **Exakter nächster Schritt:** Unabhängiger TL-Review von Docs-PR #178, danach Binding Build Order prüfen. Kein #110.
-12. **Zuerst lesen:** `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md`, ADR-0196.
+8. **Kosten / Provider / Secrets:** 0. PrivacyBee nicht aktiviert. Bestehendes PO-Konto nur als Tatsache ohne Secrets genannt.
+9. **Bekannte Risiken / Review-Funde:** Preview-SSO; Mobile-Safari Residual P2; `main` `protected=false`; historische offene PRs nur live behandeln.
+10. **Offene Nutzerentscheidungen / Freigaben:** AP-7-S2 PO-Gate; AP-6a Legal-Runtime geparkt. Ready/Merge von #178 nur Technical Lead.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #178. Kein Ready. Kein Merge. Kein #110.
+12. **Zuerst lesen:** `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
 
 ## Historischer Arbeitsblock – Visitor Search Country Alias Ranking
 

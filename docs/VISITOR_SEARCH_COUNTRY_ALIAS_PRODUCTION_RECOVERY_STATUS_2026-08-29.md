@@ -1,7 +1,7 @@
 # Jetnity – Visitor Search Country Alias Production Recovery – Status
 
 Stand: 29. August 2026  
-Status: **PR #173 GEMERGT / LIVE PRODUCTION API SMOKE PASS / ISSUE #109 CLOSED COMPLETED**  
+Status: **PR #173 GEMERGT / LIVE PRODUCTION API SMOKE PASS / ISSUE #109 CLOSED COMPLETED / DOCS-PR #178 NICHT INTEGRIERT**  
 Cursor-Agent: **`Visitor search correctness 1`**  
 Cursor-Session: `bc-020d3296-0cd7-4e36-8373-47578af701ce`  
 Merged PR: #173  
@@ -33,4 +33,4 @@ Keine laufenden.
 
 ## Nächster Schritt
 
-Kein Folgeslice. Kein #110. Mobile-Safari-Real-Device bleibt Residual P2. Docs-PR #178 bleibt Draft bis TL-Review.
+Kein Folgeslice. Kein #110. Mobile-Safari-Real-Device bleibt Residual P2. Draft-PR #178 bleibt Docs-only und ist nicht integriert, bis Technical Lead reviewed/merged.

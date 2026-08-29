@@ -3,7 +3,7 @@
 Stand: 29. August 2026  
 Autor-Agent: **`Visitor search correctness 1`**  
 Session: `bc-020d3296-0cd7-4e36-8373-47578af701ce`  
-Typ: adversarial Self-Review plus Post-Merge-Smoke, **kein** Close von Issue #109
+Typ: adversarial Self-Review plus Post-Merge-Smoke; Issue #109 wurde vom Technical Lead geschlossen, nicht vom Autor
 
 | Frage | Ergebnis |
 | --- | --- |
