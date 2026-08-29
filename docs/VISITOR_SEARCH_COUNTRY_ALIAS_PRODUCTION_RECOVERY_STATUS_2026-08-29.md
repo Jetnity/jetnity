@@ -20,6 +20,10 @@ Selektive Exact-Filter (`%, Token` / `%,Token`) trafen kein End-Token mit traili
 3. 2-Zeichen- und Shared-Alias-Tests bleiben.
 4. Neue Retrieval-Regression: letzter Alias-Token mit trailing Whitespace.
 
+## Tests / Evidence
+
+Lokal **2589/2589**, Typecheck, Lint 0/135, Hygiene, Production-Build. Dieser Stamp erzeugt einen neuen Head.
+
 ## Kosten
 
 Keine laufenden. Extra-Read bleibt selektiv.
