@@ -1,9 +1,9 @@
 # Jetnity – Active Work Status
 
 Stand: 30. August 2026  
-Status: **TA-DL1 IN ARBEIT AUF DRAFT-PR #227 / KEIN READY / KEIN MERGE**
+Status: **TA-DL1 LOKAL GATED / DRAFT-PR #227 / STOP FÜR TECHNICAL-LEAD-REVIEW**
 
-> Diese Datei ist der Live-Handoff des Feature-Branch. Globale Continuity auf `main` bleibt Technical-Lead-owned.
+> Feature-Branch-Live-Handoff. Globale Continuity auf `main` bleibt Technical-Lead-owned.
 
 ## 1. Aktueller Arbeitsblock
 
@@ -17,28 +17,23 @@ Status: **TA-DL1 IN ARBEIT AUF DRAFT-PR #227 / KEIN READY / KEIN MERGE**
 - Cursor-Agent: `Account plattform audit vorbereitung 19`
 - Cloud-Run: https://cursor.com/agents/bc-23223c5d-1f12-447a-b02b-26054bfc666e`
 
-## 2. Bereits umgesetzt in diesem Branch
+## 2. Bereits umgesetzt
 
-- reiner Kalendertags-Helper ohne persistierten Status
-- Account-Registry-Darstellung je Dokument
-- Reisevorbereitung-Darstellung je Dokument
-- focused Tests und Slice-Docs
+- Kalendertags-Helper ohne persistierten Status
+- Account- und Reisevorbereitung-Darstellung je Dokument
+- focused Tests, ADR-0202, Handoff, Self-Review
+- lokale Gates: 2738/2738 Tests, Typecheck, Lint 0, Hygiene, Production-Build
 
 ## 3. Gerade offen
 
-- lokale Gates und Exact-Head CI/Vercel-Evidence
+- Exact-Head CI/Vercel-Evidence am finalen Push-Head
 - unabhängiger Technical-Lead-Review
-- kein Folgeslice
+- kein Folgeslice, kein Ready, kein Merge
 
 ## 4. Hard non-scope bleibt
 
 Keine Migration/Schema/RLS/Grant/Auth/MFA/AAL/Supabase-Mutation, kein Service Role, keine Credential-Wahl, keine Visa-/Einreise-Inferenz, kein Migration-History-Repair.
 
-## 5. Letzter integrierter Runtime-`main`
+## 5. Exakter nächster Schritt
 
-TA-DL1 sitzt auf Baseline `0ac7296fbd9e348b05a30b4c43cd5fe1815e24d9`.  
-Der letzte post-merge verifizierte Runtime-`main` vor diesem Slice bleibt in `docs/CHATGPT_TL_AP7_S4_POST_MERGE_CHECKPOINT_2026-08-30.md`. Dieser Branch ist nicht `main`.
-
-## 6. Exakter nächster Schritt
-
-Lokale Gates laufen lassen, Evidence persistieren, danach STOP für unabhängigen Technical-Lead-Review. Cursor markiert nicht Ready und merged nicht.
+Unabhängiger Technical-Lead-Review auf dem exact Head von Draft-PR #227. Cursor markiert nicht Ready und merged nicht.

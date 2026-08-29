@@ -77,6 +77,7 @@ describe('TA-DL1 UI-/Copy-Vertrag', () => {
     assert.equal(karte.includes('dokumentKontoAblaufText'), true)
     assert.equal(karte.includes('role="status"'), true)
     assert.equal(karte.includes('heutigesDatum'), true)
+    assert.equal(karte.includes('useSyncExternalStore'), true)
     assert.equal(karte.includes('gültig bis'), false)
     assert.equal(karte.includes('DOKUMENT_LEBENSZYKLUS_COPY.kontoHinweis'), true)
   })

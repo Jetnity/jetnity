@@ -109,8 +109,8 @@ export function dokumentAblaufGegenReise(
   return { art: 'expires_on_or_after_trip_end', expiresOn: ablauf, tripStart: start, tripEnd: ende }
 }
 
-export function dokumenteAblaufGegenReise(
-  documents: readonly { expiresOn?: unknown }[],
+export function dokumenteAblaufGegenReise<T extends { expiresOn?: unknown }>(
+  documents: readonly T[],
   tripStart: unknown,
   tripEnd: unknown,
 ): DokumentReiseAblauf[] {
@@ -131,6 +131,7 @@ export function dokumentReiseAblaufText(lage: DokumentReiseAblauf): string {
   if (lage.art === 'expires_before_trip_start') return DOKUMENT_LEBENSZYKLUS_COPY.reiseVorBeginn
   if (lage.art === 'expires_during_trip') return DOKUMENT_LEBENSZYKLUS_COPY.reiseWaehrend
   if (lage.art === 'expires_on_or_after_trip_end') return DOKUMENT_LEBENSZYKLUS_COPY.reiseNichtVorEnde
+  if (lage.art !== 'unknown') return DOKUMENT_LEBENSZYKLUS_COPY.reiseFehlt
   if (lage.grund === 'expiry_invalid') return DOKUMENT_LEBENSZYKLUS_COPY.reiseUngueltig
   if (lage.grund === 'trip_dates_incomplete' || lage.grund === 'trip_dates_invalid') {
     return DOKUMENT_LEBENSZYKLUS_COPY.reiseOhneZeitraum

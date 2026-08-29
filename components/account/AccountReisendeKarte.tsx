@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, useTransition } from 'react'
+import { useState, useSyncExternalStore, useTransition } from 'react'
 
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { REGISTRY_COPY, REGISTRY_DOKUMENT_TYP_LABEL } from '@/lib/traveller/account-registry-copy'
@@ -46,6 +46,18 @@ const hauptAktion =
 const gefahrAktion =
   'inline-flex min-h-11 items-center justify-center rounded-full border border-red-200 bg-red-50 px-4 text-sm font-semibold text-red-800 hover:bg-red-100 disabled:opacity-60'
 
+function leseGeraeteKalendertag(): string | null {
+  return heutigesDatum()
+}
+
+function keinServerKalendertag(): string | null {
+  return null
+}
+
+function ohneKalendertagAbo(): () => void {
+  return () => {}
+}
+
 export default function AccountReisendeKarte({
   traveller,
   onStatus,
@@ -62,11 +74,7 @@ export default function AccountReisendeKarte({
   const [neueStaatsbuergerschaft, setNeueStaatsbuergerschaft] = useState('')
   const [dokument, setDokument] = useState(registryDokumentFormularAnfang)
   const [dokumentEditId, setDokumentEditId] = useState<string | null>(null)
-  const [heute, setHeute] = useState<string | null>(null)
-
-  useEffect(() => {
-    setHeute(heutigesDatum())
-  }, [])
+  const heute = useSyncExternalStore(ohneKalendertagAbo, leseGeraeteKalendertag, keinServerKalendertag)
 
   const citizenships = traveller.facts.citizenships
   const documents = traveller.facts.documents
