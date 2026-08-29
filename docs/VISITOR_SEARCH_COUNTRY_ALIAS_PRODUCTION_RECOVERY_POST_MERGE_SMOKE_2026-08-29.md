@@ -2,7 +2,7 @@
 
 Stand: 29. August 2026  
 Issue: #109  
-Merged transport: PR #173  
+Canonical PR #173; transport PR #177  
 Exact reviewed head: `d44d9a7f4c993be30834fb2e67c8487bd69f46ea`  
 Merge on `main`: `ade03511341433d8d0b6f09b8d8342890381d3d5`  
 Production deploy: GitHub deployment `6155203525` SUCCESS; Vercel `EC8WeJj3Mry1N1zSyZtz4qYpVjAL` completed  
