@@ -197,7 +197,7 @@ function erneutFuer(code: MfaStepUpFehlerCode): MfaStepUpFehler['erneut'] {
   return 'idle'
 }
 
-export function aalStufeLesen(wert: unknown): MfaAalStufe | null {
+function aalStufeLesen(wert: unknown): MfaAalStufe | null {
   if (wert === 'aal1' || wert === 'aal2') return wert
   return null
 }
