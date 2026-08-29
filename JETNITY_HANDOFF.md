@@ -1,9 +1,19 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
+Status: **Aktiver Authoring-Slice: HBX Hotels Contract Audit / Draft-PR #188 auf Baseline `main @ 69ef27b1`. Docs/evidence only. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge, kein Folgeslice. Search #109 und PrivacyBee #169 bleiben CLOSED auf älterer `main`-Evidence — live neu prüfen.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
+
+Aktueller Authoring-Slice (Draft-PR #188, self-expiring nach TL-Review/Merge; Autor setzt weder Ready noch Merge):
+
+- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`
+- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`
+- `docs/PROVIDER_HBX_HOTELS_ADAPTER_CONTRACT_2026-08-29.md`
+- `docs/PROVIDER_HBX_HOTELS_ADAPTER_FOUNDATION_TASK_PROPOSAL_2026-08-29.md`
+- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_STATUS_2026-08-29.md`
+- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_HANDOFF_2026-08-29.md`
+- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_SELF_REVIEW_2026-08-29.md`
 
 Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
 

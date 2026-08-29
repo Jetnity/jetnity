@@ -1,13 +1,32 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider S5-B Persistence Draft-PR #182 / TL-182 CHANGES REQUIRED CLOSED IN REPO / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
+Status: **HBX Hotels Contract Audit Draft-PR #188 / IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW. Baseline `main @ 69ef27b1`. Docs/evidence only. Keine Runtime, keine Keys, keine Calls, kein Mint. Kein Folgeslice.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+## Aktueller Arbeitsblock – Provider HBX Hotels Contract Audit
+
+1. **Arbeitsblock / Ziel:** Offiziellen HBX/Hotelbeds Hotels-API-Vertrag rekonstruieren und den kleinsten späteren Jetnity-`accommodations`-Adaptervertrag vorbereiten. Keine Runtime.
+2. **Authoring-Branch / PR:** `audit/provider-hbx-hotels-contract-2026-08-29` / Draft-PR #188.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**. Kein Ready, kein Merge, kein Folgeslice, kein Signup.
+4. **Bereits umgesetzt:** First-party Evidence; Mapping-Grenze Shared Core vs HBX; Fixture-/Truth-Sperre; Foundation-Task nur als Proposal.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider hbx audit 1`. Observed run title `Provider hbx audit`. Cloud-Run `https://cursor.com/agents/bc-19d3e8fb-5b5a-4723-aa08-f0dab9abd983`. Generation 1 bleibt 1.
+6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. Behind = 0. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
+8. **Kosten / Provider / Secrets:** 0. Kein Konto, kein Key, kein paid call, kein Certification-Request.
+9. **Bekannte Risiken / Review-Funde:** HBX ist Booking-API, nicht Affiliate-Redirect. Swagger S16 unlesbar. Destination/Geo und Request-Währung `unknown`. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Booking.com bleibt erster kommerzieller Hotelweg. HBX-Booking-Produkt wäre PO-Gate. Foundation-Task nicht aus #188 starten.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #188. Kein Ready. Kein Merge. Kein Folgeslice.
+12. **Zuerst lesen:** `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`, Audit, Adapter-Contract, Status, Handoff, Self-Review.
+
+## Paralleler offener Block – Provider S5-B Commercial Provenance Persistence
+
+Nicht dieser Agent. Live an Draft-PR #182 prüfen. TW-8 bleibt geschlossen. Dieser HBX-Audit startet S5-B nicht und wendet Production nicht an.
+
+## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
 2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.

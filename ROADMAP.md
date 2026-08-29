@@ -294,10 +294,12 @@ Abgeschlossen:
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
+48. 🟡 Provider HBX Hotels Contract Audit / Draft-PR #188 – docs/evidence/adapter-contract only auf Baseline `69ef27b1`. Keine Runtime, keine Keys, keine Calls, kein Mint. Self-expiring: solange #188 offen → STOP für unabhängigen Technical-Lead Exact-Head-Review; nach Merge → Evidence integriert, Foundation-Task extra gegatet. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Draft-PR #182.** Unabhängiger Technical-Lead Exact-Head-Re-Review der S5-B-Persistenz nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
+- **Draft-PR #188.** Unabhängiger Technical-Lead Exact-Head-Review des HBX-Hotels-Contract-Audits. Autor setzt kein Ready, kein Merge, keinen Foundation-Folgeslice, kein Signup.
+- **Draft-PR #182** bleibt ein paralleler Persistenz-Block. Kein Production-Apply, kein TW-8 aus #188.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
@@ -307,6 +309,7 @@ Nächster Schritt:
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
 - Provider S5-B Production-Apply und realer Snapshot (Repository-Persistenz ist Draft-PR #182; TW-8 bleibt geschlossen)
+- HBX Hotels Adapter Foundation / Signup / Certification / Live-Keys (Audit Draft-PR #188 ist nur Evidence; Proposal nicht autorisiert)
 - echte Providerphase
 - TW-8
 - TW-9

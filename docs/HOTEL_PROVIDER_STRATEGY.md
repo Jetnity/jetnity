@@ -72,3 +72,5 @@ Beispiel des gewünschten Produktverhaltens:
 Phase 3.2c bleibt provider-unabhängig. Die Nachweis-Naht ist an Ziel, Zeitraum, Belegung und Währung gebunden; die Suchanfrage wird vor grosser Allokation begrenzt. Ein echter Adapter wird erst ergänzt, wenn für einen ausgewählten Provider gültige Zugangsdaten vorliegen.
 
 **Verbindliche Reihenfolge:** Booking.com zuerst versuchen → HBX/Hotelbeds als Backup für reale Integration → Expedia Rapid später prüfen → langfristig mehrere Quellen provisionsneutral vergleichen.
+
+Contract-Evidence (29. August 2026, Draft-PR #188, nicht akzeptiert): first-party HBX Hotels API ist ein B2B-Booking-/Inventory-Stack (Availability → optional CheckRate → Booking) plus Batch-Content-API, kein belegtes Search/Look/Redirect. Details: `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`. Keine Aktivierung, keine Keys, keine Änderung dieser Reihenfolge.
