@@ -81,7 +81,7 @@ Das ist unvollständig gegenüber einem vollständigen Vendor-SDK-Dump. Es ist v
 
 ## 4. Nicht geprüft
 
-- Exact-Head CI/Vercel dieses Stamp-Commits
+- Exact-Head GitHub Actions / Vercel dieses Heads — nach Push live lesen; lokal `dfe63a32` Gates PASS
 - Live-Supabase
 - Branch Protection
 - ob Product Owner bereits ein HBX-Konto hat

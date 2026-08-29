@@ -29,6 +29,8 @@ Geliefert / nachgeführt:
 
 Nicht getan: Runtime, Shared-Core, Signup, Keys, Secrets, HTTP, Mint, Production, Ready, Merge.
 
+Lokale Exact-Head-Gates auf `dfe63a32`: `npm ci`, typecheck, lint (0 errors), test 2611/2611, production build, fünf Hygiene-Checks — PASS. Actions/Vercel live am neuen Head lesen.
+
 `origin/main` vor Handoff neu geholt: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3`. Merge-Base bleibt Task-Baseline `69ef27b1`. **Behind = 4** (Checkpoint-only, kein Datei-Overlap). Kein Rebase. Exact Head = Commit dieses Stamps; live am PR prüfen.
 
 ---

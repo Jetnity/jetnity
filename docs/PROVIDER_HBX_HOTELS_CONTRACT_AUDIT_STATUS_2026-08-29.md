@@ -74,9 +74,18 @@ HBX Hotel Booking API ist ein **B2B-Booking-/Inventory-API** mit Certification, 
 
 Keine neuen Runtime-Tests. Dieser Slice ist docs-only.
 
-Gates auf `f6cef132` sind historisch für den Stamp-Head. Exact-Head Actions/Vercel müssen nach diesem Push neu gelesen werden.
+Lokale Exact-Head-Gates auf Review-Fix `dfe63a32` (29. August 2026):
 
-Production-Build: nicht als Abschluss dieses Docs-Slice behauptet; kein Runtime-Change.
+| Gate | Ergebnis |
+| --- | --- |
+| `npm ci` | PASS |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS (0 errors; 135 vorbestehende warnings) |
+| `npm test` | PASS 2611/2611 |
+| `npm run build` | PASS |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | PASS |
+
+GitHub Actions / Vercel auf diesem Head: nach Push live lesen. Prior-Heads `68e98f7c` / `f6cef132` gelten nicht.
 
 ---
 
