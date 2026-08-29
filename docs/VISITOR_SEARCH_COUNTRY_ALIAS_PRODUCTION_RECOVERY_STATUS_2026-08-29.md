@@ -5,81 +5,37 @@ Status: **IMPLEMENTIERT / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-
 Workstream: Visitor Search correctness  
 Cursor-Agent: **`Visitor search correctness 1`**  
 Cursor-Session/Run-ID: `bc-020d3296-0cd7-4e36-8373-47578af701ce`  
-Prior session: `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`  
 Issue: [#109](https://github.com/Jetnity/jetnity/issues/109)  
-Branch: `fix/visitor-search-country-alias-production-recovery-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/173
 
-> Live-Evidence gewinnt. Dieser Status ist Authoring-/Handoff-Evidence, kein Technical-Lead-PASS. Prior PASS `5057668445` bleibt durch spätere Funds superseded. Aktueller Blocking-Fund vor diesem Stamp: `5057757711`.
+> Live-Evidence gewinnt. Authoring-Evidence, kein TL-PASS. Aktueller Fund: `5057811180`.
 
-## 1. Live-Rekonstruktion
+## Root Cause dieses Stamps
 
-| Feld | Wert |
-| --- | --- |
-| Baseline / Merge-Base | `main @ 2241e349f8b3b400963cf1de11e5a8617bdc8e44` |
-| Logical Cursor-Agent | `Visitor search correctness 1` |
-| Cursor-Run auf PR #173 | https://cursor.com/agents/bc-020d3296-0cd7-4e36-8373-47578af701ce |
-| Issue #109 | OPEN |
-| Draft-PR | #173, bleibt Draft |
-| Unmittelbarer TL-Fund | `5057757711` – kurze Exact-Aliase dürfen nicht hinter Limit-12-Substring-Nachzug verloren gehen |
+Der Universum-Scan (`typ = country`, leer gefiltert, Limit 500) bei jeder `ziel`-Query überträgt in Production ~240 Länderzeilen (~207 KB Keywords) auch für `Paris`. Exact-Vollständigkeit war damit erkauft, der Hot Path nicht.
 
-## 2. Root Cause
+## Was jetzt gilt
 
-1. Import-Keyword-Stapel liess Gleichnam-Städte im Score gewinnen. Ordinale Erstplatzierung schliesst das.
-2. Geteilte Aliase wurden als ununterscheidbare `Land`-Zeilen gezeigt. Kanonischer Name + Code disambiguieren.
-3. **`5057757711`:** Der Länder-Nachzug nutzte `keywords.ilike.%token%` mit Limit 12. Kurze Exact-Tokens haben in Production weit mehr als 12 Teilstring-Kandidaten. Exact-Länderzeilen sind dann nicht garantiert in der geholten Menge, bevor Ranking überhaupt läuft.
+1. Ordinale Exact-Alias-Erstplatzierung, Alias-Label, Shared-Alias-Disambiguierung, Typ/ARIA unverändert.
+2. Länder-Nachzug für `ziel` bleibt an, damit geteilte Aliase vollständig sind.
+3. Der Read ist selektiv: Exact-Name oder Exact-Komma-Token. Kein Substring-`ilike %token%`, kein leerer Universum-Scan.
+4. `ORT_LAND_UNIVERSUM = 500` ist Sicherheitskappe. Truncation nur, wenn >500 Länder dasselbe Exact-Token teilen.
+5. Tests: 2-Zeichen + >12 Substring-Lärm bleibt grün; normale Stadt-Query überträgt 0 Universum-Zeilen.
 
-## 3. Was dieser Recovery geliefert hat
+## Tests / Evidence
 
-1. Ordinale Erstplatzierung für exakte Länder-Aliase bei `ziel`.
-2. Alias als Label; Place-ID kanonisch; Typ-Kontext und Shared-Alias-Disambiguierung.
-3. Länder-Nachzug liest das typ-begrenzte Universum (`ORT_LAND_UNIVERSUM = 500`), ohne Substring-Filter. `abreise` holt das Universum nicht.
-4. Retrieval-Invariante: neutrales 2-Zeichen-Alias hinter >12 Substring-Lärm, beide Exact-Länder bleiben vor Nicht-Land-Lärm.
-5. Route-Lauf, Keyword-Normalisierung, keine Allowlist.
+Siehe Local-Evidence-Datei. Dieser Stamp erzeugt einen neuen Head.
 
-Nicht geliefert: UI-Redesign, Geocoder, Import-Mutation, hartcodierte Tokens, Issue #110.
+## Kosten
 
-## 4. Tests / Evidence
+Keine laufenden Kosten. Extra-Read: eine gefilterte Länder-Selektion, typischerweise 0–wenige Zeilen, nicht 240.
 
-Siehe `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
+## Residuals
 
-| Lauf | Ergebnis |
-| --- | --- |
-| Gezielte Ortssuche + Route-Lauf + Suchliste | **41/41 pass** |
-| `npm test` / Typecheck / Lint / Hygiene / Build | **2587/2587**, typecheck pass, lint 0/135, hygiene pass, Production-Build pass |
-| Browser / Real-Device / Mobile Safari | **nicht gelaufen** |
-| Exact-Head CI / Preview | dieser Stamp erzeugt einen neueren Head |
+- Preview-GET kann SSO bleiben. Mobile Safari nicht gelaufen.
+- Keyword-Abstand muss zum Import (`token, token`) passen; beide Komma-Varianten sind abgedeckt.
+- `main` `protected=false`. Self-Review ist kein PASS.
 
-## 5. DB / RLS / Production-Grenze
+## Nächster Schritt
 
-Keine Migration. Kein RLS-/Auth-Write. Keine Supabase-Mutation. `public.places` nur gelesen.
-
-## 6. Kosten / Provider / Secrets
-
-Keine neuen laufenden Kosten, kein Provider, keine Secrets. Zusätzliche Read-Kosten: eine kompakte `typ = country`-Selektion bis 500 Zeilen pro Zielsuche, die den Nachzug braucht. Bounded, nicht paid.
-
-## 7. Residuals / Risiken
-
-- Preview-GET kann SSO-geschützt bleiben.
-- `ORT_LAND_UNIVERSUM` muss ≥ der Länderzahl in `public.places` bleiben. Wächst der Bestand darüber, wäre Truncation wieder möglich; das ist dokumentiert, nicht versteckt.
-- Kein Mobile-Safari-Beweis.
-- `main` `protected=false`.
-- Agent-Self-Review ist kein PASS.
-
-## 8. Offene Freigaben
-
-Ready/Merge nur durch unabhängigen Technical Lead. Kein Issue #110.
-
-## 9. Exakter nächster Schritt
-
-Unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #173 auf dem neuen Head. Kein Ready. Kein Merge.
-
-## 10. Zuerst lesen
-
-1. Task
-2. dieser Status
-3. Handoff
-4. Self-Review
-5. ADR-0196 Nachträge
-6. `docs/ORTE.md`
-7. TL-Fund `5057757711`
+Unabhängiger TL Exact-Head-Re-Review. Kein Ready. Kein Merge. Kein #110.

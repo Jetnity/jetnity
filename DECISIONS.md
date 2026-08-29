@@ -5127,7 +5127,11 @@ Tests verpassten das, weil sie `orteOrdnen()` mit Städten ohne Import-Keywords 
 
 **Nachtrag 29. August 2026 – kurze Exact-Aliase und Retrieval-Vollständigkeit (TL `5057757711`):**
 
-Ein Substring-Nachzug `keywords.ilike.%token%` mit Limit 12 kann kurze Exact-Aliase verlieren. Live Production enthält mehrfach vergebene Kurz-Tokens; Teilstring-Kandidaten liegen weit über 12. Der Nachzug für `ziel` liest deshalb das typ-begrenzte Länder-Universum ohne Substring-Filter, Limit `ORT_LAND_UNIVERSUM` (500). Das ist eine bounded Read-Kosten: eine zusätzliche kompakte Länder-Selektion pro Zielsuche, kein Provider, keine Migration. Solange das Limit ≥ `count(*) where typ = country` bleibt, kann ein vorhandenes Exact-Alias nicht still abgeschnitten werden. Ranking, Alias-Anzeige, Shared-Alias-Disambiguierung und `abreise` bleiben unverändert. Kein Token-/Länder-Allowlist.
+Ein Substring-Nachzug `keywords.ilike.%token%` mit Limit 12 kann kurze Exact-Aliase verlieren. Live Production enthält mehrfach vergebene Kurz-Tokens; Teilstring-Kandidaten liegen weit über 12.
+
+**Nachtrag 29. August 2026 – kein Universum-Transfer auf dem Hot Path (TL `5057811180`):**
+
+Den gesamten `typ = country`-Bestand bei jeder Zielsuche zu lesen (240 Zeilen, allein Keywords ~207 KB) belastet normale Queries wie `Paris`. Der Nachzug bleibt für `ziel` aktiv, damit geteilte Aliase vollständig sind, überträgt aber nur Exact-Name- oder Exact-Komma-Token-Treffer. Limit 500 ist Sicherheitskappe, kein Universum-Scan. Truncation wäre nur möglich, wenn mehr Länder dasselbe Exact-Token teilen als 500. Kein Provider, keine Migration, keine Allowlist. `abreise`, Alias-Anzeige und Shared-Alias-Disambiguierung unverändert.
 
 **Nachtrag 29. August 2026 – mehrdeutige exakte Länder-Aliase (TL `5057687985`):**
 

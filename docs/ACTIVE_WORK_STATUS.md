@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109 / TL-Fund `5057757711`. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349`. Live-Evidence immer live prüfen.**
+Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109 / TL-Fund `5057811180`. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -9,18 +9,18 @@ Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Iss
 
 ## Aktueller Arbeitsblock – Visitor Search Country Alias Production Recovery
 
-1. **Arbeitsblock / Ziel:** Immediate Post-Merge-P1-Recovery desselben #109-Slices. Aktueller TL-Fund `5057757711`: kurze Exact-Aliase dürfen nicht hinter einem Substring-Nachzug mit Limit 12 verloren gehen.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29`; Draft-PR #173. Dieser Stamp erzeugt einen neueren Head nach dem Universum-Nachzug; CI/Preview live am PR prüfen.
-3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Prior PASS bleibt superseded. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
-4. **Bereits umgesetzt:** Ordinale Erstplatzierung; Alias-Anzeige; Shared-Alias-Disambiguierung; Länder-Nachzug liest das typ-begrenzte Universum (500) ohne Substring-Filter; neutraler 2-Zeichen-Retrieval-Test hinter >12 Lärmzeilen.
-5. **Cursor-Agent:** `Visitor search correctness 1`. Recovery-Session auf PR #173: `bc-020d3296-0cd7-4e36-8373-47578af701ce`. Dieselbe logische Arbeitseinheit.
-6. **Live-`main` / Baseline bei diesem Stamp:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-Write, keine Supabase-Mutation. `public.places` nur gelesen.
-8. **Kosten / Provider / Secrets:** keine laufenden. Bounded Extra-Read der Länderzeilen pro Zielsuche.
-9. **Bekannte Risiken / Review-Funde:** `ORT_LAND_UNIVERSUM` muss ≥ Länderzahl bleiben; kein Mobile-Safari-/Preview-GET-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Ready/Merge nur Technical Lead. Nach Merge auch kurze geteilte Aliase rauchen.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #173 auf dem neuen Head. Kein Ready. Kein Merge. Kein Issue #110.
-12. **Zuerst lesen:** Recovery-Task/Status/Handoff/Self-Review, ADR-0196 Nachträge, `docs/ORTE.md`, TL-Fund `5057757711`.
+1. **Arbeitsblock / Ziel:** Immediate Post-Merge-P1-Recovery desselben #109-Slices. Aktueller TL-Fund `5057811180`: Exact-Alias-Vollständigkeit ohne Universum-Transfer auf jeder Zielsuche.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29`; Draft-PR #173. Dieser Stamp erzeugt einen neueren Head nach dem selektiven Exact-Token-Nachzug.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
+4. **Bereits umgesetzt:** Ordinale Erstplatzierung; Alias-Anzeige; Shared-Alias-Disambiguierung; selektiver Exact-Token-Nachzug statt Universum-Scan; 2-Zeichen-Lärm-Test und Stadt-Query-Regression.
+5. **Cursor-Agent:** `Visitor search correctness 1`. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`.
+6. **Live-`main` / Baseline bei diesem Stamp:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44`.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein Auth-Write, keine Supabase-Mutation.
+8. **Kosten / Provider / Secrets:** keine laufenden. Extra-Read ist gefilterte Länder-Selektion, typisch 0–wenige Zeilen.
+9. **Bekannte Risiken / Review-Funde:** Truncation nur bei >500 Ländern mit demselben Exact-Token; kein Mobile-Safari-/Preview-GET-Beweis; `main` `protected=false`.
+10. **Offene Nutzerentscheidungen / Freigaben:** Ready/Merge nur Technical Lead.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review. Kein Ready. Kein Merge. Kein Issue #110.
+12. **Zuerst lesen:** Recovery-Task/Status/Handoff, ADR-0196, `docs/ORTE.md`, TL-Fund `5057811180`.
 
 ## Historischer Arbeitsblock – Visitor Search Country Alias Ranking
 
