@@ -9,11 +9,12 @@ import {
   sucheVarianten,
 } from '@/lib/airports/normalisieren'
 import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib/places/domain'
-import { namensRangMitWortanfang } from '@/lib/suche/relevanz'
+import { EXAKTER_NAMENS_RANG, namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
 export const ORT_TREFFER = 6
 const ORT_TREFFER_MAX = 8
 export const ORT_ABFRAGE = 40
+export const ORT_LAND_ALIAS_ABFRAGE = 12
 
 const STARK_RANG = 2_800
 const MIN_RANG_BEI_STARK = 1_500
@@ -54,12 +55,32 @@ export function ortSchluesselfilter(suche: string): string | null {
   return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
 }
 
+/** Name- plus Keyword-Filter für den gezielten Länder-Alias-Nachzug. */
+export function ortLandAliasfilter(suche: string): string | null {
+  const name = ortNamensfilter(suche)
+  const schluessel = ortSchluesselfilter(suche)
+  if (!name) return schluessel
+  if (!schluessel) return name
+  return `${name},${schluessel}`
+}
+
+function schluesselwortGenau(keywords: string | null | undefined, suche: string): boolean {
+  if (!keywords) return false
+  return keywords.split(',').some((teil) => gleichGefaltet(teil.trim(), suche))
+}
+
 function keywordAlsWort(keywords: string | null | undefined, suche: string): boolean {
   if (!keywords) return false
   return keywords.split(',').some((teil) => {
     const wort = teil.trim()
     return gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche)
   })
+}
+
+function istExaktesLandAlias(ort: Ort, suche: string): boolean {
+  if (ort.typ !== 'country') return false
+  const raw = suche.trim()
+  return gleichGefaltet(ort.name, raw) || schluesselwortGenau(ort.keywords, raw)
 }
 
 function typBonus(ort: Ort, rolle: OrtRolle): number {
@@ -82,14 +103,18 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   let treffer = 0
 
   if (ort.iata && ort.iata === up) treffer += 10_000
-  treffer += namensRangMitWortanfang(ort.name, raw)
+
+  const aliasGenau = schluesselwortGenau(ort.keywords, raw)
+  const landAliasAlsName = rolle === 'ziel' && ort.typ === 'country' && aliasGenau
+  let nameScore = namensRangMitWortanfang(ort.name, raw)
+  if (landAliasAlsName) {
+    nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
+  }
+  treffer += nameScore
 
   if (gleichGefaltet(ort.region, raw)) treffer += 180
-  if (keywordAlsWort(ort.keywords, raw)) {
-    const genauesKeyword = (ort.keywords ?? '')
-      .split(',')
-      .some((teil) => gleichGefaltet(teil.trim(), raw))
-    treffer += genauesKeyword ? 700 : 220
+  if (!landAliasAlsName && keywordAlsWort(ort.keywords, raw)) {
+    treffer += aliasGenau ? 700 : 220
   }
   if (treffer === 0) return 0
   if (enthaeltGefaltet(ort.country, raw)) treffer += 40
@@ -136,6 +161,12 @@ function orteBewerten(
 export function schluesselErgaenzungNoetig(orte: Ort[], suche: string, rolle: OrtRolle): boolean {
   const starke = orteBewerten(orte, suche, rolle).filter((eintrag) => eintrag.rang >= STARK_RANG)
   return starke.length < 3
+}
+
+/** Reiseziel: exaktes Länder-Alias nachziehen, auch wenn Stadt-Präfixe die Namensmenge schon füllen. */
+export function landAliasNachzugNoetig(orte: Ort[], suche: string, rolle: OrtRolle): boolean {
+  if (rolle !== 'ziel') return false
+  return !orte.some((ort) => istExaktesLandAlias(ort, suche))
 }
 
 function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Ort; rang: number }> {

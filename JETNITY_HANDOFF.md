@@ -1,11 +1,19 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7. Baseline `main @ 765fc547` (PR #164 AP-5-S5 integriert). AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 6083ee63` (PR #167 AP-6a Gate 0 integriert). AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Account-Slice auf diesem Branch (Draft-PR #166):
+Aktueller Search-Slice auf diesem Branch (Draft-PR #168):
+
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_TASK_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_STATUS_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_HANDOFF_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_SELF_REVIEW_2026-08-29.md`
+- ADR-0196
+
+Integrierter vorheriger Account-Slice auf der Baseline (Draft-PR #166 / PR #167):
 
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md`
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_HANDOFF_2026-08-29.md`
@@ -303,14 +311,14 @@ Nach Live-Rekonstruktion neu einordnen:
 
 - `main` Branch Protection zuletzt `protected=false`
 - Issue #20: Future Collaboration für Paare/Familien/Gruppen
-- Issue #109: Country-/Alias-/Intent-Relevance der Visitor Search, u. a. Peru / Schweiz / China
-- Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe
+- Issue #109: Country-Alias-Ranking – **aktueller Draft-PR #168**, nicht gemergt
+- Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe, nicht gestartet
 - Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
 - `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
 - Provider S5-B Gate 0 integriert (docs/readiness); S5-B Runtime nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
-- AP-6a Gate 0 ist der aktuelle Draft; kein automatisches AP-6a-Runtime / AP-6b / AP-7
+- AP-6a Gate 0 ist auf der Baseline integriert; kein automatisches AP-6a-Runtime / AP-6b / AP-7
 - AP-7 Persistenz/UI/S2 gated; S1 Domain-Contract self-expiring auf Draft-PR #145, nach Merge integriert ohne automatisches S2
 - P2-TA-04 C2 nicht automatisch starten
 - weitere QS-/Supabase-Security-/Performance-Advisories
@@ -382,7 +390,7 @@ Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Stand
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
-AP-5-S3–S5 sind integriert. AP-6a Gate 0 ist der aktuelle Account-Slice. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
+AP-5-S3–S5 und AP-6a Gate 0 sind auf der Baseline integriert. Der aktuelle Slice dieses Branches ist Draft-PR #168 / Issue #109. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
 
 Nicht automatisch starten:
 
@@ -394,9 +402,8 @@ Nicht automatisch starten:
 - S5-B Runtime / Provider-live
 - neue globale AAL2-Arbeit
 - Direction A
-- Homepage-Mehrziel-Runtime
-- Issue #109 / #110
-- neuer Search-Slice
+- Homepage-Mehrziel-Runtime / Issue #110
+- ein zweiter Search-Slice neben #168
 - Public Indexing / Domain Cutover
 - Native-App-Implementierung
 
