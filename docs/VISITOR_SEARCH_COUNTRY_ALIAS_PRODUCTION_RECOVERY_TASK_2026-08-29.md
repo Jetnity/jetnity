@@ -12,6 +12,8 @@ Status: AUTHORIZED / IMMEDIATE POST-MERGE P1 RECOVERY / SAME LOGICAL CURSOR SESS
 
 **Technical-Lead-Fund `5057811180` 29. August 2026:** Der Universum-Scan bei jeder `ziel`-Query ist ein P1 auf dem Hot Path. Exact-Vollständigkeit behalten, aber normale Stadt-Queries dürfen nicht den ganzen Länderbestand übertragen. Selektiver Exact-Token-Read mit Sicherheitskappe ist zulässig. Regression: Stadt-Query konsumiert kein Universum; 2-Zeichen-Lärm-Test bleibt grün.
 
+**Technical-Lead-Fund `5057889604` 29. August 2026:** 11 Production-Länderzeilen enden mit Whitespace im letzten Keyword-Token. Ranking trimmt und erkennt Exact-Aliase; der selektive Filter ohne Trim-Muster holt sie nicht. Retrieval muss zur trim-normalisierten Alias-Truth passen. Neutraler Test mit trailing-space End-Token. Stadt-Query darf weiter kein Universum übertragen.
+
 ## Baseline
 
 - Repository: `Jetnity/jetnity`

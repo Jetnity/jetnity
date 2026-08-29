@@ -5129,6 +5129,10 @@ Tests verpassten das, weil sie `orteOrdnen()` mit Städten ohne Import-Keywords 
 
 Ein Substring-Nachzug `keywords.ilike.%token%` mit Limit 12 kann kurze Exact-Aliase verlieren. Live Production enthält mehrfach vergebene Kurz-Tokens; Teilstring-Kandidaten liegen weit über 12.
 
+**Nachtrag 29. August 2026 – Trim-Semantik auch im Retrieval (TL `5057889604`):**
+
+Live Production hat Country-`keywords`, die auf Whitespace enden. Ranking trimmt Komma-Tokens und erkennt sie als Exact-Alias; der selektive PostgREST-Filter ohne Whitespace-Muster holte sie nicht. Retrieval nutzt dieselben getrimmten Token-Grenzen (`imatch` plus explizite End-Muster mit Leerzeichen). Kein Universum-Scan, keine Bestandsmutation, keine Allowlist.
+
 **Nachtrag 29. August 2026 – kein Universum-Transfer auf dem Hot Path (TL `5057811180`):**
 
 Den gesamten `typ = country`-Bestand bei jeder Zielsuche zu lesen (240 Zeilen, allein Keywords ~207 KB) belastet normale Queries wie `Paris`. Der Nachzug bleibt für `ziel` aktiv, damit geteilte Aliase vollständig sind, überträgt aber nur Exact-Name- oder Exact-Komma-Token-Treffer. Limit 500 ist Sicherheitskappe, kein Universum-Scan. Truncation wäre nur möglich, wenn mehr Länder dasselbe Exact-Token teilen als 500. Kein Provider, keine Migration, keine Allowlist. `abreise`, Alias-Anzeige und Shared-Alias-Disambiguierung unverändert.
