@@ -24,7 +24,7 @@ Der Universum-Scan (`typ = country`, leer gefiltert, Limit 500) bei jeder `ziel`
 
 ## Tests / Evidence
 
-Siehe Local-Evidence-Datei. Dieser Stamp erzeugt einen neuen Head.
+Siehe Local-Evidence-Datei. Lokal **2588/2588**, Typecheck, Lint 0/135, Hygiene, Production-Build. Dieser Stamp erzeugt einen neuen Head.
 
 ## Kosten
 
