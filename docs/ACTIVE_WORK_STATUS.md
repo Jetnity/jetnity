@@ -1,26 +1,45 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider S5-B Persistence Draft-PR #182 / TL-182 CHANGES REQUIRED CLOSED IN REPO / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
+Status: **Security/Privacy Residual Inventory auf Branch `audit/security-privacy-current-state-2026-08-29` / PR #191 CLOSED AS DUPLICATE / NON-CANONICAL / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW. Baseline `main @ 69ef27b1`. Keine Runtime. Kein Ready. Kein Merge. Kein Reopen. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+> PR #191 und dieser Branch sind **keine** kanonische Security-Current-Truth für `JETNITY_START_HERE.md` / `JETNITY_HANDOFF.md`.
+
+## Aktueller Arbeitsblock – Security/Privacy Residual Current-State Inventory
+
+1. **Arbeitsblock / Ziel:** Task `docs/SECURITY_PRIVACY_CURRENT_STATE_AUDIT_TASK_2026-08-29.md` residual-only ausführen: geschlossene Security-Arbeit nicht neu öffnen; noch offene Residuals evidence-based festhalten. Keine produktive Runtime.
+2. **Authoring-Branch / PR:** `audit/security-privacy-current-state-2026-08-29` / PR #191 **CLOSED** 2026-08-29T16:25:46Z als duplicate / non-canonical.
+3. **Status:** **RESIDUAL INVENTORY COMPLETE / CLOSED PR / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**. Kein Ready, kein Merge, kein Reopen, kein Folgeslice durch den Autor.
+4. **Bereits umgesetzt:** Residual-Audit, Status, Handoff, Self-Review, Backlog. Kein App-/Migrations-/Auth-Config-Diff.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity security privacy audit 1`. Cloud-Run `https://cursor.com/agents/bc-5c28e91c-c2f7-4686-935a-c8ad70e9dc52`. Observed UI-Titel `Sicherheits- datenschutz-ist-audit`. Keine Rename-Fähigkeit.
+6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. Ahead vor Stamp = Task-Commit `24a8c893`; dieser Stamp erzeugt einen neueren Head.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein Supabase-Read des Production-Katalogs, keine Vercel-Mutation. Read-only öffentliche HTTP-Checks: `/privacy` `/terms` 404; Admin-API 401; HSTS an.
+8. **Kosten / Provider / Secrets:** 0. Keine Secrets, keine paid calls, kein Provider-Enablement, kein Commercial-Provenance-Mint.
+9. **Bekannte Risiken / Review-Funde:** D0-P1-03 bleibt P1. Kein neues P0/P1. `main` `protected=false`. Header/CSP/XFO P2. AUTH.md AAL2-Production-Satz stale. S5-B #182 live CLOSED/unmerged. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Legal-Content für AP-6a-Runtime; Branch Protection; Consumer-AAL2; OAuth-Enablement; Provider-Live; Production-Migrationen.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review dieses Residual-Inventorys oder ausdrückliches Verwerfen des Branches. Kein Ready. Kein Merge. Kein Reopen. Kein Implementierungs-Folgeslice.
+12. **Zuerst lesen:** `docs/SECURITY_PRIVACY_CURRENT_STATE_AUDIT_2026-08-29.md`, Status, Handoff, Self-Review, PR-#191-Close-Text.
+
+## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / PR #182 live CLOSED, nicht gemergt.** Ältere „TL-182 CHANGES REQUIRED / STOP FOR RE-REVIEW“-Zeilen sind Pre-Close-Evidence. Nicht als aktuellen Runtime-Block führen.
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
-2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.
-3. **Status:** **TL-182 CHANGES REQUIRED CLOSED IN REPO / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Production-Apply durch den Autor.
-4. **Bereits umgesetzt:** Persistenzgrundlage plus TL-Fixes: fail-closed Principal, kanonische `v1`-Nutzlast, Runtime-Gate geschlossen, isolierte lokale 19/19-Evidence.
+2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182 **CLOSED** (`mergedAt=null`).
+3. **Status:** **CLOSED / NICHT AUF PRODUCTION.** Live-Zustand von #182 und ob Persistenz später auf anderem Head landete, erneut prüfen — nicht aus dieser Datei raten.
+4. **Bereits umgesetzt:** Persistenzgrundlage plus TL-Fixes auf jenem Branch (fail-closed Principal, kanonische `v1`-Nutzlast, Runtime-Gate, lokale Evidence). Das ist Branch-Evidence, kein Production-Apply.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4`.
-6. **Live-`main` / Baseline bei diesem Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Prior Head `8e597487`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-7. **DB / RLS / Production-Grenze:** Migration nur im Repository. Production nicht mutiert. Isolierte lokale Evidence über `db:s5b-persistenz-lokal`. Apply bleibt TL-kontrolliert unter PO-Gate `S5B-G0-PO-MIG-01`.
+6. **Live-`main` / Baseline bei dem historischen Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Aktuelles `main` ist weiter (`69ef27b1` bei diesem Inventory).
+7. **DB / RLS / Production-Grenze:** Migration nur im damaligen Repository-Branch. Production nicht durch diesen Block mutiert.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls.
-9. **Bekannte Risiken / Review-Funde:** Production ≠ Repository bis Apply. Production-Write-Pfad nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Production-Apply nach TL PASS. Runtime-Principal-Zuweisung extra gegatet. TW-8 extra gegatet.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #182. Kein Ready. Kein Merge. Kein Production-Apply durch Cursor. Kein Folgeslice.
-12. **Zuerst lesen:** `docs/PROVIDER_S5B_PERSISTENCE_IMPLEMENTATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, Threat Model, ADR-0197, ADR-0198.
+9. **Bekannte Risiken / Review-Funde:** Production ≠ Repository bis ein späterer Apply. TW-8 geschlossen. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Production-Apply bleibt PO-Gate, falls die Arbeit wieder aufgenommen wird.
+11. **Exakter nächster Schritt:** nicht aus #191 oder diesem Inventory starten. Live #182/#187-Linie prüfen, bevor irgendetwas S5-B-bezogenes neu beauftragt wird.
+12. **Zuerst lesen:** `docs/PROVIDER_S5B_PERSISTENCE_IMPLEMENTATION_TASK_2026-08-29.md` nur als historische Branch-Evidence.
 
 ## Historischer Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
 
