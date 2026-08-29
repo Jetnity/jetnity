@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
+Status: **Auf Branch `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187: Provider Adapter Core Foundation implementiert, STOP für unabhängigen Technical-Lead Exact-Head-Review. Baseline `main @ 69ef27b1`. Kein Ready, kein Merge, kein Folgeslice. Search #109 und PrivacyBee #169 bleiben auf `main` integriert. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 

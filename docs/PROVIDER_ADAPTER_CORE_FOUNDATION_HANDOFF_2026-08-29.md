@@ -1,14 +1,19 @@
 # Provider Adapter Core Foundation — Handoff
 
-Stand: 29. August 2026
-Status: ASSIGNED TO CURSOR / DRAFT-PR WORKSTREAM
-Cursor-Agent: `Jetnity provider adapter core 1`
-Branch: `feat/provider-adapter-core-foundation-2026-08-29`
+Stand: 29. August 2026  
+Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Cursor-Agent: `Jetnity provider adapter core 1`  
+Branch: `feat/provider-adapter-core-foundation-2026-08-29`  
+PR: https://github.com/Jetnity/jetnity/pull/187  
 Base main: `69ef27b169780e41ba506a69acb15caafa645517`
 
 ## Auftrag
 
-Implementiere exakt `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`.
+Exakt `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md` umgesetzt. ADR-0199 dokumentiert die Architekturgrenze.
+
+## Architektur kurz
+
+Outbound-Kern, nicht Inbound-`lib/provider-ops`. Dependency Injection für HTTP/Clock/Sleep/Timeout. Trust nur über Modulgrenze. Secrets nur im injizierten Request, nie in Errors/Events/Metadaten. Create/Poll bleibt Adapter-Arbeit.
 
 ## Verbindliche Grenzen
 
@@ -24,4 +29,4 @@ Implementiere exakt `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`.
 
 ## Handoff an Technical Lead
 
-Nach Implementierung, Self-Review und Tests: exakten Head-SHA, Changed Files, Test-/CI-Evidence, Risiken und Drift gegen `origin/main` dokumentieren und STOPP für unabhängigen Technical-Lead-Review.
+Exact Head, Changed Files, Test-/CI-Evidence, `origin/main`-Drift und Residuals stehen in `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_SELF_REVIEW_2026-08-29.md`. STOPP für unabhängigen Technical-Lead-Review. Self-Review ist kein PASS.

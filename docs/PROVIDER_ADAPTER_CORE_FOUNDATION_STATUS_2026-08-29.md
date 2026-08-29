@@ -1,11 +1,32 @@
 # Provider Adapter Core Foundation — Status
 
-Stand: 29. August 2026
-Status: CURSOR AGENT ASSIGNED / DRAFT PR REQUIRED
-Cursor-Agent: `Jetnity provider adapter core 1`
-Branch: `feat/provider-adapter-core-foundation-2026-08-29`
+Stand: 29. August 2026  
+Status: **IMPLEMENTIERT / DRAFT-PR #187 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Cursor-Agent: `Jetnity provider adapter core 1`  
+Branch: `feat/provider-adapter-core-foundation-2026-08-29`  
 Base main: `69ef27b169780e41ba506a69acb15caafa645517`
 
-The Technical Lead has defined the task and hard gates. Cursor is to implement on this branch via the Draft PR workstream. No implementation PASS exists yet.
+## Was gebaut ist
 
-No Ready. No Merge. No follow-up slice before independent Technical-Lead review.
+Provider-neutraler Server-Transport-Kern unter `lib/server/providers/core/`:
+
+- explizite Timeout-/Retry-/Rate-Limit-Policies mit harten Bounds
+- injizierter HTTP-Client, Clock, Sleeper, Timeout-Scheduler
+- secret-sichere Header (`x-api-key` und weitere) nur am Outbound-Call
+- strukturierte, allowlisted Observability ohne Bodies/Header-Werte
+- normalisierte Fehlertaxonomie, kein Raw-fetch über die Grenze
+- keine forgebaren Trust-Flags, kein Commercial-Provenance-Mint
+
+Die Skyscanner-Fixture-Foundation bleibt unverändert fixture-only.
+
+## Gates
+
+Lokale Kern-Unit-Tests sind grün. Vollständige Repository-Gates und Exact-Head-CI/Vercel werden im Self-Review festgehalten. Ein Agent-Self-Review ist kein PASS.
+
+## Grenzen
+
+Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls. Keine Credentials. Keine Supabase-/Vercel-/Production-Mutation.
+
+## Nächster Schritt
+
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #187.

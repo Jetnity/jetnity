@@ -72,6 +72,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - Account AP-6a Gate 0: `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md`, `docs/AP6A_GATE0_LEGAL_FOUNDATION_HANDOFF_2026-08-29.md`, `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`. Operative Git-/PR-Wahrheit bleibt `JETNITY_HANDOFF.md` und `docs/ACTIVE_WORK_STATUS.md`.
 - Account AP-3: `docs/ACCOUNT_AP3_STATUS.md`, `docs/ACCOUNT_AP3_HANDOFF.md`
 - Provider-Readiness S3: `docs/PROVIDER_READINESS_S3_STATUS.md`, `docs/PROVIDER_READINESS_S3_HANDOFF.md`, `docs/PROVIDER_READINESS_S3_SELF_REVIEW.md`
+- Provider Adapter Core Foundation (Draft-PR #187 / ADR-0199): `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`, `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_STATUS_2026-08-29.md`, `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_HANDOFF_2026-08-29.md`, `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_SELF_REVIEW_2026-08-29.md`. Operative Git-/PR-Wahrheit bleibt `JETNITY_HANDOFF.md` und `docs/ACTIVE_WORK_STATUS.md`.
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.

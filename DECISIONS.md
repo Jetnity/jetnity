@@ -5203,6 +5203,29 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0199 – Provider Adapter Core Foundation
+
+**Datum:** 29. August 2026  
+**Status:** Implementiert im Repository auf Draft-PR #187. **Kein Ready. Kein Merge. Keine Provideraktivierung.** Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+
+**Entscheidung:**
+
+1. Provider-neutraler Server-Transport-Kern unter `lib/server/providers/core/`.
+2. Trust nur über Code-Pfad; keine forgebaren Trust-Flags.
+3. Secrets nur am injizierten HTTP-Client, nie in Errors/Events/Metadaten.
+4. Timeout/Retry/Rate-Limit explizit, begrenzt, fail-closed; Tests vollständig offline.
+5. Kein Commercial-Provenance-Mint, kein `live_api` / `persisted_snapshot`.
+6. `lib/provider-ops` bleibt Inbound; dieser Kern ist Outbound. Nicht vermischen.
+7. Skyscanner-Fixture-Foundation bleibt unverändert fixture-only.
+
+**Kontext:** Gemeinsame Transportgrenze vor einem späteren Skyscanner-Server-Adapter. Create/Poll, Credentials, S5-B-Runtime und TW-8 bleiben ausserhalb.
+
+**Alternativen:** Pro-Adapter-fetch; Outbound in `lib/provider-ops` ziehen; Create/Poll in denselben Slice.
+
+**Konsequenzen:** Nächster zulässiger Folgeslice erst nach Merge und neuem versionierten Auftrag. Autor setzt kein Ready/Merge.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

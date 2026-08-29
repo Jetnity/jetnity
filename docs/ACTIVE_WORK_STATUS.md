@@ -1,13 +1,30 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider S5-B Persistence Draft-PR #182 / TL-182 CHANGES REQUIRED CLOSED IN REPO / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
+Status: **Provider Adapter Core Foundation Draft-PR #187 / IMPLEMENTIERT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW. Baseline `main @ 69ef27b1`. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+## Aktueller Arbeitsblock – Provider Adapter Core Foundation
+
+1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
+2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
+4. **Bereits umgesetzt:** `lib/server/providers/core/*` plus deterministische Offline-Tests; Skyscanner-Fixture-Foundation unverändert; keine Secrets, keine echten Provider-Calls.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1.
+6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
+8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls, keine Credentials im Repository.
+9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport und S5-B Production-Apply bleiben extra gegatet.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #187. Kein Ready. Kein Merge. Kein Folgeslice.
+12. **Zuerst lesen:** `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0199.
+
+## Historischer / paralleler Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+
+Current classification / Nachtrag, 29. August 2026: **PARALLELER DRAFT auf anderem Branch.** Nicht der Authoring-Block von PR #187. Live am PR #182 prüfen.
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
 2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.
