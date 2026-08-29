@@ -10,6 +10,7 @@ import { join } from 'node:path'
 
 const DATEI = '20260829201500_account_traveller_registry_persistence.sql'
 const sql = readFileSync(join('supabase/migrations', DATEI), 'utf8')
+const ausfuehrbaresSql = sql.replace(/^\s*--.*$/gm, '')
 
 function tabellenDefinition(name: string): string {
   const definition = sql.match(
@@ -25,10 +26,16 @@ describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
     assert.match(sql, /create table public\.account_travellers/)
     assert.match(sql, /create table public\.account_traveller_citizenships/)
     assert.match(sql, /create table public\.account_traveller_documents/)
-    assert.doesNotMatch(sql, /alter table public\.trip_traveller/)
-    assert.doesNotMatch(sql, /trip_id\s+uuid/)
-    assert.doesNotMatch(sql, /account_traveller_id[^\n]*references public\.account_travellers/)
-    assert.doesNotMatch(sql, /backfill|insert into public\.account_travellers\s+select/i)
+    assert.doesNotMatch(ausfuehrbaresSql, /alter table public\.trip_traveller/)
+    assert.doesNotMatch(ausfuehrbaresSql, /trip_id\s+uuid/)
+    assert.doesNotMatch(
+      ausfuehrbaresSql,
+      /account_traveller_id[^\n]*references public\.account_travellers/,
+    )
+    assert.doesNotMatch(
+      ausfuehrbaresSql,
+      /insert\s+into\s+public\.account_traveller(?:s|_citizenships|_documents)\b/i,
+    )
   })
 
   test('bindet Parent und Children an denselben Owner und dieselbe Traveller-Identität', () => {
@@ -57,7 +64,7 @@ describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
     assert.match(funktion, />\s*12\s+then/i)
     assert.match(sql, /after\s+insert\s+or\s+update\s+on\s+public\.account_traveller_citizenships/i)
     assert.match(sql, /after\s+insert\s+or\s+update\s+on\s+public\.account_traveller_documents/i)
-    assert.doesNotMatch(sql, /create\s+trigger\s+account_travellers[^;]*limit/i)
+    assert.doesNotMatch(ausfuehrbaresSql, /create\s+trigger\s+account_travellers[^;]*limit/i)
   })
 
   test('RLS ist owner-only; anon bleibt ohne Rechte', () => {
@@ -74,7 +81,7 @@ describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
       )
     }
     assert.match(sql, /user_id = \(select auth\.uid\(\)\)/)
-    assert.doesNotMatch(sql, /darf_konten_verwalten|service_role|security definer/i)
+    assert.doesNotMatch(ausfuehrbaresSql, /darf_konten_verwalten|service_role|security definer/i)
   })
 
   test('Registry speichert nur datensparsame Dokument-Metadaten ohne Default Credential', () => {
