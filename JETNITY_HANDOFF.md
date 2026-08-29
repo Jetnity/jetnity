@@ -1,17 +1,24 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 6083ee63` (PR #167 AP-6a Gate 0 integriert). AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109 / TL-Fund `5057889604`. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349` (PR #172 integriert, Live-Production invalidiert den vorherigen TL-PASS). Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`. AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Search-Slice auf diesem Branch (Draft-PR #168):
+Aktueller Search-Recovery-Slice auf diesem Branch (Draft-PR #173):
+
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_TASK_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_STATUS_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_HANDOFF_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_SELF_REVIEW_2026-08-29.md`
+- ADR-0196 Nachträge, inkl. Trim-Semantik im Retrieval (`5057889604`)
+
+Historischer vorheriger Search-Slice (PR #168 / #172, Production-Acceptance nicht erfüllt):
 
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_TASK_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_STATUS_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_HANDOFF_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_SELF_REVIEW_2026-08-29.md`
-- ADR-0196
 
 Integrierter vorheriger Account-Slice auf der Baseline (Draft-PR #166 / PR #167):
 
@@ -311,7 +318,7 @@ Nach Live-Rekonstruktion neu einordnen:
 
 - `main` Branch Protection zuletzt `protected=false`
 - Issue #20: Future Collaboration für Paare/Familien/Gruppen
-- Issue #109: Country-Alias-Ranking – **aktueller Draft-PR #168**, nicht gemergt
+- Issue #109: Country-Alias-Ranking – **aktueller Draft-PR #173**, nicht gemergt; TL-Fund `5057889604` im selben Slice
 - Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe, nicht gestartet
 - Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
 - `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
@@ -390,7 +397,7 @@ Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Stand
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
-AP-5-S3–S5 und AP-6a Gate 0 sind auf der Baseline integriert. Der aktuelle Slice dieses Branches ist Draft-PR #168 / Issue #109. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
+AP-5-S3–S5 und AP-6a Gate 0 sind auf der Baseline integriert. Der aktuelle Slice dieses Branches ist Draft-PR #173 / Issue #109 / TL-Fund `5057889604`. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
 
 Nicht automatisch starten:
 

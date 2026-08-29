@@ -14,7 +14,14 @@ import { EXAKTER_NAMENS_RANG, namensRangMitWortanfang } from '@/lib/suche/releva
 export const ORT_TREFFER = 6
 const ORT_TREFFER_MAX = 8
 export const ORT_ABFRAGE = 40
-export const ORT_LAND_ALIAS_ABFRAGE = 12
+
+/**
+ * Sicherheitslimit für den selektiven Exact-Alias-Nachzug.
+ * Muss ≥ der Anzahl Länder bleiben, die dasselbe Exact-Token teilen
+ * können, und ≥ der aktuellen Länderzahl als harte Kappe.
+ * Es ist kein Freibrief, das ganze Universum zu übertragen.
+ */
+export const ORT_LAND_UNIVERSUM = 500
 
 const STARK_RANG = 2_800
 const MIN_RANG_BEI_STARK = 1_500
@@ -55,32 +62,85 @@ export function ortSchluesselfilter(suche: string): string | null {
   return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
 }
 
-/** Name- plus Keyword-Filter für den gezielten Länder-Alias-Nachzug. */
-export function ortLandAliasfilter(suche: string): string | null {
-  const name = ortNamensfilter(suche)
-  const schluessel = ortSchluesselfilter(suche)
-  if (!name) return schluessel
-  if (!schluessel) return name
-  return `${name},${schluessel}`
+function postgrestIlike(feld: string, muster: string): string {
+  return /[,%() ]/.test(muster) ? `${feld}.ilike."${muster}"` : `${feld}.ilike.${muster}`
 }
 
-function schluesselwortGenau(keywords: string | null | undefined, suche: string): boolean {
-  if (!keywords) return false
-  return keywords.split(',').some((teil) => gleichGefaltet(teil.trim(), suche))
+function regexSicher(teil: string): string {
+  return teil.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-function keywordAlsWort(keywords: string | null | undefined, suche: string): boolean {
-  if (!keywords) return false
-  return keywords.split(',').some((teil) => {
-    const wort = teil.trim()
-    return gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche)
-  })
+function postgrestImatch(feld: string, muster: string): string {
+  return `${feld}.imatch."${muster}"`
+}
+
+/**
+ * Selektiver Länder-Nachzug: nur exakter Name oder exaktes Komma-Token.
+ * Dieselbe Trim-Semantik wie `schluesselwoerter`: umgebendes Whitespace
+ * am Token zählt nicht. Kein Substring-`ilike %token%`, kein Universum.
+ */
+export function ortLandAliasExaktfilter(suche: string): string | null {
+  if (sucheIstPlatzhalter(suche)) return null
+  const teile = sucheFilter(suche)
+  if (teile.length === 0) return null
+  return teile
+    .flatMap((teil) => {
+      const sicher = regexSicher(teil)
+      return [
+        postgrestIlike('name', teil),
+        postgrestIlike('name', `${teil} `),
+        postgrestIlike('keywords', teil),
+        postgrestIlike('keywords', `${teil} `),
+        postgrestIlike('keywords', `${teil},%`),
+        postgrestIlike('keywords', `${teil}, %`),
+        postgrestIlike('keywords', `${teil} ,%`),
+        postgrestIlike('keywords', `${teil} , %`),
+        postgrestIlike('keywords', `%, ${teil}`),
+        postgrestIlike('keywords', `%,${teil}`),
+        postgrestIlike('keywords', `%, ${teil} `),
+        postgrestIlike('keywords', `%,${teil} `),
+        postgrestIlike('keywords', `%, ${teil},%`),
+        postgrestIlike('keywords', `%,${teil},%`),
+        postgrestIlike('keywords', `%, ${teil}, %`),
+        postgrestIlike('keywords', `%,${teil}, %`),
+        postgrestImatch('name', `^[[:space:]]*${sicher}[[:space:]]*$`),
+        postgrestImatch('keywords', `(^|,)[[:space:]]*${sicher}[[:space:]]*(,|$)`),
+      ]
+    })
+    .join(',')
+}
+
+function schluesselwoerter(keywords: string | readonly string[] | null | undefined): string[] {
+  if (typeof keywords === 'string') {
+    return keywords
+      .split(',')
+      .map((teil) => teil.trim())
+      .filter((teil) => teil.length > 0)
+  }
+  if (Array.isArray(keywords)) {
+    return keywords.flatMap((teil) => schluesselwoerter(teil))
+  }
+  return []
+}
+
+function schluesselwortGenau(keywords: string | readonly string[] | null | undefined, suche: string): boolean {
+  return schluesselwoerter(keywords).some((teil) => gleichGefaltet(teil, suche))
+}
+
+function keywordAlsWort(keywords: string | readonly string[] | null | undefined, suche: string): boolean {
+  return schluesselwoerter(keywords).some(
+    (wort) => gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche),
+  )
 }
 
 function istExaktesLandAlias(ort: Ort, suche: string): boolean {
   if (ort.typ !== 'country') return false
   const raw = suche.trim()
   return gleichGefaltet(ort.name, raw) || schluesselwortGenau(ort.keywords, raw)
+}
+
+export function ortIstExaktesLandAlias(ort: Ort, suche: string): boolean {
+  return istExaktesLandAlias(ort, suche)
 }
 
 function typBonus(ort: Ort, rolle: OrtRolle): number {
@@ -126,20 +186,62 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   return treffer + typBonus(ort, rolle)
 }
 
-function ortBeschreibung(ort: Ort): string | undefined {
-  const teile = [ort.typ === 'country' ? null : ort.region, ort.country].filter(
+function lageText(ort: Ort): string {
+  return [ort.region, ort.country].filter(
     (wert, i, alle): wert is string => Boolean(wert) && alle.indexOf(wert) === i,
-  )
-  return teile.length > 0 ? teile.join(', ') : undefined
+  ).join(', ')
 }
 
-function ortAlsOption(ort: Ort): OrtOption {
+function kontextTeilAnhaengen(teile: string[], wert: string | null | undefined) {
+  if (!wert) return
+  if (teile.some((teil) => gleichGefaltet(teil, wert))) return
+  teile.push(wert)
+}
+
+export function landAliasMehrdeutig(orte: Ort[], suche: string): boolean {
+  return orte.filter((ort) => istExaktesLandAlias(ort, suche)).length > 1
+}
+
+export function ortAnzeigeKontext(
+  ort: Ort,
+  suche = '',
+  mehrdeutigesLandAlias = false,
+): string {
+  if (ort.typ === 'country') {
+    if (mehrdeutigesLandAlias && suche && istExaktesLandAlias(ort, suche)) {
+      const teile = ['Land']
+      kontextTeilAnhaengen(teile, ort.name)
+      kontextTeilAnhaengen(teile, ort.countryCode)
+      return teile.join(' · ')
+    }
+    return 'Land'
+  }
+  if (ort.typ === 'region') return ['Region', ort.country].filter(Boolean).join(' · ')
+  if (ort.typ === 'island') return ['Insel', ort.country].filter(Boolean).join(' · ')
+  if (ort.typ === 'airport') {
+    return ['Flughafen', ort.iata, lageText(ort)].filter(Boolean).join(' · ')
+  }
+  return ['Stadt', lageText(ort)].filter(Boolean).join(' · ')
+}
+
+export function ortAnzeigeLabel(ort: Ort, suche: string): string {
+  if (!istExaktesLandAlias(ort, suche)) return ort.name
+  const raw = suche.trim()
+  if (gleichGefaltet(ort.name, raw)) return ort.name
+  return schluesselwoerter(ort.keywords).find((teil) => gleichGefaltet(teil, raw)) ?? raw
+}
+
+function ortAlsOption(ort: Ort, suche: string, mehrdeutigesLandAlias: boolean): OrtOption {
+  const label = ortAnzeigeLabel(ort, suche)
+  const description = ortAnzeigeKontext(ort, suche, mehrdeutigesLandAlias)
   return {
     id: ort.id,
-    label: ort.name,
-    description: ortBeschreibung(ort),
+    label,
+    description,
     typ: ort.typ,
     iata: ort.iata ?? undefined,
+    ariaLabel: `${label}, ${description}`,
+    landAliasMatch: istExaktesLandAlias(ort, suche),
   }
 }
 
@@ -153,6 +255,13 @@ function orteBewerten(
     .map((ort) => ({ ort, rang: ortRang(ort, suche, rolle) }))
     .filter((eintrag) => eintrag.rang > 0)
     .sort((a, b) => {
+      // Import legt asciiName in keywords. Gleichnam-Städte würden sonst
+      // Name+Keyword stapeln und ein exaktes Länder-Alias im Score verlieren.
+      if (rolle === 'ziel') {
+        const aLand = istExaktesLandAlias(a.ort, suche)
+        const bLand = istExaktesLandAlias(b.ort, suche)
+        if (aLand !== bLand) return aLand ? -1 : 1
+      }
       if (b.rang !== a.rang) return b.rang - a.rang
       return a.ort.name.localeCompare(b.ort.name)
     })
@@ -163,10 +272,16 @@ export function schluesselErgaenzungNoetig(orte: Ort[], suche: string, rolle: Or
   return starke.length < 3
 }
 
-/** Reiseziel: exaktes Länder-Alias nachziehen, auch wenn Stadt-Präfixe die Namensmenge schon füllen. */
-export function landAliasNachzugNoetig(orte: Ort[], suche: string, rolle: OrtRolle): boolean {
+/**
+ * Reiseziel: selektiven Exact-Alias-Nachzug anstossen.
+ * Immer für `ziel`, damit geteilte Aliase vollständig bleiben, auch wenn
+ * schon ein Land in der Namensmenge steht. Der Lauf selbst überträgt
+ * nicht das ganze Universum.
+ */
+export function landAliasNachzugNoetig(_orte: Ort[], suche: string, rolle: OrtRolle): boolean {
   if (rolle !== 'ziel') return false
-  return !orte.some((ort) => istExaktesLandAlias(ort, suche))
+  if (sucheIstPlatzhalter(suche)) return false
+  return sucheFilter(suche).length > 0
 }
 
 function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Ort; rang: number }> {
@@ -180,5 +295,7 @@ function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Or
 }
 
 export function orteOrdnen(orte: Ort[], suche: string, rolle: OrtRolle): OrtOption[] {
-  return begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ortAlsOption(ort))
+  const sichtbar = begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ort)
+  const mehrdeutig = landAliasMehrdeutig(sichtbar, suche)
+  return sichtbar.map((ort) => ortAlsOption(ort, suche, mehrdeutig))
 }

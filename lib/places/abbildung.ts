@@ -1,5 +1,8 @@
 import { ORT_QUELLEN, ORT_TYPEN, type Ort, type OrtQuelle, type OrtTyp } from '@/lib/places/domain'
 
+/** PostgREST-`text` ist ein String; Arrays werden defensiv normalisiert, nicht angenommen. */
+export type OrtZeileKeywords = string | readonly string[] | null
+
 export type OrtZeile = {
   id: string
   source: string
@@ -12,7 +15,22 @@ export type OrtZeile = {
   lat: number | null
   lon: number | null
   iata: string | null
-  keywords: string | null
+  keywords: OrtZeileKeywords
+}
+
+function keywordsAusZeile(wert: unknown): string | null {
+  if (typeof wert === 'string') {
+    const trim = wert.trim()
+    return trim.length > 0 ? trim : null
+  }
+  if (Array.isArray(wert)) {
+    const teile = wert
+      .filter((eintrag): eintrag is string => typeof eintrag === 'string')
+      .map((eintrag) => eintrag.trim())
+      .filter((eintrag) => eintrag.length > 0)
+    return teile.length > 0 ? teile.join(', ') : null
+  }
+  return null
 }
 
 export function ortAusZeile(zeile: OrtZeile): Ort | null {
@@ -30,7 +48,7 @@ export function ortAusZeile(zeile: OrtZeile): Ort | null {
     lat: zeile.lat,
     lon: zeile.lon,
     iata: zeile.iata,
-    keywords: zeile.keywords,
+    keywords: keywordsAusZeile(zeile.keywords),
   }
 }
 

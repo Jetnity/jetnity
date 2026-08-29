@@ -220,9 +220,11 @@ export default function OrtSuche({
           lage={lage}
           eintraege={treffer.map((option) => ({
             id: option.id,
-            primaer: option.iata ? `${option.label} · ${option.iata}` : option.label,
+            primaer: option.label,
             sekundaer: option.description,
             extra: typText(option.typ),
+            ariaLabel: option.ariaLabel ?? `${option.label}, ${typText(option.typ)}`,
+            betont: option.landAliasMatch === true,
           }))}
           aktiv={aktiv}
           onWaehlen={(index) => {
