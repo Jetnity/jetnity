@@ -4577,6 +4577,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Nachtrag, 29. August 2026 – AP-5-S3.** Die User-API-Scopes bleiben unverändert. `/account/security` darf `local` / `others` / `global` explizit anbieten, ohne das allgemeine `signOutAction` anzufassen. Details: ADR-0192. Sessionlisting bleibt unsupported.
 
+**Nachtrag, 29. August 2026 – AP-5-S4.** Die serverseitige AAL2-Anforderung für verified-factor Unenroll bleibt. `/account/security` darf davor `challenge` / `verify` über die vorhandene User-Auth-API setzen und den AAL danach erneut prüfen. Das ist kein globales Consumer-AAL2. Details: ADR-0193.
+
 ---
 
 ## ADR-0183 – AP-5-S1: Server-Truth für Security-UI-Lagen und Fehlerhygiene
@@ -4964,6 +4966,42 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 - Evidence: `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md`, `lib/auth/account-logout-scopes.ts`, `components/account/SecurityLogout.tsx`.
 - Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
 - S4/S5 starten nicht aus diesem ADR.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+---
+
+## ADR-0193 – AP-5-S4: MFA-Step-up vor verified-factor Unenroll ohne Consumer-AAL2
+
+**Datum:** 29. August 2026  
+**Status:** Implementation-Slice auf Draft-PR #159 / Issue #158. Keine Auth-Architektur. Kein Auth-Config-Push. Kein globales Consumer-AAL2.
+
+**Entscheidung:**
+
+1. `/account/security` stept vor dem Entfernen eines **verifizierten** TOTP-Faktors über die vorhandene User-Auth-API hoch: `listFactors` → `getAuthenticatorAssuranceLevel` → bei Bedarf `challenge` / `verify` → erneuter AAL-Check → `unenroll`.
+2. Nur `currentLevel === 'aal2'` ist ausreichender Step-up. `nextLevel === 'aal2'` allein berechtigt keinen Unenroll.
+3. Unverified-factor Unenroll (Enroll-Abbruch) bleibt AAL1 und braucht keinen Dialog.
+4. Bereits ausreichendes AAL2 erzwingt keinen Challenge-Dialog.
+5. Erfolg darf nur nach bestätigtem `unenroll` behauptet werden. Verify allein, UI-Flags oder ein fehlgeschlagenes Unenroll nach Step-up sind kein Gesamterfolg.
+6. Factor-/Challenge-/Session-IDs, Tokens und OTP gehören nicht in Nutzertexte, URLs, Logs oder Analytics. Roh-GoTrue wird auf dichte Produktcopy abgebildet.
+7. Das gilt nur für diesen Vorgang. Login-MFA bleibt skippable. Admin-AAL2, Recovery, signed-in Reauthentication und S3-Logout bleiben getrennte Authorities.
+8. S5, Consumer-AAL2, Auth-Config, Passkeys/OAuth und Service-Role-Sessionlisten bleiben ausserhalb dieses ADR.
+
+**Kontext:** Gate 0 / ADR-0182 hat festgestellt, dass GoTrue für verified-factor Unenroll `aal2` verlangt und die UI nicht hochsteppt. S1–S3 haben ehrliche Lagen, signed-in Passwortänderung und Logout-Scopes geliefert. Issue #158 ist der Step-up-UI-Slice über dieselbe User-API.
+
+**Alternativen:**
+
+1. *Rohfehler „insufficient AAL“ belassen.* Würde Nutzer mit undurchsichtiger Ablehnung allein lassen.
+2. *Globales Consumer-AAL2 / Login-Hard-Gate.* Fundamentale AAL-Änderung, Product-Owner-Sondergate (AP-5-P3).
+3. *`startTotpChallenge` aus `lib/auth/mfa.ts` wiederverwenden.* Legacy-`type === "totp"` und `any`; keine AAL-Recheck-Semantik.
+4. *Service Role oder Auth-Config ändern.* Ausserhalb des normalen S4-Gates.
+
+**Begründung:** Die API existiert bereits. Der nutzbare Security-Gewinn ist, die serverseitige AAL2-Anforderung ehrlich und testbar erfüllbar zu machen, ohne Consumer-AAL2 global einzuführen oder eine MFA-Policy zu ändern.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md`, `lib/auth/account-mfa-step-up.ts`, `components/account/SecurityMfaStepUp.tsx`.
+- Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
+- S5 startet nicht aus diesem ADR.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
 ---
