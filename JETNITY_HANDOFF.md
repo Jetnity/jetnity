@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Auf Branch `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187: Provider Adapter Core Foundation implementiert, STOP für unabhängigen Technical-Lead Exact-Head-Review. Baseline `main @ 69ef27b1`. Kein Ready, kein Merge, kein Folgeslice. Search #109 und PrivacyBee #169 bleiben auf `main` integriert. Kosten 0. Live-Evidence gewinnt.**
+Status: **Auf Branch `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187: Provider Adapter Core Review-Fixes aus `5058500841` implementiert, STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Baseline `main @ 69ef27b1`. Kein Ready, kein Merge, kein Folgeslice. Search #109 und PrivacyBee #169 bleiben auf `main` integriert. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 

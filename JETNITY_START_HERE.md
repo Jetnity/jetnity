@@ -13,7 +13,7 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_STATUS_2026-08-29.md` – aktiver Draft-PR #187 / ADR-0199 auf diesem Branch; STOP für unabhängigen Technical-Lead Exact-Head-Review
+- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_STATUS_2026-08-29.md` – aktiver Draft-PR #187 / ADR-0199 auf diesem Branch; Review-Fixes aus `5058500841` implementiert; STOP für unabhängigen Technical-Lead Exact-Head-Re-Review
 - `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` – aktueller New-Chat-Checkpoint; Search #109 + PrivacyBee #169 CLOSED/completed; #178-Träger-Klausel self-expiring auf `main`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md` – PR #173 gemergt; Live Production API smoke PASS; Issue #109 CLOSED / COMPLETED; kein Issue #110
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md` – AP-6a Gate 0 auf `main @ 6083ee63` integriert; ältere Draft-#166-Zeilen sind Pre-#168-Evidence
