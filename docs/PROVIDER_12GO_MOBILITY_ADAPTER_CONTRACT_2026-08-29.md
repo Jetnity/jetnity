@@ -5,18 +5,18 @@ Status: **CONTRACT PREP ONLY / NICHT AKZEPTIERT / KEINE RUNTIME / KEIN SHARED-CO
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 Task: `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`  
 Evidence: `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_EVIDENCE_2026-08-29.md`  
-Vorgeschlagener ADR: `docs/ADR_0199_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md` (**nicht angenommen**)
+Vorgeschlagener ADR: `docs/ADR_0200_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md` (**nicht angenommen**)
 
-Dieser Vertrag definiert die **kleinste spätere** 12Go-Mobility-Naht, die an den vorhandenen Jetnity-Mobility-Port und – sobald akzeptiert – an den shared Provider-Adapter-Core anschließen kann. Er implementiert nichts.
+Dieser Vertrag definiert die **kleinste spätere** 12Go-Mobility-Naht, die an den vorhandenen Jetnity-Mobility-Port und den integrierten Provider Adapter Core (ADR-0199 / `lib/server/providers/core/*`) anschließen kann. Er implementiert nichts. ADR-0199 bleibt unberührt.
 
 ---
 
 ## 0. Harte Grenzen
 
 1. Keine Runtime-Datei in diesem Slice.
-2. Kein Shared-Core-Edit (`lib/provider-ops`, `lib/commercial-provenance`, `lib/mobility/*` bleiben unverändert).
+2. Kein Shared-Core-Edit. Offline-Foundation ändert weder `lib/server/providers/core/*` noch `lib/provider-ops`, `lib/commercial-provenance` oder `lib/mobility/*`. Kein zweiter generischer Transport-Kern.
 3. Kein Signup, kein API-Approval-Request, kein Secret, kein realer Call.
-4. Kein Commercial-Provenance-Mint. Fixture/Test/Affiliate-Link ≠ `live_api` ≠ `persisted_snapshot`.
+4. Kein Commercial-Provenance-Mint. Fixture, Test, öffentliche URL, Affiliate-Deeplink, Widget, Fahrplan, Data-Feed und White-Label-Seite ≠ `live_api` ≠ `persisted_snapshot`.
 5. `rental_cars` bleibt eigene Jetnity Commercial Domain. 12Go-About nennt „Car rent“; das wird **nicht** in diesen Adapter gefaltet.
 6. 12Go-Flights bleiben außerhalb. Jetnity-Flights sind Duffel/Skyscanner-Domäne.
 7. Daytrips, Tours, Rail Passes, Helicopters: **out of adapter**, bis ein eigener, gegateter Vertrag existiert.
@@ -31,7 +31,7 @@ Dieser Vertrag definiert die **kleinste spätere** 12Go-Mobility-Naht, die an de
 | Trip-Graph, Stages, `trip_items.kind=transfer` | Jetnity | keine |
 | `MobilitySuchanfrage` / `MobilityOption` / Ranking | Jetnity `lib/mobility` | Adapter normalisiert **hinein**, leaket 12Go-Rohformen nicht nach außen |
 | `MobilityNachweis` | Jetnity | späterer Server-Nachweis; Umgebung heute `null` |
-| Commercial Provenance | Jetnity S5-A/S5-B | S5-B-Persistenzgrundlage liegt bereits auf Production (`20260829140000_trip_item_commercial_provenance`). Kein realer Provider-Snapshot. Runtime-Write-Pfad/Principal bleibt geschlossen und separat gegatet. Nur ein genehmigter 12Go-Live-Serverpfad darf später eine `live_api`-Kandidatquote erzeugen und die vertrauenswürdige S5-B-Write-Authority aufrufen. |
+| Commercial Provenance | Jetnity S5-A/S5-B | S5-B-Persistenzgrundlage liegt bereits auf Production (`20260829140000_trip_item_commercial_provenance`). Kein realer Provider-Snapshot. Runtime-Write-Pfad/Principal bleibt geschlossen und separat gegatet. Nur eine echte authentifizierte/genehmigte 12Go-Server-API-Antwort unter dem tatsächlichen Vertrag darf später eine `live_api`-Kandidatquote erzeugen, und nur wenn Preis/Währung/Kontext nachweislich ausreichen. Öffentliche URL, Affiliate-Deeplink, Widget, Fahrplan, Data-Feed oder White-Label-Seite autorisieren das **nicht**. Redirect/Cookie ist Attribution, keine Quote. |
 | Route Truth / Bewegungskanten | Jetnity, traveller-neutral | 12Go-Fahrplan ist Anbieterfakt, keine Anschlussgarantie |
 | Traveller-Credentials / Citizenships | Jetnity | 12Go darf keine Visa-/Eligibility-Wahrheit setzen |
 | Rental Cars | Jetnity `lib/rental-cars` | **nicht dieser Adapter** |
@@ -48,11 +48,11 @@ Dieser Vertrag definiert die **kleinste spätere** 12Go-Mobility-Naht, die an de
 
 | Verantwortlichkeit | Ort heute | Später |
 | --- | --- | --- |
-| Mobility-Domäne | `lib/mobility/domain.ts` | unverändert wiederverwenden |
+| Mobility-Domäne / Port | `lib/mobility/*` | unverändert wiederverwenden; provider-neutral |
 | Provider-Port | `MobilityProvider` | 12Go implementiert den Port, ändert ihn nicht |
 | Nachweis-Port | `MobilityNachweis` | eigener 12Go-Nachweis **nach** Live-Transport |
-| Kill Switch | `JETNITY_MOBILITY_AKTIV` + Production hart aus | unverändert |
-| Request-Härtung / Failure-Taxonomie / Cost Guard | `lib/provider-ops` | Shared-Core, erst nach Accept |
+| Kill Switch / Cost / Inbound-Ops | `lib/provider-ops` + `JETNITY_MOBILITY_AKTIV` | bleibt Inbound-Ops; **kein** Outbound-Transport-Kern |
+| Shared server Transport | `lib/server/providers/core/*` (ADR-0199, integriert) | späterer Live-HTTP-Pfad; Offline-Foundation ändert ihn nicht |
 | Commercial Provenance | `lib/commercial-provenance` | provider-neutral; Domain `mobility` |
 | Neutraler Flight-Adapter-Schnitt | `lib/providers/flights/*` | **Vorbild**, kein Copy der Flight-Typen nach Mobility |
 
@@ -61,16 +61,17 @@ Dieser Vertrag definiert die **kleinste spätere** 12Go-Mobility-Naht, die an de
 Analog Skyscanner, erst nach eigenem Implementation-Task:
 
 ```text
-lib/providers/twelve-go/mobility/contracts.ts   # Jetnity-owned normalized 12Go-Sicht
+lib/providers/twelve-go/mobility/contracts.ts   # Jetnity-owned synthetische Testform; kein 12Go-API-Schema
 lib/providers/twelve-go/mobility/adapter.ts     # offline Fixture-Normalizer zuerst
 lib/providers/twelve-go/mobility/mapping.ts     # Mode-/Slug-Mapping, fail-closed
-# transport.ts / auth.ts erst mit genehmigtem API-Vertrag und server-only Secrets
+# transport/parser erst nach Audit der vertraulichen first-party API und eigenem Task
+# Live-HTTP nur über lib/server/providers/core/* ; kein zweiter Transport-Kern
 ```
 
 Vorgeschlagene Jetnity-`providerId`: `twelve_go`  
 Begründung: stabil, kein führendes Digit, nicht 12Gos internes Partner-ID-Format (das ist **UNKNOWN**).
 
-Kein Import von 12Go-Typen in `lib/commercial-provenance/*` oder `lib/mobility/domain.ts`.
+Kein Import von 12Go-Typen in `lib/commercial-provenance/*`, `lib/mobility/domain.ts` oder `lib/server/providers/core/*`. Offline-Foundation braucht keine Shared-Core-Edits.
 
 ---
 
@@ -113,14 +114,14 @@ Jetnity-Anfrage bleibt `MobilitySuchanfrage`. Fehlende 12Go-Location-ID → Adap
 
 | Fakt | Öffentlich | Adapter-Regel |
 | --- | --- | --- |
-| Affiliate partner ID | nach Approval im Dashboard | Server-only, nie Client-Env |
-| Sub-ID | „am Ende der Links“ | Jetnity darf eine eigene Attribution setzen; **Parametername UNKNOWN** |
+| Affiliate partner ID | nach Approval im Dashboard; kann in öffentlichen Affiliate-URLs stehen | Attribution-Metadaten, **kein** Credential. API-Secrets bleiben server-only. Client-supplied Partner-IDs/URLs minten keine Trusted Attribution und keine Commercial Provenance. |
+| Sub-ID | „am Ende der Links“ | **Parametername/Syntax UNKNOWN**. Später nur bounded opaque Campaign-/Channel-Token. Nie E-Mail, Reisendenname, Pass/Dokumentnummer, DOB, Nationalität/Staatsbürgerschaft, Roh-Trip-Titel oder andere PII. |
 | Booking ID | nach Confirmed Booking | nicht vor Buchung als `externalRef` erfinden |
 | Operator name | UI/FAQ | `operatorName` nur wenn belegt |
 | Connection / train number | FAQ erwähnt Zugbuchung | `connectionRef` nur wenn belegt |
-| API trip/service/offer IDs | **UNKNOWN** | Fixture darf keine erfundenen Produktions-IDs als Live-Refs ausgeben |
+| API trip/service/offer IDs | **UNKNOWN** | Fixture-`offerRef` ist test-lokal und spiegelt **keine** echte 12Go-Offer-/Service-/Trip-ID. Slugs und synthetische Fixture-IDs dürfen nach Approval **nicht** als Production-Identität wiederverwendet werden. Fehlt der realen API eine stabile Offer-Identität für `MobilityOption`: fail-closed / Redesign über eigenen TL-Slice. |
 
-`externalRef` ist provider-scoped (ADR-0168). Ohne belegte 12Go-Ref: Option verwerfen. Slug allein (`bangkok/chiang-mai`) ist **keine** Offer-Identität.
+`externalRef` ist provider-scoped (ADR-0168). Ohne belegte 12Go-Ref aus dem echten API-Vertrag: Option verwerfen. Slug allein (`bangkok/chiang-mai`) ist **keine** Offer-Identität.
 
 ### 3.4 Orte
 
@@ -149,7 +150,7 @@ Jetnity `originPlaceId` / `destinationPlaceId` bleiben Jetnity-Places **ohne FK-
 
 - Preise ändern sich zwischen Suche und Payment (Terms 1.5).
 - 12Go kann Service-/Convenience-/Cross-border-Fees erheben; oft nicht erstattbar (Terms 4.2, 6.1).
-- Affiliate-Payout-Währungen sind dokumentiert (THB/USD/EUR/…); das ist **nicht** die Quote-Währung der Tickets.
+- Affiliate-Payout-Währungen (THB/USD/EUR/…) und öffentlich beworbene Commission-/Revshare-Zahlen sind **datierte kommerzielle Evidence**, keine Adapter-Wahrheit. Sie dürfen weder hart kodiert noch Ranking/Providerwahl steuern. Jetnity-Ranking bleibt nutzerinteresse-first und provisionsneutral. Payout-Währung ist **nicht** die Quote-Währung der Tickets.
 - Reseller-Deposit: THB, USD, EUR (E-RES-01).
 
 API-Währungsfeld, Minor-Units, Fee-Breakdown, Conversion: **UNKNOWN**.  
@@ -173,15 +174,18 @@ S5-A zertifiziert kein `available`. Fehlende Evidence bleibt `unknown`. Fixture 
 
 - Unique partner ID in Cookies, 30 Tage, last-click (E-AFF-01, E-AFF-02).
 - Sub-ID zur Kanaltrennung.
+- Affiliate-Programm bietet Deep-Links **für genehmigte Affiliates**.
 - Tools: deep-links, search form, timetable, banners, white label, data feeds, API.
 - iframe **verboten** (E-BLOG-02).
 - Cookie stuffing verboten (E-AFF-02).
 - PPC Brand Bidding verboten.
 - Consumer Terms verbieten Deep-Link/Framing ohne Erlaubnis und Bots/Scrapers (E-CON-03 §9.3).
 
-Parameter-Namen (`?z=`, `?ref=`, …): **UNKNOWN**.  
-Späterer Builder: nur `https:` Hosts `12go.asia` / `12go.com` (und später schriftlich freigegebene White-Label-Hosts). Malformed → `null`, nicht raten.  
-Ein gültiger Fixture-Deeplink ist **keine** Affiliate-Evidence (`affiliateStatus` bleibt `unknown`, bis ein echter Partner-Click plus Tracking-Beleg existiert).
+**Reconcile:** Kommerzielle Affiliate-/Deep-Link-Erzeugung bleibt **aus**, bis Jetnity genehmigten Affiliate-Status/Terms oder andere schriftliche Zustimmung hat. Öffentliche `/travel/{slug}`-Muster sind nur Navigations-Evidence, keine kommerzielle Erlaubnis. Partner-ID-/Sub-ID-Query-Namen werden **nicht** aus öffentlichen URLs erfunden. Nach Approval: genau den partner-generierten/dokumentierten URL-Builder verwenden.
+
+**Host-Allowlist (späterer Attribution-Slice, server-seitig):** nur server-konfigurierte 12Go-eigene oder vertraglich freigegebene Whitelabel-Hosts. Unbekannter HTTPS-Host → reject. Browser/Client darf erlaubten Host, Partner-ID oder Trusted-Attribution-Status **nicht** liefern. Genehmigte Tracking-Parameter exakt erhalten. Fixture-Link setzt nie Affiliate `present`.
+
+Parameter-Namen (`?z=`, `?ref=`, …): **UNKNOWN**.
 
 ### 3.9 Booking vs. Reseller
 
@@ -202,11 +206,11 @@ Alles **UNKNOWN**, bis 12Go nach Approval vertrauliche Bedingungen mitteilt. Die
 
 Zukünftiger Transport (erst nach Docs):
 
-- server-only;
-- Timeout an `MOBILITY_SUCHE_GRENZEN.timeoutMs` (12 s) oder strenger dokumentierter Provider-Wert;
+- ausschließlich über `lib/server/providers/core/*` (ADR-0199); kein zweiter Transport-Kern;
+- API-Credentials/Secrets/private Tokens server-only;
+- Timeout/Retry/Rate-Limit/Redaction über den vorhandenen Kern, nicht als 12Go-Rate-Limit-Wahrheit erfinden;
 - kein `process.env` im Client;
-- Provider-Fehler mappen auf vorhandenes `MobilityProviderFehler`: `timeout | unavailable | invalid | error`;
-- Rate-Limit über Shared-Core, nicht als 12Go-Rate-Limit-Wahrheit erfinden.
+- Provider-Fehler mappen auf vorhandenes `MobilityProviderFehler`: `timeout | unavailable | invalid | error`.
 
 ### 3.11 Localization
 
@@ -222,7 +226,7 @@ Supplier Product Terms steuern Change/Cancel/Refund. Antrag in der Regel ≥ 24 
 
 ## 4. Offline-Fixtures – erlaubte vs. verbotene Fakten
 
-Fixtures sind **Test-Evidence**, analog `FlightProviderFixtureSearchResult.evidenceMode = 'fixture'`.
+Fixtures sind **Jetnity-eigene synthetische Testform**, analog `FlightProviderFixtureSearchResult.evidenceMode = 'fixture'`. Sie beschreiben **keine** 12Go-API-Kompatibilität. Ein späterer Parser/Transport darf nicht aus diesen Fixtures allein implementiert werden. Nach 12Go-Approval muss zuerst der vertrauliche first-party API-Vertrag auditiert werden; erst dann ein separat versionierter Transport-/Parser-Task gegen das reale Schema.
 
 ### 4.1 Erlaubt (aus öffentlichem Vertrag ableitbar)
 
@@ -252,7 +256,7 @@ Kein Anspruch, 12Gos API zu beschreiben:
 ```text
 schema: 'jetnity.twelve-go.mobility.normalized.v1'
 offers[]:
-  offerRef          # Pflicht, Fixture-lokal, nicht als Production-Ref wiederverwenden
+  offerRef          # Pflicht, test-lokal; spiegelt keine echte 12Go-Offer-/Service-/Trip-ID; nach Approval nicht wiederverwenden
   mode              # rail|bus|ferry|transfer
   originName
   destinationName
@@ -270,7 +274,7 @@ offers[]:
   retrievedAt       # Fixture-clock
 ```
 
-Felder, die 12Go-API vermutlich hat und die wir **nicht** spezifizieren: **UNKNOWN**.
+Felder, die eine 12Go-API haben könnte: **UNKNOWN**. Diese Form ist kein Spiegel des realen Schemas. Fehlt der realen API eine stabile Offer-Identität für `MobilityOption`: fail-closed / Redesign über eigenen TL-Slice — keine Slugs und keine synthetischen Fixture-IDs recyceln.
 
 ---
 
@@ -278,16 +282,18 @@ Felder, die 12Go-API vermutlich hat und die wir **nicht** spezifizieren: **UNKNO
 
 Reihenfolge, sobald PO + 12Go-Approval + offizielle vertrauliche Docs vorliegen:
 
-1. **Secret-Injektion** nur Server, kein `NEXT_PUBLIC_`.
-2. **Parser** fail-closed gegen das dann vorliegende offizielle Schema; unbekanntes Feld ignorieren, fehlendes Pflichtfeld verwerfen.
-3. **Normalizer** → Jetnity `MobilityOption` + getrenntes Deeplink-Objekt.
-4. **Multimodal mapping** nach §3.1.
-5. **Deeplink attribution** mit dokumentiertem Partner-ID- und Sub-ID-Parameter; Cookie-Truth bleibt 12Go-seitig.
-6. **Observability**: Latency, HTTP-Klasse, mapped error, **kein** PII, kein Secret, keine vollständigen Karten-/Passdaten.
-7. **Error mapping** auf `MobilityProviderFehler` / Suchstatus `timeout|unavailable|invalid|error|partial|empty`. Empty ≠ Error.
-8. **Kein Trusted-Live-Constructor**, bevor der Transport existiert (Skyscanner-Vorbild).
+1. **Audit** des vertraulichen first-party API-Vertrags (nicht aus Fixtures ableiten).
+2. **Secret-Injektion** nur Server, kein `NEXT_PUBLIC_`. Partner-IDs sind Attribution, keine Credentials.
+3. **Transport** nur über `lib/server/providers/core/*`.
+4. **Parser** fail-closed gegen das dann vorliegende offizielle Schema; unbekanntes Feld ignorieren, fehlendes Pflichtfeld verwerfen. Kein Parser aus Fixture-Form allein.
+5. **Normalizer** → Jetnity `MobilityOption` + getrenntes Deeplink-Objekt. Fehlt stabile Offer-Identität: fail-closed / TL-Redesign.
+6. **Multimodal mapping** nach §3.1.
+7. **Deeplink attribution** erst nach Affiliate-Approval; nur server-allowlistete Hosts; dokumentierte Partner-/Sub-ID-Parameter exakt; Cookie-Truth bleibt 12Go-seitig. Redirect/Click ist Attribution, keine Preis-/Freshness-/Availability-Evidence.
+8. **Observability**: Latency, HTTP-Klasse, mapped error, **kein** PII, kein Secret, keine vollständigen Karten-/Passdaten.
+9. **Error mapping** auf `MobilityProviderFehler` / Suchstatus `timeout|unavailable|invalid|error|partial|empty`. Empty ≠ Error.
+10. **Kein Trusted-Live-Constructor**, bevor der Transport existiert (Skyscanner-Vorbild).
 
-Commercial-Provenance: nur ein echter, genehmigter 12Go-Live-Serverpfad darf eine S5-A-Kandidatquote mit `sourceKind=live_api` und `actor=provider_adapter` erzeugen und danach die bereits auf Production liegende, vertrauenswürdige S5-B-Write-Authority aufrufen. Fixture-Normalizer hat diese Funktion nicht. Die S5-B-Persistenzgrundlage ist bereits angewendet; `production_write_path_allocated` bleibt `false`, bis ein separates Runtime-Principal-/Write-Pfad-Gate das ändert. Kein realer Provider-Snapshot existiert. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
+Commercial-Provenance: eine öffentliche Consumer-URL, ein genehmigter Affiliate-Deeplink, Widget, Fahrplan, Data-Feed oder White-Label-Seite autorisiert **nicht** `sourceKind=live_api` und keine vertrauenswürdige Current-Quote. Nur eine echte authentifizierte/genehmigte 12Go-Server-API-Antwort unter dem tatsächlichen Vertrag darf später eine S5-A-Kandidatquote mit `sourceKind=live_api` und `actor=provider_adapter` erzeugen, und nur wenn Preis/Währung/Kontext nachweislich ausreichen. Danach darf nur die bereits auf Production liegende, vertrauenswürdige S5-B-Write-Authority einen `persisted_snapshot` schreiben, und nur wenn `production_write_path_allocated` extra gegatet `true` ist. Fixture-Normalizer hat diese Funktion nicht. Kein realer Provider-Snapshot existiert. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
 
 ---
 
@@ -309,7 +315,7 @@ Relevant, aber minimieren:
 | Gate | Wofür |
 | --- | --- |
 | Unabhängiger TL-Review dieses Audits | Docs mergen, nicht aktivieren |
-| Shared Adapter Core accepted | Falls der Implementation-Task ihn voraussetzt |
+| Shared Adapter Core (ADR-0199) | **integriert** auf `main`. Offline-Foundation ändert ihn nicht. Live-HTTP später nur darüber. |
 | Strategisches Mobility-Ziel | **bereits gesetzt:** 12Go ist Jetnitys erstes spezialisiertes Mobility-Ziel. Dieser Slice aktiviert nichts. |
 | PO: Affiliate-Enrollment ja/nein | Kostenlos, aber Antrag + Approval; **kein Agent-Signup** |
 | PO: API-Antrag ja/nein | Nur bei etablierter Website + 12Go-Consent; confidential docs danach; Auth/Endpoints/Quotas/Payloads bleiben **UNKNOWN** |
@@ -326,4 +332,4 @@ Relevant, aber minimieren:
 
 Nicht gestartet. Siehe `docs/PROVIDER_12GO_MOBILITY_ADAPTER_IMPLEMENTATION_TASK_PROPOSAL_2026-08-29.md`.
 
-Offline-Foundation nach Skyscanner-Muster: Jetnity-owned Normalized Contract + Fixture-Normalizer + Tests, die beweisen, dass Fixture-Output keine `sourceKind`/`persistenz`/`freshUntil`/`availability`/`affiliate`-Truth trägt. **Kein** Live-Transport.
+Offline-Foundation nach Skyscanner-Muster: Jetnity-owned **synthetische** Testform + Fixture-Normalizer + Tests, die beweisen, dass Fixture-Output keine `sourceKind`/`persistenz`/`freshUntil`/`availability`/`affiliate`-Truth trägt und `offerRef` nicht als 12Go-API-ID behandelt wird. **Kein** Live-Transport. **Keine** Shared-Core-Edits.

@@ -13,17 +13,18 @@ Dieser Text ist **kein** Startauftrag. Ein Cursor-Agent darf ihn nicht als Runti
 
 Kleinste offline 12Go-Mobility-Adapter-Foundation, analog Skyscanner Flights:
 
-- Jetnity-owned Normalized Contract `jetnity.twelve-go.mobility.normalized.v1`
+- Jetnity-owned **synthetische** Testform `jetnity.twelve-go.mobility.normalized.v1` — kein 12Go-API-Schema
 - Fixture-Normalizer → vorhandene `MobilityOption`-Form, ohne Domänenleak
-- Tests: Fixture kann `live_api` / `persisted_snapshot` nicht minten
-- Kein HTTP, kein Secret, kein Signup, kein API-Approval-Request
+- Tests: Fixture kann `live_api` / `persisted_snapshot` nicht minten; `offerRef` bleibt test-lokal
+- Kein HTTP, kein Secret, kein Signup, kein API-Approval-Request, keine Shared-Core-Edits (`lib/server/providers/core/*` bleibt unverändert)
 
 ## Explizites Non-Scope
 
-- Shared-Core-Edits, außer der Technical Lead sie in einem **anderen** akzeptierten Slice anordnet
-- Live-Transport, Auth, Sandbox
-- Affiliate-Enrollment / API-Antrag
-- Commercial-Provenance-Mint oder S5-B-Write. Die S5-B-Persistenzgrundlage liegt bereits auf Production; Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen. Nur ein späterer genehmigter 12Go-Live-Server-Pfad darf `live_api` minten.
+- Shared-Core-Edits an `lib/server/providers/core/*`, `lib/provider-ops`, `lib/mobility/*` oder `lib/commercial-provenance`
+- Zweiten generischen Transport-Kern
+- Live-Transport, Auth, Sandbox, Parser aus Fixtures
+- Affiliate-Enrollment / API-Antrag / kommerzielle Deep-Link-Erzeugung
+- Commercial-Provenance-Mint oder S5-B-Write. Die S5-B-Persistenzgrundlage liegt bereits auf Production; Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen. Nur eine spätere echte authentifizierte 12Go-Server-API-Antwort unter dem tatsächlichen Vertrag darf `live_api` kandidieren.
 - Rental-Car-Mapping, Flight-Mapping
 - UI, Production-Suche, TW-8
 - iframe / White-Label / Reseller
@@ -41,10 +42,11 @@ Kleinste offline 12Go-Mobility-Adapter-Foundation, analog Skyscanner Flights:
 
 1. PO entscheidet Affiliate-Enrollment (Mensch, kein Agent).
 2. PO entscheidet, ob ein API-Antrag überhaupt gestellt wird.
-3. Erst nach 12Go-Consent: vertrauliche Docs lesen und Transport-Slice versionieren.
-4. Erst danach Preview-Suche hinter Kill Switch.
-5. Production-Live und Secrets bleiben besondere PO-Gates.
-6. S5-B-Foundation-Apply ist **kein** offenes Gate mehr. Ein späterer Live-Pfad braucht das separat gegatete Runtime-Write-Pfad-/Principal-Gate, bevor echte Commercial Provenance entstehen darf. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
+3. Erst nach 12Go-Consent: vertraulichen first-party API-Vertrag auditieren, dann einen separat versionierten Transport-/Parser-Task gegen das reale Schema. Fixtures allein reichen nicht.
+4. Affiliate-Deep-Links erst nach genehmigtem Affiliate-Status; Host-Allowlist server-seitig; keine client-minted Attribution.
+5. Erst danach Preview-Suche hinter Kill Switch über `lib/server/providers/core/*`.
+6. Production-Live und Secrets bleiben besondere PO-Gates.
+7. S5-B-Foundation-Apply ist **kein** offenes Gate mehr. Ein späterer Live-Pfad braucht das separat gegatete Runtime-Write-Pfad-/Principal-Gate, bevor echte Commercial Provenance entstehen darf. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
 
 ## STOPP
 

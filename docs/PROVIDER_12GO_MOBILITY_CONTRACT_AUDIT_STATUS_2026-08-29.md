@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX `5463645369` + `5463718113` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX `5464098635` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 Preferred visible title: `Jetnity provider 12go audit 1`  
 Observed Cursor run title: `12Go mobility adapter audit`  
@@ -11,7 +11,8 @@ Rename-/Title-Fähigkeit: **keine** in den verfügbaren Cursor-Namespaces. UI ni
 Task: `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`  
 Branch: `audit/provider-12go-mobility-contract-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/190  
-Baseline `origin/main`: `69ef27b169780e41ba506a69acb15caafa645517` — *Integrate Skyscanner Flights offline adapter foundation*
+Task-Baseline: `69ef27b169780e41ba506a69acb15caafa645517`  
+Aktuelles `origin/main` (gemergt): `085c95b22130232c5b5819ef8a4bcc302cc0f52b` — Provider Adapter Core ADR-0199 integriert
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates. Kein Ready. Kein Merge. Kein Folgeslice.
 
@@ -35,11 +36,11 @@ Vor Handoff erneut `git fetch origin main`.
 | Feld | Wert |
 | --- | --- |
 | Task-Baseline | `69ef27b169780e41ba506a69acb15caafa645517` |
-| `origin/main` bei Review-Fix-Handoff | `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` |
-| Merge-Base | `69ef27b169780e41ba506a69acb15caafa645517` |
-| Behind | **4** — nur `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` (Current-State-Checkpoint). Kein Rebase in diesem Review-Fix. |
-| Ahead bei Audit-Start | 1 (nur Task-Datei `1b4b2f0d`) |
-| Ahead nach diesem Stamp | Task + Audit-Docs + Review-Fix; Exact Head am PR prüfen |
+| `origin/main` gemergt | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
+| Merge-Base nach Merge | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
+| Behind | **0** nach Merge dieses Review-Fix |
+| Integrierter Shared-Core | ADR-0199 Provider Adapter Core; Checkpoint `docs/CHATGPT_PROVIDER_ADAPTER_CORE_POST_MERGE_CHECKPOINT_2026-08-29.md` |
+| Vorgeschlagener 12Go-ADR | **ADR-0200** (`docs/ADR_0200_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md`). Integriertes ADR-0199 unverändert. |
 | S5-B Current Truth auf dieser Baseline | Persistenzgrundlage auf Production: `20260829140000_trip_item_commercial_provenance` (PR #183 / Merge `3b684f64`, Verification auf `main`). Kein realer Snapshot. Runtime-Write-Pfad/Principal geschlossen. TW-8 geschlossen. #182 ist CLOSED; nicht erneut als offener Apply-Draft führen. |
 | `main` protected | letzte kanonische Evidence `protected=false`; **in diesem Slice nicht unabhängig per API re-verifiziert** |
 | Supabase / Vercel Settings | nicht mutiert, nicht als Live-Katalog abgefragt |
@@ -60,7 +61,8 @@ Isolation `5463718113`: dieser Slice ändert **nicht** `JETNITY_HANDOFF.md`, `do
 - `MobilityNachweis` async, Umgebung `null`.
 - Commercial Provenance: Domain `mobility` getrennt von `rental_cars` und `flights` (ADR-0168).
 - S5-B Persistenzgrundlage: bereits auf Production (`20260829140000_trip_item_commercial_provenance`, verifiziert). Kein realer Provider-Snapshot. Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen und separat gegatet. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
-- Skyscanner Flights offline Foundation liegt auf `main` (`69ef27b1`) – Vorbild, keine 12Go-Runtime.
+- Skyscanner Flights offline Foundation liegt auf `main` – Vorbild, keine 12Go-Runtime.
+- Provider Adapter Core ADR-0199 integriert (`lib/server/providers/core/*`). Offline-12Go-Foundation ändert ihn nicht.
 - Rental Cars: eigene Domäne, Suche aus, kein Provider.
 
 ---
@@ -149,7 +151,7 @@ Siehe Vertrag §§3.2–3.7. Kurz:
 
 ## 4. Architektur-Ergebnis
 
-Dokumentiert in `docs/PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT_2026-08-29.md` und ADR-0199 (**proposed**).
+Dokumentiert in `docs/PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT_2026-08-29.md` und ADR-0200 (**proposed**). ADR-0199 ist der integrierte Shared-Core und nicht der 12Go-Vertrag.
 
 Kleinste ehrliche spätere Naht:
 
@@ -182,7 +184,7 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 | 12GO-R13 | S5-B Runtime-Write-Pfad / TW-8-Verwechslung als offenes Production-Apply | **process** |
 | 12GO-R14 | `main` `protected=false` | **medium** |
 | 12GO-R15 | Agent-Self-Review ≠ PASS | **process** |
-| 12GO-R16 | Draft-PR #187 nutzt parallel `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`. Diese Datei bleibt der 12Go-ADR; #190 trägt keinen `DECISIONS.md`-Eintrag und beansprucht keine globale ADR-Nummer. Nummer-Konflikt nur der Technical Lead bei Accept. | **process** |
+| 12GO-R16 | ADR-Kollision geschlossen: 12Go-ADR ist ADR-0200. Integriertes ADR-0199 (Provider Adapter Core) bleibt unberührt. | **process / closed** |
 | 12GO-R17 | Globale Current-State-Dateien (`JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md`) gehören nicht diesem Audit; Parallel-PRs #187/#188/#189 bleiben isoliert. | **process** |
 
 ---
@@ -200,9 +202,9 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 ## 7. Tests / CI / Preview
 
 - Keine Runtime-Änderung; keine neuen Unit Tests.
-- Isolation-Head `22ffe925` lokale Exact-Head-Gates **PASS**: `npm ci`; `typecheck`; `lint`; `test` 2611/2611; Production-`build`; `check:dead`; `check:exports`; `check:deps`; `check:api-schutz`; `check:schema-bezug`.
-- Ältere Gates auf `17cf1ff5` / `752f6990` / `1b4b2f0d` sind **stale**.
-- GitHub Actions / Vercel Preview dieses Heads: **nicht** als grün behauptet; live am PR prüfen.
+- Isolation-Head `22ffe925` / `0d252fde` lokale Gates sind **stale** nach Merge + `5464098635`.
+- Review-Fix-Head: nach Push neu gaten. Dieser Status behauptet kein Exact-Head-Grün für den neuen SHA.
+- GitHub Actions / Vercel Preview: **nicht** als grün behauptet; live am PR prüfen.
 
 ---
 
@@ -214,7 +216,7 @@ Keine Migration, kein RLS, kein Supabase, kein Vercel-Projektmut, kein Commercia
 
 ## 9. Offene Entscheidungen
 
-1. Technical Lead: Exact-Head-**Re-Review** #190 nach CHANGES REQUIRED `5463645369` und Parallel-Isolation `5463718113`. Accept/ändern/verwerfen des vorgeschlagenen Adaptervertrags (`docs/ADR_0199_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md`). Dieser Slice beansprucht weder `DECISIONS.md` noch globale Current-State-Dateien.
+1. Technical Lead: Exact-Head-**Re-Review** #190 nach CHANGES REQUIRED `5464098635`. Accept/ändern/verwerfen des vorgeschlagenen Adaptervertrags (`docs/ADR_0200_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md`). Dieser Slice beansprucht weder `DECISIONS.md` noch globale Current-State-Dateien.
 2. Strategisches Ziel ist gesetzt: 12Go bleibt Jetnitys erstes spezialisiertes Mobility-Ziel. Dieser Slice aktiviert das nicht.
 3. Product Owner (später, nicht aus diesem Slice): Affiliate-Enrollment, API-Antrag, vertrauliche Terms, Credentials, paid calls, Production-Aktivierung. Deeplink-only vs. genehmigter API-Suchpfad bleibt ein Integrationsschnitt, keine Zielwahl.
 4. Product Owner: sensible Dokumentweitergabe, falls 12Go Zug/Flug-Checkout sie verlangt.
@@ -224,7 +226,7 @@ Keine Migration, kein RLS, kein Supabase, kein Vercel-Projektmut, kein Commercia
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach `5463645369` + `5463718113`. Prior-Gates gelten nicht für den neuen Head. GitHub CI/Vercel live am PR prüfen.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach `5464098635`. Prior-Gates gelten nicht für den neuen Head. GitHub CI/Vercel live am PR prüfen.
 
 **Kein Ready. Kein Merge. Kein Folgeslice. Kein Signup. Kein API-Antrag.**
 
@@ -238,5 +240,5 @@ Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach `54
 4. `docs/PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT_2026-08-29.md`
 5. `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_HANDOFF_2026-08-29.md`
 6. `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_SELF_REVIEW_2026-08-29.md`
-7. ADR-0199 (proposed)
+7. ADR-0200 (proposed); ADR-0199 nur als integrierter Shared-Core lesen
 8. `docs/PROVIDER_12GO_MOBILITY_ADAPTER_IMPLEMENTATION_TASK_PROPOSAL_2026-08-29.md` (nicht starten)

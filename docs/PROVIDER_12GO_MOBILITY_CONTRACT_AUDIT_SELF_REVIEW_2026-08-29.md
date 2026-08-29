@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / REVIEW-FIX `5463645369` + `5463718113` / KEIN PASS / KEIN READY / KEIN MERGE**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX `5464098635` / KEIN PASS / KEIN READY / KEIN MERGE**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/190  
 Task: `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`
@@ -53,7 +53,7 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
 | Status / Contract / Handoff / Self-Review | diese Dateien |
 | Source URLs/titles/dates | Evidence-Log |
 | Future implementation task | Proposal, nicht gestartet |
-| `origin/main` re-fetch | Handoff §2; 0 behind vs `69ef27b1` |
+| `origin/main` re-fetch + merge | Handoff §2; gemergt `085c95b2`; 0 behind |
 
 ---
 
@@ -61,7 +61,7 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
 
 ### 3.1 Habe ich ein API-Schema erfunden?
 
-Nein. Keine Endpunkte, Header oder JSON-Felder als 12Go-Wahrheit. Die Normalized-Form ist ausdrücklich `jetnity.twelve-go.mobility.normalized.v1`, nicht 12Gos API.
+Nein. Keine Endpunkte, Header oder JSON-Felder als 12Go-Wahrheit. Die Normalized-Form ist ausdrücklich eine Jetnity-eigene synthetische Testform (`jetnity.twelve-go.mobility.normalized.v1`), kein 12Go-API-Schema. `offerRef` ist test-lokal.
 
 ### 3.2 Habe ich Parse.bot oder GitHub-SDKs als Vertrag benutzt?
 
@@ -83,9 +83,9 @@ Nein. Die Implementation-Datei ist `PROPOSAL ONLY / NICHT AUTHORISIERT`.
 
 Passport/Gender aus 12Go-FAQ/Privacy sind als PO-gated dokumentiert. Keine Visa-Wahrheit. Route Truth traveller-neutral.
 
-### 3.7 Habe ich ADR-0199 als angenommen verkauft?
+### 3.7 Habe ich den 12Go-ADR als angenommen verkauft oder ADR-0199 überschrieben?
 
-Nein. Status `PROPOSED / NOT ACCEPTED`.
+Nein. Der 12Go-Vertrag ist **ADR-0200**, proposed/not accepted. Integriertes ADR-0199 (Provider Adapter Core) bleibt unberührt.
 
 ---
 
@@ -100,7 +100,7 @@ Nein. Status `PROPOSED / NOT ACCEPTED`.
 
 ## 5. Nicht geprüft / nicht behauptet
 
-- GitHub Actions / Vercel Preview **dieses** Isolation-Heads (lokal PASS auf `22ffe925`; remote live prüfen)
+- GitHub Actions / Vercel Preview **dieses** Review-Fix-Heads (nach Merge `085c95b2`; lokal neu gaten)
 - Production-Build remote/Vercel dieses Heads
 - Live-Supabase
 - Branch-Protection-API
@@ -131,12 +131,26 @@ P1 Parallel-Workstream: #190 darf nicht um globale Current-State-Ownership konku
 
 - `JETNITY_HANDOFF.md` und `docs/ACTIVE_WORK_STATUS.md` auf Merge-Base zurückgesetzt.
 - `ARCHITECTURE.md` und `ROADMAP.md` zurückgesetzt (kein S5-B-Reword, kein Ersatz des globalen Next-Step).
-- `DECISIONS.md` zurückgesetzt. 12Go-ADR bleibt die dedizierte Datei; kein shared ADR-0199-Eintrag (Draft-PR #187 nutzt ADR-0199 parallel).
+- `DECISIONS.md` nicht als 12Go-Current-State-Owner benutzt.
 - S5-B Production-Truth, 12Go-first und UNKNOWN-API bleiben in den dedizierten 12Go-Docs.
 
-## 8. Verdict
+## 8. Review-Fix `5464098635`
 
-Der Task ist als Audit/Contract-Prep erfüllt. Review-Fixes korrigieren S5-B-Current-State und Parallel-Isolation. Scope blieb docs-only. Unbekannte API-Teile bleiben UNKNOWN.
+1. 12Go-ADR nach **ADR-0200** umbenannt. Integriertes ADR-0199 unverändert.
+2. Shared-Core-Schichten: `lib/mobility/*` / `lib/server/providers/core/*` / `lib/providers/twelve-go/mobility/*`. `lib/provider-ops` bleibt Inbound-Ops. Kein zweiter Transport-Kern.
+3. Fixture-Form ist synthetisch; `offerRef` test-lokal; Parser nicht aus Fixtures.
+4. Öffentliche URL / Affiliate-Deeplink / Widget / Feed ≠ `live_api`. Redirect ist Attribution, keine Quote.
+5. Kommerzielle Deep-Links erst nach Affiliate-Approval; Host-Allowlist server-seitig; keine client-minted Attribution.
+6. Partner-ID = Attribution-Metadaten, kein Secret. Client-supplied IDs minten kein Trust.
+7. Sub-ID später nur bounded opaque Token, kein PII.
+8. Commission-Zahlen = datierte Evidence, keine Ranking-Wahrheit.
+9. `origin/main` `085c95b2` gemergt.
+
+Nicht erfunden: Auth, Endpunkte, Sandbox, Quotas, Rate Limits, Error-Bodies, Tracking-Parameternamen, Payload-Felder.
+
+## 9. Verdict
+
+Der Task ist als Audit/Contract-Prep erfüllt. Review-Fixes korrigieren S5-B-Current-State, Isolation, ADR-Nummer und den integrierten Adapter-Core. Scope blieb docs-only. Unbekannte API-Teile bleiben UNKNOWN.
 
 **Kein PASS. Kein Ready. Kein Merge.**
 
