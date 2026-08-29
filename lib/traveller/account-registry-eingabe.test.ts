@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
 import {
   REGISTRY_BEZEICHNUNG_UNGUELTIG,
+  REGISTRY_DATUM_UNGUELTIG,
   REGISTRY_EINGABE_UNGUELTIG,
   REGISTRY_LAND_UNGUELTIG,
   REGISTRY_TYP_UNGUELTIG,
@@ -130,6 +131,14 @@ describe('Account-Registry Schreibnutzlast', () => {
     assert.equal(registryKindLimitErreicht('document', 12), true)
     assert.equal(registryDocumentGegenBestandPruefen(null, [], 12, 'anlegen').ok, false)
     assert.equal(registryDocumentGegenBestandPruefen(null, [], 12, 'aendern').ok, true)
+
+    const datum = registryDocumentAnlageLesen({
+      travellerId: TRAVELLER_ID,
+      documentType: 'passport',
+      expiresOn: '01.01.2028',
+    })
+    assert.equal(datum.ok, false)
+    if (!datum.ok) assert.equal(datum.meldung, REGISTRY_DATUM_UNGUELTIG)
   })
 
   test('löscht nur mit gültiger Registry-ID', () => {
