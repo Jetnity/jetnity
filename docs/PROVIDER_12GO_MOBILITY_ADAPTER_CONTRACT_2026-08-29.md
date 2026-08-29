@@ -31,7 +31,7 @@ Dieser Vertrag definiert die **kleinste spätere** 12Go-Mobility-Naht, die an de
 | Trip-Graph, Stages, `trip_items.kind=transfer` | Jetnity | keine |
 | `MobilitySuchanfrage` / `MobilityOption` / Ranking | Jetnity `lib/mobility` | Adapter normalisiert **hinein**, leaket 12Go-Rohformen nicht nach außen |
 | `MobilityNachweis` | Jetnity | späterer Server-Nachweis; Umgebung heute `null` |
-| Commercial Provenance | Jetnity S5-A/S5-B | nur späterer live Server-Transport darf eine `live_api`-Kandidatquote erzeugen; S5-B-Write extra gegatet |
+| Commercial Provenance | Jetnity S5-A/S5-B | S5-B-Persistenzgrundlage liegt bereits auf Production (`20260829140000_trip_item_commercial_provenance`). Kein realer Provider-Snapshot. Runtime-Write-Pfad/Principal bleibt geschlossen und separat gegatet. Nur ein genehmigter 12Go-Live-Serverpfad darf später eine `live_api`-Kandidatquote erzeugen und die vertrauenswürdige S5-B-Write-Authority aufrufen. |
 | Route Truth / Bewegungskanten | Jetnity, traveller-neutral | 12Go-Fahrplan ist Anbieterfakt, keine Anschlussgarantie |
 | Traveller-Credentials / Citizenships | Jetnity | 12Go darf keine Visa-/Eligibility-Wahrheit setzen |
 | Rental Cars | Jetnity `lib/rental-cars` | **nicht dieser Adapter** |
@@ -287,7 +287,7 @@ Reihenfolge, sobald PO + 12Go-Approval + offizielle vertrauliche Docs vorliegen:
 7. **Error mapping** auf `MobilityProviderFehler` / Suchstatus `timeout|unavailable|invalid|error|partial|empty`. Empty ≠ Error.
 8. **Kein Trusted-Live-Constructor**, bevor der Transport existiert (Skyscanner-Vorbild).
 
-Commercial-Provenance: nur der live Server-Pfad darf eine S5-A-Kandidatquote mit `sourceKind=live_api` und `actor=provider_adapter` erzeugen. Fixture-Normalizer hat diese Funktion nicht. Persistenz bleibt S5-B / Production-Apply extra gegatet.
+Commercial-Provenance: nur ein echter, genehmigter 12Go-Live-Serverpfad darf eine S5-A-Kandidatquote mit `sourceKind=live_api` und `actor=provider_adapter` erzeugen und danach die bereits auf Production liegende, vertrauenswürdige S5-B-Write-Authority aufrufen. Fixture-Normalizer hat diese Funktion nicht. Die S5-B-Persistenzgrundlage ist bereits angewendet; `production_write_path_allocated` bleibt `false`, bis ein separates Runtime-Principal-/Write-Pfad-Gate das ändert. Kein realer Provider-Snapshot existiert. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
 
 ---
 
@@ -310,11 +310,13 @@ Relevant, aber minimieren:
 | --- | --- |
 | Unabhängiger TL-Review dieses Audits | Docs mergen, nicht aktivieren |
 | Shared Adapter Core accepted | Falls der Implementation-Task ihn voraussetzt |
+| Strategisches Mobility-Ziel | **bereits gesetzt:** 12Go ist Jetnitys erstes spezialisiertes Mobility-Ziel. Dieser Slice aktiviert nichts. |
 | PO: Affiliate-Enrollment ja/nein | Kostenlos, aber Antrag + Approval; **kein Agent-Signup** |
-| PO: API-Antrag ja/nein | Nur bei etablierter Website + 12Go-Consent; confidential docs danach |
-| PO: Secrets / paid calls / Live | Besonderes Product-Owner-Gate |
+| PO: API-Antrag ja/nein | Nur bei etablierter Website + 12Go-Consent; confidential docs danach; Auth/Endpoints/Quotas/Payloads bleiben **UNKNOWN** |
+| PO: Secrets / paid calls / Production-Aktivierung | Besonderes Product-Owner-Gate |
 | Cost Guard persistent | Vor bezahlter/Production-Suche |
-| S5-B Production-Apply | Nur wenn Quotes persistiert werden sollen; TW-8 weiter extra |
+| S5-B Runtime-Write-Pfad / Principal | Persistenzgrundlage ist **bereits** auf Production. Allocation (`production_write_path_allocated=true`) und echter Snapshot bleiben separat gegatet. |
+| TW-8 | Geschlossen, bis reale Commercial Provenance existiert |
 | Legal: Affiliate Terms + Consumer Terms + Privacy | Besonders Datenweitergabe an 12Go |
 | Nicht: Reseller, White-Label-Cutover, iframe, Scraping | |
 

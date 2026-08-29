@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Status
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **REVIEW-FIX `5463645369` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 Preferred visible title: `Jetnity provider 12go audit 1`  
 Observed Cursor run title: `12Go mobility adapter audit`  
@@ -35,11 +35,12 @@ Vor Handoff erneut `git fetch origin main`.
 | Feld | Wert |
 | --- | --- |
 | Task-Baseline | `69ef27b169780e41ba506a69acb15caafa645517` |
-| `origin/main` bei Handoff | `69ef27b169780e41ba506a69acb15caafa645517` |
-| Merge-Base | identisch; **0 behind** |
+| `origin/main` bei Review-Fix-Handoff | `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` |
+| Merge-Base | `69ef27b169780e41ba506a69acb15caafa645517` |
+| Behind | **4** — nur `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` (Current-State-Checkpoint). Kein Rebase in diesem Review-Fix. |
 | Ahead bei Audit-Start | 1 (nur Task-Datei `1b4b2f0d`) |
-| Ahead nach diesem Stamp | Task + Audit-Docs; Exact Head am PR prüfen |
-| Parallel offener Provider-Draft | #182 S5-B Persistenz – **nicht** dieser Slice, nicht angefasst |
+| Ahead nach diesem Stamp | Task + Audit-Docs + Review-Fix; Exact Head am PR prüfen |
+| S5-B Current Truth auf dieser Baseline | Persistenzgrundlage auf Production: `20260829140000_trip_item_commercial_provenance` (PR #183 / Merge `3b684f64`, Verification auf `main`). Kein realer Snapshot. Runtime-Write-Pfad/Principal geschlossen. TW-8 geschlossen. #182 ist CLOSED; nicht erneut als offener Apply-Draft führen. |
 | `main` protected | letzte kanonische Evidence `protected=false`; **in diesem Slice nicht unabhängig per API re-verifiziert** |
 | Supabase / Vercel Settings | nicht mutiert, nicht als Live-Katalog abgefragt |
 | 12Go Signup / API-Antrag / Keys | **keine** |
@@ -56,7 +57,7 @@ Task-Head-Gates auf `1b4b2f0d` (CI `33261061154` SUCCESS, Vercel Preview READY) 
 - `MobilityProvider` bucht nicht und erzeugt keine Deeplinks.
 - `MobilityNachweis` async, Umgebung `null`.
 - Commercial Provenance: Domain `mobility` getrennt von `rental_cars` und `flights` (ADR-0168).
-- S5-B Persistenz: Draft-PR #182 im Repository, nicht Production; TW-8 geschlossen.
+- S5-B Persistenzgrundlage: bereits auf Production (`20260829140000_trip_item_commercial_provenance`, verifiziert). Kein realer Provider-Snapshot. Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen und separat gegatet. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
 - Skyscanner Flights offline Foundation liegt auf `main` (`69ef27b1`) – Vorbild, keine 12Go-Runtime.
 - Rental Cars: eigene Domäne, Suche aus, kein Provider.
 
@@ -176,7 +177,7 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 | 12GO-R10 | Volatile Preise / Fees als Current-Quote ohne Freshness | **high** |
 | 12GO-R11 | Anschlusszeiten aus FAQ (z. B. 5 h) als Jetnity-Regel | **medium** |
 | 12GO-R12 | Confidential API nach Approval nicht in Git | **process** |
-| 12GO-R13 | Parallel-PR #182 / TW-8-Verwechslung | **process** |
+| 12GO-R13 | S5-B Runtime-Write-Pfad / TW-8-Verwechslung als offenes Production-Apply | **process** |
 | 12GO-R14 | `main` `protected=false` | **medium** |
 | 12GO-R15 | Agent-Self-Review ≠ PASS | **process** |
 
@@ -210,16 +211,17 @@ Keine Migration, kein RLS, kein Supabase, kein Vercel-Projektmut, kein Commercia
 
 ## 9. Offene Entscheidungen
 
-1. Technical Lead: Exact-Head-Review #190. Accept/ändern/verwerfen von ADR-0199.
-2. Product Owner (später, nicht aus diesem Slice): überhaupt 12Go? Nur Deeplink oder API-Antrag?
-3. Product Owner: sensible Dokumentweitergabe, falls 12Go Zug/Flug-Checkout sie verlangt.
-4. Nicht entscheiden in diesem Slice: Enrollment, Secrets, Live, TW-8, S5-B-Apply.
+1. Technical Lead: Exact-Head-**Re-Review** #190 nach CHANGES REQUIRED `5463645369`. Accept/ändern/verwerfen des vorgeschlagenen Adaptervertrags (ADR-0199).
+2. Strategisches Ziel ist gesetzt: 12Go bleibt Jetnitys erstes spezialisiertes Mobility-Ziel. Dieser Slice aktiviert das nicht.
+3. Product Owner (später, nicht aus diesem Slice): Affiliate-Enrollment, API-Antrag, vertrauliche Terms, Credentials, paid calls, Production-Aktivierung. Deeplink-only vs. genehmigter API-Suchpfad bleibt ein Integrationsschnitt, keine Zielwahl.
+4. Product Owner: sensible Dokumentweitergabe, falls 12Go Zug/Flug-Checkout sie verlangt.
+5. Nicht entscheiden in diesem Slice: Enrollment, Secrets, Live, Runtime-Write-Pfad, TW-8. S5-B-Production-Apply ist **kein** offenes Gate mehr.
 
 ---
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #190.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach CHANGES REQUIRED `5463645369` auf Head `752f6990`. Prior-Gates auf `752f6990` gelten nicht für den neuen Head.
 
 **Kein Ready. Kein Merge. Kein Folgeslice. Kein Signup. Kein API-Antrag.**
 

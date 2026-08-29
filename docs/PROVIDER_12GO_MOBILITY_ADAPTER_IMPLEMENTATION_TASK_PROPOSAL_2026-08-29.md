@@ -23,7 +23,7 @@ Kleinste offline 12Go-Mobility-Adapter-Foundation, analog Skyscanner Flights:
 - Shared-Core-Edits, außer der Technical Lead sie in einem **anderen** akzeptierten Slice anordnet
 - Live-Transport, Auth, Sandbox
 - Affiliate-Enrollment / API-Antrag
-- Commercial-Provenance-Mint oder S5-B-Write
+- Commercial-Provenance-Mint oder S5-B-Write. Die S5-B-Persistenzgrundlage liegt bereits auf Production; Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen. Nur ein späterer genehmigter 12Go-Live-Server-Pfad darf `live_api` minten.
 - Rental-Car-Mapping, Flight-Mapping
 - UI, Production-Suche, TW-8
 - iframe / White-Label / Reseller
@@ -44,6 +44,7 @@ Kleinste offline 12Go-Mobility-Adapter-Foundation, analog Skyscanner Flights:
 3. Erst nach 12Go-Consent: vertrauliche Docs lesen und Transport-Slice versionieren.
 4. Erst danach Preview-Suche hinter Kill Switch.
 5. Production-Live und Secrets bleiben besondere PO-Gates.
+6. S5-B-Foundation-Apply ist **kein** offenes Gate mehr. Ein späterer Live-Pfad braucht das separat gegatete Runtime-Write-Pfad-/Principal-Gate, bevor echte Commercial Provenance entstehen darf. TW-8 bleibt geschlossen, bis reale Commercial Provenance existiert.
 
 ## STOPP
 

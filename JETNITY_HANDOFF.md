@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Aktiver Docs-Slice: 12Go Mobility Contract Audit Draft-PR #190 auf Baseline `main @ 69ef27b1`. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Signup, keine Runtime, kein TW-8. Parallel bleibt S5-B Persistenz Draft-PR #182 unberührt. Live-Evidence gewinnt.**
+Status: **Aktiver Docs-Slice: 12Go Mobility Contract Audit Draft-PR #190 / REVIEW-FIX `5463645369` auf Task-Baseline `main @ 69ef27b1` (`origin/main` 4 behind, nur Checkpoint). STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Signup, keine Runtime, kein TW-8. S5-B-Persistenzgrundlage bereits auf Production; kein reales Snapshot; Runtime-Write-Pfad geschlossen. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 

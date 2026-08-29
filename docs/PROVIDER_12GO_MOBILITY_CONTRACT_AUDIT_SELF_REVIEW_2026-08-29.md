@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / KEIN PASS / KEIN READY / KEIN MERGE**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX `5463645369` / KEIN PASS / KEIN READY / KEIN MERGE**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/190  
 Task: `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`
@@ -110,10 +110,25 @@ Nein. Status `PROPOSED / NOT ACCEPTED`.
 
 ---
 
-## 6. Verdict
+## 6. Review-Fix `5463645369`
 
-Der Task ist als Audit/Contract-Prep erfüllt. Scope blieb docs-only. Unbekannte API-Teile bleiben UNKNOWN.
+P1: S5-B Production-Apply war fälschlich als zukünftiges Gate geführt. Korrigiert in Status, Vertrag, Handoff, ADR-0199, DECISIONS-Eintrag, Active Work Status, Handoff-Kopf, Roadmap-12Go-Nachbarzeilen und Implementation-Proposal.
+
+Aktueller Vertrag:
+
+- S5-B-Persistenzgrundlage ist bereits auf Production (`20260829140000`, verifiziert).
+- Kein reales Provider-Snapshot.
+- Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen und extra-gated.
+- Nur ein genehmigter 12Go-Live-Server-Pfad darf später `live_api` minten und die vertrauenswürdige S5-B-Write-Authority aufrufen.
+- TW-8 bleibt geschlossen, bis echte Commercial Provenance existiert.
+- 12Go bleibt das erste Mobility-Spezialziel; Enrollment/API-Antrag/Credentials/paid calls/Production-Aktivierung bleiben PO-Gates.
+
+Nicht erfunden: Auth, Endpunkte, Sandbox, Quotas, Rate Limits, Error-Bodies, Tracking-Parameternamen, Payload-Felder.
+
+## 7. Verdict
+
+Der Task ist als Audit/Contract-Prep erfüllt. Der Review-Fix korrigiert nur den S5-B-/Current-State-Wortlaut. Scope blieb docs-only. Unbekannte API-Teile bleiben UNKNOWN.
 
 **Kein PASS. Kein Ready. Kein Merge.**
 
-Unabhängiger Technical-Lead Exact-Head-Review ist erforderlich.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** ist erforderlich.

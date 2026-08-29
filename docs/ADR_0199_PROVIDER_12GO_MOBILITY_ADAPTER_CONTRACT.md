@@ -6,7 +6,7 @@ Cursor-Agent: `Jetnity provider 12go audit 1`
 Draft-PR: https://github.com/Jetnity/jetnity/pull/190  
 Vollvertrag: `docs/PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT_2026-08-29.md`
 
-Dieser ADR ist **kein** Architecture-Accept und **keine** Providerwahl. Er hält die Audit-Empfehlung fest, damit ein späterer Technical-Lead-Review sie annehmen, ändern oder verwerfen kann.
+Dieser ADR ist **kein** Architecture-Accept und **keine** Aktivierung. Die strategische Zielentscheidung ist bereits getroffen: **12Go bleibt Jetnitys erstes Mobility-Spezialziel.** Affiliate-Enrollment, API-Antrag, vertrauliche Terms, Credentials, paid calls und Production-Aktivierung bleiben Product-Owner-Gates und werden durch diesen ADR nicht ausgelöst. Der ADR hält den Audit-Vertrag fest, damit ein späterer Technical-Lead-Review ihn annehmen, ändern oder verwerfen kann.
 
 ## Entscheidung (vorgeschlagen, nicht angenommen)
 
@@ -16,7 +16,8 @@ Dieser ADR ist **kein** Architecture-Accept und **keine** Providerwahl. Er hält
 4. In-Workspace-Suchergebnisse dürfen später nur aus einem **von 12Go freigegebenen, serverseitigen API-Pfad** kommen. Scraping ist durch 12Go Consumer Terms verboten. iframe-Widgets sind durch Affiliate-Traffic-Regeln verboten.
 5. Solange der API-Vertrag confidential/approval-gated ist, bleiben Auth, Endpunkte, Quotas, Error-Codes und Payload-Felder `UNKNOWN`. Fixtures dürfen sie nicht erfinden.
 6. Fixture-/Test-/Affiliate-Link-Evidence darf niemals `live_api` oder `persisted_snapshot` minten.
-7. Dieser ADR entsperrt weder TW-8 noch Provider-Live, Secrets, paid calls oder Commercial-Provenance-Writes.
+7. S5-B-Persistenzgrundlage ist bereits auf Production (`20260829140000_trip_item_commercial_provenance`, verifiziert). Kein reales Provider-Snapshot. Runtime-Write-Pfad/Principal-Allocation bleibt geschlossen (`production_write_path_allocated=false`) und extra-gated. Nur ein genehmigter 12Go-Live-Server-Pfad darf später einen `live_api`-Kandidaten erzeugen und die vertrauenswürdige S5-B-Write-Authority aufrufen. TW-8 bleibt geschlossen, bis echte Commercial Provenance existiert.
+8. Dieser ADR entsperrt weder Enrollment/API-Antrag noch Provider-Live, Secrets, paid calls oder Commercial-Provenance-Writes.
 
 ## Kontext
 
@@ -39,4 +40,5 @@ Ohne genehmigte API gibt es keinen legalen, ehrlichen Weg zu 12Go-Suchwahrheit i
 - Keine Runtime in diesem Slice.
 - Spätere Implementation braucht einen eigenen, extra gegateten Task.
 - Shared-Core-Edits bleiben verboten, bis der Shared Adapter Core akzeptiert ist.
-- Product Owner muss vor Enrollment/API-Antrag entscheiden; dieser Audit stellt keinen Antrag.
+- Persistenzgrundlage ist bereits auf Production; Runtime-Write-Path bleibt extra-gated. Nur ein genehmigter Live-Pfad darf später `live_api` minten.
+- Product Owner muss vor Enrollment/API-Antrag/Credentials/paid calls/Production-Aktivierung entscheiden; dieser Audit stellt keinen Antrag.
