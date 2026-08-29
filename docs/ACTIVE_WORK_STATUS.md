@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109 / TL-Fund `5057687985`. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349`. Live-Evidence immer live prüfen.**
+Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109 / TL-Fund `5057757711`. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -9,18 +9,18 @@ Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Iss
 
 ## Aktueller Arbeitsblock – Visitor Search Country Alias Production Recovery
 
-1. **Arbeitsblock / Ziel:** Immediate Post-Merge-P1-Recovery desselben #109-Slices. Production Peru/China bleiben nach PR #172 falsch, obwohl exakte Alias-Tokens in der DB stehen. Zusätzlich TL-Fund `5057687985`: geteilte Aliase (z. B. `Congo` CD/CG) dürfen nicht zwei ununterscheidbare `Land`-Zeilen erzeugen.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29`; Draft-PR #173. Dieser Stamp erzeugt einen neueren Head nach dem Disambiguierungs-Fix; CI/Preview live am PR prüfen.
-3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Prior PASS `5057668445` ist durch `5057687985` superseded. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
-4. **Bereits umgesetzt:** Root Cause = Import-Keyword-Stapel. Ordinale Erstplatzierung; Alias-Anzeige; Typ-Kontext; generische Disambiguierung mehrdeutiger Aliase über kanonischen Namen + Ländercode; Route-Lauf; generische plus Production-Regressionen inkl. Sylvani/Congo; PO-Klarstellung und TL-Fund in Task/ADR.
-5. **Cursor-Agent:** `Visitor search correctness 1`. Tatsächliche Recovery-Session auf PR #173: `bc-020d3296-0cd7-4e36-8373-47578af701ce`. Prior Session `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`. Dieselbe logische Arbeitseinheit. Generation 1 bleibt 1.
+1. **Arbeitsblock / Ziel:** Immediate Post-Merge-P1-Recovery desselben #109-Slices. Aktueller TL-Fund `5057757711`: kurze Exact-Aliase dürfen nicht hinter einem Substring-Nachzug mit Limit 12 verloren gehen.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29`; Draft-PR #173. Dieser Stamp erzeugt einen neueren Head nach dem Universum-Nachzug; CI/Preview live am PR prüfen.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Prior PASS bleibt superseded. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
+4. **Bereits umgesetzt:** Ordinale Erstplatzierung; Alias-Anzeige; Shared-Alias-Disambiguierung; Länder-Nachzug liest das typ-begrenzte Universum (500) ohne Substring-Filter; neutraler 2-Zeichen-Retrieval-Test hinter >12 Lärmzeilen.
+5. **Cursor-Agent:** `Visitor search correctness 1`. Recovery-Session auf PR #173: `bc-020d3296-0cd7-4e36-8373-47578af701ce`. Dieselbe logische Arbeitseinheit.
 6. **Live-`main` / Baseline bei diesem Stamp:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, keine Supabase-Mutation, keine Service Role. `public.places` nur gelesen.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** vorheriger TL-PASS ist invalidiert; `5057687985` ist der aktuelle Blocking-Fund und hier adressiert; kein Mobile-Safari-/Preview-GET-Beweis in dieser Umgebung; Länder-Nachzug limit 12; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine Product-Owner-Sondergates. Ready/Merge nur Technical Lead. Nach Merge Production Peru+China+Schweiz plus Nicht-Beispiel-Aliase und mindestens ein geteiltes Alias explizit rauchen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-Write, keine Supabase-Mutation. `public.places` nur gelesen.
+8. **Kosten / Provider / Secrets:** keine laufenden. Bounded Extra-Read der Länderzeilen pro Zielsuche.
+9. **Bekannte Risiken / Review-Funde:** `ORT_LAND_UNIVERSUM` muss ≥ Länderzahl bleiben; kein Mobile-Safari-/Preview-GET-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Ready/Merge nur Technical Lead. Nach Merge auch kurze geteilte Aliase rauchen.
 11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #173 auf dem neuen Head. Kein Ready. Kein Merge. Kein Issue #110.
-12. **Zuerst lesen:** `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0196 Nachträge, `docs/ORTE.md`, Issue #109, TL-Fund `5057687985`.
+12. **Zuerst lesen:** Recovery-Task/Status/Handoff/Self-Review, ADR-0196 Nachträge, `docs/ORTE.md`, TL-Fund `5057757711`.
 
 ## Historischer Arbeitsblock – Visitor Search Country Alias Ranking
 

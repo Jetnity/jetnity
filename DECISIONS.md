@@ -5125,6 +5125,10 @@ Tests verpassten das, weil sie `orteOrdnen()` mit Städten ohne Import-Keywords 
 
 **Product-Owner-Klarstellung 29. August 2026:** Peru/China/Schweiz sind nur Beispiele. Dieselbe Invariante gilt für jedes vorhandene Länder-Alias. Zusätzlich muss die Zeile den Typ sofort lesbar machen (`Land` / `Stadt · …` / `Region · …` / `Insel · …` / `Flughafen · IATA · …`). Ein exaktes Alias darf den offiziellen Langnamen als Anzeige ersetzen, ohne die Place-ID zu ändern. Keine Allowlist, keine Übersetzungstabelle.
 
+**Nachtrag 29. August 2026 – kurze Exact-Aliase und Retrieval-Vollständigkeit (TL `5057757711`):**
+
+Ein Substring-Nachzug `keywords.ilike.%token%` mit Limit 12 kann kurze Exact-Aliase verlieren. Live Production enthält mehrfach vergebene Kurz-Tokens; Teilstring-Kandidaten liegen weit über 12. Der Nachzug für `ziel` liest deshalb das typ-begrenzte Länder-Universum ohne Substring-Filter, Limit `ORT_LAND_UNIVERSUM` (500). Das ist eine bounded Read-Kosten: eine zusätzliche kompakte Länder-Selektion pro Zielsuche, kein Provider, keine Migration. Solange das Limit ≥ `count(*) where typ = country` bleibt, kann ein vorhandenes Exact-Alias nicht still abgeschnitten werden. Ranking, Alias-Anzeige, Shared-Alias-Disambiguierung und `abreise` bleiben unverändert. Kein Token-/Länder-Allowlist.
+
 **Nachtrag 29. August 2026 – mehrdeutige exakte Länder-Aliase (TL `5057687985`):**
 
 Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthält z. B. `Congo` auf CD und CG; weitere geteilte Tokens existieren. Die Darstellung darf deshalb nicht zwei ununterscheidbare `Congo · Land`-Zeilen erzeugen. Generische Regel: Mehrdeutigkeit wird an der **sichtbaren** Ergebnismenge erkannt. Ein eindeutiges Alias bleibt natürlich (`Label` = getroffenes Alias, Kontext `Land`). Bei mehreren exakten Länder-Alias-Matches in derselben sichtbaren Menge bleibt das Alias das Label; sichtbare Zeile und `aria-label` disambiguieren mit kanonischem `name` und `countryCode` (`Land · {Name} · {Code}`). Beide Länder bleiben auswählbar. Place-IDs unverändert. Kein Congo-/Länder-Sonderfall, keine Übersetzungstabelle, keine Bestandsmutation.

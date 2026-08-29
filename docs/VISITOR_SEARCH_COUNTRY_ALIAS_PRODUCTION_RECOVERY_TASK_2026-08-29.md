@@ -8,6 +8,8 @@ Status: AUTHORIZED / IMMEDIATE POST-MERGE P1 RECOVERY / SAME LOGICAL CURSOR SESS
 
 **Technical-Lead-Fund `5057687985` 29. August 2026:** Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production zeigt `Congo` auf CD und CG; weitere geteilte Tokens existieren. Zwei ununterscheidbare `Congo · Land`-Zeilen sind ein P1. Generisch disambiguieren aus kanonischem Namen und Ländercode. Eindeutiges Alias bleibt natürlich. Neutraler Zwei-Länder-Test ist Pflicht. Keine Länder-Sonderfälle.
 
+**Technical-Lead-Fund `5057757711` 29. August 2026:** Kurze Exact-Aliase können vor dem Ranking verloren gehen, weil der Länder-Nachzug Substring-`ilike` mit Limit 12 nutzte. Production enthält mehrfach vergebene Kurz-Tokens; Teilstring-Kandidaten liegen weit über 12. Retrieval muss das begrenzte Länder-Universum vollständig lesen. Neutraler 2-Zeichen-Test mit >12 Substring-Lärm ist Pflicht. Keine Token-Allowlist.
+
 ## Baseline
 
 - Repository: `Jetnity/jetnity`
@@ -63,8 +65,9 @@ Make the actual deployed `/api/search/places` behavior satisfy Issue #109 generi
 5. Add regression coverage using Production-representative country rows/keywords for at least Peru, China, Schweiz and a generic alias.
 6. Add route-level regression coverage for the retrieval + ranking interaction if feasible; pure `orteOrdnen()` tests alone are insufficient after this live miss.
 7. **Mehrdeutige Aliase:** Wenn die sichtbare Menge mehr als ein exaktes Länder-Alias-Match enthält, müssen sichtbare Zeile und `aria-label` mit kanonischem Namen und/oder Ländercode disambiguieren. Ein eindeutiges Alias bleibt natürlich. Neutraler Test mit zwei verschiedenen Ländern, die dasselbe Alias teilen, plus Production-förmiges Evidence. Beide bleiben auswählbar.
-8. Verify actual Preview endpoint behavior before STOP. If Preview SSO prevents direct endpoint proof, document that and provide the strongest executable route-level evidence; do not fabricate.
-9. After merge, Production acceptance must explicitly smoke Peru + China + Schweiz, additional non-example aliases, and at least one shared alias such as Congo.
+8. **Kurze Exact-Aliase / Retrieval:** Der Länder-Nachzug darf Exact-Tokens nicht hinter einem kleinen Substring-Limit verlieren. Strategie: typ-begrenztes Länder-Universum, Limit ≥ Länderzahl, kein Substring-Filter. Neutraler Retrieval-Test: 2-Zeichen-Exact-Alias hinter >12 Substring-Lärm, alle Exact-Länder vor Nicht-Land-Lärm.
+9. Verify actual Preview endpoint behavior before STOP. If Preview SSO prevents direct endpoint proof, document that and provide the strongest executable route-level evidence; do not fabricate.
+10. After merge, Production acceptance must explicitly smoke Peru + China + Schweiz, additional non-example aliases, at least one shared alias, and at least one short shared alias.
 
 ## Boundaries
 
