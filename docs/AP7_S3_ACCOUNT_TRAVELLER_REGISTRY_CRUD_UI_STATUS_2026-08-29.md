@@ -11,7 +11,7 @@ Cursor-Agent: `Account plattform audit vorbereitung 17`
 - Task: `docs/AP7_S3_ACCOUNT_TRAVELLER_REGISTRY_CRUD_UI_TASK_2026-08-29.md`
 - Slice-cut baseline: `main @ b2857117741aad47a2bca3d198e5a0a88b4a0415`
 - `origin/main` re-fetched before this stamp: **`b2857117741aad47a2bca3d198e5a0a88b4a0415`**
-- Ahead / behind `origin/main`: **this stamp / 0**
+- Ahead / behind `origin/main`: **gated implementation head + this evidence stamp / 0**
 - Binding Dual-Authority: Account Registry = reusable current facts; Trip Snapshot = only Current Truth of a concrete trip
 - Persistence/RLS authority remains AP-7-S2; this slice adds no migration
 
@@ -84,7 +84,18 @@ Verified in this authoring environment on the implementation head before this st
 | `check:schema-bezug` | pass; 21 Tabellen/Views inkl. S2 Registry |
 | `npm run build` | pass; Route `ƒ /account/travellers` vorhanden |
 
-GitHub Actions + Vercel Preview must be read on the **exact head of this stamp**, not on an earlier implementation commit.
+Exact-head remote gates on implementation+docs head `376023b5502be495115119adb06cb16340317f16`:
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions CI | Run [`33276012303`](https://github.com/Jetnity/jetnity/actions/runs/33276012303) **SUCCESS** on exact SHA |
+| Job `Typecheck, Lint & Build` | SUCCESS (`99162786101`) |
+| Job `Auth-Konfiguration gegen config.toml` | SUCCESS (`99162785976`) |
+| Vercel Preview | **SUCCESS / completed** on exact SHA; dashboard `8K9aEMNJGGzjE5Cs4nhZT48knA12`; GitHub deployment `6160277625` |
+| Preview URL | https://jetnity-81qw6qi0s-jetnity-e1b93c82.vercel.app |
+| PR | #215 remains **Draft** |
+
+A later docs-only evidence stamp, if present, does not change runtime. Independent review still binds to the SHA under test, not to chat context.
 
 ## Hard non-scope held
 

@@ -37,6 +37,6 @@ Geprüft gegen den tatsächlichen Dateisatz dieses Stamps, nicht gegen Chat-Absi
 
 ## 4. Urteil des Autors
 
-Der Slice bleibt im autorisierten Runtime/UI-Rahmen. Dual-Authority ist in Copy und Code gehalten. Lokale Gates sind grün. Exact-Head CI/Vercel muss der unabhängige Reviewer am Stamp-Head prüfen.
+Der Slice bleibt im autorisierten Runtime/UI-Rahmen. Dual-Authority ist in Copy und Code gehalten. Lokale Gates sind grün. Exact-head GitHub Actions `33276012303` und Vercel Preview `8K9aEMNJGGzjE5Cs4nhZT48knA12` sind SUCCESS auf `376023b5502be495115119adb06cb16340317f16`.
 
 **Unabhängiger Technical-Lead-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

@@ -29,7 +29,8 @@ Binding bleibt:
 | Behind `origin/main` | **0** |
 | Cursor-Agent | `Account plattform audit vorbereitung 17` |
 | Cloud-Run | https://cursor.com/agents/bc-ad2d58ae-209c-413c-875c-d817d34861e7 |
-| Exact Head | der Commit dieses Handoff-Stamps; live an PR #215 prüfen |
+| Gated implementation head | `376023b5502be495115119adb06cb16340317f16` |
+| Exact Head | live an PR #215 prüfen; Runtime/UI ist der gated head oben |
 
 ## Scope proof
 
@@ -56,10 +57,15 @@ Lokal verifiziert:
 - `npm test` 2689/2689
 - Typecheck, Lint (0 errors), Hygiene, `check:schema-bezug`, Production Build mit Route `/account/travellers`
 
+Exact-head remote gates on `376023b5502be495115119adb06cb16340317f16`:
+
+- GitHub Actions [`33276012303`](https://github.com/Jetnity/jetnity/actions/runs/33276012303) **SUCCESS**
+- Vercel Preview **SUCCESS / completed** (`8K9aEMNJGGzjE5Cs4nhZT48knA12`, deployment `6160277625`)
+- Preview: https://jetnity-81qw6qi0s-jetnity-e1b93c82.vercel.app
+
 Nicht verifiziert in dieser Umgebung:
 
 - authentifizierter Browser-/Real-Device-Durchlauf
-- GitHub Actions + Vercel Preview am Stamp-Head (nach diesem Push vom Reviewer am exact head zu lesen)
 
 ## Review protocol
 
