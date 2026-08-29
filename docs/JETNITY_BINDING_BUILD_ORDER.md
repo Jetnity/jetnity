@@ -58,7 +58,7 @@ Marketing-/Growth-Abhängigkeit: Account-/Consent-/Notification-/Entitlement-Wah
 
 Agent: `Jetnity provider readiness audit`
 
-S1–S3 und **S5-A** (Commercial-Provenance-Domainvertrag) sind auf `main`. S5-B Zielarchitektur ist Option C (ADR-0197). S5-B Persistenz-Foundation ist integriert und Production-verifiziert (`20260829140000_trip_item_commercial_provenance`, ADR-0198 / PR #182/#183). Runtime-Write-Pfad bleibt geschlossen (`production_write_path_allocated=false`). Kein realer Provider-Snapshot. TW-8 bleibt geschlossen. Weiter mit Runtime-Principal-/Write-Pfad-Allokation unter besonderen Gates, danach S4/S6–S8.
+S1–S3 und **S5-A** (Commercial-Provenance-Domainvertrag) sind auf `main`. S5-B Zielarchitektur ist Option C (ADR-0197). S5-B Persistenz ist im Repository Draft-PR #182 / ADR-0198, nicht auf Production; Production-Write-Pfad nicht allokiert. Weiter mit TL Exact-Head-Re-Review, danach TL-kontrolliertem Production-Apply, danach S4/S6–S8. TW-8 bleibt geschlossen.
 
 Erst danach echte Provideraktivierung. Verträge, Secrets/API-Keys, kostenpflichtige Calls, Datenschutz/Lizenz und Production-Aktivierung bleiben besondere Product-Owner-Gates.
 

@@ -13,7 +13,6 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_STATUS_2026-08-29.md` – aktueller Authoring-Slice Draft-PR #188 / REVIEW-FIX 5463638059; Baseline `main @ 69ef27b1`; docs/evidence only; STOP für TL Exact-Head-Re-Review
 - `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` – aktueller New-Chat-Checkpoint; Search #109 + PrivacyBee #169 CLOSED/completed; #178-Träger-Klausel self-expiring auf `main`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md` – PR #173 gemergt; Live Production API smoke PASS; Issue #109 CLOSED / COMPLETED; kein Issue #110
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md` – AP-6a Gate 0 auf `main @ 6083ee63` integriert; ältere Draft-#166-Zeilen sind Pre-#168-Evidence
@@ -376,7 +375,7 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 1. Trip Workspace vollständig abschließen – nur nach seinen Gates;
 2. Traveller / Pass / Multi-Citizenship produktweit vervollständigen;
 3. Account AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` (P2-TA-03 / PR #117 integriert). AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. AP-4 und P2-TA-04 C1 sind integriert. Historischer PR-#39-Plan ist keine Current Truth;
-4. Provider Readiness Rest inkl. S5-B Runtime-Write-Pfad / realer Commercial Provenance (Persistenz-Foundation bereits Production-verifiziert: ADR-0197 / ADR-0198 / `20260829140000`; Write-Pfad geschlossen; kein realer Snapshot; TW-8 geschlossen), danach echte Provider unter besonderen Gates;
+4. Provider Readiness Rest inkl. S5-B Persistenz (Zielarchitektur Option C / ADR-0197; Repository-Übersetzung ADR-0198 / Draft-PR #182, nicht Production), danach echte Provider unter besonderen Gates;
 5. Admin D–K + Marketing/Growth Control Plane;
 6. Homepage finalisieren;
 7. AI/Search Discoverability / Authority phasengerecht;
@@ -425,7 +424,7 @@ Historischer Dual-State nach PR #142 (bereits erfüllt):
 
 TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. PR #138 Post-Merge-Continuity ist integriert. PR #141 Provider S5-B Gate 0 ist integriert als **docs/readiness only**. PR #180 nimmt Option C als S5-B-Zielarchitektur an (ADR-0197), ohne Runtime. Solange #180 offen: Review-Träger. Sobald #180 gemergt ist: diese Review-Klausel ist historisch; ADR-0197 ist integriert; Runtime/Persistenz bleibt ungestartet. PR #142 Operating Standard ist integriert.
 
-**Kein automatischer Folgeslice über S5 hinaus.** PR #138, PR #142, PR #152, PR #157 und PR #160 sind bereits gemergt; ältere Draft-Review-Sätze sind historische Evidence. AP-6/AP-7 bleiben nicht automatisch gestartet. Kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. S5-B Persistenz-Foundation ist Production-verifiziert (`20260829140000_trip_item_commercial_provenance`). Runtime-Write-Pfad bleibt geschlossen. Kein realer Provider-Snapshot. TW-8 bleibt geschlossen. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Nach Merge von #162 oder sobald kein offener Continuity-Transport mehr existiert: Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+**Kein automatischer Folgeslice über S5 hinaus.** PR #138, PR #142, PR #152, PR #157 und PR #160 sind bereits gemergt; ältere Draft-Review-Sätze sind historische Evidence. AP-6/AP-7 bleiben nicht automatisch gestartet. Kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. S5-B Persistenz ist Draft-PR #182 / ADR-0198 im Repository und **nicht** auf Production angewendet. TW-8 bleibt geschlossen. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Nach Merge von #162 oder sobald kein offener Continuity-Transport mehr existiert: Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 ist CLOSED / COMPLETED. Residual P2: Mobile Safari Real-Device für den nächsten Search-/Homepage-UX-Slice. Issue #110 bleibt ungestartet.
 

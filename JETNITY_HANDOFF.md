@@ -1,19 +1,9 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Aktiver Authoring-Slice: HBX Hotels Contract Audit / Draft-PR #188 / REVIEW-FIX 5463638059 auf Task-Baseline `69ef27b1`. Live `origin/main` `f80a7f0b` (behind 4, Checkpoint-only, kein Rebase). Docs/evidence only. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Ready, kein Merge, kein Folgeslice. Search #109 und PrivacyBee #169 bleiben CLOSED auf älterer `main`-Evidence — live neu prüfen.**
+Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
-
-Aktueller Authoring-Slice (Draft-PR #188, self-expiring nach TL-Review/Merge; Autor setzt weder Ready noch Merge):
-
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_ADAPTER_CONTRACT_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_ADAPTER_FOUNDATION_TASK_PROPOSAL_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_STATUS_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_HANDOFF_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_SELF_REVIEW_2026-08-29.md`
 
 Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
 
@@ -112,7 +102,7 @@ Zuerst vollständig lesen:
 25. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 26. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
 
-Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. S5-B Zielarchitektur Option C ist über PR #180 angenommen (ADR-0197). S5-B Persistenz-Foundation ist integriert und Production-verifiziert (`20260829140000_trip_item_commercial_provenance`, ADR-0198 / PR #182/#183). Runtime-Write-Pfad bleibt geschlossen. Kein realer Provider-Snapshot. TW-8 bleibt geschlossen. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
+Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. S5-B Zielarchitektur Option C ist über PR #180 angenommen (ADR-0197). Persistenz ist Draft-PR #182 / ADR-0198 im Repository, nicht auf Production. TW-8 bleibt geschlossen. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
@@ -140,7 +130,7 @@ Historischer vorheriger Chat-Übergabepunkt (PR #141, bleibt Evidence):
 - Post-Merge GitHub Actions Run `33182424045`: **SUCCESS** auf exakt diesem `main`
 - Post-Merge Vercel Production `dpl_BmpsTYQC3ANoMT1z33pjMVYws2nS`: **READY** auf exakt diesem `main`
 - Branch Protection: unverändert `protected=false`
-- S5-B Persistenz zum Checkpoint-Zeitpunkt von #141: noch nicht angewendet. **Current Truth auf dieser Baseline:** Persistenz-Foundation Production-verifiziert (`20260829140000`); Runtime-Write-Pfad geschlossen; kein realer Snapshot; TW-8 geschlossen. Evidence: `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`.
+- S5-B Persistenz: Repository Draft-PR #182 / ADR-0198; TL-182 Review-Fixes im Repository; Production-Write-Pfad nicht allokiert; **nicht** auf Production angewendet; TW-8 bleibt geschlossen
 - Checkpoint: `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 
 Historischer vorheriger Chat-Übergabepunkt (PR #138, bleibt Evidence):
@@ -257,7 +247,7 @@ Nach AP-5 bleiben gemäß kanonischem Account-Plan AP-6a/6b, AP-7, AP-8, AP-9, A
 - S5-A integriert
 - S5-B Gate 0 integriert (PR #141, docs/readiness only)
 - S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180)
-- S5-B Persistenz-Foundation integriert und Production-verifiziert (ADR-0198 / PR #182/#183, `20260829140000`); Runtime-Write-Pfad nicht allokiert; kein realer Provider-Snapshot; TW-8 extra gegatet
+- S5-B Persistenz im Repository (ADR-0198 / Draft-PR #182); Production-Apply und TW-8 extra gegatet
 - keine echten Provider/Secrets/Verträge/paid calls aktiviert
 - TW-8 bleibt geschlossen
 
@@ -339,7 +329,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe, nicht gestartet
 - Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
 - `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
-- Provider S5-B Gate 0 integriert (docs/readiness); Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz-Foundation Production-verifiziert (`20260829140000`); Runtime-Write-Pfad geschlossen; kein realer Snapshot; TW-8 geschlossen
+- Provider S5-B Gate 0 integriert (docs/readiness); Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz Draft-PR #182 / ADR-0198, nicht Production; TW-8 geschlossen
 - TW-8 gated
 - TW-9 nicht automatisch starten
 - AP-6a Gate 0 ist auf der Baseline integriert; kein automatisches AP-6a-Runtime / AP-6b / AP-7

@@ -1,34 +1,13 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **HBX Hotels Contract Audit Draft-PR #188 / REVIEW-FIX 5463638059 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Task-Baseline `69ef27b1`. Live `origin/main` `f80a7f0b` (behind 4, kein Rebase). Docs/evidence only. Keine Runtime, keine Keys, keine Calls, kein Mint. Kein Folgeslice.**
+Status: **Provider S5-B Persistence Draft-PR #182 / TL-182 CHANGES REQUIRED CLOSED IN REPO / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Provider HBX Hotels Contract Audit
-
-1. **Arbeitsblock / Ziel:** Offiziellen HBX/Hotelbeds Hotels-API-Vertrag rekonstruieren und den kleinsten späteren Jetnity-`accommodations`-Adaptervertrag vorbereiten. Keine Runtime.
-2. **Authoring-Branch / PR:** `audit/provider-hbx-hotels-contract-2026-08-29` / Draft-PR #188.
-3. **Status:** **REVIEW-FIX 5463638059 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Folgeslice, kein Signup. Prior-Head `68e98f7c` Gates ungültig.
-4. **Bereits umgesetzt:** First-party Evidence; Mapping-Grenze Shared Core vs HBX; Fixture-/Truth-Sperre; Foundation-Task nur als Proposal. Review-Fix: S5-B Production-Current-State und Portfolio-Drift 173k/250k/300k.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider hbx audit 1`. Observed run title `Provider hbx audit`. Cloud-Run `https://cursor.com/agents/bc-19d3e8fb-5b5a-4723-aa08-f0dab9abd983`. Generation 1 bleibt 1.
-6. **Live-`main` / Baseline bei diesem Stamp:** Task-Baseline `69ef27b1`. Live `origin/main` `f80a7f0b` (**behind 4**, nur Current-State-Checkpoint V2). Kein Rebase. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
-8. **Kosten / Provider / Secrets:** 0. Kein Konto, kein Key, kein paid call, kein Certification-Request.
-9. **Bekannte Risiken / Review-Funde:** HBX ist Booking-API, nicht Affiliate-Redirect. Swagger S16 unlesbar. Destination/Geo und Request-Währung `unknown`. Portfolio 173k/250k/300k first-party Drift. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Booking.com bleibt erster kommerzieller Hotelweg. HBX-Booking-Produkt wäre PO-Gate. Foundation-Task nicht aus #188 starten.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #188. Kein Ready. Kein Merge. Kein Folgeslice.
-12. **Zuerst lesen:** `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`, Audit, Adapter-Contract, Status, Handoff, Self-Review.
-
-## Paralleler Continuity-Block – Provider S5-B Commercial Provenance Persistence
-
-Auf **dieser** Baseline (`main @ 69ef27b1`) ist die S5-B Persistenz-Foundation integriert und Production-verifiziert (`20260829140000_trip_item_commercial_provenance`). Owner-readable RLS und privilegierte Write-Authority existieren. **Runtime-Provider-Write-Pfad bleibt geschlossen** (`production_write_path_allocated=false`). Kein realer Provider-Snapshot. TW-8 geschlossen. Dieser HBX-Audit allokiert den Write-Pfad nicht und mintet nichts.
-
-## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT UND PRODUCTION-VERIFIZIERT.** Die folgenden Punkte sind Pre-Apply-Evidence von Draft-PR #182. Current Truth: `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`. Persistenz-Foundation angewendet; Runtime-Write-Pfad geschlossen; kein realer Snapshot; TW-8 geschlossen.
+## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
 2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.

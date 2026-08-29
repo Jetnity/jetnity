@@ -1,7 +1,7 @@
 # Provider HBX Hotels Contract Audit — Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / REVIEW-FIX FÜR 5463638059 / KEINE FREIGABE / KEIN PASS**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX FÜR 5463638059 + 5463717117 / KEINE FREIGABE / KEIN PASS**  
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/188
 
@@ -21,6 +21,7 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
 | Nicht Ready / nicht mergen / kein Folgeslice | ja |
 | First-party Docs als Primärquelle | ja |
 | Unknowns ehrlich | ja |
+| Kein Ownership globaler Current-State-/S5-/Build-Order-Dateien | ja, nach `5463717117` auf `origin/main` zurückgesetzt |
 | `origin/main` vor Handoff neu | ja, live `f80a7f0b`; Task-Baseline `69ef27b1`; **behind 4** (Checkpoint-only). Kein Rebase. |
 
 Task-Datei unverändert.
@@ -51,7 +52,7 @@ Vertraglich nein: kein `sourceKind`, kein Live-Constructor. Mechanische Tests ex
 
 ### 2.6 Habe ich Booking.com still ersetzt?
 
-Nein. Strategie-Reihenfolge unverändert. HBX bleibt Backup. Booking-Produkt-Pivot explizit PO-gegatet.
+Nein. Strategie-Reihenfolge unverändert. HBX bleibt Backup. Booking-Produkt-Pivot explizit PO-gegatet. `docs/HOTEL_PROVIDER_STRATEGY.md` wird von diesem PR nicht mehr geändert.
 
 ### 2.7 Traveller Context
 
@@ -59,11 +60,15 @@ Nein. Strategie-Reihenfolge unverändert. HBX bleibt Backup. Booking-Produkt-Piv
 
 ### 2.8 Habe ich S5-B weiter als „nicht Production“ geführt?
 
-Nein. Persistenz-Foundation ist Production-verifiziert. Runtime-Write-Pfad, realer Snapshot und TW-8 bleiben geschlossen. G9 ist kein Apply-Gate mehr.
+Nein, **in den dedizierten HBX-Docs**. Persistenz-Foundation ist Production-verifiziert. Runtime-Write-Pfad, realer Snapshot und TW-8 bleiben geschlossen. G9 ist kein Apply-Gate mehr. Kanonische S5-ADRs/Architecture werden von diesem PR nicht mehr geschrieben.
 
 ### 2.9 Habe ich eine Portfolio-Zahl kanonisch gewählt?
 
 Nein. 173k / 250k / 300k stehen als first-party Drift. U7 bleibt `unknown`.
+
+### 2.10 Habe ich parallele Workstreams über globale Truth-Dateien gekreuzt?
+
+Nach `5463717117` nein. `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, Binding Build Order, Hotel-Strategie und S5-A/S5-B-ADR-/Architecture-Dateien sind auf `origin/main` zurückgesetzt.
 
 ---
 
@@ -81,7 +86,7 @@ Das ist unvollständig gegenüber einem vollständigen Vendor-SDK-Dump. Es ist v
 
 ## 4. Nicht geprüft
 
-- Exact-Head GitHub Actions / Vercel dieses Heads — nach Push live lesen; lokal `dfe63a32` Gates PASS
+- Exact-Head GitHub Actions / Vercel dieses Heads — nach Push live lesen
 - Live-Supabase
 - Branch Protection
 - ob Product Owner bereits ein HBX-Konto hat
@@ -91,6 +96,6 @@ Das ist unvollständig gegenüber einem vollständigen Vendor-SDK-Dump. Es ist v
 
 ## 5. Verdict
 
-Scope-treu, docs-only, Unknowns markiert, Commercial-Truth-Sperre geschrieben.
+Scope-treu, docs-only, Isolated auf `PROVIDER_HBX_*`, Unknowns markiert, Commercial-Truth-Sperre geschrieben.
 
 **Kein PASS. Kein Ready. Kein Merge.**

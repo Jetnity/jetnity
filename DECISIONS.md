@@ -5175,14 +5175,14 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 **Begründung:** Eine eigene Relation kann SELECT owner-only und WRITE privileged trennen, ohne Service-Role, ohne globale Unique auf Provider+Ref und ohne einen UniversalOffer.
 
-**Konsequenzen:** Zielarchitektur angenommen. Persistenz folgt ADR-0198. Persistenz-Foundation ist Production-verifiziert. Runtime-Write-Pfad und TW-8 bleiben extra gegatet. Self-Review ist kein PASS.
+**Konsequenzen:** Zielarchitektur angenommen. Persistenz folgt ADR-0198. Production-Apply und TW-8 bleiben extra gegatet. Self-Review ist kein PASS.
 
 ---
 
 ## ADR-0198 – Provider S5-B persistiert Option C mit privilegierter Write-Authority
 
 **Datum:** 29. August 2026  
-**Status:** Persistenz-Foundation implementiert und Production-verifiziert (`20260829140000_trip_item_commercial_provenance`, PR #182/#183). **Runtime-Write-Pfad geschlossen. Kein realer Provider-Snapshot. Kein TW-8.** Volltext: `docs/ADR_0198_PROVIDER_S5B_COMMERCIAL_PROVENANCE_PERSISTENCE.md`. Apply-Evidence: `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`.
+**Status:** Implementiert im Repository auf Draft-PR #182. **Keine Production-Anwendung. Kein TW-8. Kein Ready/Merge durch den Autor.** Volltext: `docs/ADR_0198_PROVIDER_S5B_COMMERCIAL_PROVENANCE_PERSISTENCE.md`.
 
 **Entscheidung:**
 
@@ -5195,11 +5195,11 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 7. Guard-Matrix schließt Stay/Activity/Note und Transfer/Rental-Providerfelder; Flight-Guard bleibt.
 8. Kein Backfill, keine History, keine Provider-Aktivierung.
 
-**Kontext:** PO-Gate `S5B-G0-PO-MIG-01` ist freigegeben. Persistenz-Foundation ist Production-verifiziert. Offen: Runtime-Write-Pfad-Allokation, nicht ein erneutes Foundation-Apply.
+**Kontext:** PO-Gate `S5B-G0-PO-MIG-01` ist freigegeben. Production-Apply bleibt TL-kontrolliert nach Exact-Head-PASS.
 
 **Alternativen:** Additive Spalten; EXECUTE an `authenticated`; Service Role.
 
-**Konsequenzen:** Persistenz-Foundation ist Production-Wahrheit. Runtime-Write-Pfad bleibt geschlossen. TW-8 bleibt geschlossen.
+**Konsequenzen:** Repository-Wahrheit ≠ Production-Wahrheit, bis der Technical Lead anwendet. TW-8 bleibt geschlossen.
 
 ---
 

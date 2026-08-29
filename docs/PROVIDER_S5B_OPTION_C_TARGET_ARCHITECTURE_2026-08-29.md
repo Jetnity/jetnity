@@ -1,7 +1,7 @@
 # Provider S5-B – Option C Target Architecture
 
 Stand: 29. August 2026  
-Status: **ACCEPTED TARGET ARCHITECTURE / PERSISTENCE-FOUNDATION PRODUCTION-VERIFIED (`20260829140000`) / RUNTIME WRITE-PATH CLOSED / NO REAL SNAPSHOT / NO TW-8**  
+Status: **ACCEPTED TARGET ARCHITECTURE / PERSISTENCE TRANSLATED IN REPO BY ADR-0198 / NO PRODUCTION APPLY / NO TW-8**  
 Workstream: Provider Readiness / Commercial Truth  
 Cursor-Agent: **Jetnity provider readiness audit 3**  
 ADR: `docs/ADR_0197_PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE.md`  
@@ -38,9 +38,9 @@ Gate-0-Evidence bleibt gültig:
 | --- | --- |
 | Option C als Zielarchitektur angenommen | **ja** |
 | S5-A Domainvertrag (ADR-0168) umgedeutet | **nein** |
-| Relation / Tabelle / Migration existiert | **ja – Production-verifiziert (`20260829140000`, ADR-0198 / PR #182/#183)** |
-| RLS / GRANT / REVOKE / SECURITY DEFINER geändert | **ja – Production-verifiziert; Runtime-Write-Pfad bleibt `production_write_path_allocated=false`** |
-| Persistierte Provider-Truth vorhanden | **nein – kein realer Snapshot; Foundation-Apply ≠ Commercial-Provenance-Mint** |
+| Relation / Tabelle / Migration existiert | **im Repository (ADR-0198 / PR #182), nicht auf Production** |
+| RLS / GRANT / REVOKE / SECURITY DEFINER geändert | **im Repository, nicht auf Production** |
+| Persistierte Provider-Truth vorhanden | **nein – kein realer Snapshot, kein Production-Apply** |
 | TW-8 entsperrt | **nein** |
 | Provider aktiviert / Secrets / paid calls | **nein** |
 
