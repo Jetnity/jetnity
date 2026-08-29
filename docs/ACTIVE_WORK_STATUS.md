@@ -1,13 +1,28 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Search #109 CLOSED / COMPLETED. PrivacyBee #169 CLOSED / COMPLETED. `main @ ade03511`. PR #178 ist Continuity-Träger (Live-Zustand prüfen; auf `main` ist die Pre-Merge-Klausel historisch). Kein aktiver Runtime-Agent. Kein #110. Live-Evidence immer live prüfen.**
+Status: **Provider S5-B Persistence Draft-PR #182 / IMPLEMENTIERT IM REPOSITORY / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
+## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+
+1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
+2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.
+3. **Status:** **IMPLEMENTIERT IM REPOSITORY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge, kein Production-Apply durch den Autor.
+4. **Bereits umgesetzt:** `trip_item_commercial_provenance`; owner-read RLS; kein authenticated Direct-Write; `jetnity_internal`-DEFINER-Write; Guard-Matrix; `reise_anlegen`/Guest-Strip; Repo-Tests; `db:sicherheit`-Fälle; ADR-0198; Threat Model.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4`.
+6. **Live-`main` / Baseline bei diesem Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Exact Head live am PR prüfen.
+7. **DB / RLS / Production-Grenze:** Migration nur im Repository. Production nicht mutiert. Apply bleibt TL-kontrolliert unter PO-Gate `S5B-G0-PO-MIG-01`.
+8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls.
+9. **Bekannte Risiken / Review-Funde:** Production ≠ Repository bis Apply. Kein realer Snapshot. TW-8 geschlossen. `main` `protected=false`. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Production-Apply nach TL PASS. TW-8 extra gegatet.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #182. Kein Ready. Kein Merge. Kein Production-Apply durch Cursor. Kein Folgeslice.
+12. **Zuerst lesen:** `docs/PROVIDER_S5B_PERSISTENCE_IMPLEMENTATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, Threat Model, ADR-0197, ADR-0198.
+
+## Historischer Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
 
 1. **Arbeitsblock / Ziel:** Docs-only PR #178 auf live `main @ ade03511` reconciled (`behind_by=0`) und Search-Smoke-Zuordnung `canonical #173 / transport #177`. Kein Runtime-Fix.
 2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29` / PR #178 als Continuity-Träger. Live-Zustand prüfen.

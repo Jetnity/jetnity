@@ -1,7 +1,7 @@
 // lib/commercial-provenance/index.ts
 //
-// Öffentlicher S5-A Commercial-Provenance-Vertrag.
-// Kein UniversalOffer, keine Provideraktivierung, keine Persistenz.
+// Öffentlicher S5-A Commercial-Provenance-Vertrag plus S5-B Mint-/Projektion.
+// Kein UniversalOffer, keine Provideraktivierung, kein Service-Role-Pfad.
 
 export {
   COMMERCIAL_AFFILIATE_STATUS,
@@ -48,3 +48,20 @@ export { commercialFrischheitBewerten } from '@/lib/commercial-provenance/frisch
 export { commercialWaehrungBewerten } from '@/lib/commercial-provenance/waehrung'
 export { commercialAffiliateLesen, commercialQuellePruefen } from '@/lib/commercial-provenance/quelle'
 export { commercialAkteurQuellePruefen, istCommercialProviderQuelle } from '@/lib/commercial-provenance/trust'
+export {
+  COMMERCIAL_LEGACY_GUARD,
+  TRIP_ITEM_COMMERCIAL_KINDS,
+  TRIP_ITEM_KIND_TO_COMMERCIAL_DOMAIN,
+  commercialAkteurIstWriteActor,
+  commercialDomainFuerTripItemKind,
+  commercialIstProviderHardTruth,
+  commercialLegacyGuardFuerKind,
+  commercialLegacyOhneProvenanceIstUnknown,
+  commercialLegacyProjektionAusSnapshot,
+  commercialSnapshotFuerPersistenzMinten,
+  type CommercialLegacyFeldvertrag,
+  type CommercialLegacyGuard,
+  type CommercialLegacyProjektion,
+  type CommercialSnapshotMint,
+  type TripItemCommercialKind,
+} from '@/lib/commercial-provenance/persistenz'

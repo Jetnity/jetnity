@@ -1,12 +1,11 @@
 // lib/trips/handelsfelder-nutzlast.ts
 //
-// Guest → Account darf unbewiesene Stay-/Activity-Handelsfelder nicht zu
-// Account-Truth machen. Dieselbe Feldmenge wie der bestehende Flug-Strip:
-// price_amount, price_currency, provider, external_ref, booking_url.
-//
+// Guest → Account darf unbewiesene Handelsfelder nicht zu Account- oder
+// Provider-Hard-Truth machen. S5-B Guard-Matrix (ADR-0197 / ADR-0198):
 // Flight bleibt über `flugNutzlastOhneUnbewieseneWahrheit` unverändert.
-// Transfer und rental_car bleiben bewusst unberührt: manuelle Nutzerpreise
-// sind S3-User-Intake, nicht derselbe untrusted-commercial Vertrag.
+// Stay/Activity/Note: ganze Legacy-Menge streichen.
+// Transfer/Rental: User-Intake-Preis behalten, Provider/Ref/URL streichen.
+// Guest-Promotion mintet keine Provenance-Zeile.
 //
 // Frei von Next und Supabase.
 
@@ -15,16 +14,27 @@ import type { ReiseNutzlast } from '@/lib/trips/schema'
 
 type NutzlastPunkt = ReiseNutzlast['days'][number]['items'][number]
 
-function stayOderActivityOhneUnbewieseneWahrheit(punkt: NutzlastPunkt): NutzlastPunkt {
-  if (punkt.kind !== 'stay' && punkt.kind !== 'activity') return punkt
+function ohneProviderFelder(punkt: NutzlastPunkt): NutzlastPunkt {
   return {
     ...punkt,
-    price_amount: null,
-    price_currency: null,
     provider: null,
     external_ref: null,
     booking_url: null,
   }
+}
+
+function ohneUnbewieseneHandelsfelder(punkt: NutzlastPunkt): NutzlastPunkt {
+  if (punkt.kind === 'stay' || punkt.kind === 'activity' || punkt.kind === 'note') {
+    return {
+      ...ohneProviderFelder(punkt),
+      price_amount: null,
+      price_currency: null,
+    }
+  }
+  if (punkt.kind === 'transfer' || punkt.kind === 'rental_car') {
+    return ohneProviderFelder(punkt)
+  }
+  return punkt
 }
 
 export function nutzlastOhneUnbewieseneHandelsfelder(nutzlast: ReiseNutzlast): ReiseNutzlast {
@@ -33,8 +43,8 @@ export function nutzlastOhneUnbewieseneHandelsfelder(nutzlast: ReiseNutzlast): R
     ...nachFlug,
     days: nachFlug.days.map((tag) => ({
       ...tag,
-      items: tag.items.map(stayOderActivityOhneUnbewieseneWahrheit),
+      items: tag.items.map(ohneUnbewieseneHandelsfelder),
     })),
-    ungeplante: nachFlug.ungeplante.map(stayOderActivityOhneUnbewieseneWahrheit),
+    ungeplante: nachFlug.ungeplante.map(ohneUnbewieseneHandelsfelder),
   }
 }

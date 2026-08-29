@@ -368,6 +368,108 @@ export type Database = {
           },
         ]
       }
+      trip_item_commercial_provenance: {
+        Row: {
+          affiliate_attribution_ref: string | null
+          affiliate_click_id: string | null
+          affiliate_partner_id: string | null
+          affiliate_status: string
+          amount: number | null
+          amount_status: string
+          availability_status: string
+          created_at: string
+          domain: string
+          external_ref: string | null
+          fresh_until: string | null
+          observed_at: string
+          persistenz: string
+          provider_belegt: boolean
+          provider_id: string
+          provider_offer_id: string | null
+          quoted_currency: string | null
+          requested_currency: string | null
+          retrieved_at: string
+          source_kind: string
+          source_label: string | null
+          trip_id: string
+          trip_item_id: string
+          updated_at: string
+          user_id: string
+          vergleichsschluessel: string | null
+        }
+        Insert: {
+          affiliate_attribution_ref?: string | null
+          affiliate_click_id?: string | null
+          affiliate_partner_id?: string | null
+          affiliate_status?: string
+          amount?: number | null
+          amount_status?: string
+          availability_status?: string
+          created_at?: string
+          domain: string
+          external_ref?: string | null
+          fresh_until?: string | null
+          observed_at: string
+          persistenz?: string
+          provider_belegt?: boolean
+          provider_id: string
+          provider_offer_id?: string | null
+          quoted_currency?: string | null
+          requested_currency?: string | null
+          retrieved_at: string
+          source_kind?: string
+          source_label?: string | null
+          trip_id: string
+          trip_item_id: string
+          updated_at?: string
+          user_id: string
+          vergleichsschluessel?: string | null
+        }
+        Update: {
+          affiliate_attribution_ref?: string | null
+          affiliate_click_id?: string | null
+          affiliate_partner_id?: string | null
+          affiliate_status?: string
+          amount?: number | null
+          amount_status?: string
+          availability_status?: string
+          created_at?: string
+          domain?: string
+          external_ref?: string | null
+          fresh_until?: string | null
+          observed_at?: string
+          persistenz?: string
+          provider_belegt?: boolean
+          provider_id?: string
+          provider_offer_id?: string | null
+          quoted_currency?: string | null
+          requested_currency?: string | null
+          retrieved_at?: string
+          source_kind?: string
+          source_label?: string | null
+          trip_id?: string
+          trip_item_id?: string
+          updated_at?: string
+          user_id?: string
+          vergleichsschluessel?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_item_commercial_provenance_item_fk"
+            columns: ["trip_item_id"]
+            isOneToOne: true
+            referencedRelation: "trip_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_item_commercial_provenance_reise_fk"
+            columns: ["trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
       trip_items: {
         Row: {
           booking_confirmed_at: string | null

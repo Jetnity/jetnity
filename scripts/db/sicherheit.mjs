@@ -361,7 +361,7 @@ const FAELLE = [
   // Direkter anon- oder Konto-RPC darf kein Kontingent mehr buchen (ADR-0052,
   // Nachtrag). Gäste laufen über den Serverweg.
   {
-    name: 'für anon ist keine SECURITY-DEFINER-Funktion ausführbar',
+    name: 'für anon ist keine public-SECURITY-DEFINER-Funktion ausführbar',
     rolle: 'anon',
     sql: `select p.proname from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace
@@ -373,6 +373,21 @@ const FAELLE = [
       'Vor Phase 1.4 war creator_alerts_eval_all() für anon aufrufbar und schrieb Zeilen. ' +
       'Der Fall hält fest, dass keine SECURITY-DEFINER-Funktion diesen Weg zurückbekommt – ' +
       'auch nicht die Kostenschranke.',
+  },
+  {
+    name: 'anon und authenticated führen keinen S5-B-DEFINER-Write aus',
+    rolle: 'anon',
+    sql: `select p.proname from pg_proc p
+          join pg_namespace n on n.oid = p.pronamespace
+          where n.nspname = 'jetnity_internal'
+            and p.prosecdef
+            and (
+              has_function_privilege('anon', p.oid, 'execute')
+              or has_function_privilege('authenticated', p.oid, 'execute')
+              or has_function_privilege('service_role', p.oid, 'execute')
+            )`,
+    erwartung: 'leer',
+    grund: 'Der S5-B-Write liegt ausserhalb von public und ist für PostgREST-Rollen nicht ausführbar.',
   },
   {
     name: 'anon beansprucht Kontingent mit Gastkennung',
@@ -898,6 +913,8 @@ function reisenachweise() {
     `{"kind":"transfer","title":"Zug Test","position":4,"price_amount":32,"price_currency":"CHF","provider":"sbb","external_ref":"rail-1","booking_url":"https://sbb.example/x","mobility_mode":"rail","origin_name":"Zuerich","destination_name":"Bern"}`
   const RENTAL_HANDEL =
     `{"kind":"rental_car","title":"Mietwagen Test","position":5,"price_amount":90,"price_currency":"EUR","provider":"sixt","external_ref":"car-1","booking_url":"https://sixt.example/x","rental_supplier":"Sixt","vehicle_class":"compact","transmission":"automatic","origin_name":"ZRH"}`
+  const NOTE_HANDEL =
+    `{"kind":"note","title":"Notiz Test","position":6,"price_amount":7,"price_currency":"CHF","provider":"evil","external_ref":"note-1","booking_url":"https://evil.example/note"}`
   const META = (routeObj, extra = '') => `'{"routeItinerary":${routeObj}${extra}}'::jsonb`
 
   return [
@@ -2244,35 +2261,35 @@ function reisenachweise() {
       grund: 'S2-B1: Browser-JSON darf über den öffentlichen RPC keine kommerzielle Flugwahrheit setzen.',
     },
     {
-      name: 'direktes reise_anlegen behält Hotel- und Aktivitäts-Handelsfelder',
+      name: 'direktes reise_anlegen persistiert keine untrusted Nicht-Flight-Providerfelder',
       rolle: 'authenticated',
       uid: NUTZER,
       sql: `select public.reise_anlegen(${reise(
         's2b1-fremd-1',
-        `,"ungeplante":[${FLUG_HANDEL(ROUTE_DIREKT_OBJ)},${STAY_HANDEL},${ACTIVITY_HANDEL},${TRANSFER_HANDEL},${RENTAL_HANDEL}]`,
+        `,"ungeplante":[${FLUG_HANDEL(ROUTE_DIREKT_OBJ)},${STAY_HANDEL},${ACTIVITY_HANDEL},${TRANSFER_HANDEL},${RENTAL_HANDEL},${NOTE_HANDEL}]`,
       )});
             select 1
               where exists (
                 select 1 from public.trip_items i
                   join public.trips t on t.id = i.trip_id
                  where t.client_ref = 's2b1-fremd-1' and i.kind = 'stay'
-                   and i.price_amount = 180 and i.price_currency = 'CHF'
-                   and i.provider = 'booking' and i.external_ref = 'htl-1'
-                   and i.booking_url = 'https://hotel.example/x'
+                   and i.title = 'Hotel Test'
+                   and i.price_amount is null and i.provider is null
+                   and i.external_ref is null and i.booking_url is null
               )
               and exists (
                 select 1 from public.trip_items i
                   join public.trips t on t.id = i.trip_id
                  where t.client_ref = 's2b1-fremd-1' and i.kind = 'activity'
-                   and i.price_amount = 45 and i.price_currency = 'EUR'
-                   and i.provider = 'gyg' and i.external_ref = 'act-1'
-                   and i.booking_url = 'https://activity.example/x'
+                   and i.price_amount is null and i.provider is null
               )
               and exists (
                 select 1 from public.trip_items i
                   join public.trips t on t.id = i.trip_id
                  where t.client_ref = 's2b1-fremd-1' and i.kind = 'transfer'
-                   and i.price_amount = 32 and i.provider = 'sbb'
+                   and i.price_amount = 32 and i.price_currency = 'CHF'
+                   and i.provider is null and i.external_ref is null
+                   and i.booking_url is null
                    and i.mobility_mode = 'rail' and i.mobility_evidence = 'user'
                    and i.origin_name = 'Zuerich'
               )
@@ -2280,12 +2297,19 @@ function reisenachweise() {
                 select 1 from public.trip_items i
                   join public.trips t on t.id = i.trip_id
                  where t.client_ref = 's2b1-fremd-1' and i.kind = 'rental_car'
-                   and i.price_amount = 90 and i.provider = 'sixt'
+                   and i.price_amount = 90 and i.provider is null
                    and i.rental_supplier = 'Sixt' and i.vehicle_class = 'compact'
                    and i.transmission = 'automatic' and i.rental_evidence = 'user'
+              )
+              and exists (
+                select 1 from public.trip_items i
+                  join public.trips t on t.id = i.trip_id
+                 where t.client_ref = 's2b1-fremd-1' and i.kind = 'note'
+                   and i.price_amount is null and i.provider is null
+                   and i.external_ref is null and i.booking_url is null
               )`,
       erwartung: 'erlaubt',
-      grund: 'S2-B1 darf Hotel-, Aktivitäts-, Mobilitäts- und Mietwagenverträge nicht pauschal nullen.',
+      grund: 'S5-B: Stay/Activity/Note und Transfer/Rental-Providerfelder dürfen über reise_anlegen keine Provider-Hard-Truth werden. Transfer/Rental-Preis bleibt User-Intake.',
     },
     {
       name: 'direktes reise_anlegen nullt Flug-Handelsfelder auch im Tagespunkt',
@@ -2386,7 +2410,7 @@ function reisenachweise() {
       grund: 'Ein kind-Wechsel darf Stay-Preise nicht zu Flugwahrheit adeln.',
     },
     {
-      name: 'direkter Stay-INSERT behält Handelsfelder unter S2-B2',
+      name: 'direkter Stay-INSERT persistiert keine Handelsfelder unter S5-B',
       rolle: 'authenticated',
       uid: NUTZER,
       sql: `insert into public.trip_items (
@@ -2399,13 +2423,257 @@ function reisenachweise() {
             select 1 from public.trip_items
               where trip_id = '${REISE}' and title = 'S2B2 Stay'
                 and kind = 'stay'
-                and price_amount = 180
-                and price_currency = 'CHF'
-                and provider = 'booking'
-                and external_ref = 'htl-1'
-                and booking_url = 'https://hotel.example/x'`,
+                and price_amount is null
+                and price_currency is null
+                and provider is null
+                and external_ref is null
+                and booking_url is null`,
       erwartung: 'erlaubt',
-      grund: 'S2-B2 darf Hotel-Handelsfelder nicht pauschal nullen.',
+      grund: 'S5-B: untrusted Stay-Direct-DML mintet keine Provider-Hard-Truth, einschließlich Preis.',
+    },
+    {
+      name: 'anon liest Commercial Provenance nicht',
+      rolle: 'anon',
+      sql: `select * from public.trip_item_commercial_provenance`,
+      erwartung: 'abgelehnt',
+      grund: 'anon hat weder Grant noch Policy auf der Provenance-Relation.',
+    },
+    {
+      name: 'Konto liest die eigene Commercial Provenance',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trip_item_commercial_provenance where trip_item_id = '${PUNKT}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto liest fremde Commercial Provenance nicht',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_item_commercial_provenance where trip_item_id = '${PUNKT}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'authenticated Direct-INSERT auf Provenance wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_item_commercial_provenance (
+              trip_item_id, trip_id, user_id, domain, provider_id,
+              retrieved_at, observed_at
+            ) values (
+              '${PUNKT}', '${REISE}', '${NUTZER}', 'activities', 'evil',
+              '2026-08-29T11:00:00Z', '2026-08-29T11:00:00Z'
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'authenticated Direct-UPDATE auf Provenance wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `update public.trip_item_commercial_provenance
+               set provider_id = 'evil'
+             where trip_item_id = '${PUNKT}'`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'authenticated Direct-DELETE auf Provenance wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `delete from public.trip_item_commercial_provenance where trip_item_id = '${PUNKT}'`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'authenticated darf den internen Provenance-Write nicht ausführen',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              jsonb_build_object(
+                'trip_item_id', '${PUNKT}',
+                'providerId', 'gyg',
+                'externalRef', 'act-seed',
+                'retrievedAt', '2026-08-29T11:05:00Z',
+                'quotedCurrency', 'EUR',
+                'amount', 50
+              )
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Provenance-Write mintet persisted_snapshot',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `select 1
+              from jetnity_internal.trip_item_commercial_provenance_schreiben(
+                jsonb_build_object(
+                  'trip_item_id', '${PUNKT}',
+                  'providerId', 'gyg',
+                  'sourceKind', 'live_api',
+                  'persistenz', 'ephemeral',
+                  'externalRef', 'act-seed',
+                  'retrievedAt', '2026-08-29T11:05:00Z',
+                  'quotedCurrency', 'EUR',
+                  'amount', 50,
+                  'akteur', 'provider_adapter'
+                )
+              ) as r
+             where (r ->> 'ok') = 'true'
+               and (r ->> 'source_kind') = 'persisted_snapshot'
+               and (r ->> 'persistenz') = 'snapshot'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'kontrollierter Write lehnt forged Actor ab',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              jsonb_build_object(
+                'trip_item_id', '${PUNKT}',
+                'providerId', 'gyg',
+                'externalRef', 'act-seed',
+                'retrievedAt', '2026-08-29T11:05:00Z',
+                'akteur', 'user'
+              )
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write lehnt User-Intake als Source ab',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              jsonb_build_object(
+                'trip_item_id', '${PUNKT}',
+                'providerId', 'gyg',
+                'sourceKind', 'user_intake',
+                'externalRef', 'act-seed',
+                'retrievedAt', '2026-08-29T11:05:00Z'
+              )
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write lehnt note-Items ab',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `do $body$
+begin
+  reset role;
+  insert into public.trip_items (id, trip_id, kind, title)
+    values ('${PUNKT_NEU}', '${REISE}', 'note', 'S5B Note');
+  perform set_config('role', 'jetnity_commercial_writer', true);
+  perform jetnity_internal.trip_item_commercial_provenance_schreiben(
+    jsonb_build_object(
+      'trip_item_id', '${PUNKT_NEU}',
+      'providerId', 'duffel',
+      'externalRef', 'note-x',
+      'retrievedAt', '2026-08-29T11:05:00Z'
+    )
+  );
+  raise exception 'note durfte keine Provenance erhalten';
+end
+$body$`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write lehnt Domain/Kind-Widerspruch ab',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              jsonb_build_object(
+                'trip_item_id', '${PUNKT}',
+                'domain', 'flights',
+                'providerId', 'gyg',
+                'externalRef', 'act-seed',
+                'retrievedAt', '2026-08-29T11:05:00Z'
+              )
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'gleiche Provider+Ref darf auf zwei Items stehen',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `do $body$
+declare
+  _zweite uuid;
+begin
+  reset role;
+  insert into public.trip_items (trip_id, kind, title)
+    values ('${REISE}', 'activity', 'Zweite Tour')
+    returning id into _zweite;
+  perform set_config('role', 'jetnity_commercial_writer', true);
+  perform jetnity_internal.trip_item_commercial_provenance_schreiben(
+    jsonb_build_object(
+      'trip_item_id', '${PUNKT}',
+      'providerId', 'gyg',
+      'externalRef', 'act-seed',
+      'retrievedAt', '2026-08-29T11:05:00Z',
+      'quotedCurrency', 'EUR',
+      'amount', 45
+    )
+  );
+  perform jetnity_internal.trip_item_commercial_provenance_schreiben(
+    jsonb_build_object(
+      'trip_item_id', _zweite,
+      'providerId', 'gyg',
+      'externalRef', 'act-seed',
+      'retrievedAt', '2026-08-29T11:05:00Z',
+      'quotedCurrency', 'EUR',
+      'amount', 45
+    )
+  );
+  if (select count(*) from public.trip_item_commercial_provenance
+        where provider_id = 'gyg' and external_ref = 'act-seed') < 2 then
+    raise exception 'gleiche Ref durfte nicht auf zwei Items stehen';
+  end if;
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Trip-Item-Delete hinterlässt keine Provenance-Waise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `delete from public.trip_items where id = '${PUNKT}';
+            select 1 where not exists (
+              select 1 from public.trip_item_commercial_provenance
+               where trip_item_id = '${PUNKT}'
+            )`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'direkter Transfer-INSERT behält User-Intake-Preis und nullt Providerfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (
+              trip_id, kind, title, price_amount, price_currency, provider,
+              external_ref, booking_url, mobility_mode, origin_name, destination_name
+            ) values (
+              '${REISE}', 'transfer', 'S5B Transfer', 32, 'CHF', 'sbb',
+              'rail-1', 'https://sbb.example/x', 'rail', 'Zuerich', 'Bern'
+            );
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'S5B Transfer'
+                and price_amount = 32 and price_currency = 'CHF'
+                and provider is null and external_ref is null and booking_url is null`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'direkter Note-INSERT leert alle Legacy-Handelsfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (
+              trip_id, kind, title, price_amount, price_currency, provider,
+              external_ref, booking_url
+            ) values (
+              '${REISE}', 'note', 'S5B Note Insert', 7, 'CHF', 'evil',
+              'note-1', 'https://evil.example/note'
+            );
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'S5B Note Insert'
+                and price_amount is null and provider is null
+                and external_ref is null and booking_url is null`,
+      erwartung: 'erlaubt',
     },
     {
       name: 'ungültige Surface-Evidence bleibt beim direkten INSERT ohne Evidence',
@@ -2821,6 +3089,7 @@ function aenderungsnachweise() {
       uid: NUTZER,
       sql: `do $body$
 begin
+  reset role;
   update public.trip_items
      set price_amount = 18,
          price_currency = 'EUR',
@@ -2828,6 +3097,12 @@ begin
          external_ref = 'ref-1',
          booking_url = 'https://example.com/x'
    where id = '${PUNKT}';
+  perform set_config('role', 'authenticated', true);
+  perform set_config(
+    'request.jwt.claims',
+    json_build_object('sub', '${NUTZER}', 'role', 'authenticated')::text,
+    true
+  );
   perform public.reise_aendern(${nutzlast('mut-handel', 2, 3, 'Neuer Titel')});
   if not exists (
     select 1 from public.trip_items
@@ -2844,6 +3119,7 @@ begin
 end
 $body$`,
       erwartung: 'erlaubt',
+      grund: 'Trusted Projection darf reise_aendern nicht durch Client-JSON ersetzen. Der Setup-Write ist privilegiert, nicht authenticated Direct-DML.',
     },
     {
       name: 'reise_aendern rollt bei Fehler die Revision zurück',
@@ -3176,6 +3452,13 @@ function aufbau() {
        values ('${TAG}', '${REISE}', '${NUTZER}', 1, current_date);`,
     `insert into public.trip_items (id, trip_id, user_id, day_id, kind, title)
        values ('${PUNKT}', '${REISE}', '${NUTZER}', '${TAG}', 'activity', 'Fischmarkt');`,
+    `insert into public.trip_item_commercial_provenance (
+        trip_item_id, trip_id, user_id, domain, provider_id, external_ref,
+        retrieved_at, observed_at, quoted_currency, amount, amount_status
+      ) values (
+        '${PUNKT}', '${REISE}', '${NUTZER}', 'activities', 'gyg', 'act-seed',
+        '2026-08-29T11:00:00Z', '2026-08-29T11:00:00Z', 'EUR', 45, 'quoted'
+      );`,
     `select set_config('jetnity.graph_mutation', '', true);`,
     `insert into public.trip_readiness_items
        (id, trip_id, user_id, client_ref, kind, user_status, context_fingerprint)

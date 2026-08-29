@@ -220,7 +220,7 @@ describe('Stay/Activity-Handelsfelder ohne unbewiesene Wahrheit', () => {
     assert.equal(bereinigt.ungeplante[0]?.provider, null)
   })
 
-  test('Transfer- und Mietwagen-Nutzerpreise bleiben (S3 User-Intake)', () => {
+  test('Transfer- und Mietwagen-Nutzerpreise bleiben, Providerfelder nicht', () => {
     const bereinigt = nutzlastOhneUnbewieseneHandelsfelder(
       nutzlastMit([
         basisPunkt({
@@ -228,6 +228,9 @@ describe('Stay/Activity-Handelsfelder ohne unbewiesene Wahrheit', () => {
           title: 'Zug',
           price_amount: 42,
           price_currency: 'CHF',
+          provider: 'sbb',
+          external_ref: 'rail-1',
+          booking_url: 'https://evil.example/rail',
           mobility_mode: 'rail',
           origin_name: 'Zürich',
           destination_name: 'Lugano',
@@ -238,13 +241,49 @@ describe('Stay/Activity-Handelsfelder ohne unbewiesene Wahrheit', () => {
           position: 2,
           price_amount: 280,
           price_currency: 'CHF',
+          provider: 'sixt',
+          external_ref: 'car-1',
+          booking_url: 'https://evil.example/car',
           rental_supplier: 'Europcar',
         }),
       ]),
     )
-    assert.equal(bereinigt.days[0]?.items[0]?.price_amount, 42)
-    assert.equal(bereinigt.days[0]?.items[1]?.price_amount, 280)
-    assert.equal(bereinigt.days[0]?.items[1]?.rental_supplier, 'Europcar')
+    const transfer = bereinigt.days[0]?.items[0]
+    const rental = bereinigt.days[0]?.items[1]
+    assert.equal(transfer?.price_amount, 42)
+    assert.equal(transfer?.price_currency, 'CHF')
+    assert.equal(transfer?.provider, null)
+    assert.equal(transfer?.external_ref, null)
+    assert.equal(transfer?.booking_url, null)
+    assert.equal(rental?.price_amount, 280)
+    assert.equal(rental?.rental_supplier, 'Europcar')
+    assert.equal(rental?.provider, null)
+    assert.equal(rental?.external_ref, null)
+    assert.equal(rental?.booking_url, null)
+  })
+
+  test('Note verliert alle Legacy-Handelsfelder und wird keine Domain', () => {
+    const bereinigt = nutzlastOhneUnbewieseneHandelsfelder(
+      nutzlastMit([
+        basisPunkt({
+          kind: 'note',
+          title: 'Notiz',
+          price_amount: 12,
+          price_currency: 'CHF',
+          provider: 'evil',
+          external_ref: 'note-1',
+          booking_url: 'https://evil.example/note',
+        }),
+      ]),
+    )
+    const note = bereinigt.days[0]?.items[0]
+    assert.equal(note?.kind, 'note')
+    assert.equal(note?.title, 'Notiz')
+    assert.equal(note?.price_amount, null)
+    assert.equal(note?.price_currency, null)
+    assert.equal(note?.provider, null)
+    assert.equal(note?.external_ref, null)
+    assert.equal(note?.booking_url, null)
   })
 
   test('erfindet keinen Provider- oder Preisstatus', () => {
