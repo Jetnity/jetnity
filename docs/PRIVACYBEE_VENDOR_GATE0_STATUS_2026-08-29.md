@@ -200,7 +200,7 @@ Keine Runtime. Keine Shared Continuity. Kein Search-#168.
 
 ## 9. Tests / Gates
 
-Lokale Checks und Exact-Head-CI/Vercel werden nach dem korrigierten Authoring-Push gestempelt. Ältere Heads (`f4e0707e`, US-Irrläufer-Docs) gelten nicht für den finalen Head.
+Evidence-Head `902efc96`: lokal `ap6a-gate0-legal-foundation-inventory.test.ts` 9/9; Actions `33246013131` SUCCESS; Vercel `26Tuq5edbvMEQ9W9wArzQ5wAHahs` SUCCESS; Preview deployment `6154434744`. Ältere Heads (`f4e0707e`, US-Irrläufer, `187bcbd7`) gelten nicht als aktueller Head. Dieser Stamp-Commit invalidiert die Head-Bindung; live an PR #171 prüfen.
 
 ## 10. Exakter nächster Schritt
 

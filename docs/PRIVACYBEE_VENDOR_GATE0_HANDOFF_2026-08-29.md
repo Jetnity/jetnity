@@ -91,7 +91,7 @@ Keine dieser Entscheidungen ist getroffen.
 | Baseline `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
 | Merge-Base | dieselbe SHA |
 | Task + Vendor-Korrektur | `61014e39` Correct PrivacyBee Gate 0 to Swiss privacybee.io target |
-| Authoring-Head | der Commit dieses Stamps; live an PR #171 prüfen |
+| Authoring-Head (account-evidence) | `902efc96ded3e1ef5086e6dfff3ea91fd3fc88e3` |
 | Draft-PR | #171 OPEN Draft |
 | Issue | #169 OPEN |
 | PR #168 | OPEN Draft, nicht mutiert |
@@ -123,16 +123,15 @@ Keine dieser Entscheidungen ist getroffen.
 
 ### 6.4 Lokale Checks / CI / Vercel / Threads
 
-Vor diesem Stamp: Task-Head-Gates gelten nicht für den neuen Head. Vercel auf frühere Heads (u. a. `GCCuNzhurfhkLrp8XK85pLt9d6xK`) ist invalidiert.
-
-Evidence-Head `187bcbd7` (vor diesem Stamp):
+Evidence-Head `902efc96ded3e1ef5086e6dfff3ea91fd3fc88e3` (Swiss rewrite + bestehendes PO-Konto als `account-evidence-required`):
 
 - Lokal: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
-- GitHub Actions Run `33245828404` **SUCCESS** auf exakt `187bcbd7` (Typecheck/Lint/Build + Auth-Check).
-- Vercel StatusContext **SUCCESS**; Deployment `GuTQPZ6cUcy5E5bheWiKUS6n67SX`; GitHub Preview deployment `6154400715`.
-- Review-Auftrag `5461543989`; PO-Konto-Hinweis im Issue-Comment (2026-08-29). Reviews: 0. Kein TL-PASS.
+- GitHub Actions Run `33246013131` **SUCCESS** auf exakt `902efc96` (Typecheck/Lint/Build + Auth-Check).
+- Vercel StatusContext **SUCCESS**; Deployment `26Tuq5edbvMEQ9W9wArzQ5wAHahs`; GitHub Preview deployment `6154434744`.
+- Prior Swiss-rewrite Head `187bcbd7`: Run `33245828404` SUCCESS; Vercel `GuTQPZ6cUcy5E5bheWiKUS6n67SX` — gilt nicht mehr als aktueller Head.
+- Review-Auftrag `5461543989`; Target-Korrektur-Kommentar; PO-Konto-Hinweis (2026-08-29). Reviews: 0. Kein TL-PASS.
 
-Dieser Stamp erzeugt einen neueren Head. Die genannten Gates gelten für `187bcbd7`, nicht automatisch für den Stamp. Live am PR prüfen.
+Dieser Stamp erzeugt einen neueren Head. Die genannten Gates gelten für `902efc96`, nicht automatisch für den Stamp-Commit. Live am PR prüfen.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 

@@ -33,7 +33,7 @@ Ein früherer Irrläufer gegen `privacybee.com` wurde **nicht** als Swiss-Truth 
 | Wurde Vendor-„100 % konform“ zu Jetnity-Wahrheit? | Nein. |
 | Wurde Integration oder Folgeslice gestartet? | Nein. |
 | Ready/Merge empfohlen? | Nein. STOPP für TL-Review. |
-| Generation 2 wegen UI-Titel oder Vendor-Korrektur? | Nein. Dieselbe Generation 1 / dieselbe Session. |
+| Generation 2 wegen UI-Titel oder Vendor-Korrektur? | Nein. Dieselbe Generation 1 / dieselbe Session. Target-Korrektur (`privacybee.io`, Task-Head `61014e39`) ist bereits in den Deliverables; US-Evidence nicht wiederverwendet. |
 
 ## 3. Proaktive Funde, nicht still geschlossen
 
