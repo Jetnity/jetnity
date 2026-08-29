@@ -142,8 +142,30 @@ function lageText(ort: Ort): string {
   ).join(', ')
 }
 
-export function ortAnzeigeKontext(ort: Ort): string {
-  if (ort.typ === 'country') return 'Land'
+function kontextTeilAnhaengen(teile: string[], wert: string | null | undefined) {
+  if (!wert) return
+  if (teile.some((teil) => gleichGefaltet(teil, wert))) return
+  teile.push(wert)
+}
+
+export function landAliasMehrdeutig(orte: Ort[], suche: string): boolean {
+  return orte.filter((ort) => istExaktesLandAlias(ort, suche)).length > 1
+}
+
+export function ortAnzeigeKontext(
+  ort: Ort,
+  suche = '',
+  mehrdeutigesLandAlias = false,
+): string {
+  if (ort.typ === 'country') {
+    if (mehrdeutigesLandAlias && suche && istExaktesLandAlias(ort, suche)) {
+      const teile = ['Land']
+      kontextTeilAnhaengen(teile, ort.name)
+      kontextTeilAnhaengen(teile, ort.countryCode)
+      return teile.join(' · ')
+    }
+    return 'Land'
+  }
   if (ort.typ === 'region') return ['Region', ort.country].filter(Boolean).join(' · ')
   if (ort.typ === 'island') return ['Insel', ort.country].filter(Boolean).join(' · ')
   if (ort.typ === 'airport') {
@@ -159,9 +181,9 @@ export function ortAnzeigeLabel(ort: Ort, suche: string): string {
   return schluesselwoerter(ort.keywords).find((teil) => gleichGefaltet(teil, raw)) ?? raw
 }
 
-function ortAlsOption(ort: Ort, suche: string): OrtOption {
+function ortAlsOption(ort: Ort, suche: string, mehrdeutigesLandAlias: boolean): OrtOption {
   const label = ortAnzeigeLabel(ort, suche)
-  const description = ortAnzeigeKontext(ort)
+  const description = ortAnzeigeKontext(ort, suche, mehrdeutigesLandAlias)
   return {
     id: ort.id,
     label,
@@ -217,5 +239,7 @@ function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Or
 }
 
 export function orteOrdnen(orte: Ort[], suche: string, rolle: OrtRolle): OrtOption[] {
-  return begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ortAlsOption(ort, suche))
+  const sichtbar = begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ort)
+  const mehrdeutig = landAliasMehrdeutig(sichtbar, suche)
+  return sichtbar.map((ort) => ortAlsOption(ort, suche, mehrdeutig))
 }

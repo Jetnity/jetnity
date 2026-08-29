@@ -10,6 +10,7 @@ import { eingabeOhneAuswahl, ortAusBestand, ORT_MELDUNG } from '@/lib/places/pru
 import type { Ort } from '@/lib/places/domain'
 import {
   ORT_TREFFER,
+  landAliasMehrdeutig,
   landAliasNachzugNoetig,
   orteOrdnen,
   ortAnzeigeKontext,
@@ -344,6 +345,80 @@ describe('Ortssuche', () => {
     assert.match(optionen.find((option) => option.id === stadt.id)?.description ?? '', /^Stadt · /)
   })
 
+  test('zwei Länder mit demselben exakten Alias bleiben unterscheidbar und auswählbar', () => {
+    const erstes = ortFixture({
+      id: 'geonames:9100001',
+      name: 'Northern Sylvani Federation',
+      typ: 'country',
+      country: 'Northern Sylvani Federation',
+      countryCode: 'NS',
+      keywords: 'Sylvani, Northern Sylvani Federation',
+    })
+    const zweites = ortFixture({
+      id: 'geonames:9100002',
+      name: 'Southern Sylvani Republic',
+      typ: 'country',
+      country: 'Southern Sylvani Republic',
+      countryCode: 'SS',
+      keywords: 'Sylvani, Southern Sylvani Republic',
+    })
+    const stadt = ortFixture({
+      id: 'geonames:9100003',
+      name: 'Sylvani',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Iowa',
+      keywords: 'Sylvani, Sylvani, Iowa',
+    })
+    const optionen = orteOrdnen([stadt, erstes, zweites], 'Sylvani', 'ziel')
+    const laender = optionen.filter((option) => option.typ === 'country')
+    assert.equal(laender.length, 2)
+    assert.ok(laender.every((option) => option.label === 'Sylvani'))
+    assert.ok(laender.some((option) => option.id === erstes.id))
+    assert.ok(laender.some((option) => option.id === zweites.id))
+    assert.ok(optionen.some((option) => option.id === stadt.id))
+    const texte = laender.map((option) => option.description ?? '')
+    assert.ok(texte.some((text) => text.includes('Northern Sylvani Federation') && text.includes('NS')))
+    assert.ok(texte.some((text) => text.includes('Southern Sylvani Republic') && text.includes('SS')))
+    assert.notEqual(laender[0]?.description, laender[1]?.description)
+    assert.notEqual(laender[0]?.ariaLabel, laender[1]?.ariaLabel)
+    assert.ok(laender.every((option) => (option.ariaLabel ?? '').includes(option.description ?? '')))
+    const eindeutig = orteOrdnen([erstes, stadt], 'Sylvani', 'ziel')
+    assert.equal(eindeutig[0]?.id, erstes.id)
+    assert.equal(eindeutig[0]?.label, 'Sylvani')
+    assert.equal(eindeutig[0]?.description, 'Land')
+    assert.equal(eindeutig[0]?.ariaLabel, 'Sylvani, Land')
+  })
+
+  test('Production-förmige geteilte Länder-Aliase bleiben über kanonischen Namen unterscheidbar', () => {
+    const kongoCd = ortFixture({
+      id: 'geonames:203312',
+      name: 'Democratic Republic of the Congo',
+      typ: 'country',
+      country: 'Democratic Republic of the Congo',
+      countryCode: 'CD',
+      keywords: 'Congo, DRC, Democratic Republic of the Congo',
+    })
+    const kongoCg = ortFixture({
+      id: 'geonames:2260494',
+      name: 'Republic of the Congo',
+      typ: 'country',
+      country: 'Republic of the Congo',
+      countryCode: 'CG',
+      keywords: 'Congo, Republic of the Congo',
+    })
+    const optionen = orteOrdnen([kongoCd, kongoCg], 'Congo', 'ziel')
+    assert.equal(optionen.length, 2)
+    assert.ok(optionen.every((option) => option.label === 'Congo' && option.typ === 'country'))
+    const cd = optionen.find((option) => option.id === kongoCd.id)
+    const cg = optionen.find((option) => option.id === kongoCg.id)
+    assert.equal(cd?.description, 'Land · Democratic Republic of the Congo · CD')
+    assert.equal(cg?.description, 'Land · Republic of the Congo · CG')
+    assert.equal(cd?.ariaLabel, 'Congo, Land · Democratic Republic of the Congo · CD')
+    assert.equal(cg?.ariaLabel, 'Congo, Land · Republic of the Congo · CG')
+  })
+
   test('die Zeilenform folgt dem Typ, nicht einzelnen Ländernamen', () => {
     const land = ortFixture({
       id: 'geonames:9000001',
@@ -390,6 +465,9 @@ describe('Ortssuche', () => {
     })
     assert.equal(ortAnzeigeLabel(land, 'Ruritanien'), 'Ruritanien')
     assert.equal(ortAnzeigeKontext(land), 'Land')
+    assert.equal(ortAnzeigeKontext(land, 'Ruritanien', true), 'Land · Republic of Ruritania · RR')
+    assert.equal(landAliasMehrdeutig([land], 'Ruritanien'), false)
+    assert.equal(landAliasMehrdeutig([land, stadt], 'Ruritanien'), false)
     assert.equal(ortAnzeigeKontext(stadt), 'Stadt · Ohio, United States')
     assert.equal(ortAnzeigeKontext(region), 'Region · Ruritania')
     assert.equal(ortAnzeigeKontext(insel), 'Insel · Ruritania')
@@ -486,7 +564,7 @@ describe('Ortssuche', () => {
 
   test('die Runtime enthält keine Länder-Allowlist', () => {
     const datei = readFileSync(join(hier, 'suche.ts'), 'utf8')
-    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien'] as const) {
+    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani'] as const) {
       assert.equal(datei.includes(name), false, name)
     }
   })

@@ -239,6 +239,47 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     assert.ok(schweiz.aufrufe.includes('land'))
   })
 
+  test('zwei Länder mit demselben Alias bleiben im Retrieval-Lauf unterscheidbar', async () => {
+    const norden = zeile({
+      id: 'geonames:9100001',
+      name: 'Northern Sylvani Federation',
+      typ: 'country',
+      country: 'Northern Sylvani Federation',
+      country_code: 'NS',
+      keywords: 'Sylvani, Northern Sylvani Federation',
+    })
+    const sueden = zeile({
+      id: 'geonames:9100002',
+      name: 'Southern Sylvani Republic',
+      typ: 'country',
+      country: 'Southern Sylvani Republic',
+      country_code: 'SS',
+      keywords: 'Sylvani, Southern Sylvani Republic',
+    })
+    const { lesen } = leser({
+      name: [
+        zeile({
+          id: 'geonames:9100003',
+          name: 'Sylvani',
+          typ: 'city',
+          country: 'United States',
+          country_code: 'US',
+          region: 'Iowa',
+          keywords: 'Sylvani, Sylvani, Iowa',
+        }),
+      ],
+      land: [norden, sueden],
+    })
+    const ergebnis = await placesSuchen('Sylvani', 'ziel', lesen)
+    assert.equal(ergebnis.problem, null)
+    const laender = ergebnis.optionen?.filter((option) => option.typ === 'country') ?? []
+    assert.equal(laender.length, 2)
+    assert.ok(laender.every((option) => option.label === 'Sylvani'))
+    assert.notEqual(laender[0]?.description, laender[1]?.description)
+    assert.ok(laender.every((option) => (option.ariaLabel ?? '').includes('Land ·')))
+    assert.ok(ergebnis.optionen?.some((option) => option.id === 'geonames:9100003'))
+  })
+
   test('Abreise holt Flughäfen, aber kein Länder-Alias', async () => {
     const { lesen, aufrufe } = leser({
       name: [
