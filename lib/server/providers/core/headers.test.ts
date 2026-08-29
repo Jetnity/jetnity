@@ -48,11 +48,14 @@ describe('provider transport header redaction', () => {
   test('request-id header names must be valid and non-sensitive', () => {
     assert.equal(isValidHttpHeaderName('x-request-id'), true)
     assert.equal(isValidHttpHeaderName('Bad Header'), false)
-    assert.equal(resolveRequestIdHeaderName(undefined).ok, true)
-    if (resolveRequestIdHeaderName(undefined).ok) {
-      assert.equal(resolveRequestIdHeaderName(undefined).name, 'x-request-id')
-    }
-    assert.equal(resolveRequestIdHeaderName('X-Request-Id').ok, true)
+    const fallback = resolveRequestIdHeaderName(undefined)
+    assert.equal(fallback.ok, true)
+    if (!fallback.ok) return
+    assert.equal(fallback.name, 'x-request-id')
+    const custom = resolveRequestIdHeaderName('X-Request-Id')
+    assert.equal(custom.ok, true)
+    if (!custom.ok) return
+    assert.equal(custom.name, 'x-request-id')
     assert.equal(resolveRequestIdHeaderName('authorization').ok, false)
     assert.equal(resolveRequestIdHeaderName('Set-Cookie').ok, false)
     assert.equal(resolveRequestIdHeaderName('x-api-key').ok, false)
