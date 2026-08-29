@@ -4973,7 +4973,7 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 ## ADR-0193 – AP-5-S4: MFA-Step-up vor verified-factor Unenroll ohne Consumer-AAL2
 
 **Datum:** 29. August 2026  
-**Status:** Implementation-Slice auf Draft-PR #159 / Issue #158. Keine Auth-Architektur. Kein Auth-Config-Push. Kein globales Consumer-AAL2.
+**Status:** Integriert auf `main @ 934d43da` über PR #159 / Transport PR #160 / Issue #158. Keine Auth-Architektur. Kein Auth-Config-Push. Kein globales Consumer-AAL2.
 
 **Entscheidung:**
 
@@ -5008,6 +5008,8 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 - Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
 - S5 startet nicht aus diesem ADR.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+**Nachtrag, 29. August 2026 – Merge.** PR #159 (canonical) und PR #160 (Ready-Transport desselben Exact Head `051addb8`) sind gemergt. TL PASS `5056140445`. Post-Merge Actions `33225645740` SUCCESS auf `934d43da`. S5 startet nicht aus diesem ADR.
 
 ---
 

@@ -46,4 +46,4 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein S5. 
 
 Während der lokalen Gates wurden zwei Author-Fixes nötig: Execution-Fehler von `plan_fehler` auf `ausfuehren_fehler` gemappt; `aalStufeLesen` nicht mehr exportiert. Beide sind im Diff enthalten.
 
-**Unabhängiger Technical-Lead-Review:** ausstehend. Dieses Self-Review ersetzt ihn nicht.
+**Unabhängiger Technical-Lead-Review:** PASS `5056140445` auf `051addb8`. S4 ist gemergt. Dieses Self-Review bleibt historische Author-Evidence und ersetzt den PASS nicht.

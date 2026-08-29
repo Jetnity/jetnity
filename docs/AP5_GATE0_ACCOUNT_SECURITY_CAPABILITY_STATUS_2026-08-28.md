@@ -122,7 +122,7 @@ Weitere gemessene Semantik aus dem installierten Client:
 
 **Folgerung:** AP-5-S4 darf einen nutzerfreundlichen `challenge`/`verify`-Step-up vor Unenroll eines **verifizierten** Faktors setzen, damit die bereits serverseitige AAL2-Anforderung erfüllbar ist. Das führt kein Consumer-AAL2 global ein. Consumer-AAL2 für alle Account-Routen, MFA-Config oder Passkey-Live bleiben Product-Owner-Sondergates.
 
-**Nachtrag, 29. August 2026 – AP-5-S4.** Draft-PR #159 implementiert den UI-Step-up über die vorhandene User-Auth-API. Die Gate-0-Wahrheit bleibt: nur `currentLevel === 'aal2'` reicht; Login-MFA bleibt skippable; kein globales Consumer-AAL2. S4 ist **nicht integriert**, solange #159 Draft ist. Details: ADR-0193.
+**Nachtrag, 29. August 2026 – AP-5-S4.** PR #159 / Transport PR #160 integrieren den UI-Step-up über die vorhandene User-Auth-API auf `main @ 934d43da`. Die Gate-0-Wahrheit bleibt: nur `currentLevel === 'aal2'` reicht; Login-MFA bleibt skippable; kein globales Consumer-AAL2. Details: ADR-0193.
 
 ## 7. Client-/Server-Authority, Redirects, Enumeration, Leakage
 
@@ -177,7 +177,7 @@ Kein Slice startet aus diesem Dokument. Reihenfolge ist Empfehlung, keine Build-
 | **AP-5-S1** | Security-Seite ehrlich: empty ≠ unsupported ≠ unavailable ≠ error. Rohfehler raus. Passkey-Panel sagt „aus“, nicht „bald live“. Faktor-ID nicht als Geräteidentität. | **normales Technical-Lead-Gate** |
 | **AP-5-S2** | In-Account-Passwortänderung auf `/account/security` nur über den signed-in Vertrag: `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Recovery-Seite bleibt Recovery-Authority und wird nicht als Reauthentication wiederverwendet. Kein Current-Password-Feld. HIBP/Richtlinie unverändert. | **normales Technical-Lead-Gate** |
 | **AP-5-S3** | Logout-UI: heutiges Abmelden als „überall“ belassen; optional „andere Sitzungen“ über `scope: 'others'`. Fehler nicht schlucken. JWT-Restlaufzeit nicht als sofort tot behaupten. | **normales Technical-Lead-Gate** |
-| **AP-5-S4** | Nutzerfreundlicher `challenge`/`verify`-Step-up vor Unenroll eines **verifizierten** TOTP-Faktors, weil GoTrue dafür bereits serverseitig `aal2` verlangt. Draft-PR #159 implementiert das; nicht integriert, bis unabhängig reviewed und gemergt. Erstes Enroll und unverified Unenroll bleiben AAL1. Login-Dialog-Abbrechen nicht still als AAL2 behandeln. Kein globales Consumer-AAL2. | **normales Technical-Lead-Gate**, solange kein Consumer-AAL2-Middleware |
+| **AP-5-S4** | Nutzerfreundlicher `challenge`/`verify`-Step-up vor Unenroll eines **verifizierten** TOTP-Faktors, weil GoTrue dafür bereits serverseitig `aal2` verlangt. PR #159 / Transport PR #160 integriert. Erstes Enroll und unverified Unenroll bleiben AAL1. Login-Dialog-Abbrechen nicht still als AAL2 behandeln. Kein globales Consumer-AAL2. | **integriert**; kein automatisches S5 |
 | **AP-5-S5** | Session-Karte: aktuelle Sitzung ja; andere Sitzungen `unsupported`. Keine Fake-Geräteliste. | **normales Technical-Lead-Gate** |
 | **AP-5-P1** | Default-Logout von `global` auf `local` ändern | **Product-Owner-Sondergate** – Session-Semantik |
 | **AP-5-P2** | Session-/Geräteliste über Service Role, `auth.sessions` oder neues Schema | **Product-Owner-Sondergate** – Session-Architektur + Privilegien |

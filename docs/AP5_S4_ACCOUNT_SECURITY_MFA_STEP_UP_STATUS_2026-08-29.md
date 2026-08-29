@@ -1,15 +1,16 @@
 # Jetnity – AP-5-S4 Account Security MFA Step-up – Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN S5**  
+Status: **INTEGRIERT auf `main @ 934d43da` über PR #159 / Transport PR #160. Ältere Draft-/Review-Fix-Zeilen sind Pre-Merge-Evidence. Kein S5.**  
 Workstream: Account / Security  
 Cursor-Agent: **`Account plattform audit vorbereitung 14`**  
 Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`  
 Issue: [#158](https://github.com/Jetnity/jetnity/issues/158)  
 Branch: `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/159
+Canonical-PR: https://github.com/Jetnity/jetnity/pull/159 **MERGED**  
+Transport-PR: https://github.com/Jetnity/jetnity/pull/160 **MERGED**
 
-> Live-Evidence gewinnt. Dieser Status ist Authoring-/Handoff-Evidence, kein Technical-Lead-PASS.
+> Live-Evidence gewinnt. Pre-Merge Authoring-Evidence. TL PASS war `5056140445` auf `051addb8`. Post-Merge-Current-State: `docs/CHATGPT_PR159_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
 
 ## 1. Live-Rekonstruktion dieses Agenten
 
@@ -21,8 +22,9 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/159
 | Beobachteter Run-Titel | `Ap-5-s4 mfa-step-up abmeldung` – nicht als umbenannt behauptet |
 | Cursor-Run | https://cursor.com/agents/bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132 |
 | `main` Branch Protection | `protected=false` |
-| Issue #158 | OPEN |
-| Draft-PR | #159, bleibt Draft |
+| Issue #158 | OPEN – nicht durch den Autor geschlossen |
+| Canonical-PR #159 | **MERGED**; Exact Head `051addb8`; TL PASS `5056140445` |
+| Transport-PR #160 | **MERGED** auf `main @ 934d43da` |
 | AP-5 Gate 0 / PR #129 | **integrated** |
 | AP-5-S1 / PR #133 | **integrated** |
 | AP-5-S2 / PR #137 | **integrated** |
@@ -75,7 +77,7 @@ Siehe `docs/AP5_S4_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 | Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 133 warnings |
 | `auth:pruefen` | 55/55, 242 Schlüssel |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| GitHub Actions / Vercel Preview | Exact Head `c503dbf2`: Actions `33224797456` SUCCESS; Vercel `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` READY. Dieser Stamp erzeugt einen neueren Head; dessen Gates live prüfen. |
+| GitHub Actions / Vercel | Pre-Merge Exact Head `051addb8`: Actions `33225002992` SUCCESS. Post-Merge `main @ 934d43da`: Actions `33225645740` SUCCESS; GitHub Production `6150984139` success; Vercel Inspector `6zbYcSHfXrnUZbbJVSustDMEQfW5` completed. |
 
 ## 5. DB / RLS / Production-Grenze
 
@@ -93,16 +95,16 @@ Keine neuen laufenden Kosten. Keine Provider. Keine Secrets.
 - Kein authentifizierter Browser-/Real-Device-Beweis (`/account/security` ist auth-gated; kein Testkonto).
 - `main` Branch Protection bleibt `protected=false`.
 - Agent-Self-Review ist kein PASS.
-- Review `5056084065` P1 ist lokal geschlossen: Session/AAL nach verified Unenroll wird reconciled; Refresh-Fehler ist fail-closed lokal. P2 Challenge-Faktor-Auswahl ist umgesetzt.
-- Prior-Gates auf `6f46a299` / `97a8f7b9` gelten nicht für den Review-Fix. Gates `33224797456` / `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` gelten für `c503dbf2`, nicht automatisch für diesen Stamp-Head.
+- Review `5056084065` P1/P2 sind im gemergten Head geschlossen. TL PASS `5056140445` auf `051addb8`.
+- Post-Merge-Gates gelten für `main @ 934d43da`. Alias/`target=production` live erneut prüfen.
 
 ## 8. Offene Freigaben
 
-S4 braucht kein Product-Owner-Sondergate. Es wurde keine fundamentale Auth/MFA/AAL-Architektur- oder Projektkonfigurationsänderung nötig. S5 startet nicht aus diesem File. P1–P5 bleiben extra gegated.
+S4 ist integriert. S5 und P1–P5 starten nicht aus diesem File. Issue #158 bleibt OPEN, bis der Technical Lead sie schließt.
 
 ## 9. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #159 nach CHANGES REQUIRED `5056084065`. Kein Ready. Kein Merge. Kein AP-5-S5 durch den Autor-Agenten. Jeder neue Push invalidiert Prior-Gates.
+S4-Runtime nicht erneut öffnen. Aktueller Docs-Block: Post-Merge-Continuity auf `cursor/ap5-s4-post-merge-continuity-2026-08-29-5132`. Kein S5.
 
 ## 10. Zuerst lesen
 

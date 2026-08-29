@@ -1,12 +1,13 @@
 # Jetnity – AP-5-S4 – Handoff
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN S5**  
+Status: **INTEGRIERT auf `main @ 934d43da` / PR #159 + Transport PR #160 / KEIN S5**  
 Cursor-Agent: **`Account plattform audit vorbereitung 14`**  
 Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`  
 Issue: [#158](https://github.com/Jetnity/jetnity/issues/158)  
 Branch: `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/159
+Canonical-PR: https://github.com/Jetnity/jetnity/pull/159 **MERGED**  
+Transport-PR: https://github.com/Jetnity/jetnity/pull/160 **MERGED**
 
 ## Zuerst lesen
 
@@ -48,9 +49,9 @@ Kein neuer Auth-Vertrag. ADR-0193 präzisiert nur die UI-Nutzung der bereits in 
 - Kein authentifizierter Browser-/Real-Device-Beweis.
 - `mfa.verify` kann andere Sitzungen beenden; keine Sessionliste behauptet.
 - Nach Unenroll-Fehler nach Step-up kann die Sitzung bereits AAL2 sein.
-- Review `5056084065` P1/P2 lokal geschlossen. Gates `33224797456` SUCCESS und Vercel `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` READY gelten für `c503dbf2`; dieser Stamp erzeugt einen neueren Head.
+- Review `5056084065` P1/P2 im gemergten Head geschlossen. TL PASS `5056140445` auf `051addb8`. Post-Merge CI `33225645740` SUCCESS auf `934d43da`.
 - `main` `protected=false`.
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #159 nach `5056084065`. Nicht Ready. Nicht mergen. Kein automatischer S5-Start.
+S4-Runtime nicht erneut öffnen. Docs-only Post-Merge-Continuity reviewen. Kein automatischer S5-Start.

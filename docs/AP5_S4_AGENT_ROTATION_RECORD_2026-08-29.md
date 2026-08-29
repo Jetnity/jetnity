@@ -45,4 +45,8 @@ It is not authorized to:
 - start AP-6/AP-7, Provider, TW-8, Search, Homepage or Native work;
 - mark Ready or merge.
 
-Review-Fixes für denselben S4-PR müssen dieselbe Generation 14 verwenden.
+Review-Fixes für denselben S4-PR mussten dieselbe Generation 14 verwenden.
+
+## Closeout
+
+Generation 14 completed AP-5-S4. Canonical PR #159 and transport PR #160 are merged on `main @ 934d43da`. The same generation may finish docs-only Phase-K continuity and must not author AP-5-S5.
