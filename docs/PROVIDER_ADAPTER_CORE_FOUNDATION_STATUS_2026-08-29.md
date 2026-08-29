@@ -1,24 +1,23 @@
 # Provider Adapter Core Foundation — Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX IMPLEMENTIERT / DRAFT-PR #187 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX + CONTINUITY-RECONCILIATION / DRAFT-PR #187 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider adapter core 1`  
-Branch: `feat/provider-adapter-core-foundation-2026-08-29`  
-Slice baseline main: `69ef27b169780e41ba506a69acb15caafa645517`  
-Live `origin/main`: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (`behind_by=4`, docs-only current-state checkpoint; not rebased)
+Branch: `feat/provider-adapter-core-foundation-2026-08-29`
+
+Authoritative current-state: `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` (PR #194/#195). `main` live prüfen; keine eingefrorene SHA als dauerhafte Current-Wahrheit.
 
 ## Was gebaut ist
 
-Review-Fixes aus Technical-Lead-Kommentar `5463627429` gegen Head `80129085b23f7fda4ede3e9347b98975fab3002d`:
+Kommentar `5463705604` gegen den damaligen Review-Head `6f9a8b76`:
 
-- `retry_exhausted` nur, wenn der **aktuelle** Fehler retrybar ist und ein Retry wirklich benutzt wurde. `500→401` bleibt `authentication`. `500→429` mit `retryOn429=false` und späteres disabled Preflight bleiben `rate_limited`.
-- Jedes Runtime-Modul unter `lib/server/providers/core/` trägt `import 'server-only'`. Alternativimporte (`exports.ts`, `executor.ts`, `http.ts`) scheitern ohne den test-only Stub.
-
-Die Skyscanner-Fixture-Foundation bleibt unverändert fixture-only.
+- Funktionale P1-Fixes bleiben: aktuelle Terminal-Fehler behalten ihre Kind; jedes Runtime-Modul trägt `import 'server-only'`.
+- Lint von CI #1207 / Run `33264416824` war kein main-Merge-Konflikt. Ursache: `scripts/server-only-empty.cjs` traf ESLint 9 Flat-Config (`react-hooks/set-state-in-effect` ohne Plugin in diesem Objekt). Behoben durch lint-sicheren `.js`-Stub. Keine Regel abgeschwächt.
+- Continuity: S5-B Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet/verifiziert. Runtime-Write unallokiert. Kein realer Snapshot. TW-8 geschlossen. Checkpoint V2 nicht zurückgeschrieben.
 
 ## Gates
 
-Lokal auf Runtime-Head `f82fe28e` (P1-Fix `6f9a8b76` + lint-sicherer Stub): typecheck PASS; lint 0 errors / 135 warnings; **2657** tests PASS; hygiene PASS (1 begründetes Orphan: CookieConsent); Next 16.3.3 Production-Build PASS. Dieser Stamp ist docs-only. Exact-Head CI/Vercel nach dem finalen Push live prüfen. Evidence auf `80129085` ist ungültig. Agent-Self-Review ist kein PASS.
+Lokal auf Runtime inkl. Continuity-Reconcile `92fff45c`: typecheck PASS; lint 0 errors / 135 warnings; **2657** tests PASS; hygiene PASS; Next 16.3.3 Production-Build PASS. Dieser Stamp ist docs-only. Exact-Head CI/Vercel nach dem Push live prüfen. Evidence auf `6f9a8b76` / `80129085` ist ungültig. Agent-Self-Review ist kein PASS.
 
 ## Grenzen
 
@@ -26,4 +25,4 @@ Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls. Keine Cred
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #187. Kein Ready. Kein Merge.
+Unabhängiger Technical-Lead Exact-Head-Re-Review. Kein Ready. Kein Merge.

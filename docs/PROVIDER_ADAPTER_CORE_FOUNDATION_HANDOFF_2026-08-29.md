@@ -1,34 +1,26 @@
 # Provider Adapter Core Foundation — Handoff
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **REVIEW-FIX + CONTINUITY-RECONCILIATION / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider adapter core 1`  
 Branch: `feat/provider-adapter-core-foundation-2026-08-29`  
-PR: https://github.com/Jetnity/jetnity/pull/187  
-Slice baseline main: `69ef27b169780e41ba506a69acb15caafa645517`  
-Live `origin/main`: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (`behind_by=4`, nicht rebased)
+PR: https://github.com/Jetnity/jetnity/pull/187
+
+Authoritative current-state bleibt Checkpoint V2 (PR #194/#195). `main` live prüfen.
 
 ## Auftrag
 
-Nur die zwei P1-Findings aus Technical-Lead-Kommentar `5463627429` gegen geprüften Head `80129085b23f7fda4ede3e9347b98975fab3002d`. Kein Scope-Ausbau. Kein Folgeslice.
+Nur Kommentar `5463705604`: Lint-Historie von CI #1207 erklären/fixen und stale S5-B/global Continuity gegen live `main` reconcilen. Funktionale P1-Fixes nicht zurückdrehen.
 
-## Review-Fixes
+## Fixes
 
-1. **P1 Terminal-Klassifikation:** `retry_exhausted` nur bei aktuellem retrybaren Fehler nach wirklich benutztem Retry. Früheres `lastFailure` allein reicht nicht.
-2. **P1 Server-only:** Jedes Runtime-Modul importiert `server-only`. node:test lädt `scripts/server-only-test-register.mjs`. Ohne Stub scheitern Alternativimporte mechanisch.
+1. **Lint #1207:** `.cjs`-Test-Stub durch `.js` ersetzt. Diagnose: ESLint-9 + `eslint-config-next` löst `react-hooks` in CJS-Treffern nicht auf. Kein main-Merge-Konflikt. Keine Rule-Disable.
+2. **Continuity:** `origin/main` gemerged (`behind_by=0`). ARCHITECTURE/ROADMAP/HANDOFF/ACTIVE_WORK/START_HERE/ADR-Status auf Production-verifizierte S5-B-Wahrheit gezogen. Checkpoint V2 nicht als dauerhafte SHA eingefroren.
 
 ## Verbindliche Grenzen
 
-- Kein Ready.
-- Kein Merge.
-- Kein Follow-up-Slice.
-- Keine echten Provider-Calls.
-- Keine Credentials/Secrets.
-- Keine Supabase-/Production-Mutation.
-- Kein Commercial-Provenance-Mint.
-- Kein forgebares Trust-Flag.
-- Tests vollständig offline.
+Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls/Secrets/Production-Mutation. Kein Commercial-Provenance-Mint.
 
-## Handoff an Technical Lead
+## Handoff
 
-Exact Head, Changed Files, Test-Evidence, `origin/main`-Drift und Residuals stehen in `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_SELF_REVIEW_2026-08-29.md`. STOPP für unabhängigen Technical-Lead Exact-Head-Re-Review. Self-Review ist kein PASS. Alte CI-/Vercel-Evidence auf `80129085` ist ungültig.
+Exact Head, Tests und Drift: `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_SELF_REVIEW_2026-08-29.md`. STOPP für unabhängigen Technical-Lead Exact-Head-Re-Review. Self-Review ist kein PASS.
