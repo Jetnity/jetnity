@@ -1,7 +1,9 @@
 // lib/server/providers/core/exports.ts
 //
-// Testable re-exports. Production adapters must import the server-only
-// entry `lib/server/providers/core/index.ts`, not this file.
+// Internal barrel. Every runtime path, including this file, is server-only.
+// Client bundles fail at Next compile time. node:test uses a local stub.
+
+import 'server-only'
 
 export {
   PROVIDER_HTTP_METHODS,

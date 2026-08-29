@@ -3,6 +3,8 @@
 // Safe outbound-response body parsing with a hard size cap applied while
 // reading. Content-Length is an early reject, never a trusted length.
 
+import 'server-only'
+
 import {
   PROVIDER_TRANSPORT_BOUNDS,
   type ProviderHttpResponse,

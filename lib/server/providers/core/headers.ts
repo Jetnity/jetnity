@@ -3,6 +3,8 @@
 // Credentials may be passed to the injected HTTP client, never into errors,
 // observer events, returned metadata, or snapshots.
 
+import 'server-only'
+
 import { PROVIDER_TRANSPORT_BOUNDS } from '@/lib/server/providers/core/domain'
 import type { ProviderHeaderInput } from '@/lib/server/providers/core/domain'
 

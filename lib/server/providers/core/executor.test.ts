@@ -26,7 +26,7 @@ import {
   type ProviderHttpResponse,
   type ProviderTransportEvent,
   type ProviderTransportObserver,
-} from '@/lib/server/providers/core/exports'
+} from '@/lib/server/providers/core'
 
 const SECRET = 'test-provider-secret-value'
 const URL = 'https://provider.test/v1/create?session=keep-out-of-logs'
@@ -593,6 +593,58 @@ describe('provider transport helpers', () => {
     if (oneResult.ok) return
     assert.equal(oneResult.error.kind, 'rate_limited')
     assert.equal(oneAttemptHttp.calls.length, 0)
+  })
+
+  test('a later non-retryable failure keeps its own kind after an earlier retry', async () => {
+    const auth = fakeHttp([
+      { type: 'response', status: 500, body: '{}' },
+      { type: 'response', status: 401, body: '{}' },
+    ])
+    const createdAuth = executorFor(auth.client, { retry: { maxAttempts: 2 } })
+    assert.equal(createdAuth.ok, true)
+    if (!createdAuth.ok) return
+    const authResult = await createdAuth.executor.execute(request())
+    assert.equal(authResult.ok, false)
+    if (authResult.ok) return
+    assert.equal(authResult.error.kind, 'authentication')
+    assert.equal(auth.calls.length, 2)
+
+    const limited = fakeHttp([
+      { type: 'response', status: 500, body: '{}' },
+      { type: 'response', status: 429, body: '{}' },
+    ])
+    const createdLimited = executorFor(limited.client, {
+      retry: { maxAttempts: 3, retryOn429: false },
+    })
+    assert.equal(createdLimited.ok, true)
+    if (!createdLimited.ok) return
+    const limitedResult = await createdLimited.executor.execute(request())
+    assert.equal(limitedResult.ok, false)
+    if (limitedResult.ok) return
+    assert.equal(limitedResult.error.kind, 'rate_limited')
+    assert.equal(limited.calls.length, 2)
+  })
+
+  test('a later disabled preflight 429 stays rate_limited after an earlier retry', async () => {
+    const http = fakeHttp([{ type: 'response', status: 500, body: '{}' }])
+    let attempt = 0
+    const created = executorFor(http.client, {
+      retry: { maxAttempts: 3, retryOn429: false },
+      rateLimit: {
+        preflight: async () => {
+          attempt += 1
+          if (attempt === 1) return { kind: 'allowed' }
+          return { kind: 'rate_limited', retryAfterMs: 10 }
+        },
+      },
+    })
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const result = await created.executor.execute(request())
+    assert.equal(result.ok, false)
+    if (result.ok) return
+    assert.equal(result.error.kind, 'rate_limited')
+    assert.equal(http.calls.length, 1)
   })
 
   test('preflight 429 becomes retry_exhausted only after a real retry was used', async () => {

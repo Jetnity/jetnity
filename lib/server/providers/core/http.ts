@@ -3,6 +3,8 @@
 // Thin fetch adapter for a later production transport. Tests inject a fake.
 // Cookies are never forwarded. Redirects are not followed.
 
+import 'server-only'
+
 import type { ProviderHttpClient } from '@/lib/server/providers/core/domain'
 
 export function createFetchProviderHttpClient(

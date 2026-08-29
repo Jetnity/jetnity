@@ -54,4 +54,8 @@ Dieser Nachtrag präzisiert die Transportgrenze. Er erweitert den Slice nicht.
 
 ### Server-only Trust-Grenze
 
-Die bestehende Repo-Konvention ist `import 'server-only'` (Next-Compile-Time-Grenze, kein zusätzliches npm-Paket). Die Produktions-Entry `lib/server/providers/core/index.ts` trägt diese Markierung. Tests importieren `exports.ts`, weil `node:test` die Compile-Time-Grenze nicht laden kann. Client-/Component-Module dürfen den Kern nicht importieren. Der Verzeichnisname allein ist keine Trust-Grenze.
+Die bestehende Repo-Konvention ist `import 'server-only'` (Next-Compile-Time-Grenze, kein zusätzliches npm-Paket). Jedes Runtime-Modul unter `lib/server/providers/core/` trägt diese Markierung, inklusive `exports.ts`, `executor.ts` und `http.ts`. Ein Client-Import eines Alternativpfads scheitert mechanisch an der Compile-Time-Grenze. `node:test` lädt nur über `scripts/server-only-test-register.mjs` einen lokalen Stub; ohne diesen Stub scheitert der Alternativimport. Kein neues npm-Paket.
+
+### `retry_exhausted` nach einem früheren, anderen Retry
+
+`lastFailure` beweist nur, dass irgendwann retried wurde. `retry_exhausted` gilt nur, wenn der **aktuelle** Fehler selbst retrybar ist und ein Retry-Pfad wirklich benutzt wurde. Ein späteres `401` bleibt `authentication`. Ein späteres `429` mit `retryOn429=false` oder ein späteres disabled Preflight bleibt `rate_limited`.

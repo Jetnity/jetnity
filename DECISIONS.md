@@ -5224,7 +5224,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 **Konsequenzen:** Nächster zulässiger Folgeslice erst nach Merge und neuem versionierten Auftrag. Autor setzt kein Ready/Merge.
 
-**Nachtrag, 29. August 2026 – Review 5058500841:** Body-Limit wird während des Stream-Reads erzwungen; `Content-Length` ist nur Early-Reject. `retry_exhausted` nur nach tatsächlich benutztem Retry; sonst bleibt `rate_limited`. Observer-Throws werden geschluckt. Ungültiges/werfendes Preflight ist fail-closed `rate_limited` ohne HTTP und ohne Exception-Leak. Produktions-Entry nutzt `import 'server-only'`; Tests laden `exports.ts`. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+**Nachtrag, 29. August 2026 – Review 5058500841 / 5463627429:** Body-Limit wird während des Stream-Reads erzwungen; `Content-Length` ist nur Early-Reject. `retry_exhausted` nur, wenn der aktuelle Fehler retrybar ist und ein Retry wirklich benutzt wurde; ein späteres `401` oder disabled-429 bleibt die eigene Kind. Observer-Throws werden geschluckt. Ungültiges/werfendes Preflight ist fail-closed `rate_limited` ohne HTTP und ohne Exception-Leak. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt einen lokalen Stub, ohne Stub scheitert der Alternativimport. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
 
 ---
 

@@ -7,7 +7,7 @@ import {
   headerNamesAreSecretSafe,
   isSensitiveHeaderName,
   redactHeaderName,
-} from '@/lib/server/providers/core/exports'
+} from '@/lib/server/providers/core'
 
 describe('provider transport header redaction', () => {
   test('standard secret header names are sensitive', () => {

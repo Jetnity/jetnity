@@ -3,6 +3,8 @@
 // HTTPS-only request URLs. Credentials, query and fragment never enter
 // sanitized transport metadata.
 
+import 'server-only'
+
 import type { ProviderTransportUrl } from '@/lib/server/providers/core/domain'
 
 export type SanitizedTransportUrl =

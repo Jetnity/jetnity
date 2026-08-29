@@ -3,6 +3,8 @@
 // Bounded, deterministic retry/backoff. Invalid configuration is rejected,
 // never clamped into an unbounded policy.
 
+import 'server-only'
+
 import {
   PROVIDER_TRANSPORT_BOUNDS,
   type ProviderJitterStrategy,

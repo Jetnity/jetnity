@@ -5,7 +5,7 @@ import {
   cancelProviderResponseBody,
   parseProviderResponseBody,
   readProviderResponseBodyBounded,
-} from '@/lib/server/providers/core/exports'
+} from '@/lib/server/providers/core'
 
 function headerBag(headers: Record<string, string> = {}) {
   return {

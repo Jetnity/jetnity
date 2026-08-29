@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -6,7 +7,7 @@ import { describe, test } from 'node:test'
 import {
   createProviderTransportExecutor,
   type ProviderHttpClient,
-} from '@/lib/server/providers/core/exports'
+} from '@/lib/server/providers/core'
 
 const FORBIDDEN_RUNTIME_FIELDS = [
   'trusted',
@@ -66,10 +67,33 @@ describe('provider transport trust boundary', () => {
     }
   })
 
-  test('production entry uses the existing Next server-only compile-time boundary', () => {
-    const source = readFileSync('lib/server/providers/core/index.ts', 'utf8')
-    assert.match(source, /^import 'server-only'$/m)
-    assert.match(source, /export \* from '@\/lib\/server\/providers\/core\/exports'/)
+  test('every runtime module carries import server-only so alternate paths cannot bypass', () => {
+    const runtimeFiles = walkSourceFiles('lib/server/providers/core').filter(
+      (file) => file.endsWith('.ts') && !file.endsWith('.test.ts'),
+    )
+    assert.ok(runtimeFiles.includes('lib/server/providers/core/exports.ts'))
+    assert.ok(runtimeFiles.includes('lib/server/providers/core/executor.ts'))
+    assert.ok(runtimeFiles.includes('lib/server/providers/core/http.ts'))
+    for (const file of runtimeFiles) {
+      const source = readFileSync(file, 'utf8')
+      assert.match(source, /^import 'server-only'$/m, file)
+    }
+  })
+
+  test('alternate runtime import paths fail without the test-only server-only stub', () => {
+    for (const specifier of [
+      './lib/server/providers/core/exports.ts',
+      './lib/server/providers/core/executor.ts',
+      './lib/server/providers/core/http.ts',
+    ]) {
+      const result = spawnSync(process.execPath, ['--import', 'tsx', '-e', `import(${JSON.stringify(specifier)})`], {
+        cwd: process.cwd(),
+        encoding: 'utf8',
+        env: process.env,
+      })
+      assert.notEqual(result.status, 0, specifier)
+      assert.match(`${result.stderr}\n${result.stdout}`, /server-only/, specifier)
+    }
   })
 
   test('no client or component module imports the provider transport core', () => {

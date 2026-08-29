@@ -3,6 +3,8 @@
 // Injected observer contract. Events are structured, allowlisted and never
 // carry request/response bodies or header values.
 
+import 'server-only'
+
 import {
   PROVIDER_TRANSPORT_EVENT_FIELDS,
   type ProviderTransportEvent,

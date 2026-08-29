@@ -4,6 +4,8 @@
 // Trust is a module/code-path boundary. These types mint no Commercial
 // Provenance and expose no caller-controlled trust flags.
 
+import 'server-only'
+
 export const PROVIDER_TRANSPORT_ERROR_KINDS = [
   'invalid_request',
   'invalid_configuration',

@@ -3,6 +3,8 @@
 // Dependency-injected outbound provider HTTP executor.
 // Fail closed. No Commercial Provenance. No forgeable trust flags.
 
+import 'server-only'
+
 import {
   createProviderResponseMetadata,
   createProviderTransportError,
@@ -292,7 +294,10 @@ async function runRequest<T>(opts: {
           continue
         }
         emit(opts.observer, ctx, opts.clock, 'request_failed', attempt, 0, null, error)
-        return { ok: false, error: lastFailure ? exhausted(ctx, attempt, error) : error }
+        return {
+          ok: false,
+          error: terminalAfterRetryStop(ctx, attempt, error, lastFailure != null, ctx.retry.retryOn429),
+        }
       }
     }
 
@@ -337,7 +342,10 @@ async function runRequest<T>(opts: {
     }
 
     emit(opts.observer, ctx, opts.clock, 'request_failed', attempt, elapsedMs, error.status, error)
-    return { ok: false, error: lastFailure ? exhausted(ctx, attempt, error) : error }
+    return {
+      ok: false,
+      error: terminalAfterRetryStop(ctx, attempt, error, lastFailure != null, retryable),
+    }
   }
 
   if (lastFailure) return { ok: false, error: exhausted(ctx, ctx.maxAttempts, lastFailure) }
@@ -535,6 +543,17 @@ function fail(
     operationId: ctx.operationId,
     correlationId: ctx.correlationId,
   })
+}
+
+function terminalAfterRetryStop(
+  ctx: AttemptContext,
+  attempt: number,
+  error: ProviderTransportError,
+  usedRetry: boolean,
+  currentRetryable: boolean,
+): ProviderTransportError {
+  if (usedRetry && currentRetryable) return exhausted(ctx, attempt, error)
+  return error
 }
 
 function exhausted(ctx: AttemptContext, attempt: number, last: ProviderTransportError): ProviderTransportError {

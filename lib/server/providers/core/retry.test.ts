@@ -12,7 +12,7 @@ import {
   sleepWithAbort,
   validateProviderRetryPolicy,
   validateProviderTimeoutPolicy,
-} from '@/lib/server/providers/core/exports'
+} from '@/lib/server/providers/core'
 
 describe('provider transport retry policy', () => {
   test('rejects unbounded or invalid retry configuration', () => {
