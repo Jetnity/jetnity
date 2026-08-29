@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Recovery PR #173 GEMERGT auf `main @ ade03511`. Live Production API smoke PASS. Issue #109 bleibt OFFEN bis TL/PO Close. Kein Issue #110. Kein automatischer Folgeslice. Live-Evidence immer live prüfen.**
+Status: **Visitor Search Country Alias Recovery PR #173 GEMERGT auf `main @ ade03511`. Live Production API smoke PASS. Issue #109 CLOSED / COMPLETED. Kein Issue #110. Kein automatischer Folgeslice. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -11,15 +11,15 @@ Status: **Visitor Search Country Alias Recovery PR #173 GEMERGT auf `main @ ade0
 
 1. **Arbeitsblock / Ziel:** Nach Technical-Lead-Merge von PR #173 die verbindliche Live-Production-API-Abnahme für Issue #109 dokumentieren. Kein Runtime-Fix in diesem Stamp.
 2. **Authoring-Branch / PR:** Docs-Nachzug auf `fix/visitor-search-country-alias-production-recovery-2026-08-29` nach Merge. Runtime ist bereits auf `main @ ade03511`.
-3. **Status:** **PRODUCTION API SMOKE PASS / ISSUE #109 OPEN / CLOSE NUR TL/PO**. Kein Ready, kein Merge, kein Issue-Close durch den Autor. Kein Issue #110.
+3. **Status:** **PRODUCTION API SMOKE PASS / ISSUE #109 CLOSED COMPLETED**. Docs-Nachzug Draft-PR #178. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
 4. **Bereits umgesetzt:** Live `GET /api/search/places` Country-first für Peru/China/Schweiz; Congo CD/CG disambiguiert; LI/AS/SI vollständig; Kokos/Illes/Feroeer; Paris ohne Country-Zeile; abreise stadt-/IATA-geführt.
 5. **Cursor-Agent:** `Visitor search correctness 1`. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`.
 6. **Live-`main` / Baseline bei diesem Stamp:** `ade03511341433d8d0b6f09b8d8342890381d3d5`.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein Import-Rewrite, keine Supabase-Mutation.
 8. **Kosten / Provider / Secrets:** keine laufenden. Extra-Read bleibt selektiv.
 9. **Bekannte Risiken / Review-Funde:** Preview-GET/SSO; kein Mobile-Safari-Re-Run; kein Browser-Klick-Beweis; Production-keywords haben weiter trailing Whitespace (Retrieval fängt das).
-10. **Offene Nutzerentscheidungen / Freigaben:** Issue #109 Close nur Technical Lead / Product Owner.
-11. **Exakter nächster Schritt:** TL/PO Close von #109 oder Nachforderung Browser/Mobile. Kein #110.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine für #109. Residual P2 Mobile Safari für den nächsten Search-/Homepage-UX-Slice.
+11. **Exakter nächster Schritt:** Unabhängiger TL-Review von Docs-PR #178, danach Binding Build Order prüfen. Kein #110.
 12. **Zuerst lesen:** `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md`, ADR-0196.
 
 ## Historischer Arbeitsblock – Visitor Search Country Alias Ranking

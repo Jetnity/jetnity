@@ -1,6 +1,6 @@
 # Jetnity – Ortsbasis
 
-**Stand:** 29. August 2026 · Phase 3.1 / ADR-0196 · PR #173 auf `main`; Live Production API smoke PASS, Issue #109 Close ausstehend  
+**Stand:** 29. August 2026 · Phase 3.1 / ADR-0196 · PR #173 auf `main`; Live Production API smoke PASS; Issue #109 CLOSED / COMPLETED  
 **Gilt für:** die lokale, provider-unabhängige Referenz `public.places` und `/api/search/places`.
 
 Diese Datei beschreibt, woher Reiseziele und Abreiseorte kommen, was in die Suche darf und wie ein Refresh läuft. Entscheidung: ADR-0067 in [DECISIONS.md](../DECISIONS.md). Flughäfen als Verkehrsorte stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md). `public.airports` ist **keine** weltweite Destination-Datenbank.

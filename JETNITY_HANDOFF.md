@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Recovery PR #173 GEMERGT auf `main @ ade03511`. Live Production API smoke PASS. Issue #109 bleibt OFFEN bis TL/PO Close. Kein Issue #110. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`. AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Visitor Search Country Alias Recovery PR #173 GEMERGT auf `main @ ade03511`. Live Production API smoke PASS. Issue #109 CLOSED / COMPLETED. Kein Issue #110. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`. AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Search-Stand (PR #173 gemergt, Issue #109 Close ausstehend):
+Aktueller Search-Stand (PR #173 gemergt, Issue #109 CLOSED / COMPLETED):
 
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_TASK_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_STATUS_2026-08-29.md`

@@ -27,7 +27,7 @@ Nach dem Merge:
 2. Peru IL city bleibt auswählbar
 3. Peru IN city bleibt auswählbar
 
-Issue #109 bleibt **offen**, bis Technical Lead / Product Owner die Close-Entscheidung treffen. Dieser Agent schliesst das Issue nicht.
+Issue #109 wurde vom Technical Lead um 11:28 UTC als **COMPLETED** geschlossen. Residual P2: Mobile-Safari-Real-Device-QA ist in den nächsten Search-/Homepage-UX-Slice verschoben und öffnet den Country-Alias-Defekt nicht erneut.
 
 ## Queries
 
@@ -62,4 +62,4 @@ Keine neuen laufenden Kosten. Keine Migration, kein Import-Rewrite, kein Provide
 
 ## Nächster Schritt
 
-Technical Lead / Product Owner: Issue #109 schliessen, wenn diese Live-API-Evidence reicht. Kein automatischer Folgeslice. Kein #110.
+Kein automatischer Folgeslice. Kein #110. Mobile-Safari-Real-Device bleibt Residual P2 für den nächsten Search-/Homepage-UX-Slice.

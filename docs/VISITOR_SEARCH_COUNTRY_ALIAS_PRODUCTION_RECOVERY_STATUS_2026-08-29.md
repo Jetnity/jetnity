@@ -1,7 +1,7 @@
 # Jetnity – Visitor Search Country Alias Production Recovery – Status
 
 Stand: 29. August 2026  
-Status: **PR #173 GEMERGT / LIVE PRODUCTION API SMOKE PASS / ISSUE #109 BLEIBT OFFEN BIS TL/PO CLOSE**  
+Status: **PR #173 GEMERGT / LIVE PRODUCTION API SMOKE PASS / ISSUE #109 CLOSED COMPLETED**  
 Cursor-Agent: **`Visitor search correctness 1`**  
 Cursor-Session: `bc-020d3296-0cd7-4e36-8373-47578af701ce`  
 Merged PR: #173  
@@ -19,7 +19,7 @@ Import-Keywords stapelten Exact-Name + Exact-Keyword auf Gleichnam-Städten. Sel
 1. PR #173 ist auf `main` gemergt. Technical-Lead PASS `5057950183` galt für Exact Head `d44d9a7f`.
 2. Live Production `GET /api/search/places` erfüllt die generische Country-first-Invariante inkl. Congo-Disambiguierung, kurzer Aliase und Trim-End-Tokens (`Kokos`/`Illes`/`Feroeer`).
 3. `Paris` liefert keine Country-Zeile. `abreise` bleibt stadt-/IATA-geführt.
-4. Issue #109 bleibt offen, bis Technical Lead / Product Owner schliessen.
+4. Issue #109 ist CLOSED / COMPLETED durch Technical Lead (11:28 UTC). Residual P2: Mobile Safari Real-Device.
 
 Evidence: `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md`
 
@@ -33,4 +33,4 @@ Keine laufenden.
 
 ## Nächster Schritt
 
-TL/PO: Issue #109 schliessen oder Residuals (Mobile Safari / Browser-UI) nachfordern. Kein #110. Kein Ready/Merge durch den Autor.
+Kein Folgeslice. Kein #110. Mobile-Safari-Real-Device bleibt Residual P2. Docs-PR #178 bleibt Draft bis TL-Review.

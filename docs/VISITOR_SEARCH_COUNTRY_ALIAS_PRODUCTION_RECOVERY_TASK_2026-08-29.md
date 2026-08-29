@@ -1,7 +1,7 @@
 # Jetnity – Visitor Search Country Alias Production Recovery Task
 
 Stand: 29. August 2026
-Issue: #109 — OPEN (Live Production API smoke PASS; Close nur TL/PO)
+Issue: #109 — CLOSED / COMPLETED durch Technical Lead (11:28 UTC)
 Status: PR #173 MERGED on `main @ ade03511` / LIVE PRODUCTION API SMOKE PASS / SAME LOGICAL CURSOR SESSION
 
 **Product-Owner-Klarstellung 29. August 2026:** Peru, China und Schweiz sind nur Beispiele. Die Abnahme ist generisch für jedes vorhandene Länder-Alias. Keine Allowlist. Die Suchzeile muss Typ und Ortskontext sofort lesbar machen; ein exaktes Alias darf den offiziellen Langnamen als Anzeige ersetzen, Place-ID unverändert.
