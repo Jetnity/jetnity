@@ -1,659 +1,211 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Self-expiring PR #187 / ADR-0199. Solange offen: Draft / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von `5463879179`. Sobald gemergt: Core integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner. Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck (PR #196). `main` live prüfen. S5-B Production-Migration angewendet/verifiziert. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge durch den Autor.**
-
-> **Do not blindly trust this file — live verify first.**
-
-> Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
-
-## Aktueller Arbeitsblock – Provider Adapter Core Foundation
-
-1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
-2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
-3. **Status:** **SELF-EXPIRING.** Solange #187 offen: REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Sobald gemergt: Kern integriert; erster nächster Schritt Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
-4. **Bereits umgesetzt:** Frühere akzeptierte P1-Fixes bleiben. `5463847278` bleibt. Neu aus `5463879179`: Request-ID-Quelle wird auch gegen `additionalSensitiveHeaderNames` geprüft; Konflikt ist `invalid_request` vor HTTP. Lokale Gates auf `6825a53d`: typecheck, lint 0/135, 2663 tests, hygiene, Production-Build.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1 (gleicher Slice / Review-Fix).
-6. **Live-`main`:** immer live prüfen. Reconstruction-Baseline der Checkpoint-V2 war `69ef27b1`; das ist keine dauerhafte Current-Head-Wahrheit. Exact Head live am PR prüfen. Prior Head `ec7eff42` und dessen CI gelten nicht.
-7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
-8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls, keine Credentials im Repository.
-9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt nur den lokalen Stub. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport bleibt extra gegatet und startet nicht aus einem #187-Merge. S5-B Production-Migration ist angewendet; Runtime-Write/Snapshot und TW-8 bleiben gegatet.
-11. **Exakter nächster Schritt:** solange #187 offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463879179`. Nach Merge → Post-Merge-Verifikation + TL-Continuity, kein automatischer Folgeslice. Kein Ready. Kein Merge durch den Autor.
-12. **Zuerst lesen:** `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0199.
-
-## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT / PRODUCTION-MIGRATION ANGEWENDET UND VERIFIZIERT.** Nicht der Authoring-Block von PR #187. Ältere „paralleler Draft / Production-Apply pending“-Zeilen sind Pre-Apply-Evidence.
-
-1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
-2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182; Recovery #183; Merge `3b684f64`.
-3. **Status:** **INTEGRIERT.** Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. TW-8 geschlossen.
-4. **Bereits umgesetzt:** Persistenzgrundlage plus TL-Fixes; Production-Apply verifiziert (`docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`).
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4` (historisch).
-6. **Live-`main`:** immer live prüfen. Nicht die historische Baseline `f638b441` als Current-Head behandeln.
-7. **DB / RLS / Production-Grenze:** Schema auf Production angewendet. Write-Pfad bleibt geschlossen/unallokiert.
-8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls.
-9. **Bekannte Risiken / Review-Funde:** Kein realer Snapshot. TW-8 geschlossen. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Runtime-Principal-Zuweisung extra gegatet. TW-8 extra gegatet.
-11. **Exakter nächster Schritt:** nicht erneut als offenen Apply-Slice öffnen. Aktueller Authoring-Block ist Draft-PR #187.
-12. **Zuerst lesen:** `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`, ADR-0198, Checkpoint V2.
-
-## Historischer Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
-
-1. **Arbeitsblock / Ziel:** Docs-only PR #178 auf live `main @ ade03511` reconciled (`behind_by=0`) und Search-Smoke-Zuordnung `canonical #173 / transport #177`. Kein Runtime-Fix.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29` / PR #178 als Continuity-Träger. Live-Zustand prüfen.
-3. **Status:** **DOCS-ONLY CONTINUITY / SELF-EXPIRING #178-KLAUSEL**. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Kein aktiver Runtime-Agent.
-4. **Bereits umgesetzt:** Search-Runtime auf `main @ ade03511`; Live API smoke PASS; #109/#169 CLOSED; New-Chat-Checkpoint `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
-5. **Cursor-Agent:** `Visitor search correctness 1`. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`.
-6. **Live-`main` / Baseline bei diesem Stamp:** `ade03511341433d8d0b6f09b8d8342890381d3d5`.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein Import-Rewrite, keine Supabase-Mutation.
-8. **Kosten / Provider / Secrets:** 0. PrivacyBee nicht aktiviert. Bestehendes PO-Konto nur als Tatsache ohne Secrets genannt.
-9. **Bekannte Risiken / Review-Funde:** Preview-SSO; Mobile-Safari Residual P2; `main` `protected=false`; historische offene PRs nur live behandeln.
-10. **Offene Nutzerentscheidungen / Freigaben:** AP-7-S2 PO-Gate; AP-6a Legal-Runtime geparkt. Ready/Merge nur Technical Lead.
-11. **Exakter nächster Schritt:** Wenn dieser Checkpoint auf `main` liegt: Live-Rekonstruktion + Binding-Build-Order-Auswahl; kein automatischer Produkt-Slice. Nur solange er noch nicht auf `main` liegt und #178 live offen ist: unabhängiger TL Exact-Head-Review. Kein Ready. Kein Merge. Kein #110.
-12. **Zuerst lesen:** `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
-
-## Historischer Arbeitsblock – Visitor Search Country Alias Ranking
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT und danach durch Live-Production invalidiert.** PR #172 ist auf `main @ 2241e349` gemergt. Der vorherige TL-PASS gilt nicht mehr. Der aktive Slice ist Draft-PR #173.
-
-1. **Arbeitsblock / Ziel:** Generischer Ranking-/Retrieval-Fix: exaktes Länder-Alias darf für `ziel` nicht von gleichnamigen/präfixgleichen Städten verdeckt werden.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-ranking-2026-08-29`; integriert über PR #172, danach Recovery über #173.
-3. **Status:** **INTEGRIERT, aber Production-Acceptance NICHT erfüllt.**
-4. **Bereits umgesetzt:** Alias-als-Namensstärke; Länder-Nachzug; ADR-0196. Die Score-only-Regel reichte gegen Import-Keyword-Stapel nicht.
-5. **Cursor-Agent:** `Visitor search correctness 1`.
-6. **Live-`main` bei Integration:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44`.
-7. **DB / RLS / Production-Grenze:** keine Migration.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** Live Peru/China falsch; Tests ohne Import-Keywords.
-10. **Offene Nutzerentscheidungen / Freigaben:** geschlossen durch Recovery-Slice #173, nicht durch diesen historischen Block.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Slice ist Draft-PR #173.
-12. **Zuerst lesen:** ADR-0196 Nachtrag, Recovery-Task.
-
-## Historischer Arbeitsblock – AP-6a Gate 0 Legal Foundation / Trust Boundary
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der Search-Baseline.** PR #167 ist auf `main @ 6083ee63` gemergt. Ältere „IMPLEMENTIERT / DRAFT / STOP / Kein AP-6a-Runtime“-Zeilen sind Pre-Search-Evidence. Der aktive Slice ist Draft-PR #173.
-
-1. **Arbeitsblock / Ziel:** Rekonstruktion und Vertrag für die fehlende Legal Foundation. Production `/privacy` und `/terms` sind 404, obwohl die Registrierung dorthin verlinkt. Keine Rechtstexte.
-2. **Authoring-Branch / PR:** `audit/ap6a-gate0-legal-foundation-2026-08-29`; Draft-PR #166. Exact Head vor diesem Stamp: `18516a06`. Actions `33243096002` SUCCESS; GitHub Preview `6153897069` success; Vercel-Check `jFScFBDbxgkwCRv6h5GqpkDzzchb` SUCCESS. Preview-HTML SSO-geschützt. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
-3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7.
-4. **Bereits umgesetzt:** Live-404-Evidence; Call-Site-Inventar; Legal-Input-Matrix; Runtime-Vertrag; Inventory-Test; ADR-0195; Continuity nach vollständigem AP-5.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 16`. Exact Run-ID `bc-216be067-b75a-4a2f-a186-8e38c67fb822`. Beobachteter Titel `Account plattform audit vorbereitung`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 16 bleibt 16.
-6. **Live-`main` / Baseline bei diesem Stamp:** `765fc547c2d2ffd8460e05fec4234906103fe73c` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** 404 bleibt bis Content-Gate; unbelegte „DSGVO & CH-DSG konform“-Zeile; OAuth-Pfad ohne Checkbox (Enablement aus); CookieConsent-Orphan mit V1-Text; kein Browser-Klick-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Product Owner / Legal müssen die Input-Matrix schließen, bevor Runtime-Seiten gebaut werden. Siehe `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #166. Kein Ready. Kein Merge. Kein AP-6a-Runtime.
-12. **Zuerst lesen:** `docs/AP6A_GATE0_LEGAL_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, Input-Vertrag, Runtime-Vertrag, ADR-0195.
-
-## Historischer Arbeitsblock – AP-5-S5 Honest Current Session / Device View
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der AP-6a-Baseline.** PR #164 ist auf `main @ 765fc547` gemergt. Ältere „IMPLEMENTIERT / DRAFT / Kein AP-6“-Zeilen sind Pre-AP-6a-Evidence. AP-6a Gate 0 ist jetzt der aktive Account-Slice.
-
-1. **Arbeitsblock / Ziel:** Ehrliche aktuelle Sessionansicht in `/account/security`. Andere Sitzungen bleiben `unsupported`.
-2. **Authoring-Branch / PR:** `feat/ap5-s5-honest-current-session-view-2026-08-29`; integriert über PR #164.
-3. **Status:** **INTEGRIERT auf dieser Baseline.**
-4. **Bereits umgesetzt:** Domain-Vertrag; `getUser()` als Existenz-Authority; andere Sitzungen `unsupported`; ADR-0194.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 15`. Generation 15 nicht für AP-6a wiederverwendet.
-6. **Live-`main` bei Integration:** `765fc547c2d2ffd8460e05fec4234906103fe73c`.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, keine Service Role.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `expires_at` ist Zugangscode-Zeit; vollständige Liste bleibt AP-5-P2.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. AP-6a Gate 0 ist der aktuelle Slice.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Account-Slice ist Draft-PR #166.
-12. **Zuerst lesen:** ADR-0194, `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md` als historische Evidence.
-
-## Historischer Arbeitsblock – AP-5-S4 Account Security MFA Step-up
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der S5-Baseline.** PR #160 ist auf `main @ 934d43da` gemergt. Ältere „REVIEW-FIX / DRAFT / Kein S5“-Zeilen sind Pre-S5-Evidence. S5 ist jetzt der aktive Account-Slice.
-
-1. **Arbeitsblock / Ziel:** Nutzerfreundlicher MFA-Step-up vor Unenroll eines verifizierten TOTP-Faktors über `challenge` / `verify`. Kein globales Consumer-AAL2. Keine Auth-Config.
-2. **Authoring-Branch / PR:** `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`; integriert über PR #160.
-3. **Status:** **INTEGRIERT auf dieser Baseline.**
-4. **Bereits umgesetzt:** Domain-Vertrag und Reducer; `challenge`/`verify` plus AAL-Recheck vor Unenroll; nach verified Unenroll `refreshSession` + AAL/Faktoren-Abgleich; Refresh-Fehler fail-closed lokal; anderer verified Challenge-Faktor bevorzugt; Dialog mit Fokus/Busy/`one-time-code`; dichte Fehlercopy; ADR-0193; fokussierte Tests.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 14`. Exact Run-ID `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`. Generation 14 nicht für S5 wiederverwendet.
-6. **Live-`main` bei Integration:** `934d43dae65235486f1a06a50b592468e3546b1c`.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; `main` `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. S5 ist der aktuelle Account-Slice.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Account-Slice ist Draft-PR #162.
-12. **Zuerst lesen:** ADR-0193, `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md` als historische Evidence.
-
-## Historischer Arbeitsblock – AP-5-S3 Account Security Logout Scopes
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der S4-Baseline.** PR #157 ist auf `main @ 5920860e` gemergt. Ältere „IMPLEMENTIERT / DRAFT / STOP / Kein S4“-Zeilen in S3-Dateien sind Pre-S4-Evidence. S4 ist jetzt der aktive Account-Slice, nicht ein automatischer Folgeslice aus S3.
-
-1. **Arbeitsblock / Ziel:** Vorhandene Supabase-Logout-Scopes `local` / `others` / `global` in `/account/security` ehrlich nutzbar machen. Keine Sessionliste. Kein JWT-Kill-Claim. Allgemeines Abmelden bleibt global.
-2. **Authoring-Branch / PR:** `feat/ap5-s3-account-security-logout-scopes-2026-08-29`; integriert über PR #157.
-3. **Status:** **INTEGRIERT auf dieser Baseline.**
-4. **Bereits umgesetzt:** Domain-Vertrag und Reducer; Server Action mit explizitem Scope; Security-Karte mit idle/working/success/error/unavailable/unsupported; `others` bewahrt die aktuelle Sitzung; `global` braucht Bestätigung; Navbar/`signOutAction` unverändert unscoped; ADR-0192.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 13`. Generation 13 nicht für S4 wiederverwendet.
-6. **Live-`main` bei Integration:** `5920860e164784040118667091ebcaca79f9b33d`.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** User-Client kann bestimmte Logout-HTTP-Fehler schlucken; `signOutAction` bleibt fehlerblind; keine Sessionzahl beweisbar.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. S5 bleibt extra gegatet.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Account-Slice ist Draft-PR #159.
-12. **Zuerst lesen:** ADR-0192, `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md` als historische Evidence.
-
-## Historischer Arbeitsblock – Next 16 S2 Framework Bump
-
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der S3-Baseline.** PR #152 ist auf `main @ 3c3079de` gemergt. Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING / Kein S3“-Zeilen sind Pre-S3-Evidence. S3 ist jetzt der aktive Account-Slice, nicht ein automatischer Folgeslice aus Next 16.
-
-1. **Arbeitsblock / Ziel:** Tatsächlicher Framework-Bump auf Next.js 16.3.3 Active LTS plus kompatible React-19.2-/ESLint-/TypeScript-Linie, ESLint CLI/Flat Config und `middleware.ts`→`proxy.ts`. Kein S3.
-2. **Authoring-Branch / PR:** `feat/next16-s2-framework-bump-2026-08-28`; Draft-PR #151. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-3. **Status:** **REVIEW-FIX / DRAFT / SELF-EXPIRING.** STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW nach CHANGES REQUIRED `5055372760`. Vorheriger Review-Head `b73af1c2` und dessen Gates/Preview sind nach dem neuen Push ungültig. Kein Ready, kein Merge durch den Autor. Kein S3.
-4. **Bereits umgesetzt:** `next@16.3.3`, `react@19.2.8`, `eslint-config-next@16.3.3`, `eslint@9.39.5`, `typescript@5.9.3`; Flat Config; `proxy.ts` mit erhaltener fail-closed Semantik; `typedRoutes` top-level; `useActionState`; `next typegen` vor `tsc`; öffentliche `Fehler-ID` Digest-first plus `useId()`-Fallback (Review-Fix `5e98a38e`); lokale Gates auf `5e98a38e` grün (`npm ci`, typecheck, lint 0 errors / 133 warnings, **2491** tests, hygiene, Next-16.3.3-Turbopack-Production-Build).
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework compatibility 2`. Preferred visible title: `Jetnity framework compatibility 2`. Observed run title: `Jetnity framework bump` (Cloud-Run `https://cursor.com/agents/bc-ddde1a19-b2c8-420d-916a-db4e31a3aca3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 2 bleibt 2.
-6. **Live-`main` / Baseline bei diesem Stamp:** `d7f02f77c0796b0ec04675191742049a222cfab9` – immer live neu prüfen. Merge-Base exakt, 0 behind. Ahead = Implementierung plus dieser Stamp; live am PR zählen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie-/Proxy- und `/planen`-Metadata bleiben P1 bis unabhängiger Preview-Review. Der P1-Fund `5055372760` (`#unbekannt`) ist lokal geschlossen. ESLint 9.39.5 npm-deprecated; kein Sprung auf ESLint 10. `main` `protected=false`. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** S2 braucht keine neue PO-Freigabe (PR #149). S3 bleibt extra gegatet. Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 startet nicht aus diesem Slice.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`. Kein Ready. Kein Merge. Kein S3.
-12. **Zuerst lesen:** `docs/NEXT16_S2_FRAMEWORK_BUMP_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0191, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
-
-## Historischer Arbeitsblock – Next 16 Compatibility Prep S1
-
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #150 ist auf `main @ d7f02f77` gemergt. Post-Merge GitHub Actions `33211372214` SUCCESS. Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence. Aktueller Ops-Block ist Draft-PR #151.
-
-1. **Arbeitsblock / Ziel:** Async Request-API-/Auth-Cookie-Kompatibilität auf der damaligen Next-14-Runtime. Kein Framework-Bump.
-2. **Authoring-Branch / PR:** `feat/next16-s1-request-api-compat-prep-2026-08-28`; PR #150 **MERGED**.
-3. **Status:** **INTEGRIERT.**
-4. **Bereits umgesetzt:** async Supabase-Cookie-Factories; Promise-förmige Page/Metadata-Props; ADR-0190.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework compatibility 1`. Generation 1 nicht für S2 wiederverwendet.
-6. **Live-`main` bei Integration:** `d7f02f77c0796b0ec04675191742049a222cfab9`.
-7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie-Flächen bleiben P1 für den S2-Preview-Review.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. S2 ist der aktuelle Block.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Ops-Block ist Draft-PR #151.
-12. **Zuerst lesen:** ADR-0190, `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_STATUS_2026-08-28.md` als historische Evidence.
-
-## Historischer Arbeitsblock – Next.js Framework Security Upgrade Gate 0
-
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #148 ist auf `main @ 2fdf8a18` gemergt. Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence. Aktueller Ops-Block ist Draft-PR #150.
-
-1. **Arbeitsblock / Ziel:** Read-only Compatibility-/Architekturanalyse. Vergleich `next@15.5.24` vs `next@16.3.3`. Empfehlung plus Stufenplan. Kein Runtime-Upgrade.
-2. **Authoring-Branch / PR:** `audit/framework-security-upgrade-gate0-2026-08-28`; PR #148 **MERGED**.
-3. **Status:** **INTEGRIERT.** Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** Live-Rekonstruktion auf Baseline `56aff7ff`; Inventur der Jetnity-Call-Sites; Empfehlung **16.x Active LTS live-resolved** (Minimum `16.3.3`); 15.5.24 kein Production-Ziel; TypeScript-Deklaration `^5.0.0` / resolved `5.9.2` inventarisiert; ADR-0189. Review-Fix `5457148091`: keine Ewigkeits-Pins; TL-verifiziertes Vercel Production `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` persistiert; GitHub `6147375507` nur als GitHub-Evidence. Keine Runtime-Datei geändert. Prior Head `c4bfc2bb` Gates gelten nicht für diesen Stamp.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework security audit 1`. Preferred visible title: `Jetnity framework security audit 1`. Observed run title: `Jetnity framework security audit` (Cloud-Run `https://cursor.com/agents/bc-1ec3726f-b33b-45d1-aad2-b1bce3c895b9`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
-6. **Live-`main` / Baseline bei diesem Stamp:** `56aff7ff89f7113554c45891e024f9c06f6b0d15` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** 14.x bleibt Production-Runtime bis zu einem späteren PO-gegaten Upgrade. Cookie-Factories und Middleware/Proxy sind die teuersten Regressionsflächen. 15.x EOL 21 Oct 2026. `main` `protected=false`. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Jeder tatsächliche Framework-Bump braucht ausdrückliche Product-Owner-Wahl (Status Abschnitt 12 / ADR-0189). Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 startet nicht aus diesem Slice.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Gate 0 ist integriert; der aktuelle Ops-Block ist Draft-PR #150.
-12. **Zuerst lesen:** `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0189, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
-
-## Historischer Arbeitsblock – Node 22 Runtime Consistency
-
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #147 ist auf `main @ 56aff7ff` gemergt. Post-Merge GitHub Actions `33204438255` SUCCESS. GitHub Production deployment `6147375507` success (nur GitHub-Evidence). TL-verifizierte Vercel Production: `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` READY, target `production`, exact `56aff7ff`, `aliasError=null`; Build-Log cache skip 24.x→22.x. Nicht erneut als Draft öffnen.
-
-1. **Arbeitsblock / Ziel:** Ein reproduzierbarer Node-Runtime-Vertrag: **Node 22.x** in Repository-Metadaten, `@types/node`, GitHub CI und Vercel. Keine Application-Features.
-2. **Authoring-Branch / PR:** `ops/node22-runtime-consistency-2026-08-28`; PR #147 **MERGED**.
-3. **Status:** **INTEGRIERT.** Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** `engines.node` = `22.x`; `@types/node@22.20.1`; ADR-0188. CI `22.x`. Vercel-Settings wurden im Slice nicht mutiert.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity runtime consistency 1`. Generation 1 für den Ops-Slice abgeschlossen.
-6. **Live-`main` bei Integration:** `56aff7ff89f7113554c45891e024f9c06f6b0d15`.
-7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `22.x` ist ein Linien-Pin, kein Patch-Pin. `main` `protected=false`. Framework bleibt `next@14.2.32` – das ist jetzt Gate 0 / PR #148, nicht dieser Block.
-10. **Offene Nutzerentscheidungen / Freigaben:** Keine aus diesem Slice. Framework-Upgrade ist separat PO-gegatet.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Ops-Block ist Draft-PR #148.
-12. **Zuerst lesen:** ADR-0188, `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` als historische Evidence.
-
-## Historischer Arbeitsblock – AP-7-S1 Dual-Authority Domain Contract
-
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT auf der Slice-Baseline.** PR #145 ist auf `main @ 4ec83f36` gemergt. Nicht erneut als Draft öffnen. AP-7-S2 startet nicht automatisch.
-
-1. **Arbeitsblock / Ziel:** Shared Domain-Contract für Dual-Authority: account-owned Registry-Fakten + fail-closed unabhängiger Trip-Snapshot. Keine Persistenz.
-2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; PR #145 MERGED auf Slice-Baseline `4ec83f36`.
-3. **Status:** **INTEGRIERT auf dieser Baseline.** Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** Nested Registry-Typ; explizite trip-owned Materialisierung; Pflicht-`authority`; UUID-Refs; Snapshot-`jetzt`; Snapshot-Identität disjunkt zum gesamten Registry-Universum; 16 adversarial Tests inkl. Compile-Zeit-Grenze und Cross-Entity-/id↔clientRef-Kollisionen. Canonical Continuity self-expiring. ADR-0187.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 12`. Generation 12 für S1 abgeschlossen.
-6. **Live-`main` bei Integration:** `4ec83f36426c636443d43692d6875e92e9e3b54a`. Immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** Persistenz darf Materialisierung nicht durch kopierte oder kreuzkollidierende Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Dual-Authority-Architektur ist freigegeben. Production-Migration / Identity / RLS / sensible Dokumentdaten bleiben extra gegated. AP-7-S2 bleibt separat PO-gegatet.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Nächster Account-Slice wäre nur ein separat versionierter, PO-gegateter AP-7-S2-Vorschlag – nicht aus PR #147.
-12. **Zuerst lesen:** `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0187, Product-Owner-Approval.
-
-## Historischer Arbeitsblock – AP-7 Gate 0 Account-Traveller-Registry Architecture
-
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #144 ist MERGED (`bb38aef5`). Dual-Authority danach product-owner-freigegeben. Nicht erneut als Draft öffnen.
-
-1. **Arbeitsblock / Ziel:** Read-only Rekonstruktion und Architektur-Empfehlung für eine mögliche accountweite Traveller Registry. Keine Runtime.
-2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; PR #144 MERGED.
-3. **Status:** **INTEGRIERT.** Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** Live-Rekonstruktion; Optionsvergleich; Empfehlung Dual-Authority; ADR-0186 als Gate-0-Evidence.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 11`. Generation 11 abgeschlossen.
-6. **Live-`main` bei Integration:** `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05`.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** historische Gate-0-Risiken; Architekturwahl ist jetzt PO-freigegeben.
-10. **Offene Nutzerentscheidungen / Freigaben:** Persistence/RLS bleiben extra gegated.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. S1 ist Draft-PR #145 und self-expiring; nach Merge integriert, kein automatisches S2.
-12. **Zuerst lesen:** Gate-0-Status, ADR-0186, Product-Owner-Approval, S1-Task.
-
-## Historischer Arbeitsblock – PR #142 Post-Merge Continuity
-
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL.** PR #143 ist MERGED (`1947285c`). Die Dual-State-Klausel ist erfüllt/überholt. Nicht erneut als Draft öffnen.
-
-1. **Arbeitsblock / Ziel:** Docs-only Current-State nach Merge von PR #142, damit kein aktuelles Continuity-Surface PR #142 noch als Draft führt. Kein Produkt-Folgeslice.
-2. **Authoring-Branch / PR:** `docs/pr142-post-merge-continuity-2026-08-28`; PR #143. Reviewed-Head mit CHANGES REQUIRED `6e668593c36fc6c84f7a77c80e70afa2f7bdf304` (Kommentar `5454696267`). Live Exact Head ist der Commit dieses Stamps; live an PR #143 prüfen. Nach Merge von #143 ist diese Transportzeile historisch.
-3. **Status:** **DOCS-ONLY / SELF-EXPIRING.** Solange #143 offen: DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW. Nach Merge von #143: Continuity integriert; kein offener Produkt-Slice. Jeder neue Push invalidiert Prior-Gates. Kein Ready, kein Merge durch den Autor. Kein Produkt-Folgeslice.
-4. **Bereits umgesetzt:** PR #142 ist integriert. Dauerhafter Checkpoint `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`. Handoff / Start Here / dieser Status führen PR #142 als MERGED-Wahrheit samt Post-Merge-Evidence.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity quality security audit 4` – exakt zugewiesener Name. Keine andere Generation. Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; der UI-Anzeigename wird deshalb nicht als geändert behauptet. Cloud-Run `https://cursor.com/agents/bc-93c2dcb4-c12a-4e80-869e-df21404ea9b0` (Run-Titel bleibt `Pr142 post-merge continuity closure`). Nach Merge von #143 ist Generation 4 für diesen Continuity-Stamp abgeschlossen und nicht für einen Produktslice wiederzuverwenden.
-6. **Live-`main` bei diesem Stamp:** `9d4778b81f34e199466e089fe06fb093895f2df1`. Immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `main` Branch Protection bleibt `protected=false`. Dieser Slice ändert das nicht. Ein Agent-Self-Review ist kein PASS. CHANGES REQUIRED `5454696267` auf `6e668593` werden auf diesem neuen Head adressiert. Ältere Draft-PR-#142-Sätze sind Pre-Merge-Evidence.
-10. **Offene Nutzerentscheidungen / Freigaben:** besondere Product-Owner-Gates unverändert: S5-B Runtime/Persistenz, TW-8, AP-7, Provider-live/Secrets/paid calls, Payments, Public Launch, AP-5-P1–P5. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates innerhalb Gate 0, **nicht automatisch gestartet** und **nicht PO-gated**. Kein Ready/Merge durch den Autor.
-11. **Exakter nächster Schritt:** **Dual-State.** Solange PR #143 offen/unmerged: unabhängiger Technical-Lead-Exact-Head-Review von #143; kein Ready, kein Merge. Sobald PR #143 gemergt ist: Transport-/Review-Klausel historisch; exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice dadurch autorisiert.
-12. **Zuerst lesen:** `docs/PR142_POST_MERGE_CONTINUITY_TASK_2026-08-28.md`, `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`, `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` §9, `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`, `JETNITY_START_HERE.md`, dieser Status.
-
-## Historischer Arbeitsblock – Technical Lead / Cursor Operating Standard
-
-Live integriert über PR #142. Merge `9d4778b81f34e199466e089fe06fb093895f2df1`. Reviewed Head `507bcb170604b0f680dad7325ab4f32c7c4f2f61`. Technical-Lead PASS `5454570805`. Post-Merge Actions `33186501087` SUCCESS. Post-Merge Vercel Production `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo` READY. Generation 3 für die Integration abgeschlossen. Nicht erneut als Draft öffnen.
-
-1. **Arbeitsblock / Ziel:** Docs-only Governance-Integration des Product-Owner-Operating-Standards vom 28. August 2026.
-2. **Authoring-Branch / PR:** `docs/technical-lead-cursor-operating-standard-2026-08-28`; PR #142 **MERGED**.
-3. **Status:** **INTEGRIERT.** Ältere „REVIEW-FIX / DRAFT“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** Operating Standard; exklusive Ready-/Merge-Autorität; Agenten-Namensdisziplin; universeller Recovery-Prompt; Current-State-Regel – kein relevanter Fortschritt nur im Chat; Continuity ist Definition of Done.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity quality security audit 3` – Generation für die Integration abgeschlossen.
-6. **Live-`main` bei Integration:** `9d4778b81f34e199466e089fe06fb093895f2df1`.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `main` Branch Protection bleibt `protected=false`. Historische CHANGES REQUIRED `5454244491` auf `0bce940c` sind durch die Review-Fix-Kette geschlossen.
-10. **Offene Nutzerentscheidungen / Freigaben:** besondere Product-Owner-Gates unverändert. Kein Produkt-Folgeslice aus #142.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Continuity-Transport war PR #143; nach dessen Merge nicht erneut als Draft öffnen.
-12. **Zuerst lesen:** `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`, `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`.
-
-## Historischer Arbeitsblock – AP-5-S2 Post-Merge Continuity
-
-1. **Arbeitsblock / Ziel:** Docs-only Continuity nach Merge von PR #137, damit `main` S2 nicht weiter als Draft führt.
-2. **Authoring-Branch / PR:** `cursor/ap5-s2-integrated-82e4`; Draft-PR #138.
-3. **Status:** **DOCS-ONLY / DRAFT / REVIEW-FIX FÜR 5051188747.** Issue #136 ist CLOSED / completed. Runtime ist bereits integriert. Kein Ready, kein Merge durch den Autor. Kein S3–S5.
-4. **Bereits umgesetzt:** S2-Runtime über PR #137. Dieser Stamp schreibt nur Continuity.
-5. **Cursor-Agent:** `Account plattform audit vorbereitung 10` – schließt S2; nicht für eine neue Runtime-Einheit wiederverwenden.
-6. **Live-`main` bei diesem Stamp:** `f11a17533c56f5746ca9ef56e08c3e4a21a5a3c5` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** S3–S5 nicht automatisch starten. Issue #136 ist CLOSED / completed.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review dieses Continuity-Stamps nach Review `5051188747`; **kein S3–S5 aus diesem File.**
-12. **Zuerst lesen:** `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`, S2-Status, Gate-0-Status, ADR-0182.
-
-## Historischer Arbeitsblock – AP-5-S2 eingeloggte Passwortänderung
-
-Live integriert über PR #137. Merge `f11a1753`. Reviewed Head `e4cb805a`. Technical-Lead PASS `5051115258`. Issue #136 CLOSED / completed. Generation 10 für Runtime abgeschlossen. Nicht erneut öffnen. Gate 0 / ADR-0182 bleibt die Authority.
-
-1. **Arbeitsblock / Ziel:** Issue #136 / AP-5-S2 – signed-in Passwortänderung über `reauthenticate()` → Nonce → `updateUser({ password, nonce })`.
-2. **Authoring-Branch / PR:** `cursor/ap5-s2-password-reauth-82e4`; PR #137 MERGED.
-3. **Status:** **INTEGRIERT.** Ältere „REVIEW-FIX / DRAFT“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** Zustandsmodell; Security-Passwortkarte; kanonische Richtlinie/HIBP; getrennte Recovery-Authority; Truth-State-Fix für `getUser()`-Netz/5xx; S2-Tests; Inventory-Aktualisierung.
-5. **Cursor-Agent:** `Account plattform audit vorbereitung 10` – Generation für Runtime abgeschlossen.
-6. **Live-`main` bei Authoring:** `0256905cee3e6705156ce642839983daf8b0709a` – historische Start-Baseline.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** S2 brauchte keines. S3–S5 brauchen eigene Tasks; P1–P5 brauchen Product Owner.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Continuity-Stamp und Issue-Close sind der operative Rest.
-12. **Zuerst lesen:** `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`, `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`, Gate-0-Status, ADR-0182.
-
-## Historischer Arbeitsblock – Project Sanitation Closure
-
-Live integriert über PR #135. Issue #134 CLOSED / completed. Retention-Plan, kein Cleanup. Nicht erneut öffnen. ADR-0184 bleibt die Sanitation-Entscheidung.
-
-Ältere „REVIEW-FIX / DRAFT“-Zeilen sind Pre-Merge-Evidence. Live-`main` bei Integration: `0256905c`.
-
-## Historischer Arbeitsblock – AP-5-S1 Security-UI Truth
-
-Live integriert über PR #133. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. Nicht erneut öffnen. ADR-0183 bleibt die S1-Entscheidung.
-
-1. **Arbeitsblock / Ziel:** Issue #132 / AP-5-S1 – ehrliche Security-UI-Zustände und Fehlerhygiene ohne Auth-Architektur.
-2. **Authoring-Branch / PR:** `cursor/ap5-s1-security-ui-8b13`; PR #133 MERGED.
-3. **Status:** **INTEGRIERT.** Ältere „REVIEW-FIX / DRAFT“-Zeilen sind Pre-Merge-Evidence.
-4. **Bereits umgesetzt:** Lage-Ableitung; Passkey-Server-Truth; sichere Fehlercopy; TOTP-UI ohne Faktor-ID als Gerät; ADR-0183; fokussierte Tests.
-5. **Cursor-Agent:** `Account plattform audit vorbereitung 9` – Generation abgeschlossen.
-6. **Live-`main` bei Authoring:** `eaa03ad71509d281990e0d34ca359e0750eb9591` – historische Start-Baseline.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write.
-8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** Sessionliste bleibt ungebaut/`unsupported`; heutiges Abmelden ist bereits `global`; Login-MFA abbrechbar; D0-P1-03 Legal-404; C2 PO-gated; `main` Branch Protection `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** S1 brauchte keines. AP-5-P1–P5 brauchen Product-Owner, bevor sie gebaut werden.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. S2 ist separat über PR #137 integriert.
-12. **Zuerst lesen:** `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, Handoff, ADR-0183, Gate-0-Status, ADR-0182.
-
-Historischer abgeschlossener Block AP-5 Gate 0 bleibt integriert: PR #129 MERGED, Issue #128 CLOSED / completed. Nicht erneut öffnen. P2-TA-04 C1 bleibt integriert: PR #126 MERGED, Issue #122 CLOSED / completed. P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed.
-
-## 0. Live-Integrationsbaseline
-
-Live-`main` immer live prüfen. Keine bewegliche Exact-Head-SHA als kanonische Live-Wahrheit.
-
-Post-Merge-Evidence von PR #142:
-
-- Reviewed Head: `507bcb170604b0f680dad7325ab4f32c7c4f2f61`
-- Independent Technical-Lead PASS: Issue-Kommentar `5454570805`
-- Merge-Commit / aktuelles `main`: `9d4778b81f34e199466e089fe06fb093895f2df1`
-- Post-Merge GitHub Actions: Run `33186501087` SUCCESS
-- Post-Merge Vercel Production: `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo` READY
-- Checkpoint: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-
-Post-Merge-Evidence von PR #113:
-
-- Reviewed Head: `928215a2c6c4d4ce914f12ba1bd88dbcab8f548b`
-- Independent Technical-Lead PASS: Review `5046006374`
-- Merge-Commit: `286d26fec2eed87e1227ebb2cf7327f50e8f5f1a`
-- Post-Merge GitHub Actions: Run `33120743073` SUCCESS
-- Post-Merge Vercel Production: `dpl_7V8WetsqrXC8m4CQcUZoQb9hXn1e` READY
-- Issue #112: CLOSED / completed
-
-Historische Start-Baseline von TW7-A (Issue #103 / PR #106), ausdrücklich nicht aktueller Live-Stand:
-
-- `963186f4ec75501efd253a287131f464a5fd0fdb` — `Merge PR #102: Admin AAL2 production apply gate closure`
-
-PR #102 bleibt integriert. Production `20260827170000_admin_aal2_data_plane_alignment` ist angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Admin-Capabilities verlangen Rolle **UND** aktuelles AAL2. Kein zweiter Apply.
-
-Vorherige dokumentierte Baseline (historisch):
-
-- `beaef64a151adceb8f5bc759f58ae9ad13cecc51` — `Merge PR #98: Admin AAL2 production data-plane alignment`
-- GitHub Actions auf exakt diesem SHA: Run `33087558642` SUCCESS
-- GitHub Production-Deployment auf exakt diesem SHA: `6125680097` success
-
-PR-#97-Docs-Merge bleibt:
-
-- `4362502bf23c1c54f721af48c0f7bdd6fcbdee3b` — `Merge PR #97: TL live reconstruction + AAL2 production gate`
-
-PR-#96-Continuity-Merge bleibt:
-
-- `45be14b1077589953d5dbf21f569311c9a4b59f7` — `Merge PR #96: post-PR94 continuity`
-
-PR-#94-Produktmerge bleibt:
-
-- `819715b1567417893d894b7b110eff1a2ab6cded` — `Merge PR #94: Visitor Search UX`
-
-Verifizierte PR-#94-Linie:
-
-- Base / Merge-Base vor Merge: `b76148e533fb0758c0197d0e0252624bb869cdb5`
-- PR-#94 Exact Head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
-- Independent Technical-Lead PASS review: `5040199350`
-- Exact-Head GitHub Actions Run `33066516282`: SUCCESS
-- Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS
-- Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
-- Post-Merge `main` GitHub Actions Run `33067498607`: SUCCESS
-- Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt `819715b1567417893d894b7b110eff1a2ab6cded`
-- GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
+Status: **CURRENT / DOCS-ONLY RECONCILIATION / LIVE-EVIDENCE GEWINNT**
 
-Post-Merge-Checkpoints:
+> Diese Datei ist ein Current-State-Pointer, kein historisches Archiv. Historische Detailstände bleiben in Git-Historie, Slice-Status/Handoffs und ADRs erhalten.
 
-- `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` (PR #95, bereits auf `main`)
-- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md` (PR-#94-Continuity, mit PR #96 integriert/geschlossen)
+## 1. Aktueller Arbeitsblock
 
-PR #91 bleibt Teil der Vorgeschichte (Merge `a2e46f38dcfbbea286e37960c7993adbbd06136a`). Checkpoint: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`. Aussagen dort, Production Gate B sei unangewendet oder PR #87 bleibe Draft, sind **historische Evidence** vor den späteren Gate-B- und Runtime-Merges.
+**Provider / Traveller Current-State Reconciliation**
 
-Production Public Runtime bleibt bezüglich D0 unverändert:
+- Baseline: `main @ 3bb81004b4daf981a83bfcd2fef27864dd002155`
+- Branch: `docs/provider-traveller-current-state-reconciliation-2026-08-29`
+- Draft-PR: **#203**
+- Technical-Lead-owned; kein Cursor-Coding-Agent.
+- Scope: ausschließlich globale Current-State-/Continuity-Pointer + aktueller Provider-/Traveller-Checkpoint.
+- Non-Scope: Runtime, UI, Provider-Calls, Credentials, Signup, Supabase-Mutation, Migration, RLS/Grant, AP-7-S2, TW-8, Build-Order-Änderung.
 
-- `robots` / `googlebot` = `noindex, nofollow`;
-- Canonical `https://jetnity.com`;
-- `/planen` ebenfalls `noindex, nofollow`;
-- `robots.txt` deny-all;
-- kein Domain-Cutover, kein Public Indexing, kein Redirect-Gate.
+**Self-expiring:** Wenn #203 auf `main` integriert ist, ist dieser Authoring-Block abgeschlossen. Danach zuerst Post-Merge CI/Vercel verifizieren und dann vor jedem neuen Slice wieder live rekonstruieren.
 
-`main` Branch Protection ist live **nicht aktiviert** (`protected=false`) und bleibt ein Governance-Risiko.
+Aktueller Checkpoint:
 
-## 1. Aktive Technical-Lead-Governance
+`docs/CHATGPT_TL_PROVIDER_TRAVELLER_RECONCILIATION_CHECKPOINT_2026-08-29.md`
 
-> **Autonom mergen ist erlaubt – blind mergen ist verboten.**
+## 2. Was unmittelbar zuvor abgeschlossen wurde
 
-> **Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten tun das niemals.**
+### Provider Shared Core
 
-Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
+- ADR-0199 / `lib/server/providers/core/*` integriert.
+- Finaler gegateter Implementierungs-Head `191235a536b0c14c71ff175336f588c6b737a673`.
+- Recovery-PR #197 → Merge `c5aae6b533bee3c0ee747803e196bd3a2235dc8a`.
+- Post-Merge-Continuity `085c95b22130232c5b5819ef8a4bcc302cc0f52b`.
+- CI/Vercel post-merge grün.
 
-Vor Ready/Merge zwingend: Live-`main`, Diff, Tests und Testannahmen, Security/Privacy/Truth/Shared Contracts, Exact-Head Actions/Vercel, relevante Supabase-Grenzen, Review-Threads und Parallelität prüfen. Bei Fehlern zuerst korrigieren und neu gaten. Der Technical Lead merged nur, wenn er nach unabhängigem Exact-Head-Review absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
+### HBX Hotels
 
-Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production-Migrationen, große Auth/MFA/AAL-/RLS-/Identity-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, Payments, > USD 100/Monat und Public Launch / Provider-Live / Store-Aktivierung.
+- Contract/Audit integriert über Recovery-PR #199.
+- Merge `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4`.
+- Post-Merge CI #1240 SUCCESS; Vercel SUCCESS.
+- HBX bleibt erster konkreter Hotels-Zielprovider.
+- Keine Runtime/Activation.
 
-Die Product-Owner-Freigabe vom 27. August 2026 galt **nur** für Production Gate A:
+### Viator Activities
 
-1. `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
-2. danach `20260824180000_trip_items_flug_handelsfelder_guard`
+- Contract/Audit integriert über Recovery-PR #200.
+- Merge `a9f9c3a6d0c31f7676aa686148939948a7858012`.
+- Post-Merge CI #1243 SUCCESS; Vercel SUCCESS.
+- Viator bleibt erster spezialisierter Activities-Zielprovider.
+- Keine Runtime/Activation.
 
-Diese Freigabe galt ausdrücklich **nicht** für TW6-B, AAL2, Direction A oder andere späteren Production-Migrationen. PR #94 brauchte kein besonderes Product-Owner-Gate.
+### 12Go Mobility
 
-## 2. D0 / Growth
+- Contract/Audit / ADR-0200 integriert über Recovery-PR #201.
+- Merge `d31e6966fdcb66d0e327a5960194a035676251c1`.
+- Post-Merge CI #1245 SUCCESS; Vercel SUCCESS.
+- 12Go bleibt erster spezialisierter Mobility-Zielprovider.
+- Confidential API details bleiben UNKNOWN bis Approval/First-Party-Dokumenten.
+- Keine Runtime/Activation.
 
-D0-1, D0-2 und **P1-D0-LIVE-01** sind auf `main`.
+### Traveller / Multi-Citizenship Current-Gap Audit
 
-Domain-Wahrheit:
+- Agent: `Jetnity traveller multicitizenship audit 1`.
+- Finaler gegateter Head `7bdd7da81e56808d9ff1b004999314935b3a5812`.
+- Recovery-PR #202 → Merge `3bb81004b4daf981a83bfcd2fef27864dd002155`.
+- Post-Merge CI #1248 SUCCESS; Vercel SUCCESS.
+- Audit bestätigt: 1:n Citizenships/Documents und No-Default-Pass sind current; AP-7-S2 Registry Persistence/Identity/RLS fehlt weiterhin.
 
-- `https://jetnity.com` = einzige zukünftige kanonische/indexierte Public-Hauptdomain;
-- `jetnity.ch` = Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
-- HTML-robots folgt `darfIndexieren` fail-closed;
-- Public Canonical / metadataBase / OG / JSON-LD verwenden `https://jetnity.com`;
-- `*.vercel.app` ist niemals kanonische Jetnity-Produktdomain;
-- `/planen` emittiert robots explizit;
-- Indexing nur bei explizitem `NEXT_PUBLIC_ALLOW_INDEXING=true` und exakter `.com`-Origin;
-- Default bleibt deny/false;
-- kein Domain-Cutover, kein Public-Launch, kein Redirect, kein DNS.
+## 3. Provider – aktueller Reifegrad
 
-Offen: **D0-P1-03** Legal-404 (`/privacy`, `/terms` live 404); D0-P2-04 hreflang; D0-P2-05 JSON-LD; G0-Reste.
+### Integriert
 
-`Jetnity growth discoverability` bleibt STOPP. Kein D1/G1 automatisch starten.
+- Commercial Provenance S5-A/S5-B Contract + Production Persistence Foundation.
+- Shared Provider Adapter Core / ADR-0199.
+- Skyscanner Flights Offline Adapter Foundation.
+- HBX Hotels Contract/Audit.
+- Viator Activities Contract/Audit.
+- 12Go Mobility Contract/Audit / ADR-0200.
 
-## 3. Trip Workspace
+### Nicht aktiviert / nicht gebaut
 
-Integriert:
+- keine echten Provider-Secrets oder API-Keys;
+- keine echten Provider-Calls;
+- kein Production Provider Runtime Principal;
+- kein echter `live_api`-Snapshot;
+- kein echter Provider-`persisted_snapshot`;
+- kein Provider Orchestrator;
+- TW-8 geschlossen.
 
-- TW-1 ✅
-- TW-2 ✅
-- TW-4 ✅
-- TW-3 ✅
-- TW-5 ✅
-- TW-6 Dependency-Audit ✅
-- TW6-A Create-Entry ✅
-- TW6-B Gate 0 / Provenance via PR #89 ✅
-- TW6-B Gate 0B / Zero-Stage Production Rollout Provenance via PR #91 ✅
-- TW6-B Runtime + Day→Stage Mode Contract via PR #87 ✅ (`TW6-REST-01` geschlossen)
-- Visitor Search UX via PR #94 ✅
+## 4. Supabase Production – frisch verifiziert
 
-**Gate 0 / Gate 0B ≠ TW6-B Runtime-Merge und ≠ Production Gate B.**
+Project: `qscbgcdmivbbnzrcyegn`.
 
-Der Vier-Datei-Vertrag ist der **bereits angewendete historische Production-Gate-B-Rollout**, nicht ein offener späterer Apply:
+Read-only am 29. August 2026 bestätigt:
 
-`20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
+- S5-B Migration `20260829140000` registriert;
+- `public.trip_item_commercial_provenance` vorhanden;
+- Provenance row count = **0**;
+- Writer = NOLOGIN;
+- Runtime = NOLOGIN + NOINHERIT;
+- interner Writer `SECURITY DEFINER`, EXECUTE nur `postgres` + `jetnity_commercial_writer`;
+- `authenticated` / `anon` können Writer nicht ausführen;
+- `authenticated`: SELECT ja, INSERT/UPDATE/DELETE nein;
+- `authenticated` / `anon` sind keine Writer-/Runtime-Mitglieder.
 
-Kein Re-Apply ist pending. Development und Production nicht blind erneut mit diesem Bundle migrieren. `27010000` bleibt die Zero-Stage-Regel: 0 Stages fail-closed, `single_destination` nur bei genau einer Stage.
+**Production-Write-Pfad bleibt geschlossen. Kein realer Provider-Snapshot.**
 
-PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt und **schließt `TW6-REST-01`**. Reviewed Head `7ef201fb`, Merge-Commit auf `main` `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
+## 5. Traveller / Account – aktueller Reifegrad
 
-PR #94 (`cursor/visitor-search-ux-b13d`) ist gemergt. Reviewed Head `8da869fd`, Merge-Commit auf `main` `819715b1`. P1 Listbox und P2 Abort-Race sind geschlossen. Task bleibt historische Slice-Spec: `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`. Keine Schema-/Production-Änderung. Kein neuer Search-Provider.
+Kanonischer Vertrag:
 
-Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`, Review `5040068359` CHANGES REQUIRED) bleibt historisch.
+> 1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig zulässige Optionen.
 
-TW-7-Start-Gate ist erfüllt. Der Weg ist bereits einer. TW7-A Runtime ist integriert (PR #106): Mehrziel-Kartenidentität plus Gast-`itemCount`. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
+### Integriert
 
-## 4. Traveller / Account
+- Trip-scoped 1:n Citizenships/Documents;
+- Issuer ≠ Citizenship;
+- explizite Document↔Citizenship-Relation;
+- kein Default-Pass / keine Default-Citizenship;
+- historische `documents[0]`-Normalisierung geschlossen;
+- historische First-Evaluation-Truth geschlossen/fail-closed;
+- Guest→Account Trip-Copy erhält Arrays/Relation;
+- AP-7 Gate 0;
+- Product-Owner Dual-Authority-Freigabe;
+- AP-7-S1 Domain Contract.
 
-Current Traveller Truth:
+### Offen
 
-> **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Dokumente/Credential-Optionen → kontextabhängig bewertete zulässige Optionen.**
+- **AP-7-S2 Account-Registry Persistence / Identity / RLS**;
+- Registry CRUD / Lifecycle / UX;
+- explizite Registry→Trip Runtime-Materialisierung;
+- Requirements Provider;
+- spätere option-scharfe Official-/Safety-/Booking-Dokumentdarstellung bei echter Evidence;
+- P3 Hygiene/Compatibility laut aktuellem Audit.
 
-Kein Default-Pass. Issuer ist nicht Citizenship.
+Keine Passnummern, MRZ, Scans, Biometrie oder Health-Daten im Kernmodell.
 
-Geschlossen:
+## 6. Trip Workspace / Legal / weitere Blocker
 
-- P1-QS2-02 durch PR #81;
-- P1-TA-02 durch PR #84;
-- **P2-TA-06 / Issue #112 durch PR #113.** Der First-Document-Fallback in `travellerNormalisieren()` ist entfernt; PR #113 ist auf `main`, Issue #112 CLOSED / completed. Auftrag: `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_TASK_2026-08-27.md`. Stand/Handoff sind post-merge aktualisiert. ADR-0178 bleibt die Slice-Entscheidung.
+- TW-1 bis TW-7-A weitgehend integriert.
+- **TW-8 geschlossen**, bis reale Commercial Provenance existiert.
+- TW-9 folgt erst danach.
+- AP-5 Security S1–S5 integriert.
+- AP-6a Legal Foundation Gate 0 integriert; Legal Runtime/Inhalte noch offen.
+- `main protected=false` bleibt Governance-Risiko.
+- kein bekannter P0.
 
-Weiter offen außerhalb dieses Slice:
+## 7. Besondere Product-Owner-Gates
 
-- **P2-TA-03** – kanonischer Plan durch PR #117 integriert; historische Datei bleibt auf PR #39. Kein AP-5;
-- **P2-TA-04 C1** – Issue #122 Implementation; Gate 0 / PR #120 integriert; kein C2/REVOKE/DEFINER;
-- Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
-- Account-Traveller-Registry Dual-Authority ist freigegeben; S1 Domain-Contract self-expiring auf Draft-PR #145. AP-4 ist integriert (PR #108). Persistenz/UI/S2 und AP-5-S3–S5 nicht automatisch.
+Ausdrückliche Product-Owner-Entscheidung bleibt vor insbesondere:
 
-## 5. Provider Readiness
+- Production-Migrationen oder großen produktiven RLS-/Identity-/Ownership-Änderungen;
+- fundamentalen Auth/MFA/AAL-Änderungen;
+- neuer Speicherung sensitiver Pass-/MRZ-/Biometrie-/Dokumentdaten;
+- realen Providerverträgen, Production-Secrets, paid calls, Live-Aktivierung;
+- Öffnung des Provider Runtime/S5-B Write-Pfads;
+- realen Payments/Geldbewegungen;
+- Kosten über USD 100/Monat;
+- fundamentalen Produkt-/Business-/Build-Order-/Launch-Entscheidungen.
 
-S1–S3 und **S5-A** sind integriert. S5-B ist **nicht gestartet**.
+Routine-Technik und normale scope-treue Merges bleiben Technical-Lead-autonom nach independent Exact-Head Review.
 
-Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung durch Gate A/Gate 0B/PR #94/PR #113.
+## 8. Exakter nächster Schritt
 
-Gates:
+### Solange PR #203 offen ist
 
-- **TW8-START-GATE:** Kein TW-8 ohne belastbaren S5-Vertrag **und** spätere Provenance-/Persistenz-Reife. S5-A allein reicht nicht.
-- **PROVIDER-ACTIVATION-GATE:** persistenter Cost Guard vor bezahlter/Production-Aktivierung.
-- Persistierte kommerzielle Beträge ohne belegten Zeitpunkt bleiben `unknown`/`stale`.
+1. Exact Head live prüfen.
+2. Diff nur gegen Docs-Scope prüfen.
+3. CI + Vercel terminal grün.
+4. Independent TL PASS.
+5. Technical-Lead-only Ready/Merge; bei bekanntem Draft→Ready-Connectorfehler Recovery-Transport nur mit identischem gegatetem SHA.
+6. Post-Merge `main`, CI und Vercel verifizieren.
 
-## 6. QS / Admin AAL2 / Sanitation
+### Nach erfolgreicher Integration von #203
 
-Admin-AAL2 Application-Guard ist im Code integriert. PR #102 ist integriert. Production `20260827170000_admin_aal2_data_plane_alignment` ist angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Admin-Capabilities verlangen Rolle **UND** aktuelles AAL2. Kein zweiter Apply. Ältere Sätze „Production-Datenebene ist weiterhin nicht angewendet“ sind Pre-Apply-Evidence.
+**Keinen Slice aus dieser Datei blind starten.**
 
-Separate Supabase Security-/Performance-Advisors bleiben eigene QS-Arbeit. Keine dieser separaten Baustellen wurde durch PR #94 oder PR #113 still verändert.
+Zuerst verbindlichen Slice-Precheck ausführen. Wenn die Live-Evidence unverändert bleibt, nächster produktiver Kandidat:
 
-Project-Sanitation: Issue #134 ist der aktuelle Closure-Slice. PR #88 ist `CLOSE-SAFE`; Unique Inventur-Dateien hängen am Branch `audit/project-sanitation-inventory-2026-08-26` (`HISTORICAL-EVIDENCE`). Kein Cleanup/PR-Close/Branch-/Cloud-Delete automatisch ausführen.
+**Skyscanner Flights Server Create/Poll Transport Foundation**
 
-Live Supabase-Inventur zeigt:
+Erster Slice:
 
-- Production-Elternprojekt `qscbgcdmivbbnzrcyegn` (`Jetnity's Project`) – ACTIVE_HEALTHY
-- Development-Branch `[REDACTED]`
-- weiteres Top-Level-Projekt `jrixsujkzvlvglvcmtia` (`jetnity-bets`) – Decommission bleibt separate Product-Owner-Entscheidung
+- neuer versionierter Task;
+- eigener Branch/Draft-PR;
+- neuer isolierter Cursor-Agent;
+- server-only;
+- konsumiert `lib/server/providers/core/*`;
+- feste offizielle Skyscanner Create/Poll-Endpunkte;
+- dependency-injected/mock HTTP in Tests;
+- bounded Poll-Budget, Abort/Timeout, 429/Retry-After, fail-closed Parsing;
+- keine echten Credentials/Calls;
+- kein `live_api`;
+- keine Commercial-Provenance-Persistenz;
+- keine S5-B Runtime-Write-Öffnung;
+- kein TW-8.
 
-## 7. Aktive / nächste Cursor-Workstreams
+Echte Provider-Authentication, Live Calls, Commercial-Provenance-Promotion und Refresh-Price/Freshness bleiben separate spätere Gates.
 
-Kein offener TW-7-Produktdocs-Draft als operative nächste Arbeit.
+## 9. Pflicht vor neuem Chat / neuem Slice
 
-- **PR #106** integriert TW7-A Runtime (Issue #103). Integrationsvehikel. Issue #103 ist CLOSED / completed.
-- **PR #100** versioniert TW-7-Gap / ADR-0176 / TW7-A-Spec. Nach Landung integriert.
-- Historische Pre-Merge-Evidence von PR #100: Head `2aa573f1` Actions `33087982878` SUCCESS, Vercel `DUzQZnDEY2TBdP1rwoZFPs2bzFsA` SUCCESS; späterer Stamp-Head `2abe79b4` Actions `33088507998` SUCCESS, Vercel `8NJVH46dzhrvUur8raAGukyiyzcL` SUCCESS.
+Zuerst lesen:
 
-PR #98 und PR #102 sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Ältere Sätze „Production-AAL2-Apply bleibt ein Gate“ sind Pre-Apply-Evidence.
+1. `JETNITY_START_HERE.md`
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
+4. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+5. `docs/CHATGPT_TL_PROVIDER_TRAVELLER_RECONCILIATION_CHECKPOINT_2026-08-29.md`
+6. den konkret relevanten Task/Status/Handoff/ADR;
+7. danach Live-GitHub/CI/Vercel/Supabase-Evidence.
 
-PR #96 bleibt integriert/geschlossen. Historisch Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
-
-Account/Traveller zuletzt abgeschlossen:
-
-- **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. PR #113 integriert. Issue CLOSED / completed. Generation 4 ist historische Authoring-Evidence.
-
-Account-Implementation zuletzt abgeschlossen:
-
-- **Issue #136 / AP-5-S2** – `Account plattform audit vorbereitung 10`. PR #137 integriert. Merge `f11a1753`. Generation 10 für Runtime abgeschlossen. Issue CLOSED / completed.
-
-- **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. PR #133 integriert. Issue CLOSED / completed. Generation 9 ist historische Authoring-Evidence.
-
-Historisch abgeschlossen:
-
-- **Issue #128 / AP-5 Gate 0** – `Account plattform audit vorbereitung 8`. PR #129 integriert. Generation 8 nicht wiederverwenden.
-
-- **Issue #122 / P2-TA-04 C1** – `Account plattform audit vorbereitung 7`. PR #126 integriert. Generation 7 nicht wiederverwenden.
-
-- **Issue #119 / P2-TA-04 Gate 0** – `Account plattform audit vorbereitung 6`. PR #120 integriert. Generation 6 nicht wiederverwenden.
-- **Issue #116 / P2-TA-03** – `Account plattform audit vorbereitung 5`. PR #117 integriert. Generation 5 nicht wiederverwenden.
-
-`Cursor-Agent: Jetnity framework compatibility 1` ist der Ops-Slice für Draft-PR #150 (self-expiring: STOP für TL Exact-Head-Review; kein Ready, kein Merge, kein S2). `Cursor-Agent: Jetnity framework security audit 1` / PR #148 ist abgeschlossen und nicht wiederzuverwenden. `Cursor-Agent: Jetnity runtime consistency 1` / PR #147 ist auf `main @ 56aff7ff` abgeschlossen und nicht wiederzuverwenden. Generation 12 (`Account plattform audit vorbereitung 12` / PR #145) bleibt abgeschlossen. Generation 11 (Gate 0 / PR #144) bleibt abgeschlossen. S3–S5 starten nicht aus S2. AP-7-S2 startet nicht aus S1 und nicht aus diesem Ops-Slice.
-
-STOPP weiterhin für automatische Folgeslices:
-
-- `Jetnity framework compatibility` – Generation 1 nur für PR #150; kein S2 / Framework-Bump aus S1
-- `Jetnity framework security audit` – Generation 1 für PR #148 abgeschlossen; kein Implementierungs-Bump aus Gate 0
-- `Jetnity runtime consistency` – Generation 1 für PR #147 abgeschlossen; kein Produkt-Folgeslice
-- `Account plattform audit vorbereitung` – Generation 12 nur für PR #145; kein S2 daraus
-- `Jetnity provider readiness audit`
-- `Admin platform audit`
-- `Jetnity growth discoverability`
-- `Jetnity quality security audit` – Generation 3 für Issue #134 abgeschlossen; Generation 4 ist der Continuity-Transport PR #143 und kein Produkt-/Cleanup-Folgeslice. Nach Merge von #143 ist Generation 4 abgeschlossen und nicht wiederzuverwenden.
-
-Reserviert:
-
-- `Jetnity native app architecture`
-
-## 8. Offene PRs / relevante Integration
-
-Operativ relevant:
-
-| PR | Klasse |
-| --- | --- |
-| **#162** AP-5-S5 Honest Current Session | **DRAFT.** STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6/AP-7. |
-| **#160** AP-5-S4 MFA Step-up | **GEMERGT / INTEGRIERT** auf `main @ 934d43da`. Ältere Draft-#159-Zeilen sind Pre-S5-Evidence. |
-| **#157** AP-5-S3 Logout Scopes | **GEMERGT / INTEGRIERT** auf `main @ 5920860e`. |
-| **#150** Next 16 Compatibility Prep S1 | **SELF-EXPIRING.** DRAFT, STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein S2, kein Framework-Bump. |
-| **#149** Next 16 Product Owner approval | **GEMERGT / INTEGRIERT** auf `main @ 2fdf8a18`. Autorisiert das gestufte Compatibility-Programm; kein automatischer Bump. |
-| **#148** Next.js Framework Security Upgrade Gate 0 | **GEMERGT / INTEGRIERT** auf `main @ 2fdf8a18`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
-| **#147** Node 22 Runtime Consistency | **GEMERGT / INTEGRIERT.** Merge `56aff7ff`. Post-Merge Actions `33204438255` SUCCESS. GitHub Production deployment `6147375507` (GitHub-only). TL-verifizierte Vercel Production `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` READY. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
-| **#145** AP-7-S1 Dual-Authority Domain Contract | **GEMERGT / INTEGRIERT** auf Slice-Baseline `4ec83f36`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. Kein automatisches AP-7-S2. |
-| **#144** AP-7 Gate 0 Account-Traveller-Registry | **GEMERGT / INTEGRIERT.** Merge `bb38aef5`. Architecture-Evidence; Dual-Authority danach PO-freigegeben. |
-| **#143** PR #142 Post-Merge Continuity | **GEMERGT / INTEGRIERT.** Merge `1947285c`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
-| **#142** Technical Lead / Cursor Operating Standard | **GEMERGT / INTEGRIERT.** Merge `9d4778b8`. Reviewed Head `507bcb17`. TL PASS `5454570805`. Ältere „DRAFT“-Zeilen sind Pre-Merge-Evidence. |
-| **#138** AP-5-S2 Post-Merge Continuity | **GEMERGT / INTEGRIERT** laut kanonischem Handoff. Ältere „DRAFT“-Zeilen in diesem File sind Pre-#138-Evidence. |
-| **#137** AP-5-S2 Passwortänderung | **GEMERGT / INTEGRIERT.** Merge `f11a1753`. Reviewed Head `e4cb805a`. TL PASS `5051115258`. Issue #136 CLOSED / completed. |
-| **#135** Project Sanitation Closure | **GEMERGT / INTEGRIERT.** Merge `0256905c`. Retention-Plan; kein Cleanup. |
-| **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |
-| **#129** AP-5 Gate 0 Account security capability | **GEMERGT / INTEGRIERT.** Issue #128 CLOSED / completed. Ältere „Draft“-Zeilen sind Pre-Merge-Evidence. |
-| **#126** P2-TA-04 C1 Traveller write-contract integrity | **GEMERGT / INTEGRIERT.** Merge `5ed7edbd`. Issue #122 CLOSED / completed. Production C1 live als `20260828015304`. Historische/develop-only Evidence `20260828120000`. Kein C2. |
-| **#120** P2-TA-04 Traveller Write-Path Gate 0 | **GEMERGT / INTEGRIERT.** Merge `8d8f3d57`. Issue #119 CLOSED / completed. Audit only; Residual C1 jetzt Issue #122. |
-| **#117** P2-TA-03 Account Plan Reconciliation | **GEMERGT / INTEGRIERT.** Merge `b912315d`. Issue #116 CLOSED / completed. Kanonischer AP-5–AP-12-Plan liegt auf `main`. |
-| **#113** P2-TA-06 Readiness Credential Normalization | **GEMERGT / INTEGRIERT.** Reviewed Head `928215a2`; Merge `286d26fe`; Issue #112 CLOSED / completed. |
-| **#106** TW7-A Runtime Issue #103 | **INTEGRIERT.** Integrationsvehikel. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. |
-| **#102** Admin AAL2 production apply gate closure | **GEMERGT.** Historische Start-Baseline von TW7-A war `963186f4`. Apply von `20260827170000` ausgeführt und verifiziert, exakt einmal. |
-| **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **VERSIONIERT bzw. nach Landung integriert.** Spec bleibt bindend. Runtime folgt über PR #106. |
-| **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Historische Alignment-Linie vor PR #102. |
-| **#97** TL live reconstruction + AAL2 production gate | **GEMERGT.** Merge `4362502b`. |
-| **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN.** Merge `45be14b1`. |
-| **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
-| **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. |
-| **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
-| **#88** Project Sanitation Audit | Historische Inventur 26.08.2026. Nicht Current Truth. **CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Close löscht Unique Files nicht. |
-| #52 ChatGPT TL handoff 2026-08-24 | **CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Nicht als Current Truth mergen. |
-| #50 S1 merged-status docs | **CLOSE-SAFE**; Branch `DELETE-SAFE`. Unique Files vs Merge-Base = 0. |
-| #40 Admin Platform Audit | **CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Nicht als Current Truth mergen. |
-| #39 Account Platform Audit | **CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Enthält die alte `ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`. Nicht als Current Truth mergen. P2-TA-03 ersetzt den Steuerungsvertrag auf #117. |
-| #28 Trip Collaboration Foundation | **KEEP-FUTURE**; Branch `FUTURE`. Nicht beiläufig schliessen. Nicht als aktuelle Runtime wieder aufnehmen. |
-
-PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
-
-Historische Evidence nicht löschen. Nicht als aktuelle Runtime-Arbeit wieder aufnehmen.
-
-## 9. Supabase / Production
-
-Production ist live `ACTIVE_HEALTHY`.
-
-Production Gate A bleibt PASS. Technical-Lead Re-Review vom 27. August 2026 (PR #87, Review `5039338077`): **Production Gate B ist operativ PASS.** Der Vier-Datei-Vertrag `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000` wurde unter Write-Gate transaktional angewendet und post-verifiziert.
-
-Production-AAL2 `20260827170000_admin_aal2_data_plane_alignment` ist über PR #102 angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Ältere Sätze „AAL2-Versionen bleiben ausgeschlossen“ beziehen sich auf die historischen Dateien `20260826090000` / `20260826052735`, nicht auf den ausgeführten Alignment-Apply.
-
-Frühere Absätze in älteren Checkpoints, die „Production Gate B nicht angewendet“ sagten, sind **historische Evidence** vor diesem Apply.
-
-PR #94, PR #113 und dieses Continuity-Update schreiben Production nicht.
-
-Weiterhin nicht angewendet:
-
-- historische AAL2-Datei `20260826090000`
-- Development-AAL2-Version `20260826052735`
-
-Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein zweiter Apply.
-
-Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der bestehenden Product-Owner-C1-Freigabe (Issue #122) vom Technical Lead angewendet und live verifiziert. Kein erneuter Apply. Die historische/develop-only Author-Version `20260828120000` bleibt Develop-Evidence derselben SQL und wird nicht still umgeschrieben.
-
-## 10. Nächster Schritt
-
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #168 / Issue #109. Autor-Agent setzt kein Ready, kein Merge, kein Issue #110, keine Vercel-Setting-Mutation.
-
-PR #152 Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #156.
-
-AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. AP-5-S3 ist Draft, nicht integriert. S4/S5 sind normale Technical-Lead-Gates und starten nicht aus diesem File. Kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
-
-P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
-
-P2-TA-06 bleibt integriert (PR #113); Issue #112 ist CLOSED / completed.
-
-**Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit nach S3: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
-
-Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-6a-Runtime/AP-6b/AP-7 automatisch starten. Issue #109 ist der aktuelle Draft-PR #168. Issue #110 bleibt ungestartet. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
-
-PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.
+Duplicate-/History-Gate vor jedem neuen Agenten. Kein relevanter Fortschritt nur im Chat. Globale Current-State-Dateien bleiben Technical-Lead-owned.
