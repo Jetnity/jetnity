@@ -33,7 +33,7 @@ Erneut `git fetch origin main` am 29. August 2026.
 | Task-Baseline / `origin/main` | `69ef27b169780e41ba506a69acb15caafa645517` — `Integrate Skyscanner Flights offline adapter foundation` |
 | Lokales `main` | identisch zu `origin/main` |
 | Merge-Base | `69ef27b1` = `origin/main` |
-| Ahead / Behind bei diesem Stamp | Ahead = dieser Docs-Commit; **Behind = 0** |
+| Ahead / Behind bei diesem Stamp | Ahead = Task + Audit-Docs; **Behind = 0**. Exact Head = Commit dieses Stamps; live am PR prüfen. |
 | Draft-PR | #188 OPEN Draft |
 | Task-Head CI | Actions Run `33261049464` SUCCESS auf Task-Commit `f6cef132`. **Gilt nicht für den neuen Head.** |
 | Task-Head Vercel | READY `8YCfoYedhJw6vTmy4BgTPZQfnnA1` auf `f6cef132`. **Gilt nicht für den neuen Head.** |

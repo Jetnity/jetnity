@@ -24,7 +24,7 @@ Geliefert:
 
 Nicht getan: Runtime, Shared-Core, Signup, Keys, Secrets, HTTP, Mint, Production, Ready, Merge.
 
-`origin/main` vor Handoff neu geholt: `69ef27b169780e41ba506a69acb15caafa645517`. Behind = 0.
+`origin/main` vor Handoff neu geholt: `69ef27b169780e41ba506a69acb15caafa645517`. Behind = 0. Exact Head = Commit dieses Stamps; live am PR prüfen.
 
 ---
 
