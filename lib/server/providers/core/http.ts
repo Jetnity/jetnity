@@ -25,7 +25,7 @@ export function createFetchProviderHttpClient(
           return response.headers.get(name)
         },
       },
-      text: () => response.text(),
+      body: response.body,
     }
   }
 }

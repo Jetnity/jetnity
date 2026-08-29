@@ -14,6 +14,7 @@ import {
   type ProviderHttpMethod,
   type ProviderParseStrategy,
   type ProviderRandom,
+  type ProviderRateLimitOutcome,
   type ProviderRateLimitPolicy,
   type ProviderRetryPolicy,
   type ProviderSleeper,
@@ -30,7 +31,12 @@ import {
 import { buildProviderRequestHeaders } from '@/lib/server/providers/core/headers'
 import { createFetchProviderHttpClient } from '@/lib/server/providers/core/http'
 import { isoFromClock, providerTransportEvent } from '@/lib/server/providers/core/observability'
-import { classifyProviderHttpStatus, parseProviderResponseBody, validateMaxBodyBytes } from '@/lib/server/providers/core/parse'
+import {
+  cancelProviderResponseBody,
+  classifyProviderHttpStatus,
+  parseProviderResponseBody,
+  validateMaxBodyBytes,
+} from '@/lib/server/providers/core/parse'
 import {
   computeProviderRetryDelayMs,
   defaultProviderSleeper,
@@ -256,19 +262,20 @@ async function runRequest<T>(opts: {
     }
 
     if (ctx.rateLimit?.preflight) {
-      const preflight = await ctx.rateLimit.preflight({
-        providerId: ctx.providerId,
-        operationId: ctx.operationId,
-        attempt,
-      })
-      if (preflight.kind === 'rate_limited') {
-        const error = fail(ctx, attempt, 'rate_limited', 'Provider rate limit blocked the request.', null, 0, preflight.retryAfterMs)
-        emit(opts.observer, ctx, opts.clock, 'request_rate_limited', attempt, 0, null, error, preflight.retryAfterMs)
+      const guarded = await runPreflight(ctx, attempt)
+      if (!guarded.ok) {
+        emit(opts.observer, ctx, opts.clock, 'request_rate_limited', attempt, 0, null, guarded.error, null)
+        emit(opts.observer, ctx, opts.clock, 'request_failed', attempt, 0, null, guarded.error)
+        return { ok: false, error: guarded.error }
+      }
+      if (guarded.outcome.kind === 'rate_limited') {
+        const error = fail(ctx, attempt, 'rate_limited', 'Provider rate limit blocked the request.', null, 0, guarded.outcome.retryAfterMs)
+        emit(opts.observer, ctx, opts.clock, 'request_rate_limited', attempt, 0, null, error, guarded.outcome.retryAfterMs)
         const retried = await maybeRetry({
           ctx,
           attempt,
           error,
-          retryAfterMs: preflight.retryAfterMs,
+          retryAfterMs: guarded.outcome.retryAfterMs,
           observer: opts.observer,
           clock: opts.clock,
           sleep: opts.sleep,
@@ -284,7 +291,8 @@ async function runRequest<T>(opts: {
           lastFailure = error
           continue
         }
-        return { ok: false, error: exhausted(ctx, attempt, error) }
+        emit(opts.observer, ctx, opts.clock, 'request_failed', attempt, 0, null, error)
+        return { ok: false, error: lastFailure ? exhausted(ctx, attempt, error) : error }
       }
     }
 
@@ -329,15 +337,37 @@ async function runRequest<T>(opts: {
     }
 
     emit(opts.observer, ctx, opts.clock, 'request_failed', attempt, elapsedMs, error.status, error)
-    if (attempt >= ctx.maxAttempts && retryable) {
-      return { ok: false, error: exhausted(ctx, attempt, error) }
-    }
-    return { ok: false, error }
+    return { ok: false, error: lastFailure ? exhausted(ctx, attempt, error) : error }
   }
 
   if (lastFailure) return { ok: false, error: exhausted(ctx, ctx.maxAttempts, lastFailure) }
   const fallback = fail(ctx, ctx.maxAttempts, 'retry_exhausted', 'Provider request retries were exhausted.', null, 0)
   return { ok: false, error: fallback }
+}
+
+async function runPreflight(
+  ctx: AttemptContext,
+  attempt: number,
+): Promise<
+  | { ok: true; outcome: ProviderRateLimitOutcome }
+  | { ok: false; error: ProviderTransportError }
+> {
+  try {
+    const outcome = await ctx.rateLimit!.preflight!({
+      providerId: ctx.providerId,
+      operationId: ctx.operationId,
+      attempt,
+    })
+    if (outcome?.kind === 'allowed' || outcome?.kind === 'rate_limited') {
+      return { ok: true, outcome }
+    }
+  } catch {
+    /* fail closed below; never leak the thrown value */
+  }
+  return {
+    ok: false,
+    error: fail(ctx, attempt, 'rate_limited', 'Provider rate-limit guard failed.', null, 0),
+  }
 }
 
 function isAttemptRetryable(
@@ -424,6 +454,7 @@ async function runAttempt(
     const correlationId = ctx.correlationId ?? requestId
 
     if (statusClass !== 'success') {
+      await cancelProviderResponseBody(response.body)
       const retryAfterMs =
         statusClass === 'rate_limited'
           ? parseRetryAfterHeaderMs(response.headers.get('retry-after'), clock(), ctx.retry.maxRetryAfterMs)
@@ -546,26 +577,30 @@ function emit(
   delayMs: number | null = null,
 ): void {
   if (!observer) return
-  observer.record(
-    providerTransportEvent({
-      name,
-      providerId: ctx.providerId,
-      operationId: ctx.operationId,
-      method: ctx.method,
-      origin: ctx.url.origin,
-      path: ctx.url.path,
-      attempt,
-      maxAttempts: ctx.maxAttempts,
-      status,
-      elapsedMs,
-      errorKind: error?.kind ?? null,
-      causeKind: error?.causeKind ?? null,
-      retryAfterMs,
-      delayMs,
-      correlationId: ctx.correlationId,
-      recordedAt: isoFromClock(clock()),
-    }),
-  )
+  try {
+    observer.record(
+      providerTransportEvent({
+        name,
+        providerId: ctx.providerId,
+        operationId: ctx.operationId,
+        method: ctx.method,
+        origin: ctx.url.origin,
+        path: ctx.url.path,
+        attempt,
+        maxAttempts: ctx.maxAttempts,
+        status,
+        elapsedMs,
+        errorKind: error?.kind ?? null,
+        causeKind: error?.causeKind ?? null,
+        retryAfterMs,
+        delayMs,
+        correlationId: ctx.correlationId,
+        recordedAt: isoFromClock(clock()),
+      }),
+    )
+  } catch {
+    /* telemetry must not escape the transport boundary */
+  }
 }
 
 export { createFetchProviderHttpClient }

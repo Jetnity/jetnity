@@ -213,7 +213,7 @@ export type ProviderHttpRequest = {
 export type ProviderHttpResponse = {
   status: number
   headers: { get(name: string): string | null }
-  text(): Promise<string>
+  body: ReadableStream<Uint8Array> | null
 }
 
 export type ProviderHttpClient = (request: ProviderHttpRequest) => Promise<ProviderHttpResponse>

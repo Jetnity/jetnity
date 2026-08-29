@@ -34,3 +34,24 @@ Dieser Slice implementiert nur die gemeinsame Grenze. Create/Poll, Provider-Keys
 - Zukünftige Server-Adapter, zuerst Skyscanner Flights Live Prices, sollen diesen Kern nutzen.
 - Duffel behält vorerst seinen eigenen HTTP-Pfad. Eine Migration ist ein späterer, extra gegateter Slice.
 - Kein Ready/Merge durch den Autor. Independent Technical-Lead Exact-Head-Review ist der nächste Schritt.
+
+## Nachtrag – Technical-Lead Review 5058500841 (29. August 2026)
+
+Dieser Nachtrag präzisiert die Transportgrenze. Er erweitert den Slice nicht.
+
+### Harte Body-Grenze
+
+`Content-Length` ist nur ein Early-Reject, nie eine vertrauenswürdige Länge. Der Kern liest den Response-Body als Stream und bricht ab, sobald die Max-Grenze während des Lesens überschritten würde. Ein fehlendes oder bewusst zu klein angegebenes `Content-Length` darf den Body nicht zuerst vollständig materialisieren.
+
+### `retry_exhausted` vs. `rate_limited`
+
+`retry_exhausted` bedeutet ausschließlich: eine retrybare Operation hat ihre zulässigen Versuche tatsächlich benutzt. Wenn `maxAttempts=1` oder `retryOn429=false` ist und deshalb kein Retry stattfindet, bleibt der Endfehler `rate_limited`. Das gilt für HTTP-429 und für einen preflight-`rate_limited`-Outcome.
+
+### Injizierte Observer- und Preflight-Fehler
+
+- `observer.record(...)` darf die Transportgrenze nicht verlassen. Ein Telemetriefehler lässt einen sonst erfolgreichen Request erfolgreich. Exception-Text, Bodies und Secrets erscheinen nicht in Errors oder Events.
+- `rateLimit.preflight(...)` ist fail-closed. Ein Throw oder ein ungültiger Outcome verhindert den HTTP-Call, wird nicht retried und wird zu `rate_limited` mit der generischen Meldung `Provider rate-limit guard failed.` normalisiert. Der geworfene Wert wird nicht weitergereicht.
+
+### Server-only Trust-Grenze
+
+Die bestehende Repo-Konvention ist `import 'server-only'` (Next-Compile-Time-Grenze, kein zusätzliches npm-Paket). Die Produktions-Entry `lib/server/providers/core/index.ts` trägt diese Markierung. Tests importieren `exports.ts`, weil `node:test` die Compile-Time-Grenze nicht laden kann. Client-/Component-Module dürfen den Kern nicht importieren. Der Verzeichnisname allein ist keine Trust-Grenze.

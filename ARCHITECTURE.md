@@ -52,7 +52,7 @@ Tests liegen als `*.test.ts` neben dem Code, den sie prüfen, und laufen über `
 
 **Regel:** Business-Logik gehört nach `lib/`, nicht in UI-Komponenten. Sensible Logik läuft ausschließlich serverseitig.
 
-`lib/server/providers/core` ist der provider-neutrale Outbound-HTTP-Kern (ADR-0199). Er akzeptiert nur einen injizierten HTTP-Client, bricht per AbortSignal ab, begrenzt Retries und redaktiert Secrets. Er erzeugt keine Commercial Provenance und kein Live-Trust. `lib/provider-ops` bleibt die Inbound-Hülle. Der bestehende Duffel-Pfad und die Skyscanner-Fixture-Foundation sind unverändert; ein späterer Skyscanner-Server-Adapter soll diesen Kern nutzen, ist aber nicht Teil dieses Slice.
+`lib/server/providers/core` ist der provider-neutrale Outbound-HTTP-Kern (ADR-0199). Er akzeptiert nur einen injizierten HTTP-Client, bricht per AbortSignal ab, begrenzt Retries und redaktiert Secrets. Response-Bodies werden bounded gestreamt; `retry_exhausted` entsteht nur nach einem wirklich benutzten Retry. Observer- und Preflight-Fehler verlassen die Grenze nicht als Raw-Throw. Die Produktions-Entry ist `import 'server-only'`; Tests laden `exports.ts`. Er erzeugt keine Commercial Provenance und kein Live-Trust. `lib/provider-ops` bleibt die Inbound-Hülle. Der bestehende Duffel-Pfad und die Skyscanner-Fixture-Foundation sind unverändert; ein späterer Skyscanner-Server-Adapter soll diesen Kern nutzen, ist aber nicht Teil dieses Slice.
 
 ---
 

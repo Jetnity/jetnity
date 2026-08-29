@@ -1,7 +1,7 @@
 // lib/server/providers/core/parse.ts
 //
-// Safe outbound-response body parsing with a hard size cap.
-// Invalid JSON is malformed_response, never a raw parse exception.
+// Safe outbound-response body parsing with a hard size cap applied while
+// reading. Content-Length is an early reject, never a trusted length.
 
 import {
   PROVIDER_TRANSPORT_BOUNDS,
@@ -12,6 +12,10 @@ import {
 export type ProviderParsedBody =
   | { ok: true; value: unknown }
   | { ok: false; kind: 'malformed_response'; message: string }
+
+export type ProviderBoundedBodyRead =
+  | { ok: true; text: string }
+  | { ok: false; kind: 'malformed_response'; message: string; cancelled: boolean }
 
 function contentLengthBytes(response: ProviderHttpResponse): number | null {
   const raw = response.headers.get('content-length')
@@ -30,33 +34,94 @@ export function validateMaxBodyBytes(maxBodyBytes: number | undefined): number |
   return value
 }
 
+export async function cancelProviderResponseBody(body: ReadableStream<Uint8Array> | null): Promise<void> {
+  if (!body) return
+  try {
+    await body.cancel()
+  } catch {
+    /* already locked, consumed or cancelled */
+  }
+}
+
+export async function readProviderResponseBodyBounded(
+  body: ReadableStream<Uint8Array> | null,
+  maxBodyBytes: number,
+): Promise<ProviderBoundedBodyRead> {
+  if (!body) return { ok: true, text: '' }
+
+  const reader = body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (!value || value.byteLength === 0) continue
+      if (total + value.byteLength > maxBodyBytes) {
+        await reader.cancel()
+        return {
+          ok: false,
+          kind: 'malformed_response',
+          message: 'Provider response exceeded the body size limit.',
+          cancelled: true,
+        }
+      }
+      chunks.push(value)
+      total += value.byteLength
+    }
+  } catch {
+    try {
+      await reader.cancel()
+    } catch {
+      /* ignore */
+    }
+    return {
+      ok: false,
+      kind: 'malformed_response',
+      message: 'Provider response body could not be read.',
+      cancelled: true,
+    }
+  } finally {
+    try {
+      reader.releaseLock()
+    } catch {
+      /* already released by cancel */
+    }
+  }
+
+  const bytes = new Uint8Array(total)
+  let offset = 0
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+  return { ok: true, text: new TextDecoder('utf-8').decode(bytes) }
+}
+
 export async function parseProviderResponseBody(
   response: ProviderHttpResponse,
   strategy: ProviderParseStrategy,
   maxBodyBytes: number,
 ): Promise<ProviderParsedBody> {
-  if (strategy === 'none') return { ok: true, value: null }
+  if (strategy === 'none') {
+    await cancelProviderResponseBody(response.body)
+    return { ok: true, value: null }
+  }
 
   const announced = contentLengthBytes(response)
   if (announced != null && announced > maxBodyBytes) {
+    await cancelProviderResponseBody(response.body)
     return { ok: false, kind: 'malformed_response', message: 'Provider response exceeded the body size limit.' }
   }
 
-  let text: string
-  try {
-    text = await response.text()
-  } catch {
-    return { ok: false, kind: 'malformed_response', message: 'Provider response body could not be read.' }
+  const read = await readProviderResponseBodyBounded(response.body, maxBodyBytes)
+  if (!read.ok) {
+    return { ok: false, kind: read.kind, message: read.message }
   }
 
-  const bytes = new TextEncoder().encode(text).byteLength
-  if (bytes > maxBodyBytes) {
-    return { ok: false, kind: 'malformed_response', message: 'Provider response exceeded the body size limit.' }
-  }
+  if (strategy === 'text') return { ok: true, value: read.text }
 
-  if (strategy === 'text') return { ok: true, value: text }
-
-  if (text.trim() === '') {
+  if (read.text.trim() === '') {
     return { ok: false, kind: 'malformed_response', message: 'Provider JSON response was empty.' }
   }
 
@@ -69,7 +134,7 @@ export async function parseProviderResponseBody(
   }
 
   try {
-    return { ok: true, value: JSON.parse(text) as unknown }
+    return { ok: true, value: JSON.parse(read.text) as unknown }
   } catch {
     return { ok: false, kind: 'malformed_response', message: 'Provider response was not valid JSON.' }
   }

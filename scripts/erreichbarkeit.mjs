@@ -30,6 +30,10 @@ const ABSICHTLICH = new Map([
     'components/layout/CookieConsent.tsx',
     'wartet auf die Rechts-/Produktentscheidung zum Cookie-Banner; wird erst dann eingebunden oder entfernt',
   ],
+  [
+    'lib/server/providers/core/index.ts',
+    'server-only production entry for later adapters; node:test imports exports.ts because Next implements server-only at compile time and the package is not loadable outside that compiler',
+  ],
 ])
 
 // Next.js laedt diese Dateinamen selbst, ohne dass sie importiert werden.

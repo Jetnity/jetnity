@@ -6,7 +6,7 @@ import {
   isoFromClock,
   providerTransportEvent,
   providerTransportEventFieldNames,
-} from '@/lib/server/providers/core'
+} from '@/lib/server/providers/core/exports'
 
 describe('provider transport observability', () => {
   test('events keep only the allowlisted fields', () => {

@@ -26,7 +26,7 @@ import {
   type ProviderHttpResponse,
   type ProviderTransportEvent,
   type ProviderTransportObserver,
-} from '@/lib/server/providers/core'
+} from '@/lib/server/providers/core/exports'
 
 const SECRET = 'test-provider-secret-value'
 const URL = 'https://provider.test/v1/create?session=keep-out-of-logs'
@@ -43,6 +43,19 @@ function headerBag(headers: Record<string, string> = {}): ProviderHttpResponse['
       return found ? headers[found]! : null
     },
   }
+}
+
+function bodyFromText(text: string, onCancel?: () => void): ReadableStream<Uint8Array> {
+  const encoded = new TextEncoder().encode(text)
+  return new ReadableStream({
+    start(controller) {
+      if (encoded.byteLength > 0) controller.enqueue(encoded)
+      controller.close()
+    },
+    cancel() {
+      onCancel?.()
+    },
+  })
 }
 
 function fakeHttp(steps: FakeStep[]): { client: ProviderHttpClient; calls: ProviderHttpRequest[] } {
@@ -78,9 +91,7 @@ function fakeHttp(steps: FakeStep[]): { client: ProviderHttpClient; calls: Provi
       return {
         status: step.status,
         headers: headerBag(step.headers),
-        async text() {
-          return step.body
-        },
+        body: bodyFromText(step.body),
       }
     },
   }
@@ -517,20 +528,147 @@ describe('provider transport helpers', () => {
     const oversized = {
       status: 200,
       headers: headerBag({ 'content-length': '999999' }),
-      async text() {
-        return '{"ok":true}'
-      },
+      body: bodyFromText('{"ok":true}'),
     }
     const tooBig = await parseProviderResponseBody(oversized, 'json', 16)
     assert.equal(tooBig.ok, false)
     const html = {
       status: 200,
       headers: headerBag({ 'content-type': 'text/html' }),
-      async text() {
-        return '<html></html>'
-      },
+      body: bodyFromText('<html></html>'),
     }
     const notJson = await parseProviderResponseBody(html, 'json', 1_000)
     assert.equal(notJson.ok, false)
   })
+
+  test('HTTP 429 stays rate_limited when no retry is allowed', async () => {
+    const noRetry = fakeHttp([{ type: 'response', status: 429, body: '{}' }])
+    const createdNoRetry = executorFor(noRetry.client, { retry: { maxAttempts: 3, retryOn429: false } })
+    assert.equal(createdNoRetry.ok, true)
+    if (!createdNoRetry.ok) return
+    const noRetryResult = await createdNoRetry.executor.execute(request())
+    assert.equal(noRetryResult.ok, false)
+    if (noRetryResult.ok) return
+    assert.equal(noRetryResult.error.kind, 'rate_limited')
+    assert.equal(noRetry.calls.length, 1)
+
+    const oneAttempt = fakeHttp([{ type: 'response', status: 429, body: '{}' }])
+    const createdOne = executorFor(oneAttempt.client, { retry: { maxAttempts: 1, retryOn429: true } })
+    assert.equal(createdOne.ok, true)
+    if (!createdOne.ok) return
+    const oneResult = await createdOne.executor.execute(request())
+    assert.equal(oneResult.ok, false)
+    if (oneResult.ok) return
+    assert.equal(oneResult.error.kind, 'rate_limited')
+    assert.equal(oneAttempt.calls.length, 1)
+  })
+
+  test('preflight 429 stays rate_limited when no retry is allowed', async () => {
+    const blocked = {
+      preflight: async () => ({ kind: 'rate_limited' as const, retryAfterMs: 4_000 }),
+    }
+
+    const noRetryHttp = fakeHttp([])
+    const createdNoRetry = executorFor(noRetryHttp.client, {
+      retry: { maxAttempts: 3, retryOn429: false },
+      rateLimit: blocked,
+    })
+    assert.equal(createdNoRetry.ok, true)
+    if (!createdNoRetry.ok) return
+    const noRetryResult = await createdNoRetry.executor.execute(request())
+    assert.equal(noRetryResult.ok, false)
+    if (noRetryResult.ok) return
+    assert.equal(noRetryResult.error.kind, 'rate_limited')
+    assert.equal(noRetryHttp.calls.length, 0)
+
+    const oneAttemptHttp = fakeHttp([])
+    const createdOne = executorFor(oneAttemptHttp.client, {
+      retry: { maxAttempts: 1, retryOn429: true },
+      rateLimit: blocked,
+    })
+    assert.equal(createdOne.ok, true)
+    if (!createdOne.ok) return
+    const oneResult = await createdOne.executor.execute(request())
+    assert.equal(oneResult.ok, false)
+    if (oneResult.ok) return
+    assert.equal(oneResult.error.kind, 'rate_limited')
+    assert.equal(oneAttemptHttp.calls.length, 0)
+  })
+
+  test('preflight 429 becomes retry_exhausted only after a real retry was used', async () => {
+    const http = fakeHttp([])
+    const created = executorFor(http.client, {
+      retry: { maxAttempts: 2, retryOn429: true },
+      rateLimit: {
+        preflight: async () => ({ kind: 'rate_limited', retryAfterMs: 10 }),
+      },
+    })
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const result = await created.executor.execute(request())
+    assert.equal(result.ok, false)
+    if (result.ok) return
+    assert.equal(result.error.kind, 'retry_exhausted')
+    assert.equal(result.error.causeKind, 'rate_limited')
+    assert.equal(http.calls.length, 0)
+  })
+
+  test('observer exceptions do not turn a successful request into a throw', async () => {
+    const http = fakeHttp([{ type: 'response', status: 200, body: '{"ok":true}' }])
+    const created = executorFor(http.client, {
+      observer: {
+        record() {
+          throw new Error('Authorization: Bearer leaked-token')
+        },
+      },
+    })
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const result = await created.executor.execute(request())
+    assert.equal(result.ok, true)
+    if (!result.ok) return
+    assert.deepEqual(result.value, { ok: true })
+    assertNoSecret(result)
+  })
+
+  test('throwing or invalid preflight fail-closes without HTTP or leaked exception text', async () => {
+    const throwingHttp = fakeHttp([])
+    const observer = recordingObserver()
+    const createdThrow = executorFor(throwingHttp.client, {
+      observer: observer.observer,
+      rateLimit: {
+        preflight: async () => {
+          throw new Error('secret=sk-live-xyz')
+        },
+      },
+    })
+    assert.equal(createdThrow.ok, true)
+    if (!createdThrow.ok) return
+    const thrownResult = await createdThrow.executor.execute(request())
+    assert.equal(thrownResult.ok, false)
+    if (thrownResult.ok) return
+    assert.equal(thrownResult.error.kind, 'rate_limited')
+    assert.equal(thrownResult.error.message, 'Provider rate-limit guard failed.')
+    assert.equal(thrownResult.error.message.includes('secret'), false)
+    assert.equal(throwingHttp.calls.length, 0)
+    assert.equal(observer.events.some((event) => event.name === 'request_failed'), true)
+    assertNoSecret(thrownResult)
+    assertNoSecret(observer.events)
+
+    const invalidHttp = fakeHttp([])
+    const createdInvalid = executorFor(invalidHttp.client, {
+      rateLimit: {
+        preflight: (async () => ({ kind: 'not-valid' })) as never,
+      },
+    })
+    assert.equal(createdInvalid.ok, true)
+    if (!createdInvalid.ok) return
+    const invalidResult = await createdInvalid.executor.execute(request())
+    assert.equal(invalidResult.ok, false)
+    if (invalidResult.ok) return
+    assert.equal(invalidResult.error.kind, 'rate_limited')
+    assert.equal(invalidResult.error.message, 'Provider rate-limit guard failed.')
+    assert.equal(invalidHttp.calls.length, 0)
+  })
 })
+
