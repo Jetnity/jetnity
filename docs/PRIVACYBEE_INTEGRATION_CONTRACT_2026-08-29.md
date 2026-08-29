@@ -62,7 +62,7 @@ Besucher-Consent-Logs (IP/UA) entstehen erst, wenn der Banner gemountet wird. Da
 5. Kein Autopilot-Block auf essenzielle Auth-/First-Party-Scripts ohne Test.
 6. `window.PrivacyBee` darf Register-Checkbox oder AP-6b nicht ersetzen.
 7. robots/canonical/noindex bleiben Jetnity-Helfer. Widgets ändern das Indexing-Gate nicht.
-8. Search #168, Homepage, AP-7, DB/RLS/Auth unberührt.
+8. Search-Runtime (#168 historisch; #173 live), Homepage, AP-7, DB/RLS/Auth unberührt.
 9. V1-`CookieConsent` nicht parallel mounten.
 
 ## 6. Rechtliche Vorbedingungen

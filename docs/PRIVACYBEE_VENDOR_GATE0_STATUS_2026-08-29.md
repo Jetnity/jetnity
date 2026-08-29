@@ -9,7 +9,7 @@ Branch: `audit/privacybee-vendor-gate0-2026-08-29`
 Issue: [#169](https://github.com/Jetnity/jetnity/issues/169)  
 Task: `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md`
 
-> Live-Evidence gewinnt. Dieses Dokument ist kein PASS. Kein Ready. Kein Merge. Keine PrivacyBee-Aktivierung. Kein AP-6a-Runtime. Kein AP-6b. Kein Search-#168.
+> Live-Evidence gewinnt. Dieses Dokument ist kein PASS. Kein Ready. Kein Merge. Keine PrivacyBee-Aktivierung. Kein AP-6a-Runtime. Kein AP-6b. Kein Search-Runtime (#168 historisch; #173 live).
 
 ## 0. Vendor-Identität (bindend)
 
@@ -41,11 +41,12 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | Feld | Wert |
 | --- | --- |
 | Repository | `Jetnity/jetnity` |
-| Task-Baseline / live `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
+| Historical task-baseline / original merge-base | `6083ee63a5da62870ab7ac4f5f91f69230718e44` — **nicht** live `origin/main` |
+| Live `origin/main` (2026-08-29, `5057675638`) | `2241e349f8b3b400963cf1de11e5a8617bdc8e44` |
 | Branch | `audit/privacybee-vendor-gate0-2026-08-29` |
-| Merge-Base | `6083ee63` |
+| Merge-base of this branch vs live `main` | still `6083ee63` (this audit branch was not rebased onto later `main`) |
 | Draft-PR | #171 OPEN / Draft |
-| Parallel runtime | PR #168 OPEN Draft – **nicht berührt** |
+| Search runtime | PR #168 CLOSED/MERGED via #172; current Issue #109 recovery = PR #173 OPEN Draft. **This slice did not touch Search.** |
 | `main` protected | live `false` |
 | Supabase | nicht abgefragt, nicht mutiert |
 | PrivacyBee Signup / Trial / Zahlung | **keine** |
@@ -238,11 +239,11 @@ Ein Website-Scan darf diese Klassen nicht nachträglich einsammeln. Impressum-Ge
 4. Self-Review  
 5. Handoff inkl. Pflichtabschnitten und Vendor-Disambiguation  
 
-Keine Runtime. Keine Shared Continuity. Kein Search-#168.
+Keine Runtime. Keine Shared Continuity. Kein Search-Runtime (#168/#173).
 
 ## 9. Tests / Gates
 
-Evidence-Head `fa393232`: lokal 9/9; Actions `33246529227` SUCCESS; Vercel `29fzPGLcsAFdnS6X136YFcENqesL` SUCCESS; Preview `6154529113`. Dieser Stamp-Commit ist ein neuerer SHA. Review `5057555199` galt für `f97cb97a`. Neuer TL-Review ausstehend.
+TL-Fix `5057675638` invalidiert `2f2d00e3` / `fa393232`. Neue Exact-Head-Gates nach diesem Continuity-Truth-Push. Historische Baseline `6083ee63` bleibt historisch; live `main` ist `2241e349`.
 
 ## 10. Exakter nächster Schritt
 

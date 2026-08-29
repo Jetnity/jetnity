@@ -90,13 +90,14 @@ Keine dieser Entscheidungen ist getroffen.
 
 | Fakt | Wert |
 | --- | --- |
-| Baseline `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
-| Merge-Base | dieselbe SHA |
+| Historical task-baseline / original merge-base | `6083ee63a5da62870ab7ac4f5f91f69230718e44` — **nicht** live `origin/main` |
+| Live `origin/main` (2026-08-29, `5057675638`) | `2241e349f8b3b400963cf1de11e5a8617bdc8e44` |
+| Merge-base of this branch vs live `main` | still `6083ee63` |
 | Task + Vendor-Korrektur | `61014e39` Correct PrivacyBee Gate 0 to Swiss privacybee.io target |
-| Authoring-Head (TL-Fix `5057555199`) | `fa39323280bffcd1147860178f695f567fa23f9e` |
+| Authoring-Head (TL-Fix `5057675638`) | dieser Continuity-Truth-Fix; SHA nach Push |
 | Draft-PR | #171 OPEN Draft |
 | Issue | #169 OPEN |
-| PR #168 | OPEN Draft, nicht mutiert |
+| Search | #168 CLOSED/MERGED via #172; current #109 recovery = #173 OPEN Draft; not mutated by this slice |
 | `main` protected | `false` |
 | Agent | `Privacy provider integration audit 1` / observed `PrivacyBee vendor audit` |
 | Cloud-Run | https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae |
@@ -128,14 +129,11 @@ Keine dieser Entscheidungen ist getroffen.
 
 ### 6.4 Lokale Checks / CI / Vercel / Threads
 
-Evidence-Head `fa39323280bffcd1147860178f695f567fa23f9e` (TL-Fix `5057555199`: VVZ-Inventar + AVV-Source-Integrity):
+Vorherige Heads `2f2d00e3` / `fa393232` sind durch TL-Fix `5057675638` (Continuity-Truth) invalidiert. Neue Exact-Head-Gates nach diesem Push nachstempeln.
 
-- Lokal: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
-- GitHub Actions Run `33246529227` **SUCCESS** auf exakt `fa393232` (Typecheck/Lint/Build + Auth-Check).
-- Vercel StatusContext **SUCCESS**; Deployment `29fzPGLcsAFdnS6X136YFcENqesL`; GitHub Preview deployment `6154529113`.
-- Review `5057555199` CHANGES REQUIRED galt für `f97cb97a` und ist damit invalidiert. Neuer unabhängiger TL-Review ausstehend. Kein TL-PASS.
-
-Dieser Stamp erzeugt einen neueren Head. Die genannten Gates gelten für `fa393232`, nicht automatisch für den Stamp-Commit. Live an PR #171 prüfen.
+- Review `5057675638` CHANGES REQUIRED galt für `2f2d00e3`: stale live-`main` / stale PR #168 OPEN. Dieser Slice korrigiert nur das.
+- Lokal vor Push: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
+- Kein TL-PASS behauptet.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 
@@ -164,7 +162,7 @@ Das US-Unternehmen **Privacy Bee, LLC** auf **`privacybee.com` / `business.priva
 
 - Ready setzen oder mergen.
 - Trial, Signup, Zahlung, AVV-Accept, Script-Mount.
-- AP-6a-Runtime, AP-6b, AP-7, Search #168 starten.
+- AP-6a-Runtime, AP-6b, AP-7, Search-Runtime (#168/#173) starten.
 - Rechtstexte oder Konformität erfinden.
 - Passport-/Scan-/MRZ-/Biometrie-Daten an den Vendor geben.
 - US-`privacybee.com` erneut als Ziel auditieren.

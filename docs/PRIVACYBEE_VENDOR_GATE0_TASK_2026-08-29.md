@@ -7,12 +7,13 @@ Status: AUTHORIZED / PARALLEL AUDIT / DOCS-CONTRACT-EVIDENCE ONLY / NO VENDOR AC
 ## Baseline
 
 - Repository: `Jetnity/jetnity`
-- Exact start `main`: `6083ee63a5da62870ab7ac4f5f91f69230718e44`
+- Historical task start / original merge-base `main`: `6083ee63a5da62870ab7ac4f5f91f69230718e44` — **historical only**, not current/live `origin/main`
+- Live `origin/main` at TL-review `5057675638` (2026-08-29): `2241e349f8b3b400963cf1de11e5a8617bdc8e44`
 - Branch: `audit/privacybee-vendor-gate0-2026-08-29`
 - Logical Cursor-Agent: `Privacy provider integration audit 1`
-- Parallel runtime: PR #168 / Issue #109 Visitor Search. Do not touch Search/Places/Homepage runtime or contracts.
+- Original parallel runtime constraint: PR #168 / Issue #109 Visitor Search. **Live:** PR #168 is CLOSED/MERGED via PR #172; current Issue #109 recovery is PR #173. Do not touch Search/Places/Homepage runtime or contracts.
 
-Live evidence wins over documentation. Re-check current branch/base before authoring.
+Live evidence wins over documentation. Re-check current branch/base before authoring. Do not label the historical start SHA as live `origin/main`.
 
 ## Critical vendor identity correction
 
@@ -138,7 +139,7 @@ For future Swiss PrivacyBee pricing:
 
 ## Required deliverables
 
-Dedicated versioned docs only, avoiding shared continuity files to prevent collision with PR #168:
+Dedicated versioned docs only, avoiding shared continuity files to prevent collision with Search work (#168 historically; #173 live):
 
 1. `docs/PRIVACYBEE_VENDOR_GATE0_STATUS_2026-08-29.md`
 2. `docs/PRIVACYBEE_VENDOR_FIT_GAP_MATRIX_2026-08-29.md`
@@ -146,7 +147,7 @@ Dedicated versioned docs only, avoiding shared continuity files to prevent colli
 4. `docs/PRIVACYBEE_VENDOR_GATE0_SELF_REVIEW_2026-08-29.md`
 5. `docs/PRIVACYBEE_VENDOR_GATE0_HANDOFF_2026-08-29.md`
 
-No central `JETNITY_HANDOFF.md`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md` or runtime file change in this parallel slice unless the Technical Lead explicitly re-scopes after #168.
+No central `JETNITY_HANDOFF.md`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md` or runtime file change in this parallel slice unless the Technical Lead explicitly re-scopes after Search recovery (#173).
 
 ## Mandatory final report
 
@@ -171,7 +172,7 @@ The final agent report/handoff must contain explicit sections:
 - no legal text generation or legal-completeness claim
 - no AP-6a runtime or AP-6b runtime
 - no DB migration/RLS/Ownership/Identity/Auth/MFA/AAL/Supabase mutation
-- no Search #168 / Homepage #110
+- no Search runtime (#168 historically; #173 live) / Homepage #110
 - no AP-7 Registry
 - no provider booking/payment/subscription/public-indexing/domain-cutover/branch-protection change
 - no paid call or recurring cost
