@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX IMPLEMENTIERT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ 69ef27b1`. Review `5058500841`. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge.**
+Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX IMPLEMENTIERT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Slice-Baseline `69ef27b1`. Live `origin/main` `f80a7f0b` behind_by=4. Review `5463627429`. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -12,14 +12,14 @@ Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX IMPLEMENTI
 1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
 2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
 3. **Status:** **REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
-4. **Bereits umgesetzt:** `lib/server/providers/core/*` plus Review-Fixes aus `5058500841`: bounded Stream-Body, `rate_limited` ohne benutzten Retry, isolierte Observer/Preflight-Exceptions, `import 'server-only'` auf der Produktions-Entry. Skyscanner-Fixture-Foundation unverändert. Lokale Gates auf `ab2ea861`: typecheck, lint 0/135, 2654 tests, hygiene, Production-Build. Live auf `6e2db52c`: Actions `33261310638` SUCCESS; Vercel `c1NB9K5JkHPcnB98mQMiMywx56AW` PASS.
+4. **Bereits umgesetzt:** Zwei P1-Fixes aus `5463627429`: aktuelle Terminal-Fehler behalten ihre Kind nach einem früheren anderen Retry; jedes Runtime-Modul trägt `import 'server-only'`, Alternativimporte scheitern ohne Test-Stub. Lokale Gates auf `f82fe28e`: typecheck, lint 0/135, 2657 tests, hygiene, Production-Build.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1 (gleicher Slice / Review-Fix).
-6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. `behind_by=0`. Runtime-/CI-Head `6e2db52c7956971c8ab23e9a8bf4c79123b60903`. Exact Head ist der Commit dieses Docs-Stamps; live am PR prüfen. Prior Head `98edd7b8` und dessen CI/Vercel gelten nicht.
+6. **Live-`main` / Baseline bei diesem Stamp:** Slice-merge-base `69ef27b169780e41ba506a69acb15caafa645517`. Live `origin/main` `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (`behind_by=4`, nicht rebased). Exact Head ist der Commit dieses Docs-Stamps; live am PR prüfen. Prior Head `80129085` und dessen CI/Vercel gelten nicht.
 7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls, keine Credentials im Repository.
-9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. `exports.ts` ist test-ladbar; Produktionsadapter müssen `index.ts` importieren. Agent-Self-Review ist kein PASS.
+9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt nur den lokalen Stub. Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport und S5-B Production-Apply bleiben extra gegatet.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #187. Kein Ready. Kein Merge. Kein Folgeslice.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #187 nach Kommentar `5463627429`. Kein Ready. Kein Merge. Kein Folgeslice.
 12. **Zuerst lesen:** `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0199.
 
 ## Historischer / paralleler Arbeitsblock – Provider S5-B Commercial Provenance Persistence

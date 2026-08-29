@@ -5,10 +5,11 @@ Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**
 Cursor-Agent: `Jetnity provider adapter core 1`  
 PR: https://github.com/Jetnity/jetnity/pull/187  
 Branch: `feat/provider-adapter-core-foundation-2026-08-29`  
-Baseline `origin/main`: `69ef27b169780e41ba506a69acb15caafa645517`  
-Reviewed Head (CHANGES REQUIRED): `98edd7b81a92d1eea6289cfc75048f09398cdff0`  
-Review: `5058500841`  
-Review-Fix implementation Head: `ab2ea861c2af6ac4d5842b7d5cbe7d8b0c82c5e2`
+Slice baseline `main`: `69ef27b169780e41ba506a69acb15caafa645517`  
+Live `origin/main`: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (`behind_by=4`, docs-only checkpoint, nicht rebased)  
+Reviewed Head (CHANGES REQUIRED): `80129085b23f7fda4ede3e9347b98975fab3002d`  
+Review: `5463627429`  
+Review-Fix implementation Heads: `6f9a8b76a5cd5fec30bde07bd2d25f38e2924327`, stub lint-fix `f82fe28ec04aad2bc3c98da3534fc8cbd23f311f`
 
 Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead Exact-Head-Review.  
 Exact Head ist der Commit dieses Stamps; live am PR prüfen.
@@ -19,148 +20,93 @@ Exact Head ist der Commit dieses Stamps; live am PR prüfen.
 
 | Kriterium | Gehalten? |
 | --- | --- |
-| Provider-neutraler Server-Transport unter `lib/server/providers/core/` | ja |
-| Starke Typen für IDs, URL ohne Credentials, Policies, Taxonomie, Events | ja |
-| Injizierter HTTP-Client; Production kann später `fetch` wrappen | ja |
-| Explizites Timeout mit AbortSignal, kein Ignorieren später Antworten | ja |
-| Begrenzte Retries, keine Endlosschleife | ja (`maxAttempts` 1–8) |
-| 429 explizit; 401/403/400 nie retried | ja |
-| Sicheres Body-Parsing + `malformed_response` bei ungültigem JSON | ja |
-| Harte Body-Grenze während des Stream-Reads, nicht erst nach `text()` | ja |
-| Secrets nicht in Errors/Events/Metadaten/Snapshots | ja |
-| Observer injiziert, allowlisted, keine Bodies; Throws isoliert | ja |
-| Preflight Throw/invalid Outcome fail-closed, normalisiert | ja |
-| `retry_exhausted` nur nach wirklich benutztem Retry | ja |
-| Server-only Produktions-Entry (`import 'server-only'`) | ja |
-| Deterministische Offline-Tests für alle geforderten Fälle | ja |
-| Skyscanner Create/Poll nur als Neutralitätsbeweis, nicht generalisiert | ja |
-| Bestehende Fixture-Foundation unverändert | ja |
+| `retry_exhausted` nur bei aktuellem retrybaren Fehler nach benutztem Retry | ja |
+| `500→401` bleibt `authentication` | ja |
+| `500→429` mit `retryOn429=false` bleibt `rate_limited` | ja |
+| Späteres disabled Preflight bleibt `rate_limited` | ja |
+| Wiederholte retrybare 429/5xx/Netz-Erschöpfung bleibt `retry_exhausted` | ja |
+| Jedes Runtime-Modul trägt `import 'server-only'` | ja |
+| Alternativimport ohne Test-Stub scheitert mechanisch | ja |
+| node:test bleibt ladbar über lokalen Stub, kein neues npm-Paket | ja |
+| Harte Body-Grenze / Observer-Isolation aus dem vorherigen Head bleiben | ja |
+| Kein Commercial-Provenance-Mint, keine forgebaren Trust-Flags | ja |
+| Fixture-Foundation unverändert | ja |
 
 ## 2. Scope / Non-Scope
 
 | Grenze | Gehalten? |
 | --- | --- |
-| Nur Review-Fixes aus `5058500841` | ja |
-| Kein echter Skyscanner Create/Poll | ja |
-| Kein echter Provider-Call | ja |
-| Keine API-Keys/Secrets im Repo oder in ENV-Reads | ja |
-| Keine Vercel-/Supabase-/Production-Mutation | ja |
-| Kein Commercial-Provenance-Mint | ja |
-| Kein `live_api` / `persisted_snapshot` | ja |
-| Kein TW-8/TW-9 | ja |
-| Keine UI | ja |
-| Keine Provideraktivierung / paid calls | ja |
-| Task-Datei unangetastet | ja |
+| Nur die zwei P1-Findings aus `5463627429` | ja |
+| Kein echter Provider-Call / keine Secrets / keine Production-Mutation | ja |
 | Kein Ready / kein Merge / kein Folgeslice | ja |
+| Task-Datei unangetastet | ja |
 
 ## 3. Truth / Security / Privacy
 
-- Trust ist eine Modulgrenze plus `import 'server-only'` auf der Produktions-Entry. Runtime-Objekte tragen keine `trusted`/`live`/`sourceKind`-Felder.
-- HTTPS-only; Userinfo in URLs wird abgelehnt; Query/Fragment erscheinen nicht in Metadaten.
-- `credentials: 'omit'`, `redirect: 'manual'`, `cache: 'no-store'` im Fetch-Wrapper.
-- Observer-Events sind allowlisted; kein Spread von Caller-Input.
-- Observer- und Preflight-Exceptions verlassen die Grenze nicht als Raw-Throw und tragen keinen Exception-Text.
-- Kein Traveller-Context in diesem Slice; keine Dokument-/Citizenship-Daten.
+- Trust ist `import 'server-only'` auf jedem Runtime-Modul, nicht nur `index.ts`.
+- Der Test-Stub existiert nur unter `scripts/server-only-*` und wird ausschliesslich von `npm test` geladen.
+- Kein Traveller-Context in diesem Slice.
 
-## 4. Secret / Redaction
+## 4. Retry-Klassifikation
 
-- Default-sensitive Namen inkl. `authorization`, `x-api-key`, Cookies.
-- Adapter können weitere Namen registrieren.
-- Tests beweisen, dass der Secret-Wert und Query-Strings nicht in Result/Error/Events serialisiert werden.
-- Preflight-Throw mit `secret=sk-live-xyz` erscheint nicht in Error/Events.
+`terminalAfterRetryStop()` verlangt `usedRetry && currentRetryable`. Ein früheres `lastFailure` allein macht einen späteren nicht-retrybaren Fehler nicht zu `retry_exhausted`.
 
-## 5. Retry / Timeout / Rate-Limit / Body
+## 5. Changed Files (gegen Slice-Baseline `69ef27b1`; live `origin/main` ist 4 Docs-Commits weiter)
 
-- Timeout bricht den in-flight Request ab.
-- Externes Abort stoppt den Loop und verhindert Sleep.
-- Retry-After nur als Delta-Sekunden oder IMF-fixdate; Clamp auf Bound.
-- Ungültige Policy wird als `invalid_configuration` abgelehnt.
-- 5xx/Netz/429 retrybar nach Policy; Auth/Invalid/Malformed/Timeout nicht.
-- HTTP-429 und Preflight-429: `maxAttempts=1` oder `retryOn429=false` → `rate_limited`; erst nach wirklich benutztem Retry → `retry_exhausted`.
-- Body: Stream-Read; fehlendes/gelogenes `Content-Length` wird nicht als Länge vertraut; Overflow cancelt den Reader.
+Zusätzlich zu den bereits auf dem Branch liegenden Core-Dateien:
 
-## 6. Changed Files (gegen `origin/main`)
-
-- `ARCHITECTURE.md`
-- `DECISIONS.md`
-- `JETNITY_HANDOFF.md`
-- `JETNITY_START_HERE.md`
-- `ROADMAP.md`
-- `docs/ACTIVE_WORK_STATUS.md`
-- `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`
-- `docs/CONTINUITY_STANDARD.md`
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_AGENT_PROMPT_2026-08-29.md`
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_HANDOFF_2026-08-29.md`
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_SELF_REVIEW_2026-08-29.md`
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_STATUS_2026-08-29.md`
-- `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`
-- `lib/server/providers/core/domain.ts`
 - `lib/server/providers/core/executor.ts`
 - `lib/server/providers/core/executor.test.ts`
-- `lib/server/providers/core/exports.ts`
-- `lib/server/providers/core/headers.ts`
-- `lib/server/providers/core/headers.test.ts`
-- `lib/server/providers/core/http.ts`
-- `lib/server/providers/core/index.ts`
-- `lib/server/providers/core/observability.ts`
-- `lib/server/providers/core/observability.test.ts`
-- `lib/server/providers/core/parse.ts`
-- `lib/server/providers/core/parse.test.ts`
-- `lib/server/providers/core/retry.ts`
-- `lib/server/providers/core/retry.test.ts`
-- `lib/server/providers/core/trust-boundary.test.ts`
-- `lib/server/providers/core/url.ts`
-- `scripts/erreichbarkeit.mjs`
+- `lib/server/providers/core/{domain,exports,headers,http,index,observability,parse,retry,url}.ts`
+- `lib/server/providers/core/*.test.ts`
+- `package.json` (`npm test` lädt den Stub)
+- `scripts/server-only-test-register.mjs`
+- `scripts/server-only-test-loader.mjs`
+- `scripts/server-only-empty.mjs`
+- `scripts/server-only-empty.js`
+- `scripts/erreichbarkeit.mjs` (index-Orphan-Ausnahme entfernt)
+- `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`
+- `DECISIONS.md`
+- `ARCHITECTURE.md`
+- Status / Handoff / Self-Review / `docs/ACTIVE_WORK_STATUS.md`
 
 Unverändert: `lib/providers/**`, `lib/commercial-provenance/**`, `lib/provider-ops/**`, keine Migrationen.
 
-## 7. Tests / Gates auf diesem Arbeitsstand
+## 6. Tests / Gates
 
-Lokal ausgeführt auf `ab2ea861c2af6ac4d5842b7d5cbe7d8b0c82c5e2`. Dieser Stamp ändert nur Docs.
+Lokal auf `f82fe28e`:
 
-Gezielte Regressionen: `lib/server/providers/core/*.test.ts` — **43** PASS, inkl. fehlendes/gelogenes `Content-Length`, Chunk-Overflow, Reader-Cancel, `maxAttempts=1`, `retryOn429=false`, exhausted-after-real-retries, Observer-Throw, Preflight-Throw/invalid Outcome, `import 'server-only'`.
+Gezielte Regressionen: `lib/server/providers/core/*.test.ts` — **46** PASS, inkl. `500→401`, `500→429` disabled, disabled Preflight nach Retry, exhausted-after-real-retries, jedes Runtime-Modul `server-only`, Alternativimport ohne Stub fail.
 
 | Gate | Ergebnis |
 | --- | --- |
 | `npm run typecheck` | PASS |
-| `npm run lint` | PASS, 0 errors / 135 warnings (bestehende Repo-Warnings) |
-| `npm test` | PASS, **2654** tests, 0 fail |
-| `npm run check:dead` | PASS (2 begründete Orphans: CookieConsent, server-only `index.ts`) |
-| `npm run check:exports` | PASS, 0 unbegründete Exporte |
+| `npm run lint` | PASS, 0 errors / 135 warnings |
+| `npm test` | PASS, **2657** tests, 0 fail |
+| `npm run check:dead` | PASS (1 begründetes Orphan: CookieConsent) |
+| `npm run check:exports` | PASS |
 | `npm run check:deps` | PASS |
 | `npm run check:api-schutz` | PASS, 12 Admin-Routen |
 | `npm run check:schema-bezug` | PASS |
-| `npm run build` | PASS, Next.js 16.3.3 Turbopack Production |
+| `npm run build` | PASS, Next.js 16.3.3 |
 
-Keine echten Netz-Calls in den neuen Tests.
+Keine echten Netz-Calls. Exact-Head CI/Vercel nach diesem Push neu lesen. Evidence auf `80129085` gilt nicht.
 
-Live Exact-Head Evidence auf `6e2db52c7956971c8ab23e9a8bf4c79123b60903`:
+## 7. origin/main Drift
 
-| Gate | Ergebnis |
-| --- | --- |
-| GitHub Actions `33261310638` | SUCCESS — Auth-Konfiguration; Typecheck, Lint & Build |
-| Vercel `c1NB9K5JkHPcnB98mQMiMywx56AW` | PASS |
+- Slice-merge-base bleibt `69ef27b169780e41ba506a69acb15caafa645517`
+- Live `origin/main` = `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3`
+- `behind_by=4` (authoritative current-state checkpoint Docs). Nicht rebased.
+- `ahead` = Slice + Review-Fixes + dieser Stamp; live am PR zählen
 
-Der zwischenzeitliche Run `33261228126` auf `ab2ea861` wurde cancelled, als dieser Docs-Stamp gepusht wurde. Prior-Gates und CI/Vercel auf `98edd7b8` gelten nicht. Dieser Nachtrag ist docs-only; neuer Exact Head ist der Commit dieses Stamps und muss live am PR gelesen werden.
+## 8. Residual Risks / Debt
 
-## 8. origin/main Drift
+- Duffel nutzt den Kern noch nicht.
+- Create/Poll, Provider-Keys und Live-Transport bleiben ungebaut.
+- Der Test-Stub patcht `Module._resolveFilename` nur im Testprozess. Production/Next-Client bleibt die Compile-Time-Grenze.
+- Agent-Self-Review ist kein PASS.
 
-Zum Zeitpunkt der lokalen Gates:
-
-- `origin/main` = `69ef27b169780e41ba506a69acb15caafa645517`
-- merge-base exakt diese Baseline
-- `behind_by=0`
-- `ahead` = Task-Docs + Implementierung + Review-Fix + dieser Stamp; live am PR zählen
-
-## 9. Residual Risks / Debt
-
-- Duffel nutzt den Kern noch nicht. Eine Migration ist ein späterer, extra gegateter Slice.
-- Create/Poll-Lifecycle, Provider-Keys und Live-Transport bleiben bewusst ungebaut.
-- `AbortSignal.any` setzt Node 22 voraus; das entspricht dem bestehenden Runtime-Vertrag.
-- `exports.ts` ist test-/hygiene-ladbar, weil `node:test` `import 'server-only'` nicht laden kann. Produktionsadapter müssen `index.ts` importieren. Client-/Component-Importe sind per Test gesperrt.
-- Agent-Self-Review ist kein PASS. `main` Branch Protection bleibt `protected=false` (unverändert, nicht dieser Slice).
-
-## 10. Explizite Bestätigung
+## 9. Explizite Bestätigung
 
 Keine echte Provider-Call-Site, kein Credential, keine Supabase-Mutation, keine Runtime-Aktivierung und kein Commercial-Provenance-Mint wurden eingeführt.
 

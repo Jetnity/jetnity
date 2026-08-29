@@ -294,11 +294,11 @@ Abgeschlossen:
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
-48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review `5058500841` CHANGES REQUIRED im Repository geschlossen; STOP für Exact-Head-Re-Review. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, Skyscanner-Server-Transport extra gegatet. Autor setzt kein Ready/Merge.
+48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review `5463627429` CHANGES REQUIRED im Repository geschlossen; STOP für Exact-Head-Re-Review. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, Skyscanner-Server-Transport extra gegatet. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Auf diesem Branch:** Draft-PR #187. Unabhängiger Technical-Lead Exact-Head-Re-Review der Review-Fixes aus `5058500841`. Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
+- **Auf diesem Branch:** Draft-PR #187. Unabhängiger Technical-Lead Exact-Head-Re-Review der Review-Fixes aus `5463627429`. Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
 - **Draft-PR #182** bleibt ein paralleler S5-B-Persistenz-Draft. Unabhängiger Technical-Lead Exact-Head-Re-Review nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
