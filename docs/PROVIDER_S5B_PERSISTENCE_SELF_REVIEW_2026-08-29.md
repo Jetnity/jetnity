@@ -52,6 +52,10 @@ Nein. Schema `jetnity_internal` ist nicht in `[api].schemas`. EXECUTE fehlt für
 
 Nein. Flight-INSERT bleibt null, Flight-UPDATE bleibt freeze. Triggername unverändert.
 
-## 3. Offene Residuals
+## 3. Lokale Gates
+
+Gemessen auf Implementation-Head `e3bef6f9`: 2605 Tests pass; typecheck pass; lint 0/135; hygiene pass; production build pass. `db:sicherheit` nicht gegen unapplied Schema. Production nicht mutiert.
+
+## 4. Offene Residuals
 
 Production unverändert. Kein realer Snapshot. TW-8 geschlossen. Superuser- oder künftiges EXECUTE-Grant wäre ein eigenes Gate. Self-Review ist kein PASS.

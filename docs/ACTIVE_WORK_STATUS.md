@@ -14,8 +14,8 @@ Status: **Provider S5-B Persistence Draft-PR #182 / IMPLEMENTIERT IM REPOSITORY 
 3. **Status:** **IMPLEMENTIERT IM REPOSITORY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge, kein Production-Apply durch den Autor.
 4. **Bereits umgesetzt:** `trip_item_commercial_provenance`; owner-read RLS; kein authenticated Direct-Write; `jetnity_internal`-DEFINER-Write; Guard-Matrix; `reise_anlegen`/Guest-Strip; Repo-Tests; `db:sicherheit`-Fälle; ADR-0198; Threat Model.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4`.
-6. **Live-`main` / Baseline bei diesem Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Exact Head live am PR prüfen.
-7. **DB / RLS / Production-Grenze:** Migration nur im Repository. Production nicht mutiert. Apply bleibt TL-kontrolliert unter PO-Gate `S5B-G0-PO-MIG-01`.
+6. **Live-`main` / Baseline bei diesem Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Implementation Head `e3bef6f9`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+7. **DB / RLS / Production-Grenze:** Migration nur im Repository. Production nicht mutiert. `db:sicherheit` gegen das unapplied Schema schlägt fehl, wie erwartet. Apply bleibt TL-kontrolliert unter PO-Gate `S5B-G0-PO-MIG-01`.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls.
 9. **Bekannte Risiken / Review-Funde:** Production ≠ Repository bis Apply. Kein realer Snapshot. TW-8 geschlossen. `main` `protected=false`. Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** Production-Apply nach TL PASS. TW-8 extra gegatet.

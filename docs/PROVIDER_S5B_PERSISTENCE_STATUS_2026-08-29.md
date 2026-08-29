@@ -25,7 +25,10 @@ Auftrag: `docs/PROVIDER_S5B_PERSISTENCE_IMPLEMENTATION_TASK_2026-08-29.md`
 Logischer Agentenname: `Cursor-Agent: Jetnity provider readiness audit 4`.  
 Generation 4. Gate-0 Generation 2 und Option-C Generation 3 nicht wiederverwendet.
 
-Exact Head, lokale Gates und CI stehen im Handoff und müssen live am PR geprüft werden.
+Implementation Head der lokalen Gates: `e3bef6f9386a7e077ac38bd12382250d9475d50e`.  
+Dieser Evidence-Stamp erzeugt einen neueren Head; live am PR prüfen.  
+Lokale Gates: `docs/PROVIDER_S5B_PERSISTENCE_LOCAL_TEST_EVIDENCE_2026-08-29.md`.  
+CI/Vercel live am PR prüfen. Gates auf `e3bef6f9` gelten nicht automatisch für den Stamp-Head.
 
 ---
 
