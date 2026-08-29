@@ -53,8 +53,8 @@ Siehe `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_LOCAL_TEST_EVIDENCE
 | --- | --- |
 | Live Production `2241e349` Peru/China | weiterhin Städte vor Land; Schweiz korrekt |
 | Live Production geteiltes Alias | `Congo` gehört CD und CG |
-| Gezielte Ortssuche + Route-Lauf | dieser Stamp; lokal neu prüfen |
-| `npm test` / Typecheck / Lint / Hygiene / Build | dieser Stamp; lokal neu prüfen |
+| Gezielte Ortssuche + Route-Lauf + Suchliste | **40/40 pass** |
+| `npm test` / Typecheck / Lint / Hygiene / Build | **2586/2586**, typecheck pass, lint 0/135, hygiene pass, Production-Build pass |
 | Browser / Real-Device / Mobile Safari | **nicht gelaufen**, nicht behauptet |
 | Exact-Head CI / Preview | dieser Stamp erzeugt einen neueren Head; live am PR prüfen |
 

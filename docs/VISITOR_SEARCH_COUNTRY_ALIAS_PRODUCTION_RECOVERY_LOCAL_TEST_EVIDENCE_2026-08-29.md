@@ -1,7 +1,7 @@
 # Jetnity – Visitor Search Country Alias Production Recovery – Local Evidence
 
 Stand: 29. August 2026  
-Implementation head before this stamp: see git; this file is committed with the typecheck-narrowing fix.  
+Implementation head before CI: see git; this stamp is the TL-`5057687985` disambiguation fix.  
 Baseline / merge-base: `2241e349f8b3b400963cf1de11e5a8617bdc8e44`
 
 > Live-Evidence gewinnt. CI-/Vercel-IDs auf dem Stamp-Head müssen live neu gelesen werden.
@@ -18,24 +18,28 @@ Baseline / merge-base: `2241e349f8b3b400963cf1de11e5a8617bdc8e44`
 
 Damit ist der vorherige TL-PASS von PR #172 weiterhin invalidiert.
 
+Read-only Production `public.places` zeigt ausserdem, dass Token `Congo` auf CD und CG liegt. Zwei ununterscheidbare `Congo · Land`-Zeilen wären der Fund `5057687985`.
+
 ## Lokal auf diesem Recovery-Head
 
 | Gate | Ergebnis |
 | --- | --- |
-| Gezielte Ortssuche + Route-Lauf | 33/33 pass |
-| `npm test` | **2581/2581 pass** |
-| `npm run typecheck` | pass nach Narrowing von `schluesselwoerter` |
+| Gezielte Ortssuche + Route-Lauf + Suchliste | **40/40 pass** |
+| `npm test` | **2586/2586 pass** |
+| `npm run typecheck` | pass |
 | `npm run lint` | 0 errors / 135 warnings |
-| `check:dead` | pass (1 begründetes CookieConsent-Orphan) |
-| `check:exports` | pass (0 unbenutzte Exporte) |
+| `check:dead` | pass |
+| `check:exports` | pass |
 | `check:deps` | pass |
-| `check:api-schutz` | pass (12 Admin-Routen) |
+| `check:api-schutz` | pass |
 | `check:schema-bezug` | pass |
 | `npm run build` | Next.js 16.3.3 Turbopack Production-Build pass |
 | `npm ci` | nicht erneut; vorhandenes `node_modules` plus grüne Gates |
 | Browser / Real-Device / Mobile Safari | **nicht gelaufen** |
 | Preview-GET | nach Exact-Head-Preview live prüfen; SSO kann den Public-GET verhindern |
 
+Neutraler Zwei-Länder-Beweis: `Sylvani` auf Northern Sylvani Federation (NS) und Southern Sylvani Republic (SS). Production-förmig: `Congo` CD/CG. Eindeutiges Alias bleibt `Land`. Runtime enthält keine Allowlist.
+
 ## Exact-Head Automation
 
-Noch nicht auf diesem Stamp-Head. Vorheriger Push `99578638` wird durch diesen Stamp invalidiert. IDs live am PR #173 lesen.
+Dieser Stamp erzeugt einen neueren Head. CI/Vercel/Threads live am PR prüfen. Prior PASS `5057668445` bleibt durch `5057687985` superseded.
