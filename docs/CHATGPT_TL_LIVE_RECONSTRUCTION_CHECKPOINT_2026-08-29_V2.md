@@ -1,8 +1,11 @@
 # Jetnity – Technical-Lead Live Reconstruction Checkpoint V2
 
 Stand: 29. August 2026
-Status: **AUTHORITATIVE CURRENT-STATE CHECKPOINT / LIVE-EVIDENCE WINS**
-Baseline: `main @ 69ef27b169780e41ba506a69acb15caafa645517`
+Status: **AUTHORITATIVE CURRENT-STATE RECONCILIATION / POST-LANDING-STABLE / LIVE-EVIDENCE WINS**
+Reconstruction baseline: `main @ 69ef27b169780e41ba506a69acb15caafa645517`
+Integrated via recovery PR #194; merge commit: `cbf7cfc863896b00108a9677a172df40c2e53e2d`.
+
+> `main` is moving evidence. Never treat the reconstruction baseline as the current head after this checkpoint has landed. If this file exists on `main`, current `main` is at least `cbf7cfc8`; always live-verify the actual head before any action.
 
 ## 1. Zweck
 
@@ -10,13 +13,16 @@ Dieser Checkpoint reconciled den tatsächlichen Live-Stand nach vollständigem A
 
 Verbindlich: Kein neuer großer Agenten-Workstream ohne **Duplicate/History Gate** gegen aktuellen `main`, gemergte PRs, kanonische Task/Status/Handoff-Dokumente und Build Order.
 
-## 2. Aktuelles Live-Git
+## 2. Live-Git / post-landing stable truth
 
-- `main`: `69ef27b169780e41ba506a69acb15caafa645517`
-- letzter integrierter Schritt: Skyscanner Flights offline adapter foundation via Recovery-PR #186
-- `main` Branch Protection: `protected=false` — bekanntes Governance-Risiko, unverändert
-- PR #191 und #192: CLOSED / DUPLICATE / NON-CANONICAL / nicht gemergt
-- historischer PR #88 bleibt bis separatem exakten Sanitation-Abgleich nicht als aktiver Workstream zu behandeln
+- Reconstruction baseline vor dieser Reconciliation: `69ef27b169780e41ba506a69acb15caafa645517`.
+- Reconciliation landete via PR #194 auf Merge `cbf7cfc863896b00108a9677a172df40c2e53e2d`.
+- Der **aktuelle** `main`-SHA wird nicht als dauerhaft bewegliche Wahrheit in diesem Dokument festgeschrieben; er muss live gelesen werden.
+- Letzter produktiver Schritt vor der Reconciliation: Skyscanner Flights offline adapter foundation via Recovery-PR #186.
+- `main` Branch Protection zuletzt live verifiziert: `protected=false` — bekanntes Governance-Risiko, unverändert bis neue Live-Evidence vorliegt.
+- PR #191 und #192: CLOSED / DUPLICATE / NON-CANONICAL / nicht gemergt.
+- PR #88: CLOSED / SUPERSEDED AS CURRENT INVENTORY / nicht gemergt; Source-Branch bleibt **HISTORICAL-EVIDENCE** und wurde nicht gelöscht.
+- PR #193: geschlossener Draft-Carrier wegen bekanntem Draft→Ready-Connectorfehler; identischer Exact Head wurde über PR #194 integriert.
 
 ## 3. Trip Workspace
 
@@ -101,41 +107,42 @@ Integriert:
 - Production migration `20260829140000_trip_item_commercial_provenance` applied and verified
 - runtime write path remains unallocated / closed
 - no real provider snapshot yet
-- Skyscanner Flights offline adapter foundation integrated on current main
+- Skyscanner Flights offline adapter foundation integrated
 
 Wichtig: Real Commercial Truth ist noch **nicht** vorhanden. Keine realen Skyscanner credentials/calls/snapshots. TW-8 bleibt geschlossen.
 
-## 8. Aktive Provider-PRs
+## 8. Aktive Provider-PRs und TL-Gates
 
 ### PR #187 — Provider adapter core foundation
 - Agent: `Jetnity provider adapter core 1`
 - Draft / OPEN
-- Exact Head: `80129085b23f7fda4ede3e9347b98975fab3002d`
-- CI #1198 / Run `33261493411`: SUCCESS auf Exact Head
-- Vercel Preview: zuletzt SUCCESS/READY
-- vorherige TL Findings: bounded response reading, terminal 429 classification, observer/preflight exception boundaries, mechanical server-only trust boundary
-- **nächster Schritt: vollständiger unabhängiger TL Exact-Head Re-Review; kein Merge vor PASS**
+- Reviewed Head `80129085b23f7fda4ede3e9347b98975fab3002d`: **CHANGES REQUIRED**, nicht freigegeben.
+- CI #1198 / Run `33261493411`: SUCCESS auf diesem alten Review-Head; Grün ersetzt keinen TL-PASS.
+- Bereits akzeptierte Verbesserungen: bounded streaming body read; observer/preflight exception isolation.
+- Noch blockierende P1 auf diesem Head: terminale non-retryable Fehler können nach früherem Retry fälschlich `retry_exhausted` werden; `server-only`-Grenze ist über direkte Core-/`exports.ts`-Imports mechanisch umgehbar.
+- Same-Agent-Fix wurde an `Jetnity provider adapter core 1` zurückgegeben.
+- **Nächster Schritt:** neuer Head → vollständige Exact-Head-Gates → unabhängiger TL Re-Review; kein Merge vorher.
 
 ### PR #188 — HBX Hotels adapter contract audit
 - Agent: `Jetnity provider hbx audit 1`
 - Draft / OPEN
-- Exact Head: `68e98f7ceb799c4a5494810ad4fe0805611fade8`
-- docs/evidence/contract prep only
-- benötigt unabhängigen TL Exact-Head Review
+- Reviewed Head `68e98f7ceb799c4a5494810ad4fe0805611fade8`: **CHANGES REQUIRED**.
+- Provider-Recherche grundsätzlich brauchbar; vor Akzeptanz Current-State-Fix nötig: S5-B-Persistenz ist bereits Production, nur Runtime-Write-Path/realer Snapshot bleiben gegatet; First-Party-Portfoliozahlen 173k/250k/300k als Dokumentationsdrift festhalten.
+- **Nächster Schritt:** Same-Agent-Fix → Exact-Head TL Re-Review.
 
 ### PR #189 — Viator Activities adapter contract audit
 - Agent: `Jetnity provider viator audit 1`
 - Draft / OPEN
-- Exact Head: `51eac51824aaf2aa27d795a818b8fd00bf6f80de`
-- docs/evidence/contract prep only
-- benötigt unabhängigen TL Exact-Head Review
+- Reviewed Head `51eac51824aaf2aa27d795a818b8fd00bf6f80de`: **CHANGES REQUIRED**.
+- Viator bleibt bereits festgelegter erster spezialisierter Activities-Zielprovider; kein erneutes PO-Auswahlgate. S5-B Production-Apply ist nicht mehr offen; Runtime-Provider-Write/echte Commercial Truth bleiben gegatet.
+- **Nächster Schritt:** Same-Agent-Fix → Exact-Head TL Re-Review.
 
 ### PR #190 — 12Go Mobility adapter contract audit
 - Agent: `Jetnity provider 12go audit 1`
 - Draft / OPEN
-- Exact Head: `752f69909822cb24d88e7e02aa9b609ba028c0ad`
-- docs/evidence/contract prep only
-- benötigt unabhängigen TL Exact-Head Review
+- Reviewed Head `752f69909822cb24d88e7e02aa9b609ba028c0ad`: **CHANGES REQUIRED**.
+- 12Go bleibt bereits festgelegter erster Mobility-Zielprovider. API-Details hinter prior consent/confidential terms bleiben UNKNOWN. S5-B Persistenz bereits Production; echte Runtime/Provider-Write bleibt gegatet.
+- **Nächster Schritt:** Same-Agent-Fix → Exact-Head TL Re-Review.
 
 ## 9. Provider Zielarchitektur
 
@@ -145,11 +152,13 @@ Domains bleiben getrennt: Flights, Hotels, Activities, Mobility, Rental Cars. Ke
 
 Aktuelle Ziele:
 - Flights: Skyscanner first
-- Hotels: HBX audit/evaluation; kommerzieller Redirect-Fit nach TL Review entscheiden; Booking.com Demand / Expedia Rapid später
-- Activities: Viator first candidate; GetYourGuide später
-- Mobility: 12Go first candidate
+- Hotels: HBX als Evaluation-/technischer früher Kandidat; kommerzieller Redirect-Fit bleibt gegenüber Booking.com Demand / Expedia Rapid zu bewerten
+- Activities: Viator first; GetYourGuide später
+- Mobility: 12Go first
 - Transfers: HBX Transfers optional supplement
 - Rental Cars: separater Domain-Track
+
+Diese groben Zielentscheidungen werden nicht erneut gefragt, außer neue Evidenz ändert die Produktempfehlung materiell. Signup, Vertrag, Credentials, paid calls und Production-Aktivierung bleiben separate Gates.
 
 ## 10. Framework / Runtime Basis
 
@@ -168,8 +177,8 @@ Homepage finalization, D1+ Discoverability und G1+ Growth bleiben nach stabiler 
 
 ## 12. Verbindliche nächste Reihenfolge
 
-1. PR #187 vollständiger TL Exact-Head Re-Review; nur bei PASS integrieren.
-2. PR #188, #189, #190 unabhängig gegen offizielle Provider-Evidence reviewen; Unsupported Claims korrigieren, erst danach integrieren.
+1. PR #187 Same-Agent-Fix der aktuellen P1-Funde → vollständiger TL Exact-Head Re-Review → nur bei PASS integrieren.
+2. PR #188, #189, #190 Same-Agent-Fixes → jeweils unabhängig gegen offizielle Provider-Evidence reviewen → erst danach integrieren.
 3. Skyscanner serverseitigen Create/Poll Transport auf dem accepted shared Core als neuen kleinen Slice bauen, weiterhin ohne Production credentials, sofern keine PO-Gates ausgelöst werden.
 4. Nach akzeptierten Provider Contracts konfliktfrei konkrete provider-spezifische Adapter-Slices fan-outen; Shared Core bleibt serial/TL-controlled.
 5. Separat AP-7-S2 Persistence/RLS als echten offenen Account/Traveller-Slice vorbereiten; **kein erneuter Architektur-Audit**.
@@ -191,6 +200,6 @@ Wenn der Scope bereits integriert ist: **kein Agent**. Stattdessen exakten Resid
 
 ## 14. Continuity
 
-Dieser Checkpoint ist die aktuelle Reconciliation-Evidence nach den Duplicate-PRs #191/#192. Historische Dateien dürfen ältere Zustände enthalten. Bei Widerspruch gilt: Live-Evidence → dieser Checkpoint → spätere versionierte Evidence → historische Evidence.
+Dieser Checkpoint ist die Reconciliation-Evidence nach den Duplicate-PRs #191/#192 und ist post-landing-stabil formuliert. Historische Dateien dürfen ältere Zustände enthalten. Bei Widerspruch gilt: **Live-Evidence zuerst**; danach diese Reconciliation für ihren Scope; danach spätere versionierte Evidence; historische Evidence zuletzt.
 
 Kein relevanter Fortschritt darf nur im Chat existieren.
