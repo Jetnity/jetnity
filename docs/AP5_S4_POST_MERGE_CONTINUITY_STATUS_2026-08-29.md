@@ -3,7 +3,8 @@
 Stand: 29. August 2026  
 Status: **DOCS-ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN S5**  
 Cursor-Agent: **`Account plattform audit vorbereitung 14`**  
-Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`
+Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/163
 
 Kein Runtime. Kein S5. Self-Review ist kein PASS.
 

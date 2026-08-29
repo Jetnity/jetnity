@@ -57,7 +57,7 @@ Docs-only Phase-K nach S4-Merge. Kein Runtime-Folgeslice.
 | Fakt | Wert |
 | --- | --- |
 | Arbeitsblock | Docs-only Post-Merge-Current-State nach PR #159 / #160 |
-| Branch | `cursor/ap5-s4-post-merge-continuity-2026-08-29-5132` |
+| Branch / PR | `cursor/ap5-s4-post-merge-continuity-2026-08-29-5132` / Draft-PR #163 |
 | Baseline / `origin/main` | `934d43dae65235486f1a06a50b592468e3546b1c` |
 | Cursor-Agent | Generation 14; nicht für S5 wiederverwenden |
 | Fertig | S4 auf `main` integriert; Post-Merge-CI SUCCESS persistiert |

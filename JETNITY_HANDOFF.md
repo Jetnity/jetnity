@@ -7,6 +7,7 @@ Status: **AP-5-S4 integriert auf `main @ 934d43da` (PR #159 / Transport PR #160)
 
 Aktueller Ops-Block (Docs-only Post-Merge nach S4):
 
+- Draft-PR #163 – Docs-only Post-Merge-Continuity
 - `docs/CHATGPT_PR159_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`
 - `docs/AP5_S4_POST_MERGE_CONTINUITY_STATUS_2026-08-29.md`
 - `docs/AP5_S4_POST_MERGE_CONTINUITY_SELF_REVIEW_2026-08-29.md`

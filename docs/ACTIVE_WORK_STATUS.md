@@ -10,7 +10,7 @@ Status: **AP-5-S4 integriert auf `main @ 934d43da` (PR #159 / Transport PR #160)
 ## Aktueller Arbeitsblock – AP-5-S4 Post-Merge Continuity
 
 1. **Arbeitsblock / Ziel:** Docs-only Current-State nach Merge von AP-5-S4. Keine Runtime. Kein S5.
-2. **Authoring-Branch / PR:** `cursor/ap5-s4-post-merge-continuity-2026-08-29-5132`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+2. **Authoring-Branch / PR:** `cursor/ap5-s4-post-merge-continuity-2026-08-29-5132`; Draft-PR #163. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
 3. **Status:** **DOCS-ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein S5.
 4. **Bereits umgesetzt:** S4-Runtime auf `main @ 934d43da` integriert; Checkpoint, Status, Roadmap, Handoff und ADR-0193-Nachtrag auf INTEGRIERT gezogen.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 14`. Exact Run-ID `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`. Beobachteter Titel `Ap-5-s4 mfa-step-up abmeldung`. Generation 14 nicht für S5 wiederverwenden.
