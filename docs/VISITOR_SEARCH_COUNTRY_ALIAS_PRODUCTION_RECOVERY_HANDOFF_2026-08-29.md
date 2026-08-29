@@ -2,35 +2,37 @@
 
 Stand: 29. August 2026  
 Logical Cursor-Agent: **`Visitor search correctness 1`**  
-Cursor-Run: `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`  
+Cursor-Run: `bc-020d3296-0cd7-4e36-8373-47578af701ce`  
+Prior session: `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`  
 Draft-PR: #173  
-Baseline: `main @ 2241e349f8b3b400963cf1de11e5a8617bdc8e44`
+Baseline: `main @ 2241e349f8b3b400963cf1de11e5a8617bdc8e44`  
+TL-Fund: `5057687985`
 
 ## Für den nächsten Agenten / Reviewer
 
-Dieser Recovery-Slice ist **implementiert** und bleibt Draft. Der nächste zulässige Schritt ist ein **unabhängiger Technical-Lead Exact-Head-Re-Review**. Derselbe logische Agent darf nur unmittelbare Review-Fixes auf diesem PR bearbeiten.
+Dieser Recovery-Slice ist **implementiert** und bleibt Draft. Der nächste zulässige Schritt ist ein **unabhängiger Technical-Lead Exact-Head-Re-Review** des neuen Heads. Derselbe logische Agent darf nur unmittelbare Review-Fixes auf diesem PR bearbeiten.
 
 Nicht starten: Issue #110, AP-6 Runtime, AP-7, Provider/Payments, Places-Import, UI-Redesign.
 
 ## Root Cause in einem Satz
 
-Production-Ranking verlor, weil Import-Keywords den Städtenamen verdoppeln; Tests konstruierten Städte ohne diese Keywords und prüften nicht den Route-Lauf.
+Production-Ranking verlor, weil Import-Keywords den Städtenamen verdoppeln; Tests konstruierten Städte ohne diese Keywords und prüften nicht den Route-Lauf. Danach blieb ein geteiltes Alias (z. B. `Congo` auf CD und CG) als zwei ununterscheidbare `Land`-Zeilen.
 
 ## Was gebaut wurde
 
-- `lib/places/suche.ts`: exaktes Länder-Alias für `ziel` steht ordinal vor allen anderen Treffern; Anzeige-Label und Typ-Kontext sind generisch.
+- `lib/places/suche.ts`: exaktes Länder-Alias für `ziel` steht ordinal vor allen anderen Treffern; Anzeige-Label und Typ-Kontext sind generisch; sichtbare Mehrdeutigkeit hängt kanonischen Namen und Ländercode an.
 - `lib/places/suche-lauf.ts` + `app/api/search/places/route.ts`: Retrieval, Abbildung und Ranking sind derselbe Lauf.
 - `lib/places/abbildung.ts`: Keyword-Normalisierung aus der PostgREST-Zeile.
-- `OrtSuche` / `Suchliste`: Typ-Pille, Alias-Anzeige, `aria-label`, Betonung des exakten Landes.
-- Tests: Invariante (Ruritanien) plus Production-Zeilenform und Route-Lauf. Keine Allowlist.
+- `OrtSuche` / `Suchliste`: Typ-Pille, Alias-Anzeige, `aria-label`, Betonung des exakten Landes. Die Disambiguierung kommt über `description`/`ariaLabel`.
+- Tests: Invariante (Ruritanien + Sylvani Zwei-Länder) plus Production-Zeilenform (Peru/China/Schweiz/Congo) und Route-Lauf. Keine Allowlist.
 
 ## Was bewusst nicht gebaut wurde
 
-- keine Peru/China/Schweiz-Ausnahmetabelle
+- keine Peru/China/Schweiz/Congo-Ausnahmetabelle
 - kein Geocoder / paid dependency
 - keine Bestands- oder Anzeigenamen-Mutation
 - keine Abreise-/IATA-Semantikänderung
 
 ## Stop
 
-Kein Ready. Kein Merge. Self-Review ist kein PASS. Nach Merge muss Production Peru + China + Schweiz explizit rauchen.
+Kein Ready. Kein Merge. Self-Review ist kein PASS. Nach Merge muss Production Peru + China + Schweiz plus zusätzliche Nicht-Beispiel-Aliase und mindestens ein geteiltes Alias explizit rauchen.

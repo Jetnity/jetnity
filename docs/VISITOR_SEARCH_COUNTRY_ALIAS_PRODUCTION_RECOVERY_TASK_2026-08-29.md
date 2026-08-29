@@ -6,6 +6,8 @@ Status: AUTHORIZED / IMMEDIATE POST-MERGE P1 RECOVERY / SAME LOGICAL CURSOR SESS
 
 **Product-Owner-Klarstellung 29. August 2026:** Peru, China und Schweiz sind nur Beispiele. Die Abnahme ist generisch für jedes vorhandene Länder-Alias. Keine Allowlist. Die Suchzeile muss Typ und Ortskontext sofort lesbar machen; ein exaktes Alias darf den offiziellen Langnamen als Anzeige ersetzen, Place-ID unverändert.
 
+**Technical-Lead-Fund `5057687985` 29. August 2026:** Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production zeigt `Congo` auf CD und CG; weitere geteilte Tokens existieren. Zwei ununterscheidbare `Congo · Land`-Zeilen sind ein P1. Generisch disambiguieren aus kanonischem Namen und Ländercode. Eindeutiges Alias bleibt natürlich. Neutraler Zwei-Länder-Test ist Pflicht. Keine Länder-Sonderfälle.
+
 ## Baseline
 
 - Repository: `Jetnity/jetnity`
@@ -14,9 +16,10 @@ Status: AUTHORIZED / IMMEDIATE POST-MERGE P1 RECOVERY / SAME LOGICAL CURSOR SESS
 - Prior transport merge: PR #172
 - Recovery branch: `fix/visitor-search-country-alias-production-recovery-2026-08-29`
 - Logical Cursor-Agent remains: `Visitor search correctness 1`
-- Exact Cursor session remains: `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`
+- Exact prior Cursor session: `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`
+- Tatsächlich gestartete Recovery-Session auf PR #173: `bc-020d3296-0cd7-4e36-8373-47578af701ce`
 
-This is not a new logical feature slice. It is the mandatory same-slice correction after new Production evidence invalidated the previous TL PASS.
+This is not a new logical feature slice. It is the mandatory same-slice correction after new Production evidence invalidated the previous TL PASS, plus the immediate TL re-review finding `5057687985`.
 
 ## Blocking live Production evidence
 
@@ -43,23 +46,25 @@ Read-only Production query on `public.places` confirmed that the country rows co
 - `geonames:3932488` Republic of Peru -> exact token `Peru` (UTF-8 hex `50657275`)
 - `geonames:1814991` People’s Republic of China -> exact token `China` (`4368696e61`)
 - `geonames:2658434` Switzerland -> exact token `Schweiz` (`5363687765697a`)
+- Shared token `Congo` exists on both Democratic Republic of the Congo (CD) and Republic of the Congo (CG). Other multi-country alias tokens exist.
 
-Thus do NOT paper over this as missing alias data. Find the actual runtime/test-contract mismatch.
+Thus do NOT paper over ranking as missing alias data. Do NOT treat `Congo` as a one-off exception.
 
 ## Objective
 
-Make the actual deployed `/api/search/places` behavior satisfy Issue #109 generically for exact country aliases, and add tests that exercise the same route/data shape closely enough that this Production failure cannot pass unnoticed again.
+Make the actual deployed `/api/search/places` behavior satisfy Issue #109 generically for exact country aliases, including immediately readable type/context and distinguishable rows when one exact alias belongs to more than one country. Add tests that exercise the same route/data shape closely enough that this Production failure cannot pass unnoticed again.
 
 ## Required diagnosis and acceptance
 
 1. Reproduce/explain why the current pure-ranking tests pass while Production Peru/China remain wrong.
 2. Verify the exact runtime path from PostgREST row -> `ortAusZeile` -> ranking -> JSON response; do not assume unit fixtures match Production shape.
-3. Fix generically. No `Peru`/`China`/`Schweiz` exception table or hardcoded country list.
+3. Fix generically. No `Peru`/`China`/`Schweiz`/`Congo` exception table or hardcoded country list.
 4. Preserve `ziel` vs `abreise`, canonical Place IDs, fail-closed free text, exact IATA semantics and compact relevance.
 5. Add regression coverage using Production-representative country rows/keywords for at least Peru, China, Schweiz and a generic alias.
 6. Add route-level regression coverage for the retrieval + ranking interaction if feasible; pure `orteOrdnen()` tests alone are insufficient after this live miss.
-7. Verify actual Preview endpoint behavior before STOP. If Preview SSO prevents direct endpoint proof, document that and provide the strongest executable route-level evidence; do not fabricate.
-8. After merge, Production acceptance must explicitly smoke Peru + China + Schweiz and require intended country at index 0.
+7. **Mehrdeutige Aliase:** Wenn die sichtbare Menge mehr als ein exaktes Länder-Alias-Match enthält, müssen sichtbare Zeile und `aria-label` mit kanonischem Namen und/oder Ländercode disambiguieren. Ein eindeutiges Alias bleibt natürlich. Neutraler Test mit zwei verschiedenen Ländern, die dasselbe Alias teilen, plus Production-förmiges Evidence. Beide bleiben auswählbar.
+8. Verify actual Preview endpoint behavior before STOP. If Preview SSO prevents direct endpoint proof, document that and provide the strongest executable route-level evidence; do not fabricate.
+9. After merge, Production acceptance must explicitly smoke Peru + China + Schweiz, additional non-example aliases, and at least one shared alias such as Congo.
 
 ## Boundaries
 
