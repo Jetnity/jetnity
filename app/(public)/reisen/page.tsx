@@ -21,6 +21,7 @@ import { AlertCircle, MapPin, Plus } from 'lucide-react'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { reisenLaden } from '@/lib/trips/daten'
+import AccountNavigation from '@/components/account/AccountNavigation'
 import GastReisen from '@/components/trips/GastReisen'
 import GastreiseBruecke from '@/components/trips/GastreiseBruecke'
 import KontoReisenGruppen from '@/components/trips/KontoReisenGruppen'
@@ -38,35 +39,41 @@ export default async function ReisenSeite() {
   const { data } = await supabase.auth.getUser()
   const angemeldet = Boolean(data.user)
 
-  return (
-    <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Jetnity</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
-              Meine Reisen
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
-              {angemeldet
-                ? 'Deine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.'
-                : 'Ohne Konto bleibt ein Reiseentwurf privat in diesem Browser. Mit einem Konto werden deine Reisen dauerhaft gespeichert.'}
-            </p>
-          </div>
-          {angemeldet ? (
-            <Link
-              href="/planen"
-              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
-            >
-              <Plus className="h-4 w-4" />
-              Neue Reise
-            </Link>
-          ) : null}
-        </div>
+  // Dieselbe serverseitige Auth-Aussage steuert Daten und die gemeinsame
+  // Account-Leiste. Gäste bleiben auf der öffentlichen Route ohne Konto-Nav.
 
-        {angemeldet ? <KontoReisen /> : <GastReisen />}
-      </div>
-    </main>
+  return (
+    <>
+      {angemeldet ? <AccountNavigation /> : null}
+      <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Jetnity</p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
+                Meine Reisen
+              </h1>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
+                {angemeldet
+                  ? 'Deine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.'
+                  : 'Ohne Konto bleibt ein Reiseentwurf privat in diesem Browser. Mit einem Konto werden deine Reisen dauerhaft gespeichert.'}
+              </p>
+            </div>
+            {angemeldet ? (
+              <Link
+                href="/planen"
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
+              >
+                <Plus className="h-4 w-4" />
+                Neue Reise
+              </Link>
+            ) : null}
+          </div>
+
+          {angemeldet ? <KontoReisen /> : <GastReisen />}
+        </div>
+      </main>
+    </>
   )
 }
 
