@@ -124,6 +124,8 @@ Weitere gemessene Semantik aus dem installierten Client:
 
 **Nachtrag, 29. August 2026 – AP-5-S4.** Draft-PR #159 implementiert den UI-Step-up über die vorhandene User-Auth-API. Die Gate-0-Wahrheit bleibt: nur `currentLevel === 'aal2'` reicht; Login-MFA bleibt skippable; kein globales Consumer-AAL2. S4 ist **nicht integriert**, solange #159 Draft ist. Details: ADR-0193.
 
+**Nachtrag, 29. August 2026 – AP-5-S4 integriert / S5 Draft.** PR #160 hat S4 auf `main @ 934d43da` integriert. Draft-PR #162 implementiert S5: aktuelle Sitzung ja, andere Sitzungen `unsupported`. Die Gate-0-Wahrheit bleibt: keine User-`listSessions`-API; eine vollständige Liste ist AP-5-P2. Details: ADR-0194.
+
 ## 7. Client-/Server-Authority, Redirects, Enumeration, Leakage
 
 | Fläche | Authority | Befund |

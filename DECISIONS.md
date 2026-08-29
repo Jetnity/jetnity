@@ -4579,6 +4579,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Nachtrag, 29. August 2026 – AP-5-S4.** Die serverseitige AAL2-Anforderung für verified-factor Unenroll bleibt. `/account/security` darf davor `challenge` / `verify` über die vorhandene User-Auth-API setzen und den AAL danach erneut prüfen. Das ist kein globales Consumer-AAL2. Details: ADR-0193.
 
+**Nachtrag, 29. August 2026 – AP-5-S5.** Die User-facing Sessionliste bleibt unsupported. `/account/security` darf die aktuelle Sitzung datensparsam zeigen und andere Sitzungen ausdrücklich als nicht auflistbar belassen. Eine vollständige Liste bleibt AP-5-P2. Details: ADR-0194.
+
 ---
 
 ## ADR-0183 – AP-5-S1: Server-Truth für Security-UI-Lagen und Fehlerhygiene
@@ -5007,6 +5009,42 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 - Evidence: `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md`, `lib/auth/account-mfa-step-up.ts`, `components/account/SecurityMfaStepUp.tsx`.
 - Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
 - S5 startet nicht aus diesem ADR.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+---
+
+## ADR-0194 – AP-5-S5: ehrliche aktuelle Sitzung, andere Sitzungen unsupported
+
+**Datum:** 29. August 2026  
+**Status:** Implementation-Slice auf Draft-PR #162 / Issue #161. Keine Auth-Architektur. Kein Auth-Config-Push. Keine Session-Registry.
+
+**Entscheidung:**
+
+1. `/account/security` zeigt die **aktuelle** Sitzung nur mit vorhandener User-Auth-Truth: Existenz über `getUser()`, optional Zugangscode-Zeit aus `expires_at`, optional `currentLevel` `aal1`/`aal2`.
+2. Andere Sitzungen sind `unsupported`, nicht `empty` und nicht eine Zahl. Jetnity erfindet keine Geräteliste.
+3. `expires_at` wird fachlich als Gültigkeit des aktuellen Zugangscodes benannt, nicht als Sitzungsende und nicht als letzte Aktivität.
+4. `session_id`, Access-/Refresh-Tokens, JWT-Rohdaten, Cookies, Auth-Header und User-Agent-Rohdaten gehören nicht in UI, DOM oder Logs.
+5. Ein lokaler Browser-/Plattformhinweis darf nur als lokale, nicht serverseitig geprüfte Klasse erscheinen. Kein Fingerprinting, keine persistente Device-ID, kein IP-/Geo-Raten.
+6. Die vorhandene S3-Aktion „Andere Geräte abmelden“ bleibt die Steuerungsautorität. S5 verändert `local`/`others`/`global` nicht und führt die Aktion nicht ein zweites Mal aus.
+7. S4 MFA-Step-up/AAL-Reconcile bleibt eine getrennte Authority.
+8. Eine professionelle vollständige Sessionliste würde Service Role, privilegiertes Session-Schema oder eine neue persistente Registry verlangen. Das bleibt Product-Owner-Sondergate AP-5-P2. S5 improvisiert das nicht.
+9. AP-6/AP-7, Consumer-AAL2, Auth-Config, Passkeys/OAuth und Migration/RLS/Identity bleiben ausserhalb dieses ADR.
+
+**Kontext:** Gate 0 / ADR-0182 hat festgestellt, dass der installierte User-Client keine `listSessions`-/`getSessions`-API hat. S1–S4 haben ehrliche Lagen, Passwortänderung, Logout-Scopes und MFA-Step-up geliefert. Issue #161 ist der letzte autorisierte Slice des AP-5-S3–S5-Programms.
+
+**Alternativen:**
+
+1. *Nur Copy „Geräte nicht auflistbar“ ohne aktuelle Sitzung.* Würde vorhandene, datensparsame Current-Session-Truth ungenutzt lassen.
+2. *Fake-Liste oder „0 andere Geräte“.* Truth-Bruch; `unsupported` wäre `empty`.
+3. *Sessionliste über Service Role oder neues Schema.* Privilegien- und Privacy-Schnitt, AP-5-P2.
+
+**Begründung:** Die ehrliche professionelle Ansicht ist die aktuelle Sitzung plus ausdrückliches Nichtwissen über andere Sitzungen. Eine vollständige Liste ist ohne neues Privilegienmodell nicht baubar.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md`, `lib/auth/account-session-view.ts`, `components/account/SecuritySitzung.tsx`.
+- Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
+- AP-6/AP-7 starten nicht aus diesem ADR.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
 ---

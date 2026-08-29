@@ -273,7 +273,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Parallelität | nicht parallel zu AP-6b/AP-7/AP-8. AP-6a Legal ist dateiarm und darf parallel assigned werden. |
 | Non-Scope | Auth-Config-Push; OAuth/Passkey live schalten; Consumer-AAL2-Pflicht; Admin-AAL2; Identity; RLS; AP-7; neues „aktuelles Passwort mitsenden“, solange kein separat freigegebener Auth-Vertragswechsel das verlangt |
 | Tests / Evidence | Passwortänderung bleibt am bestehenden Reauthentication-Vertrag (`secure_password_change`); kein Test darf Current-Password-Submit als Product Truth verlangen; fremde Session nicht sichtbar; Logout-all fail-closed dokumentieren, wenn API fehlt; Empty ≠ Error; keine Browser-Behauptung ohne Lauf. |
-| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0, S1, S2 und S3 sind integriert. AP-5-S4 ist Draft-PR #159 und startet **kein** S5. Folgeslices AP-5-S5 vs. AP-5-P1–P5 stehen im Gate-0-Status und brauchen eigene Tasks. |
+| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0, S1, S2, S3 und S4 sind integriert. AP-5-S5 ist Draft-PR #162 und startet **kein** AP-6/AP-7. AP-5-P1–P5 bleiben extra gegated. |
 
 ### AP-6a – Privacy-Foundation ohne DB
 
