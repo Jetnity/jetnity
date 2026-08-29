@@ -37,14 +37,18 @@ describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
   })
 
   test('erzwingt 8 Citizenships und 12 Documents auch bei UPDATE/Reparenting', () => {
-    assert.match(sql, /function public\.account_traveller_kinder_limit_pruefen\(\)/)
-    assert.match(sql, /security invoker/)
-    assert.match(sql, /for no key update/)
-    assert.match(sql, /\) > 8 then/)
-    assert.match(sql, /\) > 12 then/)
-    assert.match(sql, /after insert or update on public\.account_traveller_citizenships/)
-    assert.match(sql, /after insert or update on public\.account_traveller_documents/)
-    assert.doesNotMatch(sql, /höchstens 20|> 20/)
+    const funktion = sql.match(
+      /create or replace function public\.account_traveller_kinder_limit_pruefen\(\)[\s\S]*?\n\$\$;/,
+    )?.[0]
+
+    assert.ok(funktion, 'Limitfunktion muss vollständig in der Migration definiert sein')
+    assert.match(funktion, /security\s+invoker/i)
+    assert.match(funktion, /for\s+no\s+key\s+update/i)
+    assert.match(funktion, />\s*8\s+then/i)
+    assert.match(funktion, />\s*12\s+then/i)
+    assert.match(sql, /after\s+insert\s+or\s+update\s+on\s+public\.account_traveller_citizenships/i)
+    assert.match(sql, /after\s+insert\s+or\s+update\s+on\s+public\.account_traveller_documents/i)
+    assert.doesNotMatch(sql, /create\s+trigger\s+account_travellers[^;]*limit/i)
   })
 
   test('RLS ist owner-only; anon bleibt ohne Rechte', () => {
