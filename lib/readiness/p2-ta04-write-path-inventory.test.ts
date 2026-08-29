@@ -85,7 +85,7 @@ describe('P2-TA-04 Traveller write-path inventory', () => {
     assert.match(aktion, /travellerSetzen/)
     assert.match(aktion, /partyUebernehmen/)
     assert.match(aktion, /registryTravellerInReiseUebernehmen/)
-    assert.match(aktion, /registryTravellerAlsFrischenTripSnapshot/)
+    assert.match(aktion, /registryTripUebernahmeOrchestrieren/)
     assert.match(aktion, /partyLimitUeberschritten/)
     assert.equal(aktion.includes('service_role'), false)
     assert.equal(aktion.includes('createServiceRole'), false)

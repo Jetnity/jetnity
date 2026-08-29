@@ -169,6 +169,7 @@ describe('AP-7-S4 Registry→Trip Materialisierung', () => {
 
     assert.match(runtime, /accountRegistryTravellerProjektieren/)
     assert.match(runtime, /registryTravellerAlsFrischenTripSnapshot/)
+    assert.match(runtime, /registryTripUebernahmeOrchestrieren/)
     assert.equal(runtime.includes('citizenships[0]'), false)
     assert.equal(runtime.includes('documents[0]'), false)
     assert.equal(runtime.includes('defaultPassport'), false)

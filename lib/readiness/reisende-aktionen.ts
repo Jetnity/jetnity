@@ -19,13 +19,7 @@ import { travellerAlsPayload, travellerBauen } from '@/lib/readiness/reisende'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
 import { registryMitClientLaden } from '@/lib/traveller/account-registry-daten'
-import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
-import {
-  registryTravellerAlsFrischenTripSnapshot,
-  registryTripEintragSuchen,
-  registryTripLimitErreicht,
-  registryTripUebernahmeEingabeLesen,
-} from '@/lib/traveller/account-registry-trip'
+import { registryTripUebernahmeOrchestrieren } from '@/lib/traveller/account-registry-trip'
 
 function ersteMeldung(fehler: { issues: { message: string }[] }): string {
   return fehler.issues[0]?.message ?? 'Diese Reisendenangabe ist ungültig.'
@@ -131,38 +125,22 @@ export async function partyUebernehmen(eingabe: unknown): Promise<Aktionsergebni
 }
 
 export async function registryTravellerInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
-  const geprueft = registryTripUebernahmeEingabeLesen(eingabe)
-  if (!geprueft) return { ok: false, meldung: REGISTRY_TRIP_COPY.eingabeUngueltig }
-
-  const rahmen = await reiseDesKontos(geprueft.tripId)
-  if (!rahmen.ok) return rahmen
-
-  if (registryTripLimitErreicht(partyVon(rahmen.reise).length)) {
-    return { ok: false, meldung: REGISTRY_TRIP_COPY.limit }
-  }
-
-  const registry = await registryMitClientLaden(rahmen.supabase, { id: geprueft.registryTravellerId })
-  if (registry.problem) {
-    return {
-      ok: false,
-      meldung: registry.problem.status === 503 ? REGISTRY_TRIP_COPY.lesefehler503 : REGISTRY_TRIP_COPY.lesefehler500,
-    }
-  }
-
-  const eintrag = registryTripEintragSuchen(registry.zeilen, geprueft.registryTravellerId)
-  if (!eintrag) return { ok: false, meldung: REGISTRY_TRIP_COPY.nichtGefunden }
-
-  const snapshot = registryTravellerAlsFrischenTripSnapshot(eintrag, {
+  const { supabase, benutzerId } = await konto()
+  const ergebnis = await registryTripUebernahmeOrchestrieren({
+    eingabe,
+    benutzerId,
+    reiseLesen: async (tripId) => {
+      const geladen = await reiseLaden(tripId)
+      if (geladen.problem) return { problem: geladen.problem, reise: null }
+      const reise = geladen.zeilen[0] ?? null
+      return { problem: null, reise: reise ? { party: partyVon(reise) } : null }
+    },
+    registryLesen: (id) => registryMitClientLaden(supabase, { id }),
+    partySchreiben: (tripId, party) => partySchreiben(supabase, tripId, [...party]),
     jetzt: new Date().toISOString(),
   })
-  if (!snapshot) return { ok: false, meldung: REGISTRY_TRIP_COPY.projektion }
-
-  if (partyVon(rahmen.reise).some((item) => item.clientRef === snapshot.clientRef)) {
-    return { ok: false, meldung: REGISTRY_TRIP_COPY.projektion }
-  }
-
-  const geschrieben = await partySchreiben(rahmen.supabase, geprueft.tripId, [travellerAlsPayload(snapshot)])
-  if (!geschrieben.ok) return geschrieben
-  revalidatePath(`/reisen/${geprueft.tripId}`)
+  if (!ergebnis.ok) return { ok: false, meldung: ergebnis.meldung ?? 'Die Übernahme ist fehlgeschlagen.' }
+  if (!ergebnis.tripId) return { ok: false, meldung: 'Die Übernahme ist fehlgeschlagen.' }
+  revalidatePath(`/reisen/${ergebnis.tripId}`)
   return { ok: true, wert: null }
 }

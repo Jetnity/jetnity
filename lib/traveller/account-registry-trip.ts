@@ -5,6 +5,7 @@
 // Keine Registry-ID-Wiederverwendung, kein Default-/First-Item-Credential.
 
 import { PARTY_GRENZEN } from '@/lib/readiness/party'
+import { travellerAlsPayload } from '@/lib/readiness/reisende'
 import {
   accountRegistryTravellerLesen,
   accountRegistryTravellerProjektieren,
@@ -187,4 +188,171 @@ export function registryTripEintragSuchen(
 
 export function registryTripAnzeigeName(label: string | null): string {
   return label ?? REGISTRY_TRIP_COPY.ohneBezeichnung
+}
+
+export type RegistryTripPartyPayload = ReturnType<typeof travellerAlsPayload>
+
+export type RegistryTripReiseLesung =
+  | { readonly problem: { readonly status: 500 | 503 }; readonly reise: null }
+  | { readonly problem: null; readonly reise: { readonly party: readonly TripTraveller[] } | null }
+
+export type RegistryTripRegistryLesung =
+  | { readonly problem: { readonly status: 500 | 503 }; readonly zeilen: null }
+  | { readonly problem: null; readonly zeilen: readonly AccountRegistryTraveller[] }
+
+export type RegistryTripOrchestrierung = {
+  readonly ok: boolean
+  readonly meldung?: string
+  readonly wert?: null
+  readonly tripId: string | null
+  readonly reiseLesen: number
+  readonly registryLesen: number
+  readonly partySchreiben: number
+  readonly geschriebenesParty: readonly RegistryTripPartyPayload[] | null
+}
+
+export type RegistryTripOrchestrierungKontext = {
+  readonly eingabe: unknown
+  readonly benutzerId: string | null
+  readonly reiseLesen: (tripId: string) => Promise<RegistryTripReiseLesung>
+  readonly registryLesen: (id: string) => Promise<RegistryTripRegistryLesung>
+  readonly partySchreiben: (
+    tripId: string,
+    party: readonly RegistryTripPartyPayload[],
+  ) => Promise<{ ok: true } | { ok: false; meldung: string }>
+  readonly jetzt: string
+  readonly zufall?: () => string
+}
+
+function orchestrierungAbgelehnt(
+  meldung: string,
+  teil: {
+    tripId: string | null
+    reiseLesen: number
+    registryLesen: number
+    partySchreiben?: number
+    geschriebenesParty?: readonly RegistryTripPartyPayload[] | null
+  },
+): RegistryTripOrchestrierung {
+  return {
+    ok: false,
+    meldung,
+    tripId: teil.tripId,
+    reiseLesen: teil.reiseLesen,
+    registryLesen: teil.registryLesen,
+    partySchreiben: teil.partySchreiben ?? 0,
+    geschriebenesParty: teil.geschriebenesParty ?? null,
+  }
+}
+
+/**
+ * Testbare S4-Orchestrierung: Auth, Trip, Limit, Registry, Projektion, Write.
+ * Fail-closed Pfade rufen party_schreiben nicht auf.
+ */
+export async function registryTripUebernahmeOrchestrieren(
+  kontext: RegistryTripOrchestrierungKontext,
+): Promise<RegistryTripOrchestrierung> {
+  const geprueft = registryTripUebernahmeEingabeLesen(kontext.eingabe)
+  if (!geprueft) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.eingabeUngueltig, {
+      tripId: null,
+      reiseLesen: 0,
+      registryLesen: 0,
+    })
+  }
+
+  if (!kontext.benutzerId) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.nichtAngemeldet, {
+      tripId: geprueft.tripId,
+      reiseLesen: 0,
+      registryLesen: 0,
+    })
+  }
+
+  const reiseLesung = await kontext.reiseLesen(geprueft.tripId)
+  if (reiseLesung.problem) {
+    return orchestrierungAbgelehnt(
+      reiseLesung.problem.status === 503
+        ? REGISTRY_TRIP_COPY.reiseLesefehler503
+        : REGISTRY_TRIP_COPY.reiseLesefehler500,
+      { tripId: geprueft.tripId, reiseLesen: 1, registryLesen: 0 },
+    )
+  }
+  if (!reiseLesung.reise) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.reiseFehlt, {
+      tripId: geprueft.tripId,
+      reiseLesen: 1,
+      registryLesen: 0,
+    })
+  }
+
+  const bestehende = [...reiseLesung.reise.party]
+  if (registryTripLimitErreicht(bestehende.length)) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.limit, {
+      tripId: geprueft.tripId,
+      reiseLesen: 1,
+      registryLesen: 0,
+    })
+  }
+
+  const registryLesung = await kontext.registryLesen(geprueft.registryTravellerId)
+  if (registryLesung.problem) {
+    return orchestrierungAbgelehnt(
+      registryLesung.problem.status === 503
+        ? REGISTRY_TRIP_COPY.lesefehler503
+        : REGISTRY_TRIP_COPY.lesefehler500,
+      { tripId: geprueft.tripId, reiseLesen: 1, registryLesen: 1 },
+    )
+  }
+
+  const eintrag = registryTripEintragSuchen(registryLesung.zeilen, geprueft.registryTravellerId)
+  if (!eintrag) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.nichtGefunden, {
+      tripId: geprueft.tripId,
+      reiseLesen: 1,
+      registryLesen: 1,
+    })
+  }
+
+  const snapshot = registryTravellerAlsFrischenTripSnapshot(eintrag, {
+    jetzt: kontext.jetzt,
+    zufall: kontext.zufall,
+  })
+  if (!snapshot) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.projektion, {
+      tripId: geprueft.tripId,
+      reiseLesen: 1,
+      registryLesen: 1,
+    })
+  }
+
+  if (bestehende.some((item) => item.clientRef === snapshot.clientRef)) {
+    return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.projektion, {
+      tripId: geprueft.tripId,
+      reiseLesen: 1,
+      registryLesen: 1,
+    })
+  }
+
+  const party = [travellerAlsPayload(snapshot)]
+  const geschrieben = await kontext.partySchreiben(geprueft.tripId, party)
+  if (!geschrieben.ok) {
+    return orchestrierungAbgelehnt(geschrieben.meldung, {
+      tripId: geprueft.tripId,
+      reiseLesen: 1,
+      registryLesen: 1,
+      partySchreiben: 1,
+      geschriebenesParty: party,
+    })
+  }
+
+  return {
+    ok: true,
+    wert: null,
+    tripId: geprueft.tripId,
+    reiseLesen: 1,
+    registryLesen: 1,
+    partySchreiben: 1,
+    geschriebenesParty: party,
+  }
 }
