@@ -147,7 +147,7 @@ TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gega
 
 Separate Search-/Homepage-Themen:
 
-- Issue #109 – Country-Alias-Ranking: PR #172 plus Recovery-PR #173 auf `main @ ade03511` integriert. Live Production API smoke PASS. Technical Lead hat #109 **CLOSED / COMPLETED**. Residual P2: Mobile Safari Real-Device. Draft-PR #178 ist nur Docs/Continuity und **nicht integriert**.
+- Issue #109 – Country-Alias-Ranking: PR #172 plus Recovery-PR #173 auf `main @ ade03511` integriert. Live Production API smoke PASS. Technical Lead hat #109 **CLOSED / COMPLETED**. Residual P2: Mobile Safari Real-Device. PR #178 ist nur Docs/Continuity-Träger; Live-Zustand prüfen. Auf `main` ist die Pre-Merge-#178-Klausel historisch.
 - Issue #169 – PrivacyBee Schweiz Gate 0: über #175/#176 auf `main` integriert, **CLOSED / COMPLETED**. Keine Vendor-Aktivierung. Keine neuen Kosten.
 - Issue #110 – natürliche Homepage-Mehrziel-Eingabe: dokumentiert, **nicht gestartet**.
 

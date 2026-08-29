@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Draft-PR #178 ist Docs-only Continuity und nicht integriert. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
+Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller New-Chat-Checkpoint (Docs-PR #178 transportiert ihn; #178 selbst ist nicht integriert, solange Draft/offen):
+Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
 
 - `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`
 

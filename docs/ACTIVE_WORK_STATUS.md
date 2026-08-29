@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **TL-Fund `5058003513`. Docs-PR #178 auf `main @ ade03511` reconciled (`behind_by=0`). Search #109 CLOSED / COMPLETED. PrivacyBee #169 CLOSED / COMPLETED. Draft-PR #178 nicht integriert. Kein aktiver Runtime-Agent. Kein #110. Live-Evidence immer live prüfen.**
+Status: **Search #109 CLOSED / COMPLETED. PrivacyBee #169 CLOSED / COMPLETED. `main @ ade03511`. PR #178 ist Continuity-Träger (Live-Zustand prüfen; auf `main` ist die Pre-Merge-Klausel historisch). Kein aktiver Runtime-Agent. Kein #110. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -10,16 +10,16 @@ Status: **TL-Fund `5058003513`. Docs-PR #178 auf `main @ ade03511` reconciled (`
 ## Aktueller Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
 
 1. **Arbeitsblock / Ziel:** Docs-only PR #178 auf live `main @ ade03511` reconciled (`behind_by=0`) und Search-Smoke-Zuordnung `canonical #173 / transport #177`. Kein Runtime-Fix.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29` / Draft-PR #178. **#178 ist nicht integriert.**
-3. **Status:** **DOCS-ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Kein aktiver Runtime-Agent.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29` / PR #178 als Continuity-Träger. Live-Zustand prüfen.
+3. **Status:** **DOCS-ONLY CONTINUITY / SELF-EXPIRING #178-KLAUSEL**. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Kein aktiver Runtime-Agent.
 4. **Bereits umgesetzt:** Search-Runtime auf `main @ ade03511`; Live API smoke PASS; #109/#169 CLOSED; New-Chat-Checkpoint `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
 5. **Cursor-Agent:** `Visitor search correctness 1`. Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`.
 6. **Live-`main` / Baseline bei diesem Stamp:** `ade03511341433d8d0b6f09b8d8342890381d3d5`.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein Import-Rewrite, keine Supabase-Mutation.
 8. **Kosten / Provider / Secrets:** 0. PrivacyBee nicht aktiviert. Bestehendes PO-Konto nur als Tatsache ohne Secrets genannt.
 9. **Bekannte Risiken / Review-Funde:** Preview-SSO; Mobile-Safari Residual P2; `main` `protected=false`; historische offene PRs nur live behandeln.
-10. **Offene Nutzerentscheidungen / Freigaben:** AP-7-S2 PO-Gate; AP-6a Legal-Runtime geparkt. Ready/Merge von #178 nur Technical Lead.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #178. Kein Ready. Kein Merge. Kein #110.
+10. **Offene Nutzerentscheidungen / Freigaben:** AP-7-S2 PO-Gate; AP-6a Legal-Runtime geparkt. Ready/Merge nur Technical Lead.
+11. **Exakter nächster Schritt:** Wenn dieser Checkpoint auf `main` liegt: Live-Rekonstruktion + Binding-Build-Order-Auswahl; kein automatischer Produkt-Slice. Nur solange er noch nicht auf `main` liegt und #178 live offen ist: unabhängiger TL Exact-Head-Review. Kein Ready. Kein Merge. Kein #110.
 12. **Zuerst lesen:** `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
 
 ## Historischer Arbeitsblock – Visitor Search Country Alias Ranking

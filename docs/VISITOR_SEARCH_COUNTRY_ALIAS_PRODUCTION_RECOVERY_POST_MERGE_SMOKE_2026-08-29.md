@@ -62,4 +62,4 @@ Keine neuen laufenden Kosten. Keine Migration, kein Import-Rewrite, kein Provide
 
 ## Nächster Schritt
 
-Kein automatischer Folgeslice. Kein #110. Mobile-Safari-Real-Device bleibt Residual P2 für den nächsten Search-/Homepage-UX-Slice. Draft-PR #178 dokumentiert denselben Smoke plus New-Chat-Checkpoint und ist **nicht** die integrierte Runtime.
+Kein automatischer Folgeslice. Kein #110. Mobile-Safari-Real-Device bleibt Residual P2 für den nächsten Search-/Homepage-UX-Slice. PR #178 trägt denselben Smoke plus New-Chat-Checkpoint als Continuity, nicht als Search-Runtime.

@@ -10,4 +10,4 @@ Issue #109: **CLOSED / COMPLETED** durch Technical Lead (11:28 UTC)
 
 Live Production erfüllt Country-first, Shared-Alias-Disambiguierung, kurze Aliase und Trim-End-Tokens. Details: `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md`. Residual P2: Mobile Safari Real-Device.
 
-Kein Issue #110. Kein automatischer Folgeslice. Draft-PR #178 ist Docs-only Continuity und nicht integriert. New-Chat-Checkpoint: `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.
+Kein Issue #110. Kein automatischer Folgeslice. PR #178 ist Continuity-Träger; Live-Zustand prüfen. Liegt der Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch. New-Chat-Checkpoint: `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`.

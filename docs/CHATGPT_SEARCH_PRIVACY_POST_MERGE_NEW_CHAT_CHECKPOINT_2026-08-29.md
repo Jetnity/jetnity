@@ -11,7 +11,7 @@ Dieser Checkpoint ist die neueste versionierte New-Chat-Übergabe-Evidence nach:
 
 Er superseded ausschließlich spätere operative Aussagen älterer Dateien, die Issue #109 oder #169 noch als offen, Draft-PR #173/#171 als aktuellen Runtime-Block oder einen Search-/PrivacyBee-Runtime-Agenten als aktiv führen. Historische Authoring-Evidence bleibt erhalten und wird nicht gelöscht.
 
-Draft-PR #178 ist **nur** dieser Docs-/Continuity-Nachzug. **#178 ist nicht integriert**, solange er offen/Draft ist. Dieser Stamp behauptet keinen Merge von #178.
+PR #178 ist der Docs-/Continuity-Träger dieses Checkpoints. Sein Live-Zustand muss geprüft werden. **Wenn diese Datei auf `main` liegt, ist die Pre-Merge-#178-Klausel historisch** und kein aktiver Review-/Transport-Auftrag mehr. Dieser Stamp behauptet weder, dass #178 offen bleibt, noch dass er bereits gemergt ist.
 
 Author dieses Continuity-Stamps: logischer Agent **`Visitor search correctness 1`**. Cloud-Run: `https://cursor.com/agents/bc-020d3296-0cd7-4e36-8373-47578af701ce`. Cursor exponiert keine programmierbare Rename-/Title-Fähigkeit; der UI-Anzeigename wird nicht als geändert behauptet.
 
@@ -26,7 +26,7 @@ Diese Werte sind Evidence ihres Zeitpunkts (29. August 2026, nach 11:28 UTC). Ei
 | `origin/main` | `ade03511341433d8d0b6f09b8d8342890381d3d5` — *Merge reviewed Visitor Search country-alias recovery* |
 | `main` Branch Protection | `protected=false` (historisches P2-Governance-Risiko; nicht still ändern) |
 | Aktiver Search-/PrivacyBee-Runtime-Agent | **keiner** |
-| Draft-PR #178 | **OPEN Draft**, Docs-only Continuity. Nicht integriert. Nicht Ready/Merge durch den Autor. |
+| PR #178 | Docs-/Continuity-Träger. Live-Zustand prüfen. **Presence this file on `main` expires the pre-merge clause.** Author-Stamp: Draft/docs-only; Autor setzt kein Ready/Merge. |
 | Historische offene PRs | live neu abfragen; **niemals blind mergen oder schliessen**. Zum Stamp-Zeitpunkt u. a. Draft #88, #52, #50, #40, #39, #28. |
 
 > **Live-Evidence gewinnt immer.** Chat-Erinnerung, dieser Checkpoint und ältere Statusdateien sind Evidence ihres Zeitpunkts.
@@ -115,16 +115,18 @@ Nicht starten:
 | Issue #110 | NOT STARTED |
 | AP-7-S2 | Product-Owner-Gate; nicht gestartet |
 | AP-6a Legal-Runtime | geparkt / release-blocking |
-| Draft-PR #178 | Docs-only; unabhängiger TL-Review; Autor setzt kein Ready/Merge |
+| PR #178 | Continuity-Träger; Live-Zustand prüfen. Auf `main` ist die Pre-Merge-Klausel historisch. |
 | `main` protected=false | historisches P2 |
 | Mobile Safari Real-Device | Residual P2, nächster UX-Slice |
 
 ## 7. Exakt erster noch nicht abgeschlossener nächster Schritt
 
-Live-Evidence gewinnt.
+Live-Evidence gewinnt. Self-expiring / dual-state:
 
-- **Solange Draft-PR #178 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review von #178. Autor-Agent setzt **kein Ready** und **kein Merge**.
-- **Sobald #178 gemergt ist:** die Transport-/Review-Klausel ist historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+- **Wenn dieser Checkpoint auf `main` vorhanden ist** (PR #178 gemergt oder inhaltlich integriert): die Pre-Merge-#178-Review-/Träger-Klausel ist **historisch**. Exakt erster unfertiger Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. **Kein Produkt-Slice ist automatisch autorisiert.**
+- **Nur solange dieser Checkpoint noch nicht auf `main` liegt und #178 live offen/unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review von #178. Autor-Agent setzt **kein Ready** und **kein Merge**.
+
+Ein neuer Chat darf #178 nicht als aktiven Runtime- oder Produkt-Slice behandeln.
 
 ## 8. Continuity-Regel
 
