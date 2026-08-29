@@ -1,116 +1,105 @@
-# PrivacyBee – kleinster sicherer zukünftiger Integrationsvertrag
+# Swiss PrivacyBee – kleinster sicherer zukünftiger Integrationsvertrag
 
 Stand: 29. August 2026  
-Status: **CONTRACT ONLY / KEIN START / KEINE RUNTIME / KEIN VENDOR-ACCEPT**  
-Logical Cursor-Agent: **`Privacy provider integration audit 1`**
+Status: **CONTRACT ONLY / KEIN START / KEINE RUNTIME / KEIN TRIAL / KEIN AVV-ACCEPT**  
+Logical Cursor-Agent: **`Privacy provider integration audit 1`**  
+TARGET: PrivacyBee AG / `privacybee.io`. Nicht `privacybee.com`.
 
-Dieses Dokument gilt **nur**, falls Product Owner + Legal + Security später ausdrücklich PrivacyBee auswählen.  
-Gate 0 empfiehlt diese Auswahl **nicht**. Der Vertrag ist die Fail-closed-Grenze, nicht ein Implementierungsauftrag.
+Gilt nur, falls Product Owner + Legal + Security später ausdrücklich diese Swiss-PrivacyBee wählen.  
+Gate 0 empfiehlt **keine Aktivierung jetzt**.
 
 ---
 
 ## 1. Wahrheitshierarchie
 
-1. Jetnity bleibt einzige Source of Truth für Account, Session/Auth, Trip-Graph, Traveller/Party, Ownership, RLS, Identity und AP-6b-Consent-Version.
-2. AP-6a-Rechtstexte bleiben Jetnity-seitig und nur nach PO/Legal-Freigabe.
-3. PrivacyBee darf niemals still Identity-Authority, RLS-Authority, Traveller-Registry, Cookie-/Consent-SoT oder Speicher für Reise-/Dokumentdaten werden.
-4. Eine leere Vendor-Antwort ist kein Beweis, dass Jetnity keine Daten hat. Empty ≠ Error bleibt Jetnity-seitig.
+1. Jetnity bleibt SoT für Account, Auth, Trip-Graph, Traveller, Ownership, RLS und AP-6b.
+2. PrivacyBee darf höchstens **Website-sichtbare** DSE-/Impressum-/Cookie-UI hosten oder als Widget einbinden.
+3. PrivacyBee wird nicht Identity-, RLS-, Traveller- oder Account-Consent-Authority.
+4. Vendor-Marketing „DSG/DSGVO-konform“ wird nicht zu Jetnity-UI-Copy.
+5. Empty ≠ Error: ein totes Widget ist ein Fehler, keine „leere Privacy“.
 
-## 2. Erlaubte zukünftige Rolle (Maximum)
+## 2. Erlaubte spätere Rollen (Maximum)
 
-Nur eine der folgenden Rollen darf überhaupt diskutiert werden, und nur nach DPA/SCC + PO/Legal/Security-Gate:
-
-| Rolle | Erlaubt? | Bedingung |
+| Rolle | Default | Bedingung |
 | --- | --- | --- |
-| Processor für **DSAR-Ticket-Intake** (E-Mail + Request-Typ + Zeitstempel) | bedingt | Jetnity führt Access/Export/Delete selbst aus |
-| Processor für **Vendor-Risk-Metadaten ohne Personenbezug** (Firmennamen bestehender Infra-Vendor) | bedingt | keine Employee-PII, keine Nutzer-PII |
-| Cookie-Banner / Consent-Tag im Jetnity-Frontend | **nein** als Default | nur nach späterem Extra-Gate, und nur wenn Login/Scan/Commission nachweislich aus sind |
-| Consent-SoT / Preference-Syndication / Marketing-Unsubscribe-Hub | **nein** | würde AP-6b und Growth-Verträge ersetzen |
-| Employee External-Data-Privacy / Data-Broker-Removal für Reisende oder Gäste | **nein** | anderer Produktzweck; Traveller-PII-Verbot |
-| Authorized Agent, der gegenüber Dritten für Jetnity-Nutzer handelt | **nein** | Identity-/Vollmachts-Gate |
-| Trust Badge / Referral / Commission | **nein** | Produkt- und Trust-Konflikt |
+| DSE-Widget oder iFrame auf `/privacy` | bedingt | Legal akzeptiert PrivacyBee-Text **plus** Jetnity-Nachtrag für server-seitige/unübliche Verarbeitungen |
+| Impressum-Widget auf extra-freigegebener `/impressum` | bedingt | Pflichtfelder von Legal geprüft; keine erfundenen Firmenfakten; OpenAI-Residual akzeptiert |
+| Cookie-Banner via `cookie-banner.js` | **nein bis Tracker existieren** | Nur nach PO-Entscheid und nur für wirklich nicht-essenzielle Drittscripts |
+| Externer Link auf PrivacyBee-gehostete DSE | bedingt | Schwächer für UX/Canonical; noindex bleibt Jetnity |
+| `/terms` / Nutzungsbedingungen | **nein** | Kein PrivacyBee-Liefergegenstand |
+| AP-6b Export/Delete/Account-Consent | **nein** | Jetnity-nativ |
+| Autopilot als Entdecker von Traveller-/Auth-Daten | **nein** | Scanner sieht nur die öffentliche Website |
 
-## 3. Daten, die niemals ohne Extra-Gate fließen
+## 3. Pflicht-Nachtrag, den Jetnity selbst liefern muss
 
-Explizit **nicht freigegeben** und default-verboten:
+Bevor ein Widget live darf, muss Legal/Engineering schriftlich beschreiben (nicht der Scanner):
 
-- Pass-/Dokumentnummern, Scans, Bilder, MRZ, Biometrie, Chip/RFID;
-- gesetzliche Namen, Geburtsdaten, Gesundheits-/Impfdaten;
-- unnötige Citizenships, Residence, Credential-Optionen;
-- Auth-Secrets, Sessions, Recovery-Codes, MFA-Faktoren, AAL;
-- Payment-/Provider-Secrets, Affiliate-Tokens;
-- vollständiger Trip-Graph, Guest-`jetnity:reise:v3`, `model_usage`;
-- Admin-Support-PII-Exporte;
-- Kinder in `party` über das hinaus, was AP-6b später selbst exportiert.
+- Auth (E-Mail, Passwort, optionales `name`, Session-Cookies);
+- `profiles`;
+- Trip-Graph und trip-scoped Traveller ohne Nummer/Scan/MRZ;
+- Guest-LocalStorage `jetnity:reise:v3` und Quota-Cookie `jetnity_gast`;
+- `model_usage` (Hash, Kosten, keine Reiseinhalte);
+- Admin-PII-Sicht;
+- Infra-Kategorien Vercel/Supabase/GeoNames/optionale Modelle – nur tatsächlich live;
+- dass Analytics/Ads derzeit fehlen.
 
-Wenn AP-6b später exportiert, exportiert **Jetnity**. PrivacyBee erhält höchstens die Ticket-Metadaten, nicht das Exportpaket.
+Ohne diesen Nachtrag ist die generierte DSE für Jetnity **unzulässig unvollständig**.
 
-## 4. Daten, die in einer späteren Intake-Rolle überhaupt denkbar wären
+## 4. Daten, die niemals ohne Extra-Gate fließen
 
-Nur nach schriftlichem DPA und Minimierungsliste:
+Pass-/Dokumentnummern, Scans, MRZ, Biometrie, unnötige Citizenships, Auth-Secrets/Tokens, Payment-/Provider-Secrets, vollständiger Trip-Graph, Guest-Rohdaten, `model_usage`-Rohzeilen.
 
-- Jetnity-Account-E-Mail des Antragstellers **oder** ein transienter Request-Token;
-- Request-Typ (`access` / `deletion` / `rectification` / `other`);
-- Request-ID, Zeitstempel, Status (`received` / `in_progress` / `done` / `rejected`);
-- keine Traveller-Fakten, keine Reiseinhalte.
+Ein Website-Scan und ein Impressum-Generator dürfen diese Klassen nicht nachfordern.
 
-Zweckbindung: Betroffenenanfrage an Jetnity zustellen. Kein Scan, kein Broker-Removal, kein Upsell, kein Cross-Company-Preference-Graph.
+Besucher-Consent-Logs (IP/UA) entstehen erst, wenn der Banner gemountet wird. Das ist ein eigener PO/Legal-Entscheid.
 
-## 5. Technische Integrationsgrenze
+## 5. Technische Grenze (falls später gebaut)
 
-Falls jemals gebaut (nicht dieser Slice):
+1. Kein Trial/Signup in einem Audit- oder Runtime-Slice ohne ausdrückliches Kosten-/AVV-Gate. Trial schliesst den AVV.
+2. Scripts nur über dokumentierte `app.privacybee.io`-URLs; keine `NEXT_PUBLIC_` Secrets.
+3. Cookie-Banner, falls je: erstes Head-Script, aber **nicht** bevor Tracker existieren.
+4. CSP/SRI/Timeout/Kill-Switch. Fail-closed: Vendor down ⇒ Legal-Seite zeigt ehrlichen Fehler, keinen leeren 200.
+5. Kein Autopilot-Block auf essenzielle Auth-/First-Party-Scripts ohne Test.
+6. `window.PrivacyBee` darf Register-Checkbox oder AP-6b nicht ersetzen.
+7. robots/canonical/noindex bleiben Jetnity-Helfer. Widgets ändern das Indexing-Gate nicht.
+8. Search #168, Homepage, AP-7, DB/RLS/Auth unberührt.
+9. V1-`CookieConsent` nicht parallel mounten.
 
-1. Kein Browser-Tag, kein Cookie-Banner-Mount, kein `CookieConsent`-Ersatz durch PrivacyBee.
-2. Kein Client-Secret, kein `NEXT_PUBLIC_` Vendor-Key.
-3. Nur serverseitiger, authentisierter Adapter hinter bestehendem Auth/Ownership.
-4. Timeout, Rate-Limit, Kill-Switch, kein unbegrenzt kostenpflichtiger Pfad.
-5. Fail-closed: Vendor down ⇒ Jetnity-DSAR-Inbox bleibt lokal bedienbar.
-6. Webhook nur mit Signaturprüfung, falls eine API überhaupt first-party belegt wird. Heute: **unknown / vendor-confirmation-required**.
-7. Keine stille Abhängigkeit in Register/Login/Footer.
-8. Search/Places/Homepage und AP-7 bleiben unberührt.
+## 6. Rechtliche Vorbedingungen
 
-## 6. Rechtliche Vorbedingungen vor jeder Aktivierung
+1. PO/Legal schliesst die AP-6a-Input-Matrix mindestens für Controller, Adresse, Kontakt, `/impressum` ja/nein, Konformitätszeile.
+2. AVV 2.0 + Anlage 2 + Anlage 1 + OpenAI-TIA **gelesen und bewusst akzeptiert** – nicht durch Agenten.
+3. Legal akzeptiert: automatisierte, nicht einzeln geprüfte Texte; Abmahngarantie-Deckel CHF/EUR 5’000; Ausschluss server-seitiger Lücken; 5-Jahre-Exit-Verbot; Jahresabo.
+4. Schweizer Recht / Bern vs. Jetnity-Rechtsraum: Legal.
+5. Keine Übernahme der Vendor-Konformitätsbehauptung in Login/Register.
 
-Alles `PO-Legal-Security-approval-required`:
+Dieser Audit akzeptiert ALB und AVV **nicht**.
 
-1. Schriftliche DPA mit Processor-Rolle, TOMs, Subprocessor-Kontrolle.
-2. Benanntes Transferinstrument USA (SCC und/oder CH-Äquivalent) – heute öffentlich **nicht** belegt.
-3. Keine Commission-/Referral-Addenda (§2.7 Terms) für Jetnity-Nutzer.
-4. Keine Direct-to-Participant-Services für Jetnity-Endnutzer.
-5. Exit: Export + Löschung + Subprocessor-Purge innerhalb einer benannten Frist.
-6. Breach-Notice-Frist, die Legal für CH-DSG/GDPR akzeptiert; „promptly“ allein reicht nicht als implizite SLA.
-7. Georgia-Gerichtsstand vs. Jetnity-Rechtsraum: Legal muss das tragen oder neu verhandeln.
-8. Keine Konformitätszeile „DSGVO & CH-DSG konform“ als Folge der Integration.
+## 7. AP-6a / AP-6b / Vendor
 
-Dieser Audit akzeptiert die Business Terms **nicht**.
-
-## 7. Trennung AP-6a / AP-6b / Vendor
-
-| Arbeit | Wann | Vendor-Anteil |
-| --- | --- | --- |
-| AP-6a Legal-Seiten | nach Content-Gate, unabhängig von PrivacyBee | **0** |
-| CookieConsent Orphan/löschen/ehrlicher Text | PO-Entscheid in AP-6a-Matrix | **0** |
-| AP-6b Consent-Version, Export, Delete | serial nach AP-6a; PO-Gate | **0** als SoT |
-| Optionaler PrivacyBee-Intake | nur nach diesem Vertrag + Extra-Gates | Ticket-Metadaten |
-| Employee-EDP für Jetnity-Team | eigener PO-Entscheid, nicht Consumer-Runtime | getrenntes Briefing |
+| Arbeit | Vendor |
+| --- | --- |
+| AP-6a `/privacy` nach Content-Gate | optional Widget + Jetnity-Nachtrag |
+| AP-6a `/terms` | **0** |
+| `/impressum` | nur nach Extra-Input |
+| CookieConsent Orphan/löschen/Banner | PO; Banner ≠ Default |
+| AP-6b | **0** |
+| Traveller/Account-SoT | **0** |
 
 ## 8. Traveller-Context
 
-Nicht relevant für einen DSAR-Intake **solange** keine Traveller-Fakten übertragen werden.
+Nicht relevant für ein Website-Widget, **solange** keine Traveller-Fakten übertragen oder in die DSE als Identitäten geschrieben werden.
 
-Relevant und **verboten**, sobald Citizenship, Dokumenttyp, Residence oder Party-Labels den Vendor erreichen: Mehrfachstaatsangehörigkeit darf nicht auf eine Option reduziert und nicht extern materialisiert werden.
+Relevant und verboten: Mehrfachstaatsangehörigkeit, Dokumentoptionen oder Residence als Vendor-Input.
 
 ## 9. Exit / Failure
 
-- Kill-Switch entfernt jede serverseitige Weiterleitung.
-- Offene Tickets werden in Jetnity zu `unsupported` / manuell, nicht still als „erledigt“ geschlossen.
-- Keine automatische Verlängerung darf Runtime am Leben halten, wenn der Kill-Switch gezogen ist.
-- Commission- oder Badge-Reste dürfen nicht als tote Scripts weiterlaufen.
+- Kill-Switch entfernt alle `app.privacybee.io`-Scripts.
+- `/privacy` darf dann nicht 200 mit leerem Widget bleiben.
+- Generierte Texte nicht nach Exit weiterhosten (ALB 7.4, 5 Jahre).
+- Consent-Logs: Löschung nach ALB 7.5 / AVV §10 verlangen, nicht still behalten.
+- AP-6b und Register bleiben bedienbar.
 
-## 10. Was dieser Vertrag ausdrücklich nicht ist
+## 10. Was dieser Vertrag nicht ist
 
-- keine Vendor-Auswahl;
-- keine Kostenfreigabe;
-- keine Runtime-Erlaubnis;
-- keine Freigabe für Passport-/Scan-/MRZ-/Biometrie-Daten;
-- kein Start von AP-6a-Runtime, AP-6b oder einem Folgeslice.
+Keine Vendor-Auswahl, keine Kostenfreigabe, kein Trial, keine Runtime, keine Freigabe sensibler Traveller-Daten, kein Start von AP-6a-Runtime oder AP-6b.

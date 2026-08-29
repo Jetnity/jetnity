@@ -1,4 +1,4 @@
-# Jetnity – PrivacyBee Vendor Gate 0 Self-Review
+# Jetnity – PrivacyBee Schweiz Vendor Gate 0 Self-Review
 
 Stand: 29. August 2026  
 Autor-Agent: **`Privacy provider integration audit 1`**  
@@ -7,58 +7,59 @@ Cloud-Run: https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: Gate 0 nach `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md` und Issue #169 auf Draft-PR #171. Baseline `6083ee63`.
+Auftrag: korrigierter Task `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md` (Swiss `privacybee.io`) und Issue #169 auf Draft-PR #171. Baseline `6083ee63`.
 
-Geprüft gegen den tatsächlichen Dateisatz: Task plus Status, Fit/Gap-Matrix, Integrationsvertrag, dieses Self-Review, Handoff.
+Geprüft: Status, Fit/Gap, Integrationsvertrag, dieses Self-Review, Handoff. Nur versionierte Audit-Docs. Keine Runtime, keine Shared Continuity, kein Search #168.
 
-Erwartete Diff-Klasse: nur versionierte Vendor-/Privacy-Audit-Docs. Keine Runtime, keine Shared Continuity, kein Search #168.
+Ein früherer Irrläufer gegen `privacybee.com` wurde **nicht** als Swiss-Truth wiederverwendet. Die Disambiguation steht in Status und Handoff.
 
 ## 2. Adversarial Fragen
 
 | Frage | Ergebnis |
 | --- | --- |
-| Wurde ein PrivacyBee-Account, Order, Abo oder paid call erzeugt? | Nein. Nur öffentliche HTTP-GETs. |
-| Wurden Terms/DPA/SCC akzeptiert? | Nein. DPA-URLs sind 404; Terms nur gelesen. |
-| Wurde ein API-Key oder Secret angelegt? | Nein. |
-| Wurden User-Daten übertragen? | Nein. |
-| Wurde Runtime, Cookie-Banner oder Legal-Copy geändert/erzeugt? | Nein. |
-| Wurden Search #168 / Homepage / AP-7 / DB / RLS / Auth angefasst? | Nein. |
+| Wurde das US-Produkt als Ziel bewertet? | Nein. TARGET ist PrivacyBee AG / `privacybee.io`. |
+| Wurde ein Trial/Signup/Order/paid call erzeugt? | Nein. AVV entstünde automatisch – deshalb bewusst kein Trial. |
+| Wurden ALB/AVV akzeptiert? | Nein. Nur gelesen. |
+| Wurden User-Daten übertragen oder Runtime geändert? | Nein. |
+| Wurde Search #168 / Homepage / AP-7 / DB / Auth angefasst? | Nein. |
 | Wurden Shared Continuity-Dateien mutiert? | Nein. |
-| Wurden unbelegte API-/Preis-/DPA-/SLA-Fakten als wahr behauptet? | Nein. Als `unknown / vendor-confirmation-required` oder `quote-required / unknown` markiert. |
-| Wurden Consumer-Preise als Business-Integrationspreis verwendet? | Nein. Explizit getrennt. |
-| Wurden Passport/Scan/MRZ/Biometrie als für PrivacyBee freigegeben dargestellt? | Nein. Default-verboten. |
-| Wurde Jetnity-SoT an den Vendor abgegeben? | Nein. Vertrag verbietet das. |
-| Wurde Rechtskonformität (DSG/GDPR) behauptet? | Nein. |
-| Wurde Integration oder ein Folgeslice gestartet? | Nein. |
-| Wurde Ready/Merge empfohlen? | Nein. STOPP für unabhängigen TL-Review. |
-| Wurde Generation 2 wegen UI-Titel erfunden? | Nein. Sichtbarer Titel `PrivacyBee vendor audit`, non-blocking. |
-| Wurde „100% Free“ als Kostenvertrag übernommen? | Nein. Marketing vs. Terms-Fees getrennt. |
+| Wurden unbelegte Anlage-2-/TOM-/API-Fakten als wahr behauptet? | Nein. `unknown / vendor-confirmation-required`. |
+| Wurde CHF 54.90 live re-verifiziert? | Ja, Preis-Seite HTTP 200 am 2026-08-29. |
+| Wurden Consumer-US-Preise verwendet? | Nein. |
+| Wurden Passport/Scan/MRZ/Biometrie freigegeben? | Nein. |
+| Wurde AP-6b dem Vendor zugeordnet? | Nein. First-Party belegt das nicht. |
+| Wurde `/terms` als PrivacyBee-Lieferung behauptet? | Nein. |
+| Wurde Vendor-„100 % konform“ zu Jetnity-Wahrheit? | Nein. |
+| Wurde Integration oder Folgeslice gestartet? | Nein. |
+| Ready/Merge empfohlen? | Nein. STOPP für TL-Review. |
+| Generation 2 wegen UI-Titel oder Vendor-Korrektur? | Nein. Dieselbe Generation 1 / dieselbe Session. |
 
-## 3. Proaktive Funde, die nicht still geschlossen wurden
+## 3. Proaktive Funde, nicht still geschlossen
 
-1. **Produktkategorie-Mismatch.** PrivacyBee-Business-Kern ist Employee External-Data-Privacy / Data-Broker-Removal. Consent Core und Cookie Consent sind Zusatz-Apps mit Leadgen-/Commission-Modell.
-2. **Visitor-Login + Exposure-Scan** ist first-party belegt. Das ist der härteste Fit-Breaker, nicht ein fehlendes Feature.
-3. **Alle gelisteten Subprocessors USA**, öffentliche DPA 404. Für ein schweiz-erstes Consumer-Produkt ist das ein Transfer-Gate, kein Detail.
-4. Öffentliche App-Releases **2022/2023** bei 2026-Abruf. Live-Produktreife bleibt unknown.
-5. PrivacyBees eigene Cookie-Leiste sagt „We use cookies to measure ads“, während Policy/Trust „zero ad-tech“ behauptet. Das ist ein Vendor-Site-Residual, keine Jetnity-Runtime-Änderung.
-6. AP-6a-404 und die unbelegte Konformitätszeile bleiben; dieser Vendor heilt sie nicht.
+1. **Server-seitige Lücke ist der eigentliche Fit-Breaker**, nicht der Preis. Jetnity ist kein Durchschnitts-CMS.
+2. **Trial = AVV.** Jeder „nur mal testen“-Schritt ist ein Vertragsschluss.
+3. **OpenAI im Impressum** ist first-party belegt (mittleres TIA-Residual). Extra-Gate, nicht Kleinigkeit.
+4. **ALB 8.6** (keine vertragliche Hack-Meldepflicht) steht in Spannung zu **AVV §9** (48-Stunden-Breach). Legal muss das lesen.
+5. **5-Jahre-Exit-Verbot** macht einen späteren Vendor-Wechsel teuer, weil Texte nicht mitgenommen werden dürfen.
+6. Cookie-Banner ohne Tracker erzeugt neuen Besucher-PII-Fluss (IP/UA). Heute kein Bedarf.
+7. `/terms` bleibt unabhängig vom Vendor eine Legal-Lücke.
 
-## 4. Was der Autor bewusst nicht getan hat
+## 4. Bewusst nicht getan
 
-- Kein zweiter CMP-Vendor-Audit (OneTrust, Cookiebot, …). Für die Architekturaussage reicht: native AP-6a/6b ist die kleinere, wahrheitsfeste Option.
-- Kein Signup, um hinter Login APIs zu sehen. Das wäre Vendor-Aktivierung.
-- Keine Zertifikats-PDFs von SOC2/ISO angefordert.
-- Kein Production-Write, kein Preview-HTML-Inhalt als Legal-Beweis (Preview ist SSO-geschützt).
+- Kein Trial, um hinter Login Anlage 2 zu sehen.
+- Kein zweiter CMP-Vendor-Audit.
+- Kein Browser-Mount der Scripts.
+- Keine TOM-/TIA-PDFs angefordert (wäre Vendor-Kontakt/Aktivierung).
 
-## 5. Risiken, die bleiben
+## 5. Residuals
 
-- Authoring-Push erzeugt einen neuen Head und invalidiert Task-only-Gates auf `f4e0707e`.
+- Authoring-Push invalidiert Prior-Heads.
 - `main` `protected=false`.
 - Agent-Self-Review ist kein PASS.
-- Vendor-Marketing kann sich nach dem Abrufdatum ändern; Live-Evidence dieses Runs ist 2026-08-29T09:28Z.
+- Vendor-Copy kann sich nach 2026-08-29T09:32Z ändern.
 
-## 6. Urteil des Autors
+## 6. Urteil
 
-Gate-0-Acceptance aus dem Task ist aus Autorensicht erfüllt: Jetnity-Ist rekonstruiert, First-Party-Fakten datiert, Fit/Gap über 13 Achsen, kleinster sicherer Zukunftsvertrag, sensible Daten nicht freigegeben, Kosten `keine` / Zukunft `quote-required / unknown`, keine verbotene Grenze verletzt.
+Acceptance aus dem korrigierten Task ist aus Autorensicht erfüllt: Swiss-First-Party datiert, Jetnity-Ist rekonstruiert, 16 Fit/Gap-Achsen, Zukunftsvertrag, sensible Daten nicht freigegeben, Kosten `keine` plus belegter Listenpreis, Disambiguation vorhanden, keine verbotene Grenze verletzt.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ist kein PASS.**

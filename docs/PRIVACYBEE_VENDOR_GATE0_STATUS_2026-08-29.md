@@ -1,4 +1,4 @@
-# Jetnity – PrivacyBee Vendor Gate 0 Status
+# Jetnity – PrivacyBee Schweiz Vendor Gate 0 Status
 
 Stand: 29. August 2026  
 Status: **IMPLEMENTIERT / AUDIT + ARCHITECTURE + VENDOR-EVIDENCE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
@@ -11,7 +11,17 @@ Task: `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md`
 
 > Live-Evidence gewinnt. Dieses Dokument ist kein PASS. Kein Ready. Kein Merge. Keine PrivacyBee-Aktivierung. Kein AP-6a-Runtime. Kein AP-6b. Kein Search-#168.
 
-## 0. Naming evidence
+## 0. Vendor-Identität (bindend)
+
+| | TARGET | NICHT TARGET |
+| --- | --- | --- |
+| Produkt | Schweizer Website-Datenschutz: DSE, Cookie-Banner, Impressum | US Consumer Data-Broker-Removal |
+| Domain | `privacybee.io` / `app.privacybee.io` / `support.privacybee.io` | `privacybee.com` / `business.privacybee.com` |
+| Rechtsträger | **PrivacyBee AG** (CH); öffentlich genanntes Betreiberverhältnis: Domenig & Partner Rechtsanwälte AG + Digital Innovation Lab AG | Privacy Bee, LLC (US) |
+
+US-`privacybee.com`-Fakten aus einem früheren Irrläufer dieses Slices sind **ungültig** für die Zielbewertung und werden hier nicht als Swiss-Truth wiederverwendet.
+
+## 1. Naming evidence
 
 | Feld | Wert |
 | --- | --- |
@@ -22,205 +32,154 @@ Task: `docs/PRIVACYBEE_VENDOR_GATE0_TASK_2026-08-29.md`
 | Exact Run-ID | `bc-294ba965-a57a-4590-a98c-e11f079bc7ae` |
 | Rename-/Title-Fähigkeit | **keine** in den verfügbaren Cursor-Namespaces |
 | Regel | `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md` |
-| Generation | **1 bleibt 1.** Keine Generation 2 wegen UI-Titel. |
+| Generation | **1 bleibt 1.** Vendor-Korrektur bleibt dieselbe Session. |
 
 Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 
-## 1. Live-Rekonstruktion
+## 2. Live-Rekonstruktion
 
 | Feld | Wert |
 | --- | --- |
 | Repository | `Jetnity/jetnity` |
-| Task-Baseline / live `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` – Merge PR #167 |
+| Task-Baseline / live `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
 | Branch | `audit/privacybee-vendor-gate0-2026-08-29` |
-| Merge-Base | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
-| Ahead / Behind vor Authoring | **1 / 0** (Task-Commit `f4e0707e`) |
+| Merge-Base | `6083ee63` |
 | Draft-PR | #171 OPEN / Draft |
 | Parallel runtime | PR #168 OPEN Draft – **nicht berührt** |
-| `main` Branch Protection | live `protected=false`; unverändert |
-| Supabase | **nicht** abgefragt, **nicht** mutiert |
-| Browser / Real-Device | **nein** – Docs/First-Party-Fetch/HTTP |
-| Mutating Runtime | **keine** |
-| PrivacyBee Signup / Order / Secret | **keine** |
+| `main` protected | live `false` |
+| Supabase | nicht abgefragt, nicht mutiert |
+| PrivacyBee Signup / Trial / Zahlung | **keine** |
+| Browser / Real-Device | **nein** |
 
-### 1.1 Production-Legal auf dem Alias (dieser Run)
+Production-Alias `https://jetnity-app.vercel.app` (2026-08-29): `/` 200 `data-dpl-id=dpl_GntXsgcdUN8cQKqHPqnpB6jUEfZz`; `/privacy` `/terms` **404**; `/register` 200.
 
-Production-Alias `https://jetnity-app.vercel.app`, abgerufen 2026-08-29T09:28Z:
+## 3. Jetnity Current Truth
 
-| Pfad | HTTP | Bemerkung |
+Unverändert gegenüber AP-6a Gate 0, live bestätigt:
+
+| Fläche | Klasse |
+| --- | --- |
+| `/privacy` `/terms` Pages | **fehlend / 404** |
+| Register-Checkbox | Client-only; Links auf 404; nicht in Auth persistiert |
+| Login/Register-Copy | unbelegte „DSGVO & CH-DSG konform“ |
+| Footer Legal-Links / `/impressum` | fehlen / 404 |
+| `CookieConsent` | Orphan; V1-Text Views/Likes; nicht gemountet |
+| Analytics/Ads-SDK | **nicht gefunden** |
+| Consumer-Export/Delete | **fehlend** (AP-6b) |
+| Traveller-Dokumente | trip-scoped, keine Nummer/Scan/MRZ/Biometrie |
+| Controller / Rechtsform / Adresse | **fehlend** (PO + Legal) |
+
+Trennung bleibt:
+
+| Schicht | Owner | PrivacyBee-Anteil |
 | --- | --- | --- |
-| `/` | **200** | `data-dpl-id=dpl_GntXsgcdUN8cQKqHPqnpB6jUEfZz` |
-| `/register` | **200** | verlangt Legal-Zustimmung zu 404-Zielen |
-| `/privacy` | **404** | `x-matched-path: /404` |
-| `/terms` | **404** | `x-matched-path: /404` |
-| `/robots.txt` | **200** | fail-closed deny bleibt AP-6a-/Indexing-Wahrheit |
+| AP-6a Website-DSE / Impressum / Cookie-UI | Jetnity + PO/Legal | **möglicher späterer Website-Helfer**, kein Runtime jetzt |
+| `/terms` Nutzungsbedingungen | Jetnity + Legal | **kein** PrivacyBee-Produkt |
+| AP-6b Consent-Version, Account-Export, Kontolöschung | Jetnity | **kein** PrivacyBee-Ersatz |
+| Account / Trip / Traveller / RLS / Auth | Jetnity | **niemals** |
 
-Dieser Slice behebt den 404 nicht.
+## 4. Swiss PrivacyBee First-Party Current Truth
 
-## 2. Task / Scope / Non-Scope
+Abruf 2026-08-29T09:32Z. Nicht Belegtes = `unknown / vendor-confirmation-required`.
 
-**Scope:** Fit/Gap, Risiken, Transfer-/Security-Grenzen, Kosten-Evidence und kleinster sicherer zukünftiger Integrationsvertrag. First-Party-Vendor-Evidence plus aktuelle Repository-Wahrheit.
+### 4.1 Produkt
 
-**Non-Scope (hart):** keine PrivacyBee-Anmeldung/Order/Abo; kein Terms/DPA/SCC-Accept; kein API-Key; keine User-Datenübertragung; keine Runtime; kein Cookie-Banner-Mount; keine Rechtstexte; kein AP-6a-/AP-6b-Runtime; keine DB/RLS/Auth/Identity; kein Search #168 / Homepage #110; kein AP-7; kein paid call.
+PrivacyBee AG analysiert die live Zieldomain, erkennt eingebundene **Drittdienste** und generiert (a) Datenschutzerklärung, (b) Impressum, (c) Cookie-Consent-Banner. Rescan öffentlich **alle 8 Wochen**. Textbausteine juristisch gepflegt. Cookie-Banner erfasst bei jedem Besuch Drittdienste und verwaltet Einwilligungen. Inhalte liegen auf PrivacyBee-Servern; Einbindung als Dritt-Script (`app.privacybee.io`).
 
-Shared Continuity-Dateien (`JETNITY_HANDOFF.md`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`) wurden **nicht** geändert, um Kollision mit PR #168 zu vermeiden.
+Lizenzbedingungen **zuletzt aktualisiert 10. Juni 2026**. ALB Ziff. 4.1: geeignet für **Durchschnittswebseitenbetreiber ohne unübliche Datenbearbeitungen**; deckt **nur Website-Pflichten** der Zieldomain; befreit nicht von übrigen organisatorischen Datenschutzpflichten.
 
-## 3. Jetnity Current Truth (Account / Privacy / Consent / Traveller)
+Generierte Inhalte werden **nicht einzeln nachgeprüft** (ALB 3.1). Gewähr für Richtigkeit/Vollständigkeit **ausgeschlossen**, ausser begrenzter Abmahngarantie (ALB 5.2 / 8.7, max. CHF/EUR 5’000). Server-seitige und bot-/CDN-versteckte Verarbeitungen sind **kein** Garantiefall.
 
-Quelle: aktueller Branch-Code plus AP-6a Gate 0 auf `main` (PR #167 / Baseline `6083ee63`). Live-404 dieses Runs bestätigt die AP-6a-Rekonstruktion.
+### 4.2 Integration (Next.js / Vercel)
 
-| Fläche | Klasse | Befund |
+First-party Support (Artikel geändert 2. Juni; CMS-Artikel 7. Januar): plattformunabhängig, sobald Script/HTML oder externer Link möglich ist. Offizielles Plugin nur WordPress. Empfohlene Scripts:
+
+- `https://app.privacybee.io/cookie-banner.js` – jede Seite, zuerst im `head`
+- `https://app.privacybee.io/widget.js` – nur DSE-Seite
+- `https://app.privacybee.io/imprint-widget.js` – nur Impressum-Seite
+
+Alternativen: iFrame oder Link auf extern gehostete DSE. Cookie-API: `privacybee:ready`, `privacybee:consent-changed`, `window.PrivacyBee` (Support 27. Mai). Kategorien folgen Google Consent Mode v2.
+
+Kein öffentliches Next.js-Rezept. Kein serverseitiges Webhook-Produkt für Account-DSAR belegt.
+
+### 4.3 Recht / Transfer / Security
+
+| Thema | Evidence | Klasse |
 | --- | --- | --- |
-| `/privacy` `/terms` Pages | **fehlend / 404** | keine `app/**/privacy` oder `app/**/terms` |
-| Register-Checkbox + Links | **belegt / broken link** | Pflicht-Checkbox; Consent wird **nicht** an `signUp` geschrieben |
-| Register OAuth | **Residual / disabled** | `handleOAuth` prüft `accept` nicht; Google/Apple `enabled = false` |
-| Login/Register-Copy | **unbelegte Behauptung** | „DSGVO & CH-DSG konform.“ |
-| Footer / Navbar Legal-Links | **fehlen** | Footer zeigt `info@jetnity.ch`, nicht als Controller |
-| `CookieConsent` | **Orphan** | `jetnity:cookie-consent:v1`; V1-Text Views/Likes; nicht gemountet |
-| Consent-DB / Persistenz | **fehlend** | AP-6b |
-| Consumer-Export / Kontolöschung | **fehlend** | AP-6b |
-| Analytics / Ads SDK | **nicht gefunden** | kein gtag/plausible/posthog/vercel-analytics in App-Quellen |
-| Traveller-Dokumente | **datensparsam / trip-scoped** | Typ + Issuer + Ablauf; **keine** Nummer/Scan/MRZ/Biometrie |
-| Account-Registry | **Domain-Contract only** | sensible Schlüssel fail-closed abgewiesen; Persistenz extra gegatet |
-| Controller / Rechtsform / Gerichtsstand | **fehlend** | PO + Legal |
+| AVV | öffentlich; Version 2.0, Stand **10. Juni 2026**; schema `dateModified` 2026-06-22; Art. 28 DSGVO + Art. 9 DSG | **belegt**, **nicht akzeptiert** |
+| Rollen | Kunde = Verantwortlicher; PrivacyBee = Auftragsverarbeiter | **belegt** |
+| AVV-Abschluss | automatisch bei Trial oder Active-Lizenz | **belegt** – deshalb **kein Trial in diesem Slice** |
+| Verarbeitungsort | primär CH und/oder EWR; EWR→CH via Angemessenheit | **belegt** |
+| OpenAI | Impressum Use Case B; TIA-2026-001-OpenAI Stand 22. Mai 2026; Restrisiko **mittel**; SCC 2021/914; FISA 702 / CLOUD Act Residual | **belegt** |
+| Anlage 2 Subunternehmer | Version 1.1, Stand 22. Mai 2026; **Liste selbst nicht im öffentlichen Fliesstext** | **unknown / vendor-confirmation-required** ausser OpenAI |
+| Anlage 1 TOMs | nur auf Anfrage | **unknown / vendor-confirmation-required** |
+| Breach-Notice | AVV §9: unverzüglich, **spätestens 48 Stunden** | **belegt** |
+| Consent-Daten | Einwilligungen + IP, Zeitstempel, User-Agent, Gerät/Browser | **belegt** |
+| Retention nach Ende | ALB 7.5: 1 Jahr; auf Wunsch Löschung innert 30 Tagen | **belegt** |
+| Exit-Nutzungsverbot | 5 Jahre auf generierte Inhalte | **belegt** |
+| Verfügbarkeit | 99 % Jahresdurchschnitt; Wartung ausgenommen | **belegt** |
+| Recht / Forum | Schweizer Recht, Gerichtsstand **Bern** | **belegt** |
+| SLA Support-Reaktionszeit | nicht öffentlich | **unknown / vendor-confirmation-required** |
+| Zertifizierungen (SOC2/ISO) | auf Swiss-First-Party-Seiten nicht belegt | **unknown / vendor-confirmation-required** |
 
-AP-6a, AP-6b und ein externer Vendor bleiben getrennt:
+### 4.4 Preis (live re-verified)
 
-| Schicht | Owner | Darf PrivacyBee werden? |
-| --- | --- | --- |
-| AP-6a Legal-Content `/privacy` `/terms` | Jetnity + PO/Legal | **Nein.** Keine Vendor-Rechtstexte, keine Konformitätsbehauptung. |
-| AP-6b Consent-/Export-/Delete-Runtime | Jetnity Account/Ownership/RLS | **Nein als Source of Truth.** Höchstens späterer optionaler Intake hinter Extra-Gates. |
-| Account / Trip / Traveller / Identity | Jetnity | **Niemals.** |
-| Employee External-Data-Privacy / Data-Broker-Removal | eigener Produktnutzen, nicht Consumer-Stack | Nur nach späterem PO-Entscheid; nicht dieser Slice. |
+https://www.privacybee.io/de-ch/preis/ HTTP 200, 2026-08-29T09:32Z:
 
-## 4. PrivacyBee First-Party Current Truth
+**CHF 54,90 pro Jahr und Domain (zzgl. MWST)** für Endkunden. 14 Tage testen, keine Kreditkarte laut Home. Partner/Agentur: bis 25 % Kickback – **andere Ökonomie**, nicht Jetnity-Preis. ALB: Preise jederzeit änderbar; Jahresabo; keine Erstattung der angebrochenen Periode; Mahngebühren; Sperre ab 30. Verzugstag.
 
-Abgerufen 2026-08-29T09:28Z. Nur öffentlich belegte Fakten. Nicht Belegtes = `unknown / vendor-confirmation-required`.
+Zusätzliche nicht im Listenpreis genannte Kosten (mehrere Domains/Previews, Custom Legal, Inspektionen): **unknown / vendor-confirmation-required**.
 
-### 4.1 Wer / wo
+## 5. Fit-Entscheidung
 
-| Fakt | Evidence | Klasse |
-| --- | --- | --- |
-| Rechtsträger `Privacy Bee, LLC` | Business Terms; Schema auf privacybee.com | **belegt** |
-| HQ Atlanta / Alpharetta, GA, USA | Subprocessor-Seite; Trust; Schema-Adresse `3955 Marconi Dr, Floor 2, Alpharetta, GA 30005, US` | **belegt** (Schema/Marketing) |
-| Contacts `legal@` / `security@` / `support@privacybee.com` | Privacy Policy / Subprocessors | **belegt** |
-| Consumer-Kernprodukt | Data-Broker / People-Search Removal; Pricing Essentials/Pro/Signature | **belegt** |
-| Business-Kernprodukt | External Data Privacy für Employees (Exposure, Poach, Doxxing, Spear Phishing) | **belegt** |
-| Zusätzliche Business-Apps | Consent Core; Vendor & Cookie Consent; VRM; Trust Badge; EDPA | **belegt** (Marketing-Seiten, Releases 2022–2023) |
+Swiss PrivacyBee **passt zur Website-Schicht** (DSE + optionales Impressum + optionaler Cookie-Banner), **nicht** zur Account-/Traveller-/AP-6b-Schicht.
 
-### 4.2 Consent / Cookie / DSAR (die für Jetnity relevanten Apps)
+**Jetzt nicht aktivieren.** Gründe:
 
-**Vendor & Cookie Consent** (`https://business.privacybee.com/apps/vendor-cookie-consent/`, schema `dateModified` 2023-07-05; App-Version 2.4.0, Latest Release 2/14/23):
+1. Jetnity hat **unübliche und server-seitige** Verarbeitungen (Auth, Trip-Graph, Traveller, Guest-Storage, `model_usage`, Admin-PII). Der Scanner sieht die live Website, nicht die Datenbank. ALB verlangt Meldung solcher Lücken; die Abmahngarantie gilt dafür nicht.
+2. Controller-Identität / ladungsfähige Adresse fehlen. Ein generiertes Impressum aus „öffentlichen Quellen“ kann das nicht wahr machen.
+3. `/terms` (Nutzungsbedingungen) ist **kein** PrivacyBee-Liefergegenstand.
+4. Heute gibt es **keine** Analytics-/Ad-Scripts. Ein Banner auf jeder Seite wäre ein neuer Dritt-Processor (Consent-IP) ohne bestehenden Tracker-Zweck.
+5. DSE-Texte sind urheberrechtlich PrivacyBee; Copy-Paste verboten. Runtime wäre Widget/iFrame/externer Link, nicht Jetnity-eigene Rechtstexte.
+6. Vendor-Marketing „100 % DSG+DSGVO-konform“ darf Jetnity nicht als eigene Behauptung übernehmen. Kunde bleibt verantwortlich (ALB 8.1, Home-FAQ).
 
-- Marketing: „100% Free“; Tag auf die Site pasten; Vendor-Trust-Präferenzen merken.
-- **Härter Befund:** „Whenever a visitor saves their preferences, they create a free Privacy Bee login, which offers them upsell opportunities to a paid license.“ PrivacyBee scannt danach „personal privacy exposures“.
-- Commission an den Publisher bei Upgrade/Renewal.
-- Terms §2.6 verlangen JS/Cookie-Banner-Installation für diese Services.
+Native Alternative bleibt gültig: AP-6a mit PO/Legal-Texten; CookieConsent Orphan bis ehrlichem Bedarf; AP-6b native.
 
-**Consent Core** (`https://business.privacybee.com/apps/consent-core/`, schema `dateModified` 2023-06-28; App-Version 2.6.0, Latest Release 11/7/22):
-
-- Marketing: DSAR-Intake/Tracking, E-Mail-Unsubscribes, org-wide Consent-Logging, CMP-Ersatz, „100% Free“.
-- Derselbe Commission-/Consumer-Login-Pfad: Preference-UI kann PrivacyBee-Login anbieten; Unsubscribe kann auf eine „External Privacy Preferences“-Seite umleiten.
-
-Diese öffentlichen App-Seiten sind **Marketing**, kein API-Vertrag, kein DPA, keine SLA.
-
-### 4.3 Vertrag / Transfer / Security
-
-| Thema | Public Evidence | Klasse |
-| --- | --- | --- |
-| Business Terms | Last Modified **January 5, 2024**; Schema `dateModified` 2025-08-20; HTTP 200 am 2026-08-29 | **belegt** als öffentliche AGB, **nicht akzeptiert** |
-| Consumer Privacy Policy | Last Updated **June 10, 2026**; HTTP 200 | **belegt** |
-| Consumer Terms | Last Updated **August 21, 2026**; HTTP 200 | **belegt** |
-| Cookie Policy | Last Updated **August 14, 2026**; HTTP 200 | **belegt** (PrivacyBees eigene Site, nicht Jetnity) |
-| Subprocessors | „Last updated: **August 2026**“; alle gelisteten Data Locations = **United States** | **belegt** |
-| Public DPA | `https://privacybee.com/dpa/` und `https://business.privacybee.com/dpa/` = **HTTP 404** | **unknown / vendor-confirmation-required** |
-| Public SCC / CH-Transferinstrument | nicht gefunden | **unknown / vendor-confirmation-required** |
-| Public SLA | nicht gefunden; Terms disclaimen Downtime | **unknown / vendor-confirmation-required** |
-| Public API / Webhook / Developer-Docs | `https://privacybee.com/developers/` 404; `https://docs.privacybee.com/` ohne nutzbare öffentliche Docs in diesem Run; `https://api.privacybee.com/` 302 → Auth | **unknown / vendor-confirmation-required** |
-| Business-Preisliste | `https://business.privacybee.com/pricing/` **404**; Terms: Participant-Lizenzen + Order + custom proposal; Auto-Renew 1 Jahr | **quote-required / unknown** |
-| Consumer-Preise | Essentials **USD 8**/Mo, Pro **16**, Signature **67** (annual approx.) | **belegt, aber nicht Business-Integrationspreis** |
-| SOC 2 Type II / ISO 27001 | Trust-Seite, reviewed July 2026; Badge „AICPA SOC2 Certified“ | **vendor-published claim**; Zertifikat/Report **nicht** unabhängig abgerufen |
-| Breach-Notification | Terms §6.2: „promptly, and without unreasonable delay“; US-state-notice-Felder | **belegt als Vertragstext**, keine Stunden-SLA |
-| Governing Law | Georgia, Fulton County; JAMS-Arbitration | **belegt** |
-| Rolle gegenüber Participants | PrivacyBee erbringt Services **direkt** an Participants; Client muss vorher affirmative Consent holen und 5 Jahre aufbewahren | **belegt** |
-
-### 4.4 Subprocessors (August 2026, first-party)
-
-Core: Amazon Web Services, SendGrid, Twilio, Monday.com, Cloudflare, SparkVault – alle **United States**.  
-Support: Aircall, HubSpot, Zoom – alle **United States**.  
-Update-Kontakt: `legal@privacybee.com`.
-
-## 5. Fit-Entscheidung dieses Gate 0
-
-**Empfehlung: PrivacyBee nicht als Jetnity Consent-/Cookie-/DSAR-/Privacy-Runtime-Vendor auswählen.**
-
-Begründung in einem Satz: Der öffentlich belegte Business-Kern ist Employee External-Data-Privacy und Data-Broker-Removal; die „freien“ Consent-/Cookie-Apps erzeugen PrivacyBee-Consumer-Logins, scannen Besucher, zahlen Commission und verarbeiten Daten in den USA – das kollidiert mit Jetnity Account/Trip/Traveller-Truth, Datenminimierung, fehlender Analytics-Fläche und den noch offenen AP-6a/AP-6b-Gates.
-
-Vergleich zur Jetnity-nativen Option (kein zweiter Vendor-Audit):
-
-| Option | Passt zu Jetnity-Kern? | Extra-Datenfluss | Kosten-Evidence |
-| --- | --- | --- | --- |
-| Jetnity-nativ: AP-6a Legal-Content, danach AP-6b Consent/Export/Delete | Ja. SoT bleibt Jetnity. | Keiner neuer US-Processor für Consent/DSAR | keine Vendor-Recurring-Kosten |
-| PrivacyBee Cookie-Banner + Consent Core | **Nein.** Zweite Identity, Visitor-Scan, Commission, US-Transfer | Ja, Besucher-/Nutzer-PII an PrivacyBee + US-Subprocessors | Marketing „free“ ≠ belegter Business-Preis; Commission-Konflikt |
-| PrivacyBee Employee-EDP / VRM | Anderer Use-Case; nicht Consumer-Privacy-Stack | Employee-PII an US-Vendor | quote-required / unknown |
-
-Details: `docs/PRIVACYBEE_VENDOR_FIT_GAP_MATRIX_2026-08-29.md`.  
-Kleinster sicherer **zukünftiger** Vertrag, falls jemand später trotzdem auswählt: `docs/PRIVACYBEE_INTEGRATION_CONTRACT_2026-08-29.md`. Dieser Vertrag ist **kein** Startauftrag.
+**Spätere bedingte Eignung:** nach Content-Gate, wenn Legal Website-DSE/Impressum als Widget akzeptiert **und** Jetnity die nicht scanbaren Verarbeitungen schriftlich ergänzt. Cookie-Banner nur, wenn nicht-essenzielle Drittscripts wirklich kommen.
 
 ## 6. Sensible-Daten-Grenze
 
-Ohne späteren Product-Owner- + Legal- + Security-Gate darf **nichts** der folgenden Klassen an PrivacyBee gehen. Dieser Audit gibt **keine** Freigabe:
+Ohne späteren PO+Legal+Security-Gate **nicht** an PrivacyBee:
 
-- Pass-/Ausweisnummern;
-- Scans / Bilder / Fotos;
-- MRZ;
-- Biometrie / Gesicht / Chip;
-- unnötige Staatsangehörigkeits- oder Traveller-Identitätsdetails;
-- Auth-/Session-Secrets, Tokens, Recovery-Codes;
-- Provider-/Payment-Secrets;
-- Trip-Graph, Guest-LocalStorage, `model_usage`, Admin-PII-Exporte.
+Pass-/Dokumentnummern, Scans, MRZ, Biometrie, unnötige Citizenships, Auth-Secrets/Tokens, Payment-/Provider-Secrets, Trip-Graph, Guest-Storage, `model_usage`.
 
-Jetnity speichert diese Dokumentklassen heute bewusst nicht. Ein Vendor darf das nicht nachträglich „für DSAR“ einsammeln.
+Ein Website-Scan darf diese Klassen nicht nachträglich einsammeln. Impressum-Generierung darf fehlende Firmenfakten nicht erfinden.
 
 ## 7. Kosten
 
 | Ebene | Wirkung |
 | --- | --- |
-| Dieser Audit | **`Kostenwirkung: keine`** – kein Signup, kein Order, kein paid call |
-| Zukünftige Business-Integration | **`quote-required / unknown`** |
-| „100% Free“ App-Marketing | **kein** Kostenvertrag; Terms kennen Fees, Participant-Lizenzen, Auto-Renew, Onboarding-Fees |
-| Consumer Essentials/Pro/Signature | **nicht** als Jetnity-Business-Preis verwendbar |
+| Dieser Audit | **`Kostenwirkung: keine`** |
+| Öffentlicher Endkundenpreis | **CHF 54,90 / Jahr / Domain zzgl. MWST** (live 2026-08-29) |
+| Nicht im Listenpreis | **unknown / vendor-confirmation-required** |
+| Partner-Kickback | nicht Jetnity-Integrationspreis |
+| Aktivierung in diesem Slice | **keine** |
 
-## 8. Was dieser Slice geliefert hat
+## 8. Deliverables
 
-1. Live-Rekonstruktion gegen `main @ 6083ee63` inkl. Production-404.
-2. First-Party-Vendor-Evidence mit Datumstempeln.
-3. Fit/Gap-Matrix über die 13 Pflichtachsen.
-4. Kleinster sicherer zukünftiger Integrationsvertrag (nicht starten).
-5. Self-Review + Handoff mit Pflichtabschnitten.
+1. Diese Statusdatei  
+2. Fit/Gap-Matrix  
+3. Kleinster sicherer Zukunftsvertrag  
+4. Self-Review  
+5. Handoff inkl. Pflichtabschnitten und Vendor-Disambiguation  
 
-Keine Runtime-Datei. Keine Migration. Keine Search-/Homepage-Änderung. Keine Shared-Continuity-Mutation.
+Keine Runtime. Keine Shared Continuity. Kein Search-#168.
 
 ## 9. Tests / Gates
 
-Lokale Gates und Exact-Head-CI/Vercel werden nach dem Authoring-Push auf dem neuen Head gestempelt. Task-only-Gates auf `f4e0707e` gelten nicht für den Authoring-Head.
+Lokale Checks und Exact-Head-CI/Vercel werden nach dem korrigierten Authoring-Push gestempelt. Ältere Heads (`f4e0707e`, US-Irrläufer-Docs) gelten nicht für den finalen Head.
 
-Geplant / in diesem Slice zulässig:
-
-- bestehender AP-6a-Inventory-Test (Regression: Orphan/404-Wahrheit unverändert);
-- keine neuen Runtime-Tests;
-- kein `auth:pruefen` (kein Auth-Slice, kein Secret);
-- kein Browser-Klick.
-
-## 10. Risiken / Residuals
-
-Siehe Handoff. Kern: Produktkategorie-Mismatch; Visitor-Login/Scan; US-Transfer ohne öffentliche DPA/SCC; fehlende API-Evidence; Commission-/Branding-Konflikt; Agent-Self-Review ist kein PASS; `main` `protected=false`.
-
-## 11. Offene Entscheidungen
-
-Nur Product Owner + Legal + Security können später entscheiden, ob überhaupt ein externer Privacy-Vendor gebraucht wird. Dieser Agent startet keine Integration und keinen Folgeslice.
-
-## 12. Exakter nächster Schritt
+## 10. Exakter nächster Schritt
 
 Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #171.  
-Kein Ready. Kein Merge. Keine PrivacyBee-Integration. Kein AP-6a-Runtime. Kein AP-6b.
+Kein Ready. Kein Merge. Kein Trial. Kein AP-6a-Runtime. Kein AP-6b.

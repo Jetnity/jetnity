@@ -1,4 +1,4 @@
-# Jetnity – PrivacyBee Vendor Gate 0 Handoff
+# Jetnity – PrivacyBee Schweiz Vendor Gate 0 Handoff
 
 Stand: 29. August 2026  
 Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
@@ -7,19 +7,19 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/171
 Branch: `audit/privacybee-vendor-gate0-2026-08-29`  
 Issue: [#169](https://github.com/Jetnity/jetnity/issues/169)
 
-Dieser Handoff übergibt Gate 0. Er startet keine Integration. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
+Dieser Handoff übergibt Gate 0. Er startet keine Integration und keinen Trial. Agent-Self-Review ist kein PASS.
 
 ---
 
 ## 1. Ergebnis
 
-PrivacyBee ist auf aktueller First-Party-Evidence **kein geeigneter Consent-/Cookie-/DSAR-Processor** für Jetnity.
+Swiss PrivacyBee (`privacybee.io`, **PrivacyBee AG**) ist ein Website-Legal-Autopilot für Datenschutzerklärung, Cookie-Banner und Impressum. Das trifft die **AP-6a-Website-Schicht** teilweise, nicht die Account-/Traveller-/AP-6b-Schicht.
 
-Der öffentlich belegte Business-Kern ist Employee External-Data-Privacy und Consumer Data-Broker-Removal (Privacy Bee, LLC, Atlanta/Alpharetta, GA, USA). Die für Jetnity naheliegenden Apps **Consent Core** und **Vendor & Cookie Consent** sind als „100% Free“ vermarktete Zusatzflächen. Ihr belegter Integrationsweg ist ein Site-Tag plus PrivacyBee-Consumer-Login, Exposure-Scan und Commission. Subprocessors liegen in den USA. Eine öffentliche DPA ist 404. Eine öffentliche API/Webhook-Spec fehlt. Business-Preise sind quote-required/unknown.
+Live first-party: Scan der öffentlichen Domain, Rescan alle 8 Wochen, Widget/iFrame/externer Link oder Head-Script von `app.privacybee.io`, Sprachen DE/FR/IT/EN, Varianten DSG oder DSGVO, Endkundenpreis **CHF 54,90 pro Jahr und Domain zzgl. MWST**. AVV 2.0 (10. Juni 2026) macht PrivacyBee zum Auftragsverarbeiter; Trial schliesst den AVV automatisch. OpenAI wird für Impressum genutzt (TIA, Residual mittel, USA). Anlage 2 / TOMs nicht vollständig öffentlich. ALB: nur Durchschnittswebsites ohne unübliche Bearbeitungen; keine Gewähr der Vollständigkeit; server-seitige Lücken kein Garantiefall; Exit-Verbot 5 Jahre.
 
-Jetnity-Ist bleibt: `/privacy` und `/terms` Production-404; Register-Zustimmung ohne Persistenz; CookieConsent-Orphan; kein Consumer-Export/Delete; Traveller datensparsam ohne Nummer/Scan/MRZ/Biometrie. AP-6a Legal-Content, AP-6b Consent/Export/Delete und ein externer Vendor bleiben getrennt. Jetnity bleibt Account/Trip/Traveller/Ownership/Identity-SoT.
+Jetnity-Ist: `/privacy` `/terms` Production-404; Register-Zustimmung ohne Persistenz; CookieConsent-Orphan; keine Tracker; kein Consumer-Export/Delete; Traveller ohne Nummer/Scan/MRZ; Controller-Identität fehlend.
 
-**Bounded Empfehlung:** PrivacyBee nicht aktivieren. Native AP-6a (nach PO/Legal-Content) und danach AP-6b weiterverfolgen. Employee-EDP/VRM höchstens als späterer, getrennter PO-Entscheid. Keine Integration und keinen Folgeslice aus diesem Agenten starten.
+**Empfehlung:** Jetzt **nicht** aktivieren. Native AP-6a (PO/Legal-Texte, inkl. `/terms`) und später AP-6b bleiben der Kernweg. PrivacyBee höchstens später als Website-Widget **plus** schriftlichem Jetnity-Nachtrag für server-seitige Verarbeitungen; Cookie-Banner erst, wenn echte Tracker existieren.
 
 ---
 
@@ -27,55 +27,54 @@ Jetnity-Ist bleibt: `/privacy` und `/terms` Production-404; Register-Zustimmung 
 
 | ID | Residual | Severity |
 | --- | --- | --- |
-| PB-R1 | Produktkategorie-Mismatch: EDP/Removal statt Jetnity-Privacy-Runtime | **high** |
-| PB-R2 | Cookie-Consent erzeugt PrivacyBee-Login und scannt Besucher | **high** |
-| PB-R3 | Zweite Identity-/Consent-SoT, wenn Consent Core genutzt würde | **high** |
-| PB-R4 | US-Subprocessors ohne öffentliche DPA/SCC | **high** |
-| PB-R5 | Commission/Trust-Badge/Upsell vs. Jetnity Trust- und No-Ads-Charakter | **high** |
-| PB-R6 | Passport/Scan/MRZ/Biometrie könnten in einem naiven DSAR-Dump landen | **high** (heute nicht gespeichert, trotzdem default-verboten) |
-| PB-R7 | Keine öffentliche API; einzige belegte Integration = Browser-Tag | **medium** |
-| PB-R8 | Auto-Renew, kein Downgrade, 5-Jahre-Consent-Retention beim Client | **medium** |
-| PB-R9 | Öffentliche App-Releases 2022/2023; Live-Reife unknown | **medium** |
-| PB-R10 | SOC2/ISO27001 nur vendor-published; Report nicht unabhängig gesehen | **medium** |
-| PB-R11 | Georgia-Recht / JAMS vs. unklarer Jetnity-Rechtsraum | **medium** |
-| PB-R12 | AP-6a-404 und unbelegte „DSGVO & CH-DSG konform“-Zeile bleiben | **high** (bestehender Trust-P1, nicht durch diesen Vendor heilbar) |
-| PB-R13 | `main` Branch Protection `protected=false` | **medium** (Governance, unverändert) |
-| PB-R14 | Agent-Self-Review ist kein PASS; neuer Push invalidiert Prior-Gates | **process** |
-| PB-R15 | Vendor-Site-Widerspruch Cookie-Leiste „measure ads“ vs. zero-ad-tech-Copy | **low** (Vendor-Residual) |
+| PB-R1 | Scanner sieht keine Auth/Trip/Traveller/Guest/`model_usage` | **high** |
+| PB-R2 | Unvollständige DSE würde Trust-P1 durch Schein-Vollständigkeit ersetzen | **high** |
+| PB-R3 | Trial/Signup = automatischer AVV | **high** (Prozess) |
+| PB-R4 | OpenAI-US für Impressum; TIA-Residual mittel; Löschrecht gegenüber US-Sub nicht garantiert | **medium–high** |
+| PB-R5 | Banner ohne Tracker erzeugt neuen Besucher-PII-Fluss (IP/UA) | **medium** |
+| PB-R6 | Dritt-Scripts down ⇒ leere Legal-Seite | **high** falls je gemountet |
+| PB-R7 | 5-Jahre-Exit-Verbot auf generierte Texte | **medium** |
+| PB-R8 | `/terms` bleibt ungedeckt | **high** (bestehende Lücke) |
+| PB-R9 | Controller/Adresse fehlen; generiertes Impressum kann sie nicht erfinden | **high** |
+| PB-R10 | Anlage 2 / TOMs / TIA-PDF nicht unabhängig gelesen | **medium** |
+| PB-R11 | ALB 8.6 (keine Hack-Meldepflicht) vs. AVV §9 (48 h) | **medium** |
+| PB-R12 | Vendor-Konformitätsmarketing vs. ALB „Kunde bleibt verantwortlich“ | **medium** |
+| PB-R13 | Passport/Scan/MRZ/Biometrie dürfen nie „für DSE-Vollständigkeit“ geliefert werden | **high** (default-verboten) |
+| PB-R14 | AP-6a-404 und unbelegte UI-Konformitätszeile bleiben | **high** |
+| PB-R15 | `main` `protected=false` | **medium** |
+| PB-R16 | Agent-Self-Review ist kein PASS | **process** |
 
 ---
 
 ## 3. Kostenwirkung
 
-- **Dieser Audit: `keine`.** Kein Signup, kein Order, kein Abo, kein Secret, kein paid call.
-- **Zukünftige Business-Nutzung: `quote-required / unknown`.** Terms koppeln Preis an Participant-Lizenzen und Order; Business-`/pricing` ist 404; custom proposal vorgesehen.
-- Marketing „100% Free“ ist **kein** Kostenvertrag (Commission/Leadgen, plus Fees in den Terms).
-- Consumer Essentials/Pro/Signature (USD 8 / 16 / 67 pro Monat approx. annual) sind **nicht** der Business-Integrationspreis.
+- **Dieser Audit: `keine`.** Kein Trial, kein Order, kein paid call.
+- **Öffentlicher Zukunftspreis (belegt 2026-08-29):** CHF **54,90 / Jahr / Domain zzgl. MWST**.
+- Partner-Kickback bis 25 % ist **nicht** der Jetnity-Preis.
+- Nicht im Listenpreis genannte Posten: **`unknown / vendor-confirmation-required`**.
+- Keine Recurring-Aktivierung in diesem Slice.
 
 ---
 
 ## 4. Offene Entscheidungen / Gates
 
-1. Product Owner: Wird überhaupt ein externer Privacy-Vendor gebraucht, oder bleibt der Stack native AP-6a → AP-6b?
-2. Legal: Controller-Identität, Rechtsraum, DPA/SCC, CH-DSG/GDPR-Relevanz – unabhängig von PrivacyBee, zuerst AP-6a-Input-Matrix.
-3. Security + Legal: Jede spätere US-Processor-Auswahl braucht Transferinstrument + TOMs + Exit. Heute nicht belegt.
-4. Product Owner: CookieConsent Orphan belassen / löschen / erst nach ehrlichem Text – bleibt AP-6a-Input, nicht Vendor-Default.
-5. Product Owner: Employee-EDP für das Jetnity-Team ist ein **anderer** Entscheid und nicht implizit mit diesem Slice eröffnet.
-6. Technical Lead: Ready/Merge nur nach unabhängigem Exact-Head-Review. Cursor setzt beides nicht.
+1. PO + Legal: AP-6a-Input-Matrix zuerst (Controller, Adresse, Texte, `/impressum` ja/nein, Konformitätszeile, CookieConsent-Schicksal).
+2. PO + Legal + Security: überhaupt Swiss PrivacyBee später, oder native Texte?
+3. Legal: AVV/Anlage 2/OpenAI-TIA/ALB-8.6 lesen, bevor irgendwer einen Trial startet.
+4. PO: Cookie-Banner erst bei echten nicht-essenziellen Scripts.
+5. Technical Lead: Ready/Merge nur nach unabhängigem Exact-Head-Review.
 
-Keine dieser Entscheidungen ist durch diesen Agenten getroffen.
+Keine dieser Entscheidungen ist getroffen.
 
 ---
 
 ## 5. Empfohlene nächste Schritte
 
-Bounded, nicht gestartet:
-
 1. Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #171.
-2. Nach PASS/Merge dieses Docs-Slices: AP-6a-Content-Gate beim Product Owner/Legal weiterführen (`docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`). Das ist der echte Trust-P1.
-3. AP-6b erst nach AP-6a und eigenem Task. Native Export/Delete, kein PrivacyBee.
-4. PrivacyBee-Integration **nicht** anstoßen. Keinen zweiten CMP-Vendor-Audit automatisch starten.
-5. Falls jemand später trotzdem PrivacyBee will: zuerst schriftliche DPA/SCC und schriftliche Bestätigung, dass Cookie-Tag, Visitor-Login, Scan und Commission aus sind. Bis dahin gilt der Integrationsvertrag als Verbotsliste.
+2. Danach: AP-6a-Content-Gate (`docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`). Das bleibt der Trust-P1.
+3. AP-6b native, nicht PrivacyBee.
+4. Kein Trial, kein Script-Mount, keinen Folgeslice, keinen zweiten Vendor-Audit automatisch starten.
+5. Falls später trotzdem PrivacyBee: Integrationsvertrag einhalten (Nachtrag server-seitiger Verarbeitungen, kein Banner ohne Tracker, `/terms` Jetnity, Kill-Switch, kein Traveller-Dump).
 
 ---
 
@@ -87,86 +86,78 @@ Bounded, nicht gestartet:
 | --- | --- |
 | Baseline `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
 | Merge-Base | dieselbe SHA |
-| Task-Head (invalidiert durch Authoring) | `f4e0707e385661477e6e6484002ffc1764c5f421` |
+| Task + Vendor-Korrektur | `61014e39` Correct PrivacyBee Gate 0 to Swiss privacybee.io target |
 | Authoring-Head | der Commit dieses Stamps; live an PR #171 prüfen |
-| Draft-PR | #171 OPEN Draft – https://github.com/Jetnity/jetnity/pull/171 |
+| Draft-PR | #171 OPEN Draft |
 | Issue | #169 OPEN |
-| Parallel PR #168 | OPEN Draft; **nicht mutiert** |
+| PR #168 | OPEN Draft, nicht mutiert |
 | `main` protected | `false` |
-| Logical Agent | `Privacy provider integration audit 1` |
-| Observed title | `PrivacyBee vendor audit` |
+| Agent | `Privacy provider integration audit 1` / observed `PrivacyBee vendor audit` |
 | Cloud-Run | https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae |
-| Supabase | nicht abgefragt, nicht mutiert |
 
-### 6.2 First-Party PrivacyBee (HTTP 2026-08-29T09:28Z)
+### 6.2 First-Party Swiss PrivacyBee (HTTP 2026-08-29T09:32Z)
 
 | URL | HTTP | Beobachtetes Datum / Residual |
 | --- | --- | --- |
-| https://business.privacybee.com/ | 200 | schema `dateModified` 2023-07-05; EDP-Positionierung |
-| https://business.privacybee.com/terms-of-service/ | 200 | Last Modified **5 Jan 2024**; schema `dateModified` 2025-08-20 |
-| https://business.privacybee.com/apps/consent-core/ | 200 | Price „100% Free“; Version 2.6.0; Latest Release 11/7/22; schema 2023-06-28 |
-| https://business.privacybee.com/apps/vendor-cookie-consent/ | 200 | Visitor-Login + Scan + Commission; Version 2.4.0; Release 2/14/23; schema 2023-07-05 |
-| https://business.privacybee.com/apps/vendor-risk-management/ | 200 | Employee-EDP-VRM; „100% Free“; Release 1/16/23 |
-| https://business.privacybee.com/platform/ | 200 | Employee-Privacy-Plattform |
-| https://business.privacybee.com/pricing/ | **404** | kein öffentlicher Business-Preis |
-| https://business.privacybee.com/dpa/ | **404** | |
-| https://privacybee.com/subprocessors/ | 200 | Last updated **August 2026**; alle Locations United States |
-| https://privacybee.com/privacy-policy/ | 200 | Last Updated **10 June 2026** |
-| https://privacybee.com/cookie-policy/ | 200 | Last Updated **14 August 2026** |
-| https://privacybee.com/terms-of-service/ | 200 | Last Updated **21 August 2026** |
-| https://privacybee.com/pricing/ | 200 | Consumer USD 8 / 16 / 67; **nicht** Business-Preis |
-| https://privacybee.com/trust/ | 200 | Reviewed **July 2026**; SOC 2 Type II + ISO 27001 vendor-published |
-| https://privacybee.com/dpa/ | **404** | |
-| https://privacybee.com/security/ | **404** | |
-| https://privacybee.com/developers/ | **404** | |
-| https://api.privacybee.com/ | 302 → Auth | keine öffentliche Spec |
+| https://www.privacybee.io/de-ch/ | 200 | Produkt DSE+Banner+Impressum; 8-Wochen-Scan; 14-Tage-Test |
+| https://www.privacybee.io/de-ch/preis/ | 200 | **CHF 54,90 / Jahr / Domain zzgl. MWST** |
+| https://www.privacybee.io/de-ch/integration/ | 200 | JS-Snippet; CMS; Banner Autopilot |
+| https://www.privacybee.io/de-ch/auftragverarbeitervertrag/ | 200 | AVV 2.0 Stand **10. Juni 2026**; schema `dateModified` 2026-06-22 |
+| https://www.privacybee.io/de-ch/lizenzbedingungen/ | 200 | Zuletzt aktualisiert **10. Juni 2026** |
+| https://www.privacybee.io/de-ch/haeufig-gestellte-fragen/ | 200 | Kanzlei Domenig & Partner + Digital Innovation Lab AG |
+| https://support.privacybee.io/support/solutions/articles/103000392568-wie-kann-ich-privacybee-auf-meiner-website-einbinden- | 200 | geändert 2. Juni; `app.privacybee.io` Scripts |
+| https://support.privacybee.io/support/solutions/articles/103000403413-javascript-events-und-api-des-privacybee-cookie-banners | 200 | geändert 27. Mai; `window.PrivacyBee` |
+| https://support.privacybee.io/support/solutions/articles/103000348693-welche-content-management-systeme-und-website-typen-werden-unterstützt- | 200 | geändert 7. Januar; plattformunabhängig |
 
 ### 6.3 Jetnity Production (dieser Run)
 
 | Fakt | Wert |
 | --- | --- |
 | Alias | `https://jetnity-app.vercel.app` |
-| `/` | 200; `data-dpl-id=dpl_GntXsgcdUN8cQKqHPqnpB6jUEfZz` |
+| `/` | 200; `dpl_GntXsgcdUN8cQKqHPqnpB6jUEfZz` |
 | `/privacy` `/terms` | **404** |
-| `/register` | 200 |
-| `CookieConsent` Import | nur Inventory-Test; Orphan unverändert |
 
 ### 6.4 Lokale Checks / CI / Vercel / Threads
 
-Task-Head `f4e0707e` vor Authoring (gelten **nicht** für den neuen Head):
+Vor diesem Stamp: Task-Head-Gates gelten nicht für den neuen Head. Vercel auf frühere Heads (u. a. `GCCuNzhurfhkLrp8XK85pLt9d6xK`) ist invalidiert.
 
-- Vercel Preview Comments SUCCESS; Vercel StatusContext SUCCESS auf Deployment `GCCuNzhurfhkLrp8XK85pLt9d6xK` (PR-Comment 2026-08-29).
-- CI auf Task-Head: Auth-Check SUCCESS; Typecheck/Lint/Build war IN_PROGRESS zum Rekonstruktionszeitpunkt.
+Authoring-Head: lokale Checks und Exact-Head-CI/Vercel nach Push nachstempeln. Review-Auftrag: PR-Kommentar `5461543989`. Kein TL-PASS-Thread.
 
-Authoring-Head: lokale Checks und Exact-Head-CI/Vercel werden nach Push in diesem Dokument nachgestempelt. Review-Threads: Auftragskommentar `5461543989`; keine Technical-Lead-Review-Threads bei Authoring.
-
-Preview-HTML bleibt SSO-geschützt und wird nicht als Inhaltsbeweis verwendet.
+Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 
 ---
 
-## 7. Naming
+## 7. Vendor identity disambiguation
+
+Das Ziel dieses Slices ist **ausschliesslich** die Schweizer Website-Datenschutz-Lösung **PrivacyBee AG** auf **`privacybee.io`**.
+
+Das US-Unternehmen **Privacy Bee, LLC** auf **`privacybee.com` / `business.privacybee.com`** (Consumer Data-Broker-Removal / Employee External Data Privacy) ist **nicht** der evaluierte Vendor. Frühe Evidence gegen diese US-Marke ist ungültig und darf nicht als Swiss-PrivacyBee-Wahrheit weiterverwendet werden.
+
+---
+
+## 8. Naming
 
 | Feld | Wert |
 | --- | --- |
 | Logischer Name | `Privacy provider integration audit 1` |
 | Beobachteter Titel | `PrivacyBee vendor audit` |
-| Generation | **1.** Keine Generation 2. |
+| Generation | **1.** Vendor-Korrektur in derselben Session. |
 | UI umbenannt? | **nein** |
 
 ---
 
-## 8. Nicht tun
+## 9. Nicht tun
 
 - Ready setzen oder mergen.
-- PrivacyBee anmelden, buchen, DPA akzeptieren, Tag mounten.
-- AP-6a-Runtime, AP-6b, AP-7 oder Search #168 aus diesem Agenten starten.
+- Trial, Signup, Zahlung, AVV-Accept, Script-Mount.
+- AP-6a-Runtime, AP-6b, AP-7, Search #168 starten.
 - Rechtstexte oder Konformität erfinden.
-- Passport-/Scan-/MRZ-/Biometrie-Daten als vendor-freigegeben behandeln.
-- Consumer-Preise als Business-Kosten einsetzen.
+- Passport-/Scan-/MRZ-/Biometrie-Daten an den Vendor geben.
+- US-`privacybee.com` erneut als Ziel auditieren.
 
 ---
 
-## 9. Exakter nächster Schritt
+## 10. Exakter nächster Schritt
 
 Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #171.  
 Derselbe Agent behebt nur unmittelbare Review-Funde dieses Slices.
