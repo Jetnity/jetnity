@@ -1,7 +1,7 @@
 # TA-DL1 – Implementation Status
 
 Stand: 30. August 2026  
-Status: **LOKALE GATES GRÜN / STOP FÜR UNABHÄNGIGEN TECHNICAL-LEAD-REVIEW**  
+Status: **REVIEW-FIX / ACTIVE_WORK_STATUS AUF BASELINE / STOP FÜR TL-RE-REVIEW**  
 Cursor-Agent: `Account plattform audit vorbereitung 19`  
 Task: `docs/TA_DL1_DOCUMENT_LIFECYCLE_TRIP_DATE_AWARENESS_TASK_2026-08-30.md`  
 Baseline: `main @ 0ac7296fbd9e348b05a30b4c43cd5fe1815e24d9`  
@@ -15,6 +15,10 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/227
 - Focused Helper- und UI-Vertragstests
 - Slice-ADR, Handoff, Self-Review
 
+## Review-Fix (gleiche Session 19)
+
+`docs/ACTIVE_WORK_STATUS.md` ist bytegleich zum Baseline-Stand `0ac7296f` zurückgesetzt. Keine andere globale Continuity-Datei wurde angefasst. Runtime bleibt unverändert.
+
 ## Nicht geliefert / bewusst ausserhalb
 
 - Migration, Schema, RLS, Grant, Ownership, Supabase-Mutation
@@ -24,21 +28,13 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/227
 - Default / Primary / Preferred / Chosen Credential
 - Visa / Einreise / Transit / Boarding
 - Provider / TW-8 / Payments / Homepage / Collaboration / AP-8+
+- Änderung globaler Continuity-Dateien
 - Migration-History-Repair
 
-## Lokale Gates
+## Prior Gates auf `d07e02ee`
 
-Auf dem Type-Fix-Stand dieser Generation:
+- Lokal: Tests 2738/2738, Typecheck, Lint 0, Hygiene, Production-Build
+- CI #1299 / Run `33281014382` = SUCCESS
+- Vercel Preview `5ePAWtaqf8wx2G5RdorAQLjnXGqG` = SUCCESS
 
-- `npm test` **2738/2738**
-- Typecheck pass
-- Lint 0 errors
-- Hygiene: dead/exports/deps/api-schutz/schema-bezug pass
-- Production build pass
-
-Exact-Head auf Implementation Head `12f2ad080e98a893980707e6194af2285fce550e`:
-
-- CI #1298 / Run `33280831211` = SUCCESS
-- Vercel Preview `6cEEj5siu7r8hUrrsjptjPRSv2i6` = SUCCESS
-
-Ein späterer Continuity-Stamp ändert den live Head. Der Reviewer prüft GitHub Actions und Vercel am dann aktuellen exact Head.
+Gates und Exact-Head-Evidence des Review-Fix-Heads werden nach dem Push nachgetragen.

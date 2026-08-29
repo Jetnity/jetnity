@@ -6,8 +6,10 @@ Reviewed Head: der Commit dieses Stamps; live am Draft-PR #227 prüfen.
 
 ## Verdict
 
-**READY FOR INDEPENDENT TECHNICAL-LEAD REVIEW.**  
+**REVIEW-FIX COMPLETE / READY FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.**  
 Kein Author-PASS. Kein Ready. Kein Merge.
+
+Governance-Fix: `docs/ACTIVE_WORK_STATUS.md` ist auf Baseline `0ac7296f` zurückgesetzt und darf nicht im PR-Diff stehen. Runtime wurde in diesem Fix nicht geändert.
 
 ## Scope
 
@@ -40,12 +42,12 @@ Nicht angefasst: Migrationen, Schema, RLS, Grants, Auth/MFA/AAL, Service Role, P
 - Hygiene dead/exports/deps/api-schutz/schema-bezug pass
 - `npm run build` pass
 
-Exact-Head auf Implementation Head `12f2ad08`:
+Prior exact-head auf `d07e02ee`:
 
-- CI #1298 / Run `33280831211` = SUCCESS
-- Vercel Preview `6cEEj5siu7r8hUrrsjptjPRSv2i6` = SUCCESS
+- CI #1299 / Run `33281014382` = SUCCESS
+- Vercel Preview `5ePAWtaqf8wx2G5RdorAQLjnXGqG` = SUCCESS
 
-Der unabhängige Reviewer prüft den live exact Head, falls ein Continuity-Stamp danach liegt.
+Der Review-Fix-Head muss neu gegatet und live geprüft werden.
 
 ## Offen / nicht behauptet
 
