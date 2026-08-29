@@ -367,7 +367,10 @@ describe('AP-5-S4 Ausführung', () => {
     const challenge = await mfaStepUpUndUnenroll(
       authAttrappe({
         mfa: {
-          challenge: async () => ({ error: { message: 'challenge failed', status: 500 } }),
+          challenge: async () => ({
+            data: null,
+            error: { message: 'challenge failed', status: 500 },
+          }),
           unenroll,
         },
       }),

@@ -625,7 +625,7 @@ export async function mfaUnenrollDirekt(
 
   try {
     const sitzung = await auth.getUser()
-    if (sitzung.error) return sitzungEreignisAusFehler(sitzung.error)
+    if (sitzung.error) return sitzungAusfuehrenEreignisAusFehler(sitzung.error)
     if (!sitzung.data?.user) return { typ: 'client_ohne_sitzung' }
 
     const stale = await faktorNochVorhanden(auth, faktorId)
@@ -681,8 +681,8 @@ export async function mfaStepUpUndUnenroll(
 
   try {
     const sitzung = await auth.getUser()
-    if (sitzung.error) return sitzungEreignisAusFehler(sitzung.error)
-    if (!sitzung.data.user) return { typ: 'client_ohne_sitzung' }
+    if (sitzung.error) return sitzungAusfuehrenEreignisAusFehler(sitzung.error)
+    if (!sitzung.data?.user) return { typ: 'client_ohne_sitzung' }
 
     const liste = await mfa.listFactors()
     if (liste.error) {
@@ -859,6 +859,16 @@ async function faktorNochVorhanden(
       }),
     }
   }
+}
+
+function sitzungAusfuehrenEreignisAusFehler(
+  fehler: unknown,
+): Extract<MfaStepUpEreignis, { typ: 'client_unbekannt' | 'client_ohne_sitzung' | 'ausfuehren_fehler' }> {
+  const ereignis = sitzungEreignisAusFehler(fehler)
+  if (ereignis.typ === 'plan_fehler') {
+    return { typ: 'ausfuehren_fehler', fehler: ereignis.fehler }
+  }
+  return ereignis
 }
 
 function sitzungEreignisAusFehler(
