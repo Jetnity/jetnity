@@ -15,7 +15,7 @@ export default function AccountNavigation() {
       className="border-b border-black/5 bg-surface-75 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <ul className="grid grid-cols-3 gap-1 py-2 md:flex md:gap-1">
+        <ul className="grid grid-cols-2 gap-1 py-2 sm:flex sm:flex-wrap sm:gap-1">
           {ACCOUNT_NAVIGATION.map((eintrag) => {
             const aktiv = accountNavigationAktiv(pathname, eintrag.href)
             return (

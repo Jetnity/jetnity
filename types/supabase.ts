@@ -17,6 +17,128 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_traveller_citizenships: {
+        Row: {
+          client_ref: string
+          country_code: string
+          created_at: string
+          id: string
+          traveller_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_ref: string
+          country_code: string
+          created_at?: string
+          id?: string
+          traveller_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          client_ref?: string
+          country_code?: string
+          created_at?: string
+          id?: string
+          traveller_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_traveller_citizenships_traveller_fk"
+            columns: ["traveller_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "account_travellers"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      account_traveller_documents: {
+        Row: {
+          citizenship_id: string | null
+          client_ref: string
+          created_at: string
+          document_type: string
+          expires_on: string | null
+          id: string
+          issuing_country_code: string | null
+          traveller_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          citizenship_id?: string | null
+          client_ref: string
+          created_at?: string
+          document_type: string
+          expires_on?: string | null
+          id?: string
+          issuing_country_code?: string | null
+          traveller_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          citizenship_id?: string | null
+          client_ref?: string
+          created_at?: string
+          document_type?: string
+          expires_on?: string | null
+          id?: string
+          issuing_country_code?: string | null
+          traveller_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_traveller_documents_citizenship_fk"
+            columns: ["citizenship_id", "traveller_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "account_traveller_citizenships"
+            referencedColumns: ["id", "traveller_id", "user_id"]
+          },
+          {
+            foreignKeyName: "account_traveller_documents_traveller_fk"
+            columns: ["traveller_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "account_travellers"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      account_travellers: {
+        Row: {
+          client_ref: string
+          created_at: string
+          id: string
+          label: string | null
+          residence_country_code: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_ref: string
+          created_at?: string
+          id?: string
+          label?: string | null
+          residence_country_code?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          client_ref?: string
+          created_at?: string
+          id?: string
+          label?: string | null
+          residence_country_code?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       airports: {
         Row: {
           city: string | null
