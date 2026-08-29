@@ -1,7 +1,7 @@
 # Jetnity – AP-UX-NAV1 Mobile Account Navigation Rail Status
 
 Stand: 30. August 2026  
-Status: **IMPLEMENTED ON BRANCH / LOCAL GATES GREEN / CI+VERCEL PENDING ON THIS PUSH / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **IMPLEMENTED ON BRANCH / LOCAL GATES GREEN / EXACT-HEAD CI+VERCEL GREEN / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
 Issue: #228  
 Draft-PR: #229  
 Cursor-Agent: `Account plattform audit vorbereitung 20`
@@ -74,7 +74,15 @@ Nicht in diesem Environment verifiziert:
 
 ## Remote gates
 
-Exact-head GitHub Actions und Vercel Preview werden erst nach dem finalen Push dieses Stamps als Evidence geführt. Ältere Deployments auf Vorgänger-Heads gelten nicht.
+Gated implementation head: `d23758f64d11ab3479294ac1a4b354a3d219d8f0`
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | [`33281797775`](https://github.com/Jetnity/jetnity/actions/runs/33281797775) **SUCCESS** on `d23758f6` |
+| Vercel Preview | **Ready / SUCCESS** (`9ymUnYwBAzUi9iT5vANXNsEoewPs`, deployment `6161374151`) |
+| Preview | https://jetnity-app-git-feat-account-nav-rail-c-e28a65-jetnity-e1b93c82.vercel.app |
+
+Ein späterer Evidence-Stamp-Commit ändert nur diese Docs. Runtime bleibt `d23758f6`. Der live PR-Head muss nach dem Stamp erneut grün sein.
 
 ## STOP
 

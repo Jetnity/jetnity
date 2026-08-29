@@ -37,6 +37,6 @@ Geprüft gegen den tatsächlichen Dateisatz, nicht gegen Chat-Absicht.
 
 ## 4. Urteil des Autors
 
-Der Slice bleibt im autorisierten UX-Rahmen. Lokale Gates sind grün. Dieses Self-Review erzeugt **keinen PASS**.
+Der Slice bleibt im autorisierten UX-Rahmen. Lokale Gates sind grün. Exact-head GitHub Actions `33281797775` und Vercel Preview `9ymUnYwBAzUi9iT5vANXNsEoewPs` sind SUCCESS auf `d23758f64d11ab3479294ac1a4b354a3d219d8f0`.
 
-**Unabhängiger Technical-Lead-Review: ausstehend.**
+**Unabhängiger Technical-Lead-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

@@ -21,7 +21,8 @@ Binding bleibt:
 | Behind `origin/main` | **0** zum Slice-Start |
 | Cursor-Agent | `Account plattform audit vorbereitung 20` |
 | Cloud-Run | https://cursor.com/agents/bc-c734aa63-1027-4fe3-b458-d0c24661b281 |
-| Exact Head | live an PR #229 prüfen; dieser Stamp gehört zum finalen Docs/Audit-Commit |
+| Gated implementation head | `d23758f64d11ab3479294ac1a4b354a3d219d8f0` |
+| Exact Head | live an PR #229 prüfen; Runtime/UI ist der gated head oben |
 
 ## Scope proof
 
@@ -48,7 +49,11 @@ Lokal verifiziert:
 - Typecheck, Lint (0 errors), Hygiene, Production Build
 - Chromium: einzeilige Rail 280/360/1280; letzter Tab erreichbar; Gast-`/reisen` ohne Konto-Nav
 
-Exact-head GitHub Actions + Vercel Preview: nach diesem Push am live Head prüfen. Vorgänger-Heads sind ungültig.
+Exact-head remote gates on `d23758f64d11ab3479294ac1a4b354a3d219d8f0`:
+
+- GitHub Actions [`33281797775`](https://github.com/Jetnity/jetnity/actions/runs/33281797775) **SUCCESS**
+- Vercel Preview **Ready / SUCCESS** (`9ymUnYwBAzUi9iT5vANXNsEoewPs`, deployment `6161374151`)
+- Preview: https://jetnity-app-git-feat-account-nav-rail-c-e28a65-jetnity-e1b93c82.vercel.app
 
 Nicht verifiziert:
 
