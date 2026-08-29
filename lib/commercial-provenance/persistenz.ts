@@ -229,3 +229,125 @@ export function commercialIstProviderHardTruth(provenance: CommercialProvenance 
 export function commercialAkteurIstWriteActor(akteur: CommercialAkteur): akteur is 'provider_adapter' {
   return akteur === 'provider_adapter'
 }
+
+/**
+ * Kanonischer Persistenzvertrag. Nur diese Nutzlast darf die SQL-Funktion
+ * schreiben. Rohe Client-Quote-JSON (sourceKind/akteur/providerId) ist kein
+ * Schreibvertrag und darf nicht mit einem validierten Snapshot verwechselt
+ * werden. Die Funktion selbst ist kein Production-Write-Pfad, solange das
+ * Runtime-Principal-Gate geschlossen ist.
+ */
+export const COMMERCIAL_PERSISTENCE_VERTRAG = 'jetnity.commercial_persistence.v1' as const
+export const COMMERCIAL_PERSISTENCE_MINT = 's5a_validated_snapshot' as const
+
+export const COMMERCIAL_PERSISTENCE_CLIENT_QUOTE_KEYS = [
+  'sourceKind',
+  'providerId',
+  'externalRef',
+  'retrievedAt',
+  'observedAt',
+  'freshUntil',
+  'requestedCurrency',
+  'quotedCurrency',
+  'amountStatus',
+  'providerOfferId',
+  'sourceLabel',
+  'akteur',
+  'affiliate',
+] as const
+
+export type CommercialPersistenzNutzlast = {
+  vertrag: typeof COMMERCIAL_PERSISTENCE_VERTRAG
+  mint: typeof COMMERCIAL_PERSISTENCE_MINT
+  trip_item_id: string
+  domain: CommercialProvenanceDomain
+  provider_id: string
+  source_kind: 'persisted_snapshot'
+  persistenz: 'snapshot'
+  source_label: string | null
+  external_ref: string | null
+  provider_offer_id: string | null
+  retrieved_at: string
+  observed_at: string
+  fresh_until: string | null
+  requested_currency: string | null
+  quoted_currency: string | null
+  amount: number | null
+  amount_status: 'quoted' | 'missing' | 'error'
+  affiliate_status: 'unknown' | 'absent' | 'present'
+  affiliate_partner_id: string | null
+  affiliate_click_id: string | null
+  affiliate_attribution_ref: string | null
+  availability_status: 'unknown' | 'unavailable'
+  vergleichsschluessel: string | null
+}
+
+export function commercialPersistenzNutzlastIstRohclient(wert: unknown): boolean {
+  const roh = quoteObjekt(wert)
+  if (!roh) return true
+  if (roh.vertrag !== COMMERCIAL_PERSISTENCE_VERTRAG) return true
+  if (roh.mint !== COMMERCIAL_PERSISTENCE_MINT) return true
+  return COMMERCIAL_PERSISTENCE_CLIENT_QUOTE_KEYS.some((key) => Object.prototype.hasOwnProperty.call(roh, key))
+}
+
+/**
+ * Baut die serverseitig validierte Persistenz-Nutzlast aus einem S5-A-Mint.
+ * Rohe Client-Quotes dürfen hier nicht durchgereicht werden.
+ */
+export function commercialPersistenzNutzlastBauen(opts: {
+  tripItemId: string
+  mint: CommercialSnapshotMintOk
+}): CommercialPersistenzNutzlast {
+  const provenance = opts.mint.provenance
+  const retrievedAt = provenance.zeit.retrievedAt
+  if (!retrievedAt) {
+    throw new Error('validated persistence payload requires retrievedAt')
+  }
+  if (!provenance.quelle.providerId) {
+    throw new Error('validated persistence payload requires providerId')
+  }
+  return {
+    vertrag: COMMERCIAL_PERSISTENCE_VERTRAG,
+    mint: COMMERCIAL_PERSISTENCE_MINT,
+    trip_item_id: opts.tripItemId,
+    domain: provenance.domain,
+    provider_id: provenance.quelle.providerId,
+    source_kind: 'persisted_snapshot',
+    persistenz: 'snapshot',
+    source_label: provenance.quelle.sourceLabel,
+    external_ref: provenance.referenz.externalRef,
+    provider_offer_id: provenance.referenz.providerOfferId,
+    retrieved_at: retrievedAt,
+    observed_at: provenance.zeit.observedAt,
+    fresh_until: provenance.zeit.freshUntil,
+    requested_currency: provenance.waehrung.requestedCurrency,
+    quoted_currency: provenance.waehrung.quotedCurrency,
+    amount: provenance.preis.amount,
+    amount_status: provenance.preis.amountStatus,
+    affiliate_status: provenance.affiliate.status,
+    affiliate_partner_id: provenance.affiliate.partnerId,
+    affiliate_click_id: provenance.affiliate.clickId,
+    affiliate_attribution_ref: provenance.affiliate.attributionRef,
+    availability_status: provenance.availabilityStatus,
+    vergleichsschluessel: provenance.vergleichsschluessel,
+  }
+}
+
+export function commercialPersistenzNutzlastFuerTripItem(opts: {
+  tripItemId: string
+  tripItemKind: string
+  quote: unknown
+  bestehend?: CommercialProvenance | null
+  akteur?: unknown
+  nowMs?: number
+}):
+  | { ok: true; nutzlast: CommercialPersistenzNutzlast; mint: CommercialSnapshotMintOk }
+  | CommercialSnapshotMintFehler {
+  const mint = commercialSnapshotFuerPersistenzMinten(opts)
+  if (!mint.ok) return mint
+  return {
+    ok: true,
+    mint,
+    nutzlast: commercialPersistenzNutzlastBauen({ tripItemId: opts.tripItemId, mint }),
+  }
+}

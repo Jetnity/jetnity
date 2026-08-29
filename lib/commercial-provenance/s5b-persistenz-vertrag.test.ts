@@ -50,6 +50,8 @@ describe('S5-B Persistenz-Migrationsvertrag', () => {
     assert.match(sql, /set search_path = ''/)
     assert.match(sql, /jetnity_internal\.trip_item_commercial_provenance_schreiben/)
     assert.match(sql, /create role jetnity_commercial_writer nologin/)
+    assert.match(sql, /create role jetnity_commercial_runtime nologin noinherit/)
+    assert.match(sql, /production_write_path_allocated boolean not null default false/)
     assert.match(
       sql,
       /revoke all on function jetnity_internal\.trip_item_commercial_provenance_schreiben\(jsonb\)\s+from public, anon, authenticated, service_role/,
@@ -58,17 +60,26 @@ describe('S5-B Persistenz-Migrationsvertrag', () => {
       sql,
       /grant execute on function jetnity_internal\.trip_item_commercial_provenance_schreiben\(jsonb\)\s+to jetnity_commercial_writer/,
     )
+    assert.doesNotMatch(
+      sql,
+      /grant execute on function jetnity_internal\.trip_item_commercial_provenance_schreiben\(jsonb\)\s+to (authenticated|anon|service_role)/,
+    )
     assert.doesNotMatch(sql, /schemas = \[[^\]]*jetnity_internal/)
   })
 
-  test('Write mintet snapshot und lehnt note, forged source/actor und Domain-Mismatch ab', () => {
-    assert.match(sql, /'persisted_snapshot'/)
+  test('Write bindet den kanonischen Persistenzvertrag und ist ohne Principal fail-closed', () => {
+    assert.match(sql, /jetnity\.commercial_persistence\.v1/)
+    assert.match(sql, /s5a_validated_snapshot/)
+    assert.match(sql, /unvalidated raw payload reject/)
+    assert.match(sql, /null principal reject/)
     assert.match(sql, /note reject/)
     assert.match(sql, /forged actor reject/)
     assert.match(sql, /forged source reject/)
     assert.match(sql, /wrong kind\/domain reject/)
     assert.match(sql, /refresh_identity_mismatch/)
-    assert.match(sql, /_source_kind in \('user_intake', 'manual', 'assistant', 'llm'\)/)
+    assert.match(sql, /if _uid is null then/)
+    assert.doesNotMatch(sql, /if _uid is not null and _item\.user_id is distinct from _uid/)
+    assert.match(sql, /KEIN Production-Write-Pfad/)
   })
 
   test('Flight-Guard-Trigger bleibt und die Matrix schließt Stay/Activity/Transfer/Rental/Note', () => {

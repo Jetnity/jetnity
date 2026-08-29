@@ -1,22 +1,22 @@
 # Provider S5-B Persistence – Local Gate Evidence
 
 Stand: 29. August 2026  
-Implementation Head der gemessenen Gates: `e3bef6f9386a7e077ac38bd12382250d9475d50e`  
-Dieser Evidence-Stamp erzeugt einen neueren Head; live am PR prüfen.  
-Agent: `Cursor-Agent: Jetnity provider readiness audit 4`
+Agent: `Cursor-Agent: Jetnity provider readiness audit 4`  
+Prior Head mit CHANGES REQUIRED: `8e59748764c08a98cf59e36432c058738ba1f9bc`
+
+Dieser Stamp gehört zum Review-Fix-Head; live am PR prüfen.
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **2605** pass / 0 fail |
+| `npm test` | **2606** pass / 0 fail |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors / 135 warnings |
-| `npm run check:dead` | pass (1 begründete Waise: CookieConsent) |
-| `npm run check:exports` | pass |
-| `npm run check:deps` | pass |
-| `npm run check:api-schutz` | pass |
-| `npm run check:schema-bezug` | pass |
+| Hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) | pass |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |
-| `npm run db:sicherheit` | **nicht anwendbar auf dem erreichbaren Schema**: `public.trip_item_commercial_provenance` existiert dort nicht. Erwartet, weil Cursor die Migration nicht anwendet. Fälle sind im Repository. |
+| `npm run db:s5b-persistenz-lokal` | **19/19** pass auf isolierter lokaler PostgreSQL 16 |
 | Production Supabase | **nicht mutiert** |
+| Development-Supabase Apply | **nicht** ausgeführt |
 
-Die gemessenen Gates gelten für `e3bef6f9`. Dieser Stamp ist docs-only und ändert keinen Runtime-Code. Ein neuer Runtime-Push invalidiert die Gates.
+Lokale DB-Nachweise umfassen: clean apply der S5-B-Migration; RLS/Grants/EXECUTE; Owner-SELECT; Cross-Owner leer; Direct INSERT/UPDATE/DELETE deny; NULL-Principal deny; raw Client-Quote deny; note/domain/source deny; Refresh-Identität; Stay/Transfer-Guard; geschlossenes Production-Write-Gate.
+
+`npm run db:sicherheit` gegen ein Remote-Schema ohne diese Migration bleibt unanwendbar und wird nicht als Production-Evidence behauptet.

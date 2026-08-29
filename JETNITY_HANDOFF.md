@@ -130,7 +130,7 @@ Historischer vorheriger Chat-Übergabepunkt (PR #141, bleibt Evidence):
 - Post-Merge GitHub Actions Run `33182424045`: **SUCCESS** auf exakt diesem `main`
 - Post-Merge Vercel Production `dpl_BmpsTYQC3ANoMT1z33pjMVYws2nS`: **READY** auf exakt diesem `main`
 - Branch Protection: unverändert `protected=false`
-- S5-B Persistenz: Repository Draft-PR #182 / ADR-0198; **nicht** auf Production angewendet; TW-8 bleibt geschlossen
+- S5-B Persistenz: Repository Draft-PR #182 / ADR-0198; TL-182 Review-Fixes im Repository; Production-Write-Pfad nicht allokiert; **nicht** auf Production angewendet; TW-8 bleibt geschlossen
 - Checkpoint: `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 
 Historischer vorheriger Chat-Übergabepunkt (PR #138, bleibt Evidence):

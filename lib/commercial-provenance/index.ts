@@ -50,6 +50,9 @@ export { commercialAffiliateLesen, commercialQuellePruefen } from '@/lib/commerc
 export { commercialAkteurQuellePruefen, istCommercialProviderQuelle } from '@/lib/commercial-provenance/trust'
 export {
   COMMERCIAL_LEGACY_GUARD,
+  COMMERCIAL_PERSISTENCE_CLIENT_QUOTE_KEYS,
+  COMMERCIAL_PERSISTENCE_MINT,
+  COMMERCIAL_PERSISTENCE_VERTRAG,
   TRIP_ITEM_COMMERCIAL_KINDS,
   TRIP_ITEM_KIND_TO_COMMERCIAL_DOMAIN,
   commercialAkteurIstWriteActor,
@@ -58,10 +61,14 @@ export {
   commercialLegacyGuardFuerKind,
   commercialLegacyOhneProvenanceIstUnknown,
   commercialLegacyProjektionAusSnapshot,
+  commercialPersistenzNutzlastBauen,
+  commercialPersistenzNutzlastFuerTripItem,
+  commercialPersistenzNutzlastIstRohclient,
   commercialSnapshotFuerPersistenzMinten,
   type CommercialLegacyFeldvertrag,
   type CommercialLegacyGuard,
   type CommercialLegacyProjektion,
+  type CommercialPersistenzNutzlast,
   type CommercialSnapshotMint,
   type TripItemCommercialKind,
 } from '@/lib/commercial-provenance/persistenz'

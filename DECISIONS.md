@@ -5189,10 +5189,11 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 1. Eigene Relation `trip_item_commercial_provenance`, 1:1 an `trip_item_id`, Cascade-Delete.
 2. Nur S5-A-Evidence; immer `persisted_snapshot` / `snapshot`.
 3. Owner-SELECT; kein anon; kein authenticated Direct-Write; kein `service_role`.
-4. Write nur über `jetnity_internal.trip_item_commercial_provenance_schreiben` (DEFINER, leerer `search_path`, EXECUTE nur `jetnity_commercial_writer`).
-5. Legacy-Flachfelder sind keine zweite Hard-Truth; trusted Pfad schreibt die Display-Projektion.
-6. Guard-Matrix schließt Stay/Activity/Note und Transfer/Rental-Providerfelder; Flight-Guard bleibt.
-7. Kein Backfill, keine History, keine Provider-Aktivierung.
+4. Write nur über `jetnity_internal.trip_item_commercial_provenance_schreiben` (DEFINER, leerer `search_path`, EXECUTE nur `jetnity_commercial_writer`). NULL-Principal ist fail-closed. `jetnity_commercial_runtime` ist der vorgesehene spätere Invoker (NOINHERIT). `production_write_path_allocated` bleibt false: kein Production-Write-Pfad in diesem Slice.
+5. SQL akzeptiert nur `jetnity.commercial_persistence.v1` / `s5a_validated_snapshot` aus dem kanonischen S5-A-Mint. Rohe Client-Quotes werden abgelehnt.
+6. Legacy-Flachfelder sind keine zweite Hard-Truth; trusted Pfad schreibt die Display-Projektion.
+7. Guard-Matrix schließt Stay/Activity/Note und Transfer/Rental-Providerfelder; Flight-Guard bleibt.
+8. Kein Backfill, keine History, keine Provider-Aktivierung.
 
 **Kontext:** PO-Gate `S5B-G0-PO-MIG-01` ist freigegeben. Production-Apply bleibt TL-kontrolliert nach Exact-Head-PASS.
 

@@ -20,7 +20,7 @@ Provider-Herkunft, Price/Currency-Evidence, `externalRef`, Affiliate-Evidence, S
 
 ## 3. Trust Boundary
 
-Nur eine serverseitig geprüfte S5-A-Provider-Quote darf Provider-Hard-Truth minten. Persistiert wird ausschließlich `persisted_snapshot` / `snapshot`. Client-`sourceKind` und Client-`persistenz` sind keine Autorität.
+Nur eine serverseitig geprüfte S5-A-Provider-Quote darf Provider-Hard-Truth minten. Der SQL-Write akzeptiert ausschließlich `jetnity.commercial_persistence.v1` / `s5a_validated_snapshot`. Rohe Client-`sourceKind`/`akteur`/`providerId`-JSON ist kein Schreibvertrag. `auth.uid()` muss belegt und owner-gleich sein; NULL-Principal ist fail-closed. Die DEFINER-Funktion ist kein Production-Write-Pfad, solange `production_write_path_allocated=false`.
 
 ## 4. Bypass-Pfade und Schließung
 
@@ -34,6 +34,9 @@ Nur eine serverseitig geprüfte S5-A-Provider-Quote darf Provider-Hard-Truth min
 | Guest-Promotion | Strip Stay/Activity/Note vollständig; Transfer/Rental nur Preis; keine Provenance-Zeile |
 | PostgREST-RPC auf den Write | Funktion liegt in `jetnity_internal`, nicht in `[api].schemas` |
 | `service_role` | Weder Table-DML noch EXECUTE |
+| NULL `auth.uid()` trotz Writer-EXECUTE | `null principal reject` |
+| Rohe Client-Quote an den DEFINER-Write | `unvalidated raw payload reject` |
+| Runtime-Principal ohne späteres Gate | Gate-Zeile bleibt `production_write_path_allocated=false`; `jetnity_commercial_runtime` ist NOINHERIT und nicht an PostgREST-Rollen vergeben |
 
 ## 5. Warum Grants + RLS + privilegierter Write gemeinsam fail-closed sind
 
@@ -44,7 +47,8 @@ Nur eine serverseitig geprüfte S5-A-Provider-Quote darf Provider-Hard-Truth min
 
 ## 6. Residuals
 
-- Ein Superuser oder künftiges versehentliches EXECUTE-Grant an `authenticated` plus Schema-Exposure würde Own-Item-Minting erlauben. Ownership-Check und Source-Härtung bleiben dann die zweite Linie.
+- Ein Superuser oder künftiges versehentliches EXECUTE-Grant an `authenticated` plus Schema-Exposure würde Own-Item-Minting erlauben, aber nur mit belegtem `auth.uid()` und validierter Nutzlast.
+- GRANT `jetnity_commercial_runtime` an eine Login-Rolle ist ein späteres Gate, kein stiller Production-Write.
 - User-Intake-Preise auf Transfer/Rental bleiben sichtbar, sind aber nicht Provider-Hard-Truth.
 - Kein realer Provider-Snapshot existiert. TW-8 bleibt geschlossen.
 - Production ist nicht angewendet.

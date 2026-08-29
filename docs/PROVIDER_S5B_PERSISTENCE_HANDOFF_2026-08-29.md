@@ -1,7 +1,7 @@
 # Provider S5-B Persistence – Handoff
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT IM REPOSITORY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **TL-182 CHANGES REQUIRED CLOSED IN REPO / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Cursor-Agent: Jetnity provider readiness audit 4`  
 PR: https://github.com/Jetnity/jetnity/pull/182
 
@@ -15,23 +15,16 @@ PR: https://github.com/Jetnity/jetnity/pull/182
 6. `docs/PROVIDER_S5B_PERSISTENCE_SELF_REVIEW_2026-08-29.md`
 7. `docs/ACTIVE_WORK_STATUS.md`
 
-## Was gebaut wurde
+## Review-Fixes
 
-Option-C-Persistenzfundlage: eigene 1:1-Relation, fail-closed RLS/Grants, nicht exponierter DEFINER-Write, Legacy-Projektion, Guard-Matrix, `reise_anlegen`-Härtung, Guest-Strip, Tests, Threat Model.
-
-## Was ausdrücklich nicht gebaut wurde
-
-Keine Provider-Aktivierung, keine Secrets/paid calls, kein TW-8/TW-9, kein Account/Auth, kein Service Role im Produktpfad, kein Backfill, keine History, **keine Production-Supabase-Anwendung**.
+- **S5B-TL-182-01:** NULL-Principal fail-closed; Runtime-Rolle NOINHERIT; Production-Write-Gate geschlossen.
+- **S5B-TL-182-02:** SQL akzeptiert nur `jetnity.commercial_persistence.v1` / `s5a_validated_snapshot`.
+- **S5B-TL-182-03:** Isolierte lokale PostgreSQL-Evidence, 19/19, keine Production-Mutation.
 
 ## Widersprüche
 
 Kein still entschiedener Widerspruch zwischen Task, ADR-0197 und bestehender Production-Truth. Production-Head der Migration bleibt `20260828015304`, bis der Technical Lead anwendet.
 
-## Lokale Gates auf Implementation-Head `e3bef6f9`
-
-`npm test` 2605 pass; typecheck pass; lint 0 errors / 135 warnings; hygiene pass; production build pass.  
-`db:sicherheit` nicht gegen das unapplied Schema lauffähig – erwartet. Production nicht mutiert.
-
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review. Autor setzt kein Ready, merget nicht, wendet Production nicht an, startet keinen Folgeslice.
+Unabhängiger Technical-Lead Exact-Head-Re-Review. Autor setzt kein Ready, merget nicht, wendet Production nicht an, startet keinen Folgeslice.

@@ -27,6 +27,7 @@
     "db:rls": "node scripts/db/rls.mjs",
     "db:rechte": "node scripts/db/rechte.mjs",
     "db:sicherheit": "node scripts/db/sicherheit.mjs",
+    "db:s5b-persistenz-lokal": "node scripts/db/s5b-persistenz-lokal.mjs",
     "db:parallelitaet": "node scripts/db/parallelitaet.mjs",
     "db:kontingent": "node --import tsx scripts/db/kontingent.ts",
     "db:typen": "node scripts/db/typen.mjs",

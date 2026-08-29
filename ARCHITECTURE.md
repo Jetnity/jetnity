@@ -33,7 +33,7 @@ app/                Routing, Server Components, Route Handler, Server Actions
 components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
 lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
-lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance (ADR-0168). S5-B Zielarchitektur Option C (ADR-0197); Persistenz im Repository über ADR-0198 / `trip_item_commercial_provenance`, **nicht** auf Production angewendet. Keine Provideraktivierung.
+lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance (ADR-0168). S5-B Zielarchitektur Option C (ADR-0197); Persistenz im Repository über ADR-0198 / `trip_item_commercial_provenance`, **nicht** auf Production angewendet. SQL-Write nur über validierte `jetnity.commercial_persistence.v1`-Nutzlast; NULL-Principal fail-closed; Production-Write-Pfad nicht allokiert. Keine Provideraktivierung.
 lib/seo/            D0-Indexgrenze und öffentliche Metadata (ADR-0170). HTML-robots folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias. Kein D1/G1.
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt

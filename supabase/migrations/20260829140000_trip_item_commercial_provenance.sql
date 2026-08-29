@@ -33,10 +33,48 @@ end
 $$;
 
 comment on role jetnity_commercial_writer is
-  'NOLOGIN, nicht PostgREST. Einziger EXECUTE-Träger für den S5-B-Provenance-Write. Kein Login, kein Secret, kein Service-Role-Ersatz.';
+  'NOLOGIN, nicht PostgREST. Einziger EXECUTE-Träger für den S5-B-Provenance-Write. Kein Login, kein Secret, kein Service-Role-Ersatz. Kein Production-Write-Pfad, solange das Runtime-Gate geschlossen ist.';
+
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'jetnity_commercial_runtime') then
+    create role jetnity_commercial_runtime nologin noinherit;
+  end if;
+end
+$$;
+
+comment on role jetnity_commercial_runtime is
+  'NOLOGIN NOINHERIT. Zukünftiger server-seitiger Invoker ohne breite DB-Rechte. Darf SET ROLE jetnity_commercial_writer, erbt aber keine Privilegien. GRANT dieser Rolle an eine Login-Rolle ist ein späteres Gate. Nicht an anon/authenticated/service_role.';
+
+grant jetnity_commercial_writer to jetnity_commercial_runtime;
+revoke jetnity_commercial_writer from anon, authenticated, service_role;
+revoke jetnity_commercial_runtime from anon, authenticated, service_role;
 
 grant usage on schema jetnity_internal to jetnity_commercial_writer;
 revoke usage on schema jetnity_internal from public, anon, authenticated, service_role;
+
+create table if not exists jetnity_internal.commercial_write_runtime_gate (
+  singleton boolean primary key default true check (singleton),
+  production_write_path_allocated boolean not null default false,
+  allocated_invoker_role name,
+  note text not null
+);
+
+comment on table jetnity_internal.commercial_write_runtime_gate is
+  'S5-B Invocation-Gate. production_write_path_allocated=false bedeutet: die DEFINER-Funktion ist kein ausführbarer Production-Write-Pfad. Runtime-Principal-Zuweisung an eine Login-Rolle bleibt ein späteres Gate.';
+
+insert into jetnity_internal.commercial_write_runtime_gate (
+  singleton, production_write_path_allocated, allocated_invoker_role, note
+) values (
+  true,
+  false,
+  null,
+  'S5-B definiert den Invocation-Vertrag. GRANT jetnity_commercial_runtime an eine Anwendungs-Login-Rolle ist ein späteres Gate. Die Funktion ist kein Production-Write-Pfad.'
+)
+on conflict (singleton) do nothing;
+
+revoke all on table jetnity_internal.commercial_write_runtime_gate
+  from public, anon, authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- 2. Current-Snapshot-Relation
@@ -254,6 +292,37 @@ begin
       using errcode = '22023';
   end if;
 
+  -- Rohe Client-Quote darf nicht als Persistenzvertrag durchgehen.
+  if (_eingabe ? 'sourceKind')
+     or (_eingabe ? 'providerId')
+     or (_eingabe ? 'externalRef')
+     or (_eingabe ? 'retrievedAt')
+     or (_eingabe ? 'observedAt')
+     or (_eingabe ? 'freshUntil')
+     or (_eingabe ? 'requestedCurrency')
+     or (_eingabe ? 'quotedCurrency')
+     or (_eingabe ? 'amountStatus')
+     or (_eingabe ? 'providerOfferId')
+     or (_eingabe ? 'sourceLabel')
+     or (_eingabe ? 'akteur')
+     or (_eingabe ? 'affiliate')
+  then
+    raise exception 'unvalidated raw payload reject'
+      using errcode = '22023';
+  end if;
+
+  if (_eingabe ->> 'vertrag') is distinct from 'jetnity.commercial_persistence.v1'
+     or (_eingabe ->> 'mint') is distinct from 's5a_validated_snapshot'
+  then
+    raise exception 'unvalidated raw payload reject'
+      using errcode = '22023';
+  end if;
+
+  if _uid is null then
+    raise exception 'null principal reject'
+      using errcode = '42501';
+  end if;
+
   select *
     into _item
     from public.trip_items
@@ -264,7 +333,7 @@ begin
       using errcode = '22023';
   end if;
 
-  if _uid is not null and _item.user_id is distinct from _uid then
+  if _item.user_id is distinct from _uid then
     raise exception 'Commercial Provenance darf nur zur eigenen Reise gehören.'
       using errcode = '42501';
   end if;
@@ -296,18 +365,27 @@ begin
   end if;
 
   _akteur := nullif(btrim(coalesce(_eingabe ->> 'akteur', '')), '');
-  if _akteur is not null and _akteur is distinct from 'provider_adapter' then
+  if _akteur is not null then
     raise exception 'forged actor reject'
       using errcode = '22023';
   end if;
 
-  _source_kind := nullif(btrim(coalesce(_eingabe ->> 'sourceKind', _eingabe ->> 'source_kind')), '');
-  if _source_kind in ('user_intake', 'manual', 'assistant', 'llm') then
+  _source_kind := nullif(btrim(coalesce(_eingabe ->> 'source_kind', '')), '');
+  if _source_kind is null then
+    _source_kind := 'persisted_snapshot';
+  end if;
+  if _source_kind is distinct from 'persisted_snapshot' then
     raise exception 'forged source reject'
       using errcode = '22023';
   end if;
 
-  _provider_id := nullif(btrim(coalesce(_eingabe ->> 'providerId', _eingabe ->> 'provider_id')), '');
+  if nullif(btrim(coalesce(_eingabe ->> 'persistenz', '')), '') is not null
+     and btrim(_eingabe ->> 'persistenz') is distinct from 'snapshot' then
+    raise exception 'forged source reject'
+      using errcode = '22023';
+  end if;
+
+  _provider_id := nullif(btrim(coalesce(_eingabe ->> 'provider_id', '')), '');
   if _provider_id is null then
     raise exception 'missing_provider'
       using errcode = '22023';
@@ -317,13 +395,13 @@ begin
       using errcode = '22023';
   end if;
 
-  _source_label := nullif(btrim(coalesce(_eingabe ->> 'sourceLabel', _eingabe ->> 'source_label')), '');
-  _external_ref := nullif(btrim(coalesce(_eingabe ->> 'externalRef', _eingabe ->> 'external_ref')), '');
-  _offer_id := nullif(btrim(coalesce(_eingabe ->> 'providerOfferId', _eingabe ->> 'provider_offer_id')), '');
+  _source_label := nullif(btrim(coalesce(_eingabe ->> 'source_label', '')), '');
+  _external_ref := nullif(btrim(coalesce(_eingabe ->> 'external_ref', '')), '');
+  _offer_id := nullif(btrim(coalesce(_eingabe ->> 'provider_offer_id', '')), '');
 
   begin
     _retrieved_at := nullif(
-      coalesce(_eingabe ->> 'retrievedAt', _eingabe ->> 'retrieved_at'),
+      coalesce(_eingabe ->> 'retrieved_at', ''),
       ''
     )::timestamptz;
   exception when others then
@@ -338,7 +416,7 @@ begin
 
   begin
     _observed_at := nullif(
-      coalesce(_eingabe ->> 'observedAt', _eingabe ->> 'observed_at'),
+      coalesce(_eingabe ->> 'observed_at', ''),
       ''
     )::timestamptz;
   exception when others then
@@ -351,7 +429,7 @@ begin
 
   begin
     _fresh_until := nullif(
-      coalesce(_eingabe ->> 'freshUntil', _eingabe ->> 'fresh_until'),
+      coalesce(_eingabe ->> 'fresh_until', ''),
       ''
     )::timestamptz;
   exception when others then
@@ -362,10 +440,10 @@ begin
   end if;
 
   _requested_currency := nullif(upper(btrim(coalesce(
-    _eingabe ->> 'requestedCurrency', _eingabe ->> 'requested_currency', ''
+    _eingabe ->> 'requested_currency', ''
   ))), '');
   _quoted_currency := nullif(upper(btrim(coalesce(
-    _eingabe ->> 'quotedCurrency', _eingabe ->> 'quoted_currency', ''
+    _eingabe ->> 'quoted_currency', ''
   ))), '');
   if _requested_currency is not null and _requested_currency !~ '^[A-Z]{3}$' then
     raise exception 'invalid_currency' using errcode = '22023';
@@ -383,7 +461,7 @@ begin
     raise exception 'invalid_amount' using errcode = '22023';
   end if;
 
-  _amount_status := nullif(btrim(coalesce(_eingabe ->> 'amountStatus', _eingabe ->> 'amount_status')), '');
+  _amount_status := nullif(btrim(coalesce(_eingabe ->> 'amount_status', '')), '');
   if _amount_status is null then
     _amount_status := case when _amount is null then 'missing' else 'quoted' end;
   end if;
@@ -398,17 +476,14 @@ begin
   end if;
 
   _affiliate_partner := nullif(btrim(coalesce(
-    _eingabe #>> '{affiliate,partnerId}',
     _eingabe ->> 'affiliate_partner_id',
     ''
   )), '');
   _affiliate_click := nullif(btrim(coalesce(
-    _eingabe #>> '{affiliate,clickId}',
     _eingabe ->> 'affiliate_click_id',
     ''
   )), '');
   _affiliate_ref := nullif(btrim(coalesce(
-    _eingabe #>> '{affiliate,attributionRef}',
     _eingabe ->> 'affiliate_attribution_ref',
     ''
   )), '');
@@ -416,7 +491,6 @@ begin
     or _affiliate_click is not null
     or _affiliate_ref is not null;
   _affiliate_status := nullif(btrim(coalesce(
-    _eingabe #>> '{affiliate,status}',
     _eingabe ->> 'affiliate_status',
     ''
   )), '');
@@ -439,8 +513,6 @@ begin
   end if;
 
   _availability := nullif(btrim(coalesce(
-    _eingabe ->> 'availability',
-    _eingabe ->> 'availabilityStatus',
     _eingabe ->> 'availability_status',
     ''
   )), '');
@@ -532,7 +604,7 @@ end
 $$;
 
 comment on function jetnity_internal.trip_item_commercial_provenance_schreiben(jsonb) is
-  'S5-B privilegierter Write. SECURITY DEFINER, search_path leer, nicht in public. Mintet nur persisted_snapshot/snapshot. Prüft Ownership, Kind/Domain, Actor/Source und Refresh-Identität. Kein Service-Role-Pfad.';
+  'S5-B privilegierter Write. SECURITY DEFINER, search_path leer, nicht in public. Nimmt nur jetnity.commercial_persistence.v1 / s5a_validated_snapshot. Fail-closed ohne auth.uid(). EXECUTE nur jetnity_commercial_writer. KEIN Production-Write-Pfad, solange jetnity_internal.commercial_write_runtime_gate.production_write_path_allocated=false. Kein Service-Role-Pfad.';
 
 revoke all on function jetnity_internal.trip_item_commercial_provenance_schreiben(jsonb)
   from public, anon, authenticated, service_role;

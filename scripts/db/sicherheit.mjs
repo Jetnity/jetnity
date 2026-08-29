@@ -2486,34 +2486,45 @@ function reisenachweise() {
       rolle: 'authenticated',
       uid: NUTZER,
       sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
-              jsonb_build_object(
-                'trip_item_id', '${PUNKT}',
-                'providerId', 'gyg',
-                'externalRef', 'act-seed',
-                'retrievedAt', '2026-08-29T11:05:00Z',
-                'quotedCurrency', 'EUR',
-                'amount', 50
-              )
+              '${JSON.stringify({
+                vertrag: 'jetnity.commercial_persistence.v1',
+                mint: 's5a_validated_snapshot',
+                trip_item_id: PUNKT,
+                domain: 'activities',
+                provider_id: 'gyg',
+                source_kind: 'persisted_snapshot',
+                persistenz: 'snapshot',
+                external_ref: 'act-seed',
+                retrieved_at: '2026-08-29T11:05:00Z',
+                observed_at: '2026-08-29T11:05:00Z',
+                quoted_currency: 'EUR',
+                amount: 50,
+                amount_status: 'quoted',
+              })}'::jsonb
             )`,
       erwartung: 'abgelehnt',
     },
     {
-      name: 'kontrollierter Provenance-Write mintet persisted_snapshot',
+      name: 'kontrollierter Provenance-Write akzeptiert nur validierte Persistenz-Nutzlast',
       rolle: 'jetnity_commercial_writer',
       uid: NUTZER,
       sql: `select 1
               from jetnity_internal.trip_item_commercial_provenance_schreiben(
-                jsonb_build_object(
-                  'trip_item_id', '${PUNKT}',
-                  'providerId', 'gyg',
-                  'sourceKind', 'live_api',
-                  'persistenz', 'ephemeral',
-                  'externalRef', 'act-seed',
-                  'retrievedAt', '2026-08-29T11:05:00Z',
-                  'quotedCurrency', 'EUR',
-                  'amount', 50,
-                  'akteur', 'provider_adapter'
-                )
+                '${JSON.stringify({
+                  vertrag: 'jetnity.commercial_persistence.v1',
+                  mint: 's5a_validated_snapshot',
+                  trip_item_id: PUNKT,
+                  domain: 'activities',
+                  provider_id: 'gyg',
+                  source_kind: 'persisted_snapshot',
+                  persistenz: 'snapshot',
+                  external_ref: 'act-seed',
+                  retrieved_at: '2026-08-29T11:05:00Z',
+                  observed_at: '2026-08-29T11:05:00Z',
+                  quoted_currency: 'EUR',
+                  amount: 50,
+                  amount_status: 'quoted',
+                })}'::jsonb
               ) as r
              where (r ->> 'ok') = 'true'
                and (r ->> 'source_kind') = 'persisted_snapshot'
@@ -2521,15 +2532,79 @@ function reisenachweise() {
       erwartung: 'erlaubt',
     },
     {
-      name: 'kontrollierter Write lehnt forged Actor ab',
+      name: 'kontrollierter Write ohne auth.uid() ist fail-closed',
+      rolle: 'jetnity_commercial_writer',
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              '${JSON.stringify({
+                vertrag: 'jetnity.commercial_persistence.v1',
+                mint: 's5a_validated_snapshot',
+                trip_item_id: PUNKT,
+                domain: 'activities',
+                provider_id: 'gyg',
+                source_kind: 'persisted_snapshot',
+                persistenz: 'snapshot',
+                external_ref: 'act-seed',
+                retrieved_at: '2026-08-29T11:05:00Z',
+                observed_at: '2026-08-29T11:05:00Z',
+                quoted_currency: 'EUR',
+                amount: 50,
+                amount_status: 'quoted',
+              })}'::jsonb
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write lehnt fremdes auth.uid() ab',
+      rolle: 'jetnity_commercial_writer',
+      uid: ZWEITER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              '${JSON.stringify({
+                vertrag: 'jetnity.commercial_persistence.v1',
+                mint: 's5a_validated_snapshot',
+                trip_item_id: PUNKT,
+                domain: 'activities',
+                provider_id: 'gyg',
+                source_kind: 'persisted_snapshot',
+                persistenz: 'snapshot',
+                external_ref: 'act-seed',
+                retrieved_at: '2026-08-29T11:05:00Z',
+                observed_at: '2026-08-29T11:05:00Z',
+                quoted_currency: 'EUR',
+                amount: 50,
+                amount_status: 'quoted',
+              })}'::jsonb
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write lehnt rohe Client-sourceKind-Nutzlast ab',
       rolle: 'jetnity_commercial_writer',
       uid: NUTZER,
       sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
               jsonb_build_object(
                 'trip_item_id', '${PUNKT}',
                 'providerId', 'gyg',
+                'sourceKind', 'live_api',
+                'persistenz', 'ephemeral',
                 'externalRef', 'act-seed',
                 'retrievedAt', '2026-08-29T11:05:00Z',
+                'quotedCurrency', 'EUR',
+                'amount', 50,
+                'akteur', 'provider_adapter'
+              )
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write lehnt unvalidated Actor-Claim ab',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              jsonb_build_object(
+                'vertrag', 'jetnity.commercial_persistence.v1',
+                'mint', 's5a_validated_snapshot',
+                'trip_item_id', '${PUNKT}',
+                'provider_id', 'gyg',
                 'akteur', 'user'
               )
             )`,
@@ -2541,14 +2616,52 @@ function reisenachweise() {
       uid: NUTZER,
       sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
               jsonb_build_object(
+                'vertrag', 'jetnity.commercial_persistence.v1',
+                'mint', 's5a_validated_snapshot',
                 'trip_item_id', '${PUNKT}',
-                'providerId', 'gyg',
-                'sourceKind', 'user_intake',
-                'externalRef', 'act-seed',
-                'retrievedAt', '2026-08-29T11:05:00Z'
+                'domain', 'activities',
+                'provider_id', 'gyg',
+                'source_kind', 'user_intake',
+                'persistenz', 'snapshot',
+                'external_ref', 'act-seed',
+                'retrieved_at', '2026-08-29T11:05:00Z',
+                'observed_at', '2026-08-29T11:05:00Z'
               )
             )`,
       erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Production-Write-Pfad ist nicht allokiert',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `do $body$
+begin
+  reset role;
+  if not exists (
+    select 1
+      from jetnity_internal.commercial_write_runtime_gate
+     where singleton
+       and production_write_path_allocated = false
+       and allocated_invoker_role is null
+  ) then
+    raise exception 'Production-Write-Pfad darf in diesem Slice nicht allokiert sein';
+  end if;
+  if pg_has_role('anon', 'jetnity_commercial_writer', 'USAGE')
+     or pg_has_role('authenticated', 'jetnity_commercial_writer', 'USAGE')
+     or pg_has_role('service_role', 'jetnity_commercial_writer', 'USAGE')
+     or pg_has_role('anon', 'jetnity_commercial_runtime', 'USAGE')
+     or pg_has_role('authenticated', 'jetnity_commercial_runtime', 'USAGE')
+     or pg_has_role('service_role', 'jetnity_commercial_runtime', 'USAGE')
+  then
+    raise exception 'PostgREST-Rollen dürfen Writer/Runtime nicht erben';
+  end if;
+  if not pg_has_role('jetnity_commercial_runtime', 'jetnity_commercial_writer', 'MEMBER') then
+    raise exception 'Runtime muss Writer-Mitglied sein, um später SET ROLE zu können';
+  end if;
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+      erwartung: 'erlaubt',
     },
     {
       name: 'kontrollierter Write lehnt note-Items ab',
@@ -2560,13 +2673,20 @@ begin
   insert into public.trip_items (id, trip_id, kind, title)
     values ('${PUNKT_NEU}', '${REISE}', 'note', 'S5B Note');
   perform set_config('role', 'jetnity_commercial_writer', true);
+  perform set_config('request.jwt.claims', json_build_object('sub', '${NUTZER}', 'role', 'jetnity_commercial_writer')::text, true);
   perform jetnity_internal.trip_item_commercial_provenance_schreiben(
-    jsonb_build_object(
-      'trip_item_id', '${PUNKT_NEU}',
-      'providerId', 'duffel',
-      'externalRef', 'note-x',
-      'retrievedAt', '2026-08-29T11:05:00Z'
-    )
+    '${JSON.stringify({
+      vertrag: 'jetnity.commercial_persistence.v1',
+      mint: 's5a_validated_snapshot',
+      trip_item_id: PUNKT_NEU,
+      domain: 'flights',
+      provider_id: 'duffel',
+      source_kind: 'persisted_snapshot',
+      persistenz: 'snapshot',
+      external_ref: 'note-x',
+      retrieved_at: '2026-08-29T11:05:00Z',
+      observed_at: '2026-08-29T11:05:00Z',
+    })}'::jsonb
   );
   raise exception 'note durfte keine Provenance erhalten';
 end
@@ -2578,13 +2698,41 @@ $body$`,
       rolle: 'jetnity_commercial_writer',
       uid: NUTZER,
       sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
-              jsonb_build_object(
-                'trip_item_id', '${PUNKT}',
-                'domain', 'flights',
-                'providerId', 'gyg',
-                'externalRef', 'act-seed',
-                'retrievedAt', '2026-08-29T11:05:00Z'
-              )
+              '${JSON.stringify({
+                vertrag: 'jetnity.commercial_persistence.v1',
+                mint: 's5a_validated_snapshot',
+                trip_item_id: PUNKT,
+                domain: 'flights',
+                provider_id: 'gyg',
+                source_kind: 'persisted_snapshot',
+                persistenz: 'snapshot',
+                external_ref: 'act-seed',
+                retrieved_at: '2026-08-29T11:05:00Z',
+                observed_at: '2026-08-29T11:05:00Z',
+              })}'::jsonb
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'kontrollierter Write erzwingt Refresh-Identität',
+      rolle: 'jetnity_commercial_writer',
+      uid: NUTZER,
+      sql: `select jetnity_internal.trip_item_commercial_provenance_schreiben(
+              '${JSON.stringify({
+                vertrag: 'jetnity.commercial_persistence.v1',
+                mint: 's5a_validated_snapshot',
+                trip_item_id: PUNKT,
+                domain: 'activities',
+                provider_id: 'gyg',
+                source_kind: 'persisted_snapshot',
+                persistenz: 'snapshot',
+                external_ref: 'act-other',
+                retrieved_at: '2026-08-29T11:05:00Z',
+                observed_at: '2026-08-29T11:05:00Z',
+                quoted_currency: 'EUR',
+                amount: 50,
+                amount_status: 'quoted',
+              })}'::jsonb
             )`,
       erwartung: 'abgelehnt',
     },
@@ -2601,24 +2749,39 @@ begin
     values ('${REISE}', 'activity', 'Zweite Tour')
     returning id into _zweite;
   perform set_config('role', 'jetnity_commercial_writer', true);
+  perform set_config('request.jwt.claims', json_build_object('sub', '${NUTZER}', 'role', 'jetnity_commercial_writer')::text, true);
   perform jetnity_internal.trip_item_commercial_provenance_schreiben(
     jsonb_build_object(
+      'vertrag', 'jetnity.commercial_persistence.v1',
+      'mint', 's5a_validated_snapshot',
       'trip_item_id', '${PUNKT}',
-      'providerId', 'gyg',
-      'externalRef', 'act-seed',
-      'retrievedAt', '2026-08-29T11:05:00Z',
-      'quotedCurrency', 'EUR',
-      'amount', 45
+      'domain', 'activities',
+      'provider_id', 'gyg',
+      'source_kind', 'persisted_snapshot',
+      'persistenz', 'snapshot',
+      'external_ref', 'act-seed',
+      'retrieved_at', '2026-08-29T11:05:00Z',
+      'observed_at', '2026-08-29T11:05:00Z',
+      'quoted_currency', 'EUR',
+      'amount', 45,
+      'amount_status', 'quoted'
     )
   );
   perform jetnity_internal.trip_item_commercial_provenance_schreiben(
     jsonb_build_object(
+      'vertrag', 'jetnity.commercial_persistence.v1',
+      'mint', 's5a_validated_snapshot',
       'trip_item_id', _zweite,
-      'providerId', 'gyg',
-      'externalRef', 'act-seed',
-      'retrievedAt', '2026-08-29T11:05:00Z',
-      'quotedCurrency', 'EUR',
-      'amount', 45
+      'domain', 'activities',
+      'provider_id', 'gyg',
+      'source_kind', 'persisted_snapshot',
+      'persistenz', 'snapshot',
+      'external_ref', 'act-seed',
+      'retrieved_at', '2026-08-29T11:05:00Z',
+      'observed_at', '2026-08-29T11:05:00Z',
+      'quoted_currency', 'EUR',
+      'amount', 45,
+      'amount_status', 'quoted'
     )
   );
   if (select count(*) from public.trip_item_commercial_provenance

@@ -15,7 +15,12 @@ import {
   commercialLegacyGuardFuerKind,
   commercialLegacyOhneProvenanceIstUnknown,
   commercialLegacyProjektionAusSnapshot,
+  commercialPersistenzNutzlastBauen,
+  commercialPersistenzNutzlastFuerTripItem,
+  commercialPersistenzNutzlastIstRohclient,
   commercialSnapshotFuerPersistenzMinten,
+  COMMERCIAL_PERSISTENCE_MINT,
+  COMMERCIAL_PERSISTENCE_VERTRAG,
 } from '@/lib/commercial-provenance'
 
 const NOW = Date.parse('2026-08-29T12:00:00.000Z')
@@ -187,6 +192,45 @@ describe('S5-B kontrollierter Snapshot-Mint', () => {
       nowMs: NOW,
     })
     assert.equal(ok.ok, true)
+  })
+
+  test('validierte Persistenz-Nutzlast ist vom rohen Client-Quote unterscheidbar', () => {
+    const tripItemId = 'aaaaaaaa-0000-4000-8000-000000000004'
+    const gebaut = commercialPersistenzNutzlastFuerTripItem({
+      tripItemId,
+      tripItemKind: 'flight',
+      quote: quote(),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(gebaut.ok, true)
+    if (!gebaut.ok) return
+    assert.equal(gebaut.nutzlast.vertrag, COMMERCIAL_PERSISTENCE_VERTRAG)
+    assert.equal(gebaut.nutzlast.mint, COMMERCIAL_PERSISTENCE_MINT)
+    assert.equal(gebaut.nutzlast.source_kind, 'persisted_snapshot')
+    assert.equal(gebaut.nutzlast.persistenz, 'snapshot')
+    assert.equal(gebaut.nutzlast.trip_item_id, tripItemId)
+    assert.equal(commercialPersistenzNutzlastIstRohclient(gebaut.nutzlast), false)
+    assert.equal(commercialPersistenzNutzlastIstRohclient(quote()), true)
+    assert.equal(
+      commercialPersistenzNutzlastIstRohclient({
+        ...gebaut.nutzlast,
+        sourceKind: 'live_api',
+        akteur: 'user',
+      }),
+      true,
+    )
+    const mint = commercialSnapshotFuerPersistenzMinten({
+      tripItemKind: 'flight',
+      quote: quote(),
+      nowMs: NOW,
+    })
+    assert.equal(mint.ok, true)
+    if (!mint.ok) return
+    const direkt = commercialPersistenzNutzlastBauen({ tripItemId, mint })
+    assert.equal(direkt.vertrag, COMMERCIAL_PERSISTENCE_VERTRAG)
+    assert.equal('sourceKind' in direkt, false)
+    assert.equal('akteur' in direkt, false)
   })
 
   test('gleiche Provider+Ref darf auf mehreren Items vorkommen', () => {
