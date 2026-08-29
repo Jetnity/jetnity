@@ -10,7 +10,7 @@ Status: **AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166. IMPLEM
 ## Aktueller Arbeitsblock – AP-6a Gate 0 Legal Foundation / Trust Boundary
 
 1. **Arbeitsblock / Ziel:** Rekonstruktion und Vertrag für die fehlende Legal Foundation. Production `/privacy` und `/terms` sind 404, obwohl die Registrierung dorthin verlinkt. Keine Rechtstexte.
-2. **Authoring-Branch / PR:** `audit/ap6a-gate0-legal-foundation-2026-08-29`; Draft-PR #166. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+2. **Authoring-Branch / PR:** `audit/ap6a-gate0-legal-foundation-2026-08-29`; Draft-PR #166. Lokale Gates auf `dce9ee8c` (2564 tests, typecheck, lint 0/135, hygiene, Production-Build). Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
 3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7.
 4. **Bereits umgesetzt:** Live-404-Evidence; Call-Site-Inventar; Legal-Input-Matrix; Runtime-Vertrag; Inventory-Test; ADR-0195; Continuity nach vollständigem AP-5.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 16`. Exact Run-ID `bc-216be067-b75a-4a2f-a186-8e38c67fb822`. Beobachteter Titel `Account plattform audit vorbereitung`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 16 bleibt 16.
