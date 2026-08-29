@@ -45,8 +45,8 @@ Siehe `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_LOCAL_TEST_EVIDENCE
 
 | Lauf | Ergebnis |
 | --- | --- |
-| Gezielte Ortssuche + Route-Lauf + Suchliste | dieser Stamp; lokal neu prüfen |
-| `npm test` / Typecheck / Lint / Hygiene / Build | dieser Stamp; lokal neu prüfen |
+| Gezielte Ortssuche + Route-Lauf + Suchliste | **41/41 pass** |
+| `npm test` / Typecheck / Lint / Hygiene / Build | **2587/2587**, typecheck pass, lint 0/135, hygiene pass, Production-Build pass |
 | Browser / Real-Device / Mobile Safari | **nicht gelaufen** |
 | Exact-Head CI / Preview | dieser Stamp erzeugt einen neueren Head |
 

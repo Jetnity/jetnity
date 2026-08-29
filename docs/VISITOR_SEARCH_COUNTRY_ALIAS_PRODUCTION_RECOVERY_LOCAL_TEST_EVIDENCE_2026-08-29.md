@@ -1,31 +1,21 @@
 # Jetnity – Visitor Search Country Alias Production Recovery – Local Evidence
 
 Stand: 29. August 2026  
-Implementation head before CI: see git; this stamp is the TL-`5057687985` disambiguation fix.  
+Implementation head before CI: see git; this stamp is the TL-`5057757711` country-universe retrieval fix.  
 Baseline / merge-base: `2241e349f8b3b400963cf1de11e5a8617bdc8e44`
 
 > Live-Evidence gewinnt. CI-/Vercel-IDs auf dem Stamp-Head müssen live neu gelesen werden.
 
-## Live Production auf `main @ 2241e349` – reproduziert
+## Live Production auf `main @ 2241e349`
 
-`GET https://jetnity-app.vercel.app/api/search/places` HTTP 200:
-
-| q | index 0 | index 1 | index 2 |
-| --- | --- | --- | --- |
-| `Peru` | Peru (city) | Peru (city) | Republic of Peru (country) |
-| `China` | China (city) | China (city) | People’s Republic of China (country) |
-| `Schweiz` | Switzerland (country) | Schweizer-Reneke (city) | — |
-
-Damit ist der vorherige TL-PASS von PR #172 weiterhin invalidiert.
-
-Read-only Production `public.places` zeigt ausserdem, dass Token `Congo` auf CD und CG liegt. Zwei ununterscheidbare `Congo · Land`-Zeilen wären der Fund `5057687985`.
+Peru/China weiterhin Städte vor Land; Schweiz korrekt. Geteiltes Alias `Congo` auf CD/CG. Kurze Exact-Tokens existieren mehrfach; Substring-Kandidaten liegen weit über 12.
 
 ## Lokal auf diesem Recovery-Head
 
 | Gate | Ergebnis |
 | --- | --- |
-| Gezielte Ortssuche + Route-Lauf + Suchliste | **40/40 pass** |
-| `npm test` | **2586/2586 pass** |
+| Gezielte Ortssuche + Route-Lauf + Suchliste | **41/41 pass** |
+| `npm test` | **2587/2587 pass** |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors / 135 warnings |
 | `check:dead` | pass |
@@ -34,12 +24,15 @@ Read-only Production `public.places` zeigt ausserdem, dass Token `Congo` auf CD 
 | `check:api-schutz` | pass |
 | `check:schema-bezug` | pass |
 | `npm run build` | Next.js 16.3.3 Turbopack Production-Build pass |
-| `npm ci` | nicht erneut; vorhandenes `node_modules` plus grüne Gates |
 | Browser / Real-Device / Mobile Safari | **nicht gelaufen** |
 | Preview-GET | nach Exact-Head-Preview live prüfen; SSO kann den Public-GET verhindern |
 
-Neutraler Zwei-Länder-Beweis: `Sylvani` auf Northern Sylvani Federation (NS) und Southern Sylvani Republic (SS). Production-förmig: `Congo` CD/CG. Eindeutiges Alias bleibt `Land`. Runtime enthält keine Allowlist.
+Neutraler Retrieval-Beweis: 2-Zeichen-Alias hinter 15 Substring-Lärmländern, beide Exact-Länder vor der Stadt. Runtime ohne Allowlist.
+
+## Kosten
+
+Keine neuen laufenden Kosten. Zusätzlich eine bounded `typ = country`-Lesung bis 500 Zeilen pro Zielsuche.
 
 ## Exact-Head Automation
 
-Dieser Stamp erzeugt einen neueren Head. CI/Vercel/Threads live am PR prüfen. Prior PASS `5057668445` bleibt durch `5057687985` superseded.
+Dieser Stamp erzeugt einen neueren Head. CI/Vercel live am PR prüfen.
