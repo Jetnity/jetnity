@@ -6,7 +6,7 @@ Agent: `Cursor-Agent: Jetnity provider readiness audit 3`
 PR: https://github.com/Jetnity/jetnity/pull/180  
 Branch: `architecture/provider-s5b-option-c-acceptance-2026-08-29`
 
-Dieser Handoff startet keinen Folgeslice. CI/Vercel auf `f36959d0` gelten **nicht** für den neuen Head.
+Dieser Handoff startet keinen Folgeslice. CI/Vercel auf `f36959d0` gelten **nicht** für `4448b2c0`. Gates auf `4448b2c0` gelten **nicht** für diesen Evidence-Stamp-Head.
 
 ---
 
@@ -27,11 +27,14 @@ Kein Runtime. Keine Schema-/Migrationsdatei. Keine Supabase-Mutation. Kein RLS/O
 | `origin/main` nach Re-Fetch | `f7527899d716edfb23d5cab8ab0d9d40bec0a0a5` |
 | Drift gegen Task-Baseline | **keine** (`behind_by=0`) |
 | Merge-Base | `f7527899` |
-| Ahead / Behind bei Start | 1 / 0; nach diesem Stamp +Docs-Commits, Behind muss 0 bleiben |
+| Ahead / Behind bei Start | 1 / 0; Authoring + Evidence-Stamp, Behind muss 0 bleiben |
 | Draft-PR | #180 OPEN Draft `MERGEABLE` |
+| Authoring Exact Head | `4448b2c0cb30c38f652a4d164dc31eaa7f4ccb59` |
 | `main` Actions | `33251935789` SUCCESS auf exakt `f7527899` |
 | `main` Production | GitHub Deployment `6155560578` success auf exakt `f7527899` |
-| Prior-Head Gates | `f36959d0` Actions `33252608247` / Vercel `D9usxr6gSJQPuZ8KjGrsjWmjZSHq` **ungültig** für den neuen Head |
+| Authoring-Head Actions | `33252868884` SUCCESS auf exakt `4448b2c0` |
+| Authoring-Head Vercel | Inspect `Cs4EXesdLyCkYZzadnUfbbAqZCou` SUCCESS; GitHub Preview `6155757522` success |
+| Prior-Head Gates | `f36959d0` Actions `33252608247` / Vercel `D9usxr6gSJQPuZ8KjGrsjWmjZSHq` **ungültig** für `4448b2c0` und den Stamp-Head |
 | Branch Protection | API 403; letzte Evidence `protected=false` |
 | Supabase | **not independently live-verified**; nicht mutiert |
 | Review-Threads | keine Code-Review-Comments vor diesem Stamp |

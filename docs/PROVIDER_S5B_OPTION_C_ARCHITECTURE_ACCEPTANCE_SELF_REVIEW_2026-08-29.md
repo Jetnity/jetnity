@@ -5,7 +5,7 @@ Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**
 Agent: `Cursor-Agent: Jetnity provider readiness audit 3`  
 PR: https://github.com/Jetnity/jetnity/pull/180
 
-Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead Exact-Head-Review. Gates auf `f36959d0` gelten nicht für den neuen Head.
+Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead Exact-Head-Review. Gates auf `f36959d0` gelten nicht für `4448b2c0`. Gates auf `4448b2c0` gelten nicht für diesen Evidence-Stamp-Head.
 
 ---
 
@@ -79,7 +79,7 @@ Aktuelle Provider-Readiness- und Continuity-Zeilen in ROADMAP, ARCHITECTURE, Bin
 
 ## 4. Nicht geprüft / nicht behauptet
 
-- Exact-Head CI/Vercel dieses Authoring-Commits — müssen neu gaten
+- Authoring-Head `4448b2c0` CI/Vercel: Actions `33252868884` SUCCESS; Vercel `Cs4EXesdLyCkYZzadnUfbbAqZCou` SUCCESS. Stamp-Head muss neu gaten
 - Live-Supabase-Katalog
 - Vercel Production `dpl_*` für `f7527899` — GitHub Deployment `6155560578` success ist die in diesem Environment sichtbare Evidence
 - Runtime (unverändert)

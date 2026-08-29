@@ -25,10 +25,13 @@ Erneut gegen `origin/main` geprüft vor Authoring und vor diesem Stamp.
 | Draft-PR | [#180](https://github.com/Jetnity/jetnity/pull/180) OPEN, Draft, `MERGEABLE` |
 | Branch-Head bei Start | `f36959d0da357cb79a2ea255f9b4ff39dee1b17d` — nur die Task-Datei |
 | Ahead / Behind bei Start | 1 / 0 |
-| Exact Head dieses Stamps | der Commit dieses Authoring-Stamps; live am PR prüfen |
+| Authoring Exact Head | `4448b2c0cb30c38f652a4d164dc31eaa7f4ccb59` |
+| Evidence-Stamp Head | der Commit dieses Evidence-Stamps; live am PR prüfen. Gates auf `4448b2c0` gelten **nicht** für den Stamp-Head |
 | `main` CI | Actions Run `33251935789` **SUCCESS** auf exakt `f7527899` |
 | `main` Production | GitHub Deployment `6155560578` **success** auf exakt `f7527899` |
-| Task-Head CI / Vercel | Actions `33252608247` und Vercel Preview `D9usxr6gSJQPuZ8KjGrsjWmjZSHq` gelten nur für `f36959d0` und **nicht** für diesen neuen Head |
+| Authoring-Head CI | Actions Run `33252868884` **SUCCESS** auf exakt `4448b2c0` |
+| Authoring-Head Vercel | StatusContext **SUCCESS** / Inspect `Cs4EXesdLyCkYZzadnUfbbAqZCou`; GitHub Preview Deployment `6155757522` success |
+| Task-Head CI / Vercel | Actions `33252608247` und Vercel Preview `D9usxr6gSJQPuZ8KjGrsjWmjZSHq` gelten nur für `f36959d0` und **nicht** für `4448b2c0` oder den Stamp-Head |
 | Branch Protection | GitHub-API 403. Letzte kanonische Evidence: `protected=false`. **not independently re-verified by this agent.** |
 | Supabase Production / develop | **not independently live-verified by this agent.** Task-Baseline: Production `qscbgcdmivbbnzrcyegn` ACTIVE_HEALTHY, Migrationshead `20260828015304`. Keine Mutation. |
 | Offene Review-Threads | keine Review-Comments auf #180 vor diesem Stamp. Issue-Comments: `vercel[bot]`, `Jetnity`, `cursor[bot]`. |
@@ -109,7 +112,7 @@ Docs-only. Kein Runtime-Typecheck-Bedarf. Vor Handoff:
 | TW-8 geschlossen | ja |
 | Self-Review ≠ PASS | ja |
 
-Exact-Head Actions und Vercel Preview müssen **nach diesem Push** neu gaten. Gates auf `f36959d0` gelten nicht für den neuen Head.
+Authoring-Head `4448b2c0`: Actions `33252868884` SUCCESS; Vercel Inspect `Cs4EXesdLyCkYZzadnUfbbAqZCou` SUCCESS. Dieser Evidence-Stamp erzeugt einen neueren Head; diese Gates gelten nicht für den Stamp-Head. Gates auf `f36959d0` bleiben historisch.
 
 ---
 
