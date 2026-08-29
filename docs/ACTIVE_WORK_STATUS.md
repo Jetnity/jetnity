@@ -12,7 +12,7 @@ Status: **Self-expiring PR #187 / ADR-0199. Solange offen: Draft / STOP für una
 1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
 2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
 3. **Status:** **SELF-EXPIRING.** Solange #187 offen: REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Sobald gemergt: Kern integriert; erster nächster Schritt Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
-4. **Bereits umgesetzt:** Frühere akzeptierte P1-Fixes bleiben. `5463847278` bleibt. Neu aus `5463879179`: Request-ID-Quelle wird auch gegen `additionalSensitiveHeaderNames` geprüft; Konflikt ist `invalid_request` vor HTTP.
+4. **Bereits umgesetzt:** Frühere akzeptierte P1-Fixes bleiben. `5463847278` bleibt. Neu aus `5463879179`: Request-ID-Quelle wird auch gegen `additionalSensitiveHeaderNames` geprüft; Konflikt ist `invalid_request` vor HTTP. Lokale Gates auf `6825a53d`: typecheck, lint 0/135, 2663 tests, hygiene, Production-Build.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1 (gleicher Slice / Review-Fix).
 6. **Live-`main`:** immer live prüfen. Reconstruction-Baseline der Checkpoint-V2 war `69ef27b1`; das ist keine dauerhafte Current-Head-Wahrheit. Exact Head live am PR prüfen. Prior Head `ec7eff42` und dessen CI gelten nicht.
 7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.

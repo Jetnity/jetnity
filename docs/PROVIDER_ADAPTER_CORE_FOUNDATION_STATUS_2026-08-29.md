@@ -20,7 +20,7 @@ Kommentar `5463879179` gegen Review-Head `ec7eff42`:
 
 ## Gates
 
-Lokal nach dem Custom-Sensitive-Request-ID-Fix. Exact Head live am PR prüfen. Evidence auf `ec7eff42` / `bd2c73de` ist ungültig. Agent-Self-Review ist kein PASS.
+Lokal auf `6825a53d`: typecheck PASS; lint 0 errors / 135 warnings; **2663** tests PASS; hygiene PASS; Next 16.3.3 Production-Build PASS. Dieser Stamp ist docs-only. Exact-Head CI/Vercel nach dem Push live prüfen. Evidence auf `ec7eff42` ist ungültig. Agent-Self-Review ist kein PASS.
 
 ## Grenzen
 

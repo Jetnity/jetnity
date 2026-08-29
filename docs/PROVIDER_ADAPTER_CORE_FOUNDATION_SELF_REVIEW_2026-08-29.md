@@ -53,9 +53,17 @@ Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls, Secrets, P
 
 ## 6. Tests / Gates
 
-Gezielte Header-/Executor-Tests PASS nach dem Custom-Sensitive-Fix. Vollständige Repo-Gates folgen in diesem Arbeitsstand.
+Lokal auf `6825a53d`; dieser Stamp ist docs-only danach:
 
-Exact-Head CI/Vercel nach dem Push live lesen. `ec7eff42` gilt nicht für den neuen Head.
+| Gate | Ergebnis |
+| --- | --- |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS, 0 errors / 135 warnings |
+| `npm test` | PASS, **2663** tests, 0 fail |
+| hygiene | PASS (`check:dead` 1 begründetes CookieConsent-Orphan; exports/deps/api-schutz/schema-bezug PASS) |
+| `npm run build` | PASS, Next.js 16.3.3 |
+
+Exact-Head CI/Vercel nach diesem Push live lesen. `ec7eff42` gilt nicht für den neuen Head.
 
 ## 7. origin/main Drift
 
