@@ -2,48 +2,50 @@
 
 Stand: 29. August 2026  
 Autor-Agent: **`Privacy provider integration audit 1`**  
-Typ: adversarial Self-Review nach TL `5057675638`, **kein** unabhängiger Technical-Lead-PASS  
+Typ: adversarial Self-Review des Post-Merge-Closeouts, **kein** unabhängiger Technical-Lead-PASS  
 Cloud-Run: https://cursor.com/agents/bc-294ba965-a57a-4590-a98c-e11f079bc7ae  
-Generation: **1** (unmittelbarer Continuity-Truth-Fix, keine neue Arbeitseinheit)
+Generation: **1** (reiner Continuity-Closeout, keine neue Arbeitseinheit)
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: nur Review-Fix `5057675638` auf Draft-PR #171 / Head `2f2d00e3`. Keine neue Vendor-Recherche, keine Integration, keine Search-Runtime.
+Auftrag: Post-Merge-Continuity-Closeout nach Transport-PR #175. Keine neue Vendor-Recherche, keine Search-Dateien, kein AP-6-Runtime/AP-6b/AP-7, kein Login/Trial/Order.
 
-Geprüft: Task, Status, Fit/Gap, Integrationsvertrag, Handoff, dieses Self-Review. Nur versionierte Audit-Docs.
+Geprüft: Status, Handoff, Task, Fit/Gap, Integrationsvertrag, dieses Self-Review. Shared Continuity (`ROADMAP.md`, `DECISIONS.md`, `ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`) nicht mutiert.
 
 ## 2. Adversarial Fragen
 
 | Frage | Ergebnis |
 | --- | --- |
-| Wird `6083ee63` noch als live `origin/main` bezeichnet? | Nein. Nur noch historische Task-Baseline / original merge-base. |
-| Ist live `origin/main` auf `2241e349` gesetzt? | Ja, live-verifiziert `git fetch origin main` + `git rev-parse origin/main`. |
-| Wird PR #168 noch als OPEN Draft behauptet? | Nein. CLOSED/MERGED via #172 (`mergedAt` 2026-08-29T09:47:03Z). |
-| Ist die aktuelle #109-Recovery als PR #173 genannt? | Ja. OPEN Draft. Nicht angefasst. |
-| Wurde Search-Runtime geändert? | Nein. |
-| Wurden VVZ-/AVV-Findings aus `5057555199` zurückgedreht? | Nein. |
-| Login/Trial/Order/Runtime/Ready/Merge? | Nein. |
-| Neue logische Generation? | Nein. Dieselbe Session. |
+| Ist live `origin/main` `6c5e8c16`? | Ja. `git fetch` + `git rev-parse origin/main`. |
+| Ist `278138ad` der transportierte Content-Head? | Ja. PR #175 `headRefOid` + mergeCommit `6c5e8c16`. |
+| Wird `b9495fa7` als Teil des Merge behauptet? | Nein. Explizit nur Branch-Evidence-Stamp. |
+| Wird #171 noch als canonical geführt? | Nein. Superseded by #175. #171 bleibt OPEN Draft, nicht geschlossen durch Agent. |
+| Wird Post-Merge-CI/Production belegt? | Ja. Actions `33248216109` SUCCESS auf `6c5e8c16`. Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` live am Alias. |
+| Wird Integration als Vendor-Aktivierung verkauft? | Nein. Audit-Docs auf `main` ≠ Aktivierung. |
+| Bleibt AP-6a Legal geparkt? | Ja. |
+| Kostenwirkung dieses Audits geändert? | Nein: `keine`. |
+| Search-Runtime oder #173 angefasst? | Nein. Merge holte nur bereits auf `main` liegende Search-Dateien. |
+| Ready/Merge durch Agent? | Nein. |
 
-## 3. Was vorher falsch war
+## 3. Was vorher falsch / veraltet war
 
-Status und Handoff verdichteten historische Task-Baseline und live `origin/main` in eine Zeile und liessen PR #168 als OPEN Draft stehen, nachdem Search bereits über #172 auf `main` gelandet und #173 die Recovery war. Das ist ein Continuity-Truth-Defekt, kein Vendor- oder Runtime-Defekt.
+Status/Handoff/Task/Fit-Gap zeigten live `main` noch als `2241e349` und #171 als den zu reviewenden Draft, nachdem #175 den reviewed Head bereits nach `main` transportiert hatte. Das ist ein Continuity-Closeout-Defekt, kein Vendor-Defekt.
 
 ## 4. Bewusst nicht getan
 
-- Kein Rebase auf `2241e349` (ausserhalb dieses Review-Fixes).
-- Kein Anfassen von #173 / Search / Homepage.
-- Keine erneute PrivacyBee-Recherche.
+- Kein Schliessen von #171 oder #169 (Close von #169 erst nach TL-Review empfohlen).
+- Kein Re-Audit von PrivacyBee, kein Login, kein Trial.
+- Keine Search-/AP-6-Runtime-Änderung.
+- Kein Ready/Merge.
 
 ## 5. Residuals
 
-- Dieser Push invalidiert `2f2d00e3` / `fa393232`.
-- Merge-base dieses Audit-Branches bleibt historisch `6083ee63`.
+- Dieser Closeout-Push braucht eigene Exact-Head-CI/Vercel; `6c5e8c16`-Gates gelten nicht automatisch für den neuen SHA.
 - `main` `protected=false`.
 - Agent-Self-Review ist kein PASS.
 
 ## 6. Urteil
 
-Das Blocking-Finding `5057675638` ist aus Autorensicht gegen live Repository-Truth korrigiert. Vendor-Empfehlung unverändert: **jetzt nicht aktivieren**.
+Post-Merge-Continuity ist aus Autorensicht gegen live Repository-/CI-/Production-Truth korrigiert. Vendor-Empfehlung unverändert: **nicht aktivieren**. AP-6a Legal bleibt geparkt.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: erneut ausstehend. Dieses Self-Review ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head-Review dieses Closeouts: ausstehend. Dieses Self-Review ist kein PASS.**

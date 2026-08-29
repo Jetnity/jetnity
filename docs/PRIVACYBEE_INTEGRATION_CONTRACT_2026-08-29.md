@@ -6,7 +6,7 @@ Logical Cursor-Agent: **`Privacy provider integration audit 1`**
 TARGET: PrivacyBee AG / `privacybee.io`. Nicht `privacybee.com`.
 
 Gilt nur, falls Product Owner + Legal + Security später ausdrücklich diese Swiss-PrivacyBee wählen.  
-Gate 0 empfiehlt **keine Aktivierung jetzt**.
+Gate 0 ist als Audit-Dokumentation über Transport-PR #175 auf `main` integriert. Das ist **keine Aktivierung**.
 
 ---
 
