@@ -34,6 +34,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity.
 - Kein authentifizierter Browser-/Real-Device-Beweis.
 - Access-Token-Zeit bleibt erklärungsbedürftig.
 - Vollständige Sessionliste bleibt bewusst ungebaut (AP-5-P2).
+- Gates `33226274988` / `ExFa2X5dNSFgvFJRSYVVsW4nSiqP` gelten für `7a8caea3`, nicht automatisch für diesen Stamp-Head.
 - `main` `protected=false`.
 
 ## 4. Urteil des Autors

@@ -10,7 +10,7 @@ Status: **AP-5-S5 Honest Current Session / Device View / Draft-PR #162. IMPLEMEN
 ## Aktueller Arbeitsblock – AP-5-S5 Honest Current Session / Device View
 
 1. **Arbeitsblock / Ziel:** Ehrliche aktuelle Sessionansicht in `/account/security`. Andere Sitzungen bleiben `unsupported`. Keine Fake-Liste, keine Zahl, kein „0 Geräte“.
-2. **Authoring-Branch / PR:** `feat/ap5-s5-honest-current-session-view-2026-08-29`; Draft-PR #162. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+2. **Authoring-Branch / PR:** `feat/ap5-s5-honest-current-session-view-2026-08-29`; Draft-PR #162. Gates auf `7a8caea3`: Actions `33226274988` SUCCESS, Vercel `ExFa2X5dNSFgvFJRSYVVsW4nSiqP` READY. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
 3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein AP-6/AP-7.
 4. **Bereits umgesetzt:** Domain-Vertrag; `getUser()` als Existenz-Authority; optional Zugangscode-Zeit und AAL; lokaler Browser-/Plattformhinweis; andere Sitzungen fest unsupported; Link zur S3-Aktion `others`; ADR-0194; fokussierte adversariale Tests.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 15`. Exact Run-ID `bc-cccd6820-5dfa-4801-8af9-0659f2e26cf2`. Beobachteter Titel `Ehrliche aktuelle sitzungsansicht`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.

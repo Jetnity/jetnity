@@ -62,18 +62,17 @@ Nicht geliefert: vollständige Session-/Geräteliste, Service Role, `auth.sessio
 
 ## 4. Tests / Evidence dieses Slices
 
-Siehe `docs/AP5_S5_LOCAL_TEST_EVIDENCE_2026-08-29.md` nach den Repository-Gates.
-
-Fokussiert lokal vor dem ersten Implementation-Commit:
+Siehe `docs/AP5_S5_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 
 | Lauf | Ergebnis |
 | --- | --- |
 | Focused S5-Unit | **7/7 pass** (`lib/auth/account-session-view.test.ts`) |
 | S5 Vertrag/A11y | **5/5 pass** (`lib/auth/ap5-s5-honest-session-view.test.ts`) |
-| S3 + S4 Regression | **pass** |
-| Gate-0-Inventory | **8/8 pass** |
-| Vollständige Repository-Gates | ausstehend auf dem Implementation-Head |
+| `npm test` | **2555/2555 pass** |
+| Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 135 warnings |
+| `auth:pruefen` | 55/55, 242 Schlüssel |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
+| Exact-Head CI `7a8caea3` | Actions Run `33226274988` SUCCESS; Vercel `ExFa2X5dNSFgvFJRSYVVsW4nSiqP` SUCCESS. Dieser Stamp erzeugt einen neueren Head; dessen Gates live prüfen. |
 
 ## 5. DB / RLS / Production-Grenze
 
@@ -91,6 +90,7 @@ Keine neuen laufenden Kosten. Keine Provider. Keine Secrets.
 - Kein authentifizierter Browser-/Real-Device-Beweis (`/account/security` ist auth-gated; kein Testkonto).
 - `main` Branch Protection bleibt `protected=false`.
 - Agent-Self-Review ist kein PASS.
+- Gates `33226274988` / `ExFa2X5dNSFgvFJRSYVVsW4nSiqP` gelten für `7a8caea3`, nicht automatisch für diesen Stamp-Head.
 
 ## 8. Offene Freigaben
 
