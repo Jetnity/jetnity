@@ -49,9 +49,10 @@ export async function GET(req: Request) {
   const ergebnis = await placesSuchen(raw, rolle, async (art, filter, limit) => {
     if (art === 'land') {
       return alsOrtZeilen(
-        await lese(() =>
-          client.from('places').select(ORT_SPALTEN).eq('typ', 'country').or(filter).limit(limit),
-        ),
+        await lese(() => {
+          const anfrage = client.from('places').select(ORT_SPALTEN).eq('typ', 'country')
+          return (filter ? anfrage.or(filter) : anfrage).limit(limit)
+        }),
       )
     }
     if (art === 'abreise-flughafen') {

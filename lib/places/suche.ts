@@ -14,7 +14,17 @@ import { EXAKTER_NAMENS_RANG, namensRangMitWortanfang } from '@/lib/suche/releva
 export const ORT_TREFFER = 6
 const ORT_TREFFER_MAX = 8
 export const ORT_ABFRAGE = 40
-export const ORT_LAND_ALIAS_ABFRAGE = 12
+
+/**
+ * Hartes Leselimit für den Länder-Alias-Nachzug.
+ * Muss ≥ der Anzahl `typ = country` in `public.places` bleiben.
+ * Ein kleineres Limit (früher 12) kann exakte Kurz-Aliase hinter
+ * Substring-Treffern still abschneiden.
+ */
+export const ORT_LAND_UNIVERSUM = 500
+
+/** Leerer Filter: der Nachzug liest das typ-begrenzte Länder-Universum. */
+export const ORT_LAND_UNIVERSUM_FILTER = ''
 
 const STARK_RANG = 2_800
 const MIN_RANG_BEI_STARK = 1_500
@@ -53,15 +63,6 @@ export function ortSchluesselfilter(suche: string): string | null {
   const teile = sucheFilter(suche)
   if (teile.length === 0) return null
   return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
-}
-
-/** Name- plus Keyword-Filter für den gezielten Länder-Alias-Nachzug. */
-export function ortLandAliasfilter(suche: string): string | null {
-  const name = ortNamensfilter(suche)
-  const schluessel = ortSchluesselfilter(suche)
-  if (!name) return schluessel
-  if (!schluessel) return name
-  return `${name},${schluessel}`
 }
 
 function schluesselwoerter(keywords: string | readonly string[] | null | undefined): string[] {
@@ -222,10 +223,16 @@ export function schluesselErgaenzungNoetig(orte: Ort[], suche: string, rolle: Or
   return starke.length < 3
 }
 
-/** Reiseziel: exaktes Länder-Alias nachziehen, auch wenn Stadt-Präfixe die Namensmenge schon füllen. */
-export function landAliasNachzugNoetig(orte: Ort[], suche: string, rolle: OrtRolle): boolean {
+/**
+ * Reiseziel: das begrenzte Länder-Universum nachziehen.
+ * Ein Substring-Nachzug mit kleinem Limit kann kurze Exact-Tokens verlieren;
+ * ein einzelner Treffer in der Namensmenge reicht nicht, wenn dasselbe Alias
+ * mehreren Ländern gehört.
+ */
+export function landAliasNachzugNoetig(_orte: Ort[], suche: string, rolle: OrtRolle): boolean {
   if (rolle !== 'ziel') return false
-  return !orte.some((ort) => istExaktesLandAlias(ort, suche))
+  if (sucheIstPlatzhalter(suche)) return false
+  return sucheFilter(suche).length > 0
 }
 
 function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Ort; rang: number }> {

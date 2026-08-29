@@ -9,13 +9,13 @@ import { geoNamesTsvZeile, laenderAusCountryInfo, ortAusFlughafen, orteAusGeoNam
 import { eingabeOhneAuswahl, ortAusBestand, ORT_MELDUNG } from '@/lib/places/pruefen'
 import type { Ort } from '@/lib/places/domain'
 import {
+  ORT_LAND_UNIVERSUM,
   ORT_TREFFER,
   landAliasMehrdeutig,
   landAliasNachzugNoetig,
   orteOrdnen,
   ortAnzeigeKontext,
   ortAnzeigeLabel,
-  ortLandAliasfilter,
   ortNamensfilter,
   ortSchluesselfilter,
   schluesselErgaenzungNoetig,
@@ -564,7 +564,7 @@ describe('Ortssuche', () => {
 
   test('die Runtime enthält keine Länder-Allowlist', () => {
     const datei = readFileSync(join(hier, 'suche.ts'), 'utf8')
-    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani'] as const) {
+    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani', 'Zaxony', 'Zxyland'] as const) {
       assert.equal(datei.includes(name), false, name)
     }
   })
@@ -590,12 +590,17 @@ describe('Ortssuche', () => {
       countryCode: 'PE',
       keywords: 'Peru',
     })
-    assert.equal(landAliasNachzugNoetig([...staedte, republik], 'Peru', 'ziel'), false)
-    assert.equal(landAliasNachzugNoetig(orte, 'Thailand', 'ziel'), false)
-    const filter = ortLandAliasfilter('Schweiz')
-    assert.ok(filter)
-    assert.equal(filter.includes('keywords.ilike.'), true)
-    assert.equal(filter.includes('name.ilike.Schweiz%'), true)
+    assert.equal(landAliasNachzugNoetig([...staedte, republik], 'Peru', 'ziel'), true)
+    assert.equal(landAliasNachzugNoetig(orte, 'Thailand', 'ziel'), true)
+    assert.ok(ORT_LAND_UNIVERSUM > 12)
+    assert.ok(ORT_LAND_UNIVERSUM >= 250)
+    const lauf = readFileSync(join(hier, 'suche-lauf.ts'), 'utf8')
+    assert.match(lauf, /ORT_LAND_UNIVERSUM/)
+    assert.equal(lauf.includes('keywords.ilike.%'), false)
+    assert.equal(lauf.includes('ortLandAliasfilter'), false)
+    const route = readFileSync(join(hier, '../../app/api/search/places/route.ts'), 'utf8')
+    assert.match(route, /eq\('typ', 'country'\)/)
+    assert.match(route, /filter \? anfrage\.or\(filter\) : anfrage/)
   })
 })
 

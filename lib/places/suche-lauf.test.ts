@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import type { OrtZeile } from '@/lib/places/abbildung'
 import { ortAusZeile } from '@/lib/places/abbildung'
-import { orteOrdnen } from '@/lib/places/suche'
+import { ORT_LAND_UNIVERSUM, orteOrdnen } from '@/lib/places/suche'
 import { placesSuchen, type PlacesSuchart, type PlacesZeilenLesen } from '@/lib/places/suche-lauf'
 
 function zeile(teil: Partial<OrtZeile> & Pick<OrtZeile, 'id' | 'name' | 'typ'>): OrtZeile {
@@ -111,13 +111,17 @@ const chinaStaedte: OrtZeile[] = [
 function leser(zuordnung: Partial<Record<PlacesSuchart, OrtZeile[]>>): {
   lesen: PlacesZeilenLesen
   aufrufe: PlacesSuchart[]
+  limits: Partial<Record<PlacesSuchart, number>>
 } {
   const aufrufe: PlacesSuchart[] = []
+  const limits: Partial<Record<PlacesSuchart, number>> = {}
   return {
     aufrufe,
-    lesen: async (art) => {
+    limits,
+    lesen: async (art, _filter, limit) => {
       aufrufe.push(art)
-      return { zeilen: zuordnung[art] ?? [], problem: null }
+      limits[art] = limit
+      return { zeilen: (zuordnung[art] ?? []).slice(0, limit), problem: null }
     },
   }
 }
@@ -198,15 +202,16 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     assert.deepEqual(aufrufe, ['name', 'land'])
   })
 
-  test('ist das Land schon in der Namensmenge, bleibt der Nachzug aus und das Land steht vorn', async () => {
-    const { lesen, aufrufe } = leser({
+  test('ist das Land schon in der Namensmenge, bleibt das Universum vollständig und das Land steht vorn', async () => {
+    const { lesen, aufrufe, limits } = leser({
       name: [...peruStaedte, peruLand],
       land: [peruLand],
     })
     const ergebnis = await placesSuchen('Peru', 'ziel', lesen)
     assert.equal(ergebnis.problem, null)
     assert.equal(ergebnis.optionen?.[0]?.id, peruLand.id)
-    assert.deepEqual(aufrufe, ['name'])
+    assert.deepEqual(aufrufe, ['name', 'land'])
+    assert.equal(limits.land, ORT_LAND_UNIVERSUM)
   })
 
   test('China- und Schweiz-Retrieval folgen demselben Lauf', async () => {
@@ -278,6 +283,81 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     assert.notEqual(laender[0]?.description, laender[1]?.description)
     assert.ok(laender.every((option) => (option.ariaLabel ?? '').includes('Land ·')))
     assert.ok(ergebnis.optionen?.some((option) => option.id === 'geonames:9100003'))
+  })
+
+  test('kurzes exaktes Länder-Alias überlebt Substring-Lärm über dem alten Limit 12', async () => {
+    const laerm = Array.from({ length: 15 }, (_, index) =>
+      zeile({
+        id: `geonames:${9300000 + index}`,
+        name: `Zxyland Province ${index + 1}`,
+        typ: 'country',
+        country: `Zxyland ${index + 1}`,
+        country_code: `X${index}`,
+        keywords: `Zxyland, Noise ${index + 1}`,
+      }),
+    )
+    const norden = zeile({
+      id: 'geonames:9300100',
+      name: 'Northern Zaxony Federation',
+      typ: 'country',
+      country: 'Northern Zaxony Federation',
+      country_code: 'QZ',
+      keywords: 'ZX, Northern Zaxony Federation',
+    })
+    const sueden = zeile({
+      id: 'geonames:9300101',
+      name: 'Southern Zaxony Republic',
+      typ: 'country',
+      country: 'Southern Zaxony Republic',
+      country_code: 'QY',
+      keywords: 'ZX, Southern Zaxony Republic',
+    })
+    const stadt = zeile({
+      id: 'geonames:9300102',
+      name: 'Zxyland City',
+      typ: 'city',
+      country: 'United States',
+      country_code: 'US',
+      region: 'Iowa',
+      keywords: 'Zxyland, ZX',
+    })
+    let landLimit = 0
+    let landFilter = 'unset'
+    const lesen: PlacesZeilenLesen = async (art, filter, limit) => {
+      if (art === 'name') return { zeilen: [stadt], problem: null }
+      if (art === 'land') {
+        landLimit = limit
+        landFilter = filter
+        const pool = [...laerm, norden, sueden]
+        const token = 'ZX'
+        const substring = pool.filter((zeile) => {
+          const text = `${zeile.name} ${zeile.keywords ?? ''}`
+          return text.toLowerCase().includes(token.toLowerCase())
+        })
+        const quelle = filter.includes('keywords.ilike.%') ? substring : pool
+        return { zeilen: quelle.slice(0, limit), problem: null }
+      }
+      return { zeilen: [], problem: null }
+    }
+    const ergebnis = await placesSuchen('ZX', 'ziel', lesen)
+    assert.equal(ergebnis.problem, null)
+    assert.equal(landFilter, '')
+    assert.ok(landLimit > 12)
+    assert.equal(landLimit, ORT_LAND_UNIVERSUM)
+    const laender = ergebnis.optionen?.filter((option) => option.typ === 'country') ?? []
+    const exakt = laender.filter((option) => option.id === norden.id || option.id === sueden.id)
+    assert.equal(exakt.length, 2)
+    assert.ok(exakt.every((option) => option.label === 'ZX'))
+    assert.notEqual(exakt[0]?.description, exakt[1]?.description)
+    assert.equal(ergebnis.optionen?.[0]?.typ, 'country')
+    assert.equal(ergebnis.optionen?.[1]?.typ, 'country')
+    assert.ok(ergebnis.optionen?.some((option) => option.id === stadt.id))
+    const stadtIndex = ergebnis.optionen?.findIndex((option) => option.id === stadt.id) ?? -1
+    const letzterExakt = Math.max(
+      ergebnis.optionen?.findIndex((option) => option.id === norden.id) ?? -1,
+      ergebnis.optionen?.findIndex((option) => option.id === sueden.id) ?? -1,
+    )
+    assert.ok(stadtIndex > letzterExakt)
   })
 
   test('Abreise holt Flughäfen, aber kein Länder-Alias', async () => {
