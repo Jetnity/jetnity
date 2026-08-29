@@ -72,7 +72,7 @@ Siehe Status §5. Wichtigste UNKNOWN: API-Schema, Auth, Endpunkte, Quotas, Track
 
 0 neue Kosten. Keine Secrets. Keine Production-Mutation. Kein Commercial-Provenance-Mint.
 
-Lokale Gates auf `0d252fde` sind **stale** nach Merge + `5464098635`. Neue Exact-Head-Gates folgen.
+Lokale Exact-Head-Gates auf Review-Fix-Head `1abf3ed4`: `npm ci`, typecheck, lint, test, Production-build, Hygiene **PASS**. Evidence-Stamp danach ändert nur diese Zeilen. GitHub CI/Vercel nicht als grün behauptet.
 
 ---
 

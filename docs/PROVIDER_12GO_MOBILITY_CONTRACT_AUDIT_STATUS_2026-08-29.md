@@ -202,9 +202,9 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 ## 7. Tests / CI / Preview
 
 - Keine Runtime-Änderung; keine neuen Unit Tests.
-- Isolation-Head `22ffe925` / `0d252fde` lokale Gates sind **stale** nach Merge + `5464098635`.
-- Review-Fix-Head: nach Push neu gaten. Dieser Status behauptet kein Exact-Head-Grün für den neuen SHA.
-- GitHub Actions / Vercel Preview: **nicht** als grün behauptet; live am PR prüfen.
+- Review-Fix-Head `1abf3ed4` lokale Exact-Head-Gates **PASS**: `npm ci`; `typecheck`; `lint`; `test` 2663/2663; Production-`build`; Hygiene. `origin/main` `085c95b2`, **0 behind**.
+- Ältere Gates auf `0d252fde` / `22ffe925` sind **stale**.
+- GitHub Actions / Vercel Preview dieses Heads: **nicht** als grün behauptet; live am PR prüfen.
 
 ---
 
