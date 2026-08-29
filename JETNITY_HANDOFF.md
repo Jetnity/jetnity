@@ -7,117 +7,153 @@ Dieser Handoff ist Current-State-Evidence, kein Ersatz für Live-Rekonstruktion.
 
 ## 1. Aktuellster verifizierter Stand
 
-Provider-/Traveller-Reconciliation ist integriert und post-merge verifiziert:
+Aktueller vollständig post-merge und Production-verifizierter Baseline-Stand:
 
-- TL-reviewed exact head aus #203: `9e6a2009315995d70565756e389b2e4d639baf40`
-- Integration wegen bekanntem Draft→Ready-Connectorfehler über Recovery-PR #204
-- `main @ c698abd3c7785500fe6586f068f1cd843ade19ac`
-- Post-Merge CI Run `33271023725` / #1255: **SUCCESS**
-- Post-Merge Vercel Production `dpl_Gd5YthM5FVWpqoQ8kZRJXwx1Zhtv`: **READY** auf exact `main`
+- `main @ bb0fb2050e09e8fa5bf670e4290523c037790954`
+- Post-Merge CI #1284 / Run `33277102071`: **SUCCESS**
+- Vercel Production `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT`: **READY** auf exact `main`
 - `main protected=false` bleibt Governance-Risiko.
-
-Aktueller Workstream ist ausschließlich Continuity:
-
-- Branch `docs/provider-traveller-post-merge-continuity-2026-08-29`
-- Draft-PR **#205**
-- kein Cursor-Coding-Agent
-- keine Runtime-/Provider-/Auth-/RLS-/Supabase-/Production-Mutation.
 
 Aktuellster Checkpoint:
 
-`docs/CHATGPT_TL_PROVIDER_TRAVELLER_POST_MERGE_CHECKPOINT_2026-08-29.md`
+`docs/CHATGPT_TL_AP7_S3_AND_INFRA_AUDIT_POST_MERGE_CHECKPOINT_2026-08-29.md`
 
-## 2. Provider – gebaut vs. nicht aktiviert
+Es gibt aus diesem Handoff **keinen automatisch aktiven Produkt-/Runtime-Slice**.
 
-Integriert:
+## 2. AP-7-S3 – abgeschlossen
 
-- Shared Provider Adapter Core / ADR-0199;
-- Skyscanner Flights Offline Adapter Foundation;
-- HBX Hotels Contract/Audit;
-- Viator Activities Contract/Audit;
-- 12Go Mobility Contract/Audit / ADR-0200;
-- Commercial Provenance S5-A/S5-B Contract + Production Persistence Foundation.
+Issue #214 ist **CLOSED / completed**.
 
-Nicht vorhanden/aktiv:
+Agent:
 
-- keine echten Provider-Secrets/API-Keys;
-- keine echten Provider-Calls;
-- kein Production Provider Runtime Principal;
-- kein echter `live_api`-Snapshot;
-- kein realer Provider-`persisted_snapshot`;
-- kein Orchestrator/Multi-Provider-Fanout;
-- TW-8 geschlossen.
+- `Account plattform audit vorbereitung 17`
 
-Supabase Production `qscbgcdmivbbnzrcyegn` wurde beim #203 TL Review read-only erneut geprüft: Migration `20260829140000` registriert, Provenance-Tabelle vorhanden, 0 Rows, Writer/Runtime NOLOGIN, `authenticated`/`anon` ohne Writer-EXECUTE und ohne Tabellen-Write. Runtime-Write bleibt geschlossen.
+Integration:
 
-## 3. Traveller / Account
+- Source Draft PR #215 final exact reviewed Head `ca548fc84fd097457f26edc64653befc28e01437`
+- Independent TL PASS
+- bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId`
+- Recovery PR #219 mit identischem Head
+- Recovery CI #1281 / `33276779999`: **SUCCESS**
+- Recovery Vercel `dpl_99uUonTGNg9kUa5rTZJJvh9uA7J6`: **READY**
+- Merge/Main danach `d58f6a80ddfe9795445abc84610a2895bae19338`
+- Post-Merge CI #1282 / `33276919765`: **SUCCESS**
+- Vercel Production `dpl_Dsra2GnomnE3je1dueRALiKxLX32`: **READY**
 
-Kanonisch gebaut:
+Produktstand:
+
+- reale authentifizierte `/account/travellers` Account-Fläche;
+- Owner-only Registry Traveller CRUD über bestehende AP-7-S2 RLS;
+- mehrere Citizenships bis max. 8;
+- mehrere Document-Metadaten bis max. 12;
+- Issuer Country ≠ Citizenship;
+- optionale explizite Document→Citizenship-Relation;
+- `expires_on`;
+- Loading/Empty/Error/Success getrennt;
+- mobile-/accessibility-orientierte UI.
+
+Nicht enthalten:
+
+- keine Registry→Trip Runtime-Materialisierung;
+- kein Guest→Registry Import/Dedup;
+- kein Default-/Primary-/Chosen-Pass oder Default-Citizenship;
+- keine Pass-/Dokumentnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten;
+- keine neue Migration/RLS/Auth/MFA/AAL-Änderung.
+
+## 3. Supabase Migration-History Replay Gate 0 – abgeschlossen
+
+Issue #216 ist **CLOSED / completed**.
+
+Agent:
+
+- `Jetnity infrastructure migration audit 1`
+
+Integration:
+
+- Source Draft PR #218 final exact reviewed Head `85135a8ad35860644e9ff344000188b5c24e40af`
+- docs-only/read-only, Independent TL PASS
+- Recovery PR #220 gegen den nach AP-7-S3 aktualisierten `main`
+- Recovery CI #1283 / `33276955797`: **SUCCESS**
+- Recovery Vercel `dpl_5GKQYJEb6ojSg8ubYQAknFRTCgNP`: **READY**
+- Merge/current main `bb0fb2050e09e8fa5bf670e4290523c037790954`
+- Post-Merge CI #1284 / `33277102071`: **SUCCESS**
+- aktuelle Vercel Production `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT`: **READY**
+
+Kernbefund:
+
+- Production `qscbgcdmivbbnzrcyegn` speichert für `20260829140000_trip_item_commercial_provenance` nur einen nicht replaybaren 234-Zeichen-Prosa-Marker als einzige Statement-Body;
+- Production S5-B Catalog existiert dennoch, RLS ist aktiv, Provenance Rows = 0 und Production Write Path bleibt geschlossen;
+- Current Development `yfvbxvijcorffwxbxahl` besitzt weder die Version noch die S5-B Provenance-/Runtime-Gate-Objekte/Rollen;
+- keine Production-/Development-Mutation wurde im Audit durchgeführt.
+
+Ein späterer Repair ist separater Product-Owner-gated Infrastruktur-Slice. Er darf nicht still in einen Account-/Provider-/Migration-Slice eingeschoben werden.
+
+## 4. Traveller / Account – Current Truth
+
+Kanonisches Modell:
 
 > 1 Traveller → mehrere Citizenships → mehrere Documents/Credentials → kontextabhängig zulässige Optionen.
 
-- kein Default-Pass / keine Default-Citizenship;
+Integriert:
+
+- trip-scoped Foundation E;
+- 1:n Citizenships/Documents;
 - Issuer ≠ Citizenship;
-- explizite Document↔Citizenship-Relation;
-- historische `documents[0]`-/First-Evaluation-Kollapse geschlossen;
-- Guest→Account Trip-Copy erhält Arrays/Relation;
-- AP-7 Gate 0 + Dual-Authority-Freigabe + AP-7-S1 Domain Contract integriert.
+- Document↔Citizenship-Relation;
+- kein Default-/Primary-/Chosen-Pass und keine Default-Citizenship;
+- Guest→Account Trip-Copy mit Arrays/Relation;
+- AP-7 Gate 0 + Dual-Authority;
+- AP-7-S1 Domain Contract;
+- AP-7-S2 Account Registry Persistence / Identity / owner-only RLS auf Production;
+- AP-7-S3 Registry CRUD/UI auf Production.
 
-Offen:
+Offen bleiben insbesondere Registry→Trip Runtime-Materialisierung und weitere AP-8–AP-12-/Traveller-Restarbeit gemäß kanonischem Account-Plan. Keine davon ist durch diesen Handoff automatisch gestartet.
 
-- **AP-7-S2 Account-Registry Persistence / Identity / RLS**;
-- Registry CRUD/Lifecycle/UX;
-- Registry→Trip Runtime-Materialisierung;
-- Requirements Provider;
-- spätere option-scharfe Official-/Safety-/Booking-Dokumentdarstellung mit echter Evidence;
-- P3 Duplicate-Country/`clientRef` Write-Hygiene laut Current-Gap-Audit.
+## 5. Provider – Current Truth
 
-Keine Passnummern, Scans, MRZ, Biometrie oder Health-Daten im Kernmodell.
+Provider-Arbeit ist nicht abgeschlossen.
 
-## 4. Letzter Cursor-Agent
+Integriert sind Shared Provider Adapter Core, Offline-/Contract-Foundations und Commercial Provenance Foundation. Nicht aktiviert/gebaut bleiben u. a. echte Secrets/API-Keys, echte Calls, Production Runtime Principal, realer `live_api`-/`persisted_snapshot`-Pfad, Orchestrator und TW-8.
 
-#203/#204/#205 sind TL-owned Docs-Workstreams ohne Cursor-Coding-Agent.
+Vor migrationsnaher Provider-Arbeit ist der dokumentierte Supabase Replay-Defekt P1-Abhängigkeit.
 
-Letzter eingesetzter Agent:
+## 6. Agentenstatus
 
-- `Jetnity traveller multicitizenship audit 1`
-- Generation 1
-- Session `bc-060f0713-5f92-46b8-9631-72366bc8fb32`
-- finaler gegateter Head `7bdd7da81e56808d9ff1b004999314935b3a5812`
-- kein aktiver Folgeauftrag.
+Gestoppt / abgeschlossen:
 
-## 5. Risiken und Gates
+- `Account plattform audit vorbereitung 17`;
+- `Jetnity infrastructure migration audit 1`.
 
-- P0: keine bekannten.
-- Blocking P1 des aktuellen Continuity-Slices: keine bekannten.
+Aktiver Cursor-Agent: **keiner durch diesen Handoff autorisiert**.
+
+Neue logische Einheit → frische Agenten-Generation nach Binding Slice Precheck. Review-Fixes innerhalb eines bereits laufenden Slices würden weiterhin an dieselbe Session gehen.
+
+## 7. Risiken und Gates
+
+- P0: keine aus den aktuellen Closures bekannten.
+- P1 Infrastructure Debt: malformed Production Migration-History-Body `20260829140000` vor Rebase/Reset/Replay-/migrationsnaher Arbeit.
 - P2 Governance: `main protected=false`.
-- P2 Delivery/Gate: AP-7-S2 fehlt; Identity/RLS/Production-Aktionen können ein PO-Sondergate auslösen.
-- P3: Duplicate-Country/`clientRef` Traveller Write-Hygiene; referenzierte verworfene Refs scheitern fail-closed.
 
-Product-Owner-Entscheidung bleibt erforderlich vor insbesondere Production-Migrationen/destruktiven Datenänderungen, großen produktiven RLS-/Identity-/Ownership-Änderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Öffnung des S5-B Runtime-Write-Pfads, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
+Product-Owner-Entscheidung bleibt erforderlich vor insbesondere Production-Migrationen/destruktiven Datenänderungen, materiellen RLS-/Identity-/Ownership-Änderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Öffnung des Commercial Runtime Write-Pfads, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
 
 Normale scope-treue Technik/Reviews/Merges bleiben TL-autonom nach independent Exact-Head Review.
 
-## 6. Exakter nächster Schritt
+## 8. Exakter nächster Schritt
 
-### Solange #205 offen ist
+**Kein automatischer Folgeslice.**
 
-Independent Exact-Head Review → terminale CI/Vercel-Gates → TL PASS → TL-only Integration → Post-Merge-Verifikation. Bei erneutem Draft→Ready-Connectorfehler nur Recovery-Transport des identischen gegateten SHA.
+Neuer Chat/Technical Lead muss zuerst:
 
-### Danach
+1. `main`, offene PRs/Issues/Branches, CI/Vercel/Supabase live rekonstruieren;
+2. Binding Build Order und `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` lesen;
+3. Account-/Traveller-Restarbeit gegen Provider-Restarbeit und Shared Contracts abgleichen;
+4. den Supabase Replay-Defekt bei migrationsnahen Kandidaten als P1-Abhängigkeit behandeln;
+5. P0/P1/P2/P3 und besondere PO-Gates neu bewerten;
+6. erst danach einen bounded nächsten Slice bestimmen und eine frische Cursor-Agent-Generation anstoßen.
 
-**Kein automatischer Folgeslice.** Zuerst frischen Binding Slice Precheck durchführen und dabei mindestens prüfen:
+Registry→Trip Runtime-Materialisierung ist ein naheliegender AP-7-Kandidat, aber **nicht automatisch freigegeben**.
 
-1. Binding Build Order;
-2. AP-7-S2 Gate-/Approval-Status und Account-/Traveller-Restarbeit;
-3. Provider S4/S6-S8 sowie bestehende Provider Foundations;
-4. offene PRs/Issues/Branches und Duplicate-/Shadow-Risiken;
-5. aktuelle CI/Vercel/Supabase-/Production-Wahrheit;
-6. P0/P1/P2/P3 und besondere PO-Gates.
-
-Nur wenn dieser Precheck es bestätigt, ist **Skyscanner Flights Server Create/Poll Transport Foundation** der nächste Provider-Kandidat. Der erste Transport-Slice wäre server-only, dependency-injected/mock/offline über den Shared Provider Core und ausdrücklich ohne echte Credentials, reale Calls, `live_api`, S5-B Runtime-Write/Persistenz oder TW-8.
-
-## 7. Pflicht für Übernahme
+## 9. Pflicht für Übernahme
 
 Neuer Chat liest zuerst:
 
@@ -125,7 +161,9 @@ Neuer Chat liest zuerst:
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 3. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
 4. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-5. `docs/ACTIVE_WORK_STATUS.md`
-6. diesen Handoff;
-7. `docs/CHATGPT_TL_PROVIDER_TRAVELLER_POST_MERGE_CHECKPOINT_2026-08-29.md`;
-8. danach relevante Task/Status/Handoff/ADR plus Live-GitHub/CI/Vercel/Supabase.
+5. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
+6. `docs/ACTIVE_WORK_STATUS.md`
+7. diesen Handoff;
+8. `docs/CHATGPT_TL_AP7_S3_AND_INFRA_AUDIT_POST_MERGE_CHECKPOINT_2026-08-29.md`;
+9. relevante Task/Status/Handoff/ADR;
+10. danach Live-GitHub/CI/Vercel/Supabase.
