@@ -30,7 +30,11 @@ import {
   type ProviderTransportUrl,
   type ProviderValidatedRetryPolicy,
 } from '@/lib/server/providers/core/domain'
-import { buildProviderRequestHeaders, resolveRequestIdHeaderName } from '@/lib/server/providers/core/headers'
+import {
+  buildProviderRequestHeaders,
+  isSensitiveHeaderName,
+  resolveRequestIdHeaderName,
+} from '@/lib/server/providers/core/headers'
 import { createFetchProviderHttpClient } from '@/lib/server/providers/core/http'
 import { isoFromClock, providerTransportEvent } from '@/lib/server/providers/core/observability'
 import {
@@ -257,6 +261,20 @@ async function runRequest<T>(opts: {
   const headers = buildProviderRequestHeaders(opts.request.headers)
   if (!headers.ok) {
     return { ok: false, error: requestError({ providerId, operationId, correlationId: correlation }, 'Request headers are invalid.') }
+  }
+  if (
+    isSensitiveHeaderName(
+      opts.requestIdHeaderName,
+      opts.request.headers?.additionalSensitiveHeaderNames ?? [],
+    )
+  ) {
+    return {
+      ok: false,
+      error: requestError(
+        { providerId, operationId, correlationId: correlation },
+        'Request-id header is registered as sensitive.',
+      ),
+    }
   }
 
   const ctx: AttemptContext = {

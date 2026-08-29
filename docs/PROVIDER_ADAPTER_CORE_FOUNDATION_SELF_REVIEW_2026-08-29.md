@@ -5,8 +5,8 @@ Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**
 Cursor-Agent: `Jetnity provider adapter core 1`  
 PR: https://github.com/Jetnity/jetnity/pull/187  
 Branch: `feat/provider-adapter-core-foundation-2026-08-29`  
-Review: `5463847278`  
-Reviewed Head (NOT APPROVED): `8df3e9c2c61cc1fc4e209a16b8d97d049d734268`
+Review: `5463879179`  
+Reviewed Head (NOT APPROVED): `ec7eff42d6572a1335dff0b4391208cf32590d8e`
 
 Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead Exact-Head-Review.  
 Exact Head ist der Commit dieses Stamps; live am PR prüfen. `main` live prüfen.
@@ -19,7 +19,8 @@ Exact Head ist der Commit dieses Stamps; live am PR prüfen. `main` live prüfen
 | --- | --- |
 | gültiger HTTP-Header-Name erforderlich | ja |
 | `authorization` / `set-cookie` / `x-api-key` → `invalid_configuration` vor HTTP | ja |
-| `x-request-id` und provider-spezifische Namen funktionieren und bleiben bounded | ja |
+| `x-request-id` und unregistrierte provider-spezifische Namen funktionieren und bleiben bounded | ja |
+| per-Request `additionalSensitiveHeaderNames` (z. B. `x-partner-secret`) → `invalid_request` vor HTTP | ja |
 | Secret-Werte erscheinen nicht in Result/Events | ja |
 
 ## 2. Rate-Limit Contract
@@ -52,18 +53,9 @@ Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls, Secrets, P
 
 ## 6. Tests / Gates
 
-Lokal auf Runtime inkl. Continuity `ec7eff42`; dieser Stamp ist docs-only danach:
+Gezielte Header-/Executor-Tests PASS nach dem Custom-Sensitive-Fix. Vollständige Repo-Gates folgen in diesem Arbeitsstand.
 
-| Gate | Ergebnis |
-| --- | --- |
-| provider-core tests | PASS, **51/51** |
-| `npm run typecheck` | PASS |
-| `npm run lint` | PASS, 0 errors / 135 warnings |
-| `npm test` | PASS, **2662** tests, 0 fail |
-| hygiene | PASS (`check:dead` 1 begründetes CookieConsent-Orphan; exports/deps/api-schutz/schema-bezug PASS) |
-| `npm run build` | PASS, Next.js 16.3.3 |
-
-Exact-Head CI/Vercel nach diesem Push live lesen. `8df3e9c2` gilt nicht für den neuen Head.
+Exact-Head CI/Vercel nach dem Push live lesen. `ec7eff42` gilt nicht für den neuen Head.
 
 ## 7. origin/main Drift
 

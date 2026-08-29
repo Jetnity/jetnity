@@ -170,7 +170,14 @@ function executorFor(
   })
 }
 
-function request(teil: { signal?: AbortSignal; parse?: 'json' | 'text' | 'none'; operationId?: string } = {}) {
+function request(
+  teil: {
+    signal?: AbortSignal
+    parse?: 'json' | 'text' | 'none'
+    operationId?: string
+    additionalSensitiveHeaderNames?: readonly string[]
+  } = {},
+) {
   return {
     providerId: 'example',
     operationId: teil.operationId ?? 'search-create',
@@ -179,6 +186,7 @@ function request(teil: { signal?: AbortSignal; parse?: 'json' | 'text' | 'none';
     headers: {
       publicHeaders: { accept: 'application/json' },
       secretHeaders: { 'x-api-key': SECRET },
+      additionalSensitiveHeaderNames: teil.additionalSensitiveHeaderNames,
     },
     body: JSON.stringify({ market: 'CH' }),
     parse: teil.parse,
@@ -804,6 +812,59 @@ describe('provider transport helpers', () => {
     assert.equal(boundedResult.ok, true)
     if (!boundedResult.ok) return
     assert.equal(boundedResult.metadata.correlationId, null)
+  })
+
+  test('a request-registered sensitive header cannot be used as the request-id source', async () => {
+    const partnerSecret = 'partner-credential-value'
+    const observer = recordingObserver()
+    const http = fakeHttp([
+      {
+        type: 'response',
+        status: 200,
+        body: '{"ok":true}',
+        headers: { 'x-partner-secret': partnerSecret },
+      },
+    ])
+    const created = executorFor(http.client, {
+      observer: observer.observer,
+      requestIdHeaderName: 'x-partner-secret',
+    })
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const result = await created.executor.execute({
+      ...request({ additionalSensitiveHeaderNames: ['x-partner-secret'] }),
+      correlationId: null,
+    })
+    assert.equal(result.ok, false)
+    if (result.ok) return
+    assert.equal(result.error.kind, 'invalid_request')
+    assert.equal(result.error.message, 'Request-id header is registered as sensitive.')
+    assert.equal(http.calls.length, 0)
+    assert.equal(JSON.stringify(result).includes(partnerSecret), false)
+    assert.equal(JSON.stringify(observer.events).includes(partnerSecret), false)
+    assertNoSecret(result)
+    assertNoSecret(observer.events)
+
+    const allowed = fakeHttp([
+      {
+        type: 'response',
+        status: 200,
+        body: '{"ok":true}',
+        headers: { 'x-partner-request-id': 'partner-req-ok' },
+      },
+    ])
+    const createdAllowed = executorFor(allowed.client, { requestIdHeaderName: 'x-partner-request-id' })
+    assert.equal(createdAllowed.ok, true)
+    if (!createdAllowed.ok) return
+    const allowedResult = await createdAllowed.executor.execute({
+      ...request({ additionalSensitiveHeaderNames: ['x-partner-secret'] }),
+      correlationId: null,
+    })
+    assert.equal(allowedResult.ok, true)
+    if (!allowedResult.ok) return
+    assert.equal(allowedResult.metadata.correlationId, 'partner-req-ok')
+    assert.equal(JSON.stringify(allowedResult).includes(partnerSecret), false)
+    assertNoSecret(allowedResult)
   })
 
   test('rate-limit retry knobs belong only on retry policy and unused duplicates are rejected', async () => {

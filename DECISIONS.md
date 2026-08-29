@@ -5232,6 +5232,8 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 **Nachtrag, 29. August 2026 – Review 5463847278:** `requestIdHeaderName` muss ein gültiger, nicht-sensitiver HTTP-Header-Name sein; bekannte Secret-Header sind `invalid_configuration` vor jedem HTTP-Call. Retry-/Retry-After-Semantik gehört nur zu `ProviderRetryPolicy`; Duplikate auf `ProviderRateLimitPolicy` werden abgelehnt. Preflight-`retryAfterMs` nur `null` oder endlich/nichtnegativ/bounded, sonst fail-closed ohne Raw-Leak. PR #196 Governance bleibt erhalten; globale Current-State-Flächen sind self-expiring. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
 
+**Nachtrag, 29. August 2026 – Review 5463879179:** Die Request-ID-Quelle wird auch gegen `additionalSensitiveHeaderNames` des konkreten Requests geprüft. Konflikt ist `invalid_request` vor HTTP (Request-Ownership). Default-Secret-Liste bleibt `invalid_configuration` bei Executor-Create. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+
 ---
 
 ## Offene Widersprüche

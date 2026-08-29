@@ -294,7 +294,7 @@ Abgeschlossen:
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. ✅ Provider S5-B Persistence / PR #182 + Recovery #183 – Schema + RLS + Write-Authority integriert (ADR-0198). Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Ältere „#182 offen / Production-Apply pending“-Sätze sind Pre-Apply-Evidence.
-48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review-Fixes aus `5463847278` im Repository. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Autor setzt kein Ready/Merge.
+48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review-Fixes aus `5463879179` im Repository. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 

@@ -60,5 +60,8 @@ describe('provider transport header redaction', () => {
     assert.equal(resolveRequestIdHeaderName('Set-Cookie').ok, false)
     assert.equal(resolveRequestIdHeaderName('x-api-key').ok, false)
     assert.equal(resolveRequestIdHeaderName('x-partner-request-id').ok, true)
+    assert.equal(resolveRequestIdHeaderName('x-partner-secret').ok, true)
+    assert.equal(resolveRequestIdHeaderName('x-partner-secret', ['x-partner-secret']).ok, false)
+    assert.equal(resolveRequestIdHeaderName('x-partner-request-id', ['x-partner-secret']).ok, true)
   })
 })

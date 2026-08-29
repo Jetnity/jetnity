@@ -66,7 +66,7 @@ Dieser Nachtrag präzisiert Secret- und Rate-Limit-Verträge. Er erweitert den S
 
 ### Request-ID Secret Boundary
 
-`requestIdHeaderName` muss ein gültiger HTTP-Header-Name sein. Bekannte sensitive Namen (`authorization`, `set-cookie`, `x-api-key` und die übrige Default-Liste) sind `invalid_configuration`, bevor irgendein HTTP-Call möglich ist. Normale provider-spezifische Request-ID-Header bleiben zulässig. Der gelesene Wert bleibt über `readSafeRequestId` bounded.
+`requestIdHeaderName` muss ein gültiger HTTP-Header-Name sein. Bekannte sensitive Namen (`authorization`, `set-cookie`, `x-api-key` und die übrige Default-Liste) sind `invalid_configuration` bei der Executor-Erzeugung, bevor irgendein HTTP-Call möglich ist. Zusätzlich vom Request registrierte `additionalSensitiveHeaderNames` gehören zum Request: kollidiert die Request-ID-Quelle damit, ist das `invalid_request` vor HTTP. Ownership: Default-Secret-Liste = Executor-Konfiguration; per-Request-Registrierung = Request. Normale provider-spezifische Request-ID-Header, die nicht als sensitiv registriert sind, bleiben zulässig. Der gelesene Wert bleibt über `readSafeRequestId` bounded.
 
 ### Eine Rate-Limit-Wahrheit
 

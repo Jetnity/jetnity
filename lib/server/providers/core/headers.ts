@@ -61,13 +61,14 @@ export function isValidHttpHeaderName(name: string): boolean {
 
 export function resolveRequestIdHeaderName(
   raw: string | undefined,
+  additionalSensitiveHeaderNames: readonly string[] = [],
 ): { ok: true; name: string } | { ok: false } {
   if (raw == null || raw.trim() === '') {
     return { ok: true, name: 'x-request-id' }
   }
   if (!isValidHttpHeaderName(raw)) return { ok: false }
   const name = raw.trim().toLowerCase()
-  if (isSensitiveHeaderName(name)) return { ok: false }
+  if (isSensitiveHeaderName(name, additionalSensitiveHeaderNames)) return { ok: false }
   return { ok: true, name }
 }
 
