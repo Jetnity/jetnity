@@ -100,8 +100,8 @@ Nein. Status `PROPOSED / NOT ACCEPTED`.
 
 ## 5. Nicht geprüft / nicht behauptet
 
-- Exact-Head CI/Vercel **dieses** Audit-Commits (muss neu gaten)
-- Production-Build dieses Heads
+- GitHub Actions / Vercel Preview **dieses** Review-Fix-Heads (lokal PASS auf `17cf1ff5`; remote live prüfen)
+- Production-Build remote/Vercel dieses Heads
 - Live-Supabase
 - Branch-Protection-API
 - Partner-Dashboard, White-Label-Admin, Operator-Portal

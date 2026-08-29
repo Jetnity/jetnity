@@ -196,10 +196,9 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 ## 7. Tests / CI / Preview
 
 - Keine Runtime-Änderung; keine neuen Unit Tests.
-- Task-Head `1b4b2f0d`: GitHub Actions `33261061154` SUCCESS; Vercel Preview READY (`38mNMrUBw12jV1vkdfxWCwS718u2`). **Historisch für den Task-only-Head.**
-- Audit-Head: nach Push neu gaten. Dieser Status behauptet kein Exact-Head-Grün für den neuen SHA.
-
-Production-Build in diesem Agentenlauf: **nicht** als Abschlussbeweis ausgeführt (Docs-only).
+- Review-Fix-Head `17cf1ff584ecf75b35151d30f6538492295067f0` lokale Exact-Head-Gates **PASS**: `npm ci`; `typecheck`; `lint`; `test` 2611/2611; Production-`build` compiled in 9.2s; `check:dead` (1 begründete Waise `CookieConsent.tsx`); `check:exports` 0; `check:deps` 0; `check:api-schutz` 12/12; `check:schema-bezug` 18 Tabellen/Views + 20 Funktionen.
+- Task-Head `1b4b2f0d` / Audit-Head `752f6990` CI/Vercel sind **stale** für diesen Head.
+- GitHub Actions / Vercel Preview dieses Heads: **nicht** als grün behauptet; live am PR prüfen.
 
 ---
 
@@ -221,7 +220,7 @@ Keine Migration, kein RLS, kein Supabase, kein Vercel-Projektmut, kein Commercia
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach CHANGES REQUIRED `5463645369` auf Head `752f6990`. Prior-Gates auf `752f6990` gelten nicht für den neuen Head.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach CHANGES REQUIRED `5463645369` auf Head `17cf1ff5`. Prior-Gates auf `752f6990` gelten nicht für diesen Head. Lokale Exact-Head-Gates auf `17cf1ff5` sind PASS; CI/Vercel live am PR prüfen.
 
 **Kein Ready. Kein Merge. Kein Folgeslice. Kein Signup. Kein API-Antrag.**
 

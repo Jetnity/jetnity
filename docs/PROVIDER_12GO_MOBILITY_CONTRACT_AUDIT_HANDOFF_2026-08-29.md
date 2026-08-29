@@ -72,6 +72,8 @@ Siehe Status §5 (12GO-R1–R15). Die wichtigsten: unbekanntes API-Schema, ToS-V
 
 0 neue Kosten. Keine Secrets. Keine Production-Mutation. Kein Commercial-Provenance-Mint.
 
+Lokale Exact-Head-Gates auf Review-Fix-Head `17cf1ff5`: `npm ci`, typecheck, lint, test 2611/2611, Production-build, Hygiene (`check:dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`) **PASS**. GitHub CI/Vercel dieses Heads nicht als grün behauptet.
+
 ---
 
 ## 6. Offene Gates
