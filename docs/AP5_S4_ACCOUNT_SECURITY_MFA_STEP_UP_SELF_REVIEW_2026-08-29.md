@@ -37,7 +37,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein S5. 
 
 - GoTrue kann nach `mfa.verify` andere Sitzungen beenden. Das ist installiertes Auth-Verhalten, keine zweite Session-Authority.
 - Kein authentifizierter Browser-/Real-Device-Beweis.
-- Review `5056084065` P1 lokal geschlossen. Prior-Gates auf `6f46a299` gelten nicht für den neuen Head.
+- Review `5056084065` P1 lokal geschlossen. Gates `33224797456` / `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` gelten für `c503dbf2`, nicht automatisch für diesen Stamp-Head.
 - S5 und AP-5-P1–P5 bleiben offen.
 
 ## 4. Urteil des Autors

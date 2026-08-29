@@ -17,8 +17,10 @@ Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`
 | `npm run auth:pruefen` | **55/55**, 242 Schlüssel, Passwortregel = config.toml |
 | `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich; `/account/security` dynamisch. `check:setup` 1 Warning: keine `.env`/`.env.local` in dieser Cloud-Session. |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet – `/account/security` ist auth-gated; kein Testkonto in dieser Session |
-| GitHub Actions / Vercel Preview | Prior-Heads `6f46a299` / `97a8f7b9` sind durch Review-Fix `5056084065` supersediert. Neuer Head live prüfen; zum Authoring dieses Review-Fix-Stamps nicht als grün behaupten. |
+| GitHub Actions / Vercel Preview | Exact Head `c503dbf28ee4ad47f96646b402e701e1d2d9cfc4`: Actions Run [`33224797456`](https://github.com/Jetnity/jetnity/actions/runs/33224797456) SUCCESS; Vercel Inspector [`3sMqKGDKPXmNn7nE8UfGcf1Jpmou`](https://vercel.com/jetnity-e1b93c82/jetnity-app/3sMqKGDKPXmNn7nE8UfGcf1Jpmou) READY; GitHub Preview-Deployment `6150849393` success. Preview-Alias `https://jetnity-app-git-feat-ap5-s4-account-sec-434482-jetnity-e1b93c82.vercel.app` |
 
 Lokales `npm ci` war **nicht** nötig. Das Cloud-`node_modules` war bereits Next 16.3.3 / ESLint 9.39.5. Lockfile wurde nicht verändert.
 
-Review-Fix schließt P1 Session/AAL-Reconcile und P2 Challenge-Faktor-Auswahl. Dieser Stamp erzeugt den Exact Head für den nächsten Technical-Lead Re-Review.
+Review-Fix schließt P1 Session/AAL-Reconcile und P2 Challenge-Faktor-Auswahl.
+
+Exact-Head-Gates oben gelten für `c503dbf28ee4ad47f96646b402e701e1d2d9cfc4`. Dieser Stamp erzeugt einen neueren Head. Kein weiterer Evidence-Stamp, außer dessen CI fehlschlägt.

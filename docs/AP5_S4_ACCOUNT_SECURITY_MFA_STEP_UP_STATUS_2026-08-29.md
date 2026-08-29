@@ -75,7 +75,7 @@ Siehe `docs/AP5_S4_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 | Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 133 warnings |
 | `auth:pruefen` | 55/55, 242 Schlüssel |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| GitHub Actions / Vercel Preview | Prior-Head `6f46a299` / `97a8f7b9` Gates sind durch Review-Fix `5056084065` ungültig. Neuer Head live prüfen. |
+| GitHub Actions / Vercel Preview | Exact Head `c503dbf2`: Actions `33224797456` SUCCESS; Vercel `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` READY. Dieser Stamp erzeugt einen neueren Head; dessen Gates live prüfen. |
 
 ## 5. DB / RLS / Production-Grenze
 
@@ -94,7 +94,7 @@ Keine neuen laufenden Kosten. Keine Provider. Keine Secrets.
 - `main` Branch Protection bleibt `protected=false`.
 - Agent-Self-Review ist kein PASS.
 - Review `5056084065` P1 ist lokal geschlossen: Session/AAL nach verified Unenroll wird reconciled; Refresh-Fehler ist fail-closed lokal. P2 Challenge-Faktor-Auswahl ist umgesetzt.
-- Prior-Gates auf `6f46a299` / `97a8f7b9` gelten nicht für diesen Head.
+- Prior-Gates auf `6f46a299` / `97a8f7b9` gelten nicht für den Review-Fix. Gates `33224797456` / `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` gelten für `c503dbf2`, nicht automatisch für diesen Stamp-Head.
 
 ## 8. Offene Freigaben
 

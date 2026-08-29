@@ -48,7 +48,7 @@ Kein neuer Auth-Vertrag. ADR-0193 präzisiert nur die UI-Nutzung der bereits in 
 - Kein authentifizierter Browser-/Real-Device-Beweis.
 - `mfa.verify` kann andere Sitzungen beenden; keine Sessionliste behauptet.
 - Nach Unenroll-Fehler nach Step-up kann die Sitzung bereits AAL2 sein.
-- Review `5056084065` P1/P2 lokal geschlossen. Prior-Gates auf `6f46a299` sind ungültig.
+- Review `5056084065` P1/P2 lokal geschlossen. Gates `33224797456` SUCCESS und Vercel `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` READY gelten für `c503dbf2`; dieser Stamp erzeugt einen neueren Head.
 - `main` `protected=false`.
 
 ## Nächster Schritt

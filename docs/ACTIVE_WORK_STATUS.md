@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **AP-5-S4 Account Security MFA Step-up / Draft-PR #159. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein S5. Baseline `main @ 5920860e`. Live-Evidence immer live prüfen.**
+Status: **AP-5-S4 Account Security MFA Step-up / Draft-PR #159. REVIEW-FIX nach `5056084065`. STOP für unabhängigen Technical-Lead Exact-Head Re-Review. Kein Ready, kein Merge durch den Autor. Kein S5. Baseline `main @ 5920860e`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -10,14 +10,14 @@ Status: **AP-5-S4 Account Security MFA Step-up / Draft-PR #159. STOP für unabh�
 ## Aktueller Arbeitsblock – AP-5-S4 Account Security MFA Step-up
 
 1. **Arbeitsblock / Ziel:** Nutzerfreundlicher MFA-Step-up vor Unenroll eines verifizierten TOTP-Faktors über `challenge` / `verify`. Kein globales Consumer-AAL2. Keine Auth-Config.
-2. **Authoring-Branch / PR:** `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`; Draft-PR #159. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+2. **Authoring-Branch / PR:** `feat/ap5-s4-account-security-mfa-step-up-2026-08-29`; Draft-PR #159. Review-Fix-Gates auf `c503dbf2`: Actions `33224797456` SUCCESS, Vercel `3sMqKGDKPXmNn7nE8UfGcf1Jpmou` READY. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
 3. **Status:** **REVIEW-FIX / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW** nach CHANGES REQUIRED `5056084065`. Kein Ready, kein Merge durch den Autor. Kein S5.
 4. **Bereits umgesetzt:** Domain-Vertrag und Reducer; `challenge`/`verify` plus AAL-Recheck vor Unenroll; nach verified Unenroll `refreshSession` + AAL/Faktoren-Abgleich; Refresh-Fehler fail-closed lokal; anderer verified Challenge-Faktor bevorzugt; Dialog mit Fokus/Busy/`one-time-code`; dichte Fehlercopy; ADR-0193; fokussierte Tests.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 14`. Exact Run-ID `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`. Beobachteter Titel `Ap-5-s4 mfa-step-up abmeldung`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
 6. **Live-`main` / Baseline bei diesem Stamp:** `5920860e164784040118667091ebcaca79f9b33d` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; nach fehlgeschlagenem Refresh wird lokal abgemeldet, andere Geräte nicht aufgezählt; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS. Prior-Gates `6f46a299` / `97a8f7b9` gelten nicht für diesen Head.
+9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; nach fehlgeschlagenem Refresh wird lokal abgemeldet, andere Geräte nicht aufgezählt; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS. Prior-Gates `6f46a299` / `97a8f7b9` gelten nicht für den Review-Fix. `c503dbf2`-Gates gelten nicht automatisch für diesen Stamp-Head.
 10. **Offene Nutzerentscheidungen / Freigaben:** S4 braucht kein Product-Owner-Sondergate. S5 und P1–P5 starten nicht aus diesem Slice.
 11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #159 nach `5056084065`. Kein Ready. Kein Merge. Kein S5.
 12. **Zuerst lesen:** `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0193, Gate-0-Status, ADR-0182.
