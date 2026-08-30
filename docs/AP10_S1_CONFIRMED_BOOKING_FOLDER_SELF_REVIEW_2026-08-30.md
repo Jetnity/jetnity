@@ -2,46 +2,34 @@
 
 Stand: 30. August 2026  
 Autor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 23`**  
-Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS  
-Run: https://cursor.com/agents/bc-ec79a6cd-8076-4ec4-a130-249f9f650420
+Typ: adversarial Self-Review nach CHANGES REQUIRED, **kein** unabhängiger Technical-Lead-PASS  
+Run: https://cursor.com/agents/bc-ec79a6cd-8076-4ec4-a130-249f9f650420  
+Review-Anker: `848292182bf9d8a89a19db651b35222323144a19` / `5060655333`
 
 ## 1. Auftrag gegen Diff
 
-Geprüft gegen den tatsächlichen Dateisatz auf `feat/ap10-s1-confirmed-booking-folder-2026-08-30`, Merge-Base `main @ 30c0493c`, behind 0.
+Geprüft gegen den Review-Fix auf `feat/ap10-s1-confirmed-booking-folder-2026-08-30`, Merge-Base `main @ 30c0493c`, behind 0.
 
-## 2. Adversarial Fragen
+## 2. Adversarial Fragen zu den Blocking Findings
 
 | Frage | Ergebnis |
 | --- | --- |
-| Zweite Booking-Truth? | Nein. `kannBuchungMarkieren` + `istGebucht` aus `lib/trips/buchung.ts`. |
-| Wird `unconfirmed` als Buchung gezeigt? | Nein. Filter und Tests weisen das aus. |
-| Kommen `activity`/`note` in die Liste? | Nein. Vertrag und Abbildung lassen sie aus. |
-| Werden archivierte Reisen still versteckt? | Nein. Eigene Gruppe + Badge `Archiviert`. |
-| Fünfter Account-Tab? | Nein. `ACCOUNT_NAVIGATION` unverändert vier Punkte. `/account/bookings` aktiviert keinen Rail-Punkt. |
-| Zweites Workspace-Dashboard auf `/account`? | Nein. Nur Secondary-Link. |
-| Empty = Error? | Nein. Leere Abbildung vs. `problemAus` / unvollständige Zeile. |
-| Preise / Partner / Deeplinks? | Nein. Weder Select noch UI. |
-| Service Role / `user_id`-Filter / Write? | Nein. |
-| Traveller-/Document-PII? | Nein. Nicht gelesen. Traveller-Kontext bewusst **nicht relevant**. |
-| N+1 über alle Reisen? | Nein. Eine `trip_items`-Abfrage mit `trips!inner`. |
-| Stilles Abschneiden? | Nein. Limit 200 + `count` + sichtbarer Unvollständig-Hinweis. |
-| DB/Migration/RLS/S5-B/Payments/AP-6–12? | Nein. |
-| Globale Continuity-Dateien? | Nein. |
-| Ready / Merge / Folgeslice? | Nein. |
+| Wird unbekannter Trip-Status zu `draft`? | Nein. `tripStatusLesen` liefert `null`; die Abbildung wird `unvollstaendig`. |
+| Gibt es eine parallele Status-Welt? | Nein. `TRIP_STATUSES` bleibt die Authority. |
+| Ist das Limit ohne DB-Ordnung? | Nein. `booking_confirmed_at desc` (Nullen zuletzt) + `id asc` **vor** `.limit(200)`. |
+| Erscheint die Bestätigungszeit in der UI? | Nein. Nicht auf `KontoBuchung`, nicht in `AccountBuchungen`. |
+| Ist der Schnitt still? | Nein. `abgeschnitten` plus Copy: zuletzt ausdrücklich bestätigte Teilmenge. |
+| Zweite Booking-Truth / Preise / Service Role / fünfter Tab? | Nein. |
+| Ready / Merge / Folgeslice / globale Continuity? | Nein. |
 
-## 3. Aggregationsbegründung
+## 3. Residuals
 
-`trip_items` ist die natürliche Quelle: S1 aggregiert Items, nicht Reisen. Der bestehende `trips`-Listenpfad wäre N+1 oder ein zu breiter Graph. Der Composite-FK `trip_items_reise_fk` erlaubt ein inner Embed der benötigten Trip-Fakten (`id`, `title`, `status`) in einer Abfrage. RLS auf beiden Tabellen bleibt die Ownership-Authority.
+- Authentifizierter Preview-Klick weiter unbelegt.
+- Exact-Head Actions/Vercel von `84829218` sind durch den Review-Fix ungültig.
+- 280-px-Overflow auf `/login` bleibt vorbestehend.
 
-## 4. Residuals
+## 4. Urteil
 
-- Kein authentifiziertes Preview-/Production-Konto in dieser Session; Live-Datenpfad daher nur Source-/Gate-Evidence, kein eingeloggter Klick.
-- 280 px Overflow auf `/login` ist vorbestehend und ausserhalb des Slices.
-- `/account/bookings` hat bewusst keinen aktiven Rail-Tab, weil Übersicht kein Präfix-Match sein darf.
-- Exact-Head CI/Vercel nach diesem Docs-Stamp live prüfen.
+Beide Blocking Findings sind im autorisierten Rahmen behoben. Lokale Gates auf `87f6f3cf` sind grün.
 
-## 5. Urteil
-
-Der Slice bleibt im autorisierten read-only Rahmen. Lokale Gates sind grün.
-
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head-Re-Review: ausstehend. Dieses Self-Review ist kein PASS.**
