@@ -1,4 +1,4 @@
-name: GitHub branch hygiene audit
+name: GitHub merged branch cleanup
 
 on:
   push:
@@ -12,140 +12,178 @@ permissions:
   pull-requests: read
 
 jobs:
-  audit:
+  cleanup:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Fetch every remote branch
+      - name: Fetch current remote state
         shell: bash
         run: |
           set -euo pipefail
           git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
 
-      - name: Fetch GitHub branch and open PR metadata
+      - name: Fetch current open PR metadata
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/branches?per_page=100" | jq 'add' > /tmp/branches-api.json
           gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/pulls?state=open&per_page=100" | jq 'add' > /tmp/open-prs.json
 
-      - name: Classify branch refs
+      - name: Fail-closed preflight and delete exact safe refs
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json, subprocess, os
+          import json, os, subprocess, urllib.request, urllib.error, urllib.parse
           from pathlib import Path
+          from datetime import datetime, timezone
 
           repo = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GH_TOKEN']
           audit_branch = 'audit/github-branch-hygiene-2026-08-30'
-          main_ref = 'origin/main'
+          manifest_path = Path('docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json')
+          manifest = json.loads(manifest_path.read_text())
+          candidates = [r for r in manifest['branches'] if r['disposition'] == 'DELETE_SAFE_MERGED']
+          if len(candidates) != manifest['counts'].get('DELETE_SAFE_MERGED') or len(candidates) != 165:
+              raise SystemExit(f"Unexpected candidate count: {len(candidates)}")
 
-          branches = json.loads(Path('/tmp/branches-api.json').read_text())
           prs = json.loads(Path('/tmp/open-prs.json').read_text())
-          open_heads = {}
+          open_heads = set()
           for pr in prs:
               if pr.get('head', {}).get('repo', {}).get('full_name') == repo:
-                  open_heads.setdefault(pr['head']['ref'], []).append(pr['number'])
+                  open_heads.add(pr['head']['ref'])
 
-          def is_ancestor(sha):
-              return subprocess.run(['git','merge-base','--is-ancestor',sha,main_ref]).returncode == 0
+          def api(path, method='GET', expected=(200,)):
+              req = urllib.request.Request(
+                  'https://api.github.com' + path,
+                  method=method,
+                  headers={
+                      'Authorization': f'Bearer {token}',
+                      'Accept': 'application/vnd.github+json',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'User-Agent': 'jetnity-branch-hygiene'
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(req) as resp:
+                      body = resp.read()
+                      if resp.status not in expected:
+                          raise RuntimeError(f'{method} {path}: HTTP {resp.status}')
+                      return resp.status, json.loads(body) if body else None
+              except urllib.error.HTTPError as exc:
+                  body = exc.read().decode('utf-8', 'replace')
+                  if exc.code in expected:
+                      return exc.code, None
+                  raise RuntimeError(f'{method} {path}: HTTP {exc.code}: {body[:300]}') from exc
 
-          rows = []
-          for b in sorted(branches, key=lambda x: x['name']):
-              name = b['name']
-              sha = b['commit']['sha']
-              protected = bool(b.get('protected'))
-              prs_for_branch = open_heads.get(name, [])
-              ancestor = is_ancestor(sha)
-              if name == 'main':
-                  disposition = 'KEEP_MAIN'
-              elif name == audit_branch:
-                  disposition = 'KEEP_ACTIVE_AUDIT'
-              elif prs_for_branch:
-                  disposition = 'KEEP_OPEN_PR'
-              elif protected:
-                  disposition = 'KEEP_PROTECTED'
-              elif ancestor:
-                  disposition = 'DELETE_SAFE_MERGED'
-              else:
-                  disposition = 'REVIEW_UNMERGED'
-              rows.append({
-                  'name': name,
-                  'sha': sha,
-                  'protected': protected,
-                  'open_prs': prs_for_branch,
-                  'tip_is_ancestor_of_main': ancestor,
-                  'disposition': disposition,
-              })
+          manifest_main = manifest['main_sha']
+          current_main = subprocess.check_output(['git','rev-parse','origin/main'], text=True).strip()
+          if subprocess.run(['git','merge-base','--is-ancestor',manifest_main,'origin/main']).returncode != 0:
+              raise SystemExit(f'Manifest main {manifest_main} is not an ancestor of current main {current_main}')
 
-          counts = {}
-          for r in rows:
-              counts[r['disposition']] = counts.get(r['disposition'], 0) + 1
+          # PRE-FLIGHT ALL candidates before any mutation.
+          errors = []
+          for r in candidates:
+              name, expected_sha = r['name'], r['sha']
+              if name in ('main', audit_branch):
+                  errors.append(f'{name}: forbidden target')
+                  continue
+              if name in open_heads:
+                  errors.append(f'{name}: became open PR head')
+                  continue
+              branch_path = urllib.parse.quote(name, safe='')
+              try:
+                  _, branch = api(f'/repos/{repo}/branches/{branch_path}')
+              except Exception as exc:
+                  errors.append(f'{name}: branch lookup failed: {exc}')
+                  continue
+              current_sha = branch['commit']['sha']
+              if current_sha != expected_sha:
+                  errors.append(f'{name}: tip drift {expected_sha} -> {current_sha}')
+              if bool(branch.get('protected')):
+                  errors.append(f'{name}: became protected')
+              if subprocess.run(['git','merge-base','--is-ancestor',expected_sha,'origin/main']).returncode != 0:
+                  errors.append(f'{name}: expected tip is no longer ancestor of current main')
+          if errors:
+              raise SystemExit('PRE-FLIGHT STOP:\n' + '\n'.join(errors))
 
-          payload = {
+          deleted = []
+          for r in candidates:
+              name, expected_sha = r['name'], r['sha']
+              # Git ref endpoint accepts the full heads/<branch> ref; preserve slashes in path.
+              ref_path = urllib.parse.quote('heads/' + name, safe='/')
+              api(f'/repos/{repo}/git/refs/{ref_path}', method='DELETE', expected=(204,))
+              branch_path = urllib.parse.quote(name, safe='')
+              status, _ = api(f'/repos/{repo}/branches/{branch_path}', expected=(404,))
+              if status != 404:
+                  raise SystemExit(f'{name}: deletion after-check did not return 404')
+              deleted.append({'name': name, 'sha': expected_sha})
+
+          # Count remaining branches with paginated API.
+          remaining = []
+          page = 1
+          while True:
+              _, batch = api(f'/repos/{repo}/branches?per_page=100&page={page}')
+              remaining.extend(batch)
+              if len(batch) < 100:
+                  break
+              page += 1
+
+          result = {
               'repository': repo,
-              'main_sha': subprocess.check_output(['git','rev-parse',main_ref], text=True).strip(),
-              'audit_branch': audit_branch,
-              'total_branches': len(rows),
-              'counts': counts,
-              'branches': rows,
+              'manifest_main_sha': manifest_main,
+              'execution_main_sha': current_main,
+              'deleted_count': len(deleted),
+              'deleted': deleted,
+              'remaining_branch_count': len(remaining),
+              'remaining_branch_names': sorted(b['name'] for b in remaining),
+              'executed_at_utc': datetime.now(timezone.utc).isoformat(),
           }
-          Path('branch-hygiene-audit.json').write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
+          if len(deleted) != 165:
+              raise SystemExit(f'Expected 165 deletions, got {len(deleted)}')
+          Path('branch-hygiene-delete-result.json').write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
 
           lines = [
-              '# GitHub Branch Hygiene Audit – 2026-08-30', '',
-              f"Repository: `{repo}`", f"Audit main SHA: `{payload['main_sha']}`",
-              f"Total remote branches: **{len(rows)}**", '',
-              '## Safety contract', '',
-              'A branch is `DELETE_SAFE_MERGED` only when it is not `main`, not protected, not the head of an open pull request, and its exact tip SHA is already an ancestor of the audited `main`. Before deletion all conditions must be revalidated; any drift is a STOP. The exact branch→SHA mapping below is the restore manifest.', '',
-              '## Counts', '', '| Disposition | Count |', '|---|---:|'
+              '# GitHub Branch Hygiene Delete Result – 2026-08-30', '',
+              f"Repository: `{repo}`", f"Manifest main SHA: `{manifest_main}`", f"Execution main SHA: `{current_main}`", '',
+              f"Deleted exact merged branch refs: **{len(deleted)}**", f"Remaining remote branches immediately after deletion: **{len(remaining)}**", '',
+              'All deleted refs passed a full preflight before the first deletion: exact expected tip SHA, no open PR head, not protected, and tip reachable from current `main`. The restore source is `docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json`.', '',
+              '## Deleted refs', '', '| Branch | Restore SHA |', '|---|---|'
           ]
-          for k in sorted(counts):
-              lines.append(f'| `{k}` | {counts[k]} |')
-          lines += ['', '## Exact manifest', '', '| Branch | SHA | Protected | Open PRs | Ancestor of main | Disposition |', '|---|---|---:|---|---:|---|']
-          for r in rows:
-              prs_txt = ', '.join(f"#{n}" for n in r['open_prs']) or '—'
-              lines.append(f"| `{r['name']}` | `{r['sha']}` | {str(r['protected']).lower()} | {prs_txt} | {str(r['tip_is_ancestor_of_main']).lower()} | `{r['disposition']}` |")
-          Path('branch-hygiene-audit.md').write_text('\n'.join(lines) + '\n')
-
-          summary = os.environ.get('GITHUB_STEP_SUMMARY')
-          if summary:
-              with open(summary, 'a') as f:
-                  f.write(f"## Branch Hygiene Audit\n\nTotal: **{len(rows)}**\n\n")
-                  for k in sorted(counts):
-                      f.write(f"- `{k}`: **{counts[k]}**\n")
+          for r in deleted:
+              lines.append(f"| `{r['name']}` | `{r['sha']}` |")
+          lines += ['', '## Remaining refs', '']
+          for name in sorted(b['name'] for b in remaining):
+              lines.append(f'- `{name}`')
+          Path('branch-hygiene-delete-result.md').write_text('\n'.join(lines) + '\n')
           PY
 
-      - name: Upload exact audit manifest
+      - name: Upload deletion evidence
         uses: actions/upload-artifact@v4
         with:
-          name: github-branch-hygiene-audit
+          name: github-branch-hygiene-delete-result
           path: |
-            branch-hygiene-audit.json
-            branch-hygiene-audit.md
+            branch-hygiene-delete-result.json
+            branch-hygiene-delete-result.md
           if-no-files-found: error
           retention-days: 7
 
-      - name: Persist restore manifest on audit branch
+      - name: Persist deletion evidence on audit branch
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p docs/evidence
-          cp branch-hygiene-audit.json docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json
-          cp branch-hygiene-audit.md docs/GITHUB_BRANCH_HYGIENE_AUDIT_2026-08-30.md
+          cp branch-hygiene-delete-result.json docs/evidence/GITHUB_BRANCH_HYGIENE_DELETE_RESULT_2026-08-30.json
+          cp branch-hygiene-delete-result.md docs/GITHUB_BRANCH_HYGIENE_DELETE_RESULT_2026-08-30.md
           git config user.name 'Jetnity'
           git config user.email 'info@jetnity.ch'
-          git add docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json docs/GITHUB_BRANCH_HYGIENE_AUDIT_2026-08-30.md
-          if git diff --cached --quiet; then
-            echo 'Manifest already current.'
-          else
-            git commit -m 'Docs: persist exact GitHub branch hygiene manifest'
-            git push origin HEAD:audit/github-branch-hygiene-2026-08-30
-          fi
+          git add docs/evidence/GITHUB_BRANCH_HYGIENE_DELETE_RESULT_2026-08-30.json docs/GITHUB_BRANCH_HYGIENE_DELETE_RESULT_2026-08-30.md
+          git commit -m 'Docs: record merged branch cleanup result'
+          git push origin HEAD:audit/github-branch-hygiene-2026-08-30
