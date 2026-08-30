@@ -7,6 +7,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { AlertCircle, ArrowRight, MapPin, Plus } from 'lucide-react'
 
+import { BUCHUNGEN_COPY } from '@/lib/account/buchungen'
 import type { NaechsteReise } from '@/lib/account/naechste-reise'
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { Problem } from '@/lib/api/datenbank-lesen'
@@ -52,6 +53,15 @@ export default function AccountUebersicht({
         Hier liegt dein persönliches Jetnity-Zuhause. Die Planung einer einzelnen Reise bleibt im
         Trip Workspace.
       </p>
+      <p className="mt-4">
+        <Link
+          href="/account/bookings"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-4 hover:underline"
+        >
+          {BUCHUNGEN_COPY.einstieg}
+        </Link>
+      </p>
+      <p className="mt-1 max-w-xl text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.einstiegHinweis}</p>
 
       {problem ? (
         <section

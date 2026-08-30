@@ -55,6 +55,17 @@ describe('Account-Navigation', () => {
     assert.equal(accountNavigationAktiv('/reisen', '/account/travellers'), false)
   })
 
+  test('legt Buchungen nicht unter die vier Rail-Punkte und nicht als fünften Tab', () => {
+    assert.equal(ACCOUNT_NAVIGATION.length, 4)
+    const ziele = ACCOUNT_NAVIGATION.map((eintrag) => `${eintrag.label}:${eintrag.href}`)
+    assert.equal(ziele.includes('Buchungen:/account/bookings'), false)
+    assert.equal(ziele.some((ziel) => ziel.endsWith(':/account/bookings') || ziel.startsWith('Buchungen:')), false)
+    assert.equal(accountNavigationAktiv('/account/bookings', '/account'), false)
+    assert.equal(accountNavigationAktiv('/account/bookings', '/reisen'), false)
+    assert.equal(accountNavigationAktiv('/account/bookings', '/account/travellers'), false)
+    assert.equal(accountNavigationAktiv('/account/bookings', '/account/settings'), false)
+  })
+
   test('verschiebt den aktiven Tab nur waagrecht und nur wenn er ragt', () => {
     const leiste = { left: 0, width: 200 }
     assert.equal(accountNavigationScrollDelta(leiste, { left: 20, width: 80 }), null)
