@@ -109,6 +109,9 @@ describe('Account-Registry UI-/Scope-Vertrag', () => {
     assert.equal(karte.includes('REGISTRY_COPY.dokumentKeineZuordnung'), true)
     assert.equal(karte.includes('dokumentAblaufGegenReferenztag'), true)
     assert.equal(karte.includes('gültig bis'), false)
+    assert.equal(karte.includes('ISO-2'), false)
+    assert.equal(karte.includes('LandFeld'), true)
+    assert.equal(karte.includes('landAnzeigeText'), true)
   })
 
   test('führt keine sensitiven Felder und keine Trip-/Service-Role-Pfade ein', () => {

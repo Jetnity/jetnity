@@ -31,7 +31,7 @@ export const REGISTRY_COPY = {
   ohneBezeichnung: 'Reisender ohne Bezeichnung',
   bezeichnungLabel: 'Bezeichnung',
   bezeichnungHinweis: 'Kurz und datensparsam. Keine Ausweisnummer, kein Geburtsdatum, keine Gesundheitsdaten.',
-  wohnsitzLabel: 'Wohnsitzland (ISO-2)',
+  wohnsitzLabel: 'Wohnsitzland',
   staatsbuergerschaftenTitel: 'Staatsbürgerschaften',
   staatsbuergerschaftenHinweis:
     'Mehrere Staatsbürgerschaften sind gleichrangig. Es gibt keine primäre oder bevorzugte Staatsbürgerschaft.',
@@ -53,7 +53,7 @@ export const REGISTRY_COPY = {
   dokumentTypPassport: 'Reisepass',
   dokumentTypNationalId: 'Personalausweis',
   dokumentTypUnknown: 'Unbekannt',
-  dokumentIssuerLabel: 'Ausstellungsland (ISO-2)',
+  dokumentIssuerLabel: 'Ausstellungsland',
   dokumentIssuerHinweis: 'Kann vom Wohnsitz und von jeder Staatsbürgerschaft abweichen.',
   dokumentCitizenshipLabel: 'Zugeordnete Staatsbürgerschaft',
   dokumentCitizenshipHinweis: 'Optional. Keine Vorauswahl – auch bei nur einer Staatsbürgerschaft bleibt die Zuordnung leer, bis du sie setzt.',

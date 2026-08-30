@@ -5,6 +5,7 @@ import { AlertCircle, Plus, Users } from 'lucide-react'
 import { useState, useTransition, type FormEvent } from 'react'
 
 import AccountReisendeKarte from '@/components/account/AccountReisendeKarte'
+import LandFeld from '@/components/country/LandFeld'
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import { REGISTRY_COPY } from '@/lib/traveller/account-registry-copy'
 import { registryTravellerAnlegen } from '@/lib/traveller/account-registry-aktionen'
@@ -125,23 +126,13 @@ export default function AccountReisende({
               />
               <span className="font-normal text-ink-700">{REGISTRY_COPY.bezeichnungHinweis}</span>
             </label>
-            <label className="grid gap-1 text-sm font-medium text-brand-800">
-              {REGISTRY_COPY.wohnsitzLabel}
-              <input
-                value={formular.residenceCountryCode}
-                onChange={(event) =>
-                  setFormular((aktuell) => ({
-                    ...aktuell,
-                    residenceCountryCode: event.target.value.toUpperCase(),
-                  }))
-                }
-                maxLength={2}
-                autoComplete="off"
-                inputMode="text"
-                spellCheck={false}
-                className={`${feldKlasse} uppercase`}
-              />
-            </label>
+            <LandFeld
+              label={REGISTRY_COPY.wohnsitzLabel}
+              value={formular.residenceCountryCode}
+              onChange={(residenceCountryCode) =>
+                setFormular((aktuell) => ({ ...aktuell, residenceCountryCode }))
+              }
+            />
           </div>
           <button
             type="submit"

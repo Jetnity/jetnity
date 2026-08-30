@@ -47,7 +47,7 @@ const VERBOTENE_SCHLUESSEL = [
 export const REGISTRY_EINGABE_UNGUELTIG = 'Diese Reisendenangabe ist ungültig.'
 export const REGISTRY_BEZEICHNUNG_UNGUELTIG =
   'Diese Bezeichnung ist nicht zulässig. Verwende eine kurze, datensparsame Bezeichnung ohne Ausweisdaten.'
-export const REGISTRY_LAND_UNGUELTIG = 'Bitte ein gültiges ISO-2-Länderkürzel angeben.'
+export const REGISTRY_LAND_UNGUELTIG = 'Bitte ein gültiges Land wählen.'
 export const REGISTRY_DATUM_UNGUELTIG = 'Bitte ein gültiges Datum im Format JJJJ-MM-TT angeben.'
 export const REGISTRY_TYP_UNGUELTIG = 'Bitte einen gültigen Dokumenttyp wählen.'
 export const REGISTRY_ZUORDNUNG_UNGUELTIG =
