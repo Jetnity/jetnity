@@ -1,0 +1,61 @@
+name: Creator media privacy hardening
+
+on:
+  push:
+    branches:
+      - ops/creator-media-private-2026-08-30
+    paths:
+      - .github/workflows/creator-media-private.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  harden-creator-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obtain GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          token_json="$(curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=jetnity-creator-media-c1")"
+          token="$(jq -r '.value' <<<"$token_json")"
+          [[ -n "$token" && "$token" != "null" ]]
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      - name: Set creator-media private through official Storage API
+        shell: bash
+        env:
+          OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          set -euo pipefail
+          response="$(curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${OIDC_TOKEN}" \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            'https://qscbgcdmivbbnzrcyegn.supabase.co/functions/v1/ops-creator-media-private-20260830')"
+          jq -e '.ok == true and .bucket == "creator-media" and .before_public == true and .after_public == false' <<<"$response" >/dev/null
+
+      - name: Remove temporary Edge executor
+        shell: bash
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          [[ -n "${SUPABASE_ACCESS_TOKEN:-}" ]]
+          code="$(curl --silent --show-error --output /tmp/delete-response --write-out '%{http_code}' \
+            --request DELETE \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            'https://api.supabase.com/v1/projects/qscbgcdmivbbnzrcyegn/functions/ops-creator-media-private-20260830')"
+          [[ "$code" == '200' ]]
+
+          list_json="$(curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            'https://api.supabase.com/v1/projects/qscbgcdmivbbnzrcyegn/functions')"
+          jq -e '[.[] | select(.slug == "ops-creator-media-private-20260830")] | length == 0' <<<"$list_json" >/dev/null
