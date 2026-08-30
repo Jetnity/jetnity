@@ -1,134 +1,160 @@
 # Jetnity – Active Work Status
 
-Stand: 30. August 2026  
-Status: **CURRENT / POST-CLEANUP / NO ACTIVE RUNTIME SLICE / NO ACTIVE CURSOR IMPLEMENTATION / LIVE-EVIDENCE GEWINNT**
+Stand: 31. August 2026  
+Status: **CURRENT / REQUIREMENTS PROVIDER GATE 0 CONTENT PASS / CURSOR STOPPED / PR #290 FINAL TL MERGE GATE / LIVE-EVIDENCE GEWINNT**
 
-Aktuellster vollständiger Checkpoint:
+Aktuellster vollständiger Post-Cleanup-Checkpoint:
 
 `docs/CHATGPT_TECHNICAL_LEAD_POST_CLEANUP_CHECKPOINT_2026-08-30.md`
 
-## 1. Aktueller Arbeitsblock
+Verbindlicher Gate-0-Task:
 
-**Kein Produkt-/Runtime-Slice ist aktiv oder automatisch freigegeben.**
+`docs/REQUIREMENTS_PROVIDER_GROUNDWORK_GATE0_TASK_2026-08-30.md`
 
-Pre-Continuity-`main` nach dem letzten mechanischen Cleanup:
+## 1. Baseline und aktueller Gate-0-Block
 
-`0f7d80fa48d958a8708af982806b99966289b2bd`
+Verifiziertes `main` beim Slice-Start und vor dem mechanischen PR-Ersatz:
 
-- PR #283 MERGED
-- Issue #282 CLOSED / completed
-- finaler Cleanup Head `204511f552d58e246cd08fd8b724eb98edd4dc49`
-- PR CI #1398 SUCCESS
-- Post-Merge CI #1399 / Run `33334863504` SUCCESS
-- Vercel SUCCESS
+`60e12dd5cf0916708e0bc87219b233861b387e7d`
 
-Der docs-only Continuity-PR aus Issue #284 bewegt `main` danach weiter. Finalen SHA live prüfen.
+- Merge-Commit von Continuity-PR #285.
+- Post-Merge CI #1401 / `33335277352`: SUCCESS.
+- Vercel Production `dpl_7x2zfEYq55qHJKpnT3hgdUEn8dps`: READY auf exakt `60e12dd5...`.
+- Ruleset `Jetnity main protection` / ID `21875372`: ACTIVE, bypass leer.
+- Required Checks: `Typecheck, Lint & Build`, `Auth-Konfiguration gegen config.toml`, `Vercel`.
+- PR #287 bleibt **CLOSED / NOT MERGED / SUPERSEDED** und darf nicht wiederbelebt werden.
 
-## 2. Mechanischer Cleanup – abgeschlossen
+Aktueller Arbeitsblock:
 
-Aus aktuellem Tree entfernt:
+- Issue **#288 – Requirements Provider Groundwork Gate 0 – Current Contract & Selection Audit**
+- **Ready-PR #290 – Audit: Requirements Provider Groundwork Gate 0**
+- Branch `audit/requirements-provider-groundwork-g0-2026-08-30`
+- Scope: **AUDIT-ONLY / DOCS-ONLY / PROVIDER-NEUTRAL / NO LIVE ACTIVATION**
 
-- `supabase/.temp/cli-latest`
-- `supabase/.temp/gotrue-version`
-- `supabase/.temp/pooler-url`
-- `supabase/.temp/postgres-version`
-- `supabase/.temp/rest-version`
-- `supabase/.branches/_current_branch`
-- `public/images/prague.jpg`
+PR **#289** ist **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED**. Grund: Der verbundene GitHub-Connector scheiterte beim formalen Draft→Ready-Schritt vor der Mutation an einem GraphQL-Schemafehler (`Repository.fullDatabaseId`); der SHA-geschützte REST-Merge wurde von GitHub danach korrekt nur wegen Draft-Status mit HTTP 405 abgelehnt. Es wurde keine Schutzregel umgangen. #290 wurde aus demselben Branch als non-draft Ersatz geöffnet und muss auf seinem finalen Exact Head erneut vollständig gegatet werden.
 
-`.gitignore` schützt die beiden Supabase-Lokalpfade weiterhin. Der Sanitation-Lock-Test verlangt jetzt die Abwesenheit dieser Dateien.
+## 2. Cursor-Agent / Review-State
 
-Damit sind D-01/D-02/D-03 aus dem Core Repository Hygiene Audit **completed**.
+Exakter Agent:
 
-## 3. Legacy-Konsolidierung kumulativ
+**`Jetnity requirements provider groundwork 1`**  
+Generation: **1**  
+Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`
 
-Bereits abgeschlossen:
+Status: **STOPPED / KEIN AKTIVER CURSOR-WORKER FÜR DIESEN SLICE**.
 
-- alte Creator/MediaStudio/Feed/Blog/Render Runtime entfernt
-- alte GitHub-Repositories `jetnity-bets` / `jetnity-travel` gelöscht
-- alter eigenständiger Supabase `jetnity-bets` gelöscht
-- alte leere Storage-Buckets und orphaned Policies entfernt
-- `creator-media` Source-Bucket entfernt; private Recovery retained
-- P1 Migration-History repariert/replay-verifiziert
-- 165 sicher gemergte alte Branch-Refs entfernt
-- Core Repository Hygiene Audit abgeschlossen
-- finaler mechanischer D-01/D-02/D-03 Cleanup abgeschlossen
+Der Agent hat alle Technical-Lead `CHANGES REQUIRED` CR-1 bis CR-7 in derselben Session bearbeitet und anschließend gestoppt. Kein neuer Agent und kein Folgeslice.
 
-Historical Evidence, Migrationen, Recovery und unique-evidence Branches bleiben bewusst erhalten.
+Letzter vollständig geprüfter Agent-Head:
 
-## 4. Noch optionale UPDATE-CANDIDATEs
+`4a6f27c0d57d52c1fcb41acf50c01ed4e9b48353`
 
-Nicht automatisch aktiv:
+Technical-Lead **CONTENT PASS** wurde auf diesem Head in #289 gebunden. Danach wurde die TL-owned Continuity-Datei aktualisiert und Head `a0729075593eb596bb5b70abd96f8d52ff06aefb` erneut vollständig gegatet:
 
-- zwei ungenutzte V1 Image-Hosts in `next.config.js`
-- `components.json` hooks alias ohne `hooks/`
-- stale `zod` Exception
-- kosmetische `Mega Pro` Copy
-- ungenutzter Tailwind `content/**` Glob
-- optionale Docs-/Kommentar-Hygiene
+- Merge-Base `main@60e12dd5...`
+- **14 ahead / 0 behind**
+- genau 8 Docs-Dateien; keine Runtime-/Config-/Migration-/Workflow-/Asset-Änderung
+- CI #1410 / `33339064601`: **SUCCESS**
+- Vercel Preview `dpl_3pvz3x8A6VKnMs83RWmr2bjUhmL4`: **READY** exakt auf `a0729075...`
+- GitHub Review Threads: **0**
+- Vercel Toolbar Threads unresolved: **0**
+- Technical-Lead FINAL PASS / MERGE AUTHORIZED auf `a0729075...`
 
-Diese Punkte sind kein altes aktives System und kein aktueller Blocker.
+**Wichtig:** Diese aktuelle PR-#290-Pointer-Änderung erzeugt erneut einen neuen Branch-Head. Alle früheren mechanischen Gates sind deshalb historische Evidence. Vor Merge von #290 muss genau der neue Head erneut live gegen `main`, CI, Vercel und Threads geprüft werden.
 
-## 5. Gated / nicht mechanisch ändern
+## 3. Gate-0-Ergebnis / Current Requirements Truth
 
-- `/privacy` / `/terms` / CookieConsent → Legal / PO
-- `creator` RBAC Retirement → Auth / PO, falls vorgeschlagen
-- `jetnity-legacy-recovery` → Production/Data
-- unique-evidence Branches → separate Branch-Hygiene
-- Provider Live / Secrets / paid calls / Commercial Write → besondere Gates
+Gate 0 bestätigt:
 
-## 6. GitHub
+- `RequirementsProvider` bleibt provider-neutral; `requirementsProviderAus()` bleibt fail-closed `null`.
+- kein echter Requirements-/Visa-/Entry-Provider ist aktiviert.
+- keine Provider-Secrets, keine paid calls, kein Vertrag, keine Runtime-Aktivierung.
+- Official Hard Truth darf weiterhin nur hinter Provider + Trust/Freshness-Grenze entstehen.
+- Current Trip Snapshot bleibt Reise-Truth; Account Registry ist Wiederverwendungsquelle, nicht automatische Evaluate-Authority.
+- Production-Workspace übergibt derzeit keine serverseitigen Official Evaluations und fällt lokal fail-closed auf unknown zurück.
+- Readiness verwendet den vorhandenen Provider-Ops-Cost-Guard nur in-memory; persistente Paid-Call-/S6-Grenzen sind vor echten Calls weiterhin notwendig.
+- Der bestehende serverseitige Provider-Core bleibt der vorgesehene Outbound-Transport; kein zweiter HTTP-Stack und kein UniversalProvider.
 
-- einziges aktuelles Repo: `Jetnity/jetnity`
-- `main` protected=true
-- Ruleset `Jetnity main protection` / ID `21875372` / active
-- Required Checks: `Typecheck, Lint & Build`, `Auth-Konfiguration gegen config.toml`, `Vercel`
-- PR + up-to-date + conversation resolution Pflicht
-- nur Merge; Force Push / deletion blockiert; Bypass leer
-
-Draft→Ready-Connectorfehler `Repository.fullDatabaseId` bleibt ein Toolproblem. Branch Protection nicht lockern.
-
-## 7. Supabase
-
-Letzter Transition-Precheck:
-
-- Production `qscbgcdmivbbnzrcyegn` ACTIVE_HEALTHY
-- develop `yfvbxvijcorffwxbxahl` ACTIVE_HEALTHY
-- alter eigenständiger `jetnity-bets` gelöscht
-- P1 repariert via PR #251
-- `creator-media` entfernt
-- `jetnity-legacy-recovery` privat retained
-- Production Edge Functions nach Cleanup 0
-
-Vor betroffenem Scope live neu prüfen.
-
-## 8. Product / Traveller
-
-> **Jetnity = Travel Operating System für die konkrete Reise.**
+Kanonisches Traveller-Modell bleibt verbindlich:
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-> **Account Registry = wiederverwendbare aktuelle Traveller-Fakten. Trip Snapshot = einzige Current Truth für eine konkrete Reise.**
+Kein Default-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
 
-Integriert: AP-5, AP-7, TA-DL1, AP-UX-NAV1, TA-CUX1, AP-10-S1.
+## 4. Wesentliche Gate-0-Findings
 
-## 9. Agentenstatus
+### P1 / vor realem Adapter bzw. Provider-Aktivierung
 
-Aktiver Cursor-Implementierungsagent: **keiner**.
+- `RequirementsProvider.evaluate(...)` hat aktuell kein Provider-`AbortSignal` / explizites Timeout.
+- Es gibt keinen Readiness-Domain-Kill-Switch für den Zustand, in dem die Factory später einmal nicht mehr `null` ist.
+- `lib/readiness/official.ts::officialFrische()` hat **kein maximales Alter / TTL für `checkedAt`**. Unveränderter Fingerprint + `validUntil == null` kann sehr alte Evidence weiterhin als `current` erscheinen lassen. Vor realem Adapter ist eine bounded, fail-closed Freshness-/TTL-Policy erforderlich.
+- Jetnity-`checkedAt` darf nicht still mit einem Vendor-`lastUpdatedAt` / Source-Update-Zeitpunkt gleichgesetzt werden.
+- Vendor-Mapping muss jede Citizenship-/Document-/Credential-Option und vollständigen Transit-Kontext erhalten.
+- Sherpas öffentlich dokumentierte Empfehlung, bei unbekanntem Pass Nationalität aus dem Origin abzuleiten, ist für Jetnity **verboten**. Missing nationality bleibt `unknown` / `insufficient_context`.
+- Sherpa dokumentiert öffentlich bis zu 3 Transit-Nodes, während Jetnitys Request-Contract bis zu 12 `transitCountryCodes` akzeptiert. Ein späterer Adapter darf niemals Transitländer still verwerfen; nur nachweisbar vollständige Split/Aggregation oder fail-closed unsupported/unknown.
 
-Core-Hygiene-Agent: STOPPED / completed.
+### P2
 
-Keinen Agenten aus diesem Status automatisch starten.
+- kein realer Requirements Provider → keine live option-spezifische Visa/Entry/Transit Official Truth.
+- Workspace erhält noch keine serverseitigen Official Evaluations.
+- 8-KB-Body-Cap der öffentlichen Requirements-API kann große Multi-Traveller-/Multi-Document-Parties begrenzen.
+- keine Readiness-spezifischen Provider-Ops-Observability-Events.
 
-## 10. FIRST NEXT ACTION
+### P3
 
-Der nächste Chat/Technical Lead muss:
+- einzelne Legacy-/Summary-Flächen bleiben bewusst fail-closed und nicht option-scharf.
+- historische Planungsdokumente enthalten teilweise Status-Drift; Live-Code und Gate-0-Audit gewinnen.
 
-1. finalen `main` und Issue #284 / Continuity-PR live prüfen;
-2. CI/Vercel/Ruleset live verifizieren;
-3. offene PRs/Issues/Branches und Agentenstatus live prüfen;
-4. bei DB/Security/Storage-Bezug Supabase live prüfen;
-5. Docs-vs-Live-Widersprüche melden;
-6. erst dann bounded nächste Kandidaten priorisieren.
+**P0:** kein aktueller Production-Incident, keine Fake-Official-Truth-Aktivierung und kein Secret-Leak in diesem Scope belegt.
+
+## 5. Provider Selection Groundwork
+
+Kein Provider wurde gewählt.
+
+- Timatic/IATA-Familie bleibt Kandidat. Öffentliche Widget-/Produkt-Evidence belegt relevante Planungsflächen, aber **nicht** Jetnitys AutoCheck-REST-Vertrag, Multi-Citizenship-/Credential-Option-Semantik, Preis, Lizenz oder Minimal-PII-Vertrag.
+- Sherpa bleibt Kandidat mit klarer öffentlich dokumentierter Travel-API-Form, aber Jetnity muss dokumentierte Fallback-/Transit-Limits strikt fail-closed überbrücken. Öffentliche technische Quota-/Cache-Angaben sind **keine** Jetnity-Vertrags-/Kosten-/Lizenz-Wahrheit.
+- Ranking-/Mobility-Indizes und undokumentierte Website-/Scraping-Pfade sind keine Official-Hard-Truth-Authority.
+
+Reale Providerwahl, Vendor-Kontakt, Vertrag, DPA, API-Key/Secret, paid calls oder Live-Aktivierung bleiben besondere **Product-Owner-Gates**.
+
+## 6. Supabase / Production Boundary
+
+Production beim Slice-Start:
+
+- project ref `qscbgcdmivbbnzrcyegn`
+- `ACTIVE_HEALTHY`
+- relevante Persistence-Migrationen bereits Production-applied, einschließlich `20260829140000_trip_item_commercial_provenance` und `20260829210052_account_traveller_registry_persistence`
+
+Development:
+
+- project ref `yfvbxvijcorffwxbxahl`
+- `ACTIVE_HEALTHY`
+- Migration-History weicht nach Reset/Reconciliation von Production ab.
+
+Bewertung: kein aktueller Production-Ausfall. **Vor jedem migrationsnahen Folgeslice muss Development-vs-Production erneut live reconciled werden.** Gate 0 hat Supabase nicht mutiert.
+
+## 7. Product-Owner-Gates bleiben geschlossen
+
+#290 öffnet keines dieser Gates:
+
+- reale Providerwahl / Vertrag / Commercial Terms
+- Provider Secrets / API Keys
+- paid calls / Live-Aktivierung
+- Production Runtime Writer / Principal / Commercial Write
+- neue Production-Migrationen oder große RLS/Ownership-Änderungen
+- fundamentale Auth/MFA/AAL-Änderungen
+- sensitive Passport-/MRZ-/Biometrie-/Scan-Speicherung oder zusätzliche externe sensitive transfers
+- Payments
+- neue recurring cost > USD 100/Monat
+- Public Launch / Indexing / Domain Cutover / Store Live
+
+## 8. FIRST NEXT ACTION
+
+1. **Technical Lead re-gatet den durch diese PR-#290-Pointer-Änderung entstandenen neuen Exact Head vollständig**: live `main`, Merge-Base/Ahead/Behind, exakter Diff, CI, Vercel Preview, GitHub Review Threads und Vercel Toolbar Threads.
+2. Nur bei erneutem PASS darf der Technical Lead PR #290 mergen; Merge ausschließlich SHA-geschützt und über die erlaubte Merge-Methode `merge`.
+3. Nach Merge werden der neue `main`-SHA, Main-CI und Vercel Production auf exakt diesem Merge-Commit verifiziert und Issue #288 geschlossen.
+4. **Kein automatischer Implementierungs-Folgeslice.** Nach vollständiger Gate-0-Closure folgt zuerst ein neuer Live-Precheck.
+5. Wahrscheinlicher nächster technischer Kandidat ist ein provider-neutraler **Requirements Truth-Ops S4-R1** (AbortSignal/Timeout, Readiness Kill-Switch, technische Outcome-Semantik, bounded Freshness/TTL; Factory bleibt `null`). Das ist **nur Kandidat, noch nicht gestartet**.
+6. Ein echter Provider-/Secret-/paid-call-Schritt bleibt besonderes Product-Owner-Gate.
 
 **Live-Evidence gewinnt immer.**
