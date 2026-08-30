@@ -26,6 +26,7 @@ import {
   type OfficialFreshness,
 } from '@/lib/readiness/official'
 import { partyVon, travellerSlots } from '@/lib/readiness/party'
+import { requirementsFreshnessAusFehlerArt, requirementsProviderAbrufen } from '@/lib/readiness/abruf'
 import {
   requirementsProviderAus,
   type RequirementsAnfrage,
@@ -35,6 +36,22 @@ import {
   type RequirementsProviderZeile,
   type RequirementsTravellerInput,
 } from '@/lib/readiness/provider'
+
+export type RequirementsAuswertenOptionen = {
+  signal?: AbortSignal
+  timeoutMs?: number
+  now?: string | number
+  maxAgeMs?: number
+}
+
+function bewertungsZeitMs(optionen?: RequirementsAuswertenOptionen): number {
+  if (typeof optionen?.now === 'number' && Number.isFinite(optionen.now)) return optionen.now
+  if (typeof optionen?.now === 'string') {
+    const ms = Date.parse(optionen.now)
+    if (Number.isFinite(ms)) return ms
+  }
+  return Date.now()
+}
 import { entscheidungenGleich } from '@/lib/readiness/entscheidung'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { citizenshipCodesAus, credentialOptionsAus, documentCitizenshipCode } from '@/lib/readiness/traveller-kontext'
@@ -368,14 +385,6 @@ function gültigkeitsfeld(roh: unknown): { ok: true; wert: string | null } | { o
   return wert ? { ok: true, wert } : { ok: false }
 }
 
-function providerFehlerFreshness(fehler: unknown): OfficialFreshness {
-  if (fehler && typeof fehler === 'object' && 'availability' in fehler) {
-    const art = (fehler as { availability?: unknown }).availability
-    if (art === 'unavailable') return 'provider_unavailable'
-  }
-  return 'source_temporarily_unavailable'
-}
-
 function freshnessNachTrust(freshness: OfficialFreshness, vertrauenswuerdig: boolean): OfficialFreshness {
   if (vertrauenswuerdig) return freshness
   if (
@@ -400,6 +409,7 @@ function zeileUebernehmen(
   option: RequirementsCredentialInput,
   zeile: RequirementsProviderZeile,
   providerNameRoh: string,
+  optionen?: RequirementsAuswertenOptionen,
 ): OfficialEvaluation | null {
   if (!optionPasst(zeile, traveller, option)) return null
   if (!OFFICIAL_REQUIREMENT_TYPES.includes(zeile.requirementType)) return null
@@ -431,12 +441,15 @@ function zeileUebernehmen(
       contextFingerprint: fingerprint,
     })
   }
+  const nowMs = bewertungsZeitMs(optionen)
   const freshness = officialFrische({
     storedFingerprint: fingerprint,
     currentFingerprint: fingerprint,
     checkedAt,
     validFrom: validFromFeld.wert,
     validUntil: validUntilFeld.wert,
+    now: new Date(nowMs).toISOString(),
+    maxAgeMs: optionen?.maxAgeMs,
     hasProvider: true,
     sourceAvailable: zeile.availability !== 'temporarily_unavailable',
   })
@@ -474,6 +487,7 @@ function zeileUebernehmen(
     ruleReference,
     sourceUrl,
     sourceUrlRoh,
+    nowMs,
   })
   const uebernehmbar =
     vertrauenswuerdig &&
@@ -520,6 +534,7 @@ export function requirementsAusZeilen(
   providerName: string | null,
   roh: unknown = null,
   leerFreshness: OfficialFreshness = 'provider_unavailable',
+  optionen?: RequirementsAuswertenOptionen,
 ): OfficialEvaluation[] {
   if (roh && typeof roh === 'object' && roh !== null) {
     const behauptung = roh as { officialResult?: unknown; llmResult?: unknown; result?: unknown }
@@ -598,7 +613,14 @@ export function requirementsAusZeilen(
               let uebernommen = 0
               if (hatProvider) {
                 for (const zeile of passende) {
-                  const evaluation = zeileUebernehmen(anfrage, traveller, option, zeile, providerName as string)
+                  const evaluation = zeileUebernehmen(
+                    anfrage,
+                    traveller,
+                    option,
+                    zeile,
+                    providerName as string,
+                    optionen,
+                  )
                   if (evaluation) {
                     merken(evaluation)
                     uebernommen += 1
@@ -615,7 +637,14 @@ export function requirementsAusZeilen(
           if (zeilen.length > 0 && hatProvider) {
             let uebernommen = 0
             for (const zeile of zeilen) {
-              const evaluation = zeileUebernehmen(anfrage, traveller, option, zeile, providerName as string)
+              const evaluation = zeileUebernehmen(
+                anfrage,
+                traveller,
+                option,
+                zeile,
+                providerName as string,
+                optionen,
+              )
               if (evaluation) {
                 merken(evaluation)
                 uebernommen += 1
@@ -640,19 +669,26 @@ export async function requirementsAuswerten(
   },
   provider: RequirementsProvider | null = requirementsProviderAus(),
   roh: unknown = null,
+  optionen: RequirementsAuswertenOptionen = {},
 ): Promise<OfficialEvaluation[]> {
   const kanonisch: RequirementsAnfrage = {
     ...anfrage,
     travellers:
       anfrage.travellers.length > 0 ? anfrage.travellers.map(travellerNormalisieren) : [leererTraveller()],
   }
-  if (!provider) return requirementsAusZeilen(kanonisch, [], null, roh)
-  try {
-    const zeilen = await provider.evaluate(kanonisch)
-    return requirementsAusZeilen(kanonisch, zeilen, provider.name, roh)
-  } catch (fehler) {
-    return requirementsAusZeilen(kanonisch, [], provider.name, roh, providerFehlerFreshness(fehler))
+  if (!provider) return requirementsAusZeilen(kanonisch, [], null, roh, 'provider_unavailable', optionen)
+  const gelesen = await requirementsProviderAbrufen(provider, kanonisch, optionen)
+  if (!gelesen.ok) {
+    return requirementsAusZeilen(
+      kanonisch,
+      [],
+      provider.name,
+      roh,
+      requirementsFreshnessAusFehlerArt(gelesen.art),
+      optionen,
+    )
   }
+  return requirementsAusZeilen(kanonisch, gelesen.zeilen, provider.name, roh, 'provider_unavailable', optionen)
 }
 
 export function requirementsLokalFuerReise(reise: Trip): OfficialEvaluation[] {
@@ -662,8 +698,9 @@ export function requirementsLokalFuerReise(reise: Trip): OfficialEvaluation[] {
 export async function requirementsFuerReise(
   reise: Trip,
   provider: RequirementsProvider | null = requirementsProviderAus(),
+  optionen: RequirementsAuswertenOptionen = {},
 ): Promise<OfficialEvaluation[]> {
-  return requirementsAuswerten(requirementsAnfrageAusReise(reise), provider)
+  return requirementsAuswerten(requirementsAnfrageAusReise(reise), provider, null, optionen)
 }
 
 export function travellerGeloeschtPruefen(reise: Trip, clientRef: string): boolean {

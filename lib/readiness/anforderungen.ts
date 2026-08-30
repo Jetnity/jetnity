@@ -14,7 +14,11 @@ import {
   type OfficialRequirementEvidence,
   type OfficialRequirementReason,
 } from '@/lib/readiness/domain'
-import { requirementsAuswerten, requirementsAusZeilen } from '@/lib/readiness/engine'
+import {
+  requirementsAuswerten,
+  requirementsAusZeilen,
+  type RequirementsAuswertenOptionen,
+} from '@/lib/readiness/engine'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
 import {
@@ -282,8 +286,9 @@ export function officialFuerItem(
 export async function requirementsEvaluationsPruefen(
   anfrage: OfficialRequirementAnfrage = {},
   provider: RequirementsProvider | null = requirementsProviderAus(),
+  optionen: RequirementsAuswertenOptionen = {},
 ): Promise<OfficialEvaluation[]> {
-  return requirementsAuswerten(anfrageAus(anfrage), provider, anfrage)
+  return requirementsAuswerten(anfrageAus(anfrage), provider, anfrage, optionen)
 }
 
 /**

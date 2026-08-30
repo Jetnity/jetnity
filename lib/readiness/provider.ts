@@ -64,7 +64,7 @@ export type RequirementsProviderZeile = {
 
 export type RequirementsProvider = {
   name: string
-  evaluate(anfrage: RequirementsAnfrage): Promise<RequirementsProviderZeile[]>
+  evaluate(anfrage: RequirementsAnfrage, signal: AbortSignal): Promise<RequirementsProviderZeile[]>
 }
 
 export function requirementsProviderAus(): RequirementsProvider | null {

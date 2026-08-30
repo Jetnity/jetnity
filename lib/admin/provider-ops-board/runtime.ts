@@ -6,6 +6,7 @@ import { flugZustand } from '@/lib/flights/zustand'
 import { hotelZustand } from '@/lib/hotels/zustand'
 import { mobilityZustand } from '@/lib/mobility/zustand'
 import { providerOpsZustand } from '@/lib/provider-ops'
+import { readinessZustand } from '@/lib/readiness/zustand'
 import { rentalCarZustand } from '@/lib/rental-cars/zustand'
 import { createRouteHandlerClient, createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
@@ -34,10 +35,7 @@ function domainZustaende(): DomainZustandSnapshot[] {
     {
       id: 'domain-readiness',
       name: 'Readiness',
-      zustand: providerOpsZustand({
-        vercelEnv: process.env.VERCEL_ENV,
-        zugangVorhanden: false,
-      }),
+      zustand: readinessZustand(),
     },
     {
       id: 'domain-safety',
