@@ -8,7 +8,7 @@ on:
       - .github/workflows/github-branch-hygiene-audit.yml
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: read
 
 jobs:
@@ -55,8 +55,7 @@ jobs:
                   open_heads.setdefault(pr['head']['ref'], []).append(pr['number'])
 
           def is_ancestor(sha):
-              p = subprocess.run(['git','merge-base','--is-ancestor',sha,main_ref])
-              return p.returncode == 0
+              return subprocess.run(['git','merge-base','--is-ancestor',sha,main_ref]).returncode == 0
 
           rows = []
           for b in sorted(branches, key=lambda x: x['name']):
@@ -64,6 +63,7 @@ jobs:
               sha = b['commit']['sha']
               protected = bool(b.get('protected'))
               prs_for_branch = open_heads.get(name, [])
+              ancestor = is_ancestor(sha)
               if name == 'main':
                   disposition = 'KEEP_MAIN'
               elif name == audit_branch:
@@ -72,7 +72,7 @@ jobs:
                   disposition = 'KEEP_OPEN_PR'
               elif protected:
                   disposition = 'KEEP_PROTECTED'
-              elif is_ancestor(sha):
+              elif ancestor:
                   disposition = 'DELETE_SAFE_MERGED'
               else:
                   disposition = 'REVIEW_UNMERGED'
@@ -81,7 +81,7 @@ jobs:
                   'sha': sha,
                   'protected': protected,
                   'open_prs': prs_for_branch,
-                  'tip_is_ancestor_of_main': is_ancestor(sha),
+                  'tip_is_ancestor_of_main': ancestor,
                   'disposition': disposition,
               })
 
@@ -100,9 +100,11 @@ jobs:
           Path('branch-hygiene-audit.json').write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
 
           lines = [
-              '# GitHub Branch Hygiene Audit', '',
-              f"Repository: `{repo}`", f"Main SHA: `{payload['main_sha']}`",
+              '# GitHub Branch Hygiene Audit – 2026-08-30', '',
+              f"Repository: `{repo}`", f"Audit main SHA: `{payload['main_sha']}`",
               f"Total remote branches: **{len(rows)}**", '',
+              '## Safety contract', '',
+              'A branch is `DELETE_SAFE_MERGED` only when it is not `main`, not protected, not the head of an open pull request, and its exact tip SHA is already an ancestor of the audited `main`. Before deletion all conditions must be revalidated; any drift is a STOP. The exact branch→SHA mapping below is the restore manifest.', '',
               '## Counts', '', '| Disposition | Count |', '|---|---:|'
           ]
           for k in sorted(counts):
@@ -130,3 +132,20 @@ jobs:
             branch-hygiene-audit.md
           if-no-files-found: error
           retention-days: 7
+
+      - name: Persist restore manifest on audit branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/evidence
+          cp branch-hygiene-audit.json docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json
+          cp branch-hygiene-audit.md docs/GITHUB_BRANCH_HYGIENE_AUDIT_2026-08-30.md
+          git config user.name 'Jetnity'
+          git config user.email 'info@jetnity.ch'
+          git add docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json docs/GITHUB_BRANCH_HYGIENE_AUDIT_2026-08-30.md
+          if git diff --cached --quiet; then
+            echo 'Manifest already current.'
+          else
+            git commit -m 'Docs: persist exact GitHub branch hygiene manifest'
+            git push origin HEAD:audit/github-branch-hygiene-2026-08-30
+          fi
