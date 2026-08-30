@@ -5236,6 +5236,27 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0200 – Requirements Truth-Ops S4-R1: Timeout, Kill-Switch, bounded Freshness
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/requirements-truth-ops-s4-r1-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider. Binding: `docs/REQUIREMENTS_TRUTH_OPS_S4_R1_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. `RequirementsProvider.evaluate(anfrage, signal)` trägt einen Pflicht-`AbortSignal`. Ein späterer Adapter reicht ihn in den bestehenden Provider Transport Core weiter. Kein zweiter HTTP-/Retry-Stack.
+2. Die Requirements-Domain begrenzt die Provider-Ausführung mit Hard-Timeout 4.000 ms, bricht per `AbortController` ab und startet bei bereits abgebrochenem Aussensignal keinen Call. `POST /api/readiness/requirements` bleibt `maxDuration = 10` und propagiert `req.signal`.
+3. Technische Ursachen bleiben intern unterscheidbar: `timeout`, `aborted`, `temporarily_unavailable`, `unavailable`. Öffentliche Official-Freshness bleibt fail closed: Timeout/Abort/transient → `source_temporarily_unavailable`; grundsätzlich unavailable / kein Provider / Kill-Switch → `provider_unavailable`. Keine `required`/`not_required`/`conditional`-Wahrheit aus Fehlern. Keine Raw-Vendor-/Secret-Fehler in Antworten.
+4. Domain-Kill-Switch `JETNITY_READINESS_AKTIV` über bestehende `providerOpsZustand`-Form. Production hart aus. Zugang nur bei vorhandenem Provider-Objekt. `requirementsProviderAus()` bleibt in diesem Slice `null`.
+5. `officialFrische()` setzt einen globalen Jetnity-Ceiling von 60 Minuten auf `checkedAt`. `checkedAt` ist Retrieval-/Evaluation-Zeit, nicht Vendor-`lastUpdatedAt`. Alter ≥ Ceiling → `recheck_needed`. Future Clock Skew bleibt getrennt. Provider-spezifisch darf später nur strenger werden.
+
+**Kontext:** Schliesst die P1-Lücken G-S4-TIMEOUT, G-S4-KILLSWITCH, G-S4-OUTCOME und G-S4-TTL, bevor ein echter Requirements-Adapter verdrahtet werden darf.
+
+**Alternativen:** Safety/Seasonal-Timeout ohne Aussensignal und ohne TTL; Factory auf non-null drehen; unbounded Client-Timeout; Vendor-`lastUpdatedAt` als Freshness.
+
+**Konsequenzen:** Preview/Production bleiben ohne Provider vollständig fail closed. Kein Vendor, keine Secrets, keine paid calls, keine Supabase-/Auth-Änderung. Folgeslice nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
