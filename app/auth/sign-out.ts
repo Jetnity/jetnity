@@ -23,9 +23,11 @@ import {
  * Weitergeleitet wird nur nach bestätigtem Erfolg.
  */
 export async function signOutAction(
-  _vorher: GlobalesSignOutErgebnis | null,
-  _formular?: FormData,
+  vorher: GlobalesSignOutErgebnis | null,
+  formular?: FormData,
 ): Promise<GlobalesSignOutErgebnis> {
+  void vorher
+  void formular
   const ergebnis = await allgemeinesSignOut(GLOBALES_SIGN_OUT_ZIEL_PUBLIC)
   if (globalesSignOutDarfWeiterleiten(ergebnis)) {
     redirect(ergebnis.ziel)
@@ -41,9 +43,11 @@ export async function signOutAction(
  * Anfrage übernommenes Weiterleitungsziel wäre eine offene Weiterleitung.
  */
 export async function signOutToAdminLoginAction(
-  _vorher: GlobalesSignOutErgebnis | null,
-  _formular?: FormData,
+  vorher: GlobalesSignOutErgebnis | null,
+  formular?: FormData,
 ): Promise<GlobalesSignOutErgebnis> {
+  void vorher
+  void formular
   const ergebnis = await allgemeinesSignOut(GLOBALES_SIGN_OUT_ZIEL_ADMIN)
   if (globalesSignOutDarfWeiterleiten(ergebnis)) {
     redirect(ergebnis.ziel)

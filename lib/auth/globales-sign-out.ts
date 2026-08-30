@@ -12,7 +12,7 @@ import {
 export const GLOBALES_SIGN_OUT_ZIEL_PUBLIC = '/' as const
 export const GLOBALES_SIGN_OUT_ZIEL_ADMIN = '/admin/login' as const
 
-export const GLOBALES_SIGN_OUT_ZIELE = [
+const GLOBALES_SIGN_OUT_ZIELE = [
   GLOBALES_SIGN_OUT_ZIEL_PUBLIC,
   GLOBALES_SIGN_OUT_ZIEL_ADMIN,
 ] as const
@@ -46,10 +46,7 @@ export function globalesSignOutFehler(code: GlobalesSignOutFehlerCode): Globales
 }
 
 export function globalesSignOutZielLesen(wert: unknown): GlobalesSignOutZiel | null {
-  if (wert === GLOBALES_SIGN_OUT_ZIEL_PUBLIC || wert === GLOBALES_SIGN_OUT_ZIEL_ADMIN) {
-    return wert
-  }
-  return null
+  return GLOBALES_SIGN_OUT_ZIELE.find((ziel) => ziel === wert) ?? null
 }
 
 export function globalesSignOutFehlerEinordnen(fehler: unknown): GlobalesSignOutFehler {
@@ -95,7 +92,9 @@ export async function globalesSignOutAusfuehren(
   }
 }
 
-export function globalesSignOutDarfWeiterleiten(ergebnis: GlobalesSignOutErgebnis): boolean {
+export function globalesSignOutDarfWeiterleiten(
+  ergebnis: GlobalesSignOutErgebnis,
+): ergebnis is { ok: true; ziel: GlobalesSignOutZiel } {
   return ergebnis.ok === true
 }
 
