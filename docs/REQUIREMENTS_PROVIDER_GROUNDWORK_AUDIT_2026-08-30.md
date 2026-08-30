@@ -52,7 +52,9 @@ Verifiziert in diesem Authoring-Lauf, 30. August 2026.
 | Merge-Base `HEAD` ↔ `origin/main` | `60e12dd5` | `live_github` |
 | Ahead / Behind bei erstem Authoring | **1 / 0** (nur Task-Commit `daa91927`) | `live_github` |
 | Review-Fix-Start-Head | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` | `live_github` |
-| Ahead / Behind vor diesem Review-Fix | **5 / 0** vs `origin/main@60e12dd5` | `live_github` |
+| Ahead / Behind vor erstem Review-Fix | **5 / 0** vs `origin/main@60e12dd5` | `live_github` |
+| Reviewed CR-1–CR-5 head | `1a4fca0058dd7978396789bd680e83b923a6d659` | `live_github` |
+| Ahead / Behind vor CR-6/CR-7 | **8 / 0** vs `origin/main@60e12dd5` | `live_github` |
 | Draft-PR | [#289](https://github.com/Jetnity/jetnity/pull/289) OPEN / Draft | `live_github` |
 | Issue | [#288](https://github.com/Jetnity/jetnity/issues/288) OPEN | `live_github` |
 | Überlappender Requirements-/Readiness-Provider-Workstream | **keiner** ausser diesem Draft | `live_github` |
@@ -238,7 +240,7 @@ Nicht Authority:
 - Body-Cap **8192** Bytes (Content-Length + Stream)
 - In-Memory Cost Guard über `provider-ops`: 20 / 10 min, 80 / Tag
 - `Cache-Control: private, no-store`
-- `maxDuration = 10` (Edge), **kein** Provider-`AbortSignal`
+- Route-Export `maxDuration = 10` (`app/api/readiness/requirements/route.ts`). **Kein** `runtime = 'edge'`-Export; das ist keine Edge-Runtime-Behauptung. `maxDuration` ist **keine** Provider-`AbortSignal`-/Timeout-Grenze
 - HTTP 200 + Body-Status für orchestrierte Evaluate-Zustände; 429 + `Retry-After`; 413/415 für Härtung
 - Antwort: `{ status, evaluations, official, message }` — kanonisch ist `evaluations[]`
 
@@ -278,7 +280,7 @@ Historische Quelle: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S4 und
 
 | S4-Punkt | Klassifikation | Current Truth 30. August 2026 |
 | --- | --- | --- |
-| `RequirementsProvider.evaluate(..., signal?)` + explizites Timeout | **CURRENT / STILL NEEDED** | Port hat kein Signal. Safety/Seasonal haben 4 s + `AbortSignal`. Route `maxDuration=10` ist keine Provider-Grenze. Throw → catch → `unknown` / `source_temporarily_unavailable` |
+| `RequirementsProvider.evaluate(..., signal?)` + explizites Timeout | **CURRENT / STILL NEEDED** | Port hat kein Signal. Safety/Seasonal haben 4 s + `AbortSignal`. Route-`maxDuration = 10` ist keine Provider-Grenze und kein Edge-Runtime-Claim (`runtime` ist nicht exportiert). Throw → catch → `unknown` / `source_temporarily_unavailable` |
 | `JETNITY_READINESS_AKTIV` / Safety / Seasonal Flags | **CURRENT / STILL NEEDED** (erst wenn Factory ≠ `null`) | S1-Form `providerOpsZustand` existiert. Readiness benutzt sie nicht. Heute reicht Factory `null` als einzige Bremse |
 | Serverseitiger Party-Load | **ALREADY INTEGRATED** für Trip-Graph; **STILL NEEDED** nur für Safety-API; **NEEDS PRODUCT DECISION** für die öffentliche Readiness-API | `requirementsAnfrageAusReise` lädt Party aus dem Trip. Die öffentliche Requirements-API akzeptiert Client-`party` (Guest-Evaluate). Safety-API setzt weiter `party: []` |
 | Body-Cap / Multi-Traveller 8 KB vs 24 KB | **CURRENT / STILL NEEDED** | Cap 8192 unverändert. 20 Traveller × 8 Citizenships × 12 Documents kann den Cap reissen, bevor die Engine bewertet. Nicht gemessen mit Live-Payloads in diesem Audit |

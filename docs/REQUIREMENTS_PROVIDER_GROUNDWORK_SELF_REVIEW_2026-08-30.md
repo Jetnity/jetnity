@@ -93,6 +93,18 @@ Gegenargument: Die meisten Reisen haben 0–2 Stops. Drei Transit-Nodes könnten
 
 Antwort: Jetnitys öffentlicher Vertrag akzeptiert 12 Länder, und die Engine materialisiert **jedes** angefragte Transitland. Die vierten und weiteren Länder still wegzulassen wäre unvollständige Transit-Hard-Truth, nicht eine Optimierung. Deshalb `G-MAP-TRANSIT-CAP` als Pflicht: fail-closed Split/Aggregation **oder** `unknown` / `insufficient_context` für nicht unterstützte Shapes. Jetnitys Route-Cap bleibt 12. Nicht implementiert.
 
+### 2.13 CR-6: Habe ich „Edge“ nur an einer Stelle entfernt?
+
+Gegenargument: Derselbe Overclaim könnte in Gap-Map, Status oder Handoff stehen.
+
+Antwort: Alle sechs Deliverables nach `Edge` / `maxDuration` durchsucht. Der unzulässige Edge-Claim stand nur in Audit §2.7; die S4-Zeile nannte `maxDuration=10` bereits als Nicht-Provider-Grenze und ist jetzt explizit ohne Edge-Runtime. Verifizierter Contract: `export const maxDuration = 10`, `export const dynamic = 'force-dynamic'`, **kein** `runtime`-Export.
+
+### 2.14 CR-7: Kann das Handoff den eigenen Commit-SHA tragen?
+
+Gegenargument: Sobald ein Stamp den SHA schreibt, ist HEAD ein neuer Commit, und der Tree kann seinen eigenen Object-Id nicht enthalten.
+
+Antwort: Handoff/Status enthalten nach dem Stamp einen **40-stelligen Hex-SHA**, kein „dieser Absatz bindet“-Placeholder, und Ahead/Behind ist gegen live `origin/main` neu gezählt. Ein Commit kann seine eigene Object-Id nicht im Tree tragen; der gestempelte Exact Head ist der SHA des letzten Inhalts-/Stamp-Commits, der nach `git rev-parse HEAD` und Ahead/Behind intern zusammenpasst. Alte 6/0-Zwischenstände sind entfernt.
+
 ## 3. Unsicherheiten (`unknown` / `insufficient evidence`)
 
 | Thema | Warum unsicher |

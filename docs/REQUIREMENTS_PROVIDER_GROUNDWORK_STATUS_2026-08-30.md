@@ -8,7 +8,7 @@ Issue: #288
 Draft-PR: https://github.com/Jetnity/jetnity/pull/289  
 Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`  
 Reviewed-then-fixed Head: `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`  
-Review: Technical-Lead comment **#5471442167** (CR-1–CR-4) plus CR-5 (Transit-Kapazität, gleicher Fix-Zyklus)
+Review: Technical-Lead comment **#5471442167** (CR-1–CR-4), CR-5, plus Re-Review CR-6/CR-7
 
 > Kein Ready. Kein Merge. Kein Folgeslice. Kein Provider gewählt. Content-Gate auf `9caa1a0f` war **NOT PASS**.
 
@@ -22,18 +22,22 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 
 ## 2. Branch / PR / Head
 
+Live `git fetch origin main` vor diesem CR-6/CR-7-Stamp: `origin/main` unverändert `60e12dd5`.
+
 | Fakt | Wert |
 | --- | --- |
-| Baseline | `main@60e12dd5cf0916708e0bc87219b233861b387e7d` |
-| `origin/main` letzter Fetch (Review-Fix) | identisch `60e12dd5` (30. August 2026, vor Review-Fix-Commit erneut) |
-| Merge-Base | `60e12dd5` |
-| Ahead / Behind vor Review-Fix | **5 / 0** auf `9caa1a0f` |
+| Baseline / `origin/main` | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
+| Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
+| Behind `origin/main` | **0** |
+| Ahead / Behind vor CR-6/CR-7 | **8 / 0** auf `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | Parallel TL-Commit auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored; nicht editiert |
-| Vorheriger Exact Head (NOT PASS) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
-| Review-Fix-Paket | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
-| Ahead / Behind nach Review-Fix-Paket | **6 / 0** vs `origin/main@60e12dd5` |
-| Vorheriger Review-Fix-Stamp (CR-1–CR-4) | `df2925e580b19d86dd17733295268933e1bb2e0e` |
-| Exact Head | der Commit, der CR-5 in denselben Fix-Zyklus bindet; live am PR #289 prüfen |
+| Reviewed NOT PASS (erster Content-Gate) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
+| Reviewed NOT PASS (CR-1–CR-5 head) | `1a4fca0058dd7978396789bd680e83b923a6d659` |
+| Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
+| Stamp CR-1–CR-4 | `df2925e580b19d86dd17733295268933e1bb2e0e` |
+| CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
+| Ahead / Behind | **PENDING_AHEAD / 0** vs `origin/main@60e12dd5` |
+| Exact Head | `PENDING_EXACT_HEAD` |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
 
@@ -45,7 +49,7 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 - Live-Precheck GitHub/`origin/main`/PRs/Issues
 - Sechs task-spezifische Deliverables
 - Öffentliche Provider-Seiten mit URL + Datum + Evidence-Klasse
-- Review-Fix CR-1–CR-5 **nur** in den sechs Deliverables
+- Review-Fix CR-1–CR-7 **nur** in den sechs Deliverables
 - Keine Runtime-/Config-/Migration-Änderung
 
 ### 3.1 Review-Fix #5471442167
@@ -57,6 +61,8 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 | CR-3 | E-SHERPA-5/6; öffentliche Quota-/Cache-Schichten vs kontrahiertes `unknown` | keine Quota als Vertrag gelesen |
 | CR-4 | E-IATA-3 Timatic Widget als Planungs-Oberfläche derselben DB; AutoCheck-REST nicht überzeichnet | kein Timatic gewählt |
 | CR-5 | E-SHERPA-7; öffentlich max. 3 Transit-Nodes vs Jetnity max. 12 `transitCountryCodes`; Gap `G-MAP-TRANSIT-CAP`; kein silent drop; Route Truth nicht verkleinert | kein Adapter, kein Schema-Cap-Change |
+| CR-6 | Route-`maxDuration = 10` ohne `runtime = 'edge'`; Edge-Claim aus allen sechs Deliverables entfernt | kein Runtime-Change |
+| CR-7 | Handoff/Status Exact Head + Ahead/Behind auf den gepushten Tip gestempelt | kein Ready/Merge |
 
 ## 4. Nicht umgesetzt / bewusst nicht angefasst
 

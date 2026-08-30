@@ -6,7 +6,7 @@ Cursor-Agent: **`Jetnity requirements provider groundwork 1`**
 Cloud-Run: https://cursor.com/agents/bc-77badb21-f262-4ee2-86ce-f71a5aa1f051  
 Issue: #288  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/289  
-Review-Fix von comment **#5471442167** (CR-1–CR-4) plus CR-5 gegen Head `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`
+Review-Fix CR-1–CR-7. Reviewed NOT PASS heads: `9caa1a0f` (erster Gate), `1a4fca00` (CR-1–CR-5).
 
 > Agent-Self-Review ≠ PASS. Cursor setzt nicht Ready und merged nicht. Kein Folgeslice.
 
@@ -14,24 +14,26 @@ Review-Fix von comment **#5471442167** (CR-1–CR-4) plus CR-5 gegen Head `9caa1
 
 ## 1. Exact Head / Git
 
-Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`).
+Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`). `origin/main` ist **nicht** weitergelaufen.
 
 | Fakt | Wert |
 | --- | --- |
 | Task-Baseline / `origin/main` | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
-| Ahead / Behind vor Review-Fix | **5 / 0** auf `9caa1a0f` |
-| Ahead / Behind nach Review-Fix-Paket | **6 / 0** |
-| Vorheriger Exact Head (Content **NOT PASS**) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
+| Ahead / Behind vor CR-6/CR-7 | **8 / 0** auf `1a4fca0058dd7978396789bd680e83b923a6d659` |
+| Ahead / Behind | **PENDING_AHEAD / 0** |
+| Reviewed NOT PASS (erster Content-Gate) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
+| Reviewed NOT PASS (CR-1–CR-5) | `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
 | Stamp CR-1–CR-4 | `df2925e580b19d86dd17733295268933e1bb2e0e` |
+| CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | TL Continuity auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored, nicht editiert |
-| Exact Head | der Stamp-Commit, der diesen Absatz bindet; nach Push live am PR #289 prüfen |
+| Exact Head | `PENDING_EXACT_HEAD` |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 
-CI #1404 / Vercel `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy` gelten für **`9caa1a0f`**, nicht für diesen Head.
+Jede ältere CI/Vercel-Evidence (`9caa1a0f`, `1a4fca00`, `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy`, `HQb5iLVgaik7paubxdYtEyKKBSvF`) gilt **nicht** für diesen Head.
 
 ---
 
@@ -41,7 +43,7 @@ Gegen `origin/main` stehen unverändert genau:
 
 1. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_GATE0_TASK_2026-08-30.md` — Technical-Lead-authored
 2. `docs/ACTIVE_WORK_STATUS.md` — Technical-Lead Continuity `8d3330c1`; **dieser Agent hat die Datei nicht geschrieben und nicht editiert**
-3. die sechs Agent-Deliverables (Review-Fix CR-1–CR-5 nur hier):
+3. die sechs Agent-Deliverables (Review-Fix CR-1–CR-7 nur hier):
    - `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
    - `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
    - `docs/REQUIREMENTS_PROVIDER_CONTRACT_GAP_MAP_2026-08-30.md`
@@ -56,6 +58,7 @@ Keine Runtime-, Config-, Migration-, Workflow- oder Asset-Datei. Keine globale C
 ## 3. Was der Reviewer vorfindet
 
 - Current Requirements-Port und Engine sind provider-neutral, Multi-Credential-fähig, Factory `null`.
+- **CR-6:** `POST /api/readiness/requirements` exportiert `maxDuration = 10` und `dynamic = 'force-dynamic'`, **nicht** `runtime = 'edge'`. Route-`maxDuration` ist keine Provider-Timeout-Grenze.
 - **CR-1:** `officialFrische()` hat kein `checkedAt`-TTL. Unveränderter Fingerprint + `validUntil == null` → dauerhaft `current`. Jetnity-`checkedAt` ≠ Vendor-`lastUpdatedAt`. Gap `G-S4-TTL`. S4-R1-Proposal enthält bounded TTL, **nicht gestartet**.
 - Historical S4 (Timeout, Kill-Switch, Observability, License-Hooks, jetzt explizit TTL) ist **nicht** gebaut; S1-Hülle und Adapter-Core **sind** integriert.
 - Timatic bleibt Kandidat, nicht Vertrag. **CR-4:** Widget (E-IATA-3) ist Planungs-Oberfläche derselben DB, kein AutoCheck-REST-Beweis.
@@ -72,7 +75,7 @@ Keine Runtime-, Config-, Migration-, Workflow- oder Asset-Datei. Keine globale C
 3. CR-1 gegen `lib/readiness/official.ts` `officialFrische()` prüfen.
 4. CR-2/CR-3/CR-4/CR-5 gegen Evidence-Log und Gap-Map prüfen; Marketing nicht als Vertrag lesen. Transit-Kapazität nicht als „TRANSIT existiert“ durchgehen lassen.
 5. S4-R1 nicht als gestartet oder genehmigt lesen; TTL nicht als implementiert lesen.
-6. CI + Vercel Preview auf **diesem** Head; Gates auf `9caa1a0f` verwerfen.
+6. CI + Vercel Preview auf **diesem** Exact Head; jede frühere Gate-Evidence verwerfen.
 7. PASS nur durch unabhängigen Technical Lead.
 
 ---
