@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 30. August 2026  
-Status: **CURRENT / TA-DL1 + AP-UX-NAV1 CLOSED / NO AUTOMATIC FOLLOW-UP / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / TA-CUX1 CLOSED / NO AUTOMATIC FOLLOW-UP / LIVE-EVIDENCE GEWINNT**
 
 > Diese Datei ist ein Current-State-Pointer, kein historisches Archiv. Vor jedem neuen Slice gilt `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`.
 
@@ -11,58 +11,48 @@ Status: **CURRENT / TA-DL1 + AP-UX-NAV1 CLOSED / NO AUTOMATIC FOLLOW-UP / LIVE-E
 
 Letzter vollständig post-merge verifizierter Runtime-`main`:
 
-- `ebaead3263c57298f5102df6cffeff49e6bd6ea6`
-- Post-Merge CI: #1311 / Run `33282649222` = **SUCCESS**
-- Vercel Production Deployment `6aViQ9poQF2p4WWoxiQ8o3aDWkcz` = **SUCCESS / READY** exact `main`
+- `292e52bf76d78eef1e9967b15a189ffaeca16ceb`
+- Post-Merge CI #1326 / Run `33286617319` = **SUCCESS**
+- Vercel Production = **SUCCESS / READY** auf exact `main`
 - Branch Protection: `protected=false`
 
 Aktuellster Checkpoint:
 
-`docs/CHATGPT_TL_TA_DL1_AND_AP_UX_NAV1_POST_MERGE_CHECKPOINT_2026-08-30.md`
+`docs/CHATGPT_TL_TA_CUX1_POST_MERGE_CHECKPOINT_2026-08-30.md`
 
-## 2. Unmittelbar abgeschlossen – TA-DL1
+## 2. Unmittelbar abgeschlossen – TA-CUX1
 
-Issue #226: **CLOSED / completed**.
+Issue #233: **CLOSED / completed**.
 
-- Cursor-Agent: `Account plattform audit vorbereitung 19` – STOPPED
-- final reviewed Head: `d9c16415b56a624812aa57b2d6110346f24ca633`
-- Source CI #1302: SUCCESS
-- Recovery PR #230 / CI #1305: SUCCESS
-- Merge/Main danach: `20c203f5bee950b43db611f220c7cc5b88699dcb`
-- Post-Merge CI #1306: SUCCESS
-
-Geliefert: kalenderdatums-/timezone-sichere Document-Lifecycle-Auswertung je Dokument in Account Registry und Trip Workspace. Missing/invalid fail closed. Keine Visa-/Einreise-/Boarding-Sufficiency, kein Default-/Primary-/Preferred-/Chosen-Credential, kein Ranking, keine Migration/RLS/Auth/Supabase-Mutation.
-
-Governance-Fix: Agent 19 hatte `docs/ACTIVE_WORK_STATUS.md` unzulässig überschrieben; vor PASS vollständig aus Feature-Diff entfernt.
-
-## 3. Unmittelbar abgeschlossen – AP-UX-NAV1
-
-Issue #228: **CLOSED / completed**.
-
-- Cursor-Agent: `Account plattform audit vorbereitung 20` – STOPPED
-- final reviewed/integrated Runtime Head: `23e3885f89d0f1f71cd99cf9aef454a78f41ca66`
-- Source CI #1308: SUCCESS
-- Recovery PR #231 / CI #1310: SUCCESS
-- Merge/Main: `ebaead3263c57298f5102df6cffeff49e6bd6ea6`
-- Post-Merge CI #1311: SUCCESS
+- Cursor-Agent: `Account plattform audit vorbereitung 21` – STOPPED / completed
+- final independently reviewed Source Head: `3e021f534ca97f32dda4260138403ab4e9840c72`
+- Source CI #1324 / Run `33286044982`: SUCCESS
+- Source Vercel Preview: SUCCESS
+- 0 Review Threads
+- Draft→Ready scheiterte am bekannten Connectorfehler `Repository.fullDatabaseId`
+- Recovery PR #238 exakt auf demselben PASS-SHA
+- Recovery CI #1325 / Run `33286509759`: SUCCESS
+- Recovery Vercel: SUCCESS
+- Merge/Main: `292e52bf76d78eef1e9967b15a189ffaeca16ceb`
+- Post-Merge CI #1326 / Run `33286617319`: SUCCESS
 - Production Vercel: SUCCESS / READY
 
 Geliefert:
 
-- Mobile Account Navigation als einzeilige horizontal scrollbare Tab-Rail;
-- kein 2×2-Grid, kein custom Swipe-to-Navigate;
-- Reihenfolge Übersicht → Reisen → Reisende → Einstellungen;
-- aktiver Tab bleibt semantisch und wird horizontal sichtbar gemacht;
-- eingeloggte `/reisen`-Nutzer sehen die gemeinsame Account Navigation;
-- Gäste sehen dort keine Account Navigation;
-- keine neue Auth-Wahrheit;
-- Sticky bewusst nicht erzwungen.
+- eine Shared Country Foundation für Account Registry und Trip Workspace;
+- 249 offiziell zugewiesene ISO-3166-1-alpha-2-Codes als neu auswählbarer Katalog;
+- persistierte/domainseitige Country-Wahrheit bleibt Code;
+- User-facing Darstellung = Flagge + lokalisierter vollständiger Ländername;
+- gemeinsame accessibility-first Country-Control = natives Select + Namensfilter;
+- kein sichtbares ISO-2-Freitextfeld in den beiden Traveller-Scope-Flächen;
+- kein Defaultland, keine Locale/IP/Browser-Vorauswahl;
+- Issuer Country ≠ Citizenship;
+- Multi-Citizenship/Multi-Document und nullable Document→Citizenship bleiben erhalten;
+- bestehende unbekannte Zwei-Buchstaben-Codes bleiben ehrlich sichtbar und werden nicht still überschrieben;
+- Foundation ist für DE/EN/FR/IT/ES/PT/PL locale-parametrisiert;
+- keine Migration/RLS/Auth/Supabase/Provider-/Dependency-Erweiterung.
 
-Review-Fix: `touch-pan-x` wurde entfernt, damit vertikales Page-Scrolling auf iPhone nicht durch eine auf der Rail begonnene Geste blockiert wird.
-
-Source PR #229 erhielt nach dem gegateten Runtime Head noch `08a626c466631cc2e0d1d434d58d28241c625faa`, einen reinen Slice-Doku-Evidence-Stamp ohne Runtime. Er wurde nicht nachträglich in den SHA-gelockten Runtime-Merge gezogen; TL-Continuity superseded diesen Stamp. Source PR #229 ist geschlossen.
-
-## 4. Traveller / Account – aktueller Reifegrad
+## 3. Kumulativer Traveller-/Account-Reifegrad
 
 Verbindlicher Vertrag:
 
@@ -85,24 +75,40 @@ Integriert:
 - AP-7-S3 Registry CRUD/UI;
 - AP-7-S4 Registry → unabhängige Trip Snapshot Materialisierung;
 - TA-DL1 Document Lifecycle;
-- AP-UX-NAV1 Account Navigation Rail.
+- AP-UX-NAV1 Account Navigation Rail;
+- TA-CUX1 Shared localized Country UX.
 
 Keine Passnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten im Kernmodell.
 
-## 5. Product Direction – Country UX noch nicht gebaut
+## 4. Product Differentiation – verbindliche Current Truth
 
-Künftige UX-Richtung:
+Verbindlich:
 
-- ISO-2 bleibt intern kanonisch;
-- Nutzer sollen Codes wie `CH`/`HR` nicht kennen oder eintippen müssen;
-- UI soll suchbare lokalisierte vollständige Ländernamen, sinnvollerweise mit Flagge, zeigen;
-- intern wird weiterhin ISO-2 gespeichert;
-- wiederverwendbar für Wohnsitz, Citizenship und Issuing Country;
-- Issuer ≠ Citizenship; keine automatische Ableitung/Vorauswahl/Default-Semantik.
+`docs/JETNITY_PRODUCT_DIFFERENTIATION_DOCTRINE_2026-08-30.md`
 
-**Noch kein Slice autorisiert.** Frischer Precheck erforderlich.
+> **Jetnity wird nicht gebaut, um der Reiseplaner mit den meisten Funktionen zu sein. Jetnity soll die konkrete Reise besser verstehen als gewöhnliche Reiseplaner und daraus belegte, kontextbezogene Entscheidungen und Reisebereitschaft ableiten.**
 
-## 6. Supabase Replay Gate 0 / P1 Infrastructure Debt
+Leitfrage für neue Features:
+
+> **Macht das Jetnity einzigartiger oder nur größer?**
+
+Strategisches Register:
+
+`docs/JETNITY_STRATEGIC_DIFFERENTIATION_OPPORTUNITY_REGISTER_2026-08-30.md`
+
+Persistierte Kandidaten:
+
+- Trip Audit / Journey Integrity;
+- Change Impact & Recovery;
+- Multi-Citizenship / Entry Decision Engine;
+- True Trip Cost;
+- Route & Connection Feasibility;
+- What-if Simulator;
+- Next Best Action.
+
+Issue #236 bleibt als offener Strategy Pointer bestehen. **Das Register ist keine automatische Roadmap und autorisiert keinen Runtime-Slice.**
+
+## 5. Supabase Replay Gate 0 / P1 Infrastructure Debt
 
 Unverändert:
 
@@ -110,10 +116,11 @@ Production History-Version `20260829140000_trip_item_commercial_provenance` besi
 
 Keine Reparatur ausgeführt. Vor migrationsnahem Replay/Rebase/Reset ist dies P1 und separat PO-gated.
 
-## 7. Agentenstatus
+## 6. Agentenstatus
 
 Gestoppt / abgeschlossen:
 
+- `Account plattform audit vorbereitung 21` – TA-CUX1
 - `Account plattform audit vorbereitung 20` – AP-UX-NAV1
 - `Account plattform audit vorbereitung 19` – TA-DL1
 - `Account plattform audit vorbereitung 18` – AP-7-S4
@@ -124,7 +131,7 @@ Aktiver Cursor-Agent: **keiner**.
 
 Neue logische Einheit → frischer Agent erst nach Binding Slice Precheck. Review-Fix → derselbe Agent.
 
-## 8. Provider / Risiken / Gates
+## 7. Provider / Risiken / Gates
 
 Provider-Arbeit bleibt nicht abgeschlossen. Echte Provider-Secrets/API-Keys, echte Calls, Production Runtime Principal, `live_api`-/`persisted_snapshot`-Runtime und TW-8 bleiben nicht aktiviert. TW-8 bleibt hinter Provider S5 + realer Commercial Provenance.
 
@@ -134,14 +141,15 @@ Provider-Arbeit bleibt nicht abgeschlossen. Echte Provider-Secrets/API-Keys, ech
 
 Besondere PO-Gates bleiben vor Production-Migrationen/destruktiven Datenänderungen, materiellen RLS-/Identity-/Ownership-Änderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Commercial Runtime Write-Öffnung, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
 
-## 9. Exakter nächster Schritt
+## 8. Exakter nächster Schritt
 
 1. Frischen Binding Slice Precheck ausführen.
-2. `main`, offene PRs/Issues/Branches, CI/Vercel/Supabase live rekonstruieren.
-3. Binding Build Order + Account Platform Plan gegen AP-7-S1–S4 + TA-DL1 + AP-UX-NAV1 reconciliieren.
-4. verbleibende Traveller-/Multi-Citizenship-/Country-UX-Lücken priorisieren.
-5. Country-Picker als möglichen migrationsfreien UX-Slice prüfen, aber nicht automatisch starten.
-6. bei migrationsnaher Arbeit zuerst Replay-P1 behandeln.
-7. erst danach bounded Slice(s) und neue Agenten bestimmen.
+2. `main`, offene PRs/Issues/Branches, CI/Vercel und bei DB-Bezug Supabase live rekonstruieren.
+3. Binding Build Order + Account Platform Plan gegen AP-7-S1–S4 + TA-DL1 + AP-UX-NAV1 + TA-CUX1 reconciliieren.
+4. Verbleibende Traveller-/Multi-Citizenship-/Requirements-/Route-/Account-Lücken priorisieren.
+5. Pro Kandidat **Differentiation Impact** oder **Enabler Justification** festhalten.
+6. Strategy Issue #236 und Opportunity Register nur als Kandidatenpool verwenden; vor Umsetzung aktuellen Markt/Nutzerwert/Evidence neu prüfen.
+7. Bei migrationsnaher Arbeit zuerst Replay-P1 behandeln.
+8. Erst danach bounded Slice(s) und neue Agenten bestimmen.
 
 **Kein Folgeslice ist automatisch freigegeben.**
