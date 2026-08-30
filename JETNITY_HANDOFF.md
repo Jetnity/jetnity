@@ -1,15 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 30. August 2026  
-Status: **CURRENT HANDOFF / FINAL CHAT TRANSITION / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / POST-CLEANUP FINAL / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
 
-Vollständiger aktueller Technical-Lead-Checkpoint:
+Kanonischer Current-State-Checkpoint:
 
-`docs/CHATGPT_TECHNICAL_LEAD_CHECKPOINT_2026-08-30_FINAL.md`
-
-Direkter New-Chat-Startprompt:
-
-`docs/CHATGPT_NEW_CHAT_START_PROMPT_2026-08-30_FINAL.md`
+`docs/CHATGPT_TECHNICAL_LEAD_CHECKPOINT_2026-08-30_POST_CLEANUP_FINAL.md`
 
 Verbindlicher Precheck:
 
@@ -17,28 +13,52 @@ Verbindlicher Precheck:
 
 ## 1. Aktueller technischer Übergabestand
 
-Pre-Transition-`main`:
+Pre-Handoff-Refresh-`main`:
 
-`498abfd26e584dcd40e59f4266e1bfc87828649f`
+`0f7d80fa48d958a8708af982806b99966289b2bd`
 
-Der docs-only Transition-PR aus Issue #280 bewegt `main` danach weiter; der neue Chat muss den finalen SHA live verifizieren.
+Darauf abgeschlossen/verifiziert:
 
-Auf `498abfd...` bereits abgeschlossen/verifiziert:
-
-- Core Repository Hygiene Audit vollständig integriert
-- finaler Audit PASS-Head `a759764eefa568784bfa08029b386b978e1d2138`
-- Recovery PR #279 gemergt
-- Post-Merge CI #1395 / Run `33333229959` SUCCESS
+- Core Repository Hygiene Audit
+- letzter mechanischer Cleanup PR #283
+- PR-Head `204511f552d58e246cd08fd8b724eb98edd4dc49`
+- Merge `0f7d80fa48d958a8708af982806b99966289b2bd`
+- Post-Merge CI #1399 / `33334863504` SUCCESS
 - Vercel SUCCESS
-- Issue #273 completed
+- Issue #282 completed
+
+Der docs-only Handoff-Refresh aus Issue #286 bewegt `main` danach weiter; finalen SHA live verifizieren.
 
 Letzte große Produkt-Runtime-Feature-Baseline bleibt AP-10-S1:
 
 `a4d9384e2583ae52733c87006cd578f7489cb656`
 
-Der neuere `main` enthält danach Infrastruktur-, Cleanup-, Governance-, Audit- und Continuity-Arbeit. Nicht mit einer neuen Produktfunktion verwechseln.
+Der neuere `main` enthält Cleanup/Governance/Continuity-Arbeit, nicht automatisch eine neue Produktfunktion.
 
-## 2. GitHub Governance
+## 2. Legacy-/Old-Jetnity-Cleanup
+
+Für die aktive Codebasis abgeschlossen:
+
+- alte Creator Hub / MediaStudio / Feed / Blog / Render Runtime entfernt
+- alte GitHub-Repositories `jetnity-bets` und `jetnity-travel` gelöscht
+- alter eigenständiger Supabase `jetnity-bets` gelöscht
+- zehn alte leere Storage-Buckets entfernt
+- 24 orphaned Legacy-Policies entfernt
+- `creator-media` nach Hardening + Backup + Restore-Proof entfernt
+- 165 sicher gemergte alte Branch-Refs entfernt
+- P1 Migration-History repariert und replay-verifiziert
+- Core Repository Hygiene Audit abgeschlossen
+- D-01/D-02/D-03 aus Audit vollständig erledigt:
+  - fünf `supabase/.temp/*` Dateien entfernt/untracked
+  - `supabase/.branches/_current_branch` entfernt
+  - `public/images/prague.jpg` entfernt
+  - `lib/project-sanitation/closure-invariants.test.ts` aktualisiert und auf Abwesenheit gedreht
+
+Damit gibt es **keine bestätigten offenen mechanischen DELETE-CANDIDATEs** aus dem Core Audit mehr.
+
+Bewusst erhaltene Migrationen, historische Evidence, Recovery-Material und Unique-Evidence-Branches sind kein Cleanup-Rückstand.
+
+## 3. GitHub Governance
 
 `main` ist geschützt:
 
@@ -47,7 +67,7 @@ Der neuere `main` enthält danach Infrastruktur-, Cleanup-, Governance-, Audit- 
 - Enforcement active
 - Target `main`
 - Bypass leer
-- PR vor Merge Pflicht
+- PR-Pflicht
 - Required approvals `0`
 - Conversation resolution Pflicht
 - branch up to date Pflicht
@@ -55,40 +75,23 @@ Der neuere `main` enthält danach Infrastruktur-, Cleanup-, Governance-, Audit- 
 - nur Merge erlaubt
 - Force Push und Branch-Löschung blockiert
 
-Bekannter Connectorfehler: Draft→Ready kann an `Repository.fullDatabaseId` scheitern. Nicht Ruleset lockern. Bewährter Recovery-Transport: exakt derselbe TL-PASS-SHA → nicht-draft Recovery PR → frische Gates → Expected-Head-Lock-Merge.
+Bekannter Connectorfehler: Draft→Ready kann an `Repository.fullDatabaseId` scheitern. Das ist kein Jetnity-Fehler. Ruleset nicht lockern; dokumentierten Same-SHA-Recovery-Transport verwenden.
 
-Beim letzten Live-Check waren nur folgende historischen/future PRs offen:
+Historische/future PRs sind keine aktive Runtime-Arbeit und dürfen nicht age-only geschlossen werden.
 
-- #52
-- #50
-- #40
-- #39
-- #28
-
-Keine davon ist automatisch aktive Runtime-Arbeit.
-
-Alte private GitHub-Repositories `jetnity-bets` und `jetnity-travel` wurden nach Audit gelöscht. Connector sieht nur `Jetnity/jetnity`.
-
-165 sicher gemergte Branch-Refs wurden fail-closed entfernt. Verbleibende ungemergte/unique-evidence Branches bleiben separate Hygiene.
-
-## 3. Supabase
+## 4. Supabase
 
 Production:
 
-- `qscbgcdmivbbnzrcyegn`
-- ACTIVE_HEALTHY
+- `qscbgcdmivbbnzrcyegn` ACTIVE_HEALTHY
 
-Development branch:
+Development:
 
-- `develop`
-- project ref `yfvbxvijcorffwxbxahl`
-- ACTIVE_HEALTHY
+- `develop` / `yfvbxvijcorffwxbxahl` ACTIVE_HEALTHY
 
-Alter eigenständiger Supabase `jetnity-bets`: permanent gelöscht.
+Alter eigenständiger Supabase `jetnity-bets`: gelöscht.
 
-### P1 Migration-History
-
-**ABGESCHLOSSEN / REPARIERT.**
+P1 Migration-History: **ABGESCHLOSSEN / REPARIERT**
 
 - PR #251 merged
 - Merge `5ee8c7017180747bb29112f1c5a2cf3419fd062d`
@@ -96,34 +99,17 @@ Alter eigenständiger Supabase `jetnity-bets`: permanent gelöscht.
 - Fresh replay PASS
 - temporärer Replay-Branch gelöscht
 - `20260829140000_trip_item_commercial_provenance` replaybar repariert
-- keine S5-B-DDL erneut angewandt
 
-Ältere Dokumente, die P1 als offen darstellen, sind superseded.
+Storage:
 
-Development-Reconciliation/Drift bleibt ein eigener Live-Check vor migrationsnaher Arbeit.
-
-### Creator / Storage Cleanup
-
-Abgeschlossen:
-
-- zehn alte leere Storage-Buckets entfernt
-- 24 orphaned Legacy-Policies entfernt
-- `creator-media` public→private gehärtet
-- C2 private Recovery + echter Restore-Proof erfolgreich
-- C3 Source-Objekte, Policies und Source-Bucket entfernt
-- Migration `20260830183009_creator_media_c3_policy_decommission` integriert
-
-Live Transition-Precheck:
-
-- `creator-media` existiert nicht mehr
-- `jetnity-legacy-recovery` privat
-- genau 1 Objekt / 3,030,830 Bytes
+- `creator-media`: entfernt
+- `jetnity-legacy-recovery`: privat, 1 Objekt / 3,030,830 Bytes
 - keine zugehörigen User-Policies
-- Production Edge Functions 0
+- Production Edge Functions nach Cleanup: 0
 
 Recovery bleibt Production/Data-Gate.
 
-## 4. Traveller / Account Current Truth
+## 5. Traveller / Account Current Truth
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
@@ -146,46 +132,27 @@ Integriert:
 
 Keine Passnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten im Kernmodell.
 
-## 5. Core Repository Hygiene – Abschlussbefund
+## 6. Verbleibende kleine Hygiene
 
-Authoritative Audit:
-
-`docs/CORE_REPOSITORY_HYGIENE_AUDIT_2026-08-30.md`
-
-Matrix:
-
-`docs/CORE_REPOSITORY_HYGIENE_MATRIX_2026-08-30.md`
-
-Kein aktueller Creator Hub / MediaStudio / Feed / Blog / Render Runtime-Rest.
-
-Noch nicht umgesetzte `DELETE-CANDIDATE`:
-
-- fünf getrackte `supabase/.temp/*` CLI-Dateien
-- `supabase/.branches/_current_branch`
-- `public/images/prague.jpg`
-
-Bei späterer Bereinigung immer gekoppelt `lib/project-sanitation/closure-invariants.test.ts` aktualisieren.
-
-Noch nicht umgesetzte `UPDATE-CANDIDATE`:
+Nur `UPDATE-CANDIDATE`, keine bestätigten mechanischen Delete-Reste:
 
 - alte V1 Image-Hosts in `next.config.js`
 - `components.json` hooks alias ohne `hooks/`
 - stale `zod` Checker-Exception
 - `Mega Pro` Copy
 - Tailwind `content/**` Glob
-- Docs-Navigation/Pointer-Hygiene
-- `.gitignore` Kommentar-Hygiene
+- optionale Docs-/Kommentar-Hygiene
+
+Diese sind keine Legacy-Blocker und müssen nicht zwingend vor weiterer Produktentwicklung erledigt werden.
 
 Nicht mechanisch ändern:
 
 - `/privacy` / `/terms` / CookieConsent → Legal/PO-Gate
-- `creator` RBAC / `inhalte-moderieren` → Auth-Gate, falls Retirement vorgeschlagen
+- `creator` RBAC / `inhalte-moderieren` Retirement → Auth/PO-Gate
 - Recovery Bucket → Production/Data-Gate
-- unique-evidence Branches → separate Branch-Hygiene
+- Unique-evidence Branches → separate Branch-Hygiene
 
-Supabase-Migrationen und historische Evidence nicht allein wegen Alter löschen.
-
-## 6. Produkt-Nordstern
+## 7. Produkt-Nordstern
 
 > **Jetnity = Travel Operating System für die konkrete Reise.**
 
@@ -195,40 +162,37 @@ Leitfrage:
 
 > **„Macht das Jetnity einzigartiger oder nur größer?“**
 
-Doctrine:
-
-`docs/JETNITY_PRODUCT_DIFFERENTIATION_DOCTRINE_2026-08-30.md`
-
-## 7. PrivacyBee / Legal
+## 8. PrivacyBee / Legal
 
 PrivacyBee AG / `privacybee.io` ist Product-Owner-binding für die website-visible Privacy Layer.
 
-Jetnity-Activation bleibt geparkt bis echte erreichbare `jetnity.com` Production existiert.
+Activation bleibt geparkt bis echte erreichbare `jetnity.com` Production existiert.
 
-Current Gap aus Audit:
+Current Gap:
 
-- realer Register-Flow verlinkt `/privacy`
+- Register verlinkt `/privacy`
 - `/privacy` fehlt
 - `/terms` fehlt
-- `CookieConsent.tsx` ist unmounted und stale V1 Copy
+- `CookieConsent.tsx` ist unmounted und stale
 
 Keine Legal-Copy erfinden und CookieConsent nicht still mounten.
 
-## 8. Provider / Commercial Truth
+## 9. Provider / Commercial Truth
 
-Keine automatische Live-Aktivierung:
+Weiterhin gated:
 
-- keine Secrets/API-Keys
-- keine paid calls
-- keine Production Runtime Principal-/Writer-Öffnung
-- keine Commercial-Truth-Claims ohne Evidence
-- keine option-spezifische Visa/Entry Official Truth ohne echten Requirements-Provider
+- Secrets/API-Keys
+- paid calls
+- Production Runtime Principal-/Writer-Öffnung
+- Commercial Write
+- Payments
+- option-spezifische Visa/Entry Official Truth ohne echten Requirements-Provider
 
-Requirements/Travel Readiness Provider Groundwork bleibt strategisch sinnvoll, aber Live-/Commercial-Gates bleiben separat.
+Requirements / Travel Readiness Provider Groundwork bleibt strategisch sinnvoll.
 
-## 9. Besondere Product-Owner-Gates
+## 10. Besondere Product-Owner-Gates
 
-Explizite Freigabe erforderlich vor:
+Explizite Freigabe bzw. bestehende belegbare Freigabe erforderlich vor:
 
 - destruktiven Production-Daten-/Schema-/RLS-Änderungen
 - fundamentalen Auth/MFA/AAL-/Session-Änderungen
@@ -243,23 +207,26 @@ Explizite Freigabe erforderlich vor:
 - fundamentaler Product-/Build-Order-Änderung
 - Kosten > USD 100/Monat
 
-## 10. Agentenstatus
+## 11. Agentenstatus
 
-Core-Hygiene-Agent `Jetnity core repository hygiene audit 1` ist **STOPPED / completed**.
+Core-Hygiene-Agent `Jetnity core repository hygiene audit 1`: completed / stopped.
 
-Kein Cursor-Agent soll aus diesem Übergang automatisch weiterarbeiten. Ein neuer Agent entsteht erst nach neuem Binding Slice Precheck und bounded Task.
+Aktiver Cursor-Implementierungsagent: **keiner**.
 
-## 11. Empfohlene nächste Kandidaten – noch nicht freigegeben
+Keinen Agenten automatisch starten.
 
-1. kleiner mechanischer Hygiene-Slice: D-01/D-02/D-03 + gekoppelte Lock-Test-Aktualisierung;
-2. optional separater Config-Hygiene-Slice;
-3. danach nicht in Cleanup verharren, sondern zurück zum Produktkern: Requirements / Travel Readiness Provider Groundwork;
-4. Legal Gap separat Product-Owner-/Legal-gated.
+## 12. Nächste Kandidaten – noch nicht gestartet
 
-Der neue TL muss diese Reihenfolge gegen Live-Evidence und aktuelle Produktpriorität prüfen. Kein Folgeslice ist automatisch aktiv.
+Nach Live-Precheck priorisieren:
 
-## 12. Pflicht im neuen Chat
+1. optional kleiner Config-Hygiene-Slice für verbleibende `UPDATE-CANDIDATE`;
+2. strategisch wichtiger: zurück zum Produktkern, insbesondere Requirements / Travel Readiness Provider Groundwork;
+3. Legal Gap separat Product-Owner-/Legal-gated.
 
-Zuerst `JETNITY_START_HERE.md` und `docs/CHATGPT_TECHNICAL_LEAD_CHECKPOINT_2026-08-30_FINAL.md` vollständig lesen. Danach Live-Precheck durchführen und erst dann handeln.
+Kein Folgeslice ist automatisch aktiv.
+
+## 13. Pflicht im neuen Chat
+
+Zuerst `JETNITY_START_HERE.md` und `docs/CHATGPT_TECHNICAL_LEAD_CHECKPOINT_2026-08-30_POST_CLEANUP_FINAL.md` vollständig lesen. Danach vollständigen Live-Precheck durchführen.
 
 **Live-Evidence gewinnt immer.**
