@@ -25,6 +25,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/242
 | Draft-PR | #242, bleibt Draft |
 | AP-5-S3 scoped Logout | **unberührt** (`local` / `others` / `global`) |
 | Folgeslice | **nicht gestartet** |
+| Authoring-Head vor diesem Stamp | `118915af5ce67b1fc6ea06e8bd55b9add068d2b0` |
 
 ## 2. Caller-Inventar (vor Codeänderung, gegen aktuellen Branch)
 
@@ -87,7 +88,7 @@ Nicht geliefert: Scope-Wechsel des allgemeinen Logout, Sessionliste, MFA/AAL-Än
 | `npm run auth:pruefen` | **55/55**, 242 Schlüssel |
 | `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| Exact-Head GitHub Actions / Vercel | werden am finalen Stamp-Head live geprüft; nicht vorab behauptet |
+| Exact-Head GitHub Actions / Vercel | Authoring-Head `118915af` lokal grün. Dieser Stamp erzeugt einen neueren Head; dessen Gates live prüfen. Nicht vorab als CI/Vercel-PASS behauptet. |
 
 ## 6. DB / RLS / Production-Grenze
 
