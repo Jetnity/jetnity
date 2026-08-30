@@ -89,7 +89,16 @@ async function messen(page) {
     const nav = document.querySelector('nav[aria-label="Konto"]')
     if (!nav) fehler.push('Account-Navigation fehlt')
     else {
-      for (const link of nav.querySelectorAll('a')) {
+      const links = [...nav.querySelectorAll('a')]
+      const labels = links.map((link) => link.textContent.trim())
+      if (JSON.stringify(labels) !== JSON.stringify(['Übersicht', 'Reisen', 'Reisende', 'Einstellungen'])) {
+        fehler.push(`Nav-Reihenfolge ${labels.join(' → ')}`)
+      }
+      const tops = new Set(links.map((link) => Math.round(link.getBoundingClientRect().top)))
+      if (tops.size > 1) {
+        fehler.push(`Nav nicht einzeilig (tops ${[...tops].join(',')})`)
+      }
+      for (const link of links) {
         const box = link.getBoundingClientRect()
         if (box.height < 44 && window.innerWidth < 768) {
           fehler.push(`Nav-Trefferfläche zu klein (${Math.round(box.height)}px, ${link.textContent.trim()})`)
