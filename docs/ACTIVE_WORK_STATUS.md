@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / REQUIREMENTS PROVIDER GATE 0 CONTENT PASS / CURSOR STOPPED / FINAL TL MERGE GATE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / REQUIREMENTS PROVIDER GATE 0 CONTENT PASS / CURSOR STOPPED / PR #290 FINAL TL MERGE GATE / LIVE-EVIDENCE GEWINNT**
 
 Aktuellster vollständiger Post-Cleanup-Checkpoint:
 
@@ -13,7 +13,7 @@ Verbindlicher Gate-0-Task:
 
 ## 1. Baseline und aktueller Gate-0-Block
 
-Verifiziertes `main` beim Slice-Start und beim letzten Content-Review:
+Verifiziertes `main` beim Slice-Start und vor dem mechanischen PR-Ersatz:
 
 `60e12dd5cf0916708e0bc87219b233861b387e7d`
 
@@ -22,14 +22,16 @@ Verifiziertes `main` beim Slice-Start und beim letzten Content-Review:
 - Vercel Production `dpl_7x2zfEYq55qHJKpnT3hgdUEn8dps`: READY auf exakt `60e12dd5...`.
 - Ruleset `Jetnity main protection` / ID `21875372`: ACTIVE, bypass leer.
 - Required Checks: `Typecheck, Lint & Build`, `Auth-Konfiguration gegen config.toml`, `Vercel`.
-- PR #287 / Branch `docs/post-cleanup-final-handoff-2026-08-30` bleibt **CLOSED / NOT MERGED / SUPERSEDED** und darf nicht wiederbelebt werden.
+- PR #287 bleibt **CLOSED / NOT MERGED / SUPERSEDED** und darf nicht wiederbelebt werden.
 
 Aktueller Arbeitsblock:
 
 - Issue **#288 – Requirements Provider Groundwork Gate 0 – Current Contract & Selection Audit**
-- PR **#289 – Audit: Requirements Provider Groundwork Gate 0**
+- **Ready-PR #290 – Audit: Requirements Provider Groundwork Gate 0**
 - Branch `audit/requirements-provider-groundwork-g0-2026-08-30`
 - Scope: **AUDIT-ONLY / DOCS-ONLY / PROVIDER-NEUTRAL / NO LIVE ACTIVATION**
+
+PR **#289** ist **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED**. Grund: Der verbundene GitHub-Connector scheiterte beim formalen Draft→Ready-Schritt vor der Mutation an einem GraphQL-Schemafehler (`Repository.fullDatabaseId`); der SHA-geschützte REST-Merge wurde von GitHub danach korrekt nur wegen Draft-Status mit HTTP 405 abgelehnt. Es wurde keine Schutzregel umgangen. #290 wurde aus demselben Branch als non-draft Ersatz geöffnet und muss auf seinem finalen Exact Head erneut vollständig gegatet werden.
 
 ## 2. Cursor-Agent / Review-State
 
@@ -41,24 +43,24 @@ Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`
 
 Status: **STOPPED / KEIN AKTIVER CURSOR-WORKER FÜR DIESEN SLICE**.
 
-Der Agent hat alle Technical-Lead `CHANGES REQUIRED` CR-1 bis CR-7 in derselben Session bearbeitet und anschließend gestoppt. Kein neuer Agent, kein Folgeslice, kein Ready und kein Merge durch Cursor.
+Der Agent hat alle Technical-Lead `CHANGES REQUIRED` CR-1 bis CR-7 in derselben Session bearbeitet und anschließend gestoppt. Kein neuer Agent und kein Folgeslice.
 
-Letzter unabhängig vollständig geprüfter Agent-Head vor dieser TL-Continuity-Änderung:
+Letzter vollständig geprüfter Agent-Head:
 
 `4a6f27c0d57d52c1fcb41acf50c01ed4e9b48353`
 
-Technical-Lead **CONTENT PASS** ist auf diesem exakten Head als PR-Review gebunden. Mechanische Evidence auf diesem Head:
+Technical-Lead **CONTENT PASS** wurde auf diesem Head in #289 gebunden. Danach wurde die TL-owned Continuity-Datei aktualisiert und Head `a0729075593eb596bb5b70abd96f8d52ff06aefb` erneut vollständig gegatet:
 
-- Merge-Base: `main@60e12dd5cf0916708e0bc87219b233861b387e7d`
-- Ahead / Behind: **13 / 0**
-- Changed Files: exakt Task + diese TL-owned `ACTIVE_WORK_STATUS.md` + sechs erlaubte Agent-Deliverables
-- keine Runtime-/Config-/Migration-/Workflow-/Asset-Änderung
-- CI #1409 / `33338895626`: **SUCCESS**
-- Vercel Preview `dpl_4vCvLMkakSezLnh2wY4ZnqmVFmps`: **READY** auf exakt `4a6f27c0...`
-- offene GitHub Review Threads: **0**
-- unresolved Vercel Toolbar Threads: **0**
+- Merge-Base `main@60e12dd5...`
+- **14 ahead / 0 behind**
+- genau 8 Docs-Dateien; keine Runtime-/Config-/Migration-/Workflow-/Asset-Änderung
+- CI #1410 / `33339064601`: **SUCCESS**
+- Vercel Preview `dpl_3pvz3x8A6VKnMs83RWmr2bjUhmL4`: **READY** exakt auf `a0729075...`
+- GitHub Review Threads: **0**
+- Vercel Toolbar Threads unresolved: **0**
+- Technical-Lead FINAL PASS / MERGE AUTHORIZED auf `a0729075...`
 
-**Wichtig:** Diese TL-Continuity-Änderung erzeugt selbst einen neuen PR-Head. Deshalb sind die obigen mechanischen Gates für den neuen Head nur historische Evidence. Vor Ready/Merge muss der neue Head erneut vollständig gegen live `main` gegatet werden.
+**Wichtig:** Diese aktuelle PR-#290-Pointer-Änderung erzeugt erneut einen neuen Branch-Head. Alle früheren mechanischen Gates sind deshalb historische Evidence. Vor Merge von #290 muss genau der neue Head erneut live gegen `main`, CI, Vercel und Threads geprüft werden.
 
 ## 3. Gate-0-Ergebnis / Current Requirements Truth
 
@@ -86,7 +88,7 @@ Kein Default-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, ke
 - `RequirementsProvider.evaluate(...)` hat aktuell kein Provider-`AbortSignal` / explizites Timeout.
 - Es gibt keinen Readiness-Domain-Kill-Switch für den Zustand, in dem die Factory später einmal nicht mehr `null` ist.
 - `lib/readiness/official.ts::officialFrische()` hat **kein maximales Alter / TTL für `checkedAt`**. Unveränderter Fingerprint + `validUntil == null` kann sehr alte Evidence weiterhin als `current` erscheinen lassen. Vor realem Adapter ist eine bounded, fail-closed Freshness-/TTL-Policy erforderlich.
-- Jetnity-`checkedAt` (Retrieval/Evaluation) darf nicht still mit einem Vendor-`lastUpdatedAt` / Source-Update-Zeitpunkt gleichgesetzt werden.
+- Jetnity-`checkedAt` darf nicht still mit einem Vendor-`lastUpdatedAt` / Source-Update-Zeitpunkt gleichgesetzt werden.
 - Vendor-Mapping muss jede Citizenship-/Document-/Credential-Option und vollständigen Transit-Kontext erhalten.
 - Sherpas öffentlich dokumentierte Empfehlung, bei unbekanntem Pass Nationalität aus dem Origin abzuleiten, ist für Jetnity **verboten**. Missing nationality bleibt `unknown` / `insufficient_context`.
 - Sherpa dokumentiert öffentlich bis zu 3 Transit-Nodes, während Jetnitys Request-Contract bis zu 12 `transitCountryCodes` akzeptiert. Ein späterer Adapter darf niemals Transitländer still verwerfen; nur nachweisbar vollständige Split/Aggregation oder fail-closed unsupported/unknown.
@@ -133,7 +135,7 @@ Bewertung: kein aktueller Production-Ausfall. **Vor jedem migrationsnahen Folges
 
 ## 7. Product-Owner-Gates bleiben geschlossen
 
-#289 öffnet keines dieser Gates:
+#290 öffnet keines dieser Gates:
 
 - reale Providerwahl / Vertrag / Commercial Terms
 - Provider Secrets / API Keys
@@ -148,8 +150,8 @@ Bewertung: kein aktueller Production-Ausfall. **Vor jedem migrationsnahen Folges
 
 ## 8. FIRST NEXT ACTION
 
-1. **Technical Lead re-gatet den durch diese Continuity-Änderung entstandenen neuen PR-Head vollständig**: live `main`, Merge-Base/Ahead/Behind, exakter Diff, CI, Vercel Preview, GitHub Review Threads und Vercel Toolbar Threads.
-2. Nur bei erneutem PASS darf der Technical Lead PR #289 Ready setzen und mergen.
+1. **Technical Lead re-gatet den durch diese PR-#290-Pointer-Änderung entstandenen neuen Exact Head vollständig**: live `main`, Merge-Base/Ahead/Behind, exakter Diff, CI, Vercel Preview, GitHub Review Threads und Vercel Toolbar Threads.
+2. Nur bei erneutem PASS darf der Technical Lead PR #290 mergen; Merge ausschließlich SHA-geschützt und über die erlaubte Merge-Methode `merge`.
 3. Nach Merge werden der neue `main`-SHA, Main-CI und Vercel Production auf exakt diesem Merge-Commit verifiziert und Issue #288 geschlossen.
 4. **Kein automatischer Implementierungs-Folgeslice.** Nach vollständiger Gate-0-Closure folgt zuerst ein neuer Live-Precheck.
 5. Wahrscheinlicher nächster technischer Kandidat ist ein provider-neutraler **Requirements Truth-Ops S4-R1** (AbortSignal/Timeout, Readiness Kill-Switch, technische Outcome-Semantik, bounded Freshness/TTL; Factory bleibt `null`). Das ist **nur Kandidat, noch nicht gestartet**.
