@@ -22,14 +22,15 @@ Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`). `origin/
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
 | Ahead / Behind vor CR-6/CR-7 | **8 / 0** auf `1a4fca0058dd7978396789bd680e83b923a6d659` |
-| Ahead / Behind | **PENDING_AHEAD / 0** |
+| Ahead / Behind | **10 / 0** |
 | Reviewed NOT PASS (erster Content-Gate) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
 | Reviewed NOT PASS (CR-1–CR-5) | `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
 | Stamp CR-1–CR-4 | `df2925e580b19d86dd17733295268933e1bb2e0e` |
 | CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | TL Continuity auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored, nicht editiert |
-| Exact Head | `PENDING_EXACT_HEAD` |
+| CR-6/CR-7 content | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
+| Exact Head | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 
