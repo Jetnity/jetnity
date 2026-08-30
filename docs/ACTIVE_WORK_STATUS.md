@@ -1,119 +1,151 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / REQUIREMENTS TRUTH-OPS S4-R1 ACTIVE / DRAFT PR #293 / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / REQUIREMENTS TRUTH-OPS S4-R1 CLOSED / NO ACTIVE CURSOR RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
 
-Aktuellster abgeschlossener Checkpoint:
+Aktuellster technischer Closure-Anker:
 
-`docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_GATE0_CLOSED_2026-08-31.md`
+`main@43177a7bab61b0934775f86442833af0f27b3361`
 
-Verbindlicher aktiver Task:
+Aktuellster Closure-Checkpoint nach Merge:
 
-`docs/REQUIREMENTS_TRUTH_OPS_S4_R1_TASK_2026-08-31.md`
+`docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_TRUTH_OPS_S4_R1_CLOSED_2026-08-31.md`
 
-## 1. Live-Baseline vor S4-R1
+## 1. Verifizierter Main-Stand
 
-Verifiziertes `main`:
+Requirements Truth-Ops S4-R1 ist abgeschlossen.
 
-`67f54135957cf09e39585a8cff662ecc3645b39a`
+- Review-PR **#296 MERGED**.
+- finaler Implementierungs-Head: `595b4ad2a827beff7bec597433b3316d21da0747`.
+- Merge-SHA auf `main`: `43177a7bab61b0934775f86442833af0f27b3361`.
+- Main-CI **#1423 / Run `33342536940`: SUCCESS** exakt auf `43177a7b...`.
+- Vercel Production **`dpl_EkrbQmFfxD8gwnZ4AnYFegfaRBWG`: READY** / target `production` / exakt `43177a7b...`.
+- GitHub Review Threads: **0**.
+- Vercel Toolbar unresolved Threads auf Review-Branch und `main`: **0**.
+- Issue **#292 CLOSED / completed**.
 
-- PR #291 **MERGED**; finaler Gate-0-Continuity-Merge.
-- Main-CI #1415 / Run `33339984118`: **SUCCESS** exakt auf `67f54135...`.
-- Vercel Production `dpl_8M5fqNsNBzdsFZXkVhXMzSDoxWRN`: **READY** exakt auf `67f54135...`.
-- Issue #288: CLOSED/completed.
-- Gate 0 vollständig abgeschlossen.
-- Ruleset `Jetnity main protection` / ID `21875372`: active; PR + strict required checks + Conversation Resolution + merge-only; bypass leer.
-- Offene PRs außerhalb dieses Slices sind nur bekannte historische Drafts (#52, #50, #40, #39, #28); kein konkurrierender aktueller Runtime-Slice.
+Draft-PR **#293** ist **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED**. Grund war ausschließlich der bekannte GitHub-Connectorfehler beim Draft→Ready-Schritt (`Repository.fullDatabaseId`). Branch Protection wurde nicht gelockert oder umgangen.
 
-## 2. Aktiver Slice
+## 2. Was S4-R1 jetzt verbindlich liefert
 
-Issue **#292 – Requirements Truth-Ops S4-R1 – timeout, kill-switch & bounded freshness**.
-
-Draft-PR **#293 – Requirements Truth-Ops S4-R1: timeout, kill-switch & bounded freshness**.
-
-Branch:
-
-`feat/requirements-truth-ops-s4-r1-2026-08-31`
-
-Start-Baseline:
-
-`67f54135957cf09e39585a8cff662ecc3645b39a`
-
-Initialer TL-Task-Commit:
-
-`5e7de7e8a1c983b7dc103aa259b25892494955f5`
-
-Scope:
-
-- `RequirementsProvider.evaluate` mit AbortSignal;
-- bounded Domain-Timeout (Standard 4.000 ms);
-- Readiness-Kill-Switch `JETNITY_READINESS_AKTIV` auf bestehendem Provider-Ops-Muster;
-- technische Timeout/Abort/temporary/unavailable-Semantik;
-- `checkedAt` bounded Freshness mit globalem Jetnity-Ceiling von 60 Minuten;
-- gezielte Tests + Handoff/Self-Review.
+- `RequirementsProvider.evaluate(anfrage, signal)` verlangt ein `AbortSignal`.
+- Requirements-Provider-Ausführung besitzt einen harten, gekappten Domain-Timeout von **4.000 ms** mit echter Cancellation.
+- bereits abgebrochene äußere Requests starten keinen Provider-Call.
+- technische Fehler bleiben intern unterscheidbar: `timeout`, `aborted`, `temporarily_unavailable`, `unavailable`.
+- technische Fehler minten keine Official Hard Truth.
+- `JETNITY_READINESS_AKTIV` verwendet das bestehende Provider-Ops-Kill-Switch-Muster.
+- Production bleibt für Requirements-Provider hart aus.
+- `requirementsProviderAus()` bleibt `null`.
+- Official `checkedAt` besitzt einen globalen Jetnity-Ceiling von **60 Minuten**; Alter `>=` Ceiling → `recheck_needed`.
+- `checkedAt` ist Jetnity Retrieval-/Evaluation-Zeit und nicht Vendor-`lastUpdatedAt`.
+- kein zweiter HTTP-/Retry-Stack; späterer Adapter muss den bestehenden Provider Transport Core verwenden.
 
 ## 3. Cursor-Agent
 
-Vorgesehener exakter Anzeigename:
+Letzter Agent:
 
 **`Jetnity requirements truth ops 1`**  
-Generation: **1**
+Generation: **1**  
+Session: `bc-49df8304-48ed-4820-bdf4-57f53aa1aaee`  
+Status: **STOPPED / DELIVERY COMPLETE / TL PASS**.
 
-Session: **PENDING DISPATCH / nach Cursor-Annahme live verifizieren**.
+Es läuft derzeit **kein neuer Cursor-Runtime-Slice**.
 
-Der Agent darf ausschließlich S4-R1 implementieren, Self-Review liefern und stoppen. Er darf nicht Ready setzen, mergen oder einen Folgeslice starten. `docs/ACTIVE_WORK_STATUS.md` bleibt Technical-Lead-owned.
+## 4. Requirements / Official Truth Boundary
 
-## 4. Revalidierte Current Truth
+Weiterhin verbindlich:
 
-Auf Start-`main` live bestätigt:
+- kein echter Requirements-/Visa-/Entry-Provider aktiv;
+- keine Providerwahl abgeschlossen;
+- keine Provider-Secrets/API Keys;
+- keine echten oder paid Provider-Calls;
+- kein Vendor-Vertrag/DPA durch S4-R1;
+- keine Supabase-/Migration-/RLS-/Ownership-/Auth-/AAL-Änderung in S4-R1;
+- kein Workspace-Live-Provider-Wiring;
+- keine neuen sensitiven Passport-/MRZ-/Biometrie-/Scan-Daten.
 
-- `RequirementsProvider.evaluate(anfrage)` hat noch kein `AbortSignal`.
-- `requirementsAuswerten(...)` ruft `provider.evaluate(kanonisch)` ohne Domain-Timeout auf.
-- `requirementsProviderAus()` ist und bleibt `null`.
-- `officialFrische()` hat noch keine maximale `checkedAt`-TTL.
-- öffentliche Requirements-Route hat `maxDuration = 10` und propagiert `req.signal` noch nicht.
-- Provider Ops hat bereits die wiederverwendbare fail-closed `providerOpsZustand`-Form.
-- Provider Transport Core akzeptiert bereits AbortSignal; kein zweiter HTTP-Stack erforderlich.
-
-Kanonisches Traveller-Modell bleibt verbindlich:
+Kanonisches Traveller-Invariant bleibt:
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Kein Default-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
+Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
 
-## 5. Hard Gates / Non-Scope
+## 5. Bestätigte Entry-Requirements-/Travel-Companion-Zielarchitektur
 
-S4-R1 öffnet **kein** besonderes Product-Owner-Gate:
+Product Owner hat verbindlich bestätigt, dass Jetnity nicht nur Visa ja/nein darstellen darf, sondern die vollständige praktisch relevante Einreisevorbereitung strukturiert abbilden soll.
 
-- kein echter Requirements-Provider / keine Providerwahl;
-- kein Vendor-Kontakt, Vertrag oder DPA;
-- keine Secrets/API Keys;
-- keine echten oder paid calls;
-- `requirementsProviderAus()` bleibt `null`;
-- keine Supabase-Migration/RLS/Ownership/Storage;
-- keine Auth/MFA/AAL-Änderung;
-- kein Workspace-Live-Provider-Wiring;
-- keine Commercial Runtime Writer;
-- keine sensitiven Passport-/MRZ-/Biometrie-/Scan-Daten;
-- keine neuen recurring costs;
-- kein Public Launch/Domain/Store-Cutover.
+Kanonische Zielarchitektur:
 
-Supabase wird in diesem Slice nicht verändert; deshalb ist kein DB-Live-Mutationsschritt Teil des Tasks. Die bekannte Development-vs-Production-Migration-History bleibt vor jedem migrationsnahen Slice neu zu prüfen.
+`docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
 
-## 6. Review-State
+Sie umfasst insbesondere:
 
-Aktuell: **IMPLEMENTATION NOT YET REVIEWED / PR #293 DRAFT**.
+- visumfrei / klassisches Visum / Visa on Arrival / eVisa / eTA;
+- offizielle Antrags-/Informationslinks und direkte sichere Actions;
+- Passgültigkeit;
+- eigene strukturierte Typen für `blank_passport_pages` und `financial_means`;
+- Transitregeln;
+- Arrival-/Einreiseformulare;
+- Impf-/Gesundheitsanforderungen;
+- Versicherungspflicht;
+- Rück-/Weiterflug- und relevante Reise-/Unterkunftsnachweise;
+- proaktive Travel-Companion-/Deadline-Semantik;
+- zeitgebundene Aufgaben wie „frühestens 72 Stunden vor Ankunft“;
+- Prioritäten `Jetzt erledigen`, `Demnächst`, `Zur Information`;
+- Neuberechnung bei Flug-/Routen-/Datum-/Credential-Änderungen;
+- deduplizierte, statusbewusste In-App-/Push-/gegebenenfalls E-Mail-Begleitung;
+- harte Warnungen nur aus belastbarer, aktueller Evidence.
 
-Agent-Self-Review ist kein Technical-Lead-PASS. Jede Head-Änderung invalidiert frühere CI/Vercel/Review-Evidence. Bei `CHANGES REQUIRED` arbeitet derselbe Agent in derselben Session weiter.
+Diese Zielarchitektur ist **kein automatischer Runtime-Auftrag**.
 
-## 7. FIRST NEXT ACTION
+## 6. GitHub Governance
 
-1. Cursor-Agent `Jetnity requirements truth ops 1` auf PR #293 starten.
-2. Exact Session/Acceptance live verifizieren.
-3. Agent implementiert ausschließlich den verbindlichen S4-R1-Task.
-4. Danach unabhängiger Technical-Lead-Review des exakten Heads, Diff, Tests, CI, Vercel Preview und Threads.
-5. Nur bei PASS darf der Technical Lead Ready setzen und normal mergen.
-6. Post-Merge `main`, Main-CI und Vercel Production exakt verifizieren; Issue #292 schließen und Continuity aktualisieren.
-7. **Kein automatischer Folgeslice.**
+Ruleset `Jetnity main protection` / ID `21875372` bleibt unverändert stark.
+
+Pflicht bleiben:
+
+- PR vor Merge;
+- Branch up to date;
+- Conversation Resolution;
+- `Typecheck, Lint & Build`;
+- `Auth-Konfiguration gegen config.toml`;
+- `Vercel`;
+- merge-only;
+- bypass leer.
+
+Solange der Draft→Ready-Connectorfehler besteht, gilt verbindlicher mechanischer Ersatzprozess:
+
+1. Cursor liefert im Draft-PR.
+2. Technical Lead reviewt den exakten finalen Head.
+3. bei TL-PASS wird ein non-draft Review-PR auf **dem exakt gleichen Commit** erstellt;
+4. CI/Vercel/Mergeability/Threads werden auf diesem PR neu gegatet;
+5. erst dann geschützter Merge.
+
+Branch Protection wird deswegen **nicht** gelockert.
+
+## 7. Supabase Boundary
+
+S4-R1 hat Supabase nicht verändert.
+
+Letzter bekannter Requirements-Gate-0-Stand:
+
+- Production `qscbgcdmivbbnzrcyegn`: `ACTIVE_HEALTHY`.
+- Development `yfvbxvijcorffwxbxahl`: `ACTIVE_HEALTHY`.
+- Development-vs-Production-Migration-History weist Drift auf.
+
+Vor jedem migrationsnahen / DB-/RLS-/Storage-/Security-Slice live erneut prüfen und reconciliieren.
+
+## 8. FIRST NEXT ACTION
+
+**Kein Folgeslice ist automatisch gestartet oder freigegeben.**
+
+Vor jeder weiteren Requirements-/Provider-/Travel-Companion-Implementierung muss der Technical Lead:
+
+1. finalen `main`, offene PRs/Issues, CI/Vercel und Agentenstatus live prüfen;
+2. die bestätigte Target Architecture gegen den Ist-Code lesen;
+3. nur den kleinsten verantwortbaren bounded Slice definieren;
+4. Product-Owner-Gates für Providerwahl, Verträge, Secrets, paid calls, sensitive Daten oder Production-Aktivierung respektieren.
+
+Issue **#294** bleibt als persistenter Architektur-Tracker für Entry Requirements Detail Architecture / Travel Companion offen. Das ist kein automatischer Build-Start.
 
 **Live-Evidence gewinnt immer.**
