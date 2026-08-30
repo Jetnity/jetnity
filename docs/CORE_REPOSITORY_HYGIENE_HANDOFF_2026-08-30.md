@@ -20,22 +20,22 @@ Read in this order:
 
 Historical clues (do not treat as current truth): `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`, ADR-0184.
 
-## Exact head to review
+## Heads — do not treat a committed SHA as the live tip
 
-Review the **exact PR head after the deliverable commits**, not this prose alone.
+A committed file cannot reliably contain the SHA of the commit that contains it. Distinguish:
 
-CI-gated packet HEAD: `d6be754e0e11b45d43d0c7a36690d002be9d3bbe`  
-CI run: `33330490901` **SUCCESS** (typecheck/lint/build + auth-config + Vercel Preview SUCCESS)  
-Prior stamp CI: `fcedca1d` / run `33330291602` **SUCCESS**  
-Deliverable packet: `5c0a931d1fde2e26d95c82abe151607dddecbaa8`  
-Audit start HEAD (task file only): `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`  
-Task baseline: `d4a2bba21e9a247594272adb2a13d6cf0620ff48`
+1. **Audit/check execution:** local commands on `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`.
+2. **Historical verified heads:** packet `5c0a931d`; CI stamps `fcedca1d` / `33330291602`, `d6be754e` / `33330490901`; TL-reviewed CHANGES REQUIRED head `e1bbf7fdfdeae28c890e3318ccfaf27e071968bf` / CI `33330641032` SUCCESS.
+3. **Live PR head after this review-fix:** independently gated by the Technical Lead on the new exact tip. This handoff does not claim that tip’s SHA.
 
-Expected diff vs baseline: task file + the six deliverables. If runtime/config/migration/asset files appear, that is a defect.
+Task / live GitHub `main`: `d4a2bba21e9a247594272adb2a13d6cf0620ff48`.  
+Local pointer `ea797163` was a stale/older local `origin/main`, not a newer main.
+
+Expected diff vs baseline: task file + the six deliverables (review-fix included). If runtime/config/migration/asset files appear, that is a defect.
 
 ## One-sentence verdict
 
-The V2 runtime tree is current; Creator/MediaStudio screens are gone; three mechanical leftovers are delete candidates; legal pages/CookieConsent and cloud/branch-unique-docs remain decision-gated; green hygiene CI is not a cleanliness proof.
+The V2 runtime tree is current; Creator/MediaStudio screens are gone; three mechanical leftovers are delete candidates; legal pages/CookieConsent, the Production recovery bucket, and unique-branch retention remain decision-gated; `jetnity-bets` and `main` protection are resolved; green hygiene CI is not a cleanliness proof.
 
 ## What the Technical Lead may do after independent Exact-Head review
 
@@ -48,7 +48,7 @@ The Technical Lead must **not** infer from this handoff:
 - Ready or merge by the author-agent;
 - permission to delete migrations, mount CookieConsent, invent legal text, or touch Auth/Traveller/Provider contracts;
 - permission to close/delete remaining historical PRs/branches from this packet;
-- a live re-proof of Production Storage or branch protection.
+- a live re-inventory of the Production recovery bucket (policy/state unchanged here).
 
 ## Suggested later cleanup order (not started)
 
@@ -60,14 +60,13 @@ Only after PASS on this audit and a fresh slice:
 4. Small config/comment hygiene (`components.json` hooks alias, `pakete.mjs` zod exception, optional Mega Pro / Tailwind `content/` glob).
 5. Legal/PO slice for `/privacy`, `/terms`, CookieConsent — not a mechanical delete.
 
-Branch/PR retention and cloud gates stay on their existing workstreams.
+Branch/PR retention and the Production recovery-bucket gate stay on their existing workstreams. `jetnity-bets` and `main` protection are resolved.
 
 ## Product-Owner gates that this packet does not open
 
 - User-visible legal/cookie text
 - Auth capability/role retirement
 - Production Storage / recovery-bucket changes
-- `jetnity-bets` or any cloud decommission
 - History rewrite
 - Public launch / provider live activation
 

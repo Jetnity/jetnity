@@ -5,11 +5,16 @@
   "draftPr": 277,
   "agent": "Jetnity core repository hygiene audit 1",
   "type": "AUDIT-ONLY / NON-DESTRUCTIVE",
-  "head": "d6be754e0e11b45d43d0c7a36690d002be9d3bbe",
-  "checksHead": "c895d16b5c1f42cdb0bed5b44aaaf188d07c5024",
-  "packetHead": "5c0a931d1fde2e26d95c82abe151607dddecbaa8",
+  "heads": {
+    "liveGitHubMain": "d4a2bba21e9a247594272adb2a13d6cf0620ff48",
+    "checksHead": "c895d16b5c1f42cdb0bed5b44aaaf188d07c5024",
+    "packetHead": "5c0a931d1fde2e26d95c82abe151607dddecbaa8",
+    "reviewedThenSupersededPrHead": "e1bbf7fdfdeae28c890e3318ccfaf27e071968bf",
+    "livePrHeadAfterThisReviewFix": "independently-gated-by-technical-lead-on-new-exact-tip",
+    "staleLocalOriginMainPointer": "ea79716315304c1289b094811d80f8880c09e615",
+    "staleLocalOriginMainNote": "older/stale local ref; not newer than live GitHub main"
+  },
   "taskBaseline": "d4a2bba21e9a247594272adb2a13d6cf0620ff48",
-  "localOriginMainPointer": "ea79716315304c1289b094811d80f8880c09e615",
   "vocabulary": [
     "KEEP",
     "UPDATE-CANDIDATE",
@@ -186,8 +191,8 @@
       "id": "B-03",
       "paths": [],
       "class": "BLOCKED/NEEDS-DECISION",
-      "confidence": "medium",
-      "note": "Cloud/governance gates (jetnity-bets, recovery bucket, branch protection) are outside this file tree"
+      "confidence": "high",
+      "note": "Production recovery bucket only. jetnity-bets decommissioned; main protection ACTIVE via ruleset 21875372 / protected=true. Recovery-bucket policy/state unchanged in this review-fix."
     },
     {
       "id": "B-04",
@@ -264,26 +269,30 @@
     "test": { "exit": 0, "pass": 2815, "fail": 0 },
     "checkSetupCi": { "exit": 0, "warnings": 1, "note": "no .env/.local in this environment" },
     "build": { "exit": 0, "staticPagesGenerated": 22 },
-    "githubCi": {
-      "head": "d6be754e0e11b45d43d0c7a36690d002be9d3bbe",
-      "runId": 33330490901,
+    "githubCiHistorical": {
+      "note": "Historical Exact-Head results. Not the live PR head after this review-fix.",
+      "reviewedThenSupersededHead": "e1bbf7fdfdeae28c890e3318ccfaf27e071968bf",
+      "reviewedThenSupersededRunId": 33330641032,
       "conclusion": "SUCCESS",
-      "jobs": [
-        "Typecheck, Lint & Build",
-        "Auth-Konfiguration gegen config.toml"
-      ],
-      "vercelPreview": "SUCCESS",
-      "priorStampHead": "fcedca1d26df1c687d7155918cf25b99d6c11ed2",
-      "priorStampRunId": 33330291602
+      "priorStampHeads": [
+        { "head": "d6be754e0e11b45d43d0c7a36690d002be9d3bbe", "runId": 33330490901 },
+        { "head": "fcedca1d26df1c687d7155918cf25b99d6c11ed2", "runId": 33330291602 },
+        { "head": "c895d16b5c1f42cdb0bed5b44aaaf188d07c5024", "runId": 33329928407 }
+      ]
     }
   },
   "toolingLimits": [
     "check:dead walks TS/JS import graph only and does not see public assets, CLI temp, image hosts, branches, or cloud",
     "check:deps does not prove asset or docs cleanliness",
-    "auth:pruefen was not run in the audit workspace; CI auth-config job SUCCESS on fcedca1d",
-    "branch protection was not freshly queried from GitHub settings",
-    "Production Storage was not re-inventoried; C3 after-image was not re-executed"
+    "auth:pruefen was not run in the audit workspace; historical CI auth-config jobs SUCCESS on e1bbf7fd / d6be754e / fcedca1d",
+    "earlier 'branch protection not freshly queried / protected=false' is superseded: ruleset 21875372 ACTIVE, main protected=true",
+    "Production recovery bucket was not re-inventoried; C3 after-image was not re-executed; policy/state unchanged"
   ],
+  "resolvedExternalGovernance": {
+    "jetnityBets": "decommissioned; live Supabase list is only current Jetnity Production",
+    "mainBranchProtection": "ACTIVE ruleset Jetnity main protection id 21875372; GitHub main protected=true",
+    "earlierProtectedFalseStatement": "superseded"
+  },
   "historicalRevalidationDelta": {
     "pr88": "CLOSED on 2026-08-29; unique inventory branch still present",
     "pr135": "MERGED",

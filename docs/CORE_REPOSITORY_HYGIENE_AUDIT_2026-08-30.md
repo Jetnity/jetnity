@@ -5,10 +5,12 @@ Issue: [#273](https://github.com/Jetnity/jetnity/issues/273)
 Draft-PR: [#277](https://github.com/Jetnity/jetnity/pull/277)  
 Cursor-Agent: `Jetnity core repository hygiene audit 1`  
 Type: **AUDIT-ONLY / NON-DESTRUCTIVE**  
-Checks head: `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`  
-Deliverable packet: `5c0a931d1fde2e26d95c82abe151607dddecbaa8`  
-Task baseline: `main@d4a2bba21e9a247594272adb2a13d6cf0620ff48`  
-Local `origin/main` pointer at audit time: `ea79716315304c1289b094811d80f8880c09e615` (docs-only GitHub branch-hygiene record; newer than the task baseline)
+Task / live GitHub `main`: `d4a2bba21e9a247594272adb2a13d6cf0620ff48`  
+Checks head (local hygiene commands): `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`  
+Reviewed-then-superseded PR head (CHANGES REQUIRED): `e1bbf7fdfdeae28c890e3318ccfaf27e071968bf`  
+Live PR head after this review-fix: **independently gated by the Technical Lead on the new exact tip** (this file cannot contain the SHA of the commit that contains it)
+
+Local `origin/main` pointer `ea79716315304c1289b094811d80f8880c09e615` was a **stale/older local ref**, not a newer `main`. Live `origin/main` is still exactly the task baseline.
 
 > Age is a signal, never deletion proof. This slice classifies. It does not delete, move, rename, mount, or clean anything.
 
@@ -22,7 +24,7 @@ Companion files:
 
 ## Executive summary
 
-The current tracked repository is a single Jetnity V2 codebase. The live product surface is Trip Builder / Trip Workspace, Account/Traveller, Admin, and provider search APIs. Hygiene checks on the local checks head are green: `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` / `typecheck` / `lint` (0 errors, 135 documented warnings) / `test` (2815/2815) / `build`. GitHub CI run `33330490901` is **SUCCESS** on packet head `d6be754e`, including the fail-closed auth-config job and Vercel Preview. Prior stamp `fcedca1d` / run `33330291602` was also SUCCESS.
+The current tracked repository is a single Jetnity V2 codebase. The live product surface is Trip Builder / Trip Workspace, Account/Traveller, Admin, and provider search APIs. Hygiene checks on the local checks head are green: `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` / `typecheck` / `lint` (0 errors, 135 documented warnings) / `test` (2815/2815) / `build`. Historical Exact-Head CI already verified: `c895d16b` / `33329928407`, `fcedca1d` / `33330291602`, `d6be754e` / `33330490901`, and reviewed head `e1bbf7fd` / `33330641032` (all SUCCESS, including auth-config and Vercel). Those SHAs are **not** the live PR head after this review-fix.
 
 **Creator Hub / MediaStudio / Feed / Blog / Render are not present as current runtime.** Their remaining repository traces are historical migrations, decommission evidence, and a still-current RBAC role name (`creator`) plus the capability `inhalte-moderieren`. Those are not leftover MediaStudio pages.
 
@@ -171,14 +173,14 @@ Source clues: `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md` and 
 | `components.json` `@/hooks` | Alias present; `hooks/` absent | **still actionable** `UPDATE-CANDIDATE` |
 | Remote-branch explosion | Separate 30 Aug branch-hygiene deleted 165 merged refs. Live remote heads now **65**. Remaining historical unique-evidence branches still exist. | **superseded as “136 heads”**; remaining branch axis is **out of this slice** |
 | Open historical drafts #52/#50/#40/#39/#28 | All five still OPEN. **#88 is now CLOSED** (2026-08-29) but its branch remains. #135 MERGED. | **partially changed**; no close/delete in this slice |
-| `jetnity-bets` cloud | No product-code hit. Only historical branch-hygiene evidence names. | **PO-gate / out of repo-file cleanup** |
+| `jetnity-bets` cloud | TL live verification: project gone; Supabase list is only current Jetnity Production | **resolved / decommissioned** |
 | Unique docs only on #39/#40/#52/#88 branches | Those branches still exist. PR #88 close did not delete the inventory branch. | **still actionable** on the **branch** axis, not this repo-file audit |
 | `chore/account-admin-team-prep` unique docs | Branch still exists | **still actionable** / branch retention |
 | V1 Creator/Heatmap/Amadeus tables | Absent from `types/supabase.ts` | **resolved** in runtime types |
 | `@supabase/auth-helpers-*` | Banned in setup-check; not in `package.json` | **resolved** |
 | P2-TA-06 `documents[0]` | Not a current runtime finding in this audit | **resolved** (prior integration) |
 | Hygiene ≠ asset/branch/cloud proof | Confirmed against current checkers | **current** |
-| `main` branch protection off | Not re-proven from GitHub settings in this environment; continuity docs still say `protected=false` | `BLOCKED/NEEDS-DECISION` / governance; **unresolved live setting** |
+| `main` branch protection off | Earlier audit statement (`protected=false` / not freshly queried) is **superseded**. TL live: ruleset `Jetnity main protection` id `21875372` ACTIVE; GitHub `main protected=true` | **resolved** |
 | Docs volume / no index | 371 → **607** files | **still actionable** `UPDATE-CANDIDATE` |
 | `check:deps` stale `zod` exception | Exception still in `pakete.mjs`; `zod` is now imported widely | **stale exception** `UPDATE-CANDIDATE` |
 | “Mega Pro” copy in setup-check | Still present | `UPDATE-CANDIDATE` (cosmetic) |
@@ -221,7 +223,7 @@ Must not happen in a “hygiene cleanup” without a separate gate:
 - Production/Vercel/provider writes;
 - branch/PR/tag deletion from this audit;
 - history rewrite;
-- `jetnity-bets` / recovery-bucket cloud action.
+- recovery-bucket cloud action (`jetnity-bets` decommission is already done).
 
 ## Traveller context
 
@@ -231,6 +233,6 @@ Not applicable to the leftover files themselves. No traveller credential collect
 
 - This audit did not mutate Production, Supabase, Vercel, or providers.
 - This audit did not live-re-inventory Storage buckets; C3 after-image is accepted as the last recorded Production source-removal proof, not re-executed.
-- Branch protection was not freshly queried from GitHub settings.
+- Earlier “branch protection not freshly queried / `protected=false`” wording is superseded by TL live verification (ruleset `21875372` ACTIVE; `main protected=true`).
 - `auth:pruefen` and DB privilege/RLS live scripts were not run (secrets / Production read).
 - Unreferenced is not always delete-safe; the three delete candidates above have stronger-than-age evidence **and** a coupled lock test.

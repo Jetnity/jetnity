@@ -27,6 +27,8 @@ Hard non-scope observed:
 
 An accidental dirty `next-env.d.ts` from the environment was restored and not committed.
 
+Review-fix after TL CHANGES REQUIRED on `e1bbf7fd`: corrected the stale local `origin/main` pointer (it was older than live `main`, not newer); stopped presenting superseded stamp SHAs as the current PR head; recorded `jetnity-bets` decommission and active `main` protection as resolved; left recovery-bucket B-03 and all D/U/B file leftovers unchanged.
+
 ## 2. Adversarial questions
 
 | Question | Answer |
@@ -35,7 +37,7 @@ An accidental dirty `next-env.d.ts` from the environment was restored and not co
 | Could a later agent delete a migration because it mentions `creator_sessions`? | The audit forbids that. All 58 migrations are `HISTORICAL-EVIDENCE`. |
 | Could `next-env.d.ts` / `postcss.config.js` / `proxy.ts` be deleted as “old”? | Explicitly protected as framework-required `KEEP`. |
 | Did green `check:dead` get treated as “repo is clean”? | No. Tooling limits are documented. CookieConsent is a justified orphan. Assets/CLI temp/hosts/branches/cloud are invisible to that checker. |
-| Did the agent copy 28 Aug verdicts without reproducing them? | No. Each historical row was re-checked. Material deltas: PR #88 now CLOSED; 165 merged branches already deleted by a later slice; remote heads 136 → 65; C3 removed Production `creator-media` source (repo runtime still clean). |
+| Did the agent copy 28 Aug verdicts without reproducing them? | No. Each historical row was re-checked. Later TL live facts (this review-fix): `jetnity-bets` gone; `main` protection ACTIVE. Other deltas from the original audit: PR #88 CLOSED; 165 merged branches already deleted; remote heads 136 → 65; C3 removed Production `creator-media` source. |
 | Did the agent claim Creator/MediaStudio residue is gone without searching? | Search covered app/components/lib/types/config/workflows. Verdict is “no runtime residue”, not “no historical mention”. |
 | Did the agent propose deleting CookieConsent as if legal were decided? | No. `BLOCKED/NEEDS-DECISION`. Mounting V1 text is called out as forbidden. |
 | Did the agent treat `/privacy` as only an orphan-banner problem? | No. `RegisterForm` is mounted and already links `/privacy`. Build has no page. |
@@ -75,7 +77,7 @@ An accidental dirty `next-env.d.ts` from the environment was restored and not co
 | Dead exports hidden behind re-exports `check:exports` misses | Checker is name-based (ADR-0026 caution). Residual documented. |
 | Docs packets that are truly duplicate and deletable | Not classified `DELETE-CANDIDATE`. Residual: docs remain large. |
 | Unique-file status of historical branches drifted | Refs exist; contents not re-diffed. Residual: B-04 confidence is on presence, not on 28 Aug unique-file counts. |
-| New leftovers added on `origin/main` after `d4a2bba2` | Local pointer `ea797163` is docs-only branch-hygiene record. Residual: if `origin/main` moved again after this environment’s pointer, a TL re-gate should fetch live `main`. |
+| New leftovers added on `origin/main` after `d4a2bba2` | Live GitHub `main` is still exactly `d4a2bba2`. Local pointer `ea797163` was a stale/older ref, not a newer main. Residual: TL should still fetch live `main` before merge. |
 
 ## 5. Traveller / security / cost
 

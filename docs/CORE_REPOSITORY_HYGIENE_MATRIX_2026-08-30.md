@@ -220,18 +220,27 @@ Do **not** classify these as `DELETE-CANDIDATE` because they are old or mention 
 9. **Later slice:** Separate Auth review if product wants to retire the unused capability.
 10. **PO approval:** yes for Auth/capability contract change.
 
-### B-03 — Cloud / governance items outside the file tree
+### B-03 — Production recovery bucket only
 
-1. **Path:** not in this repository as runtime files. Named only as leftover gates: `jetnity-bets` decommission; Production recovery bucket from C3 after-image; `main` branch protection.
-2. **Role:** Cloud/governance, not tracked source.
-3. **References:** Docs/evidence only. No product-code `jetnity-bets` hit.
-4. **Package/config:** none.
-5. **Age:** n/a.
-6. **Risk if changed:** Production/cloud mutation and history rewrite are PO/TL gates. This audit did not live-query branch protection or Storage.
+`jetnity-bets` decommission and `main` branch protection are **no longer current BLOCKED findings**. TL live verification (review of `e1bbf7fd`):
+
+- Supabase project list contains only current Jetnity Production; `jetnity-bets` is gone.
+- GitHub ruleset `Jetnity main protection` id `21875372` is ACTIVE on `refs/heads/main`; no bypass actors; PR required; conversation resolution required; only merge method `merge`; deletion and force/non-fast-forward blocked; required checks are `Typecheck, Lint & Build`, `Auth-Konfiguration gegen config.toml`, `Vercel`.
+- GitHub branch endpoint reports `main protected=true`.
+- Earlier packet wording that protection was unqueried / `protected=false` is **historical and superseded**.
+
+B-03 now covers only the private C3 recovery bucket (policy/state unchanged in this review-fix; no Production write).
+
+1. **Path:** Production-only recovery bucket from the C3 after-image. Not a tracked repository file.
+2. **Role:** Private recovery copy of decommissioned creator-media bytes. Not current product runtime.
+3. **References:** C3 after-image docs. No application importer.
+4. **Package/config:** none in this repo.
+5. **Age:** n/a (Production object, not a dated repo file).
+6. **Risk if changed:** Changing or deleting the recovery bucket is a Production/data decision. This review-fix does not inspect or mutate it.
 7. **Class:** `BLOCKED/NEEDS-DECISION`
-8. **Confidence:** medium on live cloud state (not re-executed); high that they are out of a repo-file delete slice.
-9. **Later slice:** Existing PO/TL gates. Not a follow-up of this audit’s file cleanup list.
-10. **PO approval:** **yes** for cloud pause/delete, recovery-bucket changes, history rewrite, protection rules.
+8. **Confidence:** high that it is out of a repo-file delete slice; recovery-bucket live state was not re-listed here.
+9. **Later slice:** Existing Production/recovery gate. Not a follow-up of this audit’s file cleanup list.
+10. **PO approval:** **yes** before recovery-bucket mutation or history rewrite. Not required for the already-completed `jetnity-bets` decommission or the now-active main protection ruleset.
 
 ### B-04 — Unique docs still only on historical remote branches
 

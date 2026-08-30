@@ -11,10 +11,12 @@ Status: **AUDIT COMPLETE / DRAFT / READY FOR INDEPENDENT TL REVIEW / NO READY / 
 | Branch | `audit/core-repository-hygiene-2026-08-30` |
 | Cursor-Agent | `Jetnity core repository hygiene audit 1` |
 | Task | `docs/CORE_REPOSITORY_HYGIENE_AUDIT_TASK_2026-08-30.md` |
-| Task baseline | `d4a2bba21e9a247594272adb2a13d6cf0620ff48` |
-| Packet / stamp head that CI gated | `d6be754e0e11b45d43d0c7a36690d002be9d3bbe` |
+| Task / live GitHub `main` | `d4a2bba21e9a247594272adb2a13d6cf0620ff48` |
+| Checks head (local commands) | `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024` |
+| Reviewed-then-superseded PR head | `e1bbf7fdfdeae28c890e3318ccfaf27e071968bf` (CHANGES REQUIRED; CI `33330641032` SUCCESS) |
+| Live PR head after this review-fix | Independently gated by the Technical Lead on the new exact tip. This file does not claim that tip’s SHA. |
 | Baseline ancestor of audit start | yes |
-| Local `origin/main` pointer | `ea79716315304c1289b094811d80f8880c09e615` |
+| Stale local `origin/main` pointer | `ea79716315304c1289b094811d80f8880c09e615` — **older/stale local ref**, not newer than live `main` |
 | Node / npm | v22.14.0 / 10.9.7 |
 | Environment | Cloud agent workspace; `node_modules` present |
 
@@ -41,18 +43,19 @@ All commands were run from `/workspace` against start HEAD `c895d16b5c1f42cdb0be
 
 Reference command transcripts: `/tmp/hygiene-audit/*.txt` on the audit machine (not committed).
 
-## GitHub CI / Preview on exact stamp head
+## GitHub CI / Preview — historical verified heads
 
-Live-verified after the GitHub notifications. The current packet tip `d6be754e` is green. This agent will **not** add another CI-stamp commit after the next docs-only push, to avoid an endless tip-move.
+These Exact-Head results are **historical**. They are not the live PR head after this review-fix. The Technical Lead gates the new tip externally. This agent will not add a recursive CI-stamp commit after the correction push.
 
-| Gate | ID | Head | Result |
+| Gate | ID | Head (historical) | Result |
 | --- | --- | --- | --- |
-| Actions run `CI` | [33330490901](https://github.com/Jetnity/jetnity/actions/runs/33330490901) | `d6be754e` | **SUCCESS** |
-| `Typecheck, Lint & Build` | job `99308069303` | `d6be754e` | **SUCCESS** |
-| `Auth-Konfiguration gegen config.toml` | job `99308069427` | `d6be754e` | **SUCCESS** (ran; not skipped) |
-| Vercel Preview | `4uhiEdb21xUVrSQHf7CWr8iGxQmB` | `d6be754e` | **SUCCESS** |
-| Prior stamp CI | [33330291602](https://github.com/Jetnity/jetnity/actions/runs/33330291602) | `fcedca1d` | **SUCCESS** |
-| Earlier task-only CI | [33329928407](https://github.com/Jetnity/jetnity/actions/runs/33329928407) | `c895d16b` | **SUCCESS** |
+| Actions run `CI` | [33330641032](https://github.com/Jetnity/jetnity/actions/runs/33330641032) | `e1bbf7fd` (reviewed CHANGES REQUIRED head) | **SUCCESS** |
+| `Typecheck, Lint & Build` | job on run `33330641032` | `e1bbf7fd` | **SUCCESS** |
+| `Auth-Konfiguration gegen config.toml` | job on run `33330641032` | `e1bbf7fd` | **SUCCESS** (ran; not skipped) |
+| Vercel Preview | SUCCESS on `e1bbf7fd` | `e1bbf7fd` | **SUCCESS** |
+| Prior CI stamp | [33330490901](https://github.com/Jetnity/jetnity/actions/runs/33330490901) | `d6be754e` | **SUCCESS** (superseded tip) |
+| Prior CI stamp | [33330291602](https://github.com/Jetnity/jetnity/actions/runs/33330291602) | `fcedca1d` | **SUCCESS** (superseded tip) |
+| Task-only CI | [33329928407](https://github.com/Jetnity/jetnity/actions/runs/33329928407) | `c895d16b` | **SUCCESS** |
 
 Green CI still does not prove asset, branch, or cloud cleanliness.
 
@@ -83,9 +86,9 @@ These are documented gaps, not guessed pass/fail:
 
 | Check | Why not run / unresolved |
 | --- | --- |
-| `npm run auth:pruefen` locally | Not executed in this workspace (no local secrets). CI job `Auth-Konfiguration gegen config.toml` **SUCCESS** on `fcedca1d` / run `33330291602`. |
+| `npm run auth:pruefen` locally | Not executed in this workspace (no local secrets). Historical CI auth-config jobs SUCCESS on `e1bbf7fd` / `d6be754e` / `fcedca1d`. |
 | `db:rechte` / `db:rls` / `db:sicherheit` / `db:advisors` | Need a database. This slice does not change schema or RLS. |
-| GitHub branch-protection API | Continuity docs still say `protected=false`. Not freshly queried. |
+| GitHub branch-protection API | Earlier “not freshly queried / `protected=false`” is **superseded**. TL live: ruleset `Jetnity main protection` `21875372` ACTIVE; `main protected=true`. |
 | Production Storage live list | C3 after-image not re-executed. Recovery bucket is Production-only. |
 | Unique-file re-diff of historical branches vs `main` | Refs confirmed present; contents not re-copied (ADR-0184: do not absorb as current truth). |
 | External hotlinks to `/images/prague.jpg` | Cannot be proven from the repository. |
@@ -97,11 +100,11 @@ This audit itself is not blocked. Later cleanup is blocked on:
 1. Independent Technical-Lead review of these deliverables.
 2. Coupled update of `lib/project-sanitation/closure-invariants.test.ts` before leftover deletes.
 3. Product Owner / Legal decision before CookieConsent mount or legal-page text (B-01).
-4. Separate gates for cloud, Auth capability retirement, and unique-branch deletion.
+4. Separate gates for the Production recovery bucket, Auth capability retirement, and unique-branch deletion. `jetnity-bets` and `main` protection are no longer open gates.
 
 ## Writes in this slice
 
-Only the six task deliverables (plus the pre-existing task file). No runtime, config, migration, asset, workflow, or global TL continuity file was edited.
+Only the six task deliverables (plus the pre-existing task file), including this review-fix. No runtime, config, migration, asset, workflow, or global TL continuity file was edited.
 
 An accidental local `next-env.d.ts` drift from environment typegen was restored and not committed.
 
