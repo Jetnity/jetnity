@@ -3,6 +3,8 @@
 import * as React from 'react'
 import { AlertCircle, Check, ChevronDown, RotateCcw } from 'lucide-react'
 
+import LandFeld from '@/components/country/LandFeld'
+import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
 import {
   MEHRERE_REISENDE_HINWEIS,
   READINESS_ART_BEZEICHNUNG,
@@ -264,7 +266,7 @@ export default function Reisevorbereitung({
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-brand-800">
                           {item.title ?? READINESS_ART_BEZEICHNUNG[item.kind]}
-                          {item.countryCode ? ` · ${item.countryCode}` : ''}
+                          {item.countryCode ? ` · ${landAnzeigeText(item.countryCode)}` : ''}
                           {item.travellerClientRef
                             ? ` · ${slots.find((slot) => slot.clientRef === item.travellerClientRef)?.label ?? item.travellerClientRef}`
                             : ''}
@@ -436,7 +438,9 @@ function ReisendenKarte({
                   {DOKUMENT_TYP_LABEL[document.documentType]}
                 </p>
                 <p className="mt-1 text-xs leading-5 text-ink-800">
-                  Ausstellungsland {document.issuingCountryCode ?? 'nicht hinterlegt'}
+                  {document.issuingCountryCode
+                    ? landPraefixText('Ausstellungsland', document.issuingCountryCode)
+                    : 'Ausstellungsland nicht hinterlegt'}
                   {document.expiresOn ? ` · Ablaufdatum ${document.expiresOn}` : ''}
                 </p>
                 <div className="mt-2">
@@ -456,7 +460,7 @@ function ReisendenKarte({
 
   return (
     <form
-      className="grid gap-2 rounded-2xl border border-line-200 px-3 py-3"
+      className="grid min-w-0 gap-2 rounded-2xl border border-line-200 px-3 py-3"
       onSubmit={async (event) => {
         event.preventDefault()
         onFehler('')
@@ -480,25 +484,23 @@ function ReisendenKarte({
         {slot.missingFacts.length === 0 ? ' Angaben erfasst.' : ' Für eine zuverlässige Prüfung fehlen Angaben.'}
       </p>
       <fieldset className="grid gap-2">
-        <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften (ISO-2)</legend>
+        <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften</legend>
         {citizenships.map((code, index) => (
-          <div key={`cit-${index}`} className="flex gap-2">
-            <input
+          <div key={`cit-${index}`} className="grid min-w-0 gap-2">
+            <LandFeld
+              label={`Staatsbürgerschaft ${index + 1}`}
               value={code}
-              onChange={(event) => {
+              onChange={(naechsterCode) => {
                 const naechste = [...citizenships]
-                naechste[index] = event.target.value.toUpperCase()
+                naechste[index] = naechsterCode
                 setCitizenships(naechste)
               }}
-              maxLength={2}
-              className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-              placeholder="z. B. CH"
-              aria-label={`Staatsbürgerschaft ${index + 1}`}
+              optional={false}
             />
             {citizenships.length > 1 ? (
               <button
                 type="button"
-                className="min-h-11 shrink-0 rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                 onClick={() => {
                   const naechste = citizenships.filter((_, i) => i !== index)
                   setCitizenships(naechste)
@@ -520,16 +522,11 @@ function ReisendenKarte({
           </button>
         ) : null}
       </fieldset>
-      <label className="grid gap-1 text-xs font-medium text-brand-800">
-        Wohnsitzland, falls relevant (ISO-2)
-        <input
-          value={residence}
-          onChange={(event) => setResidence(event.target.value.toUpperCase())}
-          maxLength={2}
-          className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-          placeholder="z. B. CH"
-        />
-      </label>
+      <LandFeld
+        label="Wohnsitzland, falls relevant"
+        value={residence}
+        onChange={setResidence}
+      />
       <fieldset className="grid gap-2">
         <legend className="text-xs font-medium text-brand-800">Reisedokumente</legend>
         {documents.map((document, index) => (
@@ -555,19 +552,15 @@ function ReisendenKarte({
             </label>
             {document.documentType ? (
               <>
-                <label className="grid gap-1 text-xs font-medium text-brand-800">
-                  Ausstellendes Land (ISO-2)
-                  <input
-                    value={document.issuingCountryCode}
-                    onChange={(event) => {
-                      const naechste = [...documents]
-                      naechste[index] = { ...document, issuingCountryCode: event.target.value.toUpperCase() }
-                      setDocuments(naechste)
-                    }}
-                    maxLength={2}
-                    className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  />
-                </label>
+                <LandFeld
+                  label="Ausstellendes Land"
+                  value={document.issuingCountryCode}
+                  onChange={(issuingCountryCode) => {
+                    const naechste = [...documents]
+                    naechste[index] = { ...document, issuingCountryCode }
+                    setDocuments(naechste)
+                  }}
+                />
                 <label className="grid gap-1 text-xs font-medium text-brand-800">
                   Ablaufdatum, falls bekannt
                   <input
@@ -605,7 +598,7 @@ function ReisendenKarte({
                       {[...new Set(citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code)))].map(
                         (code) => (
                           <option key={code} value={citizenshipClientRefFuer(code)}>
-                            {code}
+                            {landAnzeigeText(code)}
                           </option>
                         ),
                       )}

@@ -3,7 +3,11 @@
 import { useRouter } from 'next/navigation'
 import { useState, useSyncExternalStore, useTransition } from 'react'
 
+import LandFeld from '@/components/country/LandFeld'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { COUNTRY_COPY } from '@/lib/country/copy'
+import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
+import { landFeldHatAuswahl } from '@/lib/country/land-feld'
 import { REGISTRY_COPY, REGISTRY_DOKUMENT_TYP_LABEL } from '@/lib/traveller/account-registry-copy'
 import { DOKUMENT_LEBENSZYKLUS_COPY } from '@/lib/traveller/dokument-lebenszyklus-copy'
 import {
@@ -106,7 +110,7 @@ export default function AccountReisendeKarte({
           </h2>
           <p className="mt-1 text-sm text-ink-700">
             {traveller.facts.residenceCountryCode
-              ? `Wohnsitz ${traveller.facts.residenceCountryCode}`
+              ? landPraefixText('Wohnsitz', traveller.facts.residenceCountryCode)
               : REGISTRY_COPY.wohnsitzLeer}
           </p>
         </div>
@@ -151,17 +155,11 @@ export default function AccountReisendeKarte({
               className={feldKlasse}
             />
           </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            {REGISTRY_COPY.wohnsitzLabel}
-            <input
-              value={wohnsitz}
-              onChange={(event) => setWohnsitz(event.target.value.toUpperCase())}
-              maxLength={2}
-              autoComplete="off"
-              spellCheck={false}
-              className={`${feldKlasse} uppercase`}
-            />
-          </label>
+          <LandFeld
+            label={REGISTRY_COPY.wohnsitzLabel}
+            value={wohnsitz}
+            onChange={setWohnsitz}
+          />
           <button type="submit" disabled={pending} className={hauptAktion}>
             {REGISTRY_COPY.speichern}
           </button>
@@ -208,7 +206,9 @@ export default function AccountReisendeKarte({
                 key={citizenship.id}
                 className="flex flex-col gap-2 rounded-2xl bg-surface-50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
               >
-                <span className="text-sm font-semibold text-brand-800">{citizenship.countryCode}</span>
+                <span className="text-sm font-semibold text-brand-800">
+                  {landAnzeigeText(citizenship.countryCode)}
+                </span>
                 <button
                   type="button"
                   disabled={pending}
@@ -239,6 +239,10 @@ export default function AccountReisendeKarte({
             onSubmit={(event) => {
               event.preventDefault()
               const land = neueStaatsbuergerschaft.trim().toUpperCase()
+              if (!landFeldHatAuswahl(land)) {
+                onStatus({ art: 'fehler', text: COUNTRY_COPY.bitteWaehlen })
+                return
+              }
               if (registryCitizenshipDoppelt(land, citizenships.map((eintrag) => eintrag.countryCode))) {
                 onStatus({ art: 'fehler', text: REGISTRY_COPY.staatsbuergerschaftDoppelt })
                 return
@@ -253,17 +257,14 @@ export default function AccountReisendeKarte({
               )
             }}
           >
-            <label className="grid min-w-0 flex-1 gap-1 text-sm font-medium text-brand-800">
-              ISO-2
-              <input
+            <div className="min-w-0 flex-1">
+              <LandFeld
+                label={REGISTRY_COPY.staatsbuergerschaftenTitel}
                 value={neueStaatsbuergerschaft}
-                onChange={(event) => setNeueStaatsbuergerschaft(event.target.value.toUpperCase())}
-                maxLength={2}
-                autoComplete="off"
-                spellCheck={false}
-                className={`${feldKlasse} uppercase`}
+                onChange={setNeueStaatsbuergerschaft}
+                optional={false}
               />
-            </label>
+            </div>
             <button type="submit" disabled={pending} className={`${hauptAktion} sm:self-end`}>
               {REGISTRY_COPY.staatsbuergerschaftHinzufuegen}
             </button>
@@ -289,10 +290,12 @@ export default function AccountReisendeKarte({
                     {REGISTRY_DOKUMENT_TYP_LABEL[eintrag.documentType]}
                   </p>
                   <p className="mt-1 text-sm text-ink-700">
-                    Ausstellungsland {eintrag.issuingCountryCode ?? 'nicht hinterlegt'}
+                    {eintrag.issuingCountryCode
+                      ? landPraefixText('Ausstellungsland', eintrag.issuingCountryCode)
+                      : 'Ausstellungsland nicht hinterlegt'}
                     {' · '}
                     {zugeordnet
-                      ? `Zuordnung ${zugeordnet.countryCode}`
+                      ? landPraefixText('Zuordnung', zugeordnet.countryCode)
                       : REGISTRY_COPY.dokumentKeineZuordnung}
                     {eintrag.expiresOn ? ` · Ablaufdatum ${eintrag.expiresOn}` : ''}
                   </p>
@@ -393,23 +396,14 @@ export default function AccountReisendeKarte({
                 ))}
               </select>
             </label>
-            <label className="grid gap-1 text-sm font-medium text-brand-800">
-              {REGISTRY_COPY.dokumentIssuerLabel}
-              <input
-                value={dokument.issuingCountryCode}
-                onChange={(event) =>
-                  setDokument((aktuell) => ({
-                    ...aktuell,
-                    issuingCountryCode: event.target.value.toUpperCase(),
-                  }))
-                }
-                maxLength={2}
-                autoComplete="off"
-                spellCheck={false}
-                className={`${feldKlasse} uppercase`}
-              />
-              <span className="font-normal text-ink-700">{REGISTRY_COPY.dokumentIssuerHinweis}</span>
-            </label>
+            <LandFeld
+              label={REGISTRY_COPY.dokumentIssuerLabel}
+              hinweis={REGISTRY_COPY.dokumentIssuerHinweis}
+              value={dokument.issuingCountryCode}
+              onChange={(issuingCountryCode) =>
+                setDokument((aktuell) => ({ ...aktuell, issuingCountryCode }))
+              }
+            />
             <label className="grid gap-1 text-sm font-medium text-brand-800">
               {REGISTRY_COPY.dokumentCitizenshipLabel}
               <select
@@ -422,7 +416,7 @@ export default function AccountReisendeKarte({
                 <option value="">{REGISTRY_COPY.dokumentKeineZuordnung}</option>
                 {citizenships.map((citizenship) => (
                   <option key={citizenship.id} value={citizenship.id}>
-                    {citizenship.countryCode}
+                    {landAnzeigeText(citizenship.countryCode)}
                   </option>
                 ))}
               </select>
