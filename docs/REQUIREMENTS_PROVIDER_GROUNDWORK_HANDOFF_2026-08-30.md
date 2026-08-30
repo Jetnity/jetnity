@@ -20,8 +20,9 @@ Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`).
 | Task-Baseline / `origin/main` | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
-| Ahead vor diesem Stamp | 1 (Task `daa91927`) |
-| Exact Head dieses Stamps | **dieser Commit** — nach Push live am PR #289 prüfen |
+| Ahead vor diesem Stamp | 2 (`daa91927` Task + `ec5d3ea3` Audit-Paket) |
+| Audit-Paket-Head | `ec5d3ea3db0f8238efa97ba779143492240af1f3` |
+| Exact Head dieses Stamps | der Commit dieses Continuity-Stamps; nach Push live am PR #289 prüfen |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 

@@ -23,7 +23,8 @@ AUDIT-ONLY / PROVIDER-NEUTRAL Rekonstruktion des aktuellen Requirements-/Readine
 | `origin/main` letzter Fetch | identisch `60e12dd5` (30. August 2026, vor Handoff erneut) |
 | Merge-Base | `60e12dd5` |
 | Ahead / Behind bei Start | 1 / 0 (Task `daa91927`) |
-| Exact Head | siehe Handoff nach Deliverable-Commit |
+| Audit-Paket-Head | `ec5d3ea3db0f8238efa97ba779143492240af1f3` |
+| Exact Head | Continuity-Stamp-Commit dieses Handoffs; live am PR #289 prüfen |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
 
