@@ -20,9 +20,11 @@ Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`).
 | Task-Baseline / `origin/main` | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
-| Ahead vor diesem Stamp | 2 (`daa91927` Task + `ec5d3ea3` Audit-Paket) |
-| Audit-Paket-Head | `ec5d3ea3db0f8238efa97ba779143492240af1f3` |
-| Exact Head dieses Stamps | der Commit dieses Continuity-Stamps; nach Push live am PR #289 prüfen |
+| Ahead / Behind vs `origin/main` | **4 / 0** nach Rebase auf TL-Continuity `8d3330c1` |
+| Remote-Branch vor Rebase | `8d3330c192b81d056bda127f986ebd51e921966a` — TL `ACTIVE_WORK_STATUS` (nicht Agent-authored) |
+| Audit-Paket-Head nach Rebase | `a6f179a1` |
+| Stamp-Head nach Rebase | `33a2fca59a50cfd67ef7ecced6ce2276acab7735` |
+| Exact Head | der Commit, der diesen Absatz bindet; nach Push live am PR #289 prüfen |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 
@@ -32,17 +34,19 @@ Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`).
 
 ## 2. Changed Files (erlaubter Diff)
 
-Gegen `origin/main` dürfen nur stehen:
+Gegen `origin/main` stehen:
 
-1. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_GATE0_TASK_2026-08-30.md` — Technical-Lead-authored, unverändert im Inhalt dieses Agenten
-2. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
-3. `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
-4. `docs/REQUIREMENTS_PROVIDER_CONTRACT_GAP_MAP_2026-08-30.md`
-5. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_STATUS_2026-08-30.md`
-6. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_SELF_REVIEW_2026-08-30.md`
-7. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_HANDOFF_2026-08-30.md`
+1. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_GATE0_TASK_2026-08-30.md` — Technical-Lead-authored
+2. `docs/ACTIVE_WORK_STATUS.md` — Technical-Lead Continuity `8d3330c1`; **dieser Agent hat die Datei nicht geschrieben und nicht editiert**
+3. die sechs Agent-Deliverables:
+   - `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
+   - `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
+   - `docs/REQUIREMENTS_PROVIDER_CONTRACT_GAP_MAP_2026-08-30.md`
+   - `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_STATUS_2026-08-30.md`
+   - `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_SELF_REVIEW_2026-08-30.md`
+   - `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_HANDOFF_2026-08-30.md`
 
-Keine Runtime-, Config-, Migration-, Workflow- oder Asset-Datei.
+Keine Runtime-, Config-, Migration-, Workflow- oder Asset-Datei. Der Agent hat globale Current-State-Dateien nicht selbst geändert; der Rebase hat den parallelen TL-Commit erhalten.
 
 ---
 

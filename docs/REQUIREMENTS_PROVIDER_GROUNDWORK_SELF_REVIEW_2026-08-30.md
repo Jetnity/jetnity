@@ -80,6 +80,8 @@ Eingehalten:
 
 `next-env.d.ts` war unstaged dirty (Next-Dev-Types) und wurde **restored**, nicht committed.
 
+Während des Authorings hat der Technical Lead `docs/ACTIVE_WORK_STATUS.md` auf denselben Branch gepusht (`8d3330c1`). Der Agent hat **rebase** statt force-push gemacht und die Datei nicht editiert. Der Diff gegen `main` enthält diese TL-Datei zusätzlich zu Task + sechs Deliverables. Das ist Continuity-Kollisionsschutz, kein Scope-Bruch durch den Agenten.
+
 ## 5. Traveller-Context
 
 Geprüft und relevant. Empfehlungen erweitern das 1:n-Modell nicht nach unten.
