@@ -1,7 +1,7 @@
 # Jetnity – Supabase Migration-History Repair Status
 
 Stand: 30. August 2026  
-Status: **TECHNISCH REVIEW-BEREIT NACH TL CHANGES-REQUIRED / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION-WRITE / KEIN FOLGESLICE**  
+Status: **TECHNISCH REVIEW-BEREIT NACH ZWEITEM TL CHANGES-REQUIRED / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION-WRITE / KEIN FOLGESLICE**  
 Issue: #249  
 Draft-PR: #250  
 Logical Cursor-Agent: **`Jetnity infrastructure migration repair 2`**  
@@ -18,8 +18,9 @@ Cursor-Run: https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589
 | Branch | `repair/supabase-migration-history-20260829140000-2026-08-30` |
 | Slice-cut / Merge-Base `main` | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
 | Start-Head | `4fbcfebedc7fa451063a228653f18c16a1e3dd5f` |
-| Reviewter Head mit CHANGES REQUIRED | `17c9f4f00fcb01f52b80a5c2c2264fff815c1b6e` |
-| Gated review-fix Head | `4bf76262177a75123c3fd5a1156104f35924f0e3` |
+| Erster CHANGES-REQUIRED Head | `17c9f4f00fcb01f52b80a5c2c2264fff815c1b6e` |
+| Zweiter CHANGES-REQUIRED Head | `f857210428a2d6ef7d1a4e9744c35ea74778fe10` |
+| Gated review-fix Head | `4e9b1796af4f43c4282c5fe5e252f79dd1d6d505` |
 | Authoring / reviewable Tip | Evidence-Stamp nach diesem Commit; jeder neuere Tip live auf PR #250 prüfen |
 | Traveller-Kontext | **nicht relevant** |
 | Production-Mutation durch Cursor | **keine** |
@@ -27,29 +28,26 @@ Cursor-Run: https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589
 
 ## 2. Umgesetzt in diesem Slice
 
-Fail-closed Repair-Vorbereitung, kein Live-Write:
+Fail-closed Repair-Vorbereitung, kein Live-Write. Vorherige exact Checks bleiben:
 
-1. Deterministische History-Repräsentation: eine Repo-Datei = genau ein `schema_migrations.statements`-Element über `array[sqlLiteral(sql)]`, identisch zu `scripts/db/anwenden.ts`.
-2. Kanonische Quelle fest verdrahtet: Blob `e25ab1b7efb48157828968993749a25fa30cc660`, Marker-MD5 `414f7318235ac388e97fd74f97536ca1`.
-3. Runner `npm run db:migration-history-repair` default = lokale Probe / no-write.
-4. Write nur mit `--schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn --history-body-ersetzen`.
-5. Write-SQL ist eine Transaktion, die ausschließlich `supabase_migrations.schema_migrations.statements` für Version `20260829140000` ersetzt und bei Rowcount ≠ 1 rollbackt.
-6. Die Repo-Migration wird niemals als DDL gegen Production oder Development ausgeführt.
-7. Development-Flags werden hart abgelehnt.
-8. Replay-Verifikation für einen späteren temporären Supabase-Branch ist dokumentiert; Cursor erzeugt/löscht keinen Branch.
+- eine Datei = ein `schema_migrations.statements`-Element via `array[sqlLiteral(sql)]`
+- Blob `e25ab1b7efb48157828968993749a25fa30cc660`, Marker-MD5 `414f7318235ac388e97fd74f97536ca1`
+- Default Probe / no-write; Write nur mit allen Production-Flags
+- exact Policy-/Table-ACL-/Function-ACL-/Gate-/Rowcount-/RLS-/OID-Sets
+- `docs/ACTIVE_WORK_STATUS.md` identisch mit Merge-Base
 
-## 3. Review-Fix nach CHANGES REQUIRED auf `17c9f4f0`
+## 3. Review-Fix nach zweitem CHANGES REQUIRED auf `f8572104`
 
-1. Externes Preflight und in-transaction Preflight/After-Probe vergleichen jetzt das **exakte** Before-Image-Set, nicht partielle Privilegien:
-   - genau eine Policy auf `public.trip_item_commercial_provenance`;
-   - exakter Policy-Fingerprint (Name/cmd/permissive/roles/with-check/owner-predicate);
-   - exaktes Table-ACL-Set `authenticated=r/postgres,postgres=arwdDxtm/postgres`;
-   - exakte Rollenattribute inkl. `rolsuper=false` und exakte Membership-Sets;
-   - exaktes Function-ACL-Set, `search_path=""`, SECURITY DEFINER, MD5 `7e7bfe10d20c2f13274d1eb04a75150e`;
-   - exakte Singleton-Gate-Zeile inkl. geschlossener Werte und Note-MD5;
-   - bestehende Rowcount-/RLS-/OID-/History-Marker-Invarianten.
-2. Adversarial Tests für extra Policy, extra Grant/`anon`/`service_role`, extra Role-Member und Function-Config-Drift.
-3. `docs/ACTIVE_WORK_STATUS.md` vollständig auf Merge-Base `c29ac5de` zurückgesetzt. Task §6 bleibt eingehalten.
+External Preflight, in-transaction Preflight und After-Probe verlangen jetzt zusätzlich die live Production-Rollenattribute und die exakten Membership-Records:
+
+- `jetnity_commercial_runtime`: NOLOGIN, NOINHERIT, nosuper, nocreatedb, nocreaterole, noreplication, nobypassrls, `rolconnlimit=-1`
+- `jetnity_commercial_writer`: NOLOGIN, INHERIT, nosuper, nocreatedb, nocreaterole, noreplication, nobypassrls, `rolconnlimit=-1`
+- genau 3 Membership-Records inkl. grantor / `admin_option` / `inherit_option` / `set_option`:
+  1. runtime <- postgres / grantor `supabase_admin` / admin t / inherit f / set f
+  2. writer <- runtime / grantor `postgres` / admin f / inherit f / set t
+  3. writer <- postgres / grantor `supabase_admin` / admin t / inherit f / set f
+
+Adversarial Tests decken CREATEDB, CREATEROLE, REPLICATION, connlimit sowie grantor/admin/inherit/set-Drift und extra Memberships ab.
 
 ## 4. Changed files vs Start-Head `4fbcfebe`
 
@@ -63,42 +61,34 @@ Fail-closed Repair-Vorbereitung, kein Live-Write:
 - `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_HANDOFF_2026-08-30.md`
 - `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_REPLAY_VERIFICATION_2026-08-30.md`
 
-Nicht im Diff gegen Merge-Base: `docs/ACTIVE_WORK_STATUS.md`, Migration SQL, RLS, Grants, Rollen, Funktionen, Trigger, Gate, `develop`, Provider Live, TW-8, AP-7, Auth/Account-Runtime, globale TL-Continuity-Dateien (`JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `DECISIONS.md`, `ROADMAP.md`).
+Nicht im Diff gegen Merge-Base: `docs/ACTIVE_WORK_STATUS.md` und alle globalen TL-Continuity-Dateien.
 
-## 5. Tests / Gates auf Review-Fix Head `4bf76262`
+## 5. Tests / Gates auf Review-Fix Head `4e9b1796`
 
 | Gate | Ergebnis |
 | --- | --- |
 | Focused repair + `ci-schutz` | **27/27 pass** |
 | `npm run db:migration-history-repair` | lokale Probe PASS; Blob `e25ab1b7…`; Marker-MD5 `414f7318…`; kein Write |
-| `--schreiben` ohne Production-Flags | **FAIL-CLOSED** |
-| `--entwicklung` | **FAIL-CLOSED** |
 | `npm test` | **2815/2815 pass, 0 fail** |
 | `npm run typecheck` | pass |
 | `npm run lint` | **0 errors** / 135 bestehende Repo-Warnings |
-| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
+| Hygiene (`check:dead/exports/deps/api-schutz/schema-bezug`) | pass |
 | `npm run build` | pass |
-| `db:rechte` / `db:rls` / `auth:pruefen` | nicht als Live-Write-/Schema-Gate ausgeführt – keine Schema-/Auth-Änderung; Auth-CI-Job separat grün |
 
-## 6. Exact-head Actions / Vercel auf `4bf76262`
+## 6. Exact-head Actions / Vercel auf `4e9b1796`
 
 | Evidence | Ergebnis |
 | --- | --- |
-| GitHub Actions Run `33312950506` | **SUCCESS** (Typecheck/Lint/Build + Auth-Konfiguration) |
-| Vercel Preview `vS479BbnWx3ogWf3yCCGvjJ8cySg` | **READY** |
+| GitHub Actions Run `33313923910` | **SUCCESS** |
+| Vercel Preview `Di5h8BrrgpB1wDBq6NjkbMEDXguo` | **READY** |
 
 Jeder neue Head invalidiert frühere Exact-Head-Gates. Der Docs-Stamp nach diesem Stand muss live erneut gegatet werden.
 
 ## 7. Hard boundaries eingehalten
 
-- kein Production-/Development-SQL-Write durch diesen Agenten
-- kein Re-Apply von `20260829140000_trip_item_commercial_provenance.sql`
-- kein `migration repair --status reverted`
-- kein Delete der History-Zeile
-- kein Commercial Runtime Gate geöffnet
-- kein PITR
-- kein temporärer Supabase-Branch
-- keine Änderung an `docs/ACTIVE_WORK_STATUS.md` gegenüber Merge-Base
+- kein Production-/Development-SQL-Write
+- kein Re-Apply von S5-B-DDL
+- kein Gate geöffnet, kein PITR, kein Supabase-Branch
 - kein Ready / Merge / Folgeslice
 
 ## 8. FIRST NEXT ACTION

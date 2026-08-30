@@ -1,21 +1,18 @@
 # Jetnity – Supabase Migration-History Repair Handoff
 
 Stand: 30. August 2026  
-Status: **REVIEW-FIX COMPLETE / LOCAL+REMOTE GATES GREEN ON 4bf76262 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO PRODUCTION WRITE**
+Status: **SECOND REVIEW-FIX COMPLETE / LOCAL+REMOTE GATES GREEN ON 4e9b1796 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO PRODUCTION WRITE**
 
 ## What is finished
 
-Vorbereiteter fail-closed Pfad, um den Production-History-Body von `20260829140000` später replay-fähig zu machen, ohne S5-B-DDL erneut anzuwenden.
+Fail-closed Repair-Vorbereitung für History `20260829140000`, plus zweiten Review-Fix:
 
-- Kanonische Quelle: `supabase/migrations/20260829140000_trip_item_commercial_provenance.sql`
-- Git-Blob unverändert: `e25ab1b7efb48157828968993749a25fa30cc660`
-- Before-Marker-MD5 unverändert: `414f7318235ac388e97fd74f97536ca1`
-- History-Repräsentation: `array[sqlLiteral(gesamte Datei)]`
-- CLI: `npm run db:migration-history-repair`
-- Default: lokale Probe, kein Datenbank-Write
-- Preflight/After-Probe: exakte Before-Image-Sets (Policy-Count=1, Table-ACL, Role-Members, Function-ACL/Config, Gate-Singleton)
+- Blob `e25ab1b7efb48157828968993749a25fa30cc660` und Marker-MD5 `414f7318235ac388e97fd74f97536ca1` unverändert
+- exact Policy / Table-ACL / Function-ACL / Gate / Rowcount / RLS / OID
+- exact role attributes inkl. CREATEDB, CREATEROLE, REPLICATION, `rolconnlimit=-1`
+- exact membership records inkl. grantor / admin_option / inherit_option / set_option
 - `docs/ACTIVE_WORK_STATUS.md` = Merge-Base `c29ac5de`
-- Write bleibt dem Technical Lead nach Exact-Head-PASS vorbehalten
+- Default Probe; kein Production-Write durch Cursor
 
 ## Transport
 
@@ -25,9 +22,8 @@ Vorbereiteter fail-closed Pfad, um den Production-History-Body von `202608291400
 | Branch | `repair/supabase-migration-history-20260829140000-2026-08-30` |
 | Issue | #249 |
 | Merge-Base | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
-| Start-Head | `4fbcfebedc7fa451063a228653f18c16a1e3dd5f` |
-| CHANGES REQUIRED Head | `17c9f4f00fcb01f52b80a5c2c2264fff815c1b6e` |
-| Gated review-fix | `4bf76262177a75123c3fd5a1156104f35924f0e3` |
+| Zweiter CHANGES-REQUIRED Head | `f857210428a2d6ef7d1a4e9744c35ea74778fe10` |
+| Gated review-fix | `4e9b1796af4f43c4282c5fe5e252f79dd1d6d505` |
 | Reviewable Tip | Evidence-Stamp nach diesem Commit; neuere Tips live auf PR #250 |
 | Cursor-Agent | `Jetnity infrastructure migration repair 2` |
 | Cloud-Run | https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589 |
@@ -39,34 +35,23 @@ npm run db:migration-history-repair -- --produktion --projekt-ref qscbgcdmivbbnz
 npm run db:migration-history-repair -- --schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn --history-body-ersetzen
 ```
 
-Nur nach unabhängigem Exact-Head-PASS, erneut bestätigtem Before-Image und Backup-/Restore-Fenster. Cursor führt diese Kommandos nicht aus.
-
 ## Tests / Build
 
-Lokal auf `4bf76262`:
+Lokal und remote auf `4e9b1796`:
 
-- Focused 27/27
-- `npm test` 2815/2815
-- typecheck pass
-- lint 0 errors / 135 warnings
-- Hygiene-Gates pass
-- Production Build pass
-- lokale Probe no-write; Write/Development-Flags fail-closed
-
-Remote auf `4bf76262`: Actions Run `33312950506` SUCCESS; Vercel Preview `vS479BbnWx3ogWf3yCCGvjJ8cySg` READY.
-
-Exact-head CI/Vercel für den Tip nach diesem Stamp live prüfen.
+- Focused 27/27; `npm test` 2815/2815
+- typecheck / lint 0 errors / Hygiene / Production Build
+- Actions `33313923910` SUCCESS
+- Vercel `Di5h8BrrgpB1wDBq6NjkbMEDXguo` READY
 
 ## Review protocol
 
-1. Exact Head gegen `origin/main @ c29ac5de` (nur Repair-Prep-Dateien; `docs/ACTIVE_WORK_STATUS.md` darf nicht im Diff sein).
-2. Blob `e25ab1b7…` und Marker-MD5 `414f7318…` unverändert.
-3. Write-SQL enthält genau ein UPDATE auf `supabase_migrations.schema_migrations.statements`.
-4. Write-SQL ohne History-Literal enthält kein DDL.
-5. Preflight und After-Probe verlangen das exakte Before-Image-Set, nicht partielle Privilegien.
-6. `--schreiben` ohne die übrigen Production-Flags ist unmöglich.
-7. Actions + Vercel auf dem exact head.
-8. PASS nur durch unabhängigen Technical Lead. Cursor markiert nicht Ready und merged nicht.
+1. Exact Head gegen `origin/main @ c29ac5de`; `docs/ACTIVE_WORK_STATUS.md` nicht im Diff.
+2. Blob und Marker-MD5 unverändert.
+3. Ein UPDATE nur auf `supabase_migrations.schema_migrations.statements`.
+4. Role-Fingerprint enthält CREATEDB/CREATEROLE/REPLICATION/connlimit und die drei Membership-Records inkl. grantor/options.
+5. Actions + Vercel auf dem exact head.
+6. PASS nur durch unabhängigen Technical Lead.
 
 ## STOP
 
