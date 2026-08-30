@@ -22,6 +22,7 @@
     "db:anwenden": "node --import tsx scripts/db/anwenden.ts",
     "db:gate-b-tw6-bundle": "node --import tsx scripts/db/gate-b-tw6-bundle.ts",
     "db:aal2-prod-apply": "node --import tsx scripts/db/aal2-prod-apply.ts",
+    "db:migration-history-repair": "node --import tsx scripts/db/migration-history-repair.ts",
     "production:pruefen": "node --import tsx scripts/db/production-pruefen.ts",
     "db:verwendung": "node scripts/db/verwendung.mjs",
     "db:rls": "node scripts/db/rls.mjs",
