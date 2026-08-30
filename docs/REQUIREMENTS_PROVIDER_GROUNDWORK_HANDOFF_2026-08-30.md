@@ -12,11 +12,11 @@ Review-Fix CR-1–CR-7. Reviewed NOT PASS heads: `9caa1a0f` (erster Gate), `1a4f
 
 ---
 
-## 1. Exact Head / Git
+## 1. Git-Evidence (kein self-embedded Exact Head)
 
-Erneut geprüft unmittelbar vor diesem Handoff-Stamp (`git fetch origin main`). `origin/main` ist **nicht** weitergelaufen.
+Erneut geprüft unmittelbar vor dieser Korrektur (`git fetch origin main`). `origin/main` ist **nicht** weitergelaufen.
 
-Ein Git-Commit kann seinen eigenen finalen SHA nicht im Tree tragen. Deshalb **kein** Self-Embedding-Loop. Finite Form (Technical-Lead-Lesart):
+Ein Git-Commit kann seinen eigenen finalen SHA nicht im Tree tragen. Deshalb **kein** Self-Embedding-Loop. Der finale Branch-Tip kann nicht self-embedded werden; sein genauer SHA plus Merge-Base plus Ahead/Behind stehen im finalen Cursor-PR-Handoff-Kommentar und müssen vom Technical Lead live verifiziert werden.
 
 | Fakt | Wert |
 | --- | --- |
@@ -29,14 +29,16 @@ Ein Git-Commit kann seinen eigenen finalen SHA nicht im Tree tragen. Deshalb **k
 | Merge-Base / Ahead / Behind an diesem Content-Fix | `60e12dd5` / **9 / 0** |
 | Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
 | CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
+| Recorded SHA-stamp parent / last embedded head evidence | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` — **nicht** der aktuelle Branch-Tip |
+| Historischer Live-Tip vor der finite-form Korrektur | `59292aaa29a02aac51cacde0616a9d3aa03dd7b0` — damals **11 / 0**; nur dieser Beobachtungszeitpunkt, keine Aussage über spätere Commits |
 | TL Continuity auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored, nicht editiert |
-| Finaler Branch-Head nach diesem Handoff-Stamp | **nicht** im Tree self-embedded; live in der PR-Conversation nach Push |
+| Finaler Branch-Tip | **nicht** im Tree; live im PR-Handoff-Kommentar nach diesem einen Korrektur-Commit |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 
-Keine `der Stamp-Commit…`-Placeholder. Alte Zwischenstände **6 / 0** und **11 / 0** als Tip-Behauptung sind entfernt.
+Keine `Exact Head`-Zeile für einen Parent-SHA. Keine `der Stamp-Commit…`-Placeholder. **11 / 0** ist an `59292aaa` gebunden, nicht an diesen oder einen späteren Commit.
 
-Jede ältere CI/Vercel-Evidence (`9caa1a0f`, `1a4fca00`, `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy`, `HQb5iLVgaik7paubxdYtEyKKBSvF`) gilt **nicht** für den finalen Head nach diesem Stamp.
+Jede ältere CI/Vercel-Evidence (`9caa1a0f`, `1a4fca00`, `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy`, `HQb5iLVgaik7paubxdYtEyKKBSvF`) gilt **nicht** für den finalen Head nach dieser Korrektur.
 
 ---
 
@@ -73,7 +75,7 @@ Keine Runtime-, Config-, Migration-, Workflow- oder Asset-Datei. Keine globale C
 
 ## 4. Review-Protokoll
 
-1. Letzten inhaltlichen Content-Fix (`02191a9b`) im Handoff lesen; finalen Branch-Tip live in der PR-Conversation nach diesem Stamp.
+1. Content-Fix `02191a9b` und historische Zeilen (`a5c3a07e` ≠ Exact Head; **11 / 0** = `59292aaa`) lesen; finalen Tip live im PR-Kommentar.
 2. Scope: nur Task + TL `ACTIVE_WORK_STATUS` + sechs Deliverables.
 3. CR-1 gegen `lib/readiness/official.ts` `officialFrische()` prüfen.
 4. CR-2/CR-3/CR-4/CR-5 gegen Evidence-Log und Gap-Map prüfen; Marketing nicht als Vertrag lesen. Transit-Kapazität nicht als „TRANSIT existiert“ durchgehen lassen.

@@ -103,7 +103,7 @@ Antwort: Alle sechs Deliverables nach `Edge` / `maxDuration` durchsucht. Der unz
 
 Gegenargument: Der Task verlangt den exakten Branch-Head im Handoff. Ein Stamp, der `HEAD` in den Tree schreibt, erzeugt einen neuen Head.
 
-Antwort: Technical-Lead-Lesart gilt: **kein** Self-Embedding-Loop. Handoff nennt den letzten inhaltlichen Content-Fix `02191a9b` und das dort beobachtete **9 / 0** gegen `origin/main@60e12dd5`. Der finale Branch-Tip nach dem Handoff-Stamp steht live in der PR-Conversation, nicht im Tree. Placeholder `der Stamp-Commit…` und der Zwischenstand **6 / 0** sind entfernt.
+Antwort: Technical-Lead-Lesart gilt: **kein** Self-Embedding-Loop. `a5c3a07e` ist recorded SHA-stamp parent / last embedded head evidence, **nicht** Exact Head. **11 / 0** gehört historisch zu Live-Tip `59292aaa` vor der finite-form Korrektur; das paart **nicht** intern mit `a5c3a07e` als aktuellem Head. Handoff nennt den letzten Content-Fix `02191a9b` (**9 / 0**). Der finale Tip steht nur im PR-Kommentar und muss live verifiziert werden.
 
 ## 3. Unsicherheiten (`unknown` / `insufficient evidence`)
 
