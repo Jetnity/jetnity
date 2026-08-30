@@ -4,11 +4,12 @@ Stand: 30. August 2026
 Autor-Agent: **`Cursor-Agent: Jetnity infrastructure migration repair 2`**  
 Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS  
 Run: https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589  
-Start-Anker: `4fbcfebedc7fa451063a228653f18c16a1e3dd5f`
+Start-Anker: `4fbcfebedc7fa451063a228653f18c16a1e3dd5f`  
+Review-Fix-Anker: `4bf76262177a75123c3fd5a1156104f35924f0e3`
 
 ## 1. Auftrag gegen Diff
 
-Geprüft gegen den Repair-Preparation-Slice auf `repair/supabase-migration-history-20260829140000-2026-08-30`, Merge-Base `main @ c29ac5de`.
+Geprüft gegen den Repair-Preparation-Slice auf `repair/supabase-migration-history-20260829140000-2026-08-30`, Merge-Base `main @ c29ac5de`, einschließlich des TL-CHANGES-REQUIRED-Fixes nach Head `17c9f4f0`.
 
 ## 2. Adversarial Fragen
 
@@ -23,6 +24,8 @@ Geprüft gegen den Repair-Preparation-Slice auf `repair/supabase-migration-histo
 | Bleiben Blob und Marker-MD5 unverändert? | Ja. Blob `e25ab1b7…`, Marker-MD5 `414f7318…` sind fest verdrahtet. |
 | Statement-Zerlegung neu erfunden? | Nein. Eine Datei = ein Statement, wie `db:anwenden`. |
 | Secrets in Logs? | `keineSecrets` blockiert JWT, `sbp_`, Connection-Strings und `SUPABASE_ACCESS_TOKEN=`. |
+| Extra Policy / extra ACL / extra Role-Member / Function-Config-Drift? | Fail-closed. Preflight und After-Probe vergleichen exakte Sets, nicht `has_*_privilege` oder `includes('authenticated')`. |
+| Wurde `docs/ACTIVE_WORK_STATUS.md` geändert? | Nein. Datei ist byte-identisch mit Merge-Base `c29ac5de`. |
 | Ready / Merge / Folgeslice / globale Continuity? | Nein. |
 | Temporärer Supabase-Branch erzeugt? | Nein. Nur dokumentiert. |
 
@@ -35,15 +38,15 @@ Geprüft gegen den Repair-Preparation-Slice auf `repair/supabase-migration-histo
 
 ## 4. Lokale und remote Gates
 
-Auf Implementation Head `e61477307dbea3289e752c35bf1c36cd7e89b210`:
+Auf Review-Fix Head `4bf76262177a75123c3fd5a1156104f35924f0e3`:
 
-- Focused 25/25; `npm test` 2813/2813
+- Focused 27/27; `npm test` 2815/2815
 - typecheck, lint (0 errors), Hygiene, Production Build
 - lokale Probe no-write; `--schreiben` und `--entwicklung` fail-closed
-- Actions `33312026403` SUCCESS; Vercel `HX4fYJKqWyR33EYDjRZMMRgJcvZY` READY
+- Actions `33312950506` SUCCESS; Vercel `vS479BbnWx3ogWf3yCCGvjJ8cySg` READY
 
 ## 5. Urteil
 
-Der Slice bleibt in der genehmigten Vorbereitung: fail-closed Runner, deterministische Repräsentation, Tests, task-scoped Evidence. Keine Production-Mutation.
+Die beiden blocking Findings sind im Slice adressiert: exact Before-Image-Preflight/After-Probe plus Revert der globalen Continuity-Datei. Der Slice bleibt Vorbereitung. Keine Production-Mutation.
 
 **Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ist kein PASS.**
