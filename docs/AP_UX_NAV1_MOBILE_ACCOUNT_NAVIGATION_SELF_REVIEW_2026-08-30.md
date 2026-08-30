@@ -2,41 +2,35 @@
 
 Stand: 30. August 2026  
 Autor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 20`**  
-Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
+Typ: adversarial Self-Review nach CHANGES REQUIRED, **kein** unabhängiger Technical-Lead-PASS
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: AP-UX-NAV1 auf Draft-PR #229, Task `docs/AP_UX_NAV1_MOBILE_ACCOUNT_NAVIGATION_RAIL_TASK_2026-08-30.md`.
+CHANGES REQUIRED derselben Session auf Draft-PR #229.
 
-Baseline: `main @ 0ac7296fbd9e348b05a30b4c43cd5fe1815e24d9` (0 behind zum Slice-Start).
-
-Geprüft gegen den tatsächlichen Dateisatz, nicht gegen Chat-Absicht.
+Geprüft gegen den tatsächlichen Dateisatz nach `touch-pan-x`-Fix und Merge von `origin/main @ 20c203f5bee950b43db611f220c7cc5b88699dcb`.
 
 ## 2. Adversarial Fragen
 
 | Frage | Ergebnis |
 | --- | --- |
-| Wurde eine Route migriert oder umgeleitet? | Nein. `/reisen` bleibt `/reisen`. |
-| Zweite Auth-Wahrheit / `getSession` / Browser-Client? | Nein. Eine `await supabase.auth.getUser()`-Stelle; `angemeldet` steuert Daten und Nav. |
-| 2×2-Grid oder Wrap auf schmalen Screens? | Nein. `flex-nowrap` + `overflow-x-auto`. Markupvertrag und Chromium-Messung. |
-| Eigene Swipe-to-Navigate-Geste? | Nein. Kein Pointer-/Touch-Recognizer. Nur natives Overflow-Scroll plus horizontales `scrollBy`. |
-| Aktiver Tab ohne `aria-current`? | Nein. Semantik unverändert. `/account/security` bleibt Einstellungen. |
-| Gast sieht Account-Nav? | Nein. Bedingung `angemeldet ? <AccountNavigation /> : null`. Live-Gast-HTML ohne `nav[aria-label="Konto"]`. |
-| TA-DL1 / Continuity angefasst? | Nein. Keine Traveller-Lifecycle-Dateien, kein `ACTIVE_WORK_STATUS`, kein Start-Here/Handoff. |
-| Schema / Auth / MFA / RLS / Supabase? | Nein. |
-| Ready / Merge / Folgeslice? | Nein. STOPP für unabhängigen TL-Review. |
-| Empty/Error-Verwechslung auf `/reisen`? | Nein. Bestehende Trennung unverändert. |
+| Blockiert die Rail vertikales Page-Scrollen? | Nein. `touch-pan-x` entfernt. Computed `touch-action: auto`. Test verbietet restriktive Touch-Actions. |
+| Bleibt natives horizontales Overflow-Wischen? | Ja. `overflow-x-auto` + `flex-nowrap`. Kein JS-Swipe-Recognizer. |
+| Wurde Sticky erzwungen? | Nein. |
+| Wurde gegen aktuellen `main` reconciled? | Ja. Merge-Base jetzt `20c203f5`. Behind 0. |
+| Tauchen TA-DL1-Dateien im PR-Diff auf? | Nein. Three-dot vs `origin/main` ist nur AP-UX-NAV1. |
+| Zweite Auth-Wahrheit? | Nein. Eine `auth.getUser()`-Stelle. |
+| Route-Migration / Schema / Continuity? | Nein. |
+| Ready / Merge / Folgeslice? | Nein. |
 
-## 3. Bewusst belassene Residuals
+## 3. Residuals
 
-- Authentifiziertes `/reisen` ist hier nur als Source-Vertrag bewiesen, nicht als eingeloggter Preview-Klick.
-- Real-Device-Swipe bleibt Product-Owner-/Preview-Evidence.
-- `/ui-audit/account` markiert keinen Tab aktiv; der Audit-Pfad ist kein Account-Ziel.
-- Account-Leiste ist nicht sticky; das entspricht der bestehenden Account-Shell und war nicht Auftrag.
-- Fokusring kann am Overflow-Rand der Leiste leicht angeschnitten werden.
+- Authentifiziertes `/reisen` weiterhin nur Source-Vertrag, kein Preview-Login.
+- Real-Device-iPhone bleibt Product-Owner-/Preview-Evidence.
+- Fokusring kann am Overflow-Rand leicht angeschnitten werden.
 
-## 4. Urteil des Autors
+## 4. Urteil
 
-Der Slice bleibt im autorisierten UX-Rahmen. Lokale Gates sind grün. Exact-head GitHub Actions `33281797775` und Vercel Preview `9ymUnYwBAzUi9iT5vANXNsEoewPs` sind SUCCESS auf `d23758f64d11ab3479294ac1a4b354a3d219d8f0`.
+Der Review-Fix bleibt im autorisierten UX-Rahmen. Lokale Gates nach Reconcile sind grün.
 
-**Unabhängiger Technical-Lead-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ist kein PASS.**
