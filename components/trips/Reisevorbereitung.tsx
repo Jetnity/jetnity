@@ -27,8 +27,20 @@ import {
   type DokumentFormularZeile,
 } from '@/lib/readiness/dokument-formular'
 import { VERGLEICH_NICHT_VERFUEGBAR } from '@/lib/readiness/vergleich'
+import { DOKUMENT_LEBENSZYKLUS_COPY } from '@/lib/traveller/dokument-lebenszyklus-copy'
+import {
+  dokumentAblaufGegenReise,
+  dokumentReiseAblaufText,
+  dokumentReiseAblaufWarnung,
+} from '@/lib/traveller/dokument-lebenszyklus'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType, Trip } from '@/types/trips'
 import { cn } from '@/lib/utils'
+
+const DOKUMENT_TYP_LABEL: Record<TravellerDocumentType, string> = {
+  passport: 'Reisepass',
+  national_id: 'Personalausweis',
+  unknown: 'Unbekannt',
+}
 
 type TravellerEingabe = {
   clientRef: string
@@ -167,6 +179,7 @@ export default function Reisevorbereitung({
             Mehrere Staatsbürgerschaften und Reisedokumente sind möglich. Jetnity fragt nur notwendige Angaben.
             Keine Passnummern, keine Gesundheitsdaten.
           </p>
+          <p className="text-xs leading-5 text-ink-800">{DOKUMENT_LEBENSZYKLUS_COPY.reiseHinweis}</p>
           {registryUebernahme}
           {unterschiede.mehrereTraveller && (unterschiede.unterschiedlicheCitizenships || unterschiede.unterschiedlicheDokumente) ? (
             <p className="text-xs leading-5 text-ink-800">
@@ -178,6 +191,8 @@ export default function Reisevorbereitung({
             <ReisendenKarte
               key={slot.clientRef}
               slot={slot}
+              tripStart={reise.startDate}
+              tripEnd={reise.endDate}
               onTravellerSetzen={onTravellerSetzen}
               onTravellerEntfernen={onTravellerEntfernen}
               onFehler={setMeldung}
@@ -377,11 +392,15 @@ function StandSymbol({
 
 function ReisendenKarte({
   slot,
+  tripStart,
+  tripEnd,
   onTravellerSetzen,
   onTravellerEntfernen,
   onFehler,
 }: {
   slot: ReturnType<typeof travellerSlots>[number]
+  tripStart: string | null
+  tripEnd: string | null
   onTravellerSetzen?: (eingabe: TravellerEingabe) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
   onFehler: (meldung: string) => void
@@ -396,12 +415,42 @@ function ReisendenKarte({
 
   if (!onTravellerSetzen) {
     const anzahl = slot.traveller?.citizenships.length ?? 0
+    const dokumente = slot.traveller?.documents ?? []
     return (
-      <p className="text-xs leading-5 text-ink-800">
-        {slot.label}
-        {anzahl > 0 ? ` · ${anzahl} Staatsbürgerschaft${anzahl === 1 ? '' : 'en'}` : ''}
-        {slot.missingFacts.length > 0 ? ` · fehlend: ${slot.missingFacts.join(', ')}` : ' · Angaben erfasst'}
-      </p>
+      <div className="grid gap-2">
+        <p className="text-xs leading-5 text-ink-800">
+          {slot.label}
+          {anzahl > 0 ? ` · ${anzahl} Staatsbürgerschaft${anzahl === 1 ? '' : 'en'}` : ''}
+          {slot.missingFacts.length > 0 ? ` · fehlend: ${slot.missingFacts.join(', ')}` : ' · Angaben erfasst'}
+        </p>
+        {dokumente.length === 0 ? (
+          <p className="text-xs leading-5 text-ink-800">Keine Reisedokument-Metadaten hinterlegt.</p>
+        ) : (
+          <ul className="grid gap-2">
+            {dokumente.map((document) => (
+              <li
+                key={document.clientRef || document.id}
+                className="rounded-2xl bg-surface-25 px-3 py-3"
+              >
+                <p className="text-sm font-semibold text-brand-800">
+                  {DOKUMENT_TYP_LABEL[document.documentType]}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-ink-800">
+                  Ausstellungsland {document.issuingCountryCode ?? 'nicht hinterlegt'}
+                  {document.expiresOn ? ` · Ablaufdatum ${document.expiresOn}` : ''}
+                </p>
+                <div className="mt-2">
+                  <DokumentReiseAblaufHinweis
+                    expiresOn={document.expiresOn}
+                    tripStart={tripStart}
+                    tripEnd={tripEnd}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     )
   }
 
@@ -532,6 +581,11 @@ function ReisendenKarte({
                     className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   />
                 </label>
+                <DokumentReiseAblaufHinweis
+                  expiresOn={document.expiresOn || null}
+                  tripStart={tripStart}
+                  tripEnd={tripEnd}
+                />
                 {citizenships.some((code) => /^[A-Z]{2}$/.test(code.trim())) ? (
                   <label className="grid gap-1 text-xs font-medium text-brand-800">
                     Zugeordnete Staatsbürgerschaft
@@ -615,6 +669,30 @@ function ReisendenKarte({
         )}
       </div>
     </form>
+  )
+}
+
+function DokumentReiseAblaufHinweis({
+  expiresOn,
+  tripStart,
+  tripEnd,
+}: {
+  expiresOn: string | null
+  tripStart: string | null
+  tripEnd: string | null
+}) {
+  const ablauf = dokumentAblaufGegenReise(expiresOn, tripStart, tripEnd)
+  return (
+    <p
+      role="status"
+      className={
+        dokumentReiseAblaufWarnung(ablauf)
+          ? 'text-sm leading-6 text-red-800'
+          : 'text-sm leading-6 text-ink-800'
+      }
+    >
+      {dokumentReiseAblaufText(ablauf)}
+    </p>
   )
 }
 

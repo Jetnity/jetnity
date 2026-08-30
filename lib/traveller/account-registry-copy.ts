@@ -43,7 +43,7 @@ export const REGISTRY_COPY = {
   staatsbuergerschaftDoppelt: 'Diese Staatsbürgerschaft ist bereits hinterlegt.',
   dokumenteTitel: 'Reisedokumente',
   dokumenteHinweis:
-    'Nur Metadaten. Ausstellungsland und Staatsbürgerschaft sind unabhängig und werden nicht aus dem jeweils anderen Feld abgeleitet.',
+    'Nur Metadaten. Ausstellungsland und Staatsbürgerschaft sind unabhängig und werden nicht aus dem jeweils anderen Feld abgeleitet. Ein Ablaufdatum ist kein Nachweis, dass ein Dokument genügt.',
   dokumentHinzufuegen: 'Dokument hinzufügen',
   dokumentEntfernen: 'Dokument entfernen',
   dokumentAendern: 'Dokument ändern',
@@ -58,7 +58,7 @@ export const REGISTRY_COPY = {
   dokumentCitizenshipLabel: 'Zugeordnete Staatsbürgerschaft',
   dokumentCitizenshipHinweis: 'Optional. Keine Vorauswahl – auch bei nur einer Staatsbürgerschaft bleibt die Zuordnung leer, bis du sie setzt.',
   dokumentKeineZuordnung: 'Keine Zuordnung',
-  dokumentGueltigLabel: 'Gültig bis',
+  dokumentGueltigLabel: 'Ablaufdatum',
   wohnsitzLeer: 'Wohnsitz nicht hinterlegt',
   erfolgAngelegt: 'Der Registry-Eintrag wurde angelegt.',
   erfolgGeaendert: 'Die Angaben wurden gespeichert.',
