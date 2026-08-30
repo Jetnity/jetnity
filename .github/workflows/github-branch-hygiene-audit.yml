@@ -1,0 +1,132 @@
+name: GitHub branch hygiene audit
+
+on:
+  push:
+    branches:
+      - audit/github-branch-hygiene-2026-08-30
+    paths:
+      - .github/workflows/github-branch-hygiene-audit.yml
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch every remote branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+
+      - name: Fetch GitHub branch and open PR metadata
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/branches?per_page=100" | jq 'add' > /tmp/branches-api.json
+          gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/pulls?state=open&per_page=100" | jq 'add' > /tmp/open-prs.json
+
+      - name: Classify branch refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, subprocess, os
+          from pathlib import Path
+
+          repo = os.environ['GITHUB_REPOSITORY']
+          audit_branch = 'audit/github-branch-hygiene-2026-08-30'
+          main_ref = 'origin/main'
+
+          branches = json.loads(Path('/tmp/branches-api.json').read_text())
+          prs = json.loads(Path('/tmp/open-prs.json').read_text())
+          open_heads = {}
+          for pr in prs:
+              if pr.get('head', {}).get('repo', {}).get('full_name') == repo:
+                  open_heads.setdefault(pr['head']['ref'], []).append(pr['number'])
+
+          def is_ancestor(sha):
+              p = subprocess.run(['git','merge-base','--is-ancestor',sha,main_ref])
+              return p.returncode == 0
+
+          rows = []
+          for b in sorted(branches, key=lambda x: x['name']):
+              name = b['name']
+              sha = b['commit']['sha']
+              protected = bool(b.get('protected'))
+              prs_for_branch = open_heads.get(name, [])
+              if name == 'main':
+                  disposition = 'KEEP_MAIN'
+              elif name == audit_branch:
+                  disposition = 'KEEP_ACTIVE_AUDIT'
+              elif prs_for_branch:
+                  disposition = 'KEEP_OPEN_PR'
+              elif protected:
+                  disposition = 'KEEP_PROTECTED'
+              elif is_ancestor(sha):
+                  disposition = 'DELETE_SAFE_MERGED'
+              else:
+                  disposition = 'REVIEW_UNMERGED'
+              rows.append({
+                  'name': name,
+                  'sha': sha,
+                  'protected': protected,
+                  'open_prs': prs_for_branch,
+                  'tip_is_ancestor_of_main': is_ancestor(sha),
+                  'disposition': disposition,
+              })
+
+          counts = {}
+          for r in rows:
+              counts[r['disposition']] = counts.get(r['disposition'], 0) + 1
+
+          payload = {
+              'repository': repo,
+              'main_sha': subprocess.check_output(['git','rev-parse',main_ref], text=True).strip(),
+              'audit_branch': audit_branch,
+              'total_branches': len(rows),
+              'counts': counts,
+              'branches': rows,
+          }
+          Path('branch-hygiene-audit.json').write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
+
+          lines = [
+              '# GitHub Branch Hygiene Audit', '',
+              f"Repository: `{repo}`", f"Main SHA: `{payload['main_sha']}`",
+              f"Total remote branches: **{len(rows)}**", '',
+              '## Counts', '', '| Disposition | Count |', '|---|---:|'
+          ]
+          for k in sorted(counts):
+              lines.append(f'| `{k}` | {counts[k]} |')
+          lines += ['', '## Exact manifest', '', '| Branch | SHA | Protected | Open PRs | Ancestor of main | Disposition |', '|---|---|---:|---|---:|---|']
+          for r in rows:
+              prs_txt = ', '.join(f"#{n}" for n in r['open_prs']) or '—'
+              lines.append(f"| `{r['name']}` | `{r['sha']}` | {str(r['protected']).lower()} | {prs_txt} | {str(r['tip_is_ancestor_of_main']).lower()} | `{r['disposition']}` |")
+          Path('branch-hygiene-audit.md').write_text('\n'.join(lines) + '\n')
+
+          summary = os.environ.get('GITHUB_STEP_SUMMARY')
+          if summary:
+              with open(summary, 'a') as f:
+                  f.write(f"## Branch Hygiene Audit\n\nTotal: **{len(rows)}**\n\n")
+                  for k in sorted(counts):
+                      f.write(f"- `{k}`: **{counts[k]}**\n")
+          PY
+
+      - name: Upload exact audit manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-branch-hygiene-audit
+          path: |
+            branch-hygiene-audit.json
+            branch-hygiene-audit.md
+          if-no-files-found: error
+          retention-days: 7
