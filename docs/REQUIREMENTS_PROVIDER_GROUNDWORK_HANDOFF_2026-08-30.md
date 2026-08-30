@@ -14,28 +14,29 @@ Review-Fix CR-1–CR-7. Reviewed NOT PASS heads: `9caa1a0f` (erster Gate), `1a4f
 
 ## 1. Exact Head / Git
 
-Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`). `origin/main` ist **nicht** weitergelaufen.
+Erneut geprüft unmittelbar vor diesem Handoff-Stamp (`git fetch origin main`). `origin/main` ist **nicht** weitergelaufen.
+
+Ein Git-Commit kann seinen eigenen finalen SHA nicht im Tree tragen. Deshalb **kein** Self-Embedding-Loop. Finite Form (Technical-Lead-Lesart):
 
 | Fakt | Wert |
 | --- | --- |
 | Task-Baseline / `origin/main` | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
-| Ahead / Behind vor CR-6/CR-7 | **8 / 0** auf `1a4fca0058dd7978396789bd680e83b923a6d659` |
-| Ahead / Behind | **11 / 0** |
-| Reviewed NOT PASS (erster Content-Gate) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
-| Reviewed NOT PASS (CR-1–CR-5) | `1a4fca0058dd7978396789bd680e83b923a6d659` |
+| Reviewed NOT PASS (erster Content-Gate) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` — damals **5 / 0** |
+| Reviewed NOT PASS (CR-1–CR-5) | `1a4fca0058dd7978396789bd680e83b923a6d659` — damals **8 / 0** |
+| Letzter inhaltlicher Content-Fix (CR-6) | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
+| Merge-Base / Ahead / Behind an diesem Content-Fix | `60e12dd5` / **9 / 0** |
 | Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
-| Stamp CR-1–CR-4 | `df2925e580b19d86dd17733295268933e1bb2e0e` |
 | CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | TL Continuity auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored, nicht editiert |
-| CR-6/CR-7 content | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
-| SHA stamp | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` |
-| Exact Head | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` |
+| Finaler Branch-Head nach diesem Handoff-Stamp | **nicht** im Tree self-embedded; live in der PR-Conversation nach Push |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 
-Jede ältere CI/Vercel-Evidence (`9caa1a0f`, `1a4fca00`, `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy`, `HQb5iLVgaik7paubxdYtEyKKBSvF`) gilt **nicht** für diesen Head.
+Keine `der Stamp-Commit…`-Placeholder. Alte Zwischenstände **6 / 0** und **11 / 0** als Tip-Behauptung sind entfernt.
+
+Jede ältere CI/Vercel-Evidence (`9caa1a0f`, `1a4fca00`, `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy`, `HQb5iLVgaik7paubxdYtEyKKBSvF`) gilt **nicht** für den finalen Head nach diesem Stamp.
 
 ---
 
@@ -72,12 +73,12 @@ Keine Runtime-, Config-, Migration-, Workflow- oder Asset-Datei. Keine globale C
 
 ## 4. Review-Protokoll
 
-1. Exact Head und Diff gegen aktuelles `origin/main` lesen.
+1. Letzten inhaltlichen Content-Fix (`02191a9b`) im Handoff lesen; finalen Branch-Tip live in der PR-Conversation nach diesem Stamp.
 2. Scope: nur Task + TL `ACTIVE_WORK_STATUS` + sechs Deliverables.
 3. CR-1 gegen `lib/readiness/official.ts` `officialFrische()` prüfen.
 4. CR-2/CR-3/CR-4/CR-5 gegen Evidence-Log und Gap-Map prüfen; Marketing nicht als Vertrag lesen. Transit-Kapazität nicht als „TRANSIT existiert“ durchgehen lassen.
 5. S4-R1 nicht als gestartet oder genehmigt lesen; TTL nicht als implementiert lesen.
-6. CI + Vercel Preview auf **diesem** Exact Head; jede frühere Gate-Evidence verwerfen.
+6. CI + Vercel Preview auf dem **live PR-Head** nach diesem Stamp; jede frühere Gate-Evidence verwerfen.
 7. PASS nur durch unabhängigen Technical Lead.
 
 ---

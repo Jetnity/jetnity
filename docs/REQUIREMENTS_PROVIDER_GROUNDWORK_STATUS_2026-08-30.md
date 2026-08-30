@@ -22,24 +22,20 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 
 ## 2. Branch / PR / Head
 
-Live `git fetch origin main` vor diesem CR-6/CR-7-Stamp: `origin/main` unverändert `60e12dd5`.
+Live `git fetch origin main` vor diesem Handoff-Stamp: `origin/main` unverändert `60e12dd5`. Self-Embedding des finalen Tip-SHA unterbleibt.
 
 | Fakt | Wert |
 | --- | --- |
 | Baseline / `origin/main` | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
-| Ahead / Behind vor CR-6/CR-7 | **8 / 0** auf `1a4fca0058dd7978396789bd680e83b923a6d659` |
+| Reviewed NOT PASS (CR-1–CR-5) | `1a4fca0058dd7978396789bd680e83b923a6d659` — **8 / 0** |
+| Letzter inhaltlicher Content-Fix (CR-6) | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
+| Ahead / Behind an diesem Content-Fix | **9 / 0** vs `origin/main@60e12dd5` |
 | Parallel TL-Commit auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored; nicht editiert |
-| Reviewed NOT PASS (erster Content-Gate) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
-| Reviewed NOT PASS (CR-1–CR-5 head) | `1a4fca0058dd7978396789bd680e83b923a6d659` |
 | Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
-| Stamp CR-1–CR-4 | `df2925e580b19d86dd17733295268933e1bb2e0e` |
 | CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
-| Ahead / Behind | **11 / 0** vs `origin/main@60e12dd5` |
-| CR-6/CR-7 content | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
-| SHA stamp | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` |
-| Exact Head | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` |
+| Finaler Branch-Head nach diesem Stamp | live in der PR-Conversation, nicht im Tree self-embedded |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
 
@@ -64,7 +60,7 @@ Live `git fetch origin main` vor diesem CR-6/CR-7-Stamp: `origin/main` unveränd
 | CR-4 | E-IATA-3 Timatic Widget als Planungs-Oberfläche derselben DB; AutoCheck-REST nicht überzeichnet | kein Timatic gewählt |
 | CR-5 | E-SHERPA-7; öffentlich max. 3 Transit-Nodes vs Jetnity max. 12 `transitCountryCodes`; Gap `G-MAP-TRANSIT-CAP`; kein silent drop; Route Truth nicht verkleinert | kein Adapter, kein Schema-Cap-Change |
 | CR-6 | Route-`maxDuration = 10` ohne `runtime = 'edge'`; Edge-Claim aus allen sechs Deliverables entfernt | kein Runtime-Change |
-| CR-7 | Handoff/Status Exact Head + Ahead/Behind auf den gepushten Tip gestempelt | kein Ready/Merge |
+| CR-7 | Finite Handoff-Form: letzter Content-Fix `02191a9b` + Merge-Base/`9 / 0`; finaler Tip nur live in der PR-Conversation. Kein Self-Embedding-Loop, kein `der Stamp-Commit…`-Placeholder | kein Ready/Merge |
 
 ## 4. Nicht umgesetzt / bewusst nicht angefasst
 
