@@ -30,7 +30,9 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 | Ahead / Behind vor Review-Fix | **5 / 0** auf `9caa1a0f` |
 | Parallel TL-Commit auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored; nicht editiert |
 | Vorheriger Exact Head (NOT PASS) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
-| Exact Head | Handoff-Bind-Commit; live am PR #289 prüfen |
+| Review-Fix-Paket | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
+| Ahead / Behind nach Review-Fix-Paket | **6 / 0** vs `origin/main@60e12dd5` |
+| Exact Head | der nachfolgende Stamp-Commit; live am PR #289 prüfen |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
 

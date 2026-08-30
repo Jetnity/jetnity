@@ -22,9 +22,11 @@ Erneut geprüft unmittelbar vor diesem Stamp (`git fetch origin main`).
 | Merge-Base | `60e12dd5cf0916708e0bc87219b233861b387e7d` |
 | Behind `origin/main` | **0** |
 | Ahead / Behind vor Review-Fix | **5 / 0** auf `9caa1a0f` |
+| Ahead / Behind nach Review-Fix-Paket | **6 / 0** |
 | Vorheriger Exact Head (Content **NOT PASS**) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
+| Review-Fix-Paket | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
 | TL Continuity auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored, nicht editiert |
-| Exact Head | der Commit, der diesen Absatz bindet; nach Push live am PR #289 prüfen |
+| Exact Head | der Stamp-Commit, der diesen Absatz bindet; nach Push live am PR #289 prüfen |
 | Branch | `audit/requirements-provider-groundwork-g0-2026-08-30` |
 | Session-Rename | nicht behauptet; keine programmierbare Rename-Fähigkeit |
 
