@@ -1,7 +1,7 @@
 # Requirements Provider Contract Gap Map – 2026-08-30
 
 Stand: 30. August 2026  
-Status: **GAP MAP / PROPOSAL ONLY / NO SLICE STARTED / REVIEW-FIX CR-1–CR-2**  
+Status: **GAP MAP / PROPOSAL ONLY / NO SLICE STARTED / REVIEW-FIX CR-1–CR-5**  
 Cursor-Agent: **`Jetnity requirements provider groundwork 1`**  
 Companion: `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
 
@@ -45,6 +45,7 @@ Es gibt **kein P0** in diesem Scope.
 | G-MAP-ISO | ISO-2 vs ISO-3 | **P1 bei Sherpa-artigem Adapter** | Jetnity ISO-2 | stilles Land-Mismatch | explizites Mapping; unbekannte Codes fail-closed |
 | G-MAP-ORIGIN-NAT | Vendor empfiehlt Nationalität aus Origin, wenn Pass unbekannt | **P1** / **PROVIDER-ACTIVATION-GATE** | Jetnity: keine Default-Citizenship; keine Ableitung aus Origin oder Residence; fehlen → `unknown` / `insufficient_context`. Sherpa-Tutorial E-SHERPA-4 empfiehlt Origin-Nationalität | falsche Visa-/Entry-Hard-Truth | Jeder spätere Sherpa-Adapter muss diese Empfehlung **ignorieren/ablehnen** und darf Nationalität niemals aus Origin synthetisieren. Mapping-Spec + Activation-Gate müssen das festhalten |
 | G-MAP-TRANSIT | Vendor-Transit ≠ Foundation-D-Transit | **PROVIDER-ACTIVATION-GATE** | Route Truth nur Flight-Itinerary | falsche Transit-Visa-Aussage | Vendor-Transit nur gegen belegte Route Facts; Rest `unknown` |
+| G-MAP-TRANSIT-CAP | Sherpa öffentlich max. **3** Transit-Nodes vs Jetnity-Request max. **12** `transitCountryCodes` | **P1** / **PROVIDER-ACTIVATION-GATE** | `lib/readiness/schema.ts` `transitCountryCodes.max(12)`; E-SHERPA-7 „Trips v3 supports up to 3 transit nodes“. TravelNode TRANSIT existiert, deckt den Jetnity-Request **nicht** 1:1 | stilles Weglassen von Transitländern → unvollständige Transit-Hard-Truth | Späterer Adapter: **kein** silent drop. Entweder belegte, fail-closed Split/Aggregation deren Vollständigkeit nachweisbar ist, oder `unknown` / `insufficient_context` für nicht unterstützte Itinerary-Shapes. **Kein** Grund, Jetnitys Route Truth zu verkleinern. **Nicht** in diesem Audit implementiert |
 | G-ANCILLARY | eVisa/PRODUCT/landing URL | **PROVIDER-ACTIVATION-GATE** | Commercial ≠ Official | Kauf-Link als „Visa nicht nötig/nötig“ | PRODUCT niemals in `OfficialEvaluation.result` |
 | G-PII | Vendor verlangt Nummer/MRZ/Scan/DOB | **PO-GATE** | Kernmodell ohne diese Felder | Privacy/Legal | nicht implementieren; Produkt ablehnen oder extra Gate |
 | G-SECRET | API-Key / RSA / App-ID | **PO-GATE** | keine Secrets | Leak / Kosten | server-only Core; kein Client-Key |
@@ -65,6 +66,7 @@ Es gibt **kein P0** in diesem Scope.
 | S1 Ops-Hülle fehlt | an Readiness-Request verdrahtet |
 | S5-B Commercial Persistenz fehlt | integriert; Writer geschlossen — andere Wahrheit |
 | Account Registry fehlt vollständig | Tabellen + opt-in Snapshot-Kopie existieren; Evaluate liest sie bewusst nicht |
+| Jetnity-Request erlaubt 12 Transitländer | Current Contract, nicht ein Defect. CR-5 verkleinert Route Truth **nicht** |
 
 ---
 
@@ -104,7 +106,7 @@ Es gibt **kein P0** in diesem Scope.
 
 | Alternative | Warum nicht zuerst |
 | --- | --- |
-| Timatic-/Sherpa-Adapter | Vertrag, License, PII, Mapping `unknown`; G-MAP-ORIGIN-NAT und G-S4-TTL offen; Activation-Gates offen |
+| Timatic-/Sherpa-Adapter | Vertrag, License, PII, Mapping `unknown`; G-MAP-ORIGIN-NAT, G-MAP-TRANSIT-CAP und G-S4-TTL offen; Activation-Gates offen |
 | Docs-only Vendor-Auswahl-Memo | nützlich **nach** TL-PASS dieses Audits, aber schliesst kein Timeout-Loch |
 | Workspace serverseitig evaluieren | ohne Provider nur `unknown`; aufgebläht |
 | S6 persistenter Cost Guard | DB/PO-Gate; erst vor paid calls |

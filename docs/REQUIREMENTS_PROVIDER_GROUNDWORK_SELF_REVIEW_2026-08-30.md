@@ -87,12 +87,19 @@ Gegenargument: Eine Planungs-Oberfläche + „dieselbe DB“ könnte Timatic als
 
 Antwort: Widget beweist eine UI und eine gemeinsame DB, nicht Jetnitys Port. Sherpa bleibt der klarste **öffentliche REST-Shape**-Kandidat. Beide bleiben ungewählt.
 
+### 2.12 CR-5: Ist 3 vs 12 ein überzeichnetes Gap?
+
+Gegenargument: Die meisten Reisen haben 0–2 Stops. Drei Transit-Nodes könnten praktisch reichen. Ein Adapter könnte die ersten drei senden.
+
+Antwort: Jetnitys öffentlicher Vertrag akzeptiert 12 Länder, und die Engine materialisiert **jedes** angefragte Transitland. Die vierten und weiteren Länder still wegzulassen wäre unvollständige Transit-Hard-Truth, nicht eine Optimierung. Deshalb `G-MAP-TRANSIT-CAP` als Pflicht: fail-closed Split/Aggregation **oder** `unknown` / `insufficient_context` für nicht unterstützte Shapes. Jetnitys Route-Cap bleibt 12. Nicht implementiert.
+
 ## 3. Unsicherheiten (`unknown` / `insufficient evidence`)
 
 | Thema | Warum unsicher |
 | --- | --- |
 | Ob IATA einen dokumentnummernfreien maschinenlesbaren Planungs-Evaluate verkauft | Widget + AutoCheck-Marketing; kein OpenAPI |
 | Ob Sherpa hinter Auth option-scharfe Document-Felder hat | nicht im öffentlichen Sample; kein Call |
+| Ob ein Sherpa-Vertrag >3 Transit-Nodes erlaubt | öffentlich nur „up to 3 transit nodes“ (E-SHERPA-7) |
 | Wie Testing-1000/h, FAQ-100-rps und Production-by-plan zusammenhängen | öffentliche Schichten, kein Vertrag |
 | Aktuelle TimaticWeb-/API-Preise | nur Third-Party-Blog |
 | EU/CH-DPA aller Kandidaten | nicht öffentlich als Vertrag |
@@ -114,6 +121,8 @@ Eingehalten:
 - keine Legal-Copy
 - keine Vendor-Kommunikation
 - keine Implementierung der TTL-Policy
+- keine Verkleinerung von `transitCountryCodes.max(12)` / Route Truth
+- keine Transit-Split-Implementierung
 
 `next-env.d.ts` war im ersten Lauf unstaged dirty und restored. In diesem Review-Fix clean.
 
@@ -128,8 +137,9 @@ Geprüft und relevant. CR-2 verschärft: fehlende Nationalität bleibt `unknown`
 3. Ist E-SHERPA-4 fair als Activation-Gate (Tutorial vs API-Zwang)?
 4. Sind Quota-Zahlen klar als Non-Contract markiert?
 5. Überzeichnet E-IATA-3 Timatic als Planungs-REST?
-6. Habe ich Sherpa oder Timatic trotz Disclaimern als implizite Wahl lesbar gemacht?
+6. Ist G-MAP-TRANSIT-CAP korrekt gegen Schema `.max(12)` und Tutorial „up to 3 transit nodes“, ohne Route Truth zu kürzen?
+7. Habe ich Sherpa oder Timatic trotz Disclaimern als implizite Wahl lesbar gemacht?
 
 ## 7. Verdict des Agenten
 
-Der Review-Fix adressiert CR-1–CR-4 dokumentarisch. Er ist **nicht** PASS, nicht Ready, nicht Merge, nicht Provider-Auswahl, nicht S4-R1-Start.
+Der Review-Fix adressiert CR-1–CR-5 dokumentarisch. Er ist **nicht** PASS, nicht Ready, nicht Merge, nicht Provider-Auswahl, nicht S4-R1-Start.

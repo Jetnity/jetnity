@@ -8,7 +8,7 @@ Issue: #288
 Draft-PR: https://github.com/Jetnity/jetnity/pull/289  
 Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`  
 Reviewed-then-fixed Head: `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`  
-Review: Technical-Lead comment **#5471442167** (CR-1–CR-4)
+Review: Technical-Lead comment **#5471442167** (CR-1–CR-4) plus CR-5 (Transit-Kapazität, gleicher Fix-Zyklus)
 
 > Kein Ready. Kein Merge. Kein Folgeslice. Kein Provider gewählt. Content-Gate auf `9caa1a0f` war **NOT PASS**.
 
@@ -32,7 +32,8 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 | Vorheriger Exact Head (NOT PASS) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
 | Review-Fix-Paket | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
 | Ahead / Behind nach Review-Fix-Paket | **6 / 0** vs `origin/main@60e12dd5` |
-| Exact Head | der nachfolgende Stamp-Commit; live am PR #289 prüfen |
+| Vorheriger Review-Fix-Stamp (CR-1–CR-4) | `df2925e580b19d86dd17733295268933e1bb2e0e` |
+| Exact Head | der Commit, der CR-5 in denselben Fix-Zyklus bindet; live am PR #289 prüfen |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
 
@@ -44,7 +45,7 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 - Live-Precheck GitHub/`origin/main`/PRs/Issues
 - Sechs task-spezifische Deliverables
 - Öffentliche Provider-Seiten mit URL + Datum + Evidence-Klasse
-- Review-Fix CR-1–CR-4 **nur** in den sechs Deliverables
+- Review-Fix CR-1–CR-5 **nur** in den sechs Deliverables
 - Keine Runtime-/Config-/Migration-Änderung
 
 ### 3.1 Review-Fix #5471442167
@@ -55,6 +56,7 @@ Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, R
 | CR-2 | E-SHERPA-4; Origin-Nationality-Fallback als **verbotener** Sherpa-Mismatch; Gap `G-MAP-ORIGIN-NAT` | kein Adapter |
 | CR-3 | E-SHERPA-5/6; öffentliche Quota-/Cache-Schichten vs kontrahiertes `unknown` | keine Quota als Vertrag gelesen |
 | CR-4 | E-IATA-3 Timatic Widget als Planungs-Oberfläche derselben DB; AutoCheck-REST nicht überzeichnet | kein Timatic gewählt |
+| CR-5 | E-SHERPA-7; öffentlich max. 3 Transit-Nodes vs Jetnity max. 12 `transitCountryCodes`; Gap `G-MAP-TRANSIT-CAP`; kein silent drop; Route Truth nicht verkleinert | kein Adapter, kein Schema-Cap-Change |
 
 ## 4. Nicht umgesetzt / bewusst nicht angefasst
 
@@ -96,6 +98,7 @@ Siehe Self-Review. Neu material:
 
 - Official-Truth kann nach einem späteren Adapter ohne TTL dauerhaft `current` bleiben (G-S4-TTL).
 - Sherpa-Tutorial widerspricht der No-Default-Citizenship-Invariante (G-MAP-ORIGIN-NAT).
+- Sherpa öffentlich 3 Transit-Nodes vs Jetnity 12 Transitländer; silent drop wäre Fake-Truth (G-MAP-TRANSIT-CAP).
 - Öffentliche Sherpa-Quota-Schichten sind Evidence, nicht Jetnitys Vertrag.
 - Timatic Widget ist Planungs-Oberfläche, nicht AutoCheck-REST.
 

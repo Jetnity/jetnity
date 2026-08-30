@@ -1,7 +1,7 @@
 # Requirements Provider Selection Matrix – 2026-08-30
 
 Stand: 30. August 2026  
-Status: **SELECTION GROUNDWORK ONLY / NO VENDOR CHOSEN / NO CONTRACT / NO ACTIVATION / REVIEW-FIX CR-2–CR-4**  
+Status: **SELECTION GROUNDWORK ONLY / NO VENDOR CHOSEN / NO CONTRACT / NO ACTIVATION / REVIEW-FIX CR-2–CR-5**  
 Cursor-Agent: **`Jetnity requirements provider groundwork 1`**  
 Abrufdatum aller externen URLs: **30. August 2026**  
 Companion: `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
@@ -37,6 +37,7 @@ Jetnitys Soll-Vertrag (kurz): server-only Adapter; Traveller × Credential-Optio
 | E-SHERPA-2 | https://www.joinsherpa.com/solutions | 2026-08-30 | `public_marketing` + `public_docs` | API + Widget + White-Label; Sandbox und Production behauptet; TLS; AES-256 at rest; GCP; 99%+ Uptime behauptet; PII „only stored as required“; eVisa-Commission; „Sherpa AI“ in Journey-Copy | DPA EU/CH, genaue Retention, Kosten, ob AI Hard Truth erzeugt |
 | E-SHERPA-3 | https://www.joinsherpa.com/products/travel-requirements | 2026-08-30 | `public_marketing` | 200+ countries behauptet; Passport validity, eVisa/ETA, vaccination; Nationalität + Destination + Layovers; „55 changes per hour“ dann manuelle Kuratierung | Authority-Mapping, Transit-vs-Virtual-Interlining-Lizenz |
 | E-SHERPA-4 | https://docs.joinsherpa.io/requirements-api/use-cases/trips-v3-show-visas.html | 2026-08-30 | `public_api_docs` | Tutorial: wenn der Reisepass unbekannt ist, empfiehlt Sherpa, die Nationalität des **Origin** anzunehmen („assuming the nationality of the origin“; Beispiel: Canada → Canadian) | Kein Jetnity-Vertrag. Diese Empfehlung ist ein **expliziter Integrations-Mismatch** und ein **verbotener** Adapter-Fallback |
+| E-SHERPA-7 | https://docs.joinsherpa.io/requirements-api/use-cases/trips-v3-show-visas.html | 2026-08-30 | `public_api_docs` | Dieselbe Tutorial-Seite: „Trips v3 supports up to **3 transit nodes**“; Beispielpayload mit zwei Transit-Nodes (Seattle & Seoul) | Kontrahierte höhere Transit-Kapazität; ob die API still truncates; Split/Aggregation über mehrere Calls; 1:1-Abdeckung von Jetnitys bis zu **12** `transitCountryCodes` (`lib/readiness/schema.ts`) |
 | E-SHERPA-5 | https://docs.joinsherpa.io/requirements-api/index.html | 2026-08-30 | `public_api_docs` | Öffentliche technische Quota-/Cache-Guidance: Testing **1000 requests/hour**; Production **varies by plan**; `/trips` `Cache-Control: public, max-age=3600`; Guidance: nicht länger als 1 Stunde cachen / Daten stündlich aktualisiert. Dieselbe Seite nennt den API-Key einen „public identifier designed for client-side use“ | Jetnitys **kontrahierte** Production-Quota, Kosten, License, Redisplay-Rechte. Client-Key-Modell ist **nicht** Jetnitys Server-only-Vertrag |
 | E-SHERPA-6 | https://docs.joinsherpa.io/requirements-api/requirements-api-faq.html | 2026-08-30 | `public_api_docs` | Öffentliche technische Limits: generischer Endpoint-Limit **100 requests/second**; Response-Size Hard Limit **10 MB**; stündlicher QC-Push; Cache >1 h nicht empfohlen. Die öffentlichen Quota-Schichten (1000/h Testing vs 100 rps generic vs Production-by-plan) sind **nicht** zu einer Zahl kollabiert | Jetnitys kontrahierte Production-Quota/Kosten; ob 100 rps und 1000/h gleichzeitig gelten oder planabhängig überschrieben werden |
 | E-HENLEY-1 | https://www.henleyglobal.com/passport-index/methodology | 2026-08-30 | `public_docs` | Index basiert auf IATA-Daten + Research; 199 Pässe / 227 Destinationen; monatlich; **nicht binding**; Embassy-Verifikation verlangt; viele Annahmen (normaler Pass, Adult, short stay, kein Transit-Fokus) | Nutzungs-/Redisplay-Lizenz für Produkt-Truth |
@@ -83,7 +84,7 @@ Travel-platform-förmig. **Nicht gewählt.**
 | Dimension | Wert | Evidence | Kommentar |
 | --- | --- | --- | --- |
 | Coverage | `partial` | E-SHERPA-3 | 200+ countries / 180+ in White-Label-Copy; nicht unabhängig gezählt |
-| Visa / Passport / Transit | `partial` | E-SHERPA-1, E-SHERPA-3 | Visa, Passport, Vaccination, Restrictions; Transit-Nodes existieren; Sherpa-Transit = Single-Ticket-Disembark |
+| Visa / Passport / Transit | `partial` / **Kapazitäts-`mismatch`** | E-SHERPA-1, E-SHERPA-3, E-SHERPA-7 | Visa, Passport, Vaccination, Restrictions; Transit-Nodes existieren; Sherpa-Transit = Single-Ticket-Disembark. **CR-5:** öffentlich **max. 3 Transit-Nodes** vs Jetnity-Request **max. 12** `transitCountryCodes`. TravelNode TRANSIT existiert — das ist **kein** 1:1-Contract. Ein späterer Adapter darf Transitländer **nicht still weglassen** |
 | Multi-Citizenship / Document-type / Issuer / Residence | `mismatch` / `partial` | E-SHERPA-1, E-SHERPA-4 | `passports[]` = ISO-**3** Nationalität, nicht Document-Typ+Issuer+Expiry+Relation. Mehrere Werte = mehrere Nationalitäten, nicht Jetnity-Credential-Optionen. Residence nicht im öffentlichen Trip-Sample. **E-SHERPA-4:** wenn der Pass unbekannt ist, empfiehlt Sherpa die Nationalität des Origin — **expliziter Integrations-Mismatch**; ein späterer Adapter muss diese Empfehlung **ignorieren/ablehnen** und darf Nationalität niemals aus Origin synthetisieren |
 | Machine-readable | `fit` | E-SHERPA-1 | JSON:API; PROCEDURE/RESTRICTION/PRODUCT |
 | Authority / Source | `partial` | E-SHERPA-1 | `sources[{type:GOVERNMENT,title,url}]` mappt grob auf Authority+SourceUrl; Rule Reference `unknown` |
@@ -96,7 +97,7 @@ Travel-platform-förmig. **Nicht gewählt.**
 | Commercial | `unknown` + Ancillary-Risiko | E-SHERPA-2 | eVisa-Kauf/`PRODUCT` darf **nicht** Official Truth werden |
 | Server-only Core | `fit` | E-SHERPA-1 | REST + API-Key-Header; Adapter-Core wäre transportfähig |
 | Ohne LLM als Authority | `partial` | E-SHERPA-2 | Journey-Copy nennt „Sherpa AI“; das darf in Jetnity keine Hard-Truth-Authority sein |
-| Eignung jetzt | `blocked` | — | Kein Vertrag; Mapping-Lücken; **verbotener** Origin-Nationality-Fallback (E-SHERPA-4); Commercial-Ancillary-Trennung nötig |
+| Eignung jetzt | `blocked` | — | Kein Vertrag; Mapping-Lücken; **verbotener** Origin-Nationality-Fallback (E-SHERPA-4); Transit-Kapazität 3 vs 12 (`G-MAP-TRANSIT-CAP`); Commercial-Ancillary-Trennung nötig |
 
 ### 2.3 TravelDoc (ICTS)
 
@@ -165,7 +166,7 @@ Was ein späterer Adapter **mindestens** liefern oder ehrlich als `unknown` lass
 | `authority` + `ruleReference` + `sourceUrl` | `unknown` | `sources[]` partial | Disclaimer statt Authority |
 | `checkedAt` / `validFrom` / `validUntil` | `unknown` | Vendor-`lastUpdatedAt` / procedure dates **≠** Jetnity-`checkedAt`; nicht still mappen | monthly |
 | Nationalität bei fehlendem Pass | `unknown` | **verboten:** Origin-Nationalität annehmen (E-SHERPA-4); fehlen → `unknown` / `insufficient_context` | Index nimmt oft einen Pass an |
-| Transit je Land | `unknown` | TravelNode TRANSIT, aber andere Transit-Definition | mismatch |
+| Transit je Land | `unknown` / Kapazitäts-`mismatch` | TravelNode TRANSIT existiert, aber andere Transit-Definition **und** öffentlich max. **3** Nodes vs Jetnity **12** Länder (`G-MAP-TRANSIT-CAP`). Nicht still droppen | mismatch |
 | `PRODUCT` / booking_url / eVisa-Kauf | n/a | **nicht** in Official Evaluation übernehmen | n/a |
 
 Kein Mapping in dieser Tabelle ist implementiert.
@@ -178,7 +179,7 @@ Kein Mapping in dieser Tabelle ist implementiert.
 
 1. Keinen Vendor als gewählt behandeln.
 2. Aviation-grade (Timatic-Familie) bleibt der historisch bevorzugte **Regulatory-Kandidat**. Öffentlich sichtbar ist nicht nur DCS/Scan: das Timatic Widget (E-IATA-3) ist eine Planungs-Oberfläche derselben Datenbank. Das **beweist nicht** AutoCheck-REST, Multi-Citizenship, Option-Mapping, License oder Minimal-PII. Zugang, Lizenz, Redisplay und Minimal-PII bleiben PO-Gates.
-3. Sherpa ist der öffentlich am klarsten dokumentierte **Travel-Planner-API-Kandidat**, mit echten Mapping-Lücken (ISO-3-Nationalität statt Credential-Option), **verbotenem Origin-Nationality-Fallback** (E-SHERPA-4) und Ancillary-Commercial-Risiko. Öffentliche Quota-/Cache-Zahlen sind technische Evidence, kein Vertrag.
+3. Sherpa ist der öffentlich am klarsten dokumentierte **Travel-Planner-API-Kandidat**, mit echten Mapping-Lücken (ISO-3-Nationalität statt Credential-Option), **verbotenem Origin-Nationality-Fallback** (E-SHERPA-4), **Transit-Kapazität 3 Nodes vs Jetnity 12 Länder** (E-SHERPA-7) und Ancillary-Commercial-Risiko. Öffentliche Quota-/Cache-Zahlen sind technische Evidence, kein Vertrag. Kein stilles Weglassen von Transitländern.
 4. Index-/Consumer-/Fulfilment-APIs sind für Official Hard Truth **nicht** geeignet.
 5. Nächster sinnvoller Schritt ist **kein** Adapter und **kein** Vendor-Signup, sondern der in der Gap-Map benannte kleinste Jetnity-seitige Slice plus spätere PO-Auswahl.
 
@@ -191,5 +192,6 @@ Kein Mapping in dieser Tabelle ist implementiert.
 - EU/CH-DPA, Subprozessoren, Speicherregion-Vertrag
 - ob Timatic einen dokumentnummernfreien maschinenlesbaren Planungs-`evaluate()` anbietet (Widget beweist die Oberfläche, nicht den REST-Vertrag)
 - ob Sherpa option-scharfe Multi-Passport-Semantik hinter nicht-öffentlichen Feldern hat
+- ob ein späterer Sherpa-Vertrag mehr als 3 Transit-Nodes erlaubt; öffentlich dokumentiert sind **3** (E-SHERPA-7)
 - SLA-Zahlen (99%, 99.9%) — Marketing, nicht Vertrag
 - die numerische Jetnity-`checkedAt`-TTL vor Vertrag

@@ -10,7 +10,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/289
 Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`  
 Task: `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_GATE0_TASK_2026-08-30.md`  
 Task-Baseline: `main@60e12dd5cf0916708e0bc87219b233861b387e7d`  
-Review-Fix: Technical-Lead comment **#5471442167** (CR-1–CR-4) gegen Head `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`
+Review-Fix: Technical-Lead comments **#5471442167** (CR-1–CR-4) und CR-5 (Transit-Kapazität) gegen Head `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`; CR-1–CR-4 bereits auf `df2925e5` / `71d531dd`
 
 > Agent-Self-Review ist kein Technical-Lead PASS. Kein Ready. Kein Merge. Kein Folgeslice.  
 > Kein Provider ist gewählt. Marketing-/Docs-Aussagen sind weder Vertrag noch Commercial-/License-Truth.  
@@ -96,7 +96,7 @@ RequirementsProvider = {
 | --- | --- | --- |
 | `originCountryCode` | ISO-2 oder `null` | nur aus Foundation-D-Itinerary, nie aus Ortsnamen |
 | `destinationCountryCodes` | ISO-2[] | Stages + Route-Destinations |
-| `transitCountryCodes` | ISO-2[] | nur belegte Flight-Itinerary-Transits |
+| `transitCountryCodes` | ISO-2[] | nur belegte Flight-Itinerary-Transits. Öffentliches Request-Schema (`lib/readiness/schema.ts`) erlaubt **max. 12**. Engine bewertet **jedes** angefragte Transitland separat. Das ist Jetnity-Route-Truth, kein Vendor-Cap |
 | `startDate` / `endDate` | `YYYY-MM-DD` oder `null` | Trip-Daten |
 | `travellers[]` | siehe unten | 1:n Citizenships, 1:n Documents, 1:n Credential-Optionen |
 
@@ -328,7 +328,7 @@ Keine Auswahl ist beschlossen. Historische Bevorzugung „IATA Timatic / Timatic
 Öffentlich belegte Familien:
 
 1. **Aviation-grade Compliance (IATA Timatic / AutoCheck / Widget, TravelDoc)** — hohe behauptete Regulatory-Abdeckung. Öffentlich sichtbar sind **mehrere Oberflächen derselben Datenbank**: DCS/Scan (AutoCheck, Sabre DCCI), Consumer-Widget (one-way / round-trip / multi-city; Nationalität + Residence + Itinerary als Query-Beispiele) und Timatic Web. Das Widget ist eine **Planungs-Oberfläche**, kein belegter AutoCheck-REST-Vertrag, kein Multi-Citizenship-/Option-Mapping, keine License/Preis/Minimal-PII-Aussage für Jetnity. Commercial/License/API-Shape für Jetnitys `evaluate()`-Port bleibt `unknown`.
-2. **Travel-platform Requirements APIs (Sherpa)** — öffentlich dokumentiertes REST-/JSON:API-Trips-Modell, Sandbox-Hostname, Nationalität+Route+Datum; Credential-Option/Issuer/Residence nicht 1:1; öffentliches Tutorial empfiehlt Nationalität aus Origin, wenn der Pass unbekannt ist — **verbotener** Jetnity-Fallback; Ancillary-eVisa ist Commercial, nicht Official Truth. Öffentliche technische Quota-/Cache-Guidance existiert (Testing 1000/h; FAQ 100 rps / 10 MB; `/trips` `max-age=3600`); **Jetnitys** kontrahierte Production-Quota/Kosten/Lizenz/Redisplay bleiben `unknown` / PO-GATE.
+2. **Travel-platform Requirements APIs (Sherpa)** — öffentlich dokumentiertes REST-/JSON:API-Trips-Modell, Sandbox-Hostname, Nationalität+Route+Datum; Credential-Option/Issuer/Residence nicht 1:1; öffentliches Tutorial empfiehlt Nationalität aus Origin, wenn der Pass unbekannt ist — **verbotener** Jetnity-Fallback; öffentlich **max. 3 Transit-Nodes** vs Jetnity **12** `transitCountryCodes` — kein 1:1, **kein** silent drop (`G-MAP-TRANSIT-CAP`); Ancillary-eVisa ist Commercial, nicht Official Truth. Öffentliche technische Quota-/Cache-Guidance existiert (Testing 1000/h; FAQ 100 rps / 10 MB; `/trips` `max-age=3600`); **Jetnitys** kontrahierte Production-Quota/Kosten/Lizenz/Redisplay bleiben `unknown` / PO-GATE.
 3. **Passport-Index / Ranking-Matrizen (Henley u. a.)** — bewusst Ranking/Mobility, nicht Official Truth; Disclaimer verlangt Verifikation bei Embassy; inoffizielle Endpunkte sind **kein** erlaubter Jetnity-Pfad.
 4. **Consumer-Visa-Matrizen / Fulfilment (Visafy, Visamundi, CIBT/Entriva, …)** — strukturierte JSON-Lookups oder Fulfilment-Links; Authority/Freshness/Transit/Multi-Credential öffentlich schwach oder `unknown`; nicht als Hard-Truth-Quelle geeignet ohne Vertrag.
 
@@ -348,6 +348,7 @@ Kein künstliches Hochstufen. Es gibt **keinen aktuellen P0-Incident**: Factory 
 | RPG0-ACT-03 | **PROVIDER-ACTIVATION-GATE** | Sehr alte Provider-Evidence als `current`, weil `officialFrische()` **kein** `checkedAt`-TTL hat (unveränderter Fingerprint + `validUntil == null`) |
 | RPG0-ACT-04 | **PROVIDER-ACTIVATION-GATE** | Authority/Source fehlend, trotzdem Hard Truth — heute durch Trust Gate verhindert |
 | RPG0-ACT-09 | **PROVIDER-ACTIVATION-GATE** | Vendor empfiehlt Nationalität aus Origin/Residence; Jetnity muss das ignorieren/ablehnen (`G-MAP-ORIGIN-NAT`) |
+| RPG0-ACT-10 | **PROVIDER-ACTIVATION-GATE** | Vendor-Transit-Kapazität < Jetnity-Request (Sherpa öffentlich 3 Nodes vs 12 Länder); stilles Weglassen erzeugt unvollständige Transit-Truth (`G-MAP-TRANSIT-CAP`) |
 | RPG0-ACT-05 | **PO-GATE** | Sensitive-data overcollection (Nummer/MRZ/Scan/DOB/Health) |
 | RPG0-ACT-06 | **PO-GATE** | Secret-/Credential-Leak |
 | RPG0-ACT-07 | **PO-GATE / S6** | Uncontrolled paid calls; nur In-Memory-Guard |
@@ -379,7 +380,7 @@ Requirements sind **traveller-spezifisch**. Mehrere Citizenships, Documents, Iss
 - S4 ist nicht implementiert und nicht gestartet.
 - TW-8 / TW-9 bleiben geschlossen.
 - Commercial-Provenance-Writer bleibt geschlossen.
-- Dieser Review-Fix ist kein Technical-Lead-PASS. Head `9caa1a0f` blieb Content-Gate **NOT PASS**.
+- Dieser Review-Fix ist kein Technical-Lead-PASS. Head `9caa1a0f` blieb Content-Gate **NOT PASS**. CR-5 ist Mapping-/Activation-Gate, kein Auftrag, Route Truth zu kürzen.
 
 ---
 
