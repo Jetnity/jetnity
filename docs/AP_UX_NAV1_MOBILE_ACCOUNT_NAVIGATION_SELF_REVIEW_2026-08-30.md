@@ -31,6 +31,6 @@ Geprüft gegen den tatsächlichen Dateisatz nach `touch-pan-x`-Fix und Merge von
 
 ## 4. Urteil
 
-Der Review-Fix bleibt im autorisierten UX-Rahmen. Lokale Gates nach Reconcile sind grün.
+Der Review-Fix bleibt im autorisierten UX-Rahmen. Lokale Gates nach Reconcile sind grün. Exact-head GitHub Actions `33282430023` und Vercel Preview `8CaAk3ExeNPiEgbrjjbLo5YXGTNm` sind SUCCESS auf `23e3885f89d0f1f71cd99cf9aef454a78f41ca66`.
 
 **Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ist kein PASS.**

@@ -19,6 +19,7 @@ Die Branch ist auf `main @ 20c203f5bee950b43db611f220c7cc5b88699dcb` reconciled.
 | Behind `origin/main` | **0** |
 | Cursor-Agent | `Account plattform audit vorbereitung 20` |
 | Cloud-Run | https://cursor.com/agents/bc-c734aa63-1027-4fe3-b458-d0c24661b281 |
+| Gated review-fix head | `23e3885f89d0f1f71cd99cf9aef454a78f41ca66` |
 | Exact Head | live an PR #229 prüfen |
 
 ## Scope proof
@@ -35,7 +36,13 @@ Lokal nach Review-Fix + main-Reconcile:
 - Typecheck, Lint (0 errors), Hygiene, Production Build
 - Chromium: `touch-action: auto`, einzeilig, letzter Tab erreichbar, Gast-`/reisen` ohne Konto-Nav
 
-Exact-head CI/Vercel: nach finalem Push dieses Review-Fix-Stamps am live Head prüfen. `ce535668` ist nicht mehr der reviewbare Head.
+Exact-head remote gates on `23e3885f89d0f1f71cd99cf9aef454a78f41ca66`:
+
+- GitHub Actions [`33282430023`](https://github.com/Jetnity/jetnity/actions/runs/33282430023) **SUCCESS**
+- Vercel Preview **Ready / SUCCESS** (`8CaAk3ExeNPiEgbrjjbLo5YXGTNm`, deployment `6161481927`)
+- Preview: https://jetnity-app-git-feat-account-nav-rail-c-e28a65-jetnity-e1b93c82.vercel.app
+
+`ce535668` ist nicht mehr der reviewbare Head.
 
 ## Review protocol
 

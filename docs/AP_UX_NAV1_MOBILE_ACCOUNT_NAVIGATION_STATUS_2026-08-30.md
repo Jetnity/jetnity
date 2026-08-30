@@ -1,7 +1,7 @@
 # Jetnity – AP-UX-NAV1 Mobile Account Navigation Rail Status
 
 Stand: 30. August 2026  
-Status: **REVIEW-FIX ON BRANCH / LOCAL GATES GREEN / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **REVIEW-FIX ON BRANCH / LOCAL GATES GREEN / EXACT-HEAD CI+VERCEL GREEN / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Issue: #228  
 Draft-PR: #229  
 Cursor-Agent: `Account plattform audit vorbereitung 20`
@@ -67,7 +67,15 @@ Nicht verifiziert: authentifiziertes `/reisen` im Browser; echtes iPhone-Wischen
 
 ## Remote gates
 
-Exact-head GitHub Actions und Vercel Preview gelten nur für den finalen Push nach diesem Stamp. Vorgänger-Heads, inklusive `ce535668`, sind durch den Review-Fix und den `main`-Reconcile ungültig.
+Gated review-fix head: `23e3885f89d0f1f71cd99cf9aef454a78f41ca66`
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | [`33282430023`](https://github.com/Jetnity/jetnity/actions/runs/33282430023) **SUCCESS** on `23e3885f` |
+| Vercel Preview | **Ready / SUCCESS** (`8CaAk3ExeNPiEgbrjjbLo5YXGTNm`, deployment `6161481927`) |
+| Preview | https://jetnity-app-git-feat-account-nav-rail-c-e28a65-jetnity-e1b93c82.vercel.app |
+
+`ce535668` ist durch den Review-Fix und den `main`-Reconcile nicht mehr der reviewbare Head. Ein Evidence-Stamp ändert nur Docs; Runtime bleibt `23e3885f` plus dieser Stamp.
 
 ## STOP
 
