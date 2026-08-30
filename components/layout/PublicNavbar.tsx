@@ -26,10 +26,11 @@
 // Warum nach dem Abmelden erneut gelesen wird
 // ---------------------------------------------------------------------------
 //
-// `signOutAction()` löscht die Cookies auf dem Server und leitet weiter. Die
-// Leiste liegt im Layout und wird dabei nicht neu aufgebaut; `onAuthStateChange`
-// schweigt, weil der Browser-Client nicht selbst abgemeldet hat. Ohne
-// erneutes Lesen stünde nach dem Abmelden weiter „Abmelden“ da.
+// `signOutAction()` löscht die Cookies auf dem Server und leitet nur nach
+// bestätigtem Erfolg weiter. Die Leiste liegt im Layout und wird dabei nicht
+// neu aufgebaut; `onAuthStateChange` schweigt, weil der Browser-Client nicht
+// selbst abgemeldet hat. Ohne erneutes Lesen stünde nach dem Abmelden weiter
+// „Abmelden“ da. Ein unbestätigter Fehler bleibt sichtbar und retrybar.
 //
 // Gelesen wird deshalb nach jedem Wechsel des Pfads und nach jedem
 // abgeschlossenen Vorgang. Nicht angenommen: `getSession()` schaut jedes Mal in
@@ -43,6 +44,7 @@ import { useFormStatus } from 'react-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 
 import { signOutAction } from '@/app/auth/sign-out'
+import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   HAUPTNAVIGATION,
@@ -224,8 +226,8 @@ export default function PublicNavbar() {
  * Ein sitzungsabhängiger Eintrag: Link oder Vorgang.
  *
  * Der Vorgang ist ein Formular auf `signOutAction()`. Die Server Action löscht
- * die Sitzungscookies und leitet auf die Startseite – ein Abmelden im Browser
- * allein liesse die Cookies des Servers stehen.
+ * die Sitzungscookies und leitet nur nach bestätigtem Erfolg auf die Startseite
+ * – ein Abmelden im Browser allein liesse die Cookies des Servers stehen.
  */
 function Sitzungseintrag({
   eintrag,
@@ -258,14 +260,17 @@ function Sitzungseintrag({
   }
 
   return (
-    <form action={signOutAction} className={mobil ? 'contents' : undefined}>
-      <AbmeldenKnopf
-        label={eintrag.label}
-        mobil={mobil}
-        onFertig={onFertig}
-        onNachlesen={onNachlesen}
-      />
-    </form>
+    <GlobalesAbmeldenForm
+      action={signOutAction}
+      className={mobil ? undefined : 'flex flex-col items-end'}
+      fehlerClassName={
+        mobil
+          ? 'text-xs font-medium text-red-800'
+          : 'max-w-[14rem] text-right text-xs font-medium text-red-800'
+      }
+    >
+      <AbmeldenKnopf label={eintrag.label} mobil={mobil} onNachlesen={onNachlesen} />
+    </GlobalesAbmeldenForm>
   )
 }
 
@@ -281,12 +286,10 @@ function Sitzungseintrag({
 function AbmeldenKnopf({
   label,
   mobil,
-  onFertig,
   onNachlesen,
 }: {
   label: string
   mobil: boolean
-  onFertig?: () => void
   onNachlesen: () => void
 }) {
   const { pending } = useFormStatus()
@@ -306,7 +309,6 @@ function AbmeldenKnopf({
   return (
     <button
       type="submit"
-      onClick={onFertig}
       className={
         mobil
           ? 'flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800'
