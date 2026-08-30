@@ -104,6 +104,17 @@ export function globalesSignOutWeiterleitungsziel(
   return ergebnis.ok ? ergebnis.ziel : null
 }
 
+export type GlobalesAbmeldenMenueEreignis = 'nutzer_schliessen' | 'nutzer_umschalten' | 'abmelden_fehler'
+
+export function globalesAbmeldenMenueOffen(
+  offen: boolean,
+  ereignis: GlobalesAbmeldenMenueEreignis,
+): boolean {
+  if (ereignis === 'nutzer_schliessen') return false
+  if (ereignis === 'nutzer_umschalten') return !offen
+  return offen
+}
+
 export function globalesSignOutFehlerIstDicht(text: string, roh?: string | null): boolean {
   if (!securityFehlerIstDicht(text, roh)) return false
   if (/refresh_token|access_token|session_id|gotrue|supabase|bearer\s|authorization:/i.test(text)) {

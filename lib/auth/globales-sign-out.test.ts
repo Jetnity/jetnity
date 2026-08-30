@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import {
   GLOBALES_SIGN_OUT_ZIEL_ADMIN,
   GLOBALES_SIGN_OUT_ZIEL_PUBLIC,
+  globalesAbmeldenMenueOffen,
   globalesSignOutAusAntwort,
   globalesSignOutAusfuehren,
   globalesSignOutAusWurf,
@@ -132,6 +133,14 @@ describe('AP-5-R1 allgemeines Sign-Out', () => {
     const rate = globalesSignOutFehlerEinordnen({ message: 'Too many requests', status: 429 })
     assert.deepEqual(rate, globalesSignOutFehler('rate_limited'))
     assert.equal(globalesSignOutFehlerIstDicht(rate.text), true)
+  })
+
+  test('ein Abmelden-Fehler zwingt kein übergeordnetes Menü auf und bleibt schließbar', () => {
+    assert.equal(globalesAbmeldenMenueOffen(false, 'abmelden_fehler'), false)
+    assert.equal(globalesAbmeldenMenueOffen(true, 'abmelden_fehler'), true)
+    assert.equal(globalesAbmeldenMenueOffen(true, 'nutzer_schliessen'), false)
+    assert.equal(globalesAbmeldenMenueOffen(false, 'nutzer_umschalten'), true)
+    assert.equal(globalesAbmeldenMenueOffen(true, 'nutzer_umschalten'), false)
   })
 
   test('fehlende signOut-Funktion ist kein Erfolg', async () => {

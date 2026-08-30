@@ -16,7 +16,6 @@ type Props = {
   className?: string
   fehlerClassName?: string
   children: React.ReactNode
-  onErgebnis?: (ergebnis: GlobalesSignOutErgebnis) => void
 }
 
 const ANFANG: GlobalesSignOutErgebnis | null = null
@@ -25,21 +24,17 @@ const ANFANG: GlobalesSignOutErgebnis | null = null
  * Kleines Formular für das allgemeine/admin Abmelden.
  * Success navigiert die Server Action selbst. Ein Fehler bleibt hier
  * sichtbar, retrybar und ohne Rohtexte der Auth-Authority.
+ * Übergeordnete Menüs werden nicht aus dem Fehlerzustand gesteuert.
  */
 export default function GlobalesAbmeldenForm({
   action,
   className,
   fehlerClassName,
   children,
-  onErgebnis,
 }: Props) {
   const [zustand, formAction, pending] = useActionState(action, ANFANG)
   const fehlerId = React.useId()
   const fehler = zustand && !zustand.ok ? zustand.fehler : null
-
-  React.useEffect(() => {
-    if (zustand && onErgebnis) onErgebnis(zustand)
-  }, [zustand, onErgebnis])
 
   return (
     <form

@@ -52,11 +52,11 @@ describe('AP-5-R1 Vertrag, Caller-Inventar und Accessibility', () => {
     assert.equal(footer.includes('accountLogoutScopeAction'), false)
     assert.equal(/<form action=\{signOutAction\}/.test(footer), false)
 
-    assert.equal(topbar.includes('signOutAction'), true)
+    assert.equal(topbar.includes('signOutToAdminLoginAction'), true)
     assert.equal(topbar.includes('GlobalesAbmeldenForm'), true)
-    assert.equal(topbar.includes('signOutToAdminLoginAction'), false)
-    assert.equal(/<form action=\{signOutAction\}/.test(topbar), false)
-    assert.equal(topbar.includes('onClick={() => setUserOpen(false)}'), false)
+    assert.equal(topbar.includes('signOutAction'), false)
+    assert.equal(/<form action=\{signOutToAdminLoginAction\}/.test(topbar), false)
+    assert.equal(topbar.includes('onErgebnis'), false)
 
     assert.equal(unauthorized.includes('signOutAction'), true)
     assert.equal(unauthorized.includes('GlobalesAbmeldenForm'), true)
@@ -74,8 +74,12 @@ describe('AP-5-R1 Vertrag, Caller-Inventar und Accessibility', () => {
     assert.equal(formular.includes('useActionState'), true)
     assert.equal(formular.includes('data-abmelden-lage'), true)
     assert.equal(formular.includes('fehler.text'), true)
+    assert.equal(formular.includes('onErgebnis'), false)
+    assert.equal(formular.includes('useEffect'), false)
     assert.equal(formular.includes('console.log'), false)
     assert.equal(formular.includes('console.error'), false)
+    assert.equal(topbar.includes('globalesAbmeldenMenueOffen'), true)
+    assert.equal(topbar.includes('nutzer_schliessen'), true)
     const knopf = navbar.slice(navbar.indexOf('function AbmeldenKnopf'))
     assert.equal(knopf.includes('onFertig'), false)
     assert.equal(knopf.includes('onClick='), false)
@@ -91,6 +95,18 @@ describe('AP-5-R1 Vertrag, Caller-Inventar und Accessibility', () => {
     assert.equal(scopedUi.includes('signOutAction'), false)
     assert.equal(logik.includes("'local'"), false)
     assert.equal(logik.includes("'others'"), false)
+  })
+
+  test('AP-5-R1 schreibt keine zentrale ADR-0200- oder Architecture-Wahrheit', () => {
+    const architecture = lese('ARCHITECTURE.md')
+    const decisions = lese('DECISIONS.md')
+    const status = lese('docs/AP5_R1_HONEST_GLOBAL_LOGOUT_FAILURE_SEMANTICS_STATUS_2026-08-30.md')
+    const handoff = lese('docs/AP5_R1_HONEST_GLOBAL_LOGOUT_FAILURE_SEMANTICS_HANDOFF_2026-08-30.md')
+    assert.equal(architecture.includes('AP-5-R1'), false)
+    assert.equal(architecture.includes('Draft-PR #242 / ADR-0200'), false)
+    assert.equal(decisions.includes('ehrliche Fehlersemantik für das allgemeine globale Abmelden'), false)
+    assert.equal(status.includes('ADR-0200'), false)
+    assert.equal(handoff.includes('ADR-0200'), false)
   })
 
   test('keine Tokens, Session-IDs oder Service-Role im allgemeinen Logout', () => {

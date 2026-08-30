@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, Search, Sun, Moon, ChevronDown, LogOut, UserCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { signOutAction } from '@/app/auth/sign-out'
+import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import { globalesAbmeldenMenueOffen } from '@/lib/auth/globales-sign-out'
 import { useAdminShell } from '@/app/(admin)/admin/layout'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 
@@ -66,10 +67,12 @@ export default function AdminTopbar({
   React.useEffect(() => {
     const onDown = (e: MouseEvent) => {
       const t = e.target as Node
-      if (userOpen && userRef.current && !userRef.current.contains(t)) setUserOpen(false)
+      if (userOpen && userRef.current && !userRef.current.contains(t)) {
+        setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_schliessen'))
+      }
     }
     const onEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setUserOpen(false)
+      if (e.key === 'Escape') setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_schliessen'))
     }
     document.addEventListener('mousedown', onDown)
     document.addEventListener('keydown', onEsc)
@@ -165,7 +168,7 @@ export default function AdminTopbar({
               aria-haspopup="menu"
               aria-expanded={userOpen}
               aria-controls="admin-user-menu"
-              onClick={() => setUserOpen((v) => !v)}
+              onClick={() => setUserOpen((offen) => globalesAbmeldenMenueOffen(offen, 'nutzer_umschalten'))}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm hover:bg-muted/60"
             >
               <UserCircle2 className="h-5 w-5" />
@@ -174,11 +177,8 @@ export default function AdminTopbar({
             </button>
 
             <GlobalesAbmeldenForm
-              action={signOutAction}
+              action={signOutToAdminLoginAction}
               fehlerClassName="mt-2 max-w-[14rem] text-xs"
-              onErgebnis={(ergebnis) => {
-                if (!ergebnis.ok) setUserOpen(true)
-              }}
             >
               {userOpen ? (
                 <div
