@@ -57,10 +57,9 @@ describe('Account-Navigation', () => {
 
   test('legt Buchungen nicht unter die vier Rail-Punkte und nicht als fünften Tab', () => {
     assert.equal(ACCOUNT_NAVIGATION.length, 4)
-    assert.equal(
-      ACCOUNT_NAVIGATION.some((eintrag) => eintrag.href === '/account/bookings' || eintrag.label === 'Buchungen'),
-      false,
-    )
+    const ziele = ACCOUNT_NAVIGATION.map((eintrag) => `${eintrag.label}:${eintrag.href}`)
+    assert.equal(ziele.includes('Buchungen:/account/bookings'), false)
+    assert.equal(ziele.some((ziel) => ziel.endsWith(':/account/bookings') || ziel.startsWith('Buchungen:')), false)
     assert.equal(accountNavigationAktiv('/account/bookings', '/account'), false)
     assert.equal(accountNavigationAktiv('/account/bookings', '/reisen'), false)
     assert.equal(accountNavigationAktiv('/account/bookings', '/account/travellers'), false)

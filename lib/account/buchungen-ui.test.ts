@@ -27,10 +27,8 @@ describe('AP-10-S1 Buchungsordner Vertrag', () => {
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.label),
       ['Übersicht', 'Reisen', 'Reisende', 'Einstellungen'],
     )
-    assert.equal(
-      ACCOUNT_NAVIGATION.some((eintrag) => eintrag.href === '/account/bookings'),
-      false,
-    )
+    const hrefs: string[] = ACCOUNT_NAVIGATION.map((eintrag) => eintrag.href)
+    assert.equal(hrefs.includes('/account/bookings'), false)
   })
 
   test('Route existiert und bleibt hinter der Account-Auth', () => {
