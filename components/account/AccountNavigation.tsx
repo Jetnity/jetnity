@@ -36,7 +36,7 @@ export default function AccountNavigation() {
       <div className="mx-auto min-w-0 max-w-6xl px-4 sm:px-6">
         <ul
           ref={leisteRef}
-          className="flex min-w-0 flex-nowrap gap-1 overflow-x-auto overscroll-x-contain py-2 touch-pan-x scrollbar-hide"
+          className="flex min-w-0 flex-nowrap gap-1 overflow-x-auto overscroll-x-contain py-2 scrollbar-hide"
         >
           {ACCOUNT_NAVIGATION.map((eintrag) => {
             const aktiv = accountNavigationAktiv(pathname, eintrag.href)
