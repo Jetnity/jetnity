@@ -1,9 +1,8 @@
 // lib/project-sanitation/closure-invariants.test.ts
 //
-// Read-only Evidence-Lock für Issue #134. Beweist, dass die noch offenen
-// Sanitation-Funde weiter im Tree liegen und dieser Slice sie nicht gelöscht hat.
-// Dateiexistenz ist kein Beweis für git-diff-Nicht-Änderung.
-// Kein Runtime-Write. Kein Cloud-Write. Kein Branch-Delete. Kein PR-Close.
+// Read-only Evidence-Lock für Project Sanitation.
+// Beweist sowohl abgeschlossene mechanische Bereinigung als auch bewusst noch
+// offene/gated Funde. Kein Runtime-Write. Kein Cloud-Write. Kein Branch-Delete.
 
 import { existsSync, readFileSync } from 'node:fs'
 import { describe, test } from 'node:test'
@@ -56,33 +55,30 @@ describe('project sanitation closure invariants', () => {
     }
   })
 
-  test('still actionable leftovers wurden nicht gelöscht', () => {
-    const trackedTemp = [
+  test('abgeschlossene mechanische Delete-Kandidaten bleiben entfernt', () => {
+    const removed = [
       'supabase/.temp/cli-latest',
       'supabase/.temp/gotrue-version',
       'supabase/.temp/pooler-url',
       'supabase/.temp/postgres-version',
       'supabase/.temp/rest-version',
       'supabase/.branches/_current_branch',
+      'public/images/prague.jpg',
     ]
-    for (const rel of trackedTemp) {
-      assert.equal(existsSync(join(wurzel, rel)), true, rel)
+    for (const rel of removed) {
+      assert.equal(existsSync(join(wurzel, rel)), false, rel)
     }
-    assert.equal(existsSync(join(wurzel, 'public/images/prague.jpg')), true)
-    assert.equal(existsSync(join(wurzel, 'components/layout/CookieConsent.tsx')), true)
+
     const ignore = lies('.gitignore')
     assert.match(ignore, /supabase\/\.temp\//)
     assert.match(ignore, /supabase\/\.branches\//)
+  })
+
+  test('bewusst offene oder gated Sanitation-Funde bleiben unverändert sichtbar', () => {
+    assert.equal(existsSync(join(wurzel, 'components/layout/CookieConsent.tsx')), true)
     const nextConfig = lies('next.config.js')
     assert.match(nextConfig, /jetnity\.ai/)
     assert.match(nextConfig, /oaidalleapiprodscus\.blob\.core\.windows\.net/)
-  })
-
-  test('pooler-url enthält keinen Live-Secret-Wert', () => {
-    const pooler = lies('supabase/.temp/pooler-url')
-    assert.match(pooler, /\[YOUR-PASSWORD\]/)
-    assert.equal(pooler.includes('eyJ'), false)
-    assert.equal(/service_role|sb_secret|sk_live/.test(pooler), false)
   })
 
   test('integrierte AP-5-S1-Evidence bleibt erhalten und dieser Slice ändert keine Account-Auth-Runtime', () => {
