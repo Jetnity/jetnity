@@ -1,13 +1,16 @@
 # Requirements Provider Groundwork Gate 0 – Status
 
 Stand: 30. August 2026  
-Status: **AUDIT COMPLETE / REVIEW-READY / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **CHANGES REQUIRED REVIEW-FIX COMPLETE / NOT PASS / STOP FOR TECHNICAL-LEAD RE-REVIEW**  
 Cursor-Agent: **`Jetnity requirements provider groundwork 1`**  
+Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051` (gleiche Generation; kein neuer Slice)  
 Issue: #288  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/289  
-Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`
+Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`  
+Reviewed-then-fixed Head: `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`  
+Review: Technical-Lead comment **#5471442167** (CR-1–CR-4)
 
-> Kein Ready. Kein Merge. Kein Folgeslice. Kein Provider gewählt.
+> Kein Ready. Kein Merge. Kein Folgeslice. Kein Provider gewählt. Content-Gate auf `9caa1a0f` war **NOT PASS**.
 
 ---
 
@@ -15,19 +18,23 @@ Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`
 
 AUDIT-ONLY / PROVIDER-NEUTRAL Rekonstruktion des aktuellen Requirements-/Readiness-Vertrags, S4-Revalidation, Official-Truth- und Multi-Citizenship-Mapping, öffentliche Selection-Groundwork, P0–P3-Gaps, kleinster späterer Slice **ohne** ihn zu starten.
 
+Dieser Lauf ist **nur** der Review-Fix der sechs erlaubten Deliverables. Task, Runtime und globale Current-State-Dateien unverändert.
+
 ## 2. Branch / PR / Head
 
 | Fakt | Wert |
 | --- | --- |
 | Baseline | `main@60e12dd5cf0916708e0bc87219b233861b387e7d` |
-| `origin/main` letzter Fetch | identisch `60e12dd5` (30. August 2026, vor Handoff erneut) |
+| `origin/main` letzter Fetch (Review-Fix) | identisch `60e12dd5` (30. August 2026, vor Review-Fix-Commit erneut) |
 | Merge-Base | `60e12dd5` |
-| Ahead / Behind bei Start | 1 / 0 (Task `daa91927`) |
-| Parallel TL-Commit auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored; rebase darauf, 0 behind `origin/main` |
-| Audit-Paket-Head nach Rebase | `a6f179a1` |
+| Ahead / Behind vor Review-Fix | **5 / 0** auf `9caa1a0f` |
+| Parallel TL-Commit auf dem Branch | `8d3330c1` `ACTIVE_WORK_STATUS` — nicht Agent-authored; nicht editiert |
+| Vorheriger Exact Head (NOT PASS) | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` |
 | Exact Head | Handoff-Bind-Commit; live am PR #289 prüfen |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
+
+`origin/main` ist seit Task-Baseline **nicht** weitergelaufen. Kein Rebase in diesem Review-Fix nötig.
 
 ## 3. Bereits umgesetzt (dieser Slice)
 
@@ -35,7 +42,17 @@ AUDIT-ONLY / PROVIDER-NEUTRAL Rekonstruktion des aktuellen Requirements-/Readine
 - Live-Precheck GitHub/`origin/main`/PRs/Issues
 - Sechs task-spezifische Deliverables
 - Öffentliche Provider-Seiten mit URL + Datum + Evidence-Klasse
+- Review-Fix CR-1–CR-4 **nur** in den sechs Deliverables
 - Keine Runtime-/Config-/Migration-Änderung
+
+### 3.1 Review-Fix #5471442167
+
+| CR | Fix in den Deliverables | Nicht getan |
+| --- | --- | --- |
+| CR-1 | `officialFrische()` ohne `checkedAt`-TTL als Current-Contract; Gap `G-S4-TTL` P1/Activation-Gate; Semantik `checkedAt` ≠ Vendor-`lastUpdatedAt`; S4-R1-Scope um bounded TTL erweitert | **nicht** implementiert |
+| CR-2 | E-SHERPA-4; Origin-Nationality-Fallback als **verbotener** Sherpa-Mismatch; Gap `G-MAP-ORIGIN-NAT` | kein Adapter |
+| CR-3 | E-SHERPA-5/6; öffentliche Quota-/Cache-Schichten vs kontrahiertes `unknown` | keine Quota als Vertrag gelesen |
+| CR-4 | E-IATA-3 Timatic Widget als Planungs-Oberfläche derselben DB; AutoCheck-REST nicht überzeichnet | kein Timatic gewählt |
 
 ## 4. Nicht umgesetzt / bewusst nicht angefasst
 
@@ -45,8 +62,9 @@ AUDIT-ONLY / PROVIDER-NEUTRAL Rekonstruktion des aktuellen Requirements-/Readine
 - Factory-Aktivierung, Commercial-Provenance-Mint, `live_api`, `persisted_snapshot`
 - TW-8 / TW-9
 - Legal-Copy
-- globale Current-State-Dateien
-- Folgeslice S4-R1
+- globale Current-State-Dateien inkl. `docs/ACTIVE_WORK_STATUS.md`
+- Task-Datei
+- Folgeslice S4-R1 (TTL-Policy nur als Scope-Vorschlag)
 
 ## 5. Tests / CI / Preview
 
@@ -54,12 +72,13 @@ Docs-only. Kein künstlicher Runtime-Testzwang.
 
 | Check | Ergebnis |
 | --- | --- |
-| Repository-Diff-/Scope-Sanity | nur Task + sechs Deliverables erwartet; `next-env.d.ts` wiederhergestellt |
-| Markdown-Link-/Evidence-URLs | öffentlich abgerufen 30. August 2026; nicht als Vertrag behandelt |
+| Repository-Diff-/Scope-Sanity | nur Task + TL `ACTIVE_WORK_STATUS` + sechs Deliverables |
+| Markdown-Link-/Evidence-URLs | CR-URLs 30. August 2026 erneut abgerufen; nicht als Vertrag behandelt |
 | `npm test` / Typecheck / Build | **nicht** als Abschluss-Gate dieses Docs-Slices ausgeführt |
-| CI / Vercel auf neuem Head | nach Push vom Technical Lead auf Exact Head zu prüfen; dieser Agent behauptet sie nicht vor Push |
+| CI #1404 / `33337053946` | SUCCESS auf **`9caa1a0f`** — gilt **nicht** für den Review-Fix-Head |
+| Vercel Preview `dpl_9hSbioj9zBZnfkzyHqpW2KGcBayy` | READY auf **`9caa1a0f`** — gilt **nicht** für den Review-Fix-Head |
 
-Vercel-Kommentar am PR (Preview READY auf älterem Head) gilt **nicht** für den Deliverable-Head.
+CI / Vercel auf dem neuen Exact Head muss der Technical Lead nach Push erneut gaten.
 
 ## 6. DB / RLS / Production-Grenze
 
@@ -71,17 +90,24 @@ Keine neuen laufenden Kosten. Keine Secrets. Keine paid calls. Kein Vendor gewä
 
 ## 8. Risiken / Unsicherheiten
 
-Siehe Self-Review. Kern: Timeout/Kill-Switch vor Adapter; Vendor-Shape und License `unknown`; Workspace ohne serverseitige Evaluations; Docs-Drift in globalen Dateien (TL-owned).
+Siehe Self-Review. Neu material:
+
+- Official-Truth kann nach einem späteren Adapter ohne TTL dauerhaft `current` bleiben (G-S4-TTL).
+- Sherpa-Tutorial widerspricht der No-Default-Citizenship-Invariante (G-MAP-ORIGIN-NAT).
+- Öffentliche Sherpa-Quota-Schichten sind Evidence, nicht Jetnitys Vertrag.
+- Timatic Widget ist Planungs-Oberfläche, nicht AutoCheck-REST.
+
+Weiter: Timeout/Kill-Switch vor Adapter; Vendor-Shape und License `unknown`; Workspace ohne serverseitige Evaluations; Docs-Drift in globalen Dateien (TL-owned).
 
 ## 9. Offene Freigaben
 
-- Unabhängiger Technical-Lead Exact-Head-Review
+- Unabhängiger Technical-Lead Exact-Head-**Re-Review**
 - Ready/Merge nur Technical Lead
 - Jede Vendor-/Secret-/paid-/PII-Entscheidung bleibt PO-Gate
 
 ## 10. Exakter nächster Schritt
 
-**STOPP** für unabhängigen Technical-Lead Exact-Head-Review von PR #289.
+**STOPP** für unabhängigen Technical-Lead Exact-Head-Review von PR #289 auf dem **neuen** Head.
 
 Kein Ready. Kein Merge. Kein S4-R1-Start.
 

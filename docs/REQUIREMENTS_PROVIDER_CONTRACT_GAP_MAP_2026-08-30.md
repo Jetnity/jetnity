@@ -1,7 +1,7 @@
 # Requirements Provider Contract Gap Map – 2026-08-30
 
 Stand: 30. August 2026  
-Status: **GAP MAP / PROPOSAL ONLY / NO SLICE STARTED**  
+Status: **GAP MAP / PROPOSAL ONLY / NO SLICE STARTED / REVIEW-FIX CR-1–CR-2**  
 Cursor-Agent: **`Jetnity requirements provider groundwork 1`**  
 Companion: `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
 
@@ -29,6 +29,7 @@ Es gibt **kein P0** in diesem Scope.
 | ID | Gap | Klasse | Current Truth | Blockt | Kleinster späterer Schnitt |
 | --- | --- | --- | --- | --- | --- |
 | G-S4-TIMEOUT | `evaluate` ohne `AbortSignal` / explizites Timeout | **P1** | Throw wird gefangen; hängender Call nicht abgebrochen | ersten echten Adapter | Readiness-only Truth-Ops: Signal + Timeout analog Safety/Seasonal, Tests offline |
+| G-S4-TTL | `officialFrische()` hat **kein** Höchstalter/`checkedAt`-TTL | **P1** / **PROVIDER-ACTIVATION-GATE** | Fingerprint + `validFrom`/`validUntil` werden geprüft; `checkedAt` nur auf Existenz (Freshness) bzw. 5-min-Zukunft-Skew (Trust). Unveränderter Fingerprint + `validUntil == null` → dauerhaft `current` | Adapter / Hard Truth | S4-R1: bounded Freshness-/TTL-Policy (provider-/vertragssensitiv wo nötig); fail-closed `recheck_needed` / non-current, wenn Freshness nicht begründet werden kann. Jetnity-`checkedAt` (Abruf/Auswertung) **nicht** mit Vendor-`lastUpdatedAt` vermischen. **Nicht in diesem Audit implementiert** |
 | G-S4-KILLSWITCH | Kein `JETNITY_READINESS_AKTIV` | **P1** (erst wenn Factory ≠ `null`) | Factory `null` ist heute die einzige Bremse | Factory-Verdrahtung | S1-`providerOpsZustand` an Readiness; Production bleibt hart aus |
 | G-S4-OUTCOME | Timeout nicht von Throw/`unavailable` unterscheidbar | **P1** | `providerFehlerFreshness` kennt nur `availability` am Error-Objekt | ehrliche Failure-UX / spätere Ops | Outcome-Mapping auf S1-Taxonomie **ohne** Fachzustände zu mischen |
 | G-S4-BODY | 8 KB Cap vs Multi-Traveller | **P2** | Cap existiert; Overflow nicht live gemessen | grosse Guest-Evaluate-Bodies | Messen + ggf. Cap anheben **oder** Trip-Load statt Client-Party; Produktentscheidung |
@@ -42,6 +43,7 @@ Es gibt **kein P0** in diesem Scope.
 | G-SAFETY-PARTY | Safety-API `party: []` | **P1 für Safety**, ausserhalb Requirements-Slice | unverändert | travellerabhängige Safety über HTTP | eigener Safety-Slice |
 | G-MAP-OPTION | Kein Vendor liefert öffentlich 1:1 Credential-Optionen | **PROVIDER-ACTIVATION-GATE** | Port ist bereit; Vendor-Shape unbelegt oder abweichend | saubere Multi-Document-Truth | Auswahl + Mapping-Spec **nach** Vertrag; sonst `unknown` |
 | G-MAP-ISO | ISO-2 vs ISO-3 | **P1 bei Sherpa-artigem Adapter** | Jetnity ISO-2 | stilles Land-Mismatch | explizites Mapping; unbekannte Codes fail-closed |
+| G-MAP-ORIGIN-NAT | Vendor empfiehlt Nationalität aus Origin, wenn Pass unbekannt | **P1** / **PROVIDER-ACTIVATION-GATE** | Jetnity: keine Default-Citizenship; keine Ableitung aus Origin oder Residence; fehlen → `unknown` / `insufficient_context`. Sherpa-Tutorial E-SHERPA-4 empfiehlt Origin-Nationalität | falsche Visa-/Entry-Hard-Truth | Jeder spätere Sherpa-Adapter muss diese Empfehlung **ignorieren/ablehnen** und darf Nationalität niemals aus Origin synthetisieren. Mapping-Spec + Activation-Gate müssen das festhalten |
 | G-MAP-TRANSIT | Vendor-Transit ≠ Foundation-D-Transit | **PROVIDER-ACTIVATION-GATE** | Route Truth nur Flight-Itinerary | falsche Transit-Visa-Aussage | Vendor-Transit nur gegen belegte Route Facts; Rest `unknown` |
 | G-ANCILLARY | eVisa/PRODUCT/landing URL | **PROVIDER-ACTIVATION-GATE** | Commercial ≠ Official | Kauf-Link als „Visa nicht nötig/nötig“ | PRODUCT niemals in `OfficialEvaluation.result` |
 | G-PII | Vendor verlangt Nummer/MRZ/Scan/DOB | **PO-GATE** | Kernmodell ohne diese Felder | Privacy/Legal | nicht implementieren; Produkt ablehnen oder extra Gate |
@@ -74,7 +76,7 @@ Es gibt **kein P0** in diesem Scope.
 
 **Name (Vorschlag):** Requirements Truth-Ops S4-R1  
 **Art:** Runtime, Jetnity-seitig, **kein** Vendor, **kein** Factory-Flip  
-**Warum zuerst:** schliesst G-S4-TIMEOUT und G-S4-KILLSWITCH, bevor irgendjemand einen Regulatory-HTTP-Call verdrahten kann. S1-Form und Safety/Seasonal-Muster existieren bereits. Binding Build Order führt S4 nach S1–S3/S5-B.
+**Warum zuerst:** schliesst G-S4-TIMEOUT, G-S4-KILLSWITCH und G-S4-TTL, bevor irgendjemand einen Regulatory-HTTP-Call verdrahten oder alte Evidence als `current` Hard Truth belassen kann. S1-Form und Safety/Seasonal-Muster existieren bereits. Binding Build Order führt S4 nach S1–S3/S5-B.
 
 **Scope-Skizze:**
 
@@ -83,6 +85,7 @@ Es gibt **kein P0** in diesem Scope.
 3. `JETNITY_READINESS_AKTIV` über `providerOpsZustand`; Production bleibt `aktiv: false`
 4. Throw vs Abort vs `temporarily_unavailable` ehrlich trennen
 5. Factory bleibt `null`
+6. **Bounded Freshness-/TTL-Policy** für Jetnity-`checkedAt` (provider-/vertragssensitiv wo nötig). Fail-closed nach `recheck_needed` / non-current, wenn Freshness nicht begründet werden kann. Jetnity-`checkedAt` (evaluation/retrieval time) **nicht** still mit Vendor-`lastUpdatedAt` / source-update vermischen. Numerische TTL darf bis Vertrag konservativ/default bleiben; „kein TTL“ ist kein akzeptabler Default. **Nicht in diesem Audit implementiert.**
 
 **Nicht enthalten:**
 
@@ -101,7 +104,7 @@ Es gibt **kein P0** in diesem Scope.
 
 | Alternative | Warum nicht zuerst |
 | --- | --- |
-| Timatic-/Sherpa-Adapter | Vertrag, License, PII, Mapping `unknown`; Activation-Gates offen |
+| Timatic-/Sherpa-Adapter | Vertrag, License, PII, Mapping `unknown`; G-MAP-ORIGIN-NAT und G-S4-TTL offen; Activation-Gates offen |
 | Docs-only Vendor-Auswahl-Memo | nützlich **nach** TL-PASS dieses Audits, aber schliesst kein Timeout-Loch |
 | Workspace serverseitig evaluieren | ohne Provider nur `unknown`; aufgebläht |
 | S6 persistenter Cost Guard | DB/PO-Gate; erst vor paid calls |

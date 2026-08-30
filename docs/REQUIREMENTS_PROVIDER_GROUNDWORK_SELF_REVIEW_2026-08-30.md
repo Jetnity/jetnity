@@ -2,18 +2,22 @@
 
 Stand: 30. August 2026  
 Cursor-Agent: **`Jetnity requirements provider groundwork 1`**  
-Status: **SELF-REVIEW ≠ TECHNICAL-LEAD PASS**
+Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`  
+Status: **SELF-REVIEW ≠ TECHNICAL-LEAD PASS / REVIEW-FIX OF #5471442167**
+
+Vorheriger Head `9caa1a0f` war mechanisch grün und Content-Gate **NOT PASS**. Dieser Self-Review gilt dem Review-Fix, nicht dem ersten Handoff.
 
 ---
 
 ## 1. Was ich prüfen konnte
 
 - Aktuellen Readiness-Port, Engine, Official-Trust, API, Schema, Party/Kontext, Vergleich
+- `officialFrische()` Zeilen 237–258: **kein** `checkedAt`-Max-Age; Trust-Skew 5 min ist Zukunft, nicht Alter
 - Workspace-Caller: keine `officialEvaluations` aus Konto-/Gast-Arbeitsbereich
 - `provider-ops` und `lib/server/providers/core` Abgrenzung
-- Historical S4 gegen aktuellen Code, nicht gegen die Slices-Datei als Wahrheit
-- Öffentliche Vendor-Seiten am 30. August 2026
-- `origin/main` = Task-Baseline, 0 behind
+- Historical S4 gegen aktuellen Code
+- Öffentliche Vendor-Seiten am 30. August 2026, inkl. CR-URLs erneut
+- `origin/main` = Task-Baseline `60e12dd5`, 0 behind vor diesem Review-Fix
 
 ## 2. Gegenargumente gegen meine eigenen Schlüsse
 
@@ -21,19 +25,19 @@ Status: **SELF-REVIEW ≠ TECHNICAL-LEAD PASS**
 
 Gegenargument: Der Post-Cleanup-Checkpoint will zurück zum Produktkern. Ein Timeout ohne Adapter ändert keine Nutzer-Official-Aussage. Ein docs-only Vendor-Memo könnte der PO-Entscheidung näher sein.
 
-Antwort: Ein späterer Adapter ohne Abort/Kill-Switch ist das teurere Loch. S4-R1 ist klein, vendor-frei und in der historischen Reihenfolge bereits vorgesehen. Der Vendor-Memo ersetzt das Timeout nicht. Beides darf der TL anders priorisieren.
+Antwort: Ein späterer Adapter ohne Abort/Kill-Switch **und** ohne TTL ist das teurere Loch. S4-R1 ist klein, vendor-frei und in der historischen Reihenfolge bereits vorgesehen. Der Vendor-Memo ersetzt Timeout und TTL nicht. Beides darf der TL anders priorisieren.
 
 ### 2.2 Sherpa wirkt „zu bereit“
 
-Gegenargument: Öffentliche Trips-API + Sandbox + Government-`sources[]` könnte als Quasi-Wahl gelesen werden.
+Gegenargument: Öffentliche Trips-API + Sandbox + Government-`sources[]` + jetzt Quota-Zahlen könnte als Quasi-Wahl gelesen werden.
 
-Antwort: ISO-3-Nationalität ≠ Credential-Option; Transit-Definition weicht ab; eVisa-`PRODUCT` ist Commercial; Vertrag/Kosten/DPA `unknown`; Journey-Copy nennt AI. Ich habe Sherpa **nicht** gewählt.
+Antwort: ISO-3-Nationalität ≠ Credential-Option; Transit-Definition weicht ab; eVisa-`PRODUCT` ist Commercial; Origin-Nationality-Fallback ist **verboten**; kontrahierte Quota/Kosten/DPA `unknown`; Journey-Copy nennt AI. Ich habe Sherpa **nicht** gewählt. Quota-Zahlen sind als `public_api_docs` geführt, nicht als Vertrag.
 
-### 2.3 Timatic bleibt „zu bevorzugt“
+### 2.3 Timatic bleibt „zu bevorzugt“ / Widget überzeichnet AutoCheck
 
-Gegenargument: Historical Docs nennen Timatic als bevorzugten Kandidaten. Das könnte ich als Entscheidung übernommen haben.
+Gegenargument: E-IATA-3 (Widget, dieselbe DB, Residence-Query) könnte gelesen werden, als wäre ein Planungs-REST-Port belegt.
 
-Antwort: Ich behandle Timatic als Regulatory-Familie mit unbelegtem Planungs-Port. AutoCheck/DCS/Scan ist ein anderes Produkt. Keine Auswahl.
+Antwort: Widget ist eine **Oberfläche**. Dieselbe Datenbank ≠ belegter `evaluate()`-Vertrag, ≠ Multi-Citizenship, ≠ Minimal-PII. AutoCheck bleibt öffentlich unbelegt. Keine Auswahl.
 
 ### 2.4 8 KB als P2 statt P1
 
@@ -53,47 +57,79 @@ Gegenargument: S4 nannte Safety-Party. Scope-Creep.
 
 Antwort: Klassifiziert, nicht vorgeschlagen als Teil von S4-R1. Bleibt fremder Slice.
 
+### 2.7 CR-1: Ist „kein TTL“ wirklich material, solange Factory `null` ist?
+
+Gegenargument: Ohne Provider gibt es kein `checkedAt`. Das Loch ist hypothetisch. P1 vor Adapter könnte überzogen sein.
+
+Antwort: Sobald die erste trusted Zeile mit `validUntil == null` und stabilem Fingerprint existiert, bleibt sie `current`. Das ist genau der Activation-Pfad. Deshalb **P1 / PROVIDER-ACTIVATION-GATE**, nicht P0 (heute keine Hard Truth) und nicht nur ein generisches „stale“-Risiko. Die 5-min-Skew-Prüfung täuscht eine Frischeprüfung vor, die sie nicht ist.
+
+### 2.8 CR-1: Gehört TTL in S4-R1 oder erst in den Adapter?
+
+Gegenargument: Ohne Vendor-Vertrag ist jede Zahl erfunden. TTL im Jetnity-seitigen Slice könnte eine Fake-Policy sein.
+
+Antwort: S4-R1 muss die **Policy-Naht und das Fail-Closed** etablieren, nicht eine vertragliche Stunden-Zahl erfinden. Konservativer Default + „unbegründete Frische → non-current“ ist erlaubt; Vendor-`lastUpdatedAt` als `checkedAt` ist es nicht. Die numerische TTL bleibt bis Vertrag `unknown`.
+
+### 2.9 CR-2: Ist ein Tutorial-Satz ein Activation-Gate wert?
+
+Gegenargument: „We recommend assuming the nationality of the origin“ ist Integrationsrat, kein API-Zwang. Ein Adapter könnte `passports` einfach weglassen.
+
+Antwort: Der Satz ist die öffentlich dokumentierte Sherpa-Empfehlung für fehlenden Pass. Genau das widerspricht Jetnitys Invariante. Wenn der Adapter dem Tutorial folgt, entsteht Fake-Nationalität und damit Fake-Visa-Truth. Deshalb explizites **verbotenes** Fallback und `G-MAP-ORIGIN-NAT`, nicht nur eine Fussnote.
+
+### 2.10 CR-3: Mache ich öffentliche Quota zur Vertragswahrheit?
+
+Gegenargument: 1000/h, 100 rps, `max-age=3600` stehen in Docs; ein Leser könnte sie als Jetnity-Limit planen.
+
+Antwort: Die Matrix trennt **öffentliche technische Guidance** (`partial` / bekannt) von **kontrahierter Production-Quota/Kosten/Lizenz** (`unknown` / PO-GATE). Die Schichten sind bewusst nicht zu einer Zahl kollabiert. FAQ 100 rps und Overview 1000/h Testing können gleichzeitig, nacheinander oder planabhängig gelten — das bleibt unsicher.
+
+### 2.11 CR-4: Verzerrt das Widget jetzt gegen Sherpa?
+
+Gegenargument: Eine Planungs-Oberfläche + „dieselbe DB“ könnte Timatic als den offensichtlich richtigen Planungs-Kandidaten festschreiben.
+
+Antwort: Widget beweist eine UI und eine gemeinsame DB, nicht Jetnitys Port. Sherpa bleibt der klarste **öffentliche REST-Shape**-Kandidat. Beide bleiben ungewählt.
+
 ## 3. Unsicherheiten (`unknown` / `insufficient evidence`)
 
 | Thema | Warum unsicher |
 | --- | --- |
-| Ob IATA einen dokumentnummernfreien Planungs-Evaluate verkauft | nur Marketing/DCS-Docs |
+| Ob IATA einen dokumentnummernfreien maschinenlesbaren Planungs-Evaluate verkauft | Widget + AutoCheck-Marketing; kein OpenAPI |
 | Ob Sherpa hinter Auth option-scharfe Document-Felder hat | nicht im öffentlichen Sample; kein Call |
+| Wie Testing-1000/h, FAQ-100-rps und Production-by-plan zusammenhängen | öffentliche Schichten, kein Vertrag |
 | Aktuelle TimaticWeb-/API-Preise | nur Third-Party-Blog |
 | EU/CH-DPA aller Kandidaten | nicht öffentlich als Vertrag |
+| Numerische Jetnity-`checkedAt`-TTL | bewusst offen bis Vertrag; Policy-Naht nicht |
 | Production-Katalog AP-7/S5-B | Repository-Acceptance, dieser Run hat Supabase nicht gelesen |
 | Branch Protection live | in dieser Umgebung nicht frisch verifiziert |
 | Ob 8 KB reale Multi-Traveller-Bodies trifft | nicht gemessen |
-| Vercel/CI auf Deliverable-Head | erst nach Push |
+| Vercel/CI auf Review-Fix-Head | erst nach Push; alte Gates auf `9caa1a0f` |
 
 ## 4. Scope-Treue
 
 Eingehalten:
 
-- nur die sechs erlaubten neuen Dateien plus unveränderter Task
+- nur die sechs erlaubten Deliverables geändert
+- Task und `docs/ACTIVE_WORK_STATUS.md` nicht angefasst
 - keine Runtime
-- keine globale Current-State-Datei
 - kein Ready/Merge/Folgeslice
-- kein Default-Pass / `documents[0]`
+- kein Default-Pass / `documents[0]` / Origin-Nationality
 - keine Legal-Copy
 - keine Vendor-Kommunikation
+- keine Implementierung der TTL-Policy
 
-`next-env.d.ts` war unstaged dirty (Next-Dev-Types) und wurde **restored**, nicht committed.
-
-Während des Authorings hat der Technical Lead `docs/ACTIVE_WORK_STATUS.md` auf denselben Branch gepusht (`8d3330c1`). Der Agent hat **rebase** statt force-push gemacht und die Datei nicht editiert. Der Diff gegen `main` enthält diese TL-Datei zusätzlich zu Task + sechs Deliverables. Das ist Continuity-Kollisionsschutz, kein Scope-Bruch durch den Agenten.
+`next-env.d.ts` war im ersten Lauf unstaged dirty und restored. In diesem Review-Fix clean.
 
 ## 5. Traveller-Context
 
-Geprüft und relevant. Empfehlungen erweitern das 1:n-Modell nicht nach unten.
+Geprüft und relevant. CR-2 verschärft: fehlende Nationalität bleibt `unknown` / `insufficient_context`; Origin/Residence dürfen sie nicht füllen. Empfehlungen erweitern das 1:n-Modell nicht nach unten.
 
 ## 6. Was ein Reviewer zuerst angreifen sollte
 
-1. Habe ich S4-R1 zu selbstverständlich als „nächsten Slice“ verkauft?
-2. Habe ich Sherpa oder Timatic trotz Disclaimern als implizite Wahl lesbar gemacht?
-3. Ist die Behauptung „Workspace übergibt keine Evaluations“ vollständig (nur Konto/Gast geprüft; Audit-Clients dürfen Testdaten übergeben)?
-4. Ist die AP-7-Aussage (Registry existiert, Evaluate liest sie nicht) exakt gegen `main@60e12dd5`?
-5. Evidence-Klassen: habe ich Marketing als Docs verkleidet?
+1. Ist `G-S4-TTL` korrekt gegen `officialFrische()` (kein Hidden-TTL an anderer Stelle)?
+2. Ist die `checkedAt` vs `lastUpdatedAt`-Trennung in S4-R1 klein genug, oder habe ich Adapter-Semantik in den Jetnity-Ops-Slice gezogen?
+3. Ist E-SHERPA-4 fair als Activation-Gate (Tutorial vs API-Zwang)?
+4. Sind Quota-Zahlen klar als Non-Contract markiert?
+5. Überzeichnet E-IATA-3 Timatic als Planungs-REST?
+6. Habe ich Sherpa oder Timatic trotz Disclaimern als implizite Wahl lesbar gemacht?
 
 ## 7. Verdict des Agenten
 
-Der Slice ist **review-bereit als Audit**. Er ist **nicht** PASS, nicht Ready, nicht Merge, nicht Provider-Groundwork-Abschluss im Sinne einer Auswahl.
+Der Review-Fix adressiert CR-1–CR-4 dokumentarisch. Er ist **nicht** PASS, nicht Ready, nicht Merge, nicht Provider-Auswahl, nicht S4-R1-Start.

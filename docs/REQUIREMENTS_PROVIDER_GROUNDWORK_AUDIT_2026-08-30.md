@@ -2,13 +2,15 @@
 
 Stand: 30. August 2026  
 Typ: **AUDIT-ONLY / PROVIDER-NEUTRAL / NO LIVE ACTIVATION / DOCS-EVIDENCE**  
-Status: **REVIEW-READY FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **CHANGES REQUIRED REVIEW-FIX / NOT PASS / STOP FOR RE-REVIEW**  
 Cursor-Agent: **`Jetnity requirements provider groundwork 1`**  
+Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051` (gleiche Generation; kein neuer Slice)  
 Issue: #288  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/289  
 Branch: `audit/requirements-provider-groundwork-g0-2026-08-30`  
 Task: `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_GATE0_TASK_2026-08-30.md`  
-Task-Baseline: `main@60e12dd5cf0916708e0bc87219b233861b387e7d`
+Task-Baseline: `main@60e12dd5cf0916708e0bc87219b233861b387e7d`  
+Review-Fix: Technical-Lead comment **#5471442167** (CR-1–CR-4) gegen Head `9caa1a0ff45eeea27bc042d75e736dcb17bd589d`
 
 > Agent-Self-Review ist kein Technical-Lead PASS. Kein Ready. Kein Merge. Kein Folgeslice.  
 > Kein Provider ist gewählt. Marketing-/Docs-Aussagen sind weder Vertrag noch Commercial-/License-Truth.  
@@ -48,7 +50,9 @@ Verifiziert in diesem Authoring-Lauf, 30. August 2026.
 | Task-Baseline | `60e12dd5cf0916708e0bc87219b233861b387e7d` — `Docs: post-cleanup Technical Lead checkpoint (#285)` | `live_github` |
 | `origin/main` nach Fetch | **identisch** `60e12dd5` | `live_github` |
 | Merge-Base `HEAD` ↔ `origin/main` | `60e12dd5` | `live_github` |
-| Ahead / Behind bei Start | **1 / 0** (nur Task-Commit `daa91927`) | `live_github` |
+| Ahead / Behind bei erstem Authoring | **1 / 0** (nur Task-Commit `daa91927`) | `live_github` |
+| Review-Fix-Start-Head | `9caa1a0ff45eeea27bc042d75e736dcb17bd589d` | `live_github` |
+| Ahead / Behind vor diesem Review-Fix | **5 / 0** vs `origin/main@60e12dd5` | `live_github` |
 | Draft-PR | [#289](https://github.com/Jetnity/jetnity/pull/289) OPEN / Draft | `live_github` |
 | Issue | [#288](https://github.com/Jetnity/jetnity/issues/288) OPEN | `live_github` |
 | Überlappender Requirements-/Readiness-Provider-Workstream | **keiner** ausser diesem Draft | `live_github` |
@@ -57,7 +61,7 @@ Verifiziert in diesem Authoring-Lauf, 30. August 2026.
 | Provider / Secrets / paid calls | nicht angelegt, nicht aufgerufen | `repository_code` |
 | Session-Rename | keine programmierbare Rename-Fähigkeit exponiert; UI-Name nicht als geändert behauptet | — |
 
-`main` ist seit Task-Baseline **nicht** weitergelaufen. Kein Rebase. Kein Merge.
+`main` ist seit Task-Baseline **nicht** weitergelaufen. Review-Fix ändert nur die sechs Agent-Deliverables. Kein Ready. Kein Merge.
 
 Docs-vs-Live-Widersprüche, die diesen Slice betreffen, aber **nicht** in globale Dateien korrigiert werden:
 
@@ -176,9 +180,40 @@ Residence, Document-Typ, Issuer und Ablauf werden **nicht** automatisch als fehl
 `OfficialStatus`: `unavailable` | `insufficient_context` | `unknown` | `current`.  
 `OfficialFreshness`: `never_checked` | `current` | `recheck_needed` | `stale` | `provider_unavailable` | `source_temporarily_unavailable`.
 
-Trust-Grenze (`officialEvidenceVertrauenswuerdig`): Provider-Name + plausibles `checkedAt` + (Authority **oder** Rule Reference). Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). Hard Truth (`required` / `not_required` / `conditional`) nur bei Trust **und** `freshness === 'current'`.
+Trust-Grenze (`officialEvidenceVertrauenswuerdig`): Provider-Name + plausibles `checkedAt` + (Authority **oder** Rule Reference). `checkedAt` muss existieren und darf höchstens **5 Minuten** in der Zukunft liegen (`CHECKED_AT_SKEW_MS`). Das ist **nur** eine Clock-Skew-Prüfung, **keine** Höchstalter-/TTL-Prüfung.
+
+Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). Hard Truth (`required` / `not_required` / `conditional`) nur bei Trust **und** `freshness === 'current'`.
 
 `optionEligibility` / `optionMandate` folgen derselben Grenze. Unbekannte Werte → `unknown`. Vergleich (`credentialOptionenVergleichen`) entscheidet nur bei `status=current` und `freshness=current`. `result=required` bedeutet nicht, dass genau dieses Credential zwingend ist.
+
+#### 2.5.1 Current-Code Freshness (`officialFrische`) — CR-1
+
+Quelle: `lib/readiness/official.ts` `officialFrische()`. Klasse: `repository_code`. Geprüft 30. August 2026 gegen `main@60e12dd5`.
+
+Aktuelle Reihenfolge, vollständig:
+
+1. kein Provider → `provider_unavailable`
+2. `sourceAvailable === false` → `source_temporarily_unavailable`
+3. kein `checkedAt` → `never_checked`
+4. gespeicherter Fingerprint ≠ aktueller Fingerprint → `stale`
+5. `validFrom` in der Zukunft → `never_checked`
+6. `validUntil` in der Vergangenheit → `recheck_needed`
+7. **sonst `current`**
+
+Es gibt **keine** maximale Alter-/TTL-Prüfung für `checkedAt`. Bei unverändertem Fingerprint und `validUntil == null` kann sehr alte Provider-Evidence dauerhaft `freshness: current` bleiben. Trust verlangt weiterhin ein plausibles `checkedAt` (nicht jenseits 5 min in der Zukunft), aber ein Monate altes `checkedAt` bleibt trusted und `current`, solange Authority/RuleRef und Fingerprint halten.
+
+Das ist material Official-Truth-Verhalten, nicht nur ein generisches Activation-Risiko. Gap: `G-S4-TTL` (**P1** / **PROVIDER-ACTIVATION-GATE**). Der vorgeschlagene spätere Slice S4-R1 muss eine begrenzte Freshness-/TTL-Policy festlegen (provider-/vertragssensitiv wo nötig) und fail-closed nach `recheck_needed` / non-current gehen, wenn Freshness nicht begründet werden kann. **Nicht in diesem Audit implementiert.**
+
+#### 2.5.2 Semantik: Jetnity `checkedAt` ≠ Vendor `lastUpdatedAt`
+
+Ungelöste semantische Frage; ein späterer Adapter darf die beiden Zeiten **nicht still vermischen**:
+
+| Zeitstempel | Bedeutung |
+| --- | --- |
+| Jetnity `checkedAt` | Zeitpunkt der **Auswertung / des Abrufs** durch Jetnitys Adapter (evaluation/retrieval time) |
+| Vendor `lastUpdatedAt` / source-update | Zeitpunkt, zu dem der Vendor die **Regelquelle** zuletzt geändert oder publiziert haben will |
+
+Ein Vendor-`lastUpdatedAt` darf nicht still als Jetnity-`checkedAt` gemintet werden. Ein frisches Retrieval einer alten Vendor-Regel und ein altes Retrieval einer „aktuell“ markierten Regel sind verschiedene Aussagen. Die bounded TTL-Policy muss diese Unterscheidung erhalten. Die genaue numerische TTL bleibt bis Vertrag `unknown`; „kein TTL“ ist nach S4-R1 kein akzeptabler Default.
 
 ### 2.6 Hard-Truth-Authority
 
@@ -225,6 +260,7 @@ Verbindliche Invariante, gegen aktuellen Code geprüft:
 | Kein `documents[0]` als Truth | **hält** im kanonischen Pfad | `travellerNormalisieren` expandiert alle Documents, kollabiert nicht |
 | Kein `evaluations[0]` als Hard Truth | **hält** | `officialAusEvaluations` immer `result: unknown`; nur uniformer Scope darf Authority/URL zeigen |
 | Residence ≠ Citizenship | **hält** | getrennte Felder; Citizenship-Policy verbietet Ableitung |
+| Keine Nationalität aus Origin/Residence | **hält** im Jetnity-Code | fehlende Nationalität bleibt `unknown` / `insufficient_context`; Sherpa-Tutorial empfiehlt das Gegenteil — **verbotener** Adapter-Fallback (`G-MAP-ORIGIN-NAT`) |
 | Optionen separat evaluierbar | **hält** | Engine-Schleife + `optionPasst` |
 | Transit pro Land | **hält** | eigene Evaluation je angefragtem Transitland |
 | Fehlende Facts fail-closed | **hält** | `insufficient_context` / `unknown` |
@@ -248,7 +284,8 @@ Historische Quelle: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S4 und
 | Body-Cap / Multi-Traveller 8 KB vs 24 KB | **CURRENT / STILL NEEDED** | Cap 8192 unverändert. 20 Traveller × 8 Citizenships × 12 Documents kann den Cap reissen, bevor die Engine bewertet. Nicht gemessen mit Live-Payloads in diesem Audit |
 | Error-/Outcome-Semantik | **PARTIAL / STILL NEEDED** | Fachzustände sind reif. Technisches Timeout ist nicht vom generischen Throw unterscheidbar. S1-Outcomes existieren, Readiness-Route mappt sie nicht |
 | Observability | **CURRENT / STILL NEEDED** | `providerOpsEvent` existiert. Readiness schreibt ihn nicht |
-| Cache / Licensing Defaults | **CURRENT / STILL NEEDED** | `no-store` vorhanden. Keine `cacheClass` / Attribution / Redisplay-Hooks. Default bleibt `forbidden`, bis ein Vertrag geprüft ist |
+| Cache / Licensing Defaults | **CURRENT / STILL NEEDED** | `no-store` vorhanden. Keine `cacheClass` / Attribution / Redisplay-Hooks. Default bleibt `forbidden`, bis ein Vertrag geprüft ist. Öffentliche Sherpa-Cache-Guidance (1 h) ist **kein** Jetnity-Lizenzvertrag |
+| Bounded `checkedAt` Freshness / TTL | **CURRENT / STILL NEEDED** | `officialFrische()` prüft Fingerprint/`validFrom`/`validUntil`, **kein** Höchstalter für `checkedAt`. Unveränderter Fingerprint + `validUntil == null` → dauerhaft `current` |
 | Adapter-Core-Abgrenzung | **ALREADY INTEGRATED** | `lib/server/providers/core` (ADR-0199) ist Outbound-Transport. Readiness benutzt ihn nicht, weil kein Adapter existiert. Kein UniversalProvider |
 | S1 Shared Ops als Abhängigkeit | **ALREADY INTEGRATED** | Readiness-`anfrage.ts` und `rate-limit.ts` nutzen `provider-ops` |
 | Timatic-Adapter in S4 | **SUPERSEDED** | S4 war ausdrücklich kein Adapter. Bleibt Non-Scope |
@@ -290,8 +327,8 @@ Keine Auswahl ist beschlossen. Historische Bevorzugung „IATA Timatic / Timatic
 
 Öffentlich belegte Familien:
 
-1. **Aviation-grade Compliance (IATA Timatic / AutoCheck, TravelDoc)** — hohe behauptete Regulatory-Abdeckung; öffentlich airline-/DCS-/Scan-förmig; Commercial/License/API-Shape für Jetnitys Planungs-Port `unknown`.
-2. **Travel-platform Requirements APIs (Sherpa)** — öffentlich dokumentiertes REST-/JSON:API-Trips-Modell, Sandbox-Hostname, Nationalität+Route+Datum; Credential-Option/Issuer/Residence nicht 1:1; Ancillary-eVisa ist Commercial, nicht Official Truth; Vertrag/Kosten `unknown`.
+1. **Aviation-grade Compliance (IATA Timatic / AutoCheck / Widget, TravelDoc)** — hohe behauptete Regulatory-Abdeckung. Öffentlich sichtbar sind **mehrere Oberflächen derselben Datenbank**: DCS/Scan (AutoCheck, Sabre DCCI), Consumer-Widget (one-way / round-trip / multi-city; Nationalität + Residence + Itinerary als Query-Beispiele) und Timatic Web. Das Widget ist eine **Planungs-Oberfläche**, kein belegter AutoCheck-REST-Vertrag, kein Multi-Citizenship-/Option-Mapping, keine License/Preis/Minimal-PII-Aussage für Jetnity. Commercial/License/API-Shape für Jetnitys `evaluate()`-Port bleibt `unknown`.
+2. **Travel-platform Requirements APIs (Sherpa)** — öffentlich dokumentiertes REST-/JSON:API-Trips-Modell, Sandbox-Hostname, Nationalität+Route+Datum; Credential-Option/Issuer/Residence nicht 1:1; öffentliches Tutorial empfiehlt Nationalität aus Origin, wenn der Pass unbekannt ist — **verbotener** Jetnity-Fallback; Ancillary-eVisa ist Commercial, nicht Official Truth. Öffentliche technische Quota-/Cache-Guidance existiert (Testing 1000/h; FAQ 100 rps / 10 MB; `/trips` `max-age=3600`); **Jetnitys** kontrahierte Production-Quota/Kosten/Lizenz/Redisplay bleiben `unknown` / PO-GATE.
 3. **Passport-Index / Ranking-Matrizen (Henley u. a.)** — bewusst Ranking/Mobility, nicht Official Truth; Disclaimer verlangt Verifikation bei Embassy; inoffizielle Endpunkte sind **kein** erlaubter Jetnity-Pfad.
 4. **Consumer-Visa-Matrizen / Fulfilment (Visafy, Visamundi, CIBT/Entriva, …)** — strukturierte JSON-Lookups oder Fulfilment-Links; Authority/Freshness/Transit/Multi-Credential öffentlich schwach oder `unknown`; nicht als Hard-Truth-Quelle geeignet ohne Vertrag.
 
@@ -308,14 +345,16 @@ Kein künstliches Hochstufen. Es gibt **keinen aktuellen P0-Incident**: Factory 
 | RPG0-P0-NONE | — | Kein akuter Production-Incident in diesem Scope |
 | RPG0-ACT-01 | **PROVIDER-ACTIVATION-GATE** | Falsche Official-/Visa-/Transit-Aussage bei späterem Adapter ohne Trust-Mapping |
 | RPG0-ACT-02 | **PROVIDER-ACTIVATION-GATE** | Unvollständiges Multi-Credential-Ergebnis als clean |
-| RPG0-ACT-03 | **PROVIDER-ACTIVATION-GATE** | Stale Provider-Daten als `current` |
+| RPG0-ACT-03 | **PROVIDER-ACTIVATION-GATE** | Sehr alte Provider-Evidence als `current`, weil `officialFrische()` **kein** `checkedAt`-TTL hat (unveränderter Fingerprint + `validUntil == null`) |
 | RPG0-ACT-04 | **PROVIDER-ACTIVATION-GATE** | Authority/Source fehlend, trotzdem Hard Truth — heute durch Trust Gate verhindert |
+| RPG0-ACT-09 | **PROVIDER-ACTIVATION-GATE** | Vendor empfiehlt Nationalität aus Origin/Residence; Jetnity muss das ignorieren/ablehnen (`G-MAP-ORIGIN-NAT`) |
 | RPG0-ACT-05 | **PO-GATE** | Sensitive-data overcollection (Nummer/MRZ/Scan/DOB/Health) |
 | RPG0-ACT-06 | **PO-GATE** | Secret-/Credential-Leak |
 | RPG0-ACT-07 | **PO-GATE / S6** | Uncontrolled paid calls; nur In-Memory-Guard |
 | RPG0-ACT-08 | **PO-GATE / S8** | Unklare Licensing/Cache/Display-Rechte |
 | RPG0-P1-01 | **P1 vor Adapter** | Readiness ohne `AbortSignal`/Timeout — hängender späterer Regulatory-Call |
 | RPG0-P1-02 | **P1 vor Adapter** | Kein Domain-Kill-Switch, sobald Factory ≠ `null` |
+| RPG0-P1-03 | **P1 vor Adapter / PROVIDER-ACTIVATION-GATE** | Keine bounded Freshness-/TTL-Policy; `checkedAt` darf nicht mit Vendor-`lastUpdatedAt` vermischt werden |
 | RPG0-P2-01 | **P2** | 8 KB Body-Cap vs Multi-Traveller |
 | RPG0-P2-02 | **P2** | Workspace übergibt keine serverseitigen Evaluations |
 | RPG0-P2-03 | **P2** | Keine Readiness-Observability-Events |
@@ -340,7 +379,7 @@ Requirements sind **traveller-spezifisch**. Mehrere Citizenships, Documents, Iss
 - S4 ist nicht implementiert und nicht gestartet.
 - TW-8 / TW-9 bleiben geschlossen.
 - Commercial-Provenance-Writer bleibt geschlossen.
-- Audit-Review-Ready ist kein Technical-Lead-PASS.
+- Dieser Review-Fix ist kein Technical-Lead-PASS. Head `9caa1a0f` blieb Content-Gate **NOT PASS**.
 
 ---
 
