@@ -460,7 +460,7 @@ function ReisendenKarte({
 
   return (
     <form
-      className="grid gap-2 rounded-2xl border border-line-200 px-3 py-3"
+      className="grid min-w-0 gap-2 rounded-2xl border border-line-200 px-3 py-3"
       onSubmit={async (event) => {
         event.preventDefault()
         onFehler('')
@@ -486,23 +486,21 @@ function ReisendenKarte({
       <fieldset className="grid gap-2">
         <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften</legend>
         {citizenships.map((code, index) => (
-          <div key={`cit-${index}`} className="flex items-end gap-2">
-            <div className="min-w-0 flex-1">
-              <LandFeld
-                label={`Staatsbürgerschaft ${index + 1}`}
-                value={code}
-                onChange={(naechsterCode) => {
-                  const naechste = [...citizenships]
-                  naechste[index] = naechsterCode
-                  setCitizenships(naechste)
-                }}
-                optional={false}
-              />
-            </div>
+          <div key={`cit-${index}`} className="grid min-w-0 gap-2">
+            <LandFeld
+              label={`Staatsbürgerschaft ${index + 1}`}
+              value={code}
+              onChange={(naechsterCode) => {
+                const naechste = [...citizenships]
+                naechste[index] = naechsterCode
+                setCitizenships(naechste)
+              }}
+              optional={false}
+            />
             {citizenships.length > 1 ? (
               <button
                 type="button"
-                className="min-h-11 shrink-0 rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                 onClick={() => {
                   const naechste = citizenships.filter((_, i) => i !== index)
                   setCitizenships(naechste)

@@ -27,6 +27,7 @@ describe('TA-CUX1 Country-Control UI-Vertrag', () => {
     assert.equal(control.includes('role="listbox"'), false)
     assert.equal(control.includes('touch-pan-x'), false)
     assert.equal(control.includes('min-h-11'), true)
+    assert.equal(control.includes('min-w-0'), true)
     assert.equal(control.includes("event.key === 'Enter'"), true)
     assert.equal(control.includes('landAuswahlUebernehmen'), true)
     assert.equal(control.includes('navigator.language'), false)

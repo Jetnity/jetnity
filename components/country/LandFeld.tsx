@@ -11,10 +11,10 @@ import {
 import { landFeldOptionen } from '@/lib/country/land-feld'
 
 const feldKlasse =
-  'min-h-11 w-full rounded-2xl border border-line-200 bg-white px-3 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'
+  'min-h-11 min-w-0 w-full max-w-full rounded-2xl border border-line-200 bg-white px-3 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'
 
 const sucheKlasse =
-  'min-h-11 w-full rounded-2xl border border-line-200 bg-white px-3 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'
+  'min-h-11 min-w-0 w-full max-w-full rounded-2xl border border-line-200 bg-white px-3 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'
 
 export default function LandFeld({
   label,
@@ -50,7 +50,7 @@ export default function LandFeld({
   const aktuell = landDarstellung(value, locale)
 
   return (
-    <div className="grid gap-1">
+    <div className="grid min-w-0 w-full gap-1">
       <span id={labelId} className="text-sm font-medium text-brand-800">
         {label}
       </span>
