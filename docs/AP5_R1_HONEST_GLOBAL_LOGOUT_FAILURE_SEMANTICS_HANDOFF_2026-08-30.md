@@ -7,7 +7,8 @@ Cursor-Session/Run-ID: `bc-f631838b-21f3-4290-aa1f-db450a037ac3`
 Issue: [#241](https://github.com/Jetnity/jetnity/issues/241)  
 Branch: `feat/ap5-r1-honest-global-logout-2026-08-30`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/242  
-Authoring-Head: `118915af5ce67b1fc6ea06e8bd55b9add068d2b0` (dieser Stamp ist ein neuerer Head)
+Authoring-Head: `118915af5ce67b1fc6ea06e8bd55b9add068d2b0`  
+Exact-Head Gates von `5ba971ffd95444ce35b0152c8ddeae00d694758f`: Actions `33304713036` SUCCESS; Vercel `4uZX9z4PW9vmKL4YFGgEjLbWp5ex` SUCCESS. Dieser Stamp ist ein neuerer Head.
 
 ## Zuerst lesen
 

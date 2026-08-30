@@ -88,7 +88,7 @@ Nicht geliefert: Scope-Wechsel des allgemeinen Logout, Sessionliste, MFA/AAL-Än
 | `npm run auth:pruefen` | **55/55**, 242 Schlüssel |
 | `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| Exact-Head GitHub Actions / Vercel | Authoring-Head `118915af` lokal grün. Dieser Stamp erzeugt einen neueren Head; dessen Gates live prüfen. Nicht vorab als CI/Vercel-PASS behauptet. |
+| Exact-Head GitHub Actions / Vercel | Head `5ba971ffd95444ce35b0152c8ddeae00d694758f`: Actions Run `33304713036` SUCCESS; Vercel Inspector `4uZX9z4PW9vmKL4YFGgEjLbWp5ex` SUCCESS. Dieser Evidence-Stamp erzeugt einen neueren Head. Kein weiterer Stamp, außer dessen CI fehlschlägt. |
 
 ## 6. DB / RLS / Production-Grenze
 
