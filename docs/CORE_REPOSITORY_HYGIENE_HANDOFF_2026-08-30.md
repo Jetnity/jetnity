@@ -24,7 +24,9 @@ Historical clues (do not treat as current truth): `docs/PROJECT_SANITATION_LIVE_
 
 Review the **exact PR head after the deliverable commits**, not this prose alone.
 
-Deliverable HEAD: `5c0a931d1fde2e26d95c82abe151607dddecbaa8`  
+CI-gated stamp HEAD: `fcedca1d26df1c687d7155918cf25b99d6c11ed2`  
+CI run: `33330291602` **SUCCESS** (typecheck/lint/build + auth-config + Vercel Preview SUCCESS)  
+Deliverable packet: `5c0a931d1fde2e26d95c82abe151607dddecbaa8`  
 Audit start HEAD (task file only): `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`  
 Task baseline: `d4a2bba21e9a247594272adb2a13d6cf0620ff48`
 

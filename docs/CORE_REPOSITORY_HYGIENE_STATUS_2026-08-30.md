@@ -12,7 +12,7 @@ Status: **AUDIT COMPLETE / DRAFT / READY FOR INDEPENDENT TL REVIEW / NO READY / 
 | Cursor-Agent | `Jetnity core repository hygiene audit 1` |
 | Task | `docs/CORE_REPOSITORY_HYGIENE_AUDIT_TASK_2026-08-30.md` |
 | Task baseline | `d4a2bba21e9a247594272adb2a13d6cf0620ff48` |
-| Audit head (this report) | `5c0a931d1fde2e26d95c82abe151607dddecbaa8` |
+| Packet / stamp head that CI gated | `fcedca1d26df1c687d7155918cf25b99d6c11ed2` |
 | Baseline ancestor of audit start | yes |
 | Local `origin/main` pointer | `ea79716315304c1289b094811d80f8880c09e615` |
 | Node / npm | v22.14.0 / 10.9.7 |
@@ -41,6 +41,20 @@ All commands were run from `/workspace` against start HEAD `c895d16b5c1f42cdb0be
 
 Reference command transcripts: `/tmp/hygiene-audit/*.txt` on the audit machine (not committed).
 
+## GitHub CI / Preview on exact stamp head
+
+Recorded after the GitHub notification. These jobs ran on `fcedca1d26df1c687d7155918cf25b99d6c11ed2`. A later docs-only stamp of this CI paragraph will move the branch tip; that newer tip is not claimed green here.
+
+| Gate | ID | Head | Result |
+| --- | --- | --- | --- |
+| Actions run `CI` | [33330291602](https://github.com/Jetnity/jetnity/actions/runs/33330291602) | `fcedca1d` | **SUCCESS** |
+| `Typecheck, Lint & Build` | job `99307547958` | `fcedca1d` | **SUCCESS** |
+| `Auth-Konfiguration gegen config.toml` | job `99307547842` | `fcedca1d` | **SUCCESS** (ran; not skipped) |
+| Vercel Preview | `9trwANQ6TteDrtdZnWitRbzysAPv` | `fcedca1d` | **SUCCESS** |
+| Earlier task-only CI | [33329928407](https://github.com/Jetnity/jetnity/actions/runs/33329928407) | `c895d16b` | **SUCCESS** |
+
+Green CI still does not prove asset, branch, or cloud cleanliness.
+
 ### Targeted read-only inspections
 
 | Check | Result |
@@ -68,7 +82,7 @@ These are documented gaps, not guessed pass/fail:
 
 | Check | Why not run / unresolved |
 | --- | --- |
-| `npm run auth:pruefen` | Needs `SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_REF`. Fail-closed in CI. Not executed here. |
+| `npm run auth:pruefen` locally | Not executed in this workspace (no local secrets). CI job `Auth-Konfiguration gegen config.toml` **SUCCESS** on `fcedca1d` / run `33330291602`. |
 | `db:rechte` / `db:rls` / `db:sicherheit` / `db:advisors` | Need a database. This slice does not change schema or RLS. |
 | GitHub branch-protection API | Continuity docs still say `protected=false`. Not freshly queried. |
 | Production Storage live list | C3 after-image not re-executed. Recovery bucket is Production-only. |
