@@ -1,0 +1,283 @@
+{
+  "audit": "core-repository-hygiene",
+  "date": "2026-08-30",
+  "issue": 273,
+  "draftPr": 277,
+  "agent": "Jetnity core repository hygiene audit 1",
+  "type": "AUDIT-ONLY / NON-DESTRUCTIVE",
+  "head": "c895d16b5c1f42cdb0bed5b44aaaf188d07c5024",
+  "taskBaseline": "d4a2bba21e9a247594272adb2a13d6cf0620ff48",
+  "localOriginMainPointer": "ea79716315304c1289b094811d80f8880c09e615",
+  "vocabulary": [
+    "KEEP",
+    "UPDATE-CANDIDATE",
+    "DELETE-CANDIDATE",
+    "HISTORICAL-EVIDENCE",
+    "BLOCKED/NEEDS-DECISION"
+  ],
+  "counts": {
+    "trackedFiles": 1603,
+    "docs": 607,
+    "lib": 675,
+    "components": 97,
+    "app": 81,
+    "supabaseAll": 65,
+    "supabaseMigrations": 58,
+    "scripts": 39,
+    "public": 6,
+    "types": 2,
+    "cursor": 5,
+    "githubWorkflows": 1,
+    "styles": 1,
+    "rootTrackedFiles": 24,
+    "filesLastChangedBefore2026-04-30": 23,
+    "remoteHeadsLive": 65
+  },
+  "topLevelTrackedFiles": [
+    ".env.example",
+    ".gitignore",
+    "AGENTS.md",
+    "ARCHITECTURE.md",
+    "DECISIONS.md",
+    "DESIGN_SYSTEM.md",
+    "JETNITY_HANDOFF.md",
+    "JETNITY_PRODUCT_MANDATE.md",
+    "JETNITY_START_HERE.md",
+    "JETNITY_VISION.md",
+    "README.md",
+    "ROADMAP.md",
+    "check-jetnity-setup.ts",
+    "components.json",
+    "eslint.config.mjs",
+    "next-env.d.ts",
+    "next.config.js",
+    "package-lock.json",
+    "package.json",
+    "postcss.config.js",
+    "proxy.ts",
+    "tailwind.config.js",
+    "tsconfig.json",
+    "vercel.json"
+  ],
+  "creatorMediaStudioRuntimeResidue": {
+    "existsInAppComponentsLibTypesConfigWorkflows": false,
+    "typesSupabaseHasCreatorSessionsBlogRender": false,
+    "oneshotCreatorMediaWorkflowsInTree": false,
+    "remainingHits": [
+      "RBAC role name creator in lib/auth/roles.ts",
+      "capability inhalte-moderieren in current auth contract",
+      "historical comments and security-test names",
+      "migrations that create then drop legacy tables/policies",
+      "C2/C3 and Phase-0 evidence docs"
+    ],
+    "verdict": "No current Creator Hub / MediaStudio / Feed / Blog / Render runtime residue."
+  },
+  "findings": [
+    {
+      "id": "D-01",
+      "paths": [
+        "supabase/.temp/cli-latest",
+        "supabase/.temp/gotrue-version",
+        "supabase/.temp/pooler-url",
+        "supabase/.temp/postgres-version",
+        "supabase/.temp/rest-version"
+      ],
+      "class": "DELETE-CANDIDATE",
+      "confidence": "high",
+      "poolerHasPlaceholderOnly": true,
+      "liveSecretReproduced": false,
+      "gitignoreAlreadyListsTemp": true,
+      "laterSlice": "git rm --cached plus lock-test update; no history rewrite"
+    },
+    {
+      "id": "D-02",
+      "paths": ["supabase/.branches/_current_branch"],
+      "class": "DELETE-CANDIDATE",
+      "confidence": "high",
+      "content": "main",
+      "laterSlice": "same untrack PR as D-01"
+    },
+    {
+      "id": "D-03",
+      "paths": ["public/images/prague.jpg"],
+      "class": "DELETE-CANDIDATE",
+      "confidence": "high",
+      "runtimeImageSrcFound": false,
+      "laterSlice": "asset delete plus lock-test update"
+    },
+    {
+      "id": "U-01",
+      "paths": ["next.config.js"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "medium",
+      "unusedHosts": [
+        "oaidalleapiprodscus.blob.core.windows.net",
+        "jetnity.ai"
+      ],
+      "laterSlice": "drop unused remotePatterns; keep supabase host pattern"
+    },
+    {
+      "id": "U-02",
+      "paths": ["components.json"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "high",
+      "missingAliasTarget": "hooks/"
+    },
+    {
+      "id": "U-03",
+      "paths": ["scripts/pakete.mjs"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "high",
+      "note": "zod exception is stale; zod is imported"
+    },
+    {
+      "id": "U-04",
+      "paths": ["check-jetnity-setup.ts"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "high",
+      "note": "Mega Pro banner is cosmetic; file is KEEP"
+    },
+    {
+      "id": "U-05",
+      "paths": ["tailwind.config.js"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "high",
+      "note": "content/** glob has no content/ directory"
+    },
+    {
+      "id": "U-06",
+      "paths": ["docs/"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "high",
+      "note": "navigation/index and canonical pointer lag; not a delete corpus"
+    },
+    {
+      "id": "U-07",
+      "paths": [".gitignore"],
+      "class": "UPDATE-CANDIDATE",
+      "confidence": "high",
+      "note": "comment hygiene only; file is KEEP"
+    },
+    {
+      "id": "B-01",
+      "paths": [
+        "components/layout/CookieConsent.tsx",
+        "components/auth/RegisterForm.tsx",
+        "lib/legal/ap6a-gate0-vertrag.ts"
+      ],
+      "class": "BLOCKED/NEEDS-DECISION",
+      "confidence": "high",
+      "cookieConsentMounted": false,
+      "privacyPageExists": false,
+      "termsPageExists": false,
+      "registerLinksPrivacy": true,
+      "poApprovalRequired": true
+    },
+    {
+      "id": "B-02",
+      "paths": ["lib/auth/roles.ts"],
+      "class": "BLOCKED/NEEDS-DECISION",
+      "confidence": "high",
+      "note": "Only if someone proposes removing creator role or inhalte-moderieren; files are otherwise KEEP"
+    },
+    {
+      "id": "B-03",
+      "paths": [],
+      "class": "BLOCKED/NEEDS-DECISION",
+      "confidence": "medium",
+      "note": "Cloud/governance gates (jetnity-bets, recovery bucket, branch protection) are outside this file tree"
+    },
+    {
+      "id": "B-04",
+      "paths": [],
+      "class": "BLOCKED/NEEDS-DECISION",
+      "confidence": "high",
+      "note": "Unique evidence may remain on listed remote branches; this slice did not delete or close them",
+      "stillPresentRemoteBranches": [
+        "audit/project-sanitation-inventory-2026-08-26",
+        "audit/account-platform",
+        "audit/admin-platform",
+        "docs/chatgpt-technical-lead-handoff-2026-08-24",
+        "chore/account-admin-team-prep",
+        "docs/post-pr98-continuity-2026-08-27",
+        "feat/trip-collaboration-foundation"
+      ]
+    }
+  ],
+  "keepPublicImages": [
+    "public/images/hero-bali.png",
+    "public/images/bali.jpg",
+    "public/images/lisbon.jpg",
+    "public/images/zermatt.jpg",
+    "public/images/amsterdam.jpg"
+  ],
+  "appPages": [
+    "/",
+    "/planen",
+    "/reisen",
+    "/reisen/[tripId]",
+    "/login",
+    "/register",
+    "/account",
+    "/account/bookings",
+    "/account/travellers",
+    "/account/settings",
+    "/account/security",
+    "/admin",
+    "/admin/users",
+    "/admin/system-health",
+    "/admin/settings",
+    "/admin/security",
+    "/admin/provider-ops",
+    "/admin/payments",
+    "/admin/marketing",
+    "/admin/localization",
+    "/admin/content",
+    "/admin/analytics",
+    "/admin/login",
+    "/admin/mfa",
+    "/auth/callback",
+    "/auth/update-password",
+    "/unauthorized",
+    "/ui-audit/account",
+    "/ui-audit/activities",
+    "/ui-audit/admin-provider-ops",
+    "/ui-audit/admin-system-health",
+    "/ui-audit/trip-workspace"
+  ],
+  "missingLegalPages": ["/privacy", "/terms"],
+  "checks": {
+    "checkDead": {
+      "exit": 0,
+      "startpoints": 391,
+      "reachable": 893,
+      "justifiedOrphans": ["components/layout/CookieConsent.tsx"]
+    },
+    "checkExports": { "exit": 0, "files": 768, "unusedExports": 0 },
+    "checkDeps": { "exit": 0, "unusedUnjustified": 0 },
+    "checkApiSchutz": { "exit": 0, "adminRoutes": 12 },
+    "checkSchemaBezug": { "exit": 0, "tablesOrViews": 21, "functions": 20 },
+    "typecheck": { "exit": 0 },
+    "lint": { "exit": 0, "errors": 0, "warnings": 135 },
+    "test": { "exit": 0, "pass": 2815, "fail": 0 },
+    "checkSetupCi": { "exit": 0, "warnings": 1, "note": "no .env/.local in this environment" },
+    "build": { "exit": 0, "staticPagesGenerated": 22 }
+  },
+  "toolingLimits": [
+    "check:dead walks TS/JS import graph only and does not see public assets, CLI temp, image hosts, branches, or cloud",
+    "check:deps does not prove asset or docs cleanliness",
+    "auth:pruefen and live DB privilege/RLS scripts were not run here",
+    "branch protection was not freshly queried from GitHub settings",
+    "Production Storage was not re-inventoried; C3 after-image was not re-executed"
+  ],
+  "historicalRevalidationDelta": {
+    "pr88": "CLOSED on 2026-08-29; unique inventory branch still present",
+    "pr135": "MERGED",
+    "openHistoricalDrafts": [28, 39, 40, 50, 52],
+    "remoteHeads28Aug": 136,
+    "remoteHeadsAfterMergedBranchDeleteThenThisAudit": 65,
+    "mergedRefsDeletedByLaterBranchHygiene": 165
+  },
+  "lockTest": "lib/project-sanitation/closure-invariants.test.ts",
+  "secretsInDeliverables": false
+}
