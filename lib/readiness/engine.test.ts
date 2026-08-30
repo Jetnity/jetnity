@@ -3,8 +3,16 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { officialRequirementsPruefen, requirementsEvaluationsPruefen } from '@/lib/readiness/anforderungen'
-import { officialFingerprint, requirementsAuswerten, requirementsFuerReise, travellerGeloeschtPruefen } from '@/lib/readiness/engine'
+import {
+  officialRequirementsPruefen,
+  requirementsEvaluationsPruefen as requirementsEvaluationsPruefenRoh,
+} from '@/lib/readiness/anforderungen'
+import {
+  officialFingerprint,
+  requirementsAuswerten as requirementsAuswertenRoh,
+  requirementsFuerReise as requirementsFuerReiseRoh,
+  travellerGeloeschtPruefen,
+} from '@/lib/readiness/engine'
 import { VERGLEICH_NICHT_VERFUEGBAR, credentialOptionenVergleichen } from '@/lib/readiness/vergleich'
 import {
   officialAktionAusQuelle,
@@ -23,6 +31,27 @@ import type {
 import type { TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-22T08:00:00.000Z'
+
+function requirementsAuswerten(
+  ...args: Parameters<typeof requirementsAuswertenRoh>
+) {
+  const [anfrage, provider, roh, optionen] = args
+  return requirementsAuswertenRoh(anfrage, provider, roh, { now: JETZT, ...optionen })
+}
+
+function requirementsFuerReise(
+  ...args: Parameters<typeof requirementsFuerReiseRoh>
+) {
+  const [reise, provider, optionen] = args
+  return requirementsFuerReiseRoh(reise, provider, { now: JETZT, ...optionen })
+}
+
+function requirementsEvaluationsPruefen(
+  ...args: Parameters<typeof requirementsEvaluationsPruefenRoh>
+) {
+  const [anfrage, provider, optionen] = args
+  return requirementsEvaluationsPruefenRoh(anfrage, provider, { now: JETZT, ...optionen })
+}
 
 function reisende(
   teil: Partial<TripTraveller> &

@@ -133,6 +133,16 @@ export function providerNameLesen(wert: unknown): string | null {
 /** Clock-Skew-Toleranz für Provider-Uhren: 5 Minuten. */
 const CHECKED_AT_SKEW_MS = 5 * 60 * 1000
 
+/** Globaler Jetnity-Ceiling für Official Evidence. `checkedAt` ist Retrieval-/Evaluation-Zeit, nicht Vendor-lastUpdatedAt. */
+export const OFFICIAL_CHECKED_AT_MAX_AGE_MS = 60 * 60 * 1000
+
+export function officialCheckedAtMaxAgeMs(wert: unknown): number {
+  if (typeof wert !== 'number' || !Number.isFinite(wert) || wert <= 0) {
+    return OFFICIAL_CHECKED_AT_MAX_AGE_MS
+  }
+  return Math.min(wert, OFFICIAL_CHECKED_AT_MAX_AGE_MS)
+}
+
 export function regelReferenzLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
   const text = wert.trim()
@@ -241,6 +251,7 @@ export function officialFrische(opts: {
   validFrom?: string | null
   validUntil: string | null
   now?: string
+  maxAgeMs?: number
   hasProvider: boolean
   sourceAvailable?: boolean
 }): OfficialFreshness {
@@ -249,10 +260,15 @@ export function officialFrische(opts: {
   if (!opts.checkedAt) return 'never_checked'
   if (opts.storedFingerprint && opts.storedFingerprint !== opts.currentFingerprint) return 'stale'
   const jetzt = opts.now ? Date.parse(opts.now) : Date.now()
-  if (opts.validFrom && Number.isFinite(jetzt) && jetzt < gültigkeitszeitMs(opts.validFrom)) {
+  const checkedMs = Date.parse(opts.checkedAt)
+  if (!Number.isFinite(jetzt) || !Number.isFinite(checkedMs)) return 'never_checked'
+  if (opts.validFrom && jetzt < gültigkeitszeitMs(opts.validFrom)) {
     return 'never_checked'
   }
-  if (opts.validUntil && Number.isFinite(jetzt) && jetzt > gültigkeitszeitMs(opts.validUntil)) {
+  if (opts.validUntil && jetzt > gültigkeitszeitMs(opts.validUntil)) {
+    return 'recheck_needed'
+  }
+  if (jetzt - checkedMs >= officialCheckedAtMaxAgeMs(opts.maxAgeMs)) {
     return 'recheck_needed'
   }
   return 'current'

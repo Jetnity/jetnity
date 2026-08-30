@@ -13,6 +13,8 @@ import {
   type OfficialRequirementAnfrage,
 } from '@/lib/readiness/anforderungen'
 import { officialPruefungAusEvaluations } from '@/lib/readiness/bezeichnungen'
+import { requirementsProviderAus } from '@/lib/readiness/provider'
+import { requirementsProviderNachZustand } from '@/lib/readiness/zustand'
 import {
   readinessBegrenztLesen,
   readinessContentLengthUeberschritten,
@@ -96,7 +98,11 @@ export async function POST(req: Request) {
   }
 
   const anfrage: OfficialRequirementAnfrage = geprueft.data
-  const evaluations = await requirementsEvaluationsPruefen(anfrage)
+  const evaluations = await requirementsEvaluationsPruefen(
+    anfrage,
+    requirementsProviderNachZustand(requirementsProviderAus()),
+    { signal: req.signal },
+  )
   const official = officialAusEvaluations(evaluations, anfrage)
 
   return antwort(200, {
