@@ -49,7 +49,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, ROADMAP, ARCHITECTURE, Vision, Co
 
 ## Residuals
 
-- Vollständiger `npm test` / Typecheck / Lint / Build und CI/Vercel müssen am Exact Head live gelesen werden.
+- Lokale Gates dieses Agenten: `npm test` 2834/2834, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen am Exact Head live gelesen werden.
 - Kein Browser-/Real-Device-Beweis; Slice ist server-/domainseitig.
 - Safety/Seasonal haben weiter optionales Signal und kein Domain-Flag; das ist nicht S4-R1.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.

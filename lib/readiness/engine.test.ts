@@ -1912,9 +1912,9 @@ describe('P2-TA-06 Readiness credential normalization', () => {
     const gesehen: { anfrage: RequirementsAnfrage | null } = { anfrage: null }
     const capture: RequirementsProvider = {
       name: 'p2-ta06-capture',
-      async evaluate(anfrage) {
+      async evaluate(anfrage, signal) {
         gesehen.anfrage = anfrage
-        return provider ? provider.evaluate(anfrage) : []
+        return provider ? provider.evaluate(anfrage, signal) : []
       },
     }
     const evaluations = await requirementsAuswerten(

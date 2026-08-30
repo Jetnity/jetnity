@@ -22,7 +22,7 @@ export type ReadinessUmgebung = {
   JETNITY_READINESS_AKTIV?: string
 }
 
-export function readinessUmgebungAusProzess(): ReadinessUmgebung {
+function readinessUmgebungAusProzess(): ReadinessUmgebung {
   const { VERCEL_ENV, JETNITY_READINESS_AKTIV } = process.env
   return { VERCEL_ENV, JETNITY_READINESS_AKTIV }
 }

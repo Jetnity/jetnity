@@ -41,6 +41,8 @@ Geprüft: Abort-Vertrag; 4 s Domain-Timeout mit Cancellation; `req.signal`; Fail
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice, vorbehaltlich Exact-Head-Gates (voller Testlauf / Typecheck / Lint / Build / CI / Preview) am finalen Tip.
+Während der lokalen Gates zwei Author-Fixes: `engine.test.ts` reicht das AbortSignal beim Capture-Double weiter (Typecheck); `readinessUmgebungAusProzess` ist nicht mehr exportiert (`check:exports`). Beide gehören zum Slice-Diff.
+
+**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice. CI/Vercel am Exact Head bleiben live zu prüfen.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend.

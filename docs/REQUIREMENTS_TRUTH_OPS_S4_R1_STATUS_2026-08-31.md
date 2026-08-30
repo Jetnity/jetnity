@@ -66,10 +66,14 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 | --- | --- |
 | `lib/readiness/s4-r1-truth-ops.test.ts` | **14/14 pass** |
 | `lib/readiness/zustand.test.ts` | **5/5 pass** |
-| `lib/readiness/engine.test.ts` + Board/Provider-Ops | **80/80 pass** im ersten Fokuslauf; S4-R1 danach 19/19 |
-| `npm test` / Typecheck / Lint / Build | nach dem ersten Push auf Exact Head nachzutragen |
-| GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip |
-| Browser / Real-Device | nicht gelaufen, nicht behauptet |
+| `lib/readiness/engine.test.ts` | **45/45 pass** (Engine + P2-TA-06) |
+| `npm test` | **2834/2834 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
+| `npm run build` | pass (Next.js 16.3.3 Turbopack) |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
+| GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip prüfen |
+| Browser / Real-Device | nicht gelaufen, nicht behauptet (kein UI-Slice) |
 
 ## 6. Risiken / Residuals
 
