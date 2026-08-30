@@ -1,128 +1,119 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / REQUIREMENTS PROVIDER GATE 0 CLOSED / NO ACTIVE CURSOR SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / REQUIREMENTS TRUTH-OPS S4-R1 ACTIVE / DRAFT PR #293 / LIVE-EVIDENCE GEWINNT**
 
-Aktuellster vollständiger Checkpoint:
+Aktuellster abgeschlossener Checkpoint:
 
 `docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_GATE0_CLOSED_2026-08-31.md`
 
-## 1. Aktueller verifizierter Main-Stand vor diesem Continuity-PR
+Verbindlicher aktiver Task:
 
-`1327759d9210386ae39303c65461e2fce864b5fd`
+`docs/REQUIREMENTS_TRUTH_OPS_S4_R1_TASK_2026-08-31.md`
 
-- PR #290 **MERGED**.
-- finaler PR-Head `74e214606c9f881ce0cd19aef3ed7865eb304d3b`.
-- Exact-Head PR-CI #1412 / `33339311538`: **SUCCESS**.
-- Vercel Preview `dpl_BGFuA8WmeiWK5YKWsRq9SV1aSHVN`: **READY** exakt auf `74e21460...`.
-- Post-Merge Main-CI #1413 / `33339603883`: **SUCCESS** exakt auf `1327759d...`.
-- Vercel Production `dpl_9Vgk6yeZLe6tSZvmAqypYfUDca2y`: **READY** exakt auf `1327759d...`.
-- Issue #288 **CLOSED / completed**.
-- Ruleset `Jetnity main protection` / ID `21875372`: active; strict checks; bypass leer.
+## 1. Live-Baseline vor S4-R1
 
-PR #289 bleibt **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED**. Grund war ausschließlich der GitHub-Connectorfehler beim Draft→Ready-Wrapper; Schutzregeln wurden nicht gelockert oder umgangen.
+Verifiziertes `main`:
 
-**Wichtig:** Dieser TL-only Continuity-PR bewegt `main` nach dem obigen Gate-0-Merge erneut. Finalen Main-SHA nach Merge live prüfen.
+`67f54135957cf09e39585a8cff662ecc3645b39a`
 
-## 2. Aktiver Arbeitsblock
+- PR #291 **MERGED**; finaler Gate-0-Continuity-Merge.
+- Main-CI #1415 / Run `33339984118`: **SUCCESS** exakt auf `67f54135...`.
+- Vercel Production `dpl_8M5fqNsNBzdsFZXkVhXMzSDoxWRN`: **READY** exakt auf `67f54135...`.
+- Issue #288: CLOSED/completed.
+- Gate 0 vollständig abgeschlossen.
+- Ruleset `Jetnity main protection` / ID `21875372`: active; PR + strict required checks + Conversation Resolution + merge-only; bypass leer.
+- Offene PRs außerhalb dieses Slices sind nur bekannte historische Drafts (#52, #50, #40, #39, #28); kein konkurrierender aktueller Runtime-Slice.
 
-**Kein Produkt-/Runtime-Slice aktiv. Kein Cursor-Agent aktiv.**
+## 2. Aktiver Slice
 
-Gate 0 ist abgeschlossen und dient nur noch als Evidence-/Design-Basis.
+Issue **#292 – Requirements Truth-Ops S4-R1 – timeout, kill-switch & bounded freshness**.
 
-Letzter Agent:
+Draft-PR **#293 – Requirements Truth-Ops S4-R1: timeout, kill-switch & bounded freshness**.
 
-**`Jetnity requirements provider groundwork 1`**  
-Generation: **1**  
-Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`  
-Status: **STOPPED**.
+Branch:
 
-Der Agent hat CR-1 bis CR-7 in derselben Session bearbeitet. Technical-Lead Exact-Head Review und Merge sind abgeschlossen.
+`feat/requirements-truth-ops-s4-r1-2026-08-31`
 
-## 3. Current Requirements / Official Truth Boundary
+Start-Baseline:
 
-- `RequirementsProvider` bleibt provider-neutral.
-- `requirementsProviderAus()` bleibt fail-closed `null`.
-- kein echter Requirements-/Visa-/Entry-Provider aktiviert.
-- keine Provider-Secrets, paid calls, Verträge oder Live-Runtime-Aktivierung.
-- Trip Snapshot bleibt einzige Current Truth für die konkrete Reise.
-- Account Registry bleibt Wiederverwendungsquelle und keine automatische Evaluate-Authority.
-- Production-Workspace übergibt derzeit keine serverseitigen Official Evaluations und fällt fail-closed auf unknown zurück.
-- bestehender serverseitiger Provider Adapter Core bleibt vorgesehener Outbound-Transport; kein zweiter HTTP-Stack.
+`67f54135957cf09e39585a8cff662ecc3645b39a`
 
-Kanonisches Traveller-Modell:
+Initialer TL-Task-Commit:
+
+`5e7de7e8a1c983b7dc103aa259b25892494955f5`
+
+Scope:
+
+- `RequirementsProvider.evaluate` mit AbortSignal;
+- bounded Domain-Timeout (Standard 4.000 ms);
+- Readiness-Kill-Switch `JETNITY_READINESS_AKTIV` auf bestehendem Provider-Ops-Muster;
+- technische Timeout/Abort/temporary/unavailable-Semantik;
+- `checkedAt` bounded Freshness mit globalem Jetnity-Ceiling von 60 Minuten;
+- gezielte Tests + Handoff/Self-Review.
+
+## 3. Cursor-Agent
+
+Vorgesehener exakter Anzeigename:
+
+**`Jetnity requirements truth ops 1`**  
+Generation: **1**
+
+Session: **PENDING DISPATCH / nach Cursor-Annahme live verifizieren**.
+
+Der Agent darf ausschließlich S4-R1 implementieren, Self-Review liefern und stoppen. Er darf nicht Ready setzen, mergen oder einen Folgeslice starten. `docs/ACTIVE_WORK_STATUS.md` bleibt Technical-Lead-owned.
+
+## 4. Revalidierte Current Truth
+
+Auf Start-`main` live bestätigt:
+
+- `RequirementsProvider.evaluate(anfrage)` hat noch kein `AbortSignal`.
+- `requirementsAuswerten(...)` ruft `provider.evaluate(kanonisch)` ohne Domain-Timeout auf.
+- `requirementsProviderAus()` ist und bleibt `null`.
+- `officialFrische()` hat noch keine maximale `checkedAt`-TTL.
+- öffentliche Requirements-Route hat `maxDuration = 10` und propagiert `req.signal` noch nicht.
+- Provider Ops hat bereits die wiederverwendbare fail-closed `providerOpsZustand`-Form.
+- Provider Transport Core akzeptiert bereits AbortSignal; kein zweiter HTTP-Stack erforderlich.
+
+Kanonisches Traveller-Modell bleibt verbindlich:
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
+Kein Default-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
 
-## 4. Offene Risiken aus Gate 0
+## 5. Hard Gates / Non-Scope
 
-### P1
+S4-R1 öffnet **kein** besonderes Product-Owner-Gate:
 
-- `RequirementsProvider.evaluate(...)` ohne Provider-`AbortSignal` / explizites Timeout.
-- kein Readiness-Domain-Kill-Switch für einen später aktiven Provider.
-- `officialFrische()` ohne maximale `checkedAt`-TTL; vor realem Adapter bounded fail-closed Freshness-Policy erforderlich.
-- `checkedAt` darf nicht mit Vendor-`lastUpdatedAt` gleichgesetzt werden.
-- vollständige Multi-Citizenship-/Multi-Document-/Credential-/Transit-Mapping-Pflicht.
-- Sherpa-Origin→Nationality-Fallback für Jetnity verboten.
-- Sherpa max. 3 Transit-Nodes vs Jetnity bis 12: niemals silent drop; nur vollständige Split/Aggregation oder fail-closed unsupported/unknown.
-- Development-vs-Production-Supabase-Migration-History vor migrationsnaher Arbeit live reconciliieren.
+- kein echter Requirements-Provider / keine Providerwahl;
+- kein Vendor-Kontakt, Vertrag oder DPA;
+- keine Secrets/API Keys;
+- keine echten oder paid calls;
+- `requirementsProviderAus()` bleibt `null`;
+- keine Supabase-Migration/RLS/Ownership/Storage;
+- keine Auth/MFA/AAL-Änderung;
+- kein Workspace-Live-Provider-Wiring;
+- keine Commercial Runtime Writer;
+- keine sensitiven Passport-/MRZ-/Biometrie-/Scan-Daten;
+- keine neuen recurring costs;
+- kein Public Launch/Domain/Store-Cutover.
 
-### P2
+Supabase wird in diesem Slice nicht verändert; deshalb ist kein DB-Live-Mutationsschritt Teil des Tasks. Die bekannte Development-vs-Production-Migration-History bleibt vor jedem migrationsnahen Slice neu zu prüfen.
 
-- kein realer Requirements Provider → keine live option-spezifische Visa/Entry/Transit Official Truth.
-- Workspace erhält noch keine serverseitigen Official Evaluations.
-- 8-KB-Body-Cap kann große Parties begrenzen.
-- keine Readiness-spezifischen Provider-Ops-Observability-Events.
+## 6. Review-State
 
-### P0
+Aktuell: **IMPLEMENTATION NOT YET REVIEWED / PR #293 DRAFT**.
 
-Kein aktueller Production-Incident, keine Fake-Official-Truth-Aktivierung und kein Secret-Leak aus Gate 0 belegt.
+Agent-Self-Review ist kein Technical-Lead-PASS. Jede Head-Änderung invalidiert frühere CI/Vercel/Review-Evidence. Bei `CHANGES REQUIRED` arbeitet derselbe Agent in derselben Session weiter.
 
-## 5. Provider Selection
+## 7. FIRST NEXT ACTION
 
-**Kein Provider gewählt.**
-
-Timatic/IATA-Familie und Sherpa bleiben Research-Kandidaten. Öffentliche technische/Marketing-Evidence ist keine Vertrags-, Kosten-, Lizenz- oder DPA-Wahrheit.
-
-Reale Providerwahl, Vertrag/DPA, Secrets/API Keys, paid calls und Live-Aktivierung bleiben besondere Product-Owner-Gates.
-
-## 6. Supabase Boundary
-
-Gate 0 hat Supabase nicht mutiert.
-
-Letzter Gate-0-Precheck:
-
-- Production `qscbgcdmivbbnzrcyegn`: `ACTIVE_HEALTHY`.
-- Development `yfvbxvijcorffwxbxahl`: `ACTIVE_HEALTHY`.
-- Development-Migration-History weicht von Production ab.
-
-Vor betroffenem Scope live erneut prüfen.
-
-## 7. Product-Owner-Gates bleiben geschlossen
-
-- reale Providerwahl / Vertrag / Commercial Terms / DPA
-- Provider Secrets / API Keys
-- paid calls / Live-Aktivierung
-- Production Runtime Writer / Principal / Commercial Write
-- Production-Migrationen oder große RLS/Ownership-Änderungen
-- fundamentale Auth/MFA/AAL-Änderungen
-- sensitive Passport-/MRZ-/Biometrie-/Scan-Speicherung oder zusätzliche externe sensitive transfers
-- Payments
-- neue recurring cost > USD 100/Monat
-- Public Launch / Indexing / Domain Cutover / Store Live
-
-## 8. FIRST NEXT ACTION
-
-**Kein Folgeslice automatisch starten.**
-
-1. finalen `main` nach diesem Continuity-PR live verifizieren;
-2. offene PRs/Issues/Agentenstatus live prüfen;
-3. Gate-0-Findings gegen aktuellen Code revalidieren;
-4. bei DB-/Migration-/Security-Scope Supabase live prüfen;
-5. neuen bounded Task erst danach definieren.
-
-Wahrscheinlicher Kandidat: provider-neutral **Requirements Truth-Ops S4-R1** mit AbortSignal/Timeout, Readiness-Kill-Switch, technischer Failure-Semantik und bounded Freshness/TTL; Factory bleibt `null`. **Noch nicht gestartet.**
+1. Cursor-Agent `Jetnity requirements truth ops 1` auf PR #293 starten.
+2. Exact Session/Acceptance live verifizieren.
+3. Agent implementiert ausschließlich den verbindlichen S4-R1-Task.
+4. Danach unabhängiger Technical-Lead-Review des exakten Heads, Diff, Tests, CI, Vercel Preview und Threads.
+5. Nur bei PASS darf der Technical Lead Ready setzen und normal mergen.
+6. Post-Merge `main`, Main-CI und Vercel Production exakt verifizieren; Issue #292 schließen und Continuity aktualisieren.
+7. **Kein automatischer Folgeslice.**
 
 **Live-Evidence gewinnt immer.**
