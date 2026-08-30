@@ -20,7 +20,7 @@ TL-Review: CHANGES REQUIRED auf `848292182bf9d8a89a19db651b35222323144a19` / Rev
 | Behind `origin/main` | **0** |
 | Review-anchored Head | `848292182bf9d8a89a19db651b35222323144a19` |
 | Review-Fix Runtime Head | `87f6f3cf8dde5f1424f6c65fadd4e97eb95b4362` |
-| Authoring / reviewable Tip | live auf PR #246 nach diesem Stamp prüfen |
+| Authoring / reviewable Tip | `47dfb08c489c781250822705cccff4c2336eea90` – Evidence-Stamp; jeder neuere Tip live auf PR #246 prüfen |
 | Traveller-Kontext | **nicht relevant** |
 
 ## 2. Review-Fix

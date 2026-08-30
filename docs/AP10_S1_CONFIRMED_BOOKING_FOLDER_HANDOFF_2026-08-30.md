@@ -23,7 +23,7 @@ Review-Fix gegen CHANGES REQUIRED auf `84829218`:
 | Behind `origin/main` | **0** |
 | Review-Anker | `848292182bf9d8a89a19db651b35222323144a19` |
 | Review-Fix Runtime | `87f6f3cf8dde5f1424f6c65fadd4e97eb95b4362` |
-| Reviewable Tip | live auf PR #246 |
+| Reviewable Tip | `47dfb08c489c781250822705cccff4c2336eea90` – Evidence-Stamp; neuere Tips live auf PR #246 |
 | Cursor-Agent | `Account plattform audit vorbereitung 23` |
 | Cloud-Run | https://cursor.com/agents/bc-ec79a6cd-8076-4ec4-a130-249f9f650420 |
 
