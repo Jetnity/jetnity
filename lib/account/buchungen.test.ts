@@ -10,6 +10,8 @@ import {
   buchungenAbgeschnitten,
   buchungenAusZeilen,
   buchungenGruppenAus,
+  buchungenSchnittVergleich,
+  tripStatusLesen,
   type RoheBuchungszeile,
 } from '@/lib/account/buchungen'
 
@@ -124,6 +126,40 @@ describe('AP-10-S1 Buchungsabbildung', () => {
 
     const ohneReise = buchungenAusZeilen([zeile({ trips: null })])
     assert.deepEqual(ohneReise, { ok: false, grund: 'unvollstaendig' })
+  })
+
+  test('lehnt unbekannten Trip-Status fail-closed ab und erfindet kein draft', () => {
+    assert.equal(tripStatusLesen('draft'), 'draft')
+    assert.equal(tripStatusLesen('planned'), 'planned')
+    assert.equal(tripStatusLesen('booked'), 'booked')
+    assert.equal(tripStatusLesen('archived'), 'archived')
+    assert.equal(tripStatusLesen('cancelled'), null)
+    assert.equal(tripStatusLesen(''), null)
+    assert.equal(tripStatusLesen('unknown'), null)
+
+    assert.equal(
+      buchungAusZeile(zeile({ trips: { id: 'trip-1', title: 'Lissabon', status: 'cancelled' } })),
+      'unvollstaendig',
+    )
+    assert.deepEqual(
+      buchungenAusZeilen([zeile({ trips: { id: 'trip-1', title: 'Lissabon', status: 'legacy' } })]),
+      { ok: false, grund: 'unvollstaendig' },
+    )
+  })
+
+  test('schneidet die neuesten Bestätigungen deterministisch vor dem Limit', () => {
+    const neu = { id: 'b', bookingConfirmedAt: '2026-08-30T12:00:00.000Z' }
+    const aelter = { id: 'a', bookingConfirmedAt: '2026-08-29T12:00:00.000Z' }
+    const ohneZeit = { id: 'c', bookingConfirmedAt: null }
+    assert.equal(buchungenSchnittVergleich(neu, aelter) < 0, true)
+    assert.equal(buchungenSchnittVergleich(aelter, ohneZeit) < 0, true)
+    assert.equal(
+      buchungenSchnittVergleich(
+        { id: 'item-2', bookingConfirmedAt: '2026-08-30T12:00:00.000Z' },
+        { id: 'item-1', bookingConfirmedAt: '2026-08-30T12:00:00.000Z' },
+      ) > 0,
+      true,
+    )
   })
 
   test('schneidet nicht still ab', () => {

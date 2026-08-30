@@ -6,6 +6,11 @@
 // RLS aus `20260817120000_reiseschema.sql` bleibt die Ownership-Authority:
 // `trip_items_lesen` und `trips_lesen` für `authenticated`. Empty ≠ Error
 // über `problemAus()`. Kein Write-Pfad.
+//
+// Vor dem Limit steht eine stabile DB-Ordnung: booking_confirmed_at absteigend,
+// fehlende Zeiten zuletzt, danach id. Die 200er-Teilmenge ist damit
+// deterministisch. Die Bestätigungszeit bleibt Schnittkriterium und erscheint
+// nicht in der UI.
 
 import 'server-only'
 
@@ -48,6 +53,8 @@ export async function buchungenLaden(): Promise<BuchungenLesung> {
         .from('trip_items')
         .select(BUCHUNGEN_SPALTEN, { count: 'exact' })
         .eq('booking_status', 'booked')
+        .order('booking_confirmed_at', { ascending: false, nullsFirst: false })
+        .order('id', { ascending: true })
         .limit(BUCHUNGEN_LISTE_GRENZE),
     )
   } catch (fehler) {

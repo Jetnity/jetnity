@@ -11,7 +11,7 @@ import { istArchiviert } from '@/lib/account/reise-archiv'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { ART_BEZEICHNUNG, STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
-import { TRIP_ITEM_KINDS, type TripItemKind, type TripStatus } from '@/types/trips'
+import { TRIP_ITEM_KINDS, TRIP_STATUSES, type TripItemKind, type TripStatus } from '@/types/trips'
 
 export const BUCHUNGEN_LISTE_GRENZE = 200
 
@@ -37,7 +37,7 @@ export const BUCHUNGEN_COPY = {
   einstiegHinweis: 'Nur ausdrücklich in Jetnity bestätigte Buchungen – ohne Beträge und ohne Partnerbestätigung.',
   abgeschnittenTitel: 'Diese Übersicht ist unvollständig.',
   abgeschnittenText:
-    'Es gibt mehr bestätigte Buchungen, als hier gerade angezeigt werden können. Nichts wurde still verworfen.',
+    'Es gibt mehr bestätigte Buchungen, als hier gerade angezeigt werden können. Gezeigt wird die zuletzt ausdrücklich bestätigte Teilmenge. Nichts wurde still verworfen.',
   ladenTitel: 'Buchungen werden geladen.',
   ladenText: 'Einen Moment, wir lesen die bestätigten Buchungen deines Kontos.',
 } as const
@@ -100,10 +100,12 @@ function tripAus(wert: unknown): { id: string; title: string; status: string } |
   return { id: zeile.id, title: zeile.title, status: zeile.status }
 }
 
-function statusLesen(wert: string): TripStatus {
-  return wert === 'draft' || wert === 'planned' || wert === 'booked' || wert === 'archived'
-    ? wert
-    : 'draft'
+/**
+ * Liest einen Trip-Status nur, wenn er zur bestehenden Wertewelt gehört.
+ * Unbekannte Werte werden nicht zu `draft` umgedeutet.
+ */
+export function tripStatusLesen(wert: string): TripStatus | null {
+  return (TRIP_STATUSES as readonly string[]).includes(wert) ? (wert as TripStatus) : null
 }
 
 /**
@@ -124,7 +126,9 @@ export function buchungAusZeile(zeile: RoheBuchungszeile): KontoBuchung | 'ausla
   const trip = tripAus(zeile.trips)
   if (!title || !trip) return 'unvollstaendig'
 
-  const tripStatus = statusLesen(trip.status)
+  const tripStatus = tripStatusLesen(trip.status)
+  if (!tripStatus) return 'unvollstaendig'
+
   return {
     id: zeile.id,
     title,
@@ -173,6 +177,28 @@ export function buchungenGruppenAus(buchungen: readonly KontoBuchung[]): {
     aktuell: buchungen.filter((buchung) => !buchung.tripArchived),
     archiviert: buchungen.filter((buchung) => buchung.tripArchived),
   }
+}
+
+export type BuchungenSchnittSchluessel = {
+  bookingConfirmedAt: string | null
+  id: string
+}
+
+/**
+ * Schnitt-Ordnung vor dem Limit: neueste ausdrückliche Bestätigung zuerst,
+ * fehlende Bestätigungszeit zuletzt, danach stabile `id`.
+ * Das bestimmt die gelesene Teilmenge, nicht die sichtbare Kartenreihenfolge.
+ */
+export function buchungenSchnittVergleich(
+  a: BuchungenSchnittSchluessel,
+  b: BuchungenSchnittSchluessel,
+): number {
+  const zeitA = a.bookingConfirmedAt
+  const zeitB = b.bookingConfirmedAt
+  if (zeitA && zeitB && zeitA !== zeitB) return zeitB.localeCompare(zeitA)
+  if (zeitA && !zeitB) return -1
+  if (!zeitA && zeitB) return 1
+  return a.id.localeCompare(b.id)
 }
 
 export function buchungenAbgeschnitten(
