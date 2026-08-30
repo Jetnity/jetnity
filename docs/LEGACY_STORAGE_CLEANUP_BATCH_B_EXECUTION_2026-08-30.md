@@ -4,7 +4,7 @@ Date: 2026-08-30
 Issue: #255
 PR: #260
 Product Owner approval: granted in chat on 2026-08-30
-Status: PRODUCTION CLEANUP APPLIED / AFTER-IMAGE PASS / FRESH REPLAY PENDING
+Status: COMPLETED / PRODUCTION AFTER-IMAGE PASS / FRESH REPLAY PASS
 
 ## 1. Clean execution baseline
 
@@ -113,7 +113,7 @@ The earlier preparation-only filename `20260830150133_legacy_storage_policies_cl
 
 ## 7. Independent Production after-image
 
-Read-only verification after the migration:
+Final read-only verification after the migration and after replay cleanup:
 
 - legacy candidate policy count: `0`
 - legacy bucket count across the exact ten ids: `0`
@@ -122,22 +122,48 @@ Read-only verification after the migration:
 - `creator-media` bucket count: `1` — unchanged
 - `creator-media` object count: `3` — unchanged
 - `creator-media` total object bytes: `9,092,490` — unchanged
+- migration `20260830155711 / legacy_storage_policies_cleanup`: exactly one Production history row
 
-Therefore the Production policy cleanup removed the exact Legacy-policy set and did not mutate the protected `creator-media` bucket, objects or policies.
+Therefore the Production cleanup removed the exact Legacy-policy set and did not mutate the protected `creator-media` bucket, objects or policies.
 
-## 8. Remaining completion gate: fresh replay
+## 8. Fresh replay proof
 
-Before Batch B may be closed and merged as complete:
+A fresh temporary Supabase branch was created from current Production only after a new live branch-cost quote and explicit Product Owner confirmation.
 
-1. obtain a fresh current Supabase branch cost quote;
-2. obtain explicit cost confirmation;
-3. create a new temporary branch from current Production;
-4. require `ACTIVE_HEALTHY` / no migration failure;
-5. verify migration `20260830155711` is present;
-6. verify the ten Legacy policies are absent;
-7. inspect whether obsolete Legacy buckets reappear in a fresh branch; any reappearance is a STOP/follow-up defect, not something to ignore;
-8. verify `creator-media` behavior is consistent with fresh-branch semantics and no protected Production object data is copied;
-9. delete the temporary branch immediately after evidence collection;
-10. update this document with replay evidence;
-11. exact-head CI/Vercel gate after the final evidence commit;
-12. merge PR #260 and close #255 only after all gates pass.
+Cost confirmation:
+
+- current quote: USD `0.01344` per hour
+- recurrence: hourly
+- Product Owner confirmation: granted in chat on 2026-08-30
+
+Replay branch:
+
+- branch id: `8fec9533-e19c-4933-b1be-cecd661159ad`
+- name: `replay-legacy-storage-batch-b-2026-08-30`
+- project ref: `qhjhjelkggrwolhtltzf`
+- parent Production ref: `qscbgcdmivbbnzrcyegn`
+- `with_data=false`
+- final observed preview status before verification: `ACTIVE_HEALTHY`
+
+Read-only replay verification on the fresh branch:
+
+- migration `20260830155711 / legacy_storage_policies_cleanup`: `1`
+- Legacy policy count across the exact ten removed bucket ids: `0`
+- Legacy bucket count across the exact ten ids: `0`
+- `creator-media` policy count: `0`
+- `creator-media` bucket count: `0`
+
+The absence of `creator-media` on the fresh branch is expected because the branch was created without Production data and the old bucket/policies are not part of current replay source. This proves the migration's already-clean replay path works without requiring obsolete Storage state.
+
+The temporary replay branch was deleted immediately after evidence collection. A subsequent Production branch listing showed only:
+
+- `main` / `qscbgcdmivbbnzrcyegn` — `ACTIVE_HEALTHY`
+- existing `develop` / `yfvbxvijcorffwxbxahl` — `ACTIVE_HEALTHY`
+
+No temporary replay branch remains, so hourly replay-branch cost has stopped.
+
+## 9. Final completion criteria
+
+Batch B is technically complete when the final evidence head passes exact-head GitHub CI and Vercel, then PR #260 may be merged and issue #255 closed.
+
+No Batch-C mutation of `creator-media` is included here. The three protected legacy PNG objects remain a separate backup/restore-gated decision.
