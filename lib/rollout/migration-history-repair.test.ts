@@ -8,23 +8,31 @@ import {
   REPAIR_DATEI,
   REPAIR_DO_TAG,
   REPAIR_ERSTES_SQL,
+  REPAIR_FUNCTION_ACL,
+  REPAIR_FUNCTION_CONFIG,
   REPAIR_FUNCTION_IDENTITY,
   REPAIR_FUNCTION_MD5,
   REPAIR_FUNCTION_NAME,
   REPAIR_FUNCTION_SCHEMA,
+  REPAIR_GATE_NOTE,
   REPAIR_GIT_BLOB,
   REPAIR_MARKER_MD5,
   REPAIR_MARKER_SHA256,
   REPAIR_MARKER_TEXT,
   REPAIR_NAME,
   REPAIR_POLICY,
+  REPAIR_POLICY_QUAL_FINGERPRINT,
+  REPAIR_POLICY_ROLES,
   REPAIR_PROD_PROJEKT_REF,
+  REPAIR_RUNTIME_MEMBERS,
   REPAIR_RUNTIME_ROLE,
   REPAIR_SQL_MD5,
   REPAIR_SQL_SHA256,
   REPAIR_TABLE,
+  REPAIR_TABLE_ACL,
   REPAIR_TABLE_OID,
   REPAIR_VERSION,
+  REPAIR_WRITER_MEMBERS,
   REPAIR_WRITER_ROLE,
   afterProbeSql,
   auftragLesen,
@@ -40,6 +48,8 @@ import {
   katalogUnveraendert,
   keineSecrets,
   md5Hex,
+  mengenFingerprint,
+  policyQualFingerprint,
   preflightAusZeilen,
   preflightPasst,
   preflightSql,
@@ -242,14 +252,123 @@ describe('Preflight erkennt das Marker-Before-Image und stoppt bei Drift', () =>
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_invoker', 'authenticated')), /Gate/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_nologin', false)), /Rollen/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_inherit', true)), /Rollen/)
-    assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_granted_to_runtime', false)), /Rollen/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'function_md5', 'deadbeef')), /Writer-Funktion/)
-    assert.throws(() => preflightPasst(mitAbweichung(basis, 'function_exec_authenticated', true)), /Writer-Funktion/)
-    assert.throws(() => preflightPasst(mitAbweichung(basis, 'authenticated_insert', true)), /Grants/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'policy_name', 'andere')), /Policy/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'policy_qual', 'true')), /Policy/)
     assert.equal(basis.table_oid, REPAIR_TABLE_OID)
     assert.equal(basis.function_md5, REPAIR_FUNCTION_MD5)
+    assert.equal(basis.table_acl, REPAIR_TABLE_ACL)
+    assert.equal(basis.policy_count, 1)
+    assert.equal(basis.policy_roles, REPAIR_POLICY_ROLES)
+    assert.equal(basis.policy_qual, REPAIR_POLICY_QUAL_FINGERPRINT)
+    assert.equal(basis.policy_with_check, null)
+    assert.equal(basis.function_acl, REPAIR_FUNCTION_ACL)
+    assert.equal(basis.function_config, REPAIR_FUNCTION_CONFIG)
+    assert.equal(basis.writer_members, REPAIR_WRITER_MEMBERS)
+    assert.equal(basis.runtime_members, REPAIR_RUNTIME_MEMBERS)
+    assert.equal(basis.gate_note, REPAIR_GATE_NOTE)
+  })
+
+  test('zusätzliche Policy, Rollen, ACLs oder Funktions-Config stoppen', () => {
+    const basis = erwartetesMarkerPreflight()
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'policy_count', 2)), /Policy-Count/)
+    assert.throws(
+      () => preflightPasst(mitAbweichung(basis, 'policy_roles', 'authenticated,service_role')),
+      /Policy/,
+    )
+    assert.throws(
+      () => preflightPasst(mitAbweichung(basis, 'policy_with_check', 'true')),
+      /Policy/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'table_acl',
+            'anon=r/postgres,authenticated=r/postgres,postgres=arwdDxtm/postgres',
+          ),
+        ),
+      /Table-ACL/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'table_acl',
+            'authenticated=r/postgres,postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres',
+          ),
+        ),
+      /Table-ACL/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'function_acl',
+            'jetnity_commercial_writer=X/postgres,postgres=X/postgres,service_role=X/postgres',
+          ),
+        ),
+      /Writer-Funktion/,
+    )
+    assert.throws(
+      () => preflightPasst(mitAbweichung(basis, 'function_config', 'search_path=public')),
+      /Writer-Funktion/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(basis, 'writer_members', 'authenticated,jetnity_commercial_runtime,postgres'),
+        ),
+      /Rollen/,
+    )
+    assert.throws(
+      () => preflightPasst(mitAbweichung(basis, 'runtime_members', 'authenticated,postgres')),
+      /Rollen/,
+    )
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_super', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_super', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_row_count', 2)), /Gate/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_singleton', false)), /Gate/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_note', 'andere note')), /Gate/)
+    assert.doesNotThrow(() =>
+      preflightPasst(
+        preflightAusZeilen({
+          ...basis,
+          table_acl: 'postgres=arwdDxtm/postgres,authenticated=r/postgres',
+          writer_members: 'postgres,jetnity_commercial_runtime',
+          policy_qual:
+            'user_id = (select auth.uid()) and exists (select 1 from public.trip_items i where i.id = trip_item_commercial_provenance.trip_item_id and i.user_id = (select auth.uid()) and i.trip_id = trip_item_commercial_provenance.trip_id)',
+        }),
+      ),
+    )
+  })
+
+  test('Policy- und Mengen-Fingerprints sind exakt und deterministisch', () => {
+    const using = `
+      user_id = (select auth.uid())
+      and exists (
+        select 1
+        from public.trip_items i
+        where i.id = trip_item_id
+          and i.user_id = (select auth.uid())
+          and i.trip_id = trip_item_commercial_provenance.trip_id
+      )
+    `
+    assert.equal(policyQualFingerprint(using), REPAIR_POLICY_QUAL_FINGERPRINT)
+    assert.equal(policyQualFingerprint(REPAIR_POLICY_QUAL_FINGERPRINT), REPAIR_POLICY_QUAL_FINGERPRINT)
+    assert.equal(
+      mengenFingerprint('postgres=arwdDxtm/postgres,authenticated=r/postgres'),
+      REPAIR_TABLE_ACL,
+    )
+    assert.equal(
+      mengenFingerprint('postgres,jetnity_commercial_runtime'),
+      REPAIR_WRITER_MEMBERS,
+    )
+    assert.notEqual(policyQualFingerprint('true'), REPAIR_POLICY_QUAL_FINGERPRINT)
+    assert.notEqual(mengenFingerprint('authenticated,service_role'), REPAIR_POLICY_ROLES)
   })
 })
 
@@ -285,8 +404,23 @@ describe('Write-SQL ersetzt nur den History-Body', () => {
     assert.doesNotMatch(rest, /\bcreate\s+policy\b/i)
     assert.doesNotMatch(rest, /\bcreate\s+(or\s+replace\s+)?function\b/i)
     assert.doesNotMatch(rest, /\balter\s+table\b/i)
-    assert.doesNotMatch(rest, /\bgrant\b/i)
-    assert.doesNotMatch(rest, /\brevoke\b/i)
+    assert.doesNotMatch(rest, /\bgrant\s+(select|insert|update|delete|all|execute|usage|option|privileges)\b/i)
+    assert.doesNotMatch(rest, /\brevoke\s+(select|insert|update|delete|all|execute|usage|option|privileges)\b/i)
+    assert.doesNotMatch(rest, /has_table_privilege/)
+    assert.doesNotMatch(rest, /has_function_privilege/)
+    assert.match(rest, /Policy-Count ist nicht 1/)
+    assert.match(rest, /Table-ACL weicht ab/)
+    assert.match(rest, /polwithcheck is null/)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_TABLE_ACL)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_FUNCTION_ACL)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_FUNCTION_CONFIG)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_POLICY_ROLES)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_WRITER_MEMBERS)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_RUNTIME_MEMBERS)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_POLICY_QUAL_FINGERPRINT)), true)
+    assert.equal(rest.includes(sqlLiteral(md5Hex(REPAIR_GATE_NOTE))), true)
+    assert.equal((rest.match(/Repair preflight: Owner-SELECT-Policy weicht ab/g) ?? []).length, 1)
+    assert.equal((rest.match(/Repair after-probe: Owner-SELECT-Policy weicht ab/g) ?? []).length, 1)
     assert.doesNotMatch(rest, /\binsert\s+into\b/i)
     assert.doesNotMatch(rest, /\bdelete\s+from\b/i)
     assert.doesNotMatch(rest, /migration repair/i)
@@ -320,6 +454,36 @@ describe('After-Probe prüft Body-Ersatz und unveränderten Katalog', () => {
     assert.equal(katalogUnveraendert(vorher, { ...nachher, row_count: 1 }), false)
     assert.equal(katalogUnveraendert(vorher, { ...nachher, gate_allocated: true }), false)
     assert.equal(katalogUnveraendert(vorher, { ...nachher, function_md5: 'x' }), false)
+    assert.equal(katalogUnveraendert(vorher, { ...nachher, policy_count: 2 }), false)
+    assert.equal(
+      katalogUnveraendert(vorher, { ...nachher, policy_roles: 'authenticated,service_role' }),
+      false,
+    )
+    assert.equal(
+      katalogUnveraendert(vorher, {
+        ...nachher,
+        table_acl: `${REPAIR_TABLE_ACL},anon=r/postgres`,
+      }),
+      false,
+    )
+    assert.equal(
+      katalogUnveraendert(vorher, {
+        ...nachher,
+        function_acl: `${REPAIR_FUNCTION_ACL},service_role=X/postgres`,
+      }),
+      false,
+    )
+    assert.equal(
+      katalogUnveraendert(vorher, {
+        ...nachher,
+        writer_members: `${REPAIR_WRITER_MEMBERS},authenticated`,
+      }),
+      false,
+    )
+    assert.equal(
+      katalogUnveraendert(vorher, { ...nachher, function_config: 'search_path=public' }),
+      false,
+    )
     assert.equal(historyBodyRepariert(vorher, datei), false)
     assert.equal(erstesAusfuehrbaresSql(nachher.statement_0 ?? ''), REPAIR_ERSTES_SQL)
   })

@@ -40,6 +40,16 @@ export const REPAIR_WRITER_ROLE = 'jetnity_commercial_writer'
 export const REPAIR_RUNTIME_ROLE = 'jetnity_commercial_runtime'
 export const REPAIR_DO_TAG = 'jetnity_mh_repair_20260829140000'
 export const REPAIR_ERSTES_SQL = 'create schema if not exists jetnity_internal;'
+export const REPAIR_TABLE_ACL = 'authenticated=r/postgres,postgres=arwdDxtm/postgres'
+export const REPAIR_FUNCTION_ACL = 'jetnity_commercial_writer=X/postgres,postgres=X/postgres'
+export const REPAIR_FUNCTION_CONFIG = 'search_path=""'
+export const REPAIR_POLICY_ROLES = 'authenticated'
+export const REPAIR_WRITER_MEMBERS = 'jetnity_commercial_runtime,postgres'
+export const REPAIR_RUNTIME_MEMBERS = 'postgres'
+export const REPAIR_GATE_NOTE =
+  'S5-B definiert den Invocation-Vertrag. GRANT jetnity_commercial_runtime an eine Anwendungs-Login-Rolle ist ein späteres Gate. Die Funktion ist kein Production-Write-Pfad.'
+export const REPAIR_POLICY_QUAL_FINGERPRINT =
+  'user_id = select auth.uid and exists select 1 from trip_items i where i.id = trip_item_id and i.user_id = select auth.uid and i.trip_id = trip_item_commercial_provenance.trip_id'
 
 export type HistoryRepairDatei = {
   datei: string
@@ -68,28 +78,33 @@ export type HistoryRepairPreflight = {
   rls_enabled: boolean
   rls_forced: boolean
   row_count: number
-  authenticated_select: boolean
-  authenticated_insert: boolean
-  authenticated_update: boolean
-  authenticated_delete: boolean
+  table_acl: string | null
+  policy_count: number
   policy_name: string | null
   policy_cmd: string | null
   policy_roles: string | null
   policy_permissive: boolean | null
   policy_qual: string | null
+  policy_with_check: string | null
+  gate_row_count: number
+  gate_singleton: boolean | null
   gate_allocated: boolean | null
   gate_invoker: string | null
+  gate_note: string | null
   writer_nologin: boolean | null
   writer_inherit: boolean | null
   writer_bypassrls: boolean | null
+  writer_super: boolean | null
   runtime_nologin: boolean | null
   runtime_inherit: boolean | null
   runtime_bypassrls: boolean | null
-  writer_granted_to_runtime: boolean
+  runtime_super: boolean | null
+  writer_members: string | null
+  runtime_members: string | null
   function_md5: string | null
   function_security_definer: boolean | null
-  function_exec_writer: boolean
-  function_exec_authenticated: boolean
+  function_config: string | null
+  function_acl: string | null
 }
 
 type Umgebung = { SUPABASE_PROJECT_REF?: string | undefined }
@@ -98,8 +113,8 @@ const DDL_IM_REPAIR_PFAD = [
   /\bcreate\s+(or\s+replace\s+)?(table|schema|role|policy|function|trigger|index)\b/i,
   /\balter\s+(table|role|schema|function|policy)\b/i,
   /\bdrop\s+(table|schema|role|policy|function|trigger|index)\b/i,
-  /\bgrant\b/i,
-  /\brevoke\b/i,
+  /\bgrant\s+(select|insert|update|delete|all|execute|usage|option|privileges)\b/i,
+  /\brevoke\s+(select|insert|update|delete|all|execute|usage|option|privileges)\b/i,
   /\btruncate\b/i,
   /\binsert\s+into\b/i,
   /\bdelete\s+from\b/i,
@@ -194,6 +209,38 @@ export function erstesAusfuehrbaresSql(sql: string): string {
 
 export function istProsaMarker(statement: string): boolean {
   return md5Hex(statement) === REPAIR_MARKER_MD5
+}
+
+export function mengenFingerprint(wert: string | null | undefined): string {
+  return (wert ?? '')
+    .split(',')
+    .map((teil) => teil.trim())
+    .filter(Boolean)
+    .sort()
+    .join(',')
+}
+
+export function policyQualFingerprint(qual: string | null | undefined): string {
+  if (!qual) return ''
+  return qual
+    .replace(/\s+/g, ' ')
+    .replace(/ as [A-Za-z_][A-Za-z0-9_]*/gi, '')
+    .replace(/\bpublic\./gi, '')
+    .replace(/\btrip_item_commercial_provenance\.trip_item_id\b/gi, 'trip_item_id')
+    .replace(/[()]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+}
+
+function policyQualFingerprintSql(ausdruck: string): string {
+  return `lower(btrim(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(${ausdruck},
+    '\\s+', ' ', 'g'),
+    ' as [A-Za-z_][A-Za-z0-9_]*', '', 'gi'),
+    'public\\.', '', 'gi'),
+    'trip_item_commercial_provenance\\.trip_item_id', 'trip_item_id', 'gi'),
+    '[()]', ' ', 'g'),
+    '\\s+', ' ', 'g')))`
 }
 
 export function dateiLesenUndPruefen(wurzel = process.cwd()): HistoryRepairDatei {
@@ -314,6 +361,19 @@ function alsOptionalBool(wert: unknown): boolean | null {
   return alsBool(wert)
 }
 
+function rollenMitgliederSql(rolle: string): string {
+  return `coalesce((
+    select array_to_string(array(
+      select u.rolname
+        from pg_auth_members m
+        join pg_roles r on r.oid = m.roleid
+        join pg_roles u on u.oid = m.member
+       where r.rolname = ${sqlLiteral(rolle)}
+       order by u.rolname
+    ), ',')
+  ), '')`
+}
+
 export function preflightSql(): string {
   return `
 select
@@ -356,14 +416,19 @@ select
   coalesce((
     select count(*)::int from public.trip_item_commercial_provenance
   ), 0) as row_count,
-  coalesce(has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'SELECT'), false)
-    as authenticated_select,
-  coalesce(has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'INSERT'), false)
-    as authenticated_insert,
-  coalesce(has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'UPDATE'), false)
-    as authenticated_update,
-  coalesce(has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'DELETE'), false)
-    as authenticated_delete,
+  coalesce((
+    select array_to_string(array(select unnest(c.relacl)::text order by 1), ',')
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public' and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+  ), '') as table_acl,
+  coalesce((
+    select count(*)::int
+      from pg_policy p
+      join pg_class c on c.oid = p.polrelid
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public' and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+  ), 0) as policy_count,
   (select p.polname
      from pg_policy p
      join pg_class c on c.oid = p.polrelid
@@ -378,13 +443,20 @@ select
     where n.nspname = 'public'
       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
       and p.polname = ${sqlLiteral(REPAIR_POLICY)}) as policy_cmd,
-  (select array_to_string(p.polroles::regrole[]::text[], ',')
-     from pg_policy p
-     join pg_class c on c.oid = p.polrelid
-     join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public'
-      and c.relname = ${sqlLiteral(REPAIR_TABLE)}
-      and p.polname = ${sqlLiteral(REPAIR_POLICY)}) as policy_roles,
+  coalesce((
+    select array_to_string(array(
+      select r.rolname
+        from pg_policy p
+        join pg_class c on c.oid = p.polrelid
+        join pg_namespace n on n.oid = c.relnamespace
+        join unnest(p.polroles) u(oid) on true
+        join pg_roles r on r.oid = u.oid
+       where n.nspname = 'public'
+         and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+         and p.polname = ${sqlLiteral(REPAIR_POLICY)}
+       order by r.rolname
+    ), ',')
+  ), '') as policy_roles,
   (select p.polpermissive
      from pg_policy p
      join pg_class c on c.oid = p.polrelid
@@ -392,39 +464,51 @@ select
     where n.nspname = 'public'
       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
       and p.polname = ${sqlLiteral(REPAIR_POLICY)}) as policy_permissive,
-  (select pg_get_expr(p.polqual, p.polrelid)
+  (select ${policyQualFingerprintSql('pg_get_expr(p.polqual, p.polrelid)')}
      from pg_policy p
      join pg_class c on c.oid = p.polrelid
      join pg_namespace n on n.oid = c.relnamespace
     where n.nspname = 'public'
       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
       and p.polname = ${sqlLiteral(REPAIR_POLICY)}) as policy_qual,
+  (select pg_get_expr(p.polwithcheck, p.polrelid)
+     from pg_policy p
+     join pg_class c on c.oid = p.polrelid
+     join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+      and p.polname = ${sqlLiteral(REPAIR_POLICY)}) as policy_with_check,
+  coalesce((select count(*)::int from jetnity_internal.commercial_write_runtime_gate), 0)
+    as gate_row_count,
+  (select singleton from jetnity_internal.commercial_write_runtime_gate where singleton = true)
+    as gate_singleton,
   (select production_write_path_allocated
      from jetnity_internal.commercial_write_runtime_gate
     where singleton = true) as gate_allocated,
   (select allocated_invoker_role::text
      from jetnity_internal.commercial_write_runtime_gate
     where singleton = true) as gate_invoker,
+  (select note
+     from jetnity_internal.commercial_write_runtime_gate
+    where singleton = true) as gate_note,
   (select not rolcanlogin from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
     as writer_nologin,
   (select rolinherit from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
     as writer_inherit,
   (select rolbypassrls from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
     as writer_bypassrls,
+  (select rolsuper from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
+    as writer_super,
   (select not rolcanlogin from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
     as runtime_nologin,
   (select rolinherit from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
     as runtime_inherit,
   (select rolbypassrls from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
     as runtime_bypassrls,
-  exists (
-    select 1
-      from pg_auth_members m
-      join pg_roles r on r.oid = m.roleid
-      join pg_roles u on u.oid = m.member
-     where r.rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)}
-       and u.rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)}
-  ) as writer_granted_to_runtime,
+  (select rolsuper from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+    as runtime_super,
+  ${rollenMitgliederSql(REPAIR_WRITER_ROLE)} as writer_members,
+  ${rollenMitgliederSql(REPAIR_RUNTIME_ROLE)} as runtime_members,
   (select md5(pg_get_functiondef(${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}::regprocedure)))
     as function_md5,
   (select p.prosecdef
@@ -434,10 +518,22 @@ select
       and p.proname = ${sqlLiteral(REPAIR_FUNCTION_NAME)}
       and pg_get_function_identity_arguments(p.oid) = '_eingabe jsonb')
     as function_security_definer,
-  coalesce(has_function_privilege(${sqlLiteral(REPAIR_WRITER_ROLE)}, ${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}, 'EXECUTE'), false)
-    as function_exec_writer,
-  coalesce(has_function_privilege('authenticated', ${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}, 'EXECUTE'), false)
-    as function_exec_authenticated
+  coalesce((
+    select array_to_string(p.proconfig, ',')
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = ${sqlLiteral(REPAIR_FUNCTION_SCHEMA)}
+       and p.proname = ${sqlLiteral(REPAIR_FUNCTION_NAME)}
+       and pg_get_function_identity_arguments(p.oid) = '_eingabe jsonb'
+  ), '') as function_config,
+  coalesce((
+    select array_to_string(array(select unnest(p.proacl)::text order by 1), ',')
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = ${sqlLiteral(REPAIR_FUNCTION_SCHEMA)}
+       and p.proname = ${sqlLiteral(REPAIR_FUNCTION_NAME)}
+       and pg_get_function_identity_arguments(p.oid) = '_eingabe jsonb'
+  ), '') as function_acl
 `.trim()
 }
 
@@ -448,6 +544,8 @@ export function preflightAusZeilen(
   if (!zeile) {
     throw new Error('History-Repair-Preflight leer. Abgebrochen.')
   }
+  const withCheck = alsText(zeile.policy_with_check)
+  const invoker = alsText(zeile.gate_invoker)
   return {
     version: alsText(zeile.version),
     name: alsText(zeile.name),
@@ -457,31 +555,36 @@ export function preflightAusZeilen(
     statement_0: alsText(zeile.statement_0),
     table_exists: alsBool(zeile.table_exists),
     table_oid: zeile.table_oid === null || zeile.table_oid === undefined ? null : alsZahl(zeile.table_oid),
+    table_acl: mengenFingerprint(alsText(zeile.table_acl)),
     rls_enabled: alsBool(zeile.rls_enabled),
     rls_forced: alsBool(zeile.rls_forced),
     row_count: alsZahl(zeile.row_count),
-    authenticated_select: alsBool(zeile.authenticated_select),
-    authenticated_insert: alsBool(zeile.authenticated_insert),
-    authenticated_update: alsBool(zeile.authenticated_update),
-    authenticated_delete: alsBool(zeile.authenticated_delete),
+    policy_count: alsZahl(zeile.policy_count),
     policy_name: alsText(zeile.policy_name),
     policy_cmd: alsText(zeile.policy_cmd),
-    policy_roles: alsText(zeile.policy_roles),
+    policy_roles: mengenFingerprint(alsText(zeile.policy_roles)),
     policy_permissive: alsOptionalBool(zeile.policy_permissive),
-    policy_qual: alsText(zeile.policy_qual),
+    policy_qual: policyQualFingerprint(alsText(zeile.policy_qual)),
+    policy_with_check: withCheck === '' ? null : withCheck,
+    gate_row_count: alsZahl(zeile.gate_row_count),
+    gate_singleton: alsOptionalBool(zeile.gate_singleton),
     gate_allocated: alsOptionalBool(zeile.gate_allocated),
-    gate_invoker: alsText(zeile.gate_invoker),
+    gate_invoker: invoker === '' ? null : invoker,
+    gate_note: alsText(zeile.gate_note),
     writer_nologin: alsOptionalBool(zeile.writer_nologin),
     writer_inherit: alsOptionalBool(zeile.writer_inherit),
     writer_bypassrls: alsOptionalBool(zeile.writer_bypassrls),
+    writer_super: alsOptionalBool(zeile.writer_super),
     runtime_nologin: alsOptionalBool(zeile.runtime_nologin),
     runtime_inherit: alsOptionalBool(zeile.runtime_inherit),
     runtime_bypassrls: alsOptionalBool(zeile.runtime_bypassrls),
-    writer_granted_to_runtime: alsBool(zeile.writer_granted_to_runtime),
+    runtime_super: alsOptionalBool(zeile.runtime_super),
+    writer_members: mengenFingerprint(alsText(zeile.writer_members)),
+    runtime_members: mengenFingerprint(alsText(zeile.runtime_members)),
     function_md5: alsText(zeile.function_md5),
     function_security_definer: alsOptionalBool(zeile.function_security_definer),
-    function_exec_writer: alsBool(zeile.function_exec_writer),
-    function_exec_authenticated: alsBool(zeile.function_exec_authenticated),
+    function_config: alsText(zeile.function_config) ?? '',
+    function_acl: mengenFingerprint(alsText(zeile.function_acl)),
   }
 }
 
@@ -495,41 +598,76 @@ export function erwartetesMarkerPreflight(): HistoryRepairPreflight {
     statement_0: REPAIR_MARKER_TEXT,
     table_exists: true,
     table_oid: REPAIR_TABLE_OID,
+    table_acl: REPAIR_TABLE_ACL,
     rls_enabled: true,
     rls_forced: false,
     row_count: 0,
-    authenticated_select: true,
-    authenticated_insert: false,
-    authenticated_update: false,
-    authenticated_delete: false,
+    policy_count: 1,
     policy_name: REPAIR_POLICY,
     policy_cmd: 'r',
-    policy_roles: 'authenticated',
+    policy_roles: REPAIR_POLICY_ROLES,
     policy_permissive: true,
-    policy_qual: 'user_id = (select auth.uid()) and exists (select 1 from public.trip_items',
+    policy_qual: REPAIR_POLICY_QUAL_FINGERPRINT,
+    policy_with_check: null,
+    gate_row_count: 1,
+    gate_singleton: true,
     gate_allocated: false,
     gate_invoker: null,
+    gate_note: REPAIR_GATE_NOTE,
     writer_nologin: true,
     writer_inherit: true,
     writer_bypassrls: false,
+    writer_super: false,
     runtime_nologin: true,
     runtime_inherit: false,
     runtime_bypassrls: false,
-    writer_granted_to_runtime: true,
+    runtime_super: false,
+    writer_members: REPAIR_WRITER_MEMBERS,
+    runtime_members: REPAIR_RUNTIME_MEMBERS,
     function_md5: REPAIR_FUNCTION_MD5,
     function_security_definer: true,
-    function_exec_writer: true,
-    function_exec_authenticated: false,
+    function_config: REPAIR_FUNCTION_CONFIG,
+    function_acl: REPAIR_FUNCTION_ACL,
   }
 }
 
-function policyPasst(qual: string | null): boolean {
-  if (!qual) return false
-  const klein = qual.toLowerCase()
-  return klein.includes('auth.uid()') && klein.includes('trip_items') && klein.includes('user_id')
-}
+const KATALOG_FELDER: (keyof HistoryRepairPreflight)[] = [
+  'table_exists',
+  'table_oid',
+  'table_acl',
+  'rls_enabled',
+  'rls_forced',
+  'row_count',
+  'policy_count',
+  'policy_name',
+  'policy_cmd',
+  'policy_roles',
+  'policy_permissive',
+  'policy_qual',
+  'policy_with_check',
+  'gate_row_count',
+  'gate_singleton',
+  'gate_allocated',
+  'gate_invoker',
+  'gate_note',
+  'writer_nologin',
+  'writer_inherit',
+  'writer_bypassrls',
+  'writer_super',
+  'runtime_nologin',
+  'runtime_inherit',
+  'runtime_bypassrls',
+  'runtime_super',
+  'writer_members',
+  'runtime_members',
+  'function_md5',
+  'function_security_definer',
+  'function_config',
+  'function_acl',
+]
 
 export function preflightPasst(stand: HistoryRepairPreflight): void {
+  const erwartet = erwartetesMarkerPreflight()
   if (stand.version_count !== 1 || stand.version !== REPAIR_VERSION) {
     throw new Error(
       `Preflight: Version ${REPAIR_VERSION} fehlt oder ist nicht eindeutig (${stand.version_count}). Abgebrochen.`,
@@ -554,48 +692,56 @@ export function preflightPasst(stand: HistoryRepairPreflight): void {
       `Preflight: Provenance-Tabelle/OID weicht ab (oid=${stand.table_oid ?? 'keine'}). Abgebrochen.`,
     )
   }
+  if (stand.table_acl !== erwartet.table_acl) {
+    throw new Error(`Preflight: Table-ACL weicht ab (${stand.table_acl || 'keine'}). Abgebrochen.`)
+  }
   if (!stand.rls_enabled || stand.rls_forced) {
     throw new Error('Preflight: RLS-Fingerprint weicht ab. Abgebrochen.')
   }
   if (stand.row_count !== 0) {
     throw new Error(`Preflight: Provenance-Rowcount ist nicht 0 (${stand.row_count}). Abgebrochen.`)
   }
-  if (
-    !stand.authenticated_select ||
-    stand.authenticated_insert ||
-    stand.authenticated_update ||
-    stand.authenticated_delete
-  ) {
-    throw new Error('Preflight: authenticated-Grants weichen ab. Abgebrochen.')
+  if (stand.policy_count !== 1) {
+    throw new Error(`Preflight: Policy-Count ist nicht 1 (${stand.policy_count}). Abgebrochen.`)
   }
   if (
     stand.policy_name !== REPAIR_POLICY ||
     stand.policy_cmd !== 'r' ||
     stand.policy_permissive !== true ||
-    !stand.policy_roles?.includes('authenticated') ||
-    !policyPasst(stand.policy_qual)
+    stand.policy_roles !== REPAIR_POLICY_ROLES ||
+    stand.policy_qual !== REPAIR_POLICY_QUAL_FINGERPRINT ||
+    stand.policy_with_check !== null
   ) {
     throw new Error('Preflight: Owner-SELECT-Policy weicht ab. Abgebrochen.')
   }
-  if (stand.gate_allocated !== false || stand.gate_invoker !== null) {
+  if (
+    stand.gate_row_count !== 1 ||
+    stand.gate_singleton !== true ||
+    stand.gate_allocated !== false ||
+    stand.gate_invoker !== null ||
+    stand.gate_note !== REPAIR_GATE_NOTE
+  ) {
     throw new Error('Preflight: Commercial Runtime Gate ist nicht geschlossen. Abgebrochen.')
   }
   if (
     stand.writer_nologin !== true ||
     stand.writer_inherit !== true ||
     stand.writer_bypassrls !== false ||
+    stand.writer_super !== false ||
     stand.runtime_nologin !== true ||
     stand.runtime_inherit !== false ||
     stand.runtime_bypassrls !== false ||
-    stand.writer_granted_to_runtime !== true
+    stand.runtime_super !== false ||
+    stand.writer_members !== REPAIR_WRITER_MEMBERS ||
+    stand.runtime_members !== REPAIR_RUNTIME_MEMBERS
   ) {
     throw new Error('Preflight: Rollen-Fingerprint weicht ab. Abgebrochen.')
   }
   if (
     stand.function_md5 !== REPAIR_FUNCTION_MD5 ||
     stand.function_security_definer !== true ||
-    stand.function_exec_writer !== true ||
-    stand.function_exec_authenticated !== false
+    stand.function_config !== REPAIR_FUNCTION_CONFIG ||
+    stand.function_acl !== REPAIR_FUNCTION_ACL
   ) {
     throw new Error(
       `Preflight: Writer-Funktion weicht ab (md5=${stand.function_md5 ?? 'keine'}). Abgebrochen.`,
@@ -607,36 +753,7 @@ export function katalogUnveraendert(
   vorher: HistoryRepairPreflight,
   nachher: HistoryRepairPreflight,
 ): boolean {
-  const felder: (keyof HistoryRepairPreflight)[] = [
-    'table_exists',
-    'table_oid',
-    'rls_enabled',
-    'rls_forced',
-    'row_count',
-    'authenticated_select',
-    'authenticated_insert',
-    'authenticated_update',
-    'authenticated_delete',
-    'policy_name',
-    'policy_cmd',
-    'policy_roles',
-    'policy_permissive',
-    'policy_qual',
-    'gate_allocated',
-    'gate_invoker',
-    'writer_nologin',
-    'writer_inherit',
-    'writer_bypassrls',
-    'runtime_nologin',
-    'runtime_inherit',
-    'runtime_bypassrls',
-    'writer_granted_to_runtime',
-    'function_md5',
-    'function_security_definer',
-    'function_exec_writer',
-    'function_exec_authenticated',
-  ]
-  return felder.every((feld) => vorher[feld] === nachher[feld])
+  return KATALOG_FELDER.every((feld) => vorher[feld] === nachher[feld])
 }
 
 export function historyBodyRepariert(
@@ -705,6 +822,133 @@ export function writeSqlIstFailClosed(writeSql: string, datei: HistoryRepairDate
   }
 }
 
+function katalogExactPruefSql(prefix: string): string {
+  return `
+  if (
+    select c.oid
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+       and c.relkind = 'r'
+  ) is distinct from ${REPAIR_TABLE_OID} then
+    raise exception ${sqlLiteral(`${prefix}: Provenance-Tabelle/OID weicht ab.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if not exists (
+    select 1
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+       and c.relrowsecurity is true
+       and c.relforcerowsecurity is false
+  ) then
+    raise exception ${sqlLiteral(`${prefix}: RLS-Fingerprint weicht ab.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if (select count(*) from public.trip_item_commercial_provenance) is distinct from 0 then
+    raise exception ${sqlLiteral(`${prefix}: Provenance-Rowcount ist nicht 0.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if coalesce((
+    select array_to_string(array(select unnest(c.relacl)::text order by 1), ',')
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public' and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+  ), '') is distinct from ${sqlLiteral(REPAIR_TABLE_ACL)} then
+    raise exception ${sqlLiteral(`${prefix}: Table-ACL weicht ab.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if (
+    select count(*)
+      from pg_policy p
+      join pg_class c on c.oid = p.polrelid
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public' and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+  ) is distinct from 1 then
+    raise exception ${sqlLiteral(`${prefix}: Policy-Count ist nicht 1.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if not exists (
+    select 1
+      from pg_policy p
+      join pg_class c on c.oid = p.polrelid
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
+       and p.polname = ${sqlLiteral(REPAIR_POLICY)}
+       and p.polcmd = 'r'
+       and p.polpermissive is true
+       and p.polwithcheck is null
+       and ${policyQualFingerprintSql('pg_get_expr(p.polqual, p.polrelid)')}
+           = ${sqlLiteral(REPAIR_POLICY_QUAL_FINGERPRINT)}
+       and coalesce((
+         select array_to_string(array(
+           select r.rolname
+             from unnest(p.polroles) u(oid)
+             join pg_roles r on r.oid = u.oid
+            order by r.rolname
+         ), ',')
+       ), '') = ${sqlLiteral(REPAIR_POLICY_ROLES)}
+  ) then
+    raise exception ${sqlLiteral(`${prefix}: Owner-SELECT-Policy weicht ab.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if (select count(*) from jetnity_internal.commercial_write_runtime_gate) is distinct from 1
+     or not exists (
+       select 1
+         from jetnity_internal.commercial_write_runtime_gate
+        where singleton is true
+          and production_write_path_allocated is false
+          and allocated_invoker_role is null
+          and md5(note) = ${sqlLiteral(md5Hex(REPAIR_GATE_NOTE))}
+     ) then
+    raise exception ${sqlLiteral(`${prefix}: Commercial Runtime Gate ist nicht geschlossen.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if not exists (
+    select 1 from pg_roles
+     where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)}
+       and not rolcanlogin and rolinherit and not rolbypassrls and not rolsuper
+  ) or not exists (
+    select 1 from pg_roles
+     where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)}
+       and not rolcanlogin and not rolinherit and not rolbypassrls and not rolsuper
+  ) or ${rollenMitgliederSql(REPAIR_WRITER_ROLE)} is distinct from ${sqlLiteral(REPAIR_WRITER_MEMBERS)}
+    or ${rollenMitgliederSql(REPAIR_RUNTIME_ROLE)} is distinct from ${sqlLiteral(REPAIR_RUNTIME_MEMBERS)} then
+    raise exception ${sqlLiteral(`${prefix}: Rollen-Fingerprint weicht ab.`)}
+      using errcode = 'P0001';
+  end if;
+
+  if md5(pg_get_functiondef(${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}::regprocedure))
+       is distinct from ${sqlLiteral(REPAIR_FUNCTION_MD5)}
+     or not exists (
+       select 1
+         from pg_proc p
+         join pg_namespace n on n.oid = p.pronamespace
+        where n.nspname = ${sqlLiteral(REPAIR_FUNCTION_SCHEMA)}
+          and p.proname = ${sqlLiteral(REPAIR_FUNCTION_NAME)}
+          and p.prosecdef is true
+          and pg_get_function_identity_arguments(p.oid) = '_eingabe jsonb'
+          and coalesce(array_to_string(p.proconfig, ','), '') = ${sqlLiteral(REPAIR_FUNCTION_CONFIG)}
+          and coalesce((
+            select array_to_string(array(select unnest(p.proacl)::text order by 1), ',')
+          ), '') = ${sqlLiteral(REPAIR_FUNCTION_ACL)}
+     ) then
+    raise exception ${sqlLiteral(`${prefix}: Writer-Funktion weicht ab.`)}
+      using errcode = 'P0001';
+  end if;
+`
+}
+
 export function writeTransactionSql(datei: HistoryRepairDatei): string {
   if (datei.version !== REPAIR_VERSION || datei.name !== REPAIR_NAME || datei.datei !== REPAIR_DATEI) {
     throw new Error('Repair-Transaktion akzeptiert nur 20260829140000 / trip_item_commercial_provenance.')
@@ -720,22 +964,9 @@ declare
   _name text;
   _count integer;
   _md5 text;
-  _oid oid;
-  _rls boolean;
-  _force boolean;
-  _rows bigint;
-  _gate boolean;
-  _invoker name;
-  _fn_md5 text;
   _after_md5 text;
   _after_name text;
   _after_count integer;
-  _after_oid oid;
-  _after_rls boolean;
-  _after_force boolean;
-  _after_rows bigint;
-  _after_gate boolean;
-  _after_fn_md5 text;
 begin
   select version, name, cardinality(statements), md5(statements[1])
     into _version, _name, _count, _md5
@@ -760,94 +991,7 @@ begin
       using errcode = 'P0001';
   end if;
 
-  select c.oid, c.relrowsecurity, c.relforcerowsecurity
-    into _oid, _rls, _force
-    from pg_class c
-    join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public'
-     and c.relname = ${sqlLiteral(REPAIR_TABLE)}
-     and c.relkind = 'r';
-  if not found or _oid is distinct from ${REPAIR_TABLE_OID} or _rls is not true or _force is not false then
-    raise exception 'Repair preflight: Provenance-Tabelle/RLS/OID weicht ab.'
-      using errcode = 'P0001';
-  end if;
-
-  select count(*) into _rows from public.trip_item_commercial_provenance;
-  if _rows is distinct from 0 then
-    raise exception 'Repair preflight: Provenance-Rowcount ist nicht 0 (%).', _rows
-      using errcode = 'P0001';
-  end if;
-
-  if not has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'SELECT')
-     or has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'INSERT')
-     or has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'UPDATE')
-     or has_table_privilege('authenticated', 'public.trip_item_commercial_provenance', 'DELETE') then
-    raise exception 'Repair preflight: authenticated-Grants weichen ab.'
-      using errcode = 'P0001';
-  end if;
-
-  if not exists (
-    select 1
-      from pg_policy p
-      join pg_class c on c.oid = p.polrelid
-      join pg_namespace n on n.oid = c.relnamespace
-     where n.nspname = 'public'
-       and c.relname = ${sqlLiteral(REPAIR_TABLE)}
-       and p.polname = ${sqlLiteral(REPAIR_POLICY)}
-       and p.polcmd = 'r'
-       and p.polpermissive
-       and pg_get_expr(p.polqual, p.polrelid) ilike '%auth.uid()%'
-       and pg_get_expr(p.polqual, p.polrelid) ilike '%trip_items%'
-  ) then
-    raise exception 'Repair preflight: Owner-SELECT-Policy weicht ab.'
-      using errcode = 'P0001';
-  end if;
-
-  select production_write_path_allocated, allocated_invoker_role
-    into _gate, _invoker
-    from jetnity_internal.commercial_write_runtime_gate
-   where singleton = true;
-  if _gate is not false or _invoker is not null then
-    raise exception 'Repair preflight: Commercial Runtime Gate ist nicht geschlossen.'
-      using errcode = 'P0001';
-  end if;
-
-  if not exists (
-    select 1 from pg_roles
-     where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)}
-       and not rolcanlogin and rolinherit and not rolbypassrls
-  ) or not exists (
-    select 1 from pg_roles
-     where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)}
-       and not rolcanlogin and not rolinherit and not rolbypassrls
-  ) or not exists (
-    select 1
-      from pg_auth_members m
-      join pg_roles r on r.oid = m.roleid
-      join pg_roles u on u.oid = m.member
-     where r.rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)}
-       and u.rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)}
-  ) then
-    raise exception 'Repair preflight: Rollen-Fingerprint weicht ab.'
-      using errcode = 'P0001';
-  end if;
-
-  _fn_md5 := md5(pg_get_functiondef(${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}::regprocedure));
-  if _fn_md5 is distinct from ${sqlLiteral(REPAIR_FUNCTION_MD5)}
-     or not exists (
-       select 1
-         from pg_proc p
-         join pg_namespace n on n.oid = p.pronamespace
-        where n.nspname = ${sqlLiteral(REPAIR_FUNCTION_SCHEMA)}
-          and p.proname = ${sqlLiteral(REPAIR_FUNCTION_NAME)}
-          and p.prosecdef
-          and pg_get_function_identity_arguments(p.oid) = '_eingabe jsonb'
-     )
-     or not has_function_privilege(${sqlLiteral(REPAIR_WRITER_ROLE)}, ${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}, 'EXECUTE')
-     or has_function_privilege('authenticated', ${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}, 'EXECUTE') then
-    raise exception 'Repair preflight: Writer-Funktion weicht ab.'
-      using errcode = 'P0001';
-  end if;
+${katalogExactPruefSql('Repair preflight')}
 
   update supabase_migrations.schema_migrations
      set statements = ${historyStatementsArraySql(datei.sql)}
@@ -874,26 +1018,7 @@ begin
       using errcode = 'P0001';
   end if;
 
-  select c.oid, c.relrowsecurity, c.relforcerowsecurity
-    into _after_oid, _after_rls, _after_force
-    from pg_class c
-    join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public'
-     and c.relname = ${sqlLiteral(REPAIR_TABLE)};
-  select count(*) into _after_rows from public.trip_item_commercial_provenance;
-  select production_write_path_allocated into _after_gate
-    from jetnity_internal.commercial_write_runtime_gate
-   where singleton = true;
-  _after_fn_md5 := md5(pg_get_functiondef(${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}::regprocedure));
-  if _after_oid is distinct from _oid
-     or _after_rls is distinct from _rls
-     or _after_force is distinct from _force
-     or _after_rows is distinct from 0
-     or _after_gate is not false
-     or _after_fn_md5 is distinct from _fn_md5 then
-    raise exception 'Repair after-probe: Production-Katalog hat sich verändert.'
-      using errcode = 'P0001';
-  end if;
+${katalogExactPruefSql('Repair after-probe')}
 end
 $${REPAIR_DO_TAG}$;
 `.trim()
