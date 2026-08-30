@@ -12,7 +12,7 @@ Status: **AUDIT COMPLETE / DRAFT / READY FOR INDEPENDENT TL REVIEW / NO READY / 
 | Cursor-Agent | `Jetnity core repository hygiene audit 1` |
 | Task | `docs/CORE_REPOSITORY_HYGIENE_AUDIT_TASK_2026-08-30.md` |
 | Task baseline | `d4a2bba21e9a247594272adb2a13d6cf0620ff48` |
-| Packet / stamp head that CI gated | `fcedca1d26df1c687d7155918cf25b99d6c11ed2` |
+| Packet / stamp head that CI gated | `d6be754e0e11b45d43d0c7a36690d002be9d3bbe` |
 | Baseline ancestor of audit start | yes |
 | Local `origin/main` pointer | `ea79716315304c1289b094811d80f8880c09e615` |
 | Node / npm | v22.14.0 / 10.9.7 |
@@ -43,14 +43,15 @@ Reference command transcripts: `/tmp/hygiene-audit/*.txt` on the audit machine (
 
 ## GitHub CI / Preview on exact stamp head
 
-Recorded after the GitHub notification. These jobs ran on `fcedca1d26df1c687d7155918cf25b99d6c11ed2`. A later docs-only stamp of this CI paragraph will move the branch tip; that newer tip is not claimed green here.
+Live-verified after the GitHub notifications. The current packet tip `d6be754e` is green. This agent will **not** add another CI-stamp commit after the next docs-only push, to avoid an endless tip-move.
 
 | Gate | ID | Head | Result |
 | --- | --- | --- | --- |
-| Actions run `CI` | [33330291602](https://github.com/Jetnity/jetnity/actions/runs/33330291602) | `fcedca1d` | **SUCCESS** |
-| `Typecheck, Lint & Build` | job `99307547958` | `fcedca1d` | **SUCCESS** |
-| `Auth-Konfiguration gegen config.toml` | job `99307547842` | `fcedca1d` | **SUCCESS** (ran; not skipped) |
-| Vercel Preview | `9trwANQ6TteDrtdZnWitRbzysAPv` | `fcedca1d` | **SUCCESS** |
+| Actions run `CI` | [33330490901](https://github.com/Jetnity/jetnity/actions/runs/33330490901) | `d6be754e` | **SUCCESS** |
+| `Typecheck, Lint & Build` | job `99308069303` | `d6be754e` | **SUCCESS** |
+| `Auth-Konfiguration gegen config.toml` | job `99308069427` | `d6be754e` | **SUCCESS** (ran; not skipped) |
+| Vercel Preview | `4uhiEdb21xUVrSQHf7CWr8iGxQmB` | `d6be754e` | **SUCCESS** |
+| Prior stamp CI | [33330291602](https://github.com/Jetnity/jetnity/actions/runs/33330291602) | `fcedca1d` | **SUCCESS** |
 | Earlier task-only CI | [33329928407](https://github.com/Jetnity/jetnity/actions/runs/33329928407) | `c895d16b` | **SUCCESS** |
 
 Green CI still does not prove asset, branch, or cloud cleanliness.

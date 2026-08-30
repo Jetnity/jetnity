@@ -22,7 +22,7 @@ Companion files:
 
 ## Executive summary
 
-The current tracked repository is a single Jetnity V2 codebase. The live product surface is Trip Builder / Trip Workspace, Account/Traveller, Admin, and provider search APIs. Hygiene checks on the local checks head are green: `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` / `typecheck` / `lint` (0 errors, 135 documented warnings) / `test` (2815/2815) / `build`. GitHub CI run `33330291602` is **SUCCESS** on stamp head `fcedca1d`, including the fail-closed auth-config job and Vercel Preview.
+The current tracked repository is a single Jetnity V2 codebase. The live product surface is Trip Builder / Trip Workspace, Account/Traveller, Admin, and provider search APIs. Hygiene checks on the local checks head are green: `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` / `typecheck` / `lint` (0 errors, 135 documented warnings) / `test` (2815/2815) / `build`. GitHub CI run `33330490901` is **SUCCESS** on packet head `d6be754e`, including the fail-closed auth-config job and Vercel Preview. Prior stamp `fcedca1d` / run `33330291602` was also SUCCESS.
 
 **Creator Hub / MediaStudio / Feed / Blog / Render are not present as current runtime.** Their remaining repository traces are historical migrations, decommission evidence, and a still-current RBAC role name (`creator`) plus the capability `inhalte-moderieren`. Those are not leftover MediaStudio pages.
 

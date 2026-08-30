@@ -5,7 +5,7 @@
   "draftPr": 277,
   "agent": "Jetnity core repository hygiene audit 1",
   "type": "AUDIT-ONLY / NON-DESTRUCTIVE",
-  "head": "fcedca1d26df1c687d7155918cf25b99d6c11ed2",
+  "head": "d6be754e0e11b45d43d0c7a36690d002be9d3bbe",
   "checksHead": "c895d16b5c1f42cdb0bed5b44aaaf188d07c5024",
   "packetHead": "5c0a931d1fde2e26d95c82abe151607dddecbaa8",
   "taskBaseline": "d4a2bba21e9a247594272adb2a13d6cf0620ff48",
@@ -263,12 +263,24 @@
     "lint": { "exit": 0, "errors": 0, "warnings": 135 },
     "test": { "exit": 0, "pass": 2815, "fail": 0 },
     "checkSetupCi": { "exit": 0, "warnings": 1, "note": "no .env/.local in this environment" },
-    "build": { "exit": 0, "staticPagesGenerated": 22 }
+    "build": { "exit": 0, "staticPagesGenerated": 22 },
+    "githubCi": {
+      "head": "d6be754e0e11b45d43d0c7a36690d002be9d3bbe",
+      "runId": 33330490901,
+      "conclusion": "SUCCESS",
+      "jobs": [
+        "Typecheck, Lint & Build",
+        "Auth-Konfiguration gegen config.toml"
+      ],
+      "vercelPreview": "SUCCESS",
+      "priorStampHead": "fcedca1d26df1c687d7155918cf25b99d6c11ed2",
+      "priorStampRunId": 33330291602
+    }
   },
   "toolingLimits": [
     "check:dead walks TS/JS import graph only and does not see public assets, CLI temp, image hosts, branches, or cloud",
     "check:deps does not prove asset or docs cleanliness",
-    "auth:pruefen and live DB privilege/RLS scripts were not run here",
+    "auth:pruefen was not run in the audit workspace; CI auth-config job SUCCESS on fcedca1d",
     "branch protection was not freshly queried from GitHub settings",
     "Production Storage was not re-inventoried; C3 after-image was not re-executed"
   ],
