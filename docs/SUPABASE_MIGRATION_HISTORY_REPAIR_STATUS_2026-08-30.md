@@ -1,96 +1,128 @@
 # Jetnity – Supabase Migration-History Repair Status
 
 Stand: 30. August 2026  
-Status: **TECHNISCH REVIEW-BEREIT NACH ZWEITEM TL CHANGES-REQUIRED / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION-WRITE / KEIN FOLGESLICE**  
+Status: **PRODUCTION REPAIR EXECUTED / AFTER-IMAGE PASS / FRESH REPLAY PASS / TEMP BRANCH DELETED / FINAL DOCS HEAD RE-GATE REQUIRED**  
 Issue: #249  
-Draft-PR: #250  
-Logical Cursor-Agent: **`Jetnity infrastructure migration repair 2`**  
-Cursor-Run: https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589
+PR: #250  
+Logical Cursor-Agent: **`Jetnity infrastructure migration repair 2`**
 
-> Live-Evidence gewinnt. Dieser Status ist Authoring-/Handoff-Evidence, kein Technical-Lead-PASS und keine Production-Mutation.
+> Live-Evidence gewinnt. Vollständige Ausführungs-/Recovery-Evidence: `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_EXECUTION_EVIDENCE_2026-08-30.md`.
 
-## 1. Exact Baseline / Transport
+## 1. Review-Vorgeschichte
 
 | Feld | Wert |
 | --- | --- |
-| Task | `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_TASK_2026-08-30.md` |
-| Before Image | `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_BEFORE_IMAGE_2026-08-30.md` |
-| Branch | `repair/supabase-migration-history-20260829140000-2026-08-30` |
-| Slice-cut / Merge-Base `main` | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
-| Start-Head | `4fbcfebedc7fa451063a228653f18c16a1e3dd5f` |
+| Merge-Base `main` | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
 | Erster CHANGES-REQUIRED Head | `17c9f4f00fcb01f52b80a5c2c2264fff815c1b6e` |
 | Zweiter CHANGES-REQUIRED Head | `f857210428a2d6ef7d1a4e9744c35ea74778fe10` |
-| Gated review-fix Head | `4e9b1796af4f43c4282c5fe5e252f79dd1d6d505` |
-| Authoring / reviewable Tip | Evidence-Stamp nach diesem Commit; jeder neuere Tip live auf PR #250 prüfen |
-| Traveller-Kontext | **nicht relevant** |
-| Production-Mutation durch Cursor | **keine** |
-| Development-Mutation durch Cursor | **keine** |
+| Finaler Agent-Review-Head | `16cf73d64dd08ade70a9bd2fa985d4a84931b29f` |
+| Actions auf Agent-Review-Head | `33314079382` SUCCESS |
+| Vercel auf Agent-Review-Head | `7JmqJjGKLRsahWa3BV3RdQCZy7w9` SUCCESS/READY |
+| Technical-Lead Review | **PASS vor Production-Ausführung** |
 
-## 2. Umgesetzt in diesem Slice
+Der Agent führte selbst keinen Production-/Development-Write aus. Die Production-Ausführung erfolgte erst nach unabhängiger Technical-Lead-Prüfung und Product-Owner-Freigabe des Reparaturumfangs.
 
-Fail-closed Repair-Vorbereitung, kein Live-Write. Vorherige exact Checks bleiben:
+## 2. Production Before-Image
 
-- eine Datei = ein `schema_migrations.statements`-Element via `array[sqlLiteral(sql)]`
-- Blob `e25ab1b7efb48157828968993749a25fa30cc660`, Marker-MD5 `414f7318235ac388e97fd74f97536ca1`
-- Default Probe / no-write; Write nur mit allen Production-Flags
-- exact Policy-/Table-ACL-/Function-ACL-/Gate-/Rowcount-/RLS-/OID-Sets
-- `docs/ACTIVE_WORK_STATUS.md` identisch mit Merge-Base
+Unmittelbar vor dem Write weiterhin exakt:
 
-## 3. Review-Fix nach zweitem CHANGES REQUIRED auf `f8572104`
+- Version `20260829140000`
+- Name `trip_item_commercial_provenance`
+- `statement_count=1`
+- Marker-MD5 `414f7318235ac388e97fd74f97536ca1`
+- Provenance-Tabelle OID `282263`, RLS an, FORCE RLS aus, Rowcount `0`
+- exact Table ACL / Owner-Policy / Function ACL / Function config
+- Runtime Gate geschlossen
+- exact Writer-/Runtime-Rollenattribute
+- exact drei Membership-Records inkl. grantor / admin / inherit / set options
+- Writer Function-MD5 `7e7bfe10d20c2f13274d1eb04a75150e`
 
-External Preflight, in-transaction Preflight und After-Probe verlangen jetzt zusätzlich die live Production-Rollenattribute und die exakten Membership-Records:
+## 3. Production Repair
 
-- `jetnity_commercial_runtime`: NOLOGIN, NOINHERIT, nosuper, nocreatedb, nocreaterole, noreplication, nobypassrls, `rolconnlimit=-1`
-- `jetnity_commercial_writer`: NOLOGIN, INHERIT, nosuper, nocreatedb, nocreaterole, noreplication, nobypassrls, `rolconnlimit=-1`
-- genau 3 Membership-Records inkl. grantor / `admin_option` / `inherit_option` / `set_option`:
-  1. runtime <- postgres / grantor `supabase_admin` / admin t / inherit f / set f
-  2. writer <- runtime / grantor `postgres` / admin f / inherit f / set t
-  3. writer <- postgres / grantor `supabase_admin` / admin t / inherit f / set f
+Die einzige Production-Mutation war das transaktionale Ersetzen von:
 
-Adversarial Tests decken CREATEDB, CREATEROLE, REPLICATION, connlimit sowie grantor/admin/inherit/set-Drift und extra Memberships ab.
+`supabase_migrations.schema_migrations.statements`
 
-## 4. Changed files vs Start-Head `4fbcfebe`
+für exakt Version `20260829140000` / Name `trip_item_commercial_provenance`.
 
-- `lib/rollout/migration-history-repair.ts`
-- `lib/rollout/migration-history-repair.test.ts`
-- `lib/rollout/ci-schutz.test.ts`
-- `scripts/db/migration-history-repair.ts`
-- `package.json`
-- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_STATUS_2026-08-30.md`
-- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_SELF_REVIEW_2026-08-30.md`
-- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_HANDOFF_2026-08-30.md`
-- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_REPLAY_VERIFICATION_2026-08-30.md`
+Kanonischer Repo-Body:
 
-Nicht im Diff gegen Merge-Base: `docs/ACTIVE_WORK_STATUS.md` und alle globalen TL-Continuity-Dateien.
+- Git blob `e25ab1b7efb48157828968993749a25fa30cc660`
+- MD5 `bd4b613da5037b3c7535d17451dd8e67`
+- SHA-256 `e85ded3f0fdbdc5a97bca8af796fa4ce9b0283cb27d06f83ab26f0cd16f11404`
 
-## 5. Tests / Gates auf Review-Fix Head `4e9b1796`
+Fail-closed innerhalb derselben Transaktion:
 
-| Gate | Ergebnis |
-| --- | --- |
-| Focused repair + `ci-schutz` | **27/27 pass** |
-| `npm run db:migration-history-repair` | lokale Probe PASS; Blob `e25ab1b7…`; Marker-MD5 `414f7318…`; kein Write |
-| `npm test` | **2815/2815 pass, 0 fail** |
-| `npm run typecheck` | pass |
-| `npm run lint` | **0 errors** / 135 bestehende Repo-Warnings |
-| Hygiene (`check:dead/exports/deps/api-schutz/schema-bezug`) | pass |
-| `npm run build` | pass |
+- kanonischer Body-Hash
+- exact History Before-Image
+- exact Katalog Before-Image
+- UPDATE-Rowcount exakt `1`
+- exact History After-Image
+- Katalog After-Image unverändert
 
-## 6. Exact-head Actions / Vercel auf `4e9b1796`
+Kein S5-B-DDL wurde auf Production erneut ausgeführt.
 
-| Evidence | Ergebnis |
-| --- | --- |
-| GitHub Actions Run `33313923910` | **SUCCESS** |
-| Vercel Preview `Di5h8BrrgpB1wDBq6NjkbMEDXguo` | **READY** |
+## 4. Production After-Image
 
-Jeder neue Head invalidiert frühere Exact-Head-Gates. Der Docs-Stamp nach diesem Stand muss live erneut gegatet werden.
+PASS:
 
-## 7. Hard boundaries eingehalten
+- Version/Name unverändert
+- `statement_count=1`
+- Body-MD5 jetzt `bd4b613da5037b3c7535d17451dd8e67`
+- erster ausführbarer Inhalt `create schema if not exists jetnity_internal;`
+- Tabelle OID `282263`, RLS/ACL/Policy unverändert
+- Rowcount `0`
+- Gate unverändert geschlossen
+- Rollen/Memberships unverändert
+- Function-MD5 weiterhin `7e7bfe10d20c2f13274d1eb04a75150e`
 
-- kein Production-/Development-SQL-Write
-- kein Re-Apply von S5-B-DDL
-- kein Gate geöffnet, kein PITR, kein Supabase-Branch
-- kein Ready / Merge / Folgeslice
+## 5. Backup / Recovery
 
-## 8. FIRST NEXT ACTION
+- Supabase Organization `Jetnity` ist Pro.
+- Pro-Daily-Backup/Restore mit 7 Tagen Retention wurde vor Write erneut gegen die aktuelle Supabase-Dokumentation verifiziert.
+- PITR wurde nicht aktiviert.
+- exact ursprünglicher Marker-Body + MD5 sind im versionierten Before-Image und in der Execution-Evidence erhalten.
+- Ein enger History-only Rollback ist deshalb weiterhin rekonstruierbar; er war nicht erforderlich.
 
-**Unabhängiger ChatGPT Technical-Lead Exact-Head-Review.** Nur nach TL-PASS darf der Technical Lead den separat gegateten Production-History-Write ausführen.
+## 6. Fresh Replay
+
+Freigegebener aktueller Branch-Preis: **USD 0.01344/Stunde**.
+
+Temporärer Replay-Branch:
+
+- Name `p1-replay-20260829140000-2026-08-30`
+- Branch ID `d8aec9d4-fdd9-4d28-a68f-c5400e59ea8e`
+- Project Ref `efobhwzkjarnkthgpmur`
+- Status `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
+
+Replay PASS:
+
+- Version `20260829140000` vorhanden, Marker abwesend
+- Supabase normalisierte den replayten Body in 42 ausführbare History-Statements
+- `create schema ...` in Statement 1
+- Provenance-Tabelle in Statement 18
+- Writer-Funktion in Statement 30
+- `reise_anlegen` in Statement 39
+- Tabelle/RLS/Policy/Gate/Rollen vorhanden
+- spätere Migration `20260829210052` ebenfalls erfolgreich angewendet
+
+Raw Function-MD5 differiert wegen historischer Production-Minifizierung vs. kanonisch formatierter Replay-Quelle. Nach Entfernen von Kommentaren und Whitespace ist `prosrc` auf Production und Replay identisch: `767161b569ebcb5001ec4b753b5b4928`.
+
+## 7. Kostenende
+
+Der temporäre Branch wurde nach Evidence gelöscht; Supabase bestätigte `success=true`.
+
+Der bestehende `develop`-Branch `yfvbxvijcorffwxbxahl` blieb unangetastet.
+
+## 8. Aktueller Gate-Zustand
+
+Der technische P1-Repair selbst ist **PASS**.
+
+Durch diese nachträgliche Evidence-Dokumentation entsteht jedoch ein neuer Git-Head. Deshalb gilt vor Ready/Merge erneut:
+
+1. exact-head GitHub Actions SUCCESS
+2. exact-head Vercel SUCCESS/READY
+3. PR-Diff final gegen Scope prüfen
+4. erst dann Ready/Merge nach Technical-Lead-Protokoll
+
+Kein Development-Reconciliation-Slice und kein Cleanup-Slice startet automatisch.
