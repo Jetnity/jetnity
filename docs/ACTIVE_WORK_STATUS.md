@@ -1,32 +1,29 @@
 # Jetnity – Active Work Status
 
 Stand: 30. August 2026  
-Status: **CURRENT / FINAL CHAT TRANSITION / NO ACTIVE RUNTIME SLICE / NO ACTIVE CURSOR IMPLEMENTATION / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / POST-CLEANUP FINAL / NO ACTIVE RUNTIME SLICE / NO ACTIVE CURSOR IMPLEMENTATION / LIVE-EVIDENCE GEWINNT**
 
-Vollständiger Checkpoint:
+Kanonischer Checkpoint:
 
-`docs/CHATGPT_TECHNICAL_LEAD_CHECKPOINT_2026-08-30_FINAL.md`
-
-New-Chat-Prompt:
-
-`docs/CHATGPT_NEW_CHAT_START_PROMPT_2026-08-30_FINAL.md`
+`docs/CHATGPT_TECHNICAL_LEAD_CHECKPOINT_2026-08-30_POST_CLEANUP_FINAL.md`
 
 ## 1. Current Main / letzter Abschluss
 
-Pre-Transition-`main`:
+Pre-Handoff-Refresh-`main`:
 
-`498abfd26e584dcd40e59f4266e1bfc87828649f`
+`0f7d80fa48d958a8708af982806b99966289b2bd`
 
-Darauf bereits abgeschlossen:
+Darauf abgeschlossen:
 
 - Core Repository Hygiene Audit
-- Recovery PR #279 MERGED
-- finaler Audit PASS-Head `a759764eefa568784bfa08029b386b978e1d2138`
-- Post-Merge CI #1395 / `33333229959` SUCCESS
+- finaler mechanischer Cleanup PR #283
+- PR-Head `204511f552d58e246cd08fd8b724eb98edd4dc49`
+- Merge `0f7d80fa48d958a8708af982806b99966289b2bd`
+- Post-Merge CI #1399 / `33334863504` SUCCESS
 - Vercel SUCCESS
-- Issue #273 CLOSED / completed
+- Issue #282 CLOSED / completed
 
-Der docs-only Transition-PR aus Issue #280 bewegt `main` danach weiter. Finalen SHA live lesen.
+Der docs-only Handoff-Refresh aus Issue #286 bewegt `main` danach weiter. Finalen SHA live lesen.
 
 **Kein Produkt-/Runtime-Slice ist aktiv oder automatisch freigegeben.**
 
@@ -40,19 +37,31 @@ Der docs-only Transition-PR aus Issue #280 bewegt `main` danach weiter. Finalen 
 - PR + up-to-date + conversation resolution Pflicht
 - nur Merge; Force Push / deletion blockiert; Bypass leer
 
-Letzter Live-Check offene historische/future PRs:
+Bekannter Draft→Ready-Connectorbug `Repository.fullDatabaseId` ist ein Connectorproblem, kein Jetnity-Fehler. Branch Protection nicht lockern; dokumentierten Same-SHA-Recovery-Transport verwenden.
 
-- #52
-- #50
-- #40
-- #39
-- #28
+165 sicher gemergte alte Branch-Refs wurden entfernt. Weitere ungemergte/unique-evidence Branches nicht blind löschen.
 
-Keine davon als aktive Runtime-Arbeit behandeln.
+## 3. Finaler Legacy-/Repository-Cleanup
 
-165 sicher gemergte alte Branch-Refs wurden bereits entfernt. Weitere ungemergte/unique-evidence Branches nicht blind löschen.
+Abgeschlossen:
 
-## 3. Supabase
+- alte Creator Hub / MediaStudio / Feed / Blog / Render Runtime entfernt
+- alte GitHub-/Supabase-`jetnity-bets`/`jetnity-travel` Ressourcen entfernt
+- Legacy-Storage-Buckets/Policies entfernt
+- `creator-media` Source-Bucket entfernt; Recovery retained
+- P1 Migration-History repariert/replay-verifiziert
+- Core Repository Hygiene Audit abgeschlossen
+- D-01/D-02/D-03 abgeschlossen:
+  - fünf `supabase/.temp/*` CLI-Dateien entfernt/untracked
+  - `supabase/.branches/_current_branch` entfernt
+  - `public/images/prague.jpg` entfernt
+  - `lib/project-sanitation/closure-invariants.test.ts` auf dauerhafte Abwesenheit aktualisiert
+
+**Keine bestätigten mechanischen DELETE-CANDIDATEs aus dem Core Audit mehr offen.**
+
+Bewusst erhaltene Migrationen, historische Evidence, Recovery-Material und Unique-Evidence-Branches sind kein Cleanup-Rückstand.
+
+## 4. Supabase
 
 Production:
 
@@ -64,20 +73,18 @@ Development:
 
 Alter eigenständiger Supabase `jetnity-bets`: gelöscht.
 
-P1 `20260829140000_trip_item_commercial_provenance`: **REPARIERT** über PR #251 / Merge `5ee8c7017180747bb29112f1c5a2cf3419fd062d`, Production After-Image PASS + Fresh Replay PASS.
+P1 `20260829140000_trip_item_commercial_provenance`: **REPARIERT** über PR #251 / Merge `5ee8c7017180747bb29112f1c5a2cf3419fd062d`; Production After-Image PASS + Fresh Replay PASS.
 
-Production Migration-History enthält beim Transition-Precheck u. a. `20260829140000`, `20260829210052`, `20260830155711`, `20260830183009`.
-
-Storage Cleanup:
+Storage:
 
 - `creator-media`: entfernt
 - `jetnity-legacy-recovery`: privat, 1 Objekt / 3,030,830 Bytes
-- relevante Recovery/creator-media User-Policies: keine
-- Edge Functions: 0
+- relevante User-Policies: keine
+- Production Edge Functions nach Cleanup: 0
 
 Recovery bleibt Production/Data-Gate.
 
-## 4. Letzte Produkt-Runtime-Baseline
+## 5. Letzte Produkt-Runtime-Baseline
 
 AP-10-S1 Confirmed Booking Folder:
 
@@ -100,74 +107,61 @@ Integrierter Account-/Traveller-Reifegrad:
 
 Dual Authority bleibt verbindlich: Account Registry = reusable facts; Trip Snapshot = konkrete Trip Current Truth.
 
-## 5. Core Repository Hygiene – offene Kandidaten
+## 6. Verbleibende kleine `UPDATE-CANDIDATE`
 
-Audit ist abgeschlossen, Cleanup noch nicht automatisch gestartet.
+Optional, keine Legacy-Blocker:
 
-`DELETE-CANDIDATE`:
-
-- fünf getrackte `supabase/.temp/*` CLI-Dateien
-- `supabase/.branches/_current_branch`
-- `public/images/prague.jpg`
-
-Bei Umsetzung zwingend `lib/project-sanitation/closure-invariants.test.ts` gekoppelt aktualisieren.
-
-`UPDATE-CANDIDATE`:
-
-- zwei alte V1 Image-Hosts in `next.config.js`
+- alte V1 Image-Hosts in `next.config.js`
 - `components.json` hooks alias ohne `hooks/`
 - stale `zod` Checker-Exception
 - `Mega Pro` Copy
 - Tailwind `content/**` Glob
-- Docs-Navigation/Pointer-Hygiene
-- `.gitignore` Kommentar-Hygiene
+- optionale Docs-/Kommentar-Hygiene
 
-`BLOCKED/NEEDS-DECISION`:
+`BLOCKED/NEEDS-DECISION` bleibt:
 
 - `/privacy` / `/terms` / stale unmounted CookieConsent → Legal/PO
 - `creator` RBAC / `inhalte-moderieren` Retirement → Auth/PO
 - Recovery Bucket → Production/Data
 - Unique-evidence Branches → separate Branch-Hygiene
 
-Alle Migrationen/historische Evidence vor age-only deletion schützen.
+## 7. PrivacyBee / Legal
 
-## 6. PrivacyBee / Legal
-
-PrivacyBee AG / `privacybee.io` bleibt Product-Owner-binding. Jetnity-Activation bis echte erreichbare `jetnity.com` Production geparkt.
+PrivacyBee AG / `privacybee.io` bleibt Product-Owner-binding. Activation bis echte erreichbare `jetnity.com` Production geparkt.
 
 Audit bestätigte: Register verlinkt `/privacy`, aber `/privacy` und `/terms` fehlen; CookieConsent ist unmounted/stale. Kein stilles Mounting, keine erfundene Legal-Copy.
 
-## 7. Provider / Product
+## 8. Provider / Product
 
 Provider Live / Secrets / paid calls / Commercial Write / option-spezifische Official Requirements bleiben separate Gates.
 
-Nach kleinem mechanischen Hygiene-Rest soll Jetnity nicht in endloser Cleanup-Arbeit stecken bleiben. Strategischer Kandidat: Requirements / Travel Readiness Provider Groundwork, unter den bestehenden Truth-/Provider-Gates.
+Nach abgeschlossenem mechanischen Cleanup besteht kein Grund, in allgemeiner Alt-Jetnity-Bereinigung zu verharren. Strategisch wichtiger Kandidat: Requirements / Travel Readiness Provider Groundwork, unter den bestehenden Truth-/Provider-Gates.
 
-## 8. Agentenstatus
+## 9. Agentenstatus
 
 `Jetnity core repository hygiene audit 1`: STOPPED / completed.
 
 Aktiver Cursor-Implementierungsagent: **keiner**.
 
-Keinen Agenten aus diesem Status automatisch starten.
+Keinen Agenten automatisch starten.
 
-## 9. Risiken / Gates
+## 10. Risiken / Gates
 
-- P0: keine neue bekannte Blockade aus dem abgeschlossenen Audit.
-- früheres P1 malformed Migration-History: **repariert**; Development-Reconciliation bleibt separat live zu prüfen.
-- früheres P2 `main protected=false`: **repariert**; Ruleset active.
+- P0: keine neue bekannte Blockade aus dem abgeschlossenen Audit/Cleanup.
+- früheres P1 malformed Migration-History: repariert.
+- früheres P2 `main protected=false`: repariert; Ruleset active.
 - Legal Gap `/privacy` / `/terms`: real, PO/Legal-gated.
 - Production Recovery: bewusst retained, PO-gated.
 
 Besondere Product-Owner-Gates aus Operating Standard bleiben vollständig bestehen, inklusive Kosten > USD 100/Monat.
 
-## 10. FIRST NEXT ACTION
+## 11. FIRST NEXT ACTION
 
 **Kein automatischer Folgeslice.**
 
 Der nächste Chat/Technical Lead muss:
 
-1. finalen `main` und Transition-Merge live prüfen;
+1. finalen `main` und letzten Handoff-Refresh live prüfen;
 2. CI/Vercel/Ruleset live verifizieren;
 3. offene PRs/Issues/Branches und Agentenstatus prüfen;
 4. bei DB/Security/Storage-Bezug Supabase live prüfen;
