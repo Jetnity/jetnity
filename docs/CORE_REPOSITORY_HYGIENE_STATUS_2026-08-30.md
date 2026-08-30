@@ -12,7 +12,7 @@ Status: **AUDIT COMPLETE / DRAFT / READY FOR INDEPENDENT TL REVIEW / NO READY / 
 | Cursor-Agent | `Jetnity core repository hygiene audit 1` |
 | Task | `docs/CORE_REPOSITORY_HYGIENE_AUDIT_TASK_2026-08-30.md` |
 | Task baseline | `d4a2bba21e9a247594272adb2a13d6cf0620ff48` |
-| Audit head (this report) | `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024` plus the six deliverable commits on this branch |
+| Audit head (this report) | `5c0a931d1fde2e26d95c82abe151607dddecbaa8` |
 | Baseline ancestor of audit start | yes |
 | Local `origin/main` pointer | `ea79716315304c1289b094811d80f8880c09e615` |
 | Node / npm | v22.14.0 / 10.9.7 |
@@ -22,7 +22,7 @@ The first commit on this branch is the task file only. Runtime/config/migration/
 
 ## Commands and results (reproducible)
 
-All commands were run from `/workspace` against HEAD `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024` before the deliverable files existed. Adding the six docs does not change these runtime results.
+All commands were run from `/workspace` against start HEAD `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024` before the deliverable files existed. The six docs were then committed as `5c0a931d1fde2e26d95c82abe151607dddecbaa8`. Adding docs does not change the runtime results.
 
 | Command | Exit | Result |
 | --- | ---: | --- |

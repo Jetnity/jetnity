@@ -5,7 +5,8 @@ Issue: [#273](https://github.com/Jetnity/jetnity/issues/273)
 Draft-PR: [#277](https://github.com/Jetnity/jetnity/pull/277)  
 Cursor-Agent: `Jetnity core repository hygiene audit 1`  
 Type: **AUDIT-ONLY / NON-DESTRUCTIVE**  
-Audit head: `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`  
+Checks head: `c895d16b5c1f42cdb0bed5b44aaaf188d07c5024`  
+Deliverable packet: `5c0a931d1fde2e26d95c82abe151607dddecbaa8`  
 Task baseline: `main@d4a2bba21e9a247594272adb2a13d6cf0620ff48`  
 Local `origin/main` pointer at audit time: `ea79716315304c1289b094811d80f8880c09e615` (docs-only GitHub branch-hygiene record; newer than the task baseline)
 
