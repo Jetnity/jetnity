@@ -36,9 +36,10 @@ Live `git fetch origin main` vor diesem CR-6/CR-7-Stamp: `origin/main` unveränd
 | Review-Fix-Paket CR-1–CR-4 | `71d531ddbd75941ceea59527ef0d2e14a6650e1d` |
 | Stamp CR-1–CR-4 | `df2925e580b19d86dd17733295268933e1bb2e0e` |
 | CR-5 fold | `1a4fca0058dd7978396789bd680e83b923a6d659` |
-| Ahead / Behind | **10 / 0** vs `origin/main@60e12dd5` |
+| Ahead / Behind | **11 / 0** vs `origin/main@60e12dd5` |
 | CR-6/CR-7 content | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
-| Exact Head | `02191a9b53353b0dbe9cc109e00fb226c6f7c337` |
+| SHA stamp | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` |
+| Exact Head | `a5c3a07ea24564dd5fe30f26bfa4851b8d09c1cb` |
 | Draft-PR | #289 OPEN / Draft |
 | Rename | keine programmierbare Session-Rename-Fähigkeit; UI nicht als umbenannt behauptet |
 
