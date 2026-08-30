@@ -1,124 +1,122 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 30. August 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / POST-CLEANUP / LIVE-EVIDENCE GEWINNT IMMER**
+Stand: 31. August 2026  
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / REQUIREMENTS GATE 0 CLOSED / LIVE-EVIDENCE GEWINNT IMMER**
 
 > **Vor jedem neuen Slice zuerst den relevanten Live-Stand rekonstruieren. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen. Continuity ist Definition of Done.**
 
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_POST_CLEANUP_CHECKPOINT_2026-08-30.md` ← **aktuellster Checkpoint**
+1. `docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_GATE0_CLOSED_2026-08-31.md` ← **aktuellster Checkpoint**
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 3. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
 4. `JETNITY_HANDOFF.md`
 5. `docs/ACTIVE_WORK_STATUS.md`
-6. `docs/CORE_REPOSITORY_HYGIENE_AUDIT_2026-08-30.md`
-7. `docs/CORE_REPOSITORY_HYGIENE_MATRIX_2026-08-30.md`
-8. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-9. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
-10. Product Differentiation Doctrine + Opportunity Register
+6. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
+7. `docs/REQUIREMENTS_PROVIDER_CONTRACT_GAP_MAP_2026-08-30.md`
+8. `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
+9. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+10. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
 
-Danach GitHub/CI/Vercel und bei relevantem DB-/Security-/Storage-Scope Supabase **live** verifizieren.
+Danach GitHub/CI/Vercel und – nur bei betroffenem DB-/Security-/Storage-/Migration-Scope – Supabase **live** verifizieren.
 
-Der Product Owner kann weiterhin seinen Universal-New-Chat-Prompt verwenden. Dieser Repository-Einstieg liefert ihm den jeweils aktuellen Checkpoint.
+Der frühere `docs/CHATGPT_TECHNICAL_LEAD_POST_CLEANUP_CHECKPOINT_2026-08-30.md` bleibt historische Evidence, ist aber nicht mehr der aktuelle Einstieg.
 
 ## 2. Aktueller Übergabe-Anker
 
-Pre-Continuity-`main` nach dem letzten mechanischen Cleanup:
+Requirements-Gate-0-Merge auf `main`:
 
-`0f7d80fa48d958a8708af982806b99966289b2bd`
+`1327759d9210386ae39303c65461e2fce864b5fd`
 
-- PR #283: MERGED
-- Issue #282: completed
-- Post-Merge CI #1399 / Run `33334863504`: SUCCESS
-- Post-Merge Vercel: SUCCESS
+Verifiziert nach Merge:
 
-Der docs-only Continuity-PR aus Issue #284 bewegt `main` danach weiter. **Finalen `main` immer live lesen.**
+- PR #290: **MERGED**.
+- PR #289: **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED** wegen bekanntem Draft→Ready-Connectorfehler; Schutzregeln wurden nicht gelockert.
+- Main-CI #1413 / `33339603883`: **SUCCESS** exakt auf `1327759d...`.
+- Vercel Production `dpl_9Vgk6yeZLe6tSZvmAqypYfUDca2y`: **READY** exakt auf `1327759d...`.
+- Issue #288: **CLOSED / completed**.
+- Ruleset `Jetnity main protection` / ID `21875372`: active, bypass leer, PR + strict checks erforderlich.
 
-## 3. Alte aktive Jetnity-Reste – bereinigt
+Der docs-only Continuity-PR, der diesen Einstieg aktualisiert, bewegt `main` nochmals weiter. **Finalen `main` immer live lesen.**
 
-Die alte Creator/MediaStudio-/Bets-/Travel-Welt ist nicht mehr Teil der aktuellen Runtime. Zusätzlich sind die letzten mechanischen High-confidence Repo-Reste jetzt entfernt:
+## 3. Aktiver Agent / aktiver Slice
 
-- fünf getrackte `supabase/.temp/*` CLI-Dateien
-- `supabase/.branches/_current_branch`
-- `public/images/prague.jpg`
+Es läuft **kein Cursor-Agent** und **kein neuer Produkt-/Runtime-Slice**.
 
-Der Sanitation-Lock-Test verlangt jetzt ihre Abwesenheit.
+Letzter Agent:
 
-Bewusst erhalten bleiben historische Migrationen/Evidence, private Recovery und unique-evidence Branches bis zu separaten Entscheidungen. Das ist **kein alter aktiver Runtime-Code**.
+**`Jetnity requirements provider groundwork 1`**, Generation 1  
+Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`  
+Status: **STOPPED**.
 
-## 4. Noch optionale kleine Hygiene
+Kein Folgeslice wurde automatisch gestartet.
 
-Separate `UPDATE-CANDIDATEs`, nicht automatisch aktiv und kein Legacy-System:
-
-- zwei ungenutzte V1 Image-Hosts in `next.config.js`
-- `components.json` hooks alias ohne `hooks/`
-- stale `zod` Exception
-- kosmetische `Mega Pro` Copy
-- ungenutzter Tailwind `content/**` Glob
-- optionale Docs-/Kommentar-Hygiene
-
-Details im aktuellen Post-Cleanup-Checkpoint und in der Hygiene-Matrix.
-
-## 5. Produkt-Nordstern
+## 4. Produkt-Nordstern / Traveller Truth
 
 > **Jetnity = Travel Operating System für die konkrete Reise.**
 
 Pfeiler: **Planen / Entscheiden / Reisebereit sein.**
 
-> **„Macht das Jetnity einzigartiger oder nur größer?“**
-
-Traveller Truth:
-
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
 > **Account Registry = wiederverwendbare aktuelle Traveller-Fakten. Trip Snapshot = einzige Current Truth für eine konkrete Reise.**
 
-Kein Default-/Primary-/Preferred-/Chosen-Pass; keine Default-Citizenship; keine Passnummern/Scans/MRZ/Biometrie/DOB/Health-Daten im aktuellen Kernmodell.
+Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
+
+## 5. Requirements Gate 0 – verbindliche aktuelle Grenze
+
+- `requirementsProviderAus()` bleibt fail-closed `null`.
+- kein echter Requirements-/Visa-/Entry-Provider ist aktiv.
+- keine Provider-Secrets, paid calls, Verträge oder Runtime-Aktivierung.
+- vor realem Adapter: AbortSignal/Timeout, Readiness-Kill-Switch und bounded Freshness/TTL lösen.
+- Sherpa-Origin→Nationality-Fallback ist für Jetnity verboten.
+- Sherpa max. 3 Transit-Nodes dürfen Jetnitys bis zu 12 Transitländer niemals still verkleinern.
+- Timatic/IATA und Sherpa sind nur Kandidaten; kein Provider ist gewählt.
+
+Details im aktuellen Closure-Checkpoint und den Gate-0-Deliverables.
 
 ## 6. GitHub Governance
 
-`main` ist geschützt über Ruleset `Jetnity main protection` / ID `21875372` / active.
+`main` ist über Ruleset `Jetnity main protection` / ID `21875372` geschützt.
 
 Pflicht:
 
-- PR vor Merge
-- Branch up to date
-- Conversation resolution
-- `Typecheck, Lint & Build`
-- `Auth-Konfiguration gegen config.toml`
-- `Vercel`
-- nur Merge
-- kein Force Push / keine Branch-Löschung
-- Bypass leer
+- PR vor Merge;
+- Branch up to date;
+- Conversation resolution;
+- `Typecheck, Lint & Build`;
+- `Auth-Konfiguration gegen config.toml`;
+- `Vercel`;
+- nur Merge;
+- kein Force Push / keine Löschung von `main`;
+- bypass leer.
 
-Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId` ist kein Jetnity-Codeproblem. Branch Protection niemals deswegen lockern.
+Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId` ist kein Jetnity-Codeproblem. Branch Protection deswegen niemals lockern.
 
 ## 7. Supabase Kurzstand
 
-Letzter Transition-Precheck:
+Gate 0 hat Supabase nicht mutiert.
 
-- Production `qscbgcdmivbbnzrcyegn`: ACTIVE_HEALTHY
-- develop `yfvbxvijcorffwxbxahl`: ACTIVE_HEALTHY
-- alter eigenständiger `jetnity-bets`: gelöscht
-- P1 Migration-History repariert
-- `creator-media`: entfernt
-- `jetnity-legacy-recovery`: privat, bewusst retained
-- Production Edge Functions nach Cleanup: 0
+Letzter Gate-0-Precheck:
 
-Vor betroffenem Scope live erneut prüfen.
+- Production `qscbgcdmivbbnzrcyegn`: `ACTIVE_HEALTHY`.
+- Development `yfvbxvijcorffwxbxahl`: `ACTIVE_HEALTHY`.
+- Development-vs-Production-Migration-History weist Drift auf.
+
+Vor migrationsnahem oder DB-/RLS-/Storage-/Security-Scope live erneut prüfen und reconciliieren.
 
 ## 8. FIRST NEXT ACTION
 
 **Kein Runtime-Slice und kein Cursor-Agent ist automatisch freigegeben.**
 
-Der neue Technical Lead:
+Der Technical Lead:
 
-1. liest den Post-Cleanup-Checkpoint vollständig;
-2. verifiziert finalen `main`, Continuity-PR, CI/Vercel und Ruleset live;
-3. prüft offene PRs/Issues/Branches und Agentenstatus;
-4. prüft Supabase, falls für den nächsten Scope relevant;
-5. meldet Docs-vs-Live-Widersprüche;
-6. empfiehlt erst dann den nächsten bounded Slice.
+1. liest den aktuellen Closure-Checkpoint vollständig;
+2. verifiziert finalen `main`, offene PRs/Issues, CI/Vercel und Agentenstatus live;
+3. prüft Supabase nur bei relevantem Scope;
+4. revalidiert die Gate-0-Gaps gegen den aktuellen Code;
+5. definiert erst danach einen neuen bounded Slice.
+
+Wahrscheinlicher technischer Kandidat: provider-neutral **Requirements Truth-Ops S4-R1** mit AbortSignal/Timeout, Readiness-Kill-Switch und bounded Freshness/TTL; Factory bleibt `null`. **Noch nicht gestartet.**
 
 **Live-Evidence gewinnt immer.**
