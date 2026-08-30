@@ -14,8 +14,8 @@ Cursor-Agent: `Account plattform audit vorbereitung 21`
 | Baseline | `main @ 7b85e683f39cf42762cac5b6aa7a8eb45b2728db` |
 | Implementation Head | `aafc1464c0c09f5e61a1249db8edcc5fa114fec9` |
 | Overflow-Fix Head | `7d802c72686ecf223cda9b810d9f6e658ce23e95` |
-| Evidence Head | `a5cf4193fa447bdf898ba176bd72dbd2cb4445cc` |
-| Exact Head | der Docs-Commit dieses Stamps; live am PR prüfen |
+| Evidence Head | `7f31ac107b2184556a2519fe836fd45126a4ffc2` |
+| Exact Head | der Docs-Commit dieses Stamps; live am PR prüfen. Kein weiterer Stamp. |
 
 ## Wahrheit
 
@@ -51,8 +51,8 @@ Das Control ist bewusst ein natives Select plus Filter, nicht eine Custom-Combob
 - Fokussierte Reisevorbereitungs-Verifikation: Schweiz/Serbien, keine ISO-2-Labels
 - 280px-Recheck nach Overflow-Fix: kein Overflow
 - Trip-Workspace-UI-Audit: 1017/1018; Restfehler WebKit-Tabwechsel/sticky header, nicht Country-Felder
-- CI #1322 / Run `33285733748` SUCCESS auf exact `a5cf4193`
-- Vercel Preview SUCCESS, Deployment `7EnN9EACJrtSJuJMcxH1CiiWmMsT`
+- CI #1323 / Run `33285896324` SUCCESS auf exact `7f31ac10`
+- Vercel Preview SUCCESS, Deployment `B5DnsqWF5vVUdYZL2LrbSjg63cfJ`
 
 ## Review protocol
 

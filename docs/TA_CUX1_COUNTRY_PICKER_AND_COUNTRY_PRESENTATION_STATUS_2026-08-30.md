@@ -8,7 +8,7 @@ Baseline: `main @ 7b85e683f39cf42762cac5b6aa7a8eb45b2728db`
 Draft-PR: https://github.com/Jetnity/jetnity/pull/234  
 Implementation Head: `aafc1464c0c09f5e61a1249db8edcc5fa114fec9`  
 Overflow-Fix Head: `7d802c72686ecf223cda9b810d9f6e658ce23e95`  
-Evidence Head: `a5cf4193fa447bdf898ba176bd72dbd2cb4445cc`
+Evidence Head: `7f31ac107b2184556a2519fe836fd45126a4ffc2`
 
 ## Geliefert
 
@@ -49,14 +49,13 @@ Auf Implementation Head `aafc1464` und nach Overflow-Fix `7d802c72` wiederholt, 
 - 280px-Recheck der beiden zuvor roten Fixtures: `scrollWidth === 280`
 - Zweiter `audit:trip-workspace` auf `7d802c72`: **1017/1018**. Die 280px-Vorbereitung-Overflows sind weg. Verbleibend: WebKit `1280-tabwechsel` «Fokusziel unter klebender Kopfzeile» nach Mobilität — kein Country-Feld, kein ISO-2, kein LandFeld. Nicht als TA-CUX1-Regression behandelt; nicht in diesem Slice repariert.
 
-## CI / Vercel auf `a5cf4193`
+## CI / Vercel auf `7f31ac10`
 
-- GitHub Actions CI #1322 / Run `33285733748` = **SUCCESS** auf exact `a5cf4193fa447bdf898ba176bd72dbd2cb4445cc`
-- Status-Check-Rollup: **SUCCESS** (4 contexts)
-- Vercel Preview: **SUCCESS** / Deployment `7EnN9EACJrtSJuJMcxH1CiiWmMsT`
-- Vorgänger: Overflow-Fix `7d802c72` CI #1319 SUCCESS; Docs `ac626c08` CI #1316 SUCCESS
+- GitHub Actions CI #1323 / Run `33285896324` = **SUCCESS** auf exact `7f31ac107b2184556a2519fe836fd45126a4ffc2`
+- Vercel Preview: **SUCCESS** / Deployment `B5DnsqWF5vVUdYZL2LrbSjg63cfJ`
+- Vorgänger: `a5cf4193` CI #1322 / Vercel `7EnN9EACJrtSJuJMcxH1CiiWmMsT` SUCCESS; Overflow-Fix `7d802c72` CI #1319 SUCCESS
 
-Dieser Docs-Stamp erzeugt einen neuen Head. Der Reviewer prüft CI/Vercel live am dann aktuellen exact Head.
+Kein weiterer Evidence-Stamp durch diesen Agenten. Der Reviewer prüft CI/Vercel live am dann aktuellen exact Head.
 
 ## Nächster Schritt
 

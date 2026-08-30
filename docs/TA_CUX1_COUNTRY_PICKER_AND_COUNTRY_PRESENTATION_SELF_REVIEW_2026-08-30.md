@@ -2,7 +2,7 @@
 
 Stand: 30. August 2026  
 Cursor-Agent: `Account plattform audit vorbereitung 21`  
-Reviewed Head: `a5cf4193fa447bdf898ba176bd72dbd2cb4445cc`; live am Draft-PR #234 prüfen.
+Reviewed Head: `7f31ac107b2184556a2519fe836fd45126a4ffc2`; live am Draft-PR #234 prüfen.
 
 ## Verdict
 
@@ -46,7 +46,7 @@ Lokal:
 - 280px-Overflow der beiden Country-Vorbereitungs-Fixtures nach Fix = 0
 - `audit:trip-workspace` 1017/1018; Restfehler ist WebKit-Tabwechsel/sticky header, nicht Country-UX
 
-Exact-Head auf `a5cf4193`: CI #1322 / Run `33285733748` SUCCESS; Vercel Preview `7EnN9EACJrtSJuJMcxH1CiiWmMsT` SUCCESS. Ein nachfolgender Docs-Stamp muss live neu gegatet werden.
+Exact-Head auf `7f31ac10`: CI #1323 / Run `33285896324` SUCCESS; Vercel Preview `B5DnsqWF5vVUdYZL2LrbSjg63cfJ` SUCCESS. Kein weiterer Evidence-Stamp durch diesen Agenten.
 
 ## Offen / nicht behauptet
 
