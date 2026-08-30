@@ -38,4 +38,12 @@ describe('Account-Übersicht bleibt kein Workspace', () => {
       true,
     )
   })
+
+  test('bietet nur einen kleinen Buchungs-Einstieg ohne Booking-Karten', () => {
+    const quelle = readFileSync(join(hier, '../../components/account/AccountUebersicht.tsx'), 'utf8')
+    assert.equal(quelle.includes('/account/bookings'), true)
+    assert.equal(quelle.includes('AccountBuchungen'), false)
+    assert.equal(quelle.includes('priceAmount'), false)
+    assert.equal(quelle.includes('bookingUrl'), false)
+  })
 })
