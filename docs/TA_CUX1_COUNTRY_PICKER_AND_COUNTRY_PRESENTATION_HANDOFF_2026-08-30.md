@@ -13,6 +13,7 @@ Cursor-Agent: `Account plattform audit vorbereitung 21`
 | Branch | `feat/ta-cux1-country-picker-2026-08-30` |
 | Baseline | `main @ 7b85e683f39cf42762cac5b6aa7a8eb45b2728db` |
 | Implementation Head | `aafc1464c0c09f5e61a1249db8edcc5fa114fec9` |
+| Overflow-Fix Head | `7d802c72` |
 | Exact Head | der Docs-Commit dieses Handoffs; live am PR prüfen |
 
 ## Wahrheit
@@ -41,12 +42,14 @@ Das Control ist bewusst ein natives Select plus Filter, nicht eine Custom-Combob
 - `docs/ADR_0203_TA_CUX1_SHARED_COUNTRY_PRESENTATION.md`
 - dieser Handoff / Status / Self-Review
 
-## Lokale Evidence auf `aafc1464`
+## Lokale Evidence
 
 - Tests: 2759/2759
 - Typecheck, Lint 0 errors, Hygiene, Production-Build: pass
 - Account-UI-Audit: 48/48
 - Fokussierte Reisevorbereitungs-Verifikation: Schweiz/Serbien, keine ISO-2-Labels
+- 280px-Recheck nach Overflow-Fix: kein Overflow
+- Trip-Workspace-UI-Audit: 1017/1018; Restfehler WebKit-Tabwechsel/sticky header, nicht Country-Felder
 
 ## Review protocol
 

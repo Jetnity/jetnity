@@ -34,20 +34,22 @@ Nicht angefasst: Migrationen, Schema, RLS, Grants, Auth/MFA/AAL, Service Role, P
 
 ## Gates
 
-Lokal auf `aafc1464`:
+Lokal:
 
-- Tests 2759/2759
+- Tests 2759/2759 auf `aafc1464` und erneut nach Overflow-Fix
 - Typecheck pass
 - Lint 0 errors
 - Hygiene pass
 - Production-Build pass
 - Account-UI-Audit 48/48
 - Fokussierte TW-Reisevorbereitungs-Verifikation pass
+- 280px-Overflow der beiden Country-Vorbereitungs-Fixtures nach Fix = 0
+- `audit:trip-workspace` 1017/1018; Restfehler ist WebKit-Tabwechsel/sticky header, nicht Country-UX
 
-Exact-Head-CI/Vercel und der vollständige `audit:trip-workspace` sind live am finalen Head zu prüfen.
+Exact-Head-CI/Vercel sind live am finalen Head zu prüfen.
 
 ## Offen / nicht behauptet
 
 - Authentifizierter Real-Device-Durchlauf `/account/travellers` in dieser Umgebung nicht möglich
-- Voller Trip-Workspace-UI-Audit zum ersten Docs-Stamp noch nicht als SUCCESS belegt
+- WebKit 1280 Tabwechsel-Fokus unter klebender Kopfzeile bleibt ein bestehender/flaky Workspace-Auditpunkt und wurde hier nicht erweitert
 - Unabhängiger Technical-Lead-Review ausstehend
