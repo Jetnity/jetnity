@@ -22,19 +22,23 @@ Jede spätere Repository-Löschung muss auf einem eigenen Cleanup-Branch erfolge
 
 ## 3. Storage Before-Image
 
-| Bucket | Public | Object Count | Bytes |
-| --- | --- | ---: | ---: |
-| `creator-media` | true | 3 | 9,092,490 |
-| `masks` | false | 0 | 0 |
-| `media-original` | false | 0 | 0 |
-| `media-proxy` | false | 0 | 0 |
-| `media-renders` | false | 0 | 0 |
-| `media-thumbs` | false | 0 | 0 |
-| `media-versions` | false | 0 | 0 |
-| `public-media` | true | 0 | 0 |
-| `renders` | true | 0 | 0 |
-| `session-versions` | false | 0 | 0 |
-| `subtitles` | true | 0 | 0 |
+Alle elf Buckets sind Typ `STANDARD` und `avif_autodetection=false`.
+
+| Bucket | Public | Object Count | Bytes | File Limit | MIME Limit |
+| --- | --- | ---: | ---: | ---: | --- |
+| `creator-media` | true | 3 | 9,092,490 | null | null |
+| `masks` | false | 0 | 0 | null | null |
+| `media-original` | false | 0 | 0 | null | null |
+| `media-proxy` | false | 0 | 0 | null | null |
+| `media-renders` | false | 0 | 0 | null | null |
+| `media-thumbs` | false | 0 | 0 | null | null |
+| `media-versions` | false | 0 | 0 | 10,485,760 | `application/json` |
+| `public-media` | true | 0 | 0 | null | null |
+| `renders` | true | 0 | 0 | null | null |
+| `session-versions` | false | 0 | 0 | 10,485,760 | `application/json` |
+| `subtitles` | true | 0 | 0 | null | null |
+
+Erstellungszeitpunkte: `creator-media` 2025-07-01; `session-versions` 2025-08-22; die `media-*`-Gruppe 2025-08-22; `masks`/`renders`/`subtitles` 2025-08-27; `public-media` 2025-08-30.
 
 ### `creator-media` Object Manifest – ohne Pfad/PII
 
@@ -59,15 +63,39 @@ Daher ist verbindlich:
 
 Vor einer späteren Entfernung muss ein separates Backup-Artefakt oder ein gleichwertig überprüfter Restore-Pfad erstellt und mit diesem Manifest verknüpft werden.
 
-## 5. Policy Before-Image – relevante Klassen
+## 5. Policy Before-Image
 
-- `creator-media`: authenticated owner-folder SELECT/INSERT/UPDATE/DELETE.
-- `media-original`: authenticated owner SELECT/INSERT/UPDATE/DELETE.
-- `media-proxy`: authenticated owner SELECT/INSERT/UPDATE/DELETE.
-- `media-renders`: authenticated owner SELECT/INSERT/UPDATE/DELETE.
-- `media-thumbs`: authenticated owner SELECT/INSERT/UPDATE/DELETE.
-- `media-versions`: authenticated owner SELECT/INSERT/UPDATE/DELETE.
-- `public-media`: public SELECT, authenticated INSERT, owner-bound UPDATE.
+### `creator-media`
+
+Vier Policies, alle Rolle `authenticated`, Folder-Owner über erstes Pfadsegment = `auth.uid()`:
+
+- `creator-media: own uploads only 59k4xv_0` – SELECT;
+- `creator-media: own uploads only 59k4xv_1` – INSERT / identische Folder-Owner-WITH-CHECK;
+- `creator-media: own uploads only 59k4xv_2` – UPDATE;
+- `creator-media: own uploads only 59k4xv_3` – DELETE.
+
+### Owner-CRUD-Gruppen
+
+Je vier Policies (SELECT/INSERT/UPDATE/DELETE), Rolle `authenticated`, Bedingung `bucket_id=<bucket> AND owner=auth.uid()`:
+
+- `media-original_{sel,ins,upd,del}_owner`
+- `media-proxy_{sel,ins,upd,del}_owner`
+- `media-renders_{sel,ins,upd,del}_owner`
+- `media-thumbs_{sel,ins,upd,del}_owner`
+- `media-versions_{sel,ins,upd,del}_owner`
+
+### `public-media`
+
+- `Public read public-media` – Rolle `public`, SELECT, `bucket_id='public-media'`;
+- `public-media-read` – zweite Rolle-`public`-SELECT-Policy mit derselben Bucket-Bedingung;
+- `Auth upload public-media` – Rolle `authenticated`, INSERT, WITH CHECK `bucket_id='public-media'`;
+- `Auth manage own public-media` – Rolle `public`, UPDATE, `bucket_id='public-media' AND owner=auth.uid()` für USING und WITH CHECK.
+
+Damit existieren auf `public-media` zwei funktional gleichgerichtete Public-Read-Policies. Das ist ein zusätzlicher Legacy-/Hygiene-Hinweis, aber Phase 0 ändert nichts.
+
+### Buckets ohne passende `storage.objects`-Policy im Live-Inventar
+
+Für `masks`, `renders`, `session-versions` und `subtitles` wurde keine Bucket-spezifische `storage.objects`-Policy gefunden. Der Bucket-Public-Status bleibt davon getrennt: `renders` und `subtitles` sind als Bucket `public=true` konfiguriert.
 
 Jede spätere Policy-Entfernung muss im selben Batch wie die zugehörige Storage-Entscheidung dokumentiert werden. Keine isolierte Policy-Massenlöschung.
 
@@ -79,7 +107,7 @@ Restore über exact pre-cleanup Git SHA bzw. Revert des Cleanup-Commits.
 
 ### Leere Storage-Buckets
 
-Vor Delete nochmals Object Count `0`, Runtime-Referenzen `0`, relevante Policies und Public-Flag festhalten. Restore-Vertrag muss Bucket-Konfiguration und Policies enthalten.
+Vor Delete nochmals Object Count `0`, Runtime-Referenzen `0`, relevante Policies und Public-Flag festhalten. Restore-Vertrag muss Bucket-Typ, Public-Flag, File-Limit, MIME-Limit und Policies enthalten.
 
 ### Nichtleerer Storage-Bucket
 
