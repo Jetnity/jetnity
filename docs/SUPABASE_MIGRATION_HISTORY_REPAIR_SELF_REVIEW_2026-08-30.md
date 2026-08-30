@@ -33,7 +33,16 @@ Geprüft gegen den Repair-Preparation-Slice auf `repair/supabase-migration-histo
 - `develop` behält ältere Extra-Versionen `20260826052735` / `20260828120000` und S2-Versionsdrift. Das ist Non-Scope.
 - Der 45 201-Zeichen-Body als ein Statement folgt dem Repo-Vertrag. Falls die Management-API eine Query-Größengrenze hat, muss der Technical Lead das beim späteren Write sehen und stoppen – kein stilles Splitten.
 
-## 4. Urteil
+## 4. Lokale und remote Gates
+
+Auf Implementation Head `e61477307dbea3289e752c35bf1c36cd7e89b210`:
+
+- Focused 25/25; `npm test` 2813/2813
+- typecheck, lint (0 errors), Hygiene, Production Build
+- lokale Probe no-write; `--schreiben` und `--entwicklung` fail-closed
+- Actions `33312026403` SUCCESS; Vercel `HX4fYJKqWyR33EYDjRZMMRgJcvZY` READY
+
+## 5. Urteil
 
 Der Slice bleibt in der genehmigten Vorbereitung: fail-closed Runner, deterministische Repräsentation, Tests, task-scoped Evidence. Keine Production-Mutation.
 

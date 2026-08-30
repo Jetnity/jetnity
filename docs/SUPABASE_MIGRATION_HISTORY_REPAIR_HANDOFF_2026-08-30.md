@@ -1,7 +1,7 @@
 # Jetnity – Supabase Migration-History Repair Handoff
 
 Stand: 30. August 2026  
-Status: **REPAIR PREPARATION COMPLETE / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO PRODUCTION WRITE**
+Status: **REPAIR PREPARATION COMPLETE / LOCAL+REMOTE GATES GREEN ON e6147730 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO PRODUCTION WRITE**
 
 ## What is finished
 
@@ -24,7 +24,8 @@ Vorbereiteter fail-closed Pfad, um den Production-History-Body von `202608291400
 | Issue | #249 |
 | Merge-Base | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
 | Start-Head | `4fbcfebedc7fa451063a228653f18c16a1e3dd5f` |
-| Reviewable Tip | live auf PR #250 prüfen |
+| Gated implementation | `e61477307dbea3289e752c35bf1c36cd7e89b210` |
+| Reviewable Tip | Evidence-Stamp nach diesem Commit; neuere Tips live auf PR #250 |
 | Cursor-Agent | `Jetnity infrastructure migration repair 2` |
 | Cloud-Run | https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589 |
 
@@ -36,6 +37,22 @@ npm run db:migration-history-repair -- --schreiben --produktion --projekt-ref qs
 ```
 
 Nur nach unabhängigem Exact-Head-PASS, erneut bestätigtem Before-Image und Backup-/Restore-Fenster. Cursor führt diese Kommandos nicht aus.
+
+## Tests / Build
+
+Lokal auf `e6147730`:
+
+- Focused 25/25
+- `npm test` 2813/2813
+- typecheck pass
+- lint 0 errors / 135 warnings
+- Hygiene-Gates pass
+- Production Build pass
+- lokale Probe no-write; Write/Development-Flags fail-closed
+
+Remote auf `e6147730`: Actions Run `33312026403` SUCCESS; Vercel Preview `HX4fYJKqWyR33EYDjRZMMRgJcvZY` READY.
+
+Exact-head CI/Vercel für den Tip nach diesem Stamp live prüfen.
 
 ## Review protocol
 

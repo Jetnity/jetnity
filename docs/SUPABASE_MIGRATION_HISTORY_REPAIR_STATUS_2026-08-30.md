@@ -1,7 +1,7 @@
 # Jetnity – Supabase Migration-History Repair Status
 
 Stand: 30. August 2026  
-Status: **AUTHORING / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION-WRITE / KEIN FOLGESLICE**  
+Status: **TECHNISCH REVIEW-BEREIT / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION-WRITE / KEIN FOLGESLICE**  
 Issue: #249  
 Draft-PR: #250  
 Logical Cursor-Agent: **`Jetnity infrastructure migration repair 2`**  
@@ -18,7 +18,8 @@ Cursor-Run: https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589
 | Branch | `repair/supabase-migration-history-20260829140000-2026-08-30` |
 | Slice-cut / Merge-Base `main` | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
 | Start-Head | `4fbcfebedc7fa451063a228653f18c16a1e3dd5f` |
-| Authoring Tip | nach finalem Push live auf PR #250 prüfen |
+| Gated implementation Head | `e61477307dbea3289e752c35bf1c36cd7e89b210` |
+| Authoring / reviewable Tip | Evidence-Stamp nach diesem Commit; jeder neuere Tip live auf PR #250 prüfen |
 | Traveller-Kontext | **nicht relevant** |
 | Production-Mutation durch Cursor | **keine** |
 | Development-Mutation durch Cursor | **keine** |
@@ -51,11 +52,31 @@ Fail-closed Repair-Vorbereitung, kein Live-Write:
 
 Nicht im Diff: Migration SQL, RLS, Grants, Rollen, Funktionen, Trigger, Gate, `develop`, Provider Live, TW-8, AP-7, Auth/Account-Runtime, globale TL-Continuity-Dateien (`JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `DECISIONS.md`, `ROADMAP.md`).
 
-## 4. Tests / Gates
+## 4. Tests / Gates auf Implementation Head `e6147730`
 
-Siehe Self-Review und Handoff für den exact-head Nachweis. Jeder neue Head invalidiert frühere Exact-Head-Gates.
+| Gate | Ergebnis |
+| --- | --- |
+| Focused repair + `ci-schutz` | **25/25 pass** |
+| `npm run db:migration-history-repair` | lokale Probe PASS; Blob `e25ab1b7…`; Marker-MD5 `414f7318…`; kein Write |
+| `--schreiben` ohne Production-Flags | **FAIL-CLOSED** |
+| `--entwicklung` | **FAIL-CLOSED** |
+| `npm test` | **2813/2813 pass, 0 fail** |
+| `npm run typecheck` | pass |
+| `npm run lint` | **0 errors** / 135 bestehende Repo-Warnings |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
+| `npm run build` | pass |
+| `db:rechte` / `db:rls` / `auth:pruefen` | nicht als Live-Write-/Schema-Gate ausgeführt – keine Schema-/Auth-Änderung; Auth-CI-Job separat grün |
 
-## 5. Hard boundaries eingehalten
+## 5. Exact-head Actions / Vercel auf `e6147730`
+
+| Evidence | Ergebnis |
+| --- | --- |
+| GitHub Actions Run `33312026403` | **SUCCESS** (Typecheck/Lint/Build + Auth-Konfiguration) |
+| Vercel Preview `HX4fYJKqWyR33EYDjRZMMRgJcvZY` | **READY** |
+
+Jeder neue Head invalidiert frühere Exact-Head-Gates. Der Docs-Stamp nach diesem Stand muss live erneut gegatet werden.
+
+## 6. Hard boundaries eingehalten
 
 - kein Production-/Development-SQL-Write durch diesen Agenten
 - kein Re-Apply von `20260829140000_trip_item_commercial_provenance.sql`
@@ -66,6 +87,6 @@ Siehe Self-Review und Handoff für den exact-head Nachweis. Jeder neue Head inva
 - kein temporärer Supabase-Branch
 - kein Ready / Merge / Folgeslice
 
-## 6. FIRST NEXT ACTION
+## 7. FIRST NEXT ACTION
 
 **Unabhängiger ChatGPT Technical-Lead Exact-Head-Review.** Nur nach TL-PASS darf der Technical Lead den separat gegateten Production-History-Write ausführen.
