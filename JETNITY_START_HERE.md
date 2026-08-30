@@ -8,15 +8,16 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / REQUIREMENTS GATE 0 CLOSED / LIVE
 ## 1. Zuerst lesen
 
 1. `docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_GATE0_CLOSED_2026-08-31.md` ← **aktuellster Checkpoint**
-2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
-3. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
-4. `JETNITY_HANDOFF.md`
-5. `docs/ACTIVE_WORK_STATUS.md`
-6. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
-7. `docs/REQUIREMENTS_PROVIDER_CONTRACT_GAP_MAP_2026-08-30.md`
-8. `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
-9. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-10. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
+2. `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md` ← **verbindlicher bestätigter Zielzustand für vollständige Einreiseanforderungen**
+3. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+4. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
+5. `JETNITY_HANDOFF.md`
+6. `docs/ACTIVE_WORK_STATUS.md`
+7. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
+8. `docs/REQUIREMENTS_PROVIDER_CONTRACT_GAP_MAP_2026-08-30.md`
+9. `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
+10. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+11. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
 
 Danach GitHub/CI/Vercel und – nur bei betroffenem DB-/Security-/Storage-/Migration-Scope – Supabase **live** verifizieren.
 
@@ -73,7 +74,15 @@ Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer
 - Sherpa max. 3 Transit-Nodes dürfen Jetnitys bis zu 12 Transitländer niemals still verkleinern.
 - Timatic/IATA und Sherpa sind nur Kandidaten; kein Provider ist gewählt.
 
-Details im aktuellen Closure-Checkpoint und den Gate-0-Deliverables.
+### Bestätigte Entry-Requirements-Zielarchitektur
+
+Für den Zielzustand ist verbindlich: Jetnity bildet nicht nur Visa/eTA/eVisa ab, sondern die vollständige praktisch relevante Einreise-Checkliste strukturiert pro Reisendem, Credential-Option, Route und Datum. Dazu gehören insbesondere Passgültigkeit, freie Passseiten, Transit, Einreise-/Gesundheitsformulare, Impf-/Gesundheitsanforderungen, Versicherungspflicht, Rück-/Weiterflugnachweis, Buchungs-/Reisenachweise und finanzielle Mittel. `blank_passport_pages` und `financial_means` müssen eigene strukturierte Requirement-Typen erhalten und dürfen nicht in `other_entry_requirement` verschwinden.
+
+Kanonische Zielarchitektur: `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`.
+
+Diese Produktentscheidung erweitert keinen laufenden Slice automatisch. Jeder Implementierungsslice braucht einen frischen Binding Slice Precheck.
+
+Details zum Ist-Zustand im aktuellen Closure-Checkpoint und den Gate-0-Deliverables.
 
 ## 6. GitHub Governance
 
