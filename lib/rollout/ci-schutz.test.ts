@@ -5,6 +5,10 @@ import assert from 'node:assert/strict'
 const checker = readFileSync(new URL('../../scripts/db/production-pruefen.ts', import.meta.url), 'utf8')
 const gateB = readFileSync(new URL('../../scripts/db/gate-b-tw6-bundle.ts', import.meta.url), 'utf8')
 const aal2 = readFileSync(new URL('../../scripts/db/aal2-prod-apply.ts', import.meta.url), 'utf8')
+const historyRepair = readFileSync(
+  new URL('../../scripts/db/migration-history-repair.ts', import.meta.url),
+  'utf8',
+)
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
   scripts: Record<string, string>
 }
@@ -20,6 +24,7 @@ describe('CI und Build beschreiben Production nicht', () => {
       assert.equal(kommando.includes('--produktion'), false, name)
       assert.equal(kommando.includes('gate-b-tw6-bundle'), false, name)
       assert.equal(kommando.includes('aal2-prod-apply'), false, name)
+      assert.equal(kommando.includes('migration-history-repair'), false, name)
     }
   })
 
@@ -29,6 +34,7 @@ describe('CI und Build beschreiben Production nicht', () => {
     assert.match(pkg.scripts['production:pruefen'] ?? '', /production-pruefen/)
     assert.match(pkg.scripts['db:gate-b-tw6-bundle'] ?? '', /gate-b-tw6-bundle/)
     assert.match(pkg.scripts['db:aal2-prod-apply'] ?? '', /aal2-prod-apply/)
+    assert.match(pkg.scripts['db:migration-history-repair'] ?? '', /migration-history-repair/)
   })
 })
 
@@ -70,5 +76,19 @@ describe('AAL2-Einmal-Runner schreibt Production nicht still', () => {
     assert.equal(aal2.includes('SUPABASE_ACCESS_TOKEN'), false)
     assert.equal(pkg.scripts['prebuild']?.includes('aal2-prod-apply'), false)
     assert.equal(pkg.scripts['test']?.includes('aal2-prod-apply'), false)
+  })
+})
+
+describe('History-Repair-Runner schreibt Production nicht still', () => {
+  test('Default ist Probe, Write nur explizit, kein Secret-Log', () => {
+    assert.match(historyRepair, /Lokale Probe fertig/)
+    assert.match(historyRepair, /Kein Datenbank-Write/)
+    assert.match(historyRepair, /--schreiben --produktion --projekt-ref/)
+    assert.match(historyRepair, /history-body-ersetzen/)
+    assert.match(historyRepair, /keineSecrets/)
+    assert.equal(historyRepair.includes('SUPABASE_ACCESS_TOKEN'), false)
+    assert.equal(pkg.scripts['prebuild']?.includes('migration-history-repair'), false)
+    assert.equal(pkg.scripts['test']?.includes('migration-history-repair'), false)
+    assert.equal(pkg.scripts['build']?.includes('migration-history-repair'), false)
   })
 })
