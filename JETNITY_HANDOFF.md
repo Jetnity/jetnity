@@ -1,195 +1,219 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 30. August 2026  
-Status: **CURRENT HANDOFF / TA-CUX1 POST-MERGE VERIFIED / PRODUCT DIFFERENTIATION PERSISTED / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / CHAT TRANSITION / AP-5-R1 POST-MERGE VERIFIED / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
 
 Dieser Handoff ist Current-State-Evidence, kein Ersatz für Live-Rekonstruktion. Vor jedem neuen Slice gilt verbindlich `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`.
 
-## 1. Aktuellster verifizierter Stand
+Aktuellster vollständiger Transition-Checkpoint:
 
-Aktueller vollständig post-merge und Production-verifizierter Runtime-Baseline-Stand:
+`docs/CHATGPT_TL_CHAT_TRANSITION_CHECKPOINT_2026-08-30.md`
 
-- `main @ 292e52bf76d78eef1e9967b15a189ffaeca16ceb`
-- Post-Merge CI #1326 / Run `33286617319`: **SUCCESS**
-- Vercel Production auf exact `main`: **SUCCESS / READY**
-- `main protected=false` bleibt Governance-Risiko.
+## 1. Verifizierter Übergabestand
 
-Aktuellster Checkpoint:
+Letzte vollständig verifizierte **Runtime-Baseline**:
 
-`docs/CHATGPT_TL_TA_CUX1_POST_MERGE_CHECKPOINT_2026-08-30.md`
+- `main/runtime @ 4549b0264b57052d1ab6737add9bbe7fd8801c3b`
+- Post-Merge CI #1338 / Run `33306700851`: **SUCCESS**
+- Vercel Production auf exact `4549b026...`: **SUCCESS**
+- Branch Protection: `protected=false`
 
-Es gibt aus diesem Handoff **keinen automatisch aktiven Produkt-/Runtime-Slice**.
+Nach `4549b026...` wird nur der docs-only Transition-/Continuity-Stand integriert. Ein neuer Chat kann deshalb einen neueren `main` vorfinden, ohne dass danach Runtime geändert wurde. Den aktuellen `main` immer live verifizieren.
 
-## 2. TA-CUX1 – abgeschlossen
+**Kein automatischer Produkt-/Runtime-Folgeslice. Kein aktiver Cursor-Agent.**
 
-Issue #233: **CLOSED / completed**.
+## 2. AP-5-R1 – abgeschlossen
+
+Issue #241: **CLOSED / completed**.
 
 Agent:
 
-- `Account plattform audit vorbereitung 21` – STOPPED / completed.
+- `Account plattform audit vorbereitung 22`
+- Session `bc-f631838b-21f3-4290-aa1f-db450a037ac3`
+- Status: **STOPPED / completed**
 
-Final independently reviewed Source Head:
+Source Draft PR #242:
 
-- `3e021f534ca97f32dda4260138403ab4e9840c72`
+- erster reviewed Head `c0abee5091511d241c2c1f55c04baa4e5baee10c` → **CHANGES REQUIRED**;
+- Findings: zentrale ADR/Architecture-Kollision, falsches Admin-Success-Ziel, persistenter Admin-Menü-Reopen-Callback;
+- gleicher Agent/dieselbe Session lieferte Review-Fix.
 
-Gates / Integration:
+Final independently reviewed Head:
 
-- Source CI #1324 / Run `33286044982`: SUCCESS;
-- Source Vercel Preview: SUCCESS;
-- 0 GitHub Review Threads;
-- bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId`;
-- Recovery PR #238 mit exakt identischem reviewed Head;
-- Recovery CI #1325 / Run `33286509759`: SUCCESS;
-- Recovery Vercel Preview: SUCCESS;
-- 0 Recovery Review Threads;
-- Merge mit Expected-Head-Lock;
-- Merge/Main `292e52bf76d78eef1e9967b15a189ffaeca16ceb`;
-- Post-Merge CI #1326 / Run `33286617319`: SUCCESS;
-- Vercel Production: SUCCESS / READY.
+`ccc50345b0f55e0a387c9f16f5fb3f8fac2e8d2a`
+
+Gates:
+
+- TL PASS auf exact Head;
+- 7 ahead / 0 behind;
+- CI #1336 / `33306211723`: SUCCESS;
+- Vercel exact Head: SUCCESS;
+- 0 Review Threads.
+
+Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId` → Source PR #242 transport-only geschlossen → Recovery PR #243 auf **identischem PASS-Head** → Recovery CI #1337 SUCCESS → Expected-Head-Lock Merge → `main 4549b026...` → Post-Merge CI #1338 SUCCESS → Vercel Production SUCCESS.
 
 Geliefert:
 
-- eine gemeinsame Country Foundation für Account Registry und Trip Workspace Traveller-Kontext;
-- offizieller auswählbarer ISO-3166-1-alpha-2-Katalog mit 249 Codes;
-- lokalisierte Country-Namen via expliziter Locale und Flag-Presentation;
-- gemeinsame `LandFeld`-Control als natives Select plus Namensfilter;
-- keine sichtbaren ISO-2-Freitextfelder in den beiden Scope-Flächen;
-- Codes bleiben Persistenz-/Domain-Wahrheit, Namen/Flaggen bleiben Presentation;
-- keine automatische Vorauswahl aus IP/Locale/Browser und kein First-Item-Default;
-- Issuer Country bleibt unabhängig von Citizenship und Residence;
-- Multi-Citizenship/Multi-Document + nullable Document→Citizenship bleiben verlustfrei;
-- unbekannte bestehende Zwei-Buchstaben-Codes bleiben als Legacy-Werte sichtbar, werden nicht still umgedeutet und sind nicht neu auswählbar;
-- DE/EN/FR/IT/ES/PT/PL sind in der Country-Presentation locale-parametrisiert;
-- keine Migration, kein Schema/RLS/Auth/Supabase/Provider-Scope, keine neue npm-Abhängigkeit.
-
-Agent-Self-Review meldete 2759/2759 Tests und zusätzliche Account/Trip-UI-Prüfungen. Der Technical Lead verließ sich nicht darauf, sondern prüfte den finalen Diff, Truth-/Scope-Grenzen, aktuelle CI/Vercel-Evidence und die Drift zu `main` unabhängig. Die `main`-Drift bestand ausschließlich aus disjunkten Strategie-Dokumenten und erforderte keinen Rebase nur der Form halber.
+- allgemeines/public Logout bleibt unscoped/global;
+- Success-Redirect nur nach bestätigtem Auth-Erfolg;
+- `{ error }`/Wurf bleibt fail-closed und retrybar;
+- sanitized Error Copy, keine Tokens/Session-IDs/Secrets;
+- Public Success `/`;
+- Admin Success `/admin/login`;
+- kein Open Redirect;
+- AP-5-S3 scoped `local` / `others` / `global` unverändert;
+- keine DB/Migration/RLS/Identity/Auth-Config/PrivacyBee/Provider-Änderung.
 
 ## 3. Traveller / Account – kumulative Current Truth
 
-Verbindliche Authority-Grenze:
-
-> **Account Registry = wiederverwendbare aktuelle Traveller-Fakten. Trip Snapshot = einzige Current Truth für eine konkrete Reise.**
-
 Verbindliches Modell:
 
-> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig zulässige Optionen.**
+> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Integriert:
+Dual-Authority:
 
-- AP-7 Gate 0 + Dual-Authority PO approval;
-- AP-7-S1 pure Domain Contract;
-- AP-7-S2 Account Registry Persistence / Identity / owner-only RLS auf Production;
-- AP-7-S3 Registry CRUD/UI;
-- AP-7-S4 Registry → unabhängige Trip Snapshot Runtime-Materialisierung;
-- TA-DL1 Document Calendar Lifecycle;
-- AP-UX-NAV1 skalierbare Mobile Account Navigation;
+> **Account Registry = wiederverwendbare aktuelle Traveller-Fakten. Trip Snapshot = einzige Current Truth einer konkreten Reise.**
+
+Integriert und nicht erneut als Zukunft planen:
+
+- trip-scoped Foundation E;
+- Multi-Citizenship/Multi-Document und Document↔Citizenship;
+- Issuer Country ≠ Citizenship;
+- kein Default-/Primary-/Preferred-/Chosen-Pass;
+- Guest→Account Trip-Copy;
+- AP-7 Gate 0 + S1–S4;
+- AP-5 Gate 0 + S1–S5 + AP-5-R1;
+- TA-DL1 Document Lifecycle;
+- AP-UX-NAV1 Account Navigation Rail;
 - TA-CUX1 Shared localized Country UX.
 
-Kein Default-/Primary-/Preferred-/Chosen-Pass oder Default-Citizenship. Issuer Country bleibt Citizenship-unabhängig. Keine Passnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten im Kernmodell.
+Keine Passnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten im Kernmodell.
 
-## 4. Product Differentiation – verbindlich
+## 4. PrivacyBee – Product-Owner-binding, Jetnity-Activation geparkt
 
-Product-Owner-verbindliche Doctrine:
+Binding:
+
+- **PrivacyBee AG / `privacybee.io` (Schweiz)** ist der vorgesehene Provider für Jetnitys website-visible Privacy Layer.
+- `docs/PRIVACYBEE_PRODUCT_OWNER_BINDING_DECISION_2026-08-30.md`
+- `docs/PRIVACYBEE_INTEGRATION_CONTRACT_2026-08-29.md`
+
+Neue reale Evidence:
+
+- bestehendes PrivacyBee-Konto mit alter Website `pazzar.ch`;
+- `jetnity.com` wird aktuell von PrivacyBee nicht als neue Website akzeptiert, weil dort noch keine erreichbare Jetnity-Website läuft.
+
+Daher:
+
+- **keinen Jetnity-Trial/Lizenz-/Activation-Start jetzt**;
+- warten, bis echte `jetnity.com` Production erreichbar ist;
+- kein Vercel-Preview/Ersatzdomain als Legal-Production-Domain;
+- kein Cookie-Banner ohne reale nicht-essenzielle Tracker;
+- keine Passwörter/API-Keys/Session-Secrets in Repo/Agenten;
+- `/terms` bleibt separater Legal-Input und wird nicht erfunden;
+- PrivacyBee ersetzt nicht AP-6b Consent/Export/Delete oder Account/Auth/Traveller/RLS/Commercial Truth.
+
+AP-6a PrivacyBee-Runtime ist bewusst **geparkt**.
+
+## 5. Product Differentiation – verbindlich
 
 `docs/JETNITY_PRODUCT_DIFFERENTIATION_DOCTRINE_2026-08-30.md`
 
-Jetnity wird **nicht** als weiterer generischer Reiseplaner gebaut. Langfristiger Arbeitsbegriff:
-
 > **Jetnity = Travel Operating System für die konkrete Reise.**
 
-Produktpfeiler:
+Pfeiler: **Planen / Entscheiden / Reisebereit sein.**
 
-- Planen;
-- Entscheiden;
-- Reisebereit sein.
-
-Verbindliche Feature-Frage:
+Feature-Frage:
 
 > **„Macht das Jetnity einzigartiger oder nur größer?“**
 
-Jeder größere neue Product-/Runtime-Slice braucht einen **Differentiation Impact** oder eine **Enabler Justification**.
+`docs/JETNITY_STRATEGIC_DIFFERENTIATION_OPPORTUNITY_REGISTER_2026-08-30.md` bewahrt sieben strategische Kandidaten. Sie sind **keine automatische Roadmap**. Issue #236 bleibt do-not-auto-start.
 
-Strategisches Opportunity Register:
+## 6. Supabase Replay – P1 unverändert
 
-`docs/JETNITY_STRATEGIC_DIFFERENTIATION_OPPORTUNITY_REGISTER_2026-08-30.md`
+Production-History-Version `20260829140000_trip_item_commercial_provenance` speichert einen nicht replaybaren Prosa-Statement-Body, obwohl die Production S5-B Objekte existieren. Development besitzt die Version und S5-B Runtime-Gate-/Provenance-Objekte nicht.
 
-Darin dauerhaft erhalten, aber **nicht automatisch autorisiert**:
+Keine Reparatur wurde durchgeführt. Vor migrationsnahem Rebase/Reset/Replay ist dies **P1 Infrastructure Debt** und ein separater Product-Owner-gated Repair mit Backup/PITR/Before-Image/Fingerprints/Replay-Proof.
 
-1. Trip Audit / Journey Integrity;
-2. Change Impact & Recovery;
-3. Multi-Citizenship / Entry Decision Engine;
-4. True Trip Cost;
-5. Route & Connection Feasibility;
-6. What-if Simulator;
-7. Next Best Action.
+AP-6b ist migrations-/RLS-/Delete-nah und daher zusätzlich von diesem P1 und besonderen PO-Gates betroffen.
 
-Issue #236 bleibt absichtlich offen als persistenter Strategy Pointer und darf nicht als Runtime-Freigabe interpretiert werden.
+## 7. Provider / Trip Workspace
 
-Die wöchentliche Wettbewerbsbeobachtung ist ein Produkt-Owner-seitig eingerichteter zusätzlicher Marktcheck; sie ersetzt keinen aktuellen Wettbewerbscheck vor einem konkreten Differenzierungs-Slice.
+Provider-Arbeit ist nicht abgeschlossen. Keine echten Provider-Secrets/API-Keys/paid calls/Production Runtime Principal aus diesem Handoff heraus aktivieren. TW-8 bleibt hinter Provider S5 + realer Commercial Provenance geschlossen.
 
-## 5. Supabase Migration-History Replay – P1 bleibt offen
+Binding Build Order: `docs/JETNITY_BINDING_BUILD_ORDER.md`.
 
-Production `qscbgcdmivbbnzrcyegn` besitzt für Version `20260829140000_trip_item_commercial_provenance` eine nicht replaybare Prosa-Statement-Body, obwohl der Production S5-B Catalog existiert. Development besitzt weder die Version noch die S5-B Objekte/Rollen.
+## 8. Offene PRs – historische Klassifikation
 
-Keine Reparatur wurde ausgeführt. Vor migrationsnahem Replay/Rebase/Reset bleibt dies **P1 Infrastructure Debt** und ein separater Product-Owner-gated Repair mit Backup/PITR/Before-Image/Replay-Proof.
+Beim Übergang waren exakt fünf alte PRs offen:
 
-## 6. Provider – Current Truth
+- #52 – alter ChatGPT-Handoff-Draft, historisch/veraltet;
+- #50 – alter Provider-Ops-Dokumentations-Draft, historisch/veraltet;
+- #40 – Admin Audit/Preparation, historisch, kein aktiver Runtime-Slice;
+- #39 – Account Audit/Preparation, historisch und durch spätere Integration überholt;
+- #28 – Collaboration Foundation, future/historical Draft, nicht automatisch starten.
 
-Provider-Arbeit ist nicht abgeschlossen. Echte Provider-Secrets/API-Keys, echte Calls, Production Runtime Principal, realer `live_api`-/`persisted_snapshot`-Pfad und TW-8 bleiben nicht freigegeben/aktiviert. TW-8 bleibt hinter Provider S5 + realer Commercial Provenance.
+**Kein aktueller Runtime-PR ist aktiv.** Der neue Chat muss die Liste live neu prüfen.
 
-## 7. Agentenstatus
+## 9. Agentenstatus
 
-Gestoppt / abgeschlossen:
+Zuletzt abgeschlossen:
 
-- `Account plattform audit vorbereitung 21` – TA-CUX1;
-- `Account plattform audit vorbereitung 20` – AP-UX-NAV1;
-- `Account plattform audit vorbereitung 19` – TA-DL1;
-- `Account plattform audit vorbereitung 18` – AP-7-S4;
-- `Account plattform audit vorbereitung 17` – AP-7-S3;
-- `Jetnity infrastructure migration audit 1` – Supabase Replay Gate 0.
+- `Account plattform audit vorbereitung 22` – AP-5-R1 – STOPPED / completed – Session `bc-f631838b-21f3-4290-aa1f-db450a037ac3`.
 
-Aktiver Cursor-Agent: **keiner durch diesen Handoff autorisiert**.
+Davor abgeschlossen:
 
-Neue logische Einheit → frische Agenten-Generation nach Binding Slice Precheck. Review-Fix innerhalb eines laufenden Slices → derselbe gespeicherte Agent/dieselbe Session.
+- Agent 21 – TA-CUX1;
+- Agent 20 – AP-UX-NAV1;
+- Agent 19 – TA-DL1;
+- Agent 18 – AP-7-S4;
+- Agent 17 – AP-7-S3;
+- `Jetnity infrastructure migration audit 1` – Replay Gate 0.
 
-## 8. Risiken und Gates
+Aktiver Cursor-Agent: **keiner**.
 
-- P0: keine aus den aktuellen Closures bekannten.
-- P1 Infrastructure Debt: malformed Production Migration-History-Body `20260829140000` vor Rebase/Reset/Replay-/migrationsnaher Arbeit.
-- P2 Governance: `main protected=false`.
+**Agent 23 ist nicht gestartet.** Erst ein frischer Binding Slice Precheck bestimmt Workstream und nächste Generation.
 
-Product-Owner-Entscheidung bleibt erforderlich vor insbesondere Production-Migrationen/destruktiven Datenänderungen, materiellen RLS-/Identity-/Ownership-Änderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Öffnung des Commercial Runtime Write-Pfads, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
+## 10. Risiken / Gates
 
-Normale scope-treue Technik/Reviews/Merges bleiben TL-autonom nach unabhängiger Exact-Head-Prüfung.
+- P0: keine aus dem Übergabestand bekannten.
+- P1: malformed Production Migration-History-Body `20260829140000` vor migrationsnaher Arbeit.
+- P2: `main protected=false` / Enforcement off.
+- P3: keine neue transitionsrelevante Runtime-Störung.
 
-## 9. Exakter nächster Schritt
+Alle besonderen Product-Owner-Gates aus dem Operating Standard bleiben bestehen: Production-Migration/RLS/Identity, fundamentale Auth/MFA/AAL-Änderung, sensitive Dokumentdaten/externe Weitergabe, Provider-Verträge/Secrets/paid calls/Live-Aktivierung, Commercial Write-Öffnung, Payments, > USD 100/Monat, fundamentale Product-/Build-Order-Änderung, Public Launch/Domain Cutover und Branch Protection.
 
-**Kein automatischer Folgeslice.**
+## 11. Exakter erster Schritt im neuen Chat
 
-Neuer Chat/Technical Lead muss zuerst:
+**Kein automatischer Folgeslice. Kein Agent 23 sofort.**
 
-1. `main`, offene PRs/Issues/Branches, CI/Vercel und bei DB-Bezug Supabase live rekonstruieren;
-2. Binding Build Order und `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` gegen AP-7-S1–S4 + TA-DL1 + AP-UX-NAV1 + TA-CUX1 reconciliieren;
-3. verbleibende Traveller-/Multi-Citizenship-/Requirements-/Route-/Account-Lücken bestimmen;
-4. je Kandidat **Differentiation Impact** oder **Enabler Justification** festhalten;
-5. Opportunity Register/Issue #236 nicht automatisch abarbeiten, sondern aktuellen Nutzerwert, Wettbewerb und notwendige Evidence neu prüfen;
-6. bei migrationsnahen Kandidaten den Replay-Defekt als P1-Abhängigkeit behandeln;
-7. P0/P1/P2/P3 und PO-Gates neu bewerten;
-8. erst danach bounded Slice(s), Kollisionsmatrix und neue Cursor-Agent-Generation(en) festlegen.
+Der neue Technical Lead muss zuerst:
 
-## 10. Pflicht für Übernahme
+1. `main`, letzte Merges und den docs-only Transition-Merge live rekonstruieren;
+2. offene PRs/Issues/Branches und Agentenstatus live prüfen;
+3. Current CI/Vercel verifizieren;
+4. bei DB-/Security-Bezug Supabase Production/Development/Migration-History/RLS live prüfen;
+5. Binding Build Order + Account Plan gegen den tatsächlich integrierten Stand reconciliieren;
+6. PrivacyBee/AP-6a bis erreichbarer `jetnity.com` Production als geparkt behandeln;
+7. migrationsnahe/AP-6b-Arbeit hinter P1 + PO-Gates behandeln;
+8. die besten nicht blockierten Kandidaten auf **Differentiation Impact** oder **Enabler Justification** prüfen;
+9. erst danach bounded Slice, Kollisionsmatrix und frische Agenten-Generation festlegen.
+
+Wenn dabei eine echte Product-Owner-Entscheidung nötig ist, vor dem betreffenden Slice fragen; nicht improvisieren.
+
+## 12. Pflicht für Übernahme
 
 Neuer Chat liest zuerst:
 
 1. `JETNITY_START_HERE.md`
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 3. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
-4. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-5. `docs/JETNITY_PRODUCT_DIFFERENTIATION_DOCTRINE_2026-08-30.md`
-6. `docs/JETNITY_STRATEGIC_DIFFERENTIATION_OPPORTUNITY_REGISTER_2026-08-30.md`
-7. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
-8. `docs/ACTIVE_WORK_STATUS.md`
-9. diesen Handoff
-10. `docs/CHATGPT_TL_TA_CUX1_POST_MERGE_CHECKPOINT_2026-08-30.md`
-11. relevante Task/Status/Handoff/ADR-Dateien
-12. danach Live-GitHub/CI/Vercel/Supabase.
+4. diesen Handoff
+5. `docs/ACTIVE_WORK_STATUS.md`
+6. `docs/CHATGPT_TL_CHAT_TRANSITION_CHECKPOINT_2026-08-30.md`
+7. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+8. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
+9. Product Differentiation Doctrine + Opportunity Register
+10. AP-5-R1 / PrivacyBee / Supabase Replay Evidence
+11. danach Live-GitHub/CI/Vercel/Supabase.
+
+**Live-Evidence gewinnt immer.**
