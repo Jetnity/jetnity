@@ -19,7 +19,7 @@ Die Branch bleibt auf `main @ 30c0493c38cd4bf3ceb904ef443126808c79add6` reconcil
 | Slice-cut / Merge-Base | `30c0493c38cd4bf3ceb904ef443126808c79add6` |
 | Behind `origin/main` | **0** |
 | Implementation Head | `848292182bf9d8a89a19db651b35222323144a19` |
-| Authoring Head | Tip nach Docs-Stamp; live auf PR #246 prüfen |
+| Authoring Head | `e7f8e749318c663bb6e1d10702837d804a981b2f` – Docs-Stamp; live Tip auf PR #246 prüfen |
 | Cursor-Agent | `Account plattform audit vorbereitung 23` |
 | Cloud-Run | https://cursor.com/agents/bc-ec79a6cd-8076-4ec4-a130-249f9f650420 |
 
