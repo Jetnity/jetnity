@@ -1,0 +1,245 @@
+# GitHub Branch Hygiene Delete Result – 2026-08-30
+
+Repository: `Jetnity/jetnity`
+Manifest main SHA: `9662d0a734c57a1f3507c5577d34327ab6e23918`
+Execution main SHA: `9662d0a734c57a1f3507c5577d34327ab6e23918`
+
+Deleted exact merged branch refs: **165**
+Remaining remote branches immediately after deletion: **62**
+
+All deleted refs passed a full preflight before the first deletion: exact expected tip SHA, no open PR head, not protected, and tip reachable from current `main`. The restore source is `docs/evidence/GITHUB_BRANCH_HYGIENE_MANIFEST_2026-08-30.json`.
+
+## Deleted refs
+
+| Branch | Restore SHA |
+|---|---|
+| `architecture/provider-s5b-option-c-acceptance-2026-08-29` | `f861acbc24f2865a870e7e08f999983eb661f0c8` |
+| `architecture/provider-s5b-option-c-acceptance-ready-recovery-2026-08-29` | `f861acbc24f2865a870e7e08f999983eb661f0c8` |
+| `audit/admin-d-k-growth-control` | `848c192b084d63faacd36e032011ac42d5219ff3` |
+| `audit/ap6a-gate0-legal-foundation-2026-08-29` | `71ba2b12b0786eb09f68c6427fab4701ae1f4188` |
+| `audit/framework-security-upgrade-gate0-2026-08-28` | `bd8c856fe7cd0774f729ebb41b6beab1345cd18b` |
+| `audit/growth-discoverability-d0-g0-foundation` | `0e7222c317dc5fc46a63f4d4ef1fd3ce1c8d814a` |
+| `audit/legacy-cleanup-creator-mediastudio-2026-08-30` | `4baeb637903cbbdbfa6c16ccb62dbc47aaeb1cfd` |
+| `audit/legacy-creator-media-batch-c-2026-08-30` | `8fb18170d13e058dc420b06d948aa3c4917b7777` |
+| `audit/privacybee-vendor-gate0-2026-08-29` | `2f5ad34e16d6bd1b9e83201a1e64567b908accd8` |
+| `audit/provider-12go-mobility-contract-2026-08-29` | `8f4d63bca8e1c0972827c2c4587b18475a99559f` |
+| `audit/provider-hbx-hotels-contract-2026-08-29` | `8ccdd8710ec0637d276c49ece06747e8950546d7` |
+| `audit/provider-s4-s8-provenance` | `6193f6bbb8a1415e1850570e5db2767f33e5e499` |
+| `audit/provider-s5b-gate0-readiness-2026-08-28` | `a2f1f0a80e5715b5ab0fef39b671dd887ae0204b` |
+| `audit/provider-viator-activities-contract-2026-08-29` | `1a18fb67299b1725292f48379ca9bb3f1b2f61a8` |
+| `audit/qs2-quality-security-resilience` | `98b470f4d6070b5eb02cdc3242338776fb93dfa0` |
+| `audit/quality-security-trip-workspace-checkpoint` | `81fec7ee6ed0368a3dce63f24b9c04fdae787ce0` |
+| `audit/supabase-migration-history-replay-defect-2026-08-29` | `85135a8ad35860644e9ff344000188b5c24e40af` |
+| `audit/traveller-account-next-phase` | `c507d97015b2801422c338707ce24fbda31c5a8f` |
+| `audit/traveller-multicitizenship-current-gap-2026-08-29` | `7bdd7da81e56808d9ff1b004999314935b3a5812` |
+| `audit/trip-workspace` | `842797b8f7ab20742b51c54669e9f73acb44241e` |
+| `audit/tw6-guest-one-trip-dependency` | `102257f91c8649667161dc0252ad1f8d8dfa465e` |
+| `chore/admin-reorg` | `e5446e7853b690e1ca5b92aff70f24fe486aea17` |
+| `cleanup/legacy-storage-batch-b-final-2026-08-30` | `ba21cf8fcbf243e7030c6813dae1c2ceaec81da5` |
+| `codex/jetnity-v2-foundation` | `929a26805fdacb81fe6c228b6aa50b622afd90c3` |
+| `cursor/aal2-prod-apply-gate-b13d` | `2d2b0d2e2e74cc9651b8c6781c3d01e985b33ac5` |
+| `cursor/account-traveller-reconciliation-3efc` | `8ba93f0fbb9c9ab24d4eede455f5e6638198e4a1` |
+| `cursor/ap4-account-archive-lifecycle-67d4` | `88146dd57146515fe9e78417ecb36a93ca311c36` |
+| `cursor/ap4-post-merge-continuity-67d4` | `12945d5199ca07274e1f2a1162611e5f1f091f37` |
+| `cursor/ap5-gate0-auth-session-mfa-79f9` | `1bf49fe3f870f00a1f228b81a4ee69c66e39307f` |
+| `cursor/ap5-s1-security-ui-8b13` | `e7500b128f3e6e127a0df0d6c87546f8c4324dfb` |
+| `cursor/ap5-s2-integrated-82e4` | `54bc9d2fb062341b8ff8b8e4b92f0666af725d79` |
+| `cursor/ap5-s2-password-reauth-82e4` | `e4cb805a2313fd537aeb9f1f65a8de436301d258` |
+| `cursor/audit-abschluss-production-cbcd` | `4ac50d12fd0463b31c5ed716013aa52573803d5d` |
+| `cursor/jetnity-v2-basis-cbcd` | `2e643c8541a66aa6b892d76b4b01ea80093ef1f8` |
+| `cursor/mobile-auth-formulare-cbcd` | `c14726828bbaa49753412f550b20af946c447f95` |
+| `cursor/mobile-responsive-pass-cbcd` | `ba2f7d04f2f7579ce2594a52d34fb048da0f13fb` |
+| `cursor/p2-ta-04-c1-integrity-hardening-6fc0` | `3cd1152253966cf71168faf1e1fa0a84bad1cc12` |
+| `cursor/p2-ta-06-credential-normalization-3317` | `928215a2c6c4d4ce914f12ba1bd88dbcab8f548b` |
+| `cursor/phase-0-deploy-verifikation-cbcd` | `90bf9e073b3c89cd75ef12ae57c79631ce3677e4` |
+| `cursor/phase-1-1-alt-endpunkte-cbcd` | `94df2b9679b665c15bf17c6ae0d1d95a570ce1dc` |
+| `cursor/phase-1-1b-alt-oberflaechen-cbcd` | `0e3fab752a4a3972c130acc96ced64ea89435f21` |
+| `cursor/phase-1-2-tokens-aufraeumen-cbcd` | `4c98163510b9486eff22ca6a1af2f3fa5aea17a4` |
+| `cursor/pr94-continuity-b13d` | `f0492bf09d68f6836c87a4b019ce86632c9708e6` |
+| `cursor/project-sanitation-closure-2966` | `442052edbbef1e07a9785b994c3a7e287b63c89b` |
+| `cursor/tw6-gate-0b-zero-stage-provenance-b13d` | `1da3ae0a01c6d5bb1f2325a2ca528922823c9611` |
+| `cursor/tw6-gate-b-prep-a4c4` | `986fa8b7592286731e44ab46d36a8f299531d669` |
+| `cursor/tw7-a-hub-card-identity-a4c4` | `d951e5e124315c489148e05096d60f92e797dcdb` |
+| `cursor/tw7-hub-gap-slice-b13d` | `81cf5f3f16cbf84dc88956bda9a0cb9a06dcecfb` |
+| `cursor/ui-responsive-audit-cbcd` | `aa6956f701d9eb9b5121d782812a71d2e59c6108` |
+| `cursor/visitor-search-ux-b13d` | `8da869fd2756f3c1514de6d33678c8c7abfad1c4` |
+| `docs/agent-workstream-governance` | `20ddb1fdede2a5ac457df8f8c65eb61543db9a1b` |
+| `docs/ap10-s1-post-merge-continuity-2026-08-30` | `3a513680c0bac022abbb058b5533ff8f5d6c6f29` |
+| `docs/ap5-gate0-canonical-pointer-closure-2026-08-28` | `50f28ad9c466eeab2216b8e46aa198876f6ae67c` |
+| `docs/ap7-s2-production-closure-2026-08-29` | `a2cfbb6a03eed93e19aecb769d0df262f813bce1` |
+| `docs/ap7-s2-production-identity-rls-gate-2026-08-29` | `d83eacaaa216a7a4ea36be71d07ff6f32b0be5c1` |
+| `docs/ap7-s2-production-identity-rls-gate-recovery-2026-08-29` | `d83eacaaa216a7a4ea36be71d07ff6f32b0be5c1` |
+| `docs/ap7-s3-infra-audit-continuity-2026-08-29` | `bdcb2d5a28c0ea3c8824937633c9500e2b11fb51` |
+| `docs/ap7-s4-continuity-2026-08-30` | `b7f433f3b4286ebce0786133097bfbe0943de978` |
+| `docs/binding-slice-precheck-continuity-gate-2026-08-29` | `3f7b6c584a9a6f75dfe6bd9b876dfd4e0532c8cb` |
+| `docs/chat-transition-2026-08-30` | `4f340dc197fd12f8a0a2fcc54f8441c02a5006bb` |
+| `docs/chatgpt-pr94-post-merge-checkpoint-2026-08-27` | `f6e61e7bbe7c8e6d8d24bfadf465cde836b0f33c` |
+| `docs/current-state-post-merge-stability-2026-08-29` | `9e49f1d66d6d43d753cc71f560312fae1367224a` |
+| `docs/current-state-reconciliation-2026-08-29` | `9256da530706d70d999eed1eca457f05b0122a23` |
+| `docs/final-chat-handoff-continuity-2026-08-28` | `940a4a8073e8e33f0d0abda0e79b4d6f86f07ea2` |
+| `docs/final-chat-handoff-post-pr138-2026-08-28` | `409755c45bb551334b09c38b4d1a1e7252eb4850` |
+| `docs/final-chat-handoff-post-pr138-2026-08-28-copy` | `409755c45bb551334b09c38b4d1a1e7252eb4850` |
+| `docs/final-continuity-handoff-2026-08-26` | `be40f9583ba5ece7e77faed6f254a11127b0685c` |
+| `docs/gate-a-production-continuity-2026-08-27` | `e0803c6b5d62d25f124f51451d9e810041ceedd8` |
+| `docs/marketing-growth-standard` | `46c0c1b1c5f9542c42d70e9f93ad132ebf25fb34` |
+| `docs/merge-governance-repair-2026-08-25` | `10dbc7c71b021c27fe37047f51fe898e2a5a7330` |
+| `docs/native-agent-technical-lead-standard` | `d4eccf13b3f533fbd2ac49e4bb28267b07a0ab20` |
+| `docs/next16-product-owner-approval-2026-08-28` | `8d4271add9eb28828c53b7a26bb1b4718a1a6647` |
+| `docs/p2-ta-03-account-plan-reconciliation` | `152402a6e8ab1ce8c586014abfe6109c6d015c0e` |
+| `docs/p2-ta-04-traveller-write-path-gate0` | `4c8b29bd10d6ab15936d09f03d8e155d77afd2b2` |
+| `docs/post-d0-1-continuity-2026-08-25` | `24ee8c5dd8a432994d4c63d28f6629d7d7e180e9` |
+| `docs/post-tw3-continuity-2026-08-25` | `bc6fedcb0591d79f06dbc0f8aad0415e5e1a2c40` |
+| `docs/post-tw5-continuity-2026-08-25` | `57e2000bf37fa391ddb6906ff72fa8e55b787712` |
+| `docs/pr113-post-merge-continuity-2026-08-27` | `6a738921e382cd1637b77167790580da7b02493b` |
+| `docs/pr117-post-merge-continuity-2026-08-28` | `0b00c50c9cb28f01b37c7a29b092a4b7aace71fd` |
+| `docs/pr120-post-merge-continuity-2026-08-28` | `9561f702ff5363f1ae501bfed5f09d79efd0954c` |
+| `docs/pr126-post-merge-continuity-2026-08-28` | `348d86e4fb223aeea47037bdf94da11f78b5cbe9` |
+| `docs/pr129-post-merge-continuity-2026-08-28` | `909401d63828973ccb0010b7dcde1bb29ba8c688` |
+| `docs/pr142-post-merge-continuity-2026-08-28` | `154bd59f31227927830663d13819145734480e73` |
+| `docs/pr87-postmerge-search-ux-20260827` | `12c27e99f520f48f8dcaada3b70a8bdba9898f2f` |
+| `docs/pr91-post-merge-continuity-2026-08-27` | `03acd2a333b99e27e21326a164162d30cc2dd5fe` |
+| `docs/privacybee-po-binding-2026-08-30` | `54e123199e3afb9ada8b8f35a4afc2fe6ccf6c55` |
+| `docs/product-differentiation-doctrine-2026-08-30` | `3954de2312db5288a81b6fd81e637350096f415b` |
+| `docs/provider-s5b-production-verification-2026-08-29` | `50b4a1fc06aa621c5839040e0fb79acab2d05214` |
+| `docs/provider-traveller-current-state-reconciliation-2026-08-29` | `9e6a2009315995d70565756e389b2e4d639baf40` |
+| `docs/provider-traveller-post-merge-continuity-2026-08-29` | `a15dee47a82a13e13084f38a81b7ee3625807a2f` |
+| `docs/six-agent-governance` | `76a7695d2a24e6436510ea7ad2d442aa82d05b1e` |
+| `docs/strategic-differentiation-opportunities-2026-08-30` | `08614fc7d53610995944e517f126599e3edeab78` |
+| `docs/ta-cux1-strategy-continuity-2026-08-30` | `e1bb40468762abc5c43c633261e69feed9e202c7` |
+| `docs/ta-dl1-ap-ux-nav1-continuity-2026-08-30` | `f8b05c168130939bb02dd3c7b634a6b917b0cce4` |
+| `docs/technical-lead-autonomy-2026-08-25` | `590a33cca5ccd53ffb46b9d8ed6db61d7cfbeb3a` |
+| `docs/technical-lead-cursor-operating-standard-2026-08-28` | `507bcb170604b0f680dad7325ab4f32c7c4f2f61` |
+| `docs/tl-live-reconstruction-2026-08-27` | `5405d2afc6daaecdd126356649b3eca75e36d680` |
+| `docs/tl-merge-autonomy-2026-08-26` | `a2a696930ea3bc9206dd8f6afe7cea87dc16baa5` |
+| `docs/ux-information-architecture-standard` | `9e10ac0bc84b0a64c890ba9591723e85d3a67696` |
+| `feat/account-ap3` | `3222d8bc2624f940f5e904774de62d242fdac5fb` |
+| `feat/admin-provider-cost-board` | `d2ce7b47d19e0097dda9035d6de7fb90eec9ee2c` |
+| `feat/ap10-s1-confirmed-booking-folder-2026-08-30` | `9cf7de12e58f4296c6a802dff6d3f65a01413e59` |
+| `feat/ap5-r1-honest-global-logout-2026-08-30` | `ccc50345b0f55e0a387c9f16f5fb3f8fac2e8d2a` |
+| `feat/ap5-s3-account-security-logout-scopes-2026-08-29` | `d1f5c37bfb94e2861d3bbabda307a56bf48156b1` |
+| `feat/ap5-s4-account-security-mfa-step-up-2026-08-29` | `051addb8e5cf5d0c22630bdc961375239441b909` |
+| `feat/ap5-s5-honest-current-session-view-2026-08-29` | `7cc55901824b3c824805bad426e8f948f78ca315` |
+| `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` | `19578d3e6551fe2eb606d1b66486148977dcc101` |
+| `feat/ap7-s2-account-traveller-registry-persistence-2026-08-29` | `4344e1cec3b68377395b196da140cff06b9fd3eb` |
+| `feat/ap7-s2-account-traveller-registry-persistence-recovery-2026-08-29` | `4344e1cec3b68377395b196da140cff06b9fd3eb` |
+| `feat/ap7-s3-account-traveller-registry-crud-ui-2026-08-29` | `ca548fc84fd097457f26edc64653befc28e01437` |
+| `feat/ap7-s4-registry-to-trip-materialization-2026-08-30` | `f366ea839dfd3560b4ca2f0b4ec054f0ed8c463a` |
+| `feat/d0-2-canonical-origin-consistency` | `77c4c8e161b549ca5653563b61108d3a2031ef22` |
+| `feat/impact-score-panel` | `67328016ebf40d6e536d6dedf4be8be8cc7830cf` |
+| `feat/next16-s1-request-api-compat-prep-2026-08-28` | `4217033810576a8564bf66f8172e18889091a015` |
+| `feat/next16-s2-framework-bump-2026-08-28` | `0e1428dcd988ea2e29c396a938e4049c857fcf11` |
+| `feat/provider-adapter-core-foundation-2026-08-29` | `191235a536b0c14c71ff175336f588c6b737a673` |
+| `feat/provider-mobility-rental-evidence-s3` | `2bb94ac5e7888b182d32e143e9d75c24b6917303` |
+| `feat/provider-s5-commercial-provenance-contract` | `86bc63b693de1b05b7c1e7a790ee9449bf1596c7` |
+| `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` | `ffe1cbc1aea49491576c4eb32ab8f306500c95e3` |
+| `feat/provider-skyscanner-flight-adapter-foundation-2026-08-29` | `11815f746f73cd79ce11eaccc07fd2c3ab04aeae` |
+| `feat/ta-cux1-country-picker-2026-08-30` | `3e021f534ca97f32dda4260138403ab4e9840c72` |
+| `feat/ta-dl1-document-lifecycle-trip-date-awareness-2026-08-30` | `d9c16415b56a624812aa57b2d6110346f24ca633` |
+| `feat/trip-workspace-tw1-shell-device-parity` | `3a49f78bd4d991ccc1271c93164182feed7f8a32` |
+| `feat/trip-workspace-tw2-overview` | `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8` |
+| `feat/trip-workspace-tw3-timeline` | `f55db2b0682981f293390b44e704b513476703bf` |
+| `feat/trip-workspace-tw3-timeline-prep` | `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f` |
+| `feat/trip-workspace-tw4-attention` | `6edb5746e9e15dc203cf6dd8a1bf4d2ba3b98650` |
+| `feat/trip-workspace-tw5-item-gap-details` | `49aa04d99a5eb33a89fa624f1d096f7c5400698f` |
+| `feat/tw6-create-entry-alignment` | `8361365a44f02bb1f4da5ace3fe5085ba0ca9ee8` |
+| `feat/tw6-rest-progressive-stages` | `7ef201fba58066ce417391832adb78576fa615a9` |
+| `fix/admin-aal2-production-alignment-2026-08-27` | `b3ce11c33de3b016d89b4a4e28828810102dce7a` |
+| `fix/d0-1-index-boundary-contract` | `549f3de1a44020641d1cad2c13a6a1a08086847d` |
+| `fix/d0-1-index-boundary-contract-sync-temp` | `31022a5d0c4090081339e55bd2b7c7b3927e1185` |
+| `fix/d0-live-index-metadata-boundary-2026-08-26` | `0f809857d4651543e97c3644d4aa0d30a625a262` |
+| `fix/p1-ta02-official-evaluation-option-scope` | `c7bb22b6e97804ca0982179102849c82067f8f80` |
+| `fix/qs2-admin-aal2-guard` | `c71706665b65f8435973cd699458b8df55dc5fdf` |
+| `fix/qs2-guest-account-commercial-truth` | `9afbd3d619465c650c70b23dfe5c09d4051edd9f` |
+| `fix/visitor-search-country-alias-production-recovery-2026-08-29` | `aacaefb7c58ad128186df9eb23877eae5bd93cca` |
+| `fix/visitor-search-country-alias-ranking-2026-08-29` | `4cfa520d9e2dc52e28baf5a312dd382f084ab543` |
+| `integration/ap5-s3-reviewed-head-2026-08-29` | `d1f5c37bfb94e2861d3bbabda307a56bf48156b1` |
+| `integration/ap5-s4-reviewed-head-2026-08-29` | `051addb8e5cf5d0c22630bdc961375239441b909` |
+| `integration/ap5-s5-reviewed-head-2026-08-29` | `7cc55901824b3c824805bad426e8f948f78ca315` |
+| `integration/ap6a-gate0-reviewed-head-2026-08-29` | `71ba2b12b0786eb09f68c6427fab4701ae1f4188` |
+| `integration/current-state-reconciliation-reviewed-head-2026-08-29` | `9256da530706d70d999eed1eca457f05b0122a23` |
+| `integration/next16-s2-reviewed-head-2026-08-28` | `0e1428dcd988ea2e29c396a938e4049c857fcf11` |
+| `integration/privacybee-gate0-closeout-reviewed-head-2026-08-29` | `2f5ad34e16d6bd1b9e83201a1e64567b908accd8` |
+| `integration/privacybee-gate0-reviewed-head-2026-08-29` | `278138ade951344be539df0767e02fa9fc4e24f8` |
+| `integration/search-privacy-new-chat-checkpoint-reviewed-head-2026-08-29` | `aacaefb7c58ad128186df9eb23877eae5bd93cca` |
+| `integration/visitor-search-country-alias-recovery-reviewed-head-2-2026-08-29` | `d44d9a7f4c993be30834fb2e67c8487bd69f46ea` |
+| `integration/visitor-search-country-alias-recovery-reviewed-head-2026-08-29` | `5f4ef5e6b6ffdaf55f4429f1da700acb2c6448d3` |
+| `integration/visitor-search-country-alias-reviewed-head-2026-08-29` | `4cfa520d9e2dc52e28baf5a312dd382f084ab543` |
+| `ops/creator-media-private-2026-08-30` | `69d4122ec583f3e0e3a76345f64fb3a78167e076` |
+| `ops/decommission-jetnity-bets-2026-08-30` | `9da21db319b4b10f2da2da3a3e595db89474fe15` |
+| `ops/node22-runtime-consistency-2026-08-28` | `8ff26fb28cbb3d6b6379f6993b57342c1f385029` |
+| `phase-3-flights-foundation` | `76f21929a1e152c823ae1db9281f4b27261d2b58` |
+| `recovery/ap-ux-nav1-integration-2026-08-30` | `23e3885f89d0f1f71cd99cf9aef454a78f41ca66` |
+| `recovery/ap7-s2-production-closure-2026-08-29` | `a2cfbb6a03eed93e19aecb769d0df262f813bce1` |
+| `recovery/ap7-s3-account-traveller-registry-crud-ui-2026-08-29` | `ca548fc84fd097457f26edc64653befc28e01437` |
+| `recovery/ap7-s4-registry-to-trip-materialization-2026-08-30` | `f366ea839dfd3560b4ca2f0b4ec054f0ed8c463a` |
+| `recovery/provider-traveller-current-state-reconciliation-2026-08-29` | `9e6a2009315995d70565756e389b2e4d639baf40` |
+| `recovery/provider-traveller-post-merge-continuity-2026-08-29` | `a15dee47a82a13e13084f38a81b7ee3625807a2f` |
+| `recovery/supabase-migration-history-replay-defect-gate0-2026-08-29` | `85135a8ad35860644e9ff344000188b5c24e40af` |
+| `recovery/ta-cux1-pass-2026-08-30` | `3e021f534ca97f32dda4260138403ab4e9840c72` |
+| `recovery/ta-dl1-integration-2026-08-30` | `d9c16415b56a624812aa57b2d6110346f24ca633` |
+| `repair/supabase-migration-history-20260829140000-2026-08-30` | `f2bc609d2ca979d9d756cd9e04884f7124a10d60` |
+
+## Remaining refs
+
+- `audit/account-platform`
+- `audit/admin-platform`
+- `audit/admin-platform-sync-temp`
+- `audit/admin-platform-sync-temp2`
+- `audit/ap7-account-traveller-registry-gate0-2026-08-28`
+- `audit/github-branch-hygiene-2026-08-30`
+- `audit/project-sanitation-inventory-2026-08-26`
+- `audit/provider-readiness`
+- `audit/security-privacy-current-state-2026-08-29`
+- `audit/traveller-account-multicitizenship-gap-2026-08-29`
+- `chore/account-admin-team-prep`
+- `cleanup/legacy-storage-batch-b-2026-08-30`
+- `cursor/align-handoff-after-pr38-010d`
+- `cursor/ap5-s4-post-merge-continuity-2026-08-29-5132`
+- `cursor/foundation-c-merged-status-f35b`
+- `cursor/legacy-datenbank-entfernen-f38c`
+- `cursor/phase-1-3-auth-rollen-cbcd`
+- `cursor/phase-1-4-datenbank-baseline-0c7c`
+- `cursor/phase-1-4c-auth-konfiguration-8050`
+- `cursor/phase-1-5-reiseschema-c9d2`
+- `cursor/phase-2-1-natuerliche-sprache-zu-reise-e985`
+- `cursor/phase-22-reise-aendern-e90a`
+- `cursor/phase-3-flights-foundation-c8a6`
+- `cursor/record-foundation-e-merge-be45`
+- `cursor/s1-merged-status-f23f`
+- `cursor/seasonal-merged-status-010d`
+- `cursor/supabase-mcp-dev-1f02`
+- `cursor/tw7a-hub-card-identity-b13d`
+- `do-not-use`
+- `docs-continuity-standard`
+- `docs-phase-3-3-status-sync`
+- `docs/chatgpt-technical-lead-handoff-2026-08-24`
+- `docs/chatgpt-technical-lead-handoff-2026-08-24-shadow`
+- `docs/domain-program-completion-policy`
+- `docs/domain-program-completion-policy-2`
+- `docs/jetnity-handoff-after-phase-2-1`
+- `docs/phase-3-1-final-handoff`
+- `docs/post-pr97-canonical-continuity-2026-08-27`
+- `docs/post-pr98-continuity-2026-08-27`
+- `docs/pr137-post-merge-continuity-2026-08-28`
+- `docs/product-quality-standard`
+- `feat/account-ap1`
+- `feat/account-ap2`
+- `feat/account-nav-rail-consistency-2026-08-30`
+- `feat/admin-control-center-ia`
+- `feat/admin-system-health`
+- `feat/mobility-transfers-foundation`
+- `feat/provider-flight-evidence-s2`
+- `feat/provider-ops-s1`
+- `feat/rental-car-foundation`
+- `feat/route-transit-intelligence`
+- `feat/travel-readiness-foundation`
+- `feat/travel-safety-disruption-intelligence`
+- `feat/travel-timing-seasonal-intelligence`
+- `feat/traveller-context-intelligence`
+- `feat/trip-collaboration-foundation`
+- `feat/trip-coverage-booking-status`
+- `main`
+- `phase-3-2-hotel-foundation`
+- `phase-3-3-activities-foundation`
+- `tmp-noop`
+- `ux-trip-workspace-mobile-iteration-1`
