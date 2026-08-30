@@ -6,6 +6,7 @@ import { useFormStatus } from 'react-dom'
 import type { AuthState } from './actions'
 import { signInWithPasswordAction, sendMagicLinkAction } from './actions'
 import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
+import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
 
 function SubmitBtn({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus()
@@ -97,11 +98,11 @@ export default function AdminLoginPage() {
           </div>
         </form>
 
-        <form action={signOutToAdminLoginAction} className="mt-6">
+        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} className="mt-6">
           <button type="submit" className="inline-flex min-h-11 items-center text-xs text-muted-foreground underline underline-offset-4 pointer-fine:min-h-0">
             Abmelden (falls angemeldet)
           </button>
-        </form>
+        </GlobalesAbmeldenForm>
       </div>
     </main>
   )

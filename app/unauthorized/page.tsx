@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { signOutAction } from '@/app/auth/sign-out'
+import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 
@@ -39,11 +40,11 @@ export default async function UnauthorizedPage({
         <Link className="inline-flex min-h-11 items-center underline" href="/">
           Zur Startseite
         </Link>
-        <form action={signOutAction}>
+        <GlobalesAbmeldenForm action={signOutAction}>
           <button type="submit" className="inline-flex min-h-11 items-center underline">
             Abmelden
           </button>
-        </form>
+        </GlobalesAbmeldenForm>
       </div>
     </main>
   )

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useFormStatus } from 'react-dom'
 
 import { signOutAction } from '@/app/auth/sign-out'
+import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
 import {
   sitzungseintraege,
   standAusSitzung,
@@ -87,9 +88,12 @@ function FooterSitzungseintrag({
   }
 
   return (
-    <form action={signOutAction}>
+    <GlobalesAbmeldenForm
+      action={signOutAction}
+      fehlerClassName="max-w-[16rem] text-xs text-red-200"
+    >
       <FooterAbmelden label={eintrag.label} onNachlesen={onNachlesen} />
-    </form>
+    </GlobalesAbmeldenForm>
   )
 }
 

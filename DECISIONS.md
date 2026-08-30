@@ -5236,6 +5236,39 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0200 – AP-5-R1: ehrliche Fehlersemantik für das allgemeine globale Abmelden
+
+**Datum:** 30. August 2026  
+**Status:** Implementation-Slice auf Draft-PR #242 / Issue #241. Keine Auth-Architektur. Kein Auth-Config-Push. Kein Sessionlisting.
+
+**Entscheidung:**
+
+1. `signOutAction` und `signOutToAdminLoginAction` bleiben `signOut()` ohne Scope und damit Client-Default **global**.
+2. Ein Success-Redirect (`/` bzw. `/admin/login`) darf nur nach bestätigtem `signOut()` ohne `{ error }` erfolgen.
+3. `{ error }` oder ein geworfener Operations-/Netzfehler ist fail-closed: kein Success-Redirect, keine „abgemeldet“-Behauptung, retrybare generische Copy ohne Rohtexte, Tokens, Session-IDs oder Secrets.
+4. Das Weiterleitungsziel bleibt im Code fest. Kein anfragegesteuertes Ziel, keine offene Weiterleitung.
+5. AP-5-S3 `local` / `others` / `global` in `/account/security` bleibt eine getrennte Authority und wird nicht in diesen allgemeinen Pfad gezogen.
+
+**Kontext:** Gate 0 / ADR-0182 und AP-5-S3 / ADR-0192 haben den globalen Default und die scoped Security-UI festgehalten. Das allgemeine `signOutAction` hat den Auth-`{ error }` weiter ignoriert und immer redirected. Das ist eine falsche Sicherheitswahrheit, kein Produktfeature.
+
+**Alternativen:**
+
+1. *Fehler schlucken und trotzdem weiterleiten.* Behält die Residual-Lüge.
+2. *Allgemeines Abmelden auf `local` drehen.* Session-Semantik, Product-Owner-Sondergate (AP-5-P1).
+3. *S3-Authority und allgemeinen Logout zu einer API verschmelzen.* Unnötige Architektur, ändert den S3-Vertrag.
+4. *Neues globales Notification-Framework nur für diesen Fehler.* Zu groß für den Slice.
+
+**Begründung:** Jetnity darf einen sicherheitsrelevanten Übergang nicht als gelungen zeigen, wenn die Auth-Authority das nicht bestätigt. Die kleinste ehrliche Lösung prüft die vorhandene Antwort und bleibt auf der aufrufenden Fläche retrybar.
+
+**Konsequenzen:**
+
+- Navbar, Footer, Unauthorized, Admin-Topbar und Admin-Login zeigen bei Misserfolg eine dichte, retrybare Meldung.
+- Admin-Topbar landet bei Erfolg weiter auf `/` (bestehender `signOutAction`-Caller), nicht auf `/admin/login`.
+- S4/S5, MFA/AAL, Recovery, Passkeys, Service Role und Auth-Config bleiben unberührt.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
