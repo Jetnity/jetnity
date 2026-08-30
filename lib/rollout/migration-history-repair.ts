@@ -46,6 +46,10 @@ export const REPAIR_FUNCTION_CONFIG = 'search_path=""'
 export const REPAIR_POLICY_ROLES = 'authenticated'
 export const REPAIR_WRITER_MEMBERS = 'jetnity_commercial_runtime,postgres'
 export const REPAIR_RUNTIME_MEMBERS = 'postgres'
+export const REPAIR_ROLE_CONNLIMIT = -1
+export const REPAIR_MEMBERSHIP_COUNT = 3
+export const REPAIR_ROLE_MEMBERSHIPS =
+  'jetnity_commercial_runtime<-postgres/supabase_admin/t/f/f,jetnity_commercial_writer<-jetnity_commercial_runtime/postgres/f/f/t,jetnity_commercial_writer<-postgres/supabase_admin/t/f/f'
 export const REPAIR_GATE_NOTE =
   'S5-B definiert den Invocation-Vertrag. GRANT jetnity_commercial_runtime an eine Anwendungs-Login-Rolle ist ein späteres Gate. Die Funktion ist kein Production-Write-Pfad.'
 export const REPAIR_POLICY_QUAL_FINGERPRINT =
@@ -95,12 +99,22 @@ export type HistoryRepairPreflight = {
   writer_inherit: boolean | null
   writer_bypassrls: boolean | null
   writer_super: boolean | null
+  writer_createdb: boolean | null
+  writer_createrole: boolean | null
+  writer_replication: boolean | null
+  writer_connlimit: number | null
   runtime_nologin: boolean | null
   runtime_inherit: boolean | null
   runtime_bypassrls: boolean | null
   runtime_super: boolean | null
+  runtime_createdb: boolean | null
+  runtime_createrole: boolean | null
+  runtime_replication: boolean | null
+  runtime_connlimit: number | null
   writer_members: string | null
   runtime_members: string | null
+  membership_count: number
+  role_memberships: string | null
   function_md5: string | null
   function_security_definer: boolean | null
   function_config: string | null
@@ -374,6 +388,40 @@ function rollenMitgliederSql(rolle: string): string {
   ), '')`
 }
 
+function rollenMitgliedschaftFingerprintSql(): string {
+  return `coalesce((
+    select array_to_string(array(
+      select r.rolname || '<-' || u.rolname || '/' || g.rolname || '/' ||
+             (case when m.admin_option then 't' else 'f' end) || '/' ||
+             (case when m.inherit_option then 't' else 'f' end) || '/' ||
+             (case when m.set_option then 't' else 'f' end)
+        from pg_auth_members m
+        join pg_roles r on r.oid = m.roleid
+        join pg_roles u on u.oid = m.member
+        join pg_roles g on g.oid = m.grantor
+       where r.rolname in (${sqlLiteral(REPAIR_WRITER_ROLE)}, ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+          or u.rolname in (${sqlLiteral(REPAIR_WRITER_ROLE)}, ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+       order by 1
+    ), ',')
+  ), '')`
+}
+
+function rollenMitgliedschaftCountSql(): string {
+  return `coalesce((
+    select count(*)::int
+      from pg_auth_members m
+      join pg_roles r on r.oid = m.roleid
+      join pg_roles u on u.oid = m.member
+     where r.rolname in (${sqlLiteral(REPAIR_WRITER_ROLE)}, ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+        or u.rolname in (${sqlLiteral(REPAIR_WRITER_ROLE)}, ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+  ), 0)`
+}
+
+function optionaleZahl(wert: unknown): number | null {
+  if (wert === null || wert === undefined || wert === '') return null
+  return alsZahl(wert)
+}
+
 export function preflightSql(): string {
   return `
 select
@@ -499,6 +547,14 @@ select
     as writer_bypassrls,
   (select rolsuper from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
     as writer_super,
+  (select rolcreatedb from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
+    as writer_createdb,
+  (select rolcreaterole from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
+    as writer_createrole,
+  (select rolreplication from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
+    as writer_replication,
+  (select rolconnlimit from pg_roles where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)})
+    as writer_connlimit,
   (select not rolcanlogin from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
     as runtime_nologin,
   (select rolinherit from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
@@ -507,8 +563,18 @@ select
     as runtime_bypassrls,
   (select rolsuper from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
     as runtime_super,
+  (select rolcreatedb from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+    as runtime_createdb,
+  (select rolcreaterole from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+    as runtime_createrole,
+  (select rolreplication from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+    as runtime_replication,
+  (select rolconnlimit from pg_roles where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)})
+    as runtime_connlimit,
   ${rollenMitgliederSql(REPAIR_WRITER_ROLE)} as writer_members,
   ${rollenMitgliederSql(REPAIR_RUNTIME_ROLE)} as runtime_members,
+  ${rollenMitgliedschaftCountSql()} as membership_count,
+  ${rollenMitgliedschaftFingerprintSql()} as role_memberships,
   (select md5(pg_get_functiondef(${sqlLiteral(REPAIR_FUNCTION_IDENTITY)}::regprocedure)))
     as function_md5,
   (select p.prosecdef
@@ -575,12 +641,22 @@ export function preflightAusZeilen(
     writer_inherit: alsOptionalBool(zeile.writer_inherit),
     writer_bypassrls: alsOptionalBool(zeile.writer_bypassrls),
     writer_super: alsOptionalBool(zeile.writer_super),
+    writer_createdb: alsOptionalBool(zeile.writer_createdb),
+    writer_createrole: alsOptionalBool(zeile.writer_createrole),
+    writer_replication: alsOptionalBool(zeile.writer_replication),
+    writer_connlimit: optionaleZahl(zeile.writer_connlimit),
     runtime_nologin: alsOptionalBool(zeile.runtime_nologin),
     runtime_inherit: alsOptionalBool(zeile.runtime_inherit),
     runtime_bypassrls: alsOptionalBool(zeile.runtime_bypassrls),
     runtime_super: alsOptionalBool(zeile.runtime_super),
+    runtime_createdb: alsOptionalBool(zeile.runtime_createdb),
+    runtime_createrole: alsOptionalBool(zeile.runtime_createrole),
+    runtime_replication: alsOptionalBool(zeile.runtime_replication),
+    runtime_connlimit: optionaleZahl(zeile.runtime_connlimit),
     writer_members: mengenFingerprint(alsText(zeile.writer_members)),
     runtime_members: mengenFingerprint(alsText(zeile.runtime_members)),
+    membership_count: alsZahl(zeile.membership_count),
+    role_memberships: mengenFingerprint(alsText(zeile.role_memberships)),
     function_md5: alsText(zeile.function_md5),
     function_security_definer: alsOptionalBool(zeile.function_security_definer),
     function_config: alsText(zeile.function_config) ?? '',
@@ -618,12 +694,22 @@ export function erwartetesMarkerPreflight(): HistoryRepairPreflight {
     writer_inherit: true,
     writer_bypassrls: false,
     writer_super: false,
+    writer_createdb: false,
+    writer_createrole: false,
+    writer_replication: false,
+    writer_connlimit: REPAIR_ROLE_CONNLIMIT,
     runtime_nologin: true,
     runtime_inherit: false,
     runtime_bypassrls: false,
     runtime_super: false,
+    runtime_createdb: false,
+    runtime_createrole: false,
+    runtime_replication: false,
+    runtime_connlimit: REPAIR_ROLE_CONNLIMIT,
     writer_members: REPAIR_WRITER_MEMBERS,
     runtime_members: REPAIR_RUNTIME_MEMBERS,
+    membership_count: REPAIR_MEMBERSHIP_COUNT,
+    role_memberships: REPAIR_ROLE_MEMBERSHIPS,
     function_md5: REPAIR_FUNCTION_MD5,
     function_security_definer: true,
     function_config: REPAIR_FUNCTION_CONFIG,
@@ -654,12 +740,22 @@ const KATALOG_FELDER: (keyof HistoryRepairPreflight)[] = [
   'writer_inherit',
   'writer_bypassrls',
   'writer_super',
+  'writer_createdb',
+  'writer_createrole',
+  'writer_replication',
+  'writer_connlimit',
   'runtime_nologin',
   'runtime_inherit',
   'runtime_bypassrls',
   'runtime_super',
+  'runtime_createdb',
+  'runtime_createrole',
+  'runtime_replication',
+  'runtime_connlimit',
   'writer_members',
   'runtime_members',
+  'membership_count',
+  'role_memberships',
   'function_md5',
   'function_security_definer',
   'function_config',
@@ -728,12 +824,22 @@ export function preflightPasst(stand: HistoryRepairPreflight): void {
     stand.writer_inherit !== true ||
     stand.writer_bypassrls !== false ||
     stand.writer_super !== false ||
+    stand.writer_createdb !== false ||
+    stand.writer_createrole !== false ||
+    stand.writer_replication !== false ||
+    stand.writer_connlimit !== REPAIR_ROLE_CONNLIMIT ||
     stand.runtime_nologin !== true ||
     stand.runtime_inherit !== false ||
     stand.runtime_bypassrls !== false ||
     stand.runtime_super !== false ||
+    stand.runtime_createdb !== false ||
+    stand.runtime_createrole !== false ||
+    stand.runtime_replication !== false ||
+    stand.runtime_connlimit !== REPAIR_ROLE_CONNLIMIT ||
     stand.writer_members !== REPAIR_WRITER_MEMBERS ||
-    stand.runtime_members !== REPAIR_RUNTIME_MEMBERS
+    stand.runtime_members !== REPAIR_RUNTIME_MEMBERS ||
+    stand.membership_count !== REPAIR_MEMBERSHIP_COUNT ||
+    stand.role_memberships !== REPAIR_ROLE_MEMBERSHIPS
   ) {
     throw new Error('Preflight: Rollen-Fingerprint weicht ab. Abgebrochen.')
   }
@@ -918,12 +1024,18 @@ function katalogExactPruefSql(prefix: string): string {
     select 1 from pg_roles
      where rolname = ${sqlLiteral(REPAIR_WRITER_ROLE)}
        and not rolcanlogin and rolinherit and not rolbypassrls and not rolsuper
+       and not rolcreatedb and not rolcreaterole and not rolreplication
+       and rolconnlimit = ${REPAIR_ROLE_CONNLIMIT}
   ) or not exists (
     select 1 from pg_roles
      where rolname = ${sqlLiteral(REPAIR_RUNTIME_ROLE)}
        and not rolcanlogin and not rolinherit and not rolbypassrls and not rolsuper
+       and not rolcreatedb and not rolcreaterole and not rolreplication
+       and rolconnlimit = ${REPAIR_ROLE_CONNLIMIT}
   ) or ${rollenMitgliederSql(REPAIR_WRITER_ROLE)} is distinct from ${sqlLiteral(REPAIR_WRITER_MEMBERS)}
-    or ${rollenMitgliederSql(REPAIR_RUNTIME_ROLE)} is distinct from ${sqlLiteral(REPAIR_RUNTIME_MEMBERS)} then
+    or ${rollenMitgliederSql(REPAIR_RUNTIME_ROLE)} is distinct from ${sqlLiteral(REPAIR_RUNTIME_MEMBERS)}
+    or ${rollenMitgliedschaftCountSql()} is distinct from ${REPAIR_MEMBERSHIP_COUNT}
+    or ${rollenMitgliedschaftFingerprintSql()} is distinct from ${sqlLiteral(REPAIR_ROLE_MEMBERSHIPS)} then
     raise exception ${sqlLiteral(`${prefix}: Rollen-Fingerprint weicht ab.`)}
       using errcode = 'P0001';
   end if;

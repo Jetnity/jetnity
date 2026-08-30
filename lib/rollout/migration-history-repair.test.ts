@@ -16,6 +16,9 @@ import {
   REPAIR_FUNCTION_SCHEMA,
   REPAIR_GATE_NOTE,
   REPAIR_GIT_BLOB,
+  REPAIR_MEMBERSHIP_COUNT,
+  REPAIR_ROLE_CONNLIMIT,
+  REPAIR_ROLE_MEMBERSHIPS,
   REPAIR_MARKER_MD5,
   REPAIR_MARKER_SHA256,
   REPAIR_MARKER_TEXT,
@@ -266,6 +269,16 @@ describe('Preflight erkennt das Marker-Before-Image und stoppt bei Drift', () =>
     assert.equal(basis.function_config, REPAIR_FUNCTION_CONFIG)
     assert.equal(basis.writer_members, REPAIR_WRITER_MEMBERS)
     assert.equal(basis.runtime_members, REPAIR_RUNTIME_MEMBERS)
+    assert.equal(basis.membership_count, REPAIR_MEMBERSHIP_COUNT)
+    assert.equal(basis.role_memberships, REPAIR_ROLE_MEMBERSHIPS)
+    assert.equal(basis.writer_createdb, false)
+    assert.equal(basis.writer_createrole, false)
+    assert.equal(basis.writer_replication, false)
+    assert.equal(basis.writer_connlimit, REPAIR_ROLE_CONNLIMIT)
+    assert.equal(basis.runtime_createdb, false)
+    assert.equal(basis.runtime_createrole, false)
+    assert.equal(basis.runtime_replication, false)
+    assert.equal(basis.runtime_connlimit, REPAIR_ROLE_CONNLIMIT)
     assert.equal(basis.gate_note, REPAIR_GATE_NOTE)
   })
 
@@ -330,6 +343,70 @@ describe('Preflight erkennt das Marker-Before-Image und stoppt bei Drift', () =>
     )
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_super', true)), /Rollen/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_super', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_createdb', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_createrole', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_replication', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'writer_connlimit', 1)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_createdb', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_createrole', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_replication', true)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'runtime_connlimit', 0)), /Rollen/)
+    assert.throws(() => preflightPasst(mitAbweichung(basis, 'membership_count', 4)), /Rollen/)
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'role_memberships',
+            'jetnity_commercial_runtime<-postgres/postgres/t/f/f,jetnity_commercial_writer<-jetnity_commercial_runtime/postgres/f/f/t,jetnity_commercial_writer<-postgres/supabase_admin/t/f/f',
+          ),
+        ),
+      /Rollen/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'role_memberships',
+            'jetnity_commercial_runtime<-postgres/supabase_admin/f/f/f,jetnity_commercial_writer<-jetnity_commercial_runtime/postgres/f/f/t,jetnity_commercial_writer<-postgres/supabase_admin/t/f/f',
+          ),
+        ),
+      /Rollen/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'role_memberships',
+            'jetnity_commercial_runtime<-postgres/supabase_admin/t/t/f,jetnity_commercial_writer<-jetnity_commercial_runtime/postgres/f/f/t,jetnity_commercial_writer<-postgres/supabase_admin/t/f/f',
+          ),
+        ),
+      /Rollen/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'role_memberships',
+            'jetnity_commercial_runtime<-postgres/supabase_admin/t/f/f,jetnity_commercial_writer<-jetnity_commercial_runtime/postgres/f/f/f,jetnity_commercial_writer<-postgres/supabase_admin/t/f/f',
+          ),
+        ),
+      /Rollen/,
+    )
+    assert.throws(
+      () =>
+        preflightPasst(
+          mitAbweichung(
+            basis,
+            'role_memberships',
+            `${REPAIR_ROLE_MEMBERSHIPS},authenticated<-jetnity_commercial_runtime/postgres/f/f/t`,
+          ),
+        ),
+      /Rollen/,
+    )
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_row_count', 2)), /Gate/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_singleton', false)), /Gate/)
     assert.throws(() => preflightPasst(mitAbweichung(basis, 'gate_note', 'andere note')), /Gate/)
@@ -417,6 +494,14 @@ describe('Write-SQL ersetzt nur den History-Body', () => {
     assert.equal(rest.includes(sqlLiteral(REPAIR_POLICY_ROLES)), true)
     assert.equal(rest.includes(sqlLiteral(REPAIR_WRITER_MEMBERS)), true)
     assert.equal(rest.includes(sqlLiteral(REPAIR_RUNTIME_MEMBERS)), true)
+    assert.equal(rest.includes(sqlLiteral(REPAIR_ROLE_MEMBERSHIPS)), true)
+    assert.match(rest, /rolcreatedb/)
+    assert.match(rest, /rolcreaterole/)
+    assert.match(rest, /rolreplication/)
+    assert.match(rest, /rolconnlimit/)
+    assert.match(rest, /admin_option/)
+    assert.match(rest, /inherit_option/)
+    assert.match(rest, /set_option/)
     assert.equal(rest.includes(sqlLiteral(REPAIR_POLICY_QUAL_FINGERPRINT)), true)
     assert.equal(rest.includes(sqlLiteral(md5Hex(REPAIR_GATE_NOTE))), true)
     assert.equal((rest.match(/Repair preflight: Owner-SELECT-Policy weicht ab/g) ?? []).length, 1)
@@ -482,6 +567,16 @@ describe('After-Probe prüft Body-Ersatz und unveränderten Katalog', () => {
     )
     assert.equal(
       katalogUnveraendert(vorher, { ...nachher, function_config: 'search_path=public' }),
+      false,
+    )
+    assert.equal(katalogUnveraendert(vorher, { ...nachher, writer_createrole: true }), false)
+    assert.equal(katalogUnveraendert(vorher, { ...nachher, writer_connlimit: 10 }), false)
+    assert.equal(katalogUnveraendert(vorher, { ...nachher, runtime_replication: true }), false)
+    assert.equal(
+      katalogUnveraendert(vorher, {
+        ...nachher,
+        role_memberships: REPAIR_ROLE_MEMBERSHIPS.replace('/t/f/f', '/f/f/f'),
+      }),
       false,
     )
     assert.equal(historyBodyRepariert(vorher, datei), false)
