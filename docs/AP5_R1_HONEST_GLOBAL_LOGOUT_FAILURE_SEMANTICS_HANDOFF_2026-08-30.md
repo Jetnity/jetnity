@@ -7,7 +7,8 @@ Cursor-Session/Run-ID: `bc-f631838b-21f3-4290-aa1f-db450a037ac3`
 Issue: [#241](https://github.com/Jetnity/jetnity/issues/241)  
 Branch: `feat/ap5-r1-honest-global-logout-2026-08-30`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/242  
-Prior Review-Head: `c0abee5091511d241c2c1f55c04baa4e5baee10c` – CHANGES REQUIRED `5060518239`
+Prior Review-Head: `c0abee5091511d241c2c1f55c04baa4e5baee10c` – CHANGES REQUIRED `5060518239`  
+Review-Fix-Head: `0e338da945dee3528f2629cfa2488c447657f222` – Actions `33306101036` SUCCESS; Vercel `DNmCi7Vt5dgLGmHRoKG6LaoegA3v` SUCCESS. Dieser Stamp ist ein neuerer Head.
 
 ## Zuerst lesen
 

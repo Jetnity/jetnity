@@ -70,14 +70,21 @@ Unverändert geblieben: unscoped/default globales Sign-Out; fail-closed `{ error
 
 ## 5. Tests / Evidence dieses Review-Fix
 
-Lokal und Exact-Head-Gates dieses Review-Fix-Heads werden nach dem Push live gelesen. Vorherige Gates von `c0abee50` / `5ba971ff` sind ungültig.
+Vorherige Gates von `c0abee50` / `5ba971ff` sind ungültig.
 
 | Lauf | Ergebnis |
 | --- | --- |
-| Focused R1 + S3 + Gate 0 | nach Implementierung erneut auszuführen |
-| `npm test` / typecheck / lint / hygiene / build / `auth:pruefen` | nach Implementierung erneut auszuführen |
+| Focused R1-Unit | **8/8 pass** (`lib/auth/globales-sign-out.test.ts`) |
+| R1 Vertrag/Caller/A11y | **6/6 pass** (`lib/auth/ap5-r1-honest-global-logout.test.ts`) |
+| S3 + Gate 0 + S5 | **pass** |
+| `npm test` | **2773/2773 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | **0 errors / 135 warnings** |
+| Hygiene | `check:dead` nur CookieConsent-Ausnahme; `check:exports` 0; `check:deps` sauber; `check:api-schutz` 12/12; `check:schema-bezug` pass |
+| `npm run auth:pruefen` | **55/55**, 242 Schlüssel |
+| `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| Exact-Head GitHub Actions / Vercel | neuer Head; nicht vorab behauptet |
+| Exact-Head GitHub Actions / Vercel | Review-Fix-Head `0e338da945dee3528f2629cfa2488c447657f222`: Actions Run `33306101036` SUCCESS; Vercel Inspector `DNmCi7Vt5dgLGmHRoKG6LaoegA3v` SUCCESS. Dieser Evidence-Stamp erzeugt einen neueren Head. Kein weiterer Stamp, außer dessen CI fehlschlägt. |
 
 ## 6. DB / RLS / Production-Grenze
 
