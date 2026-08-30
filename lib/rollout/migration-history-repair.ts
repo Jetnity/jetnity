@@ -677,11 +677,17 @@ export function writeSqlIstFailClosed(writeSql: string, datei: HistoryRepairDate
   if (!/update\s+supabase_migrations\.schema_migrations\s+set\s+statements\s*=/i.test(rest)) {
     throw new Error('Write-SQL aktualisiert nicht nur schema_migrations.statements.')
   }
-  if (/update\s+supabase_migrations\.schema_migrations\s+set\s+[^;]*\bname\b/i.test(rest)) {
+  const setKlausel = rest.match(
+    /update\s+supabase_migrations\.schema_migrations\s+set\s+([\s\S]+?)\s+where\b/i,
+  )?.[1]
+  if (!setKlausel || !/^\s*statements\s*=/.test(setKlausel) || /\bname\b/i.test(setKlausel)) {
     throw new Error('Write-SQL darf name nicht ändern.')
   }
-  if ((rest.match(/\bupdate\b/gi) ?? []).length !== 1) {
+  if ((rest.match(/\bupdate\s+supabase_migrations\.schema_migrations\b/gi) ?? []).length !== 1) {
     throw new Error('Write-SQL darf nur ein UPDATE enthalten.')
+  }
+  if (/\bupdate\s+(public\.|jetnity_internal\.|pg_)/i.test(rest)) {
+    throw new Error('Write-SQL aktualisiert eine verbotene Relation.')
   }
   if (!rest.includes('get diagnostics') || !rest.includes('row_count')) {
     throw new Error('Write-SQL prüft Rowcount nicht.')

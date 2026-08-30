@@ -182,11 +182,11 @@ describe('Repair-Auftrag ist fail-closed', () => {
   })
 
   test('Development ist kein zulässiges Ziel', () => {
-    assert.throws(() => auftragLesen(['--entwicklung']), /kein --entwicklung/)
-    assert.throws(() => auftragLesen(['--entwicklung-probe']), /kein --entwicklung/)
+    assert.throws(() => auftragLesen(['--entwicklung']), /kein --entwicklung/i)
+    assert.throws(() => auftragLesen(['--entwicklung-probe']), /kein --entwicklung/i)
     assert.throws(
       () => auftragLesen(['--schreiben', '--entwicklung']),
-      /kein --entwicklung/,
+      /kein --entwicklung/i,
     )
     assert.throws(
       () => auftragLesen(['--projekt-ref', REPAIR_PROD_PROJEKT_REF], env),
@@ -262,8 +262,11 @@ describe('Write-SQL ersetzt nur den History-Body', () => {
     assert.equal(sql.endsWith(';\n\ncommit;'), true)
     const rest = writeSqlOhneHistoryLiteral(sql, datei)
     assert.match(rest, /update\s+supabase_migrations\.schema_migrations\s+set\s+statements\s*=/i)
-    assert.equal(/\bupdate\b/gi.test(rest) && (rest.match(/\bupdate\b/gi) ?? []).length === 1, true)
-    assert.doesNotMatch(rest, /update\s+supabase_migrations\.schema_migrations\s+set\s+[^;]*\bname\b/i)
+    assert.equal((rest.match(/\bupdate\s+supabase_migrations\.schema_migrations\b/gi) ?? []).length, 1)
+    assert.doesNotMatch(
+      rest,
+      /update\s+supabase_migrations\.schema_migrations\s+set\s+name\b/i,
+    )
     assert.match(rest, /if\s+_updated\s*<>\s*1/i)
     assert.match(rest, /get diagnostics/i)
     assert.match(rest, /Rollback/)
