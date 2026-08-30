@@ -1,59 +1,127 @@
 # Jetnity – Supabase Migration-History Repair Handoff
 
 Stand: 30. August 2026  
-Status: **SECOND REVIEW-FIX COMPLETE / LOCAL+REMOTE GATES GREEN ON 4e9b1796 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO PRODUCTION WRITE**
+Status: **PRODUCTION REPAIR EXECUTED / AFTER-IMAGE PASS / FRESH REPLAY PASS / TEMP BRANCH DELETED / FINAL EXACT-HEAD RE-GATE REQUIRED**
 
-## What is finished
+## 1. Current Truth
 
-Fail-closed Repair-Vorbereitung für History `20260829140000`, plus zweiten Review-Fix:
+Der P1-Defekt an Supabase Migration-History `20260829140000` ist technisch repariert und durch einen frischen Replay-Branch bewiesen.
 
-- Blob `e25ab1b7efb48157828968993749a25fa30cc660` und Marker-MD5 `414f7318235ac388e97fd74f97536ca1` unverändert
-- exact Policy / Table-ACL / Function-ACL / Gate / Rowcount / RLS / OID
-- exact role attributes inkl. CREATEDB, CREATEROLE, REPLICATION, `rolconnlimit=-1`
-- exact membership records inkl. grantor / admin_option / inherit_option / set_option
-- `docs/ACTIVE_WORK_STATUS.md` = Merge-Base `c29ac5de`
-- Default Probe; kein Production-Write durch Cursor
+Zentrale Audit-/Recovery-Evidence:
 
-## Transport
+- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_EXECUTION_EVIDENCE_2026-08-30.md`
+- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_BEFORE_IMAGE_2026-08-30.md`
+- `docs/SUPABASE_MIGRATION_HISTORY_REPAIR_STATUS_2026-08-30.md`
+
+Live-Evidence gewinnt weiterhin vor Dokumentation.
+
+## 2. Transport
 
 | Fakt | Wert |
 | --- | --- |
-| Draft-PR | https://github.com/Jetnity/jetnity/pull/250 |
-| Branch | `repair/supabase-migration-history-20260829140000-2026-08-30` |
+| PR | #250 |
 | Issue | #249 |
-| Merge-Base | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
-| Zweiter CHANGES-REQUIRED Head | `f857210428a2d6ef7d1a4e9744c35ea74778fe10` |
-| Gated review-fix | `4e9b1796af4f43c4282c5fe5e252f79dd1d6d505` |
-| Reviewable Tip | Evidence-Stamp nach diesem Commit; neuere Tips live auf PR #250 |
-| Cursor-Agent | `Jetnity infrastructure migration repair 2` |
-| Cloud-Run | https://cursor.com/agents/bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589 |
+| Branch | `repair/supabase-migration-history-20260829140000-2026-08-30` |
+| Merge-Base bei Slice-Start | `c29ac5de3e0ab998ff830490a9a3e85299c399e0` |
+| Finaler Agent-Review-Head | `16cf73d64dd08ade70a9bd2fa985d4a84931b29f` |
+| Agent exact-head Actions | `33314079382` SUCCESS |
+| Agent exact-head Vercel | `7JmqJjGKLRsahWa3BV3RdQCZy7w9` READY |
+| Logical Cursor-Agent | `Jetnity infrastructure migration repair 2` |
+| Cursor Session | `bc-b4f2b6bd-ce40-4ddc-8204-1650eec68589` |
 
-## Later TL Production write, not this agent
+Der nachträgliche Evidence-Commit erzeugt einen neuen Git-Head; deshalb sind die Agent-Gates nicht der finale Merge-Gate. Der aktuelle PR-Head muss erneut live gegatet werden.
 
-```bash
-npm run db:migration-history-repair -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn
-npm run db:migration-history-repair -- --schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn --history-body-ersetzen
-```
+## 3. Was auf Production tatsächlich geändert wurde
 
-## Tests / Build
+Genau eine Metadatenzelle:
 
-Lokal und remote auf `4e9b1796`:
+- Relation `supabase_migrations.schema_migrations`
+- Version `20260829140000`
+- Name blieb `trip_item_commercial_provenance`
+- ausschließlich Spalte `statements`
 
-- Focused 27/27; `npm test` 2815/2815
-- typecheck / lint 0 errors / Hygiene / Production Build
-- Actions `33313923910` SUCCESS
-- Vercel `Di5h8BrrgpB1wDBq6NjkbMEDXguo` READY
+Vorher:
 
-## Review protocol
+- ein Prosa-Marker
+- MD5 `414f7318235ac388e97fd74f97536ca1`
 
-1. Exact Head gegen `origin/main @ c29ac5de`; `docs/ACTIVE_WORK_STATUS.md` nicht im Diff.
-2. Blob und Marker-MD5 unverändert.
-3. Ein UPDATE nur auf `supabase_migrations.schema_migrations.statements`.
-4. Role-Fingerprint enthält CREATEDB/CREATEROLE/REPLICATION/connlimit und die drei Membership-Records inkl. grantor/options.
-5. Actions + Vercel auf dem exact head.
-6. PASS nur durch unabhängigen Technical Lead.
+Nachher:
 
-## STOP
+- vollständiger kanonischer Repository-SQL-Body
+- MD5 `bd4b613da5037b3c7535d17451dd8e67`
+- erster ausführbarer Inhalt `create schema if not exists jetnity_internal;`
 
-**STOP für unabhängigen ChatGPT Technical-Lead Exact-Head-Review.**  
-Kein Production-Write. Kein temporärer Supabase-Branch. Kein Folgeslice.
+Kein S5-B-DDL wurde erneut auf Production ausgeführt.
+
+## 4. Production After-Image
+
+Unverändert gegenüber Before-Image außer der History-Zelle:
+
+- Provenance-Tabelle OID `282263`
+- RLS an, FORCE RLS aus
+- Rowcount `0`
+- Table ACL unverändert
+- genau eine Owner-SELECT-Policy
+- Runtime Gate geschlossen
+- Writer-/Runtime-Rollen unverändert
+- exakt drei Membership-Records unverändert
+- Writer-Funktion SECURITY DEFINER / `search_path=""`
+- Raw Function-MD5 weiterhin `7e7bfe10d20c2f13274d1eb04a75150e`
+
+## 5. Backup / Rollback
+
+Vor dem Production-Write wurde Supabase Pro und der aktuelle tägliche Backup-/Restore-Vertrag erneut verifiziert. PITR wurde nicht aktiviert.
+
+Zusätzlich ist der ursprüngliche History-Marker inklusive exaktem Body und Hash versioniert erhalten. Ein enger History-only Rollback ist daher rekonstruierbar, war aber nicht erforderlich.
+
+Siehe vollständige Details in `SUPABASE_MIGRATION_HISTORY_REPAIR_EXECUTION_EVIDENCE_2026-08-30.md`.
+
+## 6. Fresh Replay – PASS
+
+Temporärer Branch:
+
+- Name `p1-replay-20260829140000-2026-08-30`
+- Branch ID `d8aec9d4-fdd9-4d28-a68f-c5400e59ea8e`
+- Project Ref `efobhwzkjarnkthgpmur`
+- Parent `qscbgcdmivbbnzrcyegn`
+- Status `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
+
+Beweis:
+
+- kein `MIGRATIONS_FAILED`
+- Prosa-Marker abwesend
+- Supabase normalisierte den Replay in 42 ausführbare History-Statements
+- `create schema` Statement 1
+- Provenance-Tabelle Statement 18
+- Writer-Funktion Statement 30
+- `reise_anlegen` Statement 39
+- Tabelle/RLS/Policy/Gate/Rollen vorhanden
+- spätere Migration `20260829210052` erfolgreich vorhanden
+
+Raw Function-MD5 differierte wegen Formatierung/Kommentaren. Nach Entfernen von Kommentaren und Whitespace war `prosrc` auf Production und Replay exakt gleich: `767161b569ebcb5001ec4b753b5b4928`.
+
+## 7. Kosten / Cleanup des Testbranches
+
+Branch-Preis vor Erstellung: **USD 0.01344/Stunde**, vom Product Owner ausdrücklich freigegeben.
+
+Der temporäre Replay-Branch wurde nach der Evidence gelöscht; Supabase bestätigte `success=true`. Damit läuft kein Testbranch-Kostenposten weiter.
+
+Der bestehende Development-Branch `yfvbxvijcorffwxbxahl` wurde nicht reset, rebased, merged oder gelöscht.
+
+## 8. Finaler PR-Gate
+
+Vor Ready/Merge von #250 noch zwingend:
+
+1. aktuellen PR-Head live lesen
+2. finalen Diff gegen Scope prüfen
+3. `docs/ACTIVE_WORK_STATUS.md` darf nicht im Diff sein
+4. exact-head GitHub Actions SUCCESS
+5. exact-head Vercel SUCCESS/READY
+6. dann Technical-Lead Ready/Merge
+7. danach Issue #249 schließen und Main/Post-Merge-Evidence verifizieren
+
+## 9. Danach
+
+Kein Development-Reconciliation-Slice startet automatisch.
+
+Als nächster bewusst gewählter Arbeitsblock folgt nach abgeschlossenem P1 die **nicht-destruktive Jetnity Legacy & Infrastructure Cleanup Gate-0 Inventur**. Keine Löschung startet ohne Inventar, Before-Image, Abhängigkeitsnachweis, Recovery-/Rollback-Pfad und After-Checks.
