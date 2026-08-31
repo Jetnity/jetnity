@@ -1,109 +1,131 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / ENTRY REQUIREMENTS E3 VISITOR CHECKLIST ACTIVE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / ENTRY REQUIREMENTS E3 CLOSED / NO ACTIVE CURSOR RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
 
-## 1. Verifizierter Main-Stand vor E3
+## 1. Verifizierter Main-Stand
 
-Aktueller Baseline-Head:
+Aktueller verifizierter Runtime-Head vor diesem docs-only Closure-Slice:
 
-`main@25f0af9ab92f0757ea7e4bc6c42c2fbbb01c45f5`
+`main@5be6863a7eec7fb6b02a9ab292897a8e34c55638`
 
-Post-Merge-Evidence für Entry Requirements E2:
+Entry Requirements E3 ist vollständig abgeschlossen:
 
-- Merge über non-draft Recovery-PR **#310** nach bekanntem Draft→Ready-Connectorfehler;
-- finaler geprüfter E2-Head: `74ae756e2cd3401e7aa2499d1d3869c94fa6a433`;
-- Merge-SHA: `25f0af9ab92f0757ea7e4bc6c42c2fbbb01c45f5`;
-- Main-CI **#1451 / Run `33372358737`: SUCCESS** exakt auf diesem SHA;
-- Vercel Production: **SUCCESS** exakt auf diesem SHA;
-- Issue **#306 CLOSED / completed**;
-- Draft-PR #307 CLOSED / NOT MERGED / mechanisch superseded wegen `Repository.fullDatabaseId` beim Draft→Ready-Connectorweg.
+- Issue **#311 CLOSED / completed**;
+- finaler unabhängig geprüfter Implementierungs-Head `f6d477a7294fd53b48a3bea4d738c10291c5974c`;
+- Draft-PR **#312 CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED** nur wegen des bekannten Draft→Ready-Connectorfehlers `Repository.fullDatabaseId`;
+- Recovery-PR **#313 MERGED**;
+- Runtime-Merge-SHA **`5be6863a7eec7fb6b02a9ab292897a8e34c55638`**;
+- Recovery-CI **#1455 / Run `33375229743`: SUCCESS**;
+- Post-Merge Main-CI **#1456 / Run `33375592234`: SUCCESS** exakt auf `5be6863a...`;
+- Vercel Production **`dpl_4ubMhAhTWVKvYJvt57bk8RPKafb3`: READY** exakt auf `5be6863a...`.
 
-GitHub Hygiene Phase 1+2 ist ebenfalls abgeschlossen; Issue **#266 CLOSED / completed**. Exakt 15 manifestierte DELETE-SAFE-MERGED Remote-Refs wurden in Phase 2 nach Einzel-Revalidation entfernt; Restore-SHAs bleiben im Repository dokumentiert.
+Aktuellster Closure-Checkpoint:
 
-## 2. Aktiver Slice
+`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E3_CLOSED_2026-08-31.md`
 
-Issue: **#311 – Entry Requirements E3 – traveller/credential official checklist presentation**
+## 2. Aktiver Slice / Agent
 
-Branch:
+Es läuft derzeit **kein neuer Cursor-Runtime-Slice**.
 
-`feat/entry-requirements-checklist-e3-2026-08-31`
-
-Binding Task:
-
-`docs/ENTRY_REQUIREMENTS_VISITOR_CHECKLIST_E3_TASK_2026-08-31.md`
-
-TL-Setup-Commit nach Task-Anlage:
-
-`83a21a13c46155f293f74831ddb34f73c0e91bd2`
-
-E3-Ziel:
-
-Die bereits sichere E1/E2 Official Requirements Truth wird in `Reisevorbereitung` als konkrete, verständliche Checkliste pro **Traveller × Credential-Option × Destination/Transit × Requirement Type** dargestellt. Keine neue Requirements-Wahrheit, kein Provider, keine Deadline-Runtime.
-
-## 3. Binding E3 Truth
-
-Weiterhin unverändert:
-
-> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
-
-Verboten:
-
-- Default-/Primary-/Preferred-/Chosen-Pass oder -Citizenship;
-- `documents[0]` / `evaluations[0]` als Product Truth;
-- Issuer Country als Citizenship behandeln;
-- credential-übergreifende Zusammenlegung;
-- stale/unavailable/unknown als `not_required` darstellen;
-- Gebühren, Aufenthaltsdauer, freie Seitenzahl, Proof-of-Funds-Betrag oder Deadline aus unstrukturierten Daten erfinden.
-
-E2 bleibt bindend:
-
-- `sourceUrl` ist Evidence-/Informationsquelle;
-- application/form/appointment nur aus explizitem gültigem Purpose + validierter Action-URL;
-- `officialActionZweckText(...)` bestimmt Besucherlabel;
-- `requirementsProviderAus()` bleibt `null`.
-
-## 4. E3 Scope
-
-- konkrete OfficialEvaluation-Zeilen/-Karten statt nur Traveller-Summary;
-- priorisierte Besuchergruppen wie `Vor Abreise erledigen`, `Dokument prüfen`, `Bei Einreise / vor Ort`, `Bei Einreise / Reise nachweisen`, `Route / Transit`;
-- Visa-Modi/eTA/Requirement-Typen verständlich beschriften;
-- Credential-Option aus exakten Trip-/Traveller-Daten menschenlesbar darstellen;
-- fail-closed Result/Freshness/Missing-Facts/Authority/checkedAt/Source/Action-Presentation;
-- purpose-spezifische Official Actions;
-- kleine scope-nahe Accessibility-/Responsive-Verbesserungen;
-- Tests + Typecheck + Lint + Production Build.
-
-## 5. Hard Non-Scope / Product-Owner-Gates
-
-E3 aktiviert **nicht**:
-
-- echten Requirements-/Visa-/Entry-Provider;
-- Providerwahl / Vertrag / DPA / Secrets / API Keys / paid calls;
-- Supabase-/Migration-/RLS-/Ownership-/Auth-/AAL-Änderung;
-- Passnummer/MRZ/Scans/Biometrie/Gesundheitsakte;
-- Credential-Ranking oder automatische „beste Pass“-Auswahl;
-- Deadline-/Reminder-/Notification-Runtime;
-- Gebühren-/Stay-/Threshold-/Deadline-Hard-Truth-Felder;
-- E4.
-
-Die bestehenden Product-Owner-Gates bleiben unverändert bindend.
-
-## 6. Agent
-
-Geplanter Anzeigename:
+Letzter Agent:
 
 **`Jetnity entry requirements checklist 1`**  
 Generation: **1**  
-Session: **PENDING DISPATCH**
+Session: `bc-101a3978-c843-4ac5-8678-112eef039283`  
+Status: **STOPPED / DELIVERY COMPLETE / TL PASS / E3 MERGED**.
 
-Agent darf `docs/ACTIVE_WORK_STATUS.md` nicht ändern. Self-Review ist kein TL-PASS. Bei `CHANGES REQUIRED` bleibt dieselbe Session zuständig.
+Kein E4, Provider- oder Deadline-Slice wurde automatisch gestartet.
 
-## 7. GitHub Governance
+## 3. Entry Requirements aktueller Stand
 
-Ruleset `Jetnity main protection` / ID `21875372` bleibt maßgeblich:
+### S4-R1 Truth-Ops
 
-- PR vor Merge;
+- Provider-Port verlangt `AbortSignal`;
+- harter 4.000-ms Domain-Timeout mit echter Cancellation;
+- technische Fehler bleiben fail-closed;
+- `JETNITY_READINESS_AKTIV` folgt Provider-Ops-Kill-Switch; Production bleibt hart aus;
+- Official `checkedAt` besitzt globales 60-Minuten-Ceiling;
+- `requirementsProviderAus()` bleibt `null`.
+
+### E1 – Detail Contract
+
+- `blank_passport_pages` und `financial_means` sind First-Class-Typen;
+- `visaMode`: `visa_exempt`, `visa_on_arrival`, `electronic_visa`, `visa_before_travel`, `unknown`;
+- eTA bleibt `electronic_travel_authorization`;
+- widersprüchliche `result ↔ visaMode`-Paare werden fail-closed degradiert.
+
+### E2 – Official Actions
+
+- `sourceUrl` = Evidence-/Informationsquelle;
+- `application | form | appointment | information` sind strukturierte Action-Zwecke;
+- application/form/appointment nur mit gültigem Purpose + validierter HTTPS-`actionUrl`;
+- ungültige Action-Metadaten verändern keine Requirements-Hard-Truth;
+- `actionUrl` ohne gültigen Purpose wird nicht zu Information umetikettiert.
+
+### E3 – Visitor Checklist
+
+Die Reisevorbereitung zeigt vorhandene Official Evaluations lossless als konkrete Checkliste pro:
+
+> **Traveller × Credential-Option × Destination/Transit × Requirement Type**
+
+- keine Default-Citizenship / kein Default-Pass;
+- kein `documents[0]` / `evaluations[0]`;
+- Visa/eTA/Transit/First-Class-Typen strukturiert beschriftet;
+- fail-closed Result-/Freshness-Copy;
+- exakte Credential-Auflösung oder neutrale `Reisedokument-Option`;
+- Authority / Jetnity-`checkedAt` / Source / Freshness strukturiert;
+- purpose-spezifische Official Actions;
+- keine URL-Heuristik oder erfundenen Detailwerte.
+
+## 4. Weiterhin nicht aktiv / besondere Gates
+
+Weiterhin **nicht** aktiviert:
+
+- echter Requirements-/Visa-/Entry-Provider;
+- Providerwahl / Vendorvertrag / DPA;
+- Secrets / API Keys / paid calls;
+- Workspace-Live-Provider-Wiring;
+- Travel-Companion-/Deadline-/Reminder-/Notification-Runtime;
+- neue Hard-Truth-Felder für Gebühren, Aufenthaltsdauer, konkrete Seitenzahl, Proof-of-Funds-Betrag oder Zeitfenster;
+- Credential-Ranking / automatische „beste Pass“-Auswahl;
+- sensible Pass-/MRZ-/Scan-/Biometrie-/Gesundheitsdaten.
+
+Provider-Aktivierung/Verträge/Secrets/paid calls, Production-Migrationen/RLS/Ownership, sensitive Daten, Payments, > USD 100 monatliche neue Kosten, Public Launch und fundamentale Auth/MFA/AAL-Änderungen bleiben Product-Owner-Gates.
+
+## 5. Traveller Truth
+
+Kanonisches Invariant:
+
+> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
+
+Account Registry = wiederverwendbare aktuelle Traveller-Fakten.  
+Trip Snapshot = einzige Current Truth für die konkrete Reise.
+
+Issuer Country ≠ Citizenship. Keine Residence→Nationality-Inferenz.
+
+## 6. Persistenter Zielanker
+
+Issue **#294 – Entry Requirements Detail Architecture** bleibt offen als persistenter Product-Target-Tracker.
+
+Kanonische Zielarchitektur:
+
+`docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
+
+E1–E3 sind Teilumsetzungen. Die gesamte Travel-Companion-/Deadline-Architektur und reale Provider-Truth sind noch nicht umgesetzt.
+
+## 7. Andere relevante offene Grenzen
+
+- TW-8 / TW-9 bleiben nach dem letzten unabhängigen Audit blockiert, solange keine belastbare reale Commercial Truth / Provider-Evidence vorhanden ist.
+- GitHub Hygiene Phase 1+2 ist abgeschlossen; Issue #266 ist geschlossen.
+- Historische offene Draft-PRs sind keine aktuelle Runtime-Wahrheit; live verifizieren.
+- Supabase wurde durch E1–E3 nicht verändert. Vor jedem migrations-/DB-/RLS-/Storage-/Security-nahen Slice Supabase live neu prüfen und Drift reconciliieren.
+
+## 8. GitHub Governance
+
+Ruleset `Jetnity main protection` / ID `21875372` bleibt bindend:
+
+- PR erforderlich;
 - Branch up to date;
 - Conversation Resolution;
 - `Typecheck, Lint & Build`;
@@ -112,29 +134,19 @@ Ruleset `Jetnity main protection` / ID `21875372` bleibt maßgeblich:
 - merge-only;
 - bypass leer.
 
-Bekannter Draft→Ready-Connectorfehler: `Repository.fullDatabaseId`.
+Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId` wird ausschließlich durch den etablierten identischen non-draft Recovery-PR mit eigenen Gates behandelt. Schutzregeln werden nicht gelockert.
 
-Falls er erneut auftritt:
+## 9. FIRST NEXT ACTION
 
-1. Draft-PR bleibt Evidence-Träger für Agent/TL-Review;
-2. nach TL-PASS mechanischer non-draft Recovery-PR auf exakt demselben Commit;
-3. Recovery-PR bekommt eigene CI/Vercel/Mergeability/Thread-Gates;
-4. Branch Protection wird nicht gelockert.
+**Kein Folgeslice ist automatisch freigegeben.**
 
-## 8. Supabase Boundary
+Vor dem nächsten Slice:
 
-E3 ist nicht migrationsnah und verändert Supabase nicht. Der letzte bekannte Requirements-Gate-0-Supabase-Stand bleibt nur historische Evidence und wird vor jedem DB-/RLS-/Storage-/Security-Slice live neu geprüft.
-
-## 9. Persistenter Architektur-Tracker
-
-Issue **#294 – Entry Requirements Detail Architecture** bleibt offen als Product-Target-Tracker. E3 erfüllt nur den Besucher-Checklist-Presentation-Teil der Zielarchitektur. Detailfelder für Gebühren/Aufenthaltsdauer/Schwellenwerte und Travel-Companion-/Deadline-Runtime bleiben spätere, separat zu precheckende Slices.
-
-## 10. Nächste Aktion
-
-1. Draft-PR für E3 auf aktuellem Branch eröffnen;
-2. neuen Cursor-Agenten Generation 1 dispatchen;
-3. Agent liefert und stoppt;
-4. Technical Lead reviewt den exakten finalen Head unabhängig;
-5. kein E4 automatisch starten.
+1. finalen `main`, offene PRs/Issues, CI/Vercel und Agentenstatus live prüfen;
+2. Issue #294 + Entry-/Travel-Companion-Zielarchitektur gegen den Ist-Code lesen;
+3. andere aktuelle Build-Order-/Produktabhängigkeiten live abgleichen;
+4. nur den kleinsten verantwortbaren bounded Slice definieren;
+5. besondere Product-Owner-Gates respektieren;
+6. Supabase nur bei relevantem Scope live prüfen.
 
 **Live-Evidence gewinnt immer.**
