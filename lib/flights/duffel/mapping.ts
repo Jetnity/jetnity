@@ -11,11 +11,18 @@ import {
   type FlugSegment,
   type FlugTeilstrecke,
 } from '@/lib/flights/domain'
+import { airportTimezoneIdentifierLesen } from '@/lib/flights/airport-timezone'
 import {
   duffelAngebotSchema,
   duffelIataAus,
+  duffelTimeZoneRohAus,
   type DuffelAngebot,
 } from '@/lib/flights/duffel/antwort'
+import {
+  leereFlugAirportTimezoneEvidence,
+  type FlugAirportTimezoneEndpunkt,
+  type FlugAirportTimezoneEvidence,
+} from '@/lib/flights/provider'
 import { betragAusText, dauerAusIso, ortszeitAus } from '@/lib/flights/zeit'
 
 const KABINE_VON_DUFFEL: Record<string, FlugKabine> = {
@@ -93,6 +100,38 @@ function brandedAus(angebot: DuffelAngebot): string | null {
   return name ? name.slice(0, 40) : null
 }
 
+function endpunktEvidence(
+  optionId: string,
+  legIndex: number,
+  segmentIndex: number,
+  endpoint: FlugAirportTimezoneEndpunkt,
+  ortWert: DuffelAngebot['slices'][number]['segments'][number]['origin'],
+): FlugAirportTimezoneEvidence | null {
+  const timeZone = airportTimezoneIdentifierLesen(duffelTimeZoneRohAus(ortWert))
+  if (!timeZone) return null
+  return {
+    optionId,
+    legIndex,
+    segmentIndex,
+    endpoint,
+    iata: duffelIataAus(ortWert),
+    timeZone,
+  }
+}
+
+function evidenceAusAngebot(angebot: DuffelAngebot, optionId: string): FlugAirportTimezoneEvidence[] {
+  const evidence: FlugAirportTimezoneEvidence[] = []
+  angebot.slices.forEach((slice, legIndex) => {
+    slice.segments.forEach((segment, segmentIndex) => {
+      const abflug = endpunktEvidence(optionId, legIndex, segmentIndex, 'departure', segment.origin)
+      if (abflug) evidence.push(abflug)
+      const ankunft = endpunktEvidence(optionId, legIndex, segmentIndex, 'arrival', segment.destination)
+      if (ankunft) evidence.push(ankunft)
+    })
+  })
+  return evidence
+}
+
 function referenz(angebot: DuffelAngebot, option: Omit<FlugOption, 'id' | 'externalRef'>): string {
   const erstes = option.legs[0]?.segments[0]
   const kern = [
@@ -107,7 +146,12 @@ function referenz(angebot: DuffelAngebot, option: Omit<FlugOption, 'id' | 'exter
   return kern.slice(0, 200)
 }
 
-export function duffelAngebotMappen(roh: unknown): FlugOption | null {
+type DuffelAngebotAbbildung = {
+  option: FlugOption
+  airportTimezoneEvidence: FlugAirportTimezoneEvidence[]
+}
+
+function duffelAngebotInternMappen(roh: unknown): DuffelAngebotAbbildung | null {
   const geprueft = duffelAngebotSchema.safeParse(roh)
   if (!geprueft.success) return null
   const angebot = geprueft.data
@@ -155,33 +199,62 @@ export function duffelAngebotMappen(roh: unknown): FlugOption | null {
   }
 
   const externalRef = referenz(angebot, ohneIds)
-  return {
+  const option: FlugOption = {
     ...ohneIds,
     id: `duffel:${externalRef}`.slice(0, 120),
     externalRef,
   }
+  return {
+    option,
+    airportTimezoneEvidence: evidenceAusAngebot(angebot, option.id),
+  }
+}
+
+export function duffelAngebotMappen(roh: unknown): FlugOption | null {
+  return duffelAngebotInternMappen(roh)?.option ?? null
 }
 
 export function duffelAntwortMappen(roh: unknown): {
   options: FlugOption[]
   partial: boolean
   invalid: boolean
+  airportTimezoneEvidence: FlugAirportTimezoneEvidence[]
 } {
-  if (!roh || typeof roh !== 'object') return { options: [], partial: false, invalid: true }
+  if (!roh || typeof roh !== 'object') {
+    return {
+      options: [],
+      partial: false,
+      invalid: true,
+      airportTimezoneEvidence: leereFlugAirportTimezoneEvidence(),
+    }
+  }
   const satz = roh as { data?: { offers?: unknown } }
-  if (!Array.isArray(satz.data?.offers)) return { options: [], partial: false, invalid: true }
+  if (!Array.isArray(satz.data?.offers)) {
+    return {
+      options: [],
+      partial: false,
+      invalid: true,
+      airportTimezoneEvidence: leereFlugAirportTimezoneEvidence(),
+    }
+  }
 
   const options: FlugOption[] = []
+  const airportTimezoneEvidence: FlugAirportTimezoneEvidence[] = []
   let verworfen = 0
   for (const eintrag of satz.data.offers) {
-    const option = duffelAngebotMappen(eintrag)
-    if (option) options.push(option)
-    else verworfen += 1
+    const abbildung = duffelAngebotInternMappen(eintrag)
+    if (abbildung) {
+      options.push(abbildung.option)
+      airportTimezoneEvidence.push(...abbildung.airportTimezoneEvidence)
+    } else {
+      verworfen += 1
+    }
   }
 
   return {
     options,
     partial: options.length > 0 && verworfen > 0,
     invalid: options.length === 0 && satz.data.offers.length > 0 && verworfen === satz.data.offers.length,
+    airportTimezoneEvidence,
   }
 }

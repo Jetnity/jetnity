@@ -99,9 +99,14 @@ export function duffelAdapter(token: string, http: SucheHttp = fetchAlsHttp): Fl
       if (gemappt.invalid) {
         throw new FlugProviderFehler('invalid', 'Die Flugdaten waren unbrauchbar.')
       }
+      const options = gemappt.options.slice(0, FLUG_SUCHE_GRENZEN.angebote)
+      const behalteneIds = new Set(options.map((option) => option.id))
       return {
-        options: gemappt.options.slice(0, FLUG_SUCHE_GRENZEN.angebote),
+        options,
         partial: gemappt.partial,
+        airportTimezoneEvidence: gemappt.airportTimezoneEvidence.filter((eintrag) =>
+          behalteneIds.has(eintrag.optionId),
+        ),
       }
     },
   }

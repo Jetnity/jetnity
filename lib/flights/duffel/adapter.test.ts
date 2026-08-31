@@ -32,6 +32,7 @@ describe('Duffel-Adapter', () => {
     assert.equal(treffer.options.length, 3)
     assert.equal(treffer.partial, false)
     assert.equal(treffer.options[0]?.provider, 'duffel')
+    assert.deepEqual(treffer.airportTimezoneEvidence, [])
     const koerper = JSON.parse(http.gesendet[0]!.body) as {
       data: { passengers: Array<Record<string, string>>; slices: unknown[] }
     }
@@ -42,6 +43,39 @@ describe('Duffel-Adapter', () => {
     )
     assert.match(http.gesendet[0]!.url, /offer_requests/)
     assert.equal(/orders/.test(http.gesendet[0]!.url), false)
+  })
+
+  test('trägt strukturierte time_zone nur als Companion-Evidence, nicht in der Option', async () => {
+    const angebot = {
+      ...ANTWORT_GEMISCHT.data.offers[0],
+      slices: [
+        {
+          ...ANTWORT_GEMISCHT.data.offers[0]!.slices[0],
+          segments: [
+            {
+              ...ANTWORT_GEMISCHT.data.offers[0]!.slices[0]!.segments[0],
+              origin: { iata_code: 'ZRH', time_zone: 'Europe/Zurich' },
+              destination: { iata_code: 'BKK', time_zone: 'Asia/Bangkok' },
+            },
+          ],
+        },
+      ],
+    }
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body: { data: { offers: [angebot] } } }]),
+    )
+    const treffer = await adapter.suchen(SUCHANFRAGE)
+    assert.equal(treffer.options.length, 1)
+    assert.deepEqual(
+      treffer.airportTimezoneEvidence.map((eintrag) => [eintrag.endpoint, eintrag.iata, eintrag.timeZone]),
+      [
+        ['departure', 'ZRH', 'Europe/Zurich'],
+        ['arrival', 'BKK', 'Asia/Bangkok'],
+      ],
+    )
+    assert.equal(treffer.airportTimezoneEvidence[0]?.optionId, treffer.options[0]?.id)
+    assert.equal(/time[_-]?zone|Timezone/i.test(JSON.stringify(treffer.options)), false)
   })
 
   test('eine unbrauchbare Antwort wird invalid', async () => {

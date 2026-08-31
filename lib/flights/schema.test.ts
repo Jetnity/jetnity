@@ -111,6 +111,57 @@ describe('Flugoption', () => {
     assert.equal('access_token' in (gelesen ?? {}), false)
   })
 
+  test('injizierte Timezone-Extra-Felder werden wie andere Extra-Keys gestrippt', () => {
+    const gelesen = flugOptionLesen({
+      id: 'x',
+      provider: 'duffel',
+      externalRef: 'ref',
+      airline: 'LX',
+      airlineName: 'SWISS',
+      departureTimezone: 'Europe/Zurich',
+      arrivalTimezone: 'Asia/Bangkok',
+      timeZone: 'UTC',
+      airportTimezoneEvidence: [{ timeZone: 'Europe/Zurich' }],
+      legs: [
+        {
+          segments: [
+            {
+              origin: 'ZRH',
+              destination: 'BKK',
+              departureDate: '2026-11-01',
+              departureTime: '09:15',
+              arrivalDate: '2026-11-01',
+              arrivalTime: '23:45',
+              airline: 'LX',
+              airlineName: 'SWISS',
+              operatingAirline: null,
+              operatingAirlineName: null,
+              flightNumber: 'LX180',
+              durationMinutes: 690,
+              departureTimezone: 'Europe/Zurich',
+              arrivalTimezone: 'Asia/Bangkok',
+              time_zone: 'Asia/Bangkok',
+            },
+          ],
+          durationMinutes: 690,
+          stops: 0,
+        },
+      ],
+      durationMinutes: 690,
+      stops: 0,
+      priceAmount: 892.5,
+      priceCurrency: 'CHF',
+      cabin: 'economy',
+      baggage: null,
+      refundable: null,
+      fare: null,
+    })
+    assert.ok(gelesen)
+    const roh = JSON.stringify(gelesen)
+    assert.equal(/time[_-]?zone|Timezone|airportTimezoneEvidence/i.test(roh), false)
+    assert.equal(gelesen?.legs[0]?.segments[0]?.departureTime, '09:15')
+  })
+
   test('die Konto-Übernahme akzeptiert nur identifiers, keine kommerziellen Felder', () => {
     const geparst = flugKontoUebernahmeSchema.safeParse({
       tripId: '11111111-1111-4111-8111-111111111111',

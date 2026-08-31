@@ -19,12 +19,13 @@ const airlineCode = z
 
 const ortszeit = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/)
 
-const ort = z.union([
-  iata,
-  z.object({
-    iata_code: iata,
-  }),
-])
+const strukturierterOrt = z.object({
+  iata_code: iata,
+  /** Untrusted Providerfeld. Mapping entscheidet, ob daraus Evidence wird. */
+  time_zone: z.unknown().optional(),
+})
+
+const ort = z.union([iata, strukturierterOrt])
 
 const airline = z.object({
   iata_code: airlineCode,
@@ -89,4 +90,9 @@ export type DuffelAngebot = z.infer<typeof duffelAngebotSchema>
 
 export function duffelIataAus(ortWert: z.infer<typeof ort>): string {
   return typeof ortWert === 'string' ? ortWert : ortWert.iata_code
+}
+
+/** Nur das strukturierte Airport-Objekt darf ein Timezone-Rohfeld tragen. */
+export function duffelTimeZoneRohAus(ortWert: z.infer<typeof ort>): unknown {
+  return typeof ortWert === 'string' ? undefined : ortWert.time_zone
 }
