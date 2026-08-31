@@ -10,7 +10,7 @@ Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
 Auftrag: Issue #298 / E1 Contract only.
 
-Geprüft: First-Class `blank_passport_pages` / `financial_means`; Visa-Modus nur für `visa`; eTA bleibt eigener Typ; lossless Provider → Engine → `OfficialEvaluation`; ungültige Werte fail-closed; nicht-Visa trägt keinen Visa-Modus; keine Hard Truth aus Fehlern oder fehlender Evidence; Factory `null`; keine UI/Deadlines/Adapter/Secrets/paid calls; keine Supabase-/Auth-Änderung; Traveller-Invariants unverändert; S4-R1 nicht abgeschwächt; Tests; Slice-Docs. `docs/ACTIVE_WORK_STATUS.md` und `JETNITY_START_HERE.md` nicht editiert.
+Geprüft: First-Class `blank_passport_pages` / `financial_means`; Visa-Modus nur für `visa`; eTA bleibt eigener Typ; lossless Provider → Engine → `OfficialEvaluation`; ungültige Werte fail-closed; nicht-Visa trägt keinen Visa-Modus; `result ↔ visaMode`-Konsistenz fail-closed; keine Hard Truth aus Fehlern oder fehlender Evidence; Factory `null`; keine UI/Deadlines/Adapter/Secrets/paid calls; keine Supabase-/Auth-Änderung; Traveller-Invariants unverändert; S4-R1 nicht abgeschwächt; Tests; Slice-Docs. `docs/ACTIVE_WORK_STATUS.md` und `JETNITY_START_HERE.md` nicht editiert.
 
 ## 2. Adversarial Fragen
 
@@ -22,6 +22,10 @@ Geprüft: First-Class `blank_passport_pages` / `financial_means`; Visa-Modus nur
 | Wird aus ungültigem `'visa_free'` ein `visa_exempt`? | Nein. `unknown`. |
 | Wird fehlender Visa-Modus als `visa_before_travel` angenommen? | Nein. `unknown`. |
 | Wird ein konkreter Visa-Modus aus untrusted Evidence übernommen? | Nein. Nur wenn `uebernehmbar` (Trust + current + required/not_required/conditional). Sonst `unknown`. |
+| Kann `required + visa_exempt` als `current` Hard Truth stehen bleiben? | Nein. Widerspruch degradiert `result` und `visaMode` auf `unknown`, `status` nicht `current`. Keine Seite gewinnt. |
+| Kann `not_required + visa_on_arrival/electronic_visa/visa_before_travel` current bleiben? | Nein. Dieselben fail-closed Degrade-Regeln. |
+| Wird `conditional + visa_exempt` oder `conditional + VoA/eVisa` verboten? | Nein. `conditional` erzeugt keine erfundene Gewissheit und gilt nicht als Widerspruch. |
+| Infiziert ein Widerspruch auf Pass CH die Option RS? | Nein. Nur die betroffene Credential-Option wird degradiert. |
 | Werden widersprüchliche Visa-Modi still gemergt? | Nein. `entscheidungenGleich` unterscheidet `visaMode`; Konflikt → `officialLeer` mit `visaMode: 'unknown'`. |
 | Wird ein Default-Pass oder `documents[0]` eingeführt? | Nein. Zwei Optionen bleiben zwei Visa-Evaluations mit eigenen Modi. |
 | Wird die Factory non-null oder ein Adapter verdrahtet? | Nein. `requirementsProviderAus()` bleibt `null`. Tests injizieren Doubles. |
@@ -40,8 +44,8 @@ Geprüft: First-Class `blank_passport_pages` / `financial_means`; Visa-Modus nur
 
 ## 4. Urteil des Autors
 
-Während der lokalen Gates ein Author-Fix: Test-Hilfen durften `requirementType` nicht doppelt im Object-Literal setzen (`TS1117`); ein Inline-`OfficialEvaluation` in `bezeichnungen.test.ts` brauchte `visaMode`. Beides gehört zum Slice-Diff.
+TL CHANGES REQUIRED auf `ee700691`: `result ↔ visaMode` fehlte. Nachgezogen mit `visaResultUndModusWidersprechen` / `officialVisaWiderspruchDegradieren`, Engine-Anwendung, Tests für alle Pflicht-Widersprüche, gültige Paare, `conditional` und Multi-Credential-Trennung. ADR-0201 und Slice-Docs korrigiert.
 
-**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice. CI/Vercel am Exact Head bleiben live zu prüfen.
+**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice. CI/Vercel am neuen Exact Head bleiben live zu prüfen.
 
-**Unabhängiger Technical-Lead-Review:** ausstehend.
+**Unabhängiger Technical-Lead-Review:** erneut ausstehend nach diesem Review-Fix.

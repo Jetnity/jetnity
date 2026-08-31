@@ -121,6 +121,56 @@ export function visaModeLesen(
   return 'unknown'
 }
 
+const VISA_PFLICHT_MODI = ['visa_on_arrival', 'electronic_visa', 'visa_before_travel'] as const
+
+/**
+ * Provider-neutrale `result ↔ visaMode`-Konsistenz.
+ * Nur am Typ `visa`. `conditional` und `unknown` erzeugen keine erfundene
+ * Gewissheit und gelten nicht als Widerspruch.
+ * Widerspruch: `required + visa_exempt` sowie
+ * `not_required + visa_on_arrival|electronic_visa|visa_before_travel`.
+ */
+export function visaResultUndModusWidersprechen(
+  requirementType: OfficialRequirementType | unknown,
+  result: unknown,
+  visaMode: unknown,
+): boolean {
+  if (requirementType !== 'visa') return false
+  const modus = visaModeLesen('visa', visaMode)
+  if (result === 'required' && modus === 'visa_exempt') return true
+  if (result === 'not_required' && (VISA_PFLICHT_MODI as readonly string[]).includes(modus ?? '')) {
+    return true
+  }
+  return false
+}
+
+/**
+ * Bei Widerspruch gewinnt keine Seite. Die Evaluation bleibt nicht `current`.
+ * Freshness `stale` / source-unavailable / provider-unavailable bleibt erhalten.
+ */
+export function officialVisaWiderspruchDegradieren(evaluation: OfficialEvaluation): OfficialEvaluation {
+  if (!visaResultUndModusWidersprechen(evaluation.requirementType, evaluation.result, evaluation.visaMode)) {
+    return evaluation
+  }
+  const freshness =
+    evaluation.freshness === 'stale' ||
+    evaluation.freshness === 'source_temporarily_unavailable' ||
+    evaluation.freshness === 'provider_unavailable'
+      ? evaluation.freshness
+      : 'recheck_needed'
+  return {
+    ...evaluation,
+    result: 'unknown',
+    visaMode: visaModeLesen(evaluation.requirementType, null),
+    status: 'unknown',
+    freshness,
+    officialClass: 'unknown',
+    optionEligibility: undefined,
+    optionMandate: undefined,
+    action: null,
+  }
+}
+
 export function optionMandateLesen(wert: unknown): 'mandatory' | 'not_mandatory' | 'unknown' {
   if (wert === 'mandatory' || wert === 'not_mandatory' || wert === 'unknown') return wert
   return 'unknown'

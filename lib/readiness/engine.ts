@@ -16,6 +16,7 @@ import {
   officialEvidenceVertrauenswuerdig,
   officialFrische,
   officialLeer,
+  officialVisaWiderspruchDegradieren,
   optionEligibilityLesen,
   optionMandateLesen,
   providerNameLesen,
@@ -495,7 +496,7 @@ function zeileUebernehmen(
     freshness === 'current' &&
     (zeile.result === 'required' || zeile.result === 'not_required' || zeile.result === 'conditional')
 
-  return {
+  return officialVisaWiderspruchDegradieren({
     travellerClientRef: traveller.clientRef,
     credentialOptionRef: option.optionRef,
     destinationCountryCode: destination,
@@ -527,7 +528,7 @@ function zeileUebernehmen(
       contextFingerprint: fingerprint,
     },
     action: uebernehmbar ? officialAktionAusQuelle(sourceUrl) : null,
-  }
+  })
 }
 
 export function requirementsAusZeilen(

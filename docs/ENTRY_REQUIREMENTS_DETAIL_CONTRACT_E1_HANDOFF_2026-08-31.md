@@ -30,9 +30,10 @@ Harte Wahrheiten:
 3. eTA bleibt `electronic_travel_authorization` und wird nicht als `electronic_visa` umetikettiert.
 4. `visaMode` ist nur bei `requirementType === 'visa'` Product Truth. Sonst immer `null`.
 5. Ungültige oder fehlende Visa-Werte werden `unknown`. Ein konkreter Modus braucht dieselbe Trust-/Freshness-Grenze wie `required` / `not_required` / `conditional`.
-6. Multi-Credential bleibt 1:n. Kein Default-Pass, keine Default-Citizenship, kein `documents[0]` / `evaluations[0]`.
-7. `requirementsProviderAus()` bleibt `null`. S4-R1 Timeout/Abort/Kill-Switch/Freshness bleiben unverändert.
-8. Generation 1 arbeitet nur diesen Slice/PR. Review-Fixes bleiben dieselbe Session.
+6. `result` und `visaMode` müssen zueinander passen. Widerspruch (`required + visa_exempt`, `not_required` plus Pflichtmodus) degradiert die ganze Evaluation auf `unknown`/`unknown` und nicht `current`. Keine Seite gewinnt. `conditional` wird nicht als Widerspruch behandelt.
+7. Multi-Credential bleibt 1:n. Kein Default-Pass, keine Default-Citizenship, kein `documents[0]` / `evaluations[0]`. Ein Widerspruch auf einer Option infiziert die andere nicht.
+8. `requirementsProviderAus()` bleibt `null`. S4-R1 Timeout/Abort/Kill-Switch/Freshness bleiben unverändert.
+9. Generation 1 arbeitet nur diesen Slice/PR. Review-Fixes bleiben dieselbe Session.
 
 ## Dateien ausserhalb der Task-Liste – Begründung
 
@@ -48,10 +49,11 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Lokale Gates dieses Agenten: `npm test` 2850/2850, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen am Exact Head live gelesen werden.
+- Lokale Gates dieses Agenten nach TL-Review-Fix: `npm test` 2857/2857, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel des Heads `ee700691` sind ungültig; live am neuen Tip prüfen.
 - Kein Browser-/Real-Device-Beweis; Slice ist domainseitig.
 - Attention-Slots wachsen um zwei First-Class-Typen. Ohne Provider mehr fail-closed Official-Punkte. UI-Gruppierung ist kein E1-Auftrag.
 - Vergleichsrang nach Visa-Modus ist bewusst nicht gebaut.
+- `result ↔ visaMode`-Widerspruch ist auf die TL-Pflichtpaare begrenzt. `conditional` bleibt erlaubt.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 
 ## Nächster Schritt

@@ -21,7 +21,8 @@ Kleinster struktureller Folgeschritt aus der bestätigten Entry-Requirements-Zie
 2. strukturierter Visa-Modus nur am Typ `visa`
 3. verlustfreier Transport Provider-Zeile → Engine → `OfficialEvaluation`
 4. strikte Normalisierung: ungültig → `unknown`; nicht-Visa inklusive eTA → `null`
-5. Tests und dauerhafte Evidence
+5. `result ↔ visaMode`-Konsistenz: Widerspruch degradiert fail-closed, keine Seite gewinnt
+6. Tests und dauerhafte Evidence
 
 Kein UI. Keine Deadline-/Notification-Runtime. Kein Vendor/Adapter. Keine Secrets/paid calls. Factory bleibt `null`.
 
@@ -42,6 +43,7 @@ Kein UI. Keine Deadline-/Notification-Runtime. Kein Vendor/Adapter. Keine Secret
 - `OFFICIAL_VISA_MODES` / `visaMode` als strukturierte Subtype-Semantik nur für `requirementType === 'visa'`
 - `visaModeLesen()` als einzige Normalisierung: ungültig/`null` → `unknown`; jeder Nicht-Visa-Typ → `null`
 - Engine übernimmt einen konkreten Visa-Modus nur auf dem bestehenden Trust-/Freshness-Pfad (`uebernehmbar`); sonst `unknown`/`null`
+- `visaResultUndModusWidersprechen`: `required + visa_exempt` und `not_required + visa_on_arrival|electronic_visa|visa_before_travel` sind widersprüchlich. `officialVisaWiderspruchDegradieren` setzt `result`/`visaMode` auf `unknown`, `status` nicht `current`. `conditional` bleibt erlaubt.
 - `entscheidungenGleich` unterscheidet widersprüchliche Visa-Modi; Evidence-URLs allein bleiben kein Konflikt
 - `requirementsProviderAus()` bleibt `null`
 - Traveller-/Multi-Citizenship-/Multi-Document-Invariants unverändert
@@ -68,11 +70,11 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/readiness/e1-detail-contract.test.ts` | **16/16 pass** |
+| `lib/readiness/e1-detail-contract.test.ts` | **23/23 pass** (inkl. result↔visaMode-Konsistenz) |
 | `lib/readiness/engine.test.ts` | pass (bestehende Engine + P2-TA-06, Typenliste um E1 erweitert) |
 | `lib/readiness/s4-r1-truth-ops.test.ts` | pass |
 | `lib/trips/attention.test.ts` | pass (Pflichtslots folgen `OFFICIAL_REQUIREMENT_TYPES`) |
-| `npm test` | **2850/2850 pass** |
+| `npm test` | **2857/2857 pass** |
 | `npm run typecheck` | pass |
 | `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |
@@ -85,7 +87,8 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 - Attention-Pflichtslots wachsen um zwei Typen pro Traveller × Credential-Option × Destination. Ohne Provider bleiben sie fail-closed `unknown`/`unavailable`. Das ist die First-Class-Konsequenz, keine UI-Arbeit.
 - `credentialOptionenVergleichen` rangt Visa-Modi noch nicht (z. B. `visa_exempt` vs `visa_before_travel`). Ranking wäre Produktarbeit und liegt ausserhalb E1.
 - Konkreter Visa-Modus ist Hard Truth und erscheint nur auf trusted current Evaluations. Das ist bewusst strenger als ein Roh-Durchreichen untrusted Providerwerte.
-- Agent-Self-Review ≠ Technical-Lead-PASS.
+- `required + visa_exempt` und `not_required` plus Pflichtmodus sind jetzt widersprüchlich. Weitere Paare (z. B. `unknown + konkreter Modus`) bleiben bewusst kein Widerspruch, weil sie auf dem Engine-Pfad nicht als `current` entstehen.
+- Agent-Self-Review ≠ Technical-Lead-PASS. Vorheriges CI/Vercel/TL-Review auf `ee700691` ist durch den Review-Fix-Push ungültig.
 
 ## 7. Nächster Schritt
 

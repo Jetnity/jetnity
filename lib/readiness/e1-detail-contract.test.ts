@@ -12,7 +12,9 @@ import { officialFingerprint, requirementsAuswerten } from '@/lib/readiness/engi
 import {
   OFFICIAL_VISA_MODES,
   officialLeer,
+  officialVisaWiderspruchDegradieren,
   visaModeLesen,
+  visaResultUndModusWidersprechen,
   type OfficialVisaMode,
 } from '@/lib/readiness/official'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
@@ -170,6 +172,40 @@ describe('Entry Requirements Detail Contract E1 – Taxonomie', () => {
 
   test('requirementsProviderAus bleibt null', () => {
     assert.equal(requirementsProviderAus(), null)
+  })
+
+  test('visaResultUndModusWidersprechen: Pflichtpaare widersprechen, conditional nicht', () => {
+    assert.equal(visaResultUndModusWidersprechen('visa', 'required', 'visa_exempt'), true)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'not_required', 'visa_on_arrival'), true)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'not_required', 'electronic_visa'), true)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'not_required', 'visa_before_travel'), true)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'not_required', 'visa_exempt'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'required', 'visa_on_arrival'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'required', 'electronic_visa'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'required', 'visa_before_travel'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'required', 'unknown'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'not_required', 'unknown'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'conditional', 'visa_exempt'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'conditional', 'visa_on_arrival'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'conditional', 'electronic_visa'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'conditional', 'visa_before_travel'), false)
+    assert.equal(visaResultUndModusWidersprechen('visa', 'unknown', 'visa_exempt'), false)
+    assert.equal(visaResultUndModusWidersprechen('blank_passport_pages', 'required', 'visa_exempt'), false)
+    const widerspruch = officialVisaWiderspruchDegradieren({
+      ...officialLeer({ requirementType: 'visa', contextFingerprint: 'off-e1-widerspruch' }),
+      result: 'required',
+      status: 'current',
+      freshness: 'current',
+      officialClass: 'requirement',
+      visaMode: 'visa_exempt',
+      action: { kind: 'open_official_source', href: 'https://example.test/visa' },
+    })
+    assert.equal(widerspruch.result, 'unknown')
+    assert.equal(widerspruch.visaMode, 'unknown')
+    assert.equal(widerspruch.status, 'unknown')
+    assert.notEqual(widerspruch.status, 'current')
+    assert.equal(widerspruch.freshness, 'recheck_needed')
+    assert.equal(widerspruch.action, null)
   })
 })
 
@@ -402,5 +438,112 @@ describe('Entry Requirements Detail Contract E1 – Engine', () => {
       officialFingerprint(basis),
       officialFingerprint({ ...basis, requirementType: 'financial_means' }),
     )
+  })
+})
+
+describe('Entry Requirements Detail Contract E1 – result ↔ visaMode', () => {
+  async function visaVon(result: 'required' | 'not_required' | 'conditional', visaMode: unknown) {
+    const evaluations = await auswerten([zeile({ requirementType: 'visa', result, visaMode })])
+    return evaluations.find(
+      (eintrag) =>
+        eintrag.requirementType === 'visa' &&
+        eintrag.credentialOptionRef === 'traveller:1:document:passport:CH',
+    )
+  }
+
+  function widerspruchGehalten(
+    evaluation:
+      | {
+          result?: string
+          visaMode?: string | null
+          status?: string
+        }
+      | undefined,
+  ) {
+    assert.equal(evaluation?.result, 'unknown')
+    assert.equal(evaluation?.visaMode, 'unknown')
+    assert.equal(evaluation?.status, 'unknown')
+    assert.notEqual(evaluation?.status, 'current')
+    assert.notEqual(evaluation?.result, 'required')
+    assert.notEqual(evaluation?.result, 'not_required')
+    assert.notEqual(evaluation?.visaMode, 'visa_exempt')
+    assert.notEqual(evaluation?.visaMode, 'visa_on_arrival')
+    assert.notEqual(evaluation?.visaMode, 'electronic_visa')
+    assert.notEqual(evaluation?.visaMode, 'visa_before_travel')
+  }
+
+  test('required + visa_exempt ist widersprüchlich und bleibt nicht current', async () => {
+    widerspruchGehalten(await visaVon('required', 'visa_exempt'))
+  })
+
+  test('not_required + visumpflichtige Modi sind widersprüchlich', async () => {
+    for (const modus of ['visa_on_arrival', 'electronic_visa', 'visa_before_travel'] as const) {
+      widerspruchGehalten(await visaVon('not_required', modus))
+    }
+  })
+
+  test('gültige required-Kombinationen bleiben current', async () => {
+    for (const modus of ['visa_on_arrival', 'electronic_visa', 'visa_before_travel', 'unknown'] as const) {
+      const visa = await visaVon('required', modus)
+      assert.equal(visa?.result, 'required', modus)
+      assert.equal(visa?.visaMode, modus, modus)
+      assert.equal(visa?.status, 'current', modus)
+    }
+  })
+
+  test('gültige not_required-Kombinationen bleiben current', async () => {
+    for (const modus of ['visa_exempt', 'unknown'] as const) {
+      const visa = await visaVon('not_required', modus)
+      assert.equal(visa?.result, 'not_required', modus)
+      assert.equal(visa?.visaMode, modus, modus)
+      assert.equal(visa?.status, 'current', modus)
+    }
+  })
+
+  test('conditional bleibt bei jedem Visa-Modus erlaubt und wird nicht erfunden degradiert', async () => {
+    for (const modus of [
+      'visa_exempt',
+      'visa_on_arrival',
+      'electronic_visa',
+      'visa_before_travel',
+      'unknown',
+    ] as const) {
+      const visa = await visaVon('conditional', modus)
+      assert.equal(visa?.result, 'conditional', modus)
+      assert.equal(visa?.visaMode, modus, modus)
+      assert.equal(visa?.status, 'current', modus)
+    }
+  })
+
+  test('Widerspruch auf einer Credential-Option lässt die andere unberührt', async () => {
+    const evaluations = await auswerten([
+      zeile({
+        requirementType: 'visa',
+        result: 'required',
+        visaMode: 'visa_exempt',
+        credentialOptionRef: 'traveller:1:document:passport:CH',
+      }),
+      zeile({
+        requirementType: 'visa',
+        result: 'not_required',
+        visaMode: 'visa_exempt',
+        credentialOptionRef: 'traveller:1:document:passport:RS',
+      }),
+    ])
+    const ch = evaluations.find(
+      (eintrag) =>
+        eintrag.requirementType === 'visa' &&
+        eintrag.credentialOptionRef === 'traveller:1:document:passport:CH',
+    )
+    const rs = evaluations.find(
+      (eintrag) =>
+        eintrag.requirementType === 'visa' &&
+        eintrag.credentialOptionRef === 'traveller:1:document:passport:RS',
+    )
+    widerspruchGehalten(ch)
+    assert.equal(rs?.result, 'not_required')
+    assert.equal(rs?.visaMode, 'visa_exempt')
+    assert.equal(rs?.status, 'current')
+    assert.notEqual(ch?.credentialOptionRef, rs?.credentialOptionRef)
   })
 })
