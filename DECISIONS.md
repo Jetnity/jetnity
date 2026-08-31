@@ -5380,6 +5380,31 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0206 – Entry Requirements E5-A: exact event-instant temporal projection
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/entry-requirements-temporal-projection-e5a-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider, kein E5-B. Binding: `docs/ENTRY_REQUIREMENTS_TEMPORAL_PROJECTION_E5A_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. E5-A ist ein reiner Next-freier Readiness-Core (`lib/readiness/temporal-projection.ts`). Er wiederverwendet die E4-Typen aus `lib/readiness/temporal.ts` und begründet keine zweite Temporal-Domain.
+2. Projektion entsteht nur aus `OfficialTemporalRule` plus explizit gebundenem absolutem Event-Instant je benötigtem Anchor. Der Core sucht keinen Trip, Stage, Segment, Airport oder Country und wählt keine Occurrence / first match.
+3. Akzeptierte Instants sind nur gültige RFC3339/ISO-Date-Times mit `Z` oder numerischem Offset (`+02:00` / `-05:00`). Zonenlose lokale Wanduhr (`YYYY-MM-DDTHH:mm`), Date-only, Freitext, ungültige Daten/Offsets und locale Date-Strings bleiben `invalid_instant`. Gültige Offset-Instants werden deterministisch nach UTC `...000Z` normalisiert.
+4. `before` subtrahiert, `at` bleibt, `after` addiert die E4-`offsetMinutes`. E4-Bounds werden nicht neu definiert; Offsets ausserhalb der E4-Safety-Bound werden nicht angewandt.
+5. Fehlender Anchor ist `missing_anchor` und fällt nicht auf ein anderes Event zurück. Eine unabhängig projizierbare Seite darf erhalten bleiben. `eventRef` bleibt Provenance bis zur Projektion.
+6. Unterschiedliche Anchors dürfen erst nach erfolgreicher Projektion beider Seiten verglichen werden. `availableFrom > dueBy` setzt `actionWindow` fail-closed auf `null` (`invalid_projected_window`).
+7. Kein `Date.now()`, keine Maschinenzeitzone, kein `Z` an Foundation-D-Ortszeiten, keine Safety→Readiness-Kopplung, keine Workspace-Deadline-UI, keine Task-/Reminder-Runtime. `requirementsProviderAus()` bleibt `null`.
+
+**Kontext:** E4 kann relative Regeln wie „72 Std. vor Ankunft“ tragen, aber Route-/Flugzeiten haben keine belastbare IANA-Zone. Dieselbe Destination kann mehrfach vorkommen. Deshalb darf der erste Timestamp-Core nur rechnen, nachdem ein Aufrufer das konkrete Ereignis bereits gebunden hat.
+
+**Alternativen:** Country→first-match; zonenlose `HH:mm` still als UTC lesen; Safety-`isoZeitLesen` koppeln (akzeptiert keine Offsets und hängt fachlich an Safety); Occurrences intern auflösen; Deadline-UI/State Machine in denselben Slice ziehen.
+
+**Begründung:** Die Timezone-Reviews #37/#38 und Foundation-D-SoT verbieten erfundene UTC-Minutenwahrheit. Ohne expliziten Instant wäre jede Deadline eine Heuristik.
+
+**Konsequenzen:** Kein Resolver, keine IANA-Datenbank, keine OfficialEvaluation-Scope-Erweiterung. E5-B oder Task-/Reminder-Runtime nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

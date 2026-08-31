@@ -1,43 +1,55 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / READINESS WORKSPACE INTEGRATION R1 CLOSED / NO ACTIVE CURSOR RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / ENTRY REQUIREMENTS E5-A ACTIVE / LIVE-EVIDENCE GEWINNT**
 
 ## 1. Verifizierter aktueller Runtime-Stand
 
-Readiness Workspace Integration R1 ist vollständig abgeschlossen.
+Letzter vollständig abgeschlossener Runtime-/Continuity-Stand:
 
-Verifizierter Runtime-Main:
+`main@1600767be5ec87961e1d5b5e10c4bcc2f6eb51aa`
 
-`main@9cd5eaf472d6b55ba04d6661b12f086a0bf29d5f`
+Live vor E5-A verifiziert:
 
-Post-Merge-Evidence:
-
+- Readiness Workspace Integration R1 ist vollständig abgeschlossen;
 - Issue **#319 CLOSED / completed**;
-- final unabhängig geprüfter R1-Head `247d473f7f0842965d9ac0cd6f0b79a276ed458f`;
-- Draft-PR **#320 CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED** nur wegen `Repository.fullDatabaseId`;
-- Recovery-PR **#321 MERGED**;
-- Exact-Head CI **#1471 / Run `33388008908`: SUCCESS**;
-- Recovery-CI **#1472 / Run `33389313330`: SUCCESS**;
-- Main-CI **#1473 / Run `33389564305`: SUCCESS** exakt auf `9cd5eaf4...`;
-- Vercel Production **`dpl_DRoFvG8xw2qDrYnrmSmmpazQezcC`: READY** exakt auf `9cd5eaf4...`.
+- R1 Runtime-Merge `9cd5eaf472d6b55ba04d6661b12f086a0bf29d5f`;
+- R1 Continuity-Merge `1600767be5ec87961e1d5b5e10c4bcc2f6eb51aa`;
+- Main-CI **#1475 / Run `33390379263`: SUCCESS** exakt auf `1600767b...`;
+- Vercel Production **`dpl_CLM1GtM9HR3h5nFudtVvetPgzWka`: READY / SUCCESS** exakt auf `1600767b...`;
+- Ruleset **`Jetnity main protection` / ID `21875372`**: active, nur `main`, PR + strict CI/Auth/Vercel + Thread Resolution + merge-only, bypass leer;
+- keine konkurrierende aktuelle Runtime-PR; die offenen PRs #52, #50, #40, #39 und #28 sind historische Drafts.
 
-Aktuellster Closure-Checkpoint:
+Aktuellster abgeschlossener Closure-Checkpoint:
 
 `docs/CHATGPT_TECHNICAL_LEAD_READINESS_WORKSPACE_INTEGRATION_R1_CLOSED_2026-08-31.md`
 
 ## 2. Aktiver Slice / Agent
 
-Es läuft derzeit **kein Cursor-Runtime-Slice**.
+Aktiver bounded Slice:
 
-Letzter Agent:
+**#323 – Entry Requirements E5-A – exact event-instant temporal projection core**
 
-**`Jetnity readiness workspace integration 1`**  
+Branch:
+
+`feat/entry-requirements-temporal-projection-e5a-2026-08-31`
+
+Binding Task:
+
+`docs/ENTRY_REQUIREMENTS_TEMPORAL_PROJECTION_E5A_TASK_2026-08-31.md`
+
+Exakter Agenten-Anzeigename:
+
+**`Jetnity entry requirements temporal projection 1`**  
 Generation: **1**  
-Session: `bc-5bb53c9a-e6bf-4189-bd4f-bb2dc1f6eda3`  
-Status: **STOPPED / DELIVERY COMPLETE / TL PASS / R1 MERGED**.
+Session: **PENDING DISPATCH**  
+Status: **PREPARED / NOT YET DELIVERED**.
 
-Kein E5, Provider-, Deadline-Projektions-, Task-State- oder Reminder-Slice wurde automatisch gestartet.
+E5-A baut ausschließlich einen provider-neutralen, DB-freien Rechenkern:
+
+> **OfficialTemporalRule + explizit gebundener absoluter Event-Instant → deterministisch projizierter absoluter Zeitpunkt / Action Window.**
+
+Kein E5-B, kein Event-Resolver, keine Zeitzonenauflösung, keine Workspace-Deadline-UI, keine Tasks oder Reminder wurden automatisch gestartet.
 
 ## 3. Readiness / Entry Requirements aktueller provider-neutraler Gesamtstand
 
@@ -94,7 +106,58 @@ angezeigt, mit fail-closed Result-/Freshness-Copy, Credential-Auflösung, Author
 - current/stale/recheck/evidence-bearing/action/temporal/visa-spezifische Rows bleiben einzeln sichtbar;
 - Multi-Traveller, Multi-Credential und Transit bleiben getrennt.
 
-## 4. Traveller Truth
+### E5-A – Exact Event-Instant Projection Core
+
+E5-A ist jetzt **aktiv, aber noch nicht geliefert**.
+
+Verbindliche Grenze:
+
+- vorhandene E4-Temporal-Typen werden wiederverwendet;
+- Event-Instant wird vom Aufrufer **explizit** mit Anchor + stabiler `eventRef`/Occurrence-Identität gebunden;
+- nur echte absolute RFC3339-/ISO-Date-Time-Werte mit `Z` oder numerischem Offset sind projizierbar;
+- gültige Offset-Instants werden deterministisch nach UTC normalisiert;
+- `before | at | after` wird exakt gerechnet;
+- `dueBy.semantics` und Event-Provenance bleiben erhalten;
+- fehlende/ungültige Anchors bleiben fail-closed;
+- nach absoluter Projektion invertierte Fenster (`availableFrom > dueBy`) bleiben ungültig;
+- kein `Date.now()`-/Dringlichkeitsstatus in diesem Slice.
+
+## 4. Fresh Duplicate-/Integration-Precheck für E5-A
+
+Der Precheck vor #323 hat ausdrücklich vorhandene Zeitarchitektur gefunden und verhindert, dass eine zweite oder falsche Lösung gebaut wird.
+
+### Wiederzuverwenden
+
+- `lib/readiness/temporal.ts` ist die einzige E4-Relative-Rule-Domain;
+- `lib/route/kontakte.ts` bewahrt Flug-/Routezeiten korrekt als zonenlose lokale Wanduhrzeiten;
+- `lib/route/domain.ts` trägt strukturierte Route-/Transitzeitpunkte und `chronologieBewiesen`;
+- `lib/safety/scope.ts` enthält bereits konservative fail-closed Semantik für zonenlose Date-/Clock-Werte gegen echte Instants;
+- historische Timezone-Reviews #37/#38 dokumentieren verbindlich, dass lokale Flugzeiten nie still zu UTC-Instanten gemacht werden dürfen.
+
+### Noch nicht vorhandene Wahrheit
+
+Aktuell fehlt eine kanonische vollständige Schicht für:
+
+- IANA-Zeitzone / belastbaren UTC-Offset pro konkretem Reiseereignis;
+- eindeutige Trip-/Route-Occurrence-Bindung eines Temporal Anchors;
+- konkrete Deadline-/Action-Window-Runtime;
+- Travel-Companion Task-/Reminder-Runtime.
+
+Besonders wichtig: Dieselbe Destination oder dasselbe Transitland kann mehrfach in einer Reise vorkommen. E5-A darf deshalb niemals per Country-Code, Arrayposition oder `first match` selbst ein Ereignis auswählen.
+
+### Verbotene Abkürzung
+
+Zonenlose Werte wie
+
+`2026-09-12T18:00`
+
+oder Date-only-Werte wie
+
+`2026-09-12`
+
+sind **keine** absoluten Instants und dürfen für eine konkrete Deadline nicht als UTC interpretiert werden. Kein künstliches `Z`, keine Maschinen-Zeitzone, keine Airport-/Place-Heuristik.
+
+## 5. Traveller Truth
 
 Kanonisches Invariant:
 
@@ -105,7 +168,9 @@ Trip Snapshot = einzige Current Truth für die konkrete Reise.
 
 Issuer Country ≠ Citizenship. Keine Residence→Nationality-Inferenz. Kein Default-/Primary-/Preferred-/Chosen-Pass und kein `documents[0]` / `evaluations[0]` als Product Truth.
 
-## 5. Verbindlicher Anti-Blind-Build-Precheck
+E5-A ändert diese Truth nicht und rankt keine Credential-Option.
+
+## 6. Verbindlicher Anti-Blind-Build-Precheck
 
 Vor **jedem** neuen Jetnity-Slice gilt:
 
@@ -123,24 +188,34 @@ Pflicht vor neuem Code oder neuem Agenten:
 
 Bei Duplicate-/Integrations- oder Architekturkonflikt zuerst reconciliieren, dann bauen.
 
-## 6. Weiterhin nicht aktiv / Product-Owner-Gates
+## 7. E5-A Hard Non-Scope / weiterhin nicht aktiv
 
-Weiterhin **nicht** aktiviert:
+E5-A implementiert **nicht**:
 
-- echter Requirements-/Visa-/Entry-Provider;
-- Providerwahl / Vendorvertrag / DPA;
-- Secrets / API Keys / paid calls;
-- konkrete Deadline-/Timestamp-Projektion aus Trip-/Route-Events;
-- Zeitzonen-/DST-Auflösung;
+- Trip/Route → Event-Occurrence-Resolver;
+- Country → Occurrence-Matching;
+- Stage-/Segment-Auswahl für Temporal Anchors;
+- IANA-Timezone-/UTC-Offset-Resolver;
+- Airport-/Place-Zeitzonen-Inferenz;
+- Anhängen von `Z` an lokale Flug-/Stage-Zeiten;
+- Erweiterung von Requirements Provider Contract oder `OfficialEvaluation`-Scope;
+- konkrete Workspace-Deadline-UI;
+- `too early / upcoming / actionable now / overdue` State Machine;
 - exact Official-Requirement Task-Persistenz;
 - Travel-Companion Task-/Completion-State;
 - Reminder-/Push-/E-Mail-/Notification-Runtime;
+- Supabase-/Migration-/RLS-/Auth-/MFA-/AAL-Änderung;
+- echten Requirements-/Visa-/Entry-Provider;
+- Providerwahl / Vendorvertrag / DPA / Secrets / API Keys / paid calls;
 - Credential-Ranking / automatische beste Pass-Auswahl;
-- sensible Pass-/MRZ-/Scan-/Biometrie-/Gesundheitsdaten.
+- sensible Pass-/MRZ-/Scan-/Biometrie-/Gesundheitsdaten;
+- E5-B oder einen anderen Folgeslice.
 
 Provider-Aktivierung/Verträge/Secrets/paid calls, Production-Migrationen/RLS/Ownership, sensible Daten, Payments, > USD 100 monatliche neue Kosten, Public Launch und fundamentale Auth/MFA/AAL-Änderungen bleiben Product-Owner-Gates.
 
-## 7. Persistente Zielanker / andere Workstreams
+Supabase ist für E5-A nicht im Scope und wird nicht verändert.
+
+## 8. Persistente Zielanker / andere Workstreams
 
 Issue **#294 – Entry Requirements Detail Architecture** bleibt offen.
 
@@ -148,15 +223,15 @@ Kanonische Zielarchitektur:
 
 `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
 
+Issue **#323** ist der einzige aktuelle E5-A-Bauauftrag und startet keinen E5-B-Folgeslice.
+
 TW-8 / TW-9 bleiben blockiert, solange keine reale belastbare Commercial Truth / Provider-Evidence vorhanden ist.
 
 GitHub Hygiene Phase 1+2 ist abgeschlossen; Issue #266 ist geschlossen.
 
 Historische offene Draft-PRs sind keine aktuelle Runtime-Wahrheit und dürfen nie blind als aktiver Stand interpretiert werden.
 
-Supabase wurde durch E1–E4 und R1 nicht verändert. Vor DB-/RLS-/Storage-/Security-/Migration-Scope live neu prüfen und Drift reconciliieren.
-
-## 8. GitHub Governance
+## 9. GitHub Governance
 
 Ruleset `Jetnity main protection` / ID `21875372` bleibt bindend:
 
@@ -171,17 +246,15 @@ Ruleset `Jetnity main protection` / ID `21875372` bleibt bindend:
 
 Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId`: ausschließlich identischer non-draft Recovery-PR nach TL Exact-Head-PASS und mit eigenen Gates. Schutzregeln niemals lockern.
 
-## 9. FIRST NEXT ACTION
+Agent-Self-Review ist kein TL-PASS. Jeder Push nach einem PASS invalidiert den PASS.
 
-**Kein Folgeslice ist automatisch freigegeben.**
+## 10. Nächste Aktion
 
-Vor dem nächsten Slice:
-
-1. aktuellen R1-Closure-Checkpoint vollständig lesen;
-2. finalen `main`, offene PRs/Issues, CI/Vercel und Agentenstatus live prüfen;
-3. den verbindlichen Duplicate-/Integration-Precheck durchführen;
-4. Issue #294 und relevante Ziel-/Build-Order-Dokumente gegen den aktuellen Code abgleichen;
-5. Supabase nur bei relevantem Scope live prüfen;
-6. erst dann den kleinsten verantwortbaren bounded Slice definieren und besondere Product-Owner-Gates respektieren.
+1. Draft-PR für Issue #323 eröffnen;
+2. Cursor-Agent **`Jetnity entry requirements temporal projection 1`**, Generation 1, gegen den Binding Task starten;
+3. Agent implementiert nur E5-A und stoppt nach Delivery;
+4. Technical Lead prüft den exakten finalen Head unabhängig;
+5. bei `CHANGES REQUIRED` korrigiert dieselbe Agenten-Session und wird vollständig neu gegatet;
+6. kein Folgeslice automatisch.
 
 **Live-Evidence gewinnt immer.**
