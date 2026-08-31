@@ -522,6 +522,37 @@ describe('Entry Requirements E5-A temporal projection', () => {
     })
   })
 
+  test('whitespace-only eventRef ist keine stabile Provenance', () => {
+    const regel = regelOderFail({
+      kind: OFFICIAL_TEMPORAL_KIND,
+      availableFrom: {
+        anchor: 'destination_arrival',
+        relation: 'before',
+        offsetMinutes: STUNDEN_72,
+      },
+    })
+    const andere: OfficialTemporalEventBinding = {
+      eventRef: 'destination:TH:leg-1',
+      instant: '2026-10-10T12:00:00Z',
+    }
+    for (const eventRef of ['   ', '\t', '\n', ' \t\n ']) {
+      const projektion = temporalRuleProjizieren(regel, {
+        destination_arrival: { eventRef, instant: '2026-10-10T12:00:00Z' },
+        trip_departure: andere,
+      })
+      assert.equal(projektion.availableFrom, null, eventRef)
+      assert.equal(projektion.actionWindow, null, eventRef)
+      assert.deepEqual(projektion.issues, [
+        {
+          side: 'availableFrom',
+          issue: 'missing_anchor',
+          anchor: 'destination_arrival',
+          eventRef: null,
+        },
+      ], eventRef)
+    }
+  })
+
   test('13/14. E4-Invarianten und Factory bleiben unangetastet', () => {
     assert.equal(requirementsProviderAus(), null)
     assert.deepEqual([...OFFICIAL_TEMPORAL_PROJECTION_ISSUES], [
@@ -544,6 +575,7 @@ describe('Entry Requirements E5-A temporal projection', () => {
     assert.equal(core.includes('countryCode'), false)
     assert.equal(core.includes('LEERE_PROJEKTION'), false)
     assert.match(core, /function leereProjektion\(/)
+    assert.match(core, /wert\.trim\(\)\.length === 0/)
     assert.doesNotMatch(core, /\$\{[^}]*\}:00\.000Z/)
     assert.match(temporal, /Kein Timestamp, keine Notification/)
   })

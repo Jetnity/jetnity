@@ -134,8 +134,11 @@ function absolutenInstantLesen(wert: unknown): string | null {
   return utcInstantFormatieren(lokalAlsUtc - offsetMinuten * 60_000)
 }
 
+/** Stabile Occurrence-Identität. Whitespace-only ist keine Identität; kein Trim/Rewrite. */
 function eventRefLesen(wert: unknown): string | null {
-  return typeof wert === 'string' && wert.length > 0 ? wert : null
+  if (typeof wert !== 'string') return null
+  if (wert.trim().length === 0) return null
+  return wert
 }
 
 function bindingLesen(roh: OfficialTemporalEventBinding | undefined): {
