@@ -3,9 +3,8 @@
 // Laufzeitprüfung der Flugsuche und der übernommenen Momentaufnahme.
 //
 // Die Suchanfrage kommt aus dem Browser. Die Konto-Übernahme trägt nur
-// identifiers; kommerzielle Flugfakten und optionale Timezone-Provenance
-// kommen serverseitig aus dem Nachweis. Der Adapter prüft Providerantworten
-// extra; hier steht die Jetnity-Form. Ungültige Timezone wird `null`.
+// identifiers; kommerzielle Flugfakten kommen serverseitig aus dem Nachweis.
+// Der Adapter prüft Providerantworten extra; hier steht die Jetnity-Form.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -18,7 +17,6 @@ import {
   type FlugOption,
   type FlugSuchanfrage,
 } from '@/lib/flights/domain'
-import { ianaZeitzoneLesen } from '@/lib/flights/zeitzone'
 
 const iata = z
   .string()
@@ -46,8 +44,6 @@ const datum = z
   }, 'Dieses Datum gibt es nicht.')
 
 const uhrzeit = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Uhrzeit muss die Form HH:MM haben.')
-
-const zeitzoneOderNull = z.unknown().optional().transform((wert) => ianaZeitzoneLesen(wert ?? null))
 
 const waehrung = z
   .string()
@@ -127,8 +123,6 @@ const segmentSchema = z.object({
   departureTime: uhrzeit,
   arrivalDate: datum,
   arrivalTime: uhrzeit,
-  departureTimezone: zeitzoneOderNull,
-  arrivalTimezone: zeitzoneOderNull,
   airline: airlineCode,
   airlineName: z.string().trim().min(1).max(80),
   operatingAirline: airlineCode.nullable().default(null),

@@ -2,9 +2,9 @@
 //
 // Vertrauensgrenze der kommerziellen Flugübernahme im Konto.
 //
-// Der Browser darf nur identifiers liefern. Preis, Zeiten, Timezone,
-// Provider, External-Ref, Kabine und Legs kommen aus Nachweis plus
-// serverseitigem Suchkontext – oder die Übernahme fällt fail closed.
+// Der Browser darf nur identifiers liefern. Preis, Zeiten, Provider,
+// External-Ref, Kabine und Legs kommen aus Nachweis plus serverseitigem
+// Suchkontext – oder die Übernahme fällt fail closed.
 //
 // Frei von Next und Supabase.
 

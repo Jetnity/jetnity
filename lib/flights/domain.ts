@@ -64,16 +64,6 @@ export type FlugSegment = {
   departureTime: string
   arrivalDate: string
   arrivalTime: string
-  /**
-   * Explizite IANA-/tz-database-Provenance des Abflug-Endpunkts.
-   * Nur aus einer validierten Provider-Airport-Response; sonst `null`.
-   */
-  departureTimezone?: string | null
-  /**
-   * Explizite IANA-/tz-database-Provenance des Ankunfts-Endpunkts.
-   * Nur aus einer validierten Provider-Airport-Response; sonst `null`.
-   */
-  arrivalTimezone?: string | null
   airline: string
   airlineName: string
   operatingAirline: string | null

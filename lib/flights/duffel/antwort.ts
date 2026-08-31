@@ -2,8 +2,6 @@
 //
 // Untrusted Provider-JSON. Nur die Felder, die das Mapping braucht.
 // Zusätzliche Schlüssel fallen weg; fehlende Pflichtfelder verwerfen das Angebot.
-// `time_zone` am strukturierten Airport ist optional und wird nicht zur
-// Pflicht gemacht: ungültige Werte verwerfen das Angebot nicht.
 
 import { z } from 'zod'
 
@@ -25,7 +23,6 @@ const ort = z.union([
   iata,
   z.object({
     iata_code: iata,
-    time_zone: z.unknown().optional(),
   }),
 ])
 
@@ -92,9 +89,4 @@ export type DuffelAngebot = z.infer<typeof duffelAngebotSchema>
 
 export function duffelIataAus(ortWert: z.infer<typeof ort>): string {
   return typeof ortWert === 'string' ? ortWert : ortWert.iata_code
-}
-
-/** Nur strukturiertes Airport-Objekt darf eine Timezone tragen. IATA-String liefert `null`. */
-export function duffelZeitzoneRohAus(ortWert: z.infer<typeof ort>): unknown {
-  return typeof ortWert === 'string' ? undefined : ortWert.time_zone
 }

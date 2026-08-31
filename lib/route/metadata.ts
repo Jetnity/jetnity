@@ -3,13 +3,10 @@
 // trip_items.metadata trägt ausschliesslich die validierte Flug-Itinerary.
 // Kein allgemeiner Jutesack.
 //
-// Lesen ist der trusted Metadata-Pfad: explizite Timezone darf erhalten
-// bleiben, `surfaceFromAirportCode` nicht. Untrusted Intake gehört nicht hierher.
-//
 // Frei von Next und Providern.
 
 import type { FlugRouteItinerary } from '@/lib/route/domain'
-import { flugRouteItineraryTrustedTimezoneLesen } from '@/lib/route/schema'
+import { flugRouteItineraryLesen } from '@/lib/route/schema'
 
 const ROUTE_METADATA_SCHLUESSEL = 'routeItinerary' as const
 const ROUTE_METADATA_MAX = 8192
@@ -21,7 +18,7 @@ export type RouteMetadata = {
 export function itineraryAusMetadata(wert: unknown): FlugRouteItinerary | null {
   if (!wert || typeof wert !== 'object' || Array.isArray(wert)) return null
   const eintrag = (wert as Record<string, unknown>)[ROUTE_METADATA_SCHLUESSEL]
-  return flugRouteItineraryTrustedTimezoneLesen(eintrag)
+  return flugRouteItineraryLesen(eintrag)
 }
 
 export function metadataAusItinerary(itinerary: FlugRouteItinerary | null): RouteMetadata | Record<string, never> {
