@@ -92,3 +92,30 @@ An environment-dirty `next-env.d.ts` was restored and is not part of this slice.
 - Org-level rulesets are unread (404). No evidence of an org ruleset that would protect non-`main` refs was obtained; uncertainty here does not promote any ref to delete-safe.
 - Merged-PR history is capped at the 200 most recent merged PRs. Missing name matches are not treated as “never merged”.
 - Squash-merged historical branches remain `REVIEW_UNMERGED` unless their current tip is an ancestor of live `main`.
+
+## 7. Sync revalidation – 2026-08-31T01:08:53Z
+
+Triggered after independently reviewed TW and E1 merges moved `main` to `26b44e8f93ebf378d9d367c5e7cb2f9701efd12e`.
+
+| Source | Result |
+|---|---|
+| `git fetch origin main` / `git rev-parse origin/main` | exact `26b44e8f93ebf378d9d367c5e7cb2f9701efd12e` |
+| `git merge origin/main --no-ff` into this audit branch | merge commit created locally; no force-push |
+| `git ls-remote --heads origin` | still 79 heads; exact API agreement |
+| `gh pr list --state open` | **6** open drafts (#301, #52, #50, #40, #39, #28). #300 and #302 gone from the open list |
+| `gh pr view 300` / `302` | `state=CLOSED`, `mergedAt=null`. Classification used open-list + ancestry, not `mergedAt` |
+| Ancestry vs `main@26b44e8f` | TW tip `93fb21ef…` ancestor rc 0 / rev-list 0; E1 tip `56e018d3…` ancestor rc 0 / rev-list 0 |
+| Ruleset `21875372` | still active, include `refs/heads/main` only |
+| Sample non-main rules | still `[]` |
+| Remote tip moves | TW `d0510030` → `93fb21ef`; E1 `2bec7c2d` → `56e018d3`; `main` `7f057e6e` → `26b44e8f` |
+
+Stored sync evidence:
+
+| Path | SHA-256 | Bytes |
+|---|---|---:|
+| `docs/evidence/GITHUB_HYGIENE_PHASE1_SYNC_MANIFEST_2026-08-31.json` | `b8a7dd6a0bd01f9d0ae4bbbadabc28a453b06b74fb64633160d797a65edf9a18` | 60519 |
+| `docs/evidence/GITHUB_HYGIENE_PHASE1_SYNC_LS_REMOTE_HEADS_2026-08-31.txt` | `5e02d96c37cbfec8fc8feafdf4984f923d9e2e24e0141cc5aa58b7b08b29d09d` | 7054 |
+| `docs/evidence/GITHUB_HYGIENE_PHASE1_SYNC_API_BRANCHES_2026-08-31.json` | `adf4c9a17007e8ba617f97418b54b1515597d962683144a83fcb6cda38b5110f` | 9107 |
+| `docs/evidence/GITHUB_HYGIENE_PHASE1_SYNC_OPEN_PRS_2026-08-31.json` | `1b11fc7f05c1db1faf694d9d1158a6ef2122c88dc76212fc33b6087b1396395d` | 1866 |
+
+Still not done: branch/tag delete, PR close, ruleset write, Phase 2, edits to `docs/ACTIVE_WORK_STATUS.md` / `JETNITY_START_HERE.md`.

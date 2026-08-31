@@ -1,7 +1,7 @@
 # Jetnity – GitHub Hygiene Phase 1 Audit
 
 Stand: 31. August 2026  
-Status: **READ-ONLY MANIFEST / NO DELETION / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **SYNC REVALIDATION / READ-ONLY / STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD RE-GATE**
 
 Issue: #266  
 Task: `docs/GITHUB_HYGIENE_PHASE1_AUDIT_TASK_2026-08-31.md`  
@@ -11,12 +11,33 @@ Cursor-Session: `bc-8293337d-f32b-41fd-a36d-edb90dc99d95`
 Branch: `audit/github-hygiene-phase1-2026-08-31`  
 PR: #301 (Draft)
 
-Baseline / live `origin/main` at collection: `7f057e6ee8caddf87a3b5365731eaf43d037a114`  
-Collected at (UTC): `2026-08-31T00:28:54Z`
+Previous independent TL PASS head: `ef0c50a9c14d00774db0936831b1cfc445cef60b`  
+Previous collection `main`: `7f057e6ee8caddf87a3b5365731eaf43d037a114`  
+Current verified `main`: `26b44e8f93ebf378d9d367c5e7cb2f9701efd12e`  
+Sync collection (UTC): `2026-08-31T01:08:53Z`
 
-Machine-readable restore manifest:
+Current restore manifest (use this for any later Phase 2):
+
+`docs/evidence/GITHUB_HYGIENE_PHASE1_SYNC_MANIFEST_2026-08-31.json`
+
+Historical first collection (PASS-time snapshot, superseded for restore SHAs that drifted):
 
 `docs/evidence/GITHUB_HYGIENE_PHASE1_MANIFEST_2026-08-31.json`
+
+## 0. Sync-only delta after TW + E1 landed on `main`
+
+This update is a sync-only re-gate. The audit branch was merged with `origin/main@26b44e8f` (no force-push). Classifications changed only where live open-PR / ancestry facts required it.
+
+| Branch | Previous | Current | Why |
+|---|---|---|---|
+| `main` | `KEEP_MAIN` @ `7f057e6e…` | `KEEP_MAIN` @ `26b44e8f…` | Default branch advanced through merge commits `a5c8124b` (TW-8/TW-9) and `26b44e8f` (E1). |
+| `audit/tw8-tw9-readiness-2026-08-31` | `KEEP_OPEN_PR` #302 @ `d0510030…` | `DELETE-SAFE_MERGED` @ `93fb21efab6c22c3fd2b14a3a23d18f46110fd03` | #302 is no longer open (GitHub `CLOSED`). Tip is ancestor of current `main`. Not protected. Independently revalidated `rev-list` 0. |
+| `feat/entry-requirements-detail-contract-e1-2026-08-31` | `KEEP_OPEN_PR` #300 @ `2bec7c2d…` | `DELETE-SAFE_MERGED` @ `56e018d36a176c0061a57978b8a6b5044369409d` | #300 is no longer open (GitHub `CLOSED`). Tip is ancestor of current `main`. Not protected. Independently revalidated `rev-list` 0. |
+| `audit/github-hygiene-phase1-2026-08-31` | `KEEP_OPEN_PR` #301 | `KEEP_OPEN_PR` #301 | Still the open audit PR. Remote tip at sync collection was `ef0c50a9…`; delivery push moves it. |
+
+GitHub reports #300 and #302 as `CLOSED` with `mergedAt=null`. Classification does **not** use `mergedAt`. It uses the live open-PR list plus ancestry of the exact tip. Main contains the merge commits named above.
+
+No other disposition changed. The other 13 previous `DELETE-SAFE_MERGED` tips are unchanged and remain ancestors of the new `main`. All 57 `REVIEW_UNMERGED` names/tips/dispositions are unchanged. `docs/entry-requirements-target-architecture-2026-08-31` stays `REVIEW_UNMERGED` (3 commits not in `main`).
 
 ## 1. Safety contract
 
@@ -27,25 +48,25 @@ A branch is `DELETE-SAFE_MERGED` only when **all** of the following are true at 
 1. name is not `main`;
 2. GitHub does not report the branch as protected and no inspected ruleset includes it;
 3. the branch is not the head of any open pull request;
-4. the exact tip SHA is an ancestor of baseline `main@7f057e6e`;
+4. the exact tip SHA is an ancestor of the current verified `main`;
 5. `git rev-list --count <main>..<tip>` is `0`;
-6. the tip SHA is not equal to the current `main` tip (a freshly created empty work branch is indistinguishable from a leftover at that SHA).
+6. the tip SHA is not equal to the current `main` tip.
 
 Any uncertainty is `REVIEW_UNMERGED`, never delete-safe.
 
-Phase 2 may delete only the exact name→SHA pairs listed as `DELETE-SAFE_MERGED` in this manifest, and only after re-validating name, SHA, open-PR status, protection, and ancestry immediately before each delete. Drift is STOP.
+Phase 2 may delete only the exact name→SHA pairs listed as `DELETE-SAFE_MERGED` in the **sync** manifest, and only after re-validating name, SHA, open-PR status, protection, and ancestry immediately before each delete. Drift is STOP.
 
-## 2. Counts
+## 2. Counts (after sync)
 
 Live remote heads in `Jetnity/jetnity`: **79** (GitHub Branches API and `git ls-remote --heads origin` agree exactly).
 
-| Disposition | Count |
-|---|---:|
-| `KEEP_MAIN` | 1 |
-| `KEEP_OPEN_PR` | 8 |
-| `DELETE-SAFE_MERGED` | 13 |
-| `REVIEW_UNMERGED` | 57 |
-| **Total** | **79** |
+| Disposition | First collection | After sync |
+|---|---:|---:|
+| `KEEP_MAIN` | 1 | 1 |
+| `KEEP_OPEN_PR` | 8 | 6 |
+| `DELETE-SAFE_MERGED` | 13 | 15 |
+| `REVIEW_UNMERGED` | 57 | 57 |
+| **Total** | **79** | **79** |
 
 Tags inspected and **not** classified for deletion: 3 annotated archive tags (`archive/jetnity-v1-main`, `archive/pre-1-1b-alt-ui`, `archive/pre-1-4b-legacy-datenbank`).
 
@@ -58,71 +79,52 @@ Tags inspected and **not** classified for deletion: 3 annotated archive tags (`a
 | `DELETE-SAFE_MERGED` | Merged leftover ref. Restorable from the documented SHA. Not deleted in this slice. |
 | `REVIEW_UNMERGED` | Tip is not fully contained in current `main`, or another conservative hold applies. |
 
-`KEEP_ACTIVE_AUDIT` from the 30 August audit is **not** reused. This audit branch is an open PR head and is therefore `KEEP_OPEN_PR`.
-
 ## 4. Phase 2 candidate list (not executed)
 
-These 13 refs are the only Phase 2 delete candidates from this collection. Each tip was independently re-checked as an ancestor of `main@7f057e6e` with `rev-list` count 0.
+These 15 refs are the only Phase 2 delete candidates from the sync collection. Each tip was checked as an ancestor of `main@26b44e8f` with `rev-list` count 0. The two new rows were independently revalidated a second time.
 
-| Branch | Restore SHA | Associated merged PR (name match, last 200) |
+| Branch | Restore SHA | Note |
 |---|---|---|
-| `audit/core-repository-hygiene-2026-08-30` | `a759764eefa568784bfa08029b386b978e1d2138` | #277 |
-| `audit/github-branch-hygiene-2026-08-30` | `a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88` | #267 |
-| `audit/requirements-provider-groundwork-g0-2026-08-30` | `74e214606c9f881ce0cd19aef3ed7865eb304d3b` | #290 |
-| `cleanup/final-mechanical-repository-leftovers-2026-08-30` | `204511f552d58e246cd08fd8b724eb98edd4dc49` | #283 |
-| `docs/chatgpt-technical-lead-transition-2026-08-30-final` | `471bc93d19c2fa243182f6560e415b952b17364a` | #281 |
-| `docs/post-cleanup-technical-lead-checkpoint-2026-08-30` | `5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a` | #285 |
-| `docs/requirements-gate0-closed-2026-08-31` | `4a86ea753bf3f7c5cfd667661f6a01557280b8ba` | #291 |
-| `docs/requirements-s4-r1-closed-entry-target-2026-08-31` | `2aac34ddea0c88327986fc459826892d8895f3d0` | #297 |
-| `feat/requirements-truth-ops-s4-r1-2026-08-31` | `595b4ad2a827beff7bec597433b3316d21da0747` | none by this name; same SHA as merged #296. Closed unmerged #293 is mechanical supersession of this name. |
-| `feat/requirements-truth-ops-s4-r1-ready-2026-08-31` | `595b4ad2a827beff7bec597433b3316d21da0747` | #296 |
-| `ops/creator-media-c2-recovery-2026-08-30` | `cf2bbd5b71392f17c8f31e2a13e450ae9de72e15` | #270 |
-| `ops/creator-media-c3-decommission-2026-08-30` | `e8069799774433c905663b00867085bab4dbd461` | #272 |
-| `recovery/core-repository-hygiene-2026-08-30` | `a759764eefa568784bfa08029b386b978e1d2138` | #279 |
+| `audit/core-repository-hygiene-2026-08-30` | `a759764eefa568784bfa08029b386b978e1d2138` | unchanged from first collection; #277 |
+| `audit/github-branch-hygiene-2026-08-30` | `a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88` | unchanged; #267 |
+| `audit/requirements-provider-groundwork-g0-2026-08-30` | `74e214606c9f881ce0cd19aef3ed7865eb304d3b` | unchanged; #290 |
+| `audit/tw8-tw9-readiness-2026-08-31` | `93fb21efab6c22c3fd2b14a3a23d18f46110fd03` | **new after TW merge**; #302 no longer open |
+| `cleanup/final-mechanical-repository-leftovers-2026-08-30` | `204511f552d58e246cd08fd8b724eb98edd4dc49` | unchanged; #283 |
+| `docs/chatgpt-technical-lead-transition-2026-08-30-final` | `471bc93d19c2fa243182f6560e415b952b17364a` | unchanged; #281 |
+| `docs/post-cleanup-technical-lead-checkpoint-2026-08-30` | `5a3cf6aad1a5c89c98a96ec2904f2e265f22da2a` | unchanged; #285 |
+| `docs/requirements-gate0-closed-2026-08-31` | `4a86ea753bf3f7c5cfd667661f6a01557280b8ba` | unchanged; #291 |
+| `docs/requirements-s4-r1-closed-entry-target-2026-08-31` | `2aac34ddea0c88327986fc459826892d8895f3d0` | unchanged; #297 |
+| `feat/entry-requirements-detail-contract-e1-2026-08-31` | `56e018d36a176c0061a57978b8a6b5044369409d` | **new after E1 merge**; #300 no longer open |
+| `feat/requirements-truth-ops-s4-r1-2026-08-31` | `595b4ad2a827beff7bec597433b3316d21da0747` | unchanged; same SHA as #296 |
+| `feat/requirements-truth-ops-s4-r1-ready-2026-08-31` | `595b4ad2a827beff7bec597433b3316d21da0747` | unchanged; #296 |
+| `ops/creator-media-c2-recovery-2026-08-30` | `cf2bbd5b71392f17c8f31e2a13e450ae9de72e15` | unchanged; #270 |
+| `ops/creator-media-c3-decommission-2026-08-30` | `e8069799774433c905663b00867085bab4dbd461` | unchanged; #272 |
+| `recovery/core-repository-hygiene-2026-08-30` | `a759764eefa568784bfa08029b386b978e1d2138` | unchanged; #279 |
 
-Duplicate restore SHAs are intentional: two names can point at the same already-merged commit. Deleting either ref does not delete the commit.
+Do **not** start deletion from this PR.
 
 ## 5. Open PR heads — never delete-safe
 
 | PR | Draft | Head branch | Head SHA |
 |---|---|---|---|
-| #302 | yes | `audit/tw8-tw9-readiness-2026-08-31` | `d051003023331578d90cf295a12de8767e0b33b7` |
-| #301 | yes | `audit/github-hygiene-phase1-2026-08-31` | `9cc05da98064e551837088dc4d7c4a379110411c` at collection; this PR will move when the audit is pushed |
-| #300 | yes | `feat/entry-requirements-detail-contract-e1-2026-08-31` | `2bec7c2d3ae7967175d1a9828c6715a577376df0` |
+| #301 | yes | `audit/github-hygiene-phase1-2026-08-31` | `ef0c50a9c14d00774db0936831b1cfc445cef60b` at sync collection; delivery push moves it |
 | #52 | yes | `docs/chatgpt-technical-lead-handoff-2026-08-24` | `f1e13db332ce087297dae60d4f1b3c21f321f9ec` |
 | #50 | yes | `cursor/s1-merged-status-f23f` | `f5a25c949f8bbfb889f87653ba1a08a02f75f6ea` |
 | #40 | yes | `audit/admin-platform` | `a316015733b86e2adbd050abb2f77258a99da366` |
 | #39 | yes | `audit/account-platform` | `65b08f4718ad74f3157c55a3efb960a4c843408a` |
 | #28 | yes | `feat/trip-collaboration-foundation` | `e0132cb576e8231296dc5b290e0afcef88ceb9f4` |
 
-Active parallel streams at collection: #300 (Entry Requirements E1) and #302 (TW-8/TW-9). This agent did not touch those files.
+#300 and #302 are no longer open. Stale drafts #28 / #39 / #40 / #50 / #52 remain `KEEP_OPEN_PR`. Closing them is not Phase 2.
 
-Stale open drafts #28 / #39 / #40 / #50 / #52 are **not** a Phase 2 delete problem. Closing them would be a separate, explicitly versioned PR-closure slice.
-
-## 6. Protection
+## 6. Protection (rechecked)
 
 - Branches API `protected=true` only for `main`.
-- Repository ruleset `21875372` / `Jetnity main protection` is **active** and includes only `refs/heads/main`. It forbids deletion of `main`, forbids force-push, and requires PR + listed status checks.
-- `GET /repos/Jetnity/jetnity/rules/branches/audit/github-hygiene-phase1-2026-08-31` returned `[]`.
-- Classic `/branches/main/protection` returned **403** for this integration. Residual: classic protection details are not readable; the `protected` flag and ruleset are the usable evidence.
-- Org rulesets returned **404** for this integration.
+- Ruleset `21875372` / `Jetnity main protection` still **active**, include only `refs/heads/main`.
+- `GET /repos/Jetnity/jetnity/rules/branches/audit/github-hygiene-phase1-2026-08-31` still `[]`.
 
-## 7. Drift versus 30 August branch-hygiene remaining set
+## 7. Exact manifest after sync
 
-The 30 August audit remaining set after its delete pass was 62 refs. All 62 names still exist today. None of the 165 previously deleted names have been recreated.
-
-SHA drift among those 62 names:
-
-- `main`: `9662d0a734c5…` → `7f057e6ee8ca…`
-- `audit/github-branch-hygiene-2026-08-30`: `1ba04a245dc9…` (`KEEP_ACTIVE_AUDIT`) → `a4dbc8128455…` (`DELETE-SAFE_MERGED` after PR #267 merged)
-
-17 names are new since that remaining set. 12 of them plus the completed 30 August audit branch make the 13 current `DELETE-SAFE_MERGED` refs. The other new names are this PR, E1, TW-8/TW-9, and two unmerged docs branches.
-
-The 30 August file-hygiene / sanitation verdicts were **not** copied. This inventory is a live re-collection.
-
-## 8. Exact manifest
-
-| Branch | Tip SHA | Protected | Open PRs | Ancestor of `main@7f057e6e` | Commits not in main | Disposition |
+| Branch | Tip SHA | Protected | Open PRs | Ancestor of `main@26b44e8f` | Commits not in main | Disposition |
 |---|---|---:|---|---:|---:|---|
 | `audit/account-platform` | `65b08f4718ad74f3157c55a3efb960a4c843408a` | false | #39 | false | 11 | `KEEP_OPEN_PR` |
 | `audit/admin-platform` | `a316015733b86e2adbd050abb2f77258a99da366` | false | #40 | false | 15 | `KEEP_OPEN_PR` |
@@ -131,13 +133,13 @@ The 30 August file-hygiene / sanitation verdicts were **not** copied. This inven
 | `audit/ap7-account-traveller-registry-gate0-2026-08-28` | `85ce5399368621e916de6c1a506abbae5316a0b3` | false | — | false | 5 | `REVIEW_UNMERGED` |
 | `audit/core-repository-hygiene-2026-08-30` | `a759764eefa568784bfa08029b386b978e1d2138` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `audit/github-branch-hygiene-2026-08-30` | `a4dbc81284550d7b2aa1e0beb5e038deaf6a8d88` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
-| `audit/github-hygiene-phase1-2026-08-31` | `9cc05da98064e551837088dc4d7c4a379110411c` | false | #301 | false | 1 | `KEEP_OPEN_PR` |
+| `audit/github-hygiene-phase1-2026-08-31` | `ef0c50a9c14d00774db0936831b1cfc445cef60b` | false | #301 | false | 3 | `KEEP_OPEN_PR` |
 | `audit/project-sanitation-inventory-2026-08-26` | `a5fbaa6df79fc0515d06a1cfafb88fcd6316b0e8` | false | — | false | 2 | `REVIEW_UNMERGED` |
 | `audit/provider-readiness` | `ca8522400110a95ee0e51889417106992961f1c4` | false | — | false | 11 | `REVIEW_UNMERGED` |
 | `audit/requirements-provider-groundwork-g0-2026-08-30` | `74e214606c9f881ce0cd19aef3ed7865eb304d3b` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `audit/security-privacy-current-state-2026-08-29` | `5489196117e219d511f0a98bab3f31193775c8eb` | false | — | false | 2 | `REVIEW_UNMERGED` |
 | `audit/traveller-account-multicitizenship-gap-2026-08-29` | `3bda0496e1eab7675beab3ed3f0e1634fd552dda` | false | — | false | 3 | `REVIEW_UNMERGED` |
-| `audit/tw8-tw9-readiness-2026-08-31` | `d051003023331578d90cf295a12de8767e0b33b7` | false | #302 | false | 1 | `KEEP_OPEN_PR` |
+| `audit/tw8-tw9-readiness-2026-08-31` | `93fb21efab6c22c3fd2b14a3a23d18f46110fd03` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `chore/account-admin-team-prep` | `67074279d290c651746049f9901c999156873729` | false | — | false | 23 | `REVIEW_UNMERGED` |
 | `cleanup/final-mechanical-repository-leftovers-2026-08-30` | `204511f552d58e246cd08fd8b724eb98edd4dc49` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `cleanup/legacy-storage-batch-b-2026-08-30` | `f65af8bd3057320f6f28508fb56fa77004f3b836` | false | — | false | 6 | `REVIEW_UNMERGED` |
@@ -181,7 +183,7 @@ The 30 August file-hygiene / sanitation verdicts were **not** copied. This inven
 | `feat/account-nav-rail-consistency-2026-08-30` | `08a626c466631cc2e0d1d434d58d28241c625faa` | false | — | false | 1 | `REVIEW_UNMERGED` |
 | `feat/admin-control-center-ia` | `81de9b3db11e7f58ff59132e22bf9f35fef68b57` | false | — | false | 11 | `REVIEW_UNMERGED` |
 | `feat/admin-system-health` | `2ca916e91dbf53f9c5cad9a980cc141938fbebe6` | false | — | false | 5 | `REVIEW_UNMERGED` |
-| `feat/entry-requirements-detail-contract-e1-2026-08-31` | `2bec7c2d3ae7967175d1a9828c6715a577376df0` | false | #300 | false | 1 | `KEEP_OPEN_PR` |
+| `feat/entry-requirements-detail-contract-e1-2026-08-31` | `56e018d36a176c0061a57978b8a6b5044369409d` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `feat/mobility-transfers-foundation` | `9d3fcef38ffebac91d5f9f3806659236a10c694b` | false | — | false | 13 | `REVIEW_UNMERGED` |
 | `feat/provider-flight-evidence-s2` | `6865c8a1cde9b44dd0ce8c690fca12139e763b7c` | false | — | false | 24 | `REVIEW_UNMERGED` |
 | `feat/provider-ops-s1` | `ba10cb206d1f1d40f6e2dc14b917f18c65601c44` | false | — | false | 5 | `REVIEW_UNMERGED` |
@@ -195,7 +197,7 @@ The 30 August file-hygiene / sanitation verdicts were **not** copied. This inven
 | `feat/traveller-context-intelligence` | `725aee462c93e5dba7da7a1a7fd8c51bf16a39bb` | false | — | false | 50 | `REVIEW_UNMERGED` |
 | `feat/trip-collaboration-foundation` | `e0132cb576e8231296dc5b290e0afcef88ceb9f4` | false | #28 | false | 1 | `KEEP_OPEN_PR` |
 | `feat/trip-coverage-booking-status` | `1f6f4ba0acfe5287d292742f6992f2a3dd38e077` | false | — | false | 21 | `REVIEW_UNMERGED` |
-| `main` | `7f057e6ee8caddf87a3b5365731eaf43d037a114` | true | — | true | 0 | `KEEP_MAIN` |
+| `main` | `26b44e8f93ebf378d9d367c5e7cb2f9701efd12e` | true | — | true | 0 | `KEEP_MAIN` |
 | `ops/creator-media-c2-recovery-2026-08-30` | `cf2bbd5b71392f17c8f31e2a13e450ae9de72e15` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `ops/creator-media-c3-decommission-2026-08-30` | `e8069799774433c905663b00867085bab4dbd461` | false | — | true | 0 | `DELETE-SAFE_MERGED` |
 | `phase-3-2-hotel-foundation` | `fb26270d84c3dc661ffe71969556edad236628b0` | false | — | false | 13 | `REVIEW_UNMERGED` |
@@ -204,29 +206,19 @@ The 30 August file-hygiene / sanitation verdicts were **not** copied. This inven
 | `tmp-noop` | `9cc9b0526683f161f500326a7b72c74abac9c296` | false | — | false | 10 | `REVIEW_UNMERGED` |
 | `ux-trip-workspace-mobile-iteration-1` | `d2ec70d79982ea28f685d8715cd2d145af53e53a` | false | — | false | 13 | `REVIEW_UNMERGED` |
 
-## 9. Recommendation for Phase 2
+## 8. Recommendation for Phase 2
 
-Do **not** start deletion from this PR.
+Unchanged policy. After a fresh Technical-Lead PASS on the synchronized Exact Head and a later separate Phase 2 task:
 
-After independent Technical-Lead review and merge of this Phase 1 manifest:
+1. Allow-list only the 15 exact name→SHA pairs in the **sync** manifest.
+2. Re-check name, SHA, open-PR, protection, and ancestry against the then-current `main` immediately before each delete.
+3. Drift ⇒ STOP that ref.
+4. Do not delete tags, close PRs, or change protection.
 
-1. Open a separate versioned Phase 2 task/PR.
-2. Allow-list only the 13 exact name→SHA pairs above.
-3. Immediately before each delete, re-check: exact name, exact SHA, no open PR head, not protected, tip still ancestor of the then-current `main`.
-4. If any check differs from this manifest: STOP that ref; do not delete it.
-5. Keep a delete-result evidence file so every removed ref can be recreated from the documented SHA.
-6. Do not delete tags.
-7. Do not close pull requests.
-8. Do not change branch protection or rulesets.
-9. Do not classify `REVIEW_UNMERGED` as delete-safe because a later squash or content overlap “probably” landed on `main`. Ancestor of the live `main` tip is required.
-10. Private repositories `jetnity-travel` / `jetnity-bets` remain out of this GitHub-App scope.
+## 9. STOP
 
-A later, separate slice may review the five stale open drafts (#28, #39, #40, #50, #52). That is PR-closure work, not Phase 2 branch deletion.
+Sync-only work is the deliverable. No branch or tag was deleted. No stale PR was closed. No protection was changed. `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited.
 
-## 10. STOP
+The previous PASS on `ef0c50a9…` is historical. This synchronized head needs a **fresh** independent Technical-Lead Exact-Head re-gate.
 
-Manifest, evidence, and adversarial self-review are the deliverables.
-
-No branch or tag was deleted. No ref was moved. No PR was closed. No protection or ruleset was changed. `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited.
-
-This is **not** an independent Technical-Lead PASS. Ready and merge are forbidden for this agent. Phase 2 must not start from this slice.
+Ready, merge, and Phase 2 remain forbidden for this agent.

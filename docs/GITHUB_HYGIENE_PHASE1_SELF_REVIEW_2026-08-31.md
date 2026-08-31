@@ -71,7 +71,7 @@ The Cursor UI title was not renamed. No programmable rename tool was available. 
 | Target | Why a naive Phase 2 delete would be wrong |
 |---|---|
 | `main` | Default branch + active deletion-blocking ruleset |
-| Any of the 8 open PR heads | Destroys in-flight or still-open review surfaces, including E1, TW-8/TW-9, and this audit |
+| Any open PR head | Destroys an in-flight review surface. After sync there are 6, including this audit. E1/TW heads are no longer open and are only delete-safe because their tips are ancestors of current `main`. |
 | Any `REVIEW_UNMERGED` tip | Unique commits not in `main`; possible squash-merge leftovers or unfinished work |
 | `docs/entry-requirements-target-architecture-2026-08-31` | New, 3 commits not in `main` |
 | `docs/post-cleanup-final-handoff-2026-08-30` | 4 commits not in `main` even though a sibling checkpoint branch is delete-safe |
@@ -90,10 +90,25 @@ The Cursor UI title was not renamed. No programmable rename tool was available. 
 | `gh pr list --state merged` capped at 200 | Used only as supporting evidence for the 13 delete-safe names. |
 | This PR’s own tip will move after the audit commit | Expected. The row for `audit/github-hygiene-phase1-2026-08-31` records the collection tip and remains `KEEP_OPEN_PR`. |
 
-## 5. Author verdict
+## 5. Author verdict (first collection)
 
-**CHANGES REQUIRED through the author:** none remaining after regenerating the audit table from the JSON so it cannot drift from the machine manifest.
+First-collection PASS on `ef0c50a9…` is historical after `main` moved.
 
-**Unabhängiger Technical-Lead-Review:** ausstehend.
+## 6. Sync-only adversarial check
+
+| Question | Answer |
+|---|---|
+| Was history rewritten / force-pushed? | No. `git merge --no-ff origin/main@26b44e8f`. |
+| Were classifications rewritten from memory? | No. Full live re-inventory. Only two dispositions changed, both from vanished open PRs + proven ancestry. |
+| Was `mergedAt=null` on #300/#302 treated as “not merged, keep REVIEW_UNMERGED”? | No. They are not open, and the tips are ancestors of live `main`. That is the delete-safe contract. The closed-without-mergedAt GitHub state is documented, not used as a veto. |
+| Were #300/#302 closed by this agent? | No. They were already absent from the live open list before any write. |
+| Did the agent promote other REVIEW_UNMERGED rows because “E1 probably included them”? | No. `docs/entry-requirements-target-architecture-2026-08-31` stays `REVIEW_UNMERGED`. |
+| Did the previous 13 delete-safe SHAs change? | No. Still ancestors of the new `main`. |
+| Was Phase 2 started because two more refs became obvious? | No. |
+| Were ACTIVE_WORK_STATUS / START_HERE / runtime files edited by this agent? | No. The merge brought already-merged main files into this branch; no additional runtime edit. |
+
+**CHANGES REQUIRED through the author:** none for this sync.
+
+**Unabhängiger Technical-Lead-Review:** previous PASS invalidated by `main` movement and by this new head. Fresh Exact-Head re-gate required.
 
 Ready, merge, and Phase 2 deletion are forbidden for this agent.
