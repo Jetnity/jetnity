@@ -11,8 +11,6 @@
 
 import type { FlugSegment } from '@/lib/flights/domain'
 import type {
-  FlugAirportEventInstantEvidence,
-  FlugAirportTimezoneEvidence,
   FlugAirportTimezoneEndpunkt,
   FlugProviderTreffer,
 } from '@/lib/flights/provider'
