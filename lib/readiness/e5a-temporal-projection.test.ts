@@ -259,7 +259,6 @@ describe('Entry Requirements E5-A temporal projection', () => {
     })
     const faelle = [
       '2026-10-10T12:00:00+25:00',
-      '2026-10-10T12:00:00-12:01',
       '2026-10-10T12:00:00+02:60',
       '2026-02-30T12:00:00Z',
       '2026-13-01T12:00:00Z',
@@ -277,6 +276,29 @@ describe('Entry Requirements E5-A temporal projection', () => {
       assert.equal(projektion.availableFrom, null, instant)
       assert.deepEqual(issueSeiten(projektion.issues, 'availableFrom'), ['invalid_instant'], instant)
     }
+  })
+
+  test('expliziter Offset ausserhalb der Weltzonen-Hülle bleibt projizierbar', () => {
+    const regel = regelOderFail({
+      kind: OFFICIAL_TEMPORAL_KIND,
+      availableFrom: {
+        anchor: 'trip_departure',
+        relation: 'at',
+        offsetMinutes: 0,
+      },
+    })
+    const projektion = temporalRuleProjizieren(regel, {
+      trip_departure: {
+        eventRef: 'departure:offset-1201',
+        instant: '2026-10-10T12:00:00-12:01',
+      },
+    })
+    assert.deepEqual(projektion.availableFrom, {
+      instant: '2026-10-11T00:01:00.000Z',
+      anchor: 'trip_departure',
+      eventRef: 'departure:offset-1201',
+    })
+    assert.deepEqual(projektion.issues, [])
   })
 
   test('10. Cross-Anchor availableFrom > dueBy ist invalid_projected_window', () => {
@@ -576,6 +598,9 @@ describe('Entry Requirements E5-A temporal projection', () => {
     assert.equal(core.includes('LEERE_PROJEKTION'), false)
     assert.match(core, /function leereProjektion\(/)
     assert.match(core, /wert\.trim\(\)\.length === 0/)
+    assert.equal(core.includes('gesamt < -12 * 60'), false)
+    assert.equal(core.includes('14 * 60'), false)
+    assert.match(core, /stunden > 23 \|\| minuten > 59/)
     assert.doesNotMatch(core, /\$\{[^}]*\}:00\.000Z/)
     assert.match(temporal, /Kein Timestamp, keine Notification/)
   })

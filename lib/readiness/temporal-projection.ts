@@ -88,17 +88,17 @@ function kalenderteileGueltig(jahr: number, monat: number, tag: number): boolean
   )
 }
 
+/** Expliziter RFC3339-Offset: `Z` oder ±HH:MM mit HH 00..23, MM 00..59. Keine Weltzonen-Hülle. */
 function offsetMinutenAus(offset: string): number | null {
   if (offset === 'Z') return 0
   const treffer = /^([+-])(\d{2}):(\d{2})$/.exec(offset)
   if (!treffer) return null
   const stunden = Number(treffer[2])
   const minuten = Number(treffer[3])
-  if (!Number.isInteger(stunden) || !Number.isInteger(minuten) || minuten > 59) return null
+  if (!Number.isInteger(stunden) || !Number.isInteger(minuten)) return null
+  if (stunden > 23 || minuten > 59) return null
   const vorzeichen = treffer[1] === '-' ? -1 : 1
-  const gesamt = vorzeichen * (stunden * 60 + minuten)
-  if (gesamt < -12 * 60 || gesamt > 14 * 60) return null
-  return gesamt
+  return vorzeichen * (stunden * 60 + minuten)
 }
 
 function utcInstantFormatieren(ms: number): string | null {
