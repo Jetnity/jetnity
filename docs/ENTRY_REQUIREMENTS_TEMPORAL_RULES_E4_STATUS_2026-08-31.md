@@ -69,13 +69,13 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/readiness/e4-temporal-rules.test.ts` | pending review-fix re-run |
-| fokussierte E1–E4-/Label-/Scope-Tests | pending |
-| `npm test` | pending |
-| `npm run typecheck` | pending |
-| `npm run lint` | pending |
-| `npm run build` | pending |
-| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pending |
+| `lib/readiness/e4-temporal-rules.test.ts` | **17/17 pass** |
+| fokussierte E1–E4-/Label-/Scope-Tests | **106/106 pass** |
+| `npm test` | **2913/2913 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
+| `npm run build` | pass (Next.js 16.3.3 Turbopack) |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
 | GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip prüfen |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet (kein Real-Device-Abnahmescope) |
 

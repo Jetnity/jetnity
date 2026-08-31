@@ -52,7 +52,8 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Lokale Gates: `npm test` 2912/2912, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
+- Same-Anchor-Fenster werden relativ verglichen; gemischte Anchors bleiben ohne Timestamp-Projektion zulässig.
+- Lokale Gates: `npm test` 2913/2913, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Abnahmebeweis.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 

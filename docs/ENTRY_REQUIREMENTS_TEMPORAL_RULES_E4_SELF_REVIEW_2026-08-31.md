@@ -44,6 +44,6 @@ Geprüft: nur `relative_duration`; geschlossene Anchors/Relations; `availableFro
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Autor:** der TL-Befund Same-Anchor-Reihenfolge ist im Parser behoben. Neue lokale Gates folgen nach Re-Run.
+**CHANGES REQUIRED durch den Autor:** der TL-Befund Same-Anchor-Reihenfolge ist im Parser behoben. Lokale Gates: 2913/2913 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend auf neuem Head. PR bleibt Draft. Kein Ready, kein Merge, kein E5.
