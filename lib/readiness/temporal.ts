@@ -114,7 +114,7 @@ export function temporalRuleLesen(wert: unknown): OfficialTemporalRule | null {
   }
 }
 
-export function temporalRuleSchluessel(regel: OfficialTemporalRule | null | undefined): string {
+function temporalRuleSchluessel(regel: OfficialTemporalRule | null | undefined): string {
   if (!regel) return 'null'
   const punkt = (wert: OfficialTemporalPunkt | null) =>
     wert ? `${wert.anchor}|${wert.relation}|${wert.offsetMinutes}` : ''

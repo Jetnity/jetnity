@@ -41,6 +41,6 @@ Geprüft: nur `relative_duration`; geschlossene Anchors/Relations; `availableFro
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Autor:** keine in diesem Slice, sobald lokale Gates grün dokumentiert sind.
+**CHANGES REQUIRED durch den Autor:** keine in diesem Slice. Lokale Gates: 2912/2912 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend. PR bleibt Draft. Kein Ready, kein Merge, kein E5.
