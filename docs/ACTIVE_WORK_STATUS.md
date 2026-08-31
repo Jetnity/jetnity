@@ -1,32 +1,33 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / E5-B1R CLOSED / E5-B2A PREPARED / AGENT DISPATCH PENDING / LIVE-EVIDENCE WINS**
+Status: **CURRENT / E5-B2A INDEPENDENT TL PASS / FINAL INTEGRATION GATES PENDING / LIVE-EVIDENCE WINS**
 
 ## 1. Current canonical main
 
-Baseline at E5-B2A task cut:
+Task-cut / current review baseline:
 
 `main@f7ccdc5b98ce933b06c216135be7c4f4b08f8222`
 
 Commit:
 `Close Entry Requirements E5-B1R continuity (#333)`
 
-Live-verified:
+Verified:
 
-- Main push CI #1507 / Run `33415587649`: **SUCCESS**;
-- Vercel Production: **SUCCESS**;
-- Ruleset `Jetnity main protection` / ID `21875372`: active;
-- strict required checks + conversation resolution + merge-only + bypass empty;
-- Issue #330 E5-B1R: CLOSED / completed;
-- Parent #294 remains open.
+- Main CI #1507 / Run `33415587649`: SUCCESS;
+- Vercel Production: SUCCESS;
+- ruleset `Jetnity main protection` / ID `21875372`: active;
+- strict required CI/Auth/Vercel + Conversation Resolution + merge-only + bypass empty.
 
-Final main must still be re-read before every merge/review action.
+At independent E5-B2A review time main remained exactly this SHA. Re-read live before Ready/merge.
 
-## 2. Active prepared slice
+## 2. Active slice – E5-B2A
 
 Issue:
 **#334 – Entry Requirements E5-B2A – ephemeral airport event instant resolution**
+
+Draft PR:
+**#335**
 
 Branch:
 `feat/entry-requirements-airport-event-instant-e5b2a-2026-08-31`
@@ -34,80 +35,101 @@ Branch:
 Binding task:
 `docs/ENTRY_REQUIREMENTS_EPHEMERAL_AIRPORT_EVENT_INSTANT_E5B2A_TASK_2026-08-31.md`
 
-Fresh logical Cursor agent:
+Logical Cursor agent:
 **`Jetnity entry requirements airport event instant 1`**, Generation 1
 
 Session:
-**noch nicht belegt / Dispatch pending**.
+`bc-2f16caec-271e-4911-ac36-5abc36ab0806`
 
-## 3. Why E5-B2A
+Agent runtime + handoff head:
+`4d7e1d002eba06490da59cb4416c55229e8cb559`
 
-E5-A requires an explicit absolute event instant.
+Independent TL review:
+**PASS / no P0-P1-P2 findings.**
 
-E5-B1R already provides an exact provider-observed IANA timezone companion for a flight endpoint while `FlugSegment` keeps only airport-local wall-clock date/time.
+Review doc:
+`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B2A_REVIEW_2026-08-31.md`
 
-E5-B2A is the bounded bridge:
+## 3. What was independently accepted
 
-> exact local flight endpoint wall clock + exact E5-B1R timezone evidence -> exactly one UTC instant or explicit fail-closed issue.
+E5-B2A adds only ephemeral server-side airport event-instant companion evidence.
 
-No persistence, no route/trip adoption and no E5-A automatic binding.
+Input truth:
 
-## 4. Binding truth boundary
+- exact normalized `FlugSegment` local date/time;
+- exact existing E5-B1R provider-observed IANA timezone evidence.
 
-Resolution must match exact:
+Identity is revalidated through:
 
-- option id;
+- option ID;
 - leg index;
 - segment index;
 - endpoint `departure | arrival`;
-- endpoint IATA;
-- provider-observed timezone.
+- endpoint IATA.
 
-No IATA/country/city/name/server/browser timezone inference.
+Civil-time semantics:
 
-DST:
+- unique mapping -> canonical UTC `...Z` instant;
+- DST gap -> `nonexistent_local_time`, no instant;
+- DST overlap -> `ambiguous_local_time`, no instant;
+- invalid local date/time, timezone or identity -> explicit issue / no instant;
+- no IATA/country/city/name/server/browser timezone inference;
+- no silent earlier/later/compatible selection;
+- no local-wall-clock `Z` append.
 
-- nonexistent local time / gap -> no instant;
-- ambiguous local time / overlap -> no instant;
-- never choose earlier/later silently.
+Tests cover normal winter/summer, non-whole-hour zones, Zurich and Lord Howe DST transitions, server-TZ independence, identity mismatch, multi-segment, option reordering, cap filtering and browser no-leak.
 
-Resolved output must be canonical UTC RFC3339/ISO with `Z`.
+## 4. Runtime / client / persistence boundary
 
-## 5. Runtime boundary
+New companion fields live only on `FlugProviderTreffer`:
 
-Any new event-instant result remains ephemeral server-side companion evidence at the active FlightProvider seam.
+- `airportEventInstantEvidence`;
+- `airportEventInstantIssues`.
 
-Do not add timezone/instant to:
+Timezone/instant remain absent from:
 
 - `FlugSegment`;
 - `FlugOption` / `BewerteteFlugOption`;
-- client/browser response;
+- browser/client response;
 - route itinerary;
 - trip metadata;
 - account adoption / `flugNachweis`;
 - Supabase.
 
-`fluegeSuchen()` must not expose timezone/event-instant evidence to the browser.
+Duffel filters to retained options before resolution. Invalid/unresolvable event evidence does not discard a valid offer. `fluegeSuchen()` deliberately does not expose either timezone or instant evidence.
 
-## 6. Fresh duplicate/integration precheck
+No new npm dependency, provider, secret, paid call or live activation.
 
-Verified on current main:
+## 5. Reviewed agent-head gates
 
-- no existing local-time+IANA→absolute-instant resolver found;
-- no timezone dependency in `package.json`;
-- `lib/flights/zeit.ts` intentionally keeps wall-clock semantics;
-- `lib/flights/airport-timezone.ts` is the current identifier validator;
-- `lib/flights/provider.ts` is the active provider seam;
-- `lib/flights/duffel/mapping.ts` mints E5-B1R evidence;
-- `lib/readiness/temporal-projection.ts` only consumes already absolute instants.
+On exact reviewed agent head `4d7e1d002eba06490da59cb4416c55229e8cb559`:
 
-No new npm dependency in E5-B2A. If robust DST gap/overlap handling cannot be proven with platform APIs, agent must STOP rather than weaken semantics or widen scope.
+- CI #1510 / Run `33417793387`: SUCCESS;
+- Auth: SUCCESS;
+- Typecheck/Lint/Tests/Hygiene/Production Build: SUCCESS;
+- Vercel Preview: READY / SUCCESS;
+- GitHub review threads: 0;
+- Vercel unresolved feedback: 0.
+
+Those gates are now historical review evidence because the Technical Lead added continuity commits after the PASS. They cannot be reused as merge gates.
+
+## 6. Current integration state
+
+The Technical Lead has added:
+
+- independent E5-B2A review document;
+- updated `JETNITY_START_HERE.md`;
+- this updated `docs/ACTIVE_WORK_STATUS.md`.
+
+No runtime code is to change after the reviewed agent head. The resulting new exact branch head must be compared against `4d7e1d...` and fully re-gated.
+
+PR #335 must remain Draft until the final exact-head gates are independently confirmed.
 
 ## 7. Hard non-scope / still inactive
 
 - persistent server-owned timezone/event provenance;
-- Route/Trip→OfficialTemporalAnchor occurrence resolver;
-- E5-A auto-binding;
+- Route/Trip -> OfficialTemporalAnchor occurrence resolver;
+- E5-A automatic binding;
 - workspace deadline/action-window/urgency runtime;
 - task persistence/completion;
 - reminder/push/e-mail/notification runtime;
@@ -117,42 +139,40 @@ No new npm dependency in E5-B2A. If robust DST gap/overlap handling cannot be pr
 
 `requirementsProviderAus()` remains `null`.
 
-## 8. Provenance rule
-
-The abandoned first E5-B1 attempt remains invalid:
-
-- Issue #327 CLOSED / not_planned;
-- PR #328 CLOSED / NOT MERGED.
-
-Binding rule:
+## 8. Binding provenance rule
 
 > **Persisted does not mean provider-proven.**
 
-A later persistent timezone/event provenance layer requires technically enforced server-owned write authority. Production DB/RLS/grant/trigger changes require the special Product-Owner gate.
+Issue #327 remains CLOSED / not_planned; PR #328 remains CLOSED / NOT MERGED. Owner-writable Trip metadata cannot establish provider provenance.
 
-## 9. Traveller/product truth unchanged
+Persistent trusted event/timezone provenance later needs technically enforced server-owned write authority. Production DB/RLS/grant/trigger/write-authority changes trigger the special Product-Owner gate.
+
+## 9. Traveller / product truth unchanged
+
+> **Jetnity = Travel Operating System für die konkrete Reise.**
 
 > **1 Traveller -> multiple citizenships -> multiple travel documents/credentials -> context-dependent evaluated options.**
 
-No default/primary/preferred/chosen passport or citizenship. Issuer Country != Citizenship. No Residence→Nationality inference. No `documents[0]` / `evaluations[0]` as product truth.
+No default/primary/preferred/chosen passport or citizenship. Issuer Country != Citizenship. No Residence -> Nationality inference. No `documents[0]` / `evaluations[0]` as product truth.
 
 Account Registry = reusable current traveller facts.  
 Trip Snapshot = only current truth for a concrete trip.
 
 ## 10. Product-Owner gate assessment
 
-E5-B2A itself triggers no special gate: no Production DB/security change, persistence, provider/secret/paid activation, Auth/MFA/AAL, sensitive data, new running cost or public launch.
-
-STOP if implementation crosses into persistent Trusted Timezone/Event Provenance or Production DB/security.
+No special PO gate is triggered by E5-B2A itself: no Production DB/security change, persistence, provider/secret/paid activation, Auth/MFA/AAL, sensitive data, running cost or public launch.
 
 ## 11. Next action
 
-1. Verify preparation branch differs from current main only by E5-B2A task + TL continuity.
-2. Open dedicated Draft PR linked to #334.
-3. Dispatch fresh agent `Jetnity entry requirements airport event instant 1`.
-4. Agent implements only bounded runtime + tests + STATUS/HANDOFF/SELF_REVIEW.
-5. Agent runs full gates and stops.
-6. Agent does not mark Ready, merge or start follow-up.
-7. Technical Lead independently reviews exact final head and all gates.
+1. read final exact PR head after all TL docs commits;
+2. compare it with reviewed agent head `4d7e1d...` and ensure only TL continuity changed;
+3. verify `main`, merge-base, ahead/behind and PR mergeability;
+4. require fresh exact-head CI/Auth/Vercel and zero unresolved threads;
+5. Ready only after full gate; if known Ready connector bug occurs, use identical non-draft recovery PR;
+6. merge only with expected-head guard;
+7. post-merge main CI + Vercel Production verification;
+8. close #334 / update #294 only after post-merge green;
+9. create/gate/merge docs-only closure checkpoint;
+10. no automatic E5-B2B or follow-up.
 
 **Live-Evidence wins always.**
