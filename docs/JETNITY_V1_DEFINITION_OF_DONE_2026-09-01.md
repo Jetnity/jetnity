@@ -133,10 +133,10 @@ Hard Truth Regeln:
 
 - Admin zeigt reale System-/Security-/Provider-/Kosten-/Incident-Zustände oder ehrlich `unknown/not_configured`.
 - keine Fake-Dashboards oder Demo-KPIs.
-- Affiliate-/Referral-/Booking-Handoffs sind nachvollziehbar.
+- mindestens ein realer Affiliate-/Referral-/Booking-Handoff kann V1 grundsätzlich monetarisieren.
 - Revenue Attribution und Conversion Measurement sind für reale V1-Umsätze ausreichend vorhanden.
 - Cost Guards schützen Provider-/Modelkosten.
-- ein schlanker Premium-/Pro-Scope darf existieren, ist aber nur V1-blockierend, wenn die finale Monetarisierungsentscheidung ihn verlangt.
+- ein erster schlanker **Premium-/Pro-Entitlement-Vertrag** ist definiert und technisch/produktseitig vorbereitet; falls Premium in V1 aktiviert wird, sind Paywall/Entitlement/Consent/Support sauber. Ein komplexes Multi-Tarif-Abo-System ist ausdrücklich kein V1-DoD-Kriterium.
 
 ## 10. Cross-Domain Done
 
