@@ -17,7 +17,8 @@ Geprüft: Evidence Source ≠ Action; explizite Zwecke application/form/appointm
 | Frage | Ergebnis |
 | --- | --- |
 | Wird `sourceUrl` als application/form/appointment erraten? | Nein. `officialAktionAusQuelle` und der Engine-Fallback setzen nur `information`. Visa/eTA/entry_form ohne explizite Action bleiben information. |
-| Reicht eine valide Action-URL ohne Purpose für „Beantragen“? | Nein. Ohne exakten `actionPurpose` entsteht höchstens `information`. |
+| Reicht eine valide Action-URL ohne Purpose für „Beantragen“ oder Information? | Nein. Explizite Action braucht gültigen Purpose **und** gültige `actionUrl`. Sonst wird `actionUrl` nicht umetikettiert; höchstens valide `sourceUrl` darf `information` sein, sonst `null`. |
+| Wird gültige `actionUrl` plus ungültiger/fehlender Purpose zu `information`? | Nein. TL CHANGES REQUIRED auf `febb0196`. Fallback `actionUrl -> information` entfernt. |
 | Wird `Apply now` / `eVisa` / `Application` als Zweck akzeptiert? | Nein. `officialActionPurposeLesen` akzeptiert nur die geschlossene Liste. |
 | Wird HTTP, Credential-URL, localhost/.local oder javascript: zur Action? | Nein. `quelleUrlLesen` verwirft sie. |
 | Können ungültige Action-Metadaten `required` nach `not_required` drehen? | Nein. Action liegt ausserhalb der Trust-Grenze. Resultat bleibt. |
@@ -38,6 +39,8 @@ Geprüft: Evidence Source ≠ Action; explizite Zwecke application/form/appointm
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Autor:** keine in diesem Slice. Lokale Gates am Arbeitsstand: 2877/2877 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel am Exact Head bleiben live zu prüfen.
+TL CHANGES REQUIRED auf `febb0196`: gültige `actionUrl` ohne gültigen Purpose wurde zu `information` umetikettiert. Nachgezogen: `officialAktionAusMetadaten` fällt nur noch auf valide `sourceUrl` zurück.
 
-**Unabhängiger Technical-Lead-Review:** ausstehend. Cursor stoppt hier.
+**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice. Gates am neuen Head erneut ausführen.
+
+**Unabhängiger Technical-Lead-Review:** erneut ausstehend nach diesem Review-Fix.

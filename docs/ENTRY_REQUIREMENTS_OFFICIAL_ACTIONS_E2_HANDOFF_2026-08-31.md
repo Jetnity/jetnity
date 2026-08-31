@@ -29,7 +29,7 @@ Harte Wahrheiten:
 1. `sourceUrl` ist Evidence-/Informationsquelle. Sie wird niemals automatisch application/form/appointment.
 2. Eine konkrete Action braucht strukturierten `actionPurpose` und validierte HTTPS-`actionUrl`.
 3. Zulässige Zwecke: `application`, `form`, `appointment`, `information`. Alles andere wird verworfen.
-4. Fehlt eine explizite Action, darf eine valide `sourceUrl` höchstens `information` werden.
+4. Fehlt eine gültige explizite Action (Purpose + Action-URL), darf nur eine valide `sourceUrl` höchstens `information` werden. Eine `actionUrl` ohne gültigen Purpose wird nicht umetikettiert.
 5. Ungültige Action-Metadaten ändern `required` / `not_required` / `conditional` nicht.
 6. Fail-closed Trust/Freshness/Konflikt/`result ↔ visaMode` löscht riskante Actions.
 7. Actions hängen an derselben OfficialEvaluation / Credential-Option. Kein Default-Pass, keine Default-Citizenship, kein `documents[0]` / `evaluations[0]`.

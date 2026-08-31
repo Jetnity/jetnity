@@ -1,7 +1,7 @@
 # Entry Requirements Official Actions E2 – Status
 
 Stand: 31. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN E3**  
+Status: **REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-GATE / KEIN READY / KEIN MERGE / KEIN E3**  
 Cursor-Agent: **`Jetnity entry requirements official actions 1`**  
 Generation: **1**  
 Cursor-Session/Run-ID: `bc-805154de-4953-44e4-b2f5-8efdfd9af0ec`  
@@ -42,7 +42,7 @@ Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine D
 
 - `OFFICIAL_ACTION_PURPOSES` und `OfficialAction` als `{ kind: 'open_official_action', purpose, href }`
 - Provider-Port: optionale `actionUrl` / `actionPurpose` auf `RequirementsProviderZeile`
-- `officialActionPurposeLesen` / `officialAktionAusMetadaten`: nur exakte Zwecke, gleiche HTTPS-Validierung wie `quelleUrlLesen`
+- `officialActionPurposeLesen` / `officialAktionAusMetadaten`: nur exakte Zwecke plus gültige `actionUrl`; keine Umetikettierung `actionUrl -> information`
 - `officialAktionAusQuelle` bleibt information-only Fallback aus `sourceUrl`
 - Engine übernimmt Actions nur auf dem bestehenden `uebernehmbar`-Pfad; sonst `null`
 - `officialVisaWiderspruchDegradieren` setzt weiterhin `action: null`
@@ -88,7 +88,7 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 ## 6. Risiken / Residuals
 
 - `sourceUrl` ohne explizite Action bleibt eine klickbare `information`-Action auf trusted current Evaluations. Das erhält Presentation-Kompatibilität und ist kein Antrag.
-- Eine valide `actionUrl` ohne gültigen Purpose wird höchstens `information`, nicht application/form/appointment.
+- Ungültige oder unvollständige explizite Action-Metadaten erzeugen keine Action aus `actionUrl`. Höchstens eine valide `sourceUrl` darf `information` bleiben.
 - Unterschiedliche Actions bei gleichem Resultat derselben Credential-Option sind kein semantischer Konflikt (`entscheidungenGleich` vergleicht Actions bewusst nicht). Navigation ist keine Hard Truth.
 - Agent-Self-Review ≠ Technical-Lead-PASS.
 

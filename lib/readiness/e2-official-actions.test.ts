@@ -248,6 +248,82 @@ describe('Entry Requirements E2 – Official Action Contract', () => {
     assert.equal(officialAktionIstRiskant(visa?.action ?? null), false)
   })
 
+  test('valid actionUrl + invalid purpose + sourceUrl null => keine Action', async () => {
+    assert.equal(
+      officialAktionAusMetadaten({
+        actionUrl: 'https://immi.example.test/apply',
+        actionPurpose: 'Apply now',
+        sourceUrl: null,
+      }),
+      null,
+    )
+    const visa = visaCh(
+      await auswerten([
+        zeile({
+          actionPurpose: 'eVisa',
+          actionUrl: 'https://immi.example.test/apply',
+          sourceUrl: null,
+        }),
+      ]),
+    )
+    assert.equal(visa?.action, null)
+    assert.equal(visa?.result, 'required')
+    assert.equal(visa?.status, 'current')
+    assert.equal(visa?.freshness, 'current')
+    assert.notEqual(visa?.result, 'not_required')
+    assert.notEqual(visa?.result, 'unknown')
+  })
+
+  test('valid actionUrl + missing purpose + sourceUrl null => keine Action', async () => {
+    assert.equal(
+      officialAktionAusMetadaten({
+        actionUrl: 'https://immi.example.test/apply',
+        sourceUrl: null,
+      }),
+      null,
+    )
+    const visa = visaCh(
+      await auswerten([
+        zeile({
+          actionUrl: 'https://immi.example.test/apply',
+          sourceUrl: null,
+        }),
+      ]),
+    )
+    assert.equal(visa?.action, null)
+    assert.equal(visa?.result, 'required')
+    assert.equal(visa?.status, 'current')
+    assert.equal(visa?.freshness, 'current')
+    assert.notEqual(visa?.result, 'not_required')
+  })
+
+  test('unvollständige explizite Action + valide sourceUrl bleibt information der sourceUrl', async () => {
+    const ausHelper = officialAktionAusMetadaten({
+      actionPurpose: 'Apply now',
+      actionUrl: 'https://immi.example.test/apply',
+      sourceUrl: 'https://example.test/entry',
+    })
+    assert.equal(ausHelper?.purpose, 'information')
+    assert.equal(ausHelper?.href, 'https://example.test/entry')
+    assert.notEqual(ausHelper?.href, 'https://immi.example.test/apply')
+    const visa = visaCh(
+      await auswerten([
+        zeile({
+          actionPurpose: 'Apply now',
+          actionUrl: 'https://immi.example.test/apply',
+          sourceUrl: 'https://example.test/entry',
+        }),
+      ]),
+    )
+    assert.equal(visa?.action?.purpose, 'information')
+    assert.equal(visa?.action?.href, 'https://example.test/entry')
+    assert.notEqual(visa?.action?.href, 'https://immi.example.test/apply')
+    assert.equal(visa?.evidence.sourceUrl, 'https://example.test/entry')
+    assert.equal(visa?.result, 'required')
+    assert.equal(visa?.status, 'current')
+    assert.equal(visa?.freshness, 'current')
+  })
+
   test('http, Credentials, localhost/.local und malformed URL erzeugen keine Action', () => {
     for (const url of [
       'http://example.test/apply',

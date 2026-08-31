@@ -212,8 +212,10 @@ export function officialAktionAusQuelle(url: unknown): OfficialAction | null {
 
 /**
  * Explizite Action nur aus strukturiertem Zweck plus validierter HTTPS-URL.
- * Ungültiger Purpose oder ungültige Action-URL erzeugt keine riskante Action.
- * Eine valide `sourceUrl` darf höchstens `information` werden.
+ * Ungültige oder unvollständige Action-Metadaten erzeugen keine Action aus
+ * `actionUrl` und etikettieren sie nicht zu `information` um.
+ * Höchstens eine valide `sourceUrl` darf als kompatibler `information`-Fallback
+ * dienen.
  */
 export function officialAktionAusMetadaten(opts: {
   actionUrl?: unknown
@@ -225,9 +227,7 @@ export function officialAktionAusMetadaten(opts: {
   if (purpose && actionHref) {
     return { kind: 'open_official_action', purpose, href: actionHref }
   }
-  const ausQuelle = officialAktionAusQuelle(opts.sourceUrl ?? null)
-  if (ausQuelle) return ausQuelle
-  return officialAktionAusQuelle(actionHref)
+  return officialAktionAusQuelle(opts.sourceUrl ?? null)
 }
 
 export function missingFactsLesen(wert: unknown): MissingFact[] {
