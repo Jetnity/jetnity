@@ -1,7 +1,7 @@
 # Entry Requirements E5-B3A – Server-owned Flight Event Provenance – Handoff
 
 Stand: 31. August 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B3B / KEIN PRODUCTION APPLY**  
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B3B / KEIN PRODUCTION APPLY**  
 Cursor-Agent: **`Jetnity entry requirements event provenance persistence 1`**, Generation 1  
 Session: `bc-e7a50347-1c66-4cd1-bbd2-979b89590a40`  
 Issue: [#338](https://github.com/Jetnity/jetnity/issues/338)  
@@ -32,7 +32,8 @@ Harte Wahrheiten:
 3. Eine Zeile ist genau eine Occurrence: Item × `leg_index` × `segment_index` × `departure|arrival`.
 4. `local_date` / `local_time`, `time_zone` und `event_instant` sind getrennte Fakten.
 5. SQL rechnet keine Zone/DST und hängt kein `Z` an lokale Strings. Instant kommt nur als bereits expliziter RFC3339-`timestamptz` mit Offset/`Z`.
-6. `occurrence_event_ref` wird im Writer erzeugt: `jetnity.flight_event.v1:{trip_item_id}:{leg}:{seg}:{endpoint}:{iata}`. Client-`eventRef` wird rejected.
+6. `occurrence_event_ref` wird im Writer erzeugt: `jetnity.flight_event.v1:{trip_item_id}:{leg}:{seg}:{endpoint}:{iata}`. Client-`eventRef` wird rejected. Das ist eine Jetnity-Occurrence-ID, **keine** Provider-Source-Referenz.
+6a. `external_ref` ist verpflichtend (`NOT NULL`, nonblank 1–200). `provider_belegt=true` ohne konkrete Provider-Referenz ist unmöglich. Fehlendes/leeres `external_ref` wird mit `missing_external_ref` **vor** jedem Snapshot-DELETE abgelehnt.
 7. Authenticated darf SELECT, wenn Owner + Flight-Item matchen. Kein INSERT/UPDATE/DELETE. Kein anon.
 8. EXECUTE nur `jetnity_flight_event_writer` (NOLOGIN). Nicht `anon` / `authenticated` / `service_role`.
 9. Runtime-Gate default `production_write_path_allocated=false` und `allocated_invoker_role=null`. Der Writer wirft `production write path unallocated`, solange das so bleibt.
@@ -74,7 +75,7 @@ Die Diffs von `JETNITY_START_HERE.md` / `docs/ACTIVE_WORK_STATUS.md` / Task gege
 ## origin/main vor Handoff
 
 Erneut gelesen: `origin/main` = `3df9af4d6c3da750d50777706bce03589007a58a`.  
-Merge-Base identisch. Behind: 0. Ahead vor Docs-Commit: 4.
+Merge-Base identisch. Behind: 0. Ahead vor diesem Docs-Commit: 6. P2-Fix-Head: `f918dc0e...`. Früherer Review-Head `79dda759...` ist historische Evidence.
 
 Kompletter Diff gegen `origin/main` (Namen):
 

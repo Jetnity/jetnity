@@ -5,12 +5,13 @@ Autor-Agent: **`Jetnity entry requirements event provenance persistence 1`**, Ge
 Session: `bc-e7a50347-1c66-4cd1-bbd2-979b89590a40`  
 Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
-Implementation-Head dieser Review-Runde: `2115fe1703e47bf9d21aba463d5e52d29a71ff9a`  
+Geprüfter vorheriger TL-Head: `79dda7593bb9fbb20c36dc54348920e994da6823`  
+P2-Fix-Head dieser Review-Runde: `f918dc0ed58b4962389a860d5a1b6bf74513cd1b`  
 Docs-Commit danach erzeugt einen neuen Head. Alte Exact-Head-Evidence verfällt dann.
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: Issue #338 / E5-B3A repository-only Flight-Event-Provenance auf Draft-PR #340.
+Auftrag: Issue #338 / E5-B3A repository-only Flight-Event-Provenance auf Draft-PR #340, plus enger P2-Fix aus TL CHANGES REQUIRED: verpflichtende konkrete `external_ref`.
 
 Geänderte Agent-Dateien gegenüber Pre-agent-Head `8fec368c`:
 
@@ -24,6 +25,7 @@ Geprüft:
 - Occurrence-Identität Item × Leg × Segment × Endpoint kann nicht kollabieren
 - lokale Wanduhr, IANA-Zone und Instant getrennt
 - Event-Ref nur serverseitig
+- `external_ref` Pflicht; `provider_belegt=true` ohne konkrete Provider-Referenz unmöglich
 - Owner-Read, kein Direct-Write, kein anon
 - privater SECURITY-DEFINER-Writer, `search_path=''`, NOLOGIN-Rollen
 - Runtime-Gate default false/unallocated und im Writer erzwungen
@@ -48,6 +50,7 @@ Traveller-Context-Intelligence: für diesen Slice **nicht relevant**. Es werden 
 | Werden lokale Zeit und Instant vermischt? | Nein. `local_date`/`local_time` vs `time_zone` vs `event_instant`. Kein `AT TIME ZONE`, kein `\|\| 'Z'`. |
 | Wird Zone aus IATA/Land/Stadt geraten? | Nein. Kein `airports`-Join, kein `flug_route_punkt_aus_iata`. Zone nur Syntaxgrenze. |
 | Kann ein Client `eventRef` als Provenance adeln? | Nein. Top-level und Occurrence-Keys `eventRef`/`event_ref`/`occurrence_event_ref` werden rejected. Ref wird nur aus Item+Identity+IATA gemintet. |
+| Kann `provider_belegt=true` ohne konkrete Provider-Referenz persistieren? | Nein. `external_ref text not null` + nonblank-Check + `provider_source_ref`. Writer wirft `missing_external_ref` vor jedem DELETE. `occurrence_event_ref` zählt nicht als Source-Referenz. |
 | Kann authenticated/anon direkt schreiben? | Nein. Revoke ALL, nur SELECT an authenticated, keine Write-Policy. |
 | Ist der Writer PostgREST-erreichbar? | Nein. `jetnity_internal` nicht in `[api].schemas`. EXECUTE nur NOLOGIN-Writer. |
 | Ist Production-Runtime schon allokiert? | Nein. Gate-Insert `false`/`null`. Writer wirft `production write path unallocated`. |
@@ -79,11 +82,13 @@ Technisch erzwungen, nicht nur kommentiert:
 - Writer baut `jetnity.flight_event.v1:{trip_item_id}:{leg_index}:{segment_index}:{endpoint}:{iata}`.
 - Unique-Constraint auf `occurrence_event_ref`.
 - Die Ref ist damit an dieselbe Identität gebunden, die E5-B1R/E5-B2A ephemeral schon tragen, und später als E5-A-`eventRef` verwendbar.
+- `occurrence_event_ref` ist **keine** Provider-Source-Referenz.
+- Konkrete Provider-Belegreferenz ist `external_ref` (analog `FlugOption.externalRef`): `NOT NULL`, nonblank 1–200, Writer-fail-closed vor Snapshot-Replacement.
 - Eine bloße persistierte Zeichenkette gilt trotzdem nicht als Provider-Beweis, solange der Write-Pfad nicht server-owned und gegatet ist.
 
 ## 5. Atomare Snapshot-Semantik
 
-In derselben Funktion, nach vollständiger Validierung:
+In derselben Funktion, nach vollständiger Validierung inklusive `external_ref`:
 
 1. `DELETE FROM public.trip_item_flight_event_provenance WHERE trip_item_id = _item.id`
 2. INSERT des neuen Satzes
@@ -125,6 +130,6 @@ Diese Session hat Production-Supabase **nicht** live abgefragt. Der Pre-Cut-Read
 
 ## 9. Urteil des Autors
 
-Scope-treue Repository-Foundation + Mandatory-Contract-Tests + lokale Gates grün: `npm test` 3004/3004, Typecheck, Lint 0/137, Production-Build, Hygiene. `origin/main` unverändert `3df9af4d...`, 0 behind.
+P2-Fix scope-treu: `external_ref` ist jetzt die verpflichtende Provider-Source-Referenz. Lokale Gates auf `f918dc0e...` grün: `npm test` 3005/3005, Typecheck, Lint 0/137, Production-Build, Hygiene. `origin/main` unverändert `3df9af4d...`, 0 behind.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend auf dem **finalen** Head. PR bleibt Draft. Kein Ready, kein Merge, kein Production-Apply, kein E5-B3B.
