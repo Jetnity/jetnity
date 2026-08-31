@@ -1,9 +1,9 @@
 # Entry Requirements Temporal Projection E5-A – Status
 
 Stand: 31. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B**  
+Status: **TL CHANGES REQUIRED BEHOBEN / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B**  
 Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**  
-Generation: **1**  
+Generation: **1** (gleiche Session, kein neuer Slice)  
 Cursor-Session/Run-ID: `bc-01a057e1-e45f-79d8-a828-97be0e060415`  
 Issue: [#323](https://github.com/Jetnity/jetnity/issues/323)  
 Branch: `feat/entry-requirements-temporal-projection-e5a-2026-08-31`  
@@ -15,7 +15,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 ## 1. Arbeitsblock / Ziel
 
-Kleinster provider-neutraler Folgeschritt nach E4 / R1:
+Kleinster provider-neutraler Folgeschritt nach E4 / R1, plus enger TL-Review-Fix:
 
 1. Reiner Next-freier Projektions-Core auf bestehenden E4-Typen
 2. nur explizit gebundene absolute `Z`- oder Offset-Instants
@@ -23,6 +23,7 @@ Kleinster provider-neutraler Folgeschritt nach E4 / R1:
 4. Partial fail-closed: `missing_anchor`, `invalid_instant`, `invalid_projected_window`
 5. Cross-Anchor-Fenster erst nach beiden projizierten Instants; unmöglich → kein Action Window
 6. `eventRef` bleibt Provenance; keine Occurrence-/Country-Auswahl
+7. **Review-Fix:** leere/ungültige Regeln liefern pro Aufruf eine frische Projection; kein gemeinsam mutierbares Modul-Singleton
 
 Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine Deadline-UI, keine Task-/Reminder-Runtime. Factory bleibt `null`.
 
@@ -32,20 +33,31 @@ Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine D
 | --- | --- |
 | Task-Start-Head | `4e1af2fcd8ecc0ac147fd7b8eb6f19326f40ffc7` |
 | Task-Baseline | `main@1600767be5ec87961e1d5b5e10c4bcc2f6eb51aa` |
-| Implementierungs-Commit | `631f992e9a18584476bb1c19f9ce2b57781da267` |
+| `origin/main` vor diesem Handoff | `1600767be5ec87961e1d5b5e10c4bcc2f6eb51aa` (0 behind, unverändert) |
+| Vorheriger TL-Review-Head | `ae091777e5aec0d5a0b6baf8b28a5ce1234c967d` — **CHANGES REQUIRED** (Kommentar `5478873885`) |
+| Purity-Fix-Commit | `85aef5e2673bc06f0e6d7cb76d91aeeadf47e590` |
 | Finaler Branch-Tip | **nicht** im Tree self-embedded; live nach Push im PR |
 | Draft-PR | #324 bleibt Draft |
 | `docs/ACTIVE_WORK_STATUS.md` | nicht angefasst (Technical-Lead-owned) |
 | `JETNITY_START_HERE.md` | nicht angefasst |
+
+Alle Gates auf `ae091777...` sind historisch und zählen nicht für den neuen Head.
 
 ## 3. Bereits umgesetzt
 
 - `lib/readiness/temporal-projection.ts`: Instant-Parser nur für `Z` / `±HH:MM`, UTC-Normalisierung, Anchor-genaue Bindings, Partial Issues, Action Window
 - E4-Typen (`OfficialTemporalRule`, Anchors, Punkte, `dueBy`-Semantik) werden importiert, nicht kopiert
 - Safety-/Flight-/Route-Domain bleiben ungekoppelt; zonenlose `YYYY-MM-DDTHH:mm` wird nicht als UTC gelesen
-- Gezielte Tests in `lib/readiness/e5a-temporal-projection.test.ts` (16 Fälle inkl. Pflicht- und Adversarial-Fälle)
-- ADR-0206 und knapper `ARCHITECTURE.md`-Nachzug
+- Gezielte Tests in `lib/readiness/e5a-temporal-projection.test.ts` (17 Fälle inkl. Pflicht-, Adversarial- und Isolation-Regression)
+- ADR-0206 und knapper `ARCHITECTURE.md`-Nachzug (unverändert in diesem Fix)
 - `requirementsProviderAus()` bleibt `null`
+
+### TL-Review-Fix (Kommentar `5478873885`)
+
+- `const LEERE_PROJEKTION = { ..., issues: [] }` entfernt
+- `leereProjektion()` erzeugt pro Aufruf ein neues Objekt
+- Regression: zwei leere Projektionen teilen keine Referenz; Mutation eines früheren Ergebnisses kontaminiert spätere Aufrufe nicht
+- Quelltext-Guard: Identifier `LEERE_PROJEKTION` darf nicht zurückkehren
 
 ## 4. Nicht umgesetzt / bewusst nicht angefasst
 
@@ -61,16 +73,17 @@ Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine D
 - Credential-Ranking / „bester Pass“
 - `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`
 - E5-B / Folgeslice
+- Keine neue Generation, kein neuer Scope über den Purity-Fix hinaus
 
 ## 5. Tests / CI / Preview
 
-Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip geprüft werden.
+Lokale Evidence dieses Agenten auf dem Purity-Fix plus diesem Status-Commit; Exact-Head-Gates müssen live am finalen Tip geprüft werden.
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/readiness/e5a-temporal-projection.test.ts` | **16/16 pass** |
+| `lib/readiness/e5a-temporal-projection.test.ts` | **17/17 pass** (inkl. Cross-Call-Isolation) |
 | `lib/readiness/e4-temporal-rules.test.ts` | **17/17 pass** |
-| `npm test` | **2944/2944 pass** |
+| `npm test` | **2945/2945 pass** |
 | `npm run typecheck` | pass |
 | `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |
@@ -83,8 +96,9 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 - Ohne späteren Resolver gibt es keine automatische Trip→Event-Bindung. Das ist der Slice-Zweck, nicht ein Defekt.
 - `actionWindow` ist die einzige Fenster-Wahrheit. Bei `invalid_projected_window` bleiben die einzeln gerechneten Punkte zur Provenance sichtbar, das Fenster selbst ist `null`.
 - Safety-`isoZeitLesen` wurde bewusst nicht wiederverwendet: nur `Z`, Safety-Domäne, Task verbietet die Kopplung.
+- Erfolgreiche Projektionen bleiben gewöhnliche mutable Objects. Der Fix gilt für den früher geteilten leeren Pfad; Aufrufer sollten Ergebnisse nicht mutieren.
 - Agent-Self-Review ≠ Technical-Lead-PASS.
 
 ## 7. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #324. Nicht Ready. Nicht mergen. Kein E5-B.
+Unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #324 auf dem **neuen** Head. Nicht Ready. Nicht mergen. Kein E5-B.
