@@ -17,6 +17,7 @@ import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import type { TravellerDocumentType, TripTraveller } from '@/types/trips'
 
 const OFFICIAL_PRAESENTATION_GRUPPEN = [
+  'noch_nicht_pruefbar',
   'vor_abreise',
   'dokument_pruefen',
   'bei_einreise_vor_ort',
@@ -27,6 +28,7 @@ const OFFICIAL_PRAESENTATION_GRUPPEN = [
 export type OfficialPresentationGruppe = (typeof OFFICIAL_PRAESENTATION_GRUPPEN)[number]
 
 export const OFFICIAL_PRAESENTATION_GRUPPE_TITEL: Record<OfficialPresentationGruppe, string> = {
+  noch_nicht_pruefbar: 'Noch nicht prüfbar',
   vor_abreise: 'Vor Abreise erledigen',
   dokument_pruefen: 'Dokument prüfen',
   bei_einreise_vor_ort: 'Bei Einreise / vor Ort',
@@ -34,6 +36,8 @@ export const OFFICIAL_PRAESENTATION_GRUPPE_TITEL: Record<OfficialPresentationGru
   route_transit: 'Route / Transit',
   weitere: 'Weitere offizielle Anforderungen',
 }
+
+export const OFFICIAL_PLACEHOLDER_BLOCK_TITEL = 'Einreiseanforderungen noch nicht prüfbar'
 
 const DOKUMENT_TYP_BEZEICHNUNG: Record<TravellerDocumentType, string> = {
   passport: 'Reisepass',
@@ -56,7 +60,7 @@ export type OfficialChecklistSlot = {
 export type OfficialChecklistEintrag = {
   scopeKey: string
   gruppe: OfficialPresentationGruppe
-  requirementType: OfficialEvaluation['requirementType']
+  requirementType: OfficialEvaluation['requirementType'] | null
   visaMode: OfficialEvaluation['visaMode']
   result: OfficialEvaluation['result']
   status: OfficialEvaluation['status']
@@ -71,6 +75,7 @@ export type OfficialChecklistEintrag = {
   freshnessText: string
   timingTexte: string[]
   aktionen: OfficialPresentationAction[]
+  kompakt: boolean
 }
 
 export type OfficialChecklistGruppe = {
@@ -91,6 +96,41 @@ export function officialEvaluationScopeKey(evaluation: OfficialEvaluation): stri
     evaluation.transitCountryCode ?? '',
     evaluation.requirementType,
   ].join('|')
+}
+
+function officialPlaceholderScopeKey(
+  evaluation: Pick<
+    OfficialEvaluation,
+    'travellerClientRef' | 'credentialOptionRef' | 'destinationCountryCode' | 'transitCountryCode'
+  >,
+): string {
+  return [
+    evaluation.travellerClientRef ?? '',
+    evaluation.credentialOptionRef ?? '',
+    evaluation.destinationCountryCode ?? '',
+    evaluation.transitCountryCode ?? '',
+  ].join('|')
+}
+
+export function officialZeileIstReinerPlaceholder(evaluation: OfficialEvaluation): boolean {
+  if (evaluation.result !== 'unknown') return false
+  if (officialZeileIstAktuell(evaluation)) return false
+  if (evaluation.freshness === 'stale' || evaluation.freshness === 'recheck_needed') return false
+  if (evaluation.action) return false
+  if (evaluation.temporalRule) return false
+  if (evaluation.visaMode && evaluation.visaMode !== 'unknown') return false
+  if (evaluation.officialClass !== 'unknown') return false
+  if (evaluation.optionEligibility && evaluation.optionEligibility !== 'unknown') return false
+  if (evaluation.optionMandate && evaluation.optionMandate !== 'unknown') return false
+  const evidence = evaluation.evidence
+  if (evidence.authority) return false
+  if (evidence.provider) return false
+  if (evidence.sourceUrl) return false
+  if (evidence.checkedAt) return false
+  if (evidence.ruleReference) return false
+  if (evidence.validFrom) return false
+  if (evidence.validUntil) return false
+  return true
 }
 
 export function officialPresentationGruppe(evaluation: OfficialEvaluation): OfficialPresentationGruppe {
@@ -250,6 +290,68 @@ function eintragAus(
     freshnessText: officialFreshnessText(evaluation.freshness),
     timingTexte: officialZeileIstAktuell(evaluation) ? officialTemporalTexte(evaluation.temporalRule) : [],
     aktionen: officialPresentationAktionen(evaluation),
+    kompakt: false,
+  }
+}
+
+function placeholderZusammenfassen(
+  evaluations: readonly OfficialEvaluation[],
+): OfficialEvaluation {
+  const sortiert = [...evaluations].sort((links, rechts) =>
+    officialEvaluationScopeKey(links).localeCompare(officialEvaluationScopeKey(rechts)),
+  )
+  const vertreter = sortiert.find(() => true)
+  if (!vertreter) {
+    throw new Error('official placeholder group without evaluations')
+  }
+  const missingFacts = [...new Set(sortiert.flatMap((eintrag) => eintrag.missingFacts))].sort((links, rechts) =>
+    links.localeCompare(rechts),
+  )
+  const status = sortiert.some((eintrag) => eintrag.status === 'insufficient_context')
+    ? 'insufficient_context'
+    : vertreter.status
+  const freshness = sortiert.some((eintrag) => eintrag.freshness === 'source_temporarily_unavailable')
+    ? 'source_temporarily_unavailable'
+    : sortiert.some((eintrag) => eintrag.freshness === 'provider_unavailable')
+      ? 'provider_unavailable'
+      : vertreter.freshness
+  return {
+    ...vertreter,
+    result: 'unknown',
+    status,
+    freshness,
+    missingFacts,
+    visaMode: null,
+    action: null,
+    temporalRule: null,
+  }
+}
+
+function kompaktEintragAus(
+  evaluations: readonly OfficialEvaluation[],
+  party: readonly TripTraveller[],
+  slots: readonly OfficialChecklistSlot[],
+): OfficialChecklistEintrag {
+  const zusammengefasst = placeholderZusammenfassen(evaluations)
+  return {
+    scopeKey: officialPlaceholderScopeKey(zusammengefasst),
+    gruppe: 'noch_nicht_pruefbar',
+    requirementType: null,
+    visaMode: null,
+    result: 'unknown',
+    status: zusammengefasst.status,
+    freshness: zusammengefasst.freshness,
+    titel: OFFICIAL_PLACEHOLDER_BLOCK_TITEL,
+    travellerLabel: officialTravellerAnzeige(zusammengefasst.travellerClientRef, slots),
+    credentialLabel: officialCredentialLabel(zusammengefasst, party),
+    ortText: officialOrtText(zusammengefasst),
+    ergebnisText: officialZeileErgebnisText(zusammengefasst),
+    authorityText: null,
+    pruefzeitText: null,
+    freshnessText: officialFreshnessText(zusammengefasst.freshness),
+    timingTexte: [],
+    aktionen: [],
+    kompakt: true,
   }
 }
 
@@ -258,11 +360,31 @@ export function officialChecklist(opts: {
   party: readonly TripTraveller[]
   slots: readonly OfficialChecklistSlot[]
 }): OfficialChecklistGruppe[] {
+  const konkret: OfficialEvaluation[] = []
+  const placeholderNachScope = new Map<string, OfficialEvaluation[]>()
   const sortiert = [...opts.evaluations].sort((links, rechts) =>
     officialEvaluationScopeKey(links).localeCompare(officialEvaluationScopeKey(rechts)),
   )
-  const nachGruppe = new Map<OfficialPresentationGruppe, OfficialChecklistEintrag[]>()
   for (const evaluation of sortiert) {
+    if (officialZeileIstReinerPlaceholder(evaluation)) {
+      const key = officialPlaceholderScopeKey(evaluation)
+      const liste = placeholderNachScope.get(key) ?? []
+      liste.push(evaluation)
+      placeholderNachScope.set(key, liste)
+      continue
+    }
+    konkret.push(evaluation)
+  }
+
+  const nachGruppe = new Map<OfficialPresentationGruppe, OfficialChecklistEintrag[]>()
+  const kompaktSortiert = [...placeholderNachScope.entries()].sort(([links], [rechts]) => links.localeCompare(rechts))
+  if (kompaktSortiert.length > 0) {
+    nachGruppe.set(
+      'noch_nicht_pruefbar',
+      kompaktSortiert.map(([, gruppe]) => kompaktEintragAus(gruppe, opts.party, opts.slots)),
+    )
+  }
+  for (const evaluation of konkret) {
     const eintrag = eintragAus(evaluation, opts.party, opts.slots)
     const liste = nachGruppe.get(eintrag.gruppe) ?? []
     liste.push(eintrag)
