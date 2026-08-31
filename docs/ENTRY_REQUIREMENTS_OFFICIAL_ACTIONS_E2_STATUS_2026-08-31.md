@@ -33,6 +33,7 @@ Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine D
 | --- | --- |
 | Task-Start-Head | `666756a5a8a8f55e1eb39e7128ef9c526f44e26e` |
 | Task-Baseline | `main@a57a15a6c8011ea81af1a228a2fd0c3e6e0853b9` |
+| Main-Sync | `main@2f258af3c4ed6cfdb85f3fcc2f3765333a8b7453` enthalten |
 | Finaler Branch-Tip | **nicht** im Tree self-embedded; live nach Push im PR |
 | Draft-PR | #307 bleibt Draft |
 | `docs/ACTIVE_WORK_STATUS.md` | nicht angefasst (Technical-Lead-owned) |
@@ -73,11 +74,11 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/readiness/e2-official-actions.test.ts` | **19/19 pass** |
+| `lib/readiness/e2-official-actions.test.ts` | **22/22 pass** (inkl. TL-Review-Fix: kein `actionUrl -> information`) |
 | `lib/readiness/e1-detail-contract.test.ts` | pass (E1 result↔visaMode unverändert) |
 | `lib/readiness/bezeichnungen.test.ts` | pass |
 | `lib/readiness/engine.test.ts` | pass (source-only Action ist jetzt `information`) |
-| `npm test` | **2877/2877 pass** |
+| `npm test` | **2880/2880 pass** |
 | `npm run typecheck` | pass |
 | `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |

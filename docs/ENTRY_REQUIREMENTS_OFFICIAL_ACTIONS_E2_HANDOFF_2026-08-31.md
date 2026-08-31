@@ -51,7 +51,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Lokale Gates dieses Agenten: `npm test` 2877/2877, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
+- Review-Fix + Main-Sync `2f258af3`. Lokale Gates: `npm test` 2880/2880, Typecheck, Lint 0/137, Production-Build. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Beweis; Slice ist domainseitig.
 - `information` aus `sourceUrl` ist bewusst kompatibel, nicht „Beantragen“.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
