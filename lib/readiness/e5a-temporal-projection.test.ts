@@ -468,6 +468,60 @@ describe('Entry Requirements E5-A temporal projection', () => {
     assert.ok(a.actionWindow)
   })
 
+  test('leere Projektionen teilen keine mutierbare Referenz zwischen Aufrufen', () => {
+    const erste = temporalRuleProjizieren(null, {})
+    const zweite = temporalRuleProjizieren(undefined, {})
+    const dritte = temporalRuleProjizieren(
+      { kind: OFFICIAL_TEMPORAL_KIND, availableFrom: null, dueBy: null },
+      {},
+    )
+
+    assert.notEqual(erste, zweite)
+    assert.notEqual(erste, dritte)
+    assert.notEqual(zweite, dritte)
+    assert.notEqual(erste.issues, zweite.issues)
+    assert.notEqual(erste.issues, dritte.issues)
+    assert.notEqual(zweite.issues, dritte.issues)
+
+    erste.issues.push({
+      side: 'window',
+      issue: 'invalid_projected_window',
+      anchor: null,
+      eventRef: null,
+    })
+    erste.availableFrom = {
+      instant: '2026-10-10T12:00:00.000Z',
+      anchor: 'destination_arrival',
+      eventRef: 'mutated-empty',
+    }
+    erste.actionWindow = {
+      availableFrom: erste.availableFrom,
+      dueBy: null,
+    }
+
+    const danach = temporalRuleProjizieren(null, {})
+    assert.notEqual(danach, erste)
+    assert.notEqual(danach.issues, erste.issues)
+    assert.deepEqual(danach, {
+      availableFrom: null,
+      dueBy: null,
+      actionWindow: null,
+      issues: [],
+    })
+    assert.deepEqual(zweite, {
+      availableFrom: null,
+      dueBy: null,
+      actionWindow: null,
+      issues: [],
+    })
+    assert.deepEqual(dritte, {
+      availableFrom: null,
+      dueBy: null,
+      actionWindow: null,
+      issues: [],
+    })
+  })
+
   test('13/14. E4-Invarianten und Factory bleiben unangetastet', () => {
     assert.equal(requirementsProviderAus(), null)
     assert.deepEqual([...OFFICIAL_TEMPORAL_PROJECTION_ISSUES], [
@@ -488,6 +542,8 @@ describe('Entry Requirements E5-A temporal projection', () => {
     assert.equal(core.includes('documents[0]'), false)
     assert.equal(core.includes('evaluations[0]'), false)
     assert.equal(core.includes('countryCode'), false)
+    assert.equal(core.includes('LEERE_PROJEKTION'), false)
+    assert.match(core, /function leereProjektion\(/)
     assert.doesNotMatch(core, /\$\{[^}]*\}:00\.000Z/)
     assert.match(temporal, /Kein Timestamp, keine Notification/)
   })

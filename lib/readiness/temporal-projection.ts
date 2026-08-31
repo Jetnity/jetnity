@@ -63,11 +63,14 @@ export type OfficialTemporalProjection = {
   issues: OfficialTemporalProjectionIssueEintrag[]
 }
 
-const LEERE_PROJEKTION: OfficialTemporalProjection = {
-  availableFrom: null,
-  dueBy: null,
-  actionWindow: null,
-  issues: [],
+/** Frische leere Projection pro Aufruf. Kein gemeinsam mutierbares Modul-Singleton. */
+function leereProjektion(): OfficialTemporalProjection {
+  return {
+    availableFrom: null,
+    dueBy: null,
+    actionWindow: null,
+    issues: [],
+  }
 }
 
 const ABSOLUTER_INSTANT =
@@ -242,8 +245,8 @@ export function temporalRuleProjizieren(
   regel: OfficialTemporalRule | null | undefined,
   bindings: OfficialTemporalEventBindings,
 ): OfficialTemporalProjection {
-  if (!regel || regel.kind !== OFFICIAL_TEMPORAL_KIND) return LEERE_PROJEKTION
-  if (!regel.availableFrom && !regel.dueBy) return LEERE_PROJEKTION
+  if (!regel || regel.kind !== OFFICIAL_TEMPORAL_KIND) return leereProjektion()
+  if (!regel.availableFrom && !regel.dueBy) return leereProjektion()
 
   const issues: OfficialTemporalProjectionIssueEintrag[] = []
   let availableFrom: OfficialTemporalProjectedPunkt | null = null
