@@ -1,150 +1,150 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PROVIDER ACTIVATION READINESS PRECHECK CLOSED & POST-MERGE VERIFIED / NO ACTIVE FOLLOW-UP IMPLEMENTATION / S6 NEXT CANDIDATE NOT STARTED / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / THREE-PHASE STRATEGY INTEGRATION / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE WINS**
 
-> **Audit first. Reuse before add. Integrate before duplicate. Persisted does not mean provider-proven. Sandbox does not mean live truth.**
+> **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
 > Jeder neue Head invalidiert ältere Exact-Head-Gates. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen.
 
-## 1. Zuerst lesen
+## 1. Für Produktphase und V1-Scope zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_ACTIVATION_READINESS_PRECHECK_CLOSED_2026-09-01.md` ← **aktuellster Closure-/Continuity-Checkpoint**
-2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_ACTIVATION_READINESS_PRECHECK_REVIEW_2026-09-01.md`
-4. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_HANDOFF_2026-09-01.md`
-5. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_STATUS_2026-09-01.md`
-6. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_RECOMMENDATION_2026-09-01.md`
-7. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_NEXT_SLICE_2026-09-01.md`
-8. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_GATE_MATRIX_2026-09-01.md`
-9. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_CANDIDATE_MATRIX_2026-09-01.md`
-10. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_EVIDENCE_2026-09-01.md`
-11. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-12. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
-13. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_CLOSED_2026-08-31.md`
-14. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
-15. `JETNITY_HANDOFF.md`
+1. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+2. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+3. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+4. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+5. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+6. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+7. `docs/JETNITY_THREE_PHASE_STRATEGY_RECONCILIATION_2026-09-01.md`
+8. `docs/ACTIVE_WORK_STATUS.md`
 
-Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Migration-/Persistenzfragen zusätzlich Supabase Production read-only prüfen.
+Danach für dauerhafte Produkt-/Technologiegrundsätze:
 
-## 2. Current verified main
+9. `JETNITY_PRODUCT_MANDATE.md`
+10. `JETNITY_VISION.md`
+11. `docs/PRODUCT_QUALITY_STANDARD.md`
+12. `docs/LOGIC_STANDARD.md`
+13. `ARCHITECTURE.md`
+14. `DECISIONS.md`
+15. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+16. `JETNITY_HANDOFF.md`
 
-Provider Activation Readiness Precheck runtime/continuity merge:
+Fachlich relevante aktuelle Handoffs/Reconciliations zusätzlich nach Workstream lesen.
 
-`main@15538630fff170f53fc0e9edb60012a769f83e4d`
+## 2. Product-Owner binding product phases
+
+### Phase 1 – JETNITY CORE — **CURRENT**
+
+Die konkrete Reise zuverlässig planbar und reisebereit machen.
+
+V1 wird nach Phase 1 veröffentlicht, aber erst wenn:
+
+> **PRODUCTION READY FOR REAL TRAVELLERS.**
+
+Feature Complete allein reicht nicht.
+
+### Phase 2 – JETNITY COMPLETE TRAVEL PLATFORM
+
+Breitere Providerlandschaft, tiefere Reiseentscheidungen, Advanced Companion, Destination Intelligence, Personalisierung, Admin/Ops Pro, Monetarisierungs- und Growth-Breite.
+
+### Phase 3 – JETNITY TRAVEL ECOSYSTEM
+
+Native Apps, Traveller Network, Creator/Partner Ecosystem, eigene Data Assets/Intelligence und geordnete internationale Skalierung.
+
+## 3. Current verified baseline before strategy integration
+
+`main@6891cab6b204e6e6093a7002d7cad9b4afc692cc`
 
 Commit:
 
-`Merge Provider Activation Readiness Precheck (#355)`
+`Close Provider Activation Readiness Precheck continuity (#356)`
 
-Post-merge evidence on exact merge SHA:
+Verified:
 
-- Main CI #1560 / Run `33449440321`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_6WQJRXRoFp6eAPJjWEPF1GSLLFvD`: **READY**;
-- Issue #351: **CLOSED / completed**.
+- Main CI #1562 / Run `33450057614`: **SUCCESS**;
+- Provider Activation Readiness Precheck: **CLOSED & POST-MERGE VERIFIED**;
+- no active runtime slice;
+- no provider activated;
+- S6 was the next identified Provider Readiness candidate only, **not started**.
 
-This docs-only closure may advance canonical main after its own merge. Always read live `main` rather than assuming the SHA above remains the tip.
+Always fetch live `main` before work. The SHA above is evidence for the start of the strategy integration, not permission to assume it stays current.
 
-## 3. Provider Activation Readiness Precheck – final history
+## 4. Current planning carrier
 
 Issue:
 
-**#351 – CLOSED / completed**
+**#357 – Jetnity 3-Phase Product Strategy – V1 scope, Definition of Done and Release Readiness**
 
-Original Draft PR:
+Branch:
 
-**#354 – CLOSED / NOT MERGED** due the known connected GitHub Ready mutation error `Repository.fullDatabaseId`.
+`docs/jetnity-three-phase-v1-strategy-2026-09-01`
 
-Recovery PR:
+Type:
 
-**#355 – MERGED** from exact same final branch head `d45cf6679005ab5d45401d5eeb39a47c8c3e6884`.
+**docs-only Product-Owner/Technical-Lead strategy integration.**
 
-Logical Cursor agent:
+No Cursor runtime agent. No S6/runtime start from this branch.
 
-**`Jetnity provider activation readiness precheck 1`**, Generation 1
+## 5. V1 scope hierarchy
 
-Cursor session:
+If older `ROADMAP.md`, `JETNITY_BINDING_BUILD_ORDER.md` or historical technical “Phase 1/2/3” labels conflict about **what must be finished before V1**, use ADR-0204 and the new V1 strategy/build-order documents first.
 
-`bc-d1b4e6bb-c952-4242-ba57-384783bc23ea`
+Do **not** discard their technical/historical evidence. Real dependencies remain binding.
 
-Initial agent head:
+In particular:
 
-`43bb98762ed00bc0293e5b4df5566a4e25c3d865` → **CHANGES REQUIRED**.
+- Provider Readiness S4–S8 remains required before real provider-live paths unless a later explicit PO decision changes it;
+- correct Account/Traveller/Trip/Provider/Admin foundations are reused, not rebuilt;
+- broad Admin/Growth/Native/Social/Creator/Marketplace scope is not automatically V1-blocking;
+- Native Apps are Phase 3;
+- Switzerland is the first controlled public market.
 
-Same-session review-fix head:
+## 6. Hard product truth
 
-`997fca395cef8fe44a4198a1b313e28364d83723` → **independent Technical-Lead PASS**.
+Traveller:
 
-No new agent or generation was used for the review-fix or recovery.
+> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
-## 4. Canonical conclusions
+Never infer:
 
-### Sandbox truth
+- default/primary/preferred Citizenship;
+- default/primary/preferred Passport;
+- `documents[0]` / `evaluations[0]` as truth;
+- Residence → Citizenship;
+- Issuer Country → Citizenship.
 
-Duffel test/sandbox prices are **not** real Commercial Truth and must not mint S5-A `live_api` under the current contract.
+Truth classes:
 
-A future sandbox harness may test transport/mapping/timeout/expiry mechanics only. It cannot satisfy the real commercial snapshot gate and cannot unlock TW-8.
+> **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
 
-### Binding Provider Readiness order
+`unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
 
-The Product-Owner binding order remains:
+## 7. Product-Owner gates
 
-**Provider Readiness S4–S8 → then real providers.**
+Explicit Product-Owner approval remains required before relevant:
 
-No sequencing exception has been inferred or granted.
-
-The serial Provider Readiness graph identifies **S6 – Persistent Cost Guard** as the next implementation candidate after S5. **S6 is not active and has not been started.**
-
-Residual S4 remains open. S7 remains open. S8 remains open. All required S4–S8 work must be closed before real-provider activation unless the Product Owner explicitly changes the binding order.
-
-### First later real Commercial Truth path
-
-Preferred domain: **Flights**.
-
-The live vendor remains undecided. Duffel live, Skyscanner or another qualified real-price source requires separate partner/commercial/licensing/DPA/cost/security decisions and gates.
-
-### Server state
-
-Process-local/Vercel memory is not a valid cross-request Nachweis store. Any zero-persistence proof must stay within one server-side invocation. Cross-request state requires a durable server-side store in a separate gated architecture slice.
-
-### Viator
-
-Viator Basic supports real-time schedule retrieval for a selected product but not booking-grade `/availability/check`. Activities remain a later candidate rather than the first Commercial Truth domain.
-
-## 5. Production / Product-Owner boundary
-
-Fresh read-only Production evidence remained:
-
-- commercial provenance rows = **0**;
-- `production_write_path_allocated = false`;
-- Production Flight Event Provenance remains absent/unapplied.
-
-This precheck did **not** activate a provider, create/read a secret, make paid/live vendor calls, mutate Production, allocate a writer, or start TW-8/TW-9.
-
-Explicit Product-Owner approval remains required before:
-
-- provider signup / contract / DPA acceptance;
-- API key/token/secret creation or storage;
+- provider choice/contract/DPA;
+- API keys/secrets;
 - paid/live provider calls;
 - Production provider activation;
-- Production schema/RLS/grant/role/function mutation;
-- runtime/login writer principal allocation;
-- real application writer/backfill;
-- TW-8/TW-9 runtime;
-- public/irreversible provider-live activation;
-- sensitive Traveller/document changes;
-- spend outside approved limits.
+- Production DB/security mutations and writer allocation;
+- fundamental Auth/MFA/AAL changes;
+- sensitive document/MRZ/scan/biometric/health storage;
+- real payments;
+- spend outside approved limits;
+- public indexing/domain cutover/public launch.
 
-## 6. Current programme state
+## 8. Work rule
 
-**NO ACTIVE FOLLOW-UP IMPLEMENTATION SLICE.**
+At the start of every new runtime or architecture work cycle:
 
-S6 is the next identified candidate, not an active task. Do not automatically dispatch an agent from this checkpoint.
+1. fetch live `main`, PRs/issues, CI/Vercel and relevant Production truth;
+2. read the current V1 strategy/gap/build-order docs;
+3. identify the smallest responsible Phase-1 slice;
+4. version the task;
+5. independent Technical-Lead exact-head review;
+6. no merge without TL PASS;
+7. no Product-Owner gate without explicit approval;
+8. persist continuity.
 
-In the next work cycle, reconstruct live main/PRs/issues/CI/Vercel/Production truth again before starting any new slice.
-
-**TW-8 and TW-9 remain BLOCKED.**
-
-**Production Flight Event Provenance remains UNAPPLIED.**
-
-**Live-Evidence wins always.**
+**LIVE-EVIDENCE WINS.**
