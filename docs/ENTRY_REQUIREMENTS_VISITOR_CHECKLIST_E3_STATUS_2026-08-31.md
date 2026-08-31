@@ -71,12 +71,13 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 | `lib/readiness/e2-official-actions.test.ts` | pass |
 | `lib/readiness/bezeichnungen.test.ts` | pass |
 | `lib/readiness/official-option-scope.test.ts` | pass |
-| `npm test` | folgt im selben Delivery-Commit-Satz nach dem ersten Push |
-| `npm run typecheck` | folgt |
-| `npm run lint` | folgt |
-| `npm run build` | folgt |
+| `npm test` | **2896/2896 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
+| `npm run build` | pass (Next.js 16.3.3 Turbopack) |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
 | GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip prüfen |
-| Browser / Real-Device | nicht als Abnahme behauptet; Presentation ist lokal getestet, UI-Quelle kontraktgeprüft |
+| Browser / Real-Device | nicht gelaufen, nicht behauptet (kein Real-Device-Abnahmescope) |
 
 ## 6. Risiken / Residuals
 

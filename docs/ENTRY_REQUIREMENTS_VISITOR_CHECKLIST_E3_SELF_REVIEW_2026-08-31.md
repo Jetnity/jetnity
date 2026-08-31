@@ -44,6 +44,6 @@ Geprüft: lossless Zeile je OfficialEvaluation; kein Default-Pass/`documents[0]`
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Autor:** keine in diesem Slice.
+**CHANGES REQUIRED durch den Autor:** keine in diesem Slice. Lokale Gates: 2896/2896 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene.
 
-Unabhängiger Technical-Lead-Review: ausstehend. PR bleibt Draft. Kein Ready, kein Merge, kein E4.
+**Unabhängiger Technical-Lead-Review:** ausstehend. PR bleibt Draft. Kein Ready, kein Merge, kein E4.

@@ -49,7 +49,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Targeted E3-Tests 16/16. Full `npm test` / Typecheck / Lint / Build folgen im Delivery-Satz und müssen am Exact Head gelten.
+- Lokale Gates: `npm test` 2896/2896, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Abnahmebeweis.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 

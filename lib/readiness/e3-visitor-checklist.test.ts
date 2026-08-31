@@ -30,7 +30,7 @@ import {
 import { visaModeLesen, type OfficialEvaluation, type OfficialVisaMode } from '@/lib/readiness/official'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
-import type { OfficialRequirementType, TripTraveller } from '@/types/trips'
+import type { TripTraveller } from '@/types/trips'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')

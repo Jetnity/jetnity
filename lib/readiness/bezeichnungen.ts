@@ -176,7 +176,7 @@ export const OFFICIAL_ERGEBNIS_BEZEICHNUNG = {
   unknown: 'Noch nicht verlässlich bestimmbar',
 } as const
 
-export const OFFICIAL_FEHLENDE_ANGABE: Record<MissingFact, string> = {
+const OFFICIAL_FEHLENDE_ANGABE: Record<MissingFact, string> = {
   nationality: 'Staatsangehörigkeit',
   residence: 'Wohnsitz',
   document_type: 'Dokumenttyp',
