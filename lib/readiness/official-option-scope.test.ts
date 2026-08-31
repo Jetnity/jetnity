@@ -35,6 +35,7 @@ function ev(
     missingFacts: [],
     credentialOptionRef: `${teil.travellerClientRef ?? 'traveller:1'}:none`,
     action: null,
+    temporalRule: null,
     ...teil,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
     evidence: {

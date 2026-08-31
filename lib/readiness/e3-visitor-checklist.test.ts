@@ -103,6 +103,7 @@ function ev(
     officialClass: 'requirement',
     missingFacts: [],
     action: null,
+    temporalRule: null,
     ...teil,
     requirementType,
     visaMode: visaModeLesen(requirementType, teil.visaMode),

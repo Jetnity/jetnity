@@ -154,6 +154,7 @@ describe('Readiness-Gesamtstatus', () => {
           contextFingerprint: 'off',
         },
         action: null,
+        temporalRule: null,
       },
     ])
     assert.equal(evaluations[0]?.result, 'not_required')

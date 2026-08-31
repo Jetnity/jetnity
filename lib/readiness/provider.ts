@@ -83,6 +83,12 @@ export type RequirementsProviderZeile = {
   ruleReference?: string | null
   availability?: 'ok' | 'temporarily_unavailable'
   missingFacts?: MissingFact[]
+  /**
+   * Rohwert. Nur explizite strukturierte `relative_duration`-Metadaten.
+   * Ungültige, unsupported oder Marketing-/Freitextwerte werden verworfen.
+   * Keine Ableitung aus URL, Text, Requirement-Typ oder validFrom/validUntil.
+   */
+  temporalRule?: unknown
 }
 
 export type RequirementsProvider = {

@@ -232,6 +232,11 @@ export default function Reisevorbereitung({
                     <p role="status" className="mt-2 text-sm font-semibold leading-6 text-brand-800">
                       {eintrag.ergebnisText}
                     </p>
+                    {eintrag.timingTexte.map((text) => (
+                      <p key={text} className="mt-1 text-xs leading-5 text-ink-800">
+                        {text}
+                      </p>
+                    ))}
                     {eintrag.authorityText ? (
                       <p className="mt-1 text-xs leading-5 text-ink-800">Stelle {eintrag.authorityText}</p>
                     ) : null}

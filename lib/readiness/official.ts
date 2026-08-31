@@ -5,6 +5,7 @@
 // Frei von Next.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
+import type { OfficialTemporalRule } from '@/lib/readiness/temporal'
 import type { OfficialRequirementType } from '@/types/trips'
 
 const OFFICIAL_RESULTS = [
@@ -113,6 +114,12 @@ export type OfficialEvaluation = {
   missingFacts: MissingFact[]
   evidence: OfficialEvidence
   action: OfficialAction | null
+  /**
+   * Normalisierte relative Zeitregel. Default/fail-closed `null`.
+   * Getrennte Trust-Dimension von Requirement-Hard-Truth.
+   * Kein Timestamp, keine Notification.
+   */
+  temporalRule: OfficialTemporalRule | null
 }
 
 export function optionEligibilityLesen(wert: unknown): 'allowed' | 'not_allowed' | 'unknown' {
@@ -183,6 +190,7 @@ export function officialVisaWiderspruchDegradieren(evaluation: OfficialEvaluatio
     optionEligibility: undefined,
     optionMandate: undefined,
     action: null,
+    temporalRule: null,
   }
 }
 
@@ -375,6 +383,7 @@ export function officialLeer(teil: {
       contextFingerprint: teil.contextFingerprint,
     },
     action: null,
+    temporalRule: null,
   }
 }
 
