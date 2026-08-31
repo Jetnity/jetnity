@@ -1,108 +1,107 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / REQUIREMENTS TRUTH-OPS S4-R1 CLOSED / NO ACTIVE CURSOR RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / ENTRY REQUIREMENTS E3 VISITOR CHECKLIST ACTIVE / LIVE-EVIDENCE GEWINNT**
 
-Aktuellster technischer Closure-Anker:
+## 1. Verifizierter Main-Stand vor E3
 
-`main@43177a7bab61b0934775f86442833af0f27b3361`
+Aktueller Baseline-Head:
 
-Aktuellster Closure-Checkpoint nach Merge:
+`main@25f0af9ab92f0757ea7e4bc6c42c2fbbb01c45f5`
 
-`docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_TRUTH_OPS_S4_R1_CLOSED_2026-08-31.md`
+Post-Merge-Evidence für Entry Requirements E2:
 
-## 1. Verifizierter Main-Stand
+- Merge über non-draft Recovery-PR **#310** nach bekanntem Draft→Ready-Connectorfehler;
+- finaler geprüfter E2-Head: `74ae756e2cd3401e7aa2499d1d3869c94fa6a433`;
+- Merge-SHA: `25f0af9ab92f0757ea7e4bc6c42c2fbbb01c45f5`;
+- Main-CI **#1451 / Run `33372358737`: SUCCESS** exakt auf diesem SHA;
+- Vercel Production: **SUCCESS** exakt auf diesem SHA;
+- Issue **#306 CLOSED / completed**;
+- Draft-PR #307 CLOSED / NOT MERGED / mechanisch superseded wegen `Repository.fullDatabaseId` beim Draft→Ready-Connectorweg.
 
-Requirements Truth-Ops S4-R1 ist abgeschlossen.
+GitHub Hygiene Phase 1+2 ist ebenfalls abgeschlossen; Issue **#266 CLOSED / completed**. Exakt 15 manifestierte DELETE-SAFE-MERGED Remote-Refs wurden in Phase 2 nach Einzel-Revalidation entfernt; Restore-SHAs bleiben im Repository dokumentiert.
 
-- Review-PR **#296 MERGED**.
-- finaler Implementierungs-Head: `595b4ad2a827beff7bec597433b3316d21da0747`.
-- Merge-SHA auf `main`: `43177a7bab61b0934775f86442833af0f27b3361`.
-- Main-CI **#1423 / Run `33342536940`: SUCCESS** exakt auf `43177a7b...`.
-- Vercel Production **`dpl_EkrbQmFfxD8gwnZ4AnYFegfaRBWG`: READY** / target `production` / exakt `43177a7b...`.
-- GitHub Review Threads: **0**.
-- Vercel Toolbar unresolved Threads auf Review-Branch und `main`: **0**.
-- Issue **#292 CLOSED / completed**.
+## 2. Aktiver Slice
 
-Draft-PR **#293** ist **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED**. Grund war ausschließlich der bekannte GitHub-Connectorfehler beim Draft→Ready-Schritt (`Repository.fullDatabaseId`). Branch Protection wurde nicht gelockert oder umgangen.
+Issue: **#311 – Entry Requirements E3 – traveller/credential official checklist presentation**
 
-## 2. Was S4-R1 jetzt verbindlich liefert
+Branch:
 
-- `RequirementsProvider.evaluate(anfrage, signal)` verlangt ein `AbortSignal`.
-- Requirements-Provider-Ausführung besitzt einen harten, gekappten Domain-Timeout von **4.000 ms** mit echter Cancellation.
-- bereits abgebrochene äußere Requests starten keinen Provider-Call.
-- technische Fehler bleiben intern unterscheidbar: `timeout`, `aborted`, `temporarily_unavailable`, `unavailable`.
-- technische Fehler minten keine Official Hard Truth.
-- `JETNITY_READINESS_AKTIV` verwendet das bestehende Provider-Ops-Kill-Switch-Muster.
-- Production bleibt für Requirements-Provider hart aus.
-- `requirementsProviderAus()` bleibt `null`.
-- Official `checkedAt` besitzt einen globalen Jetnity-Ceiling von **60 Minuten**; Alter `>=` Ceiling → `recheck_needed`.
-- `checkedAt` ist Jetnity Retrieval-/Evaluation-Zeit und nicht Vendor-`lastUpdatedAt`.
-- kein zweiter HTTP-/Retry-Stack; späterer Adapter muss den bestehenden Provider Transport Core verwenden.
+`feat/entry-requirements-checklist-e3-2026-08-31`
 
-## 3. Cursor-Agent
+Binding Task:
 
-Letzter Agent:
+`docs/ENTRY_REQUIREMENTS_VISITOR_CHECKLIST_E3_TASK_2026-08-31.md`
 
-**`Jetnity requirements truth ops 1`**  
-Generation: **1**  
-Session: `bc-49df8304-48ed-4820-bdf4-57f53aa1aaee`  
-Status: **STOPPED / DELIVERY COMPLETE / TL PASS**.
+TL-Setup-Commit nach Task-Anlage:
 
-Es läuft derzeit **kein neuer Cursor-Runtime-Slice**.
+`83a21a13c46155f293f74831ddb34f73c0e91bd2`
 
-## 4. Requirements / Official Truth Boundary
+E3-Ziel:
 
-Weiterhin verbindlich:
+Die bereits sichere E1/E2 Official Requirements Truth wird in `Reisevorbereitung` als konkrete, verständliche Checkliste pro **Traveller × Credential-Option × Destination/Transit × Requirement Type** dargestellt. Keine neue Requirements-Wahrheit, kein Provider, keine Deadline-Runtime.
 
-- kein echter Requirements-/Visa-/Entry-Provider aktiv;
-- keine Providerwahl abgeschlossen;
-- keine Provider-Secrets/API Keys;
-- keine echten oder paid Provider-Calls;
-- kein Vendor-Vertrag/DPA durch S4-R1;
-- keine Supabase-/Migration-/RLS-/Ownership-/Auth-/AAL-Änderung in S4-R1;
-- kein Workspace-Live-Provider-Wiring;
-- keine neuen sensitiven Passport-/MRZ-/Biometrie-/Scan-Daten.
+## 3. Binding E3 Truth
 
-Kanonisches Traveller-Invariant bleibt:
+Weiterhin unverändert:
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
+Verboten:
 
-## 5. Bestätigte Entry-Requirements-/Travel-Companion-Zielarchitektur
+- Default-/Primary-/Preferred-/Chosen-Pass oder -Citizenship;
+- `documents[0]` / `evaluations[0]` als Product Truth;
+- Issuer Country als Citizenship behandeln;
+- credential-übergreifende Zusammenlegung;
+- stale/unavailable/unknown als `not_required` darstellen;
+- Gebühren, Aufenthaltsdauer, freie Seitenzahl, Proof-of-Funds-Betrag oder Deadline aus unstrukturierten Daten erfinden.
 
-Product Owner hat verbindlich bestätigt, dass Jetnity nicht nur Visa ja/nein darstellen darf, sondern die vollständige praktisch relevante Einreisevorbereitung strukturiert abbilden soll.
+E2 bleibt bindend:
 
-Kanonische Zielarchitektur:
+- `sourceUrl` ist Evidence-/Informationsquelle;
+- application/form/appointment nur aus explizitem gültigem Purpose + validierter Action-URL;
+- `officialActionZweckText(...)` bestimmt Besucherlabel;
+- `requirementsProviderAus()` bleibt `null`.
 
-`docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
+## 4. E3 Scope
 
-Sie umfasst insbesondere:
+- konkrete OfficialEvaluation-Zeilen/-Karten statt nur Traveller-Summary;
+- priorisierte Besuchergruppen wie `Vor Abreise erledigen`, `Dokument prüfen`, `Bei Einreise / vor Ort`, `Bei Einreise / Reise nachweisen`, `Route / Transit`;
+- Visa-Modi/eTA/Requirement-Typen verständlich beschriften;
+- Credential-Option aus exakten Trip-/Traveller-Daten menschenlesbar darstellen;
+- fail-closed Result/Freshness/Missing-Facts/Authority/checkedAt/Source/Action-Presentation;
+- purpose-spezifische Official Actions;
+- kleine scope-nahe Accessibility-/Responsive-Verbesserungen;
+- Tests + Typecheck + Lint + Production Build.
 
-- visumfrei / klassisches Visum / Visa on Arrival / eVisa / eTA;
-- offizielle Antrags-/Informationslinks und direkte sichere Actions;
-- Passgültigkeit;
-- eigene strukturierte Typen für `blank_passport_pages` und `financial_means`;
-- Transitregeln;
-- Arrival-/Einreiseformulare;
-- Impf-/Gesundheitsanforderungen;
-- Versicherungspflicht;
-- Rück-/Weiterflug- und relevante Reise-/Unterkunftsnachweise;
-- proaktive Travel-Companion-/Deadline-Semantik;
-- zeitgebundene Aufgaben wie „frühestens 72 Stunden vor Ankunft“;
-- Prioritäten `Jetzt erledigen`, `Demnächst`, `Zur Information`;
-- Neuberechnung bei Flug-/Routen-/Datum-/Credential-Änderungen;
-- deduplizierte, statusbewusste In-App-/Push-/gegebenenfalls E-Mail-Begleitung;
-- harte Warnungen nur aus belastbarer, aktueller Evidence.
+## 5. Hard Non-Scope / Product-Owner-Gates
 
-Diese Zielarchitektur ist **kein automatischer Runtime-Auftrag**.
+E3 aktiviert **nicht**:
 
-## 6. GitHub Governance
+- echten Requirements-/Visa-/Entry-Provider;
+- Providerwahl / Vertrag / DPA / Secrets / API Keys / paid calls;
+- Supabase-/Migration-/RLS-/Ownership-/Auth-/AAL-Änderung;
+- Passnummer/MRZ/Scans/Biometrie/Gesundheitsakte;
+- Credential-Ranking oder automatische „beste Pass“-Auswahl;
+- Deadline-/Reminder-/Notification-Runtime;
+- Gebühren-/Stay-/Threshold-/Deadline-Hard-Truth-Felder;
+- E4.
 
-Ruleset `Jetnity main protection` / ID `21875372` bleibt unverändert stark.
+Die bestehenden Product-Owner-Gates bleiben unverändert bindend.
 
-Pflicht bleiben:
+## 6. Agent
+
+Geplanter Anzeigename:
+
+**`Jetnity entry requirements checklist 1`**  
+Generation: **1**  
+Session: **PENDING DISPATCH**
+
+Agent darf `docs/ACTIVE_WORK_STATUS.md` nicht ändern. Self-Review ist kein TL-PASS. Bei `CHANGES REQUIRED` bleibt dieselbe Session zuständig.
+
+## 7. GitHub Governance
+
+Ruleset `Jetnity main protection` / ID `21875372` bleibt maßgeblich:
 
 - PR vor Merge;
 - Branch up to date;
@@ -113,39 +112,29 @@ Pflicht bleiben:
 - merge-only;
 - bypass leer.
 
-Solange der Draft→Ready-Connectorfehler besteht, gilt verbindlicher mechanischer Ersatzprozess:
+Bekannter Draft→Ready-Connectorfehler: `Repository.fullDatabaseId`.
 
-1. Cursor liefert im Draft-PR.
-2. Technical Lead reviewt den exakten finalen Head.
-3. bei TL-PASS wird ein non-draft Review-PR auf **dem exakt gleichen Commit** erstellt;
-4. CI/Vercel/Mergeability/Threads werden auf diesem PR neu gegatet;
-5. erst dann geschützter Merge.
+Falls er erneut auftritt:
 
-Branch Protection wird deswegen **nicht** gelockert.
+1. Draft-PR bleibt Evidence-Träger für Agent/TL-Review;
+2. nach TL-PASS mechanischer non-draft Recovery-PR auf exakt demselben Commit;
+3. Recovery-PR bekommt eigene CI/Vercel/Mergeability/Thread-Gates;
+4. Branch Protection wird nicht gelockert.
 
-## 7. Supabase Boundary
+## 8. Supabase Boundary
 
-S4-R1 hat Supabase nicht verändert.
+E3 ist nicht migrationsnah und verändert Supabase nicht. Der letzte bekannte Requirements-Gate-0-Supabase-Stand bleibt nur historische Evidence und wird vor jedem DB-/RLS-/Storage-/Security-Slice live neu geprüft.
 
-Letzter bekannter Requirements-Gate-0-Stand:
+## 9. Persistenter Architektur-Tracker
 
-- Production `qscbgcdmivbbnzrcyegn`: `ACTIVE_HEALTHY`.
-- Development `yfvbxvijcorffwxbxahl`: `ACTIVE_HEALTHY`.
-- Development-vs-Production-Migration-History weist Drift auf.
+Issue **#294 – Entry Requirements Detail Architecture** bleibt offen als Product-Target-Tracker. E3 erfüllt nur den Besucher-Checklist-Presentation-Teil der Zielarchitektur. Detailfelder für Gebühren/Aufenthaltsdauer/Schwellenwerte und Travel-Companion-/Deadline-Runtime bleiben spätere, separat zu precheckende Slices.
 
-Vor jedem migrationsnahen / DB-/RLS-/Storage-/Security-Slice live erneut prüfen und reconciliieren.
+## 10. Nächste Aktion
 
-## 8. FIRST NEXT ACTION
-
-**Kein Folgeslice ist automatisch gestartet oder freigegeben.**
-
-Vor jeder weiteren Requirements-/Provider-/Travel-Companion-Implementierung muss der Technical Lead:
-
-1. finalen `main`, offene PRs/Issues, CI/Vercel und Agentenstatus live prüfen;
-2. die bestätigte Target Architecture gegen den Ist-Code lesen;
-3. nur den kleinsten verantwortbaren bounded Slice definieren;
-4. Product-Owner-Gates für Providerwahl, Verträge, Secrets, paid calls, sensitive Daten oder Production-Aktivierung respektieren.
-
-Issue **#294** bleibt als persistenter Architektur-Tracker für Entry Requirements Detail Architecture / Travel Companion offen. Das ist kein automatischer Build-Start.
+1. Draft-PR für E3 auf aktuellem Branch eröffnen;
+2. neuen Cursor-Agenten Generation 1 dispatchen;
+3. Agent liefert und stoppt;
+4. Technical Lead reviewt den exakten finalen Head unabhängig;
+5. kein E4 automatisch starten.
 
 **Live-Evidence gewinnt immer.**
