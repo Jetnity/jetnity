@@ -53,7 +53,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Lokale Gates: im Status-/PR-Protokoll; CI/Vercel müssen live am Exact Head geprüft werden.
+- Lokale Gates: `npm test` 2928/2928, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Abnahmebeweis.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 

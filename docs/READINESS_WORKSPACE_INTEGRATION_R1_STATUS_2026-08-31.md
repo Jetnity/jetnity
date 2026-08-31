@@ -56,8 +56,20 @@ Kein neuer Readiness-Lifecycle. Kein Provider. Keine Secrets/paid calls. Keine S
 - `docs/ACTIVE_WORK_STATUS.md` nicht geändert
 - kein Ready, kein Merge, kein Folgeslice
 
-## 5. Residuals
+## 5. Lokale Gates (dieser Agent, nach Delivery)
 
-- Lokale Gates und CI/Vercel müssen am Exact Head live geprüft werden.
-- Kein Browser-/Real-Device-Abnahmebeweis in dieser Session.
+| Gate | Ergebnis |
+| --- | --- |
+| gezielte R1 + E3 + E4 Tests | grün |
+| `npm test` | **2928/2928** |
+| `npm run typecheck` | grün |
+| `npm run lint` | **0 errors / 137 warnings** (Baseline unverändert) |
+| `npm run build` | Production-Build grün |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | grün |
+
+CI/Vercel müssen live am Exact Head geprüft werden. Kein Browser-/Real-Device-Abnahmebeweis.
+
+## 6. Residuals
+
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
+- Attention zählt weiter die Domain-Summary, nicht die workspace-sichtbaren Counts.
