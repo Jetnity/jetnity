@@ -1,113 +1,116 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / E5-B3C TECHNICAL-LEAD PASS ON RUNTIME HEAD / TL DOCS-ONLY FINAL RE-GATE IN PROGRESS / NO PRODUCTION APPLY / LIVE-EVIDENCE WINS**
+Status: **CURRENT / E5-B3C CLOSED & POST-MERGE VERIFIED / NO ACTIVE FOLLOW-UP SLICE / PRODUCTION FLIGHT EVENT PROVENANCE UNAPPLIED / LIVE-EVIDENCE WINS**
 
-## 1. Current live baseline main
+## 1. Current verified main
 
-`main@8868f91319f2747ca6f3dc8cb46ab0a40cba417b`
+`main@8663fded8a8f7381450a30f4b919a1aca5bc49f6`
 
 Commit:
-`Close Entry Requirements E5-B3B continuity (#346)`
 
-Fresh live truth during E5-B3C review:
+`Merge Entry Requirements E5-B3C server-only persistence mint (#349)`
 
-- `main` remains exactly `8868f91319f2747ca6f3dc8cb46ab0a40cba417b`;
-- E5-B3C merge-base is exact baseline main;
-- runtime review head `0d80514b0aac49fec0760d95ef126ed2e845eda2` was **9 ahead / 0 behind**;
-- GitHub Actions CI #1545 / Run `33440664269`: **SUCCESS** on exact runtime review head;
-- Vercel Preview on exact runtime review head: **READY**;
-- unresolved Vercel toolbar threads: **0**;
-- GitHub inline review threads: **0**.
+Post-merge verified:
 
-## 2. Active slice E5-B3C
+- Main CI #1550 / Run `33442405068`: **SUCCESS** on exact merge SHA;
+- Vercel Production deployment `dpl_B77qNkMXEpeXhco65tTumvw9zCVW`: **READY** on exact merge SHA;
+- Issue #347: **CLOSED / completed**;
+- Recovery PR #349: **MERGED**;
+- Original Draft PR #348: **CLOSED / NOT MERGED** because of the known GitHub connector `Repository.fullDatabaseId` Ready error.
 
-Issue:
-**#347 – Entry Requirements E5-B3C – server-only Flight Event persistence payload mint**
-
-Draft-PR:
-**#348**
-
-Branch:
-`feat/entry-requirements-flight-event-persistence-mint-e5b3c-2026-08-31`
-
-Binding task:
-`docs/ENTRY_REQUIREMENTS_FLIGHT_EVENT_PERSISTENCE_MINT_E5B3C_TASK_2026-08-31.md`
-
-Technical-Lead review:
-`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_REVIEW_2026-08-31.md`
+## 2. E5-B3C final history
 
 Agent:
+
 **`Jetnity entry requirements flight event persistence mint 1`**, Generation 1
 
 Cursor session:
+
 `bc-8579f2af-62df-45f3-b15b-d9a1d2d4c180`
 
-## 3. Review history and verdict
+Relevant heads:
 
-Initial agent head `5473cd851942055ead8a1bd4b055861ecd6d5ada` was **not accepted**.
+- initial rejected agent head: `5473cd851942055ead8a1bd4b055861ecd6d5ada`;
+- same-session reviewed runtime head: `0d80514b0aac49fec0760d95ef126ed2e845eda2`;
+- final TL/recovery head: `6e704867fb1c3cd09d875da9a6215ae27008f19b`;
+- merged main: `8663fded8a8f7381450a30f4b919a1aca5bc49f6`.
 
-Technical Lead issued CHANGES REQUIRED for:
+Independent Technical-Lead verdict:
 
-1. exact Evidence plus contradictory sibling-IATA first-match ambiguity;
-2. missing technical `server-only` marker;
-3. missing E5-B3A occurrence index/count bounds in the TS mint;
-4. JavaScript date-normalization acceptance of impossible event instants.
-
-The same Cursor session performed the immediate review-fix, as required by governance.
-
-Final independently reviewed runtime head:
-`0d80514b0aac49fec0760d95ef126ed2e845eda2`
-
-Technical-Lead verdict:
 **PASS / no open P0-P1-P2 inside E5-B3C scope.**
 
-The four CHANGES-REQUIRED findings are closed and covered by regressions.
+Canonical closure:
 
-## 4. Binding E5-B3C truth now implemented
+`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_CLOSED_2026-08-31.md`
 
-The server-only, DB-free mint:
+Canonical review:
 
-- accepts future server-known `tripItemId`, selected `optionId` and one complete server-side `FlugProviderTreffer`;
-- locates the selected option uniquely inside that same provider snapshot;
-- binds exact occurrence identity by `optionId + legIndex + segmentIndex + endpoint + IATA`;
-- derives local date/time only from the selected normalized segment endpoint;
-- consumes timezone only from exact E5-B1R Evidence;
-- consumes event instant only from exact E5-B2A Evidence;
-- requires B1R/B2A timezone agreement;
+`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_REVIEW_2026-08-31.md`
+
+## 3. Delivered truth
+
+E5-B3C now provides a server-only, DB-free Flight Event persistence payload mint that:
+
+- uniquely selects one option from the same server-side `FlugProviderTreffer`;
+- binds exact B1R timezone and B2A event-instant Evidence by option/leg/segment/endpoint/IATA;
 - fails closed on duplicate/conflicting Evidence, including exact + contradictory sibling IATA;
-- keeps missing Evidence explicit as `unresolved` and creates no fake Occurrence;
-- enforces `leg_index` / `segment_index` 0..99 and at most 200 proven Occurrences;
-- strictly rejects impossible UTC calendar instants instead of trusting JS normalization;
-- sets `retrieved_at === observed_at === treffer.retrievedAt`;
-- never calls `Date.now()` for a second observation;
-- keeps `fresh_until = null`;
-- never accepts or mints TypeScript `occurrence_event_ref`;
+- derives local wall-clock only from the selected normalized segment endpoint;
+- requires B1R/B2A timezone agreement;
+- rejects impossible UTC calendar instants;
+- enforces E5-B3A occurrence bounds before payload output;
+- reuses `treffer.retrievedAt` exactly for `retrieved_at` and `observed_at`;
+- invents no freshness (`fresh_until = null`);
+- accepts/mints no TypeScript `occurrence_event_ref`;
 - carries `import 'server-only'`;
 - invokes no Supabase/API/private writer.
 
 `flugNachweisAusUmgebung()` remains `null`.  
 `requirementsProviderAus()` remains `null`.
 
-## 5. Production / trust boundary
+## 4. Production / trust boundary remains closed
 
 Supabase Production project:
+
 `qscbgcdmivbbnzrcyegn`
 
-Fresh read-only verification after the agent review-fix confirmed all still absent/unapplied:
+Fresh E5-B3C read-only verification confirmed still absent/unapplied:
 
 - `public.trip_item_flight_event_provenance`;
 - `jetnity_internal.trip_item_flight_event_provenance_schreiben(jsonb)`;
 - `jetnity_internal.flight_event_write_runtime_gate`;
-- role `jetnity_flight_event_writer`;
-- role `jetnity_flight_event_runtime`;
+- `jetnity_flight_event_writer`;
+- `jetnity_flight_event_runtime`;
 - migration `20260831190000`.
 
 No Production mutation occurred.
 
-## 6. Product-Owner boundaries
+## 5. Current risk state
 
-No special Product-Owner gate is crossed by merging this exact DB-free, invocation-free, provider-activation-free and cost-neutral E5-B3C slice after final gates.
+### P0
+None open from E5-B3C.
+
+### P1
+None open from E5-B3C.
+
+### P2
+None open inside the completed E5-B3C scope.
+
+Intentionally inactive/gated capabilities:
+
+- Production Flight Event Provenance;
+- real writer/runtime principal;
+- account flight adoption;
+- Trip/Route → E5-A occurrence binding;
+- deadlines/tasks/reminders;
+- real Requirements provider and credential ranking.
+
+### P3
+
+- E5-B3B host-server observation clock has no independent NTP attestation;
+- future writer requires an explicit complete-vs-partial snapshot policy.
+
+## 6. Product-Owner gates
 
 Explicit Product-Owner approval remains mandatory before:
 
@@ -119,54 +122,23 @@ Explicit Product-Owner approval remains mandatory before:
 - fundamental Auth/MFA/AAL changes;
 - sensitive passport/MRZ/scan/biometric/health storage changes;
 - real payments;
-- spend outside approved budget;
+- spend outside approved limits;
 - public/irreversible external activation.
 
-## 7. Current risks
+## 7. Current first next action
 
-### P0
+**No functional slice is active.**
 
-None open.
+Before opening any future slice, reconstruct fresh live state from:
 
-### P1
+1. `JETNITY_START_HERE.md`;
+2. this file;
+3. latest closure/checkpoint;
+4. binding build order/target architecture;
+5. current `main`, PRs/issues, CI/Vercel and relevant Production truth.
 
-None open after the E5-B3C review-fix.
+Then determine the smallest safe next step. Do not infer or automatically start it from this closure.
 
-### P2
-
-None open inside E5-B3C scope.
-
-Known gated/incomplete capabilities remain deliberately inactive:
-
-- Flight Event Provenance in Production;
-- real writer/runtime principal;
-- account `flugNachweis` adoption;
-- Trip/Route → OfficialTemporalAnchor resolver;
-- automatic E5-A binding;
-- deadlines/tasks/reminders;
-- real Requirements provider and credential ranking.
-
-### P3
-
-- E5-B3B host-server clock has no independent NTP attestation;
-- a future writer must define an explicit complete-vs-partial snapshot policy before writing partial/empty mint results;
-- historical Draft PRs remain non-current evidence.
-
-## 8. First unfinished action
-
-Technical Lead is currently persisting the review result in TL-owned continuity files. These docs-only changes create a new exact PR head.
-
-Before Ready/Merge:
-
-1. re-read final PR head;
-2. verify `main` unchanged or rebase/review if it moved;
-3. verify merge-base and exact ahead/behind;
-4. verify final diff has no unexpected scope;
-5. verify GitHub Actions on the final head;
-6. verify Vercel Preview on the final head;
-7. verify GitHub/Vercel unresolved threads = 0;
-8. only then may the Technical Lead mark Ready and merge.
-
-No follow-up slice starts automatically.
+**Production Flight Event Provenance remains UNAPPLIED until explicit Product-Owner approval.**
 
 **Live-Evidence wins always.**
