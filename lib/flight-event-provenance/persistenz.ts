@@ -9,6 +9,8 @@
 // Keine implizite Jetzt-Zeit, keine zweite Observation, keine Freshness,
 // keine TypeScript-occurrence_event_ref, keine Client-Provenance.
 
+import 'server-only'
+
 import type { FlugSegment } from '@/lib/flights/domain'
 import type {
   FlugAirportTimezoneEndpunkt,
@@ -98,14 +100,16 @@ const VERBOTENE_PROVIDER_IDS = new Set([
 const UUID_MUSTER =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const RETRIEVED_AT_MUSTER = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
-const EVENT_INSTANT_MUSTER =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z$/
 const LOCAL_DATE_MUSTER = /^(\d{4})-(\d{2})-(\d{2})$/
 const LOCAL_TIME_MUSTER = /^(\d{2}):(\d{2})(?::(\d{2}))?$/
 const IATA_MUSTER = /^[A-Z]{3}$/
 const TIME_ZONE_SYNTAX =
   /^[A-Za-z0-9_+\-/]+$/
 const STEUERZEICHEN = /[\u0000-\u001F\u007F]/
+const EVENT_INSTANT_TEILE =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?Z$/
+const OCCURRENCE_INDEX_MAX = 99
+const OCCURRENCE_MAX = 200
 
 export type FlightEventPersistenzEndpunkt = FlugAirportTimezoneEndpunkt
 
@@ -144,10 +148,13 @@ export const FLIGHT_EVENT_PERSISTENCE_FEHLER = [
   'invalid_external_ref',
   'invalid_retrieved_at',
   'occurrence_identity_mismatch',
+  'malformed_occurrence_identity',
+  'too_many_occurrences',
   'duplicate_timezone_evidence',
   'duplicate_event_instant_evidence',
   'timezone_instant_evidence_mismatch',
   'invalid_local_endpoint_wall_clock',
+  'invalid_event_instant',
   'unresolved_occurrence_evidence',
 ] as const
 
@@ -196,6 +203,7 @@ type OccurrenceIdentitaet = {
 type EvidenceKlassifikation<T> =
   | { art: 'exact'; werte: T[] }
   | { art: 'mismatch'; werte: T[] }
+  | { art: 'conflict'; werte: T[] }
   | { art: 'absent' }
 
 function objektLesen(wert: unknown): Record<string, unknown> | null {
@@ -227,9 +235,40 @@ function retrievedAtLesen(wert: unknown): string | null {
 
 function eventInstantLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
-  if (!EVENT_INSTANT_MUSTER.test(wert)) return null
-  const ms = Date.parse(wert)
-  if (!Number.isFinite(ms)) return null
+  const teile = EVENT_INSTANT_TEILE.exec(wert)
+  if (!teile) return null
+  const year = Number(teile[1])
+  const month = Number(teile[2])
+  const day = Number(teile[3])
+  const hour = Number(teile[4])
+  const minute = Number(teile[5])
+  const second = Number(teile[6])
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(month) ||
+    !Number.isInteger(day) ||
+    !Number.isInteger(hour) ||
+    !Number.isInteger(minute) ||
+    !Number.isInteger(second)
+  ) {
+    return null
+  }
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59) {
+    return null
+  }
+  const utc = Date.UTC(year, month - 1, day, hour, minute, second)
+  if (!Number.isFinite(utc)) return null
+  const probe = new Date(utc)
+  if (
+    probe.getUTCFullYear() !== year ||
+    probe.getUTCMonth() !== month - 1 ||
+    probe.getUTCDate() !== day ||
+    probe.getUTCHours() !== hour ||
+    probe.getUTCMinutes() !== minute ||
+    probe.getUTCSeconds() !== second
+  ) {
+    return null
+  }
   return wert
 }
 
@@ -358,8 +397,11 @@ function evidenceKlassifizieren<T extends {
   iata: string
 }>(liste: readonly T[], identitaet: OccurrenceIdentitaet): EvidenceKlassifikation<T> {
   const exact = liste.filter((eintrag) => gleicheIdentitaet(eintrag, identitaet))
-  if (exact.length > 0) return { art: 'exact', werte: exact }
   const mismatch = liste.filter((eintrag) => gleicheIdentitaetOhneIata(eintrag, identitaet))
+  if (exact.length > 0 && mismatch.length > 0) {
+    return { art: 'conflict', werte: [...exact, ...mismatch] }
+  }
+  if (exact.length > 0) return { art: 'exact', werte: exact }
   if (mismatch.length > 0) return { art: 'mismatch', werte: mismatch }
   return { art: 'absent' }
 }
@@ -492,8 +534,20 @@ export function flightEventPersistenzNutzlastMinten(
   const mintFehler: FlightEventPersistenzFehler[] = []
 
   const legs = Array.isArray(option.legs) ? option.legs : []
+  if (legs.length > OCCURRENCE_INDEX_MAX + 1) {
+    return {
+      ok: false,
+      fehler: [fehlerFuer('malformed_occurrence_identity', 'option.legs')],
+    }
+  }
   for (let legIndex = 0; legIndex < legs.length; legIndex += 1) {
     const segments = Array.isArray(legs[legIndex]?.segments) ? legs[legIndex]!.segments : []
+    if (segments.length > OCCURRENCE_INDEX_MAX + 1) {
+      return {
+        ok: false,
+        fehler: [fehlerFuer('malformed_occurrence_identity', `option.legs[${legIndex}].segments`)],
+      }
+    }
     for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex += 1) {
       const segment = segments[segmentIndex]
       if (!segment) continue
@@ -524,11 +578,11 @@ export function flightEventPersistenzNutzlastMinten(
         const zone = evidenceKlassifizieren(timezoneEvidence, identitaet)
         const instant = evidenceKlassifizieren(instantEvidence, identitaet)
 
-        if (zone.art === 'mismatch') {
+        if (zone.art === 'conflict' || zone.art === 'mismatch') {
           mintFehler.push(fehlerFuer('occurrence_identity_mismatch', path, identitaet))
           continue
         }
-        if (instant.art === 'mismatch') {
+        if (instant.art === 'conflict' || instant.art === 'mismatch') {
           mintFehler.push(fehlerFuer('occurrence_identity_mismatch', path, identitaet))
           continue
         }
@@ -555,7 +609,12 @@ export function flightEventPersistenzNutzlastMinten(
           continue
         }
         if (!eventInstant) {
-          mintFehler.push(fehlerFuer('timezone_instant_evidence_mismatch', path, identitaet))
+          mintFehler.push(fehlerFuer('invalid_event_instant', path, identitaet))
+          continue
+        }
+
+        if (occurrences.length >= OCCURRENCE_MAX) {
+          mintFehler.push(fehlerFuer('too_many_occurrences', 'occurrences', identitaet))
           continue
         }
 

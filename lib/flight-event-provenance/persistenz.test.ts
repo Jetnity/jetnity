@@ -35,6 +35,8 @@ const providerSrc = readFileSync(join('lib/flights/provider.ts'), 'utf8')
 const nachweisSrc = readFileSync(join('lib/flights/nachweis.ts'), 'utf8')
 const sucheSrc = readFileSync(join('lib/flights/suche.ts'), 'utf8')
 const clientSrc = readFileSync(join('lib/flights/client-sicht.ts'), 'utf8')
+const schemaSrc = readFileSync(join('lib/flights/schema.ts'), 'utf8')
+const rankingSrc = readFileSync(join('lib/flights/ranking.ts'), 'utf8')
 const e5b3aSrc = readFileSync(join('lib/flight-event-provenance/e5b3a-persistenz-vertrag.test.ts'), 'utf8')
 const sqlSrc = readFileSync(join('supabase/migrations/20260831190000_trip_item_flight_event_provenance.sql'), 'utf8')
 const readinessProviderSrc = readFileSync(join('lib/readiness/provider.ts'), 'utf8')
@@ -137,6 +139,63 @@ function minten(teil: {
     optionId: teil.optionId ?? OPTION_DIREKT.id,
     treffer: teil.treffer ?? trefferMit({}),
   })
+}
+
+function optionMitBeinen(beinAnzahl: number, segmenteProBein: number): FlugOption {
+  const segment = OPTION_DIREKT.legs[0]!.segments[0]!
+  return optionKopie(OPTION_DIREKT, {
+    legs: Array.from({ length: beinAnzahl }, () => ({
+      segments: Array.from({ length: segmenteProBein }, () => ({ ...segment })),
+      durationMinutes: segment.durationMinutes,
+      stops: 0,
+    })),
+  })
+}
+
+function evidenceFuerAlleEndpunkte(option: FlugOption): {
+  airportTimezoneEvidence: FlugAirportTimezoneEvidence[]
+  airportEventInstantEvidence: FlugAirportEventInstantEvidence[]
+} {
+  const airportTimezoneEvidence: FlugAirportTimezoneEvidence[] = []
+  const airportEventInstantEvidence: FlugAirportEventInstantEvidence[] = []
+  option.legs.forEach((leg, legIndex) => {
+    leg.segments.forEach((segment, segmentIndex) => {
+      const endpunkte = [
+        {
+          endpoint: 'departure' as const,
+          iata: segment.origin,
+          timeZone: 'Europe/Zurich',
+          instant: '2026-11-01T08:15:00Z',
+        },
+        {
+          endpoint: 'arrival' as const,
+          iata: segment.destination,
+          timeZone: 'Asia/Bangkok',
+          instant: '2026-11-01T14:40:00Z',
+        },
+      ]
+      for (const endpunkt of endpunkte) {
+        airportTimezoneEvidence.push({
+          optionId: option.id,
+          legIndex,
+          segmentIndex,
+          endpoint: endpunkt.endpoint,
+          iata: endpunkt.iata,
+          timeZone: endpunkt.timeZone,
+        })
+        airportEventInstantEvidence.push({
+          optionId: option.id,
+          legIndex,
+          segmentIndex,
+          endpoint: endpunkt.endpoint,
+          iata: endpunkt.iata,
+          timeZone: endpunkt.timeZone,
+          instant: endpunkt.instant,
+        })
+      }
+    })
+  })
+  return { airportTimezoneEvidence, airportEventInstantEvidence }
 }
 
 function optionKopie(option: FlugOption, aenderung: Partial<FlugOption> = {}): FlugOption {
@@ -331,6 +390,49 @@ describe('E5-B3C Persistence-Mint – Fail-closed Identität', () => {
     if (ergebnis.ok) return
     assert.ok(ergebnis.fehler.some((eintrag) => eintrag.code === 'occurrence_identity_mismatch'))
     assert.ok(!ergebnis.fehler.some((eintrag) => eintrag.code === 'duplicate_timezone_evidence'))
+  })
+
+  test('B1R: exakte Zeile plus gleiche Coordinate mit falscher IATA ist fail-closed', () => {
+    const timezone = [
+      ...direktTimezone(),
+      timezoneEvidence(OPTION_DIREKT.id, {
+        endpoint: 'departure',
+        iata: 'FRA',
+        timeZone: 'Europe/Zurich',
+      }),
+    ]
+    const ergebnis = minten({
+      treffer: trefferMit({
+        airportTimezoneEvidence: timezone,
+        airportEventInstantEvidence: instantsFuer([OPTION_DIREKT], direktTimezone()),
+      }),
+    })
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.ok(ergebnis.fehler.some((eintrag) => eintrag.code === 'occurrence_identity_mismatch'))
+    assert.ok(ergebnis.fehler.some((eintrag) => eintrag.endpoint === 'departure' && eintrag.iata === 'ZRH'))
+    assert.equal('nutzlast' in ergebnis, false)
+  })
+
+  test('B2A: exakte Zeile plus gleiche Coordinate mit falscher IATA ist fail-closed', () => {
+    const timezone = direktTimezone()
+    const instants = instantsFuer([OPTION_DIREKT], timezone)
+    const abflug = instants.find((eintrag) => eintrag.endpoint === 'departure')
+    assert.ok(abflug)
+    const ergebnis = minten({
+      treffer: trefferMit({
+        airportTimezoneEvidence: timezone,
+        airportEventInstantEvidence: [
+          ...instants,
+          { ...abflug, iata: 'FRA' },
+        ],
+      }),
+    })
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.ok(ergebnis.fehler.some((eintrag) => eintrag.code === 'occurrence_identity_mismatch'))
+    assert.ok(ergebnis.fehler.some((eintrag) => eintrag.endpoint === 'departure' && eintrag.iata === 'ZRH'))
+    assert.equal('nutzlast' in ergebnis, false)
   })
 })
 
@@ -543,6 +645,26 @@ describe('E5-B3C Persistence-Mint – lokale Wanduhr und Observation', () => {
     assert.ok(ergebnis.fehler.some((eintrag) => eintrag.code === 'invalid_local_endpoint_wall_clock'))
   })
 
+  test('fabricated B2A-Instant mit ungültigem Kalendertag wird nicht durch JS-Normalisierung akzeptiert', () => {
+    const timezone = direktTimezone()
+    const instants = instantsFuer([OPTION_DIREKT], timezone).map((eintrag) =>
+      eintrag.endpoint === 'departure'
+        ? { ...eintrag, instant: '2026-02-30T08:15:00Z' }
+        : eintrag,
+    )
+    const ergebnis = minten({
+      treffer: trefferMit({
+        airportTimezoneEvidence: timezone,
+        airportEventInstantEvidence: instants,
+      }),
+    })
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.ok(ergebnis.fehler.some((eintrag) => eintrag.code === 'invalid_event_instant'))
+    assert.equal('nutzlast' in ergebnis, false)
+    assert.equal(Date.parse('2026-02-30T08:15:00Z') > 0, true)
+  })
+
   test('ungültiges retrievedAt schlägt fehl', () => {
     const ergebnis = minten({
       treffer: trefferMit({ retrievedAt: '2026-08-31T12:00:00Z' }),
@@ -628,6 +750,41 @@ describe('E5-B3C Persistence-Mint – SQL-Grenzen und Client-Reject', () => {
     assert.match(sqlSrc, /char_length\(btrim\(external_ref\)\) between 1 and 200/)
   })
 
+  test('leg_index und segment_index ausserhalb 0..99 sind fail-closed', () => {
+    const zuVieleBeine = minten({
+      treffer: trefferMit({ options: [optionMitBeinen(101, 1)] }),
+    })
+    assert.equal(zuVieleBeine.ok, false)
+    if (!zuVieleBeine.ok) {
+      assert.equal(zuVieleBeine.fehler[0]?.code, 'malformed_occurrence_identity')
+    }
+
+    const zuVieleSegmente = minten({
+      treffer: trefferMit({ options: [optionMitBeinen(1, 101)] }),
+    })
+    assert.equal(zuVieleSegmente.ok, false)
+    if (!zuVieleSegmente.ok) {
+      assert.equal(zuVieleSegmente.fehler[0]?.code, 'malformed_occurrence_identity')
+    }
+  })
+
+  test('mehr als 200 proven Occurrences erzeugen keine Writer-Nutzlast', () => {
+    const option = optionMitBeinen(51, 2)
+    const evidence = evidenceFuerAlleEndpunkte(option)
+    assert.equal(evidence.airportTimezoneEvidence.length, 204)
+    const ergebnis = minten({
+      treffer: trefferMit({
+        options: [option],
+        airportTimezoneEvidence: evidence.airportTimezoneEvidence,
+        airportEventInstantEvidence: evidence.airportEventInstantEvidence,
+      }),
+    })
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.ok(ergebnis.fehler.some((eintrag) => eintrag.code === 'too_many_occurrences'))
+    assert.equal('nutzlast' in ergebnis, false)
+  })
+
   test('19. TypeScript akzeptiert und mintet keine occurrence_event_ref', () => {
     const ergebnis = minten({})
     assert.equal(ergebnis.ok, true)
@@ -688,8 +845,11 @@ describe('E5-B3C Persistence-Mint – unveränderte Verträge und Grenzen', () =
     assert.match(domainSrc, /arrivalTime: string/)
     assert.doesNotMatch(domainSrc, /timeZone|eventInstant|eventRef|time_zone/)
     assert.match(domainSrc, /export type FlugOption = \{/)
-    assert.doesNotMatch(sucheSrc, /flightEventPersistenzNutzlastMinten/)
-    assert.doesNotMatch(clientSrc, /timeZone|eventInstant|eventRef|retrievedAt/)
+    assert.doesNotMatch(sucheSrc, /flightEventPersistenzNutzlastMinten|flight-event-provenance/)
+    assert.doesNotMatch(clientSrc, /timeZone|eventInstant|eventRef|retrievedAt|flight-event-provenance|flightEventPersistenz/)
+    assert.doesNotMatch(schemaSrc, /flight-event-provenance|flightEventPersistenz/)
+    assert.doesNotMatch(rankingSrc, /flight-event-provenance|flightEventPersistenz/)
+    assert.match(persistenzSrc, /^import 'server-only'$/m)
     assert.doesNotMatch(persistenzSrc, /from '@\/lib\/route/)
     assert.doesNotMatch(persistenzSrc, /from '@\/lib\/trips/)
   })
@@ -715,6 +875,7 @@ describe('E5-B3C Persistence-Mint – unveränderte Verträge und Grenzen', () =
     assert.doesNotMatch(persistenzSrc, /from '@duffel/)
     assert.doesNotMatch(persistenzSrc, /from '@\/lib\/commercial-provenance/)
     assert.doesNotMatch(persistenzSrc, /from '@\/lib\/readiness\/temporal-projection/)
+    assert.match(persistenzSrc, /^import 'server-only'$/m)
   })
 
   test('23./24. bestehende E5-B1R/B2A/B3B- und E5-B3A-Verträge bleiben im Mint unberührt', () => {
