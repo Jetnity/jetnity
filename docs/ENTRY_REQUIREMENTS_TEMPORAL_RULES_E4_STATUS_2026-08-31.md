@@ -1,7 +1,7 @@
 # Entry Requirements Temporal Rules E4 – Status
 
 Stand: 31. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN E5**  
+Status: **REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5**  
 Cursor-Agent: **`Jetnity entry requirements temporal rules 1`**  
 Generation: **1**  
 Cursor-Session/Run-ID: `bc-69084bbc-a7ab-4ed5-8418-754bea9ee241`  
@@ -40,7 +40,7 @@ Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine D
 
 ## 3. Bereits umgesetzt
 
-- `lib/readiness/temporal.ts`: Parser, Safety-Bound `1_051_200` Minuten, Vergleichsschlüssel, relative Copy
+- `lib/readiness/temporal.ts`: Parser, Safety-Bound `1_051_200` Minuten, Same-Anchor-Reihenfolge (`before=-offset`, `at=0`, `after=+offset`, nur `availableFrom <= dueBy`), Vergleichsschlüssel, relative Copy
 - `RequirementsProviderZeile.temporalRule` als Rohwert; `OfficialEvaluation.temporalRule` normalisiert, default `null`
 - Engine übernimmt Timing nur bei trusted/current `required|conditional`; Visa-Degradation und `officialLeer` bleiben `null`
 - Duplicate gleiche Entscheidung + abweichendes Timing (inkl. `null` vs. Wert): Requirement bleibt, Timing `null`
@@ -69,13 +69,13 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/readiness/e4-temporal-rules.test.ts` | **16/16 pass** |
-| fokussierte E1–E4-/Label-/Scope-Tests | **105/105 pass** |
-| `npm test` | **2912/2912 pass** |
-| `npm run typecheck` | pass |
-| `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
-| `npm run build` | pass (Next.js 16.3.3 Turbopack) |
-| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
+| `lib/readiness/e4-temporal-rules.test.ts` | pending review-fix re-run |
+| fokussierte E1–E4-/Label-/Scope-Tests | pending |
+| `npm test` | pending |
+| `npm run typecheck` | pending |
+| `npm run lint` | pending |
+| `npm run build` | pending |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pending |
 | GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip prüfen |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet (kein Real-Device-Abnahmescope) |
 
@@ -84,8 +84,9 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 - Ohne Provider bleibt Timing praktisch unsichtbar. Das ist ehrlich, nicht leer.
 - 72 Stunden werden als `72 Std.` gezeigt, nicht als `3 Tage`; Tage erst ab 4 ganzen Tagen.
 - `validFrom`/`validUntil` bleiben Evidence-Gültigkeit und werden nicht als Action-Fenster gelesen.
+- Unmögliche Same-Anchor-Fenster werden im Parser `null`; unterschiedliche Anchors bleiben in E4 ungeordnet.
 - Agent-Self-Review ≠ Technical-Lead-PASS.
 
 ## 7. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #316. Nicht Ready. Nicht mergen. Kein E5.
+Unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #316 nach Same-Anchor-Fix. Nicht Ready. Nicht mergen. Kein E5.

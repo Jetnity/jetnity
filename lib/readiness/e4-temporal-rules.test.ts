@@ -328,6 +328,82 @@ describe('Entry Requirements E4 – Temporal-Rule-Contract', () => {
     }
   })
 
+  test('Same-Anchor-Fenster: unmögliche Reihenfolge wird null, Requirement bleibt', async () => {
+    const afterThenBefore = {
+      kind: 'relative_duration' as const,
+      availableFrom: {
+        anchor: 'destination_arrival' as const,
+        relation: 'after' as const,
+        offsetMinutes: STUNDEN_24,
+      },
+      dueBy: {
+        anchor: 'destination_arrival' as const,
+        relation: 'before' as const,
+        offsetMinutes: STUNDEN_24,
+        semantics: 'mandatory' as const,
+      },
+    }
+    assert.equal(temporalRuleLesen(afterThenBefore), null)
+    const afterThenBeforeEval = finden(await auswerten([zeile({ result: 'required', temporalRule: afterThenBefore })]))
+    assert.equal(afterThenBeforeEval?.result, 'required')
+    assert.equal(afterThenBeforeEval?.status, 'current')
+    assert.equal(afterThenBeforeEval?.freshness, 'current')
+    assert.equal(afterThenBeforeEval?.temporalRule, null)
+    assert.deepEqual(timingTexteVon(afterThenBeforeEval), [])
+
+    const spaeterOffenAlsFaellig = {
+      kind: 'relative_duration' as const,
+      availableFrom: {
+        anchor: 'destination_arrival' as const,
+        relation: 'before' as const,
+        offsetMinutes: STUNDEN_24,
+      },
+      dueBy: {
+        anchor: 'destination_arrival' as const,
+        relation: 'before' as const,
+        offsetMinutes: STUNDEN_72,
+        semantics: 'mandatory' as const,
+      },
+    }
+    assert.equal(temporalRuleLesen(spaeterOffenAlsFaellig), null)
+    const spaeterOffenEval = finden(await auswerten([zeile({ result: 'conditional', temporalRule: spaeterOffenAlsFaellig })]))
+    assert.equal(spaeterOffenEval?.result, 'conditional')
+    assert.equal(spaeterOffenEval?.status, 'current')
+    assert.equal(spaeterOffenEval?.freshness, 'current')
+    assert.equal(spaeterOffenEval?.temporalRule, null)
+
+    assert.deepEqual(temporalRuleLesen(arrivalCard72h)?.availableFrom?.offsetMinutes, STUNDEN_72)
+    assert.equal(temporalRuleLesen(arrivalCard72h)?.dueBy?.relation, 'at')
+    const kanonisch = finden(await auswerten([zeile({ temporalRule: arrivalCard72h })]))
+    assert.equal(kanonisch?.result, 'required')
+    assert.equal(kanonisch?.status, 'current')
+    assert.equal(kanonisch?.freshness, 'current')
+    assert.equal(kanonisch?.temporalRule?.availableFrom?.offsetMinutes, STUNDEN_72)
+
+    const verschiedeneAnker = {
+      kind: 'relative_duration' as const,
+      availableFrom: {
+        anchor: 'trip_departure' as const,
+        relation: 'after' as const,
+        offsetMinutes: STUNDEN_24,
+      },
+      dueBy: {
+        anchor: 'destination_arrival' as const,
+        relation: 'before' as const,
+        offsetMinutes: STUNDEN_24,
+        semantics: 'recommended' as const,
+      },
+    }
+    const gemischt = temporalRuleLesen(verschiedeneAnker)
+    assert.equal(gemischt?.availableFrom?.anchor, 'trip_departure')
+    assert.equal(gemischt?.dueBy?.anchor, 'destination_arrival')
+    const gemischtEval = finden(await auswerten([zeile({ temporalRule: verschiedeneAnker })]))
+    assert.equal(gemischtEval?.result, 'required')
+    assert.equal(gemischtEval?.status, 'current')
+    assert.equal(gemischtEval?.freshness, 'current')
+    assert.deepEqual(gemischtEval?.temporalRule, gemischt)
+  })
+
   test('6. not_required trägt nie Timing', async () => {
     const evaluation = finden(
       await auswerten([zeile({ result: 'not_required', temporalRule: arrivalCard72h })]),

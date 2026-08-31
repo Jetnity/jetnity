@@ -1,7 +1,7 @@
 # Entry Requirements Temporal Rules E4 – Handoff
 
 Stand: 31. August 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN E5**  
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5**  
 Cursor-Agent: **`Jetnity entry requirements temporal rules 1`**  
 Generation: **1**  
 Cursor-Session/Run-ID: `bc-69084bbc-a7ab-4ed5-8418-754bea9ee241`  
@@ -32,7 +32,7 @@ Harte Wahrheiten:
 3. Nur `kind: 'relative_duration'` mit geschlossenen Anchors `trip_departure|destination_arrival|transit_arrival|border_crossing` und `before|at|after`.
 4. Timing nur aus expliziten strukturierten Provider-Metadaten. Nie aus URL, Freitext, Requirement-Typ, LLM, Browser oder `validFrom/validUntil`.
 5. Temporal Rule nur auf trusted/current `required|conditional`. `not_required`, unknown, insufficient, stale, recheck, unavailable und Visa-Conflict tragen `null`.
-6. Malformed Timing ändert keine Requirement-Hard-Truth.
+6. Malformed Timing ändert keine Requirement-Hard-Truth. Unmögliche Same-Anchor-Fenster (`availableFrom > dueBy` nach `before=-offset` / `at=0` / `after=+offset`) werden Parser-`null`; die Requirement-Entscheidung bleibt. Unterschiedliche Anchors werden in E4 nicht geordnet.
 7. Duplicate gleiche Entscheidung + abweichendes Timing: Requirement bleibt, Timing `null`. Permutationsstabil.
 8. Relative UI-Copy nur aus dem normalisierten Contract. Keine Kalenderdaten.
 9. `requirementsProviderAus()` bleibt `null`.
@@ -58,4 +58,4 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review. Nicht Ready. Nicht mergen. Kein E5/Adapter/Deadline-Start.
+Unabhängiger Technical-Lead Exact-Head-Re-Review nach Same-Anchor-Fix. Nicht Ready. Nicht mergen. Kein E5/Adapter/Deadline-Start.

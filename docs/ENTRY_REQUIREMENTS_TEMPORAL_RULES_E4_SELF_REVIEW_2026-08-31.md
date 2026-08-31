@@ -10,7 +10,7 @@ Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
 Auftrag: Issue #315 / E4 official temporal-rule contract, no reminder runtime.
 
-Geprüft: nur `relative_duration`; geschlossene Anchors/Relations; `availableFrom`/`dueBy` mit `mandatory|recommended`; Timing nur aus strukturierten Provider-Metadaten; kein Default-Pass/`documents[0]`/`evaluations[0]`; Temporal Rule nur current/trusted `required|conditional`; malformed Timing ändert keine Hard Truth; Duplicate-Timing fail-closed und permutationsstabil; relative Copy ohne Kalender-Timestamps; Factory `null`; keine Provider/Secrets/paid calls; keine Supabase/Auth; keine sensitiven Dokumentdaten; kein Ranking; keine Deadline-/Notification-Runtime; kein E5; `docs/ACTIVE_WORK_STATUS.md` nicht editiert.
+Geprüft: nur `relative_duration`; geschlossene Anchors/Relations; `availableFrom`/`dueBy` mit `mandatory|recommended`; Same-Anchor-Reihenfolge `availableFrom <= dueBy`; Timing nur aus strukturierten Provider-Metadaten; kein Default-Pass/`documents[0]`/`evaluations[0]`; Temporal Rule nur current/trusted `required|conditional`; malformed oder unmögliches Timing ändert keine Hard Truth; Duplicate-Timing fail-closed und permutationsstabil; relative Copy ohne Kalender-Timestamps; Factory `null`; keine Provider/Secrets/paid calls; keine Supabase/Auth; keine sensitiven Dokumentdaten; kein Ranking; keine Deadline-/Notification-Runtime; kein E5; `docs/ACTIVE_WORK_STATUS.md` nicht editiert. Review-Fix bleibt Generation 1 / dieselbe Session.
 
 ## 2. Adversarial Fragen
 
@@ -26,6 +26,9 @@ Geprüft: nur `relative_duration`; geschlossene Anchors/Relations; `availableFro
 | Wird Transit-Timing auf Destination oder den anderen Transit gezogen? | Nein. Anchor `transit_arrival` bleibt am exakten Transit-Country. |
 | Löscht Visa-Conflict das Timing? | Ja. Degradation setzt `temporalRule: null`. |
 | Zeigt die UI konkrete Kalenderdaten oder Uhrzeiten? | Nein. Nur relative Copy aus Minuten. |
+| Wird ein unmögliches Same-Anchor-Fenster als Truth übernommen? | Nein. `after +24h` / `before -24h` und `before 24h` / `before 72h` werden Parser-`null`. |
+| Werden unterschiedliche Anchors in E4 in eine Reihenfolge gezwungen? | Nein. Ohne Event-Timestamps bleibt der Contract zulässig, wenn beide Punkte einzeln valide sind. |
+| Zerstört verworfenes Same-Anchor-Timing `result/status/freshness`? | Nein. Requirement bleibt `required`/`conditional` und current. |
 | Wird `calendar_day` oder ein absoluter Timestamp in den Contract gepresst? | Nein. Unsupported kinds werden `null`. |
 | Wird die Safety-Bound als fachliche Frist verkauft? | Nein. Dokumentiert als technische Obergrenze `1_051_200` Minuten. |
 | Wird die Factory non-null oder ein Adapter verdrahtet? | Nein. `requirementsProviderAus()` bleibt `null`. |
@@ -41,6 +44,6 @@ Geprüft: nur `relative_duration`; geschlossene Anchors/Relations; `availableFro
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Autor:** keine in diesem Slice. Lokale Gates: 2912/2912 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene.
+**CHANGES REQUIRED durch den Autor:** der TL-Befund Same-Anchor-Reihenfolge ist im Parser behoben. Neue lokale Gates folgen nach Re-Run.
 
-**Unabhängiger Technical-Lead-Review:** ausstehend. PR bleibt Draft. Kein Ready, kein Merge, kein E5.
+**Unabhängiger Technical-Lead-Review:** ausstehend auf neuem Head. PR bleibt Draft. Kein Ready, kein Merge, kein E5.

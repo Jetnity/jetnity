@@ -86,9 +86,30 @@ function dueByLesen(roh: unknown): OfficialTemporalDueBy | null {
 }
 
 /**
+ * Same-Anchor-Position: `before = -offset`, `at = 0`, `after = +offset`.
+ * Nur innerhalb desselben Anchors vergleichbar. Unterschiedliche Anchors
+ * werden in E4 nicht geordnet – dafür fehlen Event-Timestamps.
+ */
+function relativePositionMinutes(punkt: OfficialTemporalPunkt): number {
+  if (punkt.relation === 'before') return -punkt.offsetMinutes
+  if (punkt.relation === 'after') return punkt.offsetMinutes
+  return 0
+}
+
+function sameAnchorFensterIstMoeglich(
+  availableFrom: OfficialTemporalPunkt | null,
+  dueBy: OfficialTemporalDueBy | null,
+): boolean {
+  if (!availableFrom || !dueBy) return true
+  if (availableFrom.anchor !== dueBy.anchor) return true
+  return relativePositionMinutes(availableFrom) <= relativePositionMinutes(dueBy)
+}
+
+/**
  * Fail-closed Parser. Unsupported kinds, Freitext, Marketingwerte,
  * Floats, NaN, Infinity, negative/0 before/after, nonzero at,
- * fehlende dueBy-Semantik und leere Regeln werden null.
+ * fehlende dueBy-Semantik, leere Regeln und unmögliche Same-Anchor-
+ * Fenster (availableFrom > dueBy) werden null.
  * Liest weder URL, Requirement-Typ, validFrom/validUntil noch LLM-Text.
  */
 export function temporalRuleLesen(wert: unknown): OfficialTemporalRule | null {
@@ -107,6 +128,7 @@ export function temporalRuleLesen(wert: unknown): OfficialTemporalRule | null {
   const dueBy = hatDue ? dueByLesen(objekt.dueBy) : null
   if (hatDue && !dueBy) return null
   if (!availableFrom && !dueBy) return null
+  if (!sameAnchorFensterIstMoeglich(availableFrom, dueBy)) return null
   return {
     kind: OFFICIAL_TEMPORAL_KIND,
     availableFrom,
