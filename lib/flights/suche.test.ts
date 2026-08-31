@@ -7,7 +7,11 @@ import { clientEnthaeltGeheimnis } from '@/lib/flights/client-sicht'
 import { SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
 import {
   FlugProviderFehler,
+  leereFlugAirportEventInstantEvidence,
+  leereFlugAirportEventInstantIssues,
   leereFlugAirportTimezoneEvidence,
+  type FlugAirportEventInstantEvidence,
+  type FlugAirportEventInstantIssue,
   type FlugAirportTimezoneEvidence,
   type FlugProvider,
 } from '@/lib/flights/provider'
@@ -18,11 +22,19 @@ import { flugZustand } from '@/lib/flights/zustand'
 function providerMit(
   optionen = duffelAntwortMappen(ANTWORT_GEMISCHT).options,
   airportTimezoneEvidence: FlugAirportTimezoneEvidence[] = leereFlugAirportTimezoneEvidence(),
+  airportEventInstantEvidence: FlugAirportEventInstantEvidence[] = leereFlugAirportEventInstantEvidence(),
+  airportEventInstantIssues: FlugAirportEventInstantIssue[] = leereFlugAirportEventInstantIssues(),
 ): FlugProvider {
   return {
     id: 'test',
     async suchen() {
-      return { options: optionen, partial: false, airportTimezoneEvidence }
+      return {
+        options: optionen,
+        partial: false,
+        airportTimezoneEvidence,
+        airportEventInstantEvidence,
+        airportEventInstantIssues,
+      }
     },
   }
 }
@@ -108,14 +120,29 @@ describe('Flugsuche-Orchestrierung', () => {
     assert.ok(gemappt.airportTimezoneEvidence.length >= 2)
     const { httpStatus, koerper } = await fluegeSuchen(SUCHANFRAGE, {
       zustand: { aktiv: true, umgebung: 'test' },
-      provider: providerMit(gemappt.options, gemappt.airportTimezoneEvidence),
+      provider: providerMit(gemappt.options, gemappt.airportTimezoneEvidence, [
+        {
+          optionId: gemappt.options[0]!.id,
+          legIndex: 0,
+          segmentIndex: 0,
+          endpoint: 'departure',
+          iata: 'ZRH',
+          timeZone: 'Europe/Zurich',
+          instant: '2026-11-01T08:15:00Z',
+        },
+      ]),
       kennung: 'test-timezone-no-leak',
     })
     assert.equal(httpStatus, 200)
     assert.equal(koerper.status, 'ok')
     assert.ok(koerper.options.length >= 1)
     const serialisiert = JSON.stringify(koerper)
-    assert.equal(/time[_-]?zone|Timezone|airportTimezoneEvidence|Europe\/Zurich|Asia\/Bangkok/i.test(serialisiert), false)
+    assert.equal(
+      /time[_-]?zone|Timezone|airportTimezoneEvidence|airportEventInstant|Europe\/Zurich|Asia\/Bangkok|2026-11-01T08:15:00Z/i.test(
+        serialisiert,
+      ),
+      false,
+    )
     assert.equal(clientEnthaeltGeheimnis(koerper), false)
     assert.equal(koerper.options[0]?.legs[0]?.segments[0]?.departureTime, '09:15')
     flugRateLeeren()

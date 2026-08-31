@@ -9,6 +9,7 @@ import {
   DUFFEL_PFADE,
   DUFFEL_VERSION,
 } from '@/lib/flights/duffel/konfiguration'
+import { airportEventInstantsAufloesen } from '@/lib/flights/airport-event-instant'
 import { duffelAntwortMappen } from '@/lib/flights/duffel/mapping'
 import { fetchAlsHttp, type SucheHttp } from '@/lib/flights/duffel/http'
 import { FLUG_PROVIDER_DUFFEL, FLUG_SUCHE_GRENZEN, type FlugSuchanfrage } from '@/lib/flights/domain'
@@ -101,12 +102,16 @@ export function duffelAdapter(token: string, http: SucheHttp = fetchAlsHttp): Fl
       }
       const options = gemappt.options.slice(0, FLUG_SUCHE_GRENZEN.angebote)
       const behalteneIds = new Set(options.map((option) => option.id))
+      const airportTimezoneEvidence = gemappt.airportTimezoneEvidence.filter((eintrag) =>
+        behalteneIds.has(eintrag.optionId),
+      )
+      const aufgeloest = airportEventInstantsAufloesen({ options, airportTimezoneEvidence })
       return {
         options,
         partial: gemappt.partial,
-        airportTimezoneEvidence: gemappt.airportTimezoneEvidence.filter((eintrag) =>
-          behalteneIds.has(eintrag.optionId),
-        ),
+        airportTimezoneEvidence,
+        airportEventInstantEvidence: aufgeloest.airportEventInstantEvidence,
+        airportEventInstantIssues: aufgeloest.airportEventInstantIssues,
       }
     },
   }
