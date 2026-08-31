@@ -72,6 +72,7 @@ Unterstützte Requirement-Kategorien umfassen:
 - Reisepass
 - Identitätsdokument
 - Passgültigkeit
+- freie Passseiten (`blank_passport_pages`)
 - Transit
 - Health
 - Vaccination
@@ -80,6 +81,7 @@ Unterstützte Requirement-Kategorien umfassen:
 - Insurance
 - Return / Onward Ticket
 - Booking / Travel Document
+- finanzielle Mittel (`financial_means`)
 - weitere Einreiseanforderungen.
 
 Kanonische Resultate:
@@ -222,9 +224,10 @@ Der Nutzer sieht u. a.:
 - erneut prüfen
 - nicht relevant
 - fehlende Traveller-Fakten
-- Official Requirement Status, sobald Evidence vorhanden ist.
+- Official Requirement Status, sobald Evidence vorhanden ist
+- eine Checkliste je `OfficialEvaluation` (Traveller × Credential-Option × Destination/Transit × Requirement Type), nicht nur eine Summe pro Reisendem.
 
-Status wird nicht nur über Farbe vermittelt.
+Offizielle Einzelzeilen nutzen fail-closed Ergebnis-/Freshness-Copy, strukturierte Visa-/eTA-Labels und purpose-spezifische Action-Texte. `checkedAt` ist Jetnity-Prüfzeit, nicht „Quelle zuletzt aktualisiert“. Status wird nicht nur über Farbe vermittelt.
 
 ---
 

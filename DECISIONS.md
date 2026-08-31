@@ -5305,6 +5305,29 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0203 – Entry Requirements E3: Visitor Checklist Presentation
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/entry-requirements-checklist-e3-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider, kein E4. Binding: `docs/ENTRY_REQUIREMENTS_VISITOR_CHECKLIST_E3_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. Die vorhandene Official-Evaluation-Wahrheit aus E1/E2 wird in der Reisevorbereitung lossless als Checkliste gezeigt. Eine Besucherzeile entspricht genau einer `OfficialEvaluation` / dem Scope `Traveller × Credential-Option × Destination/Transit × Requirement Type`.
+2. Eine Traveller-Summary darf ergänzen, aber nicht die einzige Detailwahrheit sein. Kein Default-Pass, keine Default-Citizenship, kein `documents[0]`, kein `evaluations[0]`, kein Credential-Ranking.
+3. Harte Ergebnis-Copy (`Erforderlich` / `Nicht erforderlich` / `Bedingt` / `Noch nicht verlässlich bestimmbar`) nur wenn `status === 'current'` **und** `freshness === 'current'`. Stale, Recheck, Source-/Provider-Unavailable, Missing Facts und `never_checked` gewinnen vor einem alten Resultat und werden nie als aktuelle Hard Truth formuliert.
+4. Requirement-Typen und Visa-Modi nutzen die geschlossene Taxonomie. eTA bleibt `electronic_travel_authorization`. `blank_passport_pages` und `financial_means` haben First-Class-Labels. Gruppierung (`Vor Abreise erledigen`, `Dokument prüfen`, `Bei Einreise / vor Ort`, `Bei Einreise / Reise nachweisen`, `Route / Transit`, Residual) ist Presentation-only.
+5. Credential-Labels werden nur über exakte `credentialOptionRef`-Auflösung gegen Trip-/Traveller-Daten gebildet. Issuer Country ≠ Citizenship. Unauflösbare Zuordnung bleibt `Reisedokument-Option`.
+6. Action-Labels kommen nur aus `officialActionZweckText(purpose)`. Dieselbe URL wird nicht doppelt gezeigt; eine abweichende valide `sourceUrl` darf zusätzlich `Offizielle Quelle öffnen` sein. Keine URL-Heuristik, keine erfundenen Gebühren/Stay-/Seiten-/Proof-of-Funds-/Deadline-Werte.
+7. `requirementsProviderAus()` bleibt `null`. Keine Supabase-/Auth-/Deadline-Runtime.
+
+**Kontext:** E1/E2 tragen die strukturierte Official Truth, die bisherige UI reduzierte sie auf eine Summe pro Reisendem und pauschalisierte Actions als „Offizielle Information öffnen“.
+
+**Alternativen:** Nur Summary belassen; Visa-Modi als eigene Requirement-Typen umbauen; Credential aus Reihenfolge/`documents[0]` raten; Action-Zweck aus URL ableiten.
+
+**Konsequenzen:** Presentation isoliert in `lib/readiness/official-presentation.ts` plus Labels in `bezeichnungen.ts`. Keine neue Hard Truth. Folgeslice (E4/Provider/Deadline) nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

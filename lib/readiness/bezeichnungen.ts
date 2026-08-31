@@ -2,9 +2,15 @@
 //
 // Was Reisende lesen. Keine irreführende Erfolgssprache.
 
-import type { ReadinessKind, ReadinessUserStatus } from '@/types/trips'
+import type { OfficialRequirementType, ReadinessKind, ReadinessUserStatus } from '@/types/trips'
 import type { OfficialRequirementStatus, ReadinessCurrentness } from '@/lib/readiness/domain'
-import type { OfficialActionPurpose, OfficialEvaluation, OfficialFreshness } from '@/lib/readiness/official'
+import type {
+  MissingFact,
+  OfficialActionPurpose,
+  OfficialEvaluation,
+  OfficialFreshness,
+  OfficialVisaMode,
+} from '@/lib/readiness/official'
 
 export const READINESS_ART_BEZEICHNUNG: Record<ReadinessKind, string> = {
   entry_check: 'Einreisebedingungen',
@@ -135,3 +141,65 @@ export const SENSITIVE_HINWEIS =
 
 export const MEHRERE_REISENDE_HINWEIS =
   'Diese Reise hat mehrere Reisende. Ohne individuelle Angaben gilt ein Häkchen nicht für alle.'
+
+export const OFFICIAL_ANFORDERUNG_BEZEICHNUNG: Record<OfficialRequirementType, string> = {
+  visa: 'Visum',
+  electronic_travel_authorization: 'Elektronische Reisegenehmigung (eTA)',
+  passport: 'Reisepass',
+  identity_document: 'Identitätsdokument',
+  passport_validity: 'Passgültigkeit',
+  blank_passport_pages: 'Freie Passseiten',
+  transit: 'Transitbestimmungen',
+  health: 'Gesundheitsanforderung',
+  vaccination: 'Impfanforderung',
+  health_document: 'Gesundheitsdokument',
+  entry_form: 'Einreiseformular',
+  insurance: 'Versicherungspflicht',
+  onward_or_return_ticket: 'Rück- oder Weiterreisenachweis',
+  booking_or_travel_document: 'Buchungs- oder Reisenachweis',
+  financial_means: 'Finanzielle Mittel',
+  other_entry_requirement: 'Weitere Einreiseanforderung',
+}
+
+export const OFFICIAL_VISA_MODUS_BEZEICHNUNG: Record<OfficialVisaMode, string> = {
+  visa_exempt: 'Visumfreie Einreise',
+  visa_on_arrival: 'Visa on Arrival',
+  electronic_visa: 'E-Visum',
+  visa_before_travel: 'Visum vor der Reise',
+  unknown: 'Visumstatus',
+}
+
+export const OFFICIAL_ERGEBNIS_BEZEICHNUNG = {
+  required: 'Erforderlich',
+  not_required: 'Nicht erforderlich',
+  conditional: 'Bedingt',
+  unknown: 'Noch nicht verlässlich bestimmbar',
+} as const
+
+export const OFFICIAL_FEHLENDE_ANGABE: Record<MissingFact, string> = {
+  nationality: 'Staatsangehörigkeit',
+  residence: 'Wohnsitz',
+  document_type: 'Dokumenttyp',
+  document_issuing_country: 'Ausstellungsland',
+  document_expiry: 'Ablaufdatum',
+  destination_country: 'Reiseland',
+  travel_dates: 'Reisedaten',
+  transit_itinerary: 'Transitroute',
+  origin_country: 'Abreiseland',
+}
+
+export function officialAnforderungTitel(
+  requirementType: OfficialRequirementType,
+  visaMode: OfficialVisaMode | null,
+): string {
+  if (requirementType !== 'visa') return OFFICIAL_ANFORDERUNG_BEZEICHNUNG[requirementType]
+  if (visaMode && visaMode !== 'unknown') {
+    return `Visum · ${OFFICIAL_VISA_MODUS_BEZEICHNUNG[visaMode]}`
+  }
+  return OFFICIAL_VISA_MODUS_BEZEICHNUNG.unknown
+}
+
+export function officialFehlendeAngabenText(facts: readonly MissingFact[]): string {
+  if (facts.length === 0) return 'Für die Prüfung fehlen Angaben'
+  return `Für die Prüfung fehlen Angaben: ${facts.map((fakt) => OFFICIAL_FEHLENDE_ANGABE[fakt]).join(', ')}`
+}
