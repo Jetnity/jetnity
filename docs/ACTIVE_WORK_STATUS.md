@@ -1,144 +1,110 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PROVIDER ACTIVATION READINESS PRECHECK CLOSED & POST-MERGE VERIFIED / NO ACTIVE FOLLOW-UP IMPLEMENTATION / S6 NEXT CANDIDATE NOT STARTED / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
+Status: **CURRENT / THREE-PHASE PRODUCT STRATEGY INTEGRATION ACTIVE / DOCS-ONLY / PHASE 1 CORE CURRENT PRODUCT PHASE / NO RUNTIME SLICE / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
 
-## 1. Current verified main
+## 1. Current verified main baseline
 
-`main@15538630fff170f53fc0e9edb60012a769f83e4d`
+`main@6891cab6b204e6e6093a7002d7cad9b4afc692cc`
 
 Commit:
 
-`Merge Provider Activation Readiness Precheck (#355)`
+`Close Provider Activation Readiness Precheck continuity (#356)`
 
-Post-merge verified on exact main:
+Verified before this strategy-planning branch:
 
-- Main CI #1560 / Run `33449440321`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_6WQJRXRoFp6eAPJjWEPF1GSLLFvD`: **READY** on exact main;
-- Issue #351: **CLOSED / completed**.
+- Main CI #1562 / Run `33450057614`: **COMPLETED / SUCCESS**;
+- Provider Activation Readiness Precheck: **CLOSED & POST-MERGE VERIFIED**;
+- no active functional follow-up slice;
+- no provider activated;
+- S6 remained only the next identified Provider Readiness candidate, not started.
 
-This docs-only continuity closure may advance the canonical main SHA after its own merge without changing runtime behavior. Always re-read live `main`.
+Always re-read live `main`; branch work does not redefine repository truth.
 
-## 2. Provider Activation Readiness Precheck – final history
+## 2. Active planning work
 
 Issue:
 
-**#351 – CLOSED / completed**
+**#357 – Jetnity 3-Phase Product Strategy – V1 scope, Definition of Done and Release Readiness**
 
-Original Draft PR:
+Branch:
 
-**#354 – CLOSED / NOT MERGED** because the connected GitHub Ready mutation failed on the known `Repository.fullDatabaseId` GraphQL connector bug.
+`docs/jetnity-three-phase-v1-strategy-2026-09-01`
 
-Recovery PR:
+Type:
 
-**#355 – MERGED** from exact same final head `d45cf6679005ab5d45401d5eeb39a47c8c3e6884`.
+**Technical-Lead / Product-Owner strategy integration – docs only. No Cursor runtime agent.**
 
-No new agent, generation or implementation change was introduced by recovery.
+No S6 or other runtime slice may start until this planning work is reviewed, integrated and post-merge verified.
 
-Logical Cursor agent:
+## 3. Binding Product-Owner decision
 
-**`Jetnity provider activation readiness precheck 1`**, Generation 1
+Jetnity now has three product/release phases:
 
-Cursor session:
+1. **Phase 1 – Jetnity Core** – current product phase; V1 launches only when **PRODUCTION READY FOR REAL TRAVELLERS**.
+2. **Phase 2 – Jetnity Complete Travel Platform** – breadth, deeper decisions, monetization and operations on real Phase-1 learning.
+3. **Phase 3 – Jetnity Travel Ecosystem** – native apps, network, creator/partner ecosystem, data/intelligence moats and international scale.
 
-`bc-d1b4e6bb-c952-4242-ba57-384783bc23ea`
+The long-term ambition is not reduced. Only the mandatory pre-launch scope is narrowed to a coherent professional V1.
 
-Canonical closure:
+## 4. Canonical strategy documents on this branch
 
-`docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_ACTIVATION_READINESS_PRECHECK_CLOSED_2026-09-01.md`
+- `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+- `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+- `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+- `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+- `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+- `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+- `docs/JETNITY_THREE_PHASE_STRATEGY_RECONCILIATION_2026-09-01.md`
 
-Canonical review:
+These files overlay launch-scope/order onto existing Vision, Mandate, Roadmap, Architecture, Decisions and domain plans. Correct existing architecture is reused rather than renamed/rebuilt.
 
-`docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_ACTIVATION_READINESS_PRECHECK_REVIEW_2026-09-01.md`
+## 5. Current Phase-1 gap conclusion
 
-## 3. Review result
+Strong/integrated foundations already exist for:
 
-Initial agent head:
+- Trip Workspace through major pre-TW8 parts;
+- Guest→Account;
+- Account Traveller Registry and trip-owned Traveller Snapshot;
+- Multi-Citizenship/Multi-Document foundations and lifecycle;
+- Route/Transit/Multi-Destination;
+- Flight/Hotel/Activity provider-neutral domains and secure adoption seams;
+- Entry Requirements/Temporal Readiness target contracts;
+- Admin A–C / security/health/provider-cost foundations;
+- Product quality/security/continuity governance.
 
-`43bb98762ed00bc0293e5b4df5566a4e25c3d865` → **CHANGES REQUIRED**.
+Critical V1 gaps are now dominated by:
 
-Same-session review-fix head:
+- real Flight Commercial Truth;
+- real Hotel Commercial Truth;
+- real Activities path or explicit PO launch exception;
+- real Official Entry Requirements Evidence;
+- temporal Readiness runtime on real evidence;
+- TW-8/TW-9 and full core-journey closure;
+- Destination Essentials;
+- World Map;
+- explicit PWA scope/readiness;
+- V1-specific privacy/legal/ops/monetization gaps;
+- final V1 Definition-of-Done and Release Readiness evidence.
 
-`997fca395cef8fe44a4198a1b313e28364d83723` → **independent Technical-Lead PASS**.
+## 6. Product-Owner gates remain unchanged
 
-Closed findings:
+This strategy integration authorizes **none** of the following:
 
-- Duffel sandbox/test prices are not S5-A `live_api` or real Commercial Truth;
-- Binding Build Order `S4–S8, then real providers` remains binding;
-- process-local/Vercel memory is not a cross-request Nachweis store;
-- Viator Basic correctly distinguishes real-time schedules from booking-grade `/availability/check`.
-
-## 4. Programme conclusion
-
-### Next identified candidate
-
-Under the existing Provider Readiness serial path, **S6 – Persistent Cost Guard** is the next implementation candidate after S5.
-
-**S6 is not active and has not been started.**
-
-Residual S4 remains open. S7 remains open. S8 remains open. All required S4–S8 work must be closed before any real-provider phase unless the Product Owner explicitly changes the binding order.
-
-### First later real Commercial Truth domain
-
-Preferred domain: **Flights**.
-
-The eventual live vendor is **not selected**. Duffel live, Skyscanner or another qualified real-price source remains subject to provider/commercial/licensing/DPA/cost/security gates.
-
-Duffel test mode may only serve as a future integration harness. It is not real Commercial Truth and cannot mint S5-A `live_api` under the current contract.
-
-### Cross-request state
-
-Process-local/Vercel memory is not a valid cross-request Nachweis store. Any zero-persistence proof must stay inside one server-side invocation. Cross-request state requires a durable server-side store in its own gated architecture slice.
-
-### Viator
-
-Viator Basic supports real-time schedule retrieval for a selected product but not booking-grade `/availability/check`. Activities remain a later candidate.
-
-### TW-8 / TW-9
-
-Remain **BLOCKED**.
-
-## 5. Production truth / Product-Owner boundary
-
-Fresh read-only Production evidence remained:
-
-- commercial provenance rows = **0**;
-- `production_write_path_allocated = false`;
-- Production Flight Event Provenance remains absent/unapplied.
-
-No provider activation, secret creation/read, paid/live call, Production mutation, writer allocation or backfill occurred.
-
-Explicit Product-Owner approval remains required before:
-
-- provider signup / contract / DPA acceptance;
-- API key/token/secret creation or storage;
-- paid/live provider calls;
-- Production provider activation;
+- provider selection/contract/DPA/API keys/secrets;
+- paid/live calls or Production provider activation;
 - Production schema/RLS/grant/role/function mutation;
-- runtime/login writer principal allocation;
-- real application writer/backfill;
-- TW-8/TW-9 runtime;
-- public/irreversible provider-live activation;
-- sensitive Traveller/document changes;
-- spend outside approved limits.
+- runtime writer allocation/backfill;
+- fundamental Auth/MFA/AAL redesign;
+- sensitive passport/MRZ/scan/biometric/health storage;
+- real payments;
+- spend outside approved limits;
+- public indexing/domain cutover/public launch.
 
-## 6. Risk state
+## 7. Stop rule
 
-### P0
-None open inside the completed precheck scope.
+**NO RUNTIME FOLLOW-UP FROM THIS BRANCH.**
 
-### P1
-None open inside the completed precheck scope after review-fix.
+After exact-head Technical-Lead review, CI/Vercel gates, merge and post-merge verification, reconstruct live state again. Only then select the smallest responsible Phase-1 implementation slice.
 
-### P2
-None open inside the completed precheck scope after review-fix.
-
-Open programme work is intentionally not claimed closed: residual S4, S6, S7, S8, real provider onboarding, first real Commercial Truth snapshot, writer allocation and TW-8/TW-9.
-
-## 7. Current stop rule
-
-**NO ACTIVE FOLLOW-UP IMPLEMENTATION SLICE.**
-
-Do not automatically start S6 from this status. In the next work cycle, reconstruct live `main`, PRs/issues, continuity, Binding Build Order, CI/Vercel and relevant Production truth, then create a fresh versioned task only if S6 remains the smallest safe next slice.
-
-**Live-Evidence wins always.**
+**LIVE-EVIDENCE WINS. AUDIT FIRST. REUSE BEFORE ADD. INTEGRATE BEFORE DUPLICATE. FAIL CLOSED.**
