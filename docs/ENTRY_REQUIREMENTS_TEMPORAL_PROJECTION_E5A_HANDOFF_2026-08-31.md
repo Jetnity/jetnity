@@ -2,14 +2,21 @@
 
 Stand: 31. August 2026  
 Status: **TL CHANGES REQUIRED BEHOBEN / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B**  
-Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**  
-Generation: **1** (gleiche Session, kein neuer Slice)  
-Cursor-Session/Run-ID: `bc-01a057e1-e45f-79d8-a828-97be0e060415`  
+Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**, Generation 1  
+Ursprüngliche bindende Session: `bc-01a057e1-e45f-79d8-a828-97be0e060415` (beendet; nicht wieder geöffnet)  
+Aktive Recovery-Session/Run-ID: `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
+Rolle dieser Session: **mechanischer Review-Fix-Recovery-Carrier** — keine neue Produktgeneration, kein neuer Slice  
 Issue: [#323](https://github.com/Jetnity/jetnity/issues/323)  
 Branch: `feat/entry-requirements-temporal-projection-e5a-2026-08-31`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 > Ein Git-Commit kann seinen eigenen finalen SHA nicht im Tree tragen. Exact Head + Ahead/Behind stehen live im PR, nicht self-embedded.
+
+## Session-Abweichung
+
+GitHub/Cursor hat die bereits beendete ursprüngliche Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` trotz expliziter Anweisung nicht wieder geöffnet. Stattdessen entstand diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. Die STOP-Anweisung und die spätere enge PROCEDURAL-RECOVERY-Freigabe gelten derselben Session.
+
+Sie darf nur den TL-Befund aus Kommentar `5478873885` tragen. Kein Generation-2-Auftrag, kein Folgeslice.
 
 ## Zuerst lesen
 
@@ -38,9 +45,9 @@ Harte Wahrheiten:
 8. Leere/ungültige Regeln geben **pro Aufruf** eine frische Projection zurück (`leereProjektion()`). Kein gemeinsam mutierbares Modul-Singleton.
 9. `requirementsProviderAus()` bleibt `null`.
 10. `docs/ACTIVE_WORK_STATUS.md` wird vom Cursor-Agenten nicht geändert.
-11. Generation 1 arbeitet nur diesen Slice/PR. Review-Fixes bleiben dieselbe Session.
+11. Generation 1 bleibt der Slice. Diese Recovery-Session ist nur der mechanische Carrier für denselben Review-Fix.
 
-## Review-Fix dieser Session
+## Review-Fix dieser Recovery-Session
 
 Geprüfter TL-Head: `ae091777e5aec0d5a0b6baf8b28a5ce1234c967d`.
 
@@ -83,7 +90,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 ## Residuals
 
 - Kein Resolver. Ein späterer Slice muss Events binden, nicht dieser Core.
-- Lokale Gates nach dem Fix: `npm test` 2945/2945, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
+- Lokale Gates nach Recovery-Re-Run: `npm test` 2945/2945, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Abnahmebeweis, weil keine UI.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 

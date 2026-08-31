@@ -2,14 +2,25 @@
 
 Stand: 31. August 2026  
 Status: **TL CHANGES REQUIRED BEHOBEN / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B**  
-Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**  
-Generation: **1** (gleiche Session, kein neuer Slice)  
-Cursor-Session/Run-ID: `bc-01a057e1-e45f-79d8-a828-97be0e060415`  
+Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**, Generation 1  
+Ursprüngliche bindende Session: `bc-01a057e1-e45f-79d8-a828-97be0e060415` (beendet; nicht wieder geöffnet)  
+Aktive Recovery-Session/Run-ID: `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
+Rolle dieser Session: **mechanischer Review-Fix-Recovery-Carrier** — keine neue Produktgeneration, kein neuer Slice  
 Issue: [#323](https://github.com/Jetnity/jetnity/issues/323)  
 Branch: `feat/entry-requirements-temporal-projection-e5a-2026-08-31`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 > Agent-Self-Review ist kein PASS. Cursor setzt nicht Ready und merged nicht. `docs/ACTIVE_WORK_STATUS.md` und `JETNITY_START_HERE.md` wurden nicht verändert.
+
+---
+
+## 0. Session-Abweichung (verbindlich)
+
+GitHub/Cursor hat die bereits beendete ursprüngliche Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` trotz expliziter Anweisung nicht wieder geöffnet, sondern diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erzeugt.
+
+Die unmittelbar folgende STOP-Anweisung wurde derselben Recovery-Session zugestellt. Danach hat der Technical Lead diese Session **eng** als mechanischen Carrier für Kommentar `5478873885` freigegeben.
+
+Das ist kein Generation-2-Slice und kein neuer Produktauftrag.
 
 ---
 
@@ -77,7 +88,7 @@ Alle Gates auf `ae091777...` sind historisch und zählen nicht für den neuen He
 
 ## 5. Tests / CI / Preview
 
-Lokale Evidence dieses Agenten auf dem Purity-Fix plus diesem Status-Commit; Exact-Head-Gates müssen live am finalen Tip geprüft werden.
+Lokale Evidence dieser Recovery-Session nach dem Purity-Fix; Exact-Head-Gates müssen live am finalen Tip geprüft werden.
 
 | Lauf | Ergebnis |
 | --- | --- |
