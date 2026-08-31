@@ -15,9 +15,9 @@ import {
   officialListeHinweis,
   officialPruefungAusEvaluations,
   officialStatusText,
-  officialTravellerErgebnisText,
 } from '@/lib/readiness/bezeichnungen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { officialChecklist } from '@/lib/readiness/official-presentation'
 import { gruppenUnterschiede, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
 import {
@@ -28,7 +28,6 @@ import {
   neueDokumentClientRef,
   type DokumentFormularZeile,
 } from '@/lib/readiness/dokument-formular'
-import { VERGLEICH_NICHT_VERFUEGBAR } from '@/lib/readiness/vergleich'
 import { DOKUMENT_LEBENSZYKLUS_COPY } from '@/lib/traveller/dokument-lebenszyklus-copy'
 import {
   dokumentAblaufGegenReise,
@@ -97,6 +96,11 @@ export default function Reisevorbereitung({
     ),
   )
   const unterschiede = gruppenUnterschiede(reise)
+  const checkliste = officialChecklist({
+    evaluations,
+    party: reise.party ?? [],
+    slots,
+  })
 
   const setzen = async (
     item: {
@@ -202,45 +206,59 @@ export default function Reisevorbereitung({
           ))}
         </section>
 
-        <section className="grid gap-2">
+        <section className="grid gap-3">
           <h4 className="text-sm font-semibold text-brand-800">Offizielle Anforderungen</h4>
           <p className="text-xs leading-5 text-ink-800">{officialListeHinweis(evaluations)}</p>
-          <ul className="grid gap-2">
-            {slots
-              .filter((slot) => slot.applicable)
-              .map((slot) => {
-                const eigene = evaluations.filter((eintrag) => eintrag.travellerClientRef === slot.clientRef)
-                const aktionen = [
-                  ...new Map(
-                    eigene
-                      .map((eintrag) => eintrag.action)
-                      .filter((aktion): aktion is NonNullable<typeof aktion> => Boolean(aktion))
-                      .map((aktion) => [aktion.href, aktion]),
-                  ).values(),
-                ]
-                return (
-                  <li key={`off-${slot.clientRef}`} className="rounded-2xl border border-line-200 px-3 py-3">
-                    <p className="text-sm font-semibold text-brand-800">{slot.label}</p>
+          {checkliste.map((gruppe) => (
+            <section key={gruppe.id} className="grid gap-2" data-official-group={gruppe.id}>
+              <h5 className="text-sm font-semibold text-brand-800">{gruppe.titel}</h5>
+              <ul className="grid gap-2">
+                {gruppe.eintraege.map((eintrag, index) => (
+                  <li
+                    key={`${eintrag.scopeKey}:${index}`}
+                    className="rounded-2xl border border-line-200 px-3 py-3"
+                    data-official-requirement-type={eintrag.requirementType}
+                    data-official-freshness={eintrag.freshness}
+                    data-official-status={eintrag.status}
+                    data-official-result={eintrag.result}
+                  >
+                    <p className="text-sm font-semibold text-brand-800">{eintrag.titel}</p>
                     <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                      {officialTravellerErgebnisText(eigene)}
-                      {slot.traveller && slot.traveller.documents.length > 1 ? ` · ${VERGLEICH_NICHT_VERFUEGBAR}` : ''}
-                      {slot.missingFacts.includes('nationality') ? ' · Staatsangehörigkeit fehlt' : ''}
+                      {eintrag.travellerLabel}
+                      {' · '}
+                      {eintrag.credentialLabel}
+                      {eintrag.ortText ? ` · ${eintrag.ortText}` : ''}
                     </p>
-                    {aktionen.map((aktion) => (
-                      <a
-                        key={aktion.href}
-                        href={aktion.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                      >
-                        Offizielle Information öffnen
-                      </a>
-                    ))}
+                    <p role="status" className="mt-2 text-sm font-semibold leading-6 text-brand-800">
+                      {eintrag.ergebnisText}
+                    </p>
+                    {eintrag.authorityText ? (
+                      <p className="mt-1 text-xs leading-5 text-ink-800">Stelle {eintrag.authorityText}</p>
+                    ) : null}
+                    {eintrag.pruefzeitText ? (
+                      <p className="mt-1 text-xs leading-5 text-ink-800">{eintrag.pruefzeitText}</p>
+                    ) : null}
+                    <p className="mt-1 text-xs leading-5 text-ink-800">{eintrag.freshnessText}</p>
+                    {eintrag.aktionen.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {eintrag.aktionen.map((aktion) => (
+                          <a
+                            key={`${aktion.href}:${aktion.label}`}
+                            href={aktion.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                          >
+                            {aktion.label}
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
                   </li>
-                )
-              })}
-          </ul>
+                ))}
+              </ul>
+            </section>
+          ))}
         </section>
 
         {GRUPPEN.map((gruppe) => {
