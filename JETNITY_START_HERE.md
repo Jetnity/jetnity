@@ -1,179 +1,173 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 31. August 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / E5-B2A CLOSED & POST-MERGE VERIFIED / NO ACTIVE ENTRY-REQUIREMENTS RUNTIME SLICE / LIVE-EVIDENCE WINS**
-
-> **Vor jedem neuen Slice zuerst Live-Stand, Duplicate-/Integration-/Truth-/Security-Grenzen und betroffene Persistenz verifizieren. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen. Continuity ist Definition of Done.**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / E5-B3A AGENT HEAD TL-PASS / FINAL INTEGRATION CONTINUITY GATING / REPOSITORY-ONLY / NO PRODUCTION APPLY / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Persisted does not mean provider-proven.**
 
+> Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen. Jeder neue Head invalidiert ältere Exact-Head-Gates.
+
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B2A_CLOSED_2026-08-31.md` ← **aktuellster Entry-Requirements Closure-Checkpoint**
-2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B2A_REVIEW_2026-08-31.md`
-4. `docs/ENTRY_REQUIREMENTS_EPHEMERAL_AIRPORT_EVENT_INSTANT_E5B2A_HANDOFF_2026-08-31.md`
-5. `docs/ENTRY_REQUIREMENTS_EPHEMERAL_AIRPORT_EVENT_INSTANT_E5B2A_TASK_2026-08-31.md`
-6. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B1R_CLOSED_2026-08-31.md`
-7. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5A_CLOSED_2026-08-31.md`
+1. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3A_REVIEW_2026-08-31.md` ← **aktuellster TL-Review**
+2. `docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_HANDOFF_2026-08-31.md`
+3. `docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_SELF_REVIEW_2026-08-31.md`
+4. `docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_TASK_2026-08-31.md`
+5. `docs/ACTIVE_WORK_STATUS.md`
+6. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B2A_CLOSED_2026-08-31.md`
+7. `docs/CHATGPT_TECHNICAL_LEAD_E5B1_TRUST_BOUNDARY_BLOCKER_CLOSED_2026-08-31.md`
 8. `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
 9. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 10. `docs/JETNITY_BINDING_BUILD_ORDER.md`
 11. `JETNITY_HANDOFF.md`
 
-Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Storage-/Migration-/Persistenzannahmen zusätzlich Supabase live prüfen.
+Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Migration-/Persistenzfragen zusätzlich Supabase Production read-only prüfen.
 
-## 2. Canonical runtime main at E5-B2A closure
+## 2. Baseline / aktueller Main vor E5-B3A-Merge
 
-Runtime main before this docs-only closure:
-
-`main@4b503aa41fec9eaf8119d64fcbbfee9953f169a6`
+`main@3df9af4d6c3da750d50777706bce03589007a58a`
 
 Commit:
-`Merge E5-B2A airport event instant resolution (#336)`
+`Close Entry Requirements E5-B2A continuity (#337)`
 
-Post-merge evidence:
+Vor E5-B3A verifiziert:
 
-- Main push CI #1515 / Run `33419480637`: **SUCCESS** on exact runtime merge SHA;
-- Vercel Production: **SUCCESS** on exact runtime merge SHA;
-- Issue #334: **CLOSED / completed**;
-- Parent #294 remains open;
-- no E5-B2B or other runtime follow-up auto-started.
+- Main CI #1517 / Run `33420869626`: SUCCESS;
+- Vercel Production: SUCCESS;
+- Ruleset `Jetnity main protection` / ID `21875372`: active;
+- strict PR/CI/Auth/Vercel/Conversation-Resolution/merge-only, bypass empty.
 
-After this docs-only closure PR is merged, re-read `main` live because the canonical main SHA will advance without changing runtime behavior.
-
-## 3. E5-B2A final history
+## 3. Aktueller Slice – E5-B3A
 
 Issue:
-**#334 – Entry Requirements E5-B2A – ephemeral airport event instant resolution**
+**#338 – Entry Requirements E5-B3A – server-owned flight event provenance persistence foundation**
 
-Logical Cursor Agent:
-**`Jetnity entry requirements airport event instant 1`**, Generation 1
+Draft PR:
+**#340 – Entry Requirements E5-B3A – server-owned flight event provenance foundation**
+
+Branch:
+`feat/entry-requirements-flight-event-provenance-e5b3a-2026-08-31`
+
+Agent:
+**`Jetnity entry requirements event provenance persistence 1`**, Generation 1
 
 Session:
-`bc-2f16caec-271e-4911-ac36-5abc36ab0806`
+`bc-e7a50347-1c66-4cd1-bbd2-979b89590a40`
 
-Agent runtime + handoff head:
-`4d7e1d002eba06490da59cb4416c55229e8cb559`
+Initial agent head:
+`79dda7593bb9fbb20c36dc54348920e994da6823`
 
-Independent Technical-Lead verdict:
-**PASS / no P0-P1-P2 findings.**
+Dieser Head erhielt **CHANGES REQUIRED** wegen eines P2: `provider_belegt=true` konnte ohne konkrete Provider-Source-Referenz persistiert werden.
 
-Final integration head after TL continuity only:
-`20da6d3e3ce087af240d67a6009ff55e01ad0d69`
+Same-agent Fix:
+`f918dc0ed58b4962389a860d5a1b6bf74513cd1b`
 
-Original Draft PR #335:
-**CLOSED / NOT MERGED** after the known GitHub Ready connector `Repository.fullDatabaseId` failure.
+Finaler unabhängiger Agent-Review-Head:
+`d37b600f67537f4ccb816182009b6018a39f82a3`
 
-Identical non-draft recovery PR #336:
-**MERGED** with expected-head guard after its own gates.
+Technical-Lead Verdict:
+**PASS / no open P0-P1-P2 findings.**
 
-Recovery CI #1514: SUCCESS. Vercel: READY/SUCCESS. GitHub review threads: 0. Vercel unresolved feedback: 0.
+Exact-head Gates auf `d37b600f...`:
 
-## 4. What E5-B2A delivers
+- CI #1522 / Run `33427796712`: SUCCESS;
+- Auth: SUCCESS;
+- Typecheck/Lint/Tests/Hygiene/Production Build: SUCCESS;
+- Vercel Preview: READY / SUCCESS;
+- GitHub Reviewthreads: 0;
+- Vercel unresolved feedback: 0;
+- merge-base exact main, branch 0 behind.
 
-E5-B2A provides only **ephemeral server-side airport event-instant companion evidence**.
+Nach dem PASS wurden nur TL-owned Review/Continuity-Docs ergänzt. Deshalb muss der **neue finale Integrations-Head** noch einmal vollständig gegatet werden, bevor Ready/Merge zulässig ist.
 
-It resolves:
+## 4. Was E5-B3A baut
 
-> **exact local airport wall clock + exact E5-B1R provider-observed IANA timezone evidence -> exactly one canonical UTC instant or an explicit fail-closed issue.**
+Nur eine **repository-only Persistence-/Security-Foundation**:
 
-Exact binding is revalidated through:
+- neue Relation `public.trip_item_flight_event_provenance` neben `trip_items`;
+- Current-Occurrence-Identität Item × Leg × Segment × `departure|arrival`;
+- `local_date` / `local_time`, `time_zone` und `event_instant` bleiben getrennte Fakten;
+- konkrete Provider-Source-Referenz `external_ref` ist verpflichtend (`NOT NULL`, nonblank, bounded);
+- `occurrence_event_ref` wird serverseitig erzeugt und ist keine Provider-Source-Referenz;
+- authenticated Owner darf später nur SELECT;
+- kein Direct-Write durch authenticated/anon;
+- privater SECURITY-DEFINER-Writer im nicht exponierten `jetnity_internal`;
+- dedizierte NOLOGIN-Rollen;
+- Production Runtime-Gate standardmäßig geschlossen/unallocated;
+- vollständige Validierung vor atomarem Current-Snapshot DELETE+INSERT;
+- kein zweiter Timezone-/DST-Resolver im SQL.
 
-- option ID;
-- leg index;
-- segment index;
-- endpoint `departure | arrival`;
-- exact endpoint IATA.
+## 5. Production ist unverändert
 
-DST semantics:
+Supabase Production Projekt `qscbgcdmivbbnzrcyegn` wurde nach finaler Agent-Lieferung read-only geprüft.
 
-- nonexistent local time / spring gap -> no instant;
-- ambiguous local time / fall overlap -> no instant;
-- never silently choose earlier/later/compatible.
+Weiterhin **nicht vorhanden**:
 
-No IATA/country/city/name/server/browser timezone inference. No local-wall-clock `Z` append. No new timezone dependency.
+- `public.trip_item_flight_event_provenance`;
+- `jetnity_internal.trip_item_flight_event_provenance_schreiben(jsonb)`;
+- `jetnity_internal.flight_event_write_runtime_gate`;
+- `jetnity_flight_event_writer`;
+- `jetnity_flight_event_runtime`.
 
-Timezone and event-instant evidence remain outside `FlugSegment`, `FlugOption`, ranking, browser/client response, route itinerary, trip metadata, account adoption and Supabase.
+Damit gilt:
 
-## 5. Entry Requirements foundation now present
+**Repository-Migration vorhanden ≠ Production-Migration angewendet.**
 
-Provider-neutral foundation currently includes:
+Keine Production-Daten wurden verändert.
 
-- S4-R1 Truth Ops;
-- E1 Detail Contract;
-- E2 Official Actions;
-- E3 Visitor Checklist;
-- E4 Official Temporal Rules;
-- R1 Workspace Integration;
-- E5-A Exact Event-Instant Projection Core;
-- E5-B1R ephemeral provider-observed airport timezone evidence;
-- E5-B2A ephemeral airport event-instant resolution.
+## 6. Harte Runtime-/Truth-Grenzen
 
-E5-A still is not automatically bound to Trip/Route events. E5-B2A still has no persistent trusted event source or occurrence resolver.
+Weiterhin unverändert/inaktiv:
 
-## 6. Hard non-scope / still inactive
+- `flugNachweisAusUmgebung()` bleibt `null`;
+- `requirementsProviderAus()` bleibt `null`;
+- keine Timezone/Event-Felder in `FlugSegment` / `FlugOption` / Browser / Route-Metadata;
+- kein App-/API-Writer für E5-B3A;
+- kein Trip/Route → OfficialTemporalAnchor Resolver;
+- keine E5-A-Autobindung;
+- keine Deadline-/Urgency-/Task-/Reminder-/Notification-Runtime;
+- kein Credential-/Pass-Ranking;
+- keine Provider-/Secret-/paid-call-Aktivierung.
 
-- persistent server-owned trusted timezone/event provenance;
-- Trip/Route -> OfficialTemporalAnchor occurrence resolver;
-- E5-A automatic binding;
-- workspace deadline/action-window/urgency runtime;
-- task persistence/completion;
-- reminder/push/e-mail/notification runtime;
-- real Requirements provider;
-- credential/passport ranking.
+## 7. Product-Owner-Gate
 
-`requirementsProviderAus()` remains `null`.
+Explizite Product-Owner-Freigabe bleibt zwingend **vor**:
 
-## 7. Binding provenance rule
+- Anwendung der E5-B3A-Migration auf Production;
+- Production-RLS/Grants/Roles/Functions;
+- Runtime-/Login-Principal-Allokation;
+- realem Application-Writer;
+- Backfill oder Mutation realer Trip-Daten.
 
-The abandoned first E5-B1 attempt remains invalid:
+Der aktuelle Repository-PR selbst löst diese Production-Aktionen nicht aus.
 
-- Issue #327 CLOSED / not_planned;
-- PR #328 CLOSED / NOT MERGED.
+## 8. P3 / spätere Pflichtprüfung
 
-Binding rule:
+Vor einem späteren Production-Apply muss die Migration zusätzlich gegen eine disposable PostgreSQL/Supabase-Testumgebung ausgeführt werden. Die aktuellen Repository-Vertragstests prüfen den SQL-Vertrag, nicht einen Live-Apply.
 
-> **Persisted does not mean provider-proven.**
+Timezone-Erkennung und lokale Wanduhr → Instant bleiben bewusst außerhalb SQL: ein zukünftiger Trusted-Mint muss E5-B1R + E5-B2A wiederverwenden.
 
-Owner-writable Trip metadata cannot establish provider provenance. Persistent trusted event/timezone provenance later requires technically enforced server-owned write authority. Production DB/RLS/grant/trigger/write-authority changes require the special Product-Owner gate.
-
-## 8. Product / Traveller Truth unchanged
+## 9. Traveller-/Produktwahrheit unverändert
 
 > **Jetnity = Travel Operating System für die konkrete Reise.**
 
 > **1 Traveller -> multiple citizenships -> multiple travel documents/credentials -> context-dependent evaluated options.**
 
-No default/primary/preferred/chosen passport or citizenship. Issuer Country != Citizenship. No Residence -> Nationality inference. No `documents[0]` / `evaluations[0]` as Product Truth.
+Kein Default-/Primary-/Preferred-/Chosen Passport oder Citizenship. Issuer Country != Citizenship. Keine Residence→Nationality-Inferenz. Kein `documents[0]` / `evaluations[0]` als Product Truth.
 
 Account Registry = reusable current traveller facts.  
 Trip Snapshot = only current truth for a concrete trip.
 
-## 9. Product-Owner gates
-
-Special PO gates remain for:
-
-- provider/vendor/DPA/contracts/secrets/paid calls/live activation;
-- Production migrations/RLS/ownership/grants/triggers/server-owned write-authority changes;
-- fundamental Auth/MFA/AAL changes;
-- sensitive passport/MRZ/scan/biometric/health data;
-- real payments;
-- running infrastructure cost outside approved budget;
-- public launch / irreversible external activation.
-
 ## 10. FIRST NEXT ACTION
 
-**No Entry Requirements runtime slice is active.**
-
-Before any next slice:
-
-1. reconstruct final live main, open PRs/issues, CI/Vercel;
-2. read the E5-B2A closure + Entry Requirements target architecture;
-3. run a fresh Duplicate/Integration/Truth/Security/Persistence precheck;
-4. determine the smallest responsible next slice rather than inferring E5-B2B automatically;
-5. stop at the Product-Owner gate if persistent trusted event/timezone provenance needs Production DB/security changes;
-6. version task + continuity before agent dispatch;
-7. independently review and exact-head gate every resulting implementation;
-8. **do not auto-start a follow-up.**
+1. finalen PR-Head nach TL-Continuity feststellen;
+2. Diff ab `d37b600f...` muss ausschließlich TL-owned Review/Continuity-Dokumentation enthalten;
+3. finaler Head braucht neue CI/Auth/Vercel/Threads/Main-Drift-Gates;
+4. bei grünem finalen Head Ready/Merge nur durch Technical Lead;
+5. **keine Production-Migration anwenden**;
+6. nach Merge Main-CI + Vercel Production prüfen;
+7. Supabase Production read-only erneut bestätigen: E5-B3A weiterhin unapplied;
+8. Issue #338 als repository-foundation completed schließen und Parent #294 fortschreiben;
+9. keinen E5-B3B/Folgeslice automatisch starten.
 
 **Live-Evidence wins always.**
