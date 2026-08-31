@@ -368,6 +368,7 @@ describe('Travel Requirements Engine', () => {
       'passport',
       'identity_document',
       'passport_validity',
+      'blank_passport_pages',
       'transit',
       'health',
       'vaccination',
@@ -376,6 +377,7 @@ describe('Travel Requirements Engine', () => {
       'insurance',
       'onward_or_return_ticket',
       'booking_or_travel_document',
+      'financial_means',
       'other_entry_requirement',
     ] as const) {
       assert.ok(typen.has(typ), typ)

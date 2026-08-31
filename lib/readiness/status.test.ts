@@ -141,6 +141,7 @@ describe('Readiness-Gesamtstatus', () => {
         status: 'current',
         freshness: 'current',
         officialClass: 'requirement',
+        visaMode: 'unknown',
         missingFacts: [],
         evidence: {
           provider: 'test',

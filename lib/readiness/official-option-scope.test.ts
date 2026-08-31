@@ -14,7 +14,7 @@ import {
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import { readinessAnsicht } from '@/lib/readiness/status'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
-import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { visaModeLesen, type OfficialEvaluation } from '@/lib/readiness/official'
 import type { TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-22T08:00:00.000Z'
@@ -24,9 +24,10 @@ function ev(
   teil: Partial<OfficialEvaluation> &
     Pick<OfficialEvaluation, 'travellerClientRef' | 'destinationCountryCode'>,
 ): OfficialEvaluation {
+  const requirementType = teil.requirementType ?? 'visa'
   return {
     transitCountryCode: null,
-    requirementType: 'visa',
+    requirementType,
     result: 'unknown',
     status: 'unavailable',
     freshness: 'provider_unavailable',
@@ -35,6 +36,7 @@ function ev(
     credentialOptionRef: `${teil.travellerClientRef ?? 'traveller:1'}:none`,
     action: null,
     ...teil,
+    visaMode: visaModeLesen(requirementType, teil.visaMode),
     evidence: {
       provider: 'test',
       authority: null,
