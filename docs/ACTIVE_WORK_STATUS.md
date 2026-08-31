@@ -1,144 +1,111 @@
 # Jetnity – Active Work Status
 
-Stand: 31. August 2026  
-Status: **CURRENT / E5-B3C CLOSED & POST-MERGE VERIFIED / NO ACTIVE FOLLOW-UP SLICE / PRODUCTION FLIGHT EVENT PROVENANCE UNAPPLIED / LIVE-EVIDENCE WINS**
+Stand: 1. September 2026  
+Status: **CURRENT / PROVIDER ACTIVATION READINESS PRECHECK ACTIVE / AUDIT-ONLY / NO PROVIDER ACTIVATION / NO PRODUCTION WRITES / LIVE-EVIDENCE WINS**
 
-## 1. Current verified main
+## 1. Current verified main baseline
 
-`main@8663fded8a8f7381450a30f4b919a1aca5bc49f6`
+`main@ebd08ec07134f1ad4d3f6d68a694be4ff189fa5b`
 
 Commit:
 
-`Merge Entry Requirements E5-B3C server-only persistence mint (#349)`
+`Close Entry Requirements E5-B3C continuity (#350)`
 
-Post-merge verified:
+Verified on exact main:
 
-- Main CI #1550 / Run `33442405068`: **SUCCESS** on exact merge SHA;
-- Vercel Production deployment `dpl_B77qNkMXEpeXhco65tTumvw9zCVW`: **READY** on exact merge SHA;
-- Issue #347: **CLOSED / completed**;
-- Recovery PR #349: **MERGED**;
-- Original Draft PR #348: **CLOSED / NOT MERGED** because of the known GitHub connector `Repository.fullDatabaseId` Ready error.
+- Main CI #1552 / Run `33443161594`: **SUCCESS**;
+- Vercel Production: **READY** on exact `ebd08ec07134f1ad4d3f6d68a694be4ff189fa5b`;
+- E5-B3C is CLOSED & POST-MERGE VERIFIED;
+- Production Flight Event Provenance remains UNAPPLIED.
 
-## 2. E5-B3C final history
+## 2. Active work
 
-Agent:
+Issue:
 
-**`Jetnity entry requirements flight event persistence mint 1`**, Generation 1
+**#351 – Provider Activation Readiness Precheck – select first real provider path**
 
-Cursor session:
+Branch:
 
-`bc-8579f2af-62df-45f3-b15b-d9a1d2d4c180`
+`audit/provider-activation-readiness-precheck-2026-09-01`
 
-Relevant heads:
+Binding task:
 
-- initial rejected agent head: `5473cd851942055ead8a1bd4b055861ecd6d5ada`;
-- same-session reviewed runtime head: `0d80514b0aac49fec0760d95ef126ed2e845eda2`;
-- final TL/recovery head: `6e704867fb1c3cd09d875da9a6215ae27008f19b`;
-- merged main: `8663fded8a8f7381450a30f4b919a1aca5bc49f6`.
+`docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_TASK_2026-09-01.md`
 
-Independent Technical-Lead verdict:
+Logical Cursor agent:
 
-**PASS / no open P0-P1-P2 inside E5-B3C scope.**
+**`Jetnity provider activation readiness precheck 1`**
 
-Canonical closure:
+Generation: **1**
 
-`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_CLOSED_2026-08-31.md`
+Cursor session: **not yet established at this TL setup checkpoint**.
 
-Canonical review:
+## 3. Objective
 
-`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_REVIEW_2026-08-31.md`
+Determine, from live repository truth plus current official/public provider evidence, the safest and highest-value **first real provider path** for Jetnity and define exactly one smallest follow-up slice that could later prove one server-side provider-backed commercial snapshot.
 
-## 3. Delivered truth
+The active task is **audit/precheck only**. It must not activate any provider.
 
-E5-B3C now provides a server-only, DB-free Flight Event persistence payload mint that:
+## 4. Why this is the correct next programme step
 
-- uniquely selects one option from the same server-side `FlugProviderTreffer`;
-- binds exact B1R timezone and B2A event-instant Evidence by option/leg/segment/endpoint/IATA;
-- fails closed on duplicate/conflicting Evidence, including exact + contradictory sibling IATA;
-- derives local wall-clock only from the selected normalized segment endpoint;
-- requires B1R/B2A timezone agreement;
-- rejects impossible UTC calendar instants;
-- enforces E5-B3A occurrence bounds before payload output;
-- reuses `treffer.retrievedAt` exactly for `retrieved_at` and `observed_at`;
-- invents no freshness (`fresh_until = null`);
-- accepts/mints no TypeScript `occurrence_event_ref`;
-- carries `import 'server-only'`;
-- invokes no Supabase/API/private writer.
+Current TW-8/TW-9 readiness evidence remains blocked because Jetnity still lacks real provider-backed Commercial Truth. Persisted provenance foundations are not equivalent to a real provider snapshot.
 
-`flugNachweisAusUmgebung()` remains `null`.  
-`requirementsProviderAus()` remains `null`.
+The precheck must therefore rank realistic provider paths and define the first real-truth proof without silently opening TW-8/TW-9.
 
-## 4. Production / trust boundary remains closed
+## 5. Hard non-scope / Product-Owner gates
 
-Supabase Production project:
+No current approval exists for:
 
-`qscbgcdmivbbnzrcyegn`
+- provider signup/contract acceptance;
+- API keys or secrets;
+- paid/live provider calls;
+- Production provider activation;
+- Supabase Production mutation;
+- migration/RLS/grant/role/function mutation;
+- runtime/login principal allocation;
+- real application writer/backfill;
+- TW-8/TW-9 runtime;
+- provider adapter implementation;
+- public/irreversible activation.
 
-Fresh E5-B3C read-only verification confirmed still absent/unapplied:
+These remain explicit Product-Owner gates.
 
-- `public.trip_item_flight_event_provenance`;
-- `jetnity_internal.trip_item_flight_event_provenance_schreiben(jsonb)`;
-- `jetnity_internal.flight_event_write_runtime_gate`;
-- `jetnity_flight_event_writer`;
-- `jetnity_flight_event_runtime`;
-- migration `20260831190000`.
+## 6. Cursor ownership boundary
 
-No Production mutation occurred.
+Cursor may create only the versioned audit deliverables required by the task.
 
-## 5. Current risk state
+Cursor must **not** edit:
+
+- `docs/ACTIVE_WORK_STATUS.md`;
+- `JETNITY_START_HERE.md`.
+
+Cursor must not mark Ready or merge. Agent self-review is not Technical-Lead PASS.
+
+## 7. Risk state entering the audit
 
 ### P0
-None open from E5-B3C.
+None open from completed E5-B3C.
 
 ### P1
-None open from E5-B3C.
+No currently proven P1 from the new precheck yet.
 
 ### P2
-None open inside the completed E5-B3C scope.
+Known intentional programme blockers remain outside E5-B3C closure:
 
-Intentionally inactive/gated capabilities:
-
-- Production Flight Event Provenance;
-- real writer/runtime principal;
-- account flight adoption;
-- Trip/Route → E5-A occurrence binding;
-- deadlines/tasks/reminders;
-- real Requirements provider and credential ranking.
+- no real provider-backed commercial snapshot;
+- no Production Flight Event Provenance apply;
+- no real commercial runtime writer/principal;
+- TW-8/TW-9 remain blocked.
 
 ### P3
 
-- E5-B3B host-server observation clock has no independent NTP attestation;
-- future writer requires an explicit complete-vs-partial snapshot policy.
+- vendor commercial/licensing/DPA/cost details may remain unknown until vendor confirmation;
+- recommendations must clearly separate verified fact from inference/unknown.
 
-## 6. Product-Owner gates
+## 8. Stop rule
 
-Explicit Product-Owner approval remains mandatory before:
+This work stops after audit deliverables and independent Technical-Lead exact-head review.
 
-- E5-B3A Production migration apply;
-- Production RLS/grant/role/function mutation;
-- runtime/login principal allocation;
-- real application writer/backfill;
-- provider/vendor/DPA/secret/paid/live activation;
-- fundamental Auth/MFA/AAL changes;
-- sensitive passport/MRZ/scan/biometric/health storage changes;
-- real payments;
-- spend outside approved limits;
-- public/irreversible external activation.
-
-## 7. Current first next action
-
-**No functional slice is active.**
-
-Before opening any future slice, reconstruct fresh live state from:
-
-1. `JETNITY_START_HERE.md`;
-2. this file;
-3. latest closure/checkpoint;
-4. binding build order/target architecture;
-5. current `main`, PRs/issues, CI/Vercel and relevant Production truth.
-
-Then determine the smallest safe next step. Do not infer or automatically start it from this closure.
-
-**Production Flight Event Provenance remains UNAPPLIED until explicit Product-Owner approval.**
+No automatic provider activation or follow-up implementation slice.
 
 **Live-Evidence wins always.**
