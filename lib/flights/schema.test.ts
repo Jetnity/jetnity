@@ -122,6 +122,8 @@ describe('Flugoption', () => {
       arrivalTimezone: 'Asia/Bangkok',
       timeZone: 'UTC',
       airportTimezoneEvidence: [{ timeZone: 'Europe/Zurich' }],
+      airportEventInstantEvidence: [{ instant: '2026-11-01T08:15:00Z', timeZone: 'Europe/Zurich' }],
+      airportEventInstantIssues: [{ issue: 'ambiguous_local_time' }],
       legs: [
         {
           segments: [
@@ -158,7 +160,12 @@ describe('Flugoption', () => {
     })
     assert.ok(gelesen)
     const roh = JSON.stringify(gelesen)
-    assert.equal(/time[_-]?zone|Timezone|airportTimezoneEvidence/i.test(roh), false)
+    assert.equal(
+      /time[_-]?zone|Timezone|airportTimezoneEvidence|airportEventInstant|2026-11-01T08:15:00Z|ambiguous_local_time/i.test(
+        roh,
+      ),
+      false,
+    )
     assert.equal(gelesen?.legs[0]?.segments[0]?.departureTime, '09:15')
   })
 

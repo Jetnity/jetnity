@@ -2,7 +2,8 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { duffelAdapter } from '@/lib/flights/duffel/adapter'
-import { ANTWORT_GEMISCHT, ANTWORT_NUR_MUELL } from '@/lib/flights/duffel/fixtures/angebote'
+import { ANGEBOT_DIREKT, ANTWORT_GEMISCHT, ANTWORT_NUR_MUELL } from '@/lib/flights/duffel/fixtures/angebote'
+import { FLUG_SUCHE_GRENZEN } from '@/lib/flights/domain'
 import { SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
 import { FlugProviderFehler } from '@/lib/flights/provider'
 
@@ -33,6 +34,8 @@ describe('Duffel-Adapter', () => {
     assert.equal(treffer.partial, false)
     assert.equal(treffer.options[0]?.provider, 'duffel')
     assert.deepEqual(treffer.airportTimezoneEvidence, [])
+    assert.deepEqual(treffer.airportEventInstantEvidence, [])
+    assert.deepEqual(treffer.airportEventInstantIssues, [])
     const koerper = JSON.parse(http.gesendet[0]!.body) as {
       data: { passengers: Array<Record<string, string>>; slices: unknown[] }
     }
@@ -76,6 +79,93 @@ describe('Duffel-Adapter', () => {
     )
     assert.equal(treffer.airportTimezoneEvidence[0]?.optionId, treffer.options[0]?.id)
     assert.equal(/time[_-]?zone|Timezone/i.test(JSON.stringify(treffer.options)), false)
+    assert.deepEqual(
+      treffer.airportEventInstantEvidence.map((eintrag) => [eintrag.endpoint, eintrag.iata, eintrag.instant]),
+      [
+        ['departure', 'ZRH', '2026-11-01T08:15:00Z'],
+        ['arrival', 'BKK', '2026-11-01T16:45:00Z'],
+      ],
+    )
+    assert.deepEqual(treffer.airportEventInstantIssues, [])
+    assert.equal(treffer.options[0]?.priceAmount, 892.5)
+  })
+
+  test('unauflösbarer Instant verwirft kein sonst gültiges Offer', async () => {
+    const angebot = {
+      ...ANTWORT_GEMISCHT.data.offers[0],
+      slices: [
+        {
+          ...ANTWORT_GEMISCHT.data.offers[0]!.slices[0],
+          segments: [
+            {
+              ...ANTWORT_GEMISCHT.data.offers[0]!.slices[0]!.segments[0],
+              departing_at: '2026-03-29T02:30:00',
+              origin: { iata_code: 'ZRH', time_zone: 'Europe/Zurich' },
+              destination: { iata_code: 'BKK', time_zone: 'Asia/Bangkok' },
+            },
+          ],
+        },
+      ],
+    }
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body: { data: { offers: [angebot] } } }]),
+    )
+    const treffer = await adapter.suchen(SUCHANFRAGE)
+    assert.equal(treffer.options.length, 1)
+    assert.equal(treffer.options[0]?.priceAmount, 892.5)
+    assert.equal(treffer.airportTimezoneEvidence.length, 2)
+    assert.equal(
+      treffer.airportEventInstantIssues.some((eintrag) => eintrag.issue === 'nonexistent_local_time'),
+      true,
+    )
+    assert.equal(
+      treffer.airportEventInstantEvidence.some((eintrag) => eintrag.endpoint === 'departure'),
+      false,
+    )
+    assert.equal(
+      treffer.airportEventInstantEvidence.some((eintrag) => eintrag.endpoint === 'arrival'),
+      true,
+    )
+  })
+
+  test('Angebots-Cap entfernt Timezone- und Event-Instant-Evidence verworfener Optionen', async () => {
+    const angebote = Array.from({ length: FLUG_SUCHE_GRENZEN.angebote + 1 }, (_, index) => ({
+      ...ANGEBOT_DIREKT,
+      id: `off_cap_${index}`,
+      total_amount: `${800 + index}.00`,
+      slices: [
+        {
+          ...ANGEBOT_DIREKT.slices[0],
+          segments: [
+            {
+              ...ANGEBOT_DIREKT.slices[0]!.segments[0],
+              origin: { iata_code: 'ZRH', time_zone: 'Europe/Zurich' },
+              destination: { iata_code: 'BKK', time_zone: 'Asia/Bangkok' },
+            },
+          ],
+        },
+      ],
+    }))
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body: { data: { offers: angebote } } }]),
+    )
+    const treffer = await adapter.suchen(SUCHANFRAGE)
+    assert.equal(treffer.options.length, FLUG_SUCHE_GRENZEN.angebote)
+    const behalteneIds = new Set(treffer.options.map((option) => option.id))
+    assert.equal(behalteneIds.size, FLUG_SUCHE_GRENZEN.angebote)
+    assert.equal(treffer.airportTimezoneEvidence.length, FLUG_SUCHE_GRENZEN.angebote * 2)
+    assert.equal(treffer.airportEventInstantEvidence.length, FLUG_SUCHE_GRENZEN.angebote * 2)
+    assert.equal(
+      treffer.airportTimezoneEvidence.every((eintrag) => behalteneIds.has(eintrag.optionId)),
+      true,
+    )
+    assert.equal(
+      treffer.airportEventInstantEvidence.every((eintrag) => behalteneIds.has(eintrag.optionId)),
+      true,
+    )
+    assert.equal(treffer.airportEventInstantIssues.length, 0)
   })
 
   test('eine unbrauchbare Antwort wird invalid', async () => {

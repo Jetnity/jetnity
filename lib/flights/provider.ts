@@ -44,15 +44,64 @@ export type FlugAirportTimezoneEvidence = {
   timeZone: string
 }
 
+/**
+ * Flüchtiger, eindeutig aufgelöster Airport-Event-Instant an genau einem
+ * normalisierten Segment-Endpunkt. Kein Bestandteil von FlugOption.
+ *
+ * `instant` ist kanonisches UTC-ISO mit `Z`. Nur nach exakter Identity-
+ * Revalidierung und eindeutiger lokaler Wanduhr + Zone.
+ */
+export type FlugAirportEventInstantEvidence = {
+  optionId: string
+  legIndex: number
+  segmentIndex: number
+  endpoint: FlugAirportTimezoneEndpunkt
+  iata: string
+  timeZone: string
+  instant: string
+}
+
+export const FLUG_AIRPORT_EVENT_INSTANT_ISSUES = [
+  'invalid_local_date_time',
+  'nonexistent_local_time',
+  'ambiguous_local_time',
+  'evidence_mismatch',
+  'invalid_time_zone',
+] as const
+
+export type FlugAirportEventInstantIssueArt = (typeof FLUG_AIRPORT_EVENT_INSTANT_ISSUES)[number]
+
+export type FlugAirportEventInstantIssue = {
+  optionId: string
+  legIndex: number
+  segmentIndex: number
+  endpoint: FlugAirportTimezoneEndpunkt
+  iata: string
+  timeZone: string
+  issue: FlugAirportEventInstantIssueArt
+}
+
 export type FlugProviderTreffer = {
   options: FlugOption[]
   /** true, wenn gültige Optionen da sind, einzelne Angebote aber verworfen wurden. */
   partial: boolean
   /** Immer gesetzt. Leer, wenn der Provider keine akzeptable Zone geliefert hat. */
   airportTimezoneEvidence: FlugAirportTimezoneEvidence[]
+  /** Immer gesetzt. Leer, wenn kein Endpunkt eindeutig auf einen Instant fällt. */
+  airportEventInstantEvidence: FlugAirportEventInstantEvidence[]
+  /** Immer gesetzt. Diagnostiziert unauflösbare Evidence, verwirft keine Option. */
+  airportEventInstantIssues: FlugAirportEventInstantIssue[]
 }
 
 export function leereFlugAirportTimezoneEvidence(): FlugAirportTimezoneEvidence[] {
+  return []
+}
+
+export function leereFlugAirportEventInstantEvidence(): FlugAirportEventInstantEvidence[] {
+  return []
+}
+
+export function leereFlugAirportEventInstantIssues(): FlugAirportEventInstantIssue[] {
   return []
 }
 
