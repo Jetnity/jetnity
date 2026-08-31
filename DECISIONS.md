@@ -5328,6 +5328,33 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0204 – Entry Requirements E4: official relative_duration Temporal-Rule-Contract
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/entry-requirements-temporal-rules-e4-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider, kein E5. Binding: `docs/ENTRY_REQUIREMENTS_TEMPORAL_RULES_E4_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. Official Evaluations dürfen eine normalisierte `temporalRule` tragen. Default und Fail-closed-Wert ist `null`. Timing ist eine getrennte Trust-Dimension und gehört nicht in die Requirement-Entscheidungssignatur.
+2. E4 unterstützt nur `kind: 'relative_duration'`. Calendar-day-, lokale-Uhrzeit- und absolute Timestamp-Regeln werden nicht in diesen Contract gepresst.
+3. Geschlossene Anchors: `trip_departure`, `destination_arrival`, `transit_arrival`, `border_crossing`. Geschlossene Relationen: `before`, `at`, `after`. `before`/`after` brauchen einen positiven Integer `offsetMinutes`; `at` braucht exakt `0`. Negative Werte, NaN, Infinity, Floats und Offsets über der technischen Safety-Bound `1_051_200` Minuten (2×365 Tage) werden verworfen. Die Bound erfindet keine fachliche Frist.
+4. Der Contract trägt `availableFrom` und/oder `dueBy`. `dueBy` braucht explizit `mandatory | recommended`, damit eine Empfehlung später nie als Pflichtfrist gelesen wird.
+5. Übernahme nur aus expliziten strukturierten Provider-Metadaten und nur wenn die Evaluation vertrauenswürdig ist, `status === 'current'`, `freshness === 'current'` und `result` `required` oder `conditional` ist. `not_required`, unknown, insufficient, stale, recheck, unavailable, `officialLeer` und Visa-Conflict-Degradation tragen `temporalRule: null`.
+6. Malformed oder unsupported Timing ändert eine ansonsten gültige Requirement-Hard-Truth nicht.
+7. Duplicate-Zeilen derselben Evaluation: widersprechen sich die Requirement-Entscheidungen, bleibt die bestehende Conflict-Semantik. Stimmen sie überein, aber Timing unterscheidet sich – inklusive `null` vs. nicht-`null` – bleibt die Requirement-Entscheidung und Timing wird `null`. Identisches Timing darf bleiben. Das Ergebnis ist permutationsstabil.
+8. Die E3-Checkliste darf relative Copy nur aus `OfficialEvaluation.temporalRule` zeigen. Keine Heuristik aus Requirement-Typ, `validFrom/validUntil`, URL, Visa-Modus oder Freitext. Keine konkreten Kalenderdaten.
+9. `requirementsProviderAus()` bleibt `null`. Keine Timestamp-Projektion, keine Zeitzonen-/DST-Auflösung, keine Task-/Reminder-Runtime.
+
+**Kontext:** Die Zielarchitektur verlangt strukturierte Zeitregeln, bevor harte Deadlines oder Erinnerungen entstehen. E1–E3 konnten „ab 72 Stunden vor Ankunft“ nicht lossless tragen.
+
+**Alternativen:** Timing in die Entscheidungssignatur mischen; Frist aus URL/Text/Typ oder `validFrom/validUntil` ableiten; Calendar-day und absolute Timestamps schon in E4 pressen; first-row-wins bei Duplicate-Timing; konkrete Trip-Timestamps in E4 berechnen.
+
+**Begründung:** Eine Empfehlung darf keine Pflichtfrist werden. Ein Timing-Konflikt darf keine belastbare `required`-Entscheidung zerstören. Relative Minuten plus geschlossener Anchor sind der kleinste verlustfreie Subset ohne Zeitzonen- oder Notification-Scope.
+
+**Konsequenzen:** Parser/Copy liegen in `lib/readiness/temporal.ts`. Engine reconciled Timing explizit. Folgeslice (E5/Deadline-Projektion/Provider) nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

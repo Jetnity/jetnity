@@ -30,6 +30,7 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
       contextFingerprint: 'off-v2',
     },
     action: null,
+    temporalRule: null,
     ...teil,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
   }

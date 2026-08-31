@@ -32,6 +32,7 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
       contextFingerprint: 'off',
     },
     action: null,
+    temporalRule: null,
     ...teil,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
@@ -110,6 +111,7 @@ describe('Official-Copy folgt Status und Freshness', () => {
           contextFingerprint: 'off',
         },
         action: { kind: 'open_official_action', purpose: 'information', href: 'https://example.test/visa' },
+        temporalRule: null,
       },
     ])
     assert.match(text, /geprüft/)

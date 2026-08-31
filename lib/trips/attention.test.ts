@@ -229,6 +229,7 @@ function officialSauberFuer(
       contextFingerprint: `fp-official:${travellerClientRef}:${credentialOptionRef}`,
     },
     action: null,
+    temporalRule: null,
     ...teil,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
   }

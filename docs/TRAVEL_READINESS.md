@@ -227,7 +227,7 @@ Der Nutzer sieht u. a.:
 - Official Requirement Status, sobald Evidence vorhanden ist
 - eine Checkliste je `OfficialEvaluation` (Traveller × Credential-Option × Destination/Transit × Requirement Type), nicht nur eine Summe pro Reisendem.
 
-Offizielle Einzelzeilen nutzen fail-closed Ergebnis-/Freshness-Copy, strukturierte Visa-/eTA-Labels und purpose-spezifische Action-Texte. `checkedAt` ist Jetnity-Prüfzeit, nicht „Quelle zuletzt aktualisiert“. Status wird nicht nur über Farbe vermittelt.
+Offizielle Einzelzeilen nutzen fail-closed Ergebnis-/Freshness-Copy, strukturierte Visa-/eTA-Labels und purpose-spezifische Action-Texte. `checkedAt` ist Jetnity-Prüfzeit, nicht „Quelle zuletzt aktualisiert“. Status wird nicht nur über Farbe vermittelt. Relative Zeitfenster (`Ab 72 Std. vor Ankunft möglich`, Pflichtfrist vs. Empfehlung) erscheinen nur aus einer normalisierten `temporalRule`, niemals als konkretes Kalenderdatum.
 
 ---
 

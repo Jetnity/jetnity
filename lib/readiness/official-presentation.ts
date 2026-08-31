@@ -12,6 +12,7 @@ import {
   OFFICIAL_ERGEBNIS_BEZEICHNUNG,
 } from '@/lib/readiness/bezeichnungen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { officialTemporalTexte } from '@/lib/readiness/temporal'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import type { TravellerDocumentType, TripTraveller } from '@/types/trips'
 
@@ -68,6 +69,7 @@ export type OfficialChecklistEintrag = {
   authorityText: string | null
   pruefzeitText: string | null
   freshnessText: string
+  timingTexte: string[]
   aktionen: OfficialPresentationAction[]
 }
 
@@ -246,6 +248,7 @@ function eintragAus(
     authorityText: evaluation.evidence.authority,
     pruefzeitText: officialPruefzeitText(evaluation.evidence.checkedAt),
     freshnessText: officialFreshnessText(evaluation.freshness),
+    timingTexte: officialZeileIstAktuell(evaluation) ? officialTemporalTexte(evaluation.temporalRule) : [],
     aktionen: officialPresentationAktionen(evaluation),
   }
 }

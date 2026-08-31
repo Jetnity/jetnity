@@ -55,6 +55,11 @@ function bewertungsZeitMs(optionen?: RequirementsAuswertenOptionen): number {
   return Date.now()
 }
 import { entscheidungenGleich } from '@/lib/readiness/entscheidung'
+import {
+  officialDarfTemporalTragen,
+  temporalRuleLesen,
+  temporalRulesGleich,
+} from '@/lib/readiness/temporal'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { citizenshipCodesAus, credentialOptionsAus, documentCitizenshipCode } from '@/lib/readiness/traveller-kontext'
 import type { Trip } from '@/types/trips'
@@ -496,7 +501,7 @@ function zeileUebernehmen(
     freshness === 'current' &&
     (zeile.result === 'required' || zeile.result === 'not_required' || zeile.result === 'conditional')
 
-  return officialVisaWiderspruchDegradieren({
+  const degradiert = officialVisaWiderspruchDegradieren({
     travellerClientRef: traveller.clientRef,
     credentialOptionRef: option.optionRef,
     destinationCountryCode: destination,
@@ -534,7 +539,12 @@ function zeileUebernehmen(
           sourceUrl,
         })
       : null,
+    temporalRule: null,
   })
+  return {
+    ...degradiert,
+    temporalRule: officialDarfTemporalTragen(degradiert) ? temporalRuleLesen(zeile.temporalRule) : null,
+  }
 }
 
 export function requirementsAusZeilen(
@@ -583,6 +593,10 @@ export function requirementsAusZeilen(
     if (!entscheidungenGleich(vorher, evaluation)) {
       gesehen.set(key, konfliktAus(vorher))
       konflikte.add(key)
+      return
+    }
+    if (!temporalRulesGleich(vorher.temporalRule, evaluation.temporalRule)) {
+      gesehen.set(key, { ...vorher, temporalRule: null })
     }
   }
 
