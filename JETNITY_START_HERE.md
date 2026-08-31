@@ -1,22 +1,22 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 31. August 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / READINESS WORKSPACE INTEGRATION R1 CLOSED / NO ACTIVE CURSOR RUNTIME SLICE / LIVE-EVIDENCE GEWINNT IMMER**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / ENTRY REQUIREMENTS E5-A CLOSED / NO ACTIVE CURSOR RUNTIME SLICE / LIVE-EVIDENCE GEWINNT IMMER**
 
-> **Vor jedem neuen Slice zuerst den relevanten Live-Stand rekonstruieren. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen. Continuity ist Definition of Done.**
+> **Vor jedem neuen Slice zuerst den tatsächlichen Live-Stand rekonstruieren. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen. Continuity ist Definition of Done.**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Live evidence before assumptions.**
 
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_READINESS_WORKSPACE_INTEGRATION_R1_CLOSED_2026-08-31.md` ← **aktuellster Checkpoint**
+1. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5A_CLOSED_2026-08-31.md` ← **aktuellster Checkpoint**
 2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md` ← **verbindlicher Zielzustand für Entry Requirements + Travel Companion**
-4. `docs/READINESS_WORKSPACE_INTEGRATION_R1_HANDOFF_2026-08-31.md`
-5. `docs/ENTRY_REQUIREMENTS_TEMPORAL_RULES_E4_HANDOFF_2026-08-31.md`
-6. `docs/ENTRY_REQUIREMENTS_VISITOR_CHECKLIST_E3_HANDOFF_2026-08-31.md`
-7. `docs/ENTRY_REQUIREMENTS_OFFICIAL_ACTIONS_E2_HANDOFF_2026-08-31.md`
-8. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+4. `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md` ← **bindender Zielzustand Entry Requirements / Travel Companion**
+5. `docs/ENTRY_REQUIREMENTS_TEMPORAL_PROJECTION_E5A_HANDOFF_2026-08-31.md`
+6. `docs/ENTRY_REQUIREMENTS_TEMPORAL_RULES_E4_HANDOFF_2026-08-31.md`
+7. `docs/READINESS_WORKSPACE_INTEGRATION_R1_HANDOFF_2026-08-31.md`
+8. `docs/CHATGPT_TECHNICAL_LEAD_READINESS_WORKSPACE_INTEGRATION_R1_CLOSED_2026-08-31.md`
 9. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
 10. `JETNITY_HANDOFF.md`
 11. `docs/REQUIREMENTS_PROVIDER_GROUNDWORK_AUDIT_2026-08-30.md`
@@ -24,28 +24,30 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / READINESS WORKSPACE INTEGRATION R
 13. `docs/REQUIREMENTS_PROVIDER_SELECTION_MATRIX_2026-08-30.md`
 14. `docs/JETNITY_BINDING_BUILD_ORDER.md`
 
-Danach GitHub/CI/Vercel und – nur bei betroffenem DB-/Security-/Storage-/Migration-Scope – Supabase **live** verifizieren.
+Danach GitHub/CI/Vercel und – **nur bei betroffenem DB-/Security-/Storage-/Migration-Scope** – Supabase live verifizieren.
 
-Frühere Checkpoints bleiben historische Evidence, sind aber nicht der aktuelle Einstieg.
+Frühere Checkpoints und Agenten-Handoffs bleiben historische Evidence ihres jeweiligen Heads; sie ersetzen nie Live-Evidence.
 
 ## 2. Aktueller Übergabe-Anker
 
-Readiness Workspace Integration R1 ist auf `main` abgeschlossen.
+Entry Requirements E5-A ist abgeschlossen.
 
 Verifizierter Runtime-Merge:
 
-`9cd5eaf472d6b55ba04d6661b12f086a0bf29d5f`
+`a4c0c57e144e694435cfe2b1970a76239f1ef7d5`
 
-Post-Merge-Evidence:
+Post-Merge-Evidence auf diesem Runtime-Merge:
 
-- finaler unabhängig geprüfter R1-Head `247d473f7f0842965d9ac0cd6f0b79a276ed458f`;
-- Draft-PR #320: **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED** nur wegen des bekannten Draft→Ready-Connectorfehlers;
-- Recovery-PR #321: **MERGED** auf exakt demselben geprüften Head;
-- Exact-Head CI #1471 / Run `33388008908`: **SUCCESS**;
-- Recovery-CI #1472 / Run `33389313330`: **SUCCESS**;
-- Main-CI #1473 / Run `33389564305`: **SUCCESS** exakt auf `9cd5eaf4...`;
-- Vercel Production `dpl_DRoFvG8xw2qDrYnrmSmmpazQezcC`: **READY** exakt auf `9cd5eaf4...`;
-- Issue #319: **CLOSED / completed**.
+- finaler unabhängig geprüfter E5-A-Head `82c2c268f26c5aa9ee73dfd8f9e0c179aa4376a2`;
+- Draft-PR #324: **CLOSED / NOT MERGED / mechanically superseded** nur wegen des bekannten Draft→Ready-Connectorfehlers;
+- Recovery-PR #325: **MERGED** auf exakt demselben geprüften Head;
+- Exact-Head CI #1487 / Run `33399165391`: **SUCCESS**;
+- Recovery-CI #1488 / Run `33399594912`: **SUCCESS**;
+- Main Post-Merge CI #1489 / Run `33399900924`: **SUCCESS** exakt auf `a4c0c57e...`;
+- Vercel Preview `dpl_B27uxXp9BQYmM6W2sb8bWWgUSaC6`: **READY** exakt auf `82c2c268...`;
+- Vercel Production `dpl_BQxP84NVgxFDYwpziDpidvFEXpk8`: **READY** exakt auf `a4c0c57e...`;
+- Issue #323: **CLOSED / completed**;
+- Parent Issue #294: offen und weiterhin bindender Product-Target-Tracker.
 
 Der docs-only Closure-PR, der diesen Einstieg aktualisiert, bewegt `main` nach dem Runtime-Merge nochmals weiter. **Finalen `main` immer live lesen.**
 
@@ -53,13 +55,23 @@ Der docs-only Closure-PR, der diesen Einstieg aktualisiert, bewegt `main` nach d
 
 Es läuft derzeit **kein Cursor-Runtime-Slice**.
 
-Letzter Agent:
+Letzter Runtime-Agent:
 
-**`Jetnity readiness workspace integration 1`**, Generation 1  
-Session: `bc-5bb53c9a-e6bf-4189-bd4f-bb2dc1f6eda3`  
-Status: **STOPPED / DELIVERY COMPLETE / TL PASS / R1 MERGED**.
+**`Jetnity entry requirements temporal projection 1`**, Generation 1
 
-Kein E5, Provider-, konkrete Deadline-Projektions-, Task-State- oder Reminder-Slice wurde automatisch gestartet.
+Ursprüngliche Implementation-Session:
+
+`bc-01a057e1-e45f-79d8-a828-97be0e060415`
+
+Vom Technical Lead genehmigter mechanischer Review-Fix-Recovery-Carrier:
+
+`bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`
+
+Status: **STOPPED / DELIVERY COMPLETE / TL PASS / E5-A MERGED**.
+
+Die Recovery-Session war keine neue Generation und kein neuer Slice; sie wurde nur eingesetzt, weil die abgeschlossene Original-Session technisch nicht wieder geöffnet werden konnte.
+
+**Kein E5-B, Provider-, Resolver-, Workspace-Deadline-, Task-State- oder Reminder-Slice wurde automatisch gestartet.**
 
 ## 4. Produkt-Nordstern / Traveller Truth
 
@@ -82,30 +94,28 @@ Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer
 - fail-closed technische Failure-Semantik;
 - Readiness-Kill-Switch `JETNITY_READINESS_AKTIV`;
 - Production für Requirements Provider hart aus;
-- globales Official-`checkedAt`-Ceiling 60 Minuten.
+- Official-`checkedAt`-Ceiling 60 Minuten.
 
 ### E1 – Detail Contract
 
 - First-Class `blank_passport_pages` und `financial_means`;
-- strukturierte Visa-Modi `visa_exempt`, `visa_on_arrival`, `electronic_visa`, `visa_before_travel`, `unknown`;
-- eTA bleibt `electronic_travel_authorization`;
-- widersprüchliche `result ↔ visaMode`-Paare degradieren fail-closed.
+- strukturierte Visa-Modi;
+- eTA eigener Requirement-Typ;
+- widersprüchliche Result-/Visa-Mode-Paare fail-closed.
 
 ### E2 – Official Actions
 
 - Evidence Source und konkrete Official Action getrennt;
-- `sourceUrl` nicht automatisch Antrag/Formular/Termin;
-- `application | form | appointment | information` strukturierte Zwecke;
+- `application | form | appointment | information` strukturiert;
 - riskante Actions nur aus expliziten validierten Metadaten;
-- ungültige Action-Metadaten verändern keine Hard Truth.
+- ungültige Action-Metadaten ändern keine Hard Truth.
 
 ### E3 – Visitor Checklist
 
-- konkrete `OfficialEvaluation`-Zeilen im exakten Scope `Traveller × Credential-Option × Destination/Transit × Requirement Type`;
+- lossless Official-Evaluation-Scope **Traveller × Credential-Option × Destination/Transit × Requirement Type**;
 - fail-closed Result-/Freshness-Copy;
-- verständliche Visa/eTA/Transit/First-Class-Typen;
-- Credential-Labels nur aus exakten strukturierten Trip-/Traveller-Daten;
-- Authority, Jetnity-`checkedAt`, Source/Freshness und purpose-spezifische Official Actions soweit vorhanden.
+- exakte Credential-Labels aus strukturierten Trip-/Traveller-Daten;
+- Authority, checkedAt, Evidence/Freshness und purpose-spezifische Official Actions soweit vorhanden.
 
 ### E4 – Official Temporal Rules
 
@@ -113,74 +123,86 @@ Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer
 - Anchors `trip_departure`, `destination_arrival`, `transit_arrival`, `border_crossing`;
 - `before | at | after` + normalisierte Minuten;
 - `availableFrom`, `dueBy`, `mandatory | recommended`;
-- Timing nur aus expliziten strukturierten Official-Metadaten auf trusted/current `required | conditional`;
-- Duplicate-Konflikte und unmögliche Same-Anchor-Fenster fail-closed;
-- unterschiedliche Anchors ohne konkrete Event-Timestamps nicht geraten;
-- nur relative Copy, noch keine konkrete Kalenderzeit.
+- Timing nur aus expliziten strukturierten Official-Metadaten;
+- Duplicate-Konflikte und unmögliche Same-Anchor-Fenster fail-closed.
 
 ### R1 – Workspace Integration / Deduplizierung
 
-- Official Requirement Truth und User Readiness Truth bleiben zwei getrennte Wahrheiten;
-- die primäre Workspace-UI rendert nicht länger parallel grobe `entry_check`, `visa_check`, `travel_document_check`, `insurance_check`-Karten neben der Official Checklist;
-- persistierte Legacy-User-Statusdaten bleiben erhalten und werden nicht umgedeutet;
-- Ticket-/Booking-/Custom-Preparation bleiben sichtbar und bedienbar;
+- Official Requirement Truth und User Readiness Truth bleiben getrennt;
+- keine parallelen groben Entry-/Visa-/Document-/Insurance-Placeholder neben der Official Checklist;
+- persistierte Legacy-User-Statusdaten bleiben erhalten;
+- Ticket-/Booking-/Custom-Preparation bleiben sichtbar;
 - sichtbare User-Counts entsprechen sichtbaren persönlichen Tasks;
-- nur reine leere fail-closed Placeholder werden pro Traveller/Credential/Destination/Transit zu **„Einreiseanforderungen noch nicht prüfbar“** verdichtet;
+- reine leere Placeholder werden pro Traveller/Credential/Destination/Transit kompakt verdichtet;
 - current/stale/recheck/evidence-bearing/action/temporal/visa-spezifische Rows bleiben einzeln;
 - Multi-Traveller, Multi-Credential und Transit bleiben getrennt.
 
-Weiterhin **nicht** aktiv:
+### E5-A – Exact Event-Instant Projection Core
 
-- `requirementsProviderAus()` bleibt `null`;
+- reiner Next-freier Projektions-Core in `lib/readiness/temporal-projection.ts`;
+- E4-Typen werden wiederverwendet;
+- Input bindet benötigte Anchors explizit an `{ eventRef, instant }`;
+- nur absolute RFC3339/ISO-Date-Time-Werte mit `Z` oder numerischem Offset;
+- keine Trip-/Route-/Country-/first-match-Auswahl;
+- keine IANA-/Airport-/Place-Zeitzonenheuristik;
+- `before | at | after` deterministisch in UTC projiziert;
+- `dueBy.semantics` und `eventRef`-Provenance bleiben erhalten;
+- `missing_anchor`, `invalid_instant`, `invalid_projected_window` fail-closed;
+- frische leere Projection pro Aufruf;
+- whitespace-only `eventRef` fail-closed;
+- explizite RFC3339 numeric offsets `HH 00..23` / `MM 00..59`, keine künstliche UTC−12/+14-Weltzonen-Hülle.
+
+`requirementsProviderAus()` bleibt `null`.
+
+## 6. Weiterhin nicht aktiv
+
 - kein echter Requirements-/Visa-/Entry-Provider;
 - keine Provider-Secrets / paid calls / Verträge / Runtime-Aktivierung;
-- keine konkrete Deadline-/Timestamp-Projektion;
+- kein Trip/Route→Event-Occurrence-Resolver;
+- keine Country→first-match-Occurrence-Logik;
+- keine IANA-/Airport-/Place-Timezone-Auflösung;
+- keine automatische Workspace-Deadline-Runtime aus Reiseevents;
+- keine `too early / upcoming / actionable / overdue`-State-Machine;
 - keine exact Official-Requirement Task-Persistenz;
 - keine Travel-Companion Task-/Completion-State-Machine;
 - keine Reminder-/Push-/E-Mail-/Notification-Runtime;
 - kein Credential-Ranking / keine automatische beste Pass-Auswahl.
 
-## 6. Verbindlicher Duplicate-/Integration-Precheck vor jedem neuen Slice
+## 7. Verbindlicher Duplicate-/Integration-Precheck vor jedem neuen Slice
 
-Vor **jeder** neuen Jetnity-Funktion, jedem neuen Slice und jedem neuen Cursor-Agenten muss zuerst geprüft werden:
+Vor **jeder** neuen Jetnity-Funktion, jedem neuen Slice und jedem neuen Cursor-Agenten:
 
-1. aktueller `main`, CI/Vercel, offene PRs/Issues und aktive Agenten;
-2. ob dieselbe oder eine ähnliche Funktion bereits ganz oder teilweise existiert;
-3. vorhandene Components, Types, APIs, Tabellen, Utilities, Truth-Domänen und Provider-/Transport-Bausteine;
-4. Integration mit Trip Workspace, Account/Traveller, Admin, Provider, Security/Privacy und Mobile/PWA;
-5. ob vorhandene Architektur wiederverwendet oder zusammengeführt werden kann statt eine zweite Lösung zu bauen;
-6. Multi-Citizenship/Multi-Document, Auth/RLS/Ownership und Product Truth auf mögliche Regressionen;
-7. betroffene bestehende Tests und Invarianten.
+1. finalen `main`, CI/Vercel, offene PRs/Issues und aktive Agenten live prüfen;
+2. prüfen, ob gleiche/ähnliche Funktion schon ganz oder teilweise existiert;
+3. Components, Types, APIs, Tabellen, Utilities, Truth-Domänen und Provider-/Transport-Bausteine prüfen;
+4. Integration mit Trip Workspace, Account/Traveller, Admin, Provider, Security/Privacy und Mobile/PWA prüfen;
+5. vorhandene Architektur wiederverwenden/integrieren statt zweite Engine, Statuslogik, Tabelle oder UI-Welt zu bauen;
+6. Multi-Citizenship/Multi-Document, Auth/RLS/Ownership und Product Truth auf Regressionen prüfen;
+7. betroffene Tests und Invarianten bestimmen.
 
-**Keine zweite Engine, zweite Statuslogik, zweite Tabelle oder zweite UI-Welt bauen, wenn ein bestehender professioneller Baustein erweitert oder integriert werden kann.**
+**Bei Duplicate-/Integrationsrisiko zuerst reconciliieren, dann bauen.**
 
-Bei Duplicate-/Integrationsrisiko zuerst reconciliieren, dann bauen.
+## 8. Persistente Zielanker / Product-Owner-Gates
 
-## 7. Entry-Requirements-/Travel-Companion-Zielarchitektur
-
-Verbindlicher Zielzustand:
+Kanonische Zielarchitektur:
 
 `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
 
-Issue **#294 – Entry Requirements Detail Architecture** bleibt der persistente Product-Target-Tracker.
+Issue **#294 – Entry Requirements Detail Architecture** bleibt offen und bindend. Die Zielarchitektur ist **kein automatischer Build-Auftrag**.
 
-Die Zielarchitektur umfasst über den jetzigen Stand hinaus insbesondere:
+Besondere Product-Owner-Gates bleiben insbesondere für:
 
-- reale Official Requirements Truth über einen später separat gegateten Provider;
-- konkrete Projektion belastbarer Temporal Rules auf echte Trip-/Route-Events;
-- Zeitzonen-/DST-sichere Action-Fenster und Deadlines;
-- Recalculation bei Reise-/Traveller-/Credential-/Evidence-Änderungen;
-- konkrete Travel-Companion Task-/Completion-States;
-- priorisierte und deduplizierte In-App-/Push-/gegebenenfalls E-Mail-Begleitung.
+- Providerwahl, Vertrag/DPA, Secrets, paid calls und Live-Aktivierung;
+- Production-Migrationen / RLS / Ownership mit realen Datenwirkungen;
+- fundamentale Auth-/MFA-/AAL-Änderungen;
+- sensible Pass-/Dokument-/MRZ-/Scan-/Biometrie-/Gesundheitsdaten;
+- Payments / echte Geldbewegungen;
+- neue laufende Kosten außerhalb des freigegebenen Budgets;
+- Public Launch / irreversible externe Aktivierung.
 
-Diese Zielarchitektur ist **kein automatischer Build-Auftrag**.
+TW-8 / TW-9 bleiben blockiert, solange reale belastbare Commercial Truth / Provider-Evidence fehlt.
 
-## 8. Andere relevante Grenzen
-
-- TW-8 / TW-9 bleiben blockiert, solange keine reale belastbare Commercial Truth / Provider-Evidence vorliegt.
-- GitHub Hygiene Phase 1+2 ist abgeschlossen; Issue #266 ist geschlossen.
-- Historische offene Draft-PRs sind keine aktuelle Runtime-Wahrheit; live verifizieren.
-- Supabase wurde durch Requirements E1–E4 und R1 nicht verändert; vor DB-/RLS-/Storage-/Security-/Migration-Scope live neu prüfen und Drift reconciliieren.
+Supabase wurde durch E5-A nicht verändert. Vor DB-/RLS-/Storage-/Security-/Migration-Scope live neu prüfen und Drift reconciliieren.
 
 ## 9. GitHub Governance
 
@@ -199,17 +221,19 @@ Pflicht:
 
 Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId` ist kein Jetnity-Codeproblem. Schutz deswegen niemals lockern. Nach TL Exact-Head-PASS nur identischer non-draft Recovery-PR mit eigenen Gates.
 
+Agent-Self-Review ist kein TL-PASS. Jeder Head-Wechsel invalidiert frühere Exact-Head-Gates.
+
 ## 10. FIRST NEXT ACTION
 
-**Kein Runtime-Slice und kein Cursor-Agent ist automatisch freigegeben.**
+**Kein Runtime-Slice und kein Cursor-Agent ist automatisch freigegeben. Kein E5-B wurde gestartet.**
 
 Der Technical Lead:
 
-1. liest den aktuellen R1-Closure-Checkpoint vollständig;
+1. liest den aktuellen E5-A-Closure-Checkpoint vollständig;
 2. verifiziert finalen `main`, offene PRs/Issues, CI/Vercel und Agentenstatus live;
 3. führt den verbindlichen Duplicate-/Integration-Precheck gegen den tatsächlichen Code durch;
-4. liest Issue #294 und relevante Ziel-/Build-Order-Dokumente;
-5. prüft Supabase nur bei relevantem Scope;
+4. liest Issue #294, Zielarchitektur und `docs/JETNITY_BINDING_BUILD_ORDER.md`;
+5. prüft Supabase nur bei relevantem DB-/Security-Scope;
 6. definiert erst danach den kleinsten verantwortbaren bounded Slice und respektiert besondere Product-Owner-Gates.
 
 **Live-Evidence gewinnt immer.**
