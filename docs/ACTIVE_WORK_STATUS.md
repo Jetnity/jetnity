@@ -1,115 +1,99 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / E5-A CLOSED / E5-B1 FIRST ATTEMPT BLOCKED & NOT MERGED / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / E5-A CLOSED / E5-B1 BLOCKER CLOSED / E5-B1R PREPARED / AGENT DISPATCH PENDING / LIVE-EVIDENCE WINS**
 
-## 1. Aktueller verifizierter Main
+## 1. Aktueller Main
 
-`main@6928ea637133ff91cfb207cfd5b1175fecbc9699`
+Baseline beim E5-B1R-Task-Cut:
 
-Commit:
+`main@7fdd06f983a47afbbb28313479adf4e81fb9a359`
 
-`Close Entry Requirements E5-A continuity (#326)`
+- PR #329 E5-B1 Trust-Boundary Closure: MERGED;
+- Main CI #1497 / Run `33409025821`: SUCCESS;
+- Vercel Production: SUCCESS;
+- Ruleset `Jetnity main protection` / ID `21875372`: active, strict Required Checks, Conversation Resolution, merge-only, bypass leer.
 
-Live GitHub Evidence:
+Letzter abgeschlossener Runtime-Slice bleibt E5-A. Der Merge #329 war docs-only.
 
-- CI #1491 / Run `33404116202`: **SUCCESS**;
-- Ruleset `Jetnity main protection` / ID `21875372`: **active**;
-- strict Required Checks;
-- Conversation Resolution;
-- merge-only;
-- bypass leer.
+## 2. Aktiver vorbereiteter Slice
 
-Letzter abgeschlossener Runtime-Slice bleibt E5-A:
+Issue:
 
-- Issue #323 CLOSED / completed;
-- finaler TL-PASS-Head `82c2c268f26c5aa9ee73dfd8f9e0c179aa4376a2`;
-- Recovery-PR #325 MERGED;
-- Runtime-Merge `a4c0c57e144e694435cfe2b1970a76239f1ef7d5`;
-- Continuity-PR #326 MERGED auf aktuellen Main.
+**#330 – Entry Requirements E5-B1R – ephemeral provider-observed airport timezone evidence**
 
-## 2. Aktiver Runtime-Slice / Agent
+Branch:
 
-**Keiner.**
+`feat/entry-requirements-ephemeral-timezone-evidence-e5b1r-2026-08-31`
 
-Der erste E5-B1-Versuch wurde bewusst geschlossen.
+Binding Task:
 
-Issue #327:
+`docs/ENTRY_REQUIREMENTS_EPHEMERAL_PROVIDER_TIMEZONE_E5B1R_TASK_2026-08-31.md`
 
-- `Entry Requirements E5-B1 – trusted airport timezone provenance`;
-- **CLOSED / not_planned**.
+Fresh logical Cursor Agent:
 
-Draft PR #328:
+**`Jetnity entry requirements provider timezone evidence 1`**, Generation 1
 
-- **CLOSED / NOT MERGED**;
-- Branch `feat/entry-requirements-trusted-timezone-e5b1-2026-08-31`;
-- verworfener Agent-Head `fdf05f26928dfc556cc3b3b954eb3c61981b29c4`.
+Session: **noch nicht belegt / Dispatch pending**.
 
-Logical Cursor Agent:
+## 3. E5-B1R Truth-Grenze
 
-**`Jetnity entry requirements trusted event time 1`**, Generation 1
+Ziel ist ausschließlich eine **flüchtige serverseitige Companion-Evidence** am aktiven FlightProvider-Port.
 
-Session:
+Timezone wird nicht Teil von:
 
-`bc-c0a4c448-2029-4b3a-8746-53985c8ca2e0`
+- `FlugSegment`;
+- `FlugOption`;
+- Ranking-/Client-Option;
+- Browser-Antwort;
+- Route-Itinerary;
+- Trip-/Route-Metadata;
+- Account-Adoption / `flugNachweis`;
+- Supabase.
 
-Status: **STOPPED / CLOSED / NOT MERGED**.
+Evidence muss exakt an normalisierte Option + Leg + Segment + Endpoint + IATA gebunden sein.
 
-Der Agent-Code ist ausschließlich Review-Evidence. Kein Teil davon gilt als Runtime-Truth.
+Duffel darf sie nur aus dem strukturierten Airport-Endpunkt mit explizitem `time_zone` erzeugen. Kein IATA-/Country-/City-/Name-/Offset-Fallback.
 
-## 3. E5-B1 Blocker – Production-live bestätigt
+Die Search-Orchestrierung gibt diese Evidence in E5-B1R nicht an den Browser weiter.
 
-Der ursprüngliche Task nahm an, dass provider-belegte Airport-Timezone in `trip_items.metadata.routeItinerary` persistiert und aus diesem Store später als Trusted Truth gelesen werden könne.
+## 4. Fresh Precheck
 
-Das ist ohne zusätzliche Write-Authority falsch.
+Geprüft gegen aktuellen Main:
 
-Supabase Production:
+- `lib/flights/provider.ts` ist die aktive Runtime-Provider-Naht;
+- Duffel endet in dieser Naht;
+- `FlugOption` und Client-Contract sind timezone-frei und bleiben es;
+- kein bestehender timezone-evidence Contract/Resolver gefunden;
+- `lib/providers/flights/*` ist eine separate Offline-/Fixture-Readiness-Schicht und wird nicht als zweites Runtime-System erweitert;
+- kein DB-/Route-/Account-Scope erforderlich.
 
-- Projekt `qscbgcdmivbbnzrcyegn` / `Jetnity's Project`;
-- Region `eu-central-2`;
-- Status beim Check `ACTIVE_HEALTHY`.
+## 5. Verworfener erster Versuch
 
-Live `public.trip_items`:
+Issue #327: CLOSED / not_planned.  
+PR #328: CLOSED / NOT MERGED.  
+Verworfener Head: `fdf05f26928dfc556cc3b3b954eb3c61981b29c4`.
 
-- RLS enabled;
-- FORCE RLS false;
-- authenticated Owner-INSERT vorhanden;
-- authenticated Owner-UPDATE vorhanden;
-- authenticated Table Grants: INSERT, UPDATE, SELECT, DELETE.
+Dieser Stand ist ausschließlich Review-Evidence und wird nicht cherry-picked.
 
-Damit beweist RLS Ownership, aber nicht Provider-Provenance einzelner Metadata-Felder.
+Logical Agent damals:
 
-Zusätzlich Production-live:
+**`Jetnity entry requirements trusted event time 1`**, Generation 1  
+Session `bc-c0a4c448-2029-4b3a-8746-53985c8ca2e0`.
 
-- `public.trip_items_route_itinerary_schuetzen()` kanonisiert Flight-Metadata;
-- `public.flug_route_itinerary_metadata(...)` baut Route-Segmente aktuell ohne Timezone-Felder neu;
-- eine Timezone würde im bestehenden Persistenzpfad daher nicht lossless erhalten.
+## 6. Bindende Provenance-Regel
 
-Bindende Schlussfolgerung:
+Der Production-live geprüfte erste Blocker bleibt bindend:
 
 > **Persisted does not mean provider-proven.**
 
-> Trusted Provenance darf nur aus einer Write-Authority-Kette gelesen werden, die diese Herkunft technisch erzwingt.
+Owner-beschreibbare Trip-Metadaten dürfen nicht allein wegen ihres Speicherorts als Provider-Provenance gelesen werden.
 
-## 4. Bestehende Provenance-Architektur
+Eine spätere persistente Timezone/Event-Provenance benötigt eine technisch erzwungene server-owned Write-Grenze und wird als eigener DB-/Security-Slice behandelt.
 
-Bereits vorhanden:
+## 7. Entry Requirements Gesamtstand
 
-`public.trip_item_commercial_provenance`
-
-mit kontrollierter interner Write-Naht:
-
-`jetnity_internal.trip_item_commercial_provenance_schreiben(...)`.
-
-Das ist das relevante Sicherheitsmuster **server-owned provenance beside user-owned trip item**.
-
-Diese Relation bleibt Commercial-Domain und darf nicht als Timezone-Store missbraucht werden.
-
-Eine spätere persistente trusted Timezone/Event-Provenance benötigt eigenen fachlichen Contract und – falls DB-/RLS-/Grant-/Trigger-/Write-Authority-Änderung nötig – ein besonderes Product-Owner-Gate.
-
-## 5. Readiness / Entry Requirements Gesamtstand
-
-Provider-neutral abgeschlossen/vorhanden:
+Provider-neutral vorhanden:
 
 - S4-R1 Truth Ops;
 - E1 Detail Contract;
@@ -119,76 +103,41 @@ Provider-neutral abgeschlossen/vorhanden:
 - R1 Workspace Integration;
 - E5-A Exact Event-Instant Projection Core.
 
-E5-A projiziert nur bereits explizit gebundene absolute Event-Instants.
+Weiterhin nicht aktiv:
 
-Nicht vorhanden:
-
-- Trusted persistent airport timezone provenance;
-- Local-Time + IANA → absolute Instant;
+- echter Requirements Provider;
+- persistente trusted Timezone/Event-Provenance;
+- Local-Time+IANA→absolute Instant;
 - DST Resolver;
 - Trip/Route→Event-Occurrence Resolver;
 - E5-A Auto-Bind;
-- konkrete Workspace Deadline/Urgency Runtime;
-- Task Persistence/Completion;
-- Reminder/Push/E-Mail/Notification Runtime.
+- Deadline/Urgency/Task/Reminder/Notification Runtime;
+- Credential Ranking.
 
 `requirementsProviderAus()` bleibt `null`.
 
-## 6. Traveller Truth unverändert
+## 8. Traveller Truth
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Account Registry = wiederverwendbare aktuelle Traveller-Fakten.  
-Trip Snapshot = einzige Current Truth für die konkrete Reise.
+Account Registry = wiederverwendbare aktuelle Traveller-Fakten. Trip Snapshot = einzige Current Truth für die konkrete Reise.
 
-Issuer Country ≠ Citizenship. Keine Residence→Nationality-Inferenz. Kein Default-/Primary-/Preferred-/Chosen-Pass. Kein `documents[0]` / `evaluations[0]` als Product Truth.
+Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Residence→Nationality-Inferenz, Issuer Country ≠ Citizenship.
 
-## 7. Product-Owner-Gates
+## 9. Product-Owner-Gates
 
-Besondere PO-Gates bleiben insbesondere für:
+E5-B1R löst kein besonderes PO-Gate aus: keine Migration/RLS/Auth/Secrets/Provideraktivierung/paid calls/Persistenz/neue Infrastrukturkosten.
 
-- Providerwahl/Vertrag/DPA/Secrets/paid calls/Live-Aktivierung;
-- Production-Migrationen, RLS, Ownership, Trigger/Grants/server-owned Write Authority mit realer Datenwirkung;
-- fundamentale Auth/MFA/AAL-Änderungen;
-- sensible Dokument-/MRZ-/Scan-/Biometrie-/Gesundheitsdaten;
-- Payments / echte Geldbewegungen;
-- neue laufende Kosten außerhalb des freigegebenen Budgets;
-- Public Launch / irreversible externe Aktivierung.
-
-## 8. GitHub Governance
-
-Ruleset `Jetnity main protection` / ID `21875372` bleibt bindend:
-
-- PR erforderlich;
-- Branch up to date;
-- Conversation Resolution;
-- `Typecheck, Lint & Build`;
-- `Auth-Konfiguration gegen config.toml`;
-- `Vercel`;
-- merge-only;
-- bypass leer.
-
-Cursor-Self-Review ist kein TL-PASS. Jeder neue Head invalidiert frühere Exact-Head-Gates.
-
-## 9. Aktuellster Closure-Checkpoint
-
-`docs/CHATGPT_TECHNICAL_LEAD_E5B1_TRUST_BOUNDARY_BLOCKER_CLOSED_2026-08-31.md`
-
-Dieser Checkpoint ersetzt die vorbereitenden E5-B1-Aussagen aus dem geschlossenen PR #328 als kanonische Technical-Lead-Entscheidung.
+Sobald persistente server-owned Timezone/Event-Provenance erforderlich wird: STOPP am Production-DB/Security-Gate.
 
 ## 10. Nächste Aktion
 
-**Kein Runtime-Slice automatisch starten.**
-
-Vor dem nächsten Runtime-Build:
-
-1. finalen Main, PRs/Issues, CI/Vercel live prüfen;
-2. E5-B1 Blocker-Checkpoint lesen;
-3. #328 nur als verworfene Review-Evidence behandeln;
-4. Flight/Route/Provider/DB Duplicate-/Integration-/Trust-Precheck erneut durchführen;
-5. prüfen, ob der kleinste sichere Slice ausschließlich `ephemeral provider-observed airport timezone evidence` im Flight-Adapter/Contract enthält;
-6. keine owner-beschreibbare Persistenz als Trusted Provenance verwenden;
-7. keine UTC/DST/Event-Resolver-Logik in denselben Slice ziehen;
-8. sobald persistente server-owned Provenance erforderlich wird: STOPP am Product-Owner-Gate.
+1. Vorbereitungsbranch gegen `main@7fdd06f...` prüfen;
+2. vor Agent-Dispatch nur Task + TL-Continuity zulassen;
+3. Draft-PR zu #330 öffnen;
+4. fresh Agent `Jetnity entry requirements provider timezone evidence 1` starten;
+5. Agent liefert Runtime + Status/Handoff/Self-Review + Gates und stoppt;
+6. Technical Lead reviewed den exakten finalen Head unabhängig;
+7. kein Folgeslice automatisch.
 
 **Live-Evidence gewinnt immer.**
