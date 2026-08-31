@@ -1,191 +1,161 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 31. August 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / E5-B3A CLOSED & POST-MERGE VERIFIED / PRODUCTION MIGRATION UNAPPLIED / NEXT SLICE REQUIRES FRESH PRECHECK / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / E5-B3A CLOSED / E5-B3B PREPARED / SERVER-ONLY RETRIEVAL TIMESTAMP / NO PRODUCTION APPLY / AGENT NOT YET DISPATCHED / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Persisted does not mean provider-proven.**
 
-> Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen. Jeder neue Head invalidiert ältere Exact-Head-Gates.
+> Jeder neue Head invalidiert ältere Exact-Head-Gates. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen.
 
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3A_CLOSED_2026-08-31.md` ← **aktuellster Entry-Requirements Closure-Checkpoint**
+1. `docs/ENTRY_REQUIREMENTS_PROVIDER_RETRIEVAL_TIMESTAMP_E5B3B_TASK_2026-08-31.md` ← **aktiver vorbereiteter Auftrag**
 2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3A_REVIEW_2026-08-31.md`
-4. `docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_HANDOFF_2026-08-31.md`
+3. Issue **#343 – E5-B3B server-observed Flight provider retrieval timestamp evidence**
+4. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3A_CLOSED_2026-08-31.md`
 5. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B2A_CLOSED_2026-08-31.md`
-6. `docs/CHATGPT_TECHNICAL_LEAD_E5B1_TRUST_BOUNDARY_BLOCKER_CLOSED_2026-08-31.md`
+6. E5-B1R Closure/Handoff/Task
 7. `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`
 8. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 9. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-10. `JETNITY_HANDOFF.md`
+10. `lib/flights/provider.ts`
+11. `lib/flights/duffel/adapter.ts`
+12. `lib/flights/suche.ts`
+13. `lib/flights/airport-event-instant.ts`
+14. `supabase/migrations/20260831190000_trip_item_flight_event_provenance.sql`
+15. `JETNITY_HANDOFF.md`
 
-Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Migration-/Persistenzfragen zusätzlich Supabase Production read-only prüfen.
+Danach GitHub/CI/Vercel live neu verifizieren. DB-/Security-Annahmen zusätzlich Supabase Production read-only prüfen.
 
-## 2. Aktueller kanonischer Runtime-/Repository-main
+## 2. Aktueller kanonischer main
 
-Vor dieser docs-only Closure:
-
-`main@73d580a53bd60be20e4f253fafe37f25111d4b0d`
+`main@ad7fb1fa5d0bd6ac3fe2a7085a65fb8d56cecbb8`
 
 Commit:
-`Merge E5-B3A server-owned flight event provenance foundation (#341)`
+`Close Entry Requirements E5-B3A continuity (#342)`
 
-Post-merge verified:
+Live verifiziert:
 
-- Main CI #1527 / Run `33429685566`: **SUCCESS**;
-- Vercel Production: **SUCCESS** auf exakt diesem SHA;
-- Supabase Production: E5-B3A Migration weiterhin **UNAPPLIED**;
-- Issue #338: **CLOSED / completed**;
-- Parent #294: bleibt offen.
+- Main CI #1529 / Run `33430799991`: **SUCCESS**;
+- Vercel Production auf exakt `ad7fb1fa...`: **SUCCESS**;
+- Issue #338: CLOSED / completed;
+- Parent #294: OPEN;
+- Production Supabase E5-B3A Migration: weiterhin **UNAPPLIED**.
 
-Nach Merge dieser docs-only Closure muss `main` live erneut gelesen werden, weil der kanonische SHA ohne Runtime-Änderung weiterläuft.
+## 3. E5-B3A ist abgeschlossen
 
-## 3. E5-B3A final history
+Repository vorhanden:
+
+- server-owned Flight Event Provenance persistence/security foundation;
+- verpflichtende konkrete `external_ref`;
+- exact occurrence identity;
+- getrennte local wall clock / timezone / instant;
+- private write-authority foundation;
+- Runtime-Gate false/unallocated.
+
+Production weiterhin ohne E5-B3A Relation/Function/Gate/Rollen.
+
+## 4. Fresh Precheck für nächsten Slice
+
+Live auf `main@ad7fb1fa...` geprüft:
+
+- `FlugProviderTreffer` trägt `options`, E5-B1R timezone evidence, E5-B2A event-instant evidence/issues;
+- es existiert **kein** server-observed Retrieval-/Observation-Timestamp im aktiven FlightProvider-Treffer;
+- `lib/flights/duffel/adapter.ts` ist die aktive serverseitige Duffel-Seam und mintet bereits Companion-Evidence;
+- `lib/flights/suche.ts` verwirft Companion-Evidence vor Ranking/Browser;
+- `jetnity.flight_event_persistence.v1` / `e5b2a_validated_snapshot` existieren nur im E5-B3A SQL-/Test-/Docs-Vertrag, nicht als TypeScript-Mint;
+- kein aktuelles offenes Entry-Requirements-Issue dupliziert diesen Retrieval-Zeitfakt.
+
+Schlussfolgerung:
+
+Ein Persistenz-Mint wäre noch zu früh, weil E5-B3A `retrieved_at/observed_at` verlangt. Ein späterer Mint darf diesen Zeitpunkt nicht nachträglich erfinden.
+
+## 5. Aktiver vorbereiteter Slice – E5-B3B
 
 Issue:
-**#338 – Entry Requirements E5-B3A – server-owned flight event provenance persistence foundation**
+**#343 – Entry Requirements E5-B3B – server-observed Flight provider retrieval timestamp evidence**
 
-Cursor-Agent:
-**`Jetnity entry requirements event provenance persistence 1`**, Generation 1
+Branch:
+`feat/entry-requirements-provider-retrieval-time-e5b3b-2026-08-31`
 
-Session:
-`bc-e7a50347-1c66-4cd1-bbd2-979b89590a40`
+Binding Task:
+`docs/ENTRY_REQUIREMENTS_PROVIDER_RETRIEVAL_TIMESTAMP_E5B3B_TASK_2026-08-31.md`
 
-Initialer Agent-Head:
-`79dda7593bb9fbb20c36dc54348920e994da6823`
+Task-Commit:
+`963ddead23d899c57cc2610928081b4419708c3b`
 
-TL dort:
-**CHANGES REQUIRED / P2** – `provider_belegt=true` konnte ohne konkrete Provider-Source-Referenz persistiert werden.
+Vorgesehener Cursor-Agent:
+**`Jetnity entry requirements provider retrieval timestamp 1`**, Generation 1
 
-Same-agent Fix:
-`f918dc0ed58b4962389a860d5a1b6bf74513cd1b`
+**Agent an diesem Checkpoint noch nicht dispatched.**
 
-Finaler Agent-/Delivery-Head:
-`d37b600f67537f4ccb816182009b6018a39f82a3`
+## 6. Bindende E5-B3B-Architektur
 
-Finaler Integrations-Head:
-`9a839bfc2babec96ba983de0c6b1ff628da5a1f3`
+`FlugProviderTreffer` erhält einen verpflichtenden server-only Snapshot-Zeitfakt, vorzugsweise `retrievedAt: string`.
 
-TL Verdict:
-**PASS / no open P0-P1-P2 findings.**
+Semantik:
 
-Original Draft PR #340:
-**CLOSED / NOT MERGED** wegen bekanntem `Repository.fullDatabaseId` Ready-Connectorfehler.
+- Jetnity-Serverzeit bei erfolgreichem Lesen der Provider-Antwort;
+- canonical UTC ISO mit `Z`;
+- genau einmal pro Provider-Treffer;
+- nicht aus Provider-Payload, Browser oder Airportdaten;
+- keine Freshness-/Availability-Garantie;
+- nicht in `FlugOption` / `FlugSegment`;
+- nicht in Ranking / Browser-Antwort / Route / Trip-Metadata.
 
-Identischer non-draft Recovery-PR #341:
-**MERGED** nach eigenen Gates.
+Duffel darf einen kleinen injizierbaren Clock-Port für deterministische Tests erhalten. Production nutzt echte Serverzeit ohne neue Infrastruktur.
 
-Runtime-/Repository-Merge:
-`73d580a53bd60be20e4f253fafe37f25111d4b0d`
+## 7. Hard non-scope
 
-## 4. Was jetzt im Repository vorhanden ist
+E5-B3B baut nicht:
 
-- `supabase/migrations/20260831190000_trip_item_flight_event_provenance.sql`;
-- `lib/flight-event-provenance/e5b3a-persistenz-vertrag.test.ts`;
-- dedicated `public.trip_item_flight_event_provenance` als Repository-Vertrag;
-- exact Item × Leg × Segment × `departure|arrival` occurrence identity;
-- getrennte lokale Wanduhr / IANA-Zone / absoluter Instant;
-- verpflichtende konkrete Provider-Source-Referenz `external_ref`;
-- server-generated `occurrence_event_ref`;
-- Owner read-only / kein Direct-Write;
-- private SECURITY-DEFINER-Write-Foundation;
-- NOLOGIN writer/runtime roles;
-- Runtime-Gate default false/unallocated;
-- atomare Full-current-snapshot-Semantik;
-- kein SQL-Timezone-/DST-Resolver.
-
-## 5. Production ist weiterhin unverändert
-
-Supabase Production Projekt:
-`qscbgcdmivbbnzrcyegn`
-
-Post-merge read-only bestätigt **nicht vorhanden**:
-
-- `public.trip_item_flight_event_provenance`;
-- `jetnity_internal.trip_item_flight_event_provenance_schreiben(jsonb)`;
-- `jetnity_internal.flight_event_write_runtime_gate`;
-- `jetnity_flight_event_writer`;
-- `jetnity_flight_event_runtime`.
-
-**Repository-Migration vorhanden ≠ Production-Migration angewendet.**
-
-## 6. Entry Requirements / Travel Companion foundation
-
-Vorhanden im Repository/runtime:
-
-- S4-R1 Truth Ops;
-- E1 Detail Contract;
-- E2 Official Actions;
-- E3 Visitor Checklist;
-- E4 Official Temporal Rules;
-- R1 Workspace Integration;
-- E5-A Exact Event-Instant Projection Core;
-- E5-B1R ephemeral provider-observed airport timezone evidence;
-- E5-B2A ephemeral airport event-instant resolution;
-- E5-B3A server-owned Flight Event Provenance **repository persistence/security foundation**.
-
-Weiterhin inaktiv:
-
-- Production-applied Flight Event Provenance;
-- Runtime Principal / realer writer;
+- E5-B3A Production-Apply;
+- DB-/RLS-/Grant-/Role-/Function-Änderungen;
+- Runtime-Principal;
+- realen Writer/Backfill;
+- Flight Event Persistence TypeScript-Mint;
 - `flugNachweisAusUmgebung()`;
-- Trip/Route → OfficialTemporalAnchor occurrence resolver;
-- E5-A automatic binding;
-- workspace deadline/action-window/urgency;
-- task persistence/completion;
-- reminders/push/email;
-- real Requirements provider;
-- credential/passport ranking.
+- neuen Provider/Secret/paid call;
+- `FlugOption`-/`FlugSegment`-Schemaänderungen;
+- Browser-/Route-/Trip-Metadata-Timestamp;
+- E5-A-Autobinding;
+- Deadlines/Tasks/Reminder;
+- Requirements-Provider;
+- Credential-Ranking;
+- Folgeslice.
 
-`flugNachweisAusUmgebung()` bleibt `null`.  
-`requirementsProviderAus()` bleibt `null`.
+## 8. Product-Owner-Gates
 
-## 7. Product-Owner-Gates
+Für E5-B3B selbst kein besonderes PO-Gate, solange er rein in-memory/server-only bleibt.
 
 Explizite Product-Owner-Freigabe bleibt erforderlich vor:
 
-- Production-Apply der E5-B3A-Migration;
-- Production-RLS/Grant/Role/Function-Änderungen;
-- Runtime-/Login-Principal-Allokation;
-- realem Application-Writer oder Backfill;
-- Provider/Vertrag/DPA/Secret/paid-call/live activation;
-- fundamentalen Auth/MFA/AAL-Änderungen;
-- sensitiven Pass/MRZ/Scan/Biometrie-/Health-Daten;
-- realen Payments;
-- Kosten außerhalb des freigegebenen Budgets;
-- Public Launch / irreversibler externer Aktivierung.
+- Production-DB-/Security-Mutation;
+- Runtime-Principal / realem Writer / Backfill;
+- Provider-/Secret-/paid/live activation;
+- neuen laufenden Kosten;
+- sonstigen dokumentierten besonderen Gates.
 
-## 8. P3 vor späterem Production-Apply
-
-Die E5-B3A-Migration muss vor einem späteren Production-Apply zusätzlich gegen eine disposable PostgreSQL/Supabase-Testumgebung tatsächlich ausgeführt werden. Repository-Vertragstests ersetzen keinen beobachteten Live-Apply.
-
-Ein späterer Trusted-Mint muss E5-B1R + E5-B2A wiederverwenden. SQL darf keine zweite Temporal-Truth-Engine werden.
-
-## 9. Traveller-/Produktwahrheit unverändert
+## 9. Product-/Traveller-Truth unverändert
 
 > **Jetnity = Travel Operating System für die konkrete Reise.**
 
 > **1 Traveller -> multiple citizenships -> multiple travel documents/credentials -> context-dependent evaluated options.**
 
-Kein Default-/Primary-/Preferred-/Chosen Passport oder Citizenship. Issuer Country != Citizenship. Keine Residence→Nationality-Inferenz. Kein `documents[0]` / `evaluations[0]` als Product Truth.
+Kein Default Passport/Citizenship. Issuer Country != Citizenship. Keine Residence→Nationality-Inferenz.
 
-Account Registry = reusable current traveller facts.  
-Trip Snapshot = only current truth for a concrete trip.
+`flugNachweisAusUmgebung()` bleibt `null`.  
+`requirementsProviderAus()` bleibt `null`.
 
 ## 10. FIRST NEXT ACTION
 
-Der Nutzer hat ausdrücklich den Start **eines nächsten Slices** autorisiert.
-
-Vor dessen Cut trotzdem zwingend:
-
-1. finalen `main` nach dieser Closure live rekonstruieren;
-2. offene aktuelle PRs/Issues und Main-CI/Vercel prüfen;
-3. Duplicate-/Integration-/Truth-/Security-/Persistence-Precheck gegen aktuellen Code durchführen;
-4. kleinsten sicheren nächsten Entry-Requirements-/Travel-Companion-Baustein bestimmen;
-5. **kein Production-Apply und kein anderes Product-Owner-Gate still überschreiten**;
-6. eigenen versionierten Issue/Task/Branch/Draft-PR vorbereiten;
-7. frischen Cursor-Agenten dispatchen;
-8. nach Agent-Handoff unabhängig Exact-Head reviewen.
+1. `docs/ACTIVE_WORK_STATUS.md` auf denselben vorbereiteten E5-B3B-Zustand ziehen;
+2. Branch gegen exakt `main@ad7fb1fa...` prüfen – vor Agent nur Task + TL-Continuity-Dokumente zulässig;
+3. Draft-PR für #343 öffnen;
+4. Pre-agent Exact Head festhalten;
+5. frischen Cursor-Agenten `Jetnity entry requirements provider retrieval timestamp 1`, Generation 1 dispatchen;
+6. während Agent-Arbeit keine TL-Branch-Mutation;
+7. danach vollständiger unabhängiger Exact-Head-Review;
+8. **kein Production-Apply und kein automatischer Folgeslice.**
 
 **Live-Evidence wins always.**
