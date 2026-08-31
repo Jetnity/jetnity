@@ -16,7 +16,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 GitHub/Cursor hat die bereits beendete ursprüngliche Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` trotz expliziter Anweisung nicht wieder geöffnet. Stattdessen entstand diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. Die STOP-Anweisung und die spätere enge PROCEDURAL-RECOVERY-Freigabe gelten derselben Session.
 
-Sie darf nur den TL-Befund aus Kommentar `5478873885` tragen. Kein Generation-2-Auftrag, kein Folgeslice.
+Sie darf nur den TL-Befund aus Kommentar `5478873885` und den zusätzlichen Provenance-Grenzfall (whitespace-only `eventRef`) tragen. Kein Generation-2-Auftrag, kein Folgeslice.
 
 ## Zuerst lesen
 
@@ -41,11 +41,11 @@ Harte Wahrheiten:
 4. Absolute Truth nur mit `Z` oder numerischem Offset. `2026-09-12T18:00` und Date-only sind `invalid_instant`.
 5. Fehlender benötigter Anchor ist `missing_anchor` und fällt nicht auf ein anderes Binding zurück.
 6. Unterschiedliche Anchors werden erst nach beiden projizierten Instants verglichen. `availableFrom > dueBy` → `actionWindow: null` / `invalid_projected_window`.
-7. `eventRef` bleibt bis zur Projektion erhalten. Gleiche Eingabe ist value-stabil.
+7. `eventRef` bleibt bis zur Projektion erhalten. Gleiche Eingabe ist value-stabil. Whitespace-only ist keine stabile Identität und wird `missing_anchor`.
 8. Leere/ungültige Regeln geben **pro Aufruf** eine frische Projection zurück (`leereProjektion()`). Kein gemeinsam mutierbares Modul-Singleton.
 9. `requirementsProviderAus()` bleibt `null`.
 10. `docs/ACTIVE_WORK_STATUS.md` wird vom Cursor-Agenten nicht geändert.
-11. Generation 1 bleibt der Slice. Diese Recovery-Session ist nur der mechanische Carrier für denselben Review-Fix.
+11. Generation 1 bleibt der Slice. Diese Recovery-Session ist nur der mechanische Carrier für denselben Review-Fix und den Provenance-Grenzfall.
 
 ## Review-Fix dieser Recovery-Session
 
@@ -58,6 +58,15 @@ Fix (Commit `85aef5e2673bc06f0e6d7cb76d91aeeadf47e590`):
 - `leereProjektion()` statt gemeinsamer Konstante
 - Regressionstest für Cross-Call-Isolation (Referenzungleichheit + Mutation eines früheren Ergebnisses ändert spätere Aufrufe nicht)
 - Quelltext-Guard gegen Rückkehr von `LEERE_PROJEKTION`
+
+Zusätzlicher Provenance-Befund: `eventRefLesen()` akzeptierte jeden String mit `length > 0`, also auch `'   '`.
+
+Fix (Commit `fbf631c3cf86b26b069ac028dd2aef303162f6c2`):
+
+- Whitespace-only `eventRef` → `missing_anchor`, `eventRef: null`
+- kein Fallback auf ein anderes Binding
+- keine neue Taxonomie, kein Trim/Rewrite gültiger Identitäten
+- Regressionstest für `'   '`, Tab, Newline
 
 Nicht angefasst: Resolver, Timezone, Provider, Factory, UI, Tasks, Notifications, Supabase, E5-B, `ACTIVE_WORK_STATUS.md`.
 
@@ -90,7 +99,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 ## Residuals
 
 - Kein Resolver. Ein späterer Slice muss Events binden, nicht dieser Core.
-- Lokale Gates nach Recovery-Re-Run: `npm test` 2945/2945, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
+- Lokale Gates nach Provenance-Fix: `npm test` 2946/2946, Typecheck, Lint 0/137, Production-Build, Hygiene. Gates auf `85aef5e2...` sind historisch. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Abnahmebeweis, weil keine UI.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 

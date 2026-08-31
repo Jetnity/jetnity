@@ -11,11 +11,11 @@ Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
 Auftrag: Issue #323 / E5-A exact event-instant temporal projection core, plus TL-CHANGES-REQUIRED auf Head `ae091777e5aec0d5a0b6baf8b28a5ce1234c967d` (Kommentar `5478873885`).
 
-Session-Abweichung: GitHub/Cursor öffnete die beendete Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` nicht erneut. Diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erhielt zuerst STOP, danach die enge PROCEDURAL-RECOVERY-Freigabe nur für denselben TL-Befund.
+Session-Abweichung: GitHub/Cursor öffnete die beendete Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` nicht erneut. Diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erhielt zuerst STOP, danach die enge PROCEDURAL-RECOVERY-Freigabe für Kommentar `5478873885` und den zusätzlichen Provenance-Grenzfall.
 
 Geprüft: E4-Typen wiederverwendet; keine zweite Temporal-Domain; keine Trip-/Route-Occurrence-Auswahl; kein Country→first match; keine Zeitzone geraten; kein `Z` an lokale Flug-/Stage-Zeiten; nur explizite `Z`-/Offset-Instants; `eventRef` erhalten; Partial-Issues `missing_anchor` / `invalid_instant` / `invalid_projected_window`; Cross-Anchor-Fenster erst nach beiden Instants; kein `Date.now()`; kein system-local zoneless `new Date(string)`; keine Supabase-/DB-/RLS-/Auth-Änderung; kein Provider/Secret/paid call; keine Workspace-Deadline-UI; keine Task-/Reminder-Runtime; Factory `null`; kein E5-B; `docs/ACTIVE_WORK_STATUS.md` nicht editiert.
 
-Zusätzlich nach TL-Befund: kein gemeinsam mutierbares leeres Resultat; frische Projection pro Aufruf; Cross-Call-Isolation getestet.
+Zusätzlich nach TL-Befund: kein gemeinsam mutierbares leeres Resultat; frische Projection pro Aufruf; Cross-Call-Isolation getestet; whitespace-only `eventRef` ist `missing_anchor`.
 
 Traveller-Context-Intelligence: für diesen reinen Instant-Rechenkern **nicht relevant**. Der Core liest keine Citizenships, Dokumente oder Residence; er projiziert nur explizit gebundene Instants. Mehrfach-Occurrence bleibt Sache des Aufrufers, nicht first-match.
 
@@ -41,7 +41,8 @@ Traveller-Context-Intelligence: für diesen reinen Instant-Rechenkern **nicht re
 | Werden Secrets, paid calls, Supabase, Auth, Tasks oder Notifications angefasst? | Nein. |
 | Wurde ACTIVE_WORK_STATUS oder Ready/Merge/E5-B gestartet? | Nein. |
 | Teilen leere Projektionen eine mutierbare Referenz? | **Nein, nach Fix.** `leereProjektion()` liefert pro Aufruf ein neues Objekt. Mutation von `issues` / Feldern eines früheren Ergebnisses ändert spätere Aufrufe nicht. Vorher: `LEERE_PROJEKTION`-Singleton (TL-Befund). |
-| Wurde der Scope über den Purity-Fix hinaus erweitert? | Nein. |
+| Wurde der Scope über den Purity-Fix hinaus erweitert? | Nein, außer dem TL-freigegebenen Provenance-Grenzfall. |
+| Ist `'   '` eine stabile `eventRef`? | **Nein, nach Fix.** `missing_anchor`, `eventRef: null`, kein anderes Binding, keine ID-Erfindung. |
 | Ist diese Recovery-Session eine neue Generation oder ein neuer Slice? | Nein. Nur mechanischer Carrier, weil die Original-Session nicht wieder geöffnet wurde. |
 
 ## 3. Bewusste Schwächen, die bleiben
@@ -54,6 +55,6 @@ Traveller-Context-Intelligence: für diesen reinen Instant-Rechenkern **nicht re
 
 ## 4. Urteil des Autors
 
-**CHANGES REQUIRED durch den Technical Lead:** behoben im engen Purity-Fix durch diese Recovery-Session. Lokale Gates nach Re-Run: 2945/2945 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene. `origin/main` unverändert `1600767b...`.
+**CHANGES REQUIRED durch den Technical Lead:** Purity-Singleton und whitespace-only `eventRef` in dieser Recovery-Session behoben. Lokale Gates nach Re-Run: 2946/2946 Tests, Typecheck, Lint 0/137, Production-Build, Hygiene. `origin/main` unverändert `1600767b...`.
 
-**Unabhängiger Technical-Lead-Review:** ausstehend auf dem **neuen** Head. Vorherige Exact-Head-Gates auf `ae091777...` zählen nicht. PR bleibt Draft. Kein Ready, kein Merge, kein E5-B.
+**Unabhängiger Technical-Lead-Review:** ausstehend auf dem **neuen** Head. Vorherige Exact-Head-Gates auf `ae091777...` und `85aef5e2...` zählen nicht. PR bleibt Draft. Kein Ready, kein Merge, kein E5-B.

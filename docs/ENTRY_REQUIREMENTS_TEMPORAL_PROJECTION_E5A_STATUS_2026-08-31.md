@@ -18,7 +18,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 GitHub/Cursor hat die bereits beendete ursprüngliche Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` trotz expliziter Anweisung nicht wieder geöffnet, sondern diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erzeugt.
 
-Die unmittelbar folgende STOP-Anweisung wurde derselben Recovery-Session zugestellt. Danach hat der Technical Lead diese Session **eng** als mechanischen Carrier für Kommentar `5478873885` freigegeben.
+Die unmittelbar folgende STOP-Anweisung wurde derselben Recovery-Session zugestellt. Danach hat der Technical Lead diese Session **eng** als mechanischen Carrier für Kommentar `5478873885` und den zusätzlichen Provenance-Grenzfall (whitespace-only `eventRef`) freigegeben.
 
 Das ist kein Generation-2-Slice und kein neuer Produktauftrag.
 
@@ -35,6 +35,7 @@ Kleinster provider-neutraler Folgeschritt nach E4 / R1, plus enger TL-Review-Fix
 5. Cross-Anchor-Fenster erst nach beiden projizierten Instants; unmöglich → kein Action Window
 6. `eventRef` bleibt Provenance; keine Occurrence-/Country-Auswahl
 7. **Review-Fix:** leere/ungültige Regeln liefern pro Aufruf eine frische Projection; kein gemeinsam mutierbares Modul-Singleton
+8. **Review-Fix:** whitespace-only `eventRef` ist keine stabile Occurrence-Identität (`missing_anchor`)
 
 Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine Deadline-UI, keine Task-/Reminder-Runtime. Factory bleibt `null`.
 
@@ -47,19 +48,20 @@ Kein echter Provider. Keine Secrets/paid calls. Keine Supabase/Auth/RLS. Keine D
 | `origin/main` vor diesem Handoff | `1600767be5ec87961e1d5b5e10c4bcc2f6eb51aa` (0 behind, unverändert) |
 | Vorheriger TL-Review-Head | `ae091777e5aec0d5a0b6baf8b28a5ce1234c967d` — **CHANGES REQUIRED** (Kommentar `5478873885`) |
 | Purity-Fix-Commit | `85aef5e2673bc06f0e6d7cb76d91aeeadf47e590` |
+| Provenance-Fix-Commit | `fbf631c3cf86b26b069ac028dd2aef303162f6c2` |
 | Finaler Branch-Tip | **nicht** im Tree self-embedded; live nach Push im PR |
 | Draft-PR | #324 bleibt Draft |
 | `docs/ACTIVE_WORK_STATUS.md` | nicht angefasst (Technical-Lead-owned) |
 | `JETNITY_START_HERE.md` | nicht angefasst |
 
-Alle Gates auf `ae091777...` sind historisch und zählen nicht für den neuen Head.
+Alle Gates auf `ae091777...` und `85aef5e2...` sind historisch und zählen nicht für den neuen Head.
 
 ## 3. Bereits umgesetzt
 
 - `lib/readiness/temporal-projection.ts`: Instant-Parser nur für `Z` / `±HH:MM`, UTC-Normalisierung, Anchor-genaue Bindings, Partial Issues, Action Window
 - E4-Typen (`OfficialTemporalRule`, Anchors, Punkte, `dueBy`-Semantik) werden importiert, nicht kopiert
 - Safety-/Flight-/Route-Domain bleiben ungekoppelt; zonenlose `YYYY-MM-DDTHH:mm` wird nicht als UTC gelesen
-- Gezielte Tests in `lib/readiness/e5a-temporal-projection.test.ts` (17 Fälle inkl. Pflicht-, Adversarial- und Isolation-Regression)
+- Gezielte Tests in `lib/readiness/e5a-temporal-projection.test.ts` (18 Fälle inkl. Pflicht-, Isolation- und whitespace-`eventRef`-Regression)
 - ADR-0206 und knapper `ARCHITECTURE.md`-Nachzug (unverändert in diesem Fix)
 - `requirementsProviderAus()` bleibt `null`
 
@@ -69,6 +71,13 @@ Alle Gates auf `ae091777...` sind historisch und zählen nicht für den neuen He
 - `leereProjektion()` erzeugt pro Aufruf ein neues Objekt
 - Regression: zwei leere Projektionen teilen keine Referenz; Mutation eines früheren Ergebnisses kontaminiert spätere Aufrufe nicht
 - Quelltext-Guard: Identifier `LEERE_PROJEKTION` darf nicht zurückkehren
+
+### TL-Provenance-Fix (whitespace-only `eventRef`)
+
+- `eventRefLesen()` lehnt Whitespace-only (`'   '`, Tab, Newline) fail-closed ab
+- bestehende Semantik: `missing_anchor`, `eventRef: null`, kein anderes Binding als Fallback
+- keine neue EventRef-Taxonomie, kein Trim/Rewrite gültiger Identitäten
+- Regression in `e5a-temporal-projection.test.ts`
 
 ## 4. Nicht umgesetzt / bewusst nicht angefasst
 
@@ -84,17 +93,17 @@ Alle Gates auf `ae091777...` sind historisch und zählen nicht für den neuen He
 - Credential-Ranking / „bester Pass“
 - `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`
 - E5-B / Folgeslice
-- Keine neue Generation, kein neuer Scope über den Purity-Fix hinaus
+- Keine neue Generation, kein neuer Scope über Purity- und Provenance-Fix hinaus
 
 ## 5. Tests / CI / Preview
 
-Lokale Evidence dieser Recovery-Session nach dem Purity-Fix; Exact-Head-Gates müssen live am finalen Tip geprüft werden.
+Lokale Evidence dieser Recovery-Session nach Purity- und Provenance-Fix; Exact-Head-Gates müssen live am finalen Tip geprüft werden.
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/readiness/e5a-temporal-projection.test.ts` | **17/17 pass** (inkl. Cross-Call-Isolation) |
+| `lib/readiness/e5a-temporal-projection.test.ts` | **18/18 pass** (inkl. Isolation und whitespace-`eventRef`) |
 | `lib/readiness/e4-temporal-rules.test.ts` | **17/17 pass** |
-| `npm test` | **2945/2945 pass** |
+| `npm test` | **2946/2946 pass** |
 | `npm run typecheck` | pass |
 | `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |
