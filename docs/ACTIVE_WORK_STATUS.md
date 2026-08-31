@@ -1,134 +1,121 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / E5-B3A CLOSED & POST-MERGE VERIFIED / PRODUCTION MIGRATION UNAPPLIED / NEXT SLICE AUTHORIZED BUT NOT YET CUT / LIVE-EVIDENCE WINS**
+Status: **CURRENT / E5-B3A CLOSED / E5-B3B AGENT HEAD TL-PASS / FINAL INTEGRATION GATES PENDING / NO PRODUCTION APPLY / LIVE-EVIDENCE WINS**
 
-## 1. Current canonical runtime/repository main
+## 1. Current canonical main
 
-Before this docs-only closure:
-
-`main@73d580a53bd60be20e4f253fafe37f25111d4b0d`
+`main@ad7fb1fa5d0bd6ac3fe2a7085a65fb8d56cecbb8`
 
 Commit:
-`Merge E5-B3A server-owned flight event provenance foundation (#341)`
+`Close Entry Requirements E5-B3A continuity (#342)`
 
-Post-merge evidence:
+Verified:
 
-- Main CI #1527 / Run `33429685566`: **SUCCESS**;
-- Vercel Production: **SUCCESS** on exact merge SHA;
-- Issue #338: **CLOSED / completed**;
-- Parent #294 remains open;
-- Production Supabase E5-B3A objects remain absent/unapplied.
+- Main CI #1529 / Run `33430799991`: **SUCCESS**;
+- Vercel Production: **SUCCESS** on exact main;
+- Issue #338 closed/completed;
+- Parent #294 open;
+- E5-B3A Production migration still unapplied.
 
-After this docs closure merges, re-read `main` because the canonical SHA will advance without runtime behavior changing.
-
-## 2. E5-B3A final history
+## 2. Active slice – E5-B3B
 
 Issue:
-**#338 – server-owned flight event provenance persistence foundation**
+**#343 – server-observed Flight provider retrieval timestamp evidence**
+
+Draft PR:
+**#344**
+
+Branch:
+`feat/entry-requirements-provider-retrieval-time-e5b3b-2026-08-31`
 
 Agent:
-**`Jetnity entry requirements event provenance persistence 1`**, Generation 1
+**`Jetnity entry requirements provider retrieval timestamp 1`**, Generation 1
 
 Session:
-`bc-e7a50347-1c66-4cd1-bbd2-979b89590a40`
+`bc-1b857acd-7a88-4355-9bc1-4f94ece44f9b`
 
-Initial delivery:
-`79dda7593bb9fbb20c36dc54348920e994da6823`
+Pre-agent head:
+`d3baa9c7efb5f9ef8ba658b953d752cf6adc130c`
 
-TL found P2: provider-proven persistence was possible without concrete `external_ref`.
-
-Same-agent fix:
-`f918dc0ed58b4962389a860d5a1b6bf74513cd1b`
+Runtime commit:
+`09d5c0e0b46e6cdbb8e08459fe953cbb54f0c433`
 
 Final agent/delivery head:
-`d37b600f67537f4ccb816182009b6018a39f82a3`
+`6dc59f7e26d77f616cf390db724385b200ba6f2a`
 
-Final integration head:
-`9a839bfc2babec96ba983de0c6b1ff628da5a1f3`
+Independent TL result on that exact head:
+**PASS / no open P0-P1-P2 findings.**
 
-Independent TL result:
-**PASS / no open P0-P1-P2.**
+External evidence on `6dc59f7e...`:
 
-Original Draft #340:
-CLOSED / NOT MERGED after known `Repository.fullDatabaseId` Ready connector error.
+- CI #1532 / run `33432418195`: SUCCESS;
+- Auth, Typecheck, Lint, full Tests, hygiene and Production Build: SUCCESS;
+- Vercel: SUCCESS;
+- review threads: 0;
+- `main` unchanged `ad7fb1fa...`;
+- branch 0 behind;
+- Supabase Production E5-B3A objects remain absent/unapplied.
 
-Recovery #341:
-MERGED on identical exact head after independent recovery gates.
+A TL-owned continuity update is now being added. Therefore `6dc59f7e...` is a reviewed agent head, **not** the final merge head. The new integration head requires fresh exact-head gates.
 
-Runtime/repository merge:
-`73d580a53bd60be20e4f253fafe37f25111d4b0d`
+## 3. What E5-B3B implements
 
-## 3. Repository foundation now present
+`FlugProviderTreffer` now has required server-only:
 
-- `supabase/migrations/20260831190000_trip_item_flight_event_provenance.sql`;
-- `lib/flight-event-provenance/e5b3a-persistenz-vertrag.test.ts`;
-- dedicated event provenance relation contract beside `trip_items`;
-- exact item/leg/segment/endpoint identity;
-- local wall clock / timezone / instant separate;
-- required concrete provider source `external_ref`;
-- server-generated occurrence event ref;
-- owner SELECT only, no authenticated/anon write;
-- private SECURITY DEFINER writer foundation;
-- NOLOGIN writer/runtime roles;
-- runtime gate defaults false/unallocated;
-- atomic current-snapshot semantics;
-- no SQL timezone/DST resolution.
+`retrievedAt: string`
 
-Binding rule:
+Meaning:
 
-> **Persisted does not mean provider-proven.**
+- Jetnity server observation time for the successfully read provider snapshot;
+- canonical UTC ISO with `Z`;
+- one timestamp per provider result;
+- never trusted from provider/browser payload;
+- no freshness or availability claim;
+- not part of `FlugOption` / `FlugSegment`;
+- not forwarded to ranking, browser, route or trip metadata.
 
-## 4. Production remains unchanged
+The active Duffel adapter mints the value after successful HTTP and JSON read. Tests may inject a deterministic clock; Production uses the server clock.
 
-Supabase project:
-`qscbgcdmivbbnzrcyegn`
+## 4. Independent review highlights
 
-Post-merge read-only verified absent:
+Confirmed:
 
-- `public.trip_item_flight_event_provenance`;
-- `jetnity_internal.trip_item_flight_event_provenance_schreiben(jsonb)`;
-- `jetnity_internal.flight_event_write_runtime_gate`;
-- `jetnity_flight_event_writer`;
-- `jetnity_flight_event_runtime`.
+- no optional/nullable soft contract for `retrievedAt`;
+- payload lookalikes cannot source it;
+- HTTP 401/403/500, timeout and unreadable JSON do not return a successful timestamped hit;
+- invalid mapped payload remains invalid;
+- fake/test providers explicitly satisfy the required result contract;
+- serialized browser response contains no retrieval/observation timestamp keys or fake timestamp value;
+- E5-B1R timezone evidence, E5-B2A instant evidence/issues and offer cap are unchanged;
+- `lib/flights/domain.ts`, client contract, route, trips, readiness, API, Supabase, DB scripts, `lib/providers/*` and Commercial Provenance runtime are unchanged;
+- no dependency, secret, provider activation or paid call.
 
-No Production migration, RLS/grant/role/function mutation, principal allocation, real writer or backfill occurred.
+P3 only:
 
-## 5. Runtime / truth boundaries unchanged
+- host clock is the observation source;
+- no persistence consumer yet;
+- future mint must reuse this exact snapshot time and not generate a later `Date.now()`.
 
-Still inactive:
+## 5. Production / trust boundary
 
-- `flugNachweisAusUmgebung()` → `null`;
-- `requirementsProviderAus()` → `null`;
-- no browser/route persisted timezone/event fields;
-- no Trip/Route → OfficialTemporalAnchor resolver;
-- no E5-A automatic binding;
-- no deadline/action-window/urgency/task/reminder/notification runtime;
-- no real Requirements provider;
-- no credential/passport ranking.
+Supabase Production remains unchanged and does not contain the E5-B3A event provenance objects.
 
-## 6. Product-Owner gates
+No:
 
-Explicit PO approval remains mandatory before any later:
+- Production migration apply;
+- RLS/grant/role/function mutation;
+- runtime principal;
+- real DB writer/backfill;
+- Flight Event persistence TypeScript mint;
+- `flugNachweis` activation;
+- provider/secret/paid/live activation;
+- browser/route/trip timestamp persistence.
 
-- E5-B3A Production migration apply;
-- Production RLS/grant/role/function change;
-- runtime/login principal allocation;
-- real application write path or backfill;
-- provider/vendor/secret/paid/live activation;
-- fundamental auth/MFA/AAL change;
-- sensitive passport/MRZ/scan/biometric/health storage;
-- real payments;
-- infra spend outside approved budget;
-- public/irreversible external activation.
+`flugNachweisAusUmgebung()` remains `null`.  
+`requirementsProviderAus()` remains `null`.
 
-## 7. P3 before Production apply
-
-Execute the E5-B3A migration against a disposable PostgreSQL/Supabase environment before any Production apply and observe actual RLS/grant/function behavior.
-
-A future trusted mint must reuse E5-B1R + E5-B2A; SQL must not become a second temporal truth engine.
-
-## 8. Entry Requirements foundation
+## 6. Entry Requirements foundation
 
 Present:
 
@@ -138,34 +125,47 @@ Present:
 - E3 Visitor Checklist;
 - E4 Official Temporal Rules;
 - R1 Workspace Integration;
-- E5-A Exact Event-Instant Projection Core;
+- E5-A exact event-instant projection;
 - E5-B1R ephemeral airport timezone evidence;
 - E5-B2A ephemeral airport event-instant resolution;
-- E5-B3A repository persistence/security foundation.
+- E5-B3A repository persistence/security foundation;
+- E5-B3B provider retrieval timestamp core, pending final integration gates.
 
 Still inactive:
 
 - Production-applied event provenance;
-- real Flight proof/runtime writer;
+- TypeScript persistence mint;
+- real writer/runtime principal;
 - occurrence resolver into E5-A;
-- E5-A automatic binding;
+- automatic E5-A binding;
 - deadline/task/reminder runtime;
 - real Requirements provider;
 - credential ranking.
 
-## 9. Next action
+## 7. Product-Owner boundaries
 
-The user explicitly authorized **one next slice** after E5-B3A closure.
+Explicit approval remains mandatory before any later:
 
-Required sequence:
+- Production E5-B3A migration apply;
+- Production RLS/grant/role/function changes;
+- runtime/login principal allocation;
+- real application writer or backfill;
+- provider/vendor/secret/paid/live activation;
+- fundamental Auth/MFA/AAL change;
+- sensitive passport/MRZ/scan/biometric/health storage;
+- real payments;
+- spend outside approved budget;
+- public/irreversible external activation.
 
-1. merge and post-merge verify this docs-only closure;
-2. reconstruct exact new main, open PRs/issues and CI/Vercel;
-3. run a fresh Duplicate/Integration/Truth/Security/Persistence precheck;
-4. choose the smallest safe next slice from actual architecture — do not assume a label from history;
-5. remain outside Production/Provider/other special PO gates unless separately approved;
-6. cut versioned Issue + Task + Branch + Draft PR;
-7. dispatch one fresh Cursor agent;
-8. no second follow-up slice automatically.
+## 8. Next action
+
+1. read the new final integration head after TL continuity commits;
+2. compare it against agent head `6dc59f7e...` and require only three TL docs;
+3. run fresh CI/Vercel/threads/main-drift gates on that exact head;
+4. Ready/Merge only after those gates, using documented recovery if the known Ready connector bug recurs;
+5. post-merge verify main CI/Vercel and Production remains unapplied;
+6. close #343 and update #294;
+7. create/gate a docs-only closure checkpoint;
+8. no Production apply or follow-up runtime slice without a new authorized instruction.
 
 **Live-Evidence wins always.**

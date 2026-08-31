@@ -1,11 +1,18 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { duffelAdapter } from '@/lib/flights/duffel/adapter'
+import { duffelAdapter, type DuffelAdapterUhr } from '@/lib/flights/duffel/adapter'
 import { ANGEBOT_DIREKT, ANTWORT_GEMISCHT, ANTWORT_NUR_MUELL } from '@/lib/flights/duffel/fixtures/angebote'
 import { FLUG_SUCHE_GRENZEN } from '@/lib/flights/domain'
 import { SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
 import { FlugProviderFehler } from '@/lib/flights/provider'
+
+const FESTE_UHRZEIT = '2026-08-31T15:04:05.123Z'
+const FESTE_UHR: DuffelAdapterUhr = () => new Date(FESTE_UHRZEIT)
+const PAYLOAD_RETRIEVED_AT = '1999-01-01T00:00:00.000Z'
+const PAYLOAD_RETRIEVED_AT_SNAKE = '1999-01-02T00:00:00.000Z'
+const PAYLOAD_OBSERVED_AT = '1999-01-03T00:00:00.000Z'
+const PAYLOAD_OBSERVED_AT_SNAKE = '1999-01-04T00:00:00.000Z'
 
 function httpMit(antworten: Array<{ ok: boolean; status: number; body: unknown }>) {
   const rest = [...antworten]
@@ -28,11 +35,13 @@ function httpMit(antworten: Array<{ ok: boolean; status: number; body: unknown }
 describe('Duffel-Adapter', () => {
   test('mappt eine gültige Suche ohne echten Netzaufruf', async () => {
     const http = httpMit([{ ok: true, status: 201, body: ANTWORT_GEMISCHT }])
-    const adapter = duffelAdapter('duffel_test_xxxxxxxx', http)
+    const adapter = duffelAdapter('duffel_test_xxxxxxxx', http, FESTE_UHR)
     const treffer = await adapter.suchen(SUCHANFRAGE)
     assert.equal(treffer.options.length, 3)
     assert.equal(treffer.partial, false)
     assert.equal(treffer.options[0]?.provider, 'duffel')
+    assert.equal(treffer.retrievedAt, FESTE_UHRZEIT)
+    assert.match(treffer.retrievedAt, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
     assert.deepEqual(treffer.airportTimezoneEvidence, [])
     assert.deepEqual(treffer.airportEventInstantEvidence, [])
     assert.deepEqual(treffer.airportEventInstantIssues, [])
@@ -67,9 +76,11 @@ describe('Duffel-Adapter', () => {
     const adapter = duffelAdapter(
       'duffel_test_xxxxxxxx',
       httpMit([{ ok: true, status: 201, body: { data: { offers: [angebot] } } }]),
+      FESTE_UHR,
     )
     const treffer = await adapter.suchen(SUCHANFRAGE)
     assert.equal(treffer.options.length, 1)
+    assert.equal(treffer.retrievedAt, FESTE_UHRZEIT)
     assert.deepEqual(
       treffer.airportTimezoneEvidence.map((eintrag) => [eintrag.endpoint, eintrag.iata, eintrag.timeZone]),
       [
@@ -110,10 +121,12 @@ describe('Duffel-Adapter', () => {
     const adapter = duffelAdapter(
       'duffel_test_xxxxxxxx',
       httpMit([{ ok: true, status: 201, body: { data: { offers: [angebot] } } }]),
+      FESTE_UHR,
     )
     const treffer = await adapter.suchen(SUCHANFRAGE)
     assert.equal(treffer.options.length, 1)
     assert.equal(treffer.options[0]?.priceAmount, 892.5)
+    assert.equal(treffer.retrievedAt, FESTE_UHRZEIT)
     assert.equal(treffer.airportTimezoneEvidence.length, 2)
     assert.equal(
       treffer.airportEventInstantIssues.some((eintrag) => eintrag.issue === 'nonexistent_local_time'),
@@ -150,9 +163,11 @@ describe('Duffel-Adapter', () => {
     const adapter = duffelAdapter(
       'duffel_test_xxxxxxxx',
       httpMit([{ ok: true, status: 201, body: { data: { offers: angebote } } }]),
+      FESTE_UHR,
     )
     const treffer = await adapter.suchen(SUCHANFRAGE)
     assert.equal(treffer.options.length, FLUG_SUCHE_GRENZEN.angebote)
+    assert.equal(treffer.retrievedAt, FESTE_UHRZEIT)
     const behalteneIds = new Set(treffer.options.map((option) => option.id))
     assert.equal(behalteneIds.size, FLUG_SUCHE_GRENZEN.angebote)
     assert.equal(treffer.airportTimezoneEvidence.length, FLUG_SUCHE_GRENZEN.angebote * 2)
@@ -206,17 +221,192 @@ describe('Duffel-Adapter', () => {
   })
 
   test('Timeout bleibt timeout', async () => {
-    const adapter = duffelAdapter('duffel_test_xxxxxxxx', {
-      async post() {
-        const fehler = new Error('aborted')
-        fehler.name = 'AbortError'
-        throw fehler
+    let ticks = 0
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      {
+        async post() {
+          const fehler = new Error('aborted')
+          fehler.name = 'AbortError'
+          throw fehler
+        },
       },
-    })
+      () => {
+        ticks += 1
+        return new Date(FESTE_UHRZEIT)
+      },
+    )
     await assert.rejects(() => adapter.suchen(SUCHANFRAGE), (fehler: unknown) => {
       assert.ok(fehler instanceof FlugProviderFehler)
       assert.equal(fehler.art, 'timeout')
       return true
     })
+    assert.equal(ticks, 0)
+  })
+
+  test('feste Test-Uhr erzeugt exakt kanonisches UTC-ISO mit Z', async () => {
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body: ANTWORT_GEMISCHT }]),
+      FESTE_UHR,
+    )
+    const treffer = await adapter.suchen(SUCHANFRAGE)
+    assert.equal(treffer.retrievedAt, '2026-08-31T15:04:05.123Z')
+    assert.equal(treffer.retrievedAt.endsWith('Z'), true)
+    assert.equal(treffer.retrievedAt.includes('+'), false)
+    assert.equal(/retrievedAt|retrieved_at|observedAt|observed_at/.test(JSON.stringify(treffer.options)), false)
+  })
+
+  test('Provider-Payload-Timestamps ersetzen retrievedAt nicht', async () => {
+    const body = {
+      retrievedAt: PAYLOAD_RETRIEVED_AT,
+      retrieved_at: PAYLOAD_RETRIEVED_AT_SNAKE,
+      observedAt: PAYLOAD_OBSERVED_AT,
+      observed_at: PAYLOAD_OBSERVED_AT_SNAKE,
+      data: {
+        retrievedAt: PAYLOAD_RETRIEVED_AT,
+        retrieved_at: PAYLOAD_RETRIEVED_AT_SNAKE,
+        observedAt: PAYLOAD_OBSERVED_AT,
+        observed_at: PAYLOAD_OBSERVED_AT_SNAKE,
+        offers: ANTWORT_GEMISCHT.data.offers.map((angebot) => ({
+          ...angebot,
+          retrievedAt: PAYLOAD_RETRIEVED_AT,
+          retrieved_at: PAYLOAD_RETRIEVED_AT_SNAKE,
+          observedAt: PAYLOAD_OBSERVED_AT,
+          observed_at: PAYLOAD_OBSERVED_AT_SNAKE,
+        })),
+      },
+    }
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body }]),
+      FESTE_UHR,
+    )
+    const treffer = await adapter.suchen(SUCHANFRAGE)
+    assert.equal(treffer.retrievedAt, FESTE_UHRZEIT)
+    assert.notEqual(treffer.retrievedAt, PAYLOAD_RETRIEVED_AT)
+    assert.notEqual(treffer.retrievedAt, PAYLOAD_RETRIEVED_AT_SNAKE)
+    assert.notEqual(treffer.retrievedAt, PAYLOAD_OBSERVED_AT)
+    assert.notEqual(treffer.retrievedAt, PAYLOAD_OBSERVED_AT_SNAKE)
+    const optionenRoh = JSON.stringify(treffer.options)
+    assert.equal(optionenRoh.includes(PAYLOAD_RETRIEVED_AT), false)
+    assert.equal(optionenRoh.includes(PAYLOAD_RETRIEVED_AT_SNAKE), false)
+    assert.equal(optionenRoh.includes(PAYLOAD_OBSERVED_AT), false)
+    assert.equal(optionenRoh.includes(PAYLOAD_OBSERVED_AT_SNAKE), false)
+  })
+
+  test('HTTP 403 ist unavailable und ruft die Uhr nicht auf', async () => {
+    let ticks = 0
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: false, status: 403, body: { errors: [{ message: 'forbidden' }] } }]),
+      () => {
+        ticks += 1
+        return new Date(FESTE_UHRZEIT)
+      },
+    )
+    await assert.rejects(() => adapter.suchen(SUCHANFRAGE), (fehler: unknown) => {
+      assert.ok(fehler instanceof FlugProviderFehler)
+      assert.equal(fehler.art, 'unavailable')
+      return true
+    })
+    assert.equal(ticks, 0)
+  })
+
+  test('HTTP 500 ruft die Uhr nicht auf', async () => {
+    let ticks = 0
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: false, status: 500, body: { errors: [{ message: 'boom' }] } }]),
+      () => {
+        ticks += 1
+        return new Date(FESTE_UHRZEIT)
+      },
+    )
+    await assert.rejects(() => adapter.suchen(SUCHANFRAGE), (fehler: unknown) => {
+      assert.ok(fehler instanceof FlugProviderFehler)
+      assert.equal(fehler.art, 'error')
+      return true
+    })
+    assert.equal(ticks, 0)
+  })
+
+  test('HTTP 401 ruft die Uhr nicht auf', async () => {
+    let ticks = 0
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: false, status: 401, body: { errors: [{ message: 'unauthorized' }] } }]),
+      () => {
+        ticks += 1
+        return new Date(FESTE_UHRZEIT)
+      },
+    )
+    await assert.rejects(() => adapter.suchen(SUCHANFRAGE), (fehler: unknown) => {
+      assert.ok(fehler instanceof FlugProviderFehler)
+      assert.equal(fehler.art, 'unavailable')
+      return true
+    })
+    assert.equal(ticks, 0)
+  })
+
+  test('unlesbares JSON liefert keinen Treffer und ruft die Uhr nicht auf', async () => {
+    let ticks = 0
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      {
+        async post() {
+          return {
+            ok: true,
+            status: 201,
+            json: async () => {
+              throw new SyntaxError('Unexpected token')
+            },
+          }
+        },
+      },
+      () => {
+        ticks += 1
+        return new Date(FESTE_UHRZEIT)
+      },
+    )
+    await assert.rejects(() => adapter.suchen(SUCHANFRAGE), (fehler: unknown) => {
+      assert.ok(fehler instanceof FlugProviderFehler)
+      assert.equal(fehler.art, 'invalid')
+      return true
+    })
+    assert.equal(ticks, 0)
+  })
+
+  test('unbrauchbare Antwort liefert keinen Treffer trotz gelesener Uhr', async () => {
+    let ticks = 0
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body: ANTWORT_NUR_MUELL }]),
+      () => {
+        ticks += 1
+        return new Date(FESTE_UHRZEIT)
+      },
+    )
+    await assert.rejects(() => adapter.suchen(SUCHANFRAGE), (fehler: unknown) => {
+      assert.ok(fehler instanceof FlugProviderFehler)
+      assert.equal(fehler.art, 'invalid')
+      return true
+    })
+    assert.equal(ticks, 1)
+  })
+
+  test('Production-Default-Uhr erzeugt kanonisches UTC-ISO ohne Clock-Injection', async () => {
+    const vorher = Date.now()
+    const adapter = duffelAdapter(
+      'duffel_test_xxxxxxxx',
+      httpMit([{ ok: true, status: 201, body: ANTWORT_GEMISCHT }]),
+    )
+    const treffer = await adapter.suchen(SUCHANFRAGE)
+    const nachher = Date.now()
+    assert.match(treffer.retrievedAt, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
+    const ms = Date.parse(treffer.retrievedAt)
+    assert.equal(Number.isNaN(ms), false)
+    assert.ok(ms >= vorher - 1000)
+    assert.ok(ms <= nachher + 1000)
   })
 })

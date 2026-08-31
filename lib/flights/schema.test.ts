@@ -124,6 +124,10 @@ describe('Flugoption', () => {
       airportTimezoneEvidence: [{ timeZone: 'Europe/Zurich' }],
       airportEventInstantEvidence: [{ instant: '2026-11-01T08:15:00Z', timeZone: 'Europe/Zurich' }],
       airportEventInstantIssues: [{ issue: 'ambiguous_local_time' }],
+      retrievedAt: '2026-08-31T12:00:00.000Z',
+      retrieved_at: '2026-08-31T12:00:00.000Z',
+      observedAt: '2026-08-31T12:00:00.000Z',
+      observed_at: '2026-08-31T12:00:00.000Z',
       legs: [
         {
           segments: [
@@ -143,6 +147,8 @@ describe('Flugoption', () => {
               departureTimezone: 'Europe/Zurich',
               arrivalTimezone: 'Asia/Bangkok',
               time_zone: 'Asia/Bangkok',
+              retrievedAt: '2026-08-31T12:00:00.000Z',
+              observedAt: '2026-08-31T12:00:00.000Z',
             },
           ],
           durationMinutes: 690,
@@ -161,7 +167,7 @@ describe('Flugoption', () => {
     assert.ok(gelesen)
     const roh = JSON.stringify(gelesen)
     assert.equal(
-      /time[_-]?zone|Timezone|airportTimezoneEvidence|airportEventInstant|2026-11-01T08:15:00Z|ambiguous_local_time/i.test(
+      /time[_-]?zone|Timezone|airportTimezoneEvidence|airportEventInstant|2026-11-01T08:15:00Z|ambiguous_local_time|retrievedAt|retrieved_at|observedAt|observed_at|2026-08-31T12:00:00.000Z/i.test(
         roh,
       ),
       false,

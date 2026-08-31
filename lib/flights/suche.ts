@@ -66,8 +66,8 @@ export async function fluegeSuchen(
 
   try {
     const treffer = await ports.provider.suchen(geprueft.data)
-    // E5-B1R/E5-B2A: Timezone- und Event-Instant-Evidence bleiben serverseitig
-    // und gehen nicht ins Ranking und nicht in die Browser-Antwort.
+    // E5-B1R/E5-B2A/E5-B3B: Timezone-/Instant-Evidence und retrievedAt bleiben
+    // serverseitig und gehen nicht ins Ranking und nicht in die Browser-Antwort.
     // Nur options/partial werden weiterverwendet.
     const bewertet = optionenBewerten(treffer.options, geprueft.data)
     const status = treffer.partial ? 'partial' : bewertet.length === 0 ? 'empty' : 'ok'
