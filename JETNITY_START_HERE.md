@@ -1,27 +1,34 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PROVIDER ACTIVATION READINESS PRECHECK ACTIVE / AUDIT-ONLY / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PROVIDER ACTIVATION READINESS PRECHECK TECHNICAL-LEAD PASS / NO ACTIVE FOLLOW-UP IMPLEMENTATION / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
 
-> **Audit first. Reuse before add. Integrate before duplicate. Persisted does not mean provider-proven.**
+> **Audit first. Reuse before add. Integrate before duplicate. Persisted does not mean provider-proven. Sandbox does not mean live truth.**
 
 > Jeder neue Head invalidiert ältere Exact-Head-Gates. Kein relevanter Fortschritt darf nur im Chat oder in einer Cursor-Session stehen.
 
 ## 1. Zuerst lesen
 
-1. `docs/ACTIVE_WORK_STATUS.md` ← **aktueller aktiver Workstream**
-2. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_TASK_2026-09-01.md` ← **binding current task**
-3. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_CLOSED_2026-08-31.md`
-4. `docs/TRIP_WORKSPACE_TW8_TW9_READINESS_REVALIDATION_STATUS_2026-08-31.md`
-5. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-6. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
-7. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
-8. `JETNITY_HANDOFF.md`
-9. relevant latest Entry Requirements / Account / Traveller / Provider handoffs and reviews named by those files.
+1. `docs/ACTIVE_WORK_STATUS.md` ← **aktueller Status**
+2. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_ACTIVATION_READINESS_PRECHECK_REVIEW_2026-09-01.md` ← **aktueller unabhängiger TL-Review**
+3. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_HANDOFF_2026-09-01.md`
+4. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_STATUS_2026-09-01.md`
+5. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_RECOMMENDATION_2026-09-01.md`
+6. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_NEXT_SLICE_2026-09-01.md`
+7. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_GATE_MATRIX_2026-09-01.md`
+8. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_CANDIDATE_MATRIX_2026-09-01.md`
+9. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_EVIDENCE_2026-09-01.md`
+10. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+11. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
+12. `docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3C_CLOSED_2026-08-31.md`
+13. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+14. `JETNITY_HANDOFF.md`
 
 Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Migration-/Persistenzfragen zusätzlich Supabase Production read-only prüfen.
 
 ## 2. Current verified main baseline
+
+Before integration of Provider Activation Readiness Precheck PR #354:
 
 `main@ebd08ec07134f1ad4d3f6d68a694be4ff189fa5b`
 
@@ -29,87 +36,100 @@ Commit:
 
 `Close Entry Requirements E5-B3C continuity (#350)`
 
-Exact-main evidence:
+This SHA may advance after PR #354 merges. Always read live `main`.
 
-- Main CI #1552 / Run `33443161594`: **SUCCESS**;
-- Vercel Production: **READY** on exact main;
-- E5-B3C: **CLOSED & POST-MERGE VERIFIED**;
-- Production Flight Event Provenance remains **UNAPPLIED**.
-
-## 3. Active slice
+## 3. Provider Activation Readiness Precheck
 
 Issue:
 
-**#351 – Provider Activation Readiness Precheck – select first real provider path**
+**#351**
 
-Branch:
+PR:
 
-`audit/provider-activation-readiness-precheck-2026-09-01`
-
-Task:
-
-`docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_TASK_2026-09-01.md`
+**#354**
 
 Logical Cursor agent:
 
 **`Jetnity provider activation readiness precheck 1`**, Generation 1
 
-Cursor session: **not yet established at this TL setup checkpoint**.
+Cursor session:
 
-## 4. Objective
+`bc-d1b4e6bb-c952-4242-ba57-384783bc23ea`
 
-The active work is a provider-selection/readiness **audit only**.
+Initial agent head:
 
-It must determine the safest, highest-value first real provider path for Jetnity using:
+`43bb98762ed00bc0293e5b4df5566a4e25c3d865` → **CHANGES REQUIRED**.
 
-- current repository reuse boundaries;
-- current official/public provider evidence;
-- Commercial Provenance / freshness / server-side verification requirements;
-- costs and cost controls;
-- licensing/cache/attribution restrictions;
-- privacy/DPA implications;
-- operational reliability, observability and kill switches;
-- effect on TW-8/TW-9 and Entry Requirements.
+Same-session review-fix head:
 
-It must then define exactly one smallest follow-up proof slice, but must **not** start that implementation.
+`997fca395cef8fe44a4198a1b313e28364d83723` → **independent Technical-Lead PASS**.
 
-## 5. Current programme truth
+Reviewed-head gates:
 
-TW-8 and TW-9 remain blocked because Jetnity has no real provider-backed Commercial Truth yet. Persisted foundations alone do not unlock them.
+- CI #1555 / Run `33448121389`: **SUCCESS**;
+- Vercel Preview `dpl_FBvQiu1DnfhQWhp3Tv1u7T9CAigc`: **READY**;
+- GitHub inline review threads: **0**;
+- Vercel unresolved toolbar threads: **0**;
+- fresh Supabase Production SELECT: commercial rows **0**, `production_write_path_allocated=false`, Flight Event Provenance remains absent.
 
-The current provider precheck must not assume Duffel or any other vendor wins merely because adapter-shaped code exists.
+The Technical-Lead review/current-state docs create a newer docs-only descendant. It must be re-gated before merge.
 
-## 6. Production / Product-Owner boundary
+## 4. Canonical conclusions
 
-No approval in this active task for:
+### Sandbox truth
 
-- provider registration/contract acceptance;
-- secrets/API keys;
-- live or paid provider calls;
+Duffel test/sandbox prices are **not** real Commercial Truth and must not mint S5-A `live_api`.
+
+A future sandbox harness may test transport/mapping/expiry mechanics only. It cannot satisfy the real commercial snapshot gate and cannot unlock TW-8.
+
+### Binding Provider Readiness order
+
+The Product-Owner binding order remains:
+
+**Provider Readiness S4–S8 → then real providers.**
+
+No sequencing exception has been inferred or granted.
+
+The serial Provider Readiness path identifies **S6 Persistent Cost Guard** as the next implementation candidate after S5. Residual S4 still remains open; S7 and S8 remain open; all must be closed before real-provider activation.
+
+### First later real Commercial Truth path
+
+Preferred domain: **Flights**.
+
+The live vendor is still undecided. Duffel live, Skyscanner or another qualified real-price source requires separate partner/commercial/licensing/DPA/cost/security decisions.
+
+### Server state
+
+Process-local/Vercel memory is not a valid cross-request Nachweis store. Any zero-persistence proof must stay inside one server-side invocation. A cross-request design needs a durable server-side store in a separate gated architecture slice.
+
+### Viator
+
+Viator Basic supports real-time schedule retrieval for a selected product but not booking-grade `/availability/check`. Activities remain a later candidate rather than the first Commercial Truth path.
+
+## 5. Production / Product-Owner boundary
+
+This precheck does **not** authorize:
+
+- provider signup/contract/DPA;
+- API keys or secrets;
+- paid/live provider calls;
 - Production provider activation;
-- Supabase Production writes or schema/security mutations;
-- runtime/login principal allocation;
-- real application writer/backfill;
+- Supabase Production mutation;
+- runtime writer/principal allocation;
+- application writer/backfill;
 - TW-8/TW-9 runtime;
-- public/irreversible external activation.
+- public live-provider claims.
 
-All remain Product-Owner gates.
+## 6. Current programme state
 
-## 7. Governance
+**NO ACTIVE FOLLOW-UP IMPLEMENTATION SLICE.**
 
-Cursor must not edit:
+S6 is the next identified candidate, not an active task. Do not automatically dispatch an agent from this checkpoint.
 
-- `docs/ACTIVE_WORK_STATUS.md`;
-- `JETNITY_START_HERE.md`.
+After PR #354 integration, reconstruct live main/PRs/issues/CI/Vercel/Production truth again before starting any new slice.
 
-Cursor must never mark Ready or merge. Agent self-review is not Technical-Lead PASS.
+**TW-8 and TW-9 remain BLOCKED.**
 
-After delivery, Technical Lead independently reviews the exact head. Any changed head requires full re-gating.
-
-## 8. Stop rule
-
-No automatic follow-up slice.
-
-The audit stops for Technical-Lead review and then, if a real provider activation gate is next, for explicit Product-Owner approval.
+**Production Flight Event Provenance remains UNAPPLIED.**
 
 **Live-Evidence wins always.**
