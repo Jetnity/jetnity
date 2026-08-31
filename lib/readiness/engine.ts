@@ -19,6 +19,7 @@ import {
   optionEligibilityLesen,
   optionMandateLesen,
   providerNameLesen,
+  visaModeLesen,
   quelleUrlLesen,
   regelReferenzLesen,
   type MissingFact,
@@ -511,6 +512,7 @@ function zeileUebernehmen(
         : zeile.officialClass === 'requirement'
           ? 'requirement'
           : 'unknown',
+    visaMode: visaModeLesen(zeile.requirementType, uebernehmbar ? zeile.visaMode : null),
     optionEligibility: uebernehmbar ? optionEligibilityLesen(zeile.optionEligibility) : undefined,
     optionMandate: uebernehmbar ? optionMandateLesen(zeile.optionMandate) : undefined,
     missingFacts: [],

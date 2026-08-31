@@ -10,6 +10,7 @@ export type EntscheidungsSignatur = {
   status: OfficialEvaluation['status']
   freshness: OfficialEvaluation['freshness']
   officialClass: OfficialEvaluation['officialClass']
+  visaMode: OfficialEvaluation['visaMode']
   optionEligibility: OfficialEvaluation['optionEligibility']
   optionMandate: OfficialEvaluation['optionMandate']
 }
@@ -20,6 +21,7 @@ export function entscheidungsSignatur(evaluation: OfficialEvaluation): Entscheid
     status: evaluation.status,
     freshness: evaluation.freshness,
     officialClass: evaluation.officialClass,
+    visaMode: evaluation.visaMode,
     optionEligibility: evaluation.optionEligibility,
     optionMandate: evaluation.optionMandate,
   }
@@ -33,6 +35,7 @@ export function entscheidungenGleich(links: OfficialEvaluation, rechts: Official
     a.status === b.status &&
     a.freshness === b.freshness &&
     a.officialClass === b.officialClass &&
+    a.visaMode === b.visaMode &&
     a.optionEligibility === b.optionEligibility &&
     a.optionMandate === b.optionMandate
   )

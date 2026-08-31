@@ -5257,6 +5257,29 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0201 – Entry Requirements Detail Contract E1: First-Class-Typen und Visa-Modus
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/entry-requirements-detail-contract-e1-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider. Binding: `docs/ENTRY_REQUIREMENTS_DETAIL_CONTRACT_E1_TASK_2026-08-31.md` und `docs/ENTRY_REQUIREMENTS_TARGET_ARCHITECTURE_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. `OFFICIAL_REQUIREMENT_TYPES` erhält First-Class-Typen `blank_passport_pages` und `financial_means`. Sie dürfen nicht unter `other_entry_requirement` versteckt werden. Schwellen, Seitenzahlen, Beträge oder Gebühren werden in E1 nicht modelliert.
+2. Visa-Ausprägungen sind **strukturierte Subtypen** am bestehenden Typ `visa`, nicht eigene Requirement-Typen. Kanonische Werte: `visa_exempt`, `visa_on_arrival`, `electronic_visa`, `visa_before_travel`, `unknown`.
+3. `visaMode` wird verlustfrei Provider-Zeile → Engine → `OfficialEvaluation` transportiert. Nur `requirementType === 'visa'` darf einen Visa-Modus als Product Truth tragen. Ungültige oder fehlende Visa-Werte werden `unknown`. Jeder andere Typ, einschließlich eTA (`electronic_travel_authorization`), normalisiert auf `null`.
+4. Ein konkreter Visa-Modus ist Hard Truth und unterliegt derselben Trust-/Freshness-Grenze wie `required` / `not_required` / `conditional`. Untrusted, leere oder konfliktäre Visa-Zeilen tragen `visaMode: 'unknown'`, nicht `visa_on_arrival` oder ähnlich.
+5. eTA bleibt eigener Requirement-Typ und wird nicht als `electronic_visa` umetikettiert. Multi-Citizenship / Multi-Document bleibt 1:n. `requirementsProviderAus()` bleibt `null`. S4-R1 Timeout/Abort/Kill-Switch/Freshness bleiben unverändert.
+
+**Kontext:** Die Zielarchitektur verlangt eigene Typen für freie Passseiten und finanzielle Mittel sowie eine verlustfreie Unterscheidung von visumfrei, Visa on Arrival, E-Visum und Visum vor Reise. Entscheidungskriterium war Verlustfreiheit und spätere Regel-/Action-Semantik, nicht UI-Bequemlichkeit.
+
+**Alternativen:** `visa_on_arrival` / `electronic_visa` als eigene Requirement-Typen; Visa-Modus als Freitext; Schwellen (Seiten/Betrag) schon in E1; eTA als Visa-Modus.
+
+**Begründung der Subtype-Wahl:** Ein Reisender hat genau einen Visa-Slot pro Credential-Option × Destination. Mehrere Visa-Requirement-Typen würden denselben Slot splitten, Vergleichbarkeit und Attention-Pflichtslots verdoppeln und eTA leicht mit E-Visum vermischen. Der Subtyp hält die Engine-Kardinalität stabil und bleibt provider-neutral mappable.
+
+**Konsequenzen:** Attention-Pflichtslots wachsen um zwei Typen pro Traveller × Option × Destination. Ohne Provider bleiben sie fail-closed `unknown`/`unavailable`. Keine UI, keine Deadline-Runtime, keine Secrets, keine paid calls, keine Supabase-/Auth-Änderung. Folgeslice nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

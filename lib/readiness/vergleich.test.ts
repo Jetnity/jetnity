@@ -4,15 +4,16 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { entscheidungenGleich, entscheidungsSignatur } from '@/lib/readiness/entscheidung'
-import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { visaModeLesen, type OfficialEvaluation } from '@/lib/readiness/official'
 import { VERGLEICH_NICHT_VERFUEGBAR, credentialOptionenVergleichen } from '@/lib/readiness/vergleich'
 
 function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation, 'credentialOptionRef'>): OfficialEvaluation {
+  const requirementType = teil.requirementType ?? 'visa'
   return {
     travellerClientRef: 'traveller:1',
     destinationCountryCode: 'TH',
     transitCountryCode: null,
-    requirementType: 'visa',
+    requirementType,
     result: 'unknown',
     status: 'unavailable',
     freshness: 'provider_unavailable',
@@ -30,6 +31,8 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
     },
     action: null,
     ...teil,
+    requirementType,
+    visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
 }
 
@@ -291,12 +294,20 @@ describe('Credential-Vergleich', () => {
       optionMandate: 'not_mandatory',
     })
     assert.equal(entscheidungsSignatur(basis).officialClass, 'requirement')
+    assert.equal(entscheidungsSignatur(basis).visaMode, 'unknown')
     assert.equal(
       entscheidungenGleich(basis, {
         ...basis,
         evidence: { ...basis.evidence, sourceUrl: 'https://example.test/andere' },
       }),
       true,
+    )
+    assert.equal(
+      entscheidungenGleich(basis, {
+        ...basis,
+        visaMode: 'visa_on_arrival',
+      }),
+      false,
     )
     assert.equal(
       entscheidungenGleich(basis, {

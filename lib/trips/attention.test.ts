@@ -6,7 +6,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { visaModeLesen, type OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
 import { leereSafetyEvidence } from '@/lib/safety/evidence'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
@@ -206,12 +206,13 @@ function officialSauberFuer(
   credentialOptionRef: string,
   teil: Partial<OfficialEvaluation> = {},
 ): OfficialEvaluation {
+  const requirementType = teil.requirementType ?? 'visa'
   return {
     travellerClientRef,
     credentialOptionRef,
     destinationCountryCode: teil.destinationCountryCode ?? 'ID',
     transitCountryCode: teil.transitCountryCode ?? null,
-    requirementType: teil.requirementType ?? 'visa',
+    requirementType,
     result: 'not_required',
     status: 'current',
     freshness: 'current',
@@ -229,6 +230,8 @@ function officialSauberFuer(
     },
     action: null,
     ...teil,
+    requirementType,
+    visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
 }
 
