@@ -21,6 +21,10 @@ import { officialChecklist } from '@/lib/readiness/official-presentation'
 import { gruppenUnterschiede, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
 import {
+  readinessWorkspaceSichtbar,
+  readinessWorkspaceZusammenfassung,
+} from '@/lib/readiness/workspace-presentation'
+import {
   citizenshipClientRefFuer,
   dokumenteAlsPayload,
   dokumenteAusTraveller,
@@ -87,6 +91,8 @@ export default function Reisevorbereitung({
   const [meldung, setMeldung] = React.useState('')
   const [titel, setTitel] = React.useState('')
   const { items, summary, evaluations } = readinessAnsicht(reise, officialEvaluations)
+  const sichtbareItems = readinessWorkspaceSichtbar(items)
+  const sichtbareZusammenfassung = readinessWorkspaceZusammenfassung(summary, items)
   const slots = travellerSlots(reise).map((slot) =>
     slotMissingFactsErgaenzen(
       slot,
@@ -140,13 +146,13 @@ export default function Reisevorbereitung({
       <h3 id="reisevorbereitung-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
         Was diese Reise offiziell und persönlich braucht
       </h3>
-      <p className="mt-1 text-sm leading-6 text-ink-800">{readinessZusammenfassungText(summary)}</p>
+      <p className="mt-1 text-sm leading-6 text-ink-800">{readinessZusammenfassungText(sichtbareZusammenfassung)}</p>
 
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-        <Zahl label="Offen" wert={summary.open} />
-        <Zahl label="Erledigt" wert={summary.done} />
-        <Zahl label="Erneut prüfen" wert={summary.stale} />
-        <Zahl label="Nicht relevant" wert={summary.skipped} />
+        <Zahl label="Offen" wert={sichtbareZusammenfassung.open} />
+        <Zahl label="Erledigt" wert={sichtbareZusammenfassung.done} />
+        <Zahl label="Erneut prüfen" wert={sichtbareZusammenfassung.stale} />
+        <Zahl label="Nicht relevant" wert={sichtbareZusammenfassung.skipped} />
       </dl>
 
       <p className="mt-3 rounded-xl bg-surface-25 px-3 py-2 text-xs leading-5 text-ink-800" role="status">
@@ -217,10 +223,11 @@ export default function Reisevorbereitung({
                   <li
                     key={`${eintrag.scopeKey}:${index}`}
                     className="rounded-2xl border border-line-200 px-3 py-3"
-                    data-official-requirement-type={eintrag.requirementType}
+                    data-official-requirement-type={eintrag.requirementType ?? undefined}
                     data-official-freshness={eintrag.freshness}
                     data-official-status={eintrag.status}
                     data-official-result={eintrag.result}
+                    data-official-placeholder-block={eintrag.kompakt ? 'true' : undefined}
                   >
                     <p className="text-sm font-semibold text-brand-800">{eintrag.titel}</p>
                     <p className="mt-0.5 text-xs leading-5 text-ink-800">
@@ -267,8 +274,8 @@ export default function Reisevorbereitung({
         </section>
 
         {GRUPPEN.map((gruppe) => {
-          const gruppeItems = items.filter((item) => READINESS_GRUPPE[item.kind] === gruppe)
-          if (gruppe === 'sonstiges' && gruppeItems.length === 0 && !onSetzen) return null
+          const gruppeItems = sichtbareItems.filter((item) => READINESS_GRUPPE[item.kind] === gruppe)
+          if (gruppeItems.length === 0 && (gruppe !== 'sonstiges' || !onSetzen)) return null
           return (
             <section key={gruppe} className="grid gap-2">
               <h4 className="text-sm font-semibold text-brand-800">{READINESS_GRUPPE_TITEL[gruppe]}</h4>
