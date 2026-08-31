@@ -1,120 +1,133 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / E5-B2A CLOSED & POST-MERGE VERIFIED / NO ACTIVE ENTRY-REQUIREMENTS RUNTIME SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / E5-B3A PREPARED / REPOSITORY-ONLY PERSISTENCE FOUNDATION / NO PRODUCTION APPLY / AGENT NOT YET DISPATCHED / LIVE-EVIDENCE WINS**
 
-## 1. Current canonical runtime main at closure cut
+## 1. Current canonical main
 
-`main@4b503aa41fec9eaf8119d64fcbbfee9953f169a6`
+`main@3df9af4d6c3da750d50777706bce03589007a58a`
 
 Commit:
-`Merge E5-B2A airport event instant resolution (#336)`
+`Close Entry Requirements E5-B2A continuity (#337)`
 
-Post-merge verification:
+Live verified before E5-B3A task cut:
 
-- Main push CI #1515 / Run `33419480637`: **SUCCESS** on exact runtime merge SHA;
-- Vercel Production: **SUCCESS** on exact runtime merge SHA;
-- Issue #334: **CLOSED / completed**;
-- Parent #294 remains open;
-- no E5-B2B/follow-up runtime slice has been started.
+- Main CI #1517 / Run `33420869626`: **SUCCESS**;
+- Vercel Production: **SUCCESS**;
+- Ruleset `Jetnity main protection` / ID `21875372`: active;
+- PR required, strict CI/Auth/Vercel, Conversation Resolution, merge-only, bypass empty;
+- Issue #334 closed/completed;
+- Parent #294 remains open.
 
-This file is being updated in a docs-only closure branch. After that closure merges, canonical `main` will advance without changing Runtime behavior and must be re-read live.
+## 2. Fresh precheck result
 
-Ruleset `Jetnity main protection` / ID `21875372` remains the canonical main governance: PR required, strict required CI/Auth/Vercel, Conversation Resolution, merge-only, bypass empty.
+E5-A already owns explicit `OfficialTemporalAnchor -> eventRef + absolute instant` projection input. A second DB-free binder would duplicate existing architecture.
 
-## 2. E5-B2A closure
+E5-B1R + E5-B2A now provide ephemeral server-side provider-observed timezone and uniquely resolved UTC event-instant evidence for exact Flight option/leg/segment/endpoint/IATA occurrences.
+
+The remaining product gap for a saved trip is a **server-owned persistent occurrence source**. `trip_items.metadata` cannot be trusted for provider provenance because it remains owner-writable.
+
+Binding rule:
+
+> **Persisted does not mean provider-proven.**
+
+## 3. Production-live Supabase evidence
+
+Read-only recheck on project `qscbgcdmivbbnzrcyegn` confirmed:
+
+- `public.trip_items`: authenticated owner has SELECT/INSERT/UPDATE/DELETE under owner RLS;
+- `public.trip_item_commercial_provenance`: authenticated SELECT only;
+- `jetnity_internal.trip_item_commercial_provenance_schreiben(jsonb)`: SECURITY DEFINER;
+- no generic Flight-event/timezone provenance relation exists.
+
+Commercial Provenance is a security-pattern reference only and must not be overloaded with temporal/event truth.
+
+## 4. Active prepared slice – E5-B3A
 
 Issue:
-**#334 – Entry Requirements E5-B2A – ephemeral airport event instant resolution**
+**#338 – Entry Requirements E5-B3A – server-owned flight event provenance persistence foundation**
 
-Logical Cursor agent:
-**`Jetnity entry requirements airport event instant 1`**, Generation 1
+Branch:
+`feat/entry-requirements-flight-event-provenance-e5b3a-2026-08-31`
 
-Session:
-`bc-2f16caec-271e-4911-ac36-5abc36ab0806`
+Binding task:
+`docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_TASK_2026-08-31.md`
 
-Agent runtime + handoff head:
-`4d7e1d002eba06490da59cb4416c55229e8cb559`
+Task commit:
+`66b48e4266ccf18e450756fef981be0c0b38ddb4`
 
-Independent TL review:
-**PASS / no P0-P1-P2 findings.**
+Planned logical Cursor agent:
+**`Jetnity entry requirements event provenance persistence 1`**, Generation 1
 
-Final integration head after TL continuity only:
-`20da6d3e3ce087af240d67a6009ff55e01ad0d69`
+**Agent not yet dispatched at this checkpoint.**
 
-Canonical Runtime merge:
-`4b503aa41fec9eaf8119d64fcbbfee9953f169a6`
+## 5. E5-B3A scope
 
-Canonical closure document:
-`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B2A_CLOSED_2026-08-31.md`
+Repository-only persistence/security foundation for exact Flight event occurrences:
 
-## 3. PR / recovery history
+- dedicated event provenance beside `trip_items`;
+- occurrence identity by Flight item + leg + segment + departure/arrival endpoint;
+- local airport wall clock, provider-observed IANA timezone and absolute UTC instant remain separate facts;
+- server-owned write-authority principle analogous to S5-B Commercial Provenance, without reusing commercial fields;
+- owner read only, no direct owner/browser write as provider truth;
+- private privileged write contract with Production runtime gate closed/unallocated;
+- current-snapshot replacement semantics to prevent stale/orphan occurrences;
+- focused repository contract tests.
 
-Draft PR #335:
-**CLOSED / NOT MERGED**.
+## 6. Production / runtime boundary
 
-Reason: known Ready connector GraphQL schema bug `Repository.fullDatabaseId` after independent exact-head TL PASS and green final-head gates.
+Absolutely no Production apply in E5-B3A.
 
-Protection was not weakened.
+No:
 
-Recovery PR #336:
-**MERGED**, identical exact head, non-draft, expected-head guarded.
+- Production migration execution;
+- live RLS/grant/role/function mutation;
+- Production runtime/login principal allocation;
+- real application writer;
+- Production backfill/data mutation;
+- Flight proof implementation;
+- provider/secret/paid-call activation;
+- browser/route/timezone schema changes;
+- E5-A autobinding;
+- deadline/task/reminder runtime.
 
-Recovery own gates:
+`flugNachweisAusUmgebung()` remains `null`.
 
-- CI #1514 / Run `33419133410`: SUCCESS;
-- Auth: SUCCESS;
-- Typecheck/Lint/Tests/Hygiene/Production Build: SUCCESS;
-- Vercel: READY / SUCCESS;
-- GitHub review threads: 0;
-- Vercel unresolved feedback: 0.
+`requirementsProviderAus()` remains `null`.
 
-## 4. What E5-B2A now provides on main
+GitHub CI does not apply Supabase migrations, so a repository migration file alone does not change Production.
 
-Only an **ephemeral server-side airport event-instant companion evidence** contract at the active `FlugProviderTreffer` seam.
+## 7. Product-Owner gate
 
-Input truth is limited to:
+Repository-only implementation may proceed under normal TL review because Production is unchanged.
 
-- exact normalized airport-local `FlugSegment` date/time;
-- exact E5-B1R provider-observed IANA timezone evidence.
+Explicit PO approval remains mandatory before any later:
 
-Identity is revalidated through:
+- Production migration apply;
+- Production RLS/grant/role/function change;
+- runtime principal allocation;
+- real app write-path activation;
+- real-data backfill/mutation.
 
-- option ID;
-- leg index;
-- segment index;
-- endpoint `departure | arrival`;
-- exact endpoint IATA.
+## 8. Runtime contracts that remain unchanged
 
-Civil-time semantics:
+Without STOP/recut, no semantic changes to:
 
-- unique mapping -> canonical UTC `...Z` instant;
-- DST gap -> explicit `nonexistent_local_time`, no instant;
-- DST overlap -> explicit `ambiguous_local_time`, no instant;
-- invalid date/time/timezone/identity -> explicit fail-closed issue / no instant;
-- no IATA/country/city/name/server/browser timezone inference;
-- no silent earlier/later/compatible selection;
-- no local-wall-clock `Z` append.
+- `lib/flights/domain.ts`;
+- `lib/flights/provider.ts`;
+- `lib/flights/airport-event-instant.ts`;
+- `lib/flights/nachweis.ts`;
+- `lib/flights/suche.ts`;
+- `lib/flights/client-sicht.ts`;
+- `lib/route/*`;
+- `lib/readiness/temporal.ts`;
+- `lib/readiness/temporal-projection.ts`;
+- API/Workspace runtime;
+- generated Supabase types pretending an unapplied relation is live.
 
-No new npm dependency, provider, secret, paid call or live activation.
+## 9. Entry Requirements foundation
 
-## 5. Runtime / client / persistence boundary
-
-Timezone and instant evidence remain absent from:
-
-- `FlugSegment`;
-- `FlugOption` / `BewerteteFlugOption`;
-- browser/client response;
-- route itinerary;
-- trip metadata;
-- account adoption / `flugNachweis`;
-- Supabase.
-
-Duffel resolves only after retained-option filtering. Invalid/unresolvable event evidence does not discard a valid flight offer. `fluegeSuchen()` deliberately exposes neither timezone nor event-instant evidence to ranking/client serialization.
-
-## 6. Entry Requirements foundation
-
-Provider-neutral foundation currently present:
+Present on main:
 
 - S4-R1 Truth Ops;
 - E1 Detail Contract;
@@ -123,60 +136,34 @@ Provider-neutral foundation currently present:
 - E4 Official Temporal Rules;
 - R1 Workspace Integration;
 - E5-A Exact Event-Instant Projection Core;
-- E5-B1R ephemeral provider-observed airport timezone evidence;
+- E5-B1R ephemeral airport timezone evidence;
 - E5-B2A ephemeral airport event-instant resolution.
 
-E5-A still is not automatically bound to Trip/Route events. E5-B2A does not create persistent trusted event truth.
+Still inactive:
 
-## 7. Hard non-scope / still inactive
-
-- persistent server-owned trusted timezone/event provenance;
+- Production-applied trusted event provenance;
+- production Flight proof/runtime invocation;
 - Trip/Route -> OfficialTemporalAnchor occurrence resolver;
 - E5-A automatic binding;
-- workspace deadline/action-window/urgency runtime;
+- workspace deadline/action-window/urgency;
 - task persistence/completion;
-- reminder/push/e-mail/notification runtime;
+- reminders/push/email;
 - real Requirements provider;
 - credential/passport ranking.
 
-`requirementsProviderAus()` remains `null`.
+## 10. Governance / next action
 
-## 8. Binding provenance rule
+Before Cursor dispatch:
 
-Issue #327 remains CLOSED / not_planned; PR #328 remains CLOSED / NOT MERGED.
+1. compare branch against exact `main@3df9af4d...`;
+2. require `ahead=3`, `behind=0`, merge-base exact main and exactly three docs changes;
+3. open dedicated Draft PR for #338;
+4. record pre-agent exact head;
+5. dispatch **`Jetnity entry requirements event provenance persistence 1`**, Generation 1;
+6. agent must not edit this file, Ready, merge, apply Production changes or start follow-up;
+7. TL must not mutate agent branch while agent works;
+8. agent delivery requires independent exact-head review + fresh gates.
 
-> **Persisted does not mean provider-proven.**
-
-Owner-writable Trip metadata cannot establish provider provenance. Persistent trusted timezone/event provenance requires technically enforced server-owned write authority. Production DB/RLS/grant/trigger/write-authority changes require the special Product-Owner gate.
-
-## 9. Traveller / product truth unchanged
-
-> **Jetnity = Travel Operating System für die konkrete Reise.**
-
-> **1 Traveller -> multiple citizenships -> multiple travel documents/credentials -> context-dependent evaluated options.**
-
-No default/primary/preferred/chosen passport or citizenship. Issuer Country != Citizenship. No Residence -> Nationality inference. No `documents[0]` / `evaluations[0]` as Product Truth.
-
-Account Registry = reusable current traveller facts.  
-Trip Snapshot = only current truth for a concrete trip.
-
-## 10. Product-Owner gates
-
-Special gates remain for provider contracts/secrets/paid/live activation, Production migration/RLS/ownership/grants/triggers/server-owned write authority, fundamental Auth/MFA/AAL, sensitive passport/MRZ/scan/biometric/health data, real payments, running costs outside approved budget and public launch/irreversible external activation.
-
-## 11. Next action
-
-**No active Entry Requirements runtime slice. No E5-B2B auto-start.**
-
-After this docs-only closure is integrated:
-
-1. reconstruct live `main`, open PRs/issues, CI/Vercel before any next work;
-2. read the E5-B2A closure + target architecture;
-3. run a fresh Duplicate/Integration/Truth/Security/Persistence precheck;
-4. determine the smallest responsible next slice;
-5. stop at the Product-Owner gate if persistent trusted event/timezone provenance requires Production DB/security changes;
-6. version task + continuity before agent dispatch;
-7. independently review/gate every resulting head;
-8. do not infer or automatically start E5-B2B.
+No E5-B3B or other follow-up auto-start.
 
 **Live-Evidence wins always.**
