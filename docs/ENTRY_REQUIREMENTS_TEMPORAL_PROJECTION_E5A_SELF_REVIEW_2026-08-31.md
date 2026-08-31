@@ -2,16 +2,17 @@
 
 Stand: 31. August 2026  
 Autor-Agent: **`Jetnity entry requirements temporal projection 1`**, Generation 1  
-Ursprüngliche bindende Session: `bc-01a057e1-e45f-79d8-a828-97be0e060415` (beendet; nicht wieder geöffnet)  
-Aktive Recovery-Session/Run-ID: `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
-Rolle: mechanischer Review-Fix-Recovery-Carrier — keine neue Produktgeneration, kein neuer Slice  
+Ursprüngliche Implementation: Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` (abgeschlossen; nicht wieder geöffnet)  
+TL-Review-Fix-Recovery: Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
+Grund: GitHub/Cursor konnte die abgeschlossene ursprüngliche Session trotz expliziter Fortsetzungsanweisung nicht wieder öffnen.  
+Rolle: nur mechanischer enger Review-Fix — **keine** gleiche Session, keine neue Produktgeneration, kein neuer Slice  
 Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
 ## 1. Auftrag gegen Diff
 
 Auftrag: Issue #323 / E5-A exact event-instant temporal projection core, plus TL-CHANGES-REQUIRED auf Head `ae091777e5aec0d5a0b6baf8b28a5ce1234c967d` (Kommentar `5478873885`).
 
-Session-Abweichung: GitHub/Cursor öffnete die beendete Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` nicht erneut. Diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erhielt zuerst STOP, danach die enge PROCEDURAL-RECOVERY-Freigabe für Kommentar `5478873885` und den zusätzlichen Provenance-Grenzfall.
+Session-Abweichung (Live Evidence): ursprüngliche Implementation-Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` war abgeschlossen und wurde nicht wieder geöffnet. Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erhielt STOP und alle späteren Recovery-Anweisungen. Das ist **nicht** die ursprüngliche Session.
 
 Geprüft: E4-Typen wiederverwendet; keine zweite Temporal-Domain; keine Trip-/Route-Occurrence-Auswahl; kein Country→first match; keine Zeitzone geraten; kein `Z` an lokale Flug-/Stage-Zeiten; nur explizite `Z`-/Offset-Instants; `eventRef` erhalten; Partial-Issues `missing_anchor` / `invalid_instant` / `invalid_projected_window`; Cross-Anchor-Fenster erst nach beiden Instants; kein `Date.now()`; kein system-local zoneless `new Date(string)`; keine Supabase-/DB-/RLS-/Auth-Änderung; kein Provider/Secret/paid call; keine Workspace-Deadline-UI; keine Task-/Reminder-Runtime; Factory `null`; kein E5-B; `docs/ACTIVE_WORK_STATUS.md` nicht editiert.
 
@@ -43,7 +44,8 @@ Traveller-Context-Intelligence: für diesen reinen Instant-Rechenkern **nicht re
 | Teilen leere Projektionen eine mutierbare Referenz? | **Nein, nach Fix.** `leereProjektion()` liefert pro Aufruf ein neues Objekt. Mutation von `issues` / Feldern eines früheren Ergebnisses ändert spätere Aufrufe nicht. Vorher: `LEERE_PROJEKTION`-Singleton (TL-Befund). |
 | Wurde der Scope über den Purity-Fix hinaus erweitert? | Nein, außer dem TL-freigegebenen Provenance-Grenzfall. |
 | Ist `'   '` eine stabile `eventRef`? | **Nein, nach Fix.** `missing_anchor`, `eventRef: null`, kein anderes Binding, keine ID-Erfindung. |
-| Ist diese Recovery-Session eine neue Generation oder ein neuer Slice? | Nein. Nur mechanischer Carrier, weil die Original-Session nicht wieder geöffnet wurde. |
+| Ist diese Recovery-Session die ursprüngliche Session? | **Nein.** Ursprüngliche Implementation: `bc-01a057e1-e45f-79d8-a828-97be0e060415`. Recovery: `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. |
+| Ist diese Recovery-Session eine neue Generation oder ein neuer Slice? | Nein. Nur mechanischer enger Review-Fix, weil GitHub/Cursor die abgeschlossene Original-Session nicht wieder öffnen konnte. |
 
 ## 3. Bewusste Schwächen, die bleiben
 

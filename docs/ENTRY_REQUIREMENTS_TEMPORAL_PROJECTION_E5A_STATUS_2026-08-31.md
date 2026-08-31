@@ -3,9 +3,10 @@
 Stand: 31. August 2026  
 Status: **TL CHANGES REQUIRED BEHOBEN / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B**  
 Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**, Generation 1  
-Ursprüngliche bindende Session: `bc-01a057e1-e45f-79d8-a828-97be0e060415` (beendet; nicht wieder geöffnet)  
-Aktive Recovery-Session/Run-ID: `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
-Rolle dieser Session: **mechanischer Review-Fix-Recovery-Carrier** — keine neue Produktgeneration, kein neuer Slice  
+Ursprüngliche Implementation: Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` (abgeschlossen; nicht wieder geöffnet)  
+TL-Review-Fix-Recovery: Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
+Grund: GitHub/Cursor konnte die abgeschlossene ursprüngliche Session trotz expliziter Fortsetzungsanweisung nicht wieder öffnen.  
+Rolle: nur mechanischer enger Review-Fix — **keine** gleiche Session, keine neue Produktgeneration, kein neuer Slice  
 Issue: [#323](https://github.com/Jetnity/jetnity/issues/323)  
 Branch: `feat/entry-requirements-temporal-projection-e5a-2026-08-31`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/324
@@ -16,11 +17,13 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 ## 0. Session-Abweichung (verbindlich)
 
-GitHub/Cursor hat die bereits beendete ursprüngliche Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` trotz expliziter Anweisung nicht wieder geöffnet, sondern diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` erzeugt.
+Live Evidence: die ursprüngliche Implementation-Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` war bereits beendet. GitHub/Cursor konnte sie trotz expliziter Fortsetzungsanweisung nicht wieder öffnen und erzeugte die Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`.
 
-Die unmittelbar folgende STOP-Anweisung wurde derselben Recovery-Session zugestellt. Danach hat der Technical Lead diese Session **eng** als mechanischen Carrier für Kommentar `5478873885` und den zusätzlichen Provenance-Grenzfall (whitespace-only `eventRef`) freigegeben.
+STOP und alle späteren Recovery-Anweisungen landeten in `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. Das ist **nicht** die ursprüngliche Session.
 
-Das ist kein Generation-2-Slice und kein neuer Produktauftrag.
+Der Technical Lead hat diese Recovery-Session danach **eng** als mechanischen Carrier für Kommentar `5478873885` und den Provenance-Grenzfall (whitespace-only `eventRef`) freigegeben. Kein Generation-2-Slice, kein neuer Produktauftrag.
+
+Ein früherer TL-Stand `b7fd5a580a08a6b19c6f542703072c6f8fdc98b4` dokumentierte die Session-Abweichung noch nicht wahrheitsgetreu und enthielt den Provenance-Fix noch nicht. Beide Punkte liegen jetzt im Tree.
 
 ---
 

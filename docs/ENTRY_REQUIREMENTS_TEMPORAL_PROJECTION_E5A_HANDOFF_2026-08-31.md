@@ -3,9 +3,10 @@
 Stand: 31. August 2026  
 Status: **TL CHANGES REQUIRED BEHOBEN / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN E5-B**  
 Cursor-Agent: **`Jetnity entry requirements temporal projection 1`**, Generation 1  
-Ursprüngliche bindende Session: `bc-01a057e1-e45f-79d8-a828-97be0e060415` (beendet; nicht wieder geöffnet)  
-Aktive Recovery-Session/Run-ID: `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
-Rolle dieser Session: **mechanischer Review-Fix-Recovery-Carrier** — keine neue Produktgeneration, kein neuer Slice  
+Ursprüngliche Implementation: Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` (abgeschlossen; nicht wieder geöffnet)  
+TL-Review-Fix-Recovery: Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`  
+Grund: GitHub/Cursor konnte die abgeschlossene ursprüngliche Session trotz expliziter Fortsetzungsanweisung nicht wieder öffnen.  
+Rolle: nur mechanischer enger Review-Fix — **keine** gleiche Session, keine neue Produktgeneration, kein neuer Slice  
 Issue: [#323](https://github.com/Jetnity/jetnity/issues/323)  
 Branch: `feat/entry-requirements-temporal-projection-e5a-2026-08-31`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/324
@@ -14,9 +15,11 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/324
 
 ## Session-Abweichung
 
-GitHub/Cursor hat die bereits beendete ursprüngliche Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` trotz expliziter Anweisung nicht wieder geöffnet. Stattdessen entstand diese Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. Die STOP-Anweisung und die spätere enge PROCEDURAL-RECOVERY-Freigabe gelten derselben Session.
+Live Evidence: ursprüngliche Implementation-Session `bc-01a057e1-e45f-79d8-a828-97be0e060415` war abgeschlossen. GitHub/Cursor konnte sie trotz expliziter Fortsetzungsanweisung nicht wieder öffnen und erzeugte Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`.
 
-Sie darf nur den TL-Befund aus Kommentar `5478873885` und den zusätzlichen Provenance-Grenzfall (whitespace-only `eventRef`) tragen. Kein Generation-2-Auftrag, kein Folgeslice.
+STOP und alle späteren Recovery-Anweisungen landeten in `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. Das ist **nicht** die ursprüngliche Session und **keine** „gleiche Session“.
+
+Sie darf nur den TL-Befund aus Kommentar `5478873885` und den Provenance-Grenzfall (whitespace-only `eventRef`) tragen. Kein Generation-2-Auftrag, kein Folgeslice.
 
 ## Zuerst lesen
 
@@ -45,7 +48,7 @@ Harte Wahrheiten:
 8. Leere/ungültige Regeln geben **pro Aufruf** eine frische Projection zurück (`leereProjektion()`). Kein gemeinsam mutierbares Modul-Singleton.
 9. `requirementsProviderAus()` bleibt `null`.
 10. `docs/ACTIVE_WORK_STATUS.md` wird vom Cursor-Agenten nicht geändert.
-11. Generation 1 bleibt der Slice. Diese Recovery-Session ist nur der mechanische Carrier für denselben Review-Fix und den Provenance-Grenzfall.
+11. Generation 1 bleibt der Slice. Recovery-Session `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc` ist nur der mechanische Carrier; sie ist nicht die ursprüngliche Implementation-Session.
 
 ## Review-Fix dieser Recovery-Session
 
