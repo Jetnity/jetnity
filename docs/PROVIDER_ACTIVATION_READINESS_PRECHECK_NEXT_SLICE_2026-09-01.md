@@ -1,246 +1,146 @@
-# Provider Activation Readiness Precheck – Smallest Next Slice (F1)
+# Provider Activation Readiness Precheck – Next Slice
 
 Stand: 1. September 2026  
-Status: **SPECIFICATION ONLY / DO NOT START IN THIS TASK**  
-Proposed later name: **Provider Flight Test Snapshot Proof F1**  
-Proposed later agent: *not assigned*  
-This document does **not** authorise implementation.
+Status: **SPECIFICATION ONLY / DO NOT START IN THIS TASK / BINDING BUILD ORDER RESTORED**  
+Agent: **`Jetnity provider activation readiness precheck 1`**  
+Generation: **1**  
+Review-fix for TL #5072115941
+
+This document does **not** authorise implementation of any slice.
+
+It separates three things that the rejected head collapsed:
+
+1. **Immediate next implementation under the current Product-Owner Binding Build Order**
+2. **Later real Commercial Truth snapshot** (the original task’s “real provider-backed snapshot” gate)
+3. **Optional integration-pipeline sandbox harness** (not Commercial Truth; not `live_api`; not inferred as next)
 
 ---
 
-## 1. Objective
+## 0. Hard separations
 
-Authorise later, after Product-Owner gates, **one** Preview/dev-only slice that:
+| Proof class | What it may prove | May mint S5-A `live_api`? | Satisfies “real commercial snapshot” gate? |
+| --- | --- | --- | --- |
+| Provider Readiness S4 residual / S6 / S7 / S8 | Jetnity-side ops before any vendor | no | no |
+| Sandbox / test-mode vendor call (Duffel test, Hotelbeds eval) | Transport, mapping, timeout, tamper, expiry *mechanics* | **no** | **no** |
+| Real Commercial Truth snapshot | One server-side quote from **real/live** vendor prices | only from a real live/provider response, after S5-A validation | **yes**, still not TW-8 |
 
-1. performs official **Duffel test-mode** Offer Request(s);
-2. keeps the result in a **server-only** search session;
-3. implements `flugNachweisAusUmgebung()` against that session (plus optional GET-offer revalidation);
-4. mints **one** S5-A commercial snapshot **in memory**;
-5. proves tamper / stale / unavailable / currency-mismatch fail-closed.
-
-Success = one server-side provider-backed snapshot payload that could *later* be persisted.  
-Success ≠ TW-8, ≠ Production persist, ≠ live Duffel, ≠ public “flights are live”.
-
----
-
-## 2. Input and identity / trust boundary
-
-**Allowed input (server-authoritative):**
-
-- `tripId` of a trip the caller may read (account session) **or** a Technical-Lead/test harness that never accepts browser prices;
-- search fields already on `FlugSuchanfrage`: legs (IATA+date), passenger *counts*, cabin, stop preference, currency, optional trip date context;
-- `optionId` only as a pointer into the **server** session.
-
-**Forbidden input:**
-
-- browser `priceAmount` / `priceCurrency` / `externalRef` / `retrievedAt` as truth;
-- names, dates of birth, passport/MRZ, citizenships, emails beyond auth;
-- live Duffel tokens;
-- client-set `sourceKind`.
-
-**Identity:** existing user session for a trip-scoped harness *or* a server-only test route protected like other non-public tools.  
-Do not invent a new principal. Do not allocate `jetnity_commercial_runtime` login.
-
-Guest path stays fail-closed for commercial persist.
+Duffel Help Centre (VERIFIED): sandbox/test-mode prices “are not real, live prices.”  
+Duffel test-mode docs (VERIFIED): Duffel Airways schedules and prices are not realistic.  
+S5-A `live_api` is a provider-truth source eligible for a `current` commercial evaluation. A synthetic sandbox quote must not enter that class. Do not add a silent new sourceKind in this audit.
 
 ---
 
-## 3. Provider call boundary
+## 1. Immediate next implementation — Binding Build Order
 
-| Item | Rule |
+`docs/JETNITY_BINDING_BUILD_ORDER.md` §4 remains Product-Owner binding:
+
+> Provider Readiness **S4–S8**, **danach** echte Provider.
+
+That sequence is **not** superseded by the TW-8 audit, by this precheck, or by the existence of a Duffel adapter.
+
+Live reconstruction of remaining slices (this checkout / `main@ebd08ec`):
+
+| Slice | State | Role |
+| --- | --- | --- |
+| S1–S3 | contracts on main | done as readiness ports |
+| S4 | **partial** — S4-R1 Requirements timeout/kill-switch/freshness merged; residual: Safety party still `[]`, domain flags incomplete until a non-null factory | residual truth-ops |
+| S5-A / S5-B schema | on main; write path **false**; 0 rows | persist foundation, not provider truth |
+| **S6 Persistent Cost Guard** | **missing** | serial **provider-activation gate** (`S4S8-ACT-GATE-01`) |
+| S7 Observability write | event type only | after S6 in the serial ops path |
+| S8 License/cache hooks | `no-store` default only | may be planned in parallel with residual S4; not a provider |
+
+**Immediate next implementation under the current binding order:** a new versioned **Provider Readiness S6 – Persistent Cost Guard** task (not this PR, not this agent).
+
+Reasons:
+
+- Original slice order places S6 as the next **serial** slice after S5.
+- S6 is the documented activation gate before a paid/live provider.
+- Residual S4 items remain open and must be tracked, but they are largely pre-adapter residuals and do not replace S6.
+- S7 follows S6. S8 remains a hook slice, not a vendor activation.
+
+This precheck **does not start S6**. S6 still needs its own versioned task, tests, and PO gates for any DB/cost-model work.
+
+**Not the immediate next implementation:** Duffel sandbox harness, Hotelbeds adapter, Skyscanner transport, Viator, TW-8, write-path allocation.
+
+A sandbox harness **before** S4/S6/S7/S8 would be an explicit **new Product-Owner sequencing exception** (`PO-SEQ-01` in the gate matrix). This audit **does not infer** that exception.
+
+---
+
+## 2. Later real Commercial Truth snapshot (C1) — after S4/S6/S7/S8
+
+**Name (later, do not open):** Provider Real Commercial Snapshot C1  
+**Domain recommendation:** Flights  
+**Vendor:** a **live/real-price** flight source (Duffel *live* or Skyscanner Live Prices), chosen only after partner/ToS/DPA/cost gates — **not** Duffel test mode.
+
+### 2.1 Why this is the real-snapshot gate
+
+The original task asked for one server-side provider-backed commercial snapshot. That gate requires **real market prices**, not sandbox theatre.
+
+C1 may run only after:
+
+- residual S4 items closed or explicitly deferred by a new versioned S4 task;
+- **S6** persistent cost guard in place (or Preview still in-memory **only** if no paid key exists — Production/live still blocked);
+- S7 emit of secret-safe search outcomes (minimum contract, not a new SaaS);
+- S8 persist/cache defaults remain `forbidden` / `no-store` until a reviewed vendor licence;
+- Product-Owner gates for the chosen **live** vendor (signup, contract/DPA, secrets, paid/live calls).
+
+C1 success = one S5-A-validated snapshot whose `sourceKind` is honestly `live_api` or `provider_snapshot` from a **real** vendor response.  
+C1 success ≠ TW-8, ≠ write-path allocation unless separately approved, ≠ public “flights are live”.
+
+### 2.2 One-invocation / store rule
+
+- **Zero-persistence C1 proof:** search → unique option select → revalidate → S5-A mint **inside one server-side invocation / test harness**. No cross-request “session”.
+- **Cross-request Nachweis/adopt:** requires a **durable server-side store** (TTL, trip/owner binding, tamper resistance, no-store/privacy, cost). Process-local/Vercel instance memory is **not** that store. A new store is its own gated architecture slice — not implied by C1.
+
+### 2.3 Explicit C1 non-scope
+
+- Duffel test-mode / Duffel Airways as `live_api`
+- Process memory as a search session
+- S5-B Production write / TW-8 / TW-9
+- Starting C1 from this PR
+
+---
+
+## 3. Optional integration-pipeline sandbox harness (HARNESS-S) — not Commercial Truth
+
+**May be specified later. Must not be treated as C1. Must not start here.**
+
+Purpose: prove Duffel HTTP mapping, timeout, 429, tamper, `expires_at` *mechanics* against official test mode.
+
+### 3.1 Sequencing
+
+Under the current binding order, HARNESS-S is **after** S4/S6/S7/S8, or **only earlier** if Product Owner explicitly approves `PO-SEQ-01`. This audit does **not** grant `PO-SEQ-01`.
+
+### 3.2 Trust / mint ban
+
+| Allowed | Forbidden |
 | --- | --- |
-| Vendor | Duffel test mode only |
-| Token | `DUFFEL_ACCESS_TOKEN` matching `istDuffelTestToken()` |
-| Flag | `JETNITY_FLIGHT_AKTIV` true in Preview/dev only |
-| Production | `providerOpsZustand` must remain `grund: 'production'` |
-| Endpoint (search) | existing `duffelAdapter.suchen` → Offer Request |
-| Endpoint (optional revalidate) | GET `/air/offers/{id}` mapped fail-closed; new mapping must not leak raw payload to the client |
-| Transport | Reuse Duffel HTTP for this slice. Do **not** migrate onto Adapter Core here |
-| Paid/live | Forbidden |
-| Booking / order / payment | Forbidden |
+| One server-side invocation: Offer Request → pick one option → optional GET offer → assert mechanics | S5-A mint with `sourceKind: 'live_api'` |
+| Test assertions on mapped `FlugOption` / Nachweis fail-closed taxonomy | Calling `commercialSnapshotFuerPersistenzMinten` as product truth |
+| Recording outcome as **sandbox/test evidence** in tests | Workspace price, persist, or `current` commercial evaluation |
+| `duffel_test_*` + Production hard-off | Live token, paid calls |
 
-Call budget: in-memory flight cost guard plus an F1-specific hard cap (recommend ≤ 20 Offer Requests / day / environment). Stop on 429 using `ratelimit-reset`.
+If a future ADR introduces a provider-neutral **sandbox/test** evidence class, that is a **new** S5-A change and a separate PO/architecture decision. Until then: **no mint**.
 
----
+### 3.3 No process-local session
 
-## 4. Normalised output contract
+Search and Nachweis must stay in **one invocation**.  
+Do not specify `Map`/module memory, “process lifetime”, or Vercel instance reuse as a cross-request store.
 
-Reuse, do not replace:
+### 3.4 Non-scope
 
-- `FlugProviderTreffer` / `FlugOption` for search;
-- `FlugNachweisErgebnis` for confirmation;
-- `CommercialProvenance` via `commercialSnapshotFuerPersistenzMinten` for the snapshot.
-
-Minimum mint fields (fail-closed if missing):
-
-- domain `flights`
-- `sourceKind: 'live_api'` **only** from the server-observed Duffel test response (not fixtures)
-- actor `provider_adapter` / system — never `user` / `assistant` / `llm`
-- amount + currency from the nachgewiesen option
-- `retrievedAt` from the existing server observation (`treffer.retrievedAt`), not from the client
-- `freshUntil` derived from Duffel `expires_at` if present and valid; else `null` and freshness `unknown` — **do not invent**
-- currency match vs requested currency (`matched` / `mismatch` / `unknown`)
-- persistenz `ephemeral`
-- affiliate `unknown` unless independently evidenced (it will not be)
-
-Client search responses continue to strip `retrievedAt`.
+Same as C1, plus: does not satisfy the real-snapshot gate even if green.
 
 ---
 
-## 5. Provenance / freshness
+## 4. Suggested later task headers (do not open)
 
-| Event | Result |
+| Later task | When |
 | --- | --- |
-| Session missing / option unknown | `unbekannt` / unavailable — no mint |
-| Context drift (legs/pax/cabin/currency) | `geaendert` or `invalid` |
-| `expires_at` in the past | `abgelaufen` — no current mint |
-| GET offer `price_changed` | `geaendert` — do not mint old price as current |
-| GET offer `offer_no_longer_available` / `offer_expired` | `abgelaufen` / unavailable |
-| Provider down / timeout | `unavailable` / `error` — empty ≠ error |
-| Fixture / Skyscanner offline result | must not be mintable as `live_api` |
+| Provider Readiness S6 Persistent Cost Guard | Immediate next *if* TL opens a new versioned S6 task on then-current main |
+| Residual S4 truth-ops (Safety party / flags) | Own versioned task; do not mix into S6 |
+| HARNESS-S | Only after S4–S8 **or** after explicit `PO-SEQ-01` |
+| C1 real commercial snapshot | After S4–S8 + live-vendor PO gates |
 
-Persisted Workspace prices remain legacy and untrusted.
-
----
-
-## 6. Commercial persistence boundary
-
-**F1 persist policy: `forbidden` / `no-store`.**
-
-- Mint in memory (and in test assertions).
-- Do **not** call `trip_item_commercial_provenance_schreiben`.
-- Do **not** set `production_write_path_allocated`.
-- Do **not** write `trip_items.price_amount` from this mint.
-- Do **not** join provenance in `abbildung.ts`.
-
-A later **F2** (separate versioned task) may persist if and only if: persist licence is confirmed, write path is PO-allocated, and TW-8 is still not silently opened.
-
----
-
-## 7. Write-authority requirements
-
-| Authority | F1 |
-| --- | --- |
-| SQL DEFINER writer | must remain uninvoked |
-| `jetnity_commercial_writer` / runtime login | must remain unallocated |
-| Service role as writer | forbidden |
-| Browser as writer | forbidden |
-
----
-
-## 8. Cost guard
-
-- Reuse `ProviderOpsCostGuard` / `lib/flights/rate-limit.ts`.
-- Fail closed on guard errors.
-- Add an environment-level F1 daily cap.
-- S6 persistent guard is **not** in F1.
-- No new paid SaaS.
-
----
-
-## 9. Timeout / retry / kill-switch
-
-- Keep `FLUG_SUCHE_GRENZEN.timeoutMs` (12s) unless a measured test-mode need is documented.
-- No unbounded retry. At most one retry on transport failure; never retry `offer_expired`.
-- Honour 429 / `Retry-After` / `ratelimit-reset`.
-- Kill-switch: Production off; flag off; missing/invalid token → `ohne-zugang`.
-- AbortSignal already used by Duffel adapter — keep.
-
----
-
-## 10. Observability (no sensitive payloads)
-
-Emit `providerOpsEvent()` (or equivalent secret-safe event) with:
-
-- domain, outcome, latency bucket, environment (`test`), kill-switch grund
-- **not** token, offer payload, passenger counts beyond a boolean “in range”, raw Duffel body, trip title
-
-S7 persistence is out of scope. Logs must not print secrets.
-
----
-
-## 11. Cache / license / persist policy
-
-- HTTP `private, no-store` on any new response.
-- No Redis/CDN of offers.
-- Session TTL = min(vendor `expires_at`, 30 minutes, process lifetime). Memory or existing server store only — **no new Production table**.
-- Attribution: none claimed.
-- License: F1 does not redistribute offers outside the authenticated session.
-
----
-
-## 12. Test strategy
-
-Must include automated tests for:
-
-| Case | Expect |
-| --- | --- |
-| Tampered price / currency / ref on adopt | fail-closed, no mint |
-| Unknown `optionId` | `unbekannt` |
-| Expired `expires_at` | `abgelaufen` |
-| Context drift | `geaendert` / `invalid` |
-| Provider timeout / 5xx | `unavailable` or `error`, distinguishable from empty |
-| Rate limit | `rate_limited` |
-| Fixture/Skyscanner object passed to mint | reject |
-| Live token / Production env | adapter stays `null` |
-| Client body cannot carry `retrievedAt` into mint | already true; keep |
-| Empty search vs error | not the same status |
-
-Optional Preview manual: one ZRH–LHR (or Duffel Airways documented pair) test-mode search, one Nachweis, one mint assertion. **Not** a Real-Device TW-8 acceptance.
-
-TypeScript, unit tests, hygiene, production build must stay green. No `db:*` Production apply.
-
----
-
-## 13. Product-Owner gates that must be approved *before* F1 starts
-
-From `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_GATE_MATRIX_2026-09-01.md`:
-
-- **PO-PROV-01** Duffel test account (if no token exists)
-- **PO-PROV-02** acknowledgement of Duffel test-mode ToS (not a live commercial contract)
-- **PO-SEC-01** store `duffel_test_*` in Preview/dev server env only
-- Explicit written confirmation: **no** PO-PAY-01, PO-ACT-01, PO-DB-01, PO-WR-*, PO-TW-*, PO-PII-01, PO-PUB-01
-
-If any of those closed gates is requested inside F1, the slice is out of bounds and must stop.
-
----
-
-## 14. Explicit non-scope
-
-- Provider adapter rewrite or second flight vendor
-- Adapter Core migration of Duffel HTTP
-- Hotelbeds/Booking/Skyscanner/Viator/12Go implementation
-- S6 / S7 / S8 programme slices
-- S5-B write-path allocation or SQL invoke
-- TW-8 / TW-9 runtime or Workspace price join
-- Entry Requirements vendor or E5 Production apply
-- Account registry / traveller document collection
-- Booking, order, payment, affiliate claim
-- Public or Production flight search
-- Automatic F2
-
----
-
-## 15. Why this is the smallest safe proof
-
-Smaller rejected alternatives:
-
-| Alternative | Why rejected |
-| --- | --- |
-| Docs-only “we have an adapter” | Not a snapshot |
-| Fixture mint | Forbidden; not provider-backed |
-| Production persist in the same slice | Crosses write-path + licence gates |
-| Hotelbeds adapter + mint | Larger; new mapping + secrets + contract surface |
-| User-visible TW-8 price card | Unlocks commercial UI without a programme |
-| Live Duffel | Paid/live gate; excess-search economics |
-
-F1 is the smallest slice that still satisfies the task: **one real server-side provider-backed snapshot**, later-authorisable, without pretending TW-8 is open.
-
----
-
-## 16. Suggested later task header (do not open)
-
-- Issue: new, after TL review of #351 / #354
-- Branch: `feat/provider-flight-test-snapshot-proof-f1-2026-09-01` (example only)
-- Baseline: then-current `main`, not this audit head
-- Logical agent: new generation, not this session
+Baseline for any of those: then-current `main`, not this audit head.  
+Logical agent: new generation. This session must not start them.

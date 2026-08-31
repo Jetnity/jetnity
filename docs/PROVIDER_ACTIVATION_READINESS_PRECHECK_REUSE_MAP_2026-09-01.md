@@ -147,14 +147,12 @@ For a zero-spend test-mode proof, S6/S7/S8 are **not** automatic blockers, but t
 
 ---
 
-## 9. Smallest reuse path for a later proof
+## 9. Reuse paths (do not collapse)
 
-If a later authorised slice proves one server-side snapshot:
+**Immediate next (Binding Build Order):** S6 extends `ProviderOpsCostGuard` — do not invent a second budget system.
 
-1. Keep `duffelAdapter` + `flugZustand` (or a hotel factory still `null` until a real hotel adapter exists).
-2. Add a **server-only** search-session/offer store (missing seam).
-3. Implement `flugNachweisAusUmgebung()` against that store (+ optional GET-offer revalidation).
-4. Mint S5-A via existing `commercialSnapshotFuerPersistenzMinten`.
-5. Do **not** call the SQL writer, allocate the write path, or join Workspace.
+**Later real Commercial Truth (C1):** reuse `FlugProvider` / `FlugNachweis` / S5-A mint **only** from a **live** vendor response. Search → select → revalidate → mint must be **one server-side invocation** unless a separately gated durable store exists. Process-local/Vercel memory is **not** a cross-request Nachweis store.
 
-That is reuse. A Hotelbeds-first path would additionally require a new adapter/mapping — larger, not smaller.
+**Optional sandbox harness:** reuse `duffelAdapter` + `flugZustand` for mechanics only. **Do not** call `commercialSnapshotFuerPersistenzMinten` as `live_api`. Do not persist. Do not use process memory across requests.
+
+A Hotelbeds-first *live* path would additionally require a new adapter/mapping — larger, not smaller.

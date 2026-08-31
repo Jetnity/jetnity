@@ -34,7 +34,8 @@ Rental-car standalone vendors were not ranked as first path: no search UI, facto
 ## 2. Criterion scores
 
 Score: **H** high / **M** medium / **L** low / **F** fail-for-first-path / **U** unknown.  
-Score is for *first proof of one server-side commercial snapshot*, not long-term lock-in.
+Unless marked otherwise, scores are for a later **real Commercial Truth** snapshot (real/live prices), **not** for a sandbox integration harness.  
+Duffel **test mode** is scored separately where it would otherwise be confused with Duffel **live**.
 
 ### 2.1 Traveller value / product unlock
 
@@ -64,12 +65,13 @@ Score is for *first proof of one server-side commercial snapshot*, not long-term
 
 | ID | Score | Notes | Class |
 | --- | --- | --- | --- |
-| F-DUF | H | Offer Request returns offer IDs; GET `/air/offers/{id}` revalidates; `expires_at` | VERIFIED public API |
+| F-DUF **live** | H | Offer Request + GET `/air/offers/{id}` + `expires_at` on **real** prices after account activation | VERIFIED public API + Help Centre (test ≠ live) |
+| F-DUF **test** | F for *Commercial Truth* / H for *harness* | Official: sandbox prices **are not real, live prices**; Airways not realistic. May prove mechanics only. **Must not mint `live_api`** | VERIFIED Help Centre + test-mode docs |
 | F-SKY | M | Live Prices create/poll returns live partner prices; persist may be forbidden | VERIFIED API + no-cache article |
 | F-AMA | F | Self-Service decommissioned 17 Jul 2026; Enterprise contract required | VERIFIED https://developers.amadeus.com/ |
 | H-BDC | M | Demand API can quote if partner access exists; **no sandbox without contract** | VERIFIED prerequisites |
-| H-HBX | H | Availability + CheckRate on `api.test.hotelbeds.com`; test bookings not real | VERIFIED getting-started + workflow |
-| A-VIA | F | Basic Access: **no** real-time availability; Full Access needs approval/cert | VERIFIED access-level table |
+| H-HBX **eval** | M for *Commercial Truth* / H for *harness* | Availability + CheckRate on `api.test.hotelbeds.com`; test bookings not real. Whether eval *rates* are market-real is **VENDOR-CONFIRMATION-REQUIRED** — not automatic `live_api` | VERIFIED getting-started; UNKNOWN rate realism |
+| A-VIA Basic | M | `GET /availability/schedules/{product-code}` is allowed and is documented as real-time single-product schedule retrieval. `POST /availability/check` (booking-grade verify) is **denied**. Schedule quote ≠ booking-grade snapshot | VERIFIED https://docs.viator.com/partner-api/technical/ |
 | A-GYG | L | Partner-gated API; snapshot possible only after access | VERIFIED api.getyourguide.com |
 | M-12G | U | No public API contract to evaluate a snapshot | UNKNOWN / VENDOR-CONFIRMATION-REQUIRED |
 
@@ -77,7 +79,8 @@ Score is for *first proof of one server-side commercial snapshot*, not long-term
 
 | ID | Score | Notes | Class |
 | --- | --- | --- | --- |
-| F-DUF | H | `expires_at` typically 15–30 min; `price_changed` / `offer_expired` / `offer_no_longer_available` | VERIFIED |
+| F-DUF live | H | `expires_at` typically 15–30 min; `price_changed` / `offer_expired` / `offer_no_longer_available` on **real** offers | VERIFIED |
+| F-DUF test | H *mechanics* / F *truth* | Same error taxonomy, but prices are not live — revalidation proves plumbing, not market currency | VERIFIED |
 | F-SKY | M | Session ~1h; public policy forbids cache/redistribute — snapshot-as-current-price is hostile to their terms | VERIFIED |
 | H-HBX | H | `rateType=RECHECK` ⇒ mandatory CheckRate; BOOKABLE can book without recheck | VERIFIED |
 | H-BDC | U | Pricing model documented for partners; exact persist/revalidation rules not independently verified here | VENDOR-CONFIRMATION-REQUIRED |
@@ -92,7 +95,7 @@ Score is for *first proof of one server-side commercial snapshot*, not long-term
 | F-AMA | F | Self-service test portal gone | VERIFIED |
 | H-BDC | F-for-now | Sandbox only after Managed Affiliate contract | VERIFIED |
 | H-HBX | H | Self-register evaluation keys; 50 req/day; test bookings do not charge | VERIFIED |
-| A-VIA | M | Basic keys self-serve, but not real-time quotes | VERIFIED |
+| A-VIA | M | Basic keys self-serve; real-time **schedules** for one product; no booking-grade `/availability/check` | VERIFIED technical guide |
 | A-GYG | L | Contact/partner gated | VERIFIED |
 | M-12G | L | No public developer portal | VERIFIED third-party + affiliate pages |
 
@@ -190,7 +193,8 @@ Hotelbeds-as-architecture is already forbidden by hotel strategy (VERIFIED).
 Any real snapshot is a *prerequisite*, not an unlock.  
 A persisted Production row still would not open TW-8 without write-path allocation, app writer, and Workspace read/freshness UI (VERIFIED TW-8 revalidation + this session’s rowcount 0).
 
-Best TW-8 *pipeline* teacher: a vendor with explicit expiry + revalidation (F-DUF or H-HBX).
+Best TW-8 *pipeline mechanics* teacher (not truth): a vendor with explicit expiry + revalidation (Duffel test or HBX eval), **without** minting `live_api`.  
+Best TW-8 *Commercial Truth* teacher: a **live** flight (or later hotel) quote after S4–S8.
 
 ### 2.16 Effect on Entry Requirements / Traveller truth
 
@@ -217,13 +221,15 @@ X-REQ would affect Entry Requirements but is the wrong first path for Commercial
 | Candidate | Disqualifier | Class |
 | --- | --- | --- |
 | F-AMA | Self-Service portal decommissioned 17 Jul 2026 | VERIFIED |
-| A-VIA Basic | No real-time availability | VERIFIED |
+| A-VIA Basic as *booking-grade* first snapshot | Cannot call `/availability/check`; schedule retrieval is not booking-grade verification | VERIFIED technical guide |
+| A-VIA Basic as *no real-time data at all* | **Withdrawn** — `/availability/schedules/{product-code}` is allowed | VERIFIED |
 | H-BDC *now* | Cannot obtain sandbox without Managed Affiliate contract — this audit cannot start that | VERIFIED |
 | M-12G | No public API + Switzerland-first fail | VERIFIED / INFERENCE |
 | X-REQ | Not commercial | VERIFIED |
 | F-SKY persist | Public no-cache/no-redistribute policy conflicts with S5-B “store a quote” unless legal says ephemeral-only is allowed | VERIFIED policy + VENDOR-CONFIRMATION-REQUIRED exception |
 | Skyscanner fixtures | Explicitly non-promotable to `live_api` | VERIFIED code/task |
-| Duffel live token | Jetnity rejects non-`duffel_test_` tokens; Production hard-off | VERIFIED |
+| Duffel **test** as `live_api` / current Commercial Truth | Sandbox prices are not real/live (Help Centre); Airways not realistic | VERIFIED |
+| Duffel live token today | Jetnity rejects non-`duffel_test_` tokens; Production hard-off | VERIFIED |
 
 ---
 
@@ -231,9 +237,12 @@ X-REQ would affect Entry Requirements but is the wrong first path for Commercial
 
 | Rank input | Candidate | Independent (non-code) reasons | Code-reuse (secondary) |
 | --- | --- | --- | --- |
-| 1 | F-DUF test mode | Zero-spend official sandbox; strongest public offer revalidation; flight freshness is the TW-8-hard problem; Amadeus SS gone | Existing adapter makes the *next slice smaller* |
-| 2 | H-HBX evaluation | Official self-serve test keys; CheckRate; hotel value; Booking.com gated | Hotel ports exist; adapter does not |
-| 3 | F-SKY ephemeral-only | Affiliate fit; CH coverage; live-target history | Fixture foundation only |
-| later | H-BDC | Preferred hotel *commercial* partner if access is granted | Ports only |
-| later | A-VIA Full | After real-time access/cert | Ports only |
-| out | F-AMA, A-VIA Basic, M-12G first, X-REQ | See disqualifiers | — |
+| Immediate next (not a vendor) | **S6 Persistent Cost Guard** | Binding Build Order §4; serial activation gate | Existing `ProviderOpsCostGuard` port |
+| 1 later *real* Commercial Truth | Flights / **live** vendor (Duffel live or Skyscanner) | Real prices required for `live_api`; flight freshness is TW-8-hard | Ports exist; live transport/partner still gated |
+| 2 later hotel | H-BDC if access; else H-HBX **live** | Hotel strategy; eval ≠ automatic live truth | Ports only |
+| 3 later / conditional | F-SKY ephemeral-only | Affiliate + no-cache persist conflict | Fixture foundation only |
+| Later activities | A-VIA Full (booking-grade `/availability/check`) | Basic can fetch schedules, not booking-grade verify | Ports only |
+| Harness only (not truth) | F-DUF **test** / H-HBX **eval** | Zero-spend mechanics; **must not mint `live_api`** | Duffel adapter exists |
+| out | F-AMA SS, M-12G first, X-REQ, sandbox-as-`live_api` | See disqualifiers | — |
+
+This ranking is **not** the immediate next implementation. It applies after S4/S6/S7/S8 or after explicit `PO-SEQ-01` (not inferred).

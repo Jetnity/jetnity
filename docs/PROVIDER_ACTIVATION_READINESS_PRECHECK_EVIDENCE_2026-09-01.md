@@ -90,9 +90,9 @@ Honesty note: the Cloud Agent environment’s `SUPABASE_PROJECT_REF` / `NEXT_PUB
 | S5-A on main | yes | VERIFIED |
 | S5-B Draft #182, not on Production | **SUPERSEDED** — schema applied; write path closed; 0 rows | VERIFIED |
 | S4 then echte Provider | S4-R1 (Requirements truth-ops) merged 31 Aug; factory still `null`. Full S4/S6/S7/S8 not complete | VERIFIED |
-| Echte Provider after S4–S8 | No later PO decision authorises skipping remaining ops slices **and** activating a live provider. A bounded **test-mode proof** is the TW-8-audit-recommended next *programme* step, still behind PO gates | INFERENCE from later continuity + this task |
+| Echte Provider after S4–S8 | **Still binding.** No later Product-Owner decision authorises skipping remaining S4/S6/S7/S8. The TW-8 audit named a later programme *direction*; it does **not** supersede §4. A sandbox harness before those slices would need an **explicit new PO sequence decision** (`PO-SEQ-01`). This audit does **not** infer that exception. Immediate next implementation under §4: **S6 Persistent Cost Guard** (not started here) | VERIFIED order text + VERIFIED remaining gaps |
 
-TW-8 revalidation (merged via #303) already named the next productive step outside TW: staged first real provider path + at least one server-proven snapshot. That is **not** TW-8 unlock and **not** Production activation.
+TW-8 revalidation (merged via #303) named a later step outside TW (first real provider path + server-proven snapshot). That is **not** TW-8 unlock, **not** Production activation, and **not** permission to treat Duffel sandbox prices as `live_api` or to skip S4/S6/S7/S8.
 
 ---
 
@@ -186,6 +186,7 @@ Fetched or confirmed in this session (no credentials, no calls to vendor APIs):
 | Source | Used for |
 | --- | --- |
 | https://duffel.com/docs/api/overview/test-mode | Test tokens `duffel_test_`; zero-spend sandbox; Duffel Airways not realistic |
+| https://help.duffel.com/hc/en-gb/articles/4410085835282-Are-the-flight-prices-in-test-mode-sandbox-real | Sandbox/test-mode prices **are not real, live prices** |
 | https://duffel.com/pricing | $3/order; 1% managed content; $2 ancillary; 1500:1 excess search $0.005; 2% FX |
 | https://duffel.com/docs/api/offers | `expires_at` typically ~30 min; GET single offer revalidation |
 | https://duffel.com/docs/api/overview/response-handling | 429 + `ratelimit-*`; `offer_expired` / `price_changed` / `offer_no_longer_available` |
@@ -196,7 +197,8 @@ Fetched or confirmed in this session (no credentials, no calls to vendor APIs):
 | https://developer.hotelbeds.com/documentation/getting-started/ | Self-register evaluation keys; `api.test.hotelbeds.com`; 50 req/day; test bookings not real |
 | https://developer.hotelbeds.com/documentation/hotels/booking-api/workflow/ | Availability + CheckRate when `rateType=RECHECK` |
 | https://developers.amadeus.com/ | Self-Service portal decommissioned 17 July 2026; Enterprise only |
-| https://partnerresources.viator.com/travel-commerce/levels-of-access/ | Basic Access: no real-time availability |
+| https://docs.viator.com/partner-api/technical/ | Basic: `/availability/schedules/{product-code}` allowed (real-time single-product schedules); `/availability/check` denied (booking-grade verify) |
+| https://partnerresources.viator.com/travel-commerce/levels-of-access/ | Marketing table says “Get availability & pricing in real time” is Full-only — **do not use as the technical disqualifier**; endpoint matrix wins |
 | https://api.getyourguide.com/ | Partner account required; not self-serve |
 | 12Go public affiliate/reseller pages | API not publicly documented; contact-required |
 
@@ -204,7 +206,18 @@ DPA/subprocessor/data-residency schedules were **not** accepted or downloaded. T
 
 ---
 
-## 11. Explicitly not verified
+## 11. Review-fix 2026-09-01 (TL #5072115941)
+
+Rejected head: `43bb98762ed00bc0293e5b4df5566a4e25c3d865`. This section records corrections; live Production SELECT was not re-run in the review-fix (previous session SELECT + TL independent recheck both showed write path false / 0 rows).
+
+| Finding | Correction |
+| --- | --- |
+| P1 sandbox ≠ `live_api` | Duffel test prices are not real/live. No S5-A `live_api` mint from sandbox. Pipeline harness ≠ Commercial Truth gate. |
+| P1 Binding Build Order | S4/S6/S7/S8 remain required. Immediate next = S6, not a provider proof. `PO-SEQ-01` not inferred. |
+| P1/P2 process memory | Cross-request in-memory session removed. One-invocation harness or a separately gated durable store. |
+| P2 Viator Basic | Schedules endpoint is real-time; `/availability/check` is not Basic. Ranking not flipped to Activities-first. |
+
+## 12. Explicitly not verified
 
 - Whether a Duffel test token already exists in Vercel Preview (secret values were not read)
 - Current Production Vercel runtime logs

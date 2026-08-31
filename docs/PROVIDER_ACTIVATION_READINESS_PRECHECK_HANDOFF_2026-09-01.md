@@ -1,15 +1,17 @@
 # Provider Activation Readiness Precheck – Handoff
 
 Stand: 1. September 2026  
-Status: **AUDIT DELIVERED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **REVIEW-FIX DELIVERED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Logical agent: **`Jetnity provider activation readiness precheck 1`**  
 Generation: **1**  
 Cursor session: `bc-d1b4e6bb-c952-4242-ba57-384783bc23ea`  
 Issue: #351  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/354  
-Branch: `audit/provider-activation-readiness-precheck-2026-09-01`
+Branch: `audit/provider-activation-readiness-precheck-2026-09-01`  
+Rejected head: `43bb98762ed00bc0293e5b4df5566a4e25c3d865`  
+TL review: #5072115941 **CHANGES REQUIRED**
 
-`docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not changed and must not be treated as updated by this handoff until the Technical Lead says so.
+`docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not changed.
 
 ---
 
@@ -17,28 +19,28 @@ Branch: `audit/provider-activation-readiness-precheck-2026-09-01`
 
 1. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_TASK_2026-09-01.md`
 2. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_STATUS_2026-09-01.md`
-3. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_EVIDENCE_2026-09-01.md`
+3. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_NEXT_SLICE_2026-09-01.md`
 4. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_RECOMMENDATION_2026-09-01.md`
-5. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_NEXT_SLICE_2026-09-01.md`
-6. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_GATE_MATRIX_2026-09-01.md`
-7. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_REUSE_MAP_2026-09-01.md`
-8. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_CANDIDATE_MATRIX_2026-09-01.md`
-9. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_SELF_REVIEW_2026-09-01.md`
+5. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_GATE_MATRIX_2026-09-01.md`
+6. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_EVIDENCE_2026-09-01.md`
+7. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_CANDIDATE_MATRIX_2026-09-01.md`
+8. `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_SELF_REVIEW_2026-09-01.md`
+9. `docs/JETNITY_BINDING_BUILD_ORDER.md` §4
 
-Then re-read live `origin/main`, this PR head, CI, Vercel. For DB claims, re-run Production read-only if the head is no longer this review head.
+Then re-read live `origin/main`, this PR **new** head, CI, Vercel.
 
 ---
 
 ## 2. Verdict for Technical Lead
 
-**Audit complete. No activation. No F1 start.**
+**Review-fix only. No activation. No slice start.**
 
-Recommendation: first *proof path* = **Flights / Duffel test mode**.  
-Smallest later slice = **F1** (server session + FlugNachweis + in-memory S5-A mint).  
-Runner-up = Hotelbeds evaluation.  
-TW-8/TW-9 remain blocked. Production write path remains false. Commercial rowcount remains 0 as of this session’s SELECT.
+- Immediate next under current Binding Build Order: **S6 Persistent Cost Guard** (not started).
+- Later real Commercial Truth path: **Flights / live prices**. Duffel test is **not** `live_api` and does not close the real-snapshot gate.
+- Sandbox harness: mechanics only; one invocation; no process-memory session; `PO-SEQ-01` **not inferred**.
+- Viator Basic: real-time **schedules** yes; booking-grade **check** no. Activities still not first.
 
-Cursor must not mark Ready, merge, or open F1.
+Cursor must not mark Ready, merge, or open S6/HARNESS-S/C1.
 
 ---
 
@@ -47,44 +49,24 @@ Cursor must not mark Ready, merge, or open F1.
 | Fact | Value |
 | --- | --- |
 | Baseline main | `ebd08ec07134f1ad4d3f6d68a694be4ff189fa5b` |
-| Pre-agent head | `e28f48f6791cc824f91d2f94a94375a74336dba9` |
-| Review head | **the audit commit on this PR — live SHA wins** |
-| Production project queried | `qscbgcdmivbbnzrcyegn` (SELECT only) |
-| Write allocated | `false` |
+| Rejected head | `43bb98762ed00bc0293e5b4df5566a4e25c3d865` |
+| Review-fix head | **live SHA on this PR** |
+| Production write allocated | `false` (prior SELECT + TL recheck) |
 | Commercial snapshots | `0` |
-| Flight-event provenance table | absent |
 
-A new head invalidates this exact-head packet.
+A new head invalidates older exact-head gates.
 
 ---
 
 ## 4. What was not done
 
-- No Duffel/Hotelbeds/Booking/Skyscanner/Viator/12Go signup
-- No secret created or printed
-- No vendor API call
-- No Production mutation
+- No vendor signup, secret, paid/live call, Production mutation
 - No factory/flag/writer change
-- No TW-8/TW-9
+- No S6/HARNESS-S/C1/TW-8 implementation
 - No edit of TL-owned continuity files
 
 ---
 
-## 5. If review finds CHANGES REQUIRED
+## 5. STOP
 
-Same logical agent, generation 1, same session if still available.  
-Fix only the named gaps. Re-gate the new head. Do not start F1.
-
----
-
-## 6. If review is PASS
-
-Technical Lead only: continuity docs, Ready, merge.  
-Next *implementation* issue for F1 is a **new** versioned task on then-current main, after the PO gates in the gate matrix.  
-This handoff is not that task and not that approval.
-
----
-
-## 7. STOP
-
-Independent Technical-Lead exact-head review of Draft-PR #354.
+Independent Technical-Lead exact-head **re-review** of Draft-PR #354.
