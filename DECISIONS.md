@@ -5281,6 +5281,30 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0202 – Entry Requirements E2: Official Evidence Source ≠ Official Action
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/entry-requirements-official-actions-e2-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider. Binding: `docs/ENTRY_REQUIREMENTS_OFFICIAL_ACTIONS_E2_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. `OfficialAction` trägt `kind: 'open_official_action'`, einen geschlossenen `purpose` (`application` | `form` | `appointment` | `information`) und eine validierte HTTPS-`href`.
+2. `sourceUrl` bleibt ausschliesslich Evidence-/Informationsquelle. Sie darf höchstens eine `information`-Action erzeugen und niemals automatisch als Antrag, Formular oder Termin interpretiert werden.
+3. `application`, `form` und `appointment` entstehen nur aus expliziten Provider-Metadaten `actionPurpose` + `actionUrl`, beide fail-closed normalisiert. Dieselbe HTTPS-Validierung wie für andere Official URLs: kein HTTP, keine Credentials, kein localhost/.local, Längengrenze.
+4. Ungültiger oder unbekannter Purpose, Marketinglabels und ungültige Action-URLs erzeugen keine explizite Action. Eine gültige `actionUrl` ohne gültigen Purpose wird nicht zu `information` umetikettiert. Höchstens eine valide `sourceUrl` darf als `information`-Fallback dienen. Ungültige Action-Metadaten dürfen eine ansonsten vertrauenswürdige Evaluation nicht nach `not_required` oder anderer Hard Truth umdeuten. Action-Metadaten sind Navigation, nicht Requirements-Wahrheit, und gehören nicht in `officialEvidenceVertrauenswuerdig`.
+5. Wenn Trust/Freshness/Result bereits fail-closed degradiert ist – inklusive bestehender E1 `result ↔ visaMode`-Widersprüche, Stale, Unavailable und Konflikt – bleibt keine riskante Action übrig.
+6. Keine Heuristik aus Requirement-Typ: Visa/eTA/Entry-Form ohne explizite Action werden nicht zu Antrag oder Formular. Actions hängen an derselben `OfficialEvaluation` / Credential-Option. `requirementsProviderAus()` bleibt `null`.
+
+**Kontext:** ADR-0110 erlaubte eine Official Action nur aus validierter `sourceUrl`. Dadurch war fachlich nicht ausdrückbar, ob ein Link Information oder eine konkrete Handlung ist. Die Zielarchitektur verlangt eine relevante Action, sofern belastbar bekannt.
+
+**Alternativen:** `sourceUrl` heuristisch als Antrag behandeln; Purpose aus Requirement-Typ ableiten; Action-URL in die Trust-Grenze ziehen und bei ungültiger Action die ganze Evaluation verwerfen; Marketingtext als Label durchreichen.
+
+**Begründung:** Eine Behörden-Informationsseite ist nicht automatisch die Antragsseite. Heuristik aus URL oder Typ würde Reisende in die falsche Handlung führen. Ungültige Navigation darf Hard Truth nicht zerstören oder erfinden. Labels kommen nur aus dem geschlossenen Zweck, nicht aus Provider-Werbung.
+
+**Konsequenzen:** Bestehende source-only Presentation bleibt als `information` kompatibel. Kein echter Provider, keine Secrets/paid calls, keine Supabase-/Auth-Änderung, keine Deadline-Runtime, kein UI-Redesign. Folgeslice nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

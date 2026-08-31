@@ -73,8 +73,23 @@ export type OfficialEvidence = {
   contextFingerprint: string
 }
 
+/**
+ * Strukturierte Zwecke einer offiziellen Action.
+ * `sourceUrl` ist niemals automatisch application/form/appointment.
+ */
+export const OFFICIAL_ACTION_PURPOSES = [
+  'application',
+  'form',
+  'appointment',
+  'information',
+] as const
+export type OfficialActionPurpose = (typeof OFFICIAL_ACTION_PURPOSES)[number]
+
+const RISKANTE_ACTION_ZWECKE = ['application', 'form', 'appointment'] as const
+
 export type OfficialAction = {
-  kind: 'open_official_source'
+  kind: 'open_official_action'
+  purpose: OfficialActionPurpose
   href: string
 }
 
@@ -176,9 +191,43 @@ export function optionMandateLesen(wert: unknown): 'mandatory' | 'not_mandatory'
   return 'unknown'
 }
 
+export function officialActionPurposeLesen(wert: unknown): OfficialActionPurpose | null {
+  if (typeof wert === 'string' && (OFFICIAL_ACTION_PURPOSES as readonly string[]).includes(wert)) {
+    return wert as OfficialActionPurpose
+  }
+  return null
+}
+
+export function officialAktionIstRiskant(action: OfficialAction | null): boolean {
+  return action != null && (RISKANTE_ACTION_ZWECKE as readonly string[]).includes(action.purpose)
+}
+
+/**
+ * Evidence-/Informationsquelle. Niemals Antrag, Formular oder Termin.
+ */
 export function officialAktionAusQuelle(url: unknown): OfficialAction | null {
   const href = quelleUrlLesen(url)
-  return href ? { kind: 'open_official_source', href } : null
+  return href ? { kind: 'open_official_action', purpose: 'information', href } : null
+}
+
+/**
+ * Explizite Action nur aus strukturiertem Zweck plus validierter HTTPS-URL.
+ * Ungültige oder unvollständige Action-Metadaten erzeugen keine Action aus
+ * `actionUrl` und etikettieren sie nicht zu `information` um.
+ * Höchstens eine valide `sourceUrl` darf als kompatibler `information`-Fallback
+ * dienen.
+ */
+export function officialAktionAusMetadaten(opts: {
+  actionUrl?: unknown
+  actionPurpose?: unknown
+  sourceUrl?: string | null
+}): OfficialAction | null {
+  const actionHref = quelleUrlLesen(opts.actionUrl)
+  const purpose = officialActionPurposeLesen(opts.actionPurpose)
+  if (purpose && actionHref) {
+    return { kind: 'open_official_action', purpose, href: actionHref }
+  }
+  return officialAktionAusQuelle(opts.sourceUrl ?? null)
 }
 
 export function missingFactsLesen(wert: unknown): MissingFact[] {
@@ -256,7 +305,7 @@ function checkedAtPlausibel(checkedAt: string | null, nowMs = Date.now()): boole
 /**
  * Provider-neutrale Trust-Grenze.
  * Source URL ist optional für das Resultat; wenn vorhanden, muss sie valide HTTPS sein.
- * Official Action braucht zusätzlich eine validierte Source URL.
+ * Action-Metadaten sind Navigation und gehören nicht in diese Trust-Grenze.
  */
 export function officialEvidenceVertrauenswuerdig(opts: {
   provider: string | null

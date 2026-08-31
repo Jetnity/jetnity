@@ -132,7 +132,7 @@ Erforderlich sind u. a.:
 
 Eine Source URL ist für das regulatorische Resultat nicht zwingend, aber falls vorhanden muss sie valide HTTPS sein.
 
-Eine klickbare Official Action wird nur aus validierter HTTPS-Evidence erzeugt. Keine URLs aus Modelltext.
+Eine klickbare Official Action braucht eine validierte HTTPS-URL. `sourceUrl` bleibt Evidence- und Informationsquelle und wird niemals automatisch zu Antrag, Formular oder Termin. application/form/appointment entstehen nur aus explizitem `actionPurpose` plus validierter `actionUrl` (ADR-0202). Keine URLs aus Modelltext.
 
 Zeitliche Regeln:
 

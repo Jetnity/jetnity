@@ -488,6 +488,8 @@ describe('Travel Requirements Engine', () => {
 
   test('Official Action nur aus validierter HTTPS-Quelle', async () => {
     assert.equal(officialAktionAusQuelle('https://example.test/visa')?.href, 'https://example.test/visa')
+    assert.equal(officialAktionAusQuelle('https://example.test/visa')?.kind, 'open_official_action')
+    assert.equal(officialAktionAusQuelle('https://example.test/visa')?.purpose, 'information')
     assert.equal(officialAktionAusQuelle('javascript:alert(1)'), null)
     assert.equal(officialAktionAusQuelle('http://example.test/visa'), null)
     const ohneProvider = await requirementsFuerReise(
@@ -518,7 +520,8 @@ describe('Travel Requirements Engine', () => {
       testProvider,
     )
     const visa = mitQuelle.find((eintrag) => eintrag.requirementType === 'visa')
-    assert.equal(visa?.action?.kind, 'open_official_source')
+    assert.equal(visa?.action?.kind, 'open_official_action')
+    assert.equal(visa?.action?.purpose, 'information')
     assert.equal(visa?.action?.href, 'https://example.test/visa')
   })
 
