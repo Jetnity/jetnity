@@ -1,133 +1,150 @@
 # Jetnity – Active Work Status
 
 Stand: 31. August 2026  
-Status: **CURRENT / E5-B3A PREPARED / REPOSITORY-ONLY PERSISTENCE FOUNDATION / NO PRODUCTION APPLY / AGENT NOT YET DISPATCHED / LIVE-EVIDENCE WINS**
+Status: **CURRENT / E5-B3A AGENT HEAD TL-PASS / FINAL INTEGRATION CONTINUITY GATING / REPOSITORY-ONLY / NO PRODUCTION APPLY / LIVE-EVIDENCE WINS**
 
-## 1. Current canonical main
+## 1. Canonical main before E5-B3A merge
 
 `main@3df9af4d6c3da750d50777706bce03589007a58a`
 
 Commit:
 `Close Entry Requirements E5-B2A continuity (#337)`
 
-Live verified before E5-B3A task cut:
+Pre-slice live evidence:
 
-- Main CI #1517 / Run `33420869626`: **SUCCESS**;
-- Vercel Production: **SUCCESS**;
+- Main CI #1517 / Run `33420869626`: SUCCESS;
+- Vercel Production: SUCCESS;
 - Ruleset `Jetnity main protection` / ID `21875372`: active;
-- PR required, strict CI/Auth/Vercel, Conversation Resolution, merge-only, bypass empty;
-- Issue #334 closed/completed;
-- Parent #294 remains open.
+- strict PR/CI/Auth/Vercel/Conversation Resolution/merge-only, bypass empty.
 
-## 2. Fresh precheck result
+## 2. Active slice
 
-E5-A already owns explicit `OfficialTemporalAnchor -> eventRef + absolute instant` projection input. A second DB-free binder would duplicate existing architecture.
+Issue:
+**#338 – Entry Requirements E5-B3A – server-owned flight event provenance persistence foundation**
 
-E5-B1R + E5-B2A now provide ephemeral server-side provider-observed timezone and uniquely resolved UTC event-instant evidence for exact Flight option/leg/segment/endpoint/IATA occurrences.
+Draft PR:
+**#340**
 
-The remaining product gap for a saved trip is a **server-owned persistent occurrence source**. `trip_items.metadata` cannot be trusted for provider provenance because it remains owner-writable.
+Branch:
+`feat/entry-requirements-flight-event-provenance-e5b3a-2026-08-31`
+
+Agent:
+**`Jetnity entry requirements event provenance persistence 1`**, Generation 1
+
+Session:
+`bc-e7a50347-1c66-4cd1-bbd2-979b89590a40`
+
+Task:
+`docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_TASK_2026-08-31.md`
+
+Canonical TL review:
+`docs/CHATGPT_TECHNICAL_LEAD_ENTRY_REQUIREMENTS_E5B3A_REVIEW_2026-08-31.md`
+
+## 3. Review history
+
+Initial delivery head:
+`79dda7593bb9fbb20c36dc54348920e994da6823`
+
+TL verdict there:
+**CHANGES REQUIRED** – P2 because `provider_belegt=true` could be persisted without a concrete provider-source `external_ref`.
+
+Same-agent fix commit:
+`f918dc0ed58b4962389a860d5a1b6bf74513cd1b`
+
+Final agent + delivery-doc head:
+`d37b600f67537f4ccb816182009b6018a39f82a3`
+
+Independent TL verdict on that exact head:
+**PASS / no open P0-P1-P2 findings.**
+
+Exact-head evidence:
+
+- CI #1522 / Run `33427796712`: SUCCESS;
+- Auth: SUCCESS;
+- Typecheck/Lint/Tests/Hygiene/Production Build: SUCCESS;
+- Vercel: READY / SUCCESS;
+- GitHub review threads: 0;
+- Vercel unresolved feedback: 0;
+- branch 0 behind; merge-base exact main.
+
+After PASS only TL-owned review/continuity files are being added. The resulting integration head must be separately re-gated before Ready/Merge.
+
+## 4. E5-B3A repository foundation
+
+New repository migration:
+`supabase/migrations/20260831190000_trip_item_flight_event_provenance.sql`
+
+New contract test:
+`lib/flight-event-provenance/e5b3a-persistenz-vertrag.test.ts`
+
+Core contract:
+
+- dedicated `public.trip_item_flight_event_provenance` beside `trip_items`;
+- exact Item × Leg × Segment × `departure|arrival` current occurrence identity;
+- local date/time, timezone and absolute event instant are separate facts;
+- concrete `external_ref` is mandatory provider-source evidence;
+- server-generated `occurrence_event_ref` is internal occurrence identity, not provider evidence;
+- authenticated owner may SELECT only;
+- no authenticated/anon direct write;
+- private SECURITY-DEFINER writer in `jetnity_internal`, `search_path=''`;
+- dedicated NOLOGIN writer/runtime roles;
+- runtime gate defaults false/unallocated;
+- validation precedes atomic current-snapshot DELETE+INSERT;
+- no SQL timezone/DST resolution.
 
 Binding rule:
 
 > **Persisted does not mean provider-proven.**
 
-## 3. Production-live Supabase evidence
+## 5. Production remains unchanged
 
-Read-only recheck on project `qscbgcdmivbbnzrcyegn` confirmed:
+Supabase Production project:
+`qscbgcdmivbbnzrcyegn`
 
-- `public.trip_items`: authenticated owner has SELECT/INSERT/UPDATE/DELETE under owner RLS;
-- `public.trip_item_commercial_provenance`: authenticated SELECT only;
-- `jetnity_internal.trip_item_commercial_provenance_schreiben(jsonb)`: SECURITY DEFINER;
-- no generic Flight-event/timezone provenance relation exists.
+Read-only verification after final agent head confirmed all E5-B3A Production objects absent:
 
-Commercial Provenance is a security-pattern reference only and must not be overloaded with temporal/event truth.
+- relation absent;
+- writer function absent;
+- runtime gate absent;
+- writer role absent;
+- runtime role absent.
 
-## 4. Active prepared slice – E5-B3A
+No Production migration, RLS/grant/role/function mutation, principal allocation, app writer or backfill has occurred.
 
-Issue:
-**#338 – Entry Requirements E5-B3A – server-owned flight event provenance persistence foundation**
+## 6. Runtime / truth boundaries unchanged
 
-Branch:
-`feat/entry-requirements-flight-event-provenance-e5b3a-2026-08-31`
+Still inactive:
 
-Binding task:
-`docs/ENTRY_REQUIREMENTS_SERVER_OWNED_FLIGHT_EVENT_PROVENANCE_E5B3A_TASK_2026-08-31.md`
-
-Task commit:
-`66b48e4266ccf18e450756fef981be0c0b38ddb4`
-
-Planned logical Cursor agent:
-**`Jetnity entry requirements event provenance persistence 1`**, Generation 1
-
-**Agent not yet dispatched at this checkpoint.**
-
-## 5. E5-B3A scope
-
-Repository-only persistence/security foundation for exact Flight event occurrences:
-
-- dedicated event provenance beside `trip_items`;
-- occurrence identity by Flight item + leg + segment + departure/arrival endpoint;
-- local airport wall clock, provider-observed IANA timezone and absolute UTC instant remain separate facts;
-- server-owned write-authority principle analogous to S5-B Commercial Provenance, without reusing commercial fields;
-- owner read only, no direct owner/browser write as provider truth;
-- private privileged write contract with Production runtime gate closed/unallocated;
-- current-snapshot replacement semantics to prevent stale/orphan occurrences;
-- focused repository contract tests.
-
-## 6. Production / runtime boundary
-
-Absolutely no Production apply in E5-B3A.
-
-No:
-
-- Production migration execution;
-- live RLS/grant/role/function mutation;
-- Production runtime/login principal allocation;
-- real application writer;
-- Production backfill/data mutation;
-- Flight proof implementation;
-- provider/secret/paid-call activation;
-- browser/route/timezone schema changes;
-- E5-A autobinding;
-- deadline/task/reminder runtime.
-
-`flugNachweisAusUmgebung()` remains `null`.
-
-`requirementsProviderAus()` remains `null`.
-
-GitHub CI does not apply Supabase migrations, so a repository migration file alone does not change Production.
+- `flugNachweisAusUmgebung()` → `null`;
+- `requirementsProviderAus()` → `null`;
+- no Flight/Route/browser persisted timezone/event fields;
+- no Trip/Route → OfficialTemporalAnchor resolver;
+- no E5-A automatic binding;
+- no deadline/action-window/urgency/task/reminder/notification runtime;
+- no real Requirements provider;
+- no credential/passport ranking.
 
 ## 7. Product-Owner gate
 
-Repository-only implementation may proceed under normal TL review because Production is unchanged.
+Explicit Product-Owner approval remains mandatory before any later:
 
-Explicit PO approval remains mandatory before any later:
+- E5-B3A Production migration apply;
+- Production RLS/grant/role/function creation/change;
+- runtime/login principal allocation;
+- real application write path;
+- Production backfill or real-data mutation.
 
-- Production migration apply;
-- Production RLS/grant/role/function change;
-- runtime principal allocation;
-- real app write-path activation;
-- real-data backfill/mutation.
+Merging the current repository migration file does **not** apply it to Production.
 
-## 8. Runtime contracts that remain unchanged
+## 8. P3 / later requirement
 
-Without STOP/recut, no semantic changes to:
+Before Production apply, execute and verify the migration against a disposable PostgreSQL/Supabase test environment. Current tests validate the repository SQL contract, not a live apply.
 
-- `lib/flights/domain.ts`;
-- `lib/flights/provider.ts`;
-- `lib/flights/airport-event-instant.ts`;
-- `lib/flights/nachweis.ts`;
-- `lib/flights/suche.ts`;
-- `lib/flights/client-sicht.ts`;
-- `lib/route/*`;
-- `lib/readiness/temporal.ts`;
-- `lib/readiness/temporal-projection.ts`;
-- API/Workspace runtime;
-- generated Supabase types pretending an unapplied relation is live.
+A future trusted mint must reuse E5-B1R timezone recognition and E5-B2A fail-closed event-instant resolution; SQL must not become a second temporal truth engine.
 
 ## 9. Entry Requirements foundation
 
-Present on main:
+Present on current main before this merge:
 
 - S4-R1 Truth Ops;
 - E1 Detail Contract;
@@ -136,34 +153,21 @@ Present on main:
 - E4 Official Temporal Rules;
 - R1 Workspace Integration;
 - E5-A Exact Event-Instant Projection Core;
-- E5-B1R ephemeral airport timezone evidence;
+- E5-B1R ephemeral provider-observed airport timezone evidence;
 - E5-B2A ephemeral airport event-instant resolution.
 
-Still inactive:
+E5-B3A is currently a reviewed repository PR only; it is not Production truth until a later explicitly approved Production apply.
 
-- Production-applied trusted event provenance;
-- production Flight proof/runtime invocation;
-- Trip/Route -> OfficialTemporalAnchor occurrence resolver;
-- E5-A automatic binding;
-- workspace deadline/action-window/urgency;
-- task persistence/completion;
-- reminders/push/email;
-- real Requirements provider;
-- credential/passport ranking.
+## 10. Immediate next action
 
-## 10. Governance / next action
-
-Before Cursor dispatch:
-
-1. compare branch against exact `main@3df9af4d...`;
-2. require `ahead=3`, `behind=0`, merge-base exact main and exactly three docs changes;
-3. open dedicated Draft PR for #338;
-4. record pre-agent exact head;
-5. dispatch **`Jetnity entry requirements event provenance persistence 1`**, Generation 1;
-6. agent must not edit this file, Ready, merge, apply Production changes or start follow-up;
-7. TL must not mutate agent branch while agent works;
-8. agent delivery requires independent exact-head review + fresh gates.
-
-No E5-B3B or other follow-up auto-start.
+1. determine final integration head after TL review/continuity commits;
+2. verify diff from `d37b600f...` is docs-only TL continuity;
+3. run exact-head CI/Auth/Vercel/thread/drift gates;
+4. if green, Technical Lead may Ready/Merge under normal repository workflow;
+5. do **not** apply the migration to Production;
+6. after merge verify exact new main CI + Vercel Production;
+7. read-only confirm Production still has no E5-B3A objects;
+8. close Issue #338 as repository-foundation completed and update Parent #294;
+9. no automatic E5-B3B/follow-up.
 
 **Live-Evidence wins always.**
