@@ -1,7 +1,7 @@
 # Entry Requirements E5-B3C – Server-only Flight Event Persistence Payload Mint – Handoff
 
 Stand: 31. August 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**  
+Status: **REVIEW-FIX DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**  
 Cursor-Agent: **`Jetnity entry requirements flight event persistence mint 1`**, Generation 1  
 Session: `bc-8579f2af-62df-45f3-b15b-d9a1d2d4c180`  
 Issue: [#347](https://github.com/Jetnity/jetnity/issues/347)  
@@ -26,19 +26,19 @@ E5-B3C aktiviert **keinen** Writer, persistiert **keine** Zeile und bindet **nic
 
 Harte Wahrheiten:
 
-1. Der Mint lebt nur in `lib/flight-event-provenance/persistenz.ts`. Er ist Next-/Supabase-/Provider-SDK-frei.
+1. Der Mint lebt nur in `lib/flight-event-provenance/persistenz.ts`. Er trägt `import 'server-only'` und bleibt Next-/Supabase-/Provider-SDK-frei.
 2. Primäre Eingabe ist ausschliesslich `{ tripItemId, optionId, treffer: FlugProviderTreffer }`. Eine freie Client-`FlugOption` plus separat gelieferte Provenance ist kein Beweis.
 3. Die selected Option muss eindeutig in `treffer.options` liegen. 0 Treffer → `selected_option_missing`. >1 Treffer → `selected_option_ambiguous`. Kein first-match.
 4. Occurrence-Identität ist `optionId + legIndex + segmentIndex + endpoint + IATA`. Country/City/IATA-only-Suche gibt es nicht.
 5. `local_date` / `local_time` kommen vom selected Segment-Endpunkt. Departure liest origin+Abflug, Arrival liest destination+Ankunft.
 6. `time_zone` kommt aus exakt passender E5-B1R-Evidence. `event_instant` kommt aus exakt passender E5-B2A-Evidence. Die beiden Zonen müssen identisch sein.
-7. Duplicate/conflict Evidence fail-closed für die Occurrence und verhindert die ganze Nutzlast. Fehlende Evidence bleibt explizit `unresolved` und erzeugt keine Fake-Occurrence.
+7. Duplicate/conflict Evidence fail-closed für die Occurrence und verhindert die ganze Nutzlast. Eine exakte Zeile plus sibling-Coordinate mit anderer IATA ist ebenfalls `ok: false`; der exakte Eintrag wird nicht still gewählt. Fehlende Evidence bleibt explizit `unresolved` und erzeugt keine Fake-Occurrence.
 8. Leere proven `occurrences` sind gültig und bewusst kompatibel mit dem späteren Full-Current-Snapshot-Clear.
 9. `retrieved_at === observed_at === treffer.retrievedAt`. Payload-Felder wie `retrieved_at` / `observedAt` auf Treffer oder Option ersetzen das nicht. Kein `Date.now()`.
 10. `fresh_until` bleibt `null`. Observation ist keine Frischegarantie.
 11. TypeScript mintet keine `occurrence_event_ref`. SQL erzeugt sie später serverseitig.
 12. `flightEventPersistenzNutzlastIstRohclient()` folgt der E5-B3A SQL Deny-/Allow-List. CamelCase-Clientfelder sind kein Vertrag.
-13. `provider_id` und `external_ref` kommen von der selected server-proven Option und folgen den SQL-Längen-/Deny-Grenzen.
+13. `provider_id` und `external_ref` kommen von der selected server-proven Option und folgen den SQL-Längen-/Deny-Grenzen. `leg_index`/`segment_index` bleiben 0..99; mehr als 200 proven Occurrences erzeugen keine Nutzlast. UTC-`event_instant` wird kalendarisch revalidiert, nicht über `Date.parse`-Normalisierung.
 14. **Persisted does not mean provider-proven.** Es gibt keinen Write, kein `flugNachweis`, keine Provideraktivierung.
 15. Keine neue npm-Dependency. `package.json` ist unverändert.
 16. `flugNachweisAusUmgebung()` und `requirementsProviderAus()` bleiben `null`.
@@ -79,7 +79,7 @@ Die Diffs von `JETNITY_START_HERE.md` / `docs/ACTIVE_WORK_STATUS.md` gegen `main
 ## origin/main vor Handoff
 
 Erneut gelesen: `origin/main` = `8868f91319f2747ca6f3dc8cb46ab0a40cba417b`.  
-Merge-Base identisch. Behind: 0. Ahead vor Docs-Commit: 4.
+Merge-Base identisch. Behind: 0. Ahead vor Docs-Commit: 7.
 
 Kompletter Diff gegen `origin/main` (Namen) vor Docs-Commit:
 
@@ -102,7 +102,7 @@ Agent-Diff gegen Pre-agent-Head `0175d156...` (ohne TL-Docs):
 - `ok: true` + partial/empty `occurrences` darf ein späterer Writer nicht automatisch als vollständigen Current-Snapshot behandeln.
 - Host-Uhr bleibt die E5-B3B-Quelle; der Mint kopiert sie nur.
 - Kein Browser-/Real-Device-Abnahmebeweis, weil keine UI.
-- Lokale Gates auf Runtime-Head `f2499d9a` waren grün; der Docs-Commit erzeugt einen neuen Head und invalidiert diese Exact-Head-Evidence.
+- Lokale Gates auf Review-Fix-Head `2da9e758` waren grün; der Docs-Commit erzeugt einen neuen Head und invalidiert diese Exact-Head-Evidence.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 
 ## Nächster Schritt

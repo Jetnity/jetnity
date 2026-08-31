@@ -1,7 +1,7 @@
 # Entry Requirements E5-B3C – Server-only Flight Event Persistence Payload Mint – Status
 
 Stand: 31. August 2026  
-Status: **IMPLEMENTATION DELIVERED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY / KEIN FOLGESLICE**  
+Status: **REVIEW-FIX DELIVERED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY / KEIN FOLGESLICE**  
 Cursor-Agent: **`Jetnity entry requirements flight event persistence mint 1`**, Generation 1  
 Session: `bc-8579f2af-62df-45f3-b15b-d9a1d2d4c180`  
 Issue: [#347](https://github.com/Jetnity/jetnity/issues/347)  
@@ -44,8 +44,9 @@ Traveller-Context-Intelligence: **nicht relevant**. Der Slice liest keine Citize
 | `origin/main` vor Docs-Handoff | `8868f91319f2747ca6f3dc8cb46ab0a40cba417b` (0 behind) |
 | Merge-Base | `8868f91319f2747ca6f3dc8cb46ab0a40cba417b` |
 | Pre-agent PR head | `0175d1564527f66868a84c86b8ea2ebc017efcde` |
-| Runtime-Commit | `f2499d9a` |
-| Ahead vor Docs-Commit | 4 Commits gegenüber `origin/main` (3 TL-Docs + 1 Runtime) |
+| Erster Delivery-Head / TL-Review | `5473cd851942055ead8a1bd4b055861ecd6d5ada` |
+| Review-Fix Runtime-Commit | `2da9e758227e9688b30e0859032a7879e2c11f23` |
+| Ahead vor Docs-Commit | 7 Commits gegenüber `origin/main` |
 | Draft-PR | #348 bleibt Draft |
 | `docs/ACTIVE_WORK_STATUS.md` | nicht angefasst (Technical-Lead-owned) |
 | `JETNITY_START_HERE.md` | nicht angefasst |
@@ -58,11 +59,15 @@ Ein Git-Commit kann seinen eigenen finalen SHA nicht im Tree tragen. Exact Head 
   - `flightEventPersistenzNutzlastMinten({ tripItemId, optionId, treffer })`
   - typed Result: `ok: true` + `nutzlast` + `unresolved` **oder** `ok: false` + `fehler`
   - Snapshot-Fehler: `invalid_trip_item_id`, `selected_option_missing`, `selected_option_ambiguous`, `invalid_provider_identity`, `invalid_external_ref`, `invalid_retrieved_at`
-  - Occurrence-Konflikte fail-closed ohne Payload: duplicate timezone/instant, identity mismatch, timezone/instant disagreement, invalid local wall clock
+  - Occurrence-Konflikte fail-closed ohne Payload: duplicate timezone/instant, identity mismatch, exact+conflicting sibling IATA, timezone/instant disagreement, invalid local wall clock, invalid event instant
   - fehlende Evidence bleibt `ok: true` mit explizitem `unresolved_occurrence_evidence`; leere `occurrences` sind snapshot-clear-fähig
   - `retrieved_at` / `observed_at` sind der exakte E5-B3B-String; `fresh_until` ist `null`
   - `flightEventPersistenzNutzlastIstRohclient()` folgt der SQL Deny-/Allow-List 1:1
-- `lib/flight-event-provenance/persistenz.test.ts`: Pflichtregressionen 1–24 plus Source-Grenzen
+  - Review-Fix: exact + sibling-IATA-Konflikt ist `ok: false` für B1R und B2A, kein stilles first-match
+  - Review-Fix: `import 'server-only'`
+  - Review-Fix: `leg_index`/`segment_index` 0..99 und maximal 200 Occurrences fail-closed
+  - Review-Fix: UTC-Instant-Kalenderrevalidation ohne JS-Normalisierung von `2026-02-30…`
+- `lib/flight-event-provenance/persistenz.test.ts`: Pflichtregressionen 1–24 plus Review-Fix-Regressionen
 
 Nicht angefasst: `lib/flights/domain.ts`, `lib/flights/provider.ts`, `lib/flights/airport-timezone.ts`, `lib/flights/airport-event-instant.ts`, `lib/flights/duffel/*`, `lib/flights/suche.ts`, `lib/flights/client-sicht.ts`, `lib/flights/nachweis.ts`, `lib/route/*`, `lib/trips/*`, `lib/readiness/*`, `app/api/*`, `supabase/*`, `scripts/db/*`, `types/supabase.ts`, `lib/providers/*`, `lib/commercial-provenance/*`, `package.json`, `ARCHITECTURE.md`, `DECISIONS.md`.
 
@@ -86,20 +91,20 @@ Nicht angefasst: `lib/flights/domain.ts`, `lib/flights/provider.ts`, `lib/flight
 
 ## 5. Tests / CI / Preview
 
-Lokale Evidence dieser Session auf Runtime-Head `f2499d9a` plus nachfolgendem Docs-Commit. Exact-Head-Gates müssen live am finalen Tip geprüft werden.
+Lokale Evidence dieser Session auf Review-Fix-Head `2da9e758` plus nachfolgendem Docs-Commit. Exact-Head-Gates müssen live am finalen Tip geprüft werden.
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `lib/flight-event-provenance/persistenz.test.ts` | **29/29 pass** inkl. Direkt/Multi-Segment, Option-B-Isolation, first-match-Verbot, B1R/B2A-Mismatch, Konflikte, Observation-Gleichheit, Partial/Empty, SQL-Grenzen, Rohclient-Reject |
+| `lib/flight-event-provenance/persistenz.test.ts` | **34/34 pass** inkl. exact+sibling-IATA fail-closed (B1R/B2A), server-only-Marker, Index-/200-Grenzen, ungültiger Kalender-Instant |
 | `lib/flight-event-provenance/e5b3a-persistenz-vertrag.test.ts` | **16/16 pass** |
 | `lib/flights/airport-timezone.test.ts` | **4/4 pass** |
 | `lib/flights/airport-event-instant.test.ts` | **22/22 pass** |
 | `lib/flights/duffel/adapter.test.ts` | **16/16 pass** |
 | `lib/flights/suche.test.ts` | **8/8 pass** |
-| Fokus B1R/B2A/B3A/B3B + Mint | **95/95 pass** |
-| `npm test` | **3044/3044 pass** |
+| Fokus B1R/B2A/B3A/B3B + Mint | Review-Fix-Mint **34/34**; vorherige Fokus-Suites unverändert mitgelaufen über `npm test` |
+| `npm test` | **3049/3049 pass** |
 | `npm run typecheck` | pass |
-| `npm run lint` | **0 errors / 139 warnings** (bestehende Warnungen; die zwei Mint-Import-Warnungen wurden vor Docs entfernt) |
+| `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine in den Mint-Dateien) |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |
 | `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
 | GitHub CI auf Runtime-Head `f2499d9a` | zum Docs-Zeitpunkt nicht als terminal behauptet |

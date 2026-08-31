@@ -5,17 +5,18 @@ Autor-Agent: **`Jetnity entry requirements flight event persistence mint 1`**, G
 Session: `bc-8579f2af-62df-45f3-b15b-d9a1d2d4c180`  
 Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
-Runtime-Head dieser Review-Runde: `f2499d9a`  
+Geprüfter vorheriger TL-Head: `5473cd851942055ead8a1bd4b055861ecd6d5ada`  
+Review-Fix-Head dieser Runde: `2da9e758227e9688b30e0859032a7879e2c11f23`  
 Pre-agent Head: `0175d1564527f66868a84c86b8ea2ebc017efcde`  
 Baseline / `origin/main`: `8868f91319f2747ca6f3dc8cb46ab0a40cba417b`
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: Issue #347 / E5-B3C server-only Flight Event persistence payload mint auf Draft-PR #348.
+Auftrag: Issue #347 / E5-B3C server-only Flight Event persistence payload mint auf Draft-PR #348, plus enger Review-Fix aus TL CHANGES REQUIRED auf Head `5473cd85`.
 
 Geprüft:
 
-- server-only / DB-freier TypeScript-Mint im bestehenden Domainordner `lib/flight-event-provenance/`
+- server-only / DB-freier TypeScript-Mint im bestehenden Domainordner `lib/flight-event-provenance/` inkl. `import 'server-only'`
 - Eingabe nur `tripItemId` + selected `optionId` + vollständiger `FlugProviderTreffer`
 - selected Option wird in `treffer.options` gesucht; Duplikate fail-closed, kein first-match
 - Occurrence-Rebinding über `optionId + leg + segment + endpoint + IATA`
@@ -60,7 +61,10 @@ Proof `docs/ACTIVE_WORK_STATUS.md` / `JETNITY_START_HERE.md` gegen Pre-agent-Hea
 | Wird Zone oder Instant neu gerechnet? | Nein. Kein Import von `airportEventInstantsAufloesen`, kein `Intl.DateTimeFormat`, kein `Z` an lokale Strings. |
 | Bindet falsche Identität? | Nein. Falsches Leg/Segment/Endpoint/IATA oder fremde Option erzeugt keine Occurrence. |
 | First-match bei Duplikaten? | Nein. Doppelte Option-Id, doppelte B1R- oder B2A-Zeilen → `ok: false`. Auch identische Duplikate. |
-| Konflikt vs. Fehlen? | Konflikt/Mismatch/invalid wall clock → keine Nutzlast. Nur fehlende Evidence → `ok: true` + `unresolved`. |
+| Exact + sibling-IATA? | Nein. `evidenceKlassifizieren` liefert `conflict`; Mint `ok: false`. Der exakte Eintrag wird nicht gewählt. |
+| Konflikt vs. Fehlen? | Konflikt/Mismatch/invalid wall clock/invalid instant/malformed index/too many → keine Nutzlast. Nur fehlende Evidence → `ok: true` + `unresolved`. |
+| SQL-Index-/Count-Grenzen? | `leg_index`/`segment_index` > 99 oder >200 proven Occurrences → `ok: false`. |
+| Ungültiger Kalender-Instant? | `2026-02-30T08:15:00Z` bleibt `invalid_event_instant`, obwohl `Date.parse` finite ist. |
 
 ## 4. Client- / Writer-Grenze
 
@@ -73,6 +77,7 @@ Proof `docs/ACTIVE_WORK_STATUS.md` / `JETNITY_START_HERE.md` gegen Pre-agent-Hea
 | Writer-Aufruf | Source enthält keinen `trip_item_flight_event_provenance_schreiben`-Call |
 | Supabase / fetch / Next / Duffel-SDK | nicht importiert |
 | Commercial-Provenance | nicht importiert |
+| `import 'server-only'` | vorhanden; Client-Sicht/Schema/Suche/Ranking importieren den Mint nicht |
 
 ## 5. Proof unveränderter Verträge
 
@@ -122,6 +127,10 @@ Zusätzlich:
 | Wird `provider_belegt` vom Client gesetzt? | Nein. Feld existiert im TS-Payload nicht. Writer bleibt Owner dieser Invariante. |
 | Kann ein ungültiger Provider-Name (`user`, `jetnity`) durch? | Nein. SQL-Deny-Liste analog, `invalid_provider_identity`. |
 | Wird Production oder der Writer erreicht? | Nein. Kein Apply, kein RPC, kein Client. |
+| Gewinnt eine exakte B1R/B2A-Zeile gegen sibling-IATA? | Nein. `conflict` → `occurrence_identity_mismatch`, keine Nutzlast. |
+| Ist server-only nur ein Kommentar? | Nein. `import 'server-only'`; Client-Verträge importieren den Mint nicht. |
+| Kann Index 100 oder 201 Occurrences eine Writer-Nutzlast erzeugen? | Nein. `malformed_occurrence_identity` / `too_many_occurrences`. |
+| Wird `2026-02-30T08:15:00Z` über `Date.parse` akzeptiert? | Nein. Kalenderrevalidation, `invalid_event_instant`. |
 | `ACTIVE_WORK_STATUS` / Ready / Merge / Folgeslice? | Nein. |
 
 ## 7. P0 / P1 / P2 / P3
@@ -129,8 +138,8 @@ Zusätzlich:
 | Stufe | Fund |
 | --- | --- |
 | **P0** | Keiner. Kein Client-Trust, kein first-match, kein Writer, keine Production-Mutation. |
-| **P1** | Keiner. Observation kommt nur aus E5-B3B. Konflikte verhindern die Nutzlast. |
-| **P2** | Keiner in diesem Slice. Offener späterer Writer-Vertrag: partial/empty `ok: true` darf nicht blind geschrieben werden. |
+| **P1** | Der gemeldete exact+sibling-IATA-Fund ist geschlossen. Weitere P1: keiner. |
+| **P2** | Die drei gemeldeten P2 (server-only, SQL-Bounds, Instant-Kalender) sind geschlossen. Offener späterer Writer-Vertrag: partial/empty `ok: true` darf nicht blind geschrieben werden. |
 | **P3** | Mint ohne Runtime-Caller. `retrievedAt` strenger als SQL-Instant-Muster. Mutierbare Treffer-Objekte. Self-Review ≠ TL-PASS. |
 
 ## 8. Bewusste Schwächen, die bleiben
@@ -152,19 +161,19 @@ Zusätzlich:
 
 ## 10. Full repository gates
 
-Lokale Gates auf Runtime-Head `f2499d9a`:
+Lokale Gates auf Review-Fix-Head `2da9e758`:
 
 | Lauf | Ergebnis |
 | --- | --- |
-| `npm test` | **3044/3044 pass** |
+| `npm test` | **3049/3049 pass** |
 | `npm run typecheck` | pass |
-| `npm run lint` | **0 errors / 139 warnings** vor Import-Cleanup; Cleanup entfernt die zwei Mint-Warnungen |
+| `npm run lint` | **0 errors / 137 warnings** |
 | `npm run build` | pass (Next.js 16.3.3 Turbopack) |
 | `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
 | `origin/main` | `8868f913...`, **0 behind** |
 
 ## 11. Urteil des Autors
 
-Scope-treue Runtime + komplette Mandatory Regression Matrix + lokale Gates grün. `origin/main` unverändert `8868f913...`, 0 behind.
+Die vier TL CHANGES REQUIRED auf Head `5473cd85` sind geschlossen. Scope bleibt der E5-B3C-Mint. `origin/main` unverändert `8868f913...`, 0 behind.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend auf dem **finalen** Head. PR bleibt Draft. Kein Ready, kein Merge, kein Folgeslice.
