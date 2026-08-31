@@ -19,7 +19,7 @@ Live Evidence: ursprüngliche Implementation-Session `bc-01a057e1-e45f-79d8-a828
 
 STOP und alle späteren Recovery-Anweisungen landeten in `bc-c3909ff8-66de-4b95-afeb-cff18935b4fc`. Das ist **nicht** die ursprüngliche Session und **keine** „gleiche Session“.
 
-Sie darf nur den TL-Befund aus Kommentar `5478873885` und den Provenance-Grenzfall (whitespace-only `eventRef`) tragen. Kein Generation-2-Auftrag, kein Folgeslice.
+Sie darf nur die TL-Review-Fixes dieses Slices tragen, zuletzt Kommentar `5479295585` (explizite RFC3339-Offsets ohne Weltzonen-Hülle). Kein Generation-2-Auftrag, kein Folgeslice.
 
 ## Zuerst lesen
 
