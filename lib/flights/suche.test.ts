@@ -5,16 +5,24 @@ import { ANTWORT_GEMISCHT } from '@/lib/flights/duffel/fixtures/angebote'
 import { duffelAntwortMappen } from '@/lib/flights/duffel/mapping'
 import { clientEnthaeltGeheimnis } from '@/lib/flights/client-sicht'
 import { SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
-import { FlugProviderFehler, type FlugProvider } from '@/lib/flights/provider'
+import {
+  FlugProviderFehler,
+  leereFlugAirportTimezoneEvidence,
+  type FlugAirportTimezoneEvidence,
+  type FlugProvider,
+} from '@/lib/flights/provider'
 import { flugRateLeeren } from '@/lib/flights/rate-limit'
 import { fluegeSuchen } from '@/lib/flights/suche'
 import { flugZustand } from '@/lib/flights/zustand'
 
-function providerMit(optionen = duffelAntwortMappen(ANTWORT_GEMISCHT).options): FlugProvider {
+function providerMit(
+  optionen = duffelAntwortMappen(ANTWORT_GEMISCHT).options,
+  airportTimezoneEvidence: FlugAirportTimezoneEvidence[] = leereFlugAirportTimezoneEvidence(),
+): FlugProvider {
   return {
     id: 'test',
     async suchen() {
-      return { options: optionen, partial: false }
+      return { options: optionen, partial: false, airportTimezoneEvidence }
     },
   }
 }
@@ -72,6 +80,45 @@ describe('Flugsuche-Orchestrierung', () => {
       kennung: 'test-invalid',
     })
     assert.equal(kaputt.status, 'invalid')
+  })
+
+  test('Timezone-Evidence aus dem Provider erreicht die Browser-Antwort nicht', async () => {
+    flugRateLeeren()
+    const gemappt = duffelAntwortMappen({
+      data: {
+        offers: [
+          {
+            ...ANTWORT_GEMISCHT.data.offers[0],
+            slices: [
+              {
+                ...ANTWORT_GEMISCHT.data.offers[0]!.slices[0],
+                segments: [
+                  {
+                    ...ANTWORT_GEMISCHT.data.offers[0]!.slices[0]!.segments[0],
+                    origin: { iata_code: 'ZRH', time_zone: 'Europe/Zurich' },
+                    destination: { iata_code: 'BKK', time_zone: 'Asia/Bangkok' },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    })
+    assert.ok(gemappt.airportTimezoneEvidence.length >= 2)
+    const { httpStatus, koerper } = await fluegeSuchen(SUCHANFRAGE, {
+      zustand: { aktiv: true, umgebung: 'test' },
+      provider: providerMit(gemappt.options, gemappt.airportTimezoneEvidence),
+      kennung: 'test-timezone-no-leak',
+    })
+    assert.equal(httpStatus, 200)
+    assert.equal(koerper.status, 'ok')
+    assert.ok(koerper.options.length >= 1)
+    const serialisiert = JSON.stringify(koerper)
+    assert.equal(/time[_-]?zone|Timezone|airportTimezoneEvidence|Europe\/Zurich|Asia\/Bangkok/i.test(serialisiert), false)
+    assert.equal(clientEnthaeltGeheimnis(koerper), false)
+    assert.equal(koerper.options[0]?.legs[0]?.segments[0]?.departureTime, '09:15')
+    flugRateLeeren()
   })
 
   test('eine gültige Suche liefert bewertete Optionen ohne Geheimnisse', async () => {
