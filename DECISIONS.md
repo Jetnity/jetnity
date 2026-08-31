@@ -5355,6 +5355,31 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0205 – Readiness Workspace Integration R1: Presentation-Deduplizierung ohne Truth-Mix
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/readiness-workspace-integration-r1-2026-08-31`. Kein Ready, kein Merge, kein Live-Provider, kein Folgeslice. Binding: `docs/READINESS_WORKSPACE_INTEGRATION_R1_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. Official Requirement Truth (`OfficialEvaluation[]` / E1–E4) und User Readiness Truth (`trip_readiness_items` / `ReadinessViewItem`) bleiben getrennte Domänen. Kein grober User-Status darf auf credential- oder requirement-spezifische Official Rows projiziert werden.
+2. In der primären Besucheransicht von `Reisevorbereitung` sind Official Requirements die einzige sichtbare Quelle für regulatorischen Einreise-/Visa-/Dokument-/Pflichtversicherungs-Inhalt. Parallelkarten für `entry_check`, `visa_check`, `travel_document_check` und `insurance_check` werden nicht mehr gerendert.
+3. Der Filter ist Presentation-/Workspace-spezifisch (`lib/readiness/workspace-presentation.ts`). `readinessAnsicht()`, Ableitung, Persistenz und TW-4 Attention bleiben unverändert. Persistierte Legacy-Items werden nicht gelöscht, migriert oder umgedeutet.
+4. Ticket-Bestätigung, Buchungsbestätigung und benutzerdefinierte `preparation` bleiben sichtbar und mit User-Status steuerbar. Sichtbare persönliche Counts zählen nur diese gerenderten persönlichen Tasks.
+5. `officialChecklist()` bleibt die Official-Presentation. Nur echte leere Placeholder (`result === 'unknown'`, nicht trusted/current, ohne Action/Temporal Rule/konkrete Visa-Semantik/Authority/Source/checkedAt/Rule Reference/sonstige Evidence) dürfen pro `Traveller × Credential-Option × Destination/Transit` zu `Einreiseanforderungen noch nicht prüfbar` kollabieren.
+6. Current, stale, recheck_needed und evidence-bearing Rows bleiben einzeln. Bei gemischtem Scope: konkrete Rows einzeln, nur restliche reine Placeholder kompakt.
+7. `requirementsProviderAus()` bleibt `null`. Keine Supabase-/Auth-/Provider-/Reminder-Änderung.
+
+**Kontext:** Nach E1–E4 zeigte der Workspace zwei fast gleiche Kartenwelten. Die Engine erzeugt ohne Provider bewusst eine fail-closed Placeholder-Matrix; als Übersicht wiederholte das dieselbe Nichtverfügbarkeit je Requirement-Typ. Grobe User-Karten mit `Erledigt` / `Nicht relevant` konnten ungeprüfte Official Truth irreführend überdecken.
+
+**Alternativen:** Domain-Items löschen oder umdeuten; groben User-Status auf Official Rows projizieren; `officialChecklist()` 1:1 belassen und nur CSS verstecken; Attention/readinessAnsicht global umstellen; Placeholder auch bei stale/Evidence kollabieren.
+
+**Begründung:** Presentation darf die zwei Wahrheiten nicht vermischen und darf keine konkrete Official Zeile verlieren. Ein UI-Filter plus lossless Placeholder-Kollaps ist der kleinste verantwortbare Slice.
+
+**Konsequenzen:** ADR-0203 bleibt für konkrete Official Rows verbindlich (eine sichtbare Zeile je Evaluation). R1 präzisiert nur die Darstellung reiner leerer Placeholder. Folgeslice nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

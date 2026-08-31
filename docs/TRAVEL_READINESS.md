@@ -225,9 +225,13 @@ Der Nutzer sieht u. a.:
 - nicht relevant
 - fehlende Traveller-Fakten
 - Official Requirement Status, sobald Evidence vorhanden ist
-- eine Checkliste je `OfficialEvaluation` (Traveller × Credential-Option × Destination/Transit × Requirement Type), nicht nur eine Summe pro Reisendem.
+- eine Checkliste je konkreter `OfficialEvaluation` (Traveller × Credential-Option × Destination/Transit × Requirement Type), nicht nur eine Summe pro Reisendem
+- bei komplett ungeprüftem Scope einen kompakten Block `Einreiseanforderungen noch nicht prüfbar` statt der gesamten leeren Placeholder-Matrix
+- persönliche Ticket-/Booking-/Custom-Preparation, aber keine parallelen groben Visa-/Einreise-/Dokument-/Versicherungskarten neben Official Requirements.
 
 Offizielle Einzelzeilen nutzen fail-closed Ergebnis-/Freshness-Copy, strukturierte Visa-/eTA-Labels und purpose-spezifische Action-Texte. `checkedAt` ist Jetnity-Prüfzeit, nicht „Quelle zuletzt aktualisiert“. Status wird nicht nur über Farbe vermittelt. Relative Zeitfenster (`Ab 72 Std. vor Ankunft möglich`, Pflichtfrist vs. Empfehlung) erscheinen nur aus einer normalisierten `temporalRule`, niemals als konkretes Kalenderdatum.
+
+Sichtbare persönliche Counts zählen nur die gerenderten persönlichen Tasks. Persistierte Legacy-`entry_check`/`visa_check`/`travel_document_check`/`insurance_check` bleiben Domain-/Persistenzwahrheit und werden nicht gelöscht oder auf Official Rows projiziert.
 
 ---
 
