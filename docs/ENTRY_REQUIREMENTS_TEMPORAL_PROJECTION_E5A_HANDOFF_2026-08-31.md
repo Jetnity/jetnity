@@ -41,7 +41,7 @@ Harte Wahrheiten:
 1. Einzige Temporal-Domain bleibt E4 in `lib/readiness/temporal.ts`. E5-A projiziert nur.
 2. Input ist `OfficialTemporalRule` plus explizite Bindings `Anchor → { eventRef, instant }`.
 3. Der Core sucht keinen Trip, Stage, Segment, Airport oder Country und wählt keinen first match.
-4. Absolute Truth nur mit `Z` oder numerischem Offset. `2026-09-12T18:00` und Date-only sind `invalid_instant`.
+4. Absolute Truth nur mit `Z` oder numerischem RFC3339-Offset (`HH 00..23`, `MM 00..59`). Keine UTC−12/+14-Weltzonen-Hülle. `2026-09-12T18:00` und Date-only sind `invalid_instant`.
 5. Fehlender benötigter Anchor ist `missing_anchor` und fällt nicht auf ein anderes Binding zurück.
 6. Unterschiedliche Anchors werden erst nach beiden projizierten Instants verglichen. `availableFrom > dueBy` → `actionWindow: null` / `invalid_projected_window`.
 7. `eventRef` bleibt bis zur Projektion erhalten. Gleiche Eingabe ist value-stabil. Whitespace-only ist keine stabile Identität und wird `missing_anchor`.
@@ -52,7 +52,7 @@ Harte Wahrheiten:
 
 ## Review-Fix dieser Recovery-Session
 
-Geprüfter TL-Head: `ae091777e5aec0d5a0b6baf8b28a5ce1234c967d`.
+Geprüfter TL-Head für diesen Offset-Fix: `2471b48f3585df48f175e667addfa2b153f20556` (Kommentar `5479295585`).
 
 Befund: `LEERE_PROJEKTION` war ein modulweites mutable Singleton. Ein Aufrufer konnte `issues.push(...)` oder Felder mutieren und spätere unabhängige Aufrufe kontaminieren. Das verletzt **pure domain** und **gleiche Eingabe → value-stabile Ausgabe**.
 
@@ -71,7 +71,16 @@ Fix (Commit `fbf631c3cf86b26b069ac028dd2aef303162f6c2`):
 - keine neue Taxonomie, kein Trim/Rewrite gültiger Identitäten
 - Regressionstest für `'   '`, Tab, Newline
 
-Nicht angefasst: Resolver, Timezone, Provider, Factory, UI, Tasks, Notifications, Supabase, E5-B, `ACTIVE_WORK_STATUS.md`.
+Offset-Hüllen-Befund: `offsetMinutenAus()` verwarf explizite RFC3339-Offsets ausserhalb UTC−12/+14, z. B. `-12:01`.
+
+Fix (Commit `205670cb5417e097f9b0b819418c2f20a4fbb93d`):
+
+- Weltzonen-Hülle entfernt
+- nur `HH 00..23` / `MM 00..59`
+- `-12:01` projiziert nach `2026-10-11T00:01:00.000Z`
+- `+25:00` und `:60` bleiben ungültig
+
+Nicht angefasst: Resolver, Timezone-Library, Provider, Factory, UI, Tasks, Notifications, Supabase, E5-B, `ACTIVE_WORK_STATUS.md`.
 
 `origin/main` vor Handoff erneut gelesen: weiterhin `1600767be5ec87961e1d5b5e10c4bcc2f6eb51aa`. Branch 0 behind.
 
@@ -102,7 +111,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 ## Residuals
 
 - Kein Resolver. Ein späterer Slice muss Events binden, nicht dieser Core.
-- Lokale Gates nach Provenance-Fix: `npm test` 2946/2946, Typecheck, Lint 0/137, Production-Build, Hygiene. Gates auf `85aef5e2...` sind historisch. CI/Vercel müssen live am Exact Head geprüft werden.
+- Lokale Gates nach Offset-Hüllen-Fix: `npm test` 2947/2947, Typecheck, Lint 0/137, Production-Build, Hygiene. Gates auf `2471b48f...` sind historisch. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Abnahmebeweis, weil keine UI.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.
 
