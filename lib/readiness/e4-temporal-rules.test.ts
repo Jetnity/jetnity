@@ -564,14 +564,14 @@ describe('Entry Requirements E4 – Temporal-Rule-Contract', () => {
     const ohneRegel = finden(
       await auswerten([
         zeile({
-          validFrom: '2026-09-09',
-          validUntil: '2026-09-12T10:00:00.000Z',
+          validFrom: '2026-08-01',
+          validUntil: '2026-12-31T10:00:00.000Z',
           sourceUrl: 'https://example.test/apply-72h-before-arrival',
         }),
       ]),
     )
     assert.equal(ohneRegel?.result, 'required')
-    assert.equal(ohneRegel?.evidence.validFrom, '2026-09-09')
+    assert.equal(ohneRegel?.evidence.validFrom, '2026-08-01')
     assert.equal(ohneRegel?.temporalRule, null)
     assert.deepEqual(timingTexteVon(ohneRegel), [])
 
