@@ -5405,6 +5405,32 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0207 – Entry Requirements E5-B1: trusted airport timezone provenance
+
+**Datum:** 31. August 2026  
+**Status:** Implementiert im Feature-Branch `feat/entry-requirements-trusted-timezone-e5b1-2026-08-31`. Kein Ready, kein Merge, keine Zeitzonenumrechnung, kein E5-B2. Binding: `docs/ENTRY_REQUIREMENTS_TRUSTED_AIRPORT_TIMEZONE_E5B1_TASK_2026-08-31.md`.
+
+**Entscheidung:**
+
+1. Timezone-Truth darf nur aus einer expliziten, validierten, serverseitig belegten Flight-Provider-Response für genau den Segment-Endpunkt stammen.
+2. Der provider-neutrale `FlugSegment`-Contract trägt optionale `departureTimezone` / `arrivalTimezone`. Lokale `departureDate` / `departureTime` / `arrivalDate` / `arrivalTime` bleiben lokale Wall-Clock-Werte.
+3. Am Duffel-Adapter darf nur das strukturierte Airport-Objekt ein `time_zone` liefern. String-/IATA-only Origin/Destination, fehlendes oder syntaktisch ungültiges `time_zone` bleibt `null`. Kein IATA-/Country-/City-/Name-Fallback, kein Offset aus `departing_at`/`arriving_at`.
+4. IANA-Validierung ist nur bounded Syntax (`Area/Location` bzw. drei Komponenten, max. 64 Zeichen). Keine Timezone-Library, kein DST, kein Instant.
+5. Server-proven Account-Flow (`FlugOption` → Snapshot → `itineraryAusFlugOption` → `metadataAusItinerary`) darf gültige Timezone lossless im TypeScript-Metadata-Vertrag tragen. `itineraryAusMetadata` liest Timezone wieder, adelt aber keine `surfaceFromAirportCode`.
+6. Untrusted Browser-/Local-Storage-/Guest-Itinerary-Parsing und Guest→Account-Kanonisierung strippen Timezone und erfinden keine Zone aus Airport-Refs.
+7. Bestehende timezone-lose `flight_route_itinerary`-v1 bleibt lesbar. Kein Versionsbump, keine Migration.
+8. Die Live-SQL-Kanonisierung `flug_route_itinerary_metadata` bleibt unverändert und baut Segmente weiterhin ohne Timezone neu. Eine Trigger-Erhaltung wäre eine eigene PO-gegatete Migration und liegt ausserhalb E5-B1.
+
+**Kontext:** E5-A kann nur bereits absolute Instants projizieren. Flight-/Route-Truth trug bisher keine belastbare IANA-Provenance, obwohl Duffel `time_zone` am Airport-Objekt bereits liefert.
+
+**Alternativen:** IATA→Timezone-Tabelle; Offset aus `departing_at` ableiten; Timezone-Library/DST-Resolver sofort; SQL-Trigger in demselben Slice ändern; Itinerary-v2-Bump.
+
+**Begründung:** Zuerst die explizit belegte Provenance verlustfrei durch die bestehende Domain tragen. Umrechnung, Resolver und DB-Trigger sind eigene Wahrheitsentscheidungen.
+
+**Konsequenzen:** Keine Local-Time+IANA→UTC-Konvertierung, kein Event-Resolver, kein E5-A-Auto-Bind, keine Airport-DB-Timezone-Spalte, `requirementsProviderAus()` bleibt `null`. Live-INSERT über den bestehenden Trigger speichert Timezone noch nicht. Folgeslice nur nach unabhängigem Technical-Lead-PASS und neuem versionierten Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

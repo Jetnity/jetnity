@@ -37,6 +37,10 @@ export type RouteSegment = {
   arrivalTime: string | null
   /** Explizite Surface-Evidence: IATA, von dem dieser Segment-Origin per Ground-Transfer kommt. */
   surfaceFromAirportCode?: string | null
+  /** Trusted IANA-Provenance des Abflug-Endpunkts. Untrusted Intake lässt das Feld weg. */
+  departureTimezone?: string | null
+  /** Trusted IANA-Provenance des Ankunfts-Endpunkts. Untrusted Intake lässt das Feld weg. */
+  arrivalTimezone?: string | null
 }
 
 export type RouteVerbindung = {

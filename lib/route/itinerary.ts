@@ -2,16 +2,18 @@
 //
 // FlugOption → persistierbare Route-Itinerary, plus Kanonisierung vorhandener Itineraries.
 // Länder nur aus der übergebenen Flughafenreferenz, nie aus Segment- oder Clienttext.
-// Untrusted Intake (FlugOption, Browser, Local Storage) erzeugt und erhält
-// keine Surface-Evidence. Segmentlücken bleiben unknown.
+// Untrusted Intake (Browser, Local Storage) erzeugt und erhält keine
+// Surface-Evidence und keine Timezone. Eine validierte FlugOption darf
+// explizite Provider-Timezone tragen; Kanonisierung aus Airport-Refs nicht.
 //
 // Frei von Next und Providern.
 
 import type { FlugOption } from '@/lib/flights/domain'
 import { flugOptionLesen } from '@/lib/flights/schema'
+import { ianaZeitzoneLesen } from '@/lib/flights/zeitzone'
 import type { FlughafenReferenzKarte, FlugRouteItinerary, RouteSegment } from '@/lib/route/domain'
 import { flughafenPunkt } from '@/lib/route/referenz'
-import { flugRouteItineraryLesen } from '@/lib/route/schema'
+import { flugRouteItineraryLesen, flugRouteItineraryTrustedTimezoneLesen } from '@/lib/route/schema'
 
 export function itineraryAusFlugOption(
   wert: unknown,
@@ -28,7 +30,7 @@ export function itineraryAusFlugOption(
     }))
     .filter((bein) => bein.segments.length > 0)
 
-  return flugRouteItineraryLesen({
+  return flugRouteItineraryTrustedTimezoneLesen({
     v: 1,
     type: 'flight_route_itinerary',
     legs,
@@ -41,7 +43,8 @@ export function segmenteAusItinerary(itinerary: FlugRouteItinerary): RouteSegmen
 
 /**
  * Baut eine Itinerary aus IATA + serverseitiger Referenz neu.
- * Clientwerte für Land, Stadt, Ländername und Surface-Evidence werden verworfen.
+ * Clientwerte für Land, Stadt, Ländername, Surface-Evidence und Timezone
+ * werden verworfen. Airport-Refs begründen keine Timezone.
  */
 export function itineraryKanonisieren(
   itinerary: FlugRouteItinerary,
@@ -76,6 +79,8 @@ function segmentAusOption(
   const origin = flughafenPunkt(segment.origin, refs)
   const destination = flughafenPunkt(segment.destination, refs)
   if (!origin.airportCode || !destination.airportCode) return null
+  const departureTimezone = ianaZeitzoneLesen(segment.departureTimezone ?? null)
+  const arrivalTimezone = ianaZeitzoneLesen(segment.arrivalTimezone ?? null)
   return {
     origin,
     destination,
@@ -83,5 +88,7 @@ function segmentAusOption(
     departureTime: segment.departureTime,
     arrivalDate: segment.arrivalDate,
     arrivalTime: segment.arrivalTime,
+    ...(departureTimezone ? { departureTimezone } : {}),
+    ...(arrivalTimezone ? { arrivalTimezone } : {}),
   }
 }

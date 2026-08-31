@@ -1,6 +1,8 @@
 // lib/flights/duffel/mapping.ts
 //
 // Duffel-Angebot → interne FlugOption. Zeiten bleiben lokale Zeichenketten.
+// Eine Timezone entsteht nur aus explizitem Airport-`time_zone`, nie aus
+// IATA, Offset in `departing_at`/`arriving_at` oder einem Default.
 //
 // Frei von Next und `fetch`.
 
@@ -14,9 +16,11 @@ import {
 import {
   duffelAngebotSchema,
   duffelIataAus,
+  duffelZeitzoneRohAus,
   type DuffelAngebot,
 } from '@/lib/flights/duffel/antwort'
 import { betragAusText, dauerAusIso, ortszeitAus } from '@/lib/flights/zeit'
+import { ianaZeitzoneLesen } from '@/lib/flights/zeitzone'
 
 const KABINE_VON_DUFFEL: Record<string, FlugKabine> = {
   economy: 'economy',
@@ -49,6 +53,8 @@ function segmentMappen(
     departureTime: abflug.time,
     arrivalDate: ankunft.date,
     arrivalTime: ankunft.time,
+    departureTimezone: ianaZeitzoneLesen(duffelZeitzoneRohAus(roh.origin)),
+    arrivalTimezone: ianaZeitzoneLesen(duffelZeitzoneRohAus(roh.destination)),
     airline,
     airlineName: airlineName(airline, roh.marketing_carrier.name),
     operatingAirline: operating,

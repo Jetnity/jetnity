@@ -23,6 +23,8 @@ describe('Duffel → FlugOption', () => {
     assert.equal(option?.priceCurrency, 'CHF')
     assert.equal(option?.legs[0]?.segments[0]?.departureTime, '09:15')
     assert.equal(option?.legs[0]?.segments[0]?.arrivalTime, '23:45')
+    assert.equal(option?.legs[0]?.segments[0]?.departureTimezone, null)
+    assert.equal(option?.legs[0]?.segments[0]?.arrivalTimezone, null)
     assert.equal(option?.baggage?.checkedBags, 1)
     assert.equal(option?.refundable, false)
     assert.equal(option?.provider, 'duffel')

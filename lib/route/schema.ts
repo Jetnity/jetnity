@@ -2,18 +2,19 @@
 //
 // Laufzeitprüfung der Route-Itinerary-Momentaufnahme.
 //
-// Die Aufnahme kann aus dem Browser, dem Local Storage oder metadata kommen.
-// Nur strukturell gültige IATA-/Zeit-/Ländercodes dürfen Route Truth werden.
-// `surfaceFromAirportCode` ist kein untrusted Intake-Feld: Clientbehauptungen
-// werden verworfen. Die Trusted-Lesefunktion darf das Feld nur an bereits
-// typisierten oder serverseitig belegten Objekten lesen. Ohne solche Quelle
-// bleibt die Lücke unknown.
+// Untrusted Intake (Browser, Local Storage, Guest) darf weder
+// `surfaceFromAirportCode` noch Timezone-Felder als Hard Truth setzen.
+// Serverseitig belegte persistierte Metadata darf explizite IANA-Timezone
+// wiederlesen, aber weiterhin keine Surface-Evidence adeln.
+// Die Trusted-Lesefunktion darf Surface und Timezone nur an bereits
+// typisierten oder serverseitig belegten Objekten lesen.
 //
 // Frei von Next, Supabase und `process.env`.
 
 import { z } from 'zod'
 
-import type { FlugRouteItinerary, RoutePunkt, RouteSegment } from '@/lib/route/domain'
+import { ianaZeitzoneLesen } from '@/lib/flights/zeitzone'
+import type { FlugRouteItinerary } from '@/lib/route/domain'
 
 const iata = z
   .string()
@@ -64,14 +65,30 @@ const segmentFelder = {
   arrivalTime: uhrzeit.nullable().default(null),
 }
 
+const zeitzoneOptional = z.unknown().optional().transform((wert) => {
+  if (wert === undefined) return undefined
+  return ianaZeitzoneLesen(wert) ?? undefined
+})
+
+const zeitzoneFelder = {
+  departureTimezone: zeitzoneOptional,
+  arrivalTimezone: zeitzoneOptional,
+}
+
 const segmentSchema = z.object(segmentFelder)
+
+const timezoneSegmentSchema = z.object({
+  ...segmentFelder,
+  ...zeitzoneFelder,
+})
 
 const trustedSegmentSchema = z.object({
   ...segmentFelder,
   surfaceFromAirportCode: iata.nullable().optional(),
+  ...zeitzoneFelder,
 })
 
-function itinerarySchema(segment: typeof segmentSchema | typeof trustedSegmentSchema) {
+function itinerarySchema(segment: z.ZodTypeAny) {
   return z.object({
     v: z.literal(1),
     type: z.literal('flight_route_itinerary'),
@@ -90,6 +107,7 @@ export const flugRouteItinerarySchema = itinerarySchema(segmentSchema).transform
   (wert): FlugRouteItinerary => wert,
 )
 const flugRouteItineraryTrustedSchema = itinerarySchema(trustedSegmentSchema)
+const flugRouteItineraryTrustedTimezoneSchema = itinerarySchema(timezoneSegmentSchema)
 
 export function flugRouteItineraryLesen(wert: unknown): FlugRouteItinerary | null {
   const ergebnis = flugRouteItinerarySchema.safeParse(wert)
@@ -99,5 +117,14 @@ export function flugRouteItineraryLesen(wert: unknown): FlugRouteItinerary | nul
 /** Nur für bereits typisierte oder serverseitig belegte Itineraries. */
 export function flugRouteItineraryTrustedLesen(wert: unknown): FlugRouteItinerary | null {
   const ergebnis = flugRouteItineraryTrustedSchema.safeParse(wert)
+  return ergebnis.success ? ergebnis.data : null
+}
+
+/**
+ * Server-proven persistierte Metadata: Timezone ja, Surface-Evidence nein.
+ * Untrusted Intake muss `flugRouteItineraryLesen` verwenden.
+ */
+export function flugRouteItineraryTrustedTimezoneLesen(wert: unknown): FlugRouteItinerary | null {
+  const ergebnis = flugRouteItineraryTrustedTimezoneSchema.safeParse(wert)
   return ergebnis.success ? ergebnis.data : null
 }
