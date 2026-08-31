@@ -51,7 +51,35 @@ function anfrageKoerper(anfrage: FlugSuchanfrage): Record<string, unknown> {
   return { data }
 }
 
-export function duffelAdapter(token: string, http: SucheHttp = fetchAlsHttp): FlugProvider {
+const RETRIEVED_AT_MUSTER = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+
+/**
+ * Kleiner Clock-Port nur für deterministische Adapter-Tests.
+ * Production nutzt echte Serverzeit über den Default `() => new Date()`.
+ */
+export type DuffelAdapterUhr = () => Date
+
+function retrievedAtAusUhr(uhr: DuffelAdapterUhr): string {
+  const datum = uhr()
+  if (!(datum instanceof Date)) {
+    throw new FlugProviderFehler('error', 'Die Flugsuche ist fehlgeschlagen.')
+  }
+  const ms = datum.getTime()
+  if (!Number.isFinite(ms)) {
+    throw new FlugProviderFehler('error', 'Die Flugsuche ist fehlgeschlagen.')
+  }
+  const iso = datum.toISOString()
+  if (!RETRIEVED_AT_MUSTER.test(iso)) {
+    throw new FlugProviderFehler('error', 'Die Flugsuche ist fehlgeschlagen.')
+  }
+  return iso
+}
+
+export function duffelAdapter(
+  token: string,
+  http: SucheHttp = fetchAlsHttp,
+  uhr: DuffelAdapterUhr = () => new Date(),
+): FlugProvider {
   return {
     id: FLUG_PROVIDER_DUFFEL,
     async suchen(anfrage: FlugSuchanfrage): Promise<FlugProviderTreffer> {
@@ -96,6 +124,9 @@ export function duffelAdapter(token: string, http: SucheHttp = fetchAlsHttp): Fl
         throw new FlugProviderFehler('invalid', 'Der Fluganbieter hat keine lesbare Antwort geliefert.')
       }
 
+      // Observation-Zeit des erfolgreich gelesenen Snapshots. Nicht aus dem Payload.
+      const retrievedAt = retrievedAtAusUhr(uhr)
+
       const gemappt = duffelAntwortMappen(roh)
       if (gemappt.invalid) {
         throw new FlugProviderFehler('invalid', 'Die Flugdaten waren unbrauchbar.')
@@ -109,6 +140,7 @@ export function duffelAdapter(token: string, http: SucheHttp = fetchAlsHttp): Fl
       return {
         options,
         partial: gemappt.partial,
+        retrievedAt,
         airportTimezoneEvidence,
         airportEventInstantEvidence: aufgeloest.airportEventInstantEvidence,
         airportEventInstantIssues: aufgeloest.airportEventInstantIssues,

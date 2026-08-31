@@ -85,6 +85,13 @@ export type FlugProviderTreffer = {
   options: FlugOption[]
   /** true, wenn gültige Optionen da sind, einzelne Angebote aber verworfen wurden. */
   partial: boolean
+  /**
+   * Jetnity-Serverzeit, zu der die erfolgreiche Provider-Antwort als Snapshot
+   * beobachtet/gelesen wurde. Kanonisches UTC-ISO-8601 mit `Z`.
+   * Keine Provider-Behauptung, keine Freshness- oder Gültigkeitsgarantie.
+   * Kein Feld von FlugOption oder FlugSegment.
+   */
+  retrievedAt: string
   /** Immer gesetzt. Leer, wenn der Provider keine akzeptable Zone geliefert hat. */
   airportTimezoneEvidence: FlugAirportTimezoneEvidence[]
   /** Immer gesetzt. Leer, wenn kein Endpunkt eindeutig auf einen Instant fällt. */

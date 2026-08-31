@@ -1,5 +1,6 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
 import { ANTWORT_GEMISCHT } from '@/lib/flights/duffel/fixtures/angebote'
 import { duffelAntwortMappen } from '@/lib/flights/duffel/mapping'
@@ -19,11 +20,14 @@ import { flugRateLeeren } from '@/lib/flights/rate-limit'
 import { fluegeSuchen } from '@/lib/flights/suche'
 import { flugZustand } from '@/lib/flights/zustand'
 
+const TEST_RETRIEVED_AT = '2026-08-31T12:00:00.000Z'
+
 function providerMit(
   optionen = duffelAntwortMappen(ANTWORT_GEMISCHT).options,
   airportTimezoneEvidence: FlugAirportTimezoneEvidence[] = leereFlugAirportTimezoneEvidence(),
   airportEventInstantEvidence: FlugAirportEventInstantEvidence[] = leereFlugAirportEventInstantEvidence(),
   airportEventInstantIssues: FlugAirportEventInstantIssue[] = leereFlugAirportEventInstantIssues(),
+  retrievedAt: string = TEST_RETRIEVED_AT,
 ): FlugProvider {
   return {
     id: 'test',
@@ -31,6 +35,7 @@ function providerMit(
       return {
         options: optionen,
         partial: false,
+        retrievedAt,
         airportTimezoneEvidence,
         airportEventInstantEvidence,
         airportEventInstantIssues,
@@ -143,8 +148,41 @@ describe('Flugsuche-Orchestrierung', () => {
       ),
       false,
     )
+    assert.equal(/retrievedAt|retrieved_at|observedAt|observed_at/.test(serialisiert), false)
+    assert.equal(serialisiert.includes(TEST_RETRIEVED_AT), false)
     assert.equal(clientEnthaeltGeheimnis(koerper), false)
     assert.equal(koerper.options[0]?.legs[0]?.segments[0]?.departureTime, '09:15')
+    flugRateLeeren()
+  })
+
+  test('serialisierte FlugSucheAntwort enthält keinen Retrieval- oder Observation-Timestamp', async () => {
+    flugRateLeeren()
+    const { httpStatus, koerper } = await fluegeSuchen(SUCHANFRAGE, {
+      zustand: { aktiv: true, umgebung: 'test' },
+      provider: providerMit(
+        duffelAntwortMappen(ANTWORT_GEMISCHT).options,
+        leereFlugAirportTimezoneEvidence(),
+        leereFlugAirportEventInstantEvidence(),
+        leereFlugAirportEventInstantIssues(),
+        TEST_RETRIEVED_AT,
+      ),
+      kennung: 'test-retrieved-at-no-leak',
+    })
+    assert.equal(httpStatus, 200)
+    assert.equal(koerper.status, 'ok')
+    assert.ok(koerper.options.length >= 1)
+    const serialisiert = JSON.stringify(koerper)
+    assert.equal(serialisiert.includes('retrievedAt'), false)
+    assert.equal(serialisiert.includes('retrieved_at'), false)
+    assert.equal(serialisiert.includes('observedAt'), false)
+    assert.equal(serialisiert.includes('observed_at'), false)
+    assert.equal(serialisiert.includes(TEST_RETRIEVED_AT), false)
+    assert.equal('retrievedAt' in koerper, false)
+    assert.equal(
+      koerper.options.every((option) => !('retrievedAt' in option) && !('observedAt' in option)),
+      true,
+    )
+    assert.equal(clientEnthaeltGeheimnis(koerper), false)
     flugRateLeeren()
   })
 
@@ -180,5 +218,13 @@ describe('Flugsuche-Orchestrierung', () => {
     assert.equal(begrenzt.koerper.status, 'rate_limited')
     assert.ok((begrenzt.retryAfterSec ?? 0) >= 1)
     flugRateLeeren()
+  })
+
+  test('Ranking und Client-Sicht erhalten nur Optionen, nicht retrievedAt', () => {
+    const suche = readFileSync('lib/flights/suche.ts', 'utf8')
+    assert.match(suche, /optionenBewerten\(treffer\.options, geprueft\.data\)/)
+    assert.doesNotMatch(suche, /optionenBewerten\(treffer[,)]/)
+    assert.doesNotMatch(suche, /sucheFuerClient\([\s\S]*retrievedAt/)
+    assert.match(suche, /Nur options\/partial werden weiterverwendet/)
   })
 })
