@@ -51,7 +51,7 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Lokale gezielte Tests dieses Agenten: E2 19/19, E1 und Bezeichnungen grün. Voller `npm test` / Typecheck / Lint / Build / Hygiene folgen am Delivery-Head.
+- Lokale Gates dieses Agenten: `npm test` 2877/2877, Typecheck, Lint 0/137, Production-Build, Hygiene. CI/Vercel müssen live am Exact Head geprüft werden.
 - Kein Browser-/Real-Device-Beweis; Slice ist domainseitig.
 - `information` aus `sourceUrl` ist bewusst kompatibel, nicht „Beantragen“.
 - Folgeslice nur nach TL-PASS und neuem versionierten Auftrag.

@@ -76,12 +76,12 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 | `lib/readiness/e2-official-actions.test.ts` | **19/19 pass** |
 | `lib/readiness/e1-detail-contract.test.ts` | pass (E1 result↔visaMode unverändert) |
 | `lib/readiness/bezeichnungen.test.ts` | pass |
-| `lib/readiness/engine.test.ts` | ausstehend im vollen Gate-Lauf |
-| `npm test` | ausstehend im vollen Gate-Lauf |
-| `npm run typecheck` | ausstehend |
-| `npm run lint` | ausstehend |
-| `npm run build` | ausstehend |
-| Hygiene-Checks | ausstehend |
+| `lib/readiness/engine.test.ts` | pass (source-only Action ist jetzt `information`) |
+| `npm test` | **2877/2877 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | **0 errors / 137 warnings** (bestehende Warnungen, keine neuen Errors) |
+| `npm run build` | pass (Next.js 16.3.3 Turbopack) |
+| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
 | GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip prüfen |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet (kein UI-Slice) |
 

@@ -93,7 +93,7 @@ function zeile(teil: {
     requirementType: teil.requirementType ?? ('visa' as const),
     result: teil.result ?? ('required' as const),
     officialClass: 'requirement' as const,
-    visaMode: teil.visaMode,
+    visaMode: teil.visaMode as string | null | undefined,
     authority: teil.authority === undefined ? 'Test' : teil.authority,
     sourceUrl: teil.sourceUrl === undefined ? 'https://example.test/entry' : teil.sourceUrl,
     actionUrl: teil.actionUrl,
