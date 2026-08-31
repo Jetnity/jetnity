@@ -32,7 +32,6 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
     },
     action: null,
     ...teil,
-    requirementType,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
 }
@@ -89,6 +88,7 @@ describe('Official-Copy folgt Status und Freshness', () => {
         status: 'current',
         freshness: 'current',
         officialClass: 'requirement',
+        visaMode: 'unknown',
         missingFacts: [],
         evidence: {
           provider: 'test',

@@ -36,7 +36,6 @@ function ev(
     credentialOptionRef: `${teil.travellerClientRef ?? 'traveller:1'}:none`,
     action: null,
     ...teil,
-    requirementType,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
     evidence: {
       provider: 'test',

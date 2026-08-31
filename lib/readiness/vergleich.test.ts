@@ -31,7 +31,6 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
     },
     action: null,
     ...teil,
-    requirementType,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
 }

@@ -230,7 +230,6 @@ function officialSauberFuer(
     },
     action: null,
     ...teil,
-    requirementType,
     visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
 }
