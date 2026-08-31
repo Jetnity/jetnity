@@ -14,7 +14,8 @@ Read-only remote-branch inventory for Issue #266. Produce a restore-capable mani
 - Branch: `audit/github-hygiene-phase1-2026-08-31`
 - PR: #301 Draft
 - Assigned start head: `9cc05da98064e551837088dc4d7c4a379110411c`
-- Delivery head: set to the commit that adds the Phase 1 docs (see git / PR after push)
+- Inventory commit: `c5c3ea87334914a3260178ce9f0c9dcd8ef02d67`
+- Exact Head: latest commit on this branch after the handoff stamp; read live from PR #301
 - Baseline `main`: `7f057e6ee8caddf87a3b5365731eaf43d037a114`
 
 ## 3. Agent
