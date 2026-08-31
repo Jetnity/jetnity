@@ -9,14 +9,15 @@ import {
   officialPruefungAusLage,
   officialTravellerErgebnisText,
 } from '@/lib/readiness/bezeichnungen'
-import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { visaModeLesen, type OfficialEvaluation } from '@/lib/readiness/official'
 
 function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation, 'result' | 'status' | 'freshness'>): OfficialEvaluation {
+  const requirementType = teil.requirementType ?? 'visa'
   return {
     travellerClientRef: 'traveller:1',
     destinationCountryCode: 'TH',
     transitCountryCode: null,
-    requirementType: 'visa',
+    requirementType,
     officialClass: 'requirement',
     missingFacts: [],
     evidence: {
@@ -31,6 +32,7 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
     },
     action: null,
     ...teil,
+    visaMode: visaModeLesen(requirementType, teil.visaMode),
   }
 }
 
@@ -86,6 +88,7 @@ describe('Official-Copy folgt Status und Freshness', () => {
         status: 'current',
         freshness: 'current',
         officialClass: 'requirement',
+        visaMode: 'unknown',
         missingFacts: [],
         evidence: {
           provider: 'test',

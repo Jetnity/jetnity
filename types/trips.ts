@@ -138,6 +138,11 @@ export type TravellerDocumentType = (typeof TRAVELLER_DOCUMENT_TYPES)[number]
 /**
  * Offizielle Anforderungsarten. Nur eine Requirements-Engine / ein Provider
  * darf `required` oder `not_required` setzen – nie der Browser und nie ein Modell.
+ *
+ * `blank_passport_pages` und `financial_means` sind First-Class-Typen, nicht
+ * `other_entry_requirement`. eTA bleibt `electronic_travel_authorization` und
+ * wird nicht als Visa-Modus umetikettiert. Visa-Ausprägungen leben als
+ * strukturierter `visaMode` am Typ `visa`, nicht als eigene Requirement-Typen.
  */
 export const OFFICIAL_REQUIREMENT_TYPES = [
   'visa',
@@ -145,6 +150,7 @@ export const OFFICIAL_REQUIREMENT_TYPES = [
   'passport',
   'identity_document',
   'passport_validity',
+  'blank_passport_pages',
   'transit',
   'health',
   'vaccination',
@@ -153,6 +159,7 @@ export const OFFICIAL_REQUIREMENT_TYPES = [
   'insurance',
   'onward_or_return_ticket',
   'booking_or_travel_document',
+  'financial_means',
   'other_entry_requirement',
 ] as const
 export type OfficialRequirementType = (typeof OFFICIAL_REQUIREMENT_TYPES)[number]

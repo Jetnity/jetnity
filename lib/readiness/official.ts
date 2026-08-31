@@ -36,6 +36,19 @@ export type OfficialFreshness = (typeof OFFICIAL_FRESHNESS)[number]
 const OFFICIAL_CLASSES = ['requirement', 'recommendation', 'advisory', 'unknown'] as const
 export type OfficialClass = (typeof OFFICIAL_CLASSES)[number]
 
+/**
+ * Strukturierte Visa-Subtype-Semantik. Nur am Requirement-Typ `visa`.
+ * eTA bleibt `electronic_travel_authorization` und ist kein Visa-Modus.
+ */
+export const OFFICIAL_VISA_MODES = [
+  'visa_exempt',
+  'visa_on_arrival',
+  'electronic_visa',
+  'visa_before_travel',
+  'unknown',
+] as const
+export type OfficialVisaMode = (typeof OFFICIAL_VISA_MODES)[number]
+
 const MISSING_FACTS = [
   'nationality',
   'residence',
@@ -75,6 +88,11 @@ export type OfficialEvaluation = {
   status: OfficialStatus
   freshness: OfficialFreshness
   officialClass: OfficialClass
+  /**
+   * Nur Product Truth bei `requirementType === 'visa'`.
+   * Sonst immer `null`, auch wenn ein Provider einen Wert geliefert hat.
+   */
+  visaMode: OfficialVisaMode | null
   optionEligibility?: 'allowed' | 'not_allowed' | 'unknown' | null
   optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown' | null
   missingFacts: MissingFact[]
@@ -85,6 +103,72 @@ export type OfficialEvaluation = {
 export function optionEligibilityLesen(wert: unknown): 'allowed' | 'not_allowed' | 'unknown' {
   if (wert === 'allowed' || wert === 'not_allowed' || wert === 'unknown') return wert
   return 'unknown'
+}
+
+/**
+ * Visa-Modus ist nur am Typ `visa` fachliche Wahrheit.
+ * Ungültige oder fehlende Visa-Werte werden `unknown`.
+ * Jeder andere Requirement-Typ, einschließlich eTA, normalisiert auf `null`.
+ */
+export function visaModeLesen(
+  requirementType: OfficialRequirementType | unknown,
+  wert: unknown,
+): OfficialVisaMode | null {
+  if (requirementType !== 'visa') return null
+  if (typeof wert === 'string' && (OFFICIAL_VISA_MODES as readonly string[]).includes(wert)) {
+    return wert as OfficialVisaMode
+  }
+  return 'unknown'
+}
+
+const VISA_PFLICHT_MODI = ['visa_on_arrival', 'electronic_visa', 'visa_before_travel'] as const
+
+/**
+ * Provider-neutrale `result ↔ visaMode`-Konsistenz.
+ * Nur am Typ `visa`. `conditional` und `unknown` erzeugen keine erfundene
+ * Gewissheit und gelten nicht als Widerspruch.
+ * Widerspruch: `required + visa_exempt` sowie
+ * `not_required + visa_on_arrival|electronic_visa|visa_before_travel`.
+ */
+export function visaResultUndModusWidersprechen(
+  requirementType: OfficialRequirementType | unknown,
+  result: unknown,
+  visaMode: unknown,
+): boolean {
+  if (requirementType !== 'visa') return false
+  const modus = visaModeLesen('visa', visaMode)
+  if (result === 'required' && modus === 'visa_exempt') return true
+  if (result === 'not_required' && (VISA_PFLICHT_MODI as readonly string[]).includes(modus ?? '')) {
+    return true
+  }
+  return false
+}
+
+/**
+ * Bei Widerspruch gewinnt keine Seite. Die Evaluation bleibt nicht `current`.
+ * Freshness `stale` / source-unavailable / provider-unavailable bleibt erhalten.
+ */
+export function officialVisaWiderspruchDegradieren(evaluation: OfficialEvaluation): OfficialEvaluation {
+  if (!visaResultUndModusWidersprechen(evaluation.requirementType, evaluation.result, evaluation.visaMode)) {
+    return evaluation
+  }
+  const freshness =
+    evaluation.freshness === 'stale' ||
+    evaluation.freshness === 'source_temporarily_unavailable' ||
+    evaluation.freshness === 'provider_unavailable'
+      ? evaluation.freshness
+      : 'recheck_needed'
+  return {
+    ...evaluation,
+    result: 'unknown',
+    visaMode: visaModeLesen(evaluation.requirementType, null),
+    status: 'unknown',
+    freshness,
+    officialClass: 'unknown',
+    optionEligibility: undefined,
+    optionMandate: undefined,
+    action: null,
+  }
 }
 
 export function optionMandateLesen(wert: unknown): 'mandatory' | 'not_mandatory' | 'unknown' {
@@ -229,6 +313,7 @@ export function officialLeer(teil: {
     status: teil.status ?? 'unavailable',
     freshness: teil.freshness ?? 'provider_unavailable',
     officialClass: 'unknown',
+    visaMode: visaModeLesen(teil.requirementType, null),
     missingFacts: teil.missingFacts ?? [],
     evidence: {
       provider: null,

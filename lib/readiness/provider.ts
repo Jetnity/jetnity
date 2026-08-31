@@ -6,7 +6,7 @@
 // Kein Timatic-Fake, keine Visa-Matrix, kein Modell als Quelle.
 
 import type { OfficialRequirementType, TravellerDocumentType } from '@/types/trips'
-import type { MissingFact, OfficialClass, OfficialResult } from '@/lib/readiness/official'
+import type { MissingFact, OfficialClass, OfficialResult, OfficialVisaMode } from '@/lib/readiness/official'
 
 export type RequirementsCredentialInput = {
   optionRef: string
@@ -50,6 +50,12 @@ export type RequirementsProviderZeile = {
   requirementType: OfficialRequirementType
   result: OfficialResult | 'insufficient_context'
   officialClass?: OfficialClass
+  /**
+   * Rohwert. Nur bei `requirementType === 'visa'` darf die Engine ihn als
+   * `visaMode` übernehmen. Ungültige Werte werden `unknown`; nicht-Visa-Zeilen
+   * inklusive eTA tragen keinen Visa-Modus als Product Truth.
+   */
+  visaMode?: OfficialVisaMode | string | null
   optionEligibility?: 'allowed' | 'not_allowed' | 'unknown'
   optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown'
   authority?: string | null

@@ -16,9 +16,11 @@ import {
   officialEvidenceVertrauenswuerdig,
   officialFrische,
   officialLeer,
+  officialVisaWiderspruchDegradieren,
   optionEligibilityLesen,
   optionMandateLesen,
   providerNameLesen,
+  visaModeLesen,
   quelleUrlLesen,
   regelReferenzLesen,
   type MissingFact,
@@ -494,7 +496,7 @@ function zeileUebernehmen(
     freshness === 'current' &&
     (zeile.result === 'required' || zeile.result === 'not_required' || zeile.result === 'conditional')
 
-  return {
+  return officialVisaWiderspruchDegradieren({
     travellerClientRef: traveller.clientRef,
     credentialOptionRef: option.optionRef,
     destinationCountryCode: destination,
@@ -511,6 +513,7 @@ function zeileUebernehmen(
         : zeile.officialClass === 'requirement'
           ? 'requirement'
           : 'unknown',
+    visaMode: visaModeLesen(zeile.requirementType, uebernehmbar ? zeile.visaMode : null),
     optionEligibility: uebernehmbar ? optionEligibilityLesen(zeile.optionEligibility) : undefined,
     optionMandate: uebernehmbar ? optionMandateLesen(zeile.optionMandate) : undefined,
     missingFacts: [],
@@ -525,7 +528,7 @@ function zeileUebernehmen(
       contextFingerprint: fingerprint,
     },
     action: uebernehmbar ? officialAktionAusQuelle(sourceUrl) : null,
-  }
+  })
 }
 
 export function requirementsAusZeilen(
