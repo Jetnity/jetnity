@@ -122,4 +122,4 @@ Lokale Evidence dieser Session auf Review-Fix-Head `2da9e758` plus nachfolgendem
 
 ## 7. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #348 auf dem **finalen** Head. Nicht Ready. Nicht mergen. Kein Writer / Runtime-Principal / Production-Apply / Folgeslice.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #348 auf dem **finalen** Head nach dem Review-Fix. Nicht Ready. Nicht mergen. Kein Writer / Runtime-Principal / Production-Apply / Folgeslice.
