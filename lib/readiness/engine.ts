@@ -12,7 +12,7 @@ import {
   checkedAtLesen,
   gültigkeitszeitLesen,
   missingFactsLesen,
-  officialAktionAusQuelle,
+  officialAktionAusMetadaten,
   officialEvidenceVertrauenswuerdig,
   officialFrische,
   officialLeer,
@@ -527,7 +527,13 @@ function zeileUebernehmen(
       ruleReference,
       contextFingerprint: fingerprint,
     },
-    action: uebernehmbar ? officialAktionAusQuelle(sourceUrl) : null,
+    action: uebernehmbar
+      ? officialAktionAusMetadaten({
+          actionUrl: zeile.actionUrl,
+          actionPurpose: zeile.actionPurpose,
+          sourceUrl,
+        })
+      : null,
   })
 }
 

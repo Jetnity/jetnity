@@ -198,7 +198,7 @@ describe('Entry Requirements Detail Contract E1 – Taxonomie', () => {
       freshness: 'current',
       officialClass: 'requirement',
       visaMode: 'visa_exempt',
-      action: { kind: 'open_official_source', href: 'https://example.test/visa' },
+      action: { kind: 'open_official_action', purpose: 'application', href: 'https://example.test/visa' },
     })
     assert.equal(widerspruch.result, 'unknown')
     assert.equal(widerspruch.visaMode, 'unknown')

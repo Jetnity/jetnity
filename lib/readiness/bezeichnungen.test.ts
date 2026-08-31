@@ -4,6 +4,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
+  officialActionZweckText,
   officialFreshnessText,
   officialListeHinweis,
   officialPruefungAusLage,
@@ -37,6 +38,14 @@ function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation,
 }
 
 describe('Official-Copy folgt Status und Freshness', () => {
+  test('Action-Labels kommen nur aus strukturiertem Zweck', () => {
+    assert.equal(officialActionZweckText('application'), 'Offiziellen Antrag öffnen')
+    assert.equal(officialActionZweckText('form'), 'Offizielles Formular öffnen')
+    assert.equal(officialActionZweckText('appointment'), 'Offiziellen Termin öffnen')
+    assert.equal(officialActionZweckText('information'), 'Offizielle Information öffnen')
+    assert.doesNotMatch(officialActionZweckText('application'), /Apply now|Jetzt beantragen|eVisa/i)
+  })
+
   test('Provider unavailable bleibt ehrlich', () => {
     assert.match(
       officialPruefungAusLage([{ freshness: 'provider_unavailable', status: 'unavailable', missingFacts: [] }]),
@@ -100,7 +109,7 @@ describe('Official-Copy folgt Status und Freshness', () => {
           ruleReference: null,
           contextFingerprint: 'off',
         },
-        action: { kind: 'open_official_source', href: 'https://example.test/visa' },
+        action: { kind: 'open_official_action', purpose: 'information', href: 'https://example.test/visa' },
       },
     ])
     assert.match(text, /geprüft/)

@@ -4,7 +4,7 @@
 
 import type { ReadinessKind, ReadinessUserStatus } from '@/types/trips'
 import type { OfficialRequirementStatus, ReadinessCurrentness } from '@/lib/readiness/domain'
-import type { OfficialEvaluation, OfficialFreshness } from '@/lib/readiness/official'
+import type { OfficialActionPurpose, OfficialEvaluation, OfficialFreshness } from '@/lib/readiness/official'
 
 export const READINESS_ART_BEZEICHNUNG: Record<ReadinessKind, string> = {
   entry_check: 'Einreisebedingungen',
@@ -118,6 +118,16 @@ export function officialTravellerErgebnisText(evaluations: readonly OfficialEval
     return officialFreshnessText('source_temporarily_unavailable')
   }
   return 'Noch nicht automatisch geprüft'
+}
+
+/**
+ * Labels nur aus strukturiertem Zweck. Kein Provider-Marketingtext.
+ */
+export function officialActionZweckText(purpose: OfficialActionPurpose): string {
+  if (purpose === 'application') return 'Offiziellen Antrag öffnen'
+  if (purpose === 'form') return 'Offizielles Formular öffnen'
+  if (purpose === 'appointment') return 'Offiziellen Termin öffnen'
+  return 'Offizielle Information öffnen'
 }
 
 export const SENSITIVE_HINWEIS =

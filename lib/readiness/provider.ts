@@ -6,7 +6,13 @@
 // Kein Timatic-Fake, keine Visa-Matrix, kein Modell als Quelle.
 
 import type { OfficialRequirementType, TravellerDocumentType } from '@/types/trips'
-import type { MissingFact, OfficialClass, OfficialResult, OfficialVisaMode } from '@/lib/readiness/official'
+import type {
+  MissingFact,
+  OfficialActionPurpose,
+  OfficialClass,
+  OfficialResult,
+  OfficialVisaMode,
+} from '@/lib/readiness/official'
 
 export type RequirementsCredentialInput = {
   optionRef: string
@@ -60,6 +66,17 @@ export type RequirementsProviderZeile = {
   optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown'
   authority?: string | null
   sourceUrl?: string | null
+  /**
+   * Explizite Action-URL. Nicht `sourceUrl`.
+   * Nur zusammen mit strukturiertem `actionPurpose` und HTTPS-Validierung
+   * darf daraus application/form/appointment entstehen.
+   */
+  actionUrl?: string | null
+  /**
+   * Rohwert. Ungültige oder Marketing-Labels werden verworfen.
+   * Keine Heuristik aus Requirement-Typ.
+   */
+  actionPurpose?: OfficialActionPurpose | string | null
   checkedAt?: string | null
   validFrom?: string | null
   validUntil?: string | null
