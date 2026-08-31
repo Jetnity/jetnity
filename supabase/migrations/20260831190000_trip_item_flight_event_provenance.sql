@@ -22,6 +22,7 @@
 -- Full-current-snapshot: ein Write ersetzt alle Occurrences eines
 -- Flight-Items atomar. Alte Zeilen dürfen nicht stehen bleiben.
 -- occurrence_event_ref wird nur serverseitig erzeugt.
+-- provider_belegt=true erfordert eine konkrete, nicht-leere external_ref.
 --
 -- Kein Backfill. Keine History. Kein Production-Apply durch Cursor.
 -- Kein Runtime-Principal. Runtime-Gate bleibt geschlossen.
@@ -114,7 +115,7 @@ create table public.trip_item_flight_event_provenance (
   provider_belegt boolean not null default true,
   source_kind text not null default 'persisted_snapshot',
   source_label text,
-  external_ref text,
+  external_ref text not null,
   retrieved_at timestamptz not null,
   observed_at timestamptz not null,
   fresh_until timestamptz,
@@ -173,7 +174,13 @@ create table public.trip_item_flight_event_provenance (
     check (source_label is null or char_length(source_label) <= 200),
 
   constraint trip_item_flight_event_provenance_external_ref_laenge
-    check (external_ref is null or char_length(btrim(external_ref)) between 1 and 200),
+    check (char_length(btrim(external_ref)) between 1 and 200),
+
+  constraint trip_item_flight_event_provenance_provider_source_ref
+    check (
+      provider_belegt
+      and char_length(btrim(external_ref)) between 1 and 200
+    ),
 
   constraint trip_item_flight_event_provenance_event_ref_laenge
     check (char_length(occurrence_event_ref) between 1 and 200),
@@ -244,6 +251,12 @@ comment on column public.trip_item_flight_event_provenance.event_instant is
 
 comment on column public.trip_item_flight_event_provenance.source_kind is
   'Immer persisted_snapshot. Client-sourceKind wird nicht übernommen.';
+
+comment on column public.trip_item_flight_event_provenance.provider_belegt is
+  'Immer true. Ohne konkrete Provider-Source-Referenz external_ref keine belegte Provenance.';
+
+comment on column public.trip_item_flight_event_provenance.external_ref is
+  'Pflichtige konkrete Provider-Source-Referenz, analog FlugOption.externalRef. Nicht nullable. occurrence_event_ref ist keine Provider-Referenz.';
 
 comment on column public.trip_item_flight_event_provenance.persistenz is
   'Immer snapshot. live_api wird durch Persistenz nicht vertrauenswürdig.';
@@ -458,6 +471,14 @@ begin
 
   _source_label := nullif(btrim(coalesce(_eingabe ->> 'source_label', '')), '');
   _external_ref := nullif(btrim(coalesce(_eingabe ->> 'external_ref', '')), '');
+  if _external_ref is null then
+    raise exception 'missing_external_ref'
+      using errcode = '22023';
+  end if;
+  if char_length(_external_ref) > 200 then
+    raise exception 'invalid_external_ref'
+      using errcode = '22023';
+  end if;
 
   if jsonb_typeof(_eingabe -> 'occurrences') is distinct from 'array' then
     raise exception 'invalid_occurrences'

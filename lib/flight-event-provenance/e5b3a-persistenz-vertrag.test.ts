@@ -159,8 +159,32 @@ describe('E5-B3A Flight-Event-Provenance-Migrationsvertrag', () => {
     assert.match(sql, /if _uid is null then/)
     assert.match(sql, /if _item\.kind is distinct from 'flight' then/)
     assert.match(sql, /if _item\.user_id is distinct from _uid then/)
+    assert.match(sql, /missing_external_ref/)
     assert.doesNotMatch(sql, /if _uid is not null and _item\.user_id is distinct from _uid/)
     assert.match(sql, /KEIN Production-Write-Pfad/)
+  })
+
+  test('provider-belegte Occurrence braucht eine konkrete external_ref', () => {
+    assert.match(sql, /external_ref text not null/)
+    assert.match(
+      sql,
+      /constraint trip_item_flight_event_provenance_external_ref_laenge\s+check \(char_length\(btrim\(external_ref\)\) between 1 and 200\)/,
+    )
+    assert.match(sql, /constraint trip_item_flight_event_provenance_provider_source_ref/)
+    assert.match(sql, /check \(\s+provider_belegt\s+and char_length\(btrim\(external_ref\)\) between 1 and 200/)
+    assert.match(sql, /check \(provider_belegt\)/)
+    assert.match(sql, /if _external_ref is null then/)
+    assert.match(sql, /missing_external_ref/)
+    assert.match(sql, /invalid_external_ref/)
+    assert.match(sql, /_provider_id, true, 'persisted_snapshot', _source_label, _external_ref/)
+    assert.match(sql, /Ohne konkrete Provider-Source-Referenz external_ref keine belegte Provenance/)
+    assert.match(sql, /occurrence_event_ref ist keine Provider-Referenz/)
+    assert.doesNotMatch(sql, /external_ref is null or char_length/)
+    const rejectAt = sql.search(/missing_external_ref/)
+    const deleteAt = sql.search(
+      /delete from public\.trip_item_flight_event_provenance\s+where trip_item_id = _item\.id;/,
+    )
+    assert.ok(rejectAt >= 0 && deleteAt > rejectAt)
   })
 
   test('Event-Ref entsteht nur im Trusted-Write, nie aus Client-Behauptung', () => {
