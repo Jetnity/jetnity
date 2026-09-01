@@ -39,11 +39,17 @@ create table if not exists jetnity_internal.provider_cost_guard_runtime_gate (
   singleton boolean primary key default true check (singleton),
   production_write_path_allocated boolean not null default false,
   allocated_invoker_role name,
-  note text not null
+  note text not null,
+
+  constraint provider_cost_guard_runtime_gate_allocation_coherent
+    check (
+      (not production_write_path_allocated and allocated_invoker_role is null)
+      or (production_write_path_allocated and allocated_invoker_role is not null)
+    )
 );
 
 comment on table jetnity_internal.provider_cost_guard_runtime_gate is
-  'S6-A hard-off Gate. false bedeutet: kein Production-Reservierungspfad. Eine spätere Principal-Zuweisung und das Öffnen dieses Gates benötigen ein separates Product-Owner-Gate.';
+  'S6-A hard-off Gate. false verlangt allocated_invoker_role=null; true verlangt eine explizit dokumentierte Invoker-Rolle. Principal-Zuweisung und Gate-Öffnung benötigen ein separates Product-Owner-Gate.';
 
 insert into jetnity_internal.provider_cost_guard_runtime_gate (
   singleton,
@@ -150,7 +156,7 @@ create table if not exists jetnity_internal.provider_cost_guard_reservation (
 );
 
 comment on table jetnity_internal.provider_cost_guard_reservation is
-  'Konservative S6-A Vorab-Reservierung. Nur Domain, serverseitig pseudonymisierter Kennungs-Hash, reservierte Mikro-USD und DB-Zeit. Keine Reise-/Such-/Traveller-/Provider-Payloads.';
+  'Konservative S6-A Vorab-Reservierung. Nur Domain, domänengetrennter serverseitiger Kennungs-HMAC, reservierte Mikro-USD und DB-Zeit. Keine Reise-/Such-/Traveller-/Provider-Payloads.';
 
 create index if not exists provider_cost_guard_reservation_caller_idx
   on jetnity_internal.provider_cost_guard_reservation (
@@ -187,6 +193,7 @@ declare
   _cost bigint;
   _now timestamptz;
   _gate_open boolean := false;
+  _allocated_invoker_role name;
   _has_caller_window boolean := false;
   _has_caller_day boolean := false;
   _has_domain_window boolean := false;
@@ -232,12 +239,20 @@ begin
   -- instanzübergreifend atomar. Kein Vercel-Prozessspeicher ist Truth.
   perform pg_advisory_xact_lock(hashtext('jetnity_internal.provider_cost_guard'), 0);
 
-  select g.production_write_path_allocated
-    into _gate_open
+  select g.production_write_path_allocated, g.allocated_invoker_role
+    into _gate_open, _allocated_invoker_role
     from jetnity_internal.provider_cost_guard_runtime_gate g
    where g.singleton = true;
 
-  if not found or coalesce(_gate_open, false) is not true then
+  -- S6-A kennt bewusst noch keine Production-Login-Rolle. Selbst ein späterer
+  -- boolescher Gate-Flip reicht daher nicht: die Allokation muss explizit eine
+  -- Invoker-Rolle dokumentieren. Die eigentliche Principal-/Membership-Prüfung
+  -- wird erst zusammen mit der späteren Product-Owner-gated Runtime-Zuweisung
+  -- definiert.
+  if not found
+     or coalesce(_gate_open, false) is not true
+     or _allocated_invoker_role is null
+  then
     return jsonb_build_object('ok', false, 'retryAfterSec', 1);
   end if;
 
@@ -335,7 +350,7 @@ end
 $$;
 
 comment on function jetnity_internal.provider_cost_guard_reservieren(jsonb) is
-  'S6-A atomare Vorab-Reservierung für spätere bezahlte Provider-Calls. SECURITY DEFINER mit leerem search_path. Gate false + fehlende Policies sind hard-off. Kein Production-Principal in S6-A. EXECUTE ausschließlich jetnity_provider_cost_guard_writer.';
+  'S6-A atomare Vorab-Reservierung für spätere bezahlte Provider-Calls. SECURITY DEFINER mit leerem search_path. Gate false + fehlende Policies + fehlende Allokationsrolle sind hard-off. Kein Production-Principal in S6-A. EXECUTE ausschließlich jetnity_provider_cost_guard_writer.';
 
 revoke all on function jetnity_internal.provider_cost_guard_reservieren(jsonb)
   from public, anon, authenticated, service_role;
