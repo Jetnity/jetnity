@@ -4,6 +4,12 @@
 // Kein eigener HTTP-/Retry-Stack. Ein späterer Adapter reicht das
 // kombinierte AbortSignal in den bestehenden Provider Transport Core weiter.
 
+import {
+  providerOpsConsoleEventSink,
+  providerOpsEventSchreiben,
+  type ProviderOpsEventSink,
+  type ProviderOpsOutcome,
+} from '@/lib/provider-ops'
 import type { RequirementsAnfrage, RequirementsProvider, RequirementsProviderZeile } from '@/lib/readiness/provider'
 import type { OfficialFreshness } from '@/lib/readiness/official'
 
@@ -43,11 +49,26 @@ export function requirementsFreshnessAusFehlerArt(art: RequirementsTechnischerFe
 export async function requirementsProviderAbrufen(
   provider: RequirementsProvider,
   anfrage: RequirementsAnfrage,
-  optionen: { signal?: AbortSignal; timeoutMs?: number } = {},
+  optionen: { signal?: AbortSignal; timeoutMs?: number; eventSink?: ProviderOpsEventSink } = {},
 ): Promise<RequirementsProviderAbruf> {
   const aussen = optionen.signal
   if (aussen?.aborted) {
     return { ok: false, art: 'aborted' }
+  }
+
+  const gestartet = Date.now()
+  const sink = optionen.eventSink ?? providerOpsConsoleEventSink
+  const beobachten = (outcome: ProviderOpsOutcome, resultCount: number | null = 0) => {
+    void providerOpsEventSchreiben(sink, {
+      domain: 'readiness',
+      providerId: provider.name.trim() || null,
+      operation: 'evaluate',
+      outcome,
+      durationMs: Math.max(0, Date.now() - gestartet),
+      resultCount,
+      droppedCount: null,
+      rateLimitHit: false,
+    })
   }
 
   const timeoutMs = requirementsTimeoutBegrenzen(optionen.timeoutMs)
@@ -60,20 +81,28 @@ export async function requirementsProviderAbrufen(
     const lauf = provider.evaluate(anfrage, combined).then(
       (zeilen): RequirementsProviderAbruf => {
         if (!Array.isArray(zeilen)) {
+          beobachten('error')
           return { ok: false, art: 'temporarily_unavailable' }
         }
+        beobachten(zeilen.length === 0 ? 'checked_empty' : 'ok', zeilen.length)
         return { ok: true, zeilen }
       },
       (fehler: unknown): RequirementsProviderAbruf => {
         if (aussen?.aborted) return { ok: false, art: 'aborted' }
-        if (timeoutSteuer.signal.aborted) return { ok: false, art: 'timeout' }
-        return { ok: false, art: artAusFehler(fehler) }
+        if (timeoutSteuer.signal.aborted) {
+          beobachten('timeout')
+          return { ok: false, art: 'timeout' }
+        }
+        const art = artAusFehler(fehler)
+        beobachten(art === 'unavailable' ? 'unavailable' : 'error')
+        return { ok: false, art }
       },
     )
 
     const timeoutLauf = new Promise<RequirementsProviderAbruf>((resolve) => {
       timeoutId = setTimeout(() => {
         timeoutSteuer.abort()
+        beobachten('timeout')
         resolve({ ok: false, art: 'timeout' })
       }, timeoutMs)
     })
