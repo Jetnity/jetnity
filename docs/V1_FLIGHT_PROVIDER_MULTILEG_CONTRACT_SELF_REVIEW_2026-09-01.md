@@ -58,7 +58,7 @@ Unchanged by this CR-1 fix:
 - no TW-8/TW-9, Destination Essentials / #394;
 - no public launch, indexing, payment or native-app change.
 
-Gates on rejected head `3d544fa6` are invalid after this fix. Fresh gates and the exact-head handoff are recorded separately after the new head exists.
+Gates on rejected head `3d544fa6` are invalid. Fresh local gates on review-fix `8c26ea87`: contract 11/11, flights+Skyscanner 137/137, `npm test` 3123/3123, typecheck pass, lint 0 errors, production build pass. Exact-head handoff: `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md`.
 
 ## Residual / next
 
