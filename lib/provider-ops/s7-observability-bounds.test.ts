@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { providerOpsEvent } from '@/lib/provider-ops'
+import { providerOpsEvent, providerOpsHealthAusEvents } from '@/lib/provider-ops'
 
 describe('Provider Readiness S7 bounded metadata', () => {
   test('Dauer, Zähler und Provider-ID bleiben technisch begrenzt', () => {
@@ -40,5 +40,32 @@ describe('Provider Readiness S7 bounded metadata', () => {
     assert.equal(event.durationMs, 12)
     assert.equal(event.resultCount, 2)
     assert.equal(event.droppedCount, null)
+  })
+
+  test('nicht-endliche Health-Uhr oder Altersgrenze kann niemals fake-grün werden', () => {
+    const event = providerOpsEvent({
+      domain: 'flights',
+      providerId: 'test',
+      operation: 'search',
+      outcome: 'ok',
+      durationMs: 10,
+      resultCount: 1,
+      droppedCount: 0,
+      rateLimitHit: false,
+      recordedAt: '2026-09-01T04:00:00.000Z',
+    })
+
+    for (const optionen of [
+      { domain: 'flights' as const, nowMs: Number.NaN, maxAgeMs: 60_000 },
+      { domain: 'flights' as const, nowMs: Number.POSITIVE_INFINITY, maxAgeMs: 60_000 },
+      { domain: 'flights' as const, nowMs: Date.parse('2026-09-01T04:00:10.000Z'), maxAgeMs: Number.POSITIVE_INFINITY },
+      { domain: 'flights' as const, nowMs: Date.parse('2026-09-01T04:00:10.000Z'), maxAgeMs: -1 },
+    ]) {
+      assert.deepEqual(providerOpsHealthAusEvents([event], optionen), {
+        status: 'unknown',
+        evidenceAt: event.recordedAt,
+        stale: true,
+      })
+    }
   })
 })
