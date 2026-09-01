@@ -1,6 +1,6 @@
 # Jetnity – Flüge
 
-**Stand:** 24. August 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary Foundation D; Provider Readiness S2 / `FlugNachweis` auf Draft-PR #51  
+**Stand:** 1. September 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary Foundation D; provider-neutrale Request-Reconciliation ADR-0207 auf Draft-PR #403  
 **Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking, die Übernahme in die Reise und die persistierte Route Truth.
 
 Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
@@ -67,6 +67,7 @@ Browser sendet nur tripId, dayId, optionId
 | Konto-Grenze | `lib/flights/konto-uebernahme.ts` | identifiers + Nachweis + Graph, fail closed |
 | Route Truth | `lib/route/` | Segmente, Transit, Fingerprint, Metadata-Hülle |
 | Duffel | `lib/flights/duffel/*` | erster Daten-/Entwicklungsadapter |
+| Provider-neutrale Request-Projektion | `lib/providers/flights/*` | geordnete Legs aus `FlugSuchanfrage`; kein Ranking-`context`, kein `returnDate` |
 
 Die UI (`components/trips/FlugSuche.tsx`) spricht nur die interne Domäne. Duffel-Typen kommen dort nicht vor.
 
@@ -78,7 +79,9 @@ Im Flugbereich des Trip Workspace steht zuerst der Reisebestand (`components/tri
 
 Amadeus Self-Service ist seit dem 17. Juli 2026 eingestellt und wird **nicht** angebunden. Duffel Flights API ist der erste Suchadapter: ein Daten- und Entwicklungsweg, keine technische oder geschäftliche Kopplung.
 
-Ein späterer Metasuch-Provider (Skyscanner, Aviasales) muss dasselbe `FlightProvider`-Interface erfüllen. Search, Ranking und Trip-Domain bleiben. Search-Provider und Affiliate-/Booking-Provider sind getrennt.
+Ein späterer Metasuch-Provider muss dasselbe Runtime-`FlugProvider`-Interface erfüllen. Search, Ranking und Trip-Domain bleiben. Search-Provider und Affiliate-/Booking-Provider sind getrennt.
+
+Die spätere Offline-Foundation `FlightProviderSearchRequest` ist keine zweite Suche. Sie projiziert dieselbe geordnete 1–6-Bein-Wahrheit (`flightProviderSearchRequestAus`). Ranking-`context` und `stopPreference` gehören nicht in diesen Request. `market`/`locale` sind externer Request-Kontext, nicht Traveller- oder Ranking-Wahrheit (ADR-0207). Skyscanner bleibt fixture-only.
 
 Umgebung:
 
