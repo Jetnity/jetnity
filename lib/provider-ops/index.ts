@@ -2,6 +2,8 @@
 //
 // Minimaler gemeinsamer Provider-Operationsvertrag.
 // Kein UniversalProvider, keine gemeinsame Suche, keine Fachwahrheit.
+// Server-only S6-A-Adapter werden bewusst direkt importiert und nicht über
+// dieses breite, provider-neutrale Barrel re-exportiert.
 
 export {
   PROVIDER_OPS_DOMAINS,
