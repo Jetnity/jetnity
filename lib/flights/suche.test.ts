@@ -126,7 +126,6 @@ describe('Flugsuche-Orchestrierung', () => {
       zustand: flugZustand({
         VERCEL_ENV: 'production',
         JETNITY_FLIGHT_AKTIV: 'true',
-        DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx',
       }),
       providers: [providerMit()],
       kennung: 'test-prod',
@@ -408,6 +407,10 @@ describe('Flugsuche mit mehreren Providern', () => {
       kennung: 'test-partial-timeout',
     })
     assert.equal(koerper.status, 'partial')
+    assert.equal(
+      koerper.message,
+      'Einige Angebote konnten nicht gelesen werden. Die übrigen Verbindungen siehst du unten.',
+    )
     assert.deepEqual(
       koerper.options.map((option) => ({ id: option.id, provider: option.provider })),
       [{ id: 'alpha-ok', provider: 'alpha' }],
@@ -427,6 +430,10 @@ describe('Flugsuche mit mehreren Providern', () => {
     })
     assert.equal(koerper.status, 'partial')
     assert.equal(koerper.options.length, 2)
+    assert.equal(
+      koerper.message,
+      'Einige Angebote konnten nicht gelesen werden. Die übrigen Verbindungen siehst du unten.',
+    )
     flugRateLeeren()
   })
 
@@ -443,6 +450,61 @@ describe('Flugsuche mit mehreren Providern', () => {
     assert.equal(koerper.status, 'empty')
     assert.equal(koerper.message, 'Keine passenden Verbindungen gefunden.')
     assert.equal(koerper.options.length, 0)
+    flugRateLeeren()
+  })
+
+  test('leerer Erfolg plus Fehler ist partial ohne falsche Rest-Verbindungen', async () => {
+    flugRateLeeren()
+    const { koerper } = await fluegeSuchen(SUCHANFRAGE, {
+      zustand: { aktiv: true, umgebung: 'test' },
+      providers: [
+        providerId('alpha', async () => leererTreffer([])),
+        providerId('beta', async () => {
+          throw new FlugProviderFehler('timeout', 'Die Flugsuche hat zu lange gedauert.')
+        }),
+      ],
+      kennung: 'test-empty-success-plus-failure',
+    })
+    assert.equal(koerper.status, 'partial')
+    assert.equal(koerper.options.length, 0)
+    assert.doesNotMatch(koerper.message, /unten|übrigen Verbindungen/)
+    assert.equal(
+      koerper.message,
+      'Einige Quellen konnten nicht vollständig geprüft werden. Aus den abgeschlossenen Quellen liegt aktuell keine nutzbare Verbindung vor.',
+    )
+    flugRateLeeren()
+  })
+
+  test('provider-internes partial ohne Optionen behauptet keine restlichen Verbindungen', async () => {
+    flugRateLeeren()
+    const { koerper } = await fluegeSuchen(SUCHANFRAGE, {
+      zustand: { aktiv: true, umgebung: 'test' },
+      providers: [providerId('alpha', async () => leererTreffer([], true))],
+      kennung: 'test-internal-partial-empty',
+    })
+    assert.equal(koerper.status, 'partial')
+    assert.equal(koerper.options.length, 0)
+    assert.doesNotMatch(koerper.message, /unten|übrigen Verbindungen/)
+    assert.equal(
+      koerper.message,
+      'Einige Quellen konnten nicht vollständig geprüft werden. Aus den abgeschlossenen Quellen liegt aktuell keine nutzbare Verbindung vor.',
+    )
+    flugRateLeeren()
+  })
+
+  test('zwei leere Erfolge, einer davon partial, bleiben wahrheitsgetreu ohne Rest-Verbindungen', async () => {
+    flugRateLeeren()
+    const { koerper } = await fluegeSuchen(SUCHANFRAGE, {
+      zustand: { aktiv: true, umgebung: 'test' },
+      providers: [
+        providerId('alpha', async () => leererTreffer([], true)),
+        providerId('beta', async () => leererTreffer([])),
+      ],
+      kennung: 'test-empty-partial-plus-empty',
+    })
+    assert.equal(koerper.status, 'partial')
+    assert.equal(koerper.options.length, 0)
+    assert.doesNotMatch(koerper.message, /unten|übrigen Verbindungen/)
     flugRateLeeren()
   })
 

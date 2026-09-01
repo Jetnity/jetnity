@@ -46,6 +46,8 @@ const MELDUNG_OK = 'Verbindungen gefunden.'
 const MELDUNG_EMPTY = 'Keine passenden Verbindungen gefunden.'
 const MELDUNG_PARTIAL =
   'Einige Angebote konnten nicht gelesen werden. Die übrigen Verbindungen siehst du unten.'
+const MELDUNG_PARTIAL_OHNE_OPTIONEN =
+  'Einige Quellen konnten nicht vollständig geprüft werden. Aus den abgeschlossenen Quellen liegt aktuell keine nutzbare Verbindung vor.'
 const MELDUNG_TIMEOUT = 'Die Flugsuche hat zu lange gedauert.'
 const MELDUNG_UNAVAILABLE = 'Der Fluganbieter hat die Suche abgelehnt.'
 const MELDUNG_INVALID = 'Die Flugdaten waren unbrauchbar.'
@@ -206,6 +208,10 @@ function outcomeFuerAusgang(ausgang: ProviderAusgang): ProviderOpsOutcome {
   return ausgang.options.length === 0 ? 'empty' : 'ok'
 }
 
+function meldungPartial(optionAnzahl: number): string {
+  return optionAnzahl > 0 ? MELDUNG_PARTIAL : MELDUNG_PARTIAL_OHNE_OPTIONEN
+}
+
 function sucheZusammenfassen(ausgaenge: readonly ProviderAusgang[]): {
   status: FlugSuchStatus
   message: string
@@ -219,7 +225,7 @@ function sucheZusammenfassen(ausgaenge: readonly ProviderAusgang[]): {
   if (options.length > 0) {
     return {
       status: hatPartial || fehler.length > 0 ? 'partial' : 'ok',
-      message: hatPartial || fehler.length > 0 ? MELDUNG_PARTIAL : MELDUNG_OK,
+      message: hatPartial || fehler.length > 0 ? meldungPartial(options.length) : MELDUNG_OK,
       options,
     }
   }
@@ -227,13 +233,13 @@ function sucheZusammenfassen(ausgaenge: readonly ProviderAusgang[]): {
   if (erfolge.length > 0 && fehler.length === 0) {
     return {
       status: hatPartial ? 'partial' : 'empty',
-      message: hatPartial ? MELDUNG_PARTIAL : MELDUNG_EMPTY,
+      message: hatPartial ? meldungPartial(0) : MELDUNG_EMPTY,
       options: [],
     }
   }
 
   if (erfolge.length > 0 && fehler.length > 0) {
-    return { status: 'partial', message: MELDUNG_PARTIAL, options: [] }
+    return { status: 'partial', message: meldungPartial(0), options: [] }
   }
 
   if (ausgaenge.length === 1 && fehler[0]) {
