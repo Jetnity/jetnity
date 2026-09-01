@@ -20,11 +20,18 @@ import {
   type ActivityZustand,
 } from '@/lib/activities/zustand'
 import { geoPunktGueltig } from '@/lib/hotels/geo'
+import {
+  providerOpsConsoleEventSink,
+  providerOpsEventSchreiben,
+  type ProviderOpsEventSink,
+  type ProviderOpsOutcome,
+} from '@/lib/provider-ops'
 
 export type ActivitySuchePorts = {
   zustand: ActivityZustand
   provider: ActivityProvider | null
   kennung: string
+  eventSink?: ProviderOpsEventSink
 }
 
 function leerAntwort(
@@ -58,8 +65,27 @@ export async function activitiesSuchen(
   eingabe: unknown,
   ports: ActivitySuchePorts,
 ): Promise<{ httpStatus: number; koerper: ActivitySucheAntwort; retryAfterSec?: number }> {
+  const gestartet = Date.now()
+  const beobachten = (
+    outcome: ProviderOpsOutcome,
+    resultCount: number | null = 0,
+    droppedCount: number | null = 0,
+  ) => {
+    void providerOpsEventSchreiben(ports.eventSink, {
+      domain: 'activities',
+      providerId: ports.provider?.id ?? null,
+      operation: 'search',
+      outcome,
+      durationMs: Math.max(0, Date.now() - gestartet),
+      resultCount,
+      droppedCount,
+      rateLimitHit: outcome === 'rate_limited',
+    })
+  }
+
   const geprueft = activitySucheEingabeSchema.safeParse(eingabe)
   if (!geprueft.success) {
+    beobachten('invalid')
     return {
       httpStatus: 400,
       koerper: leerAntwort('error', ersteActivitymeldung(geprueft.error)),
@@ -69,6 +95,7 @@ export async function activitiesSuchen(
   const { anfrage, bestehendeFenster, evidenz } = tageskontextAusReise(geprueft.data)
 
   if (!ports.zustand.aktiv || !ports.provider) {
+    beobachten('unavailable')
     return {
       httpStatus: 200,
       koerper: leerAntwort('unavailable', activityZustandMeldung(ports.zustand), evidenz),
@@ -76,6 +103,7 @@ export async function activitiesSuchen(
   }
 
   if (!anfrage) {
+    beobachten('invalid')
     return {
       httpStatus: 200,
       koerper: leerAntwort(
@@ -88,6 +116,7 @@ export async function activitiesSuchen(
 
   const quota = await activitySucheErlaubt(ports.kennung)
   if (!quota.ok) {
+    beobachten('rate_limited')
     return {
       httpStatus: 429,
       retryAfterSec: quota.retryAfterSec,
@@ -122,6 +151,11 @@ export async function activitiesSuchen(
           ? 'Einige Angebote konnten nicht gelesen werden. Die übrigen Aktivitäten siehst du unten.'
           : 'Aktivitäten gefunden.'
 
+    beobachten(
+      status,
+      optionen.length,
+      treffer.partial ? null : Math.max(0, treffer.options.length - optionen.length),
+    )
     return {
       httpStatus: 200,
       koerper: sucheFuerClient({
@@ -141,11 +175,13 @@ export async function activitiesSuchen(
             : fehler.art === 'invalid'
               ? 'invalid'
               : 'error'
+      beobachten(status)
       return {
         httpStatus: 200,
         koerper: leerAntwort(status, fehler.message, evidenz),
       }
     }
+    beobachten('error')
     return {
       httpStatus: 200,
       koerper: leerAntwort('error', 'Die Aktivitätensuche ist fehlgeschlagen.', evidenz),
@@ -162,5 +198,6 @@ export function activitySuchePortsAusUmgebung(
     zustand: activityZustand(umgebung, provider !== null),
     provider,
     kennung,
+    eventSink: providerOpsConsoleEventSink,
   }
 }
