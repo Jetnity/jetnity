@@ -10,6 +10,7 @@ const sqlOhneKommentare = sql
   .replace(/'[^']*'/g, "''")
 const config = readFileSync('supabase/config.toml', 'utf8')
 const adapter = readFileSync('lib/provider-ops/persistent-cost-guard.ts', 'utf8')
+const barrel = readFileSync('lib/provider-ops/index.ts', 'utf8')
 
 describe('Provider Readiness S6-A Persistenzvertrag', () => {
   test('bleibt nach einem späteren Apply standardmässig hard-off', () => {
@@ -141,5 +142,11 @@ describe('Provider Readiness S6-A Persistenzvertrag', () => {
     assert.doesNotMatch(adapter, /process\.env/)
     assert.match(adapter, /leeren\(\) \{/)
     assert.match(adapter, /Bewusster No-op|Bewusster No-op\./i)
+  })
+
+  test('server-only Adapter vergiftet nicht das breite provider-neutrale Barrel', () => {
+    assert.doesNotMatch(barrel, /persistent-cost-guard/)
+    assert.doesNotMatch(barrel, /providerOpsPersistentCostGuard/)
+    assert.match(barrel, /Server-only S6-A-Adapter werden bewusst direkt importiert/)
   })
 })
