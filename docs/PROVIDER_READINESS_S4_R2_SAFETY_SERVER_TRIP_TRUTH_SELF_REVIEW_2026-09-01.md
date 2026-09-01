@@ -89,6 +89,6 @@ Safety bleibt traveller-spezifisch, sobald Facts `travellerDependent` sind. Mehr
 
 Während der lokalen Gates zwei Author-Fixes: TypeScript-Vergleich `checkState === 'checked_clean'` nach Narrowing; `SAFETY_VERBOTENE_CLIENT_WAHRHEIT` nicht mehr exportiert (`check:exports`); ungenutzter `SAFETY_NOW_MS`-Import entfernt. Beide gehören zum Slice-Diff.
 
-**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice. CI/Vercel am Exact Head bleiben live zu prüfen.
+**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice. Live Exact-Head CI/Vercel auf `92d12091` sind SUCCESS; der Typecheck-Fail auf `2d1d1084` ist ersetzt.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend.

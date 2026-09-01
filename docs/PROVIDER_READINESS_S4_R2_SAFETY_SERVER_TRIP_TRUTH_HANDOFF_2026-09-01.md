@@ -42,7 +42,8 @@ Nicht angefasst: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_START_HERE.md`, ROADMAP,
 
 ## Residuals
 
-- Lokale Gates dieses Agenten: `npm test` 3061/3061, Typecheck, Lint 0/138, Production-Build, Hygiene. CI/Vercel müssen am Exact Head live gelesen werden.
+- Lokale Gates dieses Agenten: `npm test` 3061/3061, Typecheck, Lint 0/138, Production-Build, Hygiene.
+- Live Exact-Head `92d1209176ae948db1e9ac6208564088bd1fdc60`: GitHub Actions CI [33455817372](https://github.com/Jetnity/jetnity/actions/runs/33455817372) SUCCESS; Vercel Preview SUCCESS. Der vorherige Head `2d1d1084` war Typecheck-FAIL und ist ersetzt.
 - Kein Browser-/Real-Device-Beweis; Slice ist server-/domainseitig.
 - Workspace ruft die Safety-API weiter nicht auf.
 - Seasonal Client-Kontext bleibt ein getrennter Residual, nicht dieser Slice.

@@ -25,7 +25,8 @@ Account-Safety-Evaluation leitet Route/Stages/Items/`party` aus der serverseitig
 | Task-Baseline | `main@17ee633ea89567761297c8f07c023953ec98bbf2` |
 | Merge-Base | `17ee633ea89567761297c8f07c023953ec98bbf2` (0 behind `origin/main`) |
 | Implementation commit | `2d1d10848c315f69992da0bce32049bc9d24408f` |
-| Finaler Branch-Tip | **nicht** im Tree self-embedded; live nach Push im PR |
+| Docs/hygiene-fix commit | `92d1209176ae948db1e9ac6208564088bd1fdc60` |
+| Finaler Branch-Tip | live im PR; dieser Status-Nachtrag gilt für `92d12091` |
 | Draft-PR | #366 bleibt Draft |
 | `docs/ACTIVE_WORK_STATUS.md` | nicht angefasst (Technical-Lead-owned) |
 
@@ -73,7 +74,9 @@ Lokale Evidence dieses Agenten; Exact-Head-Gates müssen live am finalen Tip gep
 | `check:deps` | pass |
 | `check:api-schutz` | pass (12/12 Admin-Routen) |
 | `check:schema-bezug` | pass |
-| GitHub Actions / Vercel Preview | gelten nicht für einen älteren Head; live am finalen Tip prüfen |
+| GitHub Actions CI | **SUCCESS** auf Exact Head `92d1209176ae948db1e9ac6208564088bd1fdc60`: [run 33455817372](https://github.com/Jetnity/jetnity/actions/runs/33455817372) — Typecheck/Lint/Build + Auth-Config |
+| Vercel Preview | **SUCCESS** auf demselben Head: [WWMqX5iz7BfGvmhZMHt9oopBrbXN](https://vercel.com/jetnity-e1b93c82/jetnity-app/WWMqX5iz7BfGvmhZMHt9oopBrbXN) |
+| Historischer CI-Fail | `2d1d1084` Typecheck FAILED ([run 33455631002](https://github.com/Jetnity/jetnity/actions/runs/33455631002)); durch den Hygiene-/TS-Fix auf `92d12091` ersetzt. Nicht der aktuelle Head. |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet (kein UI-Slice) |
 
 ## 6. Risiken / Residuals
