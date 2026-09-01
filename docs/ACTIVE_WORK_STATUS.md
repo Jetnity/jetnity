@@ -111,8 +111,10 @@ Live vehicle:
 - Draft-PR [#390](https://github.com/Jetnity/jetnity/pull/390)
 - Branch `copilot/phase-1-pwa-1-installability`
 - Rejected reviewed head: `a13e3c508977c36133af8ef8f8a0d9e9e4e74196`
+- Implementation / CI head: `915976c7336ed14062e15e6911ef6b01ce7e0ad6`
 - Binding review: CHANGES REQUIRED `#5076452634`
 - Slice-local handoff: `docs/PWA_1_INSTALLABILITY_HANDOFF_2026-09-01.md`
+- Gates evidence: `docs/evidence/PWA_1_GATES_2026-09-01.md`
 
 Mandatory PWA-1 boundaries:
 
