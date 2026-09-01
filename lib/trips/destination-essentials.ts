@@ -42,39 +42,33 @@ import type { Trip, TripStage, TripTraveller } from '@/types/trips'
 export const DESTINATION_ESSENTIALS_TITEL = 'Reiseziele im Blick'
 export const DESTINATION_ESSENTIALS_LEERTEXT = 'Noch keine verlässlichen Hinweise verfügbar'
 
-const DESTINATION_OFFICIAL_LAGEN = [
-  'keine_evidence',
-  'unavailable',
-  'stale',
-  'unknown',
-  'insufficient_context',
-  'required',
-  'conditional',
-  'not_required',
-] as const
-export type DestinationOfficialLage = (typeof DESTINATION_OFFICIAL_LAGEN)[number]
+export type DestinationOfficialLage =
+  | 'keine_evidence'
+  | 'unavailable'
+  | 'stale'
+  | 'unknown'
+  | 'insufficient_context'
+  | 'required'
+  | 'conditional'
+  | 'not_required'
 
-const DESTINATION_SAFETY_LAGEN = [
-  'keine_evidence',
-  'unavailable',
-  'stale',
-  'unknown',
-  'critical_warning',
-  'important_notice',
-  'information',
-] as const
-export type DestinationSafetyLage = (typeof DESTINATION_SAFETY_LAGEN)[number]
+export type DestinationSafetyLage =
+  | 'keine_evidence'
+  | 'unavailable'
+  | 'stale'
+  | 'unknown'
+  | 'critical_warning'
+  | 'important_notice'
+  | 'information'
 
-const DESTINATION_SEASONAL_LAGEN = [
-  'keine_evidence',
-  'unavailable',
-  'stale',
-  'unknown',
-  'timing_check',
-  'timing_notice',
-  'information',
-] as const
-export type DestinationSeasonalLage = (typeof DESTINATION_SEASONAL_LAGEN)[number]
+export type DestinationSeasonalLage =
+  | 'keine_evidence'
+  | 'unavailable'
+  | 'stale'
+  | 'unknown'
+  | 'timing_check'
+  | 'timing_notice'
+  | 'information'
 
 export type DestinationEssentialLinkArt = 'action' | 'source'
 
