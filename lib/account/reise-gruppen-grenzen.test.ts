@@ -11,6 +11,8 @@ const hier = dirname(fileURLToPath(import.meta.url))
 const VERBOTENE_IMPORTS = [
   'TripWorkspace',
   'TripWorkspaceUebersicht',
+  'TripWorkspaceDestinationEssentials',
+  'destination-essentials',
   'Reisevorbereitung',
   'ReiseSicherheit',
   'FlugSuche',

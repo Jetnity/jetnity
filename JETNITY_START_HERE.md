@@ -134,9 +134,11 @@ Never infer these from a generic “weiter”, “starten” or agent authorizat
 
 ## 7. Current work boundary
 
-**There is no automatically authorized next coding slice.**
+**There is no automatically authorized next coding slice after a closed slice.**
 
-PWA-1 is closed. Provider work waits at Product-Owner/external gates. Before any next non-gated Phase-1 implementation:
+The currently versioned non-gated Phase-1 coding slice is Destination Essentials 1 (Issue #393 / Draft PR on `feat/phase-1-destination-essentials-1`). It must stop for Technical-Lead review and must not Ready/merge itself.
+
+PWA-1 is closed. Provider work waits at Product-Owner/external gates. Before any further non-gated Phase-1 implementation:
 
 1. reconstruct live truth;
 2. read the binding V1 build order and current gap analysis;

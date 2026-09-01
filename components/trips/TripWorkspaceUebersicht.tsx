@@ -11,9 +11,11 @@ import {
   workspacePraeferenzHatInhalt,
   workspacePraeferenzSicht,
 } from '@/lib/trips/workspace-praeferenzen'
+import type { DestinationEssentialsAbleitung } from '@/lib/trips/destination-essentials'
 import type { AbdeckungLage, UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
+import TripWorkspaceDestinationEssentials from '@/components/trips/TripWorkspaceDestinationEssentials'
 import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 
 const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], ComponentType<{ className?: string }>> = {
@@ -34,6 +36,7 @@ export default function TripWorkspaceUebersicht({
   reise,
   uebersicht,
   attention,
+  destinationEssentials,
   aenderungOffen,
   onLuecke,
   onAttention,
@@ -48,6 +51,7 @@ export default function TripWorkspaceUebersicht({
   reise: Trip
   uebersicht: UebersichtAbleitung
   attention: AttentionAbleitung
+  destinationEssentials: DestinationEssentialsAbleitung
   aenderungOffen: boolean
   onLuecke: (domain: DetailDomain) => void
   onAttention: (aktion: AttentionAktion) => void
@@ -73,6 +77,8 @@ export default function TripWorkspaceUebersicht({
       </div>
 
       <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} />
+
+      <TripWorkspaceDestinationEssentials essentials={destinationEssentials} />
 
       <ul className="grid gap-2">
         {uebersicht.abdeckungen.map((eintrag) => {

@@ -303,6 +303,16 @@ Nächster Schritt:
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
+## 9a. Destination Essentials 1 – Draft-PR, nicht automatisch next
+
+Aktiver nicht-gegater Phase-1-Slice nach PWA-1, **nur** auf `feat/phase-1-destination-essentials-1` / Issue #393:
+
+- Presentation-only Zielzusammenfassung in der Trip-Workspace-Übersicht
+- Wiederverwendung vorhandener Official-/Safety-/Seasonal-Evaluations
+- kein Ready, kein Merge, kein Provider, keine DB-Mutation durch den Coding-Agenten
+
+Technical-Lead-owned. Kein Folgeslice aus diesem Stand ableiten.
+
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5

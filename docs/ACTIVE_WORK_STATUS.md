@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / PWA-1 CLOSED / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / PWA-1 CLOSED / DESTINATION ESSENTIALS 1 IN DRAFT PR / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Current verified runtime baseline
 
@@ -128,18 +128,19 @@ No current instruction implicitly approves any of these.
 
 ## 7. Current active work boundary
 
-**No coding slice is automatically active after PWA-1.**
+**Destination Essentials 1 is the authorized non-gated Phase-1 coding slice.**
 
-Provider work waits at Product-Owner/external gates. Before starting another non-gated Phase-1 slice, the Technical Lead must:
+- Issue: #393
+- Task: `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md`
+- Branch: `feat/phase-1-destination-essentials-1`
+- Cursor-Agent: `Jetnity destination essentials 1` / Generation 1
+- Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
+- Multi-Agent: **SINGLE_AGENT**
+- Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08` — re-fetch before review
+- Agent must not mark Ready and must not merge
+- Final coding state: **STOP FOR TECHNICAL-LEAD REVIEW**
 
-1. re-fetch live `main`, open PRs/issues, CI and Vercel state;
-2. re-read the binding V1 build order and current gap analysis;
-3. perform a fresh Binding Slice Precheck;
-4. perform the mandatory Multi-Agent Suitability Check;
-5. select and persist the smallest responsible slice and ownership;
-6. dispatch the selected Cursor coding agent only after that precheck.
-
-No follow-up slice is authorized by the PWA-1 merge or this continuity closure.
+Provider work remains at Product-Owner/external gates. No follow-up slice is authorized by this implementation.
 
 ## 8. Hard Traveller truth
 

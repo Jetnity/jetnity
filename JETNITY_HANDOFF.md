@@ -34,17 +34,21 @@ Der Continuity-PR, der diesen Handoff aktualisiert, bewegt `main` nochmals. Fina
 
 ## 2. Agentenstatus
 
-Letzter Cursor-Agent:
+Aktueller Cursor-Agent:
 
-**`Jetnity requirements provider groundwork 1`**  
+**`Jetnity destination essentials 1`**  
 Generation: **1**  
-Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`
+Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 
-Status: **STOPPED**.
+Status: **IMPLEMENTATION ON DRAFT PR / STOP FOR TECHNICAL-LEAD REVIEW**.
 
-Alle CR-1 bis CR-7 wurden in derselben Session bearbeitet. Der Technical Lead hat danach Exact-Head Review, mechanische Gates und Merge unabhängig durchgeführt.
+Slice: Issue #393 / `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md`  
+Branch: `feat/phase-1-destination-essentials-1`  
+Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
 
-**Kein Cursor-Agent und kein Folgeslice ist aktuell aktiv.**
+Der Agent darf nicht Ready setzen und nicht mergen. Kein Folgeslice.
+
+Historischer letzter geschlossener Agent vor diesem Slice: `Jetnity requirements provider groundwork 1` / Session `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`.
 
 ## 3. Requirements / Travel Readiness Current Truth
 
