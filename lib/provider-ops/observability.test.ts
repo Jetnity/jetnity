@@ -136,4 +136,47 @@ describe('Provider-Ops Observability-Contract', () => {
       )
     }
   })
+
+  test('neuer Request-invalid verdrängt keine echte Provider-Health-Evidence', () => {
+    const providerOk = providerOpsEvent({
+      domain: 'flights',
+      providerId: 'test',
+      operation: 'search',
+      outcome: 'ok',
+      durationMs: 10,
+      resultCount: 1,
+      droppedCount: 0,
+      rateLimitHit: false,
+      recordedAt: '2026-09-01T04:00:00.000Z',
+    })
+    const requestInvalid = providerOpsEvent({
+      domain: 'flights',
+      providerId: 'test',
+      operation: 'search',
+      outcome: 'invalid',
+      durationMs: 1,
+      resultCount: 0,
+      droppedCount: 0,
+      rateLimitHit: false,
+      recordedAt: '2026-09-01T04:00:05.000Z',
+    })
+
+    assert.deepEqual(
+      providerOpsHealthAusEvents([providerOk, requestInvalid], {
+        domain: 'flights',
+        nowMs: Date.parse('2026-09-01T04:00:10.000Z'),
+        maxAgeMs: 60_000,
+      }),
+      { status: 'ok', evidenceAt: providerOk.recordedAt, stale: false },
+    )
+
+    assert.deepEqual(
+      providerOpsHealthAusEvents([requestInvalid], {
+        domain: 'flights',
+        nowMs: Date.parse('2026-09-01T04:00:10.000Z'),
+        maxAgeMs: 60_000,
+      }),
+      { status: 'unknown', evidenceAt: null, stale: false },
+    )
+  })
 })
