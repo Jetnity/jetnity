@@ -47,7 +47,7 @@ Feature Complete alone is not sufficient.
 
 Read first:
 
-1. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_HANDOFF_2026-09-01.md` ← **current Draft-PR #403 exact-head handoff**
+1. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md` ← **current Draft-PR #403 CR-1 exact-head handoff**
 2. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_RECONCILIATION_TASK_2026-09-01.md`
 3. `docs/FLIGHT_METASEARCH_PROVIDER_ALTERNATIVES_PRECHECK_2026-09-01.md`
 4. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
@@ -144,9 +144,9 @@ No current instruction implicitly approves any of these.
 
 ## 7. Current active work boundary
 
-**Active Draft-PR only:** Issue #402 / PR #403 / `feat/v1-flight-provider-multileg-contract` — provider-neutral Flight request multi-leg reconciliation (ADR-0207). SINGLE_AGENT Generation 1. Implementation + local gates + self-review are on the branch; independent Technical-Lead review is the next gate. Draft stays Draft. No Ready, no merge, no follow-up slice.
+**Active Draft-PR only:** Issue #402 / PR #403 / `feat/v1-flight-provider-multileg-contract` — provider-neutral Flight request multi-leg reconciliation (ADR-0207). SINGLE_AGENT Generation 1, same session `bc-b592d931-3ecb-4cec-b250-ab19a19930b1`. Technical-Lead CHANGES REQUIRED `5078055105` rejected `3d544fa6` because `stopPreference` was dropped. CR-1 restores canonical `FlugStoppPraeferenz` on the shared request. Draft stays Draft. No Ready, no merge, no follow-up slice.
 
-Local gates on implementation head `3d544fa6`: contract 10/10, flights+Skyscanner 137/137, `npm test` 3122/3122, typecheck pass, lint 0 errors, production build pass. Exact final head: read live on PR #403 / `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_HANDOFF_2026-09-01.md`.
+Do not treat gates on `3d544fa6` as current. Exact CR-1 head: `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md` after the fix is gated.
 
 This is **not** a provider selection, application, secret, network, Duffel-runtime or Skyscanner-promotion slice.
 
@@ -159,7 +159,7 @@ Product Owner currently allows public-source/internal preparation only. Therefor
 3. TW-8 remains closed until real Commercial Truth exists;
 4. Destination Essentials Draft PR #394 remains deferred because it belongs to V1 Step 8;
 5. no later V1 slice may be pulled forward just to avoid the Step-2 dependency;
-6. this slice only reconciles the already-existing `FlightProviderSearchRequest` onto canonical ordered 1–6-leg truth.
+6. this slice only reconciles the already-existing `FlightProviderSearchRequest` onto canonical ordered 1–6-leg truth, including lossless `stopPreference`.
 
 ## 8. Hard Traveller truth
 

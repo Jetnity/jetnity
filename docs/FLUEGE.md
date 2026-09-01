@@ -67,7 +67,7 @@ Browser sendet nur tripId, dayId, optionId
 | Konto-Grenze | `lib/flights/konto-uebernahme.ts` | identifiers + Nachweis + Graph, fail closed |
 | Route Truth | `lib/route/` | Segmente, Transit, Fingerprint, Metadata-Hülle |
 | Duffel | `lib/flights/duffel/*` | erster Daten-/Entwicklungsadapter |
-| Provider-neutrale Request-Projektion | `lib/providers/flights/*` | geordnete Legs aus `FlugSuchanfrage`; kein Ranking-`context`, kein `returnDate` |
+| Provider-neutrale Request-Projektion | `lib/providers/flights/*` | geordnete Legs und `stopPreference` aus `FlugSuchanfrage`; kein Ranking-`context`, kein `returnDate` |
 
 Die UI (`components/trips/FlugSuche.tsx`) spricht nur die interne Domäne. Duffel-Typen kommen dort nicht vor.
 
@@ -81,7 +81,7 @@ Amadeus Self-Service ist seit dem 17. Juli 2026 eingestellt und wird **nicht** a
 
 Ein späterer Metasuch-Provider muss dasselbe Runtime-`FlugProvider`-Interface erfüllen. Search, Ranking und Trip-Domain bleiben. Search-Provider und Affiliate-/Booking-Provider sind getrennt.
 
-Die spätere Offline-Foundation `FlightProviderSearchRequest` ist keine zweite Suche. Sie projiziert dieselbe geordnete 1–6-Bein-Wahrheit (`flightProviderSearchRequestAus`). Ranking-`context` und `stopPreference` gehören nicht in diesen Request. `market`/`locale` sind externer Request-Kontext, nicht Traveller- oder Ranking-Wahrheit (ADR-0207). Skyscanner bleibt fixture-only.
+Die spätere Offline-Foundation `FlightProviderSearchRequest` ist keine zweite Suche. Sie projiziert dieselbe geordnete 1–6-Bein-Wahrheit (`flightProviderSearchRequestAus`) inklusive kanonischer `stopPreference`. Ranking-`context` gehört nicht in diesen Request. `market`/`locale` sind externer Request-Kontext, nicht Traveller- oder Ranking-Wahrheit (ADR-0207). Skyscanner bleibt fixture-only.
 
 Umgebung:
 

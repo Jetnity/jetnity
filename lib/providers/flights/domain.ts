@@ -1,4 +1,4 @@
-import type { FlugKabine } from '@/lib/flights/domain'
+import type { FlugKabine, FlugStoppPraeferenz } from '@/lib/flights/domain'
 
 /**
  * One search slice in provider-neutral request order.
@@ -28,12 +28,15 @@ export type FlightProviderExternalRequestContext = {
  * multi-city share that structure. There is no `returnDate`, top-level
  * origin/destination or ranking-`context` on this shape.
  *
- * Leg limits, passengers, cabin and currency are projections of
- * canonical `FlugSuchanfrage` / `FLUG_SUCHE_GRENZEN`. This type does
- * not define a second provider-specific maximum.
+ * Leg limits, passengers, cabin, currency and `stopPreference` are
+ * projections of canonical `FlugSuchanfrage` / `FLUG_SUCHE_GRENZEN`.
+ * This type does not define a second provider-specific maximum.
  *
- * `stopPreference` stays off this contract: it is product-search
- * filtering, not a required shared transport field.
+ * `stopPreference` is a provider-search constraint (`FlugStoppPraeferenz`),
+ * not ranking-only context. Current runtime evidence: Duffel maps
+ * `nonstop` / `at_most_one` into the provider request. This shared
+ * contract keeps the canonical value; it does not translate it into
+ * provider-specific fields such as `max_connections`.
  */
 export type FlightProviderSearchRequest = {
   legs: FlightProviderSearchLeg[]
@@ -41,6 +44,7 @@ export type FlightProviderSearchRequest = {
   children: number
   infants: number
   cabin: FlugKabine
+  stopPreference: FlugStoppPraeferenz
   currency: string
   market: string
   locale: string

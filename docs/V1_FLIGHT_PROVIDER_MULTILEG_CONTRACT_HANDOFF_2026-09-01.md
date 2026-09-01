@@ -1,7 +1,9 @@
 # V1 Flight Provider Multi-Leg Contract – Exact-Head Handoff
 
 Stand: 1. September 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **SUPERSEDED / REJECTED HEAD `3d544fa6` / DO NOT REVIEW**
+
+> Current continuity: `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md`. Gates recorded here for `3d544fa6` are invalid after Technical-Lead CHANGES REQUIRED `5078055105`.  
 Logical agent: **`Jetnity V1 flight provider multileg contract 1`**  
 Generation: **1**  
 Session: `bc-b592d931-3ecb-4cec-b250-ab19a19930b1`  
@@ -35,7 +37,8 @@ Implemented reconciliation:
 
 - `FlightProviderSearchRequest` is now ordered `legs[]`;
 - `flightProviderSearchRequestAus()` projects a validated `FlugSuchanfrage` plus external `{ market, locale }`;
-- ranking-`context` and `stopPreference` do not leak;
+- ranking-`context` does not leak;
+- **historical error on this rejected head:** `stopPreference` was dropped; CR-1 restores it as canonical search constraint;
 - no second 1–6 validator;
 - Skyscanner remains fixture-only / non-promotable;
 - Duffel runtime is unchanged.

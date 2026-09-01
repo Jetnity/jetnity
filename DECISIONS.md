@@ -5414,13 +5414,14 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 1. Die spätere provider-neutrale Request-Naht `FlightProviderSearchRequest` in `lib/providers/flights/domain.ts` trägt die Route als geordnete `legs[]` (IATA + Kalendertag). One-way, Return und Multi-City teilen dieselbe Struktur.
 2. Es gibt kein `returnDate`, kein top-level `originIata`/`destinationIata`/`departureDate` und kein Ranking-`context` auf diesem Request. Zwei Beine bleiben zwei explizite Legs.
-3. `FlugSuchanfrage` bleibt die kanonische Produktwahrheit. Die einzige Mapping-Naht ist `flightProviderSearchRequestAus()`. Sie projiziert bereits validierte Anfragen, erfindet keinen zweiten 1–6-/Passagier-/Kabinen-/Währungsvalidator und leakt weder `context` noch `stopPreference`.
-4. `market` / `locale` bleiben externer Request-Kontext, nicht Traveller-Citizenship, Residence oder Ranking-Daten.
-5. Das bestehende Runtime-`FlugProvider.suchen(FlugSuchanfrage)` und der Duffel-Adapter bleiben unverändert. Skyscanner bleibt fixture-only / non-promotable. Keine dritte Provider-Abstraktion, kein Registry, kein Fan-out.
+3. `FlugSuchanfrage` bleibt die kanonische Produktwahrheit. Die einzige Mapping-Naht ist `flightProviderSearchRequestAus()`. Sie projiziert bereits validierte Anfragen, erfindet keinen zweiten 1–6-/Passagier-/Kabinen-/Währungsvalidator und leakt kein Ranking-`context`.
+4. `stopPreference` ist eine Provider-Suchconstraint und wird als kanonische `FlugStoppPraeferenz` lossless übernommen. Die gemeinsame Naht übersetzt sie nicht in provider-spezifische Felder wie Duffel `max_connections`. Das folgt der bestehenden Runtime-Evidence im Duffel-Adapter (`nonstop` → `max_connections=0`, `at_most_one` → `max_connections=1`) und dem Technical-Lead CHANGES REQUIRED auf `3d544fa6`.
+5. `market` / `locale` bleiben externer Request-Kontext, nicht Traveller-Citizenship, Residence oder Ranking-Daten.
+6. Das bestehende Runtime-`FlugProvider.suchen(FlugSuchanfrage)` und der Duffel-Adapter bleiben unverändert. Skyscanner bleibt fixture-only / non-promotable. Keine dritte Provider-Abstraktion, kein Registry, kein Fan-out.
 
-**Kontext:** Die Offline-Skyscanner-Foundation hatte eine zweite, roundtrip-lastige Request-Form. Öffentliche Due-Diligence zeigt, dass ernsthafte Metasuch-Kandidaten Multi-City tragen. Eine implizite Return-Date-Wahrheit wäre ein Integrationsrisiko, bevor ein echter Transport gewählt wird.
+**Kontext:** Die Offline-Skyscanner-Foundation hatte eine zweite, roundtrip-lastige Request-Form. Öffentliche Due-Diligence zeigt, dass ernsthafte Metasuch-Kandidaten Multi-City tragen. Eine implizite Return-Date-Wahrheit wäre ein Integrationsrisiko, bevor ein echter Transport gewählt wird. Die erste Implementation auf `3d544fa6` strich `stopPreference` fälschlich als reines Produktfilter; das widerspricht der akzeptierten Duffel-Runtime.
 
-**Alternativen:** Die divergierende Roundtrip-Form belassen; eine dritte generische Provider-Plattform bauen; `returnDate` als Komfortfeld zusätzlich zu `legs[]` behalten; `stopPreference` und Ranking-`context` in den Provider-Request ziehen.
+**Alternativen:** Die divergierende Roundtrip-Form belassen; eine dritte generische Provider-Plattform bauen; `returnDate` als Komfortfeld zusätzlich zu `legs[]` behalten; `stopPreference` weglassen oder bereits hier in `max_connections` übersetzen; Ranking-`context` in den Provider-Request ziehen.
 
 **Begründung:** Reconciliation an der bereits vorhandenen Naht verhindert Drift, ohne Scope, Providerwahl oder Runtime zu öffnen. Ein zweites `returnDate` würde wieder zwei Route-Wahrheiten erzeugen.
 

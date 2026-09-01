@@ -6,8 +6,10 @@ import type {
 
 /**
  * Projects a validated/canonical `FlugSuchanfrage` into the provider-neutral
- * request. Ranking-only `context` and `stopPreference` are dropped. Legs stay
- * in given order; continuity is not inferred. `market` / `locale` are supplied
+ * request. Ranking-only `context` is dropped. `stopPreference` is copied
+ * losslessly as canonical `FlugStoppPraeferenz`; provider-specific fields
+ * such as Duffel `max_connections` are not invented here. Legs stay in
+ * given order; continuity is not inferred. `market` / `locale` are supplied
  * separately as external-request context, not derived from trip dates.
  *
  * Validation remains on `flugSuchanfrageSchema`. This mapper does not invent
@@ -27,6 +29,7 @@ export function flightProviderSearchRequestAus(
     children: anfrage.passengers.children,
     infants: anfrage.passengers.infants,
     cabin: anfrage.cabin,
+    stopPreference: anfrage.stopPreference,
     currency: anfrage.currency,
     market: anfrageKontext.market,
     locale: anfrageKontext.locale,

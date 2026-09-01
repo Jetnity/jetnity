@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 
-import { FLUG_SUCHE_GRENZEN, type FlugSuchanfrage } from '@/lib/flights/domain'
+import { FLUG_STOPP_PRAEFERENZEN, FLUG_SUCHE_GRENZEN, type FlugSuchanfrage } from '@/lib/flights/domain'
 import { SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
 import { flugSuchanfrageLesen, flugSuchanfrageSchema } from '@/lib/flights/schema'
 import type { FlightProviderSearchRequest } from '@/lib/providers/flights/domain'
@@ -15,15 +15,17 @@ type ForbiddenRequestKey =
   | 'destinationIata'
   | 'departureDate'
   | 'context'
-  | 'stopPreference'
   | 'tripStartDate'
   | 'tripEndDate'
   | 'selectedDate'
 
 type AssertAbsent<T, K extends string> = K extends keyof T ? never : true
+type AssertPresent<T, K extends string> = K extends keyof T ? true : never
 
 const _noReturnDate: AssertAbsent<FlightProviderSearchRequest, ForbiddenRequestKey> = true
+const _hasStopPreference: AssertPresent<FlightProviderSearchRequest, 'stopPreference'> = true
 void _noReturnDate
+void _hasStopPreference
 
 function gepruefteAnfrage(overrides: Partial<FlugSuchanfrage> = {}): FlugSuchanfrage {
   const gelesen = flugSuchanfrageLesen({ ...SUCHANFRAGE, ...overrides })
@@ -142,7 +144,7 @@ describe('FlightProviderSearchRequest reconciliation', () => {
     assert.equal(flugSuchanfrageLesen({ ...SUCHANFRAGE, legs: beine }), null)
   })
 
-  test('ranking-only context and stopPreference are absent from the provider request', () => {
+  test('ranking-only context is absent from the provider request', () => {
     const anfrage = gepruefteAnfrage({
       legs: [{ origin: 'ZRH', destination: 'BKK', date: '2026-11-01' }],
       stopPreference: 'nonstop',
@@ -156,11 +158,12 @@ describe('FlightProviderSearchRequest reconciliation', () => {
     const shape = request as unknown as Record<string, unknown>
 
     assert.equal('context' in shape, false)
-    assert.equal('stopPreference' in shape, false)
     assert.equal('tripStartDate' in shape, false)
     assert.equal('tripEndDate' in shape, false)
     assert.equal('selectedDate' in shape, false)
     assert.equal(request.legs[0]?.date, '2026-11-01')
+    assert.equal(request.stopPreference, 'nonstop')
+    assert.equal('max_connections' in shape, false)
     assert.deepEqual(requestKeys(request), [
       'adults',
       'cabin',
@@ -170,7 +173,18 @@ describe('FlightProviderSearchRequest reconciliation', () => {
       'legs',
       'locale',
       'market',
+      'stopPreference',
     ])
+  })
+
+  test('stopPreference is preserved losslessly for any, nonstop and at_most_one', () => {
+    assert.deepEqual([...FLUG_STOPP_PRAEFERENZEN], ['any', 'nonstop', 'at_most_one'])
+    for (const stopPreference of FLUG_STOPP_PRAEFERENZEN) {
+      const anfrage = gepruefteAnfrage({ stopPreference })
+      const request = flightProviderSearchRequestAus(anfrage, ANFRAGE_KONTEXT)
+      assert.equal(request.stopPreference, stopPreference)
+      assert.equal(request.stopPreference, anfrage.stopPreference)
+    }
   })
 
   test('passenger, cabin and currency values are preserved', () => {

@@ -1,49 +1,54 @@
 # V1 Flight Provider Multi-Leg Contract – Self-Review
 
 Stand: 1. September 2026  
-Status: **CURSOR SELF-REVIEW / GENERATION 1 / NOT AN INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **CURSOR SELF-REVIEW / GENERATION 1 / CR-1 FIX / NOT AN INDEPENDENT TECHNICAL-LEAD REVIEW**  
 Role: Cursor implementation agent under ChatGPT Technical Lead  
+Logical agent: **`Jetnity V1 flight provider multileg contract 1`**  
+Generation: **1**  
+Session: `bc-b592d931-3ecb-4cec-b250-ab19a19930b1`  
 Issue: #402  
 Draft-PR: #403  
+Rejected head: `3d544fa653c0f31f3447f1f24208492732f0286a`  
+Binding review: **CHANGES REQUIRED `5078055105`**  
 Binding: `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_RECONCILIATION_TASK_2026-09-01.md`
 
 This is not a Technical-Lead PASS and does not authorize Ready or merge.
 
-## Call-site evidence before coding
+## Call-site evidence
 
 | Surface | Finding |
 | --- | --- |
 | `lib/flights/domain.ts` `FlugSuchanfrage.legs[]` | Canonical product search, ordered, 1–6 |
-| `lib/flights/schema.ts` `flugSuchanfrageSchema` | Owns IATA/date/passenger/cabin/currency/1–6 validation |
-| `lib/flights/provider.ts` `FlugProvider.suchen` | Already accepts canonical `FlugSuchanfrage` |
-| `lib/flights/duffel/adapter.ts` | Already maps every ordered leg into Duffel slices |
-| `lib/providers/flights/domain.ts` `FlightProviderSearchRequest` | **Zero runtime callers** before this slice; previously origin/destination/`returnDate` |
-| `lib/providers/skyscanner/flights/adapter.ts` | Consumes only fixture **response** types |
+| `lib/flights/domain.ts` `stopPreference` | Canonical `FlugStoppPraeferenz`: `any` / `nonstop` / `at_most_one` |
+| `lib/flights/duffel/adapter.ts` | Maps `nonstop` → `max_connections=0`, `at_most_one` → `max_connections=1` — **provider-search constraint** |
+| `lib/flights/provider.ts` `FlugProvider.suchen` | Already accepts canonical `FlugSuchanfrage` including `stopPreference` |
+| Ranking `context` | Explicitly does not change the provider result set |
 
-Decision: reconcile the unused request type and add one mapping function. Do not add a third `FlightProvider`, registry, fan-out or Duffel rewrite.
+CR-1 correction: the first implementation dropped `stopPreference` as “product filtering”. That is wrong against accepted Duffel runtime truth and would silently broaden a nonstop / at-most-one search on any future adapter using this seam.
 
-## What was implemented
+## What was implemented / corrected
 
-1. `FlightProviderSearchRequest` is now ordered `legs[]` (`originIata`, `destinationIata`, `date`).
-2. Removed `returnDate` and top-level origin/destination/departureDate.
-3. Passenger/cabin/currency are projections of canonical truth (`cabin` uses `FlugKabine`).
-4. `flightProviderSearchRequestAus()` maps a validated `FlugSuchanfrage` plus external `{ market, locale }`.
-5. Ranking-`context` and `stopPreference` are not copied.
-6. No second 1–6 validator. Seven legs remain rejected by `flugSuchanfrageSchema`.
-7. Skyscanner fixture normalizer and Duffel runtime are untouched.
+1. `FlightProviderSearchRequest` remains ordered `legs[]` (`originIata`, `destinationIata`, `date`).
+2. No `returnDate` and no top-level origin/destination/departureDate.
+3. Passenger/cabin/currency stay projections of canonical truth.
+4. `stopPreference` is now a required canonical `FlugStoppPraeferenz` on the shared request.
+5. `flightProviderSearchRequestAus()` copies `stopPreference` losslessly and still drops ranking-`context`.
+6. No Duffel `max_connections` translation on this seam.
+7. No second 1–6 validator. Seven legs remain rejected by `flugSuchanfrageSchema`.
+8. Skyscanner fixture normalizer and Duffel runtime remain untouched.
 
 ## Invariants checked in review
 
-- 1 leg = one-way; 2 legs stay two explicit legs for both return-like and multi-city.
-- 3–6 legs keep caller order; disconnected legs are not rewritten.
-- Canonical max 6 is representable through `flugSuchanfrageLesen`.
-- Request JSON keys cannot include `context`, `returnDate` or `stopPreference`.
+- 1 / 2 / 3–6 ordered legs unchanged from the accepted multi-leg work.
+- Canonical max 6 through `flugSuchanfrageLesen`; 7 legs rejected by the product schema.
+- `stopPreference` preserved for `any`, `nonstop` and `at_most_one`.
+- Request keys include `stopPreference` and exclude `context` / `returnDate` / `max_connections`.
 - `market`/`locale` are injected, never derived from trip ranking dates.
 - Skyscanner `evidenceMode` remains `'fixture'`; no trusted/live constructor added.
 
 ## Non-scope proof
 
-Unchanged by this slice:
+Unchanged by this CR-1 fix:
 
 - no KAYAK/Wego/Skyscanner/Duffel provider selection, application, terms or contact;
 - no API key, secret, network, sandbox, paid or live call;
@@ -53,19 +58,8 @@ Unchanged by this slice:
 - no TW-8/TW-9, Destination Essentials / #394;
 - no public launch, indexing, payment or native-app change.
 
-## Local gates recorded on `3d544fa6`
-
-| Gate | Outcome |
-| --- | --- |
-| Focused contract tests | **10/10 pass** |
-| `lib/flights/**` + Skyscanner adapter tests | **137/137 pass** |
-| `npm test` | **3122/3122 pass** |
-| `npm run typecheck` | **pass** |
-| `npm run lint` | **0 errors** (137 pre-existing warnings) |
-| `npm run build` | **pass** |
-
-Changed-file review vs `347c129b`: only the provider-neutral request/mapper/tests plus continuity docs. Duffel, Skyscanner, Supabase and API routes untouched.
+Gates on rejected head `3d544fa6` are invalid after this fix. Fresh gates and the exact-head handoff are recorded separately after the new head exists.
 
 ## Residual / next
 
-Independent Technical-Lead Exact-Head review. Cursor stops after this exact-head handoff. No follow-up slice.
+Independent Technical-Lead Exact-Head re-review of the new head. Cursor stops after corrected implementation, fresh gates and exact-head handoff. No follow-up slice.

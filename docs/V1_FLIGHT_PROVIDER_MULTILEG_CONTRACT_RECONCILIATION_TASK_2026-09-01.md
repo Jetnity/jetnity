@@ -1,11 +1,14 @@
 # Jetnity V1 – Flight Provider Multi-Leg Contract Reconciliation Task
 
 Stand: 1. September 2026  
-Status: **IMPLEMENTED ON DRAFT PR / SINGLE_AGENT GENERATION 1 / AWAITING INDEPENDENT TECHNICAL-LEAD REVIEW / PROVIDER-NEUTRAL / NO EXTERNAL OR PRODUCTION GATE OPENED**
+Status: **CR-1 IN GENERATION 1 / SAME SESSION / PROVIDER-NEUTRAL / NO EXTERNAL OR PRODUCTION GATE OPENED**
 
 Issue: #402  
 Baseline: `main@7d826d6c26ad4f38894f18858081a179622af4de`  
+Rejected reviewed head: `3d544fa653c0f31f3447f1f24208492732f0286a` (review `5078055105`)  
 Branch: `feat/v1-flight-provider-multileg-contract`
+
+Amendment from Technical-Lead CHANGES REQUIRED: `stopPreference` is proven provider-search semantics (Duffel maps `nonstop`/`at_most_one` into the provider request). The shared contract must carry canonical `FlugStoppPraeferenz` losslessly. Ranking-only `context` remains excluded. Do not translate to provider-specific fields on this seam.
 
 ## 1. Why this slice exists
 
@@ -54,7 +57,7 @@ The Cursor agent must first inspect the actual call sites and may choose a small
 
 - `FlugSuchanfrage` remains Jetnity product truth.
 - Ranking-only `context` must not leak into provider requests merely because it exists on product truth.
-- `stopPreference` may only be carried/mapped if the existing provider-neutral contract genuinely needs it; do not add fields speculatively.
+- `stopPreference` is a provider-search constraint. After Technical-Lead CHANGES REQUIRED `5078055105` it **must** be carried as canonical `FlugStoppPraeferenz`. Do not drop it and do not translate it into provider-specific fields on this shared seam.
 - Passenger, cabin and currency semantics must remain aligned with existing Jetnity truth.
 - `market` and `locale` are request/external-market context, not traveller citizenship/residence truth.
 
