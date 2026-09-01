@@ -52,11 +52,21 @@ function kostenGueltig(kostenMikroUsd: number): boolean {
   )
 }
 
-function kennungHashen(kennung: string, hmacKey: string): string | null {
+function kennungHashen(
+  domain: ProviderOpsDomain,
+  kennung: string,
+  hmacKey: string,
+): string | null {
   const normalisiert = kennung.trim()
   if (!normalisiert) return null
 
-  return createHmac('sha256', hmacKey).update(normalisiert, 'utf8').digest('hex')
+  // Domain-Separation verhindert unnötige domänenübergreifende Verknüpfung
+  // derselben operativen Kennung im persistenten Store.
+  return createHmac('sha256', hmacKey)
+    .update(domain, 'utf8')
+    .update('\0', 'utf8')
+    .update(normalisiert, 'utf8')
+    .digest('hex')
 }
 
 function ergebnisLesen(wert: unknown): ProviderOpsCostGuardErgebnis {
@@ -83,7 +93,7 @@ function ergebnisLesen(wert: unknown): ProviderOpsCostGuardErgebnis {
  *
  * - server-only
  * - keine Supabase-/Secret-Wahl in diesem Modul
- * - Kennung verlässt den Prozess nur als HMAC-SHA256
+ * - Kennung verlässt den Prozess nur als domänengetrennter HMAC-SHA256
  * - Uhr/Atomizität liegen beim persistenten Port bzw. in der DB
  * - jeder Fehler bleibt fail-closed
  * - `leeren()` ist absichtlich No-op: ein Prozess darf globale Zähler niemals
@@ -102,7 +112,11 @@ export function providerOpsPersistentCostGuard(
           return FAIL_CLOSED
         }
 
-        const identifierHash = kennungHashen(kennung, konfiguration.identifierHmacKey)
+        const identifierHash = kennungHashen(
+          konfiguration.domain,
+          kennung,
+          konfiguration.identifierHmacKey,
+        )
         if (!identifierHash) return FAIL_CLOSED
 
         const ergebnis = await konfiguration.port.reservieren({
