@@ -24,7 +24,7 @@ function portMitAntwort(
 }
 
 describe('Provider-Ops persistenter Cost Guard', () => {
-  test('sendet nur HMAC-Hash, Domain, Vertrag und konservative Kosten an den Port', async () => {
+  test('sendet nur domänengetrennten HMAC-Hash, Domain, Vertrag und konservative Kosten', async () => {
     const aufrufe: ProviderOpsPersistentCostGuardReservation[] = []
     const guard = providerOpsPersistentCostGuard({
       domain: 'flights',
@@ -37,7 +37,11 @@ describe('Provider-Ops persistenter Cost Guard', () => {
     assert.deepEqual(ergebnis, { ok: true })
     assert.equal(aufrufe.length, 1)
 
-    const erwartet = createHmac('sha256', HMAC_KEY).update('ip:203.0.113.42', 'utf8').digest('hex')
+    const erwartet = createHmac('sha256', HMAC_KEY)
+      .update('flights', 'utf8')
+      .update('\0', 'utf8')
+      .update('ip:203.0.113.42', 'utf8')
+      .digest('hex')
     assert.deepEqual(aufrufe[0], {
       version: PROVIDER_OPS_PERSISTENT_COST_GUARD_VERSION,
       domain: 'flights',
@@ -45,6 +49,28 @@ describe('Provider-Ops persistenter Cost Guard', () => {
       reservedCostMicrousd: 1250,
     })
     assert.equal(JSON.stringify(aufrufe[0]).includes('203.0.113.42'), false)
+  })
+
+  test('dieselbe Kennung ist zwischen Domains nicht verknüpfbar', async () => {
+    const flightAufrufe: ProviderOpsPersistentCostGuardReservation[] = []
+    const hotelAufrufe: ProviderOpsPersistentCostGuardReservation[] = []
+
+    const flights = providerOpsPersistentCostGuard({
+      domain: 'flights',
+      reservedCostMicrousd: 1,
+      identifierHmacKey: HMAC_KEY,
+      port: portMitAntwort({ ok: true }, flightAufrufe),
+    })
+    const hotels = providerOpsPersistentCostGuard({
+      domain: 'hotels',
+      reservedCostMicrousd: 1,
+      identifierHmacKey: HMAC_KEY,
+      port: portMitAntwort({ ok: true }, hotelAufrufe),
+    })
+
+    assert.deepEqual(await flights.erlaubt('ip:gleich'), { ok: true })
+    assert.deepEqual(await hotels.erlaubt('ip:gleich'), { ok: true })
+    assert.notEqual(flightAufrufe[0]?.identifierHash, hotelAufrufe[0]?.identifierHash)
   })
 
   test('leere Kennung, zu kurzer HMAC-Key und ungültige Kosten bleiben fail-closed', async () => {
