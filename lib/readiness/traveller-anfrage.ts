@@ -155,13 +155,15 @@ function citizenshipStrikt(kind: unknown): { clientRef: string; countryCode: str
   return { clientRef, countryCode }
 }
 
-function documentStrikt(kind: unknown): {
+type StriktesDokument = {
   clientRef: string
   documentType: TravellerDocumentType
   issuingCountryCode: string | null
   expiresOn: string | null
   citizenshipClientRef: string | null
-} | null {
+}
+
+function documentStrikt(kind: unknown): StriktesDokument | null {
   if (!kind || typeof kind !== 'object' || Array.isArray(kind)) return null
   const zeile = kind as Record<string, unknown>
   if (hatSensibleSchluessel(zeile) || hatUnerlaubteSchluessel(zeile, ERLAUBTE_DOCUMENT_SCHLUESSEL)) return null
@@ -199,6 +201,27 @@ function documentStrikt(kind: unknown): {
   }
 }
 
+function dokumenteNachValidierterIdentitaet(
+  documents: readonly StriktesDokument[],
+): Map<string, StriktesDokument> | null {
+  // Identität ist die bereits validierte clientRef, niemals der Index nach documentsSortieren.
+  const nachRef = new Map<string, StriktesDokument>()
+  for (const document of documents) {
+    if (!document.clientRef || nachRef.has(document.clientRef)) return null
+    nachRef.set(document.clientRef, document)
+  }
+  if (nachRef.size !== documents.length) return null
+  return nachRef
+}
+
+function citizenshipLinkStimmtMitValidierterQuelle(
+  document: { clientRef: string; citizenshipClientRef: string | null },
+  nachRef: ReadonlyMap<string, StriktesDokument>,
+): boolean {
+  const quelle = nachRef.get(document.clientRef)
+  return quelle != null && document.citizenshipClientRef === quelle.citizenshipClientRef
+}
+
 export function travellerAnfrageStriktLesen(roh: unknown): TripTraveller | null {
   if (!roh || typeof roh !== 'object' || Array.isArray(roh)) return null
   const eintrag = roh as Record<string, unknown>
@@ -223,6 +246,7 @@ export function travellerAnfrageStriktLesen(roh: unknown): TripTraveller | null 
     }
   }
 
+  let validierteDocuments: StriktesDokument[] | null = null
   if (Array.isArray(eintrag.documents)) {
     if (eintrag.documents.length > TRAVELLER_CONTEXT_GRENZEN.documentsJeTraveller) return null
     const documents = eintrag.documents.map(documentStrikt)
@@ -233,27 +257,27 @@ export function travellerAnfrageStriktLesen(roh: unknown): TripTraveller | null 
         ? eintrag.citizenships.map(citizenshipStrikt).map((kind) => kind?.clientRef).filter((ref): ref is string => Boolean(ref))
         : [],
     )
+    validierteDocuments = []
     for (const document of documents) {
       if (!document) return null
       if (refs.has(document.clientRef)) return null
       refs.add(document.clientRef)
       if (document.citizenshipClientRef && !citizenshipRefs.has(document.citizenshipClientRef)) return null
+      validierteDocuments.push(document)
     }
   }
 
   if (!legacySingularFelderStrikt(eintrag)) return null
   const gelesen = travellerLegacyLesen(eintrag)
   if (!gelesen) return null
-  const documentsRoh = Array.isArray(eintrag.documents) ? eintrag.documents : null
   if (Array.isArray(eintrag.citizenships) && gelesen.citizenships.length !== eintrag.citizenships.length) return null
-  if (documentsRoh && gelesen.documents.length !== documentsRoh.length) return null
-  if (
-    documentsRoh &&
-    gelesen.documents.some(
-      (document, index) => document.citizenshipClientRef !== documentStrikt(documentsRoh[index])?.citizenshipClientRef,
-    )
-  ) {
-    return null
+  if (validierteDocuments && gelesen.documents.length !== validierteDocuments.length) return null
+  if (validierteDocuments) {
+    const nachRef = dokumenteNachValidierterIdentitaet(validierteDocuments)
+    if (!nachRef) return null
+    if (!gelesen.documents.every((document) => citizenshipLinkStimmtMitValidierterQuelle(document, nachRef))) {
+      return null
+    }
   }
   if (gelesen.documents.some((document) => document.citizenshipClientRef && !documentCitizenshipCode(gelesen, document))) {
     return null
