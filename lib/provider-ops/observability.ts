@@ -146,8 +146,16 @@ export function providerOpsHealthAusEvents(
   const juengste = passende[0]
   if (!juengste) return { status: 'unknown', evidenceAt: null, stale: false }
 
+  if (
+    !Number.isFinite(optionen.nowMs) ||
+    !Number.isFinite(optionen.maxAgeMs) ||
+    optionen.maxAgeMs < 0
+  ) {
+    return { status: 'unknown', evidenceAt: juengste.event.recordedAt, stale: true }
+  }
+
   const ageMs = optionen.nowMs - juengste.atMs
-  const stale = optionen.maxAgeMs < 0 || ageMs < 0 || ageMs > optionen.maxAgeMs
+  const stale = ageMs < 0 || ageMs > optionen.maxAgeMs
   if (stale) {
     return { status: 'unknown', evidenceAt: juengste.event.recordedAt, stale: true }
   }
