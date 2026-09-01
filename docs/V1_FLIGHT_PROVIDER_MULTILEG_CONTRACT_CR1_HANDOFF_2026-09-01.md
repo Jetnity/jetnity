@@ -55,7 +55,7 @@ CR-1 correction:
 | Rejected reviewed head | `3d544fa653c0f31f3447f1f24208492732f0286a` |
 | Invalid later docs tip on rejected work | `9d524c888bf71c1817311c1b70843ed25f250f17` |
 | CR-1 review-fix | `8c26ea877f0c606a03b690ccb886177a8a817e9c` |
-| Exact final head | **this continuity commit / live PR #403 tip** |
+| Exact final head | `3cee8aba6b2117c3291594ea794f1074ff125df9` |
 | Draft | stays Draft |
 
 ## Changed files vs task commit `347c129b`
@@ -93,7 +93,22 @@ Working tree was clean at `8c26ea877f0c606a03b690ccb886177a8a817e9c` when these 
 | `npm run lint` | **0 errors** (137 pre-existing warnings; none in changed Flight files) |
 | `npm run build` | **pass** (Next.js 16.3.3) |
 
-CI/Vercel evidence for `3d544fa6` is invalid. Fresh local gates on the exact final tip (this handoff commit) are recorded in the same session immediately after this file is committed.
+CI/Vercel evidence for `3d544fa6` is invalid.
+
+## Fresh gates re-run on exact head `3cee8aba`
+
+Same session, clean tree at `3cee8aba6b2117c3291594ea794f1074ff125df9`:
+
+| Command | Outcome |
+| --- | --- |
+| focused `map-search-request.test.ts` | **11/11 pass** |
+| `lib/flights/**` + Skyscanner adapter tests | **137/137 pass** |
+| `npm test` | **3123/3123 pass** |
+| `npm run typecheck` | **pass** |
+| `npm run lint` | **0 errors** (137 pre-existing warnings) |
+| `npm run build` | **pass** |
+
+A subsequent SHA-lock commit may sit on top of `3cee8aba` only to write this SHA into the tree. If present, that tip is the live review head; it must be re-gated before stop.
 
 ## Next step
 

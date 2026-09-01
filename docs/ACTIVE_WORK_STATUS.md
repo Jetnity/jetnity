@@ -146,7 +146,7 @@ No current instruction implicitly approves any of these.
 
 **Active Draft-PR only:** Issue #402 / PR #403 / `feat/v1-flight-provider-multileg-contract` — provider-neutral Flight request multi-leg reconciliation (ADR-0207). SINGLE_AGENT Generation 1, same session `bc-b592d931-3ecb-4cec-b250-ab19a19930b1`. Technical-Lead CHANGES REQUIRED `5078055105` rejected `3d544fa6` because `stopPreference` was dropped. CR-1 restores canonical `FlugStoppPraeferenz` on the shared request. Draft stays Draft. No Ready, no merge, no follow-up slice.
 
-Do not treat gates on `3d544fa6` as current. CR-1 review-fix `8c26ea87` restores `stopPreference`. Exact head after the CR-1 handoff commit: live PR #403 / `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md`.
+Do not treat gates on `3d544fa6` as current. CR-1 review-fix `8c26ea87` restores `stopPreference`. Exact gated handoff head: `3cee8aba6b2117c3291594ea794f1074ff125df9`. Live review tip: PR #403 / `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md`.
 
 This is **not** a provider selection, application, secret, network, Duffel-runtime or Skyscanner-promotion slice.
 
