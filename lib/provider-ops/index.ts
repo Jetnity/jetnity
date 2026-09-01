@@ -47,3 +47,16 @@ export {
   type ProviderOpsHealthStatus,
   type ProviderOpsOperation,
 } from '@/lib/provider-ops/observability'
+export {
+  PROVIDER_OPS_CACHE_CLASSES,
+  PROVIDER_OPS_DISPLAY_NOTICE_MAX_CHARS,
+  PROVIDER_OPS_PERSIST_CLASSES,
+  PROVIDER_OPS_USAGE_POLICY_FELDER,
+  providerOpsUngepruefteUsagePolicy,
+  providerOpsUsagePolicyAusGepruefterKonfiguration,
+  providerOpsUsagePolicyAusProvider,
+  type ProviderOpsCacheClass,
+  type ProviderOpsPersistClass,
+  type ProviderOpsUsagePolicy,
+  type ProviderOpsUsagePolicyTraeger,
+} from '@/lib/provider-ops/usage-policy'
