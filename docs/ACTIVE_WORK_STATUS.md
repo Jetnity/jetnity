@@ -140,7 +140,8 @@ No current instruction implicitly approves any of these.
 - Rejected exact head: `52b9866d74d8d0db1916911e08bfed3168073472` (review `#5077136019`)
 - Review-fix commits: `83ea0fab` (credential/source truth) + `f4fde3f4` (PWA gap-analysis accuracy)
 - Local gates on `f4fde3f4`: typecheck/lint/build/hygiene pass; full suite **3129/3129**
-- Exact-head CI/Preview must be read for the current branch tip after the handoff commit
+- Handoff commit: `0afcc0866ec5e2a902cbcf35b54cc2d362767e58`
+- Exact-head CI/Preview must be read for the current branch tip
 - Agent must not mark Ready and must not merge
 - Final coding state: **STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**
 

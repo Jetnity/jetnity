@@ -3,6 +3,7 @@
 Stand: 1. September 2026  
 Rejected head: `52b9866d74d8d0db1916911e08bfed3168073472`  
 Review: `#5077136019`  
+Handoff head: `0afcc0866ec5e2a902cbcf35b54cc2d362767e58`  
 Agent self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity

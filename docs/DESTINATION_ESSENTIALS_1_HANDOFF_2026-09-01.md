@@ -16,7 +16,7 @@ Status: **REVIEW FIX IMPLEMENTED / LOCAL GATES GREEN / STOP FOR FRESH TECHNICAL-
 - Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
 - Rejected exact head: `52b9866d74d8d0db1916911e08bfed3168073472` (review `#5077136019`)
 - Review-fix implementation commits: `83ea0fab06b6177d16530ae89142ef0669870e96` (truth) + `f4fde3f4b63dbc54f404381dd2ebfdfbbd442df7` (PWA gap-analysis accuracy)
-- Exact head for this handoff: **see `git rev-parse HEAD` after this commit**
+- Exact head for this handoff: `0afcc0866ec5e2a902cbcf35b54cc2d362767e58` (this documentation commit). If a later lock commit exists on the same branch, CI/Preview must be read for that tip.
 - Main drift at this handoff: **none** — `origin/main` re-fetched, still `c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
 
 ## Binding review addressed
