@@ -37,7 +37,13 @@ export {
 export {
   PROVIDER_OPS_EVENT_FELDER,
   PROVIDER_OPS_OPERATIONEN,
+  providerOpsConsoleEventSink,
   providerOpsEvent,
+  providerOpsEventSchreiben,
+  providerOpsHealthAusEvents,
   type ProviderOpsEvent,
+  type ProviderOpsEventSink,
+  type ProviderOpsHealth,
+  type ProviderOpsHealthStatus,
   type ProviderOpsOperation,
 } from '@/lib/provider-ops/observability'
