@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PROVIDER READINESS FINAL RECHECK CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / PWA-1 NEXT NON-GATED CODING SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PROVIDER READINESS FINAL RECHECK CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / PWA-1 REVIEW-FIX AWAITING TECHNICAL-LEAD RE-REVIEW / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -107,14 +107,15 @@ Never infer these from a generic “weiter”, “starten” or agent authorizat
 
 ## 6. Current next non-gated coding slice
 
-**PWA-1 – Installability / App Icons / Privacy-Safe Shell** is the next selected Phase-1 candidate while the provider path waits at PO/external gates.
+**PWA-1 – Installability / App Icons / Privacy-Safe Shell** is the active Phase-1 coding slice (Draft-PR #390 / Issue #389). It is **not merged**. The rejected reviewed head `a13e3c508977c36133af8ef8f8a0d9e9e4e74196` is not current evidence.
 
 ### PWA-1 live starting evidence
 
-- `app/manifest.ts` already exists;
+- Draft-PR #390 is the live vehicle; read `docs/PWA_1_INSTALLABILITY_HANDOFF_2026-09-01.md`;
+- `app/manifest.ts` declares id/scope plus 192/512/maskable PNG icons;
 - root metadata already links `/manifest.webmanifest`;
-- `app/icon.svg` is the current Jetnity brand mark;
-- manifest currently has no installability icon set;
+- `app/icon.svg` remains the Jetnity brand mark;
+- the maskable 512 asset must be a distinct opaque padded PNG, not a copy of the any-512 icon;
 - no service worker/offline cache path is currently present.
 
 ### PWA-1 boundaries
@@ -189,4 +190,4 @@ Still principally open:
 - V1 privacy/legal/ops/monetization closure;
 - V1 Definition of Done and V1 Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. PWA-1 NEXT NON-GATED CODING SLICE. NO REAL PROVIDER UNLOCKED.**
+**LIVE-EVIDENCE WINS. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. PWA-1 REVIEW-FIX AWAITING TECHNICAL-LEAD RE-REVIEW. NO REAL PROVIDER UNLOCKED.**
