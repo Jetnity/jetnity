@@ -1,6 +1,8 @@
 // app/api/safety/evaluate/route.ts
 //
 // Geschlossene, provider-neutrale Safety-Naht.
+// Konto-Reisen: Route/Party nur aus RLS-geschütztem `reiseLaden`.
+// Gast: transienter Routenkontext, keine Reisendenwahrheit.
 // Ohne Provider: ehrliches unavailable. Keine Fake-Warnung, keine Modellantwort.
 
 import { NextResponse } from 'next/server'
@@ -12,10 +14,11 @@ import {
   safetyInhaltstypOk,
   safetyKoerperLesen,
 } from '@/lib/safety/anfrage'
-import { safetyEvaluationsPruefen, tripAusSafetyAnfrage } from '@/lib/safety/auswerten'
+import { safetyEvaluationsPruefen } from '@/lib/safety/auswerten'
 import { safetyAnfrageErlaubt, safetyRateKennungAus } from '@/lib/safety/rate-limit'
 import { safetyAnfrageSchema } from '@/lib/safety/schema'
 import { safetyAnsicht, safetyApiStatus } from '@/lib/safety/status'
+import { reiseLaden } from '@/lib/trips/daten'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 10
@@ -83,13 +86,19 @@ export async function POST(req: Request) {
     })
   }
 
-  const evaluations = await safetyEvaluationsPruefen(geprueft.data)
-  const ansicht = safetyAnsicht(tripAusSafetyAnfrage(geprueft.data), evaluations)
+  const auswertung = await safetyEvaluationsPruefen(geprueft.data, { reiseLesen: reiseLaden })
+  if (!auswertung.ok) {
+    return antwort(auswertung.status, {
+      status: 'error',
+      message: auswertung.message,
+    })
+  }
 
+  const ansicht = safetyAnsicht(auswertung.reise, auswertung.evaluations)
   const apiStatus = safetyApiStatus(ansicht.summary)
   return antwort(200, {
     status: apiStatus,
-    evaluations,
+    evaluations: auswertung.evaluations,
     summary: ansicht.summary,
     message:
       apiStatus === 'unavailable'

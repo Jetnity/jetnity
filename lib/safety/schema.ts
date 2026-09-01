@@ -1,6 +1,8 @@
 // lib/safety/schema.ts
 //
 // Untrusted Trip-Kontext. Official-/Safety-Evidence vom Browser wird verworfen.
+// Reisenden-/Konto-Claims sind keine Safety-Wahrheit: sie werden abgelehnt.
+// Ein Konto-tripId schaltet auf serverseitige RLS-Reise, nicht auf Client-Route.
 
 import { z } from 'zod'
 
@@ -8,6 +10,30 @@ import { flugRouteItinerarySchema } from '@/lib/route/schema'
 import { SAFETY_GRENZEN, safetyLandescode } from '@/lib/safety/domain'
 import { istKalenderdatum } from '@/lib/safety/evidence'
 import { TRIP_ITEM_KINDS } from '@/types/trips'
+
+/**
+ * Client-Felder, die niemals Safety-Wahrheit werden dürfen.
+ * Wird am Rohobjekt geprüft, bevor Zod unbekannte Keys verwirft.
+ */
+export const SAFETY_VERBOTENE_CLIENT_WAHRHEIT = [
+  'party',
+  'travellers',
+  'citizenships',
+  'citizenship',
+  'citizenshipCountryCodes',
+  'documents',
+  'traveller',
+  'user_id',
+  'userId',
+  'ownerId',
+] as const
+
+export function safetyVerboteneClientWahrheit(wert: unknown): string[] {
+  if (!wert || typeof wert !== 'object' || Array.isArray(wert)) return []
+  return SAFETY_VERBOTENE_CLIENT_WAHRHEIT.filter((feld) =>
+    Object.prototype.hasOwnProperty.call(wert, feld),
+  )
+}
 
 const datum = z
   .string()
@@ -68,8 +94,10 @@ const punktSchema = z.object({
   routeItinerary: flugRouteItinerarySchema.nullable().optional(),
 })
 
-export const safetyAnfrageSchema = z
+const safetyAnfrageFelderSchema = z
   .object({
+    /** Kanonische Konto-Reise. Nur UUID; Gastkennungen `trip-<uuid>` sind keine Server-Wahrheit. */
+    tripId: z.string().trim().min(1).max(80).optional(),
     startDate: datum.nullable().optional(),
     endDate: datum.nullable().optional(),
     stages: z.array(etappeSchema).max(20).default([]),
@@ -87,4 +115,16 @@ export const safetyAnfrageSchema = z
     }
   })
 
-export type SafetyAnfrage = z.infer<typeof safetyAnfrageSchema>
+export const safetyAnfrageSchema = z.preprocess((wert, ctx) => {
+  const verboten = safetyVerboteneClientWahrheit(wert)
+  if (verboten.length > 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Reisenden- oder Kontoangaben dürfen nicht vom Browser gesetzt werden.',
+    })
+    return z.NEVER
+  }
+  return wert
+}, safetyAnfrageFelderSchema)
+
+export type SafetyAnfrage = z.infer<typeof safetyAnfrageFelderSchema>
