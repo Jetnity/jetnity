@@ -125,20 +125,25 @@ function healthStatusAusOutcome(outcome: ProviderOpsOutcome): ProviderOpsHealthS
   if (outcome === 'unavailable') return 'unavailable'
   if (outcome === 'timeout') return 'timeout'
   if (outcome === 'rate_limited') return 'rate_limited'
-  // `invalid` ist kein Beleg für Provider-Health; `error` ist interner Fehler.
   return outcome === 'error' ? 'internal' : 'unknown'
 }
 
 /**
  * Deterministische read-only Ableitung aus vorhandener Evidence.
  * Keine oder veraltete Evidence darf niemals als grün erscheinen.
+ *
+ * `invalid` ist absichtlich keine Health-Evidence: dieselbe S1-Taxonomie wird
+ * auch für Request-/Schemafehler vor einem Provider-Aufruf verwendet. Solche
+ * Clientfehler dürfen eine echte Provider-Ausführung weder herstellen noch
+ * verdrängen. Ein Providerfehler nach tatsächlichem Aufruf muss an der
+ * Orchestrierungsnaht als technischer Providerfehler beobachtet werden.
  */
 export function providerOpsHealthAusEvents(
   events: readonly ProviderOpsEvent[],
   optionen: { domain: ProviderOpsDomain; nowMs: number; maxAgeMs: number },
 ): ProviderOpsHealth {
   const passende = events
-    .filter((event) => event.domain === optionen.domain)
+    .filter((event) => event.domain === optionen.domain && event.outcome !== 'invalid')
     .map((event) => ({ event, atMs: Date.parse(event.recordedAt) }))
     .filter((eintrag) => Number.isFinite(eintrag.atMs))
     .sort((a, b) => b.atMs - a.atMs)
