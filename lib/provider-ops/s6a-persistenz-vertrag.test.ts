@@ -14,12 +14,25 @@ const adapter = readFileSync('lib/provider-ops/persistent-cost-guard.ts', 'utf8'
 describe('Provider Readiness S6-A Persistenzvertrag', () => {
   test('bleibt nach einem späteren Apply standardmässig hard-off', () => {
     assert.match(sql, /production_write_path_allocated boolean not null default false/)
+    assert.match(sql, /provider_cost_guard_runtime_gate_allocation_coherent/)
     assert.match(
       sql,
-      /values \(\s*true,\s*false,\s*null,/,
+      /\(not production_write_path_allocated and allocated_invoker_role is null\)\s+or \(production_write_path_allocated and allocated_invoker_role is not null\)/,
     )
+    assert.match(sql, /values \(\s*true,\s*false,\s*null,/)
     assert.doesNotMatch(sqlOhneKommentare, /insert into jetnity_internal\.provider_cost_guard_policy/)
     assert.doesNotMatch(sqlOhneKommentare, /enabled\s*=\s*true/)
+  })
+
+  test('ein späterer boolescher Gate-Flip reicht ohne Allokationsrolle nicht', () => {
+    assert.match(sql, /select g\.production_write_path_allocated, g\.allocated_invoker_role/)
+    assert.match(sql, /into _gate_open, _allocated_invoker_role/)
+    assert.match(
+      sql,
+      /coalesce\(_gate_open, false\) is not true\s+or _allocated_invoker_role is null/,
+    )
+    assert.doesNotMatch(sql, /create role jetnity_provider_cost_guard_runtime/)
+    assert.match(sql, /eigentliche Principal-\/Membership-Prüfung/)
   })
 
   test('privilegierter Reservierungsweg bleibt intern und least-privilege', () => {
@@ -93,8 +106,10 @@ describe('Provider Readiness S6-A Persistenzvertrag', () => {
   test('DB-Zeit ist autoritativ und kein Request darf einen Zeitstempel behaupten', () => {
     assert.match(sql, /_now := clock_timestamp\(\)/)
     assert.match(sql, /created_at timestamptz not null default clock_timestamp\(\)/)
-    assert.doesNotMatch(sqlOhneKommentare, /_payload\s*->>\s*''createdAt''/)
-    assert.doesNotMatch(sqlOhneKommentare, /_payload\s*->>\s*''observedAt''/)
+    assert.doesNotMatch(sql, /_payload\s*->>\s*'createdAt'/)
+    assert.doesNotMatch(sql, /_payload\s*->>\s*'observedAt'/)
+    assert.doesNotMatch(sql, /_payload\s*->>\s*'created_at'/)
+    assert.doesNotMatch(sql, /_payload\s*->>\s*'observed_at'/)
   })
 
   test('Cost Store enthält keine Reise- oder Traveller-Payload-Felder', () => {
@@ -113,9 +128,11 @@ describe('Provider Readiness S6-A Persistenzvertrag', () => {
     assert.match(sql, /jetnity\.provider_cost_guard\.reserve\.v1/)
   })
 
-  test('TypeScript-Adapter ist server-only und entscheidet keinen Production-Transport', () => {
+  test('TypeScript-Adapter ist server-only, domänengetrennt und entscheidet keinen Production-Transport', () => {
     assert.match(adapter, /import 'server-only'/)
     assert.match(adapter, /createHmac\('sha256'/)
+    assert.match(adapter, /\.update\(domain, 'utf8'\)/)
+    assert.match(adapter, /\.update\('\\0', 'utf8'\)/)
     assert.match(adapter, /identifierHash/)
     assert.match(adapter, /ProviderOpsPersistentCostGuardPort/)
     assert.doesNotMatch(adapter, /SUPABASE_SERVICE_ROLE_KEY/)
