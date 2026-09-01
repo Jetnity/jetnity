@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / PROVIDER READINESS FINAL RECHECK CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / PWA-1 NEXT NON-GATED CODING SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / PROVIDER READINESS FINAL RECHECK CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / PWA-1 REVIEW-FIX AWAITING TECHNICAL-LEAD RE-REVIEW / LIVE-EVIDENCE WINS**
 
 ## 1. Current verified main
 
@@ -103,7 +103,18 @@ No current instruction implicitly approves any of these.
 
 Provider work waits at Product-Owner/external gates. Phase-1 work may continue on non-gated V1 gaps.
 
-**Selected next coding candidate: PWA-1 – installability / app icons / privacy-safe shell.**
+**Active coding slice: PWA-1 – installability / app icons / privacy-safe shell.**
+
+Live vehicle:
+
+- Issue [#389](https://github.com/Jetnity/jetnity/issues/389)
+- Draft-PR [#390](https://github.com/Jetnity/jetnity/pull/390)
+- Branch `copilot/phase-1-pwa-1-installability`
+- Rejected reviewed head: `a13e3c508977c36133af8ef8f8a0d9e9e4e74196`
+- Implementation / CI head: `915976c7336ed14062e15e6911ef6b01ce7e0ad6`
+- Binding review: CHANGES REQUIRED `#5076452634`
+- Slice-local handoff: `docs/PWA_1_INSTALLABILITY_HANDOFF_2026-09-01.md`
+- Gates evidence: `docs/evidence/PWA_1_GATES_2026-09-01.md`
 
 Mandatory PWA-1 boundaries:
 
@@ -116,7 +127,7 @@ Mandatory PWA-1 boundaries:
 - no public launch/indexing change;
 - reuse current Jetnity brand mark; no generic airplane icon.
 
-PWA-1 must be versioned as its own issue/branch/PR from fresh canonical main.
+Cursor must not Ready or merge. Do not start a follow-up slice.
 
 ## 7. Hard Traveller truth
 
@@ -169,4 +180,4 @@ Still principally open:
 - V1 privacy/legal/ops/monetization closure;
 - V1 Definition of Done and Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. PWA-1 IS THE NEXT NON-GATED CODING CANDIDATE. NO REAL PROVIDER UNLOCKED.**
+**LIVE-EVIDENCE WINS. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. PWA-1 REVIEW-FIX AWAITING TECHNICAL-LEAD RE-REVIEW. NO REAL PROVIDER UNLOCKED.**

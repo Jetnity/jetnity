@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     images: [`${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`],
   },
   manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'Jetnity',
+    statusBarStyle: 'default',
+  },
 }
 
 export const viewport: Viewport = {
