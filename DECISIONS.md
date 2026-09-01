@@ -5418,6 +5418,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 4. Safety- und Seasonal-Hinweise werden nur über explizite `affectedRefs` mit `kind: 'stage'` und passender Stage-ID zugeordnet. Label-, Airport- oder Route-Ähnlichkeit reicht nicht.
 5. Nur eine validierte `OfficialEvaluation.action` ist actionable. `evidence.sourceUrl` bleibt Quelle/Information und wird nicht als Antrag/Formular/Termin umetikettiert.
 6. Fehlende Evidence bleibt sichtbar leer (`Noch keine verlässlichen Hinweise verfügbar`). Kein visited-Schluss, keine Commercial-Suche, kein Service Worker, kein Indexing, kein World Map.
+7. Aktuelle Official-Ergebnisse mehrerer Credential-Optionen oder Reisender werden nicht zu einem unbedingten `required` / `not_required` verdichtet. Unterschiedliche aktuelle Optionen erzeugen `option_abhaengig`, unterschiedliche Reisende `reisende_abhaengig`, beides `option_und_reisende_abhaengig`. Details nutzen `officialCredentialLabel`. Safety-/Seasonal-Quellen heissen nur bei Authority `official_*` offiziell. Identische Official-Hrefs behalten die validierte Action.
 
 **Kontext:** Die V1-Build-Order nennt Destination Essentials als offene Produktoberfläche. Flight/Hotel/Official-Provider bleiben Product-Owner-gegatet. PWA-1 ist geschlossen. Die vorhandenen Workspace-Evaluations reichen für eine ehrliche Zielzusammenfassung.
 

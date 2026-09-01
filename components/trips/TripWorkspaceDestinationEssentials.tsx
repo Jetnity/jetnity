@@ -15,7 +15,7 @@ function HinweisLinks({ links }: { links: readonly DestinationEssentialLink[] })
     <div className="mt-2 flex flex-wrap gap-2">
       {links.map((link) => (
         <a
-          key={`${link.art}:${link.href}`}
+          key={link.href}
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
@@ -95,6 +95,7 @@ export default function TripWorkspaceDestinationEssentials({
                             {bereich.details.map((detail) => (
                               <p key={detail.id} className="mt-1 text-xs leading-5 text-ink-800">
                                 {detail.titel}: {detail.text}
+                                {detail.dokumentLabel ? ` · ${detail.dokumentLabel}` : ''}
                                 {detail.kontextText ? ` · ${detail.kontextText}` : ''}
                               </p>
                             ))}

@@ -18,7 +18,7 @@ import {
   quelleUrlLesen,
   type OfficialEvaluation,
 } from '@/lib/readiness/official'
-import { officialZeileErgebnisText } from '@/lib/readiness/official-presentation'
+import { officialCredentialLabel, officialZeileErgebnisText } from '@/lib/readiness/official-presentation'
 import {
   SAFETY_FRISCHE_TEXT,
   SAFETY_KATEGORIE_TEXT,
@@ -41,6 +41,12 @@ import type { Trip, TripStage, TripTraveller } from '@/types/trips'
 
 export const DESTINATION_ESSENTIALS_TITEL = 'Reiseziele im Blick'
 export const DESTINATION_ESSENTIALS_LEERTEXT = 'Noch keine verlässlichen Hinweise verfügbar'
+export const DESTINATION_QUELLE_OFFIZIELL_LABEL = 'Offizielle Quelle öffnen'
+export const DESTINATION_QUELLE_NEUTRAL_LABEL = 'Quelle öffnen'
+export const DESTINATION_OFFICIAL_OPTION_ABHAENGIG_TEXT = 'Je nach Reisedokument unterschiedlich'
+export const DESTINATION_OFFICIAL_REISENDE_ABHAENGIG_TEXT = 'Je nach Reisendem unterschiedlich'
+export const DESTINATION_OFFICIAL_OPTION_UND_REISENDE_ABHAENGIG_TEXT =
+  'Je nach Reisendem und Reisedokument unterschiedlich'
 
 export type DestinationOfficialLage =
   | 'keine_evidence'
@@ -51,6 +57,9 @@ export type DestinationOfficialLage =
   | 'required'
   | 'conditional'
   | 'not_required'
+  | 'option_abhaengig'
+  | 'reisende_abhaengig'
+  | 'option_und_reisende_abhaengig'
 
 export type DestinationSafetyLage =
   | 'keine_evidence'
@@ -83,6 +92,7 @@ export type DestinationEssentialDetail = {
   titel: string
   text: string
   kontextText: string | null
+  dokumentLabel: string | null
 }
 
 export type DestinationEssentialBereich<Lage extends string> = {
@@ -216,21 +226,37 @@ export function destinationOfficialQuelle(evaluation: OfficialEvaluation): Desti
   if (!href) return null
   return {
     href,
-    label: 'Offizielle Quelle öffnen',
+    label: DESTINATION_QUELLE_OFFIZIELL_LABEL,
     art: 'source',
   }
 }
 
+export function destinationQuelleLabel(authorityClass: string): string {
+  return authorityClass.startsWith('official_')
+    ? DESTINATION_QUELLE_OFFIZIELL_LABEL
+    : DESTINATION_QUELLE_NEUTRAL_LABEL
+}
+
+function linkRang(link: DestinationEssentialLink): number {
+  if (link.art === 'action') return 2
+  return 1
+}
+
 function uniqueLinks(links: readonly DestinationEssentialLink[]): DestinationEssentialLink[] {
-  const gesehen = new Set<string>()
-  const ergebnis: DestinationEssentialLink[] = []
+  const reihenfolge: string[] = []
+  const nachHref = new Map<string, DestinationEssentialLink>()
   for (const link of links) {
-    const key = `${link.art}:${link.href}`
-    if (gesehen.has(key)) continue
-    gesehen.add(key)
-    ergebnis.push(link)
+    const bisher = nachHref.get(link.href)
+    if (!bisher) {
+      reihenfolge.push(link.href)
+      nachHref.set(link.href, link)
+      continue
+    }
+    if (linkRang(link) > linkRang(bisher)) {
+      nachHref.set(link.href, link)
+    }
   }
-  return ergebnis
+  return reihenfolge.map((href) => nachHref.get(href)!)
 }
 
 function officialUngewiss(evaluation: OfficialEvaluation): boolean {
@@ -253,7 +279,7 @@ function officialStale(evaluation: OfficialEvaluation): boolean {
   return evaluation.freshness === 'stale' || evaluation.freshness === 'recheck_needed'
 }
 
-function officialLageAus(evaluations: readonly OfficialEvaluation[]): {
+function offizielleGruppeLage(evaluations: readonly OfficialEvaluation[]): {
   lage: DestinationOfficialLage
   unvollstaendig: boolean
 } {
@@ -290,8 +316,80 @@ function officialLageAus(evaluations: readonly OfficialEvaluation[]): {
   return { lage: 'unknown', unvollstaendig: true }
 }
 
+function officialGruppenSchluessel(evaluation: OfficialEvaluation): {
+  travellerKey: string
+  credentialKey: string
+  groupKey: string
+} {
+  const travellerKey = evaluation.travellerClientRef?.trim() || '__kein_reisender__'
+  const credentialKey = evaluation.credentialOptionRef?.trim() || '__kein_dokument__'
+  return {
+    travellerKey,
+    credentialKey,
+    groupKey: `${travellerKey}\u0000${credentialKey}`,
+  }
+}
+
+function officialLageAus(evaluations: readonly OfficialEvaluation[]): {
+  lage: DestinationOfficialLage
+  unvollstaendig: boolean
+} {
+  if (evaluations.length === 0) return { lage: 'keine_evidence', unvollstaendig: false }
+
+  const gruppenMap = new Map<string, OfficialEvaluation[]>()
+  const meta = new Map<string, { travellerKey: string; credentialKey: string }>()
+  for (const eintrag of evaluations) {
+    const { travellerKey, credentialKey, groupKey } = officialGruppenSchluessel(eintrag)
+    const bisher = gruppenMap.get(groupKey)
+    if (bisher) bisher.push(eintrag)
+    else gruppenMap.set(groupKey, [eintrag])
+    meta.set(groupKey, { travellerKey, credentialKey })
+  }
+
+  const gruppen = [...gruppenMap.entries()].map(([groupKey, eintraege]) => {
+    const schluessel = meta.get(groupKey)!
+    return {
+      ...schluessel,
+      ...offizielleGruppeLage(eintraege),
+    }
+  })
+  const unvollstaendig = gruppen.some((gruppe) => gruppe.unvollstaendig)
+
+  if (gruppen.length === 1) {
+    return { lage: gruppen[0]!.lage, unvollstaendig: gruppen[0]!.unvollstaendig }
+  }
+
+  const uniqueLagen = new Set(gruppen.map((gruppe) => gruppe.lage))
+  if (uniqueLagen.size === 1) {
+    return { lage: gruppen[0]!.lage, unvollstaendig }
+  }
+
+  const lagenJeReisender = new Map<string, Set<DestinationOfficialLage>>()
+  for (const gruppe of gruppen) {
+    const lagen = lagenJeReisender.get(gruppe.travellerKey) ?? new Set<DestinationOfficialLage>()
+    lagen.add(gruppe.lage)
+    lagenJeReisender.set(gruppe.travellerKey, lagen)
+  }
+
+  const optionenUnterschiedlich = [...lagenJeReisender.values()].some((lagen) => lagen.size > 1)
+  const reisendeZusammenfassung = [...lagenJeReisender.values()].map((lagen) =>
+    lagen.size === 1 ? [...lagen][0]! : 'gemischt',
+  )
+  const reisendeUnterschiedlich = new Set(reisendeZusammenfassung).size > 1
+
+  if (optionenUnterschiedlich && reisendeUnterschiedlich) {
+    return { lage: 'option_und_reisende_abhaengig', unvollstaendig }
+  }
+  if (optionenUnterschiedlich) return { lage: 'option_abhaengig', unvollstaendig }
+  if (reisendeUnterschiedlich) return { lage: 'reisende_abhaengig', unvollstaendig }
+  return { lage: 'option_abhaengig', unvollstaendig }
+}
+
 function officialText(lage: DestinationOfficialLage, unvollstaendig: boolean, evaluations: readonly OfficialEvaluation[]): string {
   if (lage === 'keine_evidence') return DESTINATION_ESSENTIALS_LEERTEXT
+  if (lage === 'option_abhaengig') return DESTINATION_OFFICIAL_OPTION_ABHAENGIG_TEXT
+  if (lage === 'reisende_abhaengig') return DESTINATION_OFFICIAL_REISENDE_ABHAENGIG_TEXT
+  if (lage === 'option_und_reisende_abhaengig') return DESTINATION_OFFICIAL_OPTION_UND_REISENDE_ABHAENGIG_TEXT
   if (lage === 'unavailable') {
     if (evaluations.some((eintrag) => eintrag.freshness === 'source_temporarily_unavailable')) {
       return officialFreshnessText('source_temporarily_unavailable')
@@ -318,8 +416,7 @@ function travellerKontext(
   const traveller = refs.length === 1 ? refs[0] : null
   const label = traveller?.label?.trim()
   const person = label && label !== evaluation.travellerClientRef ? label : null
-  const teile = [person].filter((wert): wert is string => Boolean(wert))
-  return teile.length > 0 ? teile.join(' · ') : null
+  return person || null
 }
 
 function officialBereich(
@@ -344,6 +441,7 @@ function officialBereich(
     titel: officialAnforderungTitel(eintrag.requirementType, eintrag.visaMode),
     text: officialZeileErgebnisText(eintrag),
     kontextText: travellerKontext(eintrag, party),
+    dokumentLabel: officialCredentialLabel(eintrag, party),
   }))
   return {
     lage,
@@ -426,7 +524,7 @@ function safetyBereich(
     evaluations.flatMap((eintrag) => {
       const href = safetyQuelleUrlLesen(eintrag.evidence.sourceUrl)
       return href
-        ? [{ href, label: 'Offizielle Quelle öffnen', art: 'source' as const }]
+        ? [{ href, label: destinationQuelleLabel(eintrag.authorityClass), art: 'source' as const }]
         : []
     }),
   )
@@ -439,6 +537,7 @@ function safetyBereich(
       titel: eintrag.evidence.headline ?? SAFETY_KATEGORIE_TEXT[eintrag.category],
       text: `${SAFETY_KLASSE_TEXT[eintrag.presentationClass]} · ${SAFETY_FRISCHE_TEXT[eintrag.freshness]}`,
       kontextText: eintrag.reason || null,
+      dokumentLabel: null,
     })),
     links,
   }
@@ -516,7 +615,7 @@ function seasonalBereich(
     evaluations.flatMap((eintrag) => {
       const href = seasonalQuelleUrlLesen(eintrag.evidence.sourceUrl)
       return href
-        ? [{ href, label: 'Offizielle Quelle öffnen', art: 'source' as const }]
+        ? [{ href, label: destinationQuelleLabel(eintrag.authorityClass), art: 'source' as const }]
         : []
     }),
   )
@@ -529,6 +628,7 @@ function seasonalBereich(
       titel: eintrag.evidence.headline ?? SEASONAL_KATEGORIE_TEXT[eintrag.category],
       text: `${SEASONAL_KLASSE_TEXT[eintrag.presentationClass]} · ${SEASONAL_FRISCHE_TEXT[eintrag.freshness]}`,
       kontextText: eintrag.reason || null,
+      dokumentLabel: null,
     })),
     links,
   }

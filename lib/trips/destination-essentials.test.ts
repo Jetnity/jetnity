@@ -12,13 +12,20 @@ import { resolve } from 'node:path'
 import {
   DESTINATION_ESSENTIALS_LEERTEXT,
   DESTINATION_ESSENTIALS_TITEL,
+  DESTINATION_OFFICIAL_OPTION_ABHAENGIG_TEXT,
+  DESTINATION_OFFICIAL_OPTION_UND_REISENDE_ABHAENGIG_TEXT,
+  DESTINATION_OFFICIAL_REISENDE_ABHAENGIG_TEXT,
+  DESTINATION_QUELLE_NEUTRAL_LABEL,
+  DESTINATION_QUELLE_OFFIZIELL_LABEL,
   destinationEssentialsAbleiten,
   destinationIstOfficialZiel,
   destinationOfficialAktion,
   destinationOfficialQuelle,
+  destinationQuelleLabel,
   destinationSafetyBetrifftStage,
   destinationSeasonalBetrifftStage,
 } from '@/lib/trips/destination-essentials'
+import { officialCredentialLabel } from '@/lib/readiness/official-presentation'
 import { officialLeer, type OfficialEvaluation } from '@/lib/readiness/official'
 import { leereSafetyEvidence } from '@/lib/safety/evidence'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
@@ -311,27 +318,46 @@ describe('Official-Zielwahrheit', () => {
   })
 
   test('bewertet Credential-Optionen getrennt und nimmt keinen Default-Pass', () => {
-    const ableitung = destinationEssentialsAbleiten({
-      reise: reise({ stages: [etappe({ id: 'stage-fl', name: 'Florenz', countryCode: 'IT' })] }),
-      officialEvaluations: [
-        official({
-          credentialOptionRef: 'traveller:1:document:passport:CH',
-          result: 'required',
-          status: 'current',
-          freshness: 'current',
-        }),
-        official({
-          credentialOptionRef: 'traveller:1:document:passport:RS',
-          result: 'not_required',
-          status: 'current',
-          freshness: 'current',
-          visaMode: 'visa_exempt',
-        }),
-      ],
+    const trip = reise({ stages: [etappe({ id: 'stage-fl', name: 'Florenz', countryCode: 'IT' })] })
+    const optionCh = official({
+      credentialOptionRef: 'traveller:1:document:passport:CH',
+      result: 'required',
+      status: 'current',
+      freshness: 'current',
     })
-    assert.equal(ableitung.ziele[0]?.einreise.lage, 'required')
+    const optionRs = official({
+      credentialOptionRef: 'traveller:1:document:passport:RS',
+      result: 'not_required',
+      status: 'current',
+      freshness: 'current',
+      visaMode: 'visa_exempt',
+    })
+    const ableitung = destinationEssentialsAbleiten({
+      reise: trip,
+      officialEvaluations: [optionCh, optionRs],
+    })
+    const umgekehrt = destinationEssentialsAbleiten({
+      reise: trip,
+      officialEvaluations: [optionRs, optionCh],
+    })
+    const labelCh = officialCredentialLabel(optionCh, trip.party ?? [])
+    const labelRs = officialCredentialLabel(optionRs, trip.party ?? [])
+
+    assert.notEqual(ableitung.ziele[0]?.einreise.lage, 'required')
+    assert.notEqual(ableitung.ziele[0]?.einreise.lage, 'not_required')
+    assert.equal(ableitung.ziele[0]?.einreise.lage, 'option_abhaengig')
+    assert.equal(ableitung.ziele[0]?.einreise.text, DESTINATION_OFFICIAL_OPTION_ABHAENGIG_TEXT)
     assert.equal(ableitung.ziele[0]?.einreise.unvollstaendig, false)
-    assert.equal(ableitung.ziele[0]?.einreise.details.length, 2)
+    assert.equal(umgekehrt.ziele[0]?.einreise.lage, 'option_abhaengig')
+    assert.equal(labelCh === labelRs, false)
+    assert.equal(
+      ableitung.ziele[0]?.einreise.details.some((detail) => detail.dokumentLabel === labelCh),
+      true,
+    )
+    assert.equal(
+      ableitung.ziele[0]?.einreise.details.some((detail) => detail.dokumentLabel === labelRs),
+      true,
+    )
     assert.equal(
       ableitung.ziele[0]?.einreise.details.some((detail) => detail.text === 'Nicht erforderlich'),
       true,
@@ -340,6 +366,141 @@ describe('Official-Zielwahrheit', () => {
       ableitung.ziele[0]?.einreise.details.some((detail) => detail.text === 'Erforderlich'),
       true,
     )
+  })
+
+  test('gleiche Credential-Option darf gemischte Anforderungstypen verdichten', () => {
+    const ableitung = destinationEssentialsAbleiten({
+      reise: reise({ stages: [etappe({ id: 'stage-fl', name: 'Florenz', countryCode: 'IT' })] }),
+      officialEvaluations: [
+        official({
+          credentialOptionRef: 'traveller:1:document:passport:CH',
+          requirementType: 'visa',
+          result: 'required',
+        }),
+        official({
+          credentialOptionRef: 'traveller:1:document:passport:CH',
+          requirementType: 'insurance',
+          result: 'not_required',
+          visaMode: null,
+        }),
+      ],
+    })
+    assert.equal(ableitung.ziele[0]?.einreise.lage, 'required')
+  })
+
+  test('unterscheidet mehrere Reisende mit unterschiedlicher aktueller Lage', () => {
+    const alex = reisender()
+    const sam = reisender({
+      id: 'traveller-2',
+      clientRef: 'traveller:2',
+      label: 'Sam',
+      documents: [
+        {
+          id: 'doc-ch-sam',
+          clientRef: 'document:passport:CH',
+          documentType: 'passport',
+          issuingCountryCode: 'CH',
+          expiresOn: '2031-01-01',
+          citizenshipClientRef: 'cit:ch',
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+    })
+    const trip = reise({
+      stages: [etappe({ id: 'stage-fl', name: 'Florenz', countryCode: 'IT' })],
+      party: [alex, sam],
+    })
+    const alexRequired = official({
+      travellerClientRef: 'traveller:1',
+      credentialOptionRef: 'traveller:1:document:passport:CH',
+      result: 'required',
+    })
+    const samExempt = official({
+      travellerClientRef: 'traveller:2',
+      credentialOptionRef: 'traveller:2:document:passport:CH',
+      result: 'not_required',
+      visaMode: 'visa_exempt',
+    })
+    const ableitung = destinationEssentialsAbleiten({
+      reise: trip,
+      officialEvaluations: [alexRequired, samExempt],
+    })
+    const umgekehrt = destinationEssentialsAbleiten({
+      reise: trip,
+      officialEvaluations: [samExempt, alexRequired],
+    })
+    assert.notEqual(ableitung.ziele[0]?.einreise.lage, 'required')
+    assert.notEqual(ableitung.ziele[0]?.einreise.lage, 'not_required')
+    assert.equal(ableitung.ziele[0]?.einreise.lage, 'reisende_abhaengig')
+    assert.equal(ableitung.ziele[0]?.einreise.text, DESTINATION_OFFICIAL_REISENDE_ABHAENGIG_TEXT)
+    assert.equal(umgekehrt.ziele[0]?.einreise.lage, 'reisende_abhaengig')
+    assert.deepEqual(
+      new Set(ableitung.ziele[0]?.einreise.details.map((detail) => detail.kontextText)),
+      new Set(['Alex', 'Sam']),
+    )
+    assert.equal(
+      ableitung.ziele[0]?.einreise.details.some(
+        (detail) => detail.dokumentLabel === officialCredentialLabel(alexRequired, trip.party ?? []),
+      ),
+      true,
+    )
+    assert.equal(
+      ableitung.ziele[0]?.einreise.details.some(
+        (detail) => detail.dokumentLabel === officialCredentialLabel(samExempt, trip.party ?? []),
+      ),
+      true,
+    )
+  })
+
+  test('mischt Credential- und Reisendenunterschiede nicht zu einer Universallage', () => {
+    const alex = reisender()
+    const sam = reisender({
+      id: 'traveller-2',
+      clientRef: 'traveller:2',
+      label: 'Sam',
+      documents: [
+        {
+          id: 'doc-ch-sam',
+          clientRef: 'document:passport:CH',
+          documentType: 'passport',
+          issuingCountryCode: 'CH',
+          expiresOn: '2031-01-01',
+          citizenshipClientRef: 'cit:ch',
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+    })
+    const trip = reise({
+      stages: [etappe({ id: 'stage-fl', name: 'Florenz', countryCode: 'IT' })],
+      party: [alex, sam],
+    })
+    const ableitung = destinationEssentialsAbleiten({
+      reise: trip,
+      officialEvaluations: [
+        official({
+          travellerClientRef: 'traveller:1',
+          credentialOptionRef: 'traveller:1:document:passport:CH',
+          result: 'required',
+        }),
+        official({
+          travellerClientRef: 'traveller:1',
+          credentialOptionRef: 'traveller:1:document:passport:RS',
+          result: 'not_required',
+          visaMode: 'visa_exempt',
+        }),
+        official({
+          travellerClientRef: 'traveller:2',
+          credentialOptionRef: 'traveller:2:document:passport:CH',
+          result: 'required',
+        }),
+      ],
+    })
+    assert.equal(ableitung.ziele[0]?.einreise.lage, 'option_und_reisende_abhaengig')
+    assert.equal(ableitung.ziele[0]?.einreise.text, DESTINATION_OFFICIAL_OPTION_UND_REISENDE_ABHAENGIG_TEXT)
+    assert.notEqual(ableitung.ziele[0]?.einreise.lage, 'required')
+    assert.notEqual(ableitung.ziele[0]?.einreise.lage, 'not_required')
   })
 
   test('not_required nur bei durchgehend aktueller Gewissheit', () => {
@@ -396,7 +557,7 @@ describe('Official-Zielwahrheit', () => {
     assert.equal(action?.art, 'action')
     assert.equal(action?.label, 'Offiziellen Antrag öffnen')
     assert.equal(quelle?.art, 'source')
-    assert.equal(quelle?.label, 'Offizielle Quelle öffnen')
+    assert.equal(quelle?.label, DESTINATION_QUELLE_OFFIZIELL_LABEL)
     assert.equal(destinationOfficialAktion(nurQuelle), null)
     assert.equal(destinationOfficialQuelle(nurQuelle)?.art, 'source')
     assert.equal(destinationOfficialAktion(ungueltig), null)
@@ -408,6 +569,35 @@ describe('Official-Zielwahrheit', () => {
     assert.deepEqual(
       ableitung.ziele[0]?.einreise.links.map((link) => link.art),
       ['action', 'source'],
+    )
+  })
+
+  test('entdupliziert identische Official-Action- und Quellen-Hrefs zugunsten der Action', () => {
+    const gleicheUrl = 'https://example.test/official'
+    const quelleZuerst = official({
+      action: {
+        kind: 'open_official_action',
+        purpose: 'application',
+        href: gleicheUrl,
+      },
+      evidence: {
+        provider: 'fixture',
+        authority: 'test',
+        sourceUrl: gleicheUrl,
+        checkedAt: JETZT,
+        validFrom: null,
+        validUntil: null,
+        ruleReference: 'rule-1',
+        contextFingerprint: 'fp-official',
+      },
+    })
+    const ableitung = destinationEssentialsAbleiten({
+      reise: reise({ stages: [etappe({ id: 'stage-fl', name: 'Florenz', countryCode: 'IT' })] }),
+      officialEvaluations: [quelleZuerst],
+    })
+    assert.deepEqual(
+      ableitung.ziele[0]?.einreise.links.map((link) => ({ art: link.art, href: link.href, label: link.label })),
+      [{ art: 'action', href: gleicheUrl, label: 'Offiziellen Antrag öffnen' }],
     )
   })
 })
@@ -446,6 +636,69 @@ describe('Safety- und Seasonal-Zuordnung', () => {
     assert.equal(ableitung.ziele[1]?.sicherheit.lage, 'keine_evidence')
     assert.equal(ableitung.ziele[1]?.saison.lage, 'timing_check')
     assert.equal(ableitung.ziele[0]?.saison.lage, 'keine_evidence')
+  })
+
+  test('bezeichnet Safety- und Seasonal-Quellen nur offiziell bei official_* Authority', () => {
+    assert.equal(destinationQuelleLabel('official_government'), DESTINATION_QUELLE_OFFIZIELL_LABEL)
+    assert.equal(destinationQuelleLabel('official_humanitarian'), DESTINATION_QUELLE_OFFIZIELL_LABEL)
+    assert.equal(destinationQuelleLabel('official_transport'), DESTINATION_QUELLE_OFFIZIELL_LABEL)
+    assert.equal(destinationQuelleLabel('official_climate'), DESTINATION_QUELLE_OFFIZIELL_LABEL)
+    assert.equal(destinationQuelleLabel('unknown'), DESTINATION_QUELLE_NEUTRAL_LABEL)
+    assert.equal(destinationQuelleLabel('scientific_climatology'), DESTINATION_QUELLE_NEUTRAL_LABEL)
+
+    const ableitung = destinationEssentialsAbleiten({
+      reise: reise(),
+      safetyEvaluations: [
+        safety({
+          factId: 'safe-unknown',
+          authorityClass: 'unknown',
+          evidence: {
+            ...leereSafetyEvidence('fp-safety-unknown'),
+            sourceUrl: 'https://example.test/safety-unknown',
+          },
+        }),
+        safety({
+          factId: 'safe-official',
+          authorityClass: 'official_government',
+          evidence: {
+            ...leereSafetyEvidence('fp-safety-official'),
+            sourceUrl: 'https://example.test/safety-official',
+          },
+        }),
+      ],
+      seasonalEvaluations: [
+        seasonal({
+          factId: 'season-science',
+          authorityClass: 'scientific_climatology',
+          evidence: {
+            ...leereSeasonalEvidence(),
+            sourceUrl: 'https://example.test/season-science',
+          },
+        }),
+        seasonal({
+          factId: 'season-official',
+          authorityClass: 'official_climate',
+          evidence: {
+            ...leereSeasonalEvidence(),
+            sourceUrl: 'https://example.test/season-official',
+          },
+        }),
+      ],
+    })
+    assert.deepEqual(
+      ableitung.ziele[0]?.sicherheit.links.map((link) => ({ href: link.href, label: link.label })),
+      [
+        { href: 'https://example.test/safety-unknown', label: DESTINATION_QUELLE_NEUTRAL_LABEL },
+        { href: 'https://example.test/safety-official', label: DESTINATION_QUELLE_OFFIZIELL_LABEL },
+      ],
+    )
+    assert.deepEqual(
+      ableitung.ziele[1]?.saison.links.map((link) => ({ href: link.href, label: link.label })),
+      [
+        { href: 'https://example.test/season-science', label: DESTINATION_QUELLE_NEUTRAL_LABEL },
+        { href: 'https://example.test/season-official', label: DESTINATION_QUELLE_OFFIZIELL_LABEL },
+      ],
+    )
   })
 })
 
