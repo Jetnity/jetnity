@@ -54,29 +54,31 @@ Native apps, Traveller Network, Creator/Partner Ecosystem, own data/intelligence
 
 ## 3. Current verified runtime baseline
 
-Current post-merge verified runtime/repository main:
+Last runtime-changing verified main baseline for this completed slice:
 
-`main@ee3232666a2cee4012f36bb5405fd69c441fffaa`
+`ee3232666a2cee4012f36bb5405fd69c441fffaa`
 
 Commit:
 
 `Integrate V1 flight provider multi-leg contract reconciliation (#404)`
 
-Post-merge verified:
+This SHA is the verified **runtime-integration baseline**, not a promise that the repository's current `main` still equals this SHA. Later continuity-only merges can advance repository `main` without changing runtime behavior. **Always re-fetch live `main` before acting.**
+
+Post-merge verified for the runtime slice:
 
 - Issue #402: **CLOSED / COMPLETED**;
 - original Draft-PR #403: **CLOSED / NOT MERGED** only because Draft → Ready failed through the GitHub connector;
 - recovery PR #404: **MERGED** from exact accepted head `0841b9bfd89dcc9cc70ce708050e6e45caef478c`;
 - Recovery CI #1673: **SUCCESS** on exact accepted head;
-- Main CI #1674 / Run `33511905623`: **COMPLETED / SUCCESS** on exact `main@ee323266...`;
-- Vercel: **SUCCESS** on exact merge commit;
+- Main CI #1674 / Run `33511905623`: **COMPLETED / SUCCESS** on exact runtime-integration commit `ee323266...`;
+- Vercel: **SUCCESS** on exact runtime-integration commit;
 - provider-neutral Flight request now uses ordered 1–6 `legs[]` and preserves canonical `stopPreference` while excluding ranking-only `context`;
 - existing Duffel runtime was not rewritten;
 - Skyscanner remains fixture-only / non-promotable;
 - no Supabase/DB/Auth/provider activation/payment mutation from this slice;
 - no Product-Owner provider gate was opened.
 
-PWA-1 remains separately **CLOSED** and its installability evidence remains valid historical runtime evidence. **Always re-fetch live main.**
+PWA-1 remains separately **CLOSED** and its installability evidence remains valid historical runtime evidence.
 
 ## 4. PWA-1 final state
 
@@ -152,7 +154,7 @@ Never infer these from a generic “weiter”, “starten” or agent authorizat
 
 **There is no active Cursor coding agent and no automatically authorized next coding slice.**
 
-V1 Step 1 Provider Readiness is closed. The provider-neutral Flight multi-leg request reconciliation is also closed on `main@ee323266...`. Broader V1 Step 2 is now blocked at provider access/commercial terms rather than missing generic Jetnity route-request code.
+V1 Step 1 Provider Readiness is closed. The provider-neutral Flight multi-leg request reconciliation was integrated by runtime merge `ee3232666a2cee4012f36bb5405fd69c441fffaa` and is closed. Later continuity-only merges may advance repository `main`; live `main` must always be re-fetched. Broader V1 Step 2 is now blocked at provider access/commercial terms rather than missing generic Jetnity route-request code.
 
 Therefore:
 
