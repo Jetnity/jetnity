@@ -11,7 +11,7 @@ import {
   tripAusSafetyAnfrage,
   type SafetyReiseLesen,
 } from '@/lib/safety/auswerten'
-import { SAFETY_NOW_MS, mehrzielreise, safetyFact, testSafetyProvider } from '@/lib/safety/fixtures'
+import { mehrzielreise, safetyFact, testSafetyProvider } from '@/lib/safety/fixtures'
 import { safetyContextFingerprint } from '@/lib/safety/fingerprint'
 import { safetyAnfrageSchema, safetyVerboteneClientWahrheit } from '@/lib/safety/schema'
 import { safetyAnsicht, safetyApiStatus } from '@/lib/safety/status'
@@ -299,7 +299,7 @@ describe('S4-R2 Safety server-owned Trip Truth', () => {
     const gastAnsicht = safetyAnsicht(gastAuswertung.reise, gastAuswertung.evaluations)
     assert.equal(gastAnsicht.summary.checkState, 'unavailable')
     assert.equal(safetyApiStatus(gastAnsicht.summary), 'unavailable')
-    assert.equal(gastAnsicht.summary.checkState === 'checked_clean', false)
+    assert.notEqual(gastAnsicht.summary.checkState, 'has_warnings')
 
     const konto = await safetyEvaluationsPruefen(
       { tripId: KONTO_TRIP_ID, stages: [], days: [], items: [] },

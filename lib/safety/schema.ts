@@ -15,7 +15,7 @@ import { TRIP_ITEM_KINDS } from '@/types/trips'
  * Client-Felder, die niemals Safety-Wahrheit werden dürfen.
  * Wird am Rohobjekt geprüft, bevor Zod unbekannte Keys verwirft.
  */
-export const SAFETY_VERBOTENE_CLIENT_WAHRHEIT = [
+const SAFETY_VERBOTENE_CLIENT_WAHRHEIT = [
   'party',
   'travellers',
   'citizenships',
