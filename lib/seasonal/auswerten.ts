@@ -2,6 +2,12 @@
 //
 // API-Naht: Client darf Trip-Kontext senden, niemals Seasonal Evidence.
 
+import {
+  providerOpsConsoleEventSink,
+  providerOpsEventSchreiben,
+  type ProviderOpsEventSink,
+  type ProviderOpsOutcome,
+} from '@/lib/provider-ops'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import { seasonalAuswerten } from '@/lib/seasonal/engine'
@@ -81,9 +87,75 @@ export function tripAusSeasonalAnfrage(anfrage: SeasonalAnfrage): Trip {
   }
 }
 
+function seasonalOutcomeAus(evaluations: readonly SeasonalEvaluation[]): ProviderOpsOutcome {
+  if (evaluations.length === 0) return 'checked_empty'
+  const freshness = evaluations.map((eintrag) => eintrag.freshness)
+  if (freshness.every((wert) => wert === 'provider_unavailable')) return 'unavailable'
+  if (freshness.every((wert) => wert === 'source_temporarily_unavailable')) return 'error'
+  if (
+    freshness.some(
+      (wert) =>
+        wert === 'provider_unavailable' ||
+        wert === 'source_temporarily_unavailable' ||
+        wert === 'stale' ||
+        wert === 'recheck_needed' ||
+        wert === 'never_checked',
+    )
+  ) {
+    return 'partial'
+  }
+  return 'ok'
+}
+
 export async function seasonalEvaluationsPruefen(
   anfrage: SeasonalAnfrage,
   provider: SeasonalProvider | null = seasonalProviderAus(),
+  eventSink: ProviderOpsEventSink = providerOpsConsoleEventSink,
 ): Promise<SeasonalEvaluation[]> {
-  return seasonalAuswerten(tripAusSeasonalAnfrage(anfrage), provider, anfrage)
+  const gestartet = Date.now()
+  let beobachtet = false
+  const beobachten = (outcome: ProviderOpsOutcome, resultCount: number | null = 0) => {
+    if (beobachtet) return
+    beobachtet = true
+    void providerOpsEventSchreiben(eventSink, {
+      domain: 'seasonal',
+      providerId: provider?.name.trim() || null,
+      operation: 'evaluate',
+      outcome,
+      durationMs: Math.max(0, Date.now() - gestartet),
+      resultCount,
+      droppedCount: null,
+      rateLimitHit: false,
+    })
+  }
+
+  if (!provider) {
+    beobachten('unavailable')
+  }
+
+  const beobachteterProvider: SeasonalProvider | null = provider
+    ? {
+        name: provider.name,
+        async evaluate(providerAnfrage, signal) {
+          const onAbort = () => beobachten('timeout')
+          signal?.addEventListener('abort', onAbort, { once: true })
+          try {
+            return await provider.evaluate(providerAnfrage, signal)
+          } catch (fehler) {
+            beobachten(signal?.aborted ? 'timeout' : 'error')
+            throw fehler
+          } finally {
+            signal?.removeEventListener('abort', onAbort)
+          }
+        },
+      }
+    : null
+
+  const evaluations = await seasonalAuswerten(
+    tripAusSeasonalAnfrage(anfrage),
+    beobachteterProvider,
+    anfrage,
+  )
+  beobachten(seasonalOutcomeAus(evaluations), evaluations.length)
+  return evaluations
 }
