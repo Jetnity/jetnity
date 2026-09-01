@@ -136,12 +136,13 @@ No current instruction implicitly approves any of these.
 - Cursor-Agent: `Jetnity destination essentials 1` / Generation 1
 - Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 - Multi-Agent: **SINGLE_AGENT**
-- Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08` — re-fetched at handoff, no drift
-- Implementation/gate head: `ad5b10311a00179484dedc69f116ae2fa26b9d4d`
-- GitHub CI `33499805181`: SUCCESS on that head
-- Vercel Preview `6199680801`: success on that head
+- Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08` — re-fetched at this review-fix handoff, no drift
+- Rejected exact head: `52b9866d74d8d0db1916911e08bfed3168073472` (review `#5077136019`)
+- Review-fix commits: `83ea0fab` (credential/source truth) + `f4fde3f4` (PWA gap-analysis accuracy)
+- Local gates on `f4fde3f4`: typecheck/lint/build/hygiene pass; full suite **3129/3129**
+- Exact-head CI/Preview must be read for the current branch tip after the handoff commit
 - Agent must not mark Ready and must not merge
-- Final coding state: **STOP FOR TECHNICAL-LEAD REVIEW**
+- Final coding state: **STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**
 
 Provider work remains at Product-Owner/external gates. No follow-up slice is authorized by this implementation.
 

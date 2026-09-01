@@ -1,7 +1,7 @@
 # Destination Essentials 1 – Handoff
 
 Stand: 1. September 2026  
-Status: **IMPLEMENTED / GATES GREEN ON EXACT HEAD / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **REVIEW FIX IMPLEMENTED / LOCAL GATES GREEN / STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**
 
 ## Identity
 
@@ -14,89 +14,58 @@ Status: **IMPLEMENTED / GATES GREEN ON EXACT HEAD / STOP FOR TECHNICAL-LEAD REVI
 - Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 - Multi-Agent: **SINGLE_AGENT**
 - Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
-- Implementation/gate head: `ad5b10311a00179484dedc69f116ae2fa26b9d4d`
-- Continuity-docs head after this handoff: see latest branch SHA after the status commit
-- Main drift at handoff: **none** — `origin/main` still `c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
+- Rejected exact head: `52b9866d74d8d0db1916911e08bfed3168073472` (review `#5077136019`)
+- Review-fix implementation commits: `83ea0fab06b6177d16530ae89142ef0669870e96` (truth) + `f4fde3f4b63dbc54f404381dd2ebfdfbbd442df7` (PWA gap-analysis accuracy)
+- Exact head for this handoff: **see `git rev-parse HEAD` after this commit**
+- Main drift at this handoff: **none** — `origin/main` re-fetched, still `c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
 
-## What landed
+## Binding review addressed
 
-Presentation-only Destination Essentials in the existing Trip Workspace overview.
+Technical-Lead CHANGES REQUIRED `#5077136019` plus the same-session documentation-accuracy follow-up:
 
-- `lib/trips/destination-essentials.ts` projects `Trip.stages[]` and joins already supplied Official / Safety / Seasonal evaluations.
-- `components/trips/TripWorkspaceDestinationEssentials.tsx` renders ordered destination cards.
-- Existing `ReiseSicherheit`, `ReisezeitHinweise` and `Reisevorbereitung` remain the canonical domain surfaces.
+1. Mixed current Official outcomes across alternative credentials are no longer unconditional `required` / `not_required`. Compact states: `option_abhaengig`, `reisende_abhaengig`, `option_und_reisende_abhaengig`.
+2. Official details expose canonical `officialCredentialLabel(...)`.
+3. Deterministic tests cover same-traveller required vs not_required, reversed evaluation order, multiple travellers, and same-option mixed requirement types.
+4. Safety/Seasonal source links use `Quelle öffnen` unless authority is `official_*`.
+5. Identical Official action/source hrefs are deduped; validated action wins.
+6. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md` PWA row no longer says PWA is probably missing after verified PWA-1 closure.
 
-## Changed files
+## Production evidence limitation
+
+Live re-scan of product callers:
+
+- `TripWorkspaceAuditClient` injects `officialEvaluations` / `safetyEvaluations` / `seasonalEvaluations` (UI-audit harness only).
+- `KontoArbeitsbereich` and `GastArbeitsbereich` do **not** pass those props to `TripWorkspace`.
+
+No hidden API, fixture, local fake fact, or new runtime data source was added. If Guest/Account supplies no evaluations, Destination Essentials renders the honest bounded empty state. This slice remains a presentation/projection surface over supplied canonical truth only.
+
+## Changed files in this review fix
 
 - `lib/trips/destination-essentials.ts`
 - `lib/trips/destination-essentials.test.ts`
 - `components/trips/TripWorkspaceDestinationEssentials.tsx`
-- `components/trips/TripWorkspace.tsx`
-- `components/trips/TripWorkspaceUebersicht.tsx`
-- `lib/account/uebersicht-grenzen.test.ts`
-- `lib/account/reise-gruppen-grenzen.test.ts`
-- `ARCHITECTURE.md`
-- `DECISIONS.md` (ADR-0207)
-- `ROADMAP.md`
-- `JETNITY_HANDOFF.md`
-- `JETNITY_START_HERE.md`
-- `docs/ACTIVE_WORK_STATUS.md`
-- `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md`
+- `DECISIONS.md` (ADR-0207 point 7)
+- `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md` (PWA row accuracy only)
 - `docs/DESTINATION_ESSENTIALS_1_HANDOFF_2026-09-01.md`
 - `docs/DESTINATION_ESSENTIALS_1_SELF_REVIEW_2026-09-01.md`
-- `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+- `docs/ACTIVE_WORK_STATUS.md`
 
-## Truth rules preserved
-
-- destination Official ≠ transit Official
-- `unknown` / `unavailable` / `stale` / `recheck_needed` never become `not_required`
-- Safety / Seasonal match only explicit `affectedRefs` with `kind: 'stage'`
-- only validated `OfficialEvaluation.action` is actionable; `sourceUrl` stays source/information
-- missing evidence stays `Noch keine verlässlichen Hinweise verfügbar`
-- no visited inference
-- no commercial search mount
-
-## Tests and gates on exact head `ad5b1031`
+## Local gates on `f4fde3f4` (implementation + PWA row)
 
 | Gate | Result |
 | --- | --- |
-| Targeted Destination Essentials tests | pass |
-| Relevant Attention / Übersicht / Safety / Seasonal / Readiness tests | 79 pass |
-| Full repository suite | **3124 pass / 0 fail** |
+| Targeted Destination Essentials tests | **17/17 pass** |
+| Full repository suite | **3129 pass / 0 fail** |
 | `npm run typecheck` | pass |
-| `npm run lint` | pass (0 errors; pre-existing warnings elsewhere) |
+| `npm run lint` | pass (0 errors; 137 pre-existing warnings elsewhere) |
 | `npm run build` | pass |
 | `check:exports` / `check:dead` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | pass |
-| GitHub CI `33499805181` | **SUCCESS** on exact head |
-| Vercel Preview deployment `6199680801` | **success** on exact head |
-| Vercel dashboard | `https://vercel.com/jetnity-e1b93c82/jetnity-app/H1BD8fr76uhUafCyfCJ3iuywUm7g` |
-| Preview URL | `https://jetnity-4gzrbd8s8-jetnity-e1b93c82.vercel.app` — SSO-gated; `x-robots-tag: noindex` |
-| `/sw.js` | not introduced |
-| Console errors in local UI evidence | none |
+| GitHub CI / Vercel Preview | must be read for **this branch tip** after the handoff commit; ancestor SHA evidence is not exact-head |
 
-## Mobile / desktop evidence
-
-Local audit harness `/ui-audit/trip-workspace` with `JETNITY_UI_AUDIT=1`:
-
-- empty evidence remains `Noch keine verlässlichen Hinweise verfügbar`
-- Bali stage shows Official `required`, Safety `important_notice`, Seasonal `timing_check`
-- Ubud (same country, no stage refs) shares Official destination truth and keeps Safety/Seasonal empty
-- no Flug-Suche auto-mount
-- same IA on 390×844 and 1280×800
-
-Artifacts:
-
-- `/opt/cursor/artifacts/destination_essentials_mobile_empty.png`
-- `/opt/cursor/artifacts/destination_essentials_mobile_evidence.png`
-- `/opt/cursor/artifacts/destination_essentials_desktop_evidence.png`
-- `/opt/cursor/artifacts/destination_essentials_ui_evidence.json`
-
-## Non-scope confirmation
-
-No Supabase/DB/RLS/Auth mutation. No provider/secret/paid/live call. No World Map. No TW-8/TW-9. No service worker/offline/push. No indexing/domain cutover. No hard-coded destination facts.
+`/sw.js` was not introduced. No DB/Auth/provider/live API.
 
 ## Next
 
-Independent Technical-Lead Exact-Head review.  
+Independent Technical-Lead Exact-Head re-review of the new head.  
 **DO NOT mark Ready. DO NOT merge.**  
 **STOP FOR TECHNICAL-LEAD REVIEW.**

@@ -1,7 +1,7 @@
 # Jetnity – Destination Essentials 1 Task
 
 Stand: 1. September 2026  
-Status: **IMPLEMENTED IN FEATURE BRANCH / SINGLE_AGENT / STOP FOR TECHNICAL-LEAD REVIEW**  
+Status: **REVIEW FIX IMPLEMENTED IN FEATURE BRANCH / SINGLE_AGENT / STOP FOR FRESH TECHNICAL-LEAD REVIEW**  
 Issue: #393  
 Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`  
 Cursor-Agent: **`Jetnity destination essentials 1`**  
