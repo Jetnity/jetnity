@@ -22,6 +22,10 @@ export const PROVIDER_OPS_EVENT_FELDER = [
   'recordedAt',
 ] as const
 
+const PROVIDER_OPS_MAX_DURATION_MS = 10 * 60 * 1_000
+const PROVIDER_OPS_MAX_COUNT = 1_000_000
+const PROVIDER_OPS_MAX_PROVIDER_ID = 80
+
 export type ProviderOpsEvent = {
   domain: ProviderOpsDomain
   providerId: string | null
@@ -54,17 +58,33 @@ export type ProviderOpsHealth = {
   stale: boolean
 }
 
+function begrenzteGanzzahl(wert: number, maximum: number): number {
+  if (!Number.isFinite(wert)) return 0
+  return Math.min(Math.max(Math.floor(wert), 0), maximum)
+}
+
+function begrenzterZaehler(wert: number | null): number | null {
+  if (wert === null) return null
+  return begrenzteGanzzahl(wert, PROVIDER_OPS_MAX_COUNT)
+}
+
+function providerIdLesen(wert: string | null): string | null {
+  if (wert === null) return null
+  const bereinigt = wert.trim().slice(0, PROVIDER_OPS_MAX_PROVIDER_ID)
+  return bereinigt || null
+}
+
 export function providerOpsEvent(
   teil: Omit<ProviderOpsEvent, 'recordedAt'> & { recordedAt?: string },
 ): ProviderOpsEvent {
   return {
     domain: teil.domain,
-    providerId: teil.providerId,
+    providerId: providerIdLesen(teil.providerId),
     operation: teil.operation,
     outcome: teil.outcome,
-    durationMs: teil.durationMs,
-    resultCount: teil.resultCount,
-    droppedCount: teil.droppedCount,
+    durationMs: begrenzteGanzzahl(teil.durationMs, PROVIDER_OPS_MAX_DURATION_MS),
+    resultCount: begrenzterZaehler(teil.resultCount),
+    droppedCount: begrenzterZaehler(teil.droppedCount),
     rateLimitHit: teil.rateLimitHit,
     recordedAt: teil.recordedAt ?? new Date().toISOString(),
   }
