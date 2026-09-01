@@ -54,7 +54,9 @@ export {
   PROVIDER_OPS_USAGE_POLICY_FELDER,
   providerOpsUngepruefteUsagePolicy,
   providerOpsUsagePolicyAusGepruefterKonfiguration,
+  providerOpsUsagePolicyAusProvider,
   type ProviderOpsCacheClass,
   type ProviderOpsPersistClass,
   type ProviderOpsUsagePolicy,
+  type ProviderOpsUsagePolicyTraeger,
 } from '@/lib/provider-ops/usage-policy'
