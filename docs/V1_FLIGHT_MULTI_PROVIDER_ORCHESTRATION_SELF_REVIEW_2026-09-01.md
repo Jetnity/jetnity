@@ -64,6 +64,19 @@ Unchanged by this slice:
 - no TW-8/TW-9, Destination Essentials / #394;
 - no public launch, indexing, payment or native-app change.
 
+## Local gates
+
+On implementation head `7e2af484eea4aa998de5fab9182d93be6b57f82c`:
+
+- focused Flight tests 33/33
+- full suite 3146/3146
+- typecheck pass
+- lint 0 errors
+- hygiene/security/schema checks pass
+- production build pass
+
+A later commit changes the review head. CI/Vercel must be re-read on the live tip.
+
 ## Residual / next
 
 Independent Technical-Lead Exact-Head Review of the live PR tip. Cursor stops. No follow-up slice.

@@ -43,6 +43,23 @@ This is **not** a provider selection. Duffel remains the only constructible adap
 | Generation | 1 |
 | Session | `bc-c294a0b2-5ed8-411e-8131-5c06a254d2b8` |
 | Draft | stays Draft |
+| Local gates recorded before this evidence commit | see below |
+
+## Local gates
+
+Recorded on the implementation head `7e2af484eea4aa998de5fab9182d93be6b57f82c` before this evidence note. A later docs-only tip invalidates that SHA as the review head; re-gate the live PR tip.
+
+- focused Flight orchestration + collection tests: **33/33 pass**
+- previously colliding E5-B3A/B3C source-contract tests: **pass** after leaving `client-sicht.ts` unchanged
+- full suite: **3146/3146 pass**
+- typecheck: **pass**
+- lint: **0 errors**
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug`: **pass**
+- production build: **pass**
+- working tree runtime files: clean except local `next-env.d.ts` typegen noise, not committed
+- no changes under `lib/flights/duffel/`, `lib/providers/skyscanner/`, `supabase/`, or Destination Essentials
+
+Exact-head CI/Vercel must be read from the live PR tip, not from this paragraph.
 
 ## Changed files
 
