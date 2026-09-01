@@ -163,6 +163,7 @@ export async function seasonalEvaluationsPruefen(
     beobachteterProvider,
     anfrage,
   )
-  beobachten(seasonalOutcomeAus(evaluations), evaluations.length)
+  const outcome = seasonalOutcomeAus(evaluations)
+  beobachten(outcome, outcome === 'checked_empty' ? 0 : evaluations.length)
   return evaluations
 }
