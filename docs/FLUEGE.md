@@ -1,7 +1,7 @@
 # Jetnity – Flüge
 
-**Stand:** 1. September 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary Foundation D; provider-neutrale Request-Reconciliation ADR-0207 auf Draft-PR #403  
-**Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking, die Übernahme in die Reise und die persistierte Route Truth.
+**Stand:** 1. September 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary Foundation D; provider-neutrale Request-Reconciliation ADR-0207; Runtime-Orchestrierung 0..N Provider ADR-0208 auf Draft-PR #413  
+**Gilt für:** die interne Flugdomäne, den ersten konstruierbaren Duffel-Testadapter, 0..N-Orchestrierung, das Ranking, die Übernahme in die Reise und die persistierte Route Truth.
 
 Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
 
@@ -31,12 +31,12 @@ Nicht gebaut:
 Suchanfrage (Browser)
   → POST /api/flights/search
     → Zustand (Kill Switch, Production-Sperre, Test-Token)
-      → Rate-Limit
-        → FlightProvider.suchen()
-          → Duffel Adapter (Offer Requests, Zod)
-            → interne FlugOption
-              → deterministisches Ranking
-                → Client-Sicht (ohne Score, ohne Rohdaten)
+      → Rate-Limit einmal je Jetnity-Suche
+        → 0..N unabhängige FlugProvider.suchen(dieselbe Anfrage)
+          → provider-lokales FlugProviderTreffer / Fehler
+            → nur FlugOption[] kombinieren
+              → deterministisches globales Ranking + globale Kappe
+                → Client-Sicht (ohne Score, ohne retrievedAt/Evidence, ohne Rohdaten)
 ```
 
 Übernahme:
@@ -56,11 +56,12 @@ Browser sendet nur tripId, dayId, optionId
 | --- | --- | --- |
 | Domäne | `lib/flights/domain.ts` | Suchanfrage, Segment, Option, Status |
 | Prüfung | `lib/flights/schema.ts` | Zod, untrusted input |
-| Interface | `lib/flights/provider.ts` | `FlightProvider` – ein zweiter Adapter ohne UI-Rewrite |
+| Interface | `lib/flights/provider.ts` | `FlugProvider` – ein zweiter Adapter ohne UI-Rewrite |
+| Sammlung | `lib/flights/provider-sammlung.ts` | 0..N constructible Adapter, kein Default/Primary |
 | Zustand | `lib/flights/zustand.ts` | Production aus, Kill Switch, nur Duffel-Test-Token |
 | Ranking | `lib/flights/ranking.ts` | provisionsneutral, deterministisch, kein Modell |
 | Gründe | `lib/flights/gruende.ts` | 2–4 Sätze für „Jetnity empfiehlt“ |
-| Orchestrierung | `lib/flights/suche.ts` | Zustand → Limit → Provider → Ranking |
+| Orchestrierung | `lib/flights/suche.ts` | Zustand → Limit → 0..N Provider → globales Ranking |
 | Client-Sicht | `lib/flights/client-sicht.ts` | keine Tokens, kein Score, keine Rohfelder |
 | Übernahme | `lib/flights/uebernahme.ts` | nachgewiesene Option → kommerzieller Planpunkt inkl. Itinerary |
 | Nachweis | `lib/flights/nachweis.ts` | `FlugNachweis` bindet optionId an Suchkontext; Umgebung ist `null` |
@@ -80,6 +81,8 @@ Im Flugbereich des Trip Workspace steht zuerst der Reisebestand (`components/tri
 Amadeus Self-Service ist seit dem 17. Juli 2026 eingestellt und wird **nicht** angebunden. Duffel Flights API ist der erste Suchadapter: ein Daten- und Entwicklungsweg, keine technische oder geschäftliche Kopplung.
 
 Ein späterer Metasuch-Provider muss dasselbe Runtime-`FlugProvider`-Interface erfüllen. Search, Ranking und Trip-Domain bleiben. Search-Provider und Affiliate-/Booking-Provider sind getrennt.
+
+Die Runtime-Suche orchestriert 0..N `FlugProvider` ohne Composite-Treffer (ADR-0208). Heute ist nur Duffel als Testadapter konstruierbar. Das ist keine Providerwahl und kein Live-Pfad.
 
 Die spätere Offline-Foundation `FlightProviderSearchRequest` ist keine zweite Suche. Sie projiziert dieselbe geordnete 1–6-Bein-Wahrheit (`flightProviderSearchRequestAus`) inklusive kanonischer `stopPreference`. Ranking-`context` gehört nicht in diesen Request. `market`/`locale` sind externer Request-Kontext, nicht Traveller- oder Ranking-Wahrheit (ADR-0207). Skyscanner bleibt fixture-only.
 

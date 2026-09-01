@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 31. August 2026  
-Status: **CURRENT HANDOFF / REQUIREMENTS PROVIDER GATE 0 CLOSED / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
+Stand: 1. September 2026  
+Status: **CURRENT HANDOFF / REQUIREMENTS PROVIDER GATE 0 CLOSED / DRAFT #413 0..N FLIGHT ORCHESTRATION AWAITING TL REVIEW / LIVE-EVIDENCE GEWINNT**
 
 Aktuellster vollständiger Checkpoint:
 
@@ -34,17 +34,19 @@ Der Continuity-PR, der diesen Handoff aktualisiert, bewegt `main` nochmals. Fina
 
 ## 2. Agentenstatus
 
-Letzter Cursor-Agent:
+Aktueller Cursor-Agent für Draft-PR #413 / Issue #412:
+
+**`Jetnity flight multi-provider orchestration 1`**  
+Generation: **1**  
+Session: `bc-c294a0b2-5ed8-411e-8131-5c06a254d2b8`
+
+Status: **IMPLEMENTATION DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**. Kein Ready, kein Merge, kein Folgeslice.
+
+Letzter abgeschlossener Requirements-Agent bleibt historische Evidence:
 
 **`Jetnity requirements provider groundwork 1`**  
 Generation: **1**  
 Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`
-
-Status: **STOPPED**.
-
-Alle CR-1 bis CR-7 wurden in derselben Session bearbeitet. Der Technical Lead hat danach Exact-Head Review, mechanische Gates und Merge unabhängig durchgeführt.
-
-**Kein Cursor-Agent und kein Folgeslice ist aktuell aktiv.**
 
 ## 3. Requirements / Travel Readiness Current Truth
 

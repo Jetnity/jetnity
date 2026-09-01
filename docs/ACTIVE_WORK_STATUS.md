@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 MULTI-LEG CONTRACT CLOSED / PROVIDER ACCESS DUE DILIGENCE CURRENT / PWA-1 CLOSED / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER SELECTED OR ACTIVE / EXTERNAL A-GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 MULTI-LEG CONTRACT CLOSED / DRAFT #413 0..N FLIGHT ORCHESTRATION AWAITING TL REVIEW / PROVIDER ACCESS DUE DILIGENCE CURRENT / PWA-1 CLOSED / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER SELECTED OR ACTIVE / EXTERNAL A-GATES CLOSED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Current verified runtime baseline
 
@@ -146,9 +146,23 @@ No current instruction implicitly approves any of these.
 
 ## 7. Current active work boundary
 
-**No Cursor coding agent is active. No product follow-up slice is automatically authorized.**
+**Active Cursor coding agent (implementation complete, not Ready, not merged):**
 
-The provider-neutral Flight multi-leg contract reconciliation is **CLOSED**:
+- Logical agent: `Jetnity flight multi-provider orchestration 1`
+- Generation: **1**
+- Session: `bc-c294a0b2-5ed8-411e-8131-5c06a254d2b8`
+- Issue: #412
+- Draft-PR: #413
+- Branch: `feat/v1-flight-multi-provider-orchestration`
+- Binding: `docs/V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_TASK_2026-09-01.md`
+- Multi-Agent: **SINGLE_AGENT**
+- Baseline verified live: `origin/main` = `7654d7e7f07d39e55fc907690137e833070637ea`
+
+This slice changes Flight **search orchestration** from exactly one provider to 0..N independent `FlugProvider` calls. It does **not** select, apply to, or activate a real provider.
+
+**STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW.** Cursor must not mark Ready or merge.
+
+The provider-neutral Flight multi-leg contract reconciliation remains **CLOSED**:
 
 - Issue #402 closed/completed;
 - Draft #403 closed/not merged only because of the Draft→Ready connector failure;
@@ -220,4 +234,4 @@ Principally open after the multi-leg contract closure:
 - V1 privacy/legal/ops/monetization closure;
 - V1 Definition of Done and Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. PWA-1 CLOSED. PROVIDER READINESS CLOSED. MULTI-LEG CONTRACT CLOSED. V1 STEP 2 ACCESS DUE DILIGENCE CURRENT. PRODUCTION S6 UNAPPLIED. NO PROVIDER SELECTED. EXTERNAL A-GATES CLOSED. NO ACTIVE AGENT. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. PWA-1 CLOSED. PROVIDER READINESS CLOSED. MULTI-LEG CONTRACT CLOSED. DRAFT #413 AWAITS TL REVIEW. V1 STEP 2 ACCESS DUE DILIGENCE CURRENT. PRODUCTION S6 UNAPPLIED. NO PROVIDER SELECTED. EXTERNAL A-GATES CLOSED. NO AUTOMATIC NEXT SLICE.**

@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / V1 STEP 2 MULTI-LEG CONTRACT CLOSED / PROVIDER ACCESS DUE DILIGENCE CURRENT / PWA-1 CLOSED / PROVIDER READINESS CLOSED / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER SELECTED OR ACTIVE / EXTERNAL A-GATES CLOSED / NO AUTOMATIC NEXT SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / V1 STEP 2 MULTI-LEG CONTRACT CLOSED / DRAFT #413 0..N FLIGHT ORCHESTRATION AWAITING TL REVIEW / PROVIDER ACCESS DUE DILIGENCE CURRENT / PWA-1 CLOSED / PROVIDER READINESS CLOSED / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER SELECTED OR ACTIVE / EXTERNAL A-GATES CLOSED / NO AUTOMATIC NEXT SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -152,9 +152,13 @@ Never infer these from a generic “weiter”, “starten” or agent authorizat
 
 ## 7. Current work boundary
 
-**There is no active Cursor coding agent and no automatically authorized next coding slice.**
+**Active implementation Draft-PR, not Ready and not merged:** Issue #412 / PR #413 / `docs/V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_TASK_2026-09-01.md`.
 
-V1 Step 1 Provider Readiness is closed. The provider-neutral Flight multi-leg request reconciliation was integrated by runtime merge `ee3232666a2cee4012f36bb5405fd69c441fffaa` and is closed. Later continuity-only merges may advance repository `main`; live `main` must always be re-fetched. Broader V1 Step 2 is now blocked at provider access/commercial terms rather than missing generic Jetnity route-request code.
+Logical agent `Jetnity flight multi-provider orchestration 1`, Generation 1, session `bc-c294a0b2-5ed8-411e-8131-5c06a254d2b8`. SINGLE_AGENT. Baseline `origin/main@7654d7e7`. Cursor stops for independent Technical-Lead Exact-Head Review.
+
+This slice only changes Flight search orchestration to 0..N independent `FlugProvider` calls. It does not select or activate a real provider.
+
+V1 Step 1 Provider Readiness is closed. The provider-neutral Flight multi-leg request reconciliation was integrated by runtime merge `ee3232666a2cee4012f36bb5405fd69c441fffaa` and is closed. Later continuity-only merges may advance repository `main`; live `main` must always be re-fetched. Broader V1 Step 2 remains blocked at provider access/commercial terms rather than missing generic Jetnity route-request code.
 
 Therefore:
 
@@ -224,4 +228,4 @@ Principally open after the multi-leg contract closure:
 - V1 privacy/legal/ops/monetization closure;
 - V1 Definition of Done and V1 Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. PWA-1 CLOSED. PROVIDER READINESS CLOSED. MULTI-LEG CONTRACT CLOSED. V1 STEP 2 ACCESS DUE DILIGENCE CURRENT. PRODUCTION S6 UNAPPLIED. NO PROVIDER SELECTED. EXTERNAL A-GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. PWA-1 CLOSED. PROVIDER READINESS CLOSED. MULTI-LEG CONTRACT CLOSED. DRAFT #413 AWAITS TL REVIEW. V1 STEP 2 ACCESS DUE DILIGENCE CURRENT. PRODUCTION S6 UNAPPLIED. NO PROVIDER SELECTED. EXTERNAL A-GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
