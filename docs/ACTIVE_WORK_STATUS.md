@@ -160,7 +160,7 @@ No current instruction implicitly approves any of these.
 
 This slice changes Flight **search orchestration** from exactly one provider to 0..N independent `FlugProvider` calls. It does **not** select, apply to, or activate a real provider.
 
-Local gates on implementation head `7e2af484eea4aa998de5fab9182d93be6b57f82c`: typecheck pass, lint 0 errors, tests 3146/3146, hygiene/schema pass, production build pass. Exact-head CI/Vercel must be re-read on the live PR tip.
+Technical-Lead CHANGES REQUIRED `5080976712` rejected head `14149167` because `flugZustand` was still Duffel-token-coupled. CR-1 in the same session decouples global Flight state from vendor credentials. Previous exact-head gates on `14149167` are invalid.
 
 **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW.** Cursor must not mark Ready or merge.
 

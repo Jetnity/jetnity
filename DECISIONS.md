@@ -5445,6 +5445,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 7. Validierung und Nutzer-Rate-Limit laufen einmal je Jetnity-Suche. Provider-Fehler bleiben isoliert. Ein nutzbarer Erfolg plus ein anderer Fehler oder `partial` ergibt `partial`.
 8. Die kleinste Sammlung ist `flugProviderSammlungAus()` / `aktuelleFlugProviderSammlung()`. Heute ist nur der vorhandene Duffel-Testadapter konstruierbar. Reihenfolge in der Sammlung ist kein Default/Primary.
 9. ProviderOps-Invocation-Events sind je Provider und `providerId`-treu. Vor dem Aufruf (invalid, rate-limit, keine Provider) bleibt `providerId: null`.
+10. Der globale Flight-Zustand (`flugZustand`) ist nur Production-hart-aus plus `JETNITY_FLIGHT_AKTIV`. Anbieter-Credentials bleiben in der jeweiligen Fabrik. `ohne-zugang` / Search-unavailable entsteht an der Orchestrierungsnaht, wenn 0 Provider konstruierbar sind.
 
 **Kontext:** Der Product Owner hat ausdrücklich erlaubt, die Flight-Schicht provider-neutral weiterzubauen und die spätere echte Providerwahl offenzuhalten. ADR-0207 schloss Fan-out auf der Request-Naht aus; das bleibt für `FlightProviderSearchRequest` wahr. Diese Entscheidung betrifft nur die bestehende Runtime-Orchestrierung in `lib/flights/suche.ts`. Sie wählt keinen Provider, aktiviert keinen Live-Pfad und hebt ADR-0011 nicht in eine Multi-Provider-Produktplattform auf.
 
@@ -5452,7 +5453,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 **Begründung:** Getrennte Beobachtungen dürfen nicht zu einer gefälschten gemeinsamen Evidence werden. Ein späterer zweiter Adapter darf Route und Orchestrierung nicht neu schreiben müssen.
 
-**Konsequenzen:** Ein-Provider-Verhalten bleibt nach aussen kompatibel. Duffel bleibt der einzige heute konstruierbare Adapter. `flugZustand` prüft Zugang weiterhin über das Duffel-Test-Token; das ist bewusst unverändert und muss vor einem zweiten konstruierbaren Adapter neu bewertet werden. Kein Secret, kein Netzwerk, kein Production-S6, kein Commercial-Provenance-Writer, keine KAYAK/Wego/Skyscanner-Adapter.
+**Konsequenzen:** Ein-Provider-Verhalten bleibt nach aussen kompatibel. Duffel bleibt der einzige heute konstruierbare Adapter. `flugZustand` ist nicht mehr an ein Duffel-Token gekoppelt; ein späterer Adapter braucht dafür keine globale Zustandsänderung. Kein Secret, kein Netzwerk, kein Production-S6, kein Commercial-Provenance-Writer, keine KAYAK/Wego/Skyscanner-Adapter.
 
 ---
 

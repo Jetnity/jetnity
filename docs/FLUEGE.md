@@ -58,7 +58,7 @@ Browser sendet nur tripId, dayId, optionId
 | Prüfung | `lib/flights/schema.ts` | Zod, untrusted input |
 | Interface | `lib/flights/provider.ts` | `FlugProvider` – ein zweiter Adapter ohne UI-Rewrite |
 | Sammlung | `lib/flights/provider-sammlung.ts` | 0..N constructible Adapter, kein Default/Primary |
-| Zustand | `lib/flights/zustand.ts` | Production aus, Kill Switch, nur Duffel-Test-Token |
+| Zustand | `lib/flights/zustand.ts` | Production aus, Kill Switch; kein vendor-spezifisches Credential |
 | Ranking | `lib/flights/ranking.ts` | provisionsneutral, deterministisch, kein Modell |
 | Gründe | `lib/flights/gruende.ts` | 2–4 Sätze für „Jetnity empfiehlt“ |
 | Orchestrierung | `lib/flights/suche.ts` | Zustand → Limit → 0..N Provider → globales Ranking |
@@ -93,7 +93,7 @@ Umgebung:
 | `JETNITY_FLIGHT_AKTIV` | Kill Switch. Nur `true` oder `1` |
 | `DUFFEL_ACCESS_TOKEN` | serverseitig, nur `duffel_test_…` |
 
-`VERCEL_ENV=production` schaltet hart aus – auch wenn Kill Switch und Token gesetzt wären. Ein Live-Token (`duffel_live_…`) gilt als Feature-unavailable. Es gibt keine `NEXT_PUBLIC_DUFFEL_*`-Variable. Fehlende Credentials sind Feature-unavailable, kein Buildfehler.
+`VERCEL_ENV=production` schaltet hart aus – auch wenn Kill Switch und Token gesetzt wären. Der globale Flight-Zustand hängt nicht an einem Duffel-Token. Ein Live-Token (`duffel_live_…`) konstruiert den Duffel-Adapter nicht; ohne jeden konstruierbaren Provider bleibt die Suche an der Orchestrierungsnaht unavailable. Es gibt keine `NEXT_PUBLIC_DUFFEL_*`-Variable. Fehlende konstruierbare Provider sind Search-unavailable, kein Buildfehler.
 
 Die Suche spricht `https://api.duffel.com/air/offer_requests`. Test und Live teilen den Hostname; die Umgebung steht im Token. Phase 3.1 akzeptiert nur Test-Tokens. Buchungsendpunkte (`/air/orders`) werden nicht aufgerufen.
 
