@@ -1,7 +1,7 @@
 # Destination Essentials 1 – Adversarial Self-Review
 
 Stand: 1. September 2026  
-Head: `ad5b10311a00179484dedc69f116ae2fa26b9d4d`  
+Implementation/gate head: `ad5b10311a00179484dedc69f116ae2fa26b9d4d`  
 Agent self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity

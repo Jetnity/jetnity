@@ -136,7 +136,10 @@ No current instruction implicitly approves any of these.
 - Cursor-Agent: `Jetnity destination essentials 1` / Generation 1
 - Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 - Multi-Agent: **SINGLE_AGENT**
-- Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08` — re-fetch before review
+- Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08` — re-fetched at handoff, no drift
+- Implementation/gate head: `ad5b10311a00179484dedc69f116ae2fa26b9d4d`
+- GitHub CI `33499805181`: SUCCESS on that head
+- Vercel Preview `6199680801`: success on that head
 - Agent must not mark Ready and must not merge
 - Final coding state: **STOP FOR TECHNICAL-LEAD REVIEW**
 
