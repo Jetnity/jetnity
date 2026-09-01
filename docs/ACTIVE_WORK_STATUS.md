@@ -1,27 +1,28 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / THREE-PHASE STRATEGY CLOSED & POST-MERGE VERIFIED / NO ACTIVE RUNTIME SLICE / V1 BUILD ORDER BINDING / MULTI-AGENT SUITABILITY CHECK BINDING / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / PROVIDER READINESS S4 CLOSED / NO ACTIVE RUNTIME SLICE / S6 NEXT SERIAL CANDIDATE / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
 
-## 1. Current verified main
+## 1. Current verified runtime main
 
-`main@8eb51c55206309c5e59e46985ee15ee0b6aee3f3`
+S4 final live-main recheck was performed on:
+
+`main@9e34d36e0400da651db651cb08e0277b1d495e28`
 
 Commit:
 
-`Close Jetnity three-phase V1 strategy continuity (#362)`
+`Merge S4 Multi-Document parser order-independence fix (#372)`
 
 Post-merge verified:
 
-- Main CI #1567 / Run `33453923519`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_GfvbTiTyVnjeeb6HCSm7BtEumnnQ`: **READY** on exact main SHA;
-- PR #362: **MERGED**;
-- Phase-1/Core strategy integration and continuity: **CLOSED & POST-MERGE VERIFIED**;
-- no runtime slice active;
+- Main CI #1587 / Run `33458936508`: **COMPLETED / SUCCESS**;
+- Vercel Production `dpl_3qC2iUDUWqYqBbLEXxvM2UZBTvD9`: **READY** on exact runtime main SHA;
+- Issue #370: **CLOSED / COMPLETED**;
+- S4 final Technical-Lead recheck: **PASS**;
 - no provider activated;
-- no Production mutation from the strategy/continuity integration.
+- no Production DB/security mutation from S4 closure work.
 
-A docs-only governance update may advance main after merge. Always re-fetch live `main`.
+The docs-only S4 continuity closure can advance `main` after this runtime SHA. Always re-fetch live main.
 
 ## 2. Current product phase
 
@@ -37,38 +38,57 @@ V1 launches only when:
 
 Feature Complete alone is not sufficient.
 
-## 3. Canonical current phase / V1 / execution documents
+## 3. Canonical current documents
 
 Read first:
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_THREE_PHASE_STRATEGY_CLOSED_2026-09-01.md`
-2. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-3. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-4. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-5. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-6. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-7. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
-8. `docs/JETNITY_THREE_PHASE_STRATEGY_RECONCILIATION_2026-09-01.md`
-9. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
-10. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S4_CLOSED_2026-09-01.md` ← **current workstream closure checkpoint**
+2. `docs/CHATGPT_TECHNICAL_LEAD_THREE_PHASE_STRATEGY_CLOSED_2026-09-01.md`
+3. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+4. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+5. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+6. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+7. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+8. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+9. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+10. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
-Correct existing architecture remains authoritative and is reused. Older planning remains historical/dependency evidence, but does not override the newer V1 launch-scope contract.
+Correct existing architecture remains authoritative and is reused. Historical evidence remains useful for dependencies, but live evidence and the current V1 hierarchy win.
 
-## 4. What is already strong for Phase 1
+## 4. Provider Readiness status
 
-Existing integrated or strong foundations include:
+### S4 — CLOSED
 
-- Trip Workspace through major pre-TW8 work;
-- Guest → Account;
-- Account Traveller Registry + trip-owned Traveller Snapshot;
-- Multi-Citizenship / Multi-Document foundations and lifecycle;
-- Route / Transit / Multi-Destination truth;
-- provider-neutral Flight / Hotel / Activity domains and secure adoption seams;
-- Entry Requirements and Temporal Readiness foundations;
-- Admin A–C / security / health / provider-cost foundations;
-- product quality, logic, security and continuity governance.
+Integrated and independently reviewed:
 
-## 5. Critical V1 gaps
+- Requirements S4-R1 timeout / signal / freshness / Readiness kill switch;
+- Safety server-owned Trip/Traveller truth via recovery PR #368;
+- residual 8 KB cap / activation-flag audit via recovery PR #369;
+- Multi-Document parser order-independence fix via recovery PR #372.
+
+Final S4 conclusions:
+
+- Readiness 8 KB cap is not a current blocker and remains unchanged;
+- Requirements activation control is present;
+- Safety/Seasonal provider factories remain hard-null and fail closed;
+- Safety/Seasonal additional flags are mandatory at first non-null provider activation, not current S4 blockers;
+- account Safety does not trust browser citizenship/traveller claims as Trip truth;
+- valid Multi-Document citizenship links are no longer array-order dependent;
+- no default/primary/preferred passport or citizenship semantics introduced.
+
+### S6 — NEXT SERIAL CANDIDATE, NOT YET ACTIVE
+
+Binding V1 order now requires:
+
+1. **S6 Persistent Cost Guard**;
+2. S7 Observability;
+3. S8 Cache/License/Operational hooks;
+4. complete Provider Readiness recheck;
+5. only then Product-Owner-gated real provider work.
+
+A fresh live S6 precheck and mandatory Multi-Agent Suitability Check are required before implementation.
+
+## 5. Critical V1 gaps beyond Provider Readiness
 
 Still principally open:
 
@@ -85,82 +105,61 @@ Still principally open:
 - final V1 Definition of Done;
 - final V1 Release Readiness Gate.
 
-## 6. V1 critical path / next candidate
+These do not permit skipping the binding Provider Readiness sequence.
 
-`docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md` is now the binding V1 critical-path contract.
+## 6. Hard Traveller truth
 
-Provider Readiness must still be completed before real provider-live paths. Current known residual sequence includes:
+> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
-- residual S4 revalidation/closure;
-- S6 Persistent Cost Guard;
-- S7 Observability;
-- S8 Cache/License/Operational hooks;
-- final Provider Readiness recheck;
-- then Product-Owner-gated real provider paths.
+Never infer:
 
-The previously identified **S6 Persistent Cost Guard remains a likely next bounded candidate, but it is NOT active and NOT automatically started.**
-
-A fresh live precheck must determine the smallest responsible Phase-1 slice.
+- default/primary/preferred citizenship;
+- default/primary/preferred passport;
+- `documents[0]` as truth;
+- Residence → Citizenship;
+- Issuer Country → Citizenship.
 
 ## 7. Mandatory Multi-Agent Suitability Check
 
-Product-Owner-verbindlich gilt ab jetzt für **jede** neue Slice-Planung:
+For every new material slice:
 
-1. Live truth first;
-2. kleinsten verantwortlichen Slice identifizieren;
-3. vor Agenten-Dispatch prüfen, ob der Slice sicher auf mehrere Agenten zerlegt werden kann;
-4. Dateien, Shared Contracts, DB/Migrations, Security/Provider/Production-Gates, Ownership und Merge-Reihenfolge bewerten;
-5. `MULTI_AGENT` wählen, wenn mindestens zwei disjunkte, unabhängig reviewbare Workstreams real Geschwindigkeit oder Qualität erhöhen;
-6. `SINGLE_AGENT` wählen, wenn Parallelität Truth-/Architektur-/Security-/Merge-/Shared-Contract-Risiko erhöht;
-7. Entscheidung und Begründung im versionierten Task/PR/Continuity festhalten;
-8. bei Multi-Agent-Arbeit exakte Ownership, Contract-Owner, Branch-/PR-Topologie und Integrationsreihenfolge definieren;
-9. Cursor-Agenten behalten strikt `do not Ready`, `do not merge`, STOPP für unabhängigen TL-Review;
-10. finale Integration bleibt ausschließlich Technical-Lead-Verantwortung.
+1. reconstruct live truth;
+2. identify the smallest responsible slice;
+3. assess safe parallelization before agent dispatch;
+4. choose `MULTI_AGENT` only for genuinely disjoint, independently reviewable ownership;
+5. choose `SINGLE_AGENT` when shared truth/contracts/security/schema make parallel writers riskier;
+6. persist the decision and ownership;
+7. Cursor agents never Ready or merge;
+8. every changed head receives a fresh exact-head gate;
+9. final integration is Technical-Lead-owned.
 
-Der Product Owner muss diese Regel nicht erneut erwähnen.
-
-Binding detail:
-
-`docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-
-Für die docs-only Einführung dieser Governance-Regel wurde der Check bereits durchgeführt: **SINGLE_AGENT / Technical-Lead-owned**, weil der kleine eng gekoppelte Dokument-Scope keine sichere oder sinnvolle Parallelisierungsachse besitzt.
-
-## 8. Phase 2 / Phase 3 are preserved, not deleted
-
-Phase 2 contains broad provider landscape, advanced travel decisions/companion, Destination Intelligence, personalization, Admin/Ops Pro, Finance/Bexio and Growth breadth.
-
-Phase 3 contains native apps, Traveller Network, Creator/Partner Ecosystem, Intelligence/Data Assets and international scaling.
-
-These do not automatically block V1.
-
-## 9. Product-Owner gates
+## 8. Product-Owner gates
 
 Explicit Product-Owner approval remains required before relevant:
 
-- provider selection/contract/DPA;
+- provider/vendor choice, signup, contract or DPA;
 - API keys/secrets;
 - paid/live provider calls;
 - Production provider activation;
-- Production DB/security mutations and writer allocation;
+- Production migration / RLS / grant / role / function mutation and runtime writer allocation;
 - fundamental Auth/MFA/AAL changes;
 - sensitive passport/MRZ/scan/biometric/health storage;
 - real payments;
 - spend outside approved limits;
 - public indexing/domain cutover/public launch.
 
-## 10. Current stop rule
+## 9. Current stop / next-work rule
 
 **NO ACTIVE RUNTIME SLICE.**
 
-Before any new runtime task:
+Before S6 or any other runtime task:
 
-1. reconstruct live repository/CI/Vercel/Production truth;
-2. read the V1 hierarchy;
-3. choose the smallest responsible Phase-1 slice;
-4. perform and document the mandatory Multi-Agent Suitability Check;
-5. define one or multiple non-colliding agent ownerships accordingly;
-6. version task(s) and branch/PR topology;
-7. follow exact-head Technical-Lead review/governance;
-8. do not cross any Product-Owner gate without explicit approval.
+1. fetch live main, PRs/issues, CI and Vercel;
+2. inspect relevant live Production truth read-only where persistence/security architecture depends on it;
+3. re-read the binding V1 order and S6 contract;
+4. inspect existing S1 cost-guard interfaces and reusable Admin/provider-cost foundations;
+5. perform the mandatory Multi-Agent Suitability Check;
+6. define a bounded task without crossing a Product-Owner gate;
+7. use exact-head Technical-Lead review/governance.
 
 **LIVE-EVIDENCE WINS. AUDIT FIRST. REUSE BEFORE ADD. INTEGRATE BEFORE DUPLICATE. FAIL CLOSED.**
