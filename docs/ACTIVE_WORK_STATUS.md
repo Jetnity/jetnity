@@ -47,24 +47,25 @@ Feature Complete alone is not sufficient.
 
 Read first:
 
-1. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_RECONCILIATION_TASK_2026-09-01.md` ← **current Draft-PR #403 contract slice**
-2. `docs/FLIGHT_METASEARCH_PROVIDER_ALTERNATIVES_PRECHECK_2026-09-01.md`
-3. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
-4. `docs/FLIGHT_PROVIDER_PRODUCT_OWNER_DECISION_PACKAGE_2026-09-01.md`
-5. `docs/ACTIVE_WORK_STATUS.md`
-6. `docs/CHATGPT_TECHNICAL_LEAD_PWA_1_CLOSED_2026-09-01.md`
-7. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md`
-8. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
-9. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
-10. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
-11. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-12. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-13. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-14. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-15. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-16. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
-17. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-18. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+1. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_HANDOFF_2026-09-01.md` ← **current Draft-PR #403 exact-head handoff**
+2. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_RECONCILIATION_TASK_2026-09-01.md`
+3. `docs/FLIGHT_METASEARCH_PROVIDER_ALTERNATIVES_PRECHECK_2026-09-01.md`
+4. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
+5. `docs/FLIGHT_PROVIDER_PRODUCT_OWNER_DECISION_PACKAGE_2026-09-01.md`
+6. `docs/ACTIVE_WORK_STATUS.md`
+7. `docs/CHATGPT_TECHNICAL_LEAD_PWA_1_CLOSED_2026-09-01.md`
+8. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md`
+9. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
+10. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
+11. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
+12. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+13. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+14. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+15. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+16. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+17. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+18. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+19. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
 ## 4. PWA-1 final state
 
@@ -143,7 +144,9 @@ No current instruction implicitly approves any of these.
 
 ## 7. Current active work boundary
 
-**Active Draft-PR only:** Issue #402 / PR #403 / `feat/v1-flight-provider-multileg-contract` — provider-neutral Flight request multi-leg reconciliation (ADR-0207). SINGLE_AGENT Generation 1. Cursor implements and self-reviews; independent Technical-Lead review is the next gate. Draft stays Draft. No Ready, no merge, no follow-up slice.
+**Active Draft-PR only:** Issue #402 / PR #403 / `feat/v1-flight-provider-multileg-contract` — provider-neutral Flight request multi-leg reconciliation (ADR-0207). SINGLE_AGENT Generation 1. Implementation + local gates + self-review are on the branch; independent Technical-Lead review is the next gate. Draft stays Draft. No Ready, no merge, no follow-up slice.
+
+Local gates on implementation head `3d544fa6`: contract 10/10, flights+Skyscanner 137/137, `npm test` 3122/3122, typecheck pass, lint 0 errors, production build pass. Exact final head: read live on PR #403 / `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_HANDOFF_2026-09-01.md`.
 
 This is **not** a provider selection, application, secret, network, Duffel-runtime or Skyscanner-promotion slice.
 

@@ -53,6 +53,19 @@ Unchanged by this slice:
 - no TW-8/TW-9, Destination Essentials / #394;
 - no public launch, indexing, payment or native-app change.
 
+## Local gates recorded on `3d544fa6`
+
+| Gate | Outcome |
+| --- | --- |
+| Focused contract tests | **10/10 pass** |
+| `lib/flights/**` + Skyscanner adapter tests | **137/137 pass** |
+| `npm test` | **3122/3122 pass** |
+| `npm run typecheck` | **pass** |
+| `npm run lint` | **0 errors** (137 pre-existing warnings) |
+| `npm run build` | **pass** |
+
+Changed-file review vs `347c129b`: only the provider-neutral request/mapper/tests plus continuity docs. Duffel, Skyscanner, Supabase and API routes untouched.
+
 ## Residual / next
 
-Independent Technical-Lead Exact-Head review. Cursor stops after local gates and exact-head handoff. No follow-up slice.
+Independent Technical-Lead Exact-Head review. Cursor stops after this exact-head handoff. No follow-up slice.
