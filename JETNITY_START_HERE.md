@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PROVIDER READINESS S4 CLOSED / NO ACTIVE RUNTIME SLICE / S6 NEXT SERIAL CANDIDATE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / S4 CLOSED / S6-A REPOSITORY FOUNDATION CLOSED & POST-MERGE VERIFIED / PRODUCTION S6 UNAPPLIED / NO ACTIVE RUNTIME SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -9,28 +9,29 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PROVIDER R
 
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S4_CLOSED_2026-09-01.md` ← **aktueller Provider-Readiness-Closure-Checkpoint**
+1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S6A_CLOSED_2026-09-01.md` ← **aktueller Provider-Readiness-Closure-Checkpoint**
 2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-4. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-5. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-6. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-7. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-8. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
-9. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-10. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S4_CLOSED_2026-09-01.md`
+4. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+5. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+6. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+7. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+8. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+9. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+10. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+11. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
 Danach dauerhaft relevante Grundlagen:
 
-11. `JETNITY_PRODUCT_MANDATE.md`
-12. `JETNITY_VISION.md`
-13. `docs/PRODUCT_QUALITY_STANDARD.md`
-14. `docs/LOGIC_STANDARD.md`
-15. `ARCHITECTURE.md`
-16. `DECISIONS.md`
-17. `JETNITY_HANDOFF.md`
+12. `JETNITY_PRODUCT_MANDATE.md`
+13. `JETNITY_VISION.md`
+14. `docs/PRODUCT_QUALITY_STANDARD.md`
+15. `docs/LOGIC_STANDARD.md`
+16. `ARCHITECTURE.md`
+17. `DECISIONS.md`
+18. `JETNITY_HANDOFF.md`
 
-Fachlich relevante aktuelle Handoffs/Reconciliations zusätzlich nach Workstream lesen. Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Migration-/Persistenzfragen zusätzlich Supabase Production **read-only** prüfen.
+Danach GitHub/CI/Vercel live neu verifizieren. Bei DB-/Security-/Migration-/Persistenzfragen zusätzlich Supabase Production **read-only** prüfen, solange kein aktuelles Product-Owner-Gate ausdrücklich eine Mutation freigibt.
 
 ## 2. Product-Owner binding phases
 
@@ -54,54 +55,67 @@ Native Apps, Traveller Network, Creator/Partner Ecosystem, eigene Data Assets/In
 
 Phase 2/3 sind aus dem Standard-V1-Launchpfad herausgenommen, nicht aus Jetnity gelöscht.
 
-## 3. Current verified runtime main
+## 3. Current verified main
 
-S4 final runtime main:
+S6-A repository-foundation merge:
 
-`main@9e34d36e0400da651db651cb08e0277b1d495e28`
+`main@dfae0f05e6ffa2c8d6e1739bf41a91c31f504199`
 
 Commit:
 
-`Merge S4 Multi-Document parser order-independence fix (#372)`
+`Provider Readiness S6-A persistent cost guard foundation (#376)`
 
 Post-merge evidence:
 
-- Main CI #1587 / Run `33458936508`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_3qC2iUDUWqYqBbLEXxvM2UZBTvD9`: **READY** on exact runtime main SHA;
-- Issue #370: **CLOSED / COMPLETED**;
-- Provider Readiness S4 final Technical-Lead live-main recheck: **PASS / CLOSED**;
+- Main CI #1601 / Run `33461631088`: **COMPLETED / SUCCESS**;
+- Vercel Production `dpl_HtfLjZ6tgsDs7bUdSJfMbtpRLkQV`: **READY** on exact main SHA;
+- PR #376: **MERGED**;
+- Issue #375: **CLOSED / COMPLETED**;
 - no provider activated;
-- no Production database/security mutation from S4 closure work.
+- no Production database/security mutation from S6-A.
 
-The docs-only S4 continuity closure may advance repository `main` beyond this runtime SHA. Always fetch live main rather than assuming this remains the tip.
+Fresh read-only Production Supabase evidence after the merge shows all S6-A Production objects absent, including the runtime gate, policy/reservation tables, reservation function and writer role. Migration `20260901020000_provider_cost_guard_s6a.sql` is therefore **UNAPPLIED TO PRODUCTION**.
+
+This docs-only closure may advance `main` again. Always fetch live main instead of assuming the SHA above remains the repository tip.
 
 ## 4. Provider Readiness current state
 
 ### S4 — CLOSED
 
-S4 now includes and has independently verified:
+Requirements/Safety truth-ops, body-cap/activation decision and Multi-Document order-independence are integrated and independently verified.
 
-- Requirements timeout/signal/freshness and Readiness activation control;
-- Safety server-owned Trip/Traveller truth;
-- measured Readiness 8 KB body-cap decision;
-- activation-time classification for Safety/Seasonal flags while factories remain hard-null;
-- order-independent Multi-Document citizenship-link parsing.
+### S6-A — REPOSITORY FOUNDATION CLOSED & POST-MERGE VERIFIED
 
-The 8 KB cap is intentionally unchanged. It is not a current V1 blocker.
+Repository foundation now contains:
 
-Safety/Seasonal hard-null factories remain fail-closed. Their additional kill-switch wrappers become mandatory when a real non-null provider path is introduced; S4 closure does not authorize such activation.
+- persistent Cost Guard migration contract, hard-off by default;
+- no active cost policies;
+- atomic caller/domain/global reservation semantics;
+- internal least-privilege capability/function contract;
+- server-only persistence adapter with injected port;
+- domain-separated identifier HMAC;
+- DB-clock/fail-closed semantics;
+- regression/security contract tests.
 
-### Next binding sequence
+### Production S6 — UNAPPLIED / GATED
 
-`docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md` requires:
+S6-A is **not** Production activation. Still absent/unallocated:
 
-1. **S6 Persistent Cost Guard**;
-2. S7 Observability;
-3. S8 Cache/License/Operational hooks;
-4. full Provider Readiness recheck;
-5. only then Product-Owner-gated real provider paths.
+- Production migration apply;
+- Production runtime/login principal;
+- Production role membership;
+- HMAC secret;
+- >0 live budgets/cost policies;
+- runtime binding to the persistent DB port;
+- provider activation;
+- paid/live calls.
 
-**S6 is the next serial candidate, but no runtime S6 implementation is active at this checkpoint.**
+### S7 / S8
+
+- S7 Observability: **NOT STARTED**
+- S8 Cache/License/Operational hooks: **NOT STARTED**
+
+Do not auto-start S7 from this checkpoint.
 
 ## 5. Hard Traveller truth
 
@@ -129,7 +143,7 @@ Commercial Provider Truth may never silently become Official Entry/Safety Truth.
 
 Still principally open:
 
-- S6/S7/S8 Provider Readiness and final recheck;
+- operational Provider Readiness completion: Production-S6 decision, S7, S8 and final recheck;
 - real Flight Commercial Truth;
 - real Hotel Commercial Truth;
 - real Activities path or explicit Product-Owner launch exception if externally blocked;
@@ -161,11 +175,12 @@ Every new material work cycle must:
 
 Explicit Product-Owner approval remains required before relevant:
 
+- Production migration apply / RLS / grants / roles / functions;
+- runtime/login principal allocation;
 - provider choice/signup/contract/DPA;
 - API keys/secrets;
-- paid/live provider calls;
+- >0 live provider budgets and paid/live provider calls;
 - Production provider activation;
-- Production migration / RLS / grant / role / function mutation and writer allocation;
 - fundamental Auth/MFA/AAL changes;
 - sensitive document/MRZ/scan/biometric/health storage;
 - real payments;
@@ -176,14 +191,14 @@ Explicit Product-Owner approval remains required before relevant:
 
 **NO ACTIVE RUNTIME SLICE.**
 
-Before S6:
+Before the next Provider Readiness task:
 
-1. reconstruct live repository state after this closure;
-2. inspect existing S1 cost-guard interfaces and current Admin/provider-cost foundations;
-3. inspect relevant Supabase Production truth read-only;
-4. determine whether S6 can be safely decomposed or must remain single-agent;
-5. define the smallest S6 work that does not cross any Product-Owner gate;
-6. version task/branch/PR topology;
+1. reconstruct live main/PRs/issues/CI/Vercel and relevant Production truth;
+2. re-read the S6-A closure and binding V1 order;
+3. decide whether the smallest responsible next step is a separately Product-Owner-gated Production-S6 activation step or a repository-only S7 step that can safely proceed while Production S6 remains hard-off;
+4. perform the mandatory Multi-Agent Suitability Check;
+5. version the task/branch/PR topology;
+6. do not infer any Product-Owner gate from this closure;
 7. use independent exact-head Technical-Lead review and post-merge verification.
 
-**LIVE-EVIDENCE WINS. S4 CLOSED. S6 NEXT SERIAL CANDIDATE. NO REAL PROVIDER UNLOCKED.**
+**LIVE-EVIDENCE WINS. S6-A REPOSITORY FOUNDATION CLOSED. PRODUCTION S6 UNAPPLIED. S7 NOT STARTED. NO REAL PROVIDER UNLOCKED.**
