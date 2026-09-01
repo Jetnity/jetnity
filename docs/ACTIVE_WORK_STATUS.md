@@ -5,27 +5,29 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 MULTI-LEG CONTRACT CLOSED /
 
 ## 1. Current verified runtime baseline
 
-Current post-merge verified runtime/repository main:
+Last runtime-changing verified main baseline for this completed slice:
 
-`main@ee3232666a2cee4012f36bb5405fd69c441fffaa`
+`ee3232666a2cee4012f36bb5405fd69c441fffaa`
 
 Commit:
 
 `Integrate V1 flight provider multi-leg contract reconciliation (#404)`
 
-Post-merge verified:
+This SHA is the verified **runtime-integration baseline**, not a promise that the repository's current `main` still equals it. Later docs-only continuity merges may advance repository `main` without changing runtime behavior. Always re-fetch live `main` before acting.
+
+Post-merge verified for the runtime slice:
 
 - Issue #402: **CLOSED / COMPLETED**;
 - original Draft-PR #403: **CLOSED / NOT MERGED** only because Draft → Ready failed through the GitHub connector;
 - recovery PR #404: **MERGED** from exact accepted head `0841b9bfd89dcc9cc70ce708050e6e45caef478c`;
 - Recovery CI #1673: **SUCCESS** on exact accepted head;
-- Main CI #1674 / Run `33511905623`: **COMPLETED / SUCCESS** on exact merge commit;
-- Vercel: **SUCCESS** on exact merge commit;
-- provider-neutral Flight request reconciliation is now runtime code on main, not docs-only due diligence;
+- Main CI #1674 / Run `33511905623`: **COMPLETED / SUCCESS** on exact runtime-integration commit;
+- Vercel: **SUCCESS** on exact runtime-integration commit;
+- provider-neutral Flight request reconciliation is runtime code integrated by #404, not docs-only due diligence;
 - existing Duffel runtime and Skyscanner fixture boundary were not rewritten;
 - no Production DB/security/provider/payment mutation from this slice.
 
-PWA-1 remains separately **CLOSED**. Always re-fetch live main before acting.
+PWA-1 remains separately **CLOSED**.
 
 ## 2. Current product phase
 
@@ -151,7 +153,7 @@ The provider-neutral Flight multi-leg contract reconciliation is **CLOSED**:
 - Issue #402 closed/completed;
 - Draft #403 closed/not merged only because of the Draft→Ready connector failure;
 - recovery PR #404 merged from the exact accepted head;
-- `main@ee3232666a2cee4012f36bb5405fd69c441fffaa` post-merge verified;
+- runtime integration was verified on `ee3232666a2cee4012f36bb5405fd69c441fffaa`; later continuity-only merges may advance repository `main`, so current `main` must be fetched live;
 - accepted contract keeps ordered 1–6 legs and lossless canonical `stopPreference` while excluding ranking-only `context`.
 
 This is **not** a provider selection, application, secret, network, Duffel-runtime or Skyscanner-promotion authorization.
