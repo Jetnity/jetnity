@@ -10,6 +10,12 @@ import { optionenBewerten } from '@/lib/flights/ranking'
 import { flugSucheErlaubt } from '@/lib/flights/rate-limit'
 import { ersteFlugmeldung, flugSuchanfrageSchema } from '@/lib/flights/schema'
 import { flugZustand, flugZustandMeldung, type FlugUmgebung, type FlugZustand } from '@/lib/flights/zustand'
+import {
+  providerOpsConsoleEventSink,
+  providerOpsEventSchreiben,
+  type ProviderOpsEventSink,
+  type ProviderOpsOutcome,
+} from '@/lib/provider-ops'
 import type { FlughafenReferenzKarte } from '@/lib/route/domain'
 import { iatasAusOption } from '@/lib/route/referenz'
 
@@ -18,6 +24,7 @@ export type SuchePorts = {
   provider: FlugProvider | null
   kennung: string
   flughafenReferenz?: (codes: readonly string[]) => Promise<FlughafenReferenzKarte>
+  eventSink?: ProviderOpsEventSink
 }
 
 function sucheOhneProvider(zustand: FlugZustand): FlugSucheAntwort {
@@ -33,12 +40,32 @@ export async function fluegeSuchen(
   eingabe: unknown,
   ports: SuchePorts,
 ): Promise<{ httpStatus: number; koerper: FlugSucheAntwort; retryAfterSec?: number }> {
+  const gestartet = Date.now()
+  const beobachten = (
+    outcome: ProviderOpsOutcome,
+    resultCount: number | null = 0,
+    droppedCount: number | null = 0,
+  ) => {
+    void providerOpsEventSchreiben(ports.eventSink, {
+      domain: 'flights',
+      providerId: ports.provider?.id ?? null,
+      operation: 'search',
+      outcome,
+      durationMs: Math.max(0, Date.now() - gestartet),
+      resultCount,
+      droppedCount,
+      rateLimitHit: outcome === 'rate_limited',
+    })
+  }
+
   if (!ports.zustand.aktiv || !ports.provider) {
+    beobachten('unavailable')
     return { httpStatus: 200, koerper: sucheOhneProvider(ports.zustand) }
   }
 
   const geprueft = flugSuchanfrageSchema.safeParse(eingabe)
   if (!geprueft.success) {
+    beobachten('invalid')
     return {
       httpStatus: 400,
       koerper: {
@@ -52,6 +79,7 @@ export async function fluegeSuchen(
 
   const quota = await flugSucheErlaubt(ports.kennung)
   if (!quota.ok) {
+    beobachten('rate_limited')
     return {
       httpStatus: 429,
       retryAfterSec: quota.retryAfterSec,
@@ -81,6 +109,7 @@ export async function fluegeSuchen(
       ? await ports.flughafenReferenz(bewertet.flatMap((option) => iatasAusOption(option)))
       : {}
 
+    beobachten(status, bewertet.length, Math.max(0, treffer.options.length - bewertet.length))
     return {
       httpStatus: 200,
       koerper: sucheFuerClient({ status, message, options: bewertet, airportRefs }),
@@ -95,6 +124,7 @@ export async function fluegeSuchen(
             : fehler.art === 'invalid'
               ? 'invalid'
               : 'error'
+      beobachten(status)
       return {
         httpStatus: 200,
         koerper: {
@@ -105,6 +135,7 @@ export async function fluegeSuchen(
         },
       }
     }
+    beobachten('error')
     return {
       httpStatus: 200,
       koerper: {
@@ -126,5 +157,6 @@ export function suchePortsAusUmgebung(
     zustand: flugZustand(umgebung),
     provider,
     kennung,
+    eventSink: providerOpsConsoleEventSink,
   }
 }
