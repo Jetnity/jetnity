@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
+import { inflateSync } from 'node:zlib'
 
 import manifest from '@/app/manifest'
 
@@ -18,6 +19,31 @@ function pngAbmessungen(datei: string) {
     hoehe: inhalt.readUInt32BE(20),
     farbtyp: inhalt[25],
   }
+}
+
+function pngRgba(datei: string) {
+  const inhalt = readFileSync(datei)
+  const breite = inhalt.readUInt32BE(16)
+  const hoehe = inhalt.readUInt32BE(20)
+  let offset = 8
+  const daten: Buffer[] = []
+
+  while (offset < inhalt.length) {
+    const laenge = inhalt.readUInt32BE(offset)
+    const typ = inhalt.toString('ascii', offset + 4, offset + 8)
+    if (typ === 'IDAT') daten.push(inhalt.subarray(offset + 8, offset + 8 + laenge))
+    offset += 12 + laenge
+  }
+
+  const roh = inflateSync(Buffer.concat(daten))
+  const zeilenbreite = breite * 4 + 1
+  const pixel: Buffer[] = []
+  for (let y = 0; y < hoehe; y += 1) {
+    assert.equal(roh[y * zeilenbreite], 0, 'Produktionsicon verwendet erwartete filterlose PNG-Zeilen')
+    pixel.push(roh.subarray(y * zeilenbreite + 1, (y + 1) * zeilenbreite))
+  }
+
+  return { breite, hoehe, pixel }
 }
 
 describe('PWA-1: installierbare, datensparsame App-Shell', () => {
@@ -52,6 +78,35 @@ describe('PWA-1: installierbare, datensparsame App-Shell', () => {
       const icon = pngAbmessungen(join(ROOT, relativerPfad))
       assert.deepEqual(icon, { breite: groesse, hoehe: groesse, farbtyp: 6 })
     }
+  })
+
+  test('Das maskable Icon ist ein eigenständiges, undurchsichtiges Safe-Zone-Asset', () => {
+    const standard = readFileSync(join(ROOT, 'public/icons/jetnity-512.png'))
+    const maskable = pngRgba(join(ROOT, 'public/icons/jetnity-512-maskable.png'))
+    const mitte = maskable.breite / 2
+    const sichererRadius = maskable.breite * 0.4
+    let markPixel = 0
+
+    assert.notDeepEqual(
+      readFileSync(join(ROOT, 'public/icons/jetnity-512-maskable.png')),
+      standard,
+      'maskable Asset ist nicht das Standard-Icon',
+    )
+
+    for (let y = 0; y < maskable.hoehe; y += 1) {
+      for (let x = 0; x < maskable.breite; x += 1) {
+        const offset = x * 4
+        const [rot, gruen, blau, alpha] = maskable.pixel[y].subarray(offset, offset + 4)
+        assert.equal(alpha, 255, 'maskable Asset ist vollständig deckend')
+
+        if (gruen > 180 && rot > 150 && blau < 180) {
+          markPixel += 1
+          assert.ok(Math.hypot(x + 0.5 - mitte, y + 0.5 - mitte) < sichererRadius)
+        }
+      }
+    }
+
+    assert.ok(markPixel > 0, 'maskable Asset enthält die Lime-Marke')
   })
 
   test('PWA-1 führt weder Service Worker noch Offline-Persistenz ein', () => {
