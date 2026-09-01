@@ -20,11 +20,18 @@ import { hotelSucheErlaubt } from '@/lib/hotels/rate-limit'
 import { hotelOptionenBewerten } from '@/lib/hotels/ranking'
 import { ersteHotelmeldung, hotelSucheEingabeSchema } from '@/lib/hotels/schema'
 import { hotelZustand, hotelZustandMeldung, type HotelUmgebung, type HotelZustand } from '@/lib/hotels/zustand'
+import {
+  providerOpsConsoleEventSink,
+  providerOpsEventSchreiben,
+  type ProviderOpsEventSink,
+  type ProviderOpsOutcome,
+} from '@/lib/provider-ops'
 
 export type HotelSuchePorts = {
   zustand: HotelZustand
   provider: HotelProvider | null
   kennung: string
+  eventSink?: ProviderOpsEventSink
 }
 
 function leerAntwort(
@@ -60,8 +67,27 @@ export async function hotelsSuchen(
   eingabe: unknown,
   ports: HotelSuchePorts,
 ): Promise<{ httpStatus: number; koerper: HotelSucheAntwort; retryAfterSec?: number }> {
+  const gestartet = Date.now()
+  const beobachten = (
+    outcome: ProviderOpsOutcome,
+    resultCount: number | null = 0,
+    droppedCount: number | null = 0,
+  ) => {
+    void providerOpsEventSchreiben(ports.eventSink, {
+      domain: 'hotels',
+      providerId: ports.provider?.id ?? null,
+      operation: 'search',
+      outcome,
+      durationMs: Math.max(0, Date.now() - gestartet),
+      resultCount,
+      droppedCount,
+      rateLimitHit: outcome === 'rate_limited',
+    })
+  }
+
   const geprueft = hotelSucheEingabeSchema.safeParse(eingabe)
   if (!geprueft.success) {
+    beobachten('invalid')
     return {
       httpStatus: 400,
       koerper: leerAntwort('error', ersteHotelmeldung(geprueft.error)),
@@ -79,6 +105,7 @@ export async function hotelsSuchen(
   )
 
   if (!ports.zustand.aktiv || !ports.provider) {
+    beobachten('unavailable')
     return {
       httpStatus: 200,
       koerper: leerAntwort('unavailable', hotelZustandMeldung(ports.zustand), quartier, evidenz),
@@ -86,6 +113,7 @@ export async function hotelsSuchen(
   }
 
   if (!suchanfrage) {
+    beobachten('invalid')
     return {
       httpStatus: 200,
       koerper: leerAntwort(
@@ -99,6 +127,7 @@ export async function hotelsSuchen(
 
   const quota = await hotelSucheErlaubt(ports.kennung)
   if (!quota.ok) {
+    beobachten('rate_limited')
     return {
       httpStatus: 429,
       retryAfterSec: quota.retryAfterSec,
@@ -127,6 +156,11 @@ export async function hotelsSuchen(
           ? 'Einige Angebote konnten nicht gelesen werden. Die übrigen Hotels siehst du unten.'
           : 'Hotels gefunden.'
 
+    beobachten(
+      status,
+      optionen.length,
+      treffer.partial ? null : Math.max(0, treffer.options.length - optionen.length),
+    )
     return {
       httpStatus: 200,
       koerper: sucheFuerClient({
@@ -147,11 +181,13 @@ export async function hotelsSuchen(
             : fehler.art === 'invalid'
               ? 'invalid'
               : 'error'
+      beobachten(status)
       return {
         httpStatus: 200,
         koerper: leerAntwort(status, fehler.message, quartier, evidenz),
       }
     }
+    beobachten('error')
     return {
       httpStatus: 200,
       koerper: leerAntwort('error', 'Die Hotelsuche ist fehlgeschlagen.', quartier, evidenz),
@@ -168,5 +204,6 @@ export function hotelSuchePortsAusUmgebung(
     zustand: hotelZustand(umgebung, provider !== null),
     provider,
     kennung,
+    eventSink: providerOpsConsoleEventSink,
   }
 }

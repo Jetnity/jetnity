@@ -21,11 +21,18 @@ import {
   type MobilityUmgebung,
   type MobilityZustand,
 } from '@/lib/mobility/zustand'
+import {
+  providerOpsConsoleEventSink,
+  providerOpsEventSchreiben,
+  type ProviderOpsEventSink,
+  type ProviderOpsOutcome,
+} from '@/lib/provider-ops'
 
 export type MobilitySuchePorts = {
   zustand: MobilityZustand
   provider: MobilityProvider | null
   kennung: string
+  eventSink?: ProviderOpsEventSink
 }
 
 function evidenzAus(anfrage: MobilitySuchanfrage): MobilityEvidenz {
@@ -74,6 +81,7 @@ export function mobilitySuchePortsAusUmgebung(
     zustand: mobilityZustand(umgebung, Boolean(provider)),
     provider,
     kennung,
+    eventSink: providerOpsConsoleEventSink,
   }
 }
 
@@ -81,8 +89,27 @@ export async function mobilitySuchen(
   eingabe: unknown,
   ports: MobilitySuchePorts,
 ): Promise<{ httpStatus: number; koerper: MobilitySucheAntwort; retryAfterSec?: number }> {
+  const gestartet = Date.now()
+  const beobachten = (
+    outcome: ProviderOpsOutcome,
+    resultCount: number | null = 0,
+    droppedCount: number | null = 0,
+  ) => {
+    void providerOpsEventSchreiben(ports.eventSink, {
+      domain: 'mobility',
+      providerId: ports.provider?.id ?? null,
+      operation: 'search',
+      outcome,
+      durationMs: Math.max(0, Date.now() - gestartet),
+      resultCount,
+      droppedCount,
+      rateLimitHit: outcome === 'rate_limited',
+    })
+  }
+
   const geprueft = mobilitySucheEingabeSchema.safeParse(eingabe)
   if (!geprueft.success) {
+    beobachten('invalid')
     return {
       httpStatus: 400,
       koerper: leerAntwort('invalid', ersteMobilitymeldung(geprueft.error)),
@@ -93,6 +120,7 @@ export async function mobilitySuchen(
   const evidenz = evidenzAus(anfrage)
 
   if (!ports.zustand.aktiv || !ports.provider) {
+    beobachten('unavailable')
     return {
       httpStatus: 200,
       koerper: leerAntwort('unavailable', mobilityZustandMeldung(ports.zustand), evidenz),
@@ -101,6 +129,7 @@ export async function mobilitySuchen(
 
   const rate = await mobilitySucheErlaubt(ports.kennung)
   if (!rate.ok) {
+    beobachten('rate_limited')
     return {
       httpStatus: 429,
       retryAfterSec: rate.retryAfterSec,
@@ -116,10 +145,12 @@ export async function mobilitySuchen(
     const options = mobilityOptionenBewerten(kandidaten).slice(0, MOBILITY_SUCHE_GRENZEN.empfohleneOptionen)
 
     if (options.length === 0) {
+      const status = treffer.partial ? 'partial' : 'empty'
+      beobachten(status, 0, treffer.partial ? null : treffer.options.length)
       return {
         httpStatus: 200,
         koerper: leerAntwort(
-          treffer.partial ? 'partial' : 'empty',
+          status,
           treffer.partial
             ? 'Einzelne Angebote konnten nicht gelesen werden. Es bleibt keine gültige Verbindung.'
             : 'Für diese Verbindung liegt gerade kein Angebot vor.',
@@ -128,10 +159,16 @@ export async function mobilitySuchen(
       }
     }
 
+    const status = treffer.partial ? 'partial' : 'ok'
+    beobachten(
+      status,
+      options.length,
+      treffer.partial ? null : Math.max(0, treffer.options.length - options.length),
+    )
     return {
       httpStatus: 200,
       koerper: sucheFuerClient({
-        status: treffer.partial ? 'partial' : 'ok',
+        status,
         message: treffer.partial
           ? 'Es liegen Verbindungen vor. Einzelne Angebote wurden verworfen.'
           : 'Verbindungen passend zur Anfrage.',
@@ -150,9 +187,11 @@ export async function mobilitySuchen(
             : fehler.art === 'invalid'
               ? 'invalid'
               : 'error'
+      beobachten(status)
       const httpStatus = fehler.art === 'timeout' ? 504 : 200
       return { httpStatus, koerper: leerAntwort(status, fehler.message, evidenz) }
     }
+    beobachten('error')
     return {
       httpStatus: 200,
       koerper: leerAntwort('error', 'Die Mobilitätssuche ist gerade nicht verfügbar.', evidenz),
