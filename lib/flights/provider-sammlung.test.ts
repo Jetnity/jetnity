@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 
 import { OPTION_DIREKT, SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
 import type { FlugProvider } from '@/lib/flights/provider'
+import { duffelProviderAus } from '@/lib/flights/duffel/factory'
 import {
   aktuelleFlugProviderSammlung,
   flugProviderSammlungAus,
@@ -67,30 +68,36 @@ describe('Flug-Provider-Sammlung', () => {
   })
 
   test('aktuelle Laufzeit-Sammlung bleibt ohne Token leer und kennt nur Duffel, wenn Test-Zugang da ist', () => {
-    assert.deepEqual(aktuelleFlugProviderSammlung({ JETNITY_FLIGHT_AKTIV: 'true' }), [])
-    const mitDuffel = aktuelleFlugProviderSammlung({
-      JETNITY_FLIGHT_AKTIV: 'true',
-      DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx',
-    })
+    const flugAktiv = { JETNITY_FLIGHT_AKTIV: 'true' }
+    assert.deepEqual(flugProviderSammlungAus([duffelProviderAus(flugAktiv, {})]), [])
+    const mitDuffel = flugProviderSammlungAus([
+      duffelProviderAus(flugAktiv, { DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx' }),
+    ])
     assert.deepEqual(
       mitDuffel.map((provider) => provider.id),
       ['duffel'],
     )
     assert.equal(
-      aktuelleFlugProviderSammlung({
-        VERCEL_ENV: 'production',
-        JETNITY_FLIGHT_AKTIV: 'true',
-        DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx',
-      }).length,
+      flugProviderSammlungAus([
+        duffelProviderAus(
+          { VERCEL_ENV: 'production', JETNITY_FLIGHT_AKTIV: 'true' },
+          { DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx' },
+        ),
+      ]).length,
       0,
     )
     assert.deepEqual(
-      aktuelleFlugProviderSammlung({
-        JETNITY_FLIGHT_AKTIV: 'true',
-        DUFFEL_ACCESS_TOKEN: 'duffel_live_xxxxxxxxxxxxxxxx',
-      }),
+      flugProviderSammlungAus([
+        duffelProviderAus(flugAktiv, { DUFFEL_ACCESS_TOKEN: 'duffel_live_xxxxxxxxxxxxxxxx' }),
+      ]),
       [],
     )
+  })
+
+  test('Sammlung ist kein globales Credential-Register', () => {
+    const sammlung = readFileSync('lib/flights/provider-sammlung.ts', 'utf8')
+    assert.doesNotMatch(sammlung, /DUFFEL_ACCESS_TOKEN|ACCESS_TOKEN|KAYAK|Wego|Skyscanner/)
+    assert.match(sammlung, /duffelProviderAus\(umgebung\)/)
   })
 
   test('suchePortsAusUmgebung verdrahtet eine 0..N-Sammlung, keinen einzelnen Pflicht-Provider', () => {

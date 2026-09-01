@@ -30,5 +30,6 @@ export function flugProviderSammlungAus(
 export function aktuelleFlugProviderSammlung(
   umgebung: FlugUmgebung = flugUmgebungAusProzess(),
 ): readonly FlugProvider[] {
+  // Nur provider-neutrale Flight-Umgebung. Duffel liest sein Token selbst.
   return flugProviderSammlungAus([duffelProviderAus(umgebung)])
 }

@@ -25,18 +25,11 @@ export type FlugZustand =
 export type FlugUmgebung = {
   VERCEL_ENV?: string
   JETNITY_FLIGHT_AKTIV?: string
-  DUFFEL_ACCESS_TOKEN?: string
-}
-
-/** Nur Duffel-Test. Live-Tokens dürfen Phase 3.1 nicht auslösen. */
-export function istDuffelTestToken(wert: string | undefined): boolean {
-  const token = wert?.trim() ?? ''
-  return token.startsWith('duffel_test_') && token.length >= 20 && token.length <= 200
 }
 
 export function flugUmgebungAusProzess(): FlugUmgebung {
-  const { VERCEL_ENV, JETNITY_FLIGHT_AKTIV, DUFFEL_ACCESS_TOKEN } = process.env
-  return { VERCEL_ENV, JETNITY_FLIGHT_AKTIV, DUFFEL_ACCESS_TOKEN }
+  const { VERCEL_ENV, JETNITY_FLIGHT_AKTIV } = process.env
+  return { VERCEL_ENV, JETNITY_FLIGHT_AKTIV }
 }
 
 export function flugZustand(umgebung: FlugUmgebung = flugUmgebungAusProzess()): FlugZustand {
