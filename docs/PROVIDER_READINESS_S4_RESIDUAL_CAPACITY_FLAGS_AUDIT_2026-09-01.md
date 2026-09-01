@@ -1,17 +1,17 @@
 # Provider Readiness S4 – Residual Capacity / Activation-Flag Audit
 
-Stand: 1. September 2026  
-Status: **DOCS-ONLY AUDIT / AGENT B / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
-Logical agent: **`Jetnity provider readiness S4 residual capacity flags audit 1`**  
-Generation: **1**  
-Cursor session: `bc-38ebef81-cb58-4dbf-96ad-152dd9250125`  
-Parent: Issue #365  
-Draft-PR: #367  
+Stand: 1. September 2026
+Status: **DOCS-ONLY AUDIT / AGENT B / REVIEW-FIX FOR TL `5072890265` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**
+Logical agent: **`Jetnity provider readiness S4 residual capacity flags audit 1`**
+Generation: **1**
+Cursor session: `bc-38ebef81-cb58-4dbf-96ad-152dd9250125`
+Parent: Issue #365
+Draft-PR: #367
 Branch: `audit/provider-readiness-s4-residual-capacity-flags-2026-09-01`
 
-Pre-agent head: `cc8336c1e49defc30391efd869c51fd3125de160`  
-Live `origin/main` at reconstruction: `17ee633ea89567761297c8f07c023953ec98bbf2`  
-Merge-base: identical to live `origin/main` (branch was 1 ahead: task commit only)  
+Rejected audit head: `b0fb4b28ec14dd8f3d863bb0c8c81794202a5545` (TL **CHANGES REQUIRED** `5072890265`)
+Pre-agent head: `cc8336c1e49defc30391efd869c51fd3125de160`
+Live `origin/main` at reconstruction: `17ee633ea89567761297c8f07c023953ec98bbf2`
 Agent A (read-only neighbour): Draft-PR #366 `feat/provider-readiness-s4-r2-safety-server-trip-truth-2026-09-01`
 
 No runtime, factory, shared provider-ops, DB, Active Work or Start Here writes.
@@ -27,15 +27,16 @@ Legend used below:
 
 ## 1. Verdict
 
-| Residual | Current S4 blocker while factories are hard-`null`? | Classification |
+| Residual | Current S4 / Phase-1 blocker while factories are hard-`null`? | Classification |
 | --- | --- | --- |
-| Readiness HTTP body-cap `8192` | **No** | Sufficient for representative / currently intended payloads. Contradicts only the schema-maximum untrusted HTTP party. Prefer server-owned trip truth later; do not raise the cap. |
-| Requirements activation flag | **No** | **Already closed** by S4-R1 (`JETNITY_READINESS_AKTIV` + `requirementsProviderNachZustand`). |
-| Safety / Seasonal activation flags | **No** | **Activation-time mandatory contract.** Hard-`null` factories are already fail-closed. A future non-`null` factory must not ship without an S1 kill-switch + Production hard-off wrapper. |
+| Readiness HTTP body-cap `8192` | **No** | Sufficient for representative / currently intended payloads. Contradicts only the schema-maximum untrusted HTTP party. Prefer server-owned trip truth later; do not raise the cap. Unchanged after TL `5072890265`. |
+| Requirements activation flag | **No** | **Already closed** by S4-R1 (`JETNITY_READINESS_AKTIV` + `requirementsProviderNachZustand`). Unchanged. |
+| Safety / Seasonal activation flags | **No** | **Activation-time mandatory contract.** Hard-`null` factories are already fail-closed. A future non-`null` factory must not ship without an S1 kill-switch + Production hard-off wrapper. Unchanged. |
+| Order-sensitive Multi-Document parser (`travellerAnfrageStriktLesen`) | **Yes — Phase-1 truth-contract defect** | Binding TL `5072890265`. A valid mixed `passport` + `national_id` set with `citizenshipClientRef` can fail solely because canonical sort changes array order. Must be closed in its **own smallest bounded runtime slice** before S4 final closure and before S6. **Not implemented in this docs PR.** |
 
-**S4 after Agent A:** Agent A owns the remaining *current* S4 runtime residual (Safety HTTP `party: []`). After Agent A is independently reviewed and integrated, **this audit does not require one more bounded S4 implementation before S6** for body-cap or flags.
+**S4 after Agent A:** Agent A still owns Safety HTTP `party: []`. **S4 must not close immediately after Agent A.** Body-cap and flags do not themselves require a further implementation, but the Multi-Document parser defect is a Phase-1 blocker that remains after Agent A. Final S4 closure on live main also still needs the Issue #365 Technical-Lead recheck.
 
-Technical Lead still decides final S4 closure on live main (Issue #365 exit criteria). This document is evidence, not closure.
+This document is evidence, not closure. This PR does not implement the parser fix.
 
 ---
 
@@ -49,7 +50,8 @@ Technical Lead still decides final S4 closure on live main (Issue #365 exit crit
 | Live `origin/main` this session | same SHA; subject `Make multi-agent suitability check binding (#364)` | VERIFIED `git fetch origin main` |
 | Local branch `main` at boot | stale `71bfd70b` — **not** used as current truth | VERIFIED |
 | Pre-agent branch head | `cc8336c1` task-only | VERIFIED |
-| Ahead / behind vs live main | 1 / 0 | VERIFIED |
+| Ahead / behind vs live main at first delivery | 1 / 0 (task only), then + audit commit `b0fb4b28` | VERIFIED |
+| TL review on `b0fb4b28` | **CHANGES REQUIRED** `5072890265` | VERIFIED GitHub COMMENT (formal REQUEST_CHANGES not possible on own PR) |
 | `docs/ACTIVE_WORK_STATUS.md` on this branch | still names `main@8eb51c55` | VERIFIED stale vs live main; **not edited** (forbidden) |
 | Workspace / `components/**` callers of `/api/readiness/requirements` | **none** | VERIFIED ripgrep |
 | Agent A | Draft-PR #366 open; not reviewed in this PR | VERIFIED GitHub; Agent B did not read Agent A runtime files as authority |
@@ -63,8 +65,8 @@ Historical sources (`docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S4, `d
 3. load Safety party from server-owned trip truth
 4. **measure** the 8 KB Readiness cap vs multi-traveller
 
-S4-R1 closed (1) and the Readiness half of (2). Canonical closure: `docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_TRUTH_OPS_S4_R1_CLOSED_2026-08-31.md`.  
-(3) is Agent A.  
+S4-R1 closed (1) and the Readiness half of (2). Canonical closure: `docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_TRUTH_OPS_S4_R1_CLOSED_2026-08-31.md`.
+(3) is Agent A.
 (4) was explicitly **unmeasured** (`G-S4-BODY`, RPG0-P2-01). This audit measures it.
 
 `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_NEXT_SLICE_2026-09-01.md` already classified residual S4 as “largely pre-adapter” and named S6 as the next *serial* activation gate. That precheck is historical evidence, not a start order for this PR.
@@ -143,15 +145,56 @@ Payloads use current-contract fields only (no passport numbers, MRZ, scans). Sch
 
 Derived envelope (VERIFIED arithmetic on the compact max-shape): one fully loaded traveller including shared envelope ≈ 2112 B; each additional ≈ 1916 B. A **fifth** fully loaded traveller would be ≈ 9776 B and would 413.
 
-### 3.5 Parser residual discovered while measuring (VERIFIED)
+### 3.5 Order-sensitive Multi-Document parser — Phase-1 blocking truth-contract defect
 
-`travellerAnfrageStriktLesen` compares `citizenshipClientRef` by **input index** after `travellerLegacyLesen` **sorts** documents. A legitimate mixed-type set (`passport` + `national_id`) with citizenship links therefore returns `null` → HTTP 400, even at ~900 B.
+**Class: VERIFIED FACT + BINDING TL `5072890265`.**
+The first delivery recorded this as a measurement curiosity / later residual. That classification is **superseded**. It is a current Phase-1 Multi-Document contract defect.
 
-- 2 same-type passports + citizenship links: **accepted**
-- mixed types **without** citizenship links: **accepted**
-- mixed types **with** citizenship links: **rejected**
+Live mechanism (`lib/readiness/traveller-anfrage.ts`):
 
-This is not the body-cap. It is a current-contract parser defect. Out of implementation scope here.
+1. `documentStrikt` validates each raw document, including unique `clientRef` and `citizenshipClientRef ∈` that traveller’s citizenship refs.
+2. `travellerLegacyLesen` canonically **sorts** documents (`documentsSortieren`: type, issuing country, expiry, citizenship ref, clientRef).
+3. The post-read check then compares **positionally**:
+
+```250:257:lib/readiness/traveller-anfrage.ts
+  if (
+    documentsRoh &&
+    gelesen.documents.some(
+      (document, index) => document.citizenshipClientRef !== documentStrikt(documentsRoh[index])?.citizenshipClientRef,
+    )
+  ) {
+    return null
+  }
+```
+
+When input order is `[passport CH, passport RS, national_id CH]` and sort yields `[national_id CH, passport CH, passport RS]`, index 1 compares a CH link to the original RS row and returns `null` even though every child is well-formed.
+
+Measured this session (VERIFIED):
+
+| Input | Result |
+| --- | --- |
+| 2 same-type passports + citizenship links (sort-stable) | accepted |
+| mixed types **without** `citizenshipClientRef` | accepted |
+| mixed types **with** valid `citizenshipClientRef` | **rejected** (~900 B, far under the 8192 cap) |
+| two CH documents of different types sharing one citizenship, **alone** | accepted |
+| same mixed set once a third document changes sort order vs input | rejected |
+
+Why this is Phase-1 blocking, not a later curiosity:
+
+- Binding Traveller Context / S4-R1 invariant: **1 traveller → n citizenships → n documents/credentials → context-aware option evaluation**.
+- A valid credential set must not be rejected because array order differs.
+- The public Requirements API uses this parser (`readinessAnforderungAnfrageSchema.party` → `travellerAnfrageStriktLesen`). HTTP 400 here is a false invalid, not a missing fact.
+- This is independent of the 8192-byte cap and of Agent A’s Safety party work.
+
+**Must be closed** in its own smallest bounded **runtime** slice **before S4 final closure** and **before S6**. This docs PR must not implement that slice.
+
+Minimal future-fix acceptance (recommend only; exact contract also in the recommendation doc):
+
+- order-independent identity / `clientRef`-based comparison (or equivalent non-positional match of already-validated rows);
+- keep strict rejection of malformed children and sensitive fields;
+- keep duplicate-ref and citizenship-link integrity;
+- tests must cover mixed-document order permutations **and** citizenship links;
+- no default / primary / preferred citizenship or passport semantics.
 
 ### 3.6 Classification
 
@@ -167,7 +210,9 @@ This is not the body-cap. It is a current-contract parser defect. Out of impleme
 | Should the cap be raised? | **No** | INFERENCE; prefer `G-API-PARTY` server-owned trip truth if a later Guest-Evaluate needs >4 fully loaded travellers |
 | Future vendor payload size | **unknown** | REQUIRES FUTURE PROVIDER CONTRACT — outbound vendor mapping is not this HTTP cap |
 
-**Audit-A result:** cap is **sufficient** for currently valid *intended* payloads and **safely bounds** untrusted HTTP size. It is **not** a current S4 / V1 blocker. The schema-max contradiction is a documented residual, not a reason to enlarge the untrusted body.
+**Audit-A result (cap only):** the 8192-byte cap is **sufficient** for currently valid *intended* payloads and **safely bounds** untrusted HTTP size. It is **not** a current S4 / V1 blocker. The schema-max contradiction is a documented residual, not a reason to enlarge the untrusted body.
+
+**Audit-A result (parser, binding after TL `5072890265`):** the order-sensitive Multi-Document check **is** a current Phase-1 truth-contract blocker. It is not solved by the cap, by Agent A, or by this docs PR.
 
 ---
 
@@ -192,8 +237,8 @@ Admin Provider-Ops board (`lib/admin/provider-ops-board/runtime.ts`):
 
 ### 4.2 What a hard-null factory already does (VERIFIED)
 
-Safety engine: `if (!provider) return safetyAusFacts(...)` — no outbound call.  
-Seasonal: same.  
+Safety engine: `if (!provider) return safetyAusFacts(...)` — no outbound call.
+Seasonal: same.
 Requirements: factory `null` **and** zustand strips a non-null test double when the flag is off or `VERCEL_ENV === 'production'`.
 
 Safety / Seasonal engines do **not** consult `VERCEL_ENV`. **INFERENCE:** a future factory that simply `return adapter` would run in Production on the next request. That is the silent-bypass risk.
@@ -231,19 +276,20 @@ Requirements flag: **already sufficient**. Do not add a second Requirements flag
 
 ---
 
-## 5. Cross-check – can S4 close after Agent A?
+## 5. Cross-check – S4 cannot close immediately after Agent A
 
-| Residual | Owner | After Agent A | Before S6? |
+| Residual | Owner | After Agent A | Before S4 close / S6? |
 | --- | --- | --- | --- |
-| Safety HTTP `party: []` / server-owned trip truth | Agent A #366 | expected close if TL-PASS + integrate | that **is** the remaining current S4 runtime |
-| Readiness 8 KB cap | this audit | document only | **no implementation** |
+| Safety HTTP `party: []` / server-owned trip truth | Agent A #366 | expected close if TL-PASS + integrate | remaining Agent A runtime |
+| Readiness 8 KB cap | this audit | document only | **no cap implementation** |
 | Requirements flag | S4-R1 on main | already closed | none |
-| Safety / Seasonal flags | this audit | activation-time contract persisted | **no implementation** required to start S6 |
-| S6 Persistent Cost Guard | later versioned task | still missing | next **serial** activation gate after S4 closure |
+| Safety / Seasonal flags | this audit | activation-time contract persisted | **no flag implementation** required for S4 close |
+| **Order-sensitive Multi-Document parser** | **later versioned runtime slice** (not this PR, not Agent A) | **still open** | **required** — Phase-1 truth-contract blocker |
+| S6 Persistent Cost Guard | later versioned task | still missing | next **serial** activation gate **after** S4 closure |
 | S7 / S8 | later | missing | after S6 |
 | Real Requirements / Safety / Seasonal vendor | PO gates | factories stay `null` | REQUIRES FUTURE PROVIDER CONTRACT |
 
-**INFERENCE:** S4 can close after Agent A + persistence of this audit, without a further body-cap or flag implementation. A silent residual must not be carried into S6: the activation-flag contract and the schema-max HTTP contradiction stay written down.
+**INFERENCE (supersedes first-delivery close-after-A):** S4 final closure needs Agent A **and** the bounded parser-runtime slice **and** TL live-main recheck. Body-cap and flags do not add a third S4 implementation. Do not carry the parser defect silently into S6.
 
 **UNKNOWN:** whether Agent A’s exact head will PASS. This agent does not review #366.
 
@@ -253,7 +299,7 @@ Requirements flag: **already sufficient**. Do not add a second Requirements flag
 
 Relevant for Audit A (Readiness party). Not relevant for Seasonal (traveller-neutral). Safety traveller-dependence is Agent A.
 
-This audit does **not** recommend collapsing to one citizenship/document, inventing visa rules, or treating `documents[0]` as truth. The cap question is size vs the multi-option contract, not a reason to shrink legal options.
+This audit does **not** recommend collapsing to one citizenship/document, inventing visa rules, or treating `documents[0]` as truth. The cap question is size vs the multi-option contract, not a reason to shrink legal options. The parser fix must keep every valid credential option evaluable regardless of input array order and must not introduce default/primary passport or citizenship semantics.
 
 ---
 
