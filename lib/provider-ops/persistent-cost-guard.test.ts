@@ -7,7 +7,7 @@ import {
   providerOpsPersistentCostGuard,
   type ProviderOpsPersistentCostGuardPort,
   type ProviderOpsPersistentCostGuardReservation,
-} from '@/lib/provider-ops'
+} from '@/lib/provider-ops/persistent-cost-guard'
 
 const HMAC_KEY = '0123456789abcdef0123456789abcdef'
 
