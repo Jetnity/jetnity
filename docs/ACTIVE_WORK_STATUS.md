@@ -1,110 +1,138 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / THREE-PHASE PRODUCT STRATEGY INTEGRATION ACTIVE / DOCS-ONLY / PHASE 1 CORE CURRENT PRODUCT PHASE / NO RUNTIME SLICE / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / THREE-PHASE STRATEGY CLOSED & POST-MERGE VERIFIED / NO ACTIVE RUNTIME SLICE / V1 BUILD ORDER BINDING / NO PROVIDER ACTIVATION / LIVE-EVIDENCE WINS**
 
-## 1. Current verified main baseline
+## 1. Current verified main before this continuity closure
 
-`main@6891cab6b204e6e6093a7002d7cad9b4afc692cc`
+`main@71bfd70b5e1edeb2b9852e44ea49bed89b56fb4d`
 
 Commit:
 
-`Close Provider Activation Readiness Precheck continuity (#356)`
+`Integrate Jetnity three-phase product strategy (#361)`
 
-Verified before this strategy-planning branch:
+Post-merge verified:
 
-- Main CI #1562 / Run `33450057614`: **COMPLETED / SUCCESS**;
-- Provider Activation Readiness Precheck: **CLOSED & POST-MERGE VERIFIED**;
-- no active functional follow-up slice;
+- Main CI #1565 / Run `33452656519`: **COMPLETED / SUCCESS**;
+- Vercel Production `dpl_A23YB4HhRKeBhxwLs2mP7vvrciRQ`: **READY** on exact merge SHA;
+- Issue #357: **CLOSED / completed**;
+- no runtime slice active;
 - no provider activated;
-- S6 remained only the next identified Provider Readiness candidate, not started.
+- no Production mutation from the strategy integration.
 
-Always re-read live `main`; branch work does not redefine repository truth.
+This docs-only closure may advance main after merge. Always re-fetch live `main`.
 
-## 2. Active planning work
+## 2. Current product phase
 
-Issue:
+**PHASE 1 – JETNITY CORE**
 
-**#357 – Jetnity 3-Phase Product Strategy – V1 scope, Definition of Done and Release Readiness**
+Goal:
 
-Branch:
+> Make the concrete trip reliably plannable, organized and travel-ready.
 
-`docs/jetnity-three-phase-v1-strategy-2026-09-01`
+V1 launches only when:
 
-Type:
+> **PRODUCTION READY FOR REAL TRAVELLERS.**
 
-**Technical-Lead / Product-Owner strategy integration – docs only. No Cursor runtime agent.**
+Feature Complete alone is not sufficient.
 
-No S6 or other runtime slice may start until this planning work is reviewed, integrated and post-merge verified.
+## 3. Canonical current phase / V1 documents
 
-## 3. Binding Product-Owner decision
+Read first:
 
-Jetnity now has three product/release phases:
+1. `docs/CHATGPT_TECHNICAL_LEAD_THREE_PHASE_STRATEGY_CLOSED_2026-09-01.md`
+2. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+3. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+4. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+5. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+6. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+7. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+8. `docs/JETNITY_THREE_PHASE_STRATEGY_RECONCILIATION_2026-09-01.md`
 
-1. **Phase 1 – Jetnity Core** – current product phase; V1 launches only when **PRODUCTION READY FOR REAL TRAVELLERS**.
-2. **Phase 2 – Jetnity Complete Travel Platform** – breadth, deeper decisions, monetization and operations on real Phase-1 learning.
-3. **Phase 3 – Jetnity Travel Ecosystem** – native apps, network, creator/partner ecosystem, data/intelligence moats and international scale.
+Correct existing architecture remains authoritative and is reused. Older planning remains historical/dependency evidence, but does not override the newer V1 launch-scope contract.
 
-The long-term ambition is not reduced. Only the mandatory pre-launch scope is narrowed to a coherent professional V1.
+## 4. What is already strong for Phase 1
 
-## 4. Canonical strategy documents on this branch
+Existing integrated or strong foundations include:
 
-- `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-- `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-- `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
-- `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-- `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-- `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-- `docs/JETNITY_THREE_PHASE_STRATEGY_RECONCILIATION_2026-09-01.md`
+- Trip Workspace through major pre-TW8 work;
+- Guest → Account;
+- Account Traveller Registry + trip-owned Traveller Snapshot;
+- Multi-Citizenship / Multi-Document foundations and lifecycle;
+- Route / Transit / Multi-Destination truth;
+- provider-neutral Flight / Hotel / Activity domains and secure adoption seams;
+- Entry Requirements and Temporal Readiness foundations;
+- Admin A–C / security / health / provider-cost foundations;
+- product quality, logic, security and continuity governance.
 
-These files overlay launch-scope/order onto existing Vision, Mandate, Roadmap, Architecture, Decisions and domain plans. Correct existing architecture is reused rather than renamed/rebuilt.
+## 5. Critical V1 gaps
 
-## 5. Current Phase-1 gap conclusion
-
-Strong/integrated foundations already exist for:
-
-- Trip Workspace through major pre-TW8 parts;
-- Guest→Account;
-- Account Traveller Registry and trip-owned Traveller Snapshot;
-- Multi-Citizenship/Multi-Document foundations and lifecycle;
-- Route/Transit/Multi-Destination;
-- Flight/Hotel/Activity provider-neutral domains and secure adoption seams;
-- Entry Requirements/Temporal Readiness target contracts;
-- Admin A–C / security/health/provider-cost foundations;
-- Product quality/security/continuity governance.
-
-Critical V1 gaps are now dominated by:
+Still principally open:
 
 - real Flight Commercial Truth;
 - real Hotel Commercial Truth;
-- real Activities path or explicit PO launch exception;
+- real Activities path or explicit PO launch exception if externally blocked;
 - real Official Entry Requirements Evidence;
-- temporal Readiness runtime on real evidence;
+- Temporal Readiness runtime on real evidence;
 - TW-8/TW-9 and full core-journey closure;
 - Destination Essentials;
 - World Map;
 - explicit PWA scope/readiness;
-- V1-specific privacy/legal/ops/monetization gaps;
-- final V1 Definition-of-Done and Release Readiness evidence.
+- V1-specific privacy/legal/ops/monetization closure;
+- final V1 Definition of Done;
+- final V1 Release Readiness Gate.
 
-## 6. Product-Owner gates remain unchanged
+## 6. V1 critical path / next candidate
 
-This strategy integration authorizes **none** of the following:
+`docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md` is now the binding V1 critical-path contract.
 
-- provider selection/contract/DPA/API keys/secrets;
-- paid/live calls or Production provider activation;
-- Production schema/RLS/grant/role/function mutation;
-- runtime writer allocation/backfill;
-- fundamental Auth/MFA/AAL redesign;
+Provider Readiness must still be completed before real provider-live paths. Current known residual sequence includes:
+
+- residual S4 revalidation/closure;
+- S6 Persistent Cost Guard;
+- S7 Observability;
+- S8 Cache/License/Operational hooks;
+- final Provider Readiness recheck;
+- then Product-Owner-gated real provider paths.
+
+The previously identified **S6 Persistent Cost Guard remains a likely next bounded candidate, but it is NOT active and NOT automatically started.**
+
+A fresh live precheck must determine the smallest responsible Phase-1 slice.
+
+## 7. Phase 2 / Phase 3 are preserved, not deleted
+
+Phase 2 contains broad provider landscape, advanced travel decisions/companion, Destination Intelligence, personalization, Admin/Ops Pro, Finance/Bexio and Growth breadth.
+
+Phase 3 contains native apps, Traveller Network, Creator/Partner Ecosystem, Intelligence/Data Assets and international scaling.
+
+These do not automatically block V1.
+
+## 8. Product-Owner gates
+
+Explicit Product-Owner approval remains required before relevant:
+
+- provider selection/contract/DPA;
+- API keys/secrets;
+- paid/live provider calls;
+- Production provider activation;
+- Production DB/security mutations and writer allocation;
+- fundamental Auth/MFA/AAL changes;
 - sensitive passport/MRZ/scan/biometric/health storage;
 - real payments;
 - spend outside approved limits;
 - public indexing/domain cutover/public launch.
 
-## 7. Stop rule
+## 9. Current stop rule
 
-**NO RUNTIME FOLLOW-UP FROM THIS BRANCH.**
+**NO ACTIVE RUNTIME SLICE.**
 
-After exact-head Technical-Lead review, CI/Vercel gates, merge and post-merge verification, reconstruct live state again. Only then select the smallest responsible Phase-1 implementation slice.
+Before any new runtime task:
+
+1. reconstruct live repository/CI/Vercel/Production truth;
+2. read the V1 hierarchy;
+3. choose one smallest responsible Phase-1 slice;
+4. version it;
+5. follow exact-head Technical-Lead review/governance;
+6. do not cross any Product-Owner gate without explicit approval.
 
 **LIVE-EVIDENCE WINS. AUDIT FIRST. REUSE BEFORE ADD. INTEGRATE BEFORE DUPLICATE. FAIL CLOSED.**
