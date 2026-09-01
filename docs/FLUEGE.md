@@ -90,10 +90,10 @@ Umgebung:
 
 | Variable | Wirkung |
 | --- | --- |
-| `JETNITY_FLIGHT_AKTIV` | Kill Switch. Nur `true` oder `1` |
-| `DUFFEL_ACCESS_TOKEN` | serverseitig, nur `duffel_test_…` |
+| `JETNITY_FLIGHT_AKTIV` | Kill Switch. Nur `true` oder `1`. Teil der globalen `FlugUmgebung`. |
+| `DUFFEL_ACCESS_TOKEN` | serverseitig, nur `duffel_test_…`. Nur Duffel-Fabrik/`lib/flights/duffel/zugang.ts`, nicht `FlugUmgebung`. |
 
-`VERCEL_ENV=production` schaltet hart aus – auch wenn Kill Switch und Token gesetzt wären. Der globale Flight-Zustand hängt nicht an einem Duffel-Token. Ein Live-Token (`duffel_live_…`) konstruiert den Duffel-Adapter nicht; ohne jeden konstruierbaren Provider bleibt die Suche an der Orchestrierungsnaht unavailable. Es gibt keine `NEXT_PUBLIC_DUFFEL_*`-Variable. Fehlende konstruierbare Provider sind Search-unavailable, kein Buildfehler.
+`VERCEL_ENV=production` schaltet hart aus – auch wenn Kill Switch und Token gesetzt wären. Die globale `FlugUmgebung` enthält nur `VERCEL_ENV` und `JETNITY_FLIGHT_AKTIV`. Der globale Flight-Zustand hängt nicht an einem Duffel-Token. Ein Live-Token (`duffel_live_…`) konstruiert den Duffel-Adapter nicht; ohne jeden konstruierbaren Provider bleibt die Suche an der Orchestrierungsnaht unavailable. Es gibt keine `NEXT_PUBLIC_DUFFEL_*`-Variable. Fehlende konstruierbare Provider sind Search-unavailable, kein Buildfehler.
 
 Die Suche spricht `https://api.duffel.com/air/offer_requests`. Test und Live teilen den Hostname; die Umgebung steht im Token. Phase 3.1 akzeptiert nur Test-Tokens. Buchungsendpunkte (`/air/orders`) werden nicht aufgerufen.
 
