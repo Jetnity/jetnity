@@ -2,13 +2,14 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
-import { OPTION_DIREKT } from '@/lib/flights/fixtures/optionen'
+import { OPTION_DIREKT, SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
 import type { FlugProvider } from '@/lib/flights/provider'
 import {
   aktuelleFlugProviderSammlung,
   flugProviderSammlungAus,
 } from '@/lib/flights/provider-sammlung'
-import { suchePortsAusUmgebung } from '@/lib/flights/suche'
+import { flugRateLeeren } from '@/lib/flights/rate-limit'
+import { fluegeSuchen, suchePortsAusUmgebung } from '@/lib/flights/suche'
 
 function stubProvider(id: string): FlugProvider {
   return {
@@ -83,6 +84,13 @@ describe('Flug-Provider-Sammlung', () => {
       }).length,
       0,
     )
+    assert.deepEqual(
+      aktuelleFlugProviderSammlung({
+        JETNITY_FLIGHT_AKTIV: 'true',
+        DUFFEL_ACCESS_TOKEN: 'duffel_live_xxxxxxxxxxxxxxxx',
+      }),
+      [],
+    )
   })
 
   test('suchePortsAusUmgebung verdrahtet eine 0..N-Sammlung, keinen einzelnen Pflicht-Provider', () => {
@@ -98,6 +106,47 @@ describe('Flug-Provider-Sammlung', () => {
       ['alpha', 'beta'],
     )
     assert.equal('provider' in zwei, false)
+  })
+
+  test('nicht-Duffel-Stub ist strukturell aktiv ohne Duffel-Token; Production und 0 Provider bleiben geschlossen', async () => {
+    flugRateLeeren()
+    const ohneToken = suchePortsAusUmgebung(
+      { JETNITY_FLIGHT_AKTIV: 'true' },
+      [stubProvider('alpha')],
+      'k-stub-ohne-duffel',
+    )
+    assert.equal(ohneToken.zustand.aktiv, true)
+    assert.deepEqual(
+      ohneToken.providers.map((provider) => provider.id),
+      ['alpha'],
+    )
+    const gefunden = await fluegeSuchen(SUCHANFRAGE, ohneToken)
+    assert.equal(gefunden.httpStatus, 200)
+    assert.equal(gefunden.koerper.status, 'ok')
+    assert.equal(gefunden.koerper.options[0]?.provider, 'alpha')
+
+    const production = suchePortsAusUmgebung(
+      {
+        VERCEL_ENV: 'production',
+        JETNITY_FLIGHT_AKTIV: 'true',
+      },
+      [stubProvider('alpha')],
+      'k-stub-production',
+    )
+    assert.equal(production.zustand.aktiv, false)
+    if (!production.zustand.aktiv) assert.equal(production.zustand.grund, 'production')
+    const gesperrt = await fluegeSuchen(SUCHANFRAGE, production)
+    assert.equal(gesperrt.koerper.status, 'unavailable')
+    assert.match(gesperrt.koerper.message, /Production/)
+    assert.equal(gesperrt.koerper.options.length, 0)
+
+    const leer = suchePortsAusUmgebung({ JETNITY_FLIGHT_AKTIV: 'true' }, [], 'k-zero-ohne-duffel')
+    assert.equal(leer.zustand.aktiv, true)
+    assert.deepEqual(leer.providers, [])
+    const unavailable = await fluegeSuchen(SUCHANFRAGE, leer)
+    assert.equal(unavailable.koerper.status, 'unavailable')
+    assert.match(unavailable.koerper.message, /nicht eingerichtet/)
+    flugRateLeeren()
   })
 
   test('Route und Sammlung verdrahten 0..N ohne neuen Live-Provider und ohne KAYAK/Wego/Skyscanner', () => {
