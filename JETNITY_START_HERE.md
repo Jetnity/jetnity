@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / S4 CLOSED / S6-A REPOSITORY FOUNDATION CLOSED / PRODUCTION S6 UNAPPLIED / S7 CLOSED / S8 CLOSED & POST-MERGE VERIFIED / FULL PROVIDER READINESS RECHECK NEXT / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PROVIDER READINESS FINAL RECHECK CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / PWA-1 NEXT NON-GATED CODING SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -9,11 +9,11 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / S4 CLOSED 
 
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S8_CLOSED_2026-09-01.md` ← **aktueller Provider-Readiness-Closure-Checkpoint**
+1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md` ← **aktueller Provider-Readiness-Checkpoint**
 2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S7_CLOSED_2026-09-01.md`
-4. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S6A_CLOSED_2026-09-01.md`
-5. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S4_CLOSED_2026-09-01.md`
+3. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
+4. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
+5. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
 6. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
 7. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
 8. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
@@ -23,7 +23,7 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / S4 CLOSED 
 12. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
 13. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
-Then read the relevant domain handoffs/contracts for the current workstream and re-fetch GitHub/CI/Vercel live. For DB/security/persistence questions inspect Supabase Production read-only unless a current explicit Product-Owner approval allows mutation.
+Then read the relevant domain handoff/task for the current workstream and re-fetch GitHub/CI/Vercel live. For DB/security/persistence questions inspect Supabase Production read-only unless a current explicit Product-Owner approval allows mutation.
 
 ## 2. Product-Owner binding phases
 
@@ -47,103 +47,102 @@ Native apps, Traveller Network, Creator/Partner Ecosystem, own data/intelligence
 
 ## 3. Current verified runtime main
 
-`main@bab1f6354f07c6efb2674d0d00d6b0b3f1667460`
+`main@7c51b08e5af4ca4a37a4e3b3a08aef2fa145cab4`
 
 Commit:
 
-`Provider Readiness S8 fail-closed usage policy hooks (#384)`
+`Provider Readiness final recheck and first-provider decision package (#387)`
 
 Post-merge evidence:
 
-- Main CI #1634 / Run `33485417536`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_FHr7GaKqCnC14z2zuXmjj8aqqD8y`: **READY** on exact main SHA;
-- Issue #382: **CLOSED / COMPLETED**;
-- PR #384: **MERGED**;
-- original PR #383: **CLOSED / NOT MERGED** because of the known Draft→Ready connector error;
-- no provider activated;
-- no Production DB/security mutation from S8.
+- Issue #386: **CLOSED / COMPLETED**;
+- PR #387: **MERGED**;
+- Main CI #1638 / Run `33489646333`: **COMPLETED / SUCCESS**;
+- Vercel Production `dpl_7YrbBUFAEDXKpZtS1TENfF8c8Tkb`: **READY** on exact main SHA;
+- no provider selected or activated;
+- no Production DB/security mutation from the recheck.
 
-This docs-only S8 continuity closure may advance repository `main`. Always fetch live main.
+This docs-only continuity closure may advance repository main. Always re-fetch live main.
 
-## 4. Provider Readiness current state
+## 4. Provider Readiness final state
 
-### S4 — CLOSED
+### Repository level
 
-Truth/activation foundations, Safety server-owned Trip/Traveller truth, body-cap decision and Multi-Document order-independence are integrated and verified.
+- S4: **CLOSED**
+- S5-A: **INTEGRATED**
+- S5-B: **PRODUCTION APPLIED / UNALLOCATED / 0 ROWS**
+- S6-A repository foundation: **CLOSED**
+- S7: **CLOSED**
+- S8: **CLOSED**
 
-### S6-A — REPOSITORY FOUNDATION CLOSED / PRODUCTION UNAPPLIED
+Do not build another universal/generic Provider foundation without new evidence.
 
-Persistent Provider Cost Guard foundation exists in repository, but Production remains hard-off/unapplied. No runtime principal, HMAC secret, >0 live policy or persistent Production runtime binding exists from S6-A.
+### Production/live level
 
-### S7 — CLOSED & POST-MERGE VERIFIED
+Still hard-off / separately Product-Owner gated:
 
-S7 delivers payload-safe best-effort provider observability and truthful health derivation. Key invariants:
+- Production S6 migration/runtime/HMAC/>0 budget/binding;
+- provider selection/signup/contract/DPA;
+- live secrets/API keys;
+- paid/live calls;
+- Commercial Provenance runtime writer allocation;
+- Production provider activation.
 
-- no request/search/trip/traveller/citizenship/document/secret/provider-response payload in events;
-- sink failure cannot alter user/domain truth;
-- no/stale/non-finite evidence cannot become fake green;
-- `invalid` request/schema events do not manufacture or displace Provider Health;
-- Safety/Seasonal checked-empty sentinel truth is operationally `checked_empty` with `resultCount: 0`;
-- no external monitoring SaaS or provider ping was introduced.
+### First provider recommendation
 
-### S8 — CLOSED & POST-MERGE VERIFIED
+Flights remain the first Commercial Truth domain. Skyscanner Flights Live Prices is the current Technical-Lead recommendation for **commercial due diligence first**; Duffel live remains a strong alternative.
 
-S8 delivers the provider-neutral usage-policy hook for cache, persistence and attribution truth:
+This is a recommendation only. The Product Owner has **not selected or approved** a provider.
 
-- unverified/default = `forbidden / forbidden / null / null`;
-- `attributionRequired` is `true | false | null`; `null` means unknown/unverified;
-- current providers without an explicit policy hook remain hard fail-closed;
-- malformed/throwing adapter policy access cannot create permissions;
-- existing `Cache-Control: private, no-store` remains unchanged;
-- S8 claims no provider-specific license, ToS or redisplay right;
-- Commercial Provenance remains distinct from license/cache permission truth.
+## 5. Product-Owner decisions A–D
 
-Binding S8 Multi-Agent decision was **SINGLE_AGENT**. The Technical Lead performed S8 directly; no Cursor implementation agent was used.
+All remain **UNAPPROVED**:
 
-## 5. Next: full Provider Readiness recheck
+- **A** — provider/Skyscanner due diligence, signup or partner engagement;
+- **B** — Production S6 apply/runtime principal/HMAC/>0 budget;
+- **C** — live provider secret + first bounded real/paid call;
+- **D** — Commercial Provenance runtime writer/persistence.
 
-**NO ACTIVE RUNTIME OR REAL-PROVIDER SLICE.**
+Never infer these from a generic “weiter”, “starten” or agent authorization.
 
-The next responsible action is a fresh full Provider Readiness recheck. It must determine, from live evidence, whether any repository-only blocker remains and which external/Product-Owner gates still prevent a real V1 provider path.
+## 6. Current next non-gated coding slice
 
-The recheck must include:
+**PWA-1 – Installability / App Icons / Privacy-Safe Shell** is the next selected Phase-1 candidate while the provider path waits at PO/external gates.
 
-1. live `main`, PRs/issues and CI/Vercel;
-2. S4/S6-A/S7/S8 foundations;
-3. relevant Production persistence/security truth read-only;
-4. current provider candidate matrix and current external contract/API evidence where material;
-5. exact V1 blocker list and recommended next smallest safe slice.
+### PWA-1 live starting evidence
 
-Production S6 remains unapplied/hard-off until separately approved.
+- `app/manifest.ts` already exists;
+- root metadata already links `/manifest.webmanifest`;
+- `app/icon.svg` is the current Jetnity brand mark;
+- manifest currently has no installability icon set;
+- no service worker/offline cache path is currently present.
 
-## 6. Hard Traveller truth
+### PWA-1 boundaries
+
+- coding agent implements;
+- Technical Lead owns scope, independent review, Ready and merge;
+- preserve current Jetnity brand mark; **no generic airplane icon**;
+- add professional installability assets/contracts only;
+- **no service worker in PWA-1**;
+- **no offline caching of account/trip/traveller data**;
+- no push/notification permission flow;
+- no DB/Auth/provider/payment work;
+- no public launch/indexing change;
+- no new dependency unless strictly justified and reviewed.
+
+A dedicated versioned PWA-1 issue/branch/PR is mandatory.
+
+## 7. Hard Traveller truth
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
 Never infer default/primary/preferred citizenship or passport, array position as semantic truth, Residence → Citizenship or Issuer Country → Citizenship.
 
-## 7. Truth classes
+## 8. Truth classes
 
 > **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
 
 `unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
-
-## 8. Critical V1 gaps
-
-Still principally open:
-
-- full Provider Readiness recheck and exact remaining live blockers;
-- real Flight Commercial Truth;
-- real Hotel Commercial Truth;
-- Activities real path or explicit PO launch exception if externally blocked;
-- real Official Entry Requirements Evidence;
-- Temporal Readiness on real evidence;
-- TW-8/TW-9 and full core journey;
-- Destination Essentials;
-- basic World Map;
-- explicit PWA readiness;
-- V1 privacy/legal/ops/monetization closure;
-- V1 Definition of Done and V1 Release Readiness Gate.
 
 ## 9. Mandatory Multi-Agent Suitability Check
 
@@ -153,7 +152,7 @@ Every new material work cycle must:
 2. identify the smallest responsible Phase-1 slice;
 3. assess safe multi-agent decomposition before dispatch;
 4. use `MULTI_AGENT` only for genuinely disjoint ownership with explicit merge order;
-5. use `SINGLE_AGENT` when shared truth/schema/security/contracts make parallel writers unsafe;
+5. use `SINGLE_AGENT` when shared surfaces/contracts create collision risk;
 6. persist the decision;
 7. agents never Ready or merge;
 8. changed heads invalidate prior exact-head gates;
@@ -174,10 +173,20 @@ Explicit Product-Owner approval remains required before relevant:
 - spend outside approved limits;
 - public indexing/domain cutover/public launch.
 
-## 11. Next-work rule
+## 11. Critical V1 gaps
 
-**NO ACTIVE RUNTIME SLICE AT THIS CLOSURE CHECKPOINT.**
+Still principally open:
 
-Do not interpret S8 closure as permission to activate a provider. First perform the full Provider Readiness recheck and version any next provider or repository slice separately.
+- real Flight Commercial Truth — PO/vendor gated;
+- TW-8/TW-9 after real Commercial Truth;
+- real Hotel Commercial Truth;
+- Activities real path or explicit PO launch exception if externally blocked;
+- real Official Entry Requirements Evidence;
+- Temporal Readiness on real evidence;
+- Destination Essentials;
+- basic World Map;
+- **PWA installability/readiness**;
+- V1 privacy/legal/ops/monetization closure;
+- V1 Definition of Done and V1 Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. S8 CLOSED. PRODUCTION S6 UNAPPLIED. FULL PROVIDER READINESS RECHECK NEXT. NO REAL PROVIDER UNLOCKED.**
+**LIVE-EVIDENCE WINS. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. PWA-1 NEXT NON-GATED CODING SLICE. NO REAL PROVIDER UNLOCKED.**
