@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE CURRENT / THREE-PHASE STRATEGY CLOSED & POST-MERGE VERIFIED / NO ACTIVE RUNTIME SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE CURRENT / THREE-PHASE STRATEGY CLOSED & POST-MERGE VERIFIED / NO ACTIVE RUNTIME SLICE / V1 BUILD ORDER BINDING / MULTI-AGENT SUITABILITY CHECK BINDING / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -28,7 +28,8 @@ Danach für dauerhafte Produkt-/Technologiegrundsätze:
 14. `ARCHITECTURE.md`
 15. `DECISIONS.md`
 16. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
-17. `JETNITY_HANDOFF.md`
+17. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md` ← **verbindliche Multi-Agent-Prüfung vor jedem Slice-Dispatch**
+18. `JETNITY_HANDOFF.md`
 
 Fachlich relevante aktuelle Handoffs/Reconciliations zusätzlich nach Workstream lesen.
 
@@ -56,27 +57,27 @@ Native Apps, Traveller Network, Creator/Partner Ecosystem, eigene Data Assets/In
 
 Die langfristige Vision bleibt groß. Phase 2/3 sind aus dem Standard-V1-Launchpfad herausgenommen, nicht aus Jetnity gelöscht.
 
-## 3. Current verified main before this docs-only closure
+## 3. Current verified main
 
-Strategy merge main:
+Three-Phase-Strategy-Continuity closure main:
 
-`main@71bfd70b5e1edeb2b9852e44ea49bed89b56fb4d`
+`main@8eb51c55206309c5e59e46985ee15ee0b6aee3f3`
 
 Commit:
 
-`Integrate Jetnity three-phase product strategy (#361)`
+`Close Jetnity three-phase V1 strategy continuity (#362)`
 
 Post-merge evidence:
 
-- Main CI #1565 / Run `33452656519`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_A23YB4HhRKeBhxwLs2mP7vvrciRQ`: **READY** on exact merge SHA;
-- Issue #357: **CLOSED / completed**;
-- PR #361: **MERGED**;
+- Main CI #1567 / Run `33453923519`: **COMPLETED / SUCCESS**;
+- Vercel Production `dpl_GfvbTiTyVnjeeb6HCSm7BtEumnnQ`: **READY** on exact main SHA;
+- PR #362: **MERGED**;
+- Phase-1/Core strategy integration and continuity: **CLOSED & POST-MERGE VERIFIED**;
 - no runtime slice active;
 - no provider activated;
-- no Production database/security mutation from the strategy integration.
+- no Production database/security mutation from this closure.
 
-This continuity closure may advance canonical `main` again without changing runtime behavior. Always fetch live main rather than assuming the SHA above remains the repository tip.
+This governance update may advance canonical `main` again without changing runtime behavior. Always fetch live main rather than assuming the SHA above remains the repository tip.
 
 ## 4. V1 scope hierarchy
 
@@ -151,17 +152,21 @@ Truth classes:
 
 Provider Readiness still needs residual S4/S6/S7/S8 closure before real provider-live paths. **S6 Persistent Cost Guard remains a likely next candidate but is NOT started automatically.**
 
-Every new runtime cycle must:
+Every new material work cycle must:
 
 1. fetch live `main`, PRs/issues, CI/Vercel and relevant Production truth;
 2. read the current V1 strategy/gap/build-order docs;
 3. reconcile current Provider Readiness / dependencies;
-4. identify exactly one smallest responsible Phase-1 slice;
-5. version the task;
-6. perform independent Technical-Lead exact-head review;
-7. no merge without TL PASS;
-8. no Product-Owner gate without explicit approval;
-9. persist continuity.
+4. identify the smallest responsible Phase-1 slice;
+5. perform and document the mandatory **Multi-Agent Suitability Check** before agent dispatch;
+6. if safe/useful, decompose into multiple agents with disjoint ownership, explicit Shared-Contract owner and merge order; otherwise document why `SINGLE_AGENT` is safer;
+7. version the task / sub-tasks and branch/PR topology;
+8. perform independent Technical-Lead exact-head review for every delivered head and final integration;
+9. no merge without TL PASS;
+10. no Product-Owner gate without explicit approval;
+11. persist continuity.
+
+The Product Owner does not need to repeat the Multi-Agent requirement. It is a standing governance rule.
 
 ## 9. Product-Owner gates
 
