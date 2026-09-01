@@ -3,7 +3,8 @@
 Stand: 1. September 2026
 Status: **BINDING CURSOR AUDIT TASK / DOCS-ONLY / NO RUNTIME WRITES / AGENT B GENERATION 1 / REVIEW-FIX FOR TL `5072890265`**
 Parent: Issue #365
-Baseline: `main@17ee633ea89567761297c8f07c023953ec98bbf2`
+Original baseline: `main@17ee633ea89567761297c8f07c023953ec98bbf2`
+Current-main sync target: `main@e8549e8287382abf2dc1ea77f9722eeaa04218dd` (Agent A recovery #368)
 Rejected head: `b0fb4b28ec14dd8f3d863bb0c8c81794202a5545`
 Agent B deliverables (updated 1. September 2026 for TL `5072890265`):
 `docs/PROVIDER_READINESS_S4_RESIDUAL_CAPACITY_FLAGS_AUDIT_2026-09-01.md`,

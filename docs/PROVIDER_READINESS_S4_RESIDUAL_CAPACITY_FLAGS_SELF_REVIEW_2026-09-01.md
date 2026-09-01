@@ -37,7 +37,7 @@ Unrelated `next-env.d.ts` dirty state at session start was restored; not committ
 
 | Required | Delivered |
 | --- | --- |
-| Reconstruct branch/main evidence | live `origin/main@17ee633e`; pre-agent `cc8336c1`; ahead 1 / behind 0 |
+| Reconstruct branch/main evidence | original baseline `17ee633e`; current main after #368 `e8549e82`; this branch **0 behind** that main after docs-only sync |
 | Measure representative + near-upper payloads | 16 schema-valid shapes; UTF-8 bytes vs 8192 |
 | Inspect `READINESS_GRENZEN`, `TRAVELLER_CONTEXT_GRENZEN`, schema, strict parser, HTTP cap, call sites, S4-R1, historical S4 | yes |
 | Inspect factories, request-state wrappers, S1 kill-switch | yes |
@@ -87,6 +87,7 @@ Checked. Readiness party is traveller-specific. The parser defect violates 1 tra
 
 | Check | Result |
 | --- | --- |
+| Unique diff vs `main@e8549e82` only the five Agent B capacity/flag docs | **yes** |
 | Diff paths only under `docs/PROVIDER_READINESS_S4_RESIDUAL_CAPACITY_FLAGS_*` | **yes** |
 | No `app/**`, `lib/**`, factories, provider-ops, DB, Active Work, Start Here, Agent A | **yes** |
 | All four slice docs + task classify the parser as Phase-1 blocker before S4 close / S6 | **yes** |

@@ -11,8 +11,9 @@ Branch: `audit/provider-readiness-s4-residual-capacity-flags-2026-09-01`
 
 Rejected audit head: `b0fb4b28ec14dd8f3d863bb0c8c81794202a5545` (TL **CHANGES REQUIRED** `5072890265`)
 Pre-agent head: `cc8336c1e49defc30391efd869c51fd3125de160`
-Live `origin/main` at reconstruction: `17ee633ea89567761297c8f07c023953ec98bbf2`
-Agent A (read-only neighbour): Draft-PR #366 `feat/provider-readiness-s4-r2-safety-server-trip-truth-2026-09-01`
+Original task baseline: `main@17ee633ea89567761297c8f07c023953ec98bbf2`
+Current live `origin/main` after Agent A recovery merge: `e8549e8287382abf2dc1ea77f9722eeaa04218dd` (`Merge S4-R2 Safety server-owned Trip Truth (#368)`)
+Agent A runtime is on that main. This docs branch is synced onto that exact SHA. Audit conclusions are unchanged.
 
 No runtime, factory, shared provider-ops, DB, Active Work or Start Here writes.
 
@@ -34,7 +35,7 @@ Legend used below:
 | Safety / Seasonal activation flags | **No** | **Activation-time mandatory contract.** Hard-`null` factories are already fail-closed. A future non-`null` factory must not ship without an S1 kill-switch + Production hard-off wrapper. Unchanged. |
 | Order-sensitive Multi-Document parser (`travellerAnfrageStriktLesen`) | **Yes — Phase-1 truth-contract defect** | Binding TL `5072890265`. A valid mixed `passport` + `national_id` set with `citizenshipClientRef` can fail solely because canonical sort changes array order. Must be closed in its **own smallest bounded runtime slice** before S4 final closure and before S6. **Not implemented in this docs PR.** |
 
-**S4 after Agent A:** Agent A still owns Safety HTTP `party: []`. **S4 must not close immediately after Agent A.** Body-cap and flags do not themselves require a further implementation, but the Multi-Document parser defect is a Phase-1 blocker that remains after Agent A. Final S4 closure on live main also still needs the Issue #365 Technical-Lead recheck.
+**S4 after Agent A:** Agent A S4-R2 is on current main via #368. **That does not close S4.** Body-cap and flags do not require a further implementation. The Multi-Document parser defect remains a Phase-1 blocker. Final S4 closure still needs that parser slice and the Issue #365 Technical-Lead recheck.
 
 This document is evidence, not closure. This PR does not implement the parser fix.
 
@@ -46,15 +47,13 @@ This document is evidence, not closure. This PR does not implement the parser fi
 
 | Item | Value | Class |
 | --- | --- | --- |
-| Task baseline | `main@17ee633ea89567761297c8f07c023953ec98bbf2` | VERIFIED |
-| Live `origin/main` this session | same SHA; subject `Make multi-agent suitability check binding (#364)` | VERIFIED `git fetch origin main` |
-| Local branch `main` at boot | stale `71bfd70b` — **not** used as current truth | VERIFIED |
-| Pre-agent branch head | `cc8336c1` task-only | VERIFIED |
-| Ahead / behind vs live main at first delivery | 1 / 0 (task only), then + audit commit `b0fb4b28` | VERIFIED |
-| TL review on `b0fb4b28` | **CHANGES REQUIRED** `5072890265` | VERIFIED GitHub COMMENT (formal REQUEST_CHANGES not possible on own PR) |
-| `docs/ACTIVE_WORK_STATUS.md` on this branch | still names `main@8eb51c55` | VERIFIED stale vs live main; **not edited** (forbidden) |
-| Workspace / `components/**` callers of `/api/readiness/requirements` | **none** | VERIFIED ripgrep |
-| Agent A | Draft-PR #366 open; not reviewed in this PR | VERIFIED GitHub; Agent B did not read Agent A runtime files as authority |
+| Original task baseline | `main@17ee633ea89567761297c8f07c023953ec98bbf2` | VERIFIED historical |
+| Current live `origin/main` | `e8549e8287382abf2dc1ea77f9722eeaa04218dd` — `Merge S4-R2 Safety server-owned Trip Truth (#368)` | VERIFIED `git fetch origin main` |
+| This branch vs that main after sync | **0 behind**; unique files are the five Agent B capacity/flag docs | VERIFIED |
+| Review-fix head before sync | `1adf54f48288c11aa7a1e3012ff7ff1aef5ed672` | VERIFIED |
+| TL review on `b0fb4b28` | **CHANGES REQUIRED** `5072890265`; review-fix content aligned; PASS needs current-main baseline | VERIFIED instruction |
+| `docs/ACTIVE_WORK_STATUS.md` | not edited (forbidden) | VERIFIED |
+| Agent A | integrated to main via recovery PR #368; Agent B did not edit Agent A files | VERIFIED merge; no ownership overlap |
 
 ### 2.2 Historical S4 vs live
 
@@ -66,7 +65,7 @@ Historical sources (`docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S4, `d
 4. **measure** the 8 KB Readiness cap vs multi-traveller
 
 S4-R1 closed (1) and the Readiness half of (2). Canonical closure: `docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_TRUTH_OPS_S4_R1_CLOSED_2026-08-31.md`.
-(3) is Agent A.
+(3) is on current main via Agent A / #368. This agent did not re-review that runtime.
 (4) was explicitly **unmeasured** (`G-S4-BODY`, RPG0-P2-01). This audit measures it.
 
 `docs/PROVIDER_ACTIVATION_READINESS_PRECHECK_NEXT_SLICE_2026-09-01.md` already classified residual S4 as “largely pre-adapter” and named S6 as the next *serial* activation gate. That precheck is historical evidence, not a start order for this PR.
@@ -280,7 +279,7 @@ Requirements flag: **already sufficient**. Do not add a second Requirements flag
 
 | Residual | Owner | After Agent A | Before S4 close / S6? |
 | --- | --- | --- | --- |
-| Safety HTTP `party: []` / server-owned trip truth | Agent A #366 | expected close if TL-PASS + integrate | remaining Agent A runtime |
+| Safety HTTP `party: []` / server-owned trip truth | Agent A, now on `main` via #368 | integrated on current main; this agent did not re-review that runtime | not this PR’s residual |
 | Readiness 8 KB cap | this audit | document only | **no cap implementation** |
 | Requirements flag | S4-R1 on main | already closed | none |
 | Safety / Seasonal flags | this audit | activation-time contract persisted | **no flag implementation** required for S4 close |
@@ -289,9 +288,7 @@ Requirements flag: **already sufficient**. Do not add a second Requirements flag
 | S7 / S8 | later | missing | after S6 |
 | Real Requirements / Safety / Seasonal vendor | PO gates | factories stay `null` | REQUIRES FUTURE PROVIDER CONTRACT |
 
-**INFERENCE (supersedes first-delivery close-after-A):** S4 final closure needs Agent A **and** the bounded parser-runtime slice **and** TL live-main recheck. Body-cap and flags do not add a third S4 implementation. Do not carry the parser defect silently into S6.
-
-**UNKNOWN:** whether Agent A’s exact head will PASS. This agent does not review #366.
+**INFERENCE (supersedes first-delivery close-after-A; unchanged by the #368 sync):** Agent A is now on current main. That does **not** close S4. Final S4 closure still needs the bounded Multi-Document parser-runtime slice **and** TL live-main recheck. Body-cap and flags do not add another S4 implementation. Do not carry the parser defect silently into S6.
 
 ---
 

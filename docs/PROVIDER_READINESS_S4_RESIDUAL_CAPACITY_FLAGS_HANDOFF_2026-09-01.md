@@ -22,13 +22,13 @@ Rejected head: `b0fb4b28ec14dd8f3d863bb0c8c81794202a5545`
 4. `docs/PROVIDER_READINESS_S4_RESIDUAL_CAPACITY_FLAGS_SELF_REVIEW_2026-09-01.md`
 5. Issue #365 Multi-Agent ownership (Agent B = this PR)
 
-Do **not** treat `docs/ACTIVE_WORK_STATUS.md` on this branch as live main (`8eb51c55` vs `17ee633e`). Do not edit it.
+Do **not** treat `docs/ACTIVE_WORK_STATUS.md` as this audit’s live main. Current main for this sync is `e8549e8287382abf2dc1ea77f9722eeaa04218dd`. Do not edit Active Work or Start Here.
 
 ---
 
 ## What a new chat must know
 
-This is **Agent B / docs-only**. Agent A (#366) owns Safety server-owned Trip Truth runtime. Do not touch Agent A files.
+This is **Agent B / docs-only**. Agent A S4-R2 is on `main` via recovery PR #368. Do not touch Agent A / Safety runtime files.
 
 Measured this session against live helpers:
 
@@ -53,7 +53,7 @@ Measured this session against live helpers:
 | `docs/PROVIDER_READINESS_S4_RESIDUAL_CAPACITY_FLAGS_SELF_REVIEW_2026-09-01.md` | this agent, not TL-PASS |
 | this handoff | continuity |
 
-Nothing outside `docs/` in this PR.
+Unique commits vs current main touch only the five Agent B `docs/PROVIDER_READINESS_S4_RESIDUAL_CAPACITY_FLAGS_*` files. The merge brought Agent A main files along; this agent did not edit them.
 
 ---
 
@@ -61,9 +61,11 @@ Nothing outside `docs/` in this PR.
 
 | Item | Value |
 | --- | --- |
-| Live main reconstructed | `17ee633ea89567761297c8f07c023953ec98bbf2` |
-| Pre-agent head | `cc8336c1e49defc30391efd869c51fd3125de160` |
+| Original task baseline | `17ee633ea89567761297c8f07c023953ec98bbf2` |
+| Current live main | `e8549e8287382abf2dc1ea77f9722eeaa04218dd` |
+| Review-fix before sync | `1adf54f48288c11aa7a1e3012ff7ff1aef5ed672` |
 | Final head | **read live on PR #367** |
+| Behind main | **0** after sync |
 | Draft | stays Draft |
 
 ---
@@ -71,9 +73,9 @@ Nothing outside `docs/` in this PR.
 ## Residuals left for Technical Lead
 
 - Exact-head **re-review** of this docs review-fix
-- Exact-head review / integration of Agent A
+- Agent A S4-R2 is on current main via #368; do not re-open it from this PR
 - **Required later (not this PR):** bounded Multi-Document parser runtime slice — order-independent identity/ref comparison; keep malformed/sensitive/duplicate/ref rejection; tests for mixed-document order permutations and citizenship links; no default/primary passport or citizenship. Blocks S4 final closure and S6.
-- Live-main S4 closure decision (Issue #365) only after Agent A **and** that parser slice
+- Live-main S4 closure decision (Issue #365) only after the parser slice; Agent A is already on current main
 - Later, not S4-close blockers: Guest-Evaluate architecture (`G-API-PARTY`); Safety/Seasonal zustand at first non-null factory
 
 ---

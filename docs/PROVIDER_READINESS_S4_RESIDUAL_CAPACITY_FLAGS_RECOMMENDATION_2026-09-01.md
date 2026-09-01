@@ -11,7 +11,7 @@ Rejected head: `b0fb4b28ec14dd8f3d863bb0c8c81794202a5545`
 
 ## 1. Decision asked of Technical Lead
 
-After independent exact-head **re-review** of this Draft-PR, and later of Agent A (#366) plus the parser slice:
+After independent exact-head **re-review** of this Draft-PR on current main `e8549e82`, plus the later parser slice (Agent A S4-R2 is already on that main via #368):
 
 1. Treat the 8 KB Readiness HTTP cap as **sufficient for intended payloads**. Do not raise it in S4. Unchanged.
 2. Treat Safety / Seasonal activation flags as an **activation-time mandatory contract**, not a current S4 implementation. Unchanged.
@@ -107,9 +107,9 @@ If TL still wants mechanical lock-in before S6: a later **optional** tiny docs+w
 ## 4. S4 close vs S6
 
 ```text
-this audit review-fix TL-PASS + integrate
+this audit review-fix TL-PASS + integrate (current-main baseline `e8549e82`)
         +
-Agent A #366 TL-PASS + integrate
+Agent A S4-R2 already on main via #368
         +
 bounded Multi-Document parser runtime slice (own versioned task; not this PR)
         │
@@ -134,5 +134,5 @@ Do not start S6 from this PR. Do not start the parser implementation, flag wrapp
 | Order-sensitive Multi-Document parser | **Phase-1 blocking truth-contract defect** — own runtime slice before S4 close / S6; not implemented here |
 | Real Timatic / Sherpa / advisory / climate vendor | REQUIRES FUTURE PROVIDER CONTRACT |
 | Whether a future Guest-Evaluate must accept 5–20 fully loaded travellers | UNKNOWN / product decision |
-| Agent A exact-head quality | UNKNOWN to this agent |
+| Agent A exact-head quality | UNKNOWN to this agent — now on main via #368; not re-reviewed here |
 | Outbound vendor request size vs 8192 inbound cap | REQUIRES FUTURE PROVIDER CONTRACT (different layer) |
