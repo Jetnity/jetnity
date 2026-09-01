@@ -1,13 +1,63 @@
 // lib/safety/auswerten.ts
 //
-// API-Naht: Client darf Trip-Kontext senden, niemals Official Evidence.
+// API-Naht: Konto-Reisen kommen nur aus RLS-geschütztem Server-Load.
+// Gast darf transienten Routenkontext senden, niemals Official Evidence
+// und niemals Reisenden-/Staatsbürgerschafts-Wahrheit.
 
+import type { Lesung } from '@/lib/api/datenbank-lesen'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
 import { safetyAuswerten } from '@/lib/safety/engine'
 import { safetyProviderAus, type SafetyProvider } from '@/lib/safety/provider'
 import type { SafetyAnfrage } from '@/lib/safety/schema'
 import type { Trip, TripItem } from '@/types/trips'
+
+/**
+ * Dieselbe Konto-UUID-Form wie `istKontoKennung` in `lib/trips/daten.ts`.
+ * Hier dupliziert, damit die Safety-Naht kein `server-only`-Trip-Modul lädt.
+ */
+const KONTO_TRIP_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export function safetyIstKontoTripId(id: string): boolean {
+  return KONTO_TRIP_ID.test(id)
+}
+
+export type SafetyReiseLesen = (id: string) => Promise<Lesung<Trip>>
+
+export type SafetyAuswertungFehler = {
+  ok: false
+  art: 'nicht-gefunden' | 'lesen-fehlgeschlagen'
+  status: 404 | 500 | 503
+  message: string
+}
+
+export type SafetyAuswertungOk = {
+  ok: true
+  reise: Trip
+  evaluations: SafetyEvaluation[]
+  quelle: 'konto' | 'gast'
+}
+
+export type SafetyAuswertung = SafetyAuswertungOk | SafetyAuswertungFehler
+
+export type SafetyReiseKontext =
+  | { ok: true; reise: Trip; quelle: 'konto' | 'gast' }
+  | SafetyAuswertungFehler
+
+const LESEN_FEHLGESCHLAGEN: SafetyAuswertungFehler = {
+  ok: false,
+  art: 'lesen-fehlgeschlagen',
+  status: 500,
+  message: 'Die Sicherheitslage konnte gerade nicht geprüft werden. Das ist keine Entwarnung.',
+}
+
+const REISE_NICHT_GEFUNDEN: SafetyAuswertungFehler = {
+  ok: false,
+  art: 'nicht-gefunden',
+  status: 404,
+  message: 'Diese Reise wurde nicht gefunden.',
+}
 
 function leererPunkt(teil: SafetyAnfrage['items'][number], position: number): TripItem {
   return {
@@ -46,6 +96,10 @@ function leererPunkt(teil: SafetyAnfrage['items'][number], position: number): Tr
   }
 }
 
+/**
+ * Transienter Gast-Routenkontext. `party` bleibt leer: Gäste haben keine
+ * server-eigene Reisendenwahrheit. Client-Citizenships gehören nicht hierher.
+ */
 export function tripAusSafetyAnfrage(anfrage: SafetyAnfrage): Trip {
   const items = anfrage.items.map((punkt, index) => leererPunkt(punkt, index + 1))
   const stageIds = new Set(anfrage.stages.map((etappe) => etappe.id))
@@ -82,9 +136,51 @@ export function tripAusSafetyAnfrage(anfrage: SafetyAnfrage): Trip {
   }
 }
 
+export async function safetyReiseAufloesen(
+  anfrage: SafetyAnfrage,
+  reiseLesen?: SafetyReiseLesen,
+): Promise<SafetyReiseKontext> {
+  const tripId = anfrage.tripId
+  if (!tripId || !safetyIstKontoTripId(tripId)) {
+    return { ok: true, reise: tripAusSafetyAnfrage(anfrage), quelle: 'gast' }
+  }
+
+  if (!reiseLesen) {
+    return { ...LESEN_FEHLGESCHLAGEN }
+  }
+
+  const gelesen = await reiseLesen(tripId)
+  if (gelesen.problem) {
+    return {
+      ...LESEN_FEHLGESCHLAGEN,
+      status: gelesen.problem.status,
+    }
+  }
+
+  const reise = gelesen.zeilen[0]
+  if (!reise) {
+    return { ...REISE_NICHT_GEFUNDEN }
+  }
+
+  return { ok: true, reise, quelle: 'konto' }
+}
+
 export async function safetyEvaluationsPruefen(
   anfrage: SafetyAnfrage,
-  provider: SafetyProvider | null = safetyProviderAus(),
-): Promise<SafetyEvaluation[]> {
-  return safetyAuswerten(tripAusSafetyAnfrage(anfrage), provider, anfrage)
+  optionen: {
+    provider?: SafetyProvider | null
+    reiseLesen?: SafetyReiseLesen
+  } = {},
+): Promise<SafetyAuswertung> {
+  const kontext = await safetyReiseAufloesen(anfrage, optionen.reiseLesen)
+  if (!kontext.ok) return kontext
+
+  const provider = optionen.provider === undefined ? safetyProviderAus() : optionen.provider
+  const evaluations = await safetyAuswerten(kontext.reise, provider, anfrage)
+  return {
+    ok: true,
+    reise: kontext.reise,
+    evaluations,
+    quelle: kontext.quelle,
+  }
 }
