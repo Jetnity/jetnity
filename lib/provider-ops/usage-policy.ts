@@ -38,6 +38,15 @@ export type ProviderOpsUsagePolicy = {
   displayNotice: string | null
 }
 
+/**
+ * Optionaler, provider-neutraler Adapter-Hook. Ein bestehender Provider muss
+ * ihn nicht implementieren; Abwesenheit bedeutet ungeprüfte Vertragslage.
+ * Domain-Provider-Interfaces müssen dafür nicht gemeinsam umgebaut werden.
+ */
+export type ProviderOpsUsagePolicyTraeger = {
+  readonly usagePolicy?: ProviderOpsUsagePolicy
+}
+
 function istObjekt(wert: unknown): wert is Record<string, unknown> {
   return typeof wert === 'object' && wert !== null && !Array.isArray(wert)
 }
@@ -92,5 +101,26 @@ export function providerOpsUsagePolicyAusGepruefterKonfiguration(
     attributionRequired:
       typeof eingabe.attributionRequired === 'boolean' ? eingabe.attributionRequired : null,
     displayNotice: displayNoticeLesen(eingabe.displayNotice),
+  }
+}
+
+/**
+ * Gemeinsame S8-Bindungsnaht für servereigene Provider-Adapter.
+ *
+ * Heutige Provider besitzen kein `usagePolicy`-Feld und fallen dadurch hart
+ * auf ungeprüft zurück. Ein zukünftiger Adapter darf das Feld erst setzen,
+ * nachdem seine Vertrags-/Lizenzlage ausserhalb dieses Moduls geprüft wurde.
+ * Auch dann wird die Laufzeitform erneut allowlist-normalisiert.
+ */
+export function providerOpsUsagePolicyAusProvider(provider: unknown): ProviderOpsUsagePolicy {
+  if (!istObjekt(provider)) return providerOpsUngepruefteUsagePolicy()
+  if (!Object.prototype.hasOwnProperty.call(provider, 'usagePolicy')) {
+    return providerOpsUngepruefteUsagePolicy()
+  }
+
+  try {
+    return providerOpsUsagePolicyAusGepruefterKonfiguration(provider.usagePolicy)
+  } catch {
+    return providerOpsUngepruefteUsagePolicy()
   }
 }
