@@ -251,7 +251,8 @@ export async function safetyEvaluationsPruefen(
     : null
 
   const evaluations = await safetyAuswerten(kontext.reise, beobachteterProvider, anfrage)
-  beobachten(safetyOutcomeAus(evaluations), evaluations.length)
+  const outcome = safetyOutcomeAus(evaluations)
+  beobachten(outcome, outcome === 'checked_empty' ? 0 : evaluations.length)
   return {
     ok: true,
     reise: kontext.reise,
