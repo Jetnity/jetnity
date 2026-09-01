@@ -89,6 +89,13 @@ export function tripAusSeasonalAnfrage(anfrage: SeasonalAnfrage): Trip {
 
 function seasonalOutcomeAus(evaluations: readonly SeasonalEvaluation[]): ProviderOpsOutcome {
   if (evaluations.length === 0) return 'checked_empty'
+  if (
+    evaluations.length === 1 &&
+    evaluations[0]?.factKey === 'checked_empty' &&
+    evaluations[0].freshness === 'current'
+  ) {
+    return 'checked_empty'
+  }
   const freshness = evaluations.map((eintrag) => eintrag.freshness)
   if (freshness.every((wert) => wert === 'provider_unavailable')) return 'unavailable'
   if (freshness.every((wert) => wert === 'source_temporarily_unavailable')) return 'error'
