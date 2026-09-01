@@ -2,6 +2,8 @@
 //
 // Minimaler gemeinsamer Provider-Operationsvertrag.
 // Kein UniversalProvider, keine gemeinsame Suche, keine Fachwahrheit.
+// Server-only S6-A-Adapter werden bewusst direkt importiert und nicht über
+// dieses breite, provider-neutrale Barrel re-exportiert.
 
 export {
   PROVIDER_OPS_DOMAINS,
@@ -32,13 +34,6 @@ export {
   type ProviderOpsCostGuardErgebnis,
   type ProviderOpsCostGuardGrenzen,
 } from '@/lib/provider-ops/cost-guard'
-export {
-  PROVIDER_OPS_PERSISTENT_COST_GUARD_VERSION,
-  providerOpsPersistentCostGuard,
-  type ProviderOpsPersistentCostGuardKonfiguration,
-  type ProviderOpsPersistentCostGuardPort,
-  type ProviderOpsPersistentCostGuardReservation,
-} from '@/lib/provider-ops/persistent-cost-guard'
 export {
   PROVIDER_OPS_EVENT_FELDER,
   PROVIDER_OPS_OPERATIONEN,
