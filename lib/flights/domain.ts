@@ -132,7 +132,7 @@ export type FlugSuchergebnis = {
 }
 
 export const FLUG_ABDECKUNGSHINWEIS =
-  'Die Suche zeigt verfügbare Verbindungen über unseren ersten Flugdaten-Adapter. Nicht alle Airlines und Billigflieger sind enthalten – das ist kein Vergleich des gesamten Marktes.'
+  'Die Suche zeigt verfügbare Verbindungen über die aktuell angebundenen Flugquellen. Nicht alle Airlines, Billigflieger oder Anbieter sind enthalten – das ist kein Vergleich des gesamten Marktes.'
 
 /**
  * Technische Kennung des ersten Suchadapters in `trip_items.provider`.

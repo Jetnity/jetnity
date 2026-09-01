@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Issue #402 / PR #403 reconciliert `FlightProviderSearchRequest` auf geordnete 1–6-Bein-Wahrheit (ADR-0207). Keine Providerwahl, kein Live-Transport. Nächster Schritt: unabhängiger Technical-Lead-Review. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Issue #412 / PR #413 orchestriert die Runtime-Flugsuche auf 0..N unabhängige `FlugProvider` (ADR-0208). Die Multi-Leg-Request-Naht (ADR-0207 / #404) bleibt geschlossen. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Nächster Schritt: unabhängiger Technical-Lead Exact-Head-Review. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 

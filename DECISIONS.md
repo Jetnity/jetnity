@@ -5429,6 +5429,35 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0208 – Flight search orchestrates 0..N FlugProvider without a composite Treffer
+
+**Datum:** 1. September 2026  
+**Status:** Implementiert im Feature-Branch `feat/v1-flight-multi-provider-orchestration`. Draft-PR, kein Ready, kein Merge, keine Providerwahl, kein Live-Transport. Binding: `docs/V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_TASK_2026-09-01.md`. Issue #412.
+
+**Entscheidung:**
+
+1. Die bestehende Runtime-Naht bleibt `FlugProvider`. Es gibt keine dritte Provider-Abstraktion.
+2. `SuchePorts` trägt `providers: readonly FlugProvider[]` statt genau eines Providers. 0, 1 oder N sind gültig.
+3. Jeder Adapter wird unabhängig mit derselben validierten `FlugSuchanfrage` aufgerufen. Sein `FlugProviderTreffer` inklusive `retrievedAt` und Timezone-/Instant-Evidence bleibt provider-lokal. Es wird kein zusammengesetztes Treffer-Objekt und kein gemeinsamer `retrievedAt` erfunden.
+4. Nur normalisierte `FlugOption[]` werden für ein globales, bereits bestehendes Jetnity-Ranking kombiniert. Provider-Identität, Array-Reihenfolge, Affiliate oder Provision ändern den Score nicht.
+5. Die globale Ergebniskappe `FLUG_SUCHE_GRENZEN.angebote` gilt erst nach diesem Ranking.
+6. Identitätsbruch (`option.provider !== provider.id`) und Option-ID-Kollisionen sind fail-closed: der betroffene Provider-Treffer fällt deterministisch aus, Provenance wird nicht umgeschrieben. Gleiche Verbindungen zweier Provider werden nicht still dedupliziert.
+7. Validierung und Nutzer-Rate-Limit laufen einmal je Jetnity-Suche. Provider-Fehler bleiben isoliert. Ein nutzbarer Erfolg plus ein anderer Fehler oder `partial` ergibt `partial`.
+8. Die kleinste Sammlung ist `flugProviderSammlungAus()` / `aktuelleFlugProviderSammlung()`. Heute ist nur der vorhandene Duffel-Testadapter konstruierbar. Reihenfolge in der Sammlung ist kein Default/Primary.
+9. ProviderOps-Invocation-Events sind je Provider und `providerId`-treu. Vor dem Aufruf (invalid, rate-limit, keine Provider) bleibt `providerId: null`.
+10. Der globale Flight-Zustand (`flugZustand`) ist nur Production-hart-aus plus `JETNITY_FLIGHT_AKTIV`. `FlugUmgebung` / `flugUmgebungAusProzess()` enthalten und lesen nur provider-neutrale Eingaben (`VERCEL_ENV`, `JETNITY_FLIGHT_AKTIV`). Anbieter-Credentials bleiben vollständig in der jeweiligen Fabrik bzw. einem provider-lokalen Zugangsmodul. `aktuelleFlugProviderSammlung()` ist keine globale Credential-Registry. `ohne-zugang` / Search-unavailable entsteht an der Orchestrierungsnaht, wenn 0 Provider konstruierbar sind.
+11. Unvollständige Suche mit null nutzbaren Optionen bleibt `partial`, verwendet aber eine neutrale Meldung. „Die übrigen Verbindungen siehst du unten.“ gilt nur, wenn tatsächlich Optionen übrig sind.
+
+**Kontext:** Der Product Owner hat ausdrücklich erlaubt, die Flight-Schicht provider-neutral weiterzubauen und die spätere echte Providerwahl offenzuhalten. ADR-0207 schloss Fan-out auf der Request-Naht aus; das bleibt für `FlightProviderSearchRequest` wahr. Diese Entscheidung betrifft nur die bestehende Runtime-Orchestrierung in `lib/flights/suche.ts`. Sie wählt keinen Provider, aktiviert keinen Live-Pfad und hebt ADR-0011 nicht in eine Multi-Provider-Produktplattform auf.
+
+**Alternativen:** Ein Fake-Composite-`FlugProvider` mit einem erfundenen `retrievedAt`; genau einen Provider weiter hart verdrahten; Cross-Provider-Deduplizierung nach Route/Flugnummer; Ranking-Gewicht nach Array-Reihenfolge.
+
+**Begründung:** Getrennte Beobachtungen dürfen nicht zu einer gefälschten gemeinsamen Evidence werden. Ein späterer zweiter Adapter darf Route und Orchestrierung nicht neu schreiben müssen.
+
+**Konsequenzen:** Ein-Provider-Verhalten bleibt nach aussen kompatibel. Duffel bleibt der einzige heute konstruierbare Adapter. `flugZustand` und `FlugUmgebung` sind nicht an ein Duffel-Token gekoppelt; Duffel liest `DUFFEL_ACCESS_TOKEN` nur in `lib/flights/duffel/zugang.ts`. Ein späterer Adapter braucht dafür keine globale Zustands- oder Umgebungserweiterung. Unvollständige Suchen ohne nutzbare Optionen bleiben `partial`, ohne dem Reisenden restliche Verbindungen vorzuspiegeln. Kein Secret, kein Netzwerk, kein Production-S6, kein Commercial-Provenance-Writer, keine KAYAK/Wego/Skyscanner-Adapter.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

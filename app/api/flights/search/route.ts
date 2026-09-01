@@ -13,7 +13,7 @@ import {
   flugSucheKoerperLesen,
 } from '@/lib/flights/anfrage'
 import { sucheFuerClient, type FlugSucheAntwort } from '@/lib/flights/client-sicht'
-import { duffelProviderAus } from '@/lib/flights/duffel/factory'
+import { aktuelleFlugProviderSammlung } from '@/lib/flights/provider-sammlung'
 import { flugRateKennungAus } from '@/lib/flights/rate-limit'
 import { fluegeSuchen, suchePortsAusUmgebung } from '@/lib/flights/suche'
 import { flugUmgebungAusProzess } from '@/lib/flights/zustand'
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
 
   const ports = suchePortsAusUmgebung(
     flugUmgebungAusProzess(),
-    duffelProviderAus(),
+    aktuelleFlugProviderSammlung(),
     flugRateKennungAus(req.headers),
   )
   const { httpStatus, koerper, retryAfterSec } = await fluegeSuchen(gelesen.wert, {
