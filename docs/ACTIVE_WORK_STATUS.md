@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 PROVIDER ACCESS DUE DILIGENCE / PWA-1 CLOSED / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER SELECTED OR ACTIVE / EXTERNAL A-GATES CLOSED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 / DRAFT-PR #403 MULTILEG CONTRACT RECONCILIATION AWAITING TL REVIEW / PWA-1 CLOSED / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER SELECTED OR ACTIVE / EXTERNAL A-GATES CLOSED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Current verified runtime baseline
 
@@ -47,23 +47,25 @@ Feature Complete alone is not sufficient.
 
 Read first:
 
-1. `docs/FLIGHT_METASEARCH_PROVIDER_ALTERNATIVES_PRECHECK_2026-09-01.md` ← **current V1-Step-2 provider-access precheck**
-2. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
-3. `docs/FLIGHT_PROVIDER_PRODUCT_OWNER_DECISION_PACKAGE_2026-09-01.md`
-4. `docs/ACTIVE_WORK_STATUS.md`
-5. `docs/CHATGPT_TECHNICAL_LEAD_PWA_1_CLOSED_2026-09-01.md`
-6. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md`
-7. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
-8. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
-9. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
-10. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-11. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-12. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-13. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-14. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-15. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
-16. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-17. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+1. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md` ← **current Draft-PR #403 CR-1 exact-head handoff**
+2. `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_RECONCILIATION_TASK_2026-09-01.md`
+3. `docs/FLIGHT_METASEARCH_PROVIDER_ALTERNATIVES_PRECHECK_2026-09-01.md`
+4. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
+5. `docs/FLIGHT_PROVIDER_PRODUCT_OWNER_DECISION_PACKAGE_2026-09-01.md`
+6. `docs/ACTIVE_WORK_STATUS.md`
+7. `docs/CHATGPT_TECHNICAL_LEAD_PWA_1_CLOSED_2026-09-01.md`
+8. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md`
+9. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
+10. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
+11. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
+12. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+13. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+14. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+15. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+16. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+17. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+18. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+19. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
 ## 4. PWA-1 final state
 
@@ -142,9 +144,13 @@ No current instruction implicitly approves any of these.
 
 ## 7. Current active work boundary
 
-**No provider-specific coding slice is automatically active.**
+**Active Draft-PR only:** Issue #402 / PR #403 / `feat/v1-flight-provider-multileg-contract` — provider-neutral Flight request multi-leg reconciliation (ADR-0207). SINGLE_AGENT Generation 1, same session `bc-b592d931-3ecb-4cec-b250-ab19a19930b1`. Technical-Lead CHANGES REQUIRED `5078055105` rejected `3d544fa6` because `stopPreference` was dropped. CR-1 restores canonical `FlugStoppPraeferenz` on the shared request. Draft stays Draft. No Ready, no merge, no follow-up slice.
 
-V1 Step 1 generic Provider Readiness is closed. Current serial V1 Step 2 is blocked by external provider-access/commercial truth, not by a missing universal Jetnity abstraction.
+Do not treat gates on `3d544fa6` as current. CR-1 review-fix `8c26ea87` restores `stopPreference`. Exact gated handoff head: `3cee8aba6b2117c3291594ea794f1074ff125df9`. Live review tip: PR #403 / `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CR1_HANDOFF_2026-09-01.md`.
+
+This is **not** a provider selection, application, secret, network, Duffel-runtime or Skyscanner-promotion slice.
+
+V1 Step 1 generic Provider Readiness remains closed. Broader V1 Step 2 remains blocked by external provider-access/commercial truth.
 
 Product Owner currently allows public-source/internal preparation only. Therefore:
 
@@ -153,7 +159,7 @@ Product Owner currently allows public-source/internal preparation only. Therefor
 3. TW-8 remains closed until real Commercial Truth exists;
 4. Destination Essentials Draft PR #394 remains deferred because it belongs to V1 Step 8;
 5. no later V1 slice may be pulled forward just to avoid the Step-2 dependency;
-6. internal provider-access, cost/rate-limit/licence, application-readiness and schema-mapping evidence may continue if it does not create speculative runtime code.
+6. this slice only reconciles the already-existing `FlightProviderSearchRequest` onto canonical ordered 1–6-leg truth, including lossless `stopPreference`.
 
 ## 8. Hard Traveller truth
 
