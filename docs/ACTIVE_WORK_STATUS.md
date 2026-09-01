@@ -1,26 +1,33 @@
 # Jetnity – Active Work Status
 
 Stand: 1. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / PROVIDER READINESS FINAL RECHECK CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / PWA-1 REVIEW-FIX AWAITING TECHNICAL-LEAD RE-REVIEW / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / PWA-1 CLOSED / PROVIDER READINESS CLOSED / GENERIC PROVIDER FOUNDATION COMPLETE / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
 
-## 1. Current verified main
+## 1. Current verified runtime baseline
 
-`main@7c51b08e5af4ca4a37a4e3b3a08aef2fa145cab4`
+Runtime implementation baseline before this docs-only continuity closure:
+
+`main@bce4b13cdd4a08247b9cb2bec45c5995c1939b65`
 
 Commit:
 
-`Provider Readiness final recheck and first-provider decision package (#387)`
+`Phase 1 PWA-1 installability (#391)`
 
 Post-merge verified:
 
-- Issue #386: **CLOSED / COMPLETED**;
-- PR #387: **MERGED**;
-- Main CI #1638 / Run `33489646333`: **COMPLETED / SUCCESS**;
-- Vercel Production `dpl_7YrbBUFAEDXKpZtS1TENfF8c8Tkb`: **READY** on exact main SHA;
-- no provider selected or activated;
-- no Production DB/security mutation from the recheck.
+- Issue #389: **CLOSED / COMPLETED**;
+- PR #390: **CLOSED / NOT MERGED**;
+- PR #391: **MERGED**;
+- Main CI #1647 / Run `33496652255`: **COMPLETED / SUCCESS**;
+- Vercel Production `dpl_HtB7523gee5bfuTsRTKWVkkm8zwk`: **READY** on exact runtime main;
+- `/manifest.webmanifest`, all required PWA PNG icons and Apple icon: **HTTP 200**;
+- `/sw.js`: **HTTP 404**;
+- Production error/fatal logs: none observed;
+- unresolved Vercel toolbar threads on `main`: none;
+- indexing remains `noindex, nofollow`;
+- no Production DB/security/provider/payment mutation from PWA-1.
 
-This continuity branch can advance `main`. Always re-fetch live main.
+This docs-only continuity closure may advance repository `main`. Always re-fetch live main.
 
 ## 2. Current product phase
 
@@ -40,23 +47,47 @@ Feature Complete alone is not sufficient.
 
 Read first:
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md` ← **current Provider Readiness checkpoint**
+1. `docs/CHATGPT_TECHNICAL_LEAD_PWA_1_CLOSED_2026-09-01.md` ← **current Phase-1 continuity checkpoint**
 2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
-4. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
-5. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
-6. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S8_CLOSED_2026-09-01.md`
-7. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S7_CLOSED_2026-09-01.md`
-8. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S6A_CLOSED_2026-09-01.md`
-9. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S4_CLOSED_2026-09-01.md`
-10. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-11. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-12. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-13. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-14. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-15. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md`
+4. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
+5. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
+6. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
+7. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
+8. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+9. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+10. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+11. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+12. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
+13. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+14. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
-## 4. Provider Readiness state
+## 4. PWA-1 final state
+
+**PWA-1 – Installability / App Icons / Privacy-Safe Shell: CLOSED.**
+
+Accepted outcome:
+
+- manifest `id` / `scope` and standards-aligned icon contract;
+- 192×192 / 512×512 PNG application icons;
+- distinct opaque padded maskable 512×512 icon using the current Jetnity mark;
+- Apple touch icon and Apple web-app metadata;
+- deterministic installability and maskable-safe-zone tests;
+- no service worker/offline cache/IndexedDB/push;
+- no DB/Auth/provider/payment/indexing/native-app architecture change.
+
+Governance recovery:
+
+- early inherited history included GitHub Copilot due a prior workflow anomaly;
+- accepted work was independently Technical-Lead reviewed;
+- implementation continuity used Cursor logical agent `Jetnity PWA installability 1`, Generation 1, session `bc-bd39a000-8566-4822-b1ea-cc0e442b5aa3`;
+- Copilot assignment was removed before merge;
+- GitHub self-APPROVE is not permitted for the authenticated repository owner, so the exact-head Technical-Lead PASS was recorded as a review COMMENT without bypassing any repository rule;
+- SHA-locked merge completed successfully.
+
+Do not use GitHub Copilot as a substitute coding agent for the binding Jetnity Technical Lead → Cursor Agent workflow.
+
+## 5. Provider Readiness state
 
 ### Repository foundations
 
@@ -84,13 +115,9 @@ Still intentionally closed:
 - Commercial Provenance real runtime writer;
 - Production provider activation.
 
-### First provider recommendation
+Flights remain the first Commercial Truth domain. Skyscanner Flights Live Prices remains the current Technical-Lead recommendation for due diligence first; Duffel live remains the technical alternative. This is **not** a Product-Owner provider selection.
 
-Flights remain the first Commercial Truth domain.
-
-Skyscanner Flights Live Prices is the current Technical-Lead recommendation for **due diligence first**; Duffel live remains the technical alternative. This is **not** a Product-Owner provider selection.
-
-## 5. Product-Owner decisions A–D remain unapproved
+## 6. Product-Owner decisions A–D remain unapproved
 
 - **A** — provider/Skyscanner due diligence/signup/partner engagement;
 - **B** — Production S6 apply/runtime/HMAC/>0 budget;
@@ -99,43 +126,28 @@ Skyscanner Flights Live Prices is the current Technical-Lead recommendation for 
 
 No current instruction implicitly approves any of these.
 
-## 6. Current active work boundary
+## 7. Current active work boundary
 
-Provider work waits at Product-Owner/external gates. Phase-1 work may continue on non-gated V1 gaps.
+**No coding slice is automatically active after PWA-1.**
 
-**Active coding slice: PWA-1 – installability / app icons / privacy-safe shell.**
+Provider work waits at Product-Owner/external gates. Before starting another non-gated Phase-1 slice, the Technical Lead must:
 
-Live vehicle:
+1. re-fetch live `main`, open PRs/issues, CI and Vercel state;
+2. re-read the binding V1 build order and current gap analysis;
+3. perform a fresh Binding Slice Precheck;
+4. perform the mandatory Multi-Agent Suitability Check;
+5. select and persist the smallest responsible slice and ownership;
+6. dispatch the selected Cursor coding agent only after that precheck.
 
-- Issue [#389](https://github.com/Jetnity/jetnity/issues/389)
-- Draft-PR [#390](https://github.com/Jetnity/jetnity/pull/390)
-- Branch `copilot/phase-1-pwa-1-installability`
-- Rejected reviewed head: `a13e3c508977c36133af8ef8f8a0d9e9e4e74196`
-- Implementation / CI head: `915976c7336ed14062e15e6911ef6b01ce7e0ad6`
-- Binding review: CHANGES REQUIRED `#5076452634`
-- Slice-local handoff: `docs/PWA_1_INSTALLABILITY_HANDOFF_2026-09-01.md`
-- Gates evidence: `docs/evidence/PWA_1_GATES_2026-09-01.md`
+No follow-up slice is authorized by the PWA-1 merge or this continuity closure.
 
-Mandatory PWA-1 boundaries:
-
-- implementation by a coding agent, not Technical Lead;
-- Technical Lead owns task definition, independent exact-head review, Ready and merge;
-- no service worker/offline cache in PWA-1;
-- no caching account/trip/traveller data;
-- no push/notification permissions;
-- no DB/Auth/provider/payment change;
-- no public launch/indexing change;
-- reuse current Jetnity brand mark; no generic airplane icon.
-
-Cursor must not Ready or merge. Do not start a follow-up slice.
-
-## 7. Hard Traveller truth
+## 8. Hard Traveller truth
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
 Never infer default/primary/preferred citizenship or passport, array position as truth, Residence → Citizenship or Issuer Country → Citizenship.
 
-## 8. Mandatory Multi-Agent Suitability Check
+## 9. Mandatory Multi-Agent Suitability Check
 
 For every material slice:
 
@@ -149,7 +161,7 @@ For every material slice:
 8. changed heads invalidate previous exact-head gates;
 9. final integration remains Technical-Lead-owned.
 
-## 9. Product-Owner gates
+## 10. Product-Owner gates
 
 Explicit approval remains required before relevant:
 
@@ -164,9 +176,9 @@ Explicit approval remains required before relevant:
 - spend outside approved limits;
 - public indexing/domain cutover/public launch.
 
-## 10. Critical V1 gaps
+## 11. Critical V1 gaps still open
 
-Still principally open:
+Principally open after PWA-1:
 
 - real Flight Commercial Truth — PO/vendor gated;
 - TW-8/TW-9 after real Commercial Truth;
@@ -176,8 +188,8 @@ Still principally open:
 - Temporal Readiness on real evidence;
 - Destination Essentials;
 - basic World Map;
-- **PWA installability/readiness**;
+- broader Mobile/Desktop/PWA release polish, accessibility and real-device QA;
 - V1 privacy/legal/ops/monetization closure;
 - V1 Definition of Done and Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. PWA-1 REVIEW-FIX AWAITING TECHNICAL-LEAD RE-REVIEW. NO REAL PROVIDER UNLOCKED.**
+**LIVE-EVIDENCE WINS. PWA-1 CLOSED. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. NO AUTOMATIC NEXT SLICE. NO REAL PROVIDER UNLOCKED.**
