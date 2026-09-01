@@ -7,6 +7,7 @@ import {
   providerOpsHttpHeader,
   providerOpsUngepruefteUsagePolicy,
   providerOpsUsagePolicyAusGepruefterKonfiguration,
+  providerOpsUsagePolicyAusProvider,
 } from '@/lib/provider-ops'
 
 describe('Provider Readiness S8 usage policy', () => {
@@ -100,5 +101,62 @@ describe('Provider Readiness S8 usage policy', () => {
 
     assert.equal(policy.displayNotice?.length, PROVIDER_OPS_DISPLAY_NOTICE_MAX_CHARS)
     assert.equal(policy.displayNotice?.includes('\u0000'), false)
+  })
+
+  test('bestehender Provider ohne Hook bleibt ungeprüft statt implizit erlaubt', () => {
+    const heutigerProvider = {
+      id: 'test-provider',
+      async suchen() {
+        return { options: [], partial: false }
+      },
+    }
+
+    assert.deepEqual(providerOpsUsagePolicyAusProvider(heutigerProvider), {
+      cacheClass: 'forbidden',
+      persistClass: 'forbidden',
+      attributionRequired: null,
+      displayNotice: null,
+    })
+  })
+
+  test('Provider-Hook normalisiert nur ausdrücklich konfigurierte Usage Policy', () => {
+    const provider = {
+      id: 'contract-reviewed-test-provider',
+      usagePolicy: {
+        cacheClass: 'reference',
+        persistClass: 'user_snapshot',
+        attributionRequired: false,
+        displayNotice: ' Vertraglich geprüft ',
+        token: 'must-not-leak',
+      },
+    }
+
+    assert.deepEqual(providerOpsUsagePolicyAusProvider(provider), {
+      cacheClass: 'reference',
+      persistClass: 'user_snapshot',
+      attributionRequired: false,
+      displayNotice: 'Vertraglich geprüft',
+    })
+    assert.equal(JSON.stringify(providerOpsUsagePolicyAusProvider(provider)).includes('must-not-leak'), false)
+  })
+
+  test('malformed Provider-Hook fällt vollständig fail-closed zurück', () => {
+    for (const usagePolicy of [null, 'cacheable', [], { cacheClass: 'forever' }]) {
+      const policy = providerOpsUsagePolicyAusProvider({ id: 'test', usagePolicy })
+      assert.equal(policy.cacheClass, 'forbidden')
+      assert.equal(policy.persistClass, 'forbidden')
+      assert.equal(policy.attributionRequired, null)
+    }
+  })
+
+  test('werfender Usage-Policy-Getter kann keine Provider-Ausführung brechen', () => {
+    const provider = Object.defineProperty({ id: 'test' }, 'usagePolicy', {
+      enumerable: true,
+      get() {
+        throw new Error('broken adapter config')
+      },
+    })
+
+    assert.deepEqual(providerOpsUsagePolicyAusProvider(provider), providerOpsUngepruefteUsagePolicy())
   })
 })
