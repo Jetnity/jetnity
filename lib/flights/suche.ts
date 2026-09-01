@@ -109,7 +109,11 @@ export async function fluegeSuchen(
       ? await ports.flughafenReferenz(bewertet.flatMap((option) => iatasAusOption(option)))
       : {}
 
-    beobachten(status, bewertet.length, Math.max(0, treffer.options.length - bewertet.length))
+    beobachten(
+      status,
+      bewertet.length,
+      treffer.partial ? null : Math.max(0, treffer.options.length - bewertet.length),
+    )
     return {
       httpStatus: 200,
       koerper: sucheFuerClient({ status, message, options: bewertet, airportRefs }),
