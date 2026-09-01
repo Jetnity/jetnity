@@ -58,7 +58,10 @@ export async function requirementsProviderAbrufen(
 
   const gestartet = Date.now()
   const sink = optionen.eventSink ?? providerOpsConsoleEventSink
+  let beobachtet = false
   const beobachten = (outcome: ProviderOpsOutcome, resultCount: number | null = 0) => {
+    if (beobachtet) return
+    beobachtet = true
     void providerOpsEventSchreiben(sink, {
       domain: 'readiness',
       providerId: provider.name.trim() || null,
