@@ -54,7 +54,6 @@ This is **not** a provider selection. Duffel remains the only constructible adap
 | `lib/flights/provider-sammlung.test.ts` | collection + route wiring without a new live provider |
 | `app/api/flights/search/route.ts` | uses collection, not a single `duffelProviderAus()` |
 | `lib/flights/domain.ts` | coverage copy truthful for one or many sources |
-| `lib/flights/client-sicht.ts` | fail-closed strip of retrieval/timezone evidence keys |
 | `DECISIONS.md` | ADR-0208 |
 | `ARCHITECTURE.md` / `docs/FLUEGE.md` / `ROADMAP.md` | current architecture/status |
 | `docs/ACTIVE_WORK_STATUS.md` / `JETNITY_START_HERE.md` | continuity |

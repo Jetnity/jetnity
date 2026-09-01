@@ -23,7 +23,7 @@ This is not a Technical-Lead PASS and does not authorize Ready or merge.
 | `lib/flights/provider-sammlung.ts` | Collection factory. Duplicate IDs dropped entirely. No default/primary. |
 | `app/api/flights/search/route.ts` | `aktuelleFlugProviderSammlung()`, not `duffelProviderAus()`. |
 | ProviderOps | Per-provider events after invocation; invalid/rate-limit/no-provider use `providerId: null`. |
-| Client-Sicht | Still strips score/raw/secrets; now also fail-closes on `retrievedAt` / timezone evidence keys. |
+| Client-Sicht | Still strips score/raw/secrets. Retrieval/timezone evidence is not part of `FlugOption` and is regression-tested on the serialized search body. The E5 frozen client-sicht source contract is unchanged. |
 
 ## What was implemented
 

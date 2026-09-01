@@ -26,14 +26,6 @@ const VERBOTENE_SCHLUESSEL = [
   'providerMeta',
   'raw',
   'score',
-  'retrievedAt',
-  'retrieved_at',
-  'observedAt',
-  'observed_at',
-  'airportTimezoneEvidence',
-  'airportEventInstantEvidence',
-  'airportEventInstantIssues',
-  'timeZone',
 ] as const
 
 export type FlugOptionSichtbar = FlugOption & {
