@@ -89,9 +89,13 @@ describe('Provider Readiness S7 runtime observability', () => {
     }
     const ergebnis = await safetyEvaluationsPruefen(geprueft.data, { provider, eventSink: sink })
     assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) throw new Error('Safety-Auswertung fehlgeschlagen')
+    assert.equal(ergebnis.evaluations.length, 1)
+    assert.equal(ergebnis.evaluations[0]?.factKey, 'checked_empty')
     assert.equal(events.length, 1)
     assert.equal(events[0]?.domain, 'safety')
     assert.equal(events[0]?.outcome, 'checked_empty')
+    assert.equal(events[0]?.resultCount, 0)
     assert.equal('tripId' in (events[0] ?? {}), false)
   })
 
@@ -126,10 +130,12 @@ describe('Provider Readiness S7 runtime observability', () => {
       },
     }
     const evaluations = await seasonalEvaluationsPruefen(geprueft.data, provider, sink)
-    assert.deepEqual(evaluations, [])
+    assert.equal(evaluations.length, 1)
+    assert.equal(evaluations[0]?.factKey, 'checked_empty')
     assert.equal(events.length, 1)
     assert.equal(events[0]?.domain, 'seasonal')
     assert.equal(events[0]?.outcome, 'checked_empty')
+    assert.equal(events[0]?.resultCount, 0)
     assert.equal(JSON.stringify(events).includes('stages'), false)
   })
 })
