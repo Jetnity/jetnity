@@ -33,13 +33,15 @@ Defect: `travellerAnfrageStriktLesen` validated documents, called `travellerLega
 
 Fix: keep the existing strict child validation. After normalization, look up the already-validated source by `clientRef` and compare that document’s `citizenshipClientRef`. Unmatched / duplicate identity fails closed. No second normalizer. No inferred citizenship. No primary/preferred credential.
 
-Local evidence on implementation commit `382c31ea`:
+Local evidence on implementation commit `382c31ea`, plus exact-head gates on docs tip `2d8a884e`:
 
 - targeted parser tests 23/23
 - `npm test` 3067/3067
 - typecheck, lint (0 errors), production build, CI hygiene scripts all passed locally
+- GitHub CI **SUCCESS** on `2d8a884e`: [run 33458244777](https://github.com/Jetnity/jetnity/actions/runs/33458244777)
+- Vercel Preview **SUCCESS** on `2d8a884e`: [9qZQSn7mndoYMgf7qSfcP876CqxT](https://vercel.com/jetnity-e1b93c82/jetnity-app/9qZQSn7mndoYMgf7qSfcP876CqxT)
 
-CI and Vercel of the **final** tip are for Technical Lead, not claimed here.
+This evidence follow-up commit cannot carry its own SHA. Technical Lead reviews the live tip and re-checks its gates.
 
 ---
 
@@ -65,6 +67,7 @@ Unique commits vs current main should be the task doc + this runtime/test/docs s
 | Task baseline | `6dc5a153d1dd7b934f2f23db5a19fbd89a3a1663` |
 | Exact pre-agent head | `ace5fb47559d4d2ef6e55dbf5ab36a73950ea1b4` |
 | Implementation | `382c31eabeea1e88d0daab371e5ba09da46df4e3` |
+| Evidence tip with CI/Preview | `2d8a884e355b4a12ec941ed5dc3dd01c05771984` |
 | Final head | **read live on PR #371** |
 | Behind main | **0** at reconstruct; re-check live |
 | Draft | stays Draft |

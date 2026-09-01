@@ -26,7 +26,8 @@ Die strikte Requirements-Traveller-Grenze darf ein gültiges Multi-Document-Set 
 | Task-Baseline | `main@6dc5a153d1dd7b934f2f23db5a19fbd89a3a1663` |
 | Merge-Base | `6dc5a153d1dd7b934f2f23db5a19fbd89a3a1663` (0 behind `origin/main` at reconstruct) |
 | Implementation commit | `382c31eabeea1e88d0daab371e5ba09da46df4e3` |
-| Finaler Branch-Tip | live im PR; Docs-Commit folgt auf denselben Slice |
+| Evidence-Tip mit CI/Preview | `2d8a884e355b4a12ec941ed5dc3dd01c05771984` |
+| Dieser Status-Nachtrag | folgt auf `2d8a884e`; eigener SHA live im PR |
 | Draft-PR | #371 bleibt Draft |
 | `docs/ACTIVE_WORK_STATUS.md` | nicht angefasst (Technical-Lead-owned) |
 
@@ -72,8 +73,9 @@ Lokale Evidence dieses Agenten. Exact-Head-Gates müssen live am finalen Tip gep
 | `check:deps` | pass |
 | `check:api-schutz` | pass (12/12 Admin-Routen) |
 | `check:schema-bezug` | pass |
-| GitHub Actions CI | **nicht als grün für den finalen Tip behauptet**; Subscription aktiv, Review am Exact Head |
-| Vercel Preview | **nicht als READY für den finalen Tip behauptet**; Review am Exact Head |
+| GitHub Actions CI | **SUCCESS** on Exact Head `2d8a884e355b4a12ec941ed5dc3dd01c05771984`: [run 33458244777](https://github.com/Jetnity/jetnity/actions/runs/33458244777) — Typecheck/Lint/Build + Auth-Config |
+| Vercel Preview | **SUCCESS** on the same head: [9qZQSn7mndoYMgf7qSfcP876CqxT](https://vercel.com/jetnity-e1b93c82/jetnity-app/9qZQSn7mndoYMgf7qSfcP876CqxT) |
+| Intermediate Vercel Ready | `HUaAwxMxdbWBZJrnYbnn4MJE4cMi` belongs to superseded `382c31ea`, not to `2d8a884e` |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet (kein UI-Slice; Requirements-API bleibt server parser) |
 
 ## 6. Traveller Context

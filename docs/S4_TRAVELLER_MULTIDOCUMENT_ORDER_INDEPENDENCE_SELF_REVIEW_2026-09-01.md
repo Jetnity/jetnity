@@ -6,7 +6,8 @@ Logical agent: **`Jetnity S4 multi-document parser order independence 1`**
 Generation: **1**  
 Cursor session: `bc-aae0f830-3be2-49d7-897e-ffc7407dcf01`  
 Draft-PR: #371  
-Implementation head at self-review write: `382c31eabeea1e88d0daab371e5ba09da46df4e3`
+Implementation head: `382c31eabeea1e88d0daab371e5ba09da46df4e3`  
+Exact-head gates recorded for: `2d8a884e355b4a12ec941ed5dc3dd01c05771984`
 
 Agent self-review is not PASS. Cursor does not Ready or merge.
 
@@ -57,7 +58,8 @@ Unrelated snapshot `next-env.d.ts` dirty state on stale local `main` was restore
 | Runtime positional defect removed | **true** in `traveller-anfrage.ts` |
 | Targeted + full `npm test` this session | **true**: 23/23 targeted, 3067/3067 full |
 | Typecheck / lint / build / hygiene this session | **true** locally |
-| CI / Vercel of the final head | **not** claimed here; belong to exact-head review |
+| CI / Vercel of `2d8a884e` | **true** — CI run 33458244777 SUCCESS; Vercel `9qZQSn7mndoYMgf7qSfcP876CqxT` SUCCESS |
+| CI / Vercel of this evidence follow-up commit | **not** claimed; a docs-only tip cannot carry its own SHA |
 | Browser / Real-Device | **not** run |
 | S4 is closed | **false** |
 | S6 may start | **false** |
@@ -75,7 +77,7 @@ Unrelated snapshot `next-env.d.ts` dirty state on stale local `main` was restore
 6. **Did I accept two documents that cannot be distinguished?** No; identical generated fallback `document:passport:CH` is rejected.
 7. **Did I edit Guest legacy storage parsing?** No.
 8. **Did I touch Active Work / Start Here / S6?** No.
-9. **Did I claim CI/Preview for a head that will change after docs?** No.
+9. **Did I claim CI/Preview for a superseded intermediate deploy?** No. `HUaAwxMx` is `382c31ea` only. Exact-head gates are `2d8a884e`.
 10. **Would a missing `clientRef` after sort silently attach the wrong link?** No; unmatched identity fails closed.
 
 ---
