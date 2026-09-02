@@ -1,154 +1,124 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 2. September 2026  
-Status: **CURRENT HANDOFF / FLIGHT MULTI-PROVIDER CORE CLOSED ON MAIN / DESTINATION ESSENTIALS #394 RESUMED FOR MAIN-RECONCILE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / FLIGHT MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED ON MAIN / PROVIDER CONTACTS DEFERRED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
-Current authorized coding slice on this branch: Destination Essentials 1 (Issue #393 / Draft PR #394 / `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`). Flight orchestration on `main` is closed (`#414`). Do not Ready/merge from the coding agent.
+Latest runtime closure checkpoint:
 
-Aktuellster vollständiger Checkpoint:
+`docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
 
-`docs/CHATGPT_TECHNICAL_LEAD_REQUIREMENTS_GATE0_CLOSED_2026-08-31.md`
+Binding operating standard:
 
-Verbindlicher Precheck:
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
-`docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
+## 1. Verifizierter aktueller Runtime-Stand
 
-## 1. Verifizierter Übergabestand vor diesem Continuity-PR
+Latest runtime-changing verified `main` baseline:
 
-Requirements-Gate-0-Merge auf `main`:
+`3beef65bb1e7ed2921c9f9f3010e685b06076401`
 
-`1327759d9210386ae39303c65461e2fce864b5fd`
+Commit:
 
-Evidence:
+`Integrate Destination Essentials 1 (#417)`
 
-- PR #290 **MERGED**.
-- PR #290 Head `74e214606c9f881ce0cd19aef3ed7865eb304d3b`.
-- PR-CI #1412 / `33339311538`: **SUCCESS**.
-- Vercel Preview `dpl_BGFuA8WmeiWK5YKWsRq9SV1aSHVN`: **READY** auf dem PR-Head.
-- Post-Merge Main-CI #1413 / `33339603883`: **SUCCESS** exakt auf `1327759d...`.
-- Vercel Production `dpl_9Vgk6yeZLe6tSZvmAqypYfUDca2y`: **READY** exakt auf `1327759d...`.
-- Issue #288: **CLOSED / completed**.
-- Ruleset `Jetnity main protection` / ID `21875372`: active, strict required checks, bypass leer.
+A docs-only closure merge after this handoff may advance repository `main`; always fetch live `main` before acting.
 
-PR #289 ist **CLOSED / NOT MERGED / MECHANICALLY SUPERSEDED** wegen des bekannten GitHub-Connectorfehlers `Repository.fullDatabaseId` beim Draft→Ready-Wrapper. Schutzregeln wurden nicht gelockert; #290 wurde als non-draft Ersatz auf demselben Branch erneut vollständig gegatet.
+Destination Essentials evidence:
 
-Der Continuity-PR, der diesen Handoff aktualisiert, bewegt `main` nochmals. Finalen SHA live verifizieren.
+- Issue #393: **CLOSED / completed**;
+- original Draft PR #394: **CLOSED / NOT MERGED** only because the known Draft→Ready connector mutation failed on `Repository.fullDatabaseId`;
+- rejected head `4150517026bf2daf162207f17262f5a5b2d5d1a5`: Technical-Lead CHANGES REQUIRED review `5090867937` for the `Quellen und Details` touch target;
+- accepted exact head `ba1b446789538a6c1db5c41b42e9529d286d1969`;
+- Technical-Lead FINAL PASS review `5091873148`;
+- recovery PR #417: **MERGED / SHA-LOCKED**;
+- recovery CI #1700: **SUCCESS**;
+- post-merge main CI #1701: **SUCCESS**;
+- Vercel Production `dpl_E8i5RC5oCuEE9N995okfSw4yQkJt`: **READY** on exact merge SHA.
+
+No Product-Owner special gate was crossed by this slice.
 
 ## 2. Agentenstatus
 
-Aktueller Cursor-Agent für Draft-PR #413 / Issue #412:
+Destination Essentials agent:
 
-**`Jetnity flight multi-provider orchestration 1`**  
+**`Jetnity destination essentials 1`**  
 Generation: **1**  
-Session: `bc-c294a0b2-5ed8-411e-8131-5c06a254d2b8`
+Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 
-Status: **IMPLEMENTATION DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**. Kein Ready, kein Merge, kein Folgeslice.
+Status: **COMPLETED / NOT ACTIVE**.
 
-Letzter abgeschlossener Requirements-Agent bleibt historische Evidence:
+No Cursor coding agent is currently active. Do not continue that session unless a future Technical Lead deliberately reopens the same logical slice for a newly proven defect.
 
-**`Jetnity requirements provider groundwork 1`**  
-Generation: **1**  
-Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`
+## 3. Accepted Destination Essentials truth
 
-## 3. Requirements / Travel Readiness Current Truth
+Destination Essentials 1 is a bounded presentation surface, not a new truth engine.
 
-- `RequirementsProvider` bleibt provider-neutral.
-- `requirementsProviderAus()` bleibt fail-closed `null`.
-- kein echter Requirements-/Visa-/Entry-Provider aktiviert.
-- keine Secrets, paid calls, Providerverträge oder Runtime-Aktivierung.
-- Trip Snapshot = einzige Current Truth für die konkrete Reise.
-- Account Registry = wiederverwendbare Traveller-Fakten, nicht automatische Evaluate-Authority.
-- Production-Workspace erhält noch keine serverseitigen Official Evaluations und bleibt fail-closed unknown.
-- vorhandener Provider Adapter Core bleibt serverseitiger Outbound-Transport; kein zweiter HTTP-Stack / UniversalProvider.
+- canonical source is ordered `Trip.stages[]` plus already supplied Official/Safety/Seasonal evaluations;
+- duplicate-country stages remain separate;
+- no country or visited inference;
+- Destination Official and Transit Official remain separate;
+- `unknown`, `unavailable`, `stale`, `recheck_needed` and missing evidence are never converted to `not_required`;
+- traveller/credential alternatives are preserved and mixed outcomes remain option-/traveller-dependent;
+- no default or primary citizenship/passport is inferred;
+- validated Official actions remain distinct from source URLs;
+- Safety/Seasonal attach by explicit stage ref, not label similarity;
+- source authority is not upgraded to official without the canonical authority class;
+- the expandable `Quellen und Details` interaction retains native details/summary semantics, focus support and a `min-h-11` touch target;
+- no commercial search, provider call, DB mutation or fabricated destination fact is introduced.
 
-Traveller Truth:
+## 4. Flight Provider-neutral core
 
-> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
+Flight Multi-Leg and 0..N Multi-Provider orchestration are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
-Kein Default-/Primary-/Preferred-/Chosen-Pass, keine Default-Citizenship, Issuer Country ≠ Citizenship, kein `documents[0]` oder `evaluations[0]` als Product Truth.
+Jetnity supports multiple future providers behind the same `FlugProvider` seam. No provider is currently Primary/Default. Array order is not semantic truth. Normalized options are ranked globally and provider/provision-neutrally; provider evidence/failure truth remains isolated.
 
-## 4. Gate-0 Findings, die vor realem Provider relevant bleiben
+## 5. Provider decision / Product-Owner direction
 
-### P1
+The Product Owner has explicitly deferred provider inquiries and instructed Jetnity to continue provider-neutrally.
 
-- Provider-`AbortSignal` / Timeout fehlt im RequirementsProvider-Vertrag.
-- Readiness-Domain-Kill-Switch fehlt.
-- `officialFrische()` hat keine maximale `checkedAt`-TTL; bounded fail-closed Freshness-Policy erforderlich.
-- `checkedAt` und Vendor-`lastUpdatedAt` dürfen nicht vermischt werden.
-- vollständiges Traveller-/Citizenship-/Document-/Credential-/Transit-Mapping ist Pflicht.
-- Sherpa-Origin→Nationality-Fallback ist für Jetnity verboten.
-- Sherpa max. 3 Transit-Nodes vs Jetnity bis 12: kein silent drop.
-- Development-vs-Production-Supabase-Migration-History vor migrationsnaher Arbeit live reconciliieren.
+Therefore:
 
-### P2
+- no KAYAK/Wego/Skyscanner/Duffel/other provider contact is currently authorized;
+- no provider application/signup or Terms/DPA/contract acceptance is authorized;
+- no real provider is selected;
+- no live secret, paid call, Production S6 activation or Commercial Provenance runtime writer is authorized;
+- multiple later providers may coexist if future access and contract truth permit it.
 
-- kein echter Requirements Provider, daher keine live option-spezifische Official Entry/Visa/Transit Truth.
-- Workspace ohne serverseitige Official Evaluations.
-- 8-KB-Requirements-Body-Cap kann große Parties begrenzen.
-- keine Readiness-spezifischen Provider-Ops-Observability-Events.
+## 6. Product-Owner gates remain closed
 
-### P0
+- **A** — external provider contact/application/signup/partner engagement;
+- **B** — Production S6 runtime/HMAC/>0 budget;
+- **C** — live secrets and bounded real/paid provider calls;
+- **D** — Commercial Provenance runtime writer/persistence;
+- **E** — Production provider activation.
 
-Kein aktueller Production-Incident, keine Fake-Official-Truth-Aktivierung und kein Secret-Leak aus Gate 0 belegt.
+Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve these gates.
 
-## 5. Provider Selection Groundwork
+## 7. Hard Traveller / Truth invariants
 
-**Kein Provider gewählt.**
+> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
-- Timatic/IATA-Familie bleibt Kandidat; öffentliche Evidence beweist nicht Jetnitys zukünftigen REST-Vertrag, Multi-Citizenship-/Credential-Semantik, Lizenz, Preis oder Minimal-PII-Vertrag.
-- Sherpa bleibt Kandidat; dokumentierte Fallback-/Transit-Limits müssen strikt fail-closed überbrückt werden. Öffentliche technische Quoten/Cache-Angaben sind keine Vertrags-/Commercial-Truth.
-- undokumentierte Website-/Scraping-Pfade und reine Ranking-/Mobility-Indizes sind keine Official-Hard-Truth-Authority.
+Never infer default/primary/preferred citizenship or passport, array order as truth, Residence → Citizenship or Issuer Country → Citizenship.
 
-Reale Providerwahl, Vendor-Kontakt, Vertrag/DPA, Secrets/API Keys, paid calls und Live-Aktivierung bleiben besondere Product-Owner-Gates.
+> **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
 
-## 6. Supabase
-
-Gate 0 hat Supabase nicht mutiert.
-
-Letzter Gate-0-Precheck:
-
-- Production `qscbgcdmivbbnzrcyegn`: `ACTIVE_HEALTHY`.
-- Development `yfvbxvijcorffwxbxahl`: `ACTIVE_HEALTHY`.
-- Development-Migration-History weicht von Production ab.
-
-Vor DB-/Migration-/RLS-/Storage-/Security-Scope live neu verifizieren.
-
-## 7. GitHub Governance
-
-Ruleset `Jetnity main protection`, ID `21875372`, active.
-
-Required:
-
-- PR;
-- strict up-to-date checks;
-- review-thread resolution;
-- `Typecheck, Lint & Build`;
-- `Auth-Konfiguration gegen config.toml`;
-- `Vercel`;
-- merge-only;
-- bypass leer.
-
-Draft→Ready-Connectorbug niemals durch Lockerung der Branch Protection kompensieren.
+`unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
 
 ## 8. FIRST NEXT ACTION
 
 **Kein Folgeslice ist automatisch freigegeben.**
 
-Der nächste Technical-Lead-Zyklus beginnt mit einem frischen Live-Precheck von `main`, offenen PRs/Issues, CI/Vercel und Agentenstatus. Supabase wird nur bei betroffenem Scope erneut live geprüft.
+The next Technical-Lead cycle must first:
 
-Wahrscheinlicher nächster bounded Kandidat:
+1. read `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md`;
+2. fetch live `main` and current open PRs/issues;
+3. verify current CI/Vercel and active Cursor state;
+4. inspect Supabase only if the candidate scope touches backend/data/security truth;
+5. identify the smallest concrete remaining provider-independent V1 gap;
+6. perform the binding slice precheck and SINGLE_AGENT vs MULTI_AGENT decision before dispatch.
 
-**Requirements Truth-Ops S4-R1**
+Do not start TW-8 while real Flight Commercial Truth is absent. Do not restart Destination Essentials 1 merely because it has closed. Do not contact providers unless the Product Owner later explicitly reopens that gate.
 
-- provider-neutral;
-- `AbortSignal` / Timeout;
-- Readiness-Kill-Switch;
-- Timeout/Abort/temporarily-unavailable Outcome-Semantik;
-- bounded fail-closed Freshness/TTL;
-- vorhandenen Provider-Core wiederverwenden;
-- Factory bleibt `null`;
-- kein Vendor, keine Secrets, keine paid calls, keine Production-Migration.
+Principally open V1 areas include real Commercial Truth/provider access, Hotel/Activities real paths, real Official Entry Requirements Evidence, Temporal Readiness, basic World Map, mobile/accessibility/real-device QA, truth-aware assistant closure, account/privacy/legal/ops/monetization minimum and final V1 release gates.
 
-Das ist **nur ein Kandidat, noch nicht gestartet**. Vor Start neuer versionierter Task + frischer Live-Precheck.
-
-**Live-Evidence gewinnt immer.**
+**LIVE-EVIDENCE GEWINNT IMMER. DESTINATION ESSENTIALS 1 IST CLOSED. PR #417 IST GEMERGT. KEIN AKTIVER CURSOR-AGENT. PROVIDER-KONTAKTE UND PRODUCTION-GATES BLEIBEN GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
