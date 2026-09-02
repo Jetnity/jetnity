@@ -4,8 +4,11 @@ Stand: 2. September 2026
 Branch: `feat/phase-1-world-map-1-planned-truth`
 Issue: #419
 Draft PR: #422
-Runtime head reviewed by the agent: `e7514acf95a4160858325d40adad6f604c5bc561`
+Rejected exact head: `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`
+Runtime review-fix head reviewed by the agent: `81ee553ea5853ab41e016c2953cf0e178a8bcf76`
 Agent self-review is **not** Technical-Lead PASS.
+
+This is the same logical agent/session after Technical-Lead review `5092964996` (CHANGES REQUIRED). Only those three findings were fixed.
 
 ## Scope fidelity
 
@@ -17,6 +20,7 @@ In scope:
 - bounded Account Home `Deine Welt`
 - local map rendering
 - focused deterministic tests
+- the three review-fix items only
 
 Out of scope and not introduced:
 
@@ -29,6 +33,16 @@ Out of scope and not introduced:
 - service worker / offline / push
 - indexing / domain cutover
 - follow-up slice
+
+## Review-fix attacks
+
+| Attack | Result |
+| --- | --- |
+| Silent `herkuenfte[0]` navigation default for an aggregated place | Rejected. Navigation uses `ort.reisen`, unique by `tripId`. |
+| Dedupe two same-title trips as one action | Rejected. Same title still yields two links with different hrefs. |
+| Treat required map fields as a breaking `TripSummaryStage` change | Rejected. Fields are optional; legacy `{ name, position }` fail-closed. |
+| Replace `ACTIVE_WORK_STATUS.md` with a World-Map-only document | Rejected. Canonical `origin/main` content restored; World Map 1 is additive. |
+| Weaken Product-Owner gates A–E | Rejected. All remain UNAPPROVED. |
 
 ## Truth attacks
 
@@ -51,9 +65,10 @@ Out of scope and not introduced:
 1. Stages without stored coordinates produce an honest list-only world. That can look sparse, but inventing points would violate the truth contract.
 2. Overlapping markers are possible. The list remains the accessible source of information.
 3. A later visited-history slice needs its own persistence contract. This slice must not be extended into that work during review.
-4. Preview HTML is Vercel-SSO protected (`302` to `vercel.com/sso-api`). Exact-head Preview must be read authenticated. Local production-build `/ui-audit/account` evidence was captured for mobile 390 and desktop 1280.
+4. Preview HTML is expected to remain Vercel-SSO protected. Exact-head Preview must be read authenticated. Local production-build `/ui-audit/account` evidence was recaptured for `reise`/`leer`/`fehler` after the review-fix.
+5. The full `npm run audit:account` harness aborted because its spawned `next dev` collided with the workspace Next lock. The focused production-build Playwright check is the local UI evidence for this head.
 
 ## Recommendation
 
-Technical Lead should exact-head review Draft PR #422.  
+Technical Lead should exact-head review Draft PR #422 on the new head after this review-fix.
 **Do not Ready. Do not merge from this agent.**

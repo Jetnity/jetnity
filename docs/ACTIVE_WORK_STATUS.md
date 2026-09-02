@@ -165,7 +165,8 @@ World Map 1 / Planned Account Truth is the current authorized runtime draft:
 - Decision ADR-0210;
 - Canonical base `main@7feb9960bdb4ddac07465ab7fc0a62d9d9fe28e6`;
 - Rejected exact head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc` (Technical-Lead review `5092964996`, CHANGES REQUIRED);
-- Current work is the three-finding review fix only: unique-trip navigation, backward-compatible `TripSummaryStage`, additive restore of this status file.
+- Runtime review-fix head `81ee553ea5853ab41e016c2953cf0e178a8bcf76`;
+- Current work is the three-finding review fix only: unique-trip navigation, backward-compatible `TripSummaryStage`, additive restore of this status file. The agent now stops for a fresh Technical-Lead exact-head review.
 
 This does **not** authorize visited persistence, provider contact, Production S6, TW-8/TW-9, service worker/offline/push, or any Product-Owner gate A–E.
 
@@ -257,10 +258,10 @@ Hard non-scope still in force for this draft:
 - no service worker / offline / push;
 - no follow-up slice.
 
-Review `5092964996` required three fixes on rejected head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`:
+Review `5092964996` required three fixes on rejected head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`. Those fixes are implemented on runtime head `81ee553ea5853ab41e016c2953cf0e178a8bcf76`:
 
 1. Remove hidden `herkuenfte[0]` navigation default; preserve unique trips by `tripId`, never title.
 2. Keep `TripSummaryStage` backward-compatible; map-only fields optional; legacy `{ name, position }` fail-closed.
 3. Restore this document from `origin/main` additively instead of replacing provider readiness, gates A–E, traveller/truth invariants and deferred boundaries.
 
-Gate evidence for the new exact head is recorded in the World Map 1 handoff after local/CI verification. This section does not claim Ready, Preview-without-SSO, or merge.
+Local gates on that runtime head: focused tests 50/50; full `npm test` 3190/0; typecheck pass; lint 0 errors; CI hygiene pass; production build pass. Focused production-build `/ui-audit/account` on 390/1280 recaptured. This section does not claim Ready, unauthenticated Preview, or merge.
