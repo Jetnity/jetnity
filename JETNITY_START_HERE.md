@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 2. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -10,22 +10,23 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / FLIGHT MUL
 ## 1. Zuerst lesen
 
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
-2. `docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md` ← **latest runtime closure checkpoint**
+2. `docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md` ← **latest runtime closure checkpoint**
 3. `docs/ACTIVE_WORK_STATUS.md`
-4. `docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
-5. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← transition history; live evidence and newer closure docs supersede stale current-state passages
-6. `docs/CHATGPT_TECHNICAL_LEAD_V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_CLOSED_2026-09-02.md`
-7. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-8. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-9. `docs/FLIGHT_KAYAK_WEGO_ACCESS_ATTRIBUTION_DUE_DILIGENCE_2026-09-01.md`
-10. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_KAYAK_2026-09-01.md`
-11. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_WEGO_2026-09-01.md`
-12. `docs/FLIGHT_PROVIDER_CONTRACT_QUESTION_MATRIX_2026-09-01.md`
-13. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
-14. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
-15. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-16. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-17. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
+4. `docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`
+5. `docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
+6. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← transition history; live evidence and newer closure docs supersede stale current-state passages
+7. `docs/CHATGPT_TECHNICAL_LEAD_V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_CLOSED_2026-09-02.md`
+8. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+9. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+10. `docs/FLIGHT_KAYAK_WEGO_ACCESS_ATTRIBUTION_DUE_DILIGENCE_2026-09-01.md`
+11. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_KAYAK_2026-09-01.md`
+12. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_WEGO_2026-09-01.md`
+13. `docs/FLIGHT_PROVIDER_CONTRACT_QUESTION_MATRIX_2026-09-01.md`
+14. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
+15. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
+16. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+17. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+18. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
 
 Danach immer live verifizieren: aktuelles `main`, offene PRs/Issues, relevanter Branch/Head, Merge-Base/ahead/behind, Actions, Vercel, Review-Threads, aktiver Cursor-Status und nur bei betroffenem Scope die relevante Supabase-Production-Wahrheit.
 
@@ -51,23 +52,23 @@ Native apps, Traveller Network, Creator/Partner Ecosystem, own data/intelligence
 
 ## 3. Letzte verifizierte runtime-verändernde Main-Baseline
 
-`6b5cf463664a41cd59bdfc7f83cbc43a982ea557`
+`cd8f10da81155820c54bea987612472f5a7c7c8d`
 
 Commit:
 
-`Integrate World Map 1 (#423)`
+`Integrate Assistant Truth Context 1 (#427)`
 
-World Map 1 closure evidence:
+Assistant Truth Context 1 closure evidence:
 
-- Issue #419: **CLOSED / COMPLETED**;
-- original Draft PR #422: exact accepted head `cbed98062120ce8be125db5870fd0f108b29a3c0`; GitHub reports it closed/merged after the same head entered `main` through recovery integration;
-- rejected exact head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`: Technical-Lead CHANGES REQUIRED review `5092964996`;
-- accepted exact head `cbed98062120ce8be125db5870fd0f108b29a3c0`;
-- Technical-Lead FINAL PASS review `5093273775`;
-- recovery PR #423: **MERGED / SHA-LOCKED** on the accepted exact head;
-- recovery CI #1710: **SUCCESS**;
-- post-merge main CI #1711: **SUCCESS** on exact `6b5cf463...`;
-- Vercel Production `dpl_XcCUqnsiVydSmJCQRbSBfGUvn7Ss`: **READY** on exact `6b5cf463...`;
+- Issue #425: **CLOSED / COMPLETED**;
+- original controlled Draft PR #426: accepted exact head `bce6f3d84fb0863930f3267c76a3e998b8edca75`; direct Draft→Ready was blocked by the known connector `Repository.fullDatabaseId` error;
+- rejected exact head `42cd37fae1465c13cbec9ed2f8cd16d5c425436f`: Technical-Lead CHANGES REQUIRED review `5093789177`;
+- accepted exact head `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
+- Technical-Lead FINAL PASS review `5093904909`;
+- recovery PR #427: **MERGED / SHA-LOCKED** on the accepted exact head;
+- recovery CI #1720: **SUCCESS**;
+- post-merge main CI #1721 / run `33671587896`: **SUCCESS** on exact `cd8f10da...`;
+- Vercel Production deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`: **SUCCESS** on exact `cd8f10da...`;
 - no active Cursor agent.
 
 A later docs-only continuity merge may move repository `main`; **aktuelles `main` immer live neu lesen**.
@@ -115,6 +116,21 @@ A later docs-only continuity merge may move repository `main`; **aktuelles `main
 - geplante Reise ≠ besuchter Ort; confirmed visited history bleibt nicht erfasst;
 - kein externes Map-/Tile-/Geocoding-Runtime-System, keine neue laufende Kostenstelle;
 - keine DB-/RLS-/Auth-/Provider-Mutation.
+
+### Assistant Truth Context 1 — CLOSED
+
+- pure, deterministic `lib/reisebegleiter/kontext.ts` projection for a future in-trip assistant;
+- only existing supplied Trip/Traveller/Official/Safety/Seasonal/Route truth crosses the allowlist;
+- Multi-Traveller / Multi-Citizenship / Multi-Document remain peer options without default/primary/preferred inference;
+- Residence ≠ Citizenship; Issuer Country ≠ Citizenship;
+- Destination Official ≠ Transit Official;
+- Transit has no invented destination-stage binding without canonical Transit↔Stage evidence;
+- `unknown` / `unavailable` / `stale` / `recheck_needed` stay distinct from `not_required` / `current`;
+- Official / Provider / Recommendation / Community / Generated Suggestion remain separate truth classes;
+- passport numbers, MRZ, scans, biometrics, health records, auth/account identifiers, commercial/provider raw/secret fields and Official `contextFingerprint` do not cross the Assistant allowlist;
+- no model call, no new `Modellfunktion`, no DB/Auth/provider/Production activation, no UI/mutation.
+
+The broader real Assistant runtime/model-call V1 gap remains open and separately gated.
 
 ## 5. Provider Readiness / V1 Step 2
 
@@ -169,9 +185,11 @@ Generic `weiter`, `bauen`, `start` oder Cursor-Autorisierung genehmigen keines d
 
 **No active Cursor coding agent. No active runtime Draft. No automatic follow-up slice.**
 
-Destination Essentials 1 and World Map 1 are both closed on `main`. PR #394 and PR #422 must not be reactivated or interpreted as unfinished runtime work.
+Assistant Truth Context 1, Destination Essentials 1 and World Map 1 are closed on `main`. PR #426/#422/#394 must not be reactivated or interpreted as unfinished runtime work.
 
-World Map visited/travel-history persistence remains deliberately separate and **was not opened** by World Map 1.
+World Map visited/travel-history persistence remains deliberately separate and was not opened by World Map 1.
+
+A real Assistant model-call/runtime wiring remains deliberately separate and was not opened by Assistant Truth Context 1.
 
 The next Technical-Lead cycle must first reconstruct live state and select the smallest responsible remaining provider-independent V1 gap. The Product Owner's general direction to keep building provider-neutrally does not bypass slice precheck, architecture/truth review or special gates.
 
@@ -216,10 +234,10 @@ Principally open:
 - real Official Entry Requirements Evidence;
 - Temporal Readiness on real evidence;
 - broader Mobile/Desktop/PWA polish, accessibility and real-device QA;
-- intelligent assistant V1 truth-aware closure;
+- real intelligent-assistant runtime/model-call wiring using the closed Truth Context foundation;
 - V1 account/privacy/legal/ops/monetization minimum;
 - V1 Definition of Done and Release Readiness Gate.
 
-Destination Essentials 1 and basic World Map 1 are **not** open gaps anymore. Any future expansion needs a new live precheck and separate bounded slice.
+Destination Essentials 1, basic World Map 1 and Assistant Truth Context 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
 
-**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED ON MAIN. NO ACTIVE CURSOR AGENT. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. NO ACTIVE CURSOR AGENT. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
