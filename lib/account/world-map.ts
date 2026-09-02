@@ -37,6 +37,11 @@ export type WorldMapHerkunft = {
   stageName: string
 }
 
+export type WorldMapReise = {
+  tripId: string
+  tripTitle: string
+}
+
 export type WorldMapOrt = {
   schluessel: string
   placeId: string | null
@@ -49,6 +54,11 @@ export type WorldMapOrt = {
   x: number | null
   y: number | null
   herkuenfte: readonly WorldMapHerkunft[]
+  /**
+   * Unique trips that contribute this canonical place, keyed by tripId
+   * (never by title). Order is deterministic, not a semantic primary.
+   */
+  reisen: readonly WorldMapReise[]
 }
 
 export type WorldMapAbleitung = {
@@ -85,12 +95,12 @@ export function weltOrtDomId(schluessel: string): string {
 }
 
 export function istGueltigeKarteKoordinate(
-  latitude: number | null,
-  longitude: number | null,
+  latitude: number | null | undefined,
+  longitude: number | null | undefined,
 ): boolean {
   return (
-    latitude !== null &&
-    longitude !== null &&
+    latitude != null &&
+    longitude != null &&
     Number.isFinite(latitude) &&
     Number.isFinite(longitude) &&
     latitude >= -90 &&
@@ -107,8 +117,8 @@ export function weltKarteProjektion(latitude: number, longitude: number): { x: n
   }
 }
 
-function kanonischerPlaceId(wert: string | null): string | null {
-  if (typeof wert !== 'string') return null
+function kanonischerPlaceId(wert: string | null | undefined): string | null {
+  if (wert == null || typeof wert !== 'string') return null
   const getrimmt = wert.trim()
   return getrimmt.length > 0 ? getrimmt : null
 }
@@ -118,10 +128,21 @@ function gespeicherterName(wert: string): string {
   return getrimmt.length > 0 ? getrimmt : WORLD_MAP_ZIEL_OHNE_NAME
 }
 
-function gespeicherterCountryCode(wert: string | null): string | null {
-  if (typeof wert !== 'string') return null
+function gespeicherterCountryCode(wert: string | null | undefined): string | null {
+  if (wert == null || typeof wert !== 'string') return null
   const getrimmt = wert.trim()
   return getrimmt.length > 0 ? getrimmt : null
+}
+
+function eindeutigeOrtReisen(herkuenfte: readonly WorldMapHerkunft[]): WorldMapReise[] {
+  const gesehen = new Set<string>()
+  const reisen: WorldMapReise[] = []
+  for (const herkunft of herkuenfte) {
+    if (gesehen.has(herkunft.tripId)) continue
+    gesehen.add(herkunft.tripId)
+    reisen.push({ tripId: herkunft.tripId, tripTitle: herkunft.tripTitle })
+  }
+  return reisen
 }
 
 function vergleichText(links: string, rechts: string): number {
@@ -235,6 +256,7 @@ function ortAusGruppe(
     x: projektion?.x ?? null,
     y: projektion?.y ?? null,
     herkuenfte,
+    reisen: eindeutigeOrtReisen(herkuenfte),
   }
 }
 

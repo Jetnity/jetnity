@@ -233,6 +233,36 @@ describe('World-Map-Derivation – geplante Wahrheit', () => {
     assert.equal(welt.orte.every((ort) => ort.x === null && ort.y === null), true)
     assert.equal(istGueltigeKarteKoordinate(200, 10), false)
     assert.equal(istGueltigeKarteKoordinate(12, null), false)
+    assert.equal(istGueltigeKarteKoordinate(undefined, 10), false)
+    assert.equal(istGueltigeKarteKoordinate(12, undefined), false)
+  })
+
+  test('legacy { name, position } bleibt gültig und fail-closed ohne Land oder Punkt', () => {
+    const legacy: TripSummary['stages'][number] = { name: 'Lissabon', position: 1 }
+    const welt = worldMapAbleiten({
+      problem: null,
+      reisen: [
+        reise({
+          id: 'trip-legacy',
+          title: 'Legacy',
+          stages: [legacy],
+        }),
+      ],
+    })
+    assert.equal(welt.lage, 'geplant')
+    assert.equal(welt.orte.length, 1)
+    assert.equal(welt.orte[0]?.name, 'Lissabon')
+    assert.equal(welt.orte[0]?.geplottet, false)
+    assert.equal(welt.orte[0]?.countryCode, null)
+    assert.equal(welt.orte[0]?.countryLabel, null)
+    assert.equal(welt.orte[0]?.placeId, null)
+    assert.equal(welt.orte[0]?.latitude, null)
+    assert.equal(welt.orte[0]?.longitude, null)
+    assert.deepEqual(welt.laenderCodes, [])
+    assert.deepEqual(
+      welt.orte[0]?.reisen,
+      [{ tripId: 'trip-legacy', tripTitle: 'Legacy' }],
+    )
   })
 
   test('fehlender countryCode wird nicht aus Name, Koordinaten oder placeId erschlossen', () => {
@@ -338,6 +368,66 @@ describe('World-Map-Derivation – geplante Wahrheit', () => {
     )
     assert.equal(welt.orte[0]?.latitude, 38.73)
     assert.equal(welt.orte[0]?.longitude, -9.13)
+    assert.deepEqual(welt.orte[0]?.reisen, [
+      { tripId: 'trip-a', tripTitle: 'Erste Lissabon-Reise' },
+      { tripId: 'trip-b', tripTitle: 'Zweite Lissabon-Reise' },
+    ])
+  })
+
+  test('aggregierter Ort behält jede einzigartige Reise, auch bei gleichem Titel', () => {
+    const welt = worldMapAbleiten({
+      problem: null,
+      reisen: [
+        reise({
+          id: 'trip-b',
+          title: 'Lissabon',
+          stages: [
+            etappeSicht({
+              name: 'Lisboa',
+              position: 1,
+              countryCode: 'PT',
+              placeId: 'geonames:2267057',
+              latitude: 38.72,
+              longitude: -9.14,
+            }),
+          ],
+        }),
+        reise({
+          id: 'trip-a',
+          title: 'Lissabon',
+          stages: [
+            etappeSicht({
+              name: 'Lissabon',
+              position: 1,
+              countryCode: 'PT',
+              placeId: 'geonames:2267057',
+              latitude: 38.73,
+              longitude: -9.13,
+            }),
+            etappeSicht({
+              name: 'Lisboa Altstadt',
+              position: 2,
+              countryCode: 'PT',
+              placeId: 'geonames:2267057',
+              latitude: 38.73,
+              longitude: -9.13,
+            }),
+          ],
+        }),
+      ],
+    })
+    assert.equal(welt.orte.length, 1)
+    assert.equal(welt.orte[0]?.herkuenfte.length, 3)
+    assert.deepEqual(
+      welt.orte[0]?.reisen.map((eintrag) => eintrag.tripId),
+      ['trip-a', 'trip-b'],
+    )
+    assert.deepEqual(
+      welt.orte[0]?.reisen.map((eintrag) => eintrag.tripTitle),
+      ['Lissabon', 'Lissabon'],
+    )
+    assert.equal(welt.orte[0]?.reisen.length, 2)
+    assert.notEqual(welt.orte[0]?.reisen[0]?.tripId, welt.orte[0]?.reisen[1]?.tripId)
   })
 
   test('gleiche Labels, Länder oder ähnliche Koordinaten ohne placeId bleiben getrennt', () => {
@@ -479,6 +569,13 @@ describe('World Map bleibt lokal und nicht-kommerziell', () => {
     }
     const karte = quelle('../../components/account/AccountWeltKarte.tsx')
     assert.match(karte, /data-world-map-search="nein"/)
+  })
+
+  test('Reise öffnen benutzt nicht herkuenfte[0] als stillen Navigationsdefault', () => {
+    const karte = quelle('../../components/account/AccountWeltKarte.tsx')
+    assert.equal(karte.includes('herkuenfte[0]'), false)
+    assert.match(karte, /ort\.reisen\.map/)
+    assert.match(karte, /aria-label=\{`Reise öffnen: \$\{reise\.tripTitle\} \(\$\{reise\.tripId\}\)`\}/)
   })
 
   test('kein externes Karten-, Tile- oder Geocoding-Runtime-Ziel', () => {

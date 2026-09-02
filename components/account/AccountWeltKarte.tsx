@@ -155,13 +155,19 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
                         <p className="mt-1 text-sm leading-6 text-ink-700">{WORLD_MAP_OHNE_KOORDINATEN_TEXT}</p>
                       )}
                     </button>
-                    {ort.herkuenfte[0] ? (
-                      <Link
-                        href={`/reisen/${ort.herkuenfte[0].tripId}` as Route}
-                        className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                      >
-                        Reise öffnen
-                      </Link>
+                    {ort.reisen.length > 0 ? (
+                      <div className="mt-2 flex flex-col gap-1">
+                        {ort.reisen.map((reise) => (
+                          <Link
+                            key={`${ort.schluessel}:${reise.tripId}`}
+                            href={`/reisen/${reise.tripId}` as Route}
+                            className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                            aria-label={`Reise öffnen: ${reise.tripTitle} (${reise.tripId})`}
+                          >
+                            {ort.reisen.length === 1 ? 'Reise öffnen' : `Reise öffnen: ${reise.tripTitle}`}
+                          </Link>
+                        ))}
+                      </div>
                     ) : null}
                   </article>
                 </li>

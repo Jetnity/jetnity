@@ -430,17 +430,18 @@ export type Reisegraph = Trip
  * Geordnete Zielidentität einer Listenreise.
  *
  * Name und Position bleiben die Listenidentität. `countryCode`, `placeId`,
- * `latitude` und `longitude` kommen nur aus gespeicherten `trip_stages`-
- * Spalten. Keine Transit- oder Flight-Ziele, keine erschlossenen Länder
- * oder Koordinaten.
+ * `latitude` und `longitude` dürfen fehlen: vorhandene Werte kommen nur aus
+ * gespeicherten `trip_stages`-Spalten. Legacy-Aufrufer `{ name, position }`
+ * bleiben gültig; fehlende Map-Felder bleiben fehlend. Keine Transit- oder
+ * Flight-Ziele, keine erschlossenen Länder oder Koordinaten.
  */
 export type TripSummaryStage = {
   name: string
   position: number
-  countryCode: string | null
-  placeId: string | null
-  latitude: number | null
-  longitude: number | null
+  countryCode?: string | null
+  placeId?: string | null
+  latitude?: number | null
+  longitude?: number | null
 }
 
 /**
