@@ -9,10 +9,10 @@ import type { Problem } from '@/lib/api/datenbank-lesen'
 import type { TripStatus, TripSummary, TripSummaryStage } from '@/types/trips'
 
 export const WORLD_MAP_TITEL = 'Deine Welt'
-export const WORLD_MAP_UNTERSCHEIDUNG =
+const WORLD_MAP_UNTERSCHEIDUNG =
   'Diese Karte zeigt Orte, die in deinen Jetnity-Reisen geplant sind. Ein geplanter Ort ist kein Nachweis, dass du dort warst.'
-export const WORLD_MAP_GEPLANT_LABEL = 'In Jetnity geplant'
-export const WORLD_MAP_BESUCHT_LABEL = 'Besucht bestätigt'
+const WORLD_MAP_GEPLANT_LABEL = 'In Jetnity geplant'
+const WORLD_MAP_BESUCHT_LABEL = 'Besucht bestätigt'
 export const WORLD_MAP_BESUCHT_TEXT =
   'Bestätigte Besuchshistorie ist in Jetnity noch nicht erfasst. Ein vergangenes Datum, eine archivierte Reise oder ein Reise-Status gelten nicht als Besuch.'
 export const WORLD_MAP_LEER_TEXT =
@@ -22,7 +22,7 @@ export const WORLD_MAP_FEHLER_TEXT =
 export const WORLD_MAP_OHNE_KOORDINATEN_TEXT =
   'Ohne gespeicherte Koordinaten – in der Liste sichtbar, nicht auf der Karte.'
 export const WORLD_MAP_OHNE_LAND_TEXT = 'Kein gespeicherter Ländercode'
-export const WORLD_MAP_ZIEL_OHNE_NAME = 'Reiseziel'
+const WORLD_MAP_ZIEL_OHNE_NAME = 'Reiseziel'
 
 export const WORLD_MAP_VIEWBOX = { width: 360, height: 180 } as const
 
