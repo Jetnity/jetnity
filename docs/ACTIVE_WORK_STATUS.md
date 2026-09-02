@@ -143,7 +143,10 @@ Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any 
 - Cursor-Agent: `Jetnity destination essentials 1` / Generation 1
 - Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 - Multi-Agent: **SINGLE_AGENT**
-- Reconcile base: current `origin/main` (verify live; baseline at resume-task write was `ed41dd17b4b456899d9e4ae11694efe3b10739a9`)
+- Reconcile base: `origin/main@ed41dd17b4b456899d9e4ae11694efe3b10739a9` — re-fetched, no drift
+- Local-gate head: `7f49b8dd1b885c736f1be79f71cd2a06bd3c5522` — typecheck/lint/build/hygiene pass; full suite **3172/3172**
+- Ahead/behind after reconcile: **12 ahead / 0 behind**
+- Exact-head CI/Preview must be read for the current branch tip after the resume handoff commit
 - Agent must not mark Ready and must not merge
 - Final coding state after this resume: **STOP FOR TECHNICAL-LEAD REVIEW**
 

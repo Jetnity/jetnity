@@ -1,64 +1,61 @@
 # Destination Essentials 1 – Adversarial Self-Review
 
-Stand: 1. September 2026  
-Rejected head: `52b9866d74d8d0db1916911e08bfed3168073472`  
-Review: `#5077136019`  
-Handoff head: `0afcc0866ec5e2a902cbcf35b54cc2d362767e58`  
+Stand: 2. September 2026  
+Reconciled onto `origin/main@ed41dd17b4b456899d9e4ae11694efe3b10739a9`  
+Local-gate head: `7f49b8dd1b885c736f1be79f71cd2a06bd3c5522`  
 Agent self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity
 
-In scope and implemented:
+In scope and kept after reconcile:
 
-- destination projection from `Trip.stages[]`
-- Official join by `destinationCountryCode` only
+- Destination Essentials presentation in the existing Trip Workspace overview
+- Official join by `destinationCountryCode` only, transit excluded
 - Safety/Seasonal join by explicit `kind: 'stage'` refs
-- compact overview section, no new tab
 - option-/traveller-dependent Official compact state
-- canonical credential labels in Official details
+- canonical `officialCredentialLabel`
 - neutral Safety/Seasonal source labels unless `official_*`
 - Official href dedupe with action precedence
-- PWA gap-analysis row corrected to closed PWA-1 (docs accuracy only)
+- ADR-0209 (not ADR-0207; that number is Flight Multi-Leg on current main)
 
 Out of scope and not introduced:
 
 - DB/Supabase/RLS/Auth
 - provider/secret/live/paid call or new external API
+- Production S6 / Commercial Provenance writer
 - World Map / visited truth
 - TW-8 / TW-9
 - service worker / offline / push
 - indexing / domain cutover
 - hard-coded destination facts
 - Guest/Account Official/Safety/Seasonal runtime wiring
+- Flight 0..N orchestration or multi-leg contract changes
 
 ## Truth attacks
 
 | Attack | Result |
 | --- | --- |
-| Infer country from stage name `Thailand` | Rejected. `countryCode` stays null, Official does not attach. |
-| Attach transit visa for QA to destination IT | Rejected. Transit evals never become destination truth. |
-| Treat unknown/unavailable/stale `not_required` as “not required” | Rejected. Compact lage stays uncertain. |
-| Collapse CH `required` + RS `not_required` for one traveller into destination `required` | Rejected. Compact lage is `option_abhaengig`. Reversed array order unchanged. |
-| Collapse two travellers with differing current outcomes into one universal `required` | Rejected. Compact lage is `reisende_abhaengig`. |
-| Hide which passport an Official detail belongs to | Rejected. Details use `officialCredentialLabel`. |
-| Relabel `sourceUrl` as application | Rejected. Source stays `source`; only validated `action` is actionable. |
-| Label Safety `unknown` or Seasonal `scientific_climatology` as official | Rejected. Neutral `Quelle öffnen`. |
+| Overwrite current-main Flight ADR-0207/0208 with stale Destination Essentials ADR-0207 | Rejected. Destination Essentials is ADR-0209. |
+| Infer country from stage name | Rejected. |
+| Attach transit Official as destination truth | Rejected. |
+| Collapse CH `required` + RS `not_required` to destination `required` | Rejected. `option_abhaengig`. |
+| Collapse two travellers with differing current outcomes | Rejected. `reisende_abhaengig`. |
+| Treat unknown/unavailable/stale as `not_required` | Rejected. |
+| Label Safety `unknown` or Seasonal `scientific_climatology` as official | Rejected. |
 | Show the same Official href twice as action and source | Rejected. Action wins. |
-| Match Safety/Seasonal by label `Florenz` / airport | Rejected. Only `affectedRefs.kind === 'stage'` + stage id. |
-| Infer visited from past dates | Rejected. No visited field. |
-| Auto-mount commercial search | Rejected. `loestSucheAus === false`. |
-| Call local Safety/Seasonal engines when evaluations are omitted | Rejected. Omitted lists stay empty evidence. |
-| Compensate missing Guest/Account evaluations with fixtures or a new API | Rejected. Honest empty state. |
+| Match Safety/Seasonal by label | Rejected. |
+| Auto-mount commercial search | Rejected. |
+| Compensate missing Guest/Account evaluations | Rejected. Honest empty state. |
+| Regress Flight multi-leg / 0..N orchestration | Rejected. Those files match current main. |
 
 ## Residual observations, not blockers
 
-1. Two stages in the same country share Official destination truth. That is required by `destinationCountryCode` matching. Safety/Seasonal remain stage-isolated.
-2. Production Guest/Account Workspace still does not inject Official/Safety/Seasonal evaluations. Live users will typically see the honest empty copy until those domains are separately gated and wired.
-3. Same-option mixed requirement types (visa required + insurance not_required) still compact to `required`. That is intra-credential, not an alternative-document collapse.
-4. Preview HTML remains Vercel-SSO protected (`x-robots-tag: noindex`). Exact-head Preview must be read for the current branch tip.
-5. Gap-analysis PWA row is documentation accuracy only; no PWA/runtime change in this slice.
+1. Two stages in the same country share Official destination-country truth. Safety/Seasonal remain stage-isolated.
+2. Guest/Account still do not inject evaluations. Live empty copy is correct until those domains are separately gated.
+3. Preview HTML remains Vercel-SSO protected. Exact-head Preview must be read for the current branch tip.
+4. Old CI/Preview on `00183a37` is historical only.
 
 ## Recommendation
 
-Technical Lead should exact-head re-review this Draft PR.  
+Technical Lead should exact-head review the reconciled Draft PR #394.  
 **Do not Ready. Do not merge from this agent.**
