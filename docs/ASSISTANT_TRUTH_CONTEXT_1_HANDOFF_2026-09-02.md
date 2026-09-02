@@ -95,6 +95,22 @@ No `supabase/`, `package.json`, lockfile, Auth/MFA/AAL, UI component or API rout
 
 Previous exact-head CI/Vercel evidence on `a6737e44` / `42cd37fa` is historical.
 
+## Local + live gates on review-fix `13f45c8a`
+
+Local:
+
+- targeted assistant tests **15/15**;
+- relevant truth suite **47/47**;
+- `npm test` **3205/3205**;
+- typecheck / lint (0 errors) / hygiene / production build **pass**.
+
+GitHub CI https://github.com/Jetnity/jetnity/actions/runs/33670219759 on exact `13f45c8ab07621c238349e58b27086571e86fed1`: **SUCCESS** (Typecheck, Lint & Build + Auth-Konfiguration).
+
+Vercel Preview `7YeoDTy65K7tZ7zKKuZcG8U8w3H7` on the same SHA: **SUCCESS / READY**.  
+https://vercel.com/jetnity-e1b93c82/jetnity-app/7YeoDTy65K7tZ7zKKuZcG8U8w3H7
+
+A later documentation commit invalidates this pair. Technical Lead must re-read CI/Preview on the reviewed tip.
+
 ## Local gates on `981d47ba` (historical, pre-review-fix)
 
 | Gate | Result |

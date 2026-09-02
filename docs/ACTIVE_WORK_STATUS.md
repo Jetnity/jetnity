@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / ASSISTANT TRUTH CONTEXT 1 DRAFT REVIEW-READY / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / SINGLE_AGENT JETNITY ASSISTANT TRUTH CONTEXT 1 / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / ASSISTANT TRUTH CONTEXT 1 REVIEW-FIX AFTER 5093789177 / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / SINGLE_AGENT JETNITY ASSISTANT TRUTH CONTEXT 1 / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -255,7 +255,9 @@ Technical-Lead CHANGES REQUIRED `5093789177` on rejected head `42cd37fa`. Two fi
 1. Official `contextFingerprint` removed from the serialized projection (internal sort only).
 2. Transit Official no longer binds to destination stages by country equality; `boundStageIds` stay empty.
 
-Previous exact-head gates on `981d47ba` / `a6737e44` / `42cd37fa` are historical. Fresh local + CI/Vercel evidence must be read on the new review-fix tip.
+Previous exact-head gates on `981d47ba` / `a6737e44` / `42cd37fa` are historical.
+
+Review-fix head `13f45c8a`: local 15/15 + 47/47 + `npm test` 3205/3205; CI #33670219759 SUCCESS; Vercel `7YeoDTy65K7tZ7zKKuZcG8U8w3H7` READY. A later commit invalidates that pair.
 
 Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
 
