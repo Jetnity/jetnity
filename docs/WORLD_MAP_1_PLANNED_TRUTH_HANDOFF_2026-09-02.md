@@ -14,6 +14,7 @@ Decision: ADR-0210
 Canonical base: `main@7feb9960bdb4ddac07465ab7fc0a62d9d9fe28e6`
 Rejected exact head: `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc` (review `5092964996`)
 Runtime review-fix head: `81ee553ea5853ab41e016c2953cf0e178a8bcf76`
+Exact agent head for review: latest commit on this branch including evidence docs. Changed heads invalidate previous exact-head gates.
 
 `origin/main` re-fetched before this handoff: **0 behind** the binding SHA `7feb9960`. Merge-base is still that baseline. Branch-only ahead.
 
