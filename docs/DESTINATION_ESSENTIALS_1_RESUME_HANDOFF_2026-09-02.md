@@ -1,7 +1,7 @@
 # Destination Essentials 1 – Resume / Main-Reconciliation Handoff
 
 Stand: 2. September 2026  
-Status: **RECONCILED ONTO CURRENT MAIN / LOCAL GATES GREEN / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **A11Y TOUCH-TARGET FIX / LOCAL GATES GREEN / STOP FOR FRESH TECHNICAL-LEAD REVIEW**
 
 ## Identity
 
@@ -15,13 +15,25 @@ Status: **RECONCILED ONTO CURRENT MAIN / LOCAL GATES GREEN / STOP FOR TECHNICAL-
 - Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 - Multi-Agent: **SINGLE_AGENT**
 - Technical-Lead resume-task commit: `9d6b5f9a668e8ba54bc36dc7c409105aa38e2402`
-- Live `origin/main` at reconcile: `ed41dd17b4b456899d9e4ae11694efe3b10739a9`
-- Merge-base after reconcile: `ed41dd17b4b456899d9e4ae11694efe3b10739a9`
-- Ahead/behind vs `origin/main` after reconcile push: **12 ahead / 0 behind**
-- Local-gate head before this handoff commit: `7f49b8dd1b885c736f1be79f71cd2a06bd3c5522`
+- Live `origin/main` at this correction: `ed41dd17b4b456899d9e4ae11694efe3b10739a9`
+- Merge-base: `ed41dd17b4b456899d9e4ae11694efe3b10739a9`
+- Ahead/behind vs `origin/main`: **14 ahead / 0 behind** before this handoff commit
+- Rejected exact head: `4150517026bf2daf162207f17262f5a5b2d5d1a5` (review `5090867937`)
+- Implementation head: `46f8c7af70b1944c9e35b3a0828b70926467d92b`
 - Exact head after this handoff: **this commit on the branch tip**
 
-Historical heads `00183a37...` / `52b9866d...` and their CI/Preview/self-review are **not** current exact-head evidence.
+Historical heads `41505170...` / `7f49b8dd...` / `00183a37...` / `52b9866d...` and their CI/Preview/self-review are **not** current exact-head evidence.
+
+## Binding review addressed
+
+Technical-Lead CHANGES REQUIRED `5090867937` on `41505170...`:
+
+1. Native `<details>/<summary>` for `Quellen und Details` is unchanged.
+2. The summary now uses the Jetnity `flex min-h-11 ... list-none items-center` touch-target pattern from `FlugRoute`.
+3. Existing `focus-visible` keyboard/focus styles are preserved.
+4. `lib/trips/destination-essentials.test.ts` asserts that the `Quellen und Details` summary itself carries `min-h-11` (not only the source links).
+
+No Destination/Official/Safety/Seasonal truth, Flight, Account/Traveller, DB/Auth or provider change.
 
 ## What was reconstructed
 
@@ -105,12 +117,14 @@ Docs (main-preserving plus Destination Essentials resume / ADR-0209):
 
 Flight / provider / DB files from main are present via merge and identical to `origin/main`. They are not Destination Essentials edits.
 
-## Local gates on `7f49b8dd`
+## Local gates on `46f8c7af`
+
+Implementation-only head. This handoff commit is documentation continuity only.
 
 | Gate | Result |
 | --- | --- |
-| Destination Essentials + account-boundary tests | **26/26 pass** |
-| Full repository suite | **3172 pass / 0 fail** |
+| Destination Essentials tests | **18/18 pass** (includes the new `Quellen und Details` touch-target assertion) |
+| Full repository suite | **3173 pass / 0 fail** |
 | `npm run typecheck` | pass |
 | `npm run lint` | pass (0 errors; 138 pre-existing warnings) |
 | `npm run build` | pass |

@@ -144,11 +144,12 @@ Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any 
 - Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
 - Multi-Agent: **SINGLE_AGENT**
 - Reconcile base: `origin/main@ed41dd17b4b456899d9e4ae11694efe3b10739a9` — re-fetched, no drift
-- Local-gate head: `7f49b8dd1b885c736f1be79f71cd2a06bd3c5522` — typecheck/lint/build/hygiene pass; full suite **3172/3172**
-- Ahead/behind after reconcile: **12 ahead / 0 behind**
-- Exact-head CI/Preview must be read for the current branch tip after the resume handoff commit
+- Rejected exact head: `4150517026bf2daf162207f17262f5a5b2d5d1a5` (review `5090867937`)
+- Implementation head: `46f8c7af70b1944c9e35b3a0828b70926467d92b` — Destination Essentials **18/18**; full suite **3173/3173**; typecheck/lint/build/hygiene pass
+- Ahead/behind vs `origin/main` at implementation head: **14 ahead / 0 behind**
+- Exact-head CI/Preview must be read for the current branch tip after the a11y handoff commit
 - Agent must not mark Ready and must not merge
-- Final coding state after this resume: **STOP FOR TECHNICAL-LEAD REVIEW**
+- Final coding state after the touch-target correction: **STOP FOR FRESH TECHNICAL-LEAD REVIEW**
 
 The Product Owner deferred external provider inquiries and instructed Jetnity to keep building provider-independently. That does not approve gates A–E, Production S6, Commercial Provenance writer, TW-8/TW-9 or a new slice.
 

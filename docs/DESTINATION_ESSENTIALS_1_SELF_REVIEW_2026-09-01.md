@@ -2,7 +2,8 @@
 
 Stand: 2. September 2026  
 Reconciled onto `origin/main@ed41dd17b4b456899d9e4ae11694efe3b10739a9`  
-Local-gate head: `7f49b8dd1b885c736f1be79f71cd2a06bd3c5522`  
+Rejected exact head: `4150517026bf2daf162207f17262f5a5b2d5d1a5` (review `5090867937`)  
+Implementation head: `46f8c7af70b1944c9e35b3a0828b70926467d92b`  
 Agent self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity
@@ -17,6 +18,7 @@ In scope and kept after reconcile:
 - neutral Safety/Seasonal source labels unless `official_*`
 - Official href dedupe with action precedence
 - ADR-0209 (not ADR-0207; that number is Flight Multi-Leg on current main)
+- native `Quellen und Details` `<summary>` uses `min-h-11` / `list-none` touch-target, same pattern as `FlugRoute`
 
 Out of scope and not introduced:
 
@@ -53,7 +55,7 @@ Out of scope and not introduced:
 1. Two stages in the same country share Official destination-country truth. Safety/Seasonal remain stage-isolated.
 2. Guest/Account still do not inject evaluations. Live empty copy is correct until those domains are separately gated.
 3. Preview HTML remains Vercel-SSO protected. Exact-head Preview must be read for the current branch tip.
-4. Old CI/Preview on `00183a37` is historical only.
+4. Old CI/Preview on `41505170` / `00183a37` is historical only. A new head invalidates those exact-head gates.
 
 ## Recommendation
 
