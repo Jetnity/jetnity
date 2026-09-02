@@ -1,7 +1,9 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 1. September 2026  
-Status: **CURRENT HANDOFF / REQUIREMENTS PROVIDER GATE 0 CLOSED / DRAFT #413 0..N FLIGHT ORCHESTRATION AWAITING TL REVIEW / LIVE-EVIDENCE GEWINNT**
+Stand: 2. September 2026  
+Status: **CURRENT HANDOFF / FLIGHT MULTI-PROVIDER CORE CLOSED ON MAIN / DESTINATION ESSENTIALS #394 RESUMED FOR MAIN-RECONCILE / LIVE-EVIDENCE GEWINNT**
+
+Current authorized coding slice on this branch: Destination Essentials 1 (Issue #393 / Draft PR #394 / `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`). Flight orchestration on `main` is closed (`#414`). Do not Ready/merge from the coding agent.
 
 Aktuellster vollständiger Checkpoint:
 

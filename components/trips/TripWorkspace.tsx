@@ -46,6 +46,7 @@ import {
   type DetailDomain,
   type WorkspaceDetailAuswahl,
 } from '@/lib/trips/detail'
+import { destinationEssentialsAbleiten } from '@/lib/trips/destination-essentials'
 import { uebersichtAbleiten } from '@/lib/trips/uebersicht'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
@@ -293,6 +294,12 @@ export default function TripWorkspace({
 
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
+  const destinationEssentials = destinationEssentialsAbleiten({
+    reise,
+    officialEvaluations,
+    safetyEvaluations,
+    seasonalEvaluations,
+  })
   const attention = attentionAbleiten({
     reise,
     ohneTag: ungeplantePunkte,
@@ -398,6 +405,7 @@ export default function TripWorkspace({
               reise={reise}
               uebersicht={uebersicht}
               attention={attention}
+              destinationEssentials={destinationEssentials}
               aenderungOffen={aenderungOffen}
               onLuecke={oeffneGap}
               onAttention={onAttention}

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 PROVIDER-NEUTRAL FLIGHT CORE CLOSED / MULTI-LEG CLOSED / MULTI-PROVIDER ORCHESTRATION CLOSED / PROVIDER SELECTION DEFERRED / NO ACTIVE CURSOR AGENT / NO REAL PROVIDER SELECTED OR ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / DESTINATION ESSENTIALS #394 DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 PROVIDER-NEUTRAL FLIGHT CORE CLOSED / MULTI-LEG CLOSED / MULTI-PROVIDER ORCHESTRATION CLOSED / PROVIDER SELECTION DEFERRED / DESTINATION ESSENTIALS #394 RESUMED FOR MAIN-RECONCILE / NO REAL PROVIDER SELECTED OR ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -134,24 +134,30 @@ Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any 
 
 ## 8. Active work boundary
 
-**No active Cursor coding agent. No active Flight runtime PR. No automatic follow-up slice.**
+**Destination Essentials 1 is the authorized provider-independent resume.** Flight runtime PRs remain closed. No automatic follow-up slice.
 
-A new Technical-Lead work cycle must first:
+- Issue: #393
+- Draft PR: #394
+- Task: `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`
+- Branch: `feat/phase-1-destination-essentials-1`
+- Cursor-Agent: `Jetnity destination essentials 1` / Generation 1
+- Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
+- Multi-Agent: **SINGLE_AGENT**
+- Reconcile base: `origin/main@ed41dd17b4b456899d9e4ae11694efe3b10739a9` — re-fetched, no drift
+- Rejected exact head: `4150517026bf2daf162207f17262f5a5b2d5d1a5` (review `5090867937`)
+- Implementation head: `46f8c7af70b1944c9e35b3a0828b70926467d92b` — Destination Essentials **18/18**; full suite **3173/3173**; typecheck/lint/build/hygiene pass
+- Ahead/behind vs `origin/main` at implementation head: **14 ahead / 0 behind**
+- Exact-head CI/Preview must be read for the current branch tip after the a11y handoff commit
+- Agent must not mark Ready and must not merge
+- Final coding state after the touch-target correction: **STOP FOR FRESH TECHNICAL-LEAD REVIEW**
 
-1. fetch live `main`, open PRs/issues, CI/Vercel and relevant Supabase truth;
-2. read the current closure checkpoint and V1 binding build order;
-3. identify the smallest concrete remaining provider-neutral V1 gap;
-4. decide SINGLE_AGENT vs MULTI_AGENT;
-5. version the task before dispatch;
-6. avoid vendor-specific implementation unless the relevant external/access truth and Product-Owner gate permit it.
-
-The Product Owner's direction to continue building provider-neutrally remains valid, but it is not permission to invent generic abstractions without a demonstrated gap.
+The Product Owner deferred external provider inquiries and instructed Jetnity to keep building provider-independently. That does not approve gates A–E, Production S6, Commercial Provenance writer, TW-8/TW-9 or a new slice.
 
 ## 9. Deferred work that must not be pulled forward accidentally
 
-Destination Essentials Draft PR #394 remains **DEFERRED / STOPPED**. It belongs to V1 Step 8 and must not be resumed merely because #412 closed.
+TW-8 remains dependent on real Flight Commercial Truth and is not opened by this Destination Essentials resume.
 
-TW-8 remains dependent on real Flight Commercial Truth and is not opened by the provider-neutral orchestration closure.
+World Map, service worker/offline/push, public indexing, payments and a follow-up slice remain closed.
 
 No later V1 slice is automatically authorized by this status document.
 
@@ -194,4 +200,4 @@ Principally open:
 - V1 privacy/legal/ops/monetization closure;
 - V1 Definition of Done and Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. ISSUE #412 CLOSED. PR #414 MERGED. FLIGHT MULTI-PROVIDER CORE CLOSED. NO ACTIVE AGENT. PROVIDER SELECTION DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ISSUE #412 CLOSED. PR #414 MERGED. FLIGHT MULTI-PROVIDER CORE CLOSED. DESTINATION ESSENTIALS #394 RESUMED FOR RECONCILE ONLY. PROVIDER SELECTION DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**

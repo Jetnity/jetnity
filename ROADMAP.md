@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Issue #412 / PR #413 orchestriert die Runtime-Flugsuche auf 0..N unabhängige `FlugProvider` (ADR-0208). Die Multi-Leg-Request-Naht (ADR-0207 / #404) bleibt geschlossen. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Nächster Schritt: unabhängiger Technical-Lead Exact-Head-Review. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Destination Essentials Issue #393 / PR #394, resumed against current `main` under `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -304,6 +304,18 @@ Nächster Schritt:
 - S5-B Persistenz und Production-Migration sind integriert/verifiziert. Offener Residual: Runtime-Write-Pfad/Principal und realer Snapshot; TW-8 bleibt geschlossen. PR #180/#182/#183 sind historische Integrations-Evidence, kein offener Apply-Auftrag.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
+
+## 9a. Destination Essentials 1 – resumed Draft-PR, Technical-Lead review pending
+
+Product-Owner-authorized provider-independent resume of Issue #393 / Draft PR #394 on `feat/phase-1-destination-essentials-1`, after reconcile onto current `main`. Binding: `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`.
+
+- Presentation-only Zielzusammenfassung in der Trip-Workspace-Übersicht
+- Wiederverwendung vorhandener Official-/Safety-/Seasonal-Evaluations
+- current `main` Flight/docs contracts remain authoritative (ADR-0207/0208 stay Flight)
+- Destination Essentials decision is ADR-0209
+- kein Ready, kein Merge, kein Provider, keine DB-Mutation durch den Coding-Agenten
+
+Technical-Lead-owned. Kein Folgeslice aus diesem Stand ableiten.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 

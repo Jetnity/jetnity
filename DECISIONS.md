@@ -5458,6 +5458,31 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0209 – Destination Essentials 1: Presentation-only Zielzusammenfassung
+
+**Datum:** 1. September 2026, reconciled 2. September 2026  
+**Status:** Implementiert im Feature-Branch `feat/phase-1-destination-essentials-1` nach Reconcile auf aktuelles `main`. Kein Ready, kein Merge, kein Provider, keine DB-Mutation. Binding: `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md` und `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`.
+
+**Entscheidung:**
+
+1. Destination Essentials 1 ist eine Presentation-Derivation in der bestehenden Trip-Workspace-Übersicht. Sie erzeugt keine persistierte Zielwahrheit und keine zweite Official-/Safety-/Seasonal-Engine.
+2. Ziele kommen nur aus geordnetem `Trip.stages[]`. Stage-Identität und Reihenfolge bleiben erhalten. Doppelte Länder bleiben getrennte Karten. `countryCode`, Name, Daten, `placeId` und Koordinaten werden nicht aus Freitext erschlossen.
+3. Official-Zielwahrheit matcht nur `destinationCountryCode` und nur ohne Transit (`requirementType !== 'transit'` und `transitCountryCode == null`). `unknown`, `unavailable`, `stale` und `recheck_needed` werden niemals zu `not_required`.
+4. Safety- und Seasonal-Hinweise werden nur über explizite `affectedRefs` mit `kind: 'stage'` und passender Stage-ID zugeordnet. Label-, Airport- oder Route-Ähnlichkeit reicht nicht.
+5. Nur eine validierte `OfficialEvaluation.action` ist actionable. `evidence.sourceUrl` bleibt Quelle/Information und wird nicht als Antrag/Formular/Termin umetikettiert.
+6. Fehlende Evidence bleibt sichtbar leer (`Noch keine verlässlichen Hinweise verfügbar`). Kein visited-Schluss, keine Commercial-Suche, kein Service Worker, kein Indexing, kein World Map.
+7. Aktuelle Official-Ergebnisse mehrerer Credential-Optionen oder Reisender werden nicht zu einem unbedingten `required` / `not_required` verdichtet. Unterschiedliche aktuelle Optionen erzeugen `option_abhaengig`, unterschiedliche Reisende `reisende_abhaengig`, beides `option_und_reisende_abhaengig`. Details nutzen `officialCredentialLabel`. Safety-/Seasonal-Quellen heissen nur bei Authority `official_*` offiziell. Identische Official-Hrefs behalten die validierte Action.
+
+**Kontext:** Die V1-Build-Order nennt Destination Essentials als Step-8-Produktoberfläche. Product Owner hat externe Provider-Anfragen zurückgestellt und provider-unabhängiges Weiterbauen erlaubt. Flight-Core auf `main` (ADR-0207/0208) bleibt unverändert. Eine frühere Branch-Nummerierung als ADR-0207 ist ungültig, weil `main` ADR-0207 bereits für Flight Multi-Leg verwendet.
+
+**Alternativen:** Eigenes Destination-CMS; Country-Fact-Hardcoding; Safety/Seasonal per Landeslabel zuordnen; Destination Essentials als eigener Workspace-Tab.
+
+**Begründung:** Eine zweite Wahrheitsschicht oder erfundene Länderfakten würden Route-Truth und Official-Klassen verwischen. Die Übersicht darf nur zusammenfassen, was Jetnity bereits belegt hat.
+
+**Konsequenzen:** `ReiseSicherheit`, `ReisezeitHinweise` und `Reisevorbereitung` bleiben die kanonischen Domain-Flächen. Destination Essentials ist eine verdichtete Zielansicht, kein Ersatz. World Map, TW-8/TW-9 und echte Official-Provider bleiben eigene Slices.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
