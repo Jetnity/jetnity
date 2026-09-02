@@ -5405,10 +5405,63 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
-## ADR-0207 – Destination Essentials 1: Presentation-only Zielzusammenfassung
+## ADR-0207 – Provider-neutral Flight request uses ordered legs, not returnDate
 
 **Datum:** 1. September 2026  
-**Status:** Implementiert im Feature-Branch `feat/phase-1-destination-essentials-1`. Kein Ready, kein Merge, kein Provider, keine DB-Mutation. Binding: `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md`.
+**Status:** Implementiert im Feature-Branch `feat/v1-flight-provider-multileg-contract`. Draft-PR, kein Ready, kein Merge, keine Providerwahl, kein Live-Transport. Binding: `docs/V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_RECONCILIATION_TASK_2026-09-01.md`. Issue #402.
+
+**Entscheidung:**
+
+1. Die spätere provider-neutrale Request-Naht `FlightProviderSearchRequest` in `lib/providers/flights/domain.ts` trägt die Route als geordnete `legs[]` (IATA + Kalendertag). One-way, Return und Multi-City teilen dieselbe Struktur.
+2. Es gibt kein `returnDate`, kein top-level `originIata`/`destinationIata`/`departureDate` und kein Ranking-`context` auf diesem Request. Zwei Beine bleiben zwei explizite Legs.
+3. `FlugSuchanfrage` bleibt die kanonische Produktwahrheit. Die einzige Mapping-Naht ist `flightProviderSearchRequestAus()`. Sie projiziert bereits validierte Anfragen, erfindet keinen zweiten 1–6-/Passagier-/Kabinen-/Währungsvalidator und leakt kein Ranking-`context`.
+4. `stopPreference` ist eine Provider-Suchconstraint und wird als kanonische `FlugStoppPraeferenz` lossless übernommen. Die gemeinsame Naht übersetzt sie nicht in provider-spezifische Felder wie Duffel `max_connections`. Das folgt der bestehenden Runtime-Evidence im Duffel-Adapter (`nonstop` → `max_connections=0`, `at_most_one` → `max_connections=1`) und dem Technical-Lead CHANGES REQUIRED auf `3d544fa6`.
+5. `market` / `locale` bleiben externer Request-Kontext, nicht Traveller-Citizenship, Residence oder Ranking-Daten.
+6. Das bestehende Runtime-`FlugProvider.suchen(FlugSuchanfrage)` und der Duffel-Adapter bleiben unverändert. Skyscanner bleibt fixture-only / non-promotable. Keine dritte Provider-Abstraktion, kein Registry, kein Fan-out.
+
+**Kontext:** Die Offline-Skyscanner-Foundation hatte eine zweite, roundtrip-lastige Request-Form. Öffentliche Due-Diligence zeigt, dass ernsthafte Metasuch-Kandidaten Multi-City tragen. Eine implizite Return-Date-Wahrheit wäre ein Integrationsrisiko, bevor ein echter Transport gewählt wird. Die erste Implementation auf `3d544fa6` strich `stopPreference` fälschlich als reines Produktfilter; das widerspricht der akzeptierten Duffel-Runtime.
+
+**Alternativen:** Die divergierende Roundtrip-Form belassen; eine dritte generische Provider-Plattform bauen; `returnDate` als Komfortfeld zusätzlich zu `legs[]` behalten; `stopPreference` weglassen oder bereits hier in `max_connections` übersetzen; Ranking-`context` in den Provider-Request ziehen.
+
+**Begründung:** Reconciliation an der bereits vorhandenen Naht verhindert Drift, ohne Scope, Providerwahl oder Runtime zu öffnen. Ein zweites `returnDate` würde wieder zwei Route-Wahrheiten erzeugen.
+
+**Konsequenzen:** Zukünftige Adapter müssen geordnete Legs mappen. Provider-lokale engere Limits bleiben Adapter-lokal, sobald ein konkreter Provider das verlangt. Kein Secret, kein Netzwerk, kein Production-S6, kein Commercial-Provenance-Writer.
+
+---
+
+## ADR-0208 – Flight search orchestrates 0..N FlugProvider without a composite Treffer
+
+**Datum:** 1. September 2026  
+**Status:** Implementiert im Feature-Branch `feat/v1-flight-multi-provider-orchestration`. Draft-PR, kein Ready, kein Merge, keine Providerwahl, kein Live-Transport. Binding: `docs/V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_TASK_2026-09-01.md`. Issue #412.
+
+**Entscheidung:**
+
+1. Die bestehende Runtime-Naht bleibt `FlugProvider`. Es gibt keine dritte Provider-Abstraktion.
+2. `SuchePorts` trägt `providers: readonly FlugProvider[]` statt genau eines Providers. 0, 1 oder N sind gültig.
+3. Jeder Adapter wird unabhängig mit derselben validierten `FlugSuchanfrage` aufgerufen. Sein `FlugProviderTreffer` inklusive `retrievedAt` und Timezone-/Instant-Evidence bleibt provider-lokal. Es wird kein zusammengesetztes Treffer-Objekt und kein gemeinsamer `retrievedAt` erfunden.
+4. Nur normalisierte `FlugOption[]` werden für ein globales, bereits bestehendes Jetnity-Ranking kombiniert. Provider-Identität, Array-Reihenfolge, Affiliate oder Provision ändern den Score nicht.
+5. Die globale Ergebniskappe `FLUG_SUCHE_GRENZEN.angebote` gilt erst nach diesem Ranking.
+6. Identitätsbruch (`option.provider !== provider.id`) und Option-ID-Kollisionen sind fail-closed: der betroffene Provider-Treffer fällt deterministisch aus, Provenance wird nicht umgeschrieben. Gleiche Verbindungen zweier Provider werden nicht still dedupliziert.
+7. Validierung und Nutzer-Rate-Limit laufen einmal je Jetnity-Suche. Provider-Fehler bleiben isoliert. Ein nutzbarer Erfolg plus ein anderer Fehler oder `partial` ergibt `partial`.
+8. Die kleinste Sammlung ist `flugProviderSammlungAus()` / `aktuelleFlugProviderSammlung()`. Heute ist nur der vorhandene Duffel-Testadapter konstruierbar. Reihenfolge in der Sammlung ist kein Default/Primary.
+9. ProviderOps-Invocation-Events sind je Provider und `providerId`-treu. Vor dem Aufruf (invalid, rate-limit, keine Provider) bleibt `providerId: null`.
+10. Der globale Flight-Zustand (`flugZustand`) ist nur Production-hart-aus plus `JETNITY_FLIGHT_AKTIV`. `FlugUmgebung` / `flugUmgebungAusProzess()` enthalten und lesen nur provider-neutrale Eingaben (`VERCEL_ENV`, `JETNITY_FLIGHT_AKTIV`). Anbieter-Credentials bleiben vollständig in der jeweiligen Fabrik bzw. einem provider-lokalen Zugangsmodul. `aktuelleFlugProviderSammlung()` ist keine globale Credential-Registry. `ohne-zugang` / Search-unavailable entsteht an der Orchestrierungsnaht, wenn 0 Provider konstruierbar sind.
+11. Unvollständige Suche mit null nutzbaren Optionen bleibt `partial`, verwendet aber eine neutrale Meldung. „Die übrigen Verbindungen siehst du unten.“ gilt nur, wenn tatsächlich Optionen übrig sind.
+
+**Kontext:** Der Product Owner hat ausdrücklich erlaubt, die Flight-Schicht provider-neutral weiterzubauen und die spätere echte Providerwahl offenzuhalten. ADR-0207 schloss Fan-out auf der Request-Naht aus; das bleibt für `FlightProviderSearchRequest` wahr. Diese Entscheidung betrifft nur die bestehende Runtime-Orchestrierung in `lib/flights/suche.ts`. Sie wählt keinen Provider, aktiviert keinen Live-Pfad und hebt ADR-0011 nicht in eine Multi-Provider-Produktplattform auf.
+
+**Alternativen:** Ein Fake-Composite-`FlugProvider` mit einem erfundenen `retrievedAt`; genau einen Provider weiter hart verdrahten; Cross-Provider-Deduplizierung nach Route/Flugnummer; Ranking-Gewicht nach Array-Reihenfolge.
+
+**Begründung:** Getrennte Beobachtungen dürfen nicht zu einer gefälschten gemeinsamen Evidence werden. Ein späterer zweiter Adapter darf Route und Orchestrierung nicht neu schreiben müssen.
+
+**Konsequenzen:** Ein-Provider-Verhalten bleibt nach aussen kompatibel. Duffel bleibt der einzige heute konstruierbare Adapter. `flugZustand` und `FlugUmgebung` sind nicht an ein Duffel-Token gekoppelt; Duffel liest `DUFFEL_ACCESS_TOKEN` nur in `lib/flights/duffel/zugang.ts`. Ein späterer Adapter braucht dafür keine globale Zustands- oder Umgebungserweiterung. Unvollständige Suchen ohne nutzbare Optionen bleiben `partial`, ohne dem Reisenden restliche Verbindungen vorzuspiegeln. Kein Secret, kein Netzwerk, kein Production-S6, kein Commercial-Provenance-Writer, keine KAYAK/Wego/Skyscanner-Adapter.
+
+---
+
+## ADR-0209 – Destination Essentials 1: Presentation-only Zielzusammenfassung
+
+**Datum:** 1. September 2026, reconciled 2. September 2026  
+**Status:** Implementiert im Feature-Branch `feat/phase-1-destination-essentials-1` nach Reconcile auf aktuelles `main`. Kein Ready, kein Merge, kein Provider, keine DB-Mutation. Binding: `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md` und `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`.
 
 **Entscheidung:**
 
@@ -5420,7 +5473,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 6. Fehlende Evidence bleibt sichtbar leer (`Noch keine verlässlichen Hinweise verfügbar`). Kein visited-Schluss, keine Commercial-Suche, kein Service Worker, kein Indexing, kein World Map.
 7. Aktuelle Official-Ergebnisse mehrerer Credential-Optionen oder Reisender werden nicht zu einem unbedingten `required` / `not_required` verdichtet. Unterschiedliche aktuelle Optionen erzeugen `option_abhaengig`, unterschiedliche Reisende `reisende_abhaengig`, beides `option_und_reisende_abhaengig`. Details nutzen `officialCredentialLabel`. Safety-/Seasonal-Quellen heissen nur bei Authority `official_*` offiziell. Identische Official-Hrefs behalten die validierte Action.
 
-**Kontext:** Die V1-Build-Order nennt Destination Essentials als offene Produktoberfläche. Flight/Hotel/Official-Provider bleiben Product-Owner-gegatet. PWA-1 ist geschlossen. Die vorhandenen Workspace-Evaluations reichen für eine ehrliche Zielzusammenfassung.
+**Kontext:** Die V1-Build-Order nennt Destination Essentials als Step-8-Produktoberfläche. Product Owner hat externe Provider-Anfragen zurückgestellt und provider-unabhängiges Weiterbauen erlaubt. Flight-Core auf `main` (ADR-0207/0208) bleibt unverändert. Eine frühere Branch-Nummerierung als ADR-0207 ist ungültig, weil `main` ADR-0207 bereits für Flight Multi-Leg verwendet.
 
 **Alternativen:** Eigenes Destination-CMS; Country-Fact-Hardcoding; Safety/Seasonal per Landeslabel zuordnen; Destination Essentials als eigener Workspace-Tab.
 

@@ -137,7 +137,6 @@ export function rolloutBefund(beobachtung: RolloutBeobachtung): {
       ok: !flugZustand({
         VERCEL_ENV: 'production',
         JETNITY_FLIGHT_AKTIV: 'true',
-        DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxxxxxxxxxx',
       }).aktiv,
       detail: 'Production ist hart aus, auch mit Test-Token',
     },

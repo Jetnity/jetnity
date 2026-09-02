@@ -1,51 +1,50 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
-import { flugZustand, flugZustandMeldung } from '@/lib/flights/zustand'
-
-const zugang = {
-  JETNITY_FLIGHT_AKTIV: 'true',
-  DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx',
-}
+import { flugUmgebungAusProzess, flugZustand, flugZustandMeldung } from '@/lib/flights/zustand'
 
 describe('Flugzustand', () => {
-  test('Production bleibt hart aus, auch mit Credentials', () => {
-    const zustand = flugZustand({ ...zugang, VERCEL_ENV: 'production' })
+  test('Production bleibt hart aus, auch mit Kill Switch', () => {
+    const zustand = flugZustand({
+      VERCEL_ENV: 'production',
+      JETNITY_FLIGHT_AKTIV: 'true',
+    })
     assert.equal(zustand.aktiv, false)
     if (!zustand.aktiv) assert.equal(zustand.grund, 'production')
     assert.match(flugZustandMeldung(zustand), /Production/)
   })
 
   test('ohne Kill Switch bleibt die Suche aus', () => {
-    const zustand = flugZustand({
-      DUFFEL_ACCESS_TOKEN: 'duffel_test_xxxxxxxx',
-    })
+    const zustand = flugZustand({})
     assert.equal(zustand.aktiv, false)
     if (!zustand.aktiv) assert.equal(zustand.grund, 'abgeschaltet')
   })
 
-  test('fehlende Credentials sind Feature-unavailable, kein Buildfehler', () => {
-    const zustand = flugZustand({ JETNITY_FLIGHT_AKTIV: 'true' })
-    assert.equal(zustand.aktiv, false)
-    if (!zustand.aktiv) assert.equal(zustand.grund, 'ohne-zugang')
-    assert.match(flugZustandMeldung(zustand), /nicht eingerichtet/)
+  test('globaler Zustand hängt nicht an einem Duffel-Token', () => {
+    const ohneToken = flugZustand({ JETNITY_FLIGHT_AKTIV: 'true' })
+    assert.deepEqual(ohneToken, { aktiv: true, umgebung: 'test' })
   })
 
   test('Preview darf die Test-Suche einschalten', () => {
-    const zustand = flugZustand({ ...zugang, VERCEL_ENV: 'preview' })
+    const zustand = flugZustand({
+      VERCEL_ENV: 'preview',
+      JETNITY_FLIGHT_AKTIV: 'true',
+    })
     assert.deepEqual(zustand, { aktiv: true, umgebung: 'test' })
   })
 
   test('lokal ohne VERCEL_ENV darf die Test-Suche laufen', () => {
-    assert.equal(flugZustand(zugang).aktiv, true)
+    assert.equal(flugZustand({ JETNITY_FLIGHT_AKTIV: 'true' }).aktiv, true)
   })
 
-  test('ein Live-Token bleibt Feature-unavailable', () => {
-    const zustand = flugZustand({
-      JETNITY_FLIGHT_AKTIV: 'true',
-      DUFFEL_ACCESS_TOKEN: 'duffel_live_xxxxxxxx',
-    })
-    assert.equal(zustand.aktiv, false)
-    if (!zustand.aktiv) assert.equal(zustand.grund, 'ohne-zugang')
+  test('globale Flug-Umgebung enthält und liest kein Anbieter-Credential', () => {
+    const quelle = readFileSync('lib/flights/zustand.ts', 'utf8')
+    assert.doesNotMatch(quelle, /DUFFEL_|ACCESS_TOKEN|istDuffelTestToken/)
+    assert.match(quelle, /providerOpsIstProduction/)
+    assert.match(quelle, /providerOpsFlagAn/)
+    const umgebung = flugUmgebungAusProzess()
+    assert.deepEqual(Object.keys(umgebung).sort(), ['JETNITY_FLIGHT_AKTIV', 'VERCEL_ENV'])
+    assert.equal('DUFFEL_ACCESS_TOKEN' in umgebung, false)
   })
 })

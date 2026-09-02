@@ -44,7 +44,7 @@ No hidden API, fixture, local fake fact, or new runtime data source was added. I
 - `lib/trips/destination-essentials.ts`
 - `lib/trips/destination-essentials.test.ts`
 - `components/trips/TripWorkspaceDestinationEssentials.tsx`
-- `DECISIONS.md` (ADR-0207 point 7)
+- `DECISIONS.md` (ADR-0209; earlier branch numbering as ADR-0207 was invalid because `main` already used ADR-0207 for Flight Multi-Leg)
 - `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md` (PWA row accuracy only)
 - `docs/DESTINATION_ESSENTIALS_1_HANDOFF_2026-09-01.md`
 - `docs/DESTINATION_ESSENTIALS_1_SELF_REVIEW_2026-09-01.md`

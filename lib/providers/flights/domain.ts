@@ -1,12 +1,50 @@
-export type FlightProviderSearchRequest = {
+import type { FlugKabine, FlugStoppPraeferenz } from '@/lib/flights/domain'
+
+/**
+ * One search slice in provider-neutral request order.
+ *
+ * Calendar date only. This is not an offer segment and must not grow
+ * arrival, carrier or flight-number fields.
+ */
+export type FlightProviderSearchLeg = {
   originIata: string
   destinationIata: string
-  departureDate: string
-  returnDate?: string | null
+  date: string
+}
+
+/**
+ * External-market request context. Not traveller citizenship, residence
+ * or ranking context.
+ */
+export type FlightProviderExternalRequestContext = {
+  market: string
+  locale: string
+}
+
+/**
+ * Provider-neutral Flight search request.
+ *
+ * Route truth is the ordered `legs[]` collection. One-way, return and
+ * multi-city share that structure. There is no `returnDate`, top-level
+ * origin/destination or ranking-`context` on this shape.
+ *
+ * Leg limits, passengers, cabin, currency and `stopPreference` are
+ * projections of canonical `FlugSuchanfrage` / `FLUG_SUCHE_GRENZEN`.
+ * This type does not define a second provider-specific maximum.
+ *
+ * `stopPreference` is a provider-search constraint (`FlugStoppPraeferenz`),
+ * not ranking-only context. Current runtime evidence: Duffel maps
+ * `nonstop` / `at_most_one` into the provider request. This shared
+ * contract keeps the canonical value; it does not translate it into
+ * provider-specific fields such as `max_connections`.
+ */
+export type FlightProviderSearchRequest = {
+  legs: FlightProviderSearchLeg[]
   adults: number
-  children?: number
-  infants?: number
-  cabinClass?: 'economy' | 'premium_economy' | 'business' | 'first'
+  children: number
+  infants: number
+  cabin: FlugKabine
+  stopPreference: FlugStoppPraeferenz
   currency: string
   market: string
   locale: string

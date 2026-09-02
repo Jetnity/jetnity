@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 1. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PWA-1 CLOSED / PROVIDER READINESS CLOSED / PRODUCTION S6 UNAPPLIED / NO REAL PROVIDER ACTIVE / NO AUTOMATIC NEXT SLICE / V1 BUILD ORDER BINDING / LIVE-EVIDENCE WINS**
+Stand: 2. September 2026  
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / NEW-CHAT-CHECKPOINT CURRENT / PHASE 1 JETNITY CORE / V1 STEP 2 PROVIDER-NEUTRAL FLIGHT CORE CLOSED / MULTI-LEG CLOSED / MULTI-PROVIDER ORCHESTRATION CLOSED / PROVIDER SELECTION DEFERRED / DESTINATION ESSENTIALS #394 RESUMED FOR MAIN-RECONCILE / NO REAL PROVIDER SELECTED OR ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -9,22 +9,27 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / PWA-1 CLOS
 
 ## 1. Zuerst lesen
 
-1. `docs/CHATGPT_TECHNICAL_LEAD_PWA_1_CLOSED_2026-09-01.md` ← **aktueller Phase-1-Continuity-Checkpoint**
-2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_FINAL_RECHECK_CLOSED_2026-09-01.md`
-4. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
-5. `docs/PROVIDER_READINESS_FINAL_RECHECK_GATE_MATRIX_2026-09-01.md`
-6. `docs/PROVIDER_READINESS_FIRST_REAL_PROVIDER_PO_DECISION_PACKAGE_2026-09-01.md`
-7. `docs/ADR_0204_JETNITY_THREE_PHASE_PRODUCT_RELEASE_STRATEGY.md`
-8. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
-9. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
-10. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
-11. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
-12. `docs/JETNITY_V1_PHASE1_GAP_ANALYSIS_2026-09-01.md`
-13. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
-14. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
+2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← **aktueller New-Chat-Handoff / Transition-Checkpoint**
+3. `docs/ACTIVE_WORK_STATUS.md`
+4. `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md` ← **current authorized provider-independent resume**
+5. `docs/CHATGPT_TECHNICAL_LEAD_V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_CLOSED_2026-09-02.md` ← **letzter Runtime-Closure-Checkpoint**
+6. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
+7. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
+8. `docs/CHATGPT_TECHNICAL_LEAD_V1_FLIGHT_PROVIDER_MULTILEG_CONTRACT_CLOSED_2026-09-01.md`
+9. `docs/V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_TASK_2026-09-01.md`
+10. `docs/FLIGHT_KAYAK_WEGO_ACCESS_ATTRIBUTION_DUE_DILIGENCE_2026-09-01.md`
+11. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_KAYAK_2026-09-01.md`
+12. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_WEGO_2026-09-01.md`
+13. `docs/FLIGHT_PROVIDER_CONTRACT_QUESTION_MATRIX_2026-09-01.md`
+14. `docs/FLIGHT_METASEARCH_PROVIDER_ALTERNATIVES_PRECHECK_2026-09-01.md`
+15. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
+16. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
+17. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`
+18. `docs/JETNITY_V1_DEFINITION_OF_DONE_2026-09-01.md`
+19. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
 
-Then read the relevant domain handoff/task for the current workstream and re-fetch GitHub/CI/Vercel live. For DB/security/persistence questions inspect Supabase Production read-only unless a current explicit Product-Owner approval allows mutation.
+Danach immer live verifizieren: aktuelles `main`, offene PRs/Issues, relevanter Branch/Head, Merge-Base/ahead/behind, Actions, Vercel, Review-Threads, aktiver Cursor-Status und betroffene Supabase-Production-Wahrheit.
 
 ## 2. Product-Owner binding phases
 
@@ -36,7 +41,7 @@ V1 launches only when:
 
 > **PRODUCTION READY FOR REAL TRAVELLERS.**
 
-Feature Complete alone is not enough.
+Feature Complete allein reicht nicht.
 
 ### Phase 2 – JETNITY COMPLETE TRAVEL PLATFORM
 
@@ -46,165 +51,170 @@ Provider breadth, deeper travel decisions, Advanced Companion, Destination Intel
 
 Native apps, Traveller Network, Creator/Partner Ecosystem, own data/intelligence assets and ordered international scaling.
 
-## 3. Current verified runtime baseline
+## 3. Letzte verifizierte runtime-verändernde Main-Baseline
 
-Runtime implementation baseline before this docs-only continuity closure:
-
-`main@bce4b13cdd4a08247b9cb2bec45c5995c1939b65`
+`c3e4942d4ecfe4a960604b6314b7aa224997f60d`
 
 Commit:
 
-`Phase 1 PWA-1 installability (#391)`
+`V1 Flight provider-neutral multi-provider orchestration (#414)`
 
-Post-merge verified:
+Diese SHA ist die verifizierte **Runtime-Integration-Baseline** für den abgeschlossenen Slice. Spätere docs-only Continuity-Merges können Repository-`main` weiterbewegen. **Aktuelles `main` immer live neu lesen.**
 
-- Issue #389: **CLOSED / COMPLETED**;
-- original Draft-PR #390: **CLOSED / NOT MERGED**;
-- recovery PR #391: **MERGED**;
-- Main CI #1647 / Run `33496652255`: **COMPLETED / SUCCESS** on exact runtime main;
-- Vercel Production `dpl_HtB7523gee5bfuTsRTKWVkkm8zwk`: **READY** on exact runtime main;
-- Production PWA manifest/icons/Apple icon: **HTTP 200** with expected content types;
-- `/sw.js`: **HTTP 404** — no service worker introduced;
-- Production error/fatal logs: none observed;
-- unresolved Vercel toolbar threads: none;
-- public indexing boundary remains `noindex, nofollow`;
-- no Supabase/DB/Auth/provider/payment mutation from PWA-1.
+Post-Merge-Evidence:
 
-This docs-only continuity closure may advance repository `main` beyond the runtime baseline without changing runtime behavior. **Always re-fetch live main.**
+- Issue #412: **CLOSED / COMPLETED**;
+- Original Draft PR #413: **CLOSED / NOT MERGED** nur wegen des bekannten Draft→Ready-Connectorfehlers nach bestandenem TL-Review;
+- Technical-Lead FINAL PASS: Review `5083897831` auf exakt `8cf2c256e8dfe582640602a82554be6e03cf25e0`;
+- Recovery PR #414: **MERGED**, SHA-locked auf exakt diesem akzeptierten Head;
+- Recovery CI #1690: **SUCCESS**;
+- Main CI #1691: **SUCCESS** auf exakt `c3e4942d...`;
+- Vercel: **SUCCESS** auf exakt `c3e4942d...`;
+- kein aktiver Cursor-Agent für diesen Slice.
 
-## 4. PWA-1 final state
+## 4. Flight Core – akzeptierter Zustand
 
-**PWA-1 – Installability / App Icons / Privacy-Safe Shell: CLOSED.**
+### Multi-leg request truth — CLOSED
 
-Integrated:
+Jetnity Flight Search trägt provider-neutral:
 
-- manifest `id` / `scope`;
-- 192×192 and 512×512 app icons;
-- distinct opaque padded maskable 512×512 icon using the current Jetnity mark;
-- Apple touch icon and Apple web-app metadata;
-- deterministic installability and maskable-safe-zone tests.
+- geordnete `legs[]`;
+- 1–6 Legs;
+- One-Way, Return und Multi-City über dieselbe kanonische Wahrheit;
+- `stopPreference` lossless;
+- Ranking-only `context` wird nicht als Provider-Suchwahrheit geleakt.
 
-Not introduced:
+### Multi-provider orchestration — CLOSED
 
-- service worker or offline cache;
-- IndexedDB persistence or caching of account/trip/traveller data;
-- push/notification permissions;
-- DB/Auth/provider/payment changes;
-- public launch/indexing change;
-- native-app architecture change.
+Jetnity Flight Search kann jetzt strukturell **0..N unabhängige `FlugProvider`** orchestrieren.
 
-Governance note: early inherited history contained GitHub Copilot work due a prior workflow anomaly. Accepted work was independently Technical-Lead reviewed and completed through the bound Cursor continuity. Do not use GitHub Copilot as a substitute for the Jetnity Cursor coding-agent workflow.
+Binding invariants:
 
-## 5. Provider Readiness final state
+1. `FlugProvider` bleibt die Adapter-Naht; keine dritte Provider-Abstraktion.
+2. Validierung und Nutzer-Rate-Limit laufen einmal pro Jetnity-Suche.
+3. Provider werden unabhängig und failure-isolated aufgerufen.
+4. Provider-eigene `retrievedAt`-/Evidence-/Failure-Wahrheit bleibt getrennt.
+5. Kein Fake-Composite-`FlugProviderTreffer` und kein gemeinsamer erfundener Timestamp.
+6. Nur normalisierte `FlugOption[]` gehen in ein globales Jetnity-Ranking.
+7. Ranking ist provider- und provisionsneutral.
+8. Array-Reihenfolge bedeutet nicht Default/Primary.
+9. Ähnlich aussehende providerübergreifende Angebote werden nicht blind dedupliziert.
+10. Globaler Ergebnis-Cap erfolgt erst nach globalem Ranking.
+11. Ein Provider-Ausfall verwirft nicht die guten Ergebnisse eines anderen Providers.
+12. Zero-provider bleibt kontrolliert `unavailable`.
+13. Zero-usable-option `partial` verwendet wahrheitsgetreue neutrale Copy.
+14. Browser erhält keine `retrievedAt`-/Timezone-/Instant-/Raw-/Secret-Evidence.
+15. Globaler Flight-State ist vendor-neutral; Provider-Credentials bleiben in der jeweiligen Factory.
+16. Production bleibt hart aus und `JETNITY_FLIGHT_AKTIV` bleibt fail-closed.
 
-### Repository level
+Heute ist weiterhin nur der bestehende Duffel-Testpfad tatsächlich konstruierbar. Das ist **keine** Product-Owner-Auswahl von Duffel für Production.
+
+## 5. Provider Readiness / V1 Step 2
+
+Repository foundations:
 
 - S4: **CLOSED**
 - S5-A: **INTEGRATED**
 - S5-B: **PRODUCTION APPLIED / UNALLOCATED / 0 ROWS**
 - S6-A repository foundation: **CLOSED**
-- S7: **CLOSED**
-- S8: **CLOSED**
+- S7 Observability: **CLOSED**
+- S8 usage-policy hooks: **CLOSED**
+- Flight multi-leg contract: **CLOSED**
+- Flight 0..N multi-provider orchestration: **CLOSED**
 
-Do not build another universal/generic Provider foundation without new evidence.
+Do not build another generic Provider foundation merely for abstraction. New internal Flight work is justified only by fresh evidence of a concrete provider-neutral V1 gap.
 
-### Production/live level
+Production/live remains separately gated:
 
-Still hard-off / separately Product-Owner gated:
-
-- Production S6 migration/runtime/HMAC/>0 budget/binding;
-- provider selection/signup/contract/DPA;
+- provider-specific signup/application/contract/DPA;
+- Production S6 runtime/HMAC/>0 budget/binding;
 - live secrets/API keys;
 - paid/live calls;
-- Commercial Provenance runtime writer allocation;
+- Commercial Provenance runtime writer;
 - Production provider activation.
 
-Flights remain the first Commercial Truth domain. Skyscanner Flights Live Prices remains the current Technical-Lead recommendation for commercial due diligence first; Duffel live remains a strong alternative. This is a recommendation only, not a Product-Owner selection.
+## 6. Provider selection is deliberately deferred
 
-## 6. Product-Owner decisions A–D
+The Product Owner has explicitly decided:
 
-All remain **UNAPPROVED**:
+> **Jetnity wird jetzt provider-neutral weitergebaut. Welchen realen Provider oder welche mehreren Provider Jetnity später nutzt, wird später entschieden.**
 
-- **A** — provider/Skyscanner due diligence, signup or partner engagement;
+Therefore:
+
+- KAYAK/Wego/Skyscanner/Duffel may later coexist as adapters if contract/access truth permits;
+- no current candidate is a default/primary provider;
+- no vendor-specific branch may leak into the Flight core merely to prepare a possible future integration;
+- provider-specific adapter/runtime work still requires the relevant external/access truth and gate.
+
+Internal due-diligence ordering remains evidence only, not selection.
+
+## 7. Product-Owner gates A–E
+
+All external/Production gates remain **UNAPPROVED**:
+
+- **A-KAYAK / A-WEGO / A-SKYSCANNER / other A** — external application, signup, contact or partner engagement;
 - **B** — Production S6 apply/runtime principal/HMAC/>0 budget;
 - **C** — live provider secret + first bounded real/paid call;
-- **D** — Commercial Provenance runtime writer/persistence.
+- **D** — Commercial Provenance runtime writer/persistence;
+- **E** — final Production provider activation.
 
-Never infer these from a generic “weiter”, “starten” or agent authorization.
+Never infer these from generic `weiter`, `bauen`, `start` or agent authorization.
 
-## 7. Current work boundary
+## 8. Current work boundary
 
-**There is no automatically authorized next coding slice after a closed slice.**
+**No active Cursor coding agent. No active Flight runtime PR. No automatic next slice.**
 
-The currently versioned non-gated Phase-1 coding slice is Destination Essentials 1 (Issue #393 / Draft PR on `feat/phase-1-destination-essentials-1`). It must stop for Technical-Lead review and must not Ready/merge itself.
+The next Technical-Lead cycle must reconstruct live truth and identify the smallest real remaining provider-neutral V1 gap before dispatching an agent.
 
-PWA-1 is closed. Provider work waits at Product-Owner/external gates. Before any further non-gated Phase-1 implementation:
+Do not automatically start a provider-specific adapter merely because the multi-provider core is now ready.
 
-1. reconstruct live truth;
-2. read the binding V1 build order and current gap analysis;
-3. run a fresh Binding Slice Precheck;
-4. run the mandatory Multi-Agent Suitability Check;
-5. select the smallest responsible Phase-1 slice;
-6. persist task/ownership before coding;
-7. coding is performed by the selected Cursor agent; Technical Lead independently reviews and owns merge.
+Destination Essentials Draft PR #394 is the current provider-independent resume (Issue #393 / `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`). Reconcile against live `main`; do not Ready/merge. TW-8 and provider gates remain closed.
 
-Do not infer a follow-up slice from the PWA-1 merge.
+TW-8 still requires real Commercial Truth and remains closed until that dependency exists.
 
-## 8. Hard Traveller truth
+## 9. Hard Traveller truth
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
 Never infer default/primary/preferred citizenship or passport, array position as semantic truth, Residence → Citizenship or Issuer Country → Citizenship.
 
-## 9. Truth classes
+## 10. Truth classes
 
 > **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
 
 `unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
 
-## 10. Mandatory Multi-Agent Suitability Check
+## 11. Mandatory agent/review governance
 
-Every new material work cycle must:
+Every material slice must:
 
 1. reconstruct live truth;
-2. identify the smallest responsible Phase-1 slice;
-3. assess safe multi-agent decomposition before dispatch;
-4. use `MULTI_AGENT` only for genuinely disjoint ownership with explicit merge order;
-5. use `SINGLE_AGENT` when shared surfaces/contracts create collision risk;
-6. persist the decision;
-7. agents never Ready or merge;
+2. identify the smallest responsible slice;
+3. assess multi-agent suitability before dispatch;
+4. use `MULTI_AGENT` only for disjoint ownership;
+5. use `SINGLE_AGENT` when shared contracts create collision risk;
+6. persist task/ownership/session;
+7. agents never mark Ready or merge;
 8. changed heads invalidate prior exact-head gates;
-9. final integration is Technical-Lead-owned.
+9. CHANGES REQUIRED returns to the same logical agent/session;
+10. final PASS and integration remain Technical-Lead-owned.
 
-## 11. Product-Owner gates
-
-Explicit Product-Owner approval remains required before relevant:
-
-- Production migration/RLS/grant/role/function mutation;
-- runtime/login principal allocation;
-- provider choice/signup/contract/DPA;
-- API keys/secrets;
-- >0 live budgets, paid/live calls and provider activation;
-- fundamental Auth/MFA/AAL changes;
-- sensitive passport/MRZ/scan/biometric/health storage;
-- real payments;
-- spend outside approved limits;
-- public indexing/domain cutover/public launch.
+GitHub Copilot is not a substitute for the binding Cursor coding-agent workflow.
 
 ## 12. Critical V1 gaps still open
 
-Principally open after PWA-1:
+Principally open:
 
-- real Flight Commercial Truth — PO/vendor gated;
+- real Flight Commercial Truth / provider access and contract truth;
 - TW-8/TW-9 after real Commercial Truth;
 - real Hotel Commercial Truth;
-- Activities real path or explicit PO launch exception if externally blocked;
+- Activities real path or explicit launch exception if externally blocked;
 - real Official Entry Requirements Evidence;
 - Temporal Readiness on real evidence;
 - Destination Essentials;
 - basic World Map;
-- broader Mobile/Desktop/PWA release polish and accessibility/real-device QA;
+- broader Mobile/Desktop/PWA polish, accessibility and real-device QA;
 - V1 privacy/legal/ops/monetization closure;
-- V1 Definition of Done and V1 Release Readiness Gate.
+- V1 Definition of Done and Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. PWA-1 CLOSED. PROVIDER RECHECK CLOSED. PRODUCTION S6 UNAPPLIED. NO AUTOMATIC NEXT SLICE. NO REAL PROVIDER UNLOCKED.**
+**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS #394 RESUMED FOR RECONCILE ONLY. NO REAL PROVIDER SELECTED. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**

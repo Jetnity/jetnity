@@ -1,7 +1,9 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 31. August 2026  
-Status: **CURRENT HANDOFF / REQUIREMENTS PROVIDER GATE 0 CLOSED / NO ACTIVE RUNTIME SLICE / LIVE-EVIDENCE GEWINNT**
+Stand: 2. September 2026  
+Status: **CURRENT HANDOFF / FLIGHT MULTI-PROVIDER CORE CLOSED ON MAIN / DESTINATION ESSENTIALS #394 RESUMED FOR MAIN-RECONCILE / LIVE-EVIDENCE GEWINNT**
+
+Current authorized coding slice on this branch: Destination Essentials 1 (Issue #393 / Draft PR #394 / `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`). Flight orchestration on `main` is closed (`#414`). Do not Ready/merge from the coding agent.
 
 Aktuellster vollständiger Checkpoint:
 
@@ -34,21 +36,19 @@ Der Continuity-PR, der diesen Handoff aktualisiert, bewegt `main` nochmals. Fina
 
 ## 2. Agentenstatus
 
-Aktueller Cursor-Agent:
+Aktueller Cursor-Agent für Draft-PR #413 / Issue #412:
 
-**`Jetnity destination essentials 1`**  
+**`Jetnity flight multi-provider orchestration 1`**  
 Generation: **1**  
-Session: `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`
+Session: `bc-c294a0b2-5ed8-411e-8131-5c06a254d2b8`
 
-Status: **IMPLEMENTATION ON DRAFT PR / STOP FOR TECHNICAL-LEAD REVIEW**.
+Status: **IMPLEMENTATION DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**. Kein Ready, kein Merge, kein Folgeslice.
 
-Slice: Issue #393 / `docs/DESTINATION_ESSENTIALS_1_TASK_2026-09-01.md`  
-Branch: `feat/phase-1-destination-essentials-1`  
-Canonical base: `main@c4b6bf3266a9a6aa88a2f3e22e51007b6fb38a08`
+Letzter abgeschlossener Requirements-Agent bleibt historische Evidence:
 
-Der Agent darf nicht Ready setzen und nicht mergen. Kein Folgeslice.
-
-Historischer letzter geschlossener Agent vor diesem Slice: `Jetnity requirements provider groundwork 1` / Session `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`.
+**`Jetnity requirements provider groundwork 1`**  
+Generation: **1**  
+Session: `bc-77badb21-f262-4ee2-86ce-f71a5aa1f051`
 
 ## 3. Requirements / Travel Readiness Current Truth
 
