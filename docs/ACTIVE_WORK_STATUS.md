@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
-Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / WORLD MAP 1 DRAFT IMPLEMENTATION / TECHNICAL-LEAD REVIEW PENDING / NO READY / NO MERGE**
+Stand: 2. September 2026
+Status: **CURRENT / PHASE 1 JETNITY CORE / WORLD MAP 1 DRAFT IMPLEMENTATION / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY / NO MERGE**
 
 ## 1. Arbeitsblock / Ziel
 
@@ -21,11 +21,12 @@ Decision: ADR-0210
 - Generation: **1**
 - Session: `bc-bcfe4a30-460b-439d-8f14-96ec910487ac`
 - Canonical base: `main@7feb9960bdb4ddac07465ab7fc0a62d9d9fe28e6`
-- Exact head: to be recorded after the final push of this slice
+- Runtime implementation head: `e7514acf95a4160858325d40adad6f604c5bc561`
+- This status file is updated on the final agent head after evidence.
 
 ## 3. Status
 
-**technisch review-bereit nach Gates/Evidence; wartet auf unabhängigen Technical-Lead Exact-Head-Review.**
+**technisch review-bereit. STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW.**
 
 Kein Ready. Kein Merge. Kein Folgeslice.
 
@@ -43,31 +44,40 @@ Kein Ready. Kein Merge. Kein Folgeslice.
 
 - unabhängiger Technical-Lead Exact-Head-Review
 - visited/travel-history Persistenz (bewusst out of scope)
-- Preview-/Gate-Evidence am finalen Head
 
 ## 6. Letzte relevanten Änderungen
 
-Implementation of the versioned World Map 1 task on this branch.
+World Map 1 implementation plus hygiene/typecheck fix.
 
 ## 7. Tests / CI / Preview
 
-Recorded in the handoff after the final exact-head gates. Do not treat this status file as proof of green CI or Preview.
+Verified locally on `e7514acf95a4160858325d40adad6f604c5bc561` unless noted:
+
+- focused World Map + account/trip-summary tests: **3187/3187 pass** for full `npm test`; focused world-map tests 13/13
+- `npm run typecheck`: **pass**
+- `npm run lint`: **0 errors** (138 preexisting warnings)
+- `check:setup:ci`, `check:api-schutz`, `check:schema-bezug`, `check:dead`, `check:exports`, `check:deps`: **pass**
+- `npm run build`: **pass**
+- GitHub CI on `e7514acf`: Typecheck/Lint/Build **SUCCESS**, Auth-Konfiguration **SUCCESS**
+- Vercel Preview URL exists and is **SSO-protected** (`302` to `vercel.com/sso-api`). Exact-head HTML was not readable without SSO.
+- Local production-build `/ui-audit/account` evidence: mobile 390 and desktop 1280 for `reise` / `leer` / `fehler` all green; no console errors; no horizontal overflow; visited stays `nicht_erfasst`; error ≠ empty world; marker touch target ≥ 44px
 
 ## 8. DB / RLS / Production-Grenze
 
-Keine Schema-/Migrations-/RLS-/Grant-/Functions-Änderung. Existing owner-RLS on `trips` / `trip_stages` remains the authority. No Production data mutation.
+Keine Schema-/Migrations-/RLS-/Grant-/Functions-Änderung. Existing owner-RLS on `trips` / `trip_stages` remains the authority. Diff vs `origin/main` contains no `supabase/migrations` files.
 
 ## 9. Kosten / Provider / Secrets
 
 Keine neue laufende Kostenstelle. Kein Karten-API, kein Tile-Token, kein Geocoder, kein Provider, kein Secret, kein Production S6.
 
-Land asset: original simplified equirectangular silhouette in `lib/account/world-map-land.ts`. License: original work in this repository. No runtime geography fetch.
+Land asset: original simplified equirectangular silhouette in `lib/account/world-map-land.ts`. License: original work in this repository. No runtime geography fetch. No new npm package.
 
 ## 10. Bekannte Risiken / Review-Funde
 
 - Viele Etappen ohne Koordinaten bleiben nur in der Liste; die Karte kann dann leer wirken, ist aber ehrlich.
 - Marker können sich bei nahen Koordinaten überlappen; die Liste bleibt die zugängliche Quelle.
 - Bestätigte Besuchshistorie fehlt in Production und darf nicht nachgereicht werden, indem Status oder Daten umgedeutet werden.
+- Preview-HTML bleibt Vercel-SSO-geschützt. Technical Lead muss Preview authentifiziert lesen oder die lokale Audit-Evidence verwenden.
 
 ## 11. Offene Nutzerentscheidungen / Freigaben
 

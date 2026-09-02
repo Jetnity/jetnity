@@ -1,16 +1,20 @@
 # World Map 1 – Implementation Handoff
 
-Stand: 2. September 2026  
-Status: **DRAFT IMPLEMENTATION / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW**  
-Issue: #419  
-Draft PR: #422  
-Branch: `feat/phase-1-world-map-1-planned-truth`  
-Cursor-Agent: **`Jetnity world map 1`**  
-Generation: **1**  
+Stand: 2. September 2026
+Status: **DRAFT IMPLEMENTATION / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW**
+Issue: #419
+Draft PR: #422
+Branch: `feat/phase-1-world-map-1-planned-truth`
+Cursor-Agent: **`Jetnity world map 1`**
+Generation: **1**
 Session: `bc-bcfe4a30-460b-439d-8f14-96ec910487ac`
 
-Binding: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`  
+Binding: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`
 Decision: ADR-0210
+Canonical base: `main@7feb9960bdb4ddac07465ab7fc0a62d9d9fe28e6`
+Runtime head: `e7514acf95a4160858325d40adad6f604c5bc561`
+
+`origin/main` drift before handoff: **0 behind / branch-only ahead**. Merge-base is the binding baseline.
 
 ## Implemented
 
@@ -42,6 +46,8 @@ Decision: ADR-0210
 - indexing/domain cutover
 - follow-up slice
 
+Changed-file list vs `origin/main` contains no `supabase/migrations`, no `package.json` / lockfile change, no Auth/MFA/AAL files.
+
 ## Land asset
 
 - File: `lib/account/world-map-land.ts`
@@ -50,7 +56,34 @@ Decision: ADR-0210
 - Runtime fetch: none
 - No new npm package
 
+## Gates / evidence
+
+Local, on `e7514acf95a4160858325d40adad6f604c5bc561`:
+
+- focused World Map tests: pass
+- relevant Account/Trip summary tests: pass
+- full `npm test`: **3187 pass / 0 fail**
+- typecheck: pass
+- lint: 0 errors
+- CI hygiene: setup/api-schutz/schema-bezug/dead/exports/deps pass
+- production build: pass
+
+GitHub CI on that same head: Typecheck/Lint/Build **SUCCESS**; Auth-Konfiguration **SUCCESS**.
+
+Vercel Preview: URL present, HTML **SSO-protected** (`302` to Vercel SSO). Exact-head Preview DOM was not readable without SSO.
+
+Local production-build `/ui-audit/account` on mobile 390 and desktop 1280:
+
+- `reise` → `lage=geplant`, Lisbon plotted, list fallback present
+- `leer` → empty planned copy, no fabricated history
+- `fehler` → world-map error, not empty-world copy
+- visited attribute always `nicht_erfasst`
+- no `0 besucht`
+- no horizontal overflow
+- no console errors
+- focused marker touch target ≥ 44px
+
 ## Next step
 
-Independent Technical-Lead exact-head review.  
+Independent Technical-Lead exact-head review.
 **Do not Ready. Do not merge. Do not start another slice.**

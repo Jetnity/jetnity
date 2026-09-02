@@ -1,9 +1,10 @@
 # World Map 1 – Adversarial Self-Review
 
-Stand: 2. September 2026  
-Branch: `feat/phase-1-world-map-1-planned-truth`  
-Issue: #419  
-Draft PR: #422  
+Stand: 2. September 2026
+Branch: `feat/phase-1-world-map-1-planned-truth`
+Issue: #419
+Draft PR: #422
+Runtime head reviewed by the agent: `e7514acf95a4160858325d40adad6f604c5bc561`
 Agent self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity
@@ -50,7 +51,7 @@ Out of scope and not introduced:
 1. Stages without stored coordinates produce an honest list-only world. That can look sparse, but inventing points would violate the truth contract.
 2. Overlapping markers are possible. The list remains the accessible source of information.
 3. A later visited-history slice needs its own persistence contract. This slice must not be extended into that work during review.
-4. Preview HTML may remain Vercel-SSO protected. Exact-head Preview must be read for the current branch tip.
+4. Preview HTML is Vercel-SSO protected (`302` to `vercel.com/sso-api`). Exact-head Preview must be read authenticated. Local production-build `/ui-audit/account` evidence was captured for mobile 390 and desktop 1280.
 
 ## Recommendation
 
