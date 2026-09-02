@@ -1,16 +1,20 @@
 // components/account/AccountUebersicht.tsx
 //
-// Persönliches Zuhause: Begrüssung, nächste/aktive Reise, Fortsetzen.
-// Keine Flug-/Hotel-/Readiness-/Safety-/Seasonal-Karten.
+// Persönliches Zuhause: Begrüssung, nächste/aktive Reise, Fortsetzen,
+// geplante World Map aus TripSummary. Keine Flug-/Hotel-/Readiness-/
+// Safety-/Seasonal-Karten. Keine Besuchshistorie.
 
 import type { Route } from 'next'
 import Link from 'next/link'
 import { AlertCircle, ArrowRight, MapPin, Plus } from 'lucide-react'
 
+import AccountWeltKarte from '@/components/account/AccountWeltKarte'
 import { BUCHUNGEN_COPY } from '@/lib/account/buchungen'
 import type { NaechsteReise } from '@/lib/account/naechste-reise'
+import { worldMapAbleiten } from '@/lib/account/world-map'
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { Problem } from '@/lib/api/datenbank-lesen'
+import type { TripSummary } from '@/types/trips'
 
 const datum = new Intl.DateTimeFormat('de-CH', {
   day: '2-digit',
@@ -37,12 +41,16 @@ export default function AccountUebersicht({
   problem,
   naechste,
   hatReisen,
+  reisen,
 }: {
   name: string | null
   problem: Problem | null
   naechste: NaechsteReise | null
   hatReisen: boolean
+  reisen: readonly TripSummary[]
 }) {
+  const welt = worldMapAbleiten({ problem, reisen })
+
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Konto</p>
@@ -146,6 +154,8 @@ export default function AccountUebersicht({
           </div>
         </section>
       )}
+
+      <AccountWeltKarte welt={welt} />
     </div>
   )
 }

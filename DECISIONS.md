@@ -5483,6 +5483,31 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0210 – World Map 1: geplante Account-Wahrheit ohne Besuchshistorie
+
+**Datum:** 2. September 2026
+**Status:** Implementiert im Feature-Branch `feat/phase-1-world-map-1-planned-truth`. Kein Ready, kein Merge, keine DB-Mutation, kein Provider, keine Besuchspersistenz. Binding: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`.
+
+**Entscheidung:**
+
+1. World Map 1 ist eine Presentation-Derivation auf authentifiziertem Account Home. Sie erzeugt keine persistierte Besuchshistorie und keine zweite Ortswahrheit.
+2. Geplante Orte kommen nur aus der bestehenden `reisenLaden()` / `TripSummary`-Menge. `TripSummaryStage` trägt zusätzlich die bereits vorhandenen Spalten `country_code`, `place_id`, `latitude` und `longitude`.
+3. Ein Kartenpunkt entsteht nur aus gültigen, endlichen, in den Breiten-/Längengrenzen liegenden gespeicherten Koordinaten. Name, Land, `placeId` oder ähnliche Koordinaten erzeugen keine zweite Position.
+4. Ein Land erscheint nur aus gespeichertem `country_code`. Name, Koordinaten oder `placeId` erschliessen kein Land.
+5. Dieselbe nicht-leere `placeId` darf für die Anzeige aggregieren; Trip-/Stage-Herkunft bleibt erhalten. Ohne identische kanonische `placeId` bleiben Etappen getrennt, auch bei gleichem Label, Land oder ähnlichen Koordinaten.
+6. `visited` wird nicht abgeleitet. Status, Archiv, vergangene Daten, Reihenfolge oder vorhandene Koordinaten sind kein Besuch. Die Fläche sagt, dass bestätigte Besuchshistorie noch nicht erfasst ist, statt `0 besucht` zu behaupten.
+7. Die Karte rendert lokal aus einer gebündelten Landsilhouette. Kein Mapbox/Google/Here, keine Tiles, kein Geocoding, kein Runtime-Geography-Fetch, keine neue laufende Kostenstelle.
+
+**Kontext:** Destination Essentials 1 ist auf `main` geschlossen. Die V1-Build-Order nennt eine minimale World Map als offenen Product-Surface-Gap. Production hat keine visited-Tabelle. Ein erster Slice darf deshalb nur geplante Account-Trip-Wahrheit zeigen.
+
+**Alternativen:** Visited aus vergangenen/archivierten Reisen ableiten; Geocoding aus Etappennamen; externes Karten-API; eigene Travel-History-Tabelle in diesem Slice.
+
+**Begründung:** Eine erschlossene Besuchshistorie wäre eine Lüge über den Reisenden. Ein externes Karten-API würde Token, Kosten und Runtime-Abhängigkeit in einen V1-Slice ziehen, der ohne Migration auskommen muss.
+
+**Konsequenzen:** Account Home bleibt Orientierung, kein Workspace und kein Commercial-Mount. Eine spätere visited-Persistenz braucht einen eigenen Slice, eine eigene Wahrheitstabelle und Product-Owner-Freigabe. TW-8/TW-9, Provider und Production S6 bleiben geschlossen.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -23,7 +23,16 @@ const REISE: TripSummary = {
   budgetAmount: null,
   status: 'planned',
   updatedAt: '2026-08-20T10:00:00.000Z',
-  stages: [{ name: 'Lissabon', position: 1 }],
+  stages: [
+    {
+      name: 'Lissabon',
+      position: 1,
+      countryCode: 'PT',
+      placeId: 'geonames:2267057',
+      latitude: 38.7223,
+      longitude: -9.1393,
+    },
+  ],
   stageCount: 1,
   dayCount: 5,
   itemCount: 0,
@@ -81,16 +90,18 @@ export default function AccountAuditClient() {
         problem: { status: 503 as const, message: 'unavailable' },
         naechste: null,
         hatReisen: false,
+        reisen: [],
       }
     }
     if (zustand === 'leer') {
-      return { name: 'Sasa', problem: null, naechste: null, hatReisen: false }
+      return { name: 'Sasa', problem: null, naechste: null, hatReisen: false, reisen: [] }
     }
     return {
       name: 'Sasa',
       problem: null,
       naechste: naechsteReiseAus([REISE], '2026-08-24'),
       hatReisen: true,
+      reisen: [REISE],
     }
   }, [zustand])
 

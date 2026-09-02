@@ -1,220 +1,88 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED ON MAIN / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / WORLD MAP 1 DRAFT IMPLEMENTATION / TECHNICAL-LEAD REVIEW PENDING / NO READY / NO MERGE**
 
-## 1. Latest verified runtime integration
+## 1. Arbeitsblock / Ziel
 
-Latest runtime-changing verified main baseline:
+World Map 1 / Planned Account Truth.
 
-`3beef65bb1e7ed2921c9f9f3010e685b06076401`
+Add a bounded responsive **Deine Welt** surface to authenticated Account Home using only existing canonical account-trip stage truth. Planned places may come from stored `trip_stages` country/place/coordinate fields. Past dates, archived status, trip status or labels are never proof of a visit.
 
-Commit:
+Binding task: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`
+Issue: #419
+Decision: ADR-0210
 
-`Integrate Destination Essentials 1 (#417)`
+## 2. Branch / PR / Head
 
-This is the runtime-integration baseline. A later docs-only continuity merge may move repository `main`; live `main` must always be fetched before acting.
+- Branch: `feat/phase-1-world-map-1-planned-truth`
+- Draft PR: #422
+- Cursor-Agent: **`Jetnity world map 1`**
+- Generation: **1**
+- Session: `bc-bcfe4a30-460b-439d-8f14-96ec910487ac`
+- Canonical base: `main@7feb9960bdb4ddac07465ab7fc0a62d9d9fe28e6`
+- Exact head: to be recorded after the final push of this slice
 
-Verified Destination Essentials closure:
+## 3. Status
 
-- Issue #393: **CLOSED / COMPLETED**;
-- original Draft PR #394: **CLOSED / NOT MERGED** only because the known GitHub connector Draft→Ready mutation failed on `Repository.fullDatabaseId` after successful Technical-Lead review;
-- rejected exact head `4150517026bf2daf162207f17262f5a5b2d5d1a5`: accessibility CHANGES REQUIRED review `5090867937`;
-- accepted exact head `ba1b446789538a6c1db5c41b42e9529d286d1969`;
-- Technical-Lead FINAL PASS: review `5091873148`;
-- recovery PR #417: **MERGED / SHA-LOCKED** to accepted exact head;
-- recovery CI #1700: **SUCCESS**;
-- post-merge main CI #1701: **SUCCESS** on exact `3beef65b...`;
-- Vercel Production `dpl_E8i5RC5oCuEE9N995okfSw4yQkJt`: **READY** on exact `3beef65b...`;
-- Issue #393 auto-closed completed;
-- no active Cursor agent remains.
+**technisch review-bereit nach Gates/Evidence; wartet auf unabhängigen Technical-Lead Exact-Head-Review.**
 
-Canonical closure checkpoint:
+Kein Ready. Kein Merge. Kein Folgeslice.
 
-`docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
+## 4. Bereits umgesetzt
 
-## 2. Current product phase
+- `TripSummaryStage` trägt `countryCode`, `placeId`, `latitude`, `longitude`
+- `reisenLaden()` / `UEBERSICHT_SPALTEN` liest die bereits vorhandenen Stage-Spalten im bestehenden einen Select
+- `tripAlsUebersicht()` lässt die Felder nicht fallen
+- eine Presentation-Derivation `worldMapAbleiten()`
+- lokale Landsilhouette ohne Runtime-Fetch
+- `Deine Welt` auf Account Home mit Liste, Karte, Error/Empty-Trennung und ehrlicher visited-Lage `nicht_erfasst`
+- fokussierte Tests plus angepasste Account/Trip-Summary-Regressionen
 
-**PHASE 1 – JETNITY CORE**
+## 5. Gerade offen / noch nicht umgesetzt
 
-Goal:
+- unabhängiger Technical-Lead Exact-Head-Review
+- visited/travel-history Persistenz (bewusst out of scope)
+- Preview-/Gate-Evidence am finalen Head
 
-> Make the concrete trip reliably plannable, organized and travel-ready.
+## 6. Letzte relevanten Änderungen
 
-V1 launches only when:
+Implementation of the versioned World Map 1 task on this branch.
 
-> **PRODUCTION READY FOR REAL TRAVELLERS.**
+## 7. Tests / CI / Preview
 
-Feature Complete alone is insufficient.
+Recorded in the handoff after the final exact-head gates. Do not treat this status file as proof of green CI or Preview.
 
-## 3. Flight provider-neutral core state
+## 8. DB / RLS / Production-Grenze
 
-### Request contract — CLOSED
+Keine Schema-/Migrations-/RLS-/Grant-/Functions-Änderung. Existing owner-RLS on `trips` / `trip_stages` remains the authority. No Production data mutation.
 
-- canonical ordered `legs[]`;
-- 1–6 legs;
-- One-Way / Return / Multi-City through one request truth;
-- canonical stop preference preserved;
-- ranking-only context stays outside provider request truth.
+## 9. Kosten / Provider / Secrets
 
-### Multi-provider orchestration — CLOSED
+Keine neue laufende Kostenstelle. Kein Karten-API, kein Tile-Token, kein Geocoder, kein Provider, kein Secret, kein Production S6.
 
-Accepted runtime behavior:
+Land asset: original simplified equirectangular silhouette in `lib/account/world-map-land.ts`. License: original work in this repository. No runtime geography fetch.
 
-- 0..N independent `FlugProvider` adapters;
-- no fake composite provider result;
-- provider-local `retrievedAt`, evidence and failure truth;
-- combined normalized `FlugOption[]` only;
-- one global provider/provision-neutral ranking;
-- result cap after ranking;
-- no implicit primary/default provider from array order;
-- no blind cross-provider itinerary dedupe;
-- provider failure isolation;
-- privacy-safe browser boundary;
-- Duffel credential handling remains Duffel-local;
-- Production hard-off + explicit `JETNITY_FLIGHT_AKTIV` fail closed.
+## 10. Bekannte Risiken / Review-Funde
 
-No current code selects KAYAK, Wego, Skyscanner or Duffel as Jetnity's Production default.
+- Viele Etappen ohne Koordinaten bleiben nur in der Liste; die Karte kann dann leer wirken, ist aber ehrlich.
+- Marker können sich bei nahen Koordinaten überlappen; die Liste bleibt die zugängliche Quelle.
+- Bestätigte Besuchshistorie fehlt in Production und darf nicht nachgereicht werden, indem Status oder Daten umgedeutet werden.
 
-## 4. Destination Essentials 1 state
+## 11. Offene Nutzerentscheidungen / Freigaben
 
-**CLOSED / MERGED / POST-MERGE VERIFIED**
+Technical-Lead Exact-Head-Review, Ready und Merge. Keine Product-Owner-Special-Gates durch diesen Slice berührt.
 
-Accepted product behavior:
+## 12. Exakter nächster Schritt
 
-- source-aware destination summary inside the existing Trip Workspace overview;
-- ordered stage identity retained; duplicate-country stages remain distinct;
-- no country inference and no visited inference;
-- Destination Official and Transit Official remain separate;
-- unknown/unavailable/stale/recheck remain distinct from `not_required`;
-- mixed traveller/credential outcomes remain explicitly option-/traveller-dependent;
-- no default citizenship or passport is selected;
-- canonical credential labels preserve which document option an outcome belongs to;
-- Safety/Seasonal destination attachment requires explicit matching stage refs;
-- validated Official action and source semantics remain separate;
-- `Quellen und Details` has native details/summary semantics, focus behavior and Jetnity `min-h-11` touch target;
-- missing evidence remains honest empty state;
-- no commercial search trigger, provider call or new truth engine was added.
+Unabhängiger Technical-Lead Exact-Head-Review von Draft PR #422. Cursor-Agent stoppt.
 
-The bounded Destination Essentials 1 surface is therefore no longer an open V1 gap. A future expansion is a separate slice and needs a fresh live precheck.
+## 13. Welche Dateien zuerst gelesen werden müssen
 
-## 5. Provider Readiness foundations
-
-Repository state:
-
-- S4: **CLOSED**
-- S5-A Commercial Provenance contract: **INTEGRATED**
-- S5-B persistence: **PRODUCTION APPLIED / UNALLOCATED / 0 ROWS**
-- S6-A repository Cost Guard foundation: **CLOSED**
-- S7 Observability: **CLOSED**
-- S8 usage-policy hooks: **CLOSED**
-- Flight multi-leg contract: **CLOSED**
-- Flight multi-provider orchestration: **CLOSED**
-
-Do not add another generic provider framework unless new live evidence proves a concrete V1 need. Reuse existing seams.
-
-## 6. Production/live provider state
-
-Still intentionally closed:
-
-- real provider selection;
-- provider application/signup/contact/contract/DPA;
-- Production S6 migration/runtime/HMAC/>0 budget/binding;
-- live provider API secrets;
-- sandbox/live/paid calls requiring external access;
-- Commercial Provenance runtime writer allocation;
-- Production provider activation.
-
-The constructible Duffel Development/Test path does not make Duffel the selected Production provider.
-
-## 7. Provider selection and inquiries are deferred by Product Owner
-
-Binding direction:
-
-> Provider-Anfragen werden auf die Seite gelegt. Jetnity wird provider-neutral weitergebaut; der reale Provider oder die mehreren Provider werden später entschieden.
-
-Therefore multiple future provider adapters may coexist behind the same Flight core. Any provider-specific adapter must respect the common request, option, provenance, evidence, failure and ranking contracts rather than changing the core around one vendor.
-
-Internal due-diligence material remains evidence only, not provider selection.
-
-## 8. Product-Owner gates A–E
-
-All remain **UNAPPROVED** for external/Production action:
-
-- **A** — provider application, signup, external contact or partner engagement;
-- **B** — Production S6 apply/runtime/HMAC/>0 budget;
-- **C** — live provider secret and first bounded real/paid call;
-- **D** — Commercial Provenance runtime writer/persistence;
-- **E** — final Production provider activation.
-
-Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any of these gates.
-
-## 9. Active work boundary
-
-**No active Cursor coding agent. No active runtime PR. No automatic follow-up slice.**
-
-Completed Destination Essentials identity for historical continuity only:
-
-- Issue #393 — closed;
-- Draft PR #394 — closed/not merged due connector Ready bug;
-- Recovery PR #417 — merged;
-- Cursor-Agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2` — completed, not active.
-
-The Product Owner's direction to continue provider-neutrally does not itself authorize a new slice. A new Technical-Lead cycle must first reconstruct live truth and select the smallest responsible remaining V1 gap.
-
-TW-8 remains dependent on real Flight Commercial Truth and is not opened by Destination Essentials closure.
-
-## 10. Deferred work that must not be pulled forward accidentally
-
-Still closed/gated unless separately selected and authorized:
-
-- TW-8/TW-9 Commercial Truth closure;
-- World Map / visited truth;
-- service worker/offline/push;
-- public indexing/domain cutover;
-- payments;
-- provider activation;
-- any follow-up Destination Essentials expansion.
-
-No later V1 slice is automatically authorized by this status document.
-
-## 11. Hard Traveller truth
-
-> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
-
-Never infer a default/primary/preferred citizenship or passport, array order as truth, Residence → Citizenship or Issuer Country → Citizenship.
-
-## 12. Truth architecture
-
-> **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
-
-`unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
-
-## 13. Agent / review governance
-
-- ChatGPT is the overarching Technical Lead.
-- Cursor agents implement versioned slices.
-- Agent self-review is never Technical-Lead PASS.
-- Changed heads invalidate previous exact-head gates.
-- CHANGES REQUIRED returns to the same logical Cursor agent/session.
-- Agents do not mark Ready and do not merge.
-- Final independent review, gate validation and integration belong to the Technical Lead.
-- No automatic follow-up slice.
-
-## 14. Critical V1 gaps still open
-
-Principally open:
-
-- real Flight Commercial Truth / provider-access and contract truth;
-- TW-8/TW-9 after real Commercial Truth;
-- real Hotel Commercial Truth;
-- Activities real path or explicit launch exception if externally blocked;
-- real Official Entry Requirements Evidence;
-- Temporal Readiness on real evidence;
-- basic World Map;
-- Mobile/Desktop/PWA polish, accessibility and real-device QA;
-- intelligent assistant V1 truth-aware closure;
-- V1 privacy/legal/ops/monetization minimum;
-- V1 Definition of Done and Release Readiness Gate.
-
-**LIVE-EVIDENCE WINS. ISSUE #393 CLOSED. RECOVERY PR #417 MERGED. DESTINATION ESSENTIALS 1 CLOSED. FLIGHT MULTI-PROVIDER CORE CLOSED. NO ACTIVE AGENT. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+1. `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`
+2. `docs/WORLD_MAP_1_PLANNED_TRUTH_HANDOFF_2026-09-02.md`
+3. `docs/WORLD_MAP_1_PLANNED_TRUTH_SELF_REVIEW_2026-09-02.md`
+4. `DECISIONS.md` ADR-0210
+5. `lib/account/world-map.ts`
+6. `lib/trips/daten.ts`
+7. `components/account/AccountWeltKarte.tsx`

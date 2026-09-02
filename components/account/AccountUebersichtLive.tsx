@@ -33,6 +33,7 @@ export default function AccountUebersichtLive({
       problem={problem}
       naechste={naechste}
       hatReisen={reisen.length > 0}
+      reisen={reisen}
     />
   )
 }

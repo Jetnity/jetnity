@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Destination Essentials Issue #393 / PR #394, resumed against current `main` under `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): World Map 1 / Planned Account Truth, Issue #419 / Draft PR #422, Branch `feat/phase-1-world-map-1-planned-truth`, Binding `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`. Destination Essentials 1 ist auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -305,15 +305,19 @@ Nächster Schritt:
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
-## 9a. Destination Essentials 1 – resumed Draft-PR, Technical-Lead review pending
+## 9a. Destination Essentials 1 – CLOSED on main
 
-Product-Owner-authorized provider-independent resume of Issue #393 / Draft PR #394 on `feat/phase-1-destination-essentials-1`, after reconcile onto current `main`. Binding: `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`.
+Issue #393 / recovery PR #417 are closed on `main`. Historical resume evidence remains under `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`. Destination Essentials decision remains ADR-0209.
 
-- Presentation-only Zielzusammenfassung in der Trip-Workspace-Übersicht
-- Wiederverwendung vorhandener Official-/Safety-/Seasonal-Evaluations
-- current `main` Flight/docs contracts remain authoritative (ADR-0207/0208 stay Flight)
-- Destination Essentials decision is ADR-0209
-- kein Ready, kein Merge, kein Provider, keine DB-Mutation durch den Coding-Agenten
+## 9b. World Map 1 – Draft-PR, Technical-Lead review pending
+
+Technical-Lead-authorized planned-truth slice of Issue #419 / Draft PR #422 on `feat/phase-1-world-map-1-planned-truth`. Binding: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`.
+
+- `Deine Welt` auf authentifiziertem Account Home
+- nur gespeicherte `trip_stages` country/place/coordinate fields
+- keine visited-Ableitung, keine Geocoding-/Karten-API, keine DB-Mutation
+- Decision is ADR-0210
+- kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten
 
 Technical-Lead-owned. Kein Folgeslice aus diesem Stand ableiten.
 

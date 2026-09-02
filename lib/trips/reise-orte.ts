@@ -4,8 +4,8 @@
 // Dieselbe Regel wie die Workspace-Übersicht: Etappennamen in position-
 // Reihenfolge, getrennt mit ` · `, Herkunft als `ab {origin}`.
 //
-// Keine persistierte Wahrheit, keine Transit-/Flight-Ziele, keine Place-IDs,
-// keine stille Reorder jenseits von `position`.
+// Keine persistierte Wahrheit, keine Transit-/Flight-Ziele, keine stille
+// Reorder jenseits von `position`. World-Map-Felder bleiben Durchreichung.
 
 import type { Trip, TripSummary, TripSummaryStage } from '@/types/trips'
 
@@ -31,6 +31,10 @@ export function tripAlsUebersicht(reise: Trip): TripSummary {
   const stages = reise.stages.map((etappe) => ({
     name: etappe.name,
     position: etappe.position,
+    countryCode: etappe.countryCode,
+    placeId: etappe.placeId,
+    latitude: etappe.latitude,
+    longitude: etappe.longitude,
   }))
   return {
     id: reise.id,

@@ -28,7 +28,7 @@ function reise(teil: Partial<TripSummary> & Pick<TripSummary, 'id' | 'title'>): 
     budgetAmount: null,
     status: 'draft',
     updatedAt: '2026-08-01T10:00:00.000Z',
-    stages: [{ name: 'Ubud', position: 1 }],
+    stages: [{ name: 'Ubud', position: 1, countryCode: null, placeId: null, latitude: null, longitude: null }],
     stageCount: 1,
     dayCount: 0,
     itemCount: 0,

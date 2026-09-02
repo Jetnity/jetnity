@@ -1,7 +1,9 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 2. September 2026  
-Status: **CURRENT HANDOFF / FLIGHT MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED ON MAIN / PROVIDER CONTACTS DEFERRED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / DESTINATION ESSENTIALS 1 CLOSED ON MAIN / WORLD MAP 1 ACTIVE DRAFT ON FEATURE BRANCH / NO READY / NO MERGE / LIVE-EVIDENCE GEWINNT**
+
+Active feature-branch work, if present, lives in `docs/ACTIVE_WORK_STATUS.md` on `feat/phase-1-world-map-1-planned-truth` (Issue #419 / Draft PR #422). That draft is not on `main` and is not Ready.
 
 Latest runtime closure checkpoint:
 
