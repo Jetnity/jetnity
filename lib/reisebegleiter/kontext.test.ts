@@ -32,6 +32,9 @@ const LEAK_USER = '00000000-leak-4000-8000-000000000099'
 const LEAK_HEALTH = 'HIV-positive-akte-leak'
 const LEAK_SESSION = 'sess-leak-token-9911'
 const LEAK_RAW = '{"offers":[{"amount":4242.42}]}'
+const LEAK_FINGERPRINT =
+  'off-v2|t=traveller:1|cit=CH,RS|res=DE|docs=passport:CH|orig=CH|dest=IT|tr=CH|start=2026-09-12|end=2026-09-20|type=visa|LEAK-FP-MARKER-9911'
+const LEAK_FINGERPRINT_MARKER = 'LEAK-FP-MARKER-9911'
 
 function etappe(teil: Partial<TripStage> & Pick<TripStage, 'id' | 'name'>): TripStage {
   return {
@@ -211,7 +214,7 @@ function official(teil: Partial<OfficialEvaluation> = {}): OfficialEvaluation {
       validFrom: null,
       validUntil: null,
       ruleReference: 'rule-1',
-      contextFingerprint: 'fp-official',
+      contextFingerprint: LEAK_FINGERPRINT,
     },
     action: {
       kind: 'open_official_action',
@@ -342,6 +345,7 @@ const VERBOTENE_FELDNAMEN = new Set([
   'href',
   'action',
   'evidence',
+  'contextfingerprint',
 ])
 
 const VERBOTENE_WERTE = [
@@ -355,6 +359,8 @@ const VERBOTENE_WERTE = [
   LEAK_HEALTH,
   LEAK_SESSION,
   LEAK_RAW,
+  LEAK_FINGERPRINT,
+  LEAK_FINGERPRINT_MARKER,
   'off_secret',
 ]
 
@@ -617,7 +623,7 @@ describe('Assistant Truth Context 1', () => {
 
     const currentNotRequired = kontext.official.find((eintrag) => eintrag.freshness === 'current' && eintrag.result === 'not_required')
     assert.ok(currentNotRequired)
-    assert.notEqual(staleNotRequired?.contextFingerprint, currentNotRequired.contextFingerprint)
+    assert.notEqual(staleNotRequired?.freshness, currentNotRequired.freshness)
   })
 
   test('kollabiert Destination- und Transit-Official nicht bei gleichem Land', () => {
@@ -654,11 +660,13 @@ describe('Assistant Truth Context 1', () => {
     assert.equal(assistantOfficialIstTransit(official({ requirementType: 'transit', transitCountryCode: 'IT' })), true)
     assert.equal(destination.destinationCountryCode, 'IT')
     assert.equal(transit.transitCountryCode, 'IT')
-    assert.notEqual(destination.contextFingerprint, transit.contextFingerprint)
+    assert.equal(destination.scope, 'destination')
+    assert.equal(transit.scope, 'transit')
     assert.deepEqual(destination.boundStageIds, ['stage-fl'])
-    assert.deepEqual(transit.boundStageIds, ['stage-fl'])
+    assert.deepEqual(transit.boundStageIds, [])
     assert.notEqual(destination.result, transit.result)
     assert.equal(kontext.official.length, 2)
+    assert.equal(JSON.stringify(kontext).includes('contextFingerprint'), false)
   })
 
   test('hält zwei Etappen im selben Land als getrennte Stage-Refs', () => {
@@ -829,6 +837,53 @@ describe('Assistant Truth Context 1', () => {
     assert.equal(serialisiert.includes('duffel'), false)
     assert.equal(kontext.official[0]?.authority, 'MAECI')
     assert.equal(kontext.official[0]?.checkedAt, JETZT)
+    assert.equal(Object.prototype.hasOwnProperty.call(kontext.official[0], 'contextFingerprint'), false)
+  })
+
+  test('projiziert keinen Official-contextFingerprint und bindet Transit nicht per Landesgleichheit', () => {
+    const kontext = assistantTruthContextProjizieren({
+      reise: reise({
+        stages: [etappe({ id: 'stage-fl', position: 1, name: 'Florenz', countryCode: 'IT' })],
+      }),
+      officialEvaluations: [
+        official({
+          requirementType: 'visa',
+          destinationCountryCode: 'IT',
+          transitCountryCode: null,
+          result: 'required',
+          evidence: { ...official().evidence, contextFingerprint: LEAK_FINGERPRINT },
+        }),
+        official({
+          requirementType: 'transit',
+          destinationCountryCode: 'IT',
+          transitCountryCode: 'IT',
+          result: 'not_required',
+          visaMode: null,
+          evidence: {
+            ...official().evidence,
+            contextFingerprint: `${LEAK_FINGERPRINT}|scope=transit`,
+          },
+        }),
+      ],
+      routeFacts: {
+        quelle: 'flight_itinerary',
+        destinationCountryCodes: ['IT'],
+        transitCountryCodes: ['IT'],
+      },
+    })
+    const serialisiert = JSON.stringify(kontext)
+    assert.equal(serialisiert.includes(LEAK_FINGERPRINT), false)
+    assert.equal(serialisiert.includes(LEAK_FINGERPRINT_MARKER), false)
+    assert.equal(serialisiert.includes('contextFingerprint'), false)
+    const destination = kontext.official.find((eintrag) => eintrag.scope === 'destination')
+    const transit = kontext.official.find((eintrag) => eintrag.scope === 'transit')
+    assert.ok(destination)
+    assert.ok(transit)
+    assert.deepEqual(destination.boundStageIds, ['stage-fl'])
+    assert.deepEqual(transit.boundStageIds, [])
+    assert.deepEqual(kontext.route.destinationCountryCodes, ['IT'])
+    assert.deepEqual(kontext.route.transitCountryCodes, ['IT'])
+    assert.notDeepEqual(destination.boundStageIds, transit.boundStageIds)
   })
 
   test('ist deterministisch bei identischer Quelle', () => {

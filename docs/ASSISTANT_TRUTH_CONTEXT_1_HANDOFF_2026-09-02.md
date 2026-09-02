@@ -1,7 +1,7 @@
 # Assistant Truth Context 1 – Implementation Handoff
 
 Stand: 2. September 2026  
-Status: **IMPLEMENTED / LOCAL GATES GREEN / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **REVIEW-FIX IMPLEMENTED / STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD REVIEW**  
 Issue: #425  
 Draft PR: #426  
 Branch: `feat/phase-1-assistant-truth-context-1`  
@@ -13,9 +13,11 @@ Multi-Agent: **SINGLE_AGENT**
 Binding: `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`  
 Decision: ADR-0211  
 Canonical base: `main@efbaaf4f9bc9ea1534aba2dfcf120110d014038b`  
+Rejected exact head: `42cd37fae1465c13cbec9ed2f8cd16d5c425436f`  
+Technical-Lead CHANGES REQUIRED review: `5093789177`  
 Runtime implementation head: `981d47ba250a76af576fac24d2e5888ac4caf34f`  
-Exact live-gated head: `a6737e44ef32c327eb4947f1f33566c446a0607f`  
-Exact agent head for review: latest commit on this branch including this evidence update. Changed heads invalidate previous exact-head gates.
+Historical live-gated heads `a6737e44` / `42cd37fa` are invalid.  
+Exact agent head for review: latest commit on this branch after the review-fix. Changed heads invalidate previous exact-head gates.
 
 `origin/main` at handoff: **0 behind** the binding SHA `efbaaf4f`. Merge-base is still that baseline. Branch-only ahead.
 
@@ -30,6 +32,8 @@ Output contract:
 - stages with canonical `stageId` + `position`;
 - travellers with peer citizenships, peer documents and credential options;
 - official evaluations with separate `result` / `status` / `freshness` and `scope: destination | transit`;
+- destination Official binds only via `destinationIstOfficialZiel`; transit Official keeps country facts and empty `boundStageIds`;
+- Official `contextFingerprint` stays internal for sort stability and is not serialized;
 - safety / seasonal bound only through existing stage-ref helpers;
 - optional supplied route destination/transit country arrays, kept separate;
 - empty `generatedSuggestion` lane;
@@ -84,7 +88,14 @@ Changed runtime files vs `origin/main`:
 
 No `supabase/`, `package.json`, lockfile, Auth/MFA/AAL, UI component or API route files.
 
-## Local gates on `981d47ba`
+## Review `5093789177` — two findings only
+
+1. **Privacy.** `contextFingerprint` is no longer a field on `AssistantOfficialContext`. A realistic `off-v2|t=...|cit=...|LEAK-FP-MARKER-9911` input fingerprint is used only internally for sort stability and is absent from the serialized projection.
+2. **Transit binding.** Transit Official is no longer bound to destination stages by `stage.countryCode === transitCountryCode`. Destination IT still binds to the IT destination stage; transit IT keeps `scope: 'transit'` + `transitCountryCode` and `boundStageIds: []`. Route destination/transit country arrays remain separate facts.
+
+Previous exact-head CI/Vercel evidence on `a6737e44` / `42cd37fa` is historical.
+
+## Local gates on `981d47ba` (historical, pre-review-fix)
 
 | Gate | Result |
 | --- | --- |
@@ -131,7 +142,7 @@ A later documentation commit on this branch invalidates this exact-head pair. Te
 
 1. A later real assistant model call needs its own gate-precheck: new `Modellfunktion` / usage contract, kill-switch, cost cap and Production-model decision. This slice does not authorize that.
 2. The projection is not wired into a runtime caller. That is intentional; wiring would be a follow-up slice.
-3. Official `authority` / `checkedAt` / `ruleReference` are retained as structured official metadata. Provider name, source URL, action href, commercial fields and secrets are omitted.
+3. Official `authority` / `checkedAt` / `ruleReference` are retained as structured official metadata. Provider name, source URL, action href, commercial fields, secrets and Official `contextFingerprint` are omitted.
 4. Agent self-review is not Technical-Lead PASS.
 
 ## Next step

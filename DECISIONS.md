@@ -5518,11 +5518,11 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 1. Assistant Truth Context 1 ist eine pure Domain-Projektion unter `lib/reisebegleiter/kontext.ts`. Sie erzeugt keine Official-/Provider-/Commercial-Wahrheit und ruft kein Modell auf.
 2. Die Projektion darf nur bereits vorhandene/supplied Trip-, Traveller-, Official-, Safety-, Seasonal- und optionale Route-Facts weiterreichen. `Modellfunktion` bleibt `'reisevorschlag' | 'reiseaenderung'`.
 3. Stage-Identität und `position` bleiben kanonisch. Doppelte Länder bleiben getrennte Stage-Refs. Country wird nicht aus Name, Koordinaten oder Place-ID erschlossen.
-4. Destination Official und Transit Official bleiben getrennte Records, auch bei gleichem Land. `destinationIstOfficialZiel` wird wiederverwendet; Transit wird nicht als Destination gebunden.
+4. Destination Official und Transit Official bleiben getrennte Records, auch bei gleichem Land. Destination bindet nur über `destinationIstOfficialZiel`. Transit behält `scope: 'transit'` und `transitCountryCode`; `boundStageIds` bleibt leer, weil der aktuelle Inputvertrag keine kanonische Transit↔Stage-Relation liefert. Landesgleichheit ist keine Bindung.
 5. `result`, `status` und `freshness` bleiben getrennte Dimensionen. `unknown`, `unavailable`, `stale` und `recheck_needed` werden nicht zu `not_required` oder `current` verdichtet.
 6. Mehrere Traveller, Citizenships und Documents bleiben Peers. Array-Reihenfolge erzeugt kein Default/Primary/Preferred. Residence ≠ Citizenship. Issuer Country ≠ Citizenship. Citizenship entsteht nicht aus Wohnsitz oder Dokument.
 7. Safety/Seasonal werden nur über die bestehenden Stage-Ref-Helfer gebunden. Official, Safety, Seasonal und eine leere `generatedSuggestion`-Lane bleiben getrennt. Provider-/Recommendation-/Community-/Generated-Suggestion-Klassen werden vorbereitet, aber nicht befüllt.
-8. Die serialisierte Projektion enthält keine Pass-/MRZ-/Scan-/Biometrie-/Health-Record-, Auth-/Account-Identifier-, Preis-, Availability-, Booking-URL-, Provider-Raw- oder Secret-Felder.
+8. Die serialisierte Projektion enthält keine Pass-/MRZ-/Scan-/Biometrie-/Health-Record-, Auth-/Account-Identifier-, Preis-, Availability-, Booking-URL-, Provider-Raw-, Secret- oder Official-`contextFingerprint`-Felder. Der Fingerprint darf intern zur Sortierung dienen, überschreitet die Allowlist aber nicht.
 
 **Kontext:** World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Die V1-Build-Order nennt einen truth-aware In-Trip-Assistant als offenen Gap. Bevor ein Modellweg erweitert wird, muss feststehen, welche vorhandene Wahrheit ein Assistent sehen darf.
 
@@ -5531,6 +5531,8 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 **Begründung:** Destination Essentials verdichtet `recheck_needed` zu `stale` und trägt Quell-URLs. Ein späterer Assistant darf diese Presentation-Aggregation nicht als kanonische Wahrheit lesen. Ein Modellcall ohne minimierte Projektion würde Official/Provider/Generated Suggestion vermischen und sensible Felder riskieren.
 
 **Konsequenzen:** Ein späterer echter Assistant-Model-Call braucht einen eigenen Gate-Precheck, inkl. Usage-Contract/`Modellfunktion`, Kill-Switch und Kostenkontrolle. Dieser Slice autorisiert das nicht. Keine UI, keine Trip-Mutation, keine Production-Aktivierung.
+
+**Nachtrag, 2. September 2026 / Review `5093789177`:** Exact rejected head `42cd37fa`. `contextFingerprint` wurde aus `AssistantOfficialContext` entfernt. Transit-Official wird nicht mehr per `stage.countryCode === transitCountryCode` an Destination-Stages gebunden.
 
 ---
 

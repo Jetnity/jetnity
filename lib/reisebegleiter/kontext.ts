@@ -123,7 +123,6 @@ export type AssistantOfficialContext = {
   validUntil: string | null
   authority: string | null
   ruleReference: string | null
-  contextFingerprint: string
   temporalRule: OfficialTemporalRule | null
 }
 
@@ -316,12 +315,9 @@ function officialAnEtappen(
   stages: readonly AssistantStageContext[],
   scope: AssistantOfficialScope,
 ): string[] {
+  if (scope !== 'destination') return []
   return stages
-    .filter((stage) =>
-      scope === 'destination'
-        ? destinationIstOfficialZiel(evaluation, stage.countryCode)
-        : Boolean(evaluation.transitCountryCode) && stage.countryCode === evaluation.transitCountryCode,
-    )
+    .filter((stage) => destinationIstOfficialZiel(evaluation, stage.countryCode))
     .map((stage) => stage.stageId)
 }
 
@@ -332,8 +328,9 @@ function officialProjizieren(
   return (evaluations ?? [])
     .map((evaluation) => {
       const scope: AssistantOfficialScope = assistantOfficialIstTransit(evaluation) ? 'transit' : 'destination'
-      return {
-        truthClass: 'official' as const,
+      const contextFingerprint = evaluation.evidence.contextFingerprint
+      const projiziert: AssistantOfficialContext = {
+        truthClass: 'official',
         scope,
         travellerClientRef: refOderNull(evaluation.travellerClientRef),
         credentialOptionRef: refOderNull(evaluation.credentialOptionRef),
@@ -354,19 +351,20 @@ function officialProjizieren(
         validUntil: evaluation.evidence.validUntil,
         authority: evaluation.evidence.authority,
         ruleReference: evaluation.evidence.ruleReference,
-        contextFingerprint: evaluation.evidence.contextFingerprint,
         temporalRule: evaluation.temporalRule,
       }
+      return { projiziert, contextFingerprint }
     })
     .sort((links, rechts) =>
-      links.scope.localeCompare(rechts.scope) ||
-      (links.destinationCountryCode ?? '').localeCompare(rechts.destinationCountryCode ?? '') ||
-      (links.transitCountryCode ?? '').localeCompare(rechts.transitCountryCode ?? '') ||
-      (links.travellerClientRef ?? '').localeCompare(rechts.travellerClientRef ?? '') ||
-      (links.credentialOptionRef ?? '').localeCompare(rechts.credentialOptionRef ?? '') ||
-      links.requirementType.localeCompare(rechts.requirementType) ||
+      links.projiziert.scope.localeCompare(rechts.projiziert.scope) ||
+      (links.projiziert.destinationCountryCode ?? '').localeCompare(rechts.projiziert.destinationCountryCode ?? '') ||
+      (links.projiziert.transitCountryCode ?? '').localeCompare(rechts.projiziert.transitCountryCode ?? '') ||
+      (links.projiziert.travellerClientRef ?? '').localeCompare(rechts.projiziert.travellerClientRef ?? '') ||
+      (links.projiziert.credentialOptionRef ?? '').localeCompare(rechts.projiziert.credentialOptionRef ?? '') ||
+      links.projiziert.requirementType.localeCompare(rechts.projiziert.requirementType) ||
       links.contextFingerprint.localeCompare(rechts.contextFingerprint),
     )
+    .map(({ projiziert }) => projiziert)
 }
 
 function safetyProjizieren(

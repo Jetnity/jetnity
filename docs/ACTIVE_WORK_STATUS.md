@@ -238,7 +238,7 @@ Basic World Map 1 and Destination Essentials 1 are no longer open gaps. Assistan
 
 ## 16. Assistant Truth Context 1 — current Draft
 
-**IMPLEMENTED / LOCAL GATES GREEN / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW**
+**REVIEW-FIX AFTER `5093789177` / STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD REVIEW**
 
 Implemented in this branch:
 
@@ -250,19 +250,14 @@ Implemented in this branch:
 
 Reuse: `destinationIstOfficialZiel`, `destinationSafetyBetrifftStage`, `destinationSeasonalBetrifftStage`, `credentialOptionsAus`, `documentsSortieren`, `documentCitizenshipCode`, `landescodeLesen`, `OfficialEvaluation` / Safety / Seasonal types.
 
-Local gates on runtime head `981d47ba`:
+Technical-Lead CHANGES REQUIRED `5093789177` on rejected head `42cd37fa`. Two findings only:
 
-- targeted assistant tests 14/14;
-- relevant truth suite 46/46;
-- `npm test` 3204/3204;
-- typecheck / lint (0 errors) / hygiene / production build pass.
+1. Official `contextFingerprint` removed from the serialized projection (internal sort only).
+2. Transit Official no longer binds to destination stages by country equality; `boundStageIds` stay empty.
 
-Exact-head live evidence on `a6737e44`:
+Previous exact-head gates on `981d47ba` / `a6737e44` / `42cd37fa` are historical. Fresh local + CI/Vercel evidence must be read on the new review-fix tip.
 
-- GitHub CI #33668056090: **SUCCESS**
-- Vercel Preview `ExHtm7W1vB5xK3CuRKk8RGQ5uxCU`: **READY**
-
-A later commit on this branch invalidates that pair. Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
+Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
 
 Not introduced:
 
