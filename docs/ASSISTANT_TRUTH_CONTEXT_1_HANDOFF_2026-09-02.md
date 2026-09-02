@@ -14,7 +14,8 @@ Binding: `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`
 Decision: ADR-0211  
 Canonical base: `main@efbaaf4f9bc9ea1534aba2dfcf120110d014038b`  
 Runtime implementation head: `981d47ba250a76af576fac24d2e5888ac4caf34f`  
-Exact agent head for review: latest commit on this branch including this handoff. Changed heads invalidate previous exact-head gates.
+Exact live-gated head: `a6737e44ef32c327eb4947f1f33566c446a0607f`  
+Exact agent head for review: latest commit on this branch including this evidence update. Changed heads invalidate previous exact-head gates.
 
 `origin/main` at handoff: **0 behind** the binding SHA `efbaaf4f`. Merge-base is still that baseline. Branch-only ahead.
 
@@ -99,12 +100,32 @@ No new visual product screenshot: no UI was built.
 
 ## GitHub CI / Vercel Preview
 
-Live exact-head CI and Vercel Preview for the **final tip including this documentation commit** must be read after push. Ancestor SHA evidence is not exact-head.
+Live-read on exact head `a6737e44ef32c327eb4947f1f33566c446a0607f` (handoff commit; docs-only after runtime `981d47ba`):
 
-Placeholder until the documentation tip is gated:
+### GitHub Actions
 
-- GitHub Actions on exact final head: **pending live read**
-- Vercel Preview on exact final head: **pending live read**
+- CI run: https://github.com/Jetnity/jetnity/actions/runs/33668056090
+- Head SHA: `a6737e44ef32c327eb4947f1f33566c446a0607f`
+- Conclusion: **SUCCESS** (2m9s)
+
+Jobs:
+
+- Typecheck, Lint & Build: **SUCCESS**
+  - Setup check, Typecheck, Lint, Tests, Admin-API-Schutz, Schema-Bezug, Unerreichbarer Code, Exporte, Ungenutzte Pakete, Production build: **SUCCESS**
+- Auth-Konfiguration gegen config.toml: **SUCCESS**
+
+Implementation-only ancestor CI on `981d47ba` (run `33667776824`) was also SUCCESS and is now historical.
+
+### Vercel Preview
+
+- GitHub deployment `6229252124`, environment **Preview**, SHA `a6737e44...`
+- Vercel status context: **SUCCESS** / "Deployment has completed"
+- Dashboard: https://vercel.com/jetnity-e1b93c82/jetnity-app/ExHtm7W1vB5xK3CuRKk8RGQ5uxCU
+- Bot comment state: **Ready**
+- Preview: https://jetnity-app-git-feat-phase-1-assistant-b4815f-jetnity-e1b93c82.vercel.app
+- Deployment alias: https://jetnity-au3uk3lq7-jetnity-e1b93c82.vercel.app
+
+A later documentation commit on this branch invalidates this exact-head pair. Technical Lead must re-read CI/Preview on the reviewed tip.
 
 ## Residuals
 

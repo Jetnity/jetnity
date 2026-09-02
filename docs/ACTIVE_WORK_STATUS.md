@@ -257,7 +257,12 @@ Local gates on runtime head `981d47ba`:
 - `npm test` 3204/3204;
 - typecheck / lint (0 errors) / hygiene / production build pass.
 
-Exact-head GitHub CI + Vercel Preview must be read on the final documentation tip. Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
+Exact-head live evidence on `a6737e44`:
+
+- GitHub CI #33668056090: **SUCCESS**
+- Vercel Preview `ExHtm7W1vB5xK3CuRKk8RGQ5uxCU`: **READY**
+
+A later commit on this branch invalidates that pair. Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
 
 Not introduced:
 
