@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / ASSISTANT TRUTH CONTEXT 1 DRAFT IN IMPLEMENTATION / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / SINGLE_AGENT JETNITY ASSISTANT TRUTH CONTEXT 1 / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / ASSISTANT TRUTH CONTEXT 1 DRAFT REVIEW-READY / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / SINGLE_AGENT JETNITY ASSISTANT TRUTH CONTEXT 1 / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -238,15 +238,26 @@ Basic World Map 1 and Destination Essentials 1 are no longer open gaps. Assistan
 
 ## 16. Assistant Truth Context 1 — current Draft
 
-**IN IMPLEMENTATION / STOP FOR TECHNICAL-LEAD REVIEW WHEN GATED**
+**IMPLEMENTED / LOCAL GATES GREEN / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW**
 
 Implemented in this branch:
 
 - `lib/reisebegleiter/kontext.ts` — pure deterministic projection
 - `lib/reisebegleiter/kontext.test.ts` — privacy, order-independence, official-state, destination/transit and missing-evidence regressions
 - ADR-0211
+- `docs/ASSISTANT_TRUTH_CONTEXT_1_HANDOFF_2026-09-02.md`
+- `docs/ASSISTANT_TRUTH_CONTEXT_1_SELF_REVIEW_2026-09-02.md`
 
 Reuse: `destinationIstOfficialZiel`, `destinationSafetyBetrifftStage`, `destinationSeasonalBetrifftStage`, `credentialOptionsAus`, `documentsSortieren`, `documentCitizenshipCode`, `landescodeLesen`, `OfficialEvaluation` / Safety / Seasonal types.
+
+Local gates on runtime head `981d47ba`:
+
+- targeted assistant tests 14/14;
+- relevant truth suite 46/46;
+- `npm test` 3204/3204;
+- typecheck / lint (0 errors) / hygiene / production build pass.
+
+Exact-head GitHub CI + Vercel Preview must be read on the final documentation tip. Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
 
 Not introduced:
 
@@ -256,7 +267,5 @@ Not introduced:
 - Provider/secret/paid/live call
 - UI / trip mutation / apply
 - World Map or Destination Essentials expansion
-
-Exact-head CI/Vercel evidence and the final SHA belong in `docs/ASSISTANT_TRUTH_CONTEXT_1_HANDOFF_2026-09-02.md` after local gates. Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
 
 **LIVE-EVIDENCE WINS. ISSUE #419 CLOSED. RECOVERY PR #423 MERGED. WORLD MAP 1 CLOSED. DESTINATION ESSENTIALS 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 DRAFT #426. FLIGHT MULTI-PROVIDER CORE CLOSED. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
