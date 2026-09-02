@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO ACTIVE RUNTIME DRAFT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / ASSISTANT TRUTH CONTEXT 1 REVIEW-FIX AFTER 5093789177 / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / SINGLE_AGENT JETNITY ASSISTANT TRUTH CONTEXT 1 / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -156,18 +156,28 @@ World Map 1 does not weaken, reopen or satisfy any gate.
 
 ## 10. Active work boundary
 
-**No active Cursor coding agent. No active runtime PR/Draft. No automatic follow-up slice.**
-
-Completed identities:
+Completed identities remain closed and must not be reopened as unfinished runtime slices:
 
 - World Map 1: Issue #419 closed; accepted head `cbed980...`; recovery PR #423 merged; agent `Jetnity world map 1`, Generation 1, session `bc-bcfe4a30-460b-439d-8f14-96ec910487ac` completed/not active.
 - Destination Essentials 1: Issue #393 closed; recovery PR #417 merged; agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2` completed/not active.
 
 PR #422 and PR #394 must not be reactivated as unfinished runtime slices.
 
-The Product Owner's direction to continue provider-neutrally does not itself authorize a particular next slice. A new Technical-Lead cycle must reconstruct live truth, assess remaining V1 gaps and persist a new bounded task before dispatch.
+**Current authorized Draft (not on main, not Ready):**
 
-TW-8 remains dependent on real Flight Commercial Truth and stays closed.
+- Slice: Assistant Truth Context 1
+- Issue: #425
+- Draft PR: #426
+- Branch: `feat/phase-1-assistant-truth-context-1`
+- Cursor-Agent: **Jetnity assistant truth context 1**
+- Generation: **1**
+- Session: `bc-3031160f-45b4-4186-8c4b-5f246682aa71`
+- Multi-Agent: **SINGLE_AGENT**
+- Binding: `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`
+- Canonical base: `main@efbaaf4f9bc9ea1534aba2dfcf120110d014038b`
+- Decision: ADR-0211
+
+The Product Owner's direction to continue provider-neutrally does not itself authorize a particular next slice beyond this versioned task. TW-8 remains dependent on real Flight Commercial Truth and stays closed. No automatic follow-up slice.
 
 ## 11. Deferred work that must not be pulled forward accidentally
 
@@ -224,6 +234,40 @@ Principally open:
 - V1 privacy/legal/ops/monetization minimum;
 - V1 Definition of Done and Release Readiness Gate.
 
-Basic World Map 1 and Destination Essentials 1 are no longer open gaps.
+Basic World Map 1 and Destination Essentials 1 are no longer open gaps. Assistant Truth Context 1 is the current bounded Draft; it does not close the later intelligent-assistant V1 model-call gap.
 
-**LIVE-EVIDENCE WINS. ISSUE #419 CLOSED. RECOVERY PR #423 MERGED. WORLD MAP 1 CLOSED. DESTINATION ESSENTIALS 1 CLOSED. FLIGHT MULTI-PROVIDER CORE CLOSED. NO ACTIVE AGENT. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+## 16. Assistant Truth Context 1 — current Draft
+
+**REVIEW-FIX AFTER `5093789177` / STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD REVIEW**
+
+Implemented in this branch:
+
+- `lib/reisebegleiter/kontext.ts` — pure deterministic projection
+- `lib/reisebegleiter/kontext.test.ts` — privacy, order-independence, official-state, destination/transit and missing-evidence regressions
+- ADR-0211
+- `docs/ASSISTANT_TRUTH_CONTEXT_1_HANDOFF_2026-09-02.md`
+- `docs/ASSISTANT_TRUTH_CONTEXT_1_SELF_REVIEW_2026-09-02.md`
+
+Reuse: `destinationIstOfficialZiel`, `destinationSafetyBetrifftStage`, `destinationSeasonalBetrifftStage`, `credentialOptionsAus`, `documentsSortieren`, `documentCitizenshipCode`, `landescodeLesen`, `OfficialEvaluation` / Safety / Seasonal types.
+
+Technical-Lead CHANGES REQUIRED `5093789177` on rejected head `42cd37fa`. Two findings only:
+
+1. Official `contextFingerprint` removed from the serialized projection (internal sort only).
+2. Transit Official no longer binds to destination stages by country equality; `boundStageIds` stay empty.
+
+Previous exact-head gates on `981d47ba` / `a6737e44` / `42cd37fa` are historical.
+
+Review-fix head `13f45c8a`: local 15/15 + 47/47 + `npm test` 3205/3205; CI #33670219759 SUCCESS; Vercel `7YeoDTy65K7tZ7zKKuZcG8U8w3H7` READY. A later commit invalidates that pair.
+
+Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
+
+Not introduced:
+
+- OpenAI / Modellcall / neue `Modellfunktion`
+- Supabase migration/schema/RLS/grant/function
+- Production activation / kill-switch change
+- Provider/secret/paid/live call
+- UI / trip mutation / apply
+- World Map or Destination Essentials expansion
+
+**LIVE-EVIDENCE WINS. ISSUE #419 CLOSED. RECOVERY PR #423 MERGED. WORLD MAP 1 CLOSED. DESTINATION ESSENTIALS 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 DRAFT #426. FLIGHT MULTI-PROVIDER CORE CLOSED. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**

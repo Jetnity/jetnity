@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): World Map 1 / Planned Account Truth, Issue #419 / Draft PR #422, Branch `feat/phase-1-world-map-1-planned-truth`, Binding `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`. Destination Essentials 1 ist auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Assistant Truth Context 1, Issue #425 / Draft PR #426, Branch `feat/phase-1-assistant-truth-context-1`, Binding `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`. World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -309,14 +309,17 @@ Nächster Schritt:
 
 Issue #393 / recovery PR #417 are closed on `main`. Historical resume evidence remains under `docs/DESTINATION_ESSENTIALS_1_RESUME_TASK_2026-09-02.md`. Destination Essentials decision remains ADR-0209.
 
-## 9b. World Map 1 – Draft-PR, Technical-Lead review pending
+## 9b. World Map 1 – CLOSED on main
 
-Technical-Lead-authorized planned-truth slice of Issue #419 / Draft PR #422 on `feat/phase-1-world-map-1-planned-truth`. Binding: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`.
+Issue #419 / recovery PR #423 are closed on `main`. Historical evidence remains under `docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`. World Map decision remains ADR-0210. Visited/travel-history persistence remains deferred.
 
-- `Deine Welt` auf authentifiziertem Account Home
-- nur gespeicherte `trip_stages` country/place/coordinate fields
-- keine visited-Ableitung, keine Geocoding-/Karten-API, keine DB-Mutation
-- Decision is ADR-0210
+## 9c. Assistant Truth Context 1 – Draft-PR, Technical-Lead review pending
+
+Technical-Lead-authorized truth-context slice of Issue #425 / Draft PR #426 on `feat/phase-1-assistant-truth-context-1`. Binding: `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`.
+
+- pure/deterministische Projektion vorhandener Trip-/Traveller-/Official-/Safety-/Seasonal-Wahrheit
+- kein Modellcall, keine neue `Modellfunktion`, keine UI, keine Trip-Mutation, keine DB-Mutation
+- Decision is ADR-0211
 - kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten
 
 Technical-Lead-owned. Kein Folgeslice aus diesem Stand ableiten.

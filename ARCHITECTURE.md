@@ -223,6 +223,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Reiseübersicht | `lib/trips/uebersicht.ts` | Presentation-Derivation aus Coverage, Planstatus, `party[]` und AP-3-`reiseGruppe`; kein persistierter Gesamtstatus |
 | Aufmerksamkeit | `lib/trips/attention.ts` | TW-4 `Jetzt wichtig`: deterministische Priorisierung vorhandener Gaps/Readiness/Safety/Seasonal; lokale provider-neutrale Evaluation, keine Persistenz |
 | Destination Essentials | `lib/trips/destination-essentials.ts` | Presentation-only Zielzusammenfassung in der Trip-Workspace-Übersicht: Etappen aus `Trip.stages[]`, Official nur über `destinationCountryCode` ohne Transit, Safety/Seasonal nur über explizite Stage-Refs. Keine zweite Engine, kein visited-Schluss, keine Commercial-Suche (ADR-0209) |
+| Assistant Truth Context | `lib/reisebegleiter/kontext.ts` | Deterministische, privacy-minimierte Projektion vorhandener Trip-/Traveller-/Official-/Safety-/Seasonal-Wahrheit für einen späteren In-Trip-Assistant. Kein Modellcall, keine UI, keine Persistenz, keine Commercial-/Secret-Felder (ADR-0211) |
 | Buchungsstatus | `lib/trips/buchung.ts` | `unconfirmed` vs. `booked`; Quelle nur `user`; keine Provider-Behauptung aus dem Browser |
 | Flugabdeckung | `lib/trips/flug-abdeckung.ts` | benötigte Abschnitte aus Origin und Etappen; Match nur bei eindeutigem Datum; sonst unbestimmt |
 | Nachtabdeckung | `lib/trips/naechte-abdeckung.ts` | halboffenes `[checkIn, checkOut)`; Überlappungen als Vereinigung; unbekannte Daten nicht als `0/14` |
