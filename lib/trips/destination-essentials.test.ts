@@ -742,4 +742,20 @@ describe('Leerstand und Suche', () => {
       assert.doesNotMatch(inhalt, /from '@\/lib\/flights|from '@\/lib\/hotels|from '@\/lib\/activities/)
     }
   })
+
+  test('Quellen und Details bleibt natives details/summary mit Jetnity-Touch-Target', () => {
+    const quelle = readFileSync(resolve('components/trips/TripWorkspaceDestinationEssentials.tsx'), 'utf8')
+    const summary = quelle.match(/<summary\b([^>]*)>[\s\S]*?Quellen und Details[\s\S]*?<\/summary>/)
+    assert.ok(summary, 'Quellen und Details muss ein natives summary sein')
+    const className = summary[1].match(/className="([^"]+)"/)
+    assert.ok(className, 'Quellen und Details braucht eine className')
+    assert.match(quelle, /<details\b/)
+    assert.match(className[1], /\bflex\b/)
+    assert.match(className[1], /\bmin-h-11\b/)
+    assert.match(className[1], /\blist-none\b/)
+    assert.match(className[1], /\bitems-center\b/)
+    assert.match(className[1], /focus-visible:outline-none/)
+    assert.match(className[1], /focus-visible:ring-4/)
+    assert.doesNotMatch(summary[0], /\brole=/)
+  })
 })

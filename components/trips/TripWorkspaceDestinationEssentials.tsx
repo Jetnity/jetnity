@@ -80,7 +80,7 @@ export default function TripWorkspaceDestinationEssentials({
                 </dl>
                 {ziel.hatHinweise ? (
                   <details className="mt-3">
-                    <summary className="cursor-pointer text-xs font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center text-xs font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15">
                       Quellen und Details
                     </summary>
                     <div className="mt-2 grid gap-3">
