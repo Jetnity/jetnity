@@ -1,34 +1,34 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / ASSISTANT TRUTH CONTEXT 1 REVIEW-FIX AFTER 5093789177 / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / SINGLE_AGENT JETNITY ASSISTANT TRUTH CONTEXT 1 / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO ACTIVE RUNTIME DRAFT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
 Latest runtime-changing verified main baseline:
 
-`6b5cf463664a41cd59bdfc7f83cbc43a982ea557`
+`cd8f10da81155820c54bea987612472f5a7c7c8d`
 
 Commit:
 
-`Integrate World Map 1 (#423)`
+`Integrate Assistant Truth Context 1 (#427)`
 
-World Map 1 closure:
+Assistant Truth Context 1 closure:
 
-- Issue #419: **CLOSED / COMPLETED**;
-- original Draft PR #422 exact accepted head `cbed98062120ce8be125db5870fd0f108b29a3c0`;
-- rejected exact head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`: Technical-Lead CHANGES REQUIRED review `5092964996`;
-- accepted exact head `cbed98062120ce8be125db5870fd0f108b29a3c0`;
-- Technical-Lead FINAL PASS review `5093273775`;
-- Draft→Ready connector mutation failed on unsupported `Repository.fullDatabaseId`; no implementation changed after PASS;
-- recovery PR #423: **MERGED / SHA-LOCKED**;
-- recovery CI #1710: **SUCCESS**;
-- post-merge main CI #1711: **SUCCESS** on exact `6b5cf463...`;
-- Vercel Production `dpl_XcCUqnsiVydSmJCQRbSBfGUvn7Ss`: **READY** on exact `6b5cf463...`.
+- Issue #425: **CLOSED / COMPLETED**;
+- original controlled Draft PR #426 exact accepted head `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
+- rejected exact head `42cd37fae1465c13cbec9ed2f8cd16d5c425436f`: Technical-Lead CHANGES REQUIRED review `5093789177`;
+- accepted exact head `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
+- Technical-Lead FINAL PASS review `5093904909`;
+- Draft→Ready connector mutation failed on unsupported `Repository.fullDatabaseId`; accepted implementation did not change;
+- recovery PR #427: **MERGED / SHA-LOCKED**;
+- recovery CI #1720 / run `33671263064`: **SUCCESS**;
+- post-merge main CI #1721 / run `33671587896`: **SUCCESS** on exact `cd8f10da...`;
+- Vercel Production deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`: **SUCCESS** on exact `cd8f10da...`.
 
 Canonical closure checkpoint:
 
-`docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`
+`docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md`
 
 A later docs-only continuity merge may move repository `main`; live `main` must always be fetched before acting.
 
@@ -152,32 +152,23 @@ All remain **UNAPPROVED / CLOSED**:
 
 Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any of these gates.
 
-World Map 1 does not weaken, reopen or satisfy any gate.
+Assistant Truth Context 1, World Map 1 and Destination Essentials 1 do not weaken, reopen or satisfy any provider/Production gate.
 
 ## 10. Active work boundary
 
+**No active Cursor coding agent. No active runtime PR/Draft for the current completed slices. No automatic follow-up slice.**
+
 Completed identities remain closed and must not be reopened as unfinished runtime slices:
 
+- Assistant Truth Context 1: Issue #425 closed; accepted head `bce6f3d8...`; recovery PR #427 merged; runtime merge `cd8f10da...`; agent `Jetnity assistant truth context 1`, Generation 1, session `bc-3031160f-45b4-4186-8c4b-5f246682aa71` completed/not active.
 - World Map 1: Issue #419 closed; accepted head `cbed980...`; recovery PR #423 merged; agent `Jetnity world map 1`, Generation 1, session `bc-bcfe4a30-460b-439d-8f14-96ec910487ac` completed/not active.
 - Destination Essentials 1: Issue #393 closed; recovery PR #417 merged; agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2` completed/not active.
 
-PR #422 and PR #394 must not be reactivated as unfinished runtime slices.
+PR #426, PR #422 and PR #394 must not be reactivated as unfinished runtime slices.
 
-**Current authorized Draft (not on main, not Ready):**
+The Product Owner's direction to continue provider-neutrally does not itself authorize a particular next slice. A new Technical-Lead cycle must reconstruct live truth, assess remaining V1 gaps and persist a new bounded task before dispatch.
 
-- Slice: Assistant Truth Context 1
-- Issue: #425
-- Draft PR: #426
-- Branch: `feat/phase-1-assistant-truth-context-1`
-- Cursor-Agent: **Jetnity assistant truth context 1**
-- Generation: **1**
-- Session: `bc-3031160f-45b4-4186-8c4b-5f246682aa71`
-- Multi-Agent: **SINGLE_AGENT**
-- Binding: `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`
-- Canonical base: `main@efbaaf4f9bc9ea1534aba2dfcf120110d014038b`
-- Decision: ADR-0211
-
-The Product Owner's direction to continue provider-neutrally does not itself authorize a particular next slice beyond this versioned task. TW-8 remains dependent on real Flight Commercial Truth and stays closed. No automatic follow-up slice.
+TW-8 remains dependent on real Flight Commercial Truth and stays closed.
 
 ## 11. Deferred work that must not be pulled forward accidentally
 
@@ -185,6 +176,7 @@ Still closed/gated unless separately selected and authorized:
 
 - TW-8/TW-9 Commercial Truth closure;
 - World Map visited/travel-history persistence;
+- a real Assistant model-call/runtime/UI path beyond the closed Truth Context foundation;
 - service worker/offline/push;
 - public indexing/domain cutover;
 - payments;
@@ -208,6 +200,8 @@ Never infer a default/primary/preferred citizenship or passport, array order as 
 
 Planned/account-trip evidence ≠ visited. Missing coordinate/country/place evidence stays missing.
 
+Assistant Truth Context adds no competing truth class: it only projects allowed existing truth, and its Generated Suggestion lane remains separate.
+
 ## 14. Agent / review governance
 
 - ChatGPT is the overarching Technical Lead.
@@ -230,44 +224,62 @@ Principally open:
 - real Official Entry Requirements Evidence;
 - Temporal Readiness on real evidence;
 - Mobile/Desktop/PWA polish, accessibility and real-device QA;
-- intelligent assistant V1 truth-aware closure;
+- real intelligent-assistant runtime/model-call wiring on top of the closed Truth Context foundation;
 - V1 privacy/legal/ops/monetization minimum;
 - V1 Definition of Done and Release Readiness Gate.
 
-Basic World Map 1 and Destination Essentials 1 are no longer open gaps. Assistant Truth Context 1 is the current bounded Draft; it does not close the later intelligent-assistant V1 model-call gap.
+Basic World Map 1, Destination Essentials 1 and Assistant Truth Context 1 are no longer open gaps.
 
-## 16. Assistant Truth Context 1 — current Draft
+## 16. Assistant Truth Context 1 — CLOSED
 
-**REVIEW-FIX AFTER `5093789177` / STOP FOR FRESH TECHNICAL-LEAD EXACT-HEAD REVIEW**
+**CLOSED / MERGED / POST-MERGE VERIFIED**
 
-Implemented in this branch:
+Canonical closure checkpoint:
 
-- `lib/reisebegleiter/kontext.ts` — pure deterministic projection
-- `lib/reisebegleiter/kontext.test.ts` — privacy, order-independence, official-state, destination/transit and missing-evidence regressions
-- ADR-0211
-- `docs/ASSISTANT_TRUTH_CONTEXT_1_HANDOFF_2026-09-02.md`
-- `docs/ASSISTANT_TRUTH_CONTEXT_1_SELF_REVIEW_2026-09-02.md`
+`docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md`
 
-Reuse: `destinationIstOfficialZiel`, `destinationSafetyBetrifftStage`, `destinationSeasonalBetrifftStage`, `credentialOptionsAus`, `documentsSortieren`, `documentCitizenshipCode`, `landescodeLesen`, `OfficialEvaluation` / Safety / Seasonal types.
+Accepted implementation:
 
-Technical-Lead CHANGES REQUIRED `5093789177` on rejected head `42cd37fa`. Two findings only:
+- `lib/reisebegleiter/kontext.ts` — pure deterministic privacy-minimized projection;
+- `lib/reisebegleiter/kontext.test.ts` — privacy, order-independence, official-state, destination/transit, multi-credential and missing-evidence regressions;
+- ADR-0211;
+- no second Official/Safety/Seasonal/Traveller engine; existing canonical helpers reused.
 
-1. Official `contextFingerprint` removed from the serialized projection (internal sort only).
-2. Transit Official no longer binds to destination stages by country equality; `boundStageIds` stay empty.
+Technical-Lead review history:
 
-Previous exact-head gates on `981d47ba` / `a6737e44` / `42cd37fa` are historical.
+- CHANGES REQUIRED `5093789177` on rejected exact head `42cd37fa...`:
+  1. remove Official `contextFingerprint` from the serialized Assistant allowlist;
+  2. remove inferred Transit→Destination-Stage binding by country equality.
+- same logical agent/session corrected both findings;
+- FINAL PASS `5093904909` on exact accepted head `bce6f3d8...`.
 
-Review-fix head `13f45c8a`: local 15/15 + 47/47 + `npm test` 3205/3205; CI #33670219759 SUCCESS; Vercel `7YeoDTy65K7tZ7zKKuZcG8U8w3H7` READY. A later commit invalidates that pair.
+Fresh gates:
 
-Agent self-review is not Technical-Lead PASS. Agent does not mark Ready and does not merge.
+- exact accepted-head CI #1719: SUCCESS;
+- recovery PR #427 CI #1720: SUCCESS;
+- post-merge main CI #1721: SUCCESS on exact runtime merge `cd8f10da...`;
+- Vercel Production exact runtime merge: SUCCESS, deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`.
+
+Accepted privacy/truth rules:
+
+- no passport number/MRZ/scan/biometric/health/auth/account/commercial/provider-raw/secret leakage;
+- no Official `contextFingerprint` across the Assistant allowlist;
+- Multi-Traveller/Multi-Citizenship/Multi-Document remain peer options;
+- no array-order default/primary/preferred semantics;
+- Destination Official and Transit Official remain separate;
+- Transit `boundStageIds` stays empty absent a canonical Transit↔Stage relation;
+- unknown/unavailable/stale/recheck remain fail-closed and distinct;
+- generated suggestion remains a separate, unfilled class.
 
 Not introduced:
 
-- OpenAI / Modellcall / neue `Modellfunktion`
-- Supabase migration/schema/RLS/grant/function
-- Production activation / kill-switch change
-- Provider/secret/paid/live call
-- UI / trip mutation / apply
-- World Map or Destination Essentials expansion
+- OpenAI / Modellcall / new `Modellfunktion`;
+- Supabase migration/schema/RLS/grant/function;
+- Production activation / kill-switch change;
+- Provider/secret/paid/live call;
+- UI / trip mutation / apply;
+- World Map or Destination Essentials expansion.
 
-**LIVE-EVIDENCE WINS. ISSUE #419 CLOSED. RECOVERY PR #423 MERGED. WORLD MAP 1 CLOSED. DESTINATION ESSENTIALS 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 DRAFT #426. FLIGHT MULTI-PROVIDER CORE CLOSED. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+A future actual Assistant runtime/model-call path remains a separate gated V1 slice and is not authorized by this closure.
+
+**LIVE-EVIDENCE WINS. ASSISTANT TRUTH CONTEXT 1 CLOSED. ISSUE #425 CLOSED. RECOVERY PR #427 MERGED. RUNTIME MAIN `cd8f10da...` POST-MERGE VERIFIED. WORLD MAP 1 CLOSED. DESTINATION ESSENTIALS 1 CLOSED. FLIGHT MULTI-PROVIDER CORE CLOSED. NO ACTIVE AGENT. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
