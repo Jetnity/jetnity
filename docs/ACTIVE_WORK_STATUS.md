@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED ON MAIN / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED ON MAIN / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / WORLD MAP 1 DRAFT PR #422 ACTIVE / STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY / NO MERGE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -27,7 +27,7 @@ Verified Destination Essentials closure:
 - post-merge main CI #1701: **SUCCESS** on exact `3beef65b...`;
 - Vercel Production `dpl_E8i5RC5oCuEE9N995okfSw4yQkJt`: **READY** on exact `3beef65b...`;
 - Issue #393 auto-closed completed;
-- no active Cursor agent remains.
+- Destination Essentials coding agent is no longer active.
 
 Canonical closure checkpoint:
 
@@ -149,9 +149,26 @@ All remain **UNAPPROVED** for external/Production action:
 
 Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any of these gates.
 
+World Map 1 does **not** weaken, reopen or satisfy any of these gates.
+
 ## 9. Active work boundary
 
-**No active Cursor coding agent. No active runtime PR. No automatic follow-up slice.**
+**Active Cursor coding agent / Draft PR only. Not Ready. Not merged. No automatic follow-up slice.**
+
+World Map 1 / Planned Account Truth is the current authorized runtime draft:
+
+- Issue #419 — open;
+- Draft PR #422 — active, not Ready;
+- Branch `feat/phase-1-world-map-1-planned-truth`;
+- Cursor-Agent `Jetnity world map 1`, Generation 1, session `bc-bcfe4a30-460b-439d-8f14-96ec910487ac`;
+- Binding task `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`;
+- Decision ADR-0210;
+- Canonical base `main@7feb9960bdb4ddac07465ab7fc0a62d9d9fe28e6`;
+- Rejected exact head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc` (Technical-Lead review `5092964996`, CHANGES REQUIRED);
+- Runtime review-fix head `81ee553ea5853ab41e016c2953cf0e178a8bcf76`;
+- Current work is the three-finding review fix only: unique-trip navigation, backward-compatible `TripSummaryStage`, additive restore of this status file. The agent now stops for a fresh Technical-Lead exact-head review.
+
+This does **not** authorize visited persistence, provider contact, Production S6, TW-8/TW-9, service worker/offline/push, or any Product-Owner gate A–E.
 
 Completed Destination Essentials identity for historical continuity only:
 
@@ -162,14 +179,14 @@ Completed Destination Essentials identity for historical continuity only:
 
 The Product Owner's direction to continue provider-neutrally does not itself authorize a new slice. A new Technical-Lead cycle must first reconstruct live truth and select the smallest responsible remaining V1 gap.
 
-TW-8 remains dependent on real Flight Commercial Truth and is not opened by Destination Essentials closure.
+TW-8 remains dependent on real Flight Commercial Truth and is not opened by Destination Essentials closure or by World Map 1.
 
 ## 10. Deferred work that must not be pulled forward accidentally
 
 Still closed/gated unless separately selected and authorized:
 
 - TW-8/TW-9 Commercial Truth closure;
-- World Map / visited truth;
+- World Map visited/travel-history persistence (World Map 1 planned-truth is the current draft slice and does **not** open visited persistence);
 - service worker/offline/push;
 - public indexing/domain cutover;
 - payments;
@@ -184,11 +201,15 @@ No later V1 slice is automatically authorized by this status document.
 
 Never infer a default/primary/preferred citizenship or passport, array order as truth, Residence → Citizenship or Issuer Country → Citizenship.
 
+World Map 1 does not collect or propagate traveller credentials. Planned place truth is account-trip stage evidence, not a citizenship/document decision.
+
 ## 12. Truth architecture
 
 > **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
 
 `unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
+
+World Map 1 planned/account-trip evidence ≠ visited. Missing coordinate/country/place evidence stays missing.
 
 ## 13. Agent / review governance
 
@@ -211,10 +232,36 @@ Principally open:
 - Activities real path or explicit launch exception if externally blocked;
 - real Official Entry Requirements Evidence;
 - Temporal Readiness on real evidence;
-- basic World Map;
+- basic World Map (Draft PR #422 implements planned-truth only; visited persistence remains deferred);
 - Mobile/Desktop/PWA polish, accessibility and real-device QA;
 - intelligent assistant V1 truth-aware closure;
 - V1 privacy/legal/ops/monetization minimum;
 - V1 Definition of Done and Release Readiness Gate.
 
-**LIVE-EVIDENCE WINS. ISSUE #393 CLOSED. RECOVERY PR #417 MERGED. DESTINATION ESSENTIALS 1 CLOSED. FLIGHT MULTI-PROVIDER CORE CLOSED. NO ACTIVE AGENT. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ISSUE #393 CLOSED. RECOVERY PR #417 MERGED. DESTINATION ESSENTIALS 1 CLOSED. FLIGHT MULTI-PROVIDER CORE CLOSED. WORLD MAP 1 DRAFT PR #422 ACTIVE, NOT READY. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+
+## 15. World Map 1 / Planned Account Truth — additive draft status
+
+Binding: `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`  
+Handoff: `docs/WORLD_MAP_1_PLANNED_TRUTH_HANDOFF_2026-09-02.md`  
+Self-review: `docs/WORLD_MAP_1_PLANNED_TRUTH_SELF_REVIEW_2026-09-02.md`
+
+Product goal: bounded **Deine Welt** on authenticated Account Home from stored account-trip stage truth only. Planned ≠ visited.
+
+Hard non-scope still in force for this draft:
+
+- no DB/migration/RLS/Auth mutation;
+- no visited persistence or write UI;
+- no geocoding / external map / tiles / tokens / runtime geography fetch;
+- no provider / secret / paid / live call / Production S6;
+- no TW-8/TW-9;
+- no service worker / offline / push;
+- no follow-up slice.
+
+Review `5092964996` required three fixes on rejected head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`. Those fixes are implemented on runtime head `81ee553ea5853ab41e016c2953cf0e178a8bcf76`:
+
+1. Remove hidden `herkuenfte[0]` navigation default; preserve unique trips by `tripId`, never title.
+2. Keep `TripSummaryStage` backward-compatible; map-only fields optional; legacy `{ name, position }` fail-closed.
+3. Restore this document from `origin/main` additively instead of replacing provider readiness, gates A–E, traveller/truth invariants and deferred boundaries.
+
+Local gates on that runtime head: focused tests 50/50; full `npm test` 3190/0; typecheck pass; lint 0 errors; CI hygiene pass; production build pass. Focused production-build `/ui-audit/account` on 390/1280 recaptured. This section does not claim Ready, unauthenticated Preview, or merge.

@@ -163,12 +163,15 @@ AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth 
 | --- | --- | --- |
 | Shell | `app/account/layout.tsx` | PublicNavbar, kompakte Konto-Nav, Skip-Link, Footer |
 | Übersicht | `app/account/page.tsx` + `AccountUebersichtLive` | Begrüssung und nächste Reise nur aus `reisenLaden()`; aktiv/kommend am Geräte-Kalendertag |
+| Weltkarte | `lib/account/world-map.ts` + `AccountWeltKarte` | Geplante Account-Orte aus gespeicherten `trip_stages`-Feldern; keine Besuchshistorie |
 | Einstellungen | `app/account/settings/page.tsx` | macht vorhandenes `/account/security` auffindbar |
 | Navigation | `lib/account/navigation.ts` | Übersicht, Reisen, Einstellungen; Security zählt zu Einstellungen |
 | Nächste Reise | `lib/account/naechste-reise.ts` | mit Geräte-Kalendertag: aktiv → kommend → Fortsetzen; ohne Kalendertag nur Fortsetzen |
 | Navbar-Ziel | `sitzungseintraege('konto')` | Link **Konto** nur bei bestehender Sitzung |
 
 Die Übersicht ist Orientierung, kein Trip-Workspace. Flug-, Hotel-, Readiness-, Safety- und Seasonal-Karten gehören nicht hierher. Auth-/MFA-/AAL-, RLS- und Traveller-Verträge bleiben unverändert.
+
+World Map 1 (Draft, ADR-0210) erweitert `TripSummaryStage` um bereits persistierte `country_code`, `place_id`, `latitude` und `longitude`. Die Ableitung bleibt presentation-only: gültige gespeicherte Koordinaten werden geplottet, fehlende bleiben in der Liste, `visited` wird nicht abgeleitet. Die lokale Landsilhouette wird gebündelt und holt zur Laufzeit keine Karten, Tiles oder Geocoder.
 
 ## 4b. Account Archive Lifecycle (AP-4)
 

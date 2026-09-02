@@ -3,6 +3,7 @@
 // Persönliche Account-Übersicht. Reisen kommen ausschliesslich aus
 // `reisenLaden()`. Empty und Error bleiben getrennt. aktiv/kommend
 // klassifiziert der Client am Geräte-Kalendertag, nicht der Server.
+// Die Weltkarte nutzt dieselbe geladene TripSummary-Menge.
 
 import type { Metadata } from 'next'
 

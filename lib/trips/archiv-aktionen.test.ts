@@ -86,27 +86,20 @@ describe('AP-4 Gast-Lifecycle bleibt unverändert', () => {
 })
 
 describe('AP-4 lässt TW7-A-Kartenidentität unangetastet', () => {
-  test('Listen-Select trägt weiter trip_stages(name, position) und keine Transit-/Flight-Ziele', () => {
+  test('Listen-Select trägt trip_stages-Identität plus World-Map-Felder und keine Transit-/Flight-Ziele', () => {
     const daten = quelle('daten.ts')
     const listenSelect = daten.match(/const UEBERSICHT_SPALTEN =[\s\S]*?trip_items\(count\)/)?.[0] ?? ''
     assert.notEqual(listenSelect, '')
-    assert.match(listenSelect, /trip_stages\(name, position\)/)
+    assert.match(listenSelect, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
     assert.match(listenSelect, /metadata/)
     assert.equal(daten.includes('trip_stages(count)'), false)
     assert.match(daten, /stageCount: stages\.length/)
     assert.match(daten, /itemCount: anzahl\(zeile\.trip_items\)/)
     assert.match(daten, /archivePreviousStatus: previousStatusAusMetadata/)
-    for (const verboten of [
-      'place_id',
-      'latitude',
-      'longitude',
-      'country_code',
-      'origin_place',
-      'destination',
-      'flight',
-      'transit',
-      'itinerary',
-    ]) {
+    for (const noetig of ['country_code', 'place_id', 'latitude', 'longitude']) {
+      assert.equal(listenSelect.includes(noetig), true, noetig)
+    }
+    for (const verboten of ['origin_place', 'destination', 'flight', 'transit', 'itinerary']) {
       assert.equal(listenSelect.includes(verboten), false, verboten)
     }
   })

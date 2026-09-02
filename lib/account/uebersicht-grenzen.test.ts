@@ -26,9 +26,17 @@ const VERBOTENE_IMPORTS = [
 
 describe('Account-Übersicht bleibt kein Workspace', () => {
   test('lädt keine Flug-/Hotel-/Readiness-/Safety-/Seasonal-Widgets', () => {
-    const quelle = readFileSync(join(hier, '../../components/account/AccountUebersicht.tsx'), 'utf8')
-    for (const verboten of VERBOTENE_IMPORTS) {
-      assert.equal(quelle.includes(verboten), false, `unerlaubter Bezug: ${verboten}`)
+    const dateien = [
+      '../../components/account/AccountUebersicht.tsx',
+      '../../components/account/AccountUebersichtLive.tsx',
+      '../../components/account/AccountWeltKarte.tsx',
+      'world-map.ts',
+    ]
+    for (const datei of dateien) {
+      const quelle = readFileSync(join(hier, datei), 'utf8')
+      for (const verboten of VERBOTENE_IMPORTS) {
+        assert.equal(quelle.includes(verboten), false, `unerlaubter Bezug in ${datei}: ${verboten}`)
+      }
     }
   })
 

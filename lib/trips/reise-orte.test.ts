@@ -154,22 +154,15 @@ describe('reiseOrte – keine Transit-/Flight-Ziele', () => {
     const helper = quelle('reise-orte.ts')
     const karte = readFileSync(join(hier, '../../components/trips/Reisekarte.tsx'), 'utf8')
 
-    assert.match(daten, /trip_stages\(name, position\)/)
+    assert.match(daten, /trip_stages\(name, position, country_code, place_id, latitude, longitude\)/)
     assert.equal(daten.includes('trip_stages(count)'), false)
 
     const listenSelect = daten.match(/const UEBERSICHT_SPALTEN =[\s\S]*?trip_items\(count\)/)?.[0] ?? ''
     assert.notEqual(listenSelect, '')
-    for (const verboten of [
-      'place_id',
-      'latitude',
-      'longitude',
-      'country_code',
-      'origin_place',
-      'destination',
-      'flight',
-      'transit',
-      'itinerary',
-    ]) {
+    for (const noetig of ['country_code', 'place_id', 'latitude', 'longitude']) {
+      assert.equal(listenSelect.includes(noetig), true, noetig)
+    }
+    for (const verboten of ['origin_place', 'destination', 'flight', 'transit', 'itinerary']) {
       assert.equal(listenSelect.includes(verboten), false, verboten)
     }
 
@@ -231,6 +224,30 @@ describe('Gast- und Konto-Abbildung', () => {
     assert.equal(sicht.itemCount, 2)
     assert.equal(reiseOrte(sicht), 'Ubud · Canggu · ab Zürich')
     assert.equal(sicht.stages[0]?.name, 'Ubud')
+  })
+
+  test('tripAlsUebersicht behält gespeicherte countryCode, placeId und Koordinaten', () => {
+    const sicht = tripAlsUebersicht(
+      reise({
+        stages: [
+          {
+            ...etappe('Ubud', 1),
+            countryCode: 'ID',
+            placeId: 'geonames:1622786',
+            latitude: -8.5069,
+            longitude: 115.2625,
+          },
+        ],
+      }),
+    )
+    assert.deepEqual(sicht.stages[0], {
+      name: 'Ubud',
+      position: 1,
+      countryCode: 'ID',
+      placeId: 'geonames:1622786',
+      latitude: -8.5069,
+      longitude: 115.2625,
+    })
   })
 
   test('stageCount entspricht der gelesenen Etappenmenge, nicht einem zweiten Zähler', () => {

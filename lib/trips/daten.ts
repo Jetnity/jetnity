@@ -32,23 +32,25 @@ import {
 } from '@/lib/trips/abbildung'
 import type { ReadinessZeile } from '@/lib/readiness/persistenz'
 import type { TravellerZeile } from '@/lib/readiness/reisende'
-import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary } from '@/types/trips'
+import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary, type TripSummaryStage } from '@/types/trips'
 import { REISEN_LISTE_GRENZE } from '@/lib/trips/liste-grenze'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
 /**
  * Spalten der Liste „Meine Reisen“.
  *
- * `trip_stages(name, position)` trägt die geordnete Zielidentität (TW7-A).
- * `stageCount` entsteht aus dieser gelesenen Menge, nicht aus einem zweiten
- * Zähler. Tage und Punkte bleiben Aggregat: PostgREST beantwortet
- * `trip_days(count)` mit `[{ count: 12 }]`. Ohne diese Form wäre die Liste
- * entweder N+1 oder eine eigene View, die dieselbe Zahl ein zweites Mal
- * definiert. Keine Place-IDs, Koordinaten, Transit- oder Flight-Ziele.
+ * `trip_stages(name, position, country_code, place_id, latitude, longitude)`
+ * trägt die geordnete Zielidentität (TW7-A) plus die kanonischen
+ * World-Map-Felder. `stageCount` entsteht aus dieser gelesenen Menge, nicht
+ * aus einem zweiten Zähler. Tage und Punkte bleiben Aggregat: PostgREST
+ * beantwortet `trip_days(count)` mit `[{ count: 12 }]`. Ohne diese Form wäre
+ * die Liste entweder N+1 oder eine eigene View, die dieselbe Zahl ein
+ * zweites Mal definiert. Keine Transit- oder Flight-Ziele, keine zweite
+ * Konto-Reiseabfrage.
  */
 const UEBERSICHT_SPALTEN =
   'id, title, origin, start_date, end_date, travellers, currency, budget_amount, status, updated_at, metadata, ' +
-  'trip_stages(name, position), trip_days(count), trip_items(count)'
+  'trip_stages(name, position, country_code, place_id, latitude, longitude), trip_days(count), trip_items(count)'
 
 export type { Reisegraph }
 
@@ -57,6 +59,10 @@ type Anzahl = { count: number }
 type UebersichtEtappe = {
   name: string
   position: number
+  country_code?: string | null
+  place_id?: string | null
+  latitude?: number | string | null
+  longitude?: number | string | null
 }
 
 type UebersichtZeile = {
@@ -111,6 +117,21 @@ function status(wert: string): TripStatus {
   return (TRIP_STATUSES as readonly string[]).includes(wert) ? (wert as TripStatus) : 'draft'
 }
 
+function gespeicherterText(wert: string | null | undefined): string | null {
+  return typeof wert === 'string' ? wert : null
+}
+
+function etappeUebersicht(etappe: UebersichtEtappe): TripSummaryStage {
+  return {
+    name: etappe.name,
+    position: etappe.position,
+    countryCode: gespeicherterText(etappe.country_code),
+    placeId: gespeicherterText(etappe.place_id),
+    latitude: betrag(etappe.latitude ?? null),
+    longitude: betrag(etappe.longitude ?? null),
+  }
+}
+
 /**
  * Alle Reisen des angemeldeten Kontos, neueste Änderung zuerst.
  *
@@ -133,7 +154,7 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
   return {
     problem: null,
     zeilen: ergebnis.zeilen.map((zeile) => {
-      const stages = Array.isArray(zeile.trip_stages) ? zeile.trip_stages : []
+      const stages = (Array.isArray(zeile.trip_stages) ? zeile.trip_stages : []).map(etappeUebersicht)
       return {
         id: zeile.id,
         title: zeile.title,

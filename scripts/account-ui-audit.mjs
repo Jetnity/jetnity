@@ -25,16 +25,20 @@ const BREITEN = [
 
 const ZUSTAENDE = {
   reise: {
-    nachweis: 'Reise fortsetzen',
-    verboten: ['Verbindungen für diese Reise', 'Einreise', 'Safety', 'Saison'],
+    nachweis: 'Deine Welt',
+    verboten: ['Verbindungen für diese Reise', 'Einreise', 'Safety', 'Saison', '0 besucht'],
   },
   leer: {
-    nachweis: 'Noch keine Reise in deinem Konto.',
-    verboten: ['Reise fortsetzen'],
+    nachweis: 'Noch keine geplanten Reiseziele in deinem Konto.',
+    verboten: ['Reise fortsetzen', '0 besucht'],
   },
   fehler: {
-    nachweis: 'Deine Reisen konnten nicht geladen werden.',
-    verboten: ['Noch keine Reise in deinem Konto.'],
+    nachweis: 'Deine Weltkarte konnte nicht gelesen werden',
+    verboten: [
+      'Noch keine Reise in deinem Konto.',
+      'Noch keine geplanten Reiseziele in deinem Konto.',
+      '0 besucht',
+    ],
   },
 }
 
@@ -106,8 +110,15 @@ async function messen(page) {
       }
     }
     const text = document.body.innerText
-    for (const verboten of ['Verbindungen für diese Reise', 'Die Hotelsuche', 'Readiness', 'Safety-Hinweis']) {
+    for (const verboten of ['Verbindungen für diese Reise', 'Die Hotelsuche', 'Readiness', 'Safety-Hinweis', '0 besucht']) {
       if (text.includes(verboten)) fehler.push(`Workspace-Widget sichtbar: ${verboten}`)
+    }
+    if (!text.includes('Deine Welt')) fehler.push('Weltkarte fehlt')
+    if (!text.includes('Besucht bestätigt')) fehler.push('Besucht-Unterscheidung fehlt')
+    const welt = document.querySelector('[data-world-map="ein"]')
+    if (!welt) fehler.push('data-world-map fehlt')
+    else if (welt.getAttribute('data-world-map-visited') !== 'nicht_erfasst') {
+      fehler.push(`visited-Lage ${welt.getAttribute('data-world-map-visited')}`)
     }
     return { ok: fehler.length === 0, fehler }
   })

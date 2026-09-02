@@ -153,11 +153,18 @@ Generic `weiter`, `bauen`, `start` oder Cursor-Autorisierung genehmigen keines d
 
 ## 8. Current work boundary
 
-**No active Cursor coding agent. No active runtime PR. No automatic follow-up slice.**
+Destination Essentials 1 ist auf `main` abgeschlossen. PR #394 darf nicht wieder als aktiver Slice interpretiert werden; die akzeptierte Integration lief über Recovery PR #417.
 
-Destination Essentials 1 ist abgeschlossen. PR #394 darf nicht wieder als aktiver Slice interpretiert werden; die akzeptierte Integration lief über Recovery PR #417.
+Aktiver Draft auf dem Feature-Branch, nicht auf `main`:
 
-Der nächste Technical-Lead-Zyklus muss zuerst live rekonstruieren und dann den kleinsten realen provider-unabhängigen V1-Gap bestimmen. Er darf keinen Folgeslice nur deshalb starten, weil Destination Essentials geschlossen ist.
+- World Map 1 / Planned Account Truth
+- Issue #419 / Draft PR #422
+- Branch `feat/phase-1-world-map-1-planned-truth`
+- Binding `docs/WORLD_MAP_1_PLANNED_TRUTH_TASK_2026-09-02.md`
+- Cursor-Agent `Jetnity world map 1`, Generation 1
+- kein Ready, kein Merge, kein Folgeslice
+
+Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 TW-8 bleibt von realer Flight Commercial Truth abhängig und geschlossen.
 
