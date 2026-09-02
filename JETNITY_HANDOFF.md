@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 2. September 2026  
-Status: **CURRENT HANDOFF / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED ON MAIN / PROVIDER CONTACTS DEFERRED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER CONTACTS DEFERRED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
 Latest runtime closure checkpoint:
 
-`docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`
+`docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md`
 
 Binding operating standard:
 
@@ -15,26 +15,23 @@ Binding operating standard:
 
 Latest runtime-changing verified `main` baseline:
 
-`6b5cf463664a41cd59bdfc7f83cbc43a982ea557`
+`cd8f10da81155820c54bea987612472f5a7c7c8d`
 
 Commit:
 
-`Integrate World Map 1 (#423)`
+`Integrate Assistant Truth Context 1 (#427)`
 
-World Map 1 integration evidence:
+Assistant Truth Context 1 integration evidence:
 
-- Issue #419: **CLOSED / COMPLETED**;
-- original Draft PR #422 exact accepted head: `cbed98062120ce8be125db5870fd0f108b29a3c0`;
-- rejected head `bf2936c9fb41a6e65ed4d29f573c2820c0a7e3dc`: Technical-Lead CHANGES REQUIRED review `5092964996`;
-- accepted exact head `cbed98062120ce8be125db5870fd0f108b29a3c0`;
-- Technical-Lead FINAL PASS review `5093273775`;
-- Draft→Ready connector mutation failed on unsupported `Repository.fullDatabaseId`, with no post-PASS implementation change;
-- recovery PR #423: **MERGED / SHA-LOCKED** to accepted exact head;
-- recovery CI #1710: **SUCCESS**;
-- post-merge main CI #1711: **SUCCESS**;
-- Vercel Production `dpl_XcCUqnsiVydSmJCQRbSBfGUvn7Ss`: **READY** on exact `6b5cf463...`.
-
-GitHub reports original PR #422 closed/merged after the same exact head entered `main` via recovery integration #423. Do not reopen or treat it as active.
+- Issue #425: **CLOSED / COMPLETED**;
+- original controlled Draft PR #426 accepted exact head: `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
+- rejected head `42cd37fae1465c13cbec9ed2f8cd16d5c425436f`: Technical-Lead CHANGES REQUIRED review `5093789177`;
+- Technical-Lead FINAL PASS review `5093904909` on exact accepted head;
+- Draft→Ready connector mutation failed on unsupported `Repository.fullDatabaseId`, with no accepted-head implementation change;
+- recovery PR #427: **MERGED / SHA-LOCKED** to the accepted exact head;
+- recovery CI #1720 / run `33671263064`: **SUCCESS**;
+- post-merge main CI #1721 / run `33671587896`: **SUCCESS** on exact runtime merge;
+- Vercel Production deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`: **SUCCESS** on exact `cd8f10da...`.
 
 No Product-Owner special gate was crossed.
 
@@ -42,37 +39,47 @@ A later docs-only continuity merge may advance repository `main`; always fetch l
 
 ## 2. Agentenstatus
 
-World Map agent:
+Assistant Truth Context agent:
 
-**`Jetnity world map 1`**  
+**`Jetnity assistant truth context 1`**  
 Generation: **1**  
-Session: `bc-bcfe4a30-460b-439d-8f14-96ec910487ac`
+Session: `bc-3031160f-45b4-4186-8c4b-5f246682aa71`
 
 Status: **COMPLETED / NOT ACTIVE**.
 
-Destination Essentials agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`, is also completed/not active.
+World Map agent `Jetnity world map 1`, Generation 1, session `bc-bcfe4a30-460b-439d-8f14-96ec910487ac`, is completed/not active.
+
+Destination Essentials agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2`, is completed/not active.
 
 No Cursor coding agent is currently active.
 
-## 3. Accepted World Map 1 truth
+## 3. Accepted Assistant Truth Context 1 truth/privacy contract
 
-World Map 1 is a bounded presentation surface, not a visited-history truth engine.
+Assistant Truth Context 1 is a bounded pure projection, not a live assistant and not a competing truth engine.
 
-- source is existing authenticated account trips through `reisenLaden()` / `TripSummary`;
-- stored stage `countryCode`, `placeId`, `latitude`, `longitude` are used fail-closed;
-- legacy `{ name, position }` summary stages remain valid;
-- no country or coordinate inference;
-- invalid/missing coordinates remain unplotted but visible in the accessible list;
-- exact non-empty `placeId` may aggregate a display place while all trip/stage provenance remains;
-- unique contributing trips remain separated by `tripId`; UI does not choose a hidden primary trip;
-- past dates, archived/booked/planned/draft status and stage order never become visited truth;
-- confirmed visited history is explicitly not yet captured;
-- no commercial search/provider call/DB mutation/external map API or geocoder was introduced;
-- local land silhouette has no runtime geography fetch and no new recurring service cost.
+- source is existing supplied Trip/Traveller/Official/Safety/Seasonal/Route truth;
+- stage identity/order remain canonical; duplicate-country stages stay distinct;
+- missing country/place/route evidence stays missing;
+- multiple travellers remain distinct;
+- multiple citizenships/documents/credential options remain peers;
+- no default/primary/preferred citizenship/passport from array order;
+- Residence ≠ Citizenship; Issuer Country ≠ Citizenship;
+- Destination Official ≠ Transit Official;
+- destination binding reuses `destinationIstOfficialZiel`;
+- Transit Official keeps transit scope/country but no `boundStageIds` without a canonical Transit↔Stage relation;
+- `result`, `status`, `freshness` remain separate; unknown/unavailable/stale/recheck do not become not_required/current;
+- Safety/Seasonal bind only via existing explicit stage-ref helpers;
+- Official/Provider/Recommendation/Community/Generated Suggestion remain separate classes;
+- generated suggestion lane stays empty in this slice;
+- the Assistant allowlist excludes passport/document number, MRZ, scans/images, biometrics, health records, auth/session/account/email identifiers, booking URLs, price/availability/commercial ranking, provider raw/secrets, Official source/action URLs and Official `contextFingerprint`.
 
-Future visited/travel-history persistence is a separate slice and remains closed.
+No OpenAI/model call, new `Modellfunktion`, DB/Supabase/Auth/provider/Production activation, assistant UI or trip mutation was introduced.
+
+A future real Assistant model-call/runtime wiring is a **separate gated slice**.
 
 ## 4. Other closed core surfaces
+
+World Map 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**. Planned trip evidence is not visited truth; visited/travel-history persistence remains separate.
 
 Destination Essentials 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
@@ -118,15 +125,15 @@ Never infer default/primary/preferred citizenship or passport, array order as tr
 
 The next Technical-Lead cycle must first:
 
-1. read `JETNITY_START_HERE.md`, the current closure checkpoint and `docs/ACTIVE_WORK_STATUS.md`;
+1. read `JETNITY_START_HERE.md`, `docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md` and `docs/ACTIVE_WORK_STATUS.md`;
 2. fetch live `main`, open PRs/issues and active branches;
 3. verify current CI/Vercel and active Cursor state;
 4. inspect Supabase only if candidate scope touches backend/data/security truth;
 5. identify the smallest concrete remaining provider-independent V1 gap;
 6. perform the binding slice precheck and SINGLE_AGENT vs MULTI_AGENT decision before dispatch.
 
-Do not start TW-8 while real Flight Commercial Truth is absent. Do not restart World Map 1 or Destination Essentials 1 merely because future expansions are conceivable. Do not contact providers unless the Product Owner explicitly reopens that gate.
+Do not start TW-8 while real Flight Commercial Truth is absent. Do not restart Assistant Truth Context 1, World Map 1 or Destination Essentials 1 merely because future expansions are conceivable. Do not contact providers unless the Product Owner explicitly reopens that gate.
 
-Principally open V1 areas include real Commercial Truth/provider access, Hotel/Activities real paths, real Official Entry Requirements Evidence, Temporal Readiness, broader mobile/accessibility/real-device/PWA polish, truth-aware assistant closure, account/privacy/legal/ops/monetization minimum and final V1 release gates.
+Principally open V1 areas include real Commercial Truth/provider access, Hotel/Activities real paths, real Official Entry Requirements Evidence, Temporal Readiness, broader mobile/accessibility/real-device/PWA polish, a separately gated real Assistant runtime/model-call path, account/privacy/legal/ops/monetization minimum and final V1 release gates.
 
-**LIVE-EVIDENCE GEWINNT IMMER. WORLD MAP 1 IST CLOSED. DESTINATION ESSENTIALS 1 IST CLOSED. KEIN AKTIVER CURSOR-AGENT. PROVIDER-KONTAKTE UND PRODUCTION-GATES BLEIBEN GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT TRUTH CONTEXT 1 IST CLOSED. WORLD MAP 1 IST CLOSED. DESTINATION ESSENTIALS 1 IST CLOSED. KEIN AKTIVER CURSOR-AGENT. PROVIDER-KONTAKTE UND PRODUCTION-GATES BLEIBEN GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
