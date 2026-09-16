@@ -86,7 +86,10 @@ Hard boundaries held: no DB/Auth/Traveller/Route/Provider/PWA-1/Assistant/paymen
 | Hygiene (`dead` / `exports` / `deps` / `api-schutz` / `schema-bezug`) | **pass** |
 | `npm run build` | **pass** |
 | `audit:mobile-accessibility-1` | **21/21 pass**, method `browser viewport/emulation`, origin `http://localhost:3000` |
+| GitHub Actions exact head `7d2bf376` | **FAILURE** [35140984076](https://github.com/Jetnity/jetnity/actions/runs/35140984076): Typecheck/Lint/Build SUCCESS; Auth-Konfiguration 401 |
 | Real device | **not run** |
+
+Exact-head Auth-Konfiguration is red because the Management API rejected `SUPABASE_PROJECT_REF` / `SUPABASE_ACCESS_TOKEN` with 401. Secrets exist in the job env; the ref is neither a readable project nor branch. This slice did not touch Auth or `supabase/config.toml`. Do not change Auth to make CI green. Token/ref repair is outside scope.
 
 If the audit is pointed at `http://127.0.0.1:3000`, Next 16 blocks client chunks and menu / BackToTop / guest workspace fail. That is a harness/origin issue, not a product regression. A second `next dev` in this workspace is refused while the start-user server already owns `:3000`.
 

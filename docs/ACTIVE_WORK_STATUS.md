@@ -168,6 +168,8 @@ Canonical documents:
 
 Canonical baseline after fetch: `origin/main == e31e57269e985cb73e1490a0ac6b8ad6bea87725`. No live drift versus the task baseline. Exact review head is the live Draft-PR tip.
 
+Exact-head CI on `7d2bf376` run [35140984076](https://github.com/Jetnity/jetnity/actions/runs/35140984076): **FAILURE**. `Typecheck, Lint & Build` succeeded. `Auth-Konfiguration gegen config.toml` failed with Supabase Management API 401 (`SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401)`). Secrets were present. This slice did not change Auth or `supabase/config.toml`. Token/ref repair is outside Mobile Accessibility 1.
+
 Completed identities remain closed and must not be reopened as unfinished runtime slices:
 
 - Assistant Truth Context 1: Issue #425 closed; accepted head `bce6f3d8...`; recovery PR #427 merged; runtime merge `cd8f10da...`; continuity merge `e31e5726...`; agent `Jetnity assistant truth context 1`, Generation 1, session `bc-3031160f-45b4-4186-8c4b-5f246682aa71` completed/not active.

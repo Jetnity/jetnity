@@ -56,7 +56,20 @@ Recorded on this working tree before the docs tip. The docs commit moves HEAD; r
 | `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | **pass** |
 | `npm run build` | **pass** |
 | Browser audit `npm run audit:mobile-accessibility-1` | **21/21 pass** — Chromium viewport/emulation, origin `http://localhost:3000`, reused existing Next 16.3.3 dev server |
+| GitHub Actions `7d2bf376` run [35140984076](https://github.com/Jetnity/jetnity/actions/runs/35140984076) | **overall FAILURE** — `Typecheck, Lint & Build` SUCCESS; `Auth-Konfiguration gegen config.toml` FAILURE |
 | Physical real-device | **not run** |
+
+Exact-head Auth-Konfiguration failure:
+
+- job [104945152780](https://github.com/Jetnity/jetnity/actions/runs/35140984076/job/104945152780);
+- secrets were present (`Zugang vorhanden?` SUCCESS);
+- `npm run auth:pruefen` aborted with `SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401)`;
+- this slice did not change `supabase/config.toml`, Auth/session/MFA/AAL, or any secret;
+- the same 401 occurred on intermediate heads `47425e16`, `d73c4f22`, `9aa1a3f8`;
+- the task-only head `a49293f8` (2. September 2026, run 33674255362) had Auth-Konfiguration SUCCESS;
+- last `main` CI success is also 2. September 2026. This is a live Management-API token/ref 401, not a product or a11y regression from this slice.
+
+Do not treat the red Auth job as a reason to change Auth semantics. Token/ref repair is outside this slice.
 
 Evidence: `docs/evidence/MOBILE_ACCESSIBILITY_1_AUDIT_2026-09-02.json`.
 

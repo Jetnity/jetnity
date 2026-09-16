@@ -43,6 +43,7 @@ Agent self-review is not PASS. Cursor does not Ready or merge.
 10. **Did I mark Ready or merge?** No.
 11. **Would an empty guest workspace be reported as a pass?** No. The audit waits for “Deine Reise auf einen Blick” or records the missing heading.
 12. **Did I use an invalid guest fixture that `reiseLesen` would drop?** The fixture now includes revision, stage dates/country, day `stageId`s and timestamps so `reiseLesen` accepts it.
+13. **Did I treat exact-head CI as green?** No. Run 35140984076 on `7d2bf376` is overall FAILURE. Typecheck/Lint/Build succeeded. Auth-Konfiguration failed with Management API 401. I did not change Auth or `config.toml` to paper over a token/ref problem.
 
 ## 3. Honesty
 
@@ -58,6 +59,7 @@ Agent self-review is not PASS. Cursor does not Ready or merge.
 | Typecheck / lint(0 errors) / hygiene / production build | **true** |
 | Real-device iPhone/Android | **false / not run** |
 | Authenticated account/admin path beyond shared landmarks | **not claimed** |
+| Exact-head CI overall green | **false** — Auth-Konfiguration 401 on run 35140984076 |
 | Ready / merge | **false** |
 
 ## 4. Traveller Context
