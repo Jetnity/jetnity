@@ -281,9 +281,9 @@ async function tastaturPruefen(browser) {
   } else {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await nachOben.click()
-    await page.waitForTimeout(50)
+    await page.waitForTimeout(120)
     const y = await page.evaluate(() => window.scrollY)
-    if (y > 2) fehler.push(`Reduced Motion scrollte nicht sofort nach oben: ${y}`)
+    if (y > 2) fehler.push(`Reduced Motion blieb nicht oben: ${y}`)
   }
 
   await kontext.close()

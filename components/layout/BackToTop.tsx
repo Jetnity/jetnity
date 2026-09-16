@@ -42,17 +42,23 @@ export default function BackToTop() {
     }
   }, [])
 
-  if (!show || typing) return null
+  const sichtbar = show && !typing
 
   return (
     <button
       type="button"
-      onClick={() => window.scrollTo({ top: 0, behavior: scrollVerhalten() })}
+      hidden={!sichtbar}
+      inert={!sichtbar}
+      tabIndex={sichtbar ? 0 : -1}
+      onClick={(ereignis) => {
+        ereignis.currentTarget.blur()
+        window.scrollTo({ top: 0, behavior: scrollVerhalten() })
+      }}
       aria-label="Nach oben"
-      className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))]
-                 z-40 flex h-11 w-11 items-center justify-center rounded-full border bg-background/80
+      className={`fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))]
+                 z-40 h-11 w-11 items-center justify-center rounded-full border bg-background/80
                  backdrop-blur hover:bg-background shadow-lg focus-visible:outline-none
-                 focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                 focus-visible:ring-4 focus-visible:ring-brand-600/15 ${sichtbar ? 'flex' : 'hidden'}`}
     >
       <ArrowUp className="h-5 w-5" aria-hidden="true" />
     </button>
