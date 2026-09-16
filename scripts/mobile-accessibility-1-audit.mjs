@@ -9,7 +9,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { chromium } from 'playwright'
 
-const PORT = process.env.AUDIT_PORT || '3000'
+const PORT = process.env.AUDIT_PORT || '3471'
 // Next 16 blockiert Dev-Chunks von 127.0.0.1, wenn der Server localhost
 // bewirbt (`allowedDevOrigins`). Playwright muss denselben Origin nutzen,
 // sonst hydriert kein Client-JS (Menü, BackToTop, Gast-Workspace).
@@ -263,12 +263,13 @@ async function tastaturPruefen(browser) {
   const combo = page.getByRole('combobox', { name: 'Wohin möchtest du reisen?' })
   if ((await combo.count()) === 0) fehler.push('Hero-Ortssuche ohne combobox')
 
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.evaluate(() => {
-    window.scrollTo(0, 1200)
+    window.scrollTo({ top: 1200, behavior: 'auto' })
     document.documentElement.scrollTop = 1200
     document.body.scrollTop = 1200
   })
-  await page.waitForTimeout(400)
+  await page.waitForTimeout(200)
   const nachOben = page.getByRole('button', { name: 'Nach oben' })
   if ((await nachOben.count()) === 0) {
     const y = await page.evaluate(() => ({
@@ -279,7 +280,6 @@ async function tastaturPruefen(browser) {
     }))
     fehler.push(`Nach-oben-Knopf nach Scroll nicht da: ${JSON.stringify(y)}`)
   } else {
-    await page.emulateMedia({ reducedMotion: 'reduce' })
     await nachOben.click()
     await page.waitForTimeout(120)
     const y = await page.evaluate(() => window.scrollY)

@@ -74,7 +74,9 @@ describe('Mobile Accessibility 1 – Footer, Nach oben, Formulare', () => {
     assert.match(knopf, /aria-hidden="true"/)
     assert.match(knopf, /currentTarget\.blur/)
     assert.match(knopf, /inert=\{!sichtbar\}/)
+    assert.match(knopf, /invisible pointer-events-none/)
     assert.equal(knopf.includes('return null'), false)
+    assert.equal(knopf.includes(' hidden={!sichtbar}'), false)
   })
 
   test('Planen-Kernaktionen bleiben Tastatur-sichtbar', () => {

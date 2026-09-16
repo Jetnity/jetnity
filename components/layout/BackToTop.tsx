@@ -47,18 +47,21 @@ export default function BackToTop() {
   return (
     <button
       type="button"
-      hidden={!sichtbar}
       inert={!sichtbar}
       tabIndex={sichtbar ? 0 : -1}
+      aria-hidden={!sichtbar}
       onClick={(ereignis) => {
         ereignis.currentTarget.blur()
+        if (window.location.hash) {
+          window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`)
+        }
         window.scrollTo({ top: 0, behavior: scrollVerhalten() })
       }}
       aria-label="Nach oben"
       className={`fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))]
-                 z-40 h-11 w-11 items-center justify-center rounded-full border bg-background/80
+                 z-40 flex h-11 w-11 items-center justify-center rounded-full border bg-background/80
                  backdrop-blur hover:bg-background shadow-lg focus-visible:outline-none
-                 focus-visible:ring-4 focus-visible:ring-brand-600/15 ${sichtbar ? 'flex' : 'hidden'}`}
+                 focus-visible:ring-4 focus-visible:ring-brand-600/15 ${sichtbar ? '' : 'invisible pointer-events-none'}`}
     >
       <ArrowUp className="h-5 w-5" aria-hidden="true" />
     </button>
