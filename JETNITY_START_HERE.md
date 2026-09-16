@@ -10,12 +10,13 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACC
 ## 1. Zuerst lesen
 
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
-2. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
+2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← **canonical new-chat continuity checkpoint**
 3. `docs/ACTIVE_WORK_STATUS.md`
-3a. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for current state by the closure checkpoint
+3a. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
+3b. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for current state by the closure checkpoint
 4. `docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`
 5. `docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
-6. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← transition history; live evidence and newer closure docs supersede stale current-state passages
+6. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← historical transition checkpoint; superseded for current state by the 2026-09-17 checkpoint
 7. `docs/CHATGPT_TECHNICAL_LEAD_V1_FLIGHT_MULTI_PROVIDER_ORCHESTRATION_CLOSED_2026-09-02.md`
 8. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
 9. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`

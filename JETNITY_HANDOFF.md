@@ -3,6 +3,10 @@
 Stand: 17. September 2026  
 Status: **CURRENT HANDOFF / MOBILE ACCESSIBILITY 1 CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER CONTACTS DEFERRED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
+Canonical new-chat checkpoint:
+
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md`
+
 Latest runtime closure checkpoint:
 
 `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`
@@ -133,7 +137,7 @@ Never infer default/primary/preferred citizenship or passport, array order as tr
 
 The next Technical-Lead cycle must first:
 
-1. read `JETNITY_START_HERE.md`, `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` and `docs/ACTIVE_WORK_STATUS.md`;
+1. read `JETNITY_START_HERE.md`, `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md`, `docs/ACTIVE_WORK_STATUS.md` and the latest runtime closure checkpoint;
 2. fetch live `main`, open PRs/issues and active branches;
 3. verify current CI/Vercel and active Cursor state;
 4. inspect Supabase only if candidate scope touches backend/data/security truth;
