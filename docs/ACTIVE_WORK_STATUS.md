@@ -1,34 +1,36 @@
 # Jetnity – Active Work Status
 
-Stand: 16. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 STOP FOR TECHNICAL-LEAD REVIEW / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Stand: 17. September 2026  
+Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
 Latest runtime-changing verified main baseline:
 
-`cd8f10da81155820c54bea987612472f5a7c7c8d`
+`9a80bbfe37113468f60040ed6cbedb960538b943`
 
 Commit:
 
-`Integrate Assistant Truth Context 1 (#427)`
+`Integrate Mobile Accessibility 1 (#430)`
 
-Assistant Truth Context 1 closure:
+Mobile Accessibility 1 closure:
 
-- Issue #425: **CLOSED / COMPLETED**;
-- original controlled Draft PR #426 exact accepted head `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
-- rejected exact head `42cd37fae1465c13cbec9ed2f8cd16d5c425436f`: Technical-Lead CHANGES REQUIRED review `5093789177`;
-- accepted exact head `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
-- Technical-Lead FINAL PASS review `5093904909`;
-- Draft→Ready connector mutation failed on unsupported `Repository.fullDatabaseId`; accepted implementation did not change;
-- recovery PR #427: **MERGED / SHA-LOCKED**;
-- recovery CI #1720 / run `33671263064`: **SUCCESS**;
-- post-merge main CI #1721 / run `33671587896`: **SUCCESS** on exact `cd8f10da...`;
-- Vercel Production deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`: **SUCCESS** on exact `cd8f10da...`.
+- Issue #429: **CLOSED / COMPLETED**;
+- PR #430 exact accepted head `644ceacb22c672f3f9968df6731da58e0546d530`;
+- Technical-Lead FINAL PASS review `5228930437`;
+- exact-head CI #1730 / run `35141388608`: **SUCCESS**;
+- Vercel Preview `dpl_5okwKVgzvsC2SvVEVhtELfz3izpy`: **READY**;
+- PR #430: **MERGED**;
+- runtime merge `9a80bbfe37113468f60040ed6cbedb960538b943`;
+- post-merge main CI #1731 / run `35157033549`: **SUCCESS**;
+- Vercel Production `dpl_7xtTdC7Uy7JEe5U5qqWq7eoqghNP`: **READY** on exact runtime merge;
+- no active Cursor agent.
 
 Canonical closure checkpoint:
 
-`docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md`
+`docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`
+
+CI Auth management access is intentionally scoped to Development branch ref `yfvbxvijcorffwxbxahl`; Production project ref remains `qscbgcdmivbbnzrcyegn`. The read-only access token has a 90-day expiry and must be rotated before expiry.
 
 A later docs-only continuity merge may move repository `main`; live `main` must always be fetched before acting.
 
@@ -156,27 +158,32 @@ Assistant Truth Context 1, World Map 1 and Destination Essentials 1 do not weake
 
 ## 10. Active work boundary
 
-**Active slice:** Mobile Accessibility 1 on `feat/phase-1-mobile-accessibility-1` / Draft-PR #430. Cursor-Agent `Jetnity mobile accessibility 1`, Generation 1. `SINGLE_AGENT`. Implementation + local gates recorded. **STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW. DO NOT MARK READY. DO NOT MERGE. DO NOT START A FOLLOW-UP SLICE.**
+**No active implementation slice. No active Cursor coding agent.**
 
-Canonical documents:
+Mobile Accessibility 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
-- `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`
-- `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md`
-- `docs/MOBILE_ACCESSIBILITY_1_HANDOFF_2026-09-02.md`
-- `docs/MOBILE_ACCESSIBILITY_1_SELF_REVIEW_2026-09-02.md`
-- `docs/evidence/MOBILE_ACCESSIBILITY_1_AUDIT_2026-09-02.json`
+Canonical evidence:
 
-Canonical baseline after fetch: `origin/main == e31e57269e985cb73e1490a0ac6b8ad6bea87725`. No live drift versus the task baseline. Exact review head is the live Draft-PR tip.
+- task: `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`
+- historical status/handoff/self-review/audit under the existing Mobile Accessibility 1 docs;
+- current closure: `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`;
+- Issue #429 closed/completed;
+- PR #430 merged;
+- accepted head `644ceacb...`;
+- runtime main `9a80bbfe...`;
+- post-merge CI #1731 SUCCESS;
+- Production Vercel READY.
 
-Exact-head CI on `7d2bf376` run [35140984076](https://github.com/Jetnity/jetnity/actions/runs/35140984076): **FAILURE**. `Typecheck, Lint & Build` succeeded. `Auth-Konfiguration gegen config.toml` failed with Supabase Management API 401 (`SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401)`). Secrets were present. This slice did not change Auth or `supabase/config.toml`. Token/ref repair is outside Mobile Accessibility 1.
+Cursor agent `Jetnity mobile accessibility 1`, Generation 1, session `bc-30492cdc-0697-4460-90a7-c1bf950fbbe9`: **COMPLETED / NOT ACTIVE**.
 
 Completed identities remain closed and must not be reopened as unfinished runtime slices:
 
-- Assistant Truth Context 1: Issue #425 closed; accepted head `bce6f3d8...`; recovery PR #427 merged; runtime merge `cd8f10da...`; continuity merge `e31e5726...`; agent `Jetnity assistant truth context 1`, Generation 1, session `bc-3031160f-45b4-4186-8c4b-5f246682aa71` completed/not active.
-- World Map 1: Issue #419 closed; accepted head `cbed980...`; recovery PR #423 merged; agent `Jetnity world map 1`, Generation 1, session `bc-bcfe4a30-460b-439d-8f14-96ec910487ac` completed/not active.
-- Destination Essentials 1: Issue #393 closed; recovery PR #417 merged; agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2` completed/not active.
+- Assistant Truth Context 1: CLOSED;
+- World Map 1: CLOSED;
+- Destination Essentials 1: CLOSED;
+- Mobile Accessibility 1: CLOSED.
 
-PR #426, PR #422 and PR #394 must not be reactivated as unfinished runtime slices.
+Physical real-device QA remains a separate future bounded slice if selected; browser viewport/emulation evidence is not a physical-device claim.
 
 The Product Owner's direction to continue provider-neutrally does not itself authorize a particular next slice. A new Technical-Lead cycle must reconstruct live truth, assess remaining V1 gaps and persist a new bounded task before dispatch.
 
