@@ -203,7 +203,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <AdminTopbar />
             </div>
 
-            <main id="admin-content" role="main" aria-live="polite" className="p-4 md:p-6">
+            <main
+              id="admin-content"
+              tabIndex={-1}
+              role="main"
+              aria-live="polite"
+              className="p-4 md:p-6 outline-none"
+            >
               {children}
             </main>
           </div>

@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Assistant Truth Context 1, Issue #425 / Draft PR #426, Branch `feat/phase-1-assistant-truth-context-1`, Binding `docs/ASSISTANT_TRUTH_CONTEXT_1_TASK_2026-09-02.md`. World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Mobile Accessibility 1, Issue #429 / Draft PR #430, Branch `feat/phase-1-mobile-accessibility-1`, Binding `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`. Assistant Truth Context 1, World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 

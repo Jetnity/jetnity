@@ -17,7 +17,7 @@ const productLinks = [
  */
 const footerListClass = 'mt-5 space-y-1 pointer-fine:mt-5 pointer-fine:space-y-3'
 const footerLinkClass =
-  'inline-flex min-h-10 items-center text-sm text-white/70 transition hover:text-white pointer-fine:min-h-0'
+  'inline-flex min-h-11 items-center text-sm text-white/70 transition hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25 pointer-fine:min-h-0'
 
 export default function Footer() {
   return (
@@ -30,7 +30,7 @@ export default function Footer() {
           <div className="max-w-md">
             <Link
               href="/"
-              className="-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2"
+              className="-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
               aria-label="Jetnity Startseite"
             >
               <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
@@ -44,11 +44,11 @@ export default function Footer() {
             </p>
             <a
               href="mailto:info@jetnity.ch"
-              className="-mx-2 mt-4 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-citrus-400 hover:text-white"
+              className="-mx-2 mt-4 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-citrus-400 hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
             >
-              <Mail className="h-4 w-4 shrink-0" />
+              <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
               info@jetnity.ch
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             </a>
           </div>
 

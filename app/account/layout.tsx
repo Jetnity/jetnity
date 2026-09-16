@@ -21,7 +21,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       <div className="relative min-h-screen bg-surface-75">
         <PublicNavbar />
         <AccountNavigation />
-        <div id="account-content" className="min-h-[60dvh]">
+        <div id="account-content" tabIndex={-1} className="min-h-[60dvh] outline-none">
           {children}
         </div>
         <Footer />
