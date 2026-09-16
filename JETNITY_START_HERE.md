@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 2. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 DRAFT STOP FOR TECHNICAL-LEAD REVIEW / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Stand: 17. September 2026  
+Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -10,9 +10,9 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACC
 ## 1. Zuerst lesen
 
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
-2. `docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md` ← **latest runtime closure checkpoint**
+2. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
 3. `docs/ACTIVE_WORK_STATUS.md`
-3a. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← **current Draft-PR #430 / Issue #429, stop before Ready or merge**
+3a. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for current state by the closure checkpoint
 4. `docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`
 5. `docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
 6. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← transition history; live evidence and newer closure docs supersede stale current-state passages
@@ -53,24 +53,27 @@ Native apps, Traveller Network, Creator/Partner Ecosystem, own data/intelligence
 
 ## 3. Letzte verifizierte runtime-verändernde Main-Baseline
 
-`cd8f10da81155820c54bea987612472f5a7c7c8d`
+`9a80bbfe37113468f60040ed6cbedb960538b943`
 
 Commit:
 
-`Integrate Assistant Truth Context 1 (#427)`
+`Integrate Mobile Accessibility 1 (#430)`
 
-Assistant Truth Context 1 closure evidence:
+Mobile Accessibility 1 closure evidence:
 
-- Issue #425: **CLOSED / COMPLETED**;
-- original controlled Draft PR #426: accepted exact head `bce6f3d84fb0863930f3267c76a3e998b8edca75`; direct Draft→Ready was blocked by the known connector `Repository.fullDatabaseId` error;
-- rejected exact head `42cd37fae1465c13cbec9ed2f8cd16d5c425436f`: Technical-Lead CHANGES REQUIRED review `5093789177`;
-- accepted exact head `bce6f3d84fb0863930f3267c76a3e998b8edca75`;
-- Technical-Lead FINAL PASS review `5093904909`;
-- recovery PR #427: **MERGED / SHA-LOCKED** on the accepted exact head;
-- recovery CI #1720: **SUCCESS**;
-- post-merge main CI #1721 / run `33671587896`: **SUCCESS** on exact `cd8f10da...`;
-- Vercel Production deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`: **SUCCESS** on exact `cd8f10da...`;
-- no active Cursor agent.
+- Issue #429: **CLOSED / COMPLETED**;
+- PR #430 accepted exact head: `644ceacb22c672f3f9968df6731da58e0546d530`;
+- Technical-Lead FINAL PASS review `5228930437` on exact accepted head;
+- accepted-head CI #1730 / run `35141388608`: **SUCCESS** after the Supabase Management API CI credential was repaired;
+- PR #430: **MERGED / SHA-LOCKED**;
+- post-merge main CI #1731 / run `35157033549`: **SUCCESS** on exact `9a80bbfe...`;
+- Vercel Production deployment `dpl_7xtTdC7Uy7JEe5U5qqWq7eoqghNP`: **READY** on exact `9a80bbfe...`;
+- Cursor agent `Jetnity mobile accessibility 1`, Generation 1, session `bc-30492cdc-0697-4460-90a7-c1bf950fbbe9`: **COMPLETED / NOT ACTIVE**;
+- no Product-Owner special gate was crossed.
+
+Canonical closure checkpoint:
+
+`docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`
 
 A later docs-only continuity merge may move repository `main`; **aktuelles `main` immer live neu lesen**.
 
@@ -133,6 +136,17 @@ A later docs-only continuity merge may move repository `main`; **aktuelles `main
 
 The broader real Assistant runtime/model-call V1 gap remains open and separately gated.
 
+### Mobile Accessibility 1 — CLOSED
+
+- bounded public/guest critical-journey and shared presentation accessibility/responsive release-quality slice;
+- skip-link/main-landmark focus contract;
+- responsive/mobile navigation and touch/focus improvements;
+- reduced-motion-aware behavior;
+- targeted responsive/form visibility corrections;
+- regression tests plus reproducible Chromium viewport/emulation evidence;
+- no physical real-device testing claimed;
+- no DB/Auth semantics/provider/model/payment/public-launch change.
+
 ## 5. Provider Readiness / V1 Step 2
 
 Repository foundations:
@@ -184,11 +198,13 @@ Generic `weiter`, `bauen`, `start` oder Cursor-Autorisierung genehmigen keines d
 
 ## 8. Current work boundary
 
-**Active Draft:** Mobile Accessibility 1 on `feat/phase-1-mobile-accessibility-1` / Draft-PR #430 / Issue #429. Cursor-Agent `Jetnity mobile accessibility 1`, Generation 1, `SINGLE_AGENT`. Implementation and local gates are recorded. **STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW. DO NOT MARK READY. DO NOT MERGE. DO NOT START A FOLLOW-UP SLICE.**
+**No active implementation slice. No active Cursor coding agent.**
 
-Assistant Truth Context 1, Destination Essentials 1 and World Map 1 are closed on `main`. PR #426/#422/#394 must not be reactivated or interpreted as unfinished runtime work.
+Mobile Accessibility 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**. PR #430, Issue #429 and session `bc-30492cdc-0697-4460-90a7-c1bf950fbbe9` must not be reactivated as unfinished work.
 
-World Map visited/travel-history persistence remains deliberately separate and was not opened by World Map 1.
+Assistant Truth Context 1, Destination Essentials 1 and World Map 1 remain closed on `main`. Historical PRs #426/#422/#394 must not be interpreted as unfinished runtime work.
+
+Physical real-device QA remains distinct from the browser-emulation evidence accepted for Mobile Accessibility 1 and requires a new bounded slice if selected later.
 
 A real Assistant model-call/runtime wiring remains deliberately separate and was not opened by Assistant Truth Context 1.
 
@@ -241,4 +257,4 @@ Principally open:
 
 Destination Essentials 1, basic World Map 1 and Assistant Truth Context 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
 
-**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. MOBILE ACCESSIBILITY 1 IS DRAFT / STOP FOR TECHNICAL-LEAD REVIEW. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. NO ACTIVE CURSOR AGENT. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
