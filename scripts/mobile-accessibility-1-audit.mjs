@@ -9,10 +9,12 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { chromium } from 'playwright'
 
-const PORT = process.env.AUDIT_PORT || '3471'
+const PORT = process.env.AUDIT_PORT || '3000'
 // Next 16 blockiert Dev-Chunks von 127.0.0.1, wenn der Server localhost
 // bewirbt (`allowedDevOrigins`). Playwright muss denselben Origin nutzen,
 // sonst hydriert kein Client-JS (Menü, BackToTop, Gast-Workspace).
+// Ein zweiter `next dev` im selben Workspace wird abgelehnt; vorhandenes
+// :3000 wird deshalb wiederverwendet.
 const BASIS = process.env.AUDIT_BASE || `http://localhost:${PORT}`
 const BERICHT =
   process.env.AUDIT_REPORT || '/workspace/docs/evidence/MOBILE_ACCESSIBILITY_1_AUDIT_2026-09-02.json'

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
-Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 IN IMPLEMENTATION / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Stand: 16. September 2026  
+Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 STOP FOR TECHNICAL-LEAD REVIEW / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -156,9 +156,17 @@ Assistant Truth Context 1, World Map 1 and Destination Essentials 1 do not weake
 
 ## 10. Active work boundary
 
-**Active slice:** Mobile Accessibility 1 on `feat/phase-1-mobile-accessibility-1` / Draft-PR #430. Cursor-Agent `Jetnity mobile accessibility 1`, Generation 1. `SINGLE_AGENT`. **DO NOT MARK READY. DO NOT MERGE. DO NOT START A FOLLOW-UP SLICE.**
+**Active slice:** Mobile Accessibility 1 on `feat/phase-1-mobile-accessibility-1` / Draft-PR #430. Cursor-Agent `Jetnity mobile accessibility 1`, Generation 1. `SINGLE_AGENT`. Implementation + local gates recorded. **STOP FOR TECHNICAL-LEAD EXACT-HEAD REVIEW. DO NOT MARK READY. DO NOT MERGE. DO NOT START A FOLLOW-UP SLICE.**
 
-Canonical baseline after fetch: `origin/main == e31e57269e985cb73e1490a0ac6b8ad6bea87725`. Local `origin/main` was stale at `cd8f10da...` until fetch; no live drift versus the task baseline.
+Canonical documents:
+
+- `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`
+- `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md`
+- `docs/MOBILE_ACCESSIBILITY_1_HANDOFF_2026-09-02.md`
+- `docs/MOBILE_ACCESSIBILITY_1_SELF_REVIEW_2026-09-02.md`
+- `docs/evidence/MOBILE_ACCESSIBILITY_1_AUDIT_2026-09-02.json`
+
+Canonical baseline after fetch: `origin/main == e31e57269e985cb73e1490a0ac6b8ad6bea87725`. No live drift versus the task baseline. Exact review head is the live Draft-PR tip.
 
 Completed identities remain closed and must not be reopened as unfinished runtime slices:
 
