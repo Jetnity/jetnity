@@ -26,7 +26,11 @@ Mobile Accessibility 1 closure:
 - Vercel Production `dpl_7xtTdC7Uy7JEe5U5qqWq7eoqghNP`: **READY** on exact runtime merge;
 - no active Cursor agent.
 
-Canonical closure checkpoint:
+Canonical new-chat checkpoint:
+
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md`
+
+Canonical runtime closure checkpoint:
 
 `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`
 
