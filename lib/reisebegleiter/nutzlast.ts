@@ -74,14 +74,8 @@ import type {
 } from '@/lib/reisebegleiter/kontext'
 import { traegtLink } from '@/lib/reisebegleiter/schema'
 
-export const BEGLEITER_BEZUG_ARTEN = [
-  'etappe',
-  'reisende',
-  'official',
-  'safety',
-  'seasonal',
-] as const
-export type BegleiterBezugArt = (typeof BEGLEITER_BEZUG_ARTEN)[number]
+const BEZUG_ARTEN = ['etappe', 'reisende', 'official', 'safety', 'seasonal'] as const
+export type BegleiterBezugArt = (typeof BEZUG_ARTEN)[number]
 
 /**
  * Ein Eintrag, auf den das Modell zeigen darf – mit dem Zustand, den Jetnity

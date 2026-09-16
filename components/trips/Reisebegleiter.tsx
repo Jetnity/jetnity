@@ -242,8 +242,8 @@ export default function Reisebegleiter({ reise }: ReisebegleiterProps) {
               </ul>
               <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-ink-700">
                 <CircleHelp className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" aria-hidden="true" />
-                Diese Zeilen kommen aus Jetnity, nicht aus der Auskunft. „Nicht geprüft" heisst
-                nicht „nicht erforderlich".
+                Diese Zeilen kommen aus Jetnity, nicht aus der Auskunft. „Nicht geprüft“ heisst
+                nicht „nicht erforderlich“.
               </p>
             </div>
           )}
