@@ -56,10 +56,15 @@ import {
 import { createBrowserClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
+const MOBILE_NAV_ID = 'oeffentliche-mobile-navigation'
+const FOKUS_RING =
+  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
+
 export default function PublicNavbar() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [sitzung, setSitzung] = React.useState<Sitzungsstand>('unbekannt')
+  const menuKnopf = React.useRef<HTMLButtonElement>(null)
 
   React.useEffect(() => {
     setMobileOpen(false)
@@ -121,6 +126,18 @@ export default function PublicNavbar() {
   // trotzdem schliessen, damit das Ziel sichtbar wird.
   const closeMobile = () => setMobileOpen(false)
 
+  React.useEffect(() => {
+    if (!mobileOpen) return
+    const schliessen = (ereignis: KeyboardEvent) => {
+      if (ereignis.key !== 'Escape') return
+      ereignis.preventDefault()
+      setMobileOpen(false)
+      menuKnopf.current?.focus()
+    }
+    document.addEventListener('keydown', schliessen)
+    return () => document.removeEventListener('keydown', schliessen)
+  }, [mobileOpen])
+
   const eintraege = sitzungseintraege(sitzung)
 
   return (
@@ -132,7 +149,10 @@ export default function PublicNavbar() {
         <Link
           href="/"
           aria-label="Jetnity Startseite"
-          className="-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2 text-brand-800"
+          className={cn(
+            '-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2 text-brand-800',
+            FOKUS_RING,
+          )}
         >
           <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-800 shadow-sm">
             <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-citrus-400" />
@@ -150,6 +170,7 @@ export default function PublicNavbar() {
                 // Ab md sichtbar, auf Tablets also weiterhin per Finger bedient:
                 // volle Trefferhoehe auf Touch-Geraeten, kompakte Pille mit Maus.
                 'inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-medium transition pointer-fine:min-h-0',
+                FOKUS_RING,
                 isActive(item.href)
                   ? 'bg-surface-100 text-brand-800'
                   : 'text-ink-800 hover:bg-white hover:text-brand-800'
@@ -167,57 +188,72 @@ export default function PublicNavbar() {
           <GastCreateLink
             createHref="/planen"
             createLabel="Reise planen"
-            className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0"
+            className={cn(
+              'inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0',
+              FOKUS_RING,
+            )}
           />
         </div>
 
         <button
+          ref={menuKnopf}
           type="button"
           aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
           aria-expanded={mobileOpen}
+          aria-controls={MOBILE_NAV_ID}
           onClick={() => setMobileOpen((current) => !current)}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden"
+          className={cn(
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden',
+            FOKUS_RING,
+          )}
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
         </button>
       </div>
 
-      {mobileOpen && (
-        <nav
-          aria-label="Mobile Navigation"
-          className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
-        >
-          <div className="grid gap-1">
-            {HAUPTNAVIGATION.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={closeMobile}
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-ink-900 hover:bg-white"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line-200 pt-4">
-            {eintraege.map((eintrag) => (
-              <Sitzungseintrag
-                key={eintrag.label}
-                eintrag={eintrag}
-                mobil
-                onFertig={closeMobile}
-                onNachlesen={sitzungLesen}
-              />
-            ))}
-            <GastCreateLink
-              createHref="/planen"
-              createLabel="Reise planen"
+      <nav
+        id={MOBILE_NAV_ID}
+        aria-label="Mobile Navigation"
+        hidden={!mobileOpen}
+        inert={!mobileOpen}
+        className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
+      >
+        <div className="grid gap-1">
+          {HAUPTNAVIGATION.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
               onClick={closeMobile}
-              className="flex h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white"
+              className={cn(
+                'inline-flex min-h-11 items-center rounded-2xl px-4 text-sm font-semibold text-ink-900 hover:bg-white',
+                FOKUS_RING,
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+        <div className="mt-3 grid grid-cols-1 gap-2 border-t border-line-200 pt-4">
+          {eintraege.map((eintrag) => (
+            <Sitzungseintrag
+              key={eintrag.label}
+              eintrag={eintrag}
+              mobil
+              onFertig={closeMobile}
+              onNachlesen={sitzungLesen}
             />
-          </div>
-        </nav>
-      )}
+          ))}
+          <GastCreateLink
+            createHref="/planen"
+            createLabel="Reise planen"
+            onClick={closeMobile}
+            className={cn(
+              'flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white',
+              FOKUS_RING,
+            )}
+          />
+        </div>
+      </nav>
     </header>
   )
 }
@@ -245,14 +281,20 @@ function Sitzungseintrag({
       <Link
         href={eintrag.href}
         onClick={onFertig}
-        className="flex h-11 items-center justify-center rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800"
+        className={cn(
+          'flex min-h-11 items-center justify-center rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
+          FOKUS_RING,
+        )}
       >
         {eintrag.label}
       </Link>
     ) : (
       <Link
         href={eintrag.href}
-        className="inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0"
+        className={cn(
+          'inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+          FOKUS_RING,
+        )}
       >
         {eintrag.label}
       </Link>
@@ -311,8 +353,14 @@ function AbmeldenKnopf({
       type="submit"
       className={
         mobil
-          ? 'flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800'
-          : 'inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0'
+          ? cn(
+              'flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
+              FOKUS_RING,
+            )
+          : cn(
+              'inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+              FOKUS_RING,
+            )
       }
     >
       <LogOut className="h-4 w-4" aria-hidden="true" />

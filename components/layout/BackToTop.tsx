@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react'
 import { ArrowUp } from 'lucide-react'
 
+import { scrollVerhalten } from '@/lib/formular/sicht'
+
 /** Felder, bei denen auf Telefonen die Bildschirmtastatur aufgeht. */
 function isTypingTarget(node: EventTarget | null) {
   if (!(node instanceof HTMLElement)) return false
@@ -44,13 +46,15 @@ export default function BackToTop() {
 
   return (
     <button
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: scrollVerhalten() })}
       aria-label="Nach oben"
       className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))]
                  z-40 flex h-11 w-11 items-center justify-center rounded-full border bg-background/80
-                 backdrop-blur hover:bg-background shadow-lg"
+                 backdrop-blur hover:bg-background shadow-lg focus-visible:outline-none
+                 focus-visible:ring-4 focus-visible:ring-brand-600/15"
     >
-      <ArrowUp className="h-5 w-5" />
+      <ArrowUp className="h-5 w-5" aria-hidden="true" />
     </button>
   )
 }

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 2. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO ACTIVE RUNTIME DRAFT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 IN IMPLEMENTATION / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 ## 1. Latest verified runtime integration
 
@@ -156,11 +156,13 @@ Assistant Truth Context 1, World Map 1 and Destination Essentials 1 do not weake
 
 ## 10. Active work boundary
 
-**No active Cursor coding agent. No active runtime PR/Draft for the current completed slices. No automatic follow-up slice.**
+**Active slice:** Mobile Accessibility 1 on `feat/phase-1-mobile-accessibility-1` / Draft-PR #430. Cursor-Agent `Jetnity mobile accessibility 1`, Generation 1. `SINGLE_AGENT`. **DO NOT MARK READY. DO NOT MERGE. DO NOT START A FOLLOW-UP SLICE.**
+
+Canonical baseline after fetch: `origin/main == e31e57269e985cb73e1490a0ac6b8ad6bea87725`. Local `origin/main` was stale at `cd8f10da...` until fetch; no live drift versus the task baseline.
 
 Completed identities remain closed and must not be reopened as unfinished runtime slices:
 
-- Assistant Truth Context 1: Issue #425 closed; accepted head `bce6f3d8...`; recovery PR #427 merged; runtime merge `cd8f10da...`; agent `Jetnity assistant truth context 1`, Generation 1, session `bc-3031160f-45b4-4186-8c4b-5f246682aa71` completed/not active.
+- Assistant Truth Context 1: Issue #425 closed; accepted head `bce6f3d8...`; recovery PR #427 merged; runtime merge `cd8f10da...`; continuity merge `e31e5726...`; agent `Jetnity assistant truth context 1`, Generation 1, session `bc-3031160f-45b4-4186-8c4b-5f246682aa71` completed/not active.
 - World Map 1: Issue #419 closed; accepted head `cbed980...`; recovery PR #423 merged; agent `Jetnity world map 1`, Generation 1, session `bc-bcfe4a30-460b-439d-8f14-96ec910487ac` completed/not active.
 - Destination Essentials 1: Issue #393 closed; recovery PR #417 merged; agent `Jetnity destination essentials 1`, Generation 1, session `bc-0dde2838-bb7b-4e97-b94a-6ac95002e2a2` completed/not active.
 

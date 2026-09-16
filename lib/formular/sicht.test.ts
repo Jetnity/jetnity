@@ -1,7 +1,18 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { feldInSichtNehmen } from '@/lib/formular/sicht'
+import { feldInSichtNehmen, scrollVerhalten } from '@/lib/formular/sicht'
+
+describe('Scrollverhalten', () => {
+  test('bleibt weich, wenn keine Reduced-Motion-Praeferenz vorliegt', () => {
+    assert.equal(scrollVerhalten(null), 'smooth')
+    assert.equal(scrollVerhalten({ matches: false }), 'smooth')
+  })
+
+  test('wird instant, wenn Reduced Motion aktiv ist', () => {
+    assert.equal(scrollVerhalten({ matches: true }), 'auto')
+  })
+})
 
 describe('Erstes Fehlerfeld in Sicht nehmen', () => {
   test('scrollt zum Feld und setzt den Fokus, ohne nachzuspringen', () => {
@@ -17,7 +28,7 @@ describe('Erstes Fehlerfeld in Sicht nehmen', () => {
 
     assert.equal(feldInSichtNehmen(ziel), true)
     assert.deepEqual(aufrufe, [
-      ['scroll', { block: 'center', inline: 'nearest', behavior: 'smooth' }],
+      ['scroll', { block: 'center', inline: 'nearest', behavior: scrollVerhalten() }],
       ['focus', { preventScroll: true }],
     ])
   })

@@ -446,7 +446,7 @@ export default function TripPlanner({
                     type="button"
                     onClick={() => extraEntfernen(ziel.key)}
                     aria-label={`Weiteres Ziel ${nummer} entfernen`}
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   >
                     <X className="h-4 w-4" aria-hidden="true" />
                     Entfernen
@@ -461,7 +461,7 @@ export default function TripPlanner({
                 onClick={extraHinzufuegen}
                 disabled={!destinationOrt || zusaetzlicheZiele.length >= GRENZEN.etappenJeReise - 1}
                 aria-describedby="weitere-ziele-hinweis"
-                className="inline-flex min-h-11 w-fit items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 disabled:pointer-events-none disabled:opacity-50"
+                className="inline-flex min-h-11 w-fit items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-50"
               >
                 Weiteres Ziel hinzufügen
               </button>
@@ -616,12 +616,12 @@ export default function TripPlanner({
           <p className="flex min-w-0 items-start gap-2 text-xs leading-5 text-ink-700">
             {angemeldet ? (
               <>
-                <Cloud className="h-4 w-4 shrink-0 text-brand-600" />
+                <Cloud className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
                 Diese Reise wird in deinem Konto gespeichert.
               </>
             ) : (
               <>
-                <ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" />
+                <ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
                 Dieser Entwurf bleibt zunächst nur in deinem Browser.
               </>
             )}
@@ -629,10 +629,10 @@ export default function TripPlanner({
           <button
             type="submit"
             disabled={laeuft}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
           >
             {laeuft ? 'Reise wird erstellt …' : 'Reise erstellen'}
-            {!laeuft && <ArrowRight className="h-4 w-4" />}
+            {!laeuft && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
           </button>
         </div>
       </form>

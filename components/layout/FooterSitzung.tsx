@@ -16,7 +16,7 @@ import {
 import { createBrowserClient } from '@/lib/supabase/client'
 
 const footerLinkClass =
-  'inline-flex min-h-10 items-center text-sm text-white/70 transition hover:text-white pointer-fine:min-h-0'
+  'inline-flex min-h-11 items-center text-sm text-white/70 transition hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25 pointer-fine:min-h-0'
 
 export default function FooterSitzung() {
   const pathname = usePathname()

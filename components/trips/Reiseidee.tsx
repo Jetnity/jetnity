@@ -260,7 +260,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
           <button
             type="submit"
             disabled={laeuft}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
           >
             {plant ? 'Entwurf entsteht …' : 'Entwurf erstellen'}
             {!plant && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
