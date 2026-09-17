@@ -16,12 +16,12 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis bei Dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Aktuelle Basis | `main@03842a64698cae1f4f20f54b7e6aa5016982562c` – rebased |
-| **Letzter laufzeitändernder Head** | der Review-Fix-Commit „Guard Official hard truth across the whole requirement taxonomy“ |
+| Aktuelle Basis | `main@aa6afaa6057f631ffb332e6feeda32a45c52fa47` – durch Merge integriert |
+| **Letzter laufzeitändernder Head** | der Integrations-Merge `main@aa6afaa6` in den Branch |
 | **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
-| Merge-Base | `03842a64698cae1f4f20f54b7e6aa5016982562c` |
-| Behind / Ahead | **0 behind / 16 ahead** gegen `origin/main` |
-| Drift | keine. Der Branch ist auf `03842a64` (World Map Polish 2, #437) rebased; konfliktfrei, beide Seiten vollständig |
+| Merge-Base | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` |
+| Behind / Ahead | **0 behind / 19 ahead** gegen `origin/main` |
+| Drift | keine. `main@aa6afaa6` ist per `git merge --no-ff` integriert – ohne Rebase und ohne Force-Push, damit die reviewte Exact-Head-Historie erhalten bleibt. Konfliktfrei, beide Seiten verlustfrei geprüft |
 | Binding | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Entscheidung | `DECISIONS.md` ADR-0212 |
 
@@ -69,7 +69,7 @@ Der zweite Punkt, aus vier Review-Runden gewachsen: **Eine harte amtliche Aussag
 
 ## 4. Gates auf dem exakten Head
 
-**Grün:** `npm test` (3427/3427), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
+**Grün:** `npm test` (3505/3505), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (75 Browser-Prüfungen bei 390, 1280 und 1440 px).
 
 **Grün auf dem exakten Head in GitHub/Vercel:** CI-Run `35165950349` – **success**, beide Jobs. Darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch". Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v` – **READY**.
 
@@ -93,9 +93,9 @@ Erledigt und **nicht zu wiederholen** – der Technical Lead hat das Develop-DB-
 
 Offen bleibt genau eines:
 
-1. In Preview mit gesetztem Kill Switch **ein einzelner** bezahlter Aufruf mit angemeldetem Testkonto als Nachweis. Kein zweites Probe-Konto anlegen; wenn kein sicherer Weg besteht, bleibt der Punkt offen.
+1. **Ein einzelner gebundener bezahlter Aufruf in Preview/Development.** In dieser Agent-Umgebung nicht erreichbar: Es gibt genau vier Secrets (`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`); `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen. Ohne Service-Role-Key ist selbst die Kostenreservierung unerreichbar (`modell_kontingent_beanspruchen` ist `service_role`-only). Der Weg über die laufende Vercel-Preview scheitert an der Anmeldung: nur Konto-Reisen, `enable_confirmations = true`, kein Postfach, und ein zweites Probe-Konto ist untersagt. Nichts davon wurde umgangen, erweitert oder erfunden.
 
----
+Wer diesen Nachweis holt, braucht eine bestätigte Testanmeldung in der Preview und die dort bereits gesetzte Modellkonfiguration – beides liegt beim Technical Lead, nicht beim Agenten.
 
 ## 6. Was bewusst nicht gebaut wurde
 

@@ -20,10 +20,10 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | --- | --- |
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (durch Rebase abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | der Review-Fix-Commit „Guard Official hard truth across the whole requirement taxonomy“ |
-| Merge-Base mit `origin/main` | `03842a64698cae1f4f20f54b7e6aa5016982562c` – der Branch wurde auf den aktuellen `main` rebased |
-| Behind / Ahead gegen `origin/main` | **0 behind / 16 ahead** |
-| Drift | **keine.** `origin/main` war auf `03842a64` gewandert (World Map Polish 2, #437, 8 Commits); der Branch ist darauf rebased worden. Der Rebase lief ohne Konflikt, beide Seiten sind vollständig vorhanden (World-Map- und Assistant-Dateien geprüft), und der Diff gegen `origin/main` enthält ausschliesslich den Assistant-Slice |
+| **Letzter laufzeitändernder Head** | der Integrations-Merge `main@aa6afaa6` in den Branch |
+| Merge-Base mit `origin/main` | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` – `main` wurde in den Branch **gemergt**, nicht rebased |
+| Behind / Ahead gegen `origin/main` | **0 behind / 19 ahead** |
+| Drift | **keine.** `origin/main` war auf `aa6afaa6` gewandert (Realistic World Cartography 1, Guardian-Governance, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits). Integriert durch `git merge --no-ff`, ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt |
 
 Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
 Dokumentations-Commit über dem letzten Code-Commit und ändert keine Laufzeit:
@@ -100,21 +100,38 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `03842a64`
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3427 Tests, 597 Suites, 0 Fehler (einschliesslich der von `main` übernommenen World-Map-Tests) |
+| `npm test` | **grün** – 3505 Tests, 611 Suites, 0 Fehler (einschliesslich aller von `main` übernommenen Tests) |
 | `npm run typecheck` | **grün** |
-| `npm run lint` | **0 Fehler**, 138 Warnungen – identisch zur Basis, keine davon in neuen Dateien |
+| `npm run lint` | **0 Fehler**, 139 Warnungen – exakt die Baseline von `origin/main` (dort gemessen), keine davon in neuen Dateien |
 | `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |
 | `npm run check:dead` | **grün** – 1 verwaiste Datei, begründet und vorbestehend (`CookieConsent.tsx`) |
 | `npm run check:exports` | **grün** – 0 Exporte ohne Aufrufer |
 | `npm run check:deps` | **grün** |
 | `npm run check:api-schutz` | **grün** – 12 Admin-Routen, alle mit `requireAdminApi()` |
 | `npm run check:schema-bezug` | **grün** |
-| `npm run nachweis:reisebegleiter` | **grün** – 50 Browser-Prüfungen, mobil (390×844) und Desktop (1440×1000), 0 Fehler, keine Konsolenfehler |
+| `npm run nachweis:reisebegleiter` | **grün** – 75 Browser-Prüfungen bei 390×844, 1280×900 und 1440×1000, 0 Fehler, keine Konsolenfehler |
 | GitHub Actions auf dem exakten Head | **success** – Run `35165950349`, beide Jobs: `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml` |
 | `npm run auth:pruefen` | **grün in der CI** auf dem exakten Head: „Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch", alle vier Prüfungen ✓. Die CI hat einen gültigen `SUPABASE_ACCESS_TOKEN`; in dieser Cloud-Agent-Umgebung schlägt derselbe Aufruf mit 401 fehl |
 | Vercel Preview auf dem exakten Head | **READY** – `6kbzcUP3CDzhXkkkj3owzz4bQB3v` |
 
 Die beiden Kennungen oben gehören zum laufzeitändernden Head `ea7cf8ec`. Jeder Dokumentations-Commit darüber löst dieselbe CI und dieselbe Vercel-Preview erneut aus; beide waren auf jedem dieser Köpfe erfolgreich. Die Kennungen des jeweils letzten Laufs stehen in den Checks von PR #435 – ein Dokument kann die Kennung des Laufs nicht enthalten, den es selbst auslöst.
+
+### Integration von `main@aa6afaa6`
+
+Verlustfrei in beide Richtungen, geprüft und nicht behauptet:
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| Konflikte beim Merge | **keine**, auch nicht in `package.json` |
+| Skripte aus `origin/main` in `package.json` | alle 45 vorhanden und wortgleich; `dependencies` und `devDependencies` identisch |
+| Zusatz des Slices | genau einer: `nachweis:reisebegleiter` |
+| `supabase/migrations/20260917120000_account_visits.sql` | byte-identisch mit `origin/main` |
+| `types/supabase.ts` | byte-identisch mit `origin/main` |
+| `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`, `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, `JETNITY_START_HERE.md` | byte-identisch mit `origin/main` |
+| `lib/account/besuche.ts`, `welt-geometrie.ts`, `world-map-geografie.ts` | byte-identisch mit `origin/main` |
+| Diff gegen `origin/main` | enthält ausschliesslich den Assistant-Slice (34 Dateien) |
+
+Guardian-/Grok-Governance wurde gelesen und **nicht verändert**. Sie ändert an der Cursor-Autorität nichts: kein Ready, kein Merge, kein Folgeslice.
 
 ### Nicht gelaufen – und warum
 
@@ -165,6 +182,30 @@ Die Migration darf **nicht erneut angewandt** werden.
 
 ---
 
+### Supabase-Grenzen nach der Integration von `main@aa6afaa6`
+
+| Umgebung | Assistant-Migration `20260917090000` | Explicit Visit History `20260917120000` |
+| --- | --- | --- |
+| Development | angewandt (Technical Lead, siehe oben) | angewandt (laut Technical Lead) |
+| **Production** | **nicht angewandt, nicht vorgesehen** | angewandt nach ausdrücklicher PO-Freigabe |
+
+In diesem Durchgang wurde **keine** Supabase-Mutation ausgeführt, weder auf Development noch auf Production, und keine Migration erneut angewandt.
+
+**Live-Lesen war nicht möglich.** Der `SUPABASE_ACCESS_TOKEN` dieser Agent-Umgebung wird von der Management API weiterhin mit HTTP 401 abgewiesen – geprüft auf `/v1/projects`, `/v1/projects/{ref}` und `/v1/branches/{ref}`. Damit konnte der Development-Schema-/Migrationsstand hier nicht read-only verifiziert werden; die Feststellungen oben sind die des Technical Lead. Über die Datenebene ist es ebenfalls nicht erreichbar: `public.model_usage` hat für `anon` kein Recht, und `supabase_migrations.schema_migrations` liegt nicht auf PostgREST.
+
+**Production-Assistant-Zustand, belegbar ohne Live-Zugang:**
+
+- Der Branch wendet nichts an. Es gibt keinen Codepfad und kein Skript in diesem Slice, das Production berührt.
+- `modellZustand({})` ist `{ aktiv: false, grund: 'abgeschaltet' }`; ein Schlüssel ohne Flag bleibt `abgeschaltet`, ein Flag ohne Schlüssel `kein-schluessel`. Production ohne diese Variablen ist damit per Konfigurationsvertrag zu (`lib/reisebegleiter/erzeugen.test.ts`).
+- Ohne den dritten CHECK-Wert würde ein Aufruf in Production ohnehin an `model_usage_funktion_werte` scheitern – fail closed.
+
+**Proaktiver Befund für das künftige Production-Gate.** Production hat jetzt `20260917120000`, aber nicht `20260917090000`; die beiden Migrationen sind zwischen den Umgebungen verschränkt. Zwei Folgen, die der Technical Lead vor einer späteren Production-Freigabe kennen sollte:
+
+1. Der automatisierte Production-Pfad ist **hart gesperrt**. `produktionsPlan()` in `lib/rollout/anwenden-grenze.ts` bricht ab, sobald Production eine Version über der Phase-3.1-Grenze `20260820130000` trägt – das ist mit `20260917120000` der Fall. `npm run db:anwenden -- --produktion` kann die Assistant-Migration also nicht ausliefern; es braucht den ausdrücklichen Rollout-Playbook-Weg. Das ist die sichere Richtung, aber es ist kein Zustand, in den man versehentlich hineinläuft.
+2. Eine spätere Anwendung von `20260917090000` auf Production wäre **chronologisch rückwärts** gegenüber der bereits verzeichneten `20260917120000`. Das Apply-Skript wählt nach „noch nicht angewandt" und nicht nach Reihenfolge, würde das also mechanisch tun; die Migrationshistorie stünde danach aber nicht mehr in Versionsordnung. `scripts/db/migration-history-repair.ts` existiert für genau diese Klasse von Problemen. Die Entscheidung darüber gehört zum Production-Gate und nicht in diesen Slice.
+
+---
+
 ## 5. Security
 
 | Frage | Antwort |
@@ -199,7 +240,7 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 ## 7. Offene Punkte
 
 1. **Develop-Migration und Live-Verifikation – erledigt, aber nicht vom Agenten.** Der Technical Lead hat sie im Re-Review auf `3775d980` durchgeführt und verifiziert (Abschnitt 4). Der 401 der Management API in dieser Agent-Umgebung besteht unverändert; die übrigen DB-Skripte (`db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `production:pruefen`) sind hier weiterhin nicht gelaufen.
-2. **Bezahlter Preview/Development-Nachweis** – nicht erbracht. In dieser Umgebung fehlen `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV`; ein Konto-Login ist nicht erreichbar, weil `enable_confirmations = true` gilt und kein Postfach zugänglich ist. Die vier Schranken vor dem Aufruf sind deterministisch geprüft, der Aufruf selbst nicht ausgeführt.
+2. **Bezahlter Preview/Development-Nachweis – weiterhin offen, erneut geprüft am 17. September 2026.** Der Auftrag erlaubt genau einen gebundenen Aufruf, **falls** die autorisierte Preview-/Development-Umgebung die Zugangsdaten schon hat. Sie hat sie in dieser Agent-Umgebung nicht: `CLOUD_AGENT_ALL_SECRET_NAMES` führt genau vier Namen – `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`. `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen; ohne den Service-Role-Key ist auch die Kostenreservierung nicht erreichbar, weil `modell_kontingent_beanspruchen` nur `service_role` ausführen darf. Der Weg über die laufende Vercel-Preview scheitert an der Anmeldung: Der Reisebegleiter begleitet nur Konto-Reisen, `enable_confirmations = true` verlangt eine bestätigte E-Mail, und ein zweites Probe-Konto ist ausdrücklich untersagt. Es wurden keine Secrets erzeugt, rotiert oder erweitert, keine Production-Zugangsdaten benutzt und keine Evidenz erfunden.
 3. **Darstellung einer Auskunft** – im Browser belegt, aber mit einer **gestellten** Auskunft über den Audit-Schalter `begleiterAuskunft`, nicht mit einer erzeugten.
 4. **Unbestätigter Development-Nutzer** aus Abschnitt 5 – **vom Technical Lead gelöscht**, Nachzählung 0. Erledigt.
 5. **Systemregeln gegen ein echtes Modell** – die Wirksamkeit der Prompt-Regeln (erste Schranke) ist nicht gemessen. Schema, Nutzlast und Prüfung (zweite und dritte Schranke) sind deterministisch geprüft und hängen nicht daran.

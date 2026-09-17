@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: die Review-Fix-Commits auf `3775d980`, `74577e31` und `f46d43a0` (siehe Abschnitt 0). Der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: der Integrations-Merge von `main@aa6afaa6` (Runde 5). Die Wahrheitsschranke ist seit Runde 4 unverändert. Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -34,6 +34,18 @@ Der zweite Teil des Befundes ist grundsätzlicher: Alle bisherigen Muster waren 
 Die Lösung ist keine längere Wortliste, sondern eine andere Zerlegung: Modalität × Bereich × Vorbehalt, satzweise. Damit fällt die Richtung der Aussage weg als Unterscheidung, und die Bereichsliste lässt sich gegen `OFFICIAL_REQUIREMENT_TYPES` auf Vollständigkeit prüfen.
 
 **Die gemeinsame Wurzel aller vier Befunde.** Ich habe jede Korrektur als Schliessung des *genannten Falls* gedacht statt als Frage nach der nächsten Umgehungsdimension. Die vier Runden haben nacheinander erweitert: Kontext → genannter Bezug → Anforderungstyp → Gesamttaxonomie und Aussagerichtung. Jede dieser Stufen war nach der vorigen absehbar, wenn man die richtige Frage stellt: nicht „schliesst die Regel den genannten Fall?", sondern „worüber lässt sie sich noch umgehen?". Dazu kommt derselbe Fehler wie in Befund 1 und 2: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
+
+---
+
+## 0a. Runde 5: Integration, und was sie nicht beweist
+
+Diese Runde hat keinen Wahrheitsbefund behoben. Sie hat `main@aa6afaa6` integriert – 41 Commits mit Realistic World Cartography, Guardian-Governance, dem V1-Account-/Privacy-/Ops-Audit und Explicit Visit History – und den Slice auf dem kombinierten Stand neu gegatet.
+
+Bemerkenswert daran ist, was sie **nicht** belegt: Der Merge lief konfliktfrei, auch in `package.json`, das der Technical Lead als einzige Überschneidung vorab benannt hatte. Ein konfliktfreier Merge ist kein Beweis für Verträglichkeit – Git meldet keinen Konflikt, wenn zwei Seiten dieselbe Datei an verschiedenen Stellen anfassen, selbst wenn das Ergebnis fachlich falsch wäre. Deshalb habe ich die Verträglichkeit nachgerechnet statt sie aus dem Ausbleiben eines Konflikts zu schliessen: alle 45 Skripte aus `main` wortgleich vorhanden, `dependencies` und `devDependencies` identisch, genau ein Zusatz, und die tragenden neuen Dateien von `main` byte-identisch. Der Diff gegen `origin/main` enthält nur den Assistant-Slice.
+
+Ich habe **gemergt und nicht rebased**, obwohl ich in Runde 4 rebased hatte. Der Auftrag verlangt es diesmal ausdrücklich: Ein Rebase hätte die bereits reviewten Exact-Head-Commits neu geschrieben, und die sind Gegenstand der Review-Historie dieses PR.
+
+Was diese Runde ebenfalls nicht kann: den Live-Stand von Development lesen. Der Management-API-Zugang dieser Umgebung bleibt bei HTTP 401. Alles, was das Statusdokument über den Development-Schemastand sagt, ist die Feststellung des Technical Lead, und es ist dort auch so gekennzeichnet.
 
 ---
 
@@ -82,7 +94,7 @@ Diese Punkte sind echte Schwächen, keine rhetorischen.
 - **Fehlalarm:** „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst" ist ehrlich und fällt durch. Gegenmittel: Die Systemregeln verbieten dieselben Wörter ausdrücklich. Ein regelkonformes Modell löst den Filter nicht aus. Wie oft ein echtes Modell daran scheitert, ist **nicht gemessen** – dafür wäre ein bezahlter Aufruf nötig.
 - **Lücke:** Eine Verfügbarkeits- oder Preisbehauptung in freier Formulierung („dieses Hotel ist im April meist noch frei") erkennt er nicht. Das ist dieselbe eingestandene Grenze wie ADR-0054. Die Preisziffer-Erkennung greift, die Verfügbarkeitsaussage nicht.
 - **Geschlossen (Befund 4):** Die Bereichszuordnung deckt jetzt die vollständige `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie ab, geprüft durch einen Vollständigkeitstest. Was bleibt, ist die Sprachseite: Die Muster fangen deutsche Formulierungen. Eine Anforderung in ungewöhnlicher Wortwahl oder in einer anderen Sprache erkennt der Bereichsdetektor nicht. Der Auffangbereich („einreise", „amtlich", „Vorschrift", „Pflicht", „erforderlich") fängt einen Teil davon; eine Garantie ist er nicht.
-- **Neue Lücke durch die Strenge:** Die Sperre ist heute total – ohne aktiven Provider ist kein Official-Bezug `belegt`, also fällt jede harte amtliche Aussage. Ob die verbleibende Auskunft für Reisende noch nützlich ist, ist **nicht gemessen**; dafür wäre der offene bezahlte Aufruf nötig.
+- **Neue Lücke durch die Strenge:** Die Sperre ist heute total – ohne aktiven Provider ist kein Official-Bezug `belegt`, also fällt jede harte amtliche Aussage. Ob die verbleibende Auskunft für Reisende noch nützlich ist, ist **nicht gemessen**; dafür wäre der offene bezahlte Aufruf nötig. Fünf Runden Wahrheitsschranke ohne einen einzigen echten Modelllauf sind das eigentliche Missverhältnis dieses Slice: Ich habe sehr genau geprüft, was Jetnity mit einer Antwort tut, und gar nicht, ob die Antworten etwas wert sind.
 
 Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukturell: Das Schema hat kein Feld für eine Anforderung, und der Zustand eines Bezugs kommt nicht aus dem Modell. Was ein Modell nicht formulieren kann, muss dieser Filter nicht abfangen.
 

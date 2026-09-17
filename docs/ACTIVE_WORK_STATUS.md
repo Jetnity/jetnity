@@ -14,18 +14,18 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Current base | `main@03842a64698cae1f4f20f54b7e6aa5016982562c` (rebased) |
+| Current base | `main@aa6afaa6057f631ffb332e6feeda32a45c52fa47` (merged, not rebased) |
 | **Last runtime-changing head** | the two review-fix commits on top of `3775d9803bf01123b13f16402885b1a5d33bb71e` |
 | **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
 | Merge-base / behind / ahead | `15aa125a` / **8 behind** / 14 ahead against the current `origin/main` |
-| Drift | none. The branch was rebased onto `03842a64` (World Map Polish 2, #437) without conflict; both change sets are fully present and the diff against `origin/main` contains only the Assistant slice |
+| Drift | none. `main@aa6afaa6` (Realistic World Cartography 1, Guardian governance, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) was integrated with `git merge --no-ff`, deliberately without rebase or force-push so the already reviewed exact-head history survives. No conflicts; losslessness verified in both directions |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Decision | ADR-0212 |
 | Status doc | `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` |
 | Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
 | Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
 
-Repository gates on the exact head are green: `npm test` 3427/3427, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview; the identifiers of the latest run are in the checks of PR #435.
+Repository gates on the exact head are green: `npm test` 3505/3505, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 75 browser checks via `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview; the identifiers of the latest run are in the checks of PR #435.
 
 **Technical-Lead re-reviews on `3775d980`, `74577e31` and `f46d43a0` — four truth findings, all fixed in this session:**
 
@@ -35,6 +35,10 @@ Repository gates on the exact head are green: `npm test` 3427/3427, `typecheck`,
 4. The binding was requirement-accurate but covered only five domains and only negations, so an asserted requirement (“Du brauchst eine Reiseversicherung”, “Dein Pass muss sechs Monate gültig sein”) fell through the net. Detection is now sentence-wise over modality × domain × hedge, spans the complete `OFFICIAL_REQUIREMENT_TYPES` taxonomy in both directions, and uses `other_entry_requirement` as the catch-all. A coverage test asserts every requirement type is carried by some domain. Ordinary suggestions (“Prüfe deine Passgültigkeit in der Reisevorbereitung”) stay valid.
 
 With no requirements provider active, no Official ref is ever `belegt`, so this is currently a **complete block** on official statements rather than a filter — which is correct, because Jetnity holds no checked official truth.
+
+**Supabase boundaries after the integration.** No Supabase mutation was performed in this pass. Development holds the Assistant migration `20260917090000` (applied earlier by the Technical Lead) and Explicit Visit History; **Production holds only `20260917120000_account_visits`** and must not receive the Assistant migration in this pass. Live read-only verification was **not possible** from the agent environment — the Management API rejects its `SUPABASE_ACCESS_TOKEN` with HTTP 401 on `/v1/projects`, `/v1/projects/{ref}` and `/v1/branches/{ref}`, and the data plane exposes neither `model_usage` to `anon` nor `supabase_migrations`. The Development statements above are the Technical Lead's findings, labelled as such in the slice STATUS.
+
+**Note for the eventual Production gate:** the automated Production apply path is already hard-blocked, because `produktionsPlan()` aborts once Production carries a version beyond the Phase-3.1 boundary `20260820130000` — which `20260917120000` is. Applying `20260917090000` to Production later would also be chronologically behind that already-recorded version. Both are Technical-Lead decisions, not slice scope.
 
 **Develop-only DB gate — completed independently by the Technical Lead, do NOT repeat:** migration `20260917090000` applied on Development and recorded under the repository version; live `model_usage_funktion_werte` is exactly `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS enabled; policy `model_usage_lesen` and grants unchanged; security advisors show no new Assistant-specific finding; `model_usage` holds 0 rows on Development and Production; Development migration history corrected from the tool's temporary `20260917003925` to the repository version; the accidental unconfirmed auth user `assistant.runtime1.probe@gmail.com` was verified empty and deleted. **Production unchanged and still accepts only `reisevorschlag` / `reiseaenderung`.**
 
