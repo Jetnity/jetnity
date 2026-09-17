@@ -35,6 +35,9 @@ export async function GET() {
   if (vercelEnv !== 'preview') {
     status = 421
     gate = 'not-preview'
+  } else if (!state.aktiv) {
+    status = 425
+    gate = 'model-inactive'
   } else if (!supabaseUrlValid) {
     status = 422
     gate = 'supabase-url-invalid-or-missing'
@@ -44,9 +47,6 @@ export async function GET() {
   } else if (!serviceRoleConfigured) {
     status = 424
     gate = 'service-role-missing'
-  } else if (!state.aktiv) {
-    status = 425
-    gate = 'model-inactive'
   }
 
   return NextResponse.json(
