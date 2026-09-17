@@ -25,6 +25,7 @@ import {
 } from '@/lib/account/besuche-eingabe'
 import { besuchAusZeile } from '@/lib/account/besuche-daten'
 import {
+  WELT_BESUCHT_FEHLER_KURZ,
   WELT_BESUCHT_FEHLER_TEXT,
   WELT_BESUCHT_LABEL,
   WELT_BESUCHT_LEER_KURZ,
@@ -451,6 +452,10 @@ describe('Leer und Fehler bleiben zwei Aussagen', () => {
     assert.equal(fehler.lage, 'fehler')
     assert.equal(leer.lage, 'leer')
     assert.notEqual(fehler.kurz, leer.kurz)
+    // Die Kurzform sagt nicht „null“, sondern „unbekannt“, und sie wiederholt
+    // den ganzen Satz nicht, der direkt daneben steht.
+    assert.equal(fehler.kurz, WELT_BESUCHT_FEHLER_KURZ)
+    assert.equal(/\d/.test(fehler.kurz), false)
     assert.equal(fehler.fehlerText, WELT_BESUCHT_FEHLER_TEXT)
     assert.equal(leer.fehlerText, null)
     assert.equal(fehler.label, WELT_BESUCHT_LABEL)

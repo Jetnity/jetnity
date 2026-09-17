@@ -15,7 +15,7 @@ import { uiAuditSeiteAktiv } from '@/lib/ui-audit/freigabe'
  * Server – auch im Audit, sonst prüfte der Audit eine andere Nutzlast als die
  * Produktseite. SG steht für ein Land ohne zeichenbare Fläche.
  */
-const AUDIT_LAENDER = ['PT', 'IT', 'JP', 'SG'] as const
+const AUDIT_LAENDER = ['PT', 'IT', 'JP', 'SG', 'BR'] as const
 
 export const metadata: Metadata = {
   title: 'Account-Audit',

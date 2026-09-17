@@ -43,6 +43,13 @@ export const WELT_BESUCHT_LEER_KURZ = 'Noch keine Besuche bestätigt'
 export const WELT_BESUCHT_FEHLER_TEXT =
   'Deine bestätigten Besuche konnten nicht gelesen werden. Die Karte zeigt deshalb keinen Besuchsstand – nicht, dass keiner besteht.'
 
+/**
+ * Kurzform des Ausfalls. Sie steht dort, wo sonst die Zahl stünde, und sagt
+ * das Gegenteil einer Zahl: dass gerade keine bekannt ist. Der ganze Satz
+ * steht daneben im Hinweis und muss hier nicht ein zweites Mal stehen.
+ */
+export const WELT_BESUCHT_FEHLER_KURZ = 'Gerade nicht lesbar'
+
 export type WeltBesuchtAnsicht = {
   lage: BesuchtLage
   label: string
@@ -84,7 +91,7 @@ export function weltBesuchtAbleiten({
     return {
       lage: 'fehler',
       label: WELT_BESUCHT_LABEL,
-      kurz: WELT_BESUCHT_FEHLER_TEXT,
+      kurz: WELT_BESUCHT_FEHLER_KURZ,
       text: WELT_BESUCHT_TEXT,
       fehlerText: WELT_BESUCHT_FEHLER_TEXT,
       kennzahlen: KEINE_KENNZAHLEN,

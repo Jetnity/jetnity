@@ -95,7 +95,10 @@ async function messen(page) {
     else {
       const links = [...nav.querySelectorAll('a')]
       const labels = links.map((link) => link.textContent.trim())
-      if (JSON.stringify(labels) !== JSON.stringify(['Übersicht', 'Reisen', 'Reisende', 'Einstellungen'])) {
+      if (
+        JSON.stringify(labels) !==
+        JSON.stringify(['Übersicht', 'Reisen', 'Deine Welt', 'Reisende', 'Einstellungen'])
+      ) {
         fehler.push(`Nav-Reihenfolge ${labels.join(' → ')}`)
       }
       const tops = new Set(links.map((link) => Math.round(link.getBoundingClientRect().top)))
@@ -114,11 +117,29 @@ async function messen(page) {
       if (text.includes(verboten)) fehler.push(`Workspace-Widget sichtbar: ${verboten}`)
     }
     if (!text.includes('Deine Welt')) fehler.push('Weltkarte fehlt')
-    if (!text.includes('Besucht bestätigt')) fehler.push('Besucht-Unterscheidung fehlt')
+    if (!text.includes('Besucht:')) fehler.push('Besucht-Kennzahl fehlt')
     const welt = document.querySelector('[data-world-map="ein"]')
     if (!welt) fehler.push('data-world-map fehlt')
-    else if (welt.getAttribute('data-world-map-visited') !== 'nicht_erfasst') {
-      fehler.push(`visited-Lage ${welt.getAttribute('data-world-map-visited')}`)
+    else {
+      // Ohne bestätigte Historie ist der Stand leer – nicht unbekannt und nicht
+      // fehlerhaft. Die Fixtures dieser Zustände tragen keine Besuche, und kein
+      // geplanter Ort darf daraus einen machen: eingefärbt werden darf hier
+      // ausschliesslich `geplant`.
+      const lage = welt.getAttribute('data-world-map-visited')
+      if (lage !== 'leer') fehler.push(`visited-Lage ${lage}`)
+      for (const flaeche of welt.querySelectorAll('[data-welt-land]')) {
+        const zustand = flaeche.getAttribute('data-welt-land-zustand')
+        if (zustand !== 'geplant') {
+          fehler.push(`Besucht-Zustand ohne bestätigte Historie: ${zustand}`)
+        }
+      }
+      // Die geplante Kennzahl weicht nur dann, wenn die Reisen nicht gelesen
+      // werden konnten. Dann steht dort keine Null, sondern gar nichts.
+      const geplantFehlt = !text.includes('Geplant:')
+      const reisenFehler = welt.getAttribute('data-world-map-lage') === 'fehler'
+      if (geplantFehlt !== reisenFehler) {
+        fehler.push(`Geplant-Kennzahl ${geplantFehlt ? 'fehlt' : 'steht'} bei Lage ${welt.getAttribute('data-world-map-lage')}`)
+      }
     }
     return { ok: fehler.length === 0, fehler }
   })

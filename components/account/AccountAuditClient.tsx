@@ -5,6 +5,7 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 
+import AccountBesuche from '@/components/account/AccountBesuche'
 import AccountBuchungen from '@/components/account/AccountBuchungen'
 import AccountNavigation from '@/components/account/AccountNavigation'
 import AccountUebersicht from '@/components/account/AccountUebersicht'
@@ -124,6 +125,37 @@ const REISE_JAPAN: TripSummary = {
   itemCount: 0,
 }
 
+/**
+ * Eine geplante Etappe in einem grossen Land, das zugleich bestätigt besucht
+ * ist. Auf Weltmassstab ist Brasilien gross genug, dass der überlagerte
+ * Zustand – volle Füllung *und* Schraffur – ohne Lupe erkennbar bleibt.
+ */
+const REISE_BRASILIEN: TripSummary = {
+  id: '55555555-5555-4555-8555-555555555555',
+  title: 'Brasilien',
+  origin: 'Zürich',
+  startDate: '2027-11-02',
+  endDate: '2027-11-20',
+  travellers: 2,
+  currency: 'CHF',
+  budgetAmount: null,
+  status: 'draft',
+  updatedAt: '2026-08-25T10:00:00.000Z',
+  stages: [
+    {
+      name: 'São Paulo',
+      position: 1,
+      countryCode: 'BR',
+      placeId: 'geonames:3448439',
+      latitude: -23.5475,
+      longitude: -46.6361,
+    },
+  ],
+  stageCount: 1,
+  dayCount: 19,
+  itemCount: 0,
+}
+
 const BUCHUNG: KontoBuchung = {
   id: 'booking-1',
   title: 'Zürich – Lissabon',
@@ -143,11 +175,11 @@ const BUCHUNG: KontoBuchung = {
  * Bestätigte Besuche als Fixture.
  *
  * Absichtlich so gewählt, dass jeder Zustand der Karte einmal vorkommt:
- * Portugal ist besucht *und* geplant (überlagert), Italien nur besucht, Japan
- * nur geplant. Lissabon steht zweimal – ein wiederholter Besuch bleibt zwei
- * Ereignisse und ein Ort. Singapur hat auf Weltmassstab keine Fläche und
- * prüft die Ersatzmarke. Der letzte Eintrag trägt keinen Ländercode und darf
- * die Länderzahl deshalb nicht erhöhen.
+ * Brasilien und Portugal sind besucht *und* geplant (überlagert), Italien nur
+ * besucht, Japan nur geplant. Lissabon steht zweimal – ein wiederholter Besuch
+ * bleibt zwei Ereignisse und ein Ort. Singapur hat auf Weltmassstab keine
+ * Fläche und prüft die Ersatzmarke. Der letzte Eintrag trägt keinen
+ * Ländercode und darf die Länderzahl deshalb nicht erhöhen.
  */
 const BESUCHE: readonly Besuch[] = [
   {
@@ -197,6 +229,18 @@ const BESUCHE: readonly Besuch[] = [
     monat: 3,
     tag: null,
     erstelltAm: '2026-09-04T10:00:00.000Z',
+  },
+  {
+    id: 'aaaa1111-0000-4000-8000-000000000006',
+    placeId: 'geonames:3451190',
+    placeLabel: 'Rio de Janeiro',
+    countryCode: 'BR',
+    latitude: -22.9028,
+    longitude: -43.2075,
+    jahr: 2016,
+    monat: 8,
+    tag: 5,
+    erstelltAm: '2026-09-06T10:00:00.000Z',
   },
   {
     id: 'aaaa1111-0000-4000-8000-000000000005',
@@ -256,7 +300,7 @@ export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeome
       return { name: 'Sasa', problem: null, naechste: null, hatReisen: false, reisen: [] }
     }
     if (zustand === 'welt') {
-      const reisen = [REISE, REISE_GLEICHER_TITEL, REISE_JAPAN]
+      const reisen = [REISE, REISE_GLEICHER_TITEL, REISE_JAPAN, REISE_BRASILIEN]
       return {
         name: 'Sasa',
         problem: null,
@@ -302,6 +346,11 @@ export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeome
     [besucht.laenderCodes, geometrie, sicht.problem, sicht.reisen],
   )
 
+  const welt = useMemo(
+    () => worldMapAbleiten({ problem: sicht.problem, reisen: sicht.reisen }),
+    [sicht.problem, sicht.reisen],
+  )
+
   return (
     <div data-account-audit={zustand} className="min-h-screen bg-surface-75">
       <AccountNavigation />
@@ -309,6 +358,14 @@ export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeome
         <div className={ansicht === 'bookings' ? 'mx-auto max-w-3xl' : 'mx-auto max-w-6xl'}>
           {ansicht === 'bookings' ? (
             <AccountBuchungen {...buchungenSicht} />
+          ) : ansicht === 'besuche' ? (
+            <AccountBesuche
+              welt={welt}
+              besucht={besucht}
+              laender={laender}
+              besuche={zustand === 'welt' ? BESUCHE : []}
+              problem={zustand === 'besuch-fehler' ? { status: 503, message: 'unavailable' } : null}
+            />
           ) : (
             <AccountUebersicht {...sicht} besucht={besucht} laender={laender} />
           )}
