@@ -66,7 +66,116 @@ import type { OfficialRequirementType } from '@/types/trips'
 
 export type Pruefbefund =
   | { ok: true }
-  | { ok: false; art: 'unbekannter-bezug' | 'unbelegte-gewissheit'; hinweis: string }
+  | {
+      ok: false
+      art:
+        | 'unbekannter-bezug'
+        | 'unbelegte-gewissheit'
+        | 'fremdes-amtsvokabular'
+        | 'fremde-antwortsprache'
+      hinweis: string
+    }
+
+// ---------------------------------------------------------------------------
+// Die Sprachschranke
+// ---------------------------------------------------------------------------
+//
+// Warum es sie gibt: Die Prüfung unten liest Modalität, Bereich und Vorbehalt
+// über deutsche Muster. Eine solche Prüfung ist nur über einer **geschlossenen**
+// Sprachfläche vollständig. Solange die Auskunft „in der Sprache der Frage"
+// antworten durfte, war die Fläche offen – und „You need a visa." ging durch,
+// nicht weil die Regel eine Lücke hatte, sondern weil sie für diesen Satz gar
+// nicht zuständig war.
+//
+// Deshalb ist die Antwortsprache jetzt Teil des Vertrags und nicht des Prompts:
+// Der Reisebegleiter antwortet auf **Deutsch**, wie die ganze übrige Jetnity-
+// Oberfläche (`COUNTRY_UI_LOCALE`). Das ist keine Produktentscheidung, sondern
+// die Rücknahme einer Ausweitung, die dieser Slice selbst eingeführt hatte.
+//
+// Zwei Schranken sichern das, und jede fängt, was die andere verfehlen kann:
+//
+//   1. `DEUTSCHE_MARKER` – eine Antwort ohne deutsche Funktionswörter ist keine
+//      deutsche Antwort und wird verworfen. Das schliesst **jede** Sprache, die
+//      unten nicht aufgezählt ist, einschliesslich der, an die niemand gedacht
+//      hat.
+//   2. `FREMDES_AMTSVOKABULAR` – amtliche Begriffe der übrigen von Jetnity
+//      geführten Sprachen. Sie haben in einer deutschen Antwort keinen
+//      legitimen Platz, also kostet ihr Verbot nichts und greift auch dann,
+//      wenn Schranke 1 einen gemischtsprachigen Text noch für deutsch hält.
+//
+// Beide sind Denylists über Wörtern, aber – und das ist der Unterschied zur
+// verworfenen Lösung – sie stehen hinter einer geschlossenen Sprachfläche.
+// Eine Denylist über einer offenen Fläche ist unvollständig; über einer
+// geschlossenen ist sie eine Prüfung.
+
+/**
+ * Funktionswörter, die in einem deutschen Satz praktisch unvermeidlich sind.
+ *
+ * Bewusst Wörter, die sich von ihren englischen Verwandten unterscheiden –
+ * `ist` statt `is`, `und` statt `and`, `für`, `eine`, `nicht`.
+ */
+const DEUTSCHE_MARKER =
+  /\b(?:der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|ist|sind|war|waren|nicht|kein|keine|keinen|f[üu]r|mit|von|vom|zum|zur|im|beim|bei|dein|deine|deinen|du|dir|dich|sich|wird|werden|noch|auch|aber|dass|weil|wenn|kann|k[öo]nnte|sollte|hat|haben|habe|als|nach|danach|davor|dabei|deshalb|darum|somit|jedoch|allerdings|bereits|weiterhin|zudem|au[sß]erdem|erneut|wieder|vor|[üu]ber|unter|ohne|schon|nur|sehr|etwa|liegt|liegen|bleibt|bleiben|steht|stehen|gibt|geben|machen|lassen|l[äa]sst|sowie|damit|dazu|daf[üu]r|muss|musst|m[üu]ssen|m[üu]sst|brauchst|braucht|brauchen|ben[öo]tigst|ben[öo]tigt|sein|seine|seinen|ihre|ihren|jede|jeden|jedes|alle|allen|einige|mehrere|dieser|diese|dieses|diesen|dort|hier|dann|zuerst|bitte|gern|mindestens|ausreichend\w*)\b/gi
+
+/** Umlaute und Eszett sind ein eigenes, starkes Signal für deutschen Text. */
+const DEUTSCHE_SCHRIFT = /[äöüÄÖÜß]/
+
+/**
+ * Amtliches Vokabular der übrigen von Jetnity geführten Sprachen.
+ *
+ * `COUNTRY_LOCALES` führt neben Deutsch Englisch, Französisch, Italienisch,
+ * Spanisch, Portugiesisch und Polnisch. Aufgenommen ist nur, was **kein**
+ * deutsches Wort ist: `Visum`, `Pass` und `Visa` stehen deshalb nicht hier,
+ * sondern im deutschen Bereichsdetektor weiter unten.
+ *
+ * Es geht nicht um Vollständigkeit der Sprachen, sondern um den Kern, mit dem
+ * sich eine Einreiseanforderung überhaupt behaupten lässt.
+ */
+const FREMDES_AMTSVOKABULAR: RegExp =
+  new RegExp(
+    [
+      // Visum / Reisegenehmigung
+      'visado', 'visti', 'visto', 'wiz[aęy]', 'wizow\\w*',
+      // Pass / Ausweis
+      'passport\\w*', 'passeport\\w*', 'passaporto', 'pasaporte', 'paszport\\w*',
+      'identity\\s+(?:card|document)', "carte\\s+d'identit", 'documento\\s+de\\s+identidad',
+      // Impfung / Gesundheit
+      'vaccinat\\w*', 'vaccin\\w*', 'vacun\\w*', 'vacina\\w*', 'szczepien\\w*',
+      'health\\s+(?:certificate|declaration|requirement)', 'certificat\\s+sanitaire',
+      // Versicherung
+      'insurance', 'assurance\\s+\\w+', 'assicurazione', 'seguro\\s+de\\s+viaje', 'ubezpieczen\\w*',
+      // Einreiseformular / Registrierung
+      'entry\\s+form', "formulaire\\s+d'entr", 'modulo\\s+di\\s+ingresso', 'formulario\\s+de\\s+entrada',
+      // Rück-/Weiterreise, Nachweise
+      'onward\\s+\\w+', 'return\\s+ticket', 'billet\\s+de\\s+retour', 'biglietto\\s+di\\s+ritorno',
+      'proof\\s+of\\s+\\w+', 'sufficient\\s+funds', 'financial\\s+means',
+      // amtliche Rahmung
+      'entry\\s+requirement\\w*', 'immigration\\s+\\w+', 'border\\s+control',
+      'is\\s+required', 'are\\s+required', 'not\\s+required', 'you\\s+(?:need|must)\\b',
+      'obligatoire', 'obbligatorio', 'obligatorio', 'wymagan\\w*',
+    ]
+      .map((eintrag) => `\\b(?:${eintrag})`)
+      .join('|'),
+    'i',
+  )
+
+function deutscheSignale(text: string): number {
+  const treffer = text.match(DEUTSCHE_MARKER)
+  const woerter = treffer ? new Set(treffer.map((wort) => wort.toLowerCase())).size : 0
+  return woerter + (DEUTSCHE_SCHRIFT.test(text) ? 1 : 0)
+}
+
+/**
+ * Ob die Antwort als deutscher Text durchgeht.
+ *
+ * Kurze Einträge – „Reisedokument ergänzen." – tragen naturgemäss kein
+ * Funktionswort. Die Schranke gilt deshalb für die eigentliche Antwort und
+ * skaliert mit ihrer Länge, statt Listeneinträge zu bestrafen.
+ */
+function istDeutscheAntwort(antwort: string): boolean {
+  const signale = deutscheSignale(antwort)
+  return antwort.length >= 40 ? signale >= 2 : signale >= 1
+}
 
 // ---------------------------------------------------------------------------
 // Ansprüche, die der Kontext nie decken kann
@@ -102,6 +211,16 @@ const NICHT_BINDBAR: ReadonlyArray<{ name: string; muster: RegExp }> = [
   {
     name: 'amtlich bestätigt',
     muster: /\b(?:amtlich|offiziell|beh[öo]rdlich)\s+best[äa]tigt\b/i,
+  },
+  {
+    // Eine Aussage über die **Herkunft** der Wahrheit, nicht über eine
+    // Anforderung. Ob eine Lage geprüft ist, sagt allein Jetnity über
+    // `belegt`; ein Modell, das es behauptet, hebt `unknown` auf `current`.
+    // „noch nicht geprüft" und „geprüfte Lage" bleiben unberührt: Dort steht
+    // etwas zwischen dem Hilfsverb und dem Partizip, bzw. es ist flektiert.
+    name: 'als geprüft ausgegeben',
+    muster:
+      /\b(?:amtlich|offiziell|beh[öo]rdlich)\s+gepr[üu]ft\b|\bgilt\s+als\s+gepr[üu]ft\b|\b(?:ist|sind|wurde|wurden)\s+(?:amtlich\s+|offiziell\s+|beh[öo]rdlich\s+)?gepr[üu]ft\b/i,
   },
   {
     name: 'problemlos einreisen',
@@ -298,6 +417,28 @@ export function auskunftPruefen(
         art: 'unbekannter-bezug',
         hinweis: `Die Auskunft zeigt auf ${ref}; diesen Bezug gibt es im Kontext nicht.`,
       }
+    }
+  }
+
+  // Die Sprachschranke steht vor allem anderen: Was die deutschen Muster unten
+  // nicht lesen können, dürfen sie auch nicht durchlassen.
+  for (const text of texte(auskunft)) {
+    const fremd = FREMDES_AMTSVOKABULAR.exec(text)
+    if (fremd) {
+      return {
+        ok: false,
+        art: 'fremdes-amtsvokabular',
+        hinweis: `Die Auskunft benutzt fremdsprachiges amtliches Vokabular („${fremd[0]}"); die Antwortsprache dieses Wegs ist Deutsch.`,
+      }
+    }
+  }
+
+  if (!istDeutscheAntwort(auskunft.antwort)) {
+    return {
+      ok: false,
+      art: 'fremde-antwortsprache',
+      hinweis:
+        'Die Antwort ist nicht als deutscher Text erkennbar; über einer offenen Sprachfläche ist die amtliche Prüfung unten nicht vollständig.',
     }
   }
 
