@@ -71,9 +71,7 @@ import type { AssistantTruthContext } from '@/lib/reisebegleiter/kontext'
  * Die Rolle steht im Katalog und nicht in der Modellantwort – das Modell wählt
  * Aussagen, nicht ihre Einordnung.
  */
-const ROLLEN = ['offen', 'stand', 'schritt'] as const
-
-export type Befundrolle = (typeof ROLLEN)[number]
+export type Befundrolle = 'offen' | 'stand' | 'schritt'
 
 /** Worauf ein Befund zeigt. `null`: auf die Reise als Ganzes. */
 export type Befundbezugsart = 'etappe' | 'reisende' | null
