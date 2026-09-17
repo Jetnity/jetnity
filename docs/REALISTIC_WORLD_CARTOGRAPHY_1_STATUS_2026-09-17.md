@@ -84,7 +84,9 @@ Nicht berührt: `components/trips/**`, `lib/reisebegleiter/**`, `lib/modell/**`,
 
 ## Gates
 
-Zahlen, CI-Lauf, Vercel-Preview und Drift stehen in `docs/REALISTIC_WORLD_CARTOGRAPHY_1_HANDOFF_2026-09-17.md`.
+Alles grün: Typecheck, Lint (0 Fehler), 3 240/3 240 Tests, fünf Hygiene-Checks, Production-Build, Account-UI-Audit 48/48, Geometrie-Drift-Check. Auf dem finalen Head `f3e950b5eed65e039e6f6bb2f37712ef82b62aba` zusätzlich GitHub-Actions-Lauf `35173610481` grün und Vercel-Deployment abgeschlossen.
+
+Zahlen, Befehle, Einschränkungen und Drift stehen in `docs/REALISTIC_WORLD_CARTOGRAPHY_1_HANDOFF_2026-09-17.md`.
 
 ## Nächster Schritt
 

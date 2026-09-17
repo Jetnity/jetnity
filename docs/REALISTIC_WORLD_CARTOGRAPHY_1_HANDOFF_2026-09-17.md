@@ -127,11 +127,25 @@ Commits auf dem Branch:
 | `b48fce8d` | Testkommentar korrigiert: 192 statt geschätzter 130 Stützpunkte |
 | `4b6ff53b` | Belegskript: Bilder als WebP ablegen (**gegateter Code-Head**) |
 
-Die Dokumentations- und Evidenzdateien folgen in einem weiteren Commit. Er enthält ausschliesslich `docs/**` – keinen Code, keine Geometrie, keine Konfiguration – und verändert deshalb nichts an den oben genannten Gate-Ergebnissen. CI und Vercel-Preview laufen zusätzlich auf dem finalen Head; das Ergebnis wird nach dem Lauf in diesem Abschnitt nachgetragen.
+Dokumentation und Belege liegen in `f3e950b5eed65e039e6f6bb2f37712ef82b62aba`. Dieser Commit enthält ausschliesslich `docs/**` – keinen Code, keine Geometrie, keine Konfiguration – und verändert deshalb nichts an den oben genannten Gate-Ergebnissen.
 
 Warum drei Code-Commits statt einem: die beiden kleinen Nachträge (`b48fce8d`, `4b6ff53b`) entstanden während der Beweisaufnahme. Nach jedem wurde der **vollständige** Gate-Satz neu gefahren; die Zahlen in Abschnitt 4 stammen aus dem Lauf auf `4b6ff53b`, nicht aus einem früheren.
 
-## 9. Offene Punkte und Risiken
+## 9. CI und Vercel Preview auf dem finalen Head
+
+Finaler Head: **`f3e950b5eed65e039e6f6bb2f37712ef82b62aba`**
+
+| Check | Ergebnis |
+| --- | --- |
+| GitHub Actions Lauf `35173610481`, `headSha = f3e950b5…` | **success** |
+| `Typecheck, Lint & Build` | pass, 2 m 18 s |
+| `Auth-Konfiguration gegen config.toml` | pass, 29 s |
+| `Vercel` | pass – „Deployment has completed“, Deployment `F7UmR3zZhixvh4hkJAftnxmbaDCK` |
+| `Vercel Preview Comments` | pass |
+
+Einschränkung, ausdrücklich genannt: die Preview-URL steht hinter Vercel-SSO (Deployment Protection). Der Agent konnte den Build daher **nicht** im Browser öffnen. Belegt ist, dass die Preview auf dem exakten Head erfolgreich gebaut und ausgeliefert wurde – nicht, wie sie dort aussieht. Die Sichtbelege in Abschnitt 5 stammen aus einem lokalen Production-Build desselben Codes (`next build` + `next start`), nicht aus dem Entwicklungsmodus.
+
+## 10. Offene Punkte und Risiken
 
 | Punkt | Einschätzung |
 | --- | --- |
@@ -141,7 +155,7 @@ Warum drei Code-Commits statt einem: die beiden kleinen Nachträge (`b48fce8d`, 
 | **Natural-Earth-Version** | Fest auf `v5.1.2` verdrahtet. Ein späteres Release ändert die Geometrie; `--pruefen` würde das als Drift melden. |
 | **Grenzen politisch** | Siehe Abschnitt 7. Der Vorbehalt steht sichtbar; die Verantwortung dafür, keine Rechtsaussage daraus abzuleiten, bleibt bei künftigen Slices. |
 
-## 10. Empfehlung
+## 11. Empfehlung
 
 Technical-Lead-Exact-Head-Review von PR #443. Die Geometriedatei ist erzeugt – sie sollte nicht Zeile für Zeile gelesen, sondern über `node scripts/kartografie/weltkarte-geometrie.mjs --pruefen` und die Bildbelege geprüft werden. Der inhaltlich zu prüfende Code ist klein: der Erzeuger, die Kartenebene in `AccountWeltKarte.tsx`, zwei Texte und die neue Prüfgruppe im Test.
 

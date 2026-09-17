@@ -60,6 +60,8 @@ Alle in einem frischen Arbeitsverzeichnis auf dem gegateten Code-Head: Typecheck
 
 Datenbank- und Auth-Gates wurden nicht ausgeführt und sind nicht einschlägig – der Slice fasst weder `supabase/**` noch Anmeldung an.
 
+Auf dem finalen Head `f3e950b5eed65e039e6f6bb2f37712ef82b62aba`: GitHub-Actions-Lauf `35173610481` grün, Vercel-Deployment abgeschlossen. Die Preview steht hinter Vercel-SSO; ich konnte sie nicht im Browser öffnen und behaupte deshalb nichts über ihr Aussehen. Die Bildbelege stammen aus einem lokalen Production-Build desselben Codes.
+
 ## Scope-Treue
 
 Angefasst wurden nur `components/account/AccountWeltKarte.tsx`, `lib/account/world-map-ansicht.ts`, `lib/account/world-map-geografie.ts` (neu, erzeugt), `lib/account/world-map-land.ts` (entfernt), `lib/account/world-map.test.ts`, zwei neue Skripte unter `scripts/kartografie/` und slice-eigene Dokumente unter `docs/`.
