@@ -1,7 +1,40 @@
 # Jetnity – Active Work Status
 
 Stand: 17. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TECHNICAL-LEAD REVIEW / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+
+## 0. Active draft slice – Assistant Runtime 1
+
+**ACTIVE DRAFT / NOT ON `main` / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+
+| | |
+| --- | --- |
+| Issue | #434 |
+| Product-Owner gate | #433 – **Preview/Development only** |
+| Draft PR | #435 |
+| Branch | `feat/phase-1-assistant-runtime-1` |
+| Canonical base | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
+| **Exact final head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
+| Merge-base / ahead / behind | `15aa125a` / 4 ahead / 0 behind |
+| Drift | none |
+| Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
+| Decision | ADR-0212 |
+| Status doc | `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` |
+| Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
+| Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
+
+Repository gates on the exact head are green: `npm test` 3321/3321, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop.
+
+**Two gates are open and must not be reported as green:**
+
+1. **Develop migration not applied.** `supabase/migrations/20260917090000_modell_reisebegleiter.sql` exists in the repository and has been applied to neither Development nor Production. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `auth:pruefen` and `production:pruefen` **did not run**: the `SUPABASE_ACCESS_TOKEN` of the Cloud Agent environment is rejected by the Supabase Management API with HTTP 401, including on `/v1/projects` without a ref. The 90-day token rotation noted in section 1 is overdue or the token was revoked.
+2. **No paid Preview/Development call made.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` and `JETNITY_MODELL_AKTIV` are absent in that environment, and an account session is unreachable because `enable_confirmations = true`. The rendering of an answer is evidenced in the browser with a *supplied* answer, not a generated one.
+
+Production migration, Production model activation, Production OpenAI secrets and Production paid calls remain **CLOSED**.
+
+**Reported side effect requiring cleanup:** an unconfirmed, sessionless auth user `assistant.runtime1.probe@gmail.com` was created via the anon signup endpoint while looking for a reachable account login. The target project is **not** the documented Production ref `qscbgcdmivbbnzrcyegn`; by the convention in `docs/DATENBANK.md` it is the Development branch. Please delete it.
+
+**Exact next step:** independent Technical-Lead review on `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`, then a valid access token, then Development-only migration and live constraint/RLS/grant verification, then one bounded paid Preview call. No Ready, no merge, no follow-up slice by the coding agent.
 
 ## 1. Latest verified runtime integration
 

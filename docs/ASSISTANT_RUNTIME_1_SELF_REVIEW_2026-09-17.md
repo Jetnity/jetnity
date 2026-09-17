@@ -1,0 +1,98 @@
+# Jetnity – Assistant Runtime 1 Self-Review (adversarial)
+
+Stand: 17. September 2026  
+Exakter Head: `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`
+
+**Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
+
+---
+
+## 1. Die Angriffe, die ich gefahren habe
+
+| Angriff | Antwort des Systems | Nachweis |
+| --- | --- | --- |
+| Bezahlten Aufruf ohne Reservierung erzwingen | unmöglich: `beanspruchen` steht vor `aufrufen`, die Reihenfolge wird als Protokoll verglichen | `erzeugen.test.ts`, „das Kontingent wird vor dem Aufruf gebucht" |
+| Abgeschaltete Umgebung Geld kosten lassen | keine Buchung, kein Aufruf, keine Nutzlast – für alle drei Abschaltgründe | `erzeugen.test.ts`, „Eine abgeschaltete Umgebung kostet nichts" |
+| Über eine unbrauchbare Eingabe an die Buchung kommen | `null`, `undefined`, Zahl, Objekt, Array, zu kurze Frage: alle ohne einen einzigen Schritt | ebd. |
+| Einen zweiten Versuch auslösen | für alle acht Fehlerklassen: genau ein Aufruf, eine Buchung, ein Abschluss; kein Sol→Terra-Nachzug | ebd., „Ein Versuch, kein zweiter" |
+| Über den Reisekontext mehr Eingabetokens verbrauchen als reserviert | Eingabegrenze bricht vorher ab, ohne Buchung; Ausgabebudget 1600 statt 6000 | ebd. plus `kosten.test.ts` |
+| Kaputte, verweigerte, abgeschnittene, leere, schemawidrige Antwort verwerten | elf Fälle, jeder endet als Fehlerklasse **und** wird als bezahlter Aufruf abgeschlossen, nicht verschwiegen | ebd., „Eine unbrauchbare Antwort wird nicht brauchbar gemacht" |
+| Einen Preis in die Auskunft schreiben | Ablehnung als `schema` – nicht Entfernung | `schema.test.ts`, `erzeugen.test.ts` |
+| Einen Link in die Auskunft schreiben | Ablehnung als `schema` | ebd. |
+| Einen Bezug erfinden | Ablehnung; formal falsche Kennungen scheitern am Schema, formal richtige an der Existenzprüfung | `schema.test.ts`, `pruefung.test.ts` |
+| Eine Buchung behaupten – auch vorsichtig („noch nicht gebucht") | Ablehnung, unabhängig davon, ob eine amtliche Lage belegt ist | `pruefung.test.ts` |
+| Eine Änderung behaupten („ich habe zwei Tage hinzugefügt") | Ablehnung; der Konjunktiv („du könntest") bleibt zulässig | ebd. |
+| „visumfrei" bei unbelegter Lage sagen | Ablehnung; erst ein **belegter Official**-Bezug öffnet den Weg, eine belegte Etappe oder Safety-Lage nicht | ebd. |
+| Den Zustand eines Bezugs aus dem Modelltext übernehmen | unmöglich: das Feld existiert nicht, und ein trotzdem mitgeschicktes Feld erreicht den Wert nicht | `erzeugen.test.ts`, „übernimmt keinen Zustand aus dem Modelltext" |
+| Passnummer, MRZ, Buchungs-URL, Secret, E-Mail, Fingerprint, Preis, Koordinate, Ortsschlüssel in den Prompt bringen | zehn Leck-Marken, keine erreicht den Prompt oder die angezeigten Bezüge | `nutzlast.test.ts` |
+| Ein sensibles Feld über eine später erweiterte Projektion einschmuggeln | die Reissleine trifft Feldnamen und Wertmuster in jeder Tiefe; die Nutzlast schreibt unbekannte Felder ohnehin nicht ab | ebd. |
+| Rangsemantik unter Reisenden erzeugen | kein „primary", „preferred", „bevorzugt" im Prompt; Reihenfolge erzeugt keinen Vorrang | ebd. |
+| Die Reise über diesen Weg ändern | es gibt kein Werkzeug dafür; der Werkzeugvertrag wird als Schlüsselliste geprüft; die Server Action kennt kein `insert/update/delete/upsert/revalidatePath` | `erzeugen.test.ts`, `oberflaeche.test.ts` |
+| Einen Aufruf beim Rendern auslösen | die Fläche ist bis zum ersten Öffnen nicht im Dokument; es gibt keinen Effekt in der Komponente; im Browser bestätigt | `oberflaeche.test.ts`, `nachweis:reisebegleiter` |
+| Einen Provider-/Suchaufruf auslösen | die Server Action importiert keinen Provider und keine Suche; im Browser kein entsprechender Request | ebd. |
+| Auf einen anderen Kostentopf wechseln | die Server Action nennt `'reisevorschlag'` und `'reiseaenderung'` nirgends | `oberflaeche.test.ts` |
+| Production stillschweigend aktivieren | `modellZustand({})` ist `abgeschaltet`; Schlüssel ohne Flag bleibt `abgeschaltet`; Flag ohne Schlüssel `kein-schluessel` | `erzeugen.test.ts` |
+| Die bestehenden Funktionen beschädigen | 3321 Tests grün, darunter der vollständige Reisevorschlag- und Reiseänderungsbestand | `npm test` |
+| Einen bestehenden CHECK-Wert verlieren | jede Fassung der Prüfbedingung muss alle Werte der vorigen enthalten | `grenzen-datenbank.test.ts` |
+
+---
+
+## 2. Wo die Arbeit nachgibt
+
+Diese Punkte sind echte Schwächen, keine rhetorischen.
+
+**2.1 Der Gewissheitsfilter ist ein Wortfilter.** „Nicht als gewiss behaupten" ist semantisch, und ein deterministischer Test liest keine Semantik. `pruefung.ts` verbietet die Wörter, mit denen eine unbelegte Gewissheit im Deutschen ausgedrückt wird. Das erzeugt zwei Fehler in beide Richtungen:
+
+- **Fehlalarm:** „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst" ist ehrlich und fällt durch. Gegenmittel: Die Systemregeln verbieten dieselben Wörter ausdrücklich. Ein regelkonformes Modell löst den Filter nicht aus. Wie oft ein echtes Modell daran scheitert, ist **nicht gemessen** – dafür wäre ein bezahlter Aufruf nötig.
+- **Lücke:** Eine Verfügbarkeits- oder Preisbehauptung in freier Formulierung („dieses Hotel ist im April meist noch frei") erkennt er nicht. Das ist dieselbe eingestandene Grenze wie ADR-0054. Die Preisziffer-Erkennung greift, die Verfügbarkeitsaussage nicht.
+
+Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukturell: Das Schema hat kein Feld für eine Anforderung, und der Zustand eines Bezugs kommt nicht aus dem Modell. Was ein Modell nicht formulieren kann, muss dieser Filter nicht abfangen.
+
+**2.2 Die Eingabegrenze ist abgeleitet, nicht gemessen.** 24 000 Zeichen und 2.2 Zeichen je Token sind eine pessimistische Rechnung ohne Tokenizer. Die eigentliche Absicherung ist nicht diese Zahl, sondern das Ausgabebudget von 1600 statt 6000 Tokens: Selbst bei 29 000 Eingabetokens bliebe ein Terra-Aufruf unter seiner Reservierung. Trotzdem: Eine sehr grosse Reise bekommt keine Auskunft, und ob diese Grenze in der Praxis zu früh greift, weiss ich nicht.
+
+**2.3 Die Wirksamkeit der Systemregeln ist unbelegt.** Alles, was in dieser Arbeit geprüft ist, ist das Verhalten von Jetnity gegenüber einer Modellantwort. Ob das Modell nützliche Auskünfte gibt, ist nicht geprüft – und konnte in dieser Umgebung nicht geprüft werden.
+
+**2.4 Die Migration ist nicht live.** Solange `20260917090000` nicht auf Development angewandt ist, scheitert ein Aufruf dort an der CHECK-Bedingung. Die Richtung ist sicher (fail closed, kein Kostenrisiko), aber es ist keine geprüfte Funktion. Die live-Prüfung von RLS, Rechten und Advisor-Befunden fehlt vollständig.
+
+**2.5 Die Darstellung einer Auskunft ist mit einer gestellten Auskunft belegt.** Der Audit-Schalter `begleiterAuskunft` stellt eine Auskunft in der Form, die `begleiterauskunftErzeugen()` zurückgibt. Die Form ist typgeprüft, die Werte sind von mir geschrieben. Das zeigt die Darstellung und nicht den Weg dorthin.
+
+**2.6 Zwei neue Audit-Schalter im Harness.** `mitBegleiter` und `begleiterAuskunft` in `TripWorkspaceAuditClient.tsx` sowie `anfangsAuskunft` in `Reisebegleiter.tsx` sind Test-Infrastruktur im Produktbaum. Sie folgen dem bestehenden `anfangsBereich`-Muster in `TripWorkspace`, sind ohne Wert wirkungslos und können keinen Aufruf auslösen – aber sie sind zusätzliche Fläche, die ein Reviewer mitverantwortet.
+
+**2.7 Gastreisen bleiben ohne Reisebegleiter.** Das ist eine Produktentscheidung, die ich getroffen habe, und sie hätte anders ausfallen können. Begründung in ADR-0212 Punkt 10: Der Gast-Reisegraph liegt im Browser und trägt Reisenden-, Staatsangehörigkeits- und Dokumentkontext; ihn vom Client als Wahrheit anzunehmen, um ihn an ein Modell zu geben, wäre der falsche erste Schritt. Der Gastweg ist nicht eingeschränkt worden – er bekommt nur nichts Neues. Wenn der Product Owner das anders will, ist es ein eigener Slice.
+
+**2.8 `verbotenesFeldFinden()` hat eine Wertregel, die legitime Daten treffen könnte.** Neun zusammenhängende Ziffern gelten als verboten. In der heutigen Projektion gibt es keinen legitimen Wert dieser Form – geprüft. Eine spätere Erweiterung könnte einen einführen, und dann bricht der Weg ab statt zu lecken. Das ist die gewollte Richtung, aber es ist eine Bremse, die jemand später verstehen muss.
+
+---
+
+## 3. Was ich nicht getan habe, obwohl es naheliegend wäre
+
+- **Kein Provider-Abruf für Official/Safety/Seasonal.** Die Auskunft ist dadurch substanziell ärmer: Sie sagt fast immer „nicht geprüft". Das ist richtig – ein Provider-Abruf ist in diesem Slice nicht autorisiert, und eine erfundene Entwarnung wäre schlimmer als eine ehrliche Lücke.
+- **Kein Gesprächsverlauf.** Eine Folgefrage beginnt bei Null. Ein Verlauf braucht Persistenz oder mehr Kontext je Aufruf, und beides ist eine eigene Entscheidung mit eigenen Kosten.
+- **Kein Modellrouter.** Der Reisevorschlag wählt Sol bei Komplexität. Für eine kurze Auskunft ist das nicht begründbar, und ein zweiter Router wäre eine zweite Stelle, die auseinanderlaufen kann.
+- **Kein zweiter Kostentopf**, obwohl er die Analyse vereinfacht hätte. Zwei Zusagen über eine Summe sind keine.
+
+---
+
+## 4. Scope-Nachweis
+
+**Innerhalb des freigegebenen Scope (#433, Task Abschnitte 1–8):** additive Migration, Wiederverwendung der akzeptierten Projektion, dritte Modellfunktion `reisebegleiter`, server-only OpenAI-Weg, bestehende Kostenreservierung und Kill Switch, minimale barrierefreie Fläche, ausschliesslich generierter/advisory Output, kein Auto-Apply.
+
+**Nicht berührt (Hard non-scope):** keine Production-Migration; `JETNITY_MODELL_AKTIV` in Production unverändert; keine Production-OpenAI-Secrets; kein Production-Aufruf; keine Provider-Verträge, -Secrets oder -Live-Calls; keine Commercial-Provenance-Writer-Autorität; keine Auth-/MFA-/AAL-/Session-Änderung; keine Änderung an Traveller-/Citizenship-/Document-Persistenz; keine Pass-/MRZ-/Scan-/Biometrie-/Health-Speicherung; kein Auto-Apply; kein World Map, kein Destination Essentials, kein PWA, keine Notifications, kein Homepage-Scope; kein Public Indexing, kein Domain-Cutover; **kein Folgeslice gestartet**.
+
+**Grenzfälle, die ich als solche melde:**
+
+1. `lib/modell/anfrage.ts` bekommt ein additives `ausgabeTokens`. Das ist eine Änderung an geteilter Infrastruktur. Sie ist rein kostensenkend, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt und für bestehende Aufrufer wirkungslos. Ohne sie wäre die Kostenintegrität dieses Wegs nicht belegbar.
+2. `lib/modell/konfiguration.ts` bekommt `MODELLFUNKTIONEN`; der Typ zieht von `kontingent.ts` dorthin um. Grund: Ein Laufzeit-Array lässt sich gegen das Migrations-SQL prüfen, ein Typ nicht – dasselbe Muster wie `ERGEBNISKLASSEN`.
+3. Zwei Audit-Schalter plus `anfangsAuskunft` (siehe 2.6).
+4. Ein unbestätigter Development-Auth-Nutzer als Nebenwirkung eines Login-Versuchs (Status Abschnitt 5).
+
+---
+
+## 5. Was ein Reviewer zuerst anschauen sollte
+
+1. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast wirklich nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
+2. `lib/reisebegleiter/pruefung.ts` – ist der Handel „Wahrheit gegen Eleganz" in der richtigen Richtung gewählt, und sind die Muster präzise genug?
+3. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
+4. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
+5. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?
+6. ADR-0212 Punkt 10 – ist „nur Konto" die richtige Produktentscheidung für den ersten Slice?

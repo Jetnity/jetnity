@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Mobile Accessibility 1, Issue #429 / Draft PR #430, Branch `feat/phase-1-mobile-accessibility-1`, Binding `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`. Assistant Truth Context 1, World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Assistant Runtime 1, Issue #434 / Draft PR #435, Branch `feat/phase-1-assistant-runtime-1`, Binding `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md`, Product-Owner-Gate #433 (Preview/Development only). Mobile Accessibility 1 (Issue #429 / PR #430), Assistant Truth Context 1, World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -323,6 +323,28 @@ Technical-Lead-authorized truth-context slice of Issue #425 / Draft PR #426 on `
 - kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten
 
 Technical-Lead-owned. Kein Folgeslice aus diesem Stand ableiten.
+
+## 9d. Assistant Runtime 1 – Draft-PR, Technical-Lead review pending
+
+Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner-Gate #433 – **Preview/Development only**. Binding: `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md`. Entscheidung: ADR-0212.
+
+**Fertig in diesem Branch:**
+
+- additive Migration `20260917090000_modell_reisebegleiter.sql`: dritter Wert `reisebegleiter` in `model_usage_funktion_werte`, kein zweiter Kostentopf
+- `MODELLFUNKTIONEN` in `lib/modell/konfiguration.ts`, gegen das Migrations-SQL geprüft
+- `lib/reisebegleiter/{nutzlast,schema,regeln,pruefung,erzeugen,aktionen}.ts`: bounded, server-only, ein Versuch, Reservierung vor jedem Aufruf
+- `components/trips/Reisebegleiter.tsx` plus `begleiter`-Slot in `TripWorkspace`: eine eingeklappte Fläche in der Reiseübersicht, nur Konto
+- additives `Modellanfrage.ausgabeTokens`, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt
+- sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser, mobil und Desktop)
+- 3321 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
+
+**Offen / blockiert – Technical-Lead-Gates:**
+
+- **Develop-Migration nicht angewandt.** Der `SUPABASE_ACCESS_TOKEN` dieser Cloud-Agent-Umgebung wird von der Management API mit HTTP 401 abgewiesen. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `auth:pruefen` und `production:pruefen` sind deshalb **nicht gelaufen**, nicht „grün“.
+- **Kein bezahlter Preview/Development-Aufruf.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen in dieser Umgebung; ein Konto-Login ist ohne bestätigte E-Mail nicht erreichbar. Die Darstellung einer Auskunft ist im Browser mit einer gestellten Auskunft nachgewiesen, nicht mit einer erzeugten.
+- Production-Migration, Production-Modellaktivierung, Production-Secrets und Production-Aufrufe bleiben geschlossen.
+
+Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten. Technical-Lead-owned.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 

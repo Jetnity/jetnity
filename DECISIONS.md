@@ -5536,6 +5536,36 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 ---
 
+## ADR-0212 – Assistant Runtime 1: dritte Modellfunktion, generierter Vorschlag statt Wahrheit
+
+**Datum:** 17. September 2026  
+**Status:** Implementiert im Feature-Branch `feat/phase-1-assistant-runtime-1`. Kein Ready, kein Merge. Preview/Development-Grenze aus #433. Production-Migration, Production-Modellaktivierung und Production-Aufrufe bleiben geschlossen. Binding: `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md`.
+
+**Entscheidung:**
+
+1. `model_usage.funktion` bekommt additiv den dritten Wert `reisebegleiter` (`supabase/migrations/20260917090000_modell_reisebegleiter.sql`). `reisevorschlag` und `reiseaenderung` bleiben unverändert zulässig. Es entsteht **kein zweiter Kostentopf**: Zählgrenzen und Tagesdeckel gelten für alle drei gemeinsam. Die Werteliste lebt als `MODELLFUNKTIONEN` in `lib/modell/konfiguration.ts` und wird in `lib/modell/grenzen-datenbank.test.ts` gegen das Migrations-SQL geprüft.
+2. Der Assistant-Kontext kommt ausschliesslich aus `assistantTruthContextProjizieren()` (ADR-0211). `lib/reisebegleiter/nutzlast.ts` darf davon nur **abziehen**, nie erweitern: `placeId`, `latitude`, `longitude` und jeder linkverdächtige Freitext (Etappenname, Reisenden-Label, `authority`, `ruleReference`) fallen weg. Hinzu kommt genau ein Feld ohne Wahrheitsgehalt – `ref`, die Zeigekennung.
+3. Der **Zustand** eines Bezugs wird von Jetnity abgeleitet und von der Oberfläche angezeigt; das Modell liefert nur Zeiger. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen. `belegt` ist eng definiert: nur `status = current` **und** `freshness = current` **und** `result ≠ unknown` gelten als belegt.
+4. Das Ausgabeschema hat kein Feld für Anforderung, Preis, Anbieter, Verfügbarkeit, Buchung oder Quelle. `additionalProperties: false` plus `strict: true` machen sie unaussprechbar. Vier Felder: `antwort`, `unsicherheiten`, `naechsteSchritte`, `bezuege`.
+5. Betrag und Link in einer Auskunft werden **abgelehnt**, nicht entfernt. Beim Reisevorschlag ist Entfernen richtig, weil ein Titel ohne Betrag ein Titel bleibt; eine Auskunft ist ein Satz, und ein Satz mit herausgeschnittenem Betrag behauptet etwas, das niemand geprüft hat.
+6. `lib/reisebegleiter/pruefung.ts` lehnt zusätzlich ab: einen Bezug, den der Kontext nicht kennt; jede Aussage über Buchungszustand (die Projektion trägt keinen – auch „noch nicht gebucht" ist erfunden); eine im Perfekt behauptete Änderung; und unbelegte Gewissheit über amtliche Anforderungen, solange kein Official-Bezug `belegt` ist. Letzteres ist ein Wortfilter und nimmt Fehlalarme in Kauf; dieselben Wörter sind in den Systemregeln ausdrücklich verboten, damit ein regelkonformes Modell ihn nicht auslöst.
+7. Ein Versuch, kein zweiter. Keine Wiederholung, kein Sol→Terra-Nachzug wie bei der Reiseänderung, kein Ausweichen in eine andere semantische Modellfunktion. Kein eigener Router: Das Modell kommt aus `modellZustand()`.
+8. Die Kostenintegrität hängt an zwei neuen Zahlen statt an einer Annahme: `BEGLEITER_GRENZEN.eingabeZeichen` (24 000) begrenzt Systemregeln plus Frage, `BEGLEITER_GRENZEN.ausgabeTokens` (1600) liegt weit unter dem reservierten Ausgabebudget. `lib/reisebegleiter/kosten.test.ts` rechnet für jedes zugelassene Modell nach, dass der schlechteste tatsächliche Fall unter der Reservierung bleibt. `Modellanfrage.ausgabeTokens` ist additiv und nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt.
+9. Eine Reise oberhalb der Eingabegrenze bekommt keine gekürzte Wahrheit, sondern keine Auskunft.
+10. Nur Konto-Reisen. Bei einer Gastreise liegt der Reisegraph im Browser und trägt Reisenden-, Staatsangehörigkeits- und Dokumentkontext; diesen Kontext vom Client als Wahrheit anzunehmen, um ihn an ein Modell zu geben, ist der falsche erste Schritt. Gastreisen bleiben unverändert planbar und änderbar und zeigen keine Fläche, die es für sie nicht gibt.
+11. Official-, Safety- und Seasonal-Lagen entstehen über `requirementsLokalFuerReise()`, `safetyLokalFuerReise()` und `seasonalLokalFuerReise()` – dieselben provider-freien Auswertungen, die die Oberfläche ohne Provider-Lage benutzt. Eine Frage an den Reisebegleiter löst keinen Provider-Abruf, keine Suche und keine kommerzielle Anfrage aus.
+12. Die Fläche ist eine eingeklappte Karte in der Reiseübersicht: kein schwebender Chat, kein gleichrangiger Hauptbereich, kein Verlauf, kein Aufruf beim Mounten. `ARBEITSBEREICHE` bleibt unverändert.
+
+**Kontext:** Assistant Truth Context 1 (ADR-0211) ist akzeptiert und hat ausdrücklich offengelassen, dass ein echter Modellweg einen eigenen Gate-Precheck braucht. #433 erteilt ihn für Preview/Development.
+
+**Alternativen:** Den Zustand eines Bezugs vom Modell schreiben lassen und nachprüfen; Beträge und Links wie beim Reisevorschlag herausschneiden; Destination Essentials als Kontext wiederverwenden; ein zweites Kontingent für den Assistant; Gastreisen über einen Client-Reisegraphen mitnehmen; einen eigenen Modellrouter wie bei der Reiseänderung.
+
+**Begründung:** Die teuersten Fehler eines Assistenten sind nicht Abstürze, sondern selbstsichere Sätze über eine Lage, die niemand geprüft hat. Deshalb liegt die Wahrheit über jeden Bezug bei Jetnity und nicht im Modelltext, und deshalb ist die Ablehnung einer regelwidrigen Auskunft besser als ihre Reparatur. Ein zweites Kontingent wäre eine zweite Zusage über dieselben Kosten, und zwei Zusagen über eine Summe sind keine.
+
+**Konsequenzen:** Production-Migration, `JETNITY_MODELL_AKTIV` in Production, Production-OpenAI-Secrets und Production-Aufrufe bleiben geschlossen und brauchen eigene Gates. Ein Gast-Reisebegleiter, ein Gesprächsverlauf, ein Auto-Apply von Vorschlägen, ein Assistant-Zugriff auf Provider-/Commercial-Wahrheit und ein zweiter Kostentopf sind jeweils eigene Slices mit eigener Freigabe. Der Wortfilter in `pruefung.ts` ist eine eingestandene Näherung: Verfügbarkeitsbehauptungen in freier Formulierung erkennt er nicht – dieselbe Grenze wie ADR-0054.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
