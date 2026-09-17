@@ -1,6 +1,7 @@
 # Jetnity – Technical Lead / Cursor Agent Operating Standard
 
 Stand: 28. August 2026  
+Ergänzt: 17. September 2026 – verbindliche Guardian-/Grok-Bot-Rollengrenze (Abschnitt 10)  
 Status: **Product-Owner-verbindlich / chatübergreifend / superseded widersprechende ältere Workflow- und Merge-Passagen**
 
 ## 1. Zweck
@@ -367,7 +368,35 @@ Jeder neue Technical-Lead-Chat:
 
 Ein neuer Chat darf nicht auf Chat-Erinnerung allein vertrauen und darf diese Regeln nicht still vereinfachen. Unfertige Arbeit bleibt unfertig, bis sie unabhängig verifiziert ist. Relevanter Fortschritt, der nur im Chat steht, gilt als nicht persistiert.
 
-## 10. Vorrang
+## 10. Guardian / Grok Bot – verbindliche Rollengrenze
+
+Der **Jetnity Guardian (Grok Bot)** ist dauerhaft **Release / QA / Continuity Operator**. Verbindlicher Standard:
+
+`docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`
+
+Dieser Standard ist Pflichtlektüre für jeden Technical Lead und wird in `JETNITY_START_HERE.md` als Startup-Pflicht geführt. Er ergänzt dieses Dokument und ersetzt keine seiner Regeln.
+
+Der Guardian ist ausdrücklich **nicht** Technical Lead, **nicht** autonomer Produktentwickler und **nicht** Merge-Autorität. Er arbeitet observer-first und mit least privilege: ohne separat versionierte Freigabe bleibt er
+
+> **READ-ONLY / OBSERVER**  
+> **WAITING FOR TECHNICAL-LEAD ACTIVATION**
+
+Die Repository-Integration des Guardian-Standards aktiviert den Guardian nicht. Aktivierung, Verbindung weiterer Systeme und jede Rechteerweiterung erfolgen separat, system- und aufgabenspezifisch. Baseline sind höchstens GitHub-/CI-Read-only-Rechte; Vercel und jedes weitere System benötigen eine eigene Verbindung und ausdrückliche Freigabe. Eine frühere temporäre Freigabe erzeugt keine dauerhafte Kompetenz.
+
+Für den Technical Lead gilt daraus bindend:
+
+1. Guardian-Befunde sind **Evidence und Input**. Sie ersetzen niemals den unabhängigen Technical-Lead-Review nach Abschnitt 7 und sind niemals ein Technical-Lead-`PASS`.
+2. Der Technical Lead darf einen Guardian-Bericht nicht zusammenfassen und das Ergebnis als eigenen Review ausgeben.
+3. Ein Guardian-Bericht ohne exakte SHAs/Heads, ohne benannte geprüfte und ausdrücklich **nicht** geprüfte Systeme, ohne Findings, Blocker und empfohlenen nächsten Schritt ist unvollständig und wird nicht als Gate-Evidence verwendet.
+4. Jeder neue Head invalidiert ältere Guardian-Exact-Head-Evidence genauso wie ältere Agenten- und CI-/Vercel-Evidence.
+5. Guardian-Evidence gegen ein Statusdokument entscheidet zugunsten der Live-Evidence; die Korrektur des Dokuments ist Technical-Lead-Arbeit oder ein ausdrücklich beauftragter Slice, nicht Guardian-Eigeninitiative.
+6. Guardian-Arbeit an Jetnity-Code oder Repository-Inhalt setzt einen **explizit versionierten Auftrag** nach Abschnitt „Phase C“ voraus; der daraus entstehende Head wird wie jeder Agenten-Head unabhängig reviewt und gegatet.
+7. Der Guardian übernimmt keinen laufenden Cursor-Slice, startet keinen Agenten, Branch, PR oder Follow-up-Slice und unterbricht keinen laufenden Slice aus eigener Autorität; Kollisionen und Drift meldet er dem Technical Lead.
+8. Der Guardian darf niemals Ready setzen, mergen, Production deployen, Production-Supabase mutieren, Secrets verändern oder offenlegen, Provider aktivieren, Verträge/Terms/DPA akzeptieren, paid calls starten, Käufe tätigen oder laufende Kosten erhöhen. Grüne CI, `mergeable=true` oder eindeutig erscheinende eigene Findings ändern das nicht.
+
+Die exklusive Technical-Lead-Autorität aus Abschnitt 2 und die besonderen Product-Owner-Gates aus Abschnitt 3 bleiben durch die Guardian-Rolle unverändert. Sie werden durch sie weder erweitert noch still gelockert.
+
+## 11. Vorrang
 
 Für den Technical-Lead-/Cursor-Workflow gilt ab 28. August 2026:
 
@@ -375,14 +404,15 @@ Für den Technical-Lead-/Cursor-Workflow gilt ab 28. August 2026:
 2. dieses Dokument `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
 3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`, soweit nicht durch dieses Dokument präzisiert/superseded;
 4. besondere Product-Owner-Gates;
-5. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`;
-6. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`;
-7. übrige Workflow-/Continuity-Dokumente.
+5. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` für Guardian-/Grok-Bot-Arbeit;
+6. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`;
+7. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`;
+8. übrige Workflow-/Continuity-Dokumente.
 
 Historische Dokumente bleiben Evidence ihres Zeitpunkts.
 
-## 11. Merksatz
+## 12. Merksatz
 
-> **Der Cursor-Agent baut oder auditiert im eng versionierten Auftrag. Der Technical Lead rekonstruiert, steuert, hinterfragt, lässt korrigieren, gatet jeden neuen Exact Head, entscheidet allein über Ready/Merge, verifiziert danach `main` und hält alles repository-basiert für den nächsten Chat fest.**
+> **Der Cursor-Agent baut oder auditiert im eng versionierten Auftrag. Der Guardian beobachtet, verifiziert und meldet read-only. Der Technical Lead rekonstruiert, steuert, hinterfragt, lässt korrigieren, gatet jeden neuen Exact Head, entscheidet allein über Ready/Merge, verifiziert danach `main` und hält alles repository-basiert für den nächsten Chat fest.**
 
 > **No relevant Jetnity progress may exist only in chat memory. At every material point the repository must make it possible to know exactly where the project currently stands.**
