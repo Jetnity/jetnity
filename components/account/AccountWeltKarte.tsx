@@ -36,18 +36,32 @@ function reduzierteBewegung(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function LegendeMarke({ art }: { art: 'geplant' | 'besucht' }) {
+function LegendeZeile({
+  art,
+  label,
+  wert,
+}: {
+  art: 'geplant' | 'besucht'
+  label: string
+  wert: string
+}) {
   return (
-    <span aria-hidden="true" className="relative flex h-5 w-5 shrink-0 items-center justify-center">
-      {art === 'geplant' ? (
-        <>
-          <span className="absolute inset-0 rounded-full bg-brand-800/12" />
-          <span className="relative block h-2.5 w-2.5 rounded-full bg-brand-800 ring-2 ring-white" />
-        </>
-      ) : (
-        <span className="relative block h-2.5 w-2.5 rounded-full border-2 border-dashed border-line-500" />
-      )}
-    </span>
+    <li className="flex min-w-0 items-start gap-2">
+      <span aria-hidden="true" className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+        {art === 'geplant' ? (
+          <>
+            <span className="absolute inset-0 rounded-full bg-brand-800/12" />
+            <span className="relative block h-2.5 w-2.5 rounded-full bg-brand-800 ring-2 ring-white" />
+          </>
+        ) : (
+          <span className="relative block h-2.5 w-2.5 rounded-full border-2 border-dashed border-line-500" />
+        )}
+      </span>
+      <span className="min-w-0 text-sm leading-5">
+        <span className="font-semibold text-brand-800">{label}</span>
+        <span className="text-ink-800"> · {wert}</span>
+      </span>
+    </li>
   )
 }
 
@@ -359,32 +373,25 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
       </h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-800">{welt.unterscheidung}</p>
 
+      {/* Die Besucht-Unterscheidung hängt nicht am Leseergebnis: sie bleibt auch
+          sichtbar, wenn die Reisen gerade nicht geladen werden konnten. Genau
+          dort wäre die Annahme, es sei nur nichts erfasst, am gefährlichsten. */}
+      <ul className="mt-4 flex flex-col gap-x-6 gap-y-2 sm:flex-row sm:flex-wrap sm:items-start">
+        {welt.lage === 'fehler' ? null : (
+          <LegendeZeile art="geplant" label={welt.geplantLabel} wert={welt.geplantKurz} />
+        )}
+        <LegendeZeile art="besucht" label={welt.besuchtLabel} wert={welt.besuchtKurz} />
+      </ul>
+
       {welt.lage === 'fehler' ? (
         <div
           role="alert"
-          className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm leading-6 text-red-800"
+          className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm leading-6 text-red-800"
         >
           {welt.fehlerText}
         </div>
       ) : (
         <>
-          <ul className="mt-4 flex flex-col gap-x-6 gap-y-2 sm:flex-row sm:flex-wrap sm:items-start">
-            <li className="flex min-w-0 items-start gap-2">
-              <LegendeMarke art="geplant" />
-              <span className="min-w-0 text-sm leading-5">
-                <span className="font-semibold text-brand-800">{welt.geplantLabel}</span>
-                <span className="text-ink-800"> · {welt.geplantKurz}</span>
-              </span>
-            </li>
-            <li className="flex min-w-0 items-start gap-2">
-              <LegendeMarke art="besucht" />
-              <span className="min-w-0 text-sm leading-5">
-                <span className="font-semibold text-brand-800">{welt.besuchtLabel}</span>
-                <span className="text-ink-800"> · {welt.besuchtKurz}</span>
-              </span>
-            </li>
-          </ul>
-
           <div className="mt-5 flex flex-col gap-4">
             <div className="min-w-0">
               <div className="relative rounded-[22px] border border-line-200 bg-surface-50 p-2">
@@ -479,12 +486,12 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
               </ol>
             )}
           </div>
-
-          <p className="mt-4 border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
-            {welt.besuchtText}
-          </p>
         </>
       )}
+
+      <p className="mt-4 border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
+        {welt.besuchtText}
+      </p>
     </section>
   )
 }

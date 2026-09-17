@@ -9,7 +9,11 @@
 // fehlt, bleibt sie sichtbar unbekannt.
 
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
-import type { WorldMapOrt, WorldMapReise } from '@/lib/account/world-map'
+import { WORLD_MAP_VIEWBOX, type WorldMapOrt, type WorldMapReise } from '@/lib/account/world-map'
+
+/** Nullpunkt der Projektion aus `weltKarteProjektion`: x = lon + 180, y = 90 - lat. */
+const PROJEKTION_LON_NULL = WORLD_MAP_VIEWBOX.width / 2
+const PROJEKTION_LAT_NULL = WORLD_MAP_VIEWBOX.height / 2
 
 /**
  * Gezeigter Ausschnitt der gleichwinkligen Projektion. Die Polkappen bleiben
@@ -24,8 +28,8 @@ export const WORLD_MAP_RAHMEN = {
 } as const
 
 export const WORLD_MAP_RAHMEN_VIEWBOX = {
-  x: WORLD_MAP_RAHMEN.lonMin + 180,
-  y: 90 - WORLD_MAP_RAHMEN.latMax,
+  x: WORLD_MAP_RAHMEN.lonMin + PROJEKTION_LON_NULL,
+  y: PROJEKTION_LAT_NULL - WORLD_MAP_RAHMEN.latMax,
   width: WORLD_MAP_RAHMEN.lonMax - WORLD_MAP_RAHMEN.lonMin,
   height: WORLD_MAP_RAHMEN.latMax - WORLD_MAP_RAHMEN.latMin,
 } as const
@@ -145,11 +149,11 @@ function gitterlinien(): readonly WorldMapGitterlinie[] {
   const rechts = WORLD_MAP_RAHMEN_VIEWBOX.x + WORLD_MAP_RAHMEN_VIEWBOX.width
   return [
     ...MERIDIANE.map((lon) => {
-      const x = lon + 180
+      const x = lon + PROJEKTION_LON_NULL
       return { schluessel: `meridian-${lon}`, x1: x, y1: oben, x2: x, y2: unten }
     }),
     ...PARALLELEN.map((lat) => {
-      const y = 90 - lat
+      const y = PROJEKTION_LAT_NULL - lat
       return { schluessel: `parallele-${lat}`, x1: links, y1: y, x2: rechts, y2: y }
     }),
   ]

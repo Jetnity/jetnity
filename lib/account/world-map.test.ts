@@ -19,6 +19,7 @@ import {
 } from '@/lib/account/world-map'
 import {
   WORLD_MAP_AUSSERHALB_RAHMEN_TEXT,
+  WORLD_MAP_MARKER_ABSTAND,
   WORLD_MAP_RAHMEN,
   WORLD_MAP_RAHMEN_VIEWBOX,
   WORLD_MAP_ZEITRAUM_OFFEN_TEXT,
@@ -721,6 +722,7 @@ describe('World-Map-Darstellung bleibt an gespeicherte Koordinaten gebunden', ()
       geplotteterOrt('kyoto', 35.0116, 135.7681),
       geplotteterOrt('lissabon', 38.7223, -9.1393),
     ])
+    assert.equal(WORLD_MAP_MARKER_ABSTAND, 5)
     assert.equal(ansicht.gruppen.length, 2)
     const dicht = ansicht.gruppen.find((gruppe) => gruppe.orte.length > 1)
     assert.deepEqual(
