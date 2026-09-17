@@ -85,12 +85,31 @@ export type BegleiterBezugArt = 'etappe' | 'reisende' | 'official' | 'safety' | 
  * `recheck_needed` und `never_checked` sind es nicht – und dürfen es auch dann
  * nicht werden, wenn eine Auskunft selbstsicher klingt.
  */
+/**
+ * Die maschinenlesbare Identität einer amtlichen Anforderung.
+ *
+ * Sie kommt unverändert aus der akzeptierten Projektion und wird **nicht** aus
+ * dem Anzeigetext zurückgelesen: `titel` ist lokalisierte Copy, und eine
+ * Textänderung darf keine Wahrheitsentscheidung verschieben.
+ *
+ * `lib/reisebegleiter/pruefung.ts` braucht sie, um eine Gewissheit an die
+ * Anforderung zu binden, über die sie spricht. Ohne sie liesse sich „kein
+ * Visum erforderlich" durch eine aktuelle Impfanforderung stützen.
+ */
+export type OfficialAnforderung = {
+  requirementType: AssistantOfficialContext['requirementType']
+  scope: AssistantOfficialContext['scope']
+  visaMode: AssistantOfficialContext['visaMode']
+}
+
 export type BegleiterBezug = {
   ref: string
   art: BegleiterBezugArt
   titel: string
   lage: string
   belegt: boolean
+  /** Nur bei `art === 'official'` gesetzt, sonst `null`. */
+  anforderung: OfficialAnforderung | null
 }
 
 export type Begleiternutzlast = {
@@ -241,6 +260,7 @@ function etappenBezug(stage: AssistantStageContext, ref: string): BegleiterBezug
     lage: zeitraum,
     // Der Reisegraph ist Jetnity-Wahrheit, keine geprüfte Aussenwahrheit.
     belegt: true,
+    anforderung: null,
   }
 }
 
@@ -257,6 +277,7 @@ function reisendenBezug(traveller: AssistantTravellerContext, ref: string): Begl
         ? 'Staatsangehörigkeit nicht angegeben'
         : `${staaten.join(' · ')} · ${optionen} ${optionen === 1 ? 'Dokument-Option' : 'Dokument-Optionen'} als gleichrangige Wahl`,
     belegt: true,
+    anforderung: null,
   }
 }
 
@@ -286,7 +307,18 @@ function officialBezug(official: AssistantOfficialContext, ref: string): Begleit
     .filter(Boolean)
     .join(' · ')
 
-  return { ref, art: 'official', titel, lage, belegt: officialIstBelegt(official) }
+  return {
+    ref,
+    art: 'official',
+    titel,
+    lage,
+    belegt: officialIstBelegt(official),
+    anforderung: {
+      requirementType: official.requirementType,
+      scope: official.scope,
+      visaMode: official.visaMode,
+    },
+  }
 }
 
 function safetyBezug(safety: AssistantSafetyContext, ref: string): BegleiterBezug {
@@ -296,6 +328,7 @@ function safetyBezug(safety: AssistantSafetyContext, ref: string): BegleiterBezu
     titel: `${SAFETY_KLASSE_TEXT[safety.presentationClass]} · ${SAFETY_KATEGORIE_TEXT[safety.category]}`,
     lage: `${SAFETY_RELEVANZ_TEXT[safety.relevance]} · ${SAFETY_FRISCHE_TEXT[safety.freshness]}`,
     belegt: safety.freshness === 'current' && safety.evidenceStatus === 'current',
+    anforderung: null,
   }
 }
 
@@ -306,6 +339,7 @@ function seasonalBezug(seasonal: AssistantSeasonalContext, ref: string): Begleit
     titel: `${SEASONAL_KLASSE_TEXT[seasonal.presentationClass]} · ${SEASONAL_KATEGORIE_TEXT[seasonal.category]}`,
     lage: `${SEASONAL_RELEVANZ_TEXT[seasonal.relevance]} · ${SEASONAL_FRISCHE_TEXT[seasonal.freshness]}`,
     belegt: seasonal.freshness === 'current' && seasonal.evidenceStatus === 'current',
+    anforderung: null,
   }
 }
 

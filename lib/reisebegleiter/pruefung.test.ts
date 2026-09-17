@@ -7,17 +7,23 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import type { BegleiterBezug } from '@/lib/reisebegleiter/nutzlast'
+import type { BegleiterBezug, OfficialAnforderung } from '@/lib/reisebegleiter/nutzlast'
 import { auskunftPruefen } from '@/lib/reisebegleiter/pruefung'
 import type { Modellauskunft } from '@/lib/reisebegleiter/schema'
 
+function anforderung(teil: Partial<OfficialAnforderung> = {}): OfficialAnforderung {
+  return { requirementType: 'visa', scope: 'destination', visaMode: 'unknown', ...teil }
+}
+
 function bezug(teil: Partial<BegleiterBezug> = {}): BegleiterBezug {
+  const art = teil.art ?? 'official'
   return {
     ref: 'O1',
-    art: 'official',
+    art,
     titel: 'Visum · Italien',
     lage: 'Noch nicht verlässlich bestimmbar',
     belegt: false,
+    anforderung: art === 'official' ? anforderung() : null,
     ...teil,
   }
 }
@@ -130,15 +136,17 @@ describe('Gewissheit ist an die benannte amtliche Lage gebunden', () => {
     bezug({ ref: 'E1', art: 'etappe', titel: 'Etappe 1 · Rom', lage: 'April', belegt: true }),
     bezug({
       ref: 'O1',
-      titel: 'Passgültigkeit · Italien',
+      titel: 'Visumstatus · Italien',
       lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft',
       belegt: true,
+      anforderung: anforderung({ requirementType: 'visa', visaMode: 'visa_exempt' }),
     }),
     bezug({
       ref: 'O2',
-      titel: 'Visumstatus · Italien',
+      titel: 'Transitbestimmungen · Schweiz',
       lage: 'Noch nicht verlässlich bestimmbar · Quelle nicht erreichbar',
       belegt: false,
+      anforderung: anforderung({ requirementType: 'transit', scope: 'transit', visaMode: null }),
     }),
   ]
 
@@ -205,6 +213,156 @@ describe('Gewissheit ist an die benannte amtliche Lage gebunden', () => {
         GEMISCHT,
       ),
       { ok: true },
+    )
+  })
+})
+
+describe('Gewissheit ist an den passenden Anforderungstyp gebunden', () => {
+  // Der Kern dieses Blocks: Eine geprüfte amtliche Lage belegt genau ihre
+  // eigene Anforderung. Eine aktuelle Impfanforderung sagt nichts über das
+  // Visum – wer sie als Beleg durchgehen lässt, wertet eine Wahrheitsklasse
+  // mit einer fremden auf. Der Anforderungstyp kommt maschinenlesbar aus der
+  // Projektion und nicht aus dem Anzeigetext.
+  const visumBelegt = bezug({
+    ref: 'O1',
+    titel: 'Visumstatus · Italien',
+    lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft',
+    belegt: true,
+    anforderung: anforderung({ requirementType: 'visa', visaMode: 'visa_exempt' }),
+  })
+  const impfungBelegt = bezug({
+    ref: 'O2',
+    titel: 'Impfanforderung · Italien',
+    lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft',
+    belegt: true,
+    anforderung: anforderung({ requirementType: 'vaccination', visaMode: null }),
+  })
+  const visumUnbelegt = bezug({
+    ref: 'O3',
+    titel: 'Visumstatus · Italien',
+    lage: 'Noch nicht verlässlich bestimmbar',
+    belegt: false,
+    anforderung: anforderung({ requirementType: 'visa', visaMode: null }),
+  })
+  const transitBelegt = bezug({
+    ref: 'O4',
+    titel: 'Transitbestimmungen · Schweiz',
+    lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft',
+    belegt: true,
+    anforderung: anforderung({ requirementType: 'transit', scope: 'transit', visaMode: null }),
+  })
+
+  test('eine geprüfte Impfanforderung trägt keine Visumsgewissheit', () => {
+    // O1 = Impfung geprüft, O2 = Visum unbekannt, Aussage über das Visum
+    // zeigt nur auf die Impfung.
+    const befund = auskunftPruefen(
+      auskunft({
+        antwort: 'Für Italien ist kein Visum erforderlich.',
+        bezuege: [impfungBelegt.ref],
+      }),
+      [impfungBelegt, visumUnbelegt],
+    )
+    assert.equal(befund.ok, false)
+    assert.equal(befund.ok === false && befund.art, 'unbelegte-gewissheit')
+    assert.match(befund.ok === false ? befund.hinweis : '', /passende geprüfte amtliche Anforderung/)
+  })
+
+  test('eine geprüfte Visumslage trägt die Visumsgewissheit', () => {
+    assert.deepEqual(
+      auskunftPruefen(
+        auskunft({
+          antwort: 'Für Italien ist kein Visum erforderlich.',
+          bezuege: [visumBelegt.ref],
+        }),
+        [visumBelegt],
+      ),
+      { ok: true },
+    )
+  })
+
+  test('eine geprüfte Visumslage trägt keine Impfgewissheit', () => {
+    const befund = auskunftPruefen(
+      auskunft({
+        antwort: 'Für Italien ist keine Impfung erforderlich.',
+        bezuege: [visumBelegt.ref],
+      }),
+      [visumBelegt, impfungBelegt],
+    )
+    assert.equal(befund.ok, false)
+    assert.equal(befund.ok === false && befund.art, 'unbelegte-gewissheit')
+  })
+
+  test('eine nicht zuordenbare Gewissheit fällt auch mit geprüfter Lage durch', () => {
+    for (const text of [
+      'Das ist garantiert ausreichend.',
+      'Die Lage ist definitiv geklärt.',
+      'Das ist amtlich bestätigt.',
+      'Du kannst problemlos einreisen.',
+      'Ein Visum ist nicht erforderlich.',
+    ]) {
+      const befund = auskunftPruefen(
+        auskunft({ antwort: text, bezuege: [visumBelegt.ref] }),
+        [visumBelegt],
+      )
+      assert.equal(befund.ok, false, `durchgelassen: ${text}`)
+      assert.match(
+        befund.ok === false ? befund.hinweis : '',
+        /keiner geprüften Anforderung zuordnen/,
+      )
+    }
+  })
+
+  test('Transitvisum und Zielvisum sind getrennte Bereiche', () => {
+    // Die geprüfte Transitlage trägt die Transitaussage …
+    assert.deepEqual(
+      auskunftPruefen(
+        auskunft({
+          antwort: 'Für die Zwischenlandung ist kein Transitvisum nötig.',
+          bezuege: [transitBelegt.ref],
+        }),
+        [transitBelegt, visumUnbelegt],
+      ),
+      { ok: true },
+    )
+    // … aber nicht die Aussage über das Zielvisum.
+    assert.equal(
+      auskunftPruefen(
+        auskunft({
+          antwort: 'Für Italien ist kein Visum erforderlich.',
+          bezuege: [transitBelegt.ref],
+        }),
+        [transitBelegt, visumUnbelegt],
+      ).ok,
+      false,
+    )
+  })
+
+  test('jede Gewissheit im Text braucht ihren eigenen Beleg', () => {
+    // Zwei Aussagen, nur eine gedeckt: Die Auskunft fällt als Ganzes durch.
+    const befund = auskunftPruefen(
+      auskunft({
+        antwort: 'Für Italien ist kein Visum erforderlich.',
+        naechsteSchritte: ['Es ist auch keine Impfung nötig.'],
+        bezuege: [visumBelegt.ref],
+      }),
+      [visumBelegt, impfungBelegt],
+    )
+    assert.equal(befund.ok, false)
+  })
+
+  test('ein Bezug ohne Anforderungsidentität trägt keine Gewissheit', () => {
+    // Safety und Seasonal sind belegte Aussenwahrheit, aber keine amtliche
+    // Anforderung. Sie dürfen nichts freischalten.
+    const safetyBelegt = bezug({ ref: 'S1', art: 'safety', belegt: true })
+    assert.equal(
+      auskunftPruefen(
+        auskunft({
+          antwort: 'Für Italien ist kein Visum erforderlich.',
+          bezuege: [safetyBelegt.ref],
+        }),
+        [safetyBelegt, visumUnbelegt],
+      ).ok,
+      false,
     )
   })
 })

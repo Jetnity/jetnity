@@ -37,7 +37,7 @@
 //
 // Frei von Next, Supabase und `process.env`.
 
-import type { BegleiterBezug } from '@/lib/reisebegleiter/nutzlast'
+import type { BegleiterBezug, OfficialAnforderung } from '@/lib/reisebegleiter/nutzlast'
 import type { Modellauskunft } from '@/lib/reisebegleiter/schema'
 
 export type Pruefbefund =
@@ -48,26 +48,86 @@ export type Pruefbefund =
  * Unbelegte Gewissheit über amtliche Anforderungen.
  *
  * Eine Gewissheit ist an die amtliche Lage gebunden, auf die sich die Auskunft
- * **beruft** – nicht an die Reise. Es genügt deshalb nicht, dass irgendwo im
- * Kontext eine geprüfte Lage steht: Sonst würde eine einzige aktuelle
- * Passgültigkeitsprüfung den Satz „kein Visum erforderlich" freischalten,
- * obwohl die Visumslage unbekannt ist. Das ist genau die Aufwertung von
- * `unknown` zu `not_required`, die der Vertrag verbietet.
+ * **beruft** – und zwar an die, über die sie spricht. Zwei Stufen:
  *
- * Die Bedingung unten ist deshalb zweiseitig: Die Auskunft muss mindestens
- * einen belegten Official-Bezug **nennen**, und keiner der von ihr genannten
- * Official-Bezüge darf unbelegt sein.
+ * 1. Es genügt nicht, dass irgendwo im Kontext eine geprüfte Lage steht. Sonst
+ *    würde eine beliebige aktuelle Prüfung den Satz „kein Visum erforderlich"
+ *    freischalten, obwohl die Visumslage unbekannt ist.
+ * 2. Es genügt auch nicht, dass die Auskunft *irgendeine* geprüfte Lage nennt.
+ *    Eine aktuelle Impfanforderung sagt nichts über das Visum. Wer sie als
+ *    Beleg für „kein Visum erforderlich" durchgehen lässt, wertet eine
+ *    Wahrheitsklasse mit einer fremden auf.
+ *
+ * Beides ist dieselbe verbotene Aufwertung von `unknown` zu `not_required`,
+ * einmal über die Reise und einmal über den Anforderungstyp.
+ *
+ * `getragenVon` ist deshalb ein Prädikat über die **maschinenlesbare**
+ * Anforderungsidentität aus `lib/reisebegleiter/nutzlast.ts`, nicht über den
+ * Anzeigetext. `null` heisst: Diese Formulierung lässt sich keiner Anforderung
+ * zuordnen und wird immer abgelehnt – „garantiert" kann nichts belegen.
  */
-const GEWISSHEITSMUSTER: ReadonlyArray<{ name: string; muster: RegExp }> = [
-  { name: 'visumfrei', muster: /\bvis(?:um|a)s?frei\b/i },
-  { name: 'kein Visum', muster: /\bkein(?:e|en|es)?\s+vis(?:um|a)\b/i },
-  { name: 'ohne Visum', muster: /\bohne\s+vis(?:um|a)\b/i },
-  { name: 'keine Impfung', muster: /\bkeine?\s+impf\w*/i },
-  { name: 'nicht erforderlich', muster: /\bnicht\s+erforderlich\b/i },
-  { name: 'garantiert', muster: /\bgarantiert\b/i },
-  { name: 'definitiv', muster: /\bdefinitiv\b/i },
-  { name: 'amtlich bestätigt', muster: /\b(?:amtlich|offiziell|beh[öo]rdlich)\s+best[äa]tigt\b/i },
-  { name: 'problemlos einreisen', muster: /\b(?:problemlos|sicher|ohne\s+weiteres)\s+einreisen\b/i },
+type Gewissheitsmuster = {
+  name: string
+  muster: RegExp
+  getragenVon: ((anforderung: OfficialAnforderung) => boolean) | null
+}
+
+const zielVisum = (anforderung: OfficialAnforderung): boolean =>
+  anforderung.scope === 'destination' && anforderung.requirementType === 'visa'
+
+const transitVisum = (anforderung: OfficialAnforderung): boolean =>
+  anforderung.scope === 'transit' &&
+  (anforderung.requirementType === 'transit' || anforderung.requirementType === 'visa')
+
+const impfung = (anforderung: OfficialAnforderung): boolean =>
+  anforderung.requirementType === 'vaccination'
+
+const gesundheit = (anforderung: OfficialAnforderung): boolean =>
+  anforderung.requirementType === 'vaccination' ||
+  anforderung.requirementType === 'health' ||
+  anforderung.requirementType === 'health_document'
+
+const reisegenehmigung = (anforderung: OfficialAnforderung): boolean =>
+  anforderung.requirementType === 'electronic_travel_authorization'
+
+const GEWISSHEITSMUSTER: ReadonlyArray<Gewissheitsmuster> = [
+  // Transit zuerst benannt, damit klar ist, dass „Transitvisum" ein eigener
+  // Bereich ist. Die Muster überschneiden sich nicht: In „Transitvisum" steht
+  // vor „vis" ein Wortzeichen, an dem `\b` der Zielvisum-Muster nicht greift.
+  {
+    name: 'kein Transitvisum',
+    muster: /\b(?:kein(?:e|en|es)?|ohne)\s+transit[-\s]?vis(?:um|a)\b|\btransit[-\s]?vis(?:um|a)s?frei\b/i,
+    getragenVon: transitVisum,
+  },
+  { name: 'visumfrei', muster: /\bvis(?:um|a)s?frei\b/i, getragenVon: zielVisum },
+  { name: 'kein Visum', muster: /\bkein(?:e|en|es)?\s+vis(?:um|a)\b/i, getragenVon: zielVisum },
+  { name: 'ohne Visum', muster: /\bohne\s+vis(?:um|a)\b/i, getragenVon: zielVisum },
+  {
+    name: 'keine elektronische Reisegenehmigung',
+    muster: /\b(?:kein(?:e|en|es)?|ohne)\s+(?:eTA\b|elektronische\w*\s+reisegenehmigung)/i,
+    getragenVon: reisegenehmigung,
+  },
+  { name: 'keine Impfung', muster: /\bkeine?\s+impf\w*/i, getragenVon: impfung },
+  {
+    name: 'keine Gesundheitsanforderung',
+    muster: /\b(?:kein(?:e|en|es)?|ohne)\s+(?:gesundheits\w+|attest|[äa]rztliche\w*\s+\w+)/i,
+    getragenVon: gesundheit,
+  },
+  // Ab hier: nicht zuordenbar. Eine Anforderung, die sie belegen könnte, gibt
+  // es nicht – „nicht erforderlich" sagt nicht, was nicht erforderlich ist.
+  { name: 'nicht erforderlich', muster: /\bnicht\s+erforderlich\b/i, getragenVon: null },
+  { name: 'garantiert', muster: /\bgarantiert\b/i, getragenVon: null },
+  { name: 'definitiv', muster: /\bdefinitiv\b/i, getragenVon: null },
+  {
+    name: 'amtlich bestätigt',
+    muster: /\b(?:amtlich|offiziell|beh[öo]rdlich)\s+best[äa]tigt\b/i,
+    getragenVon: null,
+  },
+  {
+    name: 'problemlos einreisen',
+    muster: /\b(?:problemlos|sicher|ohne\s+weiteres)\s+einreisen\b/i,
+    getragenVon: null,
+  },
 ]
 
 /**
@@ -124,33 +184,49 @@ export function auskunftPruefen(
     }
   }
 
-  const gewissheit = texte(auskunft)
-    .map((text) => GEWISSHEITSMUSTER.find((eintrag) => eintrag.muster.test(text)))
-    .find((treffer) => treffer != null)
+  // Alle Gewissheiten, nicht nur die erste: Ein Text kann mehrere enthalten,
+  // und jede braucht ihren eigenen Beleg.
+  const gewissheiten = GEWISSHEITSMUSTER.filter((eintrag) =>
+    texte(auskunft).some((text) => eintrag.muster.test(text)),
+  )
 
-  if (!gewissheit) return { ok: true }
+  if (gewissheiten.length === 0) return { ok: true }
 
-  // Ab hier steht eine Gewissheit im Text. Sie darf nur bestehen bleiben, wenn
-  // die Auskunft die amtliche Lage, auf die sie sich stützt, auch benennt –
-  // und wenn keine der benannten Lagen ihr widerspricht.
-  const officialBezuege = bezuege.filter((bezug) => bezug.art === 'official')
+  // Ab hier steht mindestens eine Gewissheit im Text. Sie darf nur bestehen
+  // bleiben, wenn die Auskunft die amtliche Lage, auf die sie sich stützt,
+  // benennt – und wenn keine der benannten Lagen ihr widerspricht.
   const gezeigt = new Set(auskunft.bezuege)
-  const benannt = officialBezuege.filter((bezug) => gezeigt.has(bezug.ref))
+  const benannt = bezuege.filter((bezug) => bezug.art === 'official' && gezeigt.has(bezug.ref))
 
   const widerspruch = benannt.find((bezug) => !bezug.belegt)
   if (widerspruch) {
     return {
       ok: false,
       art: 'unbelegte-gewissheit',
-      hinweis: `Die Auskunft benutzt „${gewissheit.name}" und zeigt zugleich auf ${widerspruch.ref}, dessen amtliche Lage nicht geprüft ist.`,
+      hinweis: `Die Auskunft benutzt „${gewissheiten[0].name}" und zeigt zugleich auf ${widerspruch.ref}, dessen amtliche Lage nicht geprüft ist.`,
     }
   }
 
-  if (!benannt.some((bezug) => bezug.belegt)) {
-    return {
-      ok: false,
-      art: 'unbelegte-gewissheit',
-      hinweis: `Die Auskunft benutzt „${gewissheit.name}", ohne eine geprüfte amtliche Lage zu benennen.`,
+  for (const gewissheit of gewissheiten) {
+    const getragenVon = gewissheit.getragenVon
+    if (!getragenVon) {
+      return {
+        ok: false,
+        art: 'unbelegte-gewissheit',
+        hinweis: `Die Auskunft benutzt „${gewissheit.name}"; diese Formulierung lässt sich keiner geprüften Anforderung zuordnen.`,
+      }
+    }
+
+    const traeger = benannt.find(
+      (bezug) => bezug.belegt && bezug.anforderung != null && getragenVon(bezug.anforderung),
+    )
+
+    if (!traeger) {
+      return {
+        ok: false,
+        art: 'unbelegte-gewissheit',
+        hinweis: `Die Auskunft benutzt „${gewissheit.name}", ohne eine dazu passende geprüfte amtliche Anforderung zu benennen.`,
+      }
     }
   }
 
