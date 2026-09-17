@@ -21,7 +21,7 @@ Session: `bc-ba47e289-5ac8-49c4-857e-ba1b37d5784f`.
 | Zuvor geprüfter Head | `a372f2152f21ab7b57b488b0dab66ca8d43a1813` |
 | Integriertes `main` | `cfcb6b5ba12bef2383782e5d27e968b23d446b04` |
 | Merge-Base gegen `origin/main` | `cfcb6b5ba12bef2383782e5d27e968b23d446b04` |
-| Ahead / Behind | siehe Abschnitt 8 |
+| Ahead / Behind | 12 / 0 (Stand des letzten Commits dieser Kette) |
 | Drift | **keine** – 0 behind |
 
 `main@cfcb6b5b` ist per **Merge** integriert. Kein Rebase, kein Force-Push: der
@@ -150,7 +150,38 @@ Supabase-Voreinstellung nachbildet und seine eigene Voraussetzung mitprüft.
 
 ## 8. Exakter Endstand
 
-Wird im letzten Commit dieser Kette nachgetragen, nachdem der Push erfolgt ist.
+### Code-Head
+
+`4a939d811aa2110161b4e4865c2e378c1f60e24a`
+
+Letzter Commit mit Code, Migration, Tests, Werkzeugen und Belegen. Sein Gating
+ist vollständig:
+
+| Prüfung | Ergebnis am Head `4a939d81` |
+| --- | --- |
+| GitHub Actions, Lauf `35207604693` | **success** |
+| „Typecheck, Lint & Build“ | pass (2m33s) |
+| „Auth-Konfiguration gegen config.toml“ | pass (25s) |
+| Vercel Preview `GeENU49QXYPS8LyVefy8icK2LPTg` | **Ready** |
+
+### Dokumentations-Head
+
+Darauf folgt genau ein weiterer Commit. Er enthält **keinen Code**: diesen
+Abschnitt. Er erzeugt einen eigenen CI-Lauf und einen eigenen Vercel-Preview;
+dieser Lauf ist der Exact-Head-Stand für das Review und in PR #448 sichtbar.
+
+### Historie dieser Kette
+
+| Head | Rolle | CI |
+| --- | --- | --- |
+| `a372f215` | Runde 1, vom Technical Lead geprüft | success (`35200088971`) |
+| `4a939d81` | Runde 2, Befunde behoben, `main` integriert | success (`35207604693`) |
+
+### Drift
+
+Keine. `origin/main` steht nach erneutem Fetch auf
+`cfcb6b5ba12bef2383782e5d27e968b23d446b04`, und das ist zugleich die
+Merge-Base: **0 behind**. Kein Rebase, kein Force-Push.
 
 ---
 
