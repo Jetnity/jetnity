@@ -47,16 +47,20 @@ All seven required areas were audited: Privacy/Terms/Consent, account data lifec
 | Live `origin/main` at handoff | `69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
 | Base drift | **none** — live `main` is identical to the canonical base |
 | Merge-base `HEAD`…`origin/main` | `69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
-| Ahead / behind | **3 ahead / 0 behind** at checkpoint 2; 5 ahead / 0 behind after the final documentation commits |
+| Ahead / behind | **0 behind** throughout. 3 ahead at checkpoint 2; 4 ahead at the final content head; 5 ahead at the branch tip (head-recording commit) |
 | Initial task head | `5900ff62fa41c99ac61840b1e808d4358693d9bc` |
 | Checkpoint 1 | `5b989a8c` — Sections 1–3 of the gap matrix |
 | Checkpoint 2 | `2c2fd792` — Sections 4–7, consolidated blocking set, audit boundaries |
-| Exact final head | recorded in §2.1 below |
+| Exact final content head | `aa877dd67397f0be0ae3305ee62b2cdc07a83112` |
 | Working tree | clean at every checkpoint |
 
 ### 2.1 Exact final head
 
-The final content head (STATUS / HANDOFF / SELF_REVIEW) is `b4c86e0` — see the head-recording commit that is the branch tip. The branch tip is the commit that records this SHA; that commit changes no audit content.
+The exact final **content** head — the commit containing the complete audit including STATUS, HANDOFF and the adversarial SELF_REVIEW — is:
+
+`aa877dd67397f0be0ae3305ee62b2cdc07a83112`
+
+The branch tip is one commit later. That commit exists only to write the SHA above into this document, and changes no audit finding; recording a head inside the commit that creates it is not possible. The Technical Lead should review `aa877dd6` for content and confirm the tip contains only this recording change.
 
 ### 2.2 Docs-only proof
 
