@@ -1,8 +1,8 @@
 # Explicit Visit History 1 – Handoff
 
-Stand: 17. September 2026 (Review-Runde 1 eingearbeitet)
+Stand: 17. September 2026 (Review-Runde 2 eingearbeitet, Development live)
 
-Status: **NICHT READY / REVIEW-BEFUNDE BEHOBEN / EIN GATE BLOCKIERT / STOP FÜR TECHNICAL-LEAD-REVIEW**
+Status: **NICHT READY / REVIEW-BEFUNDE BEHOBEN / DEVELOPMENT LIVE VERIFIZIERT / STOP FÜR TECHNICAL-LEAD-REVIEW**
 
 Verbindliche Aufgabe: `docs/EXPLICIT_VISIT_HISTORY_1_TASK_2026-09-17.md`
 Issue: #445 · Direktive: #441 · Draft-PR: #448
@@ -18,17 +18,38 @@ Session: `bc-ba47e289-5ac8-49c4-857e-ba1b37d5784f`.
 | --- | --- |
 | Branch | `feat/phase-1-explicit-visit-history-1` |
 | Kanonische Basis | `main@69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
-| Zuvor geprüfter Head | `a372f2152f21ab7b57b488b0dab66ca8d43a1813` |
+| Geprüfter Head Runde 1 | `a372f2152f21ab7b57b488b0dab66ca8d43a1813` |
+| Geprüfter Head Runde 2 | `91c93be9fed77499b89ccde53d7090b95b9f728b` |
 | Integriertes `main` | `cfcb6b5ba12bef2383782e5d27e968b23d446b04` |
 | Merge-Base gegen `origin/main` | `cfcb6b5ba12bef2383782e5d27e968b23d446b04` |
-| Ahead / Behind | 12 / 0 (Stand des letzten Commits dieser Kette) |
+| Ahead / Behind | 14 / 0 (Stand des letzten Commits dieser Kette) |
 | Drift | **keine** – 0 behind |
 
 `main@cfcb6b5b` ist per **Merge** integriert. Kein Rebase, kein Force-Push: der
 zuvor geprüfte Head bleibt in der Historie auffindbar. Der Zuwachs von `main`
 war reine Dokumentation (V1 Account/Privacy/Ops Audit G2) und ohne Konflikt.
 
-## 2. Die vier Befunde
+## 2. Runde 3: die erzeugten Typen
+
+Der Technical Lead hat den Head `91c93be9` geprüft, die vier Befunde aus Runde 1
+als behoben bestätigt und die Migration auf Supabase **Development** angewendet
+und live verifiziert. Ein Punkt blieb offen: `types/supabase.ts` war von Hand
+vorweggenommen und nicht generator-genau. Der echte Generator gibt zwei
+Funktionen aus, die in der Handfassung fehlten:
+
+- `account_visit_pruefen` – mit dem Rückgabetyp der Tabellenzeile und
+  `SetofOptions`, obwohl sie für keine PostgREST-Rolle ausführbar ist;
+- `ist_katalogland`.
+
+**Behoben.** Beide sind generator-genau nachgetragen, unbeteiligte Bereiche der
+Datei blieben unangetastet. Zusätzlich prüft jetzt ein Test, dass jede Funktion
+der Migration, die kein Trigger ist, in den erzeugten Typen steht – die Lücke
+wäre damit aufgefallen.
+
+Der Cursor-Agent hat in dieser Runde **keine** Migration angewendet und
+**kein** Supabase-Projekt verändert.
+
+## 3. Die vier Befunde aus Runde 1
 
 | # | Befund | Endzustand |
 | --- | --- | --- |
@@ -41,19 +62,26 @@ war reine Dokumentation (V1 Account/Privacy/Ops Audit G2) und ohne Konflikt.
 Die ausführliche Begründung je Befund steht in
 `docs/EXPLICIT_VISIT_HISTORY_1_STATUS_2026-09-17.md`, Abschnitt „Review-Runde 1“.
 
-Über `service_role` wird ausdrücklich **nicht** behauptet, dass es auf
-Development blockiert ist. Behauptet wird, dass die Migration den Entzug
-ausspricht und dass er gegen die nachgebildete Voreinstellung nachweislich
-wirkt. Die Abfragen für die Live-Prüfung stehen im Migrationsnachweis,
-Abschnitt 5.
+Befund 4 ist inzwischen live bestätigt: auf Development hat `service_role` auf
+dieser Tabelle kein Recht, obwohl Supabase neu angelegten Tabellen von sich aus
+welche mitgibt. Die vollständige Messung steht in Abschnitt 7.
 
-## 3. Geänderte Dateien seit dem geprüften Head
+## 4. Geänderte Dateien
 
-**Datenbank**
+**Seit Head `91c93be9` (Runde 3)**
 
-- `supabase/migrations/20260917120000_account_visits.sql` – überarbeitet, nicht
-  ergänzt: die Datei ist nirgends angewendet, es bleibt eine additive Migration
-- `types/supabase.ts` – drei Vertragsfunktionen ergänzt
+- `types/supabase.ts` – `account_visit_pruefen` und `ist_katalogland`
+  generator-genau ergänzt
+- `lib/account/besuche.test.ts` – Test gegen künftige Typlücken
+- STATUS, HANDOFF, SELF_REVIEW, MIGRATION_EVIDENZ
+
+**Datenbank (Runde 2, inzwischen auf Development angewendet)**
+
+- `supabase/migrations/20260917120000_account_visits.sql` – in Runde 2
+  überarbeitet statt ergänzt, weil sie damals nirgends angewendet war. Seither
+  ist sie auf Development angewendet; sie darf **nicht erneut** angewendet und
+  nicht mehr verändert werden.
+- `types/supabase.ts` – Tabelle und fünf Funktionen
 
 **Anwendung**
 
@@ -80,11 +108,11 @@ Abschnitt 5.
 - STATUS, HANDOFF, SELF_REVIEW, MIGRATION_EVIDENZ, VISUAL_EVIDENCE
 - `docs/evidence/explicit-visit-history-1/` – 14 Bilder, 3 Lupen, ein Messbericht
 
-## 4. Gates
+## 5. Gates
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | 3308 / 0 Fehler |
+| `npm test` | 3309 / 0 Fehler |
 | `npx tsc --noEmit -p tsconfig.json` | grün |
 | `npm run lint` | 0 Fehler, 139 Warnungen (bestehend) |
 | `npm run build` | grün |
@@ -92,17 +120,17 @@ Abschnitt 5.
 | `npm run check:exports` | grün |
 | `npm run check:deps` | grün |
 | `npm run check:api-schutz` | grün |
-| `npm run check:schema-bezug` | grün (22 Tabellen/Views, 23 Funktionen) |
+| `npm run check:schema-bezug` | grün (22 Tabellen/Views, 25 Funktionen) |
 | `npm run audit:account` | 48/48 (WebKit + Chromium, 6 Breiten) |
 | `npm run db:besuche-lokal` | 41/41 gegen lokale PostgreSQL 16 |
 | `node scripts/kartografie/weltkarte-geometrie.mjs --pruefen` | beide Dateien aktuell |
 | `node scripts/kartografie/besuchshistorie-belege.mjs` | 14 Belege + 3 Lupen, `ok: true` |
-| `npm run db:anwenden` | **abgebrochen, HTTP 401** – siehe 6 |
-| `db:rls`, `db:rechte`, `db:sicherheit`, `db:advisors`, `db:typen`, `auth:pruefen` | **nicht gelaufen**, dasselbe 401 |
-| Exact-Head-CI | siehe 8 |
-| Exact-Head-Vercel-Preview | siehe 8 |
+| Supabase Development | vom Technical Lead angewendet und verifiziert – siehe 7 |
+| `db:anwenden`, `db:rls`, `db:rechte`, `db:sicherheit`, `db:advisors`, `db:typen`, `auth:pruefen` | vom Agenten **nicht** ausführbar (Token 401); die Live-Prüfung hat der Technical Lead vorgenommen |
+| Exact-Head-CI | siehe 9 |
+| Exact-Head-Vercel-Preview | siehe 9 |
 
-## 5. Sichtbelege
+## 6. Sichtbelege
 
 390 px und ≥ 1280 px je Zustand: leer, besucht, geplant, überlagert, Land ohne
 zeichenbare Fläche in allen drei Zuständen, Lesefehler, Hinzufügen, Bearbeiten,
@@ -115,28 +143,37 @@ Formnamen für die drei Zustände.
 
 Einzelheiten: `docs/EXPLICIT_VISIT_HISTORY_1_VISUAL_EVIDENCE_2026-09-17.md`.
 
-## 6. Das blockierte Gate
+## 7. Live-Stand Supabase Development
 
-`SUPABASE_ACCESS_TOKEN` wird vom Supabase-Management-API mit HTTP 401
-abgewiesen. Folge:
+Angewendet und gemessen vom **Technical Lead**. Migrationshistorie exakt auf die
+Repository-Fassung normalisiert (`20260917120000 account_visits`).
+**Nicht erneut anwenden.**
 
-- die Migration ist **nicht** auf Development angewendet;
-- Live-Schema, Live-RLS, Policies, Grants, Advisors und `auth:pruefen` sind
-  **nicht** geprüft;
-- `types/supabase.ts` trägt Tabelle und Funktionen von Hand in Generatorform
-  und muss nach dem Anwenden mit `npm run db:typen` ersetzt werden.
+| Gemessen | Ergebnis |
+| --- | --- |
+| RLS auf `public.account_visits` | aktiv |
+| Policies | genau eine: `account_visits_lesen`, `USING user_id = auth.uid()`, `authenticated` |
+| Tabellenrechte | `authenticated` nur `SELECT`; `anon` keine; `service_role` keine |
+| `EXECUTE` auf den drei Schreib-RPCs | nur `postgres` und `authenticated` |
+| `EXECUTE` auf `account_visit_pruefen` | nur `postgres` |
+| Zeilen | 0 |
+| Production | unverändert – `public.account_visits` und `account_visit_bestaetigen(...)` fehlen dort |
 
-Production wurde **nicht** berührt.
+**Security Advisors:** geprüft. Zwei Arten von Hinweisen, beide gewollt: der
+allgemeine Hinweis auf GraphQL-Sichtbarkeit für die angemeldete Rolle und
+`SECURITY DEFINER`-Hinweise für die drei absichtlich exponierten, an
+`auth.uid()` gebundenen Schreib-RPCs. Kein Hinweis auf fehlendes RLS, keiner auf
+einen anon-Schreibweg. Ausdrücklich **keine** Zusage „null Warnungen“.
 
-Ersatzweise liegt der isolierte Lauf gegen eine lokal aufgesetzte
-PostgreSQL 16 vor (41/41), der dieselbe Migrationsdatei anwendet, die
-Supabase-Voreinstellung nachbildet und seine eigene Voraussetzung mitprüft.
+Ergänzend und davon unabhängig misst `npm run db:besuche-lokal` (41/41) das
+Verhalten unter Angriff: direkte Schreibversuche als `authenticated` gegen eine
+lokale PostgreSQL, die die Supabase-Voreinstellung nachbildet und ihre eigene
+Voraussetzung mitprüft.
 
-## 7. Was der Technical Lead entscheiden muss
+## 8. Was der Technical Lead entscheiden muss
 
-1. Migration auf Development anwenden, danach die Prüfungen und die drei
-   ACL-Abfragen aus dem Migrationsnachweis, Abschnitt 5; `types/supabase.ts`
-   neu erzeugen und den Diff gegenlesen.
+1. Ob die generator-genau nachgetragenen Typeinträge dem entsprechen, was der
+   Generator gegen Development ausgibt.
 2. Ob `SECURITY DEFINER` für die drei Schreibfunktionen der gewünschte Weg ist
    (Self-Review 2.2 nennt die Gegenmassnahmen).
 3. Ob der Länderkatalog in der Datenbank als Funktion bleibt oder eine
@@ -148,21 +185,15 @@ Supabase-Voreinstellung nachbildet und seine eigene Voraussetzung mitprüft.
 6. Ob ein Real-Device-Test verlangt wird; er hat nicht stattgefunden.
 7. Produktionsmigration – ausdrücklich nicht Teil dieser Etappe.
 
-## 8. Exakter Endstand
+## 9. Exakter Endstand
 
-### Code-Head
+### Inhalts-Head
 
-`4a939d811aa2110161b4e4865c2e378c1f60e24a`
+`092d4dbf00d770aae544ae904cf2d2f11934c013`
 
-Letzter Commit mit Code, Migration, Tests, Werkzeugen und Belegen. Sein Gating
-ist vollständig:
-
-| Prüfung | Ergebnis am Head `4a939d81` |
-| --- | --- |
-| GitHub Actions, Lauf `35207604693` | **success** |
-| „Typecheck, Lint & Build“ | pass (2m33s) |
-| „Auth-Konfiguration gegen config.toml“ | pass (25s) |
-| Vercel Preview `GeENU49QXYPS8LyVefy8icK2LPTg` | **Ready** |
+Letzter Commit mit Typen, Tests und Nachweisen. Er enthält die
+Typabgleichung dieser Runde und die überarbeiteten STATUS-, SELF_REVIEW- und
+MIGRATION_EVIDENZ-Dokumente.
 
 ### Dokumentations-Head
 
@@ -175,13 +206,15 @@ dieser Lauf ist der Exact-Head-Stand für das Review und in PR #448 sichtbar.
 | Head | Rolle | CI |
 | --- | --- | --- |
 | `a372f215` | Runde 1, vom Technical Lead geprüft | success (`35200088971`) |
-| `4a939d81` | Runde 2, Befunde behoben, `main` integriert | success (`35207604693`) |
+| `91c93be9` | Runde 2, vier Befunde behoben, `main` integriert, vom Technical Lead geprüft; Development angewendet und verifiziert | success (`35207927525` / #1774), Vercel `dpl_5wPgjo7NKiTe5DQdGS2mdW68Y7Fx` Ready |
+| `092d4dbf` | Runde 3, erzeugte Typen generator-genau abgeglichen | siehe PR #448 |
 
 ### Drift
 
 Keine. `origin/main` steht nach erneutem Fetch auf
 `cfcb6b5ba12bef2383782e5d27e968b23d446b04`, und das ist zugleich die
-Merge-Base: **0 behind**. Kein Rebase, kein Force-Push.
+Merge-Base: **0 behind**. Kein Rebase, kein Force-Push; jeder zuvor geprüfte
+Head bleibt in der Historie auffindbar.
 
 ---
 
