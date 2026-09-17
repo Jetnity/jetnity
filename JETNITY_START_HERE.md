@@ -1,15 +1,18 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 17. September 2026  
-Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
 > Jeder neue Head invalidiert ältere Exact-Head-Gates. Kein relevanter Fortschritt darf nur im Chat oder in einer Agenten-Session stehen.
 
+> Dieses Dokument ist verbindlich für geschlossene Wahrheiten, Grenzen und Gates. Es ist **keine** Quelle für den momentanen Arbeitsstand: welche PRs, Branches, Heads, Slices oder Agenten gerade aktiv sind, wird ausschließlich live rekonstruiert. Wo gespeicherter Text und Live-Evidence sich widersprechen, gewinnt Live-Evidence, und der gespeicherte Text wird danach korrigiert.
+
 ## 1. Zuerst lesen
 
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
+1a. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
 2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← **canonical new-chat continuity checkpoint**
 3. `docs/ACTIVE_WORK_STATUS.md`
 3a. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
@@ -31,6 +34,8 @@ Status: **KANONISCHER CURRENT-STATE-EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACC
 18. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md`
 
 Danach immer live verifizieren: aktuelles `main`, offene PRs/Issues, relevanter Branch/Head, Merge-Base/ahead/behind, Actions, Vercel, Review-Threads, aktiver Cursor-Status und nur bei betroffenem Scope die relevante Supabase-Production-Wahrheit.
+
+Diese Live-Rekonstruktion ist Pflicht und nicht durch gespeicherte Aufzählungen ersetzbar. Kein Dokument in diesem Repository – auch dieses nicht – darf als zeitlose Wahrheit darüber gelesen werden, welche Arbeit gerade läuft.
 
 ## 2. Product-Owner binding phases
 
@@ -199,7 +204,13 @@ Generic `weiter`, `bauen`, `start` oder Cursor-Autorisierung genehmigen keines d
 
 ## 8. Current work boundary
 
-**No active implementation slice. No active Cursor coding agent.**
+**Der momentane Arbeitsstand steht nicht in diesem Dokument.**
+
+Welche Slices, PRs, Branches, Heads, Reviews und Cursor-Agenten gerade aktiv sind, wird bei jedem Einstieg live rekonstruiert: offene PRs und Issues, relevante Remote-Branches mit Exact Head, laufende Review-Threads, Actions/Vercel-Evidence auf exaktem Head und der zugehörige persistierte Task/Handoff. Diese Datei führt bewusst **keine** Liste aktiver Arbeit; eine solche Liste wäre bereits beim nächsten Push falsch.
+
+Fehlt eine solche Live-Prüfung, gilt der Arbeitsstand als unbekannt – nicht als leer. `unknown ≠ nichts aktiv`.
+
+Die folgenden Aussagen sind dagegen abgeschlossene Wahrheiten und bleiben gültig, bis eine spätere Product-Owner-Entscheidung sie ausdrücklich ändert.
 
 Mobile Accessibility 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**. PR #430, Issue #429 and session `bc-30492cdc-0697-4460-90a7-c1bf950fbbe9` must not be reactivated as unfinished work.
 
@@ -239,7 +250,8 @@ Every material slice must:
 6. changed heads invalidate prior exact-head gates;
 7. CHANGES REQUIRED returns to the same logical agent/session;
 8. final PASS and integration remain Technical-Lead-owned;
-9. no automatic next slice.
+9. no automatic next slice;
+10. Guardian-/Grok-Bot-Befunde sind Evidence und Input für den Technical Lead; sie sind niemals ein Technical-Lead-PASS, und der Guardian setzt niemals Ready und merged niemals. Verbindlich: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
 
 ## 12. Critical V1 gaps still open
 
@@ -258,4 +270,4 @@ Principally open:
 
 Destination Essentials 1, basic World Map 1 and Assistant Truth Context 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
 
-**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. NO ACTIVE CURSOR AGENT. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**
