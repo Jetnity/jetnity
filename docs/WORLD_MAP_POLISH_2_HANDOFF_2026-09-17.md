@@ -141,9 +141,23 @@ Gerenderte Kartenfläche: 188×74 bei 280px, 298×118 bei 390px, 1068×421 ab 12
 
 Das Skript dieser Probe war temporär und ist nicht eingecheckt; sein Bericht liegt in `docs/evidence/WORLD_MAP_POLISH_2_UI_2026-09-17.json`.
 
-### Vercel Preview
+### GitHub CI und Vercel Preview auf `e15ebe80`
 
-Preview auf dem exakten finalen Head ist **nicht** von diesem Agenten verifiziert. Preview-HTML ist erwartungsgemäss Vercel-SSO-geschützt und muss authentifiziert gelesen werden. Der Technical Lead muss CI und Preview auf der exakt reviewten SHA selbst lesen.
+Gelesen über die GitHub-API auf der exakten SHA `e15ebe80533de9fa7b48d2216db5efc2dfd8db3b`:
+
+| Check | Ergebnis |
+| --- | --- |
+| `CI / Typecheck, Lint & Build` (required) | completed / **success** |
+| `CI / Auth-Konfiguration gegen config.toml` (required) | completed / **success** |
+| `Vercel` (required) | **success** |
+| `Vercel Preview Comments` | completed / success |
+| Commit-Status insgesamt | **success** |
+
+Vercel-Deployment `6493160784`, Environment `Preview`, `state: success`, URL `https://jetnity-14wle1cmk-jetnity-e1b93c82.vercel.app`.
+
+Der Preview-Inhalt selbst ist **nicht** von diesem Agenten gelesen: die Deployment-URL antwortet mit `302` auf `https://vercel.com/sso-api?...` und setzt `_vercel_sso_nonce`. Das ist der erwartete Vercel-SSO-Schutz. Preview-Inhalt muss authentifiziert geprüft werden.
+
+Der Head dieses Handoff-Nachtrags liegt einen dokumentationsonly-Commit über `e15ebe80` und ist code-identisch. Der Technical Lead muss CI und Preview auf der tatsächlich reviewten SHA selbst lesen.
 
 ## Drift
 
