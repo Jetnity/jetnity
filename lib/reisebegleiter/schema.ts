@@ -35,6 +35,7 @@
 import { z } from 'zod'
 
 import { MODELL_GRENZEN } from '@/lib/modell/konfiguration'
+import { AMTLICHE_AUSSAGEN } from '@/lib/reisebegleiter/aussagen'
 import { ohneSteuerzeichen, traegtPreisangabe } from '@/lib/reisevorschlag/normalisierung'
 
 export const BEGLEITER_FASSUNG = 1
@@ -53,6 +54,7 @@ export const BEGLEITER_GRENZEN = {
   schritte: 5,
   schritt: 220,
   bezuege: 8,
+  amtlicheHinweise: 8,
 
   /**
    * Obergrenze der Ausgabe für diesen Weg, einschliesslich Denk-Tokens.
@@ -150,6 +152,19 @@ const modellauskunftRoh = z.strictObject({
     .array(auskunftstext(BEGLEITER_GRENZEN.schritt))
     .max(BEGLEITER_GRENZEN.schritte),
   bezuege: z.array(bezugKennung).max(BEGLEITER_GRENZEN.bezuege),
+  /**
+   * Der einzige Kanal für amtliche Lagen. Kein Freitext: Das Modell wählt eine
+   * Aussage und nennt den Bezug; den Satz schreibt Jetnity
+   * (`lib/reisebegleiter/aussagen.ts`).
+   */
+  amtlicheHinweise: z
+    .array(
+      z.strictObject({
+        ref: bezugKennung,
+        aussage: z.enum(AMTLICHE_AUSSAGEN),
+      }),
+    )
+    .max(BEGLEITER_GRENZEN.amtlicheHinweise),
 })
 
 export const modellauskunftSchema = modellauskunftRoh
@@ -177,7 +192,7 @@ export const begleiterfrageSchema = frage
 export const BEGLEITER_JSON_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['antwort', 'unsicherheiten', 'naechsteSchritte', 'bezuege'],
+  required: ['antwort', 'unsicherheiten', 'naechsteSchritte', 'bezuege', 'amtlicheHinweise'],
   properties: {
     antwort: {
       type: 'string',
@@ -203,6 +218,21 @@ export const BEGLEITER_JSON_SCHEMA = {
       items: { type: 'string' },
       description:
         'Kennungen (ref) aus dem Reisekontext, auf die sich die Antwort stützt. Nur vorhandene Kennungen. Keine Kennung erfinden und keinen Zustand dazu behaupten.',
+    },
+    amtlicheHinweise: {
+      type: 'array',
+      maxItems: BEGLEITER_GRENZEN.amtlicheHinweise,
+      description:
+        'Der einzige Weg, etwas über eine amtliche Lage zu sagen. Wähle je Bezug eine Aussage; den Satz dazu schreibt Jetnity. Im Text der Antwort dürfen amtliche Anforderungen nicht vorkommen.',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['ref', 'aussage'],
+        properties: {
+          ref: { type: 'string', description: 'Kennung einer official-Lage aus dem Reisekontext.' },
+          aussage: { type: 'string', enum: [...AMTLICHE_AUSSAGEN] },
+        },
+      },
     },
   },
 } as const

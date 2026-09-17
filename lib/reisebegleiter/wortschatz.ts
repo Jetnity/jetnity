@@ -110,6 +110,7 @@ export const ASSISTANT_WORTSTAEMME: readonly string[] = [
   'werden', 'wird', 'wurde', 'wurden', 'worden',
   'koennen', 'können', 'kann', 'konnte', 'muessen', 'müssen', 'muss',
   'sollen', 'soll', 'sollte', 'duerfen', 'dürfen', 'darf', 'mag', 'moechte',
+  'koennte', 'könnte', 'koenntest', 'könntest', 'umfassen', 'umfasst', 'bemessen',
   'möchte', 'wollen', 'will', 'brauchen', 'braucht', 'brauchst',
   'benoetigen', 'benötigen', 'benoetigt', 'benötigt',
   'pruefen', 'prüfen', 'geprueft', 'geprüft', 'ungeprueft', 'ungeprüft',
@@ -121,64 +122,58 @@ export const ASSISTANT_WORTSTAEMME: readonly string[] = [
   'entscheiden', 'ueberlegen', 'überlegen', 'beachten', 'bedenken',
   'achten', 'merken', 'wissen', 'weiss', 'weiß', 'kennen', 'kennt',
   'liegen', 'liegt', 'stehen', 'steht', 'bleiben', 'bleibt', 'gelten', 'gilt',
-  'passen', 'passt', 'fehlen', 'fehlt', 'geben', 'gibt', 'nehmen', 'machen',
+  'fehlen', 'fehlt', 'geben', 'gibt', 'nehmen', 'machen',
   'tun', 'lassen', 'laesst', 'lässt', 'zeigen', 'zeigt', 'nennen', 'nennt',
   'sagen', 'sagt', 'heissen', 'heißen', 'heisst', 'heißt', 'bedeuten',
   'bedeutet', 'ergeben', 'ergibt', 'entstehen', 'entsteht', 'reichen',
   'reicht', 'dauern', 'dauert', 'beginnen', 'beginnt', 'enden', 'endet',
   'ankommen', 'abreisen', 'reisen', 'fahren', 'fliegen', 'uebernachten',
-  'übernachten', 'buchen', 'gebucht', 'vorlegen', 'nachweisen', 'mitfuehren',
-  'mitführen', 'beantragen', 'ausfuellen', 'ausfüllen', 'bestaetigen',
-  'bestätigen', 'bestaetigt', 'bestätigt', 'erfordern', 'erforderlich',
-  'vorschreiben', 'vorgeschrieben', 'verpflichten', 'verpflichtend',
-  'empfehlen', 'empfohlen', 'vermeiden', 'einreisen', 'ausreisen',
-  'garantieren', 'garantiert', 'definitiv', 'entfallen', 'entfaellt',
-  'entfällt', 'befreien', 'befreit', 'problemlos',
+  'übernachten',
+  'empfehlen', 'empfohlen', 'vermeiden',
+  'entfallen', 'entfaellt',
+  'entfällt', 'befreien', 'befreit',
 
   // --- Reise, Zeit, Ort ---------------------------------------------------
   'reise', 'reisend', 'reisende', 'mitreisend', 'gruppe',
-  'etappe', 'etappen', 'ziel', 'ziele', 'zielland', 'route', 'transit',
-  'abreise', 'anreise', 'rueckreise', 'rückreise', 'weiterreise',
-  'rueckflug', 'rückflug', 'weiterflug', 'flug', 'fluege', 'flüge',
+  'etappe', 'etappen', 'ziel', 'ziele', 'zielland', 'route',
+  'abreise', 'anreise',
+  'flug', 'fluege', 'flüge',
   'unterkunft', 'unterkuenfte', 'unterkünfte', 'hotel', 'nacht', 'naechte',
   'nächte', 'aktivitaet', 'aktivität', 'aktivitaeten', 'aktivitäten',
   'mobilitaet', 'mobilität', 'transfer', 'mietwagen', 'zug', 'bus', 'faehre',
-  'fähre', 'strecke', 'verbindung', 'zwischenlandung', 'umsteigen',
+  'fähre', 'strecke', 'verbindung',
   'tag', 'tage', 'woche', 'wochen', 'monat', 'monate', 'jahr', 'jahre',
   'datum', 'daten', 'zeit', 'zeitraum', 'zeitpunkt', 'saison', 'jahreszeit',
   'frueh', 'früh', 'spaet', 'spät', 'heute', 'morgen', 'bald', 'aktuell',
   'ort', 'orte', 'stadt', 'staedte', 'städte', 'land', 'laender', 'länder',
-  'region', 'gebiet', 'umgebung', 'naehe', 'nähe', 'grenze', 'grenzkontrolle',
+  'region', 'gebiet', 'umgebung', 'naehe', 'nähe',
   'plan', 'planung', 'planpunkt', 'planpunkte', 'programm', 'punkt', 'punkte',
-  'budget', 'preis', 'kosten', 'anbieter', 'buchung', 'buchungsstatus',
+  'budget', 'preis', 'kosten', 'anbieter',
   'wunsch', 'wuensche', 'wünsche', 'interesse', 'interessen', 'tempo',
   'vorbereitung', 'uebersicht', 'übersicht', 'arbeitsbereich', 'jetnity',
 
-  // --- Amtliche Anforderungen (sprechen erlaubt, behaupten geprüft) -------
-  'amtlich', 'amt', 'behoerde', 'behörde', 'behoerdlich', 'behördlich',
-  'offiziell', 'vorschrift', 'bestimmung', 'gesetzlich', 'pflicht',
-  'obligatorisch', 'zwingend', 'anforderung', 'anforderungen', 'auflage',
-  'einreise', 'einreiseanforderung', 'einreisebestimmung', 'einreiseformular',
-  'einreiseanmeldung', 'einreisekarte', 'registrierung', 'formular',
-  'visum', 'visa', 'visumfrei', 'visumstatus', 'transitvisum',
-  'reisegenehmigung', 'eta', 'esta', 'genehmigung', 'erlaubnis',
-  'pass', 'paesse', 'pässe', 'reisepass', 'passgueltigkeit', 'passgültigkeit',
-  'passseite', 'passseiten', 'seite', 'seiten', 'ausweis', 'personalausweis',
-  'identitaet', 'identität', 'identitaetsdokument', 'identitätsdokument',
-  'dokument', 'dokumente', 'reisedokument', 'reisedokumente', 'nachweis',
-  'buchungsnachweis', 'reisenachweis', 'unterkunftsnachweis',
-  'impfung', 'impfungen', 'impfnachweis', 'impfpflicht', 'geimpft', 'vakzin',
-  'gesundheit', 'gesundheitsnachweis', 'gesundheitserklaerung',
-  'gesundheitserklärung', 'gesundheitsdokument', 'attest', 'aerztlich',
-  'ärztlich', 'quarantaene', 'quarantäne', 'test', 'testnachweis',
-  'versicherung', 'reiseversicherung', 'krankenversicherung', 'versichert',
-  'mittel', 'finanziell', 'finanzmittel', 'mindestbetrag', 'bargeld',
-  'zahlungsfaehigkeit', 'zahlungsfähigkeit', 'ticket', 'fahrkarte',
-  'staatsangehoerigkeit', 'staatsangehörigkeit', 'staatsbuergerschaft',
-  'staatsbürgerschaft', 'nationalitaet', 'nationalität', 'wohnsitz',
-  'ausstellungsland', 'dokumenttyp', 'gueltig', 'gültig', 'gueltigkeit',
-  'gültigkeit', 'ablauf', 'ablaufdatum', 'option', 'optionen',
-  'gleichrangig', 'peer',
+  // --- Reisenden- und Dokumentfelder, die Jetnity selbst anzeigt ----------
+  //
+  // Bereichsneutral: Keines dieser Wörter trifft ein Anforderungsmuster, und
+  // `wortschatz.test.ts` prüft das. Sie benennen Felder der Reise, nicht
+  // amtliche Anforderungen.
+  'staatsangehoerigkeit', 'staatsangehörigkeit', 'wohnsitz', 'dokument',
+  'dokumente', 'reisedokument', 'reisedokumente', 'formular', 'option',
+  'optionen', 'gleichrangig', 'gueltig', 'gültig', 'gueltigkeit', 'gültigkeit',
+  'ablauf', 'ablaufdatum',
+
+  // --- Bewusst NICHT geführt: amtliches Vokabular --------------------------
+  //
+  // Hier stand bis Runde 7 der amtliche Wortschatz – Visum, Pass, Impfung,
+  // Versicherung, Einreiseformular, Nachweis, Pflicht, erforderlich. Er ist
+  // entfernt, und das ist der Kern der Lösung: Prosa kann keine amtliche
+  // Anforderung erfinden, wenn sie sie nicht benennen kann. Über amtliche
+  // Lagen spricht die Auskunft ausschliesslich über den typisierten Kanal in
+  // `lib/reisebegleiter/aussagen.ts`, dessen Sätze Jetnity schreibt.
+  //
+  // `lib/reisebegleiter/wortschatz.test.ts` prüft diese Eigenschaft gegen die
+  // Bereichsmuster in `lib/reisebegleiter/pruefung.ts` selbst: Kein geführtes
+  // Wort und kein Kompositum daraus darf einen Anforderungsbereich treffen.
 
   // --- Lage, Bewertung, Unsicherheit --------------------------------------
   'lage', 'stand', 'status', 'ergebnis', 'quelle', 'quellen', 'evidenz',
@@ -187,10 +182,10 @@ export const ASSISTANT_WORTSTAEMME: readonly string[] = [
   'bekannt', 'unbekannt', 'verlaesslich', 'verlässlich', 'bestimmbar',
   'belegt', 'unbelegt', 'aktualitaet', 'aktualität', 'veraltet', 'frisch',
   'erreichbar', 'verfuegbar', 'verfügbar', 'aktiv', 'inaktiv',
-  'automatisch', 'manuell', 'moeglich', 'möglich', 'notwendig', 'noetig',
-  'nötig', 'relevant', 'wichtig', 'sinnvoll', 'geeignet', 'knapp',
+  'automatisch', 'manuell', 'moeglich', 'möglich',
+  'relevant', 'wichtig', 'sinnvoll', 'geeignet', 'knapp',
   'umfangreich', 'kurz', 'lang', 'laenger', 'länger', 'kuerzer', 'kürzer',
-  'ruhig', 'entspannt', 'dicht', 'frei', 'voll', 'leer', 'unbedruckt',
+  'ruhig', 'entspannt', 'dicht', 'frei', 'voll', 'leer',
   'angabe', 'angaben', 'auskunft', 'vorschlag', 'vorschlaege', 'vorschläge',
   'schritt', 'schritte', 'naechste', 'nächste', 'weitere', 'zusaetzlich',
   'zusätzlich', 'bedingung', 'voraussetzung', 'grund', 'gruende', 'gründe',
@@ -214,6 +209,18 @@ export const ASSISTANT_WORTSTAEMME: readonly string[] = [
 ]
 
 /** Nachgestellte Endungen, die deutsche Flexion abtragen. Längste zuerst. */
+/**
+ * Formen, die **nur genau so** zulässig sind.
+ *
+ * `passt` und `passen` sind gewöhnliches Deutsch – „der Zeitraum passt" –, aber
+ * ihr Stamm ist `pass`, und damit liesse sich `Reisepass` zusammensetzen. Sie
+ * stehen deshalb hier: exakt erlaubt, ohne Stammbildung und ohne Beitrag zu
+ * Komposita. Ein Stamm, der ein amtliches Wort ergibt, darf keiner sein.
+ */
+const ASSISTANT_WORTFORMEN: readonly string[] = ['passt', 'passen', 'passend', 'passende']
+
+const NUR_FORM = new Set(ASSISTANT_WORTFORMEN)
+
 const ENDUNGEN: readonly string[] = [
   'ungen', 'lichen', 'ischen', 'keiten', 'heiten', 'ender', 'endes', 'enden',
   'erung', 'ungs', 'lich', 'isch', 'keit', 'heit', 'bar', 'end', 'ung',
@@ -338,51 +345,40 @@ function zerlegbar(wort: string): boolean {
 }
 
 /**
- * Zahl, Datum, Uhrzeit, Ländercode, einzelner Buchstabe.
+ * Zahlen und Daten.
  *
- * Damit lässt sich keine Anforderung behaupten, und sie stehen in jeder
- * ehrlichen Auskunft.
+ * Die frühere Ausnahme für einzelne Buchstaben ist entfernt: `V I S U M ist
+ * P F L I C H T.` bestand aus lauter einzelnen Buchstaben, war damit
+ * durchgelassen und für einen Leser trotzdem ein Satz. Ein Buchstabe ist nur
+ * für sich harmlos, nicht in Folge. Jedes Wort muss deshalb geführt sein,
+ * auch ein einbuchstabiges.
  */
 function istUnbedenklich(wort: string): boolean {
-  return wort.length <= 1 || /^[0-9]+$/.test(wort)
+  return /^[0-9]+$/.test(wort)
 }
 
 /**
  * Die Wörter eines Textes, die Jetnity nicht kennt.
  *
- * `zusatz` sind Wörter aus dem serverseitig abgeleiteten Kontext – Etappen-,
- * Länder- und Reisendennamen. Sie stammen aus der akzeptierten Projektion und
- * damit nicht aus dem Modell.
+ * Ohne Zusatz aus dem Kontext, und das ist Absicht. Bis Runde 7 erweiterte
+ * `kontextwortschatz()` die Menge um jedes Wort aus `titel` und `lage` der
+ * Bezüge – darin stecken `stage.name` und `traveller.label`, und die schreibt
+ * der Nutzer. Ein Etappenname `No visa is required` brachte seine eigenen
+ * Wörter mit. Eine Erlaubnisliste, die der Eingang erweitern kann, ist keine.
+ *
+ * Eigennamen der Reise stehen deshalb nicht in der Prosa, sondern in den
+ * Bezügen, die Jetnity selbst anzeigt. Die Auskunft verweist auf „die erste
+ * Etappe"; wie sie heisst, schreibt Jetnity daneben.
  */
-export function unbelegteWoerter(text: string, zusatz: ReadonlySet<string>): string[] {
+export function unbelegteWoerter(text: string): string[] {
   const unbelegt: string[] = []
   for (const roh of text.split(/[^\p{L}\p{N}]+/u)) {
     if (roh.length === 0) continue
     const wort = roh.toLocaleLowerCase('de-DE')
     if (istUnbedenklich(wort)) continue
-    if (zusatz.has(wort) || zusatz.has(umschrift(wort))) continue
+    if (NUR_FORM.has(wort)) continue
     if (zerlegbar(wort)) continue
     if (!unbelegt.includes(roh)) unbelegt.push(roh)
   }
   return unbelegt
-}
-
-/**
- * Der Zusatzwortschatz aus serverseitig abgeleiteten Texten.
- *
- * Aufgerufen mit den `titel`- und `lage`-Zeilen der Bezüge: Sie entstehen in
- * `lib/reisebegleiter/nutzlast.ts` aus der Projektion und tragen die Eigennamen
- * dieser Reise.
- */
-export function kontextwortschatz(texte: readonly string[]): ReadonlySet<string> {
-  const woerter = new Set<string>()
-  for (const text of texte) {
-    for (const roh of text.split(/[^\p{L}\p{N}]+/u)) {
-      if (roh.length === 0) continue
-      const wort = roh.toLocaleLowerCase('de-DE')
-      woerter.add(wort)
-      woerter.add(umschrift(wort))
-    }
-  }
-  return woerter
 }

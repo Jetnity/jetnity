@@ -139,10 +139,11 @@ function kontext(etappen = 1): AssistantTruthContext {
 }
 
 const GUELTIGE_AUSKUNFT = JSON.stringify({
-  antwort: 'Der amtliche Prüfstand ist offen, weil Angaben fehlen.',
-  unsicherheiten: ['Die offizielle Quelle ist nicht aktiv.'],
+  antwort: 'Die erste Etappe passt zum Zeitraum; es fehlen noch Angaben.',
+  unsicherheiten: ['Für die zweite Etappe fehlen noch Daten.'],
   naechsteSchritte: ['Reisedokumente in der Reisevorbereitung ergänzen.'],
   bezuege: ['E1', 'O1'],
+  amtlicheHinweise: [{ ref: 'O1', aussage: 'nicht_geprueft' }],
 })
 
 const NUTZUNG: Tokennutzung = { eingabeTokens: 1200, gecachteTokens: 0, ausgabeTokens: 300 }
@@ -499,10 +500,11 @@ describe('Die Auskunft', () => {
     const { werkzeuge: w } = werkzeuge(
       erfolg(
         JSON.stringify({
-          antwort: 'Der Prüfstand für Italien ist offen.',
+          antwort: 'Für die erste Etappe fehlen noch Angaben.',
           unsicherheiten: [],
           naechsteSchritte: [],
           bezuege: ['O1'],
+          amtlicheHinweise: [],
         }),
       ),
     )
@@ -524,10 +526,11 @@ describe('Die Auskunft', () => {
     const { werkzeuge: w } = werkzeuge(
       erfolg(
         JSON.stringify({
-          antwort: 'Der Prüfstand für Italien ist offen; es fehlen Angaben.',
+          antwort: 'Für die erste Etappe fehlen noch Angaben.',
           unsicherheiten: [],
           naechsteSchritte: [],
           bezuege: ['O1'],
+          amtlicheHinweise: [{ ref: 'O1', aussage: 'nicht_geprueft' }],
         }),
       ),
     )
@@ -536,6 +539,11 @@ describe('Die Auskunft', () => {
     assert.ok(ergebnis.ok)
     assert.equal(ergebnis.auskunft.bezuege[0].belegt, false)
     assert.match(ergebnis.auskunft.bezuege[0].lage, /Noch nicht verlässlich bestimmbar/)
+    // Auch der amtliche Satz stammt aus Jetnity, nicht aus der Modellantwort.
+    assert.deepEqual(
+      ergebnis.auskunft.amtlicheHinweise.map((hinweis) => hinweis.text),
+      ['Diese amtliche Lage ist derzeit nicht geprüft.'],
+    )
     assert.equal(Object.keys(ergebnis.auskunft).includes('lagen'), false)
   })
 })

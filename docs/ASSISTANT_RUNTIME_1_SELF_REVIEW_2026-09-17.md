@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: der Review-Fix „Replace the language denylist with a vocabulary allowlist“ (Runde 7). Der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: der Review-Fix „Separate generated prose from truth-bearing Official propositions“ (Runde 8). Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -34,6 +34,30 @@ Der zweite Teil des Befundes ist grundsätzlicher: Alle bisherigen Muster waren 
 Die Lösung ist keine längere Wortliste, sondern eine andere Zerlegung: Modalität × Bereich × Vorbehalt, satzweise. Damit fällt die Richtung der Aussage weg als Unterscheidung, und die Bereichsliste lässt sich gegen `OFFICIAL_REQUIREMENT_TYPES` auf Vollständigkeit prüfen.
 
 **Die gemeinsame Wurzel aller vier Befunde.** Ich habe jede Korrektur als Schliessung des *genannten Falls* gedacht statt als Frage nach der nächsten Umgehungsdimension. Die vier Runden haben nacheinander erweitert: Kontext → genannter Bezug → Anforderungstyp → Gesamttaxonomie und Aussagerichtung. Jede dieser Stufen war nach der vorigen absehbar, wenn man die richtige Frage stellt: nicht „schliesst die Regel den genannten Fall?", sondern „worüber lässt sie sich noch umgehen?". Dazu kommt derselbe Fehler wie in Befund 1 und 2: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
+
+---
+
+## 0d. Runde 8: der Befund, der die Prämisse widerlegt hat
+
+**Befund 7 (Head `e6606ea8`) – die Erlaubnisliste war keine Wahrheitsschranke.** Drei Umgehungen, alle deterministisch, alle vom Technical Lead exakt benannt:
+
+1. `notwendig` und `nötig` standen im Register, während `PFLICHTWORT` sie nicht band. `Ein Visum ist notwendig.` bestand damit aus lauter geführten Wörtern und erzeugte keine harte Aussage.
+2. `istUnbedenklich()` liess jeden Token mit `length <= 1` durch. `V I S U M ist P F L I C H T.` war lexikalisch einwandfrei, und die Wortmuster sahen kein zusammenhängendes `visum`.
+3. `kontextwortschatz()` erweiterte das Register um jedes Wort aus `titel` und `lage` – darin stecken `stage.name` und `traveller.label`. Ein Etappenname `No visa is required` brachte seine eigenen Wörter mit.
+
+Gemessen, nicht eingeräumt: Alle **fünfzehn** Kombinationen aus diesen drei Fällen und den drei Modellfeldern waren auf dem reviewten Head zulässig. Ich habe das in einem Worktree auf `e6606ea8` nachgefahren, bevor ich den Fix gebaut habe – ein Befund, den man nicht reproduziert hat, ist auch nicht geschlossen.
+
+**Warum ich nach sieben Runden noch daneben lag.** Ich hatte in Runde 7 geschrieben, amtliche Begriffe stünden „mit Absicht im Register", weil die inhaltliche Prüfung sonst für ihren Bereich toter Code wäre. Dieser Satz ist die ganze Fehlannahme in einer Zeile: Ich habe die inhaltliche Prüfung als das Wertvolle behandelt und den Wortschatz als ihre Zulieferung – also musste das Vokabular hinein. Die richtige Frage war die umgekehrte: Wenn die inhaltliche Prüfung nur nötig ist, weil die Prosa amtliche Begriffe enthalten darf, warum darf sie das?
+
+**Die gemeinsame Wurzel aller sieben Befunde.** Sechs Fassungen haben Prosa geprüft, in der amtliche Aussagen vorkommen dürfen. Solange eine Wahrheitsaussage in einem Freitextfeld *ausdrückbar* ist, ist jede Prüfung darüber eine Näherung – und der Technical Lead hat in jeder Runde genau das gezeigt, weil das Verfahren Gegenbeispiele beliebig produziert. Sechs Erweiterungen derselben Bauart sind nicht sechs Pechfälle, sondern ein Beweis über die Bauart.
+
+Runde 8 tauscht deshalb nicht die Liste, sondern die Zuständigkeit: nicht mehr „ist dieser Satz belegt?", sondern „kann dieser Kanal so einen Satz überhaupt enthalten?". Prosa ohne amtliches Vokabular kann keine Anforderung benennen; amtliche Lagen laufen über sieben geschlossene Aussageschlüssel, deren Sätze Jetnity schreibt und deren Zulässigkeit an `ergebnis`, `frische` und `fehlendeAngaben` des Bezugs hängt.
+
+**Was diese Fassung anders belegt.** Zum ersten Mal ist die Zusicherung selbst ein Test und nicht eine Behauptung im Kommentar: `wortschatz.test.ts` prüft jeden geführten Stamm **und jedes Paar daraus** gegen die Bereichsmuster. Er hat beim Bauen sofort drei echte Lecks gefunden, die ich nicht vermutet hatte – `rückreise` im Register, `passen` mit dem Stamm `pass` (womit sich `Reisepass` zusammensetzen liess) und `notwendig`/`nötig`. Ein Nachweis, der beim ersten Lauf nichts findet, ist meist keiner.
+
+**Die Folge für die Laufzeitprüfung, ehrlich benannt.** Die semantische Prosaprüfung (`harteAussagen`, Modalität × Bereich × Vorbehalt) ist jetzt **unerreichbar**: Kein geführtes Wort trifft einen Bereich. Ich habe sie deshalb entfernt und die Bereichsmuster auf ihre wahre Rolle zurückgeführt – Spezifikation für den Test, nicht Kontrolle zur Laufzeit. Eine Schranke stehen zu lassen, die nie greifen kann, hätte den Eindruck weitergetragen, Prosa werde semantisch geprüft; genau dieser Eindruck war zweimal der Befund.
+
+**Der Preis, unverändert offen.** Recall, und er ist weiter **nicht gemessen**. Über amtliche Lagen kann die Auskunft nur noch sieben Sätze sagen, und ein gültiger deutscher Satz mit einem ungeführten Wort fällt durch. Ob die Auskunft damit noch nützlich genug ist, zeigt erst der bezahlte Aufruf – der einzige Weg, das zu messen, ist genau der Nachweis, der offen ist. Ich halte den Handel für richtig, aber er gehört vorgelegt, nicht entschieden.
 
 ---
 

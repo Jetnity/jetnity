@@ -19,10 +19,11 @@ import {
 
 function auskunft(teil: Record<string, unknown> = {}) {
   return {
-    antwort: 'Für diese Reise ist der amtliche Prüfstand offen.',
-    unsicherheiten: ['Die offizielle Quelle ist nicht aktiv.'],
+    antwort: 'Die erste Etappe passt zum Zeitraum.',
+    unsicherheiten: ['Für die zweite Etappe fehlen noch Daten.'],
     naechsteSchritte: ['Reisedokumente in der Reisevorbereitung ergänzen.'],
     bezuege: ['E1', 'O2'],
+    amtlicheHinweise: [],
     ...teil,
   }
 }
@@ -161,11 +162,11 @@ describe('Die Auskunft des Modells', () => {
     // fest, damit ein späteres Feld eine Entscheidung ist und kein Versehen.
     assert.deepEqual(
       [...BEGLEITER_JSON_SCHEMA.required],
-      ['antwort', 'unsicherheiten', 'naechsteSchritte', 'bezuege'],
+      ['antwort', 'unsicherheiten', 'naechsteSchritte', 'bezuege', 'amtlicheHinweise'],
     )
     assert.deepEqual(
       Object.keys(BEGLEITER_JSON_SCHEMA.properties).sort(),
-      ['antwort', 'bezuege', 'naechsteSchritte', 'unsicherheiten'],
+      ['amtlicheHinweise', 'antwort', 'bezuege', 'naechsteSchritte', 'unsicherheiten'],
     )
     assert.equal(BEGLEITER_JSON_SCHEMA.additionalProperties, false)
   })

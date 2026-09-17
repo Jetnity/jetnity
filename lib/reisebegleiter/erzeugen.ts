@@ -37,6 +37,7 @@ import {
   ASSISTANT_TRUTH_CONTEXT_VERSION,
   type AssistantTruthContext,
 } from '@/lib/reisebegleiter/kontext'
+import { AMTLICHE_AUSSAGE_TEXT, type AmtlicheAussage } from '@/lib/reisebegleiter/aussagen'
 import { begleiternutzlastAus, type BegleiterBezug } from '@/lib/reisebegleiter/nutzlast'
 import { auskunftPruefen } from '@/lib/reisebegleiter/pruefung'
 import { begleiterregeln } from '@/lib/reisebegleiter/regeln'
@@ -65,6 +66,16 @@ export type Begleiterauskunft = {
   naechsteSchritte: string[]
   /** Nur die Bezüge, auf die die Auskunft zeigt – mit dem Zustand aus Jetnity. */
   bezuege: BegleiterBezug[]
+  /**
+   * Amtliche Lagen, die die Auskunft anspricht – mit dem Satz, den **Jetnity**
+   * dazu schreibt. Das Modell hat nur Bezug und Aussageschlüssel gewählt.
+   */
+  amtlicheHinweise: Array<{
+    ref: string
+    aussage: AmtlicheAussage
+    titel: string
+    text: string
+  }>
 }
 
 export type Begleiterergebnis =
@@ -218,6 +229,14 @@ export async function begleiterauskunftErzeugen(
       unsicherheiten: geprueft.data.unsicherheiten,
       naechsteSchritte: geprueft.data.naechsteSchritte,
       bezuege: nutzlast.nutzlast.bezuege.filter((bezug) => gezeigt.has(bezug.ref)),
+      // Titel und Satz kommen aus Jetnity, nicht aus der Modellantwort.
+      amtlicheHinweise: geprueft.data.amtlicheHinweise.map((hinweis) => ({
+        ref: hinweis.ref,
+        aussage: hinweis.aussage,
+        titel:
+          nutzlast.nutzlast.bezuege.find((bezug) => bezug.ref === hinweis.ref)?.titel ?? hinweis.ref,
+        text: AMTLICHE_AUSSAGE_TEXT[hinweis.aussage],
+      })),
     },
   }
 }

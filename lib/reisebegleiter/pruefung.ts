@@ -2,67 +2,62 @@
 //
 // Die zweite Schranke: die Auskunft gegen den Kontext, aus dem sie entstand.
 //
-// `lib/reisebegleiter/schema.ts` prüft die Form – ein Objekt mit vier Feldern,
-// ohne Betrag, ohne Link. Form ist aber keine Aussage. Diese Datei prüft die
-// Behauptungen, die ein Modell hier überhaupt machen kann:
-//
-//   1. einen Bezug auf einen Jetnity-Zustand, den es im Kontext nicht gibt;
-//   2. eine Aussage, die der Kontext nie decken kann (Buchung, Persistenz);
-//   3. eine **harte amtliche Aussage** ohne passende geprüfte Grundlage.
-//
 // ---------------------------------------------------------------------------
-// Warum die dritte Prüfung so aussieht, wie sie aussieht
+// Was sieben Runden gekostet haben und was daraus geworden ist
 // ---------------------------------------------------------------------------
 //
-// „Erfinde keine amtliche Anforderung" ist semantisch, und ein
-// deterministischer Test liest keine Semantik. Was er lesen kann, sind drei
-// Dinge, und ihre Kombination ist der ganze Trick:
+// Sechs Fassungen haben versucht, erfundene amtliche Wahrheit in der Prosa des
+// Modells zu **erkennen**: deutsche Modalitäts- und Bereichsmuster, dann
+// mehrsprachige Verbotslisten, dann eine Spracherkennung, dann eine
+// Erlaubnisliste über dem Wortschatz. Jede war widerlegbar, und am Ende wurden
+// die Gegenbeispiele beliebig – `Ein Visum ist notwendig.` aus lauter
+// erlaubten Wörtern, `V I S U M ist P F L I C H T.` aus lauter erlaubten
+// Buchstaben, ein Etappenname `No visa is required`, der den Wortschatz selbst
+// erweiterte.
 //
-//   · **Modalität** – sagt der Satz „du musst", „du brauchst", „ist
-//     erforderlich", „kein", „ohne"? Ohne Modalität ist es eine Beschreibung
-//     und keine Anforderung.
-//   · **Bereich** – wovon spricht der Satz: Visum, Transit, Pass, Passgültigkeit,
-//     freie Passseiten, Ausweis, Impfung, Gesundheit, Einreiseformular,
-//     Versicherung, Rück-/Weiterreise, Buchungsnachweis, finanzielle Mittel –
-//     oder von etwas Amtlichem ohne erkennbaren Bereich.
-//   · **Vorbehalt** – steht ein „ob", „prüfe", „unklar", „nicht geprüft",
-//     „möglicherweise" im Satz? Dann ist es eine Frage oder ein Hinweis und
-//     keine Behauptung.
+// Der Fehler war nicht die jeweilige Liste, sondern die Annahme, man könne
+// Prosa prüfen, in der amtliche Aussagen überhaupt vorkommen dürfen. Deshalb
+// sind die beiden Sorten Inhalt jetzt **getrennte Kanäle**:
 //
-// Erst Modalität **und** Bereich **ohne** Vorbehalt ergeben eine harte
-// Aussage. Sie darf nur stehen bleiben, wenn die Auskunft eine geprüfte
-// amtliche Lage **desselben Bereichs** benennt.
+//   · **Prosa** – `antwort`, `unsicherheiten`, `naechsteSchritte`. Ihr
+//     Wortschatz (`lib/reisebegleiter/wortschatz.ts`) enthält **kein**
+//     amtliches Vokabular und wird von keiner Eingabe erweitert. Ohne
+//     Gegenstand gibt es keine amtliche Aussage.
+//   · **Amtliche Lagen** – `amtlicheHinweise`. Das Modell wählt Bezug und
+//     Aussageschlüssel aus einer geschlossenen Liste; den Satz schreibt Jetnity
+//     (`lib/reisebegleiter/aussagen.ts`), und die Aussage muss zum geprüften
+//     Zustand des Bezugs passen.
 //
-// Damit bleibt der Satz erhalten, den ein ehrlicher Assistent schreiben muss –
-// „Prüfe deine Passgültigkeit in der Reisevorbereitung", „Ob ein Visum nötig
-// ist, ist derzeit nicht geprüft" –, und der Satz fällt, den er nicht schreiben
-// darf: „Dein Pass muss sechs Monate gültig sein."
+// Damit ist „kann Modellprosa eine amtliche Anforderung erfinden?" keine Frage
+// über Texte mehr, sondern eine über Typen – und die Antwort steht im
+// Wortschatz, nicht in einem Muster.
 //
 // ---------------------------------------------------------------------------
-// Was das in dieser Ausbaustufe bedeutet
+// Warum die Bereichsmuster hier stehen bleiben
 // ---------------------------------------------------------------------------
 //
-// Solange kein Requirements-Provider aktiv ist, liefert
-// `requirementsLokalFuerReise()` ausschliesslich `provider_unavailable`, und
-// **kein** Official-Bezug ist je `belegt`. Diese Prüfung ist deshalb heute
-// kein Filter, sondern eine vollständige Sperre gegen amtliche Aussagen. Das
-// ist richtig: Jetnity hat keine geprüfte amtliche Wahrheit, also darf der
-// Reisebegleiter keine behaupten. Mit einem echten Provider öffnet sich der
-// Weg genau dort, wo die Lage tatsächlich geprüft ist.
+// `BEREICHE` ist **keine Laufzeitschranke mehr**. Es ist die Definition dessen,
+// was als amtliche Anforderung gilt – die geschlossene
+// `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie in Wortform. Sein einziger Leser ist
+// `lib/reisebegleiter/wortschatz.test.ts`: Dort wird jeder geführte Wortstamm
+// und jedes Paar daraus gegen diese Muster geprüft. Trifft eines, ist die
+// Zusicherung gebrochen, und der Test schlägt an.
 //
-// Die Zuordnung benutzt ausschliesslich die **maschinenlesbare**
-// Anforderungsidentität aus `lib/reisebegleiter/nutzlast.ts`, niemals den
-// lokalisierten Anzeigetext: Eine Copy-Änderung darf keine
-// Wahrheitsentscheidung verschieben.
+// Eine Prüfung, die zur Laufzeit nie greifen kann, hier stehen zu lassen, wäre
+// das Gegenteil: Sie hat zweimal den Eindruck erzeugt, Prosa werde semantisch
+// geprüft, und genau dieser Eindruck war der Befund. Die Muster tragen deshalb
+// jetzt ihre wahre Rolle – Spezifikation, nicht Kontrolle.
 //
 // Nicht erkannt werden Verfügbarkeitsbehauptungen in freier Formulierung –
-// dieselbe eingestandene Grenze wie in DECISIONS.md ADR-0054.
+// dieselbe eingestandene Grenze wie in DECISIONS.md ADR-0054. Preis und Link
+// fängt `lib/reisebegleiter/schema.ts`.
 //
 // Frei von Next, Supabase und `process.env`.
 
+import { AMTLICHE_AUSSAGE_TEXT, passt } from '@/lib/reisebegleiter/aussagen'
 import type { BegleiterBezug, OfficialAnforderung } from '@/lib/reisebegleiter/nutzlast'
-import { kontextwortschatz, unbelegteWoerter } from '@/lib/reisebegleiter/wortschatz'
 import type { Modellauskunft } from '@/lib/reisebegleiter/schema'
+import { unbelegteWoerter } from '@/lib/reisebegleiter/wortschatz'
 import type { OfficialRequirementType } from '@/types/trips'
 
 export type Pruefbefund =
@@ -71,134 +66,50 @@ export type Pruefbefund =
       ok: false
       art:
         | 'unbekannter-bezug'
-        | 'unbelegte-gewissheit'
+        | 'unpassende-amtliche-aussage'
         | 'unbelegtes-wort'
+        | 'unmoeglicher-anspruch'
       hinweis: string
     }
 
-// ---------------------------------------------------------------------------
-// Die Wortschatzschranke
-// ---------------------------------------------------------------------------
-//
-// Drei Runden lang wurde versucht, erfundene amtliche Wahrheit an ihren Wörtern
-// zu erkennen: erst auf Deutsch, dann in den von Jetnity geführten Sprachen,
-// dann über eine Spracherkennung mit Markerwörtern. Jede Fassung war eine
-// Verbotsliste über einer offenen Menge, und jede war widerlegbar – zuletzt
-// durch `Das ist so: İtalya için vize gerekli.`: genug deutsche Marker, um für
-// deutsch zu gelten, und eine amtliche Behauptung in einer Sprache, die in
-// keiner Liste stand.
-//
-// Über einer offenen Menge gibt es keine vollständige Verbotsliste. Es gibt nur
-// eine vollständige Erlaubnisliste. Die Frage steht deshalb jetzt umgekehrt:
-// nicht „enthält dieser Text ein verbotenes Wort?", sondern „besteht dieser
-// Text ausschliesslich aus Wörtern, die Jetnity kennt?"
-//
-// `lib/reisebegleiter/wortschatz.ts` beantwortet sie. Zulässig ist der dort
-// geführte Register, jedes Wort aus dem serverseitig abgeleiteten Kontext und
-// Zahlen; alles andere ist unbelegt. Die Schranke gilt für **jedes**
-// modellgeschriebene Feld – `antwort`, `unsicherheiten`, `naechsteSchritte` –,
-// denn eine Behauptung ist in einer Liste so wirksam wie in einem Satz.
-//
-// Damit wird die inhaltliche Prüfung darunter erst vollständig: Sie liest
-// deutsche Modalität, deutsche Bereiche, deutsche Vorbehalte, und sie darf das,
-// weil vor ihr feststeht, dass der Text aus deutschen, von Jetnity geführten
-// Wörtern besteht. Vorher war sie für fremde Sätze nicht zuständig; jetzt kommen
-// fremde Sätze nicht bis zu ihr.
-
-// ---------------------------------------------------------------------------
-// Ansprüche, die der Kontext nie decken kann
-// ---------------------------------------------------------------------------
-
 /**
- * Buchungszustand steht nicht in der akzeptierten Projektion – weder „gebucht"
- * noch „noch nicht gebucht". Beide Sätze sind erfunden, auch der vorsichtige.
- * Und eine Auskunft, die eine Reiseänderung im Perfekt beschreibt, behauptet
- * eine Persistenz, die dieser Weg nicht hat.
+ * Ansprüche, die der Kontext nie decken kann.
+ *
+ * Buchungszustand steht nicht in der akzeptierten Projektion, und eine
+ * Auskunft, die eine Reiseänderung im Perfekt beschreibt, behauptet eine
+ * Persistenz, die dieser Weg nicht hat. Beides ist mit geführten Wörtern
+ * formulierbar und braucht deshalb eine eigene Prüfung.
  */
 const UNMOEGLICHE_ANSPRUECHE: ReadonlyArray<{ name: string; muster: RegExp }> = [
-  { name: 'Buchungszustand', muster: /\bgebucht\b|\bbuchungsbest[äa]tigung\b/i },
   {
     name: 'ausgeführte Änderung',
-    muster: /\bich\s+hab(?:e)?\b[^.!?]{0,80}\b(?:ge[äa]ndert|hinzugef[üu]gt|entfernt|gespeichert|eingeplant|verschoben)\b/i,
-  },
-  { name: 'gespeicherte Änderung', muster: /\b(?:wurde|wurden|ist|sind)\s+(?:bereits\s+)?gespeichert\b/i },
-]
-
-/**
- * Gewissheit ohne erkennbaren Gegenstand.
- *
- * Diese Worte sagen nicht, worüber sie sprechen, und lassen sich deshalb
- * keiner Anforderung zuordnen. Sie fallen immer durch – auch dann, wenn die
- * Auskunft eine geprüfte Lage benennt: Was „garantiert" sein soll, steht in
- * keinem Feld, das sich prüfen liesse.
- */
-const NICHT_BINDBAR: ReadonlyArray<{ name: string; muster: RegExp }> = [
-  { name: 'nicht erforderlich', muster: /\bnicht\s+erforderlich\b/i },
-  { name: 'garantiert', muster: /\bgarantiert\b/i },
-  { name: 'definitiv', muster: /\bdefinitiv\b/i },
-  {
-    name: 'amtlich bestätigt',
-    muster: /\b(?:amtlich|offiziell|beh[öo]rdlich)\s+best[äa]tigt\b/i,
-  },
-  {
-    // Eine Aussage über die **Herkunft** der Wahrheit, nicht über eine
-    // Anforderung. Ob eine Lage geprüft ist, sagt allein Jetnity über
-    // `belegt`; ein Modell, das es behauptet, hebt `unknown` auf `current`.
-    // „noch nicht geprüft" und „geprüfte Lage" bleiben unberührt: Dort steht
-    // etwas zwischen dem Hilfsverb und dem Partizip, bzw. es ist flektiert.
-    name: 'als geprüft ausgegeben',
     muster:
-      /\b(?:amtlich|offiziell|beh[öo]rdlich)\s+gepr[üu]ft\b|\bgilt\s+als\s+gepr[üu]ft\b|\b(?:ist|sind|wurde|wurden)\s+(?:amtlich\s+|offiziell\s+|beh[öo]rdlich\s+)?gepr[üu]ft\b/i,
+      /\bich\s+hab(?:e)?\b[^.!?]{0,80}\b(?:ge[äa]ndert|hinzugef[üu]gt|entfernt|gespeichert|eingeplant|verschoben)\b/i,
   },
   {
-    name: 'problemlos einreisen',
-    muster: /\b(?:problemlos|sicher|ohne\s+weiteres)\s+einreisen\b/i,
+    name: 'gespeicherte Änderung',
+    muster: /\b(?:wurde|wurden|ist|sind)\s+(?:bereits\s+)?gespeichert\b/i,
   },
 ]
 
 // ---------------------------------------------------------------------------
-// Harte amtliche Aussagen
+// Spezifikation: was als amtliche Anforderung gilt
 // ---------------------------------------------------------------------------
-
-/** Der Satz verlangt etwas. */
-const PFLICHTWORT =
-  /\b(?:brauchst|braucht|brauchen|ben[öo]tigst|ben[öo]tigt|ben[öo]tigen|muss|musst|m[üu]ssen|m[üu]sst|erforderlich|vorgeschrieben|verpflichtend|obligatorisch|zwingend|nachweisen|nachzuweisen|vorlegen|vorzulegen|mitf[üu]hren)\b|pflicht/i
-
-/** Der Satz stellt etwas frei. */
-const BEFREIUNGSWORT =
-  /\b(?:kein|keine|keinen|keiner|keines|keinerlei|ohne|entf[äa]llt|entfallen|befreit)\b|\w+frei\b/i
-
-/**
- * Der Satz fragt, prüft oder schränkt ein – und behauptet damit nichts.
- *
- * Bewusst nur epistemische Vorbehalte. „kannst" gehört nicht dazu: „Du kannst
- * ohne Visum einreisen" ist eine Erlaubnis und damit sehr wohl eine
- * Behauptung.
- */
-const VORBEHALT =
-  /\bob\b|pr[üu]f|\bkl[äa]r|unklar|ungekl[äa]rt|\bnicht\s+belegt\b|\bnicht\s+best[äa]tig\w*|m[öo]glicherweise|eventuell|unter\s+umst[äa]nden|vielleicht|\bggf\b|gegebenenfalls|\bfalls\b|\bsofern\b|voraussichtlich|in\s+der\s+regel|[üu]blicherweise|typischerweise/i
 
 type Anforderungsbereich = {
   name: string
-  /** Wovon der Satz spricht. */
   muster: RegExp
-  /** Welche Anforderungstypen eine harte Aussage darüber belegen können. */
   traegerTypen: ReadonlyArray<OfficialRequirementType>
-  /** Zusätzliche Bedingung an die Anforderung, etwa der Geltungsbereich. */
   zusatz?: (anforderung: OfficialAnforderung) => boolean
 }
 
 /**
- * Die Bereiche, geordnet von speziell nach allgemein.
+ * Die amtlichen Anforderungsbereiche in Wortform, geordnet von speziell nach
+ * allgemein.
  *
- * Je Satz gilt der **erste** Treffer. Deshalb steht „freie Passseiten" vor
- * „Passgültigkeit" und beides vor „Reisepass": Ein Satz über freie Seiten im
- * Pass spricht nicht über die Gültigkeit, und eine geprüfte Passpflicht belegt
- * keine Sechsmonatsregel.
- *
- * Der letzte Eintrag ist der Auffangbereich: amtlicher Zusammenhang ohne
- * erkennbaren Gegenstand. Er fällt auf `other_entry_requirement` und damit in
- * aller Regel durch – was der vorgesehene Ausgang ist.
+ * Kein Laufzeitpfad liest diese Muster. Sie sind der Prüfstein für den
+ * Wortschatz: Kein geführtes Wort und kein Paar daraus darf einen dieser
+ * Bereiche treffen, denn dann könnte Prosa eine amtliche Anforderung benennen.
  */
 const BEREICHE: readonly Anforderungsbereich[] = [
   {
@@ -225,7 +136,8 @@ const BEREICHE: readonly Anforderungsbereich[] = [
   },
   {
     name: 'Passgültigkeit',
-    muster: /\bpassg[üu]ltigkeit\w*|\b(?:reise)?pass\w*\b[^.!?;:]{0,60}\bg[üu]ltig\w*|\bg[üu]ltig\w*[^.!?;:]{0,60}\b(?:reise)?pass\w*\b/i,
+    muster:
+      /\bpassg[üu]ltigkeit\w*|\b(?:reise)?pass\w*\b[^.!?;:]{0,60}\bg[üu]ltig\w*|\bg[üu]ltig\w*[^.!?;:]{0,60}\b(?:reise)?pass\w*\b/i,
     traegerTypen: ['passport_validity'],
   },
   {
@@ -250,12 +162,14 @@ const BEREICHE: readonly Anforderungsbereich[] = [
   },
   {
     name: 'Gesundheitsanforderung',
-    muster: /\bgesundheit\w*|\battest\w*|\b[äa]rztlich\w*|\bquarant[äa]ne\w*|\btest(?:pflicht|nachweis)\w*/i,
+    muster:
+      /\bgesundheit\w*|\battest\w*|\b[äa]rztlich\w*|\bquarant[äa]ne\w*|\btest(?:pflicht|nachweis)\w*/i,
     traegerTypen: ['health', 'health_document', 'vaccination'],
   },
   {
     name: 'Einreiseformular',
-    muster: /\beinreise(?:formular|anmeldung|karte|registrierung|erkl[äa]rung)\w*|\bregistrierungsformular\w*/i,
+    muster:
+      /\beinreise(?:formular|anmeldung|karte|registrierung|erkl[äa]rung)\w*|\bregistrierungsformular\w*/i,
     traegerTypen: ['entry_form'],
   },
   {
@@ -265,21 +179,23 @@ const BEREICHE: readonly Anforderungsbereich[] = [
   },
   {
     name: 'Rück- oder Weiterreise',
-    muster: /\br[üu]ckflug\w*|\br[üu]ckreise\w*|\br[üu]ckfahrkarte\w*|\bweiterreise\w*|\bweiterflug\w*|\bonward\b/i,
+    muster:
+      /\br[üu]ckflug\w*|\br[üu]ckreise\w*|\br[üu]ckfahrkarte\w*|\bweiterreise\w*|\bweiterflug\w*|\bonward\b/i,
     traegerTypen: ['onward_or_return_ticket'],
   },
   {
     name: 'Buchungs- oder Reisenachweis',
-    muster: /\bbuchungsnachweis\w*|\breisenachweis\w*|\bunterkunftsnachweis\w*|\bhotelnachweis\w*|\breisebest[äa]tigung\w*/i,
+    muster:
+      /\bbuchungsnachweis\w*|\breisenachweis\w*|\bunterkunftsnachweis\w*|\bhotelnachweis\w*|\breisebest[äa]tigung\w*/i,
     traegerTypen: ['booking_or_travel_document'],
   },
   {
     name: 'finanzielle Mittel',
-    muster: /\bfinanzielle\w*\s+mittel\w*|\bfinanzmittel\w*|\bmindestbetrag\w*|\bausreichende\w*\s+mittel\w*|\bbargeld\w*|\bzahlungsf[äa]higkeit\w*/i,
+    muster:
+      /\bfinanzielle\w*\s+mittel\w*|\bfinanzmittel\w*|\bmindestbetrag\w*|\bausreichende\w*\s+mittel\w*|\bbargeld\w*|\bzahlungsf[äa]higkeit\w*/i,
     traegerTypen: ['financial_means'],
   },
   {
-    // Auffangbereich. Amtlicher Zusammenhang, aber kein benennbarer Gegenstand.
     name: 'sonstige Einreiseanforderung',
     muster:
       /\beinreis\w*|\bamtlich\w*|\bbeh[öo]rd\w*|\boffiziell\w*|\bvorschrift\w*|\bbestimmung\w*|\bgesetzlich\w*|\bgrenzkontroll\w*|\bzoll\w*|\berforderlich\b|\bvorgeschrieben\b|pflicht/i,
@@ -287,28 +203,19 @@ const BEREICHE: readonly Anforderungsbereich[] = [
   },
 ]
 
-function traegt(bereich: Anforderungsbereich, anforderung: OfficialAnforderung): boolean {
-  if (!bereich.traegerTypen.includes(anforderung.requirementType)) return false
-  return bereich.zusatz ? bereich.zusatz(anforderung) : true
-}
+/** Nur für den Nachweis in `wortschatz.test.ts`. Kein Laufzeitpfad liest das. */
+export const BEREICHE_FUER_TEST = BEREICHE
 
-function saetze(text: string): string[] {
-  return text
-    .split(/(?<=[.!?;:])\s+/)
-    .map((satz) => satz.trim())
-    .filter((satz) => satz.length > 0)
-}
-
-function texte(auskunft: Modellauskunft): string[] {
-  return felder(auskunft).map(([, text]) => text)
-}
+// ---------------------------------------------------------------------------
+// Prüfung
+// ---------------------------------------------------------------------------
 
 /**
  * Jedes modellgeschriebene Feld mit seinem Namen.
  *
- * Alle drei sind gleich gefährlich: Eine erfundene Anforderung wirkt in einer
- * Liste genauso wie in einem Satz. Frühere Fassungen prüften die Sprache nur
- * an `antwort`; das war ein eigener Umgehungsweg.
+ * Alle drei sind gleich gefährlich: Eine Behauptung wirkt in einer Liste
+ * genauso wie in einem Satz. Frühere Fassungen prüften die Sprache nur an
+ * `antwort`; das war ein eigener Umgehungsweg.
  */
 function felder(auskunft: Modellauskunft): Array<[string, string]> {
   return [
@@ -322,29 +229,6 @@ function felder(auskunft: Modellauskunft): Array<[string, string]> {
       text,
     ]),
   ]
-}
-
-/**
- * Die Bereiche, über die die Auskunft eine harte Aussage macht.
- *
- * Ein Satz zählt höchstens einmal, mit seinem speziellsten Bereich. Mehrere
- * Sätze können mehrere Bereiche ergeben, und jeder braucht dann seinen eigenen
- * Beleg.
- */
-function harteAussagen(auskunft: Modellauskunft): Anforderungsbereich[] {
-  const gefunden: Anforderungsbereich[] = []
-
-  for (const text of texte(auskunft)) {
-    for (const satz of saetze(text)) {
-      if (VORBEHALT.test(satz)) continue
-      if (!PFLICHTWORT.test(satz) && !BEFREIUNGSWORT.test(satz)) continue
-
-      const bereich = BEREICHE.find((eintrag) => eintrag.muster.test(satz))
-      if (bereich && !gefunden.includes(bereich)) gefunden.push(bereich)
-    }
-  }
-
-  return gefunden
 }
 
 /**
@@ -369,14 +253,30 @@ export function auskunftPruefen(
     }
   }
 
-  // Die Wortschatzschranke steht vor allem anderen: Was die deutschen Muster
-  // unten nicht lesen können, darf nicht bis zu ihnen kommen. Der
-  // Zusatzwortschatz sind die Eigennamen dieser Reise, wie Jetnity sie selbst
-  // anzeigt – serverseitig abgeleitet, nicht vom Modell geschrieben.
-  const zusatz = kontextwortschatz(bezuege.flatMap((bezug) => [bezug.titel, bezug.lage]))
+  // Der typisierte Kanal: Bezug muss eine amtliche Lage sein, und die gewählte
+  // Aussage muss zu ihrem geprüften Zustand passen.
+  for (const hinweis of auskunft.amtlicheHinweise) {
+    const bezug = bezuege.find((eintrag) => eintrag.ref === hinweis.ref)
+    if (!bezug || bezug.art !== 'official' || bezug.anforderung == null) {
+      return {
+        ok: false,
+        art: 'unbekannter-bezug',
+        hinweis: `Die Auskunft gibt eine amtliche Aussage zu ${hinweis.ref} ab; das ist keine amtliche Lage im Kontext.`,
+      }
+    }
+    if (!passt(hinweis.aussage, bezug.anforderung, bezug.belegt)) {
+      return {
+        ok: false,
+        art: 'unpassende-amtliche-aussage',
+        hinweis: `Die Aussage „${AMTLICHE_AUSSAGE_TEXT[hinweis.aussage]}" passt nicht zum geprüften Zustand von ${hinweis.ref}.`,
+      }
+    }
+  }
 
+  // Die Prosa: jedes Wort geführt. Der Wortschatz kennt kein amtliches
+  // Vokabular und wird von keiner Eingabe erweitert.
   for (const [feld, text] of felder(auskunft)) {
-    const unbelegt = unbelegteWoerter(text, zusatz)
+    const unbelegt = unbelegteWoerter(text)
     if (unbelegt.length > 0) {
       return {
         ok: false,
@@ -386,69 +286,16 @@ export function auskunftPruefen(
     }
   }
 
-  for (const text of texte(auskunft)) {
+  for (const [, text] of felder(auskunft)) {
     const anspruch = UNMOEGLICHE_ANSPRUECHE.find((eintrag) => eintrag.muster.test(text))
     if (anspruch) {
       return {
         ok: false,
-        art: 'unbelegte-gewissheit',
+        art: 'unmoeglicher-anspruch',
         hinweis: `Die Auskunft behauptet ${anspruch.name}; dafür trägt der Kontext keine Wahrheit.`,
-      }
-    }
-  }
-
-  for (const text of texte(auskunft)) {
-    const gewissheit = NICHT_BINDBAR.find((eintrag) => eintrag.muster.test(text))
-    if (gewissheit) {
-      return {
-        ok: false,
-        art: 'unbelegte-gewissheit',
-        hinweis: `Die Auskunft benutzt „${gewissheit.name}"; diese Formulierung lässt sich keiner geprüften Anforderung zuordnen.`,
-      }
-    }
-  }
-
-  const aussagen = harteAussagen(auskunft)
-  if (aussagen.length === 0) return { ok: true }
-
-  // Ab hier steht mindestens eine harte amtliche Aussage im Text. Sie darf nur
-  // bestehen bleiben, wenn die Auskunft die amtliche Lage, auf die sie sich
-  // stützt, benennt – und wenn keine der benannten Lagen ihr widerspricht.
-  const gezeigt = new Set(auskunft.bezuege)
-  const benannt = bezuege.filter((bezug) => bezug.art === 'official' && gezeigt.has(bezug.ref))
-
-  const widerspruch = benannt.find((bezug) => !bezug.belegt)
-  if (widerspruch) {
-    return {
-      ok: false,
-      art: 'unbelegte-gewissheit',
-      hinweis: `Die Auskunft macht eine Aussage über ${aussagen[0].name} und zeigt zugleich auf ${widerspruch.ref}, dessen amtliche Lage nicht geprüft ist.`,
-    }
-  }
-
-  for (const bereich of aussagen) {
-    const traeger = benannt.find(
-      (bezug) => bezug.belegt && bezug.anforderung != null && traegt(bereich, bezug.anforderung),
-    )
-
-    if (!traeger) {
-      return {
-        ok: false,
-        art: 'unbelegte-gewissheit',
-        hinweis: `Die Auskunft macht eine Aussage über ${bereich.name}, ohne eine dazu passende geprüfte amtliche Anforderung zu benennen.`,
       }
     }
   }
 
   return { ok: true }
 }
-
-/**
- * Nur für den Vollständigkeitsnachweis in `pruefung.test.ts`.
- *
- * Er prüft, dass jeder Anforderungstyp der geschlossenen Taxonomie von
- * mindestens einem Bereich getragen werden kann – sonst gäbe es eine amtliche
- * Anforderung, über die niemand etwas sagen dürfte, oder schlimmer: eine, über
- * die jeder alles sagen dürfte.
- */
-export const BEREICHE_FUER_TEST = BEREICHE

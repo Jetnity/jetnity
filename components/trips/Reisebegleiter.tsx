@@ -219,6 +219,26 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
             </div>
           )}
 
+          {auskunft.amtlicheHinweise.length > 0 && (
+            <div className="mt-4 rounded-2xl border border-line-200 bg-white px-4 py-4">
+              <p className="text-sm font-semibold text-brand-800">Amtliche Lage laut Jetnity</p>
+              <ul className="mt-2 grid gap-2">
+                {auskunft.amtlicheHinweise.map((hinweis) => (
+                  <li key={`${hinweis.ref}-${hinweis.aussage}`} className="grid gap-0.5">
+                    <span className="text-sm font-medium leading-6 text-brand-900">
+                      {hinweis.titel}
+                    </span>
+                    <span className="text-sm leading-6 text-ink-800">{hinweis.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs leading-5 text-ink-700">
+                Diese Sätze schreibt Jetnity. Der Reisebegleiter hat nur ausgewählt, welche Lage er
+                anspricht.
+              </p>
+            </div>
+          )}
+
           {auskunft.bezuege.length > 0 && (
             <div className="mt-4 rounded-2xl border border-line-200 bg-white px-4 py-4">
               <p className="text-sm font-semibold text-brand-800">Jetnity-Stand dazu</p>

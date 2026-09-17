@@ -409,51 +409,58 @@ Den **Zustand** dieses Eintrags schreibt nicht das Modell. Er wird in `lib/reise
 | --- | --- |
 | ein `ref`, den der Kontext nicht kennt | die häufigste Art, eine Wahrheit zu erfinden |
 | ein unerwartetes Feld im Objekt | `z.strictObject`; ein Modell, das `lagen` mitschickt, hat die Regeln nicht verstanden |
-| eine Aussage über den Buchungszustand | die Projektion trägt keinen – auch „noch nicht gebucht“ ist erfunden |
+| ein Wort in der Prosa, das Jetnity nicht führt | der Wortschatz kennt kein amtliches Vokabular |
+| eine amtliche Aussage, die nicht zum geprüften Zustand ihres Bezugs passt | der typisierte Kanal |
 | eine Änderung im Perfekt („ich habe … hinzugefügt“) | dieser Weg hat keine Persistenz |
-| jede harte Aussage über eine amtliche Anforderung – behauptet oder verneint | wenn die Auskunft keine **passende** geprüfte amtliche Anforderung benennt oder zugleich auf eine ungeprüfte zeigt |
-| „garantiert“, „definitiv“, „amtlich bestätigt“, „nicht erforderlich“, „problemlos einreisen“ | immer – diese Formulierungen sagen nicht, worüber sie sprechen, und lassen sich deshalb keiner Anforderung zuordnen |
 
-**Eine harte amtliche Aussage braucht eine passende geprüfte Grundlage.** Erkannt wird sie satzweise aus drei Signalen:
+**Zwei Kanäle statt einer geprüften Prosa.** Sechs Fassungen haben versucht, erfundene amtliche Wahrheit im Freitext zu *erkennen*: deutsche Modalitäts- und Bereichsmuster, mehrsprachige Verbotslisten, eine Spracherkennung, zuletzt eine Erlaubnisliste über dem Wortschatz. Jede war widerlegbar, und die Gegenbeispiele wurden beliebig – `Ein Visum ist notwendig.` aus lauter erlaubten Wörtern, `V I S U M ist P F L I C H T.` aus lauter erlaubten Buchstaben, ein Etappenname `No visa is required`, der den Wortschatz selbst erweiterte.
 
-| Signal | Beispiele |
+Der Fehler war nicht die jeweilige Liste, sondern die Annahme, man könne Prosa prüfen, in der amtliche Aussagen überhaupt vorkommen dürfen. Die beiden Sorten Inhalt sind deshalb getrennt:
+
+| Kanal | Felder | Wer formuliert | Schranke |
+| --- | --- | --- | --- |
+| Prosa | `antwort`, `unsicherheiten`, `naechsteSchritte` | das Modell | jedes Wort muss im Register stehen, und das Register enthält **kein** amtliches Vokabular |
+| amtliche Lage | `amtlicheHinweise` | **Jetnity** | das Modell wählt Bezug und Aussageschlüssel; die Aussage muss zum geprüften Zustand passen |
+
+**Der typisierte Kanal.** `lib/reisebegleiter/aussagen.ts` führt sieben Aussagen. Das Modell wählt eine davon und nennt den Official-Bezug; den Satz schreibt Jetnity. Jede Aussage ist an den Zustand gebunden:
+
+| Aussage | Zulässig, wenn |
 | --- | --- |
-| Modalität | „du musst“, „du brauchst“, „ist erforderlich“, „ist vorgeschrieben“, „kein“, „ohne“, „…frei“ |
-| Bereich | Visum, Transit, Reisegenehmigung, Passgültigkeit, freie Passseiten, Reisepass, Ausweis, Impfung, Gesundheitsdokument, Gesundheitsanforderung, Einreiseformular, Versicherung, Rück-/Weiterreise, Buchungsnachweis, finanzielle Mittel, sonstige Einreiseanforderung |
-| Vorbehalt | „ob“, „prüfe“, „unklar“, „nicht geprüft“, „möglicherweise“, „falls“ |
+| `geprueft_erforderlich` | Lage geprüft **und** Ergebnis `required` |
+| `geprueft_nicht_erforderlich` | Lage geprüft **und** Ergebnis `not_required` |
+| `geprueft_bedingt` | Lage geprüft **und** Ergebnis `conditional` |
+| `angaben_fehlen` | nicht geprüft **und** es fehlen tatsächlich Angaben |
+| `quelle_nicht_erreichbar` | nicht geprüft **und** Quelle nicht erreichbar |
+| `erneut_pruefen` | nicht geprüft **und** Frische `recheck_needed`/`stale` |
+| `nicht_geprueft` | nicht geprüft |
 
-Erst Modalität **und** Bereich **ohne** Vorbehalt ergeben eine harte Aussage. Sie darf nur bestehen bleiben, wenn die Auskunft eine geprüfte amtliche Lage **desselben Bereichs** benennt und keiner ihrer genannten Official-Bezüge ungeprüft ist.
+Die Bindung benutzt die maschinenlesbare Identität aus `BegleiterBezug` – `requirementType`, `scope`, `visaMode`, `ergebnis`, `frische`, `fehlendeAngaben` –, niemals den Anzeigetext: `titel` ist lokalisierte Copy, und eine Textänderung darf keine Wahrheitsentscheidung verschieben. Kein Aussageschlüssel passt auf jeden Zustand; ein Test prüft das für alle sieben.
 
-Damit sind drei Umgehungen geschlossen: über die Reise (irgendeine geprüfte Lage im Kontext), über den Anforderungstyp (eine geprüfte Impfanforderung trägt kein Visum) und über die Richtung der Aussage (eine Anforderung lässt sich behaupten wie bestreiten). Die Bereichsliste folgt der geschlossenen `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie; ein Test prüft, dass jeder Typ von mindestens einem Bereich getragen wird.
-
-Die Zuordnung benutzt die maschinenlesbare Anforderungsidentität aus `BegleiterBezug` – `requirementType`, `scope`, `visaMode` –, niemals den Anzeigetext: `titel` ist lokalisierte Copy, und eine Textänderung darf keine Wahrheitsentscheidung verschieben.
-
-Erhalten bleibt, was ein ehrlicher Assistent schreiben muss: „Prüfe deine Passgültigkeit in der Reisevorbereitung“, „Ob ein Visum nötig ist, ist derzeit nicht geprüft“, „Du musst die Etappen noch mit Daten versehen“. Keiner dieser Sätze behauptet eine Anforderung.
-
-**Der Wortschatz ist eine Erlaubnisliste.** Die Signale oben sind deutsch, und drei Fassungen haben versucht, fremdsprachige Behauptungen zu *verbieten* – auf Deutsch, in den von Jetnity geführten Sprachen, über Markerwörter. Jede war eine Verbotsliste über einer offenen Menge und damit widerlegbar; zuletzt durch einen deutschen Satzanfang mit einer türkischen Behauptung dahinter.
-
-Über einer offenen Menge gibt es keine vollständige Verbotsliste. Es gibt nur eine vollständige Erlaubnisliste. `lib/reisebegleiter/wortschatz.ts` führt deshalb den Register, den die Systemregeln verlangen, und die Frage lautet umgekehrt: Besteht dieser Text ausschliesslich aus Wörtern, die Jetnity kennt?
+**Der Wortschatz führt kein amtliches Vokabular.** `lib/reisebegleiter/wortschatz.ts` ist eine Erlaubnisliste, und was fehlt, ist der Kern: Visum, Pass, Ausweis, Impfung, Versicherung, Einreiseformular, Nachweis, Mittel, Pflicht, erforderlich, notwendig, nötig. Prosa kann keine amtliche Anforderung erfinden, wenn sie sie nicht benennen kann – und das hängt nicht an der Sprache, der Modalität oder der Paraphrase, sondern am Gegenstand.
 
 | Zulässig | Begründung |
 | --- | --- |
-| der geführte Register – Funktionswörter, Reise-, Zeit-, Orts-, Vorbereitungs- und amtlicher Wortschatz | von Hand geführt und lesbar; `lib/reisebegleiter/wortschatz.test.ts` prüft Form und Abdeckung |
-| jedes Wort aus `titel` und `lage` der Bezüge | serverseitig aus der Projektion abgeleitet – Etappen-, Länder-, Reisendennamen; nicht vom Modell geschrieben |
-| Zahlen, Daten, einzelne Buchstaben | damit lässt sich keine Anforderung behaupten |
-| deutsche Flexion und Komposita der geführten Stämme | `geprüfte`, `Reisevorbereitung`, `Buchungsnachweis`; jeder Kompositumsteil braucht vier Zeichen und einen geführten Stamm, damit Silbenzerlegung kein Umgehungsweg wird |
+| der geführte Register – Funktionswörter, Reise-, Zeit-, Plan- und Vorbereitungswortschatz | von Hand geführt und lesbar |
+| Zahlen und Daten | tragen ohne Gegenstand keine Anforderung |
+| deutsche Flexion und Komposita der geführten Stämme | `geprüfte`, `Reisevorbereitung`; jeder Teil braucht vier Zeichen und einen geführten Stamm |
+| einzelne Formen, deren Stamm ein amtliches Wort wäre | `passt`, `passen` exakt – nicht als Stamm, sonst liesse sich `Reisepass` bilden |
 
-Alles andere ist unbelegt und verwirft die Auskunft. Die Schranke gilt für **jedes** modellgeschriebene Feld – `antwort`, `unsicherheiten`, `naechsteSchritte` –, denn eine erfundene Anforderung wirkt in einer Liste wie in einem Satz; nur `antwort` zu prüfen war ein eigener Umgehungsweg.
+Nicht mehr zulässig sind zwei frühere Ausnahmen, und beide waren Umgehungswege:
 
-Amtliche Begriffe stehen mit Absicht im Register: Ohne sie fiele `Du brauchst ein Visum.` schon hier, und die inhaltliche Prüfung käme für diesen Bereich nie zum Zug. Erlaubt ist, über eine Anforderung zu *sprechen*; ob eine Aussage darüber belegt ist, entscheidet die Prüfung danach – und die ist jetzt vollständig, weil vor ihr feststeht, dass der Text aus geführten deutschen Wörtern besteht.
+- **einzelne Buchstaben.** `V I S U M ist P F L I C H T.` bestand aus lauter Einzelbuchstaben, war damit durchgelassen und für einen Leser trotzdem ein Satz. Ein Buchstabe ist nur für sich harmlos, nicht in Folge.
+- **Wörter aus dem Kontext.** `kontextwortschatz()` erweiterte das Register um jedes Wort aus `titel` und `lage` der Bezüge – darin stecken `stage.name` und `traveller.label`, die der Nutzer schreibt. Ein Etappenname `No visa is required` brachte seine eigenen Wörter mit. Eine Erlaubnisliste, die der Eingang erweitern kann, ist keine. Eigennamen stehen deshalb nicht in der Prosa, sondern in den Bezügen, die Jetnity selbst anzeigt; die Auskunft verweist auf „die erste Etappe“.
 
-**Der Preis ist Recall.** Ein gültiger deutscher Satz mit einem Wort ausserhalb des Registers fällt durch. Das ist bewusst bezahlt: Eine abgelehnte Auskunft ist ein ausgefallenes Merkmal, eine erfundene Einreiseanforderung ist ein Schaden.
+Die Schranke gilt für **jedes** modellgeschriebene Feld, denn eine erfundene Anforderung wirkt in einer Liste wie in einem Satz; nur `antwort` zu prüfen war ein eigener Umgehungsweg.
 
-**Ob eine Lage geprüft ist, sagt allein Jetnity.** „gilt als geprüft“, „ist amtlich geprüft“ und Verwandte sind Aussagen über die Herkunft der Wahrheit und deshalb nie bindbar. „noch nicht geprüft“ und „geprüfte Lage“ bleiben zulässig.
+**Der Nachweis der Zusicherung ist ein Test, keine Behauptung.** `BEREICHE` in `pruefung.ts` ist keine Laufzeitschranke mehr, sondern die Definition dessen, was als amtliche Anforderung gilt – die geschlossene `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie in Wortform. `lib/reisebegleiter/wortschatz.test.ts` prüft jeden geführten Wortstamm **und jedes Paar daraus** gegen diese Muster. Trifft eines, ist die Zusicherung gebrochen und der Test schlägt an. Genau so sind beim Bau dieser Fassung drei echte Lecks gefunden worden: `rückreise` im Register, `passen` mit dem Stamm `pass`, und `notwendig`/`nötig`.
 
-**Heute ist das eine Sperre, keine Auswahl.** Ohne aktiven Requirements-Provider liefert `requirementsLokalFuerReise()` nur `provider_unavailable`, und kein Official-Bezug ist je `belegt`. Jede harte amtliche Aussage fällt deshalb durch – korrekt, denn Jetnity hat keine geprüfte amtliche Wahrheit. Mit einem echten Provider öffnet sich der Weg genau dort, wo die Lage geprüft ist.
+Eine Prüfung, die zur Laufzeit nie greifen kann, als Schranke stehen zu lassen, wäre das Gegenteil: Sie hat zweimal den Eindruck erzeugt, Prosa werde semantisch geprüft, und genau dieser Eindruck war der Befund. Die Muster tragen jetzt ihre wahre Rolle.
 
-Enthält ein Text mehrere Gewissheiten, braucht jede ihren eigenen Beleg. Ohne Gewissheitsformulierung bleibt der Verweis auf eine offene Lage zulässig; das ist der Normalfall.
+**Der Preis ist Recall.** Ein gültiger deutscher Satz mit einem Wort ausserhalb des Registers fällt durch, und über amtliche Lagen kann die Auskunft nur noch die sieben Sätze von Jetnity sagen. Das ist bewusst bezahlt: Eine abgelehnte Auskunft ist ein ausgefallenes Merkmal, eine erfundene Einreiseanforderung schickt jemanden mit falschen Papieren an eine Grenze. Wie oft die Schranke eine brauchbare Auskunft trifft, ist **nicht gemessen**; dafür fehlt der bezahlte Aufruf.
 
-Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhaltlich ehrliche Satz „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst“ fällt durch. Deshalb verbieten die Systemregeln dieselben Wörter ausdrücklich – ein regelkonformes Modell merkt davon nichts. Nicht erkannt werden Verfügbarkeitsbehauptungen in freier Formulierung; dieselbe eingestandene Grenze wie ADR-0054.
+**Heute ist der geprüfte Zweig unerreichbar.** Ohne aktiven Requirements-Provider liefert `requirementsLokalFuerReise()` nur `provider_unavailable`, und kein Official-Bezug ist je `belegt`. Die drei `geprueft_*`-Aussagen fallen deshalb immer durch – korrekt, denn Jetnity hat keine geprüfte amtliche Wahrheit. Mit einem echten Provider öffnet sich der Weg genau dort, wo die Lage geprüft ist.
+
+Nicht erkannt werden Verfügbarkeitsbehauptungen in freier Formulierung; dieselbe eingestandene Grenze wie ADR-0054.
 
 ### Tests
 
@@ -462,8 +469,8 @@ Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhal
 | `lib/reisebegleiter/kontext.test.ts` | die akzeptierte Projektion (ADR-0211), unverändert |
 | `lib/reisebegleiter/schema.test.ts` | Form, Betrag, Link, Bezugsform, Längen, kein Feld für Anforderung/Preis/Quelle |
 | `lib/reisebegleiter/nutzlast.test.ts` | zweiter, eigener Satz Leck-Marken; Reissleine; Bezüge als Zeiger; Gleichrangigkeit |
-| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, Bindung an die genannte Lage **und** an ihren Anforderungstyp, harte Aussagen über die ganze Taxonomie, vierzehn Sprachen behauptet und verneint, gemischtsprachige Sätze, jedes Modellfeld einzeln, Paraphrasen ohne Schlüsselwort, feindlicher Reisetext, kein Fehlalarm im Konjunktiv |
-| `lib/reisebegleiter/wortschatz.test.ts` | Form des Registers, Abdeckung der amtlichen Begriffe, Flexion und Komposita, fremde Wörter unbelegt, Kontextdeckung für Eigennamen |
+| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug; jede der sieben Aussagen gegen jeden Zustand; Ergebnisumkehr; 33 Angriffe (Modalität, Buchstabenschreibung, sieben Sprachen) in jedem Feld und gegen drei Kontexte; ganze Taxonomie; feindlicher Etappenname und Reisenden-Label; brauchbare Planungsprosa bleibt zulässig |
+| `lib/reisebegleiter/wortschatz.test.ts` | **kein geführter Stamm und kein Paar daraus trifft einen Anforderungsbereich**; amtliche Begriffe unbelegt; Eigennamen unbelegt; Einzelbuchstaben unbelegt; Flexion und Komposita; nur-Form-Einträge |
 | `lib/reisebegleiter/erzeugen.test.ts` | Reihenfolge der Schranken, abgeschaltete Umgebung, ein Versuch, dreizehn unbrauchbare Antworten |
 | `lib/reisebegleiter/kosten.test.ts` | schlechtester tatsächlicher Fall unter der Reservierung, je Modell |
 | `lib/reisebegleiter/oberflaeche.test.ts` | gebuchte Modellfunktion, kein schreibender Vorgang, kein Provider-Abruf, kein Aufruf beim Mounten |

@@ -100,6 +100,12 @@ export type OfficialAnforderung = {
   requirementType: AssistantOfficialContext['requirementType']
   scope: AssistantOfficialContext['scope']
   visaMode: AssistantOfficialContext['visaMode']
+  /** Das Ergebnis der Prüfung. Bindet die `geprueft_*`-Aussagen. */
+  ergebnis: AssistantOfficialContext['result']
+  /** Die Aktualität. Bindet `quelle_nicht_erreichbar` und `erneut_pruefen`. */
+  frische: AssistantOfficialContext['freshness']
+  /** Ob der Prüfung Angaben fehlen. Bindet `angaben_fehlen`. */
+  fehlendeAngaben: boolean
 }
 
 export type BegleiterBezug = {
@@ -317,6 +323,9 @@ function officialBezug(official: AssistantOfficialContext, ref: string): Begleit
       requirementType: official.requirementType,
       scope: official.scope,
       visaMode: official.visaMode,
+      ergebnis: official.result,
+      frische: official.freshness,
+      fehlendeAngaben: official.missingFacts.length > 0,
     },
   }
 }

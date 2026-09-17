@@ -108,15 +108,18 @@ const AUSKUNFT = {
   fassung: 1,
   wahrheitsklasse: 'generated_suggestion',
   kontextFassung: 'assistant-truth-context-v1',
+  // Die Prosa benennt keine amtliche Anforderung – sie kann es nicht, der
+  // Wortschatz führt das Vokabular nicht. Über die amtliche Lage sagt die
+  // Auskunft nur, welche Lage sie anspricht; den Satz schreibt Jetnity.
   antwort:
-    'Der Zeitraum passt zu den beiden Etappen: drei Nächte Rom, vier Nächte Florenz. Offen ist die Einreiseprüfung – Jetnity hat dafür noch keine geprüfte amtliche Lage und ergänzt sie nicht aus eigener Annahme.',
+    'Der Zeitraum passt zu den beiden Etappen: drei Nächte in der ersten, vier in der zweiten. Für die amtliche Lage der ersten Etappe siehe unten – Jetnity hat dafür keinen geprüften Stand und ergänzt ihn nicht aus eigener Annahme.',
   unsicherheiten: [
-    'Die automatische Einreiseprüfung ist in dieser Umgebung nicht aktiv; es liegt keine geprüfte amtliche Lage vor.',
-    'Für Alex sind zwei Staatsangehörigkeiten hinterlegt, aber kein Reisedokument. Ohne Dokumenttyp und Ausstellungsland bleibt die Prüfung offen.',
+    'Für eine Reisende sind zwei Staatsangehörigkeiten hinterlegt, aber noch kein Reisedokument.',
+    'Ohne diese Angaben bleiben mehrere Optionen offen.',
   ],
   naechsteSchritte: [
     'In der Reisevorbereitung je Staatsangehörigkeit ein Reisedokument ergänzen.',
-    'Danach die Einreiseanforderungen erneut prüfen lassen.',
+    'Danach die erste Etappe noch einmal ansehen.',
   ],
   bezuege: [
     {
@@ -139,6 +142,16 @@ const AUSKUNFT = {
       titel: 'Visumstatus · Italien',
       lage: 'Noch nicht verlässlich bestimmbar · Automatische Einreiseprüfung derzeit nicht verfügbar · Für die Prüfung fehlen Angaben: Dokumenttyp, Ausstellungsland',
       belegt: false,
+    },
+  ],
+  // Jetnity-eigener Satz, aus dem geschlossenen Aussagekanal. Das Modell hat
+  // nur `O1` und `angaben_fehlen` gewählt.
+  amtlicheHinweise: [
+    {
+      ref: 'O1',
+      aussage: 'angaben_fehlen',
+      titel: 'Visumstatus · Italien',
+      text: 'Für die Prüfung dieser Lage fehlen noch Angaben.',
     },
   ],
 }
@@ -334,6 +347,21 @@ async function laufen(browser, gerät) {
     gerät.name,
     'Jetnity-Stand steht neben der Auskunft',
     await seite.getByText('Jetnity-Stand dazu').isVisible(),
+  )
+  pruefe(
+    gerät.name,
+    'amtliche Lage trägt den Jetnity-eigenen Satz',
+    await seite.getByText('Amtliche Lage laut Jetnity').isVisible(),
+  )
+  pruefe(
+    gerät.name,
+    'der amtliche Satz stammt aus dem geschlossenen Kanal',
+    await seite.getByText('Für die Prüfung dieser Lage fehlen noch Angaben.').isVisible(),
+  )
+  pruefe(
+    gerät.name,
+    'die Herkunft des amtlichen Satzes ist benannt',
+    await seite.getByText('Diese Sätze schreibt Jetnity', { exact: false }).isVisible(),
   )
   pruefe(
     gerät.name,

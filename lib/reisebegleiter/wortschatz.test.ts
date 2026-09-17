@@ -13,19 +13,21 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import {
-  ASSISTANT_WORTSTAEMME,
-  kontextwortschatz,
-  unbelegteWoerter,
-} from '@/lib/reisebegleiter/wortschatz'
+import { BEREICHE_FUER_TEST } from '@/lib/reisebegleiter/pruefung'
+import { ASSISTANT_WORTSTAEMME, unbelegteWoerter } from '@/lib/reisebegleiter/wortschatz'
 
-const LEER: ReadonlySet<string> = new Set()
-
-function belegt(text: string, zusatz: ReadonlySet<string> = LEER): boolean {
-  return unbelegteWoerter(text, zusatz).length === 0
+function belegt(text: string): boolean {
+  return unbelegteWoerter(text).length === 0
 }
 
 describe('Die Form der Erlaubnisliste', () => {
+  test('gewöhnliche Wörter mit amtlichem Stamm sind nur als Form zulässig', () => {
+    // `passt` ist erlaubt, `Pass` nicht – der Stamm wäre ein amtliches Wort.
+    assert.ok(belegt('Der Zeitraum passt zu den Etappen.'))
+    assert.equal(belegt('Pass'), false)
+    assert.equal(belegt('Reisepass'), false)
+  })
+
   test('ist nicht leer und enthält keine Wiederholung', () => {
     assert.ok(ASSISTANT_WORTSTAEMME.length > 400)
     assert.equal(new Set(ASSISTANT_WORTSTAEMME).size, ASSISTANT_WORTSTAEMME.length)
@@ -39,8 +41,36 @@ describe('Die Form der Erlaubnisliste', () => {
   })
 })
 
-describe('Die amtlichen Begriffe sind belegt', () => {
-  // Sonst wäre die inhaltliche Prüfung für ihren Bereich unerreichbar.
+describe('Kein geführtes Wort benennt eine amtliche Anforderung', () => {
+  // Das ist die eigentliche Zusicherung dieses Slice, und sie wird hier gegen
+  // die Bereichsmuster selbst geprüft – nicht gegen eine Liste, die daneben
+  // gepflegt werden müsste. Trifft ein geführtes Wort einen Anforderungsbereich,
+  // könnte Prosa wieder eine amtliche Anforderung benennen.
+  test('kein Wortstamm trifft einen Anforderungsbereich', () => {
+    for (const stamm of ASSISTANT_WORTSTAEMME) {
+      const bereich = BEREICHE_FUER_TEST.find((eintrag) => eintrag.muster.test(stamm))
+      assert.equal(bereich, undefined, `„${stamm}" trifft den Bereich ${bereich?.name ?? ''}`)
+    }
+  })
+
+  test('auch kein Paar aus zwei Wortstämmen trifft einen Bereich', () => {
+    // Manche Bereichsmuster brauchen zwei Wörter, etwa „freie Seiten" oder
+    // „finanzielle Mittel". Geprüft wird deshalb auch die Nachbarschaft – über
+    // eine Vereinigung aller Bereichsmuster, damit die halbe Million Paare in
+    // einem Durchgang und nicht in sechzehn geprüft wird.
+    const vereinigung = new RegExp(
+      BEREICHE_FUER_TEST.map((bereich) => `(?:${bereich.muster.source})`).join('|'),
+      'i',
+    )
+
+    for (const links of ASSISTANT_WORTSTAEMME) {
+      for (const rechts of ASSISTANT_WORTSTAEMME) {
+        const satz = `${links} ${rechts}`
+        assert.equal(vereinigung.test(satz), false, `„${satz}" trifft einen Anforderungsbereich`)
+      }
+    }
+  })
+
   const AMTLICH = [
     'Visum',
     'Visa',
@@ -49,7 +79,6 @@ describe('Die amtlichen Begriffe sind belegt', () => {
     'Reisepass',
     'Pass',
     'Personalausweis',
-    'Passgültigkeit',
     'Passseiten',
     'Impfung',
     'Gesundheitserklärung',
@@ -62,11 +91,14 @@ describe('Die amtlichen Begriffe sind belegt', () => {
     'Einreiseanforderung',
     'erforderlich',
     'vorgeschrieben',
+    'notwendig',
+    'nötig',
+    'Pflicht',
   ]
 
   for (const begriff of AMTLICH) {
-    test(`„${begriff}" ist belegt`, () => {
-      assert.ok(belegt(begriff), `unbelegt: ${begriff}`)
+    test(`„${begriff}" ist nicht geführt`, () => {
+      assert.equal(belegt(begriff), false, `geführt: ${begriff}`)
     })
   }
 })
@@ -77,19 +109,13 @@ describe('Deutsche Flexion und Komposita lösen auf', () => {
     'geprüfte',
     'geprüften',
     'Prüfung',
-    'Prüfstand',
     'ungeprüft',
     'Reisevorbereitung',
-    'Einreiseanforderungen',
-    'Buchungsnachweis',
     'Staatsangehörigkeiten',
-    'Passgültigkeit',
     'Zeitraum',
     'Reisedokumente',
     'ergänzen',
     'verlängern',
-    'amtliche',
-    'amtlichen',
   ]
 
   for (const form of FORMEN) {
@@ -131,26 +157,23 @@ describe('Was nicht deutsch ist, bleibt unbelegt', () => {
   })
 })
 
-describe('Der Kontext erweitert den Wortschatz, das Modell nicht', () => {
-  test('Eigennamen aus den Bezügen sind belegt', () => {
-    const zusatz = kontextwortschatz(['Etappe 2 · Florenz, Italien', 'Alex'])
-    assert.ok(belegt('Die Etappe Florenz passt zu Alex.', zusatz))
+describe('Keine Eingabe erweitert den Wortschatz', () => {
+  test('Eigennamen sind grundsätzlich nicht geführt', () => {
+    // Bis Runde 7 brachte ein Etappenname seine Wörter selbst mit. Jetzt gibt
+    // es keinen eingabeabhängigen Zusatz mehr: Eigennamen stehen in den
+    // Bezügen, die Jetnity anzeigt, nicht in der Prosa.
+    for (const name of ['Florenz', 'Timbuktu', 'Alex'])
+      assert.equal(belegt(name), false, `geführt: ${name}`)
   })
 
-  test('ein Eigenname ohne Kontextdeckung bleibt unbelegt', () => {
-    assert.equal(belegt('Die Etappe Timbuktu passt.'), false)
+  test('einzelne Buchstaben sind nicht geführt', () => {
+    // `V I S U M ist P F L I C H T.` bestand aus lauter Einzelbuchstaben.
+    assert.equal(belegt('V I S U M'), false)
+    assert.equal(belegt('V.I.S.U.M'), false)
+    assert.equal(belegt('P F L I C H T'), false)
   })
 
-  test('der Kontext hilft einer fremdsprachigen Behauptung nicht', () => {
-    // Der Zusatz trägt Eigennamen, keine Grammatik. „gerekli" bleibt unbelegt,
-    // auch wenn „İtalya" über einen Etappennamen gedeckt wäre.
-    const zusatz = kontextwortschatz(['Etappe 1 · İtalya'])
-    assert.equal(belegt('İtalya için vize gerekli.', zusatz), false)
-  })
-})
-
-describe('Zahlen, Daten und einzelne Buchstaben sind unbedenklich', () => {
-  test('sie tragen keine Anforderung und bleiben zulässig', () => {
+  test('Zahlen und Daten bleiben zulässig', () => {
     assert.ok(belegt('2027-04-03 bis 2027-04-10'))
     assert.ok(belegt('drei Tage, vier Nächte, 2 Etappen'))
   })
