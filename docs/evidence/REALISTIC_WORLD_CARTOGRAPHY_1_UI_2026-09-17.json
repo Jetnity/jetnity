@@ -1,0 +1,341 @@
+{
+  "ok": true,
+  "ergebnisse": [
+    {
+      "browser": "webkit",
+      "viewport": "280",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "280",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "280",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "320",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "320",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "320",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "360",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "360",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "360",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "390",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "390",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "390",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "430",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "430",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "430",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "768",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "768",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "768",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "844x390",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "844x390",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "844x390",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "1280",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "1280",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "webkit",
+      "viewport": "1280",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "280",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "280",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "280",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "320",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "320",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "320",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "360",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "360",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "360",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "390",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "390",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "390",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "430",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "430",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "430",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "768",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "768",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "768",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "844x390",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "844x390",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "844x390",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "1280",
+      "zustand": "reise",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "1280",
+      "zustand": "leer",
+      "ok": true,
+      "fehler": []
+    },
+    {
+      "browser": "chromium",
+      "viewport": "1280",
+      "zustand": "fehler",
+      "ok": true,
+      "fehler": []
+    }
+  ]
+}
