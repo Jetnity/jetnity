@@ -72,7 +72,18 @@ CI und Preview auf Head `9c21231b1975a9d135e19f28d512b9878f925448`, automatisch 
 
 Kein Deployment wurde manuell ausgelöst, kein Vercel-Objekt mutiert, keine Vercel-Konfiguration verändert.
 
-Die Commits dieser Runde erzeugen einen **neuen Head**. Damit ist die obige Exact-Head-Evidence historisch; CI und Preview müssen für den neuen Head neu gelesen werden, bevor irgendein Gate als grün behandelt wird.
+Exakter Inhaltshead dieses Slices nach den drei Commits dieser Runde:
+
+`aa4f5bed76263dff236955209e478d649eb559dd`
+
+Automatisch über die Git-Integration ausgelöste Evidence auf genau diesem Head:
+
+- `origin/main` beim Push weiterhin `cfcb6b5ba12bef2383782e5d27e968b23d446b04`, Merge-Base identisch, 4 ahead / 0 behind;
+- GitHub Actions `CI`, Run `35211147716`: **SUCCESS** (`Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml`);
+- Vercel Preview-Status: **SUCCESS**, Deployment-Inspektion `BRyPRvckvpXkUJ5n9aYZjNUzZz4T`;
+- PR #451 bleibt `DRAFT`, ohne Review-Verdict.
+
+Der Commit, der diese Evidence festhält, erzeugt selbst einen weiteren Head. Für diesen letzten Head laufen CI und Preview erneut automatisch; der Technical Lead liest sie live und behandelt kein Gate als grün, bevor er das getan hat. Jede in diesem Dokument genannte Exact-Head-Evidence gilt ausschließlich für den jeweils genannten SHA.
 
 ## 6. Lokale Gates
 
