@@ -1,0 +1,21 @@
+name: TEMP Vercel token presence
+
+on:
+  push:
+    branches:
+      - tmp/assistant-runtime-1-smoke-endpoint-20260917
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Report presence only
+        shell: bash
+        run: |
+          [ -n "$VERCEL_TOKEN" ] && echo "VERCEL_TOKEN=present" || echo "VERCEL_TOKEN=missing"
