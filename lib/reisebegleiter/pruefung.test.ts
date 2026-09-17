@@ -89,13 +89,23 @@ describe('Unbelegte Gewissheit über amtliche Anforderungen', () => {
     )
   })
 
-  test('ist zulässig, sobald der Kontext eine belegte amtliche Lage trägt', () => {
+  test('ist zulässig, wenn die Auskunft die geprüfte amtliche Lage benennt', () => {
     const belegt = [
       KONTEXT[0],
-      bezug({ ref: 'O1', lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft', belegt: true }),
+      bezug({
+        ref: 'O1',
+        lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft',
+        belegt: true,
+      }),
     ]
     assert.deepEqual(
-      auskunftPruefen(auskunft({ antwort: 'Für diese Route ist kein Visum erforderlich.' }), belegt),
+      auskunftPruefen(
+        auskunft({
+          antwort: 'Für diese Route ist kein Visum erforderlich.',
+          bezuege: ['E1', 'O1'],
+        }),
+        belegt,
+      ),
       { ok: true },
     )
   })
@@ -107,6 +117,94 @@ describe('Unbelegte Gewissheit über amtliche Anforderungen', () => {
     assert.equal(
       auskunftPruefen(auskunft({ antwort: 'Du bist visumfrei.', bezuege: [] }), nurEtappeBelegt).ok,
       false,
+    )
+  })
+})
+
+describe('Gewissheit ist an die benannte amtliche Lage gebunden', () => {
+  // Der Kontext trägt zwei Official-Lagen: eine geprüfte und eine unbekannte.
+  // Genau hier entschied früher die blosse Anwesenheit der geprüften Lage –
+  // eine aktuelle Passgültigkeitsprüfung hätte den Satz „kein Visum
+  // erforderlich" freigeschaltet, obwohl die Visumslage unbekannt ist.
+  const GEMISCHT: BegleiterBezug[] = [
+    bezug({ ref: 'E1', art: 'etappe', titel: 'Etappe 1 · Rom', lage: 'April', belegt: true }),
+    bezug({
+      ref: 'O1',
+      titel: 'Passgültigkeit · Italien',
+      lage: 'Nicht erforderlich · Offizielle Anforderungen wurden geprüft',
+      belegt: true,
+    }),
+    bezug({
+      ref: 'O2',
+      titel: 'Visumstatus · Italien',
+      lage: 'Noch nicht verlässlich bestimmbar · Quelle nicht erreichbar',
+      belegt: false,
+    }),
+  ]
+
+  test('eine unbelegte amtliche Lage bleibt unbelegt, auch neben einer belegten', () => {
+    const befund = auskunftPruefen(
+      auskunft({ antwort: 'Für Italien ist kein Visum erforderlich.', bezuege: ['O2'] }),
+      GEMISCHT,
+    )
+    assert.equal(befund.ok, false)
+    assert.equal(befund.ok === false && befund.art, 'unbelegte-gewissheit')
+    assert.match(befund.ok === false ? befund.hinweis : '', /O2/)
+  })
+
+  test('Gewissheit ohne benannte amtliche Lage fällt durch', () => {
+    const befund = auskunftPruefen(
+      auskunft({ antwort: 'Für Italien ist kein Visum erforderlich.', bezuege: ['E1'] }),
+      GEMISCHT,
+    )
+    assert.equal(befund.ok, false)
+    assert.equal(befund.ok === false && befund.art, 'unbelegte-gewissheit')
+  })
+
+  test('Gewissheit ganz ohne Bezüge fällt durch', () => {
+    assert.equal(
+      auskunftPruefen(
+        auskunft({ antwort: 'Für Italien ist kein Visum erforderlich.', bezuege: [] }),
+        GEMISCHT,
+      ).ok,
+      false,
+    )
+  })
+
+  test('die benannte belegte Lage ohne widersprechenden Bezug trägt die Gewissheit', () => {
+    assert.deepEqual(
+      auskunftPruefen(
+        auskunft({ antwort: 'Für Italien ist kein Visum erforderlich.', bezuege: ['E1', 'O1'] }),
+        GEMISCHT,
+      ),
+      { ok: true },
+    )
+  })
+
+  test('ein zusätzlich benannter unbelegter Bezug kippt eine sonst getragene Gewissheit', () => {
+    const befund = auskunftPruefen(
+      auskunft({
+        antwort: 'Für Italien ist kein Visum erforderlich.',
+        bezuege: ['O1', 'O2'],
+      }),
+      GEMISCHT,
+    )
+    assert.equal(befund.ok, false)
+    assert.match(befund.ok === false ? befund.hinweis : '', /O2/)
+  })
+
+  test('ohne Gewissheit darf eine Auskunft auf eine unbelegte Lage zeigen', () => {
+    // Das ist der Normalfall dieses Slice und darf nicht mit abgeschaltet
+    // werden: Über eine offene Lage zu berichten ist der Zweck.
+    assert.deepEqual(
+      auskunftPruefen(
+        auskunft({
+          antwort: 'Die Visumslage für Italien ist derzeit nicht geprüft.',
+          bezuege: ['O1', 'O2'],
+        }),
+        GEMISCHT,
+      ),
+      { ok: true },
     )
   })
 })

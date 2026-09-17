@@ -47,9 +47,16 @@ export type Pruefbefund =
 /**
  * Unbelegte Gewissheit über amtliche Anforderungen.
  *
- * Greift nur, solange der Kontext keine belegte Official-Lage trägt. Sobald
- * eine geprüfte, aktuelle Quelle im Kontext steht, ist eine klare Aussage
- * darüber keine Erfindung mehr, sondern ihr Zweck.
+ * Eine Gewissheit ist an die amtliche Lage gebunden, auf die sich die Auskunft
+ * **beruft** – nicht an die Reise. Es genügt deshalb nicht, dass irgendwo im
+ * Kontext eine geprüfte Lage steht: Sonst würde eine einzige aktuelle
+ * Passgültigkeitsprüfung den Satz „kein Visum erforderlich" freischalten,
+ * obwohl die Visumslage unbekannt ist. Das ist genau die Aufwertung von
+ * `unknown` zu `not_required`, die der Vertrag verbietet.
+ *
+ * Die Bedingung unten ist deshalb zweiseitig: Die Auskunft muss mindestens
+ * einen belegten Official-Bezug **nennen**, und keiner der von ihr genannten
+ * Official-Bezüge darf unbelegt sein.
  */
 const GEWISSHEITSMUSTER: ReadonlyArray<{ name: string; muster: RegExp }> = [
   { name: 'visumfrei', muster: /\bvis(?:um|a)s?frei\b/i },
@@ -117,17 +124,33 @@ export function auskunftPruefen(
     }
   }
 
-  const officialBelegt = bezuege.some((bezug) => bezug.art === 'official' && bezug.belegt)
-  if (officialBelegt) return { ok: true }
+  const gewissheit = texte(auskunft)
+    .map((text) => GEWISSHEITSMUSTER.find((eintrag) => eintrag.muster.test(text)))
+    .find((treffer) => treffer != null)
 
-  for (const text of texte(auskunft)) {
-    const gewissheit = GEWISSHEITSMUSTER.find((eintrag) => eintrag.muster.test(text))
-    if (gewissheit) {
-      return {
-        ok: false,
-        art: 'unbelegte-gewissheit',
-        hinweis: `Die Auskunft benutzt „${gewissheit.name}", ohne dass eine geprüfte amtliche Lage vorliegt.`,
-      }
+  if (!gewissheit) return { ok: true }
+
+  // Ab hier steht eine Gewissheit im Text. Sie darf nur bestehen bleiben, wenn
+  // die Auskunft die amtliche Lage, auf die sie sich stützt, auch benennt –
+  // und wenn keine der benannten Lagen ihr widerspricht.
+  const officialBezuege = bezuege.filter((bezug) => bezug.art === 'official')
+  const gezeigt = new Set(auskunft.bezuege)
+  const benannt = officialBezuege.filter((bezug) => gezeigt.has(bezug.ref))
+
+  const widerspruch = benannt.find((bezug) => !bezug.belegt)
+  if (widerspruch) {
+    return {
+      ok: false,
+      art: 'unbelegte-gewissheit',
+      hinweis: `Die Auskunft benutzt „${gewissheit.name}" und zeigt zugleich auf ${widerspruch.ref}, dessen amtliche Lage nicht geprüft ist.`,
+    }
+  }
+
+  if (!benannt.some((bezug) => bezug.belegt)) {
+    return {
+      ok: false,
+      art: 'unbelegte-gewissheit',
+      hinweis: `Die Auskunft benutzt „${gewissheit.name}", ohne eine geprüfte amtliche Lage zu benennen.`,
     }
   }
 
