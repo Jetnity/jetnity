@@ -143,6 +143,8 @@ Finaler Head: **`f3e950b5eed65e039e6f6bb2f37712ef82b62aba`**
 | `Vercel` | pass – „Deployment has completed“, Deployment `F7UmR3zZhixvh4hkJAftnxmbaDCK` |
 | `Vercel Preview Comments` | pass |
 
+Der nachfolgende reine Dokumentations-Commit `ff7e5f2306dee77ff6d79abd7ea43761c7956e64` lief ebenfalls grün: GitHub-Actions-Lauf `35173918323`, Vercel-Deployment `GpukT4iFfZeLY7FnMpM7f6wKESBV` abgeschlossen. Der einzige Commit nach `ff7e5f23` ist dieser Nachtrag selbst; sein Lauf steht in der PR-Beschreibung, damit die Kette hier endet statt sich fortzusetzen.
+
 Einschränkung, ausdrücklich genannt: die Preview-URL steht hinter Vercel-SSO (Deployment Protection). Der Agent konnte den Build daher **nicht** im Browser öffnen. Belegt ist, dass die Preview auf dem exakten Head erfolgreich gebaut und ausgeliefert wurde – nicht, wie sie dort aussieht. Die Sichtbelege in Abschnitt 5 stammen aus einem lokalen Production-Build desselben Codes (`next build` + `next start`), nicht aus dem Entwicklungsmodus.
 
 ## 10. Offene Punkte und Risiken
