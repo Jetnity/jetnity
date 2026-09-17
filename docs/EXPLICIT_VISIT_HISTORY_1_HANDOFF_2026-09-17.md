@@ -19,7 +19,7 @@ Agent: `Jetnity explicit visit history 1`, Generation 1, Claude Opus 5 High.
 | Kanonische Basis | `main@69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
 | Merge-Base gegen `origin/main` | `69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
 | `origin/main` nach erneutem Fetch | `69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
-| Ahead / Behind | siehe Abschnitt 8 (nach dem letzten Push nachgetragen) |
+| Ahead / Behind | 8 / 0 (Stand des letzten Commits dieser Kette) |
 | Drift gegenüber der kanonischen Basis | **keine** – Merge-Base und `origin/main` sind derselbe Commit |
 
 Die Basis hat sich seit der Beauftragung nicht bewegt. Der Branch ist ein reiner
@@ -102,8 +102,8 @@ Der vollständige Umfang steht in
 | `node scripts/kartografie/besuchshistorie-belege.mjs` | 14 Belege, `ok: true` |
 | `npm run db:anwenden` | **abgebrochen, HTTP 401** – siehe 6 |
 | `db:rls`, `db:rechte`, `db:sicherheit`, `db:advisors`, `db:typen`, `auth:pruefen` | **nicht gelaufen**, dasselbe 401 |
-| Exact-Head-CI | offen, wird erst am finalen Head erzeugt |
-| Exact-Head-Vercel-Preview | offen, wird erst am finalen Head erzeugt |
+| Exact-Head-CI | siehe Abschnitt 8 |
+| Exact-Head-Vercel-Preview | siehe Abschnitt 8 |
 
 ## 5. Sichtbelege
 
@@ -153,7 +153,43 @@ Einzelheiten und der genaue Ablauf nach Freigabe:
 
 ## 8. Exakter Endstand
 
-Wird im letzten Commit dieser Kette nachgetragen, nachdem der Push erfolgt ist.
+### Code-Head
+
+`abb7378cf9ba915c62afccdea1c045cf3b2e2943`
+
+Das ist der letzte Commit, der Code, Migration, Tests, Werkzeuge und Belege
+enthält. Sein Gating ist vollständig:
+
+| Prüfung | Ergebnis am Head `abb7378c` |
+| --- | --- |
+| GitHub Actions, Lauf `35199705131` | **success** |
+| „Typecheck, Lint & Build“ | pass (2m31s) |
+| „Auth-Konfiguration gegen config.toml“ | pass (26s) |
+| Vercel Preview | **Ready** |
+
+Zwei ältere Läufe stehen in der Historie dieses Branches, und einer davon ist
+rot. Er gehört zum Zwischenstand `f26bc3bf`, dem die Tests noch fehlten;
+`check:exports` meldete 15 Exporte ohne Aufrufer. Der darauf folgende Commit
+`a30bb7df` hat ihn grün gemacht (Lauf `35197413684`, success). Beide Stände sind
+überholt; massgeblich ist der Head oben.
+
+### Dokumentations-Head
+
+Auf `abb7378c` folgt genau ein weiterer Commit. Er enthält **keinen Code**:
+diesen Abschnitt und die Rücknahme eines Blocks, den `next dev` selbsttätig an
+`AGENTS.md` angehängt hatte. `AGENTS.md` ist damit wieder byte-identisch mit
+`origin/main`; die Regeln dieses Repositories gehören nicht in den Diff einer
+Feature-Etappe.
+
+Dieser Commit erzeugt einen eigenen CI-Lauf und einen eigenen Vercel-Preview.
+Das Ergebnis dieses Laufs ist der Stand, den das Technical-Lead-Review als
+Exact-Head zu prüfen hat; er ist in PR #448 sichtbar.
+
+### Drift
+
+Keine. `origin/main` steht nach erneutem Fetch weiterhin auf
+`69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6`, und das ist zugleich die Merge-Base.
+Der Branch ist ein reiner Vorlauf: kein Merge, kein Rebase, kein Force-Push.
 
 ---
 
