@@ -14,7 +14,16 @@ Parent model: **Claude Opus 5 High**
 Canonical base: `main@15aa125addf39b15dcb50a1cdf8dece661796fc5`  
 Initial task head: `abcb09a0ac916aa818a944a7c876dc7ca32ec787`
 
-Der exakte Review-Head ist der letzte Commit dieses Branch inklusive dieser Evidenzdokumente. Ein neuer Head macht die hier genannten Gates ungültig und braucht ein neues Gating.
+Commits auf diesem Branch über der kanonischen Basis:
+
+| Commit | Inhalt |
+| --- | --- |
+| `abcb09a0ac916aa818a944a7c876dc7ca32ec787` | Task-Definition (Initial task head) |
+| `b622019eae3ba0eefd9b91e3e07cbccd57ba9c95` | Karte, Darstellungsschicht, Marker-Gruppierung, Reise-Labels |
+| `f5052963774c8cf6dfb6b0893690fadbef6f44db` | **gegateter Code-Head** – Besucht-Unterscheidung im Lesefehler, Rahmen-Nullpunkt |
+| danach | ausschliesslich Dokumentation und Evidenz |
+
+Alle unten genannten Gates wurden auf dem Code-Stand von `f5052963774c8cf6dfb6b0893690fadbef6f44db` erhoben. Jeder Commit danach ist reine Dokumentation und ändert keine Datei unter `components/`, `lib/`, `app/`, `scripts/`, `supabase/` oder `types/`. Der exakte Review-Head ist der letzte Commit dieses Branch; er ist code-identisch mit dem gegateten Head. Ein neuer **Code**-Head macht die hier genannten Gates ungültig und braucht ein neues Gating.
 
 ---
 
