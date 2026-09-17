@@ -1,0 +1,66 @@
+name: TEMP Protected Preview Assistant Smoke
+
+on:
+  push:
+    branches:
+      - tmp/assistant-runtime-1-smoke-20260917-protected
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: One protected Preview Assistant call
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PREVIEW_URL: https://jetnity-rd8yd9t0q-jetnity-e1b93c82.vercel.app
+      LOCKED_PRODUCT_HEAD: 8915ef45849b6544fe6fea201fb1450392c15f83
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      - name: Fail closed unless protected-preview bypass exists
+        shell: bash
+        run: |
+          if [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            echo "::error::VERCEL_AUTOMATION_BYPASS_SECRET is not configured; no Preview request was sent."
+            exit 1
+          fi
+          echo "::add-mask::$VERCEL_AUTOMATION_BYPASS_SECRET"
+
+      - name: Execute exactly one one-shot Preview smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --silent --show-error --fail-with-body \
+            -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+            -H "x-vercel-set-bypass-cookie: true" \
+            "$PREVIEW_URL/api/_internal/assistant-runtime-1-smoke-8915ef45")"
+          printf '%s' "$RESPONSE" > /tmp/assistant-smoke.json
+          node <<'NODE'
+          const fs = require('fs')
+          const body = JSON.parse(fs.readFileSync('/tmp/assistant-smoke.json', 'utf8'))
+          const fail = (m) => { throw new Error(m) }
+          if (body.ok !== true || body.smoke !== 'PASS') fail(`Smoke did not pass: ${JSON.stringify(body)}`)
+          if (body.lockedProductHead !== process.env.LOCKED_PRODUCT_HEAD) fail('Locked product head mismatch')
+          if (body.environment !== 'preview/development') fail(`Wrong environment: ${body.environment}`)
+          if (body.callsCreated !== 1) fail(`Expected exactly one call, got ${body.callsCreated}`)
+          if (!Array.isArray(body.order) || body.order.join('>') !== 'beanspruchen>aufrufen>abschliessen') fail(`Wrong call order: ${body.order}`)
+          const u = body.usage || {}
+          if (u.function !== 'reisebegleiter' || u.kind !== 'konto' || u.result !== 'erfolg') fail(`Unexpected usage result: ${JSON.stringify(u)}`)
+          if (!(Number(u.inputTokens) > 0) || !(Number(u.outputTokens) > 0)) fail('Token accounting missing')
+          if (!(Number(u.costMicroUsd) > 0)) fail('Positive cost accounting missing')
+          if (u.completed !== true) fail('Usage row not completed')
+          console.log(JSON.stringify({
+            smoke: body.smoke,
+            lockedProductHead: body.lockedProductHead,
+            environment: body.environment,
+            callsCreated: body.callsCreated,
+            order: body.order,
+            truthClass: body.truthClass,
+            model: body.model,
+            effort: body.effort,
+            usage: u,
+            outputCounts: body.outputCounts,
+          }))
+          NODE
