@@ -55,12 +55,9 @@ const zielSchema = z.object({
     .nullable(),
 })
 
-export const besuchAnlageSchema = zielSchema.merge(zeitSchema)
-export const besuchAenderungSchema = besuchAnlageSchema.extend({ id: z.string().uuid() })
-export const besuchLoeschungSchema = z.object({ id: z.string().uuid() })
-
-export type BesuchAnlage = z.infer<typeof besuchAnlageSchema>
-export type BesuchAenderung = z.infer<typeof besuchAenderungSchema>
+const besuchAnlageSchema = zielSchema.merge(zeitSchema)
+const besuchAenderungSchema = besuchAnlageSchema.extend({ id: z.string().uuid() })
+const besuchLoeschungSchema = z.object({ id: z.string().uuid() })
 
 export type Eingabeergebnis<Wert> = { ok: true; wert: Wert } | { ok: false; meldung: string }
 

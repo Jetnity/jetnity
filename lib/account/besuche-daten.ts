@@ -62,9 +62,7 @@ export function besuchAusZeile(zeile: BesuchZeile): Besuch {
   }
 }
 
-export async function besucheMitClientLaden(
-  supabase: SupabaseClient<Database>,
-): Promise<BesucheLesung> {
+async function besucheMitClientLaden(supabase: SupabaseClient<Database>): Promise<BesucheLesung> {
   // Ohne Limit: die Kennzahlen werden aus allen Ereignissen gerechnet, eine
   // Seite ergäbe eine falsche Zahl. Die Obergrenze je Konto steht in der
   // Datenbank und begrenzt diese Abfrage.

@@ -66,7 +66,6 @@ export type BesuchKennzahlen = {
   ohneLand: number
 }
 
-export const BESUCHE_OHNE_LAND_TEXT = 'Kein gespeicherter Ländercode'
 export const BESUCHE_OHNE_IDENTITAET_TEXT = 'Besuch ohne gespeicherten Ort'
 export const BESUCHE_ZEIT_UNBEKANNT_TEXT = 'Zeitpunkt nicht angegeben'
 

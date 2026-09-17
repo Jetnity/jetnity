@@ -189,9 +189,10 @@ export async function besuchAendern(eingabe: unknown): Promise<Aktionsergebnis<n
   const zeile = await zeileBauen(supabase, geprueft.wert)
   if (!zeile.ok) return zeile
 
-  // Kein `.eq('user_id', …)`: RLS entscheidet über das Eigentum. Ein Treffer
-  // von null Zeilen heisst deshalb „nicht deiner oder nicht vorhanden“ – und
-  // beides ist für den Schreibenden dieselbe Auskunft.
+  // Gefiltert wird nur nach der Id. Über das Eigentum entscheidet RLS, nicht
+  // ein zweiter Filter im Code – sonst gäbe es zwei Stellen, an denen es
+  // richtig sein muss. Null getroffene Zeilen heissen deshalb „nicht deine
+  // oder nicht vorhanden“, und beides ist dieselbe Auskunft.
   const { data, error, status } = await supabase
     .from('account_visits')
     .update(zeile.wert)
