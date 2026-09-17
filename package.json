@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node --import tsx scripts/temp-assistant-runtime-1-preview-smoke.ts",
     "start": "next start",
     "check:setup": "tsx check-jetnity-setup.ts",
     "check:setup:ci": "tsx check-jetnity-setup.ts --ci",
