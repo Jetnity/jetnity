@@ -19,7 +19,7 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | **Letzter laufzeitändernder Head** | der Review-Fix-Commit auf `74577e313cc5af9a0b84662ae2044775c88cec94` |
 | **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
 | Merge-Base | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Behind | 0 gegen `origin/main` |
+| Behind / Ahead | **8 behind / 14 ahead** gegen `origin/main` (siehe Drift) |
 | Drift | `origin/main` ist auf `03842a64` (World Map Polish 2, #437) gewandert. Keine Dateiüberschneidung; Merge-Base bleibt `15aa125a`. Rebase ist eine Technical-Lead-Entscheidung und wurde nicht vorgenommen |
 | Binding | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Entscheidung | `DECISIONS.md` ADR-0212 |

@@ -22,8 +22,8 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
 | **Letzter laufzeitändernder Head** | der Review-Fix-Commit auf `74577e313cc5af9a0b84662ae2044775c88cec94` |
 | Merge-Base mit `origin/main` | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Behind gegen `origin/main` | **0** |
-| Drift | **`origin/main` ist gewandert**: `15aa125a` → `03842a64` („Merge World Map Polish 2 (#437)", 8 Commits). Kein Dateiüberschneidung mit diesem Branch; die Merge-Base bleibt `15aa125a`, der Branch ist 0 behind gegenüber seiner Base, aber nicht mehr auf dem Kopf von `main`. Ein Rebase ist eine Entscheidung des Technical Lead und wurde nicht vorgenommen |
+| Behind / Ahead gegen `origin/main` | **8 behind / 14 ahead** – die 8 sind der Stand von `main`, den dieser Branch nicht enthält |
+| Drift | **`origin/main` ist gewandert**: `15aa125a` → `03842a64` („Merge World Map Polish 2 (#437)", 8 Commits). Keine Dateiüberschneidung mit diesem Branch; die Merge-Base bleibt `15aa125a`, der Branch sitzt also unverändert auf seiner Dispatch-Basis und ist damit 8 hinter dem aktuellen `main`. Ein Rebase ist eine Entscheidung des Technical Lead und wurde nicht vorgenommen |
 
 Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
 Dokumentations-Commit über dem letzten Code-Commit und ändert keine Laufzeit:

@@ -16,7 +16,7 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Canonical base | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | **Last runtime-changing head** | the two review-fix commits on top of `3775d9803bf01123b13f16402885b1a5d33bb71e` |
 | **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
-| Merge-base / behind | `15aa125a` / 0 behind |
+| Merge-base / behind / ahead | `15aa125a` / **8 behind** / 14 ahead against the current `origin/main` |
 | Drift | `origin/main` has moved from `15aa125a` to `03842a64` (World Map Polish 2, #437, 8 commits). **No file overlap** with this branch; merge-base stays `15aa125a`. Rebasing is a Technical-Lead decision and was not performed |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Decision | ADR-0212 |
