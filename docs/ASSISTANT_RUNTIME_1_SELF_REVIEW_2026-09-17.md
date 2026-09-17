@@ -1,9 +1,25 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`. Darüber liegt ausschliesslich Dokumentation; der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: die beiden Review-Fix-Commits auf `3775d980` (siehe Abschnitt 0). Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
+
+---
+
+## 0. Was das Re-Review gefunden hat, das dieses Dokument nicht gefunden hatte
+
+Zwei Wahrheitsbefunde auf Head `3775d980`, beide berechtigt, beide behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
+
+**Befund 1 – eine fremde amtliche Lage schaltete Gewissheit global frei.** `auskunftPruefen()` prüfte `bezuege.some(bezug => bezug.art === 'official' && bezug.belegt)` über den **ganzen Kontext** und gab bei einem Treffer sofort frei. Eine aktuelle Passgültigkeitsprüfung hätte damit den Satz „kein Visum erforderlich" getragen, während die Visumslage `unknown` ist – genau die Aufwertung von `unknown` zu `not_required`, gegen die dieser Slice gebaut ist.
+
+Warum ich es übersehen habe: Mein Test „ist zulässig, sobald der Kontext eine belegte amtliche Lage trägt" hat die Lücke nicht nur verfehlt, er hat sie **als Sollverhalten festgeschrieben**. Ich habe einen Kontext mit *einer* Official-Lage geprüft; die gefährliche Konstellation ist die mit *zwei*. Das ist der klassische Fehler, den eigenen Entwurf zu testen statt den Angriff.
+
+Die Regel ist jetzt zweiseitig und an die Auskunft gebunden: mindestens ein **genannter** belegter Official-Bezug, und kein genannter unbelegter. Vier Regressionen decken die Konstellationen ab; ich habe geprüft, dass sie gegen die alte Fassung durchfallen und gegen die neue tragen.
+
+**Befund 2 – unerwartete Felder wurden entfernt statt abgelehnt.** `z.object` ist nicht strict. Mein Test „lehnt ein zusätzliches Feld ab, auch wenn die Plattform es durchliesse" prüfte, dass das Feld *nicht im Wert ankommt* – und nannte das im Namen „ablehnen", obwohl es Aufräumen war. Der Name hat die Lücke verdeckt. Jetzt `z.strictObject`; ein zustandstragendes Zusatzfeld endet als Klasse `schema`.
+
+Beide Befunde haben dieselbe Ursache: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
 
 ---
 
@@ -16,14 +32,15 @@ Letzter laufzeitändernder Head: `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`. Dar
 | Über eine unbrauchbare Eingabe an die Buchung kommen | `null`, `undefined`, Zahl, Objekt, Array, zu kurze Frage: alle ohne einen einzigen Schritt | ebd. |
 | Einen zweiten Versuch auslösen | für alle acht Fehlerklassen: genau ein Aufruf, eine Buchung, ein Abschluss; kein Sol→Terra-Nachzug | ebd., „Ein Versuch, kein zweiter" |
 | Über den Reisekontext mehr Eingabetokens verbrauchen als reserviert | Eingabegrenze bricht vorher ab, ohne Buchung; Ausgabebudget 1600 statt 6000 | ebd. plus `kosten.test.ts` |
-| Kaputte, verweigerte, abgeschnittene, leere, schemawidrige Antwort verwerten | elf Fälle, jeder endet als Fehlerklasse **und** wird als bezahlter Aufruf abgeschlossen, nicht verschwiegen | ebd., „Eine unbrauchbare Antwort wird nicht brauchbar gemacht" |
+| Kaputte, verweigerte, abgeschnittene, leere, schemawidrige Antwort verwerten | dreizehn Fälle, jeder endet als Fehlerklasse **und** wird als bezahlter Aufruf abgeschlossen, nicht verschwiegen | ebd., „Eine unbrauchbare Antwort wird nicht brauchbar gemacht" |
 | Einen Preis in die Auskunft schreiben | Ablehnung als `schema` – nicht Entfernung | `schema.test.ts`, `erzeugen.test.ts` |
 | Einen Link in die Auskunft schreiben | Ablehnung als `schema` | ebd. |
 | Einen Bezug erfinden | Ablehnung; formal falsche Kennungen scheitern am Schema, formal richtige an der Existenzprüfung | `schema.test.ts`, `pruefung.test.ts` |
 | Eine Buchung behaupten – auch vorsichtig („noch nicht gebucht") | Ablehnung, unabhängig davon, ob eine amtliche Lage belegt ist | `pruefung.test.ts` |
 | Eine Änderung behaupten („ich habe zwei Tage hinzugefügt") | Ablehnung; der Konjunktiv („du könntest") bleibt zulässig | ebd. |
 | „visumfrei" bei unbelegter Lage sagen | Ablehnung; erst ein **belegter Official**-Bezug öffnet den Weg, eine belegte Etappe oder Safety-Lage nicht | ebd. |
-| Den Zustand eines Bezugs aus dem Modelltext übernehmen | unmöglich: das Feld existiert nicht, und ein trotzdem mitgeschicktes Feld erreicht den Wert nicht | `erzeugen.test.ts`, „übernimmt keinen Zustand aus dem Modelltext" |
+| Den Zustand eines Bezugs aus dem Modelltext übernehmen | das Feld existiert nicht; ein trotzdem mitgeschicktes Feld lässt die ganze Auskunft als `schema` durchfallen | `erzeugen.test.ts`, „zusätzliches zustandstragendes Feld" |
+| Gewissheit über eine Lage behaupten, die die Auskunft nicht belegt | Ablehnung: eine fremde belegte Official-Lage im Kontext schaltet nichts frei, und ein zugleich genannter unbelegter Bezug kippt eine sonst getragene Gewissheit | `pruefung.test.ts`, „Gewissheit ist an die benannte amtliche Lage gebunden" |
 | Passnummer, MRZ, Buchungs-URL, Secret, E-Mail, Fingerprint, Preis, Koordinate, Ortsschlüssel in den Prompt bringen | zehn Leck-Marken, keine erreicht den Prompt oder die angezeigten Bezüge | `nutzlast.test.ts` |
 | Ein sensibles Feld über eine später erweiterte Projektion einschmuggeln | die Reissleine trifft Feldnamen und Wertmuster in jeder Tiefe; die Nutzlast schreibt unbekannte Felder ohnehin nicht ab | ebd. |
 | Rangsemantik unter Reisenden erzeugen | kein „primary", „preferred", „bevorzugt" im Prompt; Reihenfolge erzeugt keinen Vorrang | ebd. |
@@ -52,7 +69,7 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 
 **2.3 Die Wirksamkeit der Systemregeln ist unbelegt.** Alles, was in dieser Arbeit geprüft ist, ist das Verhalten von Jetnity gegenüber einer Modellantwort. Ob das Modell nützliche Auskünfte gibt, ist nicht geprüft – und konnte in dieser Umgebung nicht geprüft werden.
 
-**2.4 Die Migration ist nicht live.** Solange `20260917090000` nicht auf Development angewandt ist, scheitert ein Aufruf dort an der CHECK-Bedingung. Die Richtung ist sicher (fail closed, kein Kostenrisiko), aber es ist keine geprüfte Funktion. Die live-Prüfung von RLS, Rechten und Advisor-Befunden fehlt vollständig.
+**2.4 Die Migration habe ich nicht anwenden können.** Der Technical Lead hat das Gate inzwischen selbst geschlossen: Development angewandt, Live-CHECK, RLS, Policy, Rechte und Advisors geprüft, Production unverändert. Das ist erledigt – aber nicht von mir, und es bleibt ein Gate, das dieser Slice nicht aus eigener Kraft belegen konnte.
 
 **2.5 Die Darstellung einer Auskunft ist mit einer gestellten Auskunft belegt.** Der Audit-Schalter `begleiterAuskunft` stellt eine Auskunft in der Form, die `begleiterauskunftErzeugen()` zurückgibt. Die Form ist typgeprüft, die Werte sind von mir geschrieben. Das zeigt die Darstellung und nicht den Weg dorthin.
 
@@ -84,14 +101,14 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 1. `lib/modell/anfrage.ts` bekommt ein additives `ausgabeTokens`. Das ist eine Änderung an geteilter Infrastruktur. Sie ist rein kostensenkend, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt und für bestehende Aufrufer wirkungslos. Ohne sie wäre die Kostenintegrität dieses Wegs nicht belegbar.
 2. `lib/modell/konfiguration.ts` bekommt `MODELLFUNKTIONEN`; der Typ zieht von `kontingent.ts` dorthin um. Grund: Ein Laufzeit-Array lässt sich gegen das Migrations-SQL prüfen, ein Typ nicht – dasselbe Muster wie `ERGEBNISKLASSEN`.
 3. Zwei Audit-Schalter plus `anfangsAuskunft` (siehe 2.6).
-4. Ein unbestätigter Development-Auth-Nutzer als Nebenwirkung eines Login-Versuchs (Status Abschnitt 5).
+4. Ein unbestätigter Development-Auth-Nutzer als Nebenwirkung eines Login-Versuchs; vom Technical Lead geprüft und gelöscht (Status Abschnitt 5). Kein zweites Probe-Konto angelegt.
 
 ---
 
 ## 5. Was ein Reviewer zuerst anschauen sollte
 
 1. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast wirklich nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
-2. `lib/reisebegleiter/pruefung.ts` – ist der Handel „Wahrheit gegen Eleganz" in der richtigen Richtung gewählt, und sind die Muster präzise genug?
+2. `lib/reisebegleiter/pruefung.ts` – ist die neue zweiseitige Bindung der Gewissheit an die **genannten** Official-Bezüge vollständig, und sind die Muster präzise genug?
 3. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
 4. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
 5. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?

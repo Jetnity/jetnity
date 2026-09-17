@@ -93,7 +93,7 @@ Commits auf dem Branch:
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3321 Tests, 590 Suites, 0 Fehler |
+| `npm test` | **grün** – 3329 Tests, 591 Suites, 0 Fehler |
 | `npm run typecheck` | **grün** |
 | `npm run lint` | **0 Fehler**, 138 Warnungen – identisch zur Basis, keine davon in neuen Dateien |
 | `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |
@@ -115,7 +115,7 @@ Diese Werkzeuge haben sich **nicht selbst übersprungen** und sind **nicht grün
 
 | Gate | Befund |
 | --- | --- |
-| `npm run db:anwenden -- --probe` | `SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401)` |
+| `npm run db:anwenden -- --probe` | `SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401)` – **vom Technical Lead unabhängig nachgeholt**, siehe Abschnitt 4 |
 | `npm run db:rechte` | `SQL fehlgeschlagen (HTTP 401): {"message":"Unauthorized"}` |
 | `npm run db:rls` | `SQL fehlgeschlagen (HTTP 401)` |
 | `npm run db:sicherheit` | `SQL fehlgeschlagen (HTTP 401)` |
@@ -137,7 +137,24 @@ Diese Werkzeuge haben sich **nicht selbst übersprungen** und sind **nicht grün
 - **Nicht geändert:** Tabellenstruktur, RLS, Policies, Rechte, `modell_kontingent_beanspruchen()`, `modell_nutzung_abschliessen()`, `modell_preis()`, Zählgrenzen, Kostendeckel, Indizes.
 - `_funktion` wird von der Funktion nur durchgeschrieben; die CHECK-Bedingung ist die einzige Stelle, die den Wert prüft (geprüft über `grep` auf alle Migrationen).
 - `types/supabase.ts` unverändert: `funktion` ist dort `string`, kein Union. Eine CHECK-Änderung erzeugt keine Typänderung.
-- **Anwendungsstand:** Development **nicht angewandt** (401, siehe Abschnitt 3). Production **nicht angewandt und nicht vorgesehen**.
+
+### Anwendungsstand – Development angewandt und verifiziert durch den Technical Lead
+
+Der Coding-Agent konnte die Migration nicht anwenden (HTTP 401, Abschnitt 3). **Der Technical Lead hat das Gate im Re-Review auf `3775d980` unabhängig abgeschlossen.** Diese Zeilen geben seine Feststellungen wieder; sie stammen nicht aus einem Lauf des Agenten:
+
+- Supabase **Development**: Migration exakt als Repository-Fassung `20260917090000 modell_reisebegleiter` verzeichnet.
+- Live-`model_usage_funktion_werte` auf Development ist exakt `reisevorschlag`, `reiseaenderung`, `reisebegleiter`.
+- RLS auf `public.model_usage` bleibt eingeschaltet.
+- Policy bleibt `model_usage_lesen` für `authenticated` mit `darf_betrieb_lesen()`.
+- Rechte unverändert gegenüber der Live-Baseline vor der Anwendung.
+- Security-Advisors erneut gelesen: **kein neuer Assistant-spezifischer Leak-Befund**.
+- `model_usage` hat auf Development und Production weiterhin **0 Zeilen**.
+- Ein Versionsversatz des Supabase-Management-Werkzeugs wurde **nur in der Development-Migrationshistorie** von der temporären `20260917003925` auf die Repository-Fassung `20260917090000` korrigiert; die Live-Historie entspricht jetzt dem Dateinamen.
+- Der unbestätigte Development-Auth-Nutzer `assistant.runtime1.probe@gmail.com` aus Abschnitt 5 wurde geprüft (kein Profil, keine Reisen, keine Account-Traveller) und **gelöscht**; Nachzählung 0.
+
+- **Production:** unverändert, akzeptiert weiterhin nur `reisevorschlag` und `reiseaenderung`. **Keine Production-Migration angewandt.**
+
+Die Migration darf **nicht erneut angewandt** werden.
 
 ---
 
@@ -174,10 +191,10 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 
 ## 7. Offene Punkte
 
-1. **Develop-Migration und Live-Verifikation** – blockiert durch den 401 der Management API. Braucht einen gültigen `SUPABASE_ACCESS_TOKEN`.
+1. **Develop-Migration und Live-Verifikation – erledigt, aber nicht vom Agenten.** Der Technical Lead hat sie im Re-Review auf `3775d980` durchgeführt und verifiziert (Abschnitt 4). Der 401 der Management API in dieser Agent-Umgebung besteht unverändert; die übrigen DB-Skripte (`db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `production:pruefen`) sind hier weiterhin nicht gelaufen.
 2. **Bezahlter Preview/Development-Nachweis** – nicht erbracht. In dieser Umgebung fehlen `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV`; ein Konto-Login ist nicht erreichbar, weil `enable_confirmations = true` gilt und kein Postfach zugänglich ist. Die vier Schranken vor dem Aufruf sind deterministisch geprüft, der Aufruf selbst nicht ausgeführt.
 3. **Darstellung einer Auskunft** – im Browser belegt, aber mit einer **gestellten** Auskunft über den Audit-Schalter `begleiterAuskunft`, nicht mit einer erzeugten.
-4. **Unbestätigter Development-Nutzer** aus Abschnitt 5 – bitte löschen.
+4. **Unbestätigter Development-Nutzer** aus Abschnitt 5 – **vom Technical Lead gelöscht**, Nachzählung 0. Erledigt.
 5. **Systemregeln gegen ein echtes Modell** – die Wirksamkeit der Prompt-Regeln (erste Schranke) ist nicht gemessen. Schema, Nutzlast und Prüfung (zweite und dritte Schranke) sind deterministisch geprüft und hängen nicht daran.
 
 ---
@@ -190,18 +207,15 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 | Der Wortfilter lehnt auch ehrliche Sätze ab | möglich; die Systemregeln verbieten dieselben Wörter ausdrücklich, damit ein regelkonformes Modell ihn nicht auslöst. Ohne bezahlten Nachweis ist die Häufigkeit unbekannt |
 | Eingabegrenze zu streng oder zu lasch | 24 000 Zeichen sind aus der Reservierung abgeleitet, nicht gemessen. Eine sehr grosse Reise bekommt keine Auskunft. `kosten.test.ts` hält die Richtung fest |
 | Zeichen-je-Token-Annahme | 2.2 ist pessimistisch, aber eine Annahme. Das Ausgabebudget von 1600 statt 6000 Tokens ist die eigentliche Absicherung |
-| Migration nicht live geprüft | offen. Solange sie nicht auf Development angewandt ist, scheitert ein Aufruf in Development an der CHECK-Bedingung, also **fail closed** – kein Kostenrisiko, aber auch keine Funktion |
+| Migration nicht live geprüft | **geschlossen für Development** (Abschnitt 4). Production bleibt ohne den dritten Wert; ein Aufruf dort scheiterte an der CHECK-Bedingung, also fail closed – und Production ist ohnehin abgeschaltet |
 | Gastreisen ohne Reisebegleiter | bewusst (ADR-0212 Punkt 10). Ein Gast sieht keine Fläche, die es für ihn nicht gibt; kein stiller Produktwechsel, der Gastweg bleibt unverändert |
 
 ---
 
 ## 9. Empfehlung
 
-1. Gültigen `SUPABASE_ACCESS_TOKEN` bereitstellen oder rotieren.
-2. Danach auf **Development** und nur dort: `db:anwenden`, `db:typen -- --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:advisors`, `auth:pruefen`.
-3. Live prüfen, dass `model_usage_funktion_werte` genau `reisevorschlag`, `reiseaenderung`, `reisebegleiter` enthält und RLS, Policies und Rechte auf `public.model_usage` unverändert sind.
-4. Erst danach in Preview mit gesetztem Kill Switch einen **einzelnen** bezahlten Aufruf als Nachweis, mit angemeldetem Testkonto.
-5. Unbestätigten Development-Nutzer aus Abschnitt 5 löschen.
-6. Unabhängiges Technical-Lead-Review auf dem exakten Head. **Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten.**
+1. **Erledigt durch den Technical Lead:** Develop-Migration angewandt und live verifiziert, Probe-Nutzer gelöscht (Abschnitt 4).
+2. **Offen:** in Preview mit gesetztem Kill Switch ein **einzelner** bezahlter Aufruf als Nachweis, mit angemeldetem Testkonto. Der Agent hat dafür keinen sicheren Weg in dieser Umgebung und erfindet ihn nicht.
+3. Unabhängiges Technical-Lead-Re-Review auf dem neuen exakten Head. **Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten.**
 
 Production-Migration, Production-Modellaktivierung, Production-OpenAI-Secrets, Production-Aufrufe, Provider-Aktivierung und Public Launch bleiben geschlossen.

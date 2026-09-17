@@ -336,13 +336,22 @@ Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner
 - `components/trips/Reisebegleiter.tsx` plus `begleiter`-Slot in `TripWorkspace`: eine eingeklappte Fläche in der Reiseübersicht, nur Konto
 - additives `Modellanfrage.ausgabeTokens`, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt
 - sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser, mobil und Desktop)
-- 3321 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
+- 3329 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
 - exact-head CI `35165950349`: **success** (beide Jobs, inkl. `auth:pruefen`); Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v`: **READY**
 
-**Offen / blockiert – Technical-Lead-Gates:**
+**Nach dem Technical-Lead-Re-Review auf `3775d980` behoben:**
 
-- **Develop-Migration nicht angewandt.** Der `SUPABASE_ACCESS_TOKEN` der Cloud-Agent-Umgebung wird von der Management API mit HTTP 401 abgewiesen; der Token der CI ist gültig. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` und `production:pruefen` sind deshalb **nicht gelaufen**, nicht „grün“. `auth:pruefen` ist in der CI grün.
-- **Kein bezahlter Preview/Development-Aufruf.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen in dieser Umgebung; ein Konto-Login ist ohne bestätigte E-Mail nicht erreichbar. Die Darstellung einer Auskunft ist im Browser mit einer gestellten Auskunft nachgewiesen, nicht mit einer erzeugten.
+- Gewissheit ist jetzt an die von der Auskunft **genannte** amtliche Lage gebunden; eine fremde geprüfte Official-Lage schaltet sie nicht mehr global frei
+- serverseitige Ausgabeprüfung lehnt unerwartete Felder ab (`z.strictObject`) statt sie zu entfernen
+
+**Vom Technical Lead erledigt – nicht wiederholen:**
+
+- Develop-Migration `20260917090000` angewandt; Live-CHECK exakt `reisevorschlag` / `reiseaenderung` / `reisebegleiter`; RLS eingeschaltet; Policy `model_usage_lesen` und Rechte unverändert; Advisors ohne neuen Befund; `model_usage` 0 Zeilen; Migrationshistorie auf die Repository-Fassung korrigiert; Probe-Auth-Nutzer gelöscht. **Production unverändert.**
+
+**Weiterhin offen:**
+
+- **Kein bezahlter Preview/Development-Aufruf.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen in der Agent-Umgebung; ein Konto-Login ist ohne bestätigte E-Mail nicht erreichbar. Die Darstellung einer Auskunft ist im Browser mit einer gestellten Auskunft nachgewiesen, nicht mit einer erzeugten.
+- `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` und `production:pruefen` sind in der Agent-Umgebung **nicht gelaufen** (HTTP 401); `auth:pruefen` ist in der CI grün.
 - Production-Migration, Production-Modellaktivierung, Production-Secrets und Production-Aufrufe bleiben geschlossen.
 
 Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten. Technical-Lead-owned.

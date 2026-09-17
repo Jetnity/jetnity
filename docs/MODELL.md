@@ -346,7 +346,7 @@ Gegen die echte Datenbank laufen **16 Nachweise** über `npm run db:kontingent`:
 
 ## 9a. Die dritte Modellfunktion: Reisebegleiter
 
-**Stand:** Assistant Runtime 1, Draft-Branch `feat/phase-1-assistant-runtime-1`. Preview/Development freigegeben (#433), **Production bleibt aus** – in Production ist weder `JETNITY_MODELL_AKTIV` gesetzt noch ein Schlüssel hinterlegt, und die Migration ist dort nicht angewandt. Entscheidung: [../DECISIONS.md](../DECISIONS.md) ADR-0212.
+**Stand:** Assistant Runtime 1, Draft-Branch `feat/phase-1-assistant-runtime-1`. Preview/Development freigegeben (#433). Die Migration `20260917090000` ist auf **Development** angewandt und live verifiziert (Technical Lead, 17. September 2026). **Production bleibt aus** – dort ist weder `JETNITY_MODELL_AKTIV` gesetzt noch ein Schlüssel hinterlegt, und `model_usage_funktion_werte` akzeptiert weiterhin nur `reisevorschlag` und `reiseaenderung`. Entscheidung: [../DECISIONS.md](../DECISIONS.md) ADR-0212.
 
 ### Der Ablauf
 
@@ -408,9 +408,12 @@ Den **Zustand** dieses Eintrags schreibt nicht das Modell. Er wird in `lib/reise
 | Befund | Warum |
 | --- | --- |
 | ein `ref`, den der Kontext nicht kennt | die häufigste Art, eine Wahrheit zu erfinden |
+| ein unerwartetes Feld im Objekt | `z.strictObject`; ein Modell, das `lagen` mitschickt, hat die Regeln nicht verstanden |
 | eine Aussage über den Buchungszustand | die Projektion trägt keinen – auch „noch nicht gebucht“ ist erfunden |
 | eine Änderung im Perfekt („ich habe … hinzugefügt“) | dieser Weg hat keine Persistenz |
-| „visumfrei“, „kein Visum“, „nicht erforderlich“, „garantiert“, „amtlich bestätigt“ … | solange kein Official-Bezug belegt ist |
+| „visumfrei“, „kein Visum“, „nicht erforderlich“, „garantiert“, „amtlich bestätigt“ … | wenn die Auskunft keine geprüfte amtliche Lage **benennt** oder zugleich auf eine ungeprüfte zeigt |
+
+**Gewissheit hängt an der genannten Lage, nicht an der Reise.** Es genügt ausdrücklich *nicht*, dass irgendwo im Reisekontext eine geprüfte Official-Lage steht: Sonst trüge eine aktuelle Passgültigkeitsprüfung den Satz „kein Visum erforderlich“, obwohl die Visumslage unbekannt ist – `unknown` wäre damit zu `not_required` aufgewertet. Die Bedingung ist deshalb zweiseitig: Die Auskunft muss mindestens einen belegten Official-Bezug nennen, und keiner der von ihr genannten Official-Bezüge darf unbelegt sein. Ohne Gewissheitsformulierung bleibt der Verweis auf eine offene Lage zulässig; das ist der Normalfall.
 
 Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhaltlich ehrliche Satz „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst“ fällt durch. Deshalb verbieten die Systemregeln dieselben Wörter ausdrücklich – ein regelkonformes Modell merkt davon nichts. Nicht erkannt werden Verfügbarkeitsbehauptungen in freier Formulierung; dieselbe eingestandene Grenze wie ADR-0054.
 
@@ -421,8 +424,8 @@ Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhal
 | `lib/reisebegleiter/kontext.test.ts` | die akzeptierte Projektion (ADR-0211), unverändert |
 | `lib/reisebegleiter/schema.test.ts` | Form, Betrag, Link, Bezugsform, Längen, kein Feld für Anforderung/Preis/Quelle |
 | `lib/reisebegleiter/nutzlast.test.ts` | zweiter, eigener Satz Leck-Marken; Reissleine; Bezüge als Zeiger; Gleichrangigkeit |
-| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, unmöglicher Anspruch, kein Fehlalarm im Konjunktiv |
-| `lib/reisebegleiter/erzeugen.test.ts` | Reihenfolge der Schranken, abgeschaltete Umgebung, ein Versuch, elf unbrauchbare Antworten |
+| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, Bindung an die genannte amtliche Lage, unmöglicher Anspruch, kein Fehlalarm im Konjunktiv |
+| `lib/reisebegleiter/erzeugen.test.ts` | Reihenfolge der Schranken, abgeschaltete Umgebung, ein Versuch, dreizehn unbrauchbare Antworten |
 | `lib/reisebegleiter/kosten.test.ts` | schlechtester tatsächlicher Fall unter der Reservierung, je Modell |
 | `lib/reisebegleiter/oberflaeche.test.ts` | gebuchte Modellfunktion, kein schreibender Vorgang, kein Provider-Abruf, kein Aufruf beim Mounten |
 | `lib/modell/grenzen-datenbank.test.ts` | die Prüfbedingung gegen `MODELLFUNKTIONEN`, additiv ohne Verlust |

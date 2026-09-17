@@ -14,8 +14,8 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| **Last runtime-changing head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
-| **Exact final head** | branch head: documentation-only commits on top of `ea7cf8ec`; read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
+| **Last runtime-changing head** | the two review-fix commits on top of `3775d9803bf01123b13f16402885b1a5d33bb71e` |
+| **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
 | Merge-base / behind | `15aa125a` / 0 behind |
 | Drift | none |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
@@ -24,18 +24,23 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
 | Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
 
-Repository gates on the exact head are green: `npm test` 3321/3321, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop. Exact-head CI run `35165950349`: **success** (both jobs, including `auth:pruefen` with 55 values / 243 keys against `supabase/config.toml`). Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v`: **READY**.
+Repository gates on the exact head are green: `npm test` 3329/3329, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview; the identifiers of the latest run are in the checks of PR #435.
 
-**Two gates are open and must not be reported as green:**
+**Technical-Lead re-review on `3775d980` — two truth findings, both fixed in this session:**
 
-1. **Develop migration not applied.** `supabase/migrations/20260917090000_modell_reisebegleiter.sql` exists in the repository and has been applied to neither Development nor Production. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` and `production:pruefen` **did not run**: the `SUPABASE_ACCESS_TOKEN` injected into the Cloud Agent environment is rejected by the Supabase Management API with HTTP 401, including on `/v1/projects` without a ref. The CI secret is valid — `auth:pruefen` passes in CI on the same head — so this is a property of the agent environment's access, not of the project. Whoever completes the DB gates needs the token CI uses.
-2. **No paid Preview/Development call made.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` and `JETNITY_MODELL_AKTIV` are absent in that environment, and an account session is unreachable because `enable_confirmations = true`. The rendering of an answer is evidenced in the browser with a *supplied* answer, not a generated one.
+1. Assistant certainty was unlocked globally by any current Official record in the context. It is now bound to the Official evidence the answer **names**: at least one named `belegt` Official ref, and no named unbelegt one. Four adversarial regressions cover the constellations and fail against the previous rule.
+2. Server-side output parsing stripped unexpected properties. It now rejects them (`z.strictObject`), so a state-bearing extra field such as `lagen` ends as class `schema` instead of a cleaned-up suggestion.
+
+**Develop-only DB gate — completed independently by the Technical Lead, do NOT repeat:** migration `20260917090000` applied on Development and recorded under the repository version; live `model_usage_funktion_werte` is exactly `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS enabled; policy `model_usage_lesen` and grants unchanged; security advisors show no new Assistant-specific finding; `model_usage` holds 0 rows on Development and Production; Development migration history corrected from the tool's temporary `20260917003925` to the repository version; the accidental unconfirmed auth user `assistant.runtime1.probe@gmail.com` was verified empty and deleted. **Production unchanged and still accepts only `reisevorschlag` / `reiseaenderung`.**
+
+**Still open and not to be reported as green:**
+
+- **No paid Preview/Development call made.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` and `JETNITY_MODELL_AKTIV` are absent in the agent environment, and an account session is unreachable because `enable_confirmations = true`. The rendering of an answer is evidenced in the browser with a *supplied* answer, not a generated one. It must not be invented, and no second probe account may be created.
+- `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` and `production:pruefen` **did not run** in the agent environment: its `SUPABASE_ACCESS_TOKEN` is rejected with HTTP 401. The CI secret is valid — `auth:pruefen` passes in CI on the same head.
 
 Production migration, Production model activation, Production OpenAI secrets and Production paid calls remain **CLOSED**.
 
-**Reported side effect requiring cleanup:** an unconfirmed, sessionless auth user `assistant.runtime1.probe@gmail.com` was created via the anon signup endpoint while looking for a reachable account login. The target project is **not** the documented Production ref `qscbgcdmivbbnzrcyegn`; by the convention in `docs/DATENBANK.md` it is the Development branch. Please delete it.
-
-**Exact next step:** independent Technical-Lead review on the exact final head of the branch (runtime stands at `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`; everything above it is documentation), then a valid access token, then Development-only migration and live constraint/RLS/grant verification, then one bounded paid Preview call. No Ready, no merge, no follow-up slice by the coding agent.
+**Exact next step:** independent Technical-Lead re-review on the exact final head of the branch. No Ready, no merge, no follow-up slice by the coding agent.
 
 ## 1. Latest verified runtime integration
 

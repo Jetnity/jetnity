@@ -66,7 +66,7 @@ Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unt
 
 ## 4. Gates auf dem exakten Head
 
-**Grün:** `npm test` (3321/3321), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
+**Grün:** `npm test` (3329/3329), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
 
 **Grün auf dem exakten Head in GitHub/Vercel:** CI-Run `35165950349` – **success**, beide Jobs. Darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch". Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v` – **READY**.
 
@@ -74,24 +74,23 @@ Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unt
 
 `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `production:pruefen`.
 
-Ursache: Der `SUPABASE_ACCESS_TOKEN` **dieser Agent-Umgebung** wird von der Supabase Management API mit **HTTP 401** abgewiesen, auch auf `/v1/projects` ohne Ref. Der **Token der CI ist gültig** – `auth:pruefen` läuft dort auf demselben Head durch. Wer die DB-Gates nachholt, braucht denselben Token.
+Ursache: Der `SUPABASE_ACCESS_TOKEN` **dieser Agent-Umgebung** wird von der Supabase Management API mit **HTTP 401** abgewiesen, auch auf `/v1/projects` ohne Ref. Der **Token der CI ist gültig** – `auth:pruefen` läuft dort auf demselben Head durch.
 
-**Kein bezahlter Aufruf gemacht.** In dieser Umgebung fehlen `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV`; ein Konto-Login ist nicht erreichbar (`enable_confirmations = true`, kein Postfach).
+**Das Develop-DB-Gate ist inzwischen geschlossen, aber nicht vom Agenten:** Der Technical Lead hat Migration, Live-CHECK, RLS, Policy, Rechte und Advisors im Re-Review auf `3775d980` selbst geprüft (Abschnitt 5 und `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` Abschnitt 4).
+
+**Kein bezahlter Aufruf gemacht.** In dieser Umgebung fehlen `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV`; ein Konto-Login ist nicht erreichbar (`enable_confirmations = true`, kein Postfach). Der Punkt bleibt offen und wird nicht erfunden.
 
 ---
 
 ## 5. Der exakte nächste Schritt
 
-**Unabhängiges Technical-Lead-Review auf dem exakten finalen Head dieses Branches.** Die Laufzeit steht auf `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`; darüber liegt ausschliesslich Dokumentation.
+**Unabhängiges Technical-Lead-Re-Review auf dem exakten finalen Head dieses Branches.**
 
-Danach, in dieser Reihenfolge:
+Erledigt und **nicht zu wiederholen** – der Technical Lead hat das Develop-DB-Gate im Re-Review auf `3775d980` unabhängig abgeschlossen: Migration `20260917090000` auf Development angewandt, Live-CHECK exakt `reisevorschlag` / `reiseaenderung` / `reisebegleiter`, RLS eingeschaltet, Policy `model_usage_lesen` unverändert, Rechte unverändert, Advisors ohne neuen Befund, `model_usage` 0 Zeilen auf beiden Umgebungen, Migrationshistorie auf die Repository-Fassung korrigiert, Probe-Nutzer gelöscht. Production unverändert. **Migration nicht erneut anwenden, Production nicht anfassen.**
 
-1. Gültigen `SUPABASE_ACCESS_TOKEN` bereitstellen – derselbe, den die CI benutzt.
-2. `npm run db:anwenden` – **nur Development**. Production bleibt geschlossen.
-3. `npm run db:typen -- --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:advisors`, `auth:pruefen`.
-4. Live prüfen: `model_usage_funktion_werte` enthält genau `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS, Policies und Rechte auf `public.model_usage` unverändert.
-5. Erst dann in Preview ein **einzelner** bezahlter Aufruf mit angemeldetem Testkonto als Nachweis.
-6. Unbestätigten Development-Nutzer `assistant.runtime1.probe@gmail.com` löschen (siehe unten).
+Offen bleibt genau eines:
+
+1. In Preview mit gesetztem Kill Switch **ein einzelner** bezahlter Aufruf mit angemeldetem Testkonto als Nachweis. Kein zweites Probe-Konto anlegen; wenn kein sicherer Weg besteht, bleibt der Punkt offen.
 
 ---
 
@@ -109,13 +108,11 @@ Danach, in dieser Reihenfolge:
 
 ---
 
-## 7. Meldepflichtige Nebenwirkung
+## 7. Meldepflichtige Nebenwirkung – erledigt
 
-Bei der Suche nach einem erreichbaren Konto-Login entstand über den anon-Auth-Endpunkt ein **unbestätigter, sitzungsloser** Nutzer:
+Bei der Suche nach einem erreichbaren Konto-Login entstand über den anon-Auth-Endpunkt ein unbestätigter, sitzungsloser Nutzer `assistant.runtime1.probe@gmail.com` auf dem Development-Projekt.
 
-`assistant.runtime1.probe@gmail.com`
-
-Das Zielprojekt ist **nicht** der in `docs/ACTIVE_WORK_STATUS.md` dokumentierte Production-Ref `qscbgcdmivbbnzrcyegn`. `NEXT_PUBLIC_SUPABASE_URL` und `SUPABASE_PROJECT_REF` zeigen auf dasselbe Projekt, und dieses ist nach `docs/DATENBANK.md` per Konvention der Development-Branch. Eine Bestätigung über die Management API war wegen des 401 nicht möglich. **Bitte löschen.**
+Der Technical Lead hat ihn geprüft – kein Profil, keine Reisen, keine Account-Traveller – und **gelöscht**; Nachzählung 0. Kein weiteres Probe-Konto wurde angelegt.
 
 ---
 
