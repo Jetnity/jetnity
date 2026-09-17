@@ -1,16 +1,34 @@
 # Explicit Visit History 1 – Migrationsnachweis
 
-Stand: 17. September 2026 (Review-Runde 1 eingearbeitet)
+Stand: 17. September 2026 (Development live angewendet und verifiziert)
 
 Migration: `supabase/migrations/20260917120000_account_visits.sql`
 
-Die Migrationsdatei wurde nach dem Technical-Lead-Review überarbeitet statt
-ergänzt. Das ist zulässig, weil sie **nirgends angewendet** ist – weder auf
-Development noch auf Production. Es bleibt eine additive Migration.
+---
+
+## 0. Wer was getan hat
+
+Die Anwendung auf Supabase Development und die Live-Verifikation hat der
+**Technical Lead** durchgeführt, nicht der Cursor-Agent. Der Agent hat in
+dieser Etappe **keine** Migration angewendet und **kein** Supabase-Projekt
+verändert; der in seiner Umgebung hinterlegte `SUPABASE_ACCESS_TOKEN` wurde
+vom Management-API durchgehend mit HTTP 401 abgewiesen.
+
+Dieses Dokument trennt deshalb strikt:
+
+| Abschnitt | Quelle |
+| --- | --- |
+| 1 – was die Migration zusichert | Repository |
+| 2 – Live-Stand Development | Messung des Technical Lead |
+| 3 – erzeugte Typen | Generator des Technical Lead, im Branch nachgezogen |
+| 4 – isolierter lokaler Lauf | Cursor-Agent, lokale PostgreSQL |
+| 5 – Production | Messung des Technical Lead |
+
+**Die Migration ist angewendet. Sie darf nicht erneut angewendet werden.**
 
 ---
 
-## 1. Was die Migration jetzt zusichert
+## 1. Was die Migration zusichert
 
 ### Die Tabelle ist für PostgREST-Rollen nur lesbar
 
@@ -39,8 +57,8 @@ public.account_visit_widerrufen(_id) -> uuid
 Konto ab; `aendern` und `widerrufen` filtern zusätzlich auf `user_id = _uid`,
 weil eine Funktion als Eigentümer der Tabelle läuft und RLS nicht sieht.
 
-Der gemeinsame Kern `public.account_visit_pruefen` hat **für keine Rolle**
-`EXECUTE`, auch nicht für `authenticated`.
+Der gemeinsame Kern `public.account_visit_pruefen` hat **für keine
+PostgREST-Rolle** `EXECUTE`.
 
 ### Was der Vertrag prüft
 
@@ -57,79 +75,96 @@ Der gemeinsame Kern `public.account_visit_pruefen` hat **für keine Rolle**
 
 Dass die Zukunft nicht in einer Check-Bedingung steht, ist kein Versäumnis: ein
 Check muss immutable sein und darf `now()` nicht lesen. Diese Zusage ist
-durchsetzbar, weil die Tabelle keinen anderen Schreibweg mehr hat.
+durchsetzbar, weil die Tabelle keinen anderen Schreibweg hat.
 
 ---
 
-## 2. Was nicht belegt ist
+## 2. Live-Stand Development (gemessen vom Technical Lead)
 
-Die Migration ist **nicht** auf Supabase Development angewendet.
-
-Grund unverändert: Der in dieser Cloud-Agent-Umgebung hinterlegte
-`SUPABASE_ACCESS_TOKEN` wird vom Supabase-Management-API abgewiesen.
+Angewendet wurde **nur** auf Development. Die Migrationshistorie des Branches
+ist exakt auf die Repository-Fassung normalisiert:
 
 ```
-$ curl -sS -o /dev/null -w "%{http_code}\n" \
-    -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
-    https://api.supabase.com/v1/projects
-401
-
-$ npm run db:anwenden -- --probe
-SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401).
-Ref oder Token prüfen. Abgebrochen.
+20260917120000  account_visits
 ```
 
-Offen bleiben deshalb:
+| Gemessen | Ergebnis |
+| --- | --- |
+| RLS auf `public.account_visits` | **aktiv** |
+| Policies | genau eine: `account_visits_lesen`, `USING user_id = auth.uid()`, für `authenticated` |
+| Tabellenrechte `authenticated` | **nur `SELECT`** |
+| Tabellenrechte `anon` | keine |
+| Tabellenrechte `service_role` | keine |
+| `EXECUTE` auf den drei öffentlichen Schreib-RPCs | nur `postgres` und `authenticated` |
+| `EXECUTE` auf `account_visit_pruefen` | nur `postgres` |
+| Zeilen in der Tabelle | 0 |
 
-- Anwendung auf Development;
-- Live-Schema, Live-RLS, Policies, Grants und Advisors;
-- `auth:pruefen`;
-- `npm run db:typen` gegen das Live-Schema.
+Damit ist der Befund aus Review-Runde 1 zur Supabase-Voreinstellung live
+bestätigt: `service_role` hat auf dieser Tabelle nichts, obwohl Supabase neu
+angelegten Tabellen von sich aus Rechte dafür mitgibt. Der explizite Entzug in
+der Migration wirkt.
 
-`types/supabase.ts` trägt den Tabellenblock **und** die drei Vertragsfunktionen
-von Hand in Generatorform. Nach dem Anwenden muss der Generator sie ersetzen und
-der Diff gegengelesen werden.
+### Security Advisors: bewertet, nicht weggelassen
 
-### Insbesondere: über `service_role` wird hier nichts behauptet
+Der Technical Lead hat die Advisors auf Development durchgesehen. Diese Etappe
+erzeugt zwei Arten von Hinweisen, und beide sind gewollt:
 
-Das Review hat zu Recht angemerkt, dass Supabase Tabellen, die `postgres`
-anlegt, von sich aus Rechte für `service_role` mitgibt. Die Migration entzieht
-sie jetzt ausdrücklich:
+1. der allgemeine Hinweis auf GraphQL-Sichtbarkeit für die angemeldete Rolle –
+   Folge des beabsichtigten `SELECT` für `authenticated` zusammen mit
+   Owner-RLS;
+2. `SECURITY DEFINER`-Hinweise für die drei absichtlich exponierten, an
+   `auth.uid()` gebundenen Schreib-RPCs.
 
-```sql
-revoke all on table public.account_visits from public;
-revoke all on table public.account_visits from anon;
-revoke all on table public.account_visits from authenticated;
-revoke all on table public.account_visits from service_role;
+Kein Hinweis auf fehlendes RLS und kein Hinweis auf einen anon-Schreibweg ist
+hinzugekommen.
 
-grant select on table public.account_visits to authenticated;
-```
-
-Dieses Dokument behauptet **nicht**, dass `service_role` auf dem
-Development-Branch blockiert ist. Es behauptet, dass die Migration den Entzug
-ausspricht und dass derselbe Entzug gegen eine nachgebildete Voreinstellung
-nachweislich wirkt (Abschnitt 3). Ob er auf Development wirkt, entscheidet die
-Live-Prüfung – und sie gehört zu den Schritten in Abschnitt 5.
+Das ist ausdrücklich **keine** Zusage „null Warnungen“. Es sind geprüfte
+Entwurfsentscheidungen mit bekannter Warnung; die Gegenmassnahmen zu (2) stehen
+im Self-Review, Abschnitt 2.2.
 
 ---
 
-## 3. Was belegt ist: isolierter Lauf gegen lokale PostgreSQL
+## 3. Erzeugte Typen
 
-`npm run db:besuche-lokal` legt jedes Mal eine frische lokale Datenbank an,
-spielt einen minimalen Supabase-ähnlichen Unterbau ein, wendet **dieselbe
-Migrationsdatei** an und misst danach Rechte, Vertrag und Eigentum empirisch.
-Alles läuft in einer Transaktion, die am Ende zurückgerollt wird.
+`types/supabase.ts` war in dieser Etappe von Hand vorweggenommen, weil es das
+Schema auf Development noch nicht gab. Der Technical Lead hat den echten
+Supabase-Generator gegen Development laufen lassen und dabei festgestellt:
+Tabelle und die drei öffentlichen RPC-Signaturen stimmten überein, **zwei
+Funktionen fehlten** in der Handfassung:
+
+- `account_visit_pruefen` – der Generator gibt sie aus, obwohl sie für keine
+  PostgREST-Rolle ausführbar ist, samt Rückgabetyp der Tabellenzeile und
+  `SetofOptions`;
+- `ist_katalogland`.
+
+Beide sind jetzt generator-genau nachgetragen. Unbeteiligte Bereiche der Datei
+wurden nicht angefasst.
+
+Damit sich dieselbe Lücke nicht wiederholt, prüft ein Test, dass jede Funktion
+der Migration, die kein Trigger ist, in `types/supabase.ts` steht
+(`lib/account/besuche.test.ts`, „jede aufrufbare Funktion der Migration steht in
+den erzeugten Typen“). Trigger-Funktionen lässt der Generator bewusst aus.
+
+---
+
+## 4. Isolierter Lauf gegen lokale PostgreSQL
+
+`npm run db:besuche-lokal` bleibt als eigenständiger Nachweis bestehen. Er
+ersetzt die Live-Prüfung nicht und wird von ihr nicht ersetzt: er misst, was
+eine Live-Momentaufnahme nicht misst, nämlich das Verhalten unter Angriff.
+
+Der Lauf legt jedes Mal eine frische lokale Datenbank an, bildet die
+Supabase-Default-Privilegien nach, wendet **dieselbe Migrationsdatei** an und
+schreibt dann als `authenticated` direkt auf die Tabelle – so, wie ein Client
+es über PostgREST versuchen könnte.
 
 Umgebung: PostgreSQL 16.15 (Ubuntu), lokal, kein Netz, kein Management-API.
 
 ### Der Lauf prüft zuerst seine eigene Voraussetzung
 
-Die erste Fassung dieses Nachweises hatte einen Fehler, den das Review
-mitverursacht aufgedeckt hat: das Bootstrap gab neu angelegten Tabellen keine
-Rechte. Ein `revoke` sah dort auch dann grün aus, wenn es nichts zu entziehen
-gab – der Lauf maß sich selbst.
-
-Das Bootstrap bildet die Voreinstellung jetzt nach:
+Die erste Fassung dieses Nachweises gab neu angelegten Tabellen keine Rechte.
+Ein `revoke` sah dort auch dann grün aus, wenn es nichts zu entziehen gab – der
+Lauf maß sich selbst. Das Bootstrap bildet die Voreinstellung jetzt nach:
 
 ```sql
 alter default privileges in schema public
@@ -138,10 +173,9 @@ alter default privileges in schema public
   grant all on functions to anon, authenticated, service_role;
 ```
 
-Und eine Kontrolltabelle entsteht danach, ohne je entzogen zu werden. Der erste
-Testfall schreibt als `authenticated` in sie hinein und **muss gelingen**.
-Gelänge er nicht, wäre die Voreinstellung unwirksam und jedes folgende
-`abgelehnt` wertlos.
+Eine Kontrolltabelle entsteht danach und wird nie entzogen. Der erste Testfall
+schreibt als `authenticated` in sie hinein und **muss gelingen**. Gelänge er
+nicht, wäre die Voreinstellung unwirksam und jedes folgende `abgelehnt` wertlos.
 
 ### 41 Nachweise
 
@@ -192,75 +226,18 @@ Gelänge er nicht, wäre die Voreinstellung unwirksam und jedes folgende
 Ziel: lokale PostgreSQL. Supabase und Production nicht berührt.
 ```
 
-Die ersten Fälle nehmen bewusst die Rolle des Angreifers ein: sie schreiben als
-`authenticated` direkt auf die Tabelle, so wie ein Client es über PostgREST
-tun könnte, und erwarten abgewiesen zu werden.
-
-### Was dieser Lauf nicht ersetzt
-
-- die tatsächliche Anwendung auf dem Development-Branch und dessen
-  Migrationshistorie;
-- die tatsächliche Supabase-ACL dieses Projekts – nachgebildet ist nachgebildet;
-- die Supabase-Advisors;
-- `auth:pruefen`;
-- die Typen aus dem Live-Schema.
-
 ---
 
-## 4. Production
+## 5. Production
 
-Production wurde nicht berührt. Es wurde kein Kommando mit `--produktion`
-ausgeführt, und derselbe 401 hätte jeden Zugriff verhindert. Es liegt keine
-Änderung an Production vor, weil keine Verbindung zu Production zustande kam.
+Production ist **unverändert**. Der Technical Lead hat nachgesehen: sowohl
+`public.account_visits` als auch `account_visit_bestaetigen(...)` fehlen dort.
 
----
+Der Cursor-Agent hat kein Kommando mit `--produktion` ausgeführt und hätte es
+mit dem vorliegenden Token auch nicht gekonnt.
 
-## 5. Ablauf nach Freigabe
-
-```bash
-export SUPABASE_PROJECT_REF='<development-branch-ref>'
-export SUPABASE_ACCESS_TOKEN='<gültiges PAT>'
-
-npm run db:anwenden -- --probe     # zeigt die offenen Migrationen
-npm run db:anwenden                # nur Development
-npm run db:typen                   # types/supabase.ts neu erzeugen
-git diff types/supabase.ts         # muss den hier ergänzten Block bestätigen
-
-npm run db:rechte
-npm run db:rls
-npm run db:sicherheit
-npm run db:advisors
-npm run check:schema-bezug
-```
-
-Zusätzlich auf Development einmal ausdrücklich nachsehen, weil der lokale Lauf
-es nur nachbildet:
-
-```sql
--- Muss leer sein.
-select grantee, privilege_type
-  from information_schema.role_table_grants
- where table_schema = 'public' and table_name = 'account_visits'
-   and grantee in ('anon', 'service_role', 'PUBLIC');
-
--- Muss genau SELECT sein.
-select privilege_type
-  from information_schema.role_table_grants
- where table_schema = 'public' and table_name = 'account_visits'
-   and grantee = 'authenticated';
-
--- Muss leer sein.
-select p.proname, rolle
-  from pg_proc p
-  join pg_namespace n on n.oid = p.pronamespace
-  cross join unnest(array['anon', 'service_role', 'public']) as rolle
- where n.nspname = 'public'
-   and p.proname like 'account_visit%'
-   and has_function_privilege(rolle, p.oid, 'execute');
-```
-
-Produktion bleibt ausgeschlossen. Sie ist eine eigene Entscheidung des
-Technical Lead nach dem Exact-Head-Review und nicht Teil dieser Etappe.
+Die Produktionsmigration bleibt eine eigene Entscheidung des Technical Lead nach
+dem Exact-Head-Review. Sie ist nicht Teil dieser Etappe.
 
 ---
 

@@ -554,6 +554,41 @@ describe('Der Schreibvertrag liegt in der Datenbank, nicht nur in der Anwendung'
     assert.equal((migration.match(/where id = _id and user_id = _uid/g) ?? []).length, 2)
   })
 
+  /**
+   * Die erzeugten Typen wurden in dieser Etappe von Hand vorweggenommen, bevor
+   * es das Schema auf Development gab – und dabei fehlten zwei Funktionen, die
+   * der echte Generator ausgibt. Diese Prüfung macht aus der einmaligen
+   * Abgleichung eine stehende: jede Funktion der Migration, die kein Trigger
+   * ist, muss in `types/supabase.ts` stehen. Trigger-Funktionen lässt der
+   * Generator bewusst aus.
+   */
+  test('jede aufrufbare Funktion der Migration steht in den erzeugten Typen', () => {
+    const typen = readFileSync(join(hier, '../../types/supabase.ts'), 'utf8')
+    const funktionen = [...migration.matchAll(/create or replace function public\.(\w+)/g)]
+      .map((treffer) => treffer[1] as string)
+      .filter((name) => {
+        const start = migration.indexOf(`create or replace function public.${name}`)
+        return !/^\s*returns trigger$/m.test(migration.slice(start, start + 400))
+      })
+
+    assert.deepEqual(funktionen.sort(), [
+      'account_visit_aendern',
+      'account_visit_bestaetigen',
+      'account_visit_pruefen',
+      'account_visit_widerrufen',
+      'ist_katalogland',
+    ])
+
+    const block = typen.slice(typen.indexOf('    Functions: {'))
+    for (const name of funktionen) {
+      assert.equal(
+        new RegExp(`^ {6}${name}: `, 'm').test(block),
+        true,
+        `${name} fehlt in types/supabase.ts`,
+      )
+    }
+  })
+
   test('der interne Vertragskern ist für keine PostgREST-Rolle ausführbar', () => {
     assert.match(
       migration,

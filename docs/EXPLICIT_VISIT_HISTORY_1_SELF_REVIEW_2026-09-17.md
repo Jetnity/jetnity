@@ -1,6 +1,6 @@
 # Explicit Visit History 1 – Self-Review
 
-Stand: 17. September 2026 (Review-Runde 1 eingearbeitet)
+Stand: 17. September 2026 (Review-Runde 2 eingearbeitet, Development live)
 
 Dies ist die Selbstprüfung des implementierenden Agenten. Sie ist **kein**
 Technical-Lead-PASS und ersetzt kein unabhängiges Exact-Head-Review.
@@ -43,12 +43,30 @@ Zwei weitere Dinge hat das Review mittelbar aufgedeckt:
 
 ## 2. Was ich am aktuellen Head zurückweisen würde
 
-### 2.1 Der Supabase-Development-Nachweis fehlt weiterhin
+### 2.1 Die erzeugten Typen waren nicht generator-genau
 
-Unverändert blockiert: `SUPABASE_ACCESS_TOKEN` wird vom Management-API mit
-HTTP 401 abgewiesen. Die Migration ist nicht angewendet, die Live-Prüfungen sind
-nicht gelaufen. Ich habe das nicht als grün ausgegeben. Der Technical Lead hat
-angekündigt, die Live-Verifikation selbst durchzuführen.
+Ich habe `types/supabase.ts` von Hand vorweggenommen, weil es das Schema auf
+Development noch nicht gab, und dabei nur die Struktur eingetragen, die ich
+selbst benutze: die Tabelle und die drei aufgerufenen RPCs. Der echte Generator
+gibt mehr aus – `account_visit_pruefen` mit Rückgabetyp und `SetofOptions`,
+obwohl sie für keine PostgREST-Rolle ausführbar ist, und `ist_katalogland`.
+
+Der Fehler dahinter ist derselbe wie bei Befund 1 aus Runde 1, nur harmloser:
+ich habe abgebildet, was ich für nötig hielt, statt was der Vertrag tatsächlich
+hergibt. Eine handgeschriebene Datei, die „Nicht von Hand ändern“ oben stehen
+hat, ist immer eine Schätzung – und meine war unvollständig.
+
+Behoben, und damit es nicht wiederkehrt, prüft jetzt ein Test, dass jede
+Funktion der Migration, die kein Trigger ist, in den erzeugten Typen steht. Der
+Test hätte diese Lücke gefunden.
+
+### 2.1b Der Development-Nachweis stammt nicht von mir
+
+Die Migration ist angewendet und live verifiziert – vom **Technical Lead**. Mein
+`SUPABASE_ACCESS_TOKEN` wurde durchgehend mit HTTP 401 abgewiesen; ich habe in
+keiner Runde eine Migration angewendet und kein Supabase-Projekt verändert. Die
+Dokumentation schreibt das jetzt überall so, weil eine Messung ohne Messenden
+keine Herkunft hat.
 
 ### 2.2 `SECURITY DEFINER` ist eine neue scharfe Kante
 
@@ -69,6 +87,12 @@ Was sie stumpf hält:
 
 Trotzdem: jede künftige Änderung an diesen Funktionen ist eine
 Sicherheitsänderung und sollte so gelesen werden.
+
+Die Supabase-Advisors auf Development melden für genau diese drei Funktionen
+einen `SECURITY DEFINER`-Hinweis, und für die Tabelle den allgemeinen Hinweis
+zur GraphQL-Sichtbarkeit der angemeldeten Rolle. Beides ist gewollt und vom
+Technical Lead bewertet. Ich führe es hier, damit niemand später „grün“ liest,
+wo „geprüft und in Kauf genommen“ steht.
 
 ### 2.3 Der Länderkatalog steht jetzt zweimal
 
@@ -167,8 +191,8 @@ richtige Seite des Kompromisses – eine Marke, die man nicht sieht, ist keine.
 | Grenzen unter jeder Füllung | Zeichenreihenfolge | 153 Farben im 21-px-Fenster über der Grenze |
 | Kein externer Kartendienst | erzeugte Geometrie | 14 Aufnahmen, 0 fremde Herkünfte |
 | Keine Reisezeile verändert | nur `account_visits` schreibend | DB-Lauf + Quelltexttest |
-| anon blockiert | kein Tabellenrecht, kein `EXECUTE` | DB-Lauf, gegen nachgebildete Voreinstellung |
-| kein Browser-Service-Role | kein Service-Role-Pfad im Code, kein Tabellenrecht | Quelltexttest + DB-Lauf |
+| anon blockiert | kein Tabellenrecht, kein `EXECUTE` | DB-Lauf gegen nachgebildete Voreinstellung + Live-Messung auf Development |
+| kein Browser-Service-Role | kein Service-Role-Pfad im Code, kein Tabellenrecht | Quelltexttest + DB-Lauf + Live-Messung auf Development |
 
 ---
 
@@ -183,7 +207,8 @@ Kartendienste, ROADMAP/ACTIVE_WORK_STATUS.
 Angefasst ausserhalb des primären Scopes, jeweils mit Begründung oben:
 `components/country/LandFeld.tsx`, `scripts/account-ui-audit.mjs`,
 `scripts/kartografie/weltkarte-geometrie.mjs`, `package.json` (ein Skript),
-`types/supabase.ts` (ein Tabellenblock, drei Funktionen).
+`types/supabase.ts` (ein Tabellenblock, fünf Funktionen – generator-genau gegen
+das Live-Schema von Development abgeglichen).
 
 ## 6. Sicherheit
 

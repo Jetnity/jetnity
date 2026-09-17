@@ -1,8 +1,8 @@
 # Explicit Visit History 1 – Status
 
-Stand: 17. September 2026 (Review-Runde 1 eingearbeitet)
+Stand: 17. September 2026 (Review-Runde 2 eingearbeitet, Development live)
 
-Status: **IMPLEMENTIERT / REVIEW-BEFUNDE BEHOBEN / LOKAL VOLLSTÄNDIG BELEGT / SUPABASE-DEVELOP-NACHWEIS BLOCKIERT**
+Status: **IMPLEMENTIERT / REVIEW-BEFUNDE BEHOBEN / DEVELOPMENT LIVE ANGEWENDET UND VERIFIZIERT / PRODUCTION UNVERÄNDERT**
 
 Issue: #445
 Product-Owner-Direktive: #441
@@ -29,11 +29,14 @@ Der Technical Lead hat den Head `a372f215` geprüft und vier inhaltliche Befunde
 plus eine Integrationsauflage gestellt. Alle fünf sind eingearbeitet; der
 wichtigste hat die Architektur des Schreibwegs verändert.
 
-Ein Punkt bleibt **nicht** erfüllt und darf nicht als erfüllt gelesen werden:
-die Migration ist **nicht** auf Supabase Development angewendet, weil der in
-dieser Umgebung hinterlegte `SUPABASE_ACCESS_TOKEN` vom Management-API mit
-HTTP 401 abgewiesen wird. Die Live-Verifikation führt der Technical Lead selbst
-durch.
+Die Migration ist inzwischen auf Supabase **Development** angewendet und dort
+live verifiziert – **durch den Technical Lead**, nicht durch den Cursor-Agenten.
+Der Agent hat in keiner Runde eine Migration angewendet; sein
+`SUPABASE_ACCESS_TOKEN` wurde vom Management-API durchgehend mit HTTP 401
+abgewiesen. Die Migration darf **nicht erneut** angewendet werden.
+
+Production ist unverändert: `public.account_visits` und
+`account_visit_bestaetigen(...)` fehlen dort, vom Technical Lead nachgesehen.
 
 ---
 
@@ -110,6 +113,7 @@ Flächenquadrat.
 
 ### 4. Die lokale Evidenz bildete die Supabase-ACL nicht ab
 
+
 **Befund:** Supabase gibt Tabellen, die `postgres` anlegt, von sich aus Rechte
 für `service_role`. Die Migration entzog `public` und `anon`, nicht
 `service_role`. Das lokale Bootstrap modellierte die Voreinstellung nicht und
@@ -122,16 +126,35 @@ eine Kontrolltabelle, die nie entzogen wird, belegt im ersten Testfall, dass die
 Voreinstellung wirksam ist. Ohne diesen Fall wäre jedes folgende „abgelehnt“
 wertlos gewesen.
 
-Über den Live-Stand behauptet die Dokumentation nichts: sie sagt, was die
-Migration ausspricht und dass es gegen die nachgebildete Voreinstellung wirkt.
-Die Abfragen für die Live-Prüfung stehen in
-`docs/EXPLICIT_VISIT_HISTORY_1_MIGRATION_EVIDENZ_2026-09-17.md`, Abschnitt 5.
+Inzwischen live bestätigt: auf Development hat `service_role` auf dieser
+Tabelle kein Recht, obwohl Supabase neu angelegten Tabellen von sich aus welche
+mitgibt. Der explizite Entzug wirkt. Die vollständige Messung steht in
+`docs/EXPLICIT_VISIT_HISTORY_1_MIGRATION_EVIDENZ_2026-09-17.md`, Abschnitt 2.
 
 ### 5. `origin/main` integrieren, 0 behind
 
 **Erledigt.** `main@cfcb6b5b` ist per Merge integriert (kein Rebase, kein
 Force-Push). Der Zuwachs von `main` war reine Dokumentation; es gab keinen
 Konflikt. Nach der Integration sind alle Gates erneut gelaufen.
+
+---
+
+## Review-Runde 2: die erzeugten Typen waren nicht generator-genau
+
+Der Technical Lead hat die Migration auf Development angewendet, live geprüft
+und danach den echten Supabase-Generator laufen lassen. Tabelle und die drei
+öffentlichen RPC-Signaturen stimmten mit der Handfassung überein; **zwei
+Funktionen fehlten**:
+
+- `account_visit_pruefen` – der Generator gibt sie aus, obwohl sie für keine
+  PostgREST-Rolle ausführbar ist, mit dem Rückgabetyp der Tabellenzeile und
+  `SetofOptions`;
+- `ist_katalogland`.
+
+**Behoben.** Beide Einträge sind generator-genau nachgetragen; unbeteiligte
+Bereiche von `types/supabase.ts` blieben unangetastet. Damit dieselbe Lücke
+nicht wiederkehrt, prüft jetzt ein Test, dass jede Funktion der Migration, die
+kein Trigger ist, in den erzeugten Typen steht.
 
 ---
 
@@ -213,7 +236,7 @@ Kein Client-Chunk enthält sie.
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | 3308 Tests, 585 Suiten, 0 Fehler |
+| `npm test` | 3309 Tests, 585 Suiten, 0 Fehler |
 | `npx tsc --noEmit` | grün |
 | `npm run lint` | 0 Fehler, 139 Warnungen (alle bestehend, keine aus dieser Etappe) |
 | `npm run build` | grün, `/account/welt` als dynamische Route |
@@ -221,7 +244,7 @@ Kein Client-Chunk enthält sie.
 | `npm run check:exports` | grün, 0 Exporte ohne Aufrufer |
 | `npm run check:deps` | grün |
 | `npm run check:api-schutz` | grün |
-| `npm run check:schema-bezug` | grün (22 Tabellen/Views, 23 Funktionen) |
+| `npm run check:schema-bezug` | grün (22 Tabellen/Views, 25 Funktionen) |
 | `npm run audit:account` | 48/48 grün (WebKit + Chromium, 6 Breiten) |
 | `npm run db:besuche-lokal` | 41/41 gegen lokale PostgreSQL 16 |
 | `node scripts/kartografie/besuchshistorie-belege.mjs` | 14 Belege + 3 Lupen, `ok: true` |
@@ -229,41 +252,44 @@ Kein Client-Chunk enthält sie.
 
 ---
 
-## Blockiert
+## Live-Stand Supabase Development
 
-**Supabase-Development-Nachweis ist nicht erbracht.**
+Angewendet und gemessen vom **Technical Lead**; Migrationshistorie exakt auf die
+Repository-Fassung normalisiert (`20260917120000 account_visits`).
 
-```
-GET https://api.supabase.com/v1/projects  → 401 {"message":"Unauthorized"}
-npm run db:anwenden -- --probe
-  → SUPABASE_PROJECT_REF ist weder Projekt (401) noch Branch (401).
-```
+| Gemessen | Ergebnis |
+| --- | --- |
+| RLS auf `public.account_visits` | aktiv |
+| Policies | genau eine: `account_visits_lesen`, `USING user_id = auth.uid()`, `authenticated` |
+| Tabellenrechte | `authenticated` nur `SELECT`; `anon` keine; `service_role` keine |
+| `EXECUTE` auf den drei Schreib-RPCs | nur `postgres` und `authenticated` |
+| `EXECUTE` auf `account_visit_pruefen` | nur `postgres` |
+| Zeilen | 0 |
+| Production | unverändert – Tabelle und RPC fehlen dort |
 
-Daraus folgt, ohne Beschönigung:
+**Security Advisors:** geprüft, nicht weggelassen. Diese Etappe erzeugt zwei
+Arten von Hinweisen, beide gewollt: den allgemeinen Hinweis auf
+GraphQL-Sichtbarkeit für die angemeldete Rolle (Folge des beabsichtigten
+`SELECT` für `authenticated` mit Owner-RLS) und `SECURITY DEFINER`-Hinweise für
+die drei absichtlich exponierten, an `auth.uid()` gebundenen Schreib-RPCs. Kein
+Hinweis auf fehlendes RLS und keiner auf einen anon-Schreibweg ist
+hinzugekommen. Das ist ausdrücklich **keine** Zusage „null Warnungen“, sondern
+eine bewertete Entwurfsentscheidung.
 
-- die Migration ist **nicht** auf Development angewendet;
-- `db:rls`, `db:rechte`, `db:sicherheit`, `db:advisors`, `auth:pruefen` und
-  `db:typen` sind **nicht** gelaufen – ein Werkzeug, das sich mangels Secret
-  überspringt, gilt nicht als gelaufen;
-- `types/supabase.ts` trägt den Tabellenblock und die drei Vertragsfunktionen
-  von Hand in Generatorform und muss nach dem Anwenden ersetzt werden.
-
-Production wurde **nicht** berührt.
-
-Ersatzweise – nicht gleichwertig, aber belastbar – liegt der isolierte Lauf
-gegen eine lokal aufgesetzte PostgreSQL 16 vor (41/41), der die
-Supabase-Voreinstellung nachbildet und seine eigene Voraussetzung mitprüft.
+Ergänzend – und von der Live-Messung unabhängig – misst
+`npm run db:besuche-lokal` (41/41) das Verhalten unter Angriff: direkte
+Schreibversuche als `authenticated` gegen eine lokale PostgreSQL, die die
+Supabase-Voreinstellung nachbildet und ihre eigene Voraussetzung mitprüft.
 
 ---
 
 ## Offene Punkte
 
-1. Migration auf Supabase Development anwenden, danach `db:typen`, `db:rls`,
-   `db:rechte`, `db:sicherheit`, `db:advisors`, `auth:pruefen`,
-   `production:pruefen` und die drei ACL-Abfragen aus dem Migrationsnachweis.
-2. Produktionsmigration bleibt ausdrücklich beim Technical Lead.
-3. Der Anschluss an Kontoexport, Kontolöschung und Aufbewahrung ist nicht
+1. Produktionsmigration bleibt ausdrücklich beim Technical Lead; sie ist nicht
+   Teil dieser Etappe.
+2. Der Anschluss an Kontoexport, Kontolöschung und Aufbewahrung ist nicht
    gebaut; die Löschung hängt an `on delete cascade` auf `auth.users`.
-4. Kein Real-Device-Test.
+3. Kein Real-Device-Test.
+4. Die Advisor-Hinweise oben bleiben stehen; sie sind bewertet, nicht behoben.
 
 Technical-Lead-Review erforderlich. Kein Ready, kein Merge durch den Agenten.

@@ -1161,6 +1161,35 @@ export type Database = {
         }
         Returns: string
       }
+      account_visit_pruefen: {
+        Args: {
+          _country_code: string
+          _jahr: number
+          _monat: number
+          _place_id: string
+          _tag: number
+        }
+        Returns: {
+          country_code: string | null
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          place_id: string | null
+          place_label: string | null
+          updated_at: string
+          user_id: string
+          visited_day: number | null
+          visited_month: number | null
+          visited_year: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_visits"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       account_visit_widerrufen: { Args: { _id: string }; Returns: string }
       admin_payments_summary_30d: {
         Args: never
@@ -1201,6 +1230,7 @@ export type Database = {
       darf_konfiguration_verwalten: { Args: never; Returns: boolean }
       darf_konten_verwalten: { Args: never; Returns: boolean }
       hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
+      ist_katalogland: { Args: { _code: string }; Returns: boolean }
       liste_ohne_doppelte: { Args: { _werte: string[] }; Returns: boolean }
       modell_kontingent_beanspruchen: {
         Args: {
