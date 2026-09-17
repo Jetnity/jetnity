@@ -197,7 +197,9 @@ Diese Werkzeuge haben sich **nicht selbst übersprungen** und sind **nicht grün
 
 **Der Token der CI ist gültig.** `auth:pruefen` läuft im CI-Job auf demselben exakten Head durch und meldet 55 geprüfte Werte gegen `supabase/config.toml`. Der 401 ist damit kein Zustand des Projekts, sondern des Zugangs, der in diese Agent-Umgebung injiziert wird. Wer die DB-Gates nachholt, braucht denselben Token, den die CI benutzt.
 
-**Folge:** Die additive Migration `20260917090000_modell_reisebegleiter.sql` ist **im Repository vorhanden und nicht angewandt** – weder auf Development noch auf Production. Die live-Prüfung der CHECK-Bedingung, der RLS-Äquivalenz, der Rechte und der Security-Advisor-Befunde ist **offen**.
+**Folge – und zwar nur für diese Agent-Umgebung:** Der Agent konnte die Migration weder anwenden noch live prüfen. Das Gate selbst ist damit **nicht** offen: Der Technical Lead hat die additive Migration `20260917090000_modell_reisebegleiter.sql` auf **Development** angewandt und live verifiziert – CHECK-Bedingung, RLS, Policy, Rechte und Security-Advisors (Abschnitt 4). **Production bleibt unangewandt und geschlossen.** Die Development-Migration darf **nicht** erneut angewandt werden.
+
+Was hier fehlt, ist also der agentenseitige Zugang, nicht der Nachweis. Wer die DB-Skripte in dieser Umgebung nachholen will, braucht denselben Token, den die CI benutzt.
 
 ---
 
@@ -267,7 +269,9 @@ In diesem Durchgang wurde **keine** Supabase-Mutation ausgeführt, weder auf Dev
 | Auth/MFA/AAL geändert? | nein |
 | Sensible Pass-/MRZ-/Scan-/Biometrie-/Health-Speicherung? | nein, nichts davon wird erfragt, gespeichert oder weitergegeben |
 
-**Nebenwirkung, die gemeldet werden muss:** Bei der Suche nach einem erreichbaren Konto-Login wurde über den anon-Auth-Endpunkt ein Registrierungsversuch gemacht. Ergebnis: ein **unbestätigter, sitzungsloser** Nutzer `assistant.runtime1.probe@gmail.com` auf dem Projekt hinter `NEXT_PUBLIC_SUPABASE_URL`. Dieses Projekt ist **nicht** der in `docs/ACTIVE_WORK_STATUS.md` dokumentierte Production-Ref `qscbgcdmivbbnzrcyegn`; `NEXT_PUBLIC_SUPABASE_URL` und `SUPABASE_PROJECT_REF` zeigen auf dasselbe Projekt, und dieses ist nach `docs/DATENBANK.md` per Konvention der Development-Branch. Eine Bestätigung des Ziels über die Management API war wegen des 401 nicht möglich. **Bitte den Nutzer im Development-Auth löschen.**
+**Nebenwirkung, die gemeldet werden muss:** Bei der Suche nach einem erreichbaren Konto-Login wurde über den anon-Auth-Endpunkt ein Registrierungsversuch gemacht. Ergebnis: ein **unbestätigter, sitzungsloser** Nutzer `assistant.runtime1.probe@gmail.com` auf dem Projekt hinter `NEXT_PUBLIC_SUPABASE_URL`. Dieses Projekt ist **nicht** der in `docs/ACTIVE_WORK_STATUS.md` dokumentierte Production-Ref `qscbgcdmivbbnzrcyegn`; `NEXT_PUBLIC_SUPABASE_URL` und `SUPABASE_PROJECT_REF` zeigen auf dasselbe Projekt, und dieses ist nach `docs/DATENBANK.md` per Konvention der Development-Branch. Eine Bestätigung des Ziels über die Management API war wegen des 401 nicht möglich.
+
+**Erledigt, kein offener Auftrag:** Der Technical Lead hat den Nutzer geprüft – kein Profil, keine Reisen, keine Account-Traveller – und gelöscht; die Nachzählung ergab 0 (Abschnitt 4 und Abschnitt 7). Es wurde kein weiteres Probe-Konto angelegt, und es ist keines anzulegen oder zu löschen.
 
 ---
 
