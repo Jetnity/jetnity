@@ -443,6 +443,30 @@ describe('Eine unbrauchbare Antwort wird nicht brauchbar gemacht', () => {
       }),
       klasse: 'schema',
     },
+    {
+      // Die Plattform hält `additionalProperties: false` durch; darauf darf
+      // sich diese Seite nicht verlassen. Ein Feld, das einen Zustand trägt,
+      // wird abgelehnt und nicht stillschweigend entfernt.
+      name: 'zusätzliches zustandstragendes Feld',
+      text: JSON.stringify({
+        antwort: 'Der Prüfstand ist offen.',
+        unsicherheiten: [],
+        naechsteSchritte: [],
+        bezuege: ['O1'],
+        lagen: [{ ref: 'O1', lage: 'Nicht erforderlich', belegt: true }],
+      }),
+      klasse: 'schema',
+    },
+    {
+      name: 'Gewissheit ohne benannte amtliche Lage',
+      text: JSON.stringify({
+        antwort: 'Für diese Route ist kein Visum erforderlich.',
+        unsicherheiten: [],
+        naechsteSchritte: [],
+        bezuege: ['E1'],
+      }),
+      klasse: 'schema',
+    },
   ]
 
   for (const fall of unbrauchbar) {
@@ -493,16 +517,17 @@ describe('Die Auskunft', () => {
     assert.match(ergebnis.auskunft.bezuege[0].lage, /Noch nicht verlässlich bestimmbar/)
   })
 
-  test('übernimmt keinen Zustand aus dem Modelltext in die Bezüge', async () => {
+  test('der angezeigte Zustand kommt aus der Projektion, nicht aus der Antwort', async () => {
+    // Die Auskunft hat kein Feld für einen Zustand. Was die Oberfläche unter
+    // „Jetnity-Stand" zeigt, stammt aus `begleiternutzlastAus()` und trägt
+    // hier `belegt: false` – unabhängig davon, wie zuversichtlich der Text ist.
     const { werkzeuge: w } = werkzeuge(
       erfolg(
         JSON.stringify({
-          antwort: 'Der Prüfstand ist offen.',
+          antwort: 'Der Prüfstand für Italien ist offen; es fehlen Angaben.',
           unsicherheiten: [],
           naechsteSchritte: [],
           bezuege: ['O1'],
-          // Ein Modell, das den Zustand doch mitschickt, wird nicht gehört.
-          lagen: [{ ref: 'O1', lage: 'Nicht erforderlich', belegt: true }],
         }),
       ),
     )
@@ -510,7 +535,8 @@ describe('Die Auskunft', () => {
 
     assert.ok(ergebnis.ok)
     assert.equal(ergebnis.auskunft.bezuege[0].belegt, false)
-    assert.equal(JSON.stringify(ergebnis.auskunft).includes('Nicht erforderlich'), false)
+    assert.match(ergebnis.auskunft.bezuege[0].lage, /Noch nicht verlässlich bestimmbar/)
+    assert.equal(Object.keys(ergebnis.auskunft).includes('lagen'), false)
   })
 })
 

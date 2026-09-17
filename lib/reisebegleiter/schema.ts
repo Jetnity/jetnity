@@ -129,7 +129,19 @@ const bezugKennung = z
   .transform((wert) => ohneSteuerzeichen(wert))
   .pipe(z.string().regex(/^[A-Z]{1,2}[0-9]{1,3}$/, 'Diesen Bezug gibt es nicht.'))
 
-const modellauskunftRoh = z.object({
+/**
+ * `.strict()`: Ein unerwartetes Feld ist ein Fehlschlag, kein Grund zum
+ * Aufräumen.
+ *
+ * Das JSON-Schema unten trägt `additionalProperties: false`, und die Plattform
+ * setzt das mit `strict: true` durch. Diese Prüfung darf sich darauf trotzdem
+ * nicht verlassen: Modelloutput bleibt untrusted input, und ein Vertrag, der
+ * nur auf der Gegenseite gilt, ist hier keiner. Ein stilles Entfernen wäre
+ * ausserdem die falsche Richtung – ein Modell, das `lagen` oder
+ * `visumErforderlich` mitschickt, hat die Regeln nicht verstanden, und eine
+ * Auskunft von so einem Modell soll nicht bereinigt, sondern verworfen werden.
+ */
+const modellauskunftRoh = z.strictObject({
   antwort: auskunftstext(BEGLEITER_GRENZEN.antwort),
   unsicherheiten: z
     .array(auskunftstext(BEGLEITER_GRENZEN.unsicherheit))

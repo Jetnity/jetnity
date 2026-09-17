@@ -171,13 +171,23 @@ describe('Die Auskunft des Modells', () => {
   })
 
   test('lehnt ein zusätzliches Feld ab, auch wenn die Plattform es durchliesse', () => {
-    const geprueft = modellauskunftSchema.safeParse(
-      auskunft({ visumErforderlich: false, preis: 120 }),
-    )
-    // Zod ist hier nicht strict; entscheidend ist, dass das Feld nicht in den
-    // Wert übernommen wird und damit nirgends gelesen werden kann.
-    assert.equal(geprueft.success, true)
-    assert.equal(geprueft.success && 'visumErforderlich' in geprueft.data, false)
-    assert.equal(geprueft.success && 'preis' in geprueft.data, false)
+    // `additionalProperties: false` gilt auf der Gegenseite. Ein Vertrag, der
+    // nur dort gilt, ist hier keiner: Modelloutput bleibt untrusted input.
+    // Ein unerwartetes Feld wird deshalb abgelehnt und nicht stillschweigend
+    // entfernt – ein Modell, das es mitschickt, hat die Regeln nicht
+    // verstanden, und seine Auskunft soll nicht bereinigt werden.
+    for (const zusatz of [
+      { visumErforderlich: false },
+      { preis: 120 },
+      { lagen: [{ ref: 'O1', belegt: true }] },
+      { quelle: 'https://behoerde.example' },
+      { bookingUrl: null },
+    ]) {
+      assert.equal(
+        modellauskunftSchema.safeParse(auskunft(zusatz)).success,
+        false,
+        `zusätzliches Feld durchgelassen: ${Object.keys(zusatz)[0]}`,
+      )
+    }
   })
 })
