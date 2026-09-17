@@ -1,8 +1,8 @@
 # Explicit Visit History 1 – Handoff
 
-Stand: 17. September 2026 (Review-Runde 2 eingearbeitet, Development live)
+Stand: 17. September 2026 (Guardian-Governance-`main` integriert, neu gegatet)
 
-Status: **NICHT READY / REVIEW-BEFUNDE BEHOBEN / DEVELOPMENT LIVE VERIFIZIERT / STOP FÜR TECHNICAL-LEAD-REVIEW**
+Status: **NICHT READY / REVIEW-BEFUNDE BEHOBEN / DEVELOPMENT LIVE VERIFIZIERT / STOP FÜR TECHNICAL-LEAD-RE-REVIEW**
 
 Verbindliche Aufgabe: `docs/EXPLICIT_VISIT_HISTORY_1_TASK_2026-09-17.md`
 Issue: #445 · Direktive: #441 · Draft-PR: #448
@@ -20,14 +20,43 @@ Session: `bc-ba47e289-5ac8-49c4-857e-ba1b37d5784f`.
 | Kanonische Basis | `main@69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6` |
 | Geprüfter Head Runde 1 | `a372f2152f21ab7b57b488b0dab66ca8d43a1813` |
 | Geprüfter Head Runde 2 | `91c93be9fed77499b89ccde53d7090b95b9f728b` |
-| Integriertes `main` | `cfcb6b5ba12bef2383782e5d27e968b23d446b04` |
-| Merge-Base gegen `origin/main` | `cfcb6b5ba12bef2383782e5d27e968b23d446b04` |
-| Ahead / Behind | 14 / 0 (Stand des letzten Commits dieser Kette) |
+| Geprüfter Head Runde 3 | `f984faa1bfb0d31cee998718c5900ccf0b28ae42` |
+| Integriertes `main` | `5b5cc403990e378854a8cbcd69fb7591e656e71a` (Guardian Governance 1, #451) |
+| Merge-Base gegen `origin/main` | `5b5cc403990e378854a8cbcd69fb7591e656e71a` |
+| Ahead / Behind | 16 / 0 (Stand des letzten Commits dieser Kette) |
 | Drift | **keine** – 0 behind |
 
-`main@cfcb6b5b` ist per **Merge** integriert. Kein Rebase, kein Force-Push: der
-zuvor geprüfte Head bleibt in der Historie auffindbar. Der Zuwachs von `main`
-war reine Dokumentation (V1 Account/Privacy/Ops Audit G2) und ohne Konflikt.
+### Warum Merge und nicht Rebase
+
+Der Auftrag nennt einen sauberen Rebase als bevorzugt, „if safe“. Er ist hier
+nicht sicher, aus drei Gründen:
+
+1. **Die Prüfkette hängt an Heads.** Der Technical Lead hat `a372f215`,
+   `91c93be9` und `f984faa1` einzeln geprüft und in diesem PR mit SHA zitiert.
+   Ein Rebase schreibt jeden Commit neu; diese drei wären keine Vorfahren des
+   Branches mehr, und der Vergleich „was hat sich seit dem geprüften Head
+   geändert“ verlöre seine Basis. Genau diesen Vergleich braucht jede Runde.
+2. **Der Verlauf enthält bereits einen Merge** (`6074f4d5`, Integration von
+   `main@cfcb6b5b`). Ein linearer Rebase wäre nicht „clean“, sondern müsste ihn
+   plattdrücken oder mit `--rebase-merges` nachbilden.
+3. **Rebase verlangt einen Force-Push**, den der Operating Standard ohne
+   ausdrückliche Anweisung untersagt.
+
+Der Merge war seinerseits risikofrei: `main` hat vier Governance-Dokumente
+hinzugefügt, mein Branch berührt keines davon, und die Probe vor dem Merge
+meldete null Konflikte.
+
+### Was der Merge gebracht hat
+
+Ausschliesslich die vier Guardian-Dateien aus `main`, unverändert übernommen:
+`JETNITY_START_HERE.md`, `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`,
+`docs/JETNITY_GUARDIAN_GOVERNANCE_1_STATUS_HANDOFF_2026-09-17.md` und
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`. Keine
+Slice-Datei hat sich dadurch geändert, und keine Guardian-Datei ist
+zurückgenommen worden – sie sind byte-identisch mit `origin/main`.
+
+Der neue Standard ändert an dieser Etappe nichts: er regelt die Rolle des
+Guardian, nicht die eines Cursor-Agenten, und führt kein neues Gate ein.
 
 ## 2. Runde 3: die erzeugten Typen
 
@@ -68,6 +97,11 @@ welche mitgibt. Die vollständige Messung steht in Abschnitt 7.
 
 ## 4. Geänderte Dateien
 
+**Seit Head `f984faa1` (Integrationslauf)**
+
+- nur der Merge von `main@5b5cc403` und diese Fortschreibung. Keine
+  Slice-Datei, keine Migration, kein Typ, kein Test geändert.
+
 **Seit Head `91c93be9` (Runde 3)**
 
 - `types/supabase.ts` – `account_visit_pruefen` und `ist_katalogland`
@@ -80,7 +114,8 @@ welche mitgibt. Die vollständige Messung steht in Abschnitt 7.
 - `supabase/migrations/20260917120000_account_visits.sql` – in Runde 2
   überarbeitet statt ergänzt, weil sie damals nirgends angewendet war. Seither
   ist sie auf Development angewendet; sie darf **nicht erneut** angewendet und
-  nicht mehr verändert werden.
+  nicht mehr verändert werden. Gegen die geprüften Heads `91c93be9` und
+  `f984faa1` ist sie byte-identisch (`git diff` leer, sha256 `bdaa9d67bf34…`).
 - `types/supabase.ts` – Tabelle und fünf Funktionen
 
 **Anwendung**
@@ -187,32 +222,36 @@ Voraussetzung mitprüft.
 
 ## 9. Exakter Endstand
 
-### Inhalts-Head
+### Integrations-Head
 
-`092d4dbf00d770aae544ae904cf2d2f11934c013`
+`8ab32b16df374e62cd5697f60f9b0231dba0f7fe`
 
-Letzter Commit mit Typen, Tests und Nachweisen. Er enthält die
-Typabgleichung dieser Runde und die überarbeiteten STATUS-, SELF_REVIEW- und
-MIGRATION_EVIDENZ-Dokumente.
+Der Merge von `main@5b5cc403`. Er enthält keine Slice-Änderung; alle Gates
+dieses Dokuments sind auf diesem Stand gelaufen.
 
 ### Dokumentations-Head
 
-Darauf folgt genau ein weiterer Commit. Er enthält **keinen Code**: diesen
-Abschnitt. Er erzeugt einen eigenen CI-Lauf und einen eigenen Vercel-Preview;
-dieser Lauf ist der Exact-Head-Stand für das Review und in PR #448 sichtbar.
+Darauf folgt genau ein weiterer Commit. Er enthält **keinen Code**: diese
+Fortschreibung. Er erzeugt einen eigenen CI-Lauf und einen eigenen
+Vercel-Preview; dieser Lauf ist der Exact-Head-Stand für das Re-Review und in
+PR #448 sichtbar.
 
 ### Historie dieser Kette
 
 | Head | Rolle | CI |
 | --- | --- | --- |
 | `a372f215` | Runde 1, vom Technical Lead geprüft | success (`35200088971`) |
-| `91c93be9` | Runde 2, vier Befunde behoben, `main` integriert, vom Technical Lead geprüft; Development angewendet und verifiziert | success (`35207927525` / #1774), Vercel `dpl_5wPgjo7NKiTe5DQdGS2mdW68Y7Fx` Ready |
-| `092d4dbf` | Runde 3, erzeugte Typen generator-genau abgeglichen | siehe PR #448 |
+| `91c93be9` | Runde 2, vier Befunde behoben, `main@cfcb6b5b` integriert, vom Technical Lead geprüft; Development angewendet und verifiziert | success (`35207927525` / #1774), Vercel `dpl_5wPgjo7NKiTe5DQdGS2mdW68Y7Fx` Ready |
+| `f984faa1` | Runde 3, erzeugte Typen generator-genau abgeglichen, vom Technical Lead geprüft | success (`35210820658`) |
+| `8ab32b16` | Integration von `main@5b5cc403` (Guardian Governance 1) | siehe PR #448 |
+
+Jeder dieser Heads ist weiterhin Vorfahr des Branches und damit für einen
+Vergleich erreichbar.
 
 ### Drift
 
 Keine. `origin/main` steht nach erneutem Fetch auf
-`cfcb6b5ba12bef2383782e5d27e968b23d446b04`, und das ist zugleich die
+`5b5cc403990e378854a8cbcd69fb7591e656e71a`, und das ist zugleich die
 Merge-Base: **0 behind**. Kein Rebase, kein Force-Push; jeder zuvor geprüfte
 Head bleibt in der Historie auffindbar.
 

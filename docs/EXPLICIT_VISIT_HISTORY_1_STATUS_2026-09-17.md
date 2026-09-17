@@ -1,6 +1,6 @@
 # Explicit Visit History 1 – Status
 
-Stand: 17. September 2026 (Review-Runde 2 eingearbeitet, Development live)
+Stand: 17. September 2026 (Guardian-Governance-`main` integriert, neu gegatet)
 
 Status: **IMPLEMENTIERT / REVIEW-BEFUNDE BEHOBEN / DEVELOPMENT LIVE ANGEWENDET UND VERIFIZIERT / PRODUCTION UNVERÄNDERT**
 
@@ -9,7 +9,7 @@ Product-Owner-Direktive: #441
 Draft-PR: #448
 Branch: `feat/phase-1-explicit-visit-history-1`
 Basis: `main@69f3b206fc87bf4a3ff9e3c275cf55d244c0a9a6`, integriert bis
-`main@cfcb6b5ba12bef2383782e5d27e968b23d446b04`
+`main@5b5cc403990e378854a8cbcd69fb7591e656e71a` (Guardian Governance 1, #451)
 
 Agent: `Jetnity explicit visit history 1`, Generation 1, Claude Opus 5 High.
 
@@ -136,6 +136,12 @@ mitgibt. Der explizite Entzug wirkt. Die vollständige Messung steht in
 **Erledigt.** `main@cfcb6b5b` ist per Merge integriert (kein Rebase, kein
 Force-Push). Der Zuwachs von `main` war reine Dokumentation; es gab keinen
 Konflikt. Nach der Integration sind alle Gates erneut gelaufen.
+
+Inzwischen ist auch `main@5b5cc403` (Guardian Governance 1, #451) auf demselben
+Weg integriert: vier Governance-Dokumente, die dieser Branch nicht berührt,
+unverändert übernommen und nicht zurückgenommen. Keine Slice-Datei hat sich
+dadurch geändert; alle Gates sind auf dem Integrationsstand erneut gelaufen.
+Die Begründung für Merge statt Rebase steht im Handoff, Abschnitt 1.
 
 ---
 
