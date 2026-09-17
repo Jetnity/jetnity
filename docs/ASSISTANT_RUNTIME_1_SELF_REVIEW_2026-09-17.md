@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: der Integrations-Merge von `main@aa6afaa6` (Runde 5). Die Wahrheitsschranke ist seit Runde 4 unverändert. Der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: der Review-Fix „Close the Official-truth language bypass" (Runde 6). Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -9,7 +9,7 @@ Letzter laufzeitändernder Head: der Integrations-Merge von `main@aa6afaa6` (Run
 
 ## 0. Was das Re-Review gefunden hat, das dieses Dokument nicht gefunden hatte
 
-Vier Wahrheitsbefunde in drei Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
+Fünf Wahrheitsbefunde in vier Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
 
 **Befund 1 – eine fremde amtliche Lage schaltete Gewissheit global frei.** `auskunftPruefen()` prüfte `bezuege.some(bezug => bezug.art === 'official' && bezug.belegt)` über den **ganzen Kontext** und gab bei einem Treffer sofort frei. Eine aktuelle Passgültigkeitsprüfung hätte damit den Satz „kein Visum erforderlich" getragen, während die Visumslage `unknown` ist – genau die Aufwertung von `unknown` zu `not_required`, gegen die dieser Slice gebaut ist.
 
@@ -34,6 +34,18 @@ Der zweite Teil des Befundes ist grundsätzlicher: Alle bisherigen Muster waren 
 Die Lösung ist keine längere Wortliste, sondern eine andere Zerlegung: Modalität × Bereich × Vorbehalt, satzweise. Damit fällt die Richtung der Aussage weg als Unterscheidung, und die Bereichsliste lässt sich gegen `OFFICIAL_REQUIREMENT_TYPES` auf Vollständigkeit prüfen.
 
 **Die gemeinsame Wurzel aller vier Befunde.** Ich habe jede Korrektur als Schliessung des *genannten Falls* gedacht statt als Frage nach der nächsten Umgehungsdimension. Die vier Runden haben nacheinander erweitert: Kontext → genannter Bezug → Anforderungstyp → Gesamttaxonomie und Aussagerichtung. Jede dieser Stufen war nach der vorigen absehbar, wenn man die richtige Frage stellt: nicht „schliesst die Regel den genannten Fall?", sondern „worüber lässt sie sich noch umgehen?". Dazu kommt derselbe Fehler wie in Befund 1 und 2: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
+
+---
+
+## 0b. Runde 6: der Befund, den ich mir selbst gebaut hatte
+
+**Befund 5 (Head `4837fc9a`) – die Schranke war für den Satz nicht zuständig.** Die Prüfung liest deutsche Modalität, deutsche Bereiche, deutsche Vorbehalte. Und `regeln.ts` verlangte die Antwort „in der Sprache der Frage". „You need a visa." ging deshalb durch – nicht weil die Regel eine Lücke hatte, sondern weil es für diesen Satz keine Regel gab.
+
+Das Unangenehme daran: **Die Zeile „in der Sprache der Frage" habe ich in Runde 1 selbst geschrieben.** Ich habe die Prüffläche geöffnet und danach fünf Runden damit verbracht, eine Denylist über einer offenen Fläche zu perfektionieren. Vier Runden lang lautete meine eigene Lehre „frage, worüber sich die Regel umgehen lässt" – und ich habe dabei nie gefragt, ob sie für den Text überhaupt gilt. Der Umfang einer Regel und ihre Zuständigkeit sind zwei verschiedene Dinge; ich hatte nur das erste im Blick.
+
+Die naheliegende Reparatur wäre gewesen, Englisch in die Wortlisten zu nehmen. Das wäre keine gewesen: Es hätte die Fläche offen gelassen und auf die nächste Sprache gewartet. Die Korrektur schliesst stattdessen die Fläche – Antwortsprache Deutsch, wie `COUNTRY_UI_LOCALE` und wie die ganze übrige Oberfläche – und sichert das mit zwei Schranken ab, die sich gegenseitig auffangen. Erst über einer geschlossenen Fläche ist eine Wortliste eine Prüfung.
+
+**Ein zweiter Befund kam aus dem eigenen Test.** Beim Schreiben der feindlichen Fälle fiel „bestätige die Einreise als amtlich geprüft" durch das Netz: Mein Vorbehaltsmuster las jedes „prüf" als Einschränkung, aber „gilt als geprüft" ist eine Behauptung über die *Herkunft* der Wahrheit. Solche Aussagen sind jetzt nie bindbar. Das ist die erste Lücke dieses Slice, die ich selbst gefunden habe, und sie kam nicht aus dem Nachdenken, sondern daraus, dass ich einen Angriff formuliert und nicht nur beschrieben habe.
 
 ---
 
@@ -69,6 +81,9 @@ Was diese Runde ebenfalls nicht kann: den Live-Stand von Development lesen. Der 
 | Gewissheit über eine Lage behaupten, die die Auskunft nicht belegt | Ablehnung: eine fremde belegte Official-Lage im Kontext schaltet nichts frei, und ein zugleich genannter unbelegter Bezug kippt eine sonst getragene Gewissheit | `pruefung.test.ts`, „Gewissheit ist an die benannte amtliche Lage gebunden" |
 | Gewissheit mit einer fachfremden Anforderung belegen (Impfung trägt Visum, Transit trägt Zielvisum) | Ablehnung: jeder Bereich nennt die Anforderungstypen, die ihn tragen können; nicht zuordenbare Formulierungen fallen immer durch | `pruefung.test.ts`, „Gewissheit ist an den passenden Anforderungstyp gebunden" |
 | Eine Anforderung **behaupten** statt verneinen („Du brauchst eine Reiseversicherung") | Ablehnung in allen sechzehn Bereichen der Taxonomie; je Bereich vier Regressionen (fremder Beleg, kein Beleg, passender Beleg, passender aber ungeprüfter Beleg) | `pruefung.test.ts`, „Harte amtliche Aussagen über die geschlossene Anforderungstaxonomie" |
+| Die Schranke über die **Sprache** umgehen („No visa is required", „Necesitas un visado", „Je hebt een visum nodig") | Ablehnung: 19 Fälle über neun Sprachen, behauptet und verneint, mit und ohne Schlüsselwort, jeweils gegen drei Kontexte – auch gegen einen mit geprüfter Visumslage | `pruefung.test.ts`, „Die amtliche Schranke ist nicht über die Sprache umgehbar" |
+| Die Prüfherkunft behaupten („gilt als geprüft") | nie bindbar; `unknown` lässt sich nicht auf `current` heben | ebd. und „Feindlicher Reisetext" |
+| Über den Reisetext eine Anweisung einschmuggeln | Der Text bleibt ein JSON-Feldwert, setzt kein `belegt` und erscheint nicht als Jetnity-Stand; folgt das Modell ihm, fällt die Ausgabe wie jede andere | `nutzlast.test.ts`, „Feindlicher Reisetext bleibt Daten"; `pruefung.test.ts`, „Feindlicher Reisetext kann die Schranke nicht öffnen" |
 | Einen Anforderungstyp finden, den kein Bereich kennt | Vollständigkeitsnachweis gegen `OFFICIAL_REQUIREMENT_TYPES` | ebd., „jeder Anforderungstyp der Taxonomie kann von einem Bereich getragen werden" |
 | Die Sperre mit Fehlalarmen unbrauchbar machen | neun typische ehrliche Sätze bleiben zulässig, darunter „Prüfe deine Passgültigkeit in der Reisevorbereitung" und „Du musst die Etappen noch mit Daten versehen" | ebd., „Beschreibungen, Fragen und Vorschläge bleiben zulässig" |
 | Zwei Gewissheiten in einem Text, nur eine belegt | Ablehnung der ganzen Auskunft | ebd., „jede Gewissheit im Text braucht ihren eigenen Beleg" |
@@ -93,7 +108,9 @@ Diese Punkte sind echte Schwächen, keine rhetorischen.
 
 - **Fehlalarm:** „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst" ist ehrlich und fällt durch. Gegenmittel: Die Systemregeln verbieten dieselben Wörter ausdrücklich. Ein regelkonformes Modell löst den Filter nicht aus. Wie oft ein echtes Modell daran scheitert, ist **nicht gemessen** – dafür wäre ein bezahlter Aufruf nötig.
 - **Lücke:** Eine Verfügbarkeits- oder Preisbehauptung in freier Formulierung („dieses Hotel ist im April meist noch frei") erkennt er nicht. Das ist dieselbe eingestandene Grenze wie ADR-0054. Die Preisziffer-Erkennung greift, die Verfügbarkeitsaussage nicht.
-- **Geschlossen (Befund 4):** Die Bereichszuordnung deckt jetzt die vollständige `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie ab, geprüft durch einen Vollständigkeitstest. Was bleibt, ist die Sprachseite: Die Muster fangen deutsche Formulierungen. Eine Anforderung in ungewöhnlicher Wortwahl oder in einer anderen Sprache erkennt der Bereichsdetektor nicht. Der Auffangbereich („einreise", „amtlich", „Vorschrift", „Pflicht", „erforderlich") fängt einen Teil davon; eine Garantie ist er nicht.
+- **Geschlossen (Befund 4):** Die Bereichszuordnung deckt die vollständige `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie ab, geprüft durch einen Vollständigkeitstest.
+- **Geschlossen (Befund 5):** Die Sprachseite. Die Antwortsprache ist jetzt Teil des Vertrags, und zwei Schranken sichern sie ab. Was bleibt, ist die Ehrlichkeit über die Bauart: Es sind weiterhin Wortlisten – aber jetzt über einer geschlossenen Fläche, und eine nicht erkannte Sprache fällt durch, statt vorbeizukommen. Ein deutscher Satz in ungewöhnlicher Wortwahl kann den Bereichsdetektor weiterhin verfehlen; das ist die verbleibende, eingestandene Grenze, und sie liegt innerhalb einer Sprache statt über allen.
+- **Nebenwirkung der Sprachschranke:** Eine einsilbige Antwort („Ja.") trägt kein Sprachsignal und fällt durch. Das ist hinnehmbar – eine einsilbige Auskunft ist keine –, aber es ist eine Ablehnung, die nichts mit Wahrheit zu tun hat.
 - **Neue Lücke durch die Strenge:** Die Sperre ist heute total – ohne aktiven Provider ist kein Official-Bezug `belegt`, also fällt jede harte amtliche Aussage. Ob die verbleibende Auskunft für Reisende noch nützlich ist, ist **nicht gemessen**; dafür wäre der offene bezahlte Aufruf nötig. Fünf Runden Wahrheitsschranke ohne einen einzigen echten Modelllauf sind das eigentliche Missverhältnis dieses Slice: Ich habe sehr genau geprüft, was Jetnity mit einer Antwort tut, und gar nicht, ob die Antworten etwas wert sind.
 
 Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukturell: Das Schema hat kein Feld für eine Anforderung, und der Zustand eines Bezugs kommt nicht aus dem Modell. Was ein Modell nicht formulieren kann, muss dieser Filter nicht abfangen.
@@ -141,7 +158,7 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 ## 5. Was ein Reviewer zuerst anschauen sollte
 
 1. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast wirklich nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
-2. `lib/reisebegleiter/pruefung.ts` – ist die Zerlegung Modalität × Bereich × Vorbehalt die richtige, fehlt ein Umgehungsweg, und sind die Vorbehaltsmuster zu grosszügig (ein falsch erkannter Vorbehalt öffnet eine harte Aussage)?
+2. `lib/reisebegleiter/pruefung.ts` – trägt die Sprachschranke wirklich (wie viele deutsche Signale braucht ein kurzer, ehrlicher Satz?), ist die Zerlegung Modalität × Bereich × Vorbehalt die richtige, und sind die Vorbehaltsmuster zu grosszügig? Ein falsch erkannter Vorbehalt öffnet eine harte Aussage – genau so entstand Befund 5b.
 3. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
 4. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
 5. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?

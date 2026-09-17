@@ -336,14 +336,16 @@ Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner
 - `components/trips/Reisebegleiter.tsx` plus `begleiter`-Slot in `TripWorkspace`: eine eingeklappte Fläche in der Reiseübersicht, nur Konto
 - additives `Modellanfrage.ausgabeTokens`, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt
 - sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser, mobil und Desktop)
-- 3505 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
-- exact-head CI `35165950349`: **success** (beide Jobs, inkl. `auth:pruefen`); Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v`: **READY**
+- 3537 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
+- exact-head CI **success** (beide Jobs, inkl. `auth:pruefen`) und Vercel Preview **READY** auf jedem bisherigen Kopf; die Kennungen des aktuellen Kopfes stehen in den Checks von PR #435, nicht hier
 
-**Nach den Technical-Lead-Re-Reviews behoben (`3775d980`, `74577e31`, `f46d43a0`):**
+**Nach den Technical-Lead-Re-Reviews behoben (`3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`):**
 
 - Gewissheit ist an die von der Auskunft **genannte** amtliche Lage gebunden; eine fremde geprüfte Official-Lage schaltet sie nicht global frei
 - Gewissheit ist zusätzlich an den **passenden Anforderungstyp** gebunden; eine geprüfte Impfanforderung trägt kein Visum. `BegleiterBezug` führt dafür die maschinenlesbare Anforderungsidentität aus der Projektion
 - harte amtliche Aussagen werden über die **vollständige** `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie geprüft, für Behauptung wie Verneinung; erkannt satzweise aus Modalität, Bereich und Vorbehalt
+- die Antwortsprache ist Teil des Vertrags: Der Reisebegleiter antwortet auf Deutsch, und zwei Schranken fangen fremde Sprache und fremdes Amtsvokabular ab – eine Prüfung über deutschen Mustern ist nur über einer geschlossenen Sprachfläche vollständig
+- „gilt als geprüft" und Verwandte sind nie bindbar: Ob eine Lage geprüft ist, sagt allein Jetnity
 - serverseitige Ausgabeprüfung lehnt unerwartete Felder ab (`z.strictObject`) statt sie zu entfernen
 - `main@aa6afaa6` per Merge integriert (kein Rebase, kein Force-Push); 0 behind, verlustfrei in beide Richtungen geprüft
 

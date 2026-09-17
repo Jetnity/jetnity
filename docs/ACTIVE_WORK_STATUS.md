@@ -15,9 +15,9 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Current base | `main@aa6afaa6057f631ffb332e6feeda32a45c52fa47` (merged, not rebased) |
-| **Last runtime-changing head** | the two review-fix commits on top of `3775d9803bf01123b13f16402885b1a5d33bb71e` |
+| **Last runtime-changing head** | the review fix “Close the Official-truth language bypass by closing the answer language” |
 | **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
-| Merge-base / behind / ahead | `15aa125a` / **8 behind** / 14 ahead against the current `origin/main` |
+| Merge-base / behind | `aa6afaa6` / **0 behind**. The ahead count is deliberately not recorded here — it changes with the very commit that would record it. The live compare in PR #435 is authoritative |
 | Drift | none. `main@aa6afaa6` (Realistic World Cartography 1, Guardian governance, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) was integrated with `git merge --no-ff`, deliberately without rebase or force-push so the already reviewed exact-head history survives. No conflicts; losslessness verified in both directions |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Decision | ADR-0212 |
@@ -25,14 +25,15 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
 | Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
 
-Repository gates on the exact head are green: `npm test` 3505/3505, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 75 browser checks via `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview; the identifiers of the latest run are in the checks of PR #435.
+Repository gates on the exact head are green: `npm test` 3537/3537, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 75 browser checks via `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview. Exact-head CI/Vercel identifiers are deliberately **not** recorded in repository documents: the commit that recorded them would itself be a new head and invalidate them. The checks of PR #435 are authoritative.
 
-**Technical-Lead re-reviews on `3775d980`, `74577e31` and `f46d43a0` — four truth findings, all fixed in this session:**
+**Technical-Lead re-reviews on `3775d980`, `74577e31`, `f46d43a0` and `4837fc9a` — five truth findings, all fixed in this session:**
 
 1. Assistant certainty was unlocked globally by any current Official record in the context. It is now bound to the Official evidence the answer **names**: at least one named `belegt` Official ref, and no named unbelegt one.
 2. Server-side output parsing stripped unexpected properties. It now rejects them (`z.strictObject`), so a state-bearing extra field such as `lagen` ends as class `schema` instead of a cleaned-up suggestion.
 3. Certainty was bound to a named Official ref but not to its **requirement type**, so a current vaccination fact could carry “kein Visum erforderlich”. `BegleiterBezug` now carries the machine-readable requirement identity (`requirementType`, `scope`, `visaMode`) straight from the accepted projection — never read back from localized display copy — and every certainty pattern names the requirement type that can carry it. Unbindable phrases (“garantiert”, “definitiv”, “amtlich bestätigt”, “nicht erforderlich”, “problemlos einreisen”) always fail closed. Twelve adversarial regressions cover the constellations; nine of them fail against the respective previous rule.
 4. The binding was requirement-accurate but covered only five domains and only negations, so an asserted requirement (“Du brauchst eine Reiseversicherung”, “Dein Pass muss sechs Monate gültig sein”) fell through the net. Detection is now sentence-wise over modality × domain × hedge, spans the complete `OFFICIAL_REQUIREMENT_TYPES` taxonomy in both directions, and uses `other_entry_requirement` as the catch-all. A coverage test asserts every requirement type is carried by some domain. Ordinary suggestions (“Prüfe deine Passgültigkeit in der Reisevorbereitung”) stay valid.
+5. The guard read German modality/domain/hedge patterns while the prompt allowed answering “in the language of the question”, so “No visa is required” passed — not through a gap in the rule but because no rule applied to that sentence. The answer language is now part of the contract (German, matching `COUNTRY_UI_LOCALE`), backed by two gates: an answer without German function words or umlauts is rejected, which closes every unenumerated language; and official vocabulary from the other `COUNTRY_LOCALES` is rejected independently, which covers a mixed-language text. A denylist over an open language surface is incomplete; over a closed one it is a check. Additionally, claims about the *provenance* of truth (“gilt als geprüft”) are never bindable — whether a situation is checked is Jetnity's statement alone. 19 regressions across nine languages, asserted and negated, plus paraphrases without keywords and hostile trip text.
 
 With no requirements provider active, no Official ref is ever `belegt`, so this is currently a **complete block** on official statements rather than a filter — which is correct, because Jetnity holds no checked official truth.
 

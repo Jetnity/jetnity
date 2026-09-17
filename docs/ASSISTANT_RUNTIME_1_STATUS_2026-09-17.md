@@ -18,11 +18,11 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 
 | | |
 | --- | --- |
-| Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (durch Rebase abgelöst) |
+| Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (historisch; inzwischen durch Rebase und Merge abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | der Integrations-Merge `main@aa6afaa6` in den Branch |
+| **Letzter laufzeitändernder Head** | der Review-Fix „Close the Official-truth language bypass by closing the answer language" |
 | Merge-Base mit `origin/main` | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` – `main` wurde in den Branch **gemergt**, nicht rebased |
-| Behind / Ahead gegen `origin/main` | **0 behind / 19 ahead** |
+| Behind gegen `origin/main` | **0** – geprüft beim letzten Handoff. Die Ahead-Zahl steht hier nicht: Sie ändert sich mit jedem Commit, auch mit dem, der sie festhielte. Verbindlich ist der Live-Vergleich in PR #435 |
 | Drift | **keine.** `origin/main` war auf `aa6afaa6` gewandert (Realistic World Cartography 1, Guardian-Governance, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits). Integriert durch `git merge --no-ff`, ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt |
 
 Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
@@ -49,7 +49,7 @@ Commits auf dem Branch:
 8. Review-Fix 4: harte amtliche Aussagen über die ganze Anforderungstaxonomie
 9. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
 
-Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `03842a64` geändert; Reihenfolge und Inhalte sind unverändert.
+Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@03842a64` geändert; Reihenfolge und Inhalte sind unverändert. Seither wird `main` gemergt und nicht mehr rebased, damit die reviewte Historie erhalten bleibt.
 
 ---
 
@@ -100,7 +100,7 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `03842a64`
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3505 Tests, 611 Suites, 0 Fehler (einschliesslich aller von `main` übernommenen Tests) |
+| `npm test` | **grün** – 3537 Tests, 614 Suites, 0 Fehler (einschliesslich aller von `main` übernommenen Tests) |
 | `npm run typecheck` | **grün** |
 | `npm run lint` | **0 Fehler**, 139 Warnungen – exakt die Baseline von `origin/main` (dort gemessen), keine davon in neuen Dateien |
 | `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |
@@ -110,11 +110,11 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `03842a64`
 | `npm run check:api-schutz` | **grün** – 12 Admin-Routen, alle mit `requireAdminApi()` |
 | `npm run check:schema-bezug` | **grün** |
 | `npm run nachweis:reisebegleiter` | **grün** – 75 Browser-Prüfungen bei 390×844, 1280×900 und 1440×1000, 0 Fehler, keine Konsolenfehler |
-| GitHub Actions auf dem exakten Head | **success** – Run `35165950349`, beide Jobs: `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml` |
-| `npm run auth:pruefen` | **grün in der CI** auf dem exakten Head: „Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch", alle vier Prüfungen ✓. Die CI hat einen gültigen `SUPABASE_ACCESS_TOKEN`; in dieser Cloud-Agent-Umgebung schlägt derselbe Aufruf mit 401 fehl |
-| Vercel Preview auf dem exakten Head | **READY** – `6kbzcUP3CDzhXkkkj3owzz4bQB3v` |
+| GitHub Actions auf dem exakten Head | **success** – beide Jobs: `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml` |
+| `npm run auth:pruefen` | **grün in der CI** auf jedem exakten Head: „Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch", alle vier Prüfungen ✓. Die CI hat einen gültigen `SUPABASE_ACCESS_TOKEN`; in dieser Cloud-Agent-Umgebung schlägt derselbe Aufruf mit 401 fehl |
+| Vercel Preview auf dem exakten Head | **READY** |
 
-Die beiden Kennungen oben gehören zum laufzeitändernden Head `ea7cf8ec`. Jeder Dokumentations-Commit darüber löst dieselbe CI und dieselbe Vercel-Preview erneut aus; beide waren auf jedem dieser Köpfe erfolgreich. Die Kennungen des jeweils letzten Laufs stehen in den Checks von PR #435 – ein Dokument kann die Kennung des Laufs nicht enthalten, den es selbst auslöst.
+Exact-Head-Kennungen von CI und Vercel stehen **nicht** in diesem Dokument: Jeder Commit, der sie festhielte, wäre ein neuer Head und machte sie im selben Moment ungültig. Die Kennungen des jeweils aktuellen Kopfes stehen in den Checks von PR #435; der Abschlussbericht des Agenten nennt sie für den Head, auf dem er endet.
 
 ### Integration von `main@aa6afaa6`
 
