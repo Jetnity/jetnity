@@ -145,7 +145,8 @@ const AUSKUNFT = {
 
 const GERAETE = [
   { name: 'mobil', width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
-  { name: 'desktop', width: 1440, height: 1000, deviceScaleFactor: 1 },
+  { name: 'desktop-1280', width: 1280, height: 900, deviceScaleFactor: 1 },
+  { name: 'desktop-1440', width: 1440, height: 1000, deviceScaleFactor: 1 },
 ]
 
 const befunde = []
