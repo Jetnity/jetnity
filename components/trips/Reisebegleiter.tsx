@@ -33,6 +33,13 @@ import type { Trip } from '@/types/trips'
 
 type ReisebegleiterProps = {
   reise: Trip
+  /**
+   * Nur für interne Audits: startet mit einer bereits vorliegenden Auskunft,
+   * damit die Darstellung ohne bezahlten Aufruf prüfbar ist. Dieselbe Bauart
+   * wie `anfangsBereich` in `TripWorkspace`. Der Produktweg lässt den
+   * Parameter weg; er kann keinen Aufruf auslösen.
+   */
+  anfangsAuskunft?: Begleiterauskunft | null
 }
 
 const BEISPIELE = [
@@ -50,9 +57,9 @@ const ART_TITEL: Record<Begleiterauskunft['bezuege'][number]['art'], string> = {
   seasonal: 'Reisezeit',
 }
 
-export default function Reisebegleiter({ reise }: ReisebegleiterProps) {
+export default function Reisebegleiter({ reise, anfangsAuskunft }: ReisebegleiterProps) {
   const [frage, setFrage] = React.useState('')
-  const [auskunft, setAuskunft] = React.useState<Begleiterauskunft | null>(null)
+  const [auskunft, setAuskunft] = React.useState<Begleiterauskunft | null>(anfangsAuskunft ?? null)
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
 
