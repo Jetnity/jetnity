@@ -1,14 +1,24 @@
 // lib/reisebegleiter/schema.test.ts
 //
-// Das Schema ist die Stelle, an der Modelloutput untrusted input bleibt.
-// Geprüft wird nicht, ob eine Auskunft gut ist, sondern ob sie überhaupt eine
-// Auskunft sein darf: kein Betrag, kein Link, keine erfundene Bezugskennung,
-// keine unbegrenzte Länge.
+// Die dritte Schranke, und seit Runde 8 die tragende: Das Ausgabeschema hat
+// kein Freitextfeld. Hier wird nicht geprüft, ob ein Satz *abgelehnt* wird,
+// sondern dass es keine Stelle gibt, an der er stehen könnte.
+//
+// Das ist der Unterschied zu sieben Vorfassungen. Die haben behauptet, kein aus
+// einer erlaubten Wortmenge bildbarer Satz sei eine amtliche Aussage – eine
+// Behauptung über einen unendlichen Satzraum, die sich nicht belegen, nur
+// widerlegen liess. Siebenmal geschehen, zuletzt mit vier gewöhnlichen
+// Wörtern: `Du musst ein gültiges Reisedokument haben.`
+//
+// Die Zusicherung dieses Slice ist jetzt am Typ ablesbar und wird hier
+// abgelesen.
 
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { MODELL_GRENZEN } from '@/lib/modell/konfiguration'
+import { AMTLICHE_AUSSAGEN } from '@/lib/reisebegleiter/aussagen'
+import { BEFUNDE, BEFUND_SCHLUESSEL } from '@/lib/reisebegleiter/befunde'
 import {
   BEGLEITER_GRENZEN,
   BEGLEITER_JSON_SCHEMA,
@@ -19,176 +29,180 @@ import {
 
 function auskunft(teil: Record<string, unknown> = {}) {
   return {
-    antwort: 'Die erste Etappe passt zum Zeitraum.',
-    unsicherheiten: ['Für die zweite Etappe fehlen noch Daten.'],
-    naechsteSchritte: ['Reisedokumente in der Reisevorbereitung ergänzen.'],
-    bezuege: ['E1', 'O2'],
+    befunde: [],
+    bezuege: ['E1'],
     amtlicheHinweise: [],
     ...teil,
   }
 }
 
 describe('Die Frage an den Reisebegleiter', () => {
-  test('braucht ein paar Worte', () => {
-    assert.equal(begleiterfrageSchema.safeParse('Visum?').success, false)
-    assert.equal(begleiterfrageSchema.safeParse('   ').success, false)
+  test('eine zu kurze Frage wird abgelehnt', () => {
+    assert.equal(begleiterfrageSchema.safeParse('was?').success, false)
   })
 
-  test('teilt die Freitextgrenze mit den übrigen Modellwegen', () => {
-    assert.equal(BEGLEITER_GRENZEN.frageMaximum, MODELL_GRENZEN.eingabeZeichen)
+  test('eine Frage über der Eingabegrenze wird abgelehnt', () => {
     assert.equal(
-      begleiterfrageSchema.safeParse('a'.repeat(BEGLEITER_GRENZEN.frageMaximum)).success,
-      true,
-    )
-    assert.equal(
-      begleiterfrageSchema.safeParse('a'.repeat(BEGLEITER_GRENZEN.frageMaximum + 1)).success,
+      begleiterfrageSchema.safeParse('a'.repeat(MODELL_GRENZEN.eingabeZeichen + 1)).success,
       false,
     )
   })
 
-  test('vereinheitlicht Steuerzeichen statt sie weiterzugeben', () => {
-    const geprueft = begleiterfrageSchema.safeParse('Brauche\tich\nein Dokument?')
-    assert.equal(geprueft.success, true)
-    assert.equal(geprueft.success && geprueft.data, 'Brauche ich ein Dokument?')
+  test('eine gewöhnliche Frage geht durch', () => {
+    assert.ok(begleiterfrageSchema.safeParse('Was ist bei dieser Reise noch offen?').success)
   })
 })
 
-describe('Die Auskunft des Modells', () => {
-  test('wird in gültiger Form angenommen', () => {
-    const geprueft = modellauskunftSchema.safeParse(auskunft())
-    assert.equal(geprueft.success, true)
-  })
+describe('Es gibt kein Freitextfeld – die Sätze sind nicht darstellbar', () => {
+  // Die vom Technical Lead verlangten Regressionen. Sie sind hier, weil sie
+  // keine Frage der Prüfung mehr sind: Für keinen dieser Sätze existiert ein
+  // Feld. Geprüft wird über alle drei früheren Prosafelder.
+  const ANGRIFFE = [
+    // 1–3: die benannten Fälle.
+    'Du musst ein gültiges Reisedokument haben.',
+    'Du brauchst ein Dokument.',
+    'Dein Reisedokument muss gültig sein.',
+    // 4: Paraphrasen, die in keiner Liste stehen – strukturell unmöglich, nicht
+    // erkannt. Deshalb darf hier beliebig paraphrasiert werden.
+    'Ohne ein gültiges Formular kommst du nicht weiter.',
+    'Für diese Reise ist eine behördliche Anmeldung Voraussetzung.',
+    'Es empfiehlt sich, ein zweites Ausweisdokument mitzunehmen.',
+    'Deine Papiere sollten mindestens sechs Monate über das Reiseende hinaus gelten.',
+    'Ein Visum ist notwendig.',
+    'V I S U M ist P F L I C H T.',
+    'You need a visa for Italy.',
+    'İtalya için vize gerekli.',
+  ]
 
-  test('trägt keinen Betrag', () => {
-    for (const text of ['Rechne mit CHF 400.', 'Etwa 1200 Euro pro Person.', 'ab ca. € 90']) {
-      assert.equal(
-        modellauskunftSchema.safeParse(auskunft({ antwort: text })).success,
-        false,
-        `Betrag durchgelassen: ${text}`,
-      )
+  const FELDER = ['antwort', 'unsicherheiten', 'naechsteSchritte', 'text', 'hinweis', 'begruendung']
+
+  for (const angriff of ANGRIFFE) {
+    test(`kein Feld nimmt „${angriff.slice(0, 40)}…"`, () => {
+      for (const feld of FELDER) {
+        // Als Zeichenkette und als Liste – beide früheren Formen.
+        for (const wert of [angriff, [angriff]]) {
+          const geprueft = modellauskunftSchema.safeParse(auskunft({ [feld]: wert }))
+          assert.equal(geprueft.success, false, `durchgelassen: ${feld} = ${String(wert)}`)
+        }
+      }
+    })
+  }
+
+  test('kein Feld des Schemas nimmt überhaupt freien Text', () => {
+    // Die allgemeine Form der Zusicherung, unabhängig von Beispielen: Jedes
+    // Zeichenkettenfeld ist entweder eine Aufzählung oder eine Bezugskennung.
+    // Ein neues Textfeld würde diesen Test brechen – genau dafür ist er da.
+    const erlaubt = new Set(['befunde', 'bezuege', 'amtlicheHinweise'])
+    assert.deepEqual(new Set(Object.keys(BEGLEITER_JSON_SCHEMA.properties)), erlaubt)
+
+    const satz = 'Du musst ein gültiges Reisedokument haben.'
+    for (const feld of erlaubt) {
+      for (const wert of [satz, [satz], [{ schluessel: satz, ref: null }], [{ ref: satz }]]) {
+        assert.equal(
+          modellauskunftSchema.safeParse(auskunft({ [feld]: wert })).success,
+          false,
+          `durchgelassen: ${feld}`,
+        )
+      }
     }
   })
 
-  test('trägt keinen Betrag in Unsicherheiten oder Schritten', () => {
-    assert.equal(
-      modellauskunftSchema.safeParse(auskunft({ unsicherheiten: ['Budget offen, ca. 300 EUR'] }))
-        .success,
-      false,
-    )
-    assert.equal(
-      modellauskunftSchema.safeParse(auskunft({ naechsteSchritte: ['Visum für 50 USD beantragen'] }))
-        .success,
-      false,
-    )
-  })
-
-  test('trägt keinen Link', () => {
-    for (const text of [
-      'Siehe https://beispiel.example/visa',
-      'Mehr unter www.behoerde.test',
-      'Quelle: konsulat.gov',
-    ]) {
-      assert.equal(traegtLink(text), true, `Link nicht erkannt: ${text}`)
-      assert.equal(
-        modellauskunftSchema.safeParse(auskunft({ antwort: text })).success,
-        false,
-        `Link durchgelassen: ${text}`,
-      )
-    }
-  })
-
-  test('hält gewöhnliche deutsche Sätze nicht für einen Link', () => {
-    for (const text of [
-      'Der Prüfstand ist offen. Ergänze zuerst die Reisedaten.',
-      'Die Etappe in Rom ist vom 15. bis 20. September geplant.',
-      'Es fehlen Angaben: Staatsangehörigkeit, Ausstellungsland.',
-    ]) {
-      assert.equal(traegtLink(text), false, `Fehlalarm: ${text}`)
-    }
-  })
-
-  test('bleibt in den Längen- und Anzahlgrenzen', () => {
-    assert.equal(
-      modellauskunftSchema.safeParse(
-        auskunft({ antwort: 'a'.repeat(BEGLEITER_GRENZEN.antwort + 1) }),
-      ).success,
-      false,
-    )
-    assert.equal(
-      modellauskunftSchema.safeParse(
-        auskunft({
-          unsicherheiten: Array.from(
-            { length: BEGLEITER_GRENZEN.unsicherheiten + 1 },
-            (_, stelle) => `offen ${stelle}`,
-          ),
-        }),
-      ).success,
-      false,
-    )
-    assert.equal(
-      modellauskunftSchema.safeParse(
-        auskunft({
-          bezuege: Array.from({ length: BEGLEITER_GRENZEN.bezuege + 1 }, (_, s) => `E${s + 1}`),
-        }),
-      ).success,
-      false,
-    )
-  })
-
-  test('nimmt eine leere Antwort nicht an', () => {
-    assert.equal(modellauskunftSchema.safeParse(auskunft({ antwort: '   ' })).success, false)
-  })
-
-  test('nimmt nur Bezugskennungen in der ausgegebenen Form an', () => {
-    for (const ref of ['stage-fl', 'O', '12', 'ETAPPE1', 'E1234', 'e1']) {
-      assert.equal(
-        modellauskunftSchema.safeParse(auskunft({ bezuege: [ref] })).success,
-        false,
-        `Bezugsform durchgelassen: ${ref}`,
-      )
-    }
-    for (const ref of ['E1', 'R2', 'O12', 'S3', 'Z9']) {
-      assert.equal(
-        modellauskunftSchema.safeParse(auskunft({ bezuege: [ref] })).success,
-        true,
-        `Bezugsform abgelehnt: ${ref}`,
-      )
-    }
-  })
-
-  test('kennt kein Feld für Anforderung, Preis, Anbieter, Buchung oder Quelle', () => {
-    // `additionalProperties: false` und `strict: true` machen ein solches Feld
-    // auf der Plattformseite unaussprechbar. Diese Prüfung hält den Vertrag
-    // fest, damit ein späteres Feld eine Entscheidung ist und kein Versehen.
+  test('das JSON-Schema nennt dieselben Felder und lässt keine weiteren zu', () => {
+    assert.equal(BEGLEITER_JSON_SCHEMA.additionalProperties, false)
     assert.deepEqual(
       [...BEGLEITER_JSON_SCHEMA.required],
-      ['antwort', 'unsicherheiten', 'naechsteSchritte', 'bezuege', 'amtlicheHinweise'],
+      ['befunde', 'bezuege', 'amtlicheHinweise'],
     )
-    assert.deepEqual(
-      Object.keys(BEGLEITER_JSON_SCHEMA.properties).sort(),
-      ['amtlicheHinweise', 'antwort', 'bezuege', 'naechsteSchritte', 'unsicherheiten'],
-    )
-    assert.equal(BEGLEITER_JSON_SCHEMA.additionalProperties, false)
+    assert.equal(BEGLEITER_JSON_SCHEMA.properties.befunde.items.additionalProperties, false)
+    assert.equal(BEGLEITER_JSON_SCHEMA.properties.amtlicheHinweise.items.additionalProperties, false)
   })
 
-  test('lehnt ein zusätzliches Feld ab, auch wenn die Plattform es durchliesse', () => {
-    // `additionalProperties: false` gilt auf der Gegenseite. Ein Vertrag, der
-    // nur dort gilt, ist hier keiner: Modelloutput bleibt untrusted input.
-    // Ein unerwartetes Feld wird deshalb abgelehnt und nicht stillschweigend
-    // entfernt – ein Modell, das es mitschickt, hat die Regeln nicht
-    // verstanden, und seine Auskunft soll nicht bereinigt werden.
-    for (const zusatz of [
-      { visumErforderlich: false },
-      { preis: 120 },
-      { lagen: [{ ref: 'O1', belegt: true }] },
-      { quelle: 'https://behoerde.example' },
-      { bookingUrl: null },
-    ]) {
-      assert.equal(
-        modellauskunftSchema.safeParse(auskunft(zusatz)).success,
-        false,
-        `zusätzliches Feld durchgelassen: ${Object.keys(zusatz)[0]}`,
-      )
-    }
+  test('die Aufzählungen stimmen mit den Katalogen überein', () => {
+    // Das JSON-Schema geht an die Plattform, die Zod-Prüfung bleibt hier.
+    // Gehen sie auseinander, ist eine der beiden Seiten blind.
+    assert.deepEqual(
+      [...BEGLEITER_JSON_SCHEMA.properties.befunde.items.properties.schluessel.enum],
+      [...BEFUND_SCHLUESSEL],
+    )
+    assert.deepEqual(
+      [...BEGLEITER_JSON_SCHEMA.properties.amtlicheHinweise.items.properties.aussage.enum],
+      [...AMTLICHE_AUSSAGEN],
+    )
+    assert.equal(BEFUND_SCHLUESSEL.length, BEFUNDE.length)
+  })
+})
+
+describe('Die Auswahl des Modells', () => {
+  test('eine leere Auswahl ist formal gültig', () => {
+    assert.ok(modellauskunftSchema.safeParse(auskunft()).success)
+  })
+
+  test('eine Auswahl aus dem Katalog ist formal gültig', () => {
+    assert.ok(
+      modellauskunftSchema.safeParse(
+        auskunft({ befunde: [{ schluessel: 'etappe_ohne_daten', ref: 'E1' }] }),
+      ).success,
+    )
+  })
+
+  test('ein Schlüssel ausserhalb des Katalogs wird abgelehnt', () => {
+    assert.equal(
+      modellauskunftSchema.safeParse(
+        auskunft({ befunde: [{ schluessel: 'visum_erforderlich', ref: 'E1' }] }),
+      ).success,
+      false,
+    )
+  })
+
+  test('ein unerwartetes Feld wird abgelehnt, nicht entfernt', () => {
+    const geprueft = modellauskunftSchema.safeParse(auskunft({ lagen: ['irgendwas'] }))
+    assert.equal(geprueft.success, false)
+  })
+
+  test('ein unerwartetes Feld innerhalb eines Befundes wird abgelehnt', () => {
+    assert.equal(
+      modellauskunftSchema.safeParse(
+        auskunft({ befunde: [{ schluessel: 'etappe_ohne_daten', ref: 'E1', text: 'eigener Satz' }] }),
+      ).success,
+      false,
+    )
+  })
+
+  test('eine formal unmögliche Bezugskennung wird abgelehnt', () => {
+    assert.equal(modellauskunftSchema.safeParse(auskunft({ bezuege: ['etappe-1'] })).success, false)
+  })
+
+  test('mehr Einträge als erlaubt werden abgelehnt', () => {
+    assert.equal(
+      modellauskunftSchema.safeParse(
+        auskunft({
+          befunde: Array.from({ length: BEGLEITER_GRENZEN.befunde + 1 }, () => ({
+            schluessel: 'etappe_ohne_daten',
+            ref: 'E1',
+          })),
+        }),
+      ).success,
+      false,
+    )
+  })
+
+  test('eine amtliche Aussage ausserhalb der Liste wird abgelehnt', () => {
+    assert.equal(
+      modellauskunftSchema.safeParse(
+        auskunft({ amtlicheHinweise: [{ ref: 'O1', aussage: 'kein_visum_notwendig' }] }),
+      ).success,
+      false,
+    )
+  })
+})
+
+describe('Die Linkerkennung bleibt für die Nutzlast erhalten', () => {
+  test('sie erkennt Links in nutzergeschriebenem Text', () => {
+    // Gebraucht in `lib/reisebegleiter/nutzlast.ts`: Linkverdächtiger Freitext
+    // aus der Projektion wird abgezogen, bevor das Modell ihn sieht.
+    assert.ok(traegtLink('https://beispiel.example'))
+    assert.ok(traegtLink('www.beispiel.example'))
+    assert.ok(traegtLink('beispiel.com/pfad'))
+    assert.equal(traegtLink('Etappe 1 · Rom, Italien'), false)
   })
 })

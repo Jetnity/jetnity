@@ -90,6 +90,13 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
     setAuskunft(ergebnis.auskunft)
   }
 
+  // Die drei Gruppen der Anzeige. Die Rolle steht im Katalog, nicht in der
+  // Modellantwort – das Modell hat nur gewählt, welche Aussagen erscheinen.
+  const befunde = auskunft?.befunde ?? []
+  const stand = befunde.filter((eintrag) => eintrag.rolle === 'stand')
+  const offen = befunde.filter((eintrag) => eintrag.rolle === 'offen')
+  const schritte = befunde.filter((eintrag) => eintrag.rolle === 'schritt')
+
   return (
     <div className="mt-6 grid gap-6">
       <form
@@ -183,33 +190,62 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
             Auskunft des Reisebegleiters
           </h3>
 
-          <p className="mt-3 whitespace-pre-line text-sm leading-6 text-ink-900">
-            {auskunft.antwort}
+          <p className="mt-3 text-sm leading-6 text-ink-900">
+            Der Reisebegleiter hat zu dieser Frage aus dem Stand deiner Reise ausgewählt. Die Sätze
+            unten schreibt Jetnity.
           </p>
 
-          {auskunft.unsicherheiten.length > 0 && (
+          {stand.length > 0 && (
             <div className="mt-5 rounded-2xl border border-line-200 bg-white px-4 py-4">
-              <p className="flex items-center gap-2 text-sm font-semibold text-brand-800">
-                <AlertTriangle className="h-4 w-4 text-brand-600" aria-hidden="true" />
-                Was dafür noch offen ist
-              </p>
-              <ul className="mt-2 grid gap-1.5">
-                {auskunft.unsicherheiten.map((eintrag) => (
-                  <li key={eintrag} className="text-sm leading-6 text-ink-800">
-                    {eintrag}
+              <p className="text-sm font-semibold text-brand-800">Was dazu feststeht</p>
+              <ul className="mt-2 grid gap-2">
+                {stand.map((eintrag) => (
+                  <li key={`${eintrag.schluessel}-${eintrag.ref ?? '-'}`} className="grid gap-0.5">
+                    {eintrag.titel && (
+                      <span className="text-sm font-medium leading-6 text-brand-900">
+                        {eintrag.titel}
+                      </span>
+                    )}
+                    <span className="text-sm leading-6 text-ink-800">{eintrag.text}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          {auskunft.naechsteSchritte.length > 0 && (
+          {offen.length > 0 && (
+            <div className="mt-4 rounded-2xl border border-line-200 bg-white px-4 py-4">
+              <p className="flex items-center gap-2 text-sm font-semibold text-brand-800">
+                <AlertTriangle className="h-4 w-4 text-brand-600" aria-hidden="true" />
+                Was dafür noch offen ist
+              </p>
+              <ul className="mt-2 grid gap-2">
+                {offen.map((eintrag) => (
+                  <li key={`${eintrag.schluessel}-${eintrag.ref ?? '-'}`} className="grid gap-0.5">
+                    {eintrag.titel && (
+                      <span className="text-sm font-medium leading-6 text-brand-900">
+                        {eintrag.titel}
+                      </span>
+                    )}
+                    <span className="text-sm leading-6 text-ink-800">{eintrag.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {schritte.length > 0 && (
             <div className="mt-4 rounded-2xl border border-line-200 bg-white px-4 py-4">
               <p className="text-sm font-semibold text-brand-800">Mögliche nächste Schritte</p>
-              <ul className="mt-2 grid gap-1.5">
-                {auskunft.naechsteSchritte.map((eintrag) => (
-                  <li key={eintrag} className="text-sm leading-6 text-ink-800">
-                    {eintrag}
+              <ul className="mt-2 grid gap-2">
+                {schritte.map((eintrag) => (
+                  <li key={`${eintrag.schluessel}-${eintrag.ref ?? '-'}`} className="grid gap-0.5">
+                    {eintrag.titel && (
+                      <span className="text-sm font-medium leading-6 text-brand-900">
+                        {eintrag.titel}
+                      </span>
+                    )}
+                    <span className="text-sm leading-6 text-ink-800">{eintrag.text}</span>
                   </li>
                 ))}
               </ul>

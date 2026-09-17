@@ -28,6 +28,8 @@ import {
 } from '@/lib/modell/konfiguration'
 import type { Tokennutzung } from '@/lib/modell/preise'
 import { officialLeer } from '@/lib/readiness/official'
+import { AMTLICHE_AUSSAGE_TEXT } from '@/lib/reisebegleiter/aussagen'
+import { BEFUNDE, befundEintrag } from '@/lib/reisebegleiter/befunde'
 import {
   assistantTruthContextProjizieren,
   type AssistantTruthContext,
@@ -138,11 +140,20 @@ function kontext(etappen = 1): AssistantTruthContext {
   })
 }
 
+/**
+ * Eine gültige Auswahl für die Reise aus `kontext()`.
+ *
+ * Kein Satz darin: Seit Runde 8 hat das Ausgabeschema kein Freitextfeld. Was
+ * hier steht, sind Schlüssel aus `BEFUNDE` und `AMTLICHE_AUSSAGEN` – und die
+ * gewählten Paare treffen auf diese Reise zu, sonst verwirft sie die Prüfung.
+ */
 const GUELTIGE_AUSKUNFT = JSON.stringify({
-  antwort: 'Die erste Etappe passt zum Zeitraum; es fehlen noch Angaben.',
-  unsicherheiten: ['Für die zweite Etappe fehlen noch Daten.'],
-  naechsteSchritte: ['Reisedokumente in der Reisevorbereitung ergänzen.'],
-  bezuege: ['E1', 'O1'],
+  befunde: [
+    { schluessel: 'etappe_ohne_daten', ref: 'E1' },
+    { schluessel: 'reisende_ohne_dokument', ref: 'R1' },
+    { schluessel: 'schritt_dokument_ergaenzen', ref: 'R1' },
+  ],
+  bezuege: ['E1', 'R1', 'O1'],
   amtlicheHinweise: [{ ref: 'O1', aussage: 'nicht_geprueft' }],
 })
 
@@ -371,100 +382,97 @@ describe('Ein Versuch, kein zweiter', () => {
 describe('Eine unbrauchbare Antwort wird nicht brauchbar gemacht', () => {
   const unbrauchbar: Array<{ name: string; text: string; klasse: Ergebnisklasse }> = [
     { name: 'kein JSON', text: 'Klar, gern! Hier deine Antwort …', klasse: 'ungueltige-antwort' },
-    { name: 'abgeschnittenes JSON', text: '{"antwort":"Der Prüfstand', klasse: 'ungueltige-antwort' },
-    { name: 'JSON-Liste statt Objekt', text: '[{"antwort":"x"}]', klasse: 'schema' },
+    { name: 'abgeschnittenes JSON', text: '{"befunde":[{"schluessel', klasse: 'ungueltige-antwort' },
+    { name: 'JSON-Liste statt Objekt', text: '[{"befunde":[]}]', klasse: 'schema' },
     { name: 'leeres Objekt', text: '{}', klasse: 'schema' },
     {
       name: 'fehlendes Feld',
-      text: JSON.stringify({ antwort: 'Offen.', unsicherheiten: [], bezuege: [] }),
+      text: JSON.stringify({ befunde: [], bezuege: [] }),
       klasse: 'schema',
     },
     {
-      name: 'leere Antwort',
-      text: JSON.stringify({ antwort: '  ', unsicherheiten: [], naechsteSchritte: [], bezuege: [] }),
-      klasse: 'schema',
-    },
-    {
-      name: 'Betrag in der Antwort',
+      // Die Fälle der Vorrunden – Betrag, Link, erfundene amtliche Anforderung,
+      // behauptete Buchung, behauptete Änderung – brauchen hier keinen
+      // eigenen Eintrag mehr. Sie waren alle Sätze, und es gibt kein Feld für
+      // Sätze. Ein Modell, das es trotzdem versucht, landet genau hier.
+      name: 'Freitext statt Auswahl',
       text: JSON.stringify({
-        antwort: 'Rechne mit etwa CHF 90 für das Visum.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
-        bezuege: [],
+        antwort: 'Du musst ein gültiges Reisedokument haben.',
+        unsicherheiten: ['Für Italien bist du visumfrei.'],
+        naechsteSchritte: ['Antrag unter https://visa.example/it stellen.'],
+        bezuege: ['E1'],
       }),
       klasse: 'schema',
     },
     {
-      name: 'Link in der Antwort',
+      name: 'Freitext neben gültiger Auswahl',
       text: JSON.stringify({
-        antwort: 'Antrag unter https://visa.example/it stellen.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
-        bezuege: [],
+        befunde: [{ schluessel: 'etappe_ohne_daten', ref: 'E1' }],
+        bezuege: ['E1'],
+        amtlicheHinweise: [],
+        antwort: 'Rechne mit etwa CHF 90 für das Visum.',
+      }),
+      klasse: 'schema',
+    },
+    {
+      name: 'eigener Satz in einem Befund',
+      text: JSON.stringify({
+        befunde: [
+          { schluessel: 'etappe_ohne_daten', ref: 'E1', text: 'Ein Visum ist notwendig.' },
+        ],
+        bezuege: ['E1'],
+        amtlicheHinweise: [],
+      }),
+      klasse: 'schema',
+    },
+    {
+      name: 'Schlüssel ausserhalb des Katalogs',
+      text: JSON.stringify({
+        befunde: [{ schluessel: 'visum_erforderlich', ref: 'E1' }],
+        bezuege: ['E1'],
+        amtlicheHinweise: [],
       }),
       klasse: 'schema',
     },
     {
       name: 'erfundener Bezug',
-      text: JSON.stringify({
-        antwort: 'Der Prüfstand ist offen.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
-        bezuege: ['O42'],
-      }),
+      text: JSON.stringify({ befunde: [], bezuege: ['O42'], amtlicheHinweise: [] }),
       klasse: 'schema',
     },
     {
-      name: 'unbelegte Gewissheit',
+      name: 'nicht angebotener Befund',
       text: JSON.stringify({
-        antwort: 'Für Italien bist du visumfrei.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
-        bezuege: ['O1'],
-      }),
-      klasse: 'schema',
-    },
-    {
-      name: 'behauptete Buchung',
-      text: JSON.stringify({
-        antwort: 'Dein Flug nach Rom ist gebucht.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
-        bezuege: [],
-      }),
-      klasse: 'schema',
-    },
-    {
-      name: 'behauptete Änderung',
-      text: JSON.stringify({
-        antwort: 'Ich habe zwei Tage in Rom hinzugefügt.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
+        befunde: [{ schluessel: 'etappe_daten_stehen', ref: 'E1' }],
         bezuege: ['E1'],
+        amtlicheHinweise: [],
       }),
       klasse: 'schema',
     },
     {
-      // Die Plattform hält `additionalProperties: false` durch; darauf darf
-      // sich diese Seite nicht verlassen. Ein Feld, das einen Zustand trägt,
-      // wird abgelehnt und nicht stillschweigend entfernt.
+      name: 'angebotener Befund am falschen Bezug',
+      text: JSON.stringify({
+        befunde: [{ schluessel: 'reisende_ohne_dokument', ref: 'E1' }],
+        bezuege: ['E1'],
+        amtlicheHinweise: [],
+      }),
+      klasse: 'schema',
+    },
+    {
+      name: 'amtliche Aussage über eine ungeprüfte Lage als geprüft',
+      text: JSON.stringify({
+        befunde: [],
+        bezuege: ['O1'],
+        amtlicheHinweise: [{ ref: 'O1', aussage: 'geprueft_nicht_erforderlich' }],
+      }),
+      klasse: 'schema',
+    },
+    {
       name: 'zusätzliches zustandstragendes Feld',
       text: JSON.stringify({
-        antwort: 'Der Prüfstand ist offen.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
+        befunde: [],
         bezuege: ['O1'],
+        amtlicheHinweise: [],
         lagen: [{ ref: 'O1', lage: 'Nicht erforderlich', belegt: true }],
-      }),
-      klasse: 'schema',
-    },
-    {
-      name: 'Gewissheit ohne benannte amtliche Lage',
-      text: JSON.stringify({
-        antwort: 'Für diese Route ist kein Visum erforderlich.',
-        unsicherheiten: [],
-        naechsteSchritte: [],
-        bezuege: ['E1'],
       }),
       klasse: 'schema',
     },
@@ -499,13 +507,7 @@ describe('Die Auskunft', () => {
   test('zeigt nur Bezüge, auf die sie zeigt – mit dem Zustand aus Jetnity', async () => {
     const { werkzeuge: w } = werkzeuge(
       erfolg(
-        JSON.stringify({
-          antwort: 'Für die erste Etappe fehlen noch Angaben.',
-          unsicherheiten: [],
-          naechsteSchritte: [],
-          bezuege: ['O1'],
-          amtlicheHinweise: [],
-        }),
+        JSON.stringify({ befunde: [], bezuege: ['O1'], amtlicheHinweise: [] }),
       ),
     )
     const ergebnis = await begleiterauskunftErzeugen(FRAGE, kontext(), w)
@@ -519,16 +521,48 @@ describe('Die Auskunft', () => {
     assert.match(ergebnis.auskunft.bezuege[0].lage, /Noch nicht verlässlich bestimmbar/)
   })
 
+  test('jeder angezeigte Satz stammt aus einem Jetnity-Katalog', async () => {
+    // Die tragende Zusicherung von Runde 8, am Ergebnis geprüft: Kein Text in
+    // der Auskunft ist vom Modell geschrieben. Jeder Satz muss sich in
+    // `BEFUNDE` oder `AMTLICHE_AUSSAGE_TEXT` wiederfinden – die Titel der
+    // Bezüge kommen aus der Projektion und sind gesondert geprüft.
+    const { werkzeuge: w } = werkzeuge(erfolg())
+    const ergebnis = await begleiterauskunftErzeugen(FRAGE, kontext(), w)
+
+    assert.ok(ergebnis.ok)
+    assert.ok(ergebnis.auskunft.befunde.length > 0)
+
+    const katalog = new Set<string>([
+      ...BEFUNDE.map((eintrag) => eintrag.text),
+      ...Object.values(AMTLICHE_AUSSAGE_TEXT),
+    ])
+    for (const eintrag of ergebnis.auskunft.befunde) {
+      assert.ok(katalog.has(eintrag.text), `nicht aus dem Katalog: ${eintrag.text}`)
+      assert.equal(eintrag.text, befundEintrag(eintrag.schluessel).text)
+    }
+    for (const hinweis of ergebnis.auskunft.amtlicheHinweise) {
+      assert.ok(katalog.has(hinweis.text), `nicht aus dem Katalog: ${hinweis.text}`)
+    }
+  })
+
+  test('die Rolle eines Befundes kommt aus dem Katalog, nicht aus der Antwort', async () => {
+    const { werkzeuge: w } = werkzeuge(erfolg())
+    const ergebnis = await begleiterauskunftErzeugen(FRAGE, kontext(), w)
+
+    assert.ok(ergebnis.ok)
+    for (const eintrag of ergebnis.auskunft.befunde) {
+      assert.equal(eintrag.rolle, befundEintrag(eintrag.schluessel).rolle)
+    }
+  })
+
   test('der angezeigte Zustand kommt aus der Projektion, nicht aus der Antwort', async () => {
     // Die Auskunft hat kein Feld für einen Zustand. Was die Oberfläche unter
     // „Jetnity-Stand" zeigt, stammt aus `begleiternutzlastAus()` und trägt
-    // hier `belegt: false` – unabhängig davon, wie zuversichtlich der Text ist.
+    // hier `belegt: false`.
     const { werkzeuge: w } = werkzeuge(
       erfolg(
         JSON.stringify({
-          antwort: 'Für die erste Etappe fehlen noch Angaben.',
-          unsicherheiten: [],
-          naechsteSchritte: [],
+          befunde: [],
           bezuege: ['O1'],
           amtlicheHinweise: [{ ref: 'O1', aussage: 'nicht_geprueft' }],
         }),
@@ -539,12 +573,12 @@ describe('Die Auskunft', () => {
     assert.ok(ergebnis.ok)
     assert.equal(ergebnis.auskunft.bezuege[0].belegt, false)
     assert.match(ergebnis.auskunft.bezuege[0].lage, /Noch nicht verlässlich bestimmbar/)
-    // Auch der amtliche Satz stammt aus Jetnity, nicht aus der Modellantwort.
     assert.deepEqual(
       ergebnis.auskunft.amtlicheHinweise.map((hinweis) => hinweis.text),
       ['Diese amtliche Lage ist derzeit nicht geprüft.'],
     )
     assert.equal(Object.keys(ergebnis.auskunft).includes('lagen'), false)
+    assert.equal(Object.keys(ergebnis.auskunft).includes('antwort'), false)
   })
 })
 

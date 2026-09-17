@@ -38,6 +38,11 @@ import {
   type AssistantTruthContext,
 } from '@/lib/reisebegleiter/kontext'
 import { AMTLICHE_AUSSAGE_TEXT, type AmtlicheAussage } from '@/lib/reisebegleiter/aussagen'
+import {
+  befundEintrag,
+  type Befundrolle,
+  type Befundschluessel,
+} from '@/lib/reisebegleiter/befunde'
 import { begleiternutzlastAus, type BegleiterBezug } from '@/lib/reisebegleiter/nutzlast'
 import { auskunftPruefen } from '@/lib/reisebegleiter/pruefung'
 import { begleiterregeln } from '@/lib/reisebegleiter/regeln'
@@ -61,9 +66,21 @@ export type Begleiterauskunft = {
   fassung: typeof BEGLEITER_FASSUNG
   wahrheitsklasse: 'generated_suggestion'
   kontextFassung: typeof ASSISTANT_TRUTH_CONTEXT_VERSION
-  antwort: string
-  unsicherheiten: string[]
-  naechsteSchritte: string[]
+  /**
+   * Die ausgewählten Jetnity-Aussagen, in der Reihenfolge des Modells.
+   *
+   * Jeder `text` stammt aus `BEFUNDE`; das Modell hat Schlüssel und Bezug
+   * gewählt, nicht die Formulierung. Es gibt kein Feld, in dem es hätte
+   * formulieren können.
+   */
+  befunde: Array<{
+    schluessel: Befundschluessel
+    rolle: Befundrolle
+    ref: string | null
+    /** Der Titel des Bezugs aus Jetnity, falls der Befund auf einen zeigt. */
+    titel: string | null
+    text: string
+  }>
   /** Nur die Bezüge, auf die die Auskunft zeigt – mit dem Zustand aus Jetnity. */
   bezuege: BegleiterBezug[]
   /**
@@ -166,6 +183,7 @@ export async function begleiterauskunftErzeugen(
   const nutzlast = begleiternutzlastAus(kontext)
   if (!nutzlast.ok) return abgelehnt('gesperrt', KONTEXT_UNZULAESSIG)
 
+  const angebot = nutzlast.nutzlast.angebot
   const systemregeln = begleiterregeln(werkzeuge.heute, nutzlast.nutzlast.kontext)
 
   // Die Kostenreservierung rechnet mit einer festen Obergrenze der Eingabe
@@ -209,7 +227,7 @@ export async function begleiterauskunftErzeugen(
     return abgelehnt('schema', MELDUNGEN.schema)
   }
 
-  const befund = auskunftPruefen(geprueft.data, nutzlast.nutzlast.bezuege)
+  const befund = auskunftPruefen(geprueft.data, nutzlast.nutzlast.bezuege, angebot)
   if (!befund.ok) {
     await beenden('schema')
     return abgelehnt('schema', MELDUNGEN.schema)
@@ -225,9 +243,21 @@ export async function begleiterauskunftErzeugen(
       fassung: BEGLEITER_FASSUNG,
       wahrheitsklasse: 'generated_suggestion',
       kontextFassung: ASSISTANT_TRUTH_CONTEXT_VERSION,
-      antwort: geprueft.data.antwort,
-      unsicherheiten: geprueft.data.unsicherheiten,
-      naechsteSchritte: geprueft.data.naechsteSchritte,
+      // Text und Titel kommen aus Jetnity, nicht aus der Modellantwort.
+      befunde: geprueft.data.befunde.map((gewaehlt) => {
+        const eintrag = befundEintrag(gewaehlt.schluessel)
+        return {
+          schluessel: gewaehlt.schluessel,
+          rolle: eintrag.rolle,
+          ref: gewaehlt.ref,
+          titel:
+            gewaehlt.ref === null
+              ? null
+              : (nutzlast.nutzlast.bezuege.find((bezug) => bezug.ref === gewaehlt.ref)?.titel ??
+                null),
+          text: eintrag.text,
+        }
+      }),
       bezuege: nutzlast.nutzlast.bezuege.filter((bezug) => gezeigt.has(bezug.ref)),
       // Titel und Satz kommen aus Jetnity, nicht aus der Modellantwort.
       amtlicheHinweise: geprueft.data.amtlicheHinweise.map((hinweis) => ({

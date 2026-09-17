@@ -108,18 +108,45 @@ const AUSKUNFT = {
   fassung: 1,
   wahrheitsklasse: 'generated_suggestion',
   kontextFassung: 'assistant-truth-context-v1',
-  // Die Prosa benennt keine amtliche Anforderung – sie kann es nicht, der
-  // Wortschatz führt das Vokabular nicht. Über die amtliche Lage sagt die
-  // Auskunft nur, welche Lage sie anspricht; den Satz schreibt Jetnity.
-  antwort:
-    'Der Zeitraum passt zu den beiden Etappen: drei Nächte in der ersten, vier in der zweiten. Für die amtliche Lage der ersten Etappe siehe unten – Jetnity hat dafür keinen geprüften Stand und ergänzt ihn nicht aus eigener Annahme.',
-  unsicherheiten: [
-    'Für eine Reisende sind zwei Staatsangehörigkeiten hinterlegt, aber noch kein Reisedokument.',
-    'Ohne diese Angaben bleiben mehrere Optionen offen.',
-  ],
-  naechsteSchritte: [
-    'In der Reisevorbereitung je Staatsangehörigkeit ein Reisedokument ergänzen.',
-    'Danach die erste Etappe noch einmal ansehen.',
+  // Kein Satz in dieser Auskunft ist vom Modell geschrieben. Das Modell hat
+  // Schlüssel und Bezug gewählt; die Texte stammen aus `BEFUNDE` und
+  // `AMTLICHE_AUSSAGE_TEXT`. Das Ausgabeschema hat kein Freitextfeld.
+  befunde: [
+    {
+      schluessel: 'reise_zeitraum_steht',
+      rolle: 'stand',
+      ref: null,
+      titel: null,
+      text: 'Der Zeitraum dieser Reise steht.',
+    },
+    {
+      schluessel: 'etappe_daten_stehen',
+      rolle: 'stand',
+      ref: 'E1',
+      titel: 'Etappe 1 · Rom, Italien',
+      text: 'Die Daten dieser Etappe stehen.',
+    },
+    {
+      schluessel: 'reisende_ohne_dokument',
+      rolle: 'offen',
+      ref: 'R1',
+      titel: 'Alex',
+      text: 'Für diese Person ist in Jetnity noch kein Reisedokument hinterlegt.',
+    },
+    {
+      schluessel: 'reisende_mehrere_staatsangehoerigkeiten',
+      rolle: 'stand',
+      ref: 'R1',
+      titel: 'Alex',
+      text: 'Für diese Person sind mehrere Staatsangehörigkeiten hinterlegt. Jetnity behandelt sie als gleichrangige Optionen.',
+    },
+    {
+      schluessel: 'schritt_dokument_ergaenzen',
+      rolle: 'schritt',
+      ref: 'R1',
+      titel: 'Alex',
+      text: 'Für diese Person ein Reisedokument in der Reisevorbereitung ergänzen.',
+    },
   ],
   bezuege: [
     {
@@ -342,6 +369,16 @@ async function laufen(browser, gerät) {
     gerät.name,
     'Vorschläge sind als Vorschläge beschriftet',
     await seite.getByText('Jetnity führt davon nichts selbst aus').isVisible(),
+  )
+  pruefe(
+    gerät.name,
+    'jeder Satz der Auskunft stammt aus einem Jetnity-Katalog',
+    await seite.getByText('Die Daten dieser Etappe stehen.').isVisible(),
+  )
+  pruefe(
+    gerät.name,
+    'die Herkunft der Sätze ist benannt',
+    await seite.getByText('Die Sätze unten schreibt Jetnity', { exact: false }).isVisible(),
   )
   pruefe(
     gerät.name,

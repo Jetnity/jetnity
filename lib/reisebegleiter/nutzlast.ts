@@ -72,6 +72,11 @@ import type {
   AssistantTravellerContext,
   AssistantTruthContext,
 } from '@/lib/reisebegleiter/kontext'
+import {
+  angeboteneBefunde,
+  befundEintrag,
+  type Befundangebot,
+} from '@/lib/reisebegleiter/befunde'
 import { traegtLink } from '@/lib/reisebegleiter/schema'
 
 export type BegleiterBezugArt = 'etappe' | 'reisende' | 'official' | 'safety' | 'seasonal'
@@ -122,6 +127,13 @@ export type Begleiternutzlast = {
   /** Was in die Systemregeln geht. Reines JSON, ohne Nutzertext. */
   kontext: string
   bezuege: BegleiterBezug[]
+  /**
+   * Die Jetnity-Aussagen, die auf diese Reise zutreffen.
+   *
+   * Dieselbe Liste steht im `kontext` für das Modell und dient in
+   * `lib/reisebegleiter/pruefung.ts` als Prüfmenge für seine Auswahl.
+   */
+  angebot: Befundangebot[]
 }
 
 export type Nutzlastergebnis =
@@ -461,6 +473,10 @@ export function verbotenesFeldFinden(wert: unknown, pfad = ''): string | null {
  * sondern die vorgesehene Antwort: Ein Aufruf kommt dann nicht zustande.
  */
 export function begleiternutzlastAus(kontext: AssistantTruthContext): Nutzlastergebnis {
+  // Das Angebot: die Jetnity-Aussagen, die auf diese Reise zutreffen. Das
+  // Modell sieht genau diese Liste und darf nur daraus wählen – deshalb steht
+  // sie in der Nutzlast und nicht nur in der Prüfung.
+  const angebot = angeboteneBefunde(kontext)
   const etappenRefs = new Map<string, string>()
   kontext.stages.forEach((stage, stelle) => etappenRefs.set(stage.stageId, `E${stelle + 1}`))
 
@@ -475,6 +491,12 @@ export function begleiternutzlastAus(kontext: AssistantTruthContext): Nutzlaster
 
   const inhalt = {
     kontextFassung: kontext.version,
+    angebot: angebot.map((eintrag) => ({
+      schluessel: eintrag.schluessel,
+      ref: eintrag.ref,
+      text: befundEintrag(eintrag.schluessel).text,
+      rolle: befundEintrag(eintrag.schluessel).rolle,
+    })),
     wahrheitsklassen: {
       etappen: 'trip',
       reisende: 'trip',
@@ -519,5 +541,5 @@ export function begleiternutzlastAus(kontext: AssistantTruthContext): Nutzlaster
     ...kontext.seasonal.map((seasonal, stelle) => seasonalBezug(seasonal, `Z${stelle + 1}`)),
   ]
 
-  return { ok: true, nutzlast: { kontext: JSON.stringify(inhalt), bezuege } }
+  return { ok: true, nutzlast: { kontext: JSON.stringify(inhalt), bezuege, angebot } }
 }

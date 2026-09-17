@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: der Review-Fix „Separate generated prose from truth-bearing Official propositions“ (Runde 8). Der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9). Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -34,6 +34,30 @@ Der zweite Teil des Befundes ist grundsätzlicher: Alle bisherigen Muster waren 
 Die Lösung ist keine längere Wortliste, sondern eine andere Zerlegung: Modalität × Bereich × Vorbehalt, satzweise. Damit fällt die Richtung der Aussage weg als Unterscheidung, und die Bereichsliste lässt sich gegen `OFFICIAL_REQUIREMENT_TYPES` auf Vollständigkeit prüfen.
 
 **Die gemeinsame Wurzel aller vier Befunde.** Ich habe jede Korrektur als Schliessung des *genannten Falls* gedacht statt als Frage nach der nächsten Umgehungsdimension. Die vier Runden haben nacheinander erweitert: Kontext → genannter Bezug → Anforderungstyp → Gesamttaxonomie und Aussagerichtung. Jede dieser Stufen war nach der vorigen absehbar, wenn man die richtige Frage stellt: nicht „schliesst die Regel den genannten Fall?", sondern „worüber lässt sie sich noch umgehen?". Dazu kommt derselbe Fehler wie in Befund 1 und 2: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
+
+---
+
+## 0e. Runde 9: der Befund, der die Bauform erledigt hat
+
+**Befund 8 (Head `5ef78e5c`) – die Erlaubnisliste ohne amtliche Substantive war weiterhin eine Behauptung über einen Satzraum.** Drei Sätze, alle aus geführten Alltagswörtern:
+
+- `Du musst ein gültiges Reisedokument haben.`
+- `Du brauchst ein Dokument.`
+- `Dein Reisedokument muss gültig sein.`
+
+Ich hatte `dokument`, `reisedokument`, `formular`, `gültig` bewusst wieder aufgenommen, mit der Begründung, sie seien „bereichsneutral": Kein Bereichsmuster trifft sie. Das war formal richtig und inhaltlich falsch. `BEREICHE` ist eine Liste von Wörtern; eine amtliche Anforderung braucht keines davon, sondern nur ein Gegenstandswort und eine Modalität. Mein Vollständigkeitsnachweis prüfte Wortstämme und Wortpaare gegen Muster – er konnte gar nicht sehen, was aus vier Wörtern über drei Satzglieder entsteht.
+
+**Was ich acht Runden lang wiederholt habe.** Jede Fassung war dieselbe Bauform: eine Behauptung, dass aus einer erlaubten Wortmenge kein amtlicher Satz bildbar ist. Ich habe die Wortmenge sechsmal umgebaut – Verbotsliste, Sprachprüfung, Erlaubnisliste, Erlaubnisliste ohne amtliche Substantive – und jedes Mal geschrieben, jetzt sei es strukturell. Es war jedes Mal dieselbe unbeweisbare Behauptung mit anderem Inhalt. Dass der Technical Lead achtmal ein Gegenbeispiel gefunden hat, ist keine Serie unglücklicher Zufälle, sondern die einzige mögliche Rückmeldung auf eine Bauform, die Gegenbeispiele beliebig zulässt.
+
+Besonders unangenehm ist Runde 8: Dort hatte ich einen *Test* als Beweis präsentiert („kein geführter Stamm trifft einen Bereich") und daraus geschlossen, die Zusicherung sei nachgewiesen statt argumentiert. Ein Test kann nur prüfen, was er formulieren kann. Meiner prüfte Wörter, die Zusicherung sprach über Sätze. Ein Nachweis, dessen Gegenstand kleiner ist als die Behauptung, ist gefährlicher als kein Nachweis, weil er Prüfung ersetzt zu haben scheint.
+
+**Die Korrektur gibt die Bauform auf.** Es gibt kein Freitextfeld mehr. Das Modell wählt Schlüssel aus zwei geschlossenen Katalogen und nennt den Bezug; jeden Satz schreibt Jetnity. Die drei Sätze oben sind nicht abgelehnt – es gibt kein Feld, in das sie passen. Das ist der erste Zustand dieses Slice, in dem die Zusicherung nicht über Sprache argumentiert wird, sondern an einem Typ ablesbar ist: `schema.test.ts` prüft, dass die Menge der Felder genau `befunde`, `bezuege`, `amtlicheHinweise` ist und dass keines davon Text annimmt.
+
+**Was ich zusätzlich abgesichert habe, weil der Katalog eine neue Angriffsfläche ist.** Ein Katalog Jetnity-eigener Sätze kann auf zwei Weisen falsch werden: durch eine Formulierung, die doch eine Anforderung behauptet, und durch eine wahre Aussage am falschen Objekt. Beides ist geprüft – die Formulierungen des ganzen Katalogs gegen Anforderungssprache, und die Auswahl gegen das berechnete Angebot inklusive Bezug. Zusätzlich: Mit leerem Angebot darf **kein** Katalogeintrag durchkommen; sonst gäbe es einen, der sich selbst belegt.
+
+**Was diese Lösung kostet, und was daran nicht meine Entscheidung ist.** Der Reisebegleiter formuliert nicht mehr. Er wählt aus 33 Jetnity-Aussagen aus und ordnet sie. Für eine Wahrheitsklasse „Generated Suggestion" halte ich das für die ehrliche Bauform, aber es ist eine **sichtbare Produktänderung**, und der Nutzen hängt jetzt an der Katalogbreite statt an der Sprachfähigkeit des Modells. Ob das Produkt so genug wert ist, ist nicht gemessen – dafür fehlt der bezahlte Aufruf. Diese Frage gehört dem Product Owner und steht als ADR-0212 Punkt 9 mit Empfehlung im Repository, nicht nur in diesem Dokument.
+
+**Ein Nebenfund beim Umbau, ehrlich benannt.** Nach dem Schemawechsel hing `erzeugen.test.ts` unter `node --test` ohne Ausgabe, statt zu scheitern: Die alten Fixtures trugen Prosa, die Prüfung verwarf sie, und eine fehlschlagende `assert.ok`-Zeile an dieser Stelle brachte den Testlauf zum Stillstand. Die Ursache lag in den veralteten Fixtures; nach deren Umstellung läuft die Datei mit 43 Tests grün. Ich habe die Mechanik des Stillstands im Testrunner nicht weiter aufgeklärt, weil sie mit dem Fix verschwand – wenn sie wiederkehrt, ist das der Ort, an dem man ansetzt.
 
 ---
 

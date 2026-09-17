@@ -12,23 +12,34 @@
 // Buchung oder eine Quelle: `additionalProperties: false` macht sie
 // unaussprechbar, und was unaussprechbar ist, muss später nicht geglaubt werden.
 //
+// ---------------------------------------------------------------------------
+// Und deshalb hat es überhaupt kein Freitextfeld mehr
+// ---------------------------------------------------------------------------
+//
+// Sieben Fassungen haben Freitext des Modells zu prüfen versucht. Die achte
+// Widerlegung brauchte nur gewöhnliche Wörter – `Du musst ein gültiges
+// Reisedokument haben.` –, weil jede dieser Fassungen behauptete, kein aus
+// ihrer Wortmenge bildbarer Satz sei eine amtliche Aussage. Das ist eine
+// Behauptung über einen unendlichen Satzraum, und Sprache komponiert.
+//
+// `antwort`, `unsicherheiten` und `naechsteSchritte` sind deshalb **entfernt**.
+// Das Modell wählt Schlüssel aus geschlossenen Katalogen
+// (`lib/reisebegleiter/befunde.ts`, `lib/reisebegleiter/aussagen.ts`) und nennt
+// den Bezug; jeden Satz schreibt Jetnity. Der Satz oben ist nicht abgelehnt –
+// es gibt kein Feld, in das er passt. Diese Zusicherung ist am Typ ablesbar und
+// wird in `lib/reisebegleiter/schema.test.ts` genau dort abgelesen, statt über
+// einen Satzraum argumentiert zu werden.
+//
 // Auf vorhandene Jetnity-Zustände zeigt das Modell über `bezuege` – und zwar
 // nur mit den Kennungen, die es im Kontext bekommen hat. Den *Zustand* dieser
 // Bezüge schreibt das Modell nicht; er wird in `lib/reisebegleiter/nutzlast.ts`
 // aus der akzeptierten Projektion abgeleitet und von der Oberfläche angezeigt.
 // Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
 //
-// ---------------------------------------------------------------------------
-// Warum Preisangaben und Links abgelehnt und nicht entfernt werden
-// ---------------------------------------------------------------------------
-//
-// `lib/reisevorschlag/schema.ts` entfernt Preisangaben aus Titeln und Notizen,
-// weil ein Titel ohne Betrag weiterhin ein Titel ist. Eine Auskunft ist ein
-// Satz. Ihm den Betrag herauszuschneiden ergibt einen Satz, der etwas anderes
-// behauptet als das Modell geschrieben hat – und den niemand geprüft hat.
-// Hier gilt deshalb die andere Richtung: Ein Betrag oder ein Link in einer
-// Auskunft ist erfundene Provider- oder Official-Wahrheit, und der Aufruf
-// endet als `schema`.
+// Betrag und Link brauchen hier keine eigene Prüfung mehr: Ohne Freitextfeld
+// gibt es keine Stelle, an der das Modell einen schreiben könnte. Die frühere
+// Ablehnung (statt Entfernung, anders als in `lib/reisevorschlag/schema.ts`)
+// ist damit gegenstandslos geworden, nicht gelockert.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -36,7 +47,8 @@ import { z } from 'zod'
 
 import { MODELL_GRENZEN } from '@/lib/modell/konfiguration'
 import { AMTLICHE_AUSSAGEN } from '@/lib/reisebegleiter/aussagen'
-import { ohneSteuerzeichen, traegtPreisangabe } from '@/lib/reisevorschlag/normalisierung'
+import { BEFUND_SCHLUESSEL } from '@/lib/reisebegleiter/befunde'
+import { ohneSteuerzeichen } from '@/lib/reisevorschlag/normalisierung'
 
 export const BEGLEITER_FASSUNG = 1
 
@@ -48,11 +60,8 @@ export const BEGLEITER_GRENZEN = {
   /** Dieselbe Obergrenze wie jeder andere Freitext an ein Modell. */
   frageMaximum: MODELL_GRENZEN.eingabeZeichen,
 
-  antwort: 900,
-  unsicherheiten: 5,
-  unsicherheit: 220,
-  schritte: 5,
-  schritt: 220,
+  /** Wie viele Katalogaussagen eine Auskunft höchstens auswählen darf. */
+  befunde: 10,
   bezuege: 8,
   amtlicheHinweise: 8,
 
@@ -84,40 +93,19 @@ export const BEGLEITER_GRENZEN = {
 } as const
 
 /**
- * Ein Link in einer Auskunft.
+ * Ein Link in einem Text.
  *
  * Auch `www.` und ein nacktes `beispiel.example/pfad` zählen: Der Zweck ist
- * nicht, URLs zu erkennen, sondern zu verhindern, dass eine generierte
- * Auskunft wie eine belegte Quelle aussieht.
+ * nicht, URLs zu erkennen, sondern zu verhindern, dass generierter oder
+ * nutzergeschriebener Text wie eine belegte Quelle aussieht. Gebraucht wird das
+ * noch in `lib/reisebegleiter/nutzlast.ts`, das linkverdächtigen Freitext aus
+ * der Projektion abzieht, bevor das Modell ihn sieht.
  */
 const LINKMUSTER = /(?:\bhttps?:\/\/|\bwww\.|\b[a-z0-9-]+\.(?:com|net|org|ch|de|at|io|gov|int)\b)/i
 
 export function traegtLink(wert: string): boolean {
   return LINKMUSTER.test(wert)
 }
-
-/**
- * Ein Textfeld der Auskunft.
- *
- * Steuerzeichen werden vereinheitlicht – das ist Form und keine Aussage.
- * Betrag und Link werden abgelehnt.
- */
-const auskunftstext = (maximum: number) =>
-  z
-    .string()
-    .transform((wert) => ohneSteuerzeichen(wert))
-    .pipe(
-      z
-        .string()
-        .min(1)
-        .max(maximum)
-        .refine((wert) => !traegtPreisangabe(wert), {
-          message: 'Eine Auskunft trägt keine Preisangabe.',
-        })
-        .refine((wert) => !traegtLink(wert), {
-          message: 'Eine Auskunft trägt keinen Link.',
-        }),
-    )
 
 /**
  * Eine Bezugskennung, wie `lib/reisebegleiter/nutzlast.ts` sie ausgibt.
@@ -144,13 +132,20 @@ const bezugKennung = z
  * Auskunft von so einem Modell soll nicht bereinigt, sondern verworfen werden.
  */
 const modellauskunftRoh = z.strictObject({
-  antwort: auskunftstext(BEGLEITER_GRENZEN.antwort),
-  unsicherheiten: z
-    .array(auskunftstext(BEGLEITER_GRENZEN.unsicherheit))
-    .max(BEGLEITER_GRENZEN.unsicherheiten),
-  naechsteSchritte: z
-    .array(auskunftstext(BEGLEITER_GRENZEN.schritt))
-    .max(BEGLEITER_GRENZEN.schritte),
+  /**
+   * Die Auswahl aus dem Jetnity-Katalog: Schlüssel plus Bezug, kein Text.
+   *
+   * Zulässig ist nur, was `angeboteneBefunde()` für diese Reise berechnet hat;
+   * `lib/reisebegleiter/pruefung.ts` prüft das Paar gegen das Angebot.
+   */
+  befunde: z
+    .array(
+      z.strictObject({
+        schluessel: z.enum(BEFUND_SCHLUESSEL),
+        ref: bezugKennung.nullable(),
+      }),
+    )
+    .max(BEGLEITER_GRENZEN.befunde),
   bezuege: z.array(bezugKennung).max(BEGLEITER_GRENZEN.bezuege),
   /**
    * Der einzige Kanal für amtliche Lagen. Kein Freitext: Das Modell wählt eine
@@ -192,25 +187,25 @@ export const begleiterfrageSchema = frage
 export const BEGLEITER_JSON_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['antwort', 'unsicherheiten', 'naechsteSchritte', 'bezuege', 'amtlicheHinweise'],
+  required: ['befunde', 'bezuege', 'amtlicheHinweise'],
   properties: {
-    antwort: {
-      type: 'string',
-      description: `Die Antwort auf die Frage, höchstens ${BEGLEITER_GRENZEN.antwort} Zeichen. Ohne Preis, ohne Link, ohne erfundene amtliche Anforderung.`,
-    },
-    unsicherheiten: {
+    befunde: {
       type: 'array',
-      maxItems: BEGLEITER_GRENZEN.unsicherheiten,
-      items: { type: 'string' },
+      maxItems: BEGLEITER_GRENZEN.befunde,
       description:
-        'Was für eine belastbare Antwort fehlt oder im Reisekontext unbekannt, veraltet oder nicht erreichbar ist. Leer nur, wenn wirklich nichts offen ist.',
-    },
-    naechsteSchritte: {
-      type: 'array',
-      maxItems: BEGLEITER_GRENZEN.schritte,
-      items: { type: 'string' },
-      description:
-        'Vorgeschlagene nächste Schritte in Jetnity. Vorschläge, keine Ausführung: Die Reise wird dadurch nicht geändert.',
+        'Deine Antwort. Du schreibst keine Sätze, du wählst aus: Nimm aus angebot im Reisekontext die Aussagen, die zur Frage passen, und ordne sie. Jeden Satz dazu schreibt Jetnity. Ein Paar aus schluessel und ref, das nicht im angebot steht, verwirft die Auskunft.',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['schluessel', 'ref'],
+        properties: {
+          schluessel: { type: 'string', enum: [...BEFUND_SCHLUESSEL] },
+          ref: {
+            type: ['string', 'null'],
+            description: 'Der Bezug aus dem angebot, oder null bei Aussagen über die ganze Reise.',
+          },
+        },
+      },
     },
     bezuege: {
       type: 'array',

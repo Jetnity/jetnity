@@ -20,7 +20,7 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | --- | --- |
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (historisch; inzwischen durch Rebase und Merge abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | der Review-Fix „Separate generated prose from truth-bearing Official propositions“ (Runde 8) |
+| **Letzter laufzeitändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) |
 | Merge-Base mit `origin/main` | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` – `main` wurde in den Branch **gemergt**, nicht rebased |
 | Behind gegen `origin/main` | **0** – geprüft beim letzten Handoff. Die Ahead-Zahl steht hier nicht: Sie ändert sich mit jedem Commit, auch mit dem, der sie festhielte. Verbindlich ist der Live-Vergleich in PR #435 |
 | Drift | **keine.** `origin/main` war auf `aa6afaa6` gewandert (Realistic World Cartography 1, Guardian-Governance, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits). Integriert durch `git merge --no-ff`, ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt |
@@ -50,8 +50,9 @@ Commits auf dem Branch:
 9. Integration von `main@aa6afaa6`
 10. Review-Fix 5: Antwortsprache als Vertrag (durch Fix 6 ersetzt)
 11. Review-Fix 6: Wortschatz als Erlaubnisliste über allen Modellfeldern (durch Fix 7 ersetzt)
-12. Review-Fix 7: getrennte Kanäle – Prosa ohne amtliches Vokabular, amtliche Lagen typisiert
-13. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
+12. Review-Fix 7: getrennte Kanäle – Prosa ohne amtliches Vokabular (durch Fix 8 ersetzt)
+13. Review-Fix 8: kein Freitextfeld mehr – Auswahl aus Jetnity-Katalogen statt Formulierung
+14. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
 
 Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@03842a64` geändert; Reihenfolge und Inhalte sind unverändert. Seither wird `main` gemergt und nicht mehr rebased, damit die reviewte Historie erhalten bleibt.
 
@@ -249,7 +250,8 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 3. **Darstellung einer Auskunft** – im Browser belegt, aber mit einer **gestellten** Auskunft über den Audit-Schalter `begleiterAuskunft`, nicht mit einer erzeugten. Die gestellte Auskunft ist auf den Stand von Runde 8 gebracht: Ihre Prosa benennt keine amtliche Anforderung, und der amtliche Satz kommt aus dem geschlossenen Aussagekanal.
 4. **Unbestätigter Development-Nutzer** aus Abschnitt 5 – **vom Technical Lead gelöscht**, Nachzählung 0. Erledigt.
 5. **Systemregeln gegen ein echtes Modell** – die Wirksamkeit der Prompt-Regeln (erste Schranke) ist nicht gemessen. Schema, Nutzlast und Prüfung (zweite und dritte Schranke) sind deterministisch geprüft und hängen nicht daran.
-6. **Recall der Kanaltrennung – nicht gemessen, und nur mit dem bezahlten Aufruf messbar.** Seit Runde 8 führt der Wortschatz kein amtliches Vokabular, und über amtliche Lagen kann die Auskunft nur die sieben Jetnity-Sätze sagen. Ein gültiger deutscher Satz mit einem ungeführten Wort fällt durch. Wie oft das eine brauchbare Auskunft trifft, ist offen; die Richtung des Handels ist bewusst gewählt (ADR-0212 Punkt 8), die Höhe des Preises nicht bekannt. Das ist eine Produktfrage und gehört dem Product Owner, nicht dem Agenten.
+6. **Umfang der Auskunft – Produktfrage an den Product Owner, nicht gemessen.** Seit Runde 9 formuliert der Reisebegleiter nicht mehr; er wählt aus 33 Jetnity-Aussagen und sieben amtlichen Aussagen aus und ordnet sie. Er kann genau sagen, was in den Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist nicht gemessen – der einzige Messpunkt ist der offene bezahlte Aufruf. Vorgelegt mit Empfehlung als ADR-0212 Punkt 9.
+7. **Mechanik eines Testrunner-Stillstands nicht aufgeklärt.** Nach dem Schemawechsel hing `erzeugen.test.ts` unter `node --test` ohne Ausgabe, weil veraltete Prosa-Fixtures verworfen wurden und eine fehlschlagende `assert.ok`-Zeile den Lauf anhielt. Nach Umstellung der Fixtures läuft die Datei mit 43 Tests grün; die Runner-Mechanik selbst ist nicht weiter untersucht.
 
 ---
 
@@ -257,10 +259,10 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 
 | Risiko | Lage |
 | --- | --- |
-| Amtliche Wahrheit aus Modellprosa | **strukturell geschlossen** seit Runde 8: Der Wortschatz führt kein amtliches Vokabular, und `wortschatz.test.ts` prüft jeden Stamm und jedes Paar daraus gegen die Bereichsmuster. Amtliche Lagen laufen über sieben geschlossene Aussageschlüssel mit Jetnity-eigenen Sätzen |
-| Der Wortschatz lehnt auch ehrliche Sätze ab | ja, und häufiger als vorher. Die Systemregeln nennen die Grenze ausdrücklich, damit ein regelkonformes Modell sie nicht auslöst. Häufigkeit ohne bezahlten Nachweis unbekannt (offener Punkt 6) |
-| Verfügbarkeitsbehauptungen in freier Formulierung | weiter nicht erkannt – eingestandene Grenze, dieselbe wie ADR-0054. Preis und Link fängt das Schema |
-| Der Nachweis der Kanaltrennung hängt an `BEREICHE` | `BEREICHE` ist die Definition dessen, was als amtliche Anforderung gilt, und deckt die geschlossene `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie ab. Ein amtlicher Begriff, den kein Muster beschreibt, würde vom Nachweis nicht erfasst. Das ist die verbleibende Annahme dieser Fassung, und sie ist wenigstens an einer versionierten Taxonomie im Repository festgemacht statt an einer Einschätzung |
+| Erfundene amtliche Wahrheit aus Modelltext | **am Typ geschlossen** seit Runde 9: Es gibt kein Freitextfeld. Jeden Satz schreibt Jetnity; das Modell wählt Schlüssel und Bezug. Dasselbe gilt für Preis, Link, Buchungszustand und behauptete Änderung – nicht mehr abgelehnt, sondern nicht darstellbar |
+| Falscher Katalogeintrag | die neue Angriffsfläche, und beidseitig geprüft: die Formulierungen des ganzen Katalogs gegen Anforderungssprache, die Auswahl gegen das berechnete Angebot **mit** Bezug, und mit leerem Angebot kommt kein Eintrag durch |
+| Katalogbreite als Produktgrenze | der Reisebegleiter sagt genau, was im Katalog steht. Neue Aussagen sind Jetnity-Formulierungen mit nachrechenbarer Bedingung – überprüfbar, aber teurer als ein Prompt (offener Punkt 6) |
+| Die Bedingungen des Katalogs sind Code | `angeboteneBefunde()` rechnet aus der Projektion. Eine falsche Bedingung wäre eine falsche, weil von Jetnity formulierte Aussage. Deshalb liegt jede Bedingung in `pruefung.test.ts` unter Test, gegen die Projektion und nicht gegen sich selbst |
 | Eingabegrenze zu streng oder zu lasch | 24 000 Zeichen sind aus der Reservierung abgeleitet, nicht gemessen. Eine sehr grosse Reise bekommt keine Auskunft. `kosten.test.ts` hält die Richtung fest |
 | Zeichen-je-Token-Annahme | 2.2 ist pessimistisch, aber eine Annahme. Das Ausgabebudget von 1600 statt 6000 Tokens ist die eigentliche Absicherung |
 | Migration nicht live geprüft | **geschlossen für Development** (Abschnitt 4). Production bleibt ohne den dritten Wert; ein Aufruf dort scheiterte an der CHECK-Bedingung, also fail closed – und Production ist ohnehin abgeschaltet |
