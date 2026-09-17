@@ -112,6 +112,28 @@ const anfragen = new Set()
 
 try {
   const browser = await chromium.launch()
+
+  /**
+   * Bilder werden als WebP abgelegt. Eine detaillierte Weltkarte kostet als
+   * PNG ein Vielfaches, und Belege sollen das Repository nicht beschweren.
+   * Die Umwandlung laeuft im selben Browser, damit kein Bildpaket dazukommt.
+   */
+  const umwandler = await browser.newPage()
+  const alsWebp = async (puffer) =>
+    Buffer.from(
+      await umwandler.evaluate(async (basis64) => {
+        const bild = new Image()
+        bild.src = `data:image/png;base64,${basis64}`
+        await bild.decode()
+        const flaeche = document.createElement('canvas')
+        flaeche.width = bild.naturalWidth
+        flaeche.height = bild.naturalHeight
+        flaeche.getContext('2d')?.drawImage(bild, 0, 0)
+        return flaeche.toDataURL('image/webp', 0.9).split(',')[1]
+      }, puffer.toString('base64')),
+      'base64',
+    )
+
   for (const viewport of BREITEN) {
     const seite = await browser.newPage({ viewport, deviceScaleFactor: SKALIERUNG })
     const konsole = []
@@ -127,21 +149,24 @@ try {
     const karte = seite.locator('[data-world-map="ein"]')
     await karte.waitFor({ timeout: 30_000 })
 
-    const bild = (art) => join(VERZEICHNIS, `${MARKE}-${viewport.name}-${art}.png`)
-    await karte.screenshot({ path: bild('karte') })
+    const aufnehmen = async (art) => {
+      const puffer = await karte.screenshot()
+      writeFileSync(join(VERZEICHNIS, `${MARKE}-${viewport.name}-${art}.webp`), await alsWebp(puffer))
+    }
+    await aufnehmen('karte')
 
     const einzel = seite.locator('[data-world-map-marker-orte="1"]').first()
     if ((await einzel.count()) > 0) {
       await einzel.click()
       await seite.waitForTimeout(400)
-      await karte.screenshot({ path: bild('marker-gewaehlt') })
+      await aufnehmen('marker-gewaehlt')
     }
 
     const gruppe = seite.locator('[data-world-map-marker]:not([data-world-map-marker-orte="1"])').first()
     if ((await gruppe.count()) > 0) {
       await gruppe.click()
       await seite.waitForTimeout(400)
-      await karte.screenshot({ path: bild('gruppe-offen') })
+      await aufnehmen('gruppe-offen')
     }
 
     const messung = await seite.evaluate(() => {
