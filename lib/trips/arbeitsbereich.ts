@@ -249,6 +249,15 @@ export function aenderungIstSichtbar(offen: boolean): boolean {
 }
 
 /**
+ * Der Reisebegleiter ist eine eingeklappte Fläche in der Übersicht, kein
+ * Hauptbereich und kein schwebender Chat. Er verhält sich wie die
+ * Änderungsfläche: sichtbar nur, solange er ausdrücklich offen ist.
+ */
+export function begleiterIstSichtbar(offen: boolean): boolean {
+  return offen
+}
+
+/**
  * Der Tagesplan liegt in der Übersicht. Er ist kein eigener Hauptbereich
  * und erscheint nicht parallel zu Domain-Suchen.
  */

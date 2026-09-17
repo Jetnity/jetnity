@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Mobile Accessibility 1, Issue #429 / Draft PR #430, Branch `feat/phase-1-mobile-accessibility-1`, Binding `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`. Assistant Truth Context 1, World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Assistant Runtime 1, Issue #434 / Draft PR #435, Branch `feat/phase-1-assistant-runtime-1`, Binding `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md`, Product-Owner-Gate #433 (Preview/Development only). Mobile Accessibility 1 (Issue #429 / PR #430), Assistant Truth Context 1, World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -323,6 +323,47 @@ Technical-Lead-authorized truth-context slice of Issue #425 / Draft PR #426 on `
 - kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten
 
 Technical-Lead-owned. Kein Folgeslice aus diesem Stand ableiten.
+
+## 9d. Assistant Runtime 1 – Draft-PR, Technical-Lead review pending
+
+Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner-Gate #433 – **Preview/Development only**. Binding: `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md`. Entscheidung: ADR-0212.
+
+**Fertig in diesem Branch:**
+
+- additive Migration `20260917090000_modell_reisebegleiter.sql`: dritter Wert `reisebegleiter` in `model_usage_funktion_werte`, kein zweiter Kostentopf
+- `MODELLFUNKTIONEN` in `lib/modell/konfiguration.ts`, gegen das Migrations-SQL geprüft
+- `lib/reisebegleiter/{nutzlast,schema,befunde,aussagen,regeln,pruefung,erzeugen,aktionen}.ts`: bounded, server-only, ein Versuch, Reservierung vor jedem Aufruf
+- **kein Freitextfeld in der Modellausgabe**: drei Felder (`befunde`, `bezuege`, `amtlicheHinweise`), alle nur Schlüssel und Bezugskennungen. Das Modell wählt aus zwei geschlossenen Jetnity-Katalogen – 33 Befunde über Jetnitys eigenen Datenstand, sieben amtliche Aussagen –, und jeden angezeigten Satz schreibt Jetnity
+- `components/trips/Reisebegleiter.tsx` plus `begleiter`-Slot in `TripWorkspace`: eine eingeklappte Fläche in der Reiseübersicht, nur Konto
+- additives `Modellanfrage.ausgabeTokens`, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt
+- sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser bei 390, 1280 und 1440 px)
+- voller Testbestand, TypeScript, Lint auf der `origin/main`-Baseline, Hygiene-Checks und Production-Build grün; Zahlen stehen nicht hier, weil jeder Commit sie ändert
+- exact-head CI **success** (beide Jobs, inkl. `auth:pruefen`) und Vercel Preview **READY** auf jedem bisherigen Kopf; die Kennungen des aktuellen Kopfes stehen in den Checks von PR #435, nicht hier
+
+**Aktueller Wahrheitsvertrag nach acht Re-Reviews (`3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`, `4ffe3f20`, `e6606ea8`, `5ef78e5c`, `0c56864e`):**
+
+- **Das Modell schreibt keine Sätze, es wählt aus.** Sieben Fassungen versuchten, erfundene amtliche Wahrheit im Freitext zu erkennen – deutsche Muster, mehrsprachige Verbotslisten, eine Spracherkennung, eine Erlaubnisliste über einem Wortschatz. Jede behauptete, aus einer erlaubten Wortmenge sei kein amtlicher Satz bildbar; das ist über einem unendlichen Satzraum nicht belegbar und wurde achtmal widerlegt. Seit Runde 9 gibt es das Feld nicht mehr, in dem so ein Satz stehen könnte.
+- gewählt werden darf nur ein Paar aus Katalogschlüssel **und** Bezug, das `angeboteneBefunde()` für diese Reise als zutreffend berechnet hat
+- amtliche Lagen laufen ausschliesslich über `amtlicheHinweise`: sieben Aussagen, gebunden an `ergebnis`, `frische` und `fehlendeAngaben` des Official-Bezugs; kein Schlüssel passt auf jeden Zustand
+- `pruefung.ts` prüft genau drei Dinge: Bezug existiert, Befundpaar steht im Angebot, amtliche Aussage passt zum geprüften Zustand. Preis, Link, Buchungsbehauptung und behauptete Änderung sind nicht mehr abgelehnt, sondern **nicht darstellbar**
+- nutzergeschriebener Reisetext (`stage.name`, Reisenden-Label) erweitert keine Autorität; er bleibt Anzeigetext
+- serverseitige Ausgabeprüfung lehnt unerwartete Felder ab (`z.strictObject`) statt sie zu entfernen
+- Produktfolge: Der Nutzen hängt an der **Katalogbreite**. Der Product Owner hat diese Form am 17. September 2026 für Preview/Development freigegeben; ADR-0212 (Produktform: Auswahl statt Formulierung) hält sie samt Empfehlung fest
+- `main@aa6afaa6` und `main@cc2e1bff` per Merge integriert (kein Rebase, kein Force-Push); 0 behind, beide Seiten verlustfrei geprüft
+
+*Die widerlegten Zwischenfassungen – Gewissheitsbindung an Bereich und Anforderungstyp, Modalität × Bereich × Vorbehalt, Sprachvertrag, Wortschatz-Erlaubnisliste – stehen als Historie in ADR-0212 und im SELF_REVIEW. Sie sind **kein** aktueller Mechanismus.*
+
+**Vom Technical Lead erledigt – nicht wiederholen:**
+
+- Develop-Migration `20260917090000` angewandt; Live-CHECK exakt `reisevorschlag` / `reiseaenderung` / `reisebegleiter`; RLS eingeschaltet; Policy `model_usage_lesen` und Rechte unverändert; Advisors ohne neuen Befund; `model_usage` 0 Zeilen; Migrationshistorie auf die Repository-Fassung korrigiert; Probe-Auth-Nutzer gelöscht. **Production unverändert.**
+
+**Weiterhin offen:**
+
+- **Kein bezahlter Preview/Development-Aufruf.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen in der Agent-Umgebung; ein Konto-Login ist ohne bestätigte E-Mail nicht erreichbar. Die Darstellung einer Auskunft ist im Browser mit einer gestellten Auskunft nachgewiesen, nicht mit einer erzeugten.
+- `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` und `production:pruefen` sind in der Agent-Umgebung **nicht gelaufen** (HTTP 401); `auth:pruefen` ist in der CI grün.
+- Production-Migration, Production-Modellaktivierung, Production-Secrets und Production-Aufrufe bleiben geschlossen.
+
+Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten. Technical-Lead-owned.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 

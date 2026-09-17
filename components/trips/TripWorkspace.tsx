@@ -20,6 +20,7 @@ import {
   ARBEITSBEREICH_DESKTOP_AB_PX,
   type Arbeitsbereich,
   aenderungIstSichtbar,
+  begleiterIstSichtbar,
   bereichDarstellungKlasse,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
@@ -84,6 +85,11 @@ type TripWorkspaceProps = {
   kopfzeile?: React.ReactNode
   hinweis?: React.ReactNode
   aenderung?: React.ReactNode
+  /**
+   * Die Assistant-Fläche. Ohne diese Prop gibt es keinen Reisebegleiter und
+   * keinen Knopf dafür – der Gast-Arbeitsbereich lässt sie aus.
+   */
+  begleiter?: React.ReactNode
   flugsuche?: React.ReactNode
   hotelsuche?: React.ReactNode
   aktivitaetensuche?: React.ReactNode
@@ -173,6 +179,7 @@ export default function TripWorkspace({
   kopfzeile,
   hinweis,
   aenderung,
+  begleiter,
   flugsuche,
   hotelsuche,
   aktivitaetensuche,
@@ -207,6 +214,12 @@ export default function TripWorkspace({
   const [aenderungBereit, setAenderungBereit] = React.useState(!kompakt)
   const aenderungKnopfRef = React.useRef<HTMLButtonElement>(null)
   const aenderungFeldRef = React.useRef<HTMLDivElement>(null)
+  const [begleiterOffen, setBegleiterOffen] = React.useState(false)
+  // Erst beim ersten Öffnen eingehängt – auf jedem Gerät. Eine Fläche, die
+  // nicht gemountet ist, kann keinen Effekt und keinen Aufruf auslösen.
+  const [begleiterBereit, setBegleiterBereit] = React.useState(false)
+  const begleiterKnopfRef = React.useRef<HTMLButtonElement>(null)
+  const begleiterFeldRef = React.useRef<HTMLDivElement>(null)
   const zurueckRef = React.useRef<HTMLButtonElement>(null)
   const detailFokusRef = React.useRef<HTMLButtonElement>(null)
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
@@ -292,7 +305,20 @@ export default function TripWorkspace({
     feld?.focus()
   }, [aenderungOffen])
 
+  const begleiterOeffnen = () => {
+    const naechster = !begleiterOffen
+    setBegleiterOffen(naechster)
+    if (naechster) setBegleiterBereit(true)
+  }
+
+  React.useEffect(() => {
+    if (!begleiterOffen) return
+    const feld = begleiterFeldRef.current?.querySelector<HTMLTextAreaElement>('textarea')
+    feld?.focus()
+  }, [begleiterOffen])
+
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
+  const begleiterSichtbar = begleiterIstSichtbar(begleiterOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
   const destinationEssentials = destinationEssentialsAbleiten({
     reise,
@@ -363,6 +389,25 @@ export default function TripWorkspace({
     </div>
   )
 
+  const begleiterFeld = begleiterBereit && begleiter && (
+    <div
+      id="reisebegleiter"
+      hidden={!begleiterSichtbar}
+      ref={(el) => {
+        begleiterFeldRef.current = el
+        setzeInert(el, !begleiterSichtbar)
+      }}
+      onKeyDown={(ereignis) => {
+        if (ereignis.key !== 'Escape' || !begleiterOffen) return
+        ereignis.stopPropagation()
+        setBegleiterOffen(false)
+        begleiterKnopfRef.current?.focus()
+      }}
+    >
+      {begleiter}
+    </div>
+  )
+
   const flugBestandBereit = bestandSollMounten('fluege', bereinigt, bestandBesucht, reise, ungeplantePunkte)
   const hotelBestandBereit = bestandSollMounten('unterkunft', bereinigt, bestandBesucht, reise, ungeplantePunkte)
   const mobilitaetBereit = bestandSollMounten('mobilitaet', bereinigt, bestandBesucht, reise, ungeplantePunkte)
@@ -407,12 +452,17 @@ export default function TripWorkspace({
               attention={attention}
               destinationEssentials={destinationEssentials}
               aenderungOffen={aenderungOffen}
+              begleiterOffen={begleiterOffen}
+              begleiterVorhanden={begleiter != null}
               onLuecke={oeffneGap}
               onAttention={onAttention}
               onAenderung={aenderungOeffnen}
+              onBegleiter={begleiterOeffnen}
               aenderungKnopfRef={aenderungKnopfRef}
+              begleiterKnopfRef={begleiterKnopfRef}
               plan={plan}
               aenderungFeld={aenderungFeld}
+              begleiterFeld={begleiterFeld}
               vorbereitung={vorbereitung}
               sicherheit={sicherheit}
               reisezeit={reisezeit}

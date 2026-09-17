@@ -11,7 +11,9 @@ import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
+import Reisebegleiter from '@/components/trips/Reisebegleiter'
 import TripWorkspace from '@/components/trips/TripWorkspace'
+import type { Begleiterauskunft } from '@/lib/reisebegleiter/erzeugen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
@@ -26,6 +28,16 @@ type AuditNutzlast = {
   anfangsBereich?: Arbeitsbereich
   mitSuche?: boolean
   mitAenderung?: boolean
+  /**
+   * Hängt die **echte** Assistant-Fläche ein, nicht eine Hülle wie bei
+   * `mitAenderung`. Das ist hier gefahrlos und der Zweck: Die Fläche ruft beim
+   * Mounten nichts auf, und ein Absenden ohne Sitzung endet in der Server
+   * Action vor Kill Switch, Kontingent und Modell. Ohne das Feld gibt es
+   * weiterhin keine Fläche und keinen Knopf.
+   */
+  mitBegleiter?: boolean
+  /** Audit-Darstellung einer bereits vorliegenden Auskunft, ohne bezahlten Aufruf. */
+  begleiterAuskunft?: Begleiterauskunft
   gastHinweis?: boolean
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
@@ -107,6 +119,11 @@ export default function TripWorkspaceAuditClient() {
               Änderung vorschlagen
             </button>
           </form>
+        ) : null
+      }
+      begleiter={
+        daten.mitBegleiter ? (
+          <Reisebegleiter reise={reise} anfangsAuskunft={daten.begleiterAuskunft ?? null} />
         ) : null
       }
       flugsuche={daten.mitSuche ? <FlugSuche reise={reise} tagId={reise.days[0]?.id ?? null} onUebernehmen={async () => null} /> : null}

@@ -44,13 +44,10 @@ import { cookies } from 'next/headers'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
 import { GAST_COOKIE_VERTRAG, istGueltigeGastkennung } from '@/lib/modell/gast-cookie'
-import type { Ergebnisklasse } from '@/lib/modell/konfiguration'
+import type { Ergebnisklasse, Modellfunktion } from '@/lib/modell/konfiguration'
 import type { Modellname, Tokennutzung } from '@/lib/modell/preise'
 import { createServerActionClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
-
-/** Die eine Modellfunktion dieser Phase. Dieselben Werte wie `model_usage.funktion`. */
-export type Modellfunktion = 'reisevorschlag' | 'reiseaenderung'
 
 export type Kontingentergebnis =
   | { ok: true; id: string }

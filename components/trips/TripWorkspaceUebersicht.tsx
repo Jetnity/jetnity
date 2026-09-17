@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentType, ReactNode, RefObject } from 'react'
-import { ArrowRightLeft, BedDouble, Plane, Sparkles } from 'lucide-react'
+import { ArrowRightLeft, BedDouble, Compass, Plane, Sparkles } from 'lucide-react'
 
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import type { DetailDomain } from '@/lib/trips/detail'
@@ -38,12 +38,17 @@ export default function TripWorkspaceUebersicht({
   attention,
   destinationEssentials,
   aenderungOffen,
+  begleiterOffen,
+  begleiterVorhanden,
   onLuecke,
   onAttention,
   onAenderung,
+  onBegleiter,
   aenderungKnopfRef,
+  begleiterKnopfRef,
   plan,
   aenderungFeld,
+  begleiterFeld,
   vorbereitung,
   sicherheit,
   reisezeit,
@@ -53,12 +58,18 @@ export default function TripWorkspaceUebersicht({
   attention: AttentionAbleitung
   destinationEssentials: DestinationEssentialsAbleitung
   aenderungOffen: boolean
+  begleiterOffen: boolean
+  /** Ohne Assistant-Fläche gibt es auch keinen Knopf dafür. */
+  begleiterVorhanden: boolean
   onLuecke: (domain: DetailDomain) => void
   onAttention: (aktion: AttentionAktion) => void
   onAenderung: () => void
+  onBegleiter: () => void
   aenderungKnopfRef: RefObject<HTMLButtonElement | null>
+  begleiterKnopfRef: RefObject<HTMLButtonElement | null>
   plan?: ReactNode
   aenderungFeld?: ReactNode
+  begleiterFeld?: ReactNode
   vorbereitung?: ReactNode
   sicherheit?: ReactNode
   reisezeit?: ReactNode
@@ -136,6 +147,28 @@ export default function TripWorkspaceUebersicht({
       </div>
 
       {aenderungFeld}
+
+      {begleiterVorhanden ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="min-w-0 text-sm leading-6 text-ink-800">
+            Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und
+            ändert nichts.
+          </p>
+          <button
+            ref={begleiterKnopfRef}
+            type="button"
+            aria-expanded={begleiterOffen}
+            aria-controls="reisebegleiter"
+            onClick={onBegleiter}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-800 px-4 text-sm font-semibold text-brand-800 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+          >
+            <Compass className="h-4 w-4" aria-hidden="true" />
+            {begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}
+          </button>
+        </div>
+      ) : null}
+
+      {begleiterFeld}
 
       {workspacePraeferenzHatInhalt(praeferenzen) ? (
         <div className="grid gap-3">
