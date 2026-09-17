@@ -332,22 +332,26 @@ Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner
 
 - additive Migration `20260917090000_modell_reisebegleiter.sql`: dritter Wert `reisebegleiter` in `model_usage_funktion_werte`, kein zweiter Kostentopf
 - `MODELLFUNKTIONEN` in `lib/modell/konfiguration.ts`, gegen das Migrations-SQL geprüft
-- `lib/reisebegleiter/{nutzlast,schema,regeln,pruefung,erzeugen,aktionen}.ts`: bounded, server-only, ein Versuch, Reservierung vor jedem Aufruf
+- `lib/reisebegleiter/{nutzlast,schema,befunde,aussagen,regeln,pruefung,erzeugen,aktionen}.ts`: bounded, server-only, ein Versuch, Reservierung vor jedem Aufruf
+- **kein Freitextfeld in der Modellausgabe**: drei Felder (`befunde`, `bezuege`, `amtlicheHinweise`), alle nur Schlüssel und Bezugskennungen. Das Modell wählt aus zwei geschlossenen Jetnity-Katalogen – 33 Befunde über Jetnitys eigenen Datenstand, sieben amtliche Aussagen –, und jeden angezeigten Satz schreibt Jetnity
 - `components/trips/Reisebegleiter.tsx` plus `begleiter`-Slot in `TripWorkspace`: eine eingeklappte Fläche in der Reiseübersicht, nur Konto
 - additives `Modellanfrage.ausgabeTokens`, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt
-- sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser, mobil und Desktop)
-- 3601 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
+- sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser bei 390, 1280 und 1440 px)
+- voller Testbestand, TypeScript, Lint auf der `origin/main`-Baseline, Hygiene-Checks und Production-Build grün; Zahlen stehen nicht hier, weil jeder Commit sie ändert
 - exact-head CI **success** (beide Jobs, inkl. `auth:pruefen`) und Vercel Preview **READY** auf jedem bisherigen Kopf; die Kennungen des aktuellen Kopfes stehen in den Checks von PR #435, nicht hier
 
-**Nach den Technical-Lead-Re-Reviews behoben (`3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`, `4ffe3f20`):**
+**Aktueller Wahrheitsvertrag nach acht Re-Reviews (`3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`, `4ffe3f20`, `e6606ea8`, `5ef78e5c`, `0c56864e`):**
 
-- Gewissheit ist an die von der Auskunft **genannte** amtliche Lage gebunden; eine fremde geprüfte Official-Lage schaltet sie nicht global frei
-- Gewissheit ist zusätzlich an den **passenden Anforderungstyp** gebunden; eine geprüfte Impfanforderung trägt kein Visum. `BegleiterBezug` führt dafür die maschinenlesbare Anforderungsidentität aus der Projektion
-- harte amtliche Aussagen werden über die **vollständige** `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie geprüft, für Behauptung wie Verneinung; erkannt satzweise aus Modalität, Bereich und Vorbehalt
-- der Wortschatz einer Auskunft ist eine **Erlaubnisliste** statt einer Verbotsliste: zulässig sind der geführte deutsche Register, der serverseitig abgeleitete Kontext und Zahlen – alles andere verwirft die Auskunft, in **jedem** Modellfeld. Über einer offenen Menge gibt es keine vollständige Verbotsliste; über einer Erlaubnisliste hängt nichts mehr an der Aufzählung
-- „gilt als geprüft" und Verwandte sind nie bindbar: Ob eine Lage geprüft ist, sagt allein Jetnity
+- **Das Modell schreibt keine Sätze, es wählt aus.** Sieben Fassungen versuchten, erfundene amtliche Wahrheit im Freitext zu erkennen – deutsche Muster, mehrsprachige Verbotslisten, eine Spracherkennung, eine Erlaubnisliste über einem Wortschatz. Jede behauptete, aus einer erlaubten Wortmenge sei kein amtlicher Satz bildbar; das ist über einem unendlichen Satzraum nicht belegbar und wurde achtmal widerlegt. Seit Runde 9 gibt es das Feld nicht mehr, in dem so ein Satz stehen könnte.
+- gewählt werden darf nur ein Paar aus Katalogschlüssel **und** Bezug, das `angeboteneBefunde()` für diese Reise als zutreffend berechnet hat
+- amtliche Lagen laufen ausschliesslich über `amtlicheHinweise`: sieben Aussagen, gebunden an `ergebnis`, `frische` und `fehlendeAngaben` des Official-Bezugs; kein Schlüssel passt auf jeden Zustand
+- `pruefung.ts` prüft genau drei Dinge: Bezug existiert, Befundpaar steht im Angebot, amtliche Aussage passt zum geprüften Zustand. Preis, Link, Buchungsbehauptung und behauptete Änderung sind nicht mehr abgelehnt, sondern **nicht darstellbar**
+- nutzergeschriebener Reisetext (`stage.name`, Reisenden-Label) erweitert keine Autorität; er bleibt Anzeigetext
 - serverseitige Ausgabeprüfung lehnt unerwartete Felder ab (`z.strictObject`) statt sie zu entfernen
-- `main@aa6afaa6` per Merge integriert (kein Rebase, kein Force-Push); 0 behind, verlustfrei in beide Richtungen geprüft
+- Produktfolge: Der Nutzen hängt an der **Katalogbreite**. Der Product Owner hat diese Form am 17. September 2026 für Preview/Development freigegeben; ADR-0212 Punkt 8 hält sie samt Empfehlung fest
+- `main@aa6afaa6` und `main@cc2e1bff` per Merge integriert (kein Rebase, kein Force-Push); 0 behind, beide Seiten verlustfrei geprüft
+
+*Die widerlegten Zwischenfassungen – Gewissheitsbindung an Bereich und Anforderungstyp, Modalität × Bereich × Vorbehalt, Sprachvertrag, Wortschatz-Erlaubnisliste – stehen als Historie in ADR-0212 und im SELF_REVIEW. Sie sind **kein** aktueller Mechanismus.*
 
 **Vom Technical Lead erledigt – nicht wiederholen:**
 

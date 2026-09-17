@@ -63,7 +63,7 @@ Frage (Konto-Reise)
 
 Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unter „Jetnity-Stand dazu" steht – „Noch nicht verlässlich bestimmbar", „nicht geprüft" – leitet `lib/reisebegleiter/nutzlast.ts` aus derselben Projektion ab. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
 
-Der zweite Punkt, aus acht Review-Runden gewachsen: **Das Modell schreibt keine Sätze, es wählt aus.** Sieben Fassungen haben Freitext einzuschränken versucht; jede behauptete, aus ihrer Wortmenge sei kein amtlicher Satz bildbar, und jede wurde widerlegt – zuletzt mit vier geführten Alltagswörtern (`Du musst ein gültiges Reisedokument haben.`). Deshalb hat `lib/reisebegleiter/schema.ts` **kein Freitextfeld** mehr: Das Modell wählt Schlüssel aus `lib/reisebegleiter/befunde.ts` (33 Aussagen über Jetnitys eigenen Datenstand, je mit nachrechenbarer Bedingung) und `lib/reisebegleiter/aussagen.ts` (sieben amtliche Aussagen, gebunden an den geprüften Zustand) und nennt den Bezug; jeden Satz schreibt Jetnity. Gewählt werden darf nur, was `angeboteneBefunde()` vorher als zutreffend berechnet hat – Schlüssel **und** Bezug. Die Zusicherung ist damit am Typ ablesbar statt über einen Satzraum argumentiert. Der Preis ist der Umfang der Auskunft; das ist eine Produktfrage und liegt als ADR-0212 Punkt 9 beim Product Owner.
+Der zweite Punkt, aus acht Review-Runden gewachsen: **Das Modell schreibt keine Sätze, es wählt aus.** Sieben Fassungen haben Freitext einzuschränken versucht; jede behauptete, aus ihrer Wortmenge sei kein amtlicher Satz bildbar, und jede wurde widerlegt – zuletzt mit vier geführten Alltagswörtern (`Du musst ein gültiges Reisedokument haben.`). Deshalb hat `lib/reisebegleiter/schema.ts` **kein Freitextfeld** mehr: Das Modell wählt Schlüssel aus `lib/reisebegleiter/befunde.ts` (33 Aussagen über Jetnitys eigenen Datenstand, je mit nachrechenbarer Bedingung) und `lib/reisebegleiter/aussagen.ts` (sieben amtliche Aussagen, gebunden an den geprüften Zustand) und nennt den Bezug; jeden Satz schreibt Jetnity. Gewählt werden darf nur, was `angeboteneBefunde()` vorher als zutreffend berechnet hat – Schlüssel **und** Bezug. Die Zusicherung ist damit am Typ ablesbar statt über einen Satzraum argumentiert. Der Preis ist der Umfang der Auskunft; das ist eine Produktfrage und liegt als ADR-0212 Punkt 8 beim Product Owner.
 
 ---
 
@@ -99,7 +99,7 @@ Wer diesen Nachweis holt, braucht eine bestätigte Testanmeldung in der Preview 
 
 ## 6. Was bewusst nicht gebaut wurde
 
-- kein Gast-Reisebegleiter (ADR-0212 Punkt 10) – Gastreisen bleiben unverändert planbar und änderbar, sehen aber keine Fläche
+- kein Gast-Reisebegleiter (ADR-0212 Punkt 13) – Gastreisen bleiben unverändert planbar und änderbar, sehen aber keine Fläche
 - kein Gesprächsverlauf, kein Speichern einer Auskunft
 - kein Auto-Apply eines Vorschlags
 - kein zweiter Kostentopf

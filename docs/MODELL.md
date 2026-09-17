@@ -372,11 +372,12 @@ Es gibt kein Gegenstück zu „Übernehmen“. Der Reisebegleiter ändert, speic
 
 | | Reisevorschlag / Reiseänderung | Reisebegleiter |
 | --- | --- | --- |
-| Ergebnis | eine Reise bzw. Operationen darauf | Text, offene Punkte, Vorschläge, Zeiger |
+| Ergebnis | eine Reise bzw. Operationen darauf | eine **Auswahl** aus Jetnity-Aussagen plus Zeiger – kein Modelltext |
 | Persistenz | nach ausdrücklicher Übernahme | keine, auch nicht nach Übernahme |
 | Zweiter Versuch | Sol → Terra bei Timeout/5xx | keiner |
 | Modellwahl | Router aus dem Freitext | `modellZustand()`, kein eigener Router |
-| Betrag im Text | wird entfernt | führt zur Ablehnung |
+| Freitext in der Ausgabe | ja, geprüft und normalisiert | **keiner** – das Schema hat kein Textfeld |
+| Betrag, Link, Buchungsaussage | wird entfernt bzw. abgelehnt | nicht darstellbar |
 | Gastreise | ja | nein, nur Konto |
 | Ausgabebudget | 6000 Tokens | 1600 Tokens |
 
@@ -414,7 +415,7 @@ Der Fehler lag nie in der jeweiligen Liste. Jede Fassung behauptete, **kein aus 
 | | Vorher (Runden 1–7) | Jetzt |
 | --- | --- | --- |
 | Felder | `antwort`, `unsicherheiten`, `naechsteSchritte` als Freitext | `befunde`, `bezuege`, `amtlicheHinweise` – nur Schlüssel und Kennungen |
-| Wer formuliert | das Modell, geprüft | **Jetnity**, immer |
+| Wer formuliert | das Modell, geprüft (überholt) | **Jetnity**, immer |
 | Zusicherung | „kein bildbarer Satz ist amtlich" – argumentiert | „es gibt kein Textfeld" – am Typ ablesbar |
 | Der Satz oben | abgelehnt (sieben Fassungen lang: durchgelassen) | **nicht darstellbar** |
 
@@ -450,7 +451,7 @@ Die früheren Prüfungen auf Preis, Link, Buchungszustand, behauptete Änderung 
 
 ### Der Preis, und wem die Entscheidung gehört
 
-Der Reisebegleiter kann genau sagen, was in seinen Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist **nicht gemessen**; dafür fehlt der bezahlte Preview-Aufruf. Mehr Nutzen heisst künftig mehr Katalog, nicht mehr Sprachfreiheit – jede neue Aussage ist eine Jetnity-Formulierung mit nachrechenbarer Bedingung. Das ist eine Produktfrage und liegt beim Product Owner; sie steht als DECISIONS.md ADR-0212 Punkt 9.
+Der Reisebegleiter kann genau sagen, was in seinen Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist **nicht gemessen**; dafür fehlt der bezahlte Preview-Aufruf. Mehr Nutzen heisst künftig mehr Katalog, nicht mehr Sprachfreiheit – jede neue Aussage ist eine Jetnity-Formulierung mit nachrechenbarer Bedingung. Das ist eine Produktfrage und liegt beim Product Owner; sie steht als DECISIONS.md ADR-0212 Punkt 8.
 
 **Heute ist der geprüfte amtliche Zweig ohnehin unerreichbar.** Ohne aktiven Requirements-Provider liefert `requirementsLokalFuerReise()` nur `provider_unavailable`, und kein Official-Bezug ist je `belegt`. Die drei `geprueft_*`-Aussagen fallen deshalb immer durch – korrekt, denn Jetnity hat keine geprüfte amtliche Wahrheit.
 

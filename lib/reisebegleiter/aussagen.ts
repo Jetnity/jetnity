@@ -4,35 +4,21 @@
 // sagen darf – und er besteht nicht aus Sprache.
 //
 // ---------------------------------------------------------------------------
-// Warum getrennte Kanäle
+// Wie der Kanal funktioniert
 // ---------------------------------------------------------------------------
 //
-// Sechs Fassungen haben versucht, erfundene amtliche Wahrheit im Freitext des
-// Modells zu **erkennen**: deutsche Muster, mehrsprachige Verbotslisten, eine
-// Spracherkennung, zuletzt eine Erlaubnisliste über dem Wortschatz. Jede war
-// widerlegbar, und die Gegenbeispiele wurden zum Schluss beliebig: `Ein Visum
-// ist notwendig.` aus lauter erlaubten Wörtern; `V I S U M ist P F L I C H T.`
-// aus lauter erlaubten Einzelbuchstaben; ein Etappenname `No visa is required`,
-// der den Wortschatz selbst erweitert.
+// Das Modell hat kein Feld, in dem es einen Satz schreiben könnte
+// (`lib/reisebegleiter/schema.ts`). Es *wählt* stattdessen: eine Aussage aus
+// der geschlossenen Liste unten und den Official-Bezug, auf den sie sich
+// bezieht. Den Satz schreibt Jetnity.
 //
-// Der gemeinsame Fehler war nicht die jeweilige Liste. Es war die Annahme, dass
-// man Prosa prüfen kann, in der amtliche Aussagen **überhaupt vorkommen
-// dürfen**. Diese Annahme ist hier aufgegeben:
+// Damit ist „kann das Modell eine amtliche Anforderung erfinden?" keine Frage
+// über Texte, sondern eine über Typen – und die Antwort steht im Schema, nicht
+// in einer Prüfung über Formulierungen.
 //
-//   · **Prosa** (`antwort`, `unsicherheiten`, `naechsteSchritte`) darf über die
-//     Reise sprechen – Etappen, Tage, Plan, nächste Schritte in Jetnity. Ihr
-//     Wortschatz (`lib/reisebegleiter/wortschatz.ts`) enthält **kein**
-//     amtliches Vokabular. Ohne Gegenstand gibt es keine amtliche Aussage;
-//     `lib/reisebegleiter/wortschatz.test.ts` prüft das gegen die
-//     Bereichsmuster selbst.
-//   · **Amtliche Lagen** laufen über diesen Kanal: Das Modell *wählt* eine
-//     Aussage aus der geschlossenen Liste unten und nennt den Bezug, auf den
-//     sie sich bezieht. Den Satz schreibt Jetnity, nicht das Modell.
-//
-// Damit ist die Frage „kann Modellprosa eine amtliche Anforderung erfinden?"
-// nicht mehr eine Frage über Texte, sondern eine über Typen: Es gibt kein
-// Freitextfeld, in dem eine amtliche Anforderung ausdrückbar wäre, und der
-// typisierte Kanal lässt nur Aussagen zu, die zum geprüften Zustand passen.
+// Der zweite Katalog, `lib/reisebegleiter/befunde.ts`, arbeitet genauso, spricht
+// aber über Jetnitys **eigenen Datenstand** (Zeitraum, Etappen, Reisende,
+// Dokumentstand, Route) und nie über eine amtliche Anforderung.
 //
 // ---------------------------------------------------------------------------
 // Warum die Aussagen an den Zustand gebunden sind
@@ -42,7 +28,21 @@
 // wäre sonst ein Schlüssel, mit dem sich `unknown` zu `not_required` erklären
 // liesse. Jede Aussage nennt deshalb unten die Bedingung, unter der sie zum
 // Bezug passt, und `passt()` prüft sie gegen die Projektion. Eine Aussage ohne
-// passenden Zustand verwirft die Auskunft.
+// passenden Zustand verwirft die Auskunft
+// (`lib/reisebegleiter/pruefung.ts`).
+//
+// ---------------------------------------------------------------------------
+// Historie, ausdrücklich nicht der aktuelle Stand
+// ---------------------------------------------------------------------------
+//
+// Sieben frühere Fassungen dieses Slice versuchten, erfundene amtliche
+// Wahrheit im **Freitext** des Modells zu erkennen: deutsche Muster,
+// mehrsprachige Verbotslisten, eine Spracherkennung, eine Erlaubnisliste über
+// einem geführten Wortschatz. Alle sind widerlegt und entfernt – der
+// Wortschatz samt Modul ebenso. Der gemeinsame Fehler war nicht die jeweilige
+// Liste, sondern die Annahme, man könne Prosa prüfen, in der amtliche Aussagen
+// überhaupt vorkommen dürfen. Die Begründung steht in DECISIONS.md ADR-0212
+// Punkt 8; hier gilt nur noch der typisierte Weg oben.
 //
 // Frei von Next, Supabase und `process.env`.
 

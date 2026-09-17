@@ -149,6 +149,20 @@ describe('Die Fläche fragt nicht von selbst', () => {
     assert.equal(flaeche.includes('nicht geprüft'), true)
   })
 
+  test('die Kopie behauptet nicht, das Modell formuliere die Sätze', () => {
+    // Seit Runde 9 schreibt Jetnity jeden angezeigten Satz; das Modell wählt
+    // nur aus. Eine Lade- oder Rahmenzeile, die „formuliert" oder „antwortet"
+    // verspricht, wäre eine falsche Aussage über die Herkunft des Textes –
+    // und genau so eine Zeile stand hier bis zum Continuity-Review.
+    for (const irreführend of ['formuliert eine Auskunft', 'Auskunft entsteht']) {
+      assert.equal(flaeche.includes(irreführend), false, `irreführende Kopie: ${irreführend}`)
+    }
+
+    assert.equal(flaeche.includes('wählt passende Jetnity-Aussagen aus'), true)
+    assert.equal(flaeche.includes('Auskunft wird zusammengestellt'), true)
+    assert.equal(flaeche.includes('unten schreibt Jetnity'), true)
+  })
+
   test('zeigt den Jetnity-Stand aus dem Bezug und nicht aus dem Modelltext', () => {
     assert.equal(flaeche.includes('bezug.lage'), true)
     assert.equal(flaeche.includes('bezug.belegt'), true)

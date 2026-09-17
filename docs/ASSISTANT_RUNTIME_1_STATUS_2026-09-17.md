@@ -63,12 +63,13 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 
 **Neu – Assistant-Domäne**
 
-- `lib/reisebegleiter/schema.ts` – Eingabe-/Ausgabevertrag, Grenzen, JSON-Schema
-- `lib/reisebegleiter/nutzlast.ts` – Modellnutzlast aus der akzeptierten Projektion, Reissleine, abgeleiteter Jetnity-Zustand je Bezug
-- `lib/reisebegleiter/regeln.ts` – Systemregeln
-- `lib/reisebegleiter/pruefung.ts` – zweite Schranke: Bezug, Gewissheit, unmöglicher Anspruch
-- `lib/reisebegleiter/wortschatz.ts` – die Erlaubnisliste: der geführte Register plus der serverseitig abgeleitete Kontext
-- `lib/reisebegleiter/erzeugen.ts` – der Ablauf, mit übergebenen Werkzeugen
+- `lib/reisebegleiter/schema.ts` – Eingabe-/Ausgabevertrag, Grenzen, JSON-Schema. **Kein Freitextfeld:** drei Felder, alle nur Schlüssel und Bezugskennungen
+- `lib/reisebegleiter/befunde.ts` – der Katalog über Jetnitys eigenen Datenstand: 33 Jetnity-Sätze mit je einer aus der Projektion berechneten Bedingung, plus `angeboteneBefunde()`, das je Reise das zulässige Angebot ausrechnet
+- `lib/reisebegleiter/aussagen.ts` – der typisierte Kanal für amtliche Lagen: sieben Aussageschlüssel mit Jetnity-Sätzen und `passt()` als Bindung an den geprüften Zustand
+- `lib/reisebegleiter/nutzlast.ts` – Modellnutzlast aus der akzeptierten Projektion, Reissleine, abgeleiteter Jetnity-Zustand je Bezug, dazu das Angebot, aus dem das Modell wählt
+- `lib/reisebegleiter/regeln.ts` – Systemregeln: die Aufgabe ist Auswahl, nicht Formulierung
+- `lib/reisebegleiter/pruefung.ts` – zweite Schranke: Bezug existiert, gewählter Befund steht mit seinem Bezug im Angebot, amtliche Aussage passt zum geprüften Zustand
+- `lib/reisebegleiter/erzeugen.ts` – der Ablauf, mit übergebenen Werkzeugen; setzt die Jetnity-Sätze zur Auswahl zusammen
 - `lib/reisebegleiter/aktionen.ts` – die eine Server Action
 
 **Neu – Oberfläche**
@@ -81,7 +82,7 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 
 **Neu – Tests und Nachweis**
 
-- `lib/reisebegleiter/schema.test.ts`, `nutzlast.test.ts`, `pruefung.test.ts`, `erzeugen.test.ts`, `kosten.test.ts`, `oberflaeche.test.ts`, `wortschatz.test.ts`
+- `lib/reisebegleiter/schema.test.ts`, `nutzlast.test.ts`, `pruefung.test.ts`, `erzeugen.test.ts`, `kosten.test.ts`, `oberflaeche.test.ts`
 - `scripts/reisebegleiter-oberflaeche-nachweis.mjs`
 
 **Geändert**
@@ -249,7 +250,7 @@ In diesem Durchgang wurde **keine** Supabase-Mutation ausgeführt, weder auf Dev
 | Service Role? | nur mittelbar über die bestehenden Kontingent-RPCs in `lib/modell/kontingent.ts`; keine neue Service-Role-Nutzung |
 | Sensible Daten in der Antwort? | nein; die Nutzlast ist enger als die akzeptierte Projektion, und `verbotenesFeldFinden()` bricht bei Feldnamen und Wertmustern ab |
 | Logging? | kein Prompt, keine Antwort, kein Schlüssel, kein Reiseinhalt; nur die bestehende Ergebnisklasse im Kostenprotokoll |
-| Leere Antwort ≠ Fehler? | ja – `Begleiterergebnis` trennt `ok: false` mit Klasse von einer Auskunft; eine leere Auskunft ist strukturell unmöglich (`antwort` ist Pflichtfeld mit `min(1)`) |
+| Leere Antwort ≠ Fehler? | ja – `Begleiterergebnis` trennt `ok: false` mit Klasse von einer Auskunft. Seit Runde 9 ist eine **leere Auswahl ausdrücklich zulässig** und wird als solche angezeigt: Es gibt kein `antwort`-Pflichtfeld mehr, das sie verhindern könnte, und eine ehrliche „dazu habe ich nichts" ist keine Fehlermeldung. Der Unterschied liegt in der Klasse, nicht in der Leerheit |
 | Auth/MFA/AAL geändert? | nein |
 | Sensible Pass-/MRZ-/Scan-/Biometrie-/Health-Speicherung? | nein, nichts davon wird erfragt, gespeichert oder weitergegeben |
 
@@ -276,7 +277,7 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 3. **Darstellung einer Auskunft** – im Browser belegt, aber mit einer **gestellten** Auskunft über den Audit-Schalter `begleiterAuskunft`, nicht mit einer erzeugten. Die gestellte Auskunft ist auf den Stand von Runde 8 gebracht: Ihre Prosa benennt keine amtliche Anforderung, und der amtliche Satz kommt aus dem geschlossenen Aussagekanal.
 4. **Unbestätigter Development-Nutzer** aus Abschnitt 5 – **vom Technical Lead gelöscht**, Nachzählung 0. Erledigt.
 5. **Systemregeln gegen ein echtes Modell** – die Wirksamkeit der Prompt-Regeln (erste Schranke) ist nicht gemessen. Schema, Nutzlast und Prüfung (zweite und dritte Schranke) sind deterministisch geprüft und hängen nicht daran.
-6. **Umfang der Auskunft – Produktfrage an den Product Owner, nicht gemessen.** Seit Runde 9 formuliert der Reisebegleiter nicht mehr; er wählt aus 33 Jetnity-Aussagen und sieben amtlichen Aussagen aus und ordnet sie. Er kann genau sagen, was in den Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist nicht gemessen – der einzige Messpunkt ist der offene bezahlte Aufruf. Vorgelegt mit Empfehlung als ADR-0212 Punkt 9.
+6. **Umfang der Auskunft – Produktfrage an den Product Owner, nicht gemessen.** Seit Runde 9 formuliert der Reisebegleiter nicht mehr; er wählt aus 33 Jetnity-Aussagen und sieben amtlichen Aussagen aus und ordnet sie. Er kann genau sagen, was in den Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist nicht gemessen – der einzige Messpunkt ist der offene bezahlte Aufruf. Vorgelegt mit Empfehlung als ADR-0212 Punkt 8.
 7. **Mechanik eines Testrunner-Stillstands nicht aufgeklärt.** Nach dem Schemawechsel hing `erzeugen.test.ts` unter `node --test` ohne Ausgabe, weil veraltete Prosa-Fixtures verworfen wurden und eine fehlschlagende `assert.ok`-Zeile den Lauf anhielt. Nach Umstellung der Fixtures läuft die Datei mit 43 Tests grün; die Runner-Mechanik selbst ist nicht weiter untersucht.
 
 ---
@@ -292,7 +293,7 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 | Eingabegrenze zu streng oder zu lasch | 24 000 Zeichen sind aus der Reservierung abgeleitet, nicht gemessen. Eine sehr grosse Reise bekommt keine Auskunft. `kosten.test.ts` hält die Richtung fest |
 | Zeichen-je-Token-Annahme | 2.2 ist pessimistisch, aber eine Annahme. Das Ausgabebudget von 1600 statt 6000 Tokens ist die eigentliche Absicherung |
 | Migration nicht live geprüft | **geschlossen für Development** (Abschnitt 4). Production bleibt ohne den dritten Wert; ein Aufruf dort scheiterte an der CHECK-Bedingung, also fail closed – und Production ist ohnehin abgeschaltet |
-| Gastreisen ohne Reisebegleiter | bewusst (ADR-0212 Punkt 10). Ein Gast sieht keine Fläche, die es für ihn nicht gibt; kein stiller Produktwechsel, der Gastweg bleibt unverändert |
+| Gastreisen ohne Reisebegleiter | bewusst (ADR-0212 Punkt 13). Ein Gast sieht keine Fläche, die es für ihn nicht gibt; kein stiller Produktwechsel, der Gastweg bleibt unverändert |
 
 ---
 

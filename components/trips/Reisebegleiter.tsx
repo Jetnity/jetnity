@@ -12,14 +12,23 @@
 //
 //   · `fragen` – das Feld
 //   · `laeuft` – der Aufruf, das Feld bleibt sichtbar
-//   · `auskunft` – Antwort, offene Punkte, Vorschläge, Jetnity-Stand
+//   · `auskunft` – ausgewählte Jetnity-Aussagen in drei Gruppen (was feststeht,
+//     was offen ist, mögliche nächste Schritte), dazu die amtliche Lage und der
+//     Jetnity-Stand der Bezüge
+//
+// **Jeden Satz auf dieser Fläche schreibt Jetnity.** Das Modell hat nur
+// gewählt, welche Aussagen erscheinen und in welcher Reihenfolge; die Texte
+// stehen in `lib/reisebegleiter/befunde.ts` und
+// `lib/reisebegleiter/aussagen.ts`. Die Kopie unten sagt das auch so – eine
+// Ladezeile, die „formuliert" verspricht, wäre eine Aussage über die Herkunft
+// des Textes und damit falsch.
 //
 // Nichts läuft beim Mounten. Ein bezahlter Aufruf entsteht nur durch Absenden;
 // die Fläche selbst kostet nichts. Sie löst auch keine Provider- oder
 // Preisanfrage aus – es gibt hier keine.
 //
-// Der Zustand eines Bezugs kommt aus `lib/reisebegleiter/nutzlast.ts` und nicht
-// aus dem Modell. Was unter „Jetnity-Stand" steht, hat das Modell nicht
+// Auch der Zustand eines Bezugs kommt aus `lib/reisebegleiter/nutzlast.ts` und
+// nicht aus dem Modell. Was unter „Jetnity-Stand" steht, hat das Modell nicht
 // geschrieben und kann es nicht verfälschen.
 
 import * as React from 'react'
@@ -112,8 +121,9 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
           Frag den Reisebegleiter
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-900">
-          Er kennt genau diese Reise und antwortet als Vorschlag – keine amtliche Auskunft, keine
-          Anbieterauskunft, keine Preise. Deine Reise wird dadurch nicht geändert.
+          Er kennt genau diese Reise und wählt dazu passende Jetnity-Aussagen aus – als
+          Vorschlag, keine amtliche Auskunft, keine Anbieterauskunft, keine Preise. Deine Reise
+          wird dadurch nicht geändert.
         </p>
 
         <label htmlFor="reisebegleiter-frage" className="mt-6 block text-sm font-medium text-brand-800">
@@ -148,7 +158,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
             aria-busy="true"
             className="mt-5 rounded-2xl border border-line-200 bg-surface-25 px-4 py-3 text-sm leading-6 text-brand-900"
           >
-            Der Reisebegleiter liest deine Reise und formuliert eine Auskunft …
+            Der Reisebegleiter liest deine Reise und wählt passende Jetnity-Aussagen aus …
           </p>
         )}
 
@@ -170,7 +180,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
             disabled={laeuft}
             className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
-            {laeuft ? 'Auskunft entsteht …' : 'Frage stellen'}
+            {laeuft ? 'Auskunft wird zusammengestellt …' : 'Frage stellen'}
           </button>
         </div>
       </form>

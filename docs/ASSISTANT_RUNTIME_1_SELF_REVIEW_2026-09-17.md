@@ -9,6 +9,13 @@ Letzter laufzeitändernder Head: der Review-Fix „Replace free prose with selec
 
 ## 0. Was das Re-Review gefunden hat, das dieses Dokument nicht gefunden hatte
 
+> **Die Abschnitte 0 bis 0e sind Historie.** Sie beschreiben acht widerlegte
+> Fassungen der Wahrheitsschranke und erklären, warum der heutige Vertrag so
+> aussieht. Keiner der dort genannten Mechanismen – Wortfilter,
+> Sprachprüfung, Erlaubnisliste, `wortschatz.ts`, die Prosafelder `antwort`,
+> `unsicherheiten`, `naechsteSchritte` – existiert noch. Der aktuelle Stand
+> steht in Abschnitt 1 und in DECISIONS.md ADR-0212 Punkte 4 bis 8.
+
 Sechs Wahrheitsbefunde in fünf Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
 
 **Befund 1 – eine fremde amtliche Lage schaltete Gewissheit global frei.** `auskunftPruefen()` prüfte `bezuege.some(bezug => bezug.art === 'official' && bezug.belegt)` über den **ganzen Kontext** und gab bei einem Treffer sofort frei. Eine aktuelle Passgültigkeitsprüfung hätte damit den Satz „kein Visum erforderlich" getragen, während die Visumslage `unknown` ist – genau die Aufwertung von `unknown` zu `not_required`, gegen die dieser Slice gebaut ist.
@@ -55,7 +62,7 @@ Besonders unangenehm ist Runde 8: Dort hatte ich einen *Test* als Beweis präsen
 
 **Was ich zusätzlich abgesichert habe, weil der Katalog eine neue Angriffsfläche ist.** Ein Katalog Jetnity-eigener Sätze kann auf zwei Weisen falsch werden: durch eine Formulierung, die doch eine Anforderung behauptet, und durch eine wahre Aussage am falschen Objekt. Beides ist geprüft – die Formulierungen des ganzen Katalogs gegen Anforderungssprache, und die Auswahl gegen das berechnete Angebot inklusive Bezug. Zusätzlich: Mit leerem Angebot darf **kein** Katalogeintrag durchkommen; sonst gäbe es einen, der sich selbst belegt.
 
-**Was diese Lösung kostet, und was daran nicht meine Entscheidung ist.** Der Reisebegleiter formuliert nicht mehr. Er wählt aus 33 Jetnity-Aussagen aus und ordnet sie. Für eine Wahrheitsklasse „Generated Suggestion" halte ich das für die ehrliche Bauform, aber es ist eine **sichtbare Produktänderung**, und der Nutzen hängt jetzt an der Katalogbreite statt an der Sprachfähigkeit des Modells. Ob das Produkt so genug wert ist, ist nicht gemessen – dafür fehlt der bezahlte Aufruf. Diese Frage gehört dem Product Owner und steht als ADR-0212 Punkt 9 mit Empfehlung im Repository, nicht nur in diesem Dokument.
+**Was diese Lösung kostet, und was daran nicht meine Entscheidung ist.** Der Reisebegleiter formuliert nicht mehr. Er wählt aus 33 Jetnity-Aussagen aus und ordnet sie. Für eine Wahrheitsklasse „Generated Suggestion" halte ich das für die ehrliche Bauform, aber es ist eine **sichtbare Produktänderung**, und der Nutzen hängt jetzt an der Katalogbreite statt an der Sprachfähigkeit des Modells. Ob das Produkt so genug wert ist, ist nicht gemessen – dafür fehlt der bezahlte Aufruf. Diese Frage gehört dem Product Owner und steht als ADR-0212 Punkt 8 im Repository, nicht nur in diesem Dokument.
 
 **Ein Nebenfund beim Umbau, ehrlich benannt.** Nach dem Schemawechsel hing `erzeugen.test.ts` unter `node --test` ohne Ausgabe, statt zu scheitern: Die alten Fixtures trugen Prosa, die Prüfung verwarf sie, und eine fehlschlagende `assert.ok`-Zeile an dieser Stelle brachte den Testlauf zum Stillstand. Die Ursache lag in den veralteten Fixtures; nach deren Umstellung läuft die Datei mit 43 Tests grün. Ich habe die Mechanik des Stillstands im Testrunner nicht weiter aufgeklärt, weil sie mit dem Fix verschwand – wenn sie wiederkehrt, ist das der Ort, an dem man ansetzt.
 
@@ -132,36 +139,39 @@ Was diese Runde ebenfalls nicht kann: den Live-Stand von Development lesen. Der 
 | Über eine unbrauchbare Eingabe an die Buchung kommen | `null`, `undefined`, Zahl, Objekt, Array, zu kurze Frage: alle ohne einen einzigen Schritt | ebd. |
 | Einen zweiten Versuch auslösen | für alle acht Fehlerklassen: genau ein Aufruf, eine Buchung, ein Abschluss; kein Sol→Terra-Nachzug | ebd., „Ein Versuch, kein zweiter" |
 | Über den Reisekontext mehr Eingabetokens verbrauchen als reserviert | Eingabegrenze bricht vorher ab, ohne Buchung; Ausgabebudget 1600 statt 6000 | ebd. plus `kosten.test.ts` |
-| Kaputte, verweigerte, abgeschnittene, leere, schemawidrige Antwort verwerten | dreizehn Fälle, jeder endet als Fehlerklasse **und** wird als bezahlter Aufruf abgeschlossen, nicht verschwiegen | ebd., „Eine unbrauchbare Antwort wird nicht brauchbar gemacht" |
-| Einen Preis in die Auskunft schreiben | Ablehnung als `schema` – nicht Entfernung | `schema.test.ts`, `erzeugen.test.ts` |
-| Einen Link in die Auskunft schreiben | Ablehnung als `schema` | ebd. |
+| Kaputte, verweigerte, abgeschnittene, leere, schemawidrige Antwort verwerten | jeder Fall endet als Fehlerklasse **und** wird als bezahlter Aufruf abgeschlossen, nicht verschwiegen | ebd. |
+| **Irgendeinen Satz schreiben** – amtliche Anforderung, Preis, Link, Buchung, behauptete Änderung, Prüfherkunft, in jeder Sprache und jeder Paraphrase | **nicht darstellbar.** Es gibt kein Freitextfeld; elf Anforderungssätze werden gegen sechs mögliche Feldnamen geprüft, je als Zeichenkette und als Liste, dazu die allgemeine Form: die Feldmenge ist genau `befunde`, `bezuege`, `amtlicheHinweise`, und keines nimmt Text | `schema.test.ts`, „Es gibt kein Freitextfeld – die Sätze sind nicht darstellbar" |
+| Einen eigenen Satz in einem Befund mitschicken | Ablehnung als `schema`; `z.strictObject` auch je Eintrag | ebd. und `erzeugen.test.ts`, „eigener Satz in einem Befund" |
 | Einen Bezug erfinden | Ablehnung; formal falsche Kennungen scheitern am Schema, formal richtige an der Existenzprüfung | `schema.test.ts`, `pruefung.test.ts` |
-| Eine Buchung behaupten – auch vorsichtig („noch nicht gebucht") | Ablehnung, unabhängig davon, ob eine amtliche Lage belegt ist | `pruefung.test.ts` |
-| Eine Änderung behaupten („ich habe zwei Tage hinzugefügt") | Ablehnung; der Konjunktiv („du könntest") bleibt zulässig | ebd. |
-| „visumfrei" bei unbelegter Lage sagen | Ablehnung; erst ein **belegter Official**-Bezug öffnet den Weg, eine belegte Etappe oder Safety-Lage nicht | ebd. |
+| Einen Katalogschlüssel wählen, der auf diese Reise nicht zutrifft | Ablehnung: gewählt werden darf nur, was `angeboteneBefunde()` berechnet hat | `pruefung.test.ts`, „ein nicht angebotener Schlüssel fällt durch" |
+| Einen **zutreffenden** Satz an den falschen Bezug hängen | Ablehnung: geprüft wird das Paar, nicht der Schlüssel | ebd., „ein angebotener Schlüssel am falschen Bezug fällt durch" |
+| Einen Reise-Befund mit Bezug oder einen Etappen-Befund ohne Bezug schicken | Ablehnung: die Bezugsart steht im Katalog | ebd. |
+| Irgendeinen Katalogeintrag ohne Angebot durchbringen | Gegenprobe über den **ganzen** Katalog: mit leerem Angebot kommt kein Eintrag durch | ebd., „kein Katalogeintrag ist ohne Angebot wählbar" |
+| Eine ungeprüfte amtliche Lage als geprüft ausgeben | Ablehnung für alle drei `geprueft_*`-Schlüssel | ebd., „eine offene Lage darf nicht als geprüft ausgegeben werden" |
+| Eine geprüfte Lage als ungeprüft ausgeben | Ablehnung für alle vier übrigen Schlüssel – „nicht geprüft" über eine geprüfte Lage ist genauso falsch | ebd. |
+| Das Ergebnis umkehren (geprüft `not_required` als „besteht") | Ablehnung; geprüft wird Ergebnis, nicht nur Prüfstand | ebd., „das Ergebnis muss stimmen, nicht nur der Prüfstand" |
+| Einen Aussageschlüssel finden, der auf jeden Zustand passt | Gegenprobe über alle sieben Schlüssel gegen beide Zustände | ebd., „jede Aussage der geschlossenen Liste ist an einen Zustand gebunden" |
+| Über einen feindlichen Etappennamen oder Reisenden-Label Autorität gewinnen | der Text bleibt Anzeigetext; die Entscheidung trifft `anforderung`, nicht `titel`. Es gibt keinen eingabeabhängigen Zusatz mehr | ebd., „ein feindlicher Titel macht keine amtliche Aussage zulässig" |
+| Einen Katalogsatz finden, der doch wie eine Anforderung klingt | Prüfung der Formulierungen des **ganzen** Katalogs gegen Anforderungssprache | ebd., „kein Katalogeintrag spricht über eine amtliche Anforderung" |
 | Den Zustand eines Bezugs aus dem Modelltext übernehmen | das Feld existiert nicht; ein trotzdem mitgeschicktes Feld lässt die ganze Auskunft als `schema` durchfallen | `erzeugen.test.ts`, „zusätzliches zustandstragendes Feld" |
-| Gewissheit über eine Lage behaupten, die die Auskunft nicht belegt | Ablehnung: eine fremde belegte Official-Lage im Kontext schaltet nichts frei, und ein zugleich genannter unbelegter Bezug kippt eine sonst getragene Gewissheit | `pruefung.test.ts`, „Gewissheit ist an die benannte amtliche Lage gebunden" |
-| Gewissheit mit einer fachfremden Anforderung belegen (Impfung trägt Visum, Transit trägt Zielvisum) | Ablehnung: jeder Bereich nennt die Anforderungstypen, die ihn tragen können; nicht zuordenbare Formulierungen fallen immer durch | `pruefung.test.ts`, „Gewissheit ist an den passenden Anforderungstyp gebunden" |
-| Eine Anforderung **behaupten** statt verneinen („Du brauchst eine Reiseversicherung") | Ablehnung in allen sechzehn Bereichen der Taxonomie; je Bereich vier Regressionen (fremder Beleg, kein Beleg, passender Beleg, passender aber ungeprüfter Beleg) | `pruefung.test.ts`, „Harte amtliche Aussagen über die geschlossene Anforderungstaxonomie" |
-| Die Schranke über die **Sprache** umgehen | Ablehnung, weil die Wörter nicht geführt sind: 19 Fälle über neun Sprachen, jeweils gegen drei Kontexte – auch gegen einen mit geprüfter Visumslage | `pruefung.test.ts`, „Die amtliche Schranke ist nicht über die Sprache umgehbar“ |
-| Eine **gemischtsprachige** Auskunft: deutscher Satzanfang, Behauptung in einer ungelisteten Sprache | Ablehnung; fünf Sprachen, die in keiner Liste stehen, jeweils in jedem Modellfeld und gegen drei Kontexte | ebd., „Die Wortschatzschranke gilt für jedes Modellfeld“ |
-| Die Behauptung aus `antwort` in `unsicherheiten` oder `naechsteSchritte` verschieben | Ablehnung mit Feldnamen im Hinweis; die Schranke gilt für jedes modellgeschriebene Feld | ebd. |
-| Einen Ort erfinden, den die Reise nicht hat | Ablehnung: Eigennamen sind nur zulässig, soweit die Projektion sie trägt | ebd., „ein Eigenname ohne Deckung in der Projektion fällt durch“ |
-| Die Prüfherkunft behaupten („gilt als geprüft") | nie bindbar; `unknown` lässt sich nicht auf `current` heben | ebd. und „Feindlicher Reisetext" |
-| Über den Reisetext eine Anweisung einschmuggeln | Der Text bleibt ein JSON-Feldwert, setzt kein `belegt` und erscheint nicht als Jetnity-Stand; folgt das Modell ihm, fällt die Ausgabe wie jede andere | `nutzlast.test.ts`, „Feindlicher Reisetext bleibt Daten"; `pruefung.test.ts`, „Feindlicher Reisetext kann die Schranke nicht öffnen" |
-| Einen Anforderungstyp finden, den kein Bereich kennt | Vollständigkeitsnachweis gegen `OFFICIAL_REQUIREMENT_TYPES` | ebd., „jeder Anforderungstyp der Taxonomie kann von einem Bereich getragen werden" |
-| Die Sperre mit Fehlalarmen unbrauchbar machen | neun typische ehrliche Sätze bleiben zulässig, darunter „Prüfe deine Passgültigkeit in der Reisevorbereitung" und „Du musst die Etappen noch mit Daten versehen" | ebd., „Beschreibungen, Fragen und Vorschläge bleiben zulässig" |
-| Zwei Gewissheiten in einem Text, nur eine belegt | Ablehnung der ganzen Auskunft | ebd., „jede Gewissheit im Text braucht ihren eigenen Beleg" |
+| Einen angezeigten Satz aus der Modellantwort beziehen | jeder Text der Auskunft muss sich in `BEFUNDE` oder `AMTLICHE_AUSSAGE_TEXT` wiederfinden | ebd., „jeder angezeigte Satz stammt aus einem Jetnity-Katalog" |
+| Die Einordnung (feststeht / offen / nächster Schritt) verschieben | die Rolle kommt aus dem Katalog, nicht aus der Antwort | ebd. |
 | Passnummer, MRZ, Buchungs-URL, Secret, E-Mail, Fingerprint, Preis, Koordinate, Ortsschlüssel in den Prompt bringen | zehn Leck-Marken, keine erreicht den Prompt oder die angezeigten Bezüge | `nutzlast.test.ts` |
 | Ein sensibles Feld über eine später erweiterte Projektion einschmuggeln | die Reissleine trifft Feldnamen und Wertmuster in jeder Tiefe; die Nutzlast schreibt unbekannte Felder ohnehin nicht ab | ebd. |
 | Rangsemantik unter Reisenden erzeugen | kein „primary", „preferred", „bevorzugt" im Prompt; Reihenfolge erzeugt keinen Vorrang | ebd. |
-| Die Reise über diesen Weg ändern | es gibt kein Werkzeug dafür; der Werkzeugvertrag wird als Schlüsselliste geprüft; die Server Action kennt kein `insert/update/delete/upsert/revalidatePath` | `erzeugen.test.ts`, `oberflaeche.test.ts` |
+| Die Reise über diesen Weg ändern | es gibt kein Werkzeug dafür; der Werkzeugvertrag wird als Schlüsselliste geprüft; die Server Action kennt kein `insert/update/delete/upsert/revalidatePath` | `oberflaeche.test.ts` |
 | Einen Aufruf beim Rendern auslösen | die Fläche ist bis zum ersten Öffnen nicht im Dokument; es gibt keinen Effekt in der Komponente; im Browser bestätigt | `oberflaeche.test.ts`, `nachweis:reisebegleiter` |
 | Einen Provider-/Suchaufruf auslösen | die Server Action importiert keinen Provider und keine Suche; im Browser kein entsprechender Request | ebd. |
 | Auf einen anderen Kostentopf wechseln | die Server Action nennt `'reisevorschlag'` und `'reiseaenderung'` nirgends | `oberflaeche.test.ts` |
 | Production stillschweigend aktivieren | `modellZustand({})` ist `abgeschaltet`; Schlüssel ohne Flag bleibt `abgeschaltet`; Flag ohne Schlüssel `kein-schluessel` | `erzeugen.test.ts` |
-| Die bestehenden Funktionen beschädigen | 3321 Tests grün, darunter der vollständige Reisevorschlag- und Reiseänderungsbestand | `npm test` |
+| Die bestehenden Funktionen beschädigen | der vollständige Reisevorschlag- und Reiseänderungsbestand bleibt grün | `npm test` |
 | Einen bestehenden CHECK-Wert verlieren | jede Fassung der Prüfbedingung muss alle Werte der vorigen enthalten | `grenzen-datenbank.test.ts` |
+
+### 1a. Angriffe gegen überholte Fassungen – Historie, kein aktueller Nachweis
+
+Bis Runde 8 schrieb das Modell Sätze, und die Prüfung versuchte, erfundene amtliche Wahrheit darin zu **erkennen**. Die Angriffe dieser Reihe – „visumfrei" bei unbelegter Lage, Gewissheit mit fachfremder Anforderung belegen, eine Anforderung behaupten statt verneinen, die Schranke über eine ungelistete Sprache oder gemischtsprachigen Text umgehen, die Behauptung aus `antwort` in `unsicherheiten` verschieben, einen Ortsnamen erfinden, Buchstabenschreibung, ein feindlicher Etappenname, der den Wortschatz erweitert – gehören zu jener Bauform und sind **nicht mehr der Nachweis dieses Slice**. Sie sind gegenstandslos geworden, weil es die Felder nicht mehr gibt, in denen sie stattfanden.
+
+Die Reihe steht in Abschnitt 0 bis 0e und in den Nachträgen zu ADR-0212, weil sie erklärt, **warum** der heutige Vertrag so aussieht. Als Absicherung zählt ausschliesslich die Tabelle darüber.
 
 ---
 
@@ -169,16 +179,14 @@ Was diese Runde ebenfalls nicht kann: den Live-Stand von Development lesen. Der 
 
 Diese Punkte sind echte Schwächen, keine rhetorischen.
 
-**2.1 Der Gewissheitsfilter ist ein Wortfilter.** „Nicht als gewiss behaupten" ist semantisch, und ein deterministischer Test liest keine Semantik. `pruefung.ts` verbietet die Wörter, mit denen eine unbelegte Gewissheit im Deutschen ausgedrückt wird. Das erzeugt zwei Fehler in beide Richtungen:
+**2.1 Der Nutzen hängt jetzt an der Katalogbreite, und die ist nicht gemessen.** Seit Runde 9 gibt es keinen Wortfilter mehr, weil es keinen Freitext mehr gibt. Damit ist die ganze Familie der Wahrheitsbefunde geschlossen – aber die Schwäche ist umgezogen, nicht verschwunden:
 
-- **Fehlalarm:** „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst" ist ehrlich und fällt durch. Gegenmittel: Die Systemregeln verbieten dieselben Wörter ausdrücklich. Ein regelkonformes Modell löst den Filter nicht aus. Wie oft ein echtes Modell daran scheitert, ist **nicht gemessen** – dafür wäre ein bezahlter Aufruf nötig.
-- **Lücke:** Eine Verfügbarkeits- oder Preisbehauptung in freier Formulierung („dieses Hotel ist im April meist noch frei") erkennt er nicht. Das ist dieselbe eingestandene Grenze wie ADR-0054. Die Preisziffer-Erkennung greift, die Verfügbarkeitsaussage nicht.
-- **Geschlossen (Befund 4):** Die Bereichszuordnung deckt die vollständige `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie ab, geprüft durch einen Vollständigkeitstest.
-- **Geschlossen (Befund 5 und 6):** Die Sprachseite, und zwar durch Umkehrung statt durch Erweiterung. Der Wortschatz ist eine Erlaubnisliste; es gibt keine Sprache mehr, die durchkommt, weil sie nicht aufgezählt ist. Was bleibt: Ein deutscher Satz aus geführten Wörtern kann den Bereichsdetektor in ungewöhnlicher Formulierung weiterhin verfehlen. Diese Grenze liegt jetzt **innerhalb** eines geschlossenen Wortschatzes statt über allen Sprachen – prüfbar, weil der Register lesbar ist.
-- **Nebenwirkung der Wortschatzschranke:** Sie lehnt aus Gründen ab, die nichts mit Wahrheit zu tun haben – ein fehlendes Wort im Register genügt. Wie oft das eine brauchbare Auskunft trifft, ist **nicht gemessen**; dafür wäre der offene bezahlte Aufruf nötig. Das ist der Punkt, an dem dieser Slice am dünnsten ist.
-- **Neue Lücke durch die Strenge:** Die Sperre ist heute total – ohne aktiven Provider ist kein Official-Bezug `belegt`, also fällt jede harte amtliche Aussage. Ob die verbleibende Auskunft für Reisende noch nützlich ist, ist **nicht gemessen**; dafür wäre der offene bezahlte Aufruf nötig. Fünf Runden Wahrheitsschranke ohne einen einzigen echten Modelllauf sind das eigentliche Missverhältnis dieses Slice: Ich habe sehr genau geprüft, was Jetnity mit einer Antwort tut, und gar nicht, ob die Antworten etwas wert sind.
+- **Der Reisebegleiter sagt genau, was im Katalog steht, und sonst nichts.** 33 Befunde über Zeitraum, Etappen, Reisende, Dokumentstand und Route, dazu sieben amtliche Aussagen. Eine Frage daneben bekommt eine leere Auswahl – ehrlich, aber wertlos für den Fragenden.
+- **Ob das genügt, ist nicht gemessen.** Der einzige Messpunkt ist der offene bezahlte Aufruf. Bis dahin ist „nützlich genug" meine Einschätzung und kein Befund.
+- **Eine falsche Katalogbedingung wäre eine falsche Aussage, die Jetnity selbst verantwortet.** Früher konnte das Modell lügen; jetzt kann `angeboteneBefunde()` sich verrechnen, und der Satz trägt dann trotzdem Jetnitys Namen. Deshalb liegt jede Bedingung unter Test, gegen die Projektion und nicht gegen sich selbst. Das ist die verbleibende Angriffsfläche dieses Entwurfs, und sie ist kleiner, aber nicht leer.
+- **Ohne aktiven Requirements-Provider ist kein Official-Bezug `belegt`**, also fallen die drei `geprueft_*`-Aussagen immer durch. Amtlich kann die Auskunft heute nur „nicht geprüft" und Verwandte sagen. Das ist korrekt und trotzdem dünn.
 
-Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukturell: Das Schema hat kein Feld für eine Anforderung, und der Zustand eines Bezugs kommt nicht aus dem Modell. Was ein Modell nicht formulieren kann, muss dieser Filter nicht abfangen.
+Was **entfallen** ist: der Fehlalarm des Wortfilters, die eingestandene Lücke bei frei formulierten Verfügbarkeitsbehauptungen (ADR-0054) und die Preisziffer-Erkennung. Alle drei betrafen Freitext, und den gibt es nicht mehr.
 
 **2.2 Die Eingabegrenze ist abgeleitet, nicht gemessen.** 24 000 Zeichen und 2.2 Zeichen je Token sind eine pessimistische Rechnung ohne Tokenizer. Die eigentliche Absicherung ist nicht diese Zahl, sondern das Ausgabebudget von 1600 statt 6000 Tokens: Selbst bei 29 000 Eingabetokens bliebe ein Terra-Aufruf unter seiner Reservierung. Trotzdem: Eine sehr grosse Reise bekommt keine Auskunft, und ob diese Grenze in der Praxis zu früh greift, weiss ich nicht.
 
@@ -190,7 +198,7 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 
 **2.6 Zwei neue Audit-Schalter im Harness.** `mitBegleiter` und `begleiterAuskunft` in `TripWorkspaceAuditClient.tsx` sowie `anfangsAuskunft` in `Reisebegleiter.tsx` sind Test-Infrastruktur im Produktbaum. Sie folgen dem bestehenden `anfangsBereich`-Muster in `TripWorkspace`, sind ohne Wert wirkungslos und können keinen Aufruf auslösen – aber sie sind zusätzliche Fläche, die ein Reviewer mitverantwortet.
 
-**2.7 Gastreisen bleiben ohne Reisebegleiter.** Das ist eine Produktentscheidung, die ich getroffen habe, und sie hätte anders ausfallen können. Begründung in ADR-0212 Punkt 10: Der Gast-Reisegraph liegt im Browser und trägt Reisenden-, Staatsangehörigkeits- und Dokumentkontext; ihn vom Client als Wahrheit anzunehmen, um ihn an ein Modell zu geben, wäre der falsche erste Schritt. Der Gastweg ist nicht eingeschränkt worden – er bekommt nur nichts Neues. Wenn der Product Owner das anders will, ist es ein eigener Slice.
+**2.7 Gastreisen bleiben ohne Reisebegleiter.** Das ist eine Produktentscheidung, die ich getroffen habe, und sie hätte anders ausfallen können. Begründung in ADR-0212 Punkt 13: Der Gast-Reisegraph liegt im Browser und trägt Reisenden-, Staatsangehörigkeits- und Dokumentkontext; ihn vom Client als Wahrheit anzunehmen, um ihn an ein Modell zu geben, wäre der falsche erste Schritt. Der Gastweg ist nicht eingeschränkt worden – er bekommt nur nichts Neues. Wenn der Product Owner das anders will, ist es ein eigener Slice.
 
 **2.8 `verbotenesFeldFinden()` hat eine Wertregel, die legitime Daten treffen könnte.** Neun zusammenhängende Ziffern gelten als verboten. In der heutigen Projektion gibt es keinen legitimen Wert dieser Form – geprüft. Eine spätere Erweiterung könnte einen einführen, und dann bricht der Weg ab statt zu lecken. Das ist die gewollte Richtung, aber es ist eine Bremse, die jemand später verstehen muss.
 
@@ -222,10 +230,13 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 
 ## 5. Was ein Reviewer zuerst anschauen sollte
 
-1. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast wirklich nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
-2. `lib/reisebegleiter/wortschatz.ts` – ist der Register gross genug für brauchbare Auskünfte und klein genug, um geschlossen zu bleiben? Lässt die Kompositumszerlegung (vier Zeichen je Teil) etwas herein, das sie nicht sollte?
-3. `lib/reisebegleiter/pruefung.ts` – ist die Zerlegung Modalität × Bereich × Vorbehalt die richtige, und sind die Vorbehaltsmuster zu grosszügig? Ein falsch erkannter Vorbehalt öffnet eine harte Aussage – genau so entstand Befund 5b.
-3. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
-4. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
-5. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?
-6. ADR-0212 Punkt 10 – ist „nur Konto" die richtige Produktentscheidung für den ersten Slice?
+1. `lib/reisebegleiter/schema.ts` – hat wirklich **kein** Feld Freitext? Ein neu hinzugefügtes Textfeld wäre die eine Änderung, die die Zusicherung dieses Slice aufhebt, und `schema.test.ts` ist genau dafür geschrieben.
+2. `lib/reisebegleiter/befunde.ts` – stimmt jede berechnete Bedingung? Ein Eintrag mit falscher Bedingung wäre eine falsche Aussage, die Jetnity selbst verantwortet. Und: klingt wirklich kein Satz wie eine amtliche Anforderung?
+3. `lib/reisebegleiter/aussagen.ts` und `passt()` – ist jeder der sieben Schlüssel eng genug an `ergebnis`, `frische` und `fehlendeAngaben` gebunden?
+4. `lib/reisebegleiter/pruefung.ts` – decken die drei Prüfungen (Bezug, Angebot samt Bezug, amtlicher Zustand) wirklich alles ab, was die Auskunft behaupten kann?
+5. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
+6. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
+7. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
+8. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?
+9. ADR-0212 Punkt 8 – ist die Katalogbreite als Produktgrenze akzeptabel, und wie soll sie wachsen?
+10. ADR-0212 Punkt 13 – ist „nur Konto" die richtige Produktentscheidung für den ersten Slice?

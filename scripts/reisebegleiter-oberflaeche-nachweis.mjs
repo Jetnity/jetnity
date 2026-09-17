@@ -273,6 +273,16 @@ async function laufen(browser, gerät) {
   )
   pruefe(
     gerät.name,
+    'Rahmung nennt Auswahl statt Formulierung',
+    await seite.getByText('wählt dazu passende Jetnity-Aussagen aus', { exact: false }).isVisible(),
+  )
+  pruefe(
+    gerät.name,
+    'der Absendeknopf verspricht keine Formulierung',
+    (await seite.getByRole('button', { name: 'Frage stellen' }).count()) === 1,
+  )
+  pruefe(
+    gerät.name,
     'Rahmung sagt, dass nichts geändert wird',
     await seite.getByText('ändert, speichert und bucht nichts', { exact: false }).isVisible(),
   )
