@@ -168,9 +168,9 @@ Always re-fetch live.
 
 ## 8. Issue field / cleanup truth
 
-Assistant Runtime implementation and its PO Preview/Development gate are fulfilled by merged PR #435 and should be treated as completed, not active.
+Assistant Runtime implementation and its PO Preview/Development gate are fulfilled by merged PR #435. During transition cleanup, issues **#433 and #434 were closed as completed**.
 
-Realistic World Cartography 1 is already integrated/post-merge verified via the World Cartography work and PR #444 evidence; do not restart it merely because a stale issue remains open.
+Realistic World Cartography 1 is already integrated/post-merge verified via the World Cartography work and PR #444 evidence. During transition cleanup, issue **#442 was closed as completed**.
 
 Product directive #441 remains broader than cartography because **Explicit Visit History 1** / historical visited truth is still a separate future capability.
 
