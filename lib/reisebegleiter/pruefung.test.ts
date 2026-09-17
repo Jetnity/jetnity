@@ -8,8 +8,9 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import type { BegleiterBezug, OfficialAnforderung } from '@/lib/reisebegleiter/nutzlast'
-import { auskunftPruefen } from '@/lib/reisebegleiter/pruefung'
+import { BEREICHE_FUER_TEST, auskunftPruefen } from '@/lib/reisebegleiter/pruefung'
 import type { Modellauskunft } from '@/lib/reisebegleiter/schema'
+import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType } from '@/types/trips'
 
 function anforderung(teil: Partial<OfficialAnforderung> = {}): OfficialAnforderung {
   return { requirementType: 'visa', scope: 'destination', visaMode: 'unknown', ...teil }
@@ -350,6 +351,19 @@ describe('Gewissheit ist an den passenden Anforderungstyp gebunden', () => {
     assert.equal(befund.ok, false)
   })
 
+  test('eine harte Aussage über einen weiteren Bereich braucht ihren eigenen Beleg', () => {
+    // Visum geprüft, aber die Aussage betrifft die Passgültigkeit.
+    const befund = auskunftPruefen(
+      auskunft({
+        antwort: 'Dein Pass muss mindestens sechs Monate gültig sein.',
+        bezuege: [visumBelegt.ref],
+      }),
+      [visumBelegt],
+    )
+    assert.equal(befund.ok, false)
+    assert.match(befund.ok === false ? befund.hinweis : '', /Passgültigkeit/)
+  })
+
   test('ein Bezug ohne Anforderungsidentität trägt keine Gewissheit', () => {
     // Safety und Seasonal sind belegte Aussenwahrheit, aber keine amtliche
     // Anforderung. Sie dürfen nichts freischalten.
@@ -413,5 +427,258 @@ describe('Ansprüche, die der Kontext nie decken kann', () => {
         `Fehlalarm: ${text}`,
       )
     }
+  })
+})
+
+describe('Harte amtliche Aussagen über die geschlossene Anforderungstaxonomie', () => {
+  // Die Vorrunden haben nur Verneinungen geprüft – „kein Visum". Eine
+  // Anforderung lässt sich aber genauso gut behaupten wie bestreiten, und
+  // „Dein Pass muss sechs Monate gültig sein" ist dieselbe erfundene
+  // Official-Wahrheit wie „visumfrei". Dieser Block geht die geschlossene
+  // Taxonomie Bereich für Bereich durch.
+
+  function official(
+    ref: string,
+    requirementType: OfficialRequirementType,
+    belegt: boolean,
+    scope: 'destination' | 'transit' = 'destination',
+  ): BegleiterBezug {
+    return bezug({
+      ref,
+      art: 'official',
+      titel: `${requirementType} · Italien`,
+      lage: belegt ? 'Offizielle Anforderungen wurden geprüft' : 'Noch nicht verlässlich bestimmbar',
+      belegt,
+      anforderung: anforderung({ requirementType, scope, visaMode: null }),
+    })
+  }
+
+  /**
+   * Je Bereich: eine harte Aussage, der Anforderungstyp, der sie tragen kann,
+   * und ein Typ aus einem anderen Bereich, der sie nicht tragen darf.
+   */
+  const FAELLE: ReadonlyArray<{
+    bereich: string
+    aussage: string
+    traegt: OfficialRequirementType
+    traegtNicht: OfficialRequirementType
+  }> = [
+    {
+      bereich: 'Passgültigkeit',
+      aussage: 'Dein Pass muss mindestens sechs Monate gültig sein.',
+      traegt: 'passport_validity',
+      traegtNicht: 'passport',
+    },
+    {
+      bereich: 'freie Passseiten',
+      aussage: 'Du brauchst zwei freie Seiten im Pass.',
+      traegt: 'blank_passport_pages',
+      traegtNicht: 'passport_validity',
+    },
+    {
+      bereich: 'Reisepass',
+      aussage: 'Du brauchst einen Reisepass.',
+      traegt: 'passport',
+      traegtNicht: 'visa',
+    },
+    {
+      bereich: 'Ausweisdokument',
+      aussage: 'Du brauchst einen Personalausweis.',
+      traegt: 'identity_document',
+      traegtNicht: 'entry_form',
+    },
+    {
+      bereich: 'Einreiseformular',
+      aussage: 'Du musst ein Einreiseformular ausfüllen.',
+      traegt: 'entry_form',
+      traegtNicht: 'insurance',
+    },
+    {
+      bereich: 'Versicherung',
+      aussage: 'Du brauchst eine Reiseversicherung.',
+      traegt: 'insurance',
+      traegtNicht: 'financial_means',
+    },
+    {
+      bereich: 'Rück- oder Weiterreise',
+      aussage: 'Du musst einen Rückflug nachweisen.',
+      traegt: 'onward_or_return_ticket',
+      traegtNicht: 'booking_or_travel_document',
+    },
+    {
+      bereich: 'Buchungs- oder Reisenachweis',
+      aussage: 'Du musst einen Buchungsnachweis vorlegen.',
+      traegt: 'booking_or_travel_document',
+      traegtNicht: 'onward_or_return_ticket',
+    },
+    {
+      bereich: 'finanzielle Mittel',
+      aussage: 'Du musst ausreichende finanzielle Mittel nachweisen.',
+      traegt: 'financial_means',
+      traegtNicht: 'insurance',
+    },
+    {
+      bereich: 'elektronische Reisegenehmigung',
+      aussage: 'Du brauchst eine elektronische Reisegenehmigung.',
+      traegt: 'electronic_travel_authorization',
+      traegtNicht: 'visa',
+    },
+    {
+      bereich: 'Impfung',
+      aussage: 'Du brauchst eine Gelbfieberimpfung.',
+      traegt: 'vaccination',
+      traegtNicht: 'health_document',
+    },
+    {
+      bereich: 'Gesundheitsdokument',
+      aussage: 'Du musst eine Gesundheitserklärung ausfüllen.',
+      traegt: 'health_document',
+      traegtNicht: 'vaccination',
+    },
+    {
+      bereich: 'Gesundheitsanforderung',
+      aussage: 'Du musst ein ärztliches Attest vorlegen.',
+      traegt: 'health',
+      traegtNicht: 'entry_form',
+    },
+    {
+      bereich: 'Visum',
+      aussage: 'Du brauchst ein Visum.',
+      traegt: 'visa',
+      traegtNicht: 'passport',
+    },
+    {
+      bereich: 'sonstige Einreiseanforderung',
+      aussage: 'Für die Einreise ist eine Registrierung vorgeschrieben.',
+      traegt: 'other_entry_requirement',
+      traegtNicht: 'passport',
+    },
+  ]
+
+  for (const fall of FAELLE) {
+    test(`${fall.bereich}: ohne passenden Beleg abgelehnt`, () => {
+      const belegtesFremdes = official('O1', fall.traegtNicht, true)
+      const befund = auskunftPruefen(
+        auskunft({ antwort: fall.aussage, bezuege: ['O1'] }),
+        [belegtesFremdes],
+      )
+      assert.equal(befund.ok, false, `durchgelassen: ${fall.aussage}`)
+      assert.equal(befund.ok === false && befund.art, 'unbelegte-gewissheit')
+    })
+
+    test(`${fall.bereich}: ganz ohne Official-Bezug abgelehnt`, () => {
+      assert.equal(
+        auskunftPruefen(auskunft({ antwort: fall.aussage, bezuege: [] }), []).ok,
+        false,
+        `durchgelassen: ${fall.aussage}`,
+      )
+    })
+
+    test(`${fall.bereich}: mit passendem geprüftem Beleg zulässig`, () => {
+      const passend = official('O1', fall.traegt, true)
+      assert.deepEqual(
+        auskunftPruefen(auskunft({ antwort: fall.aussage, bezuege: ['O1'] }), [passend]),
+        { ok: true },
+        `abgelehnt: ${fall.aussage}`,
+      )
+    })
+
+    test(`${fall.bereich}: mit passendem, aber ungeprüftem Beleg abgelehnt`, () => {
+      const unbelegt = official('O1', fall.traegt, false)
+      assert.equal(
+        auskunftPruefen(auskunft({ antwort: fall.aussage, bezuege: ['O1'] }), [unbelegt]).ok,
+        false,
+        `durchgelassen: ${fall.aussage}`,
+      )
+    })
+  }
+
+  test('Transit bleibt vom Zielbereich getrennt, auch bei gleichem Anforderungstyp', () => {
+    const zielVisumBelegt = official('O1', 'visa', true, 'destination')
+    const transitVisumBelegt = official('O2', 'visa', true, 'transit')
+
+    assert.equal(
+      auskunftPruefen(
+        auskunft({ antwort: 'Du brauchst ein Transitvisum.', bezuege: ['O1'] }),
+        [zielVisumBelegt],
+      ).ok,
+      false,
+    )
+    assert.deepEqual(
+      auskunftPruefen(
+        auskunft({ antwort: 'Du brauchst ein Transitvisum.', bezuege: ['O2'] }),
+        [transitVisumBelegt],
+      ),
+      { ok: true },
+    )
+  })
+
+  test('jeder Anforderungstyp der Taxonomie kann von einem Bereich getragen werden', () => {
+    // Ein Typ, den kein Bereich trägt, wäre eine amtliche Anforderung, über
+    // die auch mit geprüfter Lage niemand etwas sagen dürfte. Ein Typ, der
+    // gar nicht vorkäme, wäre schlimmer: eine, über die jeder alles sagen
+    // dürfte, weil kein Muster greift.
+    for (const requirementType of OFFICIAL_REQUIREMENT_TYPES) {
+      const traegerbereiche = BEREICHE_FUER_TEST.filter((bereich) =>
+        bereich.traegerTypen.includes(requirementType),
+      )
+      assert.ok(
+        traegerbereiche.length > 0,
+        `kein Bereich trägt den Anforderungstyp ${requirementType}`,
+      )
+    }
+  })
+})
+
+describe('Beschreibungen, Fragen und Vorschläge bleiben zulässig', () => {
+  const visumUnbelegt = bezug({
+    ref: 'O1',
+    titel: 'Visumstatus · Italien',
+    lage: 'Noch nicht verlässlich bestimmbar',
+    belegt: false,
+    anforderung: anforderung({ requirementType: 'visa', visaMode: null }),
+  })
+
+  const harmlos = [
+    'Prüfe deine Passgültigkeit in der Reisevorbereitung.',
+    'Ob ein Visum nötig ist, ist derzeit nicht geprüft.',
+    'Die Visumslage für Italien ist noch ungeklärt.',
+    'In der Reisevorbereitung je Staatsangehörigkeit ein Reisedokument ergänzen.',
+    'Danach die Einreiseanforderungen erneut prüfen lassen.',
+    'Jetnity kann nicht bestätigen, dass eine Impfung nötig ist.',
+    'Möglicherweise brauchst du ein Einreiseformular; das ist nicht geprüft.',
+    'Der Zeitraum passt zu den beiden Etappen: drei Nächte Rom, vier Nächte Florenz.',
+    'Du könntest die Etappe Rom um zwei Tage verlängern.',
+  ]
+
+  for (const text of harmlos) {
+    test(`kein Fehlalarm: „${text.slice(0, 48)}…"`, () => {
+      assert.deepEqual(
+        auskunftPruefen(auskunft({ antwort: text, bezuege: ['O1'] }), [visumUnbelegt]),
+        { ok: true },
+      )
+    })
+  }
+
+  test('ein Vorbehalt rettet keine nicht zuordenbare Gewissheit', () => {
+    // „garantiert" bleibt auch mit „möglicherweise" daneben unbelegbar.
+    assert.equal(
+      auskunftPruefen(
+        auskunft({ antwort: 'Möglicherweise ist das garantiert ausreichend.', bezuege: [] }),
+        [visumUnbelegt],
+      ).ok,
+      false,
+    )
+  })
+
+  test('eine Pflichtaussage ohne amtlichen Bereich ist kein amtlicher Anspruch', () => {
+    // Produktnavigation, keine Einreisebestimmung.
+    assert.deepEqual(
+      auskunftPruefen(
+        auskunft({ antwort: 'Du musst die Etappen noch mit Daten versehen.', bezuege: [] }),
+        [visumUnbelegt],
+      ),
+      { ok: true },
+    )
   })
 })
