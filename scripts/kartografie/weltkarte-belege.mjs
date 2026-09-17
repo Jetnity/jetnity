@@ -22,7 +22,8 @@
  * Voraussetzung: `npm run build` ist gelaufen.
  *
  * Aufruf:
- *   node scripts/kartografie/weltkarte-belege.mjs --verzeichnis <ordner> [--marke vorher|nachher]
+ *   node scripts/kartografie/weltkarte-belege.mjs [--marke vorher|nachher]
+ *     [--verzeichnis <ordner>] [--port <nummer>] [--skalierung 1|2]
  */
 import { spawn } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -37,7 +38,9 @@ const option = (name, standard) => {
 
 const PORT = option('port', '3471')
 const MARKE = option('marke', 'nachher')
-const VERZEICHNIS = option('verzeichnis', '/opt/cursor/artifacts/weltkarte')
+const VERZEICHNIS = option('verzeichnis', 'docs/evidence/realistic-world-cartography-1')
+/** 1 fuer Bilder im Repository, 2 fuer Bildschirmbelege ausserhalb. */
+const SKALIERUNG = Number(option('skalierung', '1'))
 const BASIS = `http://127.0.0.1:${PORT}`
 const PFAD = '/ui-audit/account?zustand=welt'
 
@@ -110,7 +113,7 @@ const anfragen = new Set()
 try {
   const browser = await chromium.launch()
   for (const viewport of BREITEN) {
-    const seite = await browser.newPage({ viewport, deviceScaleFactor: 2 })
+    const seite = await browser.newPage({ viewport, deviceScaleFactor: SKALIERUNG })
     const konsole = []
     seite.on('console', (nachricht) => {
       if (nachricht.type() === 'error' || nachricht.type() === 'warning') {
