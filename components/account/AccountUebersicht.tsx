@@ -1,16 +1,22 @@
 // components/account/AccountUebersicht.tsx
 //
 // Persönliches Zuhause: Begrüssung, nächste/aktive Reise, Fortsetzen,
-// geplante World Map aus TripSummary. Keine Flug-/Hotel-/Readiness-/
-// Safety-/Seasonal-Karten. Keine Besuchshistorie.
+// Weltkarte mit geplanter und bestätigter Wahrheit. Keine Flug-/Hotel-/
+// Readiness-/Safety-/Seasonal-Karten.
+//
+// Die Karte zeigt die Besuchshistorie hier nur; verwaltet wird sie unter
+// /account/welt. Die Übersicht bleibt eine dünne Schale.
 
 import type { Route } from 'next'
 import Link from 'next/link'
 import { AlertCircle, ArrowRight, MapPin, Plus } from 'lucide-react'
 
 import AccountWeltKarte from '@/components/account/AccountWeltKarte'
+import { BESUCHE_COPY } from '@/lib/account/besuche-copy'
 import { BUCHUNGEN_COPY } from '@/lib/account/buchungen'
 import type { NaechsteReise } from '@/lib/account/naechste-reise'
+import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
+import type { WeltLaenderAbleitung } from '@/lib/account/welt-laender'
 import { worldMapAbleiten } from '@/lib/account/world-map'
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { Problem } from '@/lib/api/datenbank-lesen'
@@ -42,12 +48,16 @@ export default function AccountUebersicht({
   naechste,
   hatReisen,
   reisen,
+  besucht,
+  laender,
 }: {
   name: string | null
   problem: Problem | null
   naechste: NaechsteReise | null
   hatReisen: boolean
   reisen: readonly TripSummary[]
+  besucht: WeltBesuchtAnsicht
+  laender: WeltLaenderAbleitung
 }) {
   const welt = worldMapAbleiten({ problem, reisen })
 
@@ -155,7 +165,12 @@ export default function AccountUebersicht({
         </section>
       )}
 
-      <AccountWeltKarte welt={welt} />
+      <AccountWeltKarte
+        welt={welt}
+        besucht={besucht}
+        laender={laender}
+        aktion={{ href: '/account/welt', text: BESUCHE_COPY.einstieg }}
+      />
     </div>
   )
 }

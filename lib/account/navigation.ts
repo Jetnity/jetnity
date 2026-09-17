@@ -6,6 +6,7 @@
 export const ACCOUNT_NAVIGATION = [
   { label: 'Übersicht', href: '/account' },
   { label: 'Reisen', href: '/reisen' },
+  { label: 'Deine Welt', href: '/account/welt' },
   { label: 'Reisende', href: '/account/travellers' },
   { label: 'Einstellungen', href: '/account/settings' },
 ] as const
@@ -31,6 +32,9 @@ export function accountNavigationAktiv(pathname: string, href: string): boolean 
   }
   if (href === '/account/travellers') {
     return pathname === '/account/travellers' || pathname.startsWith('/account/travellers/')
+  }
+  if (href === '/account/welt') {
+    return pathname === '/account/welt' || pathname.startsWith('/account/welt/')
   }
   if (href === '/reisen') return pathname === '/reisen' || pathname.startsWith('/reisen/')
   return pathname === href || pathname.startsWith(`${href}/`)

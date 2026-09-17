@@ -48,6 +48,16 @@ export const WORLD_MAP_GRUNDKARTE_BESCHREIBUNG =
   'Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung.'
 
 /**
+ * Wie die Karte ihre Zustände unterscheidet – gesagt, nicht gezeigt.
+ *
+ * Wer das Bild nicht sieht, erfährt hier, dass „besucht“ und „geplant“ zwei
+ * verschiedene Behandlungen sind und dass ein überlagertes Land beide trägt.
+ * Die vollständige Auskunft steht danach in der Länderliste.
+ */
+export const WELT_KARTE_ZUSTAND_BESCHREIBUNG =
+  'Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.'
+
+/**
  * Sichtbare Kartenherkunft und Grenz-Vorbehalt. Natural Earth ist gemeinfrei
  * und verlangt keine Nennung; genannt wird sie trotzdem, weil eine Karte ohne
  * erkennbare Herkunft eine Behauptung ohne Quelle ist. Der zweite Satz sagt,
@@ -150,6 +160,20 @@ function ausrichtungFuer(links: number): WorldMapAusrichtung {
   if (links < 18) return 'links'
   if (links > 82) return 'rechts'
   return 'mitte'
+}
+
+/**
+ * Ein Punkt der Projektion als Position in Prozent der gezeigten Karte.
+ *
+ * `null`, wenn er ausserhalb des Ausschnitts liegt: ein Punkt an den Rand zu
+ * schieben wäre eine falsche Position, keine ungenaue.
+ */
+export function weltPunktLage(x: number, y: number): { links: number; oben: number } | null {
+  if (!istImRahmen(x, y)) return null
+  return {
+    links: ((x - WORLD_MAP_RAHMEN_VIEWBOX.x) / WORLD_MAP_RAHMEN_VIEWBOX.width) * 100,
+    oben: ((y - WORLD_MAP_RAHMEN_VIEWBOX.y) / WORLD_MAP_RAHMEN_VIEWBOX.height) * 100,
+  }
 }
 
 export function weltMarkerLage(ort: WorldMapOrt): WorldMapMarker | null {
