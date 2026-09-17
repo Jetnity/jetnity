@@ -61,6 +61,7 @@
 // Frei von Next, Supabase und `process.env`.
 
 import type { BegleiterBezug, OfficialAnforderung } from '@/lib/reisebegleiter/nutzlast'
+import { kontextwortschatz, unbelegteWoerter } from '@/lib/reisebegleiter/wortschatz'
 import type { Modellauskunft } from '@/lib/reisebegleiter/schema'
 import type { OfficialRequirementType } from '@/types/trips'
 
@@ -71,111 +72,38 @@ export type Pruefbefund =
       art:
         | 'unbekannter-bezug'
         | 'unbelegte-gewissheit'
-        | 'fremdes-amtsvokabular'
-        | 'fremde-antwortsprache'
+        | 'unbelegtes-wort'
       hinweis: string
     }
 
 // ---------------------------------------------------------------------------
-// Die Sprachschranke
+// Die Wortschatzschranke
 // ---------------------------------------------------------------------------
 //
-// Warum es sie gibt: Die Prüfung unten liest Modalität, Bereich und Vorbehalt
-// über deutsche Muster. Eine solche Prüfung ist nur über einer **geschlossenen**
-// Sprachfläche vollständig. Solange die Auskunft „in der Sprache der Frage"
-// antworten durfte, war die Fläche offen – und „You need a visa." ging durch,
-// nicht weil die Regel eine Lücke hatte, sondern weil sie für diesen Satz gar
-// nicht zuständig war.
+// Drei Runden lang wurde versucht, erfundene amtliche Wahrheit an ihren Wörtern
+// zu erkennen: erst auf Deutsch, dann in den von Jetnity geführten Sprachen,
+// dann über eine Spracherkennung mit Markerwörtern. Jede Fassung war eine
+// Verbotsliste über einer offenen Menge, und jede war widerlegbar – zuletzt
+// durch `Das ist so: İtalya için vize gerekli.`: genug deutsche Marker, um für
+// deutsch zu gelten, und eine amtliche Behauptung in einer Sprache, die in
+// keiner Liste stand.
 //
-// Deshalb ist die Antwortsprache jetzt Teil des Vertrags und nicht des Prompts:
-// Der Reisebegleiter antwortet auf **Deutsch**, wie die ganze übrige Jetnity-
-// Oberfläche (`COUNTRY_UI_LOCALE`). Das ist keine Produktentscheidung, sondern
-// die Rücknahme einer Ausweitung, die dieser Slice selbst eingeführt hatte.
+// Über einer offenen Menge gibt es keine vollständige Verbotsliste. Es gibt nur
+// eine vollständige Erlaubnisliste. Die Frage steht deshalb jetzt umgekehrt:
+// nicht „enthält dieser Text ein verbotenes Wort?", sondern „besteht dieser
+// Text ausschliesslich aus Wörtern, die Jetnity kennt?"
 //
-// Zwei Schranken sichern das, und jede fängt, was die andere verfehlen kann:
+// `lib/reisebegleiter/wortschatz.ts` beantwortet sie. Zulässig ist der dort
+// geführte Register, jedes Wort aus dem serverseitig abgeleiteten Kontext und
+// Zahlen; alles andere ist unbelegt. Die Schranke gilt für **jedes**
+// modellgeschriebene Feld – `antwort`, `unsicherheiten`, `naechsteSchritte` –,
+// denn eine Behauptung ist in einer Liste so wirksam wie in einem Satz.
 //
-//   1. `DEUTSCHE_MARKER` – eine Antwort ohne deutsche Funktionswörter ist keine
-//      deutsche Antwort und wird verworfen. Das schliesst **jede** Sprache, die
-//      unten nicht aufgezählt ist, einschliesslich der, an die niemand gedacht
-//      hat.
-//   2. `FREMDES_AMTSVOKABULAR` – amtliche Begriffe der übrigen von Jetnity
-//      geführten Sprachen. Sie haben in einer deutschen Antwort keinen
-//      legitimen Platz, also kostet ihr Verbot nichts und greift auch dann,
-//      wenn Schranke 1 einen gemischtsprachigen Text noch für deutsch hält.
-//
-// Beide sind Denylists über Wörtern, aber – und das ist der Unterschied zur
-// verworfenen Lösung – sie stehen hinter einer geschlossenen Sprachfläche.
-// Eine Denylist über einer offenen Fläche ist unvollständig; über einer
-// geschlossenen ist sie eine Prüfung.
-
-/**
- * Funktionswörter, die in einem deutschen Satz praktisch unvermeidlich sind.
- *
- * Bewusst Wörter, die sich von ihren englischen Verwandten unterscheiden –
- * `ist` statt `is`, `und` statt `and`, `für`, `eine`, `nicht`.
- */
-const DEUTSCHE_MARKER =
-  /\b(?:der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|ist|sind|war|waren|nicht|kein|keine|keinen|f[üu]r|mit|von|vom|zum|zur|im|beim|bei|dein|deine|deinen|du|dir|dich|sich|wird|werden|noch|auch|aber|dass|weil|wenn|kann|k[öo]nnte|sollte|hat|haben|habe|als|nach|danach|davor|dabei|deshalb|darum|somit|jedoch|allerdings|bereits|weiterhin|zudem|au[sß]erdem|erneut|wieder|vor|[üu]ber|unter|ohne|schon|nur|sehr|etwa|liegt|liegen|bleibt|bleiben|steht|stehen|gibt|geben|machen|lassen|l[äa]sst|sowie|damit|dazu|daf[üu]r|muss|musst|m[üu]ssen|m[üu]sst|brauchst|braucht|brauchen|ben[öo]tigst|ben[öo]tigt|sein|seine|seinen|ihre|ihren|jede|jeden|jedes|alle|allen|einige|mehrere|dieser|diese|dieses|diesen|dort|hier|dann|zuerst|bitte|gern|mindestens|ausreichend\w*)\b/gi
-
-/** Umlaute und Eszett sind ein eigenes, starkes Signal für deutschen Text. */
-const DEUTSCHE_SCHRIFT = /[äöüÄÖÜß]/
-
-/**
- * Amtliches Vokabular der übrigen von Jetnity geführten Sprachen.
- *
- * `COUNTRY_LOCALES` führt neben Deutsch Englisch, Französisch, Italienisch,
- * Spanisch, Portugiesisch und Polnisch. Aufgenommen ist nur, was **kein**
- * deutsches Wort ist: `Visum`, `Pass` und `Visa` stehen deshalb nicht hier,
- * sondern im deutschen Bereichsdetektor weiter unten.
- *
- * Es geht nicht um Vollständigkeit der Sprachen, sondern um den Kern, mit dem
- * sich eine Einreiseanforderung überhaupt behaupten lässt.
- */
-const FREMDES_AMTSVOKABULAR: RegExp =
-  new RegExp(
-    [
-      // Visum / Reisegenehmigung
-      'visado', 'visti', 'visto', 'wiz[aęy]', 'wizow\\w*',
-      // Pass / Ausweis
-      'passport\\w*', 'passeport\\w*', 'passaporto', 'pasaporte', 'paszport\\w*',
-      'identity\\s+(?:card|document)', "carte\\s+d'identit", 'documento\\s+de\\s+identidad',
-      // Impfung / Gesundheit
-      'vaccinat\\w*', 'vaccin\\w*', 'vacun\\w*', 'vacina\\w*', 'szczepien\\w*',
-      'health\\s+(?:certificate|declaration|requirement)', 'certificat\\s+sanitaire',
-      // Versicherung
-      'insurance', 'assurance\\s+\\w+', 'assicurazione', 'seguro\\s+de\\s+viaje', 'ubezpieczen\\w*',
-      // Einreiseformular / Registrierung
-      'entry\\s+form', "formulaire\\s+d'entr", 'modulo\\s+di\\s+ingresso', 'formulario\\s+de\\s+entrada',
-      // Rück-/Weiterreise, Nachweise
-      'onward\\s+\\w+', 'return\\s+ticket', 'billet\\s+de\\s+retour', 'biglietto\\s+di\\s+ritorno',
-      'proof\\s+of\\s+\\w+', 'sufficient\\s+funds', 'financial\\s+means',
-      // amtliche Rahmung
-      'entry\\s+requirement\\w*', 'immigration\\s+\\w+', 'border\\s+control',
-      'is\\s+required', 'are\\s+required', 'not\\s+required', 'you\\s+(?:need|must)\\b',
-      'obligatoire', 'obbligatorio', 'obligatorio', 'wymagan\\w*',
-    ]
-      .map((eintrag) => `\\b(?:${eintrag})`)
-      .join('|'),
-    'i',
-  )
-
-function deutscheSignale(text: string): number {
-  const treffer = text.match(DEUTSCHE_MARKER)
-  const woerter = treffer ? new Set(treffer.map((wort) => wort.toLowerCase())).size : 0
-  return woerter + (DEUTSCHE_SCHRIFT.test(text) ? 1 : 0)
-}
-
-/**
- * Ob die Antwort als deutscher Text durchgeht.
- *
- * Kurze Einträge – „Reisedokument ergänzen." – tragen naturgemäss kein
- * Funktionswort. Die Schranke gilt deshalb für die eigentliche Antwort und
- * skaliert mit ihrer Länge, statt Listeneinträge zu bestrafen.
- */
-function istDeutscheAntwort(antwort: string): boolean {
-  const signale = deutscheSignale(antwort)
-  return antwort.length >= 40 ? signale >= 2 : signale >= 1
-}
+// Damit wird die inhaltliche Prüfung darunter erst vollständig: Sie liest
+// deutsche Modalität, deutsche Bereiche, deutsche Vorbehalte, und sie darf das,
+// weil vor ihr feststeht, dass der Text aus deutschen, von Jetnity geführten
+// Wörtern besteht. Vorher war sie für fremde Sätze nicht zuständig; jetzt kommen
+// fremde Sätze nicht bis zu ihr.
 
 // ---------------------------------------------------------------------------
 // Ansprüche, die der Kontext nie decken kann
@@ -372,7 +300,28 @@ function saetze(text: string): string[] {
 }
 
 function texte(auskunft: Modellauskunft): string[] {
-  return [auskunft.antwort, ...auskunft.unsicherheiten, ...auskunft.naechsteSchritte]
+  return felder(auskunft).map(([, text]) => text)
+}
+
+/**
+ * Jedes modellgeschriebene Feld mit seinem Namen.
+ *
+ * Alle drei sind gleich gefährlich: Eine erfundene Anforderung wirkt in einer
+ * Liste genauso wie in einem Satz. Frühere Fassungen prüften die Sprache nur
+ * an `antwort`; das war ein eigener Umgehungsweg.
+ */
+function felder(auskunft: Modellauskunft): Array<[string, string]> {
+  return [
+    ['antwort', auskunft.antwort],
+    ...auskunft.unsicherheiten.map((text, stelle): [string, string] => [
+      `unsicherheiten[${stelle}]`,
+      text,
+    ]),
+    ...auskunft.naechsteSchritte.map((text, stelle): [string, string] => [
+      `naechsteSchritte[${stelle}]`,
+      text,
+    ]),
+  ]
 }
 
 /**
@@ -420,25 +369,20 @@ export function auskunftPruefen(
     }
   }
 
-  // Die Sprachschranke steht vor allem anderen: Was die deutschen Muster unten
-  // nicht lesen können, dürfen sie auch nicht durchlassen.
-  for (const text of texte(auskunft)) {
-    const fremd = FREMDES_AMTSVOKABULAR.exec(text)
-    if (fremd) {
+  // Die Wortschatzschranke steht vor allem anderen: Was die deutschen Muster
+  // unten nicht lesen können, darf nicht bis zu ihnen kommen. Der
+  // Zusatzwortschatz sind die Eigennamen dieser Reise, wie Jetnity sie selbst
+  // anzeigt – serverseitig abgeleitet, nicht vom Modell geschrieben.
+  const zusatz = kontextwortschatz(bezuege.flatMap((bezug) => [bezug.titel, bezug.lage]))
+
+  for (const [feld, text] of felder(auskunft)) {
+    const unbelegt = unbelegteWoerter(text, zusatz)
+    if (unbelegt.length > 0) {
       return {
         ok: false,
-        art: 'fremdes-amtsvokabular',
-        hinweis: `Die Auskunft benutzt fremdsprachiges amtliches Vokabular („${fremd[0]}"); die Antwortsprache dieses Wegs ist Deutsch.`,
+        art: 'unbelegtes-wort',
+        hinweis: `Das Feld ${feld} benutzt Wörter, die Jetnity nicht führt: ${unbelegt.slice(0, 5).join(', ')}.`,
       }
-    }
-  }
-
-  if (!istDeutscheAntwort(auskunft.antwort)) {
-    return {
-      ok: false,
-      art: 'fremde-antwortsprache',
-      hinweis:
-        'Die Antwort ist nicht als deutscher Text erkennbar; über einer offenen Sprachfläche ist die amtliche Prüfung unten nicht vollständig.',
     }
   }
 
