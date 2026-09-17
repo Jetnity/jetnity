@@ -7,7 +7,15 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import AccountAuditClient from '@/components/account/AccountAuditClient'
+import { weltGeometrieFuer } from '@/lib/account/welt-geometrie'
 import { uiAuditSeiteAktiv } from '@/lib/ui-audit/freigabe'
+
+/**
+ * Nur die Länder der Fixtures. Die vollständige Kartografie bleibt auf dem
+ * Server – auch im Audit, sonst prüfte der Audit eine andere Nutzlast als die
+ * Produktseite. SG steht für ein Land ohne zeichenbare Fläche.
+ */
+const AUDIT_LAENDER = ['PT', 'IT', 'JP', 'SG'] as const
 
 export const metadata: Metadata = {
   title: 'Account-Audit',
@@ -27,7 +35,7 @@ export default function AccountAuditSeite() {
   }
   return (
     <Suspense fallback={<div className="min-h-screen bg-surface-75" />}>
-      <AccountAuditClient />
+      <AccountAuditClient geometrie={weltGeometrieFuer(AUDIT_LAENDER)} />
     </Suspense>
   )
 }

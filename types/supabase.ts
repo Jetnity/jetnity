@@ -139,6 +139,51 @@ export type Database = {
         }
         Relationships: []
       }
+      account_visits: {
+        Row: {
+          country_code: string | null
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          place_id: string | null
+          place_label: string | null
+          updated_at: string
+          user_id: string
+          visited_day: number | null
+          visited_month: number | null
+          visited_year: number | null
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          place_id?: string | null
+          place_label?: string | null
+          updated_at?: string
+          user_id?: string
+          visited_day?: number | null
+          visited_month?: number | null
+          visited_year?: number | null
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          place_id?: string | null
+          place_label?: string | null
+          updated_at?: string
+          user_id?: string
+          visited_day?: number | null
+          visited_month?: number | null
+          visited_year?: number | null
+        }
+        Relationships: []
+      }
       airports: {
         Row: {
           city: string | null

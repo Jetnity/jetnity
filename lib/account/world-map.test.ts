@@ -5,8 +5,6 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import {
-  WORLD_MAP_BESUCHT_KURZ,
-  WORLD_MAP_BESUCHT_TEXT,
   WORLD_MAP_FEHLER_TEXT,
   WORLD_MAP_GEPLANT_LEER_KURZ,
   WORLD_MAP_LEER_TEXT,
@@ -37,6 +35,12 @@ import {
   WORLD_MAP_LAND_PFADE,
   WORLD_MAP_SEE_PFADE,
 } from '@/lib/account/world-map-geografie'
+import {
+  WELT_BESUCHT_LEER_KURZ,
+  WELT_BESUCHT_TEXT,
+  weltBesuchtAbleiten,
+} from '@/lib/account/welt-ansicht'
+import { weltLaenderAbleiten } from '@/lib/account/welt-laender'
 import { tripAlsUebersicht } from '@/lib/trips/reise-orte'
 import type { Trip, TripItem, TripStage, TripStatus, TripSummary } from '@/types/trips'
 
@@ -231,7 +235,7 @@ describe('World-Map-Derivation – geplante Wahrheit', () => {
     assert.deepEqual(weltKarteProjektion(38.7223, -9.1393), { x: 170.8607, y: 51.2777 })
     assert.equal(welt.orte[0]?.herkuenfte[0]?.tripId, 'trip-lisbon')
     assert.equal(welt.laenderCodes.includes('PT'), true)
-    assert.equal(welt.besuchtLage, 'nicht_erfasst')
+    assert.equal(Object.keys(welt).some((feld) => feld.startsWith('besucht')), false)
   })
 
   test('ungültige oder fehlende Koordinaten werden nicht geraten', () => {
@@ -344,14 +348,33 @@ describe('World-Map-Derivation – geplante Wahrheit', () => {
         }),
       ),
     })
-    assert.equal(welt.besuchtLage, 'nicht_erfasst')
-    assert.equal(welt.besuchtText, WORLD_MAP_BESUCHT_TEXT)
-    assert.equal(welt.besuchtText.includes('0'), false)
+    // Vier Reisen, alle in der Vergangenheit, eine davon archiviert: die
+    // geplante Ableitung darf daraus keinen Besuch machen, und die bestaetigte
+    // Seite kennt diese Reisen gar nicht.
     const serialisiert = JSON.stringify(welt)
     assert.equal(serialisiert.includes('"visited":true'), false)
     assert.equal(serialisiert.includes('besucht=true'), false)
+    // Die geplante Ableitung trägt überhaupt kein Besuchsfeld mehr: sie kann
+    // nichts über Besuche sagen, also sagt sie nichts.
+    assert.equal(
+      Object.keys(welt).some((feld) => feld.toLowerCase().startsWith('besucht')),
+      false,
+    )
     assert.equal(welt.lage, 'geplant')
     assert.equal(welt.geplottet, 4)
+
+    const besucht = weltBesuchtAbleiten({ besuche: [], problem: null })
+    assert.equal(besucht.lage, 'leer')
+    assert.equal(besucht.kennzahlen.laender, 0)
+    assert.equal(besucht.laenderCodes.length, 0)
+    assert.equal(
+      weltLaenderAbleiten({
+        besucht: besucht.laenderCodes,
+        geplant: welt.laenderCodes,
+        geometrie: { PT: { pfade: ['M0 0 L1 0 L1 1 Z'], punkt: null } },
+      }).flaechen.every((flaeche) => flaeche.zustand === 'geplant'),
+      true,
+    )
   })
 
   test('identische nicht-leere placeId aggregiert, ohne Herkunft zu verlieren', () => {
@@ -547,7 +570,6 @@ describe('World-Map-Derivation – geplante Wahrheit', () => {
     assert.equal(fehler.zusammenfassung, WORLD_MAP_FEHLER_TEXT)
     assert.equal(fehler.orte.length, 0)
     assert.notEqual(fehler.lage, leer.lage)
-    assert.equal(fehler.besuchtLage, 'nicht_erfasst')
     assert.equal(leer.titel, WORLD_MAP_TITEL)
   })
 
@@ -988,12 +1010,12 @@ describe('World-Map-Reiseaktionen bleiben je tripId unterscheidbar', () => {
 })
 
 describe('World-Map-Legende behauptet keine leere Besuchshistorie', () => {
-  test('die Kurzform nennt fehlende Erfassung ohne Zahl', () => {
-    assert.equal(WORLD_MAP_BESUCHT_KURZ, 'Noch nicht erfasst')
-    assert.equal(/\d/.test(WORLD_MAP_BESUCHT_KURZ), false)
-    const welt = worldMapAbleiten({ problem: null, reisen: [] })
-    assert.equal(welt.besuchtKurz, WORLD_MAP_BESUCHT_KURZ)
-    assert.equal(welt.besuchtText, WORLD_MAP_BESUCHT_TEXT)
+  test('die Kurzform nennt den leeren Stand ohne Zahl', () => {
+    assert.equal(WELT_BESUCHT_LEER_KURZ, 'Noch keine Besuche bestätigt')
+    assert.equal(/\d/.test(WELT_BESUCHT_LEER_KURZ), false)
+    const besucht = weltBesuchtAbleiten({ besuche: [], problem: null })
+    assert.equal(besucht.kurz, WELT_BESUCHT_LEER_KURZ)
+    assert.equal(besucht.text, WELT_BESUCHT_TEXT)
   })
 
   test('die Zusammenfassung zeigt keine Null-Zählung', () => {

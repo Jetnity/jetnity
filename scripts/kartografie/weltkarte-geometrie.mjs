@@ -23,6 +23,14 @@
  * lib/account/world-map.ts gespeicherte Etappenkoordinaten setzt. Karte und
  * Marker bleiben dadurch deckungsgleich.
  *
+ * Zwei Ausgaben entstehen im selben Lauf aus denselben Parametern:
+ *   1. lib/account/world-map-geografie.ts  – anonyme Grundkarte (Land, Seen,
+ *      Grenzlinien). Sie traegt den neutralen Zustand jedes Landes.
+ *   2. lib/account/world-map-laender.ts    – dieselbe Geometrie, aber je Land
+ *      nach ISO-3166-1-alpha-2 getrennt. Nur damit kann ein einzelnes Land
+ *      eine eigene Flaechenfarbe tragen, ohne dass die Karte ihre Grenzen
+ *      verliert.
+ *
  * Aufruf:
  *   node scripts/kartografie/weltkarte-geometrie.mjs            # erzeugen
  *   node scripts/kartografie/weltkarte-geometrie.mjs --messen   # nur Kennzahlen
@@ -33,9 +41,11 @@
  *   --toleranz <grad>     Douglas-Peucker-Toleranz in Grad
  *   --flaeche <grad2>     Mindestflaeche einer Landflaeche in Quadratgrad
  *   --seeflaeche <grad2>  Mindestflaeche eines Sees in Quadratgrad
+ *   --landflaeche <grad2> Mindestflaeche eines Landesteils in Quadratgrad
  *   --stellen <n>         Nachkommastellen der Projektionskoordinaten
  *   --zwischenspeicher <verzeichnis>
  *   --ausgabe <datei>
+ *   --ausgabe-laender <datei>
  */
 import { createHash } from 'node:crypto'
 import { gzipSync } from 'node:zlib'
@@ -54,11 +64,13 @@ const DATENSAETZE = {
     land: 'ne_110m_land',
     grenzen: 'ne_110m_admin_0_boundary_lines_land',
     seen: 'ne_110m_lakes',
+    laender: 'ne_110m_admin_0_countries',
   },
   '50m': {
     land: 'ne_50m_land',
     grenzen: 'ne_50m_admin_0_boundary_lines_land',
     seen: 'ne_50m_lakes',
+    laender: 'ne_50m_admin_0_countries',
   },
 }
 
@@ -83,9 +95,18 @@ const STANDARD = {
   toleranz: 0.25,
   flaeche: 0.05,
   seeflaeche: 1.2,
+  /**
+   * Mindestflaeche eines einzelnen Landesteils. Hoeher als bei der Grundkarte:
+   * die Flaechenebene faerbt, sie zeichnet nicht die Kueste. Ein Splitter von
+   * einem Zehntel Quadratgrad ist auf 390 Pixel Breite kleiner als ein
+   * Bildpunkt und traegt keine erkennbare Farbe – kostet aber Nutzlast. Die
+   * Kuestenlinie dieses Splitters bleibt in der Grundkarte erhalten.
+   */
+  landflaeche: 0.2,
   stellen: 1,
   zwischenspeicher: join(ROOT, '.cache', 'naturalearth'),
   ausgabe: join(ROOT, 'lib', 'account', 'world-map-geografie.ts'),
+  ausgabeLaender: join(ROOT, 'lib', 'account', 'world-map-laender.ts'),
 }
 
 function argumente(argv) {
@@ -98,9 +119,11 @@ function argumente(argv) {
     else if (arg === '--toleranz') werte.toleranz = Number(argv[(i += 1)])
     else if (arg === '--flaeche') werte.flaeche = Number(argv[(i += 1)])
     else if (arg === '--seeflaeche') werte.seeflaeche = Number(argv[(i += 1)])
+    else if (arg === '--landflaeche') werte.landflaeche = Number(argv[(i += 1)])
     else if (arg === '--stellen') werte.stellen = Number(argv[(i += 1)])
     else if (arg === '--zwischenspeicher') werte.zwischenspeicher = argv[(i += 1)]
     else if (arg === '--ausgabe') werte.ausgabe = argv[(i += 1)]
+    else if (arg === '--ausgabe-laender') werte.ausgabeLaender = argv[(i += 1)]
     else {
       console.error(`Unbekannte Option: ${arg}`)
       process.exit(2)
@@ -140,6 +163,56 @@ function ringeAus(sammlung) {
     else if (geo.type === 'MultiPolygon') for (const polygon of geo.coordinates) ringe.push(...polygon)
   }
   return ringe
+}
+
+/**
+ * ISO-3166-1-alpha-2 eines Natural-Earth-Landmerkmals.
+ *
+ * `ISO_A2` traegt in Natural Earth bei einigen Staaten `-99`; `ISO_A2_EH` ist
+ * die von Natural Earth gepflegte Korrektur derselben Zuordnung. Beide werden
+ * gelesen, `WB_A2` bleibt als letzter Rueckfall. Findet sich kein Code, wird
+ * das Merkmal uebersprungen: Jetnity erfindet keine Laenderidentitaet, und ein
+ * Gebiet ohne anerkannten Code faerbt sich nicht. Seine Kuestenlinie bleibt in
+ * der Grundkarte trotzdem sichtbar.
+ */
+function landCodeAus(eigenschaften) {
+  for (const feld of ['ISO_A2_EH', 'ISO_A2', 'WB_A2']) {
+    const wert = eigenschaften?.[feld]
+    if (typeof wert === 'string' && /^[A-Za-z]{2}$/.test(wert)) return wert.toUpperCase()
+  }
+  return null
+}
+
+/** Ringe je Landcode. Mehrere Merkmale desselben Codes werden zusammengefuehrt. */
+function ringeJeLand(sammlung) {
+  const nachCode = new Map()
+  const punkte = new Map()
+  const namen = new Map()
+  const ohneCode = []
+  for (const merkmal of sammlung.features) {
+    const geo = merkmal.geometry
+    if (!geo) continue
+    const code = landCodeAus(merkmal.properties)
+    const ringe = []
+    if (geo.type === 'Polygon') ringe.push(...geo.coordinates)
+    else if (geo.type === 'MultiPolygon') for (const polygon of geo.coordinates) ringe.push(...polygon)
+    if (!code) {
+      if (ringe.length > 0) ohneCode.push(merkmal.properties?.NAME ?? 'ohne Namen')
+      continue
+    }
+    const bisher = nachCode.get(code)
+    if (bisher) bisher.push(...ringe)
+    else nachCode.set(code, ringe)
+    // LABEL_X/LABEL_Y sind der von Natural Earth gepflegte Beschriftungspunkt
+    // des Landes. Er wird uebernommen, nicht gerechnet: ein selbst gemittelter
+    // Schwerpunkt laege bei Inselstaaten im Meer.
+    const { LABEL_X: lon, LABEL_Y: lat } = merkmal.properties ?? {}
+    if (!punkte.has(code) && typeof lon === 'number' && typeof lat === 'number') {
+      punkte.set(code, [lon, lat])
+      namen.set(code, merkmal.properties?.NAME ?? code)
+    }
+  }
+  return { nachCode, punkte, namen, ohneCode }
 }
 
 function linienAus(sammlung) {
@@ -457,6 +530,99 @@ ${liste(grenzen.pfade)}
 `
 }
 
+function laenderModul({ optionen, quelle, laender, kleinstaaten, uebersprungen }) {
+  const zeilen = laender
+    .map(({ code, pfade }) => `  ${code}: [\n${liste(pfade, '    ')}\n  ],`)
+    .join('\n')
+
+  const punktZeilen = kleinstaaten
+    .map(
+      ({ code, name, x, y }) =>
+        `  ${code}: [${x.toFixed(optionen.stellen)}, ${y.toFixed(optionen.stellen)}], // ${name}`,
+    )
+    .join('\n')
+
+  return `// lib/account/world-map-laender.ts
+//
+// ERZEUGT – nicht von Hand bearbeiten.
+// Quelle: scripts/kartografie/weltkarte-geometrie.mjs
+// Neu erzeugen: node scripts/kartografie/weltkarte-geometrie.mjs
+//
+// Dieselbe lokale Vektorgeografie wie world-map-geografie.ts, aber je Land
+// getrennt und nach ISO-3166-1-alpha-2 benannt. Abgeleitet aus Natural Earth
+// (gemeinfrei / public domain), Release ${NE_VERSION}, Detailstufe ${optionen.detail}.
+//
+// Wozu: die Grundkarte traegt den neutralen Zustand. Ein einzelnes Land kann
+// nur dann \`besucht\` oder \`geplant\` zeigen, wenn seine Flaeche als eigener
+// Pfad vorliegt. Die Grenzlinien der Grundkarte werden weiterhin ueber die
+// Flaechen gezeichnet und bleiben unter jeder Fuellung lesbar.
+//
+// Was hier nicht steht, faerbt sich nicht: Gebiete ohne anerkannten ISO-Code
+// (${uebersprungen.join(', ')}) bleiben neutrale Grundkarte. Das ist eine
+// bewusste Enthaltung, keine Luecke.
+//
+// Zur Laufzeit wird nichts nachgeladen. Dieses Modul gehoert auf den Server:
+// es traegt die Flaechen aller Laender, waehrend der Browser nur die wenigen
+// Pfade erhaelt, die das Konto tatsaechlich einfaerbt.
+//
+// Projektion wie die Grundkarte: x = lon + 180, y = 90 - lat.
+//
+// Die Flaechen sind Orientierungskartografie. Sie sind keine Aussage Jetnitys
+// ueber voelkerrechtliche Grenzverlaeufe, Hoheit oder Anerkennung.
+
+/** Herkunft der Laenderflaechen. Belegt, dass nichts zur Laufzeit geladen wird. */
+export const WORLD_MAP_LAENDER_HERKUNFT = {
+  datensatz: 'Natural Earth',
+  version: '${NE_VERSION}',
+  detail: '${optionen.detail}',
+  lizenz: 'Public domain (Natural Earth terms of use)',
+  bezugsquelle: 'nvkelso/natural-earth-vector (GitHub), Verzeichnis geojson',
+  projektion: 'equirectangular / plate carree, x = lon + 180, y = 90 - lat',
+  vereinfachung: 'Douglas-Peucker',
+  toleranzGrad: ${optionen.toleranz},
+  mindestflaecheGrad2: ${optionen.landflaeche},
+  nachkommastellen: ${optionen.stellen},
+  runtimeFetch: false,
+  grenzenSindOrientierung: true,
+  /** Gebiete ohne anerkannten ISO-3166-1-alpha-2-Code. Sie bleiben neutral. */
+  ohneLandcode: [${uebersprungen.map((name) => `'${name.replace(/'/g, "\\'")}'`).join(', ')}] as readonly string[],
+  quelle: {
+    datei: '${quelle.name}.geojson',
+    bytes: ${quelle.bytes},
+    sha256: '${quelle.sha256}',
+  },
+} as const
+
+/**
+ * Landflaechen je ISO-3166-1-alpha-2-Code, als geschlossene Ringe.
+ *
+ * Der Schluessel ist Grosschreibung, wie \`countryCodeNormalisieren\` sie
+ * liefert. Ein fehlender Schluessel heisst: fuer dieses Land liegt keine
+ * faerbbare Flaeche vor – nicht, dass es das Land nicht gibt.
+ */
+export const WORLD_MAP_LAENDER_PFADE: Readonly<Record<string, readonly string[]>> = {
+${zeilen}
+}
+
+/**
+ * Beschriftungspunkt der Laender, die auf Weltmassstab keine zeichenbare
+ * Flaeche haben.
+ *
+ * Singapur, Malta oder die Malediven sind kleiner als ein Bildpunkt dieser
+ * Karte: nach dem Vereinfachen bleibt von ihrem Umriss keine Flaeche uebrig.
+ * Ohne diesen Punkt behauptete die Karte, ein bestaetigt besuchtes Land sei
+ * nicht besucht, waehrend die Kennzahl daneben es zaehlt. Der Punkt stammt aus
+ * \`LABEL_X\`/\`LABEL_Y\` des Datensatzes – er ist uebernommen, nicht gerechnet.
+ *
+ * Nur Laender ohne eigenen Eintrag in \`WORLD_MAP_LAENDER_PFADE\` stehen hier.
+ * Ein Land hat entweder eine Flaeche oder einen Punkt, nie beides.
+ */
+export const WORLD_MAP_LAENDER_PUNKTE: Readonly<Record<string, readonly [number, number]>> = {
+${punktZeilen}
+}
+`
+}
+
 const optionen = argumente(process.argv.slice(2))
 rahmenPruefen()
 
@@ -464,6 +630,7 @@ const namen = DATENSAETZE[optionen.detail]
 const quelleLand = await quelleLaden(namen.land, optionen.zwischenspeicher)
 const quelleGrenzen = await quelleLaden(namen.grenzen, optionen.zwischenspeicher)
 const quelleSeen = await quelleLaden(namen.seen, optionen.zwischenspeicher)
+const quelleLaender = await quelleLaden(namen.laender, optionen.zwischenspeicher)
 
 const land = ringePfade(ringeAus(quelleLand.daten), optionen)
 const seen = ringePfade(ringeAus(quelleSeen.daten), {
@@ -471,6 +638,34 @@ const seen = ringePfade(ringeAus(quelleSeen.daten), {
   flaeche: optionen.seeflaeche,
 })
 const grenzen = linienPfade(linienAus(quelleGrenzen.daten), optionen)
+
+const { nachCode, punkte: labelPunkte, namen: landNamen, ohneCode } = ringeJeLand(quelleLaender.daten)
+const laender = []
+const kleinstaaten = []
+let laenderPunkte = 0
+for (const code of [...nachCode.keys()].sort()) {
+  const erzeugt = ringePfade(nachCode.get(code), { ...optionen, flaeche: optionen.landflaeche })
+  if (erzeugt.pfade.length > 0) {
+    laender.push({ code, pfade: erzeugt.pfade })
+    laenderPunkte += erzeugt.punkte
+    continue
+  }
+  const label = labelPunkte.get(code)
+  if (!label) continue
+  const [[x, y] = []] = projizieren([label], optionen.stellen)
+  if (x === undefined || y === undefined) continue
+  // Antarktis liegt vollstaendig ausserhalb des gezeigten Ausschnitts und
+  // bekaeme sonst einen Punkt auf der unteren Kante.
+  if (
+    x < RAHMEN.lonMin + 180 ||
+    x > RAHMEN.lonMax + 180 ||
+    y < 90 - RAHMEN.latMax ||
+    y > 90 - RAHMEN.latMin
+  ) {
+    continue
+  }
+  kleinstaaten.push({ code, name: landNamen.get(code) ?? code, x, y })
+}
 
 const inhalt = modul({
   optionen,
@@ -480,7 +675,16 @@ const inhalt = modul({
   seen,
 })
 
+const laenderInhalt = laenderModul({
+  optionen,
+  quelle: quelleLaender,
+  laender,
+  kleinstaaten,
+  uebersprungen: [...new Set(ohneCode)].sort(),
+})
+
 const nutzlast = [...land.pfade, ...seen.pfade, ...grenzen.pfade].join(' ')
+const laenderNutzlast = laender.flatMap((eintrag) => eintrag.pfade).join(' ')
 const kennzahlen = {
   detail: optionen.detail,
   toleranz: optionen.toleranz,
@@ -495,21 +699,46 @@ const kennzahlen = {
   geometrieBytesGzip: gzipSync(Buffer.from(nutzlast, 'utf8')).length,
   moduleBytes: Buffer.byteLength(inhalt, 'utf8'),
   moduleBytesGzip: gzipSync(Buffer.from(inhalt, 'utf8')).length,
+  laenderMitFlaeche: laender.length,
+  laenderMitPunkt: kleinstaaten.length,
+  laenderOhneCode: [...new Set(ohneCode)].sort(),
+  laenderPfade: laender.reduce((summe, eintrag) => summe + eintrag.pfade.length, 0),
+  laenderPunkte,
+  laenderBytes: Buffer.byteLength(laenderNutzlast, 'utf8'),
+  laenderBytesGzip: gzipSync(Buffer.from(laenderNutzlast, 'utf8')).length,
+  /** Grosstes einzelnes Land: so viel erreicht den Browser je gefaerbtem Land. */
+  groesstesLandBytes: Math.max(
+    ...laender.map((eintrag) => Buffer.byteLength(eintrag.pfade.join(' '), 'utf8')),
+  ),
+  laenderModuleBytes: Buffer.byteLength(laenderInhalt, 'utf8'),
+  laenderModuleBytesGzip: gzipSync(Buffer.from(laenderInhalt, 'utf8')).length,
 }
+
+const ausgaben = [
+  [optionen.ausgabe, inhalt],
+  [optionen.ausgabeLaender, laenderInhalt],
+]
 
 if (optionen.messen) {
   console.log(JSON.stringify(kennzahlen, null, 2))
 } else if (optionen.pruefen) {
-  const vorhanden = existsSync(optionen.ausgabe) ? readFileSync(optionen.ausgabe, 'utf8') : ''
-  if (vorhanden !== inhalt) {
-    console.error(
-      `${relative(ROOT, optionen.ausgabe)} weicht von der Erzeugung ab. node scripts/kartografie/weltkarte-geometrie.mjs ausfuehren.`,
-    )
-    process.exit(1)
+  let abweichung = false
+  for (const [datei, erwartet] of ausgaben) {
+    const vorhanden = existsSync(datei) ? readFileSync(datei, 'utf8') : ''
+    if (vorhanden !== erwartet) {
+      console.error(
+        `${relative(ROOT, datei)} weicht von der Erzeugung ab. node scripts/kartografie/weltkarte-geometrie.mjs ausfuehren.`,
+      )
+      abweichung = true
+    } else {
+      console.log(`${relative(ROOT, datei)} ist aktuell.`)
+    }
   }
-  console.log(`${relative(ROOT, optionen.ausgabe)} ist aktuell.`)
+  if (abweichung) process.exit(1)
 } else {
-  writeFileSync(optionen.ausgabe, inhalt)
-  console.log(`${relative(ROOT, optionen.ausgabe)} erzeugt.`)
+  for (const [datei, erzeugt] of ausgaben) {
+    writeFileSync(datei, erzeugt)
+    console.log(`${relative(ROOT, datei)} erzeugt.`)
+  }
   console.log(JSON.stringify(kennzahlen, null, 2))
 }

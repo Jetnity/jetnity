@@ -48,6 +48,16 @@ export const WORLD_MAP_GRUNDKARTE_BESCHREIBUNG =
   'Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung.'
 
 /**
+ * Wie die Karte ihre Zustände unterscheidet – gesagt, nicht gezeigt.
+ *
+ * Wer das Bild nicht sieht, erfährt hier, dass „besucht“ und „geplant“ zwei
+ * verschiedene Behandlungen sind und dass ein überlagertes Land beide trägt.
+ * Die vollständige Auskunft steht danach in der Länderliste.
+ */
+export const WELT_KARTE_ZUSTAND_BESCHREIBUNG =
+  'Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.'
+
+/**
  * Sichtbare Kartenherkunft und Grenz-Vorbehalt. Natural Earth ist gemeinfrei
  * und verlangt keine Nennung; genannt wird sie trotzdem, weil eine Karte ohne
  * erkennbare Herkunft eine Behauptung ohne Quelle ist. Der zweite Satz sagt,

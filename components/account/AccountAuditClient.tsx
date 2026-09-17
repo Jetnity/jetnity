@@ -8,8 +8,12 @@ import { useSearchParams } from 'next/navigation'
 import AccountBuchungen from '@/components/account/AccountBuchungen'
 import AccountNavigation from '@/components/account/AccountNavigation'
 import AccountUebersicht from '@/components/account/AccountUebersicht'
+import type { Besuch } from '@/lib/account/besuche'
 import type { KontoBuchung } from '@/lib/account/buchungen'
 import { naechsteReiseAus } from '@/lib/account/naechste-reise'
+import { weltBesuchtAbleiten } from '@/lib/account/welt-ansicht'
+import { weltLaenderAbleiten, type WeltGeometrie } from '@/lib/account/welt-laender'
+import { worldMapAbleiten } from '@/lib/account/world-map'
 import type { TripSummary } from '@/types/trips'
 
 const REISE: TripSummary = {
@@ -135,6 +139,79 @@ const BUCHUNG: KontoBuchung = {
   tripArchived: false,
 }
 
+/**
+ * Bestätigte Besuche als Fixture.
+ *
+ * Absichtlich so gewählt, dass jeder Zustand der Karte einmal vorkommt:
+ * Portugal ist besucht *und* geplant (überlagert), Italien nur besucht, Japan
+ * nur geplant. Lissabon steht zweimal – ein wiederholter Besuch bleibt zwei
+ * Ereignisse und ein Ort. Singapur hat auf Weltmassstab keine Fläche und
+ * prüft die Ersatzmarke. Der letzte Eintrag trägt keinen Ländercode und darf
+ * die Länderzahl deshalb nicht erhöhen.
+ */
+const BESUCHE: readonly Besuch[] = [
+  {
+    id: 'aaaa1111-0000-4000-8000-000000000001',
+    placeId: 'geonames:2267057',
+    placeLabel: 'Lissabon',
+    countryCode: 'PT',
+    latitude: 38.7223,
+    longitude: -9.1393,
+    jahr: 2012,
+    monat: 7,
+    tag: 14,
+    erstelltAm: '2026-09-01T10:00:00.000Z',
+  },
+  {
+    id: 'aaaa1111-0000-4000-8000-000000000002',
+    placeId: 'geonames:2267057',
+    placeLabel: 'Lissabon',
+    countryCode: 'PT',
+    latitude: 38.7223,
+    longitude: -9.1393,
+    jahr: 2019,
+    monat: null,
+    tag: null,
+    erstelltAm: '2026-09-02T10:00:00.000Z',
+  },
+  {
+    id: 'aaaa1111-0000-4000-8000-000000000003',
+    placeId: 'geonames:3169070',
+    placeLabel: 'Rom',
+    countryCode: 'IT',
+    latitude: 41.8931,
+    longitude: 12.4828,
+    jahr: null,
+    monat: null,
+    tag: null,
+    erstelltAm: '2026-09-03T10:00:00.000Z',
+  },
+  {
+    id: 'aaaa1111-0000-4000-8000-000000000004',
+    placeId: 'geonames:1880252',
+    placeLabel: 'Singapur',
+    countryCode: 'SG',
+    latitude: 1.2897,
+    longitude: 103.8501,
+    jahr: 2005,
+    monat: 3,
+    tag: null,
+    erstelltAm: '2026-09-04T10:00:00.000Z',
+  },
+  {
+    id: 'aaaa1111-0000-4000-8000-000000000005',
+    placeId: 'geonames:9999999',
+    placeLabel: 'Ort ohne Ländercode',
+    countryCode: null,
+    latitude: null,
+    longitude: null,
+    jahr: 1998,
+    monat: null,
+    tag: null,
+    erstelltAm: '2026-09-05T10:00:00.000Z',
+  },
+]
+
 const ARCHIV_BUCHUNG: KontoBuchung = {
   ...BUCHUNG,
   id: 'booking-2',
@@ -150,7 +227,7 @@ const ARCHIV_BUCHUNG: KontoBuchung = {
   tripArchived: true,
 }
 
-export default function AccountAuditClient() {
+export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeometrie }) {
   const suche = useSearchParams()
   const zustand = suche.get('zustand') ?? 'reise'
   const ansicht = suche.get('ansicht')
@@ -197,12 +274,44 @@ export default function AccountAuditClient() {
     }
   }, [zustand])
 
+  /**
+   * `welt` zeigt beide Wahrheiten, `besuch-fehler` nur den Ausfall der
+   * bestätigten Seite. Alle übrigen Zustände bleiben ohne Besuchshistorie –
+   * die Karte muss auch dann eine gültige Aussage sein.
+   */
+  const besucht = useMemo(() => {
+    if (zustand === 'besuch-fehler') {
+      return weltBesuchtAbleiten({
+        besuche: [],
+        problem: { status: 503 as const, message: 'unavailable' },
+      })
+    }
+    return weltBesuchtAbleiten({
+      besuche: zustand === 'welt' ? BESUCHE : [],
+      problem: null,
+    })
+  }, [zustand])
+
+  const laender = useMemo(
+    () =>
+      weltLaenderAbleiten({
+        besucht: besucht.laenderCodes,
+        geplant: worldMapAbleiten({ problem: sicht.problem, reisen: sicht.reisen }).laenderCodes,
+        geometrie,
+      }),
+    [besucht.laenderCodes, geometrie, sicht.problem, sicht.reisen],
+  )
+
   return (
     <div data-account-audit={zustand} className="min-h-screen bg-surface-75">
       <AccountNavigation />
       <main className="px-4 py-10 sm:px-6 sm:py-14">
         <div className={ansicht === 'bookings' ? 'mx-auto max-w-3xl' : 'mx-auto max-w-6xl'}>
-          {ansicht === 'bookings' ? <AccountBuchungen {...buchungenSicht} /> : <AccountUebersicht {...sicht} />}
+          {ansicht === 'bookings' ? (
+            <AccountBuchungen {...buchungenSicht} />
+          ) : (
+            <AccountUebersicht {...sicht} besucht={besucht} laender={laender} />
+          )}
         </div>
       </main>
     </div>
