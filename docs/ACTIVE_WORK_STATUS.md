@@ -15,7 +15,7 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Current base | `main@cc2e1bff77329b37c882125dfed5f1eab2e8bda2` (merged, not rebased) |
-| **Last runtime-changing head** | the review fix "Replace the language denylist with a vocabulary allowlist" |
+| **Last semantics-changing head** | the review fix "Replace free prose with selection from Jetnity-owned catalogues" (Round 9) – the accepted truth architecture. Later heads carry continuity corrections, UI copy and test evidence, not new runtime semantics |
 | **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
 | Merge-base / behind | `cc2e1bff` / **0 behind**. The ahead count is deliberately not recorded here — it changes with the very commit that would record it. The live compare in PR #435 is authoritative |
 | Drift | none. Two integrations, both with `git merge --no-ff` and deliberately without rebase or force-push so the already reviewed exact-head history survives: `main@aa6afaa6` (Realistic World Cartography 1, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) and `main@cc2e1bff` (expanded Guardian/Grok operating standard, #452 — 3 commits, both files byte-identical with `origin/main`). No conflicts; losslessness verified in both directions |
@@ -25,7 +25,9 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
 | Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
 
-Repository gates on the exact head are green: `npm test` 3601/3601, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 75 browser checks via `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview. Exact-head CI/Vercel identifiers are deliberately **not** recorded in repository documents: the commit that recorded them would itself be a new head and invalidate them. The checks of PR #435 are authoritative.
+Repository gates are run in full on every head of this branch and are green: `npm test`, `typecheck`, `lint` (0 errors, warnings exactly at the `origin/main` baseline), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus the browser evidence `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px without console errors. Every head so far also passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview.
+
+**Exact numbers are deliberately not recorded here, and neither are CI/Vercel identifiers.** A commit that froze a test count or a run id would itself be a new head and make its own statement false in the same moment – that is how the counts in this file went stale once already. Authoritative are the checks of PR #435 and the agent's final report for the head it ends on.
 
 **Technical-Lead re-reviews on `3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`, `4ffe3f20`, `e6606ea8` and `5ef78e5c` — eight truth findings, all fixed in this session:**
 
@@ -40,7 +42,7 @@ Repository gates on the exact head are green: `npm test` 3601/3601, `typecheck`,
 
 With no requirements provider active, no Official ref is ever `belegt`, so the three `geprueft_*` statements always fail closed — which is correct, because Jetnity holds no checked official truth.
 
-**Open product question for the Product Owner (DECISIONS.md ADR-0212 point 9).** The Assistant no longer formulates; it selects from Jetnity-owned statements and orders them. For the "Generated Suggestion" truth class that is the honest build, but it is a visible product change, and the value now depends on catalogue breadth rather than the model's language ability. Whether that is enough value is **not measured** — the only measurement point is the still-open paid call. Recommendation: keep the selection form for Preview/Development, use the paid call as the measurement, then decide catalogue breadth against language freedom.
+**Open product question for the Product Owner (DECISIONS.md ADR-0212, the catalogue/product-form decision).** The Assistant no longer formulates; it selects from Jetnity-owned statements and orders them. For the "Generated Suggestion" truth class that is the honest build, but it is a visible product change, and the value now depends on catalogue breadth rather than the model's language ability. Whether that is enough value is **not measured** — the only measurement point is the still-open paid call. Recommendation: keep the selection form for Preview/Development, use the paid call as the measurement, then decide catalogue breadth against language freedom.
 
 **Supabase boundaries after the integration.** No Supabase mutation was performed in this pass. Development holds the Assistant migration `20260917090000` (applied earlier by the Technical Lead) and Explicit Visit History; **Production holds only `20260917120000_account_visits`** and must not receive the Assistant migration in this pass. Live read-only verification was **not possible** from the agent environment — the Management API rejects its `SUPABASE_ACCESS_TOKEN` with HTTP 401 on `/v1/projects`, `/v1/projects/{ref}` and `/v1/branches/{ref}`, and the data plane exposes neither `model_usage` to `anon` nor `supabase_migrations`. The Development statements above are the Technical Lead's findings, labelled as such in the slice STATUS.
 

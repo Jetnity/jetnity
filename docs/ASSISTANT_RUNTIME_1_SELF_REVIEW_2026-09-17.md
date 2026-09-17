@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9). Der exakte finale Head ist der Kopf des Branches.
+Letzter semantikändernder Head: der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9). Spätere Heads tragen Continuity-Korrekturen, Oberflächenkopie und Testnachweis – Code, aber keine Laufzeitsemantik.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -14,7 +14,7 @@ Letzter laufzeitändernder Head: der Review-Fix „Replace free prose with selec
 > aussieht. Keiner der dort genannten Mechanismen – Wortfilter,
 > Sprachprüfung, Erlaubnisliste, `wortschatz.ts`, die Prosafelder `antwort`,
 > `unsicherheiten`, `naechsteSchritte` – existiert noch. Der aktuelle Stand
-> steht in Abschnitt 1 und in DECISIONS.md ADR-0212 Punkte 4 bis 8.
+> steht in Abschnitt 1 und in DECISIONS.md ADR-0212 (der geltende Ausgabevertrag).
 
 Sechs Wahrheitsbefunde in fünf Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
 
@@ -62,7 +62,7 @@ Besonders unangenehm ist Runde 8: Dort hatte ich einen *Test* als Beweis präsen
 
 **Was ich zusätzlich abgesichert habe, weil der Katalog eine neue Angriffsfläche ist.** Ein Katalog Jetnity-eigener Sätze kann auf zwei Weisen falsch werden: durch eine Formulierung, die doch eine Anforderung behauptet, und durch eine wahre Aussage am falschen Objekt. Beides ist geprüft – die Formulierungen des ganzen Katalogs gegen Anforderungssprache, und die Auswahl gegen das berechnete Angebot inklusive Bezug. Zusätzlich: Mit leerem Angebot darf **kein** Katalogeintrag durchkommen; sonst gäbe es einen, der sich selbst belegt.
 
-**Was diese Lösung kostet, und was daran nicht meine Entscheidung ist.** Der Reisebegleiter formuliert nicht mehr. Er wählt aus 33 Jetnity-Aussagen aus und ordnet sie. Für eine Wahrheitsklasse „Generated Suggestion" halte ich das für die ehrliche Bauform, aber es ist eine **sichtbare Produktänderung**, und der Nutzen hängt jetzt an der Katalogbreite statt an der Sprachfähigkeit des Modells. Ob das Produkt so genug wert ist, ist nicht gemessen – dafür fehlt der bezahlte Aufruf. Diese Frage gehört dem Product Owner und steht als ADR-0212 Punkt 8 im Repository, nicht nur in diesem Dokument.
+**Was diese Lösung kostet, und was daran nicht meine Entscheidung ist.** Der Reisebegleiter formuliert nicht mehr. Er wählt aus 33 Jetnity-Aussagen aus und ordnet sie. Für eine Wahrheitsklasse „Generated Suggestion" halte ich das für die ehrliche Bauform, aber es ist eine **sichtbare Produktänderung**, und der Nutzen hängt jetzt an der Katalogbreite statt an der Sprachfähigkeit des Modells. Ob das Produkt so genug wert ist, ist nicht gemessen – dafür fehlt der bezahlte Aufruf. Diese Frage gehört dem Product Owner und steht als ADR-0212 (Produktform: Auswahl statt Formulierung) im Repository, nicht nur in diesem Dokument.
 
 **Ein Nebenfund beim Umbau, ehrlich benannt.** Nach dem Schemawechsel hing `erzeugen.test.ts` unter `node --test` ohne Ausgabe, statt zu scheitern: Die alten Fixtures trugen Prosa, die Prüfung verwarf sie, und eine fehlschlagende `assert.ok`-Zeile an dieser Stelle brachte den Testlauf zum Stillstand. Die Ursache lag in den veralteten Fixtures; nach deren Umstellung läuft die Datei mit 43 Tests grün. Ich habe die Mechanik des Stillstands im Testrunner nicht weiter aufgeklärt, weil sie mit dem Fix verschwand – wenn sie wiederkehrt, ist das der Ort, an dem man ansetzt.
 
@@ -198,7 +198,7 @@ Was **entfallen** ist: der Fehlalarm des Wortfilters, die eingestandene Lücke b
 
 **2.6 Zwei neue Audit-Schalter im Harness.** `mitBegleiter` und `begleiterAuskunft` in `TripWorkspaceAuditClient.tsx` sowie `anfangsAuskunft` in `Reisebegleiter.tsx` sind Test-Infrastruktur im Produktbaum. Sie folgen dem bestehenden `anfangsBereich`-Muster in `TripWorkspace`, sind ohne Wert wirkungslos und können keinen Aufruf auslösen – aber sie sind zusätzliche Fläche, die ein Reviewer mitverantwortet.
 
-**2.7 Gastreisen bleiben ohne Reisebegleiter.** Das ist eine Produktentscheidung, die ich getroffen habe, und sie hätte anders ausfallen können. Begründung in ADR-0212 Punkt 13: Der Gast-Reisegraph liegt im Browser und trägt Reisenden-, Staatsangehörigkeits- und Dokumentkontext; ihn vom Client als Wahrheit anzunehmen, um ihn an ein Modell zu geben, wäre der falsche erste Schritt. Der Gastweg ist nicht eingeschränkt worden – er bekommt nur nichts Neues. Wenn der Product Owner das anders will, ist es ein eigener Slice.
+**2.7 Gastreisen bleiben ohne Reisebegleiter.** Das ist eine Produktentscheidung, die ich getroffen habe, und sie hätte anders ausfallen können. Begründung in ADR-0212 (nur Konto-Reisen): Der Gast-Reisegraph liegt im Browser und trägt Reisenden-, Staatsangehörigkeits- und Dokumentkontext; ihn vom Client als Wahrheit anzunehmen, um ihn an ein Modell zu geben, wäre der falsche erste Schritt. Der Gastweg ist nicht eingeschränkt worden – er bekommt nur nichts Neues. Wenn der Product Owner das anders will, ist es ein eigener Slice.
 
 **2.8 `verbotenesFeldFinden()` hat eine Wertregel, die legitime Daten treffen könnte.** Neun zusammenhängende Ziffern gelten als verboten. In der heutigen Projektion gibt es keinen legitimen Wert dieser Form – geprüft. Eine spätere Erweiterung könnte einen einführen, und dann bricht der Weg ab statt zu lecken. Das ist die gewollte Richtung, aber es ist eine Bremse, die jemand später verstehen muss.
 
@@ -238,5 +238,5 @@ Was **entfallen** ist: der Fehlalarm des Wortfilters, die eingestandene Lücke b
 6. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
 7. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
 8. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?
-9. ADR-0212 Punkt 8 – ist die Katalogbreite als Produktgrenze akzeptabel, und wie soll sie wachsen?
-10. ADR-0212 Punkt 13 – ist „nur Konto" die richtige Produktentscheidung für den ersten Slice?
+9. ADR-0212 (Produktform: Auswahl statt Formulierung) – ist die Katalogbreite als Produktgrenze akzeptabel, und wie soll sie wachsen?
+10. ADR-0212 (nur Konto-Reisen) – ist „nur Konto" die richtige Produktentscheidung für den ersten Slice?

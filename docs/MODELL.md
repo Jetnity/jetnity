@@ -451,7 +451,7 @@ Die früheren Prüfungen auf Preis, Link, Buchungszustand, behauptete Änderung 
 
 ### Der Preis, und wem die Entscheidung gehört
 
-Der Reisebegleiter kann genau sagen, was in seinen Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist **nicht gemessen**; dafür fehlt der bezahlte Preview-Aufruf. Mehr Nutzen heisst künftig mehr Katalog, nicht mehr Sprachfreiheit – jede neue Aussage ist eine Jetnity-Formulierung mit nachrechenbarer Bedingung. Das ist eine Produktfrage und liegt beim Product Owner; sie steht als DECISIONS.md ADR-0212 Punkt 8.
+Der Reisebegleiter kann genau sagen, was in seinen Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist **nicht gemessen**; dafür fehlt der bezahlte Preview-Aufruf. Mehr Nutzen heisst künftig mehr Katalog, nicht mehr Sprachfreiheit – jede neue Aussage ist eine Jetnity-Formulierung mit nachrechenbarer Bedingung. Das ist eine Produktfrage und liegt beim Product Owner; sie steht als DECISIONS.md ADR-0212 (Produktform: Auswahl statt Formulierung).
 
 **Heute ist der geprüfte amtliche Zweig ohnehin unerreichbar.** Ohne aktiven Requirements-Provider liefert `requirementsLokalFuerReise()` nur `provider_unavailable`, und kein Official-Bezug ist je `belegt`. Die drei `geprueft_*`-Aussagen fallen deshalb immer durch – korrekt, denn Jetnity hat keine geprüfte amtliche Wahrheit.
 

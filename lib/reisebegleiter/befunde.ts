@@ -49,7 +49,7 @@
 // Wahrheitsklasse „Generated Suggestion" ist das die ehrliche Bauform, aber es
 // ist eine sichtbare Produktänderung gegenüber einer frei formulierten Antwort.
 // Die Entscheidung darüber gehört dem Product Owner; sie ist in
-// DECISIONS.md ADR-0212 Punkt 8 und im SELF_REVIEW als offener Punkt benannt.
+// DECISIONS.md ADR-0212 (Produktform: Auswahl statt Formulierung) und im SELF_REVIEW als offener Punkt benannt.
 //
 // ---------------------------------------------------------------------------
 // Warum der Katalog über Jetnity-Daten spricht und nicht über Amtliches

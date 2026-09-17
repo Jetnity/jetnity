@@ -348,7 +348,7 @@ Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner
 - `pruefung.ts` prüft genau drei Dinge: Bezug existiert, Befundpaar steht im Angebot, amtliche Aussage passt zum geprüften Zustand. Preis, Link, Buchungsbehauptung und behauptete Änderung sind nicht mehr abgelehnt, sondern **nicht darstellbar**
 - nutzergeschriebener Reisetext (`stage.name`, Reisenden-Label) erweitert keine Autorität; er bleibt Anzeigetext
 - serverseitige Ausgabeprüfung lehnt unerwartete Felder ab (`z.strictObject`) statt sie zu entfernen
-- Produktfolge: Der Nutzen hängt an der **Katalogbreite**. Der Product Owner hat diese Form am 17. September 2026 für Preview/Development freigegeben; ADR-0212 Punkt 8 hält sie samt Empfehlung fest
+- Produktfolge: Der Nutzen hängt an der **Katalogbreite**. Der Product Owner hat diese Form am 17. September 2026 für Preview/Development freigegeben; ADR-0212 (Produktform: Auswahl statt Formulierung) hält sie samt Empfehlung fest
 - `main@aa6afaa6` und `main@cc2e1bff` per Merge integriert (kein Rebase, kein Force-Push); 0 behind, beide Seiten verlustfrei geprüft
 
 *Die widerlegten Zwischenfassungen – Gewissheitsbindung an Bereich und Anforderungstyp, Modalität × Bereich × Vorbehalt, Sprachvertrag, Wortschatz-Erlaubnisliste – stehen als Historie in ADR-0212 und im SELF_REVIEW. Sie sind **kein** aktueller Mechanismus.*

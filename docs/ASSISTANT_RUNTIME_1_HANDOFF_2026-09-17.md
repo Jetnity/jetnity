@@ -17,7 +17,7 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis bei Dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Aktuelle Basis | `main@cc2e1bff77329b37c882125dfed5f1eab2e8bda2` – durch Merge integriert |
-| **Letzter laufzeitändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) |
+| **Letzter semantikändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) – die akzeptierte Wahrheitsarchitektur. Spätere Heads tragen Continuity-Korrekturen, Oberflächenkopie und Testnachweis; sie berühren Code, aber keine Laufzeitsemantik |
 | **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
 | Merge-Base | `cc2e1bff77329b37c882125dfed5f1eab2e8bda2` |
 | Behind | **0** gegen `origin/main` beim Handoff. Ahead steht hier nicht: Die Zahl ändert sich mit jedem Commit. Verbindlich ist der Live-Vergleich in PR #435 |
@@ -63,13 +63,13 @@ Frage (Konto-Reise)
 
 Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unter „Jetnity-Stand dazu" steht – „Noch nicht verlässlich bestimmbar", „nicht geprüft" – leitet `lib/reisebegleiter/nutzlast.ts` aus derselben Projektion ab. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
 
-Der zweite Punkt, aus acht Review-Runden gewachsen: **Das Modell schreibt keine Sätze, es wählt aus.** Sieben Fassungen haben Freitext einzuschränken versucht; jede behauptete, aus ihrer Wortmenge sei kein amtlicher Satz bildbar, und jede wurde widerlegt – zuletzt mit vier geführten Alltagswörtern (`Du musst ein gültiges Reisedokument haben.`). Deshalb hat `lib/reisebegleiter/schema.ts` **kein Freitextfeld** mehr: Das Modell wählt Schlüssel aus `lib/reisebegleiter/befunde.ts` (33 Aussagen über Jetnitys eigenen Datenstand, je mit nachrechenbarer Bedingung) und `lib/reisebegleiter/aussagen.ts` (sieben amtliche Aussagen, gebunden an den geprüften Zustand) und nennt den Bezug; jeden Satz schreibt Jetnity. Gewählt werden darf nur, was `angeboteneBefunde()` vorher als zutreffend berechnet hat – Schlüssel **und** Bezug. Die Zusicherung ist damit am Typ ablesbar statt über einen Satzraum argumentiert. Der Preis ist der Umfang der Auskunft; das ist eine Produktfrage und liegt als ADR-0212 Punkt 8 beim Product Owner.
+Der zweite Punkt, aus acht Review-Runden gewachsen: **Das Modell schreibt keine Sätze, es wählt aus.** Sieben Fassungen haben Freitext einzuschränken versucht; jede behauptete, aus ihrer Wortmenge sei kein amtlicher Satz bildbar, und jede wurde widerlegt – zuletzt mit vier geführten Alltagswörtern (`Du musst ein gültiges Reisedokument haben.`). Deshalb hat `lib/reisebegleiter/schema.ts` **kein Freitextfeld** mehr: Das Modell wählt Schlüssel aus `lib/reisebegleiter/befunde.ts` (33 Aussagen über Jetnitys eigenen Datenstand, je mit nachrechenbarer Bedingung) und `lib/reisebegleiter/aussagen.ts` (sieben amtliche Aussagen, gebunden an den geprüften Zustand) und nennt den Bezug; jeden Satz schreibt Jetnity. Gewählt werden darf nur, was `angeboteneBefunde()` vorher als zutreffend berechnet hat – Schlüssel **und** Bezug. Die Zusicherung ist damit am Typ ablesbar statt über einen Satzraum argumentiert. Der Preis ist der Umfang der Auskunft; das ist eine Produktfrage und liegt als ADR-0212 (Produktform: Auswahl statt Formulierung) beim Product Owner.
 
 ---
 
 ## 4. Gates auf dem exakten Head
 
-**Grün:** `npm test` (3601/3601), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (75 Browser-Prüfungen bei 390, 1280 und 1440 px).
+**Grün:** `npm test`, `typecheck`, `lint` (0 Fehler, Warnungen exakt auf der `origin/main`-Baseline), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (alle Prüfungen bei 390, 1280 und 1440 px, keine Konsolenfehler). **Zahlen stehen hier nicht:** Test- und Prüfungsanzahl wachsen mit jedem Commit, und ein Commit, der sie festhielte, wäre ein neuer Head und machte seine eigene Angabe ungültig. Verbindlich sind die Checks von PR #435 und der Abschlussbericht zum jeweiligen Head.
 
 **Grün auf dem exakten Head in GitHub/Vercel:** CI **success** in beiden Jobs, darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch"; Vercel Preview **READY**. Exact-Head-Kennungen von CI und Vercel stehen **nicht** in diesem Dokument: Jeder Commit, der sie festhielte, wäre ein neuer Head und machte sie im selben Moment ungültig. Die Kennungen des jeweils aktuellen Kopfes stehen in den Checks von PR #435; der Abschlussbericht des Agenten nennt sie für den Head, auf dem er endet.
 
@@ -99,7 +99,7 @@ Wer diesen Nachweis holt, braucht eine bestätigte Testanmeldung in der Preview 
 
 ## 6. Was bewusst nicht gebaut wurde
 
-- kein Gast-Reisebegleiter (ADR-0212 Punkt 13) – Gastreisen bleiben unverändert planbar und änderbar, sehen aber keine Fläche
+- kein Gast-Reisebegleiter (ADR-0212 (nur Konto-Reisen)) – Gastreisen bleiben unverändert planbar und änderbar, sehen aber keine Fläche
 - kein Gesprächsverlauf, kein Speichern einer Auskunft
 - kein Auto-Apply eines Vorschlags
 - kein zweiter Kostentopf

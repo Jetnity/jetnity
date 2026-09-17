@@ -1,7 +1,9 @@
 # Jetnity – Assistant Runtime 1 Status
 
 Stand: 17. September 2026  
-Status: **TEILWEISE FERTIG / IMPLEMENTIERUNG UND REPOSITORY-GATES GRÜN / DEVELOP-DB-GATES UND BEZAHLTER PREVIEW-NACHWEIS NICHT GELAUFEN / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **TEILWEISE FERTIG / IMPLEMENTIERUNG UND REPOSITORY-GATES GRÜN / DEVELOP-DB-GATE VOM TECHNICAL LEAD GESCHLOSSEN / BEZAHLTER PREVIEW-NACHWEIS OFFEN / STOP FOR TECHNICAL-LEAD REVIEW**
+
+Das Develop-DB-Gate ist **erledigt**, aber nicht vom Agenten: Der Technical Lead hat die Migration auf Development angewandt und live verifiziert (Abschnitt 4). In dieser Agent-Umgebung sind die DB-Skripte weiterhin nicht gelaufen (HTTP 401 auf die Management API); das ist in Abschnitt 3 und 7 als solches ausgewiesen. Offen bleibt allein der bezahlte Preview/Development-Aufruf.
 
 Issue: #434  
 Product-Owner-Gate: #433 (Preview/Development only)  
@@ -20,20 +22,29 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | --- | --- |
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (historisch; inzwischen durch Rebase und Merge abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) |
+| **Letzter semantikändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) – die akzeptierte Wahrheitsarchitektur. Spätere Heads tragen Continuity-Korrekturen, Oberflächenkopie und Testnachweis; sie berühren Code, aber keine Laufzeitsemantik |
 | Merge-Base mit `origin/main` | `cc2e1bff77329b37c882125dfed5f1eab2e8bda2` – `main` wurde zweimal in den Branch **gemergt**, nie rebased |
 | Behind gegen `origin/main` | **0** – geprüft beim letzten Handoff. Die Ahead-Zahl steht hier nicht: Sie ändert sich mit jedem Commit, auch mit dem, der sie festhielte. Verbindlich ist der Live-Vergleich in PR #435 |
 | Drift | **keine.** Zwei Integrationen, beide per `git merge --no-ff` und ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt: `main@aa6afaa6` (Realistic World Cartography 1, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits) und `main@cc2e1bff` (erweiterter Guardian-/Grok-Standard, #452 – 3 Commits) |
 
-Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
-Dokumentations-Commit über dem letzten Code-Commit und ändert keine Laufzeit:
-Die Commits darüber berühren nur `docs/`, `DECISIONS.md`, `ARCHITECTURE.md`
-und `ROADMAP.md`.
-Ein Dokument kann seine eigene Commit-Kennung nicht enthalten; die finale
-Kennung ist mit `git rev-parse origin/feat/phase-1-assistant-runtime-1` zu lesen
-und im Abschlussbericht des Agenten genannt.
-Die Gates in Abschnitt 3 wurden auf dem Arbeitsstand des finalen
-Dokumentations-Commits erneut vollständig ausgeführt.
+Der **exakte finale Head** ist der Kopf dieses Branches. Ein Dokument kann seine
+eigene Commit-Kennung nicht enthalten; die finale Kennung ist mit
+`git rev-parse origin/feat/phase-1-assistant-runtime-1` zu lesen und im
+Abschlussbericht des Agenten genannt.
+
+**Der finale Head ist nicht dokumentenrein, und diese Zeile stand hier einmal
+falsch.** Über dem letzten semantikändernden Head (Runde 9) liegen
+Continuity-Korrekturen, die auch Code berühren: die Oberflächenkopie
+(`components/trips/Reisebegleiter.tsx`), Kopfkommentare
+(`lib/reisebegleiter/aussagen.ts`, `befunde.ts`), eine Regression gegen
+irreführende Kopie (`lib/reisebegleiter/oberflaeche.test.ts`) und das
+Nachweisskript. **Keine** davon ändert Laufzeitsemantik, Schema, Katalogbreite,
+Kosten-, DB-, RLS-, Auth- oder Provider-Verhalten – aber „nur `docs/`" war
+schlicht unwahr, und eine Statusdatei, die den eigenen Baum falsch beschreibt,
+ist schlimmer als eine ohne diese Zeile.
+
+Die Gates in Abschnitt 3 werden auf jedem neuen Head vollständig erneut
+ausgeführt, auch bei reinen Dokumentenänderungen.
 
 Jeder weitere Head macht die Gates dieses Dokuments ungültig.
 
@@ -53,7 +64,9 @@ Commits auf dem Branch:
 12. Review-Fix 7: getrennte Kanäle – Prosa ohne amtliches Vokabular (durch Fix 8 ersetzt)
 13. Review-Fix 8: kein Freitextfeld mehr – Auswahl aus Jetnity-Katalogen statt Formulierung
 14. Integration von `main@cc2e1bff` (erweiterter Guardian-/Grok-Standard)
-15. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
+15. Continuity-Korrektur nach dem Guardian-Red-Team: Dokumentation auf den Runde-9-Stand, ehrliche Oberflächenkopie, Regression dagegen
+16. Continuity-Korrektur nach Technical-Lead-Review: Widersprüche in ACTIVE_WORK_STATUS und STATUS beseitigt, brüchige Zahlen und Nummernverweise entfernt
+17. dazwischen und darüber: Dokumentation, ohne Änderung der Laufzeitsemantik
 
 Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@03842a64` geändert; Reihenfolge und Inhalte sind unverändert. Seither wird `main` gemergt und nicht mehr rebased, damit die reviewte Historie erhalten bleibt.
 
@@ -108,16 +121,16 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3601 Tests, 621 Suites, 0 Fehler (einschliesslich aller von `main` übernommenen Tests) |
+| `npm test` | **grün** – 0 Fehler, einschliesslich aller von `main` übernommenen Tests. Die Anzahl steht hier nicht: Sie wächst mit jedem Testcommit, und ein Commit, der sie festhielte, wäre ein neuer Head |
 | `npm run typecheck` | **grün** |
 | `npm run lint` | **0 Fehler**, 139 Warnungen – exakt die Baseline von `origin/main` (dort gemessen), keine davon in neuen Dateien |
-| `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |
-| `npm run check:dead` | **grün** – 1 verwaiste Datei, begründet und vorbestehend (`CookieConsent.tsx`) |
+| `npm run build` | **grün** (`Compiled successfully`) |
+| `npm run check:dead` | **grün** – die eine verwaiste Datei ist begründet und vorbestehend (`CookieConsent.tsx`) |
 | `npm run check:exports` | **grün** – 0 Exporte ohne Aufrufer |
 | `npm run check:deps` | **grün** |
-| `npm run check:api-schutz` | **grün** – 12 Admin-Routen, alle mit `requireAdminApi()` |
+| `npm run check:api-schutz` | **grün** – alle Admin-Routen mit `requireAdminApi()` |
 | `npm run check:schema-bezug` | **grün** |
-| `npm run nachweis:reisebegleiter` | **grün** – 75 Browser-Prüfungen bei 390×844, 1280×900 und 1440×1000, 0 Fehler, keine Konsolenfehler |
+| `npm run nachweis:reisebegleiter` | **grün** – alle Prüfungen bei 390×844, 1280×900 und 1440×1000, 0 Fehler, keine Konsolenfehler. Die Anzahl wächst mit jeder neuen Prüfung und steht deshalb im Abschlussbericht zum jeweiligen Head, nicht hier |
 | GitHub Actions auf dem exakten Head | **success** – beide Jobs: `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml` |
 | `npm run auth:pruefen` | **grün in der CI** auf jedem exakten Head: „Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch", alle vier Prüfungen ✓. Die CI hat einen gültigen `SUPABASE_ACCESS_TOKEN`; in dieser Cloud-Agent-Umgebung schlägt derselbe Aufruf mit 401 fehl |
 | Vercel Preview auf dem exakten Head | **READY** |
@@ -277,7 +290,7 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 3. **Darstellung einer Auskunft** – im Browser belegt, aber mit einer **gestellten** Auskunft über den Audit-Schalter `begleiterAuskunft`, nicht mit einer erzeugten. Die gestellte Auskunft ist auf den Stand von Runde 8 gebracht: Ihre Prosa benennt keine amtliche Anforderung, und der amtliche Satz kommt aus dem geschlossenen Aussagekanal.
 4. **Unbestätigter Development-Nutzer** aus Abschnitt 5 – **vom Technical Lead gelöscht**, Nachzählung 0. Erledigt.
 5. **Systemregeln gegen ein echtes Modell** – die Wirksamkeit der Prompt-Regeln (erste Schranke) ist nicht gemessen. Schema, Nutzlast und Prüfung (zweite und dritte Schranke) sind deterministisch geprüft und hängen nicht daran.
-6. **Umfang der Auskunft – Produktfrage an den Product Owner, nicht gemessen.** Seit Runde 9 formuliert der Reisebegleiter nicht mehr; er wählt aus 33 Jetnity-Aussagen und sieben amtlichen Aussagen aus und ordnet sie. Er kann genau sagen, was in den Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist nicht gemessen – der einzige Messpunkt ist der offene bezahlte Aufruf. Vorgelegt mit Empfehlung als ADR-0212 Punkt 8.
+6. **Umfang der Auskunft – Produktfrage an den Product Owner, nicht gemessen.** Seit Runde 9 formuliert der Reisebegleiter nicht mehr; er wählt aus 33 Jetnity-Aussagen und sieben amtlichen Aussagen aus und ordnet sie. Er kann genau sagen, was in den Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist nicht gemessen – der einzige Messpunkt ist der offene bezahlte Aufruf. Vorgelegt mit Empfehlung als ADR-0212 (Produktform: Auswahl statt Formulierung).
 7. **Mechanik eines Testrunner-Stillstands nicht aufgeklärt.** Nach dem Schemawechsel hing `erzeugen.test.ts` unter `node --test` ohne Ausgabe, weil veraltete Prosa-Fixtures verworfen wurden und eine fehlschlagende `assert.ok`-Zeile den Lauf anhielt. Nach Umstellung der Fixtures läuft die Datei mit 43 Tests grün; die Runner-Mechanik selbst ist nicht weiter untersucht.
 
 ---
@@ -293,7 +306,7 @@ Keine neuen laufenden Kosten und keine neue Kostenstelle.
 | Eingabegrenze zu streng oder zu lasch | 24 000 Zeichen sind aus der Reservierung abgeleitet, nicht gemessen. Eine sehr grosse Reise bekommt keine Auskunft. `kosten.test.ts` hält die Richtung fest |
 | Zeichen-je-Token-Annahme | 2.2 ist pessimistisch, aber eine Annahme. Das Ausgabebudget von 1600 statt 6000 Tokens ist die eigentliche Absicherung |
 | Migration nicht live geprüft | **geschlossen für Development** (Abschnitt 4). Production bleibt ohne den dritten Wert; ein Aufruf dort scheiterte an der CHECK-Bedingung, also fail closed – und Production ist ohnehin abgeschaltet |
-| Gastreisen ohne Reisebegleiter | bewusst (ADR-0212 Punkt 13). Ein Gast sieht keine Fläche, die es für ihn nicht gibt; kein stiller Produktwechsel, der Gastweg bleibt unverändert |
+| Gastreisen ohne Reisebegleiter | bewusst (ADR-0212 (nur Konto-Reisen)). Ein Gast sieht keine Fläche, die es für ihn nicht gibt; kein stiller Produktwechsel, der Gastweg bleibt unverändert |
 
 ---
 
