@@ -337,10 +337,11 @@ Issue #434 / Draft PR #435 auf `feat/phase-1-assistant-runtime-1`. Product-Owner
 - additives `Modellanfrage.ausgabeTokens`, nach oben durch `MODELL_GRENZEN.ausgabeTokens` gedeckelt
 - sechs neue Testdateien plus `npm run nachweis:reisebegleiter` (Browser, mobil und Desktop)
 - 3321 Tests grün, TypeScript grün, Lint ohne Fehler, Hygiene-Checks grün, Production-Build grün
+- exact-head CI `35165950349`: **success** (beide Jobs, inkl. `auth:pruefen`); Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v`: **READY**
 
 **Offen / blockiert – Technical-Lead-Gates:**
 
-- **Develop-Migration nicht angewandt.** Der `SUPABASE_ACCESS_TOKEN` dieser Cloud-Agent-Umgebung wird von der Management API mit HTTP 401 abgewiesen. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `auth:pruefen` und `production:pruefen` sind deshalb **nicht gelaufen**, nicht „grün“.
+- **Develop-Migration nicht angewandt.** Der `SUPABASE_ACCESS_TOKEN` der Cloud-Agent-Umgebung wird von der Management API mit HTTP 401 abgewiesen; der Token der CI ist gültig. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` und `production:pruefen` sind deshalb **nicht gelaufen**, nicht „grün“. `auth:pruefen` ist in der CI grün.
 - **Kein bezahlter Preview/Development-Aufruf.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV` fehlen in dieser Umgebung; ein Konto-Login ist ohne bestätigte E-Mail nicht erreichbar. Die Darstellung einer Auskunft ist im Browser mit einer gestellten Auskunft nachgewiesen, nicht mit einer erzeugten.
 - Production-Migration, Production-Modellaktivierung, Production-Secrets und Production-Aufrufe bleiben geschlossen.
 

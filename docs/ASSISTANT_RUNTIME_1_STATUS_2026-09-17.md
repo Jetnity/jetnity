@@ -102,6 +102,9 @@ Commits auf dem Branch:
 | `npm run check:api-schutz` | **grün** – 12 Admin-Routen, alle mit `requireAdminApi()` |
 | `npm run check:schema-bezug` | **grün** |
 | `npm run nachweis:reisebegleiter` | **grün** – 50 Browser-Prüfungen, mobil (390×844) und Desktop (1440×1000), 0 Fehler, keine Konsolenfehler |
+| GitHub Actions auf dem exakten Head | **success** – Run `35165950349`, beide Jobs: `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml` |
+| `npm run auth:pruefen` | **grün in der CI** auf dem exakten Head: „Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch", alle vier Prüfungen ✓. Die CI hat einen gültigen `SUPABASE_ACCESS_TOKEN`; in dieser Cloud-Agent-Umgebung schlägt derselbe Aufruf mit 401 fehl |
+| Vercel Preview auf dem exakten Head | **READY** – `6kbzcUP3CDzhXkkkj3owzz4bQB3v` |
 
 ### Nicht gelaufen – und warum
 
@@ -115,10 +118,11 @@ Diese Werkzeuge haben sich **nicht selbst übersprungen** und sind **nicht grün
 | `npm run db:sicherheit` | `SQL fehlgeschlagen (HTTP 401)` |
 | `npm run db:typen -- --pruefen` | abgebrochen (Management-API-Zugriff) |
 | `npm run db:advisors` | `Advisors security fehlgeschlagen (HTTP 401)` |
-| `npm run auth:pruefen` | 401, abgebrochen |
 | `npm run production:pruefen -- --entwicklung` | 401, abgebrochen |
 
-**Ursache:** Der `SUPABASE_ACCESS_TOKEN` dieser Cloud-Agent-Umgebung wird von der Supabase Management API durchgehend mit HTTP 401 abgewiesen – auch auf `/v1/projects` ohne Ref. `docs/ACTIVE_WORK_STATUS.md` weist für diesen Token eine 90-Tage-Gültigkeit aus; die Rotation ist überfällig oder der Token wurde widerrufen.
+**Ursache:** Der `SUPABASE_ACCESS_TOKEN` **dieser Cloud-Agent-Umgebung** wird von der Supabase Management API durchgehend mit HTTP 401 abgewiesen – auch auf `/v1/projects` ohne Ref.
+
+**Der Token der CI ist gültig.** `auth:pruefen` läuft im CI-Job auf demselben exakten Head durch und meldet 55 geprüfte Werte gegen `supabase/config.toml`. Der 401 ist damit kein Zustand des Projekts, sondern des Zugangs, der in diese Agent-Umgebung injiziert wird. Wer die DB-Gates nachholt, braucht denselben Token, den die CI benutzt.
 
 **Folge:** Die additive Migration `20260917090000_modell_reisebegleiter.sql` ist **im Repository vorhanden und nicht angewandt** – weder auf Development noch auf Production. Die live-Prüfung der CHECK-Bedingung, der RLS-Äquivalenz, der Rechte und der Security-Advisor-Befunde ist **offen**.
 

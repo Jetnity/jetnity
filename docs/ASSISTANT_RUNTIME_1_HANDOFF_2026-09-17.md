@@ -68,11 +68,13 @@ Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unt
 
 **Grün:** `npm test` (3321/3321), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
 
+**Grün auf dem exakten Head in GitHub/Vercel:** CI-Run `35165950349` – **success**, beide Jobs. Darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch". Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v` – **READY**.
+
 **Nicht gelaufen** – nicht übersprungen, sondern an einem fehlenden Zugang gescheitert:
 
-`db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `auth:pruefen`, `production:pruefen`.
+`db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `production:pruefen`.
 
-Ursache: Der `SUPABASE_ACCESS_TOKEN` dieser Umgebung wird von der Supabase Management API mit **HTTP 401** abgewiesen, auch auf `/v1/projects` ohne Ref. `docs/ACTIVE_WORK_STATUS.md` nennt für diesen Token eine 90-Tage-Gültigkeit.
+Ursache: Der `SUPABASE_ACCESS_TOKEN` **dieser Agent-Umgebung** wird von der Supabase Management API mit **HTTP 401** abgewiesen, auch auf `/v1/projects` ohne Ref. Der **Token der CI ist gültig** – `auth:pruefen` läuft dort auf demselben Head durch. Wer die DB-Gates nachholt, braucht denselben Token.
 
 **Kein bezahlter Aufruf gemacht.** In dieser Umgebung fehlen `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` und `JETNITY_MODELL_AKTIV`; ein Konto-Login ist nicht erreichbar (`enable_confirmations = true`, kein Postfach).
 
@@ -84,7 +86,7 @@ Ursache: Der `SUPABASE_ACCESS_TOKEN` dieser Umgebung wird von der Supabase Manag
 
 Danach, in dieser Reihenfolge:
 
-1. Gültigen `SUPABASE_ACCESS_TOKEN` bereitstellen.
+1. Gültigen `SUPABASE_ACCESS_TOKEN` bereitstellen – derselbe, den die CI benutzt.
 2. `npm run db:anwenden` – **nur Development**. Production bleibt geschlossen.
 3. `npm run db:typen -- --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:advisors`, `auth:pruefen`.
 4. Live prüfen: `model_usage_funktion_werte` enthält genau `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS, Policies und Rechte auf `public.model_usage` unverändert.

@@ -24,11 +24,11 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
 | Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
 
-Repository gates on the exact head are green: `npm test` 3321/3321, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop.
+Repository gates on the exact head are green: `npm test` 3321/3321, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop. Exact-head CI run `35165950349`: **success** (both jobs, including `auth:pruefen` with 55 values / 243 keys against `supabase/config.toml`). Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v`: **READY**.
 
 **Two gates are open and must not be reported as green:**
 
-1. **Develop migration not applied.** `supabase/migrations/20260917090000_modell_reisebegleiter.sql` exists in the repository and has been applied to neither Development nor Production. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors`, `auth:pruefen` and `production:pruefen` **did not run**: the `SUPABASE_ACCESS_TOKEN` of the Cloud Agent environment is rejected by the Supabase Management API with HTTP 401, including on `/v1/projects` without a ref. The 90-day token rotation noted in section 1 is overdue or the token was revoked.
+1. **Develop migration not applied.** `supabase/migrations/20260917090000_modell_reisebegleiter.sql` exists in the repository and has been applied to neither Development nor Production. `db:anwenden`, `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` and `production:pruefen` **did not run**: the `SUPABASE_ACCESS_TOKEN` injected into the Cloud Agent environment is rejected by the Supabase Management API with HTTP 401, including on `/v1/projects` without a ref. The CI secret is valid — `auth:pruefen` passes in CI on the same head — so this is a property of the agent environment's access, not of the project. Whoever completes the DB gates needs the token CI uses.
 2. **No paid Preview/Development call made.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` and `JETNITY_MODELL_AKTIV` are absent in that environment, and an account session is unreachable because `enable_confirmations = true`. The rendering of an answer is evidenced in the browser with a *supplied* answer, not a generated one.
 
 Production migration, Production model activation, Production OpenAI secrets and Production paid calls remain **CLOSED**.
