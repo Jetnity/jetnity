@@ -12,7 +12,8 @@ Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOS
 ## 1. Zuerst lesen
 
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
-1a. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
+1a. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` ← **binding orchestrated multi-agent governance; one-writer/many-readers, specialist review and common evidence-bus standard**
+1b. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
 2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` ← **canonical new-chat continuity checkpoint; supersedes the 2026-09-17 checkpoint for current transition state**
 2a. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← historical checkpoint; keep for audit/history, not current-state authority
 3. `docs/ACTIVE_WORK_STATUS.md`
