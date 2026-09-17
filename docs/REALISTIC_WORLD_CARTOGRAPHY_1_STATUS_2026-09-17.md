@@ -1,9 +1,11 @@
 # Realistic World Cartography 1 – Slice Status
 
 Stand: 17. September 2026
-Status: **IMPLEMENTED / GATES GREEN / EVIDENCE PERSISTED / CHANGES-REQUIRED-RUNDE 1 ERLEDIGT / STOP FOR TECHNICAL-LEAD RE-REVIEW**
+Status: **GEMERGT / GATES GREEN / EVIDENCE PERSISTED / POST-MERGE-VERIFIKATION GRÜN**
 
-Review-Runde 1: Der Technical Lead prüfte Head `856a4ad2` – den reinen Code-Commit, der noch keine Evidenz- oder Slice-Dokumentation enthielt – und forderte Änderungen. Die verlangten Nachweise lagen zum Zeitpunkt des Reviews bereits in den Folge-Commits. Befund für Befund mit Fundort, neu gefahrenem Gate-Satz auf dem exakten Head und fortgeschriebenem Drift: `docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`.
+PR #443 wurde vom Technical Lead am 17.09.2026 02:29:56 UTC gemergt; gemergter Head `91148278`, Merge-Commit `cadb43ea` auf `main`. Ready und Merge hat der Technical Lead gesetzt, nicht der Agent.
+
+Review-Runde 1: Der Technical Lead prüfte zuvor Head `856a4ad2` – den reinen Code-Commit, der noch keine Evidenz- oder Slice-Dokumentation enthielt – und forderte Änderungen. Die verlangten Nachweise lagen zum Zeitpunkt des Reviews bereits in den Folge-Commits und sind damit im gemergten Head enthalten. Befund für Befund mit Fundort, Gate-Lauf je Head und Post-Merge-Verifikation von `main`: `docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`.
 
 Issue: #442
 Product-Owner-Direktive: #441
@@ -92,5 +94,8 @@ Zahlen, Befehle, Einschränkungen und Drift stehen in `docs/REALISTIC_WORLD_CART
 
 ## Nächster Schritt
 
-Technical-Lead-Exact-Head-Review von Draft PR #443.
-**Nicht Ready setzen. Nicht mergen. Explicit Visit History 1 nicht starten.**
+PR #443 ist gemergt, `main` steht auf `cadb43ea` und ist post-merge verifiziert. Offen bleibt allein die Entscheidung des Technical Lead über die nachgereichte Review-Evidenz (`docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`), die nach dem Merge entstand und deshalb nicht im gemergten Head liegt.
+
+Weiterhin offen und **nicht** durch den Merge abgenommen: der Real-Device-Test. Die Belege stammen aus Chromium und WebKit unter Playwright.
+
+**Explicit Visit History 1 nicht gestartet.** Der Agent setzt kein Ready und mergt nicht.

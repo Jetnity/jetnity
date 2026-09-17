@@ -117,7 +117,7 @@ behind        0 Commits
 Drift         keine
 ```
 
-Fortgeschriebene Zahlen nach der Review-Runde 1 – mit neu geholtem `origin/main`, neuem Gate-Satz auf dem exakten Head und der Zuordnung jedes Befunds zu seinem Fundort: `docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`.
+Diese Zahlen sind überholt: PR #443 wurde am 17.09.2026 02:29:56 UTC vom Technical Lead gemergt (gemergter Head `91148278`, Merge-Commit `cadb43ea`). Fortgeschriebener Stand, Gate-Lauf je Head, Zuordnung jedes Review-Befunds zu seinem Fundort und Post-Merge-Verifikation von `main`: `docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`.
 
 Commits auf dem Branch:
 
@@ -164,3 +164,5 @@ Einschränkung, ausdrücklich genannt: die Preview-URL steht hinter Vercel-SSO (
 Technical-Lead-Exact-Head-Review von PR #443. Die Geometriedatei ist erzeugt – sie sollte nicht Zeile für Zeile gelesen, sondern über `node scripts/kartografie/weltkarte-geometrie.mjs --pruefen` und die Bildbelege geprüft werden. Der inhaltlich zu prüfende Code ist klein: der Erzeuger, die Kartenebene in `AccountWeltKarte.tsx`, zwei Texte und die neue Prüfgruppe im Test.
 
 **Nicht Ready setzen. Nicht mergen. Explicit Visit History 1 nicht starten.**
+
+> Historisch: Diese Empfehlung galt bis zum Review. Der Technical Lead hat PR #443 am 17.09.2026 02:29:56 UTC selbst auf Ready gesetzt und gemergt. Für den Agenten bleibt die Regel unverändert gültig – er setzt kein Ready, mergt nicht und hat es auch hier nicht getan. Explicit Visit History 1 ist nicht begonnen.
