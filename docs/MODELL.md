@@ -430,14 +430,22 @@ Die Zuordnung benutzt die maschinenlesbare Anforderungsidentität aus `Begleiter
 
 Erhalten bleibt, was ein ehrlicher Assistent schreiben muss: „Prüfe deine Passgültigkeit in der Reisevorbereitung“, „Ob ein Visum nötig ist, ist derzeit nicht geprüft“, „Du musst die Etappen noch mit Daten versehen“. Keiner dieser Sätze behauptet eine Anforderung.
 
-**Die Antwortsprache ist Deutsch, und das ist Teil der Prüfung.** Die Signale oben sind deutsch. Eine solche Prüfung ist nur über einer geschlossenen Sprachfläche vollständig: „No visa is required“ fiel früher nicht durch, weil keine Regel dafür zuständig war. Zwei Schranken stehen deshalb vor der inhaltlichen Prüfung, und jede fängt, was die andere verfehlen kann.
+**Der Wortschatz ist eine Erlaubnisliste.** Die Signale oben sind deutsch, und drei Fassungen haben versucht, fremdsprachige Behauptungen zu *verbieten* – auf Deutsch, in den von Jetnity geführten Sprachen, über Markerwörter. Jede war eine Verbotsliste über einer offenen Menge und damit widerlegbar; zuletzt durch einen deutschen Satzanfang mit einer türkischen Behauptung dahinter.
 
-| Schranke | Wirkung |
+Über einer offenen Menge gibt es keine vollständige Verbotsliste. Es gibt nur eine vollständige Erlaubnisliste. `lib/reisebegleiter/wortschatz.ts` führt deshalb den Register, den die Systemregeln verlangen, und die Frage lautet umgekehrt: Besteht dieser Text ausschliesslich aus Wörtern, die Jetnity kennt?
+
+| Zulässig | Begründung |
 | --- | --- |
-| Antwort ohne deutsche Funktionswörter oder Umlaute | gilt nicht als deutsch und fällt – das schliesst **jede** nicht aufgezählte Sprache |
-| amtliches Vokabular der übrigen `COUNTRY_LOCALES` (`passport`, `visado`, `visto`, `wizy`, `insurance`, `entry form`, `is required`, `you need` …) | fällt unabhängig von der Spracherkennung, also auch in einem gemischten Text |
+| der geführte Register – Funktionswörter, Reise-, Zeit-, Orts-, Vorbereitungs- und amtlicher Wortschatz | von Hand geführt und lesbar; `lib/reisebegleiter/wortschatz.test.ts` prüft Form und Abdeckung |
+| jedes Wort aus `titel` und `lage` der Bezüge | serverseitig aus der Projektion abgeleitet – Etappen-, Länder-, Reisendennamen; nicht vom Modell geschrieben |
+| Zahlen, Daten, einzelne Buchstaben | damit lässt sich keine Anforderung behaupten |
+| deutsche Flexion und Komposita der geführten Stämme | `geprüfte`, `Reisevorbereitung`, `Buchungsnachweis`; jeder Kompositumsteil braucht vier Zeichen und einen geführten Stamm, damit Silbenzerlegung kein Umgehungsweg wird |
 
-Aufgenommen ist nur, was **kein** deutsches Wort ist: `Visum`, `Visa` und `Pass` stehen im deutschen Bereichsdetektor, nicht in der Fremdliste. Deutsch ist ohnehin `COUNTRY_UI_LOCALE`; die Beschränkung nimmt eine Ausweitung zurück, die Assistant Runtime 1 selbst eingeführt hatte.
+Alles andere ist unbelegt und verwirft die Auskunft. Die Schranke gilt für **jedes** modellgeschriebene Feld – `antwort`, `unsicherheiten`, `naechsteSchritte` –, denn eine erfundene Anforderung wirkt in einer Liste wie in einem Satz; nur `antwort` zu prüfen war ein eigener Umgehungsweg.
+
+Amtliche Begriffe stehen mit Absicht im Register: Ohne sie fiele `Du brauchst ein Visum.` schon hier, und die inhaltliche Prüfung käme für diesen Bereich nie zum Zug. Erlaubt ist, über eine Anforderung zu *sprechen*; ob eine Aussage darüber belegt ist, entscheidet die Prüfung danach – und die ist jetzt vollständig, weil vor ihr feststeht, dass der Text aus geführten deutschen Wörtern besteht.
+
+**Der Preis ist Recall.** Ein gültiger deutscher Satz mit einem Wort ausserhalb des Registers fällt durch. Das ist bewusst bezahlt: Eine abgelehnte Auskunft ist ein ausgefallenes Merkmal, eine erfundene Einreiseanforderung ist ein Schaden.
 
 **Ob eine Lage geprüft ist, sagt allein Jetnity.** „gilt als geprüft“, „ist amtlich geprüft“ und Verwandte sind Aussagen über die Herkunft der Wahrheit und deshalb nie bindbar. „noch nicht geprüft“ und „geprüfte Lage“ bleiben zulässig.
 
@@ -454,7 +462,8 @@ Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhal
 | `lib/reisebegleiter/kontext.test.ts` | die akzeptierte Projektion (ADR-0211), unverändert |
 | `lib/reisebegleiter/schema.test.ts` | Form, Betrag, Link, Bezugsform, Längen, kein Feld für Anforderung/Preis/Quelle |
 | `lib/reisebegleiter/nutzlast.test.ts` | zweiter, eigener Satz Leck-Marken; Reissleine; Bezüge als Zeiger; Gleichrangigkeit |
-| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, Bindung an die genannte Lage **und** an ihren Anforderungstyp, harte Aussagen über die ganze Taxonomie, neun Sprachen behauptet und verneint, Paraphrasen ohne Schlüsselwort, feindlicher Reisetext, kein Fehlalarm im Konjunktiv |
+| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, Bindung an die genannte Lage **und** an ihren Anforderungstyp, harte Aussagen über die ganze Taxonomie, vierzehn Sprachen behauptet und verneint, gemischtsprachige Sätze, jedes Modellfeld einzeln, Paraphrasen ohne Schlüsselwort, feindlicher Reisetext, kein Fehlalarm im Konjunktiv |
+| `lib/reisebegleiter/wortschatz.test.ts` | Form des Registers, Abdeckung der amtlichen Begriffe, Flexion und Komposita, fremde Wörter unbelegt, Kontextdeckung für Eigennamen |
 | `lib/reisebegleiter/erzeugen.test.ts` | Reihenfolge der Schranken, abgeschaltete Umgebung, ein Versuch, dreizehn unbrauchbare Antworten |
 | `lib/reisebegleiter/kosten.test.ts` | schlechtester tatsächlicher Fall unter der Reservierung, je Modell |
 | `lib/reisebegleiter/oberflaeche.test.ts` | gebuchte Modellfunktion, kein schreibender Vorgang, kein Provider-Abruf, kein Aufruf beim Mounten |

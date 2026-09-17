@@ -17,7 +17,7 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis bei Dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Aktuelle Basis | `main@aa6afaa6057f631ffb332e6feeda32a45c52fa47` – durch Merge integriert |
-| **Letzter laufzeitändernder Head** | der Review-Fix „Close the Official-truth language bypass by closing the answer language" |
+| **Letzter laufzeitändernder Head** | der Review-Fix „Replace the language denylist with a vocabulary allowlist“ |
 | **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
 | Merge-Base | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` |
 | Behind | **0** gegen `origin/main` beim Handoff. Ahead steht hier nicht: Die Zahl ändert sich mit jedem Commit. Verbindlich ist der Live-Vergleich in PR #435 |
@@ -63,13 +63,13 @@ Frage (Konto-Reise)
 
 Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unter „Jetnity-Stand dazu" steht – „Noch nicht verlässlich bestimmbar", „nicht geprüft" – leitet `lib/reisebegleiter/nutzlast.ts` aus derselben Projektion ab. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
 
-Der zweite Punkt, aus fünf Review-Runden gewachsen: **Eine harte amtliche Aussage braucht eine passende geprüfte Grundlage – und die Prüfung muss für den Satz überhaupt zuständig sein.** Erkannt satzweise aus Modalität × Bereich × Vorbehalt über die ganze `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie, für Behauptung wie Verneinung, und über einer **geschlossenen Sprachfläche**: Die Antwortsprache ist Deutsch, und zwei Schranken fangen fremde Sprache und fremdes Amtsvokabular ab. Ohne aktiven Provider ist heute kein Official-Bezug `belegt` – die Prüfung ist damit eine vollständige Sperre gegen amtliche Aussagen, und das ist der vorgesehene Zustand.
+Der zweite Punkt, aus sechs Review-Runden gewachsen: **Eine harte amtliche Aussage braucht eine passende geprüfte Grundlage – und der Text, in dem sie steht, muss aus Wörtern bestehen, die Jetnity führt.** Der Wortschatz ist eine **Erlaubnisliste** (`lib/reisebegleiter/wortschatz.ts`): der geführte Register, jedes Wort aus dem serverseitig abgeleiteten Kontext, Zahlen – alles andere verwirft die Auskunft, in jedem Modellfeld. Darüber liegt die inhaltliche Prüfung: Modalität × Bereich × Vorbehalt über der ganzen `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie, für Behauptung wie Verneinung. Ohne aktiven Provider ist kein Official-Bezug `belegt` – die Prüfung ist damit eine vollständige Sperre gegen amtliche Aussagen, und das ist der vorgesehene Zustand.
 
 ---
 
 ## 4. Gates auf dem exakten Head
 
-**Grün:** `npm test` (3537/3537), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (75 Browser-Prüfungen bei 390, 1280 und 1440 px).
+**Grün:** `npm test` (3601/3601), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (75 Browser-Prüfungen bei 390, 1280 und 1440 px).
 
 **Grün auf dem exakten Head in GitHub/Vercel:** CI **success** in beiden Jobs, darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch"; Vercel Preview **READY**. Exact-Head-Kennungen von CI und Vercel stehen **nicht** in diesem Dokument: Jeder Commit, der sie festhielte, wäre ein neuer Head und machte sie im selben Moment ungültig. Die Kennungen des jeweils aktuellen Kopfes stehen in den Checks von PR #435; der Abschlussbericht des Agenten nennt sie für den Head, auf dem er endet.
 

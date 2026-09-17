@@ -20,7 +20,7 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | --- | --- |
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (historisch; inzwischen durch Rebase und Merge abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | der Review-Fix „Close the Official-truth language bypass by closing the answer language" |
+| **Letzter laufzeitändernder Head** | der Review-Fix „Replace the language denylist with a vocabulary allowlist“ |
 | Merge-Base mit `origin/main` | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` – `main` wurde in den Branch **gemergt**, nicht rebased |
 | Behind gegen `origin/main` | **0** – geprüft beim letzten Handoff. Die Ahead-Zahl steht hier nicht: Sie ändert sich mit jedem Commit, auch mit dem, der sie festhielte. Verbindlich ist der Live-Vergleich in PR #435 |
 | Drift | **keine.** `origin/main` war auf `aa6afaa6` gewandert (Realistic World Cartography 1, Guardian-Governance, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits). Integriert durch `git merge --no-ff`, ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt |
@@ -47,7 +47,10 @@ Commits auf dem Branch:
 6. Review-Fix 2: unerwartete Ausgabefelder werden abgelehnt
 7. Review-Fix 3: Gewissheit an den passenden Anforderungstyp gebunden
 8. Review-Fix 4: harte amtliche Aussagen über die ganze Anforderungstaxonomie
-9. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
+9. Integration von `main@aa6afaa6`
+10. Review-Fix 5: Antwortsprache als Vertrag (durch Fix 6 ersetzt)
+11. Review-Fix 6: Wortschatz als Erlaubnisliste über allen Modellfeldern
+12. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
 
 Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@03842a64` geändert; Reihenfolge und Inhalte sind unverändert. Seither wird `main` gemergt und nicht mehr rebased, damit die reviewte Historie erhalten bleibt.
 
@@ -61,6 +64,7 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 - `lib/reisebegleiter/nutzlast.ts` – Modellnutzlast aus der akzeptierten Projektion, Reissleine, abgeleiteter Jetnity-Zustand je Bezug
 - `lib/reisebegleiter/regeln.ts` – Systemregeln
 - `lib/reisebegleiter/pruefung.ts` – zweite Schranke: Bezug, Gewissheit, unmöglicher Anspruch
+- `lib/reisebegleiter/wortschatz.ts` – die Erlaubnisliste: der geführte Register plus der serverseitig abgeleitete Kontext
 - `lib/reisebegleiter/erzeugen.ts` – der Ablauf, mit übergebenen Werkzeugen
 - `lib/reisebegleiter/aktionen.ts` – die eine Server Action
 
@@ -74,7 +78,7 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 
 **Neu – Tests und Nachweis**
 
-- `lib/reisebegleiter/schema.test.ts`, `nutzlast.test.ts`, `pruefung.test.ts`, `erzeugen.test.ts`, `kosten.test.ts`, `oberflaeche.test.ts`
+- `lib/reisebegleiter/schema.test.ts`, `nutzlast.test.ts`, `pruefung.test.ts`, `erzeugen.test.ts`, `kosten.test.ts`, `oberflaeche.test.ts`, `wortschatz.test.ts`
 - `scripts/reisebegleiter-oberflaeche-nachweis.mjs`
 
 **Geändert**
@@ -100,7 +104,7 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3537 Tests, 614 Suites, 0 Fehler (einschliesslich aller von `main` übernommenen Tests) |
+| `npm test` | **grün** – 3601 Tests, 621 Suites, 0 Fehler (einschliesslich aller von `main` übernommenen Tests) |
 | `npm run typecheck` | **grün** |
 | `npm run lint` | **0 Fehler**, 139 Warnungen – exakt die Baseline von `origin/main` (dort gemessen), keine davon in neuen Dateien |
 | `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |
