@@ -123,6 +123,17 @@ export const MODELL_GRENZEN = {
   kostenTagMikroUsd: 3_000_000,
 } as const
 
+/**
+ * Die Modellfunktionen, die einen bezahlten Aufruf auslösen dürfen.
+ *
+ * Dieselben Werte wie die Prüfbedingung `model_usage_funktion_werte`; dass
+ * beide Seiten übereinstimmen, prüft `lib/modell/grenzen-datenbank.test.ts`
+ * ohne Datenbank. Sie benennen den Auslöser und **kein eigenes Kontingent**:
+ * Zählgrenzen und Kostendeckel oben gelten für alle drei gemeinsam.
+ */
+export const MODELLFUNKTIONEN = ['reisevorschlag', 'reiseaenderung', 'reisebegleiter'] as const
+export type Modellfunktion = (typeof MODELLFUNKTIONEN)[number]
+
 /** Warum kein Aufruf zustande kommt. Wird dem Aufrufer genannt, nicht verschluckt. */
 export type Abschaltgrund = 'abgeschaltet' | 'kein-schluessel' | 'unbekanntes-modell'
 

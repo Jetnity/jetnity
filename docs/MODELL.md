@@ -4,7 +4,7 @@ Wie Jetnity aus einer freien Reisebeschreibung einen strukturierten Reiseentwurf
 
 Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENBANK.md). Entscheidungen: [../DECISIONS.md](../DECISIONS.md) ADR-0050 bis ADR-0060.
 
-**Stand:** Phase 2.2. Vorschlag (2.1) und Änderung (2.2) sind implementiert. In der **Preview** sind Schlüssel und Kill Switch gesetzt; **Production bleibt aus**. Warum, steht in Abschnitt 8.
+**Stand:** Phase 2.2 plus Assistant Runtime 1 (Draft). Vorschlag (2.1) und Änderung (2.2) sind implementiert; der Reisebegleiter ist die dritte Modellfunktion und steht in Abschnitt 9a. In der **Preview** sind Schlüssel und Kill Switch gesetzt; **Production bleibt aus**. Warum, steht in Abschnitt 8.
 
 ---
 
@@ -59,6 +59,8 @@ Zwölf der fünfzehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne 
 Es gibt **keine** Provider-Abstraktion. OpenAI ist der eine Anbieter, `lib/modell/aufruf.ts` die eine Stelle, die ihn kennt ([AGENTS.md](../AGENTS.md) Regel 19).
 
 Phase 2.2 erweitert denselben Unterbau um `lib/reiseaenderung/`: Operationen statt Ersatzreise, gemeinsames Kontingent, Terra/Sol, Vorschau vor dem Speichern. Die Dateien sind in [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 5a aufgeführt.
+
+Assistant Runtime 1 erweitert ihn um `lib/reisebegleiter/` als **dritte** Modellfunktion. Abschnitt 9 beschreibt sie; der Unterbau – Kill Switch, Preise, Reservierung, Aufruf, Abschluss – ist derselbe.
 
 ---
 
@@ -339,6 +341,133 @@ Tests ohne einen einzigen Modellaufruf, in zwölf Dateien der Modell- und Vorsch
 Die Fixtures liegen in `lib/reisevorschlag/fixtures/`: dreizehn Reiseideen als Eingaben, Modellantworten als Ausgaben. Die Ideen sind **keine** erwarteten Ausgaben – was ein Modell daraus macht, prüft kein Test, denn das wäre eine Prüfung des Modells und kostete je Lauf Geld. Geprüft wird, was Jetnity mit einer Antwort tut.
 
 Gegen die echte Datenbank laufen **16 Nachweise** über `npm run db:kontingent`: je einer für die Grenze und den ersten Aufruf darüber, für jede der fünf Grenzen, dazu die Behandlung der Kennungen, der Abschluss in vier Varianten und die Parallelität. Der Parallelitätsnachweis lässt sechs gleichzeitige Sitzungen auf einen freien Platz laufen und belegt, dass genau eine durchkommt – ohne `pg_advisory_xact_lock` kämen alle sechs durch.
+
+---
+
+## 9a. Die dritte Modellfunktion: Reisebegleiter
+
+**Stand:** Assistant Runtime 1, Draft-Branch `feat/phase-1-assistant-runtime-1`. Preview/Development freigegeben (#433). Die Migration `20260917090000` ist auf **Development** angewandt und live verifiziert (Technical Lead, 17. September 2026). **Production bleibt aus** – dort ist weder `JETNITY_MODELL_AKTIV` gesetzt noch ein Schlüssel hinterlegt, und `model_usage_funktion_werte` akzeptiert weiterhin nur `reisevorschlag` und `reiseaenderung`. Entscheidung: [../DECISIONS.md](../DECISIONS.md) ADR-0212.
+
+### Der Ablauf
+
+```
+Frage in der Reise (Konto)
+  → Frage prüfen            lib/reisebegleiter/schema.ts        8 … 2000 Zeichen
+    → Modellzustand prüfen  lib/modell/konfiguration.ts         Kill Switch, Schlüssel
+      → Nutzlast formen     lib/reisebegleiter/nutzlast.ts      nur aus der Projektion, nur enger
+        → Reissleine        lib/reisebegleiter/nutzlast.ts      verbotene Feldnamen/Wertmuster
+          → Eingabegrösse   lib/reisebegleiter/schema.ts        ≤ 24 000 Zeichen, sonst keine Auskunft
+            → Kontingent buchen  public.modell_kontingent_beanspruchen('reisebegleiter', …)
+              → Modell aufrufen  lib/modell/aufruf.ts           max_output_tokens 1600
+                → Nutzung abschliessen  public.modell_nutzung_abschliessen()
+                  → JSON lesen          lib/reisebegleiter/erzeugen.ts
+                    → Schema prüfen     lib/reisebegleiter/schema.ts
+                      → Auskunft prüfen lib/reisebegleiter/pruefung.ts
+                        → Anzeige       components/trips/Reisebegleiter.tsx
+```
+
+Es gibt kein Gegenstück zu „Übernehmen“. Der Reisebegleiter ändert, speichert und bucht nichts.
+
+### Was ihn von Vorschlag und Änderung unterscheidet
+
+| | Reisevorschlag / Reiseänderung | Reisebegleiter |
+| --- | --- | --- |
+| Ergebnis | eine Reise bzw. Operationen darauf | eine **Auswahl** aus Jetnity-Aussagen plus Zeiger – kein Modelltext |
+| Persistenz | nach ausdrücklicher Übernahme | keine, auch nicht nach Übernahme |
+| Zweiter Versuch | Sol → Terra bei Timeout/5xx | keiner |
+| Modellwahl | Router aus dem Freitext | `modellZustand()`, kein eigener Router |
+| Freitext in der Ausgabe | ja, geprüft und normalisiert | **keiner** – das Schema hat kein Textfeld |
+| Betrag, Link, Buchungsaussage | wird entfernt bzw. abgelehnt | nicht darstellbar |
+| Gastreise | ja | nein, nur Konto |
+| Ausgabebudget | 6000 Tokens | 1600 Tokens |
+
+### Kostenkontrolle
+
+Kein zweiter Topf: 4 / 8 / 24 / 38 Aufrufe und 3.00 USD je Tag gelten für alle drei Funktionen **gemeinsam**. `funktion` benennt nur den Auslöser.
+
+Die Zusage über die Tageskosten hängt daran, dass ein Aufruf nicht mehr kostet als seine Reservierung (2600 Eingabe- und 6000 Ausgabetokens). Beim Reisebegleiter geht zusätzlich der Reisekontext in die Eingabe, und der wächst mit der Reise – die Reservierung nicht. Dagegen stehen zwei Zahlen in `BEGLEITER_GRENZEN`:
+
+| Grenze | Wert | Wirkung |
+| --- | --- | --- |
+| `eingabeZeichen` | 24 000 | Systemregeln plus Frage; darüber gibt es keine Auskunft statt einer gekürzten Wahrheit |
+| `ausgabeTokens` | 1600 | deutlich unter den reservierten 6000; die Differenz trägt eine grössere Eingabe |
+
+`lib/reisebegleiter/kosten.test.ts` rechnet das für jedes zugelassene Modell nach. Bei 24 000 Zeichen und pessimistisch gerechneten 2.2 Zeichen je Token sind das rund 10 900 Eingabetokens; auf Terra kostet dieser Fall etwa 41 000 µ$ gegen 77 200 µ$ Reservierung.
+
+### Was das Modell sehen darf
+
+Ausschliesslich das Ergebnis von `assistantTruthContextProjizieren()` (ADR-0211), und davon **weniger**: ohne `placeId`, ohne Koordinaten, ohne linkverdächtigen Freitext. Dazu kommt genau ein Feld ohne Wahrheitsgehalt, `ref` – die Kennung, mit der das Modell auf einen Eintrag zeigen darf.
+
+Den **Zustand** dieses Eintrags schreibt nicht das Modell. Er wird in `lib/reisebegleiter/nutzlast.ts` aus derselben Projektion abgeleitet und von der Oberfläche unter „Jetnity-Stand dazu“ angezeigt, mit „nicht geprüft“, wo nichts belegt ist. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
+
+`verbotenesFeldFinden()` läuft über die fertige Nutzlast und bricht ab, wenn ein Feldname oder Wertmuster auftaucht, das dort nie stehen darf – Passnummer, MRZ, Scan, Biometrie, Gesundheitsdaten, Sitzungs-/Kontokennungen, Links, Beträge. Sie ist keine zweite Erlaubnisliste, sondern die Antwort auf die Frage, was passiert, wenn die Projektion später erweitert wird und niemand an diesen Weg denkt.
+
+### Was eine Auskunft ist – und warum sie keine Sätze enthält
+
+Sieben Fassungen dieses Slice haben versucht, den Freitext des Modells so einzuschränken, dass darin keine amtliche Anforderung ausdrückbar ist: deutsche Modalitäts- und Bereichsmuster, mehrsprachige Verbotslisten, eine Spracherkennung, eine Erlaubnisliste über dem Wortschatz, zuletzt eine Erlaubnisliste ohne amtliche Substantive. Jede wurde widerlegt. Die achte brauchte keine Sondersprache, nur vier geführte Alltagswörter:
+
+> `Du musst ein gültiges Reisedokument haben.`
+
+Der Fehler lag nie in der jeweiligen Liste. Jede Fassung behauptete, **kein aus ihrer Wortmenge bildbarer Satz** sei eine amtliche Aussage – eine Behauptung über einen unendlichen Satzraum aus einem endlichen Wortschatz. Sprache komponiert; das ist nicht belegbar, nur wiederholt widerlegbar.
+
+**Deshalb schreibt das Modell keine Sätze mehr. Es wählt aus.**
+
+| | Vorher (Runden 1–7) | Jetzt |
+| --- | --- | --- |
+| Felder | `antwort`, `unsicherheiten`, `naechsteSchritte` als Freitext | `befunde`, `bezuege`, `amtlicheHinweise` – nur Schlüssel und Kennungen |
+| Wer formuliert | das Modell, geprüft (überholt) | **Jetnity**, immer |
+| Zusicherung | „kein bildbarer Satz ist amtlich" – argumentiert | „es gibt kein Textfeld" – am Typ ablesbar |
+| Der Satz oben | abgelehnt (sieben Fassungen lang: durchgelassen) | **nicht darstellbar** |
+
+### Die zwei Kataloge
+
+**`lib/reisebegleiter/befunde.ts` – Aussagen über Jetnitys eigenen Datenstand.** 33 Einträge über Zeitraum, Etappen, Reisende, Dokumentstand und Route, jeder mit Rolle (`stand`, `offen`, `schritt`) und Jetnity-Formulierung. Kein Eintrag behauptet eine amtliche Anforderung: „Für diese Person ist in Jetnity noch kein Reisedokument hinterlegt" ist eine nachrechenbare Aussage über den eigenen Datenstand, „Du brauchst ein Reisedokument" wäre eine über eine Behörde. Ein Test prüft die Formulierungen des ganzen Katalogs gegen Anforderungssprache.
+
+`angeboteneBefunde(kontext)` rechnet aus der akzeptierten Projektion aus, **welche Einträge zutreffen** – mit Bezug. Das Modell bekommt genau diese Liste in der Nutzlast und darf nur daraus wählen; geprüft wird das Paar aus Schlüssel **und** Bezug, damit ein wahrer Satz nicht an der falschen Etappe landet.
+
+**`lib/reisebegleiter/aussagen.ts` – amtliche Lagen.** Unverändert: sieben Aussageschlüssel, gebunden an `ergebnis`, `frische` und `fehlendeAngaben` des Bezugs.
+
+| Aussage | Zulässig, wenn |
+| --- | --- |
+| `geprueft_erforderlich` | Lage geprüft **und** Ergebnis `required` |
+| `geprueft_nicht_erforderlich` | Lage geprüft **und** Ergebnis `not_required` |
+| `geprueft_bedingt` | Lage geprüft **und** Ergebnis `conditional` |
+| `angaben_fehlen` | nicht geprüft **und** es fehlen tatsächlich Angaben |
+| `quelle_nicht_erreichbar` | nicht geprüft **und** Quelle nicht erreichbar |
+| `erneut_pruefen` | nicht geprüft **und** Frische `recheck_needed`/`stale` |
+| `nicht_geprueft` | nicht geprüft |
+
+Die Bindung benutzt die maschinenlesbare Identität aus `BegleiterBezug`, niemals den Anzeigetext: `titel` ist lokalisierte Copy, und eine Textänderung darf keine Wahrheitsentscheidung verschieben.
+
+### Was die Prüfung noch tut
+
+`lib/reisebegleiter/pruefung.ts` prüft drei Dinge, alle gegen berechnete Wahrheit und keines gegen Sprache:
+
+1. Zeigt die Auskunft auf Bezüge, die es gibt?
+2. Steht jeder gewählte Befund im berechneten Angebot – mit dem richtigen Bezug?
+3. Passt jede amtliche Aussage zum geprüften Zustand ihres Bezugs?
+
+Die früheren Prüfungen auf Preis, Link, Buchungszustand, behauptete Änderung und erfundene amtliche Anforderung sind **nicht gelockert, sondern gegenstandslos**: Es gibt kein Feld, in dem sich eines davon formulieren liesse. Damit entfällt auch die eingestandene Grenze aus ADR-0054 für diesen Weg – eine Verfügbarkeitsbehauptung in freier Formulierung braucht freie Formulierung.
+
+### Der Preis, und wem die Entscheidung gehört
+
+Der Reisebegleiter kann genau sagen, was in seinen Katalogen steht, und sonst nichts. Ob das genügend Wert hat, ist **nicht gemessen**; dafür fehlt der bezahlte Preview-Aufruf. Mehr Nutzen heisst künftig mehr Katalog, nicht mehr Sprachfreiheit – jede neue Aussage ist eine Jetnity-Formulierung mit nachrechenbarer Bedingung. Das ist eine Produktfrage und liegt beim Product Owner; sie steht als DECISIONS.md ADR-0212 (Produktform: Auswahl statt Formulierung).
+
+**Heute ist der geprüfte amtliche Zweig ohnehin unerreichbar.** Ohne aktiven Requirements-Provider liefert `requirementsLokalFuerReise()` nur `provider_unavailable`, und kein Official-Bezug ist je `belegt`. Die drei `geprueft_*`-Aussagen fallen deshalb immer durch – korrekt, denn Jetnity hat keine geprüfte amtliche Wahrheit.
+
+### Tests
+
+| Datei | Prüft |
+| --- | --- |
+| `lib/reisebegleiter/kontext.test.ts` | die akzeptierte Projektion (ADR-0211), unverändert |
+| `lib/reisebegleiter/schema.test.ts` | **dass es kein Freitextfeld gibt**: elf Anforderungssätze (deutsch, englisch, türkisch, Buchstabenschreibung, Paraphrasen) gegen sechs mögliche Feldnamen, je als Zeichenkette und als Liste; Deckung von Zod-Prüfung und JSON-Schema; Katalogaufzählungen |
+| `lib/reisebegleiter/nutzlast.test.ts` | zweiter, eigener Satz Leck-Marken; Reissleine; Bezüge als Zeiger; Gleichrangigkeit |
+| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug; Auswahl ausserhalb des Angebots; richtiger Schlüssel am falschen Bezug; Rolle gegen Bezugsart; **kein Katalogeintrag ist ohne Angebot wählbar** (ganzer Katalog); das Angebot gegen die Projektion; **kein Katalogtext klingt wie eine Anforderung**; jede der sieben amtlichen Aussagen gegen jeden Zustand; Ergebnisumkehr; feindlicher Titel |
+| `lib/reisebegleiter/erzeugen.test.ts` | Reihenfolge der Schranken, abgeschaltete Umgebung, ein Versuch, dreizehn unbrauchbare Antworten |
+| `lib/reisebegleiter/kosten.test.ts` | schlechtester tatsächlicher Fall unter der Reservierung, je Modell |
+| `lib/reisebegleiter/oberflaeche.test.ts` | gebuchte Modellfunktion, kein schreibender Vorgang, kein Provider-Abruf, kein Aufruf beim Mounten |
+| `lib/modell/grenzen-datenbank.test.ts` | die Prüfbedingung gegen `MODELLFUNKTIONEN`, additiv ohne Verlust |
+| `npm run nachweis:reisebegleiter` | Browser, mobil und Desktop: eingeklappt, `aria-expanded`, Fokus, Escape, ehrliche Sperrmeldung, kein OpenAI-Aufruf |
 
 ---
 

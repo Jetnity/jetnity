@@ -19,7 +19,12 @@ import assert from 'node:assert/strict'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { ERGEBNISKLASSEN, MODELL_GRENZEN, MODELL_VORGABE } from '@/lib/modell/konfiguration'
+import {
+  ERGEBNISKLASSEN,
+  MODELLFUNKTIONEN,
+  MODELL_GRENZEN,
+  MODELL_VORGABE,
+} from '@/lib/modell/konfiguration'
 import { MODELLE, PREISE, reservierungMikroUsd } from '@/lib/modell/preise'
 
 const MIGRATIONEN_ORDNER = join(process.cwd(), 'supabase', 'migrations')
@@ -184,12 +189,46 @@ describe('Die Ergebnisklassen stimmen auf beiden Seiten überein', () => {
 })
 
 describe('Die Modellfunktionen teilen denselben Topf', () => {
-  test('model_usage.funktion kennt reisevorschlag und reiseaenderung', () => {
+  function funktionswerteAusDerDatenbank(): string[] {
     const alle = [...sql.matchAll(/model_usage_funktion_werte[\s\S]*?check \(funktion in \(([^)]+)\)/g)]
     assert.ok(alle.length > 0, 'die Prüfbedingung model_usage_funktion_werte fehlt')
     const letzter = alle[alle.length - 1]
-    const werte = [...letzter[1].matchAll(/'([a-z]+)'/g)].map((eintrag) => eintrag[1]).sort()
-    assert.deepEqual(werte, ['reiseaenderung', 'reisevorschlag'])
+    return [...letzter[1].matchAll(/'([a-z]+)'/g)].map((eintrag) => eintrag[1]).sort()
+  }
+
+  test('model_usage.funktion kennt reisevorschlag, reiseaenderung und reisebegleiter', () => {
+    assert.deepEqual(funktionswerteAusDerDatenbank(), [
+      'reiseaenderung',
+      'reisebegleiter',
+      'reisevorschlag',
+    ])
+  })
+
+  test('die Prüfbedingung kennt genau die Funktionen aus TypeScript', () => {
+    // Eine Funktion, die nur TypeScript kennt, käme nicht bis zum Aufruf: Die
+    // Reservierung schlägt an der Prüfbedingung fehl. Eine, die nur die
+    // Datenbank kennt, wäre ein Kostenweg ohne Aufrufer.
+    assert.deepEqual(funktionswerteAusDerDatenbank(), [...MODELLFUNKTIONEN].sort())
+  })
+
+  test('der dritte Wert kommt additiv hinzu und ersetzt die beiden bestehenden nicht', () => {
+    // Die Erweiterung ist ein `drop constraint` mit anschliessendem
+    // `add constraint`. Ohne diese Prüfung wäre eine Migration, die
+    // `reisevorschlag` dabei verliert, syntaktisch gültig – und der
+    // bestehende Weg wäre still abgeschaltet.
+    const reihenfolge = [
+      ...sql.matchAll(/model_usage_funktion_werte[\s\S]*?check \(funktion in \(([^)]+)\)/g),
+    ].map((treffer) => [...treffer[1].matchAll(/'([a-z]+)'/g)].map((eintrag) => eintrag[1]))
+
+    for (const [stelle, werte] of reihenfolge.entries()) {
+      if (stelle === 0) continue
+      for (const frueher of reihenfolge[stelle - 1]) {
+        assert.ok(
+          werte.includes(frueher),
+          `die Fassung ${stelle} verliert den Wert ${frueher}`,
+        )
+      }
+    }
   })
 })
 

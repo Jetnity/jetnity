@@ -1,7 +1,63 @@
 # Jetnity – Active Work Status
 
 Stand: 17. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO ACTIVE CURSOR AGENT / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TECHNICAL-LEAD REVIEW / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+
+## 0. Active draft slice – Assistant Runtime 1
+
+**ACTIVE DRAFT / NOT ON `main` / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+
+| | |
+| --- | --- |
+| Issue | #434 |
+| Product-Owner gate | #433 – **Preview/Development only** |
+| Draft PR | #435 |
+| Branch | `feat/phase-1-assistant-runtime-1` |
+| Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
+| Current base | `main@cc2e1bff77329b37c882125dfed5f1eab2e8bda2` (merged, not rebased) |
+| **Last semantics-changing head** | the review fix "Replace free prose with selection from Jetnity-owned catalogues" (Round 9) – the accepted truth architecture. Later heads carry continuity corrections, UI copy and test evidence, not new runtime semantics |
+| **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
+| Merge-base / behind | `cc2e1bff` / **0 behind**. The ahead count is deliberately not recorded here — it changes with the very commit that would record it. The live compare in PR #435 is authoritative |
+| Drift | none. Two integrations, both with `git merge --no-ff` and deliberately without rebase or force-push so the already reviewed exact-head history survives: `main@aa6afaa6` (Realistic World Cartography 1, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) and `main@cc2e1bff` (expanded Guardian/Grok operating standard, #452 — 3 commits, both files byte-identical with `origin/main`). No conflicts; losslessness verified in both directions |
+| Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
+| Decision | ADR-0212 |
+| Status doc | `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` |
+| Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
+| Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
+
+Repository gates are run in full on every head of this branch and are green: `npm test`, `typecheck`, `lint` (0 errors, warnings exactly at the `origin/main` baseline), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus the browser evidence `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px without console errors. Every head so far also passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview.
+
+**Exact numbers are deliberately not recorded here, and neither are CI/Vercel identifiers.** A commit that froze a test count or a run id would itself be a new head and make its own statement false in the same moment – that is how the counts in this file went stale once already. Authoritative are the checks of PR #435 and the agent's final report for the head it ends on.
+
+**Technical-Lead re-reviews on `3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`, `4ffe3f20`, `e6606ea8` and `5ef78e5c` — eight truth findings, all fixed in this session:**
+
+1. Assistant certainty was unlocked globally by any current Official record in the context. It is now bound to the Official evidence the answer **names**: at least one named `belegt` Official ref, and no named unbelegt one.
+2. Server-side output parsing stripped unexpected properties. It now rejects them (`z.strictObject`), so a state-bearing extra field such as `lagen` ends as class `schema` instead of a cleaned-up suggestion.
+3. Certainty was bound to a named Official ref but not to its **requirement type**, so a current vaccination fact could carry “kein Visum erforderlich”. `BegleiterBezug` now carries the machine-readable requirement identity (`requirementType`, `scope`, `visaMode`) straight from the accepted projection — never read back from localized display copy — and every certainty pattern names the requirement type that can carry it. Unbindable phrases (“garantiert”, “definitiv”, “amtlich bestätigt”, “nicht erforderlich”, “problemlos einreisen”) always fail closed. Twelve adversarial regressions cover the constellations; nine of them fail against the respective previous rule.
+4. The binding was requirement-accurate but covered only five domains and only negations, so an asserted requirement (“Du brauchst eine Reiseversicherung”, “Dein Pass muss sechs Monate gültig sein”) fell through the net. Detection is now sentence-wise over modality × domain × hedge, spans the complete `OFFICIAL_REQUIREMENT_TYPES` taxonomy in both directions, and uses `other_entry_requirement` as the catch-all. A coverage test asserts every requirement type is carried by some domain. Ordinary suggestions (“Prüfe deine Passgültigkeit in der Reisevorbereitung”) stay valid.
+5. The guard read German modality/domain/hedge patterns while the prompt allowed answering “in the language of the question”, so “No visa is required” passed — not through a gap in the rule but because no rule applied to that sentence. The answer language is now part of the contract (German, matching `COUNTRY_UI_LOCALE`), backed by two gates: an answer without German function words or umlauts is rejected, which closes every unenumerated language; and official vocabulary from the other `COUNTRY_LOCALES` is rejected independently, which covers a mixed-language text. A denylist over an open language surface is incomplete; over a closed one it is a check. Additionally, claims about the *provenance* of truth (“gilt als geprüft”) are never bindable — whether a situation is checked is Jetnity's statement alone. 19 regressions across nine languages, asserted and negated, plus paraphrases without keywords and hostile trip text.
+6. That language fix was still a heuristic plus a finite denylist, and it only covered `antwort`: `Das ist so: İtalya için vize gerekli.` satisfied the German-marker heuristic while the Turkish claim appeared in no list. A denylist over an open set is never complete, so the contract was inverted into an allowlist over every model-written field.
+7. The allowlist was not a truth boundary either: `notwendig`/`nötig` were admitted while `PFLICHTWORT` did not bind them, `istUnbedenklich()` admitted every single-letter token (`V I S U M ist P F L I C H T.`), and `kontextwortschatz()` let a user-written stage name widen the allowlist. All fifteen combinations of those three cases across the three prose fields were accepted on the reviewed head. The Official vocabulary was removed from the register, the two escapes were closed, and Official situations moved to a typed channel.
+8. Even that was still a claim about a sentence space: `Du musst ein gültiges Reisedokument haben.` is composed entirely of admitted everyday words and is plainly a document requirement. **Seven versions shared one build: an unprovable assertion that no sentence formable from an allowed word set is an Official statement.** The build is now abandoned. `lib/reisebegleiter/schema.ts` has **no free-text field** — no `antwort`, `unsicherheiten` or `naechsteSchritte`. The model selects keys from two closed catalogues and names the reference; Jetnity writes every sentence. `lib/reisebegleiter/befunde.ts` holds 33 statements about Jetnity's **own** data state, each with a condition computed from the accepted projection, and only pairs of key **and** reference that `angeboteneBefunde()` computed as true may be selected. `lib/reisebegleiter/aussagen.ts` keeps the seven Official statements bound to the checked state. The three sentences above are not rejected — there is no field they fit into, and `schema.test.ts` reads that off the type instead of arguing over a sentence space.
+
+With no requirements provider active, no Official ref is ever `belegt`, so the three `geprueft_*` statements always fail closed — which is correct, because Jetnity holds no checked official truth.
+
+**Open product question for the Product Owner (DECISIONS.md ADR-0212, the catalogue/product-form decision).** The Assistant no longer formulates; it selects from Jetnity-owned statements and orders them. For the "Generated Suggestion" truth class that is the honest build, but it is a visible product change, and the value now depends on catalogue breadth rather than the model's language ability. Whether that is enough value is **not measured** — the only measurement point is the still-open paid call. Recommendation: keep the selection form for Preview/Development, use the paid call as the measurement, then decide catalogue breadth against language freedom.
+
+**Supabase boundaries after the integration.** No Supabase mutation was performed in this pass. Development holds the Assistant migration `20260917090000` (applied earlier by the Technical Lead) and Explicit Visit History; **Production holds only `20260917120000_account_visits`** and must not receive the Assistant migration in this pass. Live read-only verification was **not possible** from the agent environment — the Management API rejects its `SUPABASE_ACCESS_TOKEN` with HTTP 401 on `/v1/projects`, `/v1/projects/{ref}` and `/v1/branches/{ref}`, and the data plane exposes neither `model_usage` to `anon` nor `supabase_migrations`. The Development statements above are the Technical Lead's findings, labelled as such in the slice STATUS.
+
+**Note for the eventual Production gate:** the automated Production apply path is already hard-blocked, because `produktionsPlan()` aborts once Production carries a version beyond the Phase-3.1 boundary `20260820130000` — which `20260917120000` is. Applying `20260917090000` to Production later would also be chronologically behind that already-recorded version. Both are Technical-Lead decisions, not slice scope.
+
+**Develop-only DB gate — completed independently by the Technical Lead, do NOT repeat:** migration `20260917090000` applied on Development and recorded under the repository version; live `model_usage_funktion_werte` is exactly `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS enabled; policy `model_usage_lesen` and grants unchanged; security advisors show no new Assistant-specific finding; `model_usage` holds 0 rows on Development and Production; Development migration history corrected from the tool's temporary `20260917003925` to the repository version; the accidental unconfirmed auth user `assistant.runtime1.probe@gmail.com` was verified empty and deleted. **Production unchanged and still accepts only `reisevorschlag` / `reiseaenderung`.**
+
+**Still open and not to be reported as green:**
+
+- **No paid Preview/Development call made.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` and `JETNITY_MODELL_AKTIV` are absent in the agent environment, and an account session is unreachable because `enable_confirmations = true`. The rendering of an answer is evidenced in the browser with a *supplied* answer, not a generated one. It must not be invented, and no second probe account may be created.
+- `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` and `production:pruefen` **did not run** in the agent environment: its `SUPABASE_ACCESS_TOKEN` is rejected with HTTP 401. The CI secret is valid — `auth:pruefen` passes in CI on the same head.
+
+Production migration, Production model activation, Production OpenAI secrets and Production paid calls remain **CLOSED**.
+
+**Exact next step:** independent Technical-Lead re-review on the exact final head of the branch. No Ready, no merge, no follow-up slice by the coding agent.
 
 ## 1. Latest verified runtime integration
 

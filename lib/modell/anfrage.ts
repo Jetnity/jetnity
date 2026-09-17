@@ -32,6 +32,17 @@ export type Modellanfrage = {
   nutzertext: string
   schemaName: string
   jsonSchema: unknown
+  /**
+   * Obergrenze der Ausgabe für diesen Aufruf, einschliesslich Denk-Tokens.
+   *
+   * Ohne Angabe gilt `MODELL_GRENZEN.ausgabeTokens` – dieselbe Zahl, mit der
+   * die Datenbank reserviert. Ein Weg, der weniger braucht, darf weniger
+   * verlangen: Reserviert bleibt der schlechteste Fall, und die Differenz ist
+   * Spielraum für einen Eingabekontext, der grösser ist als die Schätzung der
+   * Reservierung. Nach oben gibt es keinen Spielraum – mehr als reserviert
+   * wurde, wird hier nicht zugelassen.
+   */
+  ausgabeTokens?: number
 }
 
 /** Der Körper der Anfrage. Reine Umschrift der Anfrage, ohne Nebenwirkung. */
@@ -54,7 +65,10 @@ export function anfragekoerper(anfrage: Modellanfrage): string {
         schema: anfrage.jsonSchema,
       },
     },
-    max_output_tokens: MODELL_GRENZEN.ausgabeTokens,
+    max_output_tokens: Math.min(
+      anfrage.ausgabeTokens ?? MODELL_GRENZEN.ausgabeTokens,
+      MODELL_GRENZEN.ausgabeTokens,
+    ),
     // Die Reisebeschreibung bleibt nicht auf der Gegenseite liegen.
     store: false,
   })

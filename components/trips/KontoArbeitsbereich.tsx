@@ -43,6 +43,7 @@ import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
+import Reisebegleiter from '@/components/trips/Reisebegleiter'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -160,6 +161,7 @@ export default function KontoArbeitsbereich({
       aenderung={
         <ReiseAenderung reise={reise} quelle="account" onGespeichert={() => router.refresh()} />
       }
+      begleiter={<Reisebegleiter reise={reise} />}
       flugsuche={
         <FlugSuche
           reise={reise}
