@@ -12,13 +12,13 @@ jobs:
   smoke:
     name: One bounded real Preview/development Assistant call
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-      NEXT_PUBLIC_SUPABASE_URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co
       PREVIEW_URL: https://jetnity-app-git-feat-phase-1-assistant-82e2ae-jetnity-e1b93c82.vercel.app
       LOCKED_HEAD: 8915ef45849b6544fe6fea201fb1450392c15f83
+      LOCKED_DEPLOYMENT: dpl_8BvCeC9XoUbgHQtW4bYsJU34B9md
 
     steps:
       - name: Checkout locked PR head
@@ -34,40 +34,79 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify required repository secrets exist
+      - name: Fail closed unless target and Preview are Development
         shell: bash
         run: |
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_REF" ]; then
-            echo "::error::Required Development Supabase repository secrets are missing."
-            exit 1
-          fi
+          node <<'NODE'
+          const token = process.env.SUPABASE_ACCESS_TOKEN
+          const ref = process.env.SUPABASE_PROJECT_REF
+          const preview = process.env.PREVIEW_URL
+          if (!token || !ref || !preview) throw new Error('Required Development environment is incomplete')
+
+          async function status(url) {
+            const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+            return res.status
+          }
+
+          ;(async () => {
+            const projectStatus = await status(`https://api.supabase.com/v1/projects/${ref}`)
+            const branchStatus = await status(`https://api.supabase.com/v1/branches/${ref}`)
+            if (projectStatus !== 404 || branchStatus !== 200) {
+              throw new Error(`Ref is not an unambiguous Supabase Development branch (project=${projectStatus}, branch=${branchStatus})`)
+            }
+
+            const login = await fetch(`${preview}/login`)
+            if (!login.ok) throw new Error(`Preview login is not reachable: HTTP ${login.status}`)
+            const html = await login.text()
+            const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map((m) => m[1])
+            let bundle = html
+            for (const src of scripts) {
+              const url = new URL(src.replaceAll('&amp;', '&'), preview).href
+              const res = await fetch(url)
+              if (res.ok) bundle += '\n' + await res.text()
+            }
+            const refs = new Set([...bundle.matchAll(/([a-z0-9]{20})\.supabase\.co/g)].map((m) => m[1]))
+            if (!refs.has(ref)) {
+              throw new Error('Locked Preview does not expose the expected Development Supabase ref; aborting before signup')
+            }
+            if ([...refs].some((seen) => seen !== ref)) {
+              throw new Error('Locked Preview exposes more than one Supabase ref; aborting before signup')
+            }
+            console.log('Target gate PASS: Supabase target is a Development branch and locked Preview points to it.')
+          })().catch((err) => { console.error(err.message); process.exit(1) })
+          NODE
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Generate one-time smoke credentials
         shell: bash
         run: |
           EMAIL="jetnity.assistant.smoke.$(date -u +%Y%m%d%H%M%S)@example.com"
-          PASS="$(node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))")"
+          PASS="$(node -e "console.log('Jt9!'+require('crypto').randomBytes(18).toString('hex')+'Aa')")"
+          CLIENT_REF="assistant-smoke-$(date -u +%Y%m%d%H%M%S)"
           echo "::add-mask::$PASS"
           echo "SMOKE_EMAIL=$EMAIL" >> "$GITHUB_ENV"
           echo "SMOKE_PASSWORD=$PASS" >> "$GITHUB_ENV"
+          echo "SMOKE_CLIENT_REF=$CLIENT_REF" >> "$GITHUB_ENV"
 
-      - name: Create temporary Development account through Auth Admin path
-        shell: bash
-        run: |
-          npm run auth:testkonto -- anlegen "$SMOKE_EMAIL" "$SMOKE_PASSWORD" user
-          echo "SMOKE_CREATED=1" >> "$GITHUB_ENV"
-
-      - name: Create minimal Development trip and baseline usage evidence
+      - name: Register through real Preview Auth and create minimal Development fixture
         shell: bash
         run: |
           node <<'NODE'
+          const crypto = require('crypto')
           const fs = require('fs')
+          const { chromium } = require('playwright')
           const token = process.env.SUPABASE_ACCESS_TOKEN
           const ref = process.env.SUPABASE_PROJECT_REF
+          const preview = process.env.PREVIEW_URL
           const email = process.env.SMOKE_EMAIL
-          if (!token || !ref || !email) throw new Error('Smoke environment incomplete')
+          const password = process.env.SMOKE_PASSWORD
+          const clientRef = process.env.SMOKE_CLIENT_REF
+          if (!token || !ref || !preview || !email || !password || !clientRef) throw new Error('Smoke setup environment incomplete')
 
           const api = `https://api.supabase.com/v1/projects/${ref}/database/query`
+          const lit = (v) => `'${String(v).replaceAll("'", "''")}'`
           async function sql(query) {
             const res = await fetch(api, {
               method: 'POST',
@@ -75,54 +114,82 @@ jobs:
               body: JSON.stringify({ query }),
             })
             const text = await res.text()
-            if (!res.ok) throw new Error(`Management SQL failed HTTP ${res.status}`)
+            if (!res.ok) throw new Error(`Development SQL failed HTTP ${res.status}`)
             return text ? JSON.parse(text) : []
           }
-          const lit = (v) => `'${String(v).replaceAll("'", "''")}'`
+          async function waitForUser() {
+            for (let i = 0; i < 30; i++) {
+              const rows = await sql(`select id, email_confirmed_at from auth.users where email = ${lit(email)} limit 2`)
+              if (rows.length === 1) return rows[0]
+              if (rows.length > 1) throw new Error('More than one temporary Auth user exists')
+              await new Promise((r) => setTimeout(r, 1000))
+            }
+            throw new Error('Normal Preview signup did not create a Development auth user')
+          }
 
           ;(async () => {
-            const users = await sql(`select id from auth.users where email = ${lit(email)} limit 1`)
-            if (users.length !== 1) throw new Error(`Expected exactly one temporary auth user, got ${users.length}`)
-            const userId = users[0].id
+            const browser = await chromium.launch({ headless: true })
+            const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+            try {
+              await page.goto(`${preview}/register?next=${encodeURIComponent('/reisen')}`, { waitUntil: 'domcontentloaded', timeout: 45000 })
+              await page.locator('#name').fill('Smoke')
+              await page.locator('#email').fill(email)
+              await page.locator('#password').fill(password)
+              await page.locator('#password2').fill(password)
+              await page.locator('#terms').click()
+              await page.getByRole('button', { name: 'Konto erstellen' }).click()
 
-            const baseline = await sql("select count(*)::int as n from public.model_usage where funktion = 'reisebegleiter'")
-            const baselineCount = Number(baseline[0]?.n ?? -1)
-            if (baselineCount < 0) throw new Error('Could not establish model_usage baseline')
+              const user = await waitForUser()
+              const userId = user.id
+              fs.appendFileSync(process.env.GITHUB_ENV, `SMOKE_USER_ID=${userId}\n`)
+              fs.appendFileSync(process.env.GITHUB_ENV, 'SMOKE_CREATED=1\n')
 
-            const trips = await sql(`
-              insert into public.trips
-                (user_id, client_ref, title, origin, start_date, end_date, travellers, currency, status, pace, interests, travel_wish, day_stage_assignment_mode)
-              values
-                (${lit(userId)}, 'assistant-smoke-trip', 'Assistant Smoke', 'Zürich', '2026-11-05', '2026-11-07', 1, 'CHF', 'draft', 'balanced', ARRAY['culture']::text[], 'Kurze Städtereise mit klarer Etappe.', 'single_destination')
-              returning id
-            `)
-            if (trips.length !== 1) throw new Error('Temporary trip was not created')
-            const tripId = trips[0].id
+              if (!user.email_confirmed_at) {
+                await sql(`update auth.users set email_confirmed_at = now(), updated_at = now() where id = ${lit(userId)} and email = ${lit(email)}`)
+              }
 
-            const stages = await sql(`
-              insert into public.trip_stages
-                (trip_id, user_id, position, name, country_code, arrival_date, departure_date)
-              values
-                (${lit(tripId)}, ${lit(userId)}, 1, 'Lissabon', 'PT', '2026-11-05', '2026-11-07')
-              returning id
-            `)
-            if (stages.length !== 1) throw new Error('Temporary stage was not created')
-            const stageId = stages[0].id
+              await sql(`
+                insert into public.profiles (user_id, email, role, display_name)
+                values (${lit(userId)}, ${lit(email)}, 'user', 'Smoke')
+                on conflict (user_id) do update set email = excluded.email, role = excluded.role, display_name = excluded.display_name
+              `)
 
-            await sql(`
-              insert into public.trip_days
-                (trip_id, user_id, day_index, day_date, title, stage_id)
-              values
-                (${lit(tripId)}, ${lit(userId)}, 1, '2026-11-05', 'Ankunft', ${lit(stageId)})
-            `)
+              const trips = await sql(`
+                insert into public.trips
+                  (user_id, client_ref, title, origin, start_date, end_date, travellers, currency, status, pace, interests, travel_wish, day_stage_assignment_mode)
+                values
+                  (${lit(userId)}, ${lit(clientRef)}, 'Assistant Smoke', 'Zürich', '2026-11-05', '2026-11-07', 1, 'CHF', 'draft', 'balanced', ARRAY['culture']::text[], 'Kurze Städtereise mit klarer Etappe.', 'single_destination')
+                returning id
+              `)
+              if (trips.length !== 1) throw new Error('Temporary Development trip was not created')
+              const tripId = trips[0].id
 
-            fs.appendFileSync(process.env.GITHUB_ENV, `TRIP_ID=${tripId}\nSTAGE_ID=${stageId}\nBASELINE_USAGE=${baselineCount}\n`)
-            console.log(`Temporary Development trip ready; reisebegleiter baseline=${baselineCount}`)
+              const stages = await sql(`
+                insert into public.trip_stages
+                  (trip_id, user_id, position, name, country_code, arrival_date, departure_date)
+                values
+                  (${lit(tripId)}, ${lit(userId)}, 1, 'Lissabon', 'PT', '2026-11-05', '2026-11-07')
+                returning id
+              `)
+              if (stages.length !== 1) throw new Error('Temporary Development stage was not created')
+              const stageId = stages[0].id
+
+              await sql(`
+                insert into public.trip_days (trip_id, user_id, day_index, day_date, title, stage_id)
+                values (${lit(tripId)}, ${lit(userId)}, 1, '2026-11-05', 'Ankunft', ${lit(stageId)})
+              `)
+
+              const usageHash = crypto.createHash('sha256').update(`konto:${userId}`).digest('hex')
+              const baseline = await sql(`select count(*)::int as n from public.model_usage where kennung_hash = ${lit(usageHash)} and funktion = 'reisebegleiter'`)
+              if (Number(baseline[0]?.n ?? -1) !== 0) throw new Error('Fresh temporary account unexpectedly has prior reisebegleiter usage')
+
+              fs.appendFileSync(process.env.GITHUB_ENV, `TRIP_ID=${tripId}\nUSAGE_HASH=${usageHash}\n`)
+              console.log('Normal Preview registration succeeded; minimal Development fixture ready; account-specific Assistant baseline=0.')
+            } finally {
+              await browser.close()
+            }
           })().catch((err) => { console.error(err.message); process.exit(1) })
           NODE
-
-      - name: Install Chromium for one real browser smoke
-        run: npx playwright install --with-deps chromium
 
       - name: Execute exactly one real Assistant call on locked Preview
         shell: bash
@@ -131,16 +198,15 @@ jobs:
           const { chromium } = require('playwright')
           const token = process.env.SUPABASE_ACCESS_TOKEN
           const ref = process.env.SUPABASE_PROJECT_REF
+          const preview = process.env.PREVIEW_URL
           const email = process.env.SMOKE_EMAIL
           const password = process.env.SMOKE_PASSWORD
           const tripId = process.env.TRIP_ID
-          const preview = process.env.PREVIEW_URL
-          const baseline = Number(process.env.BASELINE_USAGE)
-          if (!token || !ref || !email || !password || !tripId || !preview || !Number.isFinite(baseline)) {
-            throw new Error('Smoke environment incomplete before browser call')
-          }
+          const usageHash = process.env.USAGE_HASH
+          if (!token || !ref || !preview || !email || !password || !tripId || !usageHash) throw new Error('Smoke call environment incomplete')
 
           const api = `https://api.supabase.com/v1/projects/${ref}/database/query`
+          const lit = (v) => `'${String(v).replaceAll("'", "''")}'`
           async function sql(query) {
             const res = await fetch(api, {
               method: 'POST',
@@ -148,42 +214,41 @@ jobs:
               body: JSON.stringify({ query }),
             })
             const text = await res.text()
-            if (!res.ok) throw new Error(`Management SQL failed HTTP ${res.status}`)
+            if (!res.ok) throw new Error(`Development SQL failed HTTP ${res.status}`)
             return text ? JSON.parse(text) : []
           }
-          const usageCount = async () => {
-            const rows = await sql("select count(*)::int as n from public.model_usage where funktion = 'reisebegleiter'")
-            return Number(rows[0]?.n ?? -1)
-          }
+          const usageRows = () => sql(`
+            select funktion, modell, art, ergebnis, eingabe_tokens, gecachte_tokens, ausgabe_tokens,
+                   laufzeit_ms, kosten_mikro_usd, created_at, abgeschlossen_am
+              from public.model_usage
+             where kennung_hash = ${lit(usageHash)} and funktion = 'reisebegleiter'
+             order by created_at asc
+          `)
 
           ;(async () => {
             const browser = await chromium.launch({ headless: true })
             const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
             const pageErrors = []
             page.on('pageerror', (e) => pageErrors.push(String(e.message || e)))
-
             try {
               await page.goto(`${preview}/login?next=${encodeURIComponent(`/reisen/${tripId}`)}`, { waitUntil: 'domcontentloaded', timeout: 45000 })
-              await page.locator('#email').fill(email)
-              await page.locator('#password').fill(password)
-              await page.getByRole('button', { name: 'Anmelden' }).click()
+              if (page.url().includes('/login')) {
+                await page.locator('#email').fill(email)
+                await page.locator('#password').fill(password)
+                await page.getByRole('button', { name: 'Anmelden' }).click()
+              }
               await page.waitForURL((url) => url.pathname === `/reisen/${tripId}`, { timeout: 45000 })
+
+              const beforeOpen = await usageRows()
+              if (beforeOpen.length !== 0) throw new Error(`Unexpected Assistant call before surface open: ${beforeOpen.length}`)
 
               const openButton = page.getByRole('button', { name: 'Reisebegleiter fragen' })
               await openButton.waitFor({ state: 'visible', timeout: 30000 })
-
-              const beforeMount = await usageCount()
-              if (beforeMount !== baseline) {
-                throw new Error(`Unexpected paid Assistant usage before opening surface: baseline=${baseline}, current=${beforeMount}`)
-              }
-
               await openButton.click()
               await page.locator('#reisebegleiter-frage').waitFor({ state: 'visible', timeout: 10000 })
 
-              const beforeSubmit = await usageCount()
-              if (beforeSubmit !== baseline) {
-                throw new Error(`Assistant mounted with an unexpected model call: baseline=${baseline}, current=${beforeSubmit}`)
-              }
+              const beforeSubmit = await usageRows()
+              if (beforeSubmit.length !== 0) throw new Error(`Assistant mounted with an unexpected paid call: ${beforeSubmit.length}`)
 
               await page.locator('#reisebegleiter-frage').fill('Was ist bei dieser Reise noch offen?')
               await page.getByRole('button', { name: 'Frage stellen' }).click()
@@ -199,33 +264,21 @@ jobs:
                 throw new Error(`Assistant UI returned an error after the single call: ${text}`)
               }
 
-              const after = await usageCount()
-              if (after !== baseline + 1) {
-                throw new Error(`Expected exactly one paid Assistant usage row; baseline=${baseline}, after=${after}`)
-              }
-
-              const rows = await sql(`
-                select funktion, modell, art, ergebnis, eingabe_tokens, gecachte_tokens, ausgabe_tokens,
-                       laufzeit_ms, kosten_mikro_usd, created_at, abgeschlossen_am
-                  from public.model_usage
-                 where funktion = 'reisebegleiter'
-                 order by created_at desc
-                 limit 1
-              `)
+              const rows = await usageRows()
+              if (rows.length !== 1) throw new Error(`Expected exactly one account-specific Assistant usage row; got ${rows.length}`)
               const row = rows[0]
-              if (!row) throw new Error('No reisebegleiter usage row found after successful UI result')
-              if (row.ergebnis !== 'erfolg') throw new Error(`Latest reisebegleiter result is ${row.ergebnis}, expected erfolg`)
-              if (!row.abgeschlossen_am) throw new Error('Latest reisebegleiter usage row is not completed')
-              if (!(Number(row.eingabe_tokens) > 0) || !(Number(row.ausgabe_tokens) > 0)) {
-                throw new Error('Completed paid call is missing positive input/output token accounting')
-              }
-              if (!(Number(row.kosten_mikro_usd) >= 0)) throw new Error('Completed paid call has invalid cost accounting')
+              if (row.funktion !== 'reisebegleiter') throw new Error('Wrong model-usage function')
+              if (row.art !== 'konto') throw new Error(`Wrong model-usage kind: ${row.art}`)
+              if (row.ergebnis !== 'erfolg') throw new Error(`Assistant result is ${row.ergebnis}, expected erfolg`)
+              if (!row.abgeschlossen_am) throw new Error('Assistant usage row was not completed')
+              if (!(Number(row.eingabe_tokens) > 0) || !(Number(row.ausgabe_tokens) > 0)) throw new Error('Positive token accounting is missing')
+              if (!(Number(row.kosten_mikro_usd) >= 0)) throw new Error('Cost accounting is invalid')
               if (pageErrors.length) throw new Error(`Browser page errors observed: ${pageErrors.join(' | ')}`)
 
               console.log(JSON.stringify({
                 smoke: 'PASS',
                 lockedHead: process.env.LOCKED_HEAD,
-                deployment: 'dpl_8BvCeC9XoUbgHQtW4bYsJU34B9md',
+                deployment: process.env.LOCKED_DEPLOYMENT,
                 function: row.funktion,
                 model: row.modell,
                 kind: row.art,
@@ -236,7 +289,9 @@ jobs:
                 runtimeMs: row.laufzeit_ms == null ? null : Number(row.laufzeit_ms),
                 costMicroUsd: Number(row.kosten_mikro_usd),
                 completed: Boolean(row.abgeschlossen_am),
-                callsCreated: after - baseline,
+                callsCreated: rows.length,
+                noCallBeforeOpen: true,
+                noCallOnMount: true,
               }))
             } finally {
               await browser.close()
@@ -244,12 +299,12 @@ jobs:
           })().catch((err) => { console.error(err.message); process.exit(1) })
           NODE
 
-      - name: Cleanup temporary Development trip and account
+      - name: Cleanup temporary Development account and all cascaded fixture data
         if: always()
         shell: bash
         run: |
           if [ "${SMOKE_CREATED:-}" != "1" ]; then
-            echo "No temporary account was created; nothing to clean."
+            echo "No temporary Development Auth user was created; nothing to clean."
             exit 0
           fi
 
@@ -257,57 +312,35 @@ jobs:
           const token = process.env.SUPABASE_ACCESS_TOKEN
           const ref = process.env.SUPABASE_PROJECT_REF
           const email = process.env.SMOKE_EMAIL
-          const tripId = process.env.TRIP_ID
-          if (!token || !ref || !email) process.exit(0)
+          const userId = process.env.SMOKE_USER_ID
+          const clientRef = process.env.SMOKE_CLIENT_REF
+          if (!token || !ref || !email || !userId || !clientRef) throw new Error('Cleanup environment incomplete')
           const api = `https://api.supabase.com/v1/projects/${ref}/database/query`
+          const lit = (v) => `'${String(v).replaceAll("'", "''")}'`
           async function sql(query) {
             const res = await fetch(api, {
               method: 'POST',
               headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
               body: JSON.stringify({ query }),
             })
+            const text = await res.text()
             if (!res.ok) throw new Error(`Cleanup SQL failed HTTP ${res.status}`)
-            const text = await res.text()
-            return text ? JSON.parse(text) : []
-          }
-          const lit = (v) => `'${String(v).replaceAll("'", "''")}'`
-          ;(async () => {
-            if (tripId) {
-              await sql(`delete from public.trip_days where trip_id = ${lit(tripId)}`)
-              await sql(`delete from public.trip_stages where trip_id = ${lit(tripId)}`)
-              await sql(`delete from public.trips where id = ${lit(tripId)}`)
-            }
-          })().catch((err) => { console.error(err.message); process.exit(1) })
-          NODE
-
-          npm run auth:testkonto -- entfernen "$SMOKE_EMAIL"
-
-          node <<'NODE'
-          const token = process.env.SUPABASE_ACCESS_TOKEN
-          const ref = process.env.SUPABASE_PROJECT_REF
-          const email = process.env.SMOKE_EMAIL
-          const api = `https://api.supabase.com/v1/projects/${ref}/database/query`
-          const lit = (v) => `'${String(v).replaceAll("'", "''")}'`
-          async function sql(query) {
-            const res = await fetch(api, {
-              method: 'POST',
-              headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query }),
-            })
-            const text = await res.text()
-            if (!res.ok) throw new Error(`Cleanup verification failed HTTP ${res.status}`)
             return text ? JSON.parse(text) : []
           }
           ;(async () => {
+            await sql(`delete from auth.users where id = ${lit(userId)} and email = ${lit(email)}`)
             const rows = await sql(`
               select
-                (select count(*)::int from auth.users where email = ${lit(email)}) as auth_users,
-                (select count(*)::int from public.trips where client_ref = 'assistant-smoke-trip') as trips
+                (select count(*)::int from auth.users where id = ${lit(userId)} or email = ${lit(email)}) as auth_users,
+                (select count(*)::int from public.profiles where user_id = ${lit(userId)}) as profiles,
+                (select count(*)::int from public.trips where user_id = ${lit(userId)} or client_ref = ${lit(clientRef)}) as trips,
+                (select count(*)::int from auth.sessions where user_id = ${lit(userId)}) as sessions,
+                (select count(*)::int from auth.identities where user_id = ${lit(userId)}) as identities
             `)
             const r = rows[0]
-            if (Number(r?.auth_users) !== 0 || Number(r?.trips) !== 0) {
-              throw new Error(`Cleanup incomplete: auth_users=${r?.auth_users}, trips=${r?.trips}`)
+            for (const key of ['auth_users','profiles','trips','sessions','identities']) {
+              if (Number(r?.[key]) !== 0) throw new Error(`Cleanup incomplete for ${key}: ${r?.[key]}`)
             }
-            console.log('Cleanup verified: temporary auth user=0, temporary trips=0')
+            console.log('Cleanup PASS: temporary Auth user, profile, trip, sessions and identities are all 0.')
           })().catch((err) => { console.error(err.message); process.exit(1) })
           NODE
