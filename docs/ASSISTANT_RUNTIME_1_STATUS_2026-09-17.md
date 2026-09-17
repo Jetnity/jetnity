@@ -107,6 +107,8 @@ Commits auf dem Branch:
 | `npm run auth:pruefen` | **grün in der CI** auf dem exakten Head: „Auth-Konfiguration geprüft: 55 Werte, 243 Schlüssel am Branch", alle vier Prüfungen ✓. Die CI hat einen gültigen `SUPABASE_ACCESS_TOKEN`; in dieser Cloud-Agent-Umgebung schlägt derselbe Aufruf mit 401 fehl |
 | Vercel Preview auf dem exakten Head | **READY** – `6kbzcUP3CDzhXkkkj3owzz4bQB3v` |
 
+Die beiden Kennungen oben gehören zum laufzeitändernden Head `ea7cf8ec`. Jeder Dokumentations-Commit darüber löst dieselbe CI und dieselbe Vercel-Preview erneut aus; beide waren auf jedem dieser Köpfe erfolgreich. Die Kennungen des jeweils letzten Laufs stehen in den Checks von PR #435 – ein Dokument kann die Kennung des Laufs nicht enthalten, den es selbst auslöst.
+
 ### Nicht gelaufen – und warum
 
 Diese Werkzeuge haben sich **nicht selbst übersprungen** und sind **nicht grün**. Sie sind an einem fehlenden Zugang gescheitert und werden hier nach AGENTS.md Regel 25 als nicht gelaufen ausgewiesen:
