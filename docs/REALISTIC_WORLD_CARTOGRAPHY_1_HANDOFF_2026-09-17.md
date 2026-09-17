@@ -112,10 +112,12 @@ Ein Punkt gehört ausdrücklich genannt, auch wenn er hier nicht durchschlägt: 
 ```
 origin/main   03842a64698cae1f4f20f54b7e6aa5016982562c   (= Canonical base)
 merge-base    03842a64698cae1f4f20f54b7e6aa5016982562c
-ahead         5 Commits (vor dem Dokumentations-Commit)
+ahead         5 Commits (Stand: unmittelbar vor dem Dokumentations-Commit)
 behind        0 Commits
 Drift         keine
 ```
+
+Fortgeschriebene Zahlen nach der Review-Runde 1 – mit neu geholtem `origin/main`, neuem Gate-Satz auf dem exakten Head und der Zuordnung jedes Befunds zu seinem Fundort: `docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`.
 
 Commits auf dem Branch:
 

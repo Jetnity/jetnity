@@ -1,7 +1,9 @@
 # Realistic World Cartography 1 – Slice Status
 
 Stand: 17. September 2026
-Status: **IMPLEMENTED / GATES GREEN / EVIDENCE PERSISTED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **IMPLEMENTED / GATES GREEN / EVIDENCE PERSISTED / CHANGES-REQUIRED-RUNDE 1 ERLEDIGT / STOP FOR TECHNICAL-LEAD RE-REVIEW**
+
+Review-Runde 1: Der Technical Lead prüfte Head `856a4ad2` – den reinen Code-Commit, der noch keine Evidenz- oder Slice-Dokumentation enthielt – und forderte Änderungen. Die verlangten Nachweise lagen zum Zeitpunkt des Reviews bereits in den Folge-Commits. Befund für Befund mit Fundort, neu gefahrenem Gate-Satz auf dem exakten Head und fortgeschriebenem Drift: `docs/REALISTIC_WORLD_CARTOGRAPHY_1_RE_REVIEW_EVIDENZ_2026-09-17.md`.
 
 Issue: #442
 Product-Owner-Direktive: #441
