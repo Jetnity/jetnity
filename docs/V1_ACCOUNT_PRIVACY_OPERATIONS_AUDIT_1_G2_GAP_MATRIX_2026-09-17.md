@@ -349,6 +349,24 @@ Verification method for this generation: bounded domain passes with independent 
 - **Dependency / gate** — Production auth config read; same credentialed pass as 3.3 and 3.6.
 - **Smallest next slice** — Include the rate-limit and HIBP values in the single Production auth verification pass; decide consciously on `email_sent`.
 
+### 3.8 Transactional email delivery — no own SMTP, global 2 emails/hour
+
+Added during the adversarial self-review pass, which asked what every auth flow silently depends on. It is the most severe finding in Section 3.
+
+- **Evidence**
+  - There is **no own SMTP server**. `supabase/config.toml` L216–222 has the entire `[auth.email.smtp]` block commented out (the commented example still names SendGrid), so Supabase's built-in sender is used.
+  - The rate limit is therefore the built-in sender's: `supabase/config.toml` L179 `email_sent = 2`. The surrounding comment at L177–178 confirms this key applies while `[auth.email.smtp]` is off, and it is recorded so the verification tooling sees it.
+  - `[local_smtp]` at L81–89 is the local development mail-catcher on port 54324. It is a test inbox, not a delivery path.
+  - The repository already states the consequence plainly. `docs/AUTH.md` L105 records "eigener SMTP-Server | nein | nein"; L265 states that Supabase sends the mail itself and hard-limits to two emails per hour, and that **"Für den Launch reicht das nicht"**; L314 lists it as "offen. Vor dem Launch nötig".
+  - Everything user-critical depends on this path: email confirmation is required (`enable_confirmations = true`, L204), password reset is email-only (`resetPasswordForEmail`, `components/auth/LoginForm.tsx` L130–154), and there is no alternative recovery channel (3.4) and no support process to fall back on (4.1). OAuth, which would bypass email for some users, is disabled (L306, L312).
+- **State** — `MISSING` (production-capable email delivery).
+- **V1 necessity** — **Required, absolutely.** Without it, registration and password recovery do not work for real users at any meaningful volume.
+- **Gap** — The built-in sender's limit is a **project-wide** ceiling of two emails per hour, not a per-user one. With real travellers, the third person to register or request a password reset in any given hour receives nothing — and receives no explanation, because the failure is on the provider side. This turns the whole authentication surface, which is otherwise well built, into an unusable funnel at launch. It also silently degrades every flow the rest of this matrix assumes works: email confirmation, password recovery, and any future account-deletion or data-export confirmation email.
+- **Severity** — **P0.** This should be read as the most concrete launch blocker in the entire audit: unlike the legal and data-rights P0s, it does not require a policy decision to recognise, and unlike them it breaks the core journey rather than the surrounding obligations.
+- **Dependency / gate** — Requires an email-sending provider and a secret. That is a **new external provider plus a secret**, therefore Product-Owner-gated under `AGENTS.md` §5/§16/§18 — though the cost is small and several providers have free or near-free tiers at Jetnity's current volume. Note `ARCHITECTURE.md` L361 records that earlier Infomaniak mail automation was removed in the V2 cleanup, so this is a re-introduction decision rather than a novel one. Auth configuration tooling manages the Development branch only (`supabase/config.toml` L118–121), so Production SMTP configuration is a separate manual step that the repository cannot verify.
+- **Smallest next slice** — A Product-Owner decision on the email provider, then SMTP configuration plus a documented Production verification that a confirmation and a reset mail actually arrive. No application code change is needed — this is configuration and verification, which is why it is cheap to close once the provider is chosen.
+- **Correction to 3.7** — Row 3.7 above notes `email_sent = 2/hour` as "tight for real users" and classifies auth rate limiting as `BUILT`. That framing understates the issue: the value is not a tunable limit on an otherwise working sender, it is the symptom of having no production sender at all. Read 3.7 together with this row.
+
 ---
 
 ## Checkpoint 1 summary (Sections 1–3)
@@ -375,6 +393,7 @@ Verification method for this generation: bounded domain passes with independent 
 | 3.5 | Session view / logout scopes | BUILT (honest) | P3 | — |
 | 3.6 | Password reset | BUILT | P2 (Prod redirect unverified) | Credentialed Prod read |
 | 3.7 | Auth rate limiting | BUILT (declared, Dev branch) | P2 | Credentialed Prod read |
+| 3.8 | Transactional email: no own SMTP, project-wide 2 mails/hour | MISSING | **P0** | PO (provider + secret) |
 
 ---
 
@@ -642,7 +661,7 @@ Against that background, **1.4 is an outlier and should be treated as the single
 
 ### 7.2 A cluster of P0 items is blocked on one Product-Owner input
 
-1.1 (legal pages), 1.5 (acceptance capture) and parts of 2.4 (retention statement) are all waiting on Product-Owner/legal *content*, not on engineering. The AP-6a contract deliberately forbids agent-generated legal text (`lib/legal/ap6a-gate0-vertrag.ts` L31), and the PrivacyBee decision authorises no activation (`docs/PRIVACYBEE_PRODUCT_OWNER_BINDING_DECISION_2026-08-30.md` L111). This means a substantial share of the V1 blocking set cannot be closed by any coding agent under current governance. That is worth surfacing explicitly as a programme fact rather than leaving it implicit in individual rows.
+1.1 (legal pages), 1.5 (acceptance capture) and parts of 2.4 (retention statement) are all waiting on Product-Owner/legal *content*, not on engineering. 3.8 (email provider) and 5.5 (error-tracking vendor) are waiting on Product-Owner *provider decisions*, likewise not on engineering. The AP-6a contract deliberately forbids agent-generated legal text (`lib/legal/ap6a-gate0-vertrag.ts` L31), and the PrivacyBee decision authorises no activation (`docs/PRIVACYBEE_PRODUCT_OWNER_BINDING_DECISION_2026-08-30.md` L111). This means a substantial share of the V1 blocking set cannot be closed by any coding agent under current governance. That is worth surfacing explicitly as a programme fact rather than leaving it implicit in individual rows.
 
 ### 7.3 Two P0/P1 items are free, ungated and currently unclaimed
 
@@ -689,6 +708,7 @@ Recording this because an audit that lists only gaps misrepresents the state. Th
 
 | # | Gap | Gated? |
 |---|---|---|
+| 3.8 | No production email sender; project-wide limit of 2 emails/hour breaks registration and password recovery | PO (provider + secret) |
 | 1.4 | Unproven "DSGVO & CH-DSG konform" claim shown to users at signup and login | **No — free** |
 | 1.1 | No `/privacy`, no `/terms`, no imprint; signup links to 404s | PO (legal content) |
 | 2.1 | No data export / access path | Scope decision |
