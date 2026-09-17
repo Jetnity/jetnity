@@ -214,14 +214,29 @@ Gelesen über die GitHub-API. `b622019e` ist der vom Technical Lead reviewte Hea
 | SHA | `Typecheck, Lint & Build` | `Auth-Konfiguration` | `Vercel` | Commit-Status |
 | --- | --- | --- | --- | --- |
 | `b622019ef139073635d5d85f1962e0bf23f462b9` | **failure** (`Exporte ohne Aufrufer`, Build übersprungen) | success | success | red |
+| `f5052963774c8cf6dfb6b0893690fadbef6f44db` | nicht separat gemessen, Code identisch mit den Zeilen darunter | – | – | – |
 | `e15ebe80533de9fa7b48d2216db5efc2dfd8db3b` | **success** | success | **success** | success |
 | `065fd9cd4c5a37aa1d70e9e6fe6c31006fcdeb2b` | **success** | success | **success** | success |
+| `435e86c7638a4a06d56145227209715cecc177b8` | **success** | success | **success** | success |
 
-Vercel-Deployments: `6493160784` für `e15ebe80` (`Preview`, `state: success`), Deployment für `065fd9cd` ebenfalls `Preview` / `state: success`.
+Vercel-Deployments jeweils Environment `Preview` mit `state: success`; `6493160784` für `e15ebe80`, eigene Deployments für `065fd9cd` und `435e86c7`.
 
 Der Preview-**Inhalt** ist nicht von diesem Agenten gelesen: die Deployment-URL antwortet mit `302` auf `https://vercel.com/sso-api?...` und setzt `_vercel_sso_nonce`. Das ist der erwartete Vercel-SSO-Schutz. Deshalb wurde die visuelle Evidenz gegen den lokalen **Production-Build** aufgenommen, der dieselbe `next build`-Ausgabe benutzt wie das Deployment.
 
-Der finale Head dieses Review-Fix liegt über `065fd9cd` und ist weiterhin code-identisch mit `f5052963`. Der Technical Lead muss CI und Preview auf der tatsächlich reviewten SHA selbst lesen.
+### Warum die letzte Zeile immer einen Commit zurückliegt
+
+Eine Tabelle kann das Ergebnis des Commits, der sie enthält, nicht enthalten. Jeder Nachtrag erzeugt einen neuen Head, dessen CI erst danach läuft. Dieses Dokument jagt diesen Fixpunkt deshalb nicht, sondern gibt die Prüfung ab. Für den tatsächlich reviewten Head:
+
+```
+S=$(git rev-parse HEAD)
+gh api repos/Jetnity/jetnity/commits/$S/check-runs --jq '.check_runs[] | "\(.name): \(.status)/\(.conclusion)"'
+gh api repos/Jetnity/jetnity/commits/$S/status --jq .state
+git diff --stat f5052963774c8cf6dfb6b0893690fadbef6f44db $S -- components lib app scripts supabase types
+```
+
+Die letzte Zeile muss leer bleiben. Ist sie leer, gelten die lokalen Gates aus diesem Dokument unverändert, weil dann kein Code zwischen dem gegateten Head und dem reviewten Head liegt. Ist sie nicht leer, ist die Evidenz hier ungültig und braucht ein neues Gating.
+
+Dieser Commit ist als letzter dieses Review-Fix vorgesehen; danach ändert der Agent nichts mehr, damit der Head für das Re-Review stabil bleibt.
 
 ## Drift
 
