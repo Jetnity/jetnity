@@ -1,364 +1,190 @@
 # Jetnity – Active Work Status
 
-Stand: 17. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TECHNICAL-LEAD REVIEW / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Stand: 18. September 2026  
+Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / PR #435 MERGED + POST-MERGE VERIFIED / NO ACTIVE CURSOR CODING AGENT / PR #453 NEXT KNOWN DOCS-GOVERNANCE CANDIDATE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
-## 0. Active draft slice – Assistant Runtime 1
+> This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
-**ACTIVE DRAFT / NOT ON `main` / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Canonical current transition checkpoint:
+
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`
+
+## 0. Current work boundary
+
+**No active Cursor coding agent.**
+
+**No active implementation slice is automatically authorized.**
+
+The next known repository work item is Draft PR **#453 – Define Jetnity Multi-Agent Operating System**. It was deliberately held while Assistant Runtime 1 / PR #435 was gated. It must be reconciled with current `main` before review/merge.
+
+Do not infer that #453 is merge-ready from this file. Re-fetch exact base/head, merge-base, ahead/behind, diff, Actions, Vercel and review evidence live.
+
+Historical open Draft PRs (#52, #50, #40, #39, #28) are not current runtime work merely because they remain open.
+
+## 1. Assistant Runtime 1 — CLOSED
+
+**CLOSED / MERGED / POST-MERGE VERIFIED**
 
 | | |
 | --- | --- |
-| Issue | #434 |
-| Product-Owner gate | #433 – **Preview/Development only** |
-| Draft PR | #435 |
-| Branch | `feat/phase-1-assistant-runtime-1` |
-| Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Current base | `main@cc2e1bff77329b37c882125dfed5f1eab2e8bda2` (merged, not rebased) |
-| **Last semantics-changing head** | the review fix "Replace free prose with selection from Jetnity-owned catalogues" (Round 9) – the accepted truth architecture. Later heads carry continuity corrections, UI copy and test evidence, not new runtime semantics |
-| **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
-| Merge-base / behind | `cc2e1bff` / **0 behind**. The ahead count is deliberately not recorded here — it changes with the very commit that would record it. The live compare in PR #435 is authoritative |
-| Drift | none. Two integrations, both with `git merge --no-ff` and deliberately without rebase or force-push so the already reviewed exact-head history survives: `main@aa6afaa6` (Realistic World Cartography 1, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) and `main@cc2e1bff` (expanded Guardian/Grok operating standard, #452 — 3 commits, both files byte-identical with `origin/main`). No conflicts; losslessness verified in both directions |
-| Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
-| Decision | ADR-0212 |
-| Status doc | `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` |
-| Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
-| Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
-
-Repository gates are run in full on every head of this branch and are green: `npm test`, `typecheck`, `lint` (0 errors, warnings exactly at the `origin/main` baseline), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus the browser evidence `npm run nachweis:reisebegleiter` at 390, 1280 and 1440 px without console errors. Every head so far also passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview.
-
-**Exact numbers are deliberately not recorded here, and neither are CI/Vercel identifiers.** A commit that froze a test count or a run id would itself be a new head and make its own statement false in the same moment – that is how the counts in this file went stale once already. Authoritative are the checks of PR #435 and the agent's final report for the head it ends on.
-
-**Technical-Lead re-reviews on `3775d980`, `74577e31`, `f46d43a0`, `4837fc9a`, `4ffe3f20`, `e6606ea8` and `5ef78e5c` — eight truth findings, all fixed in this session:**
-
-1. Assistant certainty was unlocked globally by any current Official record in the context. It is now bound to the Official evidence the answer **names**: at least one named `belegt` Official ref, and no named unbelegt one.
-2. Server-side output parsing stripped unexpected properties. It now rejects them (`z.strictObject`), so a state-bearing extra field such as `lagen` ends as class `schema` instead of a cleaned-up suggestion.
-3. Certainty was bound to a named Official ref but not to its **requirement type**, so a current vaccination fact could carry “kein Visum erforderlich”. `BegleiterBezug` now carries the machine-readable requirement identity (`requirementType`, `scope`, `visaMode`) straight from the accepted projection — never read back from localized display copy — and every certainty pattern names the requirement type that can carry it. Unbindable phrases (“garantiert”, “definitiv”, “amtlich bestätigt”, “nicht erforderlich”, “problemlos einreisen”) always fail closed. Twelve adversarial regressions cover the constellations; nine of them fail against the respective previous rule.
-4. The binding was requirement-accurate but covered only five domains and only negations, so an asserted requirement (“Du brauchst eine Reiseversicherung”, “Dein Pass muss sechs Monate gültig sein”) fell through the net. Detection is now sentence-wise over modality × domain × hedge, spans the complete `OFFICIAL_REQUIREMENT_TYPES` taxonomy in both directions, and uses `other_entry_requirement` as the catch-all. A coverage test asserts every requirement type is carried by some domain. Ordinary suggestions (“Prüfe deine Passgültigkeit in der Reisevorbereitung”) stay valid.
-5. The guard read German modality/domain/hedge patterns while the prompt allowed answering “in the language of the question”, so “No visa is required” passed — not through a gap in the rule but because no rule applied to that sentence. The answer language is now part of the contract (German, matching `COUNTRY_UI_LOCALE`), backed by two gates: an answer without German function words or umlauts is rejected, which closes every unenumerated language; and official vocabulary from the other `COUNTRY_LOCALES` is rejected independently, which covers a mixed-language text. A denylist over an open language surface is incomplete; over a closed one it is a check. Additionally, claims about the *provenance* of truth (“gilt als geprüft”) are never bindable — whether a situation is checked is Jetnity's statement alone. 19 regressions across nine languages, asserted and negated, plus paraphrases without keywords and hostile trip text.
-6. That language fix was still a heuristic plus a finite denylist, and it only covered `antwort`: `Das ist so: İtalya için vize gerekli.` satisfied the German-marker heuristic while the Turkish claim appeared in no list. A denylist over an open set is never complete, so the contract was inverted into an allowlist over every model-written field.
-7. The allowlist was not a truth boundary either: `notwendig`/`nötig` were admitted while `PFLICHTWORT` did not bind them, `istUnbedenklich()` admitted every single-letter token (`V I S U M ist P F L I C H T.`), and `kontextwortschatz()` let a user-written stage name widen the allowlist. All fifteen combinations of those three cases across the three prose fields were accepted on the reviewed head. The Official vocabulary was removed from the register, the two escapes were closed, and Official situations moved to a typed channel.
-8. Even that was still a claim about a sentence space: `Du musst ein gültiges Reisedokument haben.` is composed entirely of admitted everyday words and is plainly a document requirement. **Seven versions shared one build: an unprovable assertion that no sentence formable from an allowed word set is an Official statement.** The build is now abandoned. `lib/reisebegleiter/schema.ts` has **no free-text field** — no `antwort`, `unsicherheiten` or `naechsteSchritte`. The model selects keys from two closed catalogues and names the reference; Jetnity writes every sentence. `lib/reisebegleiter/befunde.ts` holds 33 statements about Jetnity's **own** data state, each with a condition computed from the accepted projection, and only pairs of key **and** reference that `angeboteneBefunde()` computed as true may be selected. `lib/reisebegleiter/aussagen.ts` keeps the seven Official statements bound to the checked state. The three sentences above are not rejected — there is no field they fit into, and `schema.test.ts` reads that off the type instead of arguing over a sentence space.
-
-With no requirements provider active, no Official ref is ever `belegt`, so the three `geprueft_*` statements always fail closed — which is correct, because Jetnity holds no checked official truth.
-
-**Open product question for the Product Owner (DECISIONS.md ADR-0212, the catalogue/product-form decision).** The Assistant no longer formulates; it selects from Jetnity-owned statements and orders them. For the "Generated Suggestion" truth class that is the honest build, but it is a visible product change, and the value now depends on catalogue breadth rather than the model's language ability. Whether that is enough value is **not measured** — the only measurement point is the still-open paid call. Recommendation: keep the selection form for Preview/Development, use the paid call as the measurement, then decide catalogue breadth against language freedom.
-
-**Supabase boundaries after the integration.** No Supabase mutation was performed in this pass. Development holds the Assistant migration `20260917090000` (applied earlier by the Technical Lead) and Explicit Visit History; **Production holds only `20260917120000_account_visits`** and must not receive the Assistant migration in this pass. Live read-only verification was **not possible** from the agent environment — the Management API rejects its `SUPABASE_ACCESS_TOKEN` with HTTP 401 on `/v1/projects`, `/v1/projects/{ref}` and `/v1/branches/{ref}`, and the data plane exposes neither `model_usage` to `anon` nor `supabase_migrations`. The Development statements above are the Technical Lead's findings, labelled as such in the slice STATUS.
-
-**Note for the eventual Production gate:** the automated Production apply path is already hard-blocked, because `produktionsPlan()` aborts once Production carries a version beyond the Phase-3.1 boundary `20260820130000` — which `20260917120000` is. Applying `20260917090000` to Production later would also be chronologically behind that already-recorded version. Both are Technical-Lead decisions, not slice scope.
-
-**Develop-only DB gate — completed independently by the Technical Lead, do NOT repeat:** migration `20260917090000` applied on Development and recorded under the repository version; live `model_usage_funktion_werte` is exactly `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS enabled; policy `model_usage_lesen` and grants unchanged; security advisors show no new Assistant-specific finding; `model_usage` holds 0 rows on Development and Production; Development migration history corrected from the tool's temporary `20260917003925` to the repository version; the accidental unconfirmed auth user `assistant.runtime1.probe@gmail.com` was verified empty and deleted. **Production unchanged and still accepts only `reisevorschlag` / `reiseaenderung`.**
-
-**Still open and not to be reported as green:**
-
-- **No paid Preview/Development call made.** `OPENAI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` and `JETNITY_MODELL_AKTIV` are absent in the agent environment, and an account session is unreachable because `enable_confirmations = true`. The rendering of an answer is evidenced in the browser with a *supplied* answer, not a generated one. It must not be invented, and no second probe account may be created.
-- `db:rechte`, `db:rls`, `db:sicherheit`, `db:typen --pruefen`, `db:advisors` and `production:pruefen` **did not run** in the agent environment: its `SUPABASE_ACCESS_TOKEN` is rejected with HTTP 401. The CI secret is valid — `auth:pruefen` passes in CI on the same head.
-
-Production migration, Production model activation, Production OpenAI secrets and Production paid calls remain **CLOSED**.
-
-**Exact next step:** independent Technical-Lead re-review on the exact final head of the branch. No Ready, no merge, no follow-up slice by the coding agent.
-
-## 1. Latest verified runtime integration
-
-Latest runtime-changing verified main baseline:
-
-`9a80bbfe37113468f60040ed6cbedb960538b943`
-
-Commit:
-
-`Integrate Mobile Accessibility 1 (#430)`
-
-Mobile Accessibility 1 closure:
-
-- Issue #429: **CLOSED / COMPLETED**;
-- PR #430 exact accepted head `644ceacb22c672f3f9968df6731da58e0546d530`;
-- Technical-Lead FINAL PASS review `5228930437`;
-- exact-head CI #1730 / run `35141388608`: **SUCCESS**;
-- Vercel Preview `dpl_5okwKVgzvsC2SvVEVhtELfz3izpy`: **READY**;
-- PR #430: **MERGED**;
-- runtime merge `9a80bbfe37113468f60040ed6cbedb960538b943`;
-- post-merge main CI #1731 / run `35157033549`: **SUCCESS**;
-- Vercel Production `dpl_7xtTdC7Uy7JEe5U5qqWq7eoqghNP`: **READY** on exact runtime merge;
-- no active Cursor agent.
-
-Canonical new-chat checkpoint:
-
-`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md`
-
-Canonical runtime closure checkpoint:
-
-`docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`
-
-CI Auth management access is intentionally scoped to Development branch ref `yfvbxvijcorffwxbxahl`; Production project ref remains `qscbgcdmivbbnzrcyegn`. The read-only access token has a 90-day expiry and must be rotated before expiry.
-
-A later docs-only continuity merge may move repository `main`; live `main` must always be fetched before acting.
-
-## 2. Current product phase
-
-**PHASE 1 – JETNITY CORE**
-
-Goal:
-
-> Make the concrete trip reliably plannable, organized and travel-ready.
-
-V1 launches only when:
-
-> **PRODUCTION READY FOR REAL TRAVELLERS.**
-
-Feature Complete alone is insufficient.
-
-## 3. Flight provider-neutral core state
-
-### Request contract — CLOSED
-
-- canonical ordered `legs[]`;
-- 1–6 legs;
-- One-Way / Return / Multi-City through one request truth;
-- canonical stop preference preserved;
-- ranking-only context stays outside provider request truth.
-
-### Multi-provider orchestration — CLOSED
-
-- 0..N independent `FlugProvider` adapters;
-- no fake composite provider result;
-- provider-local `retrievedAt`, evidence and failure truth;
-- combined normalized `FlugOption[]` only;
-- one global provider/provision-neutral ranking;
-- result cap after ranking;
-- no implicit primary/default provider from array order;
-- no blind cross-provider itinerary dedupe;
-- provider failure isolation;
-- privacy-safe browser boundary;
-- Production hard-off + explicit `JETNITY_FLIGHT_AKTIV` fail closed.
-
-No current code selects KAYAK, Wego, Skyscanner or Duffel as Jetnity's Production default.
-
-## 4. Destination Essentials 1 — CLOSED
-
-**CLOSED / MERGED / POST-MERGE VERIFIED**
-
-Accepted behavior includes ordered stage identity, duplicate-country stage preservation, Destination Official ≠ Transit Official, fail-closed unknown/unavailable/stale/recheck states, multi-traveller/multi-document option dependence without default passport, explicit Safety/Seasonal stage refs, validated action/source separation, accessible details interaction, honest missing evidence and no commercial/provider/DB truth creation.
-
-Destination Essentials 1 is not an open V1 gap.
-
-## 5. World Map 1 / Planned Account Truth — CLOSED
-
-**CLOSED / MERGED / POST-MERGE VERIFIED**
-
-Accepted behavior:
-
-- `Deine Welt` on authenticated Account Home;
-- reuses existing `reisenLaden()` / `TripSummary` path;
-- stored stage `countryCode`, `placeId`, `latitude`, `longitude` are the only map-location truth;
-- legacy `TripSummaryStage { name, position }` remains backward-compatible and fails closed;
-- valid finite stored coordinates plot; missing/invalid coordinates do not become guessed points;
-- country is never inferred from name, coordinates or `placeId`;
-- exact non-empty `placeId` may aggregate a display place;
-- full source trip/stage provenance remains retained;
-- every unique contributing trip remains explicit by `tripId`, with no hidden `herkuenfte[0]` primary/default;
-- past dates, archived/booked/planned/draft status and stage order never imply visited;
-- confirmed visited history remains explicitly not captured instead of falsely showing `0 besucht`;
-- no external map/tile/geocoder runtime service, no new recurring cost;
-- no DB/migration/RLS/Auth/provider mutation;
-- accessible text/list fallback remains available.
-
-World Map visited/travel-history persistence is separate and remains deferred/closed.
-
-## 6. Provider Readiness foundations
-
-Repository state:
-
-- S4: **CLOSED**
-- S5-A Commercial Provenance contract: **INTEGRATED**
-- S5-B persistence: **PRODUCTION APPLIED / UNALLOCATED / 0 ROWS**
-- S6-A repository Cost Guard foundation: **CLOSED**
-- S7 Observability: **CLOSED**
-- S8 usage-policy hooks: **CLOSED**
-- Flight multi-leg contract: **CLOSED**
-- Flight multi-provider orchestration: **CLOSED**
-
-Do not add another generic provider framework unless new live evidence proves a concrete V1 need. Reuse existing seams.
-
-## 7. Production/live provider state
-
-Still intentionally closed:
-
-- real provider selection;
-- provider application/signup/contact/contract/DPA;
-- Production S6 migration/runtime/HMAC/>0 budget/binding;
-- live provider API secrets;
-- sandbox/live/paid calls requiring external access;
-- Commercial Provenance runtime writer allocation;
-- Production provider activation.
-
-The constructible Duffel Development/Test path does not make Duffel the selected Production provider.
-
-## 8. Provider selection and inquiries are deferred by Product Owner
-
-Binding direction:
-
-> Provider-Anfragen werden auf die Seite gelegt. Jetnity wird provider-neutral weitergebaut; der reale Provider oder die mehreren Provider werden später entschieden.
-
-Multiple future provider adapters may coexist behind the same Flight core. No provider is currently Primary/Default. Internal due-diligence material remains evidence only, not provider selection.
-
-## 9. Product-Owner gates A–E
-
-All remain **UNAPPROVED / CLOSED**:
-
-- **A** — provider application, signup, external contact or partner engagement;
-- **B** — Production S6 apply/runtime/HMAC/>0 budget;
-- **C** — live provider secret and first bounded real/paid call;
-- **D** — Commercial Provenance runtime writer/persistence;
-- **E** — final Production provider activation.
-
-Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve any of these gates.
-
-Assistant Truth Context 1, World Map 1 and Destination Essentials 1 do not weaken, reopen or satisfy any provider/Production gate.
-
-## 10. Active work boundary
-
-**No active implementation slice. No active Cursor coding agent.**
-
-Mobile Accessibility 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**.
-
-Canonical evidence:
-
-- task: `docs/MOBILE_ACCESSIBILITY_1_TASK_2026-09-02.md`
-- historical status/handoff/self-review/audit under the existing Mobile Accessibility 1 docs;
-- current closure: `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md`;
-- Issue #429 closed/completed;
-- PR #430 merged;
-- accepted head `644ceacb...`;
-- runtime main `9a80bbfe...`;
-- post-merge CI #1731 SUCCESS;
-- Production Vercel READY.
-
-Cursor agent `Jetnity mobile accessibility 1`, Generation 1, session `bc-30492cdc-0697-4460-90a7-c1bf950fbbe9`: **COMPLETED / NOT ACTIVE**.
-
-Completed identities remain closed and must not be reopened as unfinished runtime slices:
-
-- Assistant Truth Context 1: CLOSED;
-- World Map 1: CLOSED;
-- Destination Essentials 1: CLOSED;
-- Mobile Accessibility 1: CLOSED.
-
-Physical real-device QA remains a separate future bounded slice if selected; browser viewport/emulation evidence is not a physical-device claim.
-
-The Product Owner's direction to continue provider-neutrally does not itself authorize a particular next slice. A new Technical-Lead cycle must reconstruct live truth, assess remaining V1 gaps and persist a new bounded task before dispatch.
-
-TW-8 remains dependent on real Flight Commercial Truth and stays closed.
-
-## 11. Deferred work that must not be pulled forward accidentally
-
-Still closed/gated unless separately selected and authorized:
-
-- TW-8/TW-9 Commercial Truth closure;
-- World Map visited/travel-history persistence;
-- a real Assistant model-call/runtime/UI path beyond the closed Truth Context foundation;
-- service worker/offline/push;
+| Product-Owner Preview/Development gate | #433 |
+| Coding issue | #434 |
+| PR | #435 |
+| Accepted exact product head | `8915ef45849b6544fe6fea201fb1450392c15f83` |
+| Merge commit / post-merge main at closure | `fdbd3735c0bfd4993bd78d41a3ab70edd895988c` |
+| Accepted-head CI | #1794 / `35277776782` — SUCCESS |
+| Post-merge CI | #1795 / `35286865941` — SUCCESS |
+| Post-merge Vercel Production | `dpl_Dni4i6FZDYKvabhEshEra4VDQUa7` — READY |
+| Guardian | exact-head GUARDIAN PASS |
+| Cursor agent | `Jetnity assistant runtime 1`, Generation 1, session `bc-c94275d6-9625-464f-9cbb-ea932c703043` — COMPLETED / NOT ACTIVE |
+
+Accepted runtime contract:
+- in-trip, account-trip-only Assistant;
+- accepted privacy-minimized Assistant truth projection reused;
+- no guest Assistant;
+- generated/advisory only;
+- no trip auto-apply;
+- no provider/live official/safety/seasonal fetch;
+- no hidden fallback/retry;
+- visible content is server-rendered from closed Jetnity-owned catalogues selected by the model;
+- truth classes remain structurally separate;
+- Multi-Traveller / Multi-Citizenship / Multi-Document remain peer options;
+- no default/primary/preferred credential inference.
+
+## 2. Paid Preview/Development smoke — PASS
+
+Exactly one successful bounded paid call was executed:
+- model: `gpt-5.6-terra`;
+- function: `reisebegleiter`;
+- kind: `konto`;
+- result: `erfolg`;
+- input: **2196 tokens**;
+- cached: **0**;
+- output: **102 tokens**;
+- total: **2298 tokens**;
+- runtime: **3387 ms**;
+- cost: **5616 micro-USD = USD 0.005616**;
+- persisted Development usage ID: `70608b03-dbcd-4d16-8ad3-95a350ed48ba`;
+- reservation-before-call and completion persistence verified.
+
+After the call:
+- Preview model kill switch returned to fail-closed / inactive;
+- final diagnostic: HTTP 425 / `model-inactive`;
+- temporary smoke routes/workflows removed;
+- temporary smoke branches had 0 file differences versus the accepted product head after cleanup.
+
+## 3. Supabase / Production truth after #435
+
+Development:
+- ref `yfvbxvijcorffwxbxahl`;
+- Assistant migration `20260917090000_modell_reisebegleiter` applied;
+- contains the one accepted smoke `reisebegleiter` usage row.
+
+Production:
+- ref `qscbgcdmivbbnzrcyegn`;
+- `model_usage`: **0 total / 0 reisebegleiter** at post-merge verification;
+- Assistant migration `20260917090000_modell_reisebegleiter`: **NOT applied**;
+- later `20260917120000_account_visits`: applied;
+- no Production Assistant call;
+- no Production model activation;
+- merge to `main` did not auto-apply the Assistant migration.
+
+Any future Production Assistant migration/model activation remains a special Product-Owner gate and requires a forward-only migration/history decision.
+
+## 4. Next known candidate — PR #453
+
+PR **#453 — Define Jetnity Multi-Agent Operating System**
+
+Last persisted branch before this checkpoint:
+- branch: `docs/jetnity-multi-agent-operating-system`;
+- observed head: `ab6a773705b96f0545238a189cc6c0bda9e9318c`;
+- Draft;
+- created before #435 merged;
+- expected to be stale/behind current `main` until live rechecked.
+
+Required next-chat handling:
+1. re-fetch current `main`;
+2. re-fetch #453 exact base/head;
+3. inspect merge-base/ahead/behind and changed files;
+4. read proposed `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
+5. reconcile #453 with current main;
+6. add it to `JETNITY_START_HERE.md` mandatory startup list only as part of actual integration;
+7. run fresh exact-head docs/CI/Vercel/Guardian/TL gates;
+8. no automatic follow-up slice after #453.
+
+## 5. Current broader product state
+
+Closed/core surfaces include:
+- Flight Multi-Leg;
+- Flight 0..N Multi-Provider orchestration;
+- Destination Essentials 1;
+- World Map planned-account truth foundation;
+- Realistic World Cartography 1;
+- Assistant Truth Context 1;
+- Assistant Runtime 1;
+- Mobile Accessibility 1.
+
+Product directive #441 remains broader than cartography because explicit user-confirmed historical visit truth / Explicit Visit History 1 is still a separate future capability.
+
+Planned ≠ visited.
+
+## 6. Provider / Production gates
+
+Provider inquiries remain deferred by Product Owner.
+
+Still closed unless explicitly approved:
+- provider application/signup/contact/partner engagement;
+- Terms/DPA/contract acceptance;
+- real provider/live secret activation;
+- paid/live provider calls;
+- Production S6 runtime/HMAC/>0 budget;
+- Commercial Provenance runtime writer;
+- final Production provider activation;
+- Production Assistant migration/model activation;
 - public indexing/domain cutover;
-- payments;
-- provider activation;
-- any follow-up Destination Essentials expansion;
-- any follow-up World Map expansion.
+- sensitive passport/MRZ/scan/biometric/health expansion.
 
-No later V1 slice is automatically authorized by this status document.
+Generic `weiter`, `bauen`, `start` or Cursor authorization does not approve a special gate.
 
-## 12. Hard Traveller truth
+## 7. Hard Traveller truth
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete Optionen.**
 
-Never infer a default/primary/preferred citizenship or passport, array order as truth, Residence → Citizenship or Issuer Country → Citizenship.
+Never infer default/primary/preferred citizenship or passport, array order as truth, Residence → Citizenship or Issuer Country → Citizenship.
 
-## 13. Truth architecture
+## 8. Truth architecture
 
 > **OFFICIAL TRUTH ≠ PROVIDER TRUTH ≠ JETNITY RECOMMENDATION ≠ COMMUNITY OPINION ≠ GENERATED SUGGESTION.**
 
 `unknown ≠ not_required`. `unavailable ≠ not_required`. `stale ≠ current`. LLM ≠ Official Truth.
 
-Planned/account-trip evidence ≠ visited. Missing coordinate/country/place evidence stays missing.
+Planned/account-trip evidence ≠ visited.
 
-Assistant Truth Context adds no competing truth class: it only projects allowed existing truth, and its Generated Suggestion lane remains separate.
-
-## 14. Agent / review governance
+## 9. Agent / review governance
 
 - ChatGPT is the overarching Technical Lead.
-- Cursor agents implement versioned slices.
+- Cursor agents implement bounded versioned slices.
+- Grok/Guardian is an independent challenge/evidence layer.
+- Many readers / one writer.
 - Agent self-review is never Technical-Lead PASS.
 - Changed heads invalidate previous exact-head gates.
-- CHANGES REQUIRED returns to the same logical Cursor agent/session.
-- Agents do not mark Ready and do not merge.
-- Final independent review, gate validation and integration belong to the Technical Lead.
+- CHANGES REQUIRED returns to the same logical agent/session.
+- Cursor and Guardian do not mark Ready and do not merge.
+- Technical Lead may merge normal, fully reviewed, scope-faithful work under standing authorization.
+- Product-Owner special gates remain explicit.
 - No automatic follow-up slice.
+- Relevant continuity must be persisted in GitHub/repository evidence.
 
-## 15. Critical V1 gaps still open
+## 10. First action for a new chat
 
-Principally open:
+Read:
+1. `JETNITY_START_HERE.md`;
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
+3. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`;
+4. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`;
+5. this file;
+6. `JETNITY_HANDOFF.md`.
 
-- real Flight Commercial Truth / provider-access and contract truth;
-- TW-8/TW-9 after real Commercial Truth;
-- real Hotel Commercial Truth;
-- Activities real path or explicit launch exception if externally blocked;
-- real Official Entry Requirements Evidence;
-- Temporal Readiness on real evidence;
-- Mobile/Desktop/PWA polish, accessibility and real-device QA;
-- real intelligent-assistant runtime/model-call wiring on top of the closed Truth Context foundation;
-- V1 privacy/legal/ops/monetization minimum;
-- V1 Definition of Done and Release Readiness Gate.
+Then reconstruct live state before changing anything.
 
-Basic World Map 1, Destination Essentials 1 and Assistant Truth Context 1 are no longer open gaps.
-
-## 16. Assistant Truth Context 1 — CLOSED
-
-**CLOSED / MERGED / POST-MERGE VERIFIED**
-
-Canonical closure checkpoint:
-
-`docs/CHATGPT_TECHNICAL_LEAD_ASSISTANT_TRUTH_CONTEXT_1_CLOSED_2026-09-02.md`
-
-Accepted implementation:
-
-- `lib/reisebegleiter/kontext.ts` — pure deterministic privacy-minimized projection;
-- `lib/reisebegleiter/kontext.test.ts` — privacy, order-independence, official-state, destination/transit, multi-credential and missing-evidence regressions;
-- ADR-0211;
-- no second Official/Safety/Seasonal/Traveller engine; existing canonical helpers reused.
-
-Technical-Lead review history:
-
-- CHANGES REQUIRED `5093789177` on rejected exact head `42cd37fa...`:
-  1. remove Official `contextFingerprint` from the serialized Assistant allowlist;
-  2. remove inferred Transit→Destination-Stage binding by country equality.
-- same logical agent/session corrected both findings;
-- FINAL PASS `5093904909` on exact accepted head `bce6f3d8...`.
-
-Fresh gates:
-
-- exact accepted-head CI #1719: SUCCESS;
-- recovery PR #427 CI #1720: SUCCESS;
-- post-merge main CI #1721: SUCCESS on exact runtime merge `cd8f10da...`;
-- Vercel Production exact runtime merge: SUCCESS, deployment `DAd1ZY4aUex4woNecuLHDr6TWLRA`.
-
-Accepted privacy/truth rules:
-
-- no passport number/MRZ/scan/biometric/health/auth/account/commercial/provider-raw/secret leakage;
-- no Official `contextFingerprint` across the Assistant allowlist;
-- Multi-Traveller/Multi-Citizenship/Multi-Document remain peer options;
-- no array-order default/primary/preferred semantics;
-- Destination Official and Transit Official remain separate;
-- Transit `boundStageIds` stays empty absent a canonical Transit↔Stage relation;
-- unknown/unavailable/stale/recheck remain fail-closed and distinct;
-- generated suggestion remains a separate, unfilled class.
-
-Not introduced:
-
-- OpenAI / Modellcall / new `Modellfunktion`;
-- Supabase migration/schema/RLS/grant/function;
-- Production activation / kill-switch change;
-- Provider/secret/paid/live call;
-- UI / trip mutation / apply;
-- World Map or Destination Essentials expansion.
-
-A future actual Assistant runtime/model-call path remains a separate gated V1 slice and is not authorized by this closure.
-
-**LIVE-EVIDENCE WINS. ASSISTANT TRUTH CONTEXT 1 CLOSED. ISSUE #425 CLOSED. RECOVERY PR #427 MERGED. RUNTIME MAIN `cd8f10da...` POST-MERGE VERIFIED. WORLD MAP 1 CLOSED. DESTINATION ESSENTIALS 1 CLOSED. FLIGHT MULTI-PROVIDER CORE CLOSED. NO ACTIVE AGENT. VISITED PERSISTENCE REMAINS DEFERRED. PROVIDER SELECTION + CONTACT DEFERRED. NO REAL PROVIDER ACTIVE. EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. PR #435 MERGED + POST-MERGE VERIFIED. NO ACTIVE CURSOR CODING AGENT. PR #453 IS THE NEXT KNOWN DOCS-GOVERNANCE CANDIDATE BUT MUST BE RECONCILED WITH CURRENT MAIN. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**

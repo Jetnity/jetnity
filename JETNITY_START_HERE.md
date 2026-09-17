@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 17. September 2026  
-Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
+Stand: 18. September 2026  
+Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -13,7 +13,8 @@ Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MOBILE ACCESSIBILITY 1 C
 
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
 1a. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
-2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← **canonical new-chat continuity checkpoint**
+2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` ← **canonical new-chat continuity checkpoint; supersedes the 2026-09-17 checkpoint for current transition state**
+2a. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← historical checkpoint; keep for audit/history, not current-state authority
 3. `docs/ACTIVE_WORK_STATUS.md`
 3a. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
 3b. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for current state by the closure checkpoint
@@ -59,11 +60,11 @@ Native apps, Traveller Network, Creator/Partner Ecosystem, own data/intelligence
 
 ## 3. Letzte verifizierte runtime-verändernde Main-Baseline
 
-`9a80bbfe37113468f60040ed6cbedb960538b943`
+`fdbd3735c0bfd4993bd78d41a3ab70edd895988c`
 
 Commit:
 
-`Integrate Mobile Accessibility 1 (#430)`
+`Merge Assistant Runtime 1 (#435)`
 
 Mobile Accessibility 1 closure evidence:
 
@@ -140,7 +141,27 @@ A later docs-only continuity merge may move repository `main`; **aktuelles `main
 - passport numbers, MRZ, scans, biometrics, health records, auth/account identifiers, commercial/provider raw/secret fields and Official `contextFingerprint` do not cross the Assistant allowlist;
 - no model call, no new `Modellfunktion`, no DB/Auth/provider/Production activation, no UI/mutation.
 
-The broader real Assistant runtime/model-call V1 gap remains open and separately gated.
+Assistant Runtime 1 has since closed the first real bounded model-call path. Any broader Assistant expansion or any Production Assistant migration/model activation remains separately gated.
+
+### Assistant Runtime 1 — CLOSED
+
+- PR #435 merged on accepted exact head `8915ef45849b6544fe6fea201fb1450392c15f83`;
+- post-merge main at closure: `fdbd3735c0bfd4993bd78d41a3ab70edd895988c`;
+- Guardian exact-head PASS and Technical-Lead PASS completed;
+- exactly one bounded paid Preview/Development smoke call succeeded;
+- `gpt-5.6-terra`, 2196 input / 0 cached / 102 output tokens, USD 0.005616;
+- reservation-before-call and persisted completion/accounting verified;
+- Development contains exactly the smoke `reisebegleiter` usage row from accepted evidence;
+- Production contains 0 model usage rows from this slice;
+- Production Assistant migration `20260917090000_modell_reisebegleiter` remains unapplied;
+- Production model activation remains closed;
+- final paid Preview branch returned to fail-closed / model inactive;
+- temporary smoke routes/workflows were removed;
+- no provider, Official runtime fetch, trip auto-apply or Production DB/model gate was crossed.
+
+Canonical current transition checkpoint:
+
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`
 
 ### Mobile Accessibility 1 — CLOSED
 
@@ -218,7 +239,7 @@ Assistant Truth Context 1, Destination Essentials 1 and World Map 1 remain close
 
 Physical real-device QA remains distinct from the browser-emulation evidence accepted for Mobile Accessibility 1 and requires a new bounded slice if selected later.
 
-A real Assistant model-call/runtime wiring remains deliberately separate and was not opened by Assistant Truth Context 1.
+Assistant Runtime 1 is now **CLOSED / MERGED / POST-MERGE VERIFIED**. Any future Assistant expansion, Production migration/model activation, broader tool use or new sensitive-data scope requires a fresh bounded slice and any applicable Product-Owner gate.
 
 The next Technical-Lead cycle must first reconstruct live state and select the smallest responsible remaining provider-independent V1 gap. The Product Owner's general direction to keep building provider-neutrally does not bypass slice precheck, architecture/truth review or special gates.
 
@@ -264,10 +285,9 @@ Principally open:
 - real Official Entry Requirements Evidence;
 - Temporal Readiness on real evidence;
 - broader Mobile/Desktop/PWA polish, accessibility and real-device QA;
-- real intelligent-assistant runtime/model-call wiring using the closed Truth Context foundation;
 - V1 account/privacy/legal/ops/monetization minimum;
 - V1 Definition of Done and Release Readiness Gate.
 
-Destination Essentials 1, basic World Map 1 and Assistant Truth Context 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
+Destination Essentials 1, basic World Map 1, Assistant Truth Context 1 and Assistant Runtime 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
 
-**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION A–E GATES CLOSED. NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**
+**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. ASSISTANT RUNTIME 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION GATES CLOSED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**
