@@ -680,8 +680,8 @@ describe('Die Grundkarte ist belegte, lokale Vektorgeografie', () => {
 
   /**
    * Der Gewinn dieser Etappe ist Geometrie, nicht Farbe. Die abgeloeste
-   * Handzeichnung hatte elf Formen mit rund 130 Stuetzpunkten; alles darunter
-   * waere wieder eine Skizze.
+   * Handzeichnung hatte elf Formen mit 192 Stuetzpunkten; alles in dieser
+   * Groessenordnung waere wieder eine Skizze.
    */
   test('die Geometrie ist deutlich feiner als die abgeloeste Handzeichnung', () => {
     const landPunkte = WORLD_MAP_LAND_PFADE.reduce((summe, pfad) => summe + koordinaten(pfad).length, 0)
