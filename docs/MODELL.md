@@ -411,21 +411,26 @@ Den **Zustand** dieses Eintrags schreibt nicht das Modell. Er wird in `lib/reise
 | ein unerwartetes Feld im Objekt | `z.strictObject`; ein Modell, das `lagen` mitschickt, hat die Regeln nicht verstanden |
 | eine Aussage über den Buchungszustand | die Projektion trägt keinen – auch „noch nicht gebucht“ ist erfunden |
 | eine Änderung im Perfekt („ich habe … hinzugefügt“) | dieser Weg hat keine Persistenz |
-| „visumfrei“, „kein Visum“, „keine Impfung“, „kein Transitvisum“ … | wenn die Auskunft keine **passende** geprüfte amtliche Anforderung benennt oder zugleich auf eine ungeprüfte zeigt |
+| jede harte Aussage über eine amtliche Anforderung – behauptet oder verneint | wenn die Auskunft keine **passende** geprüfte amtliche Anforderung benennt oder zugleich auf eine ungeprüfte zeigt |
 | „garantiert“, „definitiv“, „amtlich bestätigt“, „nicht erforderlich“, „problemlos einreisen“ | immer – diese Formulierungen sagen nicht, worüber sie sprechen, und lassen sich deshalb keiner Anforderung zuordnen |
 
-**Gewissheit hängt an der genannten Lage und an ihrem Anforderungstyp.** Zwei Aufwertungen sind damit ausgeschlossen. Erstens über die Reise: Es genügt nicht, dass irgendwo im Kontext eine geprüfte Official-Lage steht – die Auskunft muss den tragenden Bezug nennen, und keiner ihrer genannten Official-Bezüge darf unbelegt sein. Zweitens über den Anforderungstyp: Eine geprüfte Impfanforderung belegt kein Visum, eine geprüfte Transitlage kein Zielvisum.
+**Eine harte amtliche Aussage braucht eine passende geprüfte Grundlage.** Erkannt wird sie satzweise aus drei Signalen:
 
-Dafür trägt `BegleiterBezug` die maschinenlesbare Anforderungsidentität – `requirementType`, `scope`, `visaMode` – unverändert aus der akzeptierten Projektion. Sie wird ausdrücklich **nicht** aus dem Anzeigetext zurückgelesen: `titel` ist lokalisierte Copy, und eine Textänderung darf keine Wahrheitsentscheidung verschieben.
-
-| Formulierung | getragen von |
+| Signal | Beispiele |
 | --- | --- |
-| „visumfrei“, „kein Visum“, „ohne Visum“ | `visa` mit `scope: destination` |
-| „kein Transitvisum“, „transitvisumfrei“ | `transit`, oder `visa` mit `scope: transit` |
-| „keine Impfung“ | `vaccination` |
-| „kein Gesundheitsnachweis“, „kein Attest“ | `vaccination`, `health`, `health_document` |
-| „keine eTA“, „keine elektronische Reisegenehmigung“ | `electronic_travel_authorization` |
-| alles übrige aus der Liste oben | nichts – Ablehnung |
+| Modalität | „du musst“, „du brauchst“, „ist erforderlich“, „ist vorgeschrieben“, „kein“, „ohne“, „…frei“ |
+| Bereich | Visum, Transit, Reisegenehmigung, Passgültigkeit, freie Passseiten, Reisepass, Ausweis, Impfung, Gesundheitsdokument, Gesundheitsanforderung, Einreiseformular, Versicherung, Rück-/Weiterreise, Buchungsnachweis, finanzielle Mittel, sonstige Einreiseanforderung |
+| Vorbehalt | „ob“, „prüfe“, „unklar“, „nicht geprüft“, „möglicherweise“, „falls“ |
+
+Erst Modalität **und** Bereich **ohne** Vorbehalt ergeben eine harte Aussage. Sie darf nur bestehen bleiben, wenn die Auskunft eine geprüfte amtliche Lage **desselben Bereichs** benennt und keiner ihrer genannten Official-Bezüge ungeprüft ist.
+
+Damit sind drei Umgehungen geschlossen: über die Reise (irgendeine geprüfte Lage im Kontext), über den Anforderungstyp (eine geprüfte Impfanforderung trägt kein Visum) und über die Richtung der Aussage (eine Anforderung lässt sich behaupten wie bestreiten). Die Bereichsliste folgt der geschlossenen `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie; ein Test prüft, dass jeder Typ von mindestens einem Bereich getragen wird.
+
+Die Zuordnung benutzt die maschinenlesbare Anforderungsidentität aus `BegleiterBezug` – `requirementType`, `scope`, `visaMode` –, niemals den Anzeigetext: `titel` ist lokalisierte Copy, und eine Textänderung darf keine Wahrheitsentscheidung verschieben.
+
+Erhalten bleibt, was ein ehrlicher Assistent schreiben muss: „Prüfe deine Passgültigkeit in der Reisevorbereitung“, „Ob ein Visum nötig ist, ist derzeit nicht geprüft“, „Du musst die Etappen noch mit Daten versehen“. Keiner dieser Sätze behauptet eine Anforderung.
+
+**Heute ist das eine Sperre, keine Auswahl.** Ohne aktiven Requirements-Provider liefert `requirementsLokalFuerReise()` nur `provider_unavailable`, und kein Official-Bezug ist je `belegt`. Jede harte amtliche Aussage fällt deshalb durch – korrekt, denn Jetnity hat keine geprüfte amtliche Wahrheit. Mit einem echten Provider öffnet sich der Weg genau dort, wo die Lage geprüft ist.
 
 Enthält ein Text mehrere Gewissheiten, braucht jede ihren eigenen Beleg. Ohne Gewissheitsformulierung bleibt der Verweis auf eine offene Lage zulässig; das ist der Normalfall.
 

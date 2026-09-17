@@ -18,12 +18,12 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 
 | | |
 | --- | --- |
-| Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
+| Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (durch Rebase abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | der Review-Fix-Commit auf `74577e313cc5af9a0b84662ae2044775c88cec94` |
-| Merge-Base mit `origin/main` | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Behind / Ahead gegen `origin/main` | **8 behind / 14 ahead** – die 8 sind der Stand von `main`, den dieser Branch nicht enthält |
-| Drift | **`origin/main` ist gewandert**: `15aa125a` → `03842a64` („Merge World Map Polish 2 (#437)", 8 Commits). Keine Dateiüberschneidung mit diesem Branch; die Merge-Base bleibt `15aa125a`, der Branch sitzt also unverändert auf seiner Dispatch-Basis und ist damit 8 hinter dem aktuellen `main`. Ein Rebase ist eine Entscheidung des Technical Lead und wurde nicht vorgenommen |
+| **Letzter laufzeitändernder Head** | der Review-Fix-Commit „Guard Official hard truth across the whole requirement taxonomy“ |
+| Merge-Base mit `origin/main` | `03842a64698cae1f4f20f54b7e6aa5016982562c` – der Branch wurde auf den aktuellen `main` rebased |
+| Behind / Ahead gegen `origin/main` | **0 behind / 16 ahead** |
+| Drift | **keine.** `origin/main` war auf `03842a64` gewandert (World Map Polish 2, #437, 8 Commits); der Branch ist darauf rebased worden. Der Rebase lief ohne Konflikt, beide Seiten sind vollständig vorhanden (World-Map- und Assistant-Dateien geprüft), und der Diff gegen `origin/main` enthält ausschliesslich den Assistant-Slice |
 
 Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
 Dokumentations-Commit über dem letzten Code-Commit und ändert keine Laufzeit:
@@ -43,10 +43,13 @@ Commits auf dem Branch:
 2. `e14d8188` – Add bounded truth-aware in-trip Assistant runtime
 3. `8bb6ea98` – Add adversarial tests for the Assistant runtime
 4. `ea7cf8ec` – Add browser evidence for the Assistant surface
-5. `31817cce` – Review-Fix 1: Gewissheit an die genannte amtliche Lage gebunden
-6. `c60e7659` – Review-Fix 2: unerwartete Ausgabefelder werden abgelehnt
-7. `f77046f6` – Review-Fix 3: Gewissheit an den passenden Anforderungstyp gebunden
-8. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
+5. Review-Fix 1: Gewissheit an die genannte amtliche Lage gebunden
+6. Review-Fix 2: unerwartete Ausgabefelder werden abgelehnt
+7. Review-Fix 3: Gewissheit an den passenden Anforderungstyp gebunden
+8. Review-Fix 4: harte amtliche Aussagen über die ganze Anforderungstaxonomie
+9. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
+
+Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `03842a64` geändert; Reihenfolge und Inhalte sind unverändert.
 
 ---
 
@@ -97,7 +100,7 @@ Commits auf dem Branch:
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3336 Tests, 592 Suites, 0 Fehler |
+| `npm test` | **grün** – 3427 Tests, 597 Suites, 0 Fehler (einschliesslich der von `main` übernommenen World-Map-Tests) |
 | `npm run typecheck` | **grün** |
 | `npm run lint` | **0 Fehler**, 138 Warnungen – identisch zur Basis, keine davon in neuen Dateien |
 | `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |

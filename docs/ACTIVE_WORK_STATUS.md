@@ -13,24 +13,28 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Product-Owner gate | #433 – **Preview/Development only** |
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
-| Canonical base | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
+| Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
+| Current base | `main@03842a64698cae1f4f20f54b7e6aa5016982562c` (rebased) |
 | **Last runtime-changing head** | the two review-fix commits on top of `3775d9803bf01123b13f16402885b1a5d33bb71e` |
 | **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
 | Merge-base / behind / ahead | `15aa125a` / **8 behind** / 14 ahead against the current `origin/main` |
-| Drift | `origin/main` has moved from `15aa125a` to `03842a64` (World Map Polish 2, #437, 8 commits). **No file overlap** with this branch; merge-base stays `15aa125a`. Rebasing is a Technical-Lead decision and was not performed |
+| Drift | none. The branch was rebased onto `03842a64` (World Map Polish 2, #437) without conflict; both change sets are fully present and the diff against `origin/main` contains only the Assistant slice |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Decision | ADR-0212 |
 | Status doc | `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` |
 | Handoff | `docs/ASSISTANT_RUNTIME_1_HANDOFF_2026-09-17.md` |
 | Self-review | `docs/ASSISTANT_RUNTIME_1_SELF_REVIEW_2026-09-17.md` |
 
-Repository gates on the exact head are green: `npm test` 3336/3336, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview; the identifiers of the latest run are in the checks of PR #435.
+Repository gates on the exact head are green: `npm test` 3427/3427, `typecheck`, `lint` (0 errors), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, plus 50 browser checks via `npm run nachweis:reisebegleiter` on mobile and desktop. Every head so far passed exact-head CI (both jobs, including `auth:pruefen` against `supabase/config.toml`) and produced a READY Vercel Preview; the identifiers of the latest run are in the checks of PR #435.
 
-**Technical-Lead re-reviews on `3775d980` and `74577e31` — three truth findings, all fixed in this session:**
+**Technical-Lead re-reviews on `3775d980`, `74577e31` and `f46d43a0` — four truth findings, all fixed in this session:**
 
 1. Assistant certainty was unlocked globally by any current Official record in the context. It is now bound to the Official evidence the answer **names**: at least one named `belegt` Official ref, and no named unbelegt one.
 2. Server-side output parsing stripped unexpected properties. It now rejects them (`z.strictObject`), so a state-bearing extra field such as `lagen` ends as class `schema` instead of a cleaned-up suggestion.
 3. Certainty was bound to a named Official ref but not to its **requirement type**, so a current vaccination fact could carry “kein Visum erforderlich”. `BegleiterBezug` now carries the machine-readable requirement identity (`requirementType`, `scope`, `visaMode`) straight from the accepted projection — never read back from localized display copy — and every certainty pattern names the requirement type that can carry it. Unbindable phrases (“garantiert”, “definitiv”, “amtlich bestätigt”, “nicht erforderlich”, “problemlos einreisen”) always fail closed. Twelve adversarial regressions cover the constellations; nine of them fail against the respective previous rule.
+4. The binding was requirement-accurate but covered only five domains and only negations, so an asserted requirement (“Du brauchst eine Reiseversicherung”, “Dein Pass muss sechs Monate gültig sein”) fell through the net. Detection is now sentence-wise over modality × domain × hedge, spans the complete `OFFICIAL_REQUIREMENT_TYPES` taxonomy in both directions, and uses `other_entry_requirement` as the catch-all. A coverage test asserts every requirement type is carried by some domain. Ordinary suggestions (“Prüfe deine Passgültigkeit in der Reisevorbereitung”) stay valid.
+
+With no requirements provider active, no Official ref is ever `belegt`, so this is currently a **complete block** on official statements rather than a filter — which is correct, because Jetnity holds no checked official truth.
 
 **Develop-only DB gate — completed independently by the Technical Lead, do NOT repeat:** migration `20260917090000` applied on Development and recorded under the repository version; live `model_usage_funktion_werte` is exactly `reisevorschlag`, `reiseaenderung`, `reisebegleiter`; RLS enabled; policy `model_usage_lesen` and grants unchanged; security advisors show no new Assistant-specific finding; `model_usage` holds 0 rows on Development and Production; Development migration history corrected from the tool's temporary `20260917003925` to the repository version; the accidental unconfirmed auth user `assistant.runtime1.probe@gmail.com` was verified empty and deleted. **Production unchanged and still accepts only `reisevorschlag` / `reiseaenderung`.**
 

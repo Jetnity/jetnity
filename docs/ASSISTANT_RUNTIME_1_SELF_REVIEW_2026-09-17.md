@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: die Review-Fix-Commits auf `3775d980` und `74577e31` (siehe Abschnitt 0). Der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: die Review-Fix-Commits auf `3775d980`, `74577e31` und `f46d43a0` (siehe Abschnitt 0). Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -9,7 +9,7 @@ Letzter laufzeitändernder Head: die Review-Fix-Commits auf `3775d980` und `7457
 
 ## 0. Was das Re-Review gefunden hat, das dieses Dokument nicht gefunden hatte
 
-Drei Wahrheitsbefunde in zwei Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
+Vier Wahrheitsbefunde in drei Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
 
 **Befund 1 – eine fremde amtliche Lage schaltete Gewissheit global frei.** `auskunftPruefen()` prüfte `bezuege.some(bezug => bezug.art === 'official' && bezug.belegt)` über den **ganzen Kontext** und gab bei einem Treffer sofort frei. Eine aktuelle Passgültigkeitsprüfung hätte damit den Satz „kein Visum erforderlich" getragen, während die Visumslage `unknown` ist – genau die Aufwertung von `unknown` zu `not_required`, gegen die dieser Slice gebaut ist.
 
@@ -25,7 +25,15 @@ Warum ich es nach Befund 1 nicht selbst gesehen habe: Ich habe die Korrektur als
 
 Die Lösung trägt die maschinenlesbare Anforderungsidentität (`requirementType`, `scope`, `visaMode`) aus der Projektion in `BegleiterBezug` und gibt jedem Gewissheitsmuster ein Prädikat. Formulierungen ohne erkennbaren Gegenstand – „garantiert", „definitiv", „amtlich bestätigt", „nicht erforderlich", „problemlos einreisen" – bekommen kein Prädikat und fallen immer durch.
 
-Alle drei Befunde haben dieselbe Ursache: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
+**Befund 4 (Head `f46d43a0`) – die Bindung war bereichsgenau, aber die Bereiche waren unvollständig, und sie kannten nur die Verneinung.** Gedeckt waren fünf Bereiche; die geschlossene Taxonomie hat sechzehn. „Du brauchst eine Reiseversicherung", „Dein Pass muss sechs Monate gültig sein", „Du musst einen Rückflug nachweisen" fielen durch das Netz – nicht durch die Prüfung.
+
+Warum ich es nicht selbst geschlossen habe, obwohl ich es **gesehen** hatte: Ich hatte die Lücke in Abschnitt 2.1 dieses Dokuments als bekannte Grenze notiert und es dabei belassen. Eine erkannte Wahrheitslücke als „eingestandene Grenze" zu dokumentieren ist nur dann redlich, wenn sie sich nicht schliessen lässt. Hier liess sie sich schliessen – es gibt eine geschlossene Taxonomie im Repository, gegen die sich prüfen lässt. Dokumentieren war hier der bequemere Weg, nicht der richtige.
+
+Der zweite Teil des Befundes ist grundsätzlicher: Alle bisherigen Muster waren Verneinungen. Eine Anforderung lässt sich aber genauso behaupten wie bestreiten, und die erfundene Behauptung ist die gefährlichere von beiden – sie schickt jemanden zum Konsulat oder lässt ihn eine Versicherung kaufen, die niemand verlangt.
+
+Die Lösung ist keine längere Wortliste, sondern eine andere Zerlegung: Modalität × Bereich × Vorbehalt, satzweise. Damit fällt die Richtung der Aussage weg als Unterscheidung, und die Bereichsliste lässt sich gegen `OFFICIAL_REQUIREMENT_TYPES` auf Vollständigkeit prüfen.
+
+**Die gemeinsame Wurzel aller vier Befunde.** Ich habe jede Korrektur als Schliessung des *genannten Falls* gedacht statt als Frage nach der nächsten Umgehungsdimension. Die vier Runden haben nacheinander erweitert: Kontext → genannter Bezug → Anforderungstyp → Gesamttaxonomie und Aussagerichtung. Jede dieser Stufen war nach der vorigen absehbar, wenn man die richtige Frage stellt: nicht „schliesst die Regel den genannten Fall?", sondern „worüber lässt sie sich noch umgehen?". Dazu kommt derselbe Fehler wie in Befund 1 und 2: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
 
 ---
 
@@ -47,7 +55,10 @@ Alle drei Befunde haben dieselbe Ursache: Ich habe die strukturelle Schranke (�
 | „visumfrei" bei unbelegter Lage sagen | Ablehnung; erst ein **belegter Official**-Bezug öffnet den Weg, eine belegte Etappe oder Safety-Lage nicht | ebd. |
 | Den Zustand eines Bezugs aus dem Modelltext übernehmen | das Feld existiert nicht; ein trotzdem mitgeschicktes Feld lässt die ganze Auskunft als `schema` durchfallen | `erzeugen.test.ts`, „zusätzliches zustandstragendes Feld" |
 | Gewissheit über eine Lage behaupten, die die Auskunft nicht belegt | Ablehnung: eine fremde belegte Official-Lage im Kontext schaltet nichts frei, und ein zugleich genannter unbelegter Bezug kippt eine sonst getragene Gewissheit | `pruefung.test.ts`, „Gewissheit ist an die benannte amtliche Lage gebunden" |
-| Gewissheit mit einer fachfremden Anforderung belegen (Impfung trägt Visum, Transit trägt Zielvisum) | Ablehnung: jedes Muster nennt den Anforderungstyp, der es tragen kann; nicht zuordenbare Formulierungen fallen immer durch | `pruefung.test.ts`, „Gewissheit ist an den passenden Anforderungstyp gebunden" |
+| Gewissheit mit einer fachfremden Anforderung belegen (Impfung trägt Visum, Transit trägt Zielvisum) | Ablehnung: jeder Bereich nennt die Anforderungstypen, die ihn tragen können; nicht zuordenbare Formulierungen fallen immer durch | `pruefung.test.ts`, „Gewissheit ist an den passenden Anforderungstyp gebunden" |
+| Eine Anforderung **behaupten** statt verneinen („Du brauchst eine Reiseversicherung") | Ablehnung in allen sechzehn Bereichen der Taxonomie; je Bereich vier Regressionen (fremder Beleg, kein Beleg, passender Beleg, passender aber ungeprüfter Beleg) | `pruefung.test.ts`, „Harte amtliche Aussagen über die geschlossene Anforderungstaxonomie" |
+| Einen Anforderungstyp finden, den kein Bereich kennt | Vollständigkeitsnachweis gegen `OFFICIAL_REQUIREMENT_TYPES` | ebd., „jeder Anforderungstyp der Taxonomie kann von einem Bereich getragen werden" |
+| Die Sperre mit Fehlalarmen unbrauchbar machen | neun typische ehrliche Sätze bleiben zulässig, darunter „Prüfe deine Passgültigkeit in der Reisevorbereitung" und „Du musst die Etappen noch mit Daten versehen" | ebd., „Beschreibungen, Fragen und Vorschläge bleiben zulässig" |
 | Zwei Gewissheiten in einem Text, nur eine belegt | Ablehnung der ganzen Auskunft | ebd., „jede Gewissheit im Text braucht ihren eigenen Beleg" |
 | Passnummer, MRZ, Buchungs-URL, Secret, E-Mail, Fingerprint, Preis, Koordinate, Ortsschlüssel in den Prompt bringen | zehn Leck-Marken, keine erreicht den Prompt oder die angezeigten Bezüge | `nutzlast.test.ts` |
 | Ein sensibles Feld über eine später erweiterte Projektion einschmuggeln | die Reissleine trifft Feldnamen und Wertmuster in jeder Tiefe; die Nutzlast schreibt unbekannte Felder ohnehin nicht ab | ebd. |
@@ -70,7 +81,8 @@ Diese Punkte sind echte Schwächen, keine rhetorischen.
 
 - **Fehlalarm:** „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst" ist ehrlich und fällt durch. Gegenmittel: Die Systemregeln verbieten dieselben Wörter ausdrücklich. Ein regelkonformes Modell löst den Filter nicht aus. Wie oft ein echtes Modell daran scheitert, ist **nicht gemessen** – dafür wäre ein bezahlter Aufruf nötig.
 - **Lücke:** Eine Verfügbarkeits- oder Preisbehauptung in freier Formulierung („dieses Hotel ist im April meist noch frei") erkennt er nicht. Das ist dieselbe eingestandene Grenze wie ADR-0054. Die Preisziffer-Erkennung greift, die Verfügbarkeitsaussage nicht.
-- **Lücke:** Die Bereichszuordnung deckt Visum, Transitvisum, Impfung, Gesundheitsanforderung und elektronische Reisegenehmigung ab. Eine Gewissheit über Passgültigkeit, Einreiseformular, Versicherungspflicht oder finanzielle Mittel hat kein eigenes Muster und wird deshalb gar nicht erst erkannt – sie fällt nicht durch, sie fällt durch das Netz. Die Richtung ist dieselbe wie bei jeder Wortliste: Sie fängt das Wahrscheinliche, nicht das Mögliche.
+- **Geschlossen (Befund 4):** Die Bereichszuordnung deckt jetzt die vollständige `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie ab, geprüft durch einen Vollständigkeitstest. Was bleibt, ist die Sprachseite: Die Muster fangen deutsche Formulierungen. Eine Anforderung in ungewöhnlicher Wortwahl oder in einer anderen Sprache erkennt der Bereichsdetektor nicht. Der Auffangbereich („einreise", „amtlich", „Vorschrift", „Pflicht", „erforderlich") fängt einen Teil davon; eine Garantie ist er nicht.
+- **Neue Lücke durch die Strenge:** Die Sperre ist heute total – ohne aktiven Provider ist kein Official-Bezug `belegt`, also fällt jede harte amtliche Aussage. Ob die verbleibende Auskunft für Reisende noch nützlich ist, ist **nicht gemessen**; dafür wäre der offene bezahlte Aufruf nötig.
 
 Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukturell: Das Schema hat kein Feld für eine Anforderung, und der Zustand eines Bezugs kommt nicht aus dem Modell. Was ein Modell nicht formulieren kann, muss dieser Filter nicht abfangen.
 
@@ -117,7 +129,7 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 ## 5. Was ein Reviewer zuerst anschauen sollte
 
 1. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast wirklich nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
-2. `lib/reisebegleiter/pruefung.ts` – ist die Kette Reise → genannter Bezug → Anforderungstyp → Scope vollständig, fehlt ein Bereich, und sind die Muster präzise genug?
+2. `lib/reisebegleiter/pruefung.ts` – ist die Zerlegung Modalität × Bereich × Vorbehalt die richtige, fehlt ein Umgehungsweg, und sind die Vorbehaltsmuster zu grosszügig (ein falsch erkannter Vorbehalt öffnet eine harte Aussage)?
 3. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
 4. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
 5. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?

@@ -15,12 +15,13 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Product-Owner-Gate | #433 – **Preview/Development only** |
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
-| Kanonische Basis | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| **Letzter laufzeitändernder Head** | der Review-Fix-Commit auf `74577e313cc5af9a0b84662ae2044775c88cec94` |
+| Kanonische Basis bei Dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
+| Aktuelle Basis | `main@03842a64698cae1f4f20f54b7e6aa5016982562c` – rebased |
+| **Letzter laufzeitändernder Head** | der Review-Fix-Commit „Guard Official hard truth across the whole requirement taxonomy“ |
 | **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
-| Merge-Base | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Behind / Ahead | **8 behind / 14 ahead** gegen `origin/main` (siehe Drift) |
-| Drift | `origin/main` ist auf `03842a64` (World Map Polish 2, #437) gewandert. Keine Dateiüberschneidung; Merge-Base bleibt `15aa125a`. Rebase ist eine Technical-Lead-Entscheidung und wurde nicht vorgenommen |
+| Merge-Base | `03842a64698cae1f4f20f54b7e6aa5016982562c` |
+| Behind / Ahead | **0 behind / 16 ahead** gegen `origin/main` |
+| Drift | keine. Der Branch ist auf `03842a64` (World Map Polish 2, #437) rebased; konfliktfrei, beide Seiten vollständig |
 | Binding | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Entscheidung | `DECISIONS.md` ADR-0212 |
 
@@ -62,13 +63,13 @@ Frage (Konto-Reise)
 
 Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unter „Jetnity-Stand dazu" steht – „Noch nicht verlässlich bestimmbar", „nicht geprüft" – leitet `lib/reisebegleiter/nutzlast.ts` aus derselben Projektion ab. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
 
-Der zweite Punkt, aus drei Review-Runden gewachsen: **Eine Gewissheit muss die Anforderung nennen, über die sie spricht, und die muss geprüft sein.** Reise → genannter Bezug → Anforderungstyp → Scope; jedes Glied wird einzeln erzwungen. Formulierungen ohne erkennbaren Gegenstand („garantiert", „nicht erforderlich") fallen immer durch.
+Der zweite Punkt, aus vier Review-Runden gewachsen: **Eine harte amtliche Aussage braucht eine passende geprüfte Grundlage.** Erkannt satzweise aus Modalität × Bereich × Vorbehalt, über die ganze `OFFICIAL_REQUIREMENT_TYPES`-Taxonomie und für Behauptung wie Verneinung. Ohne aktiven Provider ist heute kein Official-Bezug `belegt` – die Prüfung ist damit eine vollständige Sperre gegen amtliche Aussagen, und das ist der vorgesehene Zustand.
 
 ---
 
 ## 4. Gates auf dem exakten Head
 
-**Grün:** `npm test` (3336/3336), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
+**Grün:** `npm test` (3427/3427), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
 
 **Grün auf dem exakten Head in GitHub/Vercel:** CI-Run `35165950349` – **success**, beide Jobs. Darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch". Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v` – **READY**.
 
