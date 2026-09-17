@@ -1,9 +1,12 @@
-'use client'
-
 // Nur für /ui-audit/account. Fixtures nie im Produktspeicher.
-
-import { useMemo } from 'react'
-import { useSearchParams } from 'next/navigation'
+//
+// Bewusst eine Server-Komponente, obwohl sie nur Fixtures zeigt. Der Audit
+// soll denselben Weg messen wie das Produkt, und dort werden die Länderlabel
+// auf dem Server gebildet und als Prop weitergereicht. Rechnete der Audit sie
+// im Browser nach, prüfte er einen Weg, den es nicht gibt – und stolperte
+// nebenbei über `Intl.DisplayNames`: Node und Chromium schreiben vier
+// Ländernamen verschieden (FK, HK, MO, PS), was beim Hydrieren als
+// Textabweichung gilt und die Seite verwerfen lässt.
 
 import AccountBesuche from '@/components/account/AccountBesuche'
 import AccountBuchungen from '@/components/account/AccountBuchungen'
@@ -126,6 +129,46 @@ const REISE_JAPAN: TripSummary = {
 }
 
 /**
+ * Zwei geplante Etappen in Ländern ohne zeichenbare Fläche. Zusammen mit dem
+ * bestätigten Besuch in Hongkong deckt das Fixture alle drei Formen der
+ * Ersatzmarke ab: Malta nur geplant, Hongkong besucht und geplant, Singapur
+ * nur besucht.
+ */
+const REISE_KLEINSTAATEN: TripSummary = {
+  id: '66666666-6666-4666-8666-666666666666',
+  title: 'Malta und Hongkong',
+  origin: 'Zürich',
+  startDate: '2028-02-04',
+  endDate: '2028-02-18',
+  travellers: 1,
+  currency: 'CHF',
+  budgetAmount: null,
+  status: 'draft',
+  updatedAt: '2026-08-26T10:00:00.000Z',
+  stages: [
+    {
+      name: 'Valletta',
+      position: 1,
+      countryCode: 'MT',
+      placeId: 'geonames:2562305',
+      latitude: 35.8997,
+      longitude: 14.5147,
+    },
+    {
+      name: 'Hongkong',
+      position: 2,
+      countryCode: 'HK',
+      placeId: 'geonames:1819729',
+      latitude: 22.2783,
+      longitude: 114.1747,
+    },
+  ],
+  stageCount: 2,
+  dayCount: 15,
+  itemCount: 0,
+}
+
+/**
  * Eine geplante Etappe in einem grossen Land, das zugleich bestätigt besucht
  * ist. Auf Weltmassstab ist Brasilien gross genug, dass der überlagerte
  * Zustand – volle Füllung *und* Schraffur – ohne Lupe erkennbar bleibt.
@@ -177,9 +220,14 @@ const BUCHUNG: KontoBuchung = {
  * Absichtlich so gewählt, dass jeder Zustand der Karte einmal vorkommt:
  * Brasilien und Portugal sind besucht *und* geplant (überlagert), Italien nur
  * besucht, Japan nur geplant. Lissabon steht zweimal – ein wiederholter Besuch
- * bleibt zwei Ereignisse und ein Ort. Singapur hat auf Weltmassstab keine
- * Fläche und prüft die Ersatzmarke. Der letzte Eintrag trägt keinen
- * Ländercode und darf die Länderzahl deshalb nicht erhöhen.
+ * bleibt zwei Ereignisse und ein Ort.
+ *
+ * Drei Länder haben auf Weltmassstab keine zeichenbare Fläche und prüfen die
+ * Ersatzmarke in allen drei Formen: Singapur nur besucht, Hongkong besucht und
+ * geplant, Malta nur geplant.
+ *
+ * Der letzte Eintrag trägt keinen Ländercode und darf die Länderzahl deshalb
+ * nicht erhöhen.
  */
 const BESUCHE: readonly Besuch[] = [
   {
@@ -243,6 +291,18 @@ const BESUCHE: readonly Besuch[] = [
     erstelltAm: '2026-09-06T10:00:00.000Z',
   },
   {
+    id: 'aaaa1111-0000-4000-8000-000000000007',
+    placeId: 'geonames:1819729',
+    placeLabel: 'Hongkong',
+    countryCode: 'HK',
+    latitude: 22.2783,
+    longitude: 114.1747,
+    jahr: 2018,
+    monat: 11,
+    tag: null,
+    erstelltAm: '2026-09-07T10:00:00.000Z',
+  },
+  {
     id: 'aaaa1111-0000-4000-8000-000000000005',
     placeId: 'geonames:9999999',
     placeLabel: 'Ort ohne Ländercode',
@@ -271,12 +331,16 @@ const ARCHIV_BUCHUNG: KontoBuchung = {
   tripArchived: true,
 }
 
-export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeometrie }) {
-  const suche = useSearchParams()
-  const zustand = suche.get('zustand') ?? 'reise'
-  const ansicht = suche.get('ansicht')
-
-  const buchungenSicht = useMemo(() => {
+export default function AccountAuditClient({
+  geometrie,
+  zustand,
+  ansicht,
+}: {
+  geometrie: WeltGeometrie
+  zustand: string
+  ansicht: string | null
+}) {
+  const buchungenSicht = (() => {
     if (zustand === 'fehler') {
       return { problem: { status: 503 as const, message: 'unavailable' }, buchungen: null, abgeschnitten: false }
     }
@@ -284,9 +348,9 @@ export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeome
       return { problem: null, buchungen: [], abgeschnitten: false }
     }
     return { problem: null, buchungen: [BUCHUNG, ARCHIV_BUCHUNG], abgeschnitten: false }
-  }, [zustand])
+  })()
 
-  const sicht = useMemo(() => {
+  const sicht = (() => {
     if (zustand === 'fehler') {
       return {
         name: 'Sasa',
@@ -300,7 +364,13 @@ export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeome
       return { name: 'Sasa', problem: null, naechste: null, hatReisen: false, reisen: [] }
     }
     if (zustand === 'welt') {
-      const reisen = [REISE, REISE_GLEICHER_TITEL, REISE_JAPAN, REISE_BRASILIEN]
+      const reisen = [
+        REISE,
+        REISE_GLEICHER_TITEL,
+        REISE_JAPAN,
+        REISE_BRASILIEN,
+        REISE_KLEINSTAATEN,
+      ]
       return {
         name: 'Sasa',
         problem: null,
@@ -316,40 +386,28 @@ export default function AccountAuditClient({ geometrie }: { geometrie: WeltGeome
       hatReisen: true,
       reisen: [REISE],
     }
-  }, [zustand])
+  })()
 
   /**
    * `welt` zeigt beide Wahrheiten, `besuch-fehler` nur den Ausfall der
    * bestätigten Seite. Alle übrigen Zustände bleiben ohne Besuchshistorie –
    * die Karte muss auch dann eine gültige Aussage sein.
    */
-  const besucht = useMemo(() => {
-    if (zustand === 'besuch-fehler') {
-      return weltBesuchtAbleiten({
-        besuche: [],
-        problem: { status: 503 as const, message: 'unavailable' },
-      })
-    }
-    return weltBesuchtAbleiten({
-      besuche: zustand === 'welt' ? BESUCHE : [],
-      problem: null,
-    })
-  }, [zustand])
+  const besucht =
+    zustand === 'besuch-fehler'
+      ? weltBesuchtAbleiten({
+          besuche: [],
+          problem: { status: 503 as const, message: 'unavailable' },
+        })
+      : weltBesuchtAbleiten({ besuche: zustand === 'welt' ? BESUCHE : [], problem: null })
 
-  const laender = useMemo(
-    () =>
-      weltLaenderAbleiten({
-        besucht: besucht.laenderCodes,
-        geplant: worldMapAbleiten({ problem: sicht.problem, reisen: sicht.reisen }).laenderCodes,
-        geometrie,
-      }),
-    [besucht.laenderCodes, geometrie, sicht.problem, sicht.reisen],
-  )
+  const welt = worldMapAbleiten({ problem: sicht.problem, reisen: sicht.reisen })
 
-  const welt = useMemo(
-    () => worldMapAbleiten({ problem: sicht.problem, reisen: sicht.reisen }),
-    [sicht.problem, sicht.reisen],
-  )
+  const laender = weltLaenderAbleiten({
+    besucht: besucht.laenderCodes,
+    geplant: welt.laenderCodes,
+    geometrie,
+  })
 
   return (
     <div data-account-audit={zustand} className="min-h-screen bg-surface-75">

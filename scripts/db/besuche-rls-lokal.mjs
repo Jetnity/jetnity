@@ -1,14 +1,18 @@
 #!/usr/bin/env node
-// Isolierter RLS-/Constraint-Nachweis für `public.account_visits`.
+// Isolierter Nachweis des Schreibvertrags von `public.account_visits`.
 //
 // Gegen eine lokale, jedes Mal frisch angelegte PostgreSQL – niemals gegen
 // Supabase, niemals gegen Production. Das Skript spricht kein Management-API
 // an und liest keine Zugangsdaten.
 //
-// Was es beweist, ist genau das, was eine Ansicht nicht beweisen kann: dass
-// anon nichts darf, dass ein Konto nur die eigenen Zeilen sieht und ändert,
-// dass wiederholte Besuche desselben Ortes erlaubt bleiben und dass ein
-// halbes Datum nicht persistiert werden kann.
+// Der Lauf nimmt die Rolle des Angreifers ein, nicht die der Anwendung: er
+// schreibt als `authenticated` direkt auf die Tabelle, so wie es ein Client
+// über PostgREST tun könnte, und erwartet, abgewiesen zu werden. Erst danach
+// prüft er, dass derselbe Vorgang über die Vertragsfunktionen gelingt.
+//
+// Das Bootstrap bildet dafür die Supabase-Voreinstellung nach, die neuen
+// Tabellen von sich aus Rechte für anon, authenticated und service_role gibt.
+// Ohne sie prüfte der Lauf ein `revoke`, das nichts zu entziehen hatte.
 //
 //   npm run db:besuche-lokal
 
@@ -27,6 +31,20 @@ const BOOTSTRAP = join(ROOT, 'scripts/db/besuche-rls-lokal-bootstrap.sql')
 const MIGRATION = join(ROOT, 'supabase/migrations/20260917120000_account_visits.sql')
 
 const FAELLE = [
+  // -------------------------------------------------------------------------
+  // Der Nachweis prüft zuerst sich selbst
+  // -------------------------------------------------------------------------
+  {
+    name: 'die nachgebildete Supabase-Voreinstellung ist wirksam',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `insert into public.acl_kontrolle (notiz) values ('voreinstellung')`,
+    erwartung: 'erlaubt',
+  },
+
+  // -------------------------------------------------------------------------
+  // Lesen: RLS und Rechte
+  // -------------------------------------------------------------------------
   {
     name: 'anon liest keine Besuche',
     rolle: 'anon',
@@ -34,25 +52,7 @@ const FAELLE = [
     erwartung: 'abgelehnt',
   },
   {
-    name: 'anon legt keinen Besuch an',
-    rolle: 'anon',
-    sql: `insert into public.account_visits (user_id, country_code) values ('${NUTZER}', 'PT')`,
-    erwartung: 'abgelehnt',
-  },
-  {
-    name: 'anon ändert keinen Besuch',
-    rolle: 'anon',
-    sql: `update public.account_visits set country_code = 'FR' where id = '${BESUCH}'`,
-    erwartung: 'abgelehnt',
-  },
-  {
-    name: 'anon löscht keinen Besuch',
-    rolle: 'anon',
-    sql: `delete from public.account_visits where id = '${BESUCH}'`,
-    erwartung: 'abgelehnt',
-  },
-  {
-    name: 'service_role erreicht die Tabelle nicht über PostgREST-Rechte',
+    name: 'service_role erreicht die Tabelle nicht',
     rolle: 'service_role',
     sql: `select * from public.account_visits`,
     erwartung: 'abgelehnt',
@@ -71,136 +71,269 @@ const FAELLE = [
     sql: `select * from public.account_visits where id = '${FREMD}'`,
     erwartung: 'leer',
   },
+
+  // -------------------------------------------------------------------------
+  // Der Schreibvertrag lässt sich nicht umgehen
+  // -------------------------------------------------------------------------
   {
-    name: 'Konto ändert den fremden Besuch nicht',
+    name: 'Konto schreibt nicht direkt in die Tabelle',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.account_visits set country_code = 'FR' where id = '${FREMD}'`,
-    erwartung: 'leer',
-  },
-  {
-    name: 'Konto löscht den fremden Besuch nicht',
-    rolle: 'authenticated',
-    uid: NUTZER,
-    sql: `delete from public.account_visits where id = '${FREMD}'`,
-    erwartung: 'leer',
-  },
-  {
-    name: 'Konto schreibt keinen Besuch auf ein fremdes Konto',
-    rolle: 'authenticated',
-    uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code) values ('${ZWEITER}', 'PT')`,
+    sql: `insert into public.account_visits (user_id, country_code) values ('${NUTZER}', 'PT')`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'Konto schiebt den eigenen Besuch nicht auf ein fremdes Konto',
+    name: 'Konto erfindet keine Geografie per Direktschreibung',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.account_visits set user_id = '${ZWEITER}' where id = '${BESUCH}'`,
+    sql: `insert into public.account_visits
+            (user_id, place_id, place_label, country_code, latitude, longitude)
+          values ('${NUTZER}', 'geonames:999999', 'Atlantis', 'FR', 12.5, 13.5)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'Konto ändert und löscht den eigenen Besuch',
+    name: 'Konto schreibt keinen Besuch von morgen per Direktschreibung',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.account_visits set visited_year = 2013 where id = '${BESUCH}';
-          delete from public.account_visits where id = '${BESUCH}'`,
-    erwartung: 'erlaubt',
+    sql: `insert into public.account_visits (user_id, country_code, visited_year)
+            values ('${NUTZER}', 'PT', 2199)`,
+    erwartung: 'abgelehnt',
   },
   {
-    name: 'derselbe Ort darf mehrfach bestätigt werden',
+    name: 'Konto ändert die Tabelle nicht direkt',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, place_id, place_label, country_code, visited_year)
-            values ('${NUTZER}', 'geonames:2267057', 'Lissabon', 'PT', 2019);
-          insert into public.account_visits (user_id, place_id, place_label, country_code)
-            values ('${NUTZER}', 'geonames:2267057', 'Lissabon', 'PT');
+    sql: `update public.account_visits set place_label = 'Atlantis' where id = '${BESUCH}'`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'Konto löscht nicht direkt aus der Tabelle',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `delete from public.account_visits where id = '${BESUCH}'`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'anon ruft den Schreibvertrag nicht auf',
+    rolle: 'anon',
+    sql: `select public.account_visit_bestaetigen(null, 'PT', null, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'service_role ruft den Schreibvertrag nicht auf',
+    rolle: 'service_role',
+    sql: `select public.account_visit_bestaetigen(null, 'PT', null, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'ohne angemeldetes Konto schreibt der Vertrag nicht',
+    rolle: 'authenticated',
+    sql: `select public.account_visit_bestaetigen(null, 'PT', null, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'der interne Vertragskern ist für niemanden aufrufbar',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_pruefen(null, 'PT', null, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+
+  // -------------------------------------------------------------------------
+  // Der Vertrag selbst: Geografie
+  // -------------------------------------------------------------------------
+  {
+    name: 'ein bekannter Ort wird mit Referenzgeografie übernommen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen('geonames:2267057', null, 2012::smallint, 7::smallint, 14::smallint);
           select 1 from public.account_visits
-            where place_id = 'geonames:2267057' having count(*) = 3`,
+           where place_id = 'geonames:2267057' and place_label = 'Lissabon'
+             and country_code = 'PT' and latitude = 38.722300 and longitude = -9.139300
+             and visited_year = 2012 and visited_month = 7 and visited_day = 14`,
     erwartung: 'erlaubt',
   },
   {
-    name: 'ein Besuch ohne Ort und ohne Land wird abgelehnt',
+    name: 'eine unbekannte Ortsreferenz wird abgewiesen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, visited_year) values ('${NUTZER}', 2004)`,
+    sql: `select public.account_visit_bestaetigen('geonames:999999', null, null, null, null)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'ein Monat ohne Jahr wird abgelehnt',
+    name: 'ein Flughafen ist kein besuchter Ort',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code, visited_month)
-            values ('${NUTZER}', 'PT', 5)`,
+    sql: `select public.account_visit_bestaetigen('airport:ZRH', null, null, null, null)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'ein Tag ohne Monat wird abgelehnt',
+    name: 'ein Landtreffer der Ortssuche wird zum Landbesuch, nicht zum Ort',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code, visited_year, visited_day)
-            values ('${NUTZER}', 'PT', 2004, 9)`,
+    sql: `select public.account_visit_bestaetigen('geonames:3932488', null, null, null, null);
+          select 1 from public.account_visits
+           where country_code = 'PE' and place_id is null and place_label is null
+             and latitude is null and longitude is null`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'ein Land ohne Ländercode in der Referenz wird abgewiesen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen('geonames:1000001', null, null, null, null)`,
     erwartung: 'abgelehnt',
   },
+  {
+    name: 'ein Ländercode ausserhalb des Katalogs wird abgewiesen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen(null, 'ZZ', null, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'ein Ländercode in falscher Form wird abgewiesen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen(null, 'prt', null, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'ein Besuch ohne Ort und ohne Land wird abgewiesen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen(null, null, 2004::smallint, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'Koordinaten der Referenz werden übernommen, nicht geraten',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen('geonames:1000002', null, null, null, null);
+          select 1 from public.account_visits
+           where place_id = 'geonames:1000002'
+             and latitude is null and longitude is null and country_code = 'MA'`,
+    erwartung: 'erlaubt',
+  },
+
+  // -------------------------------------------------------------------------
+  // Der Vertrag selbst: Zeit
+  // -------------------------------------------------------------------------
   {
     name: 'ein unbekannter Zeitpunkt bleibt unbekannt',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code) values ('${NUTZER}', 'MA');
+    sql: `select public.account_visit_bestaetigen(null, 'MA', null, null, null);
           select 1 from public.account_visits
-            where country_code = 'MA'
-              and visited_year is null and visited_month is null and visited_day is null`,
+           where country_code = 'MA' and place_id is null
+             and visited_year is null and visited_month is null and visited_day is null`,
     erwartung: 'erlaubt',
   },
   {
-    name: 'ein Ortsname ohne Ortsreferenz wird abgelehnt',
+    name: 'ein Monat ohne Jahr wird abgewiesen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code, place_label)
-            values ('${NUTZER}', 'PT', 'Irgendwo')`,
+    sql: `select public.account_visit_bestaetigen(null, 'PT', null, 5::smallint, null)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'Koordinaten ohne Ortsreferenz werden abgelehnt',
+    name: 'ein Tag ohne Monat wird abgewiesen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code, latitude, longitude)
-            values ('${NUTZER}', 'PT', 38.72, -9.14)`,
+    sql: `select public.account_visit_bestaetigen(null, 'PT', 2004::smallint, null, 9::smallint)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'eine halbe Koordinate wird abgelehnt',
+    name: 'der 30. Februar wird abgewiesen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, place_id, place_label, latitude)
-            values ('${NUTZER}', 'geonames:1', 'Irgendwo', 38.72)`,
+    sql: `select public.account_visit_bestaetigen(null, 'PT', 2023::smallint, 2::smallint, 30::smallint)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'ein Ländercode in falscher Form wird abgelehnt',
+    name: 'ein Jahr in der Zukunft wird abgewiesen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code) values ('${NUTZER}', 'prt')`,
+    sql: `select public.account_visit_bestaetigen(
+            null, 'PT', (extract(year from now())::int + 1)::smallint, null, null)`,
     erwartung: 'abgelehnt',
   },
   {
-    name: 'ein Ortslabel mit Markup wird abgelehnt',
+    name: 'ein Monat in der Zukunft wird abgewiesen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, place_id, place_label)
-            values ('${NUTZER}', 'geonames:1', '<script>x</script>')`,
+    sql: `select public.account_visit_bestaetigen(
+            null, 'PT',
+            extract(year from now())::smallint,
+            12::smallint,
+            31::smallint)`,
     erwartung: 'abgelehnt',
+  },
+  {
+    name: 'ein Jahr vor 1900 wird abgewiesen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen(null, 'PT', 1899::smallint, null, null)`,
+    erwartung: 'abgelehnt',
+  },
+
+  // -------------------------------------------------------------------------
+  // Eigentum und Ereignisse
+  // -------------------------------------------------------------------------
+  {
+    name: 'derselbe Ort darf mehrfach bestätigt werden',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.account_visit_bestaetigen('geonames:2267057', null, 2019::smallint, null, null);
+          select public.account_visit_bestaetigen('geonames:2267057', null, null, null, null);
+          select 1 from public.account_visits
+           where place_id = 'geonames:2267057' having count(*) = 3`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Konto ändert den eigenen Besuch über den Vertrag',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select 1 where public.account_visit_aendern(
+            '${BESUCH}'::uuid, null, 'IT', 2013::smallint, null, null) is not null`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Konto ändert den fremden Besuch nicht',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select 1 where public.account_visit_aendern(
+            '${FREMD}'::uuid, null, 'IT', null, null, null) is not null`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Konto widerruft den eigenen Besuch',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select 1 where public.account_visit_widerrufen('${BESUCH}'::uuid) is not null`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Konto widerruft den fremden Besuch nicht',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select 1 where public.account_visit_widerrufen('${FREMD}'::uuid) is not null`,
+    erwartung: 'leer',
   },
   {
     name: 'ein Besuch verändert keine Reisezeile',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `insert into public.account_visits (user_id, country_code) values ('${NUTZER}', 'IT');
+    sql: `select public.account_visit_bestaetigen(null, 'IT', null, null, null);
           select 1 from public.trips
-            where id = '${REISE}' and status = 'draft'
-              and updated_at = '2026-01-01T00:00:00Z'`,
+           where id = '${REISE}' and status = 'draft'
+             and updated_at = '2026-01-01T00:00:00Z'`,
     erwartung: 'erlaubt',
   },
+
+  // -------------------------------------------------------------------------
+  // Was die Tabelle über sich selbst aussagt
+  // -------------------------------------------------------------------------
   {
     name: 'die Tabelle führt keinen persistierten Zähler',
     rolle: 'authenticated',
@@ -211,7 +344,7 @@ const FAELLE = [
     erwartung: 'leer',
   },
   {
-    name: 'RLS ist aktiv und die vier Owner-Policies stehen',
+    name: 'RLS ist aktiv und es gibt genau eine Lesepolicy',
     rolle: 'authenticated',
     uid: NUTZER,
     sql: `select 1
@@ -220,17 +353,42 @@ const FAELLE = [
            where n.nspname = 'public' and c.relname = 'account_visits'
              and c.relrowsecurity
              and (select count(*) from pg_policies
+                   where schemaname = 'public' and tablename = 'account_visits') = 1
+             and (select count(*) from pg_policies
                    where schemaname = 'public' and tablename = 'account_visits'
-                     and roles = '{authenticated}') = 4`,
+                     and cmd = 'SELECT' and roles = '{authenticated}') = 1`,
     erwartung: 'erlaubt',
   },
   {
-    name: 'anon und service_role haben kein einziges Tabellenrecht',
+    name: 'authenticated hat auf der Tabelle nur SELECT',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select 1 from information_schema.role_table_grants
+           where table_schema = 'public' and table_name = 'account_visits'
+             and grantee = 'authenticated' and privilege_type <> 'SELECT'`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'anon, service_role und PUBLIC haben kein Tabellenrecht',
     rolle: 'authenticated',
     uid: NUTZER,
     sql: `select 1 from information_schema.role_table_grants
            where table_schema = 'public' and table_name = 'account_visits'
              and grantee in ('anon', 'service_role', 'PUBLIC')`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'anon und service_role dürfen keine Vertragsfunktion ausführen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select 1
+            from pg_proc p
+            join pg_namespace n on n.oid = p.pronamespace
+            cross join unnest(array['anon', 'service_role', 'public']) as rolle
+           where n.nspname = 'public'
+             and p.proname in ('account_visit_bestaetigen', 'account_visit_aendern',
+                               'account_visit_widerrufen', 'account_visit_pruefen')
+             and has_function_privilege(rolle, p.oid, 'execute')`,
     erwartung: 'leer',
   },
 ]
@@ -288,10 +446,23 @@ function main() {
       readFileSync(MIGRATION, 'utf8'),
       `
 insert into auth.users (id) values ('${NUTZER}'), ('${ZWEITER}');
-insert into public.places (id, name, typ, country_code, lat, lon)
-  values ('geonames:2267057', 'Lissabon', 'city', 'PT', 38.7223, -9.1393);
+
+-- Die Ortsreferenz, so weit der Schreibvertrag sie liest. Peru steht als
+-- Landtreffer der Ortssuche, Zuerich als Flughafen, 'Ohne Code' als Land ohne
+-- Laendercode und 'Ohne Koordinaten' als Ort, dessen Position fehlt.
+insert into public.places (id, name, typ, country_code, lat, lon) values
+  ('geonames:2267057', 'Lissabon', 'city', 'PT', 38.7223, -9.1393),
+  ('geonames:3932488', 'Peru', 'country', 'PE', -9.19, -75.0152),
+  ('airport:ZRH', 'Zuerich', 'airport', 'CH', 47.4647, 8.5492),
+  ('geonames:1000001', 'Gebiet ohne Code', 'country', null, 0, 0),
+  ('geonames:1000002', 'Ort ohne Koordinaten', 'city', 'MA', null, null);
+
 insert into public.trips (id, user_id, status, updated_at)
   values ('${REISE}', '${NUTZER}', 'draft', '2026-01-01T00:00:00Z');
+
+-- Saatzeilen entstehen als Eigentuemer der Tabelle, nicht als PostgREST-Rolle:
+-- der Vertrag laesst sich sonst nicht pruefen, weil es ohne Bestand nichts zu
+-- aendern und nichts zu widerrufen gaebe.
 insert into public.account_visits (id, user_id, place_id, place_label, country_code, visited_year)
   values ('${BESUCH}', '${NUTZER}', 'geonames:2267057', 'Lissabon', 'PT', 2012);
 insert into public.account_visits (id, user_id, country_code)

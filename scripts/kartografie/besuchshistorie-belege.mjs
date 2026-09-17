@@ -57,6 +57,19 @@ const BREITEN = [
  */
 const GRENZPROBE = { x: (180 - 7) / 360, y: (90 - 40 - 6) / 142 }
 
+/**
+ * Kartenausschnitte, die ohne Vergrösserung nicht zu beurteilen sind.
+ *
+ * Die Flächenzustände sind auf der ganzen Karte zu sehen; die Ersatzmarken der
+ * Kleinstaaten sind es nicht – sie sind wenige Bildpunkte gross. Eine Zusage
+ * über ihre Unterscheidbarkeit muss man deshalb sehen können.
+ */
+const LUPEN = [
+  { name: 'suedostasien', lon: [96, 122], lat: [28, -6], faktor: 5 },
+  { name: 'mittelmeer', lon: [4, 26], lat: [44, 28], faktor: 5 },
+  { name: 'suedamerika', lon: [-78, -32], lat: [8, -36], faktor: 3 },
+]
+
 const SZENARIEN = [
   {
     name: 'uebersicht-leer',
@@ -177,6 +190,28 @@ try {
       'base64',
     )
 
+  /** Vergrössert ohne Glättung: eine Kante soll Kante bleiben. */
+  const vergroessern = async (puffer, faktor) =>
+    Buffer.from(
+      await umwandler.evaluate(
+        async ({ basis64, faktor }) => {
+          const bild = new Image()
+          bild.src = `data:image/png;base64,${basis64}`
+          await bild.decode()
+          const flaeche = document.createElement('canvas')
+          flaeche.width = bild.naturalWidth * faktor
+          flaeche.height = bild.naturalHeight * faktor
+          const kontext = flaeche.getContext('2d')
+          if (!kontext) return basis64
+          kontext.imageSmoothingEnabled = false
+          kontext.drawImage(bild, 0, 0, flaeche.width, flaeche.height)
+          return flaeche.toDataURL('image/png').split(',')[1]
+        },
+        { basis64: puffer.toString('base64'), faktor },
+      ),
+      'base64',
+    )
+
   /**
    * Zählt die unterschiedlichen Farben in einem kleinen Fenster über der
    * Landesgrenze. Eine sichtbare Grenze unter einer Füllung heisst: neben der
@@ -236,8 +271,36 @@ try {
 
       let grenze = null
       if (szenario.grenzprobe) {
-        const kartePuffer = await seite.locator('[data-world-map="ein"] svg').first().screenshot()
-        grenze = await grenzeMessen(kartePuffer, GRENZPROBE)
+        const karte = seite.locator('[data-world-map="ein"] svg[role="img"]').first()
+        grenze = await grenzeMessen(await karte.screenshot(), GRENZPROBE)
+
+        // Die Lupen nur einmal, in der grösseren Breite: bei 390 px sind die
+        // Ersatzmarken kleiner als das, was eine Vergrösserung noch zeigt.
+        if (viewport.name === '1280') {
+          const kasten = await karte.boundingBox()
+          const versatz = await seite.evaluate(() => window.scrollY)
+          const punkt = (lon, lat) => ({
+            x: kasten.x + ((lon + 180) / 360) * kasten.width,
+            y: kasten.y + versatz + ((90 - lat - 6) / 142) * kasten.height,
+          })
+          for (const lupe of LUPEN) {
+            const oben = punkt(lupe.lon[0], lupe.lat[0])
+            const unten = punkt(lupe.lon[1], lupe.lat[1])
+            const ausschnitt = await seite.screenshot({
+              fullPage: true,
+              clip: {
+                x: oben.x,
+                y: oben.y,
+                width: unten.x - oben.x,
+                height: unten.y - oben.y,
+              },
+            })
+            writeFileSync(
+              join(VERZEICHNIS, `lupe-${lupe.name}.webp`),
+              await alsWebp(await vergroessern(ausschnitt, lupe.faktor)),
+            )
+          }
+        }
       }
 
       const messung = await seite.evaluate(() => {
@@ -257,11 +320,18 @@ try {
           const zustand = element.getAttribute('data-welt-land-zustand') ?? 'unbekannt'
           zustaende[zustand] = (zustaende[zustand] ?? 0) + 1
         }
+        // Länder ohne zeichenbare Fläche: welche Form trägt welcher Zustand?
+        const punktMarken = {}
+        for (const element of document.querySelectorAll('[data-welt-land-marke]')) {
+          const zustand = element.getAttribute('data-welt-land-zustand') ?? 'unbekannt'
+          punktMarken[zustand] = element.getAttribute('data-welt-land-marke')
+        }
         const svg = document.querySelector('[data-world-map="ein"] svg[role="img"]')
         return {
           overflow: wurzel.scrollWidth - window.innerWidth,
           kleinsteBedienflaeche: kanten.length ? Math.round(Math.min(...kanten)) : null,
           laenderZustaende: zustaende,
+          punktMarken,
           besuchtLage:
             document.querySelector('[data-world-map]')?.getAttribute('data-world-map-visited') ??
             null,
@@ -293,6 +363,18 @@ try {
 }
 
 const fremdeHerkuenfte = [...anfragen].filter((herkunft) => !herkunft.includes('127.0.0.1'))
+
+/**
+ * Tragen die drei Zustände eines Landes ohne zeichenbare Fläche drei
+ * verschiedene Formen? Farbe und Deckkraft zählen dabei nicht: verglichen wird
+ * der Formname, den die Karte selbst in den Baum schreibt.
+ */
+function markenUnterscheidbar(befund) {
+  const marken = Object.values(befund.punktMarken ?? {})
+  if (marken.length === 0) return true
+  return new Set(marken).size === marken.length
+}
+
 const bericht = {
   slice: 'Explicit Visit History 1',
   herkuenfte: [...anfragen].sort(),
@@ -305,7 +387,8 @@ const bericht = {
         befund.overflow <= 0 &&
         befund.konsole.length === 0 &&
         (befund.kleinsteBedienflaeche ?? 44) >= 44 &&
-        (befund.grenzeUnterFuellung === null || befund.grenzeUnterFuellung.farben >= 3),
+        (befund.grenzeUnterFuellung === null || befund.grenzeUnterFuellung.farben >= 3) &&
+        markenUnterscheidbar(befund),
     ),
 }
 

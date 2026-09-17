@@ -162,6 +162,20 @@ function ausrichtungFuer(links: number): WorldMapAusrichtung {
   return 'mitte'
 }
 
+/**
+ * Ein Punkt der Projektion als Position in Prozent der gezeigten Karte.
+ *
+ * `null`, wenn er ausserhalb des Ausschnitts liegt: ein Punkt an den Rand zu
+ * schieben wäre eine falsche Position, keine ungenaue.
+ */
+export function weltPunktLage(x: number, y: number): { links: number; oben: number } | null {
+  if (!istImRahmen(x, y)) return null
+  return {
+    links: ((x - WORLD_MAP_RAHMEN_VIEWBOX.x) / WORLD_MAP_RAHMEN_VIEWBOX.width) * 100,
+    oben: ((y - WORLD_MAP_RAHMEN_VIEWBOX.y) / WORLD_MAP_RAHMEN_VIEWBOX.height) * 100,
+  }
+}
+
 export function weltMarkerLage(ort: WorldMapOrt): WorldMapMarker | null {
   if (!ort.geplottet || ort.x === null || ort.y === null) return null
   if (!istImRahmen(ort.x, ort.y)) return null

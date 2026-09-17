@@ -1,20 +1,29 @@
 // lib/account/besuche-aktionen.ts
 //
-// Schreibweg der bestätigten Besuchshistorie. Authenticated-Session plus RLS,
-// kein Service-Role, keine Fremdkonto-Sicht.
+// Schreibweg der bestätigten Besuchshistorie. Authenticated-Session, kein
+// Service-Role, keine Fremdkonto-Sicht.
 //
-// Der Browser schickt eine Ortsreferenz oder einen Ländercode – nie einen
-// Ortsnamen, nie ein Land zum Ort, nie Koordinaten. Name, Ländercode und
-// Koordinaten schreibt diese Datei aus `public.places` ab. Dadurch kann kein
-// Formular Geografie behaupten, und ein freier Text wird nie zu einem Ort.
+// Geschrieben wird ausschliesslich über die Datenbankfunktionen
+// `account_visit_bestaetigen`, `account_visit_aendern` und
+// `account_visit_widerrufen`. Diese Datei setzt den Wahrheitsvertrag also
+// nicht durch, sie ruft ihn auf: `authenticated` hat auf `account_visits`
+// kein INSERT, UPDATE oder DELETE.
 //
-// Keine Zeile in `trips` oder `trip_stages` wird hier angefasst: eine
-// bestätigte Vergangenheit verändert keine geplante Reise.
+// Der Unterschied ist nicht akademisch. Solange die Tabelle direkte
+// Schreibrechte hatte, war jede Prüfung hier nur eine Bitte: ein angemeldeter
+// Client konnte dieselbe Zeile über PostgREST selbst schreiben, mit erfundenem
+// Ortsnamen, erfundenem Land und einem Besuchsdatum von morgen – und RLS hätte
+// nichts dagegen gehabt, weil das Eigentum ja stimmte. Der Vertrag steht
+// deshalb in der Datenbank, und was hier bleibt, sind zwei Dinge: früh und
+// verständlich ablehnen, was ohnehin abgelehnt würde, und die Fehlerhinweise
+// der Datenbank in Sätze übersetzen.
+//
+// Keine Zeile in `trips` oder `trip_stages` wird angefasst: eine bestätigte
+// Vergangenheit verändert keine geplante Reise.
 
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import type { SupabaseClient } from '@supabase/supabase-js'
 
 import {
   BESUCH_MELDUNG,
@@ -23,38 +32,41 @@ import {
   besuchLoeschungLesen,
   type GeprueftesZiel,
 } from '@/lib/account/besuche-eingabe'
-import { lese } from '@/lib/api/datenbank-lesen'
-import { countryCodeNormalisieren } from '@/lib/country/darstellung'
 import { createServerActionClient } from '@/lib/supabase/server'
-import type { Database } from '@/types/supabase'
 
 type Aktionsergebnis<Wert> = { ok: true; wert: Wert } | { ok: false; meldung: string }
-
-type Kontoclient = SupabaseClient<Database>
-
-/** Was tatsächlich geschrieben wird. Alles Geografische stammt aus `places`. */
-type Besuchszeile = {
-  place_id: string | null
-  place_label: string | null
-  country_code: string | null
-  latitude: number | null
-  longitude: number | null
-  visited_year: number | null
-  visited_month: number | null
-  visited_day: number | null
-}
 
 const SCHREIBFEHLER = 'Dieser Besuch konnte nicht gespeichert werden.'
 const SCHREIBFEHLER_AUSFALL =
   'Dein Besuch konnte gerade nicht gespeichert werden. Bitte versuche es in einem Moment erneut.'
 
-function schreibmeldung(
-  fehler: { message: string; code?: string | null },
-  status?: number,
-): { ok: false; meldung: string } {
-  if (fehler.code === '23514' && fehler.message.includes('hoechstens 1000')) {
-    return { ok: false, meldung: BESUCH_MELDUNG.grenze }
-  }
+/**
+ * Die Hinweise, die der Schreibvertrag der Datenbank mitschickt.
+ *
+ * Die Datenbank liefert `hint`, nicht Prosa. So bleibt die angezeigte Meldung
+ * dieselbe, egal ob die Ablehnung hier oder dort entstanden ist, und es wird
+ * keine Datenbankmeldung an den Browser durchgereicht.
+ */
+const HINWEIS_MELDUNG: Readonly<Record<string, string>> = {
+  nicht_angemeldet: BESUCH_MELDUNG.nichtAngemeldet,
+  ohne_ziel: BESUCH_MELDUNG.ohneZiel,
+  ort_unbekannt: BESUCH_MELDUNG.ortUnbekannt,
+  land_unbekannt: BESUCH_MELDUNG.landUnbekannt,
+  datum_ungueltig: BESUCH_MELDUNG.datumUngueltig,
+  datum_zukunft: BESUCH_MELDUNG.datumZukunft,
+  jahr_bereich: BESUCH_MELDUNG.jahrBereich,
+  grenze: BESUCH_MELDUNG.grenze,
+}
+
+type Schreibfehler = {
+  message: string
+  code?: string | null
+  hint?: string | null
+}
+
+function schreibmeldung(fehler: Schreibfehler, status?: number): { ok: false; meldung: string } {
+  const bekannt = fehler.hint ? HINWEIS_MELDUNG[fehler.hint] : undefined
+  if (bekannt) return { ok: false, meldung: bekannt }
   if (status === 0 || (fehler.code ?? '').startsWith('08') || (fehler.code ?? '').startsWith('57')) {
     return { ok: false, meldung: SCHREIBFEHLER_AUSFALL }
   }
@@ -69,89 +81,22 @@ async function konto() {
 }
 
 /**
- * Löst eine behauptete Ortsreferenz gegen die Jetnity-Ortsreferenz auf.
+ * Die Argumente des Schreibvertrags.
  *
- * Existiert sie nicht, wird der Besuch abgelehnt statt mit einer erfundenen
- * Geografie gespeichert. Flughäfen sind keine besuchten Orte: wer in Zürich
- * umgestiegen ist, war nicht in Zürich.
+ * Nur Referenzen und Zahlen. Kein Ortsname, kein Land zu einem Ort, keine
+ * Koordinate – die holt die Datenbank aus `public.places`.
  */
-async function ortAufloesen(
-  supabase: Kontoclient,
-  placeId: string,
-): Promise<Aktionsergebnis<Besuchszeile>> {
-  const gelesen = await lese<{
-    id: string
-    name: string
-    typ: string
-    country_code: string | null
-    lat: number | null
-    lon: number | null
-  }>(() => supabase.from('places').select('id, name, typ, country_code, lat, lon').eq('id', placeId))
-
-  if (gelesen.problem) {
-    return {
-      ok: false,
-      meldung: gelesen.problem.status === 503 ? SCHREIBFEHLER_AUSFALL : SCHREIBFEHLER,
-    }
-  }
-
-  const ort = gelesen.zeilen[0]
-  if (!ort || ort.typ === 'airport') return { ok: false, meldung: BESUCH_MELDUNG.ortUnbekannt }
-
-  const name = ort.name.trim()
-  if (!name) return { ok: false, meldung: BESUCH_MELDUNG.ortUnbekannt }
-
-  const koordinatenGueltig =
-    typeof ort.lat === 'number' &&
-    typeof ort.lon === 'number' &&
-    Number.isFinite(ort.lat) &&
-    Number.isFinite(ort.lon) &&
-    ort.lat >= -90 &&
-    ort.lat <= 90 &&
-    ort.lon >= -180 &&
-    ort.lon <= 180
-
+function vertragsargumente(ziel: GeprueftesZiel) {
+  // Weggelassen statt `null`: die Funktion hat für jedes dieser Argumente den
+  // Vorgabewert `null`, und ein fehlendes Argument ist dasselbe wie ein
+  // ausdrücklich unbekanntes. Die erzeugten Typen kennen die Argumente
+  // deshalb als optional.
   return {
-    ok: true,
-    wert: {
-      place_id: ort.id,
-      place_label: name.slice(0, 120),
-      country_code: countryCodeNormalisieren(ort.country_code),
-      latitude: koordinatenGueltig ? (ort.lat as number) : null,
-      longitude: koordinatenGueltig ? (ort.lon as number) : null,
-      visited_year: null,
-      visited_month: null,
-      visited_day: null,
-    },
-  }
-}
-
-async function zeileBauen(
-  supabase: Kontoclient,
-  ziel: GeprueftesZiel,
-): Promise<Aktionsergebnis<Besuchszeile>> {
-  const zeit = {
-    visited_year: ziel.jahr,
-    visited_month: ziel.monat,
-    visited_day: ziel.tag,
-  }
-
-  if (ziel.placeId) {
-    const ort = await ortAufloesen(supabase, ziel.placeId)
-    if (!ort.ok) return ort
-    return { ok: true, wert: { ...ort.wert, ...zeit } }
-  }
-
-  return {
-    ok: true,
-    wert: {
-      place_id: null,
-      place_label: null,
-      country_code: ziel.countryCode,
-      latitude: null,
-      longitude: null,
-      ...zeit,
-    },
+    _place_id: ziel.placeId ?? undefined,
+    _country_code: ziel.countryCode ?? undefined,
+    _jahr: ziel.jahr ?? undefined,
+    _monat: ziel.monat ?? undefined,
+    _tag: ziel.tag ?? undefined,
   }
 }
 
@@ -167,12 +112,10 @@ export async function besuchBestaetigen(eingabe: unknown): Promise<Aktionsergebn
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: BESUCH_MELDUNG.nichtAngemeldet }
 
-  const zeile = await zeileBauen(supabase, geprueft.wert)
-  if (!zeile.ok) return zeile
-
-  const { error, status } = await supabase
-    .from('account_visits')
-    .insert({ user_id: benutzerId, ...zeile.wert })
+  const { error, status } = await supabase.rpc(
+    'account_visit_bestaetigen',
+    vertragsargumente(geprueft.wert),
+  )
 
   if (error) return schreibmeldung(error, status)
   pfadeErneuern()
@@ -186,21 +129,16 @@ export async function besuchAendern(eingabe: unknown): Promise<Aktionsergebnis<n
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: BESUCH_MELDUNG.nichtAngemeldet }
 
-  const zeile = await zeileBauen(supabase, geprueft.wert)
-  if (!zeile.ok) return zeile
-
-  // Gefiltert wird nur nach der Id. Über das Eigentum entscheidet RLS, nicht
-  // ein zweiter Filter im Code – sonst gäbe es zwei Stellen, an denen es
-  // richtig sein muss. Null getroffene Zeilen heissen deshalb „nicht deine
-  // oder nicht vorhanden“, und beides ist dieselbe Auskunft.
-  const { data, error, status } = await supabase
-    .from('account_visits')
-    .update(zeile.wert)
-    .eq('id', geprueft.wert.id)
-    .select('id')
+  // Die Funktion filtert selbst auf das eigene Konto und liefert `null`, wenn
+  // die Zeile nicht existiert oder einem anderen gehört. Beides ist für den
+  // Aufrufer dieselbe Auskunft, und keine davon verrät, welche es war.
+  const { data, error, status } = await supabase.rpc('account_visit_aendern', {
+    _id: geprueft.wert.id,
+    ...vertragsargumente(geprueft.wert),
+  })
 
   if (error) return schreibmeldung(error, status)
-  if (!data || data.length === 0) return { ok: false, meldung: BESUCH_MELDUNG.nichtGefunden }
+  if (!data) return { ok: false, meldung: BESUCH_MELDUNG.nichtGefunden }
   pfadeErneuern()
   return { ok: true, wert: null }
 }
@@ -212,14 +150,12 @@ export async function besuchWiderrufen(eingabe: unknown): Promise<Aktionsergebni
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: BESUCH_MELDUNG.nichtAngemeldet }
 
-  const { data, error, status } = await supabase
-    .from('account_visits')
-    .delete()
-    .eq('id', geprueft.wert.id)
-    .select('id')
+  const { data, error, status } = await supabase.rpc('account_visit_widerrufen', {
+    _id: geprueft.wert.id,
+  })
 
   if (error) return schreibmeldung(error, status)
-  if (!data || data.length === 0) return { ok: false, meldung: BESUCH_MELDUNG.nichtGefunden }
+  if (!data) return { ok: false, meldung: BESUCH_MELDUNG.nichtGefunden }
   pfadeErneuern()
   return { ok: true, wert: null }
 }

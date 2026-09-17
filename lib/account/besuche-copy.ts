@@ -30,7 +30,7 @@ export const BESUCHE_COPY = {
   ortLabel: 'Ort',
   ortPlatzhalter: 'Stadt, Region oder Insel suchen',
   ortHinweis:
-    'Wähle einen Vorschlag aus der Suche. Freier Text wird nicht als Ort gespeichert – Jetnity rät keine Geografie.',
+    'Wähle einen Vorschlag aus der Suche. Freier Text wird nicht als Ort gespeichert – Jetnity rät keine Geografie. Wählst du ein Land statt eines Ortes, wird der Besuch als Land gezählt.',
   landLabel: 'Oder nur das Land',
   landHinweis:
     'Wenn du den Ort nicht mehr weisst, reicht das Land. Der Besuch zählt dann als Land, nicht als Ort.',

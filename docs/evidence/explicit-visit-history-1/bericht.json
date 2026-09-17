@@ -13,6 +13,7 @@
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {},
+      "punktMarken": {},
       "besuchtLage": "leer",
       "kennzahlen": [
         "Besucht: Noch keine Besuche bestätigt",
@@ -24,28 +25,35 @@
     },
     {
       "szenario": "uebersicht-zustaende",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "390",
       "grenzeUnterFuellung": {
         "fenster": 14,
-        "farben": 15
+        "farben": 66
       },
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
@@ -62,6 +70,7 @@
       "laenderZustaende": {
         "geplant": 1
       },
+      "punktMarken": {},
       "besuchtLage": "fehler",
       "kennzahlen": [
         "Besucht: Gerade nicht lesbar",
@@ -75,29 +84,36 @@
     },
     {
       "szenario": "historie-liste",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "390",
       "grenzeUnterFuellung": null,
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
-      "ereignisse": 6,
+      "ereignisse": 7,
       "konsole": []
     },
     {
@@ -108,6 +124,7 @@
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {},
+      "punktMarken": {},
       "besuchtLage": "leer",
       "kennzahlen": [
         "Besucht: Noch keine Besuche bestätigt",
@@ -119,56 +136,70 @@
     },
     {
       "szenario": "historie-bearbeiten",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "390",
       "grenzeUnterFuellung": null,
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
-      "ereignisse": 6,
+      "ereignisse": 7,
       "konsole": []
     },
     {
       "szenario": "historie-widerrufen",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "390",
       "grenzeUnterFuellung": null,
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
-      "ereignisse": 6,
+      "ereignisse": 7,
       "konsole": []
     },
     {
@@ -179,6 +210,7 @@
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {},
+      "punktMarken": {},
       "besuchtLage": "leer",
       "kennzahlen": [
         "Besucht: Noch keine Besuche bestätigt",
@@ -190,28 +222,35 @@
     },
     {
       "szenario": "uebersicht-zustaende",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "1280",
       "grenzeUnterFuellung": {
-        "fenster": 14,
-        "farben": 15
+        "fenster": 21,
+        "farben": 153
       },
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
@@ -228,6 +267,7 @@
       "laenderZustaende": {
         "geplant": 1
       },
+      "punktMarken": {},
       "besuchtLage": "fehler",
       "kennzahlen": [
         "Besucht: Gerade nicht lesbar",
@@ -241,29 +281,36 @@
     },
     {
       "szenario": "historie-liste",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "1280",
       "grenzeUnterFuellung": null,
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
-      "ereignisse": 6,
+      "ereignisse": 7,
       "konsole": []
     },
     {
@@ -274,6 +321,7 @@
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {},
+      "punktMarken": {},
       "besuchtLage": "leer",
       "kennzahlen": [
         "Besucht: Noch keine Besuche bestätigt",
@@ -285,56 +333,70 @@
     },
     {
       "szenario": "historie-bearbeiten",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "1280",
       "grenzeUnterFuellung": null,
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
-      "ereignisse": 6,
+      "ereignisse": 7,
       "konsole": []
     },
     {
       "szenario": "historie-widerrufen",
-      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 4 Länder · 5 Orte. Geplant: 3 Länder · 7 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
+      "beschreibung": "Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung. Besucht: 5 Länder · 6 Orte. Geplant: 5 Länder · 9 Orte. Bestätigt besuchte Länder sind voll gefüllt, geplante Länder schraffiert, Länder mit beiden Zuständen gefüllt und schraffiert. Die Länderliste unter der Karte nennt jeden Zustand zusätzlich in Worten.",
       "breite": "1280",
       "grenzeUnterFuellung": null,
       "overflow": 0,
       "kleinsteBedienflaeche": 44,
       "laenderZustaende": {
-        "beides": 2,
+        "beides": 3,
         "besucht": 2,
-        "geplant": 1
+        "geplant": 2
+      },
+      "punktMarken": {
+        "beides": "doppelring",
+        "geplant": "ring-gestrichelt",
+        "besucht": "ring"
       },
       "besuchtLage": "erfasst",
       "kennzahlen": [
-        "Besucht: 4 Länder · 5 Orte",
-        "Geplant: 3 Länder · 7 Orte"
+        "Besucht: 5 Länder · 6 Orte",
+        "Geplant: 5 Länder · 9 Orte"
       ],
       "laenderListe": [
         "🇧🇷 Brasilien · Besucht und geplant",
+        "🇭🇰 Sonderverwaltungsregion Hongkong · Besucht und geplant",
         "🇮🇹 Italien · Besucht",
         "🇯🇵 Japan · Geplant",
+        "🇲🇹 Malta · Geplant",
         "🇵🇹 Portugal · Besucht und geplant",
         "🇸🇬 Singapur · Besucht"
       ],
-      "ereignisse": 6,
+      "ereignisse": 7,
       "konsole": []
     }
   ],

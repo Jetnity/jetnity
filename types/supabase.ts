@@ -1140,6 +1140,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      account_visit_aendern: {
+        Args: {
+          _country_code?: string
+          _id: string
+          _jahr?: number
+          _monat?: number
+          _place_id?: string
+          _tag?: number
+        }
+        Returns: string
+      }
+      account_visit_bestaetigen: {
+        Args: {
+          _country_code?: string
+          _jahr?: number
+          _monat?: number
+          _place_id?: string
+          _tag?: number
+        }
+        Returns: string
+      }
+      account_visit_widerrufen: { Args: { _id: string }; Returns: string }
       admin_payments_summary_30d: {
         Args: never
         Returns: {

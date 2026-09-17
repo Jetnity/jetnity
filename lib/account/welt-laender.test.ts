@@ -184,6 +184,50 @@ describe('Die Länderflächen sind belegte, lokale Vektorgeografie', () => {
   })
 })
 
+describe('Die Ersatzmarke unterscheidet alle drei Zustände ohne Farbe', () => {
+  const zustaende = quelle('../../components/account/WeltZustaende.tsx')
+
+  test('jeder Zustand hat eine eigene Form, nicht nur eine eigene Deckkraft', () => {
+    assert.match(zustaende, /besucht: 'ring'/)
+    assert.match(zustaende, /geplant: 'ring-gestrichelt'/)
+    assert.match(zustaende, /beides: 'doppelring'/)
+    assert.equal(new Set(['ring', 'ring-gestrichelt', 'doppelring']).size, 3)
+  })
+
+  test('geplant ist gestrichelt, beides trägt zusätzlich den äusseren Ring', () => {
+    const start = zustaende.indexOf('export function WeltPunktMarken')
+    const ende = zustaende.indexOf('export function WeltFuellungen')
+    const marke = zustaende.slice(start, ende)
+    assert.equal(start > -1 && ende > start, true)
+    // Der überlagerte Zustand ist die Summe der beiden anderen, genau wie bei
+    // den Flächen: geschlossener Ring plus gestrichelter Ring.
+    assert.match(marke, /flaeche\.zustand === 'geplant' \? 'border-dashed' : 'border-solid'/)
+    assert.match(marke, /flaeche\.zustand === 'beides' \?[\s\S]*?border-dashed/)
+    assert.match(marke, /data-welt-land-marke=\{MARKE\[flaeche\.zustand\]\}/)
+  })
+
+  /**
+   * Die Marke liegt in der Ortsmarken-Ebene, nicht in der Kartengrafik. Ein
+   * Radius in Projektionsgrad schrumpft mit der Karte; die Ortsmarken darüber
+   * tun das nicht. Auf 390 Pixel verschwand der Ring deshalb unter dem Punkt.
+   */
+  test('die Marke behält ihre Grösse und liegt unter den Ortsmarken', () => {
+    assert.match(zustaende, /className="pointer-events-none absolute -translate-x-1\/2/)
+    assert.match(zustaende, /h-8 w-8 rounded-full border-\[3px\]/)
+    assert.equal(/<circle[^>]*data-welt-land-marke/.test(zustaende), false)
+
+    const karte = quelle('../../components/account/AccountWeltKarte.tsx')
+    const punkte = karte.indexOf('<WeltPunktMarken')
+    const orte = karte.indexOf('ansicht.gruppen.map')
+    assert.equal(punkte > -1 && orte > punkte, true, 'Ringe müssen vor den Ortsmarken stehen')
+  })
+
+  test('die Liste zeigt für Punktländer dieselbe Form wie die Karte', () => {
+    assert.match(zustaende, /alsPunkt=\{flaeche\.punkt !== null\}/)
+    assert.match(zustaende, /data-welt-probe-marke=\{MARKE\[zustand\]\}/)
+  })
+})
+
 describe('Die Zustandsebene lässt Grenzen sichtbar', () => {
   const karte = quelle('../../components/account/AccountWeltKarte.tsx')
 

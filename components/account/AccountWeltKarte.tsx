@@ -9,6 +9,7 @@ import {
   WeltFuellungen,
   WeltLaenderListe,
   WeltMusterDefs,
+  WeltPunktMarken,
   WeltZustandProbe,
   weltMusterId,
 } from '@/components/account/WeltZustaende'
@@ -541,6 +542,10 @@ export default function AccountWeltKarte({
                 }
               }}
             >
+              {/* Zuerst die Länder ohne zeichenbare Fläche, dann die Orte:
+                  so umschliesst der Ring den Punkt, statt unter ihm zu
+                  verschwinden. */}
+              <WeltPunktMarken flaechen={laender.flaechen} />
               {ansicht.gruppen.map((gruppe) => (
                 <MarkerGruppe
                   key={gruppe.schluessel}

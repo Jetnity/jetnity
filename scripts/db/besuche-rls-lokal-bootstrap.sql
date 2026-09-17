@@ -5,8 +5,16 @@
 -- `auth.users` als Eigentümertabelle, `auth.uid()` aus den JWT-Claims und der
 -- Trigger, den jede Jetnity-Tabelle für `updated_at` verwendet.
 --
+-- Wichtig und in der ersten Fassung dieses Bootstraps falsch: Supabase setzt
+-- für das Schema `public` Default-Privilegien, die jeder *neu angelegten*
+-- Tabelle von sich aus Rechte für `anon`, `authenticated` und `service_role`
+-- mitgeben. Ohne diese Zeilen prüfte der Lauf eine Tabelle, die nie Rechte
+-- hatte – ein `revoke` sähe dann auch dann grün aus, wenn es gar nichts tut.
+-- Der Nachweis muss die Voreinstellung nachbilden, sonst misst er sich selbst.
+--
 -- `public.places` und `public.trips` stehen hier nur als Nachbarn: der Test
--- muss zeigen können, dass der Besuchsweg sie nicht schreibt.
+-- muss zeigen können, dass der Besuchsweg sie nicht schreibt und dass die
+-- Ortsauflösung gegen echte Zeilen läuft.
 
 create extension if not exists pgcrypto;
 
@@ -25,6 +33,17 @@ end
 $$;
 
 create schema if not exists auth;
+
+grant usage on schema public to anon, authenticated, service_role;
+
+-- Die Supabase-Voreinstellung. Alles, was danach in `public` entsteht, trägt
+-- diese Rechte von sich aus – auch `public.account_visits`.
+alter default privileges in schema public
+  grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema public
+  grant all on functions to anon, authenticated, service_role;
+alter default privileges in schema public
+  grant all on sequences to anon, authenticated, service_role;
 
 create table auth.users (
   id uuid primary key
@@ -62,6 +81,26 @@ create table public.places (
   lon double precision
 );
 
+comment on table public.places is
+  'Nachbau der Ortsreferenz, nur so weit, wie der Schreibvertrag sie liest.';
+
+-- Kontrolltabelle. Sie entsteht nach den Default-Privilegien und bekommt
+-- deshalb von sich aus volle Rechte für anon, authenticated und service_role –
+-- und sie behält sie.
+--
+-- Sie prüft nicht die Migration, sondern diesen Nachweis: wäre die
+-- Voreinstellung nicht wirksam, hätte `account_visits` nie Rechte gehabt, und
+-- jedes `revoke` sähe grün aus, ohne etwas zu tun. Solange ein Schreibversuch
+-- hier gelingt und dort scheitert, misst der Lauf einen Unterschied und nicht
+-- sich selbst.
+create table public.acl_kontrolle (
+  id uuid primary key default gen_random_uuid(),
+  notiz text
+);
+
+comment on table public.acl_kontrolle is
+  'Nur für den lokalen Nachweis: belegt, dass die nachgebildeten Supabase-Default-Privilegien wirksam sind.';
+
 create table public.trips (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null,
@@ -79,7 +118,7 @@ create policy trips_own_update on public.trips
   using (user_id = (select auth.uid()))
   with check (user_id = (select auth.uid()));
 
-grant usage on schema public to anon, authenticated, service_role;
+revoke all on public.places from anon, authenticated, service_role;
+revoke all on public.trips from anon, authenticated, service_role;
 grant select on public.places to anon, authenticated;
 grant select, update on public.trips to authenticated;
-revoke all on public.trips from anon;

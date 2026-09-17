@@ -32,6 +32,7 @@ import {
   weltBesuchtAbleiten,
 } from '@/lib/account/welt-ansicht'
 import { WELT_ZUSTAND_TEXT, weltLaenderAbleiten } from '@/lib/account/welt-laender'
+import { ISO_3166_1_ALPHA2 } from '@/lib/country/katalog'
 import { worldMapAbleiten } from '@/lib/account/world-map'
 import type { TripSummary } from '@/types/trips'
 
@@ -143,15 +144,21 @@ describe('Besucht entsteht nur durch ausdrückliche Bestätigung', () => {
     }
   })
 
-  test('der Schreibweg fasst keine Reisezeile an', () => {
+  test('der Schreibweg fasst überhaupt keine Tabelle an', () => {
     const aktionen = quelle('besuche-aktionen.ts')
-    // Geschrieben wird nur die eigene Historie. `places` wird ausschliesslich
-    // gelesen, um die behauptete Ortsreferenz zu prüfen.
-    const tabellen = [
-      ...new Set([...aktionen.matchAll(/\.from\('([a-z_]+)'\)/g)].map((treffer) => treffer[1])),
+    // Kein `.from(...)` mehr: geschrieben wird ausschliesslich über die
+    // Vertragsfunktionen der Datenbank. Eine Tabelle, auf die `authenticated`
+    // kein Schreibrecht hat, lässt sich aus der Anwendung auch nicht
+    // versehentlich direkt beschreiben.
+    assert.equal(/\.from\(/.test(aktionen), false)
+    const rpcs = [
+      ...new Set([...aktionen.matchAll(/\.rpc\(\s*'([a-z_]+)'/g)].map((treffer) => treffer[1])),
     ].sort()
-    assert.deepEqual(tabellen, ['account_visits', 'places'])
-    assert.equal(/\.from\('places'\)[\s\S]{0,200}\.(insert|update|delete|upsert)\(/.test(aktionen), false)
+    assert.deepEqual(rpcs, [
+      'account_visit_aendern',
+      'account_visit_bestaetigen',
+      'account_visit_widerrufen',
+    ])
   })
 })
 
@@ -231,6 +238,36 @@ describe('Wiederholte Besuche bleiben unterscheidbare Ereignisse', () => {
     assert.equal(kennzahlen.laender, 1)
     assert.equal(kennzahlen.orte, 0)
     assert.equal(kennzahlen.ereignisse, 1)
+  })
+
+  /**
+   * Die Ortssuche liefert für die Rolle `ziel` auch Länder. Der Schreibvertrag
+   * führt so einen Treffer auf seine Landesidentität zurück; die Zeile kommt
+   * ohne `placeId` und ohne Koordinaten zurück. Hier wird geprüft, was das für
+   * die Kennzahl und für die Karte bedeutet.
+   */
+  test('ein Landtreffer der Ortssuche bläht die Ortszahl nicht auf', () => {
+    const ausLandtreffer = besuch({ id: 'peru', countryCode: 'PE' })
+    const ausOrt = besuch({
+      id: 'lissabon',
+      placeId: 'geonames:2267057',
+      placeLabel: 'Lissabon',
+      countryCode: 'PT',
+      latitude: 38.7223,
+      longitude: -9.1393,
+    })
+
+    const kennzahlen = besuchKennzahlen([ausLandtreffer, ausOrt])
+    assert.equal(kennzahlen.laender, 2)
+    assert.equal(kennzahlen.orte, 1)
+
+    // Und er sitzt nicht als gewöhnliche Ortsmarke auf dem Landesschwerpunkt.
+    const zeile = besuchAnzeigen([ausLandtreffer])[0]
+    assert.equal(zeile?.placeId, null)
+    assert.equal(zeile?.latitude, null)
+    assert.equal(zeile?.longitude, null)
+    assert.match(zeile?.titel ?? '', /Peru/)
+    assert.equal(zeile?.landLabel, null)
   })
 })
 
@@ -374,11 +411,10 @@ describe('Die Eingabe trägt Referenzen, niemals Geografie', () => {
 describe('Der Schreibweg bleibt eigenes Konto, ohne Service-Role', () => {
   const aktionen = quelle('besuche-aktionen.ts')
 
-  test('jede Aktion prüft die Anmeldung und schreibt die eigene user_id', () => {
+  test('jede Aktion prüft die Anmeldung, bevor sie den Vertrag ruft', () => {
     assert.match(aktionen, /'use server'/)
     assert.equal((aktionen.match(/await konto\(\)/g) ?? []).length, 3)
-    assert.equal((aktionen.match(/BESUCH_MELDUNG\.nichtAngemeldet/g) ?? []).length, 3)
-    assert.match(aktionen, /\.insert\(\{ user_id: benutzerId, \.\.\.zeile\.wert \}\)/)
+    assert.equal((aktionen.match(/BESUCH_MELDUNG\.nichtAngemeldet/g) ?? []).length, 4)
     assert.match(aktionen, /supabase\.auth\.getUser\(\)/)
     assert.equal(/auth\.getSession\(/.test(aktionen), false)
   })
@@ -397,15 +433,136 @@ describe('Der Schreibweg bleibt eigenes Konto, ohne Service-Role', () => {
     assert.equal(daten.includes('SERVICE_ROLE'), false)
   })
 
+  test('die Anwendung schickt Referenzen, nie Geografie', () => {
+    // Der Vertrag bekommt nur Ortsreferenz, Ländercode und Zahlen. Name,
+    // Koordinaten und das Land zu einem Ort holt die Datenbank selbst.
+    assert.match(aktionen, /_place_id: ziel\.placeId/)
+    assert.match(aktionen, /_country_code: ziel\.countryCode/)
+    for (const verboten of ['place_label', 'latitude', 'longitude', '_lat', '_lon']) {
+      assert.equal(aktionen.includes(verboten), false, verboten)
+    }
+  })
+
   test('Ändern und Widerrufen melden einen leeren Treffer als nicht gefunden', () => {
     assert.equal((aktionen.match(/BESUCH_MELDUNG\.nichtGefunden/g) ?? []).length, 2)
-    assert.equal((aktionen.match(/\.select\('id'\)/g) ?? []).length, 2)
-    // Kein eigener Owner-Filter im Code: über das Eigentum entscheidet RLS.
+    assert.equal((aktionen.match(/if \(!data\)/g) ?? []).length, 2)
+    // Kein eigener Owner-Filter im Code: darüber entscheidet die Funktion.
     assert.equal(/\.eq\('user_id'/.test(aktionen), false)
   })
 
-  test('Flughäfen werden nicht als besuchter Ort übernommen', () => {
-    assert.match(aktionen, /ort\.typ === 'airport'/)
+  test('jeder Hinweis der Datenbank hat einen Satz, keine Datenbankmeldung', () => {
+    const hinweise = [
+      ...aktionen.matchAll(/^ {2}([a-z_]+): BESUCH_MELDUNG\./gm),
+    ].map((treffer) => treffer[1])
+    const migration = readFileSync(
+      join(hier, '../../supabase/migrations/20260917120000_account_visits.sql'),
+      'utf8',
+    )
+    const inDerDatenbank = [
+      ...new Set([...migration.matchAll(/hint = '([a-z_]+)'/g)].map((treffer) => treffer[1])),
+    ].sort()
+    assert.equal(inDerDatenbank.length > 0, true)
+    for (const hinweis of inDerDatenbank) {
+      assert.equal(hinweise.includes(hinweis), true, `Hinweis ${hinweis} ohne Satz`)
+    }
+  })
+})
+
+describe('Der Schreibvertrag liegt in der Datenbank, nicht nur in der Anwendung', () => {
+  const migration = readFileSync(
+    join(hier, '../../supabase/migrations/20260917120000_account_visits.sql'),
+    'utf8',
+  )
+
+  test('authenticated bekommt auf der Tabelle nur SELECT', () => {
+    assert.match(migration, /revoke all on table public\.account_visits from authenticated;/)
+    assert.match(migration, /revoke all on table public\.account_visits from service_role;/)
+    assert.match(migration, /grant select on table public\.account_visits to authenticated;/)
+    assert.equal(
+      /grant[^;]*\b(insert|update|delete)\b[^;]*on table public\.account_visits/i.test(migration),
+      false,
+    )
+  })
+
+  test('es gibt genau eine Policy, und sie liest nur', () => {
+    const policies = [...migration.matchAll(/create policy (\w+) on public\.account_visits\s+for (\w+)/g)]
+    assert.deepEqual(
+      policies.map((treffer) => `${treffer[1]}:${treffer[2]}`),
+      ['account_visits_lesen:select'],
+    )
+  })
+
+  test('der Laenderkatalog der Datenbank ist der Katalog der Anwendung', () => {
+    const start = migration.indexOf('function public.ist_katalogland')
+    const ende = migration.indexOf('$$;', start)
+    const inDerDatenbank = [...migration.slice(start, ende).matchAll(/'([A-Z]{2})'/g)].map(
+      (treffer) => treffer[1],
+    )
+    assert.deepEqual(inDerDatenbank, [...ISO_3166_1_ALPHA2])
+  })
+
+  test('ein Land ohne Ortsreferenz muss im Katalog stehen', () => {
+    assert.match(migration, /constraint account_visits_country_katalog/)
+    assert.match(migration, /public\.ist_katalogland\(country_code\)/)
+  })
+
+  test('der Vertrag liest die Ortsreferenz und weist Flughafen und Unbekanntes ab', () => {
+    assert.match(migration, /select \* into _ort from public\.places where id = _place_id/)
+    assert.match(migration, /_ort\.typ = 'airport'/)
+    assert.match(migration, /hint = 'ort_unbekannt'/)
+  })
+
+  test('ein Landtreffer der Ortssuche wird auf seine Landesidentität zurückgeführt', () => {
+    const start = migration.indexOf("if _ort.typ = 'country' then")
+    const ende = migration.indexOf('else', start)
+    const zweig = migration.slice(start, ende)
+    assert.equal(start > -1, true)
+    assert.match(zweig, /_zeile\.place_id := null/)
+    assert.match(zweig, /_zeile\.place_label := null/)
+    assert.match(zweig, /_zeile\.latitude := null/)
+    assert.match(zweig, /_zeile\.country_code := _ort\.country_code/)
+  })
+
+  test('die Zukunft schliesst der Vertrag aus, weil eine Check-Bedingung es nicht kann', () => {
+    assert.match(migration, /now\(\) at time zone 'utc'/)
+    assert.match(migration, /hint = 'datum_zukunft'/)
+    assert.match(migration, /make_date/)
+  })
+
+  test('die Vertragsfunktionen laufen nur für angemeldete Konten', () => {
+    const funktionen = [
+      'account_visit_bestaetigen',
+      'account_visit_aendern',
+      'account_visit_widerrufen',
+    ]
+    for (const name of funktionen) {
+      const start = migration.indexOf(`create or replace function public.${name}`)
+      assert.equal(start > -1, true, name)
+      const rumpf = migration.slice(start, migration.indexOf('$$;', start))
+      assert.match(rumpf, /security definer/, name)
+      assert.match(rumpf, /set search_path = public, pg_temp/, name)
+      assert.match(rumpf, /_uid uuid := \(select auth\.uid\(\)\)/, name)
+      assert.match(rumpf, /hint = 'nicht_angemeldet'/, name)
+      assert.match(
+        migration,
+        new RegExp(`revoke all on function public\\.${name}\\([^)]*\\)\\s*\n?\\s*from public, anon, service_role;`),
+        name,
+      )
+    }
+    // Ändern und Widerrufen filtern selbst auf das eigene Konto: SECURITY
+    // DEFINER läuft als Eigentümer und sieht RLS nicht.
+    assert.equal((migration.match(/where id = _id and user_id = _uid/g) ?? []).length, 2)
+  })
+
+  test('der interne Vertragskern ist für keine PostgREST-Rolle ausführbar', () => {
+    assert.match(
+      migration,
+      /revoke all on function public\.account_visit_pruefen\([^)]*\)\s*\n?\s*from public, anon, authenticated, service_role;/,
+    )
+    assert.equal(
+      /grant execute on function public\.account_visit_pruefen/.test(migration),
+      false,
+    )
   })
 })
 
