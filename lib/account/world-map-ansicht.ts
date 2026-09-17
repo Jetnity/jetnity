@@ -40,6 +40,24 @@ export const WORLD_MAP_AUSSERHALB_RAHMEN_TEXT =
 export const WORLD_MAP_ZEITRAUM_OFFEN_TEXT = 'Zeitraum offen'
 
 /**
+ * Was die Grundkarte zeigt – für Hilfsmittel, die das Bild nicht sehen. Der
+ * Satz beschreibt Kartografie, nicht Reisewahrheit: die Marker und die
+ * Ortsliste darunter tragen weiterhin allein, was gespeichert ist.
+ */
+export const WORLD_MAP_GRUNDKARTE_BESCHREIBUNG =
+  'Weltkarte mit Küstenlinien, Binnenseen und Landesgrenzen zur Orientierung.'
+
+/**
+ * Sichtbare Kartenherkunft und Grenz-Vorbehalt. Natural Earth ist gemeinfrei
+ * und verlangt keine Nennung; genannt wird sie trotzdem, weil eine Karte ohne
+ * erkennbare Herkunft eine Behauptung ohne Quelle ist. Der zweite Satz sagt,
+ * dass gezeichnete Grenzen Orientierung sind – Jetnity trifft damit keine
+ * Aussage über völkerrechtliche Grenzverläufe, Hoheit oder Anerkennung.
+ */
+export const WORLD_MAP_GRUNDKARTE_HINWEIS =
+  'Kartengrundlage: Natural Earth (gemeinfrei). Grenzen dienen der Orientierung und sind keine Aussage über völkerrechtliche Grenzverläufe.'
+
+/**
  * Abstand in Projektionsgrad, unter dem zwei Punkte auf einer Weltkarte in
  * jeder gezeigten Breite übereinanderliegen. Solche Punkte teilen sich eine
  * Trefferfläche, damit keiner davon unerreichbar unter einem anderen liegt.

@@ -19,6 +19,8 @@ import {
 } from '@/lib/account/world-map'
 import {
   WORLD_MAP_AUSSERHALB_RAHMEN_TEXT,
+  WORLD_MAP_GRUNDKARTE_BESCHREIBUNG,
+  WORLD_MAP_GRUNDKARTE_HINWEIS,
   WORLD_MAP_MARKER_ABSTAND,
   WORLD_MAP_RAHMEN,
   WORLD_MAP_RAHMEN_VIEWBOX,
@@ -29,7 +31,12 @@ import {
   weltOrtReiseAnzeigen,
   weltReiseZeitraum,
 } from '@/lib/account/world-map-ansicht'
-import { WORLD_MAP_LAND_PFADE, WORLD_MAP_LAND_PROVENIENZ } from '@/lib/account/world-map-land'
+import {
+  WORLD_MAP_GEOGRAFIE_HERKUNFT,
+  WORLD_MAP_GRENZ_PFADE,
+  WORLD_MAP_LAND_PFADE,
+  WORLD_MAP_SEE_PFADE,
+} from '@/lib/account/world-map-geografie'
 import { tripAlsUebersicht } from '@/lib/trips/reise-orte'
 import type { Trip, TripItem, TripStage, TripStatus, TripSummary } from '@/types/trips'
 
@@ -608,7 +615,7 @@ describe('World Map bleibt lokal und nicht-kommerziell', () => {
       '../../components/account/AccountWeltKarte.tsx',
       'world-map.ts',
       'world-map-ansicht.ts',
-      'world-map-land.ts',
+      'world-map-geografie.ts',
     ]
     for (const datei of dateien) {
       const text = quelle(datei)
@@ -628,7 +635,7 @@ describe('World Map bleibt lokal und nicht-kommerziell', () => {
         assert.equal(text.toLowerCase().includes(verboten), false, `${datei}: ${verboten}`)
       }
     }
-    assert.equal(WORLD_MAP_LAND_PROVENIENZ.runtimeFetch, false)
+    assert.equal(WORLD_MAP_GEOGRAFIE_HERKUNFT.runtimeFetch, false)
     assert.equal(WORLD_MAP_LAND_PFADE.length > 0, true)
     assert.equal(
       WORLD_MAP_LAND_PFADE.every((pfad) => pfad.startsWith('M') && pfad.endsWith('Z')),
@@ -638,12 +645,159 @@ describe('World Map bleibt lokal und nicht-kommerziell', () => {
 
   test('die Landsilhouette enthält keinen Polplatzhalter über die ganze Breite', () => {
     const balken = WORLD_MAP_LAND_PFADE.filter((pfad) => {
-      const xWerte = [...pfad.matchAll(/[ML](-?\d+(?:\.\d+)?) /g)].map((treffer) =>
-        Number(treffer[1]),
-      )
+      const xWerte = koordinaten(pfad).map(([x]) => x)
       return Math.min(...xWerte) <= 0 && Math.max(...xWerte) >= 360
     })
     assert.deepEqual(balken, [])
+  })
+})
+
+/** Alle Punkte eines Pfades als Projektionskoordinaten. */
+function koordinaten(pfad: string): readonly (readonly [number, number])[] {
+  return [...pfad.matchAll(/[ML](-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g)].map(
+    (treffer) => [Number(treffer[1]), Number(treffer[2])] as const,
+  )
+}
+
+describe('Die Grundkarte ist belegte, lokale Vektorgeografie', () => {
+  const alleEbenen = [
+    ['Land', WORLD_MAP_LAND_PFADE],
+    ['Seen', WORLD_MAP_SEE_PFADE],
+    ['Grenzen', WORLD_MAP_GRENZ_PFADE],
+  ] as const
+
+  test('die Herkunft nennt Datensatz, Version, Lizenz und Pruefsummen', () => {
+    assert.equal(WORLD_MAP_GEOGRAFIE_HERKUNFT.datensatz, 'Natural Earth')
+    assert.match(WORLD_MAP_GEOGRAFIE_HERKUNFT.version, /^v\d+\.\d+\.\d+$/)
+    assert.match(WORLD_MAP_GEOGRAFIE_HERKUNFT.lizenz, /[Pp]ublic domain/)
+    assert.equal(WORLD_MAP_GEOGRAFIE_HERKUNFT.quellen.length, 3)
+    for (const quellDatei of WORLD_MAP_GEOGRAFIE_HERKUNFT.quellen) {
+      assert.match(quellDatei.datei, /^ne_\d+m_[a-z0-9_]+\.geojson$/)
+      assert.match(quellDatei.sha256, /^[0-9a-f]{64}$/)
+      assert.equal(quellDatei.bytes > 0, true)
+    }
+  })
+
+  /**
+   * Der Gewinn dieser Etappe ist Geometrie, nicht Farbe. Die abgeloeste
+   * Handzeichnung hatte elf Formen mit rund 130 Stuetzpunkten; alles darunter
+   * waere wieder eine Skizze.
+   */
+  test('die Geometrie ist deutlich feiner als die abgeloeste Handzeichnung', () => {
+    const landPunkte = WORLD_MAP_LAND_PFADE.reduce((summe, pfad) => summe + koordinaten(pfad).length, 0)
+    assert.equal(WORLD_MAP_LAND_PFADE.length > 150, true)
+    assert.equal(landPunkte > 3000, true)
+    assert.equal(WORLD_MAP_GRENZ_PFADE.length > 100, true)
+    assert.equal(WORLD_MAP_SEE_PFADE.length > 5, true)
+  })
+
+  test('Land und Seen sind geschlossen, Grenzen sind offene Linien', () => {
+    assert.equal(
+      WORLD_MAP_SEE_PFADE.every((pfad) => pfad.startsWith('M') && pfad.endsWith('Z')),
+      true,
+    )
+    assert.equal(
+      WORLD_MAP_GRENZ_PFADE.every((pfad) => pfad.startsWith('M') && !pfad.endsWith('Z')),
+      true,
+    )
+  })
+
+  /**
+   * Die Grundkarte muss in derselben Projektion liegen wie die Marker, sonst
+   * sitzt eine gespeicherte Koordinate neben ihrer Kueste. Jeder Punkt muss
+   * deshalb im Ausschnitt liegen, den `weltMarkerLage` auch fuer Marker gelten
+   * laesst.
+   */
+  test('jeder Punkt liegt im gezeigten Ausschnitt der Markerprojektion', () => {
+    const links = WORLD_MAP_RAHMEN_VIEWBOX.x
+    const rechts = WORLD_MAP_RAHMEN_VIEWBOX.x + WORLD_MAP_RAHMEN_VIEWBOX.width
+    const oben = WORLD_MAP_RAHMEN_VIEWBOX.y
+    const unten = WORLD_MAP_RAHMEN_VIEWBOX.y + WORLD_MAP_RAHMEN_VIEWBOX.height
+    for (const [name, pfade] of alleEbenen) {
+      for (const pfad of pfade) {
+        for (const [x, y] of koordinaten(pfad)) {
+          assert.equal(x >= links && x <= rechts, true, `${name}: x=${x}`)
+          assert.equal(y >= oben && y <= unten, true, `${name}: y=${y}`)
+        }
+      }
+    }
+  })
+
+  /**
+   * Stichproben gegen die Projektion: bekannte Landpunkte muessen von Land
+   * getroffen werden, bekannte Seepunkte nicht. Das faengt einen gespiegelten,
+   * verschobenen oder vertauschten Achsensatz, den eine reine Formpruefung
+   * durchliesse.
+   */
+  test('bekannte Orte liegen auf Land, bekannte Meerespunkte nicht', () => {
+    const ringe = WORLD_MAP_LAND_PFADE.map(koordinaten)
+    const aufLand = (lat: number, lon: number): boolean => {
+      const { x, y } = weltKarteProjektion(lat, lon)
+      let drin = false
+      for (const ring of ringe) {
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+          const [xi, yi] = ring[i] as readonly [number, number]
+          const [xj, yj] = ring[j] as readonly [number, number]
+          if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) drin = !drin
+        }
+      }
+      return drin
+    }
+
+    for (const [name, lat, lon] of [
+      ['Lissabon', 38.72, -9.14],
+      ['Zürich', 47.37, 8.54],
+      ['Tokio', 35.69, 139.69],
+      ['Nairobi', -1.29, 36.82],
+      ['Buenos Aires', -34.6, -58.38],
+      ['Denver', 39.74, -104.99],
+      ['Perth', -31.95, 115.86],
+    ] as const) {
+      assert.equal(aufLand(lat, lon), true, `${name} sollte auf Land liegen`)
+    }
+
+    for (const [name, lat, lon] of [
+      ['Nordatlantik', 40, -40],
+      ['Südpazifik', -30, -130],
+      ['Indischer Ozean', -20, 80],
+      ['Golf von Guinea', 0, 0],
+    ] as const) {
+      assert.equal(aufLand(lat, lon), false, `${name} sollte Wasser sein`)
+    }
+  })
+
+  /**
+   * Die Nutzlast ist der Preis dieser Etappe. Eine Obergrenze im Test macht
+   * aus der Messung eine Zusage: wer die Geometrie verfeinert, sieht sofort,
+   * wenn das Telefon dafuer bezahlt.
+   */
+  test('die Geometrie bleibt unter der zugesagten Nutzlastgrenze', () => {
+    const zeichen = [...WORLD_MAP_LAND_PFADE, ...WORLD_MAP_SEE_PFADE, ...WORLD_MAP_GRENZ_PFADE].join(
+      ' ',
+    ).length
+    assert.equal(zeichen < 90_000, true, `Geometrie ${zeichen} Zeichen`)
+  })
+
+  test('die erzeugte Datei bleibt erzeugt und traegt ihren Erzeuger', () => {
+    const text = quelle('world-map-geografie.ts')
+    assert.match(text, /ERZEUGT/)
+    assert.match(text, /scripts\/kartografie\/weltkarte-geometrie\.mjs/)
+  })
+
+  test('die Karte zeichnet eine Ebene je Pfad statt eines Elements je Ring', () => {
+    const karte = quelle('../../components/account/AccountWeltKarte.tsx')
+    assert.match(karte, /const LAND_PFAD = WORLD_MAP_LAND_PFADE\.join\(' '\)/)
+    assert.match(karte, /fillRule="evenodd"/)
+    assert.equal(karte.includes('WORLD_MAP_LAND_PFADE.map('), false)
+  })
+
+  test('Herkunft und Grenzvorbehalt stehen sichtbar an der Karte', () => {
+    const karte = quelle('../../components/account/AccountWeltKarte.tsx')
+    assert.match(karte, /WORLD_MAP_GRUNDKARTE_HINWEIS/)
+    assert.match(WORLD_MAP_GRUNDKARTE_HINWEIS, /Natural Earth/)
+    assert.match(WORLD_MAP_GRUNDKARTE_HINWEIS, /Orientierung/)
+    assert.match(WORLD_MAP_GRUNDKARTE_BESCHREIBUNG, /Orientierung/)
+    assert.match(karte, /WORLD_MAP_GRUNDKARTE_BESCHREIBUNG/)
   })
 })
 

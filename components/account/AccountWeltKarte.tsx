@@ -14,14 +14,30 @@ import {
 } from '@/lib/account/world-map'
 import {
   WORLD_MAP_AUSSERHALB_RAHMEN_TEXT,
+  WORLD_MAP_GRUNDKARTE_BESCHREIBUNG,
+  WORLD_MAP_GRUNDKARTE_HINWEIS,
   WORLD_MAP_GRUPPE_FRAGE,
+  WORLD_MAP_RAHMEN_VIEWBOX,
   weltKartenAnsicht,
   weltMarkerGruppeText,
   weltOrtReiseAnzeigen,
   type WorldMapAusrichtung,
   type WorldMapMarkerGruppe,
 } from '@/lib/account/world-map-ansicht'
-import { WORLD_MAP_LAND_PFADE } from '@/lib/account/world-map-land'
+import {
+  WORLD_MAP_GRENZ_PFADE,
+  WORLD_MAP_LAND_PFADE,
+  WORLD_MAP_SEE_PFADE,
+} from '@/lib/account/world-map-geografie'
+
+/**
+ * Die Geometrie steht als ein Pfad je Ebene im Baum, nicht als ein Element je
+ * Ring. Das sind drei Knoten statt siebenhundert; die Fuellregel `evenodd`
+ * traegt dabei die Loecher, etwa das Kaspische Meer in Eurasien.
+ */
+const LAND_PFAD = WORLD_MAP_LAND_PFADE.join(' ')
+const SEE_PFAD = WORLD_MAP_SEE_PFADE.join(' ')
+const GRENZ_PFAD = WORLD_MAP_GRENZ_PFADE.join(' ')
 
 const BESCHRIFTUNG_AUSRICHTUNG = {
   links: 'left-0 translate-x-0',
@@ -407,11 +423,50 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
                   >
                     <title id="account-welt-karte-titel">{welt.titel}</title>
                     <desc id="account-welt-karte-desc">
-                      {welt.lage === 'leer'
-                        ? welt.leerText
-                        : `${welt.zusammenfassung} ${welt.laenderText}`}
+                      {`${WORLD_MAP_GRUNDKARTE_BESCHREIBUNG} ${
+                        welt.lage === 'leer'
+                          ? welt.leerText
+                          : `${welt.zusammenfassung} ${welt.laenderText}`
+                      }`}
                     </desc>
+                    {/* Reine Grundkarte: eine Ebene Wasser, eine Ebene Land mit
+                        Küstenlinie, eine Ebene Binnenseen, eine Ebene Grenzen
+                        zur Orientierung, darüber das Gradnetz. */}
                     <g aria-hidden="true">
+                      <rect
+                        x={WORLD_MAP_RAHMEN_VIEWBOX.x}
+                        y={WORLD_MAP_RAHMEN_VIEWBOX.y}
+                        width={WORLD_MAP_RAHMEN_VIEWBOX.width}
+                        height={WORLD_MAP_RAHMEN_VIEWBOX.height}
+                        className="fill-surface-100"
+                      />
+                      {/* Die Strichstärken skalieren bewusst nicht mit der
+                          Karte. Eine in Projektionsgrad gemessene Küstenlinie
+                          wäre auf 390px Breite dünner als ein Bildpunkt und
+                          würde zu Grau verwaschen; `non-scaling-stroke` hält
+                          sie auf jeder Breite gleich scharf. */}
+                      <path
+                        d={LAND_PFAD}
+                        fillRule="evenodd"
+                        className="fill-brand-700/20 stroke-brand-700/60 [vector-effect:non-scaling-stroke]"
+                        strokeWidth="0.75"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d={SEE_PFAD}
+                        fillRule="evenodd"
+                        className="fill-surface-100 stroke-brand-700/35 [vector-effect:non-scaling-stroke]"
+                        strokeWidth="0.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d={GRENZ_PFAD}
+                        fill="none"
+                        className="stroke-brand-800/25 [vector-effect:non-scaling-stroke]"
+                        strokeWidth="0.5"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                      />
                       {ansicht.gitter.map((linie) => (
                         <line
                           key={linie.schluessel}
@@ -419,17 +474,8 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
                           y1={linie.y1}
                           x2={linie.x2}
                           y2={linie.y2}
-                          className="stroke-brand-800/10"
-                          strokeWidth="0.3"
-                        />
-                      ))}
-                      {WORLD_MAP_LAND_PFADE.map((pfad) => (
-                        <path
-                          key={pfad}
-                          d={pfad}
-                          className="fill-brand-700/25 stroke-brand-700/45"
-                          strokeWidth="0.45"
-                          strokeLinejoin="round"
+                          className="stroke-brand-800/[0.07] [vector-effect:non-scaling-stroke]"
+                          strokeWidth="0.5"
                         />
                       ))}
                     </g>
@@ -468,6 +514,12 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
               <p className="mt-2 text-xs leading-5 text-ink-650">
                 {welt.lage === 'leer' ? welt.leerText : welt.laenderText}
                 {ansicht.rahmenHinweis ? ` ${ansicht.rahmenHinweis}` : ''}
+              </p>
+              {/* Kartenherkunft und Grenz-Vorbehalt stehen sichtbar an der
+                  Karte, nicht nur in der Dokumentation: gezeichnete Grenzen
+                  sind Orientierung, keine Aussage Jetnitys über Hoheit. */}
+              <p className="mt-1 text-xs leading-5 text-ink-650">
+                {WORLD_MAP_GRUNDKARTE_HINWEIS}
               </p>
             </div>
 
