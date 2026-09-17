@@ -20,12 +20,20 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | --- | --- |
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Exakter finaler Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
+| **Letzter laufzeitändernder Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
 | Merge-Base mit `origin/main` | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Ahead / Behind gegen `origin/main` | **4 ahead / 0 behind** |
+| Behind gegen `origin/main` | **0** |
 | Drift | keine; `origin/main` wurde vor dem Handoff neu geholt und steht unverändert auf `15aa125a` |
 
-Jeder neue Head macht die Gates dieses Dokuments ungültig.
+Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
+Dokumentations-Commit über `ea7cf8ec` und ändert keine Laufzeit: Die Commits
+darüber berühren nur `docs/`, `DECISIONS.md`, `ARCHITECTURE.md` und `ROADMAP.md`.
+Ein Dokument kann seine eigene Commit-Kennung nicht enthalten; die finale
+Kennung steht in der PR-Beschreibung und ist mit `git rev-parse HEAD` zu lesen.
+Die Gates in Abschnitt 3 wurden auf dem Arbeitsstand des finalen
+Dokumentations-Commits erneut vollständig ausgeführt.
+
+Jeder weitere Head macht die Gates dieses Dokuments ungültig.
 
 Commits auf dem Branch:
 
@@ -33,6 +41,7 @@ Commits auf dem Branch:
 2. `e14d8188` – Add bounded truth-aware in-trip Assistant runtime
 3. `8bb6ea98` – Add adversarial tests for the Assistant runtime
 4. `ea7cf8ec` – Add browser evidence for the Assistant surface
+5. darüber: Dokumentation, ohne Laufzeitänderung
 
 ---
 

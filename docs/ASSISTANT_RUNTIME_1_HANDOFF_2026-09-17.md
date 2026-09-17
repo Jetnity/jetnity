@@ -16,14 +16,15 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| **Exakter finaler Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
+| **Letzter laufzeitändernder Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
+| **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über `ea7cf8ec`, ohne Laufzeitänderung. Kennung in der PR-Beschreibung bzw. über `git rev-parse HEAD` |
 | Merge-Base | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Ahead / Behind | 4 ahead / 0 behind gegen `origin/main` |
+| Behind | 0 gegen `origin/main` |
 | Drift | keine |
 | Binding | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Entscheidung | `DECISIONS.md` ADR-0212 |
 
-`origin/main` wurde vor dem Handoff erneut geholt. Jeder neue Head macht alle Exact-Head-Gates ungültig.
+`origin/main` wurde vor dem Handoff erneut geholt. Jeder weitere Head macht alle Exact-Head-Gates ungültig.
 
 ---
 
@@ -79,7 +80,7 @@ Ursache: Der `SUPABASE_ACCESS_TOKEN` dieser Umgebung wird von der Supabase Manag
 
 ## 5. Der exakte nächste Schritt
 
-**Unabhängiges Technical-Lead-Review auf `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`.**
+**Unabhängiges Technical-Lead-Review auf dem exakten finalen Head dieses Branches.** Die Laufzeit steht auf `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`; darüber liegt ausschliesslich Dokumentation.
 
 Danach, in dieser Reihenfolge:
 

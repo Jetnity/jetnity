@@ -14,8 +14,9 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| **Exact final head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
-| Merge-base / ahead / behind | `15aa125a` / 4 ahead / 0 behind |
+| **Last runtime-changing head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
+| **Exact final head** | branch head: documentation-only commit on top of `ea7cf8ec`; identifier in the PR description |
+| Merge-base / behind | `15aa125a` / 0 behind |
 | Drift | none |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Decision | ADR-0212 |
@@ -34,7 +35,7 @@ Production migration, Production model activation, Production OpenAI secrets and
 
 **Reported side effect requiring cleanup:** an unconfirmed, sessionless auth user `assistant.runtime1.probe@gmail.com` was created via the anon signup endpoint while looking for a reachable account login. The target project is **not** the documented Production ref `qscbgcdmivbbnzrcyegn`; by the convention in `docs/DATENBANK.md` it is the Development branch. Please delete it.
 
-**Exact next step:** independent Technical-Lead review on `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`, then a valid access token, then Development-only migration and live constraint/RLS/grant verification, then one bounded paid Preview call. No Ready, no merge, no follow-up slice by the coding agent.
+**Exact next step:** independent Technical-Lead review on the exact final head of the branch (runtime stands at `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`; everything above it is documentation), then a valid access token, then Development-only migration and live constraint/RLS/grant verification, then one bounded paid Preview call. No Ready, no merge, no follow-up slice by the coding agent.
 
 ## 1. Latest verified runtime integration
 

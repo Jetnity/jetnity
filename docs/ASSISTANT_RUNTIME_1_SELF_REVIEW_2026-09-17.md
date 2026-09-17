@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Exakter Head: `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`
+Letzter laufzeitändernder Head: `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940`. Darüber liegt ausschliesslich Dokumentation; der exakte finale Head steht in der PR-Beschreibung.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
