@@ -22,10 +22,10 @@ const RUNTIME = [
 ]
 
 describe('AP-10-S1 Buchungsordner Vertrag', () => {
-  test('Account-Navigation bleibt genau vier Punkte', () => {
+  test('Account-Navigation führt Buchungen weiterhin nicht als eigenen Punkt', () => {
     assert.deepEqual(
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.label),
-      ['Übersicht', 'Reisen', 'Reisende', 'Einstellungen'],
+      ['Übersicht', 'Reisen', 'Deine Welt', 'Reisende', 'Einstellungen'],
     )
     const hrefs: string[] = ACCOUNT_NAVIGATION.map((eintrag) => eintrag.href)
     assert.equal(hrefs.includes('/account/bookings'), false)

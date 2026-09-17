@@ -1,25 +1,22 @@
 // lib/account/world-map.ts
 //
-// Presentation-Derivation für die Account-Weltkarte. Keine persistierte
-// Besuchshistorie, kein Geocoding, keine Länder- oder Koordinaten-Erschliessung.
-// Eine geplante Etappe ist kein Besuch.
+// Presentation-Derivation der *geplanten* Wahrheit der Account-Weltkarte: was
+// in Jetnity-Reisen als Etappe gespeichert ist. Kein Geocoding, keine Länder-
+// oder Koordinaten-Erschliessung.
+//
+// Eine geplante Etappe ist kein Besuch. Diese Datei liest die Besuchshistorie
+// deshalb nicht einmal – die bestätigte Wahrheit leitet `welt-ansicht.ts` aus
+// `account_visits` ab, und keine der beiden Seiten kann die andere erzeugen.
 
+import { kennzahlText } from '@/lib/account/besuche'
 import { countryCodeNormalisieren, landAnzeigeText } from '@/lib/country/darstellung'
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import type { TripStatus, TripSummary, TripSummaryStage } from '@/types/trips'
 
 export const WORLD_MAP_TITEL = 'Deine Welt'
 const WORLD_MAP_UNTERSCHEIDUNG =
-  'Diese Karte zeigt Orte, die in deinen Jetnity-Reisen geplant sind. Ein geplanter Ort ist kein Nachweis, dass du dort warst.'
-const WORLD_MAP_GEPLANT_LABEL = 'In Jetnity geplant'
-const WORLD_MAP_BESUCHT_LABEL = 'Besucht bestätigt'
-export const WORLD_MAP_BESUCHT_TEXT =
-  'Bestätigte Besuchshistorie ist in Jetnity noch nicht erfasst. Ein vergangenes Datum, eine archivierte Reise oder ein Reise-Status gelten nicht als Besuch.'
-/**
- * Kurzform für die Legende. Sie sagt, dass die Historie fehlt – nicht, dass sie
- * leer wäre. Eine Zahl wäre hier eine Behauptung über Wirklichkeit.
- */
-export const WORLD_MAP_BESUCHT_KURZ = 'Noch nicht erfasst'
+  'Bestätigt besucht und in Jetnity geplant sind zwei getrennte Wahrheiten. Ein geplanter Ort ist kein Nachweis, dass du dort warst.'
+const WORLD_MAP_GEPLANT_LABEL = 'Geplant'
 export const WORLD_MAP_LEER_TEXT =
   'Noch keine geplanten Reiseziele in deinem Konto. Die Karte bleibt leer, bis gespeicherte Etappen existieren.'
 /** Kurzform für die Legende, damit der leere Zustand nicht doppelt dasteht. */
@@ -34,7 +31,6 @@ const WORLD_MAP_ZIEL_OHNE_NAME = 'Reiseziel'
 export const WORLD_MAP_VIEWBOX = { width: 360, height: 180 } as const
 
 export type WorldMapLage = 'fehler' | 'leer' | 'geplant'
-export type WorldMapBesuchtLage = 'nicht_erfasst'
 
 export type WorldMapHerkunft = {
   tripId: string
@@ -82,15 +78,13 @@ export type WorldMapAbleitung = {
   titel: string
   unterscheidung: string
   geplantLabel: string
-  besuchtLabel: string
-  besuchtLage: WorldMapBesuchtLage
-  besuchtText: string
-  besuchtKurz: string
   leerText: string
   fehlerText: string
   zusammenfassung: string
   /** Kurzform der geplanten Lage für die Legende. */
   geplantKurz: string
+  /** Kompakte Kennzahl `N Länder · M Orte` der geplanten Wahrheit. */
+  geplantKennzahl: string
   laenderText: string
   laenderCodes: readonly string[]
   orte: readonly WorldMapOrt[]
@@ -102,10 +96,6 @@ const LEERE_ABLEITUNG = {
   titel: WORLD_MAP_TITEL,
   unterscheidung: WORLD_MAP_UNTERSCHEIDUNG,
   geplantLabel: WORLD_MAP_GEPLANT_LABEL,
-  besuchtLabel: WORLD_MAP_BESUCHT_LABEL,
-  besuchtLage: 'nicht_erfasst' as const,
-  besuchtText: WORLD_MAP_BESUCHT_TEXT,
-  besuchtKurz: WORLD_MAP_BESUCHT_KURZ,
   leerText: WORLD_MAP_LEER_TEXT,
   fehlerText: WORLD_MAP_FEHLER_TEXT,
 }
@@ -295,6 +285,7 @@ export function worldMapAbleiten({
       lage: 'fehler',
       zusammenfassung: WORLD_MAP_FEHLER_TEXT,
       geplantKurz: WORLD_MAP_FEHLER_TEXT,
+      geplantKennzahl: WORLD_MAP_FEHLER_TEXT,
       laenderText: WORLD_MAP_FEHLER_TEXT,
       laenderCodes: [],
       orte: [],
@@ -310,6 +301,7 @@ export function worldMapAbleiten({
       lage: 'leer',
       zusammenfassung: WORLD_MAP_LEER_TEXT,
       geplantKurz: WORLD_MAP_GEPLANT_LEER_KURZ,
+      geplantKennzahl: WORLD_MAP_GEPLANT_LEER_KURZ,
       laenderText: 'Keine gespeicherten Ländercodes bei den geplanten Etappen.',
       laenderCodes: [],
       orte: [],
@@ -350,6 +342,7 @@ export function worldMapAbleiten({
     lage: 'geplant',
     zusammenfassung: zusammenfassung(geplottet, ungeplottet),
     geplantKurz: zusammenfassung(geplottet, ungeplottet),
+    geplantKennzahl: kennzahlText(laenderCodes.length, orte.length),
     laenderText: laenderText(laenderCodes),
     laenderCodes,
     orte,

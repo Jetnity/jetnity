@@ -93,8 +93,19 @@ export default function LandFeld({
         {optionen.bestehend ? (
           <option value={optionen.bestehend.code}>{optionen.bestehend.label}</option>
         ) : null}
+        {/*
+          Der Ländername kommt aus `Intl.DisplayNames`, und dessen CLDR-Stand
+          ist nicht überall derselbe: Node und Chromium schreiben zum Beispiel
+          „Sonderverwaltungsregion Hongkong“ gegen „Hongkong“. Beim Hydrieren
+          liest React daraus eine Textabweichung und verwirft die ganze Seite,
+          um sie neu zu zeichnen – ein Seitenfehler wegen vier Wörtern.
+
+          Gespeichert wird ohnehin nur der Code im `value`, und der ist auf
+          beiden Seiten identisch. Nur die Beschriftung darf abweichen; beide
+          Fassungen sind richtige deutsche Namen.
+        */}
         {optionen.katalog.map((eintrag) => (
-          <option key={eintrag.code} value={eintrag.code}>
+          <option key={eintrag.code} value={eintrag.code} suppressHydrationWarning>
             {eintrag.label}
           </option>
         ))}

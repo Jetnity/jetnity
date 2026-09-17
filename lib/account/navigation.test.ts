@@ -20,11 +20,11 @@ describe('Account-Navigation', () => {
   test('zeigt vorhandene Account-Ziele in der Rail-Reihenfolge', () => {
     assert.deepEqual(
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.label),
-      ['Übersicht', 'Reisen', 'Reisende', 'Einstellungen'],
+      ['Übersicht', 'Reisen', 'Deine Welt', 'Reisende', 'Einstellungen'],
     )
     assert.deepEqual(
       ACCOUNT_NAVIGATION.map((eintrag) => eintrag.href),
-      ['/account', '/reisen', '/account/travellers', '/account/settings'],
+      ['/account', '/reisen', '/account/welt', '/account/travellers', '/account/settings'],
     )
   })
 
@@ -33,6 +33,7 @@ describe('Account-Navigation', () => {
     assert.equal(accountNavigationAktiv('/account/settings', '/account'), false)
     assert.equal(accountNavigationAktiv('/account/security', '/account'), false)
     assert.equal(accountNavigationAktiv('/account/travellers', '/account'), false)
+    assert.equal(accountNavigationAktiv('/account/welt', '/account'), false)
   })
 
   test('legt Sicherheit unter Einstellungen', () => {
@@ -55,8 +56,14 @@ describe('Account-Navigation', () => {
     assert.equal(accountNavigationAktiv('/reisen', '/account/travellers'), false)
   })
 
-  test('legt Buchungen nicht unter die vier Rail-Punkte und nicht als fünften Tab', () => {
-    assert.equal(ACCOUNT_NAVIGATION.length, 4)
+  test('legt Deine Welt auf die eigene Route, nicht auf die Übersicht', () => {
+    assert.equal(accountNavigationAktiv('/account/welt', '/account/welt'), true)
+    assert.equal(accountNavigationAktiv('/account', '/account/welt'), false)
+    assert.equal(accountNavigationAktiv('/account/travellers', '/account/welt'), false)
+  })
+
+  test('legt Buchungen nicht unter die Rail-Punkte und nicht als eigenen Tab', () => {
+    assert.equal(ACCOUNT_NAVIGATION.length, 5)
     const ziele = ACCOUNT_NAVIGATION.map((eintrag) => `${eintrag.label}:${eintrag.href}`)
     assert.equal(ziele.includes('Buchungen:/account/bookings'), false)
     assert.equal(ziele.some((ziel) => ziel.endsWith(':/account/bookings') || ziel.startsWith('Buchungen:')), false)
@@ -64,6 +71,7 @@ describe('Account-Navigation', () => {
     assert.equal(accountNavigationAktiv('/account/bookings', '/reisen'), false)
     assert.equal(accountNavigationAktiv('/account/bookings', '/account/travellers'), false)
     assert.equal(accountNavigationAktiv('/account/bookings', '/account/settings'), false)
+    assert.equal(accountNavigationAktiv('/account/bookings', '/account/welt'), false)
   })
 
   test('verschiebt den aktiven Tab nur waagrecht und nur wenn er ragt', () => {
