@@ -21,9 +21,9 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` (historisch; inzwischen durch Rebase und Merge abgelöst) |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
 | **Letzter laufzeitändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) |
-| Merge-Base mit `origin/main` | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` – `main` wurde in den Branch **gemergt**, nicht rebased |
+| Merge-Base mit `origin/main` | `cc2e1bff77329b37c882125dfed5f1eab2e8bda2` – `main` wurde zweimal in den Branch **gemergt**, nie rebased |
 | Behind gegen `origin/main` | **0** – geprüft beim letzten Handoff. Die Ahead-Zahl steht hier nicht: Sie ändert sich mit jedem Commit, auch mit dem, der sie festhielte. Verbindlich ist der Live-Vergleich in PR #435 |
-| Drift | **keine.** `origin/main` war auf `aa6afaa6` gewandert (Realistic World Cartography 1, Guardian-Governance, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits). Integriert durch `git merge --no-ff`, ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt |
+| Drift | **keine.** Zwei Integrationen, beide per `git merge --no-ff` und ausdrücklich **ohne** Rebase oder Force-Push, damit die bereits reviewte Exact-Head-Historie erhalten bleibt: `main@aa6afaa6` (Realistic World Cartography 1, V1-Account/Privacy/Ops-Audit, Explicit Visit History 1 – 41 Commits) und `main@cc2e1bff` (erweiterter Guardian-/Grok-Standard, #452 – 3 Commits) |
 
 Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
 Dokumentations-Commit über dem letzten Code-Commit und ändert keine Laufzeit:
@@ -52,7 +52,8 @@ Commits auf dem Branch:
 11. Review-Fix 6: Wortschatz als Erlaubnisliste über allen Modellfeldern (durch Fix 7 ersetzt)
 12. Review-Fix 7: getrennte Kanäle – Prosa ohne amtliches Vokabular (durch Fix 8 ersetzt)
 13. Review-Fix 8: kein Freitextfeld mehr – Auswahl aus Jetnity-Katalogen statt Formulierung
-14. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
+14. Integration von `main@cc2e1bff` (erweiterter Guardian-/Grok-Standard)
+15. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
 
 Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@03842a64` geändert; Reihenfolge und Inhalte sind unverändert. Seither wird `main` gemergt und nicht mehr rebased, damit die reviewte Historie erhalten bleibt.
 
@@ -122,7 +123,32 @@ Die Commit-Kennungen der Runden 1–4 haben sich durch den Rebase auf `main@0384
 
 Exact-Head-Kennungen von CI und Vercel stehen **nicht** in diesem Dokument: Jeder Commit, der sie festhielte, wäre ein neuer Head und machte sie im selben Moment ungültig. Die Kennungen des jeweils aktuellen Kopfes stehen in den Checks von PR #435; der Abschlussbericht des Agenten nennt sie für den Head, auf dem er endet.
 
-### Integration von `main@aa6afaa6`
+### Integration von `main@cc2e1bff` – erweiterter Guardian-/Grok-Standard
+
+Verlustfrei, geprüft und nicht behauptet:
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| Commits aus `main` | 3, alle Guardian-Governance: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` und `docs/JETNITY_GROK_GUARDIAN_CAPABILITY_EXPANSION_2026-09-17.md` |
+| Überschneidung mit den 36 Dateien dieses Slice | **keine** – deshalb konfliktfrei |
+| beide Guardian-Dateien gegen `origin/main` | **byte-identisch** |
+| `JETNITY_START_HERE.md`, TL-Standard, `AGENTS.md` | identisch mit `origin/main` |
+| Diff gegen `origin/main` | ausschliesslich der Assistant-Slice, 36 Dateien |
+| Assistant-Architektur | unverändert; kein Redesign, keine Katalogerweiterung, keine neue Wahrheitsheuristik |
+
+Ein ausbleibender Konflikt beweist keine Verträglichkeit, deshalb ist jede Zeile
+oben gemessen. Die Guardian-Governance wurde gelesen und **nicht** verändert.
+
+**Eine Hygiene-Korrektur auf dem integrierten Stand, ausdrücklich benannt:** Die
+lokale Konstante `ROLLEN` in `lib/reisebegleiter/befunde.ts` war nach dem
+Export-Hygiene-Fix nur noch Typquelle und erzeugte genau **eine** Lint-Warnung
+über der auf `origin/main` gemessenen Baseline (140 statt 139). `Befundrolle` ist
+jetzt direkt ein Union-Typ – keine ungenutzte Laufzeitkonstante, kein
+Unterdrücken, keine Verhaltensänderung. Die Baseline wurde dafür auf einem
+Worktree von `origin/main` neu gemessen und die Warnungslisten verglichen, statt
+die Zahl zu glauben.
+
+### Integration von `main@aa6afaa6` (früher, historisch)
 
 Verlustfrei in beide Richtungen, geprüft und nicht behauptet:
 

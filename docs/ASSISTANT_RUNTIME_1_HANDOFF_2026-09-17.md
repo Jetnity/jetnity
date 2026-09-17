@@ -16,12 +16,12 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis bei Dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Aktuelle Basis | `main@aa6afaa6057f631ffb332e6feeda32a45c52fa47` – durch Merge integriert |
+| Aktuelle Basis | `main@cc2e1bff77329b37c882125dfed5f1eab2e8bda2` – durch Merge integriert |
 | **Letzter laufzeitändernder Head** | der Review-Fix „Replace free prose with selection from Jetnity-owned catalogues“ (Runde 9) |
 | **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
-| Merge-Base | `aa6afaa6057f631ffb332e6feeda32a45c52fa47` |
+| Merge-Base | `cc2e1bff77329b37c882125dfed5f1eab2e8bda2` |
 | Behind | **0** gegen `origin/main` beim Handoff. Ahead steht hier nicht: Die Zahl ändert sich mit jedem Commit. Verbindlich ist der Live-Vergleich in PR #435 |
-| Drift | keine. `main@aa6afaa6` ist per `git merge --no-ff` integriert – ohne Rebase und ohne Force-Push, damit die reviewte Exact-Head-Historie erhalten bleibt. Konfliktfrei, beide Seiten verlustfrei geprüft |
+| Drift | keine. `main@aa6afaa6` und danach `main@cc2e1bff` (erweiterter Guardian-/Grok-Standard, #452) sind per `git merge --no-ff` integriert – ohne Rebase und ohne Force-Push, damit die reviewte Exact-Head-Historie erhalten bleibt. Beide konfliktfrei, beide Seiten verlustfrei geprüft |
 | Binding | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Entscheidung | `DECISIONS.md` ADR-0212 |
 

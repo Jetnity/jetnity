@@ -14,11 +14,11 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base at dispatch | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| Current base | `main@aa6afaa6057f631ffb332e6feeda32a45c52fa47` (merged, not rebased) |
+| Current base | `main@cc2e1bff77329b37c882125dfed5f1eab2e8bda2` (merged, not rebased) |
 | **Last runtime-changing head** | the review fix "Replace the language denylist with a vocabulary allowlist" |
 | **Exact final head** | branch head: read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
-| Merge-base / behind | `aa6afaa6` / **0 behind**. The ahead count is deliberately not recorded here — it changes with the very commit that would record it. The live compare in PR #435 is authoritative |
-| Drift | none. `main@aa6afaa6` (Realistic World Cartography 1, Guardian governance, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) was integrated with `git merge --no-ff`, deliberately without rebase or force-push so the already reviewed exact-head history survives. No conflicts; losslessness verified in both directions |
+| Merge-base / behind | `cc2e1bff` / **0 behind**. The ahead count is deliberately not recorded here — it changes with the very commit that would record it. The live compare in PR #435 is authoritative |
+| Drift | none. Two integrations, both with `git merge --no-ff` and deliberately without rebase or force-push so the already reviewed exact-head history survives: `main@aa6afaa6` (Realistic World Cartography 1, V1 Account/Privacy/Ops audit, Explicit Visit History 1 — 41 commits) and `main@cc2e1bff` (expanded Guardian/Grok operating standard, #452 — 3 commits, both files byte-identical with `origin/main`). No conflicts; losslessness verified in both directions |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Decision | ADR-0212 |
 | Status doc | `docs/ASSISTANT_RUNTIME_1_STATUS_2026-09-17.md` |
