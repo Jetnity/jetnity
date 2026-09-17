@@ -141,7 +141,7 @@ A later docs-only continuity merge may move repository `main`; **aktuelles `main
 - passport numbers, MRZ, scans, biometrics, health records, auth/account identifiers, commercial/provider raw/secret fields and Official `contextFingerprint` do not cross the Assistant allowlist;
 - no model call, no new `Modellfunktion`, no DB/Auth/provider/Production activation, no UI/mutation.
 
-The broader real Assistant runtime/model-call V1 gap remains open and separately gated.
+Assistant Runtime 1 has since closed the first real bounded model-call path. Any broader Assistant expansion or any Production Assistant migration/model activation remains separately gated.
 
 ### Assistant Runtime 1 — CLOSED
 
