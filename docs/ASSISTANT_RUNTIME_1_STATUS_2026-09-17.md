@@ -20,14 +20,15 @@ Cursor-Agent: **Jetnity assistant runtime 1**, Generation 1, Parent-Modell **Cla
 | --- | --- |
 | Kanonische Basis bei Dispatch | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Initialer Task-Head | `1df2c1a1b974208fcad5b1f47638fd21f0a4a733` |
-| **Letzter laufzeitändernder Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
+| **Letzter laufzeitändernder Head** | der Review-Fix-Commit auf `74577e313cc5af9a0b84662ae2044775c88cec94` |
 | Merge-Base mit `origin/main` | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Behind gegen `origin/main` | **0** |
-| Drift | keine; `origin/main` wurde vor dem Handoff neu geholt und steht unverändert auf `15aa125a` |
+| Drift | **`origin/main` ist gewandert**: `15aa125a` → `03842a64` („Merge World Map Polish 2 (#437)", 8 Commits). Kein Dateiüberschneidung mit diesem Branch; die Merge-Base bleibt `15aa125a`, der Branch ist 0 behind gegenüber seiner Base, aber nicht mehr auf dem Kopf von `main`. Ein Rebase ist eine Entscheidung des Technical Lead und wurde nicht vorgenommen |
 
 Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
-Dokumentations-Commit über `ea7cf8ec` und ändert keine Laufzeit: Die Commits
-darüber berühren nur `docs/`, `DECISIONS.md`, `ARCHITECTURE.md` und `ROADMAP.md`.
+Dokumentations-Commit über dem letzten Code-Commit und ändert keine Laufzeit:
+Die Commits darüber berühren nur `docs/`, `DECISIONS.md`, `ARCHITECTURE.md`
+und `ROADMAP.md`.
 Ein Dokument kann seine eigene Commit-Kennung nicht enthalten; die finale
 Kennung ist mit `git rev-parse origin/feat/phase-1-assistant-runtime-1` zu lesen
 und im Abschlussbericht des Agenten genannt.
@@ -42,7 +43,10 @@ Commits auf dem Branch:
 2. `e14d8188` – Add bounded truth-aware in-trip Assistant runtime
 3. `8bb6ea98` – Add adversarial tests for the Assistant runtime
 4. `ea7cf8ec` – Add browser evidence for the Assistant surface
-5. darüber: Dokumentation, ohne Laufzeitänderung
+5. `31817cce` – Review-Fix 1: Gewissheit an die genannte amtliche Lage gebunden
+6. `c60e7659` – Review-Fix 2: unerwartete Ausgabefelder werden abgelehnt
+7. `f77046f6` – Review-Fix 3: Gewissheit an den passenden Anforderungstyp gebunden
+8. dazwischen und darüber: Dokumentation, ohne Laufzeitänderung
 
 ---
 
@@ -93,7 +97,7 @@ Commits auf dem Branch:
 
 | Gate | Ergebnis |
 | --- | --- |
-| `npm test` | **grün** – 3329 Tests, 591 Suites, 0 Fehler |
+| `npm test` | **grün** – 3336 Tests, 592 Suites, 0 Fehler |
 | `npm run typecheck` | **grün** |
 | `npm run lint` | **0 Fehler**, 138 Warnungen – identisch zur Basis, keine davon in neuen Dateien |
 | `npm run build` | **grün** (`Compiled successfully`, 23 Seiten erzeugt) |

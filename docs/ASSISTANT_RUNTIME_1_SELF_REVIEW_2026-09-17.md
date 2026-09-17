@@ -1,7 +1,7 @@
 # Jetnity – Assistant Runtime 1 Self-Review (adversarial)
 
 Stand: 17. September 2026  
-Letzter laufzeitändernder Head: die beiden Review-Fix-Commits auf `3775d980` (siehe Abschnitt 0). Der exakte finale Head ist der Kopf des Branches.
+Letzter laufzeitändernder Head: die Review-Fix-Commits auf `3775d980` und `74577e31` (siehe Abschnitt 0). Der exakte finale Head ist der Kopf des Branches.
 
 **Dieses Dokument ist kein Technical-Lead-PASS.** Es ist der Versuch, die eigene Arbeit so anzugreifen, wie ein unabhängiger Reviewer es täte, und die Stellen zu benennen, an denen sie nachgibt.
 
@@ -9,7 +9,7 @@ Letzter laufzeitändernder Head: die beiden Review-Fix-Commits auf `3775d980` (s
 
 ## 0. Was das Re-Review gefunden hat, das dieses Dokument nicht gefunden hatte
 
-Zwei Wahrheitsbefunde auf Head `3775d980`, beide berechtigt, beide behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
+Drei Wahrheitsbefunde in zwei Runden, alle berechtigt, alle behoben. Sie gehören an den Anfang, weil sie zeigen, wo dieses Selbstreview zu wohlwollend war.
 
 **Befund 1 – eine fremde amtliche Lage schaltete Gewissheit global frei.** `auskunftPruefen()` prüfte `bezuege.some(bezug => bezug.art === 'official' && bezug.belegt)` über den **ganzen Kontext** und gab bei einem Treffer sofort frei. Eine aktuelle Passgültigkeitsprüfung hätte damit den Satz „kein Visum erforderlich" getragen, während die Visumslage `unknown` ist – genau die Aufwertung von `unknown` zu `not_required`, gegen die dieser Slice gebaut ist.
 
@@ -19,7 +19,13 @@ Die Regel ist jetzt zweiseitig und an die Auskunft gebunden: mindestens ein **ge
 
 **Befund 2 – unerwartete Felder wurden entfernt statt abgelehnt.** `z.object` ist nicht strict. Mein Test „lehnt ein zusätzliches Feld ab, auch wenn die Plattform es durchliesse" prüfte, dass das Feld *nicht im Wert ankommt* – und nannte das im Namen „ablehnen", obwohl es Aufräumen war. Der Name hat die Lücke verdeckt. Jetzt `z.strictObject`; ein zustandstragendes Zusatzfeld endet als Klasse `schema`.
 
-Beide Befunde haben dieselbe Ursache: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
+**Befund 3 (Head `74577e31`) – die Bindung war an den Bezug geknüpft, nicht an die Anforderung.** Nach der Korrektur von Befund 1 musste die Auskunft einen belegten Official-Bezug *nennen*. Sie musste aber nicht den **richtigen** nennen: Eine geprüfte Impfanforderung trug den Satz „kein Visum erforderlich". Das ist dieselbe verbotene Aufwertung, nur über den Anforderungstyp statt über die Reise.
+
+Warum ich es nach Befund 1 nicht selbst gesehen habe: Ich habe die Korrektur als *eine* Bedingung gedacht („benannt statt irgendwo") und nicht gefragt, welche weiteren Dimensionen zwischen Aussage und Beleg liegen. Die Antwort ist eine Kette – Reise → genannter Bezug → Anforderungstyp → Scope – und jedes Glied musste einzeln erzwungen werden, weil keine allgemeine Regel es mitbringt. Beim Abarbeiten eines Befundes reicht es nicht, den genannten Fall zu schliessen; man muss fragen, welcher Fall der nächsten Stufe entspricht.
+
+Die Lösung trägt die maschinenlesbare Anforderungsidentität (`requirementType`, `scope`, `visaMode`) aus der Projektion in `BegleiterBezug` und gibt jedem Gewissheitsmuster ein Prädikat. Formulierungen ohne erkennbaren Gegenstand – „garantiert", „definitiv", „amtlich bestätigt", „nicht erforderlich", „problemlos einreisen" – bekommen kein Prädikat und fallen immer durch.
+
+Alle drei Befunde haben dieselbe Ursache: Ich habe die strukturelle Schranke („das Modell kann den Zustand nicht formulieren") für stärker gehalten, als sie war, und die nachgelagerten Prüfungen entsprechend milde gebaut.
 
 ---
 
@@ -41,6 +47,8 @@ Beide Befunde haben dieselbe Ursache: Ich habe die strukturelle Schranke („das
 | „visumfrei" bei unbelegter Lage sagen | Ablehnung; erst ein **belegter Official**-Bezug öffnet den Weg, eine belegte Etappe oder Safety-Lage nicht | ebd. |
 | Den Zustand eines Bezugs aus dem Modelltext übernehmen | das Feld existiert nicht; ein trotzdem mitgeschicktes Feld lässt die ganze Auskunft als `schema` durchfallen | `erzeugen.test.ts`, „zusätzliches zustandstragendes Feld" |
 | Gewissheit über eine Lage behaupten, die die Auskunft nicht belegt | Ablehnung: eine fremde belegte Official-Lage im Kontext schaltet nichts frei, und ein zugleich genannter unbelegter Bezug kippt eine sonst getragene Gewissheit | `pruefung.test.ts`, „Gewissheit ist an die benannte amtliche Lage gebunden" |
+| Gewissheit mit einer fachfremden Anforderung belegen (Impfung trägt Visum, Transit trägt Zielvisum) | Ablehnung: jedes Muster nennt den Anforderungstyp, der es tragen kann; nicht zuordenbare Formulierungen fallen immer durch | `pruefung.test.ts`, „Gewissheit ist an den passenden Anforderungstyp gebunden" |
+| Zwei Gewissheiten in einem Text, nur eine belegt | Ablehnung der ganzen Auskunft | ebd., „jede Gewissheit im Text braucht ihren eigenen Beleg" |
 | Passnummer, MRZ, Buchungs-URL, Secret, E-Mail, Fingerprint, Preis, Koordinate, Ortsschlüssel in den Prompt bringen | zehn Leck-Marken, keine erreicht den Prompt oder die angezeigten Bezüge | `nutzlast.test.ts` |
 | Ein sensibles Feld über eine später erweiterte Projektion einschmuggeln | die Reissleine trifft Feldnamen und Wertmuster in jeder Tiefe; die Nutzlast schreibt unbekannte Felder ohnehin nicht ab | ebd. |
 | Rangsemantik unter Reisenden erzeugen | kein „primary", „preferred", „bevorzugt" im Prompt; Reihenfolge erzeugt keinen Vorrang | ebd. |
@@ -62,6 +70,7 @@ Diese Punkte sind echte Schwächen, keine rhetorischen.
 
 - **Fehlalarm:** „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst" ist ehrlich und fällt durch. Gegenmittel: Die Systemregeln verbieten dieselben Wörter ausdrücklich. Ein regelkonformes Modell löst den Filter nicht aus. Wie oft ein echtes Modell daran scheitert, ist **nicht gemessen** – dafür wäre ein bezahlter Aufruf nötig.
 - **Lücke:** Eine Verfügbarkeits- oder Preisbehauptung in freier Formulierung („dieses Hotel ist im April meist noch frei") erkennt er nicht. Das ist dieselbe eingestandene Grenze wie ADR-0054. Die Preisziffer-Erkennung greift, die Verfügbarkeitsaussage nicht.
+- **Lücke:** Die Bereichszuordnung deckt Visum, Transitvisum, Impfung, Gesundheitsanforderung und elektronische Reisegenehmigung ab. Eine Gewissheit über Passgültigkeit, Einreiseformular, Versicherungspflicht oder finanzielle Mittel hat kein eigenes Muster und wird deshalb gar nicht erst erkannt – sie fällt nicht durch, sie fällt durch das Netz. Die Richtung ist dieselbe wie bei jeder Wortliste: Sie fängt das Wahrscheinliche, nicht das Mögliche.
 
 Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukturell: Das Schema hat kein Feld für eine Anforderung, und der Zustand eines Bezugs kommt nicht aus dem Modell. Was ein Modell nicht formulieren kann, muss dieser Filter nicht abfangen.
 
@@ -108,7 +117,7 @@ Das ist verantwortbar, weil er die **zweite** Schranke ist. Die erste ist strukt
 ## 5. Was ein Reviewer zuerst anschauen sollte
 
 1. `lib/reisebegleiter/nutzlast.ts` – ist die Nutzlast wirklich nur **enger** als die Projektion, und trifft die Reissleine das Richtige?
-2. `lib/reisebegleiter/pruefung.ts` – ist die neue zweiseitige Bindung der Gewissheit an die **genannten** Official-Bezüge vollständig, und sind die Muster präzise genug?
+2. `lib/reisebegleiter/pruefung.ts` – ist die Kette Reise → genannter Bezug → Anforderungstyp → Scope vollständig, fehlt ein Bereich, und sind die Muster präzise genug?
 3. `lib/reisebegleiter/kosten.test.ts` – hält die Rechnung, und ist 2.2 Zeichen je Token pessimistisch genug?
 4. `supabase/migrations/20260917090000_modell_reisebegleiter.sql` – ist die Erweiterung wirklich additiv, und fehlt nichts?
 5. `lib/modell/anfrage.ts` – ist der additive Ausgabedeckel an geteilter Infrastruktur akzeptabel?

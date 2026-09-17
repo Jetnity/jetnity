@@ -411,9 +411,23 @@ Den **Zustand** dieses Eintrags schreibt nicht das Modell. Er wird in `lib/reise
 | ein unerwartetes Feld im Objekt | `z.strictObject`; ein Modell, das `lagen` mitschickt, hat die Regeln nicht verstanden |
 | eine Aussage über den Buchungszustand | die Projektion trägt keinen – auch „noch nicht gebucht“ ist erfunden |
 | eine Änderung im Perfekt („ich habe … hinzugefügt“) | dieser Weg hat keine Persistenz |
-| „visumfrei“, „kein Visum“, „nicht erforderlich“, „garantiert“, „amtlich bestätigt“ … | wenn die Auskunft keine geprüfte amtliche Lage **benennt** oder zugleich auf eine ungeprüfte zeigt |
+| „visumfrei“, „kein Visum“, „keine Impfung“, „kein Transitvisum“ … | wenn die Auskunft keine **passende** geprüfte amtliche Anforderung benennt oder zugleich auf eine ungeprüfte zeigt |
+| „garantiert“, „definitiv“, „amtlich bestätigt“, „nicht erforderlich“, „problemlos einreisen“ | immer – diese Formulierungen sagen nicht, worüber sie sprechen, und lassen sich deshalb keiner Anforderung zuordnen |
 
-**Gewissheit hängt an der genannten Lage, nicht an der Reise.** Es genügt ausdrücklich *nicht*, dass irgendwo im Reisekontext eine geprüfte Official-Lage steht: Sonst trüge eine aktuelle Passgültigkeitsprüfung den Satz „kein Visum erforderlich“, obwohl die Visumslage unbekannt ist – `unknown` wäre damit zu `not_required` aufgewertet. Die Bedingung ist deshalb zweiseitig: Die Auskunft muss mindestens einen belegten Official-Bezug nennen, und keiner der von ihr genannten Official-Bezüge darf unbelegt sein. Ohne Gewissheitsformulierung bleibt der Verweis auf eine offene Lage zulässig; das ist der Normalfall.
+**Gewissheit hängt an der genannten Lage und an ihrem Anforderungstyp.** Zwei Aufwertungen sind damit ausgeschlossen. Erstens über die Reise: Es genügt nicht, dass irgendwo im Kontext eine geprüfte Official-Lage steht – die Auskunft muss den tragenden Bezug nennen, und keiner ihrer genannten Official-Bezüge darf unbelegt sein. Zweitens über den Anforderungstyp: Eine geprüfte Impfanforderung belegt kein Visum, eine geprüfte Transitlage kein Zielvisum.
+
+Dafür trägt `BegleiterBezug` die maschinenlesbare Anforderungsidentität – `requirementType`, `scope`, `visaMode` – unverändert aus der akzeptierten Projektion. Sie wird ausdrücklich **nicht** aus dem Anzeigetext zurückgelesen: `titel` ist lokalisierte Copy, und eine Textänderung darf keine Wahrheitsentscheidung verschieben.
+
+| Formulierung | getragen von |
+| --- | --- |
+| „visumfrei“, „kein Visum“, „ohne Visum“ | `visa` mit `scope: destination` |
+| „kein Transitvisum“, „transitvisumfrei“ | `transit`, oder `visa` mit `scope: transit` |
+| „keine Impfung“ | `vaccination` |
+| „kein Gesundheitsnachweis“, „kein Attest“ | `vaccination`, `health`, `health_document` |
+| „keine eTA“, „keine elektronische Reisegenehmigung“ | `electronic_travel_authorization` |
+| alles übrige aus der Liste oben | nichts – Ablehnung |
+
+Enthält ein Text mehrere Gewissheiten, braucht jede ihren eigenen Beleg. Ohne Gewissheitsformulierung bleibt der Verweis auf eine offene Lage zulässig; das ist der Normalfall.
 
 Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhaltlich ehrliche Satz „Jetnity kann nicht bestätigen, dass du ohne Visum einreisen darfst“ fällt durch. Deshalb verbieten die Systemregeln dieselben Wörter ausdrücklich – ein regelkonformes Modell merkt davon nichts. Nicht erkannt werden Verfügbarkeitsbehauptungen in freier Formulierung; dieselbe eingestandene Grenze wie ADR-0054.
 
@@ -424,7 +438,7 @@ Der letzte Punkt ist ein Wortfilter und nimmt Fehlalarme in Kauf: Auch der inhal
 | `lib/reisebegleiter/kontext.test.ts` | die akzeptierte Projektion (ADR-0211), unverändert |
 | `lib/reisebegleiter/schema.test.ts` | Form, Betrag, Link, Bezugsform, Längen, kein Feld für Anforderung/Preis/Quelle |
 | `lib/reisebegleiter/nutzlast.test.ts` | zweiter, eigener Satz Leck-Marken; Reissleine; Bezüge als Zeiger; Gleichrangigkeit |
-| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, Bindung an die genannte amtliche Lage, unmöglicher Anspruch, kein Fehlalarm im Konjunktiv |
+| `lib/reisebegleiter/pruefung.test.ts` | erfundener Bezug, unbelegte Gewissheit, Bindung an die genannte Lage **und** an ihren Anforderungstyp, unmöglicher Anspruch, kein Fehlalarm im Konjunktiv |
 | `lib/reisebegleiter/erzeugen.test.ts` | Reihenfolge der Schranken, abgeschaltete Umgebung, ein Versuch, dreizehn unbrauchbare Antworten |
 | `lib/reisebegleiter/kosten.test.ts` | schlechtester tatsächlicher Fall unter der Reservierung, je Modell |
 | `lib/reisebegleiter/oberflaeche.test.ts` | gebuchte Modellfunktion, kein schreibender Vorgang, kein Provider-Abruf, kein Aufruf beim Mounten |

@@ -16,11 +16,11 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Draft PR | #435 |
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
-| **Letzter laufzeitändernder Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
-| **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über `ea7cf8ec`, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
+| **Letzter laufzeitändernder Head** | der Review-Fix-Commit auf `74577e313cc5af9a0b84662ae2044775c88cec94` |
+| **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über dem letzten Code-Commit, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
 | Merge-Base | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Behind | 0 gegen `origin/main` |
-| Drift | keine |
+| Drift | `origin/main` ist auf `03842a64` (World Map Polish 2, #437) gewandert. Keine Dateiüberschneidung; Merge-Base bleibt `15aa125a`. Rebase ist eine Technical-Lead-Entscheidung und wurde nicht vorgenommen |
 | Binding | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |
 | Entscheidung | `DECISIONS.md` ADR-0212 |
 
@@ -62,11 +62,13 @@ Frage (Konto-Reise)
 
 Der entscheidende Punkt: **Das Modell liefert Zeiger, nicht Zustände.** Was unter „Jetnity-Stand dazu" steht – „Noch nicht verlässlich bestimmbar", „nicht geprüft" – leitet `lib/reisebegleiter/nutzlast.ts` aus derselben Projektion ab. Ein Modell, das den Zustand nicht formulieren darf, kann ihn nicht verfälschen.
 
+Der zweite Punkt, aus drei Review-Runden gewachsen: **Eine Gewissheit muss die Anforderung nennen, über die sie spricht, und die muss geprüft sein.** Reise → genannter Bezug → Anforderungstyp → Scope; jedes Glied wird einzeln erzwungen. Formulierungen ohne erkennbaren Gegenstand („garantiert", „nicht erforderlich") fallen immer durch.
+
 ---
 
 ## 4. Gates auf dem exakten Head
 
-**Grün:** `npm test` (3329/3329), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
+**Grün:** `npm test` (3336/3336), `typecheck`, `lint` (0 Fehler), `build`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `nachweis:reisebegleiter` (50 Browser-Prüfungen, mobil und Desktop).
 
 **Grün auf dem exakten Head in GitHub/Vercel:** CI-Run `35165950349` – **success**, beide Jobs. Darin `auth:pruefen` mit „55 Werte, 243 Schlüssel am Branch". Vercel Preview `6kbzcUP3CDzhXkkkj3owzz4bQB3v` – **READY**.
 
