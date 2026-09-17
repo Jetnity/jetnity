@@ -15,7 +15,7 @@ Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 DRAFT AWAITING TE
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Canonical base | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | **Last runtime-changing head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
-| **Exact final head** | branch head: documentation-only commit on top of `ea7cf8ec`; identifier in the PR description |
+| **Exact final head** | branch head: documentation-only commits on top of `ea7cf8ec`; read with `git rev-parse origin/feat/phase-1-assistant-runtime-1` |
 | Merge-base / behind | `15aa125a` / 0 behind |
 | Drift | none |
 | Binding task | `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md` |

@@ -29,7 +29,8 @@ Der **exakte finale Head** ist der Kopf dieses Branches. Er liegt als
 Dokumentations-Commit über `ea7cf8ec` und ändert keine Laufzeit: Die Commits
 darüber berühren nur `docs/`, `DECISIONS.md`, `ARCHITECTURE.md` und `ROADMAP.md`.
 Ein Dokument kann seine eigene Commit-Kennung nicht enthalten; die finale
-Kennung steht in der PR-Beschreibung und ist mit `git rev-parse HEAD` zu lesen.
+Kennung ist mit `git rev-parse origin/feat/phase-1-assistant-runtime-1` zu lesen
+und im Abschlussbericht des Agenten genannt.
 Die Gates in Abschnitt 3 wurden auf dem Arbeitsstand des finalen
 Dokumentations-Commits erneut vollständig ausgeführt.
 

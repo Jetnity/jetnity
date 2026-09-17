@@ -17,7 +17,7 @@ Dieses Dokument reicht, um ohne den Chat weiterzuarbeiten. Ausführlicher Stand:
 | Branch | `feat/phase-1-assistant-runtime-1` |
 | Kanonische Basis | `main@15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | **Letzter laufzeitändernder Head** | `ea7cf8ec9cabc19f8b4a9b55e0470fc580257940` |
-| **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über `ea7cf8ec`, ohne Laufzeitänderung. Kennung in der PR-Beschreibung bzw. über `git rev-parse HEAD` |
+| **Exakter finaler Head** | Kopf dieses Branches: Dokumentations-Commit über `ea7cf8ec`, ohne Laufzeitänderung. Kennung über `git rev-parse origin/feat/phase-1-assistant-runtime-1`; im Abschlussbericht des Agenten genannt |
 | Merge-Base | `15aa125addf39b15dcb50a1cdf8dece661796fc5` |
 | Behind | 0 gegen `origin/main` |
 | Drift | keine |
