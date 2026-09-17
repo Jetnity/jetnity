@@ -38,6 +38,88 @@ const REISE: TripSummary = {
   itemCount: 0,
 }
 
+/**
+ * Zweite Reise mit demselben Titel und derselben `placeId`. Sie prüft, dass
+ * gleich betitelte eigene Reisen zwei unterscheidbare Aktionen bleiben und
+ * nicht über den Titel zusammengelegt werden.
+ */
+const REISE_GLEICHER_TITEL: TripSummary = {
+  id: '33333333-3333-4333-8333-333333333333',
+  title: 'Lissabon',
+  origin: 'Zürich',
+  startDate: '2027-04-02',
+  endDate: '2027-04-09',
+  travellers: 2,
+  currency: 'CHF',
+  budgetAmount: null,
+  status: 'draft',
+  updatedAt: '2026-08-22T10:00:00.000Z',
+  stages: [
+    {
+      name: 'Lisboa',
+      position: 1,
+      countryCode: 'PT',
+      placeId: 'geonames:2267057',
+      latitude: 38.7223,
+      longitude: -9.1393,
+    },
+    {
+      name: 'Porto',
+      position: 2,
+      countryCode: 'PT',
+      placeId: 'geonames:2735943',
+      latitude: 41.1496,
+      longitude: -8.6109,
+    },
+  ],
+  stageCount: 2,
+  dayCount: 8,
+  itemCount: 0,
+}
+
+/** Dichte Marker, eine Etappe ohne Koordinaten, eine ohne Ländercode. */
+const REISE_JAPAN: TripSummary = {
+  id: '44444444-4444-4444-8444-444444444444',
+  title: 'Japan im Frühling',
+  origin: 'Zürich',
+  startDate: '2027-03-28',
+  endDate: '2027-04-11',
+  travellers: 2,
+  currency: 'CHF',
+  budgetAmount: null,
+  status: 'planned',
+  updatedAt: '2026-08-23T10:00:00.000Z',
+  stages: [
+    {
+      name: 'Tokio',
+      position: 1,
+      countryCode: 'JP',
+      placeId: 'geonames:1850147',
+      latitude: 35.6895,
+      longitude: 139.6917,
+    },
+    {
+      name: 'Kyoto',
+      position: 2,
+      countryCode: 'JP',
+      placeId: 'geonames:1857910',
+      latitude: 35.0116,
+      longitude: 135.7681,
+    },
+    { name: 'Osaka', position: 3, countryCode: 'JP', placeId: 'geonames:1853909' },
+    {
+      name: 'Auckland',
+      position: 4,
+      placeId: 'geonames:2193733',
+      latitude: -36.8485,
+      longitude: 174.7633,
+    },
+  ],
+  stageCount: 4,
+  dayCount: 15,
+  itemCount: 0,
+}
+
 const BUCHUNG: KontoBuchung = {
   id: 'booking-1',
   title: 'Zürich – Lissabon',
@@ -95,6 +177,16 @@ export default function AccountAuditClient() {
     }
     if (zustand === 'leer') {
       return { name: 'Sasa', problem: null, naechste: null, hatReisen: false, reisen: [] }
+    }
+    if (zustand === 'welt') {
+      const reisen = [REISE, REISE_GLEICHER_TITEL, REISE_JAPAN]
+      return {
+        name: 'Sasa',
+        problem: null,
+        naechste: naechsteReiseAus(reisen, '2026-08-24'),
+        hatReisen: true,
+        reisen,
+      }
     }
     return {
       name: 'Sasa',

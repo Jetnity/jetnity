@@ -15,12 +15,19 @@ const WORLD_MAP_GEPLANT_LABEL = 'In Jetnity geplant'
 const WORLD_MAP_BESUCHT_LABEL = 'Besucht bestätigt'
 export const WORLD_MAP_BESUCHT_TEXT =
   'Bestätigte Besuchshistorie ist in Jetnity noch nicht erfasst. Ein vergangenes Datum, eine archivierte Reise oder ein Reise-Status gelten nicht als Besuch.'
+/**
+ * Kurzform für die Legende. Sie sagt, dass die Historie fehlt – nicht, dass sie
+ * leer wäre. Eine Zahl wäre hier eine Behauptung über Wirklichkeit.
+ */
+export const WORLD_MAP_BESUCHT_KURZ = 'Noch nicht erfasst'
 export const WORLD_MAP_LEER_TEXT =
   'Noch keine geplanten Reiseziele in deinem Konto. Die Karte bleibt leer, bis gespeicherte Etappen existieren.'
+/** Kurzform für die Legende, damit der leere Zustand nicht doppelt dasteht. */
+export const WORLD_MAP_GEPLANT_LEER_KURZ = 'Noch keine geplanten Orte'
 export const WORLD_MAP_FEHLER_TEXT =
   'Deine Weltkarte konnte nicht gelesen werden, weil deine Reisen gerade nicht geladen werden konnten.'
 export const WORLD_MAP_OHNE_KOORDINATEN_TEXT =
-  'Ohne gespeicherte Koordinaten – in der Liste sichtbar, nicht auf der Karte.'
+  'Ohne gespeicherte Koordinaten – nicht auf der Karte.'
 export const WORLD_MAP_OHNE_LAND_TEXT = 'Kein gespeicherter Ländercode'
 const WORLD_MAP_ZIEL_OHNE_NAME = 'Reiseziel'
 
@@ -33,13 +40,22 @@ export type WorldMapHerkunft = {
   tripId: string
   tripTitle: string
   tripStatus: TripStatus
+  tripStartDate: string | null
+  tripEndDate: string | null
   stagePosition: number
   stageName: string
 }
 
+/**
+ * Eine Reise, die diesen Ort beisteuert. Status und Zeitraum stammen aus der
+ * bereits geladenen Reiseübersicht – keine zweite Abfrage, keine Ableitung.
+ */
 export type WorldMapReise = {
   tripId: string
   tripTitle: string
+  tripStatus: TripStatus
+  startDate: string | null
+  endDate: string | null
 }
 
 export type WorldMapOrt = {
@@ -69,9 +85,12 @@ export type WorldMapAbleitung = {
   besuchtLabel: string
   besuchtLage: WorldMapBesuchtLage
   besuchtText: string
+  besuchtKurz: string
   leerText: string
   fehlerText: string
   zusammenfassung: string
+  /** Kurzform der geplanten Lage für die Legende. */
+  geplantKurz: string
   laenderText: string
   laenderCodes: readonly string[]
   orte: readonly WorldMapOrt[]
@@ -86,6 +105,7 @@ const LEERE_ABLEITUNG = {
   besuchtLabel: WORLD_MAP_BESUCHT_LABEL,
   besuchtLage: 'nicht_erfasst' as const,
   besuchtText: WORLD_MAP_BESUCHT_TEXT,
+  besuchtKurz: WORLD_MAP_BESUCHT_KURZ,
   leerText: WORLD_MAP_LEER_TEXT,
   fehlerText: WORLD_MAP_FEHLER_TEXT,
 }
@@ -140,7 +160,13 @@ function eindeutigeOrtReisen(herkuenfte: readonly WorldMapHerkunft[]): WorldMapR
   for (const herkunft of herkuenfte) {
     if (gesehen.has(herkunft.tripId)) continue
     gesehen.add(herkunft.tripId)
-    reisen.push({ tripId: herkunft.tripId, tripTitle: herkunft.tripTitle })
+    reisen.push({
+      tripId: herkunft.tripId,
+      tripTitle: herkunft.tripTitle,
+      tripStatus: herkunft.tripStatus,
+      startDate: herkunft.tripStartDate,
+      endDate: herkunft.tripEndDate,
+    })
   }
   return reisen
 }
@@ -179,15 +205,20 @@ function laenderText(codes: readonly string[]): string {
   return `${codes.length} Länder aus gespeicherten Ländercodes.`
 }
 
+function orteWort(anzahl: number): string {
+  return anzahl === 1 ? '1 Ort' : `${anzahl} Orte`
+}
+
 function zusammenfassung(geplottet: number, ungeplottet: number): string {
   if (geplottet === 0 && ungeplottet === 0) return WORLD_MAP_LEER_TEXT
-  const karte =
-    geplottet === 1 ? '1 Ort auf der Karte' : `${geplottet} Orte auf der Karte`
+  // Eine Null ist hier keine Information, sondern Rauschen in einer engen Zeile.
+  if (ungeplottet === 0) return `${orteWort(geplottet)} auf der Karte`
+  if (geplottet === 0) return `${orteWort(ungeplottet)} ohne gespeicherte Koordinaten`
   const liste =
     ungeplottet === 1
       ? '1 ohne gespeicherte Koordinaten'
       : `${ungeplottet} ohne gespeicherte Koordinaten`
-  return `${karte} · ${liste}`
+  return `${orteWort(geplottet)} auf der Karte · ${liste}`
 }
 
 function etappenEinerReise(
@@ -196,38 +227,29 @@ function etappenEinerReise(
   return reise.stages.map((etappe, index) => ({ ...etappe, reise, index }))
 }
 
+function herkunftAus(
+  etappe: TripSummaryStage & { reise: TripSummary; index: number },
+): WorldMapHerkunft {
+  return {
+    tripId: etappe.reise.id,
+    tripTitle: etappe.reise.title,
+    tripStatus: etappe.reise.status,
+    tripStartDate: etappe.reise.startDate,
+    tripEndDate: etappe.reise.endDate,
+    stagePosition: etappe.position,
+    stageName: etappe.name.trim(),
+  }
+}
+
 function ortAusGruppe(
   schluessel: string,
   placeId: string | null,
   gruppe: readonly (TripSummaryStage & { reise: TripSummary; index: number })[],
 ): WorldMapOrt {
-  const herkuenfte = [...gruppe]
-    .map((etappe) => ({
-      tripId: etappe.reise.id,
-      tripTitle: etappe.reise.title,
-      tripStatus: etappe.reise.status,
-      stagePosition: etappe.position,
-      stageName: etappe.name.trim(),
-    }))
-    .sort(herkunftSort)
+  const herkuenfte = [...gruppe].map(herkunftAus).sort(herkunftSort)
 
   const sortiert = [...gruppe].sort((links, rechts) =>
-    herkunftSort(
-      {
-        tripId: links.reise.id,
-        tripTitle: links.reise.title,
-        tripStatus: links.reise.status,
-        stagePosition: links.position,
-        stageName: links.name.trim(),
-      },
-      {
-        tripId: rechts.reise.id,
-        tripTitle: rechts.reise.title,
-        tripStatus: rechts.reise.status,
-        stagePosition: rechts.position,
-        stageName: rechts.name.trim(),
-      },
-    ),
+    herkunftSort(herkunftAus(links), herkunftAus(rechts)),
   )
 
   const nameQuelle = sortiert.find((etappe) => etappe.name.trim().length > 0)
@@ -272,6 +294,7 @@ export function worldMapAbleiten({
       ...LEERE_ABLEITUNG,
       lage: 'fehler',
       zusammenfassung: WORLD_MAP_FEHLER_TEXT,
+      geplantKurz: WORLD_MAP_FEHLER_TEXT,
       laenderText: WORLD_MAP_FEHLER_TEXT,
       laenderCodes: [],
       orte: [],
@@ -286,6 +309,7 @@ export function worldMapAbleiten({
       ...LEERE_ABLEITUNG,
       lage: 'leer',
       zusammenfassung: WORLD_MAP_LEER_TEXT,
+      geplantKurz: WORLD_MAP_GEPLANT_LEER_KURZ,
       laenderText: 'Keine gespeicherten Ländercodes bei den geplanten Etappen.',
       laenderCodes: [],
       orte: [],
@@ -325,6 +349,7 @@ export function worldMapAbleiten({
     ...LEERE_ABLEITUNG,
     lage: 'geplant',
     zusammenfassung: zusammenfassung(geplottet, ungeplottet),
+    geplantKurz: zusammenfassung(geplottet, ungeplottet),
     laenderText: laenderText(laenderCodes),
     laenderCodes,
     orte,

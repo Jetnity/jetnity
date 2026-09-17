@@ -2,36 +2,356 @@
 
 import type { Route } from 'next'
 import Link from 'next/link'
-import { useState } from 'react'
+import { ArrowUpRight, MapPin, MapPinOff } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 
 import {
   WORLD_MAP_OHNE_KOORDINATEN_TEXT,
   WORLD_MAP_OHNE_LAND_TEXT,
-  WORLD_MAP_VIEWBOX,
   weltOrtDomId,
   type WorldMapAbleitung,
   type WorldMapOrt,
 } from '@/lib/account/world-map'
+import {
+  WORLD_MAP_AUSSERHALB_RAHMEN_TEXT,
+  WORLD_MAP_GRUPPE_FRAGE,
+  weltKartenAnsicht,
+  weltMarkerGruppeText,
+  weltOrtReiseAnzeigen,
+  type WorldMapAusrichtung,
+  type WorldMapMarkerGruppe,
+} from '@/lib/account/world-map-ansicht'
 import { WORLD_MAP_LAND_PFADE } from '@/lib/account/world-map-land'
 
-function markerLinks(ort: WorldMapOrt): number {
-  if (ort.x === null) return 0
-  return (ort.x / WORLD_MAP_VIEWBOX.width) * 100
+const BESCHRIFTUNG_AUSRICHTUNG = {
+  links: 'left-0 translate-x-0',
+  mitte: 'left-1/2 -translate-x-1/2',
+  rechts: 'right-0 translate-x-0',
+} as const
+
+const gruppenAuswahlId = 'account-welt-karte-auswahl'
+
+function reduzierteBewegung(): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function markerOben(ort: WorldMapOrt): number {
-  if (ort.y === null) return 0
-  return (ort.y / WORLD_MAP_VIEWBOX.height) * 100
+function LegendeZeile({
+  art,
+  label,
+  wert,
+}: {
+  art: 'geplant' | 'besucht'
+  label: string
+  wert: string
+}) {
+  return (
+    <li className="flex min-w-0 items-start gap-2">
+      <span aria-hidden="true" className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+        {art === 'geplant' ? (
+          <>
+            <span className="absolute inset-0 rounded-full bg-brand-800/12" />
+            <span className="relative block h-2.5 w-2.5 rounded-full bg-brand-800 ring-2 ring-white" />
+          </>
+        ) : (
+          <span className="relative block h-2.5 w-2.5 rounded-full border-2 border-dashed border-line-500" />
+        )}
+      </span>
+      <span className="min-w-0 text-sm leading-5">
+        <span className="font-semibold text-brand-800">{label}</span>
+        <span className="text-ink-800"> · {wert}</span>
+      </span>
+    </li>
+  )
 }
 
-function herkunftText(ort: WorldMapOrt): string {
-  const titel = [...new Set(ort.herkuenfte.map((eintrag) => eintrag.tripTitle))]
-  if (titel.length === 1) return titel[0] ?? ''
-  return titel.join(' · ')
+function MarkerPunkt({ gewaehlt, anzahl }: { gewaehlt: boolean; anzahl: number | null }) {
+  return (
+    <span aria-hidden="true" className="relative flex items-center justify-center">
+      <span
+        className={
+          gewaehlt
+            ? 'absolute h-9 w-9 rounded-full bg-citrus-400/55 ring-1 ring-brand-800/25'
+            : 'absolute h-6 w-6 rounded-full bg-brand-800/0 transition-colors group-hover:bg-brand-800/15 motion-reduce:transition-none'
+        }
+      />
+      {anzahl === null ? (
+        <span
+          className={
+            gewaehlt
+              ? 'relative block h-4 w-4 rounded-full bg-brand-900 ring-[3px] ring-citrus-400 shadow-[0_2px_6px_rgba(15,46,42,0.45)]'
+              : 'relative block h-3 w-3 rounded-full bg-brand-800 ring-2 ring-white shadow-[0_1px_4px_rgba(15,46,42,0.4)]'
+          }
+        />
+      ) : (
+        <span
+          className={`relative flex h-[18px] w-[18px] items-center justify-center rounded-full text-[10px] font-semibold leading-none shadow-[0_1px_4px_rgba(15,46,42,0.4)] ${
+            gewaehlt
+              ? 'bg-brand-900 text-citrus-400 ring-[3px] ring-citrus-400'
+              : 'bg-brand-800 text-white ring-2 ring-white'
+          }`}
+        >
+          {anzahl}
+        </span>
+      )}
+    </span>
+  )
+}
+
+function MarkerBeschriftung({
+  text,
+  unten,
+  ausrichtung,
+}: {
+  text: string
+  unten: boolean
+  ausrichtung: WorldMapAusrichtung
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none absolute max-w-[11rem] truncate rounded-full bg-brand-800 px-2 py-1 text-[11px] font-semibold leading-none text-white shadow-[0_4px_12px_rgba(15,46,42,0.25)] ${
+        unten ? 'top-full mt-1' : 'bottom-full mb-1'
+      } ${BESCHRIFTUNG_AUSRICHTUNG[ausrichtung]}`}
+    >
+      {text}
+    </span>
+  )
+}
+
+/**
+ * Eine Trefferfläche je Kartenstelle.
+ *
+ * Liegen mehrere Orte so dicht zusammen, dass ihre Flächen sich überdecken
+ * würden, öffnet die Fläche eine Auswahl. Sie entscheidet nicht selbst, welcher
+ * Ort gemeint war, und legt die Orte auch nicht zusammen.
+ */
+function MarkerGruppe({
+  gruppe,
+  geplantLabel,
+  gewaehlterOrt,
+  offen,
+  onOeffnen,
+  onWaehlen,
+}: {
+  gruppe: WorldMapMarkerGruppe
+  geplantLabel: string
+  gewaehlterOrt: string | null
+  offen: boolean
+  onOeffnen: (schluessel: string | null) => void
+  onWaehlen: (schluessel: string) => void
+}) {
+  const mehrere = gruppe.orte.length > 1
+  const ort = gruppe.orte[0]
+  if (!ort) return null
+  const gewaehlt = gruppe.orte.some((eintrag) => eintrag.schluessel === gewaehlterOrt)
+  const aktiverOrt = gruppe.orte.find((eintrag) => eintrag.schluessel === gewaehlterOrt) ?? ort
+
+  return (
+    <button
+      type="button"
+      data-world-map-marker={gruppe.schluessel}
+      data-world-map-marker-orte={gruppe.orte.length}
+      data-world-map-marker-gewaehlt={gewaehlt ? 'ja' : 'nein'}
+      aria-label={`${weltMarkerGruppeText(gruppe)}, ${geplantLabel}`}
+      aria-current={gewaehlt ? 'true' : undefined}
+      aria-expanded={mehrere ? offen : undefined}
+      aria-controls={mehrere ? gruppenAuswahlId : weltOrtDomId(ort.schluessel)}
+      onClick={() => {
+        if (mehrere) onOeffnen(offen ? null : gruppe.schluessel)
+        else onWaehlen(ort.schluessel)
+      }}
+      className={`group absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-50 ${
+        gewaehlt || offen ? 'z-20' : 'z-10'
+      }`}
+      style={{ left: `${gruppe.links}%`, top: `${gruppe.oben}%` }}
+    >
+      <MarkerPunkt gewaehlt={gewaehlt} anzahl={mehrere ? gruppe.orte.length : null} />
+      {gewaehlt ? (
+        <MarkerBeschriftung
+          text={aktiverOrt.name}
+          unten={gruppe.oben < 16}
+          ausrichtung={gruppe.ausrichtung}
+        />
+      ) : null}
+    </button>
+  )
+}
+
+/**
+ * Auswahl für eine geteilte Trefferfläche. Sie steht unter der Karte statt als
+ * Überlagerung darauf: so kann sie auf keiner Breite über den Rand laufen und
+ * verdeckt auf dem Telefon nicht die Karte, um die es geht.
+ */
+function GruppenAuswahl({
+  gruppe,
+  gewaehlterOrt,
+  onSchliessen,
+  onWaehlen,
+}: {
+  gruppe: WorldMapMarkerGruppe
+  gewaehlterOrt: string | null
+  onSchliessen: () => void
+  onWaehlen: (schluessel: string) => void
+}) {
+  return (
+    <div
+      id={gruppenAuswahlId}
+      className="mt-2 rounded-2xl border border-line-200 bg-surface-0 p-2 shadow-[0_6px_20px_rgba(15,46,42,0.08)]"
+      onKeyDown={(ereignis) => {
+        if (ereignis.key === 'Escape') {
+          ereignis.stopPropagation()
+          onSchliessen()
+        }
+      }}
+    >
+      <p className="px-1 text-xs font-semibold leading-5 text-ink-800">
+        {WORLD_MAP_GRUPPE_FRAGE}
+      </p>
+      <ul className="mt-1 grid gap-1 sm:grid-cols-2">
+        {gruppe.orte.map((eintrag) => (
+          <li key={eintrag.schluessel} className="min-w-0">
+            <button
+              type="button"
+              aria-current={eintrag.schluessel === gewaehlterOrt ? 'true' : undefined}
+              onClick={() => onWaehlen(eintrag.schluessel)}
+              className={
+                eintrag.schluessel === gewaehlterOrt
+                  ? 'flex min-h-11 w-full min-w-0 items-center rounded-xl border border-brand-600 bg-surface-50 px-3 text-left text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                  : 'flex min-h-11 w-full min-w-0 items-center rounded-xl border border-line-200 px-3 text-left text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+              }
+            >
+              <span className="min-w-0 break-words">{eintrag.name}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function OrtZeile({
+  ort,
+  geplantLabel,
+  gewaehlt,
+  imRahmen,
+  onWaehlen,
+}: {
+  ort: WorldMapOrt
+  geplantLabel: string
+  gewaehlt: boolean
+  imRahmen: boolean
+  onWaehlen: (schluessel: string) => void
+}) {
+  const reisen = weltOrtReiseAnzeigen(ort.reisen)
+  const aufKarte = ort.geplottet && imRahmen
+  const ortHinweis = ort.geplottet
+    ? imRahmen
+      ? null
+      : WORLD_MAP_AUSSERHALB_RAHMEN_TEXT
+    : WORLD_MAP_OHNE_KOORDINATEN_TEXT
+
+  return (
+    <li id={weltOrtDomId(ort.schluessel)} className="flex min-w-0">
+      <article
+        data-world-map-ort-gewaehlt={gewaehlt ? 'ja' : 'nein'}
+        className={
+          gewaehlt
+            ? 'flex w-full min-w-0 flex-col rounded-2xl border border-brand-600 bg-surface-50 p-3 shadow-[0_2px_10px_rgba(15,46,42,0.07)]'
+            : 'flex w-full min-w-0 flex-col rounded-2xl border border-line-200 bg-surface-0 p-3'
+        }
+      >
+        <button
+          type="button"
+          aria-current={gewaehlt ? 'true' : undefined}
+          aria-label={`${ort.name}, ${ort.countryLabel ?? WORLD_MAP_OHNE_LAND_TEXT}, ${geplantLabel}${
+            ortHinweis ? `, ${ortHinweis}` : ''
+          }`}
+          className="flex min-h-11 w-full min-w-0 items-start gap-2.5 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-0"
+          onClick={() => onWaehlen(ort.schluessel)}
+        >
+          <span
+            aria-hidden="true"
+            className={
+              aufKarte
+                ? 'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-100 text-brand-800'
+                : 'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-25 text-ink-650'
+            }
+          >
+            {aufKarte ? <MapPin className="h-3.5 w-3.5" /> : <MapPinOff className="h-3.5 w-3.5" />}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block break-words text-sm font-semibold leading-5 text-brand-800">
+              {ort.name}
+            </span>
+            <span className="mt-0.5 block break-words text-xs leading-5 text-ink-800">
+              {ort.countryLabel ?? WORLD_MAP_OHNE_LAND_TEXT}
+            </span>
+            {ortHinweis ? (
+              <span className="mt-0.5 block break-words text-xs leading-5 text-ink-650">
+                {ortHinweis}
+              </span>
+            ) : null}
+          </span>
+        </button>
+        {reisen.length > 0 ? (
+          <ul className="mt-2 flex flex-col gap-1.5 border-t border-line-100 pt-2">
+            {reisen.map((reise) => (
+              <li key={`${ort.schluessel}:${reise.tripId}`} className="min-w-0">
+                <Link
+                  href={`/reisen/${reise.tripId}` as Route}
+                  aria-label={reise.ariaLabel}
+                  className="group flex min-h-11 w-full min-w-0 items-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-0"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block break-words text-[13px] font-semibold leading-5 text-brand-700 underline-offset-4 group-hover:underline">
+                      {reise.titel}
+                    </span>
+                    <span className="block break-words text-xs leading-5 text-ink-650">
+                      {reise.meta}
+                      {reise.ordinalText ? ` · ${reise.ordinalText}` : ''}
+                    </span>
+                  </span>
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-brand-600"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </article>
+    </li>
+  )
 }
 
 export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) {
   const [gewaehlt, setGewaehlt] = useState<string | null>(null)
+  const [offeneGruppe, setOffeneGruppe] = useState<string | null>(null)
+  const ansicht = useMemo(() => weltKartenAnsicht(welt.orte), [welt.orte])
+  const imRahmen = useMemo(
+    () =>
+      new Set(
+        ansicht.gruppen.flatMap((gruppe) => gruppe.orte.map((eintrag) => eintrag.schluessel)),
+      ),
+    [ansicht.gruppen],
+  )
+
+  const aktiveGruppe = useMemo(() => {
+    const gruppe = ansicht.gruppen.find((eintrag) => eintrag.schluessel === offeneGruppe)
+    return gruppe && gruppe.orte.length > 1 ? gruppe : null
+  }, [ansicht.gruppen, offeneGruppe])
+
+  const waehlen = useCallback((schluessel: string) => {
+    setGewaehlt(schluessel)
+    setOffeneGruppe(null)
+    const ziel = document.getElementById(weltOrtDomId(schluessel))
+    ziel?.scrollIntoView({
+      block: 'nearest',
+      behavior: reduzierteBewegung() ? 'auto' : 'smooth',
+    })
+  }, [])
 
   return (
     <section
@@ -40,142 +360,138 @@ export default function AccountWeltKarte({ welt }: { welt: WorldMapAbleitung }) 
       data-world-map-lage={welt.lage}
       data-world-map-visited={welt.besuchtLage}
       data-world-map-search="nein"
-      className="mt-8 rounded-[30px] border border-black/5 bg-white p-6 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
+      className="mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Deine Reisen im Überblick</p>
-      <h2 id="account-welt-titel" className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+        Deine Reisen im Überblick
+      </p>
+      <h2
+        id="account-welt-titel"
+        className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-3xl"
+      >
         {welt.titel}
       </h2>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-700">{welt.unterscheidung}</p>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-800">{welt.unterscheidung}</p>
+
+      {/* Die Besucht-Unterscheidung hängt nicht am Leseergebnis: sie bleibt auch
+          sichtbar, wenn die Reisen gerade nicht geladen werden konnten. Genau
+          dort wäre die Annahme, es sei nur nichts erfasst, am gefährlichsten. */}
+      <ul className="mt-4 flex flex-col gap-x-6 gap-y-2 sm:flex-row sm:flex-wrap sm:items-start">
+        {welt.lage === 'fehler' ? null : (
+          <LegendeZeile art="geplant" label={welt.geplantLabel} wert={welt.geplantKurz} />
+        )}
+        <LegendeZeile art="besucht" label={welt.besuchtLabel} wert={welt.besuchtKurz} />
+      </ul>
 
       {welt.lage === 'fehler' ? (
         <div
           role="alert"
-          className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm leading-6 text-red-800"
+          className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm leading-6 text-red-800"
         >
           {welt.fehlerText}
         </div>
       ) : (
         <>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-line-200 bg-surface-25 px-4 py-4">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">{welt.geplantLabel}</h3>
-              <p className="mt-2 text-sm leading-6 text-ink-800">{welt.zusammenfassung}</p>
-              <p className="mt-1 text-sm leading-6 text-ink-700">{welt.laenderText}</p>
-            </div>
-            <div className="rounded-2xl border border-line-200 bg-surface-25 px-4 py-4">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">{welt.besuchtLabel}</h3>
-              <p className="mt-2 text-sm leading-6 text-ink-800">{welt.besuchtText}</p>
-            </div>
-          </div>
-
-          <div className="mt-6 overflow-x-hidden">
-            <div className="w-full rounded-[24px] bg-surface-50 p-5 sm:p-6">
-              <div className="relative w-full">
-                <svg
-                  viewBox={`0 0 ${WORLD_MAP_VIEWBOX.width} ${WORLD_MAP_VIEWBOX.height}`}
-                  role="img"
-                  aria-labelledby="account-welt-karte-titel account-welt-karte-desc"
-                  className="block h-auto w-full"
+          <div className="mt-5 flex flex-col gap-4">
+            <div className="min-w-0">
+              <div className="relative rounded-[22px] border border-line-200 bg-surface-50 p-2">
+                {/* Nur die Kartenfläche wird beschnitten. Die Marker-Ebene bleibt
+                    frei, damit ein Punkt am Kartenrand seine volle Trefferfläche
+                    behält; der Innenabstand der Karte trägt den Überhang. */}
+                <div className="overflow-hidden rounded-[14px]">
+                  <svg
+                    viewBox={ansicht.viewBox}
+                    role="img"
+                    aria-labelledby="account-welt-karte-titel account-welt-karte-desc"
+                    className="block h-auto w-full"
+                  >
+                    <title id="account-welt-karte-titel">{welt.titel}</title>
+                    <desc id="account-welt-karte-desc">
+                      {welt.lage === 'leer'
+                        ? welt.leerText
+                        : `${welt.zusammenfassung} ${welt.laenderText}`}
+                    </desc>
+                    <g aria-hidden="true">
+                      {ansicht.gitter.map((linie) => (
+                        <line
+                          key={linie.schluessel}
+                          x1={linie.x1}
+                          y1={linie.y1}
+                          x2={linie.x2}
+                          y2={linie.y2}
+                          className="stroke-brand-800/10"
+                          strokeWidth="0.3"
+                        />
+                      ))}
+                      {WORLD_MAP_LAND_PFADE.map((pfad) => (
+                        <path
+                          key={pfad}
+                          d={pfad}
+                          className="fill-brand-700/25 stroke-brand-700/45"
+                          strokeWidth="0.45"
+                          strokeLinejoin="round"
+                        />
+                      ))}
+                    </g>
+                  </svg>
+                </div>
+                <div
+                  className="absolute inset-2"
+                  onKeyDown={(ereignis) => {
+                    if (ereignis.key === 'Escape' && offeneGruppe) {
+                      ereignis.stopPropagation()
+                      setOffeneGruppe(null)
+                    }
+                  }}
                 >
-                  <title id="account-welt-karte-titel">{welt.titel}</title>
-                  <desc id="account-welt-karte-desc">
-                    {welt.lage === 'leer'
-                      ? welt.leerText
-                      : `${welt.zusammenfassung} ${welt.laenderText}`}
-                  </desc>
-                  {WORLD_MAP_LAND_PFADE.map((pfad) => (
-                    <path
-                      key={pfad}
-                      d={pfad}
-                      className="fill-brand-800/15 stroke-brand-800/25"
-                      strokeWidth="0.4"
-                      strokeLinejoin="round"
+                  {ansicht.gruppen.map((gruppe) => (
+                    <MarkerGruppe
+                      key={gruppe.schluessel}
+                      gruppe={gruppe}
+                      geplantLabel={welt.geplantLabel}
+                      gewaehlterOrt={gewaehlt}
+                      offen={offeneGruppe === gruppe.schluessel}
+                      onOeffnen={setOffeneGruppe}
+                      onWaehlen={waehlen}
                     />
                   ))}
-                </svg>
-                {welt.orte
-                  .filter((ort) => ort.geplottet)
-                  .map((ort) => (
-                    <button
-                      key={ort.schluessel}
-                      type="button"
-                      aria-label={`${ort.name}, ${welt.geplantLabel}`}
-                      aria-current={gewaehlt === ort.schluessel ? 'true' : undefined}
-                      aria-controls={weltOrtDomId(ort.schluessel)}
-                      onClick={() => {
-                        setGewaehlt(ort.schluessel)
-                        document.getElementById(weltOrtDomId(ort.schluessel))?.scrollIntoView({
-                          block: 'nearest',
-                          behavior: 'smooth',
-                        })
-                      }}
-                      className="absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20"
-                      style={{ left: `${markerLinks(ort)}%`, top: `${markerOben(ort)}%` }}
-                    >
-                      <span
-                        className={
-                          gewaehlt === ort.schluessel
-                            ? 'block h-3 w-3 rounded-full bg-brand-800 ring-2 ring-citrus-400'
-                            : 'block h-2.5 w-2.5 rounded-full bg-brand-800 ring-2 ring-white'
-                        }
-                      />
-                    </button>
-                  ))}
+                </div>
               </div>
+              {aktiveGruppe ? (
+                <GruppenAuswahl
+                  gruppe={aktiveGruppe}
+                  gewaehlterOrt={gewaehlt}
+                  onSchliessen={() => setOffeneGruppe(null)}
+                  onWaehlen={waehlen}
+                />
+              ) : null}
+              <p className="mt-2 text-xs leading-5 text-ink-650">
+                {welt.lage === 'leer' ? welt.leerText : welt.laenderText}
+                {ansicht.rahmenHinweis ? ` ${ansicht.rahmenHinweis}` : ''}
+              </p>
             </div>
-          </div>
 
-          {welt.lage === 'leer' ? (
-            <p className="mt-5 text-sm leading-6 text-ink-700">{welt.leerText}</p>
-          ) : (
-            <ol className="mt-5 grid gap-3">
-              {welt.orte.map((ort) => (
-                <li key={ort.schluessel} id={weltOrtDomId(ort.schluessel)}>
-                  <article
-                    className={
-                      gewaehlt === ort.schluessel
-                        ? 'rounded-2xl border border-brand-600 bg-surface-50 px-4 py-3'
-                        : 'rounded-2xl border border-line-200 bg-surface-0 px-4 py-3'
-                    }
-                  >
-                    <button
-                      type="button"
-                      className="flex min-h-11 w-full flex-col items-start justify-center text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                      onClick={() => setGewaehlt(ort.schluessel)}
-                    >
-                      <h3 className="text-sm font-semibold text-brand-800">{ort.name}</h3>
-                      <p className="mt-1 text-sm leading-6 text-ink-700">
-                        {ort.countryLabel ?? WORLD_MAP_OHNE_LAND_TEXT}
-                      </p>
-                      <p className="mt-1 text-sm leading-6 text-ink-800">
-                        {welt.geplantLabel} in {herkunftText(ort)}
-                      </p>
-                      {ort.geplottet ? null : (
-                        <p className="mt-1 text-sm leading-6 text-ink-700">{WORLD_MAP_OHNE_KOORDINATEN_TEXT}</p>
-                      )}
-                    </button>
-                    {ort.reisen.length > 0 ? (
-                      <div className="mt-2 flex flex-col gap-1">
-                        {ort.reisen.map((reise) => (
-                          <Link
-                            key={`${ort.schluessel}:${reise.tripId}`}
-                            href={`/reisen/${reise.tripId}` as Route}
-                            className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                            aria-label={`Reise öffnen: ${reise.tripTitle} (${reise.tripId})`}
-                          >
-                            {ort.reisen.length === 1 ? 'Reise öffnen' : `Reise öffnen: ${reise.tripTitle}`}
-                          </Link>
-                        ))}
-                      </div>
-                    ) : null}
-                  </article>
-                </li>
-              ))}
-            </ol>
-          )}
+            {welt.lage === 'leer' ? null : (
+              <ol className="grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                {welt.orte.map((ort) => (
+                  <OrtZeile
+                    key={ort.schluessel}
+                    ort={ort}
+                    geplantLabel={welt.geplantLabel}
+                    gewaehlt={gewaehlt === ort.schluessel}
+                    imRahmen={imRahmen.has(ort.schluessel)}
+                    onWaehlen={waehlen}
+                  />
+                ))}
+              </ol>
+            )}
+          </div>
         </>
       )}
+
+      <p className="mt-4 border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
+        {welt.besuchtText}
+      </p>
     </section>
   )
 }

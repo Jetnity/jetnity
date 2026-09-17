@@ -7,6 +7,12 @@
 // sind bewusst grob und dienen nur als Orientierung hinter gespeicherten
 // Etappenkoordinaten. Keine Ländergrenzen, keine implizite Ländertreue.
 // Lizenz: Originalarbeit in diesem Repository.
+//
+// Die Antarktis war in World Map 1 ein Rechteck von -63.2° bis zum Pol. Das war
+// keine Silhouette, sondern ein Platzhalter, und erschien als grauer Balken
+// unter der Karte. Der gezeigte Ausschnitt endet in
+// `lib/account/world-map-ansicht.ts` nördlich davon; der Platzhalter ist
+// deshalb entfallen statt kaschiert zu werden.
 
 export const WORLD_MAP_LAND_PROVENIENZ = {
   name: 'Jetnity World Map 1 land silhouette',
@@ -252,13 +258,6 @@ const NEUSEELAND: LonLat[] = [
   [172.6, -34.4],
 ]
 
-const ANTARKTIS: LonLat[] = [
-  [-180, -63.2],
-  [180, -63.2],
-  [180, -90],
-  [-180, -90],
-]
-
 export const WORLD_MAP_LAND_PFADE: readonly string[] = [
   pfadAusRing(AFRIKA),
   pfadAusRing(EUROPA),
@@ -271,5 +270,4 @@ export const WORLD_MAP_LAND_PFADE: readonly string[] = [
   pfadAusRing(GROSSBRITANNIEN),
   pfadAusRing(JAPAN),
   pfadAusRing(NEUSEELAND),
-  pfadAusRing(ANTARKTIS),
 ]
