@@ -1,7 +1,7 @@
 # Jetnity – V1 Account / Privacy / Operations Minimum – Gap Matrix (Audit 1, Generation 2)
 
 Stand: 17. September 2026
-Status: **AUDIT-ONLY / DOCS-ONLY — CHECKPOINT 1 (Sections 1–3 persisted)**
+Status: **AUDIT-ONLY / DOCS-ONLY — COMPLETE (Sections 1–7 persisted)**
 
 Canonical issue: #438
 Draft PR: #449
@@ -376,4 +376,349 @@ Verification method for this generation: bounded domain passes with independent 
 | 3.6 | Password reset | BUILT | P2 (Prod redirect unverified) | Credentialed Prod read |
 | 3.7 | Auth rate limiting | BUILT (declared, Dev branch) | P2 | Credentialed Prod read |
 
-Sections 4–6 and the cross-cutting findings follow in checkpoint 2 of this document.
+---
+
+## Section 4 — Support minimum
+
+### 4.1 Support / help channel
+
+- **Evidence**
+  - Exactly **one** user-facing contact entry point exists in the entire product: `components/layout/Footer.tsx` L45–52, a `mailto:info@jetnity.ch` link under the contact heading.
+  - It renders on public routes (`app/(public)/layout.tsx` L5, L56) and account routes (`app/account/layout.tsx` L9, L27). It does **not** render in the admin area (`app/(admin)/admin/layout.tsx` has no `Footer` import).
+  - Independently re-verified: `find app -type d` matching `support`, `help`, `hilfe`, `kontakt`, `contact`, `faq` returns **zero** directories. There is no help page, no FAQ, no feedback form, no ticket system.
+  - Public navigation carries no help entry: `lib/auth/oeffentliche-navigation.ts` L64–68 defines only `/#entdecken`, `/reisen`, `/#pro`.
+  - `docs/PRIVACYBEE_VENDOR_FIT_GAP_MATRIX_2026-08-29.md` L87 mentions Freshdesk / Customer.io as *future* vendors; no such integration exists in code.
+- **State** — `PARTIAL` — a contact address exists; a support capability does not.
+- **V1 necessity** — **Required.** V1 is defined as "production ready for real travellers" (`docs/ACTIVE_WORK_STATUS.md` §2). Real travellers with a trip in progress will need help, and several failure modes documented in this matrix have *no* self-service resolution: MFA factor loss (3.4), data export (2.1), account deletion (2.2). Each of those silently assumes a support channel that is not defined.
+- **Gap** — The mailto is a contact address, not a support process. There is no stated response expectation, no ownership, no triage path, and it is not reachable from the surfaces where users actually get stuck: it is absent from the admin area, absent from every error surface (4.2, 4.3), and absent from the auth forms where login/MFA failures occur.
+- **Severity** — **P1.** Not literally zero, so not P0, but it is the load-bearing assumption behind three separate P0/P1 gaps elsewhere in this matrix.
+- **Dependency / gate** — A documented support process is ungated and costs nothing. A ticketing vendor is a new recurring cost and therefore falls under `AGENTS.md` §18 and needs Product-Owner approval.
+- **Smallest next slice** — Persist a support process document (who monitors `info@jetnity.ch`, expected response window, escalation for account-locked and data-rights requests), then surface the existing address on the error surfaces. No vendor, no new cost.
+
+### 4.2 Error boundaries — coverage gap in the authenticated area
+
+- **Evidence**
+  - Independently re-verified: the complete set of error/not-found boundaries is `app/(public)/error.tsx`, `app/(admin)/admin/error.tsx`, `app/not-found.tsx`, `app/(public)/not-found.tsx`, `app/(admin)/admin/not-found.tsx`.
+  - There is **no** `app/error.tsx` (root) and **no** `app/account/error.tsx`, and **no** `global-error.tsx` anywhere.
+  - `app/account/**` is not nested under the `(public)` group, so `app/(public)/error.tsx` does not apply to it. A runtime error anywhere in `/account/*` therefore falls through to the Next.js default error screen.
+  - By contrast the public boundary is well built: `app/(public)/error.tsx` offers `reset()` (L50–57), a link to `/reisen` (L58–64), and a quotable `Fehler-ID` (L67–69 via `oeffentlicheFehlerId(error?.digest, React.useId())` L25).
+- **State** — `MISSING` for the account segment; `BUILT` for public and admin.
+- **V1 necessity** — **Required.** The authenticated area is where a user's trip data lives; it is the least acceptable place to show an unbranded default error page with no recovery action and no reference.
+- **Gap** — No error boundary covering `/account/*`, and no root-level or global boundary as a backstop. A crash while viewing bookings or travellers produces a generic screen with no `Fehler-ID`, no retry, and no way back into the product.
+- **Severity** — **P1.**
+- **Dependency / gate** — None. This is a small, self-contained runtime addition mirroring an existing pattern.
+- **Smallest next slice** — Add `app/account/error.tsx` reusing the `(public)` boundary's structure, including `oeffentlicheFehlerId`. Consider a root `app/global-error.tsx` as a backstop.
+
+### 4.3 Error identifiers without a route to use them
+
+- **Evidence**
+  - `app/(public)/error.tsx` L67–69 shows the user a `Fehler-ID`.
+  - `app/(admin)/admin/error.tsx` L17–18 shows `Ref: {error.digest}` **only if** `error.digest` is present, with no `oeffentlicheFehlerId` fallback — so the admin surface can render without any reference at all.
+  - Neither surface tells the user what to do with the identifier: no mailto, no "send this ID to support" copy.
+  - Nothing correlates the identifier on the operator side, because there is no error tracking (5.5). The `Fehler-ID` is therefore currently unresolvable even if a user does quote it.
+  - Client errors are logged only to the user's own browser console: `app/(public)/error.tsx` L19–21 `console.error('[PublicRouteError]', error)`.
+- **State** — `PARTIAL` — the identifier exists, the loop does not close.
+- **V1 necessity** — Required to make support (4.1) actually effective.
+- **Gap** — An identifier is shown that neither the user nor the operator can act on. The admin boundary can render with no identifier at all.
+- **Severity** — **P2.**
+- **Dependency / gate** — Depends on 4.1 (a support address on the surface) and 5.5 (something operator-side to correlate against).
+- **Smallest next slice** — Fold into 4.1 and 4.2: add contact copy next to the `Fehler-ID` and give the admin boundary the same fallback identifier.
+
+### 4.4 Empty-vs-error distinction in consumer views
+
+- **Evidence**
+  - The binding convention exists and is genuinely used. Server side: `lib/api/datenbank-lesen.ts` — `Problem` type L39–42, `problemAus()` L70–84 (503 for transport, 500 otherwise), `lese()` L107+ returning `{ zeilen, problem }`.
+  - Admin UI side: `lib/admin/ladezustand.ts` `ausProblem()` L43–45, `lade()` L92–137, rendered by `components/admin/Ladezustand.tsx` L36–74 (`Fehlerflaeche`).
+  - Consumer views implement the same distinction per view rather than through a shared component: `components/account/AccountBuchungen.tsx` L113–125, `components/account/AccountUebersicht.tsx` L74–87, `components/account/AccountReisende.tsx` L73–83, `app/(public)/reisen/page.tsx` L86–105, `app/(public)/reisen/[tripId]/page.tsx` L59–73. Loaders use `lese()` (`lib/trips/daten.ts` L143–152, `lib/account/buchungen-daten.ts` L65–66); actions use `meldungAus()` (`lib/trips/anlegen.ts` L54–70).
+  - A good example of the principle being applied deliberately: `components/admin/home/AdminStatsStrip.tsx` L62–65 refuses to coerce a missing capability into `0`, with the comment that a zero "wäre die Behauptung, es habe in dreissig Tagen niemand eine Reise angelegt".
+- **State** — `BUILT`. The `AGENTS.md` §15 requirement is met in both the route layer and the view layer.
+- **V1 necessity** — Satisfied.
+- **Gap** — Only duplication: the 503/500 copy is repeated across consumer components, so a future change has several places to miss. No correctness gap.
+- **Severity** — **P3.**
+- **Dependency / gate** — None.
+- **Smallest next slice** — None. If touched later, extract the shared consumer copy — but not as its own slice.
+
+### 4.5 Status / incident communication to users
+
+- **Evidence**
+  - Searched `maintenance`, `wartung`, `statusseite`, status page, downtime banner across `app/**` and `components/**`: no user-facing status, maintenance mode or downtime surface exists.
+  - The only kill switch that affects users is provider-side and silent: `lib/provider-ops/zustand.ts` L21–35 returns `{ aktiv: false, grund: 'production' }` in production, which disables provider features without any user-facing explanation surface.
+  - The only `role="banner"` in the tree is the admin topbar ARIA landmark (`components/layout/AdminTopbar.tsx` L87).
+- **State** — `MISSING`
+- **V1 necessity** — Required in minimal form. `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md` §H requires a defined incident process; telling users something is wrong is part of it.
+- **Gap** — During an outage or a deliberate degradation there is no way to tell users anything. They see generic errors or silently missing features.
+- **Severity** — **P2.**
+- **Dependency / gate** — None for a minimal, statically-controlled notice.
+- **Smallest next slice** — Not now. Record it as a release-gate item; do not build a status system before the P0 items are closed.
+
+### 4.6 Support reference for booking handover
+
+- **Evidence**
+  - `lib/account/buchungen-daten.ts` L28–33 deliberately excludes amounts, partner fields and deeplinks from the account bookings read.
+  - "Booked" means the user said so, not the provider: `lib/trips/buchung.ts` L5–7, L39–48 (`bookingSource: 'user'`).
+  - `booking_url` is forced null on every uptake path (`lib/flights/uebernahme.ts` L30, L100; `lib/flights/aktionen.ts` L79) and the DB guards it (`supabase/migrations/20260829140000_trip_item_commercial_provenance.sql` L580, L636–702).
+- **State** — Not applicable yet, and correctly so.
+- **V1 necessity** — No current gap: there is no external handover (see 6.1), so there is nothing to reference.
+- **Gap** — Forward-looking only. The moment an affiliate handover ships, a user whose external booking fails will need a reference, and the schema already has the fields for it (`affiliate_click_id`, `affiliate_attribution_ref`).
+- **Severity** — **P3 now**, becomes P1 as a precondition of any booking-handover slice.
+- **Dependency / gate** — Provider activation, which is PO-gated.
+- **Smallest next slice** — None. Record as a precondition on the future handover slice.
+
+---
+
+## Section 5 — Admin incident / error / provider / cost visibility
+
+### 5.1 Admin surface honesty
+
+- **Evidence**
+  - Five admin pages are explicit placeholders, all using the same component: `app/(admin)/admin/{analytics,content,marketing,settings,localization}/page.tsx` each render `AdminFolgtSeite` (independently re-verified — those five files plus the component itself are the only references).
+  - The component is unambiguous: `components/admin/AdminFolgtSeite.tsx` L11 labels the area "folgt" and L16 renders `adminFolgtSeitenhinweis()` from `lib/admin/ehrliche-zustaende.ts` L84–86 ("…ist kein fertiges Modul. Die Fläche ist ein Platzhalter…"). Navigation marks them `kind: 'later'` (`lib/admin/navigation.ts` L24–28).
+  - Real, data-backed admin pages: `/admin` (RPCs `admin_payments_summary_30d`, `admin_reisen_kennzahlen`, `admin_reisen_zeitreihe`, `admin_security_overview`), `/admin/users` (`profiles`), `/admin/payments`, `/admin/security`, `/admin/system-health`, `/admin/provider-ops`.
+  - Every admin page passes `requireAdminPage` via `app/(admin)/layout.tsx` L27, with AAL2 enforced inside (3.3), and admin APIs use `requireAdminApi` with a capability (`betrieb-lesen` for reads, `betrieb-eingreifen` for writes).
+  - All admin read routes use `lese()` / `problemAntwort`, so an empty table is distinguishable from a failure.
+- **State** — `BUILT` and honest. Placeholders are labelled as placeholders; this is the correct behaviour and should not be recorded as a gap.
+- **V1 necessity** — Satisfied as a *surface*. What is missing is behind the surfaces, in 5.2–5.6.
+- **Gap** — None in presentation.
+- **Severity** — **P3.**
+- **Dependency / gate** — None.
+- **Smallest next slice** — None.
+
+### 5.2 Security event ingestion — the admin security page has no writers
+
+- **Evidence**
+  - Independently re-verified: every reference to `security_events` in `app/**`, `components/**`, `lib/**` is a **read**. The three readers are `app/api/admin/security/list/route.ts`, `.../events/route.ts`, `.../summary/route.ts`. The only remaining matches are a policy-name assertion in `lib/auth/admin-aal2-alignment.test.ts` L33 and a comment in `lib/api/suchfilter.ts` L8.
+  - There is **no INSERT** anywhere in application code. The only writes in the repository are in the DB test harness `scripts/db/sicherheit.mjs`.
+  - Nothing logs auth failures: `app/(public)/admin/login/actions.ts` L41–43 calls Supabase auth and writes no event.
+  - The table itself is real (`supabase/migrations/20260815060111_baseline.sql` ~L1036) with admin-read RLS.
+- **State** — `MISSING` (ingestion). The read path is `BUILT`.
+- **V1 necessity** — **Required.** `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md` §G explicitly requires that "auth-/security-relevante Events sichtbar" — currently they are structurally invisible.
+- **Gap** — The admin security page is a correct reader of a table that nothing writes. It will therefore show an empty list forever, and — because the empty/error convention is properly implemented — that emptiness will be reported honestly as "no events", which a reader can easily misinterpret as "no security events occurred" rather than "nothing records security events".
+- **Severity** — **P1.** This is the clearest instance in the audit of a capability that looks built end-to-end and is not.
+- **Dependency / gate** — Writing events from the app needs a decision on what is recorded and how PII is avoided (§G of the release gate also requires no PII in logs). Supabase already records auth events platform-side; the cheapest honest option may be to surface those rather than duplicate them.
+- **Smallest next slice** — Before any code: decide whether Jetnity records its own security events or reads Supabase's. If Jetnity's own, one narrow writer for authentication failures and admin interventions, with no PII beyond what the table already holds.
+
+### 5.3 IP blocklist is not enforced
+
+- **Evidence**
+  - Admin can write and delete entries: `app/api/admin/security/block/route.ts` L24–26 (upsert), `.../unblock/route.ts` L23 (delete).
+  - Nothing reads the list at request time. Independently re-verified: `proxy.ts` contains no reference to `blocked_ips` or any block check, and there is no `middleware.ts` in the repository.
+  - The product is honest about it in user-visible copy: `lib/admin/ehrliche-zustaende.ts` L19–20 states the blocklist "wird derzeit nicht enforced. Einträge stehen in blocked_ips; Middleware und Edge prüfen sie nicht", and L23–24 even prefixes success messages with "(nicht enforced)".
+- **State** — `PARTIAL` — a persisted list with no enforcement, disclosed as such.
+- **V1 necessity** — Not required for V1. An unenforced list is not a security control, but the honest labelling means it is not a false claim either.
+- **Gap** — An admin intervention action exists that has no effect on traffic. The disclosure prevents this from being a truth defect, but it remains a control that cannot be used during an incident.
+- **Severity** — **P2.**
+- **Dependency / gate** — Enforcement at the proxy adds a DB read to every matching request; that is a latency and correctness decision (fail-open vs fail-closed on lookup failure) worth deciding deliberately rather than incidentally.
+- **Smallest next slice** — None now. Either enforce it in `proxy.ts` with an explicit fail-open decision, or remove the intervention buttons so no operator believes they have a lever they do not have. Do not leave it ambiguous long-term.
+
+### 5.4 System health measures almost nothing
+
+- **Evidence**
+  - Assembly in `lib/admin/system-health/sammeln.ts` L78–108. Of five checks, exactly one performs a real external probe: Supabase, via a PostgREST read of `airports` limit 1 (`lib/admin/system-health/runtime.ts` L18–28, wired at `sammeln.ts` L87–106).
+  - The other four are static declarations of non-configuration: `vercelNichtKonfiguriert()` (`bewertung.ts` L235–243), `githubNichtKonfiguriert()` (L246–254), `infomaniakNichtKonfiguriert()` (L257–265), and `bewerteApp(leseAppRuntime())` (L70–106) which only proves the current Node process answered.
+  - Not measured at all: deployment health, CI state, DNS/mail, Supabase platform status, provider health.
+  - Read-only by contract (`sammeln.ts` L112 `writeActions: []`), 30-second in-memory cache (L20–21, L70–76).
+  - The honest framing is deliberate and documented (`docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`, `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`): no fake green.
+- **State** — `PARTIAL`, honestly reported as `not_configured` rather than green.
+- **V1 necessity** — **Required** to a greater degree than currently built, per release gate §G ("technische Fehler sichtbar", "Provider Health sichtbar").
+- **Gap** — There is one real signal (can we reach the database) and four declarations of ignorance. In practice the board cannot tell an operator whether Jetnity is healthy.
+- **Severity** — **P1**, jointly with 5.5 — they are the same underlying gap seen from two sides.
+- **Dependency / gate** — Real probes need credentials (Vercel/GitHub tokens) and possibly a scheduler. Any paid tier is `AGENTS.md` §18 territory.
+- **Smallest next slice** — Do not expand the board first. Close 5.5 (alerting) first, because knowing *that* something broke matters more than a dashboard nobody is watching at 03:00.
+
+### 5.5 No error tracking, no alerting, no log aggregation
+
+- **Evidence**
+  - Independently re-verified: `package.json` contains no match for `sentry`, `analytics`, `posthog`, `plausible`, `datadog`, `axiom` or `logtail`. There is no error-reporting SDK of any kind.
+  - No structured logger module in `lib/**`; observability is ad-hoc `console.error` / `console.warn` (e.g. `lib/auth/admin-guard.ts` L85–93, L218–235).
+  - Provider operations events are explicitly non-persistent: `lib/provider-ops/observability.ts` L1–6 states "Keine Persistenz", and the wired sink is `providerOpsConsoleEventSink` → `console.info('provider_ops_event', …)` (L115–118).
+  - No error-report API endpoint (`app/api/**` contains no error route — confirmed against the full 22-route inventory in 2.1).
+  - Client errors reach nobody: `app/(public)/error.tsx` L19–21 logs to the user's own browser console.
+- **State** — `MISSING`
+- **V1 necessity** — **Required, and explicitly launch-gating.** `docs/JETNITY_V1_RELEASE_READINESS_GATE_2026-09-01.md` §G requires visible technical errors, cost/quota alerts, visible security events, defined alert ownership and escalation, and incident detection that works under partial failure. §H requires a documented incident process with responsibility. None of that exists.
+- **Gap** — A production incident is detectable only through host-side logs that nobody is alerted about, or through a user complaint sent to an unmonitored mailbox (4.1). There is no alert ownership, no escalation, and no partial-failure detection.
+- **Severity** — **P0** for public launch, by the repository's own binding release gate. It is *not* P0 for continued development.
+- **Dependency / gate** — Any hosted error-tracking or alerting service is a **new provider decision** and therefore `AGENTS.md` §18 / §5: Product-Owner approval required even if a free tier is used, because the free tier becomes a dependency and a data-processor relationship (which also feeds back into the privacy notice in 1.1).
+- **Smallest next slice** — Ungated first step: write the incident process document — who is on point, how an outage is noticed today, what the escalation is, what the provider kill-switch procedure is. That satisfies part of §H at zero cost and makes the tooling decision concrete rather than abstract. The tooling choice itself is a separate PO-gated slice.
+
+### 5.6 Provider cost guard is per-process, and S6A persistence is not wired
+
+- **Evidence**
+  - What enforces limits today is process-local: `providerOpsInMemoryCostGuard` is a `Map` (`lib/provider-ops/cost-guard.ts` L73–89), consumed by domain rate limits such as `lib/flights/rate-limit.ts` L15–20. On a serverless platform this means the limit resets per instance and is not shared across concurrent instances.
+  - The S6A persistent design exists in the repository but is deliberately not connected: migration `supabase/migrations/20260901020000_provider_cost_guard_s6a.sql` (confirmed present) creates `jetnity_internal` tables with the gate `production_write_path_allocated = false` (L38–64); the adapter `lib/provider-ops/persistent-cost-guard.ts` exists but is **not exported** from `lib/provider-ops/index.ts` (independently re-verified — no `persistent` match in the barrel), an absence asserted by `lib/provider-ops/s6a-persistenz-vertrag.test.ts` L148–149.
+  - `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S6A_CLOSED_2026-09-01.md` L67–75 states the Production tables are **absent** — i.e. "S6A closed" means the repository contract is closed, not that a guard is running.
+  - The admin board reports this accurately rather than claiming a budget: `bewerteCostGuard()` (`lib/admin/provider-ops-board/bewertung.ts` L140–150) confirms the module exists and states there is no global persistent budget.
+  - Mitigating context: every provider domain is hard-off in production (`lib/provider-ops/zustand.ts` L17–28; `JETNITY_FLIGHT_AKTIV` etc.), and all non-flight factories return `null`, so there is currently no paid provider traffic to guard.
+- **State** — `PARTIAL` — in-memory guard real, persistent guard foundation-only.
+- **V1 necessity** — Not required *today* because no provider is live. **Required as a hard precondition** before any real provider activation, which is exactly what the S6A design anticipates.
+- **Gap** — No cross-instance, persistent spend limit. If a provider were activated in its current state, per-instance limits would multiply by the number of concurrent instances, with no global ceiling — a direct `AGENTS.md` §17/§18 cost-control violation.
+- **Severity** — **P2 now** (no live provider), **P0 as a precondition of provider activation**.
+- **Dependency / gate** — Applying the S6A migration to Production is a Production migration → **PO-GATED**. Provider activation is separately PO-gated.
+- **Smallest next slice** — None now. Keep S6A as the documented precondition attached to the provider-activation gate, so activation cannot happen without it.
+
+### 5.7 AI / model cost control
+
+- **Evidence**
+  - Real quota enforcement in the database before the model call: `modell_kontingent_beanspruchen()` inserts (`supabase/migrations/20260818040000_modellnutzung.sql` L326–328) and `modell_nutzung_abschliessen()` updates afterwards, called from `lib/modell/kontingent.ts` L137–142 and L182–192.
+  - Limits are constants in the migration (L236–242): 4/hour and 8/day per identity, 24/day guest pool, 38/day global, and a daily cost ceiling of 3,000,000 micro-USD.
+  - Kill switch: `JETNITY_MODELL_AKTIV` must be `true`/`1` (`lib/modell/konfiguration.ts` L175–189).
+  - Admin visibility: the provider-ops board reads the last 30 days of `model_usage`, capped at 200 rows, and sums `kosten_mikro_usd` (`lib/admin/provider-ops-board/runtime.ts` L59–89; `bewertung.ts` L153–195). RLS requires `darf_betrieb_lesen()` (migration L177–178).
+  - Service-role use is scoped to this RPC path (`lib/modell/kontingent.ts` L73–80).
+- **State** — `BUILT` — this is the strongest cost-control implementation in the repository and satisfies `AGENTS.md` §17.
+- **V1 necessity** — Satisfied.
+- **Gap** — Two small ones: the admin aggregate caps at 200 rows, so a busy period is silently truncated in the *display*; and there is no alert when a ceiling is hit (part of 5.5). Retention is covered in 2.4.
+- **Severity** — **P3.**
+- **Dependency / gate** — None.
+- **Smallest next slice** — None.
+
+---
+
+## Section 6 — Revenue / conversion / attribution (V1 operational truth)
+
+### 6.1 Affiliate / booking handover
+
+- **Evidence**
+  - No outbound booking handover exists in any domain. The provider interfaces state it explicitly: `lib/flights/provider.ts` L10–11 ("bucht nicht und erzeugt keine Deeplinks"), and the same in `lib/hotels/provider.ts` L6–7, `lib/activities/provider.ts` L6–7, `lib/mobility/provider.ts` L7, `lib/rental-cars/provider.ts` L7.
+  - `booking_url` is null on every path and guarded at three layers: excluded from the client schema (`lib/flights/schema.ts` L144–145), forced null on uptake (`lib/flights/uebernahme.ts` L30, L100, L125), stripped on guest import (`lib/flights/nutzlast.ts` L18–22), and nulled by the DB for untrusted writes (`supabase/migrations/20260829140000_trip_item_commercial_provenance.sql` L580, L636–702).
+  - Non-flight domains have no provider at all: `lib/hotels/factory.ts` L10–11, `lib/activities/factory.ts` L10–11, `lib/mobility/factory.ts` L11–12, `lib/rental-cars/factory.ts` L11–12 all return `null`.
+  - No attribution parameters anywhere: no `utm_`, `subid` or `click_id` construction in `components/**`.
+- **State** — `MISSING`, and deliberately so.
+- **V1 necessity** — Not required for a V1 defined as "production ready for real travellers". It *is* required for revenue, which the roadmap places later.
+- **Gap** — None as a defect. The consequence to state plainly is that Jetnity currently has no revenue mechanism, so nothing downstream (attribution, conversion, commission) can be measured because nothing is happening.
+- **Severity** — **P3** for V1 as defined.
+- **Dependency / gate** — Provider activation and partner contracts are PO-gated; `docs/KAYAK_FLIGHT_APPLICATION_READINESS_NO_SUBMIT_2026-09-01.md` and `docs/WEGO_FLIGHT_APPLICATION_READINESS_LEGAL_HOLD_NO_SUBMIT_2026-09-01.md` record explicit no-submit / legal-hold states.
+- **Smallest next slice** — None. Do not start; carry 4.6 and 5.6 as preconditions.
+
+### 6.2 Click / conversion persistence
+
+- **Evidence**
+  - No click, conversion, attribution, commission or payout table exists in `supabase/migrations/**`.
+  - The affiliate *columns* exist only inside `trip_item_commercial_provenance` (`affiliate_status`, `affiliate_partner_id`, `affiliate_click_id`, `affiliate_attribution_ref`, migration L102–105), and nothing in `app/**` or `lib/**` calls the write function `jetnity_internal.trip_item_commercial_provenance_schreiben`. The gate `production_write_path_allocated = false` (L56–73) keeps the path closed, and the projection explicitly refuses to mint a `booking_url` (L196–210).
+  - `public.payouts` does not exist at all; the older summary RPC hardcodes `payouts_cents` to 0 (`supabase/migrations/20260817100400_schema_hygiene.sql` L104–105, L121–122).
+- **State** — `MISSING` at runtime; the schema and domain library are `BUILT` as an unactivated foundation.
+- **V1 necessity** — Not required while 6.1 is absent.
+- **Gap** — None as a defect. Worth recording that the design correctly defaults attribution to unknown rather than guessing (`docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`), which matches the release gate requirement that "`unknown` Attribution bleibt unknown".
+- **Severity** — **P3.**
+- **Dependency / gate** — Same as 6.1.
+- **Smallest next slice** — None.
+
+### 6.3 Payments surface reads legacy tables and lacks the honest caveat on the overview
+
+- **Evidence**
+  - No payment provider dependency exists: independently re-verified that `package.json` contains no `stripe`, `paypal` or `adyen`, and there is no webhook receiver route in `app/**`.
+  - The admin payments routes read pre-existing tables: `payments` and `refunds` (`app/api/admin/payments/{summary,list,breakdown}/route.ts`), `stripe_webhooks` (`.../webhooks/route.ts`). The only write is a local ledger note: `.../refund/route.ts` L37–62 inserts into `refunds` and may update `payments.status`.
+  - Nothing in the application inserts into `payments`. `DECISIONS.md` ADR-0010 keeps these tables without expanding them, and `docs/LEGACY_ENTFERNUNG.md` L67 records a handful of legacy/test rows.
+  - The payments *page* is honest: `lib/admin/ehrliche-zustaende.ts` L9–15 states there is no provider-backed money movement and that a refund "schreibt nur in die lokale Tabelle refunds", and the success message says "Keine Provider-Erstattung".
+  - **The admin overview strip is not equally honest.** `components/admin/home/AdminStatsStrip.tsx` renders `Gesamtumsatz (30T)`, `Bestellungen (30T)`, `Refunds (30T)`, `Payouts (30T)` from the same tables, and computes `Bestellungen je Reise: X%` as `orders / reisen30d` (L67, L96–98). Its only caveat is `kennzahlenHinweis` = "Lokale Kennzahlen aus vorhandenen Aggregaten. Keine Provider-Health." — which warns about provider health, **not** about the absence of real money movement.
+- **State** — `PARTIAL`: real reads over tables that no live system populates.
+- **V1 necessity** — The payments surface is not needed for V1. What *is* needed is that no admin surface presents a revenue figure that has no revenue behind it.
+- **Gap** — An admin reading the overview sees a CHF "Gesamtumsatz" and a "Bestellungen je Reise" conversion percentage derived from legacy residue rows, without the caveat that the payments page itself carries. If any legacy row falls inside the rolling 30-day window, this renders as revenue and as a conversion rate. `payouts_cents` is additionally hardcoded to 0 against a table that does not exist, and is displayed as a CHF value.
+- **Severity** — **P2.** Admin-internal, no user impact, but it is exactly the "erfundene Revenue-/Conversion-Dashboards" that the release gate §I forbids.
+- **Dependency / gate** — None. Copy and/or suppression only.
+- **Smallest next slice** — Extend the overview strip's caveat to state that no payment provider is connected, or suppress the monetary tiles and the conversion ratio until a provider exists. No schema change, no new dependency.
+
+### 6.4 Conversion funnel / product measurement
+
+- **Evidence**
+  - No third-party analytics (confirmed independently in 1.3) and no self-hosted product-event table. `docs/GROWTH_DISCOVERABILITY_D0_G0_AUDIT.md` L161 records the absence of versioned product/marketing/revenue events.
+  - What does exist is admin aggregate SQL over real data: `admin_reisen_kennzahlen()` (`supabase/migrations/20260817120100_reise_anlegen.sql` L251–267) and `admin_reisen_zeitreihe()` (L274+), surfaced by `components/admin/home/AdminStatsStrip.tsx` L33 and `components/admin/home/AdminTimeSeries.tsx` L9, L31, both requiring `betrieb-lesen`.
+  - Consequence: "how many trips were created in the last 30 days" and "how many accounts have a trip" are answerable. "How many visitors started planning and did not finish", "what fraction of signups create a trip", "where do users drop out" are not answerable by anything.
+  - `app/(admin)/admin/analytics/page.tsx` is a labelled placeholder (5.1).
+- **State** — `PARTIAL` — outcome counts exist, funnel does not.
+- **V1 necessity** — Required in minimal form. The release gate §I requires that activation of the core journey be measurable. Beyond compliance, the product mandate is explicitly that retention must come from real usefulness — which cannot be evaluated without knowing whether people finish planning a trip.
+- **Gap** — No measurement of the core journey's steps. There is also no consent or privacy mechanism (1.2) that a future event pipeline could hang from, so the two are coupled.
+- **Severity** — **P2.** Not user-facing, not launch-blocking for safety, but it means V1 cannot be evaluated after launch.
+- **Dependency / gate** — Any third-party analytics is a Product-Owner decision with cost and privacy consequences and would activate the consent obligation in 1.2. A first-party event table avoids the vendor question but is a new persistent data class and therefore needs a retention decision (2.4) and a privacy-notice entry (1.1).
+- **Smallest next slice** — None before 1.1 and 2.4. When taken: prefer a minimal first-party, non-identifying event count for the core journey over a vendor SDK, so consent and retention stay simple.
+
+---
+
+## Section 7 — Cross-cutting findings
+
+### 7.1 The dominant pattern: honest partial systems, one dishonest claim
+
+Across all six domains the repository behaves consistently and unusually well on one axis: it distinguishes "we do not know" from "there is nothing". `lib/api/datenbank-lesen.ts` and `lib/admin/ladezustand.ts` implement it structurally; `components/admin/home/AdminStatsStrip.tsx` L62–65 refuses to coerce a denied capability into zero; `lib/auth/account-session-view.ts` L12 types other sessions as `unsupported` rather than "0"; `lib/admin/ehrliche-zustaende.ts` L19–24 labels the IP blocklist unenforced in its own success messages; system health reports `not_configured` rather than green.
+
+Against that background, **1.4 is an outlier and should be treated as the single most inconsistent thing in the audited domain**: `components/auth/RegisterForm.tsx` L386 and `components/auth/LoginForm.tsx` L288 assert "DSGVO & CH-DSG konform" to users while the product has no privacy notice, no consent record, no data export and no account deletion. Everywhere else the codebase refuses to overstate; here it overstates to users, in the signup flow, on a regulatory matter. It was already identified on 29 August 2026 (`docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md` §3.2) and is still live at this audit head.
+
+### 7.2 A cluster of P0 items is blocked on one Product-Owner input
+
+1.1 (legal pages), 1.5 (acceptance capture) and parts of 2.4 (retention statement) are all waiting on Product-Owner/legal *content*, not on engineering. The AP-6a contract deliberately forbids agent-generated legal text (`lib/legal/ap6a-gate0-vertrag.ts` L31), and the PrivacyBee decision authorises no activation (`docs/PRIVACYBEE_PRODUCT_OWNER_BINDING_DECISION_2026-08-30.md` L111). This means a substantial share of the V1 blocking set cannot be closed by any coding agent under current governance. That is worth surfacing explicitly as a programme fact rather than leaving it implicit in individual rows.
+
+### 7.3 Two P0/P1 items are free, ungated and currently unclaimed
+
+Contrasting with 7.2: 1.4 (remove the unproven conformity claim), 3.4's operational half (write the admin MFA-loss runbook), 4.1's process half (define the support process), 5.5's process half (write the incident process), and 6.3 (extend one caveat) all require no Product-Owner gate, no migration, no dependency and no cost. Together they close one P0, mitigate one operational P0 and close two P1s. This is the highest-value, lowest-risk remediation cluster in the matrix.
+
+### 7.4 Repository evidence conflicts identified
+
+Per the binding task's requirement to identify stale or conflicting repository evidence:
+
+1. **Production admin AAL2 state — direct contradiction.** `docs/AUTH.md` L116–117 states Production lacks `aktuelles_admin_aal2()`; `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md` L23–27 states the Production migration was applied and verified. Both cannot be current. Compounding factor: `supabase/config.toml` L118–121 and `scripts/auth/anwenden.ts` L20–22 confirm auth tooling manages the Development branch only, so no automated mechanism keeps either statement true. **Resolution requires a credentialed Production read and correction of one document.** (Recorded in 3.3.)
+2. **`docs/ADR_0201_ACCOUNT_TRAVELLER_REGISTRY_PERSISTENCE.md` L42 — stale.** It states there is no user UI for the traveller registry. Runtime now has `/account/travellers` (`app/account/travellers/page.tsx`) plus registry CRUD (`lib/traveller/account-registry-aktionen.ts`) and registry→trip materialisation (`lib/traveller/account-registry-trip.ts`). The ADR was accurate for slice S2 and has been overtaken by S3/S4.
+3. **`docs/AP7_S2_ACCOUNT_TRAVELLER_REGISTRY_PERSISTENCE_STATUS_2026-08-29.md` L29 — accurate-but-misleading.** "No UI/runtime" is true of the S2 slice only; read as current product state it is wrong for the same reason as (2).
+4. **"S6A CLOSED" wording — correct but easy to misread.** `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S6A_CLOSED_2026-09-01.md` means the repository contract is closed; L67–75 correctly states the Production tables are absent and the adapter is unwired. No correction needed; noted because "closed" adjacent to "cost guard" invites the assumption that spend is guarded. (Recorded in 5.6.)
+5. **`components/layout/CookieConsent.tsx` L35–36 — stale runtime artefact.** Claims Views/Likes measurement that does not exist anywhere in the product. Unmounted, so no user sees it, but it is untrue text carried in the tree with a recorded dead-code exception. (Recorded in 1.2.)
+
+No document was found that claims data export, account deletion, live payments, live affiliate attribution or an operational persistent cost guard is implemented. On those points the documentation is honest and matches the code.
+
+### 7.5 Product-Owner-gated items identified
+
+Per the binding task, the following gaps cannot be implemented by an agent and are classified `PO-GATED`:
+
+| Gap | Reason for gate |
+|---|---|
+| 1.1 legal page content | Legal text must not be agent-generated; vendor decision authorises no activation |
+| 1.5 acceptance persistence | Requires migration; Production migration is gated |
+| 2.2 account deletion | Destructive, reversal-hard identity deletion; requires service-role path |
+| 2.4 retention enforcement | Retention periods are a product/legal decision; enforcement is a Production migration |
+| 2.7 any expansion of traveller data | Sensitive document/MRZ/biometric storage is explicitly gated |
+| 3.4 second factor / backup codes | Fundamental MFA/AAL contract change |
+| 5.5 error-tracking/alerting vendor | New external provider, new data-processor relationship, potential recurring cost |
+| 5.6 S6A Production apply | Production migration; precondition of provider activation |
+| 6.1 / 6.2 provider + affiliate activation | Provider contracts, secrets, paid calls, live activation |
+| 6.4 analytics vendor | New provider, cost, and triggers the consent obligation |
+
+### 7.6 What is genuinely strong
+
+Recording this because an audit that lists only gaps misrepresents the state. The following are built, verified against live code, and should not be re-litigated by a later slice: traveller data minimisation enforced in both schema and runtime (2.7); ownership and RLS across the whole trip and traveller graph (2.6); guest→account migration with real idempotency and conservative partial-failure handling (2.5); the TOTP MFA lifecycle and admin AAL2 enforcement in both application and data plane (3.2, 3.3); scoped logout with honest limits (3.5); the fail-closed public indexing boundary (1.6); database-enforced AI quota with a kill switch (5.7); zero third-party tracking (1.3); and the empty-vs-error discipline throughout (4.4).
+
+---
+
+## Consolidated V1 blocking set
+
+**P0 — must be closed before public launch with real travellers**
+
+| # | Gap | Gated? |
+|---|---|---|
+| 1.4 | Unproven "DSGVO & CH-DSG konform" claim shown to users at signup and login | **No — free** |
+| 1.1 | No `/privacy`, no `/terms`, no imprint; signup links to 404s | PO (legal content) |
+| 2.1 | No data export / access path | Scope decision |
+| 2.2 | No account deletion | **PO (destructive)** |
+| 3.4 | Admin MFA-loss lockout with no recovery path (operational P0) | Runbook is free |
+| 5.5 | No error tracking, no alerting, no incident process (release gate §G/§H) | Process free; tooling PO |
+
+**P1 — blocks a trustworthy V1**
+
+| # | Gap |
+|---|---|
+| 1.5 | Terms acceptance not persisted, not server-enforced, OAuth path bypasses it |
+| 2.4 | No enforced retention for any data class |
+| 3.3 | Production admin AAL2 state unknown; two repository documents contradict each other |
+| 3.4 | Consumer MFA recovery absent |
+| 4.1 | No defined support process behind the single contact address |
+| 4.2 | No error boundary covering `/account/*` |
+| 5.2 | Nothing writes `security_events`; the admin security page reads a table with no writers |
+| 5.4 | System health measures one real signal out of five checks |
+
+**P2 / P3** — as recorded per row in Sections 1–6.
+
+---
+
+## Audit boundaries and what this audit did not verify
+
+Stated explicitly so no later reader over-reads this document:
+
+1. **No live Production verification.** No Supabase credentials, no Management API read, no deployment inspection. Every statement about Production is either marked unknown (3.3, 3.6, 3.7) or derived from repository declarations.
+2. **No test suite, typecheck, lint or build was run.** This slice changes no runtime code; the binding task forbids unnecessary suite runs for a docs-only audit. Consequently no claim in this document rests on a test result produced by this audit. Where a test file is cited, it is cited as *source evidence of an encoded expectation*, not as a passing result observed here.
+3. **RLS is verified as declared, not as live.** `db:rls`, `db:rechte`, `db:sicherheit` exist and were not executed (2.6).
+4. **Not audited:** trip planning core, flight multi-leg orchestration, world map, destination essentials, assistant runtime (#435) and explicit visit history (#448) — out of scope by the binding task.
+5. **Line numbers are as at the audit head** recorded in the status document. They may drift with later commits; the cited symbol names are the durable anchor.
