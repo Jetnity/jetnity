@@ -24,13 +24,13 @@ Exclusive active meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM**.
 | Branch | `governance/full-potential-ai-operating-system-1` |
 | Canonical base | `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` |
 | Dispatch head | `979d8a6462ecb4cb1b4069d9f052f2afaa301098` |
-| Implementation head | `2ae95a27c6919a3197880092f238ae299e3964e2` — local gates green; this persist is a newer head |
+| Last verified implementation/evidence head | `2feeaae6d138473aad9c148af5b608a4bf3a954f` — Guardian exact head; CI `35372328077` SUCCESS; Vercel READY `8aot27iv27FJa6m3p4qbiom8zLDV`. This persist creates a newer head. Re-fetch the live PR head before any verdict. |
 | Topology | **SINGLE_AGENT** — this slice owns shared canonical governance + CI guard; no parallel writer |
 | Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
 | External Grok team | **not created in this slice**; all ten Grok Intelligence & Assurance roles remain mandatory later setup before HOLD lift; shared Grok environment is one blast radius |
 | Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD RE-REVIEW**. No Ready. No merge. No OS follow-up slice. |
 
-Normal product development remains blocked until the Operating System is integrated and independently verified, the later external ten-role setup/schedules/Evidence-Bus/e2e verification exists or a real platform limitation is escalated to the Product Owner, and a dedicated Technical-Lead closure changes the machine mode without product/runtime files in that same PR. Technical Lead autonomous normal architecture/governance/review/integration authority remains inside this meta-scope and, after HOLD exit, for normal slices that do not cross a special Product-Owner gate. `no automatic follow-up slice` binds Cursor/Guardian/reviewers, not Technical-Lead slice selection after HOLD exit.
+Normal product development remains blocked until the Operating System is integrated and independently verified; the later external ten-role setup/schedules/Evidence-Bus/e2e verification exists or a real platform limitation is escalated to the Product Owner; the agreed GitHub hard-enforcement baseline is configured and verified or a PO-accepted limitation is recorded; the dedicated HOLD-exit evidence checklist is complete; and a dedicated Technical-Lead closure changes the machine mode without product/runtime files in that same PR. The in-repo guard is not tamper-proof. Cursor must not activate GitHub settings. Technical Lead autonomous normal architecture/governance/review/integration authority remains inside this meta-scope and, after HOLD exit, for normal slices that do not cross a special Product-Owner gate. `no automatic follow-up slice` binds Cursor/Guardian/reviewers, not Technical-Lead slice selection after HOLD exit.
 
 Assistant Runtime 1 and the Multi-Agent Operating System are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 

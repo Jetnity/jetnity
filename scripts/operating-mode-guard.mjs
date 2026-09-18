@@ -173,6 +173,23 @@ export function validateOperatingModeSchema(mode) {
     if (exit.requiresTenRoleExternalSetupAndVerification !== true) {
       errors.push('exitCondition.requiresTenRoleExternalSetupAndVerification must be true')
     }
+    if (exit.requiresGithubHardEnforcementBaseline !== true) {
+      errors.push('exitCondition.requiresGithubHardEnforcementBaseline must be true')
+    }
+    if (exit.requiresDedicatedHoldExitEvidenceChecklist !== true) {
+      errors.push('exitCondition.requiresDedicatedHoldExitEvidenceChecklist must be true')
+    }
+    if (exit.ciCannotProveExternalPrerequisites !== true) {
+      errors.push('exitCondition.ciCannotProveExternalPrerequisites must be true')
+    }
+    if (
+      exit.dedicatedHoldExitChecklist !==
+      'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md'
+    ) {
+      errors.push(
+        'exitCondition.dedicatedHoldExitChecklist must point at the canonical HOLD-exit checklist',
+      )
+    }
     if (exit.samePrCannotMixModeChangeAndProductRuntime !== true) {
       errors.push('exitCondition.samePrCannotMixModeChangeAndProductRuntime must be true')
     }
@@ -193,6 +210,9 @@ export function validateOperatingModeSchema(mode) {
     errors.push('authorizedExactBranches must be a non-empty string array')
   } else if (!mode.authorizedExactBranches.includes('governance/full-potential-ai-operating-system-1')) {
     errors.push('authorizedExactBranches must include governance/full-potential-ai-operating-system-1')
+  }
+  if (!isNonEmptyString(mode.authorizedBranchClassRationale)) {
+    errors.push('authorizedBranchClassRationale is required')
   }
   if (!isStringArray(mode.allowedPathPatterns)) {
     errors.push('allowedPathPatterns must be a non-empty string array')

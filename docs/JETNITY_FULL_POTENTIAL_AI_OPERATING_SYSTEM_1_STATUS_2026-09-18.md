@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 1 – Status
 
 Stand: 18. September 2026  
-Status: **TL CHANGES REQUIRED ON e807e0f6 ADDRESSED / LOCAL GATES GREEN / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE**
+Status: **GUARDIAN F1–F4 HARDENING ON SAME SESSION / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -14,29 +14,33 @@ Status: **TL CHANGES REQUIRED ON e807e0f6 ADDRESSED / LOCAL GATES GREEN / STOP F
 | Issue / Draft PR | #488 / #489 Draft |
 | Branch | `governance/full-potential-ai-operating-system-1` |
 | Canonical base | `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` |
-| Implementation head | `2ae95a27c6919a3197880092f238ae299e3964e2` |
-| Relation | 7 ahead / **0 behind** `main@0c83af42` |
-| Reviewed stale head | `e807e0f673fdaca1b3eed02b90766b4b6fdb8360` — TL verdict CHANGES REQUIRED |
+| Last verified implementation/evidence head | `2feeaae6d138473aad9c148af5b608a4bf3a954f` |
+| Evidence on that SHA | CI `35372328077` SUCCESS; Auth `105689324690` SUCCESS; Vercel READY `8aot27iv27FJa6m3p4qbiom8zLDV`; Guardian comment `5733672386`; TL CHANGES REQUIRED for F1–F4 hardening |
+| This persist | **creates a newer head** than `2feeaae6`. It is not the live PR head. |
+| Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
-## 2. Implemented against the four P1s
+Do not treat any SHA written in this file as the current/live head. Continuity fields name the last verified predecessor plus the fact that this persist moved the branch.
 
-- HOLD guard now enforces the **base/main** policy (or hardcoded bootstrap HOLD if `main` has no JSON). Head policy is validated but cannot broaden/disable the same-PR check.
-- Explicit HOLD→NORMAL contract: `dedicated_hold_closure_only`. A PR may flip to NORMAL only on an authorized governance branch whose every name-status path still passes the **base** allowlist. Product/runtime files in the same PR fail.
-- Rename/copy/delete inspection uses `git diff --name-status -M -C`. Source and destination are both classified. Forbidden deletion fails.
-- Adversarial fixtures cover: NORMAL-while-base-HOLD reject unless dedicated closure; head-broadened allowlist/branches cannot authorize otherwise forbidden files/branches; forbidden→allowed rename; allowed→forbidden rename; forbidden deletion.
-- All ten Grok roles remain mandatory later identities. Later external setup + approved read-only routines/schedules + Evidence Bus + e2e verification is **required before HOLD lift**, unless a real platform limitation is escalated to the Product Owner. Ordinary approved routines must not need a new PO prompt every run.
-- Shared Grok account/environment is canonically **not** a security isolation boundary. No Production-admin / service-role / payment-admin / broad write tokens in that blast radius.
-- PR #487 not touched. No bot, team, schedule, permission, Ready, merge, product or OS follow-up.
+## 2. Implemented against accepted Guardian P2/P3
 
-## 3. Local gates on the implementation tree
+- Exact GitHub hard-enforcement proposal: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`. Distinguishes in-repo CI/HOLD guard, external GitHub protection, and the remaining separate-reviewer limitation. Protected surfaces named. Non-lockout `main` baseline documented, **not activated**. Stronger CODEOWNERS/required-reviewer documented as optional only after a real second principal exists.
+- HOLD exit now also requires that baseline (or a PO-accepted limitation) and a completed dedicated evidence checklist. CI cannot prove those facts.
+- Dedicated checklist: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md`.
+- Continuity docs no longer call a predecessor SHA the live head.
+- Authorized branch class kept for later numbered OS meta-slices; no merge/bypass authority.
+- No GitHub Ruleset/Branch Protection/CODEOWNERS mutation. No bots. No product/runtime. PR #487 untouched.
+
+## 3. Local gates on this implementation tree
+
+These results describe the tree that this persist commits. This persist is still not the live PR head after push.
 
 | Gate | Result |
 | --- | --- |
 | `check:operating-mode` | PASS |
-| Guard fixtures | 16/16 PASS, including the four P1 attack classes |
+| Guard fixtures | 16/16 PASS |
 | `typecheck` | PASS |
-| `lint` | PASS (exit 0; 0 errors / 138 pre-existing warnings; admin-layout React warnings untouched) |
+| `lint` | PASS (exit 0; 0 errors / 138 pre-existing warnings) |
 | `test` | 3509/3509 PASS |
 | `check:api-schutz` | PASS |
 | `check:schema-bezug` | PASS |
@@ -44,13 +48,11 @@ Status: **TL CHANGES REQUIRED ON e807e0f6 ADDRESSED / LOCAL GATES GREEN / STOP F
 | `check:exports` | PASS |
 | `check:deps` | PASS |
 | `build` | PASS |
-| merge-base | `0c83af42` / behind=0 / 7 ahead at `2ae95a27` |
-| review threads | 0 |
+| merge-base at persist time | `origin/main@0c83af42` / behind=0 |
+| review threads at persist time | 0 |
 
-## 4. Exact-head evidence
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `2feeaae6`.
 
-This persist is a newer head than `2ae95a27`. Re-fetch CI/Vercel/threads on the live SHA. Historical SUCCESS on `e807e0f6` (CI `35370356594`) does not clear these P1s and does not bind this head.
+## 4. Non-scope
 
-## 5. Non-scope
-
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No external Grok team. No Ready. No merge. No follow-up slice. HOLD remains in force.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No external Grok team. No Ready. No merge. No follow-up slice. No GitHub admin settings. HOLD remains in force.

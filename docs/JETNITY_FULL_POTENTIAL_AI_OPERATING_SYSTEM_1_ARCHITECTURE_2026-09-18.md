@@ -61,7 +61,7 @@ This foundation is **SINGLE_AGENT** because it owns the shared canonical governa
 | Parallel writers on these files | **Forbidden** |
 | Parked product PR | #487 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — do not resume, merge or follow |
 
-After this foundation is merged and independently verified, later AI-OS meta-slices may run in parallel **only** with disjoint file/contract ownership and a Technical-Lead-defined integration order.
+After this foundation is merged and independently verified, later AI-OS meta-slices may run in parallel **only** with disjoint file/contract ownership and a Technical-Lead-defined integration order. The authorized branch class `governance/full-potential-ai-operating-system-` is kept for those numbered later slices. It does **not** grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. It remains constrained by the base HOLD policy, Technical-Lead review, and later external `main` protection.
 
 ## 4. Routine trigger matrix
 
@@ -113,6 +113,8 @@ Behaviour:
 
 This guard does not replace Technical-Lead review and does not grant Cursor any merge or Production authority.
 
+**Honest limitation (Guardian F1–F3):** the in-repo guard is **not tamper-proof**. An authorized governance writer can change the guard script, CI workflow, `package.json` scripts, or policy that CI then executes from the PR head. A later HOLD-era PR can also weaken the merged main allowlist without adding product files in that same PR. Treat any PR that touches enforcement surfaces as high-review. External GitHub protection of `main` and the enforcement plane is a separate required HOLD-exit item; proposal only, not activated here: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`. A second Grok/Guardian identity on the same account is not an independent approval boundary.
+
 ## 7. HOLD exit criteria
 
 Mode may leave `AI_OS_BUILD_HOLD` only when **all** are true:
@@ -121,9 +123,11 @@ Mode may leave `AI_OS_BUILD_HOLD` only when **all** are true:
 2. post-merge CI and relevant Vercel Production evidence exist on the exact merge SHA;
 3. an independent Technical-Lead PASS recorded the repository operating system as integrated;
 4. the later **external setup of all ten permanent Grok Intelligence & Assurance roles** exists, including their approved read-only routines/schedules, Evidence-Bus path, and an end-to-end verification — unless a real platform limitation is found and explicitly escalated to the Product Owner;
-5. a **dedicated** Technical-Lead closure updates `.jetnity/operating-mode.json` to `NORMAL` and the startup surfaces, **without** product/runtime files in that same PR.
+5. the agreed **GitHub hard-enforcement baseline** is configured and verified, or an explicit Product-Owner decision records an accepted limitation — proposal: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`. Cursor must not activate settings;
+6. the **dedicated HOLD-exit evidence checklist** is complete with verifiable evidence: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md`. CI and schema flags cannot prove the external facts;
+7. a **dedicated** Technical-Lead closure updates `.jetnity/operating-mode.json` to `NORMAL` and the startup surfaces, **without** product/runtime files in that same PR.
 
-This repository slice still does not create external bots, grant permissions, or start schedules. Those later external actions are nevertheless **mandatory before HOLD lift**, not an optional afterthought.
+This repository slice still does not create external bots, grant permissions, start schedules, or activate GitHub Rulesets. Those later external actions are nevertheless **mandatory before HOLD lift**, not an optional afterthought.
 
 One-time Product-Owner setup/authorization may be required. After that authorization, approved read-only recurring routines must **not** need a new manual Product-Owner prompt on every ordinary run. Special Product-Owner gates remain Product-Owner-controlled. Daily/weekly automation remains no-noise and cannot create work, merge, or Production authority.
 
@@ -157,7 +161,8 @@ Cursor must **not** start these.
 | 3 | Optional Evidence-Bus prompt/template pack | foundation on `main` | may be parallel with 4 if file ownership is disjoint from `operating-mode.json` / CI guard | later tasked writer |
 | 4 | Optional routine-prompt pack for startup/review/regate | foundation on `main` | may be parallel with 3 if disjoint | later tasked writer |
 | 5 | **Required before HOLD lift:** external setup of all ten Grok roles + approved read-only routines/schedules + Evidence-Bus path + end-to-end verification | foundation on `main` + one-time PO authorization | not a Cursor writer slice | Product Owner; escalate only a real platform limitation |
-| 6 | Dedicated HOLD-exit / mode-change closure | OS integrated + independently verified + step 5 complete or PO-accepted limitation | serial; owns `.jetnity/operating-mode.json`; **no product/runtime in the same PR** | Technical Lead |
-| 7 | Decision on parked PR #487 | HOLD lifted or explicit PO/TL unpark | serial, separate branch | Technical Lead; do not start Writer 1 from this slice |
+| 6 | **Required before HOLD lift:** configure and verify the GitHub hard-enforcement baseline, or record a PO-accepted limitation | foundation on `main` + reviewed proposal | not a Cursor writer slice; **Cursor must not activate settings** | Product Owner / repository admin |
+| 7 | Dedicated HOLD-exit / mode-change closure with completed evidence checklist | OS integrated + independently verified + steps 5–6 complete or PO-accepted limitations | serial; owns `.jetnity/operating-mode.json`; **no product/runtime in the same PR**; CI does not prove external facts | Technical Lead |
+| 8 | Decision on parked PR #487 | HOLD lifted or explicit PO/TL unpark | serial, separate branch | Technical Lead; do not start Writer 1 from this slice |
 
 No normal product/runtime slice appears in this order while HOLD is active.

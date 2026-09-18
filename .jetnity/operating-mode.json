@@ -7,7 +7,9 @@
     "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
     "docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md",
     "docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md",
-    "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md"
+    "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md"
   ],
   "normalProductSlices": "blocked",
   "allowedWorkClasses": [
@@ -40,8 +42,12 @@
   "exitCondition": {
     "requiresIntegratedAndIndependentlyVerified": true,
     "requiresTenRoleExternalSetupAndVerification": true,
+    "requiresGithubHardEnforcementBaseline": true,
+    "requiresDedicatedHoldExitEvidenceChecklist": true,
+    "ciCannotProveExternalPrerequisites": true,
+    "dedicatedHoldExitChecklist": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md",
     "samePrCannotMixModeChangeAndProductRuntime": true,
-    "description": "HOLD lifts only after this foundation is merged, independently verified, and the later external setup of all ten Grok Intelligence & Assurance roles plus approved read-only routines/schedules, Evidence-Bus path and end-to-end verification exists — unless a real platform limitation is escalated to the Product Owner. A dedicated Technical-Lead closure may then change mode to NORMAL. That closure cannot include product/runtime files in the same PR. PR enforcement is always anchored to the base/main policy, never to an untrusted PR-head policy.",
+    "description": "HOLD lifts only after this foundation is merged and independently verified; the later external setup of all ten Grok roles plus approved read-only routines/schedules, Evidence-Bus path and e2e verification exists or a real platform limitation is escalated to the Product Owner; the agreed GitHub hard-enforcement baseline is configured and verified or an explicit Product-Owner decision records an accepted limitation; and the dedicated HOLD-exit evidence checklist is complete. The in-repo guard is fail-closed for ordinary unauthorized product/runtime PRs under the reviewed implementation. It is not tamper-proof against an authorized writer rewriting the enforcement plane. CI cannot prove the external prerequisites. A dedicated Technical-Lead closure may then change mode to NORMAL without product/runtime files in the same PR.",
     "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence",
     "transitionContract": "dedicated_hold_closure_only"
   },
@@ -52,6 +58,7 @@
   "authorizedExactBranches": [
     "governance/full-potential-ai-operating-system-1"
   ],
+  "authorizedBranchClassRationale": "Kept for later planned OS meta-slices with numbered suffixes and disjoint ownership after this foundation is on main. The class does not grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. It remains constrained by the base HOLD policy, Technical-Lead review, and later external main protection.",
   "allowedPathPatterns": [
     ".jetnity/**",
     ".cursor/rules/**",

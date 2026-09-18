@@ -149,6 +149,8 @@ Still forbidden:
 
 This repository slice still must not create those bots or grant permissions. The later external setup of all ten roles, their approved read-only routines/schedules, the Evidence-Bus path and an end-to-end verification is nevertheless **required before PRODUCT DEVELOPMENT HOLD is lifted**, unless a real platform limitation is found and explicitly escalated to the Product Owner. Do not silently make any of the ten identities optional.
 
+Accepted Guardian hardening (F1–F4), persisted here so later agents do not miss it: the in-repo guard is fail-closed for ordinary unauthorized product PRs and is **not** tamper-proof against an authorized enforcement-plane rewrite. External GitHub hard-enforcement for `main` is a required HOLD-exit item, documented only in `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`; Cursor must not activate settings. Dedicated closure evidence lives in `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md`. CI cannot prove those external facts.
+
 
 ## 2. Reuse before add
 
@@ -316,8 +318,9 @@ Required state now:
 - governance/continuity/evidence work allowed only within explicit path/branch policy
 - exact Product-Owner override date/reference
 - parked PR #487 resume pointer
-- exit condition: Full-Potential AI Operating System integrated + independently verified + later external ten-role setup/schedules/Evidence-Bus/e2e verification; a dedicated TL closure changes mode only after that evidence exists
+- exit condition: Full-Potential AI Operating System integrated + independently verified + later external ten-role setup/schedules/Evidence-Bus/e2e verification + agreed GitHub hard-enforcement baseline (or PO-accepted limitation) + completed dedicated HOLD-exit evidence checklist; a dedicated TL closure changes mode only after that evidence exists
 - that dedicated closure cannot mix HOLD→NORMAL with product/runtime files in the same PR
+- CI/schema flags cannot prove the external prerequisites
 - special PO gates remain in force
 
 Create:

@@ -442,7 +442,8 @@ Current truth:
 - one Product-Owner Jetnity-Guardian app already exists as the independent challenge/evidence layer;
 - the other nine target identities are **not** created in this slice;
 - no new GitHub app, installation, team, or token is granted by this document;
-- later external setup of all ten roles, their approved read-only routines/schedules, the Evidence-Bus path, and an end-to-end verification is **required before PRODUCT DEVELOPMENT HOLD is lifted**, unless a real platform limitation is escalated to the Product Owner.
+- later external setup of all ten roles, their approved read-only routines/schedules, the Evidence-Bus path, and an end-to-end verification is **required before PRODUCT DEVELOPMENT HOLD is lifted**, unless a real platform limitation is escalated to the Product Owner;
+- the agreed GitHub hard-enforcement baseline is a separate required HOLD-exit item (`docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`). Cursor/Grok must not activate repository settings. A second Grok identity is not an independent Ruleset or review boundary.
 
 ### Shared-environment security rule
 

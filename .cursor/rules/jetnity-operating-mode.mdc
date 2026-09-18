@@ -25,6 +25,8 @@ When `mode` is `AI_OS_BUILD_HOLD`:
 - governance, continuity, evidence and enforcement work is allowed only on an authorized branch and only within the **base/main** path allowlist;
 - a PR-head policy cannot broaden or disable HOLD for that same PR;
 - HOLD→NORMAL is only a later dedicated closure and cannot include product/runtime files in the same PR;
+- the in-repo guard is not tamper-proof against an authorized writer rewriting guard/workflow/package/policy; do not claim it is;
+- GitHub Rulesets / Branch Protection are a required later HOLD-exit baseline and must not be activated by Cursor;
 - special Product-Owner gates remain in force.
 
 ## Authority that does not change

@@ -43,14 +43,21 @@ const validMode = {
   exitCondition: {
     requiresIntegratedAndIndependentlyVerified: true,
     requiresTenRoleExternalSetupAndVerification: true,
+    requiresGithubHardEnforcementBaseline: true,
+    requiresDedicatedHoldExitEvidenceChecklist: true,
+    ciCannotProveExternalPrerequisites: true,
+    dedicatedHoldExitChecklist:
+      'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md',
     samePrCannotMixModeChangeAndProductRuntime: true,
-    description: 'OS integrated + independently verified + ten-role external setup',
+    description: 'OS integrated + independently verified + ten-role external setup + GitHub baseline',
     modeChangeAuthority: 'technical_lead_dedicated_closure_after_evidence',
     transitionContract: 'dedicated_hold_closure_only',
   },
   specialProductOwnerGatesRemainInForce: true,
   authorizedBranchClasses: ['governance/full-potential-ai-operating-system-'],
   authorizedExactBranches: ['governance/full-potential-ai-operating-system-1'],
+  authorizedBranchClassRationale:
+    'Planned later OS meta-slices; no merge or bypass authority.',
   allowedPathPatterns: [
     '.jetnity/**',
     '.cursor/rules/**',
@@ -78,10 +85,16 @@ describe('operating-mode guard fixtures', () => {
   test('schema without dedicated HOLD-exit contract fields fails', () => {
     const incomplete = structuredClone(validMode)
     delete incomplete.exitCondition.requiresTenRoleExternalSetupAndVerification
+    delete incomplete.exitCondition.requiresGithubHardEnforcementBaseline
+    delete incomplete.exitCondition.requiresDedicatedHoldExitEvidenceChecklist
+    delete incomplete.exitCondition.ciCannotProveExternalPrerequisites
     delete incomplete.exitCondition.samePrCannotMixModeChangeAndProductRuntime
     delete incomplete.exitCondition.transitionContract
     const errors = validateOperatingModeSchema(incomplete)
     assert.ok(errors.some((error) => error.includes('requiresTenRoleExternalSetupAndVerification')))
+    assert.ok(errors.some((error) => error.includes('requiresGithubHardEnforcementBaseline')))
+    assert.ok(errors.some((error) => error.includes('requiresDedicatedHoldExitEvidenceChecklist')))
+    assert.ok(errors.some((error) => error.includes('ciCannotProveExternalPrerequisites')))
     assert.ok(errors.some((error) => error.includes('samePrCannotMixModeChangeAndProductRuntime')))
     assert.ok(errors.some((error) => error.includes('transitionContract')))
   })

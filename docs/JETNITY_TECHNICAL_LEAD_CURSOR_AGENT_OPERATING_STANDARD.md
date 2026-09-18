@@ -57,7 +57,7 @@ Ausdrückliche Product-Owner-Freigabe bleibt vor der betreffenden Aktion erforde
 - neue laufende Infrastruktur-/Servicekosten über USD 100 pro Monat, sofern kein strengerer bestehender Gate gilt;
 - Entscheidungen, die der Product Owner ausdrücklich reserviert.
 
-Branch Protection wird nicht verändert, solange der Product Owner dies nicht ausdrücklich freigibt.
+Branch Protection / GitHub Rulesets werden nicht von Cursor aktiviert. Der verbindliche Vorschlag ist `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`. Die vereinbarte Non-Lockout-Baseline für `main` ist ein **pflichtiger HOLD-Exit-Punkt**, bis sie konfiguriert und verifiziert ist oder der Product Owner eine akzeptierte Limitation dokumentiert. Der In-Repo-HOLD-Guard ist fail-closed gegen gewöhnliche unautorisierte Produkt-PRs unter der reviewed Implementation; er ist **nicht** tamper-proof gegen einen autorisierten Governance-Writer, der Guard/Workflow/`package.json`/Policy im selben PR ändert. CI beweist keine externen Ten-Role-/Ruleset-Fakten. Ein zweiter logischer Grok-/Guardian-Name auf demselben Account ist keine unabhängige Review-Grenze.
 
 ## 3a. Follow-up-Autorität — verbindliche Korrektur
 
@@ -69,7 +69,7 @@ Der Technical Lead darf nach abgeschlossenem Slice autonom den nächsten bounded
 - `.jetnity/operating-mode.json` normale Produktarbeit erlaubt;
 - kein besonderes Product-Owner-Gate gekreuzt wird.
 
-Während `AI_OS_BUILD_HOLD` darf der Technical Lead nur innerhalb des ausdrücklich benannten Governance-Meta-Scopes dispatchen. Ein HOLD-Exit ändert den Mode nur durch einen dedizierten Technical-Lead-Closure-Schritt, nachdem das Operating System integriert und unabhängig verifiziert ist.
+Während `AI_OS_BUILD_HOLD` darf der Technical Lead nur innerhalb des ausdrücklich benannten Governance-Meta-Scopes dispatchen. Ein HOLD-Exit ändert den Mode nur durch einen dedizierten Technical-Lead-Closure-Schritt, nachdem das Operating System integriert und unabhängig verifiziert ist, die Ten-Role-Einrichtung (oder eine eskalierte Plattform-Limitation), die GitHub-Hard-Enforcement-Baseline (oder eine akzeptierte PO-Limitation) und die Evidence-Checkliste `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md` vollständig sind. Der Guard prüft nur die Path-Shape der Closure, nicht die externen Fakten.
 
 ## 4. Verbindlicher End-to-End-Workflow
 
