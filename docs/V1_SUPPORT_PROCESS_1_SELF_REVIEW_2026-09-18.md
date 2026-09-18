@@ -53,9 +53,9 @@ This document argues against the implementation. It cannot replace an independen
 | Data-rights identity = PO + Legal, not email | Yes | §8.6 / §11.1 |
 | No government ID / passport / OTP / password to verify | Yes | |
 | No uncontrolled Production DB / special gates preserved | Yes | |
-| Exact-head gates + persist | Pending on this P1 persist | |
+| Exact-head gates + persist | Partial on `7fadcf00`: verify SUCCESS, Vercel READY, Auth-Konfiguration FAILURE (404/504 ref). This evidence persist is a newer HEAD. |
 | No Ready / no merge / no follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-TL CHANGES REQUIRED `5728414707` is applied in the runbook. Local and exact-head CI / Vercel on this new HEAD are pending. Agent self-review is still not PASS.
+TL CHANGES REQUIRED `5728414707` is applied on `7fadcf00`. That SHA’s Auth-Konfiguration job failed with `SUPABASE_PROJECT_REF` 404/504; the docs-only P1 did not change Auth. This evidence persist is a newer HEAD. Agent self-review is still not PASS.
