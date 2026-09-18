@@ -1,7 +1,7 @@
 # Jetnity – V1 Account Data Export 1 STATUS
 
 Stand: 18. September 2026  
-Status: **MAIN RECONCILED / BEHIND 0 / GATED ON `a9541fdd` / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **P2 ALLOWLIST CORRECTION / GATED ON `53dfd358` / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #474  
 Draft PR: #476  
@@ -11,8 +11,8 @@ Source audit: #438 / merged PR #449 / finding 2.1
 Assigned dispatch base: `main@854045a0f37e07d783115dd3a0ee6b302f79bfa1`  
 Reconciled main: `ac3539d9ceff4e96308a48c51d2d317927245b54`  
 TL implementation PASS head: `3f8b29b73681bde93414f30af93d3f5245479b4a`  
-Reconciliation merge: `a9541fdd751b9e2274a0a1172a0cebbb36390ab6`  
-TL reconcile request: comment `5729395462` / dispatch `5729396387`
+Previous locked head (invalidated): `902a4b40b1ba05ce2ed29e766a1b43dac0e058c1`  
+TL CHANGES REQUIRED: comment `5729541740` / dispatch `5729543090`
 
 Cursor-Agent: **Jetnity V1 account data export 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast** — confirmed (`originalModelName=cursor-grok-4.6-high-fast`)  
@@ -22,29 +22,33 @@ This file is point-in-time evidence. Every new head invalidates older exact-head
 
 ---
 
-## 1. Reconciliation performed
+## 1. Correction performed
 
-`git fetch origin main` then `git merge origin/main` on this branch only.
+Same logical session. Only TL comment `5729541740`.
 
-- Incoming main is exactly `ac3539d9` — `Remove stale cookie consent artefact (#477)`.
-- No sibling feature branch was merged.
-- Merge strategy: `ort`, **no conflicts**.
-- #477 files (`CookieConsent` delete, legal/sanitation tests, `scripts/erreichbarkeit.mjs`, cookie-consent docs) were taken from main unchanged.
-- Slice files vs `origin/main` remain exactly the nine #476 files.
-- Runtime/test files vs TL PASS head `3f8b29b7` are unchanged.
+- Replaced every export `.select('*')` with `KONTO_DATENEXPORT_SPALTEN` — one canonical table → column allowlist.
+- Allowlists freeze the current generated `Database['public']['Tables'][T]['Row']` keys for the same 13 owner-scoped tables. No semantic field was added or removed.
+- Compile-time `GleicheMenge` fails typecheck if a later generated column is missing from the allowlist or an unknown column is added.
+- `schemaVersion` stays `jetnity.account-export.v1`. Comment + test require export-contract review and schema-version handling before a future allowlist field change.
+- Route/RLS/auth/`user_id` filter/fail-closed/no-store/no service-role/no persistence/UX copy unchanged.
+- No RPC, admin client, raw SQL, or migration.
+- Focused tests fail on wildcard select, missing allowlist, write/RPC, or silent table-scope change.
+- Inventory now **rejects** `.select('*')` and still rejects insert/update/upsert/delete and write RPCs.
 
-## 2. Live git comparison after merge `a9541fdd`
+## 2. Live git comparison on implementation head `53dfd358`
 
 | | |
 | --- | --- |
+| Implementation | `53dfd358b55100f259a52e793463783747d98b7c` |
+| Allowlist commit | `019706273d97c90862d45f79445d32bb4205b54f` |
 | `origin/main` | `ac3539d9ceff4e96308a48c51d2d317927245b54` |
 | Merge-base | **`ac3539d9`** (current main) |
-| Ahead / behind | **5 / 0** |
+| Ahead / behind | **8 / 0** |
 | Slice vs main | only the nine allowed #476 files |
 
 ## 3. Scope still held
 
-Accepted #476 semantics are intact: session `createRouteHandlerClient` + `auth.getUser()`, no service role, no request user-id, RLS plus session `user_id` filter, fail-closed table reads, empty arrays, direct no-store JSON attachment, exact 13-table scope, honest settings copy, no invented distributed rate-limit. Write-path inventory still allows this reader only.
+Accepted #476 semantics remain: session `createRouteHandlerClient` + `auth.getUser()`, no service role, no request user-id, RLS plus session `user_id` filter, fail-closed table reads, empty arrays, direct no-store JSON attachment, exact 13-table scope, honest settings copy, no invented distributed rate-limit. The only runtime change is explicit columns instead of `*`.
 
 ## 4. Gates
 
@@ -52,26 +56,26 @@ Accepted #476 semantics are intact: session `createRouteHandlerClient` + `auth.g
 
 | Head | Note |
 | --- | --- |
-| `dd99ee9d` | prior implementation gate; CI `35337090168` / Vercel `C5vUCdkrgYY1P1vCPMTHdJb3oj9j` |
-| `3f8b29b7` | TL implementation PASS; CI `35337704117`; no longer current after main merge |
+| `3f8b29b7` | TL implementation PASS before main merge |
+| `902a4b40` | TL PRE-FINAL / CHANGES REQUIRED; CI `35340683141` / Vercel `CczHzpmBfRE9LbqZNpwZVhTjKFNW` |
 
-### 4.2 Local on reconciliation head `a9541fdd`
+### 4.2 Local on implementation head `53dfd358`
 
 | Gate | Result |
 | --- | --- |
-| Focused export + inventory + incoming #477 tests | PASS – 28/28 |
-| `npm test` | PASS – **3468** tests, 0 fail |
+| Focused export + inventory | PASS – 14/14 |
+| `npm test` | PASS – **3469** tests, 0 fail |
 | `npm run typecheck` | PASS |
-| `npm run lint` | PASS – 0 errors, **138** warnings (was 139; CookieConsent removed on main) |
+| `npm run lint` | PASS – 0 errors, **138** warnings |
 | `npm run build` | PASS — `ƒ /api/account/export` present |
-| Hygiene (`dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`) | PASS — CookieConsent dead-code exception gone with #477 |
+| Hygiene (`dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`) | PASS |
 
-### 4.3 Exact-head CI + Preview on `a9541fdd`
+### 4.3 Exact-head CI + Preview on `53dfd358`
 
 | | |
 | --- | --- |
-| CI | **SUCCESS** — run `35340417529` |
-| Vercel Preview | **READY** — deployment `D1M4V4xkPgzCVysV4aMyHJp3m9oN` commit-status success on `a9541fdd` |
+| CI | **SUCCESS** — run `35341788949` |
+| Vercel Preview | **READY** — deployment `2q4F6yHEDNRLa545SVh2ofeg2UmU` commit-status success on `53dfd358` |
 | Preview URL | `https://jetnity-app-git-feat-v1-account-data-export-1-jetnity-e1b93c82.vercel.app` |
 
 This evidence persist is a new head and invalidates those exact-head gates.
@@ -80,9 +84,9 @@ This evidence persist is a new head and invalidates those exact-head gates.
 
 - PR #476 remains **Draft**, **not Ready**, **not merged**.
 - GitHub review threads: **none**.
-- Vercel unresolved review threads: **none** (live-feedback 0/0 at last bot comment).
-- Implementation review PASS is comment `5729395462` on `3f8b29b7`. This head is the requested main reconciliation only.
+- Vercel unresolved review threads: **none** (live-feedback 0/0).
+- Correction source: TL comment `5729541740`.
 
 ## 6. Next step
 
-**STOP FOR TECHNICAL-LEAD REVIEW.** Re-gate this persist head if FINAL PASS must be exact-head on the docs commit. No Ready. No merge. No follow-up slice.
+**STOP FOR TECHNICAL-LEAD REVIEW.** Re-gate this persist head if FINAL PASS must be exact-head on the docs commit. No Ready. No merge. No Guardian dispatch. No follow-up slice.

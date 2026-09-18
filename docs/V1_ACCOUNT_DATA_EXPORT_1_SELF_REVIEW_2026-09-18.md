@@ -5,29 +5,34 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #474  
 Draft PR: #476  
-Reconciliation merge: `a9541fdd751b9e2274a0a1172a0cebbb36390ab6`  
-Reconciled main: `ac3539d9ceff4e96308a48c51d2d317927245b54`
+Implementation head: `53dfd358b55100f259a52e793463783747d98b7c`  
+TL CHANGES REQUIRED: comment `5729541740`
 
 This document cannot replace an independent Technical-Lead PASS.
 
 ---
 
-## 1. Attacks on the reconciliation
+## 1. Attacks on the correction
 
 | Attack | Result |
 | --- | --- |
-| Persist evidence without merging main | Rejected. This session merged `origin/main@ac3539d9`. |
-| Merge a sibling feature branch | Rejected. Only `origin/main`. #477 arrived via main. |
-| Resolve a conflict by dropping #477 or #476 | No conflict occurred. Both sides kept. |
-| Rebase/force-push | Rejected. Merge commit used. |
-| Change accepted export runtime while reconciling | Rejected. Runtime/tests vs `3f8b29b7` unchanged. |
+| Keep `select('*')` and only document the risk | Rejected. Every read uses `kontoDatenexportSpaltenliste`. |
+| Add or drop semantic fields while “freezing” columns | Rejected. Allowlist equals current Row keys; typecheck locks completeness. |
+| Bump schemaVersion without a shape change | Rejected. Version stays `jetnity.account-export.v1`. |
+| Introduce service role / RPC / admin client / SQL / migration | Rejected. |
+| Touch #477 or global continuity | Rejected. |
+| Treat in-memory limiter as a global throttle | Rejected. Gap remains documented. |
 | Mark Ready or merge #476 | Rejected. |
+| Dispatch Guardian from this session | Rejected. TL forbade Guardian until after this correction review. |
 
 ## 2. Residual risks
 
-- This evidence persist invalidates exact-head gates on `a9541fdd`. Re-gate the new head if FINAL PASS requires it.
-- No globally durable export throttle. Authenticated happy-path download was not live-exercised in this agent.
+- A later persist of this evidence creates a new head and invalidates exact-head CI/Preview on `53dfd358`.
+- `metadata` / `evidence` JSON columns remain in the reviewed field set; they can carry nested application data that is not a new SQL column.
+- No globally durable export throttle.
+- Authenticated happy-path download was not live-exercised in this agent.
+- External Guardian review is still required later; not started here.
 
 ## 3. Recommendation
 
-Reconciliation is done: merge-base is current main, behind is 0. Review the current PR head after this persist and after that head's own CI / Preview.
+Accept the allowlist lock if the frozen columns match the previously inspected Production schema. Re-review the new exact head after its own CI / Preview. Do not Ready or merge from this document.
