@@ -1,7 +1,7 @@
 # Jetnity – V1 Admin MFA Loss Recovery Runbook 1 Task
 
 Stand: 18. September 2026  
-Status: **ACTIVE / BOUNDED P0 OPERATIONS REMEDIATION / DOCS-ONLY / NO AUTH OR PRODUCTION MUTATION**
+Status: **IMPLEMENTATION DELIVERED / DOCS-ONLY / NO AUTH OR PRODUCTION MUTATION / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #459  
 Source audit: #438 / merged PR #449 / finding 3.4 operational half  
@@ -171,3 +171,12 @@ No Supabase live mutation or destructive smoke is permitted or required.
 - Do not merge.
 - Do not start any follow-up slice.
 - Final state: **STOP FOR TECHNICAL-LEAD REVIEW**.
+
+---
+
+## 10. Implementation pointer (Generation 1)
+
+Canonical runbook: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_2026-09-18.md`  
+Status / Handoff / Self-review: the three `V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_1_*_2026-09-18.md` files on this branch.
+
+This pointer does not authorize Ready, merge, live Auth mutation or a follow-up slice.
