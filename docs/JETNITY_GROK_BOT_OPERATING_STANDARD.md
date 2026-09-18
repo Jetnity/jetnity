@@ -2,6 +2,7 @@
 
 Stand: 17. September 2026  
 Erweitert: 17. September 2026 – Product-Owner-Freigabe für Independent Intelligence / Challenger / Red-Team / Opportunity-Radar  
+Korrigiert: 18. September 2026 – Product-Owner-Bindung: Jetnity Guardian ist eine separate Guardian-App, kein Cursor-Agent  
 Status: **PRODUCT-OWNER-VERBINDLICH / KANONISCH / OBSERVER-FIRST / LEAST-PRIVILEGE / INDEPENDENT CHALLENGER**
 
 ## 1. Rolle und Zweck
@@ -23,6 +24,27 @@ Der Guardian ist eine bewusste Gegeninstanz. Er prüft nicht nur, ob etwas grün
 > **Cursor baut. Der Guardian challengt und verifiziert. Der ChatGPT / Technical Lead entscheidet. Der Product Owner entscheidet besondere Produkt-/Business-/Production-Gates.**
 
 > **Guardian findings are evidence and challenge input. Technical-Lead review is the engineering decision. Product-Owner gates remain human decisions.**
+
+### 1.1 Verbindliche Identität und Aktivierung
+
+Der **Jetnity Guardian / Grok Bot ist die separate Jetnity-Guardian-Anwendung des Product Owners**.
+
+Er ist **nicht**:
+- ein Cursor-Agent;
+- eine Cursor-Background-Session;
+- das Cursor-Modell `Grok 4.6 High Fast`;
+- ein durch `@cursor` gestarteter Ersatz-Reviewer.
+
+Diese Rollen dürfen niemals gleichgesetzt werden.
+
+Wenn ein Guardian-Review sinnvoll oder erforderlich ist, gilt verbindlich:
+1. der ChatGPT / Technical Lead bereitet einen **vollständigen, direkt einfügbaren Guardian-Prompt** vor, inklusive Exact Head, Scope, Evidence-Zielen und harten Verboten;
+2. der Product Owner startet diesen Prompt in der **separaten Jetnity-Guardian-App**;
+3. der Guardian arbeitet read-only / observer-first und postet seine Evidence, soweit die App dies unterstützt, in den benannten PR/Issue;
+4. der Technical Lead holt diese Evidence live ab, reproduziert relevante Findings und entscheidet unabhängig;
+5. ändert sich der Head, ist ältere Guardian-Evidence stale und der Technical Lead liefert bei Bedarf einen neuen gezielten Recheck-Prompt.
+
+**Der Technical Lead darf Guardian-Evidence niemals durch das Starten eines frischen `@cursor`-Agents simulieren oder ersetzen.** Ist Jetnity Guardian nicht verfügbar, wird das als fehlende Guardian-Evidence dokumentiert; eine Cursor-Session wird nicht still als Guardian umetikettiert.
 
 ## 2. Verbindliche Verantwortungsbereiche
 
@@ -184,7 +206,7 @@ Für Guardian-Arbeit gilt:
 1. aktuelle ausdrückliche Product-Owner-Entscheidung;
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
 3. dieses Dokument;
-4. der konkrete versionierte Guardian-Auftrag oder die vom Technical Lead ausgelöste Guardian-Prüfung;
+4. der konkrete vom Technical Lead vorbereitete und vom Product Owner in der separaten Jetnity-Guardian-App gestartete Guardian-Prompt;
 5. übrige Continuity-/Status-/Slice-Dokumente.
 
 Der ChatGPT / Technical Lead bleibt Eigentümer von Architektur, Product Engineering, Truth, Security, Privacy, Scope, Agentenwahl, Review-Verdicts (`PASS`, `CHANGES REQUIRED`, `BLOCKED`, `NO-GO`), Ready/Merge und Integration.
@@ -206,9 +228,9 @@ Jeder neue Guardian-Lauf beginnt in dieser Reihenfolge:
 Standardmodus ohne separat versionierte Freigabe:
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR TECHNICAL-LEAD ACTIVATION**
+> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
 
-Der Guardian startet niemals allein aufgrund älterer Dokumentation, Chat-Erinnerung oder eines früheren Auftrags mit Schreibrechten.
+Der Guardian startet niemals allein aufgrund älterer Dokumentation, Chat-Erinnerung oder eines früheren Auftrags. Ein Lauf beginnt erst, wenn der Product Owner den aktuellen Technical-Lead-Prompt in der separaten Jetnity-Guardian-App startet.
 
 ## 5. Wann der Guardian eingesetzt werden soll
 
@@ -269,7 +291,7 @@ Wenn sich ein Head während einer Prüfung ändert, darf der Guardian den alten 
 
 Der Guardian erhält grundsätzlich nur die Rechte, die für den konkreten Evidence-/Challenge-Auftrag notwendig sind.
 
-Initial zulässiger Capability-Scope nach separater Aktivierung durch den Product Owner / Technical Lead:
+Initial zulässiger Capability-Scope, nachdem der Product Owner den aktuellen Technical-Lead-Prompt in Jetnity Guardian gestartet hat:
 
 - GitHub Repository, Commits, Branches, PRs, Issues und Actions **read-only**;
 - CI-/Status-Evidence **read-only**;
@@ -305,21 +327,25 @@ Diese Verbote gelten auch dann, wenn CI grün ist, ein PR mergeable ist oder der
 
 ## 9. Repository-Mutationen
 
-Ohne **explizit versionierten Auftrag** darf der Guardian keinerlei Jetnity-Code verändern.
+Der Jetnity Guardian arbeitet nach aktueller Product-Owner-Vorgabe **read-only / observer-first**.
 
-Ein versionierter Guardian-Auftrag kann begrenzte, auditable Repository-Arbeit erlauben, etwa einen ausdrücklich beauftragten Evidence-/Continuity-Bericht. Auch dann gilt:
+Daher gilt verbindlich:
+- keine Dateiänderungen;
+- keine Branches oder Commits;
+- keine PR-Erstellung;
+- keine Code-, Runtime-, Business-Logic- oder Continuity-Mutation;
+- keine stillen Fixes aus Findings;
+- keine Repository-Schreibrechte als Bestandteil eines normalen Guardian-Auftrags.
 
-- nur der definierte Scope;
-- keine stillen Runtime-/Business-Logic-Änderungen;
-- keine Ready-/Merge-Autorität;
-- keine Folgearbeit aus eigener Initiative;
-- jeder neue Head wird dem Technical Lead zur unabhängigen Prüfung übergeben.
+Wenn ein Guardian Finding eine Änderung erfordert, konsolidiert der Technical Lead das Finding und gibt die Korrektur an denselben zuständigen Cursor-Writer oder einen separat gebundenen Docs-/Implementation-Slice.
 
-Code-Änderungen durch den Guardian sind Ausnahme, nicht Standard, und müssen im Auftrag ausdrücklich genannt sein.
+Eine spätere Guardian-Schreibrolle wäre eine **neue ausdrückliche Product-Owner-Governance-Entscheidung** und müsste zuerst kanonisch dokumentiert werden. Bis dahin erzeugt kein Guardian-Prompt Schreibrechte.
 
 ## 10. Verhältnis zu Cursor-Agenten und Technical Lead
 
 Cursor-Agenten bleiben die primären Implementierungs-/Audit-Agenten für klar versionierte Slices.
+
+**Cursor Grok 4.6 High Fast bleibt ein Cursor-Implementierungsmodell und ist nicht Jetnity Guardian.** Guardian-Aktivierung erfolgt ausschließlich über den oben definierten Product-Owner-/Prompt-Weg, nicht über `@cursor`.
 
 Der Guardian:
 
@@ -409,16 +435,18 @@ Nur der ChatGPT / Technical Lead darf:
 
 ## 14. Aktivierung und Rechteerweiterung
 
-Die Repository-Integration dieses Standards aktiviert den Guardian **nicht automatisch als schreibenden oder kostenverursachenden Operator**.
+Die Repository-Integration dieses Standards startet keinen Guardian-Lauf.
 
-Die Rolle und ihre Prüfverantwortung sind dauerhaft definiert. Ein konkreter Guardian-Lauf wird vom Technical Lead oder Product Owner aktiviert und erhält nur die für diesen Lauf nötigen read-only Fähigkeiten.
+Die Rolle und ihre Prüfverantwortung sind dauerhaft definiert. Der Technical Lead entscheidet anhand des Risikos, **ob** Guardian-Evidence benötigt wird und erstellt dann den vollständigen Prompt. **Nur der Product Owner startet diesen Prompt in der separaten Jetnity-Guardian-App.** Der Technical Lead startet oder emuliert den Guardian nicht selbst.
 
-Standard ohne separate Lauf-Aktivierung:
+Jeder gestartete Lauf bleibt read-only / observer-first. Eine Rechteerweiterung entsteht nicht durch den Prompt.
+
+Standard ohne Product-Owner-Start:
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR TECHNICAL-LEAD ACTIVATION**
+> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
 
-Jede Rechteerweiterung muss explizit, system- und aufgabenspezifisch erfolgen. Least privilege bleibt Standard. Eine frühere temporäre Freigabe erzeugt keine dauerhafte neue Kompetenz.
+Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich.
 
 ## 15. Verbindlicher Einsatz für zukünftige Chats
 

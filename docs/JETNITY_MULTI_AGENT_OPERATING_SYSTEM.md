@@ -11,6 +11,8 @@ Jetnity nutzt mehrere spezialisierte Modelle und Agenten bewusst als **orchestri
 
 > **Cursor baut. Spezialisten prüfen parallel read-only. Grok challengt adversarial. Der ChatGPT / Technical Lead konsolidiert, entscheidet, integriert und mergt. Der Product Owner entscheidet besondere Produkt-/Business-/Production-Gates.**
 
+> **Binding correction, 18. September 2026:** `Jetnity Guardian / Grok` meint die **separate Jetnity-Guardian-App des Product Owners**, niemals einen Cursor-Agenten oder das Cursor-Modell Grok 4.6 High Fast. Wenn Guardian-Evidence benötigt wird, liefert der Technical Lead dem Product Owner einen ready-to-paste Prompt; der Product Owner startet ihn in Jetnity Guardian. `@cursor` ist kein Guardian-Trigger.
+
 Dieses Dokument ist für alle zukünftigen Technical-Lead-Chats, Cursor-Agenten, Guardian-/Grok-Läufe und weitere Jetnity-Spezialisten verbindlich, sobald es kanonisch in `main` integriert ist.
 
 ## 2. Teamstruktur
@@ -60,6 +62,8 @@ Verbindlich:
 ### 2.4 Grok Guardian / Red Team
 
 Grok arbeitet als unabhängige Gegeninstanz gemäß `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
+
+**Identität:** Der Guardian ist die separate Jetnity-Guardian-App. Er ist kein Cursor-Agent und keine Cursor-Session. Der Technical Lead erzeugt bei Bedarf den vollständigen Guardian-Prompt; der Product Owner startet den Lauf in der separaten App.
 
 Kernaufgaben:
 
@@ -264,18 +268,20 @@ Typischer Guardian-/Reviewer-Scope:
 - keine paid calls;
 - keine Provider-/Payment-Aktivierung.
 
-## 10. Direkte Grok→Cursor-Übergabe
+## 10. Guardian-Findings → Technical Lead → Cursor
 
-Grok darf seine Findings direkt im PR posten, sodass Cursor und Technical Lead sie sehen.
+Jetnity Guardian darf seine Findings direkt im PR/Issue posten, soweit die separate Guardian-App dies unterstützt. Er wird jedoch **nicht über Cursor gestartet**.
 
-Grok darf **nicht** selbstständig Cursor-Änderungen starten oder eine zweite Steuerungskette bilden.
+Der Guardian darf **nicht** selbstständig Cursor-Änderungen starten oder eine zweite Steuerungskette bilden.
 
 Verbindlicher Ablauf:
 
-1. Grok postet Evidence/Findings.
-2. Technical Lead verifiziert und konsolidiert.
-3. Technical Lead gibt Cursor ein einziges verbindliches Fix-Paket.
-4. Cursor implementiert.
+1. Technical Lead liefert dem Product Owner bei Bedarf einen vollständigen Guardian-Prompt.
+2. Product Owner startet ihn in der separaten Jetnity-Guardian-App.
+3. Guardian postet Evidence/Findings.
+4. Technical Lead verifiziert und konsolidiert.
+5. Technical Lead gibt Cursor ein einziges verbindliches Fix-Paket.
+6. Cursor implementiert.
 
 Dies verhindert doppelte Arbeit, widersprüchliche Änderungen und sich gegenseitig übersteuernde Agenten.
 

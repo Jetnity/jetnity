@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 18. September 2026  
-Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / PR #460 MERGED / EXACT-MERGE PRODUCTION READY / NO ACTIVE CURSOR CODING AGENT / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / V1 INCIDENT PROCESS 1 CLOSED / PR #464 MERGED / EXACT-MERGE PRODUCTION READY / GUARDIAN EXTERNAL-APP WORKFLOW CANONICALIZED / NO ACTIVE CURSOR CODING AGENT / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
 Canonical new-chat checkpoint:
 
@@ -36,7 +36,7 @@ Integration evidence:
 
 Always re-fetch live `main` in the next chat. The exact SHA above is a verified Assistant Runtime transition baseline, not an instruction to assume no later commits exist.
 
-Latest continuity refresh baseline after V1 Admin MFA Loss Recovery Runbook 1: `main@6f79b45a70374518aef0b6f1a9ab4479f0798827` (PR #460 merged). Exact accepted head `f0f6c892dc22cfc1cf2cf00093f8740b36155c03` had full CI SUCCESS and independent Guardian PASS; merge tree is identical to that head; Vercel Production `dpl_doA4VePRj6BAuAvQXWqQerHUdHqc` is READY on the exact merge SHA. The current GitHub connector cannot expose push-triggered run evidence, so no invisible post-merge Actions run is claimed.
+Latest continuity refresh baseline after V1 Incident Process 1: `main@3fcebbb128a1fd3c157073ed903518b6ad3f6566` (PR #464 merged). Exact accepted head `eeff277e319b6ea5d4fb4a202b900652030c7506` had CI `35325063544` SUCCESS, Preview `dpl_GFuvVfHmVBqFdeSE4MUW7BbxKec8` READY and external Jetnity Guardian targeted recheck PASS; merge tree is identical to that head; Vercel Production `dpl_EK8FfncRZA2nknr7zM7sMRZrdQ48` is READY on the exact merge SHA. The current GitHub connector cannot expose push-triggered run evidence, so no invisible post-merge Actions run is claimed.
 
 ## 2. Paid Assistant smoke evidence
 
@@ -171,6 +171,21 @@ PR #460 / issue #459 are closed:
 
 Guardian evidence issue #461 is closed completed. Do not reconstruct #459/#460 as active implementation.
 
+## 6c. V1 Incident Process 1 — CLOSED
+
+PR #464 / issue #463 are closed:
+- accepted exact head `eeff277e319b6ea5d4fb4a202b900652030c7506`;
+- merge `3fcebbb128a1fd3c157073ed903518b6ad3f6566`;
+- exact-head CI `35325063544`: SUCCESS;
+- exact-head Preview `dpl_GFuvVfHmVBqFdeSE4MUW7BbxKec8`: READY;
+- external Jetnity Guardian targeted recheck: PASS, P3 resolved, no new P0/P1/P2/P3;
+- exact-merge Production `dpl_EK8FfncRZA2nknr7zM7sMRZrdQ48`: READY;
+- accepted head -> merge: 0 changed files;
+- audit 5.5 process half closed; tooling half remains OPEN / Product-Owner-gated;
+- no live runtime/Auth/RLS/Supabase/provider/secret/env/cost mutation.
+
+Guardian workflow correction: **Jetnity Guardian is the Product Owner's separate Guardian app, never a Cursor agent/session.** The Technical Lead supplies the ready-to-paste Guardian prompt; the Product Owner runs it. Cursor Grok 4.6 High Fast remains only the current Cursor implementation model.
+
 ## 7. Open PRs / historical clutter
 
 PR #453 is merged and must not be treated as active work.
@@ -244,4 +259,4 @@ The next Technical Lead must:
 
 Verified transition baseline after PR #453 integration: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later continuity-only merge may advance repository `main`; always re-fetch live.
 
-**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
