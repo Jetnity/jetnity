@@ -17,13 +17,13 @@ const DATEN_UNBERUEHRT = [
   'unaffected',
 ]
 const OPERATOR_KORRELATION = [
-  'nachverfolg',
+  'nachverfolgbar',
   'korreliert',
-  'Tracking',
+  'operator-side',
   'Support findet',
   'wir finden den Fehler',
-  'operator',
-  'operator-side',
+  'melde diese ID',
+  'an den Support',
 ]
 
 describe('Account-Fehlergrenze existiert und bleibt wahrheits- und sicherheitstreu', () => {
