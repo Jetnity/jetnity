@@ -1,7 +1,7 @@
 # Jetnity – V1 Incident Process 1 STATUS
 
 Stand: 18. September 2026  
-Status: **IMPLEMENTATION COMMITTED / LOCAL AND EXACT-HEAD GATES PENDING / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **IMPLEMENTATION GATED ON `c59d18bc` / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #463  
 Draft PR: #464  
@@ -10,7 +10,8 @@ Binding task: `docs/V1_INCIDENT_PROCESS_1_TASK_2026-09-18.md`
 Canonical runbook: `docs/V1_INCIDENT_PROCESS_RUNBOOK_2026-09-18.md`  
 Source audit: #438 / merged PR #449 / finding 5.5 process half  
 Canonical base: `main@926a8cde1b469b2465b311aafcf84bc18e4770f2`  
-Dispatch head: `953670e5166dd0da93e40a4a8202fbb60d1f4862`
+Dispatch head: `953670e5166dd0da93e40a4a8202fbb60d1f4862`  
+Implementation head: `c59d18bcebcfb635d9df4ed4dba58325741b5283`
 
 Cursor-Agent: **Jetnity V1 incident process 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast** — confirmed on this run (`originalModelName=cursor-grok-4.6-high-fast`)  
@@ -68,35 +69,67 @@ Not touched:
 
 An environment-generated `next-env.d.ts` working-tree diff was discarded and is not part of this branch.
 
-Changed files versus `origin/main` must remain exactly the five allowed docs files.
+Changed files versus `origin/main` remain exactly the five allowed docs files.
 
-## 5. Gates
+## 5. Historical gates (invalidated as current exact-head by this persist)
 
-Local verify-job scripts and exact-head GitHub CI / Vercel Preview are **pending** on this implementation commit. Results will be written after they exist. No gate is claimed green here.
+These remain evidence of earlier heads only.
 
-No Supabase live read, backup/restore rehearsal, or Production rollback was performed or is claimed.
+| Head | Local | GitHub CI | Vercel |
+| --- | --- | --- | --- |
+| `953670e5` dispatch / task-only | not a product head | n/a for this implementation | `8HQrXaCDxsiW95kgr6UdV9cb3Pd6` READY |
+| `c59d18bc` implementation | PASS (verify-job scripts) | [35296309928](https://github.com/Jetnity/jetnity/actions/runs/35296309928) SUCCESS | `FJFMuQQg65DDm8p4NfrBgcYAcrB8` READY |
 
-## 6. `origin/main` drift (at dispatch)
+## 6. Gates on implementation head `c59d18bc` (invalidated as current by this persist)
 
 | | |
 | --- | --- |
-| Canonical / dispatch `origin/main` | `926a8cde1b469b2465b311aafcf84bc18e4770f2` |
-| Merge-base at dispatch | `926a8cde1b469b2465b311aafcf84bc18e4770f2` |
-| Ahead at dispatch head | 1 (task-only commit `953670e5`) |
-| Behind at dispatch | **0** |
+| SHA | `c59d18bcebcfb635d9df4ed4dba58325741b5283` |
+| Local `check:setup:ci` | PASS (1 warning: no `.env`/`.env.local` in this environment) |
+| Local `typecheck` | PASS |
+| Local `lint` | PASS — 0 errors, 139 pre-existing warnings |
+| Local `test` | PASS — **3454** tests, 0 fail, 0 skipped |
+| Local `check:api-schutz` | PASS — 12 admin routes, all `requireAdminApi()` |
+| Local `check:schema-bezug` | PASS |
+| Local `check:dead` | PASS — 1 justified orphan (`CookieConsent.tsx`) |
+| Local `check:exports` | PASS — 0 unused exports |
+| Local `check:deps` | PASS |
+| Local `build` | PASS — Next.js 16.3.3 production build |
+| GitHub CI | [35296309928](https://github.com/Jetnity/jetnity/actions/runs/35296309928) **SUCCESS** (`pull_request`) |
+| Typecheck, Lint & Build | SUCCESS (`105449445839`) |
+| Auth-Konfiguration gegen config.toml | SUCCESS (`105449445617`) |
+| Vercel | GitHub commit status **success** — `FJFMuQQg65DDm8p4NfrBgcYAcrB8` READY |
+| Inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/FJFMuQQg65DDm8p4NfrBgcYAcrB8 |
+| Preview | https://jetnity-app-git-docs-v1-incident-process-1-jetnity-e1b93c82.vercel.app |
+| Vercel threads | 0 unresolved / 0 total |
 
-Re-count after this implementation commit and a live `git fetch origin main`.
+This evidence persist is a new HEAD. Re-fetch CI/Vercel on the live HEAD. No local re-run of the full verify-job is required for this docs-only evidence persist; the GitHub verify job on `c59d18bc` is the recorded exact-head suite.
 
-## 7. Threads
+No Supabase live mutation, backup/restore rehearsal, provider outage or Production rollback was performed.
+
+`npm ci` was not re-run locally because `node_modules` was already present; GitHub CI ran `npm ci` on the exact implementation head.
+
+## 7. `origin/main` drift (re-fetched 18 September 2026, at `c59d18bc`)
+
+| | |
+| --- | --- |
+| `origin/main` | `926a8cde1b469b2465b311aafcf84bc18e4770f2` |
+| Merge-base | `926a8cde1b469b2465b311aafcf84bc18e4770f2` |
+| Ahead at `c59d18bc` | 2 |
+| Behind | **0** |
+
+Re-count after this persist commit.
+
+## 8. Threads
 
 - Binding dispatch: PR comment `5723702208`.
-- No GitHub review-line threads at implementation start.
-- Vercel live-feedback on the dispatch-head Preview: 0 unresolved / 0 total (host comment `5723702647`; deployment `8HQrXaCDxsiW95kgr6UdV9cb3Pd6` READY on the **task-only** head, not this implementation).
+- No GitHub review-line threads.
+- No submitted reviews.
+- Vercel live-feedback: 0 unresolved / 0 total on the implementation-head Preview.
 
-## 8. Next step
+## 9. Next step
 
-1. Commit/push this implementation.
-2. Run required local gates and obtain exact-head CI / Vercel Preview.
-3. Persist those results, knowing a later evidence commit invalidates the previous exact-head.
-4. **STOP FOR TECHNICAL-LEAD REVIEW.**
-5. Do not Ready. Do not merge. Do not start a follow-up slice.
+1. Commit/push this evidence persist.
+2. Re-fetch exact-head CI / Vercel on the new HEAD.
+3. **STOP FOR TECHNICAL-LEAD REVIEW.**
+4. Do not Ready. Do not merge. Do not start a follow-up slice.

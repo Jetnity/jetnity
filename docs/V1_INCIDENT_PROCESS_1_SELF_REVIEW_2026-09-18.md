@@ -56,9 +56,9 @@ This document argues against the implementation. It cannot replace an independen
 | Evidence / timeline without secrets or raw sensitive data | Yes | §11 |
 | Tooling half of 5.5 remains OPEN / PO-gated | Yes | §13 |
 | No support process / error-boundary / follow-up slice | Yes | |
-| Exact-head gates + STATUS / HANDOFF / SELF_REVIEW | Pending at this write; to be persisted after they exist | |
+| Exact-head gates + STATUS / HANDOFF / SELF_REVIEW | Yes for `c59d18bc`; this evidence persist is a newer HEAD | |
 | No Ready / no merge | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-This implementation persist is a newer HEAD than dispatch `953670e5`. Re-fetch CI / Vercel / threads / `origin/main` drift on the live HEAD. Agent self-review is still not PASS.
+`c59d18bc` had CI `35296309928` SUCCESS and Vercel `FJFMuQQg65DDm8p4NfrBgcYAcrB8` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
