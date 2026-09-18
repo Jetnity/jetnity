@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
 Stand: 18. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY ORCHESTRATOR ROUTINE-READY / ROUTINES AND HOLD-EXIT OPEN / HOLD REMAINS ACTIVE**
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / NATIVE SCHEDULER VERIFIED / DAILY V2 HANDOFF CONTRACT PERSISTED / V2 AGGREGATION AND HOLD-EXIT OPEN / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -39,6 +39,13 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Daily Intelligence Orchestrator skill created (not scheduled) | `5735534623` |
 | Daily Intelligence Orchestrator MANUAL TEST #001 review | `5735636786` |
 | Daily Intelligence Orchestrator MANUAL TEST #002 — routine-ready | `5735700562` |
+| Daily Intelligence Brief routine created / PAUSED | `5735790241` |
+| Daily routine controlled one-shot #001 | `5736188318` |
+| Daily routine desktop UI / canary plan | `5736337204` |
+| Daily routine CANARY #001 — no native fire | `5736557812` |
+| Daily routine CANARY #002 — scheduler fired / DEGRADED | `5736636348` |
+| Daily Automation V2 handoff proposal | `5736642445` |
+| Daily Automation V2 contract persist dispatch | `5736670149` |
 
 ## 1. Global setup truth
 
@@ -54,12 +61,17 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
-| Approved recurring routines / schedules | **not configured** | Skill is **routine-ready**. No routine created. TEST #001/#002 are not routines. This authorizes only the later controlled Daily Routine creation/verification layer. | Product Owner one-time authorization later |
-| Daily Intelligence Orchestrator skill | **created / routine-ready / not scheduled** | Hardening persisted. FINAL CONTROL-STATE RECHECK executed on TEST #002. No routine. No GitHub write from the skill. | Product Owner later for controlled Daily Routine creation |
+| Approved recurring routines / schedules | **partial / not full-PASS** | CoS Daily `Jetnity Daily Intelligence Brief` exists and is **PAUSED** (`5735790241`). Six specialist daily pulse routines are **not created**. V2 aggregation path is **not verified**. | Product Owner / CoS after V2 test sequence |
+| Daily Intelligence Orchestrator skill | **created / conversation-path routine-ready / not a scheduled full-PASS** | Hardening persisted. FINAL CONTROL-STATE RECHECK executed on TEST #002. Conversation bot-to-bot works. Scheduled CoS cannot pulse specialists. | Product Owner / CoS implement V2 envelopes |
 | JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH HARDENING THEN SUPERSEDED FOR ROUTINE-READINESS** | Comment `5735636786`. Required the final control-state re-fetch hardening later proven on TEST #002. | None |
-| JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. START and FINAL control head both `caba1c660c658e74ceff5a4660010b46dbe84bd7`. Mid-run CI progression reported as expected movement, not conflict. Guardian not invoked. 6/6 default specialists, no-signal suppression, no GitHub write, no routine. TL recheck: CI `35390516776` completed/success. | Product Owner later for controlled Daily Routine creation/verification |
+| JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. Conversation-path only. Does not prove scheduled specialist pulses. | None for this conversation-path closure |
 | Routine-readiness hardening | **verified on TEST #002** | FINAL CONTROL-STATE RECHECK executed. START = FINAL = `caba1c66`. Mid-run CI settling is expected movement, not an evidence conflict and not a Guardian trigger. | None for this hardening |
-| Daily / weekly Chief-of-Staff briefs | **not running as a routine** | Two manual TEST-mode runs succeeded. No cadence. | Product Owner later after one-time routine authorization |
+| Jetnity Daily Intelligence Brief routine | **created / PAUSED / not full-PASS** | Comment `5735790241`. Owner CoS. Skill Orchestrator. Intended cadence daily 07:30 Europe/Zurich including weekends. Must stay paused until V2 aggregation is verified. | Product Owner / CoS; Cursor must not enable it |
+| JETNITY-DAILY-ROUTINE-ONESHOT-001 | **chat-workflow verified / not native scheduler history** | Comment `5736188318`. Confirms conversation one-shot, not native execution history. | None |
+| Native scheduler CANARY #001 | **did not materialize** | Comment `5736557812`. Timezone Europe/Zurich ruled out. Do not count as native-engine PASS. | None |
+| Native scheduler CANARY #002 | **scheduler VERIFIED / workflow DEGRADED / not full-PASS** | Comment `5736636348`. RUN_ID `JETNITY-DAILY-2026-09-18-ROUTINE-001`. Head `cedeb097`. All six default specialists `SPECIALIST UNAVAILABLE` because scheduled bot-to-bot messaging failed. Truth discipline held. | None for scheduler-fire proof |
+| Daily Automation V2 handoff contract | **persisted / not implemented / not verified** | Dispatch `5736670149`. Canonical contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`. Shared Grok workspace `/workspace/jetnity/intelligence/daily/`. Not a git path. | Product Owner / CoS / specialists for test sequence a–e |
+| Daily / weekly Chief-of-Staff briefs | **not running unattended** | Conversation tests passed. Native scheduled CoS run is degraded. Routine remains paused. | After V2 aggregation verification |
 | Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
 | Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
 | Shared environment has no Production-admin / service-role / payment-admin / broad write token | **NOT CHECKED** | Shared environment is one blast radius (Phase 1). Credentials cannot be independently inspected from this repository slice. Do not invent a PASS. | Product Owner / Technical Lead with environment access |
@@ -77,9 +89,9 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** — exact visible name. Only valid CoS roster slot. Canonical current CoS is the instance that produced the Phase-1 verification report and relayed E2E #001. |
 | Permissions / connections | Later target remains GitHub read + Actions read; gated plain-text Evidence-Bus comment write was used for E2E #001. No admin/secrets/write/merge. |
-| Routines | Daily Intelligence Orchestrator skill is **routine-ready** after TEST #002. Recurring daily/weekly routines remain **not configured**. |
+| Routines | Daily `Jetnity Daily Intelligence Brief` **created / PAUSED / not full-PASS**. V2 requires six specialist envelope writers first. |
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
-| Last verification | MANUAL TEST #002 `5735700562`; TEST #001 `5735636786`; skill create `5735534623` |
+| Last verification | V2 contract `5736670149`; CANARY #002 `5736636348`; TEST #002 `5735700562` |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
 | Blockers / platform limitations | None that drop the role. |
 | Next actor | Product Owner later for routines. Cursor must not edit this bot |
@@ -90,7 +102,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **existing** — canonical Product-Owner Jetnity-Guardian app. Do **not** create a second Guardian |
 | Permissions / connections | Modern persisted contract authorizes the plain-text Evidence-Bus GitHub path. Still no admin/secrets/write/merge. `@cursor` never substitutes for Guardian. |
-| Routines | Recurring approved schedules **not configured** |
+| Routines | Recurring approved schedules **not configured**. Guardian stays trigger-based; not a daily V2 writer. |
 | Evidence-Bus path | One-off PR comments exist (example: PR #489 comment `5733672386`). E2E #001 used the specialist → CoS → GitHub path, not Guardian as the relay. Persisted contract now matches that authorized path. |
 | Last verification | Profile #002 `5735489499`. Modern ten-role contract **VERIFIED PERSISTED**. |
 | Blockers / platform limitations | None that drop the role. `@cursor` still never substitutes for Guardian |
@@ -102,7 +114,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public research + GitHub read; never private user PII dumps; no outreach |
-| Routines | Market Radar; Traveller Pain-Point Radar — **not configured** |
+| Routines | Market Radar; Traveller Pain-Point Radar — **not configured**. Later V2 daily writer of `market-traveller.json` only. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; this identity was not the E2E #001 source |
 | Last verification | Comment `5734630533`; Phase 1 `5735080935` |
 | Blockers / platform limitations | None escalated |
@@ -114,7 +126,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public provider-docs + GitHub read; no live secrets |
-| Routines | Provider / Commercial Change Radar — **not configured** |
+| Routines | Provider / Commercial Change Radar — **not configured**. Later V2 daily writer of `provider-commercial.json` only. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Comment `5734742935`; Phase 1 `5735080935`. Gates A–E remain closed |
 | Blockers / platform limitations | Gates A–E remain closed |
@@ -126,7 +138,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public official sources + GitHub read |
-| Routines | Travel Truth / Regulation Radar — **not configured** |
+| Routines | Travel Truth / Regulation Radar — **not configured**. Later V2 daily writer of `travel-truth-regulation.json` only. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Comment `5734787361`; Phase 1 `5735080935` |
 | Blockers / platform limitations | Must not invent visa/health/carrier rules |
@@ -138,7 +150,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** — exact persisted name `Jetnity Product & UX Explorer` (**no trailing period**) |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read; browser read-only only if later connected |
-| Routines | Product / UX Synthetic Journey Review — **not configured** |
+| Routines | Product / UX Synthetic Journey Review — **not configured**. Trigger-based only. Not a daily V2 writer. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Profile #002 `5735489499` superseded stale #001 `5735410441` |
 | Blockers / platform limitations | None that drop the role |
@@ -150,7 +162,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read + public HTTP read |
-| Routines | Growth / Discoverability Review — **not configured** |
+| Routines | Growth / Discoverability Review — **not configured**. Later V2 daily writer of `growth-discoverability.json` only. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Comment `5734866069`; Phase 1 `5735080935` |
 | Blockers / platform limitations | Public launch / indexing / Store Live remain Product-Owner gates |
@@ -162,7 +174,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read only; no tracker install |
-| Routines | Analytics / Experiment Review — **not configured** |
+| Routines | Analytics / Experiment Review — **not configured**. Trigger-based only. Not a daily V2 writer. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Comment `5734906962`; Phase 1 `5735080935` |
 | Blockers / platform limitations | No tracker install. New tracking/legal processing remains Product-Owner gated |
@@ -174,7 +186,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read; billing consoles only if Product Owner later connects read-only |
-| Routines | FinOps / Reliability Watch — **not configured** |
+| Routines | FinOps / Reliability Watch — **not configured**. Later V2 daily writer of `finops-reliability.json` only. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Comment `5734949614`; Phase 1 `5735080935` |
 | Blockers / platform limitations | No paid calls. > USD 100/month remains a Product-Owner gate |
@@ -186,7 +198,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read; Supabase read-only only if later separately connected and scoped |
-| Routines | Security / Privacy Adversarial Review — **not configured**. E2E #001 was a no-signal transport test, not a security audit |
+| Routines | Security / Privacy Adversarial Review — **not configured**. Later V2 daily writer of `security-privacy.json` only. E2E #001 was a no-signal transport test, not a security audit |
 | Evidence-Bus path | **verified** as the E2E #001 source: Red Team → CoS → GitHub PR #491 → Technical Lead |
 | Last verification | Comments `5735008554`, `5735190265`, `5735209274` |
 | Blockers / platform limitations | Does not replace Guardian exact-head review. No Production mutation |
@@ -209,8 +221,10 @@ This is **not** one of the ten mandatory identities and must never be counted as
 - create or configure external Grok bots;
 - hide, retire, delete or mutate `Legacy Stabschef — DO NOT USE` or any other Grok identity;
 - grant tokens, connectors, or write permissions;
-- mark routines, team interoperability or HOLD exit complete merely because the Orchestrator is routine-ready or because TEST #001/#002 passed;
-- create or schedule a Grok routine from Cursor;
+- mark routines, team interoperability or HOLD exit complete merely because the Orchestrator is routine-ready, TEST #001/#002 passed, or the native scheduler fired;
+- treat CANARY #002 as a full Daily Routine PASS;
+- create, enable, or schedule a Grok routine from Cursor;
+- add Grok workspace envelope files to this git repository;
 - treat the legacy Stabschef/duplicate CoS as a valid roster slot;
 - invent a shared-environment credential PASS;
 - claim iOS `Anweisungen` persistence is impossible;
@@ -221,11 +235,12 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-The Daily Orchestrator is **routine-ready**. That authorizes only the controlled Daily Routine creation/verification layer. It does **not** lift HOLD, authorize product work, or Ready/merge #491.
+The Daily Orchestrator conversation-path is routine-ready. The native scheduler can fire. The Daily CoS routine is **PAUSED** and **not full-PASS**. V2 workspace-handoff aggregation is the required next external path. This does **not** lift HOLD, authorize product work, or Ready/merge #491.
 
-1. controlled Daily Routine creation and automation verification;
-2. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
-3. any other truly live gap found by exact-head review.
+1. Daily Automation V2 test sequence a–e in `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`;
+2. keep `Jetnity Daily Intelligence Brief` PAUSED until that path is verified;
+3. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
+4. any other truly live gap found by exact-head review.
 
 Until those exist, exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path.
 

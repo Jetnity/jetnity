@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-TEST #002: comment `5735700562`
+V2 dispatch: comment `5736670149`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `11dc8ed0c10b8727adfd26f987a9bbd17057fdfa` has exact-head CI `35391428027` SUCCESS. Vercel had not posted yet at persist time. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `cedeb0972c26bf412d864805a83dbef84d791384` has exact-head CI `35391904724` SUCCESS and Vercel READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,39 +19,38 @@ Last verified evidence head `11dc8ed0c10b8727adfd26f987a9bbd17057fdfa` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat MANUAL TEST #002 as a scheduled routine or HOLD lift | **Rejected.** Routine-ready authorizes only the later controlled Daily Routine layer. HOLD-exit remains **OPEN**. |
-| Treat TEST #001 hardening as still OPEN | **Rejected.** TL verified FINAL CONTROL-STATE RECHECK on TEST #002. START = FINAL = `caba1c66`. |
-| Treat mid-run CI progression as an evidence conflict or Guardian trigger | **Rejected.** TL said expected state movement, not conflict; Guardian correctly not invoked. |
-| Create or schedule the routine from this persist | **Rejected.** Documentation only. Cursor must not create the routine. |
-| Call this persist the live/current head | **Rejected.** Last-verified SHA + “this persist creates a newer head.” |
-| Ready or merge | **Rejected.** |
+| Treat CANARY #002 as a full Daily Routine PASS | **Rejected.** Scheduler fired; specialist pulse failed; brief correctly DEGRADED. |
+| Treat V2 contract persist as implementation or activation | **Rejected.** Documentation only. No envelopes in git. No routine enabled. |
+| Enable or unpause CoS Daily from this persist | **Rejected.** Contract requires PAUSED until V2 a–e verified. |
+| Add `/workspace/jetnity/intelligence/daily/` files to this repository | **Rejected.** That path is the shared Grok workspace. |
+| Make Product & UX, Analytics or Guardian daily writers | **Rejected.** They stay trigger-based. |
+| Lift HOLD / Ready / merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- No approved scheduled Daily Routine exists.
-- Dedicated HOLD-exit checklist completion is still open.
-- Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `11dc8ed0`.
-- Vercel had not posted on last-verified `11dc8ed0` at persist time.
+- V2 test sequence a–e is entirely **OPEN**.
+- Shared Grok workspace write/read has not been proven.
+- Shared-environment credentials were not independently inspected.
+- This persist is a newer head than `cedeb097`.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist MANUAL TEST #002 as PASS / routine-ready | Yes | `5735700562` |
-| Do not lift HOLD | Yes | routines + HOLD-exit remain OPEN |
-| Do not create a routine | Yes | |
+| Persist V2 scheduler-compatible handoff contract | Yes | `5736670149` + dedicated contract file |
+| Keep CoS Daily PAUSED | Yes | |
+| Do not implement specialist routines or envelopes | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comments `5735534623`, `5735636786`, `5735700562`;
-- last verified head `11dc8ed0` CI `35391428027` SUCCESS; Vercel not yet posted at persist time;
+- comments `5735790241`, `5736188318`, `5736337204`, `5736557812`, `5736636348`, `5736642445`, `5736670149`;
+- last verified head `cedeb097` CI `35391904724` SUCCESS; Vercel READY;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
-- Grok skill internals after this persist;
+- Grok workspace files (must not exist in this repo);
 - CI/Vercel on **this persist SHA**;
 - shared-environment tokens;
 - Production / Supabase (out of scope).
@@ -60,4 +59,4 @@ Not checked:
 
 Independent exact-head review of the **live** PR head. Agent self-review is still not PASS.
 
-STOP. No Ready. No merge. No normal product follow-up. No OS follow-up slice. No Grok skill/routine mutation. No Ruleset mutation.
+STOP. No Ready. No merge. No normal product follow-up. No OS follow-up slice. No Grok routine enablement. No Ruleset mutation.
