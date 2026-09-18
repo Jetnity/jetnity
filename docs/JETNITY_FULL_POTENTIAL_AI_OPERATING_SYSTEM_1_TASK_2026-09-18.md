@@ -22,6 +22,134 @@ It is a safe Draft STOP point and must not be resumed, merged, or followed by Se
 
 Issue #440 contains the canonical temporary Product-Owner override.
 
+## 1a. Product-Owner correction — canonical full target state
+
+This correction is binding and **supersedes any earlier reduced five-role Grok roster in this task**.
+
+The Full-Potential AI Operating System must canonically preserve **ten distinct permanent Grok Intelligence & Assurance responsibilities**. They may later collaborate in groups, but their responsibilities must not be silently collapsed into five generalists.
+
+### Canonical Grok Intelligence & Assurance roster
+
+1. **Jetnity Chief of Staff**
+2. **Jetnity Guardian**
+3. **Jetnity Market & Traveller Intelligence**
+4. **Jetnity Provider & Commercial Intelligence**
+5. **Jetnity Travel Truth & Regulation Intelligence**
+6. **Jetnity Product & UX Explorer**
+7. **Jetnity Growth & Discoverability**
+8. **Jetnity Analytics & Experimentation**
+9. **Jetnity FinOps & Reliability**
+10. **Jetnity Security & Privacy Red Team**
+
+This roster is the **canonical target state**. A future implementation may technically group execution, but documentation, mission, ownership, triggers, reports and approval boundaries must preserve all ten responsibilities separately.
+
+For **each of the ten roles**, the architecture/setup pack must define at minimum:
+
+- Mission;
+- explicit responsibility boundary;
+- data sources / systems it reads;
+- required skills / tool classes;
+- routines it runs;
+- triggers / cadence;
+- outputs / report format;
+- handoff to Chief of Staff / Guardian / Technical Lead;
+- GitHub Evidence Bus behavior;
+- allowed capabilities;
+- forbidden capabilities;
+- approval boundaries;
+- escalation conditions;
+- **no-signal / no-noise behavior**: when nothing material changed, it must not manufacture findings or spam reports.
+
+### Jetnity Chief of Staff — binding role boundary
+
+The Chief of Staff is the coordination layer of the Grok intelligence team.
+
+It shall:
+- coordinate specialist work;
+- prevent redundant reviews/research;
+- consolidate specialist reports;
+- produce the daily and weekly intelligence briefs;
+- prioritize material findings for Technical Lead attention;
+- track unresolved cross-specialist risks/opportunities and handoffs.
+
+It shall **not**:
+- replace ChatGPT / Technical Lead;
+- decide product architecture;
+- issue Technical-Lead PASS / CHANGES REQUIRED;
+- Ready or merge;
+- start product or engineering slices;
+- mutate Production;
+- grant permissions;
+- cross Product-Owner gates.
+
+The ChatGPT / Technical Lead remains the engineering/product-orchestration authority.
+
+### Engineering/review lanes remain separate
+
+The ten permanent Grok roles do **not** replace or collapse the engineering/review lanes.
+
+The Operating System must retain at least these capability lanes:
+
+- Builder / implementation writer
+- Codebase Explorer
+- QA / Regression Hunter
+- Architecture / Truth challenger
+- Security / Privacy review
+- DB / RLS specialist
+- UX / Accessibility
+- Performance
+- Cost / Quota
+- Release / Continuity
+- Documentation / Continuity
+
+These are scope-dependent engineering/review lanes and may be filled by Cursor subagents, Cursor/cloud agents, Guardian/specialized Grok, or another available reviewer according to capability and least privilege. They are **not required to map 1:1** to the ten permanent Grok bots.
+
+### Canonical automation target
+
+The architecture must include the future routine catalog now, even though external bots are not created in this slice:
+
+- **Daily Repository / CI Pulse**
+- **Market Radar**
+- **Traveller Pain-Point Radar**
+- **Provider / Commercial Change Radar**
+- **Travel Truth / Regulation Radar**
+- **Product / UX Synthetic Journey Review**
+- **Growth / Discoverability Review**
+- **Analytics / Experiment Review**
+- **FinOps / Reliability Watch**
+- **Security / Privacy Adversarial Review**
+- **Weekly Strategic Opportunity Synthesis**
+- **Milestone Whole-Jetnity Audit**
+- **PR / CI / Release triggered reviews**
+
+The Chief of Staff must later consolidate these into:
+
+- **JETNITY DAILY INTELLIGENCE BRIEF**
+- **JETNITY WEEKLY STRATEGIC BRIEF**
+
+For every routine define:
+- owner role(s);
+- trigger/cadence;
+- evidence sources;
+- dedupe/collision behavior;
+- materiality threshold;
+- expected output;
+- no-signal behavior;
+- escalation recipient;
+- any Product-Owner or Technical-Lead gate.
+
+### External setup remains forbidden in this slice
+
+Still forbidden:
+- creating any of the ten external Grok bots;
+- creating a Grok team/workspace;
+- granting dangerous or write-heavy permissions;
+- connecting Production-admin capabilities merely because the target state is documented;
+- granting Ready/Merge/Production/DB/Auth/provider/payment/secret authority.
+
+Actual external setup remains a later explicit Product-Owner step after repository governance and setup-pack review.
+
+
 ## 2. Reuse before add
 
 Read and extend, do not replace:
@@ -249,26 +377,69 @@ Do not erase historical closures.
 
 ## 11. Future Grok-app setup pack — documentation only
 
-Within existing Grok/Guardian standard, define the future specialized bot roster and minimum permissions.
+The setup pack must implement the **canonical ten-role target state from §1a**. It must not reduce it to five combined generalists.
 
-Recommended logical roster:
-1. Release / Continuity Guardian
-2. Security / Privacy Red Team
-3. Architecture / Truth Challenger
-4. Product / UX / Opportunity Challenger
-5. Cost / Performance / Provider Guardian
+For each of the ten permanent Grok roles, document:
+- Mission;
+- responsibility boundary and explicit non-ownership;
+- read-only source/system inventory;
+- required skills/tool classes;
+- routine ownership and cadence;
+- trigger conditions;
+- exact report/output contract;
+- handoff graph to Chief of Staff / Guardian / Technical Lead;
+- GitHub Evidence Bus behavior;
+- least-privilege allowed capabilities;
+- forbidden capabilities;
+- Approval Boundaries;
+- escalation conditions;
+- no-signal / no-noise behavior;
+- proposed future external-app identity/name.
 
-For each define:
-- purpose;
-- default read-only systems;
-- exact-head report format;
-- whether GitHub comment permission is useful;
-- forbidden permissions;
-- when the TL requests a run.
+Also document the engineering/review lane matrix from §1a separately, so permanent intelligence roles are not confused with temporary engineering subagents/reviewers.
 
-Do **not** create these bots or grant permissions.
+The setup pack must include the full automation/routine catalog from §1a and the schemas/sections for:
 
-Document exactly what the Product Owner will later need to configure in the external Grok app.
+### JETNITY DAILY INTELLIGENCE BRIEF
+
+At minimum:
+- date / evidence window;
+- source freshness;
+- critical risks;
+- important changes;
+- traveller/market signals;
+- provider/commercial signals;
+- travel-truth/regulation changes;
+- product/UX findings;
+- growth/discoverability signals;
+- analytics/experiment signals;
+- FinOps/reliability signals;
+- security/privacy signals;
+- deduplicated prioritized actions for Technical Lead;
+- items requiring Product-Owner decision;
+- explicit `NO MATERIAL CHANGE` sections instead of invented content.
+
+### JETNITY WEEKLY STRATEGIC BRIEF
+
+At minimum:
+- week/evidence window;
+- recurring patterns vs one-off noise;
+- top strategic risks;
+- top strategic opportunities;
+- cross-specialist synthesis;
+- product/traveller/market implications;
+- provider/commercial implications;
+- truth/regulatory implications;
+- growth/analytics implications;
+- cost/reliability/security implications;
+- recommended Technical-Lead investigations/slices;
+- Product-Owner decision queue;
+- unresolved carry-over;
+- explicit no-signal statement where applicable.
+
+Do **not** create these bots, team, routines, external schedules or permissions in this slice.
+
+Document exactly what the Product Owner will later need to configure in the external Grok app, role by role.
 
 ## 12. Collision-safe topology
 
