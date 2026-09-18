@@ -11,7 +11,7 @@ Profile #002: comment `5735489499`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `8f714e23c4831b480fc093101ad6995f357ae529` has exact-head CI `35387330661` SUCCESS and Vercel SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `1feae5d76809282ba21dcd92408b12d89d461834` has exact-head CI `35389329836` SUCCESS and Vercel SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -31,7 +31,7 @@ Last verified evidence head `8f714e23c4831b480fc093101ad6995f357ae529` has exact
 - Approved routines/automations are not configured.
 - Dedicated HOLD-exit checklist completion is still open.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `8f714e23`.
+- This persist is a newer head than `1feae5d7`.
 
 ## 3. Compliance
 
@@ -46,7 +46,7 @@ Last verified evidence head `8f714e23c4831b480fc093101ad6995f357ae529` has exact
 
 Checked:
 - comments `5735410441`, `5735465938`, `5735489499`;
-- last verified head `8f714e23` CI `35387330661` SUCCESS and Vercel SUCCESS;
+- last verified head `1feae5d7` CI `35389329836` SUCCESS and Vercel SUCCESS;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:

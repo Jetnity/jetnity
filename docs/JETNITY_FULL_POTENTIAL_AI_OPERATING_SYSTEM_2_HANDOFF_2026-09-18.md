@@ -19,7 +19,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `8f714e23c4831b480fc093101ad6995f357ae529` |
+| Last verified implementation/evidence head | `1feae5d76809282ba21dcd92408b12d89d461834` |
 | This persist | creates a newer head than that SHA |
 | Live PR head | **re-fetch before verdict** — do not treat a SHA in this file as live |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -36,16 +36,16 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 - stale #001 superseded: `5735410441`
 - mobile UI confirmation: `5735465938`
 - E2E #001 remains verified: `5735190265` / `5735209274`
-- last verified OS-2 head: `8f714e23c4831b480fc093101ad6995f357ae529`
-- exact-head CI on that SHA: `35387330661` SUCCESS
-- exact-head Vercel on that SHA: SUCCESS `FUcTgQGuGpXxsuWcpopBf39JsApz`
+- last verified OS-2 head: `1feae5d76809282ba21dcd92408b12d89d461834`
+- exact-head CI on that SHA: `35389329836` SUCCESS
+- exact-head Vercel on that SHA: SUCCESS `3KApvVbaGgspHWmUFKAJRsrpAwt1`
 - this persist is a newer head; live PR head must be re-fetched
 - agent: Jetnity full-potential AI operating system 2 / Generation 1
 - session: `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c`
 - model: Cursor Grok 4.6 High Fast
 - ownership: tracker + HOLD-exit checklist + continuity/STATUS/HANDOFF/SELF_REVIEW
 - verdict: **ready for Technical-Lead review** — not a TL PASS and not a HOLD-exit
-- evidence checked: comments `5735410441`, `5735465938`, `5735489499`; last verified head `8f714e23` CI/Vercel; parked #487 untouched
+- evidence checked: comments `5735410441`, `5735465938`, `5735489499`; last verified head `1feae5d7` CI/Vercel; parked #487 untouched
 - evidence not checked: CI/Vercel on **the SHA this persist will create**; shared-environment tokens; routines
 - blocker/gate: independent Technical-Lead exact-head review of the **live** head; HOLD remains
 - next actor: ChatGPT / Technical Lead
@@ -56,7 +56,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 1. Mode is still `AI_OS_BUILD_HOLD`.
 2. Tracker records profile normalization as **verified complete**, not as HOLD lift.
 3. Still **OPEN**: routines/automations; dedicated HOLD-exit verification; any other truly live gap found by exact-head review.
-4. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `8f714e23`.
+4. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `1feae5d7`.
 
 ## 4. Exact next responsible actor
 
