@@ -75,6 +75,23 @@ describe('V1 Error Reference Usability 1 bleibt wahrheits- und sicherheitstreu',
     }
   })
 
+  test('keine der drei Fehlergrenzen loggt das Error-Objekt in Production', () => {
+    for (const datei of FEHLER_GRENZEN) {
+      const quelle = lese(datei)
+      assert.equal(/error\.stack/.test(quelle), false, datei)
+
+      const ohneDiagnose = ohneDevDiagnose(quelle)
+      assert.equal(/console\.error\s*\(/.test(ohneDiagnose), false, `${datei} console.error`)
+      assert.equal(
+        /console\.error\s*\([\s\S]*?\berror\b/.test(ohneDiagnose),
+        false,
+        `${datei} console.error(error)`,
+      )
+      assert.equal(/error\?\.message/.test(ohneDiagnose), false, `${datei} error?.message`)
+      assert.equal(/error\.message/.test(ohneDiagnose), false, `${datei} error.message`)
+    }
+  })
+
   test('Admin-Fehlergrenze hängt nicht am Digest und zeigt keine Production-Rohdetails', () => {
     const quelle = lese('app/(admin)/admin/error.tsx')
     assert.match(quelle, /oeffentlicheFehlerId\(/)

@@ -17,7 +17,9 @@ export default function Error({
   reset: () => void
 }) {
   React.useEffect(() => {
-    console.error('[PublicRouteError]', error)
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[PublicRouteError]', error)
+    }
   }, [error])
 
   // Digest zuerst. Fallback ist useId(): render-rein, je Mount stabil,
