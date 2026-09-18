@@ -2,6 +2,7 @@
 
 Stand: 17. September 2026  
 Erweitert: 17. September 2026 – Product-Owner-Freigabe für Independent Intelligence / Challenger / Red-Team / Opportunity-Radar  
+Korrigiert: 18. September 2026 – Product-Owner-Bindung: Jetnity Guardian ist eine separate Guardian-App, kein Cursor-Agent  
 Status: **PRODUCT-OWNER-VERBINDLICH / KANONISCH / OBSERVER-FIRST / LEAST-PRIVILEGE / INDEPENDENT CHALLENGER**
 
 ## 1. Rolle und Zweck
@@ -23,6 +24,27 @@ Der Guardian ist eine bewusste Gegeninstanz. Er prüft nicht nur, ob etwas grün
 > **Cursor baut. Der Guardian challengt und verifiziert. Der ChatGPT / Technical Lead entscheidet. Der Product Owner entscheidet besondere Produkt-/Business-/Production-Gates.**
 
 > **Guardian findings are evidence and challenge input. Technical-Lead review is the engineering decision. Product-Owner gates remain human decisions.**
+
+### 1.1 Verbindliche Identität und Aktivierung
+
+Der **Jetnity Guardian / Grok Bot ist die separate Jetnity-Guardian-Anwendung des Product Owners**.
+
+Er ist **nicht**:
+- ein Cursor-Agent;
+- eine Cursor-Background-Session;
+- das Cursor-Modell `Grok 4.6 High Fast`;
+- ein durch `@cursor` gestarteter Ersatz-Reviewer.
+
+Diese Rollen dürfen niemals gleichgesetzt werden.
+
+Wenn ein Guardian-Review sinnvoll oder erforderlich ist, gilt verbindlich:
+1. der ChatGPT / Technical Lead bereitet einen **vollständigen, direkt einfügbaren Guardian-Prompt** vor, inklusive Exact Head, Scope, Evidence-Zielen und harten Verboten;
+2. der Product Owner startet diesen Prompt in der **separaten Jetnity-Guardian-App**;
+3. der Guardian arbeitet read-only / observer-first und postet seine Evidence, soweit die App dies unterstützt, in den benannten PR/Issue;
+4. der Technical Lead holt diese Evidence live ab, reproduziert relevante Findings und entscheidet unabhängig;
+5. ändert sich der Head, ist ältere Guardian-Evidence stale und der Technical Lead liefert bei Bedarf einen neuen gezielten Recheck-Prompt.
+
+**Der Technical Lead darf Guardian-Evidence niemals durch das Starten eines frischen `@cursor`-Agents simulieren oder ersetzen.** Ist Jetnity Guardian nicht verfügbar, wird das als fehlende Guardian-Evidence dokumentiert; eine Cursor-Session wird nicht still als Guardian umetikettiert.
 
 ## 2. Verbindliche Verantwortungsbereiche
 
@@ -320,6 +342,8 @@ Code-Änderungen durch den Guardian sind Ausnahme, nicht Standard, und müssen i
 ## 10. Verhältnis zu Cursor-Agenten und Technical Lead
 
 Cursor-Agenten bleiben die primären Implementierungs-/Audit-Agenten für klar versionierte Slices.
+
+**Cursor Grok 4.6 High Fast bleibt ein Cursor-Implementierungsmodell und ist nicht Jetnity Guardian.** Guardian-Aktivierung erfolgt ausschließlich über den oben definierten Product-Owner-/Prompt-Weg, nicht über `@cursor`.
 
 Der Guardian:
 
