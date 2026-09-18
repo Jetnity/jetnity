@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Coverage Truth 1 STATUS
 
 Stand: 18. September 2026  
-Status: **IMPLEMENTED ON `15037a14` WITH LOCAL + EXACT-HEAD GATES RECORDED / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **TL P2 FIXED ON `9c02d14e` WITH LOCAL + EXACT-HEAD GATES RECORDED / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #484  
 Draft PR: #485  
@@ -10,7 +10,9 @@ Binding task: `docs/V1_SECURITY_EVENT_COVERAGE_TRUTH_1_TASK_2026-09-18.md`
 Source audit: #438 / merged PR #449 / finding 5.2  
 Canonical base: `main@21f489d3beed55ca6a80d901d4aded5e669eb1a9`  
 Dispatch head: `9dfc44c14f331e84995b8301b03bc08c235103f4`  
-Implementation/evidence head: `15037a1498d7d2b0da525d8390d03a8d8bddec32`
+Prior review head: `751ec39e9cf17fa9a1d4eac1683d39a7690f834e`  
+TL CHANGES REQUIRED: comment `5731553314`  
+P2-fix head: `9c02d14e6e27c34934fb491e355ce1637911650e`
 
 Cursor-Agent: **Jetnity V1 security event coverage truth 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast** — confirmed on this run (`originalModelName=cursor-grok-4.6-high-fast`)  
@@ -30,7 +32,7 @@ This slice does **not** implement event ingestion.
 
 ## 2. Implemented
 
-Shared copy in `lib/admin/ehrliche-zustaende.ts`:
+Shared copy in `lib/admin/ehrliche-zustaende.ts` is unchanged by the P2 fix:
 
 - `securityHinweis` states: local `security_events` rows; no complete application ingestion; zero recorded rows are not proof of zero real events; no live monitoring; IP blocklist is not enforced.
 - `securityAbdeckungHinweis` states that KPIs/table count only recorded rows in the current window and that missing ingestion means incomplete coverage.
@@ -44,11 +46,12 @@ Shared copy in `lib/admin/ehrliche-zustaende.ts`:
 - empty state `Keine aufgezeichneten Events in diesem Zeitraum.`;
 - empty vs error distinction retained;
 - IP-blocklist non-enforcement notice and local write/remove behaviour preserved;
-- numerical KPI derivation unchanged.
+- **P2:** 24h KPIs (`last24` / `failed` / `suspicious`) are derived from the unfiltered recorded set `data.events` via `aufgezeichneteEvents`;
+- search still filters only the event table; the table entry count remains `events.length`.
 
 Audit finding 5.2 received a dated 18 September 2026 **mitigation** note only.
 
-Focused contracts: `lib/admin/ehrliche-zustaende.test.ts`, `lib/admin/security-event-coverage-truth.test.ts`.
+Focused contracts: `lib/admin/ehrliche-zustaende.test.ts`, `lib/admin/security-event-coverage-truth.test.ts` (now includes an unfiltered-KPI regression).
 
 ## 3. Changed files versus `origin/main`
 
@@ -86,12 +89,12 @@ Not introduced or touched:
 - global continuity documents (`JETNITY_HANDOFF.md`, `ROADMAP.md`, `CONTINUITY_STANDARD.md`, `docs/ACTIVE_WORK_STATUS.md`)
 - Ready / merge / follow-up slice
 
-## 6. Local gates on `15037a14`
+## 6. Local gates on `9c02d14e`
 
 | Gate | Result |
 | --- | --- |
-| Focused `lib/admin/ehrliche-zustaende.test.ts` + `security-event-coverage-truth.test.ts` | PASS **8/8** |
-| `npm test` | PASS **3488/3488** |
+| Focused `lib/admin/ehrliche-zustaende.test.ts` + `security-event-coverage-truth.test.ts` | PASS **9/9** |
+| `npm test` | PASS **3489/3489** |
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS (0 errors / 138 pre-existing warnings) |
 | `npm run check:dead` | PASS (0 unjustified orphans) |
@@ -103,16 +106,18 @@ Not introduced or touched:
 
 Browser `/admin/security` verification was **not** performed. The route is auth-gated; this environment has no admin session. Evidence is contract + compile + CI/Preview, not a logged-in click.
 
-## 7. Exact-head CI / Preview on `15037a14`
+## 7. Exact-head CI / Preview on `9c02d14e`
 
 Recorded before this persist. This persist is a newer HEAD and invalidates these bindings.
 
 | | |
 | --- | --- |
-| GitHub Actions | `35355707566` **SUCCESS** — Auth-Konfiguration `105634424239`; Typecheck, Lint & Build `105634423555`; Vercel Preview Comments `105634565726` |
-| Combined commit status | `success` on `15037a1498d7d2b0da525d8390d03a8d8bddec32` |
-| Vercel | `4tW3CFFKN2DmGx9NERg8xFA6xXnR` **READY** |
+| GitHub Actions | `35357302461` **SUCCESS** — Auth-Konfiguration `105639677473`; Typecheck, Lint & Build `105639678037`; Vercel Preview Comments `105639847583` |
+| Combined commit status | `success` on `9c02d14e6e27c34934fb491e355ce1637911650e` |
+| Vercel | `EfkQKormXNw9qJtoFwZpGs1EKjtK` **READY** |
 | Preview | https://jetnity-app-git-fix-v1-security-event-c-82d9cb-jetnity-e1b93c82.vercel.app |
+
+Prior persist-head `751ec39e` had CI `35356206410` SUCCESS and Vercel `YgtVMEpCJxnmnUEgio1Lgc1qn5Nk` READY. Those IDs do not bind this P2-fix head.
 
 ## 8. Drift / thread report (re-fetched `origin/main`)
 
@@ -120,12 +125,12 @@ Recorded before this persist. This persist is a newer HEAD and invalidates these
 | --- | --- |
 | Live `origin/main` | `21f489d3beed55ca6a80d901d4aded5e669eb1a9` |
 | Merge-base | `21f489d3beed55ca6a80d901d4aded5e669eb1a9` |
-| Ahead / behind | **3 / 0** before this persist (task + implementation + pre-test docs). Persist adds one more ahead commit. |
+| Ahead / behind | **5 / 0** before this persist. Persist adds one more ahead commit. |
 | Drift vs canonical base | **none** |
 | PR #485 | Draft, open, not merged, `mergeable_state=blocked` |
-| Reviews | none |
+| Formal reviews | none |
 | Review comment threads | none |
-| Issue comments | dispatch `5731322171`; Vercel bot `5731320100` (READY on `15037a14`); Cursor ack `5731323996` |
+| Issue comments | dispatch `5731322171`; TL CHANGES REQUIRED `5731553314`; continue `5731556003`; Vercel bot `5731320100` (READY on `9c02d14e`); Cursor acks `5731323996` / `5731557162` |
 | Parallel slices | #483 files not touched; not merged/rebased into this branch |
 
 ## 9. Residual risks
@@ -134,6 +139,7 @@ Recorded before this persist. This persist is a newer HEAD and invalidates these
 - Production/Development row counts from the task are live-read context, not restated as UI provenance.
 - IP blocklist remains not enforced.
 - Contract tests are source/copy-level, not a logged-in Preview click of `/admin/security`.
+- The 24h KPI contract is source-level: a later rewrite that still uses an unfiltered alias would pass; a return to `last24 = (events ?? []).filter` would fail.
 
 ## 10. Next step
 

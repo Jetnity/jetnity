@@ -7,6 +7,7 @@ Issue: #484
 Draft PR: #485  
 Branch: `fix/v1-security-event-coverage-truth-1`  
 Binding task: `docs/V1_SECURITY_EVENT_COVERAGE_TRUTH_1_TASK_2026-09-18.md`
+TL CHANGES REQUIRED: comment `5731553314` on prior head `751ec39e`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
@@ -17,6 +18,8 @@ This document argues against the implementation. It cannot replace an independen
 | Attack | Result |
 | --- | --- |
 | Keep `Events (24h)` / `Keine Events gefunden` and only extend the page hint | Rejected. A zero KPI plus “no events found” still reads as complete monitoring. |
+| Derive 24h KPIs from the filtered `events` memo | Rejected. TL P2: search would silently shrink “Aufgezeichnete Events (24h)”. Now sourced from unfiltered `data.events`. |
+| Add “gefiltert” to KPI labels instead of changing the source | Rejected. The required correction is unfiltered recorded-window counts, not a filtered-window relabel. |
 | Treat Development 0 / Production two 2025 rows as UI provenance copy | Rejected. Task forbids overstating unverified-in-UI historical/test provenance. |
 | Add a service-role or authenticated INSERT writer to “make the table true” | Rejected. Hard exclusion; ingestion needs a later identity/PII/rate-limit design. |
 | Mark finding 5.2 PASS because the UI is now honest | Rejected. Presentation hygiene ≠ ingestion. Runtime ingestion remains OPEN. |
@@ -33,10 +36,10 @@ This document argues against the implementation. It cannot replace an independen
 - Nothing in application runtime writes `security_events`. The table can remain empty forever.
 - Release-gate §G remains open.
 - IP blocklist is still not enforced.
-- Contract tests are source/copy-level. A later sibling component could reintroduce complete-monitoring wording.
+- The unfiltered-KPI contract is source-level. A later sibling component could reintroduce filter-coupled KPIs.
 - No Real-Device or logged-in Preview click.
 
-## 3. Compliance with the binding task
+## 3. Compliance with the binding task and TL P2
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
@@ -44,16 +47,19 @@ This document argues against the implementation. It cannot replace an independen
 | Persistent coverage notice | Yes | `securityAbdeckungHinweis`, separate from load errors |
 | KPI recorded/aufgezeichnet semantics | Yes | three 24h labels |
 | Honest table heading + empty state | Yes | aufgezeichnet wording; empty vs error kept |
+| 24h KPIs from unfiltered recorded set | Yes | `aufgezeichneteEvents = data?.events`; `last24` from that |
+| Search limited to table | Yes | filtered `events` still drives table rows and entry count |
+| Focused unfiltered-KPI regression | Yes | `security-event-coverage-truth.test.ts` |
 | Preserve IP-blocklist non-enforcement | Yes | existing notice and write/remove path unchanged |
 | Audit 5.2 dated mitigation only | Yes | ingestion OPEN; not PASS/RESOLVED |
 | No §G satisfaction claim | Yes | |
 | No service-role / migration / Auth / RLS / Production / vendor / secret / cost | Yes | |
 | Allowed write scope | Yes | widget + copy + admin tests + audit note + slice docs |
-| Required local gates | Yes | recorded on `15037a14` |
-| Exact-head CI + Preview | Yes | run `35355707566` SUCCESS; Vercel `4tW3CFFKN2DmGx9NERg8xFA6xXnR` READY on `15037a14` |
+| Required local gates | Yes | recorded on `9c02d14e` |
+| Exact-head CI + Preview | Yes | run `35357302461` SUCCESS; Vercel `EfkQKormXNw9qJtoFwZpGs1EKjtK` READY on `9c02d14e` |
 | behind=0 | Yes | vs live `origin/main@21f489d3` before this persist |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-`15037a14` had CI `35355707566` SUCCESS and Vercel `4tW3CFFKN2DmGx9NERg8xFA6xXnR` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+`9c02d14e` had CI `35357302461` SUCCESS and Vercel `EfkQKormXNw9qJtoFwZpGs1EKjtK` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
