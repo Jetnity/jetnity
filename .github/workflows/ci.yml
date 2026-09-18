@@ -120,12 +120,3 @@ jobs:
       - name: Abgleich
         if: steps.zugang.outputs.vorhanden == 'ja'
         run: npm run auth:pruefen
-
-      # Temporärer Phase-A-Nachweis nur für diesen Branch. Kein Schreiben.
-      # Phase B räumt den exact-branch-Trigger nach dem Technical-Lead-Review
-      # wieder auf. Der Development-Abgleich oben bleibt unverändert.
-      - name: Production Auth lesen (GET-only, dieser Branch)
-        if: ${{ steps.zugang.outputs.vorhanden == 'ja' && github.event_name == 'pull_request' && github.head_ref == 'verify/v1-production-auth-verification-1' }}
-        env:
-          SUPABASE_PROJECT_REF: qscbgcdmivbbnzrcyegn
-        run: npm run auth:produktion:lesen -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn

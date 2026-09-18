@@ -1,55 +1,74 @@
 # Jetnity – V1 Production Auth Verification 1 STATUS
 
 Stand: 18. September 2026  
-Status: **PHASE A EVIDENCE CAPTURED / GATED ON `82c0f564` / THIS PERSIST COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **PHASE B IMPLEMENTED / LOCAL GATES PASS / EXACT-HEAD GATES PENDING THIS PERSIST / DRAFT / NOT READY / NOT MERGED / STOP AFTER FRESH GATES**
 
 Issue: #479  
 Draft PR: #480  
 Branch: `verify/v1-production-auth-verification-1`  
-Binding task: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_TASK_2026-09-18.md`
+Binding task: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_TASK_2026-09-18.md`  
+TL Phase A PASS / Phase B dispatch: comment `5730259722`
 
-Canonical base: `main@d67529a297a5de8c5a2e83b8d80caf4d34755384`  
-Dispatch head: `7c9d902cb9e4ba553ca579bd99685949bd8af6d8`  
-Implementation / evidence head: `82c0f564865894ee4639a59f966db75cafb11878`
+Canonical base / live main: `d67529a297a5de8c5a2e83b8d80caf4d34755384`  
+Phase-A persist head (TL PASS): `66ee5fe5ca7f2b8052dfeadfc1d270022750e001`
 
 Cursor-Agent: **Jetnity V1 production auth verification 1**, Generation 1  
-Required parent model: **Cursor Grok 4.6 High Fast** — confirmed (`originalModelName=cursor-grok-4.6-high-fast`)  
+Required parent model: **Cursor Grok 4.6 High Fast** — confirmed  
 Session: `bc-1d490756-eed2-4390-a8bf-04645bf58082`
 
 This file is point-in-time evidence. Every new head invalidates older exact-head gates. Agent self-review is not Technical-Lead PASS.
 
-Phase B is **not** started. Production-truth docs were **not** edited.
+Production Auth was **not** changed.
 
 ---
 
-## 1. What Phase A implemented
+## 1. Immutable Phase-A evidence
 
-GET-only Production Auth snapshot reader:
-
-- `scripts/auth/produktion-lesen.ts` — wiring only
-- `lib/supabase/auth-produktion-lesen.ts` — allowlist, fail-closed CLI contract, sanitized formatter
-- `npm run auth:produktion:lesen`
-- temporary exact-branch CI step on `pull_request` when `github.head_ref == 'verify/v1-production-auth-verification-1'`
-- Development `auth:pruefen` step unchanged
-
-The reader requires `--produktion --projekt-ref qscbgcdmivbbnzrcyegn`, `SUPABASE_ACCESS_TOKEN`, and `SUPABASE_PROJECT_REF` equal to that ref. It calls existing `produktionsZiel()` then GET-only `authKonfiguration()`. It never calls `authKonfigurationSetzen()`, `projektSchluessel()`, Admin Auth, or any write method.
-
----
-
-## 2. Live git comparison on evidence head `82c0f564`
+Do not treat later heads as a new Production snapshot.
 
 | | |
 | --- | --- |
-| Evidence | `82c0f564865894ee4639a59f966db75cafb11878` |
-| `origin/main` | `d67529a297a5de8c5a2e83b8d80caf4d34755384` |
-| Merge-base | **`d67529a`** (canonical base / current main) |
-| Ahead / behind | **2 / 0** at `82c0f564` |
+| First snapshot head | `82c0f564865894ee4639a59f966db75cafb11878` |
+| First snapshot CI | `35346050116` SUCCESS / auth job `105602766085` |
+| First snapshot Preview | `DitxsU4VaKNhjXLjvBoGXnDm7y8M` READY |
+| Phase-A persist / TL PASS head | `66ee5fe5ca7f2b8052dfeadfc1d270022750e001` |
+| TL-read snapshot CI | `35346401221` SUCCESS / auth job `105603875234` |
+| TL-read Preview | `dpl_L89PhB6yT8rBYNSeKHAC9Eya33yK` READY |
 
-Slice vs main at `82c0f564` was only the task plus the five Phase-A implementation files. This persist adds the three slice docs and therefore creates a new head.
+Sanitized allowlist (identical in both job logs):
+
+```
+site_url = http://localhost:3000
+uri_allow_list = ""
+password_hibp_enabled = true
+rate_limit_email_sent = 2
+rate_limit_otp = 30
+rate_limit_verify = 30
+rate_limit_token_refresh = 150
+mfa_totp_enroll_enabled = true
+mfa_totp_verify_enabled = true
+mfa_allow_low_aal = false
+mailer_allow_unverified_email_sign_ins = false
+```
+
+`SUPABASE_ACCESS_TOKEN` was masked as `***`. No raw config or secrets were emitted.
 
 ---
 
-## 3. Local gates on `82c0f564`
+## 2. Phase B changes
+
+- Removed the temporary exact-branch Production Auth CI step from `.github/workflows/ci.yml`. Normal Development `auth:pruefen` is unchanged.
+- Kept the manual GET-only reader, helper, focused tests and `npm run auth:produktion:lesen`.
+- Corrected `docs/AUTH.md`: stale „Production nicht“ AAL2 sentence; alignment migration applied / no second apply; Development config-as-code vs 18 Sep 2026 snapshot; Production redirect localhost + empty allowlist **not launch-ready**; verified HIBP/TOTP/AAL/rate-limit values; SMTP P0 preserved.
+- Narrow QS2 cross-reference only; QS2 remains the correct apply-evidence side.
+- Audit matrix 3.3 / 3.6 / 3.7 dated resolution updates; historical audit text preserved.
+- Audit handoff item 7 marked completed; 3.6 redirect remediation remains open and Production-write-gated; 3.8 remains open P0.
+- No global continuity edit.
+- No Production write, config push, secret/env mutation, test user, DB/RLS/migration change.
+
+---
+
+## 3. Local gates on this Phase-B working tree
 
 | Gate | Result |
 | --- | --- |
@@ -59,74 +78,20 @@ Slice vs main at `82c0f564` was only the task plus the five Phase-A implementati
 | `npm run lint` | PASS — 0 errors, **138** warnings |
 | `npm run build` | PASS |
 | Hygiene (`dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`) | PASS |
-| Local Production reader without matching ref | FAIL-CLOSED — `SUPABASE_PROJECT_REF` was the Development target; no Production GET from this agent |
+
+Exact-head CI / Preview for the persist head are recorded after push.
 
 ---
 
-## 4. Exact-head CI + Preview on `82c0f564`
+## 4. Resolution truth recorded
 
-| | |
-| --- | --- |
-| CI | **SUCCESS** — run `35346050116` on `82c0f564` |
-| Auth job | **SUCCESS** — `105602766085` |
-| Development `Abgleich` | ran and succeeded before the Production step |
-| Production GET step | ran and succeeded |
-| Vercel Preview | **READY** — `DitxsU4VaKNhjXLjvBoGXnDm7y8M` |
-| Preview URL | `https://jetnity-app-git-verify-v1-production-au-78c333-jetnity-e1b93c82.vercel.app` |
-
-GitHub review threads: none. Vercel unresolved threads: 0.
+- **3.3** verified live / contradiction resolved.
+- **3.7** Production HIBP + requested rate limits verified; 2/h remains 3.8 P0.
+- **3.6** live config verified; **open P2 launch blocker** (localhost + empty allowlist).
+- **3.8** separate open P0. No SMTP/provider activation.
 
 ---
 
-## 5. Sanitized Production Auth snapshot from the exact-head job log
+## 5. Next step
 
-Source: job `105602766085`, step `Production Auth lesen (GET-only, dieser Branch)`, head `82c0f564`.
-
-Job env showed `SUPABASE_ACCESS_TOKEN: ***` and step-scoped `SUPABASE_PROJECT_REF: qscbgcdmivbbnzrcyegn`.
-
-```
-JETNITY_PRODUCTION_AUTH_SNAPSHOT_BEGIN
-target_project_ref=qscbgcdmivbbnzrcyegn
-method=GET
-fields=allowlist
-{
-  "site_url": "http://localhost:3000",
-  "uri_allow_list": "",
-  "password_hibp_enabled": true,
-  "rate_limit_email_sent": 2,
-  "rate_limit_otp": 30,
-  "rate_limit_verify": 30,
-  "rate_limit_token_refresh": 150,
-  "mfa_totp_enroll_enabled": true,
-  "mfa_totp_verify_enabled": true,
-  "mfa_allow_low_aal": false,
-  "mailer_allow_unverified_email_sign_ins": false
-}
-JETNITY_PRODUCTION_AUTH_SNAPSHOT_END
-```
-
-No raw config, JWT secret, SMTP/captcha/OAuth secrets, API keys, or unknown keys were printed.
-
-These values are **observed GET evidence**. They are not a rewrite of `docs/AUTH.md` and not a Production change.
-
----
-
-## 6. Scope still held
-
-- no Production Auth write
-- no DB mutation / migration / RLS change
-- no test user
-- no SMTP/provider activation
-- no secret/env mutation
-- no Ready / merge
-- no Phase B
-- no global continuity edit
-- `docs/AUTH.md` and `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md` untouched
-
----
-
-## 7. Next step
-
-**STOP FOR TECHNICAL-LEAD REVIEW.**
-
-Do not mark Ready. Do not merge. Do not start Phase B until the Technical Lead has read this snapshot and dispatched the same logical session.
+Obtain fresh exact-head CI and Vercel Preview on the Phase-B persist head, then **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice.

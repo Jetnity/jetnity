@@ -1,7 +1,7 @@
 # Jetnity – V1 Production Auth Verification 1 Task
 
 Stand: 18. September 2026
-Status: **ACTIVE / PHASE A / READ-ONLY PRODUCTION EVIDENCE**
+Status: **ACTIVE / PHASE B / DOCUMENTATION FROM VERIFIED EVIDENCE / NO PRODUCTION WRITE**
 
 Issue: #479
 Canonical base: `main@d67529a297a5de8c5a2e83b8d80caf4d34755384`

@@ -264,7 +264,7 @@ describe('Der neue Leser enthält keinen Schreib- oder Schlüsselpfad', () => {
   })
 })
 
-describe('Temporärer CI-Schritt ist exact-branch-only', () => {
+describe('CI bleibt der normale Development-Abgleich', () => {
   test('Development-Abgleich bleibt unverändert und wird nicht übersprungen', () => {
     assert.match(
       ci,
@@ -272,21 +272,10 @@ describe('Temporärer CI-Schritt ist exact-branch-only', () => {
     )
   })
 
-  test('Production-Lesen läuft nur auf diesem PR-Branch und überschreibt den Ref nur im Step', () => {
-    assert.match(ci, /auth:produktion:lesen/)
-    assert.match(ci, /github\.event_name == 'pull_request'/)
-    assert.match(ci, /github\.head_ref == 'verify\/v1-production-auth-verification-1'/)
-    assert.match(ci, /--produktion --projekt-ref qscbgcdmivbbnzrcyegn/)
-
-    const start = ci.indexOf('name: Production Auth lesen')
-    assert.ok(start >= 0)
-    const produktionSchritt = ci.slice(start, start + 700)
-    assert.match(produktionSchritt, /github\.event_name == 'pull_request'/)
-    assert.match(produktionSchritt, /github\.head_ref == 'verify\/v1-production-auth-verification-1'/)
-    assert.match(produktionSchritt, /SUPABASE_PROJECT_REF: qscbgcdmivbbnzrcyegn/)
-    assert.match(produktionSchritt, /auth:produktion:lesen/)
-    assert.equal(produktionSchritt.includes('auth:anwenden'), false)
-    assert.equal(produktionSchritt.includes('authKonfigurationSetzen'), false)
-    assert.equal(produktionSchritt.includes('auth:pruefen'), false)
+  test('der temporäre exact-branch Production-Schritt ist entfernt', () => {
+    assert.equal(ci.includes('auth:produktion:lesen'), false)
+    assert.equal(ci.includes('Production Auth lesen'), false)
+    assert.equal(ci.includes("github.head_ref == 'verify/v1-production-auth-verification-1'"), false)
+    assert.equal(ci.includes('qscbgcdmivbbnzrcyegn'), false)
   })
 })

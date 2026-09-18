@@ -1,11 +1,12 @@
 # Jetnity – V1 Production Auth Verification 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **PHASE A COMPLETE FOR REVIEW / EVIDENCE HEAD `82c0f564` / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN PHASE B**
+Status: **PHASE B IMPLEMENTED / STOP AFTER FRESH EXACT-HEAD GATES / KEIN READY / KEIN MERGE / PRODUCTION UNCHANGED**
 
 Binding task: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_TASK_2026-09-18.md`  
 Detailed status: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_STATUS_2026-09-18.md`  
-Self-review: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_SELF_REVIEW_2026-09-18.md`
+Self-review: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_SELF_REVIEW_2026-09-18.md`  
+TL dispatch: comment `5730259722`
 
 ---
 
@@ -16,34 +17,28 @@ Self-review: `docs/V1_PRODUCTION_AUTH_VERIFICATION_1_SELF_REVIEW_2026-09-18.md`
 | Issue | #479 |
 | Draft PR | #480 |
 | Branch | `verify/v1-production-auth-verification-1` |
-| Evidence head | `82c0f564865894ee4639a59f966db75cafb11878` |
+| Phase-A TL PASS head | `66ee5fe5ca7f2b8052dfeadfc1d270022750e001` |
 | Canonical / merge-base | `main@d67529a297a5de8c5a2e83b8d80caf4d34755384` |
-| Ahead / behind at evidence | **2 / 0** |
-| Exact-head CI | `35346050116` **SUCCESS** |
-| Auth job with snapshot | `105602766085` **SUCCESS** |
-| Exact-head Vercel | `DitxsU4VaKNhjXLjvBoGXnDm7y8M` **READY** |
 | Agent | Jetnity V1 production auth verification 1, Generation 1 |
 | Session | `bc-1d490756-eed2-4390-a8bf-04645bf58082` |
 
-This persist commit is docs-only and invalidates the exact-head gates above.
+Immutable Phase-A snapshot jobs: `105602766085` (`82c0f564`) and TL-read `105603875234` (`66ee5fe5`).
 
 ---
 
 ## 2. What a reviewer should verify first
 
-1. Merge-base equals current `origin/main` `d67529a`. Behind was **0** at `82c0f564`.
-2. New runtime/code files are only the reader, its test, `package.json`, and the temporary CI step. No Auth/UI/runtime product change.
-3. `scripts/auth/produktion-lesen.ts` imports only `produktionsZiel` + `authKonfiguration` and never `authKonfigurationSetzen` / `projektSchluessel` / PATCH/POST/PUT/DELETE.
-4. Output allowlist is exactly the eleven audit fields. Missing field => fail closed.
-5. CI Production step is `pull_request` + exact branch only; Development `auth:pruefen` still runs first.
-6. Job log `105602766085` contains the sanitized snapshot and `SUPABASE_ACCESS_TOKEN: ***`.
-7. GitHub review threads: none. Vercel unresolved threads: none.
+1. Merge-base equals current `origin/main` `d67529a`. Behind must be **0**.
+2. `.github/workflows/ci.yml` has **no** exact-branch Production reader step and still runs Development `auth:pruefen`.
+3. `scripts/auth/produktion-lesen.ts` and `lib/supabase/auth-produktion-lesen.ts` remain GET-only.
+4. `docs/AUTH.md` no longer says Production lacks `aktuelles_admin_aal2()`; section 12 records the 18 Sep snapshot and marks redirects **not launch-ready**.
+5. QS2 apply status is not rewritten as wrong.
+6. Audit 3.3 resolved; 3.7 verified; 3.6 open P2; 3.8 open P0.
+7. No Production Auth write is claimed or present.
 
 ---
 
-## 3. Observed Production Auth values
-
-Copied only from the allowlisted CI snapshot. Do not treat this as a docs rewrite.
+## 3. Observed Production Auth values (immutable)
 
 | Field | Observed |
 | --- | --- |
@@ -63,4 +58,4 @@ Copied only from the allowlisted CI snapshot. Do not treat this as a docs rewrit
 
 ## 4. Next step
 
-**STOP FOR TECHNICAL-LEAD REVIEW.** Same logical agent/session may continue only after an explicit Phase-B dispatch. No Ready. No merge. No Guardian dispatch from this agent. No follow-up slice.
+Record fresh exact-head CI + Preview on the Phase-B persist head, then **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice. TL persists global continuity after merge.
