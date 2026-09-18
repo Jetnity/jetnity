@@ -91,13 +91,19 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
     assert.equal(register.includes('signInWithOAuth'), true)
   })
 
-  test('Login- und Register-Copy behaupten DSGVO/CH-DSG ohne belegte Legal-Seite', () => {
+  test('Login- und Register-Copy behaupten keine unbelegte DSGVO/CH-DSG-Konformität', () => {
     const register = quelle('components/auth/RegisterForm.tsx')
     const login = quelle('components/auth/LoginForm.tsx')
-    assert.equal(register.includes('DSGVO'), true)
-    assert.equal(register.includes('CH-DSG'), true)
-    assert.equal(login.includes('DSGVO'), true)
-    assert.equal(login.includes('CH-DSG'), true)
+    const verboteneBehauptung = 'DSGVO & CH-DSG konform'
+    const verboteneJsxBehauptung = 'DSGVO &amp; CH-DSG konform'
+    assert.equal(register.includes('DSGVO'), false)
+    assert.equal(register.includes('CH-DSG'), false)
+    assert.equal(login.includes('DSGVO'), false)
+    assert.equal(login.includes('CH-DSG'), false)
+    assert.equal(register.includes(verboteneBehauptung), false)
+    assert.equal(register.includes(verboteneJsxBehauptung), false)
+    assert.equal(login.includes(verboteneBehauptung), false)
+    assert.equal(login.includes(verboteneJsxBehauptung), false)
     assert.equal(login.includes('href="/privacy"'), false)
     assert.equal(login.includes('href="/terms"'), false)
   })

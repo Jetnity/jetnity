@@ -381,10 +381,6 @@ export default function RegisterForm({
         Du hast schon ein Konto?{' '}
         <Link href={`/login?next=${encodeURIComponent(nachErfolg)}`} className="text-primary hover:underline">Zur Anmeldung</Link>
       </p>
-
-      <p className="mt-2 text-[11px] text-center text-muted-foreground">
-        Mit der Registrierung stimmst du unseren Richtlinien zu. Datenschutz: DSGVO &amp; CH-DSG konform.
-      </p>
     </div>
   );
 }
