@@ -11,7 +11,7 @@ E2E evidence: comments `5735190265` and `5735209274`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `5edc72806c62c298c864ca77b9903f5fa7fe6cc5` has exact-head CI `35385907236` SUCCESS and Vercel SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `9bc8f660b98bbcb8d314d7b93881585b818a1dce` has exact-head CI `35387027903` SUCCESS and Vercel SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -34,7 +34,7 @@ Last verified evidence head `5edc72806c62c298c864ca77b9903f5fa7fe6cc5` has exact
 - Approved routines/automations are not configured.
 - Shared Grok environment credentials were not independently inspected.
 - E2E #001 proves one specialist → CoS → GitHub → TL no-signal path, not every specialist path and not recurring cadence.
-- This persist is a newer head than `5edc7280`.
+- This persist is a newer head than `9bc8f660`.
 
 ## 3. Compliance
 
@@ -50,7 +50,7 @@ Last verified evidence head `5edc72806c62c298c864ca77b9903f5fa7fe6cc5` has exact
 
 Checked:
 - comments `5735080935`, `5735135388`, `5735190265`, `5735209274`;
-- last verified head `5edc7280` CI `35385907236` SUCCESS and Vercel SUCCESS;
+- last verified head `9bc8f660` CI `35387027903` SUCCESS and Vercel SUCCESS;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
