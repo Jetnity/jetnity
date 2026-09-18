@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-PO evidence: comment `5734539126`
+PO roster evidence: comments `5734539126` … `5735008554`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `bfe99edbe456512cf84d2c994e954a195c835c45` has exact-head CI `35377610918` SUCCESS and Vercel Preview READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `77876cf5eb1ba2a740614a4ab509dfad5a6f2bfe` has exact-head CI `35381491242` SUCCESS and Vercel Preview READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,44 +19,49 @@ Last verified evidence head `bfe99edbe456512cf84d2c994e954a195c835c45` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat the CoS initialization as complete ten-role setup or HOLD lift | **Rejected.** Eight identities, routines, Evidence Bus and e2e remain open. Mode stays `AI_OS_BUILD_HOLD`. |
+| Treat the ten identity reports as complete ten-role setup, team interoperability or HOLD lift | **Rejected.** Routines, CoS coordination, Evidence Bus e2e and HOLD-exit remain **OPEN**. Mode stays `AI_OS_BUILD_HOLD`. |
 | Count `Stabschef` as a second Chief of Staff or eleventh role | **Rejected.** Recorded as legacy duplicate / pending hide-retire only. |
-| Mark CoS profile configuration verified because initialization succeeded | **Rejected.** Product Owner says iOS `Anweisungen` persistence reverts. Row is **NOT VERIFIED**. |
-| Independently claim Cursor inspected the Grok app | **Rejected.** Source is Product-Owner comment `5734539126` only. |
+| Mark durable profile configuration verified because initialization succeeded | **Rejected.** Per-bot `Anweisungen` reopen/check is **team-verification OPEN**. |
+| Keep a blanket claim that iOS `Anweisungen` persistence is impossible | **Rejected.** Product Owner clarified that persistence can succeed after a delay. |
+| Independently claim Cursor inspected the Grok app | **Rejected.** Source is Product-Owner comments only. |
 | Create, edit, hide or delete Grok bots from this persist | **Rejected.** Documentation only. |
-| Drop a role because of the iOS UI limitation | **Rejected.** Limitation recorded; all ten names remain mandatory. |
+| Drop a role, collapse the roster, or invent a consistency PASS | **Rejected.** All ten names remain mandatory; exact consistency check stays **OPEN**. |
 | Call this persist the live/current head | **Rejected.** Last-verified SHA + “this persist creates a newer head.” |
 | Ready, merge, start routines, or start a follow-up slice | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- Eight named identities still do not exist.
-- Durable Chief-of-Staff profile-instruction persistence is unverified.
+- Exact roster/name/role consistency has not been independently re-opened in the Grok app by this slice.
+- Canonical Guardian contract/team verification remains OPEN if still needed.
+- Durable per-bot profile-instruction persistence is not independently re-checked here.
 - Legacy `Stabschef` remains a semantic-duplicate risk until the Product Owner hides or retires it.
+- Chief-of-Staff coordination and specialist → CoS → TL Evidence Bus e2e are unverified.
+- Approved routines/automations are not configured.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `bfe99edb`.
+- This persist is a newer head than `77876cf5`.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Incorporate PO evidence into the tracker | Yes | comment `5734539126` |
+| Incorporate full ten-role PO evidence into the tracker | Yes | comments through `5735008554` |
 | Guardian remains canonical existing identity | Yes | |
-| CoS created, not over-claimed | Yes | initialization recorded; profile **NOT VERIFIED** |
+| Roles 1 and 3–10 created/initialized, not over-claimed | Yes | presence recorded; team verification OPEN |
 | `Stabschef` not a roster slot; no Cursor mutation | Yes | |
-| Remaining eight / routines / e2e stay open | Yes | |
+| Routines / CoS coordination / e2e / HOLD-exit stay open | Yes | |
+| iOS persistence not claimed impossible | Yes | team-verification OPEN |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- Product-Owner comment `5734539126`;
-- last verified head `bfe99edb` CI `35377610918` SUCCESS and Vercel READY;
-- review threads 0; behind=0;
+- Product-Owner comments `5734539126` … `5735008554`;
+- last verified head `77876cf5` CI `35381491242` SUCCESS and Vercel READY;
+- review threads 0; behind=0 versus the recorded predecessor;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
-- Grok app UI / bot list / profile text;
+- Grok app UI / bot list / durable profile text;
 - CI/Vercel on **this persist SHA**;
 - shared-environment tokens;
 - Production / Supabase (out of scope).
