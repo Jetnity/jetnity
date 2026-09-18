@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
 Stand: 18. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY INTELLIGENCE MANUAL TEST #001 PASS / ROUTINE-READINESS HARDENING OPEN / HOLD REMAINS ACTIVE**
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY ORCHESTRATOR ROUTINE-READY / ROUTINES AND HOLD-EXIT OPEN / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -38,6 +38,7 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Profile persistence verification #002 — verified complete | `5735489499` |
 | Daily Intelligence Orchestrator skill created (not scheduled) | `5735534623` |
 | Daily Intelligence Orchestrator MANUAL TEST #001 review | `5735636786` |
+| Daily Intelligence Orchestrator MANUAL TEST #002 — routine-ready | `5735700562` |
 
 ## 1. Global setup truth
 
@@ -53,11 +54,12 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
-| Approved recurring routines / schedules | **not configured** | Skill `Jetnity Daily Intelligence Orchestrator` exists (`5735534623`) but is **not scheduled**. No routine created. MANUAL TEST #001 is not a routine. | Product Owner only after hardening closes |
-| Daily Intelligence Orchestrator skill | **created / not scheduled** | Private reusable skill. No routine. No GitHub write from the skill. | Product Owner / CoS hardening, then later one-time routine authorization |
-| JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH ONE SKILL HARDENING BEFORE ROUTINE CREATION** | Comment `5735636786`. Canonical CoS owned the run. Default daily specialists pulsed: Market, Provider, Travel Truth, Growth, FinOps, Security. Product & UX, Analytics and Guardian correctly skipped. Legacy Stabschef not contacted. 6/6 no-material signals. No GitHub write. No routine. HOLD unchanged. | Product Owner / CoS: apply final control-state re-fetch hardening |
-| Routine-readiness hardening | **OPEN** | Skill must re-fetch live control state immediately before emitting the brief. If head/state moved mid-run, CONTROL STATE reports the final live value and adds `MID-RUN CONTROL-STATE CHANGE` (start vs final). Do not treat mid-run head movement as an evidence conflict. Do not call Guardian unless the change is materially suspicious or contradictory. Observed during TEST #001: start `1feae5d...` / later `1d2e160...`. | Product Owner / CoS skill edit. Cursor must not mutate the skill |
-| Daily / weekly Chief-of-Staff briefs | **not running as a routine** | One manual TEST-mode run succeeded. No cadence. | Product Owner later after hardening and one-time authorization |
+| Approved recurring routines / schedules | **not configured** | Skill is **routine-ready**. No routine created. TEST #001/#002 are not routines. This authorizes only the later controlled Daily Routine creation/verification layer. | Product Owner one-time authorization later |
+| Daily Intelligence Orchestrator skill | **created / routine-ready / not scheduled** | Hardening persisted. FINAL CONTROL-STATE RECHECK executed on TEST #002. No routine. No GitHub write from the skill. | Product Owner later for controlled Daily Routine creation |
+| JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH HARDENING THEN SUPERSEDED FOR ROUTINE-READINESS** | Comment `5735636786`. Required the final control-state re-fetch hardening later proven on TEST #002. | None |
+| JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. START and FINAL control head both `caba1c660c658e74ceff5a4660010b46dbe84bd7`. Mid-run CI progression reported as expected movement, not conflict. Guardian not invoked. 6/6 default specialists, no-signal suppression, no GitHub write, no routine. TL recheck: CI `35390516776` completed/success. | Product Owner later for controlled Daily Routine creation/verification |
+| Routine-readiness hardening | **verified on TEST #002** | FINAL CONTROL-STATE RECHECK executed. START = FINAL = `caba1c66`. Mid-run CI settling is expected movement, not an evidence conflict and not a Guardian trigger. | None for this hardening |
+| Daily / weekly Chief-of-Staff briefs | **not running as a routine** | Two manual TEST-mode runs succeeded. No cadence. | Product Owner later after one-time routine authorization |
 | Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
 | Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
 | Shared environment has no Production-admin / service-role / payment-admin / broad write token | **NOT CHECKED** | Shared environment is one blast radius (Phase 1). Credentials cannot be independently inspected from this repository slice. Do not invent a PASS. | Product Owner / Technical Lead with environment access |
@@ -75,9 +77,9 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** — exact visible name. Only valid CoS roster slot. Canonical current CoS is the instance that produced the Phase-1 verification report and relayed E2E #001. |
 | Permissions / connections | Later target remains GitHub read + Actions read; gated plain-text Evidence-Bus comment write was used for E2E #001. No admin/secrets/write/merge. |
-| Routines | Daily Intelligence Orchestrator skill exists and completed MANUAL TEST #001. Recurring daily/weekly routines remain **not configured**. |
+| Routines | Daily Intelligence Orchestrator skill is **routine-ready** after TEST #002. Recurring daily/weekly routines remain **not configured**. |
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
-| Last verification | MANUAL TEST #001 `5735636786`; skill create `5735534623`; E2E `5735190265` / `5735209274` |
+| Last verification | MANUAL TEST #002 `5735700562`; TEST #001 `5735636786`; skill create `5735534623` |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
 | Blockers / platform limitations | None that drop the role. |
 | Next actor | Product Owner later for routines. Cursor must not edit this bot |
@@ -207,7 +209,7 @@ This is **not** one of the ten mandatory identities and must never be counted as
 - create or configure external Grok bots;
 - hide, retire, delete or mutate `Legacy Stabschef — DO NOT USE` or any other Grok identity;
 - grant tokens, connectors, or write permissions;
-- mark routines, team interoperability or HOLD exit complete merely because all ten identities exist, E2E #001 passed, or MANUAL TEST #001 passed;
+- mark routines, team interoperability or HOLD exit complete merely because the Orchestrator is routine-ready or because TEST #001/#002 passed;
 - create or schedule a Grok routine from Cursor;
 - treat the legacy Stabschef/duplicate CoS as a valid roster slot;
 - invent a shared-environment credential PASS;
@@ -219,12 +221,11 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-Profile normalization, Evidence-Bus E2E #001 and Daily Intelligence MANUAL TEST #001 are recorded. They are **not** sufficient for HOLD exit.
+The Daily Orchestrator is **routine-ready**. That authorizes only the controlled Daily Routine creation/verification layer. It does **not** lift HOLD, authorize product work, or Ready/merge #491.
 
-1. Daily Intelligence Orchestrator routine-readiness hardening: final control-state re-fetch immediately before the brief, plus `MID-RUN CONTROL-STATE CHANGE` when the live head/state moved;
-2. approved read-only routines / automations after that hardening, then verification;
-3. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
-4. any other truly live gap found by exact-head review.
+1. controlled Daily Routine creation and automation verification;
+2. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
+3. any other truly live gap found by exact-head review.
 
 Until those exist, exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path.
 

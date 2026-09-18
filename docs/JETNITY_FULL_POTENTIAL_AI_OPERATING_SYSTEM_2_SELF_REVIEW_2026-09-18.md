@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-TEST #001: comment `5735636786`
+TEST #002: comment `5735700562`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact-head CI `35390516776` SUCCESS. Vercel had not posted yet at persist time. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact-head CI `35390516776` SUCCESS. Vercel had not posted yet at persist time. Predecessor live head `7c15e1b0` had CI `35391007875` in progress and is not last-verified. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,34 +19,34 @@ Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat MANUAL TEST #001 as a scheduled routine or HOLD lift | **Rejected.** No routine created. HOLD-exit remains **OPEN**. |
-| Close the mid-run head-movement hardening because the brief already noted it | **Rejected.** TL requires a final control-state re-fetch immediately before the brief, plus `MID-RUN CONTROL-STATE CHANGE`. |
-| Treat mid-run `1feae5d` → `1d2e160` as an evidence conflict or Guardian trigger | **Rejected.** TL said do not treat it as conflict and do not call Guardian unless the change is materially suspicious. |
-| Create or schedule the routine from this persist | **Rejected.** Documentation only. |
+| Treat MANUAL TEST #002 as a scheduled routine or HOLD lift | **Rejected.** Routine-ready authorizes only the later controlled Daily Routine layer. HOLD-exit remains **OPEN**. |
+| Treat TEST #001 hardening as still OPEN | **Rejected.** TL verified FINAL CONTROL-STATE RECHECK on TEST #002. START = FINAL = `caba1c66`. |
+| Treat mid-run CI progression as an evidence conflict or Guardian trigger | **Rejected.** TL said expected state movement, not conflict; Guardian correctly not invoked. |
+| Create or schedule the routine from this persist | **Rejected.** Documentation only. Cursor must not create the routine. |
 | Call this persist the live/current head | **Rejected.** Last-verified SHA + “this persist creates a newer head.” |
 | Ready or merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- The Orchestrator skill still lacks the required final control-state re-fetch hardening.
-- No approved scheduled routine exists.
+- No approved scheduled Daily Routine exists.
 - Dedicated HOLD-exit checklist completion is still open.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `caba1c66`.
+- This persist is a newer head than `caba1c66` / `7c15e1b0`.
+- Vercel had not posted on last-verified `caba1c66` at persist time.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist MANUAL TEST #001 as successful | Yes | `5735636786` |
-| Keep one routine-readiness hardening OPEN | Yes | final control-state re-fetch |
+| Persist MANUAL TEST #002 as PASS / routine-ready | Yes | `5735700562` |
+| Do not lift HOLD | Yes | routines + HOLD-exit remain OPEN |
 | Do not create a routine | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comments `5735534623`, `5735636786`;
+- comments `5735534623`, `5735636786`, `5735700562`;
 - last verified head `caba1c66` CI `35390516776` SUCCESS; Vercel not yet posted at persist time;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 

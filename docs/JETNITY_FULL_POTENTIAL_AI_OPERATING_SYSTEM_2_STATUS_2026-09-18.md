@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 18. September 2026  
-Status: **DAILY INTELLIGENCE MANUAL TEST #001 PASS / ROUTINE-READINESS HARDENING OPEN / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **DAILY INTELLIGENCE MANUAL TEST #002 PASS / ORCHESTRATOR ROUTINE-READY / ROUTINES AND HOLD-EXIT OPEN / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -17,27 +17,32 @@ Status: **DAILY INTELLIGENCE MANUAL TEST #001 PASS / ROUTINE-READINESS HARDENING
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
 | Last verified implementation/evidence head | `caba1c660c658e74ceff5a4660010b46dbe84bd7` |
 | Evidence on that SHA | CI `35390516776` SUCCESS; Auth `105747526457` SUCCESS; Typecheck/Lint/Build `105747526609` SUCCESS; Vercel commit status **not yet posted** at persist time |
-| This persist | **creates a newer head** than `caba1c66`. It is not the live PR head. |
+| Predecessor live PR head at persist start | `7c15e1b05497c03ab1be457f71af65dff527ec25` — TEST #001 CI persist; CI run `35391007875` was still in progress; not treated as last verified |
+| This persist | **creates a newer head** than `caba1c66` and `7c15e1b0`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
 Do not treat any SHA written in this file as the current/live head. Continuity fields name the last verified predecessor plus the fact that this persist moved the branch.
 
-## 2. Implemented against TL dispatch `5735636786`
+## 2. Implemented against TL dispatch `5735700562`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. `activeMetaScope` stays #490 / #491 / OS-2. Parked #487 pointer unchanged.
 - Canonical tracker and HOLD-exit checklist now record:
-  - skill `Jetnity Daily Intelligence Orchestrator` **created / not scheduled** (`5735534623`);
-  - `JETNITY-DAILY-INTELLIGENCE-TEST-001` **PASS WITH ONE SKILL HARDENING BEFORE ROUTINE CREATION** (`5735636786`);
-  - no routine created;
-  - no GitHub write from the skill;
-  - canonical CoS owned the run; 6/6 default daily specialists returned no-material signals; Product & UX, Analytics and Guardian correctly skipped; Legacy Stabschef not contacted.
-- Still **OPEN**: final control-state re-fetch immediately before emitting the brief, with `MID-RUN CONTROL-STATE CHANGE` when the live head/state moved; approved scheduled routines after that hardening; dedicated HOLD-exit verification.
-- No GitHub Ruleset/admin mutation. No Cursor Grok skill/routine mutation. No product/runtime. PR #487 untouched.
+  - skill `Jetnity Daily Intelligence Orchestrator` **created / routine-ready / not scheduled**;
+  - `JETNITY-DAILY-INTELLIGENCE-TEST-001` `5735636786` PASS WITH HARDENING, later proven on TEST #002;
+  - `JETNITY-DAILY-INTELLIGENCE-TEST-002` **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** (`5735700562`);
+  - FINAL CONTROL-STATE RECHECK executed; START and FINAL control head both `caba1c660c658e74ceff5a4660010b46dbe84bd7`;
+  - mid-run CI progression reported as expected state movement, not an evidence conflict;
+  - Guardian not invoked for normal CI settling;
+  - 6/6 default specialists; Product & UX, Analytics and Guardian suppressed; Legacy Stabschef excluded;
+  - no GitHub write; no routine/schedule during the test;
+  - this authorizes only the later controlled Daily Routine creation/verification layer.
+- Still **OPEN**: controlled Daily Routine creation and automation verification; dedicated HOLD-exit verification.
+- No GitHub Ruleset/admin mutation. No Cursor Grok skill/routine mutation. No product/runtime. PR #487 untouched. HOLD not lifted. No Ready. No merge.
 
 ## 3. Local gates on last verified tree `caba1c66`
 
-Run by this writer on the TEST #001 persist SHA before the evidence commit.
+Recorded on the TEST #001 persist that produced `caba1c66`. This persist is documentation only on the same product/runtime tree.
 
 | Gate | Result |
 | --- | --- |
@@ -60,10 +65,10 @@ Run by this writer on the TEST #001 persist SHA before the evidence commit.
 | Vercel | **not yet posted** at persist time — Technical Lead must re-fetch the live head |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
-| TEST #001 dispatch | `5735636786` |
+| TEST #002 dispatch | `5735700562` |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `caba1c66`.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `caba1c66`. Predecessor head `7c15e1b0` had CI `35391007875` in progress at persist start and is not last-verified.
 
 ## 5. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor-created or Cursor-mutated Grok bots, skills or routines. No Ready. No merge. No follow-up slice. No GitHub admin settings. HOLD remains in force.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor-created or Cursor-mutated Grok bots, skills or routines. TEST #002 does **not** create a scheduled routine and does **not** lift HOLD. No Ready. No merge. No follow-up slice. No GitHub admin settings. HOLD remains in force.
