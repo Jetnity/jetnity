@@ -36,14 +36,18 @@ This slice extends the existing Technical-Lead, Multi-Agent, Slice-Planning and 
 
 ## 2. Agent / reviewer lane matrix
 
-Canonical table: `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §2a.
+Two layers, not one collapsed roster:
+
+1. **Permanent Grok Intelligence & Assurance roles** (canonical target of ten, documentation only): Chief of Staff, Guardian, Market & Traveller Intelligence, Provider & Commercial Intelligence, Travel Truth & Regulation Intelligence, Product & UX Explorer, Growth & Discoverability, Analytics & Experimentation, FinOps & Reliability, Security & Privacy Red Team. Defined in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. Responsibilities must not be silently collapsed into five generalists.
+2. **Engineering/review lanes** (scope-dependent, not 1:1 with the ten bots): Builder, Codebase Explorer, Architecture & Truth, Security & Privacy review, DB / RLS specialist, QA / Regression, UX / Accessibility, Performance, Cost / Quota, Release / Continuity, Documentation / Continuity. Canonical table: `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §2a.
 
 Summary:
 
 - **Builder** is the only writer on a branch.
-- All other listed lanes are read-only challenge/evidence.
-- Guardian/Grok means the separate Product-Owner Guardian app. Cursor Grok 4.6 High Fast is a Cursor implementation model and must never be labelled Guardian.
+- All other listed lanes are read-only challenge/evidence unless the tasked writer already owns that documentation slice.
+- Guardian/Grok means the separate Product-Owner Guardian app. Cursor Grok 4.6 High Fast is a Cursor implementation model and must never be labelled Guardian or any of the nine future identities.
 - A Cursor specialist may fill a read-only lane only when that capability is actually available and the Technical Lead scoped it that way. Missing capability is documented as `not checked`, never invented.
+- Chief of Staff coordinates Grok specialists; it does not replace the Technical Lead.
 
 ## 3. Branch / PR topology
 
@@ -61,9 +65,9 @@ After this foundation is merged and independently verified, later AI-OS meta-sli
 
 ## 4. Routine trigger matrix
 
-Canonical table: `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §11.1.
+Two catalogs:
 
-Required routines now:
+**Engineering operating routines now** — `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §11.1:
 
 1. startup / live reconstruction;
 2. operating-mode / HOLD check before any new dispatch;
@@ -76,6 +80,10 @@ Required routines now:
 9. high-risk Guardian trigger (TL prompt, PO runs separate app);
 10. post-merge verification;
 11. continuity stale-doc audit.
+
+**Future Grok automation catalog** — documented only, not scheduled: Daily Repository/CI Pulse; Market Radar; Traveller Pain-Point Radar; Provider/Commercial Change Radar; Travel Truth/Regulation Radar; Product/UX Synthetic Journey Review; Growth/Discoverability Review; Analytics/Experiment Review; FinOps/Reliability Watch; Security/Privacy Adversarial Review; Weekly Strategic Opportunity Synthesis; Milestone Whole-Jetnity Audit; PR/CI/Release triggered reviews.
+
+Chief of Staff later consolidates those into **JETNITY DAILY INTELLIGENCE BRIEF** and **JETNITY WEEKLY STRATEGIC BRIEF**. Schemas live in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. This slice does not generate briefs or create schedules.
 
 Routines may use connected skills/tools only when those tools are actually present. This slice does not claim browser, billing, Supabase-write or external Grok-admin capability.
 
@@ -116,15 +124,16 @@ Parked PR #487 is not unparked by this exit. Unparking it is a separate TL decis
 
 ## 8. Future Grok-app setup checklist
 
-Documentation only. Canonical pack: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a.
+Documentation only. Canonical ten-role pack: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a.
 
-Product Owner later, not this slice:
+Product Owner later, not this slice, role by role:
 
-1. decide whether any specialized sibling bot is actually needed;
-2. create that bot in the external Grok app;
+1. decide whether any identity beyond the existing Guardian app is actually needed now; do not pre-create all ten;
+2. if created, name it exactly (`Jetnity Chief of Staff`, `Jetnity Market & Traveller Intelligence`, `Jetnity Provider & Commercial Intelligence`, `Jetnity Travel Truth & Regulation Intelligence`, `Jetnity Product & UX Explorer`, `Jetnity Growth & Discoverability`, `Jetnity Analytics & Experimentation`, `Jetnity FinOps & Reliability`, `Jetnity Security & Privacy Red Team`);
 3. install least-privilege GitHub permissions (read + optional comment write; never contents write, admin, secrets, merge);
-4. keep Vercel/Supabase/billing disconnected until a separate connection decision;
-5. never treat `@cursor` as Guardian.
+4. keep Vercel/Supabase/billing/Production-admin disconnected until a separate connection decision for that exact role;
+5. do not start daily/weekly schedules merely because the catalog exists;
+6. never treat `@cursor` as Guardian or as any future Grok identity.
 
 ## 9. Remaining OS meta-slices — exact dependency order
 

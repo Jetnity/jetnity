@@ -24,7 +24,7 @@ Status: **IMPLEMENTATION PERSISTED / LOCAL GATES PENDING ON THIS HEAD / STOP FOR
 - `.jetnity/operating-mode.json` = `AI_OS_BUILD_HOLD` with Issue #440, parked PR #487 pointer and exit condition.
 - `scripts/operating-mode-guard.mjs` + fixtures + `npm run check:operating-mode` + CI integration with `fetch-depth: 0`.
 - Canonical TL / Multi-Agent / Slice-Planning / Guardian / START_HERE / AGENTS / ACTIVE_WORK_STATUS / 18 Sep checkpoint extended. Historical closures preserved.
-- Future Grok roster documented only. No bot created. No permission granted.
+- Canonical ten-role Grok Intelligence & Assurance target documented only, not collapsed to five generalists. No bot, team, schedule or permission created.
 - PR #487 not touched.
 
 ## 3. Still open on this persist

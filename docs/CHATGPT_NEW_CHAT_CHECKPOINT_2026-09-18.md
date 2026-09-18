@@ -18,7 +18,7 @@ A new Technical Lead must read, in this order:
 7. `JETNITY_HANDOFF.md`
 8. any current task/status/handoff/review evidence discovered during live reconstruction.
 
-**PRODUCT DEVELOPMENT HOLD is active.** Exclusive priority is the Full-Potential AI Operating System. Do not start a normal product slice. PR #487 is parked, not lost. The Technical Lead may still make normal architecture/governance/review/integration decisions inside the meta-scope and, after HOLD exit, may autonomously select the next bounded slice unless a special gate applies. The external Grok team is not created.
+**PRODUCT DEVELOPMENT HOLD is active.** Exclusive priority is the Full-Potential AI Operating System. Do not start a normal product slice. PR #487 is parked, not lost. The Technical Lead may still make normal architecture/governance/review/integration decisions inside the meta-scope and, after HOLD exit, may autonomously select the next bounded slice unless a special gate applies. The external Grok team is not created. The canonical future Grok target is ten distinct Intelligence & Assurance roles, not a collapsed five-role set; documentation only.
 
 Then independently verify live:
 - current `main`;
