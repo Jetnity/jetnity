@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 18. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / PR #457 MERGED / EXACT-MERGE PRODUCTION READY / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / PR #460 MERGED / EXACT-MERGE PRODUCTION READY / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -13,7 +13,9 @@ Canonical current transition checkpoint:
 
 Assistant Runtime 1 and the Multi-Agent Operating System are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
-V1 Legal Claim Hygiene 1 is also **CLOSED / MERGED** via PR #457. Current continuity refresh baseline is `main@e534e0f55cb4da5ebdc5222351e4e29e608b1007`. The exact accepted PR head `f132ac092ff1bd78e22dde0055a45fe74dab7d24` passed full CI; the merge commit has 0 file differences from that head; Vercel Production `dpl_6hpZrab1QPVk1o7m4nNPw4PhZUiX` is READY on the exact merge SHA. The available GitHub connector cannot expose push-triggered runs, so no unseen post-merge Actions run is claimed.
+V1 Legal Claim Hygiene 1 is **CLOSED / MERGED** via PR #457.
+
+V1 Admin MFA Loss Recovery Runbook 1 is **CLOSED / MERGED** via PR #460. Latest continuity baseline is `main@6f79b45a70374518aef0b6f1a9ab4479f0798827`. Accepted head `f0f6c892dc22cfc1cf2cf00093f8740b36155c03` passed full exact-head CI and an independent read-only Guardian PASS; the merge commit has 0 file differences from that head; Vercel Production `dpl_doA4VePRj6BAuAvQXWqQerHUdHqc` is READY on the exact merge SHA. The available GitHub connector does not expose push-triggered main workflow runs, so no unseen post-merge Actions run is claimed.
 
 Latest verified governance integration baseline:
 - PR #453 accepted head: `afc09b378676d7350101f2ee7b5b2dfd2f93d934`;
@@ -128,6 +130,22 @@ PR #457 / issue #456:
 
 The available GitHub connector only exposes PR-triggered workflow runs through commit lookup, so the main push run is not independently visible here and is not falsely claimed.
 
+## 4b. V1 Admin MFA Loss Recovery Runbook 1 — CLOSED
+
+PR #460 / issue #459:
+- accepted exact head `f0f6c892dc22cfc1cf2cf00093f8740b36155c03`;
+- merge/current continuity baseline `6f79b45a70374518aef0b6f1a9ab4479f0798827`;
+- exact-head CI run `35294323671`: SUCCESS;
+- exact-head Vercel Preview `dpl_FY7MzpD7mEAuMQeyncdnbCPW9PJJ`: READY;
+- exact-merge Vercel Production `dpl_doA4VePRj6BAuAvQXWqQerHUdHqc`: READY;
+- accepted head -> merge: 0 changed files;
+- independent Guardian session: GUARDIAN PASS, no P0/P1/P2 finding;
+- TL P2 correction preserved: post-recovery data-plane validation is read-only/non-mutating;
+- runbook preserves app-user-vs-platform-MFA separation, exact identity/factor verification, permanent AAL2, fail-closed compromise handling and later Product-Owner gate for any live Production factor deletion;
+- no live Auth/Supabase mutation, factor deletion, provider/secret/cost change.
+
+Guardian review issue #461 is closed as completed.
+
 ## 5. Current broader product state
 
 Closed/core surfaces include:
@@ -212,4 +230,4 @@ Then reconstruct live:
 
 Do not treat historical Draft PRs as active work merely because they are open. Do not infer a next product slice from this file. Select the smallest responsible bounded next step only after live reconstruction and current Product-Owner gate checks.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**
