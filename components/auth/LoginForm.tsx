@@ -284,10 +284,6 @@ export default function LoginForm({
         <Link href={`/register?next=${encodeURIComponent(nachErfolg)}`} className="text-primary hover:underline">Konto erstellen</Link>
       </p>
 
-      <p className="mt-4 text-xs text-center text-muted-foreground">
-        Mit der Anmeldung stimmst du unseren Richtlinien zu. Datenschutz: DSGVO &amp; CH-DSG konform.
-      </p>
-
       {/* MFA – TOTP Dialog */}
       <MFATotpDialog
         open={mfaOpen}
