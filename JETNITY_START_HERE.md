@@ -1,9 +1,9 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 18. September 2026  
-Status: **PRODUCT DEVELOPMENT HOLD / FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY / KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MULTI-AGENT OPERATING SYSTEM CANONICAL / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / PR #487 PARKED SAFE / NO NORMAL PRODUCT FOLLOW-UP UNTIL OS CLOSURE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
+Status: **PRODUCT DEVELOPMENT HOLD / FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY / OS-1 PR #489 MERGED POST-MERGE VERIFIED / OS-2 #490 CURRENT GOVERNANCE-EVIDENCE CONTROL SLICE / EXTERNAL TEN-ROLE SETUP NEXT REQUIRED PHASE / KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MULTI-AGENT OPERATING SYSTEM CANONICAL / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / PR #487 PARKED SAFE / NO NORMAL PRODUCT FOLLOW-UP UNTIL OS CLOSURE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
 
-> **PRODUCT DEVELOPMENT HOLD is active.** Exclusive Product-Owner-priority meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM**. Machine mode: `.jetnity/operating-mode.json` = `AI_OS_BUILD_HOLD`. Do not start, resume or follow a normal product/runtime/security/account/provider/UX slice. Parked product Draft PR #487 / Issue #486 remains a safe STOP at `12d070a79c35fbb9f03d1302833eee8561ec17bd` and must not be resumed or merged from this HOLD. The external Grok team is **not** created in this repository slice. The canonical Grok target is **ten distinct Intelligence & Assurance responsibilities**, not a reduced five-role generalist set. Later external setup of all ten roles plus approved read-only routines, and the agreed GitHub hard-enforcement baseline (or a PO-accepted limitation), are **required before HOLD lift**. Separate Grok identities on the same account/environment are not security isolation boundaries. Cursor must not activate GitHub Rulesets. The in-repo HOLD guard is not tamper-proof against an authorized enforcement-plane rewrite. Technical Lead autonomous normal architecture/governance/review/integration authority remains, constrained by this operating mode and the reserved special Product-Owner gates. `no automatic follow-up slice` binds Cursor, Guardian and reviewer agents; it does **not** require the Product Owner to pick every next normal slice after HOLD exit.
+> **PRODUCT DEVELOPMENT HOLD is active.** Exclusive Product-Owner-priority meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM**. Machine mode: `.jetnity/operating-mode.json` = `AI_OS_BUILD_HOLD`. Full-Potential AI Operating System 1 / PR #489 is **MERGED / POST-MERGE VERIFIED** on `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133`. Current governance/evidence control slice is OS-2 / Issue #490 / Draft PR #491. The next required phase is the external ten-role Grok setup plus approved read-only routines, Evidence Bus and e2e verification. Do not start, resume or follow a normal product/runtime/security/account/provider/UX slice. Parked product Draft PR #487 / Issue #486 remains a safe STOP at `12d070a79c35fbb9f03d1302833eee8561ec17bd` and must not be resumed or merged from this HOLD. The external Grok team is **not** created in this repository slice. Only the existing Product-Owner `Jetnity Guardian` app is known to exist; the other nine named identities remain uncreated. The canonical Grok target is **ten distinct Intelligence & Assurance responsibilities**, not a reduced five-role generalist set. Live control surface: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`. The agreed GitHub hard-enforcement non-lockout baseline is **live-verified** as already-active Ruleset `21875372` (`Jetnity main protection`). Cursor must not mutate GitHub Rulesets. The in-repo HOLD guard is not tamper-proof against an authorized enforcement-plane rewrite. Technical Lead autonomous normal architecture/governance/review/integration authority remains, constrained by this operating mode and the reserved special Product-Owner gates. `no automatic follow-up slice` binds Cursor, Guardian and reviewer agents; it does **not** require the Product Owner to pick every next normal slice after HOLD exit.
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -229,7 +229,7 @@ Generic `weiter`, `bauen`, `start` oder Cursor-Autorisierung genehmigen keines d
 
 ## 8. Current work boundary
 
-**PRODUCT DEVELOPMENT HOLD / exclusive AI-OS meta-scope is binding policy, not a live PR list.** Machine mode `AI_OS_BUILD_HOLD` and Issue #440 forbid normal product follow-up until a dedicated Technical-Lead closure after independent OS verification. Exact current writer, branch, PR and head are still reconstructed live.
+**PRODUCT DEVELOPMENT HOLD / exclusive AI-OS meta-scope is binding policy, not a live PR list.** Machine mode `AI_OS_BUILD_HOLD` and Issue #440 forbid normal product follow-up until a dedicated Technical-Lead closure after independent OS verification. OS-1 / PR #489 is a closed foundation truth. OS-2 / #490 is the current governance/evidence control slice; exact current writer, branch, PR and head are still reconstructed live.
 
 **Der momentane Arbeitsstand steht nicht in diesem Dokument.**
 
@@ -249,7 +249,17 @@ Assistant Runtime 1 is now **CLOSED / MERGED / POST-MERGE VERIFIED**. Any future
 
 Multi-Agent Operating System is **CLOSED / MERGED / POST-MERGE VERIFIED** via PR #453. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` is canonical startup governance; PR #453 must not be treated as unfinished work.
 
-The next Technical-Lead cycle must first reconstruct live state and select the smallest responsible remaining provider-independent V1 gap. The Product Owner's general direction to keep building provider-neutrally does not bypass slice precheck, architecture/truth review or special gates.
+Full-Potential AI Operating System 1 is **CLOSED / MERGED / POST-MERGE VERIFIED** via PR #489 / issue #488:
+- accepted exact head `824e3a2f24f88140f6673b946139b5059f44d25b`;
+- merge / current foundation main `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`;
+- Technical-Lead FINAL PASS comment `5733949233`;
+- post-merge CI `35376407897` SUCCESS;
+- Vercel Production success / READY on that exact merge SHA;
+- GitHub Ruleset `21875372` live-verified as the already-active non-lockout baseline.
+
+This does **not** lift HOLD. Current governance/evidence control slice is OS-2 / Issue #490. Exact writer/head remain live-reconstructed. The next required phase is the external ten-role Grok setup recorded in `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`. No normal product follow-up.
+
+The next Technical-Lead cycle must first reconstruct live state. While HOLD is active, do not select a normal product slice. The Product Owner's general direction to keep building provider-neutrally does not bypass slice precheck, architecture/truth review or special gates.
 
 TW-8 remains dependent on real Flight Commercial Truth and stays closed.
 
@@ -281,7 +291,7 @@ Every material slice must:
 8. final PASS and integration remain Technical-Lead-owned;
 9. Cursor, Guardian and reviewer agents start no automatic next slice; after HOLD exit the Technical Lead may autonomously select the next bounded slice unless a Product-Owner HOLD or special gate says otherwise;
 10. Guardian-/Grok-Bot-Befunde sind Evidence und Input für den Technical Lead; sie sind niemals ein Technical-Lead-PASS, und der Guardian setzt niemals Ready und merged niemals. Verbindlich: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
-11. During `AI_OS_BUILD_HOLD`, refuse normal product follow-up and keep PR #487 parked.
+11. During `AI_OS_BUILD_HOLD`, refuse normal product follow-up, keep PR #487 parked, and treat OS-2 / #490 as the current governance/evidence control slice until HOLD exit.
 
 ## 12. Critical V1 gaps still open
 
@@ -299,4 +309,4 @@ Principally open:
 
 Destination Essentials 1, basic World Map 1, Assistant Truth Context 1 and Assistant Runtime 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
 
-**LIVE-EVIDENCE WINS. PRODUCT DEVELOPMENT HOLD ACTIVE. FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY. PR #487 PARKED SAFE. EXTERNAL GROK TEAM NOT CREATED. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. ASSISTANT RUNTIME 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION GATES CLOSED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. CURSOR/GUARDIAN START NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**
+**LIVE-EVIDENCE WINS. PRODUCT DEVELOPMENT HOLD ACTIVE. FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY. OS-1 / PR #489 MERGED POST-MERGE VERIFIED. OS-2 / #490 CURRENT GOVERNANCE-EVIDENCE CONTROL SLICE. EXTERNAL TEN-ROLE SETUP NEXT REQUIRED PHASE. PR #487 PARKED SAFE. EXTERNAL GROK TEAM NOT CREATED. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. ASSISTANT RUNTIME 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION GATES CLOSED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. CURSOR/GUARDIAN START NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**
