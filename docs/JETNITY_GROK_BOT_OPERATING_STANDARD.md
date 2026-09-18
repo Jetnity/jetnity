@@ -715,7 +715,7 @@ Chief of Staff later produces this. Not generated in this slice.
 - items requiring Product-Owner decision;
 - explicit `NO MATERIAL CHANGE` sections instead of invented content.
 
-Scheduled Daily specialist → CoS handoff after native scheduler CANARY #002 uses the OS-2 V2 envelope contract, not scheduled bot-to-bot messaging: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`. That contract does not replace this brief schema. Canonical finding/source schema hardening is PASS. Recurring Daily pulses must apply the §4d novelty / re-reporting gate before clone.
+Scheduled Daily specialist → CoS handoff after native scheduler CANARY #002 uses the OS-2 V2 envelope contract, not scheduled bot-to-bot messaging: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`. That contract does not replace this brief schema. Canonical finding/source schema hardening is PASS. Market writer novelty / re-reporting hardening is PASS. Clone remains blocked until one native scheduled re-canary plus CoS direct read of the refreshed file pass.
 
 ### JETNITY WEEKLY STRATEGIC BRIEF — schema
 

@@ -1,10 +1,11 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 18. September 2026  
-Status: **CANONICAL CONTRACT / MARKET SCHEMA HARDENING PASS / NOVELTY GATE REQUIRED BEFORE CLONE / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / MARKET NOVELTY HARDENING PASS / NATIVE RE-CANARY REQUIRED BEFORE CLONE / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
+Novelty-hardening TEST #001: PR #491 comment `5737291119`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -139,9 +140,9 @@ A `source_refs` entry that does not match a `source_id` makes that finding **inv
 
 ### 4d. Novelty / re-reporting gate
 
-Canonical Daily-intelligence quality rule after `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`). Schema hardening **PASS** does **not** authorize clone until this gate is adopted.
+Canonical Daily-intelligence quality rule after `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`). Market writer adoption is **PASS** via `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`). That closes the re-reporting gap for the existing Market writer. It does **not** authorize clone until one native scheduled re-canary of the hardened routine/skill plus a Chief-of-Staff direct read of the refreshed file also pass.
 
-The test ran at `2026-09-19 01:02 Europe/Zurich` and elevated unchanged announcements dated `2026-09-10` and `2026-09-15` as `MATERIAL` in the current daily envelope. That is a quality defect for a recurring Daily pulse.
+The schema-hardening test ran at `2026-09-19 01:02 Europe/Zurich` and elevated unchanged announcements dated `2026-09-10` and `2026-09-15` as `MATERIAL` in the current daily envelope. That was a quality defect for a recurring Daily pulse. The novelty-hardening test suppressed those prior Agoda / Meta Muse / ixigo / Travelxp Marco / Trip.Biz items as old/unchanged and returned `NO_MATERIAL`.
 
 1. Track a canonical daily reporting window (`window_start` / `window_end`, normally `Europe/Zurich`).
 2. Distinguish every finding as one of:
@@ -201,7 +202,7 @@ Keep this routine **PAUSED** until the V2 aggregation path is verified.
 
 ## 8. Required testing sequence
 
-Do not skip ahead. Do not clone five more specialist routines until Market a–c are proven, later writer skills emit the hardened finding/source objects, **and** the §4d novelty / re-reporting gate is adopted.
+Do not skip ahead. Do not clone five more specialist routines until Market a–c, schema hardening, novelty hardening, **and** one native scheduled re-canary plus CoS direct read of the refreshed hardened file all pass.
 
 | Step | Proof required | State |
 | --- | --- | --- |
@@ -209,8 +210,9 @@ Do not skip ahead. Do not clone five more specialist routines until Market a–c
 | b | Chief of Staff can read and validate that envelope cross-bot | **PASS** — `5736895145` |
 | c | One specialist **scheduled** routine can refresh that envelope and CoS can read it without bot messaging | **PASS for transport** — scheduled Market `5737150676` + CoS read `5737188145` (`JETNITY-MARKET-PULSE-20260919-0053`) |
 | schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
-| novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **OPEN** — required before clone |
-| d | Clone the proven pattern to the remaining five specialists | **OPEN** — blocked until writer skills adopt §4a–4d |
+| novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **PASS for Market writer** — `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`) |
+| re-canary | Native scheduled refresh of the hardened Market skill + CoS direct read of the refreshed file | **OPEN** — final Market proof before clone |
+| d | Clone the proven pattern to the remaining five specialists | **OPEN** — blocked until the native re-canary + CoS read pass |
 | e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on d |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
