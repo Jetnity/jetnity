@@ -5,38 +5,29 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #474  
 Draft PR: #476  
-Gated implementation head: `dd99ee9d70b6b6c704d35e889b8600c41c8b6345`  
-Exact-head CI: `35337090168` SUCCESS  
-Exact-head Vercel: `C5vUCdkrgYY1P1vCPMTHdJb3oj9j` READY
+Reconciliation merge: `a9541fdd751b9e2274a0a1172a0cebbb36390ab6`  
+Reconciled main: `ac3539d9ceff4e96308a48c51d2d317927245b54`
 
 This document cannot replace an independent Technical-Lead PASS.
 
 ---
 
-## 1. Attacks on this slice
+## 1. Attacks on the reconciliation
 
 | Attack | Result |
 | --- | --- |
-| Use service role because RLS “might be incomplete” | Rejected. Live TL precheck already recorded owner SELECT policies. |
-| Accept `user_id` from query/body/path | Rejected. `GET()` has no Request parameter. |
-| Reuse in-memory provider cost guard as a real export limiter | Rejected. Documented as unreliable across serverless instances. |
-| Add a rate-limit table/migration | Rejected. Hard exclusion. |
-| Persist the JSON in Storage | Rejected. Direct response only. |
-| Export unrelated `user_id` tables or commercial provenance | Rejected. Explicit table list only. |
-| Hide `.from('trip_travellers')` to dodge the write-path inventory | Rejected. Inventory was updated to allow this helper only as SELECT. |
-| Call this account deletion or a complete DSAR package | Rejected. Settings copy and JSON scope say Jetnity-owned rows only. |
-| Touch #475 CookieConsent files or global continuity | Rejected. |
+| Persist evidence without merging main | Rejected. This session merged `origin/main@ac3539d9`. |
+| Merge a sibling feature branch | Rejected. Only `origin/main`. #477 arrived via main. |
+| Resolve a conflict by dropping #477 or #476 | No conflict occurred. Both sides kept. |
+| Rebase/force-push | Rejected. Merge commit used. |
+| Change accepted export runtime while reconciling | Rejected. Runtime/tests vs `3f8b29b7` unchanged. |
 | Mark Ready or merge #476 | Rejected. |
 
 ## 2. Residual risks
 
-- No globally durable export throttle. A motivated authenticated client can repeat downloads.
-- `/api/account` is not in `proxy.ts`; the route is the auth gate.
-- PostgREST pages are read in 1000-row steps up to 20_000 rows per table; beyond that the export fails closed.
-- Profile/travel rows may contain sensitive traveller facts already stored by the user. That is intended and warned.
-- Authenticated happy-path download was not live-exercised here.
-- This evidence persist invalidates exact-head gates on `dd99ee9d`.
+- This evidence persist invalidates exact-head gates on `a9541fdd`. Re-gate the new head if FINAL PASS requires it.
+- No globally durable export throttle. Authenticated happy-path download was not live-exercised in this agent.
 
 ## 3. Recommendation
 
-The bounded export is implemented and locally plus exact-head gated on `dd99ee9d`. Review the current PR head after this persist. Do not treat this self-review as PASS.
+Reconciliation is done: merge-base is current main, behind is 0. Review the current PR head after this persist and after that head's own CI / Preview.
