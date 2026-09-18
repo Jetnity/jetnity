@@ -74,8 +74,8 @@ describe('project sanitation closure invariants', () => {
     assert.match(ignore, /supabase\/\.branches\//)
   })
 
-  test('bewusst offene oder gated Sanitation-Funde bleiben unverändert sichtbar', () => {
-    assert.equal(existsSync(join(wurzel, 'components/layout/CookieConsent.tsx')), true)
+  test('CookieConsent-Orphan ist entfernt; V1 Image-Hosts bleiben gated sichtbar', () => {
+    assert.equal(existsSync(join(wurzel, 'components/layout/CookieConsent.tsx')), false)
     const nextConfig = lies('next.config.js')
     assert.match(nextConfig, /jetnity\.ai/)
     assert.match(nextConfig, /oaidalleapiprodscus\.blob\.core\.windows\.net/)

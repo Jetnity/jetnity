@@ -108,20 +108,49 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
     assert.equal(login.includes('href="/terms"'), false)
   })
 
-  test('CookieConsent bleibt Orphan und zeigt auf /privacy', () => {
-    assert.equal(existsSync(join(wurzel, 'components/layout/CookieConsent.tsx')), true)
-    const banner = quelle('components/layout/CookieConsent.tsx')
-    assert.equal(banner.includes("jetnity:cookie-consent:v1"), true)
-    assert.equal(banner.includes('href="/privacy"'), true)
-    assert.equal(banner.includes('Views/Likes'), true)
-    const imports = inhalte.filter(
-      (datei) =>
-        datei.pfad !== 'components/layout/CookieConsent.tsx' &&
-        datei.text.includes("from '@/components/layout/CookieConsent'"),
+  test('CookieConsent ist entfernt; kein Banner und kein Tracking-Claim', () => {
+    // Current truthful V1 state: no non-essential tracker, therefore no mounted
+    // consent banner. Introducing a tracker later is a separate explicit
+    // consent/legal gate — not a reason to restore this orphan or invent copy.
+    assert.equal(existsSync(join(wurzel, 'components/layout/CookieConsent.tsx')), false)
+    const imports = inhalte.filter((datei) =>
+      datei.text.includes("from '@/components/layout/CookieConsent'"),
     )
     assert.deepEqual(imports.map((datei) => datei.pfad), [])
     const tot = quelle('scripts/erreichbarkeit.mjs')
-    assert.equal(tot.includes("components/layout/CookieConsent.tsx"), true)
+    assert.equal(tot.includes('components/layout/CookieConsent.tsx'), false)
+    assert.equal(
+      inhalte.some((datei) => datei.text.includes('jetnity:cookie-consent:v1')),
+      false,
+    )
+    assert.equal(
+      inhalte.some((datei) => datei.text.includes('Views/Likes')),
+      false,
+    )
+    const pakete = JSON.parse(quelle('package.json')) as {
+      dependencies?: Record<string, string>
+      devDependencies?: Record<string, string>
+    }
+    const paketNamen = [
+      ...Object.keys(pakete.dependencies ?? {}),
+      ...Object.keys(pakete.devDependencies ?? {}),
+    ]
+    const tracker = [
+      '@sentry/nextjs',
+      '@vercel/analytics',
+      'posthog-js',
+      'mixpanel-browser',
+      '@mixpanel/browser',
+      'plausible-tracker',
+      '@plausible-analytics/tracker',
+      '@hotjar/browser',
+      'react-ga4',
+      'ga-gtag',
+    ]
+    assert.deepEqual(
+      paketNamen.filter((name) => tracker.includes(name)),
+      [],
+    )
   })
 
   test('Footer und Navbar haben keine Legal-Links', () => {
