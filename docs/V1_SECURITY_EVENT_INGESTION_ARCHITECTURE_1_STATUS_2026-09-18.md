@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 STATUS
 
 Stand: 18. September 2026  
-Status: **ARCHITECTURE DECIDED ON THIS HEAD / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **ARCHITECTURE DECIDED / `98b0ff33` EXACT-HEAD GATES RECORDED / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #486  
 Draft PR: #487  
@@ -9,7 +9,8 @@ Branch: `docs/v1-security-event-ingestion-architecture-1`
 Binding task: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
 Canonical base / live `origin/main` at reconstruction: `0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2`  
-Dispatch head: `64379ec3c8afdc4ea99bfbae72fceebd8e35ebc5`
+Dispatch head: `64379ec3c8afdc4ea99bfbae72fceebd8e35ebc5`  
+Implementation head: `98b0ff33472765303a6544a887b5f24fc371d4b3`
 
 Cursor-Agent: **Jetnity V1 security event ingestion architecture 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast** — confirmed on this run (`originalModelName=cursor-grok-4.6-high-fast`)  
@@ -78,23 +79,31 @@ Not introduced or touched:
 - Ready / merge / follow-up slice
 - marking finding 5.2 resolved
 
-## 6. Local gates
+## 6. Local gates on `98b0ff33`
 
-Recorded after the implementation persist. Docs-only; no production-build claim beyond what was actually run.
+Docs-only. No local `npm test` / production-build rerun was required; GitHub CI ran Typecheck, Lint & Build on that SHA.
 
 | Gate | Result |
 | --- | --- |
-| Changed-file scope | pending this persist |
-| `git merge-base` vs live `origin/main` | `0c83af42` = live main; behind **0** at reconstruction |
-| Documentation / repository hygiene | pending this persist |
+| Changed-file scope vs `origin/main` | **5 docs files only** (task + DECISION/STATUS/HANDOFF/SELF_REVIEW) |
+| Forbidden runtime/continuity paths | **none** |
+| `git merge-base` vs live `origin/main` | `0c83af42` = live main; behind **0** |
+| Finding 5.2 marked resolved | **no** |
 | DB / Auth / Production calls | **none** |
 | Browser `/admin/security` | **not** performed; no UI change |
 
-## 7. Exact-head CI / Preview
+## 7. Exact-head CI / Preview on `98b0ff33`
 
-Dispatch head `64379ec3` had Vercel Preview READY `5e5ho1cRB9BC8qJbazWN68ZFGWiz`. That SHA is **not** this implementation head.
+Recorded before this persist. This persist is a newer HEAD and invalidates these bindings.
 
-Exact-head GitHub Actions + Vercel on the **live HEAD after this persist** must be re-fetched. This persist invalidates `64379ec3` bindings.
+| | |
+| --- | --- |
+| GitHub Actions | [`35366837440`](https://github.com/Jetnity/jetnity/actions/runs/35366837440) **SUCCESS** — Auth-Konfiguration `105671244691`; Typecheck, Lint & Build `105671244350`; Vercel Preview Comments `105671369711` |
+| Combined commit status | `success` on `98b0ff33472765303a6544a887b5f24fc371d4b3` |
+| Vercel | `69HMZy4hedL3iAD81xdpZng1RDQD` **READY** |
+| Preview | https://jetnity-app-git-docs-v1-security-event-65dec6-jetnity-e1b93c82.vercel.app |
+
+Dispatch-head Preview `5e5ho1cRB9BC8qJbazWN68ZFGWiz` is historical only.
 
 ## 8. Drift / thread report (re-fetched `origin/main`)
 
@@ -102,7 +111,7 @@ Exact-head GitHub Actions + Vercel on the **live HEAD after this persist** must 
 | --- | --- |
 | Live `origin/main` | `0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` |
 | Merge-base | `0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` |
-| Ahead / behind before this persist | **2 / 0** (task commits `84a5ec7b`, `64379ec3`) |
+| Ahead / behind before this persist | **3 / 0** (`84a5ec7b`, `64379ec3`, `98b0ff33`). Persist adds one more ahead commit. |
 | Drift vs current main | **none** |
 | PR #487 | Draft, open, not merged, `mergeable_state=blocked` (draft) |
 | Formal reviews | none |

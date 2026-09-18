@@ -56,10 +56,10 @@ This document argues against the decision. It cannot replace an independent Tech
 | No global continuity edits | Yes | |
 | Do not mark 5.2 resolved | Yes | |
 | Persist DECISION / STATUS / HANDOFF / SELF_REVIEW | Yes | |
-| Exact-head evidence | Pending live HEAD after persist | Dispatch-head Preview is stale |
+| Exact-head evidence | Yes on `98b0ff33` | CI `35366837440` SUCCESS; Vercel `69HMZy4hedL3iAD81xdpZng1RDQD` READY. This persist invalidates that SHA. |
 | Review threads 0 before stop | Yes at reconstruction | Re-fetch on live HEAD |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-Re-fetch CI, Vercel Preview, merge-base and review threads on the live HEAD created by this persist. Agent self-review is still not PASS.
+`98b0ff33` had CI `35366837440` SUCCESS and Vercel `69HMZy4hedL3iAD81xdpZng1RDQD` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.

@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **ARCHITECTURE DECIDED / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **ARCHITECTURE DECIDED AT `98b0ff33` / RE-GATE THIS EVIDENCE PERSIST / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
@@ -21,6 +21,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Branch | `docs/v1-security-event-ingestion-architecture-1` |
 | Canonical / live main | `0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` |
 | Dispatch head | `64379ec3c8afdc4ea99bfbae72fceebd8e35ebc5` |
+| Implementation head | `98b0ff33472765303a6544a887b5f24fc371d4b3` |
 | Agent | Jetnity V1 security event ingestion architecture 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd` |
@@ -52,7 +53,8 @@ Schema stays; an additive authenticated INSERT grant/policy is required before a
 4. Unauthenticated failure write is explicitly rejected with a spam/forgery reason.
 5. Finding 5.2 is **not** marked resolved.
 6. Follow-up slice is specified and **not** started.
-7. Re-fetch exact-head CI / Preview / review threads on the **live HEAD**.
+7. `98b0ff33` CI `35366837440` SUCCESS and Vercel `69HMZy4hedL3iAD81xdpZng1RDQD` READY are recorded only for that SHA.
+8. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
 
 ## 4. What this slice does not mean
 
