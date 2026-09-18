@@ -402,7 +402,7 @@ Für den Technical Lead gilt daraus bindend:
 4. Jeder neue Head invalidiert ältere Guardian-Exact-Head-Evidence genauso wie ältere Agenten- und CI-/Vercel-Evidence.
 5. Ein Cursor-Agent darf niemals als Guardian-Ersatz gelten; `@cursor` erzeugt keine gültige Guardian-Evidence.
 6. Guardian-Evidence gegen ein Statusdokument entscheidet zugunsten der Live-Evidence; die Korrektur des Dokuments ist Technical-Lead-Arbeit oder ein ausdrücklich beauftragter Slice, nicht Guardian-Eigeninitiative.
-7. Guardian-Arbeit an Jetnity-Code oder Repository-Inhalt setzt einen **explizit versionierten Auftrag** nach Abschnitt „Phase C“ voraus; der daraus entstehende Head wird wie jeder Agenten-Head unabhängig reviewt und gegatet.
+7. Guardian-Arbeit ist nach aktueller Product-Owner-Vorgabe **read-only**; Findings werden vom Technical Lead verifiziert und anschließend durch den zuständigen Cursor-Writer oder einen separat gebundenen Slice umgesetzt. Guardian-Prompts erzeugen keine Repository-Schreibrechte.
 8. Der Guardian übernimmt keinen laufenden Cursor-Slice, startet keinen Agenten, Branch, PR oder Follow-up-Slice und unterbricht keinen laufenden Slice aus eigener Autorität; Kollisionen und Drift meldet er dem Technical Lead.
 9. Der Guardian darf niemals Ready setzen, mergen, Production deployen, Production-Supabase mutieren, Secrets verändern oder offenlegen, Provider aktivieren, Verträge/Terms/DPA akzeptieren, paid calls starten, Käufe tätigen oder laufende Kosten erhöhen. Grüne CI, `mergeable=true` oder eindeutig erscheinende eigene Findings ändern das nicht.
 
