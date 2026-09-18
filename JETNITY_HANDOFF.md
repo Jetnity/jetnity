@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 18. September 2026  
-Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / PR #435 MERGED + POST-MERGE VERIFIED / NO ACTIVE CURSOR CODING AGENT / PR #453 NEXT KNOWN DOCS-GOVERNANCE CANDIDATE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / PR #453 MERGED + POST-MERGE VERIFIED / NO ACTIVE CURSOR CODING AGENT / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
 Canonical new-chat checkpoint:
 
@@ -10,6 +10,7 @@ Canonical new-chat checkpoint:
 Binding operating standards:
 
 - `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+- `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`
 - `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`
 
 ## 1. Verifizierter aktueller Runtime-Stand
@@ -109,40 +110,42 @@ Grok Guardian remains an independent observer/challenger/evidence layer. It is n
 
 Any future Assistant expansion is a new bounded slice. Production migration/model activation is separately gated.
 
-## 6. FIRST NEXT ACTION — PR #453
+## 6. Multi-Agent Operating System — CLOSED / POST-MERGE VERIFIED
 
-The next known repository work item is:
+PR **#453 — Define Jetnity Multi-Agent Operating System** is **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
-**PR #453 — Define Jetnity Multi-Agent Operating System**
+Accepted exact head:
 
-Branch:
+`afc09b378676d7350101f2ee7b5b2dfd2f93d934`
 
-`docs/jetnity-multi-agent-operating-system`
+Merge commit / verified main baseline:
 
-Last observed head before this handoff:
+`30855fbb91e11e19f74afbaf1578dc67828714f2`
 
-`ab6a773705b96f0545238a189cc6c0bda9e9318c`
+Evidence:
+- branch reconciled non-destructively with then-current `main` before review;
+- effective accepted diff: `JETNITY_START_HERE.md` plus `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` only;
+- exact-head CI #1800 / run `35288958659`: **SUCCESS**;
+- exact-head Vercel Preview `dpl_EHufveKDn9J5Jc1VNw3A14899QNA`: **READY**;
+- Technical-Lead FINAL PASS on the exact accepted head;
+- SHA-locked merge;
+- post-merge CI #1801 / run `35289213441`: **SUCCESS**;
+- Vercel Production `dpl_G2DWAPB8c2NaThE7FmnQy1Ydfyhd`: **READY** on exact merge SHA;
+- no unresolved Vercel toolbar feedback at post-merge verification;
+- no runtime, Supabase, Auth/RLS, provider, Production secret/model, paid-call or cost mutation.
 
-Important sequencing:
-- #453 was intentionally held while #435 was under exact-head gating;
-- #435 is now closed/merged;
-- #453 therefore needs a fresh live reconstruction and reconciliation with current `main`;
-- do not merge the stale branch as-is;
-- inspect proposed `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
-- integrate/reconcile current main;
-- add that document to `JETNITY_START_HERE.md` mandatory startup only when actually integrating #453;
-- rerun exact-head CI/Vercel/docs/Guardian/TL checks;
-- only then decide Ready/merge.
+The operating system document is now canonical and part of the mandatory startup path in `JETNITY_START_HERE.md`.
 
-After #453 is resolved, reconstruct live state again before choosing a product slice.
+**FIRST NEXT ACTION:** reconstruct live state again before selecting any product slice. This closure does not itself authorize or choose a follow-up implementation.
 
 ## 7. Open PRs / historical clutter
 
-Known open PRs at transition preparation:
-- #453 — current next known docs-governance candidate;
-- #52, #50, #40, #39, #28 — historical/stale Drafts.
+PR #453 is merged and must not be treated as active work.
 
-The older Drafts are not current runtime work merely because they remain open. Do not merge/close/reactivate them blindly.
+Known historical/stale Draft PRs from the last reconstruction:
+- #52, #50, #40, #39, #28.
+
+They are not current runtime work merely because they remain open. Re-fetch live before closing, reactivating or integrating any of them.
 
 ## 8. Product state / future work
 
@@ -194,14 +197,17 @@ Never infer default/primary/preferred citizenship or passport, array order as tr
 
 The next Technical Lead must:
 1. read `JETNITY_START_HERE.md`;
-2. read both binding operating standards;
-3. read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`;
-4. read `docs/ACTIVE_WORK_STATUS.md`;
-5. read this handoff;
-6. fetch live `main`, open PRs/issues and relevant branches;
-7. reconstruct #453 exactly before any mutation;
-8. verify GitHub Actions/Vercel;
-9. inspect Supabase only for scopes that require backend/data/security truth;
-10. preserve special Product-Owner gates and no-automatic-follow-up rule.
+2. read `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
+3. read `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
+4. read `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`;
+5. read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`;
+6. read `docs/ACTIVE_WORK_STATUS.md` and this handoff;
+7. fetch live `main`, all open PRs/issues and relevant branches;
+8. verify GitHub Actions, Vercel, review threads and current agent/Guardian evidence;
+9. inspect Supabase only when the selected scope requires backend/data/security/Production truth;
+10. preserve all Product-Owner special gates and the no-automatic-follow-up rule;
+11. only after live reconstruction select the smallest responsible next bounded slice, if one is authorized and no higher-priority review/blocker exists.
 
-**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. PR #435 IST GEMERGT + POST-MERGE VERIFIZIERT. KEIN AKTIVER CURSOR CODING AGENT. PR #453 IST DER NÄCHSTE BEKANNTE DOCS-GOVERNANCE-KANDIDAT, MUSS ABER ZUERST MIT LIVE-MAIN REKONZILIERT WERDEN. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+Verified transition baseline after PR #453 integration: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later continuity-only merge may advance repository `main`; always re-fetch live.
+
+**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. PR #453 IST GEMERGT + POST-MERGE VERIFIZIERT. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
