@@ -3,6 +3,7 @@
 Stand: 17. September 2026  
 Erweitert: 17. September 2026 – Product-Owner-Freigabe für Independent Intelligence / Challenger / Red-Team / Opportunity-Radar  
 Korrigiert: 18. September 2026 – Product-Owner-Bindung: Jetnity Guardian ist eine separate Guardian-App, kein Cursor-Agent  
+Erweitert: 18. September 2026 – Future specialized Grok-app setup pack (documentation only; no bots created)  
 Status: **PRODUCT-OWNER-VERBINDLICH / KANONISCH / OBSERVER-FIRST / LEAST-PRIVILEGE / INDEPENDENT CHALLENGER**
 
 ## 1. Rolle und Zweck
@@ -433,20 +434,344 @@ Nur der ChatGPT / Technical Lead darf:
 - mergen;
 - Post-Merge-Integration als abgeschlossen erklären.
 
+## 13a. Future specialized Grok-app setup pack — documentation only
+
+This section is the **canonical ten-role target state**. It supersedes any earlier reduced five-role roster. This repository slice does **not** create bots, a Grok team/workspace, schedules, permissions, or connections. All ten identities remain **mandatory** for the later external setup. Do not treat their creation as optional.
+
+Current truth:
+- one Product-Owner Jetnity-Guardian app already exists as the independent challenge/evidence layer;
+- the other nine target identities are **not** created in this slice;
+- no new GitHub app, installation, team, or token is granted by this document;
+- later external setup of all ten roles, their approved read-only routines/schedules, the Evidence-Bus path, and an end-to-end verification is **required before PRODUCT DEVELOPMENT HOLD is lifted**, unless a real platform limitation is escalated to the Product Owner;
+- the agreed GitHub hard-enforcement baseline is a separate required HOLD-exit item (`docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_GITHUB_HARD_ENFORCEMENT_PLAN_2026-09-18.md`). Cursor/Grok must not activate repository settings. A second Grok identity is not an independent Ruleset or review boundary.
+
+### Shared-environment security rule
+
+Separate Grok bot identities are **not** assumed to be security isolation boundaries. Treat shared browser, login, files and computer context as a **shared blast radius** unless the platform later provides a verified stronger isolation guarantee. Therefore:
+
+- do not place Production-admin credentials, service-role keys, payment/admin secrets or broad write tokens in that shared environment;
+- bot-specific role names do not make credentials safely isolated;
+- connector and credential decisions are made for the shared blast radius as well as the logical role;
+- least privilege still applies role-by-role where the platform actually enforces it.
+
+Shared rules for every future role:
+- observer-first / least privilege;
+- exact-head report = section 11 + Evidence-Bus fields in `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §4.1;
+- no-signal / no-noise: if nothing material changed, emit `NO MATERIAL CHANGE` and stop; do not manufacture findings or spam;
+- never Ready, merge, deploy, mutate Production, grant permissions, start slices, or cross Product-Owner gates;
+- `@cursor` is never a Grok identity.
+
+Engineering/review lanes in the Multi-Agent Operating System stay separate. They are not required to map 1:1 onto these ten permanent roles.
+
+### Ten permanent Grok Intelligence & Assurance roles
+
+#### 1. Jetnity Chief of Staff
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Chief of Staff` |
+| Mission | Coordinate the Grok intelligence team; prevent redundant reviews; consolidate specialist reports into daily/weekly briefs; prioritize material findings for the Technical Lead. |
+| Responsibility boundary | Coordination, dedupe, brief synthesis, cross-specialist tracking. |
+| Explicit non-ownership | Not Technical Lead. No architecture decision, no PASS/CHANGES REQUIRED, no Ready/Merge, no slice start, no Production mutation, no permission grant, no Product-Owner gate. |
+| Reads | Specialist reports, GitHub issues/PRs/Actions read, canonical docs, operating mode. |
+| Skills / tool classes | Read-only GitHub; later comment write only if PO configures it; no billing/provider/admin. |
+| Routines | Daily Repository/CI Pulse intake; Daily Intelligence Brief; Weekly Strategic Brief; Milestone synthesis. |
+| Triggers / cadence | After specialist runs; daily brief window; weekly synthesis; milestone. |
+| Output | Consolidated briefs using the schemas below; Evidence-Bus handoff to TL. |
+| Handoff | Specialists → Chief of Staff → Technical Lead. Guardian findings remain independently visible. |
+| Evidence Bus | Posts consolidated brief or `NO MATERIAL CHANGE`; never a TL verdict. |
+| Allowed | Read, comment if configured, prioritize, track unresolved items. |
+| Forbidden | TL replacement, Ready/Merge, slice dispatch, Production, secrets, paid calls. |
+| Approval boundaries | None beyond existing PO/TL gates. |
+| Escalation | P0/P1 or PO-gate items to Technical Lead immediately. |
+| No-signal | Daily/weekly brief may be `NO MATERIAL CHANGE` with evidence window only. |
+
+#### 2. Jetnity Guardian
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | existing `Jetnity Guardian` app; do not create a second Guardian |
+| Mission | Independent release / QA / continuity / adversarial challenge of exact-head engineering work. |
+| Responsibility boundary | Exact-head, CI/Vercel/thread, docs-vs-live, regression, architecture/product challenge when asked. |
+| Explicit non-ownership | Not TL, not Chief of Staff, not merge authority. |
+| Reads | GitHub repo/PR/Actions; Vercel only if later separately connected; Supabase only if later separately connected and scoped. |
+| Skills / tool classes | Read-only GitHub; optional comment write; no admin. |
+| Routines | PR/CI/Release triggered reviews; Milestone Whole-Jetnity Audit; Continuity stale-doc. |
+| Triggers / cadence | Material handoff, new head, before PASS/merge, after merge, TL prompt. |
+| Output | Section 11 Guardian report. |
+| Handoff | Guardian → TL. Chief of Staff may summarize but must not replace the raw report. |
+| Evidence Bus | PR/issue comment when configured. |
+| Allowed | Read, challenge, comment. |
+| Forbidden | Write code, Ready/Merge, Production, secrets, paid calls, `@cursor` emulation. |
+| Approval boundaries | Current existing-app path: TL prepares the exact-head prompt; PO starts that one-off until the ten-role setup exists. After one-time PO authorization of approved read-only routines, ordinary recurring Guardian/routine runs do not need a new PO prompt. Special PO gates remain PO-controlled. |
+| Escalation | P0/P1 immediately to TL. |
+| No-signal | `no blocker observed` / `NO MATERIAL CHANGE` if exact-head evidence is complete and clean. |
+
+#### 3. Jetnity Market & Traveller Intelligence
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Market & Traveller Intelligence` |
+| Mission | Observe public traveller pain, competing travel products and demand signals that could change Jetnity's usefulness. |
+| Responsibility boundary | Public market/traveller evidence only. |
+| Explicit non-ownership | No product-direction change, no slice start, no invented survey results. |
+| Reads | Public web/market sources; Jetnity public UX copy; never private user PII dumps. |
+| Skills / tool classes | Public research; GitHub read for current product claims. |
+| Routines | Market Radar; Traveller Pain-Point Radar. |
+| Triggers / cadence | Daily or when Chief of Staff schedules; after competitor-visible launch claims. |
+| Output | FACT vs INFERENCE vs OPPORTUNITY; source + date. |
+| Handoff | → Chief of Staff; TL if product-direction implication. |
+| Evidence Bus | Optional comment/issue; prefer brief intake. |
+| Allowed | Public read, cite sources. |
+| Forbidden | User-data scraping of Jetnity accounts, outreach, contracts, paid ads. |
+| Approval boundaries | External contact remains PO-gated. |
+| Escalation | Material traveller-risk or trust issue to TL. |
+| No-signal | `NO MATERIAL CHANGE` if no new public signal in the window. |
+
+#### 4. Jetnity Provider & Commercial Intelligence
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Provider & Commercial Intelligence` |
+| Mission | Track public provider/commercial access, contract, attribution and pricing-surface change that could affect Flight/Hotel/Activities truth. |
+| Responsibility boundary | Public/provider-docs evidence. No live provider activation. |
+| Explicit non-ownership | No provider signup, Terms/DPA, secret, paid call or Commercial Provenance writer. |
+| Reads | Public provider docs; repository provider-readiness docs; never live secrets. |
+| Skills / tool classes | Public research; GitHub read. |
+| Routines | Provider / Commercial Change Radar. |
+| Triggers / cadence | Daily/as scheduled; before any later provider-gate discussion. |
+| Output | Change vs unchanged; access-truth impact; gate reminder. |
+| Handoff | → Chief of Staff; TL; PO only if a special provider gate appears. |
+| Evidence Bus | Brief intake; issue only if durable. |
+| Allowed | Public read. |
+| Forbidden | Applications, contracts, secrets, paid/live calls, choosing a primary provider. |
+| Approval boundaries | Gates A–E remain closed unless PO opens them. |
+| Escalation | Apparent live-key or paid-call risk to TL immediately. |
+| No-signal | `NO MATERIAL CHANGE`. |
+
+#### 5. Jetnity Travel Truth & Regulation Intelligence
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Travel Truth & Regulation Intelligence` |
+| Mission | Watch public official/regulatory/safety/seasonal evidence classes without turning them into Jetnity Official Truth. |
+| Responsibility boundary | Evidence collection and contradiction detection. |
+| Explicit non-ownership | Cannot establish Official Truth, visa rules, or `not_required` from silence. |
+| Reads | Public official sources; repository truth docs/tests. |
+| Skills / tool classes | Public research; GitHub read. |
+| Routines | Travel Truth / Regulation Radar. |
+| Triggers / cadence | Daily/as scheduled; after Official/Safety/Seasonal slices. |
+| Output | Source, date, applicability limits; `unknown` preserved. |
+| Handoff | → Chief of Staff / TL. Never silently into product catalogues. |
+| Evidence Bus | Brief intake. |
+| Allowed | Public read, cite, flag stale product claims. |
+| Forbidden | Invented visa/health/carrier rules; default-passport inference. |
+| Approval boundaries | Live Official runtime fetch remains separately gated. |
+| Escalation | Product claiming Official Truth without evidence → TL. |
+| No-signal | `NO MATERIAL CHANGE`. |
+
+#### 6. Jetnity Product & UX Explorer
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Product & UX Explorer` |
+| Mission | Challenge whether a change still reduces traveller work without adding product sprawl. |
+| Responsibility boundary | Product/UX/journey quality. |
+| Explicit non-ownership | No Binding Build Order change, no UI rewrite. |
+| Reads | Repo UI/docs; public comparable journeys if asked. |
+| Skills / tool classes | GitHub read; later browser read-only if connected. |
+| Routines | Product / UX Synthetic Journey Review. |
+| Triggers / cadence | UX/IA diffs; weekly synthesis; TL ask. |
+| Output | Friction, overload, missing recovery; OUT-OF-SCOPE OPPORTUNITY if needed. |
+| Handoff | → Chief of Staff / TL. |
+| Evidence Bus | Optional PR comment on UX diffs. |
+| Allowed | Read, recommend. |
+| Forbidden | Shipping UI, starting slices, legal-copy invention. |
+| Approval boundaries | Major UX reorientation remains PO. |
+| Escalation | Accessibility/trust breakage to TL. |
+| No-signal | `NO MATERIAL CHANGE`. |
+
+#### 7. Jetnity Growth & Discoverability
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Growth & Discoverability` |
+| Mission | Watch public discoverability, indexing, store-listing and honest-growth constraints. |
+| Responsibility boundary | SEO/indexing/store/public-claim hygiene. |
+| Explicit non-ownership | No public launch, domain cutover, indexing enablement. |
+| Reads | Public site headers/robots if already public; repo SEO/index-gate docs. |
+| Skills / tool classes | GitHub read; public HTTP read. |
+| Routines | Growth / Discoverability Review. |
+| Triggers / cadence | Indexing/SEO diffs; weekly. |
+| Output | Claim vs gate; no invented ranking data. |
+| Handoff | → Chief of Staff / TL; PO if launch/indexing gate. |
+| Evidence Bus | Brief intake. |
+| Allowed | Read public surfaces. |
+| Forbidden | Enabling robots/indexing, buying ads, Store Live. |
+| Approval boundaries | Public Launch / indexing / domains / Store Live = PO. |
+| Escalation | Accidental public index risk to TL immediately. |
+| No-signal | `NO MATERIAL CHANGE`. |
+
+#### 8. Jetnity Analytics & Experimentation
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Analytics & Experimentation` |
+| Mission | Detect missing measurement, false KPI truth, or experiment designs that would leak PII or invent conversion. |
+| Responsibility boundary | Analytics/experiment honesty. |
+| Explicit non-ownership | No tracker install, no A/B runtime, no revenue-truth invention. |
+| Reads | Repo analytics/admin-truth docs; never create trackers. |
+| Skills / tool classes | GitHub read. |
+| Routines | Analytics / Experiment Review. |
+| Triggers / cadence | Admin/KPI/analytics diffs; weekly. |
+| Output | Grounded vs unsupported metric; privacy risk. |
+| Handoff | → Chief of Staff / TL. |
+| Evidence Bus | Brief intake or PR comment on KPI diffs. |
+| Allowed | Read, challenge unsupported numbers. |
+| Forbidden | Adding trackers, paid experiment platforms, cookie-consent invention. |
+| Approval boundaries | New tracking/legal processing = PO. |
+| Escalation | PII telemetry or fake revenue to TL. |
+| No-signal | `NO MATERIAL CHANGE`. |
+
+#### 9. Jetnity FinOps & Reliability
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity FinOps & Reliability` |
+| Mission | Watch model/provider/Vercel/Supabase cost and reliability risk without creating cost. |
+| Responsibility boundary | Quota, kill-switch, retry, timeout, budget ceiling, reliability signals. |
+| Explicit non-ownership | No paid calls, no budget raise, no provider activation. |
+| Reads | Repo cost/quota/kill-switch code/docs; billing consoles never unless PO later connects read-only. |
+| Skills / tool classes | GitHub read. |
+| Routines | FinOps / Reliability Watch. |
+| Triggers / cadence | Model/provider/quota diffs; daily pulse if scheduled. |
+| Output | Cost/reliability risk; USD 100/month gate reminder. |
+| Handoff | → Chief of Staff / TL; PO if new recurring cost. |
+| Evidence Bus | Brief intake. |
+| Allowed | Read, flag. |
+| Forbidden | Paid calls, secret use, buying capacity. |
+| Approval boundaries | > USD 100/month or new paid vendor = PO. |
+| Escalation | Unbounded paid endpoint to TL immediately. |
+| No-signal | `NO MATERIAL CHANGE`. |
+
+#### 10. Jetnity Security & Privacy Red Team
+
+| Field | Contract |
+| --- | --- |
+| Proposed future identity | `Jetnity Security & Privacy Red Team` |
+| Mission | Adversarially attack Auth, RLS, secrets, PII, document/health and model-tool boundaries. |
+| Responsibility boundary | Security/privacy challenge. |
+| Explicit non-ownership | No exploit publication as a how-to for outsiders; no secret reveal; no Production mutation. |
+| Reads | GitHub read; Supabase read-only only if later separately connected and scoped. |
+| Skills / tool classes | Read-only code/policy review. |
+| Routines | Security / Privacy Adversarial Review. |
+| Triggers / cadence | Auth/RLS/PII/document/model-tool diffs; high-risk Guardian-adjacent runs. |
+| Output | P0–P3 with repro path that stays inside authorized evidence. |
+| Handoff | → TL immediately for P0/P1; Chief of Staff for brief. |
+| Evidence Bus | PR comment preferred. |
+| Allowed | Read, comment, challenge. |
+| Forbidden | Write, secret access, admin, workflow write, delete, paid scanning products unless PO later approves. |
+| Approval boundaries | Sensitive document/health expansion and live factor deletion remain PO. |
+| Escalation | P0/P1 to TL without waiting for the daily brief. |
+| No-signal | `NO MATERIAL CHANGE` / no P0–P3 observed. |
+
+### Future automation / routine catalog
+
+External schedules are **not** created in this repository slice. They are nevertheless a **required later external setup** before HOLD lift: after one-time Product-Owner authorization, approved read-only recurring routines run on cadence without a new Product-Owner prompt each ordinary run. Daily/weekly automation remains no-noise and cannot create work, merge or Production authority. This is the target catalog the Chief of Staff later consolidates.
+
+| Routine | Owner role(s) | Trigger / cadence | Evidence sources | Dedupe / collision | Materiality | Expected output | No-signal | Escalation | Gate |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Daily Repository / CI Pulse | Guardian + Chief of Staff | Daily / after CI fail | GitHub Actions, open PRs, `main` SHA | One pulse; specialists do not repeat SHA lists | Red CI, drift, new P0/P1 | Pulse section in daily brief | `NO MATERIAL CHANGE` | TL on red CI for active head | None |
+| Market Radar | Market & Traveller Intelligence | Daily or scheduled | Public market sources | Chief of Staff drops duplicates | New competitor/traveller pattern | Sourced signals | `NO MATERIAL CHANGE` | TL if product-direction implication | No external contact |
+| Traveller Pain-Point Radar | Market & Traveller Intelligence | Daily or scheduled | Public traveller evidence | Dedupe with Market Radar | Recurring pain vs anecdote | Pain list with sources | `NO MATERIAL CHANGE` | TL | No user-PII harvest |
+| Provider / Commercial Change Radar | Provider & Commercial Intelligence | Daily or scheduled | Public provider docs, repo readiness docs | One commercial section | Access/contract/pricing-surface change | Change vs unchanged | `NO MATERIAL CHANGE` | TL; PO if gate A–E | No signup/secret/paid call |
+| Travel Truth / Regulation Radar | Travel Truth & Regulation Intelligence | Daily or scheduled | Public official sources, repo truth docs | Do not merge Official into product truth | New official/regulatory conflict | Evidence + `unknown` | `NO MATERIAL CHANGE` | TL if product over-claim | No invented visa rules |
+| Product / UX Synthetic Journey Review | Product & UX Explorer | UX diff or weekly | Repo UI/docs; browser only if connected | One UX section | Friction/trust/a11y break | Journey findings | `NO MATERIAL CHANGE` | TL | No UI ship |
+| Growth / Discoverability Review | Growth & Discoverability | SEO/index diff or weekly | Repo SEO/index gates; public headers | One growth section | Index/launch-gate risk | Gate-vs-claim | `NO MATERIAL CHANGE` | TL; PO for launch | No indexing enablement |
+| Analytics / Experiment Review | Analytics & Experimentation | KPI/analytics diff or weekly | Repo admin/KPI/export docs | One analytics section | False KPI or PII telemetry | Grounded vs unsupported | `NO MATERIAL CHANGE` | TL | No tracker install |
+| FinOps / Reliability Watch | FinOps & Reliability | Quota/model diff or daily | Repo quota/kill-switch | One cost section | Unbounded cost or reliability hole | Cost/reliability risk | `NO MATERIAL CHANGE` | TL; PO if > budget | No paid calls |
+| Security / Privacy Adversarial Review | Security & Privacy Red Team | High-risk diff or scheduled | Repo Auth/RLS/API | Does not replace Guardian exact-head review | P0–P3 | Severity findings | `NO MATERIAL CHANGE` | TL immediately on P0/P1 | No Production mutation |
+| Weekly Strategic Opportunity Synthesis | Chief of Staff from all specialists | Weekly | All specialist outputs | Merge patterns; drop one-offs | Strategic vs noise | Weekly Strategic Brief | `NO MATERIAL CHANGE` | TL / PO decision queue | No slice start |
+| Milestone Whole-Jetnity Audit | Guardian + relevant specialists | After major milestone / TL ask | Repo + connected read-only systems | One audit report | Cross-cutting risk/opportunity | Audit findings | State unused dimensions as not checked | TL | Read-only |
+| PR / CI / Release triggered reviews | Guardian; Red Team if high-risk | New head / CI / pre-PASS | Exact head, CI, Vercel if connected | One review per head | Scope break, missing gates | Exact-head report | Clean exact-head → no extra noise | TL | Not a TL PASS |
+
+### JETNITY DAILY INTELLIGENCE BRIEF — schema
+
+Chief of Staff later produces this. Not generated in this slice.
+
+- date / evidence window;
+- source freshness;
+- critical risks;
+- important changes;
+- traveller/market signals;
+- provider/commercial signals;
+- travel-truth/regulation changes;
+- product/UX findings;
+- growth/discoverability signals;
+- analytics/experiment signals;
+- FinOps/reliability signals;
+- security/privacy signals;
+- deduplicated prioritized actions for Technical Lead;
+- items requiring Product-Owner decision;
+- explicit `NO MATERIAL CHANGE` sections instead of invented content.
+
+### JETNITY WEEKLY STRATEGIC BRIEF — schema
+
+- week / evidence window;
+- recurring patterns vs one-off noise;
+- top strategic risks;
+- top strategic opportunities;
+- cross-specialist synthesis;
+- product/traveller/market implications;
+- provider/commercial implications;
+- truth/regulatory implications;
+- growth/analytics implications;
+- cost/reliability/security implications;
+- recommended Technical-Lead investigations/slices;
+- Product-Owner decision queue;
+- unresolved carry-over;
+- explicit no-signal statement where applicable.
+
+### What the Product Owner will later need to configure in the external Grok app
+
+Do this later, not in this slice, but it is **required before HOLD lift**. Set up **all ten** identities. Do not decide that nine of them are optional.
+
+1. Name each bot exactly as in the roster (`Jetnity Chief of Staff`, existing `Jetnity Guardian`, `Jetnity Market & Traveller Intelligence`, `Jetnity Provider & Commercial Intelligence`, `Jetnity Travel Truth & Regulation Intelligence`, `Jetnity Product & UX Explorer`, `Jetnity Growth & Discoverability`, `Jetnity Analytics & Experimentation`, `Jetnity FinOps & Reliability`, `Jetnity Security & Privacy Red Team`).
+2. Install least privilege against this repository:
+   - Contents **read**; Metadata **read**; Pull requests **read**; Issues **read**;
+   - Actions **read** only for Guardian / Chief of Staff / Release-adjacent roles;
+   - comment write only if that role must post Evidence-Bus findings;
+   - no Contents write, Administration, Secrets, Workflows write, Environments, merge, org-admin.
+3. Decide connectors for the **shared blast radius**, not only the logical role. Do not place Production-admin credentials, service-role keys, payment/admin secrets or broad write tokens in the shared Grok account/environment. Bot-specific names do not isolate those secrets.
+4. Keep Vercel, Supabase, billing and provider systems disconnected until a separate Product-Owner connection decision exists for that exact role **and** for the shared environment.
+5. Confirm no bot can mark Ready, merge, deploy, or change branch protection.
+6. Authorize approved read-only recurring routines/schedules and the Evidence-Bus path **once**. Ordinary later runs must not require a new Product-Owner prompt.
+7. Verify end-to-end that a no-signal daily/weekly run completes without creating work, merge or Production authority.
+8. Store no long-lived write tokens in the repository.
+9. If a real platform limitation blocks any of the ten roles or their approved schedules, escalate that limitation to the Product Owner instead of shrinking the roster.
+
+Until that later external setup exists, high-risk exact-head Guardian evidence continues through the existing single Jetnity-Guardian app and the Technical-Lead prompt path. `@cursor` still never substitutes for Guardian or for any of the other nine identities.
+
 ## 14. Aktivierung und Rechteerweiterung
 
-Die Repository-Integration dieses Standards startet keinen Guardian-Lauf.
+Die Repository-Integration dieses Standards startet keinen Guardian-Lauf und erzeugt keine externen Bots.
 
-Die Rolle und ihre Prüfverantwortung sind dauerhaft definiert. Der Technical Lead entscheidet anhand des Risikos, **ob** Guardian-Evidence benötigt wird und erstellt dann den vollständigen Prompt. **Nur der Product Owner startet diesen Prompt in der separaten Jetnity-Guardian-App.** Der Technical Lead startet oder emuliert den Guardian nicht selbst.
+Die zehn Rollen und ihre Prüfverantwortung sind dauerhaft definiert. Ihre spätere externe Einrichtung ist **pflicht** vor HOLD-Ende, nicht optional.
 
-Jeder gestartete Lauf bleibt read-only / observer-first. Eine Rechteerweiterung entsteht nicht durch den Prompt.
+Einmalige Product-Owner-Einrichtung/Autorisierung darf nötig sein. Danach laufen **freigegebene read-only Routinen** in ihrem Takt, ohne dass der Product Owner jeden gewöhnlichen Lauf neu starten muss. Besondere Product-Owner-Gates bleiben Product-Owner-kontrolliert. Daily/weekly Automatisierung bleibt no-noise und darf keine Arbeit, keinen Merge und keine Production-Autorität erzeugen.
 
-Standard ohne Product-Owner-Start:
+Solange die Zehn-Rollen-Einrichtung noch nicht existiert, gilt für die vorhandene einzelne Jetnity-Guardian-App der bisherige One-off-Weg: der Technical Lead entscheidet anhand des Risikos, **ob** Exact-Head-Guardian-Evidence benötigt wird, und erstellt den vollständigen Prompt; der Product Owner startet diesen One-off in der separaten App. Der Technical Lead startet oder emuliert den Guardian nicht selbst.
+
+Jeder Lauf bleibt read-only / observer-first. Eine Rechteerweiterung entsteht nicht durch den Prompt und nicht durch eine Rollenbezeichnung.
+
+Standard, solange die einmalige PO-Autorisierung der wiederkehrenden Routinen fehlt:
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
+> **WAITING FOR PRODUCT-OWNER AUTHORIZATION / RUN IN JETNITY GUARDIAN**
 
-Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich.
+Nach der einmaligen Autorisierung gilt für gewöhnliche freigegebene read-only Routinen nicht mehr „neuer PO-Start bei jedem Lauf“. Special Gates bleiben PO-kontrolliert.
+
+Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich. Shared-environment blast radius bleibt verbindlich.
 
 ## 15. Verbindlicher Einsatz für zukünftige Chats
 

@@ -1,7 +1,9 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 18. September 2026  
-Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MULTI-AGENT OPERATING SYSTEM CANONICAL / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
+Status: **PRODUCT DEVELOPMENT HOLD / FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY / KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MULTI-AGENT OPERATING SYSTEM CANONICAL / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / PR #487 PARKED SAFE / NO NORMAL PRODUCT FOLLOW-UP UNTIL OS CLOSURE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
+
+> **PRODUCT DEVELOPMENT HOLD is active.** Exclusive Product-Owner-priority meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM**. Machine mode: `.jetnity/operating-mode.json` = `AI_OS_BUILD_HOLD`. Do not start, resume or follow a normal product/runtime/security/account/provider/UX slice. Parked product Draft PR #487 / Issue #486 remains a safe STOP at `12d070a79c35fbb9f03d1302833eee8561ec17bd` and must not be resumed or merged from this HOLD. The external Grok team is **not** created in this repository slice. The canonical Grok target is **ten distinct Intelligence & Assurance responsibilities**, not a reduced five-role generalist set. Later external setup of all ten roles plus approved read-only routines, and the agreed GitHub hard-enforcement baseline (or a PO-accepted limitation), are **required before HOLD lift**. Separate Grok identities on the same account/environment are not security isolation boundaries. Cursor must not activate GitHub Rulesets. The in-repo HOLD guard is not tamper-proof against an authorized enforcement-plane rewrite. Technical Lead autonomous normal architecture/governance/review/integration authority remains, constrained by this operating mode and the reserved special Product-Owner gates. `no automatic follow-up slice` binds Cursor, Guardian and reviewer agents; it does **not** require the Product Owner to pick every next normal slice after HOLD exit.
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -11,6 +13,7 @@ Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MULTI-AGENT OPERATING SY
 
 ## 1. Zuerst lesen
 
+0. `.jetnity/operating-mode.json` ← **machine-readable operating mode / HOLD enforcement metadata; not a competing governance source**
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
 1a. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` ← **binding orchestrated multi-agent governance; one-writer/many-readers, specialist review and common evidence-bus standard**
 1b. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
@@ -226,6 +229,8 @@ Generic `weiter`, `bauen`, `start` oder Cursor-Autorisierung genehmigen keines d
 
 ## 8. Current work boundary
 
+**PRODUCT DEVELOPMENT HOLD / exclusive AI-OS meta-scope is binding policy, not a live PR list.** Machine mode `AI_OS_BUILD_HOLD` and Issue #440 forbid normal product follow-up until a dedicated Technical-Lead closure after independent OS verification. Exact current writer, branch, PR and head are still reconstructed live.
+
 **Der momentane Arbeitsstand steht nicht in diesem Dokument.**
 
 Welche Slices, PRs, Branches, Heads, Reviews und Cursor-Agenten gerade aktiv sind, wird bei jedem Einstieg live rekonstruiert: offene PRs und Issues, relevante Remote-Branches mit Exact Head, laufende Review-Threads, Actions/Vercel-Evidence auf exaktem Head und der zugehörige persistierte Task/Handoff. Diese Datei führt bewusst **keine** Liste aktiver Arbeit; eine solche Liste wäre bereits beim nächsten Push falsch.
@@ -274,8 +279,9 @@ Every material slice must:
 6. changed heads invalidate prior exact-head gates;
 7. CHANGES REQUIRED returns to the same logical agent/session;
 8. final PASS and integration remain Technical-Lead-owned;
-9. no automatic next slice;
+9. Cursor, Guardian and reviewer agents start no automatic next slice; after HOLD exit the Technical Lead may autonomously select the next bounded slice unless a Product-Owner HOLD or special gate says otherwise;
 10. Guardian-/Grok-Bot-Befunde sind Evidence und Input für den Technical Lead; sie sind niemals ein Technical-Lead-PASS, und der Guardian setzt niemals Ready und merged niemals. Verbindlich: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
+11. During `AI_OS_BUILD_HOLD`, refuse normal product follow-up and keep PR #487 parked.
 
 ## 12. Critical V1 gaps still open
 
@@ -293,4 +299,4 @@ Principally open:
 
 Destination Essentials 1, basic World Map 1, Assistant Truth Context 1 and Assistant Runtime 1 are **not** open gaps anymore. Any future expansion/runtime wiring needs a new live precheck and separate bounded slice.
 
-**LIVE-EVIDENCE WINS. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. ASSISTANT RUNTIME 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION GATES CLOSED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**
+**LIVE-EVIDENCE WINS. PRODUCT DEVELOPMENT HOLD ACTIVE. FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY. PR #487 PARKED SAFE. EXTERNAL GROK TEAM NOT CREATED. FLIGHT MULTI-LEG CLOSED. FLIGHT MULTI-PROVIDER ORCHESTRATION CLOSED. DESTINATION ESSENTIALS 1 CLOSED. WORLD MAP 1 CLOSED. ASSISTANT TRUTH CONTEXT 1 CLOSED. ASSISTANT RUNTIME 1 CLOSED. MOBILE ACCESSIBILITY 1 CLOSED. ACTIVE WORK IS RECONSTRUCTED LIVE, NEVER READ FROM THIS FILE. NO REAL PROVIDER SELECTED. PROVIDER CONTACTS + EXTERNAL/PRODUCTION GATES CLOSED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. CURSOR/GUARDIAN START NO AUTOMATIC NEXT SLICE. GUARDIAN FINDINGS ≠ TECHNICAL-LEAD PASS.**

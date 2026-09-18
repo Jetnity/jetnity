@@ -1,0 +1,39 @@
+---
+description: Read Jetnity machine operating mode before any work; refuse product follow-up during HOLD
+alwaysApply: true
+---
+
+# Jetnity Operating Mode – Always Apply
+
+Before starting any Jetnity work, read `.jetnity/operating-mode.json`.
+
+That file is enforcement metadata for the current operating mode. It is not a competing governance source. Canonical authority remains:
+
+1. the latest explicit Product-Owner decision;
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
+3. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
+4. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
+
+## Current HOLD
+
+When `mode` is `AI_OS_BUILD_HOLD`:
+
+- normal product, runtime, security, account, provider, UX, DB, Auth or Production slices are blocked;
+- refuse or stop any request to start, resume or follow a normal product slice;
+- point the next actor to the exclusive governance meta-scope named in the operating-mode file (currently Full-Potential AI Operating System);
+- PR #487 / Issue #486 remains parked at its persisted exact head and must not be resumed, merged or followed from this mode;
+- governance, continuity, evidence and enforcement work is allowed only on an authorized branch and only within the **base/main** path allowlist;
+- a PR-head policy cannot broaden or disable HOLD for that same PR;
+- HOLD→NORMAL is only a later dedicated closure and cannot include product/runtime files in the same PR;
+- the in-repo guard is not tamper-proof against an authorized writer rewriting guard/workflow/package/policy; do not claim it is;
+- GitHub Rulesets / Branch Protection are a required later HOLD-exit baseline and must not be activated by Cursor;
+- special Product-Owner gates remain in force.
+
+## Authority that does not change
+
+- One writer per branch or slice.
+- Exact-head evidence is required; a new head invalidates older gates.
+- Persist relevant progress in the repository.
+- Cursor never marks Ready and never merges.
+- Cursor never creates external Grok bots, never grants permissions, and never starts a follow-up OS or product slice unless a later versioned Technical-Lead task explicitly assigns that writer role.
+- No Cursor rule grants Production, provider, payment, secret or contract authority.

@@ -15,6 +15,6 @@ For every relevant Jetnity work block, including Foundation D:
 - Before pausing, handing off, closing an agent, or reporting a major milestone, update the active work status and any affected durable docs.
 - A new agent must read the current handoff, roadmap, progress-persistence policy, merge-approval policy, active PR/branch, `docs/ACTIVE_WORK_STATUS.md`, current task and newer amendments before continuing.
 - Never claim progress, tests, Preview, Production or completion that was not verified.
-- Never merge without explicit current Product Owner approval. Progress persistence is not merge approval.
+- Never Ready or merge. Ready/Merge is ChatGPT / Technical Lead only after independent exact-head PASS. Progress persistence is not merge approval. Product-Owner special gates remain.
 
 Goal: no relevant Jetnity progress may be lost when a chat, agent or session changes.

@@ -1,6 +1,7 @@
 # Jetnity – Multi-Agent Slice Planning Standard
 
 Stand: 1. September 2026  
+Ergänzt: 18. September 2026 – Operating-Mode-/HOLD-Check vor jedem Dispatch  
 Status: **Product-Owner-verbindlich / chatübergreifend / Ergänzung zum Technical Lead / Cursor Agent Operating Standard**
 
 ## 1. Zweck
@@ -19,6 +20,7 @@ Diese Regel ergänzt insbesondere `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPER
 
 Nach der Live-Rekonstruktion und **vor Task-/Branch-/Agenten-Dispatch** prüft der Technical Lead für jeden Slice mindestens:
 
+0. Welcher Operating Mode gilt (`.jetnity/operating-mode.json`)? Bei `AI_OS_BUILD_HOLD` ist ein normaler Produkt-Slice unzulässig; nur der ausdrücklich erlaubte Governance-/Continuity-/Enforcement-Scope darf dispatcht werden. PR #487 darf während HOLD nicht resumed, gemergt oder als Follow-up gestartet werden.
 1. Welche Dateien, Module, Datenmodelle, Shared Contracts und APIs werden voraussichtlich berührt?
 2. Gibt es DB-/Migration-/RLS-/Auth-/Security-/Provider-/Production- oder andere Product-Owner-Gates?
 3. Lassen sich Teilaufgaben mit klarer, disjunkter Ownership trennen?
@@ -118,6 +120,7 @@ Jeder neue material Slice-Task muss künftig einen Abschnitt enthalten, sinngem�
 
 ### Multi-Agent Suitability
 
+- Operating Mode / HOLD / Special-PO-Gate result;
 - `Decision: SINGLE_AGENT | MULTI_AGENT`
 - Begründung;
 - identifizierte Parallelisierungsachsen;
