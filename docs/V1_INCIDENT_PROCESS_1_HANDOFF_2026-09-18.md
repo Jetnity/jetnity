@@ -1,7 +1,7 @@
 # Jetnity – V1 Incident Process 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **IMPLEMENTATION GATED ON `c59d18bc` / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **TL P3 `model_usage` ATTRIBUTION ON `c52ccbcb` APPLIED / RE-GATE THIS HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_INCIDENT_PROCESS_1_TASK_2026-09-18.md`  
 Canonical runbook: `docs/V1_INCIDENT_PROCESS_RUNBOOK_2026-09-18.md`  
@@ -22,6 +22,8 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Canonical base | `main@926a8cde1b469b2465b311aafcf84bc18e4770f2` |
 | Dispatch head | `953670e5166dd0da93e40a4a8202fbb60d1f4862` |
 | Implementation head | `c59d18bcebcfb635d9df4ed4dba58325741b5283` |
+| Previous evidence / Guardian-locked head | `c52ccbcb7bb5319fb2535f049b560627b1db6553` |
+| TL P3 | comment `5727375904` / continue `5727378163` |
 | Agent | Jetnity V1 incident process 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-6f118f5c-3e96-4426-a6f7-1b89c7d1a6a1` |
@@ -29,33 +31,29 @@ This document is enough for a new agent or Technical Lead to continue without th
 Read first:
 
 1. the task and finding 5.5 process vs tooling split
-2. the canonical runbook §2 (current capability vs limitation), §7 (containment / PO gates), §13 (remaining blocker)
+2. the canonical runbook §2.1 Admin Provider & Kosten row (runtime vs sammeln) and §8.4
 3. this handoff and STATUS / SELF_REVIEW
 4. live PR #464, live `origin/main`, live CI and Vercel on the **current HEAD**
 
 ## 2. What changed
 
-Docs-only incident operations runbook for Jetnity **as it exists today**.
+Docs-only incident operations runbook, plus TL P3 path correction:
 
-No runtime, provider, secret, Auth, database or cost change.
+- `lib/admin/provider-ops-board/runtime.ts` owns `USAGE_LIMIT = 200` and `.limit(USAGE_LIMIT)` for the last-30-day `model_usage` read;
+- `lib/admin/provider-ops-board/sammeln.ts` evaluates/assembles board state and consumes `liesModelUsage()`.
 
-The runbook names current kill switches by symbol/path and refuses to treat `blocked_ips`, empty `security_events`, the in-memory cost guard, or the unexported S6A adapter as containment.
+No runtime, provider, secret, Auth, database or cost change. Incident semantics unchanged.
 
 ## 3. What a reviewer should verify first
 
-1. Every detection/kill-switch claim is grounded in current files, not stale audit line numbers.
-2. No 24/7, paging, SLA, Sentry/Datadog/Axiom or equivalent is claimed.
-3. Special Product-Owner gates are preserved; this slice performs no live Production action.
-4. Finding 5.5 tooling half, 4.1 support process and 4.2 account error boundary remain explicitly open.
-5. Changed files versus `origin/main` are exactly the five allowed docs.
-6. `c59d18bc` CI `35296309928` SUCCESS and Vercel `FJFMuQQg65DDm8p4NfrBgcYAcrB8` READY are recorded only for that SHA.
-7. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
+1. §2.1 no longer attributes the 200-row cap to `sammeln.ts`.
+2. All earlier boundaries still hold (no invented monitoring, existing kill switches only, PO gates preserved, tooling half of 5.5 open).
+3. `c52ccbcb` CI `35296571456` SUCCESS, Vercel `3kQyXW3WR5zVuDwLWbmzxgJp4D4G` READY, and Guardian PASS are recorded only for that SHA.
+4. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
 
 ## 4. What this slice does not mean
 
 No incident was simulated. No vendor was chosen. Public V1 Launch remains blocked on automated error-tracking/alerting/log aggregation until a later Product-Owner-gated slice.
-
-The admin MFA recovery runbook remains the specialized procedure for application-admin TOTP loss. It is not replaced.
 
 ## 5. Next step
 

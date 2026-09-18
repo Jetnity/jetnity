@@ -27,6 +27,7 @@ This document argues against the implementation. It cannot replace an independen
 | Invent legal breach-notification text or user-facing status-page copy | Rejected. Product Owner owns externally binding communication. |
 | Execute or rehearse a live Production rollback, restore or env mutation to “prove” the runbook | Rejected. Task forbids live Production action. |
 | Claim HTTP 425 / `model-inactive` as current model containment evidence | Rejected. That string is not in current runtime code. Current signal is `modellZustand()` → `grund: 'abgeschaltet'`. |
+| Attribute the admin `model_usage` 200-row cap to `sammeln.ts` | Rejected after TL P3 on `c52ccbcb`. `USAGE_LIMIT = 200` and `.limit(USAGE_LIMIT)` live in `runtime.ts`; `sammeln.ts` only consumes `liesModelUsage()`. |
 | Edit global continuity docs or mark Ready / merge | Rejected. Allowed files only. |
 
 ## 2. Residual risks this slice does not close
@@ -56,9 +57,10 @@ This document argues against the implementation. It cannot replace an independen
 | Evidence / timeline without secrets or raw sensitive data | Yes | §11 |
 | Tooling half of 5.5 remains OPEN / PO-gated | Yes | §13 |
 | No support process / error-boundary / follow-up slice | Yes | |
-| Exact-head gates + STATUS / HANDOFF / SELF_REVIEW | Yes for `c59d18bc`; this evidence persist is a newer HEAD | |
+| Exact-head gates + STATUS / HANDOFF / SELF_REVIEW | Yes for earlier heads; this P3 persist is a newer HEAD | |
 | No Ready / no merge | Yes | |
+| TL P3 `model_usage` file attribution | Yes | `runtime.ts` owns `USAGE_LIMIT`; `sammeln.ts` consumes the read |
 
 ## 4. What remains before Technical-Lead review
 
-`c59d18bc` had CI `35296309928` SUCCESS and Vercel `FJFMuQQg65DDm8p4NfrBgcYAcrB8` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+TL CHANGES REQUIRED `5727375904` / continue `5727378163` on locked head `c52ccbcb` (Guardian PASS, CI `35296571456`, Vercel `3kQyXW3WR5zVuDwLWbmzxgJp4D4G`) is applied. This P3 persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
