@@ -20,7 +20,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `cedeb0972c26bf412d864805a83dbef84d791384` |
+| Last verified implementation/evidence head | `4965f5a1dd8352380acc1f82579498d889beb839` |
 | This persist | creates a newer head than that SHA |
 | Live PR head | **re-fetch before verdict** — do not treat a SHA in this file as live |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -34,16 +34,16 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 - V2 dispatch: `5736670149` — persist scheduler-compatible Daily Automation V2 contract
 - CANARY #002: `5736636348` — native scheduler VERIFIED; workflow DEGRADED / not full-PASS
 - CoS Daily created/PAUSED: `5735790241`
-- last verified OS-2 evidence head: `cedeb0972c26bf412d864805a83dbef84d791384`
-- exact-head CI on that SHA: `35391904724` SUCCESS
-- exact-head Vercel on that SHA: READY `Cytxz5hVcJJ9xyYaznCFWXU7XAuq`
+- last verified OS-2 V2 persist head: `4965f5a1dd8352380acc1f82579498d889beb839`
+- exact-head CI on that SHA: `35399389308` SUCCESS
+- exact-head Vercel on that SHA: READY `Dncnz8UW8Wg3NKhm4VnBnPKzEhT4`
 - this persist is a newer head; live PR head must be re-fetched
 - agent: Jetnity full-potential AI operating system 2 / Generation 1
 - session: `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c`
 - model: Cursor Grok 4.6 High Fast
 - ownership: V2 contract + tracker + HOLD-exit + continuity/STATUS/HANDOFF/SELF_REVIEW
 - verdict: **ready for Technical-Lead review** — not a TL PASS, not a Daily full-PASS, and not a HOLD-exit
-- evidence checked: comments `5735790241`, `5736188318`, `5736337204`, `5736557812`, `5736636348`, `5736642445`, `5736670149`; last verified head `cedeb097` CI + Vercel; parked #487 untouched
+- evidence checked: comments `5735790241`, `5736188318`, `5736337204`, `5736557812`, `5736636348`, `5736642445`, `5736670149`; last verified head `4965f5a1` CI + Vercel; parked #487 untouched
 - evidence not checked: CI/Vercel on **the SHA this persist will create**; shared-environment tokens; Grok workspace files (they must not live in this git tree)
 - blocker/gate: independent Technical-Lead exact-head review of the **live** head; CoS Daily remains PAUSED; V2 a–e OPEN; HOLD remains
 - next actor: ChatGPT / Technical Lead
@@ -55,7 +55,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 2. V2 contract is documented, **not** implemented, and **not** treated as Daily full-PASS.
 3. `Jetnity Daily Intelligence Brief` remains **PAUSED**.
 4. Still **OPEN**: V2 test sequence a–e; HOLD-exit.
-5. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `cedeb097`.
+5. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `4965f5a1`.
 
 ## 4. Exact next responsible actor
 

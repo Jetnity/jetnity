@@ -15,9 +15,9 @@ Status: **DAILY AUTOMATION V2 HANDOFF CONTRACT PERSISTED / COS DAILY PAUSED / V2
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `cedeb0972c26bf412d864805a83dbef84d791384` |
-| Evidence on that SHA | CI `35391904724` SUCCESS; Auth `105751948046` SUCCESS; Typecheck/Lint/Build `105751948235` SUCCESS; Vercel **success / READY** `Cytxz5hVcJJ9xyYaznCFWXU7XAuq` |
-| This persist | **creates a newer head** than `cedeb097`. It is not the live PR head. |
+| Last verified implementation/evidence head | `4965f5a1dd8352380acc1f82579498d889beb839` |
+| Evidence on that SHA | CI `35399389308` SUCCESS; Auth `105775563148` SUCCESS; Typecheck/Lint/Build `105775563435` SUCCESS; Vercel **success / READY** `Dncnz8UW8Wg3NKhm4VnBnPKzEhT4` |
+| This persist | **creates a newer head** than `4965f5a1`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
@@ -38,34 +38,34 @@ Do not treat any SHA written in this file as the current/live head. Continuity f
 - Still **OPEN**: V2 sequence a–e; unattended Daily production-readiness; dedicated HOLD-exit.
 - No Grok workspace files were added to this git tree. No routine created or enabled by Cursor. No product/runtime. PR #487 untouched. HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on last verified tree `cedeb097`
+## 3. Local gates on last verified tree `4965f5a1`
 
-Predecessor tree already had exact-head CI/Vercel SUCCESS. This persist is documentation / operating-mode metadata only. Local gates will be re-run on the persist tree before or immediately after the evidence commit.
+Re-run by this writer on the V2 persist SHA before the evidence commit.
 
 | Gate | Result |
 | --- | --- |
-| `check:operating-mode` | pending on this persist tree |
-| Guard / unit tests | pending on this persist tree |
-| `typecheck` | pending on this persist tree |
-| `lint` | pending on this persist tree |
-| hygiene | pending on this persist tree |
-| `build` | pending on this persist tree |
+| `check:operating-mode` | PASS |
+| Guard / unit tests | 3509/3509 PASS |
+| `typecheck` | PASS |
+| `lint` | 0 errors / 138 warnings |
+| hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) | PASS |
+| `build` | PASS (Next.js 16.3.3) |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
 
-## 4. Exact-head remote evidence on last verified SHA `cedeb097`
+## 4. Exact-head remote evidence on last verified SHA `4965f5a1`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35391904724` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35391904724 |
-| Typecheck, Lint & Build | job `105751948235` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105751948046` SUCCESS |
-| Vercel | **success / READY** — https://vercel.com/jetnity-e1b93c82/jetnity-app/Cytxz5hVcJJ9xyYaznCFWXU7XAuq |
+| GitHub Actions CI | run `35399389308` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35399389308 |
+| Typecheck, Lint & Build | job `105775563435` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105775563148` SUCCESS |
+| Vercel | **success / READY** — https://vercel.com/jetnity-e1b93c82/jetnity-app/Dncnz8UW8Wg3NKhm4VnBnPKzEhT4 |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
 | V2 dispatch | `5736670149` |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `cedeb097`.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `4965f5a1`.
 
 ## 5. Non-scope
 

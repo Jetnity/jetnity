@@ -11,7 +11,7 @@ V2 dispatch: comment `5736670149`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `cedeb0972c26bf412d864805a83dbef84d791384` has exact-head CI `35391904724` SUCCESS and Vercel READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `4965f5a1dd8352380acc1f82579498d889beb839` has exact-head CI `35399389308` SUCCESS and Vercel READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -31,7 +31,7 @@ Last verified evidence head `cedeb0972c26bf412d864805a83dbef84d791384` has exact
 - V2 test sequence a–e is entirely **OPEN**.
 - Shared Grok workspace write/read has not been proven.
 - Shared-environment credentials were not independently inspected.
-- This persist is a newer head than `cedeb097`.
+- This persist is a newer head than `4965f5a1`.
 
 ## 3. Compliance
 
@@ -46,7 +46,7 @@ Last verified evidence head `cedeb0972c26bf412d864805a83dbef84d791384` has exact
 
 Checked:
 - comments `5735790241`, `5736188318`, `5736337204`, `5736557812`, `5736636348`, `5736642445`, `5736670149`;
-- last verified head `cedeb097` CI `35391904724` SUCCESS; Vercel READY;
+- last verified head `4965f5a1` CI `35399389308` SUCCESS; Vercel READY;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
