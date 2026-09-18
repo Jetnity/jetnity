@@ -11,7 +11,7 @@ PO roster evidence: comments `5734539126` … `5735008554`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `77876cf5eb1ba2a740614a4ab509dfad5a6f2bfe` has exact-head CI `35381491242` SUCCESS and Vercel Preview READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `dbe04042e86cb1f4e794a26a9c895eb24b481af8` has exact-head CI `35385445537` SUCCESS and Vercel Preview READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -38,7 +38,7 @@ Last verified evidence head `77876cf5eb1ba2a740614a4ab509dfad5a6f2bfe` has exact
 - Chief-of-Staff coordination and specialist → CoS → TL Evidence Bus e2e are unverified.
 - Approved routines/automations are not configured.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `77876cf5`.
+- This persist is a newer head than `dbe04042`.
 
 ## 3. Compliance
 
@@ -56,7 +56,7 @@ Last verified evidence head `77876cf5eb1ba2a740614a4ab509dfad5a6f2bfe` has exact
 
 Checked:
 - Product-Owner comments `5734539126` … `5735008554`;
-- last verified head `77876cf5` CI `35381491242` SUCCESS and Vercel READY;
+- last verified head `dbe04042` CI `35385445537` SUCCESS and Vercel READY;
 - review threads 0; behind=0 versus the recorded predecessor;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 

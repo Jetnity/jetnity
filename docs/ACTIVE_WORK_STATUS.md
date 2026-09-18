@@ -24,7 +24,7 @@ Exclusive active meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM 2**.
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `77876cf5eb1ba2a740614a4ab509dfad5a6f2bfe` — CI `35381491242` SUCCESS; Vercel Preview READY `mLvGFjcCWciHq4JCto8FNTVuD1iF`. This persist creates a newer head. Re-fetch the live PR head before any verdict. |
+| Last verified implementation/evidence head | `dbe04042e86cb1f4e794a26a9c895eb24b481af8` — CI `35385445537` SUCCESS; Vercel Preview READY `952dAqtbzRFtVGeiEqNtG8nzE8pS`. This persist creates a newer head. Re-fetch the live PR head before any verdict. |
 | Topology | **SINGLE_AGENT** — this slice owns current continuity + operating-mode metadata + the external-setup tracker; no parallel writer |
 | Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
 | External Grok team | **ten identities present per Product-Owner evidence / team verification OPEN**. Comments `5734539126` … `5735008554`: all ten exact names created/initialized (`Jetnity Guardian` already existed). Legacy `Stabschef` is a duplicate / pending hide-retire, not a roster slot. Durable per-bot `Anweisungen` verification remains OPEN; iOS persistence is not claimed impossible. Routines, CoS coordination, Evidence Bus e2e and HOLD-exit remain OPEN. Cursor created no bots. |

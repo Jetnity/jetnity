@@ -15,9 +15,9 @@ Status: **PRODUCT-OWNER TEN-ROLE ROSTER EVIDENCE INCORPORATED / TEAM VERIFICATIO
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `77876cf5eb1ba2a740614a4ab509dfad5a6f2bfe` |
-| Evidence on that SHA | CI `35381491242` SUCCESS; Auth `105718455943` SUCCESS; Typecheck/Lint/Build `105718455612` SUCCESS; Vercel Preview READY `mLvGFjcCWciHq4JCto8FNTVuD1iF`; review threads 0; behind=0 |
-| This persist | **creates a newer head** than `77876cf5`. It is not the live PR head. |
+| Last verified implementation/evidence head | `dbe04042e86cb1f4e794a26a9c895eb24b481af8` |
+| Evidence on that SHA | CI `35385445537` SUCCESS; Auth `105731157742` SUCCESS; Typecheck/Lint/Build `105731157525` SUCCESS; Vercel Preview READY `952dAqtbzRFtVGeiEqNtG8nzE8pS`; review threads 0; behind=0 |
+| This persist | **creates a newer head** than `dbe04042`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
@@ -36,30 +36,33 @@ Do not treat any SHA written in this file as the current/live head. Continuity f
 - Continuity surfaces no longer say “Guardian + Chief of Staff only” or “remaining eight uncreated.”
 - No GitHub Ruleset/admin mutation. No external Grok bot creation or mutation by Cursor. No product/runtime. PR #487 untouched.
 
-## 3. Local gates on last verified tree `77876cf5`
+## 3. Local gates on last verified tree `dbe04042`
 
-These results belong to the previous persist, which already had exact-head CI/Vercel. This persist is documentation-only evidence update.
+Run by this writer on the ten-role persist SHA before the evidence commit.
 
 | Gate | Result |
 | --- | --- |
-| `check:operating-mode` | PASS on prior OS-2 heads and exact-head CI on `77876cf5` |
-| Guard fixtures | 16/16 PASS on prior OS-2 heads |
-| `typecheck` / `lint` / `test` / hygiene / `build` | PASS on last verified heads |
-| merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
+| `check:operating-mode` | PASS |
+| Guard / unit tests | 3509/3509 PASS, including operating-mode guard fixtures |
+| `typecheck` | PASS |
+| `lint` | 0 errors / 138 warnings |
+| hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) | PASS |
+| `build` | PASS (Next.js 16.3.3) |
+| merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 / ahead=6 |
 | review threads | 0 |
 
-## 4. Exact-head remote evidence on last verified SHA `77876cf5`
+## 4. Exact-head remote evidence on last verified SHA `dbe04042`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35381491242` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35381491242 |
-| Typecheck, Lint & Build | job `105718455612` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105718455943` SUCCESS |
-| Vercel | commit status **success** / READY — https://vercel.com/jetnity-e1b93c82/jetnity-app/mLvGFjcCWciHq4JCto8FNTVuD1iF |
+| GitHub Actions CI | run `35385445537` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35385445537 |
+| Typecheck, Lint & Build | job `105731157525` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105731157742` SUCCESS |
+| Vercel | commit status **success** / READY — https://vercel.com/jetnity-e1b93c82/jetnity-app/952dAqtbzRFtVGeiEqNtG8nzE8pS |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `77876cf5`.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `dbe04042`.
 
 ## 5. Non-scope
 
