@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-PO roster evidence: comments `5734539126` … `5735008554`
+E2E evidence: comments `5735190265` and `5735209274`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `dbe04042e86cb1f4e794a26a9c895eb24b481af8` has exact-head CI `35385445537` SUCCESS and Vercel Preview READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `5edc72806c62c298c864ca77b9903f5fa7fe6cc5` has exact-head CI `35385907236` SUCCESS and Vercel SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,49 +19,42 @@ Last verified evidence head `dbe04042e86cb1f4e794a26a9c895eb24b481af8` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat the ten identity reports as complete ten-role setup, team interoperability or HOLD lift | **Rejected.** Routines, CoS coordination, Evidence Bus e2e and HOLD-exit remain **OPEN**. Mode stays `AI_OS_BUILD_HOLD`. |
-| Count `Stabschef` as a second Chief of Staff or eleventh role | **Rejected.** Recorded as legacy duplicate / pending hide-retire only. |
-| Mark durable profile configuration verified because initialization succeeded | **Rejected.** Per-bot `Anweisungen` reopen/check is **team-verification OPEN**. |
-| Keep a blanket claim that iOS `Anweisungen` persistence is impossible | **Rejected.** Product Owner clarified that persistence can succeed after a delay. |
-| Independently claim Cursor inspected the Grok app | **Rejected.** Source is Product-Owner comments only. |
+| Treat E2E #001 as HOLD lift, team operational completeness or routine authorization | **Rejected.** Routines and HOLD-exit remain **OPEN**. Mode stays `AI_OS_BUILD_HOLD`. |
+| Treat E2E #001 as a security audit or material finding | **Rejected.** Signal was NO MATERIAL SECURITY / PRIVACY SIGNAL. Transport test only. |
+| Count `Legacy Stabschef — DO NOT USE` as a second Chief of Staff | **Rejected.** Renamed / do-not-use / not a roster slot. |
+| Ignore Product & UX trailing-period drift or Guardian contract gap | **Rejected.** Both remain **OPEN**. |
 | Create, edit, hide or delete Grok bots from this persist | **Rejected.** Documentation only. |
-| Drop a role, collapse the roster, or invent a consistency PASS | **Rejected.** All ten names remain mandatory; exact consistency check stays **OPEN**. |
 | Call this persist the live/current head | **Rejected.** Last-verified SHA + “this persist creates a newer head.” |
 | Ready, merge, start routines, or start a follow-up slice | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- Exact roster/name/role consistency has not been independently re-opened in the Grok app by this slice.
-- Canonical Guardian contract/team verification remains OPEN if still needed.
-- Durable per-bot profile-instruction persistence is not independently re-checked here.
-- Legacy `Stabschef` remains a semantic-duplicate risk until the Product Owner hides or retires it.
-- Chief-of-Staff coordination and specialist → CoS → TL Evidence Bus e2e are unverified.
+- Product & UX Explorer visible name still has a trailing period.
+- Guardian persisted contract still predates the modern ten-role CoS Evidence-Bus wording.
 - Approved routines/automations are not configured.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `dbe04042`.
+- E2E #001 proves one specialist → CoS → GitHub → TL no-signal path, not every specialist path and not recurring cadence.
+- This persist is a newer head than `5edc7280`.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Incorporate full ten-role PO evidence into the tracker | Yes | comments through `5735008554` |
-| Guardian remains canonical existing identity | Yes | |
-| Roles 1 and 3–10 created/initialized, not over-claimed | Yes | presence recorded; team verification OPEN |
-| `Stabschef` not a roster slot; no Cursor mutation | Yes | |
-| Routines / CoS coordination / e2e / HOLD-exit stay open | Yes | |
-| iOS persistence not claimed impossible | Yes | team-verification OPEN |
+| Persist E2E #001 into tracker / STATUS / HANDOFF / SELF_REVIEW | Yes | comments `5735190265` / `5735209274` |
+| Do not over-claim HOLD-exit or routines | Yes | both remain OPEN |
+| Record Phase-1 + duplicate-CoS rename | Yes | `5735080935` / `5735135388` |
+| Keep Product & UX name cleanup and Guardian contract OPEN | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- Product-Owner comments `5734539126` … `5735008554`;
-- last verified head `dbe04042` CI `35385445537` SUCCESS and Vercel READY;
-- review threads 0; behind=0 versus the recorded predecessor;
+- comments `5735080935`, `5735135388`, `5735190265`, `5735209274`;
+- last verified head `5edc7280` CI `35385907236` SUCCESS and Vercel SUCCESS;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
-- Grok app UI / bot list / durable profile text;
+- Grok app UI after this persist;
 - CI/Vercel on **this persist SHA**;
 - shared-environment tokens;
 - Production / Supabase (out of scope).
