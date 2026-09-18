@@ -1,7 +1,7 @@
 # Jetnity – V1 Incident Process 1 STATUS
 
 Stand: 18. September 2026  
-Status: **TL P3 PATH ATTRIBUTION ON `c52ccbcb` APPLIED / THIS HEAD INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **TL P3 GATED ON `b4f475ca` / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #463  
 Draft PR: #464  
@@ -77,22 +77,34 @@ These remain evidence of earlier heads only.
 | `953670e5` dispatch / task-only | not a product head | n/a for this implementation | `8HQrXaCDxsiW95kgr6UdV9cb3Pd6` READY |
 | `c59d18bc` implementation | PASS (verify-job scripts) | [35296309928](https://github.com/Jetnity/jetnity/actions/runs/35296309928) SUCCESS | `FJFMuQQg65DDm8p4NfrBgcYAcrB8` READY |
 | `c52ccbcb` evidence persist / Guardian lock | not re-run locally | [35296571456](https://github.com/Jetnity/jetnity/actions/runs/35296571456) SUCCESS | `3kQyXW3WR5zVuDwLWbmzxgJp4D4G` READY |
+| `b4f475ca` TL P3 path attribution | not re-run locally | [35324826220](https://github.com/Jetnity/jetnity/actions/runs/35324826220) SUCCESS | `8fACsLeNXuHJbFFmNyAhhm5Qv3mG` READY |
 
 Guardian on `c52ccbcb`: **GUARDIAN PASS — evidence only**, no P0/P1/P2, P3 path attribution accepted by TL as required.
 
-## 6. Gates on this P3 persist
+## 6. Gates on P3-fix head `b4f475ca` (invalidated as current by this persist)
 
-Local and exact-head GitHub CI / Vercel Preview are **pending** on this P3 commit. Results will be written after they exist if a further evidence persist is required. No gate is claimed green for this new HEAD here.
+| | |
+| --- | --- |
+| SHA | `b4f475cad726db66e0e4a336e3bb749fb55e3c8f` |
+| GitHub CI | [35324826220](https://github.com/Jetnity/jetnity/actions/runs/35324826220) **SUCCESS** (`pull_request`) |
+| Typecheck, Lint & Build | SUCCESS (`105535347027`) |
+| Auth-Konfiguration gegen config.toml | SUCCESS (`105535346673`) |
+| Vercel | GitHub commit status **success** — `8fACsLeNXuHJbFFmNyAhhm5Qv3mG` READY |
+| Inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/8fACsLeNXuHJbFFmNyAhhm5Qv3mG |
+| Preview | https://jetnity-app-git-docs-v1-incident-process-1-jetnity-e1b93c82.vercel.app |
+| Vercel threads | 0 unresolved / 0 total |
+
+This evidence persist is a new HEAD. Re-fetch CI/Vercel on the live HEAD. No local re-run of the full verify-job was required for the docs-only P3 wording change; the GitHub verify job on `b4f475ca` is the recorded exact-head suite.
 
 No Supabase live mutation, backup/restore rehearsal, or Production rollback was performed.
 
-## 7. `origin/main` drift (re-fetched 18 September 2026, at `c52ccbcb`)
+## 7. `origin/main` drift (re-fetched 18 September 2026, at `b4f475ca`)
 
 | | |
 | --- | --- |
 | `origin/main` | `926a8cde1b469b2465b311aafcf84bc18e4770f2` |
 | Merge-base | `926a8cde1b469b2465b311aafcf84bc18e4770f2` |
-| Ahead at `c52ccbcb` | 3 |
+| Ahead at `b4f475ca` | 4 |
 | Behind | **0** |
 
 Re-count after this persist commit.
@@ -105,12 +117,11 @@ Re-count after this persist commit.
 - TL CHANGES REQUIRED `5727375904` — addressed in the runbook text on this head.
 - Continue-same-session `5727378163`.
 - No GitHub review-line threads.
-- Vercel live-feedback: 0 unresolved / 0 total on the last recorded Preview (`c52ccbcb`).
+- Vercel live-feedback: 0 unresolved / 0 total on the P3-fix Preview (`b4f475ca`).
 
 ## 9. Next step
 
-1. Commit/push this P3 correction.
-2. Run required exact-head CI / Vercel on the new HEAD.
-3. Persist those results if a further evidence commit is needed, knowing it invalidates the previous exact-head.
-4. **STOP FOR TECHNICAL-LEAD REVIEW.**
-5. Do not Ready. Do not merge. Do not start a follow-up slice.
+1. Commit/push this evidence persist.
+2. Re-fetch exact-head CI / Vercel on the new HEAD.
+3. **STOP FOR TECHNICAL-LEAD REVIEW.**
+4. Do not Ready. Do not merge. Do not start a follow-up slice.

@@ -57,10 +57,10 @@ This document argues against the implementation. It cannot replace an independen
 | Evidence / timeline without secrets or raw sensitive data | Yes | §11 |
 | Tooling half of 5.5 remains OPEN / PO-gated | Yes | §13 |
 | No support process / error-boundary / follow-up slice | Yes | |
-| Exact-head gates + STATUS / HANDOFF / SELF_REVIEW | Yes for earlier heads; this P3 persist is a newer HEAD | |
+| Exact-head gates + STATUS / HANDOFF / SELF_REVIEW | Yes for `b4f475ca`; this evidence persist is a newer HEAD | |
 | No Ready / no merge | Yes | |
 | TL P3 `model_usage` file attribution | Yes | `runtime.ts` owns `USAGE_LIMIT`; `sammeln.ts` consumes the read |
 
 ## 4. What remains before Technical-Lead review
 
-TL CHANGES REQUIRED `5727375904` / continue `5727378163` on locked head `c52ccbcb` (Guardian PASS, CI `35296571456`, Vercel `3kQyXW3WR5zVuDwLWbmzxgJp4D4G`) is applied. This P3 persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+TL CHANGES REQUIRED `5727375904` is applied. `b4f475ca` had CI `35324826220` SUCCESS and Vercel `8fACsLeNXuHJbFFmNyAhhm5Qv3mG` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.

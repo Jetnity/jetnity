@@ -1,7 +1,7 @@
 # Jetnity – V1 Incident Process 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **TL P3 `model_usage` ATTRIBUTION ON `c52ccbcb` APPLIED / RE-GATE THIS HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **TL P3 GATED ON `b4f475ca` / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_INCIDENT_PROCESS_1_TASK_2026-09-18.md`  
 Canonical runbook: `docs/V1_INCIDENT_PROCESS_RUNBOOK_2026-09-18.md`  
@@ -23,6 +23,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Dispatch head | `953670e5166dd0da93e40a4a8202fbb60d1f4862` |
 | Implementation head | `c59d18bcebcfb635d9df4ed4dba58325741b5283` |
 | Previous evidence / Guardian-locked head | `c52ccbcb7bb5319fb2535f049b560627b1db6553` |
+| P3-fix head | `b4f475cad726db66e0e4a336e3bb749fb55e3c8f` |
 | TL P3 | comment `5727375904` / continue `5727378163` |
 | Agent | Jetnity V1 incident process 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
@@ -49,7 +50,8 @@ No runtime, provider, secret, Auth, database or cost change. Incident semantics 
 1. §2.1 no longer attributes the 200-row cap to `sammeln.ts`.
 2. All earlier boundaries still hold (no invented monitoring, existing kill switches only, PO gates preserved, tooling half of 5.5 open).
 3. `c52ccbcb` CI `35296571456` SUCCESS, Vercel `3kQyXW3WR5zVuDwLWbmzxgJp4D4G` READY, and Guardian PASS are recorded only for that SHA.
-4. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
+4. `b4f475ca` CI `35324826220` SUCCESS and Vercel `8fACsLeNXuHJbFFmNyAhhm5Qv3mG` READY are recorded only for that SHA.
+5. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
 
 ## 4. What this slice does not mean
 
