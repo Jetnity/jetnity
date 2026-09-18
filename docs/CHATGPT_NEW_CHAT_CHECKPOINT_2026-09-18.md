@@ -1,6 +1,6 @@
 # ChatGPT Technical-Lead New-Chat Checkpoint – 18. September 2026
 
-Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 #460 CLOSED / V1 INCIDENT PROCESS 1 #464 CLOSED / V1 SUPPORT PROCESS 1 #470 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 #471 CLOSED / V1 ADMIN REVENUE TRUTH 1 #472 CLOSED / JETNITY GUARDIAN EXTERNAL-APP WORKFLOW CANONICAL / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 #460 CLOSED / V1 INCIDENT PROCESS 1 #464 CLOSED / V1 SUPPORT PROCESS 1 #470 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 #471 CLOSED / V1 ADMIN REVENUE TRUTH 1 #472 CLOSED / V1 COOKIE CONSENT HYGIENE 1 #477 CLOSED / V1 ACCOUNT DATA EXPORT 1 #476 CLOSED / JETNITY GUARDIAN EXTERNAL-APP WORKFLOW CANONICAL / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 This checkpoint exists so a fresh ChatGPT Technical Lead can continue without relying on chat memory.
 
@@ -32,13 +32,13 @@ Then independently verify live:
 
 ## 2. Exact verified main at handoff
 
-Latest continuity refresh baseline after the closed parallel V1 remediation group:
+Latest verified product/runtime closure baseline after V1 Account Data Export 1:
 
-`9a3fe265dc47864897ab9f7da1c0ae7e9765a778`
+`57efdb2b796e5d99e0bf0010c5d1ef5af3842af7`
 
 Commit:
 
-`Add V1 support process runbook (#470)`
+`Add authenticated account data export (#476)`
 
 The earlier Assistant Runtime merge `fdbd3735c0bfd4993bd78d41a3ab70edd895988c` remains a historical verified transition baseline, not current main.
 
@@ -231,6 +231,31 @@ All three merge trees were content-identical to their accepted exact heads. No P
 
 Audit findings **4.1 process half, 4.2 and 6.3 are closed**. No next product slice is selected by this checkpoint.
 
+## 6e. V1 Data Portability / Cookie Hygiene group — CLOSED
+
+### PR #477 / issue #475 — Cookie Consent Hygiene 1
+- accepted head `f4bdd74626a0c079f8395bcdabe06c1765ea5565`;
+- merge `ac3539d9ceff4e96308a48c51d2d317927245b54`;
+- CI `35337224693`: SUCCESS;
+- Preview `dpl_BGBN6ChgFpURWBZK5xihJ8nVezPy`: READY;
+- Production `dpl_DGH3PW31YhX6Ge4nX7JTBAXVBw7E`: READY.
+
+### PR #476 / issue #474 — Account Data Export 1
+- accepted head `f58a3902382c2bbf458bf0be0d977eaa2aadaef0`;
+- merge/runtime closure baseline `57efdb2b796e5d99e0bf0010c5d1ef5af3842af7`;
+- CI `35342076752`: SUCCESS including Auth configuration;
+- Preview `dpl_AVzFSpwuCc2gJRLDk8qwvAn3R3nH`: READY;
+- external Jetnity Guardian exact-head verdict: **PASS — prior P2 resolved — no P0/P1/P2/P3**;
+- Production `dpl_7DRw8h3PQ3zU2FyzaNiGECJ5Wx1q`: READY;
+- TL P2 wildcard export corrected to explicit per-table column allowlists before merge;
+- no service role, DB mutation, migration, RLS/Auth change or persistent export copy.
+
+Accepted head -> merge was content-identical for both slices.
+
+Audit finding **2.1 is closed for the scoped V1 product export** and finding **1.2(a) is closed**. Separate legal-content, deletion/retention, Production-auth-verification and automated-observability work is not implicitly closed.
+
+No next product slice is selected by this checkpoint.
+
 ## 7. Open PR field at handoff
 
 PR #453 is closed/merged.
@@ -253,6 +278,8 @@ V1 Legal Claim Hygiene 1 is fulfilled by merged PR #457; issue **#456 is closed 
 V1 Admin MFA Loss Recovery Runbook 1 is fulfilled by merged PR #460; issue **#459 is closed as completed**. Guardian review issue **#461 is closed as completed**.
 
 Parallel V1 remediation is fulfilled by merged PRs **#470, #471 and #472**; issues **#467, #468 and #469 are closed as completed**.
+
+V1 Cookie Consent Hygiene 1 and V1 Account Data Export 1 are fulfilled by merged PRs **#477 and #476**; issues **#475 and #474 are closed as completed**.
 
 Realistic World Cartography 1 is already integrated/post-merge verified via the World Cartography work and PR #444 evidence. During transition cleanup, issue **#442 was closed as completed**.
 
@@ -336,4 +363,4 @@ PR #453 is closed and must not be reconstructed as pending work.
 
 Verified governance integration baseline: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later docs-only continuity merge may advance repository `main`; live evidence always wins.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. V1 SUPPORT PROCESS 1 / #470 CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. V1 SUPPORT PROCESS 1 / #470 CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
