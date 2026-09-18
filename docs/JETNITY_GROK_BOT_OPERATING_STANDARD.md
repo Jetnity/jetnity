@@ -444,7 +444,7 @@ Jeder gestartete Lauf bleibt read-only / observer-first. Eine Rechteerweiterung 
 Standard ohne Product-Owner-Start:
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR TECHNICAL-LEAD ACTIVATION**
+> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
 
 Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich.
 
