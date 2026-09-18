@@ -7,7 +7,7 @@ Issue: #484
 Draft PR: #485  
 Branch: `fix/v1-security-event-coverage-truth-1`  
 Binding task: `docs/V1_SECURITY_EVENT_COVERAGE_TRUTH_1_TASK_2026-09-18.md`
-TL CHANGES REQUIRED: comment `5731553314` on prior head `751ec39e`
+Integration: `origin/main@b934afab` (#483) into `11e66944`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
@@ -17,49 +17,37 @@ This document argues against the implementation. It cannot replace an independen
 
 | Attack | Result |
 | --- | --- |
-| Keep `Events (24h)` / `Keine Events gefunden` and only extend the page hint | Rejected. A zero KPI plus “no events found” still reads as complete monitoring. |
-| Derive 24h KPIs from the filtered `events` memo | Rejected. TL P2: search would silently shrink “Aufgezeichnete Events (24h)”. Now sourced from unfiltered `data.events`. |
-| Add “gefiltert” to KPI labels instead of changing the source | Rejected. The required correction is unfiltered recorded-window counts, not a filtered-window relabel. |
-| Treat Development 0 / Production two 2025 rows as UI provenance copy | Rejected. Task forbids overstating unverified-in-UI historical/test provenance. |
-| Add a service-role or authenticated INSERT writer to “make the table true” | Rejected. Hard exclusion; ingestion needs a later identity/PII/rate-limit design. |
-| Mark finding 5.2 PASS because the UI is now honest | Rejected. Presentation hygiene ≠ ingestion. Runtime ingestion remains OPEN. |
-| Claim release-gate §G is satisfied by copy | Rejected. §G requires visible auth/security events, not an honest empty reader. |
-| Change blocklist enforcement or middleware/edge | Rejected. Preserve non-enforcement truth only. |
-| Touch error boundaries or `docs/V1_SUPPORT_PROCESS_RUNBOOK_2026-09-18.md` | Rejected. Parallel PR #483 ownership. |
-| Edit global continuity (`ACTIVE_WORK_STATUS`, HANDOFF, ROADMAP) | Rejected. Task hard exclusion; slice STATUS/HANDOFF persist this block. |
-| Merge/rebase another active slice | Rejected. |
-| Claim a logged-in Preview proof of `/admin/security` | Rejected. No admin session in this environment. |
+| Rebase instead of merge and rewrite earlier exact-head SHAs | Rejected. Merge kept history; no force-push. |
+| Rewrite #485 widget/copy while integrating | Rejected. Integration-only; accepted runtime behaviour unchanged. |
+| Manually edit #483 error boundaries or the support runbook | Rejected. Those files arrived only via the merge commit. |
+| Derive 24h KPIs from the filtered `events` memo | Rejected. TL P2 remains: unfiltered `data.events` via `aufgezeichneteEvents`. |
+| Mark finding 5.2 PASS because main moved | Rejected. Ingestion remains OPEN. |
+| Claim release-gate §G is satisfied | Rejected. |
 | Mark Ready or merge | Rejected. |
 
 ## 2. Residual risks this slice does not close
 
-- Nothing in application runtime writes `security_events`. The table can remain empty forever.
+- Nothing in application runtime writes `security_events`.
 - Release-gate §G remains open.
 - IP blocklist is still not enforced.
-- The unfiltered-KPI contract is source-level. A later sibling component could reintroduce filter-coupled KPIs.
-- No Real-Device or logged-in Preview click.
+- No logged-in Preview click of `/admin/security`.
 
-## 3. Compliance with the binding task and TL P2
+## 3. Compliance with the integration dispatch
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| `securityHinweis` states incomplete recorded-event view | Yes | local `security_events`, no complete ingestion, 0 ≠ none happened |
-| Persistent coverage notice | Yes | `securityAbdeckungHinweis`, separate from load errors |
-| KPI recorded/aufgezeichnet semantics | Yes | three 24h labels |
-| Honest table heading + empty state | Yes | aufgezeichnet wording; empty vs error kept |
-| 24h KPIs from unfiltered recorded set | Yes | `aufgezeichneteEvents = data?.events`; `last24` from that |
-| Search limited to table | Yes | filtered `events` still drives table rows and entry count |
-| Focused unfiltered-KPI regression | Yes | `security-event-coverage-truth.test.ts` |
-| Preserve IP-blocklist non-enforcement | Yes | existing notice and write/remove path unchanged |
-| Audit 5.2 dated mitigation only | Yes | ingestion OPEN; not PASS/RESOLVED |
-| No §G satisfaction claim | Yes | |
-| No service-role / migration / Auth / RLS / Production / vendor / secret / cost | Yes | |
-| Allowed write scope | Yes | widget + copy + admin tests + audit note + slice docs |
-| Required local gates | Yes | recorded on `9c02d14e` |
-| Exact-head CI + Preview | Yes | run `35357302461` SUCCESS; Vercel `EfkQKormXNw9qJtoFwZpGs1EKjtK` READY on `9c02d14e` |
-| behind=0 | Yes | vs live `origin/main@21f489d3` before this persist |
+| Bring branch onto `main@b934afab` | Yes | merge commit `11e66944` |
+| No accepted runtime change except mechanical integration | Yes | clean disjoint merge |
+| Do not manually modify #483 files | Yes | |
+| Preserve unfiltered 24h KPIs | Yes | `aufgezeichneteEvents = data?.events` |
+| Search limited to table | Yes | |
+| Preserve coverage truth and hard exclusions | Yes | |
+| merge-base = current main, behind=0 | Yes | before this persist |
+| Full local gates | Yes | 3493/3493 tests; typecheck/lint/hygiene/build PASS |
+| Exact-head CI + Auth + Preview | Yes | `35358800258` SUCCESS; Auth `105644639434`; Vercel `2khmLugfNUZrHmNGk2b1XuiYjrrV` READY |
+| Update only #485 slice evidence | Yes | these three docs |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-`9c02d14e` had CI `35357302461` SUCCESS and Vercel `EfkQKormXNw9qJtoFwZpGs1EKjtK` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+`11e66944` had CI `35358800258` SUCCESS and Vercel `2khmLugfNUZrHmNGk2b1XuiYjrrV` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
