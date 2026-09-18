@@ -16,53 +16,46 @@ This document argues against the implementation. It cannot replace an independen
 
 | Attack | Result |
 | --- | --- |
-| Invent a named inbox owner or “we read mail daily” because the audit asked who monitors the address | Rejected. Repository evidence is **unknown**. Product Owner owns the decision of who may read; coverage is not claimed. |
-| Invent a first-response window because release-gate §M wants a defined channel | Rejected. Channel + role ownership are defined; SLA is explicitly absent. |
-| Treat Footer `mailto` as proven controller / Datenschutzkontakt | Rejected. AP-6a legal-input contract and DECISIONS legal-input rule kept. |
-| Claim `Fehler-ID` can be looked up once support exists | Rejected. §6.2 states no operator-side correlation; finding 4.3 / 5.5 tooling remain open. |
-| Add `app/account/error.tsx` or mailto on error surfaces “to make support reachable” | Rejected. Runtime 4.2 is another parallel slice; write scope forbids it. |
-| Use `/admin/users` or Production SQL as a support console | Rejected. §11 allows only already-authorized AAL2 datensparse lookup and forbids dumps, role/status unlocks and service-role. |
-| Apply the admin MFA runbook to consumer lockouts | Rejected. Named as out of scope. Consumer MFA recovery stays open. |
-| Fulfill DSAR / deletion by ad-hoc Production export | Rejected. No fulfillment path; PO + Legal; no uncontrolled DB access. |
-| Promise refunds or treat admin `payments`/`refunds` as user billing | Rejected. No payment provider; leftover ledger is not consumer billing. |
-| Invent visa / official-truth answers to close trip mail | Rejected. `unknown` preserved; traveller-context policy applied. |
-| Bundle a helpdesk or error-tracking vendor into this process | Rejected. Product-Owner-gated; §14 keeps tooling OPEN. |
-| Edit global continuity docs or reserved parallel-slice files | Rejected. Allowed files only. |
-| Mark Ready / merge because the process doc exists | Rejected. |
+| Invent a named inbox owner or “we read mail daily” | Rejected. Coverage remains unknown. |
+| Invent a first-response window / SLA | Rejected. |
+| Treat Footer `mailto` as proven controller | Rejected. |
+| Claim `Fehler-ID` can be looked up | Rejected. |
+| Add `app/account/error.tsx` or mailto on error surfaces | Rejected. Other parallel slice. |
+| Use `/admin/users` as a support disclosure source | Rejected after TL P1. Internal AAL2 triage only; no user-facing existence/status. |
+| Confirm or deny account existence from ordinary email | Rejected after TL P1. §11.1 default is non-disclosure. |
+| Ask for government ID / passport / OTP / password “to verify” | Rejected. §4.3 / §5 / §11.1. |
+| Invent From:-header or “reply from the account” as proof | Rejected. Forgeable / out of band. |
+| Fulfill DSAR / deletion by ad-hoc Production export or email identity check | Rejected. PO + Legal; no uncontrolled DB access. |
+| Apply the admin MFA runbook to consumer lockouts | Rejected. |
+| Promise refunds or treat admin `payments` as user billing | Rejected. |
+| Invent visa / official-truth answers | Rejected. |
+| Bundle a helpdesk or error-tracking vendor | Rejected. |
+| Edit global continuity docs or reserved files / Ready / merge | Rejected. |
 
 ## 2. Residual risks this slice does not close
 
-- Mail may sit unread. Detection delay is unknown and is the operational hole behind the process.
-- Users who crash on `/account/*` still have no Jetnity error boundary and no mailto on that surface (4.2).
-- `Fehler-ID` remains unresolvable on the operator side (4.3 / 5.5 tooling).
-- Data-rights requests can now be **classified**, not fulfilled (2.1 / 2.2).
-- Consumer MFA loss can now be answered honestly as unrestorable, not recovered (3.4 consumer).
-- Auth confirmation/reset mail can still fail at low volume (3.8).
-- Single-operator risk: if only one person can open the mailbox, process ownership exists on paper but coverage does not.
-- The incident runbook’s support-handoff line still says finding 4.1 had no owned mailbox **process**. After merge, a later continuity edit on `main` may update that sentence; this slice must not edit that merged runbook.
+- Mail may sit unread.
+- No approved secure support identity-verification channel. Honest non-disclosure can frustrate a real account holder; that is preferred to an existence oracle.
+- Account-area error boundary and unresolvable `Fehler-ID` remain (4.2 / 4.3 / 5.5 tooling).
+- Data-rights requests can be classified, not fulfilled, and identity for those requests is still not operable from this process.
+- Consumer MFA unrestorable; Auth mail ceiling (3.8); single-operator mailbox risk.
+- The merged incident runbook may still say finding 4.1 had no process; this slice must not edit it.
 
-## 3. Compliance with the binding task
+## 3. Compliance with the binding task and TL P1
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Docs-only allowed write scope | Yes | TASK + RUNBOOK + STATUS + HANDOFF + SELF_REVIEW |
-| Current entry point + limitations | Yes | §1; current Footer, not stale “Kontakt” heading |
-| Required intake categories | Yes | §3 |
-| Minimum information + data minimisation | Yes | §4 |
-| Never request password / OTP / TOTP seed / tokens / cookies / service-role / passport-MRZ-biometric-health over email | Yes | §5 |
-| Screenshots only when needed and redacted | Yes | §6.1 |
-| Fehler-ID as context, not automatic resolution | Yes | §6.2 |
-| Triage, ownership, escalation to merged incident runbook | Yes | §7–§9 |
-| Product Owner / Technical Lead boundaries | Yes | §2 / §10 |
-| No uncontrolled Production DB access | Yes | §11 |
-| Known/unknown; no invented SLA | Yes | §2.1 / §12 |
-| Closure / evidence | Yes | §13 |
-| Explicit remaining tooling gaps | Yes | §14 |
-| No runtime / mailbox / ticket / legal / Production / secret / cost | Yes | |
-| No parallel reserved files / no global continuity | Yes | |
-| Exact-head gates + persist | Yes for `322f59d6`; this evidence persist is a newer HEAD | |
-| No Ready / no merge / no follow-up slice | Yes | |
+| Docs-only allowed write scope | Yes | |
+| Original 4.1 process contract | Yes | unchanged except P1 tightening |
+| No confirm/deny account existence from normal email | Yes | §11.1 |
+| `/admin/users` internal triage only | Yes | §11 |
+| Generic replies unless approved secure identity exists | Yes | none exists; default non-disclosure |
+| Data-rights identity = PO + Legal, not email | Yes | §8.6 / §11.1 |
+| No government ID / passport / OTP / password to verify | Yes | |
+| No uncontrolled Production DB / special gates preserved | Yes | |
+| Exact-head gates + persist | Pending on this P1 persist | |
+| No Ready / no merge / no follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-`322f59d6` had local verify-job PASS, CI `35328321604` SUCCESS and Vercel `84V4jDWydNrVEGMM6xYQomh7upq8` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+TL CHANGES REQUIRED `5728414707` is applied in the runbook. Local and exact-head CI / Vercel on this new HEAD are pending. Agent self-review is still not PASS.

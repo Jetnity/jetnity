@@ -185,6 +185,8 @@ Ask only what is needed to classify and to avoid acting on the wrong account or 
 
 Traveller-context rule: if the question depends on citizenship, document, residence or route, do **not** ask for a “primary” passport. Ask which **option** they want evaluated, or record `unknown`. Do not invent official results to close the ticket.
 
+Do **not** collect government ID, passport, OTP, password or other secrets “to verify” that the sender controls a Jetnity account. Ordinary email is not an identity-proofing channel (§11.1).
+
 ---
 
 ## 5. Forbidden requests and redaction
@@ -196,8 +198,8 @@ Never request, accept as a required field, or store in the support record:
 - TOTP seed, authenticator QR, secret URI or backup/recovery codes;
 - access token, refresh token, session cookie, `sb-` cookie dump;
 - service-role key, anon key from a private env, database URL, webhook secret;
-- passport / ID number, MRZ, biometric template, health or vaccination data;
-- payment-card PAN, CVV, full statement, or government ID “for verification” by ordinary email.
+- passport / ID number / government ID, MRZ, biometric template, health or vaccination data;
+- payment-card PAN, CVV, full statement, or any of the above “for verification” by ordinary email.
 
 If the user sends any of those anyway:
 
@@ -263,13 +265,13 @@ Every branch starts with §7. Record known vs unknown. STOP if the next step cro
 
 ### 8.1 account/auth
 
-1. Confirm they are talking about a Jetnity **application** login, not a Supabase platform login.
-2. Existing self-service:
+1. Confirm they are talking about a Jetnity **application** login, not a Supabase platform login. That is a product-domain check, not an account-existence disclosure.
+2. Existing self-service — describe it **generically**. Do not confirm or deny that a Jetnity account exists for the From: address or any other address (§11.1):
    - registration confirmation and password reset are email-only (`enable_confirmations = true`; `resetPasswordForEmail` on the login form);
    - signed-in password change is on `/account/security` with reauthentication;
    - scoped logout exists on `/account/security`; other sessions are `unsupported` to list;
    - verified MFA unenroll requires AAL2 step-up. A user without the authenticator cannot self-clear.
-3. Do **not**: send them a new password; ask for the current password or OTP; enroll or delete factors; change `profiles.status` / role as a “support unlock”; use `ADMIN_ALLOWED_EMAILS` break-glass for a consumer.
+3. Do **not**: send them a new password; ask for the current password, OTP, government ID or passport “to verify”; enroll or delete factors; change `profiles.status` / role as a “support unlock”; use `ADMIN_ALLOWED_EMAILS` break-glass for a consumer; tell them that an account exists, does not exist, is locked, banned, pending or MFA-enrolled.
 4. Honest limits: transactional mail may fail because Jetnity has no own SMTP and the Auth project is documented with a low built-in mail ceiling (finding 3.8). If they never received confirmation/reset mail, say that this path is currently fragile and is a known launch blocker — not that support can bypass Auth.
 5. Consumer MFA loss: no in-product recovery. Do not apply the admin MFA runbook. A later Product-Owner-gated Auth slice would be required to add backup codes or a second factor. Until then the truthful answer is that Jetnity cannot restore that factor by email.
 
@@ -303,8 +305,9 @@ Every branch starts with §7. Record known vs unknown. STOP if the next step cro
 1. Classify: access / export / deletion / rectification / other / unknown.
 2. Do not promise fulfillment, a deadline, or that `info@jetnity.ch` is the proven controller contact.
 3. Do not run ad-hoc Production SELECT dumps into email. That is uncontrolled Production data access (§11).
-4. Persist an internal note: UTC received, request class, whether identity is plausible, known/unknown, **no** raw documents.
-5. Product Owner + Legal decide the response. Technical Lead may later scope a gated export or deletion slice; this process does not start it.
+4. Do **not** verify the requester’s identity by ordinary email, government ID, passport, OTP or password. Identity verification for data-rights / deletion / export remains Product Owner + Legal, or a later approved secure process. This runbook has no such process.
+5. Persist an **internal** note only: UTC received, request class, known/unknown, **no** raw documents, **no** user-facing existence/status statement.
+6. Product Owner + Legal decide the response. Technical Lead may later scope a gated export or deletion slice; this process does not start it.
 
 ### 8.7 billing/payment confusion
 
@@ -376,13 +379,30 @@ Support is not a reason to open the Production SQL editor, service-role client, 
 | Allowed today | Forbidden as “support” |
 | --- | --- |
 | Read the user’s words and any redacted screenshot they sent | Production `SELECT` of trips, travellers, documents, `auth.users`, or `profiles` into email |
-| If already an authorized admin **and** AAL2 **and** `konten-verwalten`: look at `/admin/users` for `user_id`, email, display_name, role, status, created_at, last_seen_at — then **do not** paste that row back to the mailbox beyond confirming “we see an account with that email” when that confirmation is necessary | Dumping the admin table, changing role/status to “unblock”, or using break-glass as support |
-| Existing owner-scoped self-service the user can run while signed in | Service-role writes, RLS bypass, factor delete, password set, identity delete |
+| If already an authorized admin **and** AAL2 **and** `konten-verwalten`: look at `/admin/users` for `user_id`, email, display_name, role, status, created_at, last_seen_at — **internal technical triage only**. Never paste the row, and never turn the lookup into a user-facing existence or status statement (§11.1) | Dumping the admin table, changing role/status to “unblock”, using break-glass as support, or confirming/denying that an account exists |
+| Existing owner-scoped self-service the signed-in user can run themselves | Service-role writes, RLS bypass, factor delete, password set, identity delete |
 | Read-only host logs **after** incident escalation, by an operator who already has that access | New Production query “to be helpful” |
 
-`/admin/users` is a datensparse admin surface, not a support console. Empty vs error must stay distinct. Break-glass does not reach the database.
+`/admin/users` is a datensparse admin surface, not a support console and not a disclosure source. Empty vs error must stay distinct. Break-glass does not reach the database.
 
-If identification cannot be done without a Production dump, record **unknown** and STOP for Product Owner.
+If a next step would require a Production dump to “identify” the sender, record **unknown**, do not disclose existence/status, and STOP for Product Owner.
+
+### 11.1 Ordinary email is not an account-existence oracle
+
+A normal email to `info@jetnity.ch` does **not** prove that the sender controls the Jetnity account whose address they mention. Jetnity currently has **no** approved secure support identity-verification channel.
+
+Therefore:
+
+- support may **not confirm or deny** whether a Jetnity account exists based only on a normal email request;
+- support may **not disclose** account status (active / pending / disabled / banned / MFA-enrolled / last-seen) to the sender from `/admin/users` or any other lookup;
+- `/admin/users` remains **internal technical triage only** for an already-authorized AAL2 admin with `konten-verwalten`;
+- any user-facing reply about existence or status must stay generic unless identity has been independently established through an **approved secure mechanism**;
+- because no such dedicated mechanism exists today, the default is **do not disclose account existence or status**;
+- do not invent an email challenge, magic link, or “reply from the account address” as proof — From: headers are forgeable and mailbox compromise is out of band;
+- do not ask for government ID, passport, OTP, password or other secrets to “verify” the person;
+- data-rights / deletion / export identity verification remains Product Owner + Legal, or a later approved process — not ad-hoc email verification.
+
+Generic, existence-neutral replies remain allowed: how the public login reset path works, that Jetnity does not take payments, that export/deletion are not built, that a `Fehler-ID` cannot be looked up. Those statements do not say whether **this** sender has an account.
 
 ---
 
@@ -395,16 +415,18 @@ Honesty rules:
 3. Do not fill gaps with reassurance, invented policy, or “we are looking it up in the system”.
 4. Do not claim DSGVO/CH-DSG conformity, a privacy notice, or that a request has been fulfilled when no fulfillment path exists.
 5. Do not claim a response SLA, 24/7, or dedicated staff.
-6. German product UI may receive a German reply; that is language matching, not a legal translation.
+6. Do not confirm or deny account existence or status from ordinary email (§11.1).
+7. German product UI may receive a German reply; that is language matching, not a legal translation.
 
 Suggested internal shape of a user reply (Product Owner sends anything externally binding):
 
 - thank them for writing to `info@jetnity.ch`;
 - restate the understood category in one sentence;
-- say what Jetnity can do **today**;
+- say what Jetnity can do **today**, in generic product language;
 - say what is unknown or not built;
 - do not attach a ticket number (none exists);
-- do not quote secrets or document data back.
+- do not quote secrets, document data, or `/admin/users` facts back;
+- do not say “we found / did not find your account”.
 
 If nobody can answer yet, it is better that the thread stay unanswered than that an agent invents a closing.
 
@@ -417,7 +439,7 @@ A support case may close only when **all** of the following are true:
 1. The category is recorded (or explicitly `unknown` and no further safe question exists).
 2. Secrets/sensitive data were redacted if they appeared.
 3. Any incident/legal/special-gate path was opened or explicitly recorded as not applicable.
-4. The user-facing statement, if any, stayed inside known current product truth.
+4. The user-facing statement, if any, stayed inside known current product truth and did **not** confirm or deny account existence or status (§11.1).
 5. Residual gaps are written (for example: “consumer MFA still unrestorable”; “export still missing”).
 
 Minimum internal evidence (GitHub issue comment or a slice note — **not** the global continuity files from this branch):
@@ -456,6 +478,7 @@ It does **not** satisfy, and must not be cited as satisfying:
 | Own SMTP / reliable Auth mail | Finding 3.8; provider + secret |
 | Legal desk, privacy/terms, proven controller contact | AP-6a Legal inputs still required |
 | Payments support | No money movement exists |
+| Secure support identity verification | No approved channel. Default: do not disclose account existence/status. Product-Owner + Legal for data-rights identity. |
 
 Selecting Freshdesk, Intercom, Zendesk, Sentry or any equivalent remains a **Product-Owner-gated** new-provider / data-processor / possible-cost decision. Until later slices exist, Public V1 Launch remains blocked on the operational gaps above by the repository’s own release gate.
 
@@ -467,6 +490,7 @@ STOP and escalate to Technical Lead (and Product Owner if a special gate is in p
 
 - the next step needs Production SQL, service-role, Auth Admin, RLS change or a new secret;
 - the user sent passport/MRZ/health/payment secrets and someone wants them filed “for the record”;
+- someone wants to confirm or deny that a Jetnity account exists from ordinary email, or to “verify” the sender with government ID, passport, OTP or password;
 - the user asks for account deletion, export, refund or a legal letter;
 - compromise is suspected;
 - someone asks to promise a response time or 24/7;
@@ -480,7 +504,8 @@ Forbidden shortcuts:
 - starting the account error-boundary, legal-text, export, deletion or tooling slice inside this branch;
 - inventing a ticket ID, SLA or dedicated support hire;
 - claiming `Fehler-ID` is resolvable;
-- treating `/admin/users` role/status writes as support;
+- treating `/admin/users` as a disclosure source or using role/status writes as support;
+- confirming or denying account existence/status from ordinary email;
 - using break-glass as account recovery;
 - writing legal or breach-notification text;
 - contacting users who did not write in;
