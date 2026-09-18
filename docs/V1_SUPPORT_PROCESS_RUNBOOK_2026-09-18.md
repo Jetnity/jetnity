@@ -38,9 +38,8 @@ An authorized operator should be able to answer:
 - mailbox / SMTP / provider configuration or a proven live monitoring rota;
 - a ticket queue, helpdesk vendor, chatbot or in-product support form;
 - a runtime support, help, FAQ or contact page;
-- surfacing `info@jetnity.ch` on error or auth surfaces (finding 4.2 / 4.3 leftover);
-- operator-side `Fehler-ID` correlation (finding 4.3 / 5.5 tooling half);
-- account-area error-boundary finding 4.2;
+- surfacing `info@jetnity.ch` on auth forms (error surfaces now include the factual mailto);
+- operator-side `Fehler-ID` correlation (finding 4.3 correlation/tooling half, still open under 5.5);
 - user-facing incident / status communication (finding 4.5);
 - data export / DSAR fulfillment (finding 2.1);
 - account erasure (finding 2.2);
@@ -72,9 +71,9 @@ Verified against current `main` / this branch at implementation. Stale audit lin
 | Fact | Current truth |
 | --- | --- |
 | Public address | `info@jetnity.ch` |
-| Product surface | Single `mailto:info@jetnity.ch` link in `components/layout/Footer.tsx`. Current Footer has **no** “Kontakt” heading; the address sits under the product sentence. |
+| Product surface | Footer `mailto:info@jetnity.ch` in `components/layout/Footer.tsx`, plus the same factual mailto on the public, account and admin error boundaries. Current Footer has **no** “Kontakt” heading; the address sits under the product sentence. |
 | Where the Footer renders | Public layout `app/(public)/layout.tsx` and account layout `app/account/layout.tsx`. |
-| Where it does not render | Admin layouts. Public error boundary. Admin error boundary. Auth forms. |
+| Where it does not render | Admin layouts outside the admin error boundary. Auth forms. |
 | Other product entry points | None. No `app/support`, `help`, `hilfe`, `kontakt`, `contact` or `faq` route. Public navigation (`lib/auth/oeffentliche-navigation.ts`) is only Entdecken / Meine Reisen / Jetnity Pro. |
 | In-product ticket / form / chat | None. |
 | Helpdesk / Freshdesk / Intercom / Zendesk SDK | Absent from `package.json`. |
@@ -228,9 +227,9 @@ Rules:
 
 ### 6.2 Fehler-ID
 
-Public errors may show `Fehler-ID` via `oeffentlicheFehlerId` in `app/(public)/error.tsx` (`lib/next/oeffentliche-fehler-id.ts`: Next.js `digest` if present, otherwise a render-stable `useId` fallback). Admin errors may show `Ref: {error.digest}` only when `digest` exists. Account routes have **no** `app/account/error.tsx`.
+Public, account and admin error boundaries show `Fehler-ID` via `oeffentlicheFehlerId` (`lib/next/oeffentliche-fehler-id.ts`: Next.js `digest` if present, otherwise a render-stable `useId` fallback). They also include a factual `mailto:info@jetnity.ch` and tell the user they may include the shown ID. The mailto is not prefilled with user, account, URL or error details.
 
-The identifier **may** be supplied as context. Current Jetnity has **no** operator-side correlation system (no error-tracking vendor; public errors log only `console.error('[PublicRouteError]', error)` in the **user browser**).
+The identifier **may** be supplied as context. Current Jetnity has **no** operator-side automatic Fehler-ID correlation (no error-tracking vendor; public errors log only `console.error('[PublicRouteError]', error)` in the **user browser**).
 
 Therefore:
 
@@ -239,7 +238,7 @@ Therefore:
 - do not treat a missing ID as proof that nothing happened;
 - if the ID is quoted during a possible outage, pass it into the incident record as an unresolvable user-visible reference.
 
-Finding 4.3 remains open.
+Finding 4.3 is **user-facing/process half closed**. The correlation/tooling half remains **open under 5.5**. Do not mark 5.5 tooling PASS.
 
 ---
 
@@ -469,9 +468,9 @@ It does **not** satisfy, and must not be cited as satisfying:
 | Named inbox monitor and actual coverage | Repository still cannot prove who reads `info@jetnity.ch` or how often |
 | Response window | Intentionally not invented |
 | Ticket system / helpdesk vendor | New provider + possible recurring cost = Product-Owner gate |
-| Runtime help/contact page or mailto on error/auth surfaces | Separate runtime slice; 4.2 / 4.3 leftover |
-| Operator-side `Fehler-ID` correlation | Requires finding 5.5 tooling (hosted error tracking / log aggregation), Product-Owner-gated |
-| Account error boundary | Finding 4.2; reserved to another parallel slice — do not implement here |
+| Runtime help/contact page or mailto on auth forms | Error boundaries now include the factual mailto. Auth forms still have no dedicated contact path. |
+| Operator-side `Fehler-ID` correlation | Finding 4.3 user-facing/process half is closed. Correlation/tooling half remains open under 5.5 (hosted error tracking / log aggregation), Product-Owner-gated |
+| Account error boundary | Finding 4.2 closed via merged PR #471. This runbook must not claim the account boundary is missing. |
 | Status / incident user communication | Finding 4.5 |
 | DSAR export and account deletion | Findings 2.1 / 2.2; Legal + Product-Owner gates |
 | Consumer MFA recovery | Finding 3.4 consumer half; Auth special gate |
@@ -501,7 +500,7 @@ STOP and escalate to Technical Lead (and Product Owner if a special gate is in p
 Forbidden shortcuts:
 
 - marking Ready or merging from this runbook;
-- starting the account error-boundary, legal-text, export, deletion or tooling slice inside this branch;
+- starting a legal-text, export, deletion, helpdesk or error-tracking tooling slice from this runbook;
 - inventing a ticket ID, SLA or dedicated support hire;
 - claiming `Fehler-ID` is resolvable;
 - treating `/admin/users` as a disclosure source or using role/status writes as support;
@@ -510,7 +509,7 @@ Forbidden shortcuts:
 - writing legal or breach-notification text;
 - contacting users who did not write in;
 - editing global continuity documents from this slice;
-- touching files reserved to the parallel Account Error Boundary or Admin Revenue Truth slices.
+- treating this runbook as a 5.5 tooling, helpdesk or error-tracking vendor approval.
 
 ---
 

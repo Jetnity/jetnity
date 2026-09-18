@@ -67,6 +67,16 @@ export default function Error({
           <p className="mt-6 break-words text-xs text-ink-700">
             Fehler-ID: <span className="font-mono">{id}</span>
           </p>
+          <p className="mt-3 text-xs leading-5 text-ink-700">
+            Du kannst uns unter{' '}
+            <a
+              href="mailto:info@jetnity.ch"
+              className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-2 hover:decoration-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              info@jetnity.ch
+            </a>{' '}
+            schreiben und die angezeigte Fehler-ID angeben.
+          </p>
         </div>
       </div>
     </main>

@@ -42,6 +42,8 @@ describe('Account-Fehlergrenze existiert und bleibt wahrheits- und sicherheitstr
     assert.match(quelle, /<h1[\s>]/)
     assert.match(quelle, /min-h-11/)
     assert.match(quelle, /Fehler-ID/)
+    assert.match(quelle, /mailto:info@jetnity\.ch/)
+    assert.match(quelle, /info@jetnity\.ch/)
   })
 
   test('Fehler-ID bleibt digest-first und ohne unreinen oder konstanten Fallback', () => {
