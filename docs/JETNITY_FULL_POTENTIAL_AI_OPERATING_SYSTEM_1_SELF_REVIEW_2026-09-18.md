@@ -36,7 +36,7 @@ Reviewed stale head `e807e0f6` received independent Technical-Lead **CHANGES REQ
 - A future dedicated closure that only touches allowlisted governance files can still write a bad NORMAL policy; review, not this guard, must catch a reckless closure.
 - A later HOLD-era PR could broaden the **merged** main allowlist without adding product files in that same PR; the next PR would then inherit the broader base. That is a reviewed policy change, not the same-PR self-authorization attack.
 - External Grok team still does not exist; daily/weekly briefs are schemas, not running jobs.
-- This self-review persist is a newer head than any previously cited CI/Vercel evidence.
+- This self-review persist is a newer head than `2ae95a27` and any previously cited CI/Vercel evidence.
 
 ## 3. Compliance with the binding task and TL P1s
 
@@ -50,6 +50,7 @@ Reviewed stale head `e807e0f6` received independent Technical-Lead **CHANGES REQ
 | Ten roles mandatory; later setup required before HOLD lift | Yes | this slice still creates no bots |
 | Shared blast-radius rule | Yes | |
 | Focused adversarial fixtures | Yes | 16/16 |
+| Local typecheck/lint/test/hygiene/build | Yes | 3509 tests; lint 0 errors / 138 pre-existing warnings |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. Evidence checked vs not checked
@@ -57,11 +58,13 @@ Reviewed stale head `e807e0f6` received independent Technical-Lead **CHANGES REQ
 Checked:
 - focused guard fixtures 16/16;
 - local `check:operating-mode` PASS;
+- local typecheck, lint (exit 0), 3509 tests, api-schutz, schema-bezug, dead, exports, deps, production build;
+- merge-base `origin/main@0c83af42` / behind=0;
+- review threads 0 at last fetch;
 - no stale merge phrases in `.cursor/rules`;
 - no remaining “do not pre-create all ten” / “schedules are later optional” HOLD-exit language in the OS-1 / Grok pack.
 
 Not checked at this persist:
-- full local typecheck/lint/test/hygiene/build if STATUS has not yet recorded them;
 - CI/Vercel on **this persist SHA**;
 - Guardian run;
 - Production / Supabase (out of scope).
