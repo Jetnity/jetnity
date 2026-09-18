@@ -60,9 +60,9 @@ This document argues against the implementation. It cannot replace an independen
 | Explicit remaining tooling gaps | Yes | §14 |
 | No runtime / mailbox / ticket / legal / Production / secret / cost | Yes | |
 | No parallel reserved files / no global continuity | Yes | |
-| Exact-head gates + persist | Pending on this implementation persist | |
+| Exact-head gates + persist | Yes for `322f59d6`; this evidence persist is a newer HEAD | |
 | No Ready / no merge / no follow-up slice | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-Local gates and exact-head CI / Vercel Preview are still pending on the implementation HEAD. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+`322f59d6` had local verify-job PASS, CI `35328321604` SUCCESS and Vercel `84V4jDWydNrVEGMM6xYQomh7upq8` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.

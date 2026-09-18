@@ -1,7 +1,7 @@
 # Jetnity – V1 Support Process 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **IMPLEMENTATION COMMITTED / RE-GATE THIS HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **IMPLEMENTATION GATED ON `322f59d6` / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_SUPPORT_PROCESS_1_TASK_2026-09-18.md`  
 Canonical runbook: `docs/V1_SUPPORT_PROCESS_RUNBOOK_2026-09-18.md`  
@@ -21,6 +21,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Branch | `docs/v1-support-process-1` |
 | Canonical base | `main@c3cde9ad1e2daa2ed0a3912ed6a55de803476385` |
 | Dispatch head | `64d4f2919810caee1f050452e81cb388b8b50938` |
+| Implementation head | `322f59d66e3ce3edbc7fb9d477a4a63b32743326` |
 | Agent | Jetnity V1 support process 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-869f7450-37b5-4945-8094-48705a3f6543` |
@@ -46,7 +47,8 @@ No runtime, provider, secret, Auth, database or cost change. No mailbox configur
 2. Mailbox **monitor identity** is explicitly unknown; process roles are assigned without claiming a rota.
 3. Escalation points at the merged incident runbook and does not re-implement incident containment.
 4. Parallel reserved files and global continuity docs were not touched.
-5. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
+5. `322f59d6` CI `35328321604` SUCCESS and Vercel `84V4jDWydNrVEGMM6xYQomh7upq8` READY are recorded only for that SHA.
+6. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
 
 ## 4. What this slice does not mean
 
