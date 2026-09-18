@@ -3,6 +3,8 @@
 // P2-TA-04 Evidence-Lock: welche aktuellen App-/Lib-/Component-Quellen
 // Traveller-Tabellen direkt ansprechen vs. party_schreiben / party_loeschen.
 // C1: kein produktives trip_travellers-DELETE mehr. Kein Runtime-DB-Write.
+// V1-Kontoexport darf dieselben Tabellen nur lesen (explicit allowlist + eq/range).
+// Wildcard select('*') is forbidden so a later column cannot enter the download.
 
 import { readdirSync, readFileSync } from 'node:fs'
 import { describe, test } from 'node:test'
@@ -47,13 +49,26 @@ const FROM_CITIZENSHIPS = /\.from\(\s*['"]trip_traveller_citizenships['"]\s*\)/
 const FROM_DOCUMENTS = /\.from\(\s*['"]trip_traveller_documents['"]\s*\)/
 const RPC_PARTY = /\.rpc\(\s*['"]party_schreiben['"]/
 const RPC_LOESCHEN = /\.rpc\(\s*['"]party_loeschen['"]/
+const SCHREIB_KETTE = /\.(insert|update|upsert|delete)\s*\(/
+const EXPORT_LESEN = 'lib/account/datenexport.ts'
+
+function nurExportLesen(treffer: string[]) {
+  assert.deepEqual(treffer.map(rel), [EXPORT_LESEN])
+  const exportQuelle = quelle(join(wurzel, EXPORT_LESEN))
+  assert.doesNotMatch(exportQuelle, /\.select\(\s*['"`]\s*\*\s*['"`]\s*\)/)
+  assert.match(exportQuelle, /KONTO_DATENEXPORT_SPALTEN/)
+  assert.match(exportQuelle, /\.select\(spalten\)/)
+  assert.doesNotMatch(exportQuelle, SCHREIB_KETTE)
+  assert.doesNotMatch(exportQuelle, RPC_PARTY)
+  assert.doesNotMatch(exportQuelle, RPC_LOESCHEN)
+}
 
 describe('P2-TA-04 Traveller write-path inventory', () => {
   const kandidaten = QUELL_VERZEICHNISSE.flatMap((name) => dateienSammeln(join(wurzel, name)))
 
   test('kein produktiver trip_travellers-Tabellenwrite mehr', () => {
     const treffer = kandidaten.filter((pfad) => FROM_TRAVELLER.test(quelle(pfad)))
-    assert.deepEqual(treffer, [])
+    nurExportLesen(treffer)
   })
 
   test('travellerEntfernen löscht nur über party_loeschen', () => {
@@ -72,8 +87,8 @@ describe('P2-TA-04 Traveller write-path inventory', () => {
   test('keine App-/Lib-/Component-Quelle schreibt Child-Tabellen direkt', () => {
     const citizenships = kandidaten.filter((pfad) => FROM_CITIZENSHIPS.test(quelle(pfad)))
     const documents = kandidaten.filter((pfad) => FROM_DOCUMENTS.test(quelle(pfad)))
-    assert.deepEqual(citizenships, [])
-    assert.deepEqual(documents, [])
+    nurExportLesen(citizenships)
+    nurExportLesen(documents)
   })
 
   test('party_schreiben-RPC wird nur im Reisenden-Schreibwrapper aufgerufen', () => {
