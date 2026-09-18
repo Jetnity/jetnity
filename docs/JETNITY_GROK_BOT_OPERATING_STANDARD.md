@@ -327,17 +327,19 @@ Diese Verbote gelten auch dann, wenn CI grün ist, ein PR mergeable ist oder der
 
 ## 9. Repository-Mutationen
 
-Ohne **explizit versionierten Auftrag** darf der Guardian keinerlei Jetnity-Code verändern.
+Der Jetnity Guardian arbeitet nach aktueller Product-Owner-Vorgabe **read-only / observer-first**.
 
-Ein versionierter Guardian-Auftrag kann begrenzte, auditable Repository-Arbeit erlauben, etwa einen ausdrücklich beauftragten Evidence-/Continuity-Bericht. Auch dann gilt:
+Daher gilt verbindlich:
+- keine Dateiänderungen;
+- keine Branches oder Commits;
+- keine PR-Erstellung;
+- keine Code-, Runtime-, Business-Logic- oder Continuity-Mutation;
+- keine stillen Fixes aus Findings;
+- keine Repository-Schreibrechte als Bestandteil eines normalen Guardian-Auftrags.
 
-- nur der definierte Scope;
-- keine stillen Runtime-/Business-Logic-Änderungen;
-- keine Ready-/Merge-Autorität;
-- keine Folgearbeit aus eigener Initiative;
-- jeder neue Head wird dem Technical Lead zur unabhängigen Prüfung übergeben.
+Wenn ein Guardian Finding eine Änderung erfordert, konsolidiert der Technical Lead das Finding und gibt die Korrektur an denselben zuständigen Cursor-Writer oder einen separat gebundenen Docs-/Implementation-Slice.
 
-Code-Änderungen durch den Guardian sind Ausnahme, nicht Standard, und müssen im Auftrag ausdrücklich genannt sein.
+Eine spätere Guardian-Schreibrolle wäre eine **neue ausdrückliche Product-Owner-Governance-Entscheidung** und müsste zuerst kanonisch dokumentiert werden. Bis dahin erzeugt kein Guardian-Prompt Schreibrechte.
 
 ## 10. Verhältnis zu Cursor-Agenten und Technical Lead
 
