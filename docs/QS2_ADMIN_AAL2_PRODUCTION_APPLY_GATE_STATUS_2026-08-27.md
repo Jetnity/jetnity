@@ -28,6 +28,8 @@ Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`
 - Frühere Aussagen „kein Production-Apply“, „Apply noch offen“, „STOPP vor Apply“, „Production wurde nicht beschrieben und nicht angewendet“ in diesem Dokument, im Playbook, im Apply-Gate-Task, in der Reconciliation und in älteren ADR-0175-Nachträgen sind **ausdrücklich historische Pre-Apply-Evidence**.
 - **Kein zweiter Apply.** Dieser Docs-Closure schreibt Production nicht.
 
+Nachtrag 18. September 2026: Der frühere Widerspruch in `docs/AUTH.md` („Production nicht“) ist durch den credentialed GET-only Nachweis #479 / #480 aufgelöst. Diese Datei bleibt die korrekte Apply-Evidence. `docs/AUTH.md` Abschnitt 12 verweist hierher. Kein zweiter Apply.
+
 TW-7 / ADR-0176 aus `main` bleibt unangetastet.
 
 ---

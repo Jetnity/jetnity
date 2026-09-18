@@ -36,6 +36,7 @@
     "db:advisors": "node scripts/db/advisors.mjs",
     "modell:probe": "node --import tsx scripts/modell/probe.ts",
     "auth:pruefen": "node --import tsx scripts/auth/pruefen.ts",
+    "auth:produktion:lesen": "node --import tsx scripts/auth/produktion-lesen.ts",
     "auth:anwenden": "node --import tsx scripts/auth/anwenden.ts",
     "auth:fluesse": "node --import tsx scripts/auth/fluesse.ts",
     "auth:testkonto": "node --import tsx scripts/auth/testkonto.ts",

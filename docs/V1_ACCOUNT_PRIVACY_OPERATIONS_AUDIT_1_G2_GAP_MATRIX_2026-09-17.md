@@ -1,7 +1,9 @@
 # Jetnity – V1 Account / Privacy / Operations Minimum – Gap Matrix (Audit 1, Generation 2)
 
-Stand: 17. September 2026
-Status: **AUDIT-ONLY / DOCS-ONLY — COMPLETE (Sections 1–7 persisted)**
+Stand: 18. September 2026  
+Status: **AUDIT-ONLY COMPLETE / RESOLUTION UPDATE 18 SEP 2026 FOR 3.3 + 3.6 + 3.7**
+
+Historical audit text below is preserved. Dated resolution updates record later live evidence from #479 / #480. They do not rewrite the 17 September 2026 audit as if it had Production credentials.
 
 Canonical issue: #438
 Draft PR: #449
@@ -291,6 +293,8 @@ Verification method for this generation: bounded domain passes with independent 
 - **Dependency / gate** — Resolution requires reading live Production state (`npm run auth:pruefen`, `db:sicherheit`, or a Management API read) with Production credentials. This audit deliberately did not and must not use them.
 - **Smallest next slice** — A Technical-Lead-run Production verification of `aktuelles_admin_aal2()` and the AAL2-dependent `darf_*()` helpers, then correct exactly one of the two conflicting documents and mark the other superseded. No code change. This is the cheapest high-value item in the whole matrix.
 
+**Resolution update, 18 September 2026.** Information gap **RESOLVED**. Independent Technical-Lead read-only Production DB evidence and issue #479 confirm: migration `20260827170000_admin_aal2_data_plane_alignment` is applied; `public.aktuelles_admin_aal2()` is live; all five current `darf_*` helpers require it. The conflicting `docs/AUTH.md` sentence is corrected in #480. `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md` remains the live-confirmed apply evidence and must not be treated as wrong. **Do not apply the alignment migration a second time.**
+
 ### 3.4 MFA recovery / loss of factor
 
 - **Evidence**
@@ -334,6 +338,8 @@ Verification method for this generation: bounded domain passes with independent 
 - **Dependency / gate** — Verification needs Production auth config access; same constraint as 3.3.
 - **Smallest next slice** — Fold the Production redirect-URL / `site_url` check into the same Technical-Lead Production auth verification recommended in 3.3, so one credentialed pass answers both.
 
+**Resolution update, 18 September 2026.** Live Production Auth config is **verified**, but this is **not PASS for launch**. Credentialed GET-only snapshot (`site_url=http://localhost:3000`, empty `uri_allow_list`) from CI jobs `105602766085` / `105603875234`. Record as a verified **P2 launch blocker** / Production configuration remediation. Any fix is a Production Auth write and remains **Production-write-gated**. This slice does not change Production.
+
 ### 3.7 Rate limiting on auth surfaces
 
 - **Evidence**
@@ -348,6 +354,8 @@ Verification method for this generation: bounded domain passes with independent 
 - **Severity** — **P2**.
 - **Dependency / gate** — Production auth config read; same credentialed pass as 3.3 and 3.6.
 - **Smallest next slice** — Include the rate-limit and HIBP values in the single Production auth verification pass; decide consciously on `email_sent`.
+
+**Resolution update, 18 September 2026.** Production HIBP and the requested rate-limit fields are **VERIFIED** and match the documented Development values: `password_hibp_enabled=true`, `rate_limit_email_sent=2`, `rate_limit_otp=30`, `rate_limit_verify=30`, `rate_limit_token_refresh=150`. The 2 emails/hour ceiling remains part of the separate **3.8 P0**. Verifying the number does not create a production-capable SMTP sender.
 
 ### 3.8 Transactional email delivery — no own SMTP, global 2 emails/hour
 
@@ -388,11 +396,11 @@ Added during the adversarial self-review pass, which asked what every auth flow 
 | 2.7 | Traveller data minimisation | BUILT | — | Expansion PO-gated |
 | 3.1 | Route protection / session | BUILT | P3 | — |
 | 3.2 | TOTP MFA | BUILT | — | — |
-| 3.3 | Admin AAL / step-up | BUILT, **Production state unknown** | P1 | Credentialed Prod read |
+| 3.3 | Admin AAL / step-up | BUILT, **Production AAL2 verified 18 Sep 2026** | closed P1 (info) | — |
 | 3.4 | MFA recovery / factor loss | MISSING | P1 user / **P0 admin ops** | Runbook free; 2nd factor PO-gated |
 | 3.5 | Session view / logout scopes | BUILT (honest) | P3 | — |
-| 3.6 | Password reset | BUILT | P2 (Prod redirect unverified) | Credentialed Prod read |
-| 3.7 | Auth rate limiting | BUILT (declared, Dev branch) | P2 | Credentialed Prod read |
+| 3.6 | Password reset | BUILT; **Prod redirect verified localhost + empty** | **P2 launch blocker** | Production Auth write (gated) |
+| 3.7 | Auth rate limiting | BUILT, **Production parity verified 18 Sep 2026** | — (2/h stays in 3.8 P0) | — |
 | 3.8 | Transactional email: no own SMTP, project-wide 2 mails/hour | MISSING | **P0** | PO (provider + secret) |
 
 ---
@@ -672,6 +680,7 @@ Contrasting with 7.2: 1.4 (remove the unproven conformity claim), 3.4's operatio
 Per the binding task's requirement to identify stale or conflicting repository evidence:
 
 1. **Production admin AAL2 state — direct contradiction.** `docs/AUTH.md` L116–117 states Production lacks `aktuelles_admin_aal2()`; `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md` L23–27 states the Production migration was applied and verified. Both cannot be current. Compounding factor: `supabase/config.toml` L118–121 and `scripts/auth/anwenden.ts` L20–22 confirm auth tooling manages the Development branch only, so no automated mechanism keeps either statement true. **Resolution requires a credentialed Production read and correction of one document.** (Recorded in 3.3.)
+   **Resolution update, 18 September 2026:** live evidence confirms the QS2 apply document. `docs/AUTH.md` is corrected in #480. Historical line numbers above refer to the 17 September audit head.
 2. **`docs/ADR_0201_ACCOUNT_TRAVELLER_REGISTRY_PERSISTENCE.md` L42 — stale.** It states there is no user UI for the traveller registry. Runtime now has `/account/travellers` (`app/account/travellers/page.tsx`) plus registry CRUD (`lib/traveller/account-registry-aktionen.ts`) and registry→trip materialisation (`lib/traveller/account-registry-trip.ts`). The ADR was accurate for slice S2 and has been overtaken by S3/S4.
 3. **`docs/AP7_S2_ACCOUNT_TRAVELLER_REGISTRY_PERSISTENCE_STATUS_2026-08-29.md` L29 — accurate-but-misleading.** "No UI/runtime" is true of the S2 slice only; read as current product state it is wrong for the same reason as (2).
 4. **"S6A CLOSED" wording — correct but easy to misread.** `docs/CHATGPT_TECHNICAL_LEAD_PROVIDER_READINESS_S6A_CLOSED_2026-09-01.md` means the repository contract is closed; L67–75 correctly states the Production tables are absent and the adapter is unwired. No correction needed; noted because "closed" adjacent to "cost guard" invites the assumption that spend is guarded. (Recorded in 5.6.)
@@ -722,7 +731,6 @@ Recording this because an audit that lists only gaps misrepresents the state. Th
 |---|---|
 | 1.5 | Terms acceptance not persisted, not server-enforced, OAuth path bypasses it |
 | 2.4 | No enforced retention for any data class |
-| 3.3 | Production admin AAL2 state unknown; two repository documents contradict each other |
 | 3.4 | Consumer MFA recovery absent |
 | 4.1 | No defined support process behind the single contact address |
 | 4.2 | No error boundary covering `/account/*` |
@@ -731,6 +739,12 @@ Recording this because an audit that lists only gaps misrepresents the state. Th
 
 **P2 / P3** — as recorded per row in Sections 1–6.
 
+**P2 launch blocker verified 18 September 2026**
+
+| # | Gap | Gated? |
+|---|---|---|
+| 3.6 | Production `site_url=http://localhost:3000` and empty `uri_allow_list` | **Production Auth write** |
+
 ---
 
 ## Audit boundaries and what this audit did not verify
@@ -738,6 +752,7 @@ Recording this because an audit that lists only gaps misrepresents the state. Th
 Stated explicitly so no later reader over-reads this document:
 
 1. **No live Production verification.** No Supabase credentials, no Management API read, no deployment inspection. Every statement about Production is either marked unknown (3.3, 3.6, 3.7) or derived from repository declarations.
+   **Later evidence, 18 September 2026:** #479 / #480 performed the credentialed GET-only Production Auth read and independent DB confirmation. 3.3 and 3.7 information gaps are closed; 3.6 is verified as an open P2 launch blocker. This original audit still did not itself hold those credentials.
 2. **No test suite, typecheck, lint or build was run.** This slice changes no runtime code; the binding task forbids unnecessary suite runs for a docs-only audit. Consequently no claim in this document rests on a test result produced by this audit. Where a test file is cited, it is cited as *source evidence of an encoded expectation*, not as a passing result observed here.
 3. **RLS is verified as declared, not as live.** `db:rls`, `db:rechte`, `db:sicherheit` exist and were not executed (2.6).
 4. **Not audited:** trip planning core, flight multi-leg orchestration, world map, destination essentials, assistant runtime (#435) and explicit visit history (#448) — out of scope by the binding task.

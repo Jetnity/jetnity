@@ -1,7 +1,7 @@
 # Jetnity – V1 Account / Privacy / Operations Minimum Audit 1 (Generation 2) — HANDOFF
 
-Stand: 17. September 2026
-Status: **HANDOFF TO TECHNICAL LEAD / DRAFT / NOT READY / NOT MERGED / NO REMEDIATION STARTED**
+Stand: 18. September 2026  
+Status: **AUDIT HANDOFF PRESERVED / ITEM 7 CREDENTIALED AUTH VERIFICATION COMPLETED / 3.6 REDIRECT REMEDIATION OPEN AND PRODUCTION-WRITE-GATED**
 
 Canonical issue: #438
 Draft PR: #449
@@ -43,6 +43,8 @@ If remediation is authorised, the audit's own recommendation is to take the unga
 | 5 | **4.2** — add `app/account/error.tsx` | Small runtime slice mirroring an existing pattern; the authenticated area currently has no error boundary at all. |
 | 6 | **6.3** — extend the admin overview caveat, or suppress the monetary tiles and conversion ratio | Prevents an admin revenue figure with no revenue behind it. |
 | 7 | **3.3** — one credentialed Production auth verification pass | Resolves the AAL2 contradiction and, in the same pass, the unverified items in 3.6 and 3.7 (redirect allow-list, rate limits, HIBP). Highest information gain per unit of effort in the whole matrix. |
+
+**Resolution update, 18 September 2026 — item 7 completed.** #479 / #480 performed the credentialed GET-only Production Auth verification. 3.3 is verified/resolved. 3.7 Production HIBP and requested rate limits are verified. 3.6 live config is verified and remains an **open P2 launch blocker** because Production is `site_url=http://localhost:3000` with an empty allow-list. Remediation of those redirect values is **Production-write-gated** and is not part of #480. 3.8 SMTP P0 stays separate and open.
 
 In parallel and independently of that order, **3.8 (email provider) should go to the Product Owner immediately**, because it is a launch blocker that requires only a decision plus configuration — no application code — and because every other auth-related row in the matrix implicitly assumes it is solved.
 

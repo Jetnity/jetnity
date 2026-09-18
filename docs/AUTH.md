@@ -1,7 +1,7 @@
 # Jetnity – Auth-Konfiguration
 
-**Stand:** 17. August 2026 · Phase 1.4c, Abschnitt 10 ergänzt in Phase 1.5
-**Gilt für:** den Supabase-**Development-Branch**. Production wird von hier aus nicht verwaltet.
+**Stand:** 18. September 2026 · Phase 1.4c, Abschnitt 10 aus Phase 1.5, Abschnitt 12 Production-Nachweis
+**Gilt für:** den Supabase-**Development-Branch** als config-as-code. Production wird von hier aus nicht verwaltet. Abschnitt 12 ist ein GET-only Snapshot, kein Write-Pfad.
 
 Diese Datei beantwortet drei Fragen: Wie ist die Anmeldung des Branches eingestellt, woher stammt jeder dieser Werte, und woran würde auffallen, wenn er sich ändert. Abschnitt 10 kommt hinzu: was eine erfolgreiche Anmeldung mit einem Reiseentwurf macht, der ohne Konto entstanden ist.
 
@@ -29,6 +29,7 @@ Seit Phase 1.4c gilt:
 | Befehl | Wirkung | braucht Zugang |
 | --- | --- | --- |
 | `npm run auth:pruefen` | vergleicht `config.toml` und die API-Erwartungen mit dem laufenden Branch. Endet mit Code 1 bei jeder Abweichung | ja, nur lesend |
+| `npm run auth:produktion:lesen -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn` | GET-only Allowlist-Nachweis des bestätigten Production-Projekts. Schreibt nicht | ja, nur lesend |
 | `npm run auth:anwenden -- --zeigen` | sagt, was sich ändern würde | ja, nur lesend |
 | `npm run auth:anwenden` | überträgt `config.toml` mit `supabase config push` und setzt die Schlüssel ohne CLI-Entsprechung per PATCH | ja, schreibend |
 | `npm run auth:fluesse` | prüft die Anmeldewege an ihnen selbst: Registrierung, Bestätigung, Anmeldung, Rücksetzung, zweiter Faktor, Anbieter | ja, schreibend (ein Wegwerfkonto) |
@@ -113,7 +114,7 @@ TOTP war in der Vorlage aus, auf dem Branch an – und die Anwendung führt den 
 
 **Admin-Zugang verlangt zusätzlich aktuelles AAL2.** `lib/auth/admin-guard.ts` prüft nach Identität und Rolle/Break-Glass `currentLevel === 'aal2'`. `nextLevel` oder ein vorhandener TOTP-Faktor reichen nicht. Die Regel gilt für Seiten, Server-Actions und `/api/admin`; Break-Glass ist nicht ausgenommen. AAL1-Admins gehen auf `/admin/mfa` und belegen AAL2 nach der Challenge erneut serverseitig. Ohne verifizierten Faktor bleibt der Adminbereich geschlossen; die Einrichtung bleibt `/account/security`. APIs antworten mit JSON 403 (`aal2-required`) oder 503 (`aal-lookup-failed`), nie mit einem HTML-Redirect. Begründung: [DECISIONS.md](../DECISIONS.md) ADR-0169.
 
-Dieselbe Grenze gilt für die administrativen DB-Fähigkeiten. Development hat `aktuelles_admin_aal2()` bereits. Production nicht. Die vorbereitete Alignment-Migration `20260827170000_admin_aal2_data_plane_alignment.sql` zieht `darf_*()` auf Rolle **und** JWT-`aal='aal2'`, ohne Auth-Server, Rollenmodell oder Consumer-Ownership zu ändern. Apply bleibt Product-Owner-Gate (ADR-0175).
+Dieselbe Grenze gilt für die administrativen DB-Fähigkeiten. Development und Production führen `aktuelles_admin_aal2()`. Die Alignment-Migration `20260827170000_admin_aal2_data_plane_alignment.sql` ist auf Production angewendet und verifiziert; sie darf nicht ein zweites Mal angewendet werden. `darf_*()` verlangt Rolle **und** JWT-`aal='aal2'`, ohne Auth-Server, Rollenmodell oder Consumer-Ownership zu ändern. Apply-Evidence: [docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md](QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md). Der frühere Satz „Production nicht“ in dieser Datei war veraltet.
 
 ### Missbrauchsschutz
 
@@ -147,7 +148,9 @@ Der letzte Fall ist der wichtige: Ein fremder Host bekommt das Token nicht. Desh
 
 Der Fall „fremder Host fällt zurück" ist einer der 18 Fälle in `npm run auth:fluesse` und läuft damit bei jeder Prüfung mit.
 
-**Offen:** Sobald ein ausgelieferter Ursprung existiert, muss er hier stehen. Bis dahin ist er nicht erfunden ([ROADMAP.md](../ROADMAP.md)).
+**Offen für den Branch:** Sobald ein ausgelieferter Ursprung existiert, muss er hier stehen. Bis dahin ist er nicht erfunden ([ROADMAP.md](../ROADMAP.md)).
+
+**Production 18. September 2026:** `site_url` ist live `http://localhost:3000`, `uri_allow_list` ist leer. Das ist nachgewiesen und **nicht launch-ready**. Siehe Abschnitt 12. Dieser Slice ändert Production nicht.
 
 ---
 
@@ -262,18 +265,21 @@ Geprüft ist stattdessen alles, was die Registrierung ablehnt, und der gesamte W
 
 **Magic Link.** Das öffentliche Login-/Register-Formular bietet ihn nicht an. Die Admin-Anmeldung sendet einen Magic Link auf `/admin`; Zugang entscheidet danach derselbe zentrale Guard, einschliesslich AAL2. Ein Magic Link umgeht AAL2 nicht.
 
-**Der tatsächliche E-Mail-Versand.** Es gibt keinen eigenen SMTP-Server; Supabase versendet selbst und begrenzt hart auf zwei E-Mails je Stunde. Für den Launch reicht das nicht ([ROADMAP.md](../ROADMAP.md)).
+**Der tatsächliche E-Mail-Versand.** Es gibt keinen eigenen SMTP-Server; Supabase versendet selbst und begrenzt hart auf zwei E-Mails je Stunde. Der credentialed Production-Snapshot vom 18. September 2026 bestätigt `rate_limit_email_sent = 2` und löst das nicht. Für den Launch reicht das nicht ([ROADMAP.md](../ROADMAP.md)). Das bleibt der getrennte P0-Blocker.
 
 ---
 
 ## 9. Warum kein `[remotes.*]`-Block
 
-Die offizielle Branch-Konfiguration von Supabase läuft über `[remotes.<name>]` in `config.toml`: Ein solcher Block überschreibt einzelne Werte für ein bestimmtes Projekt, erkannt am `project_id`. Jetnity führt keinen. Zwei Gründe:
+Die offizielle Branch-Konfiguration von Supabase läuft über `[remotes.<name>]` in `config.toml`: Ein solcher Block überschreibt einzelne Werte für ein bestimmtes Projekt, erkannt am `project_id`. Jetnity führt keinen.
 
-1. **Er verlangt den Projekt-Ref im Klartext.** Der Ref eines Branches ist kein Geheimnis, aber er ist auch kein Wert, der in ein öffentliches Repository gehört – er benennt das Projekt, gegen das jeder Angriff dann zielen kann.
-2. **Es gibt nur ein Ziel.** Ein `[remotes]`-Block trennt zwei Umgebungen. Solange von hier aus ausschliesslich Development verwaltet wird, würde er eine Unterscheidung einführen, die keine Wirkung hat – und nach [AGENTS.md](../AGENTS.md) Regel 12 eine Abstraktion ohne realen Bedarf.
+Der Grund ist die Schreibgrenze, nicht Geheimhaltung des Projekt-Refs.
 
-Die Folge ist bekannt und in Kauf genommen: Die Supabase-GitHub-Integration wendet Konfiguration nur auf persistente Ziele an, für die ein `[remotes]`-Block existiert. Ohne ihn überträgt sie nichts, und `npm run auth:anwenden` bleibt der Weg. Sobald ein zweites Ziel dazukommt, dockt es genau hier an: `erwarteteAuthKonfiguration()` nimmt den Namen eines Remotes bereits als Parameter.
+1. **Production Auth ist kein config-as-code-Schreibziel** der normalen Repository-Workflows. `auth:pruefen` und `auth:anwenden` gelten für den Development-Branch. Ein Production-`[remotes.*]`-Block würde ein zweites verwaltetes Auth-Ziel anlegen und diese Grenze verwischen.
+2. **Der Production-Projekt-Ref ist kein Secret.** Er steht bereits in kanonischen und operativen Dateien und Werkzeugen. Ein `[remotes.*]`-Block unterbleibt deshalb nicht, weil der Ref „nicht ins öffentliche Repository gehört“.
+3. **`npm run auth:produktion:lesen` bleibt GET-only.** Der manuelle Leser bestätigt dasselbe Production-Projekt und macht es dadurch nicht zum config-as-code-Schreibziel.
+
+Die Folge ist bekannt und in Kauf genommen: Die Supabase-GitHub-Integration wendet Konfiguration nur auf persistente Ziele an, für die ein `[remotes]`-Block existiert. Ohne ihn überträgt sie nichts, und `npm run auth:anwenden` bleibt der Development-Schreibweg. `erwarteteAuthKonfiguration()` nimmt den Namen eines Remotes bereits als Parameter, falls ein zweites Schreibziel später ausdrücklich entschieden wird.
 
 ---
 
@@ -310,9 +316,39 @@ Der Vorgang selbst, seine Reihenfolge und die 23 geprüften Fälle stehen in [do
 | Punkt | Stand |
 | --- | --- |
 | Google und Apple sind in beiden Formularen als Schaltfläche sichtbar, auf dem Branch aber aus. Ein Klick endet in einer Fehlermeldung von Supabase | festgehalten, nicht behoben – Einschalten braucht Client-ID und Secret beider Anbieter, also eine Handlung ausserhalb dieses Repositories |
-| kein ausgelieferter Ursprung in `additional_redirect_urls` | offen, bis es einen gibt. Abschnitt 4 |
-| kein eigener SMTP-Server; zwei E-Mails je Stunde | offen. Vor dem Launch nötig |
+| kein ausgelieferter Ursprung in `additional_redirect_urls` | offen für den Branch, Abschnitt 4. Production ist live localhost + leere Allowlist und **nicht launch-ready** (P2, Write-gated). Abschnitt 12 |
+| kein eigener SMTP-Server; zwei E-Mails je Stunde | offen. **P0 vor dem Launch.** Production bestätigt `rate_limit_email_sent = 2`; das ersetzt keinen production-fähigen SMTP |
 | `auth_db_connections_absolute` (Performance-Advisor) | Kapazitätsplanung vor dem Launch, kein Sicherheitsbefund |
-| Production ist nicht abgeglichen | Absicht. Der Vergleich in Abschnitt 3 ist nur gelesen; ein Abgleich gehört zum ersten Production-Deploy nach Phase 1.5 |
+| Production ist kein config-as-code-Ziel | Absicht. `auth:pruefen` / `auth:anwenden` verwalten nur Development. Abschnitt 12 ist ein GET-only Allowlist-Nachweis, kein Write-Pfad und kein vollständiger Abgleich |
 | Die CI-Prüfung braucht `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` als Repository-Secrets | fehlen sie, schlägt der Job fehl. Fail-closed, siehe Abschnitt 2 – nur ein Pull Request aus einem Fork überspringt sich |
 | Leaked Password Protection hängt am Pro Plan | Abschnitt 5. Kein Handlungsbedarf, solange die Organisation auf Pro läuft; ein Rückfall auf Free würde den Schutz mitnehmen |
+
+---
+
+## 12. Production-Nachweis 18. September 2026
+
+`supabase/config.toml` und `npm run auth:pruefen` beschreiben weiterhin nur den Development-Branch. Sie sind keine Production-Wahrheit.
+
+Am 18. September 2026 hat ein credentialed GET-only Lauf (`npm run auth:produktion:lesen -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn`) das unabhängige Production-Projekt `qscbgcdmivbbnzrcyegn` gelesen. Der Lauf schreibt nicht. Die Ausgabe ist eine feste Allowlist, kein Roh-JSON.
+
+Unabhängig gelesen vom Technical Lead aus CI-Job `105603875234` (Head `66ee5fe5`) und zuvor aus Job `105602766085` (Head `82c0f564`). Beide Snapshots stimmen überein.
+
+| Feld | Production 18. Sep 2026 | Launch-Aussage |
+| --- | --- | --- |
+| `site_url` | `http://localhost:3000` | **nicht launch-ready** (P2) |
+| `uri_allow_list` | leer | **nicht launch-ready** (P2) |
+| `password_hibp_enabled` | `true` | verifiziert |
+| `rate_limit_email_sent` | `2` | verifiziert; löst 3.8 nicht |
+| `rate_limit_otp` | `30` | verifiziert |
+| `rate_limit_verify` | `30` | verifiziert |
+| `rate_limit_token_refresh` | `150` | verifiziert |
+| `mfa_totp_enroll_enabled` | `true` | verifiziert |
+| `mfa_totp_verify_enabled` | `true` | verifiziert |
+| `mfa_allow_low_aal` | `false` | verifiziert |
+| `mailer_allow_unverified_email_sign_ins` | `false` | verifiziert |
+
+**Redirect.** Production hat dieselben localhost-Werte wie der Branch. Das ist kein PASS für einen ausgelieferten Ursprung. Eine Änderung dieser Werte ist ein Production-Auth-Write und gehört nicht in diesen Slice.
+
+**SMTP.** Es gibt weiterhin keinen production-fähigen SMTP. `rate_limit_email_sent = 2` bestätigt nur die vorhandene Decke. Das bleibt der getrennte P0-Launch-Blocker (Abschnitt 8 und 11).
+
+**Admin-AAL2-Datenplane.** `aktuelles_admin_aal2()` ist live; die Alignment-Migration ist angewendet. Kein zweiter Apply. Siehe [docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md](QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md).
