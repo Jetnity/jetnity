@@ -15,10 +15,10 @@ Status: **DAILY INTELLIGENCE MANUAL TEST #002 PASS / ORCHESTRATOR ROUTINE-READY 
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `caba1c660c658e74ceff5a4660010b46dbe84bd7` |
-| Evidence on that SHA | CI `35390516776` SUCCESS; Auth `105747526457` SUCCESS; Typecheck/Lint/Build `105747526609` SUCCESS; Vercel commit status **not yet posted** at persist time |
-| Predecessor live PR head at persist start | `7c15e1b05497c03ab1be457f71af65dff527ec25` — TEST #001 CI persist; CI run `35391007875` was still in progress; not treated as last verified |
-| This persist | **creates a newer head** than `caba1c66` and `7c15e1b0`. It is not the live PR head. |
+| Last verified implementation/evidence head | `11dc8ed0c10b8727adfd26f987a9bbd17057fdfa` |
+| Evidence on that SHA | CI `35391428027` SUCCESS; Auth `105750433451` SUCCESS; Typecheck/Lint/Build `105750433765` SUCCESS; Vercel commit status **not yet posted** at persist time |
+| TEST #002 control heads | START = FINAL = `caba1c660c658e74ceff5a4660010b46dbe84bd7` |
+| This persist | **creates a newer head** than `11dc8ed0`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
@@ -40,9 +40,9 @@ Do not treat any SHA written in this file as the current/live head. Continuity f
 - Still **OPEN**: controlled Daily Routine creation and automation verification; dedicated HOLD-exit verification.
 - No GitHub Ruleset/admin mutation. No Cursor Grok skill/routine mutation. No product/runtime. PR #487 untouched. HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on last verified tree `caba1c66`
+## 3. Local gates on last verified tree `11dc8ed0`
 
-Recorded on the TEST #001 persist that produced `caba1c66`. This persist is documentation only on the same product/runtime tree.
+Re-run by this writer on the TEST #002 persist SHA before the evidence commit.
 
 | Gate | Result |
 | --- | --- |
@@ -55,19 +55,19 @@ Recorded on the TEST #001 persist that produced `caba1c66`. This persist is docu
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
 
-## 4. Exact-head remote evidence on last verified SHA `caba1c66`
+## 4. Exact-head remote evidence on last verified SHA `11dc8ed0`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35390516776` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35390516776 |
-| Typecheck, Lint & Build | job `105747526609` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105747526457` SUCCESS |
+| GitHub Actions CI | run `35391428027` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35391428027 |
+| Typecheck, Lint & Build | job `105750433765` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105750433451` SUCCESS |
 | Vercel | **not yet posted** at persist time — Technical Lead must re-fetch the live head |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
 | TEST #002 dispatch | `5735700562` |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `caba1c66`. Predecessor head `7c15e1b0` had CI `35391007875` in progress at persist start and is not last-verified.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `11dc8ed0`.
 
 ## 5. Non-scope
 

@@ -11,7 +11,7 @@ TEST #002: comment `5735700562`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact-head CI `35390516776` SUCCESS. Vercel had not posted yet at persist time. Predecessor live head `7c15e1b0` had CI `35391007875` in progress and is not last-verified. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `11dc8ed0c10b8727adfd26f987a9bbd17057fdfa` has exact-head CI `35391428027` SUCCESS. Vercel had not posted yet at persist time. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -31,8 +31,8 @@ Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact
 - No approved scheduled Daily Routine exists.
 - Dedicated HOLD-exit checklist completion is still open.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `caba1c66` / `7c15e1b0`.
-- Vercel had not posted on last-verified `caba1c66` at persist time.
+- This persist is a newer head than `11dc8ed0`.
+- Vercel had not posted on last-verified `11dc8ed0` at persist time.
 
 ## 3. Compliance
 
@@ -47,7 +47,7 @@ Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact
 
 Checked:
 - comments `5735534623`, `5735636786`, `5735700562`;
-- last verified head `caba1c66` CI `35390516776` SUCCESS; Vercel not yet posted at persist time;
+- last verified head `11dc8ed0` CI `35391428027` SUCCESS; Vercel not yet posted at persist time;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
