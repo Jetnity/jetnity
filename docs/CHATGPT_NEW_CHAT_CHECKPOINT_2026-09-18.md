@@ -15,7 +15,7 @@ A new Technical Lead must read, in this order:
 5. this checkpoint
 6. `docs/ACTIVE_WORK_STATUS.md`
 7. `JETNITY_HANDOFF.md`
-7. any current task/status/handoff/review evidence discovered during live reconstruction.
+8. any current task/status/handoff/review evidence discovered during live reconstruction.
 
 Then independently verify live:
 - current `main`;
