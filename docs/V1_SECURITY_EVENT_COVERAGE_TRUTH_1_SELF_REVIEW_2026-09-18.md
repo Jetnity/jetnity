@@ -49,8 +49,11 @@ This document argues against the implementation. It cannot replace an independen
 | No §G satisfaction claim | Yes | |
 | No service-role / migration / Auth / RLS / Production / vendor / secret / cost | Yes | |
 | Allowed write scope | Yes | widget + copy + admin tests + audit note + slice docs |
+| Required local gates | Yes | recorded on `15037a14` |
+| Exact-head CI + Preview | Yes | run `35355707566` SUCCESS; Vercel `4tW3CFFKN2DmGx9NERg8xFA6xXnR` READY on `15037a14` |
+| behind=0 | Yes | vs live `origin/main@21f489d3` before this persist |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-This persist is a pre-test head. Local gates, exact-head GitHub CI, Vercel Preview and behind=0 must still be obtained and recorded. Agent self-review is still not PASS.
+`15037a14` had CI `35355707566` SUCCESS and Vercel `4tW3CFFKN2DmGx9NERg8xFA6xXnR` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
