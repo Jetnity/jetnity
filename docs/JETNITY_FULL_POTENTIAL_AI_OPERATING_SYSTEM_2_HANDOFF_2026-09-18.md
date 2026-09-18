@@ -20,7 +20,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `1dace0fff117b9079eedd9c4a12bcfa3902a72e7` |
+| Last verified implementation/evidence head | `9d822047cefd29e7cc63ca03340433ad17b745df` |
 | This persist | creates a newer head than that SHA |
 | Live PR head | **re-fetch before verdict** |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -33,12 +33,12 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 - exact main/base SHA: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`
 - hardening dispatch: `5737188145` — Market scheduled handoff transport PASS + finding/source hardening
 - scheduled run id: `JETNITY-MARKET-PULSE-20260919-0053`
-- last verified OS-2 evidence head: `1dace0fff117b9079eedd9c4a12bcfa3902a72e7`
-- exact-head CI on that SHA: `35399742158` SUCCESS
-- exact-head Vercel on that SHA: READY `AqHq6LBkBRYm7JuRrA2N2SZXUaBJ`
+- last verified OS-2 hardening persist head: `9d822047cefd29e7cc63ca03340433ad17b745df`
+- exact-head CI on that SHA: `35404008045` SUCCESS
+- exact-head Vercel on that SHA: READY `4qXJgWPqCqEmPHRnkj6tJpQfkW12`
 - this persist is a newer head; live PR head must be re-fetched
 - verdict: **ready for Technical-Lead review** — not a Daily full-PASS and not a HOLD-exit
-- evidence checked: `5736871320`, `5736895145`, `5736927892`, `5737150676`, `5737188145`; last verified `1dace0ff` CI + Vercel
+- evidence checked: `5736871320`, `5736895145`, `5736927892`, `5737150676`, `5737188145`; last verified `9d822047` CI + Vercel
 - evidence not checked: CI/Vercel on **the SHA this persist will create**; Grok workspace files; shared-environment tokens
 - blocker/gate: adopt §4a–4c before clone; CoS Daily remains PAUSED; HOLD remains
 - next actor: ChatGPT / Technical Lead
@@ -50,7 +50,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 2. Market V2 transport a–c is recorded as **PASS**, **not** as Daily full-PASS or clone authorization.
 3. Finding/source object hardening is in the V2 contract.
 4. Remaining five specialists are **not** cloned.
-5. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `1dace0ff`.
+5. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `9d822047`.
 
 ## 4. Exact next responsible actor
 

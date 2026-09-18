@@ -11,7 +11,7 @@ Hardening dispatch: comment `5737188145`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `1dace0fff117b9079eedd9c4a12bcfa3902a72e7` has exact-head CI `35399742158` SUCCESS and Vercel READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `9d822047cefd29e7cc63ca03340433ad17b745df` has exact-head CI `35404008045` SUCCESS and Vercel READY. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -30,7 +30,7 @@ Last verified evidence head `1dace0fff117b9079eedd9c4a12bcfa3902a72e7` has exact
 - Writer skills have not yet been proven to emit the hardened finding/source objects.
 - Sequence d/e remain **OPEN**.
 - Shared-environment credentials were not independently inspected.
-- This persist is a newer head than `1dace0ff`.
+- This persist is a newer head than `9d822047`.
 
 ## 3. Compliance
 
@@ -45,7 +45,7 @@ Last verified evidence head `1dace0fff117b9079eedd9c4a12bcfa3902a72e7` has exact
 
 Checked:
 - comments `5736871320`, `5736895145`, `5736927892`, `5737150676`, `5737188145`;
-- last verified head `1dace0ff` CI `35399742158` SUCCESS; Vercel READY;
+- last verified head `9d822047` CI `35404008045` SUCCESS; Vercel READY;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
