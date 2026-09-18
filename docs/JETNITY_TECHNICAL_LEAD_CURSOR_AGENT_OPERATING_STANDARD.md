@@ -2,6 +2,7 @@
 
 Stand: 28. August 2026  
 Ergänzt: 17. September 2026 – verbindliche Guardian-/Grok-Bot-Rollengrenze (Abschnitt 10)  
+Korrigiert: 18. September 2026 – Guardian ist separate Product-Owner-App; niemals Cursor-Agent  
 Status: **Product-Owner-verbindlich / chatübergreifend / superseded widersprechende ältere Workflow- und Merge-Passagen**
 
 ## 1. Zweck
@@ -372,6 +373,16 @@ Ein neuer Chat darf nicht auf Chat-Erinnerung allein vertrauen und darf diese Re
 
 Der **Jetnity Guardian (Grok Bot)** ist dauerhaft **Release / QA / Continuity Operator**. Verbindlicher Standard:
 
+**Product-Owner-Korrektur vom 18. September 2026:** Jetnity Guardian ist die **separate Jetnity-Guardian-App**, nicht Cursor, keine Cursor-Background-Session und nicht das Cursor-Modell Grok 4.6 High Fast. Der Technical Lead darf einen Guardian-Lauf **niemals mit `@cursor` erzeugen oder emulieren**.
+
+Wenn Guardian-Evidence gebraucht wird:
+1. Technical Lead erstellt einen vollständigen ready-to-paste Prompt mit Exact Head, Scope, Evidence-Zielen und harten Verboten;
+2. Product Owner führt ihn in der separaten Jetnity-Guardian-App aus;
+3. Technical Lead holt den Bericht live aus dem benannten Evidence-Kanal ab und reproduziert relevante Findings;
+4. ein neuer Head invalidiert den Guardian-Report und erfordert bei Bedarf einen neuen Recheck-Prompt.
+
+Verbindlicher Standard:
+
 `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`
 
 Dieser Standard ist Pflichtlektüre für jeden Technical Lead und wird in `JETNITY_START_HERE.md` als Startup-Pflicht geführt. Er ergänzt dieses Dokument und ersetzt keine seiner Regeln.
@@ -389,10 +400,11 @@ Für den Technical Lead gilt daraus bindend:
 2. Der Technical Lead darf einen Guardian-Bericht nicht zusammenfassen und das Ergebnis als eigenen Review ausgeben.
 3. Ein Guardian-Bericht ohne exakte SHAs/Heads, ohne benannte geprüfte und ausdrücklich **nicht** geprüfte Systeme, ohne Findings, Blocker und empfohlenen nächsten Schritt ist unvollständig und wird nicht als Gate-Evidence verwendet.
 4. Jeder neue Head invalidiert ältere Guardian-Exact-Head-Evidence genauso wie ältere Agenten- und CI-/Vercel-Evidence.
-5. Guardian-Evidence gegen ein Statusdokument entscheidet zugunsten der Live-Evidence; die Korrektur des Dokuments ist Technical-Lead-Arbeit oder ein ausdrücklich beauftragter Slice, nicht Guardian-Eigeninitiative.
-6. Guardian-Arbeit an Jetnity-Code oder Repository-Inhalt setzt einen **explizit versionierten Auftrag** nach Abschnitt „Phase C“ voraus; der daraus entstehende Head wird wie jeder Agenten-Head unabhängig reviewt und gegatet.
-7. Der Guardian übernimmt keinen laufenden Cursor-Slice, startet keinen Agenten, Branch, PR oder Follow-up-Slice und unterbricht keinen laufenden Slice aus eigener Autorität; Kollisionen und Drift meldet er dem Technical Lead.
-8. Der Guardian darf niemals Ready setzen, mergen, Production deployen, Production-Supabase mutieren, Secrets verändern oder offenlegen, Provider aktivieren, Verträge/Terms/DPA akzeptieren, paid calls starten, Käufe tätigen oder laufende Kosten erhöhen. Grüne CI, `mergeable=true` oder eindeutig erscheinende eigene Findings ändern das nicht.
+5. Ein Cursor-Agent darf niemals als Guardian-Ersatz gelten; `@cursor` erzeugt keine gültige Guardian-Evidence.
+6. Guardian-Evidence gegen ein Statusdokument entscheidet zugunsten der Live-Evidence; die Korrektur des Dokuments ist Technical-Lead-Arbeit oder ein ausdrücklich beauftragter Slice, nicht Guardian-Eigeninitiative.
+7. Guardian-Arbeit an Jetnity-Code oder Repository-Inhalt setzt einen **explizit versionierten Auftrag** nach Abschnitt „Phase C“ voraus; der daraus entstehende Head wird wie jeder Agenten-Head unabhängig reviewt und gegatet.
+8. Der Guardian übernimmt keinen laufenden Cursor-Slice, startet keinen Agenten, Branch, PR oder Follow-up-Slice und unterbricht keinen laufenden Slice aus eigener Autorität; Kollisionen und Drift meldet er dem Technical Lead.
+9. Der Guardian darf niemals Ready setzen, mergen, Production deployen, Production-Supabase mutieren, Secrets verändern oder offenlegen, Provider aktivieren, Verträge/Terms/DPA akzeptieren, paid calls starten, Käufe tätigen oder laufende Kosten erhöhen. Grüne CI, `mergeable=true` oder eindeutig erscheinende eigene Findings ändern das nicht.
 
 Die exklusive Technical-Lead-Autorität aus Abschnitt 2 und die besonderen Product-Owner-Gates aus Abschnitt 3 bleiben durch die Guardian-Rolle unverändert. Sie werden durch sie weder erweitert noch still gelockert.
 
