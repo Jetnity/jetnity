@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 18. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / V1 INCIDENT PROCESS 1 CLOSED / V1 SUPPORT PROCESS 1 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 CLOSED / V1 ADMIN REVENUE TRUTH 1 CLOSED / PRS #470 #471 #472 MERGED / EXACT-MERGE PRODUCTION READY / GUARDIAN EXTERNAL-APP WORKFLOW CANONICALIZED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / V1 INCIDENT PROCESS 1 CLOSED / V1 SUPPORT PROCESS 1 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 CLOSED / V1 ADMIN REVENUE TRUTH 1 CLOSED / V1 COOKIE CONSENT HYGIENE 1 CLOSED / V1 ACCOUNT DATA EXPORT 1 CLOSED / PRS #470 #471 #472 #476 #477 MERGED / EXACT-MERGE PRODUCTION READY / GUARDIAN EXTERNAL-APP WORKFLOW CANONICALIZED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -24,7 +24,7 @@ Parallel V1 remediation group is also **CLOSED / MERGED / POST-MERGE VERIFIED**:
 - PR #471 / issue #468 — Account Error Boundary 1;
 - PR #470 / issue #467 — Support Process 1.
 
-Latest continuity baseline is now `main@9a3fe265dc47864897ab9f7da1c0ae7e9765a778`. The three slices were implemented in parallel on disjoint file scopes and integrated serially with fresh main reconciliation and exact-head gates. #470 additionally received external Jetnity Guardian PASS after TL found and corrected a P1 account-existence disclosure risk. Exact-merge Production is READY on the latest merge. The available GitHub connector does not expose push-triggered main workflow runs, so no unseen post-merge Actions run is claimed.
+Latest verified product/runtime closure baseline is now `main@57efdb2b796e5d99e0bf0010c5d1ef5af3842af7`. After the prior #470/#471/#472 group, #477 Cookie Consent Hygiene and #476 Account Data Export were integrated serially. #476 received independent external Jetnity Guardian PASS after TL found and corrected a P2 wildcard-export schema-stability risk. Exact-merge Production is READY on the latest runtime merge. The available GitHub connector does not expose push-triggered main workflow runs, so no unseen post-merge Actions run is claimed. A later continuity-only merge may advance repository `main` without changing this runtime closure truth.
 
 Latest verified governance integration baseline:
 - PR #453 accepted head: `afc09b378676d7350101f2ee7b5b2dfd2f93d934`;
@@ -212,6 +212,37 @@ Audit findings **4.1 process half, 4.2 and 6.3 are therefore closed**. Do not re
 
 No next product slice is selected by this continuity update. The previously identified credentialed Production Auth verification item may be a future candidate only after fresh live reconstruction and gate review.
 
+## 4e. V1 Data Portability / Cookie Hygiene group — CLOSED
+
+### V1 Cookie Consent Hygiene 1 — PR #477 / issue #475
+- accepted exact head `f4bdd74626a0c079f8395bcdabe06c1765ea5565`;
+- merge `ac3539d9ceff4e96308a48c51d2d317927245b54`;
+- exact-head CI `35337224693`: SUCCESS;
+- exact-head Preview `dpl_BGBN6ChgFpURWBZK5xihJ8nVezPy`: READY;
+- exact-merge Production `dpl_DGH3PW31YhX6Ge4nX7JTBAXVBw7E`: READY;
+- accepted head -> merge: 0 changed files;
+- stale orphaned `CookieConsent.tsx` and its false processing claim were removed;
+- no replacement banner, tracker, legal text, Supabase/Auth/RLS/provider/secret/cost mutation.
+
+### V1 Account Data Export 1 — PR #476 / issue #474
+- accepted exact head `f58a3902382c2bbf458bf0be0d977eaa2aadaef0`;
+- merge/runtime closure baseline `57efdb2b796e5d99e0bf0010c5d1ef5af3842af7`;
+- exact-head CI `35342076752`: SUCCESS including Auth configuration;
+- exact-head Preview `dpl_AVzFSpwuCc2gJRLDk8qwvAn3R3nH`: READY;
+- external Jetnity Guardian exact-head verdict: **GUARDIAN PASS — prior P2 resolved — no P0/P1/P2/P3**;
+- exact-merge Production `dpl_7DRw8h3PQ3zU2FyzaNiGECJ5Wx1q`: READY;
+- accepted head -> merge: 0 changed files;
+- authenticated direct JSON download added under existing session-bound RLS;
+- no service role, admin client, privileged SQL, DB mutation, migration or export persistence;
+- export scope is exactly 13 reviewed owner-scoped account/travel tables;
+- explicit per-table column allowlists replaced wildcard selects after TL P2;
+- UI truthfully warns about sensitive data and does not claim legal DSAR completeness or deletion;
+- residuals remain honest: no durable cross-instance throttle and no transactional legal-snapshot guarantee.
+
+Audit finding **2.1 data export is closed for the scoped V1 product export**. Audit finding **1.2(a) stale CookieConsent artefact is closed**. This does **not** close separate legal-content, account-deletion/retention, Production-auth-verification or automated-observability gates.
+
+No next product slice is selected by this continuity update.
+
 ## 5. Current broader product state
 
 Closed/core surfaces include:
@@ -296,4 +327,4 @@ Then reconstruct live:
 
 Do not treat historical Draft PRs as active work merely because they are open. Do not infer a next product slice from this file. Select the smallest responsible bounded next step only after live reconstruction and current Product-Owner gate checks.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. V1 SUPPORT PROCESS 1 / #470 CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. V1 SUPPORT PROCESS 1 / #470 CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**
