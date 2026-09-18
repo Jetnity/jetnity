@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 18. September 2026  
-Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / V1 INCIDENT PROCESS 1 CLOSED / V1 SUPPORT PROCESS 1 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 CLOSED / V1 ADMIN REVENUE TRUTH 1 CLOSED / V1 COOKIE CONSENT HYGIENE 1 CLOSED / V1 ACCOUNT DATA EXPORT 1 CLOSED / PRS #470 #471 #472 #476 #477 MERGED / EXACT-MERGE PRODUCTION READY / GUARDIAN EXTERNAL-APP WORKFLOW CANONICALIZED / NO ACTIVE CURSOR CODING AGENT / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / V1 INCIDENT PROCESS 1 CLOSED / V1 SUPPORT PROCESS 1 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 CLOSED / V1 ADMIN REVENUE TRUTH 1 CLOSED / V1 COOKIE CONSENT HYGIENE 1 CLOSED / V1 ACCOUNT DATA EXPORT 1 CLOSED / V1 PRODUCTION AUTH VERIFICATION 1 CLOSED / PRS #470 #471 #472 #476 #477 #480 MERGED / EXACT-MERGE PRODUCTION READY / GUARDIAN EXTERNAL-APP WORKFLOW CANONICALIZED / NO ACTIVE CURSOR CODING AGENT / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
 Canonical new-chat checkpoint:
 
@@ -36,7 +36,7 @@ Integration evidence:
 
 Always re-fetch live `main` in the next chat. The exact SHA above is a verified Assistant Runtime transition baseline, not an instruction to assume no later commits exist.
 
-Latest verified product/runtime closure baseline: `main@57efdb2b796e5d99e0bf0010c5d1ef5af3842af7` after PR #477 then PR #476. The latest accepted head `f58a3902382c2bbf458bf0be0d977eaa2aadaef0` had CI `35342076752` SUCCESS including Auth configuration, Preview `dpl_AVzFSpwuCc2gJRLDk8qwvAn3R3nH` READY and external Jetnity Guardian exact-head PASS after the TL P2 wildcard-export correction; merge tree is identical to that head; Vercel Production `dpl_7DRw8h3PQ3zU2FyzaNiGECJ5Wx1q` is READY on the exact merge SHA. The current GitHub connector cannot expose push-triggered main-run evidence, so no invisible post-merge Actions run is claimed. A later docs-only continuity merge may advance `main`.
+Latest verified product/runtime closure baseline: `main@581e8ad1f0d3f80e2631b967568fec51e67555af` after PR #480. Accepted exact head `b7a9764331ec813361f850c52129f624c42c45ca` had CI `35348781454` SUCCESS, Auth job `105611618459` SUCCESS (Development-only), Vercel Preview `dpl_EHxhGsfhLBpbJVimzmryaw2RL9hb` READY and external Jetnity Guardian exact-head PASS. Accepted head -> merge has 0 changed files. Exact-merge Vercel Production `dpl_C58unv1yazveBQ1v7MjdUAiQEaSE` is READY on the merge SHA. The current GitHub connector does not expose push-triggered main-run evidence, so no invisible post-merge Actions run is claimed. A later docs-only continuity merge may advance `main`.
 
 ## 2. Paid Assistant smoke evidence
 
@@ -88,6 +88,8 @@ Session: `bc-c94275d6-9625-464f-9cbb-ea932c703043`
 Status: **COMPLETED / NOT ACTIVE**.
 
 No active Cursor coding agent is known at this handoff.
+
+Last completed Cursor slice: **`Jetnity V1 production auth verification 1`**, Generation **1**, session `bc-1d490756-eed2-4390-a8bf-04645bf58082`, model **Cursor Grok 4.6 High Fast**. Final persisted agent state was STOP FOR TECHNICAL-LEAD REVIEW; PR #480 is now merged and that agent/session must not be reconstructed as active work.
 
 Current Product-Owner Cursor parent-model preference: **Cursor Grok 4.6 High Fast**. Do not use Auto; if unavailable, stop/report rather than silently substituting. This replaces prior Opus requirements until changed by the Product Owner.
 
@@ -241,9 +243,36 @@ No product follow-up is selected by this handoff. Reconstruct live state before 
 - TL P2 wildcard-column auto-expansion issue fixed before merge;
 - no legal-completeness/deletion claim; throttle/snapshot residuals remain documented.
 
-Audit finding 2.1 is closed for this scoped V1 product export, and 1.2(a) is closed. Account deletion/retention, legal content, credentialed Production Auth verification and automated observability remain separate unresolved/gated work.
+Audit finding 2.1 is closed for this scoped V1 product export, and 1.2(a) is closed. Account deletion/retention, legal content and automated observability remain separate unresolved/gated work. Credentialed Production Auth verification is CLOSED via #479/#480; its verified residuals are the separate P0 SMTP provider/secret gate and P2 Production redirect-write gate.
 
 No product follow-up is selected by this handoff. Reconstruct live state before choosing the next slice.
+
+## 6f. V1 Production Auth Verification 1 — CLOSED
+
+PR #480 / issue #479 are **CLOSED / MERGED / POST-MERGE VERIFIED**:
+- accepted exact head `b7a9764331ec813361f850c52129f624c42c45ca`;
+- merge/runtime closure baseline `581e8ad1f0d3f80e2631b967568fec51e67555af`;
+- accepted head -> merge: **0 changed files**;
+- exact-head CI `35348781454`: **SUCCESS**;
+- Auth job `105611618459`: **SUCCESS**, normal Development `auth:pruefen` only;
+- exact-head Preview `dpl_EHxhGsfhLBpbJVimzmryaw2RL9hb`: **READY**;
+- external Jetnity Guardian comment `5730907932`: **PASS** on the accepted exact head;
+- exact-merge Production `dpl_C58unv1yazveBQ1v7MjdUAiQEaSE`: **READY**;
+- prior TL P3 on the `AUTH.md` Production-remotes rationale was corrected by the same Generation-1 agent/session before final review.
+
+Verified Production truth:
+- project `qscbgcdmivbbnzrcyegn`: **ACTIVE_HEALTHY**;
+- migration `20260827170000_admin_aal2_data_plane_alignment` is already applied — **no second apply**;
+- `public.aktuelles_admin_aal2()` is live and checks JWT `aal='aal2'`;
+- all five current `darf_*` admin capabilities require current AAL2;
+- Audit 3.3 is resolved and Audit 3.7 is Production-verified;
+- Production Auth snapshot: `site_url=http://localhost:3000`, empty `uri_allow_list`, HIBP enabled, Auth rate limits verified, TOTP enroll/verify enabled, low-AAL disallowed, unverified-email sign-in disallowed.
+
+Residual launch risks stay explicitly open:
+- **P0 3.8:** no production-capable SMTP; `rate_limit_email_sent=2`. Provider + secret choice is Product-Owner-gated.
+- **P2 3.6:** Production redirect configuration is localhost + empty allowlist. Remediation is a separate Production Auth write gate.
+
+The slice performed **no Production Auth write, DB mutation/migration/RLS change, test-user action, provider/SMTP activation, secret mutation or new cost**. No follow-up remediation is automatically selected.
 
 ## 7. Open PRs / historical clutter
 
@@ -318,4 +347,4 @@ The next Technical Lead must:
 
 Verified transition baseline after PR #453 integration: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later continuity-only merge may advance repository `main`; always re-fetch live.
 
-**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. V1 SUPPORT PROCESS 1 / #470 IST CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 IST CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 IST CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 IST CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. V1 SUPPORT PROCESS 1 / #470 IST CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 IST CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 IST CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 IST CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 IST CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
