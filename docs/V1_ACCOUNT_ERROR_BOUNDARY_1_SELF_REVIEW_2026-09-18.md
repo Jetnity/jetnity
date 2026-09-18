@@ -5,45 +5,30 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #468  
 Draft PR: #471  
-Branch: `fix/v1-account-error-boundary-1`  
-Binding task: `docs/V1_ACCOUNT_ERROR_BOUNDARY_1_TASK_2026-09-18.md`  
-TL CHANGES REQUIRED: comment `5728416485`  
-P2 fix head: `a9bf882d6d9ec2c0bee576b87146769a248c01b3`
+Reconciliation merge: `30376297f633f7df0db52533c46517d705d2f6f0`  
+Reconciled main: `b051b2c2c08572b8948d24deb013d930d77ec503`
 
-This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
+This document cannot replace an independent Technical-Lead PASS.
 
 ---
 
-## 1. Attacks on the P2 fix
+## 1. Attacks on the reconciliation
 
 | Attack | Result |
 | --- | --- |
-| Leave `console.error(..., error)` unconditional | Rejected. That was the TL P2 finding. |
-| Remove the log and also change user-facing copy | Rejected. Copy unchanged. Guarded the existing diagnostic instead. |
-| Guard only the JSX message and leave the console log | That was the previous defect. Now both are behind `NODE_ENV !== 'production'`. |
-| Contract-test only the JSX path | Rejected. After stripping development-only blocks, `console.error` must be absent. |
-| Change public `app/(public)/error.tsx` to match | Rejected. Out of scope; public/admin boundaries not touched. |
-| Rebase onto `origin/main` / #472 | Rejected. Parallel isolation forbids cross-slice merges during this slice. |
-| Mark Ready or merge | Rejected. |
+| Persist evidence without merging main | That was the previous defect (`122bbe6d`). This session merged `origin/main`. |
+| Merge a sibling feature branch | Rejected. Only `origin/main@b051b2c2`. |
+| Resolve a conflict by dropping #472 or #471 | No conflict occurred. Both sides kept. |
+| Rebase/force-push | Rejected. Merge commit used. |
+| Change slice runtime while reconciling | Rejected. P2 guard and copy unchanged. |
+| Mark Ready or merge #471 | Rejected. |
 
-## 2. Residual risks this slice does not close
+## 2. Residual risks
 
-- Findings **4.1**, **4.3**, **5.5** remain open.
-- Development still logs the raw Error in the user's browser console.
-- No root / `global-error.tsx` backstop.
-- This evidence persist invalidates exact-head gates on `a9bf882d`. Re-gate the new head.
-- Branch is behind `origin/main` by #472. That is reported, not merged here.
+- This evidence persist invalidates exact-head gates on `30376297`. Re-gate the new head.
+- Findings 4.1 / 4.3 / 5.5 remain open.
+- Development still logs the raw Error in the browser console.
 
-## 3. Compliance with the binding task and TL P2
+## 3. Recommendation
 
-| Requirement | Met? | Note |
-| --- | --- | --- |
-| No Production stack/raw detail | Yes after P2 | Console and JSX both development-only |
-| Smallest safe fix | Yes | Guard, do not rewrite the surface |
-| Focused contract updated | Yes | Unguarded `console.error(..., error)` fails |
-| No copy / Auth / other-slice edits | Yes | |
-| Persist STATUS / HANDOFF / SELF_REVIEW | Yes | This set |
-
-## 4. Recommendation to the Technical Lead
-
-P2 is locally closed on `a9bf882d`. Review the current PR head after this persist and after that head's own CI / Preview. Do not treat superseded heads as current exact-head truth.
+Reconciliation is done: merge-base is current main, behind is 0. Review the current PR head after this persist and after that head's own CI / Preview.
