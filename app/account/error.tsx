@@ -18,7 +18,9 @@ export default function AccountError({
   reset: () => void
 }) {
   React.useEffect(() => {
-    console.error('[AccountRouteError]', error)
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[AccountRouteError]', error)
+    }
   }, [error])
 
   // Digest zuerst. Fallback ist useId(): render-rein, je Mount stabil,

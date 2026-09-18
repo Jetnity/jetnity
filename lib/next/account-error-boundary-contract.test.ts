@@ -70,11 +70,18 @@ describe('Account-Fehlergrenze existiert und bleibt wahrheits- und sicherheitstr
     assert.equal(/error\.stack/.test(quelle), false)
     assert.match(quelle, /process\.env\.NODE_ENV\s*!==\s*['"]production['"]/)
 
-    const ohneDevDiagnose = quelle.replace(
-      /\{process\.env\.NODE_ENV\s*!==\s*['"]production['"]\s*&&\s*\([\s\S]*?\)\}/,
-      '',
-    )
+    const ohneDevDiagnose = quelle
+      .replace(
+        /if\s*\(\s*process\.env\.NODE_ENV\s*!==\s*['"]production['"]\s*\)\s*\{[\s\S]*?\}/g,
+        '',
+      )
+      .replace(
+        /\{process\.env\.NODE_ENV\s*!==\s*['"]production['"]\s*&&\s*\([\s\S]*?\)\}/g,
+        '',
+      )
     assert.equal(/error\?\.message/.test(ohneDevDiagnose), false)
     assert.equal(/error\.message/.test(ohneDevDiagnose), false)
+    assert.equal(/console\.error\s*\(/.test(ohneDevDiagnose), false)
+    assert.equal(/console\.error\s*\([\s\S]*?\berror\b/.test(ohneDevDiagnose), false)
   })
 })
