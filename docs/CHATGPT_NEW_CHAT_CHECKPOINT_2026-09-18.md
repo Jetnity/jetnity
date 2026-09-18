@@ -1,6 +1,6 @@
 # ChatGPT Technical-Lead New-Chat Checkpoint – 18. September 2026
 
-Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 #460 CLOSED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 This checkpoint exists so a fresh ChatGPT Technical Lead can continue without relying on chat memory.
 
@@ -32,13 +32,13 @@ Then independently verify live:
 
 ## 2. Exact verified main at handoff
 
-Latest continuity refresh baseline after V1 Legal Claim Hygiene 1:
+Latest continuity refresh baseline after V1 Admin MFA Loss Recovery Runbook 1:
 
-`e534e0f55cb4da5ebdc5222351e4e29e608b1007`
+`6f79b45a70374518aef0b6f1a9ab4479f0798827`
 
 Commit:
 
-`Remove unproven compliance assertion (#457)`
+`Add admin MFA loss recovery runbook (#460)`
 
 The earlier Assistant Runtime merge `fdbd3735c0bfd4993bd78d41a3ab70edd895988c` remains a historical verified transition baseline, not current main.
 
@@ -169,6 +169,22 @@ PR #457 / issue #456:
 
 The GitHub connector available to this chat only exposes PR-triggered runs in commit workflow lookup, so a main push run is not independently visible and is not claimed.
 
+## 6b. V1 Admin MFA Loss Recovery Runbook 1 — CLOSED
+
+PR #460 / issue #459:
+- accepted exact head `f0f6c892dc22cfc1cf2cf00093f8740b36155c03`;
+- merge/current continuity baseline `6f79b45a70374518aef0b6f1a9ab4479f0798827`;
+- exact-head CI `35294323671`: SUCCESS;
+- exact-head Vercel Preview `dpl_FY7MzpD7mEAuMQeyncdnbCPW9PJJ`: READY;
+- exact-merge Vercel Production `dpl_doA4VePRj6BAuAvQXWqQerHUdHqc`: READY;
+- accepted head -> merge: 0 changed files;
+- independent Guardian PASS on exact head with no P0/P1/P2;
+- TL P2 read-only validation correction is present;
+- no factor deletion, live Auth/Supabase mutation, provider, secret or cost change;
+- any later Production deleteFactor remains a separate Product-Owner Auth/MFA gate.
+
+Guardian review issue #461 is closed completed.
+
 ## 7. Open PR field at handoff
 
 PR #453 is closed/merged.
@@ -187,6 +203,8 @@ These must not be treated as current implementation merely because they remain o
 Assistant Runtime implementation and its PO Preview/Development gate are fulfilled by merged PR #435. During transition cleanup, issues **#433 and #434 were closed as completed**.
 
 V1 Legal Claim Hygiene 1 is fulfilled by merged PR #457; issue **#456 is closed as completed**.
+
+V1 Admin MFA Loss Recovery Runbook 1 is fulfilled by merged PR #460; issue **#459 is closed as completed**. Guardian review issue **#461 is closed as completed**.
 
 Realistic World Cartography 1 is already integrated/post-merge verified via the World Cartography work and PR #444 evidence. During transition cleanup, issue **#442 was closed as completed**.
 
@@ -270,4 +288,4 @@ PR #453 is closed and must not be reconstructed as pending work.
 
 Verified governance integration baseline: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later docs-only continuity merge may advance repository `main`; live evidence always wins.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
