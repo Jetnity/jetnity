@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 18. September 2026  
-Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / PR #453 MERGED + POST-MERGE VERIFIED / NO ACTIVE CURSOR CODING AGENT / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT HANDOFF / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / PR #457 MERGED / EXACT-MERGE PRODUCTION READY / NO ACTIVE CURSOR CODING AGENT / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO ACTIVE PRODUCT SLICE SELECTED BY THIS HANDOFF / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PROVIDER CONTACTS DEFERRED / NO AUTOMATIC NEXT SLICE / LIVE-EVIDENCE GEWINNT**
 
 Canonical new-chat checkpoint:
 
@@ -34,7 +34,9 @@ Integration evidence:
 - Vercel Production deployment `dpl_Dni4i6FZDYKvabhEshEra4VDQUa7`: READY;
 - no automatic Production Supabase migration occurred.
 
-Always re-fetch live `main` in the next chat. The exact SHA above is a verified transition baseline, not an instruction to assume no later commits exist.
+Always re-fetch live `main` in the next chat. The exact SHA above is a verified Assistant Runtime transition baseline, not an instruction to assume no later commits exist.
+
+Latest continuity refresh baseline after V1 Legal Claim Hygiene 1: `main@e534e0f55cb4da5ebdc5222351e4e29e608b1007` (PR #457 merged). Exact accepted head `f132ac092ff1bd78e22dde0055a45fe74dab7d24` had full CI SUCCESS; merge tree is identical to that head; Vercel Production `dpl_6hpZrab1QPVk1o7m4nNPw4PhZUiX` is READY on the exact merge SHA. The current GitHub connector cannot expose push-triggered run evidence, so no invisible post-merge Actions run is claimed.
 
 ## 2. Paid Assistant smoke evidence
 
@@ -87,6 +89,8 @@ Status: **COMPLETED / NOT ACTIVE**.
 
 No active Cursor coding agent is known at this handoff.
 
+Current Product-Owner Cursor parent-model preference: **Cursor Grok 4.6 High Fast**. Do not use Auto; if unavailable, stop/report rather than silently substituting. This replaces prior Opus requirements until changed by the Product Owner.
+
 Do not reactivate the Assistant Runtime 1 session as unfinished work.
 
 Grok Guardian remains an independent observer/challenger/evidence layer. It is not a second Technical Lead and cannot Ready/merge.
@@ -138,6 +142,20 @@ The operating system document is now canonical and part of the mandatory startup
 
 **FIRST NEXT ACTION:** reconstruct live state again before selecting any product slice. This closure does not itself authorize or choose a follow-up implementation.
 
+## 6a. V1 Legal Claim Hygiene 1 — CLOSED
+
+PR #457 / issue #456 are closed:
+- accepted head `f132ac092ff1bd78e22dde0055a45fe74dab7d24`;
+- merge `e534e0f55cb4da5ebdc5222351e4e29e608b1007`;
+- exact-head CI run `35292084238`: SUCCESS;
+- exact-head Preview `dpl_GnzRuwcv5oMktSbSajh6W8kycaL3`: READY;
+- exact-merge Production `dpl_6hpZrab1QPVk1o7m4nNPw4PhZUiX`: READY;
+- Login/Register no longer make the unsupported standalone DSGVO/CH-DSG conformity assertion;
+- registration consent mechanics were intentionally not changed;
+- no Supabase, Production data, provider, secret or cost mutation.
+
+Git comparison shows 0 file differences from accepted head to merge commit. Push-triggered Actions evidence is not exposed by the currently available connector and must not be invented.
+
 ## 7. Open PRs / historical clutter
 
 PR #453 is merged and must not be treated as active work.
@@ -160,7 +178,6 @@ Closed:
 - Mobile Accessibility 1.
 
 Still distinct/future:
-- explicit user-confirmed historical visit truth / Explicit Visit History 1 under Product directive #441;
 - real Flight/Hotel/Activities Commercial Truth where provider/external access is required;
 - real Official Entry Requirements evidence;
 - Temporal Readiness on real evidence;
@@ -168,7 +185,9 @@ Still distinct/future:
 - account/privacy/legal/ops/monetization minimum;
 - final V1 Definition of Done and Release Readiness.
 
-No future slice is automatically authorized by this handoff.
+Explicit Visit History 1 / Product directive #441 is **already CLOSED / COMPLETED** and must not be reconstructed as future work. Planned ≠ visited remains an invariant.
+
+No future slice is automatically selected by this handoff.
 
 ## 9. Provider decision / Product-Owner direction
 
@@ -210,4 +229,4 @@ The next Technical Lead must:
 
 Verified transition baseline after PR #453 integration: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later continuity-only merge may advance repository `main`; always re-fetch live.
 
-**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. PR #453 IST GEMERGT + POST-MERGE VERIFIZIERT. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+**LIVE-EVIDENCE GEWINNT IMMER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. KEIN AKTIVER CURSOR CODING AGENT IST AUS DER LETZTEN PERSISTIERTEN EVIDENCE BEKANNT. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
