@@ -5,7 +5,7 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #479  
 Draft PR: #480  
-Phase-B implementation head: `a84317eee71873fa4be5f3c4eb75020e0964cfa4`  
+P3 correction evidence head: `f72cdd499c6ee0e6ec782e0df5011e223d8d814d`  
 TL CHANGES REQUIRED: comment `5730407196`
 
 This document cannot replace an independent Technical-Lead PASS.
@@ -25,14 +25,26 @@ This document cannot replace an independent Technical-Lead PASS.
 
 ---
 
-## 2. Residual risks
+## 2. Evidence checked on `f72cdd49`
 
-- Production redirect values remain localhost + empty allowlist (open P2).
-- No production-capable SMTP (open P0).
-- This persist creates a new head and needs its own CI/Preview gates.
+- §9 now names the write boundary, not public-repo secrecy, as the reason there is no Production `[remotes.*]`.
+- The only remaining “öffentliche Repository” phrase is the explicit negation of the old claim.
+- CI `35348329618` SUCCESS; auth job `105610134444` ran only Development `Abgleich`.
+- Vercel Preview `GdeQ6s9AJrRwzeNjgUbaw59vbPmu` READY.
+- Merge-base `d67529a`, behind **0**. Threads 0.
+
+This persist creates a new head and invalidates `f72cdd49` as the exact current SHA.
 
 ---
 
-## 3. Recommendation
+## 3. Residual risks
 
-Accept the §9 rationale if it matches the required write-boundary wording and no other Phase-B truth changed. Re-gate the correction head. Do not Ready or merge from this document.
+- Production redirect values remain localhost + empty allowlist (open P2).
+- No production-capable SMTP (open P0).
+- Persist-after-gates creates a new head that needs independent TL re-bind.
+
+---
+
+## 4. Recommendation
+
+Accept the §9 rationale if it matches the required write-boundary wording and no other Phase-B truth changed. Do not Ready or merge from this document.
