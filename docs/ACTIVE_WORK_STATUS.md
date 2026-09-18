@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 18. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / PR #453 MERGED + POST-MERGE VERIFIED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / PR #457 MERGED / EXACT-MERGE PRODUCTION READY / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -13,6 +13,8 @@ Canonical current transition checkpoint:
 
 Assistant Runtime 1 and the Multi-Agent Operating System are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
+V1 Legal Claim Hygiene 1 is also **CLOSED / MERGED** via PR #457. Current continuity refresh baseline is `main@e534e0f55cb4da5ebdc5222351e4e29e608b1007`. The exact accepted PR head `f132ac092ff1bd78e22dde0055a45fe74dab7d24` passed full CI; the merge commit has 0 file differences from that head; Vercel Production `dpl_6hpZrab1QPVk1o7m4nNPw4PhZUiX` is READY on the exact merge SHA. The available GitHub connector cannot expose push-triggered runs, so no unseen post-merge Actions run is claimed.
+
 Latest verified governance integration baseline:
 - PR #453 accepted head: `afc09b378676d7350101f2ee7b5b2dfd2f93d934`;
 - merge/main baseline: `30855fbb91e11e19f74afbaf1578dc67828714f2`;
@@ -21,6 +23,8 @@ Latest verified governance integration baseline:
 - exact-head Preview and post-merge Production Vercel: READY.
 
 No product follow-up slice is selected by this status file. No active Cursor coding agent is known from the latest persisted evidence; direct Cursor UI/session state must still be re-fetched when accessible.
+
+Current Product-Owner Cursor model preference: **Cursor Grok 4.6 High Fast**. Do not use Auto. If that model is unavailable, stop/report instead of silently substituting. This supersedes prior Opus requirements until the Product Owner changes it.
 
 Always reconstruct live state before acting. A later continuity-only merge may move `main` without changing runtime truth.
 
@@ -109,6 +113,21 @@ The new document is in the mandatory startup path. PR #453 must not be reopened 
 
 No automatic product follow-up is implied.
 
+## 4a. V1 Legal Claim Hygiene 1 — CLOSED
+
+PR #457 / issue #456:
+- accepted exact head `f132ac092ff1bd78e22dde0055a45fe74dab7d24`;
+- merge commit `e534e0f55cb4da5ebdc5222351e4e29e608b1007`;
+- exact-head CI run `35292084238`: SUCCESS;
+- Vercel Preview `dpl_GnzRuwcv5oMktSbSajh6W8kycaL3`: READY on the accepted head;
+- Vercel Production `dpl_6hpZrab1QPVk1o7m4nNPw4PhZUiX`: READY on the exact merge SHA;
+- merge commit has 0 changed files relative to the accepted head;
+- unsupported standalone `Datenschutz: DSGVO & CH-DSG konform.` copy removed from Login/Register;
+- registration terms/privacy checkbox, links, validation and submit gating preserved;
+- no legal text generation, Auth semantics change, Supabase mutation, provider activation, secret change or new cost.
+
+The available GitHub connector only exposes PR-triggered workflow runs through commit lookup, so the main push run is not independently visible here and is not falsely claimed.
+
 ## 5. Current broader product state
 
 Closed/core surfaces include:
@@ -121,9 +140,9 @@ Closed/core surfaces include:
 - Assistant Runtime 1;
 - Mobile Accessibility 1.
 
-Product directive #441 remains broader than cartography because explicit user-confirmed historical visit truth / Explicit Visit History 1 is still a separate future capability.
+Product directive #441 is **CLOSED / COMPLETED**. Explicit Visit History 1 is already implemented and Production-backed via `20260917120000_account_visits`; prior live verification confirmed RLS/grants/RPC boundaries and real Production usage. Do not reconstruct #441 as future implementation.
 
-Planned ≠ visited.
+Planned ≠ visited remains a hard semantic invariant.
 
 ## 6. Provider / Production gates
 
@@ -193,4 +212,4 @@ Then reconstruct live:
 
 Do not treat historical Draft PRs as active work merely because they are open. Do not infer a next product slice from this file. Select the smallest responsible bounded next step only after live reconstruction and current Product-Owner gate checks.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. PR #453 MERGED + POST-MERGE VERIFIED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**

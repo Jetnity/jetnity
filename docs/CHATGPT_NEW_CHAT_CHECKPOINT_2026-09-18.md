@@ -1,6 +1,6 @@
 # ChatGPT Technical-Lead New-Chat Checkpoint – 18. September 2026
 
-Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / PR #453 MERGED + POST-MERGE VERIFIED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 This checkpoint exists so a fresh ChatGPT Technical Lead can continue without relying on chat memory.
 
@@ -32,13 +32,15 @@ Then independently verify live:
 
 ## 2. Exact verified main at handoff
 
-Verified `main` after Assistant Runtime 1 integration:
+Latest continuity refresh baseline after V1 Legal Claim Hygiene 1:
 
-`fdbd3735c0bfd4993bd78d41a3ab70edd895988c`
+`e534e0f55cb4da5ebdc5222351e4e29e608b1007`
 
 Commit:
 
-`Merge Assistant Runtime 1 (#435)`
+`Remove unproven compliance assertion (#457)`
+
+The earlier Assistant Runtime merge `fdbd3735c0bfd4993bd78d41a3ab70edd895988c` remains a historical verified transition baseline, not current main.
 
 Post-merge evidence:
 - PR #435: **MERGED** at 2026-09-17T23:26:37Z;
@@ -115,6 +117,8 @@ Any future Production Assistant migration requires a fresh Product-Owner special
 
 **No active Cursor coding agent is known at this handoff.**
 
+Current Product-Owner Cursor parent-model preference: **Cursor Grok 4.6 High Fast**. Do not use Auto. If it is unavailable, stop/report rather than silently substituting. This supersedes prior Opus requirements until the Product Owner changes it.
+
 Assistant Runtime 1 agent:
 - logical name: `Jetnity assistant runtime 1`;
 - Generation 1;
@@ -150,6 +154,21 @@ Evidence:
 
 `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` is now canonical and mandatory startup reading.
 
+## 6a. V1 Legal Claim Hygiene 1 — CLOSED
+
+PR #457 / issue #456:
+- accepted exact head: `f132ac092ff1bd78e22dde0055a45fe74dab7d24`;
+- merge/current continuity baseline: `e534e0f55cb4da5ebdc5222351e4e29e608b1007`;
+- exact-head CI run `35292084238`: SUCCESS;
+- exact-head Vercel Preview `dpl_GnzRuwcv5oMktSbSajh6W8kycaL3`: READY;
+- exact-merge Vercel Production `dpl_6hpZrab1QPVk1o7m4nNPw4PhZUiX`: READY;
+- accepted head -> merge: 0 changed files;
+- unsupported Login/Register DSGVO/CH-DSG conformity copy removed;
+- registration checkbox/links/validation/submit gating preserved;
+- no legal-content generation, Auth semantic change, Supabase mutation, provider activation, secret change or new cost.
+
+The GitHub connector available to this chat only exposes PR-triggered runs in commit workflow lookup, so a main push run is not independently visible and is not claimed.
+
 ## 7. Open PR field at handoff
 
 PR #453 is closed/merged.
@@ -167,9 +186,11 @@ These must not be treated as current implementation merely because they remain o
 
 Assistant Runtime implementation and its PO Preview/Development gate are fulfilled by merged PR #435. During transition cleanup, issues **#433 and #434 were closed as completed**.
 
+V1 Legal Claim Hygiene 1 is fulfilled by merged PR #457; issue **#456 is closed as completed**.
+
 Realistic World Cartography 1 is already integrated/post-merge verified via the World Cartography work and PR #444 evidence. During transition cleanup, issue **#442 was closed as completed**.
 
-Product directive #441 remains broader than cartography because **Explicit Visit History 1** / historical visited truth is still a separate future capability.
+Product directive **#441 is CLOSED / COMPLETED**. Explicit Visit History 1 / historical visited truth is implemented and Production-backed through `20260917120000_account_visits`; prior live verification confirmed RLS/grants/RPC boundaries and real Production usage. Do not reconstruct #441 as pending work.
 
 Standing Authorization #440 must be read live before relying on it for any future autonomous work; special Product-Owner gates are never waived by a generic standing authorization.
 
@@ -249,4 +270,4 @@ PR #453 is closed and must not be reconstructed as pending work.
 
 Verified governance integration baseline: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later docs-only continuity merge may advance repository `main`; live evidence always wins.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. PR #435 MERGED + POST-MERGE VERIFIED. MULTI-AGENT OPERATING SYSTEM CANONICAL. PR #453 MERGED + POST-MERGE VERIFIED. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
