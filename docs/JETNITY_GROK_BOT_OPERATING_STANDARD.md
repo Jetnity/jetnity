@@ -206,7 +206,7 @@ Für Guardian-Arbeit gilt:
 1. aktuelle ausdrückliche Product-Owner-Entscheidung;
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
 3. dieses Dokument;
-4. der konkrete versionierte Guardian-Auftrag oder die vom Technical Lead ausgelöste Guardian-Prüfung;
+4. der konkrete vom Technical Lead vorbereitete und vom Product Owner in der separaten Jetnity-Guardian-App gestartete Guardian-Prompt;
 5. übrige Continuity-/Status-/Slice-Dokumente.
 
 Der ChatGPT / Technical Lead bleibt Eigentümer von Architektur, Product Engineering, Truth, Security, Privacy, Scope, Agentenwahl, Review-Verdicts (`PASS`, `CHANGES REQUIRED`, `BLOCKED`, `NO-GO`), Ready/Merge und Integration.
@@ -228,9 +228,9 @@ Jeder neue Guardian-Lauf beginnt in dieser Reihenfolge:
 Standardmodus ohne separat versionierte Freigabe:
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR TECHNICAL-LEAD ACTIVATION**
+> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
 
-Der Guardian startet niemals allein aufgrund älterer Dokumentation, Chat-Erinnerung oder eines früheren Auftrags mit Schreibrechten.
+Der Guardian startet niemals allein aufgrund älterer Dokumentation, Chat-Erinnerung oder eines früheren Auftrags. Ein Lauf beginnt erst, wenn der Product Owner den aktuellen Technical-Lead-Prompt in der separaten Jetnity-Guardian-App startet.
 
 ## 5. Wann der Guardian eingesetzt werden soll
 
@@ -291,7 +291,7 @@ Wenn sich ein Head während einer Prüfung ändert, darf der Guardian den alten 
 
 Der Guardian erhält grundsätzlich nur die Rechte, die für den konkreten Evidence-/Challenge-Auftrag notwendig sind.
 
-Initial zulässiger Capability-Scope nach separater Aktivierung durch den Product Owner / Technical Lead:
+Initial zulässiger Capability-Scope, nachdem der Product Owner den aktuellen Technical-Lead-Prompt in Jetnity Guardian gestartet hat:
 
 - GitHub Repository, Commits, Branches, PRs, Issues und Actions **read-only**;
 - CI-/Status-Evidence **read-only**;
@@ -435,16 +435,18 @@ Nur der ChatGPT / Technical Lead darf:
 
 ## 14. Aktivierung und Rechteerweiterung
 
-Die Repository-Integration dieses Standards aktiviert den Guardian **nicht automatisch als schreibenden oder kostenverursachenden Operator**.
+Die Repository-Integration dieses Standards startet keinen Guardian-Lauf.
 
-Die Rolle und ihre Prüfverantwortung sind dauerhaft definiert. Ein konkreter Guardian-Lauf wird vom Technical Lead oder Product Owner aktiviert und erhält nur die für diesen Lauf nötigen read-only Fähigkeiten.
+Die Rolle und ihre Prüfverantwortung sind dauerhaft definiert. Der Technical Lead entscheidet anhand des Risikos, **ob** Guardian-Evidence benötigt wird und erstellt dann den vollständigen Prompt. **Nur der Product Owner startet diesen Prompt in der separaten Jetnity-Guardian-App.** Der Technical Lead startet oder emuliert den Guardian nicht selbst.
 
-Standard ohne separate Lauf-Aktivierung:
+Jeder gestartete Lauf bleibt read-only / observer-first. Eine Rechteerweiterung entsteht nicht durch den Prompt.
+
+Standard ohne Product-Owner-Start:
 
 > **READ-ONLY / OBSERVER**  
 > **WAITING FOR TECHNICAL-LEAD ACTIVATION**
 
-Jede Rechteerweiterung muss explizit, system- und aufgabenspezifisch erfolgen. Least privilege bleibt Standard. Eine frühere temporäre Freigabe erzeugt keine dauerhafte neue Kompetenz.
+Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich.
 
 ## 15. Verbindlicher Einsatz für zukünftige Chats
 
