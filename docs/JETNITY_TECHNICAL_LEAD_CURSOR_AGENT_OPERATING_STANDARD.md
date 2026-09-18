@@ -390,7 +390,7 @@ Dieser Standard ist Pflichtlektüre für jeden Technical Lead und wird in `JETNI
 Der Guardian ist ausdrücklich **nicht** Technical Lead, **nicht** autonomer Produktentwickler und **nicht** Merge-Autorität. Er arbeitet observer-first und mit least privilege: ohne separat versionierte Freigabe bleibt er
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR TECHNICAL-LEAD ACTIVATION**
+> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
 
 Die Repository-Integration des Guardian-Standards aktiviert den Guardian nicht. Aktivierung, Verbindung weiterer Systeme und jede Rechteerweiterung erfolgen separat, system- und aufgabenspezifisch. Baseline sind höchstens GitHub-/CI-Read-only-Rechte; Vercel und jedes weitere System benötigen eine eigene Verbindung und ausdrückliche Freigabe. Eine frühere temporäre Freigabe erzeugt keine dauerhafte Kompetenz.
 
