@@ -11,7 +11,7 @@ TEST #001: comment `5735636786`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `1d2e160d244c75d4503e77422df8a6959737fa1c` has exact-head CI `35389633854` SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `caba1c660c658e74ceff5a4660010b46dbe84bd7` has exact-head CI `35390516776` SUCCESS. Vercel had not posted yet at persist time. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -32,7 +32,7 @@ Last verified evidence head `1d2e160d244c75d4503e77422df8a6959737fa1c` has exact
 - No approved scheduled routine exists.
 - Dedicated HOLD-exit checklist completion is still open.
 - Shared Grok environment credentials were not independently inspected.
-- This persist is a newer head than `1d2e160d`.
+- This persist is a newer head than `caba1c66`.
 
 ## 3. Compliance
 
@@ -47,7 +47,7 @@ Last verified evidence head `1d2e160d244c75d4503e77422df8a6959737fa1c` has exact
 
 Checked:
 - comments `5735534623`, `5735636786`;
-- last verified head `1d2e160d` CI `35389633854` SUCCESS;
+- last verified head `caba1c66` CI `35390516776` SUCCESS; Vercel not yet posted at persist time;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:

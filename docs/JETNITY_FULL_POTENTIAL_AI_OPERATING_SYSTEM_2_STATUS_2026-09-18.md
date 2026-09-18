@@ -15,9 +15,9 @@ Status: **DAILY INTELLIGENCE MANUAL TEST #001 PASS / ROUTINE-READINESS HARDENING
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `1d2e160d244c75d4503e77422df8a6959737fa1c` |
-| Evidence on that SHA | CI `35389633854` SUCCESS; Auth `105744702133` SUCCESS; Typecheck/Lint/Build `105744701914` SUCCESS; Technical-Lead live readback of this exact head for TEST #001 |
-| This persist | **creates a newer head** than `1d2e160d`. It is not the live PR head. |
+| Last verified implementation/evidence head | `caba1c660c658e74ceff5a4660010b46dbe84bd7` |
+| Evidence on that SHA | CI `35390516776` SUCCESS; Auth `105747526457` SUCCESS; Typecheck/Lint/Build `105747526609` SUCCESS; Vercel commit status **not yet posted** at persist time |
+| This persist | **creates a newer head** than `caba1c66`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
@@ -35,31 +35,34 @@ Do not treat any SHA written in this file as the current/live head. Continuity f
 - Still **OPEN**: final control-state re-fetch immediately before emitting the brief, with `MID-RUN CONTROL-STATE CHANGE` when the live head/state moved; approved scheduled routines after that hardening; dedicated HOLD-exit verification.
 - No GitHub Ruleset/admin mutation. No Cursor Grok skill/routine mutation. No product/runtime. PR #487 untouched.
 
-## 3. Local gates on last verified tree `1d2e160d`
+## 3. Local gates on last verified tree `caba1c66`
 
-These results belong to the previous persist, which already had exact-head CI used by the Technical Lead. This persist is documentation-only evidence update.
+Run by this writer on the TEST #001 persist SHA before the evidence commit.
 
 | Gate | Result |
 | --- | --- |
-| `check:operating-mode` | PASS on prior OS-2 heads |
-| Guard / unit tests | 3509/3509 PASS on prior OS-2 heads |
-| `typecheck` / `lint` / hygiene / `build` | PASS on last verified heads |
+| `check:operating-mode` | PASS |
+| Guard / unit tests | 3509/3509 PASS |
+| `typecheck` | PASS |
+| `lint` | 0 errors / 138 warnings |
+| hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) | PASS |
+| `build` | PASS (Next.js 16.3.3) |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
 
-## 4. Exact-head remote evidence on last verified SHA `1d2e160d`
+## 4. Exact-head remote evidence on last verified SHA `caba1c66`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35389633854` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35389633854 |
-| Typecheck, Lint & Build | job `105744701914` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105744702133` SUCCESS |
-| Vercel | re-fetch on persist; TL said current exact-head CI was verified separately before routine readiness |
+| GitHub Actions CI | run `35390516776` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35390516776 |
+| Typecheck, Lint & Build | job `105747526609` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105747526457` SUCCESS |
+| Vercel | **not yet posted** at persist time — Technical Lead must re-fetch the live head |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
 | TEST #001 dispatch | `5735636786` |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `1d2e160d`.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `caba1c66`.
 
 ## 5. Non-scope
 

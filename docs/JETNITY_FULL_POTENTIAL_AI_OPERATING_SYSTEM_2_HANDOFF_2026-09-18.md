@@ -19,7 +19,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `1d2e160d244c75d4503e77422df8a6959737fa1c` |
+| Last verified implementation/evidence head | `caba1c660c658e74ceff5a4660010b46dbe84bd7` |
 | This persist | creates a newer head than that SHA |
 | Live PR head | **re-fetch before verdict** — do not treat a SHA in this file as live |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -33,15 +33,16 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 - skill create: `5735534623` — `Jetnity Daily Intelligence Orchestrator` created / not scheduled
 - MANUAL TEST #001: `5735636786` — PASS WITH ONE SKILL HARDENING BEFORE ROUTINE CREATION
 - TEST_ID: `JETNITY-DAILY-INTELLIGENCE-TEST-001`
-- last verified OS-2 head at TL readback: `1d2e160d244c75d4503e77422df8a6959737fa1c`
-- exact-head CI on that SHA: `35389633854` SUCCESS
+- last verified OS-2 TEST #001 persist head: `caba1c660c658e74ceff5a4660010b46dbe84bd7`
+- exact-head CI on that SHA: `35390516776` SUCCESS
+- exact-head Vercel on that SHA: **not yet posted** at persist time
 - this persist is a newer head; live PR head must be re-fetched
 - agent: Jetnity full-potential AI operating system 2 / Generation 1
 - session: `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c`
 - model: Cursor Grok 4.6 High Fast
 - ownership: tracker + HOLD-exit checklist + continuity/STATUS/HANDOFF/SELF_REVIEW
 - verdict: **ready for Technical-Lead review** — not a TL PASS and not a HOLD-exit
-- evidence checked: comments `5735534623`, `5735636786`; last verified head `1d2e160d` CI; parked #487 untouched
+- evidence checked: comments `5735534623`, `5735636786`; last verified head `caba1c66` CI; parked #487 untouched
 - evidence not checked: CI/Vercel on **the SHA this persist will create**; shared-environment tokens; skill internals after hardening
 - blocker/gate: independent Technical-Lead exact-head review of the **live** head; HOLD remains; no routine
 - next actor: ChatGPT / Technical Lead
@@ -52,7 +53,7 @@ Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026
 1. Mode is still `AI_OS_BUILD_HOLD`.
 2. MANUAL TEST #001 is recorded as successful, **not** as a scheduled routine or HOLD lift.
 3. Still **OPEN**: final control-state re-fetch hardening; approved routines after that hardening; HOLD-exit.
-4. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `1d2e160d`.
+4. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `caba1c66`. Vercel had not posted yet on that SHA at persist time.
 
 ## 4. Exact next responsible actor
 
