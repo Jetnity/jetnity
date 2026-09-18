@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 18. September 2026  
-Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **PRODUCT-OWNER EXTERNAL-SETUP EVIDENCE INCORPORATED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -15,55 +15,51 @@ Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `3208126a4e0307058b074028fcf0907784ecbfc9` |
-| Evidence on that SHA | CI `35377200438` SUCCESS; Auth `105704579119` SUCCESS; Vercel Preview READY `DFgYkV5Jj1WjJAHHbaHYRMSjGhrx` / deployment `6529989091`; review threads 0; behind=0 |
-| This persist | **creates a newer head** than `3208126a`. It is not the live PR head. |
+| Last verified implementation/evidence head | `bfe99edbe456512cf84d2c994e954a195c835c45` |
+| Evidence on that SHA | CI `35377610918` SUCCESS; Auth `105705935023` SUCCESS; Typecheck/Lint/Build `105705935333` SUCCESS; Vercel Preview READY `97nGAxxbr5hfcWFL9oyYtnQ54Mpn`; review threads 0; behind=0 |
+| This persist | **creates a newer head** than `bfe99edb`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
 Do not treat any SHA written in this file as the current/live head. Continuity fields name the last verified predecessor plus the fact that this persist moved the branch.
 
-## 2. Implemented against the binding task
+## 2. Implemented against the binding task plus PO evidence `5734539126`
 
-- `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. `activeMetaScope` now points at #490 / #491 / OS-2. Parked #487 pointer and all special Product-Owner gates are unchanged. Required exit-condition flags are unchanged. GitHub baseline is recorded as `live_verified` from Ruleset `21875372`.
-- HOLD-exit checklist records verified OS-1 / PR #489 foundation, exact merge SHA `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`, post-merge CI `35376407897`, Vercel Production success/READY, TL PASS `5733949233` and post-merge `5733986499`, plus live Ruleset baseline rows. Ten-role setup, routines, Evidence Bus and e2e remain open / NOT CHECKED.
-- Canonical tracker created: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`. All ten names are mandatory. Guardian = existing. Other nine = not created. Shared-environment credential row is **NOT CHECKED**.
-- Continuity surfaces updated: `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`.
-- No GitHub Ruleset/admin mutation. No external Grok bot creation. No product/runtime. PR #487 untouched.
+- `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. `activeMetaScope` stays #490 / #491 / OS-2. Parked #487 pointer unchanged.
+- HOLD-exit checklist now records partial ten-role progress: Guardian existing; Chief of Staff created per Product-Owner evidence; remaining eight still open; iOS profile-persistence limitation recorded without dropping a role.
+- Canonical tracker updated: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`.
+  - `Jetnity Guardian` remains the canonical existing identity.
+  - `Jetnity Chief of Staff` is **created** with a correct initialization report; profile-instruction persistence is **NOT VERIFIED**.
+  - Legacy `Stabschef` is recorded as duplicate / pending hide-retire, **not** a roster slot.
+  - Remaining eight identities, routines, Evidence Bus and e2e stay open.
+- Continuity surfaces updated so they no longer claim “only Guardian / other nine uncreated.”
+- No GitHub Ruleset/admin mutation. No external Grok bot creation or mutation by Cursor. No product/runtime. PR #487 untouched.
 
-## 3. Local gates on last verified tree `3208126a`
+## 3. Local gates on last verified tree `bfe99edb`
+
+These results belong to the previous persist, which already had exact-head CI/Vercel. This persist is documentation-only evidence update.
 
 | Gate | Result |
 | --- | --- |
-| `check:operating-mode` | PASS |
+| `check:operating-mode` | PASS on `3208126a` and exact-head CI on `bfe99edb` |
 | Guard fixtures | 16/16 PASS |
-| `typecheck` | PASS |
-| `lint` | PASS (exit 0; 0 errors / 138 pre-existing warnings) |
-| `test` | 3509/3509 PASS |
-| `check:api-schutz` | PASS |
-| `check:schema-bezug` | PASS |
-| `check:dead` | PASS |
-| `check:exports` | PASS |
-| `check:deps` | PASS |
-| `build` | PASS |
+| `typecheck` / `lint` / `test` / hygiene / `build` | PASS on last verified heads |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
 
-## 4. Exact-head remote evidence on last verified SHA `3208126a`
+## 4. Exact-head remote evidence on last verified SHA `bfe99edb`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35377200438` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35377200438 |
-| Operating mode step | SUCCESS |
-| Typecheck / Lint / Tests / hygiene / Production build | SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105704579119` SUCCESS |
-| Vercel | commit status **success** / READY — https://vercel.com/jetnity-e1b93c82/jetnity-app/DFgYkV5Jj1WjJAHHbaHYRMSjGhrx |
-| Preview deployment | `6529989091` environment Preview state **success** |
+| GitHub Actions CI | run `35377610918` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35377610918 |
+| Typecheck, Lint & Build | job `105705935333` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105705935023` SUCCESS |
+| Vercel | commit status **success** / READY — https://vercel.com/jetnity-e1b93c82/jetnity-app/97nGAxxbr5hfcWFL9oyYtnQ54Mpn |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `3208126a`.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `bfe99edb`.
 
 ## 5. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No external Grok team. No Ready. No merge. No follow-up slice. No GitHub admin settings. HOLD remains in force.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor-created Grok bots. No routines. No Ready. No merge. No follow-up slice. No GitHub admin settings. HOLD remains in force.

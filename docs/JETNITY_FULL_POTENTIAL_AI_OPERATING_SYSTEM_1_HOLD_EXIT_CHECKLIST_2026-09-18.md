@@ -26,12 +26,12 @@ Live OS-2 control surface for the still-open ten-role work:
 
 | Prerequisite | Evidence required | Status | Evidence / limitation |
 | --- | --- | --- | --- |
-| All ten permanent Grok identities exist under their exact names | Identity list + where they live; not a Cursor claim | **open** | Only the existing Product-Owner `Jetnity Guardian` app is known to exist. The other nine named identities are **not created**. Canonical live tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`. This OS-2 slice must not create bots. |
-| Approved read-only routines/schedules authorized once | Which routines, cadence, who authorized | **open** | No approved recurring routines/schedules are configured. Daily/weekly Chief-of-Staff briefs are **not running**. |
+| All ten permanent Grok identities exist under their exact names | Identity list + where they live; not a Cursor claim | **open** | Product-Owner comment `5734539126` on PR #491: `Jetnity Guardian` remains the canonical existing identity; `Jetnity Chief of Staff` has been created and completed an initialization report. The remaining **eight** named identities are **not created**. Legacy `Stabschef` exists as a duplicate / pending hide-retire cleanup and is **not** a valid roster slot. Canonical live tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`. This OS-2 slice must not create, hide or delete bots. |
+| Approved read-only routines/schedules authorized once | Which routines, cadence, who authorized | **open** | No approved recurring routines/schedules are configured. Daily/weekly Chief-of-Staff briefs are **not running**. The CoS initialization created no routines. |
 | Evidence-Bus path works | Example no-signal or material comment/handoff URL | **open** | Evidence-Bus end-to-end is **not verified**. Existing one-off Guardian comments are not a ten-role bus. |
 | End-to-end verification that a no-signal run creates no work/merge/Production authority | Dated verification note | **open** | No e2e no-signal verification exists. |
 | Shared Grok environment still has no Production-admin / service-role / payment-admin / broad write tokens | Negative check recorded | **NOT CHECKED** | This repository slice cannot independently inspect the shared Grok environment credentials. Do not invent a PASS. Next actor: Product Owner / Technical Lead with access to that environment. |
-| Real platform limitation, if any | Explicit Product-Owner escalation/acceptance; do not silently drop a role | **none unless escalated** | All ten roles remain mandatory. No limitation has been escalated. |
+| Real platform limitation, if any | Explicit Product-Owner escalation/acceptance; do not silently drop a role | **recorded / not a role drop** | Product-Owner comment `5734539126`: iOS Grok Bot `Anweisungen` / profile-instruction edits appear to save but revert on reopen. Chief-of-Staff profile configuration is therefore **NOT VERIFIED**. Retest on desktop later. This limitation does **not** drop or replace any of the ten mandatory roles and is **not** an accepted HOLD-exit substitute. |
 
 ## 3. GitHub hard-enforcement baseline
 
@@ -71,4 +71,4 @@ Cursor must not activate these settings. This slice only recorded an already-act
 | Product Owner | Accepted platform or GitHub-baseline limitation; special gates | Silent roster shrink |
 | Cursor / Guardian / Grok | Supply evidence only | Ready, merge, activate Rulesets, flip mode without this record |
 
-**Current HOLD-exit verdict: incomplete.** Repository OS-1 foundation is merged and post-merge verified. GitHub non-lockout baseline is live-verified. Ten-role external setup, routines, Evidence Bus and e2e remain open. Mode stays `AI_OS_BUILD_HOLD`.
+**Current HOLD-exit verdict: incomplete.** Repository OS-1 foundation is merged and post-merge verified. GitHub non-lockout baseline is live-verified. Two of ten Grok identities now exist per Product-Owner evidence (`Jetnity Guardian`, `Jetnity Chief of Staff`). The remaining eight identities, routines, Evidence Bus, e2e and durable CoS profile persistence remain open / NOT VERIFIED. Mode stays `AI_OS_BUILD_HOLD`.
