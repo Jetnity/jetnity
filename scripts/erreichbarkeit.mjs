@@ -24,13 +24,10 @@ const ROOT = process.cwd()
 const CODE = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'])
 const BEOBACHTET = ['app', 'components', 'lib', 'types', 'hooks', 'config', 'styles', 'utils']
 
-// Bewusst unerreichbar – mit Grund.
-const ABSICHTLICH = new Map([
-  [
-    'components/layout/CookieConsent.tsx',
-    'wartet auf die Rechts-/Produktentscheidung zum Cookie-Banner; wird erst dann eingebunden oder entfernt',
-  ],
-])
+// Bewusst unerreichbar – mit Grund. Leer, weil der frühere CookieConsent-Orphan
+// entfernt wurde: ohne nicht-essentiellen Tracker gibt es keinen Banner.
+// Ein späterer Tracker ist ein eigener Consent-/Legal-Gate, keine Ausnahme hier.
+const ABSICHTLICH = new Map()
 
 // Next.js laedt diese Dateinamen selbst, ohne dass sie importiert werden.
 const ROUTEN_DATEIEN = new Set([
