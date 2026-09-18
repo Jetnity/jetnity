@@ -22,4 +22,4 @@ Technical detail decisions inside an approved scope may be made independently wh
 
 Critical truth/security/data-loss/production risks must be surfaced immediately and must not be hidden as later optimizations.
 
-The Product Owner decides major product direction and every merge. Expert proactivity means thinking ahead and presenting high-value recommendations, not taking ownership away from the Product Owner.
+The Product Owner decides major product direction and the reserved special gates. Ready/Merge for normal scope-faithful work belongs to ChatGPT / Technical Lead after independent exact-head PASS. Expert proactivity means thinking ahead and presenting high-value recommendations, not taking ownership away from the Product Owner or the Technical Lead.

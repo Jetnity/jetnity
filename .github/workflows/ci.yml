@@ -16,7 +16,13 @@ jobs:
     timeout-minutes: 20
 
     steps:
+      # fetch-depth: 0 is required so the operating-mode guard can compute the
+      # exact PR-vs-base file list locally. GitHub's default shallow clone does
+      # not contain the base SHA, and the guard must not use network APIs,
+      # secrets, providers or paid services.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -29,6 +35,14 @@ jobs:
 
       - name: Setup check
         run: npm run check:setup:ci
+
+      - name: Operating mode
+        env:
+          JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}
+          JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}
+          JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run check:operating-mode
 
       - name: Typecheck
         run: npm run typecheck

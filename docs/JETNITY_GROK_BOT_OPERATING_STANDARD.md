@@ -3,6 +3,7 @@
 Stand: 17. September 2026  
 Erweitert: 17. September 2026 – Product-Owner-Freigabe für Independent Intelligence / Challenger / Red-Team / Opportunity-Radar  
 Korrigiert: 18. September 2026 – Product-Owner-Bindung: Jetnity Guardian ist eine separate Guardian-App, kein Cursor-Agent  
+Erweitert: 18. September 2026 – Future specialized Grok-app setup pack (documentation only; no bots created)  
 Status: **PRODUCT-OWNER-VERBINDLICH / KANONISCH / OBSERVER-FIRST / LEAST-PRIVILEGE / INDEPENDENT CHALLENGER**
 
 ## 1. Rolle und Zweck
@@ -432,6 +433,44 @@ Nur der ChatGPT / Technical Lead darf:
 - Ready setzen;
 - mergen;
 - Post-Merge-Integration als abgeschlossen erklären.
+
+## 13a. Future specialized Grok-app setup pack — documentation only
+
+This section defines the **future** least-privilege roster. It does **not** create bots, grant permissions, start the external Grok team, or authorize anyone to do so.
+
+Current truth:
+- one Product-Owner Jetnity-Guardian app already exists as the independent challenge/evidence layer;
+- specialized sibling bots are **not** created;
+- no new GitHub app, installation, team, or token is granted by this document.
+
+When the Product Owner later chooses to create specialized Grok apps, configure only the minimum below. Default remains read-only / observer-first.
+
+Exact-head report format for every specialized bot is the Guardian report contract in section 11 plus the Evidence-Bus fields in `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §4.1.
+
+| Logical roster | Purpose | Default read-only systems | GitHub comment useful? | Forbidden permissions | When TL requests a run |
+| --- | --- | --- | --- | --- | --- |
+| Release / Continuity Guardian | Exact-head, CI/Vercel/thread, docs-vs-live, post-merge completeness | GitHub repo/PR/Actions read; Vercel metadata only if later separately connected | Yes, comments/reviews write only | No contents write, no merge, no admin, no secrets, no Actions write | Before PASS/merge, after merge, stale-doc suspicion |
+| Security / Privacy Red Team | Auth/RLS/PII/secret/document/health/tool-boundary attack | GitHub read; Supabase read-only only if later separately connected and scoped | Yes, comments useful | No repo write, no secret access, no admin, no workflow, no delete | Auth/RLS/PII/document/model-tool slices |
+| Architecture / Truth Challenger | Shared-contract, truth-class, Traveller/Route, duplicate-engine challenge | GitHub read; canonical docs | Optional comments | No write, no merge, no admin | New architecture, truth-class or shared-contract diffs |
+| Product / UX / Opportunity Challenger | User-value, journey, overload, opportunity radar | GitHub read; public market sources | Optional comments | No write, no issues-create unless TL later asks, no project admin | UX/IA changes or explicit opportunity ask |
+| Cost / Performance / Provider Guardian | Quota, kill-switch, retry, bundle, provider-cost risk | GitHub read; billing/provider consoles never | Optional comments | No paid calls, no secret/provider activation, no billing write | Model/provider/quota/budget or perf-risk diffs |
+
+### What the Product Owner will later need to configure in the external Grok app
+
+Do this later, not in this slice:
+
+1. Create only the bots actually needed; do not pre-create the full roster.
+2. Install each bot against this repository with **least privilege**:
+   - Repository: Contents **read**; Metadata **read**; Pull requests **read**; Issues **read**;
+   - Actions: **read** if the bot must cite workflow runs;
+   - Pull requests / Issues: **write comments** only if that bot should post Evidence-Bus findings;
+   - no Contents write, no Administration, no Secrets, no Workflows write, no Environments, no Pages, no Packages, no merge, no org-admin.
+3. Keep Vercel, Supabase, billing and provider systems disconnected until a separate Product-Owner connection decision exists for that bot.
+4. Name each bot exactly as in the roster so reports are auditable.
+5. Confirm the bot cannot mark Ready, merge, deploy, or change branch protection.
+6. Store no long-lived write tokens in the repository.
+
+Until that Product-Owner action happens, Guardian evidence continues through the existing single Jetnity-Guardian app and the Technical-Lead prompt path. `@cursor` still never substitutes for Guardian.
 
 ## 14. Aktivierung und Rechteerweiterung
 

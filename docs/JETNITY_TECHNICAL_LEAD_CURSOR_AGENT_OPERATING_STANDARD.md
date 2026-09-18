@@ -3,6 +3,7 @@
 Stand: 28. August 2026  
 Ergänzt: 17. September 2026 – verbindliche Guardian-/Grok-Bot-Rollengrenze (Abschnitt 10)  
 Korrigiert: 18. September 2026 – Guardian ist separate Product-Owner-App; niemals Cursor-Agent  
+Ergänzt: 18. September 2026 – Operating Mode / HOLD, Follow-up-Klarstellung, abgestimmte Special-PO-Gates  
 Status: **Product-Owner-verbindlich / chatübergreifend / superseded widersprechende ältere Workflow- und Merge-Passagen**
 
 ## 1. Zweck
@@ -23,6 +24,8 @@ Leitregeln:
 
 Besondere Product-Owner-Gates bleiben vollständig bestehen.
 
+Maschinenlesbarer Betriebsmodus: `.jetnity/operating-mode.json`. Das ist Enforcement-Metadaten, keine zweite Autoritätskette. Vor jedem Dispatch zuerst den Mode lesen. Solange `AI_OS_BUILD_HOLD` aktiv ist, darf der Technical Lead keine normale Produktarbeit starten; er darf innerhalb des AI-OS-Meta-Scopes autonom Architektur, Governance, Agentengraph, Review und Integration steuern.
+
 ## 2. Exklusive Merge-Autorität
 
 Seit der ausdrücklichen Product-Owner-Entscheidung vom 28. August 2026 gilt:
@@ -42,17 +45,31 @@ Diese Regel superseded jede ältere Passage, die Cursor-Agenten Ready/Merge erla
 
 Ausdrückliche Product-Owner-Freigabe bleibt vor der betreffenden Aktion erforderlich insbesondere für:
 
-- neue Production-Migrationen oder destruktive/schwer rücknehmbare produktive Datenänderungen;
+- fundamentale Produkt-, Geschäftsmodell- oder Binding-Build-Order-Änderungen;
+- neue Production-Migrationen oder destruktive/schwer rücknehmbare produktive Daten-/Identity-/Security-Änderungen;
 - große produktive RLS-/Ownership-/Identity-Vertragsänderungen;
 - fundamentale Auth-/Session-/MFA-/AAL-Änderungen;
-- besonders sensitive Pass-/MRZ-/Biometrie-/Dokument-Speicherung oder neue sensible externe Datenweitergabe;
-- reale Providerverträge, Production-Secrets, paid calls oder Live-Aktivierung;
+- besonders sensitive Pass-/MRZ-/Biometrie-/Dokument-/Health-Erweiterung oder neue sensible externe Datenweitergabe;
+- Secrets, Providerverträge, externe Verträge/Terms/DPA;
+- reale Provider-Calls / Live-Provider-Aktivierung;
 - reale Payments/Geldbewegung;
-- neue laufende Infrastruktur-/Servicekosten über USD 100 pro Monat;
-- fundamentale Produkt-, Geschäftsmodell- oder Binding-Build-Order-Änderungen;
-- Public Launch, Indexing/Domain-Cutover, App-Store-/Store-Live oder vergleichbare extern bindende Aktivierung.
+- Public Launch, Indexing/Domain-Cutover, App-Store-/Store-Live;
+- neue laufende Infrastruktur-/Servicekosten über USD 100 pro Monat, sofern kein strengerer bestehender Gate gilt;
+- Entscheidungen, die der Product Owner ausdrücklich reserviert.
 
 Branch Protection wird nicht verändert, solange der Product Owner dies nicht ausdrücklich freigibt.
+
+## 3a. Follow-up-Autorität — verbindliche Korrektur
+
+`no automatic follow-up slice` / `do not start a follow-up slice` bindet **Cursor, Guardian und Reviewer**. Es bedeutet nicht, dass der Product Owner jeden nächsten normalen Slice manuell auswählen muss.
+
+Der Technical Lead darf nach abgeschlossenem Slice autonom den nächsten bounded Slice wählen und dispatchen, **sofern**:
+
+- kein Product-Owner HOLD aktiv ist;
+- `.jetnity/operating-mode.json` normale Produktarbeit erlaubt;
+- kein besonderes Product-Owner-Gate gekreuzt wird.
+
+Während `AI_OS_BUILD_HOLD` darf der Technical Lead nur innerhalb des ausdrücklich benannten Governance-Meta-Scopes dispatchen. Ein HOLD-Exit ändert den Mode nur durch einen dedizierten Technical-Lead-Closure-Schritt, nachdem das Operating System integriert und unabhängig verifiziert ist.
 
 ## 4. Verbindlicher End-to-End-Workflow
 
@@ -60,8 +77,11 @@ Branch Protection wird nicht verändert, solange der Product Owner dies nicht au
 
 Vor einem neuen Slice oder nach Chatwechsel rekonstruiert der Technical Lead zuerst den tatsächlichen Live-Stand.
 
+Zuerst `.jetnity/operating-mode.json` lesen. Bei `AI_OS_BUILD_HOLD` ist normale Produktarbeit kein zulässiger nächster Schritt.
+
 Mindestens prüfen:
 
+- aktueller Operating Mode / HOLD / Exit-Bedingung;
 - aktueller `main`-SHA;
 - letzte relevante Merges;
 - offene PRs/Drafts/Issues;
@@ -116,7 +136,7 @@ Der Auftrag enthält mindestens:
 - klaren `STOPP`-Punkt;
 - `do not mark Ready`;
 - `do not merge`;
-- `do not start a follow-up slice`.
+- `do not start a follow-up slice` — gilt für den beauftragten Cursor-/Guardian-/Reviewer-Agenten, nicht als Verbot autonomer Technical-Lead-Slicewahl außerhalb eines HOLD/Special-Gate.
 
 Agenten dürfen einen benötigten neuen Shared Contract dokumentieren, aber nicht still eigenmächtig einführen, wenn dieser außerhalb des freigegebenen Slices liegt.
 
@@ -242,7 +262,7 @@ Nach jedem Merge:
 5. bei DB-/Production-Slices relevante Supabase-Live-Wahrheit prüfen;
 6. neue Incidents/Drift/Threads prüfen;
 7. Continuity/Status/Checkpoint im Repository nachziehen;
-8. erst danach den nächsten zulässigen Slice bestimmen.
+8. erst danach den nächsten zulässigen Slice bestimmen, wenn der Operating Mode das erlaubt. Während `AI_OS_BUILD_HOLD` ist das kein normaler Produkt-Slice.
 
 Ein Preview-PASS vor Merge ist keine Production-Evidence nach Merge.
 

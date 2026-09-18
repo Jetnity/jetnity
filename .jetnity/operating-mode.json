@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "mode": "AI_OS_BUILD_HOLD",
+  "updatedAt": "2026-09-18",
+  "enforcementRole": "metadata_not_competing_governance",
+  "canonicalGovernance": [
+    "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+    "docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md",
+    "docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md",
+    "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md"
+  ],
+  "normalProductSlices": "blocked",
+  "allowedWorkClasses": [
+    "governance",
+    "continuity",
+    "evidence",
+    "enforcement"
+  ],
+  "productOwnerOverride": {
+    "date": "2026-09-18",
+    "issue": 440,
+    "title": "TEMPORARY PRODUCT-OWNER PRIORITY OVERRIDE — 18 September 2026",
+    "url": "https://github.com/Jetnity/jetnity/issues/440"
+  },
+  "activeMetaScope": {
+    "issue": 488,
+    "pr": 489,
+    "branch": "governance/full-potential-ai-operating-system-1",
+    "task": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_TASK_2026-09-18.md",
+    "title": "JETNITY FULL-POTENTIAL AI OPERATING SYSTEM"
+  },
+  "parkedProductSlice": {
+    "pr": 487,
+    "issue": 486,
+    "branch": "docs/v1-security-event-ingestion-architecture-1",
+    "head": "12d070a79c35fbb9f03d1302833eee8561ec17bd",
+    "status": "parked_safe_draft_stop",
+    "resumeAfterHold": "independent_tl_review_of_exact_current_head_then_decide_integration"
+  },
+  "exitCondition": {
+    "requiresIntegratedAndIndependentlyVerified": true,
+    "description": "Full-Potential AI Operating System integrated + independently verified; a dedicated Technical-Lead closure changes mode only after that evidence exists.",
+    "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence"
+  },
+  "specialProductOwnerGatesRemainInForce": true,
+  "authorizedBranchClasses": [
+    "governance/full-potential-ai-operating-system-"
+  ],
+  "authorizedExactBranches": [
+    "governance/full-potential-ai-operating-system-1"
+  ],
+  "allowedPathPatterns": [
+    ".jetnity/**",
+    ".cursor/rules/**",
+    ".github/workflows/ci.yml",
+    "package.json",
+    "AGENTS.md",
+    "JETNITY_START_HERE.md",
+    "docs/ACTIVE_WORK_STATUS.md",
+    "docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md",
+    "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
+    "docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md",
+    "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md",
+    "docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_*",
+    "scripts/operating-mode-guard.mjs",
+    "scripts/operating-mode-guard.test.mjs"
+  ],
+  "forbiddenPathPrefixesDuringHold": [
+    "app/",
+    "components/",
+    "lib/",
+    "hooks/",
+    "supabase/",
+    "types/",
+    "public/"
+  ]
+}
