@@ -392,7 +392,7 @@ Der Guardian ist ausdrücklich **nicht** Technical Lead, **nicht** autonomer Pro
 > **READ-ONLY / OBSERVER**  
 > **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
 
-Die Repository-Integration des Guardian-Standards aktiviert den Guardian nicht. Aktivierung, Verbindung weiterer Systeme und jede Rechteerweiterung erfolgen separat, system- und aufgabenspezifisch. Baseline sind höchstens GitHub-/CI-Read-only-Rechte; Vercel und jedes weitere System benötigen eine eigene Verbindung und ausdrückliche Freigabe. Eine frühere temporäre Freigabe erzeugt keine dauerhafte Kompetenz.
+Die Repository-Integration des Guardian-Standards startet keinen Guardian-Lauf. Ein konkreter Lauf beginnt nur, wenn der Product Owner den aktuellen Technical-Lead-Prompt in der separaten Jetnity-Guardian-App startet. Verbindungen weiterer Systeme bleiben separat, system- und aufgabenspezifisch; Baseline sind höchstens GitHub-/CI-Read-only-Rechte. Vercel und jedes weitere System benötigen eine eigene Verbindung/Freigabe. Eine frühere temporäre Freigabe erzeugt keine dauerhafte Kompetenz.
 
 Für den Technical Lead gilt daraus bindend:
 
