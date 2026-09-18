@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 18. September 2026  
-Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
+Status: **KANONISCHER EINSTIEG / PHASE 1 JETNITY CORE / MULTI-AGENT OPERATING SYSTEM CANONICAL / ASSISTANT RUNTIME 1 CLOSED / MOBILE ACCESSIBILITY 1 CLOSED / FLIGHT MULTI-LEG + 0..N MULTI-PROVIDER CORE CLOSED / DESTINATION ESSENTIALS 1 CLOSED / WORLD MAP 1 CLOSED / ASSISTANT TRUTH CONTEXT 1 CLOSED / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / NO REAL PROVIDER ACTIVE / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / PRODUCTION S6 UNAPPLIED / EXTERNAL A–E GATES CLOSED / NO AUTOMATIC NEXT SLICE / AKTIVE ARBEIT IMMER LIVE REKONSTRUIEREN / LIVE-EVIDENCE WINS**
 
 > **Audit first. Reuse before add. Integrate before duplicate. Fail closed. Eine Reise, eine Wahrheit.**
 
@@ -241,6 +241,8 @@ Assistant Truth Context 1, Destination Essentials 1 and World Map 1 remain close
 Physical real-device QA remains distinct from the browser-emulation evidence accepted for Mobile Accessibility 1 and requires a new bounded slice if selected later.
 
 Assistant Runtime 1 is now **CLOSED / MERGED / POST-MERGE VERIFIED**. Any future Assistant expansion, Production migration/model activation, broader tool use or new sensitive-data scope requires a fresh bounded slice and any applicable Product-Owner gate.
+
+Multi-Agent Operating System is **CLOSED / MERGED / POST-MERGE VERIFIED** via PR #453. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` is canonical startup governance; PR #453 must not be treated as unfinished work.
 
 The next Technical-Lead cycle must first reconstruct live state and select the smallest responsible remaining provider-independent V1 gap. The Product Owner's general direction to keep building provider-neutrally does not bypass slice precheck, architecture/truth review or special gates.
 
