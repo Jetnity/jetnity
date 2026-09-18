@@ -227,9 +227,9 @@ Rules:
 
 ### 6.2 Fehler-ID
 
-Public, account and admin error boundaries show `Fehler-ID` via `oeffentlicheFehlerId` (`lib/next/oeffentliche-fehler-id.ts`: Next.js `digest` if present, otherwise a render-stable `useId` fallback). They also include a factual `mailto:info@jetnity.ch` and tell the user they may include the shown ID. The mailto is not prefilled with user, account, URL or error details.
+Public, account and admin error boundaries (`app/(public)/error.tsx`, `app/account/error.tsx`, `app/(admin)/admin/error.tsx`) show `Fehler-ID` via `oeffentlicheFehlerId` (`lib/next/oeffentliche-fehler-id.ts`: Next.js `digest` if present, otherwise a render-stable `useId` fallback). They also include a factual `mailto:info@jetnity.ch` and tell the user they may include the shown ID. The mailto is not prefilled with user, account, URL or error details.
 
-The identifier **may** be supplied as context. Current Jetnity has **no** operator-side automatic Fehler-ID correlation (no error-tracking vendor; public errors log only `console.error('[PublicRouteError]', error)` in the **user browser**).
+The identifier **may** be supplied as context. Current Jetnity has **no operator-side automatic Fehler-ID correlation** today (no error-tracking vendor; public errors log only `console.error('[PublicRouteError]', error)` in the **user browser**).
 
 Therefore:
 
