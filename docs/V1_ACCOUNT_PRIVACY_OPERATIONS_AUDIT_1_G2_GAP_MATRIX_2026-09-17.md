@@ -1,9 +1,9 @@
 # Jetnity – V1 Account / Privacy / Operations Minimum – Gap Matrix (Audit 1, Generation 2)
 
 Stand: 18. September 2026  
-Status: **AUDIT-ONLY COMPLETE / RESOLUTION UPDATE 18 SEP 2026 FOR 3.3 + 3.6 + 3.7**
+Status: **AUDIT-ONLY COMPLETE / RESOLUTION UPDATE 18 SEP 2026 FOR 3.3 + 3.6 + 3.7 / 5.2 PRESENTATION MITIGATION 18 SEP 2026 (INGESTION OPEN)**
 
-Historical audit text below is preserved. Dated resolution updates record later live evidence from #479 / #480. They do not rewrite the 17 September 2026 audit as if it had Production credentials.
+Historical audit text below is preserved. Dated resolution updates record later live evidence from #479 / #480. They do not rewrite the 17 September 2026 audit as if it had Production credentials. A dated 18 September 2026 mitigation update for finding 5.2 records Admin Security presentation hygiene only; runtime ingestion remains OPEN and release-gate §G is not satisfied by copy.
 
 Canonical issue: #438
 Draft PR: #449
@@ -523,6 +523,8 @@ Added during the adversarial self-review pass, which asked what every auth flow 
 - **Severity** — **P1.** This is the clearest instance in the audit of a capability that looks built end-to-end and is not.
 - **Dependency / gate** — Writing events from the app needs a decision on what is recorded and how PII is avoided (§G of the release gate also requires no PII in logs). Supabase already records auth events platform-side; the cheapest honest option may be to surface those rather than duplicate them.
 - **Smallest next slice** — Before any code: decide whether Jetnity records its own security events or reads Supabase's. If Jetnity's own, one narrow writer for authentication failures and admin interventions, with no PII beyond what the table already holds.
+
+**Mitigation update, 18 September 2026.** Admin Security presentation now explicitly says that `security_events` is an incomplete recorded-event view. Zero recorded rows no longer imply zero real security events. **Runtime ingestion remains OPEN.** Release-gate §G is **not** satisfied by copy alone. This slice introduced no service-role writer, Auth log integration, observability vendor, migration or Production mutation. Do not mark 5.2 PASS/RESOLVED.
 
 ### 5.3 IP blocklist is not enforced
 
