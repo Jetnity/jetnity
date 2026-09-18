@@ -56,4 +56,4 @@ This document argues against the implementation. It cannot replace an independen
 
 ## 4. What remains before Technical-Lead review
 
-Local gates, exact-head GitHub CI, exact-head Vercel Preview, review/Vercel-thread state and a live `origin/main` drift report. Those are not claimed here because they do not yet exist for the implementation head.
+Implementation-head `fecf5228` local + GitHub CI `35293321757` SUCCESS + Vercel `2Y9XtVLu7QSQEsw5Y1rbXBdXvGTU` READY are recorded in STATUS. This evidence persist is a new HEAD and invalidates those exact-head gates. The Technical Lead must re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.

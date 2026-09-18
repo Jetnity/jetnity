@@ -1,7 +1,7 @@
 # Jetnity – V1 Admin MFA Loss Recovery Runbook 1 STATUS
 
 Stand: 18. September 2026  
-Status: **IMPLEMENTATION COMMITTED / LOCAL AND EXACT-HEAD GATES PENDING / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **IMPLEMENTATION + IMPLEMENTATION-HEAD GATES RECORDED / EVIDENCE COMMIT INVALIDATES THOSE EXACT-HEAD GATES / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #459  
 Draft PR: #460  
@@ -10,13 +10,14 @@ Binding task: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_1_TASK_2026-09-18.md`
 Canonical runbook: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_2026-09-18.md`  
 Source audit: #438 / merged PR #449 / finding 3.4 operational half  
 Canonical base: `main@88382ce0ef1d01b1cb32677fa48dfde71b5055d1`  
-Dispatch head: `7e688f25d4dc2f681425d36fede46499d39300bc`
+Dispatch head: `7e688f25d4dc2f681425d36fede46499d39300bc`  
+Implementation head: `fecf522882a52517eb1b497768e5871c146b3d30`
 
 Cursor-Agent: **Jetnity V1 admin MFA loss recovery runbook 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast** — confirmed on this run (`originalModelName=cursor-grok-4.6-high-fast`)  
 Session: `bc-9b3f4865-ee30-47b2-8f10-91e649c91709`
 
-This file is point-in-time evidence. Every new head invalidates older exact-head gates. Agent self-review is not Technical-Lead PASS.
+This file is point-in-time evidence. Every new head invalidates older exact-head gates. Agent self-review is not Technical-Lead PASS. Live-reconstruct the current HEAD after this commit.
 
 ---
 
@@ -73,15 +74,72 @@ Not touched:
 
 An environment-generated `next-env.d.ts` working-tree diff was discarded and is not part of this branch.
 
-## 5. Gates
+Changed files versus dispatch head and versus `origin/main` are exactly the five allowed docs files.
 
-Local and exact-head GitHub CI / Vercel Preview are **pending** on the implementation commit. Results will be written after they exist. No gate is claimed green here.
+## 5. Gates recorded for implementation head `fecf5228`
 
-No Supabase live mutation or destructive smoke was performed or is required.
+These gates belong to `fecf522882a52517eb1b497768e5871c146b3d30`. **This evidence commit is a new HEAD and invalidates them as current exact-head gates.** Re-fetch CI/Vercel on the live HEAD.
+
+### 5.1 Local (same machine, implementation head)
+
+All CI verify-job scripts: **PASS** (exit 0), about 76s, warm `node_modules`:
+
+- `npm run check:setup:ci`
+- `npm run typecheck`
+- `npm run lint`
+- `npm test`
+- `npm run check:api-schutz`
+- `npm run check:schema-bezug`
+- `npm run check:dead`
+- `npm run check:exports`
+- `npm run check:deps`
+- `npm run build`
+
+`auth:pruefen` was **not** run locally (no claim). GitHub job `Auth-Konfiguration gegen config.toml` did run on the implementation head.
+
+No Supabase live mutation or destructive smoke was performed.
+
+### 5.2 Exact-head GitHub CI (implementation head)
+
+| | |
+| --- | --- |
+| SHA | `fecf522882a52517eb1b497768e5871c146b3d30` |
+| Run | [35293321757](https://github.com/Jetnity/jetnity/actions/runs/35293321757) |
+| Event | `pull_request` |
+| Conclusion | **SUCCESS** |
+| Typecheck, Lint & Build | SUCCESS (`105440634789`) |
+| Auth-Konfiguration gegen config.toml | SUCCESS (`105440634878`) |
+| Vercel Preview Comments | SUCCESS (`105440727680`) |
+
+### 5.3 Exact-head Vercel Preview (implementation head)
+
+| | |
+| --- | --- |
+| GitHub commit status | **success** on `fecf5228` — “Deployment has completed” |
+| Deployment | `2Y9XtVLu7QSQEsw5Y1rbXBdXvGTU` — READY |
+| Inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/2Y9XtVLu7QSQEsw5Y1rbXBdXvGTU |
+| Preview | https://jetnity-app-git-docs-v1-admin-mfa-loss-8ce8ff-jetnity-e1b93c82.vercel.app |
+| Vercel live-feedback threads | 0 unresolved / 0 total |
+
+### 5.4 Threads
+
+- GitHub review threads: none
+- GitHub reviews: none
+- No unresolved Vercel feedback threads known to the agent
+
+### 5.5 `origin/main` drift (re-fetched 18 September 2026)
+
+| | |
+| --- | --- |
+| `origin/main` | `88382ce0ef1d01b1cb32677fa48dfde71b5055d1` |
+| Merge-base | `88382ce0ef1d01b1cb32677fa48dfde71b5055d1` |
+| Ahead | 2 commits at implementation head (`7e688f25` task + `fecf5228` runbook); this evidence commit makes it 3 |
+| Behind | **0** |
+| Drift vs canonical base | none — merge-base equals the dispatch canonical base |
 
 ## 6. Next step
 
-1. Run the required local gates on this implementation head.
-2. Persist exact-head CI / Preview / `origin/main` drift evidence.
-3. Stop for independent Technical-Lead review.
-4. Do not Ready. Do not merge. Do not start a follow-up slice.
+1. Re-gate the live HEAD after this evidence commit (CI + Vercel).
+2. **STOP FOR TECHNICAL-LEAD REVIEW.**
+3. Do not Ready. Do not merge. Do not start a follow-up slice.
+4. A later live Production `deleteFactor` remains a special Product-Owner Auth/MFA gate. This slice did not execute it.
