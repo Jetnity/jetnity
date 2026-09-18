@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 18. September 2026  
-Status: **DAILY AUTOMATION V2 HANDOFF CONTRACT PERSISTED / COS DAILY PAUSED / V2 AGGREGATION OPEN / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **MARKET V2 TRANSPORT a–c PASS / FINDING+SOURCE HARDENING PERSISTED / CLONE BLOCKED / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -15,58 +15,56 @@ Status: **DAILY AUTOMATION V2 HANDOFF CONTRACT PERSISTED / COS DAILY PAUSED / V2
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `4965f5a1dd8352380acc1f82579498d889beb839` |
-| Evidence on that SHA | CI `35399389308` SUCCESS; Auth `105775563148` SUCCESS; Typecheck/Lint/Build `105775563435` SUCCESS; Vercel **success / READY** `Dncnz8UW8Wg3NKhm4VnBnPKzEhT4` |
-| This persist | **creates a newer head** than `4965f5a1`. It is not the live PR head. |
+| Last verified implementation/evidence head | `1dace0fff117b9079eedd9c4a12bcfa3902a72e7` |
+| Evidence on that SHA | CI `35399742158` SUCCESS; Auth `105776669643` SUCCESS; Typecheck/Lint/Build `105776669991` SUCCESS; Vercel **success / READY** `AqHq6LBkBRYm7JuRrA2N2SZXUaBJ` |
+| This persist | **creates a newer head** than `1dace0ff`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
-Do not treat any SHA written in this file as the current/live head. Continuity fields name the last verified predecessor plus the fact that this persist moved the branch.
+Do not treat any SHA written in this file as the current/live head.
 
-## 2. Implemented against TL dispatch `5736670149`
+## 2. Implemented against TL dispatch `5737188145`
 
-- `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. `activeMetaScope` stays #490 / #491 / OS-2. Parked #487 pointer unchanged. V2 contract added to `canonicalGovernance`.
-- Canonical tracker, HOLD-exit checklist, and dedicated contract now record:
-  - CoS routine `Jetnity Daily Intelligence Brief` **created / PAUSED** (`5735790241`);
-  - one-shot #001 is chat-workflow only (`5736188318`);
-  - CANARY #001 did not fire (`5736557812`);
-  - CANARY #002 native scheduler **VERIFIED**, workflow **DEGRADED / not full-PASS** (`5736636348`);
-  - Daily Automation V2 scheduler-compatible handoff contract persisted (`5736670149` / `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`);
-  - six specialist daily writers + six JSON envelopes + CoS read/validate/aggregate;
-  - Product & UX, Analytics, Guardian remain trigger-based;
-  - Daily CoS stays PAUSED until V2 test sequence a–e is verified.
-- Still **OPEN**: V2 sequence a–e; unattended Daily production-readiness; dedicated HOLD-exit.
-- No Grok workspace files were added to this git tree. No routine created or enabled by Cursor. No product/runtime. PR #487 untouched. HOLD not lifted. No Ready. No merge.
+- `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
+- V2 contract now hardens `findings[]` / `sources[]` object shapes and MATERIAL discipline while preserving status enum and safety/freshness fields.
+- Tracker now records Market transport a–c **PASS**:
+  - writer `5736871320`;
+  - cross-bot read `5736895145`;
+  - Market pulse routine created/PAUSED `5736927892`;
+  - scheduled file refresh `5737150676` (`JETNITY-MARKET-PULSE-20260919-0053`);
+  - scheduled CoS read without bot messaging `5737188145`.
+- Still **OPEN**: adopt §4a–4c on later writer skills; clone to remaining five; six-file CoS aggregation; HOLD-exit.
+- No specialist clone. No Cursor Grok mutation. No product/runtime. CoS Daily stays PAUSED. HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on last verified tree `4965f5a1`
+## 3. Local gates on last verified tree `1dace0ff`
 
-Re-run by this writer on the V2 persist SHA before the evidence commit.
+Predecessor tree already had exact-head CI/Vercel SUCCESS. This persist is documentation only. Local gates will be re-run on the persist tree.
 
 | Gate | Result |
 | --- | --- |
-| `check:operating-mode` | PASS |
-| Guard / unit tests | 3509/3509 PASS |
-| `typecheck` | PASS |
-| `lint` | 0 errors / 138 warnings |
-| hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) | PASS |
-| `build` | PASS (Next.js 16.3.3) |
+| `check:operating-mode` | pending on this persist tree |
+| Guard / unit tests | pending on this persist tree |
+| `typecheck` | pending on this persist tree |
+| `lint` | pending on this persist tree |
+| hygiene | pending on this persist tree |
+| `build` | pending on this persist tree |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
 
-## 4. Exact-head remote evidence on last verified SHA `4965f5a1`
+## 4. Exact-head remote evidence on last verified SHA `1dace0ff`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35399389308` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35399389308 |
-| Typecheck, Lint & Build | job `105775563435` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105775563148` SUCCESS |
-| Vercel | **success / READY** — https://vercel.com/jetnity-e1b93c82/jetnity-app/Dncnz8UW8Wg3NKhm4VnBnPKzEhT4 |
+| GitHub Actions CI | run `35399742158` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35399742158 |
+| Typecheck, Lint & Build | job `105776669991` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105776669643` SUCCESS |
+| Vercel | **success / READY** — https://vercel.com/jetnity-e1b93c82/jetnity-app/AqHq6LBkBRYm7JuRrA2N2SZXUaBJ |
 | behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | review threads | 0 |
-| V2 dispatch | `5736670149` |
+| Hardening dispatch | `5737188145` |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `4965f5a1`.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `1dace0ff`.
 
 ## 5. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor-created or Cursor-enabled Grok bots, skills or routines. V2 is a **contract persist**, not an implementation. The Daily CoS routine stays PAUSED. HOLD remains in force. No Ready. No merge.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor clone, enablement, or Grok mutation. HOLD remains in force. No Ready. No merge.

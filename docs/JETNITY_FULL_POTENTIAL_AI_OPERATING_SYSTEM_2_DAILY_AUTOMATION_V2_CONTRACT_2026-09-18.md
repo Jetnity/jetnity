@@ -1,8 +1,9 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 18. September 2026  
-Status: **CANONICAL CONTRACT / NOT IMPLEMENTED / NOT VERIFIED / COS DAILY REMAINS PAUSED**  
-Dispatch: PR #491 comment `5736670149`  
+Status: **CANONICAL CONTRACT / MARKET TRANSPORT a–c PASS / FINDING+SOURCE HARDENING REQUIRED BEFORE CLONE / COS DAILY REMAINS PAUSED**  
+Origin dispatch: PR #491 comment `5736670149`  
+Hardening dispatch: PR #491 comment `5737188145`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -78,8 +79,8 @@ Every specialist envelope MUST include exactly these fields:
 | `window_end` | Exclusive or documented end of the current daily window |
 | `status` | `MATERIAL` \| `NO_MATERIAL` \| `DEGRADED` |
 | `summary` | Short role-owned statement |
-| `findings` | Array. Empty when `NO_MATERIAL` |
-| `sources` | Array of source links or IDs. Never credentials |
+| `findings` | Array of canonical finding objects. Empty when `NO_MATERIAL` |
+| `sources` | Array of canonical source objects with stable `source_id`. Never credentials |
 | `source_freshness` | Freshness statement for the sources used |
 | `errors` | Array. Empty when no error |
 | `external_writes` | Must be `[]` |
@@ -90,6 +91,47 @@ Missing, extra-required, or invalid required fields make the envelope **invalid*
 Invalid / missing / stale envelope ⇒ Chief of Staff treats that role as `SPECIALIST UNAVAILABLE` or `SOURCE UNAVAILABLE` and marks the brief `DEGRADED`.
 
 Never silently reuse a prior-day envelope.
+
+This remains schema **v1**. The finding/source object shapes below are a required hardening inside v1, not a new `schema_version`.
+
+### 4a. Canonical finding object
+
+Every item in `findings[]` MUST use these keys exactly:
+
+| Field | Rule |
+| --- | --- |
+| `classification` | Required. Role-owned class of the finding |
+| `statement` | Required. The claim itself |
+| `confidence` | Required |
+| `impact` | Required |
+| `source_refs` | Required array of `source_id` values that exist in `sources[]` |
+| `next_actor` | Optional |
+
+Do **not** use `type` or a singular free-text `source` as substitutes. Those keys make the finding **invalid**.
+
+### 4b. Canonical source object
+
+Every item in `sources[]` MUST use these keys:
+
+| Field | Rule |
+| --- | --- |
+| `source_id` | Required stable id referenced by `source_refs` |
+| `title` | Required |
+| `url` | Required |
+| `date` | Required |
+| `source_kind` | Required: `OFFICIAL` \| `FIRST_PARTY` \| `REPUTABLE_SECONDARY` \| `PRESS_RELEASE` \| `COMMUNITY` |
+| `notes` | Optional |
+
+A `source_refs` entry that does not match a `source_id` makes that finding **invalid**.
+
+### 4c. MATERIAL discipline
+
+- Marketing / PR copy must not be presented as independently verified product truth.
+- One secondary or `PRESS_RELEASE` source alone must not create an overconfident FACT.
+- `MATERIAL` means genuinely worth surfacing in the Daily Brief, not merely interesting.
+- HOLD may reduce Jetnity actionability; it does not erase legitimate market intelligence.
+- The Chief of Staff remains the final consolidator and may downgrade or action-filter a specialist `MATERIAL` item.
+- Bounded public-source discovery is acceptable for `NO_MATERIAL` screening. Future `MATERIAL` findings should prefer first-party / high-authority sources or corroborated multi-source evidence before escalation.
 
 ## 5. Freshness
 
@@ -110,7 +152,7 @@ After the specialist pulse window, `Jetnity Daily Intelligence Brief` (owner: Je
 
 1. re-fetches live control state immediately before emitting the brief;
 2. reads the six canonical files;
-3. validates schema, freshness, and role identity;
+3. validates schema, freshness, role identity, and the canonical finding/source object shapes;
 4. de-duplicates and conflict-checks;
 5. emits one Daily Intelligence Brief using `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a;
 6. does **not** write GitHub by default;
@@ -130,14 +172,14 @@ Keep this routine **PAUSED** until the V2 aggregation path is verified.
 
 ## 8. Required testing sequence
 
-Do not skip ahead. Do not clone five more specialist routines before step (c) passes.
+Do not skip ahead. Do not clone five more specialist routines until Market a–c are proven **and** later writer skills emit the hardened finding/source objects.
 
 | Step | Proof required | State |
 | --- | --- | --- |
-| a | One specialist can write a valid current-window envelope | **OPEN** |
-| b | Chief of Staff can read and validate that envelope cross-bot | **OPEN** |
-| c | One specialist **scheduled** routine can refresh that envelope | **OPEN** |
-| d | Clone the proven pattern to the remaining five specialists | **OPEN** — blocked on a–c |
+| a | One specialist can write a valid current-window envelope | **PASS** — Market writer `5736871320` |
+| b | Chief of Staff can read and validate that envelope cross-bot | **PASS** — `5736895145` |
+| c | One specialist **scheduled** routine can refresh that envelope and CoS can read it without bot messaging | **PASS for transport** — scheduled Market `5737150676` + CoS read `5737188145` (`JETNITY-MARKET-PULSE-20260919-0053`) |
+| d | Clone the proven pattern to the remaining five specialists | **OPEN** — blocked until writer skills adopt §4a–4c |
 | e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on d |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.

@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
 Stand: 18. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / NATIVE SCHEDULER VERIFIED / DAILY V2 HANDOFF CONTRACT PERSISTED / V2 AGGREGATION AND HOLD-EXIT OPEN / HOLD REMAINS ACTIVE**
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / MARKET V2 TRANSPORT a–c PASS / FINDING+SOURCE HARDENING PERSISTED / CLONE AND HOLD-EXIT OPEN / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -46,6 +46,11 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Daily routine CANARY #002 — scheduler fired / DEGRADED | `5736636348` |
 | Daily Automation V2 handoff proposal | `5736642445` |
 | Daily Automation V2 contract persist dispatch | `5736670149` |
+| Market pulse writer handoff TEST #001 | `5736871320` |
+| Cross-bot workspace read TEST #001 | `5736895145` |
+| Market Daily Pulse routine created / PAUSED | `5736927892` |
+| Market native scheduled writer CANARY #001 | `5737150676` |
+| Scheduled Market cross-bot read + schema/source hardening | `5737188145` |
 
 ## 1. Global setup truth
 
@@ -61,7 +66,7 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
-| Approved recurring routines / schedules | **partial / not full-PASS** | CoS Daily `Jetnity Daily Intelligence Brief` exists and is **PAUSED** (`5735790241`). Six specialist daily pulse routines are **not created**. V2 aggregation path is **not verified**. | Product Owner / CoS after V2 test sequence |
+| Approved recurring routines / schedules | **partial / not full-PASS** | CoS Daily remains **PAUSED**. Market specialist pulse routine exists and is **PAUSED** (`5736927892`). Remaining five specialist daily writers are **not created**. Do not clone until hardened finding/source keys are adopted. | Product Owner / CoS after hardening + clone review |
 | Daily Intelligence Orchestrator skill | **created / conversation-path routine-ready / not a scheduled full-PASS** | Hardening persisted. FINAL CONTROL-STATE RECHECK executed on TEST #002. Conversation bot-to-bot works. Scheduled CoS cannot pulse specialists. | Product Owner / CoS implement V2 envelopes |
 | JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH HARDENING THEN SUPERSEDED FOR ROUTINE-READINESS** | Comment `5735636786`. Required the final control-state re-fetch hardening later proven on TEST #002. | None |
 | JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. Conversation-path only. Does not prove scheduled specialist pulses. | None for this conversation-path closure |
@@ -70,7 +75,12 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | JETNITY-DAILY-ROUTINE-ONESHOT-001 | **chat-workflow verified / not native scheduler history** | Comment `5736188318`. Confirms conversation one-shot, not native execution history. | None |
 | Native scheduler CANARY #001 | **did not materialize** | Comment `5736557812`. Timezone Europe/Zurich ruled out. Do not count as native-engine PASS. | None |
 | Native scheduler CANARY #002 | **scheduler VERIFIED / workflow DEGRADED / not full-PASS** | Comment `5736636348`. RUN_ID `JETNITY-DAILY-2026-09-18-ROUTINE-001`. Head `cedeb097`. All six default specialists `SPECIALIST UNAVAILABLE` because scheduled bot-to-bot messaging failed. Truth discipline held. | None for scheduler-fire proof |
-| Daily Automation V2 handoff contract | **persisted / not implemented / not verified** | Dispatch `5736670149`. Canonical contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`. Shared Grok workspace `/workspace/jetnity/intelligence/daily/`. Not a git path. | Product Owner / CoS / specialists for test sequence a–e |
+| Daily Automation V2 handoff contract | **persisted / Market transport a–c PASS / finding+source hardening required before clone** | Origin `5736670149`. Hardening `5737188145`. Contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`. | Product Owner / CoS adopt §4a–4c before clone |
+| JETNITY-MARKET-PULSE-HANDOFF-TEST-001 | **PASS** | Comment `5736871320`. Skill `Jetnity Daily Market & Traveller Pulse Writer` wrote `market-traveller.json`. Schema v1. `NO_MATERIAL`. No routine. | None |
+| JETNITY CROSS-BOT WORKSPACE READ TEST #001 | **PASS** | Comment `5736895145`. CoS read the file without contacting Market. | None |
+| Jetnity Daily Market & Traveller Pulse | **created / PAUSED** | Comment `5736927892`. Owner Market. Skill Pulse Writer. Normal schedule 06:50 Europe/Zurich. | Product Owner / Market; Cursor must not clone or enable others |
+| Market native scheduled writer CANARY #001 | **PASS for file refresh** | Comment `5737150676`. RUN_ID `JETNITY-MARKET-PULSE-20260919-0053`. Canonical file refreshed. MATERIAL not accepted as Jetnity truth from this canary alone. | None for refresh proof |
+| JETNITY SCHEDULED MARKET CROSS-BOT READ TEST #001 | **PASS for transport architecture** | Comment `5737188145`. Native Market scheduler → refreshed file → CoS direct read. Freshness/schema/role/safety valid. Finding/source object hardening required before clone. | Product Owner / CoS apply §4a–4c |
 | Daily / weekly Chief-of-Staff briefs | **not running unattended** | Conversation tests passed. Native scheduled CoS run is degraded. Routine remains paused. | After V2 aggregation verification |
 | Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
 | Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
@@ -91,7 +101,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Permissions / connections | Later target remains GitHub read + Actions read; gated plain-text Evidence-Bus comment write was used for E2E #001. No admin/secrets/write/merge. |
 | Routines | Daily `Jetnity Daily Intelligence Brief` **created / PAUSED / not full-PASS**. V2 requires six specialist envelope writers first. |
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
-| Last verification | V2 contract `5736670149`; CANARY #002 `5736636348`; TEST #002 `5735700562` |
+| Last verification | Scheduled Market CoS read `5737188145`; V2 contract `5736670149`; CANARY #002 `5736636348` |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
 | Blockers / platform limitations | None that drop the role. |
 | Next actor | Product Owner later for routines. Cursor must not edit this bot |
@@ -114,11 +124,11 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public research + GitHub read; never private user PII dumps; no outreach |
-| Routines | Market Radar; Traveller Pain-Point Radar — **not configured**. Later V2 daily writer of `market-traveller.json` only. |
+| Routines | `Jetnity Daily Market & Traveller Pulse` **created / PAUSED** (`5736927892`). Writes `market-traveller.json` only. Do not clone this pattern yet. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; this identity was not the E2E #001 source |
-| Last verification | Comment `5734630533`; Phase 1 `5735080935` |
-| Blockers / platform limitations | None escalated |
-| Next actor | Later routine setup. Cursor must not mutate this bot |
+| Last verification | Scheduled Market transport PASS `5737188145`; writer `5736871320`; cross-bot read `5736895145`; scheduled canary `5737150676` |
+| Blockers / platform limitations | Finding/source object hardening `5737188145` must be adopted before other specialists clone the pattern |
+| Next actor | Product Owner / Market to emit hardened finding/source keys. Cursor must not mutate this bot |
 
 ### 4. Jetnity Provider & Commercial Intelligence
 
@@ -235,12 +245,13 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-The Daily Orchestrator conversation-path is routine-ready. The native scheduler can fire. The Daily CoS routine is **PAUSED** and **not full-PASS**. V2 workspace-handoff aggregation is the required next external path. This does **not** lift HOLD, authorize product work, or Ready/merge #491.
+Market V2 transport a–c is **PASS**. Finding/source object hardening is now required before cloning to the other five specialists. The Daily CoS routine stays **PAUSED** and **not full-PASS**. This does **not** lift HOLD, authorize product work, or Ready/merge #491.
 
-1. Daily Automation V2 test sequence a–e in `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`;
-2. keep `Jetnity Daily Intelligence Brief` PAUSED until that path is verified;
-3. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
-4. any other truly live gap found by exact-head review.
+1. adopt V2 contract §4a–4c (canonical finding/source keys + MATERIAL discipline) on later writer skills;
+2. only then clone the Market pattern to the remaining five specialists (sequence d);
+3. full six-file CoS scheduled aggregation (sequence e);
+4. keep `Jetnity Daily Intelligence Brief` PAUSED until that path is verified;
+5. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure.
 
 Until those exist, exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path.
 
