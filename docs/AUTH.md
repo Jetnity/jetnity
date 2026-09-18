@@ -271,12 +271,15 @@ Geprüft ist stattdessen alles, was die Registrierung ablehnt, und der gesamte W
 
 ## 9. Warum kein `[remotes.*]`-Block
 
-Die offizielle Branch-Konfiguration von Supabase läuft über `[remotes.<name>]` in `config.toml`: Ein solcher Block überschreibt einzelne Werte für ein bestimmtes Projekt, erkannt am `project_id`. Jetnity führt keinen. Zwei Gründe:
+Die offizielle Branch-Konfiguration von Supabase läuft über `[remotes.<name>]` in `config.toml`: Ein solcher Block überschreibt einzelne Werte für ein bestimmtes Projekt, erkannt am `project_id`. Jetnity führt keinen.
 
-1. **Er verlangt den Projekt-Ref im Klartext.** Der Ref eines Branches ist kein Geheimnis, aber er ist auch kein Wert, der in ein öffentliches Repository gehört – er benennt das Projekt, gegen das jeder Angriff dann zielen kann.
-2. **Es gibt nur ein Ziel.** Ein `[remotes]`-Block trennt zwei Umgebungen. Solange von hier aus ausschliesslich Development verwaltet wird, würde er eine Unterscheidung einführen, die keine Wirkung hat – und nach [AGENTS.md](../AGENTS.md) Regel 12 eine Abstraktion ohne realen Bedarf.
+Der Grund ist die Schreibgrenze, nicht Geheimhaltung des Projekt-Refs.
 
-Die Folge ist bekannt und in Kauf genommen: Die Supabase-GitHub-Integration wendet Konfiguration nur auf persistente Ziele an, für die ein `[remotes]`-Block existiert. Ohne ihn überträgt sie nichts, und `npm run auth:anwenden` bleibt der Weg. Sobald ein zweites Ziel dazukommt, dockt es genau hier an: `erwarteteAuthKonfiguration()` nimmt den Namen eines Remotes bereits als Parameter.
+1. **Production Auth ist kein config-as-code-Schreibziel** der normalen Repository-Workflows. `auth:pruefen` und `auth:anwenden` gelten für den Development-Branch. Ein Production-`[remotes.*]`-Block würde ein zweites verwaltetes Auth-Ziel anlegen und diese Grenze verwischen.
+2. **Der Production-Projekt-Ref ist kein Secret.** Er steht bereits in kanonischen und operativen Dateien und Werkzeugen. Ein `[remotes.*]`-Block unterbleibt deshalb nicht, weil der Ref „nicht ins öffentliche Repository gehört“.
+3. **`npm run auth:produktion:lesen` bleibt GET-only.** Der manuelle Leser bestätigt dasselbe Production-Projekt und macht es dadurch nicht zum config-as-code-Schreibziel.
+
+Die Folge ist bekannt und in Kauf genommen: Die Supabase-GitHub-Integration wendet Konfiguration nur auf persistente Ziele an, für die ein `[remotes]`-Block existiert. Ohne ihn überträgt sie nichts, und `npm run auth:anwenden` bleibt der Development-Schreibweg. `erwarteteAuthKonfiguration()` nimmt den Namen eines Remotes bereits als Parameter, falls ein zweites Schreibziel später ausdrücklich entschieden wird.
 
 ---
 
