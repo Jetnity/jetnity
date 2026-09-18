@@ -1,7 +1,7 @@
 # Jetnity – V1 Admin MFA Loss Recovery Runbook 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **IMPLEMENTATION + IMPLEMENTATION-HEAD GATES RECORDED / RE-GATE LIVE HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **TL P2 READ-ONLY VALIDATION FIX APPLIED / RE-GATE LIVE HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_1_TASK_2026-09-18.md`  
 Canonical runbook: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_2026-09-18.md`  
@@ -22,20 +22,18 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Canonical base | `main@88382ce0ef1d01b1cb32677fa48dfde71b5055d1` |
 | Dispatch head | `7e688f25d4dc2f681425d36fede46499d39300bc` |
 | Implementation head | `fecf522882a52517eb1b497768e5871c146b3d30` |
-| Source audit | #438 / merged PR #449 / finding 3.4 operational half |
+| Previous evidence head | `83602155d0ac3f4c88100e0307f137adf95549e4` |
+| TL P2 | comment `5723394799` / continue `5723398473` |
 | Agent | Jetnity V1 admin MFA loss recovery runbook 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-9b3f4865-ee30-47b2-8f10-91e649c91709` |
 
 Read first:
 
-1. `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_1_TASK_2026-09-18.md`
-2. finding 3.4 in `docs/V1_ACCOUNT_PRIVACY_OPERATIONS_AUDIT_1_G2_GAP_MATRIX_2026-09-17.md`
-3. the canonical runbook
-4. this handoff and the STATUS / SELF_REVIEW for the same slice
-5. live PR #460, live `origin/main`, live CI and Vercel Preview **on the current HEAD**
-
-Do not treat implementation-head gates as current after this evidence commit.
+1. the task and finding 3.4
+2. the canonical runbook §6 step 4 (read-only validation) and §10 (no probe write)
+3. this handoff and STATUS / SELF_REVIEW
+4. live PR #460, live `origin/main`, live CI and Vercel on the **current HEAD**
 
 ## 2. What changed
 
@@ -46,28 +44,18 @@ Privileged operation documented (not executed):
 - `supabase.auth.admin.mfa.listFactors({ userId })`
 - `supabase.auth.admin.mfa.deleteFactor({ id, userId })`
 
-Verified against installed `@supabase/auth-js` 2.71.1 and current official Supabase Auth Admin MFA docs. AAL2 stays permanent. Break-glass is explicitly not recovery. Recovery is incomplete until new TOTP enrollment, AAL2 verification and role-backed admin data-plane verification all pass.
-
-Allowed write scope only. No runtime or Auth mutation.
+TL P2: recovery completion is **read-only**. An existing capability-gated admin read distinguishes authorized data, honest empty, and denied/error. No test write/create/update/delete is required or permitted merely to prove the data plane.
 
 ## 3. What a reviewer should verify first
 
-1. Application-user MFA vs platform-account MFA is an explicit hard distinction.
-2. List/identify of exact user and factor is required before any documented delete; no guessed IDs.
-3. Installed types and official docs were re-checked; signatures are not copied from the stale audit.
-4. AAL2 is never weakened; break-glass is not treated as data-plane recovery.
-5. Compromise path STOPS and hands off to future finding 5.5 without inventing that process.
-6. Examples use placeholders only; no secrets in the diff.
-7. Changed files are exactly the allowed docs set.
-8. Implementation-head CI `35293321757` SUCCESS and Vercel `2Y9XtVLu7QSQEsw5Y1rbXBdXvGTU` READY are recorded for `fecf5228` only.
-9. Re-fetch exact-head CI / Preview / threads on the **live HEAD**.
-10. `origin/main` at evidence time: `88382ce0`, merge-base identical, behind 0.
+1. §6 no longer requires a write or `admin_break_glass_write_denied` as a recovery check.
+2. Empty vs denied stays an existing honesty rule, not a mutation.
+3. All earlier boundaries still hold (app vs platform MFA, list-before-delete, AAL2 permanent, no secrets, no live Auth mutation).
+4. Re-fetch exact-head CI / Preview / threads on the live HEAD. Gates on `fecf5228` and `83602155` are historical.
 
 ## 4. What this slice does not mean
 
-The runbook existing does **not** mean a factor was deleted, Auth config changed, Production AAL2 data-plane contradiction (finding 3.3) resolved, consumer MFA recovery built, or incident process 5.5 written.
-
-A later live Production `deleteFactor` remains a special Product-Owner Auth/MFA gate.
+No factor was deleted. Finding 3.3 and 5.5 remain open. A later live Production `deleteFactor` remains a special Product-Owner Auth/MFA gate.
 
 ## 5. Next step
 

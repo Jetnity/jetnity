@@ -284,12 +284,17 @@ After a later authorized delete (not in this slice):
    - Consumer security / `getAuthenticatorAssuranceLevel()`: `currentLevel === 'aal2'`.
    - Admin: `/admin/mfa` challenge succeeds and `bestaetigeAdminAal2Action` redirects into `/admin` (or another allowed admin path).
    - A later `/admin` load does not bounce to `/admin/mfa` with `aal2-required`.
-4. **Normal database-backed admin access.**
+4. **Normal database-backed admin access — read-only / non-mutating.**
+   Recovery validation must not create, update or delete application data. No test write is required or permitted merely to prove the data plane.
    - Grant is `role`, not `break-glass`.
    - `NotzugangHinweis` is **absent**.
-   - A capability-gated admin read that previously worked for this role returns authorized data **or** a distinguishable empty/error — not the break-glass “empty because RLS denied”.
-   - A write that this role is allowed to perform is not rejected with `admin_break_glass_write_denied`.
-   - Where `aktuelles_admin_aal2()` is live, the session JWT must carry `aal='aal2'`. If live data-plane AAL2 presence for that environment is uncertain, record **unknown** and do not claim data-plane recovery. Do not “fix” that uncertainty by altering RLS.
+   - Use an **existing** capability-gated admin **read** (or another non-mutating role-backed data-plane check) that this role already had. Do not invent a write, refund, block, unblock, settings change or other mutation as a probe.
+   - Distinguish the three honest outcomes of that read:
+     - authorized rows/content → role-backed data plane is working;
+     - honest empty (the query succeeded and there is nothing to show) → still role-backed; empty is not denied;
+     - denied / lookup-failed / error (including the known break-glass empty-because-RLS-denied pattern) → recovery is **not** complete.
+   - Do **not** attempt a write to distinguish empty from denied. Do not treat `admin_break_glass_write_denied` as a required recovery check.
+   - Where `aktuelles_admin_aal2()` is live, the session JWT must carry `aal='aal2'`. If live data-plane AAL2 presence for that environment is uncertain, record **unknown** and do not claim data-plane recovery. Do not “fix” that uncertainty by altering RLS or by writing a probe row.
 
 If any check fails, recovery is **not complete**. Do not announce restored admin access. Do not leave the user on break-glass as a substitute.
 
@@ -372,6 +377,7 @@ After STOP: do not continue with a “smaller” mutation. Re-verify or escalate
 - Deleting the Auth user or rotating the user id.
 - Promoting another account instead of recovering the intended admin, unless that is a separately authorized identity decision (not this runbook).
 - Running the placeholder example from this repository, a CI job, Preview or a Cursor agent.
+- Creating, updating or deleting any application row merely to prove that admin access returned.
 
 ---
 

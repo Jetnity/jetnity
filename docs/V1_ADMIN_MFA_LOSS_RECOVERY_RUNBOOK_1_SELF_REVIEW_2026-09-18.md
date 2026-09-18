@@ -22,6 +22,7 @@ This document argues against the implementation. It cannot replace an independen
 | Use user-level `auth.mfa.unenroll` as the recovery operation | Rejected. The locked-out admin cannot reach the AAL2 that verified unenroll requires. |
 | Claim the runbook also recovers Supabase platform-account MFA | Rejected. Hard distinction and explicit inability claim. |
 | Treat `ADMIN_ALLOWED_EMAILS` as the operational fix | Rejected. Documented as shell-only, AAL2-still-required, no data plane. |
+| Use a mutating admin write to prove data-plane recovery | Rejected after TL P2 on `fecf5228`. Validation is read-only; empty ≠ denied; no probe write. |
 | Weaken AAL2 “until re-enrollment” | Rejected. After delete the user is AAL1; admin stays closed until new TOTP + AAL2. |
 | Add backup codes / phone / WebAuthn / a recovery endpoint “while we are here” | Rejected. Out of scope and PO-gated Auth/MFA contract. |
 | Invent a full incident process to close 5.5 in the same slice | Rejected. Compromise branch STOPS and hands off. |
@@ -56,4 +57,4 @@ This document argues against the implementation. It cannot replace an independen
 
 ## 4. What remains before Technical-Lead review
 
-Implementation-head `fecf5228` local + GitHub CI `35293321757` SUCCESS + Vercel `2Y9XtVLu7QSQEsw5Y1rbXBdXvGTU` READY are recorded in STATUS. This evidence persist is a new HEAD and invalidates those exact-head gates. The Technical Lead must re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+TL P2 from comment `5723394799` is applied in the runbook. Previous heads `fecf5228` / `83602155` had green CI/Preview; this correction is a new HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
