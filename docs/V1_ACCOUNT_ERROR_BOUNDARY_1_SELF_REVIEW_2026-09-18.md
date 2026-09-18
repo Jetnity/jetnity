@@ -6,7 +6,8 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 Issue: #468  
 Draft PR: #471  
 Branch: `fix/v1-account-error-boundary-1`  
-Binding task: `docs/V1_ACCOUNT_ERROR_BOUNDARY_1_TASK_2026-09-18.md`
+Binding task: `docs/V1_ACCOUNT_ERROR_BOUNDARY_1_TASK_2026-09-18.md`  
+Product head reviewed here: `6ba6e223e872f214a2d47ad408006e4fe8c5e9ac`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
@@ -24,9 +25,10 @@ This document argues against the implementation. It cannot replace an independen
 | Link only to another `/account/*` page as the recovery path | Rejected. Exit is `/reisen`, outside the failed subtree. |
 | Use `#unbekannt`, `Date.now()` or `Math.random()` for the ID | Rejected. Digest-first `oeffentlicheFehlerId` + `useId()`. |
 | Show `error.message` / `error.stack` in Production | Rejected. Message is development-only; stack is never rendered. |
-| Change Auth / session / MFA / AAL / account settings | Rejected. New file only wraps the existing account segment. |
+| Change Auth / session / MFA / AAL / account settings | Rejected. New file only wraps the existing account segment. Local `/account` still 307s to `/login?next=%2Faccount`. |
 | Touch Supabase / migrations / RLS / Production | Rejected. |
 | Edit global continuity docs or parallel-slice files | Rejected. Only this slice's allowed write set. |
+| Claim a live Preview crash-UI review | Rejected. Preview is Vercel-SSO-protected. Crash UI is locked by the contract test. |
 | Mark Ready or merge | Rejected. |
 
 ## 2. Residual risks this slice does not close
@@ -36,6 +38,7 @@ This document argues against the implementation. It cannot replace an independen
 - There is still no root `app/error.tsx` or `global-error.tsx`. Layout-level or root failures remain outside this segment boundary.
 - `console.error('[AccountRouteError]', error)` still reaches only the user's browser console.
 - The account layout (navbar / account nav / footer) remains mounted around the boundary. That is Next.js segment semantics, not a second recovery product.
+- This evidence persist invalidates the exact-head CI / Preview taken on `6ba6e223`. Re-gate the new head.
 
 ## 3. Compliance with the binding task
 
@@ -49,10 +52,12 @@ This document argues against the implementation. It cannot replace an independen
 | No “data unaffected” claim | Yes | |
 | No operator-correlation claim | Yes | |
 | Accessibility / mobile | Yes | `<main>`, `<h1>`, `min-h-11`, focus-visible ring |
-| Smallest focused contract test | Yes | `lib/next/account-error-boundary-contract.test.ts` |
+| Smallest focused contract test | Yes | `lib/next/account-error-boundary-contract.test.ts` (4/4) |
+| Full current repository gates | Yes | local PASS on `6ba6e223` |
+| Exact-head CI + Preview | Yes on `6ba6e223`; this persist invalidates that head |
 | Persist STATUS / HANDOFF / SELF_REVIEW | Yes | This set |
 | No Auth/DB/provider/cost/Ready/merge/follow-up | Yes | |
 
-## 4. What remains before Technical-Lead review
+## 4. Recommendation to the Technical Lead
 
-Local gates, exact-head GitHub CI, exact-head Vercel Preview, review/Vercel-thread state and a live `origin/main` drift report. Those are not claimed here because they do not yet exist for the implementation head.
+Scope-faithful small runtime slice. Product files last changed at `6ba6e223`. Independent exact-head review should start from the current PR head after this evidence persist and after that head's own CI / Preview, not from the superseded `6ba6e223` gates.
