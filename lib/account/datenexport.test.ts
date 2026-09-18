@@ -146,7 +146,7 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     assert.match(helfer, /export const KONTO_DATENEXPORT_SPALTEN/)
     assert.match(helfer, /A later migration must not enter/)
     assert.match(helfer, /export-contract review/)
-    assert.match(helfer, /schemaVersion stays `jetnity\.account-export\.v1`/)
+    assert.match(helfer, /`schemaVersion` stays `jetnity\.account-export\.v1`/)
     assert.deepEqual(Object.keys(KONTO_DATENEXPORT_SPALTEN), [...KONTO_DATENEXPORT_TABELLEN])
 
     for (const tabelle of KONTO_DATENEXPORT_TABELLEN) {
