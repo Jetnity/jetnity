@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
 Stand: 18. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / EVIDENCE-BUS E2E #001 VERIFIED / RESIDUAL TEAM ITEMS OPEN / HOLD REMAINS ACTIVE**
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / EVIDENCE-BUS E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED COMPLETE / ROUTINES AND HOLD-EXIT OPEN / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -33,6 +33,9 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Duplicate CoS renamed to `Legacy Stabschef — DO NOT USE` | `5735135388` |
 | Evidence-Bus E2E #001 transport comment | `5735190265` |
 | Technical-Lead E2E #001 verification dispatch | `5735209274` |
+| Profile persistence verification #001 (stale / superseded) | `5735410441` |
+| Product Owner mobile UI visual confirmation | `5735465938` |
+| Profile persistence verification #002 — verified complete | `5735489499` |
 
 ## 1. Global setup truth
 
@@ -40,18 +43,18 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 
 | Item | State | Evidence / note | Next actor |
 | --- | --- | --- | --- |
-| Canonical ten-role roster presence | **present / initialized** | Comments through `5735008554` plus Phase-1 report `5735080935`: all ten canonical responsibilities are present. Exact Product & UX visible-name cleanup remains **OPEN**. | Product Owner trailing-period cleanup |
-| `Jetnity Guardian` | **existing** | Canonical Guardian identity. Identity/behavior valid per Phase 1. Contract normalization remains **OPEN**. | Technical Lead / Product Owner |
+| Canonical ten-role roster presence | **present / initialized / exact names verified persisted** | Comments through `5735008554`, Phase-1 `5735080935`, and profile #002 `5735489499`. Product & UX exact name is now persisted without a trailing period. | Product Owner later for routines |
+| `Jetnity Guardian` | **existing / modern contract VERIFIED PERSISTED** | Canonical Guardian identity. Modern ten-role contract persisted per `5735489499`. | Product Owner later for routines |
 | `Jetnity Chief of Staff` | **created / initialized / canonical** | Comments `5734539126` and `5735135388`. Only valid CoS roster slot. Coordination proven by E2E #001. | Product Owner / Technical Lead for later routines |
-| Roles 3–10 | **created / initialized** | Comments `5734630533` … `5735008554`. Product & UX visible name has a trailing-period drift. | Product Owner name cleanup |
+| Roles 3–10 | **created / initialized** | Comments `5734630533` … `5735008554`. Product & UX exact name verified persisted in `5735489499`. | Product Owner later for routines |
 | Legacy CoS / `Stabschef` | **renamed / do-not-use / not a roster slot** | Older duplicate CoS renamed to visible name `Legacy Stabschef — DO NOT USE` (`5735135388`). Exact historical `Stabschef` was not found in the Phase-1 inventory. Cursor must not delete or mutate it. | Product Owner only if later hide/retire is desired |
-| Exact roster / name / role consistency | **OPEN — Product & UX trailing period** | Phase 1 found visible-name drift: Product & UX Explorer has a trailing period versus the canonical name. | Product Owner |
+| Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
 | Approved recurring routines / schedules | **not configured** | None authorized or running. E2E #001 started no routines. | Product Owner one-time authorization later |
 | Daily / weekly Chief-of-Staff briefs | **not running** | Schemas exist; no cadence | Product Owner later after approved routines |
-| Durable profile-instruction / `Anweisungen` | **persisted text observed in Phase 1 / iOS latency not independently checked** | Phase 1 observed persisted profile descriptions for CoS, Guardian and specialists 3–10. Do not claim global persistence failure. iOS UI sync latency itself was not independently checked. | Later only if a specific bot reopen fails |
-| Guardian contract normalization | **OPEN** | Phase 1: identity/behavior valid, but persisted Guardian profile predates the modern ten-role CoS Evidence-Bus contract and lacks some explicit modern boundaries / no-signal wording. | Product Owner / Technical Lead |
+| Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
+| Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
 | Shared environment has no Production-admin / service-role / payment-admin / broad write token | **NOT CHECKED** | Shared environment is one blast radius (Phase 1). Credentials cannot be independently inspected from this repository slice. Do not invent a PASS. | Product Owner / Technical Lead with environment access |
 | GitHub hard-enforcement baseline | **live-verified separately** | Ruleset `21875372`. Not a Grok-setup substitute | Cursor must not mutate it |
 | `AI_OS_BUILD_HOLD` | **active** | HOLD-exit completion remains **OPEN** | Dedicated later closure only |
@@ -79,12 +82,12 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Field | Current truth |
 | --- | --- |
 | Identity state | **existing** — canonical Product-Owner Jetnity-Guardian app. Do **not** create a second Guardian |
-| Permissions / connections | **NOT CHECKED** beyond the operating-standard contract. Current path remains one-off TL prompt / PO start until contract normalization says otherwise |
+| Permissions / connections | Modern persisted contract authorizes the plain-text Evidence-Bus GitHub path. Still no admin/secrets/write/merge. `@cursor` never substitutes for Guardian. |
 | Routines | Recurring approved schedules **not configured** |
-| Evidence-Bus path | One-off PR comments exist (example: PR #489 comment `5733672386`). E2E #001 used the specialist → CoS → GitHub path, not Guardian as the relay |
-| Last verification | Phase 1 `5735080935`. Identity/behavior valid. **Contract normalization OPEN** |
-| Blockers / platform limitations | Persisted profile predates the modern ten-role CoS Evidence-Bus contract. `@cursor` still never substitutes for Guardian |
-| Next actor | Product Owner / Technical Lead for contract normalization |
+| Evidence-Bus path | One-off PR comments exist (example: PR #489 comment `5733672386`). E2E #001 used the specialist → CoS → GitHub path, not Guardian as the relay. Persisted contract now matches that authorized path. |
+| Last verification | Profile #002 `5735489499`. Modern ten-role contract **VERIFIED PERSISTED**. |
+| Blockers / platform limitations | None that drop the role. `@cursor` still never substitutes for Guardian |
+| Next actor | Product Owner later for routines. Cursor must not mutate this bot |
 
 ### 3. Jetnity Market & Traveller Intelligence
 
@@ -126,13 +129,13 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 
 | Field | Current truth |
 | --- | --- |
-| Identity state | **created / initialized** — **visible-name drift OPEN** (trailing period versus canonical `Jetnity Product & UX Explorer`) |
+| Identity state | **created / initialized** — exact persisted name `Jetnity Product & UX Explorer` (**no trailing period**) |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read; browser read-only only if later connected |
 | Routines | Product / UX Synthetic Journey Review — **not configured** |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
-| Last verification | Comment `5734831448`; Phase 1 `5735080935` recorded the trailing-period drift |
-| Blockers / platform limitations | Exact-name cleanup remains **OPEN** |
-| Next actor | Product Owner exact-name cleanup. Cursor must not mutate this bot |
+| Last verification | Profile #002 `5735489499` superseded stale #001 `5735410441` |
+| Blockers / platform limitations | None that drop the role |
+| Next actor | Later routine setup. Cursor must not mutate this bot |
 
 ### 7. Jetnity Growth & Discoverability
 
@@ -210,12 +213,11 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-Evidence-Bus E2E #001 is necessary and now recorded. It is **not** sufficient for HOLD exit.
+Profile normalization and Evidence-Bus E2E #001 are recorded. They are **not** sufficient for HOLD exit.
 
-1. Product & UX Explorer exact-name cleanup (trailing period);
-2. Guardian contract normalization;
-3. approved read-only routines / automations and verification;
-4. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure.
+1. approved read-only routines / automations and verification;
+2. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
+3. any other truly live gap found by exact-head review.
 
 Until those exist, exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path.
 
