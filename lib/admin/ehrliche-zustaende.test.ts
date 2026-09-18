@@ -22,6 +22,25 @@ describe('ehrliche Admin-Zustände', () => {
     assert.match(ADMIN_EHRLICHE_TEXTE.ipBlockErfolgPrefix, /nicht enforced/)
   })
 
+  test('Security-Hinweis trennt aufgezeichnete Zeilen von echten Ereignissen', () => {
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /security_events/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /keine vollständige Event-Ingestion/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /0 aufgezeichnete Zeilen/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /belegen nicht/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /kein sicherheitsrelevantes Ereignis/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /Keine Live-Überwachung/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /nicht enforced/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityAbdeckungHinweis, /aufgezeichnete Zeilen/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityAbdeckungHinweis, /security_events/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityAbdeckungHinweis, /unvollständig/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityKpiEvents24h, /Aufgezeichnete/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityKpiLoginFehler24h, /Aufgezeichnete/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityKpiAuffaelligkeiten24h, /Aufgezeichnete/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityTabelleTitel, /Aufgezeichnete/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityTabelleLeer, /Keine aufgezeichneten Events/)
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.securityTabelleLeer, /^Keine Events gefunden/)
+  })
+
   test('kein Copilot-Execute und keine erfundene Automatik', () => {
     assert.match(ADMIN_EHRLICHE_TEXTE.copilotFolgtHinweis, /Kein Execute-Pfad/)
     assert.match(ADMIN_EHRLICHE_TEXTE.steuerzentraleLage, /kein Copilot-Execute/i)

@@ -136,9 +136,10 @@ export default function SecurityWidget() {
     )
   }, [data, filter])
 
-  // KPIs (clientseitig aus Events abgeleitet). Ohne Antwort bleiben sie leer:
-  // „0 Login-Fehler" ist die Aussage, die eine Sicherheitsübersicht am
-  // deutlichsten treffen kann, und ohne Daten trifft sie sie zu Unrecht.
+  // KPIs (clientseitig aus aufgezeichneten Events abgeleitet). Ohne Antwort
+  // bleiben sie leer: „0 aufgezeichnete Login-Fehler" wäre ohne Daten eine
+  // falsche Entwarnung, und 0 aufgezeichnete Zeilen sind kein Beleg dafür,
+  // dass kein sicherheitsrelevantes Ereignis stattgefunden hat.
   const now = Date.now()
   const last24 = (events ?? []).filter((e) =>
     e.created_at ? now - new Date(e.created_at).getTime() <= 24 * 3600 * 1000 : false
@@ -149,6 +150,9 @@ export default function SecurityWidget() {
 
   return (
     <div className="space-y-6">
+      <p className="rounded-xl border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+        {ADMIN_EHRLICHE_TEXTE.securityAbdeckungHinweis}
+      </p>
       <p className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
         {ADMIN_EHRLICHE_TEXTE.ipBlockHinweis}
       </p>
@@ -165,17 +169,17 @@ export default function SecurityWidget() {
       <section className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-4">
         <KPICard
           icon={<ShieldCheck className="h-5 w-5" />}
-          label="Events (24h)"
+          label={ADMIN_EHRLICHE_TEXTE.securityKpiEvents24h}
           value={data ? last24.length : null}
         />
         <KPICard
           icon={<LockKeyhole className="h-5 w-5" />}
-          label="Login-Fehler (24h)"
+          label={ADMIN_EHRLICHE_TEXTE.securityKpiLoginFehler24h}
           value={data ? failed : null}
         />
         <KPICard
           icon={<ShieldAlert className="h-5 w-5" />}
-          label="Verdächtig (24h)"
+          label={ADMIN_EHRLICHE_TEXTE.securityKpiAuffaelligkeiten24h}
           value={data ? suspicious : null}
         />
         <KPICard
@@ -295,7 +299,7 @@ export default function SecurityWidget() {
       {/* Events */}
       <section className="rounded-2xl border bg-card">
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 className="text-sm font-semibold">Letzte Security-Events (7 Tage)</h2>
+          <h2 className="text-sm font-semibold">{ADMIN_EHRLICHE_TEXTE.securityTabelleTitel}</h2>
           <span className="text-xs text-muted-foreground">
             {events === null ? '—' : `${events.length} Einträge`}
           </span>
@@ -351,7 +355,7 @@ export default function SecurityWidget() {
               {events !== null && events.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                    Keine Events gefunden.
+                    {ADMIN_EHRLICHE_TEXTE.securityTabelleLeer}
                   </td>
                 </tr>
               )}

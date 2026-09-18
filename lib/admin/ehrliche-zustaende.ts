@@ -17,7 +17,14 @@ export const ADMIN_EHRLICHE_TEXTE = {
   refundErfolg: 'Lokal in refunds vermerkt. Keine Provider-Erstattung.',
   securityTitel: 'Security',
   securityHinweis:
-    'Lokale Events und Blockliste. Keine Live-Überwachung. Die IP-Blockliste ist derzeit nicht enforced.',
+    'Diese Fläche liest lokale Zeilen aus security_events. Die aktuelle Jetnity-Anwendung liefert keine vollständige Event-Ingestion. 0 aufgezeichnete Zeilen belegen nicht, dass kein sicherheitsrelevantes Ereignis stattgefunden hat. Keine Live-Überwachung. Die IP-Blockliste ist derzeit nicht enforced.',
+  securityAbdeckungHinweis:
+    'Die Kennzahlen und die Tabelle zählen nur aufgezeichnete Zeilen im aktuellen Fenster von security_events. Fehlende Ingestion heisst: die Abdeckung ist unvollständig.',
+  securityKpiEvents24h: 'Aufgezeichnete Events (24h)',
+  securityKpiLoginFehler24h: 'Aufgezeichnete Login-Fehler (24h)',
+  securityKpiAuffaelligkeiten24h: 'Aufgezeichnete Auffälligkeiten (24h)',
+  securityTabelleTitel: 'Aufgezeichnete Security-Events (7 Tage)',
+  securityTabelleLeer: 'Keine aufgezeichneten Events in diesem Zeitraum.',
   ipBlockHinweis:
     'Die IP-Blockliste wird derzeit nicht enforced. Einträge stehen in blocked_ips; Middleware und Edge prüfen sie nicht.',
   ipBlockButton: 'In Blockliste schreiben',
