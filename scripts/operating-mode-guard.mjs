@@ -282,9 +282,10 @@ export function detectBranch(env = process.env, gitBranch = null) {
   )
 }
 
-export function isMainPush(event, branch, env = process.env) {
+export function isMainPush(event, branch, env = {}) {
   if (event !== 'push') return false
-  const refName = env.GITHUB_REF_NAME || env.JETNITY_OPERATING_MODE_REF || branch
+  if (branch === 'main') return true
+  const refName = env.GITHUB_REF_NAME || env.JETNITY_OPERATING_MODE_REF
   return refName === 'main' || env.GITHUB_REF === 'refs/heads/main'
 }
 
@@ -296,6 +297,7 @@ export function runGuard({
   staleHits = [],
   schemaErrors = [],
   missingFileErrors = [],
+  env = {},
 }) {
   const errors = [...schemaErrors, ...missingFileErrors]
   const checks = {
@@ -312,7 +314,7 @@ export function runGuard({
     }
   }
 
-  if (isMainPush(event, branch)) {
+  if (isMainPush(event, branch, env)) {
     checks.mainPushSkipsDiff = true
     return { ok: errors.length === 0, errors, checks }
   }
@@ -390,6 +392,7 @@ export function evaluateRepository(root = repoRootFrom(), env = process.env) {
     staleHits,
     schemaErrors,
     missingFileErrors,
+    env,
   })
 }
 

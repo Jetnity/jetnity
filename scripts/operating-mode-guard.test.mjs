@@ -131,6 +131,10 @@ describe('operating-mode guard fixtures', () => {
       event: 'push',
       branch: 'main',
       changedFiles: ['app/page.tsx'],
+      env: {
+        GITHUB_REF_NAME: 'governance/full-potential-ai-operating-system-1',
+        GITHUB_HEAD_REF: 'governance/full-potential-ai-operating-system-1',
+      },
     })
     assert.equal(result.ok, true)
     assert.equal(result.checks.mainPushSkipsDiff, true)
