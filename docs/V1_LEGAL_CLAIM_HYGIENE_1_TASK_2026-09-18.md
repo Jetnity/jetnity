@@ -12,9 +12,9 @@ Branch: `fix/v1-legal-claim-hygiene-1`
 
 Cursor-Agent: **Jetnity V1 legal claim hygiene 1**  
 Generation: **1**  
-Required parent model: **Claude Opus 5 High**
+Required parent model: **Cursor Grok 4.6 High Fast**
 
-Do not use Auto. If Claude Opus 5 High is unavailable, stop and report instead of silently substituting.
+Do not use Auto. If Cursor Grok 4.6 High Fast is unavailable, stop and report instead of silently substituting.
 
 ---
 
