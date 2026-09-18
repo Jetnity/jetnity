@@ -40,6 +40,249 @@ export const KONTO_DATENEXPORT_MAX_ZEILEN = 20_000
 export const KONTO_DATENEXPORT_VOLLSTAENDIGKEIT =
   'jetnity-owned-account-travel-rows' as const
 
+/**
+ * Frozen V1 export columns for the 13 reviewed owner-scoped tables.
+ *
+ * These are the current Production columns. A later migration must not enter
+ * the download automatically. Adding or removing a field needs explicit
+ * export-contract review and, where the JSON shape changes, schema-version
+ * handling. `schemaVersion` stays `jetnity.account-export.v1` while this
+ * semantic field set is unchanged.
+ */
+export const KONTO_DATENEXPORT_SPALTEN = {
+  profiles: [
+    'avatar_url',
+    'created_at',
+    'display_name',
+    'email',
+    'id',
+    'last_seen_at',
+    'role',
+    'status',
+    'user_id',
+  ],
+  account_travellers: [
+    'client_ref',
+    'created_at',
+    'id',
+    'label',
+    'residence_country_code',
+    'updated_at',
+    'user_id',
+  ],
+  account_traveller_citizenships: [
+    'client_ref',
+    'country_code',
+    'created_at',
+    'id',
+    'traveller_id',
+    'updated_at',
+    'user_id',
+  ],
+  account_traveller_documents: [
+    'citizenship_id',
+    'client_ref',
+    'created_at',
+    'document_type',
+    'expires_on',
+    'id',
+    'issuing_country_code',
+    'traveller_id',
+    'updated_at',
+    'user_id',
+  ],
+  account_visits: [
+    'country_code',
+    'created_at',
+    'id',
+    'latitude',
+    'longitude',
+    'place_id',
+    'place_label',
+    'updated_at',
+    'user_id',
+    'visited_day',
+    'visited_month',
+    'visited_year',
+  ],
+  trips: [
+    'budget_amount',
+    'client_ref',
+    'created_at',
+    'currency',
+    'day_stage_assignment_mode',
+    'end_date',
+    'id',
+    'interests',
+    'last_mutation_id',
+    'metadata',
+    'origin',
+    'origin_place_id',
+    'pace',
+    'revision',
+    'start_date',
+    'status',
+    'title',
+    'travel_wish',
+    'travellers',
+    'updated_at',
+    'user_id',
+  ],
+  trip_stages: [
+    'arrival_date',
+    'country_code',
+    'created_at',
+    'departure_date',
+    'id',
+    'latitude',
+    'longitude',
+    'metadata',
+    'name',
+    'place_id',
+    'position',
+    'trip_id',
+    'updated_at',
+    'user_id',
+  ],
+  trip_days: [
+    'created_at',
+    'day_date',
+    'day_index',
+    'id',
+    'metadata',
+    'stage_id',
+    'title',
+    'trip_id',
+    'updated_at',
+    'user_id',
+  ],
+  trip_items: [
+    'booking_confirmed_at',
+    'booking_source',
+    'booking_status',
+    'booking_url',
+    'connection_ref',
+    'created_at',
+    'day_id',
+    'destination_name',
+    'destination_place_id',
+    'ends_at',
+    'ends_on',
+    'external_ref',
+    'id',
+    'kind',
+    'metadata',
+    'mobility_changes',
+    'mobility_evidence',
+    'mobility_mode',
+    'note',
+    'origin_name',
+    'origin_place_id',
+    'position',
+    'price_amount',
+    'price_currency',
+    'provider',
+    'rental_evidence',
+    'rental_supplier',
+    'stage_id',
+    'starts_at',
+    'starts_on',
+    'time_zone',
+    'title',
+    'transmission',
+    'trip_id',
+    'updated_at',
+    'user_id',
+    'vehicle_class',
+  ],
+  trip_travellers: [
+    'client_ref',
+    'created_at',
+    'document_expires_on',
+    'document_issuing_country_code',
+    'document_type',
+    'id',
+    'label',
+    'nationality_country_code',
+    'residence_country_code',
+    'trip_id',
+    'updated_at',
+    'user_id',
+  ],
+  trip_traveller_citizenships: [
+    'client_ref',
+    'country_code',
+    'created_at',
+    'id',
+    'traveller_id',
+    'trip_id',
+    'updated_at',
+    'user_id',
+  ],
+  trip_traveller_documents: [
+    'citizenship_id',
+    'client_ref',
+    'created_at',
+    'document_type',
+    'expires_on',
+    'id',
+    'issuing_country_code',
+    'traveller_id',
+    'trip_id',
+    'updated_at',
+    'user_id',
+  ],
+  trip_readiness_items: [
+    'client_ref',
+    'context_fingerprint',
+    'country_code',
+    'created_at',
+    'evidence',
+    'id',
+    'kind',
+    'title',
+    'traveller_id',
+    'trip_id',
+    'trip_item_id',
+    'updated_at',
+    'user_id',
+    'user_status',
+  ],
+} as const satisfies {
+  [K in KontoDatenexportTabelle]: readonly (keyof Database['public']['Tables'][K]['Row'] & string)[]
+}
+
+type GleicheMenge<A, B> = [Exclude<A, B>, Exclude<B, A>] extends [never, never] ? true : never
+
+type KontoDatenexportSpaltenSindVollstaendig = {
+  [K in KontoDatenexportTabelle]: GleicheMenge<
+    (typeof KONTO_DATENEXPORT_SPALTEN)[K][number],
+    keyof Database['public']['Tables'][K]['Row']
+  >
+}
+
+const _spaltenSindVollstaendig: KontoDatenexportSpaltenSindVollstaendig = {
+  profiles: true,
+  account_travellers: true,
+  account_traveller_citizenships: true,
+  account_traveller_documents: true,
+  account_visits: true,
+  trips: true,
+  trip_stages: true,
+  trip_days: true,
+  trip_items: true,
+  trip_travellers: true,
+  trip_traveller_citizenships: true,
+  trip_traveller_documents: true,
+  trip_readiness_items: true,
+}
+
+void _spaltenSindVollstaendig
+
+export function kontoDatenexportSpaltenliste(tabelle: KontoDatenexportTabelle): string {
+  return KONTO_DATENEXPORT_SPALTEN[tabelle].join(',')
+}
+
 export type KontoDatenexportDokument = {
   schemaVersion: typeof KONTO_DATENEXPORT_SCHEMA_VERSION
   generatedAt: string
@@ -66,51 +309,52 @@ function tabelleSeite(
   von: number,
   bis: number,
 ) {
+  const spalten = kontoDatenexportSpaltenliste(tabelle)
   switch (tabelle) {
     case 'profiles':
-      return supabase.from('profiles').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('profiles').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'account_travellers':
-      return supabase.from('account_travellers').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('account_travellers').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'account_traveller_citizenships':
       return supabase
         .from('account_traveller_citizenships')
-        .select('*')
+        .select(spalten)
         .eq('user_id', sitzungUserId)
         .range(von, bis)
     case 'account_traveller_documents':
       return supabase
         .from('account_traveller_documents')
-        .select('*')
+        .select(spalten)
         .eq('user_id', sitzungUserId)
         .range(von, bis)
     case 'account_visits':
-      return supabase.from('account_visits').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('account_visits').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'trips':
-      return supabase.from('trips').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('trips').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'trip_stages':
-      return supabase.from('trip_stages').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('trip_stages').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'trip_days':
-      return supabase.from('trip_days').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('trip_days').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'trip_items':
-      return supabase.from('trip_items').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('trip_items').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'trip_travellers':
-      return supabase.from('trip_travellers').select('*').eq('user_id', sitzungUserId).range(von, bis)
+      return supabase.from('trip_travellers').select(spalten).eq('user_id', sitzungUserId).range(von, bis)
     case 'trip_traveller_citizenships':
       return supabase
         .from('trip_traveller_citizenships')
-        .select('*')
+        .select(spalten)
         .eq('user_id', sitzungUserId)
         .range(von, bis)
     case 'trip_traveller_documents':
       return supabase
         .from('trip_traveller_documents')
-        .select('*')
+        .select(spalten)
         .eq('user_id', sitzungUserId)
         .range(von, bis)
     case 'trip_readiness_items':
       return supabase
         .from('trip_readiness_items')
-        .select('*')
+        .select(spalten)
         .eq('user_id', sitzungUserId)
         .range(von, bis)
   }

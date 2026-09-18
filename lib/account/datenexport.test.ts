@@ -10,11 +10,13 @@ import {
   KONTO_DATENEXPORT_MAX_ZEILEN,
   KONTO_DATENEXPORT_SCHEMA_VERSION,
   KONTO_DATENEXPORT_SEITE,
+  KONTO_DATENEXPORT_SPALTEN,
   KONTO_DATENEXPORT_TABELLEN,
   KONTO_DATENEXPORT_VOLLSTAENDIGKEIT,
   kontoDatenexportDateiname,
   kontoDatenexportDokument,
   kontoDatenexportErzeugen,
+  kontoDatenexportSpaltenliste,
 } from '@/lib/account/datenexport'
 import type { Database } from '@/types/supabase'
 
@@ -43,7 +45,7 @@ type MockFehler = { message: string; code?: string; status?: number }
 function mockClient(args: {
   zeilen?: Partial<Record<string, unknown[]>>
   fehler?: Partial<Record<string, MockFehler>>
-  gesehen?: { tabelle: string; userId: string }[]
+  gesehen?: { tabelle: string; userId: string; select: string }[]
 }): SupabaseClient<Database> {
   const zeilen = args.zeilen ?? {}
   const fehler = args.fehler ?? {}
@@ -52,8 +54,10 @@ function mockClient(args: {
   return {
     from(tabelle: string) {
       let userId = ''
+      let select = ''
       const kette = {
-        select() {
+        select(spalten: string) {
+          select = spalten
           return kette
         },
         eq(spalte: string, wert: string) {
@@ -62,7 +66,7 @@ function mockClient(args: {
           return kette
         },
         range(von: number, bis: number) {
-          gesehen?.push({ tabelle, userId })
+          gesehen?.push({ tabelle, userId, select })
           const eintrag = fehler[tabelle]
           if (eintrag) {
             return Promise.resolve({
@@ -123,11 +127,54 @@ describe('V1 Account Data Export 1 Vertrag', () => {
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(name),
       false,
     )
-    assert.equal(helfer.includes('email'), false)
-    assert.equal(helfer.includes('display_name'), false)
+    const dateinameFn = helfer.slice(
+      helfer.indexOf('export function kontoDatenexportDateiname'),
+      helfer.indexOf('export function kontoDatenexportDokument'),
+    )
+    assert.equal(dateinameFn.includes('email'), false)
+    assert.equal(dateinameFn.includes('display_name'), false)
     assert.equal(route.includes('email'), false)
     assert.equal(route.includes('user.email'), false)
     assert.equal(route.includes('user.user_metadata'), false)
+  })
+
+  test('jeder Export-Read nutzt eine explizite Spalten-Allowlist, niemals select *', async () => {
+    assert.equal(helfer.includes(".select('*')"), false)
+    assert.equal(helfer.includes('.select("*")'), false)
+    assert.equal(helfer.includes('.select(`*`)'), false)
+    assert.doesNotMatch(helfer, /\.select\(\s*['"`]\s*\*\s*['"`]\s*\)/)
+    assert.match(helfer, /export const KONTO_DATENEXPORT_SPALTEN/)
+    assert.match(helfer, /A later migration must not enter/)
+    assert.match(helfer, /export-contract review/)
+    assert.match(helfer, /schemaVersion stays `jetnity\.account-export\.v1`/)
+    assert.deepEqual(Object.keys(KONTO_DATENEXPORT_SPALTEN), [...KONTO_DATENEXPORT_TABELLEN])
+
+    for (const tabelle of KONTO_DATENEXPORT_TABELLEN) {
+      const spalten = KONTO_DATENEXPORT_SPALTEN[tabelle]
+      assert.ok(Array.isArray(spalten) && spalten.length > 0, tabelle)
+      assert.equal(spalten.includes('*'), false, tabelle)
+      assert.equal(new Set(spalten).size, spalten.length, `duplikat ${tabelle}`)
+      assert.equal(kontoDatenexportSpaltenliste(tabelle), spalten.join(','))
+      assert.equal(kontoDatenexportSpaltenliste(tabelle).includes('*'), false, tabelle)
+      assert.match(helfer, new RegExp(`\\.from\\('${tabelle}'\\)[\\s\\S]{0,80}\\.select\\(spalten\\)`))
+    }
+
+    const gesehen: { tabelle: string; userId: string; select: string }[] = []
+    const leer = await kontoDatenexportErzeugen(
+      mockClient({ gesehen }),
+      '55555555-5555-5555-5555-555555555555',
+    )
+    assert.equal(leer.ok, true)
+    assert.deepEqual(
+      gesehen.map((eintrag) => eintrag.tabelle),
+      [...KONTO_DATENEXPORT_TABELLEN],
+    )
+    for (const eintrag of gesehen) {
+      assert.equal(eintrag.select, kontoDatenexportSpaltenliste(eintrag.tabelle as (typeof KONTO_DATENEXPORT_TABELLEN)[number]))
+      assert.notEqual(eintrag.select, '*')
+      assert.equal(eintrag.select.includes('*'), false, eintrag.tabelle)
+      assert.equal(eintrag.userId, '55555555-5555-5555-5555-555555555555')
+    }
   })
 
   test('Dokument hat stabile Schemaversion und generatedAt', () => {
@@ -161,7 +208,7 @@ describe('V1 Account Data Export 1 Vertrag', () => {
       assert.deepEqual(leer.dokument.data[tabelle], [])
     }
 
-    const gesehen: { tabelle: string; userId: string }[] = []
+    const gesehen: { tabelle: string; userId: string; select: string }[] = []
     const fehl = await kontoDatenexportErzeugen(
       mockClient({
         gesehen,
@@ -235,6 +282,10 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     assert.equal(route.includes('providerOpsInMemoryCostGuard'), false)
     assert.equal(helfer.includes('rate-limit'), false)
     assert.equal(route.includes('rate-limit'), false)
+    for (const verboten of ['.insert(', '.update(', '.upsert(', '.delete(', '.rpc(']) {
+      assert.equal(helfer.includes(verboten), false, verboten)
+      assert.equal(route.includes(verboten), false, verboten)
+    }
   })
 
   test('Einstellungen bieten den Export ehrlich und ohne Löschversprechen', () => {

@@ -3,7 +3,8 @@
 // P2-TA-04 Evidence-Lock: welche aktuellen App-/Lib-/Component-Quellen
 // Traveller-Tabellen direkt ansprechen vs. party_schreiben / party_loeschen.
 // C1: kein produktives trip_travellers-DELETE mehr. Kein Runtime-DB-Write.
-// V1-Kontoexport darf dieselben Tabellen nur lesen (select/eq/range).
+// V1-Kontoexport darf dieselben Tabellen nur lesen (explicit allowlist + eq/range).
+// Wildcard select('*') is forbidden so a later column cannot enter the download.
 
 import { readdirSync, readFileSync } from 'node:fs'
 import { describe, test } from 'node:test'
@@ -54,7 +55,9 @@ const EXPORT_LESEN = 'lib/account/datenexport.ts'
 function nurExportLesen(treffer: string[]) {
   assert.deepEqual(treffer.map(rel), [EXPORT_LESEN])
   const exportQuelle = quelle(join(wurzel, EXPORT_LESEN))
-  assert.match(exportQuelle, /\.select\('\*'\)/)
+  assert.doesNotMatch(exportQuelle, /\.select\(\s*['"`]\s*\*\s*['"`]\s*\)/)
+  assert.match(exportQuelle, /KONTO_DATENEXPORT_SPALTEN/)
+  assert.match(exportQuelle, /\.select\(spalten\)/)
   assert.doesNotMatch(exportQuelle, SCHREIB_KETTE)
   assert.doesNotMatch(exportQuelle, RPC_PARTY)
   assert.doesNotMatch(exportQuelle, RPC_LOESCHEN)
