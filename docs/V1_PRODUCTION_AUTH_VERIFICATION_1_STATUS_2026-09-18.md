@@ -1,7 +1,7 @@
 # Jetnity – V1 Production Auth Verification 1 STATUS
 
 Stand: 18. September 2026  
-Status: **PHASE B IMPLEMENTED / LOCAL GATES PASS / EXACT-HEAD GATES PENDING THIS PERSIST / DRAFT / NOT READY / NOT MERGED / STOP AFTER FRESH GATES**
+Status: **PHASE B GATED ON `a84317ee` / THIS PERSIST INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #479  
 Draft PR: #480  
@@ -79,7 +79,22 @@ mailer_allow_unverified_email_sign_ins = false
 | `npm run build` | PASS |
 | Hygiene (`dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`) | PASS |
 
-Exact-head CI / Preview for the persist head are recorded after push.
+---
+
+## 3a. Exact-head gates on Phase-B implementation `a84317ee`
+
+| | |
+| --- | --- |
+| Head | `a84317eee71873fa4be5f3c4eb75020e0964cfa4` |
+| Merge-base | `d67529a` — behind **0**, ahead **4** |
+| CI | **SUCCESS** — run `35347350401` |
+| Auth job | **SUCCESS** — `105606906931`; only Development `Abgleich`; no Production reader step |
+| Vercel Preview | **READY** — `6k61PrTc6d53A3G61zbfhpo2wg1T` |
+| Preview URL | `https://jetnity-app-git-verify-v1-production-au-78c333-jetnity-e1b93c82.vercel.app` |
+| GitHub review threads | 0 |
+| Vercel unresolved threads | 0 |
+
+This persist commit records those gates and therefore creates a new head.
 
 ---
 
@@ -94,4 +109,4 @@ Exact-head CI / Preview for the persist head are recorded after push.
 
 ## 5. Next step
 
-Obtain fresh exact-head CI and Vercel Preview on the Phase-B persist head, then **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice.
+**STOP FOR TECHNICAL-LEAD REVIEW.** No Ready. No merge. No follow-up slice. TL persists global continuity after merge.

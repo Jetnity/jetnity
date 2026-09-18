@@ -6,6 +6,7 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 Issue: #479  
 Draft PR: #480  
 Phase-A TL PASS head: `66ee5fe5ca7f2b8052dfeadfc1d270022750e001`  
+Phase-B evidence head: `a84317eee71873fa4be5f3c4eb75020e0964cfa4`  
 TL Phase B dispatch: comment `5730259722`
 
 This document cannot replace an independent Technical-Lead PASS.
@@ -39,4 +40,4 @@ This document cannot replace an independent Technical-Lead PASS.
 
 ## 3. Recommendation
 
-Accept Phase B if CI no longer contains the temporary Production step, AUTH.md matches the recorded snapshot, 3.6 stays an open P2, and 3.8 stays an open P0. Do not Ready or merge from this document.
+Accept Phase B if CI `35347350401` / auth job `105606906931` on `a84317ee` has no Production reader step, AUTH.md matches the recorded snapshot, 3.6 stays an open P2, and 3.8 stays an open P0. Re-gate this persist head if FINAL PASS requires exact-head on the docs commit. Do not Ready or merge from this document.
