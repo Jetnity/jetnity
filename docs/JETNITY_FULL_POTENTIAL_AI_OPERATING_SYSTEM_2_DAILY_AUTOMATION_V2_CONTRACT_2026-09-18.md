@@ -1,9 +1,10 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 18. September 2026  
-Status: **CANONICAL CONTRACT / MARKET TRANSPORT a–c PASS / FINDING+SOURCE HARDENING REQUIRED BEFORE CLONE / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / MARKET SCHEMA HARDENING PASS / NOVELTY GATE REQUIRED BEFORE CLONE / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
+Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -106,8 +107,11 @@ Every item in `findings[]` MUST use these keys exactly:
 | `impact` | Required |
 | `source_refs` | Required array of `source_id` values that exist in `sources[]` |
 | `next_actor` | Optional |
+| `novelty` | Optional additive v1 field. `NEW_SIGNAL` \| `NEW_CORROBORATION` \| `MATERIAL_UPDATE` \| `CONTEXT_ONLY`. Do **not** bump `schema_version` for this field. |
 
 Do **not** use `type` or a singular free-text `source` as substitutes. Those keys make the finding **invalid**.
+
+`novelty` is schema-compatible and recommended. Its absence does not invalidate an otherwise valid finding, but a `MATERIAL` finding still must satisfy the §4d novelty / re-reporting gate.
 
 ### 4b. Canonical source object
 
@@ -133,6 +137,31 @@ A `source_refs` entry that does not match a `source_id` makes that finding **inv
 - The Chief of Staff remains the final consolidator and may downgrade or action-filter a specialist `MATERIAL` item.
 - Bounded public-source discovery is acceptable for `NO_MATERIAL` screening. Future `MATERIAL` findings should prefer first-party / high-authority sources or corroborated multi-source evidence before escalation.
 
+### 4d. Novelty / re-reporting gate
+
+Canonical Daily-intelligence quality rule after `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`). Schema hardening **PASS** does **not** authorize clone until this gate is adopted.
+
+The test ran at `2026-09-19 01:02 Europe/Zurich` and elevated unchanged announcements dated `2026-09-10` and `2026-09-15` as `MATERIAL` in the current daily envelope. That is a quality defect for a recurring Daily pulse.
+
+1. Track a canonical daily reporting window (`window_start` / `window_end`, normally `Europe/Zurich`).
+2. Distinguish every finding as one of:
+   - `NEW_SIGNAL` — first report of a development inside the current window;
+   - `NEW_CORROBORATION` — independent new confirmation of an already-known item that materially changes confidence or impact;
+   - `MATERIAL_UPDATE` — a genuine state change, contradiction, or newly material development on a previously known item;
+   - `CONTEXT_ONLY` — historic or background evidence that must not mint a fresh Daily `MATERIAL` signal by itself.
+3. A source older than the current reporting window may appear in `sources[]` as context, but **cannot by itself justify `status=MATERIAL`** for the current run.
+4. Repeated unchanged announcements must not be resurfaced daily.
+5. If all relevant evidence is old or unchanged:
+   - `status` = `NO_MATERIAL`;
+   - `summary` = the role-specific no-material signal;
+   even if the historic context remains strategically interesting.
+6. If a newly discovered older source materially changes the assessment, the envelope may be `MATERIAL`, but the finding must explicitly say this is **newly discovered historical evidence**, not a new market event. Prefer `novelty=MATERIAL_UPDATE` and state the discovery explicitly in `statement`.
+7. Chief-of-Staff de-duplication remains the final defense. Specialists must suppress re-reporting at source.
+
+Use the optional `novelty` field when emitting findings. Do not treat missing `novelty` as a schema-invalid envelope. Do treat a `MATERIAL` status justified only by old unchanged sources as a **novelty-gate failure**. The Chief of Staff must downgrade that role to `NO_MATERIAL` or mark the brief `DEGRADED` if the specialist cannot be trusted to suppress re-reporting.
+
+This remains schema **v1**. Do not bump `schema_version` for `novelty`.
+
 ## 5. Freshness
 
 The Chief of Staff MUST accept only envelopes generated for the **current daily window**.
@@ -152,7 +181,7 @@ After the specialist pulse window, `Jetnity Daily Intelligence Brief` (owner: Je
 
 1. re-fetches live control state immediately before emitting the brief;
 2. reads the six canonical files;
-3. validates schema, freshness, role identity, and the canonical finding/source object shapes;
+3. validates schema, freshness, role identity, the canonical finding/source object shapes, and the §4d novelty / re-reporting gate;
 4. de-duplicates and conflict-checks;
 5. emits one Daily Intelligence Brief using `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a;
 6. does **not** write GitHub by default;
@@ -172,14 +201,16 @@ Keep this routine **PAUSED** until the V2 aggregation path is verified.
 
 ## 8. Required testing sequence
 
-Do not skip ahead. Do not clone five more specialist routines until Market a–c are proven **and** later writer skills emit the hardened finding/source objects.
+Do not skip ahead. Do not clone five more specialist routines until Market a–c are proven, later writer skills emit the hardened finding/source objects, **and** the §4d novelty / re-reporting gate is adopted.
 
 | Step | Proof required | State |
 | --- | --- | --- |
 | a | One specialist can write a valid current-window envelope | **PASS** — Market writer `5736871320` |
 | b | Chief of Staff can read and validate that envelope cross-bot | **PASS** — `5736895145` |
 | c | One specialist **scheduled** routine can refresh that envelope and CoS can read it without bot messaging | **PASS for transport** — scheduled Market `5737150676` + CoS read `5737188145` (`JETNITY-MARKET-PULSE-20260919-0053`) |
-| d | Clone the proven pattern to the remaining five specialists | **OPEN** — blocked until writer skills adopt §4a–4c |
+| schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
+| novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **OPEN** — required before clone |
+| d | Clone the proven pattern to the remaining five specialists | **OPEN** — blocked until writer skills adopt §4a–4d |
 | e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on d |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
