@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 – Binding Task
 
 Stand: 18. September 2026  
-Issue: #undefined  
+Issue: #486  
 Branch: `docs/v1-security-event-ingestion-architecture-1`  
 Canonical base: `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2`
 
