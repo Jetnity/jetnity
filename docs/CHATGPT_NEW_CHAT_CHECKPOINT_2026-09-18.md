@@ -1,6 +1,6 @@
 # ChatGPT Technical-Lead New-Chat Checkpoint – 18. September 2026
 
-Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 #460 CLOSED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Status: **CANONICAL NEW-CHAT CONTINUITY / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CANONICAL / EXPLICIT VISIT HISTORY #441 CLOSED / V1 LEGAL CLAIM HYGIENE 1 #457 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 #460 CLOSED / V1 INCIDENT PROCESS 1 #464 CLOSED / JETNITY GUARDIAN EXTERNAL-APP WORKFLOW CANONICAL / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / CURRENT CURSOR MODEL PREFERENCE GROK 4.6 HIGH FAST / NO PRODUCT FOLLOW-UP SELECTED HERE / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
 
 This checkpoint exists so a fresh ChatGPT Technical Lead can continue without relying on chat memory.
 
@@ -32,13 +32,13 @@ Then independently verify live:
 
 ## 2. Exact verified main at handoff
 
-Latest continuity refresh baseline after V1 Admin MFA Loss Recovery Runbook 1:
+Latest continuity refresh baseline after V1 Incident Process 1:
 
-`6f79b45a70374518aef0b6f1a9ab4479f0798827`
+`3fcebbb128a1fd3c157073ed903518b6ad3f6566`
 
 Commit:
 
-`Add admin MFA loss recovery runbook (#460)`
+`Add V1 incident process runbook (#464)`
 
 The earlier Assistant Runtime merge `fdbd3735c0bfd4993bd78d41a3ab70edd895988c` remains a historical verified transition baseline, not current main.
 
@@ -185,6 +185,22 @@ PR #460 / issue #459:
 
 Guardian review issue #461 is closed completed.
 
+## 6c. V1 Incident Process 1 — CLOSED
+
+PR #464 / issue #463:
+- accepted exact head `eeff277e319b6ea5d4fb4a202b900652030c7506`;
+- merge/current continuity baseline `3fcebbb128a1fd3c157073ed903518b6ad3f6566`;
+- exact-head CI `35325063544`: SUCCESS;
+- exact-head Vercel Preview `dpl_GFuvVfHmVBqFdeSE4MUW7BbxKec8`: READY;
+- external Jetnity Guardian targeted recheck: **PASS — P3 resolved — no new P0/P1/P2/P3**;
+- exact-merge Vercel Production `dpl_EK8FfncRZA2nknr7zM7sMRZrdQ48`: READY;
+- accepted head -> merge: 0 changed files;
+- audit 5.5 process half closed;
+- automated observability/tooling half remains OPEN and Product-Owner-gated;
+- no runtime/Auth/RLS/Supabase/provider/secret/env/cost mutation.
+
+**Guardian identity correction:** Jetnity Guardian / Grok Bot is the Product Owner's separate Jetnity-Guardian app. It is not Cursor, not a Cursor Background Agent and not Cursor Grok 4.6 High Fast. When Guardian review is required, the Technical Lead supplies the complete prompt and the Product Owner runs it in Jetnity Guardian. `@cursor` never substitutes for Guardian evidence.
+
 ## 7. Open PR field at handoff
 
 PR #453 is closed/merged.
@@ -288,4 +304,4 @@ PR #453 is closed and must not be reconstructed as pending work.
 
 Verified governance integration baseline: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later docs-only continuity merge may advance repository `main`; live evidence always wins.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
+**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE. NO AUTOMATIC NEXT SLICE.**
