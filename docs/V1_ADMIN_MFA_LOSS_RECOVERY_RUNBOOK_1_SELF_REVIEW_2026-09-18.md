@@ -57,4 +57,4 @@ This document argues against the implementation. It cannot replace an independen
 
 ## 4. What remains before Technical-Lead review
 
-TL P2 from comment `5723394799` is applied in the runbook. Previous heads `fecf5228` / `83602155` had green CI/Preview; this correction is a new HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.
+TL P2 from comment `5723394799` is applied. `00fb3fd8` had CI `35294057381` SUCCESS and Vercel `J1hdTz1eUWaqKVpb5gEXPPtBWDo5` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.

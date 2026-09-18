@@ -1,7 +1,7 @@
 # Jetnity – V1 Admin MFA Loss Recovery Runbook 1 STATUS
 
 Stand: 18. September 2026  
-Status: **TL P2 READ-ONLY VALIDATION FIX APPLIED / EXACT-HEAD GATES PENDING ON THIS HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **TL P2 READ-ONLY VALIDATION RECORDED ON `00fb3fd8` / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #459  
 Draft PR: #460  
@@ -13,6 +13,7 @@ Canonical base: `main@88382ce0ef1d01b1cb32677fa48dfde71b5055d1`
 Dispatch head: `7e688f25d4dc2f681425d36fede46499d39300bc`  
 Implementation head: `fecf522882a52517eb1b497768e5871c146b3d30`  
 Previous evidence head: `83602155d0ac3f4c88100e0307f137adf95549e4`  
+P2-fix head: `00fb3fd87278f2406e6b49bf3bb5c03ca34c1b6d`  
 TL CHANGES REQUIRED: comment `5723394799` on `fecf5228` (P2 read-only recovery validation)  
 Continue-same-session dispatch: comment `5723398473`
 
@@ -86,23 +87,35 @@ These remain evidence of earlier heads only.
 | --- | --- | --- | --- |
 | `fecf5228` implementation | PASS (verify-job scripts) | [35293321757](https://github.com/Jetnity/jetnity/actions/runs/35293321757) SUCCESS | `2Y9XtVLu7QSQEsw5Y1rbXBdXvGTU` READY |
 | `83602155` evidence persist | not re-run | [35293715961](https://github.com/Jetnity/jetnity/actions/runs/35293715961) SUCCESS | `BAn31e2GW9WTF4rutDZh7P7dNvgv` READY |
+| `00fb3fd8` TL P2 read-only fix | historical after this persist | [35294057381](https://github.com/Jetnity/jetnity/actions/runs/35294057381) SUCCESS | `J1hdTz1eUWaqKVpb5gEXPPtBWDo5` READY |
 
-## 6. Gates on the P2-fix head
+## 6. Gates on P2-fix head `00fb3fd8` (invalidated as current by this persist)
 
-**Pending** until this correction is committed and live CI/Preview exist for that SHA. No current exact-head gate is claimed green here.
+| | |
+| --- | --- |
+| SHA | `00fb3fd87278f2406e6b49bf3bb5c03ca34c1b6d` |
+| GitHub CI | [35294057381](https://github.com/Jetnity/jetnity/actions/runs/35294057381) **SUCCESS** (`pull_request`) |
+| Typecheck, Lint & Build | SUCCESS |
+| Auth-Konfiguration gegen config.toml | SUCCESS |
+| Vercel | GitHub commit status **success** — `J1hdTz1eUWaqKVpb5gEXPPtBWDo5` READY |
+| Inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/J1hdTz1eUWaqKVpb5gEXPPtBWDo5 |
+| Preview | https://jetnity-app-git-docs-v1-admin-mfa-loss-8ce8ff-jetnity-e1b93c82.vercel.app |
+| Vercel threads | 0 unresolved / 0 total |
+
+This evidence persist is a new HEAD. Re-fetch CI/Vercel on the live HEAD. No local re-run of the full verify-job was required for the docs-only P2 wording change; the GitHub verify job on `00fb3fd8` is the recorded exact-head suite.
 
 No Supabase live mutation or destructive smoke was performed.
 
-## 7. `origin/main` drift (re-fetched 18 September 2026, before this fix commit)
+## 7. `origin/main` drift (re-fetched 18 September 2026, at `00fb3fd8`)
 
 | | |
 | --- | --- |
 | `origin/main` | `88382ce0ef1d01b1cb32677fa48dfde71b5055d1` |
 | Merge-base | `88382ce0ef1d01b1cb32677fa48dfde71b5055d1` |
-| Ahead at `83602155` | 3 |
+| Ahead at `00fb3fd8` | 4 |
 | Behind | **0** |
 
-Re-count after this commit.
+Re-count after this persist commit.
 
 ## 8. Threads
 

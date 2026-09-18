@@ -1,7 +1,7 @@
 # Jetnity – V1 Admin MFA Loss Recovery Runbook 1 HANDOFF
 
 Stand: 18. September 2026  
-Status: **TL P2 READ-ONLY VALIDATION FIX APPLIED / RE-GATE LIVE HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **TL P2 READ-ONLY VALIDATION ON `00fb3fd8` WITH GATES RECORDED / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_1_TASK_2026-09-18.md`  
 Canonical runbook: `docs/V1_ADMIN_MFA_LOSS_RECOVERY_RUNBOOK_2026-09-18.md`  
@@ -23,6 +23,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Dispatch head | `7e688f25d4dc2f681425d36fede46499d39300bc` |
 | Implementation head | `fecf522882a52517eb1b497768e5871c146b3d30` |
 | Previous evidence head | `83602155d0ac3f4c88100e0307f137adf95549e4` |
+| P2-fix head | `00fb3fd87278f2406e6b49bf3bb5c03ca34c1b6d` |
 | TL P2 | comment `5723394799` / continue `5723398473` |
 | Agent | Jetnity V1 admin MFA loss recovery runbook 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
@@ -51,7 +52,8 @@ TL P2: recovery completion is **read-only**. An existing capability-gated admin 
 1. §6 no longer requires a write or `admin_break_glass_write_denied` as a recovery check.
 2. Empty vs denied stays an existing honesty rule, not a mutation.
 3. All earlier boundaries still hold (app vs platform MFA, list-before-delete, AAL2 permanent, no secrets, no live Auth mutation).
-4. Re-fetch exact-head CI / Preview / threads on the live HEAD. Gates on `fecf5228` and `83602155` are historical.
+4. `00fb3fd8` CI `35294057381` SUCCESS and Vercel `J1hdTz1eUWaqKVpb5gEXPPtBWDo5` READY are recorded only for that SHA.
+5. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
 
 ## 4. What this slice does not mean
 
