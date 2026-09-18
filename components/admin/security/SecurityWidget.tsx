@@ -136,12 +136,14 @@ export default function SecurityWidget() {
     )
   }, [data, filter])
 
-  // KPIs (clientseitig aus aufgezeichneten Events abgeleitet). Ohne Antwort
-  // bleiben sie leer: „0 aufgezeichnete Login-Fehler" wäre ohne Daten eine
-  // falsche Entwarnung, und 0 aufgezeichnete Zeilen sind kein Beleg dafür,
-  // dass kein sicherheitsrelevantes Ereignis stattgefunden hat.
+  // 24h-KPIs kommen aus der ungefilterten aufgezeichneten Menge.
+  // Die Suche gilt nur für die Tabelle; sonst würde „Aufgezeichnete Events (24h)"
+  // nach einer Suche eine Teilmenge als Fensterwahrheit vortäuschen.
+  // Ohne Antwort bleiben die Kacheln leer: 0 aufgezeichnete Zeilen sind kein
+  // Beleg dafür, dass kein sicherheitsrelevantes Ereignis stattgefunden hat.
+  const aufgezeichneteEvents = data?.events ?? []
   const now = Date.now()
-  const last24 = (events ?? []).filter((e) =>
+  const last24 = aufgezeichneteEvents.filter((e) =>
     e.created_at ? now - new Date(e.created_at).getTime() <= 24 * 3600 * 1000 : false
   )
   const failed = last24.filter((e) => (e.type ?? '').includes('failed')).length

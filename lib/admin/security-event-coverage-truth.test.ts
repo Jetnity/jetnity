@@ -31,6 +31,17 @@ describe('Admin-Security Coverage-Truth (Finding 5.2 presentation)', () => {
     assert.doesNotMatch(widget, /Keine Events gefunden/)
   })
 
+  test('24h-KPIs kommen aus ungefilterten aufgezeichneten Events', () => {
+    assert.match(widget, /aufgezeichneteEvents = data\?\.events/)
+    assert.match(widget, /const last24 = aufgezeichneteEvents\.filter/)
+    assert.doesNotMatch(widget, /const last24 = \(events/)
+    assert.doesNotMatch(widget, /last24 = \(events \?\? \[\]\)\.filter/)
+    assert.match(widget, /events === null \? '—' : `\$\{events\.length\} Einträge`/)
+    assert.match(widget, /value=\{data \? last24\.length : null\}/)
+    assert.match(widget, /value=\{data \? failed : null\}/)
+    assert.match(widget, /value=\{data \? suspicious : null\}/)
+  })
+
   test('zentrale Texte behaupten keine vollständige Überwachung', () => {
     assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /keine vollständige Event-Ingestion/)
     assert.match(ADMIN_EHRLICHE_TEXTE.securityHinweis, /0 aufgezeichnete Zeilen/)
