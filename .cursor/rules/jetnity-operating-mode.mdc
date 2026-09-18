@@ -22,7 +22,9 @@ When `mode` is `AI_OS_BUILD_HOLD`:
 - refuse or stop any request to start, resume or follow a normal product slice;
 - point the next actor to the exclusive governance meta-scope named in the operating-mode file (currently Full-Potential AI Operating System);
 - PR #487 / Issue #486 remains parked at its persisted exact head and must not be resumed, merged or followed from this mode;
-- governance, continuity, evidence and enforcement work is allowed only on an authorized branch and only within the path allowlist;
+- governance, continuity, evidence and enforcement work is allowed only on an authorized branch and only within the **base/main** path allowlist;
+- a PR-head policy cannot broaden or disable HOLD for that same PR;
+- HOLD→NORMAL is only a later dedicated closure and cannot include product/runtime files in the same PR;
 - special Product-Owner gates remain in force.
 
 ## Authority that does not change

@@ -27,10 +27,10 @@ Exclusive active meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM**.
 | Evidence head | `69fc429d90acc135ae78f37c27fd0be65a16a9f2` — CI `35369857598` SUCCESS; Vercel Preview READY; this persist is a newer head |
 | Topology | **SINGLE_AGENT** — this slice owns shared canonical governance + CI guard; no parallel writer |
 | Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
-| External Grok team | **not created**; canonical target remains ten distinct Grok Intelligence & Assurance roles, documentation only |
-| Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No OS follow-up slice. |
+| External Grok team | **not created in this slice**; all ten Grok Intelligence & Assurance roles remain mandatory later setup before HOLD lift; shared Grok environment is one blast radius |
+| Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD RE-REVIEW**. No Ready. No merge. No OS follow-up slice. |
 
-Normal product development remains blocked until the Operating System is integrated and independently verified and a dedicated Technical-Lead closure changes the machine mode. Technical Lead autonomous normal architecture/governance/review/integration authority remains inside this meta-scope and, after HOLD exit, for normal slices that do not cross a special Product-Owner gate. `no automatic follow-up slice` binds Cursor/Guardian/reviewers, not Technical-Lead slice selection after HOLD exit.
+Normal product development remains blocked until the Operating System is integrated and independently verified, the later external ten-role setup/schedules/Evidence-Bus/e2e verification exists or a real platform limitation is escalated to the Product Owner, and a dedicated Technical-Lead closure changes the machine mode without product/runtime files in that same PR. Technical Lead autonomous normal architecture/governance/review/integration authority remains inside this meta-scope and, after HOLD exit, for normal slices that do not cross a special Product-Owner gate. `no automatic follow-up slice` binds Cursor/Guardian/reviewers, not Technical-Lead slice selection after HOLD exit.
 
 Assistant Runtime 1 and the Multi-Agent Operating System are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 

@@ -147,7 +147,7 @@ Still forbidden:
 - connecting Production-admin capabilities merely because the target state is documented;
 - granting Ready/Merge/Production/DB/Auth/provider/payment/secret authority.
 
-Actual external setup remains a later explicit Product-Owner step after repository governance and setup-pack review.
+This repository slice still must not create those bots or grant permissions. The later external setup of all ten roles, their approved read-only routines/schedules, the Evidence-Bus path and an end-to-end verification is nevertheless **required before PRODUCT DEVELOPMENT HOLD is lifted**, unless a real platform limitation is found and explicitly escalated to the Product Owner. Do not silently make any of the ten identities optional.
 
 
 ## 2. Reuse before add
@@ -234,7 +234,7 @@ Independent challenge/evidence lanes.
 
 Do not create the external Grok team in this slice.
 
-Repository governance must define the future least-privilege roster and setup checklist, but actual external-app creation remains a later Product-Owner action.
+Repository governance must define the future least-privilege roster and setup checklist. Actual external-app creation remains a later Product-Owner action and is **required before HOLD lift**. After one-time Product-Owner authorization, approved read-only recurring routines must not need a new Product-Owner prompt on every ordinary run. Special Product-Owner gates remain Product-Owner-controlled.
 
 Guardian/specialized Grok remains read-only/observer-first except narrowly scoped GitHub comment/evidence permission if later explicitly configured.
 
@@ -316,7 +316,8 @@ Required state now:
 - governance/continuity/evidence work allowed only within explicit path/branch policy
 - exact Product-Owner override date/reference
 - parked PR #487 resume pointer
-- exit condition: Full-Potential AI Operating System integrated + independently verified; a dedicated TL closure changes mode only after that evidence exists
+- exit condition: Full-Potential AI Operating System integrated + independently verified + later external ten-role setup/schedules/Evidence-Bus/e2e verification; a dedicated TL closure changes mode only after that evidence exists
+- that dedicated closure cannot mix HOLD→NORMAL with product/runtime files in the same PR
 - special PO gates remain in force
 
 Create:
@@ -329,11 +330,15 @@ Integrate it into CI.
 
 ### Guard requirements
 
-On pull requests while mode is `AI_OS_BUILD_HOLD`:
-- fail closed for a non-authorized branch class;
-- fail closed if changed files exceed the governance/continuity/enforcement allowlist;
+On pull requests while the **base/main** policy is `AI_OS_BUILD_HOLD`:
+- fail closed for a non-authorized branch class according to the **base** policy, not the untrusted PR-head policy;
+- fail closed if any added, modified, renamed, copied or deleted path exceeds the **base** governance/continuity/enforcement allowlist;
+- inspect rename/copy status with `git diff --name-status -M -C` (or equivalent) and validate **both source and destination**;
+- deletion of a forbidden runtime/product path must also fail;
 - this branch `governance/full-potential-ai-operating-system-1` must be allowed;
-- normal runtime/product paths must be rejected.
+- normal runtime/product paths must be rejected;
+- validate the head policy separately, but do not let it broaden/disable the policy that decides whether that very PR is legal;
+- HOLD→NORMAL is accepted only as a dedicated closure: authorized governance branch, base HOLD allowlist only, no product/runtime files in the same PR.
 
 On `main` push:
 - validate the operating-mode JSON/schema/required references;
@@ -439,7 +444,7 @@ At minimum:
 
 Do **not** create these bots, team, routines, external schedules or permissions in this slice.
 
-Document exactly what the Product Owner will later need to configure in the external Grok app, role by role.
+Document exactly what the Product Owner will later need to configure in the external Grok app, role by role. All ten identities remain mandatory. Canonically state that separate Grok bot identities on the same account/environment are **not** security isolation boundaries (shared blast radius). The later external setup is required before HOLD lift.
 
 ## 12. Collision-safe topology
 
@@ -519,7 +524,12 @@ Test the guard with positive and negative fixtures:
 - product/runtime file during HOLD => fail;
 - unauthorized branch during HOLD => fail;
 - stale merge-authority phrase => fail;
-- normal main push validation => pass.
+- normal main push validation => pass;
+- head changes `mode` to `NORMAL` while base is HOLD => rejected unless it is the dedicated closure shape;
+- head broadens the allowlist or authorized branches => cannot authorize otherwise forbidden files/branches in that same PR;
+- forbidden→allowed rename => fail;
+- allowed→forbidden rename => fail;
+- forbidden deletion => fail.
 
 No DB/Auth/Production write.
 

@@ -12,7 +12,9 @@ Jetnity nutzt mehrere spezialisierte Modelle und Agenten bewusst als **orchestri
 
 > **Cursor baut. Spezialisten prüfen parallel read-only. Grok challengt adversarial. Der ChatGPT / Technical Lead konsolidiert, entscheidet, integriert und mergt. Der Product Owner entscheidet besondere Produkt-/Business-/Production-Gates.**
 
-> **Binding correction, 18. September 2026:** `Jetnity Guardian / Grok` meint die **separate Jetnity-Guardian-App des Product Owners**, niemals einen Cursor-Agenten oder das Cursor-Modell Grok 4.6 High Fast. Wenn Guardian-Evidence benötigt wird, liefert der Technical Lead dem Product Owner einen ready-to-paste Prompt; der Product Owner startet ihn in Jetnity Guardian. `@cursor` ist kein Guardian-Trigger.
+> **Binding correction, 18. September 2026:** `Jetnity Guardian / Grok` meint die **separate Jetnity-Guardian-App des Product Owners**, niemals einen Cursor-Agenten oder das Cursor-Modell Grok 4.6 High Fast. `@cursor` ist kein Guardian-Trigger.
+>
+> **Binding correction, 18. September 2026 — activation:** Solange die zehn permanenten Grok-Rollen noch nicht extern eingerichtet sind, gilt für die vorhandene einzelne Guardian-App der One-off-Weg: der Technical Lead liefert bei Bedarf einen ready-to-paste Prompt; der Product Owner startet diesen One-off. Nach einmaliger Product-Owner-Autorisierung der später erforderlichen zehn Rollen und ihrer freigegebenen read-only Routinen braucht ein gewöhnlicher wiederkehrender Lauf **keinen neuen Product-Owner-Prompt**. Besondere Product-Owner-Gates bleiben Product-Owner-kontrolliert. Daily/weekly Automatisierung bleibt no-noise und erzeugt keine Work-/Merge-/Production-Autorität.
 
 Dieses Dokument ist für alle zukünftigen Technical-Lead-Chats, Cursor-Agenten, Guardian-/Grok-Läufe und weitere Jetnity-Spezialisten verbindlich, sobald es kanonisch in `main` integriert ist.
 
@@ -75,7 +77,7 @@ Nicht behaupten, eine Cursor-Fähigkeit existiere, wenn sie in der laufenden Ses
 
 Grok arbeitet als unabhängige Gegeninstanz gemäß `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
 
-**Identität:** Der Guardian ist die separate Jetnity-Guardian-App. Er ist kein Cursor-Agent und keine Cursor-Session. Der Technical Lead erzeugt bei Bedarf den vollständigen Guardian-Prompt; der Product Owner startet den Lauf in der separaten App.
+**Identität:** Der Guardian ist die separate Jetnity-Guardian-App. Er ist kein Cursor-Agent und keine Cursor-Session. Solange die zehn Rollen noch nicht extern eingerichtet sind, erzeugt der Technical Lead bei Bedarf den vollständigen One-off-Guardian-Prompt; der Product Owner startet diesen One-off. Nach einmaliger Product-Owner-Autorisierung der freigegebenen read-only Routinen braucht ein gewöhnlicher wiederkehrender Lauf keinen neuen Product-Owner-Prompt.
 
 Kernaufgaben:
 
@@ -338,9 +340,9 @@ Der Guardian darf **nicht** selbstständig Cursor-Änderungen starten oder eine 
 
 Verbindlicher Ablauf:
 
-1. Technical Lead liefert dem Product Owner bei Bedarf einen vollständigen Guardian-Prompt.
-2. Product Owner startet ihn in der separaten Jetnity-Guardian-App.
-3. Guardian postet Evidence/Findings.
+1. Technical Lead liefert dem Product Owner bei Bedarf einen vollständigen One-off-Guardian-Prompt, solange die zehn-Rollen-Einrichtung noch fehlt.
+2. Product Owner startet diesen One-off in der separaten Jetnity-Guardian-App, oder hat die wiederkehrenden read-only Routinen einmalig autorisiert.
+3. Guardian postet Evidence/Findings. Gewöhnliche autorisierte Routinen brauchen danach keinen neuen Product-Owner-Start.
 4. Technical Lead verifiziert und konsolidiert.
 5. Technical Lead gibt Cursor ein einziges verbindliches Fix-Paket.
 6. Cursor implementiert.
@@ -378,7 +380,7 @@ Routinen sind wiederverwendbare Abläufe, keine Chat-Gewohnheiten. Skills/Tools 
 | Same-session CHANGES REQUIRED | TL finding on a head | Same logical writer | Head-bound findings; only those fixes | New head invalidates old gates |
 | Exact-head review | Material handoff or new head | TL; optional lanes | Independent read of full diff + exact-head CI/Vercel/threads | PASS is TL-only |
 | Main-drift / rebase / regate | Behind>0 or base moved | TL decides; same writer if rebase/fix | Reassess merge-base; new exact-head gates | Old CI/Preview is historical |
-| High-risk Guardian trigger | Auth/RLS/Truth/DB/cost/release risk | TL prepares prompt; PO runs Guardian app | Read-only challenge report in Evidence Bus | Not a TL PASS; `@cursor` ≠ Guardian |
+| High-risk Guardian trigger | Auth/RLS/Truth/DB/cost/release risk | TL prepares one-off prompt while ten-role setup is absent; after one-time PO authorization, approved read-only routines run without a new PO prompt | Read-only challenge report in Evidence Bus | Not a TL PASS; `@cursor` ≠ Guardian |
 | Post-merge verification | After TL merge | TL | Exact `main` CI/Production/docs; then next slice only if mode allows | Preview PASS ≠ Production evidence |
 | Continuity stale-doc audit | After merge, HOLD, or contradiction | Release/Continuity lane or TL | Report docs-vs-live; TL or tasked writer corrects | Reviewer does not overwrite docs unless tasked |
 

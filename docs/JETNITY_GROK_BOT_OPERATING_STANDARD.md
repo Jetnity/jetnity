@@ -436,12 +436,22 @@ Nur der ChatGPT / Technical Lead darf:
 
 ## 13a. Future specialized Grok-app setup pack — documentation only
 
-This section is the **canonical ten-role target state**. It supersedes any earlier reduced five-role roster. It does **not** create bots, a Grok team/workspace, schedules, permissions, or connections.
+This section is the **canonical ten-role target state**. It supersedes any earlier reduced five-role roster. This repository slice does **not** create bots, a Grok team/workspace, schedules, permissions, or connections. All ten identities remain **mandatory** for the later external setup. Do not treat their creation as optional.
 
 Current truth:
 - one Product-Owner Jetnity-Guardian app already exists as the independent challenge/evidence layer;
-- the other nine target identities are **not** created;
-- no new GitHub app, installation, team, or token is granted by this document.
+- the other nine target identities are **not** created in this slice;
+- no new GitHub app, installation, team, or token is granted by this document;
+- later external setup of all ten roles, their approved read-only routines/schedules, the Evidence-Bus path, and an end-to-end verification is **required before PRODUCT DEVELOPMENT HOLD is lifted**, unless a real platform limitation is escalated to the Product Owner.
+
+### Shared-environment security rule
+
+Separate Grok bot identities are **not** assumed to be security isolation boundaries. Treat shared browser, login, files and computer context as a **shared blast radius** unless the platform later provides a verified stronger isolation guarantee. Therefore:
+
+- do not place Production-admin credentials, service-role keys, payment/admin secrets or broad write tokens in that shared environment;
+- bot-specific role names do not make credentials safely isolated;
+- connector and credential decisions are made for the shared blast radius as well as the logical role;
+- least privilege still applies role-by-role where the platform actually enforces it.
 
 Shared rules for every future role:
 - observer-first / least privilege;
@@ -492,7 +502,7 @@ Engineering/review lanes in the Multi-Agent Operating System stay separate. They
 | Evidence Bus | PR/issue comment when configured. |
 | Allowed | Read, challenge, comment. |
 | Forbidden | Write code, Ready/Merge, Production, secrets, paid calls, `@cursor` emulation. |
-| Approval boundaries | Runs only when PO starts the current TL prompt. |
+| Approval boundaries | Current existing-app path: TL prepares the exact-head prompt; PO starts that one-off until the ten-role setup exists. After one-time PO authorization of approved read-only routines, ordinary recurring Guardian/routine runs do not need a new PO prompt. Special PO gates remain PO-controlled. |
 | Escalation | P0/P1 immediately to TL. |
 | No-signal | `no blocker observed` / `NO MATERIAL CHANGE` if exact-head evidence is complete and clean. |
 
@@ -666,7 +676,7 @@ Engineering/review lanes in the Multi-Agent Operating System stay separate. They
 
 ### Future automation / routine catalog
 
-External schedules are **not** created in this slice. This is the target catalog the Chief of Staff later consolidates.
+External schedules are **not** created in this repository slice. They are nevertheless a **required later external setup** before HOLD lift: after one-time Product-Owner authorization, approved read-only recurring routines run on cadence without a new Product-Owner prompt each ordinary run. Daily/weekly automation remains no-noise and cannot create work, merge or Production authority. This is the target catalog the Chief of Staff later consolidates.
 
 | Routine | Owner role(s) | Trigger / cadence | Evidence sources | Dedupe / collision | Materiality | Expected output | No-signal | Escalation | Gate |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -723,37 +733,44 @@ Chief of Staff later produces this. Not generated in this slice.
 
 ### What the Product Owner will later need to configure in the external Grok app
 
-Do this later, not in this slice, role by role:
+Do this later, not in this slice, but it is **required before HOLD lift**. Set up **all ten** identities. Do not decide that nine of them are optional.
 
-1. Decide whether any additional identity beyond the existing Guardian app is actually needed now; do not pre-create all ten.
-2. If created, name the bot exactly as in the roster (`Jetnity Chief of Staff`, `Jetnity Market & Traveller Intelligence`, …).
-3. Install least privilege against this repository:
+1. Name each bot exactly as in the roster (`Jetnity Chief of Staff`, existing `Jetnity Guardian`, `Jetnity Market & Traveller Intelligence`, `Jetnity Provider & Commercial Intelligence`, `Jetnity Travel Truth & Regulation Intelligence`, `Jetnity Product & UX Explorer`, `Jetnity Growth & Discoverability`, `Jetnity Analytics & Experimentation`, `Jetnity FinOps & Reliability`, `Jetnity Security & Privacy Red Team`).
+2. Install least privilege against this repository:
    - Contents **read**; Metadata **read**; Pull requests **read**; Issues **read**;
    - Actions **read** only for Guardian / Chief of Staff / Release-adjacent roles;
    - comment write only if that role must post Evidence-Bus findings;
    - no Contents write, Administration, Secrets, Workflows write, Environments, merge, org-admin.
-4. Keep Vercel, Supabase, billing and provider systems disconnected until a separate Product-Owner connection decision exists for that exact role.
-5. Confirm the bot cannot mark Ready, merge, deploy, or change branch protection.
-6. Do not connect Production-admin capabilities merely because this target state is documented.
-7. Store no long-lived write tokens in the repository.
-8. Schedules for daily/weekly briefs are a later PO operations decision; documenting the catalog does not start them.
+3. Decide connectors for the **shared blast radius**, not only the logical role. Do not place Production-admin credentials, service-role keys, payment/admin secrets or broad write tokens in the shared Grok account/environment. Bot-specific names do not isolate those secrets.
+4. Keep Vercel, Supabase, billing and provider systems disconnected until a separate Product-Owner connection decision exists for that exact role **and** for the shared environment.
+5. Confirm no bot can mark Ready, merge, deploy, or change branch protection.
+6. Authorize approved read-only recurring routines/schedules and the Evidence-Bus path **once**. Ordinary later runs must not require a new Product-Owner prompt.
+7. Verify end-to-end that a no-signal daily/weekly run completes without creating work, merge or Production authority.
+8. Store no long-lived write tokens in the repository.
+9. If a real platform limitation blocks any of the ten roles or their approved schedules, escalate that limitation to the Product Owner instead of shrinking the roster.
 
-Until that Product-Owner action happens, Guardian evidence continues through the existing single Jetnity-Guardian app and the Technical-Lead prompt path. `@cursor` still never substitutes for Guardian or for any of the nine future identities.
+Until that later external setup exists, high-risk exact-head Guardian evidence continues through the existing single Jetnity-Guardian app and the Technical-Lead prompt path. `@cursor` still never substitutes for Guardian or for any of the other nine identities.
 
 ## 14. Aktivierung und Rechteerweiterung
 
-Die Repository-Integration dieses Standards startet keinen Guardian-Lauf.
+Die Repository-Integration dieses Standards startet keinen Guardian-Lauf und erzeugt keine externen Bots.
 
-Die Rolle und ihre Prüfverantwortung sind dauerhaft definiert. Der Technical Lead entscheidet anhand des Risikos, **ob** Guardian-Evidence benötigt wird und erstellt dann den vollständigen Prompt. **Nur der Product Owner startet diesen Prompt in der separaten Jetnity-Guardian-App.** Der Technical Lead startet oder emuliert den Guardian nicht selbst.
+Die zehn Rollen und ihre Prüfverantwortung sind dauerhaft definiert. Ihre spätere externe Einrichtung ist **pflicht** vor HOLD-Ende, nicht optional.
 
-Jeder gestartete Lauf bleibt read-only / observer-first. Eine Rechteerweiterung entsteht nicht durch den Prompt.
+Einmalige Product-Owner-Einrichtung/Autorisierung darf nötig sein. Danach laufen **freigegebene read-only Routinen** in ihrem Takt, ohne dass der Product Owner jeden gewöhnlichen Lauf neu starten muss. Besondere Product-Owner-Gates bleiben Product-Owner-kontrolliert. Daily/weekly Automatisierung bleibt no-noise und darf keine Arbeit, keinen Merge und keine Production-Autorität erzeugen.
 
-Standard ohne Product-Owner-Start:
+Solange die Zehn-Rollen-Einrichtung noch nicht existiert, gilt für die vorhandene einzelne Jetnity-Guardian-App der bisherige One-off-Weg: der Technical Lead entscheidet anhand des Risikos, **ob** Exact-Head-Guardian-Evidence benötigt wird, und erstellt den vollständigen Prompt; der Product Owner startet diesen One-off in der separaten App. Der Technical Lead startet oder emuliert den Guardian nicht selbst.
+
+Jeder Lauf bleibt read-only / observer-first. Eine Rechteerweiterung entsteht nicht durch den Prompt und nicht durch eine Rollenbezeichnung.
+
+Standard, solange die einmalige PO-Autorisierung der wiederkehrenden Routinen fehlt:
 
 > **READ-ONLY / OBSERVER**  
-> **WAITING FOR PRODUCT-OWNER RUN IN JETNITY GUARDIAN**
+> **WAITING FOR PRODUCT-OWNER AUTHORIZATION / RUN IN JETNITY GUARDIAN**
 
-Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich.
+Nach der einmaligen Autorisierung gilt für gewöhnliche freigegebene read-only Routinen nicht mehr „neuer PO-Start bei jedem Lauf“. Special Gates bleiben PO-kontrolliert.
+
+Eine spätere Rechteerweiterung wäre eine neue ausdrückliche Product-Owner-Governance-Entscheidung und muss zuerst kanonisch dokumentiert werden. Least privilege und read-only bleiben bis dahin verbindlich. Shared-environment blast radius bleibt verbindlich.
 
 ## 15. Verbindlicher Einsatz für zukünftige Chats
 

@@ -2,11 +2,15 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import {
   HOLD_MODE,
+  NORMAL_MODE,
   STALE_MERGE_AUTHORITY_PHRASES,
   classifyChangedFiles,
+  filesAuthorizedOnlyByHead,
   findStaleMergeAuthorityPhrases,
   isAuthorizedBranch,
+  isDedicatedHoldClosure,
   loadOperatingModeFromText,
+  parseNameStatus,
   pathMatchesPattern,
   runGuard,
   validateOperatingModeSchema,
@@ -38,8 +42,11 @@ const validMode = {
   },
   exitCondition: {
     requiresIntegratedAndIndependentlyVerified: true,
-    description: 'OS integrated + independently verified',
+    requiresTenRoleExternalSetupAndVerification: true,
+    samePrCannotMixModeChangeAndProductRuntime: true,
+    description: 'OS integrated + independently verified + ten-role external setup',
     modeChangeAuthority: 'technical_lead_dedicated_closure_after_evidence',
+    transitionContract: 'dedicated_hold_closure_only',
   },
   specialProductOwnerGatesRemainInForce: true,
   authorizedBranchClasses: ['governance/full-potential-ai-operating-system-'],
@@ -53,6 +60,14 @@ const validMode = {
   forbiddenPathPrefixesDuringHold: ['app/', 'lib/', 'supabase/'],
 }
 
+const authorizedBranch = 'governance/full-potential-ai-operating-system-1'
+const allowedFiles = [
+  '.jetnity/operating-mode.json',
+  '.cursor/rules/jetnity-operating-mode.mdc',
+  'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_TASK_2026-09-18.md',
+  'scripts/operating-mode-guard.mjs',
+]
+
 describe('operating-mode guard fixtures', () => {
   test('valid HOLD schema passes', () => {
     assert.deepEqual(validateOperatingModeSchema(validMode), [])
@@ -60,29 +75,41 @@ describe('operating-mode guard fixtures', () => {
     assert.equal(parsed.mode, HOLD_MODE)
   })
 
+  test('schema without dedicated HOLD-exit contract fields fails', () => {
+    const incomplete = structuredClone(validMode)
+    delete incomplete.exitCondition.requiresTenRoleExternalSetupAndVerification
+    delete incomplete.exitCondition.samePrCannotMixModeChangeAndProductRuntime
+    delete incomplete.exitCondition.transitionContract
+    const errors = validateOperatingModeSchema(incomplete)
+    assert.ok(errors.some((error) => error.includes('requiresTenRoleExternalSetupAndVerification')))
+    assert.ok(errors.some((error) => error.includes('samePrCannotMixModeChangeAndProductRuntime')))
+    assert.ok(errors.some((error) => error.includes('transitionContract')))
+  })
+
   test('governance branch + allowed files => pass', () => {
     const result = runGuard({
       mode: validMode,
+      enforcementMode: validMode,
+      headMode: validMode,
       event: 'pull_request',
-      branch: 'governance/full-potential-ai-operating-system-1',
-      changedFiles: [
-        '.jetnity/operating-mode.json',
-        '.cursor/rules/jetnity-operating-mode.mdc',
-        'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_TASK_2026-09-18.md',
-        'scripts/operating-mode-guard.mjs',
-      ],
+      branch: authorizedBranch,
+      changedFiles: allowedFiles,
     })
     assert.equal(result.ok, true)
     assert.equal(result.checks.holdBranch, true)
     assert.equal(result.checks.holdFiles, true)
+    assert.equal(result.checks.holdTransition, true)
+    assert.equal(result.checks.headCannotBroaden, true)
     assert.equal(result.checks.mainPushSkipsDiff, false)
   })
 
   test('product/runtime file during HOLD => fail', () => {
     const result = runGuard({
       mode: validMode,
+      enforcementMode: validMode,
+      headMode: validMode,
       event: 'pull_request',
-      branch: 'governance/full-potential-ai-operating-system-1',
+      branch: authorizedBranch,
       changedFiles: ['app/page.tsx', 'lib/flights/suche.ts'],
     })
     assert.equal(result.ok, false)
@@ -94,6 +121,8 @@ describe('operating-mode guard fixtures', () => {
   test('unauthorized branch during HOLD => fail', () => {
     const result = runGuard({
       mode: validMode,
+      enforcementMode: validMode,
+      headMode: validMode,
       event: 'pull_request',
       branch: 'feat/trip-builder-polish',
       changedFiles: ['.jetnity/operating-mode.json'],
@@ -159,5 +188,184 @@ describe('operating-mode guard fixtures', () => {
     )
     assert.deepEqual(classified.allowed, ['scripts/operating-mode-guard.mjs'])
     assert.deepEqual(classified.rejected, ['supabase/config.toml'])
+  })
+
+  test('head NORMAL while base HOLD without dedicated closure shape => fail', () => {
+    const headMode = { ...validMode, mode: NORMAL_MODE, normalProductSlices: 'allowed' }
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode,
+      event: 'pull_request',
+      branch: authorizedBranch,
+      changedFiles: [...allowedFiles, 'app/page.tsx'],
+    })
+    assert.equal(result.ok, false)
+    assert.equal(result.checks.holdFiles, false)
+    assert.equal(result.checks.holdTransition, false)
+    assert.equal(
+      isDedicatedHoldClosure({
+        enforcementMode: validMode,
+        headMode,
+        branch: authorizedBranch,
+        changedFiles: [...allowedFiles, 'app/page.tsx'],
+      }),
+      false,
+    )
+    assert.match(result.errors.join('\n'), /HOLD→NORMAL/)
+    assert.match(result.errors.join('\n'), /app\/page\.tsx/)
+  })
+
+  test('head NORMAL while base HOLD with dedicated closure shape => pass', () => {
+    const headMode = { ...validMode, mode: NORMAL_MODE, normalProductSlices: 'allowed' }
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode,
+      event: 'pull_request',
+      branch: authorizedBranch,
+      changedFiles: allowedFiles,
+    })
+    assert.equal(result.ok, true)
+    assert.equal(result.checks.holdTransition, true)
+    assert.equal(result.checks.holdFiles, true)
+    assert.equal(
+      isDedicatedHoldClosure({
+        enforcementMode: validMode,
+        headMode,
+        branch: authorizedBranch,
+        changedFiles: allowedFiles,
+      }),
+      true,
+    )
+  })
+
+  test('head-broadened allowlist cannot authorize otherwise forbidden files', () => {
+    const headMode = {
+      ...validMode,
+      allowedPathPatterns: [...validMode.allowedPathPatterns, 'app/**', '**'],
+      forbiddenPathPrefixesDuringHold: [],
+    }
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode,
+      event: 'pull_request',
+      branch: authorizedBranch,
+      changedFiles: [...allowedFiles, 'app/page.tsx'],
+    })
+    assert.equal(result.ok, false)
+    assert.equal(result.checks.holdFiles, false)
+    assert.equal(result.checks.headCannotBroaden, false)
+    assert.deepEqual(
+      filesAuthorizedOnlyByHead(['app/page.tsx'], validMode, headMode),
+      ['app/page.tsx'],
+    )
+    assert.match(result.errors.join('\n'), /cannot authorize files forbidden by base\/main/)
+  })
+
+  test('head-broadened authorized branches cannot authorize an otherwise forbidden branch', () => {
+    const headMode = {
+      ...validMode,
+      authorizedExactBranches: [...validMode.authorizedExactBranches, 'feat/trip-builder-polish'],
+      authorizedBranchClasses: [...validMode.authorizedBranchClasses, 'feat/'],
+    }
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode,
+      event: 'pull_request',
+      branch: 'feat/trip-builder-polish',
+      changedFiles: allowedFiles,
+    })
+    assert.equal(result.ok, false)
+    assert.equal(result.checks.holdBranch, false)
+    assert.equal(isAuthorizedBranch('feat/trip-builder-polish', validMode), false)
+    assert.equal(isAuthorizedBranch('feat/trip-builder-polish', headMode), true)
+  })
+
+  test('parseNameStatus evaluates rename and copy source plus destination', () => {
+    const parsed = parseNameStatus(
+      [
+        'R100\tapp/page.tsx\tdocs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_MOVED.md',
+        'C080\tlib/flights/suche.ts\tdocs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_COPIED.md',
+        'D\tsupabase/config.toml',
+        'M\t.jetnity/operating-mode.json',
+      ].join('\n'),
+    )
+    assert.deepEqual(parsed.paths, [
+      'app/page.tsx',
+      'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_MOVED.md',
+      'lib/flights/suche.ts',
+      'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_COPIED.md',
+      'supabase/config.toml',
+      '.jetnity/operating-mode.json',
+    ])
+    assert.equal(parsed.entries[0].kind, 'rename')
+    assert.equal(parsed.entries[1].kind, 'copy')
+    assert.equal(parsed.entries[2].kind, 'delete')
+  })
+
+  test('forbidden→allowed rename during HOLD => fail', () => {
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode: validMode,
+      event: 'pull_request',
+      branch: authorizedBranch,
+      changeEntries: [
+        {
+          status: 'R100',
+          kind: 'rename',
+          source: 'app/page.tsx',
+          dest: 'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_MOVED.md',
+        },
+      ],
+    })
+    assert.equal(result.ok, false)
+    assert.equal(result.checks.holdFiles, false)
+    assert.match(result.errors.join('\n'), /app\/page\.tsx/)
+  })
+
+  test('allowed→forbidden rename during HOLD => fail', () => {
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode: validMode,
+      event: 'pull_request',
+      branch: authorizedBranch,
+      changeEntries: [
+        {
+          status: 'R100',
+          kind: 'rename',
+          source: 'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_TASK_2026-09-18.md',
+          dest: 'app/page.tsx',
+        },
+      ],
+    })
+    assert.equal(result.ok, false)
+    assert.equal(result.checks.holdFiles, false)
+    assert.match(result.errors.join('\n'), /app\/page\.tsx/)
+  })
+
+  test('forbidden deletion during HOLD => fail', () => {
+    const result = runGuard({
+      mode: validMode,
+      enforcementMode: validMode,
+      headMode: validMode,
+      event: 'pull_request',
+      branch: authorizedBranch,
+      changeEntries: [
+        {
+          status: 'D',
+          kind: 'delete',
+          source: 'lib/flights/suche.ts',
+          dest: null,
+        },
+      ],
+    })
+    assert.equal(result.ok, false)
+    assert.equal(result.checks.holdFiles, false)
+    assert.match(result.errors.join('\n'), /lib\/flights\/suche\.ts/)
   })
 })

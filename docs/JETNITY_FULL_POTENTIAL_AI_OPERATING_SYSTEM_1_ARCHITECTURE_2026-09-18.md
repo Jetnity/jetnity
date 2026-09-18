@@ -38,7 +38,7 @@ This slice extends the existing Technical-Lead, Multi-Agent, Slice-Planning and 
 
 Two layers, not one collapsed roster:
 
-1. **Permanent Grok Intelligence & Assurance roles** (canonical target of ten, documentation only): Chief of Staff, Guardian, Market & Traveller Intelligence, Provider & Commercial Intelligence, Travel Truth & Regulation Intelligence, Product & UX Explorer, Growth & Discoverability, Analytics & Experimentation, FinOps & Reliability, Security & Privacy Red Team. Defined in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. Responsibilities must not be silently collapsed into five generalists.
+1. **Permanent Grok Intelligence & Assurance roles** (canonical target of ten; this slice documents them only and does not create bots; later external setup of all ten is required before HOLD lift): Chief of Staff, Guardian, Market & Traveller Intelligence, Provider & Commercial Intelligence, Travel Truth & Regulation Intelligence, Product & UX Explorer, Growth & Discoverability, Analytics & Experimentation, FinOps & Reliability, Security & Privacy Red Team. Defined in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. Responsibilities must not be silently collapsed into five generalists.
 2. **Engineering/review lanes** (scope-dependent, not 1:1 with the ten bots): Builder, Codebase Explorer, Architecture & Truth, Security & Privacy review, DB / RLS specialist, QA / Regression, UX / Accessibility, Performance, Cost / Quota, Release / Continuity, Documentation / Continuity. Canonical table: `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` §2a.
 
 Summary:
@@ -81,9 +81,9 @@ Two catalogs:
 10. post-merge verification;
 11. continuity stale-doc audit.
 
-**Future Grok automation catalog** — documented only, not scheduled: Daily Repository/CI Pulse; Market Radar; Traveller Pain-Point Radar; Provider/Commercial Change Radar; Travel Truth/Regulation Radar; Product/UX Synthetic Journey Review; Growth/Discoverability Review; Analytics/Experiment Review; FinOps/Reliability Watch; Security/Privacy Adversarial Review; Weekly Strategic Opportunity Synthesis; Milestone Whole-Jetnity Audit; PR/CI/Release triggered reviews.
+**Future Grok automation catalog** — documented in this repository slice; not created here: Daily Repository/CI Pulse; Market Radar; Traveller Pain-Point Radar; Provider/Commercial Change Radar; Travel Truth/Regulation Radar; Product/UX Synthetic Journey Review; Growth/Discoverability Review; Analytics/Experiment Review; FinOps/Reliability Watch; Security/Privacy Adversarial Review; Weekly Strategic Opportunity Synthesis; Milestone Whole-Jetnity Audit; PR/CI/Release triggered reviews.
 
-Chief of Staff later consolidates those into **JETNITY DAILY INTELLIGENCE BRIEF** and **JETNITY WEEKLY STRATEGIC BRIEF**. Schemas live in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. This slice does not generate briefs or create schedules.
+Chief of Staff later consolidates those into **JETNITY DAILY INTELLIGENCE BRIEF** and **JETNITY WEEKLY STRATEGIC BRIEF**. Schemas live in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. This slice does not generate briefs or create external schedules. The later external setup of all ten roles plus their approved read-only routines/schedules is **required before HOLD lift**.
 
 Routines may use connected skills/tools only when those tools are actually present. This slice does not claim browser, billing, Supabase-write or external Grok-admin capability.
 
@@ -105,7 +105,9 @@ Every material handoff must include exact base/head SHAs, agent name/generation,
 
 Behaviour:
 
-- **PR + `AI_OS_BUILD_HOLD`:** fail closed on unauthorized branch class; fail closed if any changed path is outside the governance/continuity/enforcement allowlist; `governance/full-potential-ai-operating-system-1` is authorized; `app/`, `lib/`, `supabase/` and other runtime prefixes are rejected unless later explicitly allowlisted, which this foundation does not do.
+- **PR enforcement is anchored to the base/main policy**, not the untrusted PR-head file. If `main` has no operating-mode JSON yet, a hardcoded bootstrap HOLD policy is used. The head policy is validated separately and cannot broaden or disable the check that decides whether that same PR is legal.
+- **PR + base `AI_OS_BUILD_HOLD`:** fail closed on unauthorized branch class; fail closed if any added, modified, renamed, copied or deleted path is outside the **base** governance/continuity/enforcement allowlist; `governance/full-potential-ai-operating-system-1` is authorized; `app/`, `lib/`, `supabase/` and other runtime prefixes are rejected. Rename/copy inspection uses `git diff --name-status -M -C` and evaluates **both source and destination**. Deletion of a forbidden runtime/product path also fails.
+- **HOLD→NORMAL** is accepted only as a **dedicated closure**: authorized governance branch, every changed path still allowed by the **base** HOLD allowlist, and no product/runtime path in the same PR. A normal/meta PR cannot flip to `NORMAL` and include product/runtime changes together.
 - **`main` push:** validate JSON/schema/required references and canonical file presence; scan Always-Apply Cursor rules for the two stale merge-authority phrases; do **not** run the PR-diff hold check.
 - **Always:** fail if those stale phrases reappear in `.cursor/rules/*`.
 
@@ -117,23 +119,31 @@ Mode may leave `AI_OS_BUILD_HOLD` only when **all** are true:
 
 1. this foundation is merged to `main`;
 2. post-merge CI and relevant Vercel Production evidence exist on the exact merge SHA;
-3. an independent Technical-Lead PASS recorded the operating system as integrated;
-4. a **dedicated** Technical-Lead closure updates `.jetnity/operating-mode.json` and the startup surfaces.
+3. an independent Technical-Lead PASS recorded the repository operating system as integrated;
+4. the later **external setup of all ten permanent Grok Intelligence & Assurance roles** exists, including their approved read-only routines/schedules, Evidence-Bus path, and an end-to-end verification — unless a real platform limitation is found and explicitly escalated to the Product Owner;
+5. a **dedicated** Technical-Lead closure updates `.jetnity/operating-mode.json` to `NORMAL` and the startup surfaces, **without** product/runtime files in that same PR.
+
+This repository slice still does not create external bots, grant permissions, or start schedules. Those later external actions are nevertheless **mandatory before HOLD lift**, not an optional afterthought.
+
+One-time Product-Owner setup/authorization may be required. After that authorization, approved read-only recurring routines must **not** need a new manual Product-Owner prompt on every ordinary run. Special Product-Owner gates remain Product-Owner-controlled. Daily/weekly automation remains no-noise and cannot create work, merge, or Production authority.
 
 Parked PR #487 is not unparked by this exit. Unparking it is a separate TL decision after HOLD lift.
 
 ## 8. Future Grok-app setup checklist
 
-Documentation only. Canonical ten-role pack: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a.
+This repository slice documents the pack only and must not create bots. Canonical ten-role pack: `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a.
 
-Product Owner later, not this slice, role by role:
+All ten permanent roles are **mandatory target identities**. Do not silently make their creation optional. Product Owner later, not this slice, must set up **every** role before HOLD lift:
 
-1. decide whether any identity beyond the existing Guardian app is actually needed now; do not pre-create all ten;
-2. if created, name it exactly (`Jetnity Chief of Staff`, `Jetnity Market & Traveller Intelligence`, `Jetnity Provider & Commercial Intelligence`, `Jetnity Travel Truth & Regulation Intelligence`, `Jetnity Product & UX Explorer`, `Jetnity Growth & Discoverability`, `Jetnity Analytics & Experimentation`, `Jetnity FinOps & Reliability`, `Jetnity Security & Privacy Red Team`);
-3. install least-privilege GitHub permissions (read + optional comment write; never contents write, admin, secrets, merge);
-4. keep Vercel/Supabase/billing/Production-admin disconnected until a separate connection decision for that exact role;
-5. do not start daily/weekly schedules merely because the catalog exists;
-6. never treat `@cursor` as Guardian or as any future Grok identity.
+1. create or confirm each identity by its exact name (`Jetnity Chief of Staff`, existing `Jetnity Guardian`, `Jetnity Market & Traveller Intelligence`, `Jetnity Provider & Commercial Intelligence`, `Jetnity Travel Truth & Regulation Intelligence`, `Jetnity Product & UX Explorer`, `Jetnity Growth & Discoverability`, `Jetnity Analytics & Experimentation`, `Jetnity FinOps & Reliability`, `Jetnity Security & Privacy Red Team`);
+2. install least-privilege GitHub permissions (read + optional comment write; never contents write, admin, secrets, merge);
+3. keep Vercel/Supabase/billing/Production-admin and any service-role, payment/admin or broad write tokens **out of the shared Grok account/environment**;
+4. treat separate Grok bot identities as **not** security isolation boundaries — shared browser/login/files/computer context is one blast radius unless the platform later proves stronger isolation;
+5. authorize approved read-only recurring routines/schedules and the Evidence-Bus path once; ordinary later runs do not require a fresh Product-Owner prompt;
+6. verify end-to-end that a no-signal run can complete without creating work/merge/Production authority;
+7. never treat `@cursor` as Guardian or as any of the other nine identities.
+
+If a real platform limitation prevents any of the ten roles or their approved read-only schedules, escalate that limitation to the Product Owner. Do not silently shrink the roster.
 
 ## 9. Remaining OS meta-slices — exact dependency order
 
@@ -142,12 +152,12 @@ Cursor must **not** start these.
 | Order | Slice | Dependency | Parallelism after this foundation is on `main` | Owner |
 | --- | --- | --- | --- | --- |
 | 0 | **This foundation** — shared governance + mechanical HOLD | none | SINGLE_AGENT now | Cursor writer of #489, then TL review |
-| 1 | Independent Technical-Lead exact-head review + optional Guardian prompt | this PR head | serial | Technical Lead; PO runs Guardian if requested |
+| 1 | Independent Technical-Lead exact-head review | this PR head | serial | Technical Lead |
 | 2 | Ready/Merge + post-merge verification of this foundation | TL PASS | serial | Technical Lead only |
 | 3 | Optional Evidence-Bus prompt/template pack | foundation on `main` | may be parallel with 4 if file ownership is disjoint from `operating-mode.json` / CI guard | later tasked writer |
 | 4 | Optional routine-prompt pack for startup/review/regate | foundation on `main` | may be parallel with 3 if disjoint | later tasked writer |
-| 5 | External specialized Grok-app creation + permissions | PO decision; docs already exist | not a Cursor writer slice | Product Owner only |
-| 6 | Dedicated HOLD-exit / mode-change closure | OS integrated + independently verified | serial; owns `.jetnity/operating-mode.json` | Technical Lead |
+| 5 | **Required before HOLD lift:** external setup of all ten Grok roles + approved read-only routines/schedules + Evidence-Bus path + end-to-end verification | foundation on `main` + one-time PO authorization | not a Cursor writer slice | Product Owner; escalate only a real platform limitation |
+| 6 | Dedicated HOLD-exit / mode-change closure | OS integrated + independently verified + step 5 complete or PO-accepted limitation | serial; owns `.jetnity/operating-mode.json`; **no product/runtime in the same PR** | Technical Lead |
 | 7 | Decision on parked PR #487 | HOLD lifted or explicit PO/TL unpark | serial, separate branch | Technical Lead; do not start Writer 1 from this slice |
 
 No normal product/runtime slice appears in this order while HOLD is active.

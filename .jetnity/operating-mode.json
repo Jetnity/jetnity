@@ -39,8 +39,11 @@
   },
   "exitCondition": {
     "requiresIntegratedAndIndependentlyVerified": true,
-    "description": "Full-Potential AI Operating System integrated + independently verified; a dedicated Technical-Lead closure changes mode only after that evidence exists.",
-    "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence"
+    "requiresTenRoleExternalSetupAndVerification": true,
+    "samePrCannotMixModeChangeAndProductRuntime": true,
+    "description": "HOLD lifts only after this foundation is merged, independently verified, and the later external setup of all ten Grok Intelligence & Assurance roles plus approved read-only routines/schedules, Evidence-Bus path and end-to-end verification exists — unless a real platform limitation is escalated to the Product Owner. A dedicated Technical-Lead closure may then change mode to NORMAL. That closure cannot include product/runtime files in the same PR. PR enforcement is always anchored to the base/main policy, never to an untrusted PR-head policy.",
+    "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence",
+    "transitionContract": "dedicated_hold_closure_only"
   },
   "specialProductOwnerGatesRemainInForce": true,
   "authorizedBranchClasses": [

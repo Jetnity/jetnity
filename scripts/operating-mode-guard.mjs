@@ -6,10 +6,11 @@
  *
  * No network, secrets, providers or paid services.
  *
- * On pull requests while mode is AI_OS_BUILD_HOLD:
+ * On pull requests while the *base/main* policy is AI_OS_BUILD_HOLD:
  *   fail closed for a non-authorized branch class;
- *   fail closed if changed files exceed the governance/continuity/enforcement
- *   allowlist.
+ *   fail closed if any changed, renamed, copied or deleted path exceeds the
+ *   base governance/continuity/enforcement allowlist;
+ *   do not let the untrusted PR-head policy broaden or disable that check.
  *
  * On main push:
  *   validate JSON/schema/required references and governance consistency;
@@ -24,7 +25,8 @@ import { fileURLToPath } from 'node:url'
 
 export const OPERATING_MODE_PATH = '.jetnity/operating-mode.json'
 export const HOLD_MODE = 'AI_OS_BUILD_HOLD'
-export const KNOWN_MODES = Object.freeze([HOLD_MODE, 'NORMAL'])
+export const NORMAL_MODE = 'NORMAL'
+export const KNOWN_MODES = Object.freeze([HOLD_MODE, NORMAL_MODE])
 
 export const STALE_MERGE_AUTHORITY_PHRASES = Object.freeze([
   'Never merge without explicit current Product Owner approval',
@@ -42,6 +44,41 @@ const REQUIRED_CANONICAL_FILES = Object.freeze([
   '.cursor/rules/jetnity-expert-proactivity.mdc',
   'scripts/operating-mode-guard.mjs',
 ])
+
+export const BOOTSTRAP_HOLD_POLICY = Object.freeze({
+  schemaVersion: 1,
+  mode: HOLD_MODE,
+  enforcementRole: 'metadata_not_competing_governance',
+  normalProductSlices: 'blocked',
+  authorizedBranchClasses: ['governance/full-potential-ai-operating-system-'],
+  authorizedExactBranches: ['governance/full-potential-ai-operating-system-1'],
+  allowedPathPatterns: [
+    '.jetnity/**',
+    '.cursor/rules/**',
+    '.github/workflows/ci.yml',
+    'package.json',
+    'AGENTS.md',
+    'JETNITY_START_HERE.md',
+    'docs/ACTIVE_WORK_STATUS.md',
+    'docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md',
+    'docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md',
+    'docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md',
+    'docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md',
+    'docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md',
+    'docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_*',
+    'scripts/operating-mode-guard.mjs',
+    'scripts/operating-mode-guard.test.mjs',
+  ],
+  forbiddenPathPrefixesDuringHold: [
+    'app/',
+    'components/',
+    'lib/',
+    'hooks/',
+    'supabase/',
+    'types/',
+    'public/',
+  ],
+})
 
 export function repoRootFrom(here = fileURLToPath(import.meta.url)) {
   return dirname(dirname(here))
@@ -133,8 +170,17 @@ export function validateOperatingModeSchema(mode) {
     if (exit.requiresIntegratedAndIndependentlyVerified !== true) {
       errors.push('exitCondition.requiresIntegratedAndIndependentlyVerified must be true')
     }
+    if (exit.requiresTenRoleExternalSetupAndVerification !== true) {
+      errors.push('exitCondition.requiresTenRoleExternalSetupAndVerification must be true')
+    }
+    if (exit.samePrCannotMixModeChangeAndProductRuntime !== true) {
+      errors.push('exitCondition.samePrCannotMixModeChangeAndProductRuntime must be true')
+    }
     if (exit.modeChangeAuthority !== 'technical_lead_dedicated_closure_after_evidence') {
       errors.push('exitCondition.modeChangeAuthority must be technical_lead_dedicated_closure_after_evidence')
+    }
+    if (exit.transitionContract !== 'dedicated_hold_closure_only') {
+      errors.push('exitCondition.transitionContract must be dedicated_hold_closure_only')
     }
     if (!isNonEmptyString(exit.description)) {
       errors.push('exitCondition.description is required')
@@ -221,6 +267,45 @@ export function classifyChangedFiles(files, mode) {
   return { allowed, rejected }
 }
 
+export function parseNameStatus(output) {
+  const entries = []
+  const paths = []
+  const seen = new Set()
+  const addPath = (file) => {
+    if (!file) return
+    const normalized = file.replaceAll('\\', '/')
+    if (seen.has(normalized)) return
+    seen.add(normalized)
+    paths.push(normalized)
+  }
+  for (const line of output.split('\n')) {
+    if (!line) continue
+    const parts = line.split('\t')
+    const status = parts[0] ?? ''
+    if (status.startsWith('R') || status.startsWith('C')) {
+      const source = parts[1]
+      const dest = parts[2]
+      entries.push({
+        status,
+        kind: status.startsWith('R') ? 'rename' : 'copy',
+        source,
+        dest,
+      })
+      addPath(source)
+      addPath(dest)
+      continue
+    }
+    if (status.startsWith('D')) {
+      entries.push({ status, kind: 'delete', source: parts[1], dest: null })
+      addPath(parts[1])
+      continue
+    }
+    entries.push({ status, kind: 'change', source: null, dest: parts[1] })
+    addPath(parts[1])
+  }
+  return { entries, paths }
+}
+
 export function findStaleMergeAuthorityPhrases(fileContentsByPath) {
   const hits = []
   for (const [file, contents] of Object.entries(fileContentsByPath)) {
@@ -289,22 +374,58 @@ export function isMainPush(event, branch, env = {}) {
   return refName === 'main' || env.GITHUB_REF === 'refs/heads/main'
 }
 
+export function isDedicatedHoldClosure({ enforcementMode, headMode, branch, changedFiles }) {
+  if (!enforcementMode || enforcementMode.mode !== HOLD_MODE) return false
+  if (!headMode || headMode.mode !== NORMAL_MODE) return false
+  if (!isAuthorizedBranch(branch, enforcementMode)) return false
+  const { rejected } = classifyChangedFiles(changedFiles, enforcementMode)
+  return rejected.length === 0
+}
+
+export function filesAuthorizedOnlyByHead(changedFiles, enforcementMode, headMode) {
+  if (!headMode) return []
+  return changedFiles.filter((file) => {
+    const byBase = classifyChangedFiles([file], enforcementMode)
+    const byHead = classifyChangedFiles([file], headMode)
+    return byBase.rejected.length > 0 && byHead.allowed.length > 0
+  })
+}
+
 export function runGuard({
   mode,
+  enforcementMode,
+  headMode,
   event,
   branch,
   changedFiles = [],
+  changeEntries = [],
   staleHits = [],
   schemaErrors = [],
   missingFileErrors = [],
   env = {},
 }) {
+  const policy = enforcementMode || mode
+  const head = headMode || mode
+  const paths = changeEntries.length > 0 ? parseNameStatus(
+    changeEntries
+      .map((entry) => {
+        if (entry.kind === 'rename' || entry.kind === 'copy') {
+          return `${entry.status}\t${entry.source}\t${entry.dest}`
+        }
+        if (entry.kind === 'delete') return `${entry.status}\t${entry.source}`
+        return `${entry.status}\t${entry.dest}`
+      })
+      .join('\n'),
+  ).paths : changedFiles
+
   const errors = [...schemaErrors, ...missingFileErrors]
   const checks = {
     schema: schemaErrors.length === 0,
     stalePhrases: staleHits.length === 0,
     holdBranch: true,
     holdFiles: true,
+    holdTransition: true,
+    headCannotBroaden: true,
     mainPushSkipsDiff: false,
   }
 
@@ -319,22 +440,43 @@ export function runGuard({
     return { ok: errors.length === 0, errors, checks }
   }
 
-  if (mode.mode === HOLD_MODE) {
-    if (!isAuthorizedBranch(branch, mode)) {
+  if (policy.mode === HOLD_MODE) {
+    if (!isAuthorizedBranch(branch, policy)) {
       checks.holdBranch = false
       errors.push(
         `AI_OS_BUILD_HOLD rejects unauthorized branch "${branch || '(empty)'}"; allowed exact/class: ${[
-          ...(mode.authorizedExactBranches ?? []),
-          ...(mode.authorizedBranchClasses ?? []),
+          ...(policy.authorizedExactBranches ?? []),
+          ...(policy.authorizedBranchClasses ?? []),
         ].join(', ')}`,
       )
     }
-    const { rejected } = classifyChangedFiles(changedFiles, mode)
+    const { rejected } = classifyChangedFiles(paths, policy)
     if (rejected.length > 0) {
       checks.holdFiles = false
       errors.push(
         `AI_OS_BUILD_HOLD rejects non-governance/runtime paths: ${rejected.join(', ')}`,
       )
+    }
+    const headOnly = filesAuthorizedOnlyByHead(paths, policy, head)
+    if (headOnly.length > 0) {
+      checks.headCannotBroaden = false
+      errors.push(
+        `PR-head policy cannot authorize files forbidden by base/main HOLD policy: ${headOnly.join(', ')}`,
+      )
+    }
+    if (head && head.mode === NORMAL_MODE) {
+      const closure = isDedicatedHoldClosure({
+        enforcementMode: policy,
+        headMode: head,
+        branch,
+        changedFiles: paths,
+      })
+      if (!closure) {
+        checks.holdTransition = false
+        errors.push(
+          'HOLD→NORMAL is rejected unless this is a dedicated closure: authorized governance branch, base HOLD allowlist only, and no product/runtime paths in the same PR',
+        )
+      }
     }
   }
 
@@ -357,38 +499,74 @@ export function currentGitBranch(root) {
   }
 }
 
-export function collectChangedFiles(root, env = process.env) {
+function diffRange(env = process.env) {
   const base = env.JETNITY_OPERATING_MODE_BASE_SHA
   const head = env.JETNITY_OPERATING_MODE_HEAD_SHA
-  if (base && head) {
-    const out = git(root, ['diff', '--name-only', `${base}...${head}`])
-    return out ? out.split('\n').filter(Boolean) : []
-  }
+  if (base && head) return `${base}...${head}`
+  return null
+}
+
+export function tryLoadOperatingModeFromGit(root, ref) {
   try {
-    const out = git(root, ['diff', '--name-only', 'origin/main...HEAD'])
-    return out ? out.split('\n').filter(Boolean) : []
+    const text = git(root, ['show', `${ref}:${OPERATING_MODE_PATH}`])
+    if (!text) return null
+    return loadOperatingModeFromText(text, `${ref}:${OPERATING_MODE_PATH}`)
   } catch {
-    const out = git(root, ['diff', '--name-only', 'main...HEAD'])
-    return out ? out.split('\n').filter(Boolean) : []
+    return null
+  }
+}
+
+export function loadEnforcementPolicy(root, env = process.env, event, branch) {
+  const head = loadOperatingMode(root)
+  if (isMainPush(event, branch, env)) {
+    return { head, enforcement: head, base: head, source: 'head-as-main' }
+  }
+  const baseSha = env.JETNITY_OPERATING_MODE_BASE_SHA
+  const refs = [baseSha, 'origin/main', 'main'].filter(Boolean)
+  for (const ref of refs) {
+    const loaded = tryLoadOperatingModeFromGit(root, ref)
+    if (loaded) {
+      return { head, enforcement: loaded, base: loaded, source: ref }
+    }
+  }
+  return {
+    head,
+    enforcement: BOOTSTRAP_HOLD_POLICY,
+    base: BOOTSTRAP_HOLD_POLICY,
+    source: 'bootstrap-hold',
+  }
+}
+
+export function collectChangedFileEntries(root, env = process.env) {
+  const range = diffRange(env)
+  const args = range
+    ? ['diff', '--name-status', '-M', '-C', range]
+    : ['diff', '--name-status', '-M', '-C', 'origin/main...HEAD']
+  try {
+    return parseNameStatus(git(root, args))
+  } catch {
+    return parseNameStatus(git(root, ['diff', '--name-status', '-M', '-C', 'main...HEAD']))
   }
 }
 
 export function evaluateRepository(root = repoRootFrom(), env = process.env) {
-  const mode = loadOperatingMode(root)
-  const schemaErrors = validateOperatingModeSchema(mode)
-  const missingFileErrors = validateCanonicalFilesExist(root, mode)
-  const staleHits = findStaleMergeAuthorityPhrases(readCursorRuleContents(root))
   const gitBranch = currentGitBranch(root)
   const event = detectEvent(env, gitBranch)
   const branch = detectBranch(env, gitBranch)
-  const changedFiles = isMainPush(event, branch, env)
-    ? []
-    : collectChangedFiles(root, env)
+  const { head, enforcement } = loadEnforcementPolicy(root, env, event, branch)
+  const schemaErrors = validateOperatingModeSchema(head)
+  const missingFileErrors = validateCanonicalFilesExist(root, head)
+  const staleHits = findStaleMergeAuthorityPhrases(readCursorRuleContents(root))
+  const collected = isMainPush(event, branch, env)
+    ? { paths: [], entries: [] }
+    : collectChangedFileEntries(root, env)
   return runGuard({
-    mode,
+    mode: enforcement,
+    enforcementMode: enforcement,
+    headMode: head,
     event,
     branch,
-    changedFiles,
+    changedFiles: collected.paths,
     staleHits,
     schemaErrors,
     missingFileErrors,
