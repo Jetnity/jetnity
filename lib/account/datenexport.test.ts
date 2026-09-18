@@ -131,10 +131,8 @@ describe('V1 Account Data Export 1 Vertrag', () => {
   })
 
   test('Dokument hat stabile Schemaversion und generatedAt', () => {
-    const leer = Object.fromEntries(KONTO_DATENEXPORT_TABELLEN.map((tabelle) => [tabelle, []])) as Record<
-      (typeof KONTO_DATENEXPORT_TABELLEN)[number],
-      unknown[]
-    >
+    const leer = {} as Record<(typeof KONTO_DATENEXPORT_TABELLEN)[number], unknown[]>
+    for (const tabelle of KONTO_DATENEXPORT_TABELLEN) leer[tabelle] = []
     const dokument = kontoDatenexportDokument({
       generatedAt: '2026-09-18T10:49:00.000Z',
       data: leer,
