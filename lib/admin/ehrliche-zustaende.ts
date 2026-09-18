@@ -2,6 +2,8 @@ export const ADMIN_EHRLICHE_TEXTE = {
   steuerzentraleLage:
     'Operative Lage aus vorhandenen lokalen Daten. System Health und Provider & Kosten sind read-only und nur so weit belegt, wie eine frische Quelle reicht. Kein Copilot-Execute, keine Provider-Steuerung.',
   kennzahlenHinweis: 'Lokale Kennzahlen aus vorhandenen Aggregaten. Keine Provider-Health.',
+  umsatzConversionHinweis:
+    'Umsatz, Bestellungen und Conversion sind nicht verfügbar, solange kein provider-backed kommerzieller Pfad existiert. Lokale Zahlungsreste sind kein Umsatz.',
   rlsKatalogTitel: 'Datenbank-RLS-Katalog',
   rlsKatalogHinweis:
     'Nur RLS-Abdeckung der bekannten Tabellen. Keine Infrastruktur-Health und kein System-Health-Backend.',
