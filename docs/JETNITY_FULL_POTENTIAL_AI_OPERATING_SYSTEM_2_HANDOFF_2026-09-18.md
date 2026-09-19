@@ -4,7 +4,7 @@ Stand: 19. September 2026
 Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN OS-FOLGESLICE**
 
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Archive PASS + weekly phase-open dispatch: PR #491 comment `5741961756`  
+Weekly bootstrap PASS + native canary dispatch: PR #491 comment `5741991608`  
 Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0  
 V2 contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`  
@@ -22,8 +22,8 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 | Draft PR | #491 |
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
-| Dispatch head | `ef9d5f11d8c4756eaed9b7c53a203dfd4de7caca` |
-| Last persist predecessor | `ef9d5f11d8c4756eaed9b7c53a203dfd4de7caca` |
+| Dispatch head | `fdcf4eff1d259ce68568a48e5d9b0f124588678b` |
+| Last persist predecessor | `fdcf4eff1d259ce68568a48e5d9b0f124588678b` |
 | This persist | creates a newer head than that SHA |
 | Live PR head | **re-fetch before verdict** |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -34,15 +34,15 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 ## 2. Evidence Bus
 
 - exact main/base SHA: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`
-- archive PASS + weekly phase-open dispatch: `5741961756`
-- last persist predecessor: `ef9d5f11d8c4756eaed9b7c53a203dfd4de7caca`
+- weekly bootstrap PASS + native canary dispatch: `5741991608`
+- last persist predecessor: `fdcf4eff1d259ce68568a48e5d9b0f124588678b`
 - remote CI on that SHA at dispatch: **in_progress / unknown**
 - last remotely SUCCESS SHA: `a02c6fbe` — CI `35439492253`; Vercel `FiZ6dmTwetWJRBXLrjoYEf6H8oR2`
 - this persist is a newer head; live PR head must be re-fetched
-- verdict: **ready for Technical-Lead review** — Daily archive VALIDATION #001 PASS; weekly synthesis phase OPEN; weekly skill/routine not created; HOLD remains
-- evidence checked: `5741961756`; local operating-mode/typecheck on `ef9d5f11`
-- evidence not checked: remote CI/Vercel on `ef9d5f11` or **the SHA this persist will create**; live Grok workspace file bytes; whether a weekly skill already exists
-- blocker/gate: **NEXT EXACT STEP** = weekly synthesizer skill + paused Monday 08:30 routine; Cursor must not implement that; HOLD remains
+- verdict: **ready for Technical-Lead review** — weekly bootstrap TEST #001 PASS; native Weekly canary still OPEN; HOLD remains
+- evidence checked: `5741991608`; local gates on `fdcf4eff`
+- evidence not checked: remote CI/Vercel on `fdcf4eff` or **the SHA this persist will create**; live Grok workspace weekly file bytes
+- blocker/gate: **NEXT EXACT STEP** = native Weekly canary on the existing skill/routine, preserving `BOOTSTRAP_PARTIAL`, then read/verify the weekly brief and restore/activate Monday 08:30 if PASS; Cursor must not implement that; HOLD remains
 - next actor: ChatGPT / Technical Lead
 - STOP: no Ready, no merge, no Cursor Grok mutation
 
@@ -50,15 +50,15 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 
 1. Mode is still `AI_OS_BUILD_HOLD`.
 2. A new chat can reconstruct the exact next step from checkpoint §0 without prior chat memory.
-3. Archive PASS is not weekly complete, not HOLD exit, and not Ready/merge.
+3. Bootstrap PASS is not native weekly complete, not HOLD exit, and not Ready/merge.
 4. Daily/weekly/archive paths are Grok workspace paths, not git-tree paths.
 5. Ready / Merge remain Technical-Lead-only.
-6. Re-fetch CI/Vercel/threads on the live SHA. Do not treat `ef9d5f11` remote CI as SUCCESS.
+6. Re-fetch CI/Vercel/threads on the live SHA. Do not treat `fdcf4eff` remote CI as SUCCESS.
 
 ## 4. Exact next responsible actor
 
 **ChatGPT / Technical Lead** — independent exact-head review of the live PR head.
 
-After that review, the authorized next **external** layer is the weekly synthesizer skill plus the paused Monday 08:30 routine. Cursor does not implement that from this persist.
+After that review, the authorized next **external** layer is the native scheduled Weekly canary. Cursor does not implement that from this persist.
 
 STOP. No Ready. No merge. No normal product follow-up. No OS follow-up slice.

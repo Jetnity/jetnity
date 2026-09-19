@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
 Stand: 19. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY V2 ACTIVE / DAILY ARCHIVE VALIDATION #001 PASS / WEEKLY STRATEGIC SYNTHESIS PHASE OPEN / HOLD REMAINS ACTIVE**
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY V2 ACTIVE / DAILY ARCHIVE VALIDATION #001 PASS / WEEKLY BOOTSTRAP TEST #001 PASS / NATIVE WEEKLY CANARY NEXT / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -77,6 +77,7 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Canonical CoS schedule correction — 07:45 Europe/Zurich | `5741888256` |
 | Daily V2 normal ACTIVE operation + weekly archive requirement | `5741925172` |
 | Daily history archive VALIDATION #001 PASS + weekly phase open | `5741961756` |
+| Weekly Strategic Intelligence BOOTSTRAP TEST #001 PASS | `5741991608` |
 
 ## 1. Global setup truth
 
@@ -92,7 +93,7 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
-| Approved recurring routines / schedules | **Daily V2 ACTIVE / weekly phase OPEN** | Daily ACTIVE `5741925172`. Archive VALIDATION #001 **PASS** `5741961756`. Weekly skill/routine not created from Cursor; must start **PAUSED** at Monday 08:30 Europe/Zurich. | Product Owner / CoS: create weekly synthesizer skill + paused Monday 08:30 routine. Cursor must not mutate Grok |
+| Approved recurring routines / schedules | **Daily V2 ACTIVE / weekly bootstrap PASS / native weekly canary next** | Daily ACTIVE `5741925172`. Archive VALIDATION #001 **PASS** `5741961756`. Weekly bootstrap TEST #001 **PASS** `5741991608`. Weekly routine remains **PAUSED** at Monday 08:30 Europe/Zurich. | Product Owner / CoS: native Weekly canary, then restore/activate if PASS. Cursor must not mutate Grok |
 | Daily Intelligence Orchestrator skill | **reused / upgraded in place / archive writer PASS** | Native canary `5741863042` plus archive VALIDATION #001 `5741961756`. Post-aggregation dated archive step is now on the existing skill. | None for Daily archive writer |
 | JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH HARDENING THEN SUPERSEDED FOR ROUTINE-READINESS** | Comment `5735636786`. Required the final control-state re-fetch hardening later proven on TEST #002. | None |
 | JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. Conversation-path only. Does not prove scheduled specialist pulses. | None for this conversation-path closure |
@@ -101,8 +102,8 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | JETNITY-DAILY-ROUTINE-ONESHOT-001 | **chat-workflow verified / not native scheduler history** | Comment `5736188318`. Confirms conversation one-shot, not native execution history. | None |
 | Native scheduler CANARY #001 | **did not materialize** | Comment `5736557812`. Timezone Europe/Zurich ruled out. Do not count as native-engine PASS. | None |
 | Native scheduler CANARY #002 | **scheduler VERIFIED / workflow DEGRADED / not full-PASS** | Comment `5736636348`. RUN_ID `JETNITY-DAILY-2026-09-18-ROUTINE-001`. Head `cedeb097`. All six default specialists `SPECIALIST UNAVAILABLE` because scheduled bot-to-bot messaging failed. Truth discipline held. | None for scheduler-fire proof |
-| Daily Automation V2 handoff contract | **persisted / archive §10 PASS / weekly §11 OPEN** | Origin `5736670149`. Archive VALIDATION #001 `5741961756`. Weekly phase-open in contract §11. | Product Owner / CoS: weekly skill + paused routine. Cursor must not mutate Grok |
-| Exact new-chat continuation point | **hardened** | Comments through `5741961756`. Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
+| Daily Automation V2 handoff contract | **persisted / archive §10 PASS / weekly §11 bootstrap PASS** | Origin `5736670149`. Archive VALIDATION #001 `5741961756`. Weekly bootstrap TEST #001 `5741991608`. | Product Owner / CoS: native Weekly canary. Cursor must not mutate Grok |
+| Exact new-chat continuation point | **hardened** | Comments through `5741991608`. Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
 | JETNITY-MARKET-PULSE-HANDOFF-TEST-001 | **PASS** | Comment `5736871320`. Skill `Jetnity Daily Market & Traveller Pulse Writer` wrote `market-traveller.json`. Schema v1. `NO_MATERIAL`. No routine. | None |
 | JETNITY CROSS-BOT WORKSPACE READ TEST #001 | **PASS** | Comment `5736895145`. CoS read the file without contacting Market. | None |
 | Jetnity Daily Market & Traveller Pulse | **ACTIVE / 06:50 Europe/Zurich** | Product Owner `5741925172`. Owner Market. Skill Pulse Writer unchanged. | None for Daily activation. Cursor must not mutate this routine |
@@ -136,10 +137,11 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Jetnity Daily FinOps & Reliability Pulse | **ACTIVE / 07:10 Europe/Zurich** | Created `5740816529`. ACTIVE `5741925172`. | None for Daily activation. Cursor must not mutate this routine |
 | Jetnity Daily Growth & Discoverability Pulse | **ACTIVE / 07:05 Europe/Zurich** | Created `5740686624`. ACTIVE `5741925172`. | None for Daily activation. Cursor must not mutate this routine |
 | Jetnity Daily Travel Truth & Regulation Pulse | **ACTIVE / 07:00 Europe/Zurich** | Created `5740522887`. ACTIVE `5741925172`. | None for Daily activation. Cursor must not mutate this routine |
-| Daily / weekly Chief-of-Staff briefs | **Daily V2 ACTIVE / weekly phase OPEN** | Daily ACTIVE `5741925172`. Archive VALIDATION #001 **PASS**. Weekly skill/routine not created from Cursor. Target Monday **08:30 Europe/Zurich**, initial **PAUSED**. | Product Owner / CoS: weekly synthesizer + paused routine. Cursor must not mutate Grok |
+| Daily / weekly Chief-of-Staff briefs | **Daily V2 ACTIVE / weekly bootstrap PASS / native weekly canary next** | Daily ACTIVE `5741925172`. Weekly bootstrap TEST #001 **PASS** `5741991608`. Weekly routine remains **PAUSED** at Monday **08:30 Europe/Zurich**. | Product Owner / CoS: native Weekly canary, then restore/activate if PASS. Cursor must not mutate Grok |
 | Durable daily archive | **VALIDATION #001 PASS** | Comment `5741961756`. File `/workspace/jetnity/intelligence/archive/daily/2026-09-19.json`. `run_id=JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`. Schema v1. No prior-date mutation. Archived control/config metadata is historical, not current control state. | None for archive writer proof |
-| Jetnity Weekly Strategic Intelligence Synthesizer | **not created from Cursor / phase OPEN** | Preferred dedicated private CoS skill. Contract §11. | Product Owner / CoS create later. Cursor must not create it |
-| Jetnity Weekly Strategic Intelligence Brief | **not created / target PAUSED Monday 08:30 Europe/Zurich** | One recurring CoS routine. Manual + native validation required before activation. | Product Owner / CoS create later. Cursor must not create it |
+| Jetnity Weekly Strategic Intelligence Synthesizer | **created / bootstrap TEST #001 PASS** | Comment `5741991608`. Dedicated private CoS skill. Cursor did not create it. | None for skill creation |
+| Jetnity Weekly Strategic Intelligence Brief | **created / PAUSED Monday 08:30 Europe/Zurich** | Comment `5741991608`. Manual bootstrap PASS. Native canary still required before activation. | Product Owner / CoS: native Weekly canary. Cursor must not mutate this routine |
+| JETNITY WEEKLY STRATEGIC INTELLIGENCE — BOOTSTRAP TEST #001 | **PASS** | Comment `5741991608`. Used `2026-09-19.json`. `coverage_days=1`. `coverage_status=BOOTSTRAP_PARTIAL`. Missing days not DEGRADED. `status=NO_MATERIAL`. `strategic_findings=[]`. `technical_lead_attention_required=false`. Current weekly file written/re-read. No weekly archive from the manual test. Fresh control-state start/end. `external_writes=[]`. | Product Owner / CoS: native Weekly canary preserving BOOTSTRAP_PARTIAL |
 | Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
 | Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
 | Shared environment has no Production-admin / service-role / payment-admin / broad write token | **NOT CHECKED** | Shared environment is one blast radius (Phase 1). Credentials cannot be independently inspected from this repository slice. Do not invent a PASS. | Product Owner / Technical Lead with environment access |
@@ -157,12 +159,12 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** — exact visible name. Only valid CoS roster slot. Canonical current CoS is the instance that produced the Phase-1 verification report and relayed E2E #001. |
 | Permissions / connections | Later target remains GitHub read + Actions read; gated plain-text Evidence-Bus comment write was used for E2E #001. No admin/secrets/write/merge. |
-| Routines | Daily `Jetnity Daily Intelligence Brief` **ACTIVE** at **07:45 Europe/Zurich** (`5741925172`). Archive writer PASS `5741961756`. Weekly skill/routine not created from Cursor; target Monday **08:30 Europe/Zurich**, initial **PAUSED**. |
+| Routines | Daily `Jetnity Daily Intelligence Brief` **ACTIVE** at **07:45 Europe/Zurich** (`5741925172`). Weekly `Jetnity Weekly Strategic Intelligence Brief` **PAUSED** at Monday **08:30 Europe/Zurich**. Bootstrap TEST #001 **PASS** `5741991608`. |
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
-| Last verification | Archive VALIDATION #001 `5741961756`; Daily ACTIVE `5741925172`; native canary `5741863042` |
+| Last verification | Weekly bootstrap TEST #001 `5741991608`; archive VALIDATION #001 `5741961756`; Daily ACTIVE `5741925172` |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
-| Blockers / platform limitations | Weekly skill/routine not created. Daily ACTIVE + archive PASS is not HOLD exit. |
-| Next actor | Product Owner / CoS: create weekly synthesizer skill + paused Monday 08:30 routine. Cursor must not edit this bot |
+| Blockers / platform limitations | Native Weekly canary not yet run. Bootstrap PASS is not weekly complete and not HOLD exit. |
+| Next actor | Product Owner / CoS: native Weekly canary on the existing skill/routine, then restore Monday 08:30 and activate if PASS. Cursor must not edit this bot |
 
 ### 2. Jetnity Guardian
 
@@ -303,28 +305,24 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-Daily Automation V2 is **END-TO-END FINAL PASS** (`5741863042`) and in **normal ACTIVE operation** (`5741925172`). Daily archive VALIDATION #001 is **PASS** (`5741961756`). All seven Daily routines remain ACTIVE at canonical Europe/Zurich times. This does **not** lift HOLD, complete weekly validation, authorize product work, or Ready/merge #491.
+Daily Automation V2 is **END-TO-END FINAL PASS** (`5741863042`) and in **normal ACTIVE operation** (`5741925172`). Daily archive VALIDATION #001 is **PASS** (`5741961756`). Weekly bootstrap TEST #001 is **PASS** (`5741991608`). All seven Daily routines remain ACTIVE. The Weekly routine remains **PAUSED**. This does **not** lift HOLD, complete weekly validation, authorize product work, or Ready/merge #491.
 
-**NEXT EXACT STEP (external, not Cursor):** create the dedicated private skill `Jetnity Weekly Strategic Intelligence Synthesizer` and the paused routine `Jetnity Weekly Strategic Intelligence Brief` at Monday **08:30 Europe/Zurich**. Cursor must not create or mutate that skill or routine.
+**NEXT EXACT STEP (external, not Cursor):** one native scheduled Weekly canary using the existing `Jetnity Weekly Strategic Intelligence Synthesizer` / `Jetnity Weekly Strategic Intelligence Brief`, operating on the real archive set and correctly preserving `BOOTSTRAP_PARTIAL` semantics. After native success, directly read/verify `/workspace/jetnity/intelligence/weekly/weekly-strategic-brief.json`, then restore Monday **08:30 Europe/Zurich** and activate normal Weekly operation if PASS. Cursor must not schedule or activate that routine.
 
-Weekly phase-open contract (V2 contract §11):
+Weekly bootstrap facts (V2 contract §11):
 
-- owner: Jetnity Chief of Staff;
-- initial state **PAUSED** until manual + native validation pass;
-- normal weekly period: the seven completed calendar days ending the preceding Sunday (Europe/Zurich);
-- daily archive input `/workspace/jetnity/intelligence/archive/daily/`;
-- current weekly output `/workspace/jetnity/intelligence/weekly/weekly-strategic-brief.json`;
-- weekly archive root `/workspace/jetnity/intelligence/archive/weekly/`;
-- bootstrap: available real dated Daily archives only; never fabricate missing pre-deployment days;
-- `coverage_days` + `coverage_status = BOOTSTRAP_PARTIAL | COMPLETE`;
-- `BOOTSTRAP_PARTIAL` is not by itself `DEGRADED` and must not fabricate trend claims;
-- archived control/config metadata is historical evidence, not current control state;
-- fresh start/end read-only control-state checks required;
-- no GitHub write by default; `external_writes=[]`; HOLD remains active.
+- skill and routine exist; routine stays **PAUSED / NOT ACTIVE**;
+- used real archive `2026-09-19.json`; `coverage_days=1`; `coverage_status=BOOTSTRAP_PARTIAL`;
+- missing pre-deployment days were not `DEGRADED`;
+- no unsupported trend / repetition / escalation / resolution / cross-day corroboration claims;
+- weekly `status=NO_MATERIAL`; `strategic_findings=[]`; `technical_lead_attention_required=false`;
+- current weekly file written/re-read; no weekly archive from the manual test;
+- archived control/config metadata remains historical; fresh start/end control-state checks required;
+- `external_writes=[]`; HOLD remains active.
 
-After weekly skill/routine exist and stay PAUSED:
+After native Weekly canary PASS + restore/activate:
 
-1. manual + native weekly validation, then remaining trigger automation if still required;
+1. remaining trigger automation if still required;
 2. whole-system / Guardian assurance;
 3. exact-head Technical-Lead final review;
 4. Ready / Merge #491 only after all OS-2 acceptance criteria pass (Technical Lead only);
