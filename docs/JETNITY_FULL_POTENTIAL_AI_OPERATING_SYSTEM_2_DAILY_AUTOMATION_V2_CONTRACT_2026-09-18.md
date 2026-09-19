@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY OPEN / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / DAILY V2 END-TO-END FINAL PASS / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY PASS / RESTORE TO CANONICAL SCHEDULES AUTHORIZED AS TL OPERATIONAL DECISION / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -20,6 +20,7 @@ Final Security canary: PR #491 comment `5741212303`
 Security restore + aggregator phase: PR #491 comment `5741257042`  
 Six-file aggregation TEST #001: PR #491 comment `5741314686`  
 Aggregator output hardening complete: PR #491 comment `5741340041`  
+Full native system canary FINAL PASS: PR #491 comment `5741863042`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -34,7 +35,7 @@ Technical-Lead decision after CANARY #002 (`5736636348`, `5736670149`):
 - a scheduled Chief-of-Staff run **cannot currently perform bot-to-bot specialist messaging**;
 - CANARY #002 therefore returned `JETNITY DAILY INTELLIGENCE — DEGRADED / CURRENT TRUTH NOT FULLY VERIFIED` with `SPECIALIST UNAVAILABLE` for the six default specialists;
 - that is a scheduler/runtime integration gap, not a failure of no-signal discipline;
-- the current Daily Routine is **not full-PASS** and must stay **PAUSED** until the V2 aggregation path is verified.
+- the bot-to-bot scheduled Daily path was therefore **not full-PASS** and had to stay **PAUSED** until the V2 aggregation path was verified. That verification is now complete (`5741863042`; see §8j).
 
 Manual skill tests #001/#002 remain valid for conversation-triggered bot-to-bot pulses. They do **not** prove the scheduled automation path.
 
@@ -205,7 +206,7 @@ After the specialist pulse window, `Jetnity Daily Intelligence Brief` (owner: Je
 
 If any of the six envelopes is missing, stale, or invalid, the brief MUST be `DEGRADED` and MUST name the unavailable specialist. It MUST NOT invent `NO MATERIAL CHANGE` for that role.
 
-Keep this routine **PAUSED** until the V2 aggregation path is verified.
+The V2 aggregation path is now **verified** (`5741863042`). Restore to the canonical **07:30 Europe/Zurich** schedule is a Technical-Lead operational decision. Cursor must not restore or activate this routine.
 
 ## 7. Security
 
@@ -217,7 +218,7 @@ Keep this routine **PAUSED** until the V2 aggregation path is verified.
 
 ## 8. Required testing sequence
 
-Sequence (d) is **complete**. All six Daily specialists are FINAL PASS. Sequence (e) is the authorized next external layer. Cursor documents only and must **not** create, enable, or edit those Grok routines.
+Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. Historical next-external lines in §8a–§8i are superseded by §8j. Cursor documents only and must **not** create, enable, or edit those Grok routines.
 
 | Step | Proof required | State |
 | --- | --- | --- |
@@ -233,15 +234,15 @@ Sequence (d) is **complete**. All six Daily specialists are FINAL PASS. Sequence
 | d-growth | Native scheduled Growth canary + CoS direct read without contacting Growth | **PASS** — `JETNITY GROWTH NATIVE CANARY READ #001` (`5740795465`, run `growth-discoverability-2026-09-19-0957a7`) |
 | d-finops | Native scheduled FinOps canary + CoS direct read without contacting FinOps | **PASS** — `JETNITY FINOPS NATIVE CANARY READ #001` (`5740939484`, run `JETNITY-FINOPS-2026-09-19-1200`) |
 | d-security | Native scheduled Security canary + CoS direct read without contacting Security | **PASS** — `JETNITY SECURITY NATIVE CANARY READ #001` (`5741212303`, run `JETNITY-SECURITY-PULSE-2026-09-19-1230`) |
-| e | Full six-file CoS scheduled aggregation | **IN PROGRESS** — manual path PASS; output hardening COMPLETE (`5741340041`); full native system canary OPEN (see §8i) |
+| e | Full six-file CoS scheduled aggregation | **PASS** — full native system canary `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`) |
 | e-skill | Update existing `Jetnity Daily Intelligence Orchestrator` for V2 scheduled file aggregation | **PASS** — reused and upgraded in place (`5741314686`) |
 | e-manual | Manual six-file aggregation test | **PASS** — `JETNITY DAILY V2 — SIX-FILE AGGREGATION TEST #001` (`5741314686`) |
 | e-artifact | CoS writes and re-reads canonical `daily-intelligence-brief.json` | **PASS** — written/re-read on TEST #001 |
 | e-hardening | Bounded output hardening before native canary | **PASS** — existing Orchestrator updated in place (`5741340041`) |
-| e-native | Coordinated full native system canary | **OPEN** — six specialist native runs in one cycle, then one native CoS aggregation (see §8i) |
-| e-activate | Restore 07:30 Europe/Zurich and decide activation | **OPEN** — only after e-native PASS |
+| e-native | Coordinated full native system canary | **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j) |
+| e-activate | Restore canonical schedules and decide activation | **AUTHORIZED** — Technical-Lead operational decision; Cursor must not restore or activate |
 
-Until the full native system canary is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**. Do not activate 07:30 from hardening completion alone.
+The complete Daily Automation V2 path is technically proven. Restore of the seven routines to their canonical Europe/Zurich schedules is now a Technical-Lead operational decision. HOLD-exit, weekly/trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat this persist as HOLD exit.
 
 ### 8a. Clone gate
 
@@ -512,11 +513,11 @@ Required proof sequence:
 2. **e-manual** — **PASS** — TEST #001;
 3. **e-artifact** — **PASS** — `daily-intelligence-brief.json` written and re-read;
 4. **e-hardening** — **PASS** — existing Orchestrator updated in place (`5741340041`);
-5. **e-native** — coordinated full native system canary (see §8i);
-6. **e-activate** — only after PASS, restore 07:30 and decide activation state;
-7. then remaining weekly / trigger automation work and whole-system assurance.
+5. **e-native** — **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j);
+6. **e-activate** — **AUTHORIZED** as a Technical-Lead operational decision: restore the seven routines to canonical Europe/Zurich schedules; PAUSED vs activate is TL-owned. Cursor must not restore or activate;
+7. then remaining weekly / trigger automation work and whole-system assurance, if still required by the canonical full-target OS.
 
-This persist authorizes only that later controlled native-canary layer. It does **not** lift HOLD, authorize Daily 07:30 activation, Ready, merge, or Cursor Grok mutation.
+This persist records Daily V2 end-to-end FINAL PASS. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -558,14 +559,71 @@ Product Owner completion evidence (`5741340041`) for the existing Chief-of-Staff
 - no manual rerun was performed;
 - HOLD remains active.
 
-Next **external** proof, not Cursor work: one coordinated **FULL NATIVE SYSTEM CANARY**.
+Historical next-external proof from this subsection is **superseded** by §8j.
 
-1. six specialist native runs produce fresh envelopes in one controlled canary cycle;
-2. then one native Chief-of-Staff aggregation run reads those six **fresh** files directly and writes / re-reads `daily-intelligence-brief.json`;
-3. production freshness rules apply — **no** manual fixture exception;
-4. verify the actual output file directly afterward.
+### 8j. Full native system canary #001 — DAILY V2 END-TO-END FINAL PASS
 
-Do not activate normal 07:30 production operation from this persist.
+`JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`) is **FULL DAILY V2 END-TO-END NATIVE PASS**.
+
+Technical-Lead review of native scheduler evidence plus the Chief-of-Staff aggregate run:
+
+| Field | Verified value |
+| --- | --- |
+| run_id | `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` |
+| generated_at | `2026-09-19T14:24:04+02:00` |
+| mode | six-file direct read only |
+| specialist messaging used | NO |
+| aggregate status | `NO_MATERIAL` |
+| summary | `NO MATERIAL DAILY INTELLIGENCE SIGNAL` |
+| material_findings | empty |
+| deferred_context | empty |
+| conflicts | none |
+| degraded | none |
+| technical_lead_attention_required | false |
+| output written + re-read | `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json` (Grok workspace, not this git repo) |
+| external_writes | `[]` |
+| HOLD | unchanged / still `AI_OS_BUILD_HOLD` |
+| PR #487 | remained parked |
+
+Fresh native specialist runs accepted in the controlled canary window:
+
+| Role | Run id | Time (Europe/Zurich evidence) | Status |
+| --- | --- | --- | --- |
+| Market | `JETNITY-MARKET-PULSE-2026-09-19-88059e` | 13:46:31 | `NO_MATERIAL` PASS |
+| Provider | `JETNITY-PROVIDER-PULSE-2026-09-19-135205` | 13:52:05 | `NO_MATERIAL` PASS |
+| Travel Truth | `JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1345` | 13:50:49 | `NO_MATERIAL` PASS |
+| Growth | `growth-discoverability-2026-09-19-b35c60` | 13:57:21 | `NO_MATERIAL` PASS |
+| FinOps | `JETNITY-FINOPS-2026-09-19-1407` | 14:09:03 | `NO_MATERIAL` PASS |
+| Security | `JETNITY-SECURITY-PULSE-2026-09-19-1400` | 14:02:53 | `NO_MATERIAL` PASS |
+
+Verified semantic behavior:
+
+- prior Growth MATERIAL signal was **not** re-elevated; novelty suppression worked;
+- hardened `material_findings[]` semantics held;
+- no `CONTEXT_ONLY` leakage into material status;
+- no stale/old specialist envelope reuse;
+- no specialist bot-to-bot dependency;
+- no conflicts or degraded role;
+- final control-state recheck matched start;
+- no GitHub write from the skill.
+
+The complete Daily Automation V2 path is now technically proven:
+
+native specialist schedules → six canonical specialist JSON files → native CoS 07:30-style aggregation → canonical `daily-intelligence-brief.json` → one consolidated Daily Intelligence Brief.
+
+Canonical schedules (all Europe/Zurich):
+
+- Market **06:50**
+- Provider **06:55**
+- Travel Truth **07:00**
+- Growth **07:05**
+- FinOps **07:10**
+- Security **07:15**
+- Chief of Staff **07:30**
+
+The external Grok routines may now be restored to those canonical schedules. Whether they are left **PAUSED** or activated for normal operation is a Technical-Lead operational decision. No Product Owner special gate is required because these are bounded read-only / no-external-write intelligence automations. Cursor must not restore or activate them.
+
+After Daily V2 normal-state restoration, remaining OS-2 work — if still required by the canonical full-target OS — is weekly strategic synthesis, risk/PR/CI/release-triggered automation, whole-system / Guardian assurance, exact-head Technical-Lead final review, then Ready/Merge #491 only after all OS-2 acceptance criteria pass. HOLD-exit remains **OPEN**.
 
 ## 9. What this contract is not
 
@@ -573,8 +631,10 @@ Do not activate normal 07:30 production operation from this persist.
 - not a HOLD lift;
 - not authorization to Ready or merge PR #491;
 - not authorization to unpark PR #487;
-- not a Cursor order to create, enable, or edit Grok routines;
+- not a Cursor order to create, enable, restore, or edit Grok routines;
 - not a git-tree path inside this repository;
-- not a full Daily Routine PASS.
+- not weekly / trigger / Guardian / HOLD-exit closure.
 
-**STOP.** External Product-Owner / Chief-of-Staff setup implements this later. Cursor documents only.
+Daily V2 end-to-end native path is technically proven (`5741863042`). That is **not** HOLD exit and **not** Ready/merge.
+
+**STOP.** Restore/activate is a Technical-Lead operational decision. Cursor documents only.

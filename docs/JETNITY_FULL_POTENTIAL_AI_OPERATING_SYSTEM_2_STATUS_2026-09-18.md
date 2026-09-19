@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 19. September 2026  
-Status: **OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY OPEN / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **DAILY V2 END-TO-END FINAL PASS / RESTORE TO CANONICAL SCHEDULES AUTHORIZED AS TL OPERATIONAL DECISION / WEEKLY+TRIGGER+ASSURANCE NEXT / HOLD REMAINS ACTIVE / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -15,54 +15,54 @@ Status: **OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY OPEN / COS DAILY
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last persist predecessor | `f582e55f2d8ded3b5bfd3c23b626e7872c8222c9` |
-| Evidence on that SHA | Local gates PASS. Dispatch named exact-head CI **in_progress / unknown**. Last remotely SUCCESS SHA remains `753a5ade` — CI `35438904316`; Vercel `7GapEVWqsTK54P3vjgCifZuHUJFw`. |
-| This persist | **creates a newer head** than `f582e55f`. It is not the live PR head. |
+| Last persist predecessor | `a02c6fbe880a261bef3186b5c96b675fb43ba408` |
+| Evidence on that SHA | Exact-head CI `35439492253` SUCCESS. Typecheck job `105887734571`. Auth job `105887734554`. Vercel READY `FiZ6dmTwetWJRBXLrjoYEf6H8oR2`. Dispatch named exact-head CI **completed / success**. |
+| This persist | **creates a newer head** than `a02c6fbe`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
-Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient. Do not invent remote CI SUCCESS for `f582e55f`.
+Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient.
 
-## 2. Implemented against TL dispatch `5741340041`
+## 2. Implemented against TL dispatch `5741863042`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
-- Aggregator output hardening persisted as **COMPLETE** on the existing Orchestrator:
-  - `material_findings[]` accepts only NEW_SIGNAL / NEW_CORROBORATION / MATERIAL_UPDATE;
-  - CONTEXT_ONLY excluded from material status; optional `deferred_context[]` only;
-  - provenance limited to referenced `source_id` values;
-  - `technical_lead_attention_required` only for surviving current material findings, genuine conflicts, or TL-worthy degraded conditions;
-  - production freshness unchanged;
-  - Brief remains PAUSED at 07:30;
-  - no manual rerun.
-- **NEXT EXACT STEP** is the coordinated full native system canary: six specialist native runs in one cycle, then one native CoS aggregation reading those six fresh files and writing/re-reading `daily-intelligence-brief.json`.
-- Cursor implemented no Grok mutation. HOLD not lifted. No Ready. No merge.
+- `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` persisted as **DAILY V2 END-TO-END FINAL PASS**:
+  - CoS run_id `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`;
+  - `generated_at=2026-09-19T14:24:04+02:00`;
+  - six-file direct read only; specialist messaging used: NO;
+  - aggregate `NO_MATERIAL`; summary `NO MATERIAL DAILY INTELLIGENCE SIGNAL`;
+  - empty `material_findings` / `deferred_context`; no conflicts; no degraded role;
+  - `technical_lead_attention_required=false`;
+  - output written + re-read at `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json` (Grok workspace, not this git repo);
+  - `external_writes=[]`;
+  - prior Growth MATERIAL was not re-elevated;
+  - six fresh native specialist runs accepted in the controlled window.
+- Restore of the seven routines to canonical Europe/Zurich schedules is now a **Technical-Lead operational decision**. Cursor implemented no Grok mutation.
+- **NEXT EXACT STEP** is that restore. PAUSED vs activate is TL-owned. Then weekly/trigger work if still required, Guardian assurance, exact-head TL final review, Ready/Merge only after OS-2 acceptance, post-merge, HOLD-exit.
+- HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on predecessor `f582e55f`
+## 3. Local gates on predecessor `a02c6fbe`
 
-Recorded on the TEST #001 persist immediately before this dispatch.
-
-| Gate | Result |
-| --- | --- |
-| `check:operating-mode` | PASS |
-| Guard / unit tests | 3509/3509 PASS |
-| `typecheck` | PASS |
-| `lint` | 0 errors / 138 warnings |
-| hygiene | PASS |
-| `build` | PASS (Next.js 16.3.3) |
-| merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
-| Remote CI on `f582e55f` at dispatch | **in_progress / unknown** — do not treat as SUCCESS |
-
-## 4. Last remotely SUCCESS exact-head evidence `753a5ade`
+Recorded on the hardening persist immediately before this dispatch, then re-confirmed by live GitHub before this persist.
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35438904316` SUCCESS |
-| Typecheck, Lint & Build | job `105886211540` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105886211421` SUCCESS |
-| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/7GapEVWqsTK54P3vjgCifZuHUJFw |
+| GitHub Actions CI | run `35439492253` SUCCESS |
+| Typecheck, Lint & Build | job `105887734571` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105887734554` SUCCESS |
+| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/FiZ6dmTwetWJRBXLrjoYEf6H8oR2 |
 
-Exact-head CI/Vercel on `f582e55f` and on the SHA this persist creates must be re-fetched.
+Exact-head CI/Vercel on the SHA this persist creates must be re-fetched.
+
+## 4. Last remotely SUCCESS exact-head evidence `a02c6fbe`
+
+| Gate | Result |
+| --- | --- |
+| GitHub Actions CI | run `35439492253` SUCCESS |
+| Typecheck, Lint & Build | job `105887734571` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105887734554` SUCCESS |
+| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/FiZ6dmTwetWJRBXLrjoYEf6H8oR2 |
 
 ## 5. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. Full native system canary, Daily 07:30 activation, weekly/trigger work, and HOLD-exit remain OPEN. No Ready. No merge.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. Daily restore/activate, weekly/trigger work, Guardian whole-system assurance, Ready/merge, and HOLD-exit remain OPEN. No Ready. No merge.

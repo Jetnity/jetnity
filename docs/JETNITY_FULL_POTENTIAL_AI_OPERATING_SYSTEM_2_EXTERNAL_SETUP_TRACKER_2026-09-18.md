@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
-Stand: 18. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY OPEN / COS DAILY PAUSED / HOLD REMAINS ACTIVE**
+Stand: 19. September 2026  
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING COMPLETE / DAILY V2 END-TO-END FINAL PASS / RESTORE TO CANONICAL SCHEDULES AUTHORIZED AS TL OPERATIONAL DECISION / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -73,6 +73,7 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Security restore + CoS aggregator phase start | `5741257042` |
 | Six-file aggregation TEST #001 PASS + output hardening | `5741314686` |
 | Aggregator output hardening complete | `5741340041` |
+| Full native system canary #001 — Daily V2 END-TO-END FINAL PASS | `5741863042` |
 
 ## 1. Global setup truth
 
@@ -88,20 +89,20 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
-| Approved recurring routines / schedules | **partial / not full-PASS** | All six Daily specialist proofs are **FINAL PASS**. Manual six-file TEST #001 is **PASS**. Output hardening is **COMPLETE**. CoS Daily remains **PAUSED** until the full native system canary passes. | Product Owner / CoS: coordinated six specialist native runs, then one native CoS aggregation |
-| Daily Intelligence Orchestrator skill | **reused / upgraded in place / output hardening COMPLETE** | TEST #001 (`5741314686`) plus hardening completion `5741340041`. Novelty-filtered `material_findings`, `source_refs`-only provenance, and TL-attention rule are now on the existing skill. Production freshness unchanged. | None for hardening |
+| Approved recurring routines / schedules | **Daily V2 technically proven / restore authorized** | All six Daily specialist proofs are **FINAL PASS**. Manual six-file TEST #001 is **PASS**. Output hardening is **COMPLETE**. Full native system canary is **PASS** (`5741863042`). Restore to canonical schedules is a Technical-Lead operational decision. Weekly / trigger automation remains **OPEN**. | Technical Lead: restore seven routines to canonical Europe/Zurich schedules; PAUSED vs activate is TL-owned. Cursor must not restore or activate |
+| Daily Intelligence Orchestrator skill | **reused / upgraded in place / output hardening COMPLETE / native canary PASS** | TEST #001 (`5741314686`) plus hardening completion `5741340041` plus native canary `5741863042`. Novelty-filtered `material_findings` and no `CONTEXT_ONLY` leakage held in native mode. | None for Daily V2 skill proof |
 | JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH HARDENING THEN SUPERSEDED FOR ROUTINE-READINESS** | Comment `5735636786`. Required the final control-state re-fetch hardening later proven on TEST #002. | None |
 | JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. Conversation-path only. Does not prove scheduled specialist pulses. | None for this conversation-path closure |
 | Routine-readiness hardening | **verified on TEST #002** | FINAL CONTROL-STATE RECHECK executed. START = FINAL = `caba1c66`. Mid-run CI settling is expected movement, not an evidence conflict and not a Guardian trigger. | None for this hardening |
-| Jetnity Daily Intelligence Brief routine | **created / PAUSED / not full-PASS** | Comment `5735790241`. Reused on TEST #001. Owner CoS. Skill Orchestrator. Production target daily **07:30 Europe/Zurich**. Next proof is a full native system canary, not 07:30 activation. | Product Owner / CoS: native CoS aggregation after six fresh specialist envelopes |
+| Jetnity Daily Intelligence Brief routine | **created / Daily V2 E2E PASS / restore 07:30 authorized** | Comment `5735790241`. Native canary `5741863042` proved 07:30-style aggregation. Restore to **07:30 Europe/Zurich** and PAUSED vs activate is a Technical-Lead operational decision. Cursor must not restore or activate. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
 | JETNITY-DAILY-ROUTINE-ONESHOT-001 | **chat-workflow verified / not native scheduler history** | Comment `5736188318`. Confirms conversation one-shot, not native execution history. | None |
 | Native scheduler CANARY #001 | **did not materialize** | Comment `5736557812`. Timezone Europe/Zurich ruled out. Do not count as native-engine PASS. | None |
 | Native scheduler CANARY #002 | **scheduler VERIFIED / workflow DEGRADED / not full-PASS** | Comment `5736636348`. RUN_ID `JETNITY-DAILY-2026-09-18-ROUTINE-001`. Head `cedeb097`. All six default specialists `SPECIALIST UNAVAILABLE` because scheduled bot-to-bot messaging failed. Truth discipline held. | None for scheduler-fire proof |
-| Daily Automation V2 handoff contract | **persisted / OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY OPEN** | Origin `5736670149`. Hardening complete `5741340041`. Contract §8i. | Product Owner / CoS: six specialist native runs, then one native CoS aggregation |
-| Exact new-chat continuation point | **hardened** | Comments through `5741340041`. Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
+| Daily Automation V2 handoff contract | **persisted / DAILY V2 END-TO-END FINAL PASS** | Origin `5736670149`. Native canary `5741863042`. Contract §8j. | Technical Lead: restore seven routines to canonical schedules. Cursor must not restore or activate |
+| Exact new-chat continuation point | **hardened** | Comments through `5741863042`. Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
 | JETNITY-MARKET-PULSE-HANDOFF-TEST-001 | **PASS** | Comment `5736871320`. Skill `Jetnity Daily Market & Traveller Pulse Writer` wrote `market-traveller.json`. Schema v1. `NO_MATERIAL`. No routine. | None |
 | JETNITY CROSS-BOT WORKSPACE READ TEST #001 | **PASS** | Comment `5736895145`. CoS read the file without contacting Market. | None |
-| Jetnity Daily Market & Traveller Pulse | **created / PAUSED / normal schedule restored** | Comment `5737767891` restores `5736927892`. Owner Market. Skill Pulse Writer unchanged. Schedule **06:50 Europe/Zurich**. Intended pre-production paused state after final native PASS. | None for Market restore |
+| Jetnity Daily Market & Traveller Pulse | **created / restore to 06:50 authorized** | Comment `5737767891` restores `5736927892`. Owner Market. Skill Pulse Writer unchanged. Canonical schedule **06:50 Europe/Zurich**. Coordinated canary run `JETNITY-MARKET-PULSE-2026-09-19-88059e`. After the canary window, restore/activate is a Technical-Lead operational decision. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
 | Market native scheduled writer CANARY #001 | **PASS for file refresh** | Comment `5737150676`. RUN_ID `JETNITY-MARKET-PULSE-20260919-0053`. Canonical file refreshed. MATERIAL not accepted as Jetnity truth from this canary alone. | None for refresh proof |
 | JETNITY SCHEDULED MARKET CROSS-BOT READ TEST #001 | **PASS for transport architecture** | Comment `5737188145`. Native Market scheduler → refreshed file → CoS direct read. Freshness/schema/role/safety valid. Superseded for object-shape proof by schema-hardening TEST #001. | None for transport proof |
 | JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001 | **PASS for canonical schema hardening / superseded for novelty proof** | Comment `5737237338`. Object-shape PASS. Quality gap (old announcements as `MATERIAL`) closed by novelty-hardening TEST #001. | None for object-shape proof |
@@ -123,16 +124,16 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | JETNITY-SECURITY-PULSE-HANDOFF-TEST-001 | **PASS for Security manual writer + paused routine / superseded for completeness** | Comment `5740963538`. Setup proof only. Completeness closed by native canary `5741212303`. | None for setup proof |
 | Security native scheduler UI success | **scheduler fire observed / not canonical completeness** | Comment `5741170845`. Native history showed Erfolgreich at a 12:30 Europe/Zurich canary. Canonical proof is the workspace file + CoS read, not the UI screenshot. | None |
 | JETNITY SECURITY NATIVE CANARY READ #001 | **FINAL SECURITY PASS** | Comment `5741212303`. File `security-privacy.json`. Run id `JETNITY-SECURITY-PULSE-2026-09-19-1230`. `generated_at=2026-09-19T12:31:45+02:00`. Manual run replaced. Freshness/schema/role/novelty valid. Old unchanged security evidence suppressed. `NO_MATERIAL`. Least-privilege / deny / fail-closed valid. UI hiding not treated as authorization. THEORETICAL / REACHABLE / VERIFIED_EXPLOIT preserved. No unsupported breach / compromise / exploitability claim. Privacy risk separated from legal conclusion. No sensitive traveller/auth data, secrets, tokens or credentials copied. No exploit payloads. No Auth/RLS/MFA/Production/security mutation. `external_writes=[]`. CoS did **not** contact Security. | None for Security proof |
-| Security normal state restored | **PAUSED / 07:15 Europe/Zurich** | Comment `5741257042`. Routine `Jetnity Daily Security & Privacy Pulse`. Skill and canonical workspace path unchanged. Intended pre-production paused state. | None for Security restore |
-| Jetnity Daily Security & Privacy Pulse | **created / PAUSED / normal schedule restored** | Comment `5740963538` created the routine. Completeness closed by `5741212303`. Restore confirmed by `5741257042`. Skill Pulse Writer unchanged. Schedule **07:15 Europe/Zurich**. | None for this restore. Cursor must not mutate this routine |
-| CoS six-file aggregator output | **written / re-read on TEST #001 / hardening COMPLETE** | Comments `5741314686` and `5741340041`. Canonical file `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json`. Next write must come from the full native system canary under production freshness. | Product Owner / CoS after six fresh specialist envelopes |
+| Security normal state restored | **07:15 target confirmed / post-canary restore authorized** | Comment `5741257042` confirmed the canonical 07:15 target. Coordinated canary run `JETNITY-SECURITY-PULSE-2026-09-19-1400` (`5741863042`). After the canary window, restore/activate is a Technical-Lead operational decision. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
+| Jetnity Daily Security & Privacy Pulse | **created / restore to 07:15 authorized** | Comment `5740963538` created the routine. Completeness closed by `5741212303`. 07:15 target confirmed by `5741257042`. Skill Pulse Writer unchanged. Canonical schedule **07:15 Europe/Zurich**. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
+| CoS six-file aggregator output | **written / re-read on native canary** | Native canary `5741863042` wrote and re-read `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json`. Manual TEST #001 write remains historical. File lives in the Grok workspace, not this git repo. | None for Daily V2 output proof |
 | JETNITY DAILY V2 — SIX-FILE AGGREGATION TEST #001 | **PASS for architecture and manual path / not native-canary complete** | Comment `5741314686`. Six files read directly. No bot messaging. Manual-fixture freshness exception marked. 6/6 specialist validations PASS. Aggregate `MATERIAL` from Growth later-review evidence. | None for the manual path |
 | Aggregator output hardening | **COMPLETE** | Comment `5741340041`. Existing Orchestrator updated in place. Novelty-filtered `material_findings`, `deferred_context` for CONTEXT_ONLY, `source_refs`-only provenance, TL-attention rule. Production freshness unchanged. No manual rerun. Brief remains PAUSED at 07:30. | None for hardening |
-| Full native system canary | **OPEN** | Comment `5741340041`. Six specialist native runs in one controlled cycle, then one native CoS aggregation reading those six fresh files and writing/re-reading `daily-intelligence-brief.json`. Production freshness only. | Product Owner / CoS |
-| Jetnity Daily FinOps & Reliability Pulse | **created / restore to PAUSED 07:10** | Comment `5740816529` created the routine. Skill Pulse Writer unchanged. Normal schedule **07:10 Europe/Zurich**. After the 11:55 canary, restore to paused 07:10 as the intended pre-production state. | Product Owner / CoS restore paused 07:10. Cursor must not mutate this routine |
-| Jetnity Daily Growth & Discoverability Pulse | **created / restore to PAUSED 07:05** | Comment `5740686624` created the routine. Skill Pulse Writer unchanged. Normal schedule **07:05 Europe/Zurich**. After the 11:25 canary, restore to paused 07:05 as the intended pre-production state. | Product Owner / CoS restore paused 07:05. Cursor must not mutate this routine |
-| Jetnity Daily Travel Truth & Regulation Pulse | **created / restore to PAUSED 07:00** | Comment `5740522887` created the routine. Skill Pulse Writer unchanged. Normal schedule **07:00 Europe/Zurich**. After the 10:50 canary, restore to paused 07:00 as the intended pre-production state. | Product Owner / CoS restore paused 07:00. Cursor must not mutate this routine |
-| Daily / weekly Chief-of-Staff briefs | **not running unattended** | Manual six-file path PASS. Output hardening COMPLETE. Native scheduled bot-to-bot path remains degraded. Reuse the existing Brief routine. Remains paused until the full native system canary PASS. | Product Owner / CoS: six specialist native runs, then one native CoS aggregation |
+| Full native system canary | **PASS — DAILY V2 END-TO-END FINAL PASS** | Comment `5741863042`. RUN_ID `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`. `generated_at=2026-09-19T14:24:04+02:00`. Six-file direct read only. No specialist messaging. Aggregate `NO_MATERIAL`. Empty `material_findings` / `deferred_context`. No conflicts or degraded role. `technical_lead_attention_required=false`. `external_writes=[]`. Prior Growth MATERIAL was not re-elevated. | None for Daily V2 native proof |
+| Jetnity Daily FinOps & Reliability Pulse | **created / restore to 07:10 authorized** | Comment `5740816529` created the routine. Skill Pulse Writer unchanged. Canonical schedule **07:10 Europe/Zurich**. Coordinated canary run `JETNITY-FINOPS-2026-09-19-1407`. PAUSED vs activate is a Technical-Lead operational decision. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
+| Jetnity Daily Growth & Discoverability Pulse | **created / restore to 07:05 authorized** | Comment `5740686624` created the routine. Skill Pulse Writer unchanged. Canonical schedule **07:05 Europe/Zurich**. Coordinated canary run `growth-discoverability-2026-09-19-b35c60`. PAUSED vs activate is a Technical-Lead operational decision. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
+| Jetnity Daily Travel Truth & Regulation Pulse | **created / restore to 07:00 authorized** | Comment `5740522887` created the routine. Skill Pulse Writer unchanged. Canonical schedule **07:00 Europe/Zurich**. Coordinated canary run `JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1345`. PAUSED vs activate is a Technical-Lead operational decision. | Technical Lead operational restore/activate. Cursor must not mutate this routine |
+| Daily / weekly Chief-of-Staff briefs | **Daily V2 proven / weekly still OPEN** | Native canary `5741863042` proved the Daily V2 path. Scheduled bot-to-bot remains unused by design. Restore Daily 07:30 is a Technical-Lead operational decision. Weekly strategic synthesis and trigger automation remain **OPEN**. | Technical Lead: Daily restore/activate; later weekly/trigger if still required |
 | Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
 | Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
 | Shared environment has no Production-admin / service-role / payment-admin / broad write token | **NOT CHECKED** | Shared environment is one blast radius (Phase 1). Credentials cannot be independently inspected from this repository slice. Do not invent a PASS. | Product Owner / Technical Lead with environment access |
@@ -150,12 +151,12 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** — exact visible name. Only valid CoS roster slot. Canonical current CoS is the instance that produced the Phase-1 verification report and relayed E2E #001. |
 | Permissions / connections | Later target remains GitHub read + Actions read; gated plain-text Evidence-Bus comment write was used for E2E #001. No admin/secrets/write/merge. |
-| Routines | Daily `Jetnity Daily Intelligence Brief` **created / PAUSED / not full-PASS**. Reused on TEST #001. Output hardening COMPLETE. Next required proof is the full native system canary. |
+| Routines | Daily `Jetnity Daily Intelligence Brief` **created / Daily V2 E2E PASS**. Native canary `5741863042` proved 07:30-style aggregation. Restore to **07:30 Europe/Zurich**; PAUSED vs activate is a Technical-Lead operational decision. |
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
-| Last verification | Output hardening complete `5741340041`; six-file TEST #001 `5741314686` |
+| Last verification | Full native canary `5741863042` (`JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`) |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
 | Blockers / platform limitations | None that drop the role. |
-| Next actor | Product Owner / CoS: full native system canary. Cursor must not edit this bot |
+| Next actor | Technical Lead operational restore/activate of Daily 07:30. Cursor must not edit this bot |
 
 ### 2. Jetnity Guardian
 
@@ -177,9 +178,9 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public research + GitHub read; never private user PII dumps; no outreach |
 | Routines | `Jetnity Daily Market & Traveller Pulse` **created / PAUSED** at **06:50 Europe/Zurich** (`5737767891`). Skill `Jetnity Daily Market & Traveller Pulse Writer` unchanged. Writes `market-traveller.json` only. Market proof complete. Intended pre-production paused state. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; this identity was not the E2E #001 source |
-| Last verification | Market restore `5737767891`; final native re-canary `5737734991` (`JETNITY-MARKET-PULSE-2026-09-19-6ff494`) |
+| Last verification | Coordinated native canary window `5741863042` (`JETNITY-MARKET-PULSE-2026-09-19-88059e` @ 13:46:31). Earlier FINAL PASS `5737734991` remains the role-completeness proof. |
 | Blockers / platform limitations | None that drop the Market proof. |
-| Next actor | None for Market restore. Cursor must not mutate this bot |
+| Next actor | Technical Lead: restore to canonical **06:50 Europe/Zurich**; PAUSED vs activate is TL-owned. Cursor must not mutate this bot |
 
 ### 4. Jetnity Provider & Commercial Intelligence
 
@@ -187,11 +188,11 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public provider-docs + GitHub read; no live secrets |
-| Routines | `Jetnity Daily Provider & Commercial Pulse` exists. Skill `Jetnity Daily Provider & Commercial Pulse Writer`. Writes `provider-commercial.json` only. Provider proof complete. Restore to **PAUSED** **06:55 Europe/Zurich** remains an authorized external next step. |
+| Routines | `Jetnity Daily Provider & Commercial Pulse` exists. Skill `Jetnity Daily Provider & Commercial Pulse Writer`. Writes `provider-commercial.json` only. Provider proof complete. Restore to **06:55 Europe/Zurich** is now a Technical-Lead operational decision. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
-| Last verification | Final native canary `5738078082` (`JETNITY-PROVIDER-PULSE-2026-09-19-024605`). Gates A–E remain closed |
+| Last verification | Coordinated native canary window `5741863042` (`JETNITY-PROVIDER-PULSE-2026-09-19-135205` @ 13:52:05). Earlier FINAL PASS `5738078082` remains the role-completeness proof. Gates A–E remain closed |
 | Blockers / platform limitations | Gates A–E remain closed. No live provider contact. No private commercial terms. |
-| Next actor | Product Owner / CoS restore paused 06:55. Cursor must not mutate this bot |
+| Next actor | Technical Lead: restore to canonical **06:55 Europe/Zurich**; PAUSED vs activate is TL-owned. Cursor must not mutate this bot |
 
 ### 5. Jetnity Travel Truth & Regulation Intelligence
 
@@ -199,11 +200,11 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: public official sources + GitHub read |
-| Routines | `Jetnity Daily Travel Truth & Regulation Pulse` exists. Skill `Jetnity Daily Travel Truth & Regulation Pulse Writer`. Writes `travel-truth-regulation.json` only. Travel Truth proof complete. Next external step: restore to **PAUSED** **07:00 Europe/Zurich**. |
+| Routines | `Jetnity Daily Travel Truth & Regulation Pulse` exists. Skill `Jetnity Daily Travel Truth & Regulation Pulse Writer`. Writes `travel-truth-regulation.json` only. Travel Truth proof complete. Restore to **07:00 Europe/Zurich** is now a Technical-Lead operational decision. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
-| Last verification | Final native canary `5740658975` (`JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1050`). Official-source / effective-date / multi-citizenship / destination-vs-transit / fail-closed remain binding. |
+| Last verification | Coordinated native canary window `5741863042` (`JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1345` @ 13:50:49). Earlier FINAL PASS `5740658975` remains the role-completeness proof. Official-source / effective-date / multi-citizenship / destination-vs-transit / fail-closed remain binding. |
 | Blockers / platform limitations | Must not invent visa/health/carrier rules. Fail closed. Preserve `unknown` when evidence is insufficient. Evaluate per traveller and per necessary legal credential option. Distinguish destination vs transit and effective-date vs active-current. |
-| Next actor | Product Owner / CoS restore paused 07:00. Cursor must not mutate this bot |
+| Next actor | Technical Lead: restore to canonical **07:00 Europe/Zurich**; PAUSED vs activate is TL-owned. Cursor must not mutate this bot |
 
 ### 6. Jetnity Product & UX Explorer
 
@@ -223,11 +224,11 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read + public HTTP read |
-| Routines | `Jetnity Daily Growth & Discoverability Pulse` exists. Skill `Jetnity Daily Growth & Discoverability Pulse Writer`. Writes `growth-discoverability.json` only. Growth proof complete. Next external step: restore to **PAUSED** **07:05 Europe/Zurich**. |
+| Routines | `Jetnity Daily Growth & Discoverability Pulse` exists. Skill `Jetnity Daily Growth & Discoverability Pulse Writer`. Writes `growth-discoverability.json` only. Growth proof complete. Restore to **07:05 Europe/Zurich** is now a Technical-Lead operational decision. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
-| Last verification | Final native canary `5740795465` (`growth-discoverability-2026-09-19-0957a7`). `status=MATERIAL` is later-review intelligence only. Ethical-growth / attribution / causation remain binding. |
+| Last verification | Coordinated native canary window `5741863042` (`growth-discoverability-2026-09-19-b35c60` @ 13:57:21). `NO_MATERIAL` — prior Growth MATERIAL was not re-elevated. Earlier FINAL PASS `5740795465` remains the role-completeness proof. Ethical-growth / attribution / causation remain binding. |
 | Blockers / platform limitations | Public launch / indexing / Store Live remain Product-Owner gates. Do not invent metrics. No dark-pattern or policy-bypass behavior. Correlation is not causation. `MATERIAL` is not an implementation instruction. |
-| Next actor | Product Owner / CoS restore paused 07:05. Cursor must not mutate this bot |
+| Next actor | Technical Lead: restore to canonical **07:05 Europe/Zurich**; PAUSED vs activate is TL-owned. Cursor must not mutate this bot |
 
 ### 8. Jetnity Analytics & Experimentation
 
@@ -247,11 +248,11 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | --- | --- |
 | Identity state | **created / initialized** |
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read; billing consoles only if Product Owner later connects read-only |
-| Routines | `Jetnity Daily FinOps & Reliability Pulse` **created / restore to PAUSED** at **07:10 Europe/Zurich**. Skill `Jetnity Daily FinOps & Reliability Pulse Writer`. Writes `finops-reliability.json` only. Final native canary **PASS**. |
+| Routines | `Jetnity Daily FinOps & Reliability Pulse` exists. Skill `Jetnity Daily FinOps & Reliability Pulse Writer`. Writes `finops-reliability.json` only. Final native canary **PASS**. Restore to **07:10 Europe/Zurich** is now a Technical-Lead operational decision. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
-| Last verification | Final native canary `5740939484` (`JETNITY-FINOPS-2026-09-19-1200`). `NO_MATERIAL`. ACTUAL / BILLED remained `unknown`. USD 100/month is BUDGET only. |
+| Last verification | Coordinated native canary window `5741863042` (`JETNITY-FINOPS-2026-09-19-1407` @ 14:09:03). `NO_MATERIAL`. Earlier FINAL PASS `5740939484` remains the role-completeness proof. ACTUAL / BILLED remain `unknown` unless later independently evidenced. USD 100/month is BUDGET only. |
 | Blockers / platform limitations | No paid calls. > USD 100/month remains a Product-Owner gate and is a BUDGET threshold only. Separate actual / configured / estimated / budgeted / billed. Separate symptom / cause / root-cause. |
-| Next actor | Product Owner / CoS: restore FinOps to paused 07:10. Cursor must not mutate this bot |
+| Next actor | Technical Lead: restore to canonical **07:10 Europe/Zurich**; PAUSED vs activate is TL-owned. Cursor must not mutate this bot |
 
 ### 10. Jetnity Security & Privacy Red Team
 
@@ -261,9 +262,9 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Permissions / connections | **NOT CHECKED** beyond initialization. Later: GitHub read; Supabase read-only only if later separately connected and scoped |
 | Routines | `Jetnity Daily Security & Privacy Pulse` **created / PAUSED / normal schedule restored** at **07:15 Europe/Zurich** (`5741257042`). Skill `Jetnity Daily Security & Privacy Pulse Writer`. Writes `security-privacy.json` only. Final native canary **PASS**. E2E #001 remains a no-signal transport test, not a security audit. |
 | Evidence-Bus path | **verified** as the E2E #001 source: Red Team → CoS → GitHub PR #491 → Technical Lead |
-| Last verification | Restore confirmed `5741257042`; final native canary `5741212303` (`JETNITY-SECURITY-PULSE-2026-09-19-1230`). `NO_MATERIAL`. |
+| Last verification | Coordinated native canary window `5741863042` (`JETNITY-SECURITY-PULSE-2026-09-19-1400` @ 14:02:53). `NO_MATERIAL`. Earlier FINAL PASS `5741212303` and restore `5741257042` remain the role-completeness / schedule-target proofs. |
 | Blockers / platform limitations | Does not replace Guardian exact-head review. No Production mutation. No exploit payloads. |
-| Next actor | None for Security restore. Cursor must not mutate this bot |
+| Next actor | Technical Lead: restore to canonical **07:15 Europe/Zurich**; PAUSED vs activate is TL-owned. Cursor must not mutate this bot |
 
 ## 2a. Legacy non-roster identity — `Legacy Stabschef — DO NOT USE`
 
@@ -282,7 +283,7 @@ This is **not** one of the ten mandatory identities and must never be counted as
 - create or configure external Grok bots;
 - hide, retire, delete or mutate `Legacy Stabschef — DO NOT USE` or any other Grok identity;
 - grant tokens, connectors, or write permissions;
-- mark routines, team interoperability or HOLD exit complete merely because the Orchestrator is routine-ready, TEST #001/#002 passed, or the native scheduler fired;
+- mark weekly/trigger automation, Guardian whole-system assurance or HOLD exit complete merely because Daily V2 is end-to-end proven;
 - treat CANARY #002 as a full Daily Routine PASS;
 - create, enable, or schedule a Grok routine from Cursor;
 - add Grok workspace envelope files to this git repository;
@@ -296,30 +297,30 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-All six Daily specialist proofs are **FINAL PASS**. Manual six-file aggregation TEST #001 is **PASS** (`5741314686`). Output hardening is **COMPLETE** (`5741340041`). The Growth `MATERIAL` finding remains later-review intelligence only. The Daily CoS routine stays **PAUSED** and **not full-PASS**. Reuse the existing Orchestrator skill and Brief routine. This does **not** lift HOLD, authorize Daily 07:30 activation, authorize product work, or Ready/merge #491.
+Daily Automation V2 is **END-TO-END FINAL PASS** (`5741863042`). All six Daily specialist proofs remain FINAL PASS. Manual six-file TEST #001 remains PASS. Output hardening remains COMPLETE. The complete Daily path is technically proven: native specialist schedules → six canonical JSON files → native CoS 07:30-style aggregation → `daily-intelligence-brief.json`. Prior Growth MATERIAL was not re-elevated. This does **not** lift HOLD, authorize product work, or Ready/merge #491.
 
-**NEXT EXACT STEP:** one coordinated **FULL NATIVE SYSTEM CANARY** — six specialist native runs producing fresh envelopes in one controlled cycle, then one native Chief-of-Staff aggregation that reads those six fresh files directly and writes / re-reads `daily-intelligence-brief.json`. Production freshness only; no fixture exception. Do not activate normal 07:30 operation yet.
+**NEXT EXACT STEP (external, not Cursor):** restore the seven Daily routines to their canonical Europe/Zurich schedules. Whether they are left **PAUSED** or activated for normal operation is a Technical-Lead operational decision. No Product Owner special gate is required for these bounded read-only / no-external-write intelligence automations. Cursor must not restore or activate them.
 
-After the full native system canary PASS:
+After Daily V2 normal-state restoration:
 
-1. restore 07:30 and decide activation state;
-2. remaining weekly / triggered automation only if still required by the OS-2 target;
-3. whole-system / Guardian assurance;
-4. exact-head Technical-Lead final review;
-5. Ready / Merge #491 only after that review (Technical Lead only);
-6. post-merge verification;
-7. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
-8. only after HOLD exit resume parked product development (#487).
+1. remaining weekly strategic synthesis and risk/PR/CI/release-triggered automation, if still required by the canonical full-target OS;
+2. whole-system / Guardian assurance;
+3. exact-head Technical-Lead final review;
+4. Ready / Merge #491 only after all OS-2 acceptance criteria pass (Technical Lead only);
+5. post-merge verification;
+6. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
+7. only after HOLD exit resume parked product development (#487).
 
-Canonical specialist schedules remain **PAUSED**:
+Canonical schedules (all Europe/Zurich):
 
-- Market **06:50** Europe/Zurich — restored;
-- Provider **06:55** Europe/Zurich;
-- Travel Truth **07:00** Europe/Zurich;
-- Growth **07:05** Europe/Zurich;
-- FinOps **07:10** Europe/Zurich;
-- Security **07:15** Europe/Zurich — **confirmed** (`5741257042`).
+- Market **06:50**
+- Provider **06:55**
+- Travel Truth **07:00**
+- Growth **07:05**
+- FinOps **07:10**
+- Security **07:15**
+- Chief of Staff **07:30**
 
-Until six-file aggregation is verified, exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path.
+Exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path. Guardian is not a daily V2 writer.
 
 **STOP.** This file is a control surface, not an activation order for Cursor.
