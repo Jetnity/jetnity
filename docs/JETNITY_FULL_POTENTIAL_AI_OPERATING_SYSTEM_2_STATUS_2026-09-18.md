@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 19. September 2026  
-Status: **SECURITY RESTORED PAUSED 07:15 / COS SIX-FILE AGGREGATOR PHASE START / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING OPEN / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -15,33 +15,34 @@ Status: **SECURITY RESTORED PAUSED 07:15 / COS SIX-FILE AGGREGATOR PHASE START /
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last persist predecessor | `9f8aa93fa1ce9618dad6ca7bbce707c1b83abd01` |
-| Evidence on that SHA | Local gates PASS. Dispatch named exact-head CI **in_progress / unknown**. Last remotely SUCCESS SHA remains `7c60ae1a` — CI `35437236776`; Vercel `3yDbpVYcnaMhRwFYN8uDtb7ZXotA`. |
-| This persist | **creates a newer head** than `9f8aa93f`. It is not the live PR head. |
+| Last verified implementation/evidence head | `753a5adefbdd7fdd1f27acfdc2912a20123be527` |
+| Evidence on that SHA | CI `35438904316` SUCCESS; Typecheck/Lint/Build `105886211540` SUCCESS; Auth `105886211421` SUCCESS; Vercel **success / completed** `7GapEVWqsTK54P3vjgCifZuHUJFw` |
+| This persist | **creates a newer head** than `753a5ade`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
-Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient. Do not invent remote CI SUCCESS for `9f8aa93f`.
+Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient.
 
-## 2. Implemented against TL dispatch `5741257042`
+## 2. Implemented against TL dispatch `5741314686`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
-- Security restore persisted: `Jetnity Daily Security & Privacy Pulse` at **07:15 Europe/Zurich**, **PAUSED / NOT ACTIVE**, skill and path unchanged.
-- All six Daily specialists remain FINAL PASS.
-- Aggregator contract persisted in V2 §8g:
-  - reuse existing `Jetnity Daily Intelligence Orchestrator` and `Jetnity Daily Intelligence Brief`;
-  - no second skill/routine;
-  - no scheduled bot-to-bot messaging;
-  - read the six canonical specialist files;
-  - CoS-only output `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json` with recommended schema v1;
-  - production freshness = current Europe/Zurich cycle; prior-day JSON is not acceptable; future timestamps beyond clock-skew are invalid;
-  - same-day FINAL-PASS canaries may be manual test fixtures only and must not weaken production freshness.
-- **NEXT EXACT STEP** is e-skill: update the existing Orchestrator in place, then e-manual + e-artifact, then e-native. Do not activate 07:30 until those pass.
-- Cursor implemented no Grok mutation. CoS Daily stays PAUSED. HOLD not lifted. No Ready. No merge.
+- `JETNITY DAILY V2 — SIX-FILE AGGREGATION TEST #001` persisted as **PASS for architecture and manual path**:
+  - existing Orchestrator reused and upgraded in place;
+  - existing Brief reused, still PAUSED at 07:30;
+  - six files read directly; no specialist bot messaging;
+  - manual-fixture freshness exception marked; production freshness not weakened;
+  - 6/6 specialist validations PASS;
+  - aggregate `MATERIAL` from Growth later-review evidence;
+  - no conflicts; no degraded reasons;
+  - `daily-intelligence-brief.json` written/re-read; schema v1 valid;
+  - final control-state recheck YES; start = end; `external_writes=[]`.
+- Three bounded output hardenings remain OPEN (novelty-filtered `material_findings`, `source_refs`-only provenance, TL-attention rule). No second manual run if the existing skill is updated exactly with those rules.
+- **NEXT EXACT STEP** is apply §8h to the existing skill, then one native scheduled canary with production freshness only. Do not activate 07:30.
+- Cursor implemented no Grok mutation. HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on predecessor `9f8aa93f`
+## 3. Local gates on last verified tree `753a5ade`
 
-Recorded on the Security FINAL persist immediately before this dispatch.
+Recorded on the aggregator-phase persist immediately before this dispatch.
 
 | Gate | Result |
 | --- | --- |
@@ -53,19 +54,21 @@ Recorded on the Security FINAL persist immediately before this dispatch.
 | `build` | PASS (Next.js 16.3.3) |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
-| Remote CI on `9f8aa93f` at dispatch | **in_progress / unknown** — do not treat as SUCCESS |
 
-## 4. Last remotely SUCCESS exact-head evidence `7c60ae1a`
+## 4. Exact-head remote evidence on last verified SHA `753a5ade`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35437236776` SUCCESS |
-| Typecheck, Lint & Build | job `105881868615` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105881868699` SUCCESS |
-| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/3yDbpVYcnaMhRwFYN8uDtb7ZXotA |
+| GitHub Actions CI | run `35438904316` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35438904316 |
+| Typecheck, Lint & Build | job `105886211540` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105886211421` SUCCESS |
+| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/7GapEVWqsTK54P3vjgCifZuHUJFw |
+| TEST #001 dispatch | `5741314686` |
+| TL live head named in that dispatch | `753a5adefbdd7fdd1f27acfdc2912a20123be527` |
+| TL CI note at dispatch | `completed / success` — matches this SHA |
 
-Exact-head CI/Vercel on `9f8aa93f` and on the SHA this persist creates must be re-fetched.
+Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `753a5ade`.
 
 ## 5. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor clone, enablement, or Grok mutation. Six-file aggregation, Daily 07:30 activation, weekly/trigger work, and HOLD-exit remain OPEN. No Ready. No merge.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. Output hardening, native aggregator canary, Daily 07:30 activation, weekly/trigger work, and HOLD-exit remain OPEN. No Ready. No merge.

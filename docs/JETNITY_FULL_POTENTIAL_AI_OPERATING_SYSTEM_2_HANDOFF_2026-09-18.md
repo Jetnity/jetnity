@@ -4,7 +4,7 @@ Stand: 19. September 2026
 Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN OS-FOLGESLICE**
 
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Aggregator-phase dispatch: PR #491 comment `5741257042`  
+Six-file TEST #001 dispatch: PR #491 comment `5741314686`  
 Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0  
 V2 contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`  
@@ -23,7 +23,7 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last persist predecessor | `9f8aa93fa1ce9618dad6ca7bbce707c1b83abd01` |
+| Last verified implementation/evidence head | `753a5adefbdd7fdd1f27acfdc2912a20123be527` |
 | This persist | creates a newer head than that SHA |
 | Live PR head | **re-fetch before verdict** |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -34,16 +34,15 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 ## 2. Evidence Bus
 
 - exact main/base SHA: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`
-- aggregator-phase dispatch: `5741257042`
-- last persist predecessor: `9f8aa93fa1ce9618dad6ca7bbce707c1b83abd01`
-- local gates on that SHA: PASS
-- remote CI on that SHA at dispatch: **in_progress / unknown**
-- last remotely SUCCESS SHA: `7c60ae1a` — CI `35437236776`; Vercel `3yDbpVYcnaMhRwFYN8uDtb7ZXotA`
+- TEST #001 dispatch: `5741314686`
+- last verified OS-2 persist head: `753a5adefbdd7fdd1f27acfdc2912a20123be527`
+- exact-head CI on that SHA: `35438904316` SUCCESS
+- exact-head Vercel on that SHA: success `7GapEVWqsTK54P3vjgCifZuHUJFw`
 - this persist is a newer head; live PR head must be re-fetched
-- verdict: **ready for Technical-Lead review** — Security restore confirmed; aggregator contract persisted; Daily not full-PASS; HOLD-exit not closed
-- evidence checked: `5741257042`; local gates on `9f8aa93f`
-- evidence not checked: remote CI/Vercel on `9f8aa93f` or **the SHA this persist will create**; live Grok workspace file bytes; shared-environment tokens
-- blocker/gate: **NEXT EXACT STEP** = update existing Orchestrator in place, then manual six-file test + `daily-intelligence-brief.json`; HOLD remains
+- verdict: **ready for Technical-Lead review** — manual six-file path PASS; output hardening and native canary OPEN; Daily not full-PASS
+- evidence checked: `5741314686`; last verified `753a5ade` CI + Vercel
+- evidence not checked: CI/Vercel on **the SHA this persist will create**; live Grok workspace file bytes; shared-environment tokens
+- blocker/gate: **NEXT EXACT STEP** = apply §8h hardenings to the existing Orchestrator, then one native canary with production freshness; HOLD remains
 - next actor: ChatGPT / Technical Lead
 - STOP: no Ready, no merge, no Cursor Grok mutation
 
@@ -51,14 +50,14 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 
 1. Mode is still `AI_OS_BUILD_HOLD`.
 2. A new chat can reconstruct the exact next step from checkpoint §0 without prior chat memory.
-3. Existing Orchestrator / Brief are to be reused, not duplicated. CoS output path is contracted, not yet written.
+3. TEST #001 is a manual-path PASS, not Daily 07:30 activation.
 4. Ready / Merge remain Technical-Lead-only. Product Owner is asked only for reserved gates.
-5. Re-fetch CI/Vercel/threads on the live SHA. Do not treat `9f8aa93f` remote CI as SUCCESS.
+5. Re-fetch CI/Vercel/threads on the live SHA. Last verified remote evidence is `753a5ade`.
 
 ## 4. Exact next responsible actor
 
 **ChatGPT / Technical Lead** — independent exact-head review of the live PR head.
 
-After that review, the authorized next **external** layer is e-skill on the existing Orchestrator. Cursor does not implement that from this persist.
+After that review, the authorized next **external** layer is §8h skill hardening, then one native aggregator canary. Cursor does not implement that from this persist.
 
 STOP. No Ready. No merge. No normal product follow-up. No OS follow-up slice.
