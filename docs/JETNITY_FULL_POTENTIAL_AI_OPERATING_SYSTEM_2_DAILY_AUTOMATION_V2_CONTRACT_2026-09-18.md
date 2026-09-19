@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / RISK-ROUTING TARGET NOT IMPLEMENTED / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / DAILY ROUTING EXTENSION AUTHORIZED NOT YET IMPLEMENTED OR TESTED / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -30,6 +30,7 @@ Weekly ACTIVE confirmed + Guardian-first event slice: PR #491 comment `574225353
 Guardian event-assurance setup complete + first real pr-pushed validation: PR #491 comment `5742304439`  
 Emergency ChatGPT handover — first-event target locked to `2db26344`: PR #491 comment `5742521442`  
 Bounded native event path accepted / risk-routing capability check next: PR #491 comment `5742732366`  
+Routing capability review accepted with hardening / Daily extension authorized not implemented: PR #491 comment `5743274564`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -263,9 +264,9 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 | h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled (`5742304439`; see §12) |
 | h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
-| h-routing | Remaining event/risk routing | **TARGET / NOT IMPLEMENTED** — CoS read-only capability inventory next (`5742732366`; see §12) |
+| h-routing | Remaining event/risk routing | **AUTHORIZED / NOT YET IMPLEMENTED OR TESTED** — Daily Orchestrator in-place extension (`5743274564`; see §12a) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Remaining event/risk routing is **TARGET / NOT IMPLEMENTED**. HOLD-exit, Ready, and merge remain **OPEN**. Do not treat transport acceptance as whole-system assurance or a Technical-Lead FINAL PASS.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Daily routing extension is **AUTHORIZED / NOT YET IMPLEMENTED OR TESTED**. HOLD-exit, Ready, and merge remain **OPEN**. Do not treat transport acceptance or this authorization as whole-system assurance or a Technical-Lead FINAL PASS.
 
 ### 8a. Clone gate
 
@@ -544,9 +545,9 @@ Required proof sequence:
 10. **g-activate** — **CONFIRMED ACTIVE** (`5742253536`);
 11. **h-guardian** — **SETUP COMPLETE** (`5742304439`; see §12);
 12. **h-guardian-observe** — **ACCEPTED** bounded native `pr-pushed` transport/processing for `e0524311` (`5742732366`); `2db26344` standalone historical proof remains UNVERIFIED;
-13. **h-routing** — remaining event/risk routing **TARGET / NOT IMPLEMENTED**.
+13. **h-routing** — Daily routing extension **AUTHORIZED / NOT YET IMPLEMENTED OR TESTED** (`5743274564`; see §12a).
 
-This persist records that accepted transport proof and the routing target. It does **not** manufacture a Guardian result, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+This persist records that authorization. It does **not** implement routing, manufacture fixtures or test results, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -794,7 +795,7 @@ Normal Weekly operation:
 - canonical weekly archive begins only from valid normal scheduled weekly operation;
 - canonical archive path: `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`.
 
-## 12. Event-triggered / risk-triggered automation — bounded native transport ACCEPTED / routing TARGET NOT IMPLEMENTED
+## 12. Event-triggered / risk-triggered automation — bounded native transport ACCEPTED / Daily routing AUTHORIZED NOT YET IMPLEMENTED OR TESTED
 
 Weekly is **ACTIVE**. Canonical first event-trigger slice is **Guardian PR/CI/Release Assurance**. Product Owner `5742304439` confirms setup complete. Technical-Lead `5742732366` accepts bounded native `pr-pushed` transport/processing for `e0524311`. Cursor must not mutate that skill or routine and must not manufacture a Guardian result.
 
@@ -851,20 +852,42 @@ Reported native artifact facts (PO-supplied; do not invent missing fields, hashe
 
 This is **not** final Guardian whole-system assurance, **not** a Technical-Lead FINAL PASS for PR #491, **not** Ready/Merge, and **not** HOLD exit. Any later head invalidates exact-head review evidence. The transport proof remains proof of that past execution only.
 
-### 12a. Remaining event/risk routing — TARGET / NOT IMPLEMENTED
+### 12a. Remaining event/risk routing — AUTHORIZED / NOT YET IMPLEMENTED OR TESTED
 
-Acceptance requirements for the next routing layer. None of these are implemented by this persist:
+Technical-Lead `5743274564` **ACCEPTED WITH HARDENING** the PO-supplied CoS capability inventory. TL did **not** directly inspect Grok. Cursor did **not** implement, test, or write routing files.
 
-1. Reuse current Daily/Weekly findings plus Guardian events; no new broad duplicate monitors.
-2. Material Security/Privacy, Provider/Commercial, Travel Truth/Regulation and FinOps/Reliability routes, plus contradictions and evidence degradation.
-3. Chief of Staff coordinates; Guardian remains independent assurance; ChatGPT Technical Lead decides actions / PASS / Ready / Merge.
-4. Preserve per-source provenance, event identity, freshness, exact-head validity, domain truth classes and `unknown` / unavailable.
-5. `NO_MATERIAL` / unchanged `CONTEXT_ONLY` must not create alerts. Deduplicate repeats; genuine escalation, changed evidence, contradiction or recovery must not be lost. Delivery failure must not be marked delivered.
-6. Single writer per output. Shared Grok environment is not security isolation. No secrets / sensitive payloads or external / GitHub mutations.
-7. Must first inspect actual external capabilities: existing skill composition, native event/file triggers, scheduled execution constraints, durable receipt/dedup facilities and human/TL delivery. Do not assert any unsupported capability exists.
-8. Prefer a verified existing native path. If unsupported, propose the smallest justified bounded fallback with explicit latency; no implementation or activation of a fallback from this persist.
-9. Later tests must distinguish isolated labelled fixtures from actual native execution. Never contaminate live daily/weekly/event outputs or canonical archives with fabricated material events.
+Inventory provenance (PO-supplied CoS report; not Cursor observation):
 
-**NEXT EXACT EXTERNAL STEP:** existing Jetnity Chief of Staff performs a read-only capability/routing inventory, consuming existing real outputs directly without bot-to-bot messaging, then returns a concrete minimal proposal with evidence, unsupported capabilities and exact changes needed. This is not an external configuration or activation order.
+- CoS reports direct reads of real daily/weekly/six-specialist outputs, `archive/daily/2026-09-19.json`, and a newer Guardian `NO_MATERIAL` envelope `guardian-pr491-20260919T164411+0200-79f0517a` (`pr-pushed` #491 at `79f0517a`).
+- That inventory changed no configuration or files.
+- Guardian archive implementation/content was **NOT CHECKED** in that inventory.
+- Reported available in the inspected scheduled environment: cron; existing native GitHub listener; shared-workspace direct file handoff; existing Daily/Weekly composition; user-visible scheduled parent-agent brief.
+- Reported unavailable in that inspected scheduled environment: file-change triggers; routine-completion cascade; reliable scheduled bot-to-bot messages; automatic ChatGPT wake/receipt.
+- Webhook delivery IDs / raw listener logs are **NOT ACCESSIBLE** from the inspected interface. That is not proof the provider globally lacks them.
+- Skill composition feasibility is **NOT** tested routing implementation.
+
+Authorized next external work **only** (CoS, not Cursor): extend the existing `Jetnity Daily Intelligence Orchestrator` **in place** and validate with isolated fixtures. Keep all existing schedules / ACTIVE states. No new cron, monitor, integration, GitHub write, or manual live run. No Weekly skill change yet. No routing FINAL PASS, no whole-system PASS, no Ready/Merge, no HOLD exit.
+
+Required hardened first implementation — **AUTHORIZED / NOT YET IMPLEMENTED OR TESTED**:
+
+1. Keep existing six-specialist freshness / novelty / source / materiality behavior intact. Four material domains, contradictions and meaningful `DEGRADED` retain provenance and role-specific truth boundaries.
+2. Guardian latest-only reading is insufficient: a MATERIAL/DEGRADED event can be overwritten by later `NO_MATERIAL` before 07:45. Inspect existing Guardian archive structure, then consume previously unprocessed MATERIAL/DEGRADED receipts from `/workspace/jetnity/intelligence/archive/events/guardian/` plus `guardian-latest.json`, dedup by actual identity. CoS is read-only on Guardian-owned data. If archive durability/identity cannot be established, report a precise coverage limitation, not a lossless routing PASS.
+3. Bounded, deterministic oldest-first backlog processing with persisted progress; no silent truncation. Malformed / unreadable / missing expected archive creates explicit routing degradation. Do not start a broad repository rescan. A scan cap / backlog must be visible.
+4. Guardian is event-driven, not a daily heartbeat: old `NO_MATERIAL` or no new event is not alone `DEGRADED` and is not proof of listener health. Distinguish idle, missing/unreadable evidence, mismatch and unknown coverage. Daily freshness rules still apply to specialists. Head mismatch invalidates exact-head assurance; an unresolved historical risk must not be silently resolved or dropped.
+5. CoS-only minimal durable routing state may live at `/workspace/jetnity/intelligence/routing/cos-daily-routing-state.json` (Grok workspace, not this git repo). Preserve event/finding provenance, actual stable identities or explicitly derived canonical fingerprints, evidence changes and unresolved issues. Do not dedup on status alone. Genuine severity change, contradiction, new evidence, or explicit evidence-backed recovery must surface. `NO_MATERIAL` never resolves an unrelated issue.
+6. Serialize overlapping Daily invocations or detect conflict and fail closed; atomic state replacement only after validated output. Do not claim locking/atomicity if the runtime lacks it. On interruption/write failure, retain retryable pending work; no mark-delivered shortcut.
+7. Add an explicit routing section to the existing Daily output/brief while preserving consumers and schema v1 compatibility. Check existing validators before adding fields; if incompatible, report the exact conflict instead of weakening schema. Keep specialist and Guardian evidence distinguishable.
+8. Delivery truth: stored / prepared / user-visible / TL-acknowledged are distinct. Parent handoff is not proven TL receipt. Unknown delivery remains unknown/pending; no automatic ChatGPT activation or fabricated ack. Unchanged pending findings remain tracked without repeated new-alert spam.
+9. 07:45 Europe/Zurich remains unchanged. After-cutoff signals may wait until the next Daily (~24 hours plus scheduling/execution delay). The 30-minute Security→CoS spacing is **not** a delivery SLA. This bounded step is **not** immediate critical-incident paging or complete end-to-end independent Guardian review of domain findings. Remaining reverse routing, Weekly integration and urgent delivery coverage remain OPEN.
+10. No secrets, sensitive data, costs, or external writes. Shared workspace remains one trust boundary.
+
+External validation **before any routing PASS** — also **NOT YET IMPLEMENTED OR TESTED**:
+
+- Isolated fixtures only, under a run-specific `/workspace/jetnity/intelligence/fixtures/os2-routing-*/` root, with fixture-local outputs/state and explicit test mode.
+- Do not overwrite production daily/weekly/Guardian outputs or canonical archives; do not run or reschedule any live routine.
+- Required cases: each of the four material domains with source/caveat preservation; contradiction; meaningful `DEGRADED`; no-signal/`CONTEXT_ONLY` suppression; latest `NO_MATERIAL` after archived MATERIAL; replay dedup; actual update/escalation/recovery; idle Guardian; stale-head unresolved risk; malformed/unreadable archive; bounded backlog; interrupted or overlapping state update / delivery-unknown retry.
+- Read back results. Report actual pass/fail and exact changed external assets. Fixtures/manual tests are **not** a native scheduled PASS. A later real scheduled validation remains separate.
+
+**NEXT EXACT EXTERNAL STEP:** existing Jetnity Chief of Staff extends `Jetnity Daily Intelligence Orchestrator` in place under the hardened rules above, then validates with isolated fixtures only. Cursor must not implement that work, create routing JSON in this git repo, or manufacture fixture results.
 
 **STOP.** Cursor documents only.

@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Bounded native event path accepted: comment `5742732366`
+Routing capability review + Daily extension authorized: comment `5743274564`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Predecessor persist `e0524311b64f954ca4a2d1d41baf975f12b72a1d` has live exact-head CI `35447981309` SUCCESS plus Vercel `BZBAGh3b2xAEMDE7N5Ngx7X39664` success. That SHA is the accepted transport subject. This persist is a newer continuity head only. Re-fetch the live PR head before any verdict.
+Predecessor persist `79f0517ac7f805c60cc3c1484e00e10475e2265d` has live exact-head CI `35449584547` SUCCESS plus Vercel `F6L3gsXVPyWiKqr6MQDbt5WdHWPc` success. This persist is a newer continuity head only. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,52 +19,51 @@ Predecessor persist `e0524311b64f954ca4a2d1d41baf975f12b72a1d` has live exact-he
 
 | Attack | Result |
 | --- | --- |
-| Treat transport acceptance as whole-system assurance or TL FINAL PASS | **Rejected.** Scope is bounded transport/processing for `e0524311` only. |
-| Claim `2db26344` received a complete historical PASS | **Rejected.** Standalone proof remains UNVERIFIED. |
-| Rewrite PO Guardian diagnostic as TL direct Grok observation | **Rejected.** TL checked GitHub only. |
-| Rewrite historical pending CI in the event snapshot as success | **Rejected.** Later GitHub success is separate. |
-| Manufacture `guardian-latest.json` or label this persist a new canary | **Rejected.** |
-| Create a replay/synthetic event to recover `2db26344` | **Rejected.** |
-| Implement or activate routing fallbacks from this persist | **Rejected.** TARGET / NOT IMPLEMENTED only. |
-| Add event JSON to this git repository | **Rejected.** Grok workspace only. |
+| Treat authorization as routing implementation or FINAL PASS | **Rejected.** State is AUTHORIZED / NOT YET IMPLEMENTED OR TESTED. |
+| Invent routing JSON, schema, or fixture results | **Rejected.** Cursor documents only. |
+| Rewrite the CoS inventory as TL/Cursor Grok inspection | **Rejected.** Provenance is PO-supplied. |
+| Treat webhook IDs as globally unavailable | **Rejected.** Not accessible from the inspected interface only. |
+| Claim Guardian archive was verified | **Rejected.** Inventory marked it NOT CHECKED. |
+| Implement or activate routing from Cursor | **Rejected.** CoS external work only. |
+| Overwrite live Daily/Weekly/Guardian outputs | **Rejected.** Isolated fixtures only, later and external. |
 | Lift HOLD / Ready / merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- Remaining event/risk routing is not implemented.
+- Daily routing is not implemented or tested.
+- Guardian archive durability/identity is not established.
 - Shared-environment credentials were not independently inspected.
-- Cursor did not read live `guardian-latest.json` bytes.
-- GitHub delivery IDs / raw listener logs / durable local transcripts remain unavailable.
 - Remote CI on this persist SHA is unchecked until after push.
+- Reverse routing, Weekly integration and urgent delivery remain OPEN.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist TL transport acceptance for `e0524311` | Yes | contract §12 / tracker / STATUS |
-| Keep `2db26344` as UNVERIFIED history | Yes | |
-| Record routing as TARGET / NOT IMPLEMENTED | Yes | contract §12a |
-| Do not manufacture a Guardian result | Yes | |
-| Do not invent missing fields / hashes / IDs | Yes | |
-| Do not mutate Grok bots | Yes | |
+| Persist inventory + TL hardening + authorization | Yes | contract §12a / tracker / STATUS |
+| Keep state AUTHORIZED / NOT YET IMPLEMENTED OR TESTED | Yes | |
+| Preserve `e0524311` transport acceptance and `2db26344` UNVERIFIED | Yes | |
+| Do not invent external files/schema/test results | Yes | |
+| Do not mutate Grok or add routing JSON to git | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comment `5742732366`;
-- live CI/Vercel on `e0524311`;
+- comment `5743274564`;
+- live CI/Vercel on `79f0517a`;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`;
-- main still `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`.
+- main still `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`;
+- PR-head HOLD / activeMetaScope #490/#491.
 
 Not checked:
-- live `guardian-latest.json` bytes;
+- live Grok workspace bytes;
+- Guardian archive implementation/content;
 - remote CI/Vercel on **this persist SHA**;
-- shared-environment tokens;
-- GitHub delivery IDs / listener logs.
+- shared-environment tokens.
 
 ## 5. What remains
 
-Independent exact-head review of the **live** PR head, plus the CoS read-only capability/routing inventory. Agent self-review is still not PASS.
+Independent exact-head review of the **live** PR head, plus CoS in-place Daily Orchestrator extension and isolated fixture validation. Agent self-review is still not PASS.
 
-STOP. No Ready. No merge. No Cursor Grok mutation. No manufactured Guardian envelope.
+STOP. No Ready. No merge. No Cursor Grok mutation. No manufactured fixtures.
