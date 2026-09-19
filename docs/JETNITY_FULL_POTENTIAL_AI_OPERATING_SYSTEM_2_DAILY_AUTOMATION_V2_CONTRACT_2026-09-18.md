@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / DAILY ARCHIVE VALIDATION #001 PASS / WEEKLY BOOTSTRAP TEST #001 PASS / NATIVE WEEKLY CANARY NEXT / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NATIVE CANARY #001 FINAL PASS / WEEKLY RESTORE-ACTIVATE AUTHORIZED / TRIGGER PHASE OPEN / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -25,6 +25,7 @@ Canonical CoS schedule correction: PR #491 comment `5741888256` — **07:45 Euro
 Daily V2 normal ACTIVE operation + weekly archive requirement: PR #491 comment `5741925172`  
 Daily archive VALIDATION #001 PASS + weekly phase open: PR #491 comment `5741961756`  
 Weekly bootstrap TEST #001 PASS + native canary next: PR #491 comment `5741991608`  
+Weekly native canary #001 FINAL PASS + trigger phase open: PR #491 comment `5742211136`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -249,11 +250,13 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | e-native | Coordinated full native system canary | **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j) |
 | e-activate | Restore canonical schedules and decide activation | **CONFIRMED ACTIVE** — Product Owner `5741925172`; all seven Daily routines ACTIVE at canonical times |
 | f | Durable daily archive before weekly synthesis is complete | **PASS** — `JETNITY DAILY HISTORY ARCHIVE — VALIDATION #001` (`5741961756`; see §10) |
-| g | Weekly Strategic Synthesis phase | **OPEN / bootstrap PASS** — skill + paused routine exist; native canary still required (see §11) |
+| g | Weekly Strategic Synthesis phase | **CLOSED for bootstrap/native proof** — see §11 |
 | g-bootstrap | Manual weekly bootstrap on real dated archives | **PASS** — `JETNITY WEEKLY STRATEGIC INTELLIGENCE — BOOTSTRAP TEST #001` (`5741991608`) |
-| g-native | Native scheduled Weekly canary + direct brief read | **OPEN** — existing Weekly skill/routine; preserve `BOOTSTRAP_PARTIAL` |
+| g-native | Native scheduled Weekly canary + direct brief read | **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`) |
+| g-activate | Restore Weekly to Monday 08:30 ACTIVE | **AUTHORIZED** — external Product Owner / CoS restore; Cursor must not activate |
+| h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 
-The complete Daily Automation V2 path is technically proven, **ACTIVE**, and now has a verified daily archive writer (`5741961756`). Weekly bootstrap TEST #001 is **PASS** (`5741991608`). HOLD-exit, native weekly canary, trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat bootstrap PASS as weekly complete or HOLD exit.
+The complete Daily Automation V2 path is technically proven and **ACTIVE**. Weekly bootstrap + native proof is **CLOSED** (`5742211136`). HOLD-exit, Weekly restore/activate, trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat Weekly native PASS as HOLD exit.
 
 ### 8a. Clone gate
 
@@ -528,9 +531,11 @@ Required proof sequence:
 6. **e-activate** — **CONFIRMED ACTIVE** (`5741925172`);
 7. **f** — **PASS** — daily archive VALIDATION #001 (`5741961756`; see §10);
 8. **g-bootstrap** — **PASS** — weekly bootstrap TEST #001 (`5741991608`; see §11);
-9. **g-native** — native scheduled Weekly canary still **OPEN**; then remaining trigger automation and whole-system assurance, if still required.
+9. **g-native** — **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`; see §11);
+10. **g-activate** — restore Monday 08:30 **ACTIVE** (external);
+11. **h** — event-triggered / risk-triggered automation architecture **OPEN** (see §12); then whole-system / Guardian assurance if still required.
 
-This persist records weekly bootstrap TEST #001 **PASS** and the native Weekly canary as the next proof. It does **not** lift HOLD, Ready, merge, complete weekly validation, or authorize Cursor Grok mutation.
+This persist records Weekly native canary **FINAL PASS** and opens the trigger phase. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -646,9 +651,9 @@ Product Owner confirmation `5741925172`: all seven routines are now restored to 
 - not authorization to unpark PR #487;
 - not a Cursor order to create, enable, restore, or edit Grok routines;
 - not a git-tree path inside this repository;
-- not weekly / trigger / Guardian / HOLD-exit closure.
+- not trigger / Guardian / HOLD-exit closure.
 
-Daily V2 is technically proven and **ACTIVE**. Daily archive VALIDATION #001 is **PASS** (`5741961756`). Weekly bootstrap TEST #001 is **PASS** (`5741991608`). Native Weekly canary remains **OPEN**. That is **not** HOLD exit and **not** Ready/merge.
+Daily V2 is technically proven and **ACTIVE**. Weekly bootstrap + native proof is **CLOSED** (`5742211136`). Weekly restore/activate and the trigger phase remain **OPEN**. That is **not** HOLD exit and **not** Ready/merge.
 
 ## 10. Durable daily archive — VALIDATION #001 PASS
 
@@ -691,9 +696,9 @@ These paths live in the shared Grok workspace. Do not add them to this git repos
 
 Historical note: the `2026-09-19` archive correctly preserves canary-era metadata, including the prior canary freshness note. Weekly logic must treat archived control/config metadata as **historical evidence**, not current control state. Current control state must always be re-fetched independently.
 
-## 11. Weekly Strategic Synthesis — bootstrap TEST #001 PASS / native canary next
+## 11. Weekly Strategic Synthesis — native canary #001 FINAL PASS
 
-This section records the weekly layer after bootstrap TEST #001. It does **not** complete native weekly validation and does **not** authorize Cursor to mutate Grok.
+This section records closed Weekly bootstrap/native proof. Cursor must not restore or activate the Weekly routine.
 
 | Item | Canonical value |
 | --- | --- |
@@ -701,11 +706,13 @@ This section records the weekly layer after bootstrap TEST #001. It does **not**
 | Skill | `Jetnity Weekly Strategic Intelligence Synthesizer` — created; Cursor did not create it |
 | Routine | `Jetnity Weekly Strategic Intelligence Brief` — created; Cursor did not create it |
 | Normal schedule | **Monday 08:30 Europe/Zurich** |
-| Current state | **PAUSED / NOT ACTIVE** until native canary PASS + restore/activate |
+| Current documented state | **PAUSED / NOT ACTIVE** until Product Owner / CoS restore Monday 08:30 **ACTIVE** |
+| Authorized normal state | Monday **08:30 Europe/Zurich** **ACTIVE** after this PASS — external restore only |
 | Normal weekly period | the seven completed calendar days ending the preceding Sunday (Europe/Zurich) |
 | Daily archive input | `/workspace/jetnity/intelligence/archive/daily/` |
 | Current weekly output | `/workspace/jetnity/intelligence/weekly/weekly-strategic-brief.json` |
 | Weekly archive root | `/workspace/jetnity/intelligence/archive/weekly/` |
+| Canonical weekly archive name | `week-ending-YYYY-MM-DD.json` |
 
 Coverage:
 
@@ -748,8 +755,55 @@ Weekly analysis must:
 - current control state freshly re-read start/end; archived `control_state` treated as historical only;
 - `external_writes=[]`; authority boundary preserved; HOLD unchanged.
 
-Next required proof (**g-native**, external, not Cursor): one native scheduled Weekly canary using the existing Weekly skill/routine, operating on the real archive set and correctly preserving `BOOTSTRAP_PARTIAL` semantics. After native success, directly read/verify the resulting `weekly-strategic-brief.json`, then restore Monday 08:30 and activate normal Weekly operation if PASS.
+`JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`) is **FINAL WEEKLY NATIVE CANARY PASS**:
 
-Cursor must not schedule, restore, or activate that weekly routine.
+- native scheduler execution succeeded;
+- real Daily archive input only;
+- `coverage_status=BOOTSTRAP_PARTIAL`; `coverage_days=1`;
+- period `2026-09-19` → `2026-09-19` for this bootstrap canary only;
+- no fabricated missing days;
+- no unsupported trend / repetition / escalation / resolution / cross-day claims;
+- weekly `status=NO_MATERIAL`;
+- current output written: `/workspace/jetnity/intelligence/weekly/weekly-strategic-brief.json`;
+- no canonical weekly archive written from the Saturday canary;
+- `technical_lead_attention_required=false`;
+- `external_writes=[]`; HOLD unchanged;
+- fresh current control-state start/end matched; no mid-run control-state change.
+
+This closes Weekly Strategic Intelligence bootstrap/native proof.
+
+Normal Weekly operation after restore/activate:
+
+- analyze the seven completed calendar days ending the preceding Sunday;
+- use only real dated Daily archives;
+- expose `BOOTSTRAP_PARTIAL` until seven real daily archive dates exist;
+- no fabricated history;
+- canonical weekly archive begins only from valid normal scheduled weekly operation;
+- canonical archive path: `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`.
+
+Cursor must not restore or activate that weekly routine.
+
+## 12. Event-triggered / risk-triggered automation — phase OPEN
+
+After Weekly restore/activate, the next OS-2 architecture layer is event-triggered / risk-triggered automation required by the canonical full target. This persist opens that contract. Cursor must not implement Grok hooks or routines for it.
+
+Required trigger classes:
+
+- PR / CI / release-triggered assurance;
+- material security / privacy signal escalation;
+- material provider / commercial signal escalation;
+- material travel-truth / regulation escalation;
+- material FinOps / reliability escalation;
+- contradiction / degraded-evidence escalation;
+- Guardian assurance routing.
+
+Rules:
+
+- prefer event-driven hooks where the external platform/runtime actually supports them;
+- otherwise use bounded scheduled checks only when justified;
+- no noisy duplicate alerts;
+- Chief of Staff remains coordinator;
+- Guardian remains independent assurance, not the Technical Lead;
+- no GitHub write by default; `external_writes=[]`; HOLD remains active.
 
 **STOP.** Cursor documents only.
