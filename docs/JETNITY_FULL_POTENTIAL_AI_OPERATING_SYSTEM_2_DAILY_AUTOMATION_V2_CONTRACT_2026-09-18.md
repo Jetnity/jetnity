@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / MARKET + PROVIDER + TRAVEL TRUTH + GROWTH FINAL PASS / FINOPS MANUAL PASS / NATIVE CANARY OPEN / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / MARKET + PROVIDER + TRAVEL TRUTH + GROWTH + FINOPS FINAL PASS / SECURITY NEXT / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -14,6 +14,7 @@ Final Travel Truth canary: PR #491 comment `5740658975`
 Growth manual: PR #491 comment `5740686624`  
 Final Growth canary: PR #491 comment `5740795465`  
 FinOps manual: PR #491 comment `5740816529`  
+Final FinOps canary: PR #491 comment `5740939484`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -220,11 +221,11 @@ Market proof is complete. Sequence (d) is now **authorized** for later external 
 | schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
 | novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **PASS for Market writer** — `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`) |
 | re-canary | Native scheduled refresh of the hardened Market skill + CoS direct read of the refreshed file | **PASS** — `JETNITY MARKET FINAL NATIVE RE-CANARY READ #001` (`5737734991`, run `JETNITY-MARKET-PULSE-2026-09-19-6ff494`) |
-| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider + Travel Truth + Growth **complete**. FinOps **manual PASS**; native canary **OPEN**. Security writer not created. Cursor must not implement. |
+| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider + Travel Truth + Growth + FinOps **complete**. Security writer not created. Cursor must not implement. |
 | d-provider | Native scheduled Provider canary + CoS direct read without contacting Provider | **PASS** — `JETNITY PROVIDER NATIVE CANARY READ #001` (`5738078082`, run `JETNITY-PROVIDER-PULSE-2026-09-19-024605`) |
 | d-travel-truth | Native scheduled Travel Truth canary + CoS direct read without contacting Travel Truth | **PASS** — `JETNITY TRAVEL TRUTH NATIVE CANARY READ #001` (`5740658975`, run `JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1050`) |
 | d-growth | Native scheduled Growth canary + CoS direct read without contacting Growth | **PASS** — `JETNITY GROWTH NATIVE CANARY READ #001` (`5740795465`, run `growth-discoverability-2026-09-19-0957a7`) |
-| d-finops | Native scheduled FinOps canary + CoS direct read without contacting FinOps | **OPEN** — setup proven by `JETNITY-FINOPS-PULSE-HANDOFF-TEST-001` (`5740816529`). Completeness requires one native scheduled canary and a Chief-of-Staff read of the refreshed canonical file without contacting the specialist. |
+| d-finops | Native scheduled FinOps canary + CoS direct read without contacting FinOps | **PASS** — `JETNITY FINOPS NATIVE CANARY READ #001` (`5740939484`, run `JETNITY-FINOPS-2026-09-19-1200`) |
 | e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on remaining clones |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
@@ -280,7 +281,7 @@ Next **external** steps, not Cursor work:
 1. restore Provider routine to normal schedule **06:55 Europe/Zurich** and keep it **PAUSED**;
 2. restore Travel Truth to **PAUSED** **07:00 Europe/Zurich** (see §8c);
 3. restore Growth to **PAUSED** **07:05 Europe/Zurich** (see §8d);
-4. complete the FinOps native canary + CoS read (see §8e);
+4. restore FinOps to **PAUSED** **07:10 Europe/Zurich** (see §8e);
 5. then clone Security.
 
 The earlier Provider manual writer TEST #001 (`5737767891`) remains the paused-routine setup proof and is superseded for completeness by this native canary.
@@ -324,7 +325,7 @@ Next **external** steps, not Cursor work:
 
 1. restore Travel Truth routine to normal schedule **07:00 Europe/Zurich** and keep it **PAUSED**;
 2. restore Growth to **PAUSED** **07:05 Europe/Zurich** (see §8d);
-3. complete the FinOps native canary + CoS read (see §8e);
+3. restore FinOps to **PAUSED** **07:10 Europe/Zurich** (see §8e);
 4. then clone Security.
 
 ### 8d. Clone progress — Growth FINAL PASS
@@ -357,42 +358,42 @@ Do not invent metrics. Do not use dark-pattern or policy-bypass behavior. Public
 Next **external** steps, not Cursor work:
 
 1. restore Growth routine to normal schedule **07:05 Europe/Zurich** and keep it **PAUSED**;
-2. complete the FinOps native canary + CoS read (see §8e);
+2. restore FinOps to **PAUSED** **07:10 Europe/Zurich** (see §8e);
 3. then clone Security.
 
-### 8e. Clone progress — FinOps manual PASS / native canary OPEN
+### 8e. Clone progress — FinOps FINAL PASS
 
-`JETNITY-FINOPS-PULSE-HANDOFF-TEST-001` (`5740816529`) is **PASS for FinOps & Reliability manual writer validation and paused routine setup**. It does **not** complete FinOps.
+`JETNITY FINOPS NATIVE CANARY READ #001` (`5740939484`) is **FINAL FINOPS PASS**. Direct CoS workspace verification:
 
-Verified from Product Owner / Technical-Lead evidence:
-
-- private skill created: `Jetnity Daily FinOps & Reliability Pulse Writer`;
 - canonical file `/workspace/jetnity/intelligence/daily/finops-reliability.json` (Grok workspace, not this git repo);
+- native scheduled run id `JETNITY-FINOPS-2026-09-19-1200`;
+- `generated_at=2026-09-19T12:00:48+02:00`;
+- previous manual validation run replaced;
+- freshness / schema v1 / exact canonical role valid;
+- novelty gate preserved; old unchanged reliability evidence suppressed;
 - `status=NO_MATERIAL`;
-- `schema_version="1"`;
-- canonical role valid;
-- novelty gate valid;
-- financial truth discipline preserved: ACTUAL / BILLED not invented when unavailable;
-- USD 100/month treated only as a BUDGET governance threshold;
+- financial truth discipline preserved;
+- ACTUAL / BILLED remained `unknown` when unavailable;
+- USD 100/month preserved strictly as a BUDGET governance threshold;
+- no invented spend / invoices / usage / tokens / storage / bandwidth / monthly totals;
 - estimate discipline preserved;
 - symptom / cause / root-cause distinction preserved;
 - no Jetnity root cause invented;
-- stale / resolved reliability incidents treated as context when no Jetnity impact evidence existed;
-- no secrets or billing-sensitive data;
-- `external_writes=[]`;
-- `authority_boundary_preserved=true`;
-- routine created: `Jetnity Daily FinOps & Reliability Pulse`;
-- normal schedule: **07:10 Europe/Zurich**;
-- initial state: **PAUSED / NOT ACTIVE**.
+- no billing-sensitive information or secrets;
+- no purchases / plan changes / resource creation / billing mutation;
+- `external_writes=[]`; authority boundary preserved;
+- FinOps bot was **not** contacted by CoS.
 
-Evidence-quality note: lack of connected ACTUAL / BILLED cost evidence was explicitly recorded as `unknown` rather than fabricated. That does not by itself require `DEGRADED` absent a suspected material current cost condition.
+That closes the FinOps & Reliability specialist proof: native scheduled writer → canonical shared workspace file → direct CoS read/validation → novelty → financial-truth separation → budget-governance discipline → reliability causality discipline.
 
-Next required proof before marking FinOps complete:
+The earlier FinOps manual writer TEST #001 (`5740816529`) remains the paused-routine setup proof and is superseded for completeness by this native canary. The UI Erfolgreich observation (`5740920318`) is scheduler-fire evidence only and is not the completeness proof.
 
-1. one native scheduled FinOps canary using the existing skill/routine;
-2. a direct Chief-of-Staff read of the refreshed canonical file without contacting the specialist.
+Do not invent ACTUAL / BILLED spend. Preserve `unknown` when cost evidence is unavailable. Missing ACTUAL / BILLED does not by itself require `DEGRADED` absent a suspected material current cost condition. USD 100/month remains a BUDGET threshold only.
 
-Do not enable unattended FinOps scheduling from this persist. Cursor must not mutate the skill or routine.
+Next **external** steps, not Cursor work:
+
+1. restore FinOps routine to normal schedule **07:10 Europe/Zurich** and keep it **PAUSED**;
+2. proceed to Security & Privacy Red Team using the same proven transport/schema/novelty pattern, with least-privilege, deny/fail-closed, auth-vs-UI separation, sensitive-data discipline, and theoretical / reachable / verified-exploit separation.
 
 ## 9. What this contract is not
 
