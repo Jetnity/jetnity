@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Conditional receipt REPORTED CAPTURED / Auth diagnosis: comment `5744814651`
+Weekly Path A installed-source PASS / batched continuity: comment `5745439900`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Predecessor persist `c399e93da4b47d538853a1a2ba7a8685e770f76b` has exact-head CI `35465150491` **FAILURE** (Auth job `105956002699`). Typecheck/Lint/Build SUCCESS. Vercel `Bi4Jh6qeE9VSgJq8xktK9FFjpAvG` success. Re-fetch the live PR head before any verdict.
+Predecessor persist `ef38ef818cdc5bb1c9107617e22f601996c7b701` has exact-head CI `35465636952` **SUCCESS**. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,50 +19,52 @@ Predecessor persist `c399e93da4b47d538853a1a2ba7a8685e770f76b` has exact-head CI
 
 | Attack | Result |
 | --- | --- |
-| Treat CoS receipt as independently re-inspected by TL/Guardian | **Rejected.** REPORTED CAPTURED / reported record evidence. |
-| Treat new receipt as retroactive original serialized ordering | **Rejected.** Original durable receipt remains unavailable. |
-| Treat new repo head as current-head product review | **Rejected.** Historical review remains `30e8921f`. |
-| Label Auth failure transient, 401 noise, or config regression | **Rejected.** Observed pair is project HTTP 500 + branch HTTP 200 → `unbekannt`. No second observation. Comparison never ran. |
-| Rerun the failed job from this environment | **Rejected.** One observation does not authorize a retry claim; `gh` here is read-only. |
-| Claim predecessor CI success for this or the next head | **Rejected.** |
+| Treat installed-source PASS as native Weekly execution | **Rejected.** Native updated Weekly remains OPEN. |
+| Collapse old canary / ignore-routing compatibility / fixtures / install into one PASS | **Rejected.** Four distinct layers. |
+| Treat 61/0 or 18/0 as deterministic full execution | **Rejected.** Model-mediated composed-skill followthrough; deterministic checks on artifacts only. |
+| Treat Path B synthetic receipts as real messaging | **Rejected.** Protocol fixture only. |
+| Close Path C from a design choice | **Rejected.** `gap_open_no_prompt_path` stays OPEN. |
+| Treat engineering-support pack as OS-2 acceptance or new bots | **Rejected.** Deferred NOT RUN; post-HOLD slice need only. |
+| Claim Cursor observed Grok files | **Rejected.** PO/Guardian provenance. |
+| Invent transient/root-cause closure for `c399e93d` Auth 500/200 | **Rejected.** |
 | Lift HOLD / Ready / merge / ten-role FINAL | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- Exact-head Auth check on `c399e93d` failed before `config.toml` comparison. Cause of the project-endpoint HTTP 500 is not established.
-- Later whole-system Guardian read of the receipt is pending.
-- Reject/timeout untested. Automatic consumers unimplemented.
-- Native Daily+routing, native Guardian MATERIAL/DEGRADED archive, Weekly routing / reverse / urgent remain OPEN.
+- Native Daily+routing and updated Weekly scheduled execution remain unproven schedules.
+- Native Guardian MATERIAL/DEGRADED archive proof OPEN.
+- Path B real messaging / return OPEN. Path C urgent transport OPEN.
+- Later whole-system Guardian read of the conditional receipt pending.
+- Guardian could not independently enumerate the live Weekly routine object.
 - Remote CI on **this persist SHA** is unchecked until after push.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Re-fetch head/runs; report prior Auth diagnosis; no duplicate retry | Yes | one run `35465150491`; no rerun |
-| Investigate Auth from read-only logs + `ziel()` / `artAusStatus` | Yes | 500/200 → `unbekannt` |
-| Persist receipt REPORTED CAPTURED with hash/time/historical SHA | Yes | |
-| Keep original ordering unproven; later Guardian read pending | Yes | |
-| Do not weaken or skip `auth:pruefen` | Yes | |
+| Reconstruct live controls; no runtime/mode change | Yes | head `ef38ef81`; HOLD; #487 parked |
+| Distinct Weekly evidence layers + hashes | Yes | |
+| A installed / B design-only / C OPEN | Yes | |
+| Preserve Daily `scheduled_only_provisional` and conditional receipt | Yes | |
+| Deferred engineering-support pointer, not new acceptance | Yes | |
+| No Grok fixtures copied into git | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comment `5744814651` plus `5744765614`;
-- live CI `35465150491` / Auth job `105956002699` log and annotations;
-- `scripts/auth/pruefen.ts` + `lib/rollout/ziel-art.ts` classification;
+- comment `5745439900` plus the cited source comments;
+- live PR #491 Draft `ef38ef81`; CI `35465636952` SUCCESS; Vercel `9jV6PaVJyMyW2QP1SKgMkhsoVfz5`;
 - parked #487; main `ff0df56`; HOLD / activeMetaScope #490/#491.
 
 Not checked:
-- live Grok receipt file bytes;
-- original serialized CoS handoff;
-- cause of Management-API project HTTP 500;
+- live Grok installed skill bytes;
+- live Weekly routine object enumeration;
 - remote CI/Vercel on **this persist SHA**;
 - shared-environment tokens.
 
 ## 5. What remains
 
-Independent exact-head review of the **live** PR head, including the new Auth outcome. Later whole-system Guardian read of the receipt. Agent self-review is still not PASS.
+Independent exact-head review of the **live** PR head. Agent self-review is still not PASS.
 
-STOP. No Ready. No merge. No Cursor Grok mutation. No Auth-check skip.
+STOP. No Ready. No merge. No Cursor Grok mutation.

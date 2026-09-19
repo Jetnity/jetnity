@@ -4,10 +4,11 @@ Stand: 19. September 2026
 Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN OS-FOLGESLICE**
 
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Conditional receipt REPORTED CAPTURED / TL accepted limited manual scope: PR #491 comment `5744814651`  
-Prior LIMITED conditional PASS: `5744765614`  
-Guardian archive fixture intake: `5744526554`  
-Scheduled routing REPORTED CONFIGURED: `5744481469`  
+Weekly Path A installed-source PASS: PR #491 comment `5745439900`  
+Install / readback: `5745327519` / `5745416385`  
+CASE3 precedence: `5745244377` / `5745270998`  
+Fixture / design: `5745121359` / `5745219557`  
+Conditional receipt REPORTED CAPTURED: `5744814651`  
 Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0  
 V2 contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`  
@@ -25,9 +26,10 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 | Draft PR | #491 |
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical / merge-base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
-| Dispatch head | `c399e93da4b47d538853a1a2ba7a8685e770f76b` |
+| Dispatch head | `ef38ef818cdc5bb1c9107617e22f601996c7b701` |
 | Historical conditional review SHA | `30e8921f8d9740aa5ac9b7795dd2e808540bf912` |
 | Accepted transport subject | `e0524311b64f954ca4a2d1d41baf975f12b72a1d` |
+| Installed Weekly Path A | `5e77164e7f0858886d1c4523d31f81f46cffe9d235918ed8d49c0cb9634beb18` |
 | This persist | docs-only continuity persist; may produce a normal `pr-pushed`; not a canary and not an event test |
 | Live PR head | **re-fetch before verdict** |
 | Agent | Jetnity full-potential AI operating system 2, Generation 1 |
@@ -38,28 +40,28 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 ## 2. Evidence Bus
 
 - exact main/base SHA: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`
-- TL receipt-accept / Auth follow-up dispatch: `5744814651`
-- predecessor head: `c399e93da4b47d538853a1a2ba7a8685e770f76b`
-- remote CI on that SHA: run `35465150491` **FAILURE**; Typecheck SUCCESS; Auth job `105956002699` FAILED; Vercel `Bi4Jh6qeE9VSgJq8xktK9FFjpAvG` success
-- Auth diagnosis already on this session: `ziel()` `unbekannt` from project HTTP 500 + branch HTTP 200; no `config.toml` comparison; no rerun
-- verdict: **ready for Technical-Lead review** — receipt REPORTED CAPTURED / limited manual scope accepted; Auth check failed on predecessor; HOLD remains
-- blocker/gate: **NEXT EXACT STEP** = TL review of this persist; later whole-system Guardian read of the receipt; await 2026-09-20 07:45 Daily
+- TL installed-source acceptance: `5745439900`
+- predecessor head: `ef38ef818cdc5bb1c9107617e22f601996c7b701`
+- remote CI on that SHA: run `35465636952` **SUCCESS**; Auth `105957327392` SUCCESS; Vercel `9jV6PaVJyMyW2QP1SKgMkhsoVfz5` success
+- historical Auth failure on `c399e93d` / `35465150491` remains 500/200 → `unbekannt`; no invented transient closure
+- verdict: **ready for Technical-Lead review** — Weekly Path A installed-source PASS; native updated Weekly execution OPEN; HOLD remains
+- blocker/gate: **NEXT EXACT STEP** = TL exact-head review; await 2026-09-20 07:45 Daily and 2026-09-21 08:30 Weekly as schedules; later whole-system Guardian receipt read
 - next actor: ChatGPT / Technical Lead
-- STOP: no Ready, no merge, no Cursor Grok mutation, no Auth check skip
+- STOP: no Ready, no merge, no Cursor Grok mutation
 
 ## 3. What a reviewer should verify first
 
 1. Mode is still `AI_OS_BUILD_HOLD`.
-2. Receipt is REPORTED CAPTURED, not independently re-read by Cursor/TL/Guardian.
-3. Historical role review remains at `30e8921f`; new repo head is not a current-head product review.
-4. Original serialized ordering remains unproven.
-5. Predecessor Auth failure is the logged HTTP pair (500/200), not a claimed transient/401/config-regression.
-6. Re-fetch CI/Vercel on the **new** persist SHA. Do not reuse `c399e93d` or `30e8921f` success.
+2. Weekly Path A is installed-source PASS only. Native updated Weekly execution is OPEN.
+3. Evidence layers stay distinct: old native canary / limited ignore-routing compatibility / model-mediated fixtures / installed source.
+4. Path B is design + synthetic protocol only. Path C `gap_open_no_prompt_path` remains OPEN.
+5. Daily gate remains `scheduled_only_provisional`. Conditional receipt and historical SHA `30e8921f` stay as previously accepted.
+6. Re-fetch CI/Vercel on the **new** persist SHA. Do not reuse `ef38ef81` SUCCESS as the new-head verdict.
 
 ## 4. Exact next responsible actor
 
-**ChatGPT / Technical Lead** — independent exact-head review of the live PR head after this persist, including the new Auth-job outcome.
+**ChatGPT / Technical Lead** — independent exact-head review of the live PR head after this persist.
 
-Later: whole-system Guardian independent read of `CONDITIONAL_ROLES_RECEIPT_EVIDENCE.json`. Existing native Daily at 2026-09-20 07:45 Europe/Zurich.
+Later: native Daily+routing at the existing 2026-09-20 07:45 Europe/Zurich schedule; updated Weekly scheduled evidence at 2026-09-21 08:30; later whole-system Guardian receipt read.
 
 STOP. No Ready. No merge. No normal product follow-up. No OS follow-up slice.

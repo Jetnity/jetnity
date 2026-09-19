@@ -281,9 +281,9 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 | h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled (`5742304439`; see §12) |
 | h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
-| h-routing | Remaining event/risk routing | **STAGED CORRECTIONS LIMITED PASS / Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED / conditional LIMITED PASS / receipt REPORTED CAPTURED / native Daily+routing OPEN** (`5744814651`; see §12a) |
+| h-routing | Remaining event/risk routing | **Weekly Path A INSTALLED-SOURCE PASS / Path B design-only / Path C OPEN / scheduled routing REPORTED CONFIGURED / conditional receipt REPORTED CAPTURED / native Daily+routing OPEN** (`5745439900`; see §12a) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Daily routing staged corrections and limited Weekly consumer compatibility are accepted. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited manual scope (`5744814651`); later whole-system Guardian read is pending. Native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Ready, merge, and HOLD-exit remain **OPEN**.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Weekly Path A routing plus binding mixed-status precedence is an **INSTALLED-SOURCE PASS** (`5745439900`); native updated Weekly execution remains **OPEN**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Old Weekly ignore-routing compatibility remains a historical LIMITED PASS. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited manual scope (`5744814651`); later whole-system Guardian read is pending. Native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Path B messaging, Path C urgent transport, Ready, merge, and HOLD-exit remain **OPEN**.
 
 ### 8a. Clone gate
 
@@ -929,7 +929,7 @@ Pre-Fix-1 Guardian-reviewed identities from `5743383261` are **superseded** (his
 
 The four activation gates recorded at `5743658093` were the authorized Fix-2 scope. They are **not** still “not implemented.” Later comments closed A, B and D as staged corrections and left C (real Weekly consumer) OPEN. See the Fix-2 cycle below.
 
-Separate OPEN (not defects of empty `NO_MATERIAL` archive): real Guardian MATERIAL/DEGRADED archive proof; native Daily+routing execution; Weekly routing integration; reverse domain assurance; urgent delivery. Empty archive under `NO_MATERIAL` is **not** a defect. No PR FINAL PASS / Ready / Merge / HOLD exit.
+Separate OPEN (not defects of empty `NO_MATERIAL` archive): real Guardian MATERIAL/DEGRADED archive proof; native Daily+routing execution; native updated Weekly scheduled execution; Path B real messaging; Path C urgent delivery. Weekly Path A is installed-source PASS only. Empty archive under `NO_MATERIAL` is **not** a defect. No PR FINAL PASS / Ready / Merge / HOLD exit.
 
 #### Review Fix 2 / 2a / 2b — staged correction cycle
 
@@ -1034,8 +1034,34 @@ The original durable serialized receipt remains **unavailable**. This new receip
 
 CookieConsent chronology: Mobile Accessibility STATUS blob `29db3c920302715938e147f22a1d4c26d2dfc130` (Stand 16 September, intentional orphan) is historical. Cookie Consent Hygiene STATUS blob `bb4fdf5130b17b644cb122d81de39e23281b85c9` (Stand 18 September, component deleted) supersedes it. Do not present the orphan as current unresolved product truth. No runtime/consent action.
 
-Still OPEN: native Daily+routing; native Guardian MATERIAL/DEGRADED archive proof; Weekly routing integration; reverse domain assurance; urgent delivery; original serialized ordering; later whole-system Guardian receipt read. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
+#### Weekly Path A — INSTALLED-SOURCE PASS / native updated execution OPEN
 
-**NEXT EXACT STEP:** Technical-Lead review of this persist, including the new-head Auth outcome. Later whole-system Guardian independent read of the receipt. No further role rerun/ping. Await the existing native Daily 07:45 Europe/Zurich schedule for routing proof. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
+Technical-Lead `5745439900` **ACCEPTS LIMITED INSTALLED-SOURCE PASS** for Weekly Path A and binding mixed-status precedence. `status_precedence_contract_gap` is **CLOSED in installed source**. Guardian independently measured the installed text; TL/Cursor did not observe Grok files. This is **not** native Weekly execution.
+
+| Artifact | Reported identity |
+| --- | --- |
+| Installed agent+sand / production compose | `5e77164e7f0858886d1c4523d31f81f46cffe9d235918ed8d49c0cb9634beb18` |
+| Saved baseline (old native canary skill) | `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67` |
+| Accepted candidate | `6b503b7c6b0c13df10fa96018922acd13642706be02d6ade6b299198873bf97b` |
+| `INSTALL_RECEIPT.json` | SHA256 `1ff43047c44dabc4b7236e25665f36715c3f0726f1e4ae834402a90672255023` |
+
+`INSTALL_DIFF.patch` +139/−5: Path A / schema / step3b / precedence only. Canonical production I/O. No fixture clock/remap. No Path B/C activation. No conditional auto-intake. Existing Monday **08:30 Europe/Zurich** ACTIVE schedule unchanged. Next expected run `2026-09-21T08:30:00+02:00` is a **schedule**, not a receipt. Guardian did not independently enumerate the live routine object.
+
+Binding precedence (`5745244377`): meaningful evidence-integrity/availability failure or unsafe contradiction → `DEGRADED` even with surviving MATERIAL; else genuine MATERIAL; else valid `NO_MATERIAL`. Preserve material/conflict/gaps in structured output **and** human brief. `technical_lead_attention_required=true` when surviving MATERIAL, material unresolved conflict, or meaningful DEGRADED applies. Legacy / `BOOTSTRAP_PARTIAL` alone does not degrade. Absence / head advance does not resolve risk.
+
+Distinct evidence layers:
+
+1. Original native Weekly bootstrap / canary on the **old** skill remains historical (`5741991608` / `5742211136`).
+2. Old Weekly ignoring additive Daily routing is LIMITED compatibility, not integration (`5744379287`).
+3. Correction-1 design PASS, original fixture `61/0`, and correction-2 CASE3 `18/0` are separate model-mediated sets. Original CASE3 `MATERIAL` and corrected CASE3 `DEGRADED` stay labelled. No invented deterministic full execution.
+4. Accepted install + independent source readback on `5e77164e…`. Native updated Weekly execution remains OPEN.
+
+Path **B** is reviewed request/receipt design plus synthetic protocol cases only. Real targeted messaging / return remains OPEN. Path **C** remains `gap_open_no_prompt_path` OPEN. No automatic ChatGPT wake or delivery SLA. P0/P1 must not intentionally wait for Daily.
+
+Deferred engineering-support pack (`5744886051` / `5744921031`): `/workspace/jetnity/intelligence/routing/staging/ENGINEERING_SUPPORT_TASK_PACK.md` SHA256 `53382552d98fb8b66517027c269ee820b800bebace8c4e6a11e50e591c5b91d8`. Seven scoped assistance tasks prepared **NOT RUN**. Not new bots. Not new OS-2 acceptance.
+
+Still OPEN: native Daily+routing; native updated Weekly scheduled execution; native Guardian MATERIAL/DEGRADED archive proof; Path B messaging; Path C urgent transport; original serialized ordering; later whole-system Guardian receipt read. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
+
+**NEXT EXACT STEP:** Technical-Lead exact-head review of this persist. Await the existing native Daily 07:45 Europe/Zurich and the updated Weekly 08:30 Europe/Zurich as **schedules**. Later whole-system Guardian independent read of the receipt. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
 
 **STOP.** Cursor documents only.
