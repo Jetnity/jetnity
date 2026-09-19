@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / MARKET + PROVIDER + TRAVEL TRUTH + GROWTH + FINOPS FINAL PASS / SECURITY MANUAL PASS / NATIVE CANARY OPEN / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / ALL SIX DAILY SPECIALISTS FINAL PASS / COS SIX-FILE AGGREGATION NEXT / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -16,6 +16,7 @@ Final Growth canary: PR #491 comment `5740795465`
 FinOps manual: PR #491 comment `5740816529`  
 Final FinOps canary: PR #491 comment `5740939484`  
 Security manual: PR #491 comment `5740963538`  
+Final Security canary: PR #491 comment `5741212303`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -212,7 +213,7 @@ Keep this routine **PAUSED** until the V2 aggregation path is verified.
 
 ## 8. Required testing sequence
 
-Market proof is complete. Sequence (d) is now **authorized** for later external Product-Owner / Chief-of-Staff setup. Cursor documents only and must **not** create, enable, or edit those Grok routines.
+Sequence (d) is **complete**. All six Daily specialists are FINAL PASS. Sequence (e) is the authorized next external layer. Cursor documents only and must **not** create, enable, or edit those Grok routines.
 
 | Step | Proof required | State |
 | --- | --- | --- |
@@ -222,15 +223,18 @@ Market proof is complete. Sequence (d) is now **authorized** for later external 
 | schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
 | novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **PASS for Market writer** — `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`) |
 | re-canary | Native scheduled refresh of the hardened Market skill + CoS direct read of the refreshed file | **PASS** — `JETNITY MARKET FINAL NATIVE RE-CANARY READ #001` (`5737734991`, run `JETNITY-MARKET-PULSE-2026-09-19-6ff494`) |
-| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider + Travel Truth + Growth + FinOps **complete**. Security **manual PASS**; native canary **OPEN**. Cursor must not implement the canary. |
+| d | Clone the proven pattern to the remaining five specialists | **COMPLETE** — all six Daily specialists FINAL PASS |
 | d-provider | Native scheduled Provider canary + CoS direct read without contacting Provider | **PASS** — `JETNITY PROVIDER NATIVE CANARY READ #001` (`5738078082`, run `JETNITY-PROVIDER-PULSE-2026-09-19-024605`) |
 | d-travel-truth | Native scheduled Travel Truth canary + CoS direct read without contacting Travel Truth | **PASS** — `JETNITY TRAVEL TRUTH NATIVE CANARY READ #001` (`5740658975`, run `JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1050`) |
 | d-growth | Native scheduled Growth canary + CoS direct read without contacting Growth | **PASS** — `JETNITY GROWTH NATIVE CANARY READ #001` (`5740795465`, run `growth-discoverability-2026-09-19-0957a7`) |
 | d-finops | Native scheduled FinOps canary + CoS direct read without contacting FinOps | **PASS** — `JETNITY FINOPS NATIVE CANARY READ #001` (`5740939484`, run `JETNITY-FINOPS-2026-09-19-1200`) |
-| d-security | Native scheduled Security canary + CoS direct read without contacting Security | **OPEN** — setup proven by `JETNITY-SECURITY-PULSE-HANDOFF-TEST-001` (`5740963538`). Completeness requires one native scheduled canary and a Chief-of-Staff read of the refreshed canonical file without contacting the specialist. |
-| e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on remaining clones |
+| d-security | Native scheduled Security canary + CoS direct read without contacting Security | **PASS** — `JETNITY SECURITY NATIVE CANARY READ #001` (`5741212303`, run `JETNITY-SECURITY-PULSE-2026-09-19-1230`) |
+| e | Full six-file CoS scheduled aggregation | **OPEN** — authorized next after restore-all-six PAUSED (see §8g) |
+| e-manual | Manual six-file aggregation test | **OPEN** |
+| e-native | Native scheduled six-file aggregation canary | **OPEN** |
+| e-activate | Activate Daily production schedule 07:30 Europe/Zurich | **OPEN** — only after e-manual and e-native PASS |
 
-Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
+Until (e-manual) and (e-native) are independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**. Do not activate 07:30 from specialist-final-pass evidence alone.
 
 ### 8a. Clone gate
 
@@ -281,10 +285,8 @@ That closes the Provider & Commercial specialist proof: native scheduled writer 
 Next **external** steps, not Cursor work:
 
 1. restore Provider routine to normal schedule **06:55 Europe/Zurich** and keep it **PAUSED**;
-2. restore Travel Truth to **PAUSED** **07:00 Europe/Zurich** (see §8c);
-3. restore Growth to **PAUSED** **07:05 Europe/Zurich** (see §8d);
-4. restore FinOps to **PAUSED** **07:10 Europe/Zurich** (see §8e);
-5. complete the Security native canary + CoS read (see §8f).
+2. restore the other five specialists to their canonical PAUSED schedules (see §8c–§8f);
+3. then Chief-of-Staff six-file aggregation (see §8g).
 
 The earlier Provider manual writer TEST #001 (`5737767891`) remains the paused-routine setup proof and is superseded for completeness by this native canary.
 
@@ -326,9 +328,8 @@ Do not invent visa, transit, health, carrier, eligibility or document rules. Pre
 Next **external** steps, not Cursor work:
 
 1. restore Travel Truth routine to normal schedule **07:00 Europe/Zurich** and keep it **PAUSED**;
-2. restore Growth to **PAUSED** **07:05 Europe/Zurich** (see §8d);
-3. restore FinOps to **PAUSED** **07:10 Europe/Zurich** (see §8e);
-4. complete the Security native canary + CoS read (see §8f).
+2. restore the other five specialists to their canonical PAUSED schedules (see §8b–§8f);
+3. then Chief-of-Staff six-file aggregation (see §8g).
 
 ### 8d. Clone progress — Growth FINAL PASS
 
@@ -360,8 +361,8 @@ Do not invent metrics. Do not use dark-pattern or policy-bypass behavior. Public
 Next **external** steps, not Cursor work:
 
 1. restore Growth routine to normal schedule **07:05 Europe/Zurich** and keep it **PAUSED**;
-2. restore FinOps to **PAUSED** **07:10 Europe/Zurich** (see §8e);
-3. complete the Security native canary + CoS read (see §8f).
+2. restore the other five specialists to their canonical PAUSED schedules (see §8b–§8f);
+3. then Chief-of-Staff six-file aggregation (see §8g).
 
 ### 8e. Clone progress — FinOps FINAL PASS
 
@@ -395,42 +396,81 @@ Do not invent ACTUAL / BILLED spend. Preserve `unknown` when cost evidence is un
 Next **external** steps, not Cursor work:
 
 1. restore FinOps routine to normal schedule **07:10 Europe/Zurich** and keep it **PAUSED**;
-2. complete the Security native canary + CoS read (see §8f).
+2. restore the other five specialists to their canonical PAUSED schedules (see §8b–§8f);
+3. then Chief-of-Staff six-file aggregation (see §8g).
 
-### 8f. Clone progress — Security manual PASS / native canary OPEN
+### 8f. Clone progress — Security FINAL PASS
 
-`JETNITY-SECURITY-PULSE-HANDOFF-TEST-001` (`5740963538`) is **PASS for Security & Privacy Red Team manual writer validation and paused routine setup**. It does **not** complete Security.
+`JETNITY SECURITY NATIVE CANARY READ #001` (`5741212303`) is **FINAL SECURITY PASS**. Direct CoS workspace verification:
 
-Verified from Product Owner / Technical-Lead evidence:
-
-- private skill created: `Jetnity Daily Security & Privacy Pulse Writer`;
 - canonical file `/workspace/jetnity/intelligence/daily/security-privacy.json` (Grok workspace, not this git repo);
+- native scheduled run id `JETNITY-SECURITY-PULSE-2026-09-19-1230`;
+- `generated_at=2026-09-19T12:31:45+02:00`;
+- previous manual validation run replaced;
+- freshness / schema v1 / exact canonical role valid;
+- novelty gate preserved; old unchanged security evidence suppressed;
 - `status=NO_MATERIAL`;
-- `schema_version="1"`;
-- canonical role valid;
-- novelty gate valid;
 - least-privilege / deny / fail-closed discipline preserved;
 - UI hiding not confused with authorization;
 - THEORETICAL / REACHABLE / VERIFIED_EXPLOIT distinction preserved;
-- no unsupported exploit or breach claim;
-- privacy risk separated from legal conclusion;
-- sensitive traveller / auth data not copied;
+- no unsupported breach / compromise / exploitability claim;
+- privacy risk kept separate from legal conclusion;
+- no sensitive traveller / auth data, secrets, tokens or credentials copied;
 - no exploit payloads;
-- old unchanged security evidence suppressed;
-- `external_writes=[]`;
-- `authority_boundary_preserved=true`;
-- routine created: `Jetnity Daily Security & Privacy Pulse`;
-- normal schedule: **07:15 Europe/Zurich**;
-- initial state: **PAUSED / NOT ACTIVE**.
+- no Auth / RLS / MFA / Production / security mutation;
+- `external_writes=[]`; authority boundary preserved;
+- Security bot was **not** contacted by CoS.
 
-Evidence-quality note: read-only repository / governance observations remained context and were not inflated into security findings. No theoretical pattern was elevated to reachable or verified exploit.
+That closes the Security & Privacy Red Team specialist proof: native scheduled writer → canonical shared workspace file → direct CoS read/validation → novelty → least-privilege / deny / fail-closed → auth-vs-UI → THEORETICAL / REACHABLE / VERIFIED_EXPLOIT.
 
-Next required proof before marking Security complete:
+The earlier Security manual writer TEST #001 (`5740963538`) remains the paused-routine setup proof and is superseded for completeness by this native canary. The UI Erfolgreich observation (`5741170845`) is scheduler-fire evidence only and is not the completeness proof.
 
-1. one native scheduled Security canary using the existing skill/routine;
-2. a direct Chief-of-Staff read of the refreshed canonical file without contacting the specialist.
+Do not write exploit payloads or reproduction steps. Do not treat UI hiding as authorization. Preserve `unknown` when exploitability is unproven.
 
-Do not enable unattended Security scheduling from this persist. Cursor must not mutate the skill or routine. Cursor must not write exploit payloads or reproduction steps.
+Next **external** steps, not Cursor work:
+
+1. restore Security routine to normal schedule **07:15 Europe/Zurich** and keep it **PAUSED**;
+2. restore the other five specialists to their canonical PAUSED schedules (see §8b–§8e);
+3. then Chief-of-Staff six-file aggregation (see §8g).
+
+### 8g. Next phase — Chief-of-Staff six-file aggregation
+
+All six Daily specialists are FINAL PASS. Before aggregation-system work begins, restore every specialist to its canonical normal schedule and keep it **PAUSED**:
+
+| Role | Normal schedule Europe/Zurich |
+| --- | --- |
+| Market & Traveller | 06:50 PAUSED |
+| Provider & Commercial | 06:55 PAUSED |
+| Travel Truth & Regulation | 07:00 PAUSED |
+| Growth & Discoverability | 07:05 PAUSED |
+| FinOps & Reliability | 07:10 PAUSED |
+| Security & Privacy Red Team | 07:15 PAUSED |
+
+The next bounded work is to build or update the existing Chief-of-Staff Daily Intelligence path so **scheduled** execution:
+
+- reads the six canonical shared-workspace JSON files;
+- does **not** depend on scheduled bot-to-bot messaging;
+- validates `schema_version`, canonical role, current-window freshness, `status`, and source integrity;
+- treats missing / stale / invalid role envelopes as `SPECIALIST UNAVAILABLE` / `DEGRADED`;
+- never silently reuses prior-day evidence;
+- deduplicates overlapping findings;
+- detects contradictions;
+- preserves role-specific caveats and source-quality limits;
+- does **not** promote specialist `MATERIAL` blindly;
+- emits one concise Daily Intelligence Brief;
+- performs a final control-state recheck immediately before emitting the brief;
+- does **not** mutate GitHub by default;
+- does **not** Ready / Merge / Production / provider / payment action;
+- keeps `AI_OS_BUILD_HOLD` active.
+
+Required proof sequence:
+
+1. **e-manual** — one manual six-file aggregation test;
+2. **e-native** — one native scheduled six-file aggregation canary;
+3. **e-activate** — only after both pass, activate the daily production schedule at **07:30 Europe/Zurich**;
+4. then remaining weekly / trigger automation work and whole-system assurance.
+
+This persist authorizes only that later controlled aggregation layer. It does **not** lift HOLD, authorize Daily 07:30 activation, Ready, merge, or Cursor Grok mutation.
 
 ## 9. What this contract is not
 

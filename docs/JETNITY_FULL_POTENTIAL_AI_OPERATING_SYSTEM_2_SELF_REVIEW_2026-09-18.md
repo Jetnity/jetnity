@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Continuity-hardening dispatch: comment `5741007110`
+Security FINAL dispatch: comment `5741212303`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `920325a9abd848aa1eca78afba01bb7222493053` has exact-head CI `35436831797` SUCCESS and Vercel success. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `7c60ae1a9a951ddcc4b097bf69b896718f7195a7` has exact-head CI `35437236776` SUCCESS and Vercel success. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,7 +19,9 @@ Last verified evidence head `920325a9abd848aa1eca78afba01bb7222493053` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat this persist as Security complete, Daily full-PASS, or HOLD-exit | **Rejected.** Native canary + CoS read, sequence e, and HOLD-exit remain OPEN. |
+| Treat this persist as Daily full-PASS, 07:30 activation, or HOLD-exit | **Rejected.** Sequence e (manual + native six-file aggregation) and HOLD-exit remain OPEN. |
+| Treat specialist FINAL PASS as authorization to enable unattended Daily | **Rejected.** Restore-all-six must stay PAUSED until e-manual and e-native pass. |
+| Promote the Growth `MATERIAL` finding as an implementation instruction | **Rejected.** Later-review intelligence only. |
 | Let a new chat reconstruct from `main` docs only | **Rejected.** While #491 is open, live PR head/comments win. |
 | Treat Cursor as allowed to Ready/merge | **Rejected.** ChatGPT / Technical Lead only. |
 | Ask the Product Owner for normal bounded technical decisions | **Rejected.** PO reserved gates only. |
@@ -28,18 +30,18 @@ Last verified evidence head `920325a9abd848aa1eca78afba01bb7222493053` has exact
 
 ## 2. Residual risks this slice does not close
 
-- Security native scheduled canary + CoS read remain OPEN.
-- Restores of FinOps / Growth / Travel Truth / Provider to paused canonical schedules remain external.
-- Sequence e and HOLD-exit remain **OPEN**.
+- Restore-all-six to canonical PAUSED schedules remains external.
+- Sequence e-manual, e-native, and e-activate remain **OPEN**.
+- Weekly / trigger automation and whole-system assurance remain **OPEN**.
 - Shared-environment credentials were not independently inspected.
-- This persist is a newer head than `920325a9`.
+- This persist is a newer head than `7c60ae1a`.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist exact continuation point for a new ChatGPT conversation | Yes | checkpoint §0 + START_HERE routing |
-| Keep Security incomplete until native canary + CoS read | Yes | NEXT EXACT STEP unchanged |
+| Persist Security FINAL PASS and all-six closeout | Yes | contract §8f / tracker / checkpoint §0 |
+| Persist CoS six-file aggregation as the next phase | Yes | contract §8g; NEXT EXACT STEP updated |
 | Live-evidence-wins / do not assume main docs | Yes | |
 | Do not mutate Grok bots | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
@@ -47,8 +49,9 @@ Last verified evidence head `920325a9abd848aa1eca78afba01bb7222493053` has exact
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comment `5741007110`;
-- last verified head `920325a9` CI `35436831797` SUCCESS; Vercel success `EJvQ58J5snM574ZfQC9yfVqumP3v`;
+- comment `5741212303`;
+- UI-only fire `5741170845`;
+- last verified head `7c60ae1a` CI `35437236776` SUCCESS; Vercel success `3yDbpVYcnaMhRwFYN8uDtb7ZXotA`;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
