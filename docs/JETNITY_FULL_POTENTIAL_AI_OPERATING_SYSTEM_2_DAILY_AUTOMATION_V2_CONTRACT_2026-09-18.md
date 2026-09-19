@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / END-TO-END FINAL PASS / DURABLE DAILY ARCHIVE REQUIRED BEFORE WEEKLY COMPLETE / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / DAILY ARCHIVE VALIDATION #001 PASS / WEEKLY STRATEGIC SYNTHESIS PHASE OPEN / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -23,11 +23,12 @@ Aggregator output hardening complete: PR #491 comment `5741340041`
 Full native system canary FINAL PASS: PR #491 comment `5741863042`  
 Canonical CoS schedule correction: PR #491 comment `5741888256` — **07:45 Europe/Zurich** supersedes the prior 07:30 CoS target  
 Daily V2 normal ACTIVE operation + weekly archive requirement: PR #491 comment `5741925172`  
+Daily archive VALIDATION #001 PASS + weekly phase open: PR #491 comment `5741961756`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
 
-The paths below are the **shared Grok workspace**, not this git repository. Do not add `/workspace/jetnity/intelligence/daily/` or `/workspace/jetnity/intelligence/archive/` files to Jetnity V2.
+The paths below are the **shared Grok workspace**, not this git repository. Do not add `/workspace/jetnity/intelligence/daily/`, `/workspace/jetnity/intelligence/weekly/`, or `/workspace/jetnity/intelligence/archive/` files to Jetnity V2.
 
 ## 1. Why V2 exists
 
@@ -82,6 +83,8 @@ One writer per file:
 | `security-privacy.json` | Jetnity Security & Privacy Red Team |
 | `daily-intelligence-brief.json` | Jetnity Chief of Staff |
 | `../archive/daily/YYYY-MM-DD.json` | Jetnity Chief of Staff |
+| `../weekly/weekly-strategic-brief.json` | Jetnity Chief of Staff |
+| `../archive/weekly/` dated weekly snapshots | Jetnity Chief of Staff |
 
 No other identity may overwrite another role’s file. The Chief of Staff is a **reader** of the six specialist files and the **sole writer** of `daily-intelligence-brief.json`. Specialists must not write the brief file.
 
@@ -244,9 +247,10 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | e-hardening | Bounded output hardening before native canary | **PASS** — existing Orchestrator updated in place (`5741340041`) |
 | e-native | Coordinated full native system canary | **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j) |
 | e-activate | Restore canonical schedules and decide activation | **CONFIRMED ACTIVE** — Product Owner `5741925172`; all seven Daily routines ACTIVE at canonical times |
-| f | Durable daily archive before weekly synthesis is complete | **PERSISTED / not weekly-complete** — see §10 |
+| f | Durable daily archive before weekly synthesis is complete | **PASS** — `JETNITY DAILY HISTORY ARCHIVE — VALIDATION #001` (`5741961756`; see §10) |
+| g | Weekly Strategic Synthesis phase | **OPEN** — contract persisted; skill/routine not created from Cursor (see §11) |
 
-The complete Daily Automation V2 path is technically proven and is now in **normal ACTIVE operation** (`5741925172`). HOLD-exit, weekly synthesis (blocked on the §10 archive), trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat Daily ACTIVE as HOLD exit.
+The complete Daily Automation V2 path is technically proven, **ACTIVE**, and now has a verified daily archive writer (`5741961756`). HOLD-exit, weekly skill/routine validation, trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat archive PASS as weekly complete or HOLD exit.
 
 ### 8a. Clone gate
 
@@ -519,10 +523,11 @@ Required proof sequence:
 4. **e-hardening** — **PASS** — existing Orchestrator updated in place (`5741340041`);
 5. **e-native** — **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j);
 6. **e-activate** — **CONFIRMED ACTIVE** (`5741925172`);
-7. **f** — durable daily archive contract persisted (§10); weekly synthesis is **not** complete until the archive writer exists and weekly logic reads dated archives only;
-8. then remaining weekly / trigger automation work and whole-system assurance, if still required by the canonical full-target OS.
+7. **f** — **PASS** — daily archive VALIDATION #001 (`5741961756`; see §10);
+8. **g** — weekly synthesis phase **OPEN** (see §11); skill/routine remain uncreated from Cursor and must stay **PAUSED** until manual + native validation;
+9. then remaining trigger automation work and whole-system assurance, if still required by the canonical full-target OS.
 
-This persist records Daily V2 ACTIVE operation plus the archive prerequisite. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+This persist records Daily archive VALIDATION #001 **PASS** and opens weekly synthesis (§11). It does **not** lift HOLD, Ready, merge, complete weekly validation, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -640,11 +645,11 @@ Product Owner confirmation `5741925172`: all seven routines are now restored to 
 - not a git-tree path inside this repository;
 - not weekly / trigger / Guardian / HOLD-exit closure.
 
-Daily V2 is technically proven and **ACTIVE** (`5741863042`, `5741925172`). The §10 archive contract is persisted. That is **not** weekly complete, **not** HOLD exit, and **not** Ready/merge.
+Daily V2 is technically proven and **ACTIVE**. Daily archive VALIDATION #001 is **PASS** (`5741961756`). Weekly synthesis is **OPEN**, not complete. That is **not** HOLD exit and **not** Ready/merge.
 
-## 10. Durable daily archive — required before weekly synthesis is complete
+## 10. Durable daily archive — VALIDATION #001 PASS
 
-`daily-intelligence-brief.json` is a **current-state** file and may be overwritten by the next Daily run. Weekly strategic synthesis needs durable daily history. This archive contract is a prerequisite. It does **not** complete the weekly routine.
+`daily-intelligence-brief.json` is a **current-state** file and may be overwritten by the next Daily run. Weekly strategic synthesis needs durable daily history.
 
 | Item | Canonical value |
 | --- | --- |
@@ -668,6 +673,62 @@ Weekly logic:
 - missing pre-deployment days are not a failure and must not be fabricated;
 - after seven real days exist, expected normal coverage is the most recent seven daily archives.
 
-These paths live in the shared Grok workspace. Do not add them to this git repository. Cursor must not implement the Grok archive writer.
+These paths live in the shared Grok workspace. Do not add them to this git repository.
+
+`JETNITY DAILY HISTORY ARCHIVE — VALIDATION #001` (`5741961756`) is **PASS**:
+
+- existing `Jetnity Daily Intelligence Orchestrator` updated in place with a post-aggregation daily archive step;
+- Daily routine remains **ACTIVE** at **07:45 Europe/Zurich**;
+- current Daily file unchanged: `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json`;
+- dated archive written: `/workspace/jetnity/intelligence/archive/daily/2026-09-19.json`;
+- archive `run_id` preserved from the source Daily Brief: `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`;
+- schema v1 valid; content preserved with no new claims and no finding/source loss;
+- prior-date archive mutation: NONE;
+- `external_writes=[]`; no sensitive data; HOLD unchanged.
+
+Historical note: the `2026-09-19` archive correctly preserves canary-era metadata, including the prior canary freshness note. Weekly logic must treat archived control/config metadata as **historical evidence**, not current control state. Current control state must always be re-fetched independently.
+
+## 11. Weekly Strategic Synthesis — phase OPEN
+
+This section opens the weekly layer. It does **not** create the skill or routine from Cursor and does **not** complete weekly validation.
+
+| Item | Canonical value |
+| --- | --- |
+| Owner | Jetnity Chief of Staff |
+| Preferred skill | `Jetnity Weekly Strategic Intelligence Synthesizer` — new dedicated private skill allowed/preferred |
+| Routine | `Jetnity Weekly Strategic Intelligence Brief` |
+| Normal schedule | **Monday 08:30 Europe/Zurich** |
+| Initial state | **PAUSED** until manual + native validation pass |
+| Normal weekly period | the seven completed calendar days ending the preceding Sunday (Europe/Zurich) |
+| Daily archive input | `/workspace/jetnity/intelligence/archive/daily/` |
+| Current weekly output | `/workspace/jetnity/intelligence/weekly/weekly-strategic-brief.json` |
+| Weekly archive root | `/workspace/jetnity/intelligence/archive/weekly/` |
+
+Coverage:
+
+- use available real dated Daily archives only;
+- never fabricate missing pre-deployment days;
+- expose `coverage_days` and `coverage_status = BOOTSTRAP_PARTIAL | COMPLETE`;
+- `BOOTSTRAP_PARTIAL` is not by itself `DEGRADED` and must not fabricate trend claims;
+- after seven real days exist, expected normal coverage is that Monday’s preceding Sunday-ended seven-day window.
+
+Weekly analysis must:
+
+- read only real dated Daily archives;
+- validate each archive schema / date / run provenance;
+- deduplicate repeated signals across days;
+- distinguish persistent/repeated signals from one-day noise;
+- identify trend only with sufficient multi-day evidence;
+- preserve role/source caveats;
+- not convert correlation into causation;
+- not promote `CONTEXT_ONLY` into material weekly findings;
+- surface contradictions and unresolved degraded days;
+- distinguish `NEW_THIS_WEEK` / `REPEATED` / `ESCALATING` / `RESOLVED` / `CONTEXT_ONLY`;
+- never infer current control state from old archived `control_state`; perform fresh start/end read-only control-state checks;
+- no GitHub write by default;
+- `external_writes=[]`;
+- HOLD remains active.
+
+Cursor must not create, schedule, or edit that weekly skill or routine.
 
 **STOP.** Cursor documents only.
