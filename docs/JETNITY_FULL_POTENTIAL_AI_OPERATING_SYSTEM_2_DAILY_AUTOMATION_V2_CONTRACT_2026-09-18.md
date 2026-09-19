@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 END-TO-END FINAL PASS / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY PASS / RESTORE TO CANONICAL SCHEDULES AUTHORIZED AS TL OPERATIONAL DECISION / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / END-TO-END FINAL PASS / DURABLE DAILY ARCHIVE REQUIRED BEFORE WEEKLY COMPLETE / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -22,11 +22,12 @@ Six-file aggregation TEST #001: PR #491 comment `5741314686`
 Aggregator output hardening complete: PR #491 comment `5741340041`  
 Full native system canary FINAL PASS: PR #491 comment `5741863042`  
 Canonical CoS schedule correction: PR #491 comment `5741888256` — **07:45 Europe/Zurich** supersedes the prior 07:30 CoS target  
+Daily V2 normal ACTIVE operation + weekly archive requirement: PR #491 comment `5741925172`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
 
-The path below is the **shared Grok workspace**, not this git repository. Do not add `/workspace/jetnity/intelligence/daily/` files to Jetnity V2.
+The paths below are the **shared Grok workspace**, not this git repository. Do not add `/workspace/jetnity/intelligence/daily/` or `/workspace/jetnity/intelligence/archive/` files to Jetnity V2.
 
 ## 1. Why V2 exists
 
@@ -80,6 +81,7 @@ One writer per file:
 | `finops-reliability.json` | Jetnity FinOps & Reliability |
 | `security-privacy.json` | Jetnity Security & Privacy Red Team |
 | `daily-intelligence-brief.json` | Jetnity Chief of Staff |
+| `../archive/daily/YYYY-MM-DD.json` | Jetnity Chief of Staff |
 
 No other identity may overwrite another role’s file. The Chief of Staff is a **reader** of the six specialist files and the **sole writer** of `daily-intelligence-brief.json`. Specialists must not write the brief file.
 
@@ -241,9 +243,10 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | e-artifact | CoS writes and re-reads canonical `daily-intelligence-brief.json` | **PASS** — written/re-read on TEST #001 |
 | e-hardening | Bounded output hardening before native canary | **PASS** — existing Orchestrator updated in place (`5741340041`) |
 | e-native | Coordinated full native system canary | **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j) |
-| e-activate | Restore canonical schedules and decide activation | **AUTHORIZED** — Technical-Lead operational decision; Cursor must not restore or activate |
+| e-activate | Restore canonical schedules and decide activation | **CONFIRMED ACTIVE** — Product Owner `5741925172`; all seven Daily routines ACTIVE at canonical times |
+| f | Durable daily archive before weekly synthesis is complete | **PERSISTED / not weekly-complete** — see §10 |
 
-The complete Daily Automation V2 path is technically proven. Restore of the seven routines to their canonical Europe/Zurich schedules is now a Technical-Lead operational decision. HOLD-exit, weekly/trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat this persist as HOLD exit.
+The complete Daily Automation V2 path is technically proven and is now in **normal ACTIVE operation** (`5741925172`). HOLD-exit, weekly synthesis (blocked on the §10 archive), trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat Daily ACTIVE as HOLD exit.
 
 ### 8a. Clone gate
 
@@ -515,10 +518,11 @@ Required proof sequence:
 3. **e-artifact** — **PASS** — `daily-intelligence-brief.json` written and re-read;
 4. **e-hardening** — **PASS** — existing Orchestrator updated in place (`5741340041`);
 5. **e-native** — **PASS** — `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` (`5741863042`; see §8j);
-6. **e-activate** — **AUTHORIZED** as a Technical-Lead operational decision: restore the seven routines to canonical Europe/Zurich schedules; PAUSED vs activate is TL-owned. Cursor must not restore or activate;
-7. then remaining weekly / trigger automation work and whole-system assurance, if still required by the canonical full-target OS.
+6. **e-activate** — **CONFIRMED ACTIVE** (`5741925172`);
+7. **f** — durable daily archive contract persisted (§10); weekly synthesis is **not** complete until the archive writer exists and weekly logic reads dated archives only;
+8. then remaining weekly / trigger automation work and whole-system assurance, if still required by the canonical full-target OS.
 
-This persist records Daily V2 end-to-end FINAL PASS. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+This persist records Daily V2 ACTIVE operation plus the archive prerequisite. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -624,9 +628,7 @@ Canonical schedules (all Europe/Zurich):
 
 The 07:45 CoS target exists so aggregation starts a full 30 minutes after the final specialist (07:15), tolerating native scheduler delay and reducing false `DEGRADED` caused only by latency.
 
-The external Grok routines may now be restored to those canonical schedules. Whether they are left **PAUSED** or activated for normal operation is a Technical-Lead operational decision. No Product Owner special gate is required because these are bounded read-only / no-external-write intelligence automations. Cursor must not restore or activate them.
-
-After Daily V2 normal-state restoration, remaining OS-2 work — if still required by the canonical full-target OS — is weekly strategic synthesis, risk/PR/CI/release-triggered automation, whole-system / Guardian assurance, exact-head Technical-Lead final review, then Ready/Merge #491 only after all OS-2 acceptance criteria pass. HOLD-exit remains **OPEN**.
+Product Owner confirmation `5741925172`: all seven routines are now restored to those canonical schedules and left **ACTIVE**. Daily V2 is in normal active operation after END-TO-END NATIVE PASS. Cursor did not restore or activate them.
 
 ## 9. What this contract is not
 
@@ -638,6 +640,34 @@ After Daily V2 normal-state restoration, remaining OS-2 work — if still requir
 - not a git-tree path inside this repository;
 - not weekly / trigger / Guardian / HOLD-exit closure.
 
-Daily V2 end-to-end native path is technically proven (`5741863042`). That is **not** HOLD exit and **not** Ready/merge.
+Daily V2 is technically proven and **ACTIVE** (`5741863042`, `5741925172`). The §10 archive contract is persisted. That is **not** weekly complete, **not** HOLD exit, and **not** Ready/merge.
 
-**STOP.** Restore/activate is a Technical-Lead operational decision. Cursor documents only.
+## 10. Durable daily archive — required before weekly synthesis is complete
+
+`daily-intelligence-brief.json` is a **current-state** file and may be overwritten by the next Daily run. Weekly strategic synthesis needs durable daily history. This archive contract is a prerequisite. It does **not** complete the weekly routine.
+
+| Item | Canonical value |
+| --- | --- |
+| Current Daily Brief | `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json` |
+| Archive root | `/workspace/jetnity/intelligence/archive/daily/` |
+| Dated snapshot | `YYYY-MM-DD.json` using the Europe/Zurich calendar date of the successful Daily aggregation |
+| Writer | Jetnity Chief of Staff only |
+| Write trigger | after the validated final Daily Brief is written |
+| Same-day rerun | may replace that date’s snapshot with the latest validated final brief |
+| Prior dates | must not be altered |
+| Secrets / sensitive raw personal data | forbidden |
+| `external_writes` | `[]` |
+| Authority boundary | preserved |
+
+Weekly logic:
+
+- must read **available** dated daily archives;
+- must **never fabricate** missing days;
+- until seven real archive days exist, weekly synthesis may run on available real history;
+- must expose `coverage_days` and `coverage_status` = `BOOTSTRAP_PARTIAL` \| `COMPLETE`;
+- missing pre-deployment days are not a failure and must not be fabricated;
+- after seven real days exist, expected normal coverage is the most recent seven daily archives.
+
+These paths live in the shared Grok workspace. Do not add them to this git repository. Cursor must not implement the Grok archive writer.
+
+**STOP.** Cursor documents only.

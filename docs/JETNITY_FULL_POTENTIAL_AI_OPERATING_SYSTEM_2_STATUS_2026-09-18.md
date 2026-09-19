@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 19. September 2026  
-Status: **DAILY V2 END-TO-END FINAL PASS / RESTORE TO CANONICAL SCHEDULES AUTHORIZED AS TL OPERATIONAL DECISION / WEEKLY+TRIGGER+ASSURANCE NEXT / HOLD REMAINS ACTIVE / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **DAILY V2 NORMAL ACTIVE OPERATION / DURABLE DAILY ARCHIVE REQUIRED BEFORE WEEKLY COMPLETE / HOLD REMAINS ACTIVE / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -15,44 +15,38 @@ Status: **DAILY V2 END-TO-END FINAL PASS / RESTORE TO CANONICAL SCHEDULES AUTHOR
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last persist predecessor | `a02c6fbe880a261bef3186b5c96b675fb43ba408` |
-| Evidence on that SHA | Exact-head CI `35439492253` SUCCESS. Typecheck job `105887734571`. Auth job `105887734554`. Vercel READY `FiZ6dmTwetWJRBXLrjoYEf6H8oR2`. Dispatch named exact-head CI **completed / success**. |
-| This persist | **creates a newer head** than `a02c6fbe`. It is not the live PR head. |
+| Last persist predecessor | `0103b61c266f94928bffba85435e473b6d5488c3` |
+| Evidence on that SHA | Dispatch named exact-head CI **in_progress / unknown**. Do not invent remote SUCCESS. Last remotely SUCCESS SHA remains `a02c6fbe` — CI `35439492253`; Vercel `FiZ6dmTwetWJRBXLrjoYEf6H8oR2`. |
+| This persist | **creates a newer head** than `0103b61c`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
-Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient.
+Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient. Do not invent remote CI SUCCESS for `0103b61c`.
 
-## 2. Implemented against TL dispatch `5741863042`
+## 2. Implemented against PO/TL dispatch `5741925172`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
-- `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001` persisted as **DAILY V2 END-TO-END FINAL PASS**:
-  - CoS run_id `JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`;
-  - `generated_at=2026-09-19T14:24:04+02:00`;
-  - six-file direct read only; specialist messaging used: NO;
-  - aggregate `NO_MATERIAL`; summary `NO MATERIAL DAILY INTELLIGENCE SIGNAL`;
-  - empty `material_findings` / `deferred_context`; no conflicts; no degraded role;
-  - `technical_lead_attention_required=false`;
-  - output written + re-read at `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json` (Grok workspace, not this git repo);
-  - `external_writes=[]`;
-  - prior Growth MATERIAL was not re-elevated;
-  - six fresh native specialist runs accepted in the controlled window.
-- Restore of the seven routines to canonical Europe/Zurich schedules is now a **Technical-Lead operational decision**. Canonical CoS time is **07:45** (`5741888256` supersedes 07:30). Cursor implemented no Grok mutation.
-- **NEXT EXACT STEP** is that restore. PAUSED vs activate is TL-owned. Then weekly/trigger work if still required, Guardian assurance, exact-head TL final review, Ready/Merge only after OS-2 acceptance, post-merge, HOLD-exit.
-- HOLD not lifted. No Ready. No merge.
+- Product Owner confirms all seven Daily V2 routines are restored to canonical schedules and left **ACTIVE**:
+  - Market 06:50, Provider 06:55, Travel Truth 07:00, Growth 07:05, FinOps 07:10, Security 07:15, CoS **07:45** Europe/Zurich.
+- Daily V2 remains END-TO-END NATIVE PASS and is now in normal active operation.
+- Durable daily archive contract persisted (V2 contract §10) as a prerequisite before weekly synthesis is complete:
+  - current file stays `daily-intelligence-brief.json`;
+  - archive root `/workspace/jetnity/intelligence/archive/daily/` with `YYYY-MM-DD.json`;
+  - CoS-only; same-day replace allowed; prior dates immutable;
+  - weekly reads available archives only; never fabricates missing days;
+  - bootstrap `coverage_days` + `coverage_status = BOOTSTRAP_PARTIAL | COMPLETE`.
+- Cursor implemented no Grok mutation and did not write workspace archive files.
+- **NEXT EXACT STEP** is the external CoS archive writer, then weekly synthesis against dated archives. HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on predecessor `a02c6fbe`
+## 3. Local gates on predecessor `0103b61c`
 
-Recorded on the hardening persist immediately before this dispatch, then re-confirmed by live GitHub before this persist.
+Recorded on the 07:45 schedule persist immediately before this dispatch.
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35439492253` SUCCESS |
-| Typecheck, Lint & Build | job `105887734571` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105887734554` SUCCESS |
-| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/FiZ6dmTwetWJRBXLrjoYEf6H8oR2 |
-
-Exact-head CI/Vercel on the SHA this persist creates must be re-fetched.
+| `check:operating-mode` | PASS |
+| `typecheck` | PASS |
+| Remote CI on `0103b61c` at dispatch | **in_progress / unknown** — do not treat as SUCCESS |
 
 ## 4. Last remotely SUCCESS exact-head evidence `a02c6fbe`
 
@@ -63,6 +57,8 @@ Exact-head CI/Vercel on the SHA this persist creates must be re-fetched.
 | Auth-Konfiguration gegen config.toml | job `105887734554` SUCCESS |
 | Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/FiZ6dmTwetWJRBXLrjoYEf6H8oR2 |
 
+Exact-head CI/Vercel on `0103b61c` and on the SHA this persist creates must be re-fetched.
+
 ## 5. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. Daily restore/activate, weekly/trigger work, Guardian whole-system assurance, Ready/merge, and HOLD-exit remain OPEN. No Ready. No merge.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. Weekly synthesis, trigger work, Guardian whole-system assurance, Ready/merge, and HOLD-exit remain OPEN. No Ready. No merge.
