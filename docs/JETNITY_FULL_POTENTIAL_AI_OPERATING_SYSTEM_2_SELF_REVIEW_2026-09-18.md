@@ -7,12 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Emergency ChatGPT handover: comment `5742521442`  
-Guardian event-assurance setup + first real pr-pushed dispatch: comment `5742304439`
+Bounded native event path accepted: comment `5742732366`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Predecessor persist `2db2634409706f81830ec98301d8cea6e1fa476b` has local gates PASS and live exact-head CI `35446305442` SUCCESS plus Vercel `CnWWrt5HCfni12hJNHLedXKbWiMB` success. That SHA remains the first real `pr-pushed` subject. This handover persist is a newer continuity head only. Re-fetch the live PR head before any verdict.
+Predecessor persist `e0524311b64f954ca4a2d1d41baf975f12b72a1d` has live exact-head CI `35447981309` SUCCESS plus Vercel `BZBAGh3b2xAEMDE7N5Ngx7X39664` success. That SHA is the accepted transport subject. This persist is a newer continuity head only. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -20,50 +19,52 @@ Predecessor persist `2db2634409706f81830ec98301d8cea6e1fa476b` has local gates P
 
 | Attack | Result |
 | --- | --- |
-| Treat setup complete as a Guardian PASS | **Rejected.** Guardian must independently observe `2db26344`. |
-| Treat this handover persist as a second first-event or synthetic event | **Rejected.** Continuity only; first-event target stays `2db26344`. |
-| Manufacture `guardian-latest.json` or post a Guardian result from Cursor | **Rejected.** Workspace envelope is Guardian-only. |
-| Create another synthetic PR or extra event | **Rejected.** Next ChatGPT must not create one. |
-| Silently add broad polling if no event arrived | **Rejected.** Diagnose native integration first. |
-| Invent unavailable event classes (deployment/release, repo-governance, PR-branch ci-*) | **Rejected.** Unsupported classes stay unavailable. |
+| Treat transport acceptance as whole-system assurance or TL FINAL PASS | **Rejected.** Scope is bounded transport/processing for `e0524311` only. |
+| Claim `2db26344` received a complete historical PASS | **Rejected.** Standalone proof remains UNVERIFIED. |
+| Rewrite PO Guardian diagnostic as TL direct Grok observation | **Rejected.** TL checked GitHub only. |
+| Rewrite historical pending CI in the event snapshot as success | **Rejected.** Later GitHub success is separate. |
+| Manufacture `guardian-latest.json` or label this persist a new canary | **Rejected.** |
+| Create a replay/synthetic event to recover `2db26344` | **Rejected.** |
+| Implement or activate routing fallbacks from this persist | **Rejected.** TARGET / NOT IMPLEMENTED only. |
 | Add event JSON to this git repository | **Rejected.** Grok workspace only. |
-| Treat Cursor as allowed to Ready/merge or mutate Grok | **Rejected.** |
 | Lift HOLD / Ready / merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- Independent Guardian observation of `2db26344` has not been verified in this persist.
+- Remaining event/risk routing is not implemented.
 - Shared-environment credentials were not independently inspected.
-- Remote CI on this handover SHA is unchecked until after push.
-- Live Grok event-routine enablement was not independently inspected by Cursor; it is Product-Owner comment evidence.
+- Cursor did not read live `guardian-latest.json` bytes.
+- GitHub delivery IDs / raw listener logs / durable local transcripts remain unavailable.
+- Remote CI on this persist SHA is unchecked until after push.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist emergency ChatGPT handover | Yes | checkpoint §0 / STATUS / HANDOFF / tracker |
-| Keep first-event target at `2db26344` | Yes | |
+| Persist TL transport acceptance for `e0524311` | Yes | contract §12 / tracker / STATUS |
+| Keep `2db26344` as UNVERIFIED history | Yes | |
+| Record routing as TARGET / NOT IMPLEMENTED | Yes | contract §12a |
 | Do not manufacture a Guardian result | Yes | |
-| Do not invent unavailable event classes | Yes | |
-| Do not invent remote CI SUCCESS | Yes | `2db26344` CI live-verified |
+| Do not invent missing fields / hashes / IDs | Yes | |
 | Do not mutate Grok bots | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comment `5742521442`;
-- live CI/Vercel on first-event subject `2db26344`;
+- comment `5742732366`;
+- live CI/Vercel on `e0524311`;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`;
 - main still `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`.
 
 Not checked:
-- live `guardian-latest.json` bytes for `2db26344`;
-- remote CI/Vercel on **this handover SHA**;
-- shared-environment tokens.
+- live `guardian-latest.json` bytes;
+- remote CI/Vercel on **this persist SHA**;
+- shared-environment tokens;
+- GitHub delivery IDs / listener logs.
 
 ## 5. What remains
 
-Independent exact-head review of the **live** PR head, plus independent Guardian observation of `2db26344` as `pr-pushed`. Agent self-review is still not PASS.
+Independent exact-head review of the **live** PR head, plus the CoS read-only capability/routing inventory. Agent self-review is still not PASS.
 
 STOP. No Ready. No merge. No Cursor Grok mutation. No manufactured Guardian envelope.

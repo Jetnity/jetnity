@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / FIRST REAL PR-PUSHED OBSERVATION OPEN AT 2db26344 / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / RISK-ROUTING TARGET NOT IMPLEMENTED / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -29,6 +29,7 @@ Weekly native canary #001 FINAL PASS + trigger phase open: PR #491 comment `5742
 Weekly ACTIVE confirmed + Guardian-first event slice: PR #491 comment `5742253536`  
 Guardian event-assurance setup complete + first real pr-pushed validation: PR #491 comment `5742304439`  
 Emergency ChatGPT handover — first-event target locked to `2db26344`: PR #491 comment `5742521442`  
+Bounded native event path accepted / risk-routing capability check next: PR #491 comment `5742732366`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -260,10 +261,11 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | g-native | Native scheduled Weekly canary + direct brief read | **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`) |
 | g-activate | Restore Weekly to Monday 08:30 ACTIVE | **CONFIRMED ACTIVE** — Product Owner `5742253536` |
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
-| h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled / awaiting first real event (`5742304439`; see §12) |
-| h-guardian-observe | First real `pr-pushed` observation on PR #491 | **OPEN** — first-event subject locked to `2db26344` (`5742521442`); not a Guardian PASS |
+| h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled (`5742304439`; see §12) |
+| h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
+| h-routing | Remaining event/risk routing | **TARGET / NOT IMPLEMENTED** — CoS read-only capability inventory next (`5742732366`; see §12) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. First real `pr-pushed` observation, remaining escalation routing, HOLD-exit, Ready, and merge remain **OPEN**. Do not treat setup complete as a Guardian PASS.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Remaining event/risk routing is **TARGET / NOT IMPLEMENTED**. HOLD-exit, Ready, and merge remain **OPEN**. Do not treat transport acceptance as whole-system assurance or a Technical-Lead FINAL PASS.
 
 ### 8a. Clone gate
 
@@ -541,9 +543,10 @@ Required proof sequence:
 9. **g-native** — **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`; see §11);
 10. **g-activate** — **CONFIRMED ACTIVE** (`5742253536`);
 11. **h-guardian** — **SETUP COMPLETE** (`5742304439`; see §12);
-12. **h-guardian-observe** — first real `pr-pushed` observation of `2db26344` **OPEN**; then remaining escalation routing if still required.
+12. **h-guardian-observe** — **ACCEPTED** bounded native `pr-pushed` transport/processing for `e0524311` (`5742732366`); `2db26344` standalone historical proof remains UNVERIFIED;
+13. **h-routing** — remaining event/risk routing **TARGET / NOT IMPLEMENTED**.
 
-The first-event subject remains `2db26344`. Later emergency-handover persistence is continuity only. It does **not** manufacture a Guardian result, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+This persist records that accepted transport proof and the routing target. It does **not** manufacture a Guardian result, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -791,15 +794,15 @@ Normal Weekly operation:
 - canonical weekly archive begins only from valid normal scheduled weekly operation;
 - canonical archive path: `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`.
 
-## 12. Event-triggered / risk-triggered automation — Guardian setup COMPLETE / first real observation OPEN
+## 12. Event-triggered / risk-triggered automation — bounded native transport ACCEPTED / routing TARGET NOT IMPLEMENTED
 
-Weekly is **ACTIVE**. Canonical first event-trigger slice is **Guardian PR/CI/Release Assurance**. Product Owner `5742304439` confirms setup complete. Cursor must not mutate that skill or routine and must not manufacture a Guardian result.
+Weekly is **ACTIVE**. Canonical first event-trigger slice is **Guardian PR/CI/Release Assurance**. Product Owner `5742304439` confirms setup complete. Technical-Lead `5742732366` accepts bounded native `pr-pushed` transport/processing for `e0524311`. Cursor must not mutate that skill or routine and must not manufacture a Guardian result.
 
 | Item | Canonical value |
 | --- | --- |
 | Owner | Jetnity Guardian |
 | Skill | `Jetnity GitHub Event Assurance Reviewer` — created; Cursor did not create it |
-| Routine | `Jetnity PR CI Release Assurance` — created / enabled / awaiting first real event |
+| Routine | `Jetnity PR CI Release Assurance` — created / enabled |
 | Role | independent assurance only |
 | Not | Technical Lead; no Ready/Merge; no Production/Auth/RLS mutation; no branch/file mutation by default |
 | Trigger mode | native GitHub event listener |
@@ -828,38 +831,40 @@ Unavailable / not invented:
 - repository-governance/protection triggers
 - native PR-branch `ci-*` without PR scoping
 
-The docs persist that produced `2db2634409706f81830ec98301d8cea6e1fa476b` is the first real `pr-pushed` event on PR #491 after the listener was enabled. Later emergency-handover persistence is continuity only and is not a second synthetic event. Do not create another synthetic PR or event. Do not post or manufacture a Guardian result. Guardian must have observed that head independently.
+Historical first-event identity remains `2db2634409706f81830ec98301d8cea6e1fa476b`. That standalone historical proof is **UNVERIFIED** / residual auditability limitation: no standalone retained event output, native Run-ID or Delivery-ID was available. A later file's `prior_event_identity` / `prior_head_sha` is an **INFERENCE**, not a complete historical PASS. Empty MATERIAL/DEGRADED archive does not prove a missed event. Do not create a replay or synthetic event merely to recover that old head.
 
-Expected independent Guardian validation target, if the native integration works:
+Technical-Lead `5742732366` **ACCEPTED** bounded native `pr-pushed` **TRANSPORT / PROCESSING** proof for `e0524311b64f954ca4a2d1d41baf975f12b72a1d`. Provenance: Product Owner supplied a read-only diagnostic from the separate Jetnity Guardian app of an already-existing native artifact; TL independently rechecked GitHub only and did **not** directly access the Grok workspace or platform run history. The manual diagnostic did **not** run the native routine or write the output.
 
-- `event_type = pr-pushed`
-- repository = `Jetnity/jetnity`
-- subject PR #491
-- exact head `2db2634409706f81830ec98301d8cea6e1fa476b`
-- re-fetch current PR / HOLD / main truth
-- write/re-read `guardian-latest.json`
-- `NO_MATERIAL` unless actual evidence shows a real assurance issue
-- no GitHub mutation
-- `external_writes=[]`
-- exact-head evidence invalidation preserved
+Reported native artifact facts (PO-supplied; do not invent missing fields, hashes or IDs):
 
-Setup/configuration and this handover persist are **not** a Guardian PASS. If no event was received, diagnose the native event integration before any fallback. Do not silently add broad polling.
+- path `/workspace/jetnity/intelligence/events/guardian-latest.json`
+- mtime / `generated_at` `2026-09-19T16:12:44+02:00`; reported size 7280 B
+- `event_run_id` `guardian-pr491-20260919T161244+0200-e0524311`
+- `observed_event.source` `github_listener`; `fired_at_utc` `2026-09-19T14:11:32.028Z`
+- platform routine last run `2026-09-19 16:11:32` Europe/Zurich, succeeded
+- `event_type=pr-pushed`; repository `Jetnity/jetnity`; subject PR #491; event head `e0524311`
+- `status=NO_MATERIAL`; summary `NO MATERIAL GUARDIAN SIGNAL`
+- existing write/re-read evidence; `external_writes=[]`; `authority_boundary_preserved=true`
+- CoS/TL attention false
+- control-state snapshot held HOLD / draft / open; 12 governance/docs paths; no forbidden prefixes
+- CI in that historical snapshot was **pending**; later GitHub CI succeeded. Do not rewrite historical pending as success or treat it as contradictory.
 
-After this first event-trigger routine is proven, remaining escalation routing may reuse its event-envelope pattern and Daily/Weekly materiality outputs rather than creating noisy duplicate monitors:
+This is **not** final Guardian whole-system assurance, **not** a Technical-Lead FINAL PASS for PR #491, **not** Ready/Merge, and **not** HOLD exit. Any later head invalidates exact-head review evidence. The transport proof remains proof of that past execution only.
 
-- material security / privacy signal escalation;
-- material provider / commercial signal escalation;
-- material travel-truth / regulation escalation;
-- material FinOps / reliability escalation;
-- contradiction / degraded-evidence escalation.
+### 12a. Remaining event/risk routing — TARGET / NOT IMPLEMENTED
 
-Rules:
+Acceptance requirements for the next routing layer. None of these are implemented by this persist:
 
-- prefer event-driven hooks where the external platform/runtime actually supports them;
-- otherwise use bounded scheduled checks only when justified;
-- no noisy duplicate alerts;
-- Chief of Staff remains coordinator;
-- Guardian remains independent assurance, not the Technical Lead;
-- no GitHub write by default; `external_writes=[]`; HOLD remains active.
+1. Reuse current Daily/Weekly findings plus Guardian events; no new broad duplicate monitors.
+2. Material Security/Privacy, Provider/Commercial, Travel Truth/Regulation and FinOps/Reliability routes, plus contradictions and evidence degradation.
+3. Chief of Staff coordinates; Guardian remains independent assurance; ChatGPT Technical Lead decides actions / PASS / Ready / Merge.
+4. Preserve per-source provenance, event identity, freshness, exact-head validity, domain truth classes and `unknown` / unavailable.
+5. `NO_MATERIAL` / unchanged `CONTEXT_ONLY` must not create alerts. Deduplicate repeats; genuine escalation, changed evidence, contradiction or recovery must not be lost. Delivery failure must not be marked delivered.
+6. Single writer per output. Shared Grok environment is not security isolation. No secrets / sensitive payloads or external / GitHub mutations.
+7. Must first inspect actual external capabilities: existing skill composition, native event/file triggers, scheduled execution constraints, durable receipt/dedup facilities and human/TL delivery. Do not assert any unsupported capability exists.
+8. Prefer a verified existing native path. If unsupported, propose the smallest justified bounded fallback with explicit latency; no implementation or activation of a fallback from this persist.
+9. Later tests must distinguish isolated labelled fixtures from actual native execution. Never contaminate live daily/weekly/event outputs or canonical archives with fabricated material events.
+
+**NEXT EXACT EXTERNAL STEP:** existing Jetnity Chief of Staff performs a read-only capability/routing inventory, consuming existing real outputs directly without bot-to-bot messaging, then returns a concrete minimal proposal with evidence, unsupported capabilities and exact changes needed. This is not an external configuration or activation order.
 
 **STOP.** Cursor documents only.
