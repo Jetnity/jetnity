@@ -67,6 +67,7 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | FinOps native scheduler UI success observed | `5740920318` |
 | FinOps final native canary + CoS read #001 | `5740939484` |
 | Security manual writer + paused routine TEST #001 | `5740963538` |
+| OS-2 continuity hardening / new-chat checkpoint | `5741007110` |
 
 ## 1. Global setup truth
 
@@ -92,6 +93,7 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Native scheduler CANARY #001 | **did not materialize** | Comment `5736557812`. Timezone Europe/Zurich ruled out. Do not count as native-engine PASS. | None |
 | Native scheduler CANARY #002 | **scheduler VERIFIED / workflow DEGRADED / not full-PASS** | Comment `5736636348`. RUN_ID `JETNITY-DAILY-2026-09-18-ROUTINE-001`. Head `cedeb097`. All six default specialists `SPECIALIST UNAVAILABLE` because scheduled bot-to-bot messaging failed. Truth discipline held. | None for scheduler-fire proof |
 | Daily Automation V2 handoff contract | **persisted / Market + Provider + Travel Truth + Growth + FinOps FINAL PASS / Security manual PASS / native canary OPEN** | Origin `5736670149`. Final FinOps `5740939484`. Security manual `5740963538`. Contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`. | Product Owner / CoS: restore paused routines; run Security native canary + CoS read |
+| Exact new-chat continuation point | **hardened** | Comment `5741007110`. Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
 | JETNITY-MARKET-PULSE-HANDOFF-TEST-001 | **PASS** | Comment `5736871320`. Skill `Jetnity Daily Market & Traveller Pulse Writer` wrote `market-traveller.json`. Schema v1. `NO_MATERIAL`. No routine. | None |
 | JETNITY CROSS-BOT WORKSPACE READ TEST #001 | **PASS** | Comment `5736895145`. CoS read the file without contacting Market. | None |
 | Jetnity Daily Market & Traveller Pulse | **created / PAUSED / normal schedule restored** | Comment `5737767891` restores `5736927892`. Owner Market. Skill Pulse Writer unchanged. Schedule **06:50 Europe/Zurich**. Intended pre-production paused state after final native PASS. | None for Market restore |
@@ -138,7 +140,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Permissions / connections | Later target remains GitHub read + Actions read; gated plain-text Evidence-Bus comment write was used for E2E #001. No admin/secrets/write/merge. |
 | Routines | Daily `Jetnity Daily Intelligence Brief` **created / PAUSED / not full-PASS**. V2 requires six specialist envelope writers first. |
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
-| Last verification | Security manual TEST #001 `5740963538`; final FinOps canary `5740939484`; final Growth canary `5740795465`; final Travel Truth canary `5740658975`; final Provider canary `5738078082`; final Market re-canary `5737734991`; V2 contract `5736670149` |
+| Last verification | Continuity hardening `5741007110`; Security manual TEST #001 `5740963538`; final FinOps canary `5740939484`; final Growth canary `5740795465`; final Travel Truth canary `5740658975`; final Provider canary `5738078082`; final Market re-canary `5737734991`; V2 contract `5736670149` |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
 | Blockers / platform limitations | None that drop the role. |
 | Next actor | Product Owner later for routines. Cursor must not edit this bot |
@@ -284,14 +286,30 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 Market, Provider, Travel Truth, Growth, and FinOps proofs are **complete**. Security **manual writer + paused 07:15 routine** is proven; the native scheduled canary is **OPEN**. The Growth `MATERIAL` finding remains later-review intelligence only. Provider / Travel Truth / Growth / FinOps should still be restored to paused 06:55 / 07:00 / 07:05 / 07:10. Cursor must **not** mutate the Security skill or routine. The Daily CoS routine stays **PAUSED** and **not full-PASS**. This does **not** lift HOLD, authorize product work, or Ready/merge #491.
 
-1. restore Provider to **PAUSED** 06:55 Europe/Zurich;
-2. restore Travel Truth to **PAUSED** 07:00 Europe/Zurich;
-3. restore Growth to **PAUSED** 07:05 Europe/Zurich;
-4. restore FinOps to **PAUSED** 07:10 Europe/Zurich;
-5. one native scheduled Security canary + CoS read of the refreshed `security-privacy.json` without contacting the specialist;
-6. full six-file CoS scheduled aggregation (sequence e);
-7. keep `Jetnity Daily Intelligence Brief` PAUSED until that path is verified;
-8. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure.
+**NEXT EXACT STEP:** one native scheduled Security canary + CoS read of `/workspace/jetnity/intelligence/daily/security-privacy.json` without contacting the specialist.
+
+After Security FINAL PASS:
+
+1. restore Security to **PAUSED** 07:15 Europe/Zurich;
+2. verify all six specialist routines are at canonical normal schedules and **PAUSED** before aggregator work;
+3. build/update the Chief-of-Staff scheduled aggregation path to read the six canonical workspace files, not scheduled bot-to-bot messaging;
+4. validate schema / role / freshness / novelty; degrade on missing / stale / invalid evidence; deduplicate / conflict-check; preserve material caveats; emit one Daily Intelligence Brief;
+5. manual six-file aggregation test;
+6. native scheduled six-file aggregation canary;
+7. remaining weekly / triggered automation only if still required by the OS-2 target;
+8. whole-system / Guardian assurance;
+9. exact-head Technical-Lead final review;
+10. Ready / Merge #491 only after that review (Technical Lead only);
+11. post-merge verification;
+12. dedicated HOLD-exit checklist completion and Technical-Lead mode-change closure;
+13. only after HOLD exit resume parked product development (#487).
+
+Also still authorized in parallel as external restores, not a substitute for the Security canary:
+
+- restore Provider to **PAUSED** 06:55 Europe/Zurich;
+- restore Travel Truth to **PAUSED** 07:00 Europe/Zurich;
+- restore Growth to **PAUSED** 07:05 Europe/Zurich;
+- restore FinOps to **PAUSED** 07:10 Europe/Zurich.
 
 Until those exist, exact-head Guardian evidence continues through the existing Guardian app and the Technical-Lead prompt path.
 

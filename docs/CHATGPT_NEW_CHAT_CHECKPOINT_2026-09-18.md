@@ -4,6 +4,63 @@ Status: **CANONICAL NEW-CHAT CONTINUITY / PRODUCT DEVELOPMENT HOLD / FULL-POTENT
 
 This checkpoint exists so a fresh ChatGPT Technical Lead can continue without relying on chat memory.
 
+Continuity-hardening dispatch: PR #491 comment `5741007110`. While Draft PR #491 is open, **docs on `main` are not sufficient**. Reconstruct from the **live PR #491 head, comments, and evidence**. Live evidence wins.
+
+## 0. Exact OS-2 continuation point — 19 September 2026
+
+A different ChatGPT conversation must be able to reconstruct this state from the repository plus live GitHub. Do not rely on prior chat memory.
+
+| Fact | Current truth |
+| --- | --- |
+| Machine mode | `.jetnity/operating-mode.json` = `AI_OS_BUILD_HOLD`. Do not flip to `NORMAL`. |
+| Canonical writer | Draft PR #491 / Issue #490 / branch `governance/full-potential-ai-operating-system-2` / same Cursor session `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c` |
+| Last verified predecessor | `920325a9abd848aa1eca78afba01bb7222493053` — CI `35436831797` SUCCESS; Vercel success `EJvQ58J5snM574ZfQC9yfVqumP3v`. This persist creates a newer head. Re-fetch the live SHA. |
+| Parked product | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — Draft / not Ready / do not resume |
+| Ready / Merge | ChatGPT Technical Lead only, after independent exact-head review. Cursor never Ready/merges. |
+| Product Owner | reserved gates only. Normal bounded technical decisions remain TL-owned. |
+
+Completed Daily Automation V2 specialist proofs (restore each to the named schedule and keep **PAUSED**):
+
+| Role | Proof | Normal schedule Europe/Zurich |
+| --- | --- | --- |
+| Market & Traveller | FINAL PASS `5737734991` | 06:50 PAUSED |
+| Provider & Commercial | FINAL PASS `5738078082` | 06:55 PAUSED |
+| Travel Truth & Regulation | FINAL PASS `5740658975` | 07:00 PAUSED |
+| Growth & Discoverability | FINAL PASS `5740795465` | 07:05 PAUSED |
+| FinOps & Reliability | FINAL PASS `5740939484` | 07:10 PAUSED |
+| Security & Privacy Red Team | **manual writer + paused routine PASS only** `5740963538` | 07:15 PAUSED; **not complete** |
+
+**NEXT EXACT STEP (external, not Cursor):** one native scheduled Security canary using the existing skill/routine, then a direct Chief-of-Staff read of `/workspace/jetnity/intelligence/daily/security-privacy.json` without contacting the Security specialist.
+
+After Security FINAL PASS, in this order, still without lifting HOLD:
+
+1. restore Security to normal **07:15 Europe/Zurich** and keep it **PAUSED**;
+2. verify all six specialist routines are at their canonical normal schedules and **PAUSED** before aggregator work;
+3. build/update the Chief-of-Staff scheduled aggregation path to **read the six canonical workspace files**, not scheduled bot-to-bot messaging;
+4. validate schema / role / freshness / novelty; degrade on missing / stale / invalid evidence; deduplicate / conflict-check; preserve material caveats; emit one Daily Intelligence Brief;
+5. manual six-file aggregation test;
+6. native scheduled six-file aggregation canary;
+7. remaining weekly / triggered automation only if still required by the OS-2 target;
+8. whole-system / Guardian assurance;
+9. exact-head Technical-Lead final review;
+10. Ready / Merge #491 only after that review;
+11. post-merge verification;
+12. dedicated HOLD-exit checklist;
+13. only after HOLD exit resume parked product development.
+
+Shared Grok workspace files (not this git repo) under `/workspace/jetnity/intelligence/daily/`:
+
+- `market-traveller.json`
+- `provider-commercial.json`
+- `travel-truth-regulation.json`
+- `growth-discoverability.json`
+- `finops-reliability.json`
+- `security-privacy.json`
+
+Contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`  
+Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`  
+OS-2 handoff: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HANDOFF_2026-09-18.md`
+
 ## 1. Mandatory startup order
 
 A new Technical Lead must read, in this order:

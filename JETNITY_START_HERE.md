@@ -11,14 +11,17 @@ Status: **PRODUCT DEVELOPMENT HOLD / FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY / O
 
 > Dieses Dokument ist verbindlich für geschlossene Wahrheiten, Grenzen und Gates. Es ist **keine** Quelle für den momentanen Arbeitsstand: welche PRs, Branches, Heads, Slices oder Agenten gerade aktiv sind, wird ausschließlich live rekonstruiert. Wo gespeicherter Text und Live-Evidence sich widersprechen, gewinnt Live-Evidence, und der gespeicherte Text wird danach korrigiert.
 
+> **While Draft PR #491 is open, docs on `main` are not sufficient.** A new chat must inspect the live PR #491 head, comments, and evidence, then read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0 (Exact OS-2 continuation point). The next exact external step is the native Security canary + CoS read of `security-privacy.json`. Cursor does not implement that. ChatGPT / Technical Lead alone decides PASS / Ready / Merge.
+
 ## 1. Zuerst lesen
 
 0. `.jetnity/operating-mode.json` ← **machine-readable operating mode / HOLD enforcement metadata; not a competing governance source**
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
 1a. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` ← **binding orchestrated multi-agent governance; one-writer/many-readers, specialist review and common evidence-bus standard**
 1b. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
-2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` ← **canonical new-chat continuity checkpoint; supersedes the 2026-09-17 checkpoint for current transition state**
-2a. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← historical checkpoint; keep for audit/history, not current-state authority
+2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` ← **canonical new-chat continuity checkpoint; start at §0 Exact OS-2 continuation point; supersedes the 2026-09-17 checkpoint for current transition state**
+2a. `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HANDOFF_2026-09-18.md` ← **current OS-2 exact continuation / same session #491**
+2b. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← historical checkpoint; keep for audit/history, not current-state authority
 3. `docs/ACTIVE_WORK_STATUS.md`
 3a. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
 3b. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for current state by the closure checkpoint
