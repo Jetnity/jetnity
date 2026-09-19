@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 19. September 2026  
-Status: **MARKET FINAL NATIVE RE-CANARY PASS / CLONE GATE OPEN / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **MARKET RESTORED PAUSED / PROVIDER MANUAL WRITER PASS / PROVIDER NATIVE CANARY OPEN / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -17,32 +17,35 @@ Status: **MARKET FINAL NATIVE RE-CANARY PASS / CLONE GATE OPEN / COS DAILY PAUSE
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
 | Last verified implementation/evidence head | `49946eb3d2195ba772f7f1b975e73caf7171a03f` |
 | Evidence on that SHA | CI `35405414752` SUCCESS; Typecheck/Lint/Build `105794066340` SUCCESS; Auth `105794065729` SUCCESS; Vercel **success / completed** `7zL5B8RDBYJmUHvTFwi9Cxri66JX` |
-| This persist | **creates a newer head** than `49946eb3`. It is not the live PR head. |
+| Live PR head before this persist | `c561defca04296adbe62a38fcf960da950f69cdf` — Typecheck/Lint/Build still in progress at persist time (`35408847546`); Vercel success `Hw6qXGWtcx65TKq5DfAqqD5kw8jC`. Do not treat as last-verified until Typecheck completes. |
+| This persist | **creates a newer head** than `49946eb3` / `c561defc`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
 Do not treat any SHA written in this file as the current/live head.
 
-## 2. Implemented against TL dispatch `5737734991`
+## 2. Implemented against TL dispatch `5737767891`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
-- V2 contract now records `JETNITY MARKET FINAL NATIVE RE-CANARY READ #001` as **FINAL MARKET PASS**:
-  - canonical file `/workspace/jetnity/intelligence/daily/market-traveller.json`;
-  - run id `JETNITY-MARKET-PULSE-2026-09-19-6ff494`;
-  - `generated_at=2026-09-19T01:30:02+02:00`;
-  - previous manual hardening run replaced;
-  - schema v1 / role / novelty / freshness valid;
-  - old unchanged evidence suppressed;
-  - `status=NO_MATERIAL`;
-  - `external_writes=[]`; authority boundary preserved; no sensitive data;
-  - Market bot was **not** contacted by CoS.
-- Complete Market proof is closed. Clone gate is **OPEN** for later external setup of the five remaining specialist writers. Cursor did **not** implement the clone.
-- Still **OPEN**: sequence d clone (authorized, not started); sequence e six-file CoS aggregation; HOLD-exit.
-- No Cursor Grok mutation. No product/runtime. CoS Daily stays PAUSED. HOLD not lifted. No Ready. No merge.
+- Market restored to intended pre-production paused state:
+  - routine `Jetnity Daily Market & Traveller Pulse`;
+  - schedule **06:50 Europe/Zurich**;
+  - **PAUSED / NOT ACTIVE**;
+  - skill unchanged;
+  - canonical file unchanged.
+- Provider manual writer TEST #001 is **PASS**:
+  - skill `Jetnity Daily Provider & Commercial Pulse Writer`;
+  - file `provider-commercial.json`;
+  - `status=NO_MATERIAL`; schema v1; novelty valid; no stale re-elevation;
+  - `external_writes=[]`; no provider contact / no private commercial terms;
+  - routine `Jetnity Daily Provider & Commercial Pulse` **created / PAUSED** at **06:55 Europe/Zurich**;
+  - Gates A–E remain closed.
+- Provider is **not complete**. Next required proof: native scheduled Provider canary + CoS direct read without contacting Provider.
+- Four remaining specialist writers are not created. Cursor implemented no Grok clone. CoS Daily stays PAUSED. HOLD not lifted. No Ready. No merge.
 
 ## 3. Local gates on last verified tree `49946eb3`
 
-Recorded on the prior novelty-hardening persist. This persist re-runs the same task-required gates on the new tree after commit.
+Recorded on the prior final-Market persist. This persist re-runs the same task-required gates on the new tree after commit.
 
 | Gate | Result |
 | --- | --- |
@@ -50,7 +53,7 @@ Recorded on the prior novelty-hardening persist. This persist re-runs the same t
 | Guard / unit tests | 3509/3509 PASS on last verified `49946eb3` |
 | `typecheck` | PASS on last verified `49946eb3` |
 | `lint` | 0 errors / 138 warnings on last verified `49946eb3` |
-| hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) | PASS on last verified `49946eb3` |
+| hygiene | PASS on last verified `49946eb3` |
 | `build` | PASS (Next.js 16.3.3) on last verified `49946eb3` |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
@@ -63,11 +66,9 @@ Recorded on the prior novelty-hardening persist. This persist re-runs the same t
 | Typecheck, Lint & Build | job `105794066340` SUCCESS |
 | Auth-Konfiguration gegen config.toml | job `105794065729` SUCCESS |
 | Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/7zL5B8RDBYJmUHvTFwi9Cxri66JX |
-| behind | 0 versus live `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
-| review threads | 0 |
-| Final Market dispatch | `5737734991` |
-| TL live head named in that dispatch | `49946eb3d2195ba772f7f1b975e73caf7171a03f` |
-| TL CI note at dispatch | `completed / success` — matches this SHA |
+| Restore + Provider dispatch | `5737767891` |
+| TL live head named in that dispatch | `c561defca04296adbe62a38fcf960da950f69cdf` |
+| TL CI note at dispatch | `in_progress / unknown` — Typecheck still in progress on that SHA at persist time |
 
 Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `49946eb3`.
 
