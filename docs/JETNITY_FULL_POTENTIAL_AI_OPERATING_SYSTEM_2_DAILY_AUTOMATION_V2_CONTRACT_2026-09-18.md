@@ -281,9 +281,9 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 | h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled (`5742304439`; see §12) |
 | h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
-| h-routing | Remaining event/risk routing | **STAGED CORRECTIONS LIMITED PASS / Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED / conditional LIMITED PASS / native Daily+routing OPEN** (`5744765614`; see §12a) |
+| h-routing | Remaining event/risk routing | **STAGED CORRECTIONS LIMITED PASS / Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED / conditional LIMITED PASS / receipt REPORTED CAPTURED / native Daily+routing OPEN** (`5744814651`; see §12a) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Daily routing staged corrections and limited Weekly consumer compatibility are accepted. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Ready, merge, and HOLD-exit remain **OPEN**.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Daily routing staged corrections and limited Weekly consumer compatibility are accepted. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited manual scope (`5744814651`); later whole-system Guardian read is pending. Native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Ready, merge, and HOLD-exit remain **OPEN**.
 
 ### 8a. Clone gate
 
@@ -1014,9 +1014,9 @@ Reported (PO/Guardian; Cursor/TL did not observe files):
 
 Fixture root `/workspace/jetnity/intelligence/fixtures/os2-guardian-archive-20260919/`. Sequential `manual_fixture` MATERIAL → DEGRADED → NO_MATERIAL. Both archives reportedly survived latest overwrite. Live archive remained empty. Ordinary file writes may be deterministic; full agent-executed skill behavior remains model-mediated. No separate writer binary exists. A crash-injection test **cannot** establish `native_material_archive_proof`. `native_material_archive_proof=false`.
 
-#### Conditional Product/UX and Analytics — LIMITED PASS / receipt capture AUTHORIZED PENDING
+#### Conditional Product/UX and Analytics — LIMITED PASS / receipt REPORTED CAPTURED
 
-Technical-Lead `5744765614` **ACCEPTS LIMITED PASS** for the two conditional skills + final envelopes + source-backed classification, based on PO-supplied Guardian review `5744694015`. TL did not directly access Grok. Manual/interactive on-demand only. No daily/weekly scheduling or automatic consumers.
+Technical-Lead `5744765614` **ACCEPTS LIMITED PASS** for the two conditional skills + final envelopes + source-backed classification, based on PO-supplied Guardian review `5744694015`. Technical-Lead `5744814651` **ACCEPTS** the later bounded CoS direct-read receipt at **manual/interactive scope** with explicit provenance limits. TL did not directly access Grok. No further role rerun, ping, or duplicate review is requested now. No daily/weekly scheduling or automatic consumers.
 
 | Artifact | Reported identity |
 | --- | --- |
@@ -1024,17 +1024,18 @@ Technical-Lead `5744765614` **ACCEPTS LIMITED PASS** for the two conditional ski
 | Product output `/workspace/jetnity/intelligence/conditional/product-ux.json` | `a0112b34297b27709720596893028dddc01a83c529e726cb66d752c4a3a36573` |
 | Analytics skill | `9068e0892cdf1feca57145a0e7afb48e604274abb0bf7ae35147e56e670cb9e8` |
 | Analytics output `/workspace/jetnity/intelligence/conditional/analytics-experimentation.json` | `be293b92c1130fe34462902df4712c1925d8d9f3c4aba03ac959144fd5b3f31c` |
+| Receipt `/workspace/jetnity/intelligence/routing/staging/CONDITIONAL_ROLES_RECEIPT_EVIDENCE.json` | SHA256 `8054390102d1bb34d0a5147f09574c2f8ca7af28e66f60d1722bbee603e8fb01`; `current_receipt_time=2026-09-19T21:41:45+02:00` |
 
-Runs: `JETNITY-PUX-CONDITIONAL-SETUP-001` (`NO_MATERIAL`, 9 CONTEXT_ONLY); `JETNITY-ANA-CONDITIONAL-SETUP-001` (`NO_MATERIAL`, 8 CONTEXT_ONLY). Analytics MATERIAL → NO_MATERIAL is accepted because findings restate known source-backed CONTEXT_ONLY constraints and retain residual gaps. CONTEXT_ONLY must **not** hide missing/invalid evidence, DEGRADED, or a genuinely new contradiction.
+Runs: `JETNITY-PUX-CONDITIONAL-SETUP-001` (`NO_MATERIAL`, 9 CONTEXT_ONLY); `JETNITY-ANA-CONDITIONAL-SETUP-001` (`NO_MATERIAL`, 8 CONTEXT_ONLY). Analytics MATERIAL → NO_MATERIAL is accepted because findings restate known source-backed CONTEXT_ONLY constraints and retain residual gaps. CONTEXT_ONLY must **not** hide missing/invalid evidence, DEGRADED, or a genuinely new contradiction. CoS reports no drift vs accepted hashes; schema/authority pass.
 
-**OPEN evidence limit:** historical role-context `get_file_contents` execution and original CoS serialized direct-read receipts were INACCESSIBLE to Guardian. Matching outputs alone do not independently prove actors or receipt sequence. Reject/timeout is specified, not tested.
+Receipt is **REPORTED CAPTURED / TL accepted limited manual scope**. Role transcripts are **AVAILABLE to CoS / reported record evidence** (Product serverId `4131227` Mobile Accessibility STATUS/HANDOFF; Analytics serverId `4132206` Revenue Truth / Cookie Consent) at historical source SHA `30e8921f8d9740aa5ac9b7795dd2e808540bf912`. Those records were **not** independently re-inspected by TL/Guardian in this turn. Carry the receipt into the later whole-system Guardian evidence bundle for independent read; that review has **not** happened.
 
-Receipt capture is **AUTHORIZED / PENDING**. Target `/workspace/jetnity/intelligence/routing/staging/CONDITIONAL_ROLES_RECEIPT_EVIDENCE.json`. A new CoS read is not retroactive original-handoff proof and not a fresh product review.
+The original durable serialized receipt remains **unavailable**. This new receipt is **not** retroactive proof of original ordering. Reject/timeout remains untested. Automatic consumers unimplemented. `native_scheduled_pass=false`. Historical role review remains at `30e8921f`; a later repo head does not make it a current-head product review.
 
 CookieConsent chronology: Mobile Accessibility STATUS blob `29db3c920302715938e147f22a1d4c26d2dfc130` (Stand 16 September, intentional orphan) is historical. Cookie Consent Hygiene STATUS blob `bb4fdf5130b17b644cb122d81de39e23281b85c9` (Stand 18 September, component deleted) supersedes it. Do not present the orphan as current unresolved product truth. No runtime/consent action.
 
-Still OPEN: native Daily+routing; native Guardian MATERIAL/DEGRADED archive proof; Weekly routing integration; reverse domain assurance; urgent delivery; historical role-tool/CoS receipt provenance; whole-system Guardian assurance. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
+Still OPEN: native Daily+routing; native Guardian MATERIAL/DEGRADED archive proof; Weekly routing integration; reverse domain assurance; urgent delivery; original serialized ordering; later whole-system Guardian receipt read. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
 
-**NEXT EXACT EXTERNAL STEP:** same Jetnity Chief of Staff captures the bounded receipt-evidence record, then STOP for Technical-Lead assessment. Await the existing native Daily 07:45 Europe/Zurich schedule for routing proof. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
+**NEXT EXACT STEP:** Technical-Lead review of this persist, including the new-head Auth outcome. Later whole-system Guardian independent read of the receipt. No further role rerun/ping. Await the existing native Daily 07:45 Europe/Zurich schedule for routing proof. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
 
 **STOP.** Cursor documents only.
