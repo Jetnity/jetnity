@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / ALL SIX DAILY SPECIALISTS FINAL PASS / COS SIX-FILE AGGREGATION NEXT / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / ALL SIX DAILY SPECIALISTS FINAL PASS / SECURITY RESTORED PAUSED 07:15 / COS SIX-FILE AGGREGATOR PHASE START / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -17,6 +17,7 @@ FinOps manual: PR #491 comment `5740816529`
 Final FinOps canary: PR #491 comment `5740939484`  
 Security manual: PR #491 comment `5740963538`  
 Final Security canary: PR #491 comment `5741212303`  
+Security restore + aggregator phase: PR #491 comment `5741257042`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -74,8 +75,9 @@ One writer per file:
 | `growth-discoverability.json` | Jetnity Growth & Discoverability |
 | `finops-reliability.json` | Jetnity FinOps & Reliability |
 | `security-privacy.json` | Jetnity Security & Privacy Red Team |
+| `daily-intelligence-brief.json` | Jetnity Chief of Staff |
 
-No other identity may overwrite another role’s file. The Chief of Staff is a reader of these six files, not a writer of them.
+No other identity may overwrite another role’s file. The Chief of Staff is a **reader** of the six specialist files and the **sole writer** of `daily-intelligence-brief.json`. Specialists must not write the brief file.
 
 ## 4. Envelope schema v1
 
@@ -195,7 +197,7 @@ After the specialist pulse window, `Jetnity Daily Intelligence Brief` (owner: Je
 2. reads the six canonical files;
 3. validates schema, freshness, role identity, the canonical finding/source object shapes, and the §4d novelty / re-reporting gate;
 4. de-duplicates and conflict-checks;
-5. emits one Daily Intelligence Brief using `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a;
+5. emits one Daily Intelligence Brief using `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a and writes `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json`;
 6. does **not** write GitHub by default;
 7. does **not** Ready, merge, mutate Production/Auth/Supabase/RLS, or start product work.
 
@@ -229,10 +231,12 @@ Sequence (d) is **complete**. All six Daily specialists are FINAL PASS. Sequence
 | d-growth | Native scheduled Growth canary + CoS direct read without contacting Growth | **PASS** — `JETNITY GROWTH NATIVE CANARY READ #001` (`5740795465`, run `growth-discoverability-2026-09-19-0957a7`) |
 | d-finops | Native scheduled FinOps canary + CoS direct read without contacting FinOps | **PASS** — `JETNITY FINOPS NATIVE CANARY READ #001` (`5740939484`, run `JETNITY-FINOPS-2026-09-19-1200`) |
 | d-security | Native scheduled Security canary + CoS direct read without contacting Security | **PASS** — `JETNITY SECURITY NATIVE CANARY READ #001` (`5741212303`, run `JETNITY-SECURITY-PULSE-2026-09-19-1230`) |
-| e | Full six-file CoS scheduled aggregation | **OPEN** — authorized next after restore-all-six PAUSED (see §8g) |
+| e | Full six-file CoS scheduled aggregation | **OPEN** — aggregator phase started (`5741257042`); reuse existing CoS skill/routine (see §8g) |
+| e-skill | Update existing `Jetnity Daily Intelligence Orchestrator` for V2 scheduled file aggregation | **OPEN** — do not create a second skill |
 | e-manual | Manual six-file aggregation test | **OPEN** |
-| e-native | Native scheduled six-file aggregation canary | **OPEN** |
-| e-activate | Activate Daily production schedule 07:30 Europe/Zurich | **OPEN** — only after e-manual and e-native PASS |
+| e-artifact | CoS writes and re-reads canonical `daily-intelligence-brief.json` | **OPEN** |
+| e-native | Native scheduled aggregator canary | **OPEN** |
+| e-activate | Restore 07:30 Europe/Zurich and decide activation | **OPEN** — only after e-manual, e-artifact, and e-native PASS |
 
 Until (e-manual) and (e-native) are independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**. Do not activate 07:30 from specialist-final-pass evidence alone.
 
@@ -427,48 +431,85 @@ The earlier Security manual writer TEST #001 (`5740963538`) remains the paused-r
 
 Do not write exploit payloads or reproduction steps. Do not treat UI hiding as authorization. Preserve `unknown` when exploitability is unproven.
 
-Next **external** steps, not Cursor work:
+Security restore is **confirmed** (`5741257042`): routine `Jetnity Daily Security & Privacy Pulse` is at **07:15 Europe/Zurich**, **PAUSED / NOT ACTIVE**, skill and canonical workspace path unchanged.
 
-1. restore Security routine to normal schedule **07:15 Europe/Zurich** and keep it **PAUSED**;
-2. restore the other five specialists to their canonical PAUSED schedules (see §8b–§8e);
-3. then Chief-of-Staff six-file aggregation (see §8g).
+Next **external** step, not Cursor work: Chief-of-Staff six-file aggregator (see §8g).
 
-### 8g. Next phase — Chief-of-Staff six-file aggregation
+### 8g. Next phase — Chief-of-Staff six-file aggregator
 
-All six Daily specialists are FINAL PASS. Before aggregation-system work begins, restore every specialist to its canonical normal schedule and keep it **PAUSED**:
+All six Daily specialists are FINAL PASS. Security is restored to its canonical **PAUSED** 07:15 state (`5741257042`). Other specialists remain at or should remain at their canonical PAUSED schedules:
 
-| Role | Normal schedule Europe/Zurich |
+| Role | Normal schedule Europe/Zurich | Restore state |
+| --- | --- | --- |
+| Market & Traveller | 06:50 PAUSED | restored (`5737767891`) |
+| Provider & Commercial | 06:55 PAUSED | restore if not already |
+| Travel Truth & Regulation | 07:00 PAUSED | restore if not already |
+| Growth & Discoverability | 07:05 PAUSED | restore if not already |
+| FinOps & Reliability | 07:10 PAUSED | restore if not already |
+| Security & Privacy Red Team | 07:15 PAUSED | **confirmed** (`5741257042`) |
+
+Reuse the existing Chief-of-Staff path. Do **not** create a second skill or routine.
+
+| Existing asset | Name | Rule |
+| --- | --- | --- |
+| Skill | `Jetnity Daily Intelligence Orchestrator` | update in place for V2 scheduled file aggregation |
+| Routine | `Jetnity Daily Intelligence Brief` | keep **PAUSED**; production target **07:30 Europe/Zurich** |
+
+Scheduled-mode architecture:
+
+- **no** scheduled bot-to-bot specialist messaging;
+- read exactly the six canonical specialist files under `/workspace/jetnity/intelligence/daily/`;
+- validate schema, exact role, status, source integrity, novelty, and freshness;
+- missing / stale / invalid specialist evidence ⇒ `SPECIALIST_UNAVAILABLE` and the aggregate run `DEGRADED`;
+- never silently reuse a prior-day envelope;
+- deduplicate overlapping findings;
+- detect contradictions;
+- preserve source-quality / role-specific caveats;
+- specialist `MATERIAL` is input, not an automatic CoS conclusion;
+- perform a final control-state recheck immediately before emitting the brief;
+- no GitHub write by default;
+- no Ready / Merge / Production / provider / payment action;
+- `AI_OS_BUILD_HOLD` remains active.
+
+Canonical CoS output artifact, owned only by Chief of Staff (Grok workspace, not this git repo):
+
+`/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json`
+
+Recommended output schema **v1**:
+
+| Field | Rule |
 | --- | --- |
-| Market & Traveller | 06:50 PAUSED |
-| Provider & Commercial | 06:55 PAUSED |
-| Travel Truth & Regulation | 07:00 PAUSED |
-| Growth & Discoverability | 07:05 PAUSED |
-| FinOps & Reliability | 07:10 PAUSED |
-| Security & Privacy Red Team | 07:15 PAUSED |
+| `schema_version` | `"1"` |
+| `run_id` | Unique id for this aggregate run |
+| `generated_at` | ISO-8601 timestamp |
+| `timezone` | IANA timezone, normally `Europe/Zurich` |
+| `status` | `MATERIAL` \| `NO_MATERIAL` \| `DEGRADED` |
+| `specialist_statuses[]` | Each item: `role` / `file` / `run_id` / `generated_at` / `status` / `validation` |
+| `material_findings[]` | CoS-consolidated findings. Empty when none survive aggregation |
+| `conflicts[]` | Detected contradictions across specialists |
+| `degraded_reasons[]` | Empty when `status` is not `DEGRADED` |
+| `summary` | Concise Daily Intelligence Brief |
+| `technical_lead_attention_required` | Boolean |
+| `external_writes` | Must be `[]` |
+| `authority_boundary_preserved` | Must be `true` |
 
-The next bounded work is to build or update the existing Chief-of-Staff Daily Intelligence path so **scheduled** execution:
+Production scheduled freshness rule:
 
-- reads the six canonical shared-workspace JSON files;
-- does **not** depend on scheduled bot-to-bot messaging;
-- validates `schema_version`, canonical role, current-window freshness, `status`, and source integrity;
-- treats missing / stale / invalid role envelopes as `SPECIALIST UNAVAILABLE` / `DEGRADED`;
-- never silently reuses prior-day evidence;
-- deduplicates overlapping findings;
-- detects contradictions;
-- preserves role-specific caveats and source-quality limits;
-- does **not** promote specialist `MATERIAL` blindly;
-- emits one concise Daily Intelligence Brief;
-- performs a final control-state recheck immediately before emitting the brief;
-- does **not** mutate GitHub by default;
-- does **not** Ready / Merge / Production / provider / payment action;
-- keeps `AI_OS_BUILD_HOLD` active.
+- each specialist envelope must be from the **current** Europe/Zurich daily cycle;
+- for the 07:30 run, `generated_at` must be consistent with that morning’s specialist schedule, allowing bounded scheduler delay;
+- do **not** accept the previous day’s file merely because the JSON is valid;
+- a future timestamp beyond small clock-skew tolerance is invalid / `DEGRADED`.
+
+Manual validation may use the known same-day FINAL-PASS canary envelopes explicitly as **test fixtures**. That must **not** weaken the production scheduled freshness logic.
 
 Required proof sequence:
 
-1. **e-manual** — one manual six-file aggregation test;
-2. **e-native** — one native scheduled six-file aggregation canary;
-3. **e-activate** — only after both pass, activate the daily production schedule at **07:30 Europe/Zurich**;
-4. then remaining weekly / trigger automation work and whole-system assurance.
+1. **e-skill** — update the existing Orchestrator skill for V2 scheduled file aggregation;
+2. **e-manual** — one manual six-file aggregation test;
+3. **e-artifact** — CoS writes and re-reads canonical `daily-intelligence-brief.json`;
+4. **e-native** — one native scheduled aggregator canary;
+5. **e-activate** — only after PASS, restore 07:30 and decide activation state for normal daily operation;
+6. then remaining weekly / trigger automation work and whole-system assurance.
 
 This persist authorizes only that later controlled aggregation layer. It does **not** lift HOLD, authorize Daily 07:30 activation, Ready, merge, or Cursor Grok mutation.
 

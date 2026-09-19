@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 19. September 2026  
-Status: **ALL SIX DAILY SPECIALISTS FINAL PASS / COS SIX-FILE AGGREGATION NEXT / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **SECURITY RESTORED PAUSED 07:15 / COS SIX-FILE AGGREGATOR PHASE START / COS DAILY PAUSED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -15,63 +15,56 @@ Status: **ALL SIX DAILY SPECIALISTS FINAL PASS / COS SIX-FILE AGGREGATION NEXT /
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last verified implementation/evidence head | `7c60ae1a9a951ddcc4b097bf69b896718f7195a7` |
-| Evidence on that SHA | CI `35437236776` SUCCESS; Typecheck/Lint/Build `105881868615` SUCCESS; Auth `105881868699` SUCCESS; Vercel **success / completed** `3yDbpVYcnaMhRwFYN8uDtb7ZXotA` |
-| This persist | **creates a newer head** than `7c60ae1a`. It is not the live PR head. |
+| Last persist predecessor | `9f8aa93fa1ce9618dad6ca7bbce707c1b83abd01` |
+| Evidence on that SHA | Local gates PASS. Dispatch named exact-head CI **in_progress / unknown**. Last remotely SUCCESS SHA remains `7c60ae1a` — CI `35437236776`; Vercel `3yDbpVYcnaMhRwFYN8uDtb7ZXotA`. |
+| This persist | **creates a newer head** than `9f8aa93f`. It is not the live PR head. |
 | Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
 | Topology | SINGLE_AGENT |
 
-Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient.
+Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient. Do not invent remote CI SUCCESS for `9f8aa93f`.
 
-## 2. Implemented against TL dispatch `5741212303`
+## 2. Implemented against TL dispatch `5741257042`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
-- `JETNITY SECURITY NATIVE CANARY READ #001` persisted as **FINAL SECURITY PASS**:
-  - file `/workspace/jetnity/intelligence/daily/security-privacy.json` (Grok workspace, not this git repo);
-  - run id `JETNITY-SECURITY-PULSE-2026-09-19-1230`;
-  - `generated_at=2026-09-19T12:31:45+02:00`;
-  - manual run replaced; freshness / schema v1 / role / novelty valid;
-  - `status=NO_MATERIAL`;
-  - least-privilege / deny / fail-closed, auth-vs-UI, THEORETICAL / REACHABLE / VERIFIED_EXPLOIT preserved;
-  - no unsupported breach / compromise / exploitability claim;
-  - privacy risk kept separate from legal conclusion;
-  - no sensitive traveller/auth data, secrets, tokens or credentials copied;
-  - no exploit payloads; no Auth/RLS/MFA/Production/security mutation;
-  - `external_writes=[]`; CoS did not contact Security.
-- UI observation `5741170845` recorded as scheduler-fire only.
-- All six Daily specialists are now FINAL PASS. Sequence (d) is complete.
-- **NEXT EXACT STEP** is restore-all-six to canonical PAUSED schedules, then Chief-of-Staff six-file aggregation:
-  1. manual six-file aggregation test;
-  2. native scheduled six-file aggregation canary;
-  3. only after both pass, activate Daily 07:30 Europe/Zurich;
-  4. then weekly / trigger automation and whole-system assurance.
-- ChatGPT / Technical Lead alone decides PASS / Ready / Merge. Product Owner is asked only for reserved gates.
+- Security restore persisted: `Jetnity Daily Security & Privacy Pulse` at **07:15 Europe/Zurich**, **PAUSED / NOT ACTIVE**, skill and path unchanged.
+- All six Daily specialists remain FINAL PASS.
+- Aggregator contract persisted in V2 §8g:
+  - reuse existing `Jetnity Daily Intelligence Orchestrator` and `Jetnity Daily Intelligence Brief`;
+  - no second skill/routine;
+  - no scheduled bot-to-bot messaging;
+  - read the six canonical specialist files;
+  - CoS-only output `/workspace/jetnity/intelligence/daily/daily-intelligence-brief.json` with recommended schema v1;
+  - production freshness = current Europe/Zurich cycle; prior-day JSON is not acceptable; future timestamps beyond clock-skew are invalid;
+  - same-day FINAL-PASS canaries may be manual test fixtures only and must not weaken production freshness.
+- **NEXT EXACT STEP** is e-skill: update the existing Orchestrator in place, then e-manual + e-artifact, then e-native. Do not activate 07:30 until those pass.
 - Cursor implemented no Grok mutation. CoS Daily stays PAUSED. HOLD not lifted. No Ready. No merge.
 
-## 3. Local gates on last verified tree `7c60ae1a`
+## 3. Local gates on predecessor `9f8aa93f`
 
-Remote CI on `7c60ae1a` includes Typecheck, Lint & Build `105881868615` SUCCESS and Auth `105881868699` SUCCESS. This persist re-runs the same task-required local gates on the new tree after commit.
+Recorded on the Security FINAL persist immediately before this dispatch.
 
 | Gate | Result |
 | --- | --- |
-| Remote Typecheck, Lint & Build | PASS — job `105881868615` on `7c60ae1a` |
-| Remote Auth-Konfiguration | PASS — job `105881868699` on `7c60ae1a` |
+| `check:operating-mode` | PASS |
+| Guard / unit tests | 3509/3509 PASS |
+| `typecheck` | PASS |
+| `lint` | 0 errors / 138 warnings |
+| hygiene | PASS |
+| `build` | PASS (Next.js 16.3.3) |
 | merge-base | `origin/main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` / behind=0 |
 | review threads | 0 |
+| Remote CI on `9f8aa93f` at dispatch | **in_progress / unknown** — do not treat as SUCCESS |
 
-## 4. Exact-head remote evidence on last verified SHA `7c60ae1a`
+## 4. Last remotely SUCCESS exact-head evidence `7c60ae1a`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35437236776` SUCCESS — https://github.com/Jetnity/jetnity/actions/runs/35437236776 |
+| GitHub Actions CI | run `35437236776` SUCCESS |
 | Typecheck, Lint & Build | job `105881868615` SUCCESS |
 | Auth-Konfiguration gegen config.toml | job `105881868699` SUCCESS |
 | Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/3yDbpVYcnaMhRwFYN8uDtb7ZXotA |
-| Security FINAL dispatch | `5741212303` |
-| TL live head named in that dispatch | `7c60ae1a9a951ddcc4b097bf69b896718f7195a7` |
-| TL CI note at dispatch | current live head before the comment was this SHA |
 
-Exact-head CI/Vercel on the SHA created by this persist must be re-fetched. Last verified remote evidence remains `7c60ae1a`.
+Exact-head CI/Vercel on `9f8aa93f` and on the SHA this persist creates must be re-fetched.
 
 ## 5. Non-scope
 
