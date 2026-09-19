@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / DAILY ROUTING STAGED CORRECTIONS LIMITED PASS / WEEKLY CONSUMER EXERCISE AUTHORIZED NOT YET PROVEN / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / WEEKLY CONSUMER LIMITED PASS / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -41,6 +41,9 @@ Review Fix 2a intake / Guardian archive-recovery delta: PR #491 comment `5744145
 Fix-2a disposition / Fix-2b clock-mode guard authorized: PR #491 comment `5744185200`  
 Fix-2b completion intake / Guardian clock-guard review: PR #491 comment `5744213457`  
 Limited Fix-2b acceptance / isolated Weekly consumer exercise authorized not proven: PR #491 comment `5744249536`  
+Weekly consumer report intake / Guardian artifact verification: PR #491 comment `5744345314`  
+Limited Weekly consumer PASS / scheduled-only routing validation authorized: PR #491 comment `5744379287`  
+Scheduled routing activation receipt / isolated Guardian archive exercise: PR #491 comment `5744481469`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -274,9 +277,9 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 | h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled (`5742304439`; see §12) |
 | h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
-| h-routing | Remaining event/risk routing | **STAGED CORRECTIONS LIMITED PASS / gates remain false / isolated Weekly consumer AUTHORIZED / NOT YET PROVEN** (`5744249536`; see §12a) |
+| h-routing | Remaining event/risk routing | **STAGED CORRECTIONS LIMITED PASS / Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED / native Daily+routing OPEN** (`5744481469`; see §12a) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Daily routing has **staged correction acceptance only** (Fix-1 / Fix-2 / Fix-2a / Fix-2b). Routing is **not** active, **not** a native PASS, and **not** whole-system assurance. Isolated Weekly consumer proof, native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Ready, merge, and HOLD-exit remain **OPEN**.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Daily routing staged corrections and limited Weekly consumer compatibility are accepted. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Ready, merge, and HOLD-exit remain **OPEN**.
 
 ### 8a. Clone gate
 
@@ -555,9 +558,9 @@ Required proof sequence:
 10. **g-activate** — **CONFIRMED ACTIVE** (`5742253536`);
 11. **h-guardian** — **SETUP COMPLETE** (`5742304439`; see §12);
 12. **h-guardian-observe** — **ACCEPTED** bounded native `pr-pushed` transport/processing for `e0524311` (`5742732366`); `2db26344` standalone historical proof remains UNVERIFIED;
-13. **h-routing** — Daily routing **STAGED CORRECTIONS LIMITED PASS** (`5744249536`; see §12a). Fix-1 / Fix-2 / Fix-2a / Fix-2b are accepted as discrete gated corrections only. Isolated Weekly consumer exercise is **AUTHORIZED / NOT YET PROVEN**. Gate stays `pending_remediation`; both live gates false. This is **not** routing activation.
+13. **h-routing** — Daily routing **STAGED CORRECTIONS LIMITED PASS**; Weekly consumer **LIMITED PASS**; scheduled routing **REPORTED CONFIGURED** (`5744481469`; see §12a). Historical gate through Fix-2b was `pending_remediation` / both live gates false. Current reported gate is `scheduled_only_provisional` with `enabled_for_scheduled_daily=true` and `enabled_for_live_manual_daily=false`. Native Daily+routing remains **OPEN**. This is **not** a native PASS.
 
-This persist records that limited staged-correction acceptance. It does **not** implement the Weekly consumer exercise, manufacture fixtures or test results, lift HOLD, Ready, merge, flip the execution gate, or authorize Cursor Grok mutation.
+This persist records reported configuration and limited consumer acceptance. It does **not** implement the Guardian archive exercise, manufacture fixtures or test results, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -862,7 +865,7 @@ Reported native artifact facts (PO-supplied; do not invent missing fields, hashe
 
 This is **not** final Guardian whole-system assurance, **not** a Technical-Lead FINAL PASS for PR #491, **not** Ready/Merge, and **not** HOLD exit. Any later head invalidates exact-head review evidence. The transport proof remains proof of that past execution only.
 
-### 12a. Remaining event/risk routing — STAGED CORRECTIONS LIMITED PASS / WEEKLY CONSUMER AUTHORIZED NOT YET PROVEN
+### 12a. Remaining event/risk routing — STAGED CORRECTIONS LIMITED PASS / WEEKLY CONSUMER LIMITED PASS / SCHEDULED ROUTING REPORTED CONFIGURED
 
 This section is the live routing contract. Do not collapse it to “authorized / not implemented.” The external review cycle is:
 
@@ -886,7 +889,7 @@ Technical-Lead `5743658093` **ACCEPTS LIMITED FIX-1 CLOSURE** for these discrete
 
 Reasoning recorded by TL: persisted pending plus output-before-processed removes the originally demonstrated lost-output commit window for **same-run** recovery; process-owned lock removes age-based live-holder eviction; installed entry/hash chain now connects the tested candidate to an explicit Daily invocation. Those are discrete fixes, **not** proof of every scheduled or consumer path.
 
-Execution gate remains:
+Historical execution gate through Fix-2b (do not treat as current):
 
 - `pending_remediation`
 - `enabled_for_scheduled_daily=false`
@@ -935,7 +938,7 @@ Provenance throughout: PO-supplied CoS/Guardian evidence. **TL reviewed source-b
 5. **Fix-2b completion intake** — `5744213457`. Module hash unchanged. Invoke changed. Presence of `--clock-iso` (including empty values) in non-fixture mode reportedly rejected with `CLOCK_ISO_FIXTURE_ONLY`, exit 8, before clock/gate/mutation.
 6. **Independent LIMITED FIX-2b PASS** — `5744249536`. TL **ACCEPTS ONLY** closure of the clock-mode guard. Presence-based `--clock-iso` rejection in non-fixture mode before clock/gate/mutation **CLOSED**. Fixture-root ordering **CLOSED**. Recorded 4/0 focused tests source-reviewed, not rerun. Prior Fix-2 / Fix-2a closures stand for unchanged reviewed surfaces.
 
-This is **staged correction acceptance ONLY**. Routing is **not** active, **not** a native PASS, and **not** whole-system PASS. Gate remains `pending_remediation`; `enabled_for_scheduled_daily=false`; `enabled_for_live_manual_daily=false`. Separate TL activation order is required before any live routing.
+This is **staged correction acceptance ONLY**. Routing is **not** a native PASS and **not** whole-system PASS. Historical gate through Fix-2b: `pending_remediation`; `enabled_for_scheduled_daily=false`; `enabled_for_live_manual_daily=false`. Later reported scheduled-only configuration is recorded under `5744481469` and is still not a native PASS.
 
 Accepted current external hashes (PO/Guardian provenance; Cursor/TL did not observe files):
 
@@ -946,24 +949,65 @@ Accepted current external hashes (PO/Guardian provenance; Cursor/TL did not obse
 | Daily skill (Fix-2a / reported still invoking this entry) | `5c9ba660e60ddebd37bec162f8d3be100c09a6e1a1b5b8063752fb59458e5661` |
 | expected unchanged Weekly skill | `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67` |
 
-Guardian measured manifest pins matching module and invoke; Daily still invokes this entry; both live gates false. Historical Fix-1 / Fix-2 / Fix-2a evidence files remain historical (`FIX1_EVIDENCE`, `FIX2_EVIDENCE`, `FIX2A_EVIDENCE`, `FIX2B_EVIDENCE` under `/workspace/jetnity/intelligence/routing/staging/`). Do not add those files to this git repo.
+Guardian measured manifest pins matching module and invoke; Daily still invokes this entry. Historical gate through Fix-2b (do not treat as current): both live gates false. Historical Fix-1 / Fix-2 / Fix-2a evidence files remain historical (`FIX1_EVIDENCE`, `FIX2_EVIDENCE`, `FIX2A_EVIDENCE`, `FIX2B_EVIDENCE` under `/workspace/jetnity/intelligence/routing/staging/`). Do not add those files to this git repo.
 
 Minor non-blocking notes (not reasons for another feature patch): skill wording about fixture-only clock; non-persisted blocked marker on one orphan brief error.
 
-#### Isolated Weekly consumer exercise — AUTHORIZED / NOT YET PROVEN
+#### Isolated Weekly consumer exercise — LIMITED PASS (model-mediated additive compatibility only)
 
-Technical-Lead `5744249536` authorizes **one** isolated paired consumer exercise. This is still Fix-2 item C. It is **not** Weekly routing integration.
+Authorization `5744249536` remains the origin of the isolated paired exercise. Intake `5744345314` required Guardian artifact readback. Technical-Lead `5744379287` **ACCEPTS LIMITED MODEL-MEDIATED WEEKLY CONSUMER COMPATIBILITY**. TL verified GitHub, not the external filesystem or execution. Provenance: PO-supplied CoS report plus independent Guardian artifact review. **Cursor did not observe the files.**
 
-Existing Jetnity Chief of Staff, external, **not Cursor**:
+Accepted identities (PO/Guardian provenance):
 
-- Use the **actual installed, unmodified** `Jetnity Weekly Strategic Intelligence Synthesizer`. Expected hash `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67`. Verify the actual hash and report drift before claiming that reviewed identity.
-- Read and execute its full applicable weekly synthesis workflow in the existing CoS turn, **explicitly model-mediated**. No new Python checklist / `consume_v1` as a substitute.
-- Two isolated input roots under `/workspace/jetnity/intelligence/fixtures/`: baseline schema-v1 daily archives, and identical archives with additive routing generated through the reviewed entry in fixture mode. Existing fixture data may be reused and must be labelled synthetic. Fix test period/reference date equally for both. Remap all outputs/archives to fixture roots. If isolation cannot be achieved without altering the installed skill, **STOP BLOCKED**.
-- Retain original v1 fields identically. Cover existing material findings/sources/caveats, conflict/degraded semantics as applicable to the actual skill, historical control state and coverage. Save actual outputs and a step/source trace to isolated paths. Compare semantic preservation, not identical prose.
-- Do not claim routing-specific fields were consumed if the unchanged Weekly skill ignores them. Compatibility is additive-field tolerance / preservation of existing semantics.
-- Report installed skill hash, input/output hashes and paths, actual execution trace, model-mediated outcome and limits. `native_scheduled_pass=false`. Do not describe this as deterministic whole-synthesis proof.
-- No native Weekly routine, live Daily/routing invocation, canonical archive/output writes, skill/schedule changes, live gate unlock, GitHub writes or new bots. Snapshot/readback relevant live files to substantiate non-contamination, accounting honestly for any independent scheduled changes.
+| Artifact | Reported identity |
+| --- | --- |
+| unchanged Weekly skill | `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67` |
+| A output | `0dfb9d9bac4b473af888947c7595aade415b9daf3685a01e66dac93d317d7d27` |
+| B output | `642e62816709cb3fc895a2af6dce4ff9301c99c6097ec3e96ac6ee7e0e15937d` |
 
-**NEXT EXACT EXTERNAL STEP:** same Jetnity Chief of Staff runs that isolated paired Weekly consumer exercise, then STOP for Technical-Lead evidence assessment. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
+Guardian read both outputs and traces. Reported: 3 findings; source/caveat provenance; 1 unresolved synthetic conflict; fresh-vs-historical control semantics preserved. Inputs are semantically paired, **not** byte-identical: `archived_at` differs by one minute in addition to routing/fixture metadata. That disclosed rebuild timestamp is accepted for this limited compatibility question only. It is **not** a perfectly single-variable experiment.
+
+Limits that remain binding:
+
+- CoS I/O-remapped execution is **model-mediated**, not native/deterministic synthesis.
+- Synthetic period 2026-09-15..17 referenced at 2026-09-19T20:15+02:00 is a declared fixture period, **not** production Monday–Sunday scheduled coverage.
+- Unchanged Weekly **ignores routing**. This may demonstrate additive-field compatibility. It is **not** Guardian routing propagation and **not** Weekly routing integration.
+- Consumer compatibility item is **CLOSED only at this scope**.
+
+#### Provisional scheduled routing — REPORTED CONFIGURED / native PASS OPEN
+
+Technical-Lead `5744379287` authorized same CoS to set scheduled-only enablement. Receipt persist `5744481469` records PO-supplied CoS activation under `/workspace/jetnity/intelligence/routing/staging/SCHEDULED_ACTIVATION_RECEIPT.json`. **TL/Cursor did not directly observe that file.** This is **REPORTED CONFIGURED**, not native PASS.
+
+Historical gate through Fix-2b (do not erase): `pending_remediation`; `enabled_for_scheduled_daily=false`; `enabled_for_live_manual_daily=false`; `allow_fixture_tests_only=true`.
+
+Reported current gate (`5744481469`):
+
+| Field | Reported value |
+| --- | --- |
+| `status` | `scheduled_only_provisional` |
+| `enabled_for_scheduled_daily` | `true` |
+| `enabled_for_live_manual_daily` | `false` |
+| `allow_fixture_tests_only` | `false` |
+| gate SHA256 | `f6490963c0fe5aefd917cafb2c4704c05f3f7fceb3611901d9496d6cef20293d` |
+
+Reported preconditions still match accepted hashes: module `0b47cf8750317fbd1937393fb3c6b0fefad430df068010f57e438db4467daaa9`; invoke `cf68a13eb824be10599aa7eeb3316f7721b9186ce130ad2dbe111a6e07c2a0a7`; Daily skill `5c9ba660e60ddebd37bec162f8d3be100c09a6e1a1b5b8063752fb59458e5661`. CoS reports the existing validator allows scheduled and blocks live_manual; `pending_remediation` status had to change because installed Daily branches on it. No code/skill change reported. No live pending/state/recovery block reported.
+
+Next scheduled execution reported: `2026-09-20T07:45:00+02:00`. That is an **expected schedule**, not an execution receipt. `native_scheduled_pass=false`. Await real scheduler evidence. Prior rollback authorization on observed routing malfunction stands. No ChatGPT wake / TL delivery claim. Successful setup or CLI invocation alone is not native PASS.
+
+#### Isolated Guardian archive-writer exercise — AUTHORIZED / NOT YET PROVEN
+
+Technical-Lead `5744481469` authorizes same Jetnity Guardian to run a bounded isolated archive-writer exercise using the **actual installed, unmodified** `Jetnity GitHub Event Assurance Reviewer`. This is a **manual synthetic test**, not native event execution and not independent review of Guardian's own implementation.
+
+- Fixture root only: `/workspace/jetnity/intelligence/fixtures/os2-guardian-archive-20260919/`. If isolation requires changing live skill/code or exercising a real listener, **STOP BLOCKED**.
+- Synthetic identities with `manual_fixture` (or equivalent) provenance. Never `github_listener` / native claims or fabricated real PR findings.
+- One MATERIAL and one DEGRADED envelope through installed archive behavior, then a `NO_MATERIAL` update to the isolated latest.
+- Re-read: both material/degraded archives survive later latest overwrite; identity/content/source/authority remain attributable; names do not collide; `NO_MATERIAL` need not archive.
+- Do not claim crash durability or exactly-once delivery from this sequential test.
+- No live writes to `events/guardian-latest.json` or `archive/events/guardian`. No routine invocation, synthetic GitHub event, or scheduled-gate change.
+- Completion may close only the isolated behavior question. `native_scheduled_pass=false`. `native_material_archive_proof=false` until independently observed.
+
+Still OPEN: native Daily+routing; native Guardian MATERIAL/DEGRADED archive proof; Weekly routing integration; reverse domain assurance; urgent delivery. Empty archive under `NO_MATERIAL` is not a defect. All ten Grok identities existing does **not** mean all ten are operationally accepted: Product & UX Explorer and Analytics & Experimentation remain created/initialized with conditional routines **not configured** and access beyond initialization **NOT CHECKED**.
+
+**NEXT EXACT EXTERNAL STEP:** same Jetnity Guardian runs the isolated archive-writer exercise, then STOP for Technical-Lead assessment. Await the existing native Daily 07:45 Europe/Zurich schedule for routing proof. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
 
 **STOP.** Cursor documents only.

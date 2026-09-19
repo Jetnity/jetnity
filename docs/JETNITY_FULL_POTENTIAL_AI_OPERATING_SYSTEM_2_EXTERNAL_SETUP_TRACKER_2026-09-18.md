@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – External Ten-Role Setup Tracker
 
 Stand: 19. September 2026  
-Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY V2 ACTIVE / WEEKLY ACTIVE / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / DAILY ROUTING EXTENSION AUTHORIZED NOT YET IMPLEMENTED OR TESTED / HOLD REMAINS ACTIVE**
+Status: **CANONICAL LIVE CONTROL SURFACE / TEN IDENTITIES PRESENT / E2E #001 VERIFIED / PROFILE NORMALIZATION VERIFIED / DAILY V2 ACTIVE / WEEKLY ACTIVE / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / WEEKLY CONSUMER LIMITED PASS / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS / HOLD REMAINS ACTIVE**
 
 Issue: #490  
 Draft PR: #491  
@@ -94,6 +94,9 @@ Evidence provenance is Product-Owner and Technical-Lead comments on PR #491. Thi
 | Fix-2a disposition / Fix-2b clock-mode guard authorized | `5744185200` |
 | Fix-2b completion intake / Guardian clock-guard review | `5744213457` |
 | Limited Fix-2b acceptance / isolated Weekly consumer authorized not proven | `5744249536` |
+| Weekly consumer report intake / Guardian artifact verification | `5744345314` |
+| Limited Weekly consumer PASS / scheduled-only routing validation authorized | `5744379287` |
+| Scheduled routing activation receipt / isolated Guardian archive exercise | `5744481469` |
 
 ## 1. Global setup truth
 
@@ -101,7 +104,7 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 
 | Item | State | Evidence / note | Next actor |
 | --- | --- | --- | --- |
-| Canonical ten-role roster presence | **present / initialized / exact names verified persisted** | Comments through `5735008554`, Phase-1 `5735080935`, and profile #002 `5735489499`. Product & UX exact name is now persisted without a trailing period. | Product Owner later for routines |
+| Canonical ten-role roster presence | **present / initialized / exact names verified persisted — not all ten operationally accepted** | Comments through `5735008554`, Phase-1 `5735080935`, and profile #002 `5735489499`. Product & UX exact name is persisted without a trailing period. Product & UX Explorer and Analytics & Experimentation have no configured conditional routines; access beyond initialization is NOT CHECKED. | Product Owner later for those conditional routines |
 | `Jetnity Guardian` | **existing / modern contract VERIFIED PERSISTED** | Canonical Guardian identity. Modern ten-role contract persisted per `5735489499`. | Product Owner later for routines |
 | `Jetnity Chief of Staff` | **created / initialized / canonical** | Comments `5734539126` and `5735135388`. Only valid CoS roster slot. Coordination proven by E2E #001. | Product Owner / Technical Lead for later routines |
 | Roles 3–10 | **created / initialized** | Comments `5734630533` … `5735008554`. Product & UX exact name verified persisted in `5735489499`. | Product Owner later for routines |
@@ -109,7 +112,7 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | Exact roster / name / role consistency | **verified persisted — profile #002** | Product & UX Explorer exact persisted name is `Jetnity Product & UX Explorer` with no trailing period (`5735489499`). Earlier stale #001 `5735410441` is superseded. | None for this closure |
 | Chief-of-Staff coordination test | **verified via E2E #001** | Specialist-to-CoS handoff and CoS receipt/coordination observed on the no-signal path. | None for this bounded test |
 | Specialist → CoS → TL Evidence-Bus e2e | **verified — JETNITY-EVIDENCE-BUS-E2E-001** | Comment `5735190265`. Technical-Lead live receipt `5735209274`. Path: Security & Privacy Red Team → Jetnity Chief of Staff → GitHub PR #491 → ChatGPT Technical Lead. Signal: NO MATERIAL SECURITY / PRIVACY SIGNAL. One controlled transport test, not a recurring routine. | None for this bounded test |
-| Approved recurring routines / schedules | **Daily V2 ACTIVE / Weekly ACTIVE / Guardian event setup COMPLETE / e0524311 transport ACCEPTED / Daily routing staged corrections LIMITED PASS / Weekly consumer AUTHORIZED not proven** | Daily ACTIVE `5741925172`. Weekly ACTIVE `5742253536`. Guardian event routine enabled `5742304439`. Transport ACCEPTED for `e0524311` (`5742732366`). Staged routing corrections `5744249536`. | CoS isolated Weekly consumer exercise. Cursor must not implement |
+| Approved recurring routines / schedules | **Daily V2 ACTIVE / Weekly ACTIVE / Guardian event setup COMPLETE / e0524311 transport ACCEPTED / Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED not native PASS** | Daily ACTIVE `5741925172`. Weekly ACTIVE `5742253536`. Guardian event routine enabled `5742304439`. Transport ACCEPTED for `e0524311` (`5742732366`). Weekly consumer LIMITED PASS `5744379287`. Activation receipt `5744481469`. | Guardian isolated archive-writer exercise; await 2026-09-20 07:45 native Daily. Cursor must not implement |
 | Daily Intelligence Orchestrator skill | **reused / upgraded in place / archive writer PASS** | Native canary `5741863042` plus archive VALIDATION #001 `5741961756`. Post-aggregation dated archive step is now on the existing skill. | None for Daily archive writer |
 | JETNITY-DAILY-INTELLIGENCE-TEST-001 | **PASS WITH HARDENING THEN SUPERSEDED FOR ROUTINE-READINESS** | Comment `5735636786`. Required the final control-state re-fetch hardening later proven on TEST #002. | None |
 | JETNITY-DAILY-INTELLIGENCE-TEST-002 | **PASS — DAILY ORCHESTRATOR IS ROUTINE-READY** | Comment `5735700562`. Conversation-path only. Does not prove scheduled specialist pulses. | None for this conversation-path closure |
@@ -118,8 +121,8 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | JETNITY-DAILY-ROUTINE-ONESHOT-001 | **chat-workflow verified / not native scheduler history** | Comment `5736188318`. Confirms conversation one-shot, not native execution history. | None |
 | Native scheduler CANARY #001 | **did not materialize** | Comment `5736557812`. Timezone Europe/Zurich ruled out. Do not count as native-engine PASS. | None |
 | Native scheduler CANARY #002 | **scheduler VERIFIED / workflow DEGRADED / not full-PASS** | Comment `5736636348`. RUN_ID `JETNITY-DAILY-2026-09-18-ROUTINE-001`. Head `cedeb097`. All six default specialists `SPECIALIST UNAVAILABLE` because scheduled bot-to-bot messaging failed. Truth discipline held. | None for scheduler-fire proof |
-| Daily Automation V2 handoff contract | **persisted / weekly §11 ACTIVE / trigger §12 transport ACCEPTED / §12a staged corrections LIMITED PASS / Weekly consumer AUTHORIZED not proven** | Origin `5736670149`. Transport ACCEPTED `5742732366`. Staged routing corrections `5744249536`. | CoS isolated Weekly consumer exercise. Cursor must not implement |
-| Exact new-chat continuation point | **updated after TL `5744249536`** | Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
+| Daily Automation V2 handoff contract | **persisted / weekly §11 ACTIVE / trigger §12 transport ACCEPTED / §12a Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED** | Origin `5736670149`. Transport ACCEPTED `5742732366`. Receipt `5744481469`. | Guardian isolated archive-writer exercise. Cursor must not implement |
+| Exact new-chat continuation point | **updated after TL `5744481469`** | Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. While #491 is open, live PR evidence wins over docs on `main`. | Any new ChatGPT / Cursor chat: reconstruct from live #491 + §0 |
 | JETNITY-MARKET-PULSE-HANDOFF-TEST-001 | **PASS** | Comment `5736871320`. Skill `Jetnity Daily Market & Traveller Pulse Writer` wrote `market-traveller.json`. Schema v1. `NO_MATERIAL`. No routine. | None |
 | JETNITY CROSS-BOT WORKSPACE READ TEST #001 | **PASS** | Comment `5736895145`. CoS read the file without contacting Market. | None |
 | Jetnity Daily Market & Traveller Pulse | **ACTIVE / 06:50 Europe/Zurich** | Product Owner `5741925172`. Owner Market. Skill Pulse Writer unchanged. | None for Daily activation. Cursor must not mutate this routine |
@@ -160,13 +163,15 @@ Recorded on 2026-09-18 by `Jetnity full-potential AI operating system 2`. No ext
 | JETNITY WEEKLY STRATEGIC INTELLIGENCE — BOOTSTRAP TEST #001 | **PASS / superseded for native completeness** | Comment `5741991608`. Completeness closed by native canary `5742211136`. | None for bootstrap proof |
 | JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001 | **FINAL WEEKLY NATIVE CANARY PASS** | Comment `5742211136`. Native scheduler succeeded. Real archive only. `coverage_days=1`. `coverage_status=BOOTSTRAP_PARTIAL`. Period 2026-09-19→2026-09-19. `status=NO_MATERIAL`. Current weekly file written. No Saturday canonical weekly archive. Fresh control-state start/end matched. `external_writes=[]`. | None for native proof |
 | Canonical weekly archive | **not started** | Path `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`. Begins only from valid normal scheduled weekly operation. Saturday canary wrote none. | First valid Monday ACTIVE run |
-| Event-triggered / risk-triggered automation | **e0524311 transport ACCEPTED / Daily routing staged corrections LIMITED PASS / isolated Weekly consumer AUTHORIZED / NOT YET PROVEN** | Cycle continues `5743658093` → `5743817253` → `5743877859` → `5744145735` → `5744185200` → `5744213457` → `5744249536`. PO/Guardian provenance; Cursor/TL did not observe external files or rerun tests. Staged closures: Fix-1 entry/hash/lock/same-run commit; Fix-2 fixture isolation + real crash assertion; Fix-2a prior-day archive protection/reuse/date checks; Fix-2b presence-based `--clock-iso` rejection before clock/gate/mutation. Gate remains `pending_remediation`; both live gates false. Routing is not active and not a native PASS. Historical `2db26344` standalone proof UNVERIFIED. Empty archive under `NO_MATERIAL` is not a defect. | CoS isolated Weekly consumer exercise; then TL evidence assessment. Cursor must not implement or manufacture results |
+| Event-triggered / risk-triggered automation | **e0524311 transport ACCEPTED / Weekly consumer LIMITED PASS / scheduled routing REPORTED CONFIGURED / native Daily+routing OPEN** | Cycle continues through `5744249536` → `5744345314` → `5744379287` → `5744481469`. PO/Guardian provenance; Cursor/TL did not observe external files. Historical gate through Fix-2b: `pending_remediation` / both live gates false. Reported current gate: `scheduled_only_provisional`; `enabled_for_scheduled_daily=true`; `enabled_for_live_manual_daily=false`; `allow_fixture_tests_only=false`; SHA256 `f6490963c0fe5aefd917cafb2c4704c05f3f7fceb3611901d9496d6cef20293d`. Next expected schedule `2026-09-20T07:45:00+02:00` is not an execution receipt. `native_scheduled_pass=false`. Historical `2db26344` standalone proof UNVERIFIED. Empty archive under `NO_MATERIAL` is not a defect. | Guardian isolated archive-writer exercise; await native Daily. Cursor must not implement or manufacture results |
 | JETNITY-OS2-ROUTING-EXT1-20260919 | **reported complete / then CHANGES REQUIRED / superseded by Fix-1** | Intake `5743347207`. 10/10 fixture cases were reported, not independently accepted. TL `5743383261` required durable entry/hash wiring, output-before-processed commit, and process-owned lock. Pre-Fix-1 Guardian hashes are historical only. | None — superseded |
 | Daily Routing Review Fix 1 | **LIMITED PASS — discrete same-run crash-safety / lock / entry-hash wiring only** | Comment `5743658093`. Guardian-measured hashes (PO/Guardian provenance; Cursor/TL did not observe files): module `1.1.0-fix1` `adb2f20e74295af63b0d4e0f224adea90abaefe382a33baf971b77d2bed16742`; Daily skill `f48d1af4a4a7485f4ce37ad6806c6d080e444e3511a1c28deda2cb7629ef8321`; entry `e57950ada73849833a54fda8cfb13cbba7914dd55df7b34bf414f456c221b89c`; manifest `ef2ee5459667a5a27a9e2a8f176ac5db9ad58a1be5b4ec0120fc4a7a92a9d4ad`; gate `c0d14f4b07f0c2bbfbd221ab47c52c445e8cfb32d33a475fceffc8896e5582d3`; `FIX1_EVIDENCE` `4f7d4c70afb9f3d0f2514f8f25cca0277e6ba15ed71a4cf04350163a3aacbe09`; fault runner `bed500bfa416ef358135bb804df16d197dd93da59882dc3046c5298a87d21d31`; `FAULT_TEST_RESULTS` `27b9f2c920875cce15c3f1a0db1dd2b430f1644c285928244c61196fbf886375`. Paths remain Grok-workspace only. | None for this limited closure |
 | Daily Routing Review Fix 2 | **LIMITED PASS for A + D; B required Fix-2a; C remains OPEN** | Intake `5743817253`. CHANGES REQUIRED `5743877859`. CLOSED: fixture contamination guard and real crash assertion. PARTIAL: prior-day archive rewrite after `brief_written`. C (`weekly_skill_consumer`) was checklist reimplementation only. | None for A/D — see Fix-2a / Weekly consumer rows |
 | Daily Routing Review Fix 2a | **LIMITED PASS — archive-recovery / date / reuse / lock invariants** | Comments `5744145735` and `5744185200`. Candidate `1.1.0-fix2a`. Module `0b47cf8750317fbd1937393fb3c6b0fefad430df068010f57e438db4467daaa9`. Daily skill `5c9ba660e60ddebd37bec162f8d3be100c09a6e1a1b5b8063752fb59458e5661`. Recorded 7/0 tests source-reviewed, not rerun. Prior-day archives protected; current-day original-content reuse; fail-closed on differing/unowned archives; midnight recheck. | None for this limited closure |
 | Daily Routing Review Fix 2b | **LIMITED PASS — clock-mode guard only** | Comments `5744213457` and `5744249536`. Module hash unchanged. Invoke `cf68a13eb824be10599aa7eeb3316f7721b9186ce130ad2dbe111a6e07c2a0a7`. Presence of `--clock-iso` (including empty) in non-fixture mode rejected with `CLOCK_ISO_FIXTURE_ONLY` / exit 8 before clock/gate/mutation. Recorded 4/0 tests source-reviewed, not rerun. | None for this limited closure |
-| Isolated Weekly consumer exercise | **AUTHORIZED / NOT YET PROVEN — model-mediated; not native; not Weekly routing** | Comment `5744249536`. Actual installed unmodified Weekly skill; expected hash `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67`. Verify actual hash before claiming identity. Two isolated fixture roots; no `consume_v1` substitute. If isolation requires skill change, STOP BLOCKED. | Existing CoS; then TL evidence assessment. Cursor must not implement |
+| Isolated Weekly consumer exercise | **LIMITED PASS — model-mediated additive compatibility only** | Comments `5744345314` and `5744379287`. Weekly skill `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67`. A output `0dfb9d9bac4b473af888947c7595aade415b9daf3685a01e66dac93d317d7d27`. B output `642e62816709cb3fc895a2af6dce4ff9301c99c6097ec3e96ac6ee7e0e15937d`. Inputs semantically paired, not byte-identical: `archived_at` differs by one minute. Unchanged Weekly ignores routing. Synthetic 15–17 Sep period is not production Mon–Sun coverage. Not native/deterministic synthesis. Weekly routing integration remains OPEN. | None for this limited closure |
+| Scheduled routing activation | **REPORTED CONFIGURED / not native PASS** | Comment `5744481469` under order `5744379287`. Receipt `/workspace/jetnity/intelligence/routing/staging/SCHEDULED_ACTIVATION_RECEIPT.json` (PO-supplied; Cursor/TL did not observe). Reported hashes match accepted module/invoke/Daily. Next expected run `2026-09-20T07:45:00+02:00`. `native_scheduled_pass=false`. Rollback on observed routing malfunction still authorized. | Await real scheduler evidence. Cursor must not implement |
+| Isolated Guardian archive-writer exercise | **AUTHORIZED / NOT YET PROVEN — manual synthetic; not native archive proof** | Comment `5744481469`. Actual installed unmodified Guardian Event Assurance Reviewer. Fixture root `/workspace/jetnity/intelligence/fixtures/os2-guardian-archive-20260919/` only. MATERIAL + DEGRADED then isolated `NO_MATERIAL` latest. If isolation requires live skill/code change or a real listener, STOP BLOCKED. `native_material_archive_proof=false`. | Same Guardian; then TL assessment. Cursor must not implement |
 | Durable profile-instruction / `Anweisungen` | **profile normalization VERIFIED COMPLETE** | Product Owner mobile UI `5735465938` plus CoS read-only persisted-profile re-check `5735489499`. Do not claim global persistence failure. Catalog previews are not persisted-profile truth. | Later only if a specific bot reopen fails |
 | Guardian contract normalization | **VERIFIED PERSISTED** | Comment `5735489499`: modern ten-role framing, independent assurance/review, not-TL, FACT/INFERENCE/RISK/OPPORTUNITY/RECOMMENDATION, no PASS/Ready/merge, no Production/Supabase/Auth/RLS mutation, Guardian → CoS → TL handoff, authorized plain-text GitHub evidence path, shared-environment non-isolation, HOLD, NO MATERIAL GUARDIAN SIGNAL. | None for this closure |
 | Shared environment has no Production-admin / service-role / payment-admin / broad write token | **NOT CHECKED** | Shared environment is one blast radius (Phase 1). Credentials cannot be independently inspected from this repository slice. Do not invent a PASS. | Product Owner / Technical Lead with environment access |
@@ -188,8 +193,8 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Evidence-Bus path | **verified** for controlled no-signal test `JETNITY-EVIDENCE-BUS-E2E-001` (comment `5735190265`) |
 | Last verification | Weekly ACTIVE `5742253536`; native canary `5742211136`; Daily ACTIVE `5741925172` |
 | Profile / `Anweisungen` | Phase 1 observed persisted profile text. iOS latency not independently checked. |
-| Blockers / platform limitations | Daily routing staged corrections LIMITED PASS only. Isolated Weekly consumer AUTHORIZED / NOT YET PROVEN. Weekly ACTIVE is not HOLD exit. |
-| Next actor | Existing CoS runs isolated Weekly consumer exercise. Cursor must not edit this bot |
+| Blockers / platform limitations | Scheduled routing REPORTED CONFIGURED only. Native Daily+routing OPEN. Weekly ACTIVE is not HOLD exit. |
+| Next actor | None for Weekly consumer / activation receipt. Await native Daily 07:45. Cursor must not edit this bot |
 
 ### 2. Jetnity Guardian
 
@@ -199,9 +204,9 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Permissions / connections | Modern persisted contract authorizes the plain-text Evidence-Bus GitHub path. Still no admin/secrets/write/merge. `@cursor` never substitutes for Guardian. |
 | Routines | `Jetnity PR CI Release Assurance` **enabled** (`5742304439`). Bounded native `pr-pushed` transport ACCEPTED for `e0524311` (`5742732366`). Skill `Jetnity GitHub Event Assurance Reviewer`. Native GitHub listener for `Jetnity/jetnity` only. No polling fallback. Not a Daily V2 writer. |
 | Evidence-Bus path | Event-trigger output is a workspace envelope, not automatic GitHub mutation. One-off PR comments exist (example: PR #489 comment `5733672386`). E2E #001 used the specialist → CoS → GitHub path, not Guardian as the relay. |
-| Last verification | TL transport acceptance `5742732366` of PO-supplied Guardian diagnostic for `e0524311`. Staged routing corrections `5744249536`. Not whole-system assurance. |
-| Blockers / platform limitations | `2db26344` standalone historical proof UNVERIFIED. Daily routing staged corrections LIMITED PASS only; isolated Weekly consumer AUTHORIZED / NOT YET PROVEN. Unsupported classes must stay uninvented. `@cursor` never substitutes for Guardian. |
-| Next actor | None for staged routing-correction review. Isolated Weekly consumer is CoS then TL. Cursor must not mutate this bot or manufacture envelopes |
+| Last verification | TL transport acceptance `5742732366` of PO-supplied Guardian diagnostic for `e0524311`. Weekly consumer LIMITED PASS `5744379287`. Not whole-system assurance. |
+| Blockers / platform limitations | `2db26344` standalone historical proof UNVERIFIED. Native MATERIAL/DEGRADED archive proof OPEN. Isolated archive-writer exercise AUTHORIZED / NOT YET PROVEN. Unsupported classes must stay uninvented. `@cursor` never substitutes for Guardian. |
+| Next actor | Same Guardian runs isolated archive-writer exercise. Cursor must not mutate this bot or manufacture envelopes |
 
 ### 3. Jetnity Market & Traveller Intelligence
 
@@ -248,7 +253,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Routines | Product / UX Synthetic Journey Review — **not configured**. Trigger-based only. Not a daily V2 writer. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Profile #002 `5735489499` superseded stale #001 `5735410441` |
-| Blockers / platform limitations | None that drop the role |
+| Blockers / platform limitations | Conditional Product / UX Synthetic Journey Review is **not configured**. Access beyond initialization is **NOT CHECKED**. Presence is not operational acceptance. |
 | Next actor | Later routine setup. Cursor must not mutate this bot |
 
 ### 7. Jetnity Growth & Discoverability
@@ -272,7 +277,7 @@ Exact names only. Engineering/review lanes stay a separate capability layer.
 | Routines | Analytics / Experiment Review — **not configured**. Trigger-based only. Not a daily V2 writer. |
 | Evidence-Bus path | Specialist → CoS → TL handoff understood; not the E2E #001 source |
 | Last verification | Comment `5734906962`; Phase 1 `5735080935` |
-| Blockers / platform limitations | No tracker install. New tracking/legal processing remains Product-Owner gated |
+| Blockers / platform limitations | Conditional Analytics / Experiment Review is **not configured**. Access beyond initialization is **NOT CHECKED**. Presence is not operational acceptance. No tracker install. New tracking/legal processing remains Product-Owner gated. |
 | Next actor | Later routine setup. Cursor must not mutate this bot |
 
 ### 9. Jetnity FinOps & Reliability
@@ -330,9 +335,9 @@ This is **not** one of the ten mandatory identities and must never be counted as
 
 ## 4. Still OPEN before HOLD lift
 
-Daily Automation V2 is **END-TO-END FINAL PASS** (`5741863042`) and in **normal ACTIVE operation** (`5741925172`). Weekly Strategic Intelligence is in **normal ACTIVE operation** at Monday **08:30 Europe/Zurich** (`5742253536`). Guardian event-assurance setup is **COMPLETE** (`5742304439`). Technical-Lead `5742732366` **ACCEPTED** bounded native `pr-pushed` transport/processing for `e0524311`. Historical first-event identity `2db26344` remains recorded; its standalone proof is **UNVERIFIED**. Daily routing staged corrections are a **LIMITED PASS** through Fix-2b (`5744249536`). Isolated Weekly consumer exercise is **AUTHORIZED / NOT YET PROVEN**. This does **not** lift HOLD, authorize product work, Ready/merge #491, or flip the routing execution gate.
+Daily Automation V2 is **END-TO-END FINAL PASS** (`5741863042`) and in **normal ACTIVE operation** (`5741925172`). Weekly Strategic Intelligence is in **normal ACTIVE operation** at Monday **08:30 Europe/Zurich** (`5742253536`). Guardian event-assurance setup is **COMPLETE** (`5742304439`). Technical-Lead `5742732366` **ACCEPTED** bounded native `pr-pushed` transport/processing for `e0524311`. Historical first-event identity `2db26344` remains recorded; its standalone proof is **UNVERIFIED**. Weekly consumer compatibility is a **LIMITED PASS** (`5744379287`). Scheduled routing is **REPORTED CONFIGURED** (`5744481469`), not a native PASS. This does **not** lift HOLD, authorize product work, or Ready/merge #491.
 
-**NEXT EXACT STEP (external, not Cursor):** Same Jetnity Chief of Staff runs one isolated paired model-mediated Weekly consumer exercise using the actual installed unmodified Weekly skill (expected hash `b1da689fab62d1645479b73b18ce5e8e54b3bbf9e99863f094790d73d0374b67`). If isolation cannot be achieved without altering the installed skill, STOP BLOCKED. Then STOP for Technical-Lead evidence assessment. Keep both live gates false. No native Weekly/Daily/routing run, gate flip, GitHub write, routing FINAL PASS, or HOLD exit. Cursor must not implement that work or manufacture fixture results.
+**NEXT EXACT STEP (external, not Cursor):** Same Jetnity Guardian runs the isolated archive-writer exercise under `/workspace/jetnity/intelligence/fixtures/os2-guardian-archive-20260919/` only. Await the existing native Daily at **2026-09-20 07:45 Europe/Zurich** for routing proof. `native_scheduled_pass=false`. `native_material_archive_proof=false`. No live Guardian writes, synthetic GitHub event, Ready/merge, or HOLD exit. Cursor must not implement that work or manufacture fixture results.
 
 Guardian event-assurance facts (V2 contract §12):
 
@@ -343,7 +348,7 @@ Guardian event-assurance facts (V2 contract §12):
 - MATERIAL/DEGRADED archive `/workspace/jetnity/intelligence/archive/events/guardian/`;
 - no GitHub mutation; `external_writes=[]`; HOLD remains active.
 
-After the isolated Weekly consumer exercise is assessed, and Technical Lead later authorizes any native/activation proof:
+After native Daily+routing evidence is reviewed, and Technical Lead later authorizes any further activation/HOLD-exit proof:
 
 1. remaining escalation routing (material domain signals, contradiction/degraded-evidence) reusing the event-envelope pattern;
 2. whole-system / Guardian assurance;
