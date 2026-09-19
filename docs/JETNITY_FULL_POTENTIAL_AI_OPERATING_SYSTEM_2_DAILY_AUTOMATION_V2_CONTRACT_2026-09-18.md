@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / MARKET + PROVIDER FINAL PASS / TRAVEL TRUTH NEXT / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / MARKET + PROVIDER FINAL PASS / TRAVEL TRUTH MANUAL PASS / NATIVE CANARY OPEN / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -9,6 +9,7 @@ Novelty-hardening TEST #001: PR #491 comment `5737291119`
 Final Market re-canary: PR #491 comment `5737734991`  
 Market restore + Provider manual: PR #491 comment `5737767891`  
 Final Provider canary: PR #491 comment `5738078082`  
+Travel Truth manual: PR #491 comment `5740522887`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -215,8 +216,9 @@ Market proof is complete. Sequence (d) is now **authorized** for later external 
 | schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
 | novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **PASS for Market writer** — `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`) |
 | re-canary | Native scheduled refresh of the hardened Market skill + CoS direct read of the refreshed file | **PASS** — `JETNITY MARKET FINAL NATIVE RE-CANARY READ #001` (`5737734991`, run `JETNITY-MARKET-PULSE-2026-09-19-6ff494`) |
-| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider **complete**. Travel Truth is next. Three remaining writers not created. Cursor must not implement. |
+| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider **complete**. Travel Truth **manual PASS**; native canary **OPEN**. Growth, FinOps, and Security writers not created. Cursor must not implement. |
 | d-provider | Native scheduled Provider canary + CoS direct read without contacting Provider | **PASS** — `JETNITY PROVIDER NATIVE CANARY READ #001` (`5738078082`, run `JETNITY-PROVIDER-PULSE-2026-09-19-024605`) |
+| d-travel-truth | Native scheduled Travel Truth canary + CoS direct read without contacting Travel Truth | **OPEN** — setup proven by `JETNITY-TRAVEL-TRUTH-PULSE-HANDOFF-TEST-001` (`5740522887`). Completeness requires one native scheduled canary and a Chief-of-Staff read of the refreshed canonical file without contacting the specialist. |
 | e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on remaining clones |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
@@ -270,7 +272,8 @@ That closes the Provider & Commercial specialist proof: native scheduled writer 
 Next **external** steps, not Cursor work:
 
 1. restore Provider routine to normal schedule **06:55 Europe/Zurich** and keep it **PAUSED**;
-2. proceed to Travel Truth & Regulation using the same proven transport/schema/novelty pattern, with role-specific official-source, citizenship / document / transit / destination evaluation and fail-closed truth discipline. Do not invent visa, transit, health, carrier, eligibility or document rules. Preserve `unknown` when evidence is insufficient.
+2. complete the Travel Truth native canary + CoS read (see §8c);
+3. then clone Growth, FinOps, and Security.
 
 The earlier Provider manual writer TEST #001 (`5737767891`) remains the paused-routine setup proof and is superseded for completeness by this native canary.
 
@@ -281,6 +284,40 @@ Market after final PASS is restored to its intended pre-production paused state 
 - state **PAUSED / NOT ACTIVE**;
 - skill unchanged: `Jetnity Daily Market & Traveller Pulse Writer`;
 - canonical file unchanged.
+
+### 8c. Clone progress — Travel Truth manual PASS / native canary OPEN
+
+`JETNITY-TRAVEL-TRUTH-PULSE-HANDOFF-TEST-001` (`5740522887`) is **PASS for Travel Truth & Regulation manual writer validation and paused routine setup**. It does **not** complete Travel Truth.
+
+Verified from Product Owner / Technical-Lead evidence:
+
+- private skill created: `Jetnity Daily Travel Truth & Regulation Pulse Writer`;
+- canonical file `/workspace/jetnity/intelligence/daily/travel-truth-regulation.json` (Grok workspace, not this git repo);
+- `status=NO_MATERIAL`;
+- `schema_version="1"`;
+- canonical role valid;
+- novelty gate valid;
+- official-source-first discipline preserved;
+- effective-date distinction preserved;
+- multi-citizenship / multi-document discipline preserved;
+- destination vs transit distinction preserved;
+- fail-closed discipline preserved;
+- no sensitive personal data;
+- `external_writes=[]`;
+- `authority_boundary_preserved=true`;
+- no authority contact;
+- routine created: `Jetnity Daily Travel Truth & Regulation Pulse`;
+- normal schedule: **07:00 Europe/Zurich**;
+- initial state: **PAUSED / NOT ACTIVE**.
+
+Evidence quality note: old / future-effective regulatory items were correctly retained as context only and not elevated to current `MATERIAL`. ETIAS standing status and staged UK effective dates were correctly distinguished from active-current rules. Do not invent visa, transit, health, carrier, eligibility or document rules. Preserve `unknown` when evidence is insufficient. Evaluate per traveller and per necessary legal credential option.
+
+Next required proof before marking Travel Truth complete:
+
+1. one native scheduled Travel Truth canary using the existing skill/routine;
+2. a direct Chief-of-Staff read of the refreshed canonical file without contacting the specialist.
+
+Do not enable unattended Travel Truth scheduling from this persist. Cursor must not mutate the skill or routine.
 
 ## 9. What this contract is not
 
