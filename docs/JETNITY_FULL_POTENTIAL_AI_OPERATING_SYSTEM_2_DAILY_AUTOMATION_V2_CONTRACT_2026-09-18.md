@@ -21,6 +21,7 @@ Security restore + aggregator phase: PR #491 comment `5741257042`
 Six-file aggregation TEST #001: PR #491 comment `5741314686`  
 Aggregator output hardening complete: PR #491 comment `5741340041`  
 Full native system canary FINAL PASS: PR #491 comment `5741863042`  
+Canonical CoS schedule correction: PR #491 comment `5741888256` — **07:45 Europe/Zurich** supersedes the prior 07:30 CoS target  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -206,7 +207,7 @@ After the specialist pulse window, `Jetnity Daily Intelligence Brief` (owner: Je
 
 If any of the six envelopes is missing, stale, or invalid, the brief MUST be `DEGRADED` and MUST name the unavailable specialist. It MUST NOT invent `NO MATERIAL CHANGE` for that role.
 
-The V2 aggregation path is now **verified** (`5741863042`). Restore to the canonical **07:30 Europe/Zurich** schedule is a Technical-Lead operational decision. Cursor must not restore or activate this routine.
+The V2 aggregation path is now **verified** (`5741863042`). Restore to the canonical **07:45 Europe/Zurich** schedule is a Technical-Lead operational decision (`5741888256` supersedes the prior 07:30 CoS target). Cursor must not restore or activate this routine.
 
 ## 7. Security
 
@@ -457,7 +458,7 @@ Reuse the existing Chief-of-Staff path. Do **not** create a second skill or rout
 | Existing asset | Name | Rule |
 | --- | --- | --- |
 | Skill | `Jetnity Daily Intelligence Orchestrator` | update in place for V2 scheduled file aggregation |
-| Routine | `Jetnity Daily Intelligence Brief` | keep **PAUSED**; production target **07:30 Europe/Zurich** |
+| Routine | `Jetnity Daily Intelligence Brief` | restore/activate is TL-owned; production target **07:45 Europe/Zurich** (`5741888256` supersedes 07:30) |
 
 Scheduled-mode architecture:
 
@@ -501,7 +502,7 @@ Recommended output schema **v1**:
 Production scheduled freshness rule:
 
 - each specialist envelope must be from the **current** Europe/Zurich daily cycle;
-- for the 07:30 run, `generated_at` must be consistent with that morning’s specialist schedule, allowing bounded scheduler delay;
+- for the 07:45 run, `generated_at` must be consistent with that morning’s specialist schedule, allowing bounded scheduler delay;
 - do **not** accept the previous day’s file merely because the JSON is valid;
 - a future timestamp beyond small clock-skew tolerance is invalid / `DEGRADED`.
 
@@ -526,7 +527,7 @@ This persist records Daily V2 end-to-end FINAL PASS. It does **not** lift HOLD, 
 Verified:
 
 - existing `Jetnity Daily Intelligence Orchestrator` reused and upgraded in place;
-- existing `Jetnity Daily Intelligence Brief` reused, still **PAUSED** at 07:30 Europe/Zurich;
+- existing `Jetnity Daily Intelligence Brief` reused; historical TEST #001 target was 07:30 and is superseded by **07:45 Europe/Zurich** (`5741888256`);
 - all six canonical specialist files read directly;
 - no specialist bot messaging used;
 - manual-fixture freshness exception explicitly marked and did **not** weaken production freshness rules;
@@ -555,7 +556,7 @@ Product Owner completion evidence (`5741340041`) for the existing Chief-of-Staff
 - `technical_lead_attention_required` true only for surviving current material findings, genuine conflicts, or TL-worthy degraded conditions;
 - production freshness logic unchanged;
 - existing routine `Jetnity Daily Intelligence Brief` remains **PAUSED**;
-- normal target remains **07:30 Europe/Zurich**;
+- historical hardening target 07:30 is superseded by **07:45 Europe/Zurich** (`5741888256`);
 - no manual rerun was performed;
 - HOLD remains active.
 
@@ -609,7 +610,7 @@ Verified semantic behavior:
 
 The complete Daily Automation V2 path is now technically proven:
 
-native specialist schedules → six canonical specialist JSON files → native CoS 07:30-style aggregation → canonical `daily-intelligence-brief.json` → one consolidated Daily Intelligence Brief.
+native specialist schedules → six canonical specialist JSON files → native CoS 07:45-style aggregation → canonical `daily-intelligence-brief.json` → one consolidated Daily Intelligence Brief.
 
 Canonical schedules (all Europe/Zurich):
 
@@ -619,7 +620,9 @@ Canonical schedules (all Europe/Zurich):
 - Growth **07:05**
 - FinOps **07:10**
 - Security **07:15**
-- Chief of Staff **07:30**
+- Chief of Staff **07:45** (`5741888256` supersedes 07:30)
+
+The 07:45 CoS target exists so aggregation starts a full 30 minutes after the final specialist (07:15), tolerating native scheduler delay and reducing false `DEGRADED` caused only by latency.
 
 The external Grok routines may now be restored to those canonical schedules. Whether they are left **PAUSED** or activated for normal operation is a Technical-Lead operational decision. No Product Owner special gate is required because these are bounded read-only / no-external-write intelligence automations. Cursor must not restore or activate them.
 

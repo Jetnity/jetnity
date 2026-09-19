@@ -29,7 +29,7 @@ Completed Daily Automation V2 proofs. Restore each to the named canonical schedu
 | Growth & Discoverability | FINAL PASS `5740795465`; coordinated canary `growth-discoverability-2026-09-19-b35c60` (`NO_MATERIAL`) | 07:05 |
 | FinOps & Reliability | FINAL PASS `5740939484`; coordinated canary `JETNITY-FINOPS-2026-09-19-1407` | 07:10 |
 | Security & Privacy Red Team | FINAL PASS `5741212303`; coordinated canary `JETNITY-SECURITY-PULSE-2026-09-19-1400` | 07:15 |
-| Chief of Staff Daily Brief | E2E FINAL PASS `5741863042` (`JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`) | 07:30 |
+| Chief of Staff Daily Brief | E2E FINAL PASS `5741863042` (`JETNITY-DAILY-V2-FULL-NATIVE-CANARY-001`); schedule correction `5741888256` | 07:45 |
 
 **NEXT EXACT STEP (external, not Cursor):** restore the seven Daily routines to those canonical Europe/Zurich schedules. Whether they are left **PAUSED** or activated for normal operation is a Technical-Lead operational decision. No Product Owner special gate is required for these bounded read-only / no-external-write intelligence automations. Cursor must not restore or activate them.
 

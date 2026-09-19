@@ -5,6 +5,7 @@ Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN OS-FOL
 
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
 Daily-V2-final-pass dispatch: PR #491 comment `5741863042`  
+Canonical CoS schedule correction: PR #491 comment `5741888256` — **07:45 Europe/Zurich** supersedes 07:30  
 Canonical reconstruction: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0  
 V2 contract: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`  
@@ -42,7 +43,7 @@ A different ChatGPT conversation can reconstruct this state from those files plu
 - verdict: **ready for Technical-Lead review** — Daily V2 END-TO-END FINAL PASS; restore to canonical schedules authorized as TL operational decision; HOLD remains
 - evidence checked: `5741863042`; exact-head CI/Vercel on `a02c6fbe`
 - evidence not checked: remote CI/Vercel on **the SHA this persist will create**; live Grok workspace file bytes; shared-environment tokens; whether the seven routines have already been restored after the canary window
-- blocker/gate: **NEXT EXACT STEP** = restore seven Daily routines to canonical Europe/Zurich schedules; PAUSED vs activate is TL-owned; Cursor must not restore; HOLD remains
+- blocker/gate: **NEXT EXACT STEP** = restore seven Daily routines to canonical Europe/Zurich schedules (CoS **07:45**, not 07:30); PAUSED vs activate is TL-owned; Cursor must not restore; HOLD remains
 - next actor: ChatGPT / Technical Lead
 - STOP: no Ready, no merge, no Cursor Grok mutation
 

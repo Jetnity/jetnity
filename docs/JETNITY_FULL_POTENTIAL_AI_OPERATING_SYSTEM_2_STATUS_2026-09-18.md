@@ -37,7 +37,7 @@ Do not treat any SHA written in this file as the current/live head. While #491 i
   - `external_writes=[]`;
   - prior Growth MATERIAL was not re-elevated;
   - six fresh native specialist runs accepted in the controlled window.
-- Restore of the seven routines to canonical Europe/Zurich schedules is now a **Technical-Lead operational decision**. Cursor implemented no Grok mutation.
+- Restore of the seven routines to canonical Europe/Zurich schedules is now a **Technical-Lead operational decision**. Canonical CoS time is **07:45** (`5741888256` supersedes 07:30). Cursor implemented no Grok mutation.
 - **NEXT EXACT STEP** is that restore. PAUSED vs activate is TL-owned. Then weekly/trigger work if still required, Guardian assurance, exact-head TL final review, Ready/Merge only after OS-2 acceptance, post-merge, HOLD-exit.
 - HOLD not lifted. No Ready. No merge.
 

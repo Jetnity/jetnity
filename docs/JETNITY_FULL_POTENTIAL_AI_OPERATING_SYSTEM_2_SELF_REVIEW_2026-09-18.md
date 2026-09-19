@@ -40,7 +40,7 @@ Predecessor persist `a02c6fbe880a261bef3186b5c96b675fb43ba408` has exact-head CI
 | Requirement | Met? | Note |
 | --- | --- | --- |
 | Persist Daily V2 as END-TO-END FINAL PASS | Yes | contract §8j / tracker |
-| Persist restore to canonical schedules as NEXT EXACT STEP | Yes | TL operational; not Cursor |
+| Persist restore to canonical schedules as NEXT EXACT STEP | Yes | TL operational; CoS **07:45** supersedes 07:30; not Cursor |
 | Do not invent that routines are already restored/activated | Yes | |
 | Do not mutate Grok bots | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
@@ -56,7 +56,7 @@ Not checked:
 - live Grok workspace JSON bytes;
 - remote CI/Vercel on **this persist SHA**;
 - shared-environment tokens;
-- whether the seven Grok routines have already been moved back to 06:50–07:30 after the canary window.
+- whether the seven Grok routines have already been moved back to 06:50–07:45 after the canary window.
 
 ## 5. What remains
 
