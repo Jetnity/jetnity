@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Final Growth dispatch: comment `5740795465`
+FinOps manual dispatch: comment `5740816529`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `d0e5834802f1471d7bb8b1126569e41e7d677d62` has exact-head CI `35434079242` SUCCESS and Vercel success. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `b03d46666c7989dc8e4352a817a88d1aac040ff1` has exact-head CI `35435196043` SUCCESS and Vercel success. The dispatch named CI `in_progress / unknown`; later live fetch settled SUCCESS. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,38 +19,40 @@ Last verified evidence head `d0e5834802f1471d7bb8b1126569e41e7d677d62` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat FINAL GROWTH PASS as Daily full-PASS or HOLD-exit | **Rejected.** Sequence e and HOLD-exit remain OPEN. CoS Daily stays PAUSED. |
-| Treat `status=MATERIAL` as an implementation instruction or publish/SEO authorization | **Rejected.** Later-review intelligence only. No measured Jetnity performance/eligibility claim. HOLD remains. |
-| Treat the UI Erfolgreich screenshot as the completeness proof | **Rejected.** Canonical proof is the workspace file + CoS read. |
-| Invent rankings / traffic / CTR / search volume / uplift | **Rejected.** No invented metrics. |
-| Treat this persist as a Cursor Grok restore/clone | **Rejected.** Cursor documents only. |
+| Treat FinOps manual PASS as FinOps complete, Daily full-PASS, or HOLD-exit | **Rejected.** Native canary + CoS read, sequence e, and HOLD-exit remain OPEN. CoS Daily stays PAUSED. |
+| Invent ACTUAL / BILLED costs because they were unavailable | **Rejected.** Recorded as `unknown`. Not fabricated. |
+| Force `DEGRADED` solely because ACTUAL / BILLED were unknown | **Rejected.** Missing cost evidence does not by itself require `DEGRADED` absent a suspected material current cost condition. |
+| Treat USD 100/month as an ACTUAL / BILLED figure | **Rejected.** BUDGET governance threshold only. |
+| Invent a Jetnity root cause from stale / resolved reliability incidents | **Rejected.** Those incidents were context only when no Jetnity impact evidence existed. |
+| Treat this persist as a Cursor Grok restore/clone/canary | **Rejected.** Cursor documents only. |
 | Lift HOLD / Ready / merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
+- FinOps native scheduled canary + CoS read remain OPEN.
 - Growth restore to paused 07:05 is still an external action.
 - Travel Truth restore to paused 07:00 is still an external action.
 - Provider restore to paused 06:55 is still an external action.
-- FinOps and Security writers are not created.
+- Security writer is not created.
 - Sequence e remains **OPEN**.
 - Shared-environment credentials were not independently inspected.
-- This persist is a newer head than `d0e58348`.
+- This persist is a newer head than `b03d4666`.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist Growth final native canary PASS | Yes | `5740795465` |
-| Keep MATERIAL as later-review intelligence only | Yes | not an implementation instruction |
-| Keep FinOps as next external clone | Yes | cost-class / reliability-evidence / USD 100 gate |
+| Persist FinOps manual writer + paused routine PASS | Yes | `5740816529` |
+| Keep FinOps incomplete until native canary + CoS read | Yes | d-finops OPEN |
+| Preserve ACTUAL / BILLED unknown; USD 100/month is BUDGET only | Yes | not invented, not forced DEGRADED |
 | Do not mutate Grok bots | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comments `5740686624`, `5740772575`, `5740795465`;
-- last verified head `d0e58348` CI `35434079242` SUCCESS; Vercel success `BCPdt5CZzy72qHSQohGEXRty6hwT`;
+- comment `5740816529`;
+- last verified head `b03d4666` CI `35435196043` SUCCESS; Vercel success `3vYr5y2GWeqTBPemTMdKTeVrcfA8`;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
