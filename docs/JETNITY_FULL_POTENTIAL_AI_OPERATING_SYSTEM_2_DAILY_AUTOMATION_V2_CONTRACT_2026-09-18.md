@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING OPEN / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / ALL SIX DAILY SPECIALISTS FINAL PASS / SIX-FILE MANUAL TEST #001 PASS / OUTPUT HARDENING COMPLETE / FULL NATIVE SYSTEM CANARY OPEN / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -19,6 +19,7 @@ Security manual: PR #491 comment `5740963538`
 Final Security canary: PR #491 comment `5741212303`  
 Security restore + aggregator phase: PR #491 comment `5741257042`  
 Six-file aggregation TEST #001: PR #491 comment `5741314686`  
+Aggregator output hardening complete: PR #491 comment `5741340041`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -232,15 +233,15 @@ Sequence (d) is **complete**. All six Daily specialists are FINAL PASS. Sequence
 | d-growth | Native scheduled Growth canary + CoS direct read without contacting Growth | **PASS** — `JETNITY GROWTH NATIVE CANARY READ #001` (`5740795465`, run `growth-discoverability-2026-09-19-0957a7`) |
 | d-finops | Native scheduled FinOps canary + CoS direct read without contacting FinOps | **PASS** — `JETNITY FINOPS NATIVE CANARY READ #001` (`5740939484`, run `JETNITY-FINOPS-2026-09-19-1200`) |
 | d-security | Native scheduled Security canary + CoS direct read without contacting Security | **PASS** — `JETNITY SECURITY NATIVE CANARY READ #001` (`5741212303`, run `JETNITY-SECURITY-PULSE-2026-09-19-1230`) |
-| e | Full six-file CoS scheduled aggregation | **IN PROGRESS** — manual path PASS (`5741314686`); native canary still OPEN (see §8h) |
+| e | Full six-file CoS scheduled aggregation | **IN PROGRESS** — manual path PASS; output hardening COMPLETE (`5741340041`); full native system canary OPEN (see §8i) |
 | e-skill | Update existing `Jetnity Daily Intelligence Orchestrator` for V2 scheduled file aggregation | **PASS** — reused and upgraded in place (`5741314686`) |
 | e-manual | Manual six-file aggregation test | **PASS** — `JETNITY DAILY V2 — SIX-FILE AGGREGATION TEST #001` (`5741314686`) |
 | e-artifact | CoS writes and re-reads canonical `daily-intelligence-brief.json` | **PASS** — written/re-read on TEST #001 |
-| e-hardening | Bounded output hardening before native canary | **OPEN** — `material_findings` novelty gate, source_refs-only provenance, TL-attention rule (see §8h) |
-| e-native | Native scheduled aggregator canary | **OPEN** — production freshness only; no manual-fixture exception |
-| e-activate | Restore 07:30 Europe/Zurich and decide activation | **OPEN** — only after e-hardening and e-native PASS |
+| e-hardening | Bounded output hardening before native canary | **PASS** — existing Orchestrator updated in place (`5741340041`) |
+| e-native | Coordinated full native system canary | **OPEN** — six specialist native runs in one cycle, then one native CoS aggregation (see §8i) |
+| e-activate | Restore 07:30 Europe/Zurich and decide activation | **OPEN** — only after e-native PASS |
 
-Until (e-hardening) and (e-native) are independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**. Do not activate 07:30 from the manual six-file PASS alone.
+Until the full native system canary is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**. Do not activate 07:30 from hardening completion alone.
 
 ### 8a. Clone gate
 
@@ -510,8 +511,8 @@ Required proof sequence:
 1. **e-skill** — **PASS** — existing Orchestrator updated in place (`5741314686`);
 2. **e-manual** — **PASS** — TEST #001;
 3. **e-artifact** — **PASS** — `daily-intelligence-brief.json` written and re-read;
-4. **e-hardening** — **OPEN** — apply §8h rules to the existing skill before the native canary;
-5. **e-native** — one native scheduled aggregator canary with production freshness only;
+4. **e-hardening** — **PASS** — existing Orchestrator updated in place (`5741340041`);
+5. **e-native** — coordinated full native system canary (see §8i);
 6. **e-activate** — only after PASS, restore 07:30 and decide activation state;
 7. then remaining weekly / trigger automation work and whole-system assurance.
 
@@ -540,22 +541,29 @@ Verified:
 - authority boundary preserved;
 - HOLD stayed active.
 
-Bounded hardenings still required **before** the native canary. Keep `schema_version` `"1"`; these are additive / semantic hardenings, not a schema bump.
+Those three hardenings are now **COMPLETE** on the existing skill (`5741340041`). Keep `schema_version` `"1"`. No second manual six-file run was performed, and none is required. Production freshness logic is unchanged.
 
-1. `material_findings[]` may contain only findings whose `novelty` is `NEW_SIGNAL`, `NEW_CORROBORATION`, or `MATERIAL_UPDATE`. A `CONTEXT_ONLY` recommendation must not be counted as a material finding. Keep such items in optional `deferred_context[]`, or omit them if they add no decision value.
-2. Source provenance inside an aggregate finding must include only the sources actually referenced by that finding’s `source_refs`, not the entire specialist source list.
-3. `technical_lead_attention_required=true` remains appropriate only if at least one CoS-reviewed current material finding survives aggregation, or a conflict / degraded condition genuinely requires TL review.
+### 8i. Aggregator output hardening COMPLETE — full native system canary next
 
-No second manual six-file run is required if the existing CoS skill is updated exactly with these rules before the native scheduled canary. The native canary plus a direct output-file read will verify them.
+Product Owner completion evidence (`5741340041`) for the existing Chief-of-Staff skill:
 
-Next **external** proof, not Cursor work:
+- existing `Jetnity Daily Intelligence Orchestrator` updated in place;
+- `material_findings[]` now accepts only `NEW_SIGNAL` / `NEW_CORROBORATION` / `MATERIAL_UPDATE`;
+- `CONTEXT_ONLY` excluded from material status and may be placed only in optional `deferred_context[]`;
+- source provenance minimized to only `source_id` values actually referenced by each finding;
+- `technical_lead_attention_required` true only for surviving current material findings, genuine conflicts, or TL-worthy degraded conditions;
+- production freshness logic unchanged;
+- existing routine `Jetnity Daily Intelligence Brief` remains **PAUSED**;
+- normal target remains **07:30 Europe/Zurich**;
+- no manual rerun was performed;
+- HOLD remains active.
 
-1. update the **existing** CoS skill in place with the three hardenings above;
-2. temporarily schedule the **existing** Daily Intelligence Brief for one controlled native canary;
-3. no manual run;
-4. native scheduled execution must read the six files directly and write `daily-intelligence-brief.json`;
-5. afterward verify the actual output file directly;
-6. production freshness rules must be used in native mode — **no** manual fixture exception.
+Next **external** proof, not Cursor work: one coordinated **FULL NATIVE SYSTEM CANARY**.
+
+1. six specialist native runs produce fresh envelopes in one controlled canary cycle;
+2. then one native Chief-of-Staff aggregation run reads those six **fresh** files directly and writes / re-reads `daily-intelligence-brief.json`;
+3. production freshness rules apply — **no** manual fixture exception;
+4. verify the actual output file directly afterward.
 
 Do not activate normal 07:30 production operation from this persist.
 
