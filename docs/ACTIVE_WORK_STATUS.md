@@ -24,12 +24,12 @@ Exclusive active meta-scope: **JETNITY FULL-POTENTIAL AI OPERATING SYSTEM 2**.
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch head | `1dadff27b672bcbdb84d921018506de868f8fa32` |
-| Last persist predecessor | `64033ab44d25aacb062eab76f3f9daabf3bbb2e6` — local gates PASS; exact-head CI `35445930185` SUCCESS; Vercel `EWAibuk7vWkt7RFZL5pTK9eiPH2p` success. This persist creates a newer head that is the allowed first real `pr-pushed` subject. Re-fetch the live PR head before any verdict. |
+| Last persist predecessor | `2db2634409706f81830ec98301d8cea6e1fa476b` — first real `pr-pushed` subject; exact-head CI `35446305442` SUCCESS; Vercel `CnWWrt5HCfni12hJNHLedXKbWiMB` success. This handover persist creates a newer continuity head only. Re-fetch the live PR head before any verdict. |
 | Topology | **SINGLE_AGENT** — this slice owns current continuity + operating-mode metadata + the external-setup tracker; no parallel writer |
 | Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
-| External Grok team | **ten identities present / E2E #001 verified / profile normalization complete / Daily V2 ACTIVE / Weekly ACTIVE / Guardian event-assurance setup COMPLETE / first real pr-pushed observation OPEN**. Dispatch `5742304439`. HOLD-exit remains OPEN. Cursor mutated no Grok routines. |
+| External Grok team | **ten identities present / E2E #001 verified / profile normalization complete / Daily V2 ACTIVE / Weekly ACTIVE / Guardian event-assurance setup COMPLETE / first real pr-pushed observation OPEN at `2db26344`**. Handover `5742521442`. HOLD-exit remains OPEN. Cursor mutated no Grok routines. |
 | Canonical tracker | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md` |
-| Exact continuation | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. Next exact external step: Guardian independently observe this persist as `pr-pushed` and write `guardian-latest.json`. While #491 is open, live PR evidence wins over docs on `main`. |
+| Exact continuation | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. Next exact external step: verify independent Guardian observation of `2db26344` as `pr-pushed` and write/re-read `guardian-latest.json`. Do not create another synthetic event. While #491 is open, live PR evidence wins over docs on `main`. |
 | Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No OS follow-up slice. |
 
 OS-1 / PR #489 is **MERGED / POST-MERGE VERIFIED** and must not be reconstructed as the active writer. Issue #488 is closed. Merge/current main at that closure: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`. Post-merge CI `35376407897` SUCCESS. Vercel Production success / READY. Technical-Lead PASS `5733949233` and post-merge verification `5733986499`. GitHub Ruleset `21875372` is live-verified as the already-active non-lockout baseline.

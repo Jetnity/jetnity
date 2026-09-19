@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / FIRST REAL PR-PUSHED OBSERVATION OPEN / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / FIRST REAL PR-PUSHED OBSERVATION OPEN AT 2db26344 / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -28,6 +28,7 @@ Weekly bootstrap TEST #001 PASS + native canary next: PR #491 comment `574199160
 Weekly native canary #001 FINAL PASS + trigger phase open: PR #491 comment `5742211136`  
 Weekly ACTIVE confirmed + Guardian-first event slice: PR #491 comment `5742253536`  
 Guardian event-assurance setup complete + first real pr-pushed validation: PR #491 comment `5742304439`  
+Emergency ChatGPT handover — first-event target locked to `2db26344`: PR #491 comment `5742521442`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -260,7 +261,7 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | g-activate | Restore Weekly to Monday 08:30 ACTIVE | **CONFIRMED ACTIVE** — Product Owner `5742253536` |
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 | h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled / awaiting first real event (`5742304439`; see §12) |
-| h-guardian-observe | First real `pr-pushed` observation on PR #491 | **OPEN** — this persist is the allowed first real event; not a Guardian PASS |
+| h-guardian-observe | First real `pr-pushed` observation on PR #491 | **OPEN** — first-event subject locked to `2db26344` (`5742521442`); not a Guardian PASS |
 
 The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. First real `pr-pushed` observation, remaining escalation routing, HOLD-exit, Ready, and merge remain **OPEN**. Do not treat setup complete as a Guardian PASS.
 
@@ -540,9 +541,9 @@ Required proof sequence:
 9. **g-native** — **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`; see §11);
 10. **g-activate** — **CONFIRMED ACTIVE** (`5742253536`);
 11. **h-guardian** — **SETUP COMPLETE** (`5742304439`; see §12);
-12. **h-guardian-observe** — first real `pr-pushed` observation on this persist **OPEN**; then remaining escalation routing if still required.
+12. **h-guardian-observe** — first real `pr-pushed` observation of `2db26344` **OPEN**; then remaining escalation routing if still required.
 
-This persist records Guardian event-assurance **setup complete** and is itself the allowed first real `pr-pushed` event. It does **not** manufacture a Guardian result, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+The first-event subject remains `2db26344`. Later emergency-handover persistence is continuity only. It does **not** manufacture a Guardian result, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -827,20 +828,22 @@ Unavailable / not invented:
 - repository-governance/protection triggers
 - native PR-branch `ci-*` without PR scoping
 
-This bounded documentation persist is intentionally the first real `pr-pushed` event on PR #491 after the listener was enabled. Do not create a synthetic PR or event. Do not post or manufacture a Guardian result. Guardian must observe the resulting head push independently.
+The docs persist that produced `2db2634409706f81830ec98301d8cea6e1fa476b` is the first real `pr-pushed` event on PR #491 after the listener was enabled. Later emergency-handover persistence is continuity only and is not a second synthetic event. Do not create another synthetic PR or event. Do not post or manufacture a Guardian result. Guardian must have observed that head independently.
 
 Expected independent Guardian validation target, if the native integration works:
 
 - `event_type = pr-pushed`
+- repository = `Jetnity/jetnity`
 - subject PR #491
-- exact new head SHA after this persist
+- exact head `2db2634409706f81830ec98301d8cea6e1fa476b`
 - re-fetch current PR / HOLD / main truth
 - write/re-read `guardian-latest.json`
-- `NO_MATERIAL` unless the actual new head introduces a real assurance issue
+- `NO_MATERIAL` unless actual evidence shows a real assurance issue
 - no GitHub mutation
+- `external_writes=[]`
 - exact-head evidence invalidation preserved
 
-This persist is **not** a Guardian PASS.
+Setup/configuration and this handover persist are **not** a Guardian PASS. If no event was received, diagnose the native event integration before any fallback. Do not silently add broad polling.
 
 After this first event-trigger routine is proven, remaining escalation routing may reuse its event-envelope pattern and Daily/Weekly materiality outputs rather than creating noisy duplicate monitors:
 
