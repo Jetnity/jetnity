@@ -1,13 +1,14 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / MARKET RESTORED PAUSED / PROVIDER MANUAL WRITER PASS / PROVIDER NATIVE CANARY OPEN / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / MARKET + PROVIDER FINAL PASS / TRAVEL TRUTH NEXT / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
 Novelty-hardening TEST #001: PR #491 comment `5737291119`  
 Final Market re-canary: PR #491 comment `5737734991`  
 Market restore + Provider manual: PR #491 comment `5737767891`  
+Final Provider canary: PR #491 comment `5738078082`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -214,9 +215,9 @@ Market proof is complete. Sequence (d) is now **authorized** for later external 
 | schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
 | novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **PASS for Market writer** — `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`) |
 | re-canary | Native scheduled refresh of the hardened Market skill + CoS direct read of the refreshed file | **PASS** — `JETNITY MARKET FINAL NATIVE RE-CANARY READ #001` (`5737734991`, run `JETNITY-MARKET-PULSE-2026-09-19-6ff494`) |
-| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Provider manual writer + paused routine **PASS** (`5737767891`). Four remaining writers not created. Cursor must not implement. |
-| d-provider | Native scheduled Provider canary + CoS direct read without contacting Provider | **OPEN** — required before Provider is complete |
-| e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on remaining clones + Provider native canary |
+| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider **complete**. Travel Truth is next. Three remaining writers not created. Cursor must not implement. |
+| d-provider | Native scheduled Provider canary + CoS direct read without contacting Provider | **PASS** — `JETNITY PROVIDER NATIVE CANARY READ #001` (`5738078082`, run `JETNITY-PROVIDER-PULSE-2026-09-19-024605`) |
+| e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on remaining clones |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
 
@@ -249,23 +250,29 @@ Preserve exactly:
 
 This clone gate does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
-### 8b. Clone progress — Provider manual PASS
+### 8b. Clone progress — Provider FINAL PASS
 
-`JETNITY-PROVIDER-PULSE-HANDOFF-TEST-001` (`5737767891`) is **PASS** for Provider manual writer validation and paused routine setup:
+`JETNITY PROVIDER NATIVE CANARY READ #001` (`5738078082`) is **FINAL PROVIDER PASS**. Direct CoS workspace verification:
 
-- private skill `Jetnity Daily Provider & Commercial Pulse Writer` created;
 - canonical file `/workspace/jetnity/intelligence/daily/provider-commercial.json`;
-- `status=NO_MATERIAL`; `schema_version="1"`; canonical role valid;
-- canonical finding/source schema present; novelty gate valid;
-- no stale provider/commercial items re-elevated; no dangling `source_refs`;
-- `external_writes=[]`; `authority_boundary_preserved=true`;
-- no provider contact and no private commercial terms inferred;
-- routine `Jetnity Daily Provider & Commercial Pulse` created;
-- normal schedule **06:55 Europe/Zurich**;
-- initial state **PAUSED / NOT ACTIVE**;
-- HOLD active; Gates A–E remain closed.
+- native scheduled run id `JETNITY-PROVIDER-PULSE-2026-09-19-024605`;
+- `generated_at=2026-09-19T02:46:05+02:00`;
+- previous manual validation run replaced;
+- freshness / schema v1 / exact canonical role valid;
+- novelty gate preserved; old unchanged provider/commercial evidence suppressed;
+- `status=NO_MATERIAL`;
+- provider neutrality preserved; no private commercial terms invented; no provider contact;
+- `external_writes=[]`; authority boundary preserved; no sensitive data;
+- Provider bot was **not** contacted by CoS.
 
-Provider is **not** complete until one native scheduled Provider canary using the existing skill/routine, then a Chief-of-Staff direct read of the refreshed file **without contacting Provider**.
+That closes the Provider & Commercial specialist proof: native scheduled writer → canonical shared workspace file → direct CoS read/validation → novelty → provider-neutrality / commercial-truth boundaries.
+
+Next **external** steps, not Cursor work:
+
+1. restore Provider routine to normal schedule **06:55 Europe/Zurich** and keep it **PAUSED**;
+2. proceed to Travel Truth & Regulation using the same proven transport/schema/novelty pattern, with role-specific official-source, citizenship / document / transit / destination evaluation and fail-closed truth discipline. Do not invent visa, transit, health, carrier, eligibility or document rules. Preserve `unknown` when evidence is insufficient.
+
+The earlier Provider manual writer TEST #001 (`5737767891`) remains the paused-routine setup proof and is superseded for completeness by this native canary.
 
 Market after final PASS is restored to its intended pre-production paused state (`5737767891`):
 
