@@ -1,7 +1,7 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 19. September 2026  
-Status: **WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN PR-CI-RELEASE ASSURANCE FIRST SLICE OPEN / HOLD REMAINS ACTIVE / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **GUARDIAN EVENT ASSURANCE SETUP COMPLETE / FIRST REAL PR-PUSHED OBSERVATION OPEN / HOLD REMAINS ACTIVE / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 ## 1. Identity
 
@@ -14,45 +14,42 @@ Status: **WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN PR-CI-RELEASE ASSURANCE FIRS
 | Issue / Draft PR | #490 / #491 Draft |
 | Branch | `governance/full-potential-ai-operating-system-2` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
-| Dispatch head | `054212c4b450b629923a723e8900f6df2458d5ba` |
-| Last persist predecessor | `054212c4b450b629923a723e8900f6df2458d5ba` |
-| Evidence on that SHA | Dispatch named exact-head CI **completed / success**. Live recheck: Actions run `35445613423` SUCCESS; Vercel `EwpmpQUhfpv7T5uAbRtZKfEPK9aC` success. |
-| This persist | **creates a newer head** than `054212c4`. It is not the live PR head. |
-| Live PR head | **must be re-fetched** by the Technical Lead before any verdict |
+| Dispatch head | `64033ab44d25aacb062eab76f3f9daabf3bbb2e6` |
+| Last persist predecessor | `64033ab44d25aacb062eab76f3f9daabf3bbb2e6` |
+| Evidence on that SHA | Dispatch named exact-head CI **completed / success**. Live recheck: Actions run `35445930185` SUCCESS; Vercel `EWAibuk7vWkt7RFZL5pTK9eiPH2p` success. |
+| This persist | **creates a newer head** than `64033ab4`. That new head is the allowed first real `pr-pushed` subject. |
+| Live PR head | **must be re-fetched** by the Technical Lead and by Guardian before any verdict |
 | Topology | SINGLE_AGENT |
 
 Do not treat any SHA written in this file as the current/live head. While #491 is open, docs on `main` are not sufficient.
 
-## 2. Implemented against PO/TL dispatch `5742253536`
+## 2. Implemented against PO/TL dispatch `5742304439`
 
 - `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`. Parked #487 unchanged.
-- Product Owner confirms Weekly is in normal **ACTIVE** operation:
-  - routine `Jetnity Weekly Strategic Intelligence Brief`;
-  - owner Jetnity Chief of Staff;
-  - Monday **08:30 Europe/Zurich**;
-  - existing Weekly skill unchanged;
-  - Daily routines unchanged.
-- Event-trigger phase remains **OPEN** with canonical first slice **Guardian PR/CI/Release Assurance**:
-  - independent assurance only; no TL / Ready / Merge / Production-Auth-RLS / default branch-file mutation;
-  - narrow GitHub notification matching for `Jetnity/jetnity`;
-  - no broad listener; no polling if an event source exists;
-  - output `/workspace/jetnity/intelligence/events/guardian-latest.json`;
-  - report exact integration limitations instead of silent high-frequency polling.
-- Cursor implemented no Grok mutation and did not write workspace event files.
-- **NEXT EXACT STEP** is the external Guardian PR/CI/Release Assurance routine. HOLD not lifted. No Ready. No merge.
+- Guardian event-assurance setup is **COMPLETE**:
+  - skill `Jetnity GitHub Event Assurance Reviewer`;
+  - routine `Jetnity PR CI Release Assurance`;
+  - native GitHub event listener; `Jetnity/jetnity` only;
+  - enabled / awaiting first real event; no polling fallback;
+  - current output `/workspace/jetnity/intelligence/events/guardian-latest.json`;
+  - MATERIAL/DEGRADED archive `/workspace/jetnity/intelligence/archive/events/guardian/`;
+  - supported: `pr-opened`, `pr-pushed`, review-*, `ci-passed`/`ci-failed` (main only);
+  - unavailable and not invented: distinct PR materially-updated, deployment/release, repo-governance/protection, native PR-branch `ci-*` without PR scoping.
+- This docs-only persist is the allowed first real `pr-pushed` on PR #491. Cursor did not create a synthetic event and did not manufacture a Guardian result.
+- **NEXT EXACT STEP** is independent Guardian observation of the new head. This persist is **not** a Guardian PASS. HOLD not lifted. No Ready. No merge.
 
-## 3. Exact-head evidence on predecessor `054212c4`
+## 3. Exact-head evidence on predecessor `64033ab4`
 
 | Gate | Result |
 | --- | --- |
-| GitHub Actions CI | run `35445613423` SUCCESS |
-| Typecheck, Lint & Build | job `105903903697` SUCCESS |
-| Auth-Konfiguration gegen config.toml | job `105903903609` SUCCESS |
-| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/EwpmpQUhfpv7T5uAbRtZKfEPK9aC |
+| GitHub Actions CI | run `35445930185` SUCCESS |
+| Typecheck, Lint & Build | job `105904726441` SUCCESS |
+| Auth-Konfiguration gegen config.toml | job `105904726550` SUCCESS |
+| Vercel | **success / completed** — https://vercel.com/jetnity-e1b93c82/jetnity-app/EWAibuk7vWkt7RFZL5pTK9eiPH2p |
 | Local gates on that persist | operating-mode PASS; typecheck PASS; lint 0/138; tests 3509/3509; hygiene PASS; build PASS |
 
-Exact-head CI/Vercel on the SHA this persist creates must be re-fetched.
+Exact-head CI/Vercel on the SHA this persist creates must be re-fetched. That new SHA is the Guardian validation subject.
 
 ## 4. Non-scope
 
-No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. Guardian event-trigger proof, remaining escalation routing, Ready/merge, and HOLD-exit remain OPEN. No Ready. No merge.
+No runtime, DB, Auth, Supabase, Production, provider, payment, secret or paid action. No Cursor Grok mutation. No manufactured Guardian envelope. First real `pr-pushed` observation, remaining escalation routing, Ready/merge, and HOLD-exit remain OPEN. No Ready. No merge.

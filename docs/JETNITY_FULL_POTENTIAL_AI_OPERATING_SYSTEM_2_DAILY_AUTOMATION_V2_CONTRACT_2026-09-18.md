@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN PR-CI-RELEASE ASSURANCE FIRST SLICE OPEN / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / FIRST REAL PR-PUSHED OBSERVATION OPEN / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -27,6 +27,7 @@ Daily archive VALIDATION #001 PASS + weekly phase open: PR #491 comment `5741961
 Weekly bootstrap TEST #001 PASS + native canary next: PR #491 comment `5741991608`  
 Weekly native canary #001 FINAL PASS + trigger phase open: PR #491 comment `5742211136`  
 Weekly ACTIVE confirmed + Guardian-first event slice: PR #491 comment `5742253536`  
+Guardian event-assurance setup complete + first real pr-pushed validation: PR #491 comment `5742304439`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -89,6 +90,7 @@ One writer per file:
 | `../weekly/weekly-strategic-brief.json` | Jetnity Chief of Staff |
 | `../archive/weekly/` dated weekly snapshots | Jetnity Chief of Staff |
 | `../events/guardian-latest.json` | Jetnity Guardian |
+| `../archive/events/guardian/` MATERIAL/DEGRADED snapshots | Jetnity Guardian |
 
 No other identity may overwrite another role’s file. The Chief of Staff is a **reader** of the six specialist files and the **sole writer** of `daily-intelligence-brief.json`. Specialists must not write the brief file.
 
@@ -257,9 +259,10 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | g-native | Native scheduled Weekly canary + direct brief read | **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`) |
 | g-activate | Restore Weekly to Monday 08:30 ACTIVE | **CONFIRMED ACTIVE** — Product Owner `5742253536` |
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
-| h-guardian | Guardian PR/CI/Release Assurance first slice | **OPEN** — contract only; Cursor must not create it |
+| h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled / awaiting first real event (`5742304439`; see §12) |
+| h-guardian-observe | First real `pr-pushed` observation on PR #491 | **OPEN** — this persist is the allowed first real event; not a Guardian PASS |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. HOLD-exit, Guardian event-trigger proof, remaining escalation routing, Ready, and merge remain **OPEN**. Do not treat Weekly ACTIVE as HOLD exit.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Guardian event-assurance setup is **COMPLETE**. First real `pr-pushed` observation, remaining escalation routing, HOLD-exit, Ready, and merge remain **OPEN**. Do not treat setup complete as a Guardian PASS.
 
 ### 8a. Clone gate
 
@@ -536,9 +539,10 @@ Required proof sequence:
 8. **g-bootstrap** — **PASS** — weekly bootstrap TEST #001 (`5741991608`; see §11);
 9. **g-native** — **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`; see §11);
 10. **g-activate** — **CONFIRMED ACTIVE** (`5742253536`);
-11. **h-guardian** — Guardian PR/CI/Release Assurance first slice **OPEN** (see §12); then remaining escalation routing if still required.
+11. **h-guardian** — **SETUP COMPLETE** (`5742304439`; see §12);
+12. **h-guardian-observe** — first real `pr-pushed` observation on this persist **OPEN**; then remaining escalation routing if still required.
 
-This persist records Weekly **ACTIVE** operation and opens the Guardian-first event-trigger slice. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+This persist records Guardian event-assurance **setup complete** and is itself the allowed first real `pr-pushed` event. It does **not** manufacture a Guardian result, lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -656,7 +660,7 @@ Product Owner confirmation `5741925172`: all seven routines are now restored to 
 - not a git-tree path inside this repository;
 - not trigger / Guardian / HOLD-exit closure.
 
-Daily V2 is technically proven and **ACTIVE**. Weekly Strategic Intelligence is in **normal ACTIVE operation** (`5742253536`). The Guardian-first event-trigger slice is **OPEN**, not proven. That is **not** HOLD exit and **not** Ready/merge.
+Daily V2 is technically proven and **ACTIVE**. Weekly Strategic Intelligence is in **normal ACTIVE operation** (`5742253536`). Guardian event-assurance setup is **COMPLETE** (`5742304439`). First real `pr-pushed` observation remains **OPEN**. That is **not** a Guardian PASS, **not** HOLD exit, and **not** Ready/merge.
 
 ## 10. Durable daily archive — VALIDATION #001 PASS
 
@@ -786,30 +790,57 @@ Normal Weekly operation:
 - canonical weekly archive begins only from valid normal scheduled weekly operation;
 - canonical archive path: `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`.
 
-## 12. Event-triggered / risk-triggered automation — Guardian-first slice OPEN
+## 12. Event-triggered / risk-triggered automation — Guardian setup COMPLETE / first real observation OPEN
 
-Weekly is **ACTIVE**. The next OS-2 architecture layer is event-triggered / risk-triggered automation. Canonical first slice: **Guardian PR/CI/Release Assurance**. Cursor must not create, connect, or schedule that routine.
+Weekly is **ACTIVE**. Canonical first event-trigger slice is **Guardian PR/CI/Release Assurance**. Product Owner `5742304439` confirms setup complete. Cursor must not mutate that skill or routine and must not manufacture a Guardian result.
 
 | Item | Canonical value |
 | --- | --- |
 | Owner | Jetnity Guardian |
+| Skill | `Jetnity GitHub Event Assurance Reviewer` — created; Cursor did not create it |
+| Routine | `Jetnity PR CI Release Assurance` — created / enabled / awaiting first real event |
 | Role | independent assurance only |
 | Not | Technical Lead; no Ready/Merge; no Production/Auth/RLS mutation; no branch/file mutation by default |
-| Preferred runtime | event-triggered GitHub notification integration for `Jetnity/jetnity`, where supported |
-| Matching | narrow only; no broad all-notification listener |
-| Polling | forbidden if an event source is available |
-| Output | `/workspace/jetnity/intelligence/events/guardian-latest.json` — assurance envelope, not an automatic GitHub mutation |
+| Trigger mode | native GitHub event listener |
+| Repository scope | `Jetnity/jetnity` only |
+| Polling | none; no polling fallback |
+| Current output | `/workspace/jetnity/intelligence/events/guardian-latest.json` |
+| MATERIAL/DEGRADED archive | `/workspace/jetnity/intelligence/archive/events/guardian/` |
 | Writer | Jetnity Guardian only |
+| `external_writes` | `[]` |
 
-Initial event scope, when surfaced by the integration:
+Supported event classes:
 
-- PR opened / synchronized / materially updated;
-- PR moved toward review/release state;
-- CI/check completion or failure notification;
-- release/deployment notification;
-- material branch-protection/governance signal.
+- `pr-opened`
+- `pr-pushed`
+- `review-requested`
+- `review-approved`
+- `review-changes-requested`
+- `review-commented`
+- `ci-passed` (main only)
+- `ci-failed` (main only)
 
-Routine must suppress duplicates and no-signal noise. If event integration cannot support a needed event class, report the exact limitation. Do not silently substitute broad high-frequency polling.
+Unavailable / not invented:
+
+- distinct PR materially-updated trigger beyond `pr-pushed`
+- deployment/release triggers
+- repository-governance/protection triggers
+- native PR-branch `ci-*` without PR scoping
+
+This bounded documentation persist is intentionally the first real `pr-pushed` event on PR #491 after the listener was enabled. Do not create a synthetic PR or event. Do not post or manufacture a Guardian result. Guardian must observe the resulting head push independently.
+
+Expected independent Guardian validation target, if the native integration works:
+
+- `event_type = pr-pushed`
+- subject PR #491
+- exact new head SHA after this persist
+- re-fetch current PR / HOLD / main truth
+- write/re-read `guardian-latest.json`
+- `NO_MATERIAL` unless the actual new head introduces a real assurance issue
+- no GitHub mutation
+- exact-head evidence invalidation preserved
+
+This persist is **not** a Guardian PASS.
 
 After this first event-trigger routine is proven, remaining escalation routing may reuse its event-envelope pattern and Daily/Weekly materiality outputs rather than creating noisy duplicate monitors:
 
