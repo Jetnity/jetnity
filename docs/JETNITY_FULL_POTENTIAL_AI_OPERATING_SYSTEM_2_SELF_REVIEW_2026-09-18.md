@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Final Travel Truth dispatch: comment `5740658975`
+Growth manual dispatch: comment `5740686624`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Last verified evidence head `c8f66231a63ce5529fa9e41f55cd353a567bf78a` has exact-head CI `35432564016` SUCCESS and Vercel success. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Last verified evidence head `6d20b574d9b95f747752a85f79502e190d0e45aa` has exact-head CI `35433816975` SUCCESS and Vercel success. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,36 +19,38 @@ Last verified evidence head `c8f66231a63ce5529fa9e41f55cd353a567bf78a` has exact
 
 | Attack | Result |
 | --- | --- |
-| Treat FINAL TRAVEL TRUTH PASS as Daily full-PASS or HOLD-exit | **Rejected.** Sequence e and HOLD-exit remain OPEN. CoS Daily stays PAUSED. |
-| Treat the UI Erfolgreich screenshot as the completeness proof | **Rejected.** Canonical proof is the workspace file + CoS read. |
-| Treat this persist as a Cursor Grok restore/clone | **Rejected.** Cursor documents only. |
-| Invent visa / transit / health / carrier rules in the Travel Truth note | **Rejected.** Fail closed. Preserve `unknown`. |
-| Invent Growth metrics or authorize dark-pattern / policy-bypass behavior | **Rejected.** Ethical-growth / SEO / AI-search discoverability only. |
+| Treat Growth manual PASS as Growth complete or Daily full-PASS | **Rejected.** Native canary + CoS read remain OPEN. Sequence e and HOLD-exit remain OPEN. CoS Daily stays PAUSED. |
+| Invent rankings / traffic / CTR / search volume | **Rejected.** No invented metrics. |
+| Treat correlation as causation | **Rejected.** Source attribution only. |
+| Authorize dark-pattern or policy-bypass Growth behavior | **Rejected.** Ethical-growth / SEO / AI-search discoverability only. |
+| Treat this persist as a Cursor Grok clone / enablement | **Rejected.** Cursor documents only. |
 | Lift HOLD / Ready / merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
+- Growth native scheduled canary + CoS read remains OPEN.
 - Travel Truth restore to paused 07:00 is still an external action.
 - Provider restore to paused 06:55 is still an external action.
-- Growth, FinOps, and Security writers are not created.
+- FinOps and Security writers are not created.
 - Sequence e remains **OPEN**.
 - Shared-environment credentials were not independently inspected.
-- This persist is a newer head than `c8f66231`.
+- This persist is a newer head than `6d20b574`.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist Travel Truth final native canary PASS | Yes | `5740658975` |
-| Keep Growth as next external clone | Yes | ethical-growth / SEO / AI-search; no invented metrics |
+| Persist Growth manual TEST #001 as setup PASS | Yes | `5740686624` |
+| Keep native canary + CoS read OPEN | Yes | not Growth complete |
+| Do not invent Growth metrics | Yes | ethical-growth / source attribution |
 | Do not mutate Grok bots | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
 
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comments `5740522887`, `5740619641`, `5740658975`;
-- last verified head `c8f66231` CI `35432564016` SUCCESS; Vercel success `5Lb1kC47nikZD38Tivm2JVmio9BJ`;
+- comments `5740658975`, `5740686624`;
+- last verified head `6d20b574` CI `35433816975` SUCCESS; Vercel success `Er8sXiNABmBQT3vRQHP6KC1dVhp5`;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:

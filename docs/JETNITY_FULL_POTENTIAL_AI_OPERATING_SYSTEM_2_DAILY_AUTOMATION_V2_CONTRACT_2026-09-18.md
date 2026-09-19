@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / MARKET + PROVIDER + TRAVEL TRUTH FINAL PASS / GROWTH NEXT / COS DAILY REMAINS PAUSED**  
+Status: **CANONICAL CONTRACT / MARKET + PROVIDER + TRAVEL TRUTH FINAL PASS / GROWTH MANUAL PASS / NATIVE CANARY OPEN / COS DAILY REMAINS PAUSED**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -11,6 +11,7 @@ Market restore + Provider manual: PR #491 comment `5737767891`
 Final Provider canary: PR #491 comment `5738078082`  
 Travel Truth manual: PR #491 comment `5740522887`  
 Final Travel Truth canary: PR #491 comment `5740658975`  
+Growth manual: PR #491 comment `5740686624`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -217,9 +218,10 @@ Market proof is complete. Sequence (d) is now **authorized** for later external 
 | schema | Canonical finding/source object shapes | **PASS** — `JETNITY-MARKET-PULSE-SCHEMA-HARDENING-TEST-001` (`5737237338`) |
 | novelty | Recurring Daily pulse does not re-elevate old unchanged announcements as `MATERIAL` | **PASS for Market writer** — `JETNITY-MARKET-PULSE-NOVELTY-HARDENING-TEST-001` (`5737291119`) |
 | re-canary | Native scheduled refresh of the hardened Market skill + CoS direct read of the refreshed file | **PASS** — `JETNITY MARKET FINAL NATIVE RE-CANARY READ #001` (`5737734991`, run `JETNITY-MARKET-PULSE-2026-09-19-6ff494`) |
-| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider + Travel Truth **complete**. Growth is next. FinOps and Security writers not created. Cursor must not implement. |
+| d | Clone the proven pattern to the remaining five specialists | **IN PROGRESS** — Market + Provider + Travel Truth **complete**. Growth **manual PASS**; native canary **OPEN**. FinOps and Security writers not created. Cursor must not implement. |
 | d-provider | Native scheduled Provider canary + CoS direct read without contacting Provider | **PASS** — `JETNITY PROVIDER NATIVE CANARY READ #001` (`5738078082`, run `JETNITY-PROVIDER-PULSE-2026-09-19-024605`) |
 | d-travel-truth | Native scheduled Travel Truth canary + CoS direct read without contacting Travel Truth | **PASS** — `JETNITY TRAVEL TRUTH NATIVE CANARY READ #001` (`5740658975`, run `JETNITY-TRAVEL-TRUTH-PULSE-2026-09-19-1050`) |
+| d-growth | Native scheduled Growth canary + CoS direct read without contacting Growth | **OPEN** — setup proven by `JETNITY-GROWTH-PULSE-HANDOFF-TEST-001` (`5740686624`). Completeness requires one native scheduled canary and a Chief-of-Staff read of the refreshed canonical file without contacting the specialist. |
 | e | Full six-file CoS scheduled aggregation test | **OPEN** — blocked on remaining clones |
 
 Until (e) is independently verified, the Daily CoS routine stays PAUSED and HOLD-exit stays **OPEN**.
@@ -274,7 +276,8 @@ Next **external** steps, not Cursor work:
 
 1. restore Provider routine to normal schedule **06:55 Europe/Zurich** and keep it **PAUSED**;
 2. restore Travel Truth to **PAUSED** **07:00 Europe/Zurich** (see §8c);
-3. then clone Growth, FinOps, and Security.
+3. complete the Growth native canary + CoS read (see §8d);
+4. then clone FinOps and Security.
 
 The earlier Provider manual writer TEST #001 (`5737767891`) remains the paused-routine setup proof and is superseded for completeness by this native canary.
 
@@ -316,7 +319,40 @@ Do not invent visa, transit, health, carrier, eligibility or document rules. Pre
 Next **external** steps, not Cursor work:
 
 1. restore Travel Truth routine to normal schedule **07:00 Europe/Zurich** and keep it **PAUSED**;
-2. proceed to Growth & Discoverability using the same proven transport/schema/novelty pattern, with role-specific ethical-growth, SEO, and AI-search / answer-engine discoverability. Do not invent metrics. Do not use dark-pattern or policy-bypass behavior.
+2. complete the Growth native canary + CoS read (see §8d);
+3. then clone FinOps and Security.
+
+### 8d. Clone progress — Growth manual PASS / native canary OPEN
+
+`JETNITY-GROWTH-PULSE-HANDOFF-TEST-001` (`5740686624`) is **PASS for Growth & Discoverability manual writer validation and paused routine setup**. It does **not** complete Growth.
+
+Verified from Product Owner / Technical-Lead evidence:
+
+- private skill created: `Jetnity Daily Growth & Discoverability Pulse Writer`;
+- canonical file `/workspace/jetnity/intelligence/daily/growth-discoverability.json` (Grok workspace, not this git repo);
+- `status=NO_MATERIAL`;
+- `schema_version="1"`;
+- canonical role valid;
+- novelty gate valid;
+- ethical-growth discipline preserved;
+- no invented rankings / traffic / CTR / search volume;
+- source attribution discipline preserved;
+- correlation not treated as causation;
+- stale unchanged search / discoverability items suppressed;
+- `external_writes=[]`;
+- `authority_boundary_preserved=true`;
+- routine created: `Jetnity Daily Growth & Discoverability Pulse`;
+- normal schedule: **07:05 Europe/Zurich**;
+- initial state: **PAUSED / NOT ACTIVE**.
+
+Do not invent metrics. Do not use dark-pattern or policy-bypass behavior. Public launch / indexing / Store Live remain Product-Owner gates.
+
+Next required proof before marking Growth complete:
+
+1. one native scheduled Growth canary using the existing skill/routine;
+2. a direct Chief-of-Staff read of the refreshed canonical file without contacting the specialist.
+
+Do not enable unattended Growth scheduling from this persist. Cursor must not mutate the skill or routine.
 
 ## 9. What this contract is not
 
