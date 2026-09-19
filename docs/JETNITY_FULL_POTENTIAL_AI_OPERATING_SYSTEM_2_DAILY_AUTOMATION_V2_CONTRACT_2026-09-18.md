@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NATIVE CANARY #001 FINAL PASS / WEEKLY RESTORE-ACTIVATE AUTHORIZED / TRIGGER PHASE OPEN / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN PR-CI-RELEASE ASSURANCE FIRST SLICE OPEN / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -26,11 +26,12 @@ Daily V2 normal ACTIVE operation + weekly archive requirement: PR #491 comment `
 Daily archive VALIDATION #001 PASS + weekly phase open: PR #491 comment `5741961756`  
 Weekly bootstrap TEST #001 PASS + native canary next: PR #491 comment `5741991608`  
 Weekly native canary #001 FINAL PASS + trigger phase open: PR #491 comment `5742211136`  
+Weekly ACTIVE confirmed + Guardian-first event slice: PR #491 comment `5742253536`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
 
-The paths below are the **shared Grok workspace**, not this git repository. Do not add `/workspace/jetnity/intelligence/daily/`, `/workspace/jetnity/intelligence/weekly/`, or `/workspace/jetnity/intelligence/archive/` files to Jetnity V2.
+The paths below are the **shared Grok workspace**, not this git repository. Do not add `/workspace/jetnity/intelligence/daily/`, `/workspace/jetnity/intelligence/weekly/`, `/workspace/jetnity/intelligence/archive/`, or `/workspace/jetnity/intelligence/events/` files to Jetnity V2.
 
 ## 1. Why V2 exists
 
@@ -87,6 +88,7 @@ One writer per file:
 | `../archive/daily/YYYY-MM-DD.json` | Jetnity Chief of Staff |
 | `../weekly/weekly-strategic-brief.json` | Jetnity Chief of Staff |
 | `../archive/weekly/` dated weekly snapshots | Jetnity Chief of Staff |
+| `../events/guardian-latest.json` | Jetnity Guardian |
 
 No other identity may overwrite another role’s file. The Chief of Staff is a **reader** of the six specialist files and the **sole writer** of `daily-intelligence-brief.json`. Specialists must not write the brief file.
 
@@ -253,10 +255,11 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | g | Weekly Strategic Synthesis phase | **CLOSED for bootstrap/native proof** — see §11 |
 | g-bootstrap | Manual weekly bootstrap on real dated archives | **PASS** — `JETNITY WEEKLY STRATEGIC INTELLIGENCE — BOOTSTRAP TEST #001` (`5741991608`) |
 | g-native | Native scheduled Weekly canary + direct brief read | **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`) |
-| g-activate | Restore Weekly to Monday 08:30 ACTIVE | **AUTHORIZED** — external Product Owner / CoS restore; Cursor must not activate |
+| g-activate | Restore Weekly to Monday 08:30 ACTIVE | **CONFIRMED ACTIVE** — Product Owner `5742253536` |
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
+| h-guardian | Guardian PR/CI/Release Assurance first slice | **OPEN** — contract only; Cursor must not create it |
 
-The complete Daily Automation V2 path is technically proven and **ACTIVE**. Weekly bootstrap + native proof is **CLOSED** (`5742211136`). HOLD-exit, Weekly restore/activate, trigger work, Guardian whole-system assurance, Ready, and merge remain **OPEN**. Do not treat Weekly native PASS as HOLD exit.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. HOLD-exit, Guardian event-trigger proof, remaining escalation routing, Ready, and merge remain **OPEN**. Do not treat Weekly ACTIVE as HOLD exit.
 
 ### 8a. Clone gate
 
@@ -532,10 +535,10 @@ Required proof sequence:
 7. **f** — **PASS** — daily archive VALIDATION #001 (`5741961756`; see §10);
 8. **g-bootstrap** — **PASS** — weekly bootstrap TEST #001 (`5741991608`; see §11);
 9. **g-native** — **PASS** — `JETNITY-WEEKLY-STRATEGIC-NATIVE-CANARY-001` (`5742211136`; see §11);
-10. **g-activate** — restore Monday 08:30 **ACTIVE** (external);
-11. **h** — event-triggered / risk-triggered automation architecture **OPEN** (see §12); then whole-system / Guardian assurance if still required.
+10. **g-activate** — **CONFIRMED ACTIVE** (`5742253536`);
+11. **h-guardian** — Guardian PR/CI/Release Assurance first slice **OPEN** (see §12); then remaining escalation routing if still required.
 
-This persist records Weekly native canary **FINAL PASS** and opens the trigger phase. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
+This persist records Weekly **ACTIVE** operation and opens the Guardian-first event-trigger slice. It does **not** lift HOLD, Ready, merge, or authorize Cursor Grok mutation.
 
 ### 8h. Six-file aggregation TEST #001 — PASS with bounded output hardening
 
@@ -653,7 +656,7 @@ Product Owner confirmation `5741925172`: all seven routines are now restored to 
 - not a git-tree path inside this repository;
 - not trigger / Guardian / HOLD-exit closure.
 
-Daily V2 is technically proven and **ACTIVE**. Weekly bootstrap + native proof is **CLOSED** (`5742211136`). Weekly restore/activate and the trigger phase remain **OPEN**. That is **not** HOLD exit and **not** Ready/merge.
+Daily V2 is technically proven and **ACTIVE**. Weekly Strategic Intelligence is in **normal ACTIVE operation** (`5742253536`). The Guardian-first event-trigger slice is **OPEN**, not proven. That is **not** HOLD exit and **not** Ready/merge.
 
 ## 10. Durable daily archive — VALIDATION #001 PASS
 
@@ -698,7 +701,7 @@ Historical note: the `2026-09-19` archive correctly preserves canary-era metadat
 
 ## 11. Weekly Strategic Synthesis — native canary #001 FINAL PASS
 
-This section records closed Weekly bootstrap/native proof. Cursor must not restore or activate the Weekly routine.
+This section records closed Weekly bootstrap/native proof and confirmed normal ACTIVE operation. Cursor must not mutate the Weekly routine.
 
 | Item | Canonical value |
 | --- | --- |
@@ -706,8 +709,8 @@ This section records closed Weekly bootstrap/native proof. Cursor must not resto
 | Skill | `Jetnity Weekly Strategic Intelligence Synthesizer` — created; Cursor did not create it |
 | Routine | `Jetnity Weekly Strategic Intelligence Brief` — created; Cursor did not create it |
 | Normal schedule | **Monday 08:30 Europe/Zurich** |
-| Current documented state | **PAUSED / NOT ACTIVE** until Product Owner / CoS restore Monday 08:30 **ACTIVE** |
-| Authorized normal state | Monday **08:30 Europe/Zurich** **ACTIVE** after this PASS — external restore only |
+| Current documented state | **ACTIVE** at Monday **08:30 Europe/Zurich** — Product Owner `5742253536` |
+| Authorized normal state | Monday **08:30 Europe/Zurich** **ACTIVE** |
 | Normal weekly period | the seven completed calendar days ending the preceding Sunday (Europe/Zurich) |
 | Daily archive input | `/workspace/jetnity/intelligence/archive/daily/` |
 | Current weekly output | `/workspace/jetnity/intelligence/weekly/weekly-strategic-brief.json` |
@@ -772,7 +775,9 @@ Weekly analysis must:
 
 This closes Weekly Strategic Intelligence bootstrap/native proof.
 
-Normal Weekly operation after restore/activate:
+Product Owner confirmation `5742253536`: the existing Weekly routine is restored to canonical normal **ACTIVE** operation at Monday **08:30 Europe/Zurich**. Existing Weekly skill unchanged. Daily routines unchanged. Cursor did not restore or activate it.
+
+Normal Weekly operation:
 
 - analyze the seven completed calendar days ending the preceding Sunday;
 - use only real dated Daily archives;
@@ -781,21 +786,38 @@ Normal Weekly operation after restore/activate:
 - canonical weekly archive begins only from valid normal scheduled weekly operation;
 - canonical archive path: `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`.
 
-Cursor must not restore or activate that weekly routine.
+## 12. Event-triggered / risk-triggered automation — Guardian-first slice OPEN
 
-## 12. Event-triggered / risk-triggered automation — phase OPEN
+Weekly is **ACTIVE**. The next OS-2 architecture layer is event-triggered / risk-triggered automation. Canonical first slice: **Guardian PR/CI/Release Assurance**. Cursor must not create, connect, or schedule that routine.
 
-After Weekly restore/activate, the next OS-2 architecture layer is event-triggered / risk-triggered automation required by the canonical full target. This persist opens that contract. Cursor must not implement Grok hooks or routines for it.
+| Item | Canonical value |
+| --- | --- |
+| Owner | Jetnity Guardian |
+| Role | independent assurance only |
+| Not | Technical Lead; no Ready/Merge; no Production/Auth/RLS mutation; no branch/file mutation by default |
+| Preferred runtime | event-triggered GitHub notification integration for `Jetnity/jetnity`, where supported |
+| Matching | narrow only; no broad all-notification listener |
+| Polling | forbidden if an event source is available |
+| Output | `/workspace/jetnity/intelligence/events/guardian-latest.json` — assurance envelope, not an automatic GitHub mutation |
+| Writer | Jetnity Guardian only |
 
-Required trigger classes:
+Initial event scope, when surfaced by the integration:
 
-- PR / CI / release-triggered assurance;
+- PR opened / synchronized / materially updated;
+- PR moved toward review/release state;
+- CI/check completion or failure notification;
+- release/deployment notification;
+- material branch-protection/governance signal.
+
+Routine must suppress duplicates and no-signal noise. If event integration cannot support a needed event class, report the exact limitation. Do not silently substitute broad high-frequency polling.
+
+After this first event-trigger routine is proven, remaining escalation routing may reuse its event-envelope pattern and Daily/Weekly materiality outputs rather than creating noisy duplicate monitors:
+
 - material security / privacy signal escalation;
 - material provider / commercial signal escalation;
 - material travel-truth / regulation escalation;
 - material FinOps / reliability escalation;
-- contradiction / degraded-evidence escalation;
-- Guardian assurance routing.
+- contradiction / degraded-evidence escalation.
 
 Rules:
 

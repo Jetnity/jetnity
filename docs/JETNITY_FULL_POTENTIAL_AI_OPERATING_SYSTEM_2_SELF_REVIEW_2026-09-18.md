@@ -7,11 +7,11 @@ Issue: #490
 Draft PR: #491  
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
-Weekly native FINAL PASS + trigger-phase dispatch: comment `5742211136`
+Weekly ACTIVE + Guardian-first event-slice dispatch: comment `5742253536`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Predecessor persist `98201619828e69c7c2d59449ea34eac13c98fb9b` has local gates PASS and live exact-head CI `35443977440` SUCCESS plus Vercel `HxX1bGMpirH3daYXqQLZqxnFGb8h` success. This persist is a newer head. Re-fetch the live PR head before any verdict.
+Predecessor persist `054212c4b450b629923a723e8900f6df2458d5ba` has local gates PASS and live exact-head CI `35445613423` SUCCESS plus Vercel `EwpmpQUhfpv7T5uAbRtZKfEPK9aC` success. This persist is a newer head. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -19,29 +19,26 @@ Predecessor persist `98201619828e69c7c2d59449ea34eac13c98fb9b` has local gates P
 
 | Attack | Result |
 | --- | --- |
-| Treat Weekly native PASS as HOLD exit or Ready/merge | **Rejected.** Restore/activate, trigger work, Guardian assurance, and HOLD-exit remain OPEN. |
-| Claim Weekly is already ACTIVE from this persist | **Rejected.** Restore Monday 08:30 ACTIVE is authorized, not observed by Cursor. |
-| Treat Saturday canary as a canonical weekly archive | **Rejected.** No Saturday canonical weekly archive was written. Archive begins only from valid normal scheduled weekly operation. |
-| Treat one-day `BOOTSTRAP_PARTIAL` as seven-day COMPLETE coverage | **Rejected.** `coverage_days=1`. Period is 2026-09-19 → 2026-09-19 for the canary only. |
-| Add Daily/weekly archive JSON to this git repository | **Rejected.** Grok workspace only. |
+| Treat Weekly ACTIVE as HOLD exit or Ready/merge | **Rejected.** Guardian event-trigger proof, remaining escalations, and HOLD-exit remain OPEN. |
+| Treat the Guardian event-slice contract as an implemented routine | **Rejected.** §12 is a phase-open contract. Cursor must not create it. |
+| Add `guardian-latest.json` or other workspace envelopes to this git repository | **Rejected.** Grok workspace only. |
+| Silently substitute high-frequency polling for missing GitHub event classes | **Rejected.** Report the exact limitation. |
 | Treat Cursor as allowed to Ready/merge or mutate Grok | **Rejected.** |
 | Lift HOLD / Ready / merge | **Rejected.** |
 
 ## 2. Residual risks this slice does not close
 
-- Weekly restore/activate has not been independently inspected by Cursor.
-- Trigger-phase architecture is a contract only.
+- Guardian PR/CI/Release Assurance does not exist from this persist.
 - Shared-environment credentials were not independently inspected.
 - Remote CI on this persist SHA is unchecked.
-- Live Grok weekly file bytes were not independently inspected by Cursor.
+- Live Grok Weekly ACTIVE state was not independently inspected by Cursor; it is Product-Owner comment evidence.
 
 ## 3. Compliance
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Persist Weekly native canary as FINAL PASS | Yes | tracker / contract §11 |
-| Do not claim Weekly ACTIVE from Cursor | Yes | restore authorized only |
-| Open trigger-phase architecture | Yes | contract §12 |
+| Persist Weekly as ACTIVE at Monday 08:30 | Yes | tracker / contract §11 |
+| Open Guardian-first event-trigger slice | Yes | contract §12 |
 | Do not invent remote CI SUCCESS | Yes | predecessor CI live-verified |
 | Do not mutate Grok bots | Yes | |
 | HOLD / parked #487 / no Ready-merge | Yes | |
@@ -49,12 +46,12 @@ Predecessor persist `98201619828e69c7c2d59449ea34eac13c98fb9b` has local gates P
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comment `5742211136`;
-- live CI/Vercel on predecessor `98201619`;
+- comment `5742253536`;
+- live CI/Vercel on predecessor `054212c4`;
 - parked #487 still at `12d070a79c35fbb9f03d1302833eee8561ec17bd`.
 
 Not checked:
-- live Grok Weekly ACTIVE restore;
+- live Grok Weekly ACTIVE restore bytes;
 - remote CI/Vercel on **this persist SHA**;
 - shared-environment tokens.
 
