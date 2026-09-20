@@ -194,7 +194,9 @@ Update current-state portions of START_HERE, checkpoint §0 / current closing su
 
 Add one reviewable matrix:
 
-`docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md`
+`docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`
+
+The dispatch's short name `docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md` is the same reviewable matrix. It is stored under the existing HOLD-allowed OS-2 glob so base/main path-shape policy is not widened and `.jetnity/operating-mode.json` stays unchanged.
 
 Link it from the tracker and handoff. Row fields: capability; actual acceptance scope; evidence / reference / hash; VERIFIED vs REPORTED / DECLARED / INFERRED; residual; next owner / action; whether a PO decision exists. No blank or automatic PASS rows.
 

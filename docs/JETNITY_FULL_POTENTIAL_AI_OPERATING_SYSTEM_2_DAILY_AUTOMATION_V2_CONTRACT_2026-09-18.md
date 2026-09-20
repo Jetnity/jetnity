@@ -55,7 +55,7 @@ PO THIS-RUN-ONLY provenance limitation: PR #491 comment `5748343178`
 Path B artifact PASS: PR #491 comment `5748428132`  
 Path C interactive ack: PR #491 comment `5748484353`  
 Path C off-session BLOCKED / 20 September closeout: PR #491 comment `5748633847`  
-Acceptance matrix: `docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md`  
+Acceptance matrix: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.

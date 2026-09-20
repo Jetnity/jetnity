@@ -5,7 +5,7 @@ Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN OS-FOL
 
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
 20 September closeout addendum: task §7 / comment `5748633847`  
-Acceptance matrix: `docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md`  
+Acceptance matrix: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`  
 Daily Sep20 output-consistency PASS: `5748314138`  
 PO THIS-RUN-ONLY provenance limitation: `5748343178`  
 Path B artifact PASS: `5748428132`  

@@ -8,7 +8,7 @@ Draft PR: #491
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
 20 September closeout persist: comment `5748633847`  
-Acceptance matrix: `docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md`
+Acceptance matrix: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
@@ -51,8 +51,8 @@ Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI
 | Requirement | Met? | Note |
 | --- | --- | --- |
 | Persist addendum in the versioned OS-2 task first | Yes | task §7 |
-| Reconstruct live controls; no runtime/mode change | Yes | head `c9475ea5`; HOLD; #487 parked. Allowlist gained only the authorized matrix path. |
-| Acceptance matrix with required fields; no automatic PASS | Yes | `docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md` |
+| Reconstruct live controls; no runtime/mode change | Yes | head `c9475ea5`; HOLD; #487 parked. Matrix remapped onto existing HOLD-allowed OS-2 glob; operating-mode JSON unchanged. |
+| Acceptance matrix with required fields; no automatic PASS | Yes | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md` |
 | Preserve Sep20 / Path A / Path B / Path C / receipt / archive / ten-role / pack decisions | Yes | |
 | Fix stale current slogans without rewriting history | Yes | Path B no longer design-only; Sep20 no longer future-only |
 | Include 21 Sep inspection checklist without running schedules | Yes | |

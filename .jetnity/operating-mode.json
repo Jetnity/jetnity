@@ -90,7 +90,6 @@
     "docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md",
     "docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md",
     "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_*",
-    "docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md",
     "scripts/operating-mode-guard.mjs",
     "scripts/operating-mode-guard.test.mjs"
   ],
