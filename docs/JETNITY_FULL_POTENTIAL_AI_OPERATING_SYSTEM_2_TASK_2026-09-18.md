@@ -212,7 +212,7 @@ Keep `.jetnity/operating-mode.json` and all runtime / CI enforcement / external 
 
 4. **Path C** `5748484353`: interactive visibility / human-ack accepted at bounded evidence class (`PATH_C_PROP_001`; receipt `f57ac62af29bb128e8daddf86f49e14b6643b0f6d5f2fb4db716c75e1149aee8`; submission `t72s1`; ack `t73u`). Specific device push of that probe while closed is **UNVERIFIED**. Inventory `5748446585`: `PATH_C_CAPABILITY.json` `e9370be669e7d19d8d0a4a04653a865f24ba954d992cbc47f81f4852fa6e23e9`; summary `aec254650fc98d7dd7576333b0c7935614ee4ea1d62172204488fabf2f0e1838`. Off-session `JETNITY-PATHC-OFFSESSION-001` **BLOCKED** (`5748633847`); receipt `b227846f59f45b8b728040f755889d72b7eda5515f093b898ac6f1f3e8c324fc`. CoS tools expose recurring cron / event listeners but no supported native single-fire send with bounded lifecycle / readback. No retry, cron workaround, or urgent-gap waiver. A later Sep21 07:45 Daily notification observation would establish only that message / device / context.
 
-5. **Conditional two-role** LIMITED PASS `5744765614` plus later receipt **REPORTED CAPTURED** `5744814651` SHA256 `8054390102d1bb34d0a5147f09574c2f8ca7af28e66f60d1722bbee603e8fb01`; `current_receipt_time=2026-09-19T21:41:45+02:00`. Role transcripts AVAILABLE to CoS / reported record evidence at historical SHA `30e8921f8d9740aa5ac9b7795dd2e808540bf912`. Current capture ≠ original handoff proof. Later independent whole-system receipt read pending (Guardian preflight `5748637045` may perform it; this persist does **not** claim that review already happened).
+5. **Conditional two-role** LIMITED PASS `5744765614` plus later receipt **REPORTED CAPTURED** `5744814651` SHA256 `8054390102d1bb34d0a5147f09574c2f8ca7af28e66f60d1722bbee603e8fb01`; `current_receipt_time=2026-09-19T21:41:45+02:00`. Role transcripts AVAILABLE to CoS / reported record evidence at historical SHA `30e8921f8d9740aa5ac9b7795dd2e808540bf912`. Current capture ≠ original handoff proof. First independent existing receipt read is **COMPLETE** at that bounded class (`5748724868` / PO-forwarded `5748637045`). `hash_drift` fields are verified file claims, not a writing-process replay. `5744814651` is **not** a newly granted PO exception and does **not** extend the Sep20 Daily waiver. Final whole-system review remains pending.
 
 6. **Guardian** native MATERIAL / DEGRADED archive remains **OPEN**. Sequential remapped fixture ≠ native / crash proof. Empty `NO_MATERIAL` archive is not a defect.
 
@@ -242,3 +242,22 @@ When the existing Monday **08:30 Europe/Zurich** Weekly fires, later reviewers s
 Run the existing section-6 gates on the resulting exact head. Obtain CI / Vercel on the **new** persist SHA. Do not claim `c9475ea5` SUCCESS for the new head. Avoid recursive evidence-only commits.
 
 STOP FOR TECHNICAL-LEAD REVIEW. No Ready. No merge. No HOLD-exit. No #487. No follow-up slice.
+
+### 7.8 Same-batch Guardian preflight integration (`5748724868`)
+
+Technical-Lead `5748724868` accepts the PO-forwarded Guardian preflight `5748637045` at **bounded scope**. Guardian reviewed repository snapshot `c9475ea5`; that is **not** Guardian acceptance of later docs heads. Cursor did not inspect Grok.
+
+Integrate into matrix / tracker / STATUS / HANDOFF / current pointers only:
+
+- first independent existing conditional-receipt read is **COMPLETE** at the bounded class (`80543901…`); hash_drift fields are verified file claims, not a replay of the writing process;
+- original serialized ordering remains unproven; `5744814651` bounded later manual-capture scope is **not** a new PO exception and does **not** extend the Sep20 Daily waiver;
+- Path C inventory / probe / off-session receipts independently re-hashed; `created_any_routine_or_task=false`; platform routine enumeration unavailable;
+- Path B final-artifact consistency reconfirmed; dispatch / authorship / atomic write / CoS read remain **DECLARED**;
+- Weekly installed source reconfirmed; revised native Monday run remains OPEN;
+- credential / connector ACL isolation remains **NOT CHECKED**;
+- no ChatGPT auto-wake requirement; unmet Path C need is timely user notification plus honest detection / transport limits;
+- no urgent-gap waiver and no native-archive waiver;
+- final whole-system review remains pending;
+- intermediate `8403c6a5` temporarily added a short-name allowlist and `004daa9d` reverted it; net operating-mode config matches the pre-closeout file. Do not claim the file was never touched at any intermediate commit. Do not modify operating-mode / enforcement again.
+
+Do not broaden scope. Guardian need not repeat this preflight merely to acknowledge this correction.

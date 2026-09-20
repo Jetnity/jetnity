@@ -8,11 +8,12 @@ Draft PR: #491
 Branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
 20 September closeout persist: comment `5748633847`  
+Same-batch preflight integration: comment `5748724868` / PO-forwarded `5748637045`  
 Acceptance matrix: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`
 
 This document argues against the implementation. It cannot replace an independent Technical-Lead PASS.
 
-Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI `35470823111` **SUCCESS**. Re-fetch the live PR head before any verdict.
+Predecessor persist `004daa9d529598fef98bc6c8517bb9ec5fd053f8` has exact-head CI `35499686599` **SUCCESS**. Re-fetch the live PR head before any verdict.
 
 ---
 
@@ -25,7 +26,7 @@ Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI
 | Treat Path B artifact PASS as independently verified messaging/ownership | **Rejected.** Bytes VERIFIED; execution classes DECLARED. |
 | Treat Path C interactive ack as off-session / urgent delivery | **Rejected.** Off-session BLOCKED. `gap_open_no_prompt_path` stays OPEN for that claim. |
 | Invent an accepted urgent-transport limitation or cron workaround | **Rejected.** |
-| Treat the new receipt as original serialized ordering or as already-read by Guardian | **Rejected.** Later independent whole-system read pending. Historical review remains `30e8921f`. |
+| Treat the new receipt as original serialized ordering, a new PO exception, or a Sep20 Daily waiver extension | **Rejected.** First independent existing receipt read is COMPLETE at bounded class only. Original ordering remains unproven. Historical review remains `30e8921f`. Final whole-system review remains pending. |
 | Treat installed-source PASS as native Weekly execution | **Rejected.** Native updated Weekly remains OPEN. |
 | Collapse old canary / ignore-routing compatibility / fixtures / install into one PASS | **Rejected.** Four distinct layers. |
 | Treat engineering-support pack as OS-2 acceptance or new bots | **Rejected.** Deferred NOT RUN. |
@@ -33,7 +34,9 @@ Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI
 | Claim Cursor observed Grok files | **Rejected.** PO/Guardian provenance. |
 | Invent transient/root-cause closure for `c399e93d` Auth 500/200 | **Rejected.** |
 | Lift HOLD / Ready / merge / ten-role FINAL | **Rejected.** |
-| Emulate the companion Guardian preflight `5748637045` | **Rejected.** Guardian is not Cursor. |
+| Emulate the companion Guardian preflight `5748637045` or claim Cursor inspected Grok | **Rejected.** Guardian is not Cursor. This persist records PO-forwarded evidence only. |
+| Treat `c9475ea5` Guardian preflight as acceptance of `004daa9d` or later docs heads | **Rejected.** Snapshot-bound only. |
+| Claim operating-mode.json was never touched at any intermediate commit | **Rejected.** `8403c6a5` temporarily added a short-name allowlist; `004daa9d` reverted it. Net final config matches the pre-closeout file. |
 
 ## 2. Residual risks this slice does not close
 
@@ -41,7 +44,7 @@ Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI
 - Native Guardian MATERIAL/DEGRADED archive proof OPEN.
 - Path B timeout/rejection/scheduling/automatic consumer and DECLARED execution classes remain.
 - Path C off-session urgent delivery BLOCKED / unproven.
-- Later whole-system Guardian read of the conditional receipt pending.
+- First independent existing receipt read COMPLETE at bounded class; final whole-system review pending.
 - Guardian could not independently enumerate the live Weekly routine object.
 - Shared-environment credentials NOT CHECKED.
 - Remote CI on **this persist SHA** is unchecked until after push.
@@ -51,7 +54,7 @@ Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI
 | Requirement | Met? | Note |
 | --- | --- | --- |
 | Persist addendum in the versioned OS-2 task first | Yes | task §7 |
-| Reconstruct live controls; no runtime/mode change | Yes | head `c9475ea5`; HOLD; #487 parked. Matrix remapped onto existing HOLD-allowed OS-2 glob; operating-mode JSON unchanged. |
+| Reconstruct live controls; no runtime/mode change | Yes | live reconstruction `004daa9d`; HOLD; #487 parked. Matrix remapped onto existing HOLD-allowed OS-2 glob. Intermediate `8403c6a5` allowlist then `004daa9d` revert; no further operating-mode edit. |
 | Acceptance matrix with required fields; no automatic PASS | Yes | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md` |
 | Preserve Sep20 / Path A / Path B / Path C / receipt / archive / ten-role / pack decisions | Yes | |
 | Fix stale current slogans without rewriting history | Yes | Path B no longer design-only; Sep20 no longer future-only |
@@ -62,17 +65,16 @@ Predecessor persist `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181` has exact-head CI
 ## 4. Evidence checked vs not checked
 
 Checked:
-- comment `5748633847` plus the cited source comments through `5748637045`;
-- live PR #491 Draft `c9475ea5`; CI `35470823111` SUCCESS; Vercel `9qvmdQRXkKWf5tqvjsWDdUEooLoN`;
+- comments `5748633847` and `5748724868` plus the cited source comments through PO-forwarded `5748637045`;
+- live PR #491 Draft `004daa9d`; CI `35499686599` SUCCESS; Vercel `9FWg3b4uUJSQ2oWQfMJ6z7yUonRr`;
 - parked #487; main `ff0df56`; HOLD / activeMetaScope #490/#491;
 - message queue empty; review threads 0; behind=0.
 
 Not checked:
-- live Grok workspace bytes or receipt files;
+- live Grok workspace bytes or receipt files (Cursor did not inspect Grok);
 - live Weekly routine object enumeration;
 - remote CI/Vercel on **this persist SHA**;
-- shared-environment tokens;
-- Guardian preflight result (assigned to Guardian, not this writer).
+- shared-environment tokens / connector ACL isolation;
 
 ## 5. What remains
 
