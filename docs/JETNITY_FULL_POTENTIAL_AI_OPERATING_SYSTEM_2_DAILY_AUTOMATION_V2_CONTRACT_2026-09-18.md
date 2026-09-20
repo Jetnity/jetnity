@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
-Stand: 19. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / WEEKLY CONSUMER LIMITED PASS / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS / CONDITIONAL SURFACE LIMITED PASS / HOLD REMAINS ACTIVE**  
+Stand: 20. September 2026  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / WEEKLY PATH A INSTALLED-SOURCE PASS / DAILY SEP20 OUTPUT-CONSISTENCY PASS / PATH B ARTIFACT PASS / PATH C INTERACTIVE ACK ACCEPTED / PATH C OFF-SESSION BLOCKED / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS / CONDITIONAL SURFACE LIMITED PASS / HOLD REMAINS ACTIVE**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -48,6 +48,14 @@ Guardian archive fixture intake: PR #491 comment `5744526554`
 Two-role inventory disposition / conditional on-demand setup authorization: PR #491 comment `5744574159`  
 Conditional roles completion intake / independent review order: PR #491 comment `5744694015`  
 LIMITED conditional-surface PASS / provenance closeout: PR #491 comment `5744765614`  
+Receipt REPORTED CAPTURED: PR #491 comment `5744814651`  
+Weekly Path A INSTALLED-SOURCE PASS: PR #491 comment `5745439900`  
+Daily Sep20 output-consistency PASS: PR #491 comment `5748314138`  
+PO THIS-RUN-ONLY provenance limitation: PR #491 comment `5748343178`  
+Path B artifact PASS: PR #491 comment `5748428132`  
+Path C interactive ack: PR #491 comment `5748484353`  
+Path C off-session BLOCKED / 20 September closeout: PR #491 comment `5748633847`  
+Acceptance matrix: `docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md`  
 Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
@@ -281,9 +289,9 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | h | Event-triggered / risk-triggered automation architecture | **OPEN** — see §12 |
 | h-guardian | Guardian PR/CI/Release Assurance first slice | **SETUP COMPLETE** — enabled (`5742304439`; see §12) |
 | h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
-| h-routing | Remaining event/risk routing | **Weekly Path A INSTALLED-SOURCE PASS / Path B design-only / Path C OPEN / scheduled routing REPORTED CONFIGURED / conditional receipt REPORTED CAPTURED / native Daily+routing OPEN** (`5745439900`; see §12a) |
+| h-routing | Remaining event/risk routing | **Weekly Path A INSTALLED-SOURCE PASS / Daily Sep20 output-consistency PASS / Path B ARTIFACT PASS / Path C interactive ack accepted / Path C off-session BLOCKED / scheduled routing REPORTED CONFIGURED / conditional receipt REPORTED CAPTURED / native scheduled PASS OPEN** (`5748633847`; see §12a) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Weekly Path A routing plus binding mixed-status precedence is an **INSTALLED-SOURCE PASS** (`5745439900`); native updated Weekly execution remains **OPEN**. Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Old Weekly ignore-routing compatibility remains a historical LIMITED PASS. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited manual scope (`5744814651`); later whole-system Guardian read is pending. Native Daily+routing, native Guardian MATERIAL/DEGRADED archive proof, Path B messaging, Path C urgent transport, Ready, merge, and HOLD-exit remain **OPEN**.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Weekly Path A routing plus binding mixed-status precedence is an **INSTALLED-SOURCE PASS** (`5745439900`); native updated Weekly execution remains **OPEN**. Daily Sep20 is an **output-consistency PASS** (`5748314138`) with PO limitation THIS RUN ONLY (`5748343178`). Path B is a LIMITED success-path **ARTIFACT PASS** (`5748428132`). Path C interactive ack is accepted (`5748484353`); off-session is **BLOCKED** (`5748633847`). Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Old Weekly ignore-routing compatibility remains a historical LIMITED PASS. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited manual scope (`5744814651`); later whole-system Guardian read is pending and not claimed here. Native scheduled PASS, native Guardian MATERIAL/DEGRADED archive proof, remaining Path B execution residuals, Path C urgent transport, Ready, merge, and HOLD-exit remain **OPEN**.
 
 ### 8a. Clone gate
 
@@ -812,7 +820,7 @@ Normal Weekly operation:
 - canonical weekly archive begins only from valid normal scheduled weekly operation;
 - canonical archive path: `/workspace/jetnity/intelligence/archive/weekly/week-ending-YYYY-MM-DD.json`.
 
-## 12. Event-triggered / risk-triggered automation — bounded native transport ACCEPTED / Daily routing AUTHORIZED NOT YET IMPLEMENTED OR TESTED
+## 12. Event-triggered / risk-triggered automation — bounded native transport ACCEPTED / staged routing live with residual OPEN items
 
 Weekly is **ACTIVE**. Canonical first event-trigger slice is **Guardian PR/CI/Release Assurance**. Product Owner `5742304439` confirms setup complete. Technical-Lead `5742732366` accepts bounded native `pr-pushed` transport/processing for `e0524311`. Cursor must not mutate that skill or routine and must not manufacture a Guardian result.
 
@@ -869,7 +877,7 @@ Reported native artifact facts (PO-supplied; do not invent missing fields, hashe
 
 This is **not** final Guardian whole-system assurance, **not** a Technical-Lead FINAL PASS for PR #491, **not** Ready/Merge, and **not** HOLD exit. Any later head invalidates exact-head review evidence. The transport proof remains proof of that past execution only.
 
-### 12a. Remaining event/risk routing — STAGED CORRECTIONS LIMITED PASS / WEEKLY CONSUMER LIMITED PASS / SCHEDULED ROUTING REPORTED CONFIGURED
+### 12a. Remaining event/risk routing — STAGED CORRECTIONS LIMITED PASS / WEEKLY PATH A INSTALLED-SOURCE PASS / DAILY SEP20 OUTPUT-CONSISTENCY PASS / PATH B ARTIFACT PASS / PATH C INTERACTIVE ACK / OFF-SESSION BLOCKED
 
 This section is the live routing contract. Do not collapse it to “authorized / not implemented.” The external review cycle is:
 
@@ -929,7 +937,7 @@ Pre-Fix-1 Guardian-reviewed identities from `5743383261` are **superseded** (his
 
 The four activation gates recorded at `5743658093` were the authorized Fix-2 scope. They are **not** still “not implemented.” Later comments closed A, B and D as staged corrections and left C (real Weekly consumer) OPEN. See the Fix-2 cycle below.
 
-Separate OPEN (not defects of empty `NO_MATERIAL` archive): real Guardian MATERIAL/DEGRADED archive proof; native Daily+routing execution; native updated Weekly scheduled execution; Path B real messaging; Path C urgent delivery. Weekly Path A is installed-source PASS only. Empty archive under `NO_MATERIAL` is **not** a defect. No PR FINAL PASS / Ready / Merge / HOLD exit.
+Separate OPEN (not defects of empty `NO_MATERIAL` archive): real Guardian MATERIAL/DEGRADED archive proof; native scheduled PASS (`native_scheduled_pass` remains false despite Sep20 output-consistency); native updated Weekly scheduled execution; remaining Path B execution residuals; Path C off-session urgent delivery. Weekly Path A is installed-source PASS only. Empty archive under `NO_MATERIAL` is **not** a defect. No PR FINAL PASS / Ready / Merge / HOLD exit.
 
 #### Review Fix 2 / 2a / 2b — staged correction cycle
 
@@ -1056,12 +1064,51 @@ Distinct evidence layers:
 3. Correction-1 design PASS, original fixture `61/0`, and correction-2 CASE3 `18/0` are separate model-mediated sets. Original CASE3 `MATERIAL` and corrected CASE3 `DEGRADED` stay labelled. No invented deterministic full execution.
 4. Accepted install + independent source readback on `5e77164e…`. Native updated Weekly execution remains OPEN.
 
-Path **B** is reviewed request/receipt design plus synthetic protocol cases only. Real targeted messaging / return remains OPEN. Path **C** remains `gap_open_no_prompt_path` OPEN. No automatic ChatGPT wake or delivery SLA. P0/P1 must not intentionally wait for Daily.
+#### Daily Sep20 — output-consistency PASS / historical provenance limitation
+
+Technical-Lead `5748314138` **ACCEPTS** independent Guardian output-consistency for `JETNITY-DAILY-V2-2026-09-20-0745`. Product Owner `5748343178` accepted the inaccessible historical scheduler/entry-execution provenance limitation for **THIS RUN ONLY**. Native scheduler origin remains **INFERRED**. Pinned-entry execution remains **strongly INFERRED**, not VERIFIED. Not `native_scheduled_pass=true`. Do not repeat historical search, replay the run, or manufacture provenance. Gate stays `scheduled_only_provisional`.
+
+| Artifact | Reported identity |
+| --- | --- |
+| `NATIVE_RUN_EVIDENCE.json` | `e60fb510e52b52a2308103b85b3ef32c33a57fe7bcf01348a7d45ee2a5686463` |
+| Brief | `ab947325679e1d9a67b9c2c2a76876d13571aa55d14c68f474a13e20433def7b` |
+| Sep20 archive | `72a229be3794c285704b50fb70a05f41863f3095cd8234bf4c795b637d6810f4` |
+| Sep19 archive (unchanged vs predecessor) | `d9b0c55c33251eb663ec3e742b92121d905a168e36f2df73e03ca2b110c93682` |
+| Routing result | `aa582dd66557f63ffa821e52243bcbd4ddb130e9f44b85b1a3fc51e92e2828a4` |
+| State | `ca6907e55122b20ef70a8fb22ef972d6c9a6547241f92ae8d3e717cabaeaadc1` |
+| Provenance closeout | `8d9a42aa42992e660808d5e005b35a9241eabe1fd4ebabe12aa3ed24d4b1b7b9` |
+
+#### Path B — LIMITED success-path ARTIFACT PASS
+
+Technical-Lead `5748428132` **ACCEPTS LIMITED** success-path ARTIFACT PASS for `JETNITY-OS2-PATHB-SECURITY-001`. This is **not** design-only anymore and **not** independently verified messaging/ownership. Guardian independently measured final artifacts. Interactive dispatch, Security authorship, atomic write and CoS direct-read remain **DECLARED**. Earlier request `1590416f…` bytes remain unavailable; do not invent a metadata-only proof. `CONTEXT_ONLY` was permitted by that Path B request. Timeout/rejection/scheduling/automatic consumer remain unproven. Sep20 Daily limitation does **not** waive these residuals.
+
+| Artifact | Reported identity |
+| --- | --- |
+| request | `4e669c2525053ee68218a5ac93e9643787324899e866fed5fa1f1453fead2dac` |
+| result | `13412dceb5f5710edc189e64ccc177d9c2f1eca3e0cfb56a9f5229c243916f40` |
+| receipt | `7de5cdabbad4b918c81d40740435fbecafabccbf6e20850d6821bab3eb40081b` |
+| brief | `78963167f276d183bbfb5b73eb594045e02adcda12f92c299dbda7e7d3bbf426` |
+| Security Daily hash (unchanged) | `5ce896326dfb524e9698a210cca5aa5be3baf6c0f4a9cba421314959aeccd7b5` |
+
+#### Path C — interactive ack accepted / off-session BLOCKED
+
+Technical-Lead `5748484353` **ACCEPTS LIMITED** interactive chat visibility/human-ack for `PATH_C_PROP_001_INTERACTIVE_CHAT_PROBE`. Device notification of **this** probe while closed is **UNVERIFIED**. Off-session `JETNITY-PATHC-OFFSESSION-001` is **BLOCKED** (`5748633847`): CoS tools expose recurring cron/event listeners but no supported native single-fire send with bounded lifecycle/readback. No retry, cron workaround, new connector, or extra probe. `gap_open_no_prompt_path` remains OPEN for the required off-session urgent-delivery **claim**. No automatic ChatGPT wake or delivery SLA. P0/P1 must not intentionally wait for Daily. A later Sep21 07:45 Daily notification observation would establish only that message/device/context.
+
+| Artifact | Reported identity |
+| --- | --- |
+| `PATH_C_CAPABILITY.json` | `e9370be669e7d19d8d0a4a04653a865f24ba954d992cbc47f81f4852fa6e23e9` |
+| `PATH_C_CAPABILITY_SUMMARY.md` | `aec254650fc98d7dd7576333b0c7935614ee4ea1d62172204488fabf2f0e1838` |
+| Interactive probe receipt | `f57ac62af29bb128e8daddf86f49e14b6643b0f6d5f2fb4db716c75e1149aee8` |
+| Off-session receipt | `b227846f59f45b8b728040f755889d72b7eda5515f093b898ac6f1f3e8c324fc` |
+
+#### 21 September Weekly inspection checklist
+
+Do **not** run or change the Monday **08:30 Europe/Zurich** Weekly. When later reviewing that natural run: correlate actual run/input/archive/installed-source identities; retain the four Weekly evidence classes; verify period/coverage/routing/status/attention; do not manufacture native origin by synthetic replay. `2026-09-21T08:30:00+02:00` is a schedule, not a receipt.
 
 Deferred engineering-support pack (`5744886051` / `5744921031`): `/workspace/jetnity/intelligence/routing/staging/ENGINEERING_SUPPORT_TASK_PACK.md` SHA256 `53382552d98fb8b66517027c269ee820b800bebace8c4e6a11e50e591c5b91d8`. Seven scoped assistance tasks prepared **NOT RUN**. Not new bots. Not new OS-2 acceptance.
 
-Still OPEN: native Daily+routing; native updated Weekly scheduled execution; native Guardian MATERIAL/DEGRADED archive proof; Path B messaging; Path C urgent transport; original serialized ordering; later whole-system Guardian receipt read. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
+Still OPEN: native scheduled PASS; native updated Weekly scheduled execution; native Guardian MATERIAL/DEGRADED archive proof; remaining Path B execution residuals; Path C urgent transport; original serialized ordering; later whole-system Guardian receipt read. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
 
-**NEXT EXACT STEP:** Technical-Lead exact-head review of this persist. Await the existing native Daily 07:45 Europe/Zurich and the updated Weekly 08:30 Europe/Zurich as **schedules**. Later whole-system Guardian independent read of the receipt. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results.
+**NEXT EXACT STEP:** Technical-Lead exact-head review of this persist. Await the existing updated Weekly 08:30 Europe/Zurich as a **schedule**. Later whole-system Guardian independent read of the receipt is pending and not claimed here. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results. #491 must not set `NORMAL`.
 
 **STOP.** Cursor documents only.

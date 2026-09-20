@@ -166,3 +166,77 @@ At minimum:
 No external Grok or GitHub-admin actions are part of this slice.
 
 STOP FOR TECHNICAL-LEAD REVIEW.
+
+## 7. Bounded acceptance-preparation addendum — 20 September 2026 (`5748633847`)
+
+Continue the **same** OS-2 writer, session `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c`, branch, and Draft PR #491. No new agent or PR. Cursor remains the sole repo writer. Guardian is not Cursor and must not be emulated.
+
+This addendum is **docs-only acceptance preparation**. It does **not** authorize Ready, merge, HOLD exit, mode `NORMAL`, #487 work, Grok mutation, or a follow-up slice.
+
+### 7.1 Live reconstruction at this persist
+
+Reconstructed before edits (no unexpected concurrent scope/head drift):
+
+- `main` `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`;
+- #491 OPEN DRAFT `c9475ea5d13dfac41c83f51e9dc8ddd9e6eda181`;
+- exact-head CI `35470823111` SUCCESS (Typecheck `105971347369` SUCCESS; Auth `105971347455` SUCCESS);
+- Vercel Preview `9qvmdQRXkKWf5tqvjsWDdUEooLoN` READY; Vercel Preview Comments `105971400186` SUCCESS;
+- #487 unchanged parked Draft `12d070a79c35fbb9f03d1302833eee8561ec17bd`;
+- `.jetnity/operating-mode.json` remains `AI_OS_BUILD_HOLD`;
+- merge-base `ff0df56`; behind=0; review threads=0;
+- message queue empty.
+
+Companion Guardian read-only preflight `5748637045` is assigned to the existing external Jetnity Guardian against **fixed** `c9475ea5` and hash-bound external evidence. It is **not** Cursor, **not** a docs push, and **not** acceptance of the future persist head.
+
+### 7.2 Required current-state persist
+
+Update current-state portions of START_HERE, checkpoint §0 / current closing summary, ACTIVE_WORK_STATUS, OS-2 STATUS / HANDOFF / SELF_REVIEW, external tracker, Daily V2 contract evidence section, HOLD-exit checklist, and this task. Keep historical evidence labelled. Avoid wholesale rewrites of genuinely historical accounts.
+
+Add one reviewable matrix:
+
+`docs/JETNITY_OS2_ACCEPTANCE_MATRIX_2026-09-20.md`
+
+Link it from the tracker and handoff. Row fields: capability; actual acceptance scope; evidence / reference / hash; VERIFIED vs REPORTED / DECLARED / INFERRED; residual; next owner / action; whether a PO decision exists. No blank or automatic PASS rows.
+
+Keep `.jetnity/operating-mode.json` and all runtime / CI enforcement / external Grok artifacts unchanged. Do not copy external JSON or fixtures into this git repo. No live filesystem access claims from reported hashes.
+
+### 7.3 Authoritative decisions that must be preserved
+
+1. **Daily Sep20** `JETNITY-DAILY-V2-2026-09-20-0745`: Guardian output-consistency PASS accepted `5748314138`. PO limitation `5748343178` applies to **this historical run only**. Native scheduler origin **INFERRED**; pinned-entry execution **strongly INFERRED**. Not `native_scheduled_pass=true`. Capture SHA256 `e60fb510e52b52a2308103b85b3ef32c33a57fe7bcf01348a7d45ee2a5686463`. Closeout SHA256 `8d9a42aa42992e660808d5e005b35a9241eabe1fd4ebabe12aa3ed24d4b1b7b9`. No repeat historical search or replay. Gate remains `scheduled_only_provisional`.
+
+2. **Weekly Path A** INSTALLED-SOURCE PASS `5745439900` at installed hash `5e77164e7f0858886d1c4523d31f81f46cffe9d235918ed8d49c0cb9634beb18`. Revised scheduled execution still **OPEN**. `2026-09-21T08:30:00+02:00` is an expected **schedule**, not a receipt. Old native canary, ignore-routing compatibility, and fixture evidence stay distinct.
+
+3. **Path B** `5748428132`: LIMITED success-path **ARTIFACT PASS**. No longer design-only. Not full independently verified messaging / ownership. Hashes: request `4e669c2525053ee68218a5ac93e9643787324899e866fed5fa1f1453fead2dac`; result `13412dceb5f5710edc189e64ccc177d9c2f1eca3e0cfb56a9f5229c243916f40`; receipt `7de5cdabbad4b918c81d40740435fbecafabccbf6e20850d6821bab3eb40081b`; brief `78963167f276d183bbfb5b73eb594045e02adcda12f92c299dbda7e7d3bbf426`. Interactive dispatch / Security authorship / atomic write / CoS direct-read remain **DECLARED**. Earlier request `1590416f…` bytes unavailable; metadata-only explanation unproven. `CONTEXT_ONLY` allowed by that Path B request. No timeout / rejection / scheduling / automatic-consumer claim.
+
+4. **Path C** `5748484353`: interactive visibility / human-ack accepted at bounded evidence class (`PATH_C_PROP_001`; receipt `f57ac62af29bb128e8daddf86f49e14b6643b0f6d5f2fb4db716c75e1149aee8`; submission `t72s1`; ack `t73u`). Specific device push of that probe while closed is **UNVERIFIED**. Inventory `5748446585`: `PATH_C_CAPABILITY.json` `e9370be669e7d19d8d0a4a04653a865f24ba954d992cbc47f81f4852fa6e23e9`; summary `aec254650fc98d7dd7576333b0c7935614ee4ea1d62172204488fabf2f0e1838`. Off-session `JETNITY-PATHC-OFFSESSION-001` **BLOCKED** (`5748633847`); receipt `b227846f59f45b8b728040f755889d72b7eda5515f093b898ac6f1f3e8c324fc`. CoS tools expose recurring cron / event listeners but no supported native single-fire send with bounded lifecycle / readback. No retry, cron workaround, or urgent-gap waiver. A later Sep21 07:45 Daily notification observation would establish only that message / device / context.
+
+5. **Conditional two-role** LIMITED PASS `5744765614` plus later receipt **REPORTED CAPTURED** `5744814651` SHA256 `8054390102d1bb34d0a5147f09574c2f8ca7af28e66f60d1722bbee603e8fb01`; `current_receipt_time=2026-09-19T21:41:45+02:00`. Role transcripts AVAILABLE to CoS / reported record evidence at historical SHA `30e8921f8d9740aa5ac9b7795dd2e808540bf912`. Current capture ≠ original handoff proof. Later independent whole-system receipt read pending (Guardian preflight `5748637045` may perform it; this persist does **not** claim that review already happened).
+
+6. **Guardian** native MATERIAL / DEGRADED archive remains **OPEN**. Sequential remapped fixture ≠ native / crash proof. Empty `NO_MATERIAL` archive is not a defect.
+
+7. Ten-role identity presence ≠ operational FINAL / whole-system acceptance. Engineering-support pack remains **PREPARED / NOT RUN** / deferred post-HOLD (`5744886051` / `5744921031`); SHA256 `53382552d98fb8b66517027c269ee820b800bebace8c4e6a11e50e591c5b91d8`.
+
+### 7.4 Current-state slogan corrections
+
+Fix contradictory **current-state** slogans such as “routing not implemented”, “Sep20 still future”, or “Path B only synthetic / design-only” where they describe live truth. Do not alter genuinely historical accounts.
+
+### 7.5 Closing sequence (unchanged authority)
+
+Outstanding evidence / explicit properly scoped decisions → whole-system Guardian + independent exact-head TL final review → Ready / Merge #491 only by Technical Lead → post-merge verification → separate dedicated HOLD closure. #491 must **not** change mode to `NORMAL`. No unconditional tomorrow-finished promise.
+
+### 7.6 21 September Weekly inspection checklist — do not run or change schedules
+
+When the existing Monday **08:30 Europe/Zurich** Weekly fires, later reviewers should:
+
+1. correlate actual run / input / archive / installed-source identities;
+2. retain the four Weekly evidence classes (old canary / ignore-routing compatibility / model-mediated fixtures / installed Path A source);
+3. verify weekly period, coverage, routing consumption, status precedence, and `technical_lead_attention_required`;
+4. not manufacture native origin by synthetic replay.
+
+`2026-09-21T08:30:00+02:00` remains a schedule, not a receipt.
+
+### 7.7 Validation and stop
+
+Run the existing section-6 gates on the resulting exact head. Obtain CI / Vercel on the **new** persist SHA. Do not claim `c9475ea5` SUCCESS for the new head. Avoid recursive evidence-only commits.
+
+STOP FOR TECHNICAL-LEAD REVIEW. No Ready. No merge. No HOLD-exit. No #487. No follow-up slice.
