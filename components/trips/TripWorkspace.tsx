@@ -246,7 +246,10 @@ export default function TripWorkspace({
     if (detailOffen && !vorherOffenRef.current) {
       const ziel = kompakt ? zurueckRef.current : detailFokusRef.current
       ziel?.focus({ preventScroll: true })
-      if (!kompakt) ziel?.scrollIntoView({ block: 'start', inline: 'nearest' })
+      // Compact leftover scrollY after hiding the overview is the reproduced
+      // phone gap-open driver. Instant snap so the first frame keeps identity
+      // and return in view, including prefers-reduced-motion.
+      ziel?.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' })
     }
     if (!detailOffen && vorherOffenRef.current) {
       letzterAusloeserRef.current?.focus?.()
@@ -419,7 +422,7 @@ export default function TripWorkspace({
 
   return (
     <main className="min-h-screen bg-surface-75 pb-20">
-      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
           className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-ink-800 transition hover:text-brand-800"

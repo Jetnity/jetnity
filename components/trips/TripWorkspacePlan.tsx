@@ -17,6 +17,7 @@ import {
   ART_BEZEICHNUNG,
   betragLesbar,
 } from '@/lib/trips/bezeichnungen'
+import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
 import { ersterTagDerEtappe, timelineAbleiten } from '@/lib/trips/timeline'
 import { cn } from '@/lib/utils'
@@ -323,9 +324,8 @@ export default function TripWorkspacePlan({
                     <strong className="block hyphens-auto break-words text-sm font-semibold">{etappe.name}</strong>
                     <span className="mt-0.5 block text-xs text-ink-700">
                       {etappe.istNutzerziel
-                        ? etappe.arrivalDate || etappe.departureDate
-                          ? [etappe.arrivalDate, etappe.departureDate].filter(Boolean).join(' – ')
-                          : 'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
+                        ? etappenZeitraumAnzeigen(etappe.arrivalDate, etappe.departureDate) ??
+                          'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
                         : 'Tage ohne festgelegten Aufenthalt'}
                     </span>
                   </span>

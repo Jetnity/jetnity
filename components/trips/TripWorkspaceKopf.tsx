@@ -29,7 +29,7 @@ export default function TripWorkspaceKopf({
 
   if (kompakt) {
     return (
-      <section className="mt-5 rounded-[24px] bg-brand-800 px-4 py-4 text-white shadow-[0_18px_50px_rgba(15,46,42,0.14)] sm:px-5">
+      <section className="mt-3 rounded-[24px] bg-brand-800 px-4 py-3 text-white shadow-[0_18px_50px_rgba(15,46,42,0.14)] sm:px-5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-ink-300">
             <ShieldCheck className="h-3 w-3" aria-hidden="true" />
@@ -37,26 +37,26 @@ export default function TripWorkspaceKopf({
           </span>
           <span className="text-[11px] text-white/55">{uebersicht.lageText}</span>
         </div>
-        <h1 className="mt-3 hyphens-auto break-words text-2xl font-semibold tracking-[-0.04em]">
+        <h1 className="mt-2 hyphens-auto break-words text-2xl font-semibold tracking-[-0.04em]">
           {uebersicht.titel}
         </h1>
-        <p className="mt-1.5 flex min-w-0 items-start gap-2 text-sm text-white/70">
+        <p className="mt-1 flex min-w-0 items-start gap-2 text-sm text-white/70">
           <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span className="min-w-0 hyphens-auto break-words">{uebersicht.orte}</span>
         </p>
-        <p className="mt-3 text-xs leading-5 text-white/70">
+        <p className="mt-1 text-xs leading-5 text-white/70">
           <span>{uebersicht.zeitraum}</span>
           <span aria-hidden="true"> · </span>
           <span>{uebersicht.personen.text}</span>
         </p>
-        {kopfzeile && <div className="mt-3 border-t border-white/10 pt-3">{kopfzeile}</div>}
+        {kopfzeile && <div className="mt-2 border-t border-white/10 pt-2">{kopfzeile}</div>}
       </section>
     )
   }
 
   return (
-    <section className="mt-5 rounded-[30px] bg-brand-800 text-white shadow-[0_24px_70px_rgba(15,46,42,0.16)]">
-      <div className="grid grid-cols-1 gap-7 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+    <section className="mt-4 rounded-[30px] bg-brand-800 text-white shadow-[0_24px_70px_rgba(15,46,42,0.16)] xl:mt-5">
+      <div className="grid grid-cols-1 gap-4 p-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end xl:gap-7 xl:p-8">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-ink-300">
@@ -65,7 +65,7 @@ export default function TripWorkspaceKopf({
             </span>
             <span className="text-xs text-white/55">{uebersicht.lageText}</span>
           </div>
-          <h1 className="mt-5 hyphens-auto break-words text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">
+          <h1 className="mt-3 hyphens-auto break-words text-3xl font-semibold tracking-[-0.04em] xl:mt-5 xl:text-5xl">
             {uebersicht.titel}
           </h1>
           <p className="mt-2 flex min-w-0 items-start gap-2 text-sm text-white/65">
@@ -91,7 +91,7 @@ export default function TripWorkspaceKopf({
           </div>
         </div>
       </div>
-      {kopfzeile && <div className="border-t border-white/10 px-6 py-4 sm:px-8">{kopfzeile}</div>}
+      {kopfzeile && <div className="border-t border-white/10 px-5 py-3 sm:px-6 xl:px-8 xl:py-4">{kopfzeile}</div>}
     </section>
   )
 }
