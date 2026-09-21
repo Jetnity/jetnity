@@ -10,36 +10,39 @@ Session `bc-2d1117f4-c1b0-4307-852e-3609076509c2`
 Model Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`)  
 No Auto. Immediate review fixes reuse this exact session.
 
-## Delivered
+## Delivered (including 5271421930)
 
-1. Reproduced the assigned residual at 390×844 / html font-size 32px with compiled CSS and scrollX reset: client 390 / scroll 403 / overflow 13. Cause is the budget label + glued `(optional)` span (329.92px) overflowing a 267.91px Feld track. Skip-link negative bounds are not a separate defect.
-2. Smallest TripPlanner-local wrap: constrain each Feld column with `minmax(0,1fr)` and let the label/marker wrap. Shared `feld.tsx` unchanged.
-3. After 390/200%: page overflow 0; budget/label 267.91px; labels remain readable (`Ungefähres` / `Gesamtbudget` / `(optional)`).
-4. Keyboard: pointer Enter focuses `#manuell-planen`, Tab enters `#feld-ziel`. Invalid local submit shows field errors and summary; no write requests. Prefill and guest active-trip gate unchanged. No real submit/account/trip mutation.
-5. Own test + audit script + before/after evidence.
+1. TASK amendment records RF-R1/R2/R3 before the 360 layout edit.
+2. Assigned 390 residual still repaired: baseline `4278cd` 13px → after 0. Matched visible budget-before is now the focused `#feld-budget` from clean compiled CSS, not the historic idea-form PNG.
+3. Authorized 360/200% overflow closed: pointer wrap + Reiseidee `min-w-0` after measuring that pointer-only left 22px. After: page overflow 0; pointer fully visible.
+4. Source-regex tests removed. Audit aborts unexpected mutations including `POST /planen`. Invalid submit: errors shown; attempts 0 / completed 0.
+5. Keyboard, prefill, guest gate unchanged. No real submit/account/trip mutation.
 
 ## Changed paths
 
-- `components/trips/TripPlanner.tsx` — layout classes only
-- `lib/trips/manual-planner-text-reflow-1.test.ts`
-- `scripts/v1-manual-planner-text-reflow-1-audit.mjs`
-- `docs/evidence/v1-manual-planner-text-reflow-1/**`
-- `docs/V1_MANUAL_PLANNER_TEXT_REFLOW_1_{TASK,STATUS,HANDOFF,SELF_REVIEW}_2026-09-21.md`
+- `docs/V1_MANUAL_PLANNER_TEXT_REFLOW_1_TASK_2026-09-21.md` — RF amendment
+- `components/trips/TripPlanner.tsx` — prior 390 wrap (unchanged this correction)
+- `components/trips/PlanenEinstiegNavigation.tsx` — pointer wrap classes only
+- `components/trips/Reiseidee.tsx` — `min-w-0 max-w-full` on card/form only
+- `scripts/v1-manual-planner-text-reflow-1-audit.mjs` — real mutation abort; 360 initial before
+- deleted `lib/trips/manual-planner-text-reflow-1.test.ts`
+- `docs/evidence/v1-manual-planner-text-reflow-1/**` including `historic/`
+- `docs/V1_MANUAL_PLANNER_TEXT_REFLOW_1_{STATUS,HANDOFF,SELF_REVIEW}_2026-09-21.md`
 
-Read-only: `/planen` page, `PlanenEinstiegNavigation`, `PlanenCreateGate`, `Reiseidee`, `feld.tsx`, header/globals, create/storage/Auth.
+Read-only: `/planen` page, `PlanenCreateGate`, `feld.tsx`, header/globals, create/storage/Auth, all `#526` paths.
 
 ## What a successor must know
 
-- `#524` session stays STOP. This is a new logical task.
-- Parallel `#526` owns coverage/status wording. No shared write paths. TL integration order remains `#526` then this PR. Do not rebase onto the sibling.
-- 360/200% still has **22px page** overflow from the pointer/idea column, not from `#feld-budget`. Requested ownership expansion is written in STATUS. Do not edit those files in this PR.
-- After-evidence product tree was dirty only for the audit script and the evidence files being written. TripPlanner CSS captured was `2a58559d`.
+- `#524` session stays STOP. This is still Generation 1 of the same writer.
+- Parallel `#526` owns coverage/status wording. **Do not integrate main yet**; `#526` is first TL slot. No autonomous sibling merge/rebase.
+- Historic `historic/before_before_text-200_390x844_budget.png` is mislabelled leftover, not RF-R2 proof.
+- After-evidence product tree was dirty for evidence/docs being written. Layout CSS captured is the RF-R1 classes on the implementation commits.
 
 ## Honest limits
 
 - Local Chromium/Playwright; `html { font-size: 32px }`, not OS text-only zoom, Safari, hardware, or WCAG certification.
-- Number-input placeholder/spinner at 200% is a native control; labels are not clipped.
-- First before budget/tab screenshots were not scrolled into the field; use `audit-before.json` for geometry.
+- Number-input placeholder/spinner at 200% is a native control.
+- Invalid submit did not fire `POST /planen` because client validation returned first. Abort is in the route hook; completed unexpected remains 0.
 - No live authenticated account. Disposable synthetic guest data only.
 - Exact-head CI/Auth/direct Preview belong in the PR comment after this freeze push.
 

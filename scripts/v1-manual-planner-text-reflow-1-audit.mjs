@@ -736,6 +736,19 @@ async function main() {
     )
     szenen.push(
       await szene(browser, phone360, {
+        name: 'text-200_360x800_initial',
+        schrift: 32,
+        simulationClass: 'synthetic-guest + intercepted-unavailable + html-font-size-32px',
+        actionSequence: [
+          'goto /planen',
+          'set html font-size 32px',
+          'measure pointer at scrollY0',
+          'reset scrollX',
+        ],
+      }),
+    )
+    szenen.push(
+      await szene(browser, phone360, {
         name: 'text-200_360x800_pointer',
         schrift: 32,
         action: pointerKlick,
