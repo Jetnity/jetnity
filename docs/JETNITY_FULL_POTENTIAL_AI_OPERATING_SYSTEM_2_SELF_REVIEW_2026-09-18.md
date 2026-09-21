@@ -1,11 +1,13 @@
 # Jetnity – Full-Potential AI Operating System 2 – SELF-REVIEW
 
 Stand: 21. September 2026  
-Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
+Status: **HISTORICAL AGENT SELF-REVIEW FOR MERGED #491 — NOT A TECHNICAL-LEAD PASS**
 
-Issue: #490  
-Draft PR: #491  
-Branch: `governance/full-potential-ai-operating-system-2`  
+Current self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_SELF_REVIEW_2026-09-21.md`.
+
+Historical issue: #490  
+Historical Draft PR: #491 — **MERGED**  
+Historical branch: `governance/full-potential-ai-operating-system-2`  
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
 21 September scoped-limitation persist: comment `5756712854`  
 Acceptance matrix: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`

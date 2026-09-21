@@ -281,3 +281,13 @@ Evidence (PO-forwarded / Guardian-reviewed; Cursor did not observe files):
 - Weekly brief/archive SHA256 `0a486407be993878845f0ebced51493773e10c3c83d68031c6fefa6beb16f903`
 
 Correct the stale CoS “Later Guardian receipt read” next-actor wording noted in `5748946655`. Keep Path B / conditional process-evidence and ACL/permission unknowns visible. Do not manufacture whole-system acceptance. Keep HOLD active and #487 parked. #491 must not set `NORMAL`. No operating-mode / enforcement / allowlist edit.
+
+### 7.10 Dedicated HOLD closure (`5757763756` / PR #492)
+
+OS-2 / PR #491 is merged and post-merge verified. Product Owner accepted residual permission visibility for dedicated HOLD closure in `5757763756`.
+
+The dedicated writer work lives on Draft PR #492 / branch `governance/full-potential-ai-operating-system-2-hold-closure` and is specified by:
+
+`docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md`
+
+This OS-2 task file remains the historical #491 implementation record. It does **not** authorize another #491 persist. Current-state pointers: HOLD-closure STATUS / HANDOFF / SELF_REVIEW and the filled HOLD-exit checklist.

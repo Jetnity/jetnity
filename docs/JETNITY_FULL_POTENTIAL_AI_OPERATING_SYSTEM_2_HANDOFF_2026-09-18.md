@@ -1,7 +1,10 @@
 # Jetnity – Full-Potential AI Operating System 2 – HANDOFF
 
 Stand: 21. September 2026  
-Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN OS-FOLGESLICE**
+Status: **SUPERSEDED AS LIVE HANDOFF / #491 MERGED / CONTINUE ON PR #492**
+
+Current handoff: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_HANDOFF_2026-09-21.md`.  
+This file remains the historical 21 September scoped-limitation handoff for merged #491.
 
 Binding task: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md`  
 21 September scoped PO limitations: task §7.9 / comment `5756712854`  
@@ -25,7 +28,7 @@ HOLD-exit checklist: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXI
 Status: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_STATUS_2026-09-18.md`  
 Self-review: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_SELF_REVIEW_2026-09-18.md`
 
-A different ChatGPT conversation can reconstruct this state from those files plus the **live PR #491** head/comments. Docs on `main` are not sufficient while #491 is open.
+A different ChatGPT conversation reconstructs later state from the **live PR #492** head/comments plus the HOLD-closure STATUS/HANDOFF. This historical handoff is not sufficient while #492 is open.
 
 ## 1. Where the work lives
 

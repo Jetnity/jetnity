@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "mode": "AI_OS_BUILD_HOLD",
-  "updatedAt": "2026-09-18",
+  "mode": "NORMAL",
+  "updatedAt": "2026-09-21",
   "enforcementRole": "metadata_not_competing_governance",
   "canonicalGovernance": [
     "docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md",
@@ -12,14 +12,16 @@
     "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md",
     "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md",
     "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md",
-    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md"
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_DAILY_AUTOMATION_V2_CONTRACT_2026-09-18.md",
+    "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md"
   ],
-  "normalProductSlices": "blocked",
+  "normalProductSlices": "allowed",
   "allowedWorkClasses": [
     "governance",
     "continuity",
     "evidence",
-    "enforcement"
+    "enforcement",
+    "product"
   ],
   "productOwnerOverride": {
     "date": "2026-09-18",
@@ -29,10 +31,12 @@
   },
   "activeMetaScope": {
     "issue": 490,
-    "pr": 491,
-    "branch": "governance/full-potential-ai-operating-system-2",
-    "task": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_TASK_2026-09-18.md",
-    "title": "JETNITY FULL-POTENTIAL AI OPERATING SYSTEM 2"
+    "pr": 492,
+    "branch": "governance/full-potential-ai-operating-system-2-hold-closure",
+    "task": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md",
+    "title": "OS-2 dedicated HOLD closure",
+    "proposalStatus": "proposed_until_tl_merge",
+    "liveMainRemainsHoldUntilMerge": true
   },
   "parkedProductSlice": {
     "pr": 487,
@@ -50,7 +54,7 @@
     "ciCannotProveExternalPrerequisites": true,
     "dedicatedHoldExitChecklist": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md",
     "samePrCannotMixModeChangeAndProductRuntime": true,
-    "description": "HOLD lifts only after this foundation is merged and independently verified; the later external setup of all ten Grok roles plus approved read-only routines/schedules, Evidence-Bus path and e2e verification exists or a real platform limitation is escalated to the Product Owner; the agreed GitHub hard-enforcement baseline is configured and verified or an explicit Product-Owner decision records an accepted limitation; and the dedicated HOLD-exit evidence checklist is complete. The in-repo guard is fail-closed for ordinary unauthorized product/runtime PRs under the reviewed implementation. It is not tamper-proof against an authorized writer rewriting the enforcement plane. CI cannot prove the external prerequisites. A dedicated Technical-Lead closure may then change mode to NORMAL without product/runtime files in the same PR.",
+    "description": "This dedicated closure branch proposes NORMAL after the HOLD-exit checklist was filled with verified evidence and explicit Product-Owner accepted limitations. Live main remains AI_OS_BUILD_HOLD until Technical-Lead exact-head PASS, Ready/Merge of PR #492, and separate post-merge verification. NORMAL means later ordinary bounded work may be selected by the Technical Lead. It grants no Production migration, provider activation, real payment, sensitive-data storage, public launch or reserved-gate authority. PR #487 remains parked pending a separate independent Technical-Lead review. CI cannot prove the external prerequisites. Special Product-Owner gates remain in force.",
     "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence",
     "transitionContract": "dedicated_hold_closure_only",
     "githubHardEnforcementBaselineStatus": "live_verified",
@@ -63,8 +67,10 @@
       "apiUrl": "https://api.github.com/repos/Jetnity/jetnity/rulesets/21875372",
       "verifiedAt": "2026-09-18T17:55:00Z",
       "verifiedBy": "Jetnity full-potential AI operating system 2",
+      "reReadAt": "2026-09-21",
+      "reReadBy": "Technical Lead (5756999582 / HOLD-closure task) plus Cursor API confirm enforcement=active, bypass_actors=null",
       "matchesDocumentedNonLockoutBaseline": true,
-      "note": "Read-only GitHub API readback matches the documented non-lockout baseline and the Technical-Lead PASS/post-merge comments on PR #489. This records verification only. It does not lift HOLD, does not authorize NORMAL, and does not complete the ten-role external setup."
+      "note": "Read-only GitHub API readback matches the documented non-lockout baseline. This records verification only. Cursor did not mutate the ruleset."
     }
   },
   "specialProductOwnerGatesRemainInForce": true,
@@ -73,9 +79,10 @@
   ],
   "authorizedExactBranches": [
     "governance/full-potential-ai-operating-system-1",
-    "governance/full-potential-ai-operating-system-2"
+    "governance/full-potential-ai-operating-system-2",
+    "governance/full-potential-ai-operating-system-2-hold-closure"
   ],
-  "authorizedBranchClassRationale": "Kept for later planned OS meta-slices with numbered suffixes and disjoint ownership after this foundation is on main. The class does not grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. It remains constrained by the base HOLD policy, Technical-Lead review, and later external main protection.",
+  "authorizedBranchClassRationale": "Kept for later planned OS meta-slices with numbered suffixes and disjoint ownership after this foundation is on main. The class does not grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. It remains constrained by the base HOLD policy until this dedicated closure is merged, Technical-Lead review, and later external main protection.",
   "allowedPathPatterns": [
     ".jetnity/**",
     ".cursor/rules/**",
