@@ -25,6 +25,8 @@ import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
   GastreiseBestehtFehler,
+  GastreiseUnbrauchbarFehler,
+  GastspeicherUnlesbarFehler,
   SCHLUESSEL,
   SpeicherFehler,
   gastAktivitaetUebernehmen,
@@ -1608,8 +1610,16 @@ describe('Read-only Vorprüfung des aktiven Gastschlüssels', () => {
   })
 
   test('nach Korrektur liest die Vorprüfung frisch, ohne Cache', () => {
-    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    const defekt = '{kein JSON'
+    speicher.setzen(SCHLUESSEL.aktiv, defekt)
     assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.throws(() => gastreiseAnlegen(eingabe({ title: 'Unerlaubt' })), GastreiseUnbrauchbarFehler)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), defekt)
+
+    // Fixture simulates an external correction. Create must not overwrite the
+    // invalid raw bytes to "repair" them.
+    speicher.ablage.delete(SCHLUESSEL.aktiv)
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
 
     gastreiseAnlegen(eingabe({ title: 'Korrigiert' }))
     assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'gueltig' })

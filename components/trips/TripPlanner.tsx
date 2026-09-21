@@ -57,14 +57,15 @@ import { reiseAnlegen } from '@/lib/trips/aktionen'
 import {
   CREATE_PERSISTENZ_INTERESSEN,
   CREATE_PERSISTENZ_TEMPO,
-  gastCreateGate,
-  gastCreateVorNetzschritt,
+  gastCreateGateMeldung,
+  gastCreateJetztPruefen,
 } from '@/lib/trips/create-entry'
 import {
   GastreiseBestehtFehler,
+  GastreiseUnbrauchbarFehler,
+  GastspeicherUnlesbarFehler,
   SpeicherFehler,
   gastreiseAnlegen,
-  gastspeicherLaden,
   kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
@@ -181,14 +182,10 @@ export default function TripPlanner({
     ereignis.preventDefault()
     if (laeuft) return
 
-    const gate = gastCreateGate({
-      angemeldet,
-      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
-    })
+    const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
-      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
-      setBestehendeReise(fehler.bestehendeId)
-      setMeldung(fehler.message)
+      setBestehendeReise(gate.grund === 'besteht' ? gate.bestehendeId : '')
+      setMeldung(gastCreateGateMeldung(gate))
       return
     }
 
@@ -264,14 +261,10 @@ export default function TripPlanner({
       return
     }
 
-    const vorNetz = gastCreateVorNetzschritt({
-      angemeldet,
-      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
-    })
+    const vorNetz = gastCreateJetztPruefen(angemeldet)
     if (!vorNetz.erlaubt) {
-      const fehler = new GastreiseBestehtFehler(vorNetz.bestehendeId)
-      setBestehendeReise(fehler.bestehendeId)
-      setMeldung(fehler.message)
+      setBestehendeReise(vorNetz.grund === 'besteht' ? vorNetz.bestehendeId : '')
+      setMeldung(gastCreateGateMeldung(vorNetz))
       return
     }
 
@@ -336,6 +329,11 @@ export default function TripPlanner({
       setLaeuft(false)
       if (fehler instanceof GastreiseBestehtFehler) {
         setBestehendeReise(fehler.bestehendeId)
+        setMeldung(fehler.message)
+        return
+      }
+      if (fehler instanceof GastreiseUnbrauchbarFehler || fehler instanceof GastspeicherUnlesbarFehler) {
+        setBestehendeReise('')
         setMeldung(fehler.message)
         return
       }

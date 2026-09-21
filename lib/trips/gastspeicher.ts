@@ -128,6 +128,42 @@ export class GastreiseBestehtFehler extends Error {
 }
 
 /**
+ * Der aktive Gastschlüssel ist belegt, aber kein gültiger Entwurf.
+ *
+ * Das ist keine freie Kapazität. Create darf den Eintrag nicht ersetzen.
+ * Die Meldung behauptet weder Verlust noch Wiederherstellung.
+ */
+export class GastreiseUnbrauchbarFehler extends Error {
+  readonly art = 'ungueltig' as const
+
+  constructor() {
+    super(
+      'Auf diesem Gerät liegt ein Reiseentwurf, der sich nicht als Reise lesen lässt. Es kann deshalb ' +
+        'keine neue Reise angelegt werden. Der vorhandene Eintrag wurde nicht verändert.',
+    )
+    this.name = 'GastreiseUnbrauchbarFehler'
+  }
+}
+
+/**
+ * Der Browserspeicher konnte nicht gelesen werden.
+ *
+ * Das ist weder „kein Entwurf“ noch ein beschädigter Eintrag. Create darf
+ * nicht so tun, als wäre der Slot frei.
+ */
+export class GastspeicherUnlesbarFehler extends Error {
+  readonly art = 'speicher_unlesbar' as const
+
+  constructor() {
+    super(
+      'Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht ' +
+        'geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden.',
+    )
+    this.name = 'GastspeicherUnlesbarFehler'
+  }
+}
+
+/**
  * Die Gastreise im Speicher ist eine neuere Fassung als der Vorschlag.
  *
  * Dieselbe Meldung wie bei einer veralteten `trips.revision` im Konto. Die
@@ -259,6 +295,29 @@ export function aktiveGastreiseVorpruefen(): AktiveGastreiseVorpruefung {
   }
 
   return reiseLesen(geparst) ? { art: 'gueltig' } : { art: 'ungueltig' }
+}
+
+/**
+ * Kennung der gültigen aktiven Gastreise, oder `null`.
+ *
+ * Nur lesen. Kein Loader, keine Migration, kein Schreiben. Ungültige oder
+ * unlesbare Bytes bleiben unberührt.
+ */
+export function aktiveGastreiseKennungLesen(): string | null {
+  if (aktiveGastreiseVorpruefen().art !== 'gueltig') return null
+  return reiseLesen(rohLesen(SCHLUESSEL_AKTIV))?.id ?? null
+}
+
+/**
+ * Create- und Schreibwege prüfen den aktiven Schlüssel frisch, bevor sie
+ * Kapazität annehmen. Der Loader selbst wirft hier nicht – nur Anlegen/Ablegen.
+ */
+function aktiveAblageVorSchreibenPruefen() {
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art === 'nicht_im_browser' || vor.art === 'speicher_unlesbar') {
+    throw new GastspeicherUnlesbarFehler()
+  }
+  if (vor.art === 'ungueltig') throw new GastreiseUnbrauchbarFehler()
 }
 
 /**
@@ -420,6 +479,9 @@ function einzelneEtappe(
  * den diese Datei nicht mehr macht. Er kostet je Laden ein `JSON.parse`.
  */
 function legacyUebernehmen(): Gastspeicher | null {
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art !== 'fehlend' && vor.art !== 'gueltig') return null
+
   const roh = rohLesen(SCHLUESSEL_LEGACY)
   if (!Array.isArray(roh)) return null
 
@@ -490,7 +552,13 @@ function bestandWarteschlange(): Trip[] {
 
 /** Der gesamte Gastspeicher. Führt bei Bedarf die Übernahme aus v2 aus. */
 export function gastspeicherLaden(): Gastspeicher {
-  if (!verfuegbar()) return { aktiv: null, warteschlange: [] }
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art === 'nicht_im_browser' || vor.art === 'speicher_unlesbar') {
+    return { aktiv: null, warteschlange: [] }
+  }
+  if (vor.art === 'ungueltig') {
+    return { aktiv: null, warteschlange: bestandWarteschlange() }
+  }
 
   const uebernommen = legacyUebernehmen()
   if (uebernommen) return uebernommen
@@ -582,6 +650,7 @@ export function gastreiseAnlegen(
   eingabe: CreateTripInput,
   bestaetigt?: { ziel: Ort; abreise: Ort; weitereZiele?: Ort[] },
 ): Trip {
+  aktiveAblageVorSchreibenPruefen()
   if (!verfuegbar()) throw new SpeicherFehler()
 
   const bestehend = gastreiseLaden()
@@ -703,6 +772,7 @@ export function gastreiseAnlegen(
  * navigiert die Oberfläche nach dem ersten Anlauf weg.
  */
 export function gastreiseAblegen(entwurf: Trip): Trip {
+  aktiveAblageVorSchreibenPruefen()
   if (!verfuegbar()) throw new SpeicherFehler()
 
   const bestehend = gastreiseLaden()
