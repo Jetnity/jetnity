@@ -25,13 +25,17 @@ import { toast } from 'sonner'
 import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { lade, liste, type Fehler } from '@/lib/admin/ladezustand'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
+import {
+  istAufgezeichneterLoginFehler,
+  istAufgezeichneteAuffaelligkeit,
+} from '@/lib/admin/security-event-taxonomy'
 import { cn } from '@/lib/utils'
 
 type SecEvent = {
   id: string
   created_at?: string | null
   ip?: string | null
-  type?: string | null // z.B. 'login_failed' | 'bot' | 'suspicious' | ...
+  type?: string | null // historische/lesbare Typen: login_failed, auth_failed, bot, suspicious, ddos, anomaly*
   user_id?: string | null
   detail?: string | null
 }
@@ -146,8 +150,8 @@ export default function SecurityWidget() {
   const last24 = aufgezeichneteEvents.filter((e) =>
     e.created_at ? now - new Date(e.created_at).getTime() <= 24 * 3600 * 1000 : false
   )
-  const failed = last24.filter((e) => (e.type ?? '').includes('failed')).length
-  const suspicious = last24.filter((e) => (e.type ?? '').match(/bot|suspicious|ddos/i)).length
+  const failed = last24.filter((e) => istAufgezeichneterLoginFehler(e.type)).length
+  const suspicious = last24.filter((e) => istAufgezeichneteAuffaelligkeit(e.type)).length
   const blockedCount = data ? data.blocklist.length : null
 
   return (

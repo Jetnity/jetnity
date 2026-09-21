@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 21. September 2026  
-Status: **DEDICATED HOLD CLOSURE #492 PROPOSES NORMAL / LIVE MAIN REMAINS HOLD UNTIL TL MERGE / OS-1 #489 AND OS-2 #491 MERGED POST-MERGE VERIFIED / PR #487 PARKED SAFE / SAME SESSION bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c / LIVE-EVIDENCE WINS**
+Status: **V1 ADMIN SECURITY KPI TAXONOMY ALIGNMENT 1 IN IMPLEMENTATION / DRAFT #504 / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW AFTER FROZEN-HEAD GATES**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -11,33 +11,36 @@ Canonical current transition checkpoint:
 
 ## 0. Current work boundary
 
-**Live `main` remains `AI_OS_BUILD_HOLD`.** This dedicated closure branch proposes `.jetnity/operating-mode.json` `NORMAL`. Issue #440 historical override remains recorded. Special Product-Owner gates remain in force.
-
-Exclusive active meta-scope: **OS-2 dedicated HOLD closure**.
+Exclusive active writer on this branch: **V1 Admin Security KPI Taxonomy Alignment 1**.
 
 | | |
 | --- | --- |
-| Active writer | `Jetnity full-potential AI operating system 2`, Generation 1 |
-| Required model | Cursor Grok 4.6 High Fast — no Auto/substitution |
-| Session | `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c` |
-| Closed foundation | #490 closed / #491 merged at `780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
-| Active Draft PR | #492 |
-| Branch | `governance/full-potential-ai-operating-system-2-hold-closure` |
-| Canonical base | `main@780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
-| Seed head | `163502d75d4419234476a8ad4aa542983be8de41` |
-| Binding task | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md` |
-| Topology | **SINGLE_AGENT** — same existing writer; no new session |
-| Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
-| External Grok team | ten identities present; E2E #001 verified; profile normalization complete; Daily/Weekly ACTIVE with accepted operational limitations; permission visibility SATISFIED BY EXPLICIT ACCEPTED LIMITATION `5757763756`; `native_scheduled_pass=false`; `native_material_archive_proof=false`. Cursor mutated no Grok routines. |
-| Canonical tracker | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md` |
-| Closure status | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md` |
-| Acceptance matrix | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md` |
-| Exact continuation | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. Next exact step: Technical-Lead exact-head review of #492. While #492 is open, live PR evidence wins over docs on `main`. |
-| Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice. |
+| Active writer | `Jetnity V1 admin security kpi taxonomy alignment 1`, Generation 1 |
+| Required model | Cursor Grok 4.6 High Fast — no Auto/substitution; confirmed `originalModelName=cursor-grok-4.6-high-fast` |
+| Session | `bc-1ef7e31e-c82e-4545-b5ac-67117b3730a7` |
+| Issue | #503 |
+| Active Draft PR | #504 |
+| Branch | `fix/v1-admin-security-kpi-taxonomy-alignment-1` |
+| Canonical base | `main@d1949e23b3dda30b7482265822e7e1279f244228` |
+| Dispatch head | `df5c2a1861139432c5286fe11da7eb2feed3cc03` |
+| Binding task | `docs/V1_ADMIN_SECURITY_KPI_TAXONOMY_ALIGNMENT_1_TASK_2026-09-21.md` |
+| Topology | **SINGLE_AGENT** |
+| Ownership | SecurityWidget + kennzahlen + one taxonomy helper/tests + slice-local docs |
+| Parallel boundaries | do not touch #494 harness, #497 reconciliation docs, sibling P2-fix ownership; do not merge other branches |
+| Parked product slice | PR #487 / Issue #486 remains parked pending separate TL review; this slice does not resume it |
+| Next Cursor/Guardian action after gates | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice. |
+
+Implemented on this branch: one shared presentation taxonomy for recorded login-failure and anomaly KPIs. Historical `login_failed` / `bot` / `suspicious` / `ddos` remain readable. No producer, no schema/RLS/Auth/Production mutation, no provider/secret/paid action.
+
+Honest incomplete-ingestion copy and null/error != zero are preserved. Final exact-head CI/Auth/Vercel IDs belong in the PR #504 comment on the frozen head.
+
+Special Product-Owner gates remain in force. `.jetnity/operating-mode.json` on this checkout is `NORMAL`; that grants no reserved-gate authority.
+
+OS-2 dedicated HOLD-closure #492 is **not** the active writer on this branch. Reconstruct live `origin/main` before treating HOLD/NORMAL as current production operating truth.
 
 OS-1 / PR #489 is **MERGED / POST-MERGE VERIFIED** and must not be reconstructed as the active writer. Issue #488 is closed. Merge/current main at that closure: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`. Post-merge CI `35376407897` SUCCESS. Vercel Production success / READY. Technical-Lead PASS `5733949233` and post-merge verification `5733986499`. GitHub Ruleset `21875372` is live-verified as the already-active non-lockout baseline.
 
-The dedicated HOLD-exit checklist is filled on this branch. Live main remains HOLD until Technical-Lead Ready/Merge of #492 and post-merge verification. NORMAL, if later merged, allows the Technical Lead to select ordinary bounded work later; it grants no reserved Product-Owner gate, no #487 unpark, and no native-proof promotion. The in-repo guard is not tamper-proof. Cursor must not activate GitHub settings. `no automatic follow-up slice` binds Cursor/Guardian/reviewers, not Technical-Lead slice selection after live-main HOLD exit.
+The following HOLD-closure paragraphs are **historical context inherited from earlier main**, not the active writer on this branch. Reconstruct live `origin/main` and `.jetnity/operating-mode.json` before treating HOLD/NORMAL as current production operating truth. Special Product-Owner gates remain. PR #487 remains parked. Cursor must not Ready/merge this slice.
 
 Assistant Runtime 1 and the Multi-Agent Operating System are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
