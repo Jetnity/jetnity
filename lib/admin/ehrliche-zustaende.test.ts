@@ -65,4 +65,15 @@ describe('ehrliche Admin-Zustände', () => {
   test('Stub-Seitenhinweis behauptet kein fertiges Modul', () => {
     assert.match(adminFolgtSeitenhinweis('Analytics'), /kein fertiges Modul/)
   })
+
+  test('Aktuelle Hinweise bleiben regelbasiert und ohne universelle 30s-Behauptung', () => {
+    assert.equal(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseTitel, 'Aktuelle Hinweise')
+    assert.match(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseHinweis, /Regelbasierte Lage/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseHinweis, /kein Copilot-Execute/i)
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseHinweis, /höchstens 30s|at most 30s old/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseKeinSignal, /prozessweite airports-Beobachtung/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseNotzugang, /nicht zugeschrieben/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseOhnePruefung, /betrieb-lesen/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.copilotFolgtHinweis, /Kein Execute-Pfad/)
+  })
 })
