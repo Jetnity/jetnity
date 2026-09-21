@@ -8,6 +8,9 @@ Sie definiert nicht die gesamte Produktvision, sondern die Arbeitsweise, mit der
 
 Vor jeder größeren Aufgabe müssen außerdem die folgenden Projektdateien gelesen werden, sofern vorhanden:
 
+- [.jetnity/operating-mode.json](.jetnity/operating-mode.json) — aktueller Maschinen-Betriebsmodus / HOLD-Enforcement; keine konkurrierende Governance-Quelle
+- [docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md](docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md)
+- [docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md](docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md)
 - [JETNITY_VISION.md](JETNITY_VISION.md)
 - [ARCHITECTURE.md](ARCHITECTURE.md)
 - [ROADMAP.md](ROADMAP.md)
@@ -18,6 +21,8 @@ Vor jeder größeren Aufgabe müssen außerdem die folgenden Projektdateien gele
 - relevante README-Dateien
 - relevante Datenbankmigrationen
 - relevante Tests
+
+Wenn `.jetnity/operating-mode.json` `AI_OS_BUILD_HOLD` ist: keine normale Produkt-/Runtime-/Security-/Account-/Provider-/UX-Arbeit starten oder fortsetzen. Ausschließliche Priorität ist das dokumentierte Full-Potential-AI-OS-Meta-Scope. PR #487 bleibt geparkt. Ready/Merge bleiben beim Technical Lead. Besondere Product-Owner-Gates bleiben.
 
 Wenn Informationen widersprüchlich sind, darf nicht geraten werden.
 

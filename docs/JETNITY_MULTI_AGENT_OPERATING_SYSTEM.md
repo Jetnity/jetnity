@@ -1,6 +1,7 @@
 # Jetnity – Multi-Agent Operating System
 
 Stand: 17. September 2026  
+Erweitert: 18. September 2026 – Full-Potential Lanes, Evidence-Bus-Vertrag, Routine-Matrix, Operating-Mode-HOLD  
 Status: **PRODUCT-OWNER-VERBINDLICH / GOVERNANCE / ONE-WRITER-MANY-READERS / EVIDENCE-FIRST / LEAST-PRIVILEGE**
 
 ## 1. Zweck
@@ -11,7 +12,11 @@ Jetnity nutzt mehrere spezialisierte Modelle und Agenten bewusst als **orchestri
 
 > **Cursor baut. Spezialisten prüfen parallel read-only. Grok challengt adversarial. Der ChatGPT / Technical Lead konsolidiert, entscheidet, integriert und mergt. Der Product Owner entscheidet besondere Produkt-/Business-/Production-Gates.**
 
-> **Binding correction, 18. September 2026:** `Jetnity Guardian / Grok` meint die **separate Jetnity-Guardian-App des Product Owners**, niemals einen Cursor-Agenten oder das Cursor-Modell Grok 4.6 High Fast. Wenn Guardian-Evidence benötigt wird, liefert der Technical Lead dem Product Owner einen ready-to-paste Prompt; der Product Owner startet ihn in Jetnity Guardian. `@cursor` ist kein Guardian-Trigger.
+> **Binding correction, 18. September 2026:** `Jetnity Guardian / Grok` meint die **separate Jetnity-Guardian-App des Product Owners**, niemals einen Cursor-Agenten oder das Cursor-Modell Grok 4.6 High Fast. `@cursor` ist kein Guardian-Trigger.
+>
+> **Binding correction, 18. September 2026 — activation:** Solange die zehn permanenten Grok-Rollen noch nicht extern eingerichtet sind, gilt für die vorhandene einzelne Guardian-App der One-off-Weg: der Technical Lead liefert bei Bedarf einen ready-to-paste Prompt; der Product Owner startet diesen One-off. Nach einmaliger Product-Owner-Autorisierung der später erforderlichen zehn Rollen und ihrer freigegebenen read-only Routinen braucht ein gewöhnlicher wiederkehrender Lauf **keinen neuen Product-Owner-Prompt**. Besondere Product-Owner-Gates bleiben Product-Owner-kontrolliert. Daily/weekly Automatisierung bleibt no-noise und erzeugt keine Work-/Merge-/Production-Autorität.
+>
+> **Binding correction, 18. September 2026 — enforcement plane:** Der In-Repo-HOLD-Guard ist fail-closed gegen gewöhnliche unautorisierte Produkt-/Runtime-PRs unter der reviewed Implementation. Er ist nicht tamper-proof gegen einen autorisierten Writer der Enforcement-Fläche. Externe GitHub-Hard-Enforcement für `main` ist ein pflichtiger HOLD-Exit-Punkt und wird von Cursor/Guardian/Grok nicht aktiviert. Ein zweiter logischer Bot auf demselben Account ist keine unabhängige Approval-Grenze. Die Closure-Checkliste `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md` ist die Evidence-Quelle; CI allein beweist die externen Voraussetzungen nicht.
 
 Dieses Dokument ist für alle zukünftigen Technical-Lead-Chats, Cursor-Agenten, Guardian-/Grok-Läufe und weitere Jetnity-Spezialisten verbindlich, sobald es kanonisch in `main` integriert ist.
 
@@ -27,6 +32,8 @@ Verantwortet insbesondere:
 - Prioritätskonflikte zwischen Produktzielen.
 
 Der Product Owner muss nicht für jeden normalen technisch geprüften Merge erneut zustimmen, wenn der Technical Lead ihn als sinnvoll und verantwortbar einstuft. Bestehende besondere Gates bleiben davon unberührt.
+
+Während `.jetnity/operating-mode.json` = `AI_OS_BUILD_HOLD` startet der Technical Lead keine normale Produktarbeit. PR #487 bleibt geparkt. Der Product Owner wird nur an den reservierten Special Gates gefragt.
 
 ### 2.2 ChatGPT / Technical Lead / Orchestrator
 
@@ -59,11 +66,20 @@ Verbindlich:
 - jeder neue Head invalidiert ältere Exact-Head-Gates;
 - vor Handoff vollständige Tests/Evidence/Docs.
 
+Capability-conditional Cursor-Subagents oder Cloud-Agents dürfen nur verwendet werden, wenn das Cursor-Produkt sie tatsächlich exponiert. Sie bleiben dem Branch-Owner untergeordnet und bilden keine zweite Autoritätskette.
+
+Default:
+- Lese-/Research-/Test-Analyse-Subagents sind innerhalb des Parent-Scopes erlaubt;
+- ein zweiter Writer ist nur auf einem ausdrücklich getrennten Branch mit disjunkter Datei-/Contract-Ownership und vom Technical Lead definierter Integrationsreihenfolge erlaubt;
+- kein Subagent/Child erhält Ready-, Merge- oder Follow-up-Autorität.
+
+Nicht behaupten, eine Cursor-Fähigkeit existiere, wenn sie in der laufenden Session nicht verfügbar ist.
+
 ### 2.4 Grok Guardian / Red Team
 
 Grok arbeitet als unabhängige Gegeninstanz gemäß `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`.
 
-**Identität:** Der Guardian ist die separate Jetnity-Guardian-App. Er ist kein Cursor-Agent und keine Cursor-Session. Der Technical Lead erzeugt bei Bedarf den vollständigen Guardian-Prompt; der Product Owner startet den Lauf in der separaten App.
+**Identität:** Der Guardian ist die separate Jetnity-Guardian-App. Er ist kein Cursor-Agent und keine Cursor-Session. Solange die zehn Rollen noch nicht extern eingerichtet sind, erzeugt der Technical Lead bei Bedarf den vollständigen One-off-Guardian-Prompt; der Product Owner startet diesen One-off. Nach einmaliger Product-Owner-Autorisierung der freigegebenen read-only Routinen braucht ein gewöhnlicher wiederkehrender Lauf keinen neuen Product-Owner-Prompt.
 
 Kernaufgaben:
 
@@ -159,6 +175,34 @@ Prüft insbesondere:
 - Regressionen;
 - Post-Merge-Verification.
 
+## 2a. Full-potential reviewer lanes
+
+Der Technical Lead routed Arbeit nach Risiko/Domäne. Nicht jede Lane wird für jeden Slice gestartet.
+
+Jede Lane darf nur Capabilities nutzen, die in der laufenden Session wirklich verfügbar sind. Guardian/Grok bedeutet die separate Product-Owner-Guardian-App, niemals Cursor Grok 4.6 High Fast. Ein Cursor-Spezialist darf eine Lane nur dann füllen, wenn der Technical Lead das ausdrücklich so scoped und die Session die nötige Fähigkeit hat.
+
+These engineering/review lanes stay separate from the ten permanent Grok Intelligence & Assurance roles in `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` §13a. They are not required to map 1:1 onto those bots.
+
+| Lane | Trigger | Writer? | Evidence sources | Output contract | Collision | Escalation | Who may fill |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Builder / implementation writer | Versionierter Task + Draft-PR + `@cursor` | **Writer**, genau einer pro Branch | Repo, lokale Tests/CI, Task, Live-GitHub | Code/Docs + Status/Handoff/Self-Review; STOP für TL | Kein zweiter Writer; Subagents nur subordinate | TL bei Scope-Kollision oder Special Gate | Cursor parent only |
+| Codebase Explorer | Locate contracts, owners, call sites before or during a slice | Read-only | Repo search, docs, git history | Map + uncertainty; no silent rewrite | Darf nicht schreiben | TL / assigned writer | Cursor read-only subagent if exposed; otherwise parent |
+| Architecture & Truth challenger | Shared-contract, Truth-class, Traveller/Route or new architecture | Read-only | Diff, canonical docs, Live SHA/head | Evidence-Bus finding: FACT/INFERENCE/RISK; no rewrite | Darf Writer-Dateien nicht ändern | TL konsolidiert | Guardian/Grok **or** Cursor read-only specialist |
+| Security & Privacy review | Auth/RLS/secrets/PII/document/health/model-tool scope | Read-only | Code, policies, logs only if already permitted; no mutation | P0–P3 security/privacy findings + missing evidence | Keine Fixes, keine Secrets | Sofort TL; PO wenn Special Gate | Permanent Grok Red Team preferred; Cursor specialist if Guardian unavailable and documented as Cursor evidence, never labelled Guardian |
+| DB / RLS specialist | Schema, migration, grant, RLS, ownership, definer risk | Read-only unless the tasked writer owns that migration slice | Schema/types/migrations; live DB only if already permitted read-only | Boundary/finding; no silent apply | Keine Production-Writes | TL; PO for Production apply | Cursor specialist or later Grok read-only; never Production-admin |
+| QA / Regression hunter | Material handoff, CHANGES REQUIRED rehead, accepted-contract risk | Read-only | Tests, diffs vs accepted contracts, CI | Repro + expected/actual + severity | Keine parallelen Fixes | TL Fix-Paket | Guardian/Grok **or** Cursor specialist |
+| UX / Accessibility | UX/IA, journey, focus, touch, screenreader, form risk | Read-only | UI/docs, existing audits, browser evidence if available | UX/a11y findings; no invented device tests | Kein autonomer Product-Slice | TL | Guardian/Grok **or** Cursor specialist |
+| Performance | Render/request/bundle/N+1/layout-shift risk | Read-only | Code, existing audits, traces if already present | Perf findings; no paid load tests | Keine Runtime-Writes | TL | Guardian/Grok **or** Cursor specialist |
+| Cost / Quota | Model/provider/quota/budget/retry/new cost risk | Read-only | Code, kill-switch/quota docs; **no paid calls** | Cost/quota risk; gate if > budget or live activation | Keine paid calls, keine Secrets | TL; PO for cost/provider/live gates | Permanent Grok FinOps preferred or Cursor specialist |
+| Release / Continuity | Before PASS/merge, after merge, stale-doc suspicion | Read-only | Exact SHA, CI, Vercel if connected, threads, status/handoff | Exact-head completeness; docs-vs-live contradictions | Keine Ready/Merge | TL owns PASS | Permanent Grok Guardian preferred |
+| Documentation / Continuity | Status/handoff/checkpoint drift, missing Evidence-Bus fields | Read-only unless tasked as the slice writer | Repo docs vs live GitHub | Continuity finding or tasked doc fix | Reviewer does not overwrite unless tasked | TL | Cursor writer if tasked; otherwise read-only reviewer |
+
+Gemeinsame Lane-Regeln:
+- Output landet im GitHub Evidence Bus, nicht nur in einer Agent-UI.
+- Findings sind Input. Nur der Technical Lead setzt das Integrationsverdict.
+- Fehlende Evidence bleibt `unknown` / `not checked`.
+- Keine Lane erhält Production-, Provider-, Payment- oder Secret-Autorität.
+
 ## 3. Standard-Workflow
 
 Für material relevante Slices gilt grundsätzlich:
@@ -199,6 +243,28 @@ Vorteile:
 - keine stillen Agentenentscheidungen.
 
 Externe Bots dürfen Ergebnisse nicht nur in eigener UI behalten, wenn sie für einen Merge-/Release-/Security-Verdict relevant sind.
+
+Agent-UI-State allein ist niemals Continuity.
+
+### 4.1 Evidence-Bus-Pflichtvertrag
+
+Jeder materiale Agent-/Reviewer-Handoff enthält mindestens:
+
+- exact `main` / base SHA;
+- exact branch / head SHA;
+- agent logical name + generation;
+- available session ID;
+- model/capability if known, otherwise `unknown`;
+- files / ownership scope;
+- verdict or findings with severity;
+- evidence actually checked;
+- evidence **not** checked;
+- CI / Vercel / DB / Production bindings where applicable, otherwise explicitly not checked;
+- blocker / gate;
+- exact next responsible actor;
+- explicit STOP point.
+
+Ein Handoff ohne diese Felder ist unvollständig und darf nicht als Gate-Evidence gelten.
 
 ## 5. Standardformat für Bot-/Specialist-Findings
 
@@ -276,9 +342,9 @@ Der Guardian darf **nicht** selbstständig Cursor-Änderungen starten oder eine 
 
 Verbindlicher Ablauf:
 
-1. Technical Lead liefert dem Product Owner bei Bedarf einen vollständigen Guardian-Prompt.
-2. Product Owner startet ihn in der separaten Jetnity-Guardian-App.
-3. Guardian postet Evidence/Findings.
+1. Technical Lead liefert dem Product Owner bei Bedarf einen vollständigen One-off-Guardian-Prompt, solange die zehn-Rollen-Einrichtung noch fehlt.
+2. Product Owner startet diesen One-off in der separaten Jetnity-Guardian-App, oder hat die wiederkehrenden read-only Routinen einmalig autorisiert.
+3. Guardian postet Evidence/Findings. Gewöhnliche autorisierte Routinen brauchen danach keinen neuen Product-Owner-Start.
 4. Technical Lead verifiziert und konsolidiert.
 5. Technical Lead gibt Cursor ein einziges verbindliches Fix-Paket.
 6. Cursor implementiert.
@@ -301,6 +367,26 @@ Sinnvolle zukünftige Trigger:
 - größere Produkt-/Architektur-Meilensteine.
 
 Automatisierte Reviewer dürfen Findings erzeugen, aber keine selbstständige Umsetzung, Merge- oder Production-Aktion starten.
+
+### 11.1 Verbindliche Routine-/Trigger-Matrix
+
+Routinen sind wiederverwendbare Abläufe, keine Chat-Gewohnheiten. Skills/Tools dürfen nur genannt werden, wenn sie in der laufenden Session tatsächlich verbunden sind.
+
+| Routine | Trigger | Owner | Allowed action | STOP |
+| --- | --- | --- | --- | --- |
+| Startup / live reconstruction | New chat, new agent, after pause | TL, then any agent for itself | Read START_HERE, operating mode, canonical standards, live GitHub/Vercel; Supabase only if scope needs it | Do not dispatch before reconstruction |
+| Operating-mode / HOLD check | Before any new dispatch | TL + mechanical `check:operating-mode` | Read `.jetnity/operating-mode.json`; refuse blocked work | HOLD blocks normal product slices |
+| Special Product-Owner gate detection | Scope touches reserved gates | TL | Name the exact gate; ask PO before the gated action | No silent crossing |
+| Slice precheck + multi-agent suitability | After live reconstruction, before task | TL | File/contract/gate/parallelism check; persist SINGLE_AGENT or MULTI_AGENT | No dispatch without this record |
+| Task / branch / Draft-PR / dispatch | Slice selected and allowed by mode | TL writes task; one Cursor writer | Versioned task, one branch, Draft PR, `@cursor` with exact name | Writer: no Ready/merge/follow-up |
+| Same-session CHANGES REQUIRED | TL finding on a head | Same logical writer | Head-bound findings; only those fixes | New head invalidates old gates |
+| Exact-head review | Material handoff or new head | TL; optional lanes | Independent read of full diff + exact-head CI/Vercel/threads | PASS is TL-only |
+| Main-drift / rebase / regate | Behind>0 or base moved | TL decides; same writer if rebase/fix | Reassess merge-base; new exact-head gates | Old CI/Preview is historical |
+| High-risk Guardian trigger | Auth/RLS/Truth/DB/cost/release risk | TL prepares one-off prompt while ten-role setup is absent; after one-time PO authorization, approved read-only routines run without a new PO prompt | Read-only challenge report in Evidence Bus | Not a TL PASS; `@cursor` ≠ Guardian |
+| Post-merge verification | After TL merge | TL | Exact `main` CI/Production/docs; then next slice only if mode allows | Preview PASS ≠ Production evidence |
+| Continuity stale-doc audit | After merge, HOLD, or contradiction | Release/Continuity lane or TL | Report docs-vs-live; TL or tasked writer corrects | Reviewer does not overwrite docs unless tasked |
+
+Während `AI_OS_BUILD_HOLD` dürfen Startup, HOLD-Check, Gate-Detection, Governance-Dispatch und Continuity-Audit laufen. Product-Dispatch-Routinen sind blockiert.
 
 ## 12. Whole-Jetnity Audits
 

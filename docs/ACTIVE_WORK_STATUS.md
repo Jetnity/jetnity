@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
-Stand: 18. September 2026  
-Status: **CURRENT / PHASE 1 JETNITY CORE / ASSISTANT RUNTIME 1 CLOSED / MULTI-AGENT OPERATING SYSTEM CLOSED / V1 LEGAL CLAIM HYGIENE 1 CLOSED / V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 CLOSED / V1 INCIDENT PROCESS 1 CLOSED / V1 SUPPORT PROCESS 1 CLOSED / V1 ACCOUNT ERROR BOUNDARY 1 CLOSED / V1 ADMIN REVENUE TRUTH 1 CLOSED / V1 COOKIE CONSENT HYGIENE 1 CLOSED / V1 ACCOUNT DATA EXPORT 1 CLOSED / V1 PRODUCTION AUTH VERIFICATION 1 CLOSED / PRS #470 #471 #472 #476 #477 #480 MERGED / EXACT-MERGE PRODUCTION READY / GUARDIAN EXTERNAL-APP WORKFLOW CANONICALIZED / NO ACTIVE CURSOR CODING AGENT KNOWN FROM LAST PERSISTED EVIDENCE / NO PRODUCT FOLLOW-UP SELECTED HERE / PROVIDER SELECTION + EXTERNAL CONTACT DEFERRED / PRODUCTION ASSISTANT MIGRATION + MODEL ACTIVATION CLOSED / NO AUTOMATIC FOLLOW-UP SLICE / LIVE-EVIDENCE WINS**
+Stand: 21. September 2026  
+Status: **DEDICATED HOLD CLOSURE #492 PROPOSES NORMAL / LIVE MAIN REMAINS HOLD UNTIL TL MERGE / OS-1 #489 AND OS-2 #491 MERGED POST-MERGE VERIFIED / PR #487 PARKED SAFE / SAME SESSION bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c / LIVE-EVIDENCE WINS**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -10,6 +10,34 @@ Canonical current transition checkpoint:
 `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`
 
 ## 0. Current work boundary
+
+**Live `main` remains `AI_OS_BUILD_HOLD`.** This dedicated closure branch proposes `.jetnity/operating-mode.json` `NORMAL`. Issue #440 historical override remains recorded. Special Product-Owner gates remain in force.
+
+Exclusive active meta-scope: **OS-2 dedicated HOLD closure**.
+
+| | |
+| --- | --- |
+| Active writer | `Jetnity full-potential AI operating system 2`, Generation 1 |
+| Required model | Cursor Grok 4.6 High Fast — no Auto/substitution |
+| Session | `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c` |
+| Closed foundation | #490 closed / #491 merged at `780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
+| Active Draft PR | #492 |
+| Branch | `governance/full-potential-ai-operating-system-2-hold-closure` |
+| Canonical base | `main@780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
+| Seed head | `163502d75d4419234476a8ad4aa542983be8de41` |
+| Binding task | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md` |
+| Topology | **SINGLE_AGENT** — same existing writer; no new session |
+| Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
+| External Grok team | ten identities present; E2E #001 verified; profile normalization complete; Daily/Weekly ACTIVE with accepted operational limitations; permission visibility SATISFIED BY EXPLICIT ACCEPTED LIMITATION `5757763756`; `native_scheduled_pass=false`; `native_material_archive_proof=false`. Cursor mutated no Grok routines. |
+| Canonical tracker | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md` |
+| Closure status | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md` |
+| Acceptance matrix | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md` |
+| Exact continuation | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. Next exact step: Technical-Lead exact-head review of #492. While #492 is open, live PR evidence wins over docs on `main`. |
+| Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice. |
+
+OS-1 / PR #489 is **MERGED / POST-MERGE VERIFIED** and must not be reconstructed as the active writer. Issue #488 is closed. Merge/current main at that closure: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`. Post-merge CI `35376407897` SUCCESS. Vercel Production success / READY. Technical-Lead PASS `5733949233` and post-merge verification `5733986499`. GitHub Ruleset `21875372` is live-verified as the already-active non-lockout baseline.
+
+The dedicated HOLD-exit checklist is filled on this branch. Live main remains HOLD until Technical-Lead Ready/Merge of #492 and post-merge verification. NORMAL, if later merged, allows the Technical Lead to select ordinary bounded work later; it grants no reserved Product-Owner gate, no #487 unpark, and no native-proof promotion. The in-repo guard is not tamper-proof. Cursor must not activate GitHub settings. `no automatic follow-up slice` binds Cursor/Guardian/reviewers, not Technical-Lead slice selection after live-main HOLD exit.
 
 Assistant Runtime 1 and the Multi-Agent Operating System are **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
@@ -37,7 +65,7 @@ Latest verified governance integration baseline:
 - post-merge CI #1801: SUCCESS;
 - exact-head Preview and post-merge Production Vercel: READY.
 
-No product follow-up slice is selected by this status file. No active Cursor coding agent is known from the latest persisted evidence; direct Cursor UI/session state must still be re-fetched when accessible.
+No normal product follow-up slice may be selected while HOLD is active. The exclusive active writer is the Full-Potential AI Operating System 2 slice above. Direct Cursor UI/session state must still be re-fetched when accessible.
 
 Current Product-Owner Cursor model preference: **Cursor Grok 4.6 High Fast**. Do not use Auto. If that model is unavailable, stop/report instead of silently substituting. This supersedes prior Opus requirements until the Product Owner changes it.
 
@@ -307,12 +335,14 @@ Planned/account-trip evidence ≠ visited.
 - Cursor and Guardian do not mark Ready and do not merge.
 - Technical Lead may merge normal, fully reviewed, scope-faithful work under standing authorization.
 - Product-Owner special gates remain explicit.
-- No automatic follow-up slice.
-- Relevant continuity must be persisted in GitHub/repository evidence.
+- Cursor, Guardian and reviewer agents start no automatic follow-up slice. After HOLD exit the Technical Lead may autonomously select the next bounded slice unless a Product-Owner HOLD or special gate says otherwise.
+- Relevant continuity must be persisted in GitHub/repository evidence. Agent UI state alone is never continuity.
+- Read `.jetnity/operating-mode.json` before any dispatch.
 
 ## 10. First action for a new chat
 
 Read:
+0. `.jetnity/operating-mode.json`;
 1. `JETNITY_START_HERE.md`;
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
 3. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
@@ -329,6 +359,6 @@ Then reconstruct live:
 - current Cursor/Guardian evidence;
 - Supabase only when selected scope requires it.
 
-Do not treat historical Draft PRs as active work merely because they are open. Do not infer a next product slice from this file. Select the smallest responsible bounded next step only after live reconstruction and current Product-Owner gate checks.
+Do not treat historical Draft PRs as active work merely because they are open. Do not resume parked PR #487. Do not infer a next product slice from this file while HOLD is active.
 
-**LIVE-EVIDENCE WINS. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. V1 SUPPORT PROCESS 1 / #470 CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. NO AUTOMATIC FOLLOW-UP SLICE.**
+**LIVE-EVIDENCE WINS. PRODUCT DEVELOPMENT HOLD ACTIVE. FULL-POTENTIAL AI OS EXCLUSIVE PRIORITY. OS-1 / PR #489 MERGED POST-MERGE VERIFIED. OS-2 / #490 CURRENT GOVERNANCE-EVIDENCE CONTROL SLICE. ALL SIX DAILY SPECIALISTS FINAL PASS / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / DAILY SEP20 OUTPUT-CONSISTENCY PASS / PATH B ARTIFACT PASS / PATH C INTERACTIVE ACK ACCEPTED / PATH C OFF-SESSION BLOCKED / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS / HOLD-EXIT OPEN. PR #487 PARKED SAFE. ASSISTANT RUNTIME 1 CLOSED. MULTI-AGENT OPERATING SYSTEM CANONICAL. EXPLICIT VISIT HISTORY / #441 CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 CLOSED. V1 INCIDENT PROCESS 1 / #464 CLOSED. V1 SUPPORT PROCESS 1 / #470 CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NEVER CURSOR. CURRENT CURSOR MODEL PREFERENCE: CURSOR GROK 4.6 HIGH FAST, NO AUTO. PRODUCTION ASSISTANT MIGRATION/MODEL ACTIVATION CLOSED. CURSOR/GUARDIAN START NO AUTOMATIC FOLLOW-UP SLICE.**
