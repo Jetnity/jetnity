@@ -7,6 +7,15 @@
 // einem Fehler folgt keine Zahl. Die Routen entscheiden vorher, welcher der
 // beiden Fälle vorliegt (`lib/api/datenbank-lesen.ts`); hier wird nur noch
 // gerechnet – mit Daten, die es tatsächlich gibt.
+//
+// Login-Fehler und Auffälligkeiten kommen aus einer Präsentations-Taxonomie,
+// nicht aus zwei Stringregeln. Das ändert nicht, dass fehlende Ingestion
+// unvollständig bleibt.
+
+import {
+  istAufgezeichneterLoginFehler,
+  istAufgezeichneteAuffaelligkeit,
+} from '@/lib/admin/security-event-taxonomy'
 
 export type Sicherheitsereignis = {
   type: string
@@ -32,9 +41,9 @@ export function fasseSicherheitslageZusammen(
   const erstes = ereignisse[0]
 
   return {
-    failed_logins: ereignisse.filter(e => e.type === 'auth_failed').length,
+    failed_logins: ereignisse.filter(e => istAufgezeichneterLoginFehler(e.type)).length,
     blocked_ips: sperren.length,
-    anomalies: ereignisse.filter(e => e.type.startsWith('anomaly')).length,
+    anomalies: ereignisse.filter(e => istAufgezeichneteAuffaelligkeit(e.type)).length,
     last_event: erstes ? { type: erstes.type, at: erstes.created_at } : null,
   }
 }
