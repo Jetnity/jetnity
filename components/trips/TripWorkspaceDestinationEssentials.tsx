@@ -47,6 +47,7 @@ function zieleSindEchtLeer(ziele: readonly DestinationEssentialZiel[]): boolean 
     ziele.length > 0 &&
     ziele.every(
       (ziel) =>
+        ziel.hatHinweise === false &&
         bereichIstEchtLeer(ziel.einreise) &&
         bereichIstEchtLeer(ziel.sicherheit) &&
         bereichIstEchtLeer(ziel.saison),
@@ -123,7 +124,10 @@ export default function TripWorkspaceDestinationEssentials({
 }: {
   essentials: DestinationEssentialsAbleitung
 }) {
-  const kompaktLeer = essentials.hatZiele && zieleSindEchtLeer(essentials.ziele)
+  const kompaktLeer =
+    essentials.hatZiele &&
+    essentials.hatHinweise === false &&
+    zieleSindEchtLeer(essentials.ziele)
 
   return (
     <section

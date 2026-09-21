@@ -1,8 +1,10 @@
 // lib/trips/destination-essentials-density-1.test.ts
 //
 // Presentation-only density regressions for VUX-5. Derivation stays in
-// destination-essentials.test.ts. Emptiness is decided from canonical
-// domain states plus details/links, not from hatHinweise or text matching.
+// destination-essentials.test.ts. Compact emptiness requires consistent
+// no-hints flags plus canonical keine_evidence domains with no details,
+// links or incompleteness. A positive hatHinweise flag vetoes the fast
+// path; flags alone never establish emptiness.
 
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -188,15 +190,16 @@ describe('Destination Essentials Density 1 — empty fast path', () => {
     assert.equal(zaehle(html, 'Rom · Italien'), 2)
   })
 
-  test('hatHinweise allein steuert den Kompaktpfad nicht', () => {
+  test('konsistent leere Flags und Domains bleiben kompakt', () => {
     const html = htmlAus(
       ableitung({
-        hatHinweise: true,
-        ziele: [ziel({ stageId: 'stage-fl', hatHinweise: true })],
+        hatHinweise: false,
+        ziele: [ziel({ stageId: 'stage-fl', hatHinweise: false })],
       }),
     )
     assert.match(html, /data-destination-essentials-dichte="kompakt"/)
-    assert.doesNotMatch(html, /Quellen und Details/)
+    assert.match(html, /data-destination-essentials-leerhinweis="ein"/)
+    assert.doesNotMatch(html, />Einreise</)
   })
 })
 
@@ -371,6 +374,50 @@ describe('Destination Essentials Density 1 — conservative full display', () =>
     )
     assert.match(html, /data-destination-essentials-dichte="voll"/)
     assert.match(html, />Sicherheit</)
+  })
+
+  test('positives Aggregat-hatHinweise bei leeren Domains fällt auf Vollanzeige zurück', () => {
+    const html = htmlAus(
+      ableitung({
+        hatHinweise: true,
+        ziele: [ziel({ stageId: 'stage-fl', hatHinweise: false })],
+      }),
+    )
+    assert.match(html, /data-destination-essentials-dichte="voll"/)
+    assert.match(html, />Einreise</)
+    assert.match(html, />Sicherheit</)
+    assert.match(html, />Reisezeit</)
+    assert.match(html, /Florenz · Italien/)
+    assert.doesNotMatch(html, /data-destination-essentials-leerhinweis/)
+    assert.doesNotMatch(html, /<ol/)
+  })
+
+  test('positives Etappen-hatHinweise bei leeren Domains fällt auf Vollanzeige zurück', () => {
+    const html = htmlAus(
+      ableitung({
+        hatHinweise: false,
+        ziele: [ziel({ stageId: 'stage-fl', hatHinweise: true })],
+      }),
+    )
+    assert.match(html, /data-destination-essentials-dichte="voll"/)
+    assert.match(html, />Einreise</)
+    assert.match(html, /Quellen und Details/)
+    assert.doesNotMatch(html, /data-destination-essentials-leerhinweis/)
+  })
+
+  test('positive Aggregat- und Etappen-hatHinweise bei leeren Domains fallen auf Vollanzeige zurück', () => {
+    const html = htmlAus(
+      ableitung({
+        hatHinweise: true,
+        ziele: [ziel({ stageId: 'stage-fl', hatHinweise: true })],
+      }),
+    )
+    assert.match(html, /data-destination-essentials-dichte="voll"/)
+    assert.match(html, />Einreise</)
+    assert.match(html, />Sicherheit</)
+    assert.match(html, />Reisezeit</)
+    assert.match(html, /Quellen und Details/)
+    assert.doesNotMatch(html, /data-destination-essentials-leerhinweis/)
   })
 
   test('gemischte Sicherheit/Einreise/Reisezeit behalten Quellen-Bedienung', () => {
