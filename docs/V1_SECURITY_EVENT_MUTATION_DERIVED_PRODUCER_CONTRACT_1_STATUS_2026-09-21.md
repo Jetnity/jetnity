@@ -7,7 +7,7 @@ Issue: #493
 Draft PR: #494  
 Branch: `test/v1-security-event-mutation-derived-producer-contract-1`  
 Dispatch / original canonical base: `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`  
-Integrated live main: `main@d99c7781eb098f303beab9c314fa116d0680dc98` (#502 after #497/#498; audit docs and proof files unchanged)  
+Integrated live main: `main@3e93e7c5a298ef4a82ba156cdbbb851d34650ca7` (#500 after #502/#497/#498; audit docs and proof files unchanged)  
 Reviewed exact head that required changes: `0d2a3a1f413b018c2d322424d33861dd916ed14a`  
 Binding review: Technical-Lead **5267095835**  
 Binding task: `docs/V1_SECURITY_EVENT_MUTATION_DERIVED_PRODUCER_CONTRACT_1_TASK_2026-09-21.md`  
@@ -36,7 +36,7 @@ Prove the accepted mutation-derived producer contract on a **local disposable Po
 - Real two-session concurrency: at C−1, one session held the quota row lock (`PgSleep`), the other waited on `Lock/transactionid`, then failed with `quota exceeded`. Final `used` = `tracked` = C.
 - Synthetic fixtures only: TEST-NET IPs, fixed UUIDs. No real actor data.
 - **F2 (review 5267095835):** `docs/ACTIVE_WORK_STATUS.md` restored to current `main` and removed from the #494 diff. Continuity for this writer stays in the slice STATUS/HANDOFF/SELF_REVIEW.
-- **Main integration:** merged `#498`, `#497`, then live `main@d99c7781` (#502). Hunter, reconciliation, and mobility-slice docs are unmodified. Security contract / local proof files were not changed for these integrates. #494 ownership remains the producer-contract files only.
+- **Main integration:** merged `#498`, `#497`, `#502`, then live `main@3e93e7c5` (#500). Incoming audit/runtime files are unmodified. Security contract / local proof files were not changed for these integrates. #494 ownership remains the producer-contract files only.
 
 ## 3. Changed files versus canonical base
 
@@ -80,10 +80,10 @@ Reported after freeze, in a PR comment:
 - `npm run build`
 - exact-head GitHub CI / Auth
 - exact-head Vercel Preview
-- merge-base / behind versus live `main@d99c7781` (must be 0)
+- merge-base / behind versus live `main@3e93e7c5` (must be 0)
 - review threads 0
 
-Dispatch base `4169c5b4` remains the historical start. Live main `#498`, `#497`, then `#502` is integrated; those files are not owned by this slice.
+Dispatch base `4169c5b4` remains the historical start. Live main `#498`, `#497`, `#502`, then `#500` is integrated; those files are not owned by this slice.
 
 ## 8. Residual risks
 

@@ -21,7 +21,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Draft PR | #494 |
 | Branch | `test/v1-security-event-mutation-derived-producer-contract-1` |
 | Dispatch / original canonical base | `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
-| Integrated live main | `main@d99c7781eb098f303beab9c314fa116d0680dc98` (#502 after #497/#498; proof files unchanged) |
+| Integrated live main | `main@3e93e7c5a298ef4a82ba156cdbbb851d34650ca7` (#500 after #502/#497/#498; proof files unchanged) |
 | Agent / session | Generation 1 / `bc-c0bfb7b9-1212-4121-b8d6-4f1bbf0d6a39` |
 | Required model | Cursor Grok 4.6 High Fast — confirmed (`originalModelName=cursor-grok-4.6-high-fast`) |
 
@@ -53,7 +53,7 @@ Last verified local run: **67/67 PASS** on PostgreSQL 16.15.
 
 ## 4. What a reviewer should verify first
 
-1. Merge-base equals live `main@d99c7781` and behind=0. #498/#497/#502 incoming files are unmodified. Dispatch base `4169c5b4` is historical. The security contract / local proof files were not edited for this integrate.
+1. Merge-base equals live `main@3e93e7c5` and behind=0. #498/#497/#502/#500 incoming files are unmodified. Dispatch base `4169c5b4` is historical. The security contract / local proof files were not edited for this integrate.
 2. Diff stays inside the allowed files. Zero files under `supabase/migrations/`. **Zero** `docs/ACTIVE_WORK_STATUS.md` hunks.
 3. Harness never imports `scripts/db/sql.mjs` and rejects remote overrides.
 4. Catalog proof: DEFINER, `search_path=""`, no EXECUTE for PUBLIC/anon/authenticated/service_role, trigger returns `trigger`, ROW not STATEMENT. Private schema/table/function ACLs closed; public shape classifier absent.

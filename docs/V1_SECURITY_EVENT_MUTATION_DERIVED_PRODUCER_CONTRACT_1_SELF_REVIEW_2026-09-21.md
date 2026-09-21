@@ -44,7 +44,7 @@ The fixture follows that current guidance. Training-memory-only semantics were n
 | Legacy row destruction | `login_failed` + IP fixture and privileged out-of-contract row survive cleanup. No type CHECK. | legacy + cleanup |
 | Accidental remote DB use | Script rejects `JETNITY_ALLOW_REMOTE_DB=1` and URL overrides; does not import `sql.mjs`; connects only via `sudo -u postgres psql` to a created/dropped local name. | source of harness |
 | Continuity-file scope (F2) | `docs/ACTIVE_WORK_STATUS.md` restored to current main; not in #494 diff. | `git diff origin/main -- docs/ACTIVE_WORK_STATUS.md` empty |
-| Main-drift integration | Live `#498`, `#497`, then `#502` merged; incoming files unchanged; contract / proof files not rewritten; no extra ownership. | merge-base `d99c7781`; those paths identical to `origin/main` |
+| Main-drift integration | Live `#498`, `#497`, `#502`, then `#500` merged; incoming files unchanged; contract / proof files not rewritten; no extra ownership. | merge-base `3e93e7c5`; those paths identical to `origin/main` |
 
 ## 2. Residual risks I would still challenge
 
