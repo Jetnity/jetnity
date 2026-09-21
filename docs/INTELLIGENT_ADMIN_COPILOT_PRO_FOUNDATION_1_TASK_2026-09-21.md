@@ -114,3 +114,11 @@ Freeze head after substantive completion. Final CI/Preview IDs in PR comment onl
 
 STOP FOR TECHNICAL-LEAD ARCHITECTURE / PRODUCT REVIEW.
 No Ready. No merge. No implementation or follow-up dispatch by Cursor.
+
+---
+
+## 9. Dated amendment — 21 September 2026 (Generation 1)
+
+Specification writer **Jetnity intelligent admin copilot pro foundation 1**, Generation 1, session `bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c`, model Cursor Grok 4.6 High Fast, executed this task without changing §§1–8.
+
+Delivered: source matrix, one System-Health Attention Analyst decision, complete undispatched runtime task, status, handoff, self-review. No runtime implementation. No follow-up dispatch. Head freeze and exact-head CI/Auth/Preview belong in the #510 PR comment.
