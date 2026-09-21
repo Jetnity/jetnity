@@ -32,9 +32,14 @@ Harness: `render-harness.ts`. Launcher: `scripts/v1-destination-essentials-densi
 
 Horizontal overflow: `overflowing: false` on document, section and shell for every captured case. Mixed `summary` height 44px (`meetsMinH11: true`). Keyboard: focus on `SUMMARY`, Enter opens `details`, official source `https://example.test/official` receives focus.
 
+## DE-R1 and recapture
+
+DE-R1 (positive `hatHinweise` veto) does **not** change the captured fixtures: empty-three / long-names / large-text already use `hatHinweise: false` at aggregate and stages; mixed already has material domains. Images were **not recaptured**. They remain bound to product tree `6f8cd923`.
+
 ## Limits
 
 - Before frames reconstruct the previous JSX path from this head; they are not a screenshot of seed `866fbce0` before the source change.
 - Compiled-product-CSS component evidence, not a branded authenticated Preview pixel match of a trip workspace.
 - No hardware, Safari, whole-site or E2E claim.
 - Not official-travel-advice validation.
+- No new visual of the contradictory-flag full path.
