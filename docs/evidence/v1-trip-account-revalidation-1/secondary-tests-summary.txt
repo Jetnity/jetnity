@@ -1,0 +1,6 @@
+    # Subtest: Paris → Rom → Paris bleibt drei Stages in Eingabereihenfolge
+    ok 2 - Paris → Rom → Paris bleibt drei Stages in Eingabereihenfolge
+# tests 187
+# pass 187
+# fail 0
+# duration_ms 756.566903
