@@ -71,4 +71,4 @@ Read first:
 3. Fresh no-signal mixed clock: `checkedAt=11:59:30.000Z`, `ageMs=30000`, `sourceCheckedAt=12:00:00.000Z`.
 4. Visible Beobachtet time/age with UTC label.
 5. Compiled-CSS captures vs the previous approximated harness; overflow measurements in the manifest.
-6. One main integration of #517 only; exclusive Admin ownership otherwise.
+6. Two authorized main integrations only (#517 then #516); exclusive Admin ownership otherwise. Reviewed runtime `1355fc78` is unchanged.
