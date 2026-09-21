@@ -233,3 +233,19 @@ Required:
 4. Persist the substantive docs, freeze the head, then report final exact-head CI/Auth/Preview in a **PR comment**. Do not add another docs commit solely to record predecessor green checks.
 5. No runtime/SQL, migration, grant, RLS, Auth, secret, Ready, merge, Producer 1 or follow-up.
 
+---
+
+## 15. Amendment — 21 September 2026 — Technical-Lead re-review R3/R4
+
+Review: `5266535944` on head `37abe3e15bd4fd3c37c741dc37ed500283384fb5`.  
+Same agent / generation / session / branch / PR. Model remains Cursor Grok 4.6 High Fast.
+
+Preserve F1/F2/R1 and the mutation-derived source direction. Correct only R3/R4 in the existing five-file package.
+
+Required:
+
+1. **R3:** `used` is currently retained tracked producer rows. Future cleanup must decrement/reconcile `used` under the same serialized quota lock and transaction as deletion of those rows. Rollback rolls both back. Legacy/privileged rows stay outside quota and must not be deleted to repair accounting. Drift or a missing quota row disables persistent producer writes until repaired/verified. Persistent activation stays closed until this coupling is implemented and tested. No invented period N.
+2. **R4:** Keep the AFTER row-level trigger. Each qualifying row reserves **exactly 1** under the same quota-row lock. A later row that exceeds C RAISEs; the whole multi-row statement rolls back all source rows, events and quota increments. Do not claim an upfront statement-wide `n` reservation and do not add a statement-level collector. Add future synthetic tests for bulk capacity boundary and rollback.
+3. Freeze the resulting head. Report exact-head CI/Auth/Preview in a **PR comment**. No extra evidence-only commit.
+4. No runtime/SQL, migration, grant, RLS, Auth, secret, Ready, merge, Producer Contract 1 or follow-up. Next gate after a clean frozen head is a full independent Guardian adversarial architecture review, not another automatic event classification.
+

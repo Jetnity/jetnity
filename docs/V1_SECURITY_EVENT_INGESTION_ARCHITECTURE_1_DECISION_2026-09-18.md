@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 – Binding Decision
 
 Stand: 21. September 2026  
-Status: **R1/R2 LIFECYCLE AND FAILURE SEMANTICS CORRECTED / F1–F2 PRESERVED / NOT A TECHNICAL-LEAD PASS / FINDING 5.2 INGESTION REMAINS OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **R3/R4 QUOTA LIFECYCLE AND ROW-LEVEL ADMISSION CORRECTED / F1–F2/R1 PRESERVED / NOT A TECHNICAL-LEAD PASS / FINDING 5.2 INGESTION REMAINS OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #486  
 Draft PR: #487  
@@ -9,17 +9,17 @@ Branch: `docs/v1-security-event-ingestion-architecture-1`
 Original canonical base: `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2`  
 Current integration base: `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc`  
 Binding task: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
-Task amendments: 21 September 2026 §13 (F1–F3) and §14 (R1/R2)  
+Task amendments: 21 September 2026 §13 (F1–F3), §14 (R1/R2) and §15 (R3/R4)  
 Source audit: #438 / merged PR #449 / finding 5.2  
 Presentation hygiene: merged PR #485  
-Prior TL review: CHANGES REQUIRED on `035486e0` (review `5265503350`) — F1/F2 later accepted at design level on `86540c7a`  
-Binding TL review: CHANGES REQUIRED on `86540c7a` (review `5265844197`) — R1/R2 only
+Prior TL reviews: `5265503350` on `035486e0`; `5265844197` on `86540c7a` (R1 accepted at design level)  
+Binding TL review: CHANGES REQUIRED on `37abe3e1` (review `5266535944`) — R3/R4 only
 
 Cursor-Agent: **Jetnity V1 security event ingestion architecture 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast**  
 Session: `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd`
 
-This document **replaces** the 18–21 September actor-JWT INSERT contract and the later open F3 failure/lifecycle choices. It is not a runtime implementation and does **not** close finding 5.2. Integration onto current main preserved a then-proposed draft; that preservation was **not** architectural acceptance. F1 and F2 remain the mutation-derived replacement accepted at design level on `86540c7a`. R1 and R2 below replace the remaining open choices.
+This document **replaces** the 18–21 September actor-JWT INSERT contract and the later open F3 failure/lifecycle choices. It is not a runtime implementation and does **not** close finding 5.2. Integration onto current main preserved a then-proposed draft; that preservation was **not** architectural acceptance. F1, F2 and R1 remain the mutation-derived / fail-closed replacement. R3 and R4 below close the remaining quota-lifecycle and row-level admission wording.
 
 ---
 
@@ -256,7 +256,12 @@ Unchanged minimum-data rule. Purpose of persistable rows: attribute **who change
 | Injected event failure | Neither committed | Required future test. |
 | Outer rollback | Pair disappears; quota released | Required future test. |
 | Zero affected source rows | No success event | Required future test. |
-| Two admissions at C−1 | Cannot commit C+1 tracked producer rows | Serialized quota, not COUNT-then-INSERT. Required future test. |
+| Two admissions at C−1 | Cannot commit C+1 tracked producer rows | Each qualifying row reserves **1** under the same locked quota row. Required future test. |
+| Multi-row statement that would exceed C | Whole statement rolls back | Later row RAISE undoes prior source rows, events and `used + 1` increments. Required future test. |
+| Cleanup of tracked producer rows | `used` decreases in the same xact | `used` is retained-row count, not lifetime admissions. Required future test. |
+| Cleanup rollback | Rows and `used` both restored | Same lock domain. Required future test. |
+| Drift / missing quota row | Persistent producer writes disabled | Until repaired and verified. |
+| Cleanup of legacy / privileged rows | Forbidden as a quota repair | Those rows are outside C. |
 | Login / MFA logging failure | Auth outcome unchanged | Those paths do not write. A denial must stay a denial. Telemetry loss ≠ complete coverage. |
 | Historical / test rows (`login_failed` + IP) | Keep | No table-wide type CHECK that forbids legacy types. No rewrite/delete of old rows. New producer emits only the two new types. Quota does not govern these rows. |
 | Unauthenticated flood | Fail | No anon write. |
@@ -282,25 +287,45 @@ These controls are independent. Satisfying one does not satisfy the others.
 | **B. Serialized concurrent admission** | Every in-scope producer write reserves capacity in the **same transaction** as the source mutation. See §8.1. | Not `SELECT count(*) …` then `INSERT`. Not “capability is rare, so volume is bounded”. |
 | **C. Retention / cleanup lifecycle** | A separately approved **time-bound** delete-older-than-N arrangement (period N is **not** invented here) plus verified technical controls. | Not implied by C. Not implied by “we will add a job later”. |
 
-**Persistent Development / Preview / Production activation stays closed** until (C) is explicitly approved **and** (A)+(B) are implemented and verified. A fixture cap used in a disposable-database test is a **test parameter**, not a production budget and not legal policy.
+**Persistent Development / Preview / Production activation stays closed** until (C) is explicitly approved, (A)+(B) are implemented and verified, **and** the §8.2 cleanup/`used` coupling is designed, implemented and tested. A fixture cap used in a disposable-database test is a **test parameter**, not a production budget and not legal policy.
 
-Missing, null, zero, negative or otherwise invalid cap / enablement configuration **disables the producer**: the trigger must RAISE on in-scope writes (fail-closed) and must not emit events. An unconfigured producer must not write.
+Missing, null, zero, negative or otherwise invalid cap / enablement configuration **disables the producer**: the trigger must RAISE on in-scope writes (fail-closed) and must not emit events. An unconfigured producer must not write. Drift or a missing quota row likewise **disables persistent producer writes** until repaired and verified.
 
-### 8.1 Serialized admission contract
+### 8.1 Serialized admission contract (R4 — one reservation per row)
 
-Trigger + function alone is **incomplete**. A later slice needs an additional narrow **quota object** in the same database:
+Trigger + function alone is **incomplete**. A later slice needs an additional narrow **quota object** in the same database.
 
-- one capacity row (or equivalent single-key ledger) for tracked producer rows, with `used`, `cap` and an explicit enable/valid flag;
-- reservation **only** via a single conditional update that takes the row lock until commit or rollback, for example `UPDATE … SET used = used + n WHERE used + n <= cap AND enabled AND cap > 0 RETURNING used`;
-- `n` is the number of derived events this statement will emit (one per affected in-scope row);
-- zero rows returned ⇒ RAISE ⇒ source mutation rolls back (R1);
-- two transactions that each observe C−1 cannot both commit C+1 tracked rows: the second UPDATE sees the first’s uncommitted `used` via the row lock ([transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html));
-- rollback / statement failure **releases** the reservation automatically (the UPDATE never commits);
+`used` means **currently retained tracked producer rows**, not lifetime admissions.
+
+Keep the chosen **AFTER row-level** trigger. Do **not** add a statement-level collector or transition-table reservation. A row trigger does not know statement cardinality in advance, so there is **no upfront statement-wide `n`**.
+
+Per qualifying in-scope row:
+
+- lock the single quota row in this transaction;
+- reserve **exactly 1**: `UPDATE … SET used = used + 1 WHERE used + 1 <= cap AND enabled AND cap > 0 RETURNING used`;
+- zero rows returned ⇒ **RAISE** ⇒ the firing statement and its transaction roll back (R1), which removes every earlier source row, derived event and `used + 1` from that statement;
+- two transactions that each observe C−1 cannot both commit C+1 tracked rows: the second UPDATE waits on the same row lock ([transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html));
+- rollback / statement failure **releases** uncommitted `+ 1` increments automatically;
 - retries are new transactions and must re-reserve; there is no leaked reservation after rollback;
-- bulk / multi-row statements reserve `n` under that same lock, or fail all;
-- do **not** implement or describe non-atomic COUNT-then-INSERT as a bound.
+- do **not** implement or describe non-atomic COUNT-then-INSERT as a bound;
+- do **not** claim an upfront bulk `n` reservation.
 
 Quota **governs** only trigger-emitted producer types. It does **not** promise bounds against privileged out-of-contract writers while baseline `service_role` ALL remains a disclosed residual. Legacy `login_failed` fixtures stay readable and are not rewritten to fit C.
+
+### 8.2 Cleanup ↔ quota lifecycle (R3)
+
+A later approved time-bound cleanup (period N is **not** invented here) must keep `used` equal to the count of **currently retained tracked producer rows**.
+
+Binding future contract:
+
+- delete only tracked producer rows (`admin_blocklist_add` / `admin_blocklist_remove` written by this trigger);
+- decrement / reconcile `used` **in the same serialized transaction and the same quota-row lock domain** as that deletion;
+- rollback rolls back **both** the deletion and the quota adjustment;
+- never count, delete or rewrite legacy / privileged out-of-contract rows merely to repair quota accounting;
+- if `used` and the retained tracked-row count drift, or the quota row is missing, **disable persistent producer writes** until repaired and verified;
+- persistent activation remains **closed** until this coupling is designed, implemented and tested.
+
+`used` is not a lifetime-admission counter. Cleaning retained rows without decreasing `used` would permanently disable an otherwise-under-cap producer and is rejected.
 
 This slice specifies the contract only. No quota table, trigger, cron or invented N is created here.
 
@@ -317,7 +342,7 @@ Why keep the table: readers and UI already exist.
 Minimal **future** additive change (describe only; not complete by trigger+function alone):
 
 1. Trigger + trigger function as in §3.3. **Not** `GRANT INSERT` to `authenticated`.
-2. The §8.1 quota object in the same transaction. Identify this as a required extra dependency.
+2. The §8.1 quota object in the same transaction, with `used` as retained tracked-row count and §8.2 cleanup coupling. Identify this as a required extra dependency.
 3. No INSERT policy for `authenticated`.
 4. Do **not** add a table CHECK that only allows the two new types (would break historical/test `login_failed` without a rewrite).
 5. Optional later: CHECK that `ip IS NULL` **for new producer rows** is enforced in the trigger, not by deleting old IP-bearing fixtures.
@@ -334,7 +359,7 @@ Standing Authorization #440 does not waive special gates.
 | Class | Items |
 | --- | --- |
 | **Ungated next engineering (after TL PASS on this decision)** | Repository / **local disposable-database** producer-contract work and synthetic tests only (§12). No persistent environment apply. No real actor data. Fixture cap is a test parameter. |
-| **Activation / retention gated** | Enabling the producer in any persistent Development, Preview or Production database; any time-bound cleanup job; privacy-notice text. A count cap **cannot** open this gate. |
+| **Activation / retention gated** | Enabling the producer in any persistent Development, Preview or Production database; any time-bound cleanup job; the §8.2 cleanup/`used` coupling; privacy-notice text. A count cap **cannot** open this gate. |
 | **Production-write gated** | Applying trigger/function/quota to Production; any Production event row; revoking `service_role` ALL. |
 | **Privileged-auth-writer gated** | service-role-only closed RPC for AAL2-complete login/MFA outcomes. |
 | **New provider / secret gated** | Management API, observability vendor, new env, paid log storage. |
@@ -359,7 +384,7 @@ Not relevant. No traveller credentials.
 ### Allowed files / areas (future slice)
 
 - Local / repository test harness and, if needed, a disposable-database migration used only by that harness (trigger + function + §8.1 quota object; no authenticated INSERT grant).
-- Synthetic tests for §7 including R1/R2 acceptance examples: injected event failure leaves neither source nor event; outer rollback drops a successful pair; zero affected rows emit no success event; two admissions at C−1 cannot commit C+1 tracked rows; rejected/rolled-back mutations leak no quota; invalid config disables writes; historical `login_failed` remains readable; same-JWT bypass / moderator forge / AAL1 / break-glass.
+- Synthetic tests for §7 including R1–R4 acceptance examples: injected event failure leaves neither source nor event; outer rollback drops a successful pair; zero affected rows emit no success event; two admissions at C−1 cannot commit C+1 tracked rows; a multi-row statement that would exceed C rolls back all source rows, events and per-row `+ 1` reservations; cleanup of tracked rows decreases `used` in the same xact; cleanup rollback restores both; rejected/rolled-back mutations leak no quota; invalid or drifted quota disables writes; historical `login_failed` remains readable and is not deleted to repair quota; same-JWT bypass / moderator forge / AAL1 / break-glass.
 - Slice-local TASK / STATUS / HANDOFF / SELF_REVIEW.
 
 ### Hard exclusions
@@ -380,7 +405,7 @@ Not relevant. No traveller credentials.
 
 ### Done when (future slice)
 
-- The R1/R2 acceptance examples pass on the disposable database.
+- The R1–R4 acceptance examples pass on the disposable database.
 - Direct authenticated INSERT of a forged blocklist event fails.
 - Coverage copy still says recorded ≠ real, and unobserved auth signals stay unnamed as recorded.
 - Persistent environments untouched.

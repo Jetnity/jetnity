@@ -5,8 +5,8 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #486  
 Draft PR: #487  
-Binding task amendments §13 and §14  
-TL reviews: `5265503350` on `035486e0`; `5265844197` on `86540c7a`
+Binding task amendments §13–§15  
+TL review: `5266535944` on `37abe3e1`
 
 This document argues against the correction. It cannot replace an independent Technical-Lead PASS.
 
@@ -16,59 +16,50 @@ This document argues against the correction. It cannot replace an independent Te
 
 | Attack | Result |
 | --- | --- |
-| Re-open actor-JWT INSERT / F1 | Rejected. F1 preserved. |
-| Weaken AAL2 to persist login/step-up | Rejected. F2 preserved. Unobserved. |
-| Leave fail-closed vs best-effort open | Rejected. R1 binds fail-closed for in-scope writes. |
-| Treat a count cap as retention or activation | Rejected. R2. |
-| COUNT-then-INSERT as a bound | Rejected. Serialized quota UPDATE required. |
-| Claim trigger+function alone is complete | Rejected. Quota object is an extra dependency. |
-| Implement the trigger / quota in this slice | Rejected. Docs only. |
-| Invent a legal retention period | Rejected. |
-| Persist another commit only to store CI SHAs | Rejected per `5265844197`. |
-| Ready / merge / start Producer 1 | Rejected. |
+| Re-open actor-JWT INSERT / weaken AAL2 | Rejected. F1/F2 preserved. |
+| Re-open fail-closed vs best-effort | Rejected. R1 preserved. |
+| Treat `used` as lifetime admissions | Rejected. R3: retained tracked-row count. |
+| Cleanup without decreasing `used` | Rejected. |
+| Decrement `used` without deleting, or vice versa, in different xacts | Rejected. Same lock domain. |
+| Delete legacy/`login_failed` to repair quota | Rejected. |
+| Upfront statement-wide `n` reservation | Rejected. R4: reserve 1 per row. |
+| Add a statement-level collector here | Rejected. |
+| Implement SQL in this slice | Rejected. Docs only. |
+| Persist another commit only to store CI SHAs | Rejected. |
+| Ready / merge / start Producer Contract 1 | Rejected. |
 
 ## 2. Residual risks
 
-- Fail-closed will, after a later activation, refuse some local blocklist writes when audit/quota fails. That availability cost is documented but not product-accepted beyond this contract.
-- Null-uid / `service_role` mutations remain unaudited by design. Operators can still confuse “no event” with “no change”.
-- A buggy quota UPDATE or missing row lock would re-introduce the C−1 race. Tests are specified, not run.
-- Trigger DEFINER remains privilege.
-- No PostgreSQL test of R1/R2 was run here.
+- Cleanup/`used` coupling can still be implemented wrongly (count vs ledger drift). Tests are specified, not run.
+- `service_role` writes remain outside quota.
+- Fail-closed plus a drifted quota will refuse in-scope blocklist writes after a later activation.
+- No PostgreSQL test of R3/R4 was run here.
 
 ## 3. Adversarial matrix — reasoning vs tests run
 
 | Case | Source reasoning | Test actually run this slice |
 | --- | --- | --- |
-| Same-JWT bypass | No INSERT grant ⇒ Data API fail | **None** (no DB) |
-| Moderator forges operator event | No `blocked_ips` write; no event INSERT | **None** |
-| AAL1 | `darf_betrieb_eingreifen()` false | **None** |
-| AAL2 operator mutation | Atomic derived row | **None** |
-| Break-glass | `adminWriteErlaubt` + RLS | **None** |
-| Foreign actor | `auth.uid()` in trigger | **None** |
-| Arbitrary JSON / supplied time | Function-built extra/now() | **None** |
-| Oversized payload | RAISE; source rolls back | **None** |
-| Injected event failure | Neither source nor event remains | **None** |
-| Outer rollback | Pair disappears; quota released | **None** |
-| Zero-row DELETE | No success event | **None** |
-| Two admissions at C−1 | Cannot commit C+1 tracked rows | **None** |
-| Invalid cap config | Producer disabled | **None** |
-| Historical `login_failed` | Outside quota; remains readable | **None** |
-| Login logging failure | Auth path does not write | **None** |
-
-TL synthetic evaluation on the **old** actor-JWT predicate is not a test of this replacement.
+| Same-JWT / moderator forge / AAL1 / break-glass | Unchanged F1/F2 | **None** |
+| In-scope fail-closed | R1 RAISE rolls back source+event | **None** |
+| Reserve 1 per row | R4 | **None** |
+| Multi-row over-cap | Whole statement rolls back | **None** |
+| Two admissions at C−1 | Row lock; cannot commit C+1 | **None** |
+| Cleanup decreases `used` | Same xact / lock | **None** |
+| Cleanup rollback | Rows and `used` restored | **None** |
+| Drift / missing quota | Persistent writes disabled | **None** |
+| Legacy rows used to repair quota | Forbidden | **None** |
 
 ## 4. Dispatch compliance
 
 | Requirement | Met? |
 | --- | --- |
 | Same session / branch / PR | Yes |
-| Preserve F1/F2; correct only R1/R2 | Yes |
+| Preserve F1/F2/R1; correct only R3/R4 | Yes |
 | No runtime / migration / privileged activation | Yes |
-| Writer 1 withdrawn; Producer Contract 1 not started | Yes |
-| No false prior-PASS / self-SHA as current PASS | Yes |
-| No extra persist-only-for-CI commit | Yes — CI for this head goes in a PR comment |
+| No false prior-PASS | Yes |
+| CI for this head in a PR comment, not a second persist | Yes after freeze |
 | Stop for TL review | Yes after freeze |
 
 ## 5. What remains
 
-Independent Technical-Lead re-review of the frozen R1/R2 head. Guardian event assessment `5759414802` is not that review. Agent self-review is not PASS.
+Independent Technical-Lead re-review of the frozen R3/R4 head, then a **full Guardian adversarial architecture review**. Event assessment `5759414802` is not that review. Agent self-review is not PASS.
