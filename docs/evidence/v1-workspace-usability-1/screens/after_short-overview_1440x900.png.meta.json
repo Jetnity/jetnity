@@ -1,0 +1,74 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_short-overview_1440x900.png",
+  "phase": "after",
+  "name": "short-overview_1440x900",
+  "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+  "capturedAt": "2026-09-21T17:46:19.470Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "sicht": {
+    "boxes": {
+      "titel": {
+        "x": 136,
+        "y": 305,
+        "width": 457.78125,
+        "height": 48
+      },
+      "gast": {
+        "x": 141,
+        "y": 178,
+        "width": 1100.40625,
+        "height": 20
+      },
+      "verwerfen": {
+        "x": 1141.765625,
+        "y": 450,
+        "width": 162.234375,
+        "height": 44
+      },
+      "uebersicht": {
+        "x": 104,
+        "y": 550,
+        "width": 1232,
+        "height": 28
+      },
+      "jetzt": {
+        "x": 121,
+        "y": 683,
+        "width": 1198,
+        "height": 24
+      },
+      "attention": {
+        "x": 121,
+        "y": 719,
+        "width": 1198,
+        "height": 66
+      },
+      "fluege": {
+        "x": 104,
+        "y": 1828.5,
+        "width": 1232,
+        "height": 68
+      }
+    },
+    "titelSichtbar": true,
+    "gastSichtbar": true,
+    "verwerfenSichtbar": true,
+    "uebersichtSichtbar": true,
+    "jetztSichtbar": true,
+    "attentionSichtbar": true,
+    "fluegeSichtbar": false,
+    "overflow": {
+      "html": 0,
+      "body": 0,
+      "scrollY": 0,
+      "scrollHeight": 3913
+    }
+  },
+  "state": "overview-top"
+}

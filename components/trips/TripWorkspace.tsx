@@ -224,6 +224,23 @@ export default function TripWorkspace({
   const detailFokusRef = React.useRef<HTMLButtonElement>(null)
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
   const vorherOffenRef = React.useRef(false)
+  const vorherKompaktRef = React.useRef(kompakt)
+  const detailAnkerRef = React.useRef<HTMLDivElement | null>(null)
+  const oeffnungsArbeitRef = React.useRef<{ rahmen: number; timeout: number } | null>(null)
+
+  const oeffnungsArbeitBeenden = () => {
+    const arbeit = oeffnungsArbeitRef.current
+    if (!arbeit) return
+    window.cancelAnimationFrame(arbeit.rahmen)
+    window.clearTimeout(arbeit.timeout)
+    oeffnungsArbeitRef.current = null
+  }
+
+  const scrollDetailInSicht = (el: HTMLElement | null) => {
+    if (!el) return
+    const oben = el.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top: Math.max(0, oben - 72), behavior: 'auto' })
+  }
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
@@ -242,16 +259,46 @@ export default function TripWorkspace({
     if (!kompakt) setAenderungBereit(true)
   }, [kompakt])
 
-  React.useEffect(() => {
-    if (detailOffen && !vorherOffenRef.current) {
-      const ziel = kompakt ? zurueckRef.current : detailFokusRef.current
-      ziel?.focus({ preventScroll: true })
-      if (!kompakt) ziel?.scrollIntoView({ block: 'start', inline: 'nearest' })
-    }
-    if (!detailOffen && vorherOffenRef.current) {
+  React.useLayoutEffect(() => {
+    const oeffnet = detailOffen && !vorherOffenRef.current
+    const schliesst = !detailOffen && vorherOffenRef.current
+    const sichtwechsel = detailOffen && vorherKompaktRef.current !== kompakt
+
+    if (schliesst) {
+      oeffnungsArbeitBeenden()
       letzterAusloeserRef.current?.focus?.()
     }
+
+    if (oeffnet || sichtwechsel) {
+      oeffnungsArbeitBeenden()
+      const fokus = kompakt ? zurueckRef.current : detailFokusRef.current
+      if (oeffnet) fokus?.focus({ preventScroll: true })
+      const ziel = kompakt ? detailAnkerRef.current : fokus
+      if (ziel) scrollDetailInSicht(ziel)
+      if (kompakt) {
+        const rahmen = window.requestAnimationFrame(() => {
+          if (detailAnkerRef.current) scrollDetailInSicht(detailAnkerRef.current)
+        })
+        const timeout = window.setTimeout(() => {
+          const heading = document.querySelector('[data-workspace-detail] h2')
+          if (heading instanceof HTMLElement) {
+            const rand = heading.getBoundingClientRect()
+            if (rand.top >= 80 && rand.bottom <= window.innerHeight - 8) return
+          }
+          const flaeche = document.querySelector('[data-arbeitsbereich="detail"]')
+          if (flaeche instanceof HTMLElement) {
+            flaeche.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
+          }
+        }, 0)
+        oeffnungsArbeitRef.current = { rahmen, timeout }
+      }
+    }
+
     vorherOffenRef.current = detailOffen
+    vorherKompaktRef.current = kompakt
+    return () => {
+      oeffnungsArbeitBeenden()
+    }
   }, [detailOffen, kompakt])
 
   const merkeAusloeser = () => {
@@ -418,8 +465,8 @@ export default function TripWorkspace({
   const sucheSichtbar = sucheIstOffen(bereinigt)
 
   return (
-    <main className="min-h-screen bg-surface-75 pb-20">
-      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
+    <main className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
+      <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
           className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-ink-800 transition hover:text-brand-800"
@@ -437,6 +484,15 @@ export default function TripWorkspace({
           uebersicht={uebersicht}
           kopfzeile={kopfzeile}
         />
+
+        {kompakt && detailOffen ? (
+          <div
+            ref={detailAnkerRef}
+            data-workspace-detail-anker="ein"
+            aria-hidden="true"
+            className="h-px scroll-mt-[calc(72px+env(safe-area-inset-top))]"
+          />
+        ) : null}
 
         <TripWorkspaceNavigation sichtbar={kompakt && detailOffen} onZurueck={schliessen} zurueckRef={zurueckRef} />
 
@@ -469,7 +525,11 @@ export default function TripWorkspace({
             />
           </FlaecheHuelle>
 
-          <FlaecheHuelle name="detail" verborgen={detailVerborgen} sichtbarKlasse="min-w-0">
+          <FlaecheHuelle
+            name="detail"
+            verborgen={detailVerborgen}
+            sichtbarKlasse="min-w-0 scroll-mt-[calc(72px+3.75rem)]"
+          >
             <div
               onKeyDown={(ereignis) => {
                 if (ereignis.key !== 'Escape' || !detailOffen) return

@@ -17,7 +17,7 @@ export default function TripWorkspaceNavigation({
   return (
     <nav
       aria-label="Reise"
-      className="sticky top-[calc(72px+env(safe-area-inset-top))] z-40 -mx-3 mt-4 border-y border-line-200 bg-surface-75/95 px-3 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6"
+      className="sticky top-[calc(72px+env(safe-area-inset-top))] z-40 -mx-3 mt-3 scroll-mt-[calc(72px+env(safe-area-inset-top))] border-y border-line-200 bg-surface-75/95 px-3 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6"
     >
       <button
         ref={zurueckRef}

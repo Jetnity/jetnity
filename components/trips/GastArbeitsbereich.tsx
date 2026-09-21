@@ -291,11 +291,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       ohneTag={reise.ohneTag}
       kopfzeile={
         <div className="grid gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="min-w-0 text-xs leading-5 text-white/65">
-              Ohne Konto lässt sich eine Reise planen. Verwirf diesen Entwurf, um mit einem anderen zu
-              beginnen.
-            </p>
+          <div className="flex justify-end">
             <button
               type="button"
               onClick={verwerfen}
@@ -316,7 +312,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         </div>
       }
       hinweis={
-        <p className="mt-5 flex items-start gap-3 rounded-2xl border border-line-200 bg-white px-4 py-3 text-sm leading-6 text-ink-800">
+        <p className="mt-3 flex items-start gap-2 rounded-xl border border-line-200 bg-white px-3 py-2 text-xs leading-5 text-ink-800">
           <CloudOff className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
           <span>
             Dieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und
