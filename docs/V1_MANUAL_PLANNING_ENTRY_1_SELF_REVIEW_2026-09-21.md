@@ -1,31 +1,27 @@
-# V1 Manual Planning Entry 1 — Adversarial self-review
+# V1 Manual Planning Entry 1 — Adversarial self-review (closure)
 
 Stand: 21. September 2026  
-Status: **AGENT SELF-REVIEW AFTER IMPLEMENTATION + EVIDENCE — NOT A TECHNICAL-LEAD PASS**
+Status: **AGENT SELF-REVIEW AFTER TL CLOSURE — NOT A TECHNICAL-LEAD PASS**
 
-## 1. Acceptance against #506 VUX-7 / task
+## 1. P3 overflow gap
 
-| Criterion | Author finding |
-| --- | --- |
-| Pointer visible on 360×800 and 390×844 at scrollY0 | Held. Idea heading remains on the first screen. |
-| Useful click/keyboard destination and focus | Held. `#manuell-planen` focused; Tab to `#feld-ziel`; heading visible below sticky chrome. |
-| Gate suppresses pointer and target | Held on disposable `jetnity:reise:v3` draft. Continue/account links intact. |
-| Prefill / auth / idea-first order unchanged | Held in source and query-prefill capture. Not live signed-in E2E. |
-| No submit / model / draft mutation | Held. Helper has no submit/network/storage. Audit recorded no write POSTs. |
-| Narrow actual-style before/after | Held with compiled Next CSS. Not a mock. |
-| No sibling-owned files | Held. |
+The previous handoff called the 13px 200% overflow pre-existing without a matched baseline capture. That gap is closed:
 
-## 2. Remaining risks
+- Actual compiled baseline `1103407b` and current `76414940` both measure pageOverflow **13**.
+- `#feld-budget` right/width are **byte-identical**.
+- New wrappers did not change the overflowing geometry.
+- No out-of-scope planner rewrite.
 
-- 200% text residual overflow is the existing “Ungefähres Gesamtbudget (optional)” label inside `TripPlanner`. This slice must not edit that file.
-- First compositor frame / reduced-motion smoothness was not measured as a filmstrip; reduced-motion click did reach scrollY 745.
-- Desktop 1024×768 still shows both planners; the pointer is extra, not a replacement.
-- Live Preview/CI of the freeze SHA are recorded in the PR comment, not invented here.
+## 2. Integration
 
-## 3. Scope held
+One merge of authorized `e713d682`. No conflicts. No edit of `attention.ts` or planner internals. Planen page/helper/test have 0 diff versus `76414940`.
 
-No homepage/hero, no tab redesign, no duplicate form, no attention.ts, no essentials-density component, no Ready, no merge, no follow-up.
+## 3. Remaining risks
+
+- The 13px residual remains on both trees. TL may accept it as existing residual.
+- Skip-link `sr-only` left overflow is also pre-existing on both trees.
+- Post-merge Preview/CI of the freeze SHA are recorded in the PR comment.
 
 ## 4. Verdict
 
-Author self-review: the bounded discoverability pointer matches the dispatched VUX-7 scope. **Not TL PASS.**
+Author self-review: the requested comparison and the one authorized main integration are complete. **Not TL PASS.**

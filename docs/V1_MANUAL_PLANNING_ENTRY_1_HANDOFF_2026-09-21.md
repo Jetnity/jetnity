@@ -1,44 +1,36 @@
 # V1 Manual Planning Entry 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **FROZEN FOR INDEPENDENT TL REVIEW / NOT TL PASS / NOT READY / NOT MERGED**
+Status: **CLOSURE FROZEN / NOT TL PASS / NOT READY / NOT MERGED**
 
 ## Owner
 
 **Jetnity V1 manual planning entry 1**, Generation 1  
-Session `bc-55b70652-7849-4613-9dd2-cbcd8e8921fe`  
+Session `bc-55b70652-7849-4613-9dd2-cbcd8e8921fe` (same session as implementation)  
 Model Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`)  
-Required model was available in cloud-agent `run-info` (`originalModelName`). No Auto substitution.
+No Auto. Immediate review fixes reuse this session.
 
-Immediate review fixes reuse this exact session.
+## Closure delivered
+
+1. Matched 200% comparison: original baseline `1103407b` (worktree, compiled Next on :3001) vs product `76414940` (compiled Next on :3000).
+2. Page overflow 13px on both; `#feld-budget` geometry identical; `worsened: false`.
+3. No planner-internal or shared-control edit.
+4. One authorized merge of `main@e713d682` (`214e6ac0`). #520 files arrived read-only.
 
 ## What a successor must know
 
-1. Pointer and target are page composition plus `components/trips/PlanenEinstiegNavigation.tsx`.
-2. `Reiseidee.tsx`, `TripPlanner.tsx`, `PlanenCreateGate.tsx`, `lib/trips/attention.ts` and Destination Essentials remain read-only.
-3. `#520` then this PR then `#522` is TL integration order, not an implementation dependency.
-4. Do not rebase unless TL authorizes one integration boundary.
-5. Closed #516/#517/#518 stay closed.
-6. Ready/Merge remain Technical-Lead only.
-
-## Changed paths
-
-- `app/(public)/planen/page.tsx`
-- `components/trips/PlanenEinstiegNavigation.tsx` (new)
-- `lib/trips/manual-planning-entry-1.test.ts` (new)
-- `scripts/v1-manual-planning-entry-1-audit.mjs` (new)
-- own STATUS / HANDOFF / SELF_REVIEW
-- `docs/evidence/v1-manual-planning-entry-1/`
+- Pointer/target ownership is unchanged. `#520` attention files are not ours.
+- Old first-screen / click / keyboard / gate / prefill evidence remains valid: `/planen` source is identical to `76414940`.
+- Compare-200 is the only new visual proof required by the review.
+- Ready/Merge remain Technical-Lead only.
 
 ## Honest limits
 
-- Local Chromium/Playwright, not hardware or Safari.
-- No live authenticated account. Signed-in rendering is not claimed from a fixture.
-- 200% text used `html { font-size: 32px }`, not OS text-only zoom.
-- Existing TripPlanner budget label overflows ~13px at that 200% text size. Planner internals are out of ownership.
-- Next.js dev portal was hidden at screenshot time; it is not product UI.
-- After-capture `workingTree` was dirty only for untracked evidence files.
+- Local Chromium/Playwright; `html { font-size: 32px }`, not OS text-only zoom or Safari.
+- Skip-to-content `sr-only` link still reports a left overflow of 14px on both trees (pre-existing skip-link pattern).
+- No live authenticated account. No general recapture after merge.
+- Compare-200 `productTree` at capture listed HEAD `293416bb` dirty only for the audit-script edit that added the comparison mode.
 
 ## Next owner
 
-Independent Technical-Lead code and visual/interaction review of the freeze SHA. No follow-up slice from this writer.
+Independent Technical-Lead review of the closure freeze SHA. No follow-up slice from this writer.

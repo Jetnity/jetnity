@@ -1,11 +1,11 @@
 # V1 Manual Planning Entry 1 — Status
 
 Stand: 21. September 2026  
-Status: **FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
+Status: **CLOSURE FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## Arbeitsblock / Ziel
 
-Accepted #506 VUX-7: compact visible in-page pointer to the existing manual planner on `/planen`. Idea-first order and the existing guest-create gate stay in force. No model/provider invocation, form duplication, storage write or homepage change.
+Same-session bounded closure of the TL review on `293416bb`: matched original-baseline vs current 200% overflow comparison, plus one authorized integration of `main@e713d682`.
 
 ## Branch / PR / heads
 
@@ -14,48 +14,44 @@ Accepted #506 VUX-7: compact visible in-page pointer to the existing manual plan
 | Branch | `fix/v1-manual-planning-entry-1` |
 | Issue | #523 |
 | Draft PR | #524 |
-| Assigned / live `main` | `1103407ba2a9e5fa76f4a8e588ab210934b955e3` |
-| Task seed | `60249211f4153d7d93e8db5394447d6ee3205283` |
-| Product tree for after-evidence | **`764149404b6b234752265b00d301f1db90e8cc22`** |
+| Assigned original baseline | `1103407ba2a9e5fa76f4a8e588ab210934b955e3` |
+| Authorized integrated main | **`e713d68217d470306a114746d1e5816054a6cb4e`** (#520) |
+| Merge commit | `214e6ac022eb316bfa30d7f016d33a982190fbd3` |
+| Product tree for after-evidence | `764149404b6b234752265b00d301f1db90e8cc22` (0 file diff vs merge for page/helper/test) |
+| Compare-200 current SHA | `76414940` vs baseline `1103407b` |
 | Agent | **Jetnity V1 manual planning entry 1**, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto |
-| Session | `bc-55b70652-7849-4613-9dd2-cbcd8e8921fe` |
-| Session name | V1 manual planning entry pointer (cloud-agent `run-info`; no separate UI rename claimed) |
-| Ahead / behind live `main` | 4 / 0 at product SHA `76414940` |
+| Session | `bc-55b70652-7849-4613-9dd2-cbcd8e8921fe` (reused; no new agent) |
 
-Exact freeze SHA of the docs/evidence commit belongs in the freeze PR comment. After-evidence JSON records product `76414940` with `workingTree: dirty` only because after-evidence files were still untracked at capture time. No product file was dirty.
+Exact freeze SHA of this docs commit belongs in the PR comment.
 
-## Live-main drift
+## TL P3 — 200% overflow comparison
 
-Fetched `origin/main` at freeze: **`1103407b`**. Matches the assigned baseline. A stale local snapshot earlier showed `19a91a25`; live GitHub `main` is `1103407b`. No rebase. No sibling merge. TL integration order remains #520 → this PR → #522.
+Compiled-style match at 390×844, `html { font-size: 32px }`, scroll to `#feld-budget`:
 
-## Bereits umgesetzt
+| | Baseline `1103407b` | Current `76414940` | Delta |
+| --- | --- | --- | --- |
+| clientWidth | 390 | 390 | 0 |
+| scrollWidth | 403 | 403 | 0 |
+| pageOverflow | **13** | **13** | **0** |
+| `#feld-budget` left/right/width | 60 / 389.921875 / 329.921875 | 60 / 389.921875 / 329.921875 | 0 |
+| budget label right/width | 389.921875 / 329.921875 | 389.921875 / 329.921875 | 0 |
 
-- Compact pointer “Lieber selbst ausfüllen? **Schritt für Schritt planen**” above `Reiseidee`, still inside `PlanenCreateGate`.
-- Accessible target `#manuell-planen` wraps existing `TripPlanner`. Planner/gate internals remain read-only.
-- Helper owns only focus, `scrollIntoView` via `scrollVerhalten`, and hash `replaceState`.
-- Focused tests plus Playwright audit with compiled product CSS.
+`worsened: false`. Residual exists on the original baseline with the same overflowing page width. No planner-internal edit. Evidence: `docs/evidence/v1-manual-planning-entry-1/audit-compare-200.json`.
 
-## Evidence (author-run, not TL PASS)
+## Live-main integration
+
+TL authorized one merge of `e713d682`. Ort merge, **no conflicts**. Incoming files were #520 attention/docs/evidence only. This writer did not edit `lib/trips/attention.ts`. No sibling branch merge. `/planen` composition unchanged vs `76414940`.
+
+## Author gates after merge (not TL PASS)
 
 | Check | Result |
 | --- | --- |
-| 360×800 and 390×844 scrollY0 | Pointer visible; idea heading still on first screen |
-| Click / keyboard | Target `#manuell-planen` focused; Tab enters `#feld-ziel`; scrollY 745; heading not under sticky chrome |
-| Synthetic active-guest gate | Pointer, target and both forms suppressed; continue / register / login remain |
-| Query prefill | `idee=Sieben Tage Lissabon`, `ziel=Lissabon` unchanged |
-| No submit / draft mutation | localStorage unchanged; no non-Next write requests |
-| 200% text | Pointer does not overflow; residual 13px is existing TripPlanner budget label |
-| `npm test` | 3613 / 3613 PASS |
+| Focused manual-entry / create-entry / mobile-a11y | 49 / 49 PASS |
+| `npm test` | 3627 / 3627 PASS |
 | typecheck / lint / hygiene | PASS |
 | `npm run build` | PASS (local `.env` warning only) |
 
-## Sicherheit / Kosten
-
-- No secrets, paid provider/model, DB/Auth/RLS, Production setting or new dependency.
-- Synthetic guest storage only. Intercepted provider/model/search routes labelled unavailable.
-- Traveller credentials were not collected; this slice is not traveller-context-relevant.
-
 ## Next step
 
-**ChatGPT / Technical Lead** independent exact-head review of the freeze SHA. Cursor does not Ready, merge, or start a follow-up.
+**ChatGPT / Technical Lead** independent exact-head review of the closure freeze SHA. Cursor does not Ready, merge, or start a follow-up.
