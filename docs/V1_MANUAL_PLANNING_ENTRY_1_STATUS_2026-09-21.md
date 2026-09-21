@@ -1,7 +1,7 @@
 # V1 Manual Planning Entry 1 — Status
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTATION ON BRANCH / DRAFT / NOT READY / NOT MERGED / AUTHOR WORK IN PROGRESS**
+Status: **FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## Arbeitsblock / Ziel
 
@@ -14,38 +14,48 @@ Accepted #506 VUX-7: compact visible in-page pointer to the existing manual plan
 | Branch | `fix/v1-manual-planning-entry-1` |
 | Issue | #523 |
 | Draft PR | #524 |
-| Assigned baseline | `main@1103407ba2a9e5fa76f4a8e588ab210934b955e3` |
+| Assigned / live `main` | `1103407ba2a9e5fa76f4a8e588ab210934b955e3` |
 | Task seed | `60249211f4153d7d93e8db5394447d6ee3205283` |
+| Product tree for after-evidence | **`764149404b6b234752265b00d301f1db90e8cc22`** |
 | Agent | **Jetnity V1 manual planning entry 1**, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto |
 | Session | `bc-55b70652-7849-4613-9dd2-cbcd8e8921fe` |
-| Session name | V1 manual planning entry pointer (cloud-agent metadata; no separate UI rename claimed) |
+| Session name | V1 manual planning entry pointer (cloud-agent `run-info`; no separate UI rename claimed) |
+| Ahead / behind live `main` | 4 / 0 at product SHA `76414940` |
 
-Exact freeze SHA belongs in the later freeze PR comment. Mutable heads below are observation pins.
+Exact freeze SHA of the docs/evidence commit belongs in the freeze PR comment. After-evidence JSON records product `76414940` with `workingTree: dirty` only because after-evidence files were still untracked at capture time. No product file was dirty.
+
+## Live-main drift
+
+Fetched `origin/main` at freeze: **`1103407b`**. Matches the assigned baseline. A stale local snapshot earlier showed `19a91a25`; live GitHub `main` is `1103407b`. No rebase. No sibling merge. TL integration order remains #520 → this PR → #522.
 
 ## Bereits umgesetzt
 
-- Compact pointer `Schritt für Schritt planen` rendered above `Reiseidee`, still inside `PlanenCreateGate`.
-- Accessible target `#manuell-planen` wraps the existing `TripPlanner` without editing planner internals.
-- Navigation helper owns only focus/scroll/hash; reduced motion uses `scrollVerhalten`.
-- Focused tests for helper behavior and page composition.
-- Playwright audit harness for before/after phone and desktop captures.
+- Compact pointer “Lieber selbst ausfüllen? **Schritt für Schritt planen**” above `Reiseidee`, still inside `PlanenCreateGate`.
+- Accessible target `#manuell-planen` wraps existing `TripPlanner`. Planner/gate internals remain read-only.
+- Helper owns only focus, `scrollIntoView` via `scrollVerhalten`, and hash `replaceState`.
+- Focused tests plus Playwright audit with compiled product CSS.
 
-## Gerade offen
+## Evidence (author-run, not TL PASS)
 
-- After-phase browser evidence (click/keyboard/gate/prefill/no-submit/reflow).
-- Full repository gates (typecheck/lint/test/hygiene/build).
-- Exact-head CI/Auth/Preview receipts and one freeze.
-
-## Observed main drift at implementation start
-
-Local `origin/main` was observed at `19a91a2594127eb2b6104b68da69786194e13865` (Close V1 Visual UX and Device Audit 1, #506). This writer did **not** rebase or merge. TL integration order remains #520 → this PR → #522.
+| Check | Result |
+| --- | --- |
+| 360×800 and 390×844 scrollY0 | Pointer visible; idea heading still on first screen |
+| Click / keyboard | Target `#manuell-planen` focused; Tab enters `#feld-ziel`; scrollY 745; heading not under sticky chrome |
+| Synthetic active-guest gate | Pointer, target and both forms suppressed; continue / register / login remain |
+| Query prefill | `idee=Sieben Tage Lissabon`, `ziel=Lissabon` unchanged |
+| No submit / draft mutation | localStorage unchanged; no non-Next write requests |
+| 200% text | Pointer does not overflow; residual 13px is existing TripPlanner budget label |
+| `npm test` | 3613 / 3613 PASS |
+| typecheck / lint / hygiene | PASS |
+| `npm run build` | PASS (local `.env` warning only) |
 
 ## Sicherheit / Kosten
 
 - No secrets, paid provider/model, DB/Auth/RLS, Production setting or new dependency.
-- Browser evidence uses disposable synthetic guest storage and intercepted routes only.
+- Synthetic guest storage only. Intercepted provider/model/search routes labelled unavailable.
+- Traveller credentials were not collected; this slice is not traveller-context-relevant.
 
 ## Next step
 
-Capture after-phase compiled-product evidence, run required gates, then one freeze for independent Technical-Lead review. Cursor does not Ready, merge, or start a follow-up.
+**ChatGPT / Technical Lead** independent exact-head review of the freeze SHA. Cursor does not Ready, merge, or start a follow-up.

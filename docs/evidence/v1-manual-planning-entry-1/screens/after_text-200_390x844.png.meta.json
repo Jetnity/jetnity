@@ -1,0 +1,112 @@
+{
+  "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png",
+  "phase": "after",
+  "name": "text-200_390x844",
+  "sha": "764149404b6b234752265b00d301f1db90e8cc22",
+  "productTree": {
+    "head": "764149404b6b234752265b00d301f1db90e8cc22",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? docs/evidence/v1-manual-planning-entry-1/audit-after.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png.meta.json"
+    ]
+  },
+  "capturedAt": "2026-09-21T18:52:02.941Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/planen",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "200-percent-text-reflow",
+  "sicht": {
+    "boxes": {
+      "zeiger": {
+        "x": 32,
+        "y": 201,
+        "width": 347.859375,
+        "height": 88
+      },
+      "idee": {
+        "x": 73,
+        "y": 466,
+        "width": 267.90625,
+        "height": 288
+      },
+      "manuell": {
+        "x": 73,
+        "y": 2839,
+        "width": 267.90625,
+        "height": 192
+      },
+      "ziel": {
+        "x": 32,
+        "y": 2686,
+        "width": 349.90625,
+        "height": 4727
+      },
+      "gate": null
+    },
+    "zeigerVorhanden": true,
+    "zielVorhanden": true,
+    "ideeVorhanden": true,
+    "manuellVorhanden": true,
+    "gateVorhanden": false,
+    "zeigerSichtbar": true,
+    "ideeSichtbar": true,
+    "manuellSichtbar": false,
+    "overflow": {
+      "html": 13,
+      "body": 13,
+      "scrollY": 0,
+      "scrollHeight": 9318
+    },
+    "activeElement": {
+      "tag": "body",
+      "id": null,
+      "name": null,
+      "text": "Zum Inhalt\nJetnity\n\nLieber selbst ausfüllen? Schritt für Schritt planen\n\nPrivate"
+    }
+  },
+  "overflowQuellen": [
+    {
+      "id": null,
+      "text": "Ungefähres Gesamtbudget(optional)",
+      "overflow": 12.921875
+    },
+    {
+      "id": null,
+      "text": "(optional)",
+      "overflow": 12.921875
+    },
+    {
+      "id": null,
+      "text": "",
+      "overflow": 12.921875
+    },
+    {
+      "id": "feld-budget",
+      "text": "",
+      "overflow": 12.921875
+    }
+  ],
+  "zeigerOverflow": -10.140625
+}
