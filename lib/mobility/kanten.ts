@@ -7,6 +7,7 @@
 // Fehlende oder mehrdeutige Graphdaten bleiben unbestimmt.
 // Airport-Change und Connection Duration liegen in `lib/route`;
 // diese Datei rät sie nicht aus Flugtiteln.
+// Etappen folgen kanonischer `position`, nicht der Array-Reihenfolge.
 // Frei von React, Next und Providern.
 
 import { istGebucht } from '@/lib/trips/buchung'
@@ -71,6 +72,12 @@ function originOrt(reise: Trip): { name: string; placeId: string | null } | null
 
 function etappenOrt(etappe: TripStage): { name: string; placeId: string | null } {
   return { name: etappe.name.trim(), placeId: etappe.placeId }
+}
+
+function etappenSortieren(links: TripStage, rechts: TripStage): number {
+  const position = links.position - rechts.position
+  if (position !== 0) return position
+  return links.id.localeCompare(rechts.id)
 }
 
 function transferOrt(punkt: TripItem, seite: 'origin' | 'destination'): {
@@ -171,7 +178,9 @@ function benoetigteKanten(reise: Trip): {
   roh: Omit<Bewegungskante, 'status' | 'flightItem' | 'mobilityItem' | 'durationMinutes'>[]
 } {
   const origin = originOrt(reise)
-  const etappen = reise.stages.filter((etappe) => etappe.name.trim().length > 0)
+  const etappen = [...reise.stages]
+    .sort(etappenSortieren)
+    .filter((etappe) => etappe.name.trim().length > 0)
   if (!origin || etappen.length === 0) return { bestimmbar: false, roh: [] }
 
   const roh: Omit<Bewegungskante, 'status' | 'flightItem' | 'mobilityItem' | 'durationMinutes'>[] = []
