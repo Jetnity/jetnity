@@ -1,0 +1,43 @@
+{
+  "file": "/workspace/docs/evidence/v1-manual-planner-text-reflow-1/screens/before_text-200_360x800_initial.png",
+  "phase": "before",
+  "name": "text-200_360x800_initial",
+  "sha": "4278cd047b907b218fe64c122c4eed7dd61e0a7e",
+  "productTree": {
+    "head": "4278cd047b907b218fe64c122c4eed7dd61e0a7e",
+    "workingTree": "clean",
+    "dirtyPaths": [],
+    "sourceNote": "unmodified baseline 4278cd047b907b218fe64c122c4eed7dd61e0a7e compiled CSS"
+  },
+  "capturedAt": "2026-09-21T20:26:32.111Z",
+  "browser": "chromium/140.0.7339.16",
+  "route": "http://localhost:3001/planen",
+  "viewport": {
+    "width": 360,
+    "height": 800
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable + html-font-size-32px",
+  "actionSequence": [
+    "goto /planen",
+    "set html font-size 32px",
+    "measure pointer at scrollY0",
+    "reset scrollX"
+  ],
+  "layout": {
+    "page": {
+      "clientWidth": 360,
+      "scrollWidth": 403,
+      "overflow": 43,
+      "scrollX": 0,
+      "scrollY": 0
+    },
+    "pointer": {
+      "left": 32,
+      "right": 379.859375,
+      "width": 347.859375,
+      "height": 88,
+      "text": "Schritt für Schritt planen"
+    },
+    "htmlFontSize": "32px"
+  }
+}

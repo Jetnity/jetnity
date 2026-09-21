@@ -97,6 +97,17 @@ const fieldClass =
 const fieldIconClass =
   'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700'
 
+/**
+ * Oversized-text reflow: Feld already has `min-w-0`, but its implicit grid
+ * column still sizes to the label min-content. The optional marker is an
+ * adjacent inline span without a wrap opportunity, so
+ * `Gesamtbudget(optional)` stays one 330px sequence and overflows a 268px
+ * track. Constrain the column and allow the label/marker to wrap. Do not
+ * clip, shrink text, or hide the marker.
+ */
+const feldReflowClass =
+  'grid-cols-[minmax(0,1fr)] [&_label]:min-w-0 [&_label]:max-w-full [&_label]:break-words [&_label>span]:inline-block'
+
 function heuteIso() {
   const jetzt = new Date()
   const lokal = new Date(jetzt.getTime() - jetzt.getTimezoneOffset() * 60_000)
@@ -340,11 +351,11 @@ export default function TripPlanner({
   }
 
   return (
-    <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
         noValidate
         onSubmit={absenden}
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
+        className="min-w-0 max-w-full rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
         <div className="mb-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
@@ -359,8 +370,14 @@ export default function TripPlanner({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Feld id="feld-ziel" label="Reiseziel" fehler={feldfehler.destination} icon={<MapPin className={fieldIconClass} aria-hidden="true" />}>
+        <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
+          <Feld
+            id="feld-ziel"
+            label="Reiseziel"
+            className={feldReflowClass}
+            fehler={feldfehler.destination}
+            icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
+          >
             <OrtSuche
               rolle="ziel"
               variante="field"
@@ -382,7 +399,13 @@ export default function TripPlanner({
             />
           </Feld>
 
-          <Feld id="feld-abreiseort" label="Abreise ab" fehler={feldfehler.origin} icon={<MapPin className={fieldIconClass} aria-hidden="true" />}>
+          <Feld
+            id="feld-abreiseort"
+            label="Abreise ab"
+            className={feldReflowClass}
+            fehler={feldfehler.origin}
+            icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
+          >
             <OrtSuche
               rolle="abreise"
               variante="field"
@@ -414,6 +437,7 @@ export default function TripPlanner({
                     id={`feld-ziel-${ziel.key}`}
                     label={`Weiteres Ziel ${nummer}`}
                     optional
+                    className={feldReflowClass}
                     fehler={fehler}
                     icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
                   >
@@ -473,7 +497,13 @@ export default function TripPlanner({
             </div>
           </div>
 
-          <Feld id="feld-start" label="Abreise" fehler={feldfehler.startDate} icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}>
+          <Feld
+            id="feld-start"
+            label="Abreise"
+            className={feldReflowClass}
+            fehler={feldfehler.startDate}
+            icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}
+          >
             <input
               id="feld-start"
               ref={(el) => {
@@ -499,7 +529,13 @@ export default function TripPlanner({
             />
           </Feld>
 
-          <Feld id="feld-ende" label="Rückreise" fehler={feldfehler.endDate} icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}>
+          <Feld
+            id="feld-ende"
+            label="Rückreise"
+            className={feldReflowClass}
+            fehler={feldfehler.endDate}
+            icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}
+          >
             <input
               id="feld-ende"
               ref={(el) => {
@@ -519,7 +555,13 @@ export default function TripPlanner({
             />
           </Feld>
 
-          <Feld id="feld-reisende" label="Reisende" fehler={feldfehler.travellers} icon={<Users className={fieldIconClass} aria-hidden="true" />}>
+          <Feld
+            id="feld-reisende"
+            label="Reisende"
+            className={feldReflowClass}
+            fehler={feldfehler.travellers}
+            icon={<Users className={fieldIconClass} aria-hidden="true" />}
+          >
             <input
               id="feld-reisende"
               ref={(el) => {
@@ -550,6 +592,7 @@ export default function TripPlanner({
             id="feld-budget"
             label="Ungefähres Gesamtbudget"
             optional
+            className={feldReflowClass}
             fehler={feldfehler.budget}
             icon={<WalletCards className={fieldIconClass} aria-hidden="true" />}
           >

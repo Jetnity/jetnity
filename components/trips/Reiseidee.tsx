@@ -195,10 +195,10 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 max-w-full gap-6">
       <form
         onSubmit={erzeugen}
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
+        className="min-w-0 max-w-full rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
         <span className="inline-flex items-center gap-2 rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
           <Sparkles className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
