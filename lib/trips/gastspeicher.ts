@@ -303,7 +303,7 @@ export function aktiveGastreiseVorpruefen(): AktiveGastreiseVorpruefung {
  * Nur lesen. Kein Loader, keine Migration, kein Schreiben. Ungültige oder
  * unlesbare Bytes bleiben unberührt.
  */
-export function aktiveGastreiseKennungLesen(): string | null {
+function aktiveGastreiseKennungLesen(): string | null {
   if (aktiveGastreiseVorpruefen().art !== 'gueltig') return null
   return reiseLesen(rohLesen(SCHLUESSEL_AKTIV))?.id ?? null
 }

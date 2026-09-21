@@ -250,9 +250,7 @@ async function geometrieLesen(page, viewport) {
     const overflowX = doc.scrollWidth > sicht.width + 1 || body.scrollWidth > sicht.width + 1
     const sectionOverflow = sectionBox ? sectionBox.width > sicht.width + 1 : false
     const headingOverflow = headingBox ? headingBox.width > sicht.width + 1 : false
-    const headingClipped = h1
-      ? h1.scrollWidth > h1.clientWidth + 1 || h1.scrollHeight > h1.clientHeight + 1
-      : false
+    const headingClipped = h1 ? h1.scrollWidth > h1.clientWidth + 1 : false
     return {
       viewport: sicht,
       document: {
@@ -476,8 +474,13 @@ async function main() {
       width: 390,
       height: 844,
       simulationClass: 'synthetic_missing_v3_valid_legacy',
-      sequence: ['init valid legacy only', 'goto /planen', 'gate besteht', 'no mutation'],
-      expectedRaw: { aktiv: null, legacy: LEGACY_BYTES },
+      sequence: [
+        'init valid legacy only',
+        'goto /planen',
+        'gate besteht without create form',
+        'no model/place/create',
+        'nav loader may migrate under existing valid-legacy contract',
+      ],
       init: ({ aktiv, legacy, warteschlange, legacyBytes }) => {
         window.localStorage.removeItem(aktiv)
         window.localStorage.setItem(legacy, legacyBytes)

@@ -23,4 +23,6 @@ Own docs / evidence:
 - `docs/V1_GUEST_ACTIVE_DRAFT_PRESERVATION_1_{TASK,STATUS,HANDOFF,SELF_REVIEW,DECISION}_2026-09-21.md`
 - `docs/evidence/v1-guest-active-draft-preservation-1/**`
 
-Not touched: types/trips, schema/mappers/readiness/credentials, `uebernahme.ts`, `GastreiseBruecke.tsx`, account graph (#531), Auth, SQL, package/lockfile, global continuity files.
+Account files on this branch (`lib/trips/daten.ts`, `foundation-e-select.ts`, `account-graph-read.ts` and #531 docs) arrived only via the authorized merge of main `65db24b6`. They were not edited in this session.
+
+Not touched by this writer: types/trips, schema/mappers/readiness/credentials, `uebernahme.ts`, `GastreiseBruecke.tsx`, `GastCreateLink.tsx`, #534 homepage, Auth, SQL, package/lockfile, global continuity files.

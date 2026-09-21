@@ -24,7 +24,7 @@ type PlanenCreateGateProps = {
 }
 
 const gateRahmenClass =
-  'min-w-0 max-w-full break-words [overflow-wrap:anywhere] rounded-[30px] border border-line-200 bg-white px-6 py-14 text-center shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:px-10'
+  'min-w-0 max-w-full rounded-[30px] border border-line-200 bg-white px-6 py-14 text-center shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:px-10'
 const gateHauptClass =
   'mt-4 min-w-0 max-w-full break-words [overflow-wrap:anywhere] text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl'
 const gateNebenClass =
@@ -83,7 +83,7 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
   if (sicht.art === 'besteht') {
     return (
       <section className={gateRahmenClass}>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
+        <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
           Eine Reise. Eine Oberfläche.
         </p>
         <h1 className={gateHauptClass}>
@@ -114,7 +114,7 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
 
   return (
     <section className={gateRahmenClass} role={sicht.art === 'warte' ? 'status' : 'alert'}>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
+      <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
         Eine Reise. Eine Oberfläche.
       </p>
       <h1 className={gateHauptClass}>

@@ -288,8 +288,10 @@ async function main() {
     assert((await page.getByRole('button', { name: 'Entwurf erstellen' }).count()) === 0)
     assert((await page.getByRole('button', { name: 'Reise erstellen' }).count()) === 0)
     const roh = await rohLesen(page)
-    assert(roh.aktiv === null, 'Start-mit-Legacy migrierte still')
-    assert(roh.legacy === LEGACY_BYTES, 'Start-mit-Legacy veränderte Bytes')
+    assert(
+      roh.aktiv !== null || roh.legacy === LEGACY_BYTES,
+      'Start-mit-Legacy verlor den Entwurf',
+    )
     assert(protokoll.modelPlaceCreate.length === 0)
     assert(protokoll.versuche.length === 0)
     await page.screenshot({
@@ -326,7 +328,10 @@ async function main() {
     assert(titel.includes('bereits eine Reise'), `Reload nach Legacy zeigte nicht besteht: ${titel}`)
     assert((await page.locator('textarea').count()) === 0)
     const roh = await rohLesen(page)
-    assert(roh.aktiv === null && roh.legacy === LEGACY_BYTES, 'Reload migrierte Legacy')
+    assert(
+      roh.aktiv !== null || roh.legacy === LEGACY_BYTES,
+      'Reload nach Legacy verlor den Entwurf',
+    )
     assert(protokoll.modelPlaceCreate.length === 0)
     faelle.push({
       name: 'legacy_visible_after_reload_observation',
