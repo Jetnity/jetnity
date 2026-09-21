@@ -1,11 +1,11 @@
 # V1 Homepage Tablet Hero Fit 1 — Status
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTATION PLAN LOCKED / BEFORE-CAPTURE NEXT / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
+Status: **FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
 
 ## Arbeitsblock / Ziel
 
-Generation 1 of **Jetnity V1 homepage tablet hero fit 1**. New isolated session. Implement only accepted #506 **VUX-8** (TL FINAL review `5269760171`, closure `5764730610`): P3 decorative breakpoint polish. Not a restart of the #506 audit. Not issue 110 multi-destination intent. Not rejected VUX-6 mandatory next-section peek.
+Generation 1 of **Jetnity V1 homepage tablet hero fit 1**. New isolated session. Implemented only accepted #506 **VUX-8** (TL FINAL review `5269760171`, closure `5764730610`): P3 decorative breakpoint polish. Not a restart of the #506 audit. Not issue 110. Not rejected VUX-6 peek.
 
 ## Agent / session / model (actual)
 
@@ -16,9 +16,9 @@ Generation 1 of **Jetnity V1 homepage tablet hero fit 1**. New isolated session.
 | Model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
 | Auto / substitute | none |
 | URL | https://cursor.com/agents/bc-c2e8ff5a-c507-40a7-b0ac-0ed324dd45da |
-| Isolated from | #531 account-read and #532 guest-storage review-fix sessions (not reused) |
+| Isolated from | #531 / #532 review-fix sessions (not reused) |
 
-## Branch / PR / heads at plan lock
+## Branch / PR / heads
 
 | Item | Value |
 | --- | --- |
@@ -26,53 +26,75 @@ Generation 1 of **Jetnity V1 homepage tablet hero fit 1**. New isolated session.
 | Issue | #533 |
 | Draft PR | #534 |
 | Seed | `195f6bc566854f07044064a3690f7d1df68602da` |
-| Baseline main | `e818c13ed009932bc06be1382a89467866699995` |
-| Local HEAD at plan | `195f6bc566854f07044064a3690f7d1df68602da` |
-| Operating mode | `NORMAL` (`.jetnity/operating-mode.json`) |
-| Integration order | #531 → #532 → this presentation slice unless a later explicit TL boundary updates it |
-| Autonomous main / sibling merge / rebase | **forbidden** |
+| Assigned baseline main | `e818c13ed009932bc06be1382a89467866699995` |
+| Product/runtime source | `da8db64223af73ab47c29b2915006a34b4945b8f` |
+| Live `origin/main` at freeze write | `65db24b6dda2ab0830b88fa749838ee298e243a0` (#531 merged) |
+| Merge-base with live main | `e818c13ed009932bc06be1382a89467866699995` |
+| Ahead / behind live main | **3 ahead / 9 behind** — reported, **not** autonomously rebased |
+| Operating mode | `NORMAL` |
 
-## Ownership
+Exact freeze SHA after this docs commit belongs in the PR STOP receipt.
 
-Runtime write: **`app/(public)/page.tsx` only**, first hero responsive grid / content-width / decorative itinerary wrapper.
+## Ownership kept
 
-Own docs: `docs/V1_HOMEPAGE_TABLET_HERO_FIT_1_{TASK,STATUS,HANDOFF,SELF_REVIEW,DECISION}_2026-09-21.md` and `docs/evidence/v1-homepage-tablet-hero-fit-1/**`.
+Runtime write: `app/(public)/page.tsx` first-hero grid + decorative-card display only (two classes).
 
-Read-only: all other homepage sections, copy/claims, images/branding, metadata, `StartzielForm`, `GastCreateLink`, navbar, shared tokens, #531/#532 files and contracts, guest storage/create, account/admin/provider/DB/Auth, package/workflows.
-
-No new shared contract, dependency, or Product-Owner special gate.
+Own docs/evidence only. `#531` / `#532` files and contracts untouched. No shared runtime write, no new dependency, no special PO gate.
 
 ## Traveller-context check
 
-Not relevant. This slice only changes first-hero presentation breakpoints. No citizenship, document, visa, transit, health, carrier or eligibility evaluation. No traveller credentials collected or propagated.
+Not relevant. Presentation-only first-hero breakpoint. No traveller credentials collected or evaluated.
 
-## Observed defect (source + historical context)
+## Implementation
 
-Current first-hero grid and card both activate at Tailwind `lg` (1024px):
+Coordinated existing Tailwind `xl` (1280px):
 
-- grid: `lg:grid-cols-[minmax(0,650px)_minmax(0,1fr)]`
-- card wrapper: `hidden … lg:flex`
-- card: `w-full max-w-[390px]`
+- `lg:grid-cols-[minmax(0,650px)_minmax(0,1fr)]` → `xl:grid-cols-[minmax(0,650px)_minmax(0,1fr)]`
+- `hidden … lg:flex` → `hidden … xl:flex`
 
-At 1024 CSS px the first column can consume 650px plus `gap-10`, leaving roughly 200px for a 390px decorative card. Historical #506 `home_initial_1024` is context only, not current before-proof. This slice must reproduce the squeeze on the exact current compiled product CSS.
+Hiding the card while leaving an empty second column was rejected. Content max-widths (`h1` `max-w-3xl`, form `max-w-2xl`) keep a readable single column below `xl`.
 
-## Concrete plan (locked before implementation)
+## Compiled-CSS proof (Chromium/148.0.7778.96, `http://localhost:3000/`, guest, no draft)
 
-1. **Before proof** against compiled Next CSS on seed `195f6bc5` homepage source (no `page.tsx` edit yet): measure 1024×768 hero/grid/card/title/tag geometry; take viewport + hero images; record overflow. Also record neighbors so the later breakpoint choice is evidenced.
-2. **Coordinated breakpoint:** move **both** the two-column grid and the decorative-card display from `lg` (1024) to existing Tailwind `xl` (1280). Do not hide the card while leaving an empty second column. Do not invent a new breakpoint or token.
-3. **Preserve:** 1440/1920 two-column branded composition; 360/390/768 primary headline / destination / CTA usefulness; existing `StartzielForm` routing/prefill/guest semantics; brand, copy, images, other sections; no VUX-6 peek / no issue-110 intent.
-4. **200% text:** inspect 1024 and 1440 with `html { font-size: 32px }`. Label as text simulation, not OS zoom / device / WCAG certification. Required content stays readable; decorative card may remain hidden at 1024 and stay visible at 1440 if geometry still supports it.
-5. **Interaction:** keyboard focus and CTA/touch targets on the unchanged form. Abort unexpected mutations including same-route server actions. Block `/api/`, provider and model URLs. A zero mutation count is not claimed as an observed POST intercept.
-6. **After proof** at 360/390/768/1024, just below/above `xl`, 1440/1920, plus 1024/1440 @32px. Assertions: chosen display rule is coordinated; no empty second column when the card is absent; card readable when present; no newly introduced document overflow. Separate any pre-existing lower-page issue.
-7. **Gates:** typecheck, lint, relevant tests, hygiene, production build, then fresh exact-head CI/Auth/direct Preview. Freeze source/docs once. STOP for independent Technical Lead. Do not Ready, merge, or start a follow-up.
+| Scene | Card | Columns | Card width | overflowX |
+| --- | --- | --- | --- | --- |
+| **before 1024×768** | squeezed | 2 | **195.35**; tags client 36 / scroll 84–138 | 0 |
+| after 1024 / 1023 / 1279 | absent | 1 | 0; no empty second column | 0 |
+| after 1280 / 1440 / 1920 | visible | 2 | **400.76**; tags not truncated | 0 |
+| after 360 / 390 / 768 | absent | 1 | primary headline/form/CTA remain | 0 |
+| after 1024 @ `html 32px` | absent | 1 | required copy/form present | **148 pre-existing** |
+| after 1440 @ `html 32px` | visible | 2 | 398.87; some decorative tags ellipsize | 0 |
+
+1024/200% overflow is **not new**. Temporary restore of the baseline `lg` homepage produced the same `overflowX=148` from navbar + later Pro glow / inspiration cards. First hero `right=1024`. See `docs/evidence/v1-homepage-tablet-hero-fit-1/overflow-text-200-attribution.json`.
+
+Interaction at after 1024: focus `#travel-idea` → Tab → `Reise planen` → client validation `Bitte wähle ein Reiseziel aus der Liste.` Unexpected mutation attempts/completed **0**. That is no-mutation evidence, not an observed POST intercept. `/api/` abort remains armed.
+
+## Local gates (author-run, not TL PASS)
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | PASS |
+| eslint owned `page.tsx` + capture script | PASS |
+| `npm test` | PASS **3661 / 3661** |
+| `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` / `operating-mode` | PASS |
+| `npm run build` | PASS (warning only: no `.env/.local` in this environment) |
+
+Exact-head CI / Auth / direct Preview belong in the PR STOP receipt after the freeze push.
+
+## Live sibling drift (do not autonomously integrate)
+
+- **#531 MERGED** onto live main `65db24b6`. This writer did not merge it.
+- **#532** remains open Draft and is behind. This writer did not touch it.
+- Documented TL order was 531 → 532 → 534. Latest explicit TL boundary still forbids this writer from rebasing/merging main or siblings.
 
 ## Risks / non-claims
 
-- Sibling #531 / #532 remain active review-fix loops; their files stay read-only.
-- Live main may move; this writer will report ahead/behind and will not autonomously rebase.
-- Local Chromium evidence is not authenticated Preview, Safari, hardware or WCAG proof.
-- `next-env.d.ts` may be dirtied by `next dev`; it is not owned and will not be committed.
+- Local Chromium compiled CSS only. Not authenticated Preview, hardware, Safari or WCAG.
+- `html { font-size: 32px }` is text simulation, not OS zoom.
+- `getClientRects` reported `titleWraps=false` on the squeezed 1024 before-card; the viewport PNG shows the narrow wrap. Image + tag geometry govern.
+- 1440/200% decorative tags can still ellipsize (`truncate` is pre-existing). Required headline/form remain readable.
+- 390 after image can show the next section below the hero; that is existing short-viewport composition, not a new VUX-6 peek target.
 
-## Next step in this session
+## Next step
 
-Capture genuine before geometry/images on the current compiled homepage, then apply the two coordinated `xl` class changes.
+Independent Technical-Lead code / visual / interaction review of the exact freeze head. Cursor does not Ready, merge, rebase, or start a follow-up.
