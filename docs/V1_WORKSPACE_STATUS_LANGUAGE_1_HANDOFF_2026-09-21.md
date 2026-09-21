@@ -19,6 +19,8 @@ Matrix: `docs/evidence/v1-workspace-status-language-1/wording-matrix.md`
 | Branch | `fix/v1-workspace-status-language-1` |
 | Assigned dispatch base | `main@4278cd047b907b218fe64c122c4eed7dd61e0a7e` |
 | Dispatch seed | `f6372928b994c6ac00dac8fc82deee0a856a2376` |
+| Product tree for screenshots | `7a143fecdf0647bfa059653f96cc8c1eca5d6656` (clean) |
+| Re-read `origin/main` | `4278cd047b907b218fe64c122c4eed7dd61e0a7e` — matches baseline; behind 0 |
 | Agent | Jetnity V1 workspace status language 1, Generation 1 |
 | Session | `bc-d6388e7d-7896-4902-a4d0-efd5dcbe4cce` |
 | Required model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |

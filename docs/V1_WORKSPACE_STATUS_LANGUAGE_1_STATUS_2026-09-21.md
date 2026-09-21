@@ -1,7 +1,7 @@
 # V1 Workspace Status Language 1 — Status
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / AUTHOR SELF-REVIEW ONLY / DRAFT / NOT READY / NOT MERGED**
+Status: **IMPLEMENTED / FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## Arbeitsblock / Ziel
 
@@ -16,6 +16,8 @@ Accepted #506 VUX-3: replace internal “Abdeckung / bestimmbar / Lage / Pflicht
 | Draft PR | #526 |
 | Assigned baseline | `main@4278cd047b907b218fe64c122c4eed7dd61e0a7e` |
 | Task seed | `f6372928b994c6ac00dac8fc82deee0a856a2376` |
+| Product tree used for screenshots | **`7a143fecdf0647bfa059653f96cc8c1eca5d6656` (clean)** |
+| Re-read `origin/main` before freeze | `4278cd047b907b218fe64c122c4eed7dd61e0a7e` — **no drift**; this branch is ahead only with this slice |
 | Agent | **Jetnity V1 workspace status language 1**, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) — no Auto |
 | Session | `bc-d6388e7d-7896-4902-a4d0-efd5dcbe4cce` |
@@ -52,9 +54,19 @@ Not written: #520 date-mismatch logic, non-coverage attention, Bestand “bestim
 
 Traveller context is not relevant. No citizenship/document/credential collection.
 
-## Author-run gates
+## Author-run gates (not TL PASS)
 
-Recorded after the product commit. Exact-head IDs stay in the freeze PR comment.
+| Check | Result |
+| --- | --- |
+| focused wording/state tests | **PASS** including `workspace-status-language-1.test.ts` |
+| `npm run typecheck` | **PASS** |
+| `npm run lint` | **PASS** (0 errors; 138 pre-existing warnings) |
+| `npm test` | **3659/3659 PASS** on product tree `7a143fec` |
+| `npm run build` | **PASS** |
+| `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
+| synthetic browser 390 / 1440 | **PASS** on clean `7a143fec`; compiled product CSS via `next dev`; provider/model intercepted |
+
+No live provider, model, account or DB probe. Exact-head CI / Auth / Preview IDs belong in the freeze PR comment.
 
 ## Sicherheit / Kosten
 

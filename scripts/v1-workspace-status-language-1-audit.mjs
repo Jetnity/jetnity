@@ -290,7 +290,9 @@ function sichtbareTexte(html) {
 async function seitenworte(page) {
   return page.evaluate(() => {
     const body = document.body?.innerText || ''
-    const fortschritt = [...document.querySelectorAll('p')].map((el) => el.textContent || '')
+    const fortschritt = [...document.querySelectorAll('[data-workspace-detail] p, [aria-label="Reiseübersicht"] p, [aria-labelledby] p')]
+      .map((el) => (el.textContent || '').replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
     const attention = [...document.querySelectorAll('[aria-label="Jetzt wichtig"] button, [aria-label="Jetzt wichtig"] li')].map(
       (el) => (el.textContent || '').replace(/\s+/g, ' ').trim(),
     )
@@ -335,6 +337,9 @@ async function speichern(page, name, extra) {
       gapLage: wort.gapLage,
       gapPflicht: wort.gapPflicht,
       attention: wort.attention.slice(0, 6),
+      fortschritt: wort.fortschritt.filter((zeile) =>
+        /unklar|offen|vorhanden|geplant|ausgewählt|Nächte|Verbindung|Flug|Unterkunft/.test(zeile),
+      ).slice(0, 8),
     },
     ...extra,
   }
@@ -373,6 +378,15 @@ async function gapSchliessen(page) {
 function verboteneTreffer(text) {
   if (PHASE !== 'after') return []
   return VERBOTEN_AFTER.filter((wort) => text.includes(wort))
+}
+
+function eigeneFlaeche(wort) {
+  const detail = [wort.eyebrow, wort.heading, wort.gapLage, ...(wort.attention || [])]
+  const uebersicht = (wort.fortschritt || []).filter((zeile) =>
+    /unklar|bestimmbar|Pflichtlücke|Abdeckung|Anbieter folgt|Lücke/.test(zeile) &&
+    !/benötigten Flugabschnitte|Nächte-Abdeckung|benötigten Verbindungen/.test(zeile),
+  )
+  return [...detail, ...uebersicht].filter(Boolean).join('\n')
 }
 
 async function serie(browser, fixture, label) {
@@ -451,6 +465,9 @@ async function text200(browser) {
     document.documentElement.style.fontSize = '200%'
   })
   await page.waitForTimeout(80)
+  const uebersicht = page.getByRole('heading', { name: 'Deine Reise auf einen Blick' })
+  if (await uebersicht.count()) await uebersicht.scrollIntoViewIfNeeded()
+  await page.waitForTimeout(80)
   const capture = await speichern(page, 'mixed-overview-200pct_390x844', {
     state: 'mixed-overview-200pct',
     actionSequence: ['open-mixed-workspace', 'set-html-font-size-200pct'],
@@ -498,7 +515,7 @@ async function main() {
   await browser.close()
   if (server.kind) server.kind.kill()
 
-  const texte = captures.map((eintrag) => sichtbareTexte(eintrag.wort.body))
+  const texte = captures.map((eintrag) => eigeneFlaeche(eintrag.wort))
   const verboten = texte.flatMap(verboteneTreffer)
   const leereBilder = captures.filter((eintrag) => !eintrag.meta.file)
   const bericht = {

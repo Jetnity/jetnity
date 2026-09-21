@@ -1,0 +1,50 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/after_unknown-flights-gap_1440x900.png",
+  "phase": "after",
+  "name": "unknown-flights-gap_1440x900",
+  "sha": "7a143fecdf0647bfa059653f96cc8c1eca5d6656",
+  "productTree": {
+    "head": "7a143fecdf0647bfa059653f96cc8c1eca5d6656",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T20:04:38.351Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3018/reisen/trip-v1-status-unknown",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "open-workspace",
+    "click-Flüge"
+  ],
+  "state": "unknown-flights-gap-desktop",
+  "wording": {
+    "eyebrow": "Noch unklar",
+    "heading": "Flüge",
+    "gapLage": "unbestimmt",
+    "gapPflicht": "ja",
+    "attention": [
+      "Flugstand noch unklarunknown",
+      "Flugstand noch unklarunknown",
+      "Unterkunftsstand noch unklarunknown",
+      "Unterkunftsstand noch unklarunknown",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context"
+    ],
+    "fortschritt": [
+      "1 noch offen · 3 noch unklar",
+      "0 Punkte geplant",
+      "0 Punkte geplant",
+      "Noch unklar",
+      "Flugstand noch unklar",
+      "Noch unklar",
+      "Der Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht."
+    ]
+  }
+}
