@@ -11,13 +11,14 @@ import {
   ACCOUNT_GRAPH_UNVOLLSTAENDIG_MELDUNG,
   accountGraphLesen,
   accountGraphUnvollstaendigProblem,
-  accountGraphVerbrauch,
 } from '@/lib/trips/account-graph-read'
 import { reiseAus, type ReiseZeile } from '@/lib/trips/abbildung'
 import { foundationERelationFehlt } from '@/lib/trips/foundation-e-select'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import { safetyAnfrageSchema } from '@/lib/safety/schema'
 import { safetyEvaluationsPruefen, safetyReiseAufloesen } from '@/lib/safety/auswerten'
+import { registryTripUebernahmeOrchestrieren } from '@/lib/traveller/account-registry-trip'
+import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
 import type { TravellerZeile } from '@/lib/readiness/reisende'
 import type { Reisegraph } from '@/types/trips'
 
@@ -270,7 +271,6 @@ describe('Account-Graph-Read – Legacy-Fallback', () => {
     assert.equal(mapperAufrufe, 0)
     assert.equal(lesung.problem, null)
     assert.deepEqual(lesung.zeilen, [])
-    assert.equal(accountGraphVerbrauch(lesung).art, 'fehlend')
   })
 
   test('fehlgeschlagener Fallback bleibt Fehler, kein leerer Erfolg', async () => {
@@ -401,38 +401,7 @@ describe('Account-Graph-Read – andere Fehler bleiben Fehler', () => {
   })
 })
 
-describe('Account-Graph-Read – Verbraucher halten vor Nutzung an', () => {
-  const verbraucher = [
-    'page',
-    'readiness/aktionen',
-    'readiness/reisende-aktionen',
-    'reiseaenderung/aktionen',
-    'reisebegleiter/aktionen',
-    'hotels/aktionen',
-    'flights/aktionen',
-    'activities/aktionen',
-    'mobility/aktionen',
-    'rental-cars/aktionen',
-    'safety/auswerten',
-  ] as const
-
-  test('unvollständige Lesung gibt keinem Verbraucher einen Graph', async () => {
-    const lesung = await lesen(
-      () => antwort({ data: [zeile([reisender()])] }),
-      () => {
-        throw new Error('Fallback darf nicht laufen')
-      },
-      () => {
-        throw new Error('Mapper darf nicht laufen')
-      },
-    )
-    const verbrauch = accountGraphVerbrauch(lesung)
-    assert.equal(verbrauch.art, 'problem')
-    for (const name of verbraucher) {
-      assert.notEqual(verbrauch.art, 'graph', name)
-    }
-  })
-
+describe('Account-Graph-Read – ausgeführte injizierbare Verbraucher', () => {
   test('Safety-Aufrufer nutzen den Graph nicht bei Problem', async () => {
     const lesung = await lesen(
       () => antwort({ data: null, error: FEHLENDE_RELATION }),
@@ -463,20 +432,45 @@ describe('Account-Graph-Read – Verbraucher halten vor Nutzung an', () => {
     assert.equal('reise' in auswertung, false)
   })
 
-  test('Seite und Aktionen würden bei Problem nicht rendern oder schreiben', async () => {
+  test('Registry-Übernahme-Orchestrierung schreibt bei Problem nicht', async () => {
     const lesung = await lesen(
-      () => antwort({ data: [zeile(null)] }),
+      () => antwort({ data: [zeile([reisender()])] }),
       () => {
         throw new Error('Fallback darf nicht laufen')
       },
+      () => {
+        throw new Error('Mapper darf nicht laufen')
+      },
     )
-    let genutzt = 0
-    const verbrauch = accountGraphVerbrauch(lesung)
-    if (verbrauch.art === 'graph') {
-      genutzt += 1
-    }
-    assert.equal(verbrauch.art, 'problem')
-    assert.equal(genutzt, 0)
-    assert.equal(verbrauch.problem.status, 500)
+    assert.equal(lesung.problem?.status, 500)
+
+    const aufrufe = { registryLesen: 0, partySchreiben: 0 }
+    const ergebnis = await registryTripUebernahmeOrchestrieren({
+      eingabe: {
+        tripId: TRIP_ID,
+        registryTravellerId: '2f1c6d8a-4b21-4a7e-9c11-0d3e8a7b6c55',
+      },
+      benutzerId: 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee',
+      reiseLesen: async () => {
+        // Dieselbe Abbildung wie registryTravellerInReiseUebernehmen.
+        if (lesung.problem) return { problem: lesung.problem, reise: null }
+        const reise = lesung.zeilen[0] ?? null
+        return { problem: null, reise: reise ? { party: reise.party } : null }
+      },
+      registryLesen: async () => {
+        aufrufe.registryLesen += 1
+        return { problem: null, zeilen: [] }
+      },
+      partySchreiben: async () => {
+        aufrufe.partySchreiben += 1
+        return { ok: true }
+      },
+      jetzt: JETZT,
+    })
+    assert.equal(ergebnis.ok, false)
+    assert.equal(ergebnis.meldung, REGISTRY_TRIP_COPY.reiseLesefehler500)
+    assert.equal(aufrufe.registryLesen, 0)
+    assert.equal(aufrufe.partySchreiben, 0)
+    assert.equal(ergebnis.partySchreiben, 0)
   })
 })

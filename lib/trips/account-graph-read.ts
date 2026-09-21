@@ -36,22 +36,6 @@ export type AccountGraphLesenEingabe<Zeile extends AccountGraphZeileKind, Graph>
   mapper: (zeile: Zeile) => Graph
 }
 
-export type AccountGraphVerbrauch<T> =
-  | { art: 'problem'; problem: Problem }
-  | { art: 'fehlend' }
-  | { art: 'graph'; graph: T }
-
-/**
- * Gemeinsame Grenze aller reiseLaden-Verbraucher: Problem zuerst, dann Leere,
- * erst danach ein handlungsfähiger Graph.
- */
-export function accountGraphVerbrauch<T>(lesung: Lesung<T>): AccountGraphVerbrauch<T> {
-  if (lesung.problem) return { art: 'problem', problem: lesung.problem }
-  const graph = lesung.zeilen[0]
-  if (!graph) return { art: 'fehlend' }
-  return { art: 'graph', graph }
-}
-
 export async function accountGraphLesen<Zeile extends AccountGraphZeileKind, Graph>(
   eingabe: AccountGraphLesenEingabe<Zeile, Graph>,
 ): Promise<Lesung<Graph>> {
