@@ -1,7 +1,7 @@
 # V1 Manual Planner Text Reflow 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **FROZEN / NOT TL PASS / NOT READY / NOT MERGED**
+Status: **FROZEN AFTER AUTHORIZED MAIN INTEGRATION / NOT TL FINAL / NOT READY / NOT MERGED**
 
 ## Owner
 
@@ -17,6 +17,7 @@ No Auto. Immediate review fixes reuse this exact session.
 3. Authorized 360/200% overflow closed: pointer wrap + Reiseidee `min-w-0` after measuring that pointer-only left 22px. After: page overflow 0; pointer fully visible.
 4. Source-regex tests removed. Audit aborts unexpected mutations including `POST /planen`. Invalid submit: errors shown; attempts 0 / completed 0.
 5. Keyboard, prefill, guest gate unchanged. No real submit/account/trip mutation.
+6. ONE authorized merge of main `926c9d1f` (`#526`) after live-main confirm. No product edits.
 
 ## Changed paths
 
@@ -31,21 +32,27 @@ No Auto. Immediate review fixes reuse this exact session.
 
 Read-only: `/planen` page, `PlanenCreateGate`, `feld.tsx`, header/globals, create/storage/Auth, all `#526` paths.
 
+## Authorized main integration
+
+Live main was confirmed still `926c9d1fabd61a4fa588e6333d550bfbb4c948a9` (`#526` postmerge). ONE merge into this branch produced `402c58e38a9d672921a4a9ef32891af7f01756b9`. No rebase. The three planner runtime files plus `feld.tsx` / `/planen` page / create gate are **byte-identical** to reviewed `9a2d88dd`. Existing source-bound `/planen` browser evidence remains applicable.
+
+After 360 initial PNG wrap is **`Schritt für Schritt` / `planen`** (two lines). Attempts/completed 0 means no mutation occurred, not that a POST was observed and blocked. After product source is `5c30088a` (runtime-identical to `b8810c`); dirty capture listed evidence/audit-script/worktree, not runtime.
+
 ## What a successor must know
 
 - `#524` session stays STOP. This is still Generation 1 of the same writer.
-- Parallel `#526` owns coverage/status wording. **Do not integrate main yet**; `#526` is first TL slot. No autonomous sibling merge/rebase.
+- `#526` is completed and is now on this branch via the authorized merge only.
 - Historic `historic/before_before_text-200_390x844_budget.png` is mislabelled leftover, not RF-R2 proof.
-- After-evidence product tree was dirty for evidence/docs being written. Layout CSS captured is the RF-R1 classes on the implementation commits.
+- This integration is **not** TL FINAL or Ready. Stay Draft.
 
 ## Honest limits
 
 - Local Chromium/Playwright; `html { font-size: 32px }`, not OS text-only zoom, Safari, hardware, or WCAG certification.
 - Number-input placeholder/spinner at 200% is a native control.
-- Invalid submit did not fire `POST /planen` because client validation returned first. Abort is in the route hook; completed unexpected remains 0.
+- Invalid submit did not fire `POST /planen` because client validation returned first. Attempts/completed 0 is no-mutation evidence, not an observed blocked POST. The abort remains armed.
 - No live authenticated account. Disposable synthetic guest data only.
 - Exact-head CI/Auth/direct Preview belong in the PR comment after this freeze push.
 
 ## Next owner
 
-Independent Technical-Lead review of the exact freeze SHA. No follow-up slice from this writer.
+Independent Technical-Lead exact-head review after this integration freeze. No Ready/merge/follow-up from this writer.

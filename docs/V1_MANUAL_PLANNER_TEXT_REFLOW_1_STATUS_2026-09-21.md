@@ -1,11 +1,11 @@
 # V1 Manual Planner Text Reflow 1 — Status
 
 Stand: 21. September 2026  
-Status: **FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
+Status: **FROZEN AFTER AUTHORIZED MAIN INTEGRATION / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
 
 ## Arbeitsblock / Ziel
 
-Generation 1 of **Jetnity V1 manual planner text reflow 1**, same session after TL review **5271421930** (RF-R1 / RF-R2 / RF-R3). Assigned 390 residual plus the authorized 360 pointer/idea overflow. `#524` pointer/create/validation behavior stays unchanged. `#526` remains read-only; main was not integrated.
+Generation 1 of **Jetnity V1 manual planner text reflow 1**, same session. TL accepted RF-R1/R2/R3 on reviewed `9a2d88dd` and authorized **one** merge of completed `#526` main. No rebase, no new product edits.
 
 ## Branch / PR / heads
 
@@ -14,17 +14,35 @@ Generation 1 of **Jetnity V1 manual planner text reflow 1**, same session after 
 | Branch | `fix/v1-manual-planner-text-reflow-1` |
 | Issue | #527 |
 | Draft PR | #528 |
-| Assigned baseline main | `4278cd047b907b218fe64c122c4eed7dd61e0a7e` |
-| Task seed | `84deca894270ef89fa5c61ba1ac7ea56175074a9` |
-| Previous reviewed head | `f768db932f6d0517d54af9e20b624520124e6011` |
-| Layout SHA | `b8810c0851a3aedfd36a9c31c4bdf92c853cc32e` |
+| Assigned original baseline | `4278cd047b907b218fe64c122c4eed7dd61e0a7e` |
+| Reviewed freeze (RF accepted) | `9a2d88dd0dfd7624624fdfa48742ab1aa3908c4a` |
+| After product/runtime source | `5c30088a6d16181dabe74f06233917f23d8eb721` (runtime-identical to `b8810c0851a3aedfd36a9c31c4bdf92c853cc32e`) |
+| Authorized live main (confirmed) | `926c9d1fabd61a4fa588e6333d550bfbb4c948a9` |
+| Merge commit | `402c58e38a9d672921a4a9ef32891af7f01756b9` |
 | Agent | **Jetnity V1 manual planner text reflow 1**, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto |
 | Session | `bc-2d1117f4-c1b0-4307-852e-3609076509c2` |
 
-Exact freeze SHA of this docs/evidence commit belongs in the PR comment.
+Exact docs-freeze SHA after this integration belongs in the PR comment.
 
-Live main at freeze read: `origin/main` still `4278cd04`. Ahead/behind versus that main is recorded in the PR comment after push. No sibling merge/rebase.
+Live `origin/main` was re-fetched and **equals** `926c9d1f` before the merge. Integration is merge-only of that SHA. No rebase.
+
+## Authorized main integration
+
+ONE merge of independently verified postmerge `#526` main `926c9d1f`. Runtime files vs reviewed `9a2d88dd` (git blobs):
+
+| Path | Blob | vs `9a2d88dd` |
+| --- | --- | --- |
+| `components/trips/PlanenEinstiegNavigation.tsx` | `61514a10a307e422ea2474a6ba72a86139da0333` | identical |
+| `components/trips/Reiseidee.tsx` | `355d3773171f2c624199dbc395e6b8dd0da4f45a` | identical |
+| `components/trips/TripPlanner.tsx` | `38d1ba22c75bba28e5b9e706f0bdbb5d8dc13335` | identical |
+| `components/ui/feld.tsx` | `98d1e96349a4751509119d8f12429666b5413320` | identical |
+| `app/(public)/planen/page.tsx` | `90db49e799e9b3b00846352f43209ebf909c9057` | identical |
+| `components/trips/PlanenCreateGate.tsx` | `0dfbedde34f31fe4edc6b6efb5630554702a29fe` | identical |
+
+No `/planen` style-path drift versus the reviewed freeze. Existing source-bound browser evidence remains applicable; no general recapture.
+
+After-capture dirty tree on `5c30088a` listed evidence files, the audit-script 360-initial scene addition, and an untracked baseline worktree — **not** runtime/CSS changes.
 
 ## RF-R2 matched baseline (clean `4278cd` compiled CSS)
 
@@ -44,7 +62,7 @@ Historic first-pass files live under `docs/evidence/v1-manual-planner-text-reflo
 | pageOverflow after scrollX reset | **0** | **0** |
 | budget / label right | **317** | **287** |
 | pointer right | 358 (wrapped) | **328** (wrapped, fully in view) |
-| visible wrap | `Ungefähres` / `Gesamtbudget` / `(optional)` | `Schritt für` / `Schritt` / `planen` |
+| visible wrap | `Ungefähres` / `Gesamtbudget` / `(optional)` | `Schritt für Schritt` / `planen` (two lines; the PNG and 0 overflow govern, not a three-line claim) |
 
 No page/body clipping, no smaller text, no hidden labels.
 
@@ -58,7 +76,7 @@ No page/body clipping, no smaller text, no hidden labels.
 
 - Removed `lib/trips/manual-planner-text-reflow-1.test.ts`.
 - Audit now **aborts** unexpected `POST`/`PUT`/`PATCH`/`DELETE`, including same-route `POST /planen`. Provider/API URLs are fulfilled 503. `/_next/`, `__nextjs`, `__turbopack` may continue and are counted separately.
-- Invalid-submit rerun: client validation showed five field/summary errors. Mutation **attempts 0 / completed unexpected 0**. No POST reached the server. The abort is armed; logging is not the only control.
+- Invalid-submit rerun: client validation showed five field/summary errors. Mutation **attempts 0 / completed unexpected 0**. That is evidence **no mutation occurred**, not an observed blocked `POST /planen`. The abort is armed; logging is not the only control.
 
 ## Behavior
 
@@ -85,4 +103,4 @@ Before metadata binds `4278cd047b907b218fe64c122c4eed7dd61e0a7e` / workingTree `
 
 ## Next step
 
-**ChatGPT / Technical Lead** independent exact-head code and visual/interaction review. Cursor does not Ready, merge, or start a follow-up slice.
+**ChatGPT / Technical Lead** independent exact-head review of the integration freeze. This is **not** TL FINAL or Ready. Cursor does not Ready, merge the PR, or start a follow-up slice.
