@@ -20,6 +20,15 @@ const EVIDENZ =
 const BERICHT = join(EVIDENZ, `audit-${PHASE}.json`)
 const SCHLUESSEL = 'jetnity:reise:v3'
 const SHA = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim()
+const DIRTY = execSync('git status --porcelain', { encoding: 'utf8' })
+  .split('\n')
+  .map((zeile) => zeile.trim())
+  .filter(Boolean)
+const PRODUCT_TREE = {
+  head: SHA,
+  workingTree: DIRTY.length === 0 ? 'clean' : 'dirty',
+  dirtyPaths: DIRTY,
+}
 const JETZT = new Date().toISOString()
 
 const VIEWPORTS = [
@@ -256,6 +265,7 @@ async function speichern(page, name, extra) {
     phase: PHASE,
     name,
     sha: SHA,
+    productTree: PRODUCT_TREE,
     capturedAt: new Date().toISOString(),
     browser: 'chromium/playwright',
     route: page.url(),
@@ -549,7 +559,8 @@ async function vuxR2(browser) {
   const nachSchnellClose = await lage(schnellPage)
   const uebersicht = await schnellPage.getByRole('heading', { name: 'Deine Reise auf einen Blick' }).boundingBox()
   await speichern(schnellPage, 'complex-r2-rapid-close_390x844', {
-    state: 'rapid-close-before-deferred-scroll',
+    state: 'rapid-close-return',
+    note: 'Escape after detail mount and back-control focus. This does not measure whether rAF/timeout were still pending.',
     after: nachSchnellClose,
     uebersicht,
   })
@@ -574,8 +585,13 @@ async function vuxR2(browser) {
     resetToOpenAfterSearch: resetNachSuche,
     explicitSearchMounted: sucheGemountet,
     headingStillFluege: nachSuche.heading?.text === 'Flüge',
-    rapidCloseOverviewVisible: Boolean(uebersicht && uebersicht.y < 844),
-    rapidCloseScrollY: nachSchnellClose.scrollY,
+    rapidClose: {
+      kind: 'return-after-escape',
+      overviewHeadingWaitVisible: Boolean(uebersicht),
+      overviewHeadingTopPx: uebersicht?.y ?? null,
+      scrollY: nachSchnellClose.scrollY,
+      note: 'Waits for detail mount and focuses the in-detail back control before Escape. Not a measurement that deferred rAF/timeout were still queued.',
+    },
   }
 }
 
@@ -625,6 +641,7 @@ async function main() {
   const bericht = {
     phase: PHASE,
     sha: SHA,
+    productTree: PRODUCT_TREE,
     capturedAt: JETZT,
     browser: 'chromium/playwright',
     origin: BASIS,
@@ -653,6 +670,7 @@ async function main() {
     writeFileSync(join(EVIDENZ, 'vux-r2-interaction.json'), JSON.stringify({
       id: 'VUX-R2',
       sha: SHA,
+      productTree: PRODUCT_TREE,
       capturedAt: JETZT,
       browser: 'chromium/playwright',
       viewport: { width: 390, height: 844 },
