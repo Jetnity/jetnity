@@ -1,0 +1,40 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-flights-keyboard_390x844.png",
+  "phase": "after",
+  "name": "complex-flights-keyboard_390x844",
+  "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+  "capturedAt": "2026-09-21T17:46:22.615Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "gap-flights-keyboard",
+  "after": {
+    "scrollY": 486,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 98.5,
+      "w": 169.421875,
+      "h": 44,
+      "top": 98.5,
+      "bottom": 142.5
+    },
+    "heading": {
+      "text": "Flüge",
+      "x": 29,
+      "y": 260.5,
+      "w": 332,
+      "h": 28,
+      "top": 260.5,
+      "bottom": 288.5
+    }
+  }
+}

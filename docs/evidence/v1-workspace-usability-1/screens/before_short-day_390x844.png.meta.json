@@ -1,0 +1,20 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/before_short-day_390x844.png",
+  "phase": "before",
+  "name": "short-day_390x844",
+  "sha": "efacfc9e31d23ce4429e9bf5a7c004a3b70ff591",
+  "capturedAt": "2026-09-21T17:38:45.814Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-short",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "tagesplan-scrolled",
+  "stageDates": [
+    "Ubud mit sehr langem Etappennamen ohne horizontales Abschneiden\n2026-10-12 – 2026-10-16\nTag 1\n12. Okt.\nTag 2\n13. Okt.",
+    "Seminyak\n2026-10-16 – 2026-10-19\nTag 3\n16. Okt.",
+    "Singapur\n2026-10-19 – 2026-10-22\nTag 4\n19. Okt."
+  ]
+}

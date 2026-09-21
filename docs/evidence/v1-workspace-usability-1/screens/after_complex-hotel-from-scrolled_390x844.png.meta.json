@@ -1,0 +1,50 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-hotel-from-scrolled_390x844.png",
+  "phase": "after",
+  "name": "complex-hotel-from-scrolled_390x844",
+  "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+  "capturedAt": "2026-09-21T17:46:21.764Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "gap-hotel-from-scrolled",
+  "before": {
+    "scrollY": 1469,
+    "focus": {
+      "tag": "BODY",
+      "text": "Zum InhaltJetnityEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeck",
+      "aria": null
+    },
+    "zurueck": null,
+    "heading": null
+  },
+  "after": {
+    "scrollY": 477,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 107.5,
+      "w": 169.421875,
+      "h": 44,
+      "top": 107.5,
+      "bottom": 151.5
+    },
+    "heading": {
+      "text": "Unterkunft",
+      "x": 29,
+      "y": 269.5,
+      "w": 332,
+      "h": 28,
+      "top": 269.5,
+      "bottom": 297.5
+    }
+  }
+}
