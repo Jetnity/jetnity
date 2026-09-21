@@ -317,4 +317,162 @@ describe('Mobilitätsabdeckung', () => {
     assert.equal(lage.kanten[0]?.mobilityItem, null)
     assert.equal(lage.unzugeordnet.some((eintrag) => eintrag.id === 'car-1'), false)
   })
+
+  test('Etappen in falscher Array-Reihenfolge folgen position', () => {
+    const lage = mobilitaetsAbdeckung(
+      reise({
+        origin: 'Zürich',
+        originPlaceId: 'geonames:2657896',
+        startDate: '2026-11-01',
+        endDate: '2026-11-10',
+        stages: [
+          etappe({
+            id: 'stage-phuket',
+            name: 'Phuket',
+            position: 3,
+            countryCode: 'TH',
+            placeId: 'geonames:1151254',
+            arrivalDate: '2026-11-07',
+            departureDate: '2026-11-10',
+          }),
+          etappe({
+            id: 'stage-bangkok',
+            name: 'Bangkok',
+            position: 1,
+            countryCode: 'TH',
+            placeId: 'geonames:1609350',
+            arrivalDate: '2026-11-01',
+            departureDate: '2026-11-04',
+          }),
+          etappe({
+            id: 'stage-chiang-mai',
+            name: 'Chiang Mai',
+            position: 2,
+            countryCode: 'TH',
+            placeId: 'geonames:1153671',
+            arrivalDate: '2026-11-04',
+            departureDate: '2026-11-07',
+          }),
+        ],
+      }),
+    )
+    assert.equal(lage.bestimmbar, true)
+    assert.deepEqual(
+      lage.kanten.map((kante) => [kante.art, kante.originName, kante.destinationName, kante.date]),
+      [
+        ['outbound', 'Zürich', 'Bangkok', '2026-11-01'],
+        ['connection', 'Bangkok', 'Chiang Mai', '2026-11-04'],
+        ['connection', 'Chiang Mai', 'Phuket', '2026-11-07'],
+        ['return', 'Phuket', 'Zürich', '2026-11-10'],
+      ],
+    )
+    assert.equal(
+      lage.kanten.every((kante) => kante.status === 'open'),
+      true,
+    )
+  })
+
+  test('die erste kanonische Etappe, nicht die Array-Erste, bestimmt die Hinkante', () => {
+    const lage = mobilitaetsAbdeckung(
+      reise({
+        origin: 'Zürich',
+        originPlaceId: 'geonames:2657896',
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        stages: [
+          etappe({
+            id: 'stage-lugano',
+            name: 'Lugano',
+            position: 2,
+            placeId: 'geonames:2659836',
+            arrivalDate: '2026-09-14',
+            departureDate: '2026-09-16',
+          }),
+          etappe({
+            id: 'stage-zurich',
+            name: 'Zürich',
+            position: 1,
+            placeId: 'geonames:2657896',
+            arrivalDate: '2026-09-12',
+            departureDate: '2026-09-14',
+          }),
+        ],
+      }),
+    )
+    assert.deepEqual(
+      lage.kanten.map((kante) => [kante.art, kante.originName, kante.destinationName]),
+      [
+        ['connection', 'Zürich', 'Lugano'],
+        ['return', 'Lugano', 'Zürich'],
+      ],
+    )
+  })
+
+  test('mehrdeutige Transfers bleiben nach Positionsortierung unbestimmt', () => {
+    const etappen = [
+      etappe({
+        id: 'stage-phuket',
+        name: 'Phuket',
+        position: 3,
+        countryCode: 'TH',
+        placeId: 'geonames:1151254',
+        arrivalDate: '2026-11-07',
+        departureDate: '2026-11-10',
+      }),
+      etappe({
+        id: 'stage-bangkok',
+        name: 'Bangkok',
+        position: 1,
+        countryCode: 'TH',
+        placeId: 'geonames:1609350',
+        arrivalDate: '2026-11-01',
+        departureDate: '2026-11-04',
+      }),
+      etappe({
+        id: 'stage-chiang-mai',
+        name: 'Chiang Mai',
+        position: 2,
+        countryCode: 'TH',
+        placeId: 'geonames:1153671',
+        arrivalDate: '2026-11-04',
+        departureDate: '2026-11-07',
+      }),
+    ]
+    const a = punkt({
+      id: 'a',
+      kind: 'transfer',
+      title: 'Zug A',
+      originName: 'Zürich',
+      destinationName: 'Bangkok',
+      startsOn: '2026-11-01',
+      mobilityMode: 'rail',
+      mobilityEvidence: 'user',
+    })
+    const b = punkt({
+      id: 'b',
+      kind: 'transfer',
+      title: 'Zug B',
+      originName: 'Zürich',
+      destinationName: 'Bangkok',
+      startsOn: '2026-11-01',
+      mobilityMode: 'rail',
+      mobilityEvidence: 'user',
+    })
+    const lage = mobilitaetsAbdeckung(
+      reise({
+        origin: 'Zürich',
+        originPlaceId: 'geonames:2657896',
+        startDate: '2026-11-01',
+        endDate: '2026-11-10',
+        stages: etappen,
+        days: [{ ...reise().days[0], items: [a, b] }],
+      }),
+    )
+    const outbound = lage.kanten.find((kante) => kante.art === 'outbound')
+    assert.equal(outbound?.originName, 'Zürich')
+    assert.equal(outbound?.destinationName, 'Bangkok')
+    assert.equal(outbound?.status, 'unknown')
+    assert.equal(outbound?.mobilityItem, null)
+    assert.equal(lage.kanten.find((kante) => kante.art === 'return')?.originName, 'Phuket')
+  })
 })
