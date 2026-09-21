@@ -6,6 +6,8 @@ Checkpoint branch: `docs/v1-continuity-refresh-1`
 
 This checkpoint is immediately usable on its branch. Until its continuity PR is merged, do not claim the canonical entry documents on main have been corrected. Re-fetch the live continuity PR for its status. After integration it supersedes the 18 September checkpoint for current work only; historical evidence and accepted limitations remain intact.
 
+Continuity refresh 1 observation (21 September 2026, this writer, session `bc-b4248ba4-ebbd-4416-ab07-61a1acb98d7b`): live `origin/main` remains `c7fb9f0f693ba9f020add7b26a041263aa7e3b07`; Draft PR #512 / branch `docs/v1-continuity-refresh-1` is the single writer for these global pointers. The original TL capture fields below remain the restart baseline. Where a later live observation differs, it is labelled as observation, not as a new accepted product state. Mutable heads must be re-fetched; this file does not freeze sibling PRs as eternally current.
+
 ## 1. Read-first and authority
 
 Read `JETNITY_START_HERE.md`, `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, this checkpoint, `.jetnity/operating-mode.json`, `docs/ACTIVE_WORK_STATUS.md`, and the live PRs/tasks/handoffs below. Then independently reconstruct main, open PRs, heads, diffs, merge-base/ahead/behind, Actions, Vercel, threads and available agent-session evidence. Relevant Supabase truth is checked only when the next scope requires it.
@@ -54,7 +56,7 @@ The Product Owner expressly reaffirmed that functional Trip Workspace + Account 
 - Task: `docs/V1_VISUAL_UX_DEVICE_AUDIT_1_TASK_2026-09-21.md`.
 - Handoff/report/status/self-review: same `V1_VISUAL_UX_DEVICE_AUDIT_1_` prefix.
 - Evidence: `docs/evidence/v1-visual-ux-device-audit-1/manifest.json` and `screens/`.
-- At capture: Draft/open, 74 changed paths reported; evidence delivered, independent TL review pending. No audit acceptance is given by this checkpoint.
+- Classification: **commissioned and agent-delivered / not independently reviewed / not merged**. At original capture and at this refresh observation: Draft/open, 74 changed paths, head unchanged. Evidence delivered; independent TL visual review pending. No audit acceptance is given by this checkpoint.
 - Rendered product SHA is separately pinned to `9f386d10816d7adcdaf2fcd6d3732e64f952fb50`, local browser source, not a moving Preview alias. Later #494 contains no product UI/style change; do not falsely relabel screenshots as captured from a newer SHA or restart all captures solely because unrelated main moved.
 - Agent reports VUX-1/2/3 as P1 and VUX-4/5/6/7 as P2, plus VUX-8 P3. They are **unreviewed candidate findings**, not reproduced TL conclusions.
 - Next actor: TL must inspect actual phone/tablet/desktop screenshots, manifest/source binding, all changed-file scope and candidate findings. Separate reproducible defects, reasoned UX improvements and taste preferences. Open bounded repairs only after review.
@@ -63,15 +65,16 @@ The Product Owner expressly reaffirmed that functional Trip Workspace + Account 
 ### B. PR #509 / Issue #507 — Trip Workspace + Account Functional Revalidation
 
 - Branch: `audit/v1-trip-account-revalidation-1`.
-- Observed head: `ef8df8a502b37d43a1b34666ca3caf9b356eeb6b` (seed only at capture).
+- Original TL capture head: `ef8df8a502b37d43a1b34666ca3caf9b356eeb6b` (seed only at capture).
+- Continuity-refresh observation head: `6fc59f28eed73b15fb383954baf4f3284ee4a42d` (14 paths; REPORT/STATUS/HANDOFF/SELF_REVIEW/NEXT_SLICES + `docs/evidence/v1-trip-account-revalidation-1/`). Re-fetch before acting; do not treat this SHA as permanently current.
 - Agent: **Jetnity V1 trip account revalidation 1**, Generation 1.
 - Session: `bc-18cfea6b-09d5-4bb8-ac73-10332a6079eb`.
 - Task: `docs/V1_TRIP_ACCOUNT_REVALIDATION_1_TASK_2026-09-21.md`.
 - Dispatch `5763103055`; same-session acknowledgement `5763104959`.
-- At capture: Draft/open; only task committed; task accepted, result/handoff not yet visible. Do not claim completion or start a replacement writer.
+- Classification: **commissioned and agent-delivered / not independently reviewed / not merged**. Agent STATUS claims functional revalidation complete and STOP for TL review. That is producer evidence, not a Technical-Lead PASS. 479 local unit tests are author-reported and were not rerun by this continuity writer. Do not start a replacement writer.
 - Scope: guest-to-account, account registry vs trip snapshot, ordered stages/timeline/mobility, change/readiness effects, archive/restore and account capability truth.
-- Output: own `docs/V1_TRIP_ACCOUNT_REVALIDATION_1_*` files and `docs/evidence/v1-trip-account-revalidation-1/` only; first one-to-three exact repair scopes.
-- Next actor: existing Cursor session reaches safe commit/handoff/STOP; TL reads current result and gates. Tests/source reasoning are not live authenticated or Production proof.
+- Output: own `docs/V1_TRIP_ACCOUNT_REVALIDATION_1_*` files and `docs/evidence/v1-trip-account-revalidation-1/` only; first one-to-three exact repair scopes (TA-R1/TA-R2/TA-R3 specified, not implemented).
+- Next actor: TL reads the current committed result and gates. Tests/source reasoning are not live authenticated or Production proof. Uncommitted local files on that session are not claimed backed up.
 
 ### C. PR #510 / Issue #508 — Intelligent Admin / Copilot Pro Foundation
 
@@ -81,16 +84,16 @@ The Product Owner expressly reaffirmed that functional Trip Workspace + Account 
 - Session: `bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c`.
 - Task: `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_TASK_2026-09-21.md`.
 - Handoff/decision/source-matrix/status/self-review/runtime-task: same `INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_` prefix.
-- At capture: Draft/open; seven docs delivered; no TL architecture/product PASS yet.
+- Classification: **commissioned and agent-delivered / not independently reviewed / not merged**. At original capture and at this refresh observation: Draft/open; seven docs delivered; freeze comment `5763226707` on the same head. No TL architecture/product PASS yet.
 - Proposed first contract: System-Health Attention Analyst using existing `SystemHealthBericht`; model explanations disabled. This is a proposal to review, not an operational Copilot.
 - Next actor: TL independently reviews source/capability/freshness/permission boundaries and the smallest runtime task. Only after acceptance and a separate versioned dispatch may runtime begin.
 - Full D–K/Ads/Bexio/CRM/operator scope stays later; this bounded first read-only foundation remains requested now.
 
 ## 4. Immediate next steps and collision rules
 
-1. Complete this continuity refresh and independently review its exact head; until merged use this checkpoint from its branch and PR.
+1. Complete this continuity refresh and independently review its exact head; until merged use this checkpoint from its branch and PR #512.
 2. Review #506 actual visual evidence promptly, including the agent's candidate P1s; do not let a new generic audit replace this review.
-3. Review #510's delivered specification; await/re-fetch #509's safe handoff in its existing session.
+3. Review #510's delivered specification and #509's now-visible committed handoff/report in their existing sessions. Do not create duplicate agents.
 4. Select the first bounded repairs/runtime foundation only from accepted evidence. Keep three responsibilities distinct, deduplicate overlap and preserve existing design tokens/truth/security contracts.
 
 No active audit agent owns global startup/status files. The continuity writer alone owns those in #511. No product, style, package, DB, auth or sibling evidence edits in continuity. Do not merge other active branches into a task or interrupt a running write; review at safe committed checkpoints. Main drift is assessed, not used to trigger endless gratuitous reintegration of all agents.

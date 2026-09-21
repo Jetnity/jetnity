@@ -5,7 +5,7 @@ Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety,
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Draft-Slice (nicht auf `main`, nicht Ready): Assistant Runtime 1, Issue #434 / Draft PR #435, Branch `feat/phase-1-assistant-runtime-1`, Binding `docs/ASSISTANT_RUNTIME_1_TASK_2026-09-17.md`, Product-Owner-Gate #433 (Preview/Development only). Mobile Accessibility 1 (Issue #429 / PR #430), Assistant Truth Context 1, World Map 1 und Destination Essentials 1 sind auf `main` geschlossen. Flight Multi-Leg (ADR-0207) and 0..N orchestration (ADR-0208 / #414) are closed on `main`. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen Draft-Stand nicht überschreiben.
+Aktueller Einstieg (21. September 2026; Heads live rekonstruieren, nicht hier einfrieren): Machine mode auf live `main` ist `NORMAL`. Canonical current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` (bis Merge von Draft PR #512 von Branch `docs/v1-continuity-refresh-1` lesen). Drei getrennte laufende Workstreams: Visual UX/Device Audit #506 / #505; Trip Workspace + Account Functional Revalidation #509 / #507; erste read-only Intelligent Admin / Copilot-Pro-Foundation #510 / #508. Sie ersetzen einander nicht. Assistant Runtime 1, Mobile Accessibility 1, Assistant Truth Context 1, World Map 1, Destination Essentials 1, Flight Multi-Leg (ADR-0207) und 0..N orchestration (ADR-0208 / #414) sind auf `main` geschlossen. HOLD-Closure #492, Architecture #487 und lokaler Producer-Proof #494 sind geschlossen; Finding 5.2 / Gate G bleiben offen. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge durch diese Roadmap. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen aktuellen Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -375,7 +375,7 @@ Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten. Technical-Lead
 - TW-8
 - TW-9
 - Direction A
-- Admin D–K
+- Admin D–K — später; **kein neues V1-Launch-Prerequisite**. Die separat beauftragte erste read-only Intelligent Admin / Copilot-Pro-Foundation (#510 / #508) bleibt jetzt angefordert und wird dadurch nicht gestrichen.
 - D1 / G1
 - Issue #109 CLOSED / COMPLETED — Residual P2 Mobile Safari für den nächsten Search-/Homepage-UX-Slice; kein automatischer Folgeslice
 - Issue #110
@@ -400,4 +400,4 @@ Normale scope-treue PRs darf der Technical Lead nach unabhängigem Exact-Head-Re
 
 Kein neuer Agent startet allein aufgrund dieser Roadmap.
 
-Der nächste Technical Lead muss zuerst live rekonstruieren und danach einen scope-treuen Auftrag versionieren. Historische Agenten-/PR-Bodies bleiben Evidence ihres Zeitpunkts und werden nicht als aktuelle Freigabe gelesen.
+Der nächste Technical Lead muss zuerst `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` und live PRs #506/#509/#510/#512 rekonstruieren und danach einen scope-treuen Auftrag versionieren. Historische Agenten-/PR-Bodies bleiben Evidence ihres Zeitpunkts und werden nicht als aktuelle Freigabe gelesen.

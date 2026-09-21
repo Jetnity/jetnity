@@ -30,13 +30,23 @@
     "url": "https://github.com/Jetnity/jetnity/issues/440"
   },
   "activeMetaScope": {
-    "issue": 490,
-    "pr": 492,
-    "branch": "governance/full-potential-ai-operating-system-2-hold-closure",
-    "task": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md",
-    "title": "OS-2 dedicated HOLD closure",
-    "proposalStatus": "proposed_until_tl_merge",
-    "liveMainRemainsHoldUntilMerge": true
+    "issue": 511,
+    "pr": 512,
+    "branch": "docs/v1-continuity-refresh-1",
+    "task": "docs/V1_CONTINUITY_REFRESH_1_TASK_2026-09-21.md",
+    "title": "V1 Continuity Refresh 1",
+    "proposalStatus": "continuity_repair_until_tl_merge",
+    "liveMainRemainsHoldUntilMerge": false,
+    "historicalCompletedHoldClosure": {
+      "issue": 490,
+      "pr": 492,
+      "branch": "governance/full-potential-ai-operating-system-2-hold-closure",
+      "task": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md",
+      "title": "OS-2 dedicated HOLD closure",
+      "proposalStatus": "merged_normal_on_main",
+      "merged": true,
+      "liveMainRemainsHoldUntilMerge": false
+    }
   },
   "parkedProductSlice": {
     "pr": 487,
@@ -44,7 +54,13 @@
     "branch": "docs/v1-security-event-ingestion-architecture-1",
     "head": "12d070a79c35fbb9f03d1302833eee8561ec17bd",
     "status": "parked_safe_draft_stop",
-    "resumeAfterHold": "independent_tl_review_of_exact_current_head_then_decide_integration"
+    "resumeAfterHold": "independent_tl_review_of_exact_current_head_then_decide_integration",
+    "schemaNote": "Guard/schema still requires these exact parked identity/status fields. They are historical HOLD-era enforcement metadata, not a live parked writer. Changing pr/issue/head/status would require a guard/schema change, which this continuity refresh must not do.",
+    "laterObservedState": "merged_architecture_only",
+    "laterMerged": true,
+    "laterMergedAt": "2026-09-21T12:38:27Z",
+    "finding52AndGateGRemainOpen": true,
+    "persistentActivationNotAuthorized": true
   },
   "exitCondition": {
     "requiresIntegratedAndIndependentlyVerified": true,
@@ -54,7 +70,7 @@
     "ciCannotProveExternalPrerequisites": true,
     "dedicatedHoldExitChecklist": "docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_1_HOLD_EXIT_CHECKLIST_2026-09-18.md",
     "samePrCannotMixModeChangeAndProductRuntime": true,
-    "description": "This dedicated closure branch proposes NORMAL after the HOLD-exit checklist was filled with verified evidence and explicit Product-Owner accepted limitations. Live main remains AI_OS_BUILD_HOLD until Technical-Lead exact-head PASS, Ready/Merge of PR #492, and separate post-merge verification. NORMAL means later ordinary bounded work may be selected by the Technical Lead. It grants no Production migration, provider activation, real payment, sensitive-data storage, public launch or reserved-gate authority. PR #487 remains parked pending a separate independent Technical-Lead review. CI cannot prove the external prerequisites. Special Product-Owner gates remain in force.",
+    "description": "OS-2 dedicated HOLD closure PR #492 is merged. Live main machine mode is NORMAL. NORMAL means later ordinary bounded work may be selected by the Technical Lead. It grants no Production migration, provider activation, real payment, sensitive-data storage, public launch or reserved-gate authority. Historical parkedProductSlice identity for PR #487 remains in this object because the guard schema still requires those exact fields; #487 later merged as architecture-only and is not a live parked writer. Finding 5.2 / release-gate G / persistent ingestion remain OPEN. CI cannot prove the external prerequisites. Special Product-Owner gates remain in force. native_scheduled_pass and native_material_archive_proof remain false.",
     "modeChangeAuthority": "technical_lead_dedicated_closure_after_evidence",
     "transitionContract": "dedicated_hold_closure_only",
     "githubHardEnforcementBaselineStatus": "live_verified",
@@ -82,7 +98,7 @@
     "governance/full-potential-ai-operating-system-2",
     "governance/full-potential-ai-operating-system-2-hold-closure"
   ],
-  "authorizedBranchClassRationale": "Kept for later planned OS meta-slices with numbered suffixes and disjoint ownership after this foundation is on main. The class does not grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. It remains constrained by the base HOLD policy until this dedicated closure is merged, Technical-Lead review, and later external main protection.",
+  "authorizedBranchClassRationale": "Kept for later planned OS meta-slices with numbered suffixes and disjoint ownership after the HOLD-closure foundation is on main. The class does not grant Ready, merge, force-push, Ruleset bypass, Production or secret authority. HOLD-era branch-class constraints remain historical metadata; live mode is NORMAL. Special Product-Owner gates remain. Later external main protection is already live-verified as Ruleset 21875372 and is not mutated here.",
   "allowedPathPatterns": [
     ".jetnity/**",
     ".cursor/rules/**",
