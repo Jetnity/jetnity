@@ -122,3 +122,11 @@ No Ready. No merge. No implementation or follow-up dispatch by Cursor.
 Specification writer **Jetnity intelligent admin copilot pro foundation 1**, Generation 1, session `bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c`, model Cursor Grok 4.6 High Fast, executed this task without changing §§1–8.
 
 Delivered: source matrix, one System-Health Attention Analyst decision, complete undispatched runtime task, status, handoff, self-review. No runtime implementation. No follow-up dispatch. Head freeze and exact-head CI/Auth/Preview belong in the #510 PR comment.
+
+---
+
+## 10. Dated amendment — 21 September 2026 (Generation 1, IA-CR1)
+
+Same agent/session. Independent TL review `5268850363` on `3e0d36827bd4cf7c12ae8d3d1fce4243009dfd2d` required a source-context correction.
+
+Chosen policy: reuse the existing System Health report as a **process-recent observation** with no current-session attribution, plus an explicit break-glass projection. Denial mapping reuses `AdminDenial` and `ANALYST_DENIAL_TO_OBSERVED` (`aal-lookup-failed` → observed `lookup-failed`). Executable T-cache-* tests are specified. No runtime, no collector/guard change, no new cache/permission system, no rebase onto later main/continuity PRs.

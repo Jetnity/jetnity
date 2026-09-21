@@ -1,65 +1,60 @@
 # Intelligent Admin / Copilot Pro Foundation 1 — Status
 
 Stand: 21. September 2026  
-Status: **SPECIFICATION COMPLETE / DOCS-ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD ARCHITECTURE / PRODUCT REVIEW**
+Status: **IA-CR1 CONTRACT CORRECTED / DOCS-ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD ARCHITECTURE / PRODUCT REVIEW**
 
 Issue: #508  
 Draft PR: #510  
 Branch: `architecture/intelligent-admin-copilot-pro-foundation-1`  
-Binding task: `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_TASK_2026-09-21.md`
+Binding task: `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_TASK_2026-09-21.md`  
+TL CHANGES REQUIRED: review `5268850363` on `3e0d36827bd4cf7c12ae8d3d1fce4243009dfd2d`
 
 Cursor-Agent: **Jetnity intelligent admin copilot pro foundation 1**, Generation 1  
 Required model: **Cursor Grok 4.6 High Fast** — confirmed (`originalModelName=cursor-grok-4.6-high-fast`)  
 Session: `bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c`  
 Run URL: https://cursor.com/agents/bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c
 
-This file is point-in-time evidence. Agent self-review is not Technical-Lead PASS. A docs-only CI pass is not runtime, security or browser acceptance. Exact-head CI / Auth / Preview IDs for the frozen content head belong in a **PR comment**, not in a later evidence-only commit.
+This file is point-in-time evidence. Agent self-review is not Technical-Lead PASS. A docs-only CI pass is not runtime, security or browser acceptance. Exact-head CI / Auth / Preview IDs for the **new** frozen content head belong in a **PR comment**, not in a later evidence-only commit. Review `5268850363` gates on `3e0d3682` are invalid after this persist.
 
 ---
 
 ## 1. Result
 
-The Product-Owner-reaffirmed Foundation 1 specification is written.
+The one-source deterministic System-Health Attention Analyst is unchanged in product shape. IA-CR1 is corrected in the contract:
 
-Chosen contract: a **deterministic System-Health Attention Analyst** on existing Admin home, using only the sanitized `SystemHealthBericht`. Copilot Pro remains `folgt` / no Execute. Full D–K / Ads / Bexio / CRM stay later work and are not a new V1 prerequisite. The companion runtime task is complete and **not dispatched**.
+- reused `SystemHealthBericht` is **process-recent**, not current-session evidence;
+- break-glass gets an explicit projection (no database-backed fact, including cached success); banner is not the proof;
+- `AdminDenial` maps through `ANALYST_DENIAL_TO_OBSERVED` (`aal-lookup-failed` → observed `lookup-failed`);
+- T-cache-A-then-B, T-role-to-break-glass, T-allowed-to-denied, T-stale-reage are required executable tests.
 
-This is not an operational Copilot.
+No runtime implementation. Runtime task still **not dispatched**. Not an operational Copilot.
 
 ---
 
-## 2. Git evidence (at persist time)
+## 2. Git evidence (at this persist)
 
-`origin/main` was fetched before writing.
+`origin/main` was fetched. **No rebase.**
 
 | Item | Value |
 | --- | --- |
 | Task verified baseline | `main@c7fb9f0f693ba9f020add7b26a041263aa7e3b07` |
-| Live `origin/main` | `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` (unchanged vs baseline) |
+| Live `origin/main` | `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` |
+| Reviewed head (CR) | `3e0d36827bd4cf7c12ae8d3d1fce4243009dfd2d` |
 | Dispatch / seed head | `b498f0dfa64fff500c08bf87cb5bffa6979e477f` |
 | Merge-base `HEAD`…`origin/main` before this persist | `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` |
-| Ahead / behind before this persist | 1 ahead / **0 behind** |
-| Main delta | none — no rebase requested |
-| Working tree before persist | clean except these slice docs |
+| Ahead / behind before this persist | 2 ahead / **0 behind** |
+| Continuity / sibling PRs | not merged; #506 / #509 / #512 not edited |
+| Main delta | none — TL re-reads main at integration |
 
-Exact content SHA is the commit that adds the decision, matrix, runtime task, this STATUS, HANDOFF and SELF_REVIEW. That SHA is recorded in the PR comment after push. Recording it inside the same commit is impossible.
+Exact content SHA is the commit that records this IA-CR1 correction. It is reported in the PR comment after push.
 
 ---
 
 ## 3. Docs-only proof
 
-`git diff --name-only origin/main...HEAD` after this persist must list only:
+`git diff --name-only origin/main...HEAD` after this persist must still list only the seven `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_*` files.
 
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_TASK_2026-09-21.md` (seed + dated amendment)
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_DECISION_2026-09-21.md`
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_SOURCE_MATRIX_2026-09-21.md`
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_RUNTIME_TASK_2026-09-21.md`
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_STATUS_2026-09-21.md`
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_HANDOFF_2026-09-21.md`
-- `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_SELF_REVIEW_2026-09-21.md`
-
-Forbidden paths were not written: `app/**`, `components/**`, `lib/**`, `hooks/**`, `types/**`, `public/**`, `supabase/**`, `scripts/**`, `package.json`, `ROADMAP.md`, `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, operating-mode, Auth/RLS, #506, #509, #494 harness.
-
-A stray `next-env.d.ts` working-tree change was restored and not committed.
+Forbidden paths were not written: `app/**`, `components/**`, `lib/**`, `hooks/**`, `types/**`, `public/**`, `supabase/**`, `scripts/**`, `package.json`, `ROADMAP.md`, `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, operating-mode, Auth/RLS, #506, #509, #512, #494 harness.
 
 ---
 
@@ -67,62 +62,45 @@ A stray `next-env.d.ts` working-tree change was restored and not committed.
 
 | Document | Role |
 | --- | --- |
-| Source matrix | Actual Admin A–C seams, gates, freshness, PII, first-slice selection |
-| Decision | One architecture; insight TypeScript shape; ranking; disabled model seam |
-| Runtime task | Smallest file set, tests, exclusions; **NOT DISPATCHED** |
-| Status / Handoff / Self-review | Continuity for TL |
+| Decision §6.4 / §6.4a | Chosen process-recent policy + break-glass projection + denial map |
+| Source matrix §1 | Collector “in dieser Sitzung” labelled board copy; analyst attribution reconciled |
+| Runtime task §5 / §8.2 | Executable T-cache-* tests; comments insufficient |
+| Status / Handoff / Self-review | This CR persist |
 
-Chosen first source: System Health. Named next source (not in first runtime): Provider-ops `model-usage` only.
+First source remains System Health only.
 
 ---
 
 ## 5. Checked versus unchecked evidence
 
-### Checked (read / reconstructed)
+### Checked
 
-- `.jetnity/operating-mode.json` = `NORMAL` (live main still documents HOLD-exit history; task says NORMAL is live and #492 merged).
-- TL / multi-agent standards (merge/Ready remain TL-only; one writer).
-- V1 Binding Build Order §9: full Admin D–K is not a V1 prerequisite.
-- Release-gate §G still requires visible auth/security events — **unsatisfied**; this slice does not close it.
-- Current Admin home, `ehrliche-zustaende`, kennzahlen, security taxonomy, system-health, provider-ops-board, admin-guard/roles, security/payments routes.
-- #497 classifications used as input (5.2 / 5.4 `PARTIAL`; 4.1 / 5.5(a) closed; 5.5(b) PO_GATED).
-- #498 as sibling regression evidence owner, not re-run here.
-- #500 lookup-failure truth: unavailable ≠ logged out.
-- #504 taxonomy alignment: presentation only, not ingestion.
-- #494: local disposable proof; `jetnity_internal` must not be queried.
-- Historical D–K audit `docs/ADMIN_D_K_*` (PR #78). PR #40 plan is **not on main** (`origin/audit/admin-platform`).
-- Issue #508 / PR #510 live metadata. Sibling #506 / #509 not waited on and not edited.
-- `origin/main` SHA match to the task baseline.
+- TL review `5268850363` text and independently re-read `sammeln.ts` cache, `runtime.ts` cookie ping, `bewertung.ts` “in dieser Sitzung”, `reachesDatabase`.
+- Live `origin/main` still `c7fb9f0f` — no cascade rebase.
+- Path allowlist still the seven foundation docs.
 
-### Existing safe checks actually run
+### Existing safe checks
 
-Recorded after persist in the PR comment if they finish. Intended local checks (docs-only, no runtime change):
+Local source-contract tests on the **unchanged** Slice B files may be re-run as confirmation. They do not accept the unimplemented analyst.
 
-- `git diff --name-only origin/main...HEAD` path allowlist
-- existing `lib/admin/system-health/system-health.test.ts` and `lib/admin/ehrliche-zustaende.test.ts` as **source-contract confirmation**, not as acceptance of an unimplemented analyst
-
-Not run, deliberately: Production build, browser/Playwright, remote DB, Management API, provider/model/paid call, Auth configuration live rewrite, Preview login as an operator.
+Not run, deliberately: runtime implementation, browser/operator acceptance, remote DB, Management API, model/paid call.
 
 ### Unchecked / later
 
-- Exact-head GitHub Actions / Auth job / Vercel Preview IDs (PR comment after freeze)
-- Independent Technical-Lead architecture/product review
-- Runtime implementation and its tests
-- #506 / #509 sibling reports (unaccepted input if they land)
+- Exact-head CI / Auth / Vercel IDs for **this** persist (PR comment)
+- Independent Technical-Lead re-review of the new head
+- Runtime implementation of T-cache-*
 
 ---
 
 ## 6. Operating / product notes
 
 - Traveller-context intelligence: not applicable.
-- No new permissions, secrets, costs, or schedulers.
-- External Grok team and in-product Copilot remain separate.
+- No new permissions, secrets, costs, caches or schedulers.
 - Cursor does not Ready, merge, implement the runtime task, or start a follow-up.
 
 ---
 
 ## 7. Next step
 
-**STOP FOR TECHNICAL-LEAD ARCHITECTURE / PRODUCT REVIEW of #510.**
-
-If accepted: TL opens/dispatches the runtime task as a new numbered writer. If main moves: record delta; TL chooses one integration point — no rebase churn by this agent.
+**STOP FOR TECHNICAL-LEAD ARCHITECTURE / PRODUCT REVIEW of the new #510 head.**

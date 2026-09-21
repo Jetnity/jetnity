@@ -23,7 +23,7 @@ This document chooses one contract. It is not a menu. It does not implement runt
 Build the first Intelligent Admin foundation as a **deterministic System-Health Attention Analyst** inside the existing Admin home.
 
 1. **One source:** the already collected, sanitized `SystemHealthBericht` from `lib/admin/system-health`.
-2. **One derivation:** a pure function that ranks observed items/sub-checks, copies their `summary` / `proves` / `doesNotProve` / freshness, and emits a typed `AnalystBericht`.
+2. **One derivation:** a pure function that ranks observed items/sub-checks and emits a typed `AnalystBericht`. Source `summary` / `doesNotProve` / freshness may be reused as display text. Source `proves` is **not** copied through when it claims current-session evidence (see §6.4).
 3. **One surface:** a new “Aktuelle Hinweise” block on `/admin`, composed **above** the existing static `AdminNaechsteSchritte` directory. No second dashboard, no new route, no new table, no new API unless the existing RSC loader is insufficient — it is sufficient.
 4. **One safe next hop** for this slice: `/admin/system-health`.
 5. **Model seam:** typed, default-disabled, unauthorized. No provider, secret, paid call or “AI is thinking” chrome.
@@ -61,13 +61,18 @@ The operator problem that is real *and* solvable without new privileges: **an en
 - Expected `not_configured` (Vercel, GitHub, Infomaniak, Supabase Management) is **coverage**, not an incident. That is the difference between a useful analyst and a generic audit.
 - The only commonly *variable* operational check today is `supabase-app-datenzugriff`, plus freshness/stale and collector failure. That is enough for a first useful slice.
 - Permission can be checked with the same `betrieb-lesen` + AAL2 gate the System Health page already uses. Home currently does not repeat that gate; the analyst must, before aggregation.
+- The existing collector cache is process-wide. Foundation 1 **reuses** it as a recent process observation and does **not** add a second cache or change Slice B.
 - No traveller credentials are involved.
 
 ## 6. Insight contract
 
 Reuse `HealthStatus`, `HealthFreshness`, `SystemHealthId` from `lib/admin/system-health/typen.ts`. Do not add a storage table for a view of existing facts.
 
+Reuse `AdminDenial` from `lib/auth/admin-access.ts` as-is. Do not invent a parallel denial vocabulary.
+
 ```ts
+import type { AdminDenial } from '@/lib/auth/admin-access'
+
 export const ANALYST_INSIGHT_KIND = 'deterministic-source' as const
 
 export const ANALYST_MATERIALITY = ['attention', 'coverage', 'none'] as const
@@ -79,8 +84,29 @@ export type AnalystSafeHref = (typeof ANALYST_SAFE_HREFS)[number]
 export type AnalystObserved =
   | HealthStatus
   | 'access_denied'
+  | 'lookup-failed'
   | 'source_failed'
   | 'partial_failed'
+
+/** Exact AdminDenial → observed. `aal-lookup-failed` is unavailable, not a distinct observed token. */
+export const ANALYST_DENIAL_TO_OBSERVED: Record<
+  AdminDenial,
+  Extract<AnalystObserved, 'access_denied' | 'lookup-failed'>
+> = {
+  unauthenticated: 'access_denied',
+  forbidden: 'access_denied',
+  'aal2-required': 'access_denied',
+  'lookup-failed': 'lookup-failed',
+  'aal-lookup-failed': 'lookup-failed',
+}
+
+export type AnalystAccess =
+  | { status: 'allowed'; grant: 'role' | 'break-glass' }
+  | { status: 'denied'; denial: AdminDenial }
+
+export type AnalystObservationScope = 'none' | 'process-recent'
+
+export type AnalystAttribution = 'none' | 'process-recent' | 'not_attributed'
 
 export type AnalystNext =
   | { href: AnalystSafeHref; label: string; kind: 'investigate' }
@@ -97,6 +123,7 @@ export type AnalystInsight = {
   freshness: HealthFreshness
   checkedAt: string | null
   materiality: AnalystMateriality
+  attribution: AnalystAttribution
   title: string
   explanation: string
   proves: string
@@ -110,13 +137,15 @@ export type AnalystCoverage = {
   notConfigured: readonly string[]
   unknown: readonly string[]
   failed: readonly string[]
+  notAttributed: readonly string[]
 }
 
 export type AnalystBericht = {
   generatedAt: string
   sourceCheckedAt: string | null
   source: 'system-health'
-  access: 'allowed' | 'denied' | 'lookup-failed'
+  observationScope: AnalystObservationScope
+  access: AnalystAccess
   insights: AnalystInsight[]
   coverage: AnalystCoverage
   writeActions: []
@@ -142,7 +171,7 @@ Deterministic rank, then `SYSTEM_HEALTH_IDS` order, then check id:
 
 | Rank | `observed` / freshness | `materiality` | `next` |
 | --- | --- | --- | --- |
-| 0 | `access_denied` or `lookup-failed` | `attention` | null (no hop the session cannot use) |
+| 0 | `access_denied` or `lookup-failed` (from `ANALYST_DENIAL_TO_OBSERVED`) | `attention` | null (no hop; no source load) |
 | 1 | `source_failed` / `partial_failed` | `attention` | `/admin/system-health` if access allowed |
 | 2 | `unavailable` | `attention` | `/admin/system-health` |
 | 3 | `degraded` | `attention` | `/admin/system-health` |
@@ -157,46 +186,80 @@ Stale does **not** keep a previous `healthy` as current green. Stale healthy is 
 
 ### 6.3 No-signal
 
-If access is allowed, collection succeeded, the only variable check (`supabase-app-datenzugriff`) is `healthy` + `fresh`, and remaining items are expected `unknown` / `not_configured`:
+If `access.status === 'allowed'`, `access.grant === 'role'`, `observationScope === 'process-recent'`, the only variable check (`supabase-app-datenzugriff`) is `healthy` + `fresh` **after attribution overlay**, and remaining items are expected `unknown` / `not_configured`:
 
-- emit **one** `materiality: 'none'` coverage insight;
-- title/explanation must say that only process reachability and the airports read are evidenced;
-- `next` is null (do not invent a recommendation);
+- emit **one** `materiality: 'none'` insight;
+- explanation must say that only process reachability and a **recent process-level** airports observation are evidenced — not that this session performed the read;
+- `next` is null;
 - coverage lists still disclose what is not configured.
+
+For `access.grant === 'break-glass'`, airports / any database-backed check **cannot** count as evidenced. No-signal, if reached, may only cite process-local and expected-not_configured coverage.
 
 No-signal is not “all systems healthy”. Parent `app` / `supabase` must stay non-green (existing `istUeberzogenerGesamtClaim`).
 
-### 6.4 Permission before aggregation
+### 6.4 Chosen source-context policy — process-recent observation
 
-```
-evaluateAdminAccess({ capability: 'betrieb-lesen', surface: 'admin-home-analyst' })
-  → if denied: AnalystBericht.access = denied | lookup-failed; insights = one attention insight; do not call sammleSystemHealth
-  → if allowed: reuse ladeSystemHealthFuerSeite() / sammleSystemHealth
-```
+**IA-CR1 choice (one policy, not a menu):** Foundation 1 reuses the existing `SystemHealthBericht` as a **recent process-level observation**. It does **not** claim current-session provenance. It does **not** add a request/identity-isolated collector, a second cache, or a new permission subsystem. Slice B (`sammeln.ts` module cache, cookie-client miss path, board `proves` strings) stays unchanged.
 
-Hiding the new block is not authorization. Break-glass may see the process-local snapshot the System Health page already shows; it must not be told that database-backed facts were proven if `reachesDatabase()` is false. Do not serve the 30s process cache to a caller who failed the gate.
+Facts about the existing collector that this analyst must treat as given:
 
-`access_denied` and `lookup-failed` render with existing denial copy (`messageForDenial`). They must not look like an empty healthy list.
+- `sammleSystemHealth` holds one process-wide `cache` for 30s.
+- A cache hit returns `cache.bericht` after `wendeEvidenceAlterAn` and does **not** run the current caller’s `pingSupabase`.
+- A cache miss may ping `public.airports` through that miss’s cookie client.
+- Slice B `proves` for a successful zugriff currently says the read was answered “in dieser Sitzung”. That string is **board copy**, not analyst attribution.
+
+Therefore:
+
+1. **Gate first, always.** `evaluateAdminAccess({ capability: 'betrieb-lesen', surface: 'admin-home-analyst' })`.
+2. **Denied load ban.** If `allowed === false` (any `AdminDenial`, including `lookup-failed` and `aal-lookup-failed`): `observationScope: 'none'`; do **not** call `sammleSystemHealth` / `ladeSystemHealthFuerSeite`; emit one attention insight via `ANALYST_DENIAL_TO_OBSERVED`; `next: null`. Hiding the card is not this proof.
+3. **Allowed load.** Reuse the existing loader. Set `observationScope: 'process-recent'` and `access: { status: 'allowed', grant }`.
+4. **No current-session attribution.** Every insight that uses the bericht has `attribution: 'process-recent'` and a mandatory limitation: the observation is process-wide and at most 30s old; it does not prove that **this** session executed the airports read. Caller A can populate the cache; caller B can receive the same `checkedAt`. That is accepted and must be labelled, not hidden.
+5. **Copy-through rule.** Reuse `summary`, `doesNotProve`, `freshness`, `checkedAt`. If `proves` matches `/in dieser Sitzung/i` (or equivalent session wording), **replace** `proves` with process-recent wording, e.g. `Ein Prozess in dieser Instanz hat public.airports in einem kürzlichen Sammellauf beantwortet. Das ist kein Nachweis für die aktuelle Sitzung.` Do not invent a stronger claim. Do not edit Slice B source strings.
+6. **Cache is not a privilege escalation to denied callers.** The gate in (2) remains. The cache is also not a session-binding mechanism for allowed callers.
+
+### 6.4a Break-glass projection
+
+`grant === 'break-glass'` means `reachesDatabase()` is false. The existing Notzugang banner is **not** the proof.
+
+Closed Foundation 1 list of **database-backed** System Health facts (do not attribute to break-glass, **including cached success or cached failure**):
+
+- `supabase-app-datenzugriff` (sources `supabase-postgrest-airports` / `supabase-app-client`)
+
+Process-local / unconfigured (may remain as process-recent or coverage):
+
+- `app-prozess` (`process-runtime`)
+- `app-deployment`, `supabase-management`, `vercel`, `github`, `infomaniak` (`source: none` / `not_configured`)
+
+Required projection after an allowed break-glass load:
+
+- Do not emit attention/none that treats a database-backed status as a fact for this grant.
+- Put those check ids in `coverage.notAttributed`.
+- Emit at most one coverage insight (`attribution: 'not_attributed'`) stating that database-backed System Health facts are not attributed to Notzugang, including values from the process cache.
+- `checkedAt` of the process observation may still be shown as the age of the **process** snapshot, never as proof this grant reached the database.
+
+Denied / lookup-failed sessions never reach this projection: they never load.
 
 ### 6.5 Honest failure
 
-| Input | Output |
-| --- | --- |
-| Denied / AAL2 required | `access: 'denied'`; no source items; no green |
-| Lookup / AAL lookup failed | `access: 'lookup-failed'`; unavailable, not logged-out (#500) |
-| Collector throw after allow | `source_failed`; do not invent timestamps |
-| Partial item isolation (existing `isoliert`) | typed item as today; `partial_failed` only if the bericht itself is incomplete (`systemHealthIdsVollstaendig === false`) |
-| Missing `checkedAt` | freshness `unknown`; no fabricated clock |
-| Stale | keep last observed status, mark stale, do not treat as current |
+| Input | `access` | `observationScope` | Notes |
+| --- | --- | --- | --- |
+| `unauthenticated` / `forbidden` / `aal2-required` | `{ status: 'denied', denial }` | `none` | `observed: 'access_denied'`; `messageForDenial`; no source load; no green |
+| `lookup-failed` / `aal-lookup-failed` | `{ status: 'denied', denial }` | `none` | `observed: 'lookup-failed'`; unavailable, not logged-out (#500); no source load |
+| Allowed + collector throw | `{ status: 'allowed', grant }` | `process-recent` or `none` if no bericht | `source_failed`; do not invent timestamps |
+| Partial item isolation (existing `isoliert`) | allowed | `process-recent` | `partial_failed` only if `systemHealthIdsVollstaendig === false` |
+| Missing `checkedAt` | allowed | `process-recent` | freshness `unknown`; no fabricated clock |
+| Stale re-age | allowed | `process-recent` | keep status; mark stale; **do not refresh `checkedAt`** |
+| Role → same cached bericht as another role caller | allowed / `role` | `process-recent` | same `checkedAt`; no session claim |
+| Role-populated cache → break-glass | allowed / `break-glass` | `process-recent` | apply §6.4a; cached airports success is `notAttributed` |
 
-Empty insights after a successful load means the ranking produced only coverage/none — still show coverage. Never coerce to zero incidents.
+Empty insights after a successful **role** load means the ranking produced only coverage/none — still show coverage. Never coerce to zero incidents.
 
 ### 6.6 Navigation and text
 
 - Allowlisted hrefs: `/admin/system-health` only in this slice.
 - Kind is `investigate`, never `execute`, `repair`, `pay`, `switch-provider`, `write`.
 - No buttons labelled Execute, Auto, Repair, Apply, Block, Refund.
-- `explanation`, `proves`, `doesNotProve` and `summary` are **untrusted display data**. Render as text, not markdown-as-HTML, not instructions to an agent.
+- `explanation`, `proves`, `doesNotProve` and `summary` are **untrusted display data**. Render as text, not markdown-as-HTML, not instructions to an agent. Analyst `proves` is the **overlay** result from §6.4, not a guarantee that Slice B’s session wording is shown.
 - No public indexing (Admin already uses `NICHT_INDEXIEREN`).
 - No cross-user data. No new export.
 
@@ -239,12 +302,14 @@ The following are **synthetic design cases**, not observed Production incidents.
 
 | Case | Input (synthetic) | Expected insight |
 | --- | --- | --- |
-| A | `supabase-app-datenzugriff` `unavailable` + fresh | One `attention` insight; proves only this ping failed; next `/admin/system-health` |
-| B | Same status, freshness `stale` | Same fact, labelled stale; not current; still attention |
-| C | Airports ping `healthy` + fresh; others expected unknown/not_configured | One `none` coverage insight; no recommendation |
-| D | `betrieb-lesen` denied | `access: 'denied'`; no aggregation; no green; no System Health hop |
+| A | Role grant; `supabase-app-datenzugriff` `unavailable` + fresh | One `attention` insight; process-recent; proves only this process observation failed; next `/admin/system-health`; no “diese Sitzung” |
+| B | Same status, freshness `stale` (`checkedAt` unchanged) | Same fact, labelled stale; not current; still attention |
+| C | Role grant; airports `healthy` + fresh; others expected unknown/not_configured | One `none` insight; process-recent airports, not session; no recommendation |
+| D | Any `AdminDenial` | `access.status: 'denied'`; mapped `observed`; `observationScope: 'none'`; no load; no hop |
 | E | Bericht missing `github` item | `partial_failed` attention; do not assume GitHub is healthy |
 | F | `app` parent `healthy` in a fixture | Invalid input; derivation must refuse to emit a green parent claim (`istUeberzogenerGesamtClaim`) |
+| G | Cached healthy airports from caller A, then role caller B | B sees same `checkedAt`; `attribution: 'process-recent'`; proves must not claim B’s session |
+| H | Same cache, then break-glass caller | Airports in `coverage.notAttributed`; no healthy/unavailable fact for this grant |
 
 ## 9. What this is not
 
@@ -262,3 +327,4 @@ The following are **synthetic design cases**, not observed Production incidents.
 - Provider-ops `model-usage` remains the documented second snapshot for a later numbered slice.
 - Existing System Health tests stay the source-contract tests; the analyst adds derivation tests, it does not fork a second health model.
 - If TL rejects the single-source choice, the alternative is to add `model-usage` only — not to reopen D–K or security ingestion in the same slice.
+- IA-CR1 is closed in this specification by **process-recent attribution + break-glass projection**, not by isolating the Slice B cache. A later isolated-acquisition slice would be a different, named change to System Health and is not authorized here.

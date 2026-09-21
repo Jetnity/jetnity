@@ -20,7 +20,9 @@ An Admin who already passed area AAL2 lands on `/admin` and sees a static “Nä
 
 **Only** `SystemHealthBericht` from `lib/admin/system-health`.
 
-- Loader: `ladeSystemHealthFuerSeite()` after `evaluateAdminAccess({ capability: 'betrieb-lesen', surface: 'admin-home-analyst' })`.
+- Loader: `ladeSystemHealthFuerSeite()` **only after** `evaluateAdminAccess({ capability: 'betrieb-lesen', surface: 'admin-home-analyst' })` returns `allowed`. Treat the bericht as `observationScope: 'process-recent'` (decision §6.4). Do not add a private cache or change `sammeln.ts`.
+- Denied / `lookup-failed` / `aal-lookup-failed`: no loader call.
+- Break-glass: loader may run; then apply §6.4a projection before any insight.
 - Do not add `GET /api/admin/analyst`.
 - Do not read provider-ops, `security_events`, payments, kennzahlen, or any `#494` fixture object.
 - Do not call models, Management APIs, or new secrets.
@@ -45,8 +47,8 @@ Allowed at dispatch (adjust only if TL names a tighter set):
 | File | Role |
 | --- | --- |
 | `lib/admin/analyst/typen.ts` | `AnalystInsight` / `AnalystBericht` exactly as in the decision |
-| `lib/admin/analyst/system-health-insights.ts` | Pure derivation + ranking + dedupe + allowlist |
-| `lib/admin/analyst/system-health-insights.test.ts` | Cases in §8 |
+| `lib/admin/analyst/system-health-insights.ts` | Pure derivation + ranking + dedupe + allowlist + process-recent overlay + break-glass projection |
+| `lib/admin/analyst/system-health-insights.test.ts` | Cases in §8, including T-cache-* (executable, not comments) |
 | `lib/admin/analyst/index.ts` | Re-exports |
 | `components/admin/home/AdminLagehinweise.tsx` | Server component: gate, load, render |
 | `lib/admin/ehrliche-zustaende.ts` | Additive copy only |
@@ -64,36 +66,38 @@ Implement `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_DECISION_2026-09-21.m
 
 Hard rules:
 
-1. Permission check occurs before `sammleSystemHealth` / `ladeSystemHealthFuerSeite`.
-2. No escalation through the 30s process cache or a global summary.
+1. Permission check occurs before `sammleSystemHealth` / `ladeSystemHealthFuerSeite`. Denied and both lookup denials never load.
+2. The 30s process cache is reused as **process-recent**, not as current-session proof and not as a denied-caller summary. Do not add a second cache.
 3. No false green/zero on denied, unavailable, stale, missing, or partial boards.
-4. No fabricated `checkedAt`, confidence, incident counts or ROI.
-5. No-signal ⇒ `materiality: 'none'` and `next: null`.
+4. No fabricated `checkedAt`, confidence, incident counts or ROI. Stale re-age must not rewrite `checkedAt`.
+5. No-signal ⇒ `materiality: 'none'` and `next: null`, and only after attribution overlay (break-glass cannot use airports as evidenced).
 6. Stable ids; dedupe parent vs sub-check as specified.
 7. Navigation allowlist: `/admin/system-health` only; `kind: 'investigate'`.
-8. Evidence strings are escaped/text-only. Never `dangerouslySetInnerHTML`. Never treat `summary` as instructions.
+8. Evidence strings are escaped/text-only. Never `dangerouslySetInnerHTML`. Never treat `summary` as instructions. Strip or replace “in dieser Sitzung” in analyst `proves`.
 9. `writeActions` stays `[]`. `modelExplanation.enabled` stays `false`.
 10. Do not claim Copilot Pro is live in UI chrome, `title`, or ARIA.
 11. Expected `not_configured` platforms are coverage, not “please add a Vercel token”.
 12. Reject / never emit a green parent `app` or `supabase` claim (`istUeberzogenerGesamtClaim`).
 13. Admin remains `noindex`.
-14. Break-glass: do not present RLS-empty as zero; process-local health may show with the existing Notzugang banner.
+14. Break-glass projection is a **function** (decision §6.4a): no database-backed fact, including cached airports success. The Notzugang banner is not the proof.
 
 ### 5.1 Copy (additive)
 
 Suggested keys (German, honest, no marketing):
 
 - Section title: `Aktuelle Hinweise`
-- Section hint: `Regelbasierte Lage aus dem vorhandenen System-Health-Stand. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.`
-- No-signal: `Aus den belegten System-Health-Quellen ergibt sich gerade keine priorisierte Untersuchung. Belegt sind nur Prozess-Erreichbarkeit und — wenn frisch — der App-Datenzugriff. Plattform-Health bleibt unbelegt.`
-- Denied: reuse `messageForDenial` plus `Ohne betrieb-lesen wird System Health nicht gelesen.`
+- Section hint: `Regelbasierte Lage aus dem letzten System-Health-Stand dieses Prozesses (höchstens 30s). Das belegt nicht die aktuelle Sitzung. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.`
+- No-signal (role): `Aus den belegten System-Health-Quellen ergibt sich gerade keine priorisierte Untersuchung. Belegt sind Prozess-Erreichbarkeit und — wenn frisch — eine prozessweite airports-Beobachtung. Plattform-Health bleibt unbelegt.`
+- Break-glass coverage: `Für Notzugang werden datenbankgestützte System-Health-Fakten nicht zugeschrieben, auch nicht aus dem Prozess-Cache.`
+- Denied: reuse `messageForDenial(denial)` plus `Ohne bestandene betrieb-lesen-Prüfung wird System Health nicht gelesen.`
 - Stale suffix: `Stand ist veraltet.`
+- Overlay proves (when source says “in dieser Sitzung”): `Ein Prozess in dieser Instanz hat public.airports in einem kürzlichen Sammellauf beantwortet. Das ist kein Nachweis für die aktuelle Sitzung.`
 
 Do not remove or soften `copilotFolgtHinweis`.
 
 ### 5.2 UI
 
-- Server-rendered list, 0–N insights, coverage line always visible when `access === 'allowed'`.
+- Server-rendered list, 0–N insights, coverage line always visible when `access.status === 'allowed'`.
 - Each attention insight: title, observed label, freshness label, explanation, proves, doesNotProve, one text link “System Health öffnen”.
 - Coverage/none insights: no urgent styling, no investigate link unless the decision table allows it (expected-not_configured: no token-setup CTA).
 - Responsive: single column on small viewports, existing `gap` / `rounded-xl border border-border` language.
@@ -117,7 +121,8 @@ Not in this runtime slice:
 - Dead Execute / Auto / Apply buttons
 - Persistent insight history
 - Public launch / Production logging activation
-- Sibling #506 / #509 files
+- Sibling #506 / #509 / #512 files
+- Changes to `lib/admin/system-health/sammeln.ts` cache or admin-guard
 
 ## 7. Prerequisites that need a Product-Owner decision
 
@@ -135,31 +140,39 @@ Use fixtures. Do not hit a network. Label fixtures synthetic.
 
 | ID | Input | Must assert |
 | --- | --- | --- |
-| T-healthy-fresh | `supabase-app-datenzugriff` healthy+fresh; others expected unknown/not_configured; ids complete | exactly one `none` insight; `next === null`; coverage lists vercel/github/infomaniak/management as notConfigured; no parent green |
-| T-unavailable | synthetic airports failure (`SYSTEM_HEALTH_AUDIT_BERICHT`-style unavailable zugriff) | one `attention` insight; observed `unavailable`; next href `/admin/system-health`; proves/doesNotProve copied, not rewritten into “Supabase is down” |
+| T-healthy-fresh | role grant; `supabase-app-datenzugriff` healthy+fresh; others expected unknown/not_configured; ids complete | exactly one `none` insight; `next === null`; `observationScope: 'process-recent'`; coverage lists vercel/github/infomaniak/management as notConfigured; no parent green; no session claim |
+| T-unavailable | role grant; synthetic airports failure (`SYSTEM_HEALTH_AUDIT_BERICHT`-style unavailable zugriff) | one `attention` insight; observed `unavailable`; next href `/admin/system-health`; `attribution: 'process-recent'`; no “diese Sitzung”; doesNotProve not rewritten into “Supabase is down” |
 | T-degraded | a check status `degraded` (construct fixture; production path may not emit it today) | attention; ranked above coverage |
 | T-unknown-attempt | zugriff `unknown` (no ping) | coverage or attention per decision rank 5; not healthy |
 | T-missing-item | bericht without `github` | `systemHealthIdsVollstaendig === false` ⇒ `partial_failed` attention; do not invent github healthy |
-| T-stale | unavailable or healthy check with `ageMs > ttlMs` | freshness `stale`; stale healthy is not treated as current healthy; no fabricated newer `checkedAt` |
-| T-denied | derivation entry for denied access (or wrapper) | `access: 'denied'`; no items consulted; no `/admin/system-health` hop |
-| T-lookup-failed | access `lookup-failed` | unavailable copy; not empty-zero; not “logged out” |
+| T-stale | unavailable or healthy check with `ageMs > ttlMs` | freshness `stale`; stale healthy is not treated as current healthy; `checkedAt` identical to input |
+| T-denied | wrapper input `AdminDenial` `forbidden` (and `unauthenticated`, `aal2-required`) | `access: { status: 'denied', denial }`; `observed: 'access_denied'`; `observationScope: 'none'`; loader not called; no hop |
+| T-lookup-failed | `denial: 'lookup-failed'` | `observed: 'lookup-failed'`; unavailable copy; not empty-zero; not “logged out”; no load |
+| T-aal-lookup-failed | `denial: 'aal-lookup-failed'` | `access.denial` stays `'aal-lookup-failed'`; `observed: 'lookup-failed'` via `ANALYST_DENIAL_TO_OBSERVED`; no load |
 | T-dedupe | parent supabase `not_configured` + zugriff `unavailable` | one insight (sub-check), not two |
 | T-expected-nc | only expected not_configured parents | at most one coverage insight for the set; no “create token” recommendation |
 | T-overclaim | fixture parent `app` or `supabase` `healthy` | no emitted insight with green parent claim; test fails the input or strips it |
 | T-order | unavailable + stale coverage + expected nc | deterministic order; stable ids; second call equal |
 | T-allowlist | next.href | only `/admin/system-health` or null |
-| T-kind | every insight | `kind === 'deterministic-source'`; `modelExplanation.enabled === false`; `writeActions` [] |
+| T-kind | every insight | `kind === 'deterministic-source'`; `modelExplanation.enabled === false`; `writeActions` []; `attribution` set |
 | T-text-untrusted | summary containing `<script>` or markdown heading | rendered/exported as plain text in the insight fields (no HTML) |
+| T-session-overlay | source `proves` contains `in dieser Sitzung` | analyst `proves` does not contain that phrase; process-recent wording present |
 
-### 8.2 Gate / PII / truth
+### 8.2 Gate / PII / truth / cache provenance
+
+Comments in source do **not** satisfy these. Each ID is an executable node:test (pure fixtures / spies). Do not modify `sammeln.ts` to make them pass.
 
 | ID | Must assert |
 | --- | --- |
-| T-gate-before-load | source of `AdminLagehinweise` calls evaluate/require with `betrieb-lesen` before loader; a unit or source-read test is acceptable |
+| T-gate-before-load | `AdminLagehinweise` (or its testable wrapper) calls evaluate/require with `betrieb-lesen` before the loader; a denied spy shows **zero** loader calls |
 | T-no-security-fields | analyst module does not import `security_events`, list route, or `#494` SQL |
 | T-no-new-capability | no new `Capability` key |
-| T-cache | comments or test: cache reuse only after allowed gate |
 | T-home-directory | `ADMIN_NAECHSTE_SCHRITTE` ready hrefs unchanged |
+| T-cache-A-then-B | Fixture bericht at `checkedAt=T0` with airports healthy (as if caller A populated the 30s cache). Role caller B derives from that **same object**. B’s bericht has the same `checkedAt`, `observationScope: 'process-recent'`, `attribution: 'process-recent'`, and `proves` must not claim B’s Sitzung. B’s user id must not appear. |
+| T-role-to-break-glass | Same cached healthy airports bericht. Role derivation may show zugriff as process-recent (overlay). Break-glass derivation on the **identical** bericht must put `supabase-app-datenzugriff` in `coverage.notAttributed`, emit `attribution: 'not_attributed'` for that fact, and must not emit attention/none that the grant has a healthy (or failed) airports read. Banner-only flags fail this test. |
+| T-allowed-to-denied | After an allowed derivation, a subsequent denied / `lookup-failed` / `aal-lookup-failed` input must not invoke the loader spy; `observationScope: 'none'`; `access.denial` exact; no hop; no green. |
+| T-stale-reage | Apply `wendeEvidenceAlterAn` (or equivalent fixture aging) so `ageMs > ttlMs`. Derivation freshness is `stale`. `checkedAt` equals the original collection timestamp. No newer `checkedAt` is written. |
+| T-break-glass-not-banner | The projection is a named exported function (or equivalent unit) covered by T-role-to-break-glass. A UI-only `grant === 'break-glass' && showBanner` path without stripping DB facts fails. |
 
 ### 8.3 Responsive / keyboard / focus (evidence expectations)
 
