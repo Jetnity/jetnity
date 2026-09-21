@@ -149,6 +149,26 @@ export type Gastspeicher = {
   warteschlange: Trip[]
 }
 
+/**
+ * Read-only observation of the active v3 guest key, before any loader that
+ * may migrate, normalize or write.
+ *
+ * Distinguishes a missing key from present-but-invalid bytes and from a
+ * browser storage that cannot be read. Does not invent a trip and does not
+ * touch storage.
+ */
+export type AktiveGastreiseVorpruefung =
+  /** No `window` yet — SSR / first paint. Not a browser-storage error. */
+  | { art: 'nicht_im_browser' }
+  /** localStorage getter or getItem is unavailable or throws. */
+  | { art: 'speicher_unlesbar' }
+  /** Active key is genuinely absent. Queue / legacy adoption may proceed. */
+  | { art: 'fehlend' }
+  /** Active key is present, parseable and schema-valid. */
+  | { art: 'gueltig' }
+  /** Active key is present but not a valid trip. Raw bytes must stay. */
+  | { art: 'ungueltig' }
+
 function verfuegbar(): boolean {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 }
@@ -180,6 +200,65 @@ function rohLesen(schluessel: string): unknown {
     // Ein unlesbarer Eintrag ist kein Grund, die Seite abzubrechen.
     return null
   }
+}
+
+/**
+ * Liest nur die Rohbytes des aktiven Schlüssels.
+ *
+ * Im Gegensatz zu `rohLesen` bleibt ein vorhandener, aber unbrauchbarer
+ * Eintrag von einem fehlenden Schlüssel und von einem unlesbaren Speicher
+ * unterscheidbar. Kein Parse, kein Schema, kein Schreiben.
+ */
+function aktiveSchluesselRohLesen():
+  | { art: 'nicht_im_browser' }
+  | { art: 'speicher_unlesbar' }
+  | { art: 'fehlend' }
+  | { art: 'roh'; bytes: string } {
+  if (typeof window === 'undefined') return { art: 'nicht_im_browser' }
+
+  let speicher: Storage
+  try {
+    speicher = window.localStorage
+  } catch {
+    return { art: 'speicher_unlesbar' }
+  }
+  if (typeof speicher === 'undefined' || speicher === null) {
+    return { art: 'speicher_unlesbar' }
+  }
+  if (typeof speicher.getItem !== 'function') {
+    return { art: 'speicher_unlesbar' }
+  }
+
+  let roh: string | null
+  try {
+    roh = speicher.getItem(SCHLUESSEL_AKTIV)
+  } catch {
+    return { art: 'speicher_unlesbar' }
+  }
+
+  if (roh === null) return { art: 'fehlend' }
+  return { art: 'roh', bytes: roh }
+}
+
+/**
+ * Read-only preflight for account adoption.
+ *
+ * Call this before `zurUebernahme()` / `gastspeicherLaden()`, so an invalid
+ * active draft cannot be overwritten by legacy normalization. Fresh on every
+ * call — no cached result.
+ */
+export function aktiveGastreiseVorpruefen(): AktiveGastreiseVorpruefung {
+  const roh = aktiveSchluesselRohLesen()
+  if (roh.art !== 'roh') return roh
+
+  let geparst: unknown
+  try {
+    geparst = JSON.parse(roh.bytes) as unknown
+  } catch {
+    return { art: 'ungueltig' }
+  }
+
+  return reiseLesen(geparst) ? { art: 'gueltig' } : { art: 'ungueltig' }
 }
 
 /**
