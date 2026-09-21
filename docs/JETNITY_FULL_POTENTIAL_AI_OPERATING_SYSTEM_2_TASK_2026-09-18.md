@@ -261,3 +261,23 @@ Integrate into matrix / tracker / STATUS / HANDOFF / current pointers only:
 - intermediate `8403c6a5` temporarily added a short-name allowlist and `004daa9d` reverted it; net operating-mode config matches the pre-closeout file. Do not claim the file was never touched at any intermediate commit. Do not modify operating-mode / enforcement again.
 
 Do not broaden scope. Guardian need not repeat this preflight merely to acknowledge this correction.
+
+### 7.9 21 September scoped PO limitations (`5756712854`)
+
+Technical-Lead `5756712854` records explicit Product-Owner consent after Guardian schema clarification `5756594272`. This is **not** an inferred extension of the Sep20 exception `5748343178`. Cursor did not inspect Grok.
+
+Persist into the existing matrix / tracker / STATUS / HANDOFF / current pointers only:
+
+1. Independently reviewed Sep21 Daily `JETNITY-DAILY-V2-2026-09-21-0745` and Weekly `JETNITY-WEEKLY-STRATEGIC-2026-09-21-0830` output results are accepted with inaccessible execution provenance. Scheduler origin remains **INFERRED**; pinned invocation **STRONGLY_INFERRED**. `native_scheduled_pass` remains false. No blanket waiver, gate promotion, or new invocation claim.
+2. Existing chat/push path is provisionally accepted as **BEST EFFORT**. Specific Sep21 Daily (`5756237674`) and Weekly (lock-screen screenshot under `5756594272`) device notifications are observed. No guaranteed prompt P0/P1 detection-to-delivery, SLA, or ChatGPT wake. The urgent capability gap remains technically open and is now an explicit provisional limitation. Do not intentionally delay known P0/P1 to Daily. No new transport, connector, settings, or probe.
+3. Native Guardian MATERIAL/DEGRADED archive proof is **deferred** until the first genuine qualifying event. `native_material_archive_proof` remains false. Sequential isolated exercise remains its existing evidence class. CoS/Guardian must preserve and present the real event/archive when available. No fabricated finding or invented timer.
+
+Schema clarification **CLOSED** without live changes: installed Weekly schema `5e77164e7f0858886d1c4523d31f81f46cffe9d235918ed8d49c0cb9634beb18` uses `strategic_findings` array (3 entries); top-level `material_findings` is **ABSENT**. Earlier “JSON null” was a missing-key lookup artifact in the capture summary, not a live contract violation. Preserve original capture hashes. Three entries do not imply MATERIAL; reviewed weekly status remains `NO_MATERIAL`.
+
+Evidence (PO-forwarded / Guardian-reviewed; Cursor did not observe files):
+
+- Daily capture SHA256 `8b3e695ecfbe23fe9c9604d0fbc7e366ef72a7d2ab21dbe2926114180a9331f9`
+- Weekly capture SHA256 `39609ecdd689f23c0d90b7a139f5fa67b40da4cf40b8d5d539199a72b758fbf0`
+- Weekly brief/archive SHA256 `0a486407be993878845f0ebced51493773e10c3c83d68031c6fefa6beb16f903`
+
+Correct the stale CoS “Later Guardian receipt read” next-actor wording noted in `5748946655`. Keep Path B / conditional process-evidence and ACL/permission unknowns visible. Do not manufacture whole-system acceptance. Keep HOLD active and #487 parked. #491 must not set `NORMAL`. No operating-mode / enforcement / allowlist edit.

@@ -291,7 +291,7 @@ Sequence (d) is **complete**. Sequence (e) including **e-native** is **PASS**. H
 | h-guardian-observe | First real `pr-pushed` observation on PR #491 | **ACCEPTED for e0524311 transport/processing** (`5742732366`); historical `2db26344` standalone proof remains UNVERIFIED |
 | h-routing | Remaining event/risk routing | **Weekly Path A INSTALLED-SOURCE PASS / Daily Sep20 output-consistency PASS / Path B ARTIFACT PASS / Path C interactive ack accepted / Path C off-session BLOCKED / scheduled routing REPORTED CONFIGURED / conditional receipt REPORTED CAPTURED / native scheduled PASS OPEN** (`5748633847`; see §12a) |
 
-The complete Daily and Weekly paths are technically proven and **ACTIVE**. Weekly Path A routing plus binding mixed-status precedence is an **INSTALLED-SOURCE PASS** (`5745439900`); native updated Weekly execution remains **OPEN**. Daily Sep20 is an **output-consistency PASS** (`5748314138`) with PO limitation THIS RUN ONLY (`5748343178`). Path B is a LIMITED success-path **ARTIFACT PASS** (`5748428132`). Path C interactive ack is accepted (`5748484353`); off-session is **BLOCKED** (`5748633847`). Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Old Weekly ignore-routing compatibility remains a historical LIMITED PASS. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited later manual-capture scope (`5744814651`); first independent existing receipt read is **COMPLETE** at that bounded class (`5748724868` / PO-forwarded `5748637045`); `hash_drift` fields are verified file claims; original serialized ordering remains unproven; final whole-system review remains pending. Native scheduled PASS, native Guardian MATERIAL/DEGRADED archive proof, remaining Path B execution residuals, Path C urgent transport, Ready, merge, and HOLD-exit remain **OPEN**.
+The complete Daily and Weekly paths are technically proven and **ACTIVE**. Weekly Path A routing plus binding mixed-status precedence is an **INSTALLED-SOURCE PASS** (`5745439900`); native updated Weekly execution remains **OPEN**. Daily Sep20 is an **output-consistency PASS** (`5748314138`) with PO limitation THIS RUN ONLY (`5748343178`). Path B is a LIMITED success-path **ARTIFACT PASS** (`5748428132`). Path C interactive ack is accepted (`5748484353`); off-session is **BLOCKED** (`5748633847`). Guardian event-assurance setup is **COMPLETE**. Bounded native `pr-pushed` transport/processing for `e0524311` is **ACCEPTED**. Historical `2db26344` standalone proof remains UNVERIFIED. Old Weekly ignore-routing compatibility remains a historical LIMITED PASS. Scheduled routing is **REPORTED CONFIGURED**, **not** a native PASS. Conditional receipt is **REPORTED CAPTURED** at limited later manual-capture scope (`5744814651`); first independent existing receipt read is **COMPLETE** at that bounded class (`5748724868` / PO-forwarded `5748637045`); `hash_drift` fields are verified file claims; original serialized ordering remains unproven. Daily Sep21 and Weekly Sep21 are output-consistency PASSes with run-scoped provenance limitation (`5756712854` decision 1). Chat/push is a provisional BEST EFFORT limitation. Native archive proof is DEFERRED. Final whole-system review remains pending. Native scheduled PASS, native Guardian MATERIAL/DEGRADED archive proof, remaining Path B execution residuals, Path C urgent transport, Ready, merge, and HOLD-exit remain **OPEN**.
 
 ### 8a. Clone gate
 
@@ -1101,14 +1101,28 @@ Technical-Lead `5748484353` **ACCEPTS LIMITED** interactive chat visibility/huma
 | Interactive probe receipt | `f57ac62af29bb128e8daddf86f49e14b6643b0f6d5f2fb4db716c75e1149aee8` |
 | Off-session receipt | `b227846f59f45b8b728040f755889d72b7eda5515f093b898ac6f1f3e8c324fc` |
 
-#### 21 September Weekly inspection checklist
+#### Daily Sep21 and Weekly Sep21 — output-consistency PASS / run-scoped provenance limitation
 
-Do **not** run or change the Monday **08:30 Europe/Zurich** Weekly. When later reviewing that natural run: correlate actual run/input/archive/installed-source identities; retain the four Weekly evidence classes; verify period/coverage/routing/status/attention; do not manufacture native origin by synthetic replay. `2026-09-21T08:30:00+02:00` is a schedule, not a receipt.
+Technical-Lead `5756594272` **ACCEPTS** PO-forwarded Guardian output-consistency for `JETNITY-DAILY-V2-2026-09-21-0745` and `JETNITY-WEEKLY-STRATEGIC-2026-09-21-0830`. Product Owner `5756712854` accepted inaccessible execution provenance for **those two runs only**. Scheduler origin remains **INFERRED**. Pinned invocation remains **STRONGLY_INFERRED**. Not `native_scheduled_pass=true`. Sep20 exception `5748343178` is **not** inherited. Cursor did not observe the files.
+
+| Artifact | Reported identity |
+| --- | --- |
+| Daily capture | `8b3e695ecfbe23fe9c9604d0fbc7e366ef72a7d2ab21dbe2926114180a9331f9` |
+| Weekly capture | `39609ecdd689f23c0d90b7a139f5fa67b40da4cf40b8d5d539199a72b758fbf0` |
+| Weekly brief/archive | `0a486407be993878845f0ebced51493773e10c3c83d68031c6fefa6beb16f903` |
+
+Weekly period Sep14–20; uses Sep19/20; excludes Sep21 Daily; `BOOTSTRAP_PARTIAL` 2/7; `NO_MATERIAL`; attention=false. Schema clarification CLOSED: installed Weekly schema `5e77164e…` uses `strategic_findings` array (3 entries); top-level `material_findings` is **ABSENT**. Earlier “JSON null” was a missing-key lookup artifact. Three entries do not imply MATERIAL. Preserve original hashes.
+
+Device notifications: Daily PO-OBSERVED `5756237674`; Weekly lock-screen observation under `5756594272`. Chat/push is a **provisional BEST EFFORT** limitation (`5756712854` decision 2). Native archive proof is **DEFERRED** (`5756712854` decision 3).
+
+#### 21 September Weekly inspection checklist — observed
+
+Do **not** rerun or change the Monday **08:30 Europe/Zurich** Weekly. The Sep21 run is now an observed output-consistency PASS. For later natural Weekly runs: correlate actual run/input/archive/installed-source identities; retain the four Weekly evidence classes; verify period/coverage/routing/status/attention; do not manufacture native origin by synthetic replay.
 
 Deferred engineering-support pack (`5744886051` / `5744921031`): `/workspace/jetnity/intelligence/routing/staging/ENGINEERING_SUPPORT_TASK_PACK.md` SHA256 `53382552d98fb8b66517027c269ee820b800bebace8c4e6a11e50e591c5b91d8`. Seven scoped assistance tasks prepared **NOT RUN**. Not new bots. Not new OS-2 acceptance.
 
-Still OPEN: native scheduled PASS; native updated Weekly scheduled execution; native Guardian MATERIAL/DEGRADED archive proof; remaining Path B execution residuals; Path C urgent transport; original serialized ordering; final whole-system review. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
+Still OPEN: `native_scheduled_pass`; remaining Path B DECLARED execution residuals; prompt P0/P1 urgent transport (technically open, provisionally BEST EFFORT); original serialized ordering; ACL/permission unknowns; deferred native Guardian archive proof; final whole-system review. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
 
-**NEXT EXACT STEP:** Technical-Lead exact-head review of this persist. Await the existing updated Weekly 08:30 Europe/Zurich as a **schedule**. First independent existing receipt read is COMPLETE at the bounded class; final whole-system review remains pending. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results. #491 must not set `NORMAL`.
+**NEXT EXACT STEP:** Technical-Lead exact-head review of this persist. Sep21 Daily and Weekly output-consistency already recorded. First independent existing receipt read is COMPLETE at the bounded class; final whole-system review remains pending. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results. #491 must not set `NORMAL`.
 
 **STOP.** Cursor documents only.
