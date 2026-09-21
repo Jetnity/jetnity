@@ -1,7 +1,7 @@
 # Jetnity – V1 Auth Lookup Failure Truth 1 HANDOFF
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **MAIN INTEGRATED / ACTIVE_WORK_STATUS REMOVED FROM DIFF / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
 
 Binding task: `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_TASK_2026-09-21.md`  
 Detailed status: `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_STATUS_2026-09-21.md`  
@@ -16,7 +16,9 @@ Self-review: `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_SELF_REVIEW_2026-09-21.md`
 | Issue | #499 |
 | Draft PR | #500 |
 | Branch | `fix/v1-auth-lookup-failure-truth-1` |
-| Canonical base | `main@d1949e23b3dda30b7482265822e7e1279f244228` |
+| Assigned dispatch base | `main@d1949e23b3dda30b7482265822e7e1279f244228` |
+| Integrated main | `main@d99c7781eb098f303beab9c314fa116d0680dc98` |
+| Accepted implementation | `2ce75b63b06944274db58ecf4aa8f01473fb7397` |
 | Dispatch head | `c155e79d127debac8b8a327ab48ef6bcfebf7b39` |
 | Agent | Jetnity V1 auth lookup failure truth 1, Generation 1 |
 | Session | `bc-4a7937bd-b57c-4bca-9a0a-9d33dc2e86c5` |
@@ -24,8 +26,8 @@ Self-review: `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_SELF_REVIEW_2026-09-21.md`
 
 ## 2. What a reviewer should verify first
 
-1. Merge-base equals the assigned current main `d1949e23`. Behind is 0 versus that canonical base.
-2. Diff vs main is only `proxy.ts`, the two focused proxy/auth tests, and slice-local docs including `docs/ACTIVE_WORK_STATUS.md`.
+1. Merge-base equals current `origin/main` `d99c7781`. Behind is 0.
+2. Diff vs main is only `proxy.ts`, the two focused proxy/auth tests, and slice-local `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_*` files. `docs/ACTIVE_WORK_STATUS.md` is absent from the diff.
 3. HTML unauthenticated still redirects to `/login` or `/admin/login`.
 4. HTML unconfigured / lookup-failed is HTTP 503 with retry copy, not a login redirect.
 5. API 401/503 contracts and AAL2-out-of-proxy remain unchanged.

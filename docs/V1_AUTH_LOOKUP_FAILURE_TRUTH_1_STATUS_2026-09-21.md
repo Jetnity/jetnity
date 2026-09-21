@@ -1,13 +1,15 @@
 # Jetnity – V1 Auth Lookup Failure Truth 1 STATUS
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / LOCAL GATES PENDING AT WRITE TIME / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **MAIN INTEGRATED / ACTIVE_WORK_STATUS REMOVED FROM DIFF / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #499  
 Draft PR: #500  
 Branch: `fix/v1-auth-lookup-failure-truth-1`  
 Binding task: `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_TASK_2026-09-21.md`  
-Canonical base: `main@d1949e23b3dda30b7482265822e7e1279f244228`  
+Assigned dispatch base: `main@d1949e23b3dda30b7482265822e7e1279f244228`  
+Integrated main: `main@d99c7781eb098f303beab9c314fa116d0680dc98`  
+Accepted implementation head: `2ce75b63b06944274db58ecf4aa8f01473fb7397`  
 Dispatch head: `c155e79d127debac8b8a327ab48ef6bcfebf7b39`
 
 Cursor-Agent: **Jetnity V1 auth lookup failure truth 1**, Generation 1  
@@ -44,7 +46,11 @@ Allowed files only:
 - `proxy.ts`
 - `lib/auth/proxy-security-contract.test.ts`
 - `lib/auth/proxy-auth-lookup-failure.test.ts`
-- slice-local docs and this branch's `docs/ACTIVE_WORK_STATUS.md`
+- slice-local `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_*` files
+
+`docs/ACTIVE_WORK_STATUS.md` was restored to current main and is **not** in this PR diff.
+
+Same-session main integration: `git merge origin/main` at `d99c7781` after #502. No sibling feature branch was merged. `proxy.ts` and the two focused tests are unchanged versus accepted head `2ce75b63`.
 
 Not touched:
 
