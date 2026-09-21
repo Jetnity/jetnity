@@ -21,7 +21,8 @@ import 'server-only'
 
 import { previousStatusAusMetadata } from '@/lib/account/reise-archiv'
 import { lese, type Leseantwort, type Lesung } from '@/lib/api/datenbank-lesen'
-import { foundationERelationFehlt, TRIP_GRAPH_SELECT_KANONISCH, TRIP_GRAPH_SELECT_LEGACY } from '@/lib/trips/foundation-e-select'
+import { accountGraphLesen } from '@/lib/trips/account-graph-read'
+import { TRIP_GRAPH_SELECT_KANONISCH, TRIP_GRAPH_SELECT_LEGACY } from '@/lib/trips/foundation-e-select'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import {
   reiseAus,
@@ -176,6 +177,19 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
   }
 }
 
+function graphZeileZuReise(zeile: GraphZeile): Reisegraph {
+  const graph = reiseAus(
+    zeile,
+    zeile.trip_stages ?? [],
+    zeile.trip_days ?? [],
+    zeile.trip_items ?? [],
+    zeile.trip_readiness_items ?? [],
+    zeile.trip_travellers ?? [],
+  )
+  const zugeordnet = tageEtappenZuordnen(graph)
+  return { ...zugeordnet, ohneTag: graph.ohneTag }
+}
+
 /**
  * Eine Reise des angemeldeten Kontos, vollständig.
  *
@@ -186,35 +200,17 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
 export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
   const supabase = await createServerComponentClient()
 
-  const kanonisch = await alsAntwort<GraphZeile>(
-    supabase.from('trips').select(TRIP_GRAPH_SELECT_KANONISCH).eq('id', id).limit(1),
-  )
-  const ergebnis = await lese<GraphZeile>(() => {
-    if (kanonisch.error && foundationERelationFehlt(kanonisch.error)) {
-      return alsAntwort<GraphZeile>(
+  return accountGraphLesen({
+    kanonisch: () =>
+      alsAntwort<GraphZeile>(
+        supabase.from('trips').select(TRIP_GRAPH_SELECT_KANONISCH).eq('id', id).limit(1),
+      ),
+    fallback: () =>
+      alsAntwort<GraphZeile>(
         supabase.from('trips').select(TRIP_GRAPH_SELECT_LEGACY).eq('id', id).limit(1),
-      )
-    }
-    return Promise.resolve(kanonisch)
+      ),
+    mapper: graphZeileZuReise,
   })
-
-  if (ergebnis.problem) return ergebnis
-
-  return {
-    problem: null,
-    zeilen: ergebnis.zeilen.map((zeile) => {
-      const graph = reiseAus(
-        zeile,
-        zeile.trip_stages ?? [],
-        zeile.trip_days ?? [],
-        zeile.trip_items ?? [],
-        zeile.trip_readiness_items ?? [],
-        zeile.trip_travellers ?? [],
-      )
-      const zugeordnet = tageEtappenZuordnen(graph)
-      return { ...zugeordnet, ohneTag: graph.ohneTag }
-    }),
-  }
 }
 
 /**
