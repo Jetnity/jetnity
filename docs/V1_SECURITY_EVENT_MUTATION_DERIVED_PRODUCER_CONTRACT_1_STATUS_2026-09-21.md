@@ -6,7 +6,8 @@ Status: **LOCAL DISPOSABLE PROOF + TL F1/F2 CHANGES REQUIRED ADDRESSED / HEAD WI
 Issue: #493  
 Draft PR: #494  
 Branch: `test/v1-security-event-mutation-derived-producer-contract-1`  
-Canonical base: `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`  
+Dispatch / original canonical base: `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`  
+Integrated live main: `main@d1949e23b3dda30b7482265822e7e1279f244228` (#498 docs-only, unchanged)  
 Reviewed exact head that required changes: `0d2a3a1f413b018c2d322424d33861dd916ed14a`  
 Binding review: Technical-Lead **5267095835**  
 Binding task: `docs/V1_SECURITY_EVENT_MUTATION_DERIVED_PRODUCER_CONTRACT_1_TASK_2026-09-21.md`  
@@ -34,7 +35,8 @@ Prove the accepted mutation-derived producer contract on a **local disposable Po
 - **F1 provenance (review 5267095835):** private `jetnity_internal.security_event_producer_origin` keyed by event id, written atomically by the trigger. Quota and cleanup classify membership from that ledger via `jetnity_internal.security_event_is_trigger_produced(uuid)`, not from public extra shape. Schema/table/function revoked from PUBLIC/anon/authenticated/service_role; RLS enabled with no policies. The public shape classifier is gone.
 - Real two-session concurrency: at C−1, one session held the quota row lock (`PgSleep`), the other waited on `Lock/transactionid`, then failed with `quota exceeded`. Final `used` = `tracked` = C.
 - Synthetic fixtures only: TEST-NET IPs, fixed UUIDs. No real actor data.
-- **F2 (review 5267095835):** `docs/ACTIVE_WORK_STATUS.md` restored to current `main` / canonical-base content and removed from the #494 diff. Continuity for this writer stays in the slice STATUS/HANDOFF/SELF_REVIEW.
+- **F2 (review 5267095835):** `docs/ACTIVE_WORK_STATUS.md` restored to current `main` and removed from the #494 diff. Continuity for this writer stays in the slice STATUS/HANDOFF/SELF_REVIEW.
+- **Main integration (queued follow-up):** merged live `main@d1949e23` (#498). Regression Hunter audit docs are present and unmodified. #494 ownership remains the producer-contract files only.
 
 ## 3. Changed files versus canonical base
 
@@ -78,10 +80,10 @@ Reported after freeze, in a PR comment:
 - `npm run build`
 - exact-head GitHub CI / Auth
 - exact-head Vercel Preview
-- merge-base / behind versus canonical base `4169c5b4`
+- merge-base / behind versus live `main@d1949e23` (must be 0)
 - review threads 0
 
-Live `origin/main` has since moved by Regression Hunter #498 (`d1949e23`). This slice does not rebase onto that work. Canonical base remains `4169c5b4`. Ahead/behind versus that base is the gate; versus live main the branch is diverged until a later integrator decides.
+Dispatch base `4169c5b4` remains the historical start. Live main `#498` is now integrated; hunter files are not owned by this slice.
 
 ## 8. Residual risks
 

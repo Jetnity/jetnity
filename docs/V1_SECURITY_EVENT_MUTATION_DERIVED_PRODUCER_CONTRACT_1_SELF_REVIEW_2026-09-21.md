@@ -43,7 +43,8 @@ The fixture follows that current guidance. Training-memory-only semantics were n
 | PII leakage | Event `ip`/`metadata` null; extra is exactly `{surface,result,op}`; blocked IP and reason absent. | payload group; 58 bytes |
 | Legacy row destruction | `login_failed` + IP fixture and privileged out-of-contract row survive cleanup. No type CHECK. | legacy + cleanup |
 | Accidental remote DB use | Script rejects `JETNITY_ALLOW_REMOTE_DB=1` and URL overrides; does not import `sql.mjs`; connects only via `sudo -u postgres psql` to a created/dropped local name. | source of harness |
-| Continuity-file scope (F2) | `docs/ACTIVE_WORK_STATUS.md` restored to current main; not in #494 diff. | `git diff 4169c5b4 -- docs/ACTIVE_WORK_STATUS.md` empty |
+| Continuity-file scope (F2) | `docs/ACTIVE_WORK_STATUS.md` restored to current main; not in #494 diff. | `git diff origin/main -- docs/ACTIVE_WORK_STATUS.md` empty |
+| Main-drift integration | Live `#498` merged; hunter audit docs unchanged; no extra ownership. | merge-base `d1949e23`; hunter paths identical to `origin/main` |
 
 ## 2. Residual risks I would still challenge
 

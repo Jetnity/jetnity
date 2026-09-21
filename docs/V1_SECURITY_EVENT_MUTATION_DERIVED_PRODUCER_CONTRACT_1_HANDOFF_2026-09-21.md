@@ -20,7 +20,8 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Issue | #493 |
 | Draft PR | #494 |
 | Branch | `test/v1-security-event-mutation-derived-producer-contract-1` |
-| Canonical base | `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
+| Dispatch / original canonical base | `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
+| Integrated live main | `main@d1949e23b3dda30b7482265822e7e1279f244228` (#498 docs-only, unchanged) |
 | Agent / session | Generation 1 / `bc-c0bfb7b9-1212-4121-b8d6-4f1bbf0d6a39` |
 | Required model | Cursor Grok 4.6 High Fast — confirmed (`originalModelName=cursor-grok-4.6-high-fast`) |
 
@@ -52,7 +53,7 @@ Last verified local run: **67/67 PASS** on PostgreSQL 16.15.
 
 ## 4. What a reviewer should verify first
 
-1. Merge-base equals `main@4169c5b4` and behind=0 versus that canonical base. Live main has #498 on top; this slice did not rebase.
+1. Merge-base equals live `main@d1949e23` and behind=0. #498 hunter docs are present and unmodified. Dispatch base `4169c5b4` is historical.
 2. Diff stays inside the allowed files. Zero files under `supabase/migrations/`. **Zero** `docs/ACTIVE_WORK_STATUS.md` hunks.
 3. Harness never imports `scripts/db/sql.mjs` and rejects remote overrides.
 4. Catalog proof: DEFINER, `search_path=""`, no EXECUTE for PUBLIC/anon/authenticated/service_role, trigger returns `trigger`, ROW not STATEMENT. Private schema/table/function ACLs closed; public shape classifier absent.
