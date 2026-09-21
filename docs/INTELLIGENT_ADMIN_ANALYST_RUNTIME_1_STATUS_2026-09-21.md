@@ -1,7 +1,7 @@
 # Intelligent Admin Analyst Runtime 1 — Status
 
 Stand: 21. September 2026  
-Status: **IA-R1 no-signal + IA-R2 UTC + IA-R3 compiled CSS ADDRESSED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
+Status: **#516 MAIN INTEGRATED / REVIEWED RUNTIME UNCHANGED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Issue: #515  
 Draft PR: #518  
@@ -56,17 +56,19 @@ Traveller-context intelligence does not apply: operator Admin A–C, no travelle
 
 ## 2. Git evidence (at this persist)
 
-One clean integration of live `origin/main` after TL merged #517. **No rebase. No sibling branch merge.**
+Second authorized main integration after TL merged #516. **No rebase. No sibling branch merge. Reviewed Admin runtime unchanged.**
 
 | Item | Value |
 | --- | --- |
 | Task / PR baseline | `main@19a91a2594127eb2b6104b68da69786194e13865` |
-| Live `origin/main` integrated | `66af15397c1bb4e73d8e4012080bb04b7389147d` (#517 guest-draft honesty) |
+| Reviewed runtime head | `1355fc78b52e7b2e664f19116160f5173aeebdcb` |
+| Live `origin/main` integrated | `039e62ff2f3245ed006de02f7d4c9fbac661b3ee` (#516 workspace usability, after #517) |
 | Dispatch / seed head | `e90e2622e0f9cadd0d32b21b674289c42f457ddf` |
-| Previous freeze (historical) | `ffff328c85319a9ba75800a39c01b60bb1226405` — invalidated by this persist |
-| Ahead / behind vs live main after integration | **10 ahead / 0 behind** before this persist |
+| Previous freezes (historical) | `ffff328c` and `1355fc78` — invalidated by this persist |
+| Ahead / behind vs live main after this merge | **13 ahead / 0 behind** before the handoff persist |
 | Rebase | **not done** |
-| Sibling branches | #516 not edited or merged; #517 entered only via main |
+| Conflicts | none — #516 files are disjoint Workspace UI/date paths |
+| Sibling branches | #516 and #517 entered only via main; neither sibling branch was merged |
 
 Exact freeze SHA is the commit that records this STATUS plus recaptured evidence. It is reported in the PR comment after push.
 
@@ -87,7 +89,7 @@ Allowed runtime set only:
 - this STATUS / HANDOFF / SELF_REVIEW / TASK
 - `docs/evidence/intelligent-admin-analyst-runtime-1/`
 
-Not written by this writer: System Health collector/cache/guard, roles/capabilities, Security widgets, provider-ops, package/lockfile, workflows, DB/RLS/migrations, finance/Ads/Bexio/CRM, Foundation 1 specification docs, `docs/ACTIVE_WORK_STATUS.md`, #516 files. #517 files arrived only through the authorized main integration.
+Not written by this writer: System Health collector/cache/guard, roles/capabilities, Security widgets, provider-ops, package/lockfile, workflows, DB/RLS/migrations, finance/Ads/Bexio/CRM, Foundation 1 specification docs, `docs/ACTIVE_WORK_STATUS.md`. #516 and #517 files arrived only through authorized main integrations.
 
 ---
 

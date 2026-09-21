@@ -1,7 +1,7 @@
 # Intelligent Admin Analyst Runtime 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **IA-R1 no-signal + IA-R2 UTC + IA-R3 compiled CSS ADDRESSED / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **#516 MAIN INTEGRATED / REVIEWED RUNTIME UNCHANGED / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/INTELLIGENT_ADMIN_ANALYST_RUNTIME_1_TASK_2026-09-21.md`  
 Accepted contracts: Foundation 1 DECISION / SOURCE_MATRIX / RUNTIME_TASK  
@@ -21,10 +21,11 @@ This document is enough for a new Technical Lead chat to review without the impl
 | Draft PR | #518 |
 | Branch | `feat/intelligent-admin-analyst-runtime-1` |
 | Task baseline | `19a91a2594127eb2b6104b68da69786194e13865` |
-| Integrated live main | `66af15397c1bb4e73d8e4012080bb04b7389147d` (#517 via main, one merge, no rebase) |
+| Reviewed runtime head | `1355fc78b52e7b2e664f19116160f5173aeebdcb` — Admin files unchanged after this integration |
+| Integrated live main | `039e62ff2f3245ed006de02f7d4c9fbac661b3ee` (#516 via main after #517; one additional merge, no rebase, no sibling-branch merge) |
 | Dispatch / seed | `e90e2622e0f9cadd0d32b21b674289c42f457ddf` |
-| Historical freeze | `ffff328c` — invalidated by the no-signal / compiled-CSS persist |
-| Ahead / behind vs live main | 10 ahead / 0 behind before evidence persist |
+| Historical freezes | `ffff328c` and `1355fc78` gates are invalid after this merge persist |
+| Ahead / behind vs live main | 13 ahead / 0 behind after the #516 merge commit |
 | Agent | Jetnity intelligent admin analyst runtime 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-d984b8d4-cc45-4889-96ec-2a10599881c4` |
@@ -57,7 +58,7 @@ Read first:
 ## 3. What the next reviewer must not do
 
 - Do not treat synthetic screenshots as authenticated Preview acceptance.
-- Do not rebase or merge #516 from this writer.
+- Do not rebase or merge further sibling branches from this writer. #516 and #517 entered only via the authorized main integrations.
 - Do not mark Ready or merge from Cursor.
 - Do not start Provider-ops `model-usage`, a model seam, or Execute.
 
