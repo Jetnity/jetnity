@@ -3,7 +3,9 @@
 //
 // Disposable local Chromium evidence for V1 Manual Planner Text Reflow 1.
 // Uses the compiled Next app and real product CSS. Synthetic guest only.
-// Provider/model/search routes and unexpected write POSTs are intercepted.
+// Provider/model/search routes are fulfilled as unavailable. Unexpected
+// mutation requests, including same-route POST /planen server actions,
+// are aborted before they complete. Safe local Next internals may continue.
 //
 // PHASE=before reproduces the 390x844 / html-font-size-32px residual with
 // scrollX reset and computed-style instrumentation.
@@ -23,15 +25,18 @@ const EVIDENZ =
   '/workspace/docs/evidence/v1-manual-planner-text-reflow-1'
 const BERICHT = join(EVIDENZ, `audit-${PHASE}.json`)
 const SCHLUESSEL = 'jetnity:reise:v3'
-const SHA = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim()
-const DIRTY = execSync('git status --porcelain', { encoding: 'utf8' })
-  .split('\n')
-  .map((zeile) => zeile.trim())
-  .filter(Boolean)
+const SHA = (process.env.AUDIT_PRODUCT_SHA || execSync('git rev-parse HEAD', { encoding: 'utf8' })).trim()
+const DIRTY = process.env.AUDIT_WORKING_TREE === 'clean'
+  ? []
+  : execSync('git status --porcelain', { encoding: 'utf8' })
+      .split('\n')
+      .map((zeile) => zeile.trim())
+      .filter(Boolean)
 const PRODUCT_TREE = {
   head: SHA,
   workingTree: DIRTY.length === 0 ? 'clean' : 'dirty',
   dirtyPaths: DIRTY,
+  sourceNote: process.env.AUDIT_SOURCE_NOTE || null,
 }
 const JETZT = new Date().toISOString()
 const ZEIGER_NAME = 'Schritt für Schritt planen'
@@ -125,30 +130,80 @@ async function serverStarten() {
   throw new Error('Next.js startete nicht')
 }
 
+function istProviderOderApi(url) {
+  return (
+    url.includes('/api/') ||
+    url.includes('openai.com') ||
+    url.includes('anthropic.com') ||
+    url.includes('supabase.co') ||
+    url.includes('/functions/v1/')
+  )
+}
+
+function istSicheresNextIntern(url) {
+  return url.includes('/_next/') || url.includes('__nextjs') || url.includes('/__turbopack')
+}
+
+function istMutation(method) {
+  return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
+}
+
 async function abfangen(page, protokoll) {
-  const muster = [
-    '**/api/**',
-    '**/*.openai.com/**',
-    '**/*.anthropic.com/**',
-    '**/*.supabase.co/**',
-    '**/functions/v1/**',
-  ]
-  for (const url of muster) {
-    await page.route(url, async (route) => {
-      protokoll.abgefangen.push({ method: route.request().method(), url: route.request().url() })
+  await page.route('**/*', async (route) => {
+    const req = route.request()
+    const method = req.method()
+    const url = req.url()
+    const resourceType = req.resourceType()
+
+    if (istProviderOderApi(url)) {
+      protokoll.abgefangen.push({ method, url, resourceType, kind: 'provider-or-api' })
       await route.fulfill({
         status: 503,
         contentType: 'application/json',
         body: JSON.stringify({ ok: false, reason: 'audit-blocked', simulation: true }),
       })
-    })
-  }
+      return
+    }
+
+    if (istMutation(method)) {
+      if (istSicheresNextIntern(url)) {
+        protokoll.interneSchreiben.push({ method, url, resourceType, kind: 'safe-next-internal' })
+        await route.continue()
+        return
+      }
+      protokoll.versuche.push({ method, url, resourceType, kind: 'unexpected-mutation' })
+      protokoll.abgebrochen.push({ method, url, resourceType, reason: 'audit-abort-mutation' })
+      await route.abort('blockedbyclient')
+      return
+    }
+
+    await route.continue()
+  })
+
   page.on('request', (req) => {
     const eintrag = { method: req.method(), url: req.url(), resourceType: req.resourceType() }
     protokoll.anfragen.push(eintrag)
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method())) {
+    if (istMutation(req.method())) {
       protokoll.schreiben.push(eintrag)
     }
+  })
+  page.on('requestfinished', (req) => {
+    if (!istMutation(req.method())) return
+    const eintrag = { method: req.method(), url: req.url(), resourceType: req.resourceType() }
+    if (istSicheresNextIntern(req.url())) {
+      protokoll.interneAbgeschlossen.push(eintrag)
+    } else {
+      protokoll.unerwartetAbgeschlossen.push(eintrag)
+    }
+  })
+  page.on('requestfailed', (req) => {
+    if (!istMutation(req.method())) return
+    protokoll.fehlgeschlagen.push({
+      method: req.method(),
+      url: req.url(),
+      resourceType: req.resourceType(),
+      failure: req.failure()?.errorText || null,
+    })
   })
 }
 
@@ -175,18 +230,30 @@ async function nextDevChromeVerbergen(page) {
 }
 
 function leeresProtokoll() {
-  return { anfragen: [], schreiben: [], abgefangen: [] }
+  return {
+    anfragen: [],
+    schreiben: [],
+    abgefangen: [],
+    versuche: [],
+    abgebrochen: [],
+    interneSchreiben: [],
+    interneAbgeschlossen: [],
+    unerwartetAbgeschlossen: [],
+    fehlgeschlagen: [],
+  }
 }
 
-function schreibendAusserhalbNext(protokoll) {
-  return protokoll.schreiben.filter((eintrag) => {
-    const url = eintrag.url
-    return !(
-      url.includes('/_next/') ||
-      url.includes('__nextjs') ||
-      url.includes('/__turbopack')
-    )
-  })
+function mutationskonto(protokoll) {
+  return {
+    versuche: protokoll.versuche,
+    abgebrochen: protokoll.abgebrochen,
+    interneSchreiben: protokoll.interneSchreiben,
+    interneAbgeschlossen: protokoll.interneAbgeschlossen,
+    unerwartetAbgeschlossen: protokoll.unerwartetAbgeschlossen,
+    fehlgeschlagen: protokoll.fehlgeschlagen,
+    completedUnexpected: protokoll.unerwartetAbgeschlossen.length,
+    blockedUnexpected: protokoll.abgebrochen.length,
+  }
 }
 
 async function kontext(browser, viewport, extras = {}) {
@@ -292,6 +359,10 @@ async function layoutLesen(page) {
     const startLabel = document.querySelector('label[for="feld-start"]')
     const skip = document.querySelector('a[href="#public-content"]')
     const pointer = document.querySelector('a[href="#manuell-planen"]')
+    const ideeHeading = [...document.querySelectorAll('h1')].find((el) =>
+      (el.textContent || '').includes('Beginnen wir'),
+    )
+    const ideeForm = ideeHeading?.closest('form') || null
     const divider = [...document.querySelectorAll('span')].find((el) =>
       (el.textContent || '').includes('Oder Schritt'),
     )
@@ -346,6 +417,8 @@ async function layoutLesen(page) {
         header: stil(document.querySelector('header')),
         skip: stil(skip),
         pointer: stil(pointer),
+        ideeHeading: stil(ideeHeading || null),
+        ideeForm: stil(ideeForm),
         divider: stil(divider),
         ziel: stil(ziel),
         plannerRoot: stil(plannerRoot),
@@ -436,7 +509,7 @@ async function szene(browser, viewport, { name, pfad = '/planen', schrift = null
     actionSequence,
     speicherNachherGleich:
       JSON.stringify(speicherVorher) === JSON.stringify(await page.evaluate(() => ({ ...window.localStorage }))),
-    schreiben: schreibendAusserhalbNext(protokoll),
+    schreiben: mutationskonto(protokoll),
     abgefangen: protokoll.abgefangen,
     extra,
   }, browser)
@@ -448,7 +521,7 @@ async function szene(browser, viewport, { name, pfad = '/planen', schrift = null
     ...daten,
     extra,
     meta,
-    schreiben: schreibendAusserhalbNext(protokoll),
+    schreiben: mutationskonto(protokoll),
   }
 }
 
@@ -538,7 +611,7 @@ function bewerten(ergebnis) {
   const phone200 = (ergebnis.szenen || []).filter((s) => s.name.includes('text-200'))
   if (PHASE === 'after') {
     for (const sz of phone200) {
-      if (sz.viewport === '390x844') {
+      if (sz.viewport === '390x844' || sz.viewport === '360x800') {
         const overflow = sz.layout?.pageAfterReset?.overflow ?? 99
         if (overflow > 1) {
           fehler.push(`${sz.name}: page overflow after scrollX reset is ${overflow}`)
@@ -567,9 +640,14 @@ function bewerten(ergebnis) {
       if (!meldungen.length) {
         fehler.push('validation: no client errors after invalid submit')
       }
-      if ((ergebnis.validierung.schreiben || []).length) {
-        fehler.push(`validation: unexpected writes ${JSON.stringify(ergebnis.validierung.schreiben)}`)
+      const konto = ergebnis.validierung.schreiben || {}
+      if ((konto.completedUnexpected || 0) > 0) {
+        fehler.push(`validation: unexpected mutations completed ${JSON.stringify(konto.unerwartetAbgeschlossen)}`)
       }
+    }
+    const allCompleted = (ergebnis.szenen || []).flatMap((sz) => sz.schreiben?.unerwartetAbgeschlossen || [])
+    if (allCompleted.length) {
+      fehler.push(`unexpected mutations completed: ${JSON.stringify(allCompleted)}`)
     }
     if (ergebnis.gate) {
       if (!ergebnis.gate.sicht?.gate) fehler.push('gate: existing-trip heading missing')
@@ -656,6 +734,20 @@ async function main() {
         ],
       }),
     )
+    szenen.push(
+      await szene(browser, phone360, {
+        name: 'text-200_360x800_pointer',
+        schrift: 32,
+        action: pointerKlick,
+        simulationClass: 'synthetic-guest + intercepted-unavailable + html-font-size-32px',
+        actionSequence: [
+          'goto /planen',
+          'set html font-size 32px',
+          'click Schritt für Schritt planen',
+          'reset scrollX',
+        ],
+      }),
+    )
   } else {
     for (const [viewport, schrift, label] of [
       [phone360, null, 'normal-360x800'],
@@ -676,6 +768,20 @@ async function main() {
         }),
       )
     }
+    szenen.push(
+      await szene(browser, phone360, {
+        name: 'text-200_360x800_pointer',
+        schrift: 32,
+        action: pointerKlick,
+        simulationClass: 'synthetic-guest + intercepted-unavailable + html-font-size-32px',
+        actionSequence: [
+          'goto /planen',
+          'set html font-size 32px',
+          'click Schritt für Schritt planen',
+          'reset scrollX',
+        ],
+      }),
+    )
     szenen.push(
       await szene(browser, phone360, {
         name: 'text-200_360x800_budget',
@@ -805,7 +911,8 @@ async function main() {
     limits: [
       'local Chromium/Playwright, not hardware/Safari/OS text-only zoom',
       '200% text uses html { font-size: 32px }, not a claim of WCAG or device zoom',
-      'provider/model/search routes intercepted as unavailable',
+      'provider/model/search routes fulfilled as unavailable',
+      'unexpected mutations including POST /planen are aborted; Next internals may continue',
       'disposable synthetic browser data only; no real account/trip mutation',
       'Next.js dev portal is hidden at screenshot time; it is not product UI',
       'negative sr-only skip-link bounds are recorded but not treated as a skip-link defect',
@@ -837,7 +944,7 @@ async function main() {
         budgetRight: residual360.layout?.boxes?.budget?.right ?? null,
         budgetLabelRight: residual360.layout?.boxes?.budgetLabel?.right ?? null,
         note:
-          '360/200% page overflow, if present, is measured against the #524 pointer / Reiseidee column min-content. Manual budget/label/control rights must stay inside the viewport.',
+          '360/200% page overflow is now in-scope after TL RF-R1. Pointer wrap and Reiseidee min-w-0 must keep page overflow at 0 without clipping.',
       }
     : null
   ergebnis.sibling360 = sibling360
