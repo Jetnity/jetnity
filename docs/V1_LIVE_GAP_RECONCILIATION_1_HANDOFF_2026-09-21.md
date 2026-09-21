@@ -1,12 +1,13 @@
 # Jetnity – V1 Live Gap Reconciliation 1 — HANDOFF
 
 Stand: 21. September 2026  
-Status: **RECONCILIATION HANDOFF / DOCS-ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **INTEGRATED ONTO `main@d1949e23` AFTER #498 / CLASSIFICATIONS UNCHANGED / DOCS-ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #495  
 Draft PR: #497  
 Branch: `audit/v1-live-gap-reconciliation-1`  
-Canonical / live `origin/main`: `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`
+Original canonical base: `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`  
+Current live `origin/main`: `d1949e23b3dda30b7482265822e7e1279f244228`
 
 ---
 
@@ -16,8 +17,9 @@ Canonical / live `origin/main`: `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`
 2. `docs/V1_LIVE_GAP_RECONCILIATION_1_REPORT_2026-09-21.md` — current classifications. This is the substance.
 3. `docs/V1_LIVE_GAP_RECONCILIATION_1_STATUS_2026-09-21.md` — git evidence and what was not verified.
 4. `docs/V1_LIVE_GAP_RECONCILIATION_1_SELF_REVIEW_2026-09-21.md` — where this reconciliation could be wrong.
-5. Live GitHub: PR #497, PR #494, PR #498, issue #495, current `origin/main`.
-6. Do **not** treat `JETNITY_START_HERE.md` / `docs/ACTIVE_WORK_STATUS.md` HOLD or “#487 parked” sentences as current. Live main is `4169c5b4` (#487 merged) and `.jetnity/operating-mode.json` is `NORMAL`.
+5. Live GitHub: PR #497, PR #494, issue #495, current `origin/main@d1949e23`.
+6. Do **not** treat `JETNITY_START_HERE.md` / `docs/ACTIVE_WORK_STATUS.md` HOLD or “#487 parked” sentences as current. Live main is `d1949e23` (#498 merged; #487 already on the ancestor `4169c5b4`) and `.jetnity/operating-mode.json` is `NORMAL`.
+7. Merged sibling #498 is historical QA on main. Do not edit its files from this PR.
 
 The historical G2 matrix remains useful history. It is **not** current open-work authority.
 
@@ -25,7 +27,7 @@ The historical G2 matrix remains useful history. It is **not** current open-work
 
 ## 2. Current state in one paragraph
 
-This docs-only slice reconciled the 17 September Account / Privacy / Operations audit against live `main@4169c5b4`. Several historical P0/P1 items are now closed in the form that would justify repeating them: legal-claim copy (#457), cookie-artefact hygiene (#477), scoped account export (#476), support process (#470), account error boundary (#471), admin revenue honesty (#472), incident process (#464), admin MFA-loss runbook (#460), and security-event presentation/architecture (#485 / #487). The remaining launch-blocking cluster is still Product-Owner-gated rather than “missing engineering”: legal content, SMTP, account deletion, retention policy, observability vendor, and Production Auth redirect write. Finding 5.2 **ingestion** is still open; #487 only merged the architecture. PR #494 exclusively owns the next local disposable producer-contract proof and must not be edited or merged from here. Ready is not set. No finding was implemented.
+This docs-only slice reconciled the 17 September Account / Privacy / Operations audit against `main@4169c5b4`, then integrated `main@d1949e23` after sibling #498 merged. Classifications did not change. Several historical P0/P1 items remain closed in the form that would justify repeating them: legal-claim copy (#457), cookie-artefact hygiene (#477), scoped account export (#476), support process (#470), account error boundary (#471), admin revenue honesty (#472), incident process (#464), admin MFA-loss runbook (#460), and security-event presentation/architecture (#485 / #487). The remaining launch-blocking cluster is still Product-Owner-gated rather than “missing engineering”: legal content, SMTP, account deletion, retention policy, observability vendor, and Production Auth redirect write. Finding 5.2 **ingestion** is still open; #487 only merged the architecture. PR #494 exclusively owns the next local disposable producer-contract proof and must not be edited or merged from here. Ready is not set. No finding was implemented.
 
 ---
 
@@ -52,9 +54,9 @@ If the Technical Lead later selects work after this review, the report’s §4 a
 | --- | --- | --- | --- |
 | #494 | #493 | local `scripts/db` producer-contract harness + its package script + its own STATUS/HANDOFF/SELF_REVIEW | disjoint; 5.2 ingestion residual, not this writer |
 | #497 | #495 | only `docs/V1_LIVE_GAP_RECONCILIATION_1_*` | this slice |
-| #498 | #496 | only regression-hunter docs | disjoint QA |
+| #498 | #496 | only regression-hunter docs | **MERGED** at `d1949e23`; files arrived via main merge only; not edited here |
 
-Do not merge another active branch into this one.
+Do not merge another active branch into this one. Do not start hunter-residual remediations from this PR.
 
 ---
 

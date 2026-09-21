@@ -1,7 +1,7 @@
 # Jetnity – V1 Live Gap Reconciliation 1 — ADVERSARIAL SELF-REVIEW
 
 Stand: 21. September 2026  
-Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
+Status: **AGENT SELF-REVIEW AFTER #498 INTEGRATION — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #495  
 Draft PR: #497  
@@ -67,7 +67,8 @@ The 5.2 no-writer claim was re-checked with a repository search over `*.ts` / `*
 | Did I invent legal pages or SMTP as an engineering next slice? | No. |
 | Did I edit global continuity to make the report tidier? | No. Stale HOLD/#487 prose is recorded, not “fixed”. |
 | Did I touch #494 harness files or recommend merging them? | No. |
-| Did I treat #498 as a second writer of this matrix? | No. |
+| Did I treat #498 as a second writer of this matrix? | No. After it merged, I merged main and did not edit its five files. |
+| Did #498 force a classification rewrite? | No. 1.A / 12.B / RH-12.5 confirm 4.2, 5.2 residual and 1.2(a). RH-1.1 / RH-10.1 were not absorbed into G2 rows. |
 | Did I claim Production SMTP/redirect state from a new credentialed read? | No. Cited #480 + current config.toml only. |
 | Did I run tests and call them green? | No. Recorded as not run. |
 | Did I collect traveller credentials? | No. Not relevant. |
@@ -90,7 +91,8 @@ The 5.2 no-writer claim was re-checked with a repository search over `*.ts` / `*
 | No implementation | Yes | |
 | No Ready / merge / follow-up | Yes | |
 | Freeze head + PR comment evidence | After this persist | STATUS says CI/Vercel go in the PR comment |
-| Disjoint from #494 / #498 | Yes | |
+| Disjoint from #494 / do not edit #498 files | Yes | #498 files exist on main after merge; `git diff` vs main is still only this slice's five docs |
+| Integrate current main / behind=0 | Yes | merge-base `d1949e23` |
 
 ---
 

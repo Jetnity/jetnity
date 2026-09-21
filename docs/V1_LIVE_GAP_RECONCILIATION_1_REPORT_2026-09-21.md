@@ -1,12 +1,13 @@
 # Jetnity – V1 Live Gap Reconciliation 1 – Current Audit Truth
 
 Stand: 21. September 2026  
-Status: **RECONCILIATION COMPLETE / DOCS-EVIDENCE ONLY / DRAFT / NOT READY / NOT MERGED / NO FINDING IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **INTEGRATED ONTO `main@d1949e23` AFTER #498 / CLASSIFICATIONS UNCHANGED / DOCS-EVIDENCE ONLY / DRAFT / NOT READY / NOT MERGED / NO FINDING IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #495  
 Draft PR: #497  
 Branch: `audit/v1-live-gap-reconciliation-1`  
-Canonical / live `origin/main`: `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`  
+Original canonical base: `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`  
+Current live `origin/main`: `d1949e23b3dda30b7482265822e7e1279f244228` (`Close V1 Core Regression Hunter 1 (#498)`)  
 Binding task: `docs/V1_LIVE_GAP_RECONCILIATION_1_TASK_2026-09-21.md`  
 Source audit: #438 / merged PR #449 / `docs/V1_ACCOUNT_PRIVACY_OPERATIONS_AUDIT_1_G2_GAP_MATRIX_2026-09-17.md`
 
@@ -33,7 +34,7 @@ For mixed rows the **primary** classification is the one a later agent must not 
 
 Evidence rules:
 
-1. Live `origin/main@4169c5b4` outranks the G2 matrix, G2 STATUS/HANDOFF, and stale continuity prose.
+1. Live `origin/main@d1949e23` outranks the G2 matrix, G2 STATUS/HANDOFF, and stale continuity prose. The accepted classifications were first proven against `4169c5b4`; #498 added only sibling QA docs and did not change those classifications.
 2. A docs file describing a capability is not evidence that the capability exists, except where the original gap **was** the missing document (runbooks).
 3. UI copy is not compliance.
 4. No Production write, secret, provider or paid action was performed by this slice.
@@ -45,7 +46,7 @@ Parallel ownership (do not cross):
 | --- | --- | --- |
 | #494 | local disposable security-event producer-contract harness / `scripts/db` / its package script | open, not merged, not evidence that 5.2 ingestion is closed |
 | #497 | only these reconciliation docs | this report |
-| #498 | only its regression-audit docs | independent QA; not a second writer of this matrix |
+| #498 | only its regression-audit docs | **MERGED** at `d1949e23`; files were not imported or edited by this slice |
 
 ---
 
@@ -55,19 +56,20 @@ Re-fetched `origin/main` during this slice.
 
 | Item | Value |
 | --- | --- |
-| Live `origin/main` | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` — `Close V1 Security Event Ingestion Architecture 1 (#487)` |
-| Merge-base `HEAD`…`origin/main` at start | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
-| Behind | **0** |
+| Live `origin/main` after #498 | `d1949e23b3dda30b7482265822e7e1279f244228` — `Close V1 Core Regression Hunter 1 (#498)` |
+| Previous persist main | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` — `Close V1 Security Event Ingestion Architecture 1 (#487)` |
+| Merge-base `HEAD`…`origin/main` after integration | `d1949e23b3dda30b7482265822e7e1279f244228` |
+| Behind after integration | **0** |
 | Operating-mode file on this main | `.jetnity/operating-mode.json` `mode: NORMAL` |
 | Draft PR #497 | open, draft, not Ready, not merged |
 | Draft PR #494 | open, draft; exclusive owner of the local producer-contract harness |
-| Draft PR #498 | open, draft; exclusive owner of the regression-audit docs |
+| PR #498 | **MERGED** 21 September 2026 at `d1949e23` — docs-only QA; not a writer of this matrix |
 | PR #487 | **MERGED** 21 September 2026 at `4169c5b4` — architecture only; finding 5.2 ingestion remains OPEN |
 | Review threads on #497 at write time | **0** |
 
 ### 1.1 Stale continuity that must not be treated as current work
 
-`JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` on this same main still describe live `main` as `AI_OS_BUILD_HOLD` and PR #487 as parked at `12d070a7`. Live GitHub/Git evidence contradicts both statements: #492 is already merged into the ancestor `4a223d34`, `operating-mode.json` is `NORMAL`, and #487 is the current main tip.
+`JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` on this same main still describe live `main` as `AI_OS_BUILD_HOLD` and PR #487 as parked at `12d070a7`. Live GitHub/Git evidence contradicts both statements: #492 is already merged into the ancestor `4a223d34`, `operating-mode.json` is `NORMAL`, #487 is on main at `4169c5b4`, and current main is now `d1949e23` after #498. Sibling QA finding RH-12.3 records the same stale HOLD / parked-#487 leftover and does not change this slice's classifications.
 
 This slice **does not** edit those global continuity files. The contradiction is recorded so a later Technical-Lead continuity refresh can correct them. Until then: **live GitHub/Git wins**. Do not reconstruct #487 as parked. Do not reconstruct HOLD as the live main mode.
 
@@ -88,6 +90,20 @@ This slice **does not** edit those global continuity files. The contradiction is
 | 4.3 error-reference usability | #483 | `b934afab293ba73ad05ca7e14847db477c44fff0` | recorded in #483 STATUS as `fcbecf0a7c77e11aebbfe5f4184d02f07e4baa86` before merge |
 | 5.2 presentation hygiene | #485 | `0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` | coverage-truth STATUS `11e66944` integration; merge is `0c83af42` |
 | 5.2 architecture decision | #487 | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` | PR head `39ad5b0d526e978311d0da12d59b82ee342e9961` |
+
+### 1.3 Integration after sibling #498 merge
+
+Main advanced only because sibling evidence PR #498 merged at `d1949e23b3dda30b7482265822e7e1279f244228`. That merge added exactly five `docs/V1_CORE_REGRESSION_HUNTER_1_*` files. This slice merged that main. It did **not** import, edit, rewrite or re-own those files.
+
+The hunter report was read as evidence only. It does not classify the G2 matrix and does **not** materially change any accepted classification in §2:
+
+- Non-finding 1.A confirms `app/account/error.tsx` exists → 4.2 stays `CLOSED`.
+- Non-finding 12.B confirms no application `security_events` INSERT and that 5.2 ingestion remains open → 5.2 stays `PARTIAL`; #494 still owns the local proof.
+- RH-12.5 confirms the CookieConsent file is absent → 1.2(a) stays `CLOSED`.
+- RH-12.3 independently records the same stale HOLD / parked-#487 continuity leftover already named in §1.1. This slice still does not edit those global files.
+- RH-1.1 (HTML Auth lookup-failure → login) and RH-10.1 / RH-10.2 (admin KPI type-filter disagreement) are new hunter residuals. They are **not** G2 findings 4.2 or 5.2 and are not owned by this PR.
+
+No classification in §2 was rewritten.
 
 ---
 

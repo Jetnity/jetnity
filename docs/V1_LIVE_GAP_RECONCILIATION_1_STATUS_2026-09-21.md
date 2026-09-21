@@ -1,7 +1,7 @@
 # Jetnity – V1 Live Gap Reconciliation 1 — STATUS
 
 Stand: 21. September 2026  
-Status: **RECONCILIATION PERSISTED / DOCS-ONLY / DRAFT / NOT READY / NOT MERGED / NO FINDING IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **INTEGRATED ONTO `main@d1949e23` AFTER #498 / CLASSIFICATIONS UNCHANGED / DOCS-ONLY / DRAFT / NOT READY / NOT MERGED / NO FINDING IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #495  
 Draft PR: #497  
@@ -21,7 +21,7 @@ Exact-head CI / Auth / Preview for **this** persist will be reported in a **PR c
 
 ## 1. Result
 
-The reconciliation requested by #495 is complete. Historical G2 findings were re-read against live `origin/main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9`. Live evidence wins.
+The reconciliation requested by #495 is complete. Historical G2 findings were first re-read against `origin/main@4169c5b4`. This persist integrates `origin/main@d1949e23` after sibling #498 merged. Classifications are unchanged. Live evidence wins.
 
 Primary classifications (see the report for residuals and split rows):
 
@@ -56,13 +56,14 @@ Closed halves that must not be rebuilt: #457, #460, #464, #470, #471, #472, #476
 
 | Item | Value |
 | --- | --- |
-| Canonical base (task) | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
-| Live `origin/main` at persist | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
-| Base drift | **none** |
-| Merge-base `HEAD`…`origin/main` before this persist | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
-| Ahead / behind before this persist | 1 ahead (task commit) / **0 behind** |
+| Original canonical base (task) | `4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
+| Live `origin/main` after #498 | `d1949e23b3dda30b7482265822e7e1279f244228` |
+| Previous persist head | `b7778ccdc3e97f588b8439821472ea581ff6c0ed` |
+| Merge commit of current main | `4d9ee21a90012e6e43d47fde27ff7d386a893d9a` |
+| Merge-base `HEAD`…`origin/main` | `d1949e23b3dda30b7482265822e7e1279f244228` |
+| Ahead / behind after merge, before this persist | 3 ahead / **0 behind** |
 | Dispatch head | `79d1d320602a093635a99c0ca92f0de2f12147ff` |
-| Working tree before persist | clean (`next-env.d.ts` incidental dirty state restored, never staged) |
+| Working tree | clean except this integration persist |
 
 ### 2.1 Exact content head
 
@@ -80,7 +81,13 @@ Allowed:
 - `docs/V1_LIVE_GAP_RECONCILIATION_1_HANDOFF_2026-09-21.md`
 - `docs/V1_LIVE_GAP_RECONCILIATION_1_SELF_REVIEW_2026-09-21.md`
 
-Forbidden paths were not written: `app/**`, `components/**`, `lib/**`, `hooks/**`, `types/**`, `public/**`, `supabase/**`, `scripts/**`, `package.json`, `ROADMAP.md`, `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, and any #494 / #498 file.
+Forbidden paths were not written: `app/**`, `components/**`, `lib/**`, `hooks/**`, `types/**`, `public/**`, `supabase/**`, `scripts/**`, `package.json`, `ROADMAP.md`, `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, and any #494 file.
+
+#498 files exist on current main and arrived only through the merge of `origin/main`. They were **not** imported, edited or re-owned by this persist. `git diff --name-only origin/main...HEAD` therefore still lists only the five `docs/V1_LIVE_GAP_RECONCILIATION_1_*` files.
+
+### 2.3 #498 material-change check
+
+Read-only review of `docs/V1_CORE_REGRESSION_HUNTER_1_REPORT_2026-09-21.md` on `d1949e23`. No G2 classification was rewritten. Confirming non-findings: 1.A (4.2 still closed), 12.B (5.2 ingestion still open), RH-12.5 (1.2(a) still closed). Hunter residuals RH-1.1 / RH-10.1 / RH-10.2 / RH-12.3 stay outside this slice.
 
 ---
 
