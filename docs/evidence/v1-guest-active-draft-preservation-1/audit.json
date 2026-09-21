@@ -3,34 +3,14 @@
   "authenticatedPreview": "NOT_CLAIMED",
   "route": "/planen",
   "product": {
-    "head": "8f63001f437edd4ff56093ec907ac3960a8497f7",
+    "head": "00643f3566499b6f6bf4419c21656eab31b54670",
     "workingTree": "dirty",
     "dirtyPaths": [
-      "M components/trips/PlanenCreateGate.tsx",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/audit.json",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/capture.mjs",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/handler-proof.mjs",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/screens/invalid_360x800_text-200.png",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/screens/invalid_390x844.png",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/screens/retry_390x844.png",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/screens/unavailable_360x800_text-200.png",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/screens/unavailable_390x844.png",
-      "M docs/evidence/v1-guest-active-draft-preservation-1/screens/valid_gate_390x844.png",
-      "M lib/trips/gastspeicher.ts",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/handler-proof.json",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/handler_legacy_after_render_390.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/handler_legacy_only_gate_390.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/invalid_360x800_text-200-full.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/invalid_390x844-full.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/legacy_only_390x844-full.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/legacy_only_390x844.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/retry_390x844-full.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/unavailable_360x800_text-200-full.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/unavailable_390x844-full.png",
-      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/valid_gate_390x844-full.png"
+      "M docs/evidence/v1-guest-active-draft-preservation-1/handler-proof.json",
+      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/handler_legacy_throw_after_render_390.png"
     ]
   },
-  "capturedAt": "2026-09-21T22:43:01.304Z",
+  "capturedAt": "2026-09-21T23:01:26.520Z",
   "note": "Synthetic guest /planen with compiled Next CSS. Not authenticated Preview, hardware, Safari or WCAG proof.",
   "omitted": [
     "live provider/model/paid call",
@@ -49,7 +29,7 @@
       "fontSize": 16,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:03.267Z",
+      "timestamp": "2026-09-21T23:01:28.566Z",
       "actionSequence": [
         "init invalid active + valid legacy",
         "goto /planen",
@@ -142,7 +122,7 @@
       "fontSize": 16,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:04.979Z",
+      "timestamp": "2026-09-21T23:01:40.290Z",
       "actionSequence": [
         "init getItem throw for active key",
         "goto /planen",
@@ -228,7 +208,7 @@
       "fontSize": 16,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:07.549Z",
+      "timestamp": "2026-09-21T23:01:42.872Z",
       "actionSequence": [
         "init invalid active",
         "goto /planen",
@@ -322,7 +302,7 @@
       "fontSize": 16,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:10.093Z",
+      "timestamp": "2026-09-21T23:01:44.838Z",
       "actionSequence": [
         "init valid disposable guest trip",
         "goto /planen",
@@ -415,7 +395,7 @@
       "fontSize": 32,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:12.043Z",
+      "timestamp": "2026-09-21T23:01:46.957Z",
       "actionSequence": [
         "init invalid active",
         "goto /planen",
@@ -509,7 +489,7 @@
       "fontSize": 32,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:16.084Z",
+      "timestamp": "2026-09-21T23:01:48.899Z",
       "actionSequence": [
         "init getItem throw",
         "goto /planen",
@@ -587,6 +567,93 @@
       "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/unavailable_360x800_text-200.png"
     },
     {
+      "name": "legacy_throw_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:01:51.204Z",
+      "actionSequence": [
+        "init active absent",
+        "legacy getItem throws",
+        "gate unlesbar",
+        "no mutation"
+      ],
+      "simulationClass": "synthetic_active_absent_legacy_getitem_throws",
+      "visible": {
+        "title": "Der Browserspeicher ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Der Browserspeicher ist nicht lesbar. Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 518,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Der Browserspeicher ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": null,
+      "expectedRaw": null,
+      "rawEqual": null,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/legacy_throw_390x844.png",
+      "fullPageScreenshot": "screens/legacy_throw_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/legacy_throw_390x844.png"
+    },
+    {
       "name": "legacy_only_390x844",
       "route": "/planen",
       "viewport": {
@@ -596,7 +663,7 @@
       "fontSize": 16,
       "httpOk": true,
       "browser": "chromium/148.0.7778.96",
-      "timestamp": "2026-09-21T22:43:19.506Z",
+      "timestamp": "2026-09-21T23:01:53.014Z",
       "actionSequence": [
         "init valid legacy only",
         "goto /planen",
@@ -658,7 +725,7 @@
       },
       "evidenceKind": "viewport-and-full-page",
       "rawBytes": {
-        "aktiv": "{\"id\":\"trip-alt\",\"clientRef\":\"trip-alt\",\"title\":\"Barcelona\",\"origin\":\"Zürich\",\"originPlaceId\":null,\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travellers\":1,\"currency\":\"CHF\",\"budgetAmount\":null,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[],\"travelWish\":null,\"revision\":1,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-96c1a5e9-4f4c-463f-9e40-74d1378ed4e3\",\"position\":1,\"name\":\"Barcelona\",\"countryCode\":null,\"arrivalDate\":null,\"departureDate\":null,\"latitude\":null,\"longitude\":null,\"placeId\":null}],\"days\":[{\"id\":\"day-9e089999-bf5e-44a4-86e1-11e8316d18d3\",\"stageId\":null,\"dayIndex\":1,\"dayDate\":\"2026-09-12\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"readinessItems\":[],\"party\":[],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\",\"dayStageAssignmentMode\":\"single_destination\"}",
+        "aktiv": "{\"id\":\"trip-alt\",\"clientRef\":\"trip-alt\",\"title\":\"Barcelona\",\"origin\":\"Zürich\",\"originPlaceId\":null,\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travellers\":1,\"currency\":\"CHF\",\"budgetAmount\":null,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[],\"travelWish\":null,\"revision\":1,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-62f16bb8-0f35-4a5f-a879-aa3e9ba34a84\",\"position\":1,\"name\":\"Barcelona\",\"countryCode\":null,\"arrivalDate\":null,\"departureDate\":null,\"latitude\":null,\"longitude\":null,\"placeId\":null}],\"days\":[{\"id\":\"day-72de23f3-2b83-412a-a917-a5f3bf645f94\",\"stageId\":null,\"dayIndex\":1,\"dayDate\":\"2026-09-12\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"readinessItems\":[],\"party\":[],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\",\"dayStageAssignmentMode\":\"single_destination\"}",
         "legacy": null,
         "warteschlange": null
       },

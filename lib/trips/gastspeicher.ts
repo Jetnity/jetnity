@@ -302,17 +302,6 @@ export function aktiveGastreiseVorpruefen(): AktiveGastreiseVorpruefung {
 }
 
 /**
- * Kennung der gültigen aktiven Gastreise, oder `null`.
- *
- * Nur lesen. Kein Loader, keine Migration, kein Schreiben. Ungültige oder
- * unlesbare Bytes bleiben unberührt.
- */
-function aktiveGastreiseKennungLesen(): string | null {
-  if (aktiveGastreiseVorpruefen().art !== 'gueltig') return null
-  return reiseLesen(rohLesen(SCHLUESSEL_AKTIV))?.id ?? null
-}
-
-/**
  * Create-Belegung aus dem Gastspeicher.
  *
  * Ungültige oder unlesbare aktive Bytes werden zuerst erkannt und niemals

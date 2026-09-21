@@ -31,3 +31,7 @@ Create occupancy is not active-v3-only. After the active-key preflight, a missin
 Rejected alternative: keep the gate on active-v3 only and rely on `gastreiseAnlegen` to throw after the loader migrates. That is the TL counterexample — the guest can already start model/place work.
 
 `gastCreateVorNetzschritt` only forwards passed state. Fresh storage observation is `gastCreateJetztPruefen`.
+
+## Follow-up decision (GP-R3, same date)
+
+A successful absent active-key read plus a **throwing** Legacy-key read is storage-unavailable, not a free slot. `rohLesen` still swallows parse/access errors for generic loader consumers; create occupancy and both persistence preflights use `schluesselRohLesen`, which keeps access failure distinct from absent or schema-invalid Legacy bytes. No new storage key and no malformed-Legacy cleanup.

@@ -1,7 +1,7 @@
 # Jetnity – V1 Guest Active Draft Preservation 1 STATUS
 
 Stand: 21. September 2026  
-Status: **GP-R1/R2 IMPLEMENTED / AUTHORIZED MAIN MERGED / DRAFT / NOT READY / NOT MERGED**
+Status: **GP-R1/R2/R3 IMPLEMENTED / AUTHORIZED MAIN MERGED / DRAFT / NOT READY / NOT MERGED**
 
 Issue: #530  
 Draft PR: #532  
@@ -32,6 +32,7 @@ Traveller context: not relevant. No citizenship, document or residence collectio
 | Valid | existing | `GastreiseBestehtFehler` / same-id Ablegen retry | existing one-trip gate |
 | Malformed / schema-invalid / empty / primitive / JSON null | `{ aktiv: null }` shape, **zero writes** | `ungueltig` | invalid alert + recheck, no continue |
 | Getter/getItem throws | empty shape, **zero writes** | `speicher_unlesbar` | unavailable alert + recheck |
+| Active absent, Legacy getItem throws | empty shape, **zero writes** | `speicher_unlesbar` | unavailable alert + recheck |
 | No window / not yet observed | empty shape | reject | pending / not a free slot |
 
 Signed-in create never inspects guest localStorage. PlanenCreateGate no longer calls `gastspeicherLaden()` for the title.
@@ -40,13 +41,13 @@ Signed-in create never inspects guest localStorage. PlanenCreateGate no longer c
 
 | Gate | Result |
 | --- | --- |
-| focused gastspeicher + create-entry + preservation + uebernahme + account-graph-read | **207/207 pass** |
-| `npm test` | **3703/3703 pass** |
+| focused gastspeicher + create-entry + preservation | **144/144 pass** |
+| `npm test` | **3706/3706 pass** |
 | `npm run typecheck` | **PASS** |
 | `npm run lint` | **PASS** (0 errors; 139 warnings, unchanged class) |
 | `npm run build` | **PASS** |
 | `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
-| mounted handler proof | Reiseidee.erzeugen + TripPlanner.absenden after legacy inject: **0** model/place/create, raw active unchanged |
+| mounted handler proof | legacy inject **and** active-absent + Legacy getItem throw: **0** model/place/create, no writes |
 | 360/200% capture | viewport PNGs **360×800**; document/section/heading widths ≤ 360; overflowX false |
 
 Exact-head CI / Auth / Vercel IDs belong in the PR receipt after this freeze commit.

@@ -29,8 +29,8 @@ Exact freeze SHA, ahead/behind, CI/Auth/direct Preview and thread counts belong 
 ## 2. What a reviewer should verify first
 
 1. Diff stays inside gastspeicher / create-entry / PlanenCreateGate / TripPlanner / Reiseidee, their tests, this prefix’s docs and evidence. Account files arrived only via the authorized main merge; they were not edited on this branch. One smallest expansion: `lib/trips/uebernahme.test.ts` fixture only. No `uebernahme.ts` / GastreiseBruecke runtime edit. No #534 homepage files.
-2. Invalid/unreadable active is checked **before** any loader/migration. Missing active + valid legacy occupies create at render and `gastCreateJetztPruefen` without `gastspeicherLaden`.
-3. Mounted `/planen` handlers: empty start, inject valid legacy, submit idea + planner → 0 model/place/create. Start-with-legacy hides both forms.
+2. Invalid/unreadable active is checked **before** any loader/migration. Missing active + valid legacy occupies create at render and `gastCreateJetztPruefen` without `gastspeicherLaden`. Missing active + **throwing Legacy-key read** is `speicher_unlesbar`, not empty — before network and both persistence functions.
+3. Mounted `/planen` handlers: empty start, inject valid legacy, submit idea + planner → 0 model/place/create. Same for active-absent + Legacy getItem throw. Start-with-legacy hides both forms.
 4. Confirmed absence still migrates valid legacy when a loader runs. Valid active still blocks a second draft. Same-`clientRef` Ablegen retry stays idempotent. Invalid+legacy remains byte-identical.
 5. `/planen` distinguishes pending / invalid / unavailable from the existing valid one-trip gate. 360/200% viewport PNGs are 360px wide; inspect images, not element crops.
 6. `gastCreateVorNetzschritt` only forwards passed state. Fresh observation is `gastCreateJetztPruefen`.

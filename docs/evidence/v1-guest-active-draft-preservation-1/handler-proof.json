@@ -2,9 +2,9 @@
   "kind": "mounted-handler-no-network-proof",
   "authenticatedPreview": "NOT_CLAIMED",
   "product": {
-    "head": "8f63001f437edd4ff56093ec907ac3960a8497f7"
+    "head": "00643f3566499b6f6bf4419c21656eab31b54670"
   },
-  "capturedAt": "2026-09-21T22:42:46.400Z",
+  "capturedAt": "2026-09-21T23:01:25.884Z",
   "note": "Actual mounted Reiseidee/TripPlanner submit after storage change. Adoption not reachable because idea is blocked before proposal. Not Preview/hardware proof.",
   "cases": [
     {
@@ -18,6 +18,17 @@
       "modelPlaceCreate": 0,
       "mutationsAttempted": 0,
       "mutationsCompleted": 0
+    },
+    {
+      "name": "mounted_handlers_after_legacy_getItem_throw",
+      "paths": [
+        "Reiseidee.erzeugen",
+        "TripPlanner.absenden"
+      ],
+      "modelPlaceCreate": 0,
+      "mutationsAttempted": 0,
+      "mutationsCompleted": 0,
+      "rawActiveUnchanged": true
     },
     {
       "name": "start_with_valid_legacy_blocks_form",
