@@ -1,0 +1,25 @@
+# Subtest: AP-4 Restore-Provenienz
+    # Subtest: fehlende oder ungültige Restore-Provenienz ist fail-closed, kein Default
+    ok 5 - fehlende oder ungültige Restore-Provenienz ist fail-closed, kein Default
+ok 3 - AP-4 Restore-Provenienz
+ok 9 - Sicherheits-KPI-Taxonomie
+ok 10 - Proxy unterscheidet Login von Auth-Lookup-Ausfall
+    # Subtest: Etappen in falscher Array-Reihenfolge folgen position
+    ok 16 - Etappen in falscher Array-Reihenfolge folgen position
+    # Subtest: zeitraum_verschieben lässt Termine eines kommerziellen Punkts stehen
+    ok 3 - zeitraum_verschieben lässt Termine eines kommerziellen Punkts stehen
+    # Subtest: ein neues Startdatum verschiebt den kommerziellen Termin nicht
+    ok 4 - ein neues Startdatum verschiebt den kommerziellen Termin nicht
+ok 25 - AP-7-S4 Write-/Auth-Orchestrierung
+ok 26 - AP-7-S4 Registry→Trip Materialisierung
+ok 27 - AP-7 Dual-Authority Account-Registry
+    # Subtest: Paris → Rom → Paris bleibt drei Stages und wird nicht nach placeId dedupliziert
+    ok 3 - Paris → Rom → Paris bleibt drei Stages und wird nicht nach placeId dedupliziert
+# Subtest: TW6 Day→Stage Mode Contract – Paris → Rom → Paris / 12.–17. September
+ok 41 - TW6 Day→Stage Mode Contract – Paris → Rom → Paris / 12.–17. September
+    # Subtest: ein Entwurf mit unmöglichen Werten wird verworfen, nicht geschickt
+    ok 6 - ein Entwurf mit unmöglichen Werten wird verworfen, nicht geschickt
+# tests 292
+# pass 292
+# fail 0
+# duration_ms 1690.463151

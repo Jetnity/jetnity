@@ -1,0 +1,36 @@
+{
+  "omitted": [
+    {
+      "class": "authenticated_browser_e2e",
+      "reason": "Not authorized. Source-only and local unit tests are not executed browser proof."
+    },
+    {
+      "class": "real_database_rls",
+      "reason": "No remote Supabase read/write. Existing local tests mock or stay in-memory."
+    },
+    {
+      "class": "production_sql_reread",
+      "reason": "Not authorized. Foundation-E / AAL2 Production apply evidence remains historical documents."
+    },
+    {
+      "class": "remote_signup_login_factor_delete",
+      "reason": "Forbidden by the binding task."
+    },
+    {
+      "class": "paid_provider_or_model_call",
+      "reason": "Forbidden. Official/search providers remain null/fail-closed in source."
+    },
+    {
+      "class": "full_npm_test_typecheck_lint_build",
+      "reason": "Docs-only slice. AGENTS.md §25 suite was not required and was not claimed green as a whole. Focused seam tests were run."
+    },
+    {
+      "class": "visual_device_screenshots",
+      "reason": "Owned by PR #506. Not repeated or re-owned."
+    },
+    {
+      "class": "preview_clickthrough_as_functional_proof",
+      "reason": "Vercel READY on the dispatch head is deployment presence, not functional Trip/Account proof."
+    }
+  ]
+}
