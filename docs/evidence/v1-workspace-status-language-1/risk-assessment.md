@@ -2,6 +2,8 @@
 
 | Risk | Assessment |
 | --- | --- |
+| SL-R1 inventory claim | Closed in this correction. `belegt` display is inventory-neutral; same-place 0-item regression covers progress and gap labels. |
+| SL-R2 mobility search promise | Closed in this correction. `belegt` next-step uses already-derived `sucheAnbietbar`. |
 | Truth / unknown collapse | Low. Tests keep `unbestimmt` / `unknown` distinct from known-open “nicht ausgewählt”. |
 | Commercial upgrade | Low. Booked / selected / open stay separate. No availability claim. |
 | #520 date mismatch | Low. Signal, rank, action and title pattern unchanged; existing tests still pass. |

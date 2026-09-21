@@ -1,7 +1,7 @@
 # V1 Workspace Status Language 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **SL-R1/SL-R2 CORRECTION — SAME SESSION / KEIN READY / KEIN MERGE / KEIN FOLGE-SLICE**
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD CODE AND VISUAL/INTERACTION REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGE-SLICE**
 
 Binding task: `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_TASK_2026-09-21.md`  
 Detailed status: `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_STATUS_2026-09-21.md`  
@@ -19,7 +19,9 @@ Matrix: `docs/evidence/v1-workspace-status-language-1/wording-matrix.md`
 | Branch | `fix/v1-workspace-status-language-1` |
 | Assigned dispatch base | `main@4278cd047b907b218fe64c122c4eed7dd61e0a7e` |
 | Dispatch seed | `f6372928b994c6ac00dac8fc82deee0a856a2376` |
-| Product tree for screenshots | `7a143fecdf0647bfa059653f96cc8c1eca5d6656` (clean) |
+| First-slice screens (unchanged) | `7a143fecdf0647bfa059653f96cc8c1eca5d6656` — source-equivalent |
+| SL-R1/SL-R2 same-place screens | `a71d3b5d6dce01b07ce1738c1322b9e24ba198ab` (clean) |
+| Reviewed defect head | `5b80a8213fecab575ae5d47aed76ea970baa7d50` |
 | Re-read `origin/main` | `4278cd047b907b218fe64c122c4eed7dd61e0a7e` — matches baseline; behind 0 |
 | Agent | Jetnity V1 workspace status language 1, Generation 1 |
 | Session | `bc-d6388e7d-7896-4902-a4d0-efd5dcbe4cce` |

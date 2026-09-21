@@ -22,6 +22,6 @@ Owned writes:
 - `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_STATUS_2026-09-21.md`
 - `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_HANDOFF_2026-09-21.md`
 - `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_SELF_REVIEW_2026-09-21.md`
-- `docs/evidence/v1-workspace-status-language-1/**`
+- `docs/evidence/v1-workspace-status-language-1/**` including `after_same-place-*` and `audit-after-same-place.json`
 
 Not written: planner/Feld, types, DB/Auth/RLS, storage, package/lockfile, workflows, `ACTIVE_WORK_STATUS.md`, `#520` mismatch logic.

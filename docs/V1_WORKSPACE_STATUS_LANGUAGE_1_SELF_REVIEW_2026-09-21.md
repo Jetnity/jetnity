@@ -34,7 +34,8 @@ Required model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-hi
 - Older “bestimmbar” sentences remain in Bestand components. Out of scope, not silently fixed.
 - `covered_by_flight` is still not produced from an unstructured same-date flight. The Hinweis path is display-only.
 - 200% / keyboard evidence is synthetic Chromium, not real-device or Safari.
-- `npm test` 3659/3659 was taken on product tree `7a143fec`. Later evidence/docs commits do not change the owned runtime copy sources.
+- `npm test` 3661/3661 was taken on product tree `a71d3b5d`. Later evidence/docs commits do not change the owned runtime copy sources.
+- Unchanged first-slice screens remain bound to `7a143fec`. New same-place screens are bound to `a71d3b5d`.
 - Exact-head CI / Auth / Vercel IDs belong in the freeze PR comment.
 
 ## Verdict
