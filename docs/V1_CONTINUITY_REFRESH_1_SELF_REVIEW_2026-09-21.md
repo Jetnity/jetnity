@@ -40,9 +40,9 @@ The observed `6fc59f28…` is a live pin, not a freeze of that PR. If that agent
 
 The OS-2 accepted-limitation paragraph remains long. That is required preservation, but it can drown the new current-state lines if a reader skips the first two blockquotes. The first-read list now puts 21-Sep first to compensate.
 
-### 2.4 Pre-existing missing first-read files
+### 2.4 First-read dead names (CR-1)
 
-Three historical START_HERE provider-readiness filenames still do not exist on this branch. They were already missing on main. Repairing them would have been out-of-scope cleanup.
+The first persist wrongly treated three missing START_HERE first-read filenames as out-of-scope documentation debt. TL review `5268788399` correctly required pointer repair inside this owned file. This persist replaces them with the existing NO SUBMIT / legal-hold / no-selected-provider documents and does not create replacements or imply a provider decision. A later reader can still be misled by historical filenames elsewhere; those were not cleaned repository-wide.
 
 ### 2.5 I did not independently re-read sibling evidence bytes
 
@@ -60,7 +60,8 @@ I used live GitHub PR metadata, comments and file lists. I did not download #506
 | Do not edit sibling outputs/sessions | Yes | |
 | Historical receipts remain historical | Yes | |
 | Focused JSON / link / guard / operating-mode tests | Yes | 16/16 + guard PASS |
-| Freeze; CI IDs in PR comment | Pending push | |
+| CR-1 first-read paths exist; no new provider docs | Yes | review `5268788399` |
+| Freeze; CI IDs in PR comment | Pending this persist | |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. Residual risks this slice does not close

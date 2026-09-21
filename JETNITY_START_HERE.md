@@ -29,8 +29,8 @@ Status: **NORMAL ON LIVE MAIN / CONTINUITY REFRESH #511 ON THIS BRANCH UNTIL TL 
 2a2. `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HANDOFF_2026-09-18.md` ← historical merged-#491 handoff
 2b. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-17.md` ← historical checkpoint; keep for audit/history, not current-state authority
 3. `docs/ACTIVE_WORK_STATUS.md`
-3a. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **latest runtime closure checkpoint**
-3b. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for current state by the closure checkpoint
+3a. `docs/CHATGPT_TECHNICAL_LEAD_MOBILE_ACCESSIBILITY_1_CLOSED_2026-09-17.md` ← **historical Mobile Accessibility 1 runtime-closure checkpoint**; later application-runtime baseline is #504 (see §3). Not current-work authority.
+3b. `docs/MOBILE_ACCESSIBILITY_1_STATUS_2026-09-02.md` ← historical implementation/review evidence; superseded for that slice by the Mobile Accessibility closure checkpoint
 4. `docs/CHATGPT_TECHNICAL_LEAD_WORLD_MAP_1_CLOSED_2026-09-02.md`
 5. `docs/CHATGPT_TECHNICAL_LEAD_DESTINATION_ESSENTIALS_1_CLOSED_2026-09-02.md`
 6. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-02.md` ← historical transition checkpoint; superseded for current state by the 2026-09-17 checkpoint
@@ -38,9 +38,9 @@ Status: **NORMAL ON LIVE MAIN / CONTINUITY REFRESH #511 ON THIS BRANCH UNTIL TL 
 8. `docs/JETNITY_V1_BINDING_BUILD_ORDER_2026-09-01.md`
 9. `docs/JETNITY_MULTI_AGENT_SLICE_PLANNING_STANDARD.md`
 10. `docs/FLIGHT_KAYAK_WEGO_ACCESS_ATTRIBUTION_DUE_DILIGENCE_2026-09-01.md`
-11. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_KAYAK_2026-09-01.md`
-12. `docs/FLIGHT_PROVIDER_APPLICATION_READINESS_WEGO_2026-09-01.md`
-13. `docs/FLIGHT_PROVIDER_CONTRACT_QUESTION_MATRIX_2026-09-01.md`
+11. `docs/KAYAK_FLIGHT_APPLICATION_READINESS_NO_SUBMIT_2026-09-01.md` ← historical KAYAK readiness; **NO SUBMIT / no contact / no Terms accepted**; no provider selected
+12. `docs/WEGO_FLIGHT_APPLICATION_READINESS_LEGAL_HOLD_NO_SUBMIT_2026-09-01.md` ← historical Wego readiness; **LEGAL/PRIVACY HOLD / NO SUBMIT / no contact**; no provider selected
+13. `docs/FLIGHT_PROVIDER_ACCESS_CONTRACT_QUESTION_MATRIX_2026-09-01.md` ← historical access/contract questions; **no provider contact / no provider selected**
 14. `docs/SKYSCANNER_APPLICATION_READINESS_PRECHECK_2026-09-01.md`
 15. `docs/PROVIDER_READINESS_FINAL_RECHECK_2026-09-01.md`
 16. `docs/JETNITY_THREE_PHASE_PRODUCT_STRATEGY_2026-09-01.md`

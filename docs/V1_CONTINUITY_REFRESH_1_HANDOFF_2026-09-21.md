@@ -27,7 +27,8 @@ Until #512 is merged, use the 21 September checkpoint from branch `docs/v1-conti
 | Branch | `docs/v1-continuity-refresh-1` |
 | Product / continuity baseline | `main@c7fb9f0f693ba9f020add7b26a041263aa7e3b07` |
 | Dispatch head | `ca1e76e7c8a402e6646213cbaa10291613926865` |
-| Main drift | none at persist reconstruction |
+| Previous persist / reviewed head | `c5bd0fcc4f02663f840714ec602c761bf6184b7a` |
+| Main drift | none at CR-1 reconstruction; live `origin/main` re-fetched, no rebase |
 
 ## What was delivered
 
@@ -35,9 +36,10 @@ A restart-safe current-state surface:
 
 - 21-Sep checkpoint verified and minimally reconciled;
 - START_HERE / ACTIVE_WORK_STATUS / HANDOFF / ROADMAP / 18-Sep supersession now point at that checkpoint;
-- operating-mode descriptive metadata no longer presents #492 as the live writer or #487 as a live parked PR, without changing enforcement predicates or guard/schema.
+- operating-mode descriptive metadata no longer presents #492 as the live writer or #487 as a live parked PR, without changing enforcement predicates or guard/schema;
+- CR-1 / review `5268788399`: START_HERE first-read now uses the existing KAYAK NO SUBMIT, Wego LEGAL-HOLD NO SUBMIT and access/contract-matrix documents; Mobile Accessibility closure is labelled historical.
 
-Not delivered: any product/runtime change, sibling review PASS, main merge, or guard/schema relaxation.
+Not delivered: any product/runtime change, sibling review PASS, main merge, guard/schema relaxation, new provider material or a provider decision.
 
 ## What the Technical Lead should decide
 
