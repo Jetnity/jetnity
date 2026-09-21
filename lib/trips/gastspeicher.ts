@@ -309,6 +309,39 @@ export function aktiveGastreiseKennungLesen(): string | null {
 }
 
 /**
+ * Create-Belegung aus dem Gastspeicher.
+ *
+ * Ungültige oder unlesbare aktive Bytes werden zuerst erkannt und niemals
+ * durch Legacy ersetzt. Fehlt der aktive Schlüssel, zählt ein gültiger
+ * Legacy-Entwurf als belegt – nur lesen, keine Migration, kein Schreiben.
+ */
+export type GastspeicherCreateBelegung =
+  | { art: 'nicht_im_browser' }
+  | { art: 'speicher_unlesbar' }
+  | { art: 'ungueltig' }
+  | { art: 'fehlend' }
+  | { art: 'gueltig'; id: string; titel: string | null }
+
+export function gastspeicherCreateBelegungLesen(): GastspeicherCreateBelegung {
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art === 'nicht_im_browser') return { art: 'nicht_im_browser' }
+  if (vor.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  if (vor.art === 'ungueltig') return { art: 'ungueltig' }
+
+  if (vor.art === 'gueltig') {
+    const aktiv = reiseLesen(rohLesen(SCHLUESSEL_AKTIV))
+    if (!aktiv) return { art: 'ungueltig' }
+    return { art: 'gueltig', id: aktiv.id, titel: aktiv.title?.trim() || null }
+  }
+
+  const neuester = legacyEntwuerfeLesen()[0]
+  if (neuester) {
+    return { art: 'gueltig', id: neuester.id, titel: neuester.title?.trim() || null }
+  }
+  return { art: 'fehlend' }
+}
+
+/**
  * Create- und Schreibwege prüfen den aktiven Schlüssel frisch, bevor sie
  * Kapazität annehmen. Der Loader selbst wirft hier nicht – nur Anlegen/Ablegen.
  */
@@ -466,6 +499,19 @@ function einzelneEtappe(
 }
 
 /**
+ * Gültige Legacy-Entwürfe, neueste zuerst. Dieselbe Parse-/Schema-Politik
+ * wie die Übernahme – nur ohne Schreiben.
+ */
+function legacyEntwuerfeLesen(): Trip[] {
+  const roh = rohLesen(SCHLUESSEL_LEGACY)
+  if (!Array.isArray(roh)) return []
+  return roh
+    .map(ausLegacy)
+    .filter((entwurf): entwurf is Trip => entwurf !== null)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+}
+
+/**
  * Holt die Entwürfe der Fassung v2 herüber, falls es welche gibt.
  *
  * Läuft genau einmal – aber nur, wenn sie gelingt. Der alte Schlüssel fällt
@@ -482,13 +528,7 @@ function legacyUebernehmen(): Gastspeicher | null {
   const vor = aktiveGastreiseVorpruefen()
   if (vor.art !== 'fehlend' && vor.art !== 'gueltig') return null
 
-  const roh = rohLesen(SCHLUESSEL_LEGACY)
-  if (!Array.isArray(roh)) return null
-
-  const entwuerfe = roh
-    .map(ausLegacy)
-    .filter((entwurf): entwurf is Trip => entwurf !== null)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  const entwuerfe = legacyEntwuerfeLesen()
 
   if (entwuerfe.length === 0) return null
 

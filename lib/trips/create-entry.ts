@@ -10,8 +10,7 @@
 
 import type { Sitzungsstand } from '@/lib/auth/oeffentliche-navigation'
 import {
-  aktiveGastreiseKennungLesen,
-  aktiveGastreiseVorpruefen,
+  gastspeicherCreateBelegungLesen,
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
   GastspeicherUnlesbarFehler,
@@ -37,7 +36,7 @@ export type GastCreateBelegung =
   | { art: 'nicht_beobachtet' }
   | { art: 'speicher_unlesbar' }
   | { art: 'ungueltig' }
-  | { art: 'gueltig'; id: string }
+  | { art: 'gueltig'; id: string; titel?: string | null }
   | { art: 'fehlend' }
 
 export type GastCreateGate =
@@ -56,13 +55,17 @@ export const GAST_CREATE_ERHALTUNG_TEXTE = {
 } as const
 
 /**
- * Frische Beobachtung des aktiven Gastschlüssels für Create-Wege.
- *
- * Ruft die vorhandene Vorprüfung auf. Kein Loader, keine Migration.
- * Ein gültiger Entwurf liefert nur die Kennung, nie erfundenen Inhalt.
+ * Frische Create-Belegung: zuerst der aktive Schlüssel, bei dessen
+ * Abwesenheit ein gültiger Legacy-Entwurf. Kein Loader, keine Migration.
+ * Ein gültiger Entwurf liefert Kennung und vorhandenen Titel, nie erfundenen Inhalt.
  */
 export function gastCreateBelegungLesen(): GastCreateBelegung {
-  return gastCreateBelegungAusVorpruefung(aktiveGastreiseVorpruefen(), aktiveGastreiseKennungLesen())
+  const belegt = gastspeicherCreateBelegungLesen()
+  if (belegt.art === 'nicht_im_browser') return { art: 'nicht_beobachtet' }
+  if (belegt.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  if (belegt.art === 'ungueltig') return { art: 'ungueltig' }
+  if (belegt.art === 'fehlend') return { art: 'fehlend' }
+  return { art: 'gueltig', id: belegt.id, titel: belegt.titel }
 }
 
 export function gastCreateBelegungAusVorpruefung(
@@ -123,11 +126,11 @@ export function gastCreateGateMeldung(gate: Extract<GastCreateGate, { erlaubt: f
 }
 
 /**
- * Erneute Prüfung unmittelbar vor Ortsauflösung, Modell oder Persistenz.
- * Der Slot kann sich in einem anderen Tab inzwischen belegt haben.
+ * Create-Gate aus bereits übergebenem Zustand.
  *
- * Ohne mitgegebene Belegung oder Kennung beobachtet der Gastweg den
- * Speicher frisch. Konten bleiben unabhängig vom Gastspeicher.
+ * Beobachtet den Speicher nicht selbst. Eine frische Beobachtung ist
+ * `gastCreateJetztPruefen`. Diese Funktion reicht nur den mitgegebenen
+ * Stand an `gastCreateGate` weiter.
  */
 export function gastCreateVorNetzschritt(eingabe: {
   angemeldet: boolean

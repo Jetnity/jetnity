@@ -17,7 +17,6 @@ import {
   planenCreateGateSicht,
   type GastCreateBelegung,
 } from '@/lib/trips/create-entry'
-import { gastspeicherLaden } from '@/lib/trips/gastspeicher'
 
 type PlanenCreateGateProps = {
   angemeldet: boolean
@@ -25,7 +24,11 @@ type PlanenCreateGateProps = {
 }
 
 const gateRahmenClass =
-  'rounded-[30px] border border-line-200 bg-white px-6 py-14 text-center shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:px-10'
+  'min-w-0 max-w-full break-words [overflow-wrap:anywhere] rounded-[30px] border border-line-200 bg-white px-6 py-14 text-center shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:px-10'
+const gateHauptClass =
+  'mt-4 min-w-0 max-w-full break-words [overflow-wrap:anywhere] text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl'
+const gateNebenClass =
+  'mx-auto mt-4 w-full min-w-0 max-w-xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-ink-800'
 const primaerKnopfClass =
   'inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-900'
 const sekundaerKnopfClass =
@@ -60,11 +63,7 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
     }
     const naechste = gastCreateBelegungLesen()
     setBelegung(naechste)
-    setAktivTitel(null)
-    if (naechste.art === 'gueltig') {
-      const reise = gastspeicherLaden().aktiv
-      setAktivTitel(reise?.id === naechste.id ? reise.title : null)
-    }
+    setAktivTitel(naechste.art === 'gueltig' ? naechste.titel?.trim() || null : null)
     setBeobachtet(true)
   }, [angemeldet])
 
@@ -87,10 +86,10 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
           Eine Reise. Eine Oberfläche.
         </p>
-        <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
+        <h1 className={gateHauptClass}>
           Du hast bereits eine Reise.
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-ink-800">
+        <p className={gateNebenClass}>
           {sicht.neben}
           {sicht.titel ? ` Dein Entwurf „${sicht.titel}“ liegt auf diesem Gerät.` : ''}
         </p>
@@ -118,10 +117,10 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
         Eine Reise. Eine Oberfläche.
       </p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
+      <h1 className={gateHauptClass}>
         {haupt}
       </h1>
-      <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-ink-800">{neben}</p>
+      <p className={gateNebenClass}>{neben}</p>
       <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
         <button type="button" onClick={beobachten} className={primaerKnopfClass}>
           {GAST_CREATE_ERHALTUNG_TEXTE.erneut}

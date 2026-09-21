@@ -19,6 +19,7 @@ import {
   SCHLUESSEL,
   gastreiseAblegen,
   gastreiseAnlegen,
+  gastspeicherCreateBelegungLesen,
   gastspeicherLaden,
   kennungErzeugen,
   aktiveGastreiseVorpruefen,
@@ -281,6 +282,68 @@ describe('Fehlender aktiver Schlüssel behält Migration, Idempotenz und One-Tri
     const reise = gastreiseAnlegen(eingabe({ title: 'Neu' }))
     assert.equal(reise.title, 'Neu')
     assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'gueltig' })
+  })
+})
+
+describe('Fehlender aktiver Schlüssel plus gültiges Legacy belegt den Create-Slot ohne Schreiben', () => {
+  test('Belegung und Action-Gate sehen den neuesten gültigen Legacy-Entwurf', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-alt', 'Älter', '2026-07-01T10:00:00.000Z'),
+      legacyMini('trip-neu', 'Barcelona', '2026-08-01T10:00:00.000Z'),
+    ])
+    const vorher = speicher.snapshot()
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    const belegt = gastspeicherCreateBelegungLesen()
+    assert.equal(belegt.art, 'gueltig')
+    if (belegt.art !== 'gueltig') throw new Error('erwartet gueltig')
+    assert.equal(belegt.id, 'trip-neu')
+    assert.equal(belegt.titel, 'Barcelona')
+
+    const gelesen = gastCreateBelegungLesen()
+    assert.equal(gelesen.art, 'gueltig')
+    if (gelesen.art !== 'gueltig') throw new Error('erwartet gueltig')
+    assert.equal(gelesen.id, 'trip-neu')
+    assert.equal(gelesen.titel, 'Barcelona')
+
+    const gate = gastCreateJetztPruefen(false)
+    assert.equal(gate.erlaubt, false)
+    if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(gate.grund, 'besteht')
+    assert.equal(gate.bestehendeId, 'trip-neu')
+    assert.equal(darfCreateModellAufrufen(gate), false)
+    assertUnveraendert(vorher)
+  })
+
+  test('ungültiges Legacy bleibt ein freier Slot und wird nicht aufgeräumt', () => {
+    speicher.setzen(SCHLUESSEL.legacy, { title: 'Halb' })
+    const vorher = speicher.snapshot()
+    assert.equal(gastCreateBelegungLesen().art, 'fehlend')
+    assert.equal(gastCreateJetztPruefen(false).erlaubt, true)
+    assertUnveraendert(vorher)
+  })
+
+  test('gültiges Legacy nach dem ersten Render blockiert den Netzschritt', () => {
+    assert.equal(gastCreateJetztPruefen(false).erlaubt, true)
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-spaeter', 'Lissabon', '2026-08-01T10:00:00.000Z')])
+    const danach = gastCreateJetztPruefen(false)
+    assert.equal(danach.erlaubt, false)
+    if (danach.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(danach.grund, 'besteht')
+    assert.equal(danach.bestehendeId, 'trip-spaeter')
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+  })
+
+  test('ungültige aktive Bytes plus Legacy bleiben ungueltig und ungeschrieben', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{bad-json')
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-alt', 'Barcelona', '2026-08-01T10:00:00.000Z')])
+    const vorher = speicher.snapshot()
+    assert.equal(gastspeicherCreateBelegungLesen().art, 'ungueltig')
+    const gate = gastCreateJetztPruefen(false)
+    assert.equal(gate.erlaubt, false)
+    if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(gate.grund, 'ungueltig')
+    assertUnveraendert(vorher)
   })
 })
 

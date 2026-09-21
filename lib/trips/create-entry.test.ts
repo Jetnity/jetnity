@@ -417,6 +417,13 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
     assert.match(datei, /PlanenCreateGate/)
   })
 
+  test('PlanenCreateGate liest den Titel ohne Loader-Migration', () => {
+    const datei = quelle('../../components/trips/PlanenCreateGate.tsx')
+    assert.equal(datei.includes('gastspeicherLaden'), false)
+    assert.match(datei, /overflow-wrap:anywhere/)
+    assert.match(datei, /gastCreateBelegungLesen/)
+  })
+
   test('PlanenCreateGate zeigt vor der Beobachtung kein Create-Formular', () => {
     const sicht = planenCreateGateSicht({
       angemeldet: false,
@@ -526,5 +533,15 @@ describe('Guest active draft preservation – create gate', () => {
       }).art,
       'kinder',
     )
+    const legacy = planenCreateGateSicht({
+      angemeldet: false,
+      beobachtet: true,
+      belegung: { art: 'gueltig', id: 'trip-legacy', titel: 'Barcelona' },
+      aktivTitel: 'Barcelona',
+    })
+    assert.equal(legacy.art, 'besteht')
+    if (legacy.art !== 'besteht') throw new Error('erwartet besteht')
+    assert.equal(legacy.bestehendeId, 'trip-legacy')
+    assert.equal(legacy.titel, 'Barcelona')
   })
 })

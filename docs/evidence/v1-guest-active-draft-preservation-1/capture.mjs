@@ -5,7 +5,7 @@
 // before they complete. Provider/API routes are fulfilled 503.
 
 import { execSync, spawn } from 'node:child_process'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
@@ -239,11 +239,63 @@ async function sichtLesen(page) {
   })
 }
 
+async function geometrieLesen(page, viewport) {
+  return page.evaluate((sicht) => {
+    const doc = document.documentElement
+    const body = document.body
+    const section = document.querySelector('main section')
+    const h1 = document.querySelector('h1')
+    const sectionBox = section?.getBoundingClientRect()
+    const headingBox = h1?.getBoundingClientRect()
+    const overflowX = doc.scrollWidth > sicht.width + 1 || body.scrollWidth > sicht.width + 1
+    const sectionOverflow = sectionBox ? sectionBox.width > sicht.width + 1 : false
+    const headingOverflow = headingBox ? headingBox.width > sicht.width + 1 : false
+    const headingClipped = h1
+      ? h1.scrollWidth > h1.clientWidth + 1 || h1.scrollHeight > h1.clientHeight + 1
+      : false
+    return {
+      viewport: sicht,
+      document: {
+        clientWidth: doc.clientWidth,
+        scrollWidth: doc.scrollWidth,
+        clientHeight: doc.clientHeight,
+        scrollHeight: doc.scrollHeight,
+      },
+      body: { clientWidth: body.clientWidth, scrollWidth: body.scrollWidth },
+      section: sectionBox
+        ? { width: sectionBox.width, height: sectionBox.height, x: sectionBox.x, y: sectionBox.y }
+        : null,
+      heading: headingBox
+        ? {
+            width: headingBox.width,
+            height: headingBox.height,
+            x: headingBox.x,
+            y: headingBox.y,
+            text: h1?.textContent?.trim() ?? null,
+          }
+        : null,
+      overflowX,
+      sectionOverflow,
+      headingOverflow,
+      headingClipped,
+    }
+  }, viewport)
+}
+
+function pngGroesse(pfad) {
+  const bytes = readFileSync(pfad)
+  if (bytes.length < 24 || bytes.toString('ascii', 1, 4) !== 'PNG') {
+    throw new Error(`keine PNG-Signatur: ${pfad}`)
+  }
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) }
+}
+
 async function szene(browser, fall, initArgs) {
   const context = await browser.newContext({
     viewport: { width: fall.width, height: fall.height },
     hasTouch: true,
     locale: 'de-CH',
+    deviceScaleFactor: 1,
   })
   const page = await context.newPage()
   const protokoll = leeresProtokoll()
@@ -260,6 +312,7 @@ async function szene(browser, fall, initArgs) {
   await page.waitForTimeout(200)
 
   const sicht = await sichtLesen(page)
+  const geometrie = await geometrieLesen(page, { width: fall.width, height: fall.height })
   let roh = null
   if (!fall.skipRaw) {
     try {
@@ -270,12 +323,32 @@ async function szene(browser, fall, initArgs) {
   }
 
   const dateiname = `${fall.name}.png`
-  const ziel = join(ROOT, 'screens', dateiname)
-  const artifact = join(ARTIFACTS, dateiname)
-  await page.locator('main section').first().screenshot({ path: ziel })
-  await page.screenshot({ path: artifact, fullPage: false })
+  const voll = `${fall.name}-full.png`
+  const viewportPfad = join(ROOT, 'screens', dateiname)
+  const fullPfad = join(ROOT, 'screens', voll)
+  await page.screenshot({ path: viewportPfad, fullPage: false })
+  await page.screenshot({ path: fullPfad, fullPage: true })
+  await page.screenshot({ path: join(ARTIFACTS, dateiname), fullPage: false })
+  await page.screenshot({ path: join(ARTIFACTS, voll), fullPage: true })
+  const viewportPng = await pngGroesse(viewportPfad)
+  const fullPng = await pngGroesse(fullPfad)
   const version = `${browser.browserType().name()}/${browser.version()}`
   await context.close()
+
+  const overflowFail =
+    Boolean(fall.assertNoOverflow) &&
+    (geometrie.overflowX ||
+      geometrie.sectionOverflow ||
+      geometrie.headingOverflow ||
+      geometrie.headingClipped ||
+      viewportPng.width > fall.width + 1)
+
+  if (overflowFail) {
+    throw new Error(
+      `${fall.name}: horizontal overflow/clip. viewportPng=${viewportPng.width}x${viewportPng.height} ` +
+        `doc=${geometrie.document.scrollWidth} heading=${JSON.stringify(geometrie.heading)}`,
+    )
+  }
 
   return {
     name: fall.name,
@@ -288,6 +361,9 @@ async function szene(browser, fall, initArgs) {
     actionSequence: fall.sequence,
     simulationClass: fall.simulationClass,
     visible: sicht,
+    geometry: geometrie,
+    screenshotSizes: { viewport: viewportPng, full: fullPng },
+    evidenceKind: 'viewport-and-full-page',
     rawBytes: roh,
     expectedRaw: fall.expectedRaw ?? null,
     rawEqual: fall.expectedRaw
@@ -295,7 +371,8 @@ async function szene(browser, fall, initArgs) {
       : null,
     mutations: konto(protokoll),
     screenshot: `screens/${dateiname}`,
-    artifact,
+    fullPageScreenshot: `screens/${voll}`,
+    artifact: join(ARTIFACTS, dateiname),
   }
 }
 
@@ -367,8 +444,9 @@ async function main() {
       width: 360,
       height: 800,
       schrift: 32,
+      assertNoOverflow: true,
       simulationClass: 'synthetic_invalid_active_enlarged_text',
-      sequence: ['init invalid active', 'goto /planen', 'html font-size 32px'],
+      sequence: ['init invalid active', 'goto /planen', 'html font-size 32px', 'measure overflow'],
       expectedRaw: { aktiv: INVALID_BYTES, legacy: LEGACY_BYTES },
       init: ({ aktiv, legacy, warteschlange, invalid, legacyBytes }) => {
         window.localStorage.setItem(aktiv, invalid)
@@ -381,8 +459,9 @@ async function main() {
       width: 360,
       height: 800,
       schrift: 32,
+      assertNoOverflow: true,
       simulationClass: 'synthetic_getitem_throws_enlarged_text',
-      sequence: ['init getItem throw', 'goto /planen', 'html font-size 32px'],
+      sequence: ['init getItem throw', 'goto /planen', 'html font-size 32px', 'measure overflow'],
       skipRaw: true,
       init: ({ aktiv }) => {
         const original = Storage.prototype.getItem
@@ -390,6 +469,19 @@ async function main() {
           if (schluessel === aktiv) throw new Error('SecurityError')
           return original.call(this, schluessel)
         }
+      },
+    },
+    {
+      name: 'legacy_only_390x844',
+      width: 390,
+      height: 844,
+      simulationClass: 'synthetic_missing_v3_valid_legacy',
+      sequence: ['init valid legacy only', 'goto /planen', 'gate besteht', 'no mutation'],
+      expectedRaw: { aktiv: null, legacy: LEGACY_BYTES },
+      init: ({ aktiv, legacy, warteschlange, legacyBytes }) => {
+        window.localStorage.removeItem(aktiv)
+        window.localStorage.setItem(legacy, legacyBytes)
+        window.localStorage.removeItem(warteschlange)
       },
     },
   ]
@@ -428,7 +520,23 @@ async function main() {
   }
   writeFileSync(join(ROOT, 'audit.json'), JSON.stringify(bericht, null, 2))
   writeFileSync(join(ARTIFACTS, 'audit.json'), JSON.stringify(bericht, null, 2))
-  console.log(JSON.stringify({ ok: true, cases: results.map((fall) => ({ name: fall.name, title: fall.visible.title, rawEqual: fall.rawEqual, mutations: fall.mutations })) }, null, 2))
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        cases: results.map((fall) => ({
+          name: fall.name,
+          title: fall.visible.title,
+          rawEqual: fall.rawEqual,
+          mutations: fall.mutations,
+          screenshotSizes: fall.screenshotSizes,
+          overflowX: fall.geometry?.overflowX ?? null,
+        })),
+      },
+      null,
+      2,
+    ),
+  )
 }
 
 main().catch((fehler) => {
