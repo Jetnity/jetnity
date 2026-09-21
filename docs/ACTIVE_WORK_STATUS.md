@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 21. September 2026  
-Status: **DEDICATED HOLD CLOSURE #492 PROPOSES NORMAL / LIVE MAIN REMAINS HOLD UNTIL TL MERGE / OS-1 #489 AND OS-2 #491 MERGED POST-MERGE VERIFIED / PR #487 PARKED SAFE / SAME SESSION bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c / LIVE-EVIDENCE WINS**
+Status: **V1 AUTH LOOKUP FAILURE TRUTH 1 #500 IMPLEMENTING / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW / LIVE-EVIDENCE WINS**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -11,29 +11,27 @@ Canonical current transition checkpoint:
 
 ## 0. Current work boundary
 
-**Live `main` remains `AI_OS_BUILD_HOLD`.** This dedicated closure branch proposes `.jetnity/operating-mode.json` `NORMAL`. Issue #440 historical override remains recorded. Special Product-Owner gates remain in force.
+Feature-branch writer for this checkout: **Jetnity V1 auth lookup failure truth 1**.
 
-Exclusive active meta-scope: **OS-2 dedicated HOLD closure**.
+This branch does not own HOLD-closure, #494, #497 or sibling P2 fixes. Special Product-Owner gates remain in force. Cursor does not Ready or merge.
 
 | | |
 | --- | --- |
-| Active writer | `Jetnity full-potential AI operating system 2`, Generation 1 |
+| Active writer | `Jetnity V1 auth lookup failure truth 1`, Generation 1 |
 | Required model | Cursor Grok 4.6 High Fast — no Auto/substitution |
-| Session | `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c` |
-| Closed foundation | #490 closed / #491 merged at `780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
-| Active Draft PR | #492 |
-| Branch | `governance/full-potential-ai-operating-system-2-hold-closure` |
-| Canonical base | `main@780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
-| Seed head | `163502d75d4419234476a8ad4aa542983be8de41` |
-| Binding task | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md` |
-| Topology | **SINGLE_AGENT** — same existing writer; no new session |
-| Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
-| External Grok team | ten identities present; E2E #001 verified; profile normalization complete; Daily/Weekly ACTIVE with accepted operational limitations; permission visibility SATISFIED BY EXPLICIT ACCEPTED LIMITATION `5757763756`; `native_scheduled_pass=false`; `native_material_archive_proof=false`. Cursor mutated no Grok routines. |
-| Canonical tracker | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md` |
-| Closure status | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md` |
-| Acceptance matrix | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md` |
-| Exact continuation | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. Next exact step: Technical-Lead exact-head review of #492. While #492 is open, live PR evidence wins over docs on `main`. |
+| Session | `bc-4a7937bd-b57c-4bca-9a0a-9d33dc2e86c5` |
+| Issue | #499 |
+| Active Draft PR | #500 |
+| Branch | `fix/v1-auth-lookup-failure-truth-1` |
+| Canonical base | `main@d1949e23b3dda30b7482265822e7e1279f244228` |
+| Dispatch head | `c155e79d127debac8b8a327ab48ef6bcfebf7b39` |
+| Binding task | `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_TASK_2026-09-21.md` |
+| Status / handoff | `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_STATUS_2026-09-21.md`, `docs/V1_AUTH_LOOKUP_FAILURE_TRUTH_1_HANDOFF_2026-09-21.md` |
+| Topology | **SINGLE_AGENT** |
+| Ownership | `proxy.ts` + focused proxy/auth tests + slice-local docs |
 | Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice. |
+
+Exact-head CI / Auth / Vercel IDs belong in the PR #500 comment on the frozen head.
 
 OS-1 / PR #489 is **MERGED / POST-MERGE VERIFIED** and must not be reconstructed as the active writer. Issue #488 is closed. Merge/current main at that closure: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`. Post-merge CI `35376407897` SUCCESS. Vercel Production success / READY. Technical-Lead PASS `5733949233` and post-merge verification `5733986499`. GitHub Ruleset `21875372` is live-verified as the already-active non-lockout baseline.
 
