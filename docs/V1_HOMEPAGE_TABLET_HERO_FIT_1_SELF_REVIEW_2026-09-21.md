@@ -17,7 +17,7 @@ Yes. Seed homepage source (no `page.tsx` edit yet) on reused `localhost:3000`. C
 
 ## 4. Is 200% text an honest proof?
 
-Labeled as `html { font-size: 32px }` simulation. Required 1024/1440 content remains present. 1024 overflowX 148 is pre-existing (same value and offenders on restored `lg` homepage): navbar + Pro glow + inspiration cards. First hero stayed viewport-bounded. 1440/200% decorative tags can still ellipsize; that is existing `truncate`, not a new 1024 squeeze.
+Labeled as `html { font-size: 32px }` simulation. First-round hero clips omitted the form (y 751.5 / 905.16). Correction-round `hero-full` and scrolled `form-cta` images show destination + CTA. OverflowX 148=148 vs matched baseline blob `1bd46c82` with raw painted/unpainted offenders. Hidden-card ghost boxes are `painted=false`. Destination placeholder can clip at 200% inside unchanged `StartzielForm`; CTA is complete. 1440/200% decorative tags can still ellipsize.
 
 ## 5. Did we invent overflow-hidden or smaller type to pass?
 
@@ -31,6 +31,10 @@ Focus `#travel-idea`, Tab to `Reise planen`, empty submit shows the existing val
 
 #531 merged onto live main after this branch started. This writer did not rebase. Reporting 3 ahead / 9 behind is required honesty, not a defect of the hero CSS.
 
-## 8. Verdict
+## 8. Did HT-E2 actually assert?
 
-Author self-review: VUX-8 is addressed with coordinated `xl` display and genuine before/after compiled-CSS geometry. **Not TL PASS.**
+Yes. `ht-e1-e2/assert.mjs` fails on wrong column/card/overflow/interaction measurements. It passed after the painted-flag honesty fix. It does not read class strings from `page.tsx`.
+
+## 9. Verdict
+
+Author self-review: HT-E1/HT-E2 evidence gaps are addressed without touching runtime. **Not TL PASS.**

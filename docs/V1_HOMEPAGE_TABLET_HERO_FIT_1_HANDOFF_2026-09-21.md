@@ -1,7 +1,7 @@
 # V1 Homepage Tablet Hero Fit 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **FROZEN / NOT TL FINAL / NOT READY / NOT MERGED**
+Status: **HT-E1/HT-E2 EVIDENCE CORRECTION FROZEN / NOT TL FINAL / NOT READY / NOT MERGED**
 
 ## Owner
 
@@ -18,6 +18,7 @@ No Auto / no substitute. Immediate review fixes reuse this exact session.
 4. After-proof at 360/390/768/1023/1024/1279/1280/1440/1920 plus 1024/1440 @32px. 1440/1920 keep the branded card (~401px, tags complete at 100% text).
 5. Keyboard/CTA interaction unchanged. Empty submit shows the existing list-validation message. Mutation attempts/completed 0.
 6. 1024/200% document overflow attributed to pre-existing navbar / later sections; matched on restored baseline `lg` homepage.
+7. **HT-E1/HT-E2** (same session): full-hero + scrolled form/CTA images; reproducible matched baseline blob `1bd46c82`; raw offender selectors/bounds/`painted`; `assert.mjs` PASS. First-round screens left immutable. No runtime edit.
 
 ## Changed-path manifest
 
@@ -32,8 +33,8 @@ Read-only: `StartzielForm`, `GastCreateLink`, navbar, tokens, other homepage sec
 
 ## What a successor must know
 
-- Product/runtime source is `da8db642`. Freeze docs commit will advance HEAD without further runtime edits.
-- Live main moved to `65db24b6` because **#531 merged**. This branch is **3 ahead / 9 behind**. Do **not** treat that as authorization to rebase from this writer.
+- Product/runtime source remains `da8db642` / page blob `bc272ae9`. This correction only adds `ht-e1-e2/` evidence and docs.
+- Live main was `65db24b6` after **#531 merged**. Re-read ahead/behind at STOP. Do **not** rebase from this writer. #532 still outstanding.
 - #532 remains an active Draft and is behind. Do not start or reuse its session.
 - Integration remains Technical-Lead-owned. Latest documented order was 531 → 532 → 534 unless TL updates it after the #531 merge.
 - Stay Draft. No Ready. No merge. No follow-up slice from Cursor.

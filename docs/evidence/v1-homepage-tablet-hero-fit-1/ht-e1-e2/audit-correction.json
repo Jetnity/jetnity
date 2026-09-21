@@ -1,0 +1,1255 @@
+{
+  "capturedAt": "2026-09-21T22:39:22.802Z",
+  "correction": "HT-E1/HT-E2",
+  "browser": "chromium/148.0.7778.96",
+  "server": {
+    "base": "http://localhost:3000",
+    "reused": true
+  },
+  "blobs": {
+    "baselineHomepage": "1bd46c82674e727b122d1798f842a8d57a99d62f",
+    "afterHomepage": "bc272ae9f82f591ea4c4b7540796e7652f6c2e19",
+    "baselineRef": "195f6bc566854f07044064a3690f7d1df68602da"
+  },
+  "limitations": [
+    "Local Chromium compiled-CSS evidence only.",
+    "Not authenticated Preview, hardware, Safari or WCAG proof.",
+    "html font-size 32px scenes are text simulation.",
+    "Old first-round screens/audit JSON were not overwritten."
+  ],
+  "baseline1024Text200": {
+    "scene": "baseline_1024x768_text-200",
+    "textSimulation": true,
+    "textSimulationNote": "html { font-size: 32px } CSS text simulation. Not OS zoom, hardware, Safari or WCAG certification.",
+    "viewport": {
+      "width": 1024,
+      "height": 768,
+      "dpr": 1
+    },
+    "route": "/",
+    "state": "anonymous-guest-homepage-no-draft",
+    "loaded": true,
+    "images": {
+      "viewport": "screens/baseline_1024x768_text-200_viewport.png",
+      "heroFull": "screens/baseline_1024x768_text-200_hero-full.png",
+      "formCta": "screens/baseline_1024x768_text-200_form-cta.png",
+      "note": "viewport = first paint at the named height. hero-full = first-hero element screenshot (viewport width × full hero height, may exceed 768/900). form-cta = same named viewport after scrolling the destination/CTA into view. Vertical scroll is allowed."
+    },
+    "geometry": {
+      "document": {
+        "clientWidth": 1024,
+        "scrollWidth": 1172,
+        "clientHeight": 768,
+        "scrollHeight": 10805,
+        "overflowX": 148,
+        "bodyOverflowX": 148
+      },
+      "hero": {
+        "x": 0,
+        "y": 73,
+        "width": 1024,
+        "height": 1427,
+        "right": 1024,
+        "bottom": 1500,
+        "display": "block",
+        "visibility": "visible",
+        "exceedsViewportHeight": true
+      },
+      "grid": {
+        "x": 40,
+        "y": 97,
+        "width": 944,
+        "height": 1211,
+        "right": 984,
+        "bottom": 1308,
+        "display": "grid",
+        "visibility": "visible",
+        "gridTemplateColumns": "640px 0px",
+        "columnCount": 2
+      },
+      "headline": {
+        "text": "Deine ganze Reise. Einfach an einem Ort.",
+        "x": 152,
+        "y": 349.13,
+        "width": 640,
+        "height": 210.75,
+        "right": 792,
+        "bottom": 559.88,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "form": {
+        "x": 152,
+        "y": 895.88,
+        "width": 640,
+        "height": 154,
+        "right": 792,
+        "bottom": 1049.88,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "destination": {
+        "x": 257,
+        "y": 928.88,
+        "width": 172.16,
+        "height": 88,
+        "right": 429.16,
+        "bottom": 1016.88,
+        "display": "inline-block",
+        "visibility": "visible",
+        "placeholder": "Wohin möchtest du reisen?"
+      },
+      "cta": {
+        "text": "Reise planen",
+        "x": 469.16,
+        "y": 924.88,
+        "width": 305.84,
+        "height": 96,
+        "right": 775,
+        "bottom": 1020.88,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      "card": {
+        "visible": true,
+        "emptySecondColumn": false,
+        "title": "Bali · 14 Tage",
+        "x": 793.51,
+        "y": 224.3,
+        "width": 90.98,
+        "height": 956.4,
+        "right": 884.49,
+        "bottom": 1180.7,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "containment": {
+        "formInsideHero": true,
+        "ctaInsideHero": true,
+        "destinationInsideHero": true,
+        "formBelowFirstViewport": true,
+        "note": "Contained means inside the first-hero rectangle. It does not mean visible without vertical scroll."
+      },
+      "firstHeroDescendants": [
+        {
+          "role": "headline",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > h1.mt-6",
+          "x": 152,
+          "y": 349.13,
+          "width": 640,
+          "height": 210.75,
+          "right": 792,
+          "bottom": 559.88,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "form",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > form.mt-8",
+          "x": 152,
+          "y": 895.88,
+          "width": 640,
+          "height": 154,
+          "right": 792,
+          "bottom": 1049.88,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "destination",
+          "selector": "#travel-idea",
+          "x": 257,
+          "y": 928.88,
+          "width": 172.16,
+          "height": 88,
+          "right": 429.16,
+          "bottom": 1016.88,
+          "display": "inline-block",
+          "visibility": "visible"
+        },
+        {
+          "role": "cta",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > form.mt-8 > div.flex > button.inline-flex",
+          "x": 469.16,
+          "y": 924.88,
+          "width": 305.84,
+          "height": 96,
+          "right": 775,
+          "bottom": 1020.88,
+          "display": "flex",
+          "visibility": "visible"
+        },
+        {
+          "role": "card",
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div > h2.mt-1",
+          "x": 886,
+          "y": 323.68,
+          "width": 147.01,
+          "height": 115.73,
+          "right": 1033.01,
+          "bottom": 439.41,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "card",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full",
+          "x": 793.51,
+          "y": 224.3,
+          "width": 90.98,
+          "height": 956.4,
+          "right": 884.49,
+          "bottom": 1180.7,
+          "display": "block",
+          "visibility": "visible"
+        }
+      ],
+      "overflowOffenders": [
+        {
+          "selector": "#pro > div.relative > div:nth-of-type(1)[aria-hidden=\"true\"].absolute",
+          "tag": "div",
+          "id": null,
+          "className": "absolute -right-28 -top-28 h-96 w-96 rounded-full bg-citrus-400/10 blur-3xl",
+          "ariaHidden": "true",
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 440,
+            "y": 7746,
+            "width": 768,
+            "height": 768,
+            "right": 1208,
+            "bottom": 8514
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "html > body.min-h-screen > div:nth-of-type(2).relative > header.sticky > div.mx-auto > div.hidden",
+          "tag": "div",
+          "id": null,
+          "className": "hidden items-center gap-2 md:flex",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "AnmeldenReise planen",
+          "bounds": {
+            "x": 772,
+            "y": -24,
+            "width": 400,
+            "height": 120,
+            "right": 1172,
+            "bottom": 96
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "html > body.min-h-screen > div:nth-of-type(2).relative > header.sticky > div.mx-auto > div.hidden > a:nth-of-type(2).inline-flex",
+          "tag": "a",
+          "id": null,
+          "className": "inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "Reise planen",
+          "bounds": {
+            "x": 995,
+            "y": -24,
+            "width": 177,
+            "height": 120,
+            "right": 1172,
+            "bottom": 96
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > span.flex",
+          "tag": "span",
+          "id": null,
+          "className": "flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 transition group-hover:bg-white group-hover:text-brand-800",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1092,
+            "y": 7634,
+            "width": 34,
+            "height": 72,
+            "right": 1126,
+            "bottom": 7706
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > span.flex > svg[aria-hidden=\"true\"]",
+          "tag": "svg",
+          "id": null,
+          "className": "",
+          "ariaHidden": "true",
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1093,
+            "y": 7654,
+            "width": 32,
+            "height": 32,
+            "right": 1125,
+            "bottom": 7686
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > span.flex > svg[aria-hidden=\"true\"] > path:nth-of-type(2)",
+          "tag": "path",
+          "id": null,
+          "className": "",
+          "ariaHidden": null,
+          "computedDisplay": "inline",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1109,
+            "y": 7661,
+            "width": 9,
+            "height": 19,
+            "right": 1118,
+            "bottom": 7679
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > span.flex",
+          "tag": "span",
+          "id": null,
+          "className": "flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-800 text-white",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1064,
+            "y": 304,
+            "width": 42,
+            "height": 81,
+            "right": 1106,
+            "bottom": 385
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > span.flex > svg[aria-hidden=\"true\"]",
+          "tag": "svg",
+          "id": null,
+          "className": "",
+          "ariaHidden": "true",
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1064,
+            "y": 324,
+            "width": 41,
+            "height": 41,
+            "right": 1105,
+            "bottom": 365
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > span.flex > svg[aria-hidden=\"true\"] > path:nth-of-type(1)",
+          "tag": "path",
+          "id": null,
+          "className": "",
+          "ariaHidden": null,
+          "computedDisplay": "inline",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1069,
+            "y": 329,
+            "width": 31,
+            "height": 30,
+            "right": 1100,
+            "bottom": 359
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > h3.text-2xl",
+          "tag": "h3",
+          "id": null,
+          "className": "text-2xl font-semibold tracking-[-0.03em]",
+          "ariaHidden": null,
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "Amsterdam",
+          "bounds": {
+            "x": 800,
+            "y": 7638,
+            "width": 268,
+            "height": 64,
+            "right": 1068,
+            "bottom": 7702
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(2).mt-3 > svg[aria-hidden=\"true\"] > path:nth-of-type(2)",
+          "tag": "path",
+          "id": null,
+          "className": "",
+          "ariaHidden": null,
+          "computedDisplay": "inline",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1039,
+            "y": 1085,
+            "width": 7,
+            "height": 14,
+            "right": 1047,
+            "bottom": 1100
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div",
+          "tag": "div",
+          "id": null,
+          "className": "",
+          "ariaHidden": null,
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "Dein EntwurfBali · 14 Tage2 Reisende · ausgewogen",
+          "bounds": {
+            "x": 884,
+            "y": 299,
+            "width": 150,
+            "height": 212,
+            "right": 1034,
+            "bottom": 511
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div > p:nth-of-type(1).text-11px",
+          "tag": "p",
+          "id": null,
+          "className": "text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600",
+          "ariaHidden": null,
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "Dein Entwurf",
+          "bounds": {
+            "x": 889,
+            "y": 299,
+            "width": 145,
+            "height": 20,
+            "right": 1034,
+            "bottom": 319
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div > h2.mt-1",
+          "tag": "h2",
+          "id": null,
+          "className": "mt-1 text-xl font-semibold tracking-[-0.03em]",
+          "ariaHidden": null,
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "Bali · 14 Tage",
+          "bounds": {
+            "x": 886,
+            "y": 324,
+            "width": 147,
+            "height": 116,
+            "right": 1033,
+            "bottom": 439
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div > p:nth-of-type(2).mt-1",
+          "tag": "p",
+          "id": null,
+          "className": "mt-1 text-xs text-ink-700",
+          "ariaHidden": null,
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "2 Reisende · ausgewogen",
+          "bounds": {
+            "x": 884,
+            "y": 444,
+            "width": 146,
+            "height": 68,
+            "right": 1030,
+            "bottom": 511
+          },
+          "firstHeroDescendant": true
+        },
+        {
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(2).mt-3 > span.flex",
+          "tag": "span",
+          "id": null,
+          "className": "flex items-center gap-2 text-xs font-medium",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "Bereit zum Verfeinern",
+          "bounds": {
+            "x": 860,
+            "y": 1060,
+            "width": 168,
+            "height": 68,
+            "right": 1028,
+            "bottom": 1128
+          },
+          "firstHeroDescendant": true
+        }
+      ],
+      "overflowHonesty": "hero.right === viewport width does not prove every descendant fits. Offenders are listed separately. firstHeroDescendant=false items are navbar or later sections and are out of this slice ownership."
+    },
+    "geometryAfterFormScroll": {
+      "form": {
+        "x": 152,
+        "y": 359.88,
+        "width": 640,
+        "height": 154,
+        "right": 792,
+        "bottom": 513.88,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "destination": {
+        "x": 257,
+        "y": 392.88,
+        "width": 172.16,
+        "height": 88,
+        "right": 429.16,
+        "bottom": 480.88,
+        "display": "inline-block",
+        "visibility": "visible",
+        "placeholder": "Wohin möchtest du reisen?"
+      },
+      "cta": {
+        "text": "Reise planen",
+        "x": 469.16,
+        "y": 388.88,
+        "width": 305.84,
+        "height": 96,
+        "right": 775,
+        "bottom": 484.88,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      "containment": {
+        "formInsideHero": true,
+        "ctaInsideHero": true,
+        "destinationInsideHero": true,
+        "formBelowFirstViewport": false,
+        "note": "Contained means inside the first-hero rectangle. It does not mean visible without vertical scroll."
+      }
+    },
+    "mutations": {
+      "attemptedUnexpectedMutations": 0,
+      "abortedUnexpectedMutations": 0,
+      "completedUnexpectedMutations": 0,
+      "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+      "versuche": [],
+      "abgebrochen": [],
+      "unerwartetAbgeschlossen": []
+    },
+    "interaction": null,
+    "productTree": {
+      "head": "858a3b84a63e55aef9628c7f1fc16d4da13350e4",
+      "pageBlob": "1bd46c82674e727b122d1798f842a8d57a99d62f",
+      "workingTree": "dirty",
+      "dirtyPaths": [
+        "M app/(public)/page.tsx",
+        "M docs/V1_HOMEPAGE_TABLET_HERO_FIT_1_STATUS_2026-09-21.md",
+        "?? docs/evidence/v1-homepage-tablet-hero-fit-1/ht-e1-e2/"
+      ],
+      "sourceNote": "matched baseline homepage blob 1bd46c82674e727b122d1798f842a8d57a99d62f from 195f6bc566854f07044064a3690f7d1df68602da; temporary page.tsx swap for 1024/200% only"
+    }
+  },
+  "after1024Text200": {
+    "scene": "after_1024x768_text-200",
+    "textSimulation": true,
+    "textSimulationNote": "html { font-size: 32px } CSS text simulation. Not OS zoom, hardware, Safari or WCAG certification.",
+    "viewport": {
+      "width": 1024,
+      "height": 768,
+      "dpr": 1
+    },
+    "route": "/",
+    "state": "anonymous-guest-homepage-no-draft",
+    "loaded": true,
+    "images": {
+      "viewport": "screens/after_1024x768_text-200_viewport.png",
+      "heroFull": "screens/after_1024x768_text-200_hero-full.png",
+      "formCta": "screens/after_1024x768_text-200_form-cta.png",
+      "note": "viewport = first paint at the named height. hero-full = first-hero element screenshot (viewport width × full hero height, may exceed 768/900). form-cta = same named viewport after scrolling the destination/CTA into view. Vertical scroll is allowed."
+    },
+    "geometry": {
+      "document": {
+        "clientWidth": 1024,
+        "scrollWidth": 1172,
+        "clientHeight": 768,
+        "scrollHeight": 10643,
+        "overflowX": 148,
+        "bodyOverflowX": 148
+      },
+      "hero": {
+        "x": 0,
+        "y": 73,
+        "width": 1024,
+        "height": 1264.5,
+        "right": 1024,
+        "bottom": 1337.5,
+        "display": "block",
+        "visibility": "visible",
+        "exceedsViewportHeight": true
+      },
+      "grid": {
+        "x": 40,
+        "y": 97,
+        "width": 944,
+        "height": 1048.5,
+        "right": 984,
+        "bottom": 1145.5,
+        "display": "grid",
+        "visibility": "visible",
+        "gridTemplateColumns": "720px",
+        "columnCount": 1
+      },
+      "headline": {
+        "text": "Deine ganze Reise. Einfach an einem Ort.",
+        "x": 152,
+        "y": 331,
+        "width": 720,
+        "height": 140.5,
+        "right": 872,
+        "bottom": 471.5,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "form": {
+        "x": 152,
+        "y": 751.5,
+        "width": 720,
+        "height": 154,
+        "right": 872,
+        "bottom": 905.5,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "destination": {
+        "x": 257,
+        "y": 784.5,
+        "width": 252.16,
+        "height": 88,
+        "right": 509.16,
+        "bottom": 872.5,
+        "display": "inline-block",
+        "visibility": "visible",
+        "placeholder": "Wohin möchtest du reisen?"
+      },
+      "cta": {
+        "text": "Reise planen",
+        "x": 549.16,
+        "y": 780.5,
+        "width": 305.84,
+        "height": 96,
+        "right": 855,
+        "bottom": 876.5,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      "card": {
+        "visible": false,
+        "emptySecondColumn": false,
+        "title": "Bali · 14 Tage",
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "right": 0,
+        "bottom": 0,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "containment": {
+        "formInsideHero": true,
+        "ctaInsideHero": true,
+        "destinationInsideHero": true,
+        "formBelowFirstViewport": true,
+        "note": "Contained means inside the first-hero rectangle. It does not mean visible without vertical scroll."
+      },
+      "firstHeroDescendants": [
+        {
+          "role": "headline",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > h1.mt-6",
+          "x": 152,
+          "y": 331,
+          "width": 720,
+          "height": 140.5,
+          "right": 872,
+          "bottom": 471.5,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "form",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > form.mt-8",
+          "x": 152,
+          "y": 751.5,
+          "width": 720,
+          "height": 154,
+          "right": 872,
+          "bottom": 905.5,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "destination",
+          "selector": "#travel-idea",
+          "x": 257,
+          "y": 784.5,
+          "width": 252.16,
+          "height": 88,
+          "right": 509.16,
+          "bottom": 872.5,
+          "display": "inline-block",
+          "visibility": "visible"
+        },
+        {
+          "role": "cta",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > form.mt-8 > div.flex > button.inline-flex",
+          "x": 549.16,
+          "y": 780.5,
+          "width": 305.84,
+          "height": 96,
+          "right": 855,
+          "bottom": 876.5,
+          "display": "flex",
+          "visibility": "visible"
+        },
+        {
+          "role": "card",
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div > h2.mt-1",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "card",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible"
+        }
+      ],
+      "overflowOffenders": [
+        {
+          "selector": "#pro > div.relative > div:nth-of-type(1)[aria-hidden=\"true\"].absolute",
+          "tag": "div",
+          "id": null,
+          "className": "absolute -right-28 -top-28 h-96 w-96 rounded-full bg-citrus-400/10 blur-3xl",
+          "ariaHidden": "true",
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 440,
+            "y": 7584,
+            "width": 768,
+            "height": 768,
+            "right": 1208,
+            "bottom": 8352
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "html > body.min-h-screen > div:nth-of-type(2).relative > header.sticky > div.mx-auto > div.hidden",
+          "tag": "div",
+          "id": null,
+          "className": "hidden items-center gap-2 md:flex",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "AnmeldenReise planen",
+          "bounds": {
+            "x": 772,
+            "y": -24,
+            "width": 400,
+            "height": 120,
+            "right": 1172,
+            "bottom": 96
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "html > body.min-h-screen > div:nth-of-type(2).relative > header.sticky > div.mx-auto > div.hidden > a:nth-of-type(2).inline-flex",
+          "tag": "a",
+          "id": null,
+          "className": "inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "Reise planen",
+          "bounds": {
+            "x": 995,
+            "y": -24,
+            "width": 177,
+            "height": 120,
+            "right": 1172,
+            "bottom": 96
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > span.flex",
+          "tag": "span",
+          "id": null,
+          "className": "flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 transition group-hover:bg-white group-hover:text-brand-800",
+          "ariaHidden": null,
+          "computedDisplay": "flex",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1092,
+            "y": 7472,
+            "width": 34,
+            "height": 72,
+            "right": 1126,
+            "bottom": 7544
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > span.flex > svg[aria-hidden=\"true\"]",
+          "tag": "svg",
+          "id": null,
+          "className": "",
+          "ariaHidden": "true",
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1093,
+            "y": 7492,
+            "width": 32,
+            "height": 32,
+            "right": 1125,
+            "bottom": 7524
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > span.flex > svg[aria-hidden=\"true\"] > path:nth-of-type(2)",
+          "tag": "path",
+          "id": null,
+          "className": "",
+          "ariaHidden": null,
+          "computedDisplay": "inline",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 1109,
+            "y": 7498,
+            "width": 9,
+            "height": 19,
+            "right": 1118,
+            "bottom": 7517
+          },
+          "firstHeroDescendant": false
+        },
+        {
+          "selector": "#entdecken > div:nth-of-type(2).mt-10 > a:nth-of-type(4).group > div:nth-of-type(2).absolute > div.mt-1 > h3.text-2xl",
+          "tag": "h3",
+          "id": null,
+          "className": "text-2xl font-semibold tracking-[-0.03em]",
+          "ariaHidden": null,
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "Amsterdam",
+          "bounds": {
+            "x": 800,
+            "y": 7476,
+            "width": 268,
+            "height": 64,
+            "right": 1068,
+            "bottom": 7540
+          },
+          "firstHeroDescendant": false
+        }
+      ],
+      "overflowHonesty": "hero.right === viewport width does not prove every descendant fits. Offenders are listed separately. firstHeroDescendant=false items are navbar or later sections and are out of this slice ownership."
+    },
+    "geometryAfterFormScroll": {
+      "form": {
+        "x": 152,
+        "y": 613.5,
+        "width": 720,
+        "height": 154,
+        "right": 872,
+        "bottom": 767.5,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "destination": {
+        "x": 257,
+        "y": 646.5,
+        "width": 252.16,
+        "height": 88,
+        "right": 509.16,
+        "bottom": 734.5,
+        "display": "inline-block",
+        "visibility": "visible",
+        "placeholder": "Wohin möchtest du reisen?"
+      },
+      "cta": {
+        "text": "Reise planen",
+        "x": 549.16,
+        "y": 642.5,
+        "width": 305.84,
+        "height": 96,
+        "right": 855,
+        "bottom": 738.5,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      "containment": {
+        "formInsideHero": true,
+        "ctaInsideHero": true,
+        "destinationInsideHero": true,
+        "formBelowFirstViewport": false,
+        "note": "Contained means inside the first-hero rectangle. It does not mean visible without vertical scroll."
+      }
+    },
+    "mutations": {
+      "attemptedUnexpectedMutations": 0,
+      "abortedUnexpectedMutations": 0,
+      "completedUnexpectedMutations": 0,
+      "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+      "versuche": [],
+      "abgebrochen": [],
+      "unerwartetAbgeschlossen": []
+    },
+    "interaction": {
+      "focusedDestinationId": "travel-idea",
+      "afterTab": {
+        "tag": "BUTTON",
+        "type": "submit",
+        "text": "Reise planen"
+      },
+      "validation": "Bitte wähle ein Reiseziel aus der Liste.",
+      "destinationPlaceholder": "Wohin möchtest du reisen?",
+      "ctaName": "Reise planen",
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": []
+      }
+    },
+    "productTree": {
+      "head": "858a3b84a63e55aef9628c7f1fc16d4da13350e4",
+      "pageBlob": "bc272ae9f82f591ea4c4b7540796e7652f6c2e19",
+      "workingTree": "dirty",
+      "dirtyPaths": [
+        "M docs/V1_HOMEPAGE_TABLET_HERO_FIT_1_STATUS_2026-09-21.md",
+        "?? docs/evidence/v1-homepage-tablet-hero-fit-1/ht-e1-e2/"
+      ],
+      "sourceNote": "after homepage blob bc272ae9f82f591ea4c4b7540796e7652f6c2e19; compiled Next CSS"
+    }
+  },
+  "after1440Text200": {
+    "scene": "after_1440x900_text-200",
+    "textSimulation": true,
+    "textSimulationNote": "html { font-size: 32px } CSS text simulation. Not OS zoom, hardware, Safari or WCAG certification.",
+    "viewport": {
+      "width": 1440,
+      "height": 900,
+      "dpr": 1
+    },
+    "route": "/",
+    "state": "anonymous-guest-homepage-no-draft",
+    "loaded": true,
+    "images": {
+      "viewport": "screens/after_1440x900_text-200_viewport.png",
+      "heroFull": "screens/after_1440x900_text-200_hero-full.png",
+      "formCta": "screens/after_1440x900_text-200_form-cta.png",
+      "note": "viewport = first paint at the named height. hero-full = first-hero element screenshot (viewport width × full hero height, may exceed 768/900). form-cta = same named viewport after scrolling the destination/CTA into view. Vertical scroll is allowed."
+    },
+    "geometry": {
+      "document": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "clientHeight": 900,
+        "scrollHeight": 8917,
+        "overflowX": 0,
+        "bodyOverflowX": 0
+      },
+      "hero": {
+        "x": 0,
+        "y": 73,
+        "width": 1440,
+        "height": 1427,
+        "right": 1440,
+        "bottom": 1500,
+        "display": "block",
+        "visibility": "visible",
+        "exceedsViewportHeight": true
+      },
+      "grid": {
+        "x": 40,
+        "y": 97,
+        "width": 1360,
+        "height": 1211,
+        "right": 1400,
+        "bottom": 1308,
+        "display": "grid",
+        "visibility": "visible",
+        "gridTemplateColumns": "650px 374px",
+        "columnCount": 2
+      },
+      "headline": {
+        "text": "Deine ganze Reise. Einfach an einem Ort.",
+        "x": 168,
+        "y": 339.84,
+        "width": 650,
+        "height": 229.31,
+        "right": 818,
+        "bottom": 569.16,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "form": {
+        "x": 168,
+        "y": 905.16,
+        "width": 650,
+        "height": 154,
+        "right": 818,
+        "bottom": 1059.16,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "destination": {
+        "x": 273,
+        "y": 938.16,
+        "width": 182.16,
+        "height": 88,
+        "right": 455.16,
+        "bottom": 1026.16,
+        "display": "inline-block",
+        "visibility": "visible",
+        "placeholder": "Wohin möchtest du reisen?"
+      },
+      "cta": {
+        "text": "Reise planen",
+        "x": 495.16,
+        "y": 934.16,
+        "width": 305.84,
+        "height": 96,
+        "right": 801,
+        "bottom": 1030.16,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      "card": {
+        "visible": true,
+        "emptySecondColumn": false,
+        "title": "Bali · 14 Tage",
+        "x": 885.56,
+        "y": 220.27,
+        "width": 398.87,
+        "height": 964.46,
+        "right": 1284.44,
+        "bottom": 1184.73,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "containment": {
+        "formInsideHero": true,
+        "ctaInsideHero": true,
+        "destinationInsideHero": true,
+        "formBelowFirstViewport": true,
+        "note": "Contained means inside the first-hero rectangle. It does not mean visible without vertical scroll."
+      },
+      "firstHeroDescendants": [
+        {
+          "role": "headline",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > h1.mt-6",
+          "x": 168,
+          "y": 339.84,
+          "width": 650,
+          "height": 229.31,
+          "right": 818,
+          "bottom": 569.16,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "form",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > form.mt-8",
+          "x": 168,
+          "y": 905.16,
+          "width": 650,
+          "height": 154,
+          "right": 818,
+          "bottom": 1059.16,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "destination",
+          "selector": "#travel-idea",
+          "x": 273,
+          "y": 938.16,
+          "width": 182.16,
+          "height": 88,
+          "right": 455.16,
+          "bottom": 1026.16,
+          "display": "inline-block",
+          "visibility": "visible"
+        },
+        {
+          "role": "cta",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(1).min-w-0 > form.mt-8 > div.flex > button.inline-flex",
+          "x": 495.16,
+          "y": 934.16,
+          "width": 305.84,
+          "height": 96,
+          "right": 801,
+          "bottom": 1030.16,
+          "display": "flex",
+          "visibility": "visible"
+        },
+        {
+          "role": "card",
+          "selector": "main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full > div:nth-of-type(1).rounded-22px > div:nth-of-type(1).flex > div > h2.mt-1",
+          "x": 978.05,
+          "y": 319.65,
+          "width": 156.02,
+          "height": 115.97,
+          "right": 1134.07,
+          "bottom": 435.62,
+          "display": "block",
+          "visibility": "visible"
+        },
+        {
+          "role": "card",
+          "selector": "#public-content > main.bg-surface-75 > section:nth-of-type(1).px-3 > div.relative > div:nth-of-type(3).relative > div:nth-of-type(2).hidden > div.w-full",
+          "x": 885.56,
+          "y": 220.27,
+          "width": 398.87,
+          "height": 964.46,
+          "right": 1284.44,
+          "bottom": 1184.73,
+          "display": "block",
+          "visibility": "visible"
+        }
+      ],
+      "overflowOffenders": [
+        {
+          "selector": "#pro > div.relative > div:nth-of-type(1)[aria-hidden=\"true\"].absolute",
+          "tag": "div",
+          "id": null,
+          "className": "absolute -right-28 -top-28 h-96 w-96 rounded-full bg-citrus-400/10 blur-3xl",
+          "ariaHidden": "true",
+          "computedDisplay": "block",
+          "painted": true,
+          "text": "",
+          "bounds": {
+            "x": 856,
+            "y": 6442,
+            "width": 768,
+            "height": 768,
+            "right": 1624,
+            "bottom": 7210
+          },
+          "firstHeroDescendant": false
+        }
+      ],
+      "overflowHonesty": "hero.right === viewport width does not prove every descendant fits. Offenders are listed separately. firstHeroDescendant=false items are navbar or later sections and are out of this slice ownership."
+    },
+    "geometryAfterFormScroll": {
+      "form": {
+        "x": 168,
+        "y": 425.16,
+        "width": 650,
+        "height": 154,
+        "right": 818,
+        "bottom": 579.16,
+        "display": "block",
+        "visibility": "visible"
+      },
+      "destination": {
+        "x": 273,
+        "y": 458.16,
+        "width": 182.16,
+        "height": 88,
+        "right": 455.16,
+        "bottom": 546.16,
+        "display": "inline-block",
+        "visibility": "visible",
+        "placeholder": "Wohin möchtest du reisen?"
+      },
+      "cta": {
+        "text": "Reise planen",
+        "x": 495.16,
+        "y": 454.16,
+        "width": 305.84,
+        "height": 96,
+        "right": 801,
+        "bottom": 550.16,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      "containment": {
+        "formInsideHero": true,
+        "ctaInsideHero": true,
+        "destinationInsideHero": true,
+        "formBelowFirstViewport": false,
+        "note": "Contained means inside the first-hero rectangle. It does not mean visible without vertical scroll."
+      }
+    },
+    "mutations": {
+      "attemptedUnexpectedMutations": 0,
+      "abortedUnexpectedMutations": 0,
+      "completedUnexpectedMutations": 0,
+      "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+      "versuche": [],
+      "abgebrochen": [],
+      "unerwartetAbgeschlossen": []
+    },
+    "interaction": null,
+    "productTree": {
+      "head": "858a3b84a63e55aef9628c7f1fc16d4da13350e4",
+      "pageBlob": "bc272ae9f82f591ea4c4b7540796e7652f6c2e19",
+      "workingTree": "dirty",
+      "dirtyPaths": [
+        "M docs/V1_HOMEPAGE_TABLET_HERO_FIT_1_STATUS_2026-09-21.md",
+        "?? docs/evidence/v1-homepage-tablet-hero-fit-1/ht-e1-e2/"
+      ],
+      "sourceNote": "after homepage blob bc272ae9f82f591ea4c4b7540796e7652f6c2e19; compiled Next CSS"
+    }
+  }
+}

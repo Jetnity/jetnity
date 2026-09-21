@@ -1,7 +1,7 @@
 # V1 Homepage Tablet Hero Fit 1 — Status
 
 Stand: 21. September 2026  
-Status: **FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
+Status: **HT-E1/HT-E2 EVIDENCE CORRECTION FROZEN / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
 
 ## Arbeitsblock / Ziel
 
@@ -95,6 +95,16 @@ Exact-head CI / Auth / direct Preview belong in the PR STOP receipt after the fr
 - 1440/200% decorative tags can still ellipsize (`truncate` is pre-existing). Required headline/form remain readable.
 - 390 after image can show the next section below the hero; that is existing short-viewport composition, not a new VUX-6 peek target.
 
-## Next step
+## HT-E1 / HT-E2 evidence-only correction (same session)
 
-Independent Technical-Lead code / visual / interaction review of the exact freeze head. Cursor does not Ready, merge, rebase, or start a follow-up.
+TL review of exact `858a3b84`. Runtime two-class fix accepted; no `page.tsx` / navbar / shared-component edit. Old `screens/` and `audit-*.json` stay immutable. New proof goes under `docs/evidence/v1-homepage-tablet-hero-fit-1/ht-e1-e2/`.
+
+Delivered (evidence only; `page.tsx` blob still `bc272ae9`):
+
+1. Reproducible `ht-e1-e2/capture.mjs` swapped homepage blob `1bd46c82` for matched baseline 1024/200%, then restored `bc272ae9`.
+2. Full-hero + scrolled form/CTA images at baseline 1024/200%, after 1024/200%, after 1440/200%. Form bottoms 905.5 / 1059.16 match the TL review numbers. First-paint viewport images still omit the form; that is why the scroll/full-hero images exist.
+3. `ht-e1-e2/overflow-attribution.json`: raw selectors/bounds, `painted`, `firstHeroDescendant`. Document overflowX **148 = 148**. Painted first-hero overflow is **non-empty on baseline** (squeezed card) and **empty after**. Hidden-card ghost boxes are `painted=false`.
+4. `ht-e1-e2/assert.mjs` **PASS** (fails on wrong measurements). No class-string tests.
+5. No main/#532 integrate. Fresh gates + STOP after this freeze.
+
+Destination placeholder can clip at 200% inside unchanged `StartzielForm`. CTA remains complete. Not a navbar/form rewrite.
