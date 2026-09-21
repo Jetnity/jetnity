@@ -2,8 +2,13 @@
   "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/r2_complex-r2-scrolled-search_390x844.png",
   "phase": "r2",
   "name": "complex-r2-scrolled-search_390x844",
-  "sha": "4b5f34f9fc0ca3501f3bf3ca850f71f157764229",
-  "capturedAt": "2026-09-21T18:00:12.916Z",
+  "sha": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+  "productTree": {
+    "head": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-09-21T18:05:01.740Z",
   "browser": "chromium/playwright",
   "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
   "viewport": {

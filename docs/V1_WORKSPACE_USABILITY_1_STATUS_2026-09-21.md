@@ -1,11 +1,11 @@
 # V1 Workspace Usability 1 — Status
 
 Stand: 21. September 2026  
-Status: **REVIEW-FIX FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
+Status: **INTEGRATED + REVIEW-FIX FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## Arbeitsblock / Ziel
 
-Same-session bounded review fixes for TL CHANGES REQUIRED on `4b5f34f9fc0ca3501f3bf3ca850f71f157764229`: VUX-R1 and VUX-R2 only. Accepted VUX-1 hierarchy and first-open VUX-4 repair preserved.
+Same-session integration/closure: merge authorized `origin/main@66af1539` once, bind R2 evidence to the clean integrated product tree, freeze. No Ready / no PR merge.
 
 ## Branch / PR / heads
 
@@ -15,40 +15,41 @@ Same-session bounded review fixes for TL CHANGES REQUIRED on `4b5f34f9fc0ca3501f
 | Issue | #513 |
 | Draft PR | #516 |
 | Assigned baseline | `main@19a91a2594127eb2b6104b68da69786194e13865` |
-| Prior freeze (invalidated by this head) | `4b5f34f9fc0ca3501f3bf3ca850f71f157764229` |
+| Integrated main (once) | `66af15397c1bb4e73d8e4012080bb04b7389147d` (#517) |
+| Merge commit | `b67adcb6a64359b56c3a89b7a6c6c350ef7d804c` |
+| Product tree used for R2 | **`dda36b176d9ca66a7fb2e66a28193a37e8b3e719` (clean)** |
+| Prior freeze (invalidated) | `4b5f34f9` then `cdaff642` |
 | Agent | **Jetnity V1 workspace usability 1**, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto |
 | Session | `bc-8a1bf241-3bb4-41f9-8fa1-7f6c5c965bca` |
 
-Exact new freeze SHA + CI/Auth/Vercel/thread IDs belong in the freeze PR comment only. R2 capture `sha` fields still record parent `4b5f34f9` because the harness ran on the dirty working tree that already contained these review fixes.
+Exact freeze SHA of the evidence/docs commit belongs in the freeze PR comment only. R2 artifacts record product `dda36b17` / `workingTree: clean`. That is the tested product tree; the later evidence commit is documentation only.
 
-## Live-main drift (reported, not integrated)
+## Live-main integration
 
-Re-read `origin/main` on 21 September 2026: `66af15397c1bb4e73d8e4012080bb04b7389147d` (Merge #517 guest-draft adoption). Earlier observed `d3d42047` (#512). Assigned PR base remains `19a91a25`. This writer did not rebase or merge main.
+TL authorized one merge of `origin/main@66af1539`. Merge completed with **no shared-path conflicts**. Incoming files were #517-owned guest storage/adoption/GastreiseBruecke only. This writer did not edit those files. No sibling branch merge. PR remains unmerged/draft.
 
 ## Review findings
 
 | ID | Disposition |
 | --- | --- |
-| VUX-R1 | **Fixed.** `tagLesen` now requires a UTC calendar round-trip. `2026-02-29` / `2026-02-30` / `2026-04-31` stay empty. `2024-02-29` stays visible. One valid + one invalid endpoint keeps only the valid side. Stored strings unchanged. `datumKurz` / `zeitraumKurz` untouched. |
-| VUX-R2 | **Fixed.** Removed the per-render callback-ref scroll. Stable `detailAnkerRef`. Scroll + cancelled rAF/timeout only on open or compact/desktop transition. Booking-toggle parent update and explicit search after manual scroll: `scrollY` 1038 → 1038 (jump 0; no reset to open 433). Rapid Escape before deferred work returns overview context. |
+| VUX-R1 | Source fix on `cdaff642` stands. UTC calendar round-trip; impossible days empty. |
+| VUX-R2 | Source fix on `cdaff642` stands. Recaptured on clean `dda36b17`: open 433 → manual 1038 → booking update 1038 → explicit search 1038 (jump 0). |
+| Rapid close | **Return evidence only.** Escape after detail mount + back-control focus. Not a measurement that rAF/timeout were still pending. Overview heading wait-visible; `scrollY` 565. |
 
 ## Local gates (author-run, not TL PASS)
 
 | Check | Result |
 | --- | --- |
-| focused date + workspace/detail/timeline/overview tests | PASS 80/80 (includes new impossible-day/leap tests) |
-| `tsc --noEmit` | PASS |
-| R2 harness | no unsolicited reset; explicit search mounted; rapid-close overview visible |
-
-Full `npm test` / lint / hygiene / build / mobile-a11y remain the prior author-run greens on `4b5f34f9` plus these focused re-runs. Exact-head CI is the gate that counts for the new SHA.
+| `npm test` on `cdaff642` | PASS 3539/3539 |
+| focused date/workspace tests | independently rerun by TL + author PASS |
+| R2 harness on clean `dda36b17` | no open-snap reset; explicit search mounted; rapid-close labelled as return |
 
 ## Sicherheit / Kosten
 
-- No secrets, accounts, paid provider/model calls, DB writes, Auth, or deployment settings
-- R2 booking toggle used only synthetic guest localStorage via existing UI
-- #514 / #515 files not written
+- No secrets, paid provider/model, DB/Auth activation
+- #514/#515 files not written by this writer; #517 arrived only via the authorized main merge
 
 ## Next step
 
-**ChatGPT / Technical Lead** performs independent exact-head code + visual/interaction review of the new freeze SHA. Cursor does not Ready, merge, or start a follow-up.
+**ChatGPT / Technical Lead** independent exact-head review of the freeze SHA. Cursor does not Ready, merge the PR, or start a follow-up.

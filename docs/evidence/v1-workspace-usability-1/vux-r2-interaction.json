@@ -1,7 +1,12 @@
 {
   "id": "VUX-R2",
-  "sha": "4b5f34f9fc0ca3501f3bf3ca850f71f157764229",
-  "capturedAt": "2026-09-21T18:00:10.846Z",
+  "sha": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+  "productTree": {
+    "head": "dda36b176d9ca66a7fb2e66a28193a37e8b3e719",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-09-21T18:04:59.568Z",
   "browser": "chromium/playwright",
   "viewport": {
     "width": 390,
@@ -25,6 +30,11 @@
   "resetToOpenAfterSearch": false,
   "explicitSearchMounted": true,
   "headingStillFluege": true,
-  "rapidCloseOverviewVisible": true,
-  "rapidCloseScrollY": 565
+  "rapidClose": {
+    "kind": "return-after-escape",
+    "overviewHeadingWaitVisible": true,
+    "overviewHeadingTopPx": 1.5,
+    "scrollY": 565,
+    "note": "Waits for detail mount and focuses the in-detail back control before Escape. Not a measurement that deferred rAF/timeout were still queued."
+  }
 }
