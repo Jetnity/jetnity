@@ -30,7 +30,7 @@ No Auto. Immediate review fixes reuse this exact session.
 - `docs/evidence/v1-manual-planner-text-reflow-1/**` including `historic/`
 - `docs/V1_MANUAL_PLANNER_TEXT_REFLOW_1_{STATUS,HANDOFF,SELF_REVIEW}_2026-09-21.md`
 
-Read-only: `/planen` page, `PlanenCreateGate`, `feld.tsx`, header/globals, create/storage/Auth, all `#526` paths.
+Read-only after RF: `/planen` page, `PlanenCreateGate`, `feld.tsx`, header/globals, create/storage/Auth. `#526` entered only via the authorized main merge.
 
 ## Authorized main integration
 
