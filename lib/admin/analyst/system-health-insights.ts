@@ -21,7 +21,6 @@ import {
   DATENBANKGESTUETZTE_SYSTEM_HEALTH_CHECKS,
   ERWARTETE_NICHT_KONFIGURIERTE_IDS,
   type AnalystAccess,
-  type AnalystAttribution,
   type AnalystBericht,
   type AnalystCoverage,
   type AnalystInsight,
@@ -518,10 +517,10 @@ function checkInsight(
     explanation,
     proves: overlayProves(check.proves, klass.observed),
     doesNotProve: alsUnvertrautenText(check.doesNotProve),
-    limitations: [
+    limitations: limitationen([
       TEXTE.aktuelleHinweiseProzessGrenze,
       stale ? TEXTE.aktuelleHinweiseVeraltet : null,
-    ],
+    ]),
     next: klass.next ? untersucheWennErlaubt(access) : null,
   })
 }
@@ -549,7 +548,10 @@ function itemInsight(
       .join(' '),
     proves: overlayProves(item.proves, klass.observed),
     doesNotProve: alsUnvertrautenText(item.doesNotProve),
-    limitations: [TEXTE.aktuelleHinweiseProzessGrenze, stale ? TEXTE.aktuelleHinweiseVeraltet : null],
+    limitations: limitationen([
+      TEXTE.aktuelleHinweiseProzessGrenze,
+      stale ? TEXTE.aktuelleHinweiseVeraltet : null,
+    ]),
     next: klass.next ? untersucheWennErlaubt(access) : null,
   })
 }

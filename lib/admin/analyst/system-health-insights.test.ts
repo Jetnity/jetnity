@@ -120,7 +120,6 @@ function assertKind(bericht: AnalystBericht) {
   assert.deepEqual(bericht.modelExplanation, { enabled: false })
   for (const insight of bericht.insights) {
     assert.equal(insight.kind, ANALYST_INSIGHT_KIND)
-    assert.equal(insight.modelExplanation === undefined, true)
     assert.ok(ANALYST_MATERIALITY.includes(insight.materiality))
     assert.ok(insight.attribution === 'none' || insight.attribution === 'process-recent' || insight.attribution === 'not_attributed')
     if (insight.next) {

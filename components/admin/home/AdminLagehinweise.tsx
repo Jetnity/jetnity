@@ -57,7 +57,7 @@ export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht 
           {abdeckungText(bericht)}
         </p>
       ) : null}
-      <ul className="mt-4 grid w-full min-w-0 gap-3">
+      <ul className="mt-4 grid w-full min-w-0 list-none gap-3 p-0">
         {bericht.insights.map((insight) => {
           const observedLabel = ANALYST_OBSERVED_LABEL[insight.observed]
           const freshnessLabel = ANALYST_FRESHNESS_LABEL[insight.freshness.state]
