@@ -96,9 +96,9 @@ Not written by this writer: System Health collector/cache/guard, roles/capabilit
 | Check | Result |
 | --- | --- |
 | Analyst T-* + loader + render + IA-R1/IA-R2/no-signal | **46/46 pass** (`lib/admin/analyst/*.test.ts` + additive honest-copy) |
-| Required System Health / navigation / admin-access regressions | run after this persist; recorded in freeze comment if later |
-| `npx tsc -p tsconfig.json --noEmit` | pending this persist |
-| ESLint on owned files | pending this persist |
+| Required System Health / admin-access / honest-copy regressions | **44/44 pass** |
+| `npx tsc -p tsconfig.json --noEmit` | **pass** |
+| ESLint on owned files | **pass** |
 | Synthetic render | attention / coverage (mixed-clock 30s) / denied / stale / break-glass at 320 / 390 / 1280 with compiled product CSS |
 | Overflow measurements | all cases/viewports `overflowing: false`, `cardsBeyondShell: 0` |
 | Authenticated Preview click-through | **BLOCKED_ACCESS** — no login/secret/bypass |
