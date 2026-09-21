@@ -1,6 +1,10 @@
 # ChatGPT Technical-Lead New-Chat Checkpoint – 18. September 2026
 
-Status: **CANONICAL NEW-CHAT CONTINUITY / DEDICATED HOLD CLOSURE #492 PROPOSES NORMAL / LIVE MAIN REMAINS HOLD UNTIL TL MERGE / OS-1 #489 AND OS-2 #491 MERGED POST-MERGE VERIFIED / PR #487 PARKED SAFE / LIVE-EVIDENCE WINS**
+Status: **HISTORICAL OS-2 / HOLD-EXIT CHECKPOINT / SUPERSEDED FOR CURRENT WORK BY 21 SEPTEMBER 2026 / LIVE-EVIDENCE WINS**
+
+> **SUPERSEDED FOR PRESENT CONTINUATION.** Current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md`. Until continuity PR #512 merges, read the new checkpoint from branch `docs/v1-continuity-refresh-1`. This 18 September file remains historical evidence for OS-2 / HOLD-exit receipts and accepted limitations. Do not rewrite the body below as if it was captured today. Live `main` is now `NORMAL`; #492/#487/#494 are closed. Do not treat §0 “#492 is the live writer / #487 parked / live main remains HOLD” as current.
+
+The body below is **unchanged historical evidence** from the OS-2 / HOLD-closure window.
 
 This checkpoint exists so a fresh ChatGPT Technical Lead can continue without relying on chat memory.
 
