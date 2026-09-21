@@ -1,7 +1,7 @@
 # Jetnity – V1 Guest Active Draft Preservation 1 STATUS
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTING / DRAFT / NOT READY / NOT MERGED**
+Status: **IMPLEMENTED / FROZEN SOURCE+DOCS PENDING THIS COMMIT / DRAFT / NOT READY / NOT MERGED**
 
 Issue: #530  
 Draft PR: #532  
@@ -14,54 +14,44 @@ Cursor-Agent: **Jetnity V1 guest active draft preservation 1**, Generation 1
 Required and actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=cursor-grok-4.6-high-fast`)  
 Session: `bc-7b2ee7bd-2aa2-4b83-bbf0-4d88eb19bfad`
 
-This file is a point-in-time working plan. Exact-head CI / Auth / Vercel IDs belong in the final PR receipt after freeze. Agent self-review is not Technical-Lead PASS.
-
-Traveller context: not relevant. This slice does not collect or interpret citizenship, documents, residence or route credentials.
+Traveller context: not relevant. No citizenship, document or residence collection.
 
 ---
 
-## 1. Residual (not a #517 restart)
+## 1. Residual closed
 
-On `e818c13`, independent TL probe: active v3 raw `{bad-json` plus valid legacy. `aktiveGastreiseVorpruefen()` correctly returns `ungueltig`, but `gastspeicherLaden()` still runs legacy migration, treats invalid active as free capacity, writes the valid legacy onto the active key and performs three writes/deletes. `gastreiseAnlegen` / `gastreiseAblegen` inherit that via the loader. The existing test `nach Korrektur liest die Vorprüfung frisch` currently creates over invalid raw; that fixture will be corrected.
+`gastspeicherLaden` no longer migrates valid legacy onto a present invalid/unreadable active key. Both create persistence functions reject that slot. `/planen` blocks honestly. The correction fixtures simulate external repair instead of create-over-invalid.
 
-#517 adoption preflight remains unchanged and is not reopened.
+## 2. Behaviour
 
-## 2. Concrete implementation plan
+| Active v3 key | Loader | Create APIs | /planen |
+| --- | --- | --- | --- |
+| Absent | existing legacy migration | create allowed | form |
+| Valid | existing | `GastreiseBestehtFehler` / same-id Ablegen retry | existing one-trip gate |
+| Malformed / schema-invalid / empty / primitive / JSON null | `{ aktiv: null }` shape, **zero writes** | `GastreiseUnbrauchbarFehler` | invalid alert + recheck, no continue |
+| Getter/getItem throws | empty shape, **zero writes** | `GastspeicherUnlesbarFehler` | unavailable alert + recheck |
+| No window / not yet observed | empty shape | reject | pending / not a free slot |
 
-### Loader / storage (`lib/trips/gastspeicher.ts`)
+Signed-in create never inspects guest localStorage.
 
-- Reuse `aktiveGastreiseVorpruefen()` before any migration or write.
-- `gastspeicherLaden`: if `ungueltig` or `speicher_unlesbar` / `nicht_im_browser`, skip `legacyUebernehmen`, return existing `{ aktiv: null, warteschlange }` shape, zero writes/deletes. Do not throw into generic readers.
-- `legacyUebernehmen` itself refuses to write when the active key is occupied-unusable or unreadable.
-- `gastreiseAnlegen` and `gastreiseAblegen` re-preflight immediately before persistence and reject occupied-unusable / unreadable with own errors. Valid same-`clientRef` Ablegen retry stays. Confirmed `fehlend` still migrates / creates.
-- No new storage key, backup, repair, reset, delete or export product.
+## 3. Gates (implementation head `58cf2e3f` plus later test/docs commits)
 
-### Create contract (`lib/trips/create-entry.ts`)
+| Gate | Result |
+| --- | --- |
+| focused gastspeicher + create-entry + preservation + uebernahme | **188/188 pass** |
+| `npm test` | **3683/3683 pass** |
+| `npm run typecheck` | **PASS** |
+| `npm run lint` | **PASS** (0 errors; 139 warnings after unused-import cleanup) |
+| `npm run build` | **PASS** |
+| `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
+| synthetic `/planen` Chromium | invalid / unavailable / retry / valid gate; rawEqual true; mutations 0/0 |
 
-- Add a bounded guest-create belegung (`nicht_beobachtet` / `speicher_unlesbar` / `ungueltig` / `gueltig` / `fehlend`).
-- Keep `{ erlaubt: true }` and existing `aktiveReiseId` fallback so older helper tests and the account path stay compatible.
-- Authenticated create never inspects guest localStorage.
-- Fresh `gastCreateJetztPruefen(angemeldet)` for action-time observation.
+Exact-head CI / Auth / Vercel IDs belong in the PR receipt after freeze.
 
-### Gate + callers
+## 4. Smallest expansion
 
-- `PlanenCreateGate`: pending / invalid / unavailable distinct from the existing valid one-trip gate. Non-destructive recheck. No continue-to-unknown-id, no lost/recoverable/no-draft claim, no destructive fix. Reuse #528 section/button classes.
-- `TripPlanner` / `Reiseidee`: replace `gastspeicherLaden().aktiv?.id` preflight with action-time `gastCreateJetztPruefen`. Handle the new errors. No layout/class, validation, model or provider change.
+`lib/trips/uebernahme.test.ts` fixture only. Reported here; no adoption runtime change.
 
-### Tests / evidence
+## 5. Next step
 
-- Adjust the correction fixture; add `lib/trips/guest-active-draft-preservation.test.ts`.
-- Extend gastspeicher + create-entry tests for bytes-identical reject paths and before-network gates.
-- Compiled-CSS synthetic screenshots at 390 (invalid / unavailable / retry / valid gate) and 360/200% readability. Abort unexpected mutations before interaction.
-
-## 3. Files in exclusive ownership
-
-Runtime: `lib/trips/gastspeicher.ts`, `lib/trips/create-entry.ts`, `components/trips/PlanenCreateGate.tsx`, `components/trips/TripPlanner.tsx`, `components/trips/Reiseidee.tsx`.  
-Tests: existing gastspeicher/create-entry tests + own preservation test.  
-Docs/evidence: own `docs/V1_GUEST_ACTIVE_DRAFT_PRESERVATION_1_*` and `docs/evidence/v1-guest-active-draft-preservation-1/**`.
-
-Not touched: types/trips, schema/mappers/readiness/credentials, uebernahme/GastreiseBruecke, account graph (#531), Auth, SQL, global continuity files, sibling branches.
-
-## 4. Next step in this session
-
-Implement the plan, then commit/push a pre-testing head, run gates, capture evidence, freeze, STOP.
+**STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.** No Ready. No merge. No follow-up slice.
