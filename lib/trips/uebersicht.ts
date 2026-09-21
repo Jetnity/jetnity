@@ -112,10 +112,10 @@ function fortschrittAus(abdeckungen: readonly UebersichtAbdeckung[]): string {
 
   if (unbestimmt === gesamt) return 'Stand der Bereiche noch unklar'
   if (offen === gesamt) return 'Noch nichts ausgewählt'
-  if (belegt === gesamt) return 'Wesentliche Bereiche sind vorhanden'
+  if (belegt === gesamt) return 'Keine bekannten offenen Punkte'
 
   const teile: string[] = []
-  if (belegt > 0) teile.push(`${belegt} von ${gesamt} Bereichen vorhanden`)
+  if (belegt > 0) teile.push(`${belegt} von ${gesamt} Bereichen ohne bekannten offenen Punkt`)
   if (teilweise > 0) teile.push(`${teilweise} nur teilweise geplant`)
   if (offen > 0) teile.push(`${offen} noch offen`)
   if (unbestimmt > 0) teile.push(`${unbestimmt} noch unklar`)

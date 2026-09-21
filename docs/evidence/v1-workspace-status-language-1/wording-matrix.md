@@ -11,8 +11,8 @@ After-Texte: dieser Slice. Nicht-textliche Felder bleiben gleich.
 | --- | --- | --- | --- |
 | alle `offen` | Noch nichts ausgewählt | Noch nichts ausgewählt | lagen `offen,offen,offen,offen` |
 | alle `unbestimmt` | Abdeckung noch nicht vollständig bestimmbar | Stand der Bereiche noch unklar | keine Lage wird `belegt` |
-| alle `belegt` | Wesentliche Bereiche sind belegt | Wesentliche Bereiche sind vorhanden | kein trip-ready/booked Claim |
-| Mix belegt + offen | N von 4 Bereichen belegt · M offen | N von 4 Bereichen vorhanden · M noch offen | Zählung N/M unverändert |
+| alle `belegt` | Wesentliche Bereiche sind belegt | Keine bekannten offenen Punkte | kein Inventory-/trip-ready/booked Claim; gilt auch für no-needed |
+| Mix belegt + offen | N von 4 Bereichen belegt · M offen | N von 4 Bereichen ohne bekannten offenen Punkt · M noch offen | Zählung N/M unverändert; `belegt` ≠ Eintrag existiert |
 | Mix teilweise | … teilweise abgedeckt | … nur teilweise geplant | `lage === teilweise` bleibt |
 | Mix unbestimmt | … noch nicht vollständig bestimmbar | … noch unklar | `lage === unbestimmt` bleibt |
 | kein Geräte-Kalender | Zeitliche Lage noch nicht bestimmbar | Zeitliche Einordnung noch unklar | `lage === null` |
@@ -63,7 +63,7 @@ After-Texte: dieser Slice. Nicht-textliche Felder bleiben gleich.
 | Flug `unbestimmt` Pflicht | Lücke | Noch unklar | Lage: Noch nicht bestimmbar | Noch unklar |
 | Flug `teilweise` Pflicht | Lücke | Teilweise offen | Lage: Teilweise | Nur teilweise geplant |
 | Aktivitäten `offen` | Lücke | Optional | Lage: Offen · keine Pflichtlücke | Noch offen · kein Pflichtpunkt |
-| Domain `belegt` | Lücke | Vorhanden | Lage: Belegt · keine Pflichtlücke | Vorhanden · kein Pflichtpunkt |
+| Domain `belegt` | Lücke | Kein offener Punkt | Lage: Belegt · keine Pflichtlücke | Kein bekannter offener Punkt · kein Pflichtpunkt |
 | `coveredByFlight` | Lücke | Hinweis | … über Flug abgedeckt | … durch den vorhandenen Flug abgedeckt |
 
 | Machine state | Before next step | After next step |
@@ -73,6 +73,13 @@ After-Texte: dieser Slice. Nicht-textliche Felder bleiben gleich.
 | Mobilität Pflicht | … Es gibt keinen Live-Mobilitätsadapter. | … Eine Live-Suche für Verbindungen gibt es hier nicht. |
 | `coveredByFlight` | … Das ist keine offene Bodenmobilitätslücke. | … Es fehlt keine Bodenverbindung. |
 | Flug/Stay offen | Du kannst den vorhandenen Bestand prüfen oder eine Suche ausdrücklich öffnen. | Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. |
+| `belegt` + Suche anbietbar | Die vorhandenen Einträge können geprüft werden. Eine Suche startet erst, … | Du kannst den Stand prüfen. Eine Suche startet erst, wenn du sie ausdrücklich öffnest. |
+| `belegt` + keine Suche (Mobilität, inkl. no-needed/0 Items) | dieselbe „vorhandene Einträge / Suche startet“-Formel | Kein bekannter offener Punkt. Eine Live-Suche für Verbindungen gibt es hier nicht. |
+| gleiche Stadt, 0 Items | Flug/Mobilität `belegt`, Übersicht „2 von 4 … vorhanden“, Gap „Vorhanden“ | Flug „Kein Flugabschnitt erforderlich“, Mobilität „Keine Verbindung erforderlich“, Übersicht „2 von 4 Bereichen ohne bekannten offenen Punkt · 2 noch offen“, Gap „Kein offener Punkt“ |
+
+## SL-R1 / SL-R2 correction (review 5271416938)
+
+`belegt` remains the machine state for both actual coverage and no-needed. Display copy must stay valid for zero-item same-place trips. Canonical no-needed summaries stay. No second coverage derivation.
 
 ## Rejected mappings
 

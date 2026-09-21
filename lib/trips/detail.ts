@@ -47,7 +47,7 @@ export const DETAIL_SUCHE_BEZEICHNUNG: Record<DetailDomain, string> = {
 export const DETAIL_LAGE_TEXT: Record<BereichLage, string> = {
   offen: 'Noch offen',
   teilweise: 'Nur teilweise geplant',
-  belegt: 'Vorhanden',
+  belegt: 'Kein bekannter offener Punkt',
   unbestimmt: 'Noch unklar',
 }
 
@@ -75,7 +75,7 @@ export type GapAnzeigeFelder = Pick<
 export function gapEyebrowText(gap: GapAnzeigeFelder): string {
   if (gap.coveredByFlight) return 'Hinweis'
   if (gap.domain === 'aktivitaeten') return 'Optional'
-  if (!gap.istPflichtLuecke) return gap.lage === 'belegt' ? 'Vorhanden' : 'Hinweis'
+  if (!gap.istPflichtLuecke) return gap.lage === 'belegt' ? 'Kein offener Punkt' : 'Hinweis'
   if (gap.lage === 'unbestimmt') return 'Noch unklar'
   if (gap.lage === 'teilweise') return 'Teilweise offen'
   return 'Noch offen'
@@ -253,6 +253,7 @@ export function gapDetailAbleiten(
   const text = status?.text ?? 'Stand noch unklar'
   const coveredByFlight = domain === 'mobilitaet' && mobilityNurDurchFlug(reise, ohneTag)
   const istPflichtLuecke = domain !== 'aktivitaeten' && lage !== 'belegt' && !coveredByFlight
+  const sucheAnbietbar = domain !== 'mobilitaet'
 
   return {
     domain,
@@ -260,8 +261,8 @@ export function gapDetailAbleiten(
     text,
     istPflichtLuecke,
     coveredByFlight,
-    sucheAnbietbar: domain !== 'mobilitaet',
-    naechsterSchritt: gapNaechsterSchritt(domain, lage, istPflichtLuecke, coveredByFlight),
+    sucheAnbietbar,
+    naechsterSchritt: gapNaechsterSchritt(domain, lage, istPflichtLuecke, coveredByFlight, sucheAnbietbar),
   }
 }
 
@@ -320,6 +321,7 @@ function gapNaechsterSchritt(
   lage: BereichLage,
   istPflichtLuecke: boolean,
   coveredByFlight: boolean,
+  sucheAnbietbar: boolean,
 ): string {
   if (domain === 'aktivitaeten') {
     return 'Aktivitäten sind freiwillig. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.'
@@ -331,7 +333,9 @@ function gapNaechsterSchritt(
     return 'Der Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.'
   }
   if (lage === 'belegt') {
-    return 'Die vorhandenen Einträge können geprüft werden. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.'
+    return sucheAnbietbar
+      ? 'Du kannst den Stand prüfen. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.'
+      : 'Kein bekannter offener Punkt. Eine Live-Suche für Verbindungen gibt es hier nicht.'
   }
   if (domain === 'mobilitaet') {
     return istPflichtLuecke

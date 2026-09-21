@@ -13,10 +13,14 @@ import { chromium } from 'playwright'
 const PORT = process.env.AUDIT_PORT || '3017'
 const BASIS = process.env.AUDIT_BASE || `http://localhost:${PORT}`
 const PHASE = process.env.AUDIT_PHASE || 'after'
+const SCOPE = process.env.AUDIT_SCOPE || 'all'
 const EVIDENZ =
   process.env.AUDIT_EVIDENCE_DIR ||
   '/workspace/docs/evidence/v1-workspace-status-language-1'
-const BERICHT = join(EVIDENZ, `audit-${PHASE}.json`)
+const BERICHT = join(
+  EVIDENZ,
+  SCOPE === 'all' ? `audit-${PHASE}.json` : `audit-${PHASE}-${SCOPE}.json`,
+)
 const SCHLUESSEL = 'jetnity:reise:v3'
 const SHA = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim()
 const DIRTY = execSync('git status --porcelain', { encoding: 'utf8' })
@@ -148,6 +152,25 @@ const UNKNOWN = reise({
     }),
   ],
 })
+const SAME_PLACE = reise({
+  id: 'trip-v1-status-same-place',
+  clientRef: 'trip-v1-status-same-place',
+  title: 'Gleiche Stadt Zürich',
+  origin: 'Zürich',
+  originPlaceId: 'geonames:2657896',
+  stages: [
+    etappe({
+      id: 'stage-1',
+      position: 1,
+      name: 'Zürich',
+      countryCode: 'CH',
+      arrivalDate: '2026-10-12',
+      departureDate: '2026-10-16',
+      placeId: 'geonames:2657896',
+    }),
+  ],
+})
+
 const MIXED = reise({
   id: 'trip-v1-status-mixed',
   clientRef: 'trip-v1-status-mixed',
@@ -338,7 +361,7 @@ async function speichern(page, name, extra) {
       gapPflicht: wort.gapPflicht,
       attention: wort.attention.slice(0, 6),
       fortschritt: wort.fortschritt.filter((zeile) =>
-        /unklar|offen|vorhanden|geplant|ausgewählt|Nächte|Verbindung|Flug|Unterkunft/.test(zeile),
+        /unklar|offen|vorhanden|geplant|ausgewählt|Nächte|Verbindung|Flug|Unterkunft|Punkt/.test(zeile),
       ).slice(0, 8),
     },
     ...extra,
@@ -411,27 +434,31 @@ async function serie(browser, fixture, label) {
         }),
       )
       await gapSchliessen(page)
-      await gapOeffnen(page, 'Unterkunft')
-      ergebnis.push(
-        await speichern(page, `${label}-stay-gap_${viewport.name}`, {
-          state: `${label}-stay-gap`,
-          actionSequence: ['return-overview', 'click-Unterkunft'],
-        }),
-      )
-      await gapSchliessen(page)
-      if (label === 'open') {
-        await gapOeffnen(page, 'Aktivitäten')
+      if (label !== 'same-place') {
+        await gapOeffnen(page, 'Unterkunft')
         ergebnis.push(
-          await speichern(page, `${label}-activities-gap_${viewport.name}`, {
-            state: `${label}-activities-optional`,
-            actionSequence: ['return-overview', 'click-Aktivitäten'],
+          await speichern(page, `${label}-stay-gap_${viewport.name}`, {
+            state: `${label}-stay-gap`,
+            actionSequence: ['return-overview', 'click-Unterkunft'],
           }),
         )
         await gapSchliessen(page)
+      }
+      if (label === 'open' || label === 'same-place') {
+        if (label === 'open') {
+          await gapOeffnen(page, 'Aktivitäten')
+          ergebnis.push(
+            await speichern(page, `${label}-activities-gap_${viewport.name}`, {
+              state: `${label}-activities-optional`,
+              actionSequence: ['return-overview', 'click-Aktivitäten'],
+            }),
+          )
+          await gapSchliessen(page)
+        }
         await gapOeffnen(page, 'Mobilität')
         ergebnis.push(
           await speichern(page, `${label}-mobility-gap_${viewport.name}`, {
-            state: `${label}-mobility-known-open`,
+            state: label === 'same-place' ? `${label}-mobility-no-needed` : `${label}-mobility-known-open`,
             actionSequence: ['return-overview', 'click-Mobilität'],
           }),
         )
@@ -507,11 +534,17 @@ async function main() {
   const server = await serverStarten()
   const browser = await chromium.launch({ headless: true })
   const captures = []
-  captures.push(...(await serie(browser, UNKNOWN, 'unknown')))
-  captures.push(...(await serie(browser, MIXED, 'mixed')))
-  captures.push(...(await serie(browser, OPEN, 'open')))
-  const zoom = await text200(browser)
-  const keys = await tastatur(browser)
+  const scope = SCOPE
+  if (scope === 'all' || scope === 'same-place') {
+    captures.push(...(await serie(browser, SAME_PLACE, 'same-place')))
+  }
+  if (scope === 'all') {
+    captures.push(...(await serie(browser, UNKNOWN, 'unknown')))
+    captures.push(...(await serie(browser, MIXED, 'mixed')))
+    captures.push(...(await serie(browser, OPEN, 'open')))
+  }
+  const zoom = scope === 'all' ? await text200(browser) : null
+  const keys = scope === 'all' ? await tastatur(browser) : null
   await browser.close()
   if (server.kind) server.kind.kill()
 
@@ -524,13 +557,16 @@ async function main() {
     productTree: PRODUCT_TREE,
     browser: BROWSER_LABEL,
     simulationClass: 'synthetic-guest + intercepted-unavailable',
+    scope,
     captures: captures.map((eintrag) => eintrag.meta),
-    zoom: { overflow: zoom.overflow, file: zoom.capture.meta.file },
-    keyboard: {
-      overviewReturned: keys.uebersichtSichtbar,
-      openFile: keys.offen.meta.file,
-      backFile: keys.zurueck.meta.file,
-    },
+    zoom: zoom ? { overflow: zoom.overflow, file: zoom.capture.meta.file } : { skipped: true, reason: 'scope-same-place' },
+    keyboard: keys
+      ? {
+          overviewReturned: keys.uebersichtSichtbar,
+          openFile: keys.offen.meta.file,
+          backFile: keys.zurueck.meta.file,
+        }
+      : { skipped: true, reason: 'scope-same-place' },
     forbiddenAfterHits: verboten,
     emptyImages: leereBilder.length,
     limits: [

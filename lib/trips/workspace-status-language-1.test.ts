@@ -418,9 +418,117 @@ describe('Gap-Anzeige ohne bestätigte Lücke für unknown/optional', () => {
   test('DETAIL_LAGE_TEXT hält die vier Lagen auseinander', () => {
     assert.equal(DETAIL_LAGE_TEXT.offen, 'Noch offen')
     assert.equal(DETAIL_LAGE_TEXT.teilweise, 'Nur teilweise geplant')
-    assert.equal(DETAIL_LAGE_TEXT.belegt, 'Vorhanden')
+    assert.equal(DETAIL_LAGE_TEXT.belegt, 'Kein bekannter offener Punkt')
     assert.equal(DETAIL_LAGE_TEXT.unbestimmt, 'Noch unklar')
     assert.equal(new Set(Object.values(DETAIL_LAGE_TEXT)).size, 4)
+  })
+})
+
+describe('SL-R1/SL-R2: no-needed belegt behauptet keinen Bestand', () => {
+  function gleicheStadtReise(teil: Partial<Trip> = {}): Trip {
+    return reise({
+      title: 'Zürich',
+      origin: 'Zürich',
+      originPlaceId: 'geonames:2657896',
+      stages: [
+        {
+          id: 'stage-1',
+          position: 1,
+          name: 'Zürich',
+          countryCode: 'CH',
+          arrivalDate: '2026-09-12',
+          departureDate: '2026-09-16',
+          latitude: null,
+          longitude: null,
+          placeId: 'geonames:2657896',
+        },
+      ],
+      ...teil,
+    })
+  }
+
+  test('zero-item gleiche Stadt behält no-needed-Summaries und neutrale Anzeige', () => {
+    const aktuell = gleicheStadtReise()
+    const sicht = uebersichtAbleiten(aktuell, [], HEUTE)
+    const fluege = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')
+    const mobilitaet = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'mobilitaet')
+    const unterkunft = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'unterkunft')
+    const aktivitaeten = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'aktivitaeten')
+    const kanonisch = bereichStatus(aktuell, [])
+
+    assert.deepEqual(
+      kanonisch.map((eintrag) => ({ bereich: eintrag.bereich, lage: eintrag.lage, anzahl: eintrag.anzahl })),
+      [
+        { bereich: 'fluege', lage: 'belegt', anzahl: 0 },
+        { bereich: 'unterkunft', lage: 'offen', anzahl: 0 },
+        { bereich: 'aktivitaeten', lage: 'offen', anzahl: 0 },
+        { bereich: 'mobilitaet', lage: 'belegt', anzahl: 0 },
+      ],
+    )
+    assert.equal(fluege?.lage, 'belegt')
+    assert.equal(fluege?.anzahl, 0)
+    assert.equal(fluege?.text, 'Kein Flugabschnitt erforderlich')
+    assert.equal(mobilitaet?.lage, 'belegt')
+    assert.equal(mobilitaet?.anzahl, 0)
+    assert.equal(mobilitaet?.text, 'Keine Verbindung erforderlich')
+    assert.equal(unterkunft?.lage, 'offen')
+    assert.equal(aktivitaeten?.lage, 'offen')
+    assert.equal(sicht.fortschrittText, '2 von 4 Bereichen ohne bekannten offenen Punkt · 2 noch offen')
+    assert.equal(sicht.fortschrittText.includes('vorhanden'), false)
+    assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche'), false)
+
+    const flugGap = gapDetailAbleiten(aktuell, [], 'fluege')
+    const mobilGap = gapDetailAbleiten(aktuell, [], 'mobilitaet')
+    assert.equal(flugGap.lage, 'belegt')
+    assert.equal(flugGap.istPflichtLuecke, false)
+    assert.equal(flugGap.sucheAnbietbar, true)
+    assert.equal(flugGap.text, 'Kein Flugabschnitt erforderlich')
+    assert.equal(gapEyebrowText(flugGap), 'Kein offener Punkt')
+    assert.equal(gapNebenzeile(flugGap), 'Kein bekannter offener Punkt · kein Pflichtpunkt')
+    assert.equal(gapEyebrowText(flugGap).includes('Vorhanden'), false)
+    assert.equal(gapNebenzeile(flugGap).includes('Vorhanden'), false)
+    assert.match(flugGap.naechsterSchritt, /Stand prüfen/)
+    assert.equal(flugGap.naechsterSchritt.includes('vorhandene Einträge'), false)
+
+    assert.equal(mobilGap.lage, 'belegt')
+    assert.equal(mobilGap.istPflichtLuecke, false)
+    assert.equal(mobilGap.coveredByFlight, false)
+    assert.equal(mobilGap.sucheAnbietbar, false)
+    assert.equal(mobilGap.text, 'Keine Verbindung erforderlich')
+    assert.equal(gapEyebrowText(mobilGap), 'Kein offener Punkt')
+    assert.equal(gapNebenzeile(mobilGap), 'Kein bekannter offener Punkt · kein Pflichtpunkt')
+    assert.equal(mobilGap.naechsterSchritt, 'Kein bekannter offener Punkt. Eine Live-Suche für Verbindungen gibt es hier nicht.')
+    assert.equal(mobilGap.naechsterSchritt.includes('Eine Suche startet'), false)
+    assert.equal(mobilGap.naechsterSchritt.includes('vorhandene Einträge'), false)
+    assert.equal(mobilGap.naechsterSchritt.includes('vorhandenen Einträge'), false)
+    ohneVerbot(anzeigeTexte(sicht))
+  })
+
+  test('alle belegt bleibt inventarneutral und kein trip-ready Claim', () => {
+    const hotel = punkt({
+      id: 'stay-zh',
+      kind: 'stay',
+      title: 'Zürich Inn',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-16',
+    })
+    const aktivitaet = punkt({
+      id: 'act-zh',
+      kind: 'activity',
+      title: 'Seeufer',
+    })
+    const aktuell = gleicheStadtReise({
+      days: [{ ...reise().days[0]!, items: [hotel, aktivitaet] }],
+    })
+    const sicht = uebersichtAbleiten(aktuell, [], HEUTE)
+    assert.deepEqual(
+      sicht.abdeckungen.map((eintrag) => eintrag.lage),
+      ['belegt', 'belegt', 'belegt', 'belegt'],
+    )
+    assert.equal(sicht.fortschrittText, 'Keine bekannten offenen Punkte')
+    assert.equal(sicht.fortschrittText.includes('vorhanden'), false)
+    assert.equal(sicht.fortschrittText.includes('bereit'), false)
+    assert.equal(sicht.fortschrittText.includes('gebucht'), false)
   })
 })
 

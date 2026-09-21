@@ -1,7 +1,7 @@
 # V1 Workspace Status Language 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD CODE AND VISUAL/INTERACTION REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGE-SLICE**
+Status: **SL-R1/SL-R2 CORRECTION — SAME SESSION / KEIN READY / KEIN MERGE / KEIN FOLGE-SLICE**
 
 Binding task: `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_TASK_2026-09-21.md`  
 Detailed status: `docs/V1_WORKSPACE_STATUS_LANGUAGE_1_STATUS_2026-09-21.md`  
@@ -32,11 +32,12 @@ Exact freeze SHA is in the STOP PR comment on this head.
 1. Diff vs baseline is only the named copy sources, matching tests, this prefix’s docs/evidence and the own audit script. No planner/Feld, types, Auth, DB, package or global-continuity edit.
 2. `bereichStatus` / `attentionAbleiten` / `gapDetailAbleiten` still emit the same lagen, counts, ids, actions and `sucheAnbietbar`. Only strings changed.
 3. Unknown is not mapped to “noch nicht gewählt” or `known_gap`. “Anbieter folgt” is absent.
-4. Gap eyebrow is not a blanket “Lücke”. Optional activities and covered-by-flight stay non-required.
-5. `#520 item.date_mismatch` title/signal/aktion remain. Official/safety/seasonal titles were not globally replaced.
-6. Canonical summaries still come from `flug-abdeckung` / `naechte-abdeckung` / `kanten`. No localized-string parser.
-7. Screenshots are synthetic guest + intercepted unavailable, compiled product CSS, bound to a clean product SHA. Not Preview, not real-device, not Safari.
-8. This self-review is not Technical-Lead PASS.
+4. Gap eyebrow is not a blanket “Lücke”. Optional activities and covered-by-flight stay non-required. `belegt` / no-needed must not say “Vorhanden”.
+5. Same-place zero-item: flight/mobility remain `belegt` + anzahl 0 with explicit no-needed summaries; overview progress and gap labels stay inventory-neutral; mobility next-step does not promise search.
+6. `#520 item.date_mismatch` title/signal/aktion remain. Official/safety/seasonal titles were not globally replaced.
+7. Canonical summaries still come from `flug-abdeckung` / `naechte-abdeckung` / `kanten`. No localized-string parser.
+8. Screenshots are synthetic guest + intercepted unavailable, compiled product CSS, bound to a clean product SHA. Not Preview, not real-device, not Safari.
+9. This self-review is not Technical-Lead PASS. Unchanged first-slice screenshots remain source-equivalent to `7a143fec`.
 
 ## 3. What this slice does not mean
 

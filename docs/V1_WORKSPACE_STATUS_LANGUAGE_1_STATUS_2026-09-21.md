@@ -1,7 +1,7 @@
 # V1 Workspace Status Language 1 — Status
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
+Status: **SL-R1/SL-R2 CORRECTION IN PROGRESS / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## Arbeitsblock / Ziel
 
@@ -29,10 +29,18 @@ Exact freeze SHA and CI/Auth/Preview IDs belong in the freeze PR comment.
 
 - Unknown stays uncertain: “Noch unklar” / “Stand noch unklar”. Known-open still says not selected only when the existing branch proves it.
 - Partial, selected, booked and no-needed keep distinct copy. Counts and route fragments stay in the canonical summaries.
-- Gap eyebrow no longer labels every panel as “Lücke”. Unknown → “Noch unklar”, activities → “Optional”, covered-by-flight → “Hinweis”, known open → “Noch offen”.
-- Next-step copy asks to check trip data and existing entries. It does not promise a provider, live check or “Anbieter folgt”.
+- Gap eyebrow no longer labels every panel as “Lücke”. Unknown → “Noch unklar”, activities → “Optional”, covered-by-flight → “Hinweis”, known open → “Noch offen”, `belegt` / no-needed → “Kein offener Punkt” (not “Vorhanden”).
+- Overview `belegt` is inventory-neutral: “Keine bekannten offenen Punkte” / “N von 4 Bereichen ohne bekannten offenen Punkt”. Same-place zero-item stays `belegt` with “Kein Flugabschnitt erforderlich” / “Keine Verbindung erforderlich”.
+- Next-step copy matches offered actions. Mobility `belegt` does not promise a search or existing entries when `sucheAnbietbar=false`. It does not promise a provider, live check or “Anbieter folgt”.
 - `item.date_mismatch` and non-coverage attention titles are unchanged.
 - Coverage texts still come from `flugAbdeckung` / `unterkunftAbdeckung` / `mobilitaetsAbdeckung`. No second string-parsing formatter.
+
+## TL review 5271416938
+
+Reviewed head `5b80a8213fecab575ae5d47aed76ea970baa7d50`. Same session.
+
+- **SL-R1:** first-slice “vorhanden” converted no-known-gap/not-needed into inventory existence. Neutral copy now valid for both actual coverage and zero-item same-place.
+- **SL-R2:** mobility `belegt` next-step no longer says a search will start or that entries exist.
 
 ## Scope held
 

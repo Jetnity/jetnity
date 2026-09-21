@@ -51,3 +51,12 @@ TA-R3 Foundation-E degraded honesty is NOT part of either task: its account mapp
 Guardian risk assessment: bounded presentation with unchanged state/selection/Truth contracts, independently reviewed by TL; no external Guardian run required at dispatch. Reassess any discovered material Truth/Auth risk. Guardian is the separate PO app, never this Cursor writer.
 
 Tracking issue: #525.
+
+## Same-session correction — TL review 5271416938
+
+Immediate review fix on reviewed head `5b80a8213fecab575ae5d47aed76ea970baa7d50`. Same agent/session/model. Only SL-R1 and SL-R2:
+
+- **SL-R1:** `belegt` / no-required / zero-item must not claim inventory exists. Neutral wording valid for both actual coverage and not-needed. Preserve machine states, counts and explicit no-needed summaries. No localized-string parsing or new coverage derivation.
+- **SL-R2:** `belegt` next-step must match offered actions. No implied mobility search when `sucheAnbietbar=false`. No implied existing entries when count may be 0.
+
+Canonical same-place zero-item display regression is required. Recapture only affected/new representative states; unchanged screenshots keep source-equivalence. Do not extend Bestand residual or #528 paths. Main remains `4278cd047b907b218fe64c122c4eed7dd61e0a7e`. No Ready/merge/follow-up.

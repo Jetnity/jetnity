@@ -12,6 +12,8 @@ Required model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-hi
 ## Held
 
 - Display strings only. Conditions, enums, counts, identities, order, actions and commercial states were not rewritten.
+- SL-R1: `belegt` copy is inventory-neutral. Zero-item same-place no longer reads as “vorhanden”.
+- SL-R2: mobility `belegt` next-step uses already-derived `sucheAnbietbar` and does not promise search or entries.
 - Unknown has its own uncertain label. Known-open still uses “Noch kein Flug ausgewählt” / “Noch keine Unterkunft ausgewählt” only when the graph proves required open segments and zero items.
 - `!bestimmbar` + 0 items no longer reuses the known-open “not selected” sentence. That was the previous collision the audit vocabulary hid.
 - Gap eyebrow uses already-derived `lage` / `istPflichtLuecke` / `coveredByFlight` / `domain`. It does not reconstruct coverage.
