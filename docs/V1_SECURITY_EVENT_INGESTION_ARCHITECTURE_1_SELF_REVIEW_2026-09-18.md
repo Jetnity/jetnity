@@ -59,9 +59,9 @@ TL synthetic evaluation on the **old** predicate is evidence against that predic
 | No runtime / migration / privileged activation | Yes |
 | Writer 1 withdrawn | Yes |
 | No false prior-PASS / self-SHA as current PASS | Yes |
-| Fresh exact-head CI | Pending live HEAD after this persist |
+| Fresh exact-head CI | Yes on `c7c614d8` | CI `35589130241` SUCCESS; Vercel `47NWELGnCWNcpXc4kqvwjhFpgH1H` READY. This persist invalidates that SHA. |
 | Stop for TL review | Yes after re-gate |
 
 ## 5. What remains
 
-Re-fetch CI, Preview and threads on the live HEAD. Agent self-review is not PASS.
+`c7c614d8` had CI `35589130241` SUCCESS and Vercel `47NWELGnCWNcpXc4kqvwjhFpgH1H` READY. This evidence persist is a newer HEAD and invalidates those gates. Re-fetch on the live HEAD. Agent self-review is not PASS.

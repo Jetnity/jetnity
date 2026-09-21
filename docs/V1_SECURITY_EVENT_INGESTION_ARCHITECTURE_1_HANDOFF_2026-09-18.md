@@ -21,6 +21,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Branch | `docs/v1-security-event-ingestion-architecture-1` |
 | Integration base | `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
 | Rejected head | `035486e021cf56c0ada4a3dc7ad1924cb1c01de4` |
+| Correction persist | `c7c614d8ea45ca51d34420b47038f8c10c969e6d` |
 | TL review | CHANGES REQUIRED `5265503350` |
 | Agent / session | Generation 1 / `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd` |
 
@@ -41,7 +42,9 @@ No runtime, migration, grant or Production change was made.
 3. Decision no longer grants authenticated INSERT or calls actor JWT “server truth”.
 4. AAL1 step-up is unobserved; AAL2 is not weakened.
 5. Finding 5.2 is not marked resolved; no PASS claim.
-6. Re-fetch CI / Preview / threads on the **live HEAD**.
+6. `c7c614d8` CI `35589130241` SUCCESS and Vercel `47NWELGnCWNcpXc4kqvwjhFpgH1H` READY are recorded only for that SHA.
+7. Re-fetch CI / Preview / threads on the **live HEAD** after this persist.
+8. PR description was not rewritten (tool refused a non-agent-managed body).
 
 ## 4. What this does not mean
 

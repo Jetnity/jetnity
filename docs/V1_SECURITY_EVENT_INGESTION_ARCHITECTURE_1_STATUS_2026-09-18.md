@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 STATUS
 
 Stand: 21. September 2026  
-Status: **TL CHANGES REQUIRED F1–F3 ADDRESSED IN DOCS / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **TL CHANGES REQUIRED F1–F3 ADDRESSED IN DOCS / `c7c614d8` GATES RECORDED / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #486  
 Draft PR: #487  
@@ -10,7 +10,8 @@ Binding task + 21 September amendment: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITE
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
 Current integration base / live `origin/main` at last fetch: `4a223d342e24fb9316f5ee4333914a16dca3b7bc`  
 Reviewed rejected head: `035486e021cf56c0ada4a3dc7ad1924cb1c01de4`  
-TL review: `5265503350` CHANGES REQUIRED
+TL review: `5265503350` CHANGES REQUIRED  
+Correction persist: `c7c614d8ea45ca51d34420b47038f8c10c969e6d`
 
 Cursor-Agent: **Jetnity V1 security event ingestion architecture 1**, Generation 1  
 Session: `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd`
@@ -48,21 +49,27 @@ Not relevant.
 
 No runtime writer, migration, RLS/grant, Auth/Supabase/Production mutation, service-role client, auth-log ingest, provider/secret/scheduler, Writer 1, Ready or merge.
 
-## 6. Local gates
-
-To be completed on the correction persist head.
+## 6. Local gates on `c7c614d8`
 
 | Gate | Result |
 | --- | --- |
-| Merge-base vs live `origin/main` | pending this persist |
-| Behind | pending this persist |
-| Scope | five architecture docs only (intended) |
+| Merge-base vs live `origin/main` | `4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
+| Ahead / behind before this evidence persist | **8 / 0** |
+| Scope | **5 architecture docs only** |
 | PostgreSQL/RLS attack tests | **not run** — matrix is source reasoning |
 | DB / Auth / Production calls | **none** |
+| GitHub PR body update | **not applied** — ManagePullRequest refused to overwrite a non-agent-managed description. Correction lives in the five docs. |
 
-## 7. Exact-head CI / Preview
+## 7. Exact-head CI / Preview on `c7c614d8`
 
-`035486e0` gates (CI `35587798753` / Vercel `dpl_FTvYZRjcrADw5pqbfdvHSS7pzcrg` per TL review) are **invalidated** by this correction head. Re-fetch on the live HEAD.
+Recorded before this persist. This persist is a newer HEAD and invalidates these bindings.
+
+| | |
+| --- | --- |
+| GitHub Actions | [`35589130241`](https://github.com/Jetnity/jetnity/actions/runs/35589130241) **SUCCESS** — Auth-Konfiguration `106299275054`; Typecheck, Lint & Build `106299274847`; Vercel Preview Comments `106299376926` |
+| Combined commit status | `success` on `c7c614d8ea45ca51d34420b47038f8c10c969e6d` |
+| Vercel | `47NWELGnCWNcpXc4kqvwjhFpgH1H` **READY** |
+| Preview | https://jetnity-app-git-docs-v1-security-event-65dec6-jetnity-e1b93c82.vercel.app |
 
 ## 8. Drift / threads
 
