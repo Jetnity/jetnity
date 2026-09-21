@@ -195,3 +195,24 @@ Cursor:
 - STOP FOR TECHNICAL-LEAD REVIEW.
 
 Any new head invalidates older exact-head evidence.
+
+---
+
+## 13. Amendment — 21 September 2026 — Technical-Lead CHANGES REQUIRED
+
+Review: `5265503350` on head `035486e021cf56c0ada4a3dc7ad1924cb1c01de4`.  
+Same agent / generation / session / branch / PR.
+
+This amendment **supersedes the integration-only restriction** for architecture corrections only. It does **not** authorise runtime implementation, migration, RLS/grant/Auth changes, privileged credentials, Production action, Writer 1, or a new agent/branch/PR.
+
+Required:
+
+1. Remove wording that the architecture was “accepted” because it survived integration.
+2. Replace, do not caveat, the actor-JWT INSERT contract (F1).
+3. Reconcile taxonomy with AAL2 / `darf_betrieb_*` / break-glass (F2). Unobserved signals must be named as unobserved.
+4. Specify an enforced producer boundary for payload, time, size, rate/volume, historical-type compatibility and delivery failure (F3). Retention remains an activation prerequisite without inventing a legal period.
+5. Publish an adversarial acceptance matrix. Distinguish reasoning from tests actually run.
+6. Withdraw Writer 1 as previously specified. Propose a replacement follow-up that does not presume F1–F3 are solved.
+7. Update DECISION / STATUS / HANDOFF / SELF_REVIEW and the PR description. No false self-SHA or prior-PASS claims.
+8. Fresh exact-head CI + Auth + Preview; merge-base = current main; behind = 0; then **STOP FOR TECHNICAL-LEAD REVIEW**.
+
