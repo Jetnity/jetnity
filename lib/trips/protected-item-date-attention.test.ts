@@ -343,6 +343,23 @@ describe('kanonischer Schutz ohne Schutz-Neudefinition', () => {
 })
 
 describe('kein erfundenes Mismatch', () => {
+  test('leerer Titel zeigt keinen internen Feldnamen', () => {
+    const sicht = ableiten(
+      reiseMitTagen([
+        {
+          id: 'day-1',
+          dayDate: '2026-09-19',
+          items: [geschuetzt({ id: 'blank', title: '   ' })],
+        },
+      ]),
+    )
+    const punkt = sicht.punkte.find((eintrag) => eintrag.id === 'item.date_mismatch:blank')
+    assert.ok(punkt)
+    assert.match(punkt.titel, /^Planpunkt:/)
+    assert.equal(punkt.titel.includes('blank'), false)
+    assert.equal(punkt.titel.includes('startsOn'), false)
+  })
+
   test('gleicher geschützter Termin erzeugt kein Signal', () => {
     const sicht = ableiten(
       reiseMitTagen([

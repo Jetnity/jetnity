@@ -1,0 +1,39 @@
+{
+  "kind": "author-run-local-gates",
+  "not": "technical-lead-pass",
+  "productTree": "948ad2fcffd7cc170feebd19fe0a94baed54fc72",
+  "commands": [
+    {
+      "cmd": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/protected-item-date-attention.test.ts lib/trips/attention.test.ts lib/reiseaenderung/anwenden.test.ts lib/reiseaenderung/geschuetzt.test.ts",
+      "result": "81/81 pass (later freeze adds one empty-title case)"
+    },
+    {
+      "cmd": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/trips/detail.test.ts lib/trips/datum-anzeige.test.ts",
+      "result": "48/48 pass"
+    },
+    {
+      "cmd": "node --import ./scripts/server-only-test-register.mjs --import tsx docs/evidence/v1-protected-item-date-attention-1/render-harness.ts",
+      "result": "ok; source 948ad2fc clean; 4 mismatches; sichtbar 3; weitere 4; viewports 390 and 1024; css 104346 bytes from styles/globals.css"
+    },
+    {
+      "cmd": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "cmd": "npm run lint",
+      "result": "PASS (0 errors, 138 pre-existing warnings)"
+    },
+    {
+      "cmd": "npm test",
+      "result": "3621/3621 pass on product tree 948ad2fc"
+    },
+    {
+      "cmd": "npm run build",
+      "result": "PASS (Next.js 16.3.3 Turbopack); prebuild check:setup warning only: no .env/.local"
+    },
+    {
+      "cmd": "npm run check:dead && npm run check:exports && npm run check:deps && npm run check:api-schutz && npm run check:schema-bezug",
+      "result": "all PASS"
+    }
+  ]
+}
