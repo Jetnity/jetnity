@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 21. September 2026  
-Status: **DEDICATED HOLD CLOSURE #492 PROPOSES NORMAL / LIVE MAIN REMAINS HOLD UNTIL TL MERGE / OS-1 #489 AND OS-2 #491 MERGED POST-MERGE VERIFIED / PR #487 PARKED SAFE / SAME SESSION bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c / LIVE-EVIDENCE WINS**
+Status: **V1 SECURITY EVENT MUTATION-DERIVED PRODUCER CONTRACT 1 — LOCAL DISPOSABLE PROOF / DRAFT #494 / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting.
 
@@ -11,29 +11,29 @@ Canonical current transition checkpoint:
 
 ## 0. Current work boundary
 
-**Live `main` remains `AI_OS_BUILD_HOLD`.** This dedicated closure branch proposes `.jetnity/operating-mode.json` `NORMAL`. Issue #440 historical override remains recorded. Special Product-Owner gates remain in force.
+Operating mode on this branch's merge-base `main@4169c5b4` is **NORMAL** after #492. Special Product-Owner gates remain in force. This slice is **local disposable PostgreSQL proof only**.
 
-Exclusive active meta-scope: **OS-2 dedicated HOLD closure**.
+Exclusive active writer: **Jetnity V1 security event mutation-derived producer contract 1**.
 
 | | |
 | --- | --- |
-| Active writer | `Jetnity full-potential AI operating system 2`, Generation 1 |
+| Active writer | `Jetnity V1 security event mutation-derived producer contract 1`, Generation 1 |
 | Required model | Cursor Grok 4.6 High Fast — no Auto/substitution |
-| Session | `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c` |
-| Closed foundation | #490 closed / #491 merged at `780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
-| Active Draft PR | #492 |
-| Branch | `governance/full-potential-ai-operating-system-2-hold-closure` |
-| Canonical base | `main@780210f47ec1085e6dd995a7aef80d16bfeafa8c` |
-| Seed head | `163502d75d4419234476a8ad4aa542983be8de41` |
-| Binding task | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_TASK_2026-09-21.md` |
-| Topology | **SINGLE_AGENT** — same existing writer; no new session |
-| Parked product slice | PR #487 / Issue #486 at `12d070a79c35fbb9f03d1302833eee8561ec17bd` — SAFE STOP / Draft / not Ready / not merged / do not resume, merge or follow |
-| External Grok team | ten identities present; E2E #001 verified; profile normalization complete; Daily/Weekly ACTIVE with accepted operational limitations; permission visibility SATISFIED BY EXPLICIT ACCEPTED LIMITATION `5757763756`; `native_scheduled_pass=false`; `native_material_archive_proof=false`. Cursor mutated no Grok routines. |
-| Canonical tracker | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md` |
-| Closure status | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md` |
-| Acceptance matrix | `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md` |
-| Exact continuation | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` §0. Next exact step: Technical-Lead exact-head review of #492. While #492 is open, live PR evidence wins over docs on `main`. |
-| Next Cursor/Guardian action after this slice | **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up slice. |
+| Session | `bc-c0bfb7b9-1212-4121-b8d6-4f1bbf0d6a39` |
+| Issue | #493 |
+| Active Draft PR | #494 |
+| Branch | `test/v1-security-event-mutation-derived-producer-contract-1` |
+| Canonical base | `main@4169c5b4a2d6e2f663bfaace385a2d482a4cc2d9` |
+| Binding task | `docs/V1_SECURITY_EVENT_MUTATION_DERIVED_PRODUCER_CONTRACT_1_TASK_2026-09-21.md` |
+| Topology | **SINGLE_AGENT** |
+| Local harness | `npm run db:security-events-producer-contract-lokal` on disposable PostgreSQL 16 |
+| Persistent apply | **closed** — no `supabase/migrations/`, no Development/Preview/Production mutation |
+| Finding 5.2 / §G | still **OPEN** |
+| Next Cursor action | Freeze head, report exact-head CI/Auth/Vercel in a PR comment, **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No follow-up. |
+
+PR #487 architecture is **merged** and binding. Do not reopen the actor-JWT INSERT contract. Do not start persistent activation from this slice.
+
+Historical HOLD-closure / OS-2 continuity below remains archive context. Live evidence wins.
 
 OS-1 / PR #489 is **MERGED / POST-MERGE VERIFIED** and must not be reconstructed as the active writer. Issue #488 is closed. Merge/current main at that closure: `ff0df56ae32e3f28e0f9c160a40fa75de81ba133`. Post-merge CI `35376407897` SUCCESS. Vercel Production success / READY. Technical-Lead PASS `5733949233` and post-merge verification `5733986499`. GitHub Ruleset `21875372` is live-verified as the already-active non-lockout baseline.
 
