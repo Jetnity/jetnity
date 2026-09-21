@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 HANDOFF
 
-Stand: 18. September 2026  
-Status: **ARCHITECTURE DECIDED AT `98b0ff33` / RE-GATE THIS EVIDENCE PERSIST / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Stand: 21. September 2026  
+Status: **INTEGRATED ONTO `main@4a223d34` / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
@@ -19,42 +19,44 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Issue | #486 |
 | Draft PR | #487 |
 | Branch | `docs/v1-security-event-ingestion-architecture-1` |
-| Canonical / live main | `0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2` |
-| Dispatch head | `64379ec3c8afdc4ea99bfbae72fceebd8e35ebc5` |
-| Implementation head | `98b0ff33472765303a6544a887b5f24fc371d4b3` |
+| Current integration base | `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
+| Parked head before resume | `12d070a79c35fbb9f03d1302833eee8561ec17bd` |
+| Integration merge | `9e6b68a2202d641ed8368875b77ef6776f6f6115` |
+| Operating mode | **NORMAL** (prior HOLD closed) |
 | Agent | Jetnity V1 security event ingestion architecture 1, Generation 1 |
-| Parent model | Cursor Grok 4.6 High Fast (confirmed `originalModelName=cursor-grok-4.6-high-fast`) |
+| Parent model | Cursor Grok 4.6 High Fast |
 | Session | `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd` |
 
 Read first:
 
-1. the binding task and decision §1 / §5 / §12
-2. audit finding 5.2 plus the 18 September presentation mitigation (ingestion still OPEN)
+1. the binding task, decision §1 / §5 / §12, and the 21 September integration note
+2. audit finding 5.2 (ingestion still OPEN)
 3. this handoff and STATUS / SELF_REVIEW
 4. live PR #487, live `origin/main`, live CI and Vercel on the **current HEAD**
 
-## 2. What was decided
+## 2. What changed in this step
 
-V1 records **Jetnity-owned authenticated admin application events** into the existing `security_events` table.
+Integration only. `origin/main@4a223d34` was merged with a clean disjoint tree. The accepted architecture was re-read against current-main admin security surfaces and is unchanged.
 
-Do not ingest Supabase Auth logs. Do not merge trust classes. Do not write from the unauthenticated login form. Do not use service role or a new SECURITY DEFINER writer.
+Preserved:
 
-Allowed V1 types: `admin_login_success`, `admin_aal2_success`, `admin_authorization_denied`, `admin_blocklist_add`, `admin_blocklist_remove`.
+- authenticated Jetnity-owned events only;
+- no platform-log ingest;
+- no unauthenticated writer;
+- no service-role / DEFINER writer;
+- finding 5.2 OPEN;
+- no Writer 1.
 
-PII: store admin `user_id` only; never email, IP, user-agent, tokens, free text, request bodies, or traveller data.
-
-Schema stays; an additive authenticated INSERT grant/policy is required before any writer can persist. That migration is the follow-up slice, not this one.
+`.jetnity/operating-mode.json` arrived from main and still labels this PR parked at `12d070a7`. Not edited here.
 
 ## 3. What a reviewer should verify first
 
-1. Merge-base equals live `origin/main@0c83af42` and behind=0.
-2. Diff is docs-only: task + four persist files. No runtime/migration/RLS/continuity edits.
-3. Decision chooses one architecture; it does not leave A/B/C open.
-4. Unauthenticated failure write is explicitly rejected with a spam/forgery reason.
-5. Finding 5.2 is **not** marked resolved.
-6. Follow-up slice is specified and **not** started.
-7. `98b0ff33` CI `35366837440` SUCCESS and Vercel `69HMZy4hedL3iAD81xdpZng1RDQD` READY are recorded only for that SHA.
-8. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
+1. Merge-base equals live `origin/main@4a223d34` and behind=0.
+2. Diff versus current main is still exactly the five #487 docs.
+3. Decision still chooses one architecture; the 21 September note records no material invalidation.
+4. Finding 5.2 is **not** marked resolved.
+5. Writer 1 is **not** started.
+6. Re-fetch exact-head CI / Preview / review threads on the **live HEAD**.
 
 ## 4. What this slice does not mean
 
@@ -62,4 +64,4 @@ Finding 5.2 is **not** closed. Release-gate §G remains unsatisfied. There is st
 
 ## 5. Next step
 
-Technical-Lead exact-head review of this architecture. If PASS: open a new numbered Writer 1 slice. Cursor must **STOP** here. Do not Ready. Do not merge. Do not start the follow-up.
+Re-gate the live HEAD, then **STOP FOR TECHNICAL-LEAD REVIEW**. Do not Ready. Do not merge. Do not start Writer 1.

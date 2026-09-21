@@ -1,12 +1,13 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 – Binding Decision
 
-Stand: 18. September 2026  
-Status: **ARCHITECTURE DECIDED / FINDING 5.2 INGESTION REMAINS OPEN / NOT RESOLVED / STOP FOR TECHNICAL-LEAD REVIEW**
+Stand: 21. September 2026  
+Status: **ARCHITECTURE DECIDED / INTEGRATED ONTO `main@4a223d34` / FINDING 5.2 INGESTION REMAINS OPEN / NOT RESOLVED / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #486  
 Draft PR: #487  
 Branch: `docs/v1-security-event-ingestion-architecture-1`  
-Canonical base: `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2`  
+Original canonical base: `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2`  
+Current integration base: `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc`  
 Binding task: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Source audit: #438 / merged PR #449 / finding 5.2  
 Presentation hygiene: merged PR #485
@@ -16,6 +17,21 @@ Required parent model: **Cursor Grok 4.6 High Fast**
 Session: `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd`
 
 This document is the binding source / threat / privacy decision for the smallest V1-safe writer. It is **not** a runtime implementation and does **not** close finding 5.2.
+
+### Integration update, 21 September 2026
+
+Re-read on live `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc` after OS-1 / OS-2 / HOLD-closure landed. Operating mode is **NORMAL**. The prior Product-Development HOLD is closed. The accepted architecture below is **unchanged**.
+
+Current-main evidence that would have invalidated it was checked and is absent:
+
+- finding 5.2 still OPEN / ingestion MISSING; 18 September presentation mitigation remains;
+- Admin Security copy still discloses incomplete recorded-event coverage;
+- `security_events` references in `app/**` / `components/**` / `lib/**` remain reads only;
+- login / guard still write no events;
+- block/unblock still write `blocked_ips` only and are not enforced;
+- no `security_events` migration, grant or INSERT policy was added on main.
+
+Main-only delta is governance/OS documentation and `.jetnity/operating-mode.json`. That file still lists this PR as `parked_safe_draft_stop` at `12d070a7`. That pointer is stale after this resume; it is **not** edited in this slice.
 
 ---
 
