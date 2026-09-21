@@ -1,0 +1,101 @@
+{
+  "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png",
+  "phase": "after",
+  "name": "reduced-motion_390x844",
+  "sha": "764149404b6b234752265b00d301f1db90e8cc22",
+  "productTree": {
+    "head": "764149404b6b234752265b00d301f1db90e8cc22",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? docs/evidence/v1-manual-planning-entry-1/audit-after.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png.meta.json"
+    ]
+  },
+  "capturedAt": "2026-09-21T18:52:01.875Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/planen#manuell-planen",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "pointer-click-reduced-motion",
+  "vor": {
+    "html": 0,
+    "body": 0,
+    "scrollY": 0,
+    "scrollHeight": 3500
+  },
+  "nach": {
+    "html": 0,
+    "body": 0,
+    "scrollY": 745,
+    "scrollHeight": 3500
+  },
+  "sicht": {
+    "boxes": {
+      "zeiger": {
+        "x": 173.171875,
+        "y": -632,
+        "width": 173.921875,
+        "height": 44
+      },
+      "idee": {
+        "x": 37,
+        "y": -514,
+        "width": 316,
+        "height": 72
+      },
+      "manuell": {
+        "x": 37,
+        "y": 240,
+        "width": 316,
+        "height": 64
+      },
+      "ziel": {
+        "x": 16,
+        "y": 178,
+        "width": 358,
+        "height": 1728
+      },
+      "gate": null
+    },
+    "zeigerVorhanden": true,
+    "zielVorhanden": true,
+    "ideeVorhanden": true,
+    "manuellVorhanden": true,
+    "gateVorhanden": false,
+    "zeigerSichtbar": false,
+    "ideeSichtbar": false,
+    "manuellSichtbar": true,
+    "overflow": {
+      "html": 0,
+      "body": 0,
+      "scrollY": 745,
+      "scrollHeight": 3500
+    },
+    "activeElement": {
+      "tag": "section",
+      "id": "manuell-planen",
+      "name": "Schritt für Schritt planen",
+      "text": "Privater Reiseentwurf\nDeine Reise Schritt für Schritt.\n\nEin paar Angaben genügen"
+    }
+  }
+}

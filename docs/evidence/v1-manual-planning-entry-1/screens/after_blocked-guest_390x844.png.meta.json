@@ -1,0 +1,79 @@
+{
+  "file": "/workspace/docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png",
+  "phase": "after",
+  "name": "blocked-guest_390x844",
+  "sha": "764149404b6b234752265b00d301f1db90e8cc22",
+  "productTree": {
+    "head": "764149404b6b234752265b00d301f1db90e8cc22",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? docs/evidence/v1-manual-planning-entry-1/audit-after.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_blocked-guest_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_click_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_1024x768.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_360x800.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_initial_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_keyboard_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_prefill_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_reduced-motion_390x844.png.meta.json",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png",
+      "?? docs/evidence/v1-manual-planning-entry-1/screens/after_text-200_390x844.png.meta.json"
+    ]
+  },
+  "capturedAt": "2026-09-21T18:52:00.154Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/planen",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "synthetic-active-guest-gate",
+  "sicht": {
+    "boxes": {
+      "zeiger": null,
+      "idee": null,
+      "manuell": null,
+      "ziel": null,
+      "gate": {
+        "x": 41,
+        "y": 202,
+        "width": 308,
+        "height": 72
+      }
+    },
+    "zeigerVorhanden": false,
+    "zielVorhanden": false,
+    "ideeVorhanden": false,
+    "manuellVorhanden": false,
+    "gateVorhanden": true,
+    "zeigerSichtbar": false,
+    "ideeSichtbar": false,
+    "manuellSichtbar": false,
+    "overflow": {
+      "html": 0,
+      "body": 0,
+      "scrollY": 0,
+      "scrollHeight": 1726
+    },
+    "activeElement": {
+      "tag": "body",
+      "id": null,
+      "name": null,
+      "text": "Zum Inhalt\nJetnity\n\nEINE REISE. EINE OBERFLÄCHE.\n\nDu hast bereits eine Reise.\n\nO"
+    }
+  },
+  "links": {
+    "fortsetzen": true,
+    "konto": true,
+    "anmelden": true
+  }
+}

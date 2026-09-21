@@ -11,6 +11,10 @@
 // Official-Clean ist fail-closed: jeder kanonische Requirements-Key
 // (Traveller, Credential-Option, Destination, Requirement-Typ, Transit)
 // braucht eine aktuelle Official-Evaluation.
+//
+// Geschützte kommerzielle Planpunkte können nach einer Reiseverschiebung
+// ihren startsOn behalten, während der Plandtag wandert. item.date_mismatch
+// ist eine reine Projektion dieses bewiesenen Kalenderunterschieds.
 
 import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
@@ -23,7 +27,9 @@ import { safetyAnsicht } from '@/lib/safety/status'
 import { seasonalLokalFuerReise } from '@/lib/seasonal/engine'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import { seasonalAnsicht } from '@/lib/seasonal/status'
+import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import { bereichStatus, type Arbeitsbereich, type BereichLage } from '@/lib/trips/arbeitsbereich'
+import { kalenderdatumLesen } from '@/lib/traveller/dokument-lebenszyklus'
 import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType, type Trip, type TripItem } from '@/types/trips'
 
 export type AttentionLeerstand =
@@ -107,6 +113,7 @@ const SIGNAL_RANG: Record<string, number> = {
   'seasonal.unavailable': 18,
   'safety.ungeprueft': 19,
   'seasonal.ungeprueft': 20,
+  'item.date_mismatch': 22,
 }
 
 const AKTIVE_LAGEN: ReadonlySet<AttentionLage> = new Set([
@@ -581,6 +588,51 @@ function punktVonSignal(signal: DomainSignal, aktion: AttentionAktion | null = n
   return { ...signal, aktion }
 }
 
+const DATUM_ANZEIGE = new Intl.DateTimeFormat('de-CH', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
+function kalenderdatumAnzeigen(iso: string): string {
+  const [jahr, monat, tag] = iso.split('-').map(Number)
+  return DATUM_ANZEIGE.format(new Date(Date.UTC(jahr, monat - 1, tag)))
+}
+
+function planpunktBezeichnung(punkt: TripItem): string {
+  const titel = punkt.title.trim()
+  return titel || 'Planpunkt'
+}
+
+/**
+ * Item-level date mismatch for a commercially protected point on an existing
+ * owning day. Missing, invalid or unassigned dates are not a proved mismatch.
+ * Pure projection: the trip graph is not rewritten.
+ */
+function geschuetzteTerminabweichungen(reise: Trip): AttentionPunkt[] {
+  const punkte: AttentionPunkt[] = []
+  for (const tag of reise.days) {
+    for (const punkt of tag.items) {
+      if (!istKommerziell(punkt)) continue
+      const itemDatum = kalenderdatumLesen(punkt.startsOn)
+      const tagDatum = kalenderdatumLesen(tag.dayDate)
+      if (!itemDatum || !tagDatum) continue
+      if (itemDatum === tagDatum) continue
+      punkte.push({
+        id: `item.date_mismatch:${punkt.id}`,
+        ebene: 'item',
+        signal: 'item.date_mismatch',
+        schwere: 'bald',
+        lage: 'stale',
+        titel: `${planpunktBezeichnung(punkt)}: ${kalenderdatumAnzeigen(itemDatum)} weicht vom geplanten Tag ${kalenderdatumAnzeigen(tagDatum)} ab`,
+        aktion: null,
+      })
+    }
+  }
+  return punkte
+}
+
 export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung {
   const reise = eingabe.reise
   const ohneTag = eingabe.ohneTag ?? []
@@ -703,6 +755,8 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
       }
     }
   }
+
+  punkte.push(...geschuetzteTerminabweichungen(reise))
 
   const geordnet = [...punkte].sort(punktSortieren)
   const hatAktive = geordnet.some((punkt) => istAktivesSignal(punkt.lage))
