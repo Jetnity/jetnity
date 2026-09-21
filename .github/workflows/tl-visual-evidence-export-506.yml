@@ -1,0 +1,62 @@
+name: TL Visual Evidence Export 506
+
+on:
+  push:
+    branches: [tmp/tl-visual-evidence-export-506-20260921]
+    paths: [.github/workflows/tl-visual-evidence-export-506.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    name: Export frozen non-sensitive visual evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Read exact audit evidence commit (not product execution)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 6a1b53f7ae23a071326d6263737ab8ab5cde6b75
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Verify source and copy only approved evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '6a1b53f7ae23a071326d6263737ab8ab5cde6b75'
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, shutil
+          root = pathlib.Path.cwd()
+          dest = pathlib.Path(os.environ['RUNNER_TEMP']) / 'jetnity-506-evidence'
+          evidence = root / 'docs/evidence/v1-visual-ux-device-audit-1'
+          files = sorted(p for p in evidence.rglob('*') if p.is_file())
+          files += sorted((root / 'docs').glob('V1_VISUAL_UX_DEVICE_AUDIT_1_*.md'))
+          assert files and len(files) <= 120
+          assert sum(p.stat().st_size for p in files) <= 64 * 1024 * 1024
+          checksums = {}
+          for p in files:
+              assert not p.is_symlink() and p.suffix in {'.png', '.jpg', '.json', '.txt', '.md'}
+              rel = p.relative_to(root)
+              out = dest / rel
+              out.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(p, out)
+              checksums[str(rel)] = hashlib.sha256(out.read_bytes()).hexdigest()
+          provenance = {
+              'sourceCommit': '6a1b53f7ae23a071326d6263737ab8ab5cde6b75',
+              'renderedProductCommit': '9f386d10816d7adcdaf2fcd6d3732e64f952fb50',
+              'purpose': 'Transport of previously captured synthetic visual evidence; no recapture and no PASS',
+              'files': checksums,
+          }
+          (dest / 'EXPORT_PROVENANCE.json').write_text(json.dumps(provenance, indent=2) + '\n')
+          print(f'Exported {len(files)} approved files from exact frozen evidence commit.')
+          PY
+      - name: Upload review-only artifact (one day)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: jetnity-506-frozen-visual-evidence
+          path: ${{ runner.temp }}/jetnity-506-evidence/
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+          include-hidden-files: false
