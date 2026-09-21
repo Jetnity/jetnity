@@ -1,0 +1,233 @@
+{
+  "kind": "synthetic-component-render",
+  "authenticatedPreview": "BLOCKED_ACCESS",
+  "note": "Dependency-injected fixtures rendered locally. Not a real /admin session.",
+  "cases": {
+    "attention": {
+      "insights": [
+        {
+          "id": "system-health:supabase:supabase-app-datenzugriff:unavailable:fresh",
+          "observed": "unavailable",
+          "freshness": "fresh",
+          "materiality": "attention",
+          "attribution": "process-recent",
+          "next": {
+            "href": "/admin/system-health",
+            "label": "System Health öffnen",
+            "kind": "investigate"
+          }
+        },
+        {
+          "id": "system-health:system-health-collection:expected-not-configured:not_configured:fresh",
+          "observed": "not_configured",
+          "freshness": "fresh",
+          "materiality": "coverage",
+          "attribution": "process-recent",
+          "next": null
+        }
+      ],
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [
+          "app-prozess"
+        ],
+        "notConfigured": [
+          "vercel",
+          "supabase",
+          "supabase-management",
+          "github",
+          "infomaniak"
+        ],
+        "unknown": [
+          "app",
+          "app-deployment"
+        ],
+        "failed": [
+          "supabase-app-datenzugriff"
+        ],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "attention_320.png",
+        "attention_390.png",
+        "attention_1280.png"
+      ]
+    },
+    "coverage": {
+      "insights": [
+        {
+          "id": "system-health:system-health-collection:item:healthy:fresh",
+          "observed": "healthy",
+          "freshness": "fresh",
+          "materiality": "none",
+          "attribution": "process-recent",
+          "next": null
+        }
+      ],
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [
+          "app-prozess",
+          "supabase-app-datenzugriff"
+        ],
+        "notConfigured": [
+          "vercel",
+          "supabase",
+          "supabase-management",
+          "github",
+          "infomaniak"
+        ],
+        "unknown": [
+          "app",
+          "app-deployment"
+        ],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "coverage_320.png",
+        "coverage_390.png",
+        "coverage_1280.png"
+      ]
+    },
+    "denied": {
+      "insights": [
+        {
+          "id": "system-health:system-health-collection:item:access_denied:unknown",
+          "observed": "access_denied",
+          "freshness": "unknown",
+          "materiality": "attention",
+          "attribution": "none",
+          "next": null
+        }
+      ],
+      "observationScope": "none",
+      "access": {
+        "status": "denied",
+        "denial": "forbidden"
+      },
+      "coverage": {
+        "evidenced": [],
+        "notConfigured": [],
+        "unknown": [],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "denied_320.png",
+        "denied_390.png",
+        "denied_1280.png"
+      ]
+    },
+    "stale": {
+      "insights": [
+        {
+          "id": "system-health:supabase:supabase-app-datenzugriff:healthy:stale",
+          "observed": "healthy",
+          "freshness": "stale",
+          "materiality": "attention",
+          "attribution": "process-recent",
+          "next": {
+            "href": "/admin/system-health",
+            "label": "System Health öffnen",
+            "kind": "investigate"
+          }
+        },
+        {
+          "id": "system-health:system-health-collection:expected-not-configured:not_configured:stale",
+          "observed": "not_configured",
+          "freshness": "stale",
+          "materiality": "coverage",
+          "attribution": "process-recent",
+          "next": null
+        }
+      ],
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "role"
+      },
+      "coverage": {
+        "evidenced": [
+          "app-prozess"
+        ],
+        "notConfigured": [
+          "vercel",
+          "supabase",
+          "supabase-management",
+          "github",
+          "infomaniak"
+        ],
+        "unknown": [
+          "app",
+          "app-deployment"
+        ],
+        "failed": [],
+        "notAttributed": []
+      },
+      "screenshots": [
+        "stale_320.png",
+        "stale_390.png",
+        "stale_1280.png"
+      ]
+    },
+    "break-glass": {
+      "insights": [
+        {
+          "id": "system-health:system-health-collection:expected-not-configured:not_configured:fresh",
+          "observed": "not_configured",
+          "freshness": "fresh",
+          "materiality": "coverage",
+          "attribution": "process-recent",
+          "next": null
+        },
+        {
+          "id": "system-health:system-health-collection:not-attributed:unknown:fresh",
+          "observed": "unknown",
+          "freshness": "fresh",
+          "materiality": "coverage",
+          "attribution": "not_attributed",
+          "next": null
+        }
+      ],
+      "observationScope": "process-recent",
+      "access": {
+        "status": "allowed",
+        "grant": "break-glass"
+      },
+      "coverage": {
+        "evidenced": [
+          "app-prozess"
+        ],
+        "notConfigured": [
+          "vercel",
+          "supabase",
+          "supabase-management",
+          "github",
+          "infomaniak"
+        ],
+        "unknown": [
+          "app",
+          "app-deployment"
+        ],
+        "failed": [],
+        "notAttributed": [
+          "supabase-app-datenzugriff"
+        ]
+      },
+      "screenshots": [
+        "break-glass_320.png",
+        "break-glass_390.png",
+        "break-glass_1280.png"
+      ]
+    }
+  }
+}
