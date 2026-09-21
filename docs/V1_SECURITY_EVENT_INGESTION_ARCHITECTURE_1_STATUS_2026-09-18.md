@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 STATUS
 
 Stand: 21. September 2026  
-Status: **INTEGRATED ONTO `main@4a223d34` / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / OPERATING MODE NORMAL / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **INTEGRATED ONTO `main@4a223d34` / `d4fee848` EXACT-HEAD GATES RECORDED / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / OPERATING MODE NORMAL / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #486  
 Draft PR: #487  
@@ -12,7 +12,8 @@ Original canonical base: `main@0c83af42f8dd8c7572f531f5c2d766f4c0dba3f2`
 Current integration base / live `origin/main`: `4a223d342e24fb9316f5ee4333914a16dca3b7bc`  
 Parked head before resume: `12d070a79c35fbb9f03d1302833eee8561ec17bd`  
 Dispatch relation before merge: **4 ahead / 71 behind**  
-Integration merge: `9e6b68a2202d641ed8368875b77ef6776f6f6115`
+Integration merge: `9e6b68a2202d641ed8368875b77ef6776f6f6115`  
+Integration persist head: `d4fee84804a87247c0ae054a2c63bd8ed0980e2a`
 
 Cursor-Agent: **Jetnity V1 security event ingestion architecture 1**, Generation 1  
 Required parent model: **Cursor Grok 4.6 High Fast**  
@@ -95,25 +96,32 @@ Not introduced or touched by this resume:
 - Ready / merge / follow-up slice
 - marking finding 5.2 resolved
 
-## 6. Local gates on the integration persist
+## 6. Local gates on `d4fee848`
 
-Docs/architecture only. Recorded after this persist.
+Docs/architecture only.
 
 | Gate | Result |
 | --- | --- |
 | Merge-base vs live `origin/main` | `4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
-| Ahead / behind after merge, before this persist | **5 / 0** (4 parked commits + merge `9e6b68a2`) |
+| Ahead / behind before this evidence persist | **6 / 0** |
 | Changed-file scope vs `origin/main` | **5 docs files only** |
 | Forbidden runtime/continuity paths in the #487 diff | **none** |
 | Finding 5.2 marked resolved | **no** |
 | DB / Auth / Production calls | **none** |
 | Browser `/admin/security` | **not** performed; no UI change |
 
-## 7. Exact-head CI / Preview
+## 7. Exact-head CI / Preview on `d4fee848`
 
-Historical parked-head gates on `12d070a7` (CI `35367401959` SUCCESS, Vercel `dpl_3bPiYSyPirvdHpthKoKNtXScTrw6` READY) are **not** bindings for the live HEAD.
+Recorded before this persist. This persist is a newer HEAD and invalidates these bindings.
 
-Exact-head GitHub Actions + Vercel on the **live HEAD after this persist** must be re-fetched. This persist invalidates `9e6b68a2` and older SHAs.
+| | |
+| --- | --- |
+| GitHub Actions | [`35587473966`](https://github.com/Jetnity/jetnity/actions/runs/35587473966) **SUCCESS** — Auth-Konfiguration `106294046795`; Typecheck, Lint & Build `106294047011`; Vercel Preview Comments `106294220557` |
+| Combined commit status | `success` on `d4fee84804a87247c0ae054a2c63bd8ed0980e2a` |
+| Vercel | `AwhkmGrVhELkhguMp4WphHaMGJRP` **READY** |
+| Preview | https://jetnity-app-git-docs-v1-security-event-65dec6-jetnity-e1b93c82.vercel.app |
+
+Parked-head CI `35367401959` / Vercel `dpl_3bPiYSyPirvdHpthKoKNtXScTrw6` remain historical only.
 
 ## 8. Drift / thread report (re-fetched `origin/main`)
 
@@ -121,12 +129,12 @@ Exact-head GitHub Actions + Vercel on the **live HEAD after this persist** must 
 | --- | --- |
 | Live `origin/main` | `4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
 | Merge-base | `4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
-| Ahead / behind | **5 / 0** before this persist. Persist adds one more ahead commit. |
+| Ahead / behind | **6 / 0** before this evidence persist. Persist adds one more ahead commit. |
 | Drift vs current main | **none** after merge |
 | Operating mode | **NORMAL** |
 | PR #487 | Draft, open, not merged |
-| Formal reviews | none at last fetch |
-| Review comment threads | **0** at last fetch |
+| Formal reviews | none |
+| Review comment threads | **0** |
 
 ## 9. Residual risks
 

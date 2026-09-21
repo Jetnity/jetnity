@@ -43,10 +43,11 @@ This document argues against the integration. It cannot replace an independent T
 | Do not implement Writer 1 | Yes | |
 | No migration / service-role / auth-log / secret | Yes | |
 | Update STATUS / HANDOFF / SELF_REVIEW | Yes | plus a dated DECISION integration note |
-| merge-base = current main, behind=0 | Yes | before this persist |
-| Review threads 0 | Yes at last fetch | re-fetch on live HEAD |
+| merge-base = current main, behind=0 | Yes | `4a223d34` |
+| Exact-head CI + Preview | Yes on `d4fee848` | CI `35587473966` SUCCESS; Vercel `AwhkmGrVhELkhguMp4WphHaMGJRP` READY. This persist invalidates that SHA. |
+| Review threads 0 | Yes | re-fetch on live HEAD |
 | No Ready / merge / follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead review
 
-This persist is a newer HEAD than merge `9e6b68a2` and invalidates older exact-head gates. Re-fetch CI, Vercel and review threads on the live HEAD. Agent self-review is still not PASS.
+`d4fee848` had CI `35587473966` SUCCESS and Vercel `AwhkmGrVhELkhguMp4WphHaMGJRP` READY. This evidence persist is a newer HEAD and invalidates those exact-head gates. Re-fetch CI/Vercel/threads on the live HEAD. Agent self-review is still not PASS.

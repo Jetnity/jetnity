@@ -1,7 +1,7 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 HANDOFF
 
 Stand: 21. September 2026  
-Status: **INTEGRATED ONTO `main@4a223d34` / RE-GATE THIS PERSIST HEAD / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **INTEGRATED ONTO `main@4a223d34` AT `d4fee848` / RE-GATE THIS EVIDENCE PERSIST / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
@@ -22,6 +22,7 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Current integration base | `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
 | Parked head before resume | `12d070a79c35fbb9f03d1302833eee8561ec17bd` |
 | Integration merge | `9e6b68a2202d641ed8368875b77ef6776f6f6115` |
+| Integration persist | `d4fee84804a87247c0ae054a2c63bd8ed0980e2a` |
 | Operating mode | **NORMAL** (prior HOLD closed) |
 | Agent | Jetnity V1 security event ingestion architecture 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast |
@@ -56,7 +57,8 @@ Preserved:
 3. Decision still chooses one architecture; the 21 September note records no material invalidation.
 4. Finding 5.2 is **not** marked resolved.
 5. Writer 1 is **not** started.
-6. Re-fetch exact-head CI / Preview / review threads on the **live HEAD**.
+6. `d4fee848` CI `35587473966` SUCCESS and Vercel `AwhkmGrVhELkhguMp4WphHaMGJRP` READY are recorded only for that SHA.
+7. Re-fetch exact-head CI / Preview / threads on the **live HEAD** after this persist.
 
 ## 4. What this slice does not mean
 
