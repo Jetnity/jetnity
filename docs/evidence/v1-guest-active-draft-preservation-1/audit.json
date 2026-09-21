@@ -1,0 +1,840 @@
+{
+  "kind": "synthetic-compiled-css-browser",
+  "authenticatedPreview": "NOT_CLAIMED",
+  "route": "/planen",
+  "product": {
+    "head": "cd9612e4dfb5104e881d7a5493d63ec0d2887668",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M docs/evidence/v1-guest-active-draft-preservation-1/handler-proof.json",
+      "?? docs/evidence/v1-guest-active-draft-preservation-1/screens/handler_legacy_ohne_kennung_after_render_390.png"
+    ]
+  },
+  "capturedAt": "2026-09-21T23:19:24.355Z",
+  "note": "Synthetic guest /planen with compiled Next CSS. Not authenticated Preview, hardware, Safari or WCAG proof.",
+  "omitted": [
+    "live provider/model/paid call",
+    "authenticated Preview/Production",
+    "real account write",
+    "real-device lab"
+  ],
+  "cases": [
+    {
+      "name": "invalid_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:26.623Z",
+      "actionSequence": [
+        "init invalid active + valid legacy",
+        "goto /planen",
+        "no mutation"
+      ],
+      "simulationClass": "synthetic_invalid_active_plus_valid_legacy",
+      "visible": {
+        "title": "Dieser Entwurf ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Dieser Entwurf ist nicht lesbar. Auf diesem Gerät liegt ein Reiseentwurf, der sich nicht als Reise lesen lässt. Es kann deshalb keine neue Reise angelegt werden. Der vorhandene Eintrag wurde nicht verändert. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 518,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Dieser Entwurf ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": {
+        "aktiv": "{bad-json",
+        "legacy": "[{\"id\":\"trip-alt\",\"title\":\"Barcelona\",\"destination\":\"Barcelona\",\"origin\":\"Zürich\",\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travelers\":1,\"pace\":\"ausgewogen\",\"interests\":[],\"days\":[{\"id\":\"day-1\",\"date\":\"2026-09-12\",\"items\":[]}],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\"}]",
+        "warteschlange": null
+      },
+      "expectedRaw": {
+        "aktiv": "{bad-json",
+        "legacy": "[{\"id\":\"trip-alt\",\"title\":\"Barcelona\",\"destination\":\"Barcelona\",\"origin\":\"Zürich\",\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travelers\":1,\"pace\":\"ausgewogen\",\"interests\":[],\"days\":[{\"id\":\"day-1\",\"date\":\"2026-09-12\",\"items\":[]}],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\"}]"
+      },
+      "rawEqual": true,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/invalid_390x844.png",
+      "fullPageScreenshot": "screens/invalid_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/invalid_390x844.png"
+    },
+    {
+      "name": "unavailable_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:28.531Z",
+      "actionSequence": [
+        "init getItem throw for active key",
+        "goto /planen",
+        "no mutation"
+      ],
+      "simulationClass": "synthetic_getitem_throws",
+      "visible": {
+        "title": "Der Browserspeicher ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Der Browserspeicher ist nicht lesbar. Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 518,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Der Browserspeicher ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": null,
+      "expectedRaw": null,
+      "rawEqual": null,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/unavailable_390x844.png",
+      "fullPageScreenshot": "screens/unavailable_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/unavailable_390x844.png"
+    },
+    {
+      "name": "retry_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:30.760Z",
+      "actionSequence": [
+        "init invalid active",
+        "goto /planen",
+        "click Erneut prüfen",
+        "bytes unchanged"
+      ],
+      "simulationClass": "synthetic_invalid_then_recheck",
+      "visible": {
+        "title": "Dieser Entwurf ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Dieser Entwurf ist nicht lesbar. Auf diesem Gerät liegt ein Reiseentwurf, der sich nicht als Reise lesen lässt. Es kann deshalb keine neue Reise angelegt werden. Der vorhandene Eintrag wurde nicht verändert. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 518,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Dieser Entwurf ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": {
+        "aktiv": "{bad-json",
+        "legacy": "[{\"id\":\"trip-alt\",\"title\":\"Barcelona\",\"destination\":\"Barcelona\",\"origin\":\"Zürich\",\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travelers\":1,\"pace\":\"ausgewogen\",\"interests\":[],\"days\":[{\"id\":\"day-1\",\"date\":\"2026-09-12\",\"items\":[]}],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\"}]",
+        "warteschlange": null
+      },
+      "expectedRaw": {
+        "aktiv": "{bad-json",
+        "legacy": "[{\"id\":\"trip-alt\",\"title\":\"Barcelona\",\"destination\":\"Barcelona\",\"origin\":\"Zürich\",\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travelers\":1,\"pace\":\"ausgewogen\",\"interests\":[],\"days\":[{\"id\":\"day-1\",\"date\":\"2026-09-12\",\"items\":[]}],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\"}]"
+      },
+      "rawEqual": true,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/retry_390x844.png",
+      "fullPageScreenshot": "screens/retry_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/retry_390x844.png"
+    },
+    {
+      "name": "valid_gate_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:32.688Z",
+      "actionSequence": [
+        "init valid disposable guest trip",
+        "goto /planen",
+        "no mutation"
+      ],
+      "simulationClass": "synthetic_valid_active_one_trip_gate",
+      "visible": {
+        "title": "Du hast bereits eine Reise.",
+        "role": null,
+        "hasContinue": true,
+        "hasRecheck": false,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Du hast bereits eine Reise. Ohne Konto lässt sich eine Reise planen. Öffne deinen bestehenden Entwurf oder erstelle ein Konto, um mehrere Reisen zu speichern. Dein Entwurf „Disposable gate draft“ liegt auf diesem Gerät. Reise fortsetzen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 542,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Du hast bereits eine Reise."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": {
+        "aktiv": "{\"id\":\"trip-preservation-1\",\"clientRef\":\"trip-preservation-1\",\"title\":\"Disposable gate draft\",\"origin\":\"Zürich\",\"originPlaceId\":\"geonames:2657896\",\"startDate\":\"2026-10-12\",\"endDate\":\"2026-10-16\",\"travellers\":2,\"currency\":\"CHF\",\"budgetAmount\":2400,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[\"culture\"],\"travelWish\":null,\"revision\":1,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-1\",\"position\":1,\"name\":\"Lissabon\",\"countryCode\":\"PT\",\"arrivalDate\":\"2026-10-12\",\"departureDate\":\"2026-10-16\",\"latitude\":null,\"longitude\":null,\"placeId\":\"geonames:2267057\"}],\"days\":[{\"id\":\"day-1\",\"stageId\":\"stage-1\",\"dayIndex\":1,\"dayDate\":\"2026-10-12\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"createdAt\":\"2026-09-21T10:00:00.000Z\",\"updatedAt\":\"2026-09-21T10:00:00.000Z\"}",
+        "legacy": null,
+        "warteschlange": null
+      },
+      "expectedRaw": {
+        "aktiv": "{\"id\":\"trip-preservation-1\",\"clientRef\":\"trip-preservation-1\",\"title\":\"Disposable gate draft\",\"origin\":\"Zürich\",\"originPlaceId\":\"geonames:2657896\",\"startDate\":\"2026-10-12\",\"endDate\":\"2026-10-16\",\"travellers\":2,\"currency\":\"CHF\",\"budgetAmount\":2400,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[\"culture\"],\"travelWish\":null,\"revision\":1,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-1\",\"position\":1,\"name\":\"Lissabon\",\"countryCode\":\"PT\",\"arrivalDate\":\"2026-10-12\",\"departureDate\":\"2026-10-16\",\"latitude\":null,\"longitude\":null,\"placeId\":\"geonames:2267057\"}],\"days\":[{\"id\":\"day-1\",\"stageId\":\"stage-1\",\"dayIndex\":1,\"dayDate\":\"2026-10-12\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"createdAt\":\"2026-09-21T10:00:00.000Z\",\"updatedAt\":\"2026-09-21T10:00:00.000Z\"}",
+        "legacy": null
+      },
+      "rawEqual": true,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/valid_gate_390x844.png",
+      "fullPageScreenshot": "screens/valid_gate_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/valid_gate_390x844.png"
+    },
+    {
+      "name": "invalid_360x800_text-200",
+      "route": "/planen",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "fontSize": 32,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:35.957Z",
+      "actionSequence": [
+        "init invalid active",
+        "goto /planen",
+        "html font-size 32px",
+        "measure overflow"
+      ],
+      "simulationClass": "synthetic_invalid_active_enlarged_text",
+      "visible": {
+        "title": "Dieser Entwurf ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Dieser Entwurf ist nicht lesbar. Auf diesem Gerät liegt ein Reiseentwurf, der sich nicht als Reise lesen lässt. Es kann deshalb keine neue Reise angelegt werden. Der vorhandene Eintrag wurde nicht verändert. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "document": {
+          "clientWidth": 360,
+          "scrollWidth": 360,
+          "clientHeight": 800,
+          "scrollHeight": 3852
+        },
+        "body": {
+          "clientWidth": 360,
+          "scrollWidth": 360
+        },
+        "section": {
+          "width": 296,
+          "height": 1794,
+          "x": 32,
+          "y": 153
+        },
+        "heading": {
+          "width": 198,
+          "height": 360,
+          "x": 81,
+          "y": 394,
+          "text": "Dieser Entwurf ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "full": {
+          "width": 360,
+          "height": 3852
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": {
+        "aktiv": "{bad-json",
+        "legacy": "[{\"id\":\"trip-alt\",\"title\":\"Barcelona\",\"destination\":\"Barcelona\",\"origin\":\"Zürich\",\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travelers\":1,\"pace\":\"ausgewogen\",\"interests\":[],\"days\":[{\"id\":\"day-1\",\"date\":\"2026-09-12\",\"items\":[]}],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\"}]",
+        "warteschlange": null
+      },
+      "expectedRaw": {
+        "aktiv": "{bad-json",
+        "legacy": "[{\"id\":\"trip-alt\",\"title\":\"Barcelona\",\"destination\":\"Barcelona\",\"origin\":\"Zürich\",\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travelers\":1,\"pace\":\"ausgewogen\",\"interests\":[],\"days\":[{\"id\":\"day-1\",\"date\":\"2026-09-12\",\"items\":[]}],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\"}]"
+      },
+      "rawEqual": true,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/invalid_360x800_text-200.png",
+      "fullPageScreenshot": "screens/invalid_360x800_text-200-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/invalid_360x800_text-200.png"
+    },
+    {
+      "name": "unavailable_360x800_text-200",
+      "route": "/planen",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "fontSize": 32,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:38.214Z",
+      "actionSequence": [
+        "init getItem throw",
+        "goto /planen",
+        "html font-size 32px",
+        "measure overflow"
+      ],
+      "simulationClass": "synthetic_getitem_throws_enlarged_text",
+      "visible": {
+        "title": "Der Browserspeicher ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Der Browserspeicher ist nicht lesbar. Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "document": {
+          "clientWidth": 360,
+          "scrollWidth": 360,
+          "clientHeight": 800,
+          "scrollHeight": 4044
+        },
+        "body": {
+          "clientWidth": 360,
+          "scrollWidth": 360
+        },
+        "section": {
+          "width": 296,
+          "height": 1986,
+          "x": 32,
+          "y": 153
+        },
+        "heading": {
+          "width": 198,
+          "height": 504,
+          "x": 81,
+          "y": 394,
+          "text": "Der Browserspeicher ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "full": {
+          "width": 360,
+          "height": 4044
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": null,
+      "expectedRaw": null,
+      "rawEqual": null,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/unavailable_360x800_text-200.png",
+      "fullPageScreenshot": "screens/unavailable_360x800_text-200-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/unavailable_360x800_text-200.png"
+    },
+    {
+      "name": "legacy_throw_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:40.142Z",
+      "actionSequence": [
+        "init active absent",
+        "legacy getItem throws",
+        "gate unlesbar",
+        "no mutation"
+      ],
+      "simulationClass": "synthetic_active_absent_legacy_getitem_throws",
+      "visible": {
+        "title": "Der Browserspeicher ist nicht lesbar.",
+        "role": "alert",
+        "hasContinue": false,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Der Browserspeicher ist nicht lesbar. Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 518,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Der Browserspeicher ist nicht lesbar."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": null,
+      "expectedRaw": null,
+      "rawEqual": null,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/legacy_throw_390x844.png",
+      "fullPageScreenshot": "screens/legacy_throw_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/legacy_throw_390x844.png"
+    },
+    {
+      "name": "legacy_only_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:41.937Z",
+      "actionSequence": [
+        "init valid legacy only",
+        "goto /planen",
+        "gate besteht without create form",
+        "no model/place/create",
+        "nav loader may migrate under existing valid-legacy contract"
+      ],
+      "simulationClass": "synthetic_missing_v3_valid_legacy",
+      "visible": {
+        "title": "Du hast bereits eine Reise.",
+        "role": null,
+        "hasContinue": true,
+        "hasRecheck": false,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Du hast bereits eine Reise. Ohne Konto lässt sich eine Reise planen. Öffne deinen bestehenden Entwurf oder erstelle ein Konto, um mehrere Reisen zu speichern. Dein Entwurf „Barcelona“ liegt auf diesem Gerät. Reise fortsetzen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 518,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Du hast bereits eine Reise."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": {
+        "aktiv": "{\"id\":\"trip-alt\",\"clientRef\":\"trip-alt\",\"title\":\"Barcelona\",\"origin\":\"Zürich\",\"originPlaceId\":null,\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travellers\":1,\"currency\":\"CHF\",\"budgetAmount\":null,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[],\"travelWish\":null,\"revision\":1,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-e67defb8-f4c1-45ed-87f9-c9fb7a87cdd9\",\"position\":1,\"name\":\"Barcelona\",\"countryCode\":null,\"arrivalDate\":null,\"departureDate\":null,\"latitude\":null,\"longitude\":null,\"placeId\":null}],\"days\":[{\"id\":\"day-24492b92-c716-43d1-adb6-8105f70d9d09\",\"stageId\":null,\"dayIndex\":1,\"dayDate\":\"2026-09-12\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"readinessItems\":[],\"party\":[],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\",\"dayStageAssignmentMode\":\"single_destination\"}",
+        "legacy": null,
+        "warteschlange": null
+      },
+      "expectedRaw": null,
+      "rawEqual": null,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/legacy_only_390x844.png",
+      "fullPageScreenshot": "screens/legacy_only_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/legacy_only_390x844.png"
+    },
+    {
+      "name": "legacy_ohne_kennung_390x844",
+      "route": "/planen",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fontSize": 16,
+      "httpOk": true,
+      "browser": "chromium/148.0.7778.96",
+      "timestamp": "2026-09-21T23:19:43.903Z",
+      "actionSequence": [
+        "init valid-enough legacy without id",
+        "goto /planen",
+        "occupied gate; no Continue unless loader persisted an id",
+        "unowned GastCreateLink may migrate under existing loader policy"
+      ],
+      "simulationClass": "synthetic_missing_v3_legacy_without_persisted_id",
+      "visible": {
+        "title": "Du hast bereits eine Reise.",
+        "role": null,
+        "hasContinue": true,
+        "hasRecheck": true,
+        "hasIdeaForm": false,
+        "text": "EINE REISE. EINE OBERFLÄCHE. Du hast bereits eine Reise. Auf diesem Gerät liegt bereits ein Reiseentwurf. Er hat keine gespeicherte Kennung, deshalb gibt es keinen Fortsetzen-Link. Es kann keine neue Reise angelegt werden. Der vorhandene Eintrag wurde nicht verändert. Dein Entwurf „Ohne Kennung“ liegt auf diesem Gerät. Erneut prüfen Konto erstellen Anmelden"
+      },
+      "geometry": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 1726
+        },
+        "body": {
+          "clientWidth": 390,
+          "scrollWidth": 390
+        },
+        "section": {
+          "width": 358,
+          "height": 590,
+          "x": 16,
+          "y": 113
+        },
+        "heading": {
+          "width": 308,
+          "height": 72,
+          "x": 41,
+          "y": 202,
+          "text": "Du hast bereits eine Reise."
+        },
+        "overflowX": false,
+        "sectionOverflow": false,
+        "headingOverflow": false,
+        "headingClipped": false
+      },
+      "screenshotSizes": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "full": {
+          "width": 390,
+          "height": 1726
+        }
+      },
+      "evidenceKind": "viewport-and-full-page",
+      "rawBytes": {
+        "aktiv": "{\"id\":\"trip-550f8fd6-8878-4326-8a74-d8da1e15c47b\",\"clientRef\":\"trip-550f8fd6-8878-4326-8a74-d8da1e15c47b\",\"title\":\"Ohne Kennung\",\"origin\":\"Zürich\",\"originPlaceId\":null,\"startDate\":\"2026-09-12\",\"endDate\":\"2026-09-12\",\"travellers\":1,\"currency\":\"CHF\",\"budgetAmount\":null,\"status\":\"draft\",\"pace\":\"balanced\",\"interests\":[],\"travelWish\":null,\"revision\":1,\"lastMutationId\":null,\"stages\":[{\"id\":\"stage-3f09fa4a-1df5-4962-8524-2e7bae60c595\",\"position\":1,\"name\":\"Lissabon\",\"countryCode\":null,\"arrivalDate\":null,\"departureDate\":null,\"latitude\":null,\"longitude\":null,\"placeId\":null}],\"days\":[{\"id\":\"day-e86f8391-6aba-4929-97e2-e50d546d2b08\",\"stageId\":null,\"dayIndex\":1,\"dayDate\":\"2026-09-12\",\"title\":null,\"items\":[]}],\"ohneTag\":[],\"readinessItems\":[],\"party\":[],\"createdAt\":\"2026-08-01T10:00:00.000Z\",\"updatedAt\":\"2026-08-01T10:00:00.000Z\",\"dayStageAssignmentMode\":\"single_destination\"}",
+        "legacy": null,
+        "warteschlange": null
+      },
+      "expectedRaw": null,
+      "rawEqual": null,
+      "mutations": {
+        "attempts": 0,
+        "aborted": 0,
+        "completedUnexpected": 0,
+        "providerOrApiBlocked": 0,
+        "failedMutations": 0,
+        "attemptsDetail": [],
+        "abortedDetail": [],
+        "completedUnexpectedDetail": []
+      },
+      "screenshot": "screens/legacy_ohne_kennung_390x844.png",
+      "fullPageScreenshot": "screens/legacy_ohne_kennung_390x844-full.png",
+      "artifact": "/opt/cursor/artifacts/v1-guest-active-draft-preservation-1/legacy_ohne_kennung_390x844.png"
+    }
+  ]
+}

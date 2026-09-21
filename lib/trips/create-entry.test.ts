@@ -11,11 +11,15 @@ import {
   CREATE_PERSISTENZ_TEMPO,
   createEinstiegFuerGast,
   darfCreateModellAufrufen,
+  gastCreateBelegungAusVorpruefung,
   gastCreateGate,
+  gastCreateGateMeldung,
+  gastCreateJetztPruefen,
   gastCreateVorNetzschritt,
   genericCreateCtaFuerSitzung,
   genericCreateHrefFuerGast,
   istGenerischerCreateHref,
+  planenCreateGateSicht,
   planenVorbelegung,
 } from '@/lib/trips/create-entry'
 
@@ -36,6 +40,7 @@ describe('TW6-A Create-Entry – Guest-One-Trip Gate', () => {
     const gate = gastCreateGate({ angemeldet: false, aktiveReiseId: 'trip-besteht' })
     assert.equal(gate.erlaubt, false)
     if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(gate.grund, 'besteht')
     assert.equal(gate.bestehendeId, 'trip-besteht')
     assert.equal(darfCreateModellAufrufen(gate), false)
   })
@@ -221,6 +226,7 @@ describe('TW6-TL-02 – Zweittab-Race vor Ortsauflösung', () => {
     })
     assert.equal(nachZweittab.erlaubt, false)
     if (nachZweittab.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(nachZweittab.grund, 'besteht')
     assert.equal(nachZweittab.bestehendeId, 'trip-aus-tab-b')
     assert.equal(darfCreateModellAufrufen(nachZweittab), false)
   })
@@ -236,10 +242,10 @@ describe('TW6-TL-02 – Zweittab-Race vor Ortsauflösung', () => {
   test('Reiseidee.uebernehmen prüft den Gate erneut vor vorschlagOrteAufloesen', () => {
     const datei = quelle('../../components/trips/Reiseidee.tsx')
     const uebernehmen = datei.slice(datei.indexOf('const uebernehmen'))
-    const gate = uebernehmen.indexOf('gastCreateVorNetzschritt')
+    const gate = uebernehmen.indexOf('gastCreateJetztPruefen')
     const orte = uebernehmen.indexOf('vorschlagOrteAufloesen')
     const persist = uebernehmen.indexOf('gastreiseAblegen')
-    assert.ok(gate >= 0, 'uebernehmen muss gastCreateVorNetzschritt nutzen')
+    assert.ok(gate >= 0, 'uebernehmen muss gastCreateJetztPruefen nutzen')
     assert.ok(orte >= 0 && persist >= 0)
     assert.ok(gate < orte, 'Fail-fast muss vor der Ortsauflösung stehen')
     assert.ok(gate < persist)
@@ -334,9 +340,9 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
   test('Reiseidee prüft den Guest-Slot vor dem Modellaufruf', () => {
     const datei = quelle('../../components/trips/Reiseidee.tsx')
     const erzeugen = datei.slice(datei.indexOf('const erzeugen'))
-    const gate = erzeugen.indexOf('gastCreateGate')
+    const gate = erzeugen.indexOf('gastCreateJetztPruefen')
     const modell = erzeugen.indexOf('vorschlagErzeugen')
-    assert.ok(gate >= 0, 'Reiseidee muss gastCreateGate im Erzeugen nutzen')
+    assert.ok(gate >= 0, 'Reiseidee muss gastCreateJetztPruefen im Erzeugen nutzen')
     assert.ok(modell >= 0, 'Reiseidee muss vorschlagErzeugen weiter nutzen')
     assert.ok(gate < modell, 'Fail-fast muss vor dem Modellaufruf stehen')
   })
@@ -344,13 +350,13 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
   test('TripPlanner prüft den Guest-Slot vor Ortsbestätigung und Persistenz', () => {
     const datei = quelle('../../components/trips/TripPlanner.tsx')
     const absenden = datei.slice(datei.indexOf('const absenden'))
-    const gate = absenden.indexOf('gastCreateGate')
-    const vorNetz = absenden.indexOf('gastCreateVorNetzschritt')
+    const erste = absenden.indexOf('gastCreateJetztPruefen')
+    const vorNetz = absenden.indexOf('gastCreateJetztPruefen', erste + 1)
     const orte = absenden.indexOf('reiseorteBestaetigen')
     const persist = absenden.indexOf('gastreiseAnlegen')
-    assert.ok(gate >= 0 && vorNetz >= 0 && orte >= 0 && persist >= 0)
-    assert.ok(gate < orte && gate < persist)
-    assert.ok(vorNetz > gate && vorNetz < orte && vorNetz < persist)
+    assert.ok(erste >= 0 && vorNetz > erste && orte >= 0 && persist >= 0)
+    assert.ok(erste < orte && erste < persist)
+    assert.ok(vorNetz > erste && vorNetz < orte && vorNetz < persist)
   })
 
   test('GastReisen zeigt bei aktiver Reise keinen zweiten Create', () => {
@@ -411,10 +417,144 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
     assert.match(datei, /PlanenCreateGate/)
   })
 
-  test('PlanenCreateGate versteckt die Create-Kinder nicht vor dem ersten Speicherlesen', () => {
+  test('PlanenCreateGate liest den Titel ohne Loader-Migration', () => {
     const datei = quelle('../../components/trips/PlanenCreateGate.tsx')
-    assert.equal(datei.includes('angemeldet ? null : undefined'), false)
-    assert.equal(datei.includes('aria-busy'), false)
-    assert.match(datei, /useState<\{ id: string; title: string \} \| null>\(null\)/)
+    assert.equal(datei.includes('gastspeicherLaden'), false)
+    assert.match(datei, /overflow-wrap:anywhere/)
+    assert.match(datei, /gastCreateBelegungLesen/)
+  })
+
+  test('PlanenCreateGate zeigt vor der Beobachtung kein Create-Formular', () => {
+    const sicht = planenCreateGateSicht({
+      angemeldet: false,
+      beobachtet: false,
+      belegung: null,
+    })
+    assert.equal(sicht.art, 'warte')
+    assert.equal(
+      planenCreateGateSicht({
+        angemeldet: true,
+        beobachtet: false,
+        belegung: null,
+      }).art,
+      'kinder',
+    )
+  })
+})
+
+describe('Guest active draft preservation – create gate', () => {
+  test('ungültige oder unlesbare Belegung blockiert Modell und Persistenz', () => {
+    for (const belegung of [
+      { art: 'ungueltig' } as const,
+      { art: 'speicher_unlesbar' } as const,
+      { art: 'nicht_beobachtet' } as const,
+      { art: 'belegt_ohne_kennung' } as const,
+    ]) {
+      const gate = gastCreateGate({ angemeldet: false, belegung })
+      assert.equal(gate.erlaubt, false)
+      assert.equal(darfCreateModellAufrufen(gate), false)
+      if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+      const meldung = gastCreateGateMeldung(gate)
+      assert.equal(/verloren|wiederherstell|kein Entwurf/i.test(meldung), false)
+    }
+  })
+
+  test('Konto bleibt unabhängig von ungültigem Gastspeicher', () => {
+    const gate = gastCreateJetztPruefen(true)
+    assert.equal(gate.erlaubt, true)
+    assert.equal(
+      gastCreateGate({
+        angemeldet: true,
+        belegung: { art: 'ungueltig' },
+      }).erlaubt,
+      true,
+    )
+  })
+
+  test('Vorprüfung wird ohne Loader-Kennung zur Create-Belegung', () => {
+    assert.deepEqual(gastCreateBelegungAusVorpruefung({ art: 'nicht_im_browser' }), {
+      art: 'nicht_beobachtet',
+    })
+    assert.deepEqual(gastCreateBelegungAusVorpruefung({ art: 'speicher_unlesbar' }), {
+      art: 'speicher_unlesbar',
+    })
+    assert.deepEqual(gastCreateBelegungAusVorpruefung({ art: 'ungueltig' }), { art: 'ungueltig' })
+    assert.deepEqual(gastCreateBelegungAusVorpruefung({ art: 'fehlend' }), { art: 'fehlend' })
+    assert.deepEqual(gastCreateBelegungAusVorpruefung({ art: 'gueltig' }, 'trip-1'), {
+      art: 'gueltig',
+      id: 'trip-1',
+    })
+  })
+
+  test('gültige und fehlende Belegung bleiben beim bestehenden Vertrag', () => {
+    const frei = gastCreateGate({ angemeldet: false, belegung: { art: 'fehlend' } })
+    assert.equal(frei.erlaubt, true)
+    const belegt = gastCreateGate({
+      angemeldet: false,
+      belegung: { art: 'gueltig', id: 'trip-1' },
+    })
+    assert.equal(belegt.erlaubt, false)
+    if (belegt.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(belegt.grund, 'besteht')
+    assert.equal(belegt.bestehendeId, 'trip-1')
+  })
+
+  test('Gate-Sicht unterscheidet ungültig, unlesbar, gültig und frei', () => {
+    assert.equal(
+      planenCreateGateSicht({
+        angemeldet: false,
+        beobachtet: true,
+        belegung: { art: 'ungueltig' },
+      }).art,
+      'ungueltig',
+    )
+    assert.equal(
+      planenCreateGateSicht({
+        angemeldet: false,
+        beobachtet: true,
+        belegung: { art: 'speicher_unlesbar' },
+      }).art,
+      'unlesbar',
+    )
+    const besteht = planenCreateGateSicht({
+      angemeldet: false,
+      beobachtet: true,
+      belegung: { art: 'gueltig', id: 'trip-1' },
+      aktivTitel: 'Japan',
+    })
+    assert.equal(besteht.art, 'besteht')
+    if (besteht.art !== 'besteht') throw new Error('erwartet besteht')
+    assert.equal(besteht.bestehendeId, 'trip-1')
+    assert.equal(besteht.titel, 'Japan')
+    assert.equal(
+      planenCreateGateSicht({
+        angemeldet: false,
+        beobachtet: true,
+        belegung: { art: 'fehlend' },
+      }).art,
+      'kinder',
+    )
+    const legacy = planenCreateGateSicht({
+      angemeldet: false,
+      beobachtet: true,
+      belegung: { art: 'gueltig', id: 'trip-legacy', titel: 'Barcelona' },
+      aktivTitel: 'Barcelona',
+    })
+    assert.equal(legacy.art, 'besteht')
+    if (legacy.art !== 'besteht') throw new Error('erwartet besteht')
+    assert.equal(legacy.bestehendeId, 'trip-legacy')
+    assert.equal(legacy.titel, 'Barcelona')
+    const ohneKennung = planenCreateGateSicht({
+      angemeldet: false,
+      beobachtet: true,
+      belegung: { art: 'belegt_ohne_kennung', titel: 'Ohne Id' },
+      aktivTitel: 'Ohne Id',
+    })
+    assert.equal(ohneKennung.art, 'belegt_ohne_kennung')
+    if (ohneKennung.art !== 'belegt_ohne_kennung') throw new Error('erwartet belegt_ohne_kennung')
+    assert.equal(ohneKennung.titel, 'Ohne Id')
+    assert.equal('bestehendeId' in ohneKennung, false)
+    assert.equal(/verloren|wiederherstell|kein Entwurf/i.test(ohneKennung.neben), false)
+    assert.equal(ohneKennung.neben.includes('Fortsetzen-Link'), true)
   })
 })
