@@ -1,0 +1,192 @@
+{
+  "kind": "synthetic-component-render",
+  "authenticatedPreview": "BLOCKED_ACCESS",
+  "component": "components/trips/TripWorkspaceJetztWichtig.tsx",
+  "css": {
+    "source": "styles/globals.css",
+    "config": "tailwind.config.js",
+    "plugins": [
+      "tailwindcss/nesting",
+      "tailwindcss",
+      "autoprefixer"
+    ],
+    "bytes": 104346
+  },
+  "source": {
+    "sourceCommit": "948ad2fcffd7cc170feebd19fe0a94baed54fc72",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "note": "Dependency-injected fixture rendered with compiled styles/globals.css. Not a real trip workspace session, Preview click-through or real-device test.",
+  "omitted": [
+    "live provider/model/paid call",
+    "authenticated Preview/Production",
+    "real account/DB probe",
+    "real-device lab",
+    "TW-8 / booking rewrite"
+  ],
+  "attention": {
+    "leerstand": null,
+    "sichtbar": [
+      {
+        "id": "item.date_mismatch:item-booked",
+        "signal": "item.date_mismatch",
+        "titel": "Reservierung Uffizien: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+      },
+      {
+        "id": "item.date_mismatch:item-dom",
+        "signal": "item.date_mismatch",
+        "titel": "Dom: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+      },
+      {
+        "id": "item.date_mismatch:item-link",
+        "signal": "item.date_mismatch",
+        "titel": "Garten Boboli: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+      }
+    ],
+    "weitere": [
+      {
+        "id": "item.date_mismatch:item-ticket",
+        "signal": "item.date_mismatch",
+        "titel": "Gratis-Ticket: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+      },
+      {
+        "id": "coverage:fluege",
+        "signal": "coverage.fluege",
+        "titel": "Flugstrecke noch offen"
+      },
+      {
+        "id": "coverage:unterkunft",
+        "signal": "coverage.unterkunft",
+        "titel": "Unterkunftsnächte fehlen noch"
+      },
+      {
+        "id": "official:insufficient_context",
+        "signal": "official.insufficient_context",
+        "titel": "Offizielle Prüfung noch nicht möglich"
+      }
+    ],
+    "mismatchIds": [
+      "item.date_mismatch:item-booked",
+      "item.date_mismatch:item-dom",
+      "item.date_mismatch:item-link",
+      "item.date_mismatch:item-ticket"
+    ]
+  },
+  "cases": {
+    "date-mismatch": {
+      "screenshots": [
+        "date-mismatch_390.png",
+        "date-mismatch_1024.png"
+      ],
+      "measurements": {
+        "390": {
+          "heading": "Was jetzt Aufmerksamkeit braucht",
+          "banner": "SYNTHETIC RENDER — not authenticated Preview/Production. Case: date-mismatch. Component: components/trips/TripWorkspaceJetztWichtig.tsx. CSS: styles/globals.css compiled via postcss+tailwind+autoprefixer. Source 948ad2fcffd7cc170feebd19fe0a94baed54fc72 (clean).",
+          "leerstand": null,
+          "punkte": [
+            {
+              "id": "item.date_mismatch:item-booked",
+              "lage": "stale",
+              "titel": "Reservierung Uffizien: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+            },
+            {
+              "id": "item.date_mismatch:item-dom",
+              "lage": "stale",
+              "titel": "Dom: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+            },
+            {
+              "id": "item.date_mismatch:item-link",
+              "lage": "stale",
+              "titel": "Garten Boboli: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+            }
+          ],
+          "weitereLabel": "4 weitere Hinweise anzeigen",
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            }
+          },
+          "boxes": {
+            "section": {
+              "width": 358,
+              "height": 380,
+              "left": 16,
+              "right": 374,
+              "top": 120,
+              "bottom": 500
+            },
+            "weitere": {
+              "width": 332,
+              "height": 44,
+              "left": 29,
+              "right": 361,
+              "top": 439,
+              "bottom": 483
+            }
+          }
+        },
+        "1024": {
+          "heading": "Was jetzt Aufmerksamkeit braucht",
+          "banner": "SYNTHETIC RENDER — not authenticated Preview/Production. Case: date-mismatch. Component: components/trips/TripWorkspaceJetztWichtig.tsx. CSS: styles/globals.css compiled via postcss+tailwind+autoprefixer. Source 948ad2fcffd7cc170feebd19fe0a94baed54fc72 (clean).",
+          "leerstand": null,
+          "punkte": [
+            {
+              "id": "item.date_mismatch:item-booked",
+              "lage": "stale",
+              "titel": "Reservierung Uffizien: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+            },
+            {
+              "id": "item.date_mismatch:item-dom",
+              "lage": "stale",
+              "titel": "Dom: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+            },
+            {
+              "id": "item.date_mismatch:item-link",
+              "lage": "stale",
+              "titel": "Garten Boboli: 12. Sept. 2026 weicht vom geplanten Tag 19. Sept. 2026 ab"
+            }
+          ],
+          "weitereLabel": "4 weitere Hinweise anzeigen",
+          "overflow": {
+            "document": {
+              "scrollWidth": 1024,
+              "clientWidth": 1024,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 768,
+              "clientWidth": 768,
+              "overflowing": false
+            }
+          },
+          "boxes": {
+            "section": {
+              "width": 736,
+              "height": 360,
+              "left": 144,
+              "right": 880,
+              "top": 72,
+              "bottom": 432
+            },
+            "weitere": {
+              "width": 702,
+              "height": 44,
+              "left": 161,
+              "right": 863,
+              "top": 371,
+              "bottom": 415
+            }
+          }
+        }
+      }
+    }
+  }
+}

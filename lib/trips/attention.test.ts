@@ -959,3 +959,81 @@ describe('TW-4 Completeness und gemischte Degraded States', () => {
     assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
   })
 })
+
+describe('geschützte item.date_mismatch-Regression', () => {
+  function reiseMitAbweichung(): Trip {
+    return reise({
+      origin: 'Ubud',
+      originPlaceId: null,
+      party: vollstaendigeParty(),
+      days: [
+        {
+          id: 'day-1',
+          stageId: 'stage-1',
+          dayIndex: 1,
+          dayDate: '2026-09-19',
+          title: null,
+          items: [
+            punkt({
+              id: 'stay-1',
+              kind: 'stay',
+              title: 'Hotel',
+              startsOn: '2026-09-12',
+              endsOn: '2026-09-16',
+            }),
+            punkt({
+              id: 'dom-1',
+              kind: 'activity',
+              title: 'Dom',
+              startsOn: '2026-09-12',
+              priceAmount: 18,
+              provider: 'getyourguide',
+            }),
+          ],
+        },
+      ],
+    })
+  }
+
+  test('Safety-critical bleibt vor der Terminabweichung', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseMitAbweichung(),
+      safetyEvaluations: [safetyWarnung('critical_warning', 'safe-date')],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(sicht.punkte[0]?.signal, 'safety.critical_warning')
+    assert.equal(sicht.punkte[0]?.schwere, 'blockierend')
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'item.date_mismatch'), true)
+    assert.equal(sicht.leerstand, null)
+  })
+
+  test('aktive Terminabweichung unterdrückt den irreführenden All-clear', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseMitAbweichung(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'item.date_mismatch' && eintrag.lage === 'stale'), true)
+    assert.equal(sicht.leerstand, null)
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+  })
+
+  test('sichtbares Limit und Official-fail-closed bleiben neben der Abweichung erhalten', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseMitAbweichung(),
+      safetyEvaluations: [safetyUnavailable()],
+      seasonalEvaluations: [seasonalInsufficient()],
+      officialEvaluations: officialVollstaendig(),
+      sichtbarLimit: 2,
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'item.date_mismatch'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.unavailable'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'seasonal.insufficient_context'), true)
+    assert.equal(sicht.sichtbar.length, 2)
+    assert.equal(sicht.weitere.length, sicht.punkte.length - 2)
+    assert.equal(sicht.sichtbar.some((eintrag) => eintrag.signal === 'safety.critical_warning'), false)
+    assert.equal(sicht.leerstand, null)
+  })
+})
