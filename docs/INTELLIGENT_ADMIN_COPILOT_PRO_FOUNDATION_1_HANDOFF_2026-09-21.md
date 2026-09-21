@@ -1,7 +1,7 @@
 # Intelligent Admin / Copilot Pro Foundation 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **IA-CR1 CONTRACT CORRECTED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEINE RUNTIME / KEIN FOLGESLICE**
+Status: **IA-CR2 CONTRACT CORRECTED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEINE RUNTIME / KEIN FOLGESLICE**
 
 Binding task: `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_TASK_2026-09-21.md`  
 Decision: `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_DECISION_2026-09-21.md`  
@@ -21,20 +21,22 @@ This document is enough for a new Technical Lead chat or agent to continue witho
 | Issue | #508 |
 | Draft PR | #510 |
 | Branch | `architecture/intelligent-admin-copilot-pro-foundation-1` |
-| Canonical / live main | `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` |
-| Reviewed CR head | `3e0d36827bd4cf7c12ae8d3d1fce4243009dfd2d` |
+| Task baseline / merge-base | `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` |
+| Live `origin/main` | `d3d42047ba247ded8d6c584e447db1573b80f19a` (#512, recorded once) |
+| Ahead / behind before this persist | 3 / 6 — **no rebase** |
+| Reviewed IA-CR2 head | `7a752a2410d04d79cd1b1ea2b6211196e22f3bfd` |
 | Dispatch / seed head | `b498f0dfa64fff500c08bf87cb5bffa6979e477f` |
 | Agent | Jetnity intelligent admin copilot pro foundation 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c` |
-| Prior TL review | `5268850363` — CHANGES REQUIRED (IA-CR1) |
+| Prior TL review | `5269097070` — CHANGES REQUIRED (IA-CR2); IA-CR1 `5268850363` preserved |
 
 Read first:
 
-1. review `5268850363`
-2. decision §6.4 / §6.4a / `ANALYST_DENIAL_TO_OBSERVED`
-3. source matrix §1 (collector vs analyst attribution)
-4. runtime task §8.2 T-cache-*
+1. review `5269097070` (this correction) and `5268850363` (preserved)
+2. decision §6.4 / §6.4a / §6.4b / `ANALYST_DENIAL_TO_OBSERVED`
+3. source matrix §1 (reuse vs displayed age)
+4. runtime task §5.1 hint + §8 T-age-*
 5. STATUS and this handoff
 6. SELF_REVIEW
 7. live PR #510 CI/Vercel on the **new frozen HEAD**
@@ -43,33 +45,33 @@ Read first:
 
 ## 2. What changed in this persist
 
-Docs only, same seven files. IA-CR1 source-context contract:
+Docs only, same seven files. IA-CR2 evidence-age contract:
 
-- process-recent observation, no session claim;
-- break-glass projection (function, not banner);
-- explicit denial mapping including `aal-lookup-failed`;
-- executable cache/provenance tests specified.
+- 30s = collector `CACHE_MS` reuse, not a displayed-age SLA;
+- age/freshness from original `checkedAt` + eval time;
+- unknown/stale preserved; no `checkedAt` refresh on projection/render/cache hit;
+- hint / mandatory limitation no longer say “höchstens 30s”;
+- T-age-older-than-cache, T-age-missing-checkedAt, T-age-invalid-checkedAt, T-stale-reage, T-hint-no-universal-30s specified.
 
-Did not: implement runtime; edit collector/guard; add a cache/permission system; rebase; touch #506 / #509 / #512.
+Did not: implement runtime; edit collector/guard; add a cache/permission system; rebase onto #512; touch #506 / #509; weaken IA-CR1.
 
 ---
 
 ## 3. What a reviewer should verify first
 
-1. Merge-base still `main@c7fb9f0f` unless TL records a later integration point. This agent did not rebase.
+1. Merge-base remains `main@c7fb9f0f`. Live main `d3d42047` is recorded once. This agent did not rebase and will not request sibling reintegration again.
 2. Diff stays inside the seven foundation docs.
-3. One source, deterministic, no Execute, no model.
-4. Decision chooses **process-recent + projection**, not an isolated collector.
-5. Cached A→B cannot claim B’s Sitzung. Break-glass cannot inherit cached airports success.
-6. `ANALYST_DENIAL_TO_OBSERVED` covers all five `AdminDenial` values.
-7. T-cache-A-then-B / T-role-to-break-glass / T-allowed-to-denied / T-stale-reage are executable requirements.
-8. New exact-head CI/Auth/Preview in the PR comment. Gates on `3e0d3682` are stale.
+3. One source, deterministic, no Execute, no model. IA-CR1 projection / denial-before-load intact.
+4. Decision §6.4b: `CACHE_MS` is reuse only; no universal “at most 30s old”.
+5. Runtime §5.1 hint has no “höchstens 30s”.
+6. T-age-* / T-hint-no-universal-30s are executable requirements; none may claim “höchstens 30s” without a supported condition.
+7. New exact-head CI/Auth/Preview in the PR comment. Gates on `7a752a24` are stale.
 
 ---
 
 ## 4. What this does not mean
 
-Not implemented. Not Ready. Not a Technical-Lead PASS. Not a Slice B cache redesign. Not a dispatch of the runtime writer.
+Not implemented. Not Ready. Not a Technical-Lead PASS. Not a Slice B cache redesign. Not a dispatch of the runtime writer. Not a request to rebase onto #512.
 
 ---
 

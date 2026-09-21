@@ -67,9 +67,9 @@ Implement `docs/INTELLIGENT_ADMIN_COPILOT_PRO_FOUNDATION_1_DECISION_2026-09-21.m
 Hard rules:
 
 1. Permission check occurs before `sammleSystemHealth` / `ladeSystemHealthFuerSeite`. Denied and both lookup denials never load.
-2. The 30s process cache is reused as **process-recent**, not as current-session proof and not as a denied-caller summary. Do not add a second cache.
+2. The 30s process cache (`CACHE_MS`) is the collector’s **reuse policy**, not a displayed-age guarantee. Reused reports are **process-recent**, not current-session proof and not a denied-caller summary. Do not add a second cache.
 3. No false green/zero on denied, unavailable, stale, missing, or partial boards.
-4. No fabricated `checkedAt`, confidence, incident counts or ROI. Stale re-age must not rewrite `checkedAt`.
+4. No fabricated `checkedAt`, confidence, incident counts or ROI. Displayed age/freshness come only from the original `checkedAt` and the explicit evaluation time. Preserve `unknown` / `stale`. Do not refresh `checkedAt` on projection, render, or cache hit. Do not claim “höchstens 30s” / “at most 30s old” unless a separately supported condition actually holds.
 5. No-signal ⇒ `materiality: 'none'` and `next: null`, and only after attribution overlay (break-glass cannot use airports as evidenced).
 6. Stable ids; dedupe parent vs sub-check as specified.
 7. Navigation allowlist: `/admin/system-health` only; `kind: 'investigate'`.
@@ -86,7 +86,8 @@ Hard rules:
 Suggested keys (German, honest, no marketing):
 
 - Section title: `Aktuelle Hinweise`
-- Section hint: `Regelbasierte Lage aus dem letzten System-Health-Stand dieses Prozesses (höchstens 30s). Das belegt nicht die aktuelle Sitzung. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.`
+- Section hint: `Regelbasierte Lage aus dem letzten System-Health-Stand dieses Prozesses. Alter und Frische folgen dem ursprünglichen checkedAt und dem Auswertezeitpunkt; unbekannt und veraltet bleiben sichtbar. Das belegt nicht die aktuelle Sitzung. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.`
+  Do **not** add “(höchstens 30s)” or equivalent to this hint. Process-level scope is not a freshness SLA.
 - No-signal (role): `Aus den belegten System-Health-Quellen ergibt sich gerade keine priorisierte Untersuchung. Belegt sind Prozess-Erreichbarkeit und — wenn frisch — eine prozessweite airports-Beobachtung. Plattform-Health bleibt unbelegt.`
 - Break-glass coverage: `Für Notzugang werden datenbankgestützte System-Health-Fakten nicht zugeschrieben, auch nicht aus dem Prozess-Cache.`
 - Denied: reuse `messageForDenial(denial)` plus `Ohne bestandene betrieb-lesen-Prüfung wird System Health nicht gelesen.`
@@ -145,7 +146,10 @@ Use fixtures. Do not hit a network. Label fixtures synthetic.
 | T-degraded | a check status `degraded` (construct fixture; production path may not emit it today) | attention; ranked above coverage |
 | T-unknown-attempt | zugriff `unknown` (no ping) | coverage or attention per decision rank 5; not healthy |
 | T-missing-item | bericht without `github` | `systemHealthIdsVollstaendig === false` ⇒ `partial_failed` attention; do not invent github healthy |
-| T-stale | unavailable or healthy check with `ageMs > ttlMs` | freshness `stale`; stale healthy is not treated as current healthy; `checkedAt` identical to input |
+| T-stale | unavailable or healthy check with `ageMs > ttlMs` | freshness `stale`; stale healthy is not treated as current healthy; `checkedAt` identical to input; no “höchstens 30s” in limitations / hint / insight copy |
+| T-age-older-than-cache | role grant; fixture bericht with original `checkedAt` **older than 30s** (e.g. 90s; if `ageMs > ttlMs` then stale) | displayed age/freshness from that `checkedAt` + eval `nowMs`; `checkedAt` unchanged; insight/limitations/section hint **must not** claim “höchstens 30s” / “at most 30s old” |
+| T-age-missing-checkedAt | role grant; `checkedAt` null / omitted | freshness `unknown`; `ageMs` null; no fabricated clock; **must not** claim “höchstens 30s” |
+| T-age-invalid-checkedAt | role grant; `checkedAt` not a finite parseable instant | same as missing: freshness `unknown`; no age upper bound; **must not** claim “höchstens 30s” |
 | T-denied | wrapper input `AdminDenial` `forbidden` (and `unauthenticated`, `aal2-required`) | `access: { status: 'denied', denial }`; `observed: 'access_denied'`; `observationScope: 'none'`; loader not called; no hop |
 | T-lookup-failed | `denial: 'lookup-failed'` | `observed: 'lookup-failed'`; unavailable copy; not empty-zero; not “logged out”; no load |
 | T-aal-lookup-failed | `denial: 'aal-lookup-failed'` | `access.denial` stays `'aal-lookup-failed'`; `observed: 'lookup-failed'` via `ANALYST_DENIAL_TO_OBSERVED`; no load |
@@ -171,7 +175,8 @@ Comments in source do **not** satisfy these. Each ID is an executable node:test 
 | T-cache-A-then-B | Fixture bericht at `checkedAt=T0` with airports healthy (as if caller A populated the 30s cache). Role caller B derives from that **same object**. B’s bericht has the same `checkedAt`, `observationScope: 'process-recent'`, `attribution: 'process-recent'`, and `proves` must not claim B’s Sitzung. B’s user id must not appear. |
 | T-role-to-break-glass | Same cached healthy airports bericht. Role derivation may show zugriff as process-recent (overlay). Break-glass derivation on the **identical** bericht must put `supabase-app-datenzugriff` in `coverage.notAttributed`, emit `attribution: 'not_attributed'` for that fact, and must not emit attention/none that the grant has a healthy (or failed) airports read. Banner-only flags fail this test. |
 | T-allowed-to-denied | After an allowed derivation, a subsequent denied / `lookup-failed` / `aal-lookup-failed` input must not invoke the loader spy; `observationScope: 'none'`; `access.denial` exact; no hop; no green. |
-| T-stale-reage | Apply `wendeEvidenceAlterAn` (or equivalent fixture aging) so `ageMs > ttlMs`. Derivation freshness is `stale`. `checkedAt` equals the original collection timestamp. No newer `checkedAt` is written. |
+| T-stale-reage | Apply `wendeEvidenceAlterAn` (or equivalent fixture aging) so `ageMs > ttlMs`. Derivation freshness is `stale`. `checkedAt` equals the original collection timestamp. No newer `checkedAt` is written. Insight/limitations/section hint **must not** claim “höchstens 30s”. |
+| T-hint-no-universal-30s | Section hint plus every insight `limitations` on fixtures from T-age-older-than-cache, T-age-missing-checkedAt, T-age-invalid-checkedAt, T-stale and T-stale-reage | none contain a universal “höchstens 30s” / “at most 30s old” assertion. Thirty seconds may appear only as collector `CACHE_MS` reuse documentation, never as the displayed observation’s age without a separately supported condition. |
 | T-break-glass-not-banner | The projection is a named exported function (or equivalent unit) covered by T-role-to-break-glass. A UI-only `grant === 'break-glass' && showBanner` path without stripping DB facts fails. |
 
 ### 8.3 Responsive / keyboard / focus (evidence expectations)

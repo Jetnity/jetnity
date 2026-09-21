@@ -70,6 +70,8 @@ Common Admin gate (all surfaces below):
 
 Process-level cache (`CACHE_MS = 30_000` in `sammeln.ts`) is **after** the existing page/API gate and is **shared across allowed callers in the same process**. Foundation 1 does not isolate it. The analyst gate still forbids denied reuse. Allowed reuse is labelled `process-recent`, not session-bound.
 
+`CACHE_MS` is the collector’s **reuse policy**, not an unconditional maximum age of a displayed observation. Displayed age/freshness come only from the original `checkedAt` and the evaluation time (`nowMs`). Missing/invalid `checkedAt` stays `unknown`; `ageMs > ttlMs` stays `stale`; `checkedAt` is not rewritten on cache hit, projection or render. A snapshot can be older than 30s (already-old bericht, stale re-age, or a page left open). Process-level scope is not a freshness SLA. Do not claim “höchstens 30s” as a universal displayed-age guarantee.
+
 ---
 
 ## 2. Deferred — Provider & cost typed snapshot

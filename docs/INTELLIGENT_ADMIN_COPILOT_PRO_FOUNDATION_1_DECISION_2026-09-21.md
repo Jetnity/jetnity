@@ -203,7 +203,7 @@ No-signal is not “all systems healthy”. Parent `app` / `supabase` must stay 
 
 Facts about the existing collector that this analyst must treat as given:
 
-- `sammleSystemHealth` holds one process-wide `cache` for 30s.
+- `sammleSystemHealth` holds one process-wide `cache` with `CACHE_MS = 30_000`. That value is the collector’s **reuse policy** (how long this process may return the last bericht without a new ping). It is **not** a displayed-age ceiling.
 - A cache hit returns `cache.bericht` after `wendeEvidenceAlterAn` and does **not** run the current caller’s `pingSupabase`.
 - A cache miss may ping `public.airports` through that miss’s cookie client.
 - Slice B `proves` for a successful zugriff currently says the read was answered “in dieser Sitzung”. That string is **board copy**, not analyst attribution.
@@ -213,7 +213,7 @@ Therefore:
 1. **Gate first, always.** `evaluateAdminAccess({ capability: 'betrieb-lesen', surface: 'admin-home-analyst' })`.
 2. **Denied load ban.** If `allowed === false` (any `AdminDenial`, including `lookup-failed` and `aal-lookup-failed`): `observationScope: 'none'`; do **not** call `sammleSystemHealth` / `ladeSystemHealthFuerSeite`; emit one attention insight via `ANALYST_DENIAL_TO_OBSERVED`; `next: null`. Hiding the card is not this proof.
 3. **Allowed load.** Reuse the existing loader. Set `observationScope: 'process-recent'` and `access: { status: 'allowed', grant }`.
-4. **No current-session attribution.** Every insight that uses the bericht has `attribution: 'process-recent'` and a mandatory limitation: the observation is process-wide and at most 30s old; it does not prove that **this** session executed the airports read. Caller A can populate the cache; caller B can receive the same `checkedAt`. That is accepted and must be labelled, not hidden.
+4. **No current-session attribution.** Every insight that uses the bericht has `attribution: 'process-recent'` and a mandatory limitation: the observation is process-wide; it does not prove that **this** session executed the airports read. Caller A can populate the cache; caller B can receive the same `checkedAt`. That is accepted and must be labelled, not hidden. `process-recent` names the **scope** (shared process snapshot), not a freshness SLA.
 5. **Copy-through rule.** Reuse `summary`, `doesNotProve`, `freshness`, `checkedAt`. If `proves` matches `/in dieser Sitzung/i` (or equivalent session wording), **replace** `proves` with process-recent wording, e.g. `Ein Prozess in dieser Instanz hat public.airports in einem kürzlichen Sammellauf beantwortet. Das ist kein Nachweis für die aktuelle Sitzung.` Do not invent a stronger claim. Do not edit Slice B source strings.
 6. **Cache is not a privilege escalation to denied callers.** The gate in (2) remains. The cache is also not a session-binding mechanism for allowed callers.
 
@@ -239,6 +239,20 @@ Required projection after an allowed break-glass load:
 
 Denied / lookup-failed sessions never reach this projection: they never load.
 
+### 6.4b Evidence age — cache reuse is not a displayed-age guarantee
+
+**IA-CR2:** Process-level scope does **not** mean guaranteed freshness.
+
+Displayed age and freshness come **only** from the original `checkedAt` plus the explicit evaluation time (`nowMs` / `generatedAt`), using the existing `berechneFreshness` / `wendeEvidenceAlterAn` rules:
+
+- missing or invalid `checkedAt` → freshness `unknown`; `ageMs` null; no fabricated clock;
+- `ageMs > ttlMs` (item TTL: app/supabase 60s, vercel 120s, github/infomaniak 300s) → `stale`;
+- otherwise → `fresh`.
+
+Do **not** refresh `checkedAt` on projection, render, or cache hit. A page left open after render may age past both `CACHE_MS` and item TTL; the original `checkedAt` stays.
+
+Do **not** write a universal “höchstens 30s” / “at most 30s old” limitation, section hint, or insight copy. A 90-second-old snapshot that is already `stale` must not also claim it is at most 30s old. A report with missing/invalid `checkedAt` cannot establish an age upper bound. Thirty seconds may be mentioned only as the collector’s reuse policy (`CACHE_MS`), never as the age of the displayed observation unless a later, separately evidenced condition actually supports that bound.
+
 ### 6.5 Honest failure
 
 | Input | `access` | `observationScope` | Notes |
@@ -247,8 +261,8 @@ Denied / lookup-failed sessions never reach this projection: they never load.
 | `lookup-failed` / `aal-lookup-failed` | `{ status: 'denied', denial }` | `none` | `observed: 'lookup-failed'`; unavailable, not logged-out (#500); no source load |
 | Allowed + collector throw | `{ status: 'allowed', grant }` | `process-recent` or `none` if no bericht | `source_failed`; do not invent timestamps |
 | Partial item isolation (existing `isoliert`) | allowed | `process-recent` | `partial_failed` only if `systemHealthIdsVollstaendig === false` |
-| Missing `checkedAt` | allowed | `process-recent` | freshness `unknown`; no fabricated clock |
-| Stale re-age | allowed | `process-recent` | keep status; mark stale; **do not refresh `checkedAt`** |
+| Missing / invalid `checkedAt` | allowed | `process-recent` | freshness `unknown`; no fabricated clock; **no** “höchstens 30s” claim |
+| Stale re-age / report older than 30s | allowed | `process-recent` | keep status; mark stale when `ageMs > ttlMs`; **do not refresh `checkedAt`**; **no** universal 30s age claim |
 | Role → same cached bericht as another role caller | allowed / `role` | `process-recent` | same `checkedAt`; no session claim |
 | Role-populated cache → break-glass | allowed / `break-glass` | `process-recent` | apply §6.4a; cached airports success is `notAttributed` |
 
@@ -303,13 +317,15 @@ The following are **synthetic design cases**, not observed Production incidents.
 | Case | Input (synthetic) | Expected insight |
 | --- | --- | --- |
 | A | Role grant; `supabase-app-datenzugriff` `unavailable` + fresh | One `attention` insight; process-recent; proves only this process observation failed; next `/admin/system-health`; no “diese Sitzung” |
-| B | Same status, freshness `stale` (`checkedAt` unchanged) | Same fact, labelled stale; not current; still attention |
+| B | Same status, freshness `stale` (`checkedAt` unchanged; e.g. 90s old) | Same fact, labelled stale; not current; still attention; **must not** also say “höchstens 30s” |
 | C | Role grant; airports `healthy` + fresh; others expected unknown/not_configured | One `none` insight; process-recent airports, not session; no recommendation |
 | D | Any `AdminDenial` | `access.status: 'denied'`; mapped `observed`; `observationScope: 'none'`; no load; no hop |
 | E | Bericht missing `github` item | `partial_failed` attention; do not assume GitHub is healthy |
 | F | `app` parent `healthy` in a fixture | Invalid input; derivation must refuse to emit a green parent claim (`istUeberzogenerGesamtClaim`) |
 | G | Cached healthy airports from caller A, then role caller B | B sees same `checkedAt`; `attribution: 'process-recent'`; proves must not claim B’s session |
 | H | Same cache, then break-glass caller | Airports in `coverage.notAttributed`; no healthy/unavailable fact for this grant |
+| I | Missing or invalid `checkedAt` | freshness `unknown`; no fabricated age bound; no “höchstens 30s” |
+| J | Role grant; bericht `checkedAt` older than `CACHE_MS` (reuse window) and, if `ageMs > ttlMs`, stale | Age/freshness from original `checkedAt` + eval time; `checkedAt` unchanged; no universal 30s claim |
 
 ## 9. What this is not
 
@@ -328,3 +344,4 @@ The following are **synthetic design cases**, not observed Production incidents.
 - Existing System Health tests stay the source-contract tests; the analyst adds derivation tests, it does not fork a second health model.
 - If TL rejects the single-source choice, the alternative is to add `model-usage` only — not to reopen D–K or security ingestion in the same slice.
 - IA-CR1 is closed in this specification by **process-recent attribution + break-glass projection**, not by isolating the Slice B cache. A later isolated-acquisition slice would be a different, named change to System Health and is not authorized here.
+- IA-CR2 is closed in this specification by treating `CACHE_MS = 30_000` as **collector reuse only**. Displayed evidence age follows original `checkedAt` + evaluation time, including stale and missing/invalid timestamps. The general hint and mandatory limitation must not claim “höchstens 30s”. The collector is not changed.

@@ -130,3 +130,13 @@ Delivered: source matrix, one System-Health Attention Analyst decision, complete
 Same agent/session. Independent TL review `5268850363` on `3e0d36827bd4cf7c12ae8d3d1fce4243009dfd2d` required a source-context correction.
 
 Chosen policy: reuse the existing System Health report as a **process-recent observation** with no current-session attribution, plus an explicit break-glass projection. Denial mapping reuses `AdminDenial` and `ANALYST_DENIAL_TO_OBSERVED` (`aal-lookup-failed` → observed `lookup-failed`). Executable T-cache-* tests are specified. No runtime, no collector/guard change, no new cache/permission system, no rebase onto later main/continuity PRs.
+
+---
+
+## 11. Dated amendment — 21 September 2026 (Generation 1, IA-CR2)
+
+Same agent/session. Independent TL review `5269097070` on `7a752a2410d04d79cd1b1ea2b6211196e22f3bfd` required an evidence-age correction.
+
+`CACHE_MS = 30_000` is the existing collector’s **reuse policy**, not an unconditional displayed-age promise. Age/freshness derive from original `checkedAt` + evaluation time, including stale and missing/invalid timestamps. The general hint and mandatory limitation must not say “höchstens 30s”. Future executable cases: T-age-older-than-cache, T-age-missing-checkedAt, T-age-invalid-checkedAt, T-stale-reage (no 30s claim), T-hint-no-universal-30s. IA-CR1, break-glass projection, denial-before-load, one source, disabled model seam and no execute authority stay unchanged.
+
+Live `origin/main` after docs-only #512 is `d3d42047ba247ded8d6c584e447db1573b80f19a`. Drift vs task baseline `c7fb9f0f` is recorded **once**. No rebase / no repeated sibling reintegration request. No runtime, no collector/cache/permissions/model/DB change.
