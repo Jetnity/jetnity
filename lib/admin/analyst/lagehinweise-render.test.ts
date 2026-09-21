@@ -108,7 +108,43 @@ describe('AdminLagehinweise Ansicht (synthetic render)', () => {
     assert.match(html, /Beobachtet:/)
     const stand = beobachtungsstand(stale.insights[0]!)
     assert.equal(stand.dateTime, ursprung)
+    assert.match(stand.zeittext, /UTC/)
+    assert.match(html, /UTC/)
     assert.equal(html.includes('renderContainsOriginalTimestamp=false'), false)
+
+    const noSignalMs = JETZT - 30_000
+    const noSignalZeit = new Date(noSignalMs).toISOString()
+    const noSignal = leiteSystemHealthInsights({
+      access: { status: 'allowed', grant: 'role' },
+      nowMs: JETZT,
+      bericht: {
+        checkedAt: new Date(JETZT).toISOString(),
+        writeActions: [],
+        items: [
+          bewerteApp({ vercelEnv: 'preview', commitSha: 'a', deploymentId: 'd', region: 'fra1' }, JETZT),
+          vercelNichtKonfiguriert(JETZT),
+          {
+            ...bewerteSupabaseAppZugriff({ configured: true, ping: { ok: true }, nowMs: noSignalMs }),
+            checkedAt: noSignalZeit,
+          },
+          githubNichtKonfiguriert(JETZT),
+          infomaniakNichtKonfiguriert(JETZT),
+        ],
+      },
+    })
+    assert.equal(noSignal.insights.length, 1)
+    const noSignalInsight = noSignal.insights[0]!
+    assert.equal(noSignalInsight.title, ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseKeinSignalTitel)
+    assert.equal(noSignalInsight.checkedAt, noSignalZeit)
+    assert.equal(noSignalInsight.freshness.ageMs, 30_000)
+    const noSignalHtml = htmlAus(noSignal)
+    const noSignalStand = beobachtungsstand(noSignalInsight)
+    assert.equal(noSignalStand.dateTime, noSignalZeit)
+    assert.match(noSignalStand.zeittext, /UTC/)
+    assert.match(noSignalHtml, /<time dateTime="2026-09-21T11:59:30.000Z"/)
+    assert.match(noSignalHtml, /30 Sekunden/)
+    assert.match(noSignalHtml, /UTC/)
+    assert.doesNotMatch(noSignalHtml, /12:00:00/)
 
     const unbekannt = leiteSystemHealthInsights({
       access: { status: 'allowed', grant: 'role' },

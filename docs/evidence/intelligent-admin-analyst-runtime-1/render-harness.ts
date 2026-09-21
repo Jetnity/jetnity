@@ -1,10 +1,14 @@
 // Temporary synthetic render harness. Not a product route and not an auth bypass.
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { chromium } from 'playwright'
+import { chromium, type Page } from 'playwright'
+import postcss from 'postcss'
+import tailwindcss from 'tailwindcss'
+import nesting from 'tailwindcss/nesting'
+import autoprefixer from 'autoprefixer'
 
 import { AdminLagehinweiseAnsicht } from '@/components/admin/home/AdminLagehinweise'
 import { leiteSystemHealthInsights } from '@/lib/admin/analyst/system-health-insights'
@@ -14,6 +18,7 @@ import {
   githubNichtKonfiguriert,
   infomaniakNichtKonfiguriert,
   vercelNichtKonfiguriert,
+  wendeEvidenceAlterAn,
 } from '@/lib/admin/system-health/bewertung'
 import type { AnalystBericht } from '@/lib/admin/analyst/typen'
 import type { SystemHealthItem } from '@/lib/admin/system-health/typen'
@@ -50,6 +55,7 @@ function ausBericht(
   })
 }
 
+const coverageItemMs = JETZT - 30_000
 const faelle: Record<string, AnalystBericht> = {
   attention: ausBericht(
     { status: 'allowed', grant: 'role' },
@@ -59,7 +65,13 @@ const faelle: Record<string, AnalystBericht> = {
   coverage: ausBericht(
     { status: 'allowed', grant: 'role' },
     JETZT,
-    bewerteSupabaseAppZugriff({ configured: true, ping: { ok: true }, nowMs: JETZT }),
+    wendeEvidenceAlterAn(
+      {
+        ...bewerteSupabaseAppZugriff({ configured: true, ping: { ok: true }, nowMs: coverageItemMs }),
+        checkedAt: new Date(coverageItemMs).toISOString(),
+      },
+      JETZT,
+    ),
   ),
   denied: leiteSystemHealthInsights({
     access: { status: 'denied', denial: 'forbidden' },
@@ -78,77 +90,94 @@ const faelle: Record<string, AnalystBericht> = {
   ),
 }
 
-const css = `
-html, body { margin: 0; background: #0f302a; color: #0f302a; font-family: ui-sans-serif, system-ui, sans-serif; }
-.bg-card, .shell { background: #fff; }
-.bg-background { background: #fbfcf9; }
-.text-muted-foreground { color: #50605b; }
-.text-foreground { color: #0f302a; }
-.border-border { border-color: #d5e2db; }
-.rounded-xl { border-radius: 0.75rem; }
-.border { border-width: 1px; border-style: solid; }
-.p-4 { padding: 1rem; }
-.mt-1 { margin-top: 0.25rem; }
-.mt-2 { margin-top: 0.5rem; }
-.mt-3 { margin-top: 0.75rem; }
-.mt-4 { margin-top: 1rem; }
-.grid { display: grid; }
-.gap-2 { gap: 0.5rem; }
-.gap-3 { gap: 0.75rem; }
-.flex { display: flex; }
-.flex-wrap { flex-wrap: wrap; }
-.items-start { align-items: flex-start; }
-.justify-between { justify-content: space-between; }
-.min-w-0 { min-width: 0; }
-.w-full { width: 100%; }
-.max-w-full { max-width: 100%; }
-.text-lg { font-size: 1.125rem; }
-.text-sm { font-size: 0.875rem; line-height: 1.35; }
-.text-xs { font-size: 0.75rem; line-height: 1.35; }
-.font-semibold { font-weight: 600; }
-.font-medium { font-weight: 500; }
-.underline { text-decoration: underline; }
-.underline-offset-4 { text-underline-offset: 4px; }
-.inline-block { display: inline-block; }
-.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
-.py-0\\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
-.border-rose-400\\/30 { border-color: rgb(251 113 133 / 0.3); }
-.bg-rose-400\\/10 { background: rgb(251 113 133 / 0.1); }
-.text-rose-800 { color: #9f1239; }
-.border-amber-400\\/30 { border-color: rgb(251 191 36 / 0.3); }
-.bg-amber-400\\/10 { background: rgb(251 191 36 / 0.1); }
-.text-amber-800 { color: #92400e; }
-.bg-muted { background: #edf8f3; }
-.shell { margin: 12px; border: 1px solid #d5e2db; border-radius: 1rem; padding: 1.25rem; }
-.banner { margin: 12px 12px 0; color: #e8fa91; font: 12px/1.4 ui-sans-serif, system-ui; }
-ul { list-style: none; padding: 0; margin: 0; }
-h2, h3, p { margin: 0; }
-a { color: #17604f; }
-`
+async function compileProductCss() {
+  const from = join(process.cwd(), 'styles/globals.css')
+  const input = readFileSync(from, 'utf8')
+  const result = await postcss([nesting(), tailwindcss(), autoprefixer()]).process(input, { from })
+  return {
+    css: result.css,
+    provenance: {
+      source: 'styles/globals.css',
+      config: 'tailwind.config.js',
+      plugins: ['tailwindcss/nesting', 'tailwindcss', 'autoprefixer'] as const,
+      bytes: Buffer.byteLength(result.css),
+    },
+  }
+}
 
-function seite(name: string, markup: string): string {
-  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Synthetic ${name}</title><style>${css}</style></head><body><p class="banner">SYNTHETIC RENDER — not authenticated Preview/Production. Case: ${name}</p><div class="shell">${markup}</div></body></html>`
+function seite(name: string, markup: string, productCss: string): string {
+  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Synthetic ${name}</title><style>${productCss}</style></head><body><p class="p-4 text-xs text-muted-foreground" data-synthetic-banner>SYNTHETIC RENDER — not authenticated Preview/Production. Case: ${name}. CSS: styles/globals.css compiled via postcss+tailwind+autoprefixer.</p><div class="bg-card rounded-2xl border border-border p-5" data-analyst-shell>${markup}</div></body></html>`
+}
+
+async function messe(page: Page) {
+  return page.evaluate(() => {
+    const shell = document.querySelector('[data-analyst-shell]')
+    const section = document.querySelector('section')
+    const cards = [...document.querySelectorAll('[data-analyst-id]')]
+    const focusable = [...document.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])')]
+    const box = (el: Element | null) => {
+      if (!el) return null
+      const r = el.getBoundingClientRect()
+      return { width: r.width, height: r.height, left: r.left, right: r.right, top: r.top, bottom: r.bottom }
+    }
+    const shellBox = box(shell)
+    const cardBoxes = cards.map((el) => box(el))
+    return {
+      overflow: {
+        document: {
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          overflowing: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        },
+        shell: shell
+          ? {
+              scrollWidth: shell.scrollWidth,
+              clientWidth: shell.clientWidth,
+              overflowing: shell.scrollWidth > shell.clientWidth + 1,
+            }
+          : null,
+        section: section
+          ? {
+              scrollWidth: section.scrollWidth,
+              clientWidth: section.clientWidth,
+              overflowing: section.scrollWidth > section.clientWidth + 1,
+            }
+          : null,
+        cardsBeyondShell: shellBox
+          ? cardBoxes.filter((card) => card != null && card.right > shellBox.right + 1).length
+          : null,
+      },
+      focus: {
+        focusableCount: focusable.length,
+        first: focusable[0]
+          ? `${(focusable[0] as HTMLElement).tagName.toLowerCase()}:${focusable[0].getAttribute('href') ?? ''}`
+          : null,
+      },
+    }
+  })
 }
 
 mkdirSync(join(ROOT, 'html'), { recursive: true })
 mkdirSync(join(ROOT, 'screenshots'), { recursive: true })
 mkdirSync(ARTIFACTS, { recursive: true })
 
-const manifest: Record<string, unknown> = {
-  kind: 'synthetic-component-render',
-  authenticatedPreview: 'BLOCKED_ACCESS',
-  note: 'Dependency-injected fixtures rendered locally. Not a real /admin session.',
-  cases: {},
-}
-
 async function main() {
+  const compiled = await compileProductCss()
+  const manifest: Record<string, unknown> = {
+    kind: 'synthetic-component-render',
+    authenticatedPreview: 'BLOCKED_ACCESS',
+    css: compiled.provenance,
+    note: 'Dependency-injected fixtures rendered with compiled styles/globals.css. Not a real /admin session.',
+    cases: {},
+  }
   const cases = manifest.cases as Record<string, unknown>
   const browser = await chromium.launch({ channel: 'chrome' })
   for (const [name, daten] of Object.entries(faelle)) {
     const markup = renderToStaticMarkup(createElement(AdminLagehinweiseAnsicht, { bericht: daten }))
-    const html = seite(name, markup)
+    const html = seite(name, markup, compiled.css)
     writeFileSync(join(ROOT, 'html', `${name}.html`), html)
     const shots: string[] = []
+    const measurements: Record<string, unknown> = {}
     cases[name] = {
       insights: daten.insights.map((insight) => ({
         id: insight.id,
@@ -156,12 +185,16 @@ async function main() {
         freshness: insight.freshness.state,
         materiality: insight.materiality,
         attribution: insight.attribution,
+        checkedAt: insight.checkedAt,
+        ageMs: insight.freshness.ageMs,
         next: insight.next,
       })),
+      sourceCheckedAt: daten.sourceCheckedAt,
       observationScope: daten.observationScope,
       access: daten.access,
       coverage: daten.coverage,
       screenshots: shots,
+      measurements,
     }
     for (const viewport of VIEWPORTS) {
       const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } })
@@ -170,6 +203,7 @@ async function main() {
       await page.screenshot({ path: join(ROOT, 'screenshots', dateiname), fullPage: true })
       await page.screenshot({ path: join(ARTIFACTS, dateiname), fullPage: true })
       shots.push(dateiname)
+      measurements[viewport.name] = await messe(page)
       await page.close()
     }
   }
@@ -177,7 +211,18 @@ async function main() {
 
   writeFileSync(join(ROOT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`)
   writeFileSync(join(ARTIFACTS, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`)
-  console.log(JSON.stringify({ ok: true, cases: Object.keys(faelle), viewports: VIEWPORTS.map((v) => v.name) }, null, 2))
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        cases: Object.keys(faelle),
+        viewports: VIEWPORTS.map((v) => v.name),
+        css: compiled.provenance,
+      },
+      null,
+      2,
+    ),
+  )
 }
 
 void main()

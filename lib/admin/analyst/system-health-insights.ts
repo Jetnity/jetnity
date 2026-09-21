@@ -108,11 +108,11 @@ export function beobachtungsstand(insight: Pick<AnalystInsight, 'checkedAt' | 'f
   const instant = new Date(insight.checkedAt as string)
   return {
     dateTime: instant.toISOString(),
-    zeittext: instant.toLocaleString('de-CH', {
+    zeittext: `${instant.toLocaleString('de-CH', {
       dateStyle: 'short',
       timeStyle: 'medium',
       timeZone: 'UTC',
-    }),
+    })} UTC`,
     alterstext: insight.freshness.ageMs == null ? 'Alter unbekannt' : `vor ${formatiereAlter(insight.freshness.ageMs)}`,
   }
 }
@@ -204,6 +204,10 @@ function sucheItem(bericht: SystemHealthBericht, id: SystemHealthId): SystemHeal
   return bericht.items.find((item) => item.id === id)
 }
 
+function sucheItemFuerCheck(bericht: SystemHealthBericht, checkId: string): SystemHealthItem | undefined {
+  return bericht.items.find((item) => item.checks?.some((check) => check.id === checkId))
+}
+
 export function leiteSystemHealthInsights(eingabe: AnalystInsightEingabe): AnalystBericht {
   const generatedAt = iso(eingabe.nowMs)
 
@@ -251,7 +255,7 @@ export function leiteSystemHealthInsights(eingabe: AnalystInsightEingabe): Analy
         source: 'system-health',
         observationScope: 'process-recent',
         access: eingabe.access,
-        insights: [keinSignalInsight(eingabe.access, bericht, originalCheckedAt)],
+        insights: [keinSignalInsight(eingabe.access, bericht)],
         coverage,
       },
       originalCheckedAt,
@@ -413,12 +417,9 @@ function notzugangInsight(
   })
 }
 
-function keinSignalInsight(
-  access: AnalystAccess,
-  bericht: SystemHealthBericht,
-  originalCheckedAt: string | null,
-): AnalystInsight {
+function keinSignalInsight(access: AnalystAccess, bericht: SystemHealthBericht): AnalystInsight {
   const zugriff = sucheCheck(bericht, ZUGRIFF_ID)
+  const eigentuemer = sucheItemFuerCheck(bericht, ZUGRIFF_ID)
   const freshness = zugriff?.freshness ?? UNBEKANNTE_FRISCHE
   return basisInsight({
     id: insightId('system-health-collection', 'item', 'healthy', freshness.state),
@@ -426,7 +427,7 @@ function keinSignalInsight(
     sourceCheckId: ZUGRIFF_ID,
     observed: 'healthy',
     freshness,
-    checkedAt: originalCheckedAt || null,
+    checkedAt: eigentuemer?.checkedAt || null,
     materiality: 'none',
     attribution: 'process-recent',
     title: TEXTE.aktuelleHinweiseKeinSignalTitel,

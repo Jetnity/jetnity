@@ -570,6 +570,31 @@ describe('System-Health-Analyst (synthetic fixtures)', () => {
     assert.notEqual(zugriff!.checkedAt, bericht.sourceCheckedAt)
   })
 
+  test('IA-R1 mixed-clock no-signal: airports-Zeit trägt Frische, Sammlung bleibt sourceCheckedAt', () => {
+    const sammlung = JETZT
+    const itemMs = JETZT - 30_000
+    const itemZeit = new Date(itemMs).toISOString()
+    const sammlungZeit = new Date(sammlung).toISOString()
+    const roh = synthetisch(sammlung)
+    const gemischt: SystemHealthBericht = {
+      ...roh,
+      checkedAt: sammlungZeit,
+      items: roh.items.map((item) =>
+        item.id === 'supabase' ? wendeEvidenceAlterAn({ ...item, checkedAt: itemZeit }, sammlung) : item,
+      ),
+    }
+    const bericht = leite(ROLL, gemischt, sammlung)
+    assert.equal(bericht.insights.length, 1)
+    const ziel = bericht.insights[0]!
+    assert.equal(ziel.title, ADMIN_EHRLICHE_TEXTE.aktuelleHinweiseKeinSignalTitel)
+    assert.equal(ziel.sourceCheckId, 'supabase-app-datenzugriff')
+    assert.equal(ziel.checkedAt, itemZeit)
+    assert.equal(ziel.freshness.ageMs, 30_000)
+    assert.equal(ziel.freshness.state, 'fresh')
+    assert.equal(bericht.sourceCheckedAt, sammlungZeit)
+    assert.notEqual(ziel.checkedAt, bericht.sourceCheckedAt)
+  })
+
   test('IA-R1 item-local missing/invalid checkedAt: nur diese Beobachtung wird unknown', () => {
     const roh = synthetisch()
     const ohneItemZeit: SystemHealthBericht = {
