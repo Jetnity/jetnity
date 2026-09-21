@@ -29,8 +29,8 @@ Exact freeze SHA, ahead/behind, CI/Auth/direct Preview and thread counts belong 
 ## 2. What a reviewer should verify first
 
 1. Diff stays inside gastspeicher / create-entry / PlanenCreateGate / TripPlanner / Reiseidee, their tests, this prefix’s docs and evidence. Account files arrived only via the authorized main merge; they were not edited on this branch. One smallest expansion: `lib/trips/uebernahme.test.ts` fixture only. No `uebernahme.ts` / GastreiseBruecke runtime edit. No #534 homepage files.
-2. Invalid/unreadable active is checked **before** any loader/migration. Missing active + valid legacy occupies create at render and `gastCreateJetztPruefen` without `gastspeicherLaden`. Missing active + **throwing Legacy-key read** is `speicher_unlesbar`, not empty — before network and both persistence functions.
-3. Mounted `/planen` handlers: empty start, inject valid legacy, submit idea + planner → 0 model/place/create. Same for active-absent + Legacy getItem throw. Start-with-legacy hides both forms.
+2. Invalid/unreadable active is checked **before** any loader/migration. Missing active + valid legacy occupies create at render and `gastCreateJetztPruefen` without `gastspeicherLaden`. Missing active + **throwing Legacy-key read** is `speicher_unlesbar`, not empty — before network and both persistence functions. Missing active + migration-accepted Legacy **without persisted id** is `belegt_ohne_kennung`: occupied, no Continue URL, both persistence functions throw without writing.
+3. Mounted `/planen` handlers: empty start, inject valid legacy, submit idea + planner → 0 model/place/create. Same for active-absent + Legacy getItem throw **and** Legacy without persisted id (no `/reisen/` href). Start-with-legacy hides both forms.
 4. Confirmed absence still migrates valid legacy when a loader runs. Valid active still blocks a second draft. Same-`clientRef` Ablegen retry stays idempotent. Invalid+legacy remains byte-identical.
 5. `/planen` distinguishes pending / invalid / unavailable from the existing valid one-trip gate. 360/200% viewport PNGs are 360px wide; inspect images, not element crops.
 6. `gastCreateVorNetzschritt` only forwards passed state. Fresh observation is `gastCreateJetztPruefen`.
@@ -40,7 +40,7 @@ Exact freeze SHA, ahead/behind, CI/Auth/direct Preview and thread counts belong 
 ## 3. What this slice does not mean
 
 - No reset/delete/export/repair product and no new storage key.
-- `GastCreateLink` still uses the loader; valid-legacy first paint may migrate. Out of ownership.
+- `GastCreateLink` still uses the loader; first paint with valid or id-less legacy may migrate under the existing loader contract. Out of ownership. The owned gate still refuses a converter-generated Continue URL.
 - Do not merge this PR. Do not start a follow-up slice. Do not import a later main or sibling branch.
 - Screenshots are synthetic compiled-CSS, not Preview/hardware/Safari/WCAG.
 

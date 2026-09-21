@@ -35,3 +35,7 @@ Rejected alternative: keep the gate on active-v3 only and rely on `gastreiseAnle
 ## Follow-up decision (GP-R3, same date)
 
 A successful absent active-key read plus a **throwing** Legacy-key read is storage-unavailable, not a free slot. `rohLesen` still swallows parse/access errors for generic loader consumers; create occupancy and both persistence preflights use `schluesselRohLesen`, which keeps access failure distinct from absent or schema-invalid Legacy bytes. No new storage key and no malformed-Legacy cleanup.
+
+## Follow-up decision (GP-R4, same date)
+
+A migration-accepted Legacy record whose `id` is missing, empty or not a string occupies create as `belegt_ohne_kennung`. Observation reuses `ausLegacy` only for acceptance; the Continue destination uses only a persisted non-empty string id (`legacyPersistierteKennung`). Converter-generated ids stay in-memory for the loader and are not exposed as `/reisen/…`. Repeated observations stay occupied without an id and write nothing. The loader still generates an id when it actually migrates. No UUID cache, no new key, no cleanup.

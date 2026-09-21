@@ -25,4 +25,6 @@ Own docs / evidence:
 
 Account files on this branch (`lib/trips/daten.ts`, `foundation-e-select.ts`, `account-graph-read.ts` and #531 docs) arrived only via the authorized merge of main `65db24b6`. They were not edited in this session.
 
+GP-R4 adds no new runtime files. Occupancy/gate/create-entry gain `belegt_ohne_kennung` only.
+
 Not touched by this writer: types/trips, schema/mappers/readiness/credentials, `uebernahme.ts`, `GastreiseBruecke.tsx`, `GastCreateLink.tsx`, #534 homepage, Auth, SQL, package/lockfile, global continuity files.

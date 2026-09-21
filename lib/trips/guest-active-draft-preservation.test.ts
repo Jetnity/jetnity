@@ -543,7 +543,10 @@ describe('GP-R4 – Legacy ohne persistierte Kennung belegt, ohne Fortsetzen-URL
     if (erst.art !== 'gueltig' || zweit.art !== 'gueltig') throw new Error('erwartet gueltig')
     assert.equal(erst.id, 'trip-stabil')
     assert.equal(zweit.id, 'trip-stabil')
-    assert.equal(gastCreateJetztPruefen(false).grund, 'besteht')
+    const gate = gastCreateJetztPruefen(false)
+    assert.equal(gate.erlaubt, false)
+    if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(gate.grund, 'besteht')
   })
 
   test('Loader-Migration ohne persistierte ID bleibt erlaubt und schreibt erst beim Laden', () => {
@@ -563,7 +566,10 @@ describe('GP-R4 – Legacy ohne persistierte Kennung belegt, ohne Fortsetzen-URL
     speicher.setzen(SCHLUESSEL.legacy, [legacyOhnePersistierteId('Barcelona', '2026-08-01T10:00:00.000Z')])
     const vorher = speicher.snapshot()
     assert.equal(gastspeicherCreateBelegungLesen().art, 'ungueltig')
-    assert.equal(gastCreateJetztPruefen(false).grund, 'ungueltig')
+    const gate = gastCreateJetztPruefen(false)
+    assert.equal(gate.erlaubt, false)
+    if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(gate.grund, 'ungueltig')
     assertUnveraendert(vorher)
   })
 

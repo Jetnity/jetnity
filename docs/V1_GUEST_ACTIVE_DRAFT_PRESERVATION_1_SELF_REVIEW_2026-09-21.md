@@ -7,7 +7,7 @@ Agent: **Jetnity V1 guest active draft preservation 1**, Generation 1
 Session: `bc-7b2ee7bd-2aa2-4b83-bbf0-4d88eb19bfad`  
 Required and actual model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`)
 
-Reviewed TL comments: 5768184284 (GP-R1/R2), 5768307752 (authorized main merge), 5768634081 (GP-R3).
+Reviewed TL comments: 5768184284 (GP-R1/R2), 5768307752 (authorized main merge), 5768634081 (GP-R3), 5768808875 (GP-R4 continuation of the exact-290c336 review).
 
 ---
 
@@ -16,6 +16,7 @@ Reviewed TL comments: 5768184284 (GP-R1/R2), 5768307752 (authorized main merge),
 - Occupied but unusable active v3 bytes are not free capacity.
 - Missing active + valid legacy occupies `/planen` and action-time create **before** model/place/create. Occupancy lives in `gastspeicherCreateBelegungLesen` and reuses `ausLegacy` read-only.
 - Missing active + throwing Legacy-key `getItem` is `speicher_unlesbar`. Successful malformed Legacy bytes stay non-cleanup / not occupied. Both persistence functions refuse that unreadable slot without writing.
+- Missing active + migration-accepted Legacy without persisted string id is `belegt_ohne_kennung`. Repeated observations stay occupied without an id. Create/network/persistence are blocked; no `/reisen/` Continue. Loader migration policy is unchanged.
 - Loader still skips legacy normalization when active is invalid or storage is unreadable.
 - `gastreiseAnlegen` and `gastreiseAblegen` re-preflight and reject without writing on invalid/unreadable active.
 - Valid legacy migration, one-active-trip, same-ID Ablegen retry and #517 adoption remain.

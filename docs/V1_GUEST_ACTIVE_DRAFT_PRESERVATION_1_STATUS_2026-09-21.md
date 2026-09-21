@@ -1,7 +1,7 @@
 # Jetnity – V1 Guest Active Draft Preservation 1 STATUS
 
 Stand: 21. September 2026  
-Status: **GP-R1/R2/R3 IMPLEMENTED / AUTHORIZED MAIN MERGED / DRAFT / NOT READY / NOT MERGED**
+Status: **GP-R1/R2/R3/R4 IMPLEMENTED / AUTHORIZED MAIN MERGED / DRAFT / NOT READY / NOT MERGED**
 
 Issue: #530  
 Draft PR: #532  
@@ -21,14 +21,15 @@ Traveller context: not relevant. No citizenship, document or residence collectio
 
 ## 1. Residual closed
 
-`gastspeicherLaden` no longer migrates valid legacy onto a present invalid/unreadable active key. Both create persistence functions reject that slot. `/planen` and action-time guards treat a **missing active + valid legacy** draft as occupied without calling the loader. Invalid/unavailable stay distinct. 360/200% gate headings reflow inside the viewport.
+`gastspeicherLaden` no longer migrates valid legacy onto a present invalid/unreadable active key. Both create persistence functions reject that slot. `/planen` and action-time guards treat a **missing active + valid legacy** draft as occupied without calling the loader. A migration-accepted Legacy record **without a persisted string id** occupies the slot as `belegt_ohne_kennung` — create is blocked, no converter-generated Continue URL. Invalid/unavailable stay distinct. 360/200% gate headings reflow inside the viewport.
 
 ## 2. Behaviour
 
 | Active v3 key | Loader | Create gate / action-time | /planen |
 | --- | --- | --- | --- |
 | Absent, no valid legacy | existing | create allowed | form |
-| Absent + valid legacy | existing migration if a loader runs | `besteht` / block before model/place/create | one-trip gate, title from occupancy |
+| Absent + valid legacy with persisted id | existing migration if a loader runs | `besteht` / block before model/place/create | one-trip gate + Continue |
+| Absent + migration-accepted legacy without persisted id | existing migration if a loader runs | `belegt_ohne_kennung` / block, no Continue URL | occupied gate, Erneut prüfen, no `/reisen/…` |
 | Valid | existing | `GastreiseBestehtFehler` / same-id Ablegen retry | existing one-trip gate |
 | Malformed / schema-invalid / empty / primitive / JSON null | `{ aktiv: null }` shape, **zero writes** | `ungueltig` | invalid alert + recheck, no continue |
 | Getter/getItem throws | empty shape, **zero writes** | `speicher_unlesbar` | unavailable alert + recheck |
@@ -41,13 +42,13 @@ Signed-in create never inspects guest localStorage. PlanenCreateGate no longer c
 
 | Gate | Result |
 | --- | --- |
-| focused gastspeicher + create-entry + preservation | **144/144 pass** |
-| `npm test` | **3706/3706 pass** |
+| focused gastspeicher + create-entry + preservation | **pass, including GP-R4 id variants** |
+| `npm test` | **3716/3716 pass** |
 | `npm run typecheck` | **PASS** |
 | `npm run lint` | **PASS** (0 errors; 139 warnings, unchanged class) |
 | `npm run build` | **PASS** |
 | `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
-| mounted handler proof | legacy inject **and** active-absent + Legacy getItem throw: **0** model/place/create, no writes |
+| mounted handler proof | legacy inject, Legacy throw, **and** legacy without persisted id: **0** model/place/create, no Continue href, no writes |
 | 360/200% capture | viewport PNGs **360×800**; document/section/heading widths ≤ 360; overflowX false |
 
 Exact-head CI / Auth / Vercel IDs belong in the PR receipt after this freeze commit.
