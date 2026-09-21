@@ -27,6 +27,7 @@ Required model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-hi
 - Filtering the incomplete traveller and returning the rest. That would invent a trusted smaller party.
 - Changing `partyAusZeilen` globally. Guest/legacy snapshots still need leftover-column expansion.
 - Editing mutation callers after source-read showed they already stop on `problem`.
+- Keeping `accountGraphVerbrauch` as a fake shared gate. AG-R1: unused helper is not consumer proof.
 
 ## Residual / not claimed
 
@@ -34,6 +35,7 @@ Required model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-hi
 - `partyAusZeilen` still expands legacy columns when children are not loaded. Account `reiseLaden` must not hand that result to current consumers.
 - Author-run gates and exact-head CI/Auth/Preview belong in the freeze PR comment.
 - Local main may have moved after `e818c13`. This branch must not autonomously rebase.
+- Acceptance #6 for non-injectable page/actions is source inspection, not executed caller tests.
 
 ## Verdict
 

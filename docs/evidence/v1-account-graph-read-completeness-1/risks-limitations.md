@@ -13,15 +13,21 @@ A later partial-workspace experience would need a separate consumer contract. Th
 - Credential sufficiency, visa rules, or document validity. Only structural load completeness.
 - Authenticated Preview, hardware, Safari or WCAG. No UI change; no visual audit required.
 - Live SQL, Auth, provider or account mutation. None were run.
+- Execution of every page/action caller. Non-injectable callers are source-inspected only.
 
 ## Caller ownership
 
-Source-read on this session: page, readiness/traveller actions, travel-change generate/apply, companion, hotel/flight/activity/mobility/rental actions and Safety already check `Lesung.problem` before using the graph. No out-of-scope caller defect is reported. No expansion requested.
+Source inspection of the named production callers found an existing `Lesung.problem` stop before graph use or mutation. No out-of-scope caller defect. No expansion requested. Matrix: `consumer-source-review.md`.
 
-Safety is executed as a real injectable consumer. Other callers are proved through the shared `accountGraphVerbrauch` gate that matches their existing problem-before-use branch. Those action files were not edited.
+Executed consumer evidence is only:
+
+- `safetyReiseAufloesen` / `safetyEvaluationsPruefen` with this slice’s incomplete Lesung
+- `registryTripUebernahmeOrchestrieren` with the same problem mapping as `registryTravellerInReiseUebernehmen`
+
+There is no shared runtime consumer helper. A previous unused `accountGraphVerbrauch` surrogate was removed after AG-R1.
 
 ## Residual
 
 - `partyAusZeilen` still expands leftover singular columns when children are not loaded. That remains correct for guest/legacy snapshots. Account consumers must not receive that result from `reiseLaden`.
 - Header correction does not prove live Production catalog state.
-- Local `origin/main` may drift after the assigned baseline. This branch must not autonomously rebase.
+- This branch must not autonomously rebase onto later main.

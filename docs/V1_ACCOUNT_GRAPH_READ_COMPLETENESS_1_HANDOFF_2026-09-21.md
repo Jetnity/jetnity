@@ -1,7 +1,7 @@
 # V1 Account Graph Read Completeness 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTATION DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGE-SLICE**
+Status: **AG-R1 CORRECTED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGE-SLICE**
 
 Binding task: `docs/V1_ACCOUNT_GRAPH_READ_COMPLETENESS_1_TASK_2026-09-21.md`  
 Detailed status: `docs/V1_ACCOUNT_GRAPH_READ_COMPLETENESS_1_STATUS_2026-09-21.md`  
@@ -32,7 +32,7 @@ Exact freeze SHA, ahead/behind, CI/Auth/Preview and thread counts belong in the 
 3. Missing-relation detector still runs exactly one legacy select. Nonempty fallback is `Lesung.problem` / `zeilen: null` before `reiseAus`. Empty fallback stays absent. Other errors do not retry.
 4. Canonical success with any missing/null/non-array child, including mixed travellers, fails closed. No filtering.
 5. Internal message may say incomplete traveller load. It must not contain SQL, schema names or raw rows. Page/actions already show generic 500 copy.
-6. Named consumers stop before use. Safety is executed. No out-of-scope caller expansion was needed.
+6. Acceptance #6: executed Safety + registry orchestration only. All other named callers, including both travel-change paths and the registry wrapper, are in `consumer-source-review.md` as source inspection. No unused consumer helper.
 7. `partyAusZeilen` guest/legacy semantics are unchanged. Existing reisende tests stay green.
 8. This self-review is not Technical-Lead PASS.
 

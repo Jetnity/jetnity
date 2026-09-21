@@ -12,7 +12,7 @@ Owned writes:
 - `docs/V1_ACCOUNT_GRAPH_READ_COMPLETENESS_1_HANDOFF_2026-09-21.md`
 - `docs/V1_ACCOUNT_GRAPH_READ_COMPLETENESS_1_SELF_REVIEW_2026-09-21.md`
 - `docs/V1_ACCOUNT_GRAPH_READ_COMPLETENESS_1_DECISION_2026-09-21.md`
-- `docs/evidence/v1-account-graph-read-completeness-1/**`
+- `docs/evidence/v1-account-graph-read-completeness-1/**` including `consumer-source-review.md`
 
 Not written:
 

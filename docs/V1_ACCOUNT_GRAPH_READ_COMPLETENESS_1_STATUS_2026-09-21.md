@@ -1,7 +1,7 @@
 # V1 Account Graph Read Completeness 1 — Status
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
+Status: **AG-R1 CORRECTED / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## First receipt
 
@@ -31,7 +31,7 @@ This is a new Generation1 session, not a restart of #517 / #526 / #528.
 1. `lib/trips/foundation-e-select.ts` — truthful header (fallback only for the narrowly detected missing relation; not a claim that Production lacks child tables). Add `accountGraphKinderVollstaendig`: traveller relation must be an array; every actual traveller must have both child arrays loaded. Empty party and empty children are complete.
 2. `lib/trips/account-graph-read.ts` — injectable orchestration used by `reiseLaden` and tests. Canonical read first. Missing-relation detector may run one legacy select. Nonempty fallback → sanitized `Lesung.problem` / `zeilen: null` **before** mapping. Empty fallback stays absent/not-owned. Fallback/canonical transport errors keep `lese()`. Canonical success with any missing/null/non-array child fails closed before mapping; no filtering of incomplete travellers. Complete rows map unchanged.
 3. `lib/trips/daten.ts` — `reiseLaden` only: call the orchestration. Keep RLS/no-`user_id` filter, `limit(1)`, existing mapper (`reiseAus` + `tageEtappenZuordnen`).
-4. Tests in `lib/trips/account-graph-read.test.ts` plus helper cases in `foundation-e-select.test.ts`. Execute the real orchestration with injected responses. Prove mapper-not-called on incomplete/legacy-nonempty paths. Prove named `reiseLaden` consumers stop before use via the existing problem-before-use contract and the injectable Safety caller. No source-regex policy tests.
+4. Tests in `lib/trips/account-graph-read.test.ts` plus helper cases in `foundation-e-select.test.ts`. Execute the real orchestration with injected responses. Prove mapper-not-called on incomplete/legacy-nonempty paths. Execute injectable Safety and registry-adoption orchestration. Other named callers: source-review matrix only. No unused consumer helper.
 5. Own STATUS / HANDOFF / SELF_REVIEW / DECISION / evidence. No global continuity files. No guest/create, types, schema, Auth, provider or mutation edits.
 
 **Availability tradeoff.** Exceptional incomplete account reads make that trip workspace/actions unavailable. No claim of deleted data. Canonical complete/empty path unchanged.
@@ -48,7 +48,15 @@ This is a new Generation1 session, not a restart of #517 / #526 / #528.
 - Detected missing child relation still runs one legacy select. Nonempty fallback → sanitized `Lesung.problem` / `zeilen: null` before `reiseAus`. Empty fallback stays absent/not-owned. Fallback errors keep `lese()`.
 - Canonical success with any missing/null/non-array child, including mixed travellers, fails closed before mapping.
 - Other canonical errors, null-data/no-error and thrown readers do not retry and do not become empty success.
-- Named consumers already stop on `problem`. Safety is executed as a real caller. No out-of-scope expansion requested.
+- Named consumers already stop on `problem` (source inspection). Executed consumers: Safety and registry-adoption orchestration. No unused shared consumer helper. No out-of-scope expansion requested.
+
+## TL review AG-R1
+
+Reviewed head `9e5ac1acd916924db09abc1411e3e4376e4b6413`. Same session.
+
+- Removed unused `accountGraphVerbrauch` helper/type and the name-loop / surrogate page-action tests.
+- Kept orchestration, mapper-not-called and real Safety tests.
+- Added executed `registryTripUebernahmeOrchestrieren` proof and `consumer-source-review.md` (source inspection vs executed).
 
 ## Scope held
 
@@ -58,15 +66,4 @@ Traveller context is relevant: completeness is checked per traveller; multiple l
 
 ## Author-run gates (not TL PASS)
 
-| Check | Result |
-| --- | --- |
-| focused orchestration/party tests | **PASS** 18/18 |
-| `npm run typecheck` | **PASS** |
-| `npm run lint` | **PASS** (0 errors; 139 pre-existing warnings) |
-| `npm test` | **3677/3677 PASS** |
-| `npm run build` | **PASS** |
-| `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
-
-No live provider, model, account or DB probe. No UI change; no visual audit. Exact-head CI / Auth / Preview IDs belong in the freeze PR comment.
-
-Re-read `origin/main` after fetch: `e818c13ed009932bc06be1382a89467866699995` — **no drift**; ahead 4 / behind 0 before the freeze commit that records these gates.
+Previous exact-head gates on `9e5ac1ac` are invalidated by this AG-R1 head. New focused/full gate results belong in the freeze PR comment.
