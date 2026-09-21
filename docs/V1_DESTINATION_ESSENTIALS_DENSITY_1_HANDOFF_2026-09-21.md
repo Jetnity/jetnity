@@ -1,36 +1,38 @@
 # V1 Destination Essentials Density 1 — Handoff
 
 Stand: 21. September 2026  
-For: ChatGPT / Technical Lead. Head `874674cf` is invalidated by DE-R1.
+For: ChatGPT / Technical Lead. `ca6859a3` gates do not approve a changed integrated head.
 
 ## What to open
 
 1. Draft PR #522 / issue #521  
-2. TL CHANGES REQUIRED DE-R1 on `874674cf` plus this same-session correction  
+2. TL integration authorization of `main@f0093365` plus this merge  
 3. STATUS / SELF_REVIEW with this prefix  
-4. Existing evidence `docs/evidence/v1-destination-essentials-density-1/` — **not recaptured**; fixtures remain equivalent after DE-R1  
-5. New render cases in `lib/trips/destination-essentials-density-1.test.ts`: aggregate-only, stage-only, both-positive `hatHinweise` contradictions
+4. Existing evidence `docs/evidence/v1-destination-essentials-density-1/` — **not recaptured**  
+5. Merge commit `2bb14296` (parents `ca6859a3` + `f0093365`)
 
 ## Look-first
 
 | Question | Evidence |
 | --- | --- |
-| Consistent empty still compact | empty-path tests; harness empty-three after images still apply |
-| Positive flag veto | three new full-display tests; compact path requires `hatHinweise === false` at aggregate and every stage |
-| Domain/detail/link checks kept | existing contradiction tests still require `keine_evidence` + empty details/links + `unvollstaendig === false` |
-| Mixed unchanged | mixed-after screenshot + mixed render tests |
-| Main not integrated | #524 is the next TL integration slot |
+| One authorized merge | `2bb14296`; merge-base now `f0093365`; 0 behind |
+| Conflicts | none |
+| Owned source unchanged | empty diff vs `ca6859a3` for component + density tests |
+| Incoming only | #520 attention + #524 `/planen` paths |
+| DE-R1 still in source | compact path still requires consistent `hatHinweise === false` plus genuine empty domains |
+| Recapture | none |
 
 ## Source vs evidence
 
 | Layer | SHA | Role |
 | --- | --- | --- |
-| Assigned baseline | `1103407b` | not integrated into this correction |
-| Prior freeze | `874674cf` | invalidated by DE-R1 |
-| DE-R1 source | `fb6f58e7` | component + tests |
-| Screenshot product tree | `6f8cd923` | unchanged empty/mixed fixtures; no recapture |
+| Authorized main | `f0093365` | #524 after #520 |
+| DE-R1 accepted freeze | `ca6859a3` | last reviewed product source |
+| Merge | `2bb14296` | integration only |
+| Screenshot product tree | `6f8cd923` | unchanged fixtures |
+| Docs freeze | later commit on `2bb14296` | STATUS/HANDOFF only |
 
 ## Stop
 
-**STOP FOR INDEPENDENT TECHNICAL-LEAD CODE + VISUAL/INTERACTION REVIEW.**  
-No Ready, no PR merge, no follow-up, no main integration by Cursor.
+**STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW OF THE INTEGRATED HEAD.**  
+No Ready, no PR merge, no follow-up slice by Cursor. Main post-merge verification is TL-owned.

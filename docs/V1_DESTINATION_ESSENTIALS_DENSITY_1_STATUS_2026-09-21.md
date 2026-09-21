@@ -1,11 +1,11 @@
 # V1 Destination Essentials Density 1 — Status
 
 Stand: 21. September 2026  
-Status: **DE-R1 CORRECTED / FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
+Status: **INTEGRATED + FROZEN FOR INDEPENDENT TL REVIEW / DRAFT / NOT READY / NOT MERGED / AUTHOR SELF-REVIEW ONLY**
 
 ## Arbeitsblock / Ziel
 
-Accepted #506 VUX-5 plus TL DE-R1: collapse repeated absent-evidence sentences ONLY when every destination and every domain is genuinely `keine_evidence` with no details, links or incompleteness **and** aggregate plus per-stage `hatHinweise` are consistently false. A positive flag vetoes the compact path. Mixed/material/unknown/stale/unavailable/other contradictory input keeps the existing full rendering.
+Same-session integration-only: one TL-authorized merge of `origin/main@f009336530ef81a8c27a3b1e78f2b6072c3e2492` (#524 after #520). No new runtime feature. No unchanged-fixture recapture.
 
 ## Branch / PR / heads
 
@@ -14,35 +14,45 @@ Accepted #506 VUX-5 plus TL DE-R1: collapse repeated absent-evidence sentences O
 | Branch | `fix/v1-destination-essentials-density-1` |
 | Issue | #521 |
 | Draft PR | #522 |
-| Assigned baseline | `main@1103407ba2a9e5fa76f4a8e588ab210934b955e3` |
-| Prior freeze (invalidated) | `874674cfb41befea9517bfcfe8f42d4bf1b73adf` |
-| DE-R1 source head | `fb6f58e71c09c40816a71123ccb42978782c3a69` |
+| Authorized main | `f009336530ef81a8c27a3b1e78f2b6072c3e2492` (#524) |
+| Merge commit | `2bb14296a332a4fe39332a888c0f7a884e8aa1db` |
+| Parents | `ca6859a3` (DE-R1 freeze) + `f0093365` (main) |
+| Ahead / behind after merge | **6 ahead / 0 behind** before this docs freeze |
 | Agent | **Jetnity V1 destination essentials density 1**, Generation 1 |
-| Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto / no substitution |
-| Session | `bc-f4bf1e77-e22d-45b8-a15e-deed1bbbc1d8` (same session, no duplicate agent) |
-| UI session rename | **unknown** |
+| Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto |
+| Session | `bc-f4bf1e77-e22d-45b8-a15e-deed1bbbc1d8` |
 
-Exact corrected freeze SHA belongs in the PR comment. **Main was not integrated.** #520 is merged; #524 holds the next TL integration slot.
+Exact integrated freeze SHA belongs in the PR comment. This is **not** FINAL PASS / Ready / merge of #522.
 
-## DE-R1
+## Source equivalence
 
-Positive aggregate-only, stage-only, or both-positive `hatHinweise` with otherwise empty domains now keep the full per-stage cards. Canonical domain/details/links/incompleteness checks remain required. Genuine consistent empty still compact. Mixed/material fixtures unchanged.
+`git diff ca6859a3 HEAD` on owned product/test files is **empty**:
 
-## Visual evidence (not recaptured)
+- `components/trips/TripWorkspaceDestinationEssentials.tsx`
+- `lib/trips/destination-essentials-density-1.test.ts`
+- `lib/trips/destination-essentials.ts` (never edited)
+- density evidence screenshots / harness (not recaptured)
 
-Harness fixtures on `6f8cd923` remain valid: empty-three / long-names / large-text use `hatHinweise: false` at aggregate and stages; mixed uses material domains. DE-R1 does not change those renders. Before frames stay reconstructed JSX, not a live historical baseline.
+## Integration paths (incoming only)
 
-## Local gates (author-run, not TL PASS)
+No shared-path conflict. Incoming files are #520 attention and #524 `/planen` only, including `lib/trips/attention.ts`, `app/(public)/planen/page.tsx`, `components/trips/PlanenEinstiegNavigation.tsx`, and their docs/evidence/tests. This writer did not edit those files.
+
+## Visual evidence
+
+Existing compiled-CSS captures remain bound to `6f8cd923`. Not recaptured. DE-R1 and this merge do not change those fixtures.
+
+## Local gates after merge (author-run, not TL PASS)
 
 | Check | Result |
 | --- | --- |
-| focused density + derivation tests after DE-R1 | PASS **36** (density+derivation) |
-| remaining repository gates | recorded at the corrected freeze comment |
+| focused density + derivation | PASS **36/36** on integrated tree |
+
+Remaining repository gates belong on the docs-freeze head in the PR comment.
 
 ## Sicherheit / Kosten
 
-No DB/Auth/RLS, secret, provider, model, paid-call, real-account or Production-setting change. No evaluator/attention/`/planen` edit.
+No DB/Auth/RLS, secret, provider, model, paid-call, real-account or Production-setting change. No new runtime feature.
 
 ## Next step
 
-**ChatGPT / Technical Lead** independent exact-head review of the corrected freeze. No Ready / no merge / no follow-up / no autonomous main integration.
+**ChatGPT / Technical Lead** independent exact-head review of the integrated freeze. Main post-merge verification is TL-owned. Cursor does not Ready, merge #522, or start a follow-up.

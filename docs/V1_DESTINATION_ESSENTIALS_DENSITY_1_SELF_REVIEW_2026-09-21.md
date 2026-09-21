@@ -1,36 +1,34 @@
 # V1 Destination Essentials Density 1 — Adversarial self-review
 
 Stand: 21. September 2026  
-Status: **AGENT SELF-REVIEW AFTER DE-R1 — NOT A TECHNICAL-LEAD PASS**
+Status: **AGENT SELF-REVIEW AFTER AUTHORIZED MAIN INTEGRATION — NOT A TECHNICAL-LEAD PASS**
 
 ---
 
-## 1. DE-R1
+## 1. Integration
 
-The first freeze collapsed when domains were empty even if `hatHinweise` was true. That violated the conservative contradictory-flag rule.
+One merge of the authorized `origin/main@f0093365`. Ort strategy. **No conflicts.** Incoming paths are #520 attention and #524 `/planen` only. Owned product/test files have an empty diff versus `ca6859a3`. No new runtime feature. No recapture.
 
-Correction: compact path now requires `essentials.hatHinweise === false` and every `ziel.hatHinweise === false`, **in addition to** `keine_evidence`, no details/links, and `unvollstaendig === false`. Flags alone still cannot prove emptiness.
-
-Render cases added: aggregate-only, stage-only, both-positive. Genuine consistent empty still compact. Mixed/material tests unchanged.
+Focused density + derivation tests still **36/36 PASS** on the integrated tree.
 
 ---
 
 ## 2. Remaining risks / honest limits
 
-- Prior screenshots were not recaptured. That is correct only because harness fixtures never set a contradictory positive flag. If a reviewer wants a new visual of the flag-contradiction full path, that is a later capture, not claimed here.
-- Before images remain reconstructed JSX on `6f8cd923`, not a live historical baseline.
-- Synthetic compiled-CSS only. No authenticated Preview trip, Safari, hardware, or official-travel-advice claim.
-- Main was not integrated. #520 merged; #524 still owns the next integration slot.
-- Exact-head CI/Auth/Preview for the corrected freeze belong in the PR comment.
+- This writer did not review #520/#524 source as owner. Those files arrived via the authorized merge only.
+- Existing screenshots remain bound to `6f8cd923` and stay reconstructed-before / synthetic compiled-CSS. They were not recaptured because fixtures are source-equivalent.
+- Exact-head CI/Auth/Preview for the integrated freeze belong in the PR comment. `ca6859a3` gates are invalid for a new head.
+- Main post-merge verification is TL-owned and is not claimed here.
+- This is not FINAL PASS, Ready, or merge of #522.
 
 ---
 
 ## 3. Scope held
 
-No evaluator, attention, `/planen`, sibling merge, Ready, or PR merge. Same session `bc-f4bf1e77-e22d-45b8-a15e-deed1bbbc1d8`.
+No evaluator, attention, `/planen`, Ready, PR merge, or follow-up. Same session `bc-f4bf1e77-e22d-45b8-a15e-deed1bbbc1d8`. Special Product-Owner gates unchanged.
 
 ---
 
 ## 4. Verdict
 
-Author self-review: DE-R1 is implemented as specified. **Not TL PASS.**
+Author self-review: the authorized one-merge boundary was followed and owned source is equivalent. **Not TL PASS.**
