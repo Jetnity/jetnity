@@ -19,6 +19,10 @@ import type { Metadata } from 'next'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import PlanenCreateGate from '@/components/trips/PlanenCreateGate'
+import {
+  PlanenManuellZeiger,
+  PlanenManuellZiel,
+} from '@/components/trips/PlanenEinstiegNavigation'
 import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { ortBestaetigen } from '@/lib/places/aktionen'
@@ -87,10 +91,13 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
     <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto grid w-full max-w-6xl gap-10">
         <PlanenCreateGate angemeldet={angemeldet}>
-          <Reiseidee
-            angemeldet={angemeldet}
-            initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
-          />
+          <div className="grid gap-3">
+            <PlanenManuellZeiger />
+            <Reiseidee
+              angemeldet={angemeldet}
+              initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
+            />
+          </div>
 
           <div className="flex items-center gap-4">
             <span className="h-px flex-1 bg-line-200" />
@@ -100,12 +107,14 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
             <span className="h-px flex-1 bg-line-200" />
           </div>
 
-          <TripPlanner
-            angemeldet={angemeldet}
-            initialDestination={vor.destination}
-            initialDestinationId={vor.destinationId}
-            initialIdea={vor.idee}
-          />
+          <PlanenManuellZiel>
+            <TripPlanner
+              angemeldet={angemeldet}
+              initialDestination={vor.destination}
+              initialDestinationId={vor.destinationId}
+              initialIdea={vor.idee}
+            />
+          </PlanenManuellZiel>
         </PlanenCreateGate>
       </div>
     </main>
