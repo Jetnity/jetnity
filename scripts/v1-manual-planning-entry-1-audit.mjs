@@ -576,8 +576,163 @@ function bewerten(ergebnis) {
   return fehler
 }
 
+async function overflowMessen(page) {
+  return page.evaluate(() => {
+    const html = document.documentElement
+    const body = document.body
+    const limit = html.clientWidth
+    const offenders = [...document.querySelectorAll('*')]
+      .map((el) => {
+        const r = el.getBoundingClientRect()
+        return {
+          id: el.id || null,
+          tag: el.tagName.toLowerCase(),
+          className: String(el.className).slice(0, 160),
+          text: (el instanceof HTMLElement ? el.innerText : '').trim().slice(0, 80),
+          left: r.left,
+          right: r.right,
+          width: r.width,
+          overflow: Math.max(r.right - limit, -r.left),
+        }
+      })
+      .filter((eintrag) => eintrag.overflow > 1)
+      .sort((a, b) => b.overflow - a.overflow)
+      .slice(0, 8)
+
+    const budget = document.getElementById('feld-budget')
+    const budgetLabel = document.querySelector('label[for="feld-budget"], label:has(#feld-budget)')
+    const planner = document.querySelector('#manuell-planen, form')
+    const box = (el) => {
+      if (!el) return null
+      const r = el.getBoundingClientRect()
+      return { left: r.left, right: r.right, width: r.width, top: r.top }
+    }
+
+    return {
+      clientWidth: limit,
+      scrollWidth: html.scrollWidth,
+      pageOverflow: html.scrollWidth - html.clientWidth,
+      htmlOverflow: html.scrollWidth - html.clientWidth,
+      bodyOverflow: body.scrollWidth - body.clientWidth,
+      offenders,
+      budget: box(budget),
+      budgetLabel: box(budgetLabel),
+      planner: box(planner),
+    }
+  })
+}
+
+async function vergleich200(browser, basis, name, sha) {
+  const viewport = { name: '390x844', width: 390, height: 844, hasTouch: true }
+  const ctx = await kontext(browser, viewport)
+  const page = await ctx.newPage()
+  const protokoll = leeresProtokoll()
+  const vorher = BASIS
+  process.env.AUDIT_BASE = basis
+  await page.addInitScript(() => {
+    window.localStorage.removeItem('jetnity:reise:v3')
+    window.localStorage.removeItem('jetnity:reisen-warteschlange:v3')
+    window.localStorage.removeItem('jetnity:guest-trips:v2')
+  })
+  await abfangen(page, protokoll)
+  const antwort = await page.goto(`${basis}/planen`, { waitUntil: 'load', timeout: 60_000 })
+  try {
+    await hydrationWarten(page)
+  } catch {
+    // overflow measurement does not require hydrated client JS
+  }
+  await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
+  await page.waitForTimeout(250)
+  const budget = page.locator('#feld-budget')
+  if ((await budget.count()) > 0) {
+    await budget.scrollIntoViewIfNeeded()
+    await page.waitForTimeout(150)
+  }
+  const messung = await overflowMessen(page)
+  const pfad = join(EVIDENZ, 'screens', `compare200_${name}_390x844.png`)
+  mkdirSync(dirname(pfad), { recursive: true })
+  await nextDevChromeVerbergen(page)
+  await page.screenshot({ path: pfad, fullPage: false, animations: 'disabled' })
+  const meta = {
+    file: pfad,
+    phase: 'compare-200',
+    name,
+    sha,
+    capturedAt: new Date().toISOString(),
+    browser: 'chromium/playwright',
+    route: `${basis}/planen`,
+    viewport: { width: 390, height: 844 },
+    simulationClass: 'synthetic-guest + intercepted-unavailable + html-font-size-32px',
+    actionSequence: ['goto /planen', 'set html font-size 32px', 'scroll #feld-budget into view'],
+    messung,
+  }
+  writeFileSync(`${pfad}.meta.json`, JSON.stringify(meta, null, 2))
+  process.env.AUDIT_BASE = vorher
+  await ctx.close()
+  return { ok: antwort?.ok() ?? false, messung, meta }
+}
+
 async function main() {
   mkdirSync(join(EVIDENZ, 'screens'), { recursive: true })
+  if (PHASE === 'compare-200') {
+    const baseline = process.env.AUDIT_BASELINE || 'http://localhost:3001'
+    const current = BASIS
+    const baselineSha = process.env.AUDIT_BASELINE_SHA || '1103407ba2a9e5fa76f4a8e588ab210934b955e3'
+    const currentSha = process.env.AUDIT_CURRENT_SHA || SHA
+    const browser = await chromium.launch({ headless: true })
+    const vorher = await vergleich200(browser, baseline, 'baseline', baselineSha)
+    const nachher = await vergleich200(browser, current, 'current', currentSha)
+    await browser.close()
+    const delta = {
+      pageOverflow: nachher.messung.pageOverflow - vorher.messung.pageOverflow,
+      budgetRight: (nachher.messung.budget?.right ?? 0) - (vorher.messung.budget?.right ?? 0),
+      budgetWidth: (nachher.messung.budget?.width ?? 0) - (vorher.messung.budget?.width ?? 0),
+      budgetLabelRight:
+        (nachher.messung.budgetLabel?.right ?? 0) - (vorher.messung.budgetLabel?.right ?? 0),
+    }
+    const worsened = delta.pageOverflow > 0.5 || delta.budgetRight > 0.5
+    const bericht = {
+      phase: 'compare-200',
+      capturedAt: JETZT,
+      productTree: PRODUCT_TREE,
+      baseline: { sha: baselineSha, basis: baseline, ...vorher },
+      current: { sha: currentSha, basis: current, ...nachher },
+      delta,
+      worsened,
+      sameResidual:
+        vorher.messung.offenders[0]?.id === nachher.messung.offenders[0]?.id ||
+        (vorher.messung.offenders[0]?.text || '').includes('Gesamtbudget'),
+      limits: [
+        'local Chromium/Playwright, not hardware/Safari',
+        '200% text uses html font-size 32px, not OS text-only zoom',
+        'baseline served from worktree 1103407b; current from this checkout',
+        'no general recapture; this is the matched 200% overflow comparison only',
+      ],
+    }
+    writeFileSync(join(EVIDENZ, 'audit-compare-200.json'), JSON.stringify(bericht, null, 2))
+    if (!vorher.ok || !nachher.ok) {
+      console.error(JSON.stringify({ ok: false, reason: 'route-failed', bericht }, null, 2))
+      process.exit(1)
+    }
+    console.log(
+      JSON.stringify(
+        {
+          ok: true,
+          phase: 'compare-200',
+          worsened,
+          delta,
+          baselineOverflow: vorher.messung.pageOverflow,
+          currentOverflow: nachher.messung.pageOverflow,
+          baselineTop: vorher.messung.offenders[0],
+          currentTop: nachher.messung.offenders[0],
+        },
+        null,
+        2,
+      ),
+    )
+    return
+  }
+
   const server = await serverStarten()
   const browser = await chromium.launch({ headless: true })
   const firstScreens = []
