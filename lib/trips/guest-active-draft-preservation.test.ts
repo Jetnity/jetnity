@@ -30,13 +30,14 @@ import type { Trip } from '@/types/trips'
 function speicherStellen() {
   const ablage = new Map<string, string>()
   let lesenWirft = false
+  const werfendeSchluessel = new Set<string>()
   const schreibvorgaenge: Array<{ art: 'set' | 'remove'; schluessel: string }> = []
 
   Object.assign(globalThis, {
     window: {
       localStorage: {
         getItem: (schluessel: string) => {
-          if (lesenWirft) throw new Error('SecurityError')
+          if (lesenWirft || werfendeSchluessel.has(schluessel)) throw new Error('SecurityError')
           return ablage.get(schluessel) ?? null
         },
         setItem: (schluessel: string, wert: string) => {
@@ -56,6 +57,9 @@ function speicherStellen() {
     schreibvorgaenge,
     lesenWerfen: () => {
       lesenWirft = true
+    },
+    schluesselWerfen: (schluessel: string) => {
+      werfendeSchluessel.add(schluessel)
     },
     roh: (schluessel: string) => ablage.get(schluessel) ?? null,
     setzen: (schluessel: string, wert: unknown) =>
@@ -344,6 +348,72 @@ describe('Fehlender aktiver Schlüssel plus gültiges Legacy belegt den Create-S
     if (gate.erlaubt) throw new Error('unerwartet erlaubt')
     assert.equal(gate.grund, 'ungueltig')
     assertUnveraendert(vorher)
+  })
+})
+
+function ablegenEntwurf(): Trip {
+  return {
+    id: 'trip-neu',
+    clientRef: 'trip-neu',
+    title: 'Neuer Vorschlag',
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    startDate: '2026-09-12',
+    endDate: '2026-09-16',
+    travellers: 2,
+    currency: 'CHF',
+    budgetAmount: null,
+    status: 'draft',
+    pace: 'balanced',
+    interests: [],
+    travelWish: null,
+    revision: 1,
+    lastMutationId: null,
+    stages: [],
+    days: [],
+    ohneTag: [],
+    createdAt: '2026-09-12T10:00:00.000Z',
+    updatedAt: '2026-09-12T10:00:00.000Z',
+  } as Trip
+}
+
+describe('Aktiver Schlüssel fehlt, Legacy-Lesen wirft – fail closed', () => {
+  test('Belegung, Action-Gate und beide Persistenzwege bleiben unlesbar ohne Schreiben', () => {
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    const vorher = speicher.snapshot()
+    speicher.schluesselWerfen(SCHLUESSEL.legacy)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    assert.equal(gastspeicherCreateBelegungLesen().art, 'speicher_unlesbar')
+    assert.equal(gastCreateBelegungLesen().art, 'speicher_unlesbar')
+
+    const gate = gastCreateJetztPruefen(false)
+    assert.equal(gate.erlaubt, false)
+    if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+    assert.equal(gate.grund, 'speicher_unlesbar')
+    assert.equal(darfCreateModellAufrufen(gate), false)
+
+    assert.throws(() => gastreiseAnlegen(eingabe()), GastspeicherUnlesbarFehler)
+    assert.throws(() => gastreiseAblegen(ablegenEntwurf()), GastspeicherUnlesbarFehler)
+    assert.equal(gastspeicherLaden().aktiv, null)
+    assertUnveraendert(vorher)
+  })
+
+  test('Konto bleibt unabhängig vom werfenden Legacy-Schlüssel', () => {
+    speicher.schluesselWerfen(SCHLUESSEL.legacy)
+    assert.equal(gastCreateJetztPruefen(true).erlaubt, true)
+    assert.equal(gastCreateBelegungLesen().art, 'speicher_unlesbar')
+  })
+
+  test('beschädigte Legacy-Bytes bleiben ein freier Slot und unaufgeräumt', () => {
+    speicher.setzen(SCHLUESSEL.legacy, '{bad-legacy')
+    const vorher = speicher.snapshot()
+    assert.equal(gastspeicherCreateBelegungLesen().art, 'fehlend')
+    assert.equal(gastCreateJetztPruefen(false).erlaubt, true)
+    const reise = gastreiseAnlegen(eingabe({ title: 'Neu trotz Altbytes' }))
+    assert.equal(reise.title, 'Neu trotz Altbytes')
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), '{bad-legacy')
+    assert.equal(vorher.legacy, '{bad-legacy')
   })
 })
 

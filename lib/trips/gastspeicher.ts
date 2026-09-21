@@ -238,18 +238,18 @@ function rohLesen(schluessel: string): unknown {
   }
 }
 
-/**
- * Liest nur die Rohbytes des aktiven Schlüssels.
- *
- * Im Gegensatz zu `rohLesen` bleibt ein vorhandener, aber unbrauchbarer
- * Eintrag von einem fehlenden Schlüssel und von einem unlesbaren Speicher
- * unterscheidbar. Kein Parse, kein Schema, kein Schreiben.
- */
-function aktiveSchluesselRohLesen():
+type SchluesselRoh =
   | { art: 'nicht_im_browser' }
   | { art: 'speicher_unlesbar' }
   | { art: 'fehlend' }
-  | { art: 'roh'; bytes: string } {
+  | { art: 'roh'; bytes: string }
+
+/**
+ * Liest Rohbytes eines Schlüssels, ohne Parse-Fehler mit Zugriffsstörungen
+ * zu vermengen. Ein Wurf von getItem oder dem Storage-Getter ist unlesbar.
+ * Vorhandene, aber unbrauchbare Bytes bleiben `roh`.
+ */
+function schluesselRohLesen(schluessel: string): SchluesselRoh {
   if (typeof window === 'undefined') return { art: 'nicht_im_browser' }
 
   let speicher: Storage
@@ -267,13 +267,17 @@ function aktiveSchluesselRohLesen():
 
   let roh: string | null
   try {
-    roh = speicher.getItem(SCHLUESSEL_AKTIV)
+    roh = speicher.getItem(schluessel)
   } catch {
     return { art: 'speicher_unlesbar' }
   }
 
   if (roh === null) return { art: 'fehlend' }
   return { art: 'roh', bytes: roh }
+}
+
+function aktiveSchluesselRohLesen(): SchluesselRoh {
+  return schluesselRohLesen(SCHLUESSEL_AKTIV)
 }
 
 /**
@@ -334,7 +338,9 @@ export function gastspeicherCreateBelegungLesen(): GastspeicherCreateBelegung {
     return { art: 'gueltig', id: aktiv.id, titel: aktiv.title?.trim() || null }
   }
 
-  const neuester = legacyEntwuerfeLesen()[0]
+  const legacy = legacyEntwuerfeBeobachten()
+  if (legacy.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  const neuester = legacy.entwuerfe[0]
   if (neuester) {
     return { art: 'gueltig', id: neuester.id, titel: neuester.title?.trim() || null }
   }
@@ -344,6 +350,8 @@ export function gastspeicherCreateBelegungLesen(): GastspeicherCreateBelegung {
 /**
  * Create- und Schreibwege prüfen den aktiven Schlüssel frisch, bevor sie
  * Kapazität annehmen. Der Loader selbst wirft hier nicht – nur Anlegen/Ablegen.
+ * Fehlt der aktive Schlüssel, darf ein unlesbarer Legacy-Schlüssel nicht als
+ * freie Kapazität gelten.
  */
 function aktiveAblageVorSchreibenPruefen() {
   const vor = aktiveGastreiseVorpruefen()
@@ -351,6 +359,9 @@ function aktiveAblageVorSchreibenPruefen() {
     throw new GastspeicherUnlesbarFehler()
   }
   if (vor.art === 'ungueltig') throw new GastreiseUnbrauchbarFehler()
+  if (vor.art === 'fehlend' && legacyEntwuerfeBeobachten().art === 'speicher_unlesbar') {
+    throw new GastspeicherUnlesbarFehler()
+  }
 }
 
 /**
@@ -498,17 +509,42 @@ function einzelneEtappe(
   }
 }
 
+type LegacyEntwuerfeBeobachtung =
+  | { art: 'speicher_unlesbar'; entwuerfe: [] }
+  | { art: 'gelesen'; entwuerfe: Trip[] }
+
 /**
  * Gültige Legacy-Entwürfe, neueste zuerst. Dieselbe Parse-/Schema-Politik
- * wie die Übernahme – nur ohne Schreiben.
+ * wie die Übernahme – nur ohne Schreiben. Ein Wurf beim Lesen des
+ * Legacy-Schlüssels ist unlesbar, nicht „kein Entwurf“. Vorhandene, aber
+ * unbrauchbare Bytes bleiben liegen und zählen nicht als gültige Belegung.
  */
+function legacyEntwuerfeBeobachten(): LegacyEntwuerfeBeobachtung {
+  const roh = schluesselRohLesen(SCHLUESSEL_LEGACY)
+  if (roh.art === 'nicht_im_browser' || roh.art === 'speicher_unlesbar') {
+    return { art: 'speicher_unlesbar', entwuerfe: [] }
+  }
+  if (roh.art === 'fehlend') return { art: 'gelesen', entwuerfe: [] }
+
+  let geparst: unknown
+  try {
+    geparst = JSON.parse(roh.bytes) as unknown
+  } catch {
+    return { art: 'gelesen', entwuerfe: [] }
+  }
+  if (!Array.isArray(geparst)) return { art: 'gelesen', entwuerfe: [] }
+
+  return {
+    art: 'gelesen',
+    entwuerfe: geparst
+      .map(ausLegacy)
+      .filter((entwurf): entwurf is Trip => entwurf !== null)
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+  }
+}
+
 function legacyEntwuerfeLesen(): Trip[] {
-  const roh = rohLesen(SCHLUESSEL_LEGACY)
-  if (!Array.isArray(roh)) return []
-  return roh
-    .map(ausLegacy)
-    .filter((entwurf): entwurf is Trip => entwurf !== null)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  return legacyEntwuerfeBeobachten().entwuerfe
 }
 
 /**

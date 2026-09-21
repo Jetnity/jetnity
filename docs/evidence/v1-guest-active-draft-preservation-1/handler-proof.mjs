@@ -36,6 +36,8 @@ const LEGACY = [
 const LEGACY_BYTES = JSON.stringify(LEGACY)
 const BESTEHT =
   'Ohne Konto lässt sich eine Reise planen. Öffne deinen bestehenden Entwurf oder erstelle ein Konto, um mehrere Reisen zu speichern.'
+const UNLESBAR =
+  'Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden.'
 
 mkdirSync(join(ROOT, 'screens'), { recursive: true })
 mkdirSync(ARTIFACTS, { recursive: true })
@@ -261,6 +263,73 @@ async function main() {
       modelPlaceCreate: protokoll.modelPlaceCreate.length,
       mutationsAttempted: protokoll.versuche.length,
       mutationsCompleted: protokoll.unerwartetAbgeschlossen.length,
+    })
+    await context.close()
+  }
+
+  {
+    const { context, page, protokoll } = await kontext(browser)
+    await page.goto(`${BASIS}/planen`, { waitUntil: 'load', timeout: 60_000 })
+    await page.waitForTimeout(400)
+    assert(await page.locator('textarea').first().isVisible(), 'Leerer Start muss das Formular zeigen')
+    const vorher = await rohLesen(page)
+    assert(vorher.aktiv === null && vorher.legacy === null, 'GP-R3 start muss leer sein')
+
+    await page.evaluate(({ legacy }) => {
+      const original = Storage.prototype.getItem
+      Storage.prototype.getItem = function getItem(schluessel) {
+        if (schluessel === legacy) throw new Error('SecurityError')
+        return original.call(this, schluessel)
+      }
+    }, { legacy: SCHLUESSEL_LEGACY })
+
+    await page.locator('textarea').first().fill('Weekend in Barcelona with two friends')
+    await page.getByRole('button', { name: 'Entwurf erstellen' }).click()
+    await page.waitForTimeout(500)
+    const ideeText = await page.locator('body').innerText()
+    assert(ideeText.includes(UNLESBAR), 'Idee-Handler zeigte unlesbares Legacy nicht')
+    assert(
+      !(await page.getByRole('button', { name: 'Entwurf übernehmen' }).count()),
+      'Idee-Adoption bei unlesbarem Legacy',
+    )
+
+    await page.getByRole('button', { name: 'Reise erstellen' }).click()
+    await page.waitForTimeout(500)
+    const manuellText = await page.locator('body').innerText()
+    assert(manuellText.includes(UNLESBAR), 'Manuell-Handler zeigte unlesbares Legacy nicht')
+
+    const danach = await page.evaluate(({ aktiv, warteschlange }) => {
+      try {
+        return {
+          aktiv: window.localStorage.getItem(aktiv),
+          warteschlange: window.localStorage.getItem(warteschlange),
+        }
+      } catch (fehler) {
+        return { error: String(fehler?.message || fehler) }
+      }
+    }, { aktiv: SCHLUESSEL_AKTIV, warteschlange: SCHLUESSEL_WARTESCHLANGE })
+    assert(danach.aktiv === null, 'Legacy-Wurf schrieb den aktiven Schlüssel')
+    assert(danach.warteschlange === null, 'Legacy-Wurf schrieb die Warteschlange')
+    assert(protokoll.modelPlaceCreate.length === 0, `Modell/Ort/Create: ${JSON.stringify(protokoll.modelPlaceCreate)}`)
+    assert(protokoll.versuche.length === 0, `Mutationsversuche: ${JSON.stringify(protokoll.versuche)}`)
+    assert(protokoll.unerwartetAbgeschlossen.length === 0)
+
+    await page.screenshot({
+      path: join(ROOT, 'screens', 'handler_legacy_throw_after_render_390.png'),
+      fullPage: false,
+    })
+    await page.screenshot({
+      path: join(ARTIFACTS, 'handler_legacy_throw_after_render_390.png'),
+      fullPage: false,
+    })
+
+    faelle.push({
+      name: 'mounted_handlers_after_legacy_getItem_throw',
+      paths: ['Reiseidee.erzeugen', 'TripPlanner.absenden'],
+      modelPlaceCreate: 0,
+      mutationsAttempted: 0,
+      mutationsCompleted: 0,
+      rawActiveUnchanged: danach.aktiv === null,
     })
     await context.close()
   }

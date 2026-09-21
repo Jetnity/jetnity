@@ -470,6 +470,21 @@ async function main() {
       },
     },
     {
+      name: 'legacy_throw_390x844',
+      width: 390,
+      height: 844,
+      simulationClass: 'synthetic_active_absent_legacy_getitem_throws',
+      sequence: ['init active absent', 'legacy getItem throws', 'gate unlesbar', 'no mutation'],
+      skipRaw: true,
+      init: ({ legacy }) => {
+        const original = Storage.prototype.getItem
+        Storage.prototype.getItem = function getItem(schluessel) {
+          if (schluessel === legacy) throw new Error('SecurityError')
+          return original.call(this, schluessel)
+        }
+      },
+    },
+    {
       name: 'legacy_only_390x844',
       width: 390,
       height: 844,
