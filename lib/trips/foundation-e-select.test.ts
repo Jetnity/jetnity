@@ -3,7 +3,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { foundationERelationFehlt } from '@/lib/trips/foundation-e-select'
+import { accountGraphKinderVollstaendig, foundationERelationFehlt } from '@/lib/trips/foundation-e-select'
 
 describe('Foundation-E Expand/Contract Read', () => {
   test('fehlende Child-Relation darf auf Legacy-Select fallen', () => {
@@ -54,5 +54,32 @@ describe('Foundation-E Expand/Contract Read', () => {
     )
     assert.equal(foundationERelationFehlt({ code: 'PGRST200', message: 'something else' }), false)
     assert.equal(foundationERelationFehlt(null), false)
+  })
+
+  test('strukturelle Ladevollständigkeit trennt leere Party von fehlender Relation', () => {
+    assert.equal(accountGraphKinderVollstaendig({ trip_travellers: [] }), true)
+    assert.equal(
+      accountGraphKinderVollstaendig({
+        trip_travellers: [{ trip_traveller_citizenships: [], trip_traveller_documents: [] }],
+      }),
+      true,
+    )
+    assert.equal(accountGraphKinderVollstaendig({}), false)
+    assert.equal(accountGraphKinderVollstaendig({ trip_travellers: null }), false)
+    assert.equal(
+      accountGraphKinderVollstaendig({
+        trip_travellers: [{ trip_traveller_citizenships: [], trip_traveller_documents: null }],
+      }),
+      false,
+    )
+    assert.equal(
+      accountGraphKinderVollstaendig({
+        trip_travellers: [
+          { trip_traveller_citizenships: [], trip_traveller_documents: [] },
+          { trip_traveller_citizenships: undefined, trip_traveller_documents: [] },
+        ],
+      }),
+      false,
+    )
   })
 })
