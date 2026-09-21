@@ -153,3 +153,17 @@ Before handoff:
 - STOP FOR TECHNICAL-LEAD VISUAL/PRODUCT REVIEW.
 
 No Ready. No merge. No follow-up slice. ChatGPT TL independently reads/screens the evidence and decides bounded repairs. No unreviewed author self-rating becomes TL or Product-Owner acceptance.
+
+## 10. Dated amendment — 21 September 2026 — evidence transport only
+
+Same session `bc-89494e60-e648-4519-bb84-0213d85bb04f`, Generation 1, model Cursor Grok 4.6 High Fast. No restart, recapture, redesign, finding change or product work.
+
+Technical-Lead PNG retrieval failed as a transport problem (GitHub base64/UTF-8, fetch_blob, local download, no CI artifacts). This amendment authorizes only mechanically derived JPEG review copies inside `docs/evidence/v1-visual-ux-device-audit-1/`:
+
+- Preserve every original PNG and original `manifest.json` / capture SHA.
+- Eight named JPEG derivatives + 76-character-line `.base64.txt` + compact `review-transport.json`.
+- Ordinary JPEG compression; phone native 360/390 width; desktop proportional readable width; aim ≤18 KiB; record any size exception rather than making text illegible.
+- No generative edits. Strip EXIF. No secrets.
+- GitHub user-image attachment only if an existing tool can produce it without new credentials or extra data upload. VM-local `/opt/cursor/artifacts` paths are not portable evidence.
+
+Freeze after the bounded evidence commit; fresh exact-head CI/Preview in a PR comment; STOP. This does not award a visual PASS.

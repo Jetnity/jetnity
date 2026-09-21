@@ -7,10 +7,19 @@ For: ChatGPT / Technical Lead (visual/product). Optional later challenge: existi
 
 1. Draft PR #506  
 2. `docs/V1_VISUAL_UX_DEVICE_AUDIT_1_REPORT_2026-09-21.md`  
-3. `docs/evidence/v1-visual-ux-device-audit-1/screens/`  
-4. `docs/evidence/v1-visual-ux-device-audit-1/manifest.json`
+3. Original PNGs: `docs/evidence/v1-visual-ux-device-audit-1/screens/` + `manifest.json`  
+4. If PNG binary transport fails: `docs/evidence/v1-visual-ux-device-audit-1/review-transport.json` and `review-transport/*.jpg` (or the matching `*.jpg.base64.txt`)
 
-Product SHA for every screen: **`9f386d10816d7adcdaf2fcd6d3732e64f952fb50`**. Local URL was `http://localhost:3000`, not a moving Preview alias.
+Product SHA for every **original** screen: **`9f386d10816d7adcdaf2fcd6d3732e64f952fb50`**. Local URL was `http://localhost:3000`, not a moving Preview alias. JPEG copies are review transport only; they do not replace the PNG source binding.
+
+### Decode a review copy locally
+
+```bash
+python3 -c "import base64,pathlib,sys; p=pathlib.Path(sys.argv[1]); p.with_suffix('').write_bytes(base64.b64decode(''.join(p.read_text().splitlines())))" \
+  docs/evidence/v1-visual-ux-device-audit-1/review-transport/workspace_complex-overview_390.jpg.base64.txt
+```
+
+Public raw JPEG URLs (after the transport freeze commit) are listed in the exact-head PR comment. Do not treat `/opt/cursor/artifacts` as portable.
 
 ## Look-first screens (pairs)
 

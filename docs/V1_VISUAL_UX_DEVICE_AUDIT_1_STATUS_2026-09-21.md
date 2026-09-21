@@ -1,7 +1,7 @@
 # V1 Visual UX & Device Audit 1 — Status
 
 Stand: 21. September 2026  
-Status: **EVIDENCE WRITTEN / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD VISUAL/PRODUCT REVIEW**
+Status: **EVIDENCE + REVIEW-TRANSPORT WRITTEN / DRAFT / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD VISUAL/PRODUCT REVIEW**
 
 ## Arbeitsblock / Ziel
 
@@ -20,31 +20,31 @@ Screenshot-backed visual/product/device audit of the visitor → search/planning
 | Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — no Auto |
 | Session | `bc-89494e60-e648-4519-bb84-0213d85bb04f` |
 
-Audit-doc HEAD after this persist will be recorded in the exact-head PR comment. Do not treat an older comment as the freeze.
+Previous freeze (first evidence persist): `c8d30e9f165cddcaf17fe330dfe916be002572e6`.  
+This transport amendment produces a new audit-doc HEAD. Exact SHA + CI/Preview IDs belong in the **new** PR comment only. Do not treat `c8d30e9f` or `/opt/cursor/artifacts` as the current freeze.
+
+Original rendered product SHA remains `9f386d10816d7adcdaf2fcd6d3732e64f952fb50`. Screens were **not** recaptured.
 
 ## Live-main drift (reported, not recaptured)
 
-At persist time `origin/main` = `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` (`Close V1 Security Event Mutation-Derived Producer Contract 1 (#494)`).
+At first persist, `origin/main` = `c7fb9f0f693ba9f020add7b26a041263aa7e3b07` (#494). TL later recorded continuity #512 merged at `d3d42047ba247ded8d6c584e447db1573b80f19a` (docs/descriptive metadata only). Live-main SHA at this transport persist is re-read before the freeze comment.
 
-- Ahead of merge-base: this slice’s audit commit(s)  
-- Behind: 17 commits, **all #494** (docs + `scripts/db/*` + one `package.json` script)  
-- **No `app/`, `components/`, or `styles/` in that diff.** Visual screens of the product UI remain valid. They are not silently “current main” for the harness files.
-
-#494 head `3de1d8e857a383dbf9bfb2e04f37374da552ac4a` is **merged**. This writer did not touch, rebase, comment-dispatch or restart it.
+- **No `app/`, `components/`, or `styles/`** in the known post-baseline main commits. Visual screens remain bound to product SHA `9f386d10`, not relabelled as later main.
+- #494 remains **merged**. This writer did not touch, rebase, comment-dispatch or restart it. Sibling #509 / #510 were not edited.
 
 ## Bereits umgesetzt
 
 - Real browser verified (Chrome 148 + Playwright viewports)  
 - Site inventory + deep guest journey  
-- 66 non-sensitive PNGs + manifest + layout measures  
+- 66 non-sensitive PNGs + manifest + layout measures (unchanged)  
 - Reused `scripts/mobile-accessibility-1-audit.mjs`: 21/21 OK  
-- In-progress PR comment after first real screens  
-- REPORT / this STATUS / HANDOFF / SELF_REVIEW  
+- REPORT / first STATUS / HANDOFF / SELF_REVIEW  
+- **Transport amendment:** 8 JPEG review copies + `.base64.txt` (76-char lines) + `review-transport.json` under `docs/evidence/v1-visual-ux-device-audit-1/`. Original PNG SHA-256 values verified identical to `c8d30e9f`. One recorded size exception: `home_initial_1024.jpg` 720×540 Q=32 / 27892 B so VUX-8 truncation stays readable. GitHub user-image attachment **not** produced (no existing portable upload tool / no new credentials).
 
 ## Offen
 
-- Technical-Lead visual/product review of the screens  
-- Exact-head CI / Vercel readback in the **final PR comment** (no extra evidence-only commit after freeze)  
+- Technical-Lead visual/product review of the **original PNGs** (or these review copies if PNG transport remains blocked)  
+- Exact-head CI / Vercel readback in the **transport freeze PR comment**  
 - Account/Admin interiors still BLOCKED_ACCESS  
 - Real-device / Safari untested  
 

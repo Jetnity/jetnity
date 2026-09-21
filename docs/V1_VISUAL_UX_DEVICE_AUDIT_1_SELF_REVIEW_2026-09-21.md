@@ -68,6 +68,10 @@ Days 7/9/10 were omitted on purpose in the fixture. Missing day chips are **not*
 
 ---
 
-## 4. Stop
+## 4. Transport amendment (same session, not a new audit)
+
+21 September 2026: JPEG review copies were derived from the eight named existing PNGs with Pillow 12.3.0. Original PNG SHA-256 values match `c8d30e9f`. Findings VUX-1…8 and scopes A/B/C were **not** changed. `home_initial_1024.jpg` is the only size-budget exception (27892 B) so VUX-8 remains judgeable. These JPEGs are lossy review transport, not new captures and not a visual PASS.
+
+## 5. Stop
 
 No Ready. No merge. No self-acceptance.
