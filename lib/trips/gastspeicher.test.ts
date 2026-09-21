@@ -26,7 +26,6 @@ import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
-  GastspeicherUnlesbarFehler,
   SCHLUESSEL,
   SpeicherFehler,
   gastAktivitaetUebernehmen,

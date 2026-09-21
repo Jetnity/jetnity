@@ -187,6 +187,7 @@ describe('Loader und Create überschreiben ungültige aktive Bytes nicht', () =>
             clientRef: 'trip-neu',
             title: 'Neuer Vorschlag',
             origin: 'Zürich',
+            originPlaceId: 'geonames:2657896',
             startDate: '2026-09-12',
             endDate: '2026-09-16',
             travellers: 2,
