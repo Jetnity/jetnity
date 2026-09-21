@@ -18,6 +18,7 @@ Self-review: `docs/V1_GUEST_DRAFT_ADOPTION_HONESTY_1_SELF_REVIEW_2026-09-21.md`
 | Branch | `fix/v1-guest-draft-adoption-honesty-1` |
 | Assigned dispatch base | `main@19a91a2594127eb2b6104b68da69786194e13865` |
 | Dispatch seed | `4f171cfa512b89a5f19ea557210b41c4c00b0701` |
+| Observed `origin/main` | `19a91a2594127eb2b6104b68da69786194e13865` — matches baseline; behind 0 |
 | Agent | Jetnity V1 guest draft adoption honesty 1, Generation 1 |
 | Session | `bc-47795181-3fb3-4cfc-82cc-ce3c05d63c3b` |
 | Required model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |

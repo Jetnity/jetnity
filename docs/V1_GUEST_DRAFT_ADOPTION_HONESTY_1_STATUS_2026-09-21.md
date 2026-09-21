@@ -68,9 +68,20 @@ Traveller context is not relevant. No citizenship, document or credential collec
 
 ## 5. Gates
 
-Focused executable cases: `lib/trips/gastspeicher.test.ts` + `lib/trips/uebernahme.test.ts` — **129/129 pass** (local, mocked storage/server).
+Local gates on implementation head `00c65337ed8a90af58d386c96b63b9ae7ddf4382` (mocked storage/server; not authenticated E2E):
 
-Repository gates and exact-head CI / Auth / Vercel IDs are recorded in the freeze PR comment. This document does not claim those results until they are verified at the frozen head.
+| Gate | Result |
+| --- | --- |
+| focused gastspeicher + uebernahme | **129/129 pass** |
+| `npm run typecheck` | **PASS** |
+| `npm run lint` | **PASS** (0 errors; 138 pre-existing warnings) |
+| `npm test` | **3552/3552 pass** |
+| `npm run build` | **PASS** |
+| `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
+
+Fetched `origin/main` = `19a91a2594127eb2b6104b68da69786194e13865` — matches the assigned dispatch baseline. Ahead 2 (seed + this implementation), behind 0. No main integration in this writer.
+
+Exact-head CI / Auth / Vercel / thread IDs belong in the freeze PR comment only.
 
 ## 6. Next step
 
