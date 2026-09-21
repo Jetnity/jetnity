@@ -1,7 +1,10 @@
 # Jetnity – Full-Potential AI Operating System 2 – Status
 
 Stand: 21. September 2026  
-Status: **21 SEPTEMBER SCOPED PO LIMITATIONS RECORDED / SEP21 DAILY+WEEKLY OUTPUT-CONSISTENCY PASS / BEST-EFFORT CHAT-PUSH ACCEPTED AS PROVISIONAL LIMITATION / NATIVE ARCHIVE DEFERRED / WHOLE-SYSTEM REVIEW PENDING / HOLD REMAINS ACTIVE / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE**
+Status: **SUPERSEDED AS LIVE CONTROL / #491 MERGED / DEDICATED HOLD CLOSURE IS PR #492**
+
+Current live writer: Draft PR #492 / `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md`.  
+This file remains the historical 21 September scoped-limitation persist for merged #491. Do not treat `#491 OPEN` or `final whole-system review pending` as current.
 
 ## 1. Identity
 
@@ -11,8 +14,8 @@ Status: **21 SEPTEMBER SCOPED PO LIMITATIONS RECORDED / SEP21 DAILY+WEEKLY OUTPU
 | Generation | 1 |
 | Required model | Cursor Grok 4.6 High Fast — no Auto/substitution |
 | Session | `bc-36b222c4-88a8-43ed-8c4a-a0f5ade7491c` |
-| Issue / Draft PR | #490 / #491 Draft |
-| Branch | `governance/full-potential-ai-operating-system-2` |
+| Historical Issue / Draft PR | #490 / #491 — **MERGED**; live writer is now #492 |
+| Historical branch | `governance/full-potential-ai-operating-system-2` — merged. Live branch: `governance/full-potential-ai-operating-system-2-hold-closure` |
 | Canonical base | `main@ff0df56ae32e3f28e0f9c160a40fa75de81ba133` |
 | Dispatch / last persist predecessor | `0540e9ee023ed01714f8c93b3d69ce3bee0a4aea` |
 | Evidence on that SHA | Actions run `35500410208` **SUCCESS**. Auth job `106051075103` SUCCESS. Typecheck/Lint/Build `106051075093` SUCCESS. Vercel `CUPaXKBuNWPM7a5842gMN5EXN7Gz` success. TL docs-batch PASS `5748946655`. |

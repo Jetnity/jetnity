@@ -1,7 +1,7 @@
 # Jetnity – OS-2 Daily Automation V2 – Scheduler-Compatible Handoff Contract
 
 Stand: 20. September 2026  
-Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / GUARDIAN EVENT ASSURANCE SETUP COMPLETE / BOUNDED NATIVE PR-PUSHED TRANSPORT ACCEPTED FOR e0524311 / WEEKLY PATH A INSTALLED-SOURCE PASS / DAILY SEP20 OUTPUT-CONSISTENCY PASS / PATH B ARTIFACT PASS / PATH C INTERACTIVE ACK ACCEPTED / PATH C OFF-SESSION BLOCKED / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS / CONDITIONAL SURFACE LIMITED PASS / HOLD REMAINS ACTIVE**  
+Status: **CANONICAL CONTRACT / DAILY V2 NORMAL ACTIVE OPERATION / WEEKLY NORMAL ACTIVE OPERATION / HOLD-CLOSURE #492 PROPOSES NORMAL / LIVE MAIN REMAINS HOLD UNTIL TL MERGE / SCHEDULED ROUTING REPORTED CONFIGURED NOT NATIVE PASS**  
 Origin dispatch: PR #491 comment `5736670149`  
 Hardening dispatch: PR #491 comment `5737188145`  
 Schema-hardening + novelty dispatch: PR #491 comment `5737237338`  
@@ -56,7 +56,8 @@ Path B artifact PASS: PR #491 comment `5748428132`
 Path C interactive ack: PR #491 comment `5748484353`  
 Path C off-session BLOCKED / 20 September closeout: PR #491 comment `5748633847`  
 Acceptance matrix: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_ACCEPTANCE_MATRIX_2026-09-20.md`  
-Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`
+Tracker: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_EXTERNAL_SETUP_TRACKER_2026-09-18.md`  
+HOLD-closure status: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md`
 
 This file is the repository contract for scheduled Daily Intelligence after native scheduler CANARY #002. It does **not** create routines, write envelopes, or lift HOLD.
 
@@ -1121,8 +1122,8 @@ Do **not** rerun or change the Monday **08:30 Europe/Zurich** Weekly. The Sep21 
 
 Deferred engineering-support pack (`5744886051` / `5744921031`): `/workspace/jetnity/intelligence/routing/staging/ENGINEERING_SUPPORT_TASK_PACK.md` SHA256 `53382552d98fb8b66517027c269ee820b800bebace8c4e6a11e50e591c5b91d8`. Seven scoped assistance tasks prepared **NOT RUN**. Not new bots. Not new OS-2 acceptance.
 
-Still OPEN: `native_scheduled_pass`; remaining Path B DECLARED execution residuals; prompt P0/P1 urgent transport (technically open, provisionally BEST EFFORT); original serialized ordering; ACL/permission unknowns; deferred native Guardian archive proof; final whole-system review. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
+Still OPEN as residuals, not as missing checklist rows: `native_scheduled_pass`; remaining Path B DECLARED execution residuals; prompt P0/P1 urgent transport (technically open, provisionally BEST EFFORT); original serialized ordering; credential/ACL isolation NOT CHECKED and accepted as a visibility limitation; native Guardian archive proof remains false. Empty archive under `NO_MATERIAL` is not a defect. All ten identities existing plus two on-demand skills is **not** ten-role FINAL PASS.
 
-**NEXT EXACT STEP:** Technical-Lead exact-head review of this persist. Sep21 Daily and Weekly output-consistency already recorded. First independent existing receipt read is COMPLETE at the bounded class; final whole-system review remains pending. Cursor must not implement that work, edit Grok, create routing JSON in this git repo, or manufacture fixture results. #491 must not set `NORMAL`.
+**NEXT EXACT STEP:** Technical-Lead exact-head review of dedicated HOLD-closure PR #492. Cursor must not implement runtime work, edit Grok, create routing JSON in this git repo, or manufacture fixture results. Live main remains HOLD until TL merge.
 
 **STOP.** Cursor documents only.
