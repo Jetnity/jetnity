@@ -225,6 +225,30 @@ export default function TripWorkspace({
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
   const vorherOffenRef = React.useRef(false)
 
+  const scrollDetailInSicht = (el: HTMLElement | null) => {
+    if (!el) return
+    const oben = el.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top: Math.max(0, oben - 72), behavior: 'auto' })
+  }
+
+  const scrollLueckeInSicht = () => {
+    const flaeche = document.querySelector('[data-arbeitsbereich="detail"]')
+    const heading = document.querySelector('[data-workspace-detail] h2')
+    if (heading instanceof HTMLElement) {
+      const rand = heading.getBoundingClientRect()
+      if (rand.top >= 80 && rand.bottom <= window.innerHeight - 8) return
+    }
+    if (flaeche instanceof HTMLElement) {
+      flaeche.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
+    }
+  }
+
+  const detailAnkerSetzen = (el: HTMLDivElement | null) => {
+    if (!el) return
+    scrollDetailInSicht(el)
+    requestAnimationFrame(() => scrollDetailInSicht(el))
+  }
+
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
   const detailOffen = bereinigt.art !== 'keine'
@@ -242,19 +266,28 @@ export default function TripWorkspace({
     if (!kompakt) setAenderungBereit(true)
   }, [kompakt])
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (detailOffen && !vorherOffenRef.current) {
-      const ziel = kompakt ? zurueckRef.current : detailFokusRef.current
-      ziel?.focus({ preventScroll: true })
-      // Compact leftover scrollY after hiding the overview is the reproduced
-      // phone gap-open driver. Instant snap so the first frame keeps identity
-      // and return in view, including prefers-reduced-motion.
-      ziel?.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' })
+      const fokus = kompakt ? zurueckRef.current : detailFokusRef.current
+      fokus?.focus({ preventScroll: true })
+      if (kompakt) {
+        const anker = document.querySelector('[data-workspace-detail-anker="ein"]')
+        if (anker instanceof HTMLElement) scrollDetailInSicht(anker)
+      } else {
+        scrollDetailInSicht(fokus)
+      }
     }
     if (!detailOffen && vorherOffenRef.current) {
       letzterAusloeserRef.current?.focus?.()
     }
     vorherOffenRef.current = detailOffen
+  }, [detailOffen, kompakt])
+
+  React.useEffect(() => {
+    if (!detailOffen || !kompakt) return
+    scrollLueckeInSicht()
+    const id = window.setTimeout(scrollLueckeInSicht, 0)
+    return () => window.clearTimeout(id)
   }, [detailOffen, kompakt])
 
   const merkeAusloeser = () => {
@@ -421,7 +454,7 @@ export default function TripWorkspace({
   const sucheSichtbar = sucheIstOffen(bereinigt)
 
   return (
-    <main className="min-h-screen bg-surface-75 pb-20">
+    <main className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
       <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
@@ -440,6 +473,15 @@ export default function TripWorkspace({
           uebersicht={uebersicht}
           kopfzeile={kopfzeile}
         />
+
+        {kompakt && detailOffen ? (
+          <div
+            ref={detailAnkerSetzen}
+            data-workspace-detail-anker="ein"
+            aria-hidden="true"
+            className="h-px scroll-mt-[calc(72px+env(safe-area-inset-top))]"
+          />
+        ) : null}
 
         <TripWorkspaceNavigation sichtbar={kompakt && detailOffen} onZurueck={schliessen} zurueckRef={zurueckRef} />
 
@@ -472,7 +514,11 @@ export default function TripWorkspace({
             />
           </FlaecheHuelle>
 
-          <FlaecheHuelle name="detail" verborgen={detailVerborgen} sichtbarKlasse="min-w-0">
+          <FlaecheHuelle
+            name="detail"
+            verborgen={detailVerborgen}
+            sichtbarKlasse="min-w-0 scroll-mt-[calc(72px+3.75rem)]"
+          >
             <div
               onKeyDown={(ereignis) => {
                 if (ereignis.key !== 'Escape' || !detailOffen) return

@@ -1,0 +1,25 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/after_complex-return-from-top_390x844.png",
+  "phase": "after",
+  "name": "complex-return-from-top_390x844",
+  "sha": "9d3e50b1bb96b60b0722dab15440833044d68ca6",
+  "capturedAt": "2026-09-21T17:46:21.363Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "return-from-top",
+  "after": {
+    "scrollY": 491,
+    "focus": {
+      "tag": "BODY",
+      "text": "Zum InhaltJetnityEntdeckenMeine ReisenJetnity ProAnmeldenReise fortsetzenEntdeck",
+      "aria": null
+    },
+    "zurueck": null,
+    "heading": null
+  }
+}

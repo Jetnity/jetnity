@@ -334,17 +334,18 @@ async function vux4(browser) {
   const ctx = await kontext(browser, viewport)
   const page = await ctx.newPage()
   await workspaceOeffnen(page, COMPLEX)
-  const laeufe = []
-
   const oeffnen = async (name, wie) => {
     const knopf = page.getByRole('button', { name, exact: true })
+    await knopf.scrollIntoViewIfNeeded()
+    await page.waitForTimeout(50)
+    await knopf.focus()
     if (wie === 'keyboard') {
-      await knopf.focus()
       await page.keyboard.press('Enter')
     } else {
-      await knopf.click()
+      await knopf.evaluate((el) => el.click())
     }
     await page.locator('[data-workspace-detail]').waitFor({ timeout: 10_000 })
+    await page.waitForTimeout(80)
   }
 
   const schliessen = async (wie) => {

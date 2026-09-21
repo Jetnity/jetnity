@@ -1,0 +1,244 @@
+{
+  "methode": "browser viewport/emulation",
+  "realDevice": false,
+  "engine": "chromium",
+  "origin": "http://localhost:3000",
+  "server": "reused-existing-dev",
+  "kombinationen": 21,
+  "viewports": [
+    "320",
+    "360",
+    "390",
+    "768",
+    "1024",
+    "1440"
+  ],
+  "pfade": [
+    "/",
+    "/planen",
+    "/reisen"
+  ],
+  "fehlerzahl": 0,
+  "fehlgeschlagen": [],
+  "ergebnisse": [
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "320",
+      "pfad": "/",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "320",
+      "pfad": "/planen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "320",
+      "pfad": "/reisen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "360",
+      "pfad": "/",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "360",
+      "pfad": "/planen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "360",
+      "pfad": "/reisen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "390",
+      "pfad": "/",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "390",
+      "pfad": "/planen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "390",
+      "pfad": "/reisen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "768",
+      "pfad": "/",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "768",
+      "pfad": "/planen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "768",
+      "pfad": "/reisen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "1024",
+      "pfad": "/",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "1024",
+      "pfad": "/planen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "1024",
+      "pfad": "/reisen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "1440",
+      "pfad": "/",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "1440",
+      "pfad": "/planen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "reflow",
+      "viewport": "1440",
+      "pfad": "/reisen",
+      "overflow": {
+        "htmlOverflow": 0,
+        "bodyOverflow": 0
+      },
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "tastatur",
+      "viewport": "390",
+      "pfad": "/",
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "planen",
+      "viewport": "390",
+      "pfad": "/planen",
+      "fehler": []
+    },
+    {
+      "ok": true,
+      "art": "workspace",
+      "viewport": "390",
+      "pfad": "/reisen/trip-a11y-1",
+      "fehler": []
+    }
+  ]
+}
