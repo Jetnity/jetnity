@@ -1,0 +1,11 @@
+{
+  "kind": "synthetic-attention-render",
+  "sourceCommit": "948ad2fcffd7cc170feebd19fe0a94baed54fc72",
+  "workingTree": "clean",
+  "dirtyPaths": [],
+  "component": "components/trips/TripWorkspaceJetztWichtig.tsx",
+  "viewports": [
+    "390",
+    "1024"
+  ]
+}
