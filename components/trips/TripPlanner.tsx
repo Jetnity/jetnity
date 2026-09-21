@@ -61,6 +61,7 @@ import {
   gastCreateJetztPruefen,
 } from '@/lib/trips/create-entry'
 import {
+  GastreiseBelegtOhneKennungFehler,
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
   GastspeicherUnlesbarFehler,
@@ -332,7 +333,11 @@ export default function TripPlanner({
         setMeldung(fehler.message)
         return
       }
-      if (fehler instanceof GastreiseUnbrauchbarFehler || fehler instanceof GastspeicherUnlesbarFehler) {
+      if (
+        fehler instanceof GastreiseUnbrauchbarFehler ||
+        fehler instanceof GastspeicherUnlesbarFehler ||
+        fehler instanceof GastreiseBelegtOhneKennungFehler
+      ) {
         setBestehendeReise('')
         setMeldung(fehler.message)
         return

@@ -146,6 +146,24 @@ export class GastreiseUnbrauchbarFehler extends Error {
 }
 
 /**
+ * Ein migrationsfähiger Legacy-Entwurf belegt den Slot, hat aber keine
+ * gespeicherte Kennung. Create darf weder eine neue Reise schreiben noch eine
+ * vom Konverter erzeugte Kennung als Fortsetzen-Ziel ausgeben.
+ */
+export class GastreiseBelegtOhneKennungFehler extends Error {
+  readonly art = 'belegt_ohne_kennung' as const
+
+  constructor() {
+    super(
+      'Auf diesem Gerät liegt bereits ein Reiseentwurf. Er hat keine gespeicherte Kennung, ' +
+        'deshalb gibt es keinen Fortsetzen-Link. Es kann keine neue Reise angelegt werden. ' +
+        'Der vorhandene Eintrag wurde nicht verändert.',
+    )
+    this.name = 'GastreiseBelegtOhneKennungFehler'
+  }
+}
+
+/**
  * Der Browserspeicher konnte nicht gelesen werden.
  *
  * Das ist weder „kein Entwurf“ noch ein beschädigter Eintrag. Create darf
@@ -314,6 +332,7 @@ export type GastspeicherCreateBelegung =
   | { art: 'ungueltig' }
   | { art: 'fehlend' }
   | { art: 'gueltig'; id: string; titel: string | null }
+  | { art: 'belegt_ohne_kennung'; titel: string | null }
 
 export function gastspeicherCreateBelegungLesen(): GastspeicherCreateBelegung {
   const vor = aktiveGastreiseVorpruefen()
@@ -330,10 +349,12 @@ export function gastspeicherCreateBelegungLesen(): GastspeicherCreateBelegung {
   const legacy = legacyEntwuerfeBeobachten()
   if (legacy.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
   const neuester = legacy.entwuerfe[0]
-  if (neuester) {
-    return { art: 'gueltig', id: neuester.id, titel: neuester.title?.trim() || null }
+  if (!neuester) return { art: 'fehlend' }
+  const titel = neuester.reise.title?.trim() || null
+  if (neuester.persistierteId) {
+    return { art: 'gueltig', id: neuester.persistierteId, titel }
   }
-  return { art: 'fehlend' }
+  return { art: 'belegt_ohne_kennung', titel }
 }
 
 /**
@@ -348,8 +369,13 @@ function aktiveAblageVorSchreibenPruefen() {
     throw new GastspeicherUnlesbarFehler()
   }
   if (vor.art === 'ungueltig') throw new GastreiseUnbrauchbarFehler()
-  if (vor.art === 'fehlend' && legacyEntwuerfeBeobachten().art === 'speicher_unlesbar') {
-    throw new GastspeicherUnlesbarFehler()
+  if (vor.art === 'fehlend') {
+    const legacy = legacyEntwuerfeBeobachten()
+    if (legacy.art === 'speicher_unlesbar') throw new GastspeicherUnlesbarFehler()
+    const neuester = legacy.entwuerfe[0]
+    if (neuester && !neuester.persistierteId) {
+      throw new GastreiseBelegtOhneKennungFehler()
+    }
   }
 }
 
@@ -498,9 +524,26 @@ function einzelneEtappe(
   }
 }
 
+type LegacyBeobachteterEntwurf = {
+  reise: Trip
+  persistierteId: string | null
+}
+
 type LegacyEntwuerfeBeobachtung =
   | { art: 'speicher_unlesbar'; entwuerfe: [] }
-  | { art: 'gelesen'; entwuerfe: Trip[] }
+  | { art: 'gelesen'; entwuerfe: LegacyBeobachteterEntwurf[] }
+
+/**
+ * Dieselbe Kennungsregel wie `ausLegacy`: nur ein vorhandener nicht-leerer
+ * String gilt als gespeicherte Identität. Fehlende, leere oder nicht-string
+ * IDs werden vom Konverter erzeugt – die Beobachtung darf sie nicht als
+ * Fortsetzen-Ziel ausgeben.
+ */
+function legacyPersistierteKennung(wert: unknown): string | null {
+  if (!wert || typeof wert !== 'object') return null
+  const id = (wert as Record<string, unknown>).id
+  return typeof id === 'string' && id ? id.slice(0, 64) : null
+}
 
 /**
  * Gültige Legacy-Entwürfe, neueste zuerst. Dieselbe Parse-/Schema-Politik
@@ -523,17 +566,21 @@ function legacyEntwuerfeBeobachten(): LegacyEntwuerfeBeobachtung {
   }
   if (!Array.isArray(geparst)) return { art: 'gelesen', entwuerfe: [] }
 
-  return {
-    art: 'gelesen',
-    entwuerfe: geparst
-      .map(ausLegacy)
-      .filter((entwurf): entwurf is Trip => entwurf !== null)
-      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+  const aufgenommen: LegacyBeobachteterEntwurf[] = []
+  for (const eintrag of geparst) {
+    const reise = ausLegacy(eintrag)
+    if (!reise) continue
+    aufgenommen.push({
+      reise,
+      persistierteId: legacyPersistierteKennung(eintrag),
+    })
   }
+  aufgenommen.sort((a, b) => b.reise.updatedAt.localeCompare(a.reise.updatedAt))
+  return { art: 'gelesen', entwuerfe: aufgenommen }
 }
 
 function legacyEntwuerfeLesen(): Trip[] {
-  return legacyEntwuerfeBeobachten().entwuerfe
+  return legacyEntwuerfeBeobachten().entwuerfe.map((eintrag) => eintrag.reise)
 }
 
 /**

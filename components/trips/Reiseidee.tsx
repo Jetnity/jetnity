@@ -54,6 +54,7 @@ import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
 import { gastCreateGateMeldung, gastCreateJetztPruefen } from '@/lib/trips/create-entry'
 import {
+  GastreiseBelegtOhneKennungFehler,
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
   GastspeicherUnlesbarFehler,
@@ -178,7 +179,11 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
         setMeldung(fehler.message)
         return
       }
-      if (fehler instanceof GastreiseUnbrauchbarFehler || fehler instanceof GastspeicherUnlesbarFehler) {
+      if (
+        fehler instanceof GastreiseUnbrauchbarFehler ||
+        fehler instanceof GastspeicherUnlesbarFehler ||
+        fehler instanceof GastreiseBelegtOhneKennungFehler
+      ) {
         setBestehendeReise('')
         setMeldung(fehler.message)
         return

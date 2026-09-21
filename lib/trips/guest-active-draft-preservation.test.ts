@@ -11,8 +11,10 @@ import {
   darfCreateModellAufrufen,
   gastCreateBelegungLesen,
   gastCreateJetztPruefen,
+  planenCreateGateSicht,
 } from '@/lib/trips/create-entry'
 import {
+  GastreiseBelegtOhneKennungFehler,
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
   GastspeicherUnlesbarFehler,
@@ -114,6 +116,27 @@ function legacyMini(id: string, title: string, updatedAt: string) {
     createdAt: updatedAt,
     updatedAt,
   }
+}
+
+function legacyOhnePersistierteId(
+  title: string,
+  updatedAt: string,
+  id?: unknown,
+) {
+  const basis = {
+    title,
+    destination: title,
+    origin: 'Zürich',
+    startDate: '2026-09-12',
+    endDate: '2026-09-12',
+    travelers: 1,
+    pace: 'ausgewogen',
+    interests: [],
+    days: [{ id: 'day-1', date: '2026-09-12', items: [] }],
+    createdAt: updatedAt,
+    updatedAt,
+  }
+  return id === undefined ? basis : { ...basis, id }
 }
 
 function warteschlangeEintrag(id: string) {
@@ -450,5 +473,103 @@ describe('Action-time Create-Prüfung beobachtet frisch', () => {
   test('Erhaltungstexte behaupten weder Verlust noch Wiederherstellung', () => {
     const alle = Object.values(GAST_CREATE_ERHALTUNG_TEXTE).join(' ')
     assert.equal(/verloren|wiederherstell|kein Entwurf|safe|recoverable/i.test(alle), false)
+  })
+})
+
+describe('GP-R4 – Legacy ohne persistierte Kennung belegt, ohne Fortsetzen-URL', () => {
+  const varianten: Array<{ name: string; id?: unknown }> = [
+    { name: 'fehlend' },
+    { name: 'leer', id: '' },
+    { name: 'zahl', id: 17 },
+    { name: 'null', id: null },
+    { name: 'objekt', id: { trip: 'x' } },
+    { name: 'boolean', id: true },
+  ]
+
+  for (const variante of varianten) {
+    test(`${variante.name}: Beobachtung bleibt belegt_ohne_kennung und unverändert`, () => {
+      speicher.setzen(SCHLUESSEL.legacy, [
+        legacyOhnePersistierteId('Ohne Kennung', '2026-08-01T10:00:00.000Z', variante.id),
+      ])
+      const vorher = speicher.snapshot()
+
+      const erst = gastspeicherCreateBelegungLesen()
+      const zweit = gastspeicherCreateBelegungLesen()
+      assert.equal(erst.art, 'belegt_ohne_kennung')
+      assert.equal(zweit.art, 'belegt_ohne_kennung')
+      if (erst.art !== 'belegt_ohne_kennung' || zweit.art !== 'belegt_ohne_kennung') {
+        throw new Error('erwartet belegt_ohne_kennung')
+      }
+      assert.equal('id' in erst, false)
+      assert.equal('id' in zweit, false)
+      assert.equal(erst.titel, 'Ohne Kennung')
+      assert.deepEqual(erst, zweit)
+
+      const gelesen = gastCreateBelegungLesen()
+      assert.equal(gelesen.art, 'belegt_ohne_kennung')
+      if (gelesen.art !== 'belegt_ohne_kennung') throw new Error('erwartet belegt_ohne_kennung')
+      assert.equal('id' in gelesen, false)
+
+      const gate = gastCreateJetztPruefen(false)
+      assert.equal(gate.erlaubt, false)
+      if (gate.erlaubt) throw new Error('unerwartet erlaubt')
+      assert.equal(gate.grund, 'belegt_ohne_kennung')
+      assert.equal('bestehendeId' in gate, false)
+      assert.equal(darfCreateModellAufrufen(gate), false)
+
+      const sicht = planenCreateGateSicht({
+        angemeldet: false,
+        beobachtet: true,
+        belegung: gelesen,
+        aktivTitel: gelesen.titel,
+      })
+      assert.equal(sicht.art, 'belegt_ohne_kennung')
+      if (sicht.art !== 'belegt_ohne_kennung') throw new Error('erwartet Gate ohne Link')
+      assert.equal('bestehendeId' in sicht, false)
+      assert.equal(/\/reisen\//.test(sicht.neben), false)
+
+      assert.throws(() => gastreiseAnlegen(eingabe({ title: 'Zweite' })), GastreiseBelegtOhneKennungFehler)
+      assert.throws(() => gastreiseAblegen(ablegenEntwurf()), GastreiseBelegtOhneKennungFehler)
+      assertUnveraendert(vorher)
+    })
+  }
+
+  test('stabile Legacy-ID bleibt Fortsetzen-Ziel und über wiederholte Beobachtung gleich', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-stabil', 'Barcelona', '2026-08-01T10:00:00.000Z')])
+    const erst = gastspeicherCreateBelegungLesen()
+    const zweit = gastspeicherCreateBelegungLesen()
+    assert.equal(erst.art, 'gueltig')
+    assert.equal(zweit.art, 'gueltig')
+    if (erst.art !== 'gueltig' || zweit.art !== 'gueltig') throw new Error('erwartet gueltig')
+    assert.equal(erst.id, 'trip-stabil')
+    assert.equal(zweit.id, 'trip-stabil')
+    assert.equal(gastCreateJetztPruefen(false).grund, 'besteht')
+  })
+
+  test('Loader-Migration ohne persistierte ID bleibt erlaubt und schreibt erst beim Laden', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyOhnePersistierteId('Lissabon', '2026-08-01T10:00:00.000Z')])
+    const vorher = speicher.snapshot()
+    assert.equal(gastspeicherCreateBelegungLesen().art, 'belegt_ohne_kennung')
+    assertUnveraendert(vorher)
+    const geladen = gastspeicherLaden()
+    assert.ok(geladen.aktiv)
+    assert.equal(geladen.aktiv?.title, 'Lissabon')
+    assert.match(geladen.aktiv?.id ?? '', /^trip-/)
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), null)
+  })
+
+  test('ungültige aktive Bytes gewinnen weiter vor Legacy ohne Kennung', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{bad-json')
+    speicher.setzen(SCHLUESSEL.legacy, [legacyOhnePersistierteId('Barcelona', '2026-08-01T10:00:00.000Z')])
+    const vorher = speicher.snapshot()
+    assert.equal(gastspeicherCreateBelegungLesen().art, 'ungueltig')
+    assert.equal(gastCreateJetztPruefen(false).grund, 'ungueltig')
+    assertUnveraendert(vorher)
+  })
+
+  test('Konto bleibt unabhängig von Legacy ohne persistierte Kennung', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyOhnePersistierteId('Barcelona', '2026-08-01T10:00:00.000Z')])
+    assert.equal(gastCreateJetztPruefen(true).erlaubt, true)
+    assert.equal(gastCreateBelegungLesen().art, 'belegt_ohne_kennung')
   })
 })

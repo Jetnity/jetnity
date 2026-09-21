@@ -11,6 +11,7 @@
 import type { Sitzungsstand } from '@/lib/auth/oeffentliche-navigation'
 import {
   gastspeicherCreateBelegungLesen,
+  GastreiseBelegtOhneKennungFehler,
   GastreiseBestehtFehler,
   GastreiseUnbrauchbarFehler,
   GastspeicherUnlesbarFehler,
@@ -37,11 +38,13 @@ export type GastCreateBelegung =
   | { art: 'speicher_unlesbar' }
   | { art: 'ungueltig' }
   | { art: 'gueltig'; id: string; titel?: string | null }
+  | { art: 'belegt_ohne_kennung'; titel?: string | null }
   | { art: 'fehlend' }
 
 export type GastCreateGate =
   | { erlaubt: true }
   | { erlaubt: false; grund: 'besteht'; bestehendeId: string }
+  | { erlaubt: false; grund: 'belegt_ohne_kennung' }
   | { erlaubt: false; grund: 'ungueltig' }
   | { erlaubt: false; grund: 'speicher_unlesbar' }
   | { erlaubt: false; grund: 'nicht_beobachtet' }
@@ -65,6 +68,9 @@ export function gastCreateBelegungLesen(): GastCreateBelegung {
   if (belegt.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
   if (belegt.art === 'ungueltig') return { art: 'ungueltig' }
   if (belegt.art === 'fehlend') return { art: 'fehlend' }
+  if (belegt.art === 'belegt_ohne_kennung') {
+    return { art: 'belegt_ohne_kennung', titel: belegt.titel }
+  }
   return { art: 'gueltig', id: belegt.id, titel: belegt.titel }
 }
 
@@ -105,6 +111,9 @@ function gastCreateGateAusBelegung(belegung: GastCreateBelegung): GastCreateGate
   if (belegung.art === 'nicht_beobachtet') return { erlaubt: false, grund: 'nicht_beobachtet' }
   if (belegung.art === 'speicher_unlesbar') return { erlaubt: false, grund: 'speicher_unlesbar' }
   if (belegung.art === 'ungueltig') return { erlaubt: false, grund: 'ungueltig' }
+  if (belegung.art === 'belegt_ohne_kennung') {
+    return { erlaubt: false, grund: 'belegt_ohne_kennung' }
+  }
   if (belegung.art === 'gueltig') {
     return { erlaubt: false, grund: 'besteht', bestehendeId: belegung.id }
   }
@@ -117,6 +126,7 @@ export function darfCreateModellAufrufen(gate: GastCreateGate): boolean {
 
 export function gastCreateGateMeldung(gate: Extract<GastCreateGate, { erlaubt: false }>): string {
   if (gate.grund === 'besteht') return new GastreiseBestehtFehler(gate.bestehendeId).message
+  if (gate.grund === 'belegt_ohne_kennung') return new GastreiseBelegtOhneKennungFehler().message
   if (gate.grund === 'ungueltig') return new GastreiseUnbrauchbarFehler().message
   if (gate.grund === 'speicher_unlesbar') return new GastspeicherUnlesbarFehler().message
   return (
@@ -158,6 +168,7 @@ export type PlanenCreateGateSicht =
   | { art: 'ungueltig'; neben: string }
   | { art: 'unlesbar'; neben: string }
   | { art: 'besteht'; bestehendeId: string; titel: string | null; neben: string }
+  | { art: 'belegt_ohne_kennung'; titel: string | null; neben: string }
 
 /**
  * Reine Sichtentscheidung für /planen. Kein Speicherzugriff.
@@ -180,6 +191,13 @@ export function planenCreateGateSicht(eingabe: {
       bestehendeId: gate.bestehendeId,
       titel: eingabe.aktivTitel?.trim() || null,
       neben: new GastreiseBestehtFehler(gate.bestehendeId).message,
+    }
+  }
+  if (gate.grund === 'belegt_ohne_kennung') {
+    return {
+      art: 'belegt_ohne_kennung',
+      titel: eingabe.aktivTitel?.trim() || null,
+      neben: gastCreateGateMeldung(gate),
     }
   }
   if (gate.grund === 'ungueltig') {

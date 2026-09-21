@@ -448,6 +448,7 @@ describe('Guest active draft preservation – create gate', () => {
       { art: 'ungueltig' } as const,
       { art: 'speicher_unlesbar' } as const,
       { art: 'nicht_beobachtet' } as const,
+      { art: 'belegt_ohne_kennung' } as const,
     ]) {
       const gate = gastCreateGate({ angemeldet: false, belegung })
       assert.equal(gate.erlaubt, false)
@@ -543,5 +544,17 @@ describe('Guest active draft preservation – create gate', () => {
     if (legacy.art !== 'besteht') throw new Error('erwartet besteht')
     assert.equal(legacy.bestehendeId, 'trip-legacy')
     assert.equal(legacy.titel, 'Barcelona')
+    const ohneKennung = planenCreateGateSicht({
+      angemeldet: false,
+      beobachtet: true,
+      belegung: { art: 'belegt_ohne_kennung', titel: 'Ohne Id' },
+      aktivTitel: 'Ohne Id',
+    })
+    assert.equal(ohneKennung.art, 'belegt_ohne_kennung')
+    if (ohneKennung.art !== 'belegt_ohne_kennung') throw new Error('erwartet belegt_ohne_kennung')
+    assert.equal(ohneKennung.titel, 'Ohne Id')
+    assert.equal('bestehendeId' in ohneKennung, false)
+    assert.equal(/verloren|wiederherstell|kein Entwurf/i.test(ohneKennung.neben), false)
+    assert.equal(ohneKennung.neben.includes('Fortsetzen-Link'), true)
   })
 })

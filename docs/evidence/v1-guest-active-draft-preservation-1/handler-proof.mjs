@@ -38,6 +38,24 @@ const BESTEHT =
   'Ohne Konto lässt sich eine Reise planen. Öffne deinen bestehenden Entwurf oder erstelle ein Konto, um mehrere Reisen zu speichern.'
 const UNLESBAR =
   'Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden.'
+const OHNE_KENNUNG =
+  'Er hat keine gespeicherte Kennung, deshalb gibt es keinen Fortsetzen-Link.'
+const LEGACY_OHNE_ID = [
+  {
+    title: 'Ohne Kennung',
+    destination: 'Lissabon',
+    origin: 'Zürich',
+    startDate: '2026-09-12',
+    endDate: '2026-09-12',
+    travelers: 1,
+    pace: 'ausgewogen',
+    interests: [],
+    days: [{ id: 'day-1', date: '2026-09-12', items: [] }],
+    createdAt: '2026-08-01T10:00:00.000Z',
+    updatedAt: '2026-08-01T10:00:00.000Z',
+  },
+]
+const LEGACY_OHNE_ID_BYTES = JSON.stringify(LEGACY_OHNE_ID)
 
 mkdirSync(join(ROOT, 'screens'), { recursive: true })
 mkdirSync(ARTIFACTS, { recursive: true })
@@ -330,6 +348,87 @@ async function main() {
       mutationsAttempted: 0,
       mutationsCompleted: 0,
       rawActiveUnchanged: danach.aktiv === null,
+    })
+    await context.close()
+  }
+
+  {
+    const { context, page, protokoll } = await kontext(browser)
+    await page.goto(`${BASIS}/planen`, { waitUntil: 'load', timeout: 60_000 })
+    await page.waitForTimeout(400)
+    assert(await page.locator('textarea').first().isVisible(), 'Leerer Start muss das Formular zeigen')
+    const vorher = await rohLesen(page)
+    assert(vorher.aktiv === null && vorher.legacy === null, 'GP-R4 start muss leer sein')
+
+    await page.evaluate(
+      ({ legacy, bytes, aktiv, warteschlange }) => {
+        window.localStorage.removeItem(aktiv)
+        window.localStorage.removeItem(warteschlange)
+        window.localStorage.setItem(legacy, bytes)
+      },
+      {
+        legacy: SCHLUESSEL_LEGACY,
+        bytes: LEGACY_OHNE_ID_BYTES,
+        aktiv: SCHLUESSEL_AKTIV,
+        warteschlange: SCHLUESSEL_WARTESCHLANGE,
+      },
+    )
+
+    await page.locator('textarea').first().fill('Weekend in Lisbon with two friends')
+    await page.getByRole('button', { name: 'Entwurf erstellen' }).click()
+    await page.waitForTimeout(500)
+    const ideeText = await page.locator('body').innerText()
+    assert(ideeText.includes(OHNE_KENNUNG), 'Idee-Handler zeigte Belegung ohne Kennung nicht')
+    assert(
+      !(await page.getByRole('link', { name: 'Entwurf öffnen' }).count()),
+      'Idee-Handler erfand einen Fortsetzen-Link',
+    )
+    assert(
+      !(await page.getByRole('button', { name: 'Entwurf übernehmen' }).count()),
+      'Idee-Adoption trotz Legacy ohne Kennung',
+    )
+
+    await page.getByRole('button', { name: 'Reise erstellen' }).click()
+    await page.waitForTimeout(500)
+    const manuellText = await page.locator('body').innerText()
+    assert(manuellText.includes(OHNE_KENNUNG), 'Manuell-Handler zeigte Belegung ohne Kennung nicht')
+    assert(
+      !(await page.getByRole('link', { name: 'Entwurf öffnen' }).count()),
+      'Manuell-Handler erfand einen Fortsetzen-Link',
+    )
+    const hrefs = await page.evaluate(() =>
+      [...document.querySelectorAll('a')].map((el) => el.getAttribute('href') || ''),
+    )
+    assert(
+      !hrefs.some((href) => href.startsWith('/reisen/')),
+      `erfundes /reisen-Ziel nach Handler: ${hrefs.join(',')}`,
+    )
+
+    const danach = await rohLesen(page)
+    assert(danach.aktiv === null, 'Handler schrieb den aktiven Schlüssel')
+    assert(danach.legacy === LEGACY_OHNE_ID_BYTES, 'Handler veränderte Legacy ohne Kennung')
+    assert(danach.warteschlange === null, 'Handler schrieb die Warteschlange')
+    assert(protokoll.modelPlaceCreate.length === 0, `Modell/Ort/Create: ${JSON.stringify(protokoll.modelPlaceCreate)}`)
+    assert(protokoll.versuche.length === 0, `Mutationsversuche: ${JSON.stringify(protokoll.versuche)}`)
+    assert(protokoll.unerwartetAbgeschlossen.length === 0)
+
+    await page.screenshot({
+      path: join(ROOT, 'screens', 'handler_legacy_ohne_kennung_after_render_390.png'),
+      fullPage: false,
+    })
+    await page.screenshot({
+      path: join(ARTIFACTS, 'handler_legacy_ohne_kennung_after_render_390.png'),
+      fullPage: false,
+    })
+
+    faelle.push({
+      name: 'mounted_handlers_after_legacy_without_persisted_id',
+      paths: ['Reiseidee.erzeugen', 'TripPlanner.absenden'],
+      modelPlaceCreate: 0,
+      mutationsAttempted: 0,
+      mutationsCompleted: 0,
+      rawEqual: danach.legacy === LEGACY_OHNE_ID_BYTES && danach.aktiv === null,
+      continueHref: false,
     })
     await context.close()
   }

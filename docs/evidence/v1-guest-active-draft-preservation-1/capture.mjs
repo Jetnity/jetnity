@@ -40,6 +40,21 @@ const LEGACY_BYTES = JSON.stringify([
     updatedAt: '2026-08-01T10:00:00.000Z',
   },
 ])
+const LEGACY_OHNE_ID_BYTES = JSON.stringify([
+  {
+    title: 'Ohne Kennung',
+    destination: 'Lissabon',
+    origin: 'Zürich',
+    startDate: '2026-09-12',
+    endDate: '2026-09-12',
+    travelers: 1,
+    pace: 'ausgewogen',
+    interests: [],
+    days: [{ id: 'day-1', date: '2026-09-12', items: [] }],
+    createdAt: '2026-08-01T10:00:00.000Z',
+    updatedAt: '2026-08-01T10:00:00.000Z',
+  },
+])
 
 const GAST_REISE = {
   id: 'trip-preservation-1',
@@ -331,6 +346,14 @@ async function szene(browser, fall, initArgs) {
   const viewportPng = await pngGroesse(viewportPfad)
   const fullPng = await pngGroesse(fullPfad)
   const version = `${browser.browserType().name()}/${browser.version()}`
+  let reisenHrefs = []
+  if (fall.assertNoUnpersistedContinue) {
+    reisenHrefs = await page.evaluate(() =>
+      [...document.querySelectorAll('a')]
+        .map((el) => el.getAttribute('href') || '')
+        .filter((href) => href.startsWith('/reisen/')),
+    )
+  }
   await context.close()
 
   const overflowFail =
@@ -346,6 +369,30 @@ async function szene(browser, fall, initArgs) {
       `${fall.name}: horizontal overflow/clip. viewportPng=${viewportPng.width}x${viewportPng.height} ` +
         `doc=${geometrie.document.scrollWidth} heading=${JSON.stringify(geometrie.heading)}`,
     )
+  }
+
+  if (fall.assertNoUnpersistedContinue) {
+    if (sicht.hasIdeaForm) throw new Error(`${fall.name}: Create-Formular trotz Belegung`)
+    if (!sicht.title.includes('bereits eine Reise')) {
+      throw new Error(`${fall.name}: Gate nicht belegt: ${sicht.title}`)
+    }
+    const persistierteId = (() => {
+      if (!roh?.aktiv) return null
+      try {
+        const gelesen = JSON.parse(roh.aktiv)
+        return typeof gelesen?.id === 'string' && gelesen.id ? gelesen.id : null
+      } catch {
+        return null
+      }
+    })()
+    if (!persistierteId) {
+      if (sicht.hasContinue || reisenHrefs.length) {
+        throw new Error(`${fall.name}: Fortsetzen-URL ohne persistierte Kennung: ${reisenHrefs.join(',')}`)
+      }
+      if (!sicht.hasRecheck) throw new Error(`${fall.name}: ehrliche Prüfung fehlt`)
+    } else if (reisenHrefs.some((href) => href !== `/reisen/${persistierteId}`)) {
+      throw new Error(`${fall.name}: Fortsetzen-URL passt nicht zur persistierten Kennung`)
+    }
   }
 
   return {
@@ -502,6 +549,24 @@ async function main() {
         window.localStorage.removeItem(warteschlange)
       },
     },
+    {
+      name: 'legacy_ohne_kennung_390x844',
+      width: 390,
+      height: 844,
+      assertNoUnpersistedContinue: true,
+      simulationClass: 'synthetic_missing_v3_legacy_without_persisted_id',
+      sequence: [
+        'init valid-enough legacy without id',
+        'goto /planen',
+        'occupied gate; no Continue unless loader persisted an id',
+        'unowned GastCreateLink may migrate under existing loader policy',
+      ],
+      init: ({ aktiv, legacy, warteschlange, legacyOhneIdBytes }) => {
+        window.localStorage.removeItem(aktiv)
+        window.localStorage.setItem(legacy, legacyOhneIdBytes)
+        window.localStorage.removeItem(warteschlange)
+      },
+    },
   ]
 
   const initArgs = {
@@ -510,6 +575,7 @@ async function main() {
     warteschlange: SCHLUESSEL_WARTESCHLANGE,
     invalid: INVALID_BYTES,
     legacyBytes: LEGACY_BYTES,
+    legacyOhneIdBytes: LEGACY_OHNE_ID_BYTES,
     valid: GAST_REISE,
   }
 

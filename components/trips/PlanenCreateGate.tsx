@@ -63,7 +63,11 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
     }
     const naechste = gastCreateBelegungLesen()
     setBelegung(naechste)
-    setAktivTitel(naechste.art === 'gueltig' ? naechste.titel?.trim() || null : null)
+    setAktivTitel(
+      naechste.art === 'gueltig' || naechste.art === 'belegt_ohne_kennung'
+        ? naechste.titel?.trim() || null
+        : null,
+    )
     setBeobachtet(true)
   }, [angemeldet])
 
@@ -80,7 +84,7 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
 
   if (sicht.art === 'kinder') return children
 
-  if (sicht.art === 'besteht') {
+  if (sicht.art === 'besteht' || sicht.art === 'belegt_ohne_kennung') {
     return (
       <section className={gateRahmenClass}>
         <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
@@ -94,9 +98,15 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
           {sicht.titel ? ` Dein Entwurf „${sicht.titel}“ liegt auf diesem Gerät.` : ''}
         </p>
         <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-          <Link href={`/reisen/${sicht.bestehendeId}` as Route} className={primaerKnopfClass}>
-            Reise fortsetzen
-          </Link>
+          {sicht.art === 'besteht' ? (
+            <Link href={`/reisen/${sicht.bestehendeId}` as Route} className={primaerKnopfClass}>
+              Reise fortsetzen
+            </Link>
+          ) : (
+            <button type="button" onClick={beobachten} className={primaerKnopfClass}>
+              {GAST_CREATE_ERHALTUNG_TEXTE.erneut}
+            </button>
+          )}
           <KontoWege />
         </div>
       </section>
