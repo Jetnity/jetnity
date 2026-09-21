@@ -216,3 +216,20 @@ Required:
 7. Update DECISION / STATUS / HANDOFF / SELF_REVIEW and the PR description. No false self-SHA or prior-PASS claims.
 8. Fresh exact-head CI + Auth + Preview; merge-base = current main; behind = 0; then **STOP FOR TECHNICAL-LEAD REVIEW**.
 
+---
+
+## 14. Amendment — 21 September 2026 — Technical-Lead re-review R1/R2
+
+Review: `5265844197` on head `86540c7a702547fbe5825784dbd64063ef9622cd`.  
+Same agent / generation / session / branch / PR. Model remains Cursor Grok 4.6 High Fast.
+
+F1 and F2 remain accepted at design level. Correct only R1/R2 and dependent wording in the existing five-file package. Do not restart the source architecture.
+
+Required:
+
+1. **R1:** Binding fail-closed atomic audit for in-scope operator+AAL2 `blocked_ips` mutations. Source change and derived event commit together or both roll back. Payload/admission/trigger errors must not be swallowed. Login/MFA/authorization stay unobserved and must not flip. Document the availability tradeoff. Define row-level, zero-row, upsert, multi-row and outer-rollback behaviour. Privileged/no-actor paths stay outside the authenticated producer guarantee.
+2. **R2:** Separate payload/row-volume, serialized concurrent admission, and retention/cleanup. Missing/invalid cap config disables the producer. Do not treat COUNT-then-INSERT or a count cap as retention. Persistent environment activation stays closed until an approved time-bound cleanup arrangement and the technical controls are implemented and verified. No invented legal period.
+3. Identify any extra quota-object dependency explicitly. Narrow the next proposal to repository/local disposable-database producer-contract work and synthetic tests only.
+4. Persist the substantive docs, freeze the head, then report final exact-head CI/Auth/Preview in a **PR comment**. Do not add another docs commit solely to record predecessor green checks.
+5. No runtime/SQL, migration, grant, RLS, Auth, secret, Ready, merge, Producer 1 or follow-up.
+

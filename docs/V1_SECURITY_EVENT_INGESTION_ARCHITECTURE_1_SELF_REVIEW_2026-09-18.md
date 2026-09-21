@@ -5,9 +5,8 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #486  
 Draft PR: #487  
-Binding task + 21 September amendment  
-TL CHANGES REQUIRED: `5265503350` on `035486e0`  
-Same-session dispatch: comment `5759015153` (architecture already replaced in `c7c614d8`)
+Binding task amendments §13 and §14  
+TL reviews: `5265503350` on `035486e0`; `5265844197` on `86540c7a`
 
 This document argues against the correction. It cannot replace an independent Technical-Lead PASS.
 
@@ -17,23 +16,24 @@ This document argues against the correction. It cannot replace an independent Te
 
 | Attack | Result |
 | --- | --- |
-| Append caveats to actor-JWT INSERT | Rejected. Contract replaced. |
-| Keep Writer 1 and add “don’t call Data API” | Rejected. |
-| Call integration preservation a prior PASS | Rejected. |
-| Persist AAL1 step-up by weakening `darf_*` | Rejected. Unobserved. |
-| Table CHECK that bans `login_failed` | Rejected. Historical/test compatibility. |
-| Implement the trigger in this slice | Rejected. Docs only. |
-| Invent a legal retention period | Rejected. Activation prerequisite only. |
-| Treat this evidence persist as a new architecture change | Rejected. Gates only. |
-| Ready / merge / start follow-up | Rejected. |
+| Re-open actor-JWT INSERT / F1 | Rejected. F1 preserved. |
+| Weaken AAL2 to persist login/step-up | Rejected. F2 preserved. Unobserved. |
+| Leave fail-closed vs best-effort open | Rejected. R1 binds fail-closed for in-scope writes. |
+| Treat a count cap as retention or activation | Rejected. R2. |
+| COUNT-then-INSERT as a bound | Rejected. Serialized quota UPDATE required. |
+| Claim trigger+function alone is complete | Rejected. Quota object is an extra dependency. |
+| Implement the trigger / quota in this slice | Rejected. Docs only. |
+| Invent a legal retention period | Rejected. |
+| Persist another commit only to store CI SHAs | Rejected per `5265844197`. |
+| Ready / merge / start Producer 1 | Rejected. |
 
 ## 2. Residual risks
 
-- Trigger DEFINER is still privilege. Specification is least-privilege; implementation can get it wrong.
-- `service_role` ALL remains a latent bypass of the “no app DML” rule.
-- Unobserved auth signals can be misread as “no attacks” if #485 copy is later removed.
-- No PostgreSQL test of the new matrix was run here.
-- Block/unblock vs trigger-failure semantics are only recommended, not coded.
+- Fail-closed will, after a later activation, refuse some local blocklist writes when audit/quota fails. That availability cost is documented but not product-accepted beyond this contract.
+- Null-uid / `service_role` mutations remain unaudited by design. Operators can still confuse “no event” with “no change”.
+- A buggy quota UPDATE or missing row lock would re-introduce the C−1 race. Tests are specified, not run.
+- Trigger DEFINER remains privilege.
+- No PostgreSQL test of R1/R2 was run here.
 
 ## 3. Adversarial matrix — reasoning vs tests run
 
@@ -42,29 +42,33 @@ This document argues against the correction. It cannot replace an independent Te
 | Same-JWT bypass | No INSERT grant ⇒ Data API fail | **None** (no DB) |
 | Moderator forges operator event | No `blocked_ips` write; no event INSERT | **None** |
 | AAL1 | `darf_betrieb_eingreifen()` false | **None** |
-| AAL2 operator mutation | Trigger would fire after real change | **None** |
+| AAL2 operator mutation | Atomic derived row | **None** |
 | Break-glass | `adminWriteErlaubt` + RLS | **None** |
 | Foreign actor | `auth.uid()` in trigger | **None** |
 | Arbitrary JSON / supplied time | Function-built extra/now() | **None** |
-| Oversized / replay | Cap + one-event-per-mutation | **None** |
-| Logging failure | Auth path does not write | **None** |
-| Historical `login_failed` | No destructive type CHECK | **None** |
+| Oversized payload | RAISE; source rolls back | **None** |
+| Injected event failure | Neither source nor event remains | **None** |
+| Outer rollback | Pair disappears; quota released | **None** |
+| Zero-row DELETE | No success event | **None** |
+| Two admissions at C−1 | Cannot commit C+1 tracked rows | **None** |
+| Invalid cap config | Producer disabled | **None** |
+| Historical `login_failed` | Outside quota; remains readable | **None** |
+| Login logging failure | Auth path does not write | **None** |
 
-TL synthetic evaluation on the **old** predicate is evidence against that predicate, not a test of this replacement.
+TL synthetic evaluation on the **old** actor-JWT predicate is not a test of this replacement.
 
 ## 4. Dispatch compliance
 
 | Requirement | Met? |
 | --- | --- |
 | Same session / branch / PR | Yes |
-| Replace F1–F3, do not caveat | Yes — `c7c614d8` |
+| Preserve F1/F2; correct only R1/R2 | Yes |
 | No runtime / migration / privileged activation | Yes |
-| Writer 1 withdrawn | Yes |
+| Writer 1 withdrawn; Producer Contract 1 not started | Yes |
 | No false prior-PASS / self-SHA as current PASS | Yes |
-| Fresh exact-head CI on recorded HEAD | Yes on `61c65be9`: CI `35589413339` SUCCESS; Auth `106300164451`; Typecheck `106300164095`; Vercel `9hzjqpe84FMGrv8sCeg5iHqUBTy3` READY. This persist invalidates that SHA. |
-| Merge-base = current main / behind = 0 | Yes before this persist: `4a223d34` / **9 / 0** |
-| Stop for TL review | Yes |
+| No extra persist-only-for-CI commit | Yes — CI for this head goes in a PR comment |
+| Stop for TL review | Yes after freeze |
 
 ## 5. What remains
 
-`61c65be9` had CI `35589413339` SUCCESS and Vercel `9hzjqpe84FMGrv8sCeg5iHqUBTy3` READY. This evidence persist is a newer HEAD and invalidates those gates. Re-fetch on the live HEAD. Formal review `5265503350` still applies to `035486e0` until independent re-review. Agent self-review is not PASS.
+Independent Technical-Lead re-review of the frozen R1/R2 head. Guardian event assessment `5759414802` is not that review. Agent self-review is not PASS.

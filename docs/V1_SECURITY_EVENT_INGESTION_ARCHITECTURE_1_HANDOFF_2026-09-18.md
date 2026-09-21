@@ -1,9 +1,9 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 HANDOFF
 
 Stand: 21. September 2026  
-Status: **F1–F3 CONTRACT REPLACED / LIVE-HEAD `61c65be9` GATES RECORDED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN WRITER 1**
+Status: **R1/R2 CORRECTED / F1–F2 PRESERVED / FREEZE THIS HEAD / REPORT CI IN A PR COMMENT / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN WRITER 1**
 
-Binding task + amendment: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
+Binding task + amendments: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
 Status: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_STATUS_2026-09-18.md`  
 Self-review: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_SELF_REVIEW_2026-09-18.md`
@@ -20,42 +20,37 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Draft PR | #487 |
 | Branch | `docs/v1-security-event-ingestion-architecture-1` |
 | Integration base | `main@4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
-| Rejected head | `035486e021cf56c0ada4a3dc7ad1924cb1c01de4` |
-| Architecture replacement persist | `c7c614d8ea45ca51d34420b47038f8c10c969e6d` |
-| Recorded live HEAD before this persist | `61c65be9607418a549d1fd3e5eb0d717b118e294` |
-| TL review | CHANGES REQUIRED `5265503350` on the rejected head |
+| Rejected F1–F3 head | `035486e021cf56c0ada4a3dc7ad1924cb1c01de4` / review `5265503350` |
+| R1/R2 reviewed head | `86540c7a702547fbe5825784dbd64063ef9622cd` / review `5265844197` |
 | Agent / session | Generation 1 / `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd` |
-| Same-session dispatch | comment `5759015153` — already implemented in `c7c614d8` |
 
-Read first: TL review F1–F3, decision §0–§1 and §5.3, then this file’s recorded gates. A new HEAD after this persist invalidates `61c65be9`.
+Read first: review `5265844197` R1/R2, then decision §3.3, §7 and §8.
 
 ## 2. What changed
 
-The actor-JWT INSERT contract was **replaced**, not caveated.
+F1/F2 mutation-derived replacement is **preserved**.
 
-Persistable V1 evidence is only a **mutation-derived** `blocked_ips` trigger row. Auth login/step-up/denial/break-glass are **unobserved**. Writer 1 is withdrawn.
+R1 now binds **atomic fail-closed** audit for in-scope operator+AAL2 `blocked_ips` mutations. R2 separates volume, serialized admission and retention; names a quota-object dependency; keeps persistent activation closed; narrows the next slice to local disposable-database contract tests.
 
 No runtime, migration, grant or Production change was made.
 
-This persist does not reopen architecture. It only records exact-head CI / Auth / Preview on `61c65be9`.
+Do **not** add another commit whose only purpose is to record this correction’s later CI.
 
 ## 3. What a reviewer should verify first
 
 1. Merge-base equals live `origin/main@4a223d34` and behind=0.
 2. Diff is still the five architecture docs.
-3. Decision no longer grants authenticated INSERT or calls actor JWT “server truth”.
-4. AAL1 step-up is unobserved; AAL2 is not weakened.
+3. §3.3 no longer leaves exception vs no-op to implementation for in-scope writes.
+4. §8 no longer treats a row cap as a retention/activation substitute.
 5. Finding 5.2 is not marked resolved; no PASS claim.
-6. `61c65be9` CI `35589413339` SUCCESS (Auth `106300164451`, Typecheck `106300164095`) and Vercel `9hzjqpe84FMGrv8sCeg5iHqUBTy3` READY are recorded only for that SHA.
-7. Re-fetch CI / Preview / threads on the **live HEAD** after this persist.
-8. Formal review `5265503350` is still CHANGES REQUIRED on the old head until independent re-review.
-9. Line review threads were 0 at last fetch.
-10. PR description may still show the pre-correction “required corrections” text if ManagePullRequest refuses a non-agent-managed body. The binding replacement is the five docs.
+6. Predecessor `86540c7a` CI `35589833774` / Vercel `dpl_EgnAycGVJQuwYZZr8bCBVVQ66QjG` are historical only.
+7. Final gates for the **new** frozen head belong in a PR comment, not a second persist.
+8. Guardian comment `5759414802` is an event assessment, not an architecture PASS.
 
 ## 4. What this does not mean
 
-Not implemented. Not PASS. Not Ready. §G unsatisfied. Mutation-Derived Producer 1 is **not** authorised.
+Not implemented. Not PASS. Not Ready. §G unsatisfied. Producer Contract 1 is **not** authorised.
 
 ## 5. Next step
 
-**STOP FOR TECHNICAL-LEAD REVIEW.** Independent Guardian review belongs on the corrected frozen head after that review, not as a substitute for F1–F3.
+**STOP FOR TECHNICAL-LEAD REVIEW** after the frozen head’s CI/Auth/Preview are posted as a PR comment.

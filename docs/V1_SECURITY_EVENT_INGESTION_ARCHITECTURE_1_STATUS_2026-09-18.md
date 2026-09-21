@@ -1,25 +1,23 @@
 # Jetnity – V1 Security Event Ingestion Architecture 1 STATUS
 
 Stand: 21. September 2026  
-Status: **SAME-SESSION F1–F3 CORRECTION DONE / LIVE-HEAD `61c65be9` GATES RECORDED / THIS EVIDENCE COMMIT INVALIDATES THAT EXACT-HEAD / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
+Status: **R1/R2 SPECIFICATION CORRECTED / F1–F2 PRESERVED / HEAD WILL BE FROZEN AFTER THIS COMMIT / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / FINDING 5.2 INGESTION OPEN / STOP FOR TECHNICAL-LEAD REVIEW**
 
 Issue: #486  
 Draft PR: #487  
 Branch: `docs/v1-security-event-ingestion-architecture-1`  
-Binding task + 21 September amendment: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
+Binding task + amendments §13/§14: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_TASK_2026-09-18.md`  
 Decision: `docs/V1_SECURITY_EVENT_INGESTION_ARCHITECTURE_1_DECISION_2026-09-18.md`  
 Current integration base / live `origin/main` at last fetch: `4a223d342e24fb9316f5ee4333914a16dca3b7bc`  
-Reviewed rejected head: `035486e021cf56c0ada4a3dc7ad1924cb1c01de4`  
-TL review: `5265503350` CHANGES REQUIRED (on the rejected head; not yet re-reviewed)  
-Architecture replacement persist: `c7c614d8ea45ca51d34420b47038f8c10c969e6d`  
-Recorded live HEAD before this persist: `61c65be9607418a549d1fd3e5eb0d717b118e294`
+Reviewed rejected F1–F3 head: `035486e021cf56c0ada4a3dc7ad1924cb1c01de4` (review `5265503350`)  
+Reviewed R1/R2 head: `86540c7a702547fbe5825784dbd64063ef9622cd` (review `5265844197`)
 
 Cursor-Agent: **Jetnity V1 security event ingestion architecture 1**, Generation 1  
 Session: `bc-5208e459-47c3-4d03-ba30-7ebb633c71bd`
 
 This file is point-in-time evidence. A new head invalidates older exact-head gates. Agent self-review is not Technical-Lead PASS. Integration preservation was **not** architectural acceptance. No prior PASS is claimed.
 
-The same-session architecture-fix dispatch (comment `5759015153`) was already implemented in `c7c614d8`. This persist only records the subsequent exact-head CI / Auth / Preview on `61c65be9`.
+Final exact-head CI / Auth / Preview for **this** correction will be reported in a **PR comment** after they finish. This commit cannot contain its own SHA. **No further docs commit solely to record those checks.**
 
 Finding 5.2 remains **OPEN**. Writer 1 is **withdrawn**. Mutation-derived producer is **not** implemented.
 
@@ -27,18 +25,14 @@ Finding 5.2 remains **OPEN**. Writer 1 is **withdrawn**. Mutation-derived produc
 
 ## 1. Goal
 
-Correct the architecture package for F1–F3. Do not implement a writer.
+Correct only R1 (fail-closed delivery) and R2 (volume / admission / retention) in the five-file package. Preserve the F1/F2 mutation-derived replacement. Do not implement a writer.
 
 ## 2. Implemented
 
-Replacement decision (already on branch; not re-opened here):
-
-- **F1:** Actor-JWT INSERT is rejected. Persistable V1 rows must be **derived from a `blocked_ips` mutation** via a trigger-only least-privilege function. Same-JWT Data API bypass is a specified fail case.
-- **F2:** Role × AAL × grant table. Login / step-up / AAL1 / denial / break-glass are **unobserved**. AAL2 and break-glass rules are not weakened. Break-glass grant payloads removed.
-- **F3:** Payload, time, size and historical-type compatibility are required of the producer function, not a TypeScript helper. Retention/row-cap is an **activation prerequisite**. No invented legal period. Legacy `login_failed` fixtures must remain readable (no table-wide type CHECK rewrite).
-- Follow-up renamed to **Mutation-Derived Producer 1**. Previous Writer 1 is withdrawn.
-
-Wording that called the draft “accepted architecture” was removed.
+- **F1/F2 preserved:** no actor-JWT INSERT; role × AAL × grant table; login/AAL1/denial/break-glass unobserved.
+- **R1:** In-scope operator+AAL2 mutations are **atomic fail-closed**. Source row and derived event commit together or both roll back. Payload/admission/trigger errors RAISE. Login/MFA stay unobserved. Privileged/no-actor paths stay uncovered. Row-level, zero-row, upsert, multi-row and outer-rollback behaviour specified. Availability tradeoff documented; not activated.
+- **R2:** Payload/tracked-row volume, serialized quota admission, and time-bound retention are **separate**. COUNT-then-INSERT rejected. Missing/invalid cap disables the producer. A count cap is not retention and cannot open persistent activation. Next slice narrowed to local disposable-database contract tests. Quota object named as an extra future dependency.
+- Follow-up renamed to **Mutation-Derived Producer Contract 1**. Previous Writer 1 remains withdrawn.
 
 ## 3. Changed files versus current `origin/main`
 
@@ -50,49 +44,40 @@ Not relevant.
 
 ## 5. Hard exclusions held
 
-No runtime writer, migration, RLS/grant, Auth/Supabase/Production mutation, service-role client, auth-log ingest, provider/secret/scheduler, Writer 1, Ready or merge.
+No runtime writer, migration, RLS/grant, Auth/Supabase/Production mutation, service-role client, auth-log ingest, provider/secret/scheduler, Writer 1, Producer 1, Ready or merge.
 
-## 6. Local gates on `61c65be9` (before this persist)
+## 6. Local relation before this correction persist
 
 | Gate | Result |
 | --- | --- |
 | Merge-base vs live `origin/main` | `4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
-| Ahead / behind before this evidence persist | **9 / 0** |
+| Predecessor reviewed head | `86540c7a` — **10 ahead / 0 behind** |
 | Scope | **5 architecture docs only** |
 | PostgreSQL/RLS attack tests | **not run** — matrix is source reasoning |
 | DB / Auth / Production calls | **none** |
-| GitHub PR body update | **not applied on prior persist** — ManagePullRequest refused to overwrite a non-agent-managed description. Correction lives in the five docs. Re-attempted after this persist without claiming success until the tool accepts it. |
+| GitHub PR body update | historically refused for a non-agent-managed description; binding text is the five docs |
 
-## 7. Exact-head CI / Preview on `61c65be9`
+## 7. Historical predecessor gates (invalidated by this correction)
 
-Recorded before this persist. This persist is a newer HEAD and invalidates these bindings.
-
-| | |
-| --- | --- |
-| GitHub Actions | [`35589413339`](https://github.com/Jetnity/jetnity/actions/runs/35589413339) **SUCCESS** — Auth-Konfiguration `106300164451`; Typecheck, Lint & Build `106300164095`; Vercel Preview Comments `106300268324` |
-| Combined commit status | `success` on `61c65be9607418a549d1fd3e5eb0d717b118e294` |
-| Vercel | `9hzjqpe84FMGrv8sCeg5iHqUBTy3` **READY** |
-| Preview | https://jetnity-app-git-docs-v1-security-event-65dec6-jetnity-e1b93c82.vercel.app |
-
-Historical (already invalidated): `c7c614d8` CI `35589130241` / Vercel `47NWELGnCWNcpXc4kqvwjhFpgH1H`.
+`86540c7a` had CI [`35589833774`](https://github.com/Jetnity/jetnity/actions/runs/35589833774) SUCCESS (Auth `106301470507`, Typecheck `106301470717`) and Vercel `dpl_EgnAycGVJQuwYZZr8bCBVVQ66QjG` READY. Those bindings do not apply to the new head. Do not add a second persist just to copy the new head’s later green checks into this file.
 
 ## 8. Drift / threads
 
 | | |
 | --- | --- |
 | Live `origin/main` at last fetch | `4a223d342e24fb9316f5ee4333914a16dca3b7bc` |
-| Formal review | CHANGES REQUIRED `5265503350` on rejected head `035486e0` — not a review of this replacement |
-| Line review threads at last fetch | **0** (review was a summary review) |
+| Formal reviews | `5265503350` on `035486e0`; `5265844197` CHANGES REQUIRED on `86540c7a` |
+| Guardian event assessment | PO-forwarded CoS readback in comment `5759414802` — MATERIAL event assessment, **not** an architecture PASS |
 | Draft / Ready / merged | Draft; not Ready; not merged |
 
 ## 9. Residual risks
 
 - Finding 5.2 still OPEN. Almost all auth signals unobserved.
-- Baseline `service_role` ALL remains.
-- Trigger DEFINER, if later built, is still privileged and must stay trigger-only.
-- Retention/activation still gated.
-- `.jetnity/operating-mode.json` on main may still park this PR at an old SHA. Not edited here (global governance).
+- Baseline `service_role` ALL and null-uid maintenance remain uncovered.
+- Trigger DEFINER plus quota object are still privilege; implementation can get serialization wrong.
+- Fail-closed will reject some otherwise-valid local blocklist writes after a later activation.
+- Retention law remains undecided.
 
 ## 10. Next step
 
-**STOP FOR TECHNICAL-LEAD REVIEW** of the replacement decision. No Ready. No merge. No Writer 1. No Mutation-Derived Producer 1. No follow-up slice.
+Freeze this correction head. Report completed exact-head CI / Auth / Preview in a PR comment. Then **STOP FOR TECHNICAL-LEAD REVIEW**. No Ready. No merge. No Writer 1. No Producer Contract 1. No follow-up slice.
