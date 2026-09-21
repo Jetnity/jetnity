@@ -128,7 +128,7 @@ describe('Flugabdeckung', () => {
     assert.equal(ergebnis.bestimmbar, false)
     assert.equal(ergebnis.abschnitte.length, 0)
     assert.equal(ergebnis.unzugeordnet.length, 1)
-    assert.match(ergebnis.zusammenfassung, /noch nicht vollständig bestimmbar/)
+    assert.match(ergebnis.zusammenfassung, /Stand noch unklar/)
   })
 
   test('kein IATA-Code aus Ortsnamen raten', () => {
@@ -167,7 +167,7 @@ describe('Flugabdeckung', () => {
     assert.equal(ergebnis.abschnitte[0]?.status, 'unknown')
     assert.equal(ergebnis.abschnitte[0]?.item, null)
     assert.equal(ergebnis.unzugeordnet.length, 2)
-    assert.match(ergebnis.zusammenfassung, /noch nicht vollständig bestimmbar/)
+    assert.match(ergebnis.zusammenfassung, /noch unklar/)
   })
 
   test('Flug ohne Datum wird nicht einer Strecke zugeordnet', () => {

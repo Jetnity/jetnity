@@ -235,7 +235,7 @@ describe('Unterkunftsabdeckung', () => {
     assert.equal(ergebnis.bekannt, true)
     assert.equal(ergebnis.naechteGesamt, 14)
     assert.equal(ergebnis.aufenthalte[0]?.status, 'unknown')
-    assert.equal(ergebnis.zusammenfassung, 'Abdeckung noch nicht vollständig bestimmbar')
+    assert.equal(ergebnis.zusammenfassung, 'Unterkunftsstand noch unklar')
   })
 
   test('fehlende Daten behaupten keine 0/14-Abdeckung', () => {
@@ -249,7 +249,7 @@ describe('Unterkunftsabdeckung', () => {
     )
     assert.equal(ergebnis.bekannt, false)
     assert.equal(ergebnis.naechteGesamt, null)
-    assert.equal(ergebnis.zusammenfassung, 'Abdeckung noch nicht vollständig bestimmbar')
+    assert.equal(ergebnis.zusammenfassung, 'Unterkunftsstand noch unklar')
     assert.equal(ergebnis.aufenthalte[0]?.status, 'unknown')
   })
 

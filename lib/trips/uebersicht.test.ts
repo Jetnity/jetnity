@@ -137,7 +137,7 @@ describe('Reiseidentität', () => {
 
   test('ohne Geräte-Kalendertag wird keine zeitliche Lage behauptet', () => {
     assert.equal(uebersichtLage(reise(), null), null)
-    assert.equal(uebersichtAbleiten(reise(), [], null).lageText, 'Zeitliche Lage noch nicht bestimmbar')
+    assert.equal(uebersichtAbleiten(reise(), [], null).lageText, 'Zeitliche Einordnung noch unklar')
   })
 })
 
@@ -248,7 +248,8 @@ describe('Coverage-Verdichtung', () => {
     )
     assert.equal(sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'aktivitaeten')?.lage, 'belegt')
     assert.equal(sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')?.lage, 'offen')
-    assert.match(sicht.fortschrittText, /1 von 4 Bereichen belegt/)
+    assert.match(sicht.fortschrittText, /1 von 4 Bereichen ohne bekannten offenen Punkt/)
+    assert.equal(sicht.fortschrittText.includes('vorhanden'), false)
     assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche sind belegt'), false)
   })
 
@@ -289,7 +290,8 @@ describe('Coverage-Verdichtung', () => {
     const fluege = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')
     assert.equal(fluege?.text, 'Hinflug gebucht · Rückflug offen')
     assert.equal(fluege?.lage, 'teilweise')
-    assert.match(sicht.fortschrittText, /teilweise abgedeckt/)
+    assert.match(sicht.fortschrittText, /nur teilweise geplant/)
+    assert.equal(sicht.fortschrittText.includes('vorhanden'), false)
     assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche sind belegt'), false)
   })
 
@@ -327,7 +329,8 @@ describe('Coverage-Verdichtung', () => {
     )
     const fluege = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')
     assert.equal(fluege?.lage, 'unbestimmt')
-    assert.match(sicht.fortschrittText, /noch nicht vollständig bestimmbar/)
+    assert.match(sicht.fortschrittText, /noch unklar/)
+    assert.equal(sicht.fortschrittText.includes('vorhanden'), false)
     assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche sind belegt'), false)
   })
 })

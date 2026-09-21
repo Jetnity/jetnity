@@ -1,0 +1,44 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_unknown-overview_390x844.png",
+  "phase": "before",
+  "name": "unknown-overview_390x844",
+  "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+  "productTree": {
+    "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M AGENTS.md",
+      "M next-env.d.ts",
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T20:01:34.790Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3016/reisen/trip-v1-status-unknown",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "inject-guest",
+    "open-workspace",
+    "scroll-top"
+  ],
+  "state": "unknown-overview",
+  "wording": {
+    "eyebrow": null,
+    "heading": null,
+    "gapLage": null,
+    "gapPflicht": null,
+    "attention": [
+      "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+      "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+      "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+      "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context"
+    ]
+  }
+}

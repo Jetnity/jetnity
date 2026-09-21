@@ -191,8 +191,8 @@ describe('Status der Übersicht', () => {
 
     assert.equal(planpunkteSammeln(reise(), ohneTag).length, 1)
     assert.equal(planStatus(reise(), ohneTag).text, '1 Punkt geplant, davon 1 noch nicht eingeplant')
-    assert.equal(status[0]?.text, 'noch nicht vollständig bestimmbar')
-    assert.equal(status[1]?.text, 'Abdeckung noch nicht vollständig bestimmbar')
+    assert.equal(status[0]?.text, 'Flugstand noch unklar')
+    assert.equal(status[1]?.text, 'Unterkunftsstand noch unklar')
     assert.equal(status[2]?.text, '1 Aktivität geplant')
     assert.equal(status[3]?.bereich, 'mobilitaet')
   })

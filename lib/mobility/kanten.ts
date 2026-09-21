@@ -124,7 +124,7 @@ function statusWort(status: BewegungsStatus): string {
   if (status === 'selected') return 'ausgewählt'
   if (status === 'covered_by_flight') return 'über Flug abgedeckt'
   if (status === 'open') return 'offen'
-  return 'noch nicht vollständig bestimmbar'
+  return 'noch unklar'
 }
 
 function kanteWort(kante: Bewegungskante): string {
@@ -137,11 +137,11 @@ function zusammenfassungAus(
   transfers: readonly TripItem[],
 ): string {
   if (!bestimmbar) {
-    if (transfers.length === 0) return 'Noch keine Verbindung geplant'
+    if (transfers.length === 0) return 'Verbindungsstand noch unklar'
     if (transfers.length === 1) {
-      return '1 Verbindung geplant · Abdeckung noch nicht vollständig bestimmbar'
+      return '1 Verbindung geplant · Stand noch unklar'
     }
-    return `${transfers.length} Verbindungen geplant · Abdeckung noch nicht vollständig bestimmbar`
+    return `${transfers.length} Verbindungen geplant · Stand noch unklar`
   }
 
   const mobilitaet = kanten.filter((kante) => kante.status !== 'covered_by_flight')
@@ -154,12 +154,12 @@ function zusammenfassungAus(
   if (mobilitaet.some((kante) => kante.status === 'unknown') || (!bestimmbar && transfers.length > 0)) {
     const bekannte = mobilitaet.filter((kante) => kante.status !== 'unknown')
     if (bekannte.length === 0) {
-      if (transfers.length === 0) return 'noch nicht vollständig bestimmbar'
+      if (transfers.length === 0) return 'Verbindungsstand noch unklar'
       return transfers.length === 1
-        ? '1 Verbindung geplant · weitere Abschnitte noch nicht vollständig bestimmbar'
-        : `${transfers.length} Verbindungen geplant · weitere Abschnitte noch nicht vollständig bestimmbar`
+        ? '1 Verbindung geplant · weitere Verbindungen noch unklar'
+        : `${transfers.length} Verbindungen geplant · weitere Verbindungen noch unklar`
     }
-    return `${bekannte.map(kanteWort).join(' · ')} · weitere Abschnitte noch nicht vollständig bestimmbar`
+    return `${bekannte.map(kanteWort).join(' · ')} · weitere Verbindungen noch unklar`
   }
 
   if (mobilitaet.every((kante) => kante.status === 'open') && transfers.length === 0) {

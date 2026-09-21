@@ -1,0 +1,43 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-flights-gap_1440x900.png",
+  "phase": "before",
+  "name": "mixed-flights-gap_1440x900",
+  "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+  "productTree": {
+    "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M AGENTS.md",
+      "M next-env.d.ts",
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T20:01:39.479Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3016/reisen/trip-v1-status-mixed",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "open-workspace",
+    "click-Flüge"
+  ],
+  "state": "mixed-flights-gap-desktop",
+  "wording": {
+    "eyebrow": "Lücke",
+    "heading": "Flüge",
+    "gapLage": "teilweise",
+    "gapPflicht": "ja",
+    "attention": [
+      "Flugabdeckung nur teilweiseknown_gap",
+      "Flugabdeckung nur teilweiseknown_gap",
+      "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+      "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context"
+    ]
+  }
+}

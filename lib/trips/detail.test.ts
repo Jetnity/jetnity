@@ -268,7 +268,7 @@ describe('Flight Gap', () => {
   test('unbestimmt bleibt unbestimmt und nicht unavailable', () => {
     const gap = gapDetailAbleiten(flugReise('unbestimmt'), [], 'fluege')
     assert.equal(gap.lage, 'unbestimmt')
-    assert.match(gap.naechsterSchritt, /nicht vollständig bestimmbar/)
+    assert.match(gap.naechsterSchritt, /noch unklar/)
     assert.equal(gap.text.includes('unavailable'), false)
   })
 })
@@ -289,7 +289,7 @@ describe('Stay Gap', () => {
   test('unbestimmt bleibt unbestimmt', () => {
     const gap = gapDetailAbleiten(hotelReise('unbestimmt'), [], 'unterkunft')
     assert.equal(gap.lage, 'unbestimmt')
-    assert.match(gap.naechsterSchritt, /nicht vollständig bestimmbar/)
+    assert.match(gap.naechsterSchritt, /noch unklar/)
   })
 })
 
@@ -298,7 +298,7 @@ describe('Activities', () => {
     const gap = gapDetailAbleiten(reise(), [], 'aktivitaeten')
     assert.equal(gap.lage, 'offen')
     assert.equal(gap.istPflichtLuecke, false)
-    assert.match(gap.naechsterSchritt, /optional/)
+    assert.match(gap.naechsterSchritt, /freiwillig/)
     assert.equal(gap.text.includes('unvollständig'), false)
   })
 
@@ -329,7 +329,7 @@ describe('Mobility', () => {
     const gap = gapDetailAbleiten(reise(), [], 'mobilitaet')
     assert.equal(gap.lage, 'offen')
     assert.equal(gap.coveredByFlight, false)
-    assert.match(gap.naechsterSchritt, /Live-Mobilitätsadapter/)
+    assert.match(gap.naechsterSchritt, /Live-Suche für Verbindungen/)
   })
 
   test('unbestimmte Mobilität bleibt unbestimmt', () => {
@@ -358,7 +358,7 @@ describe('Mobility', () => {
     assert.equal(gap.coveredByFlight, false)
     assert.equal(gap.lage, 'unbestimmt')
     assert.notEqual(gap.lage, 'offen')
-    assert.match(gap.naechsterSchritt, /nicht vollständig bestimmbar/)
+    assert.match(gap.naechsterSchritt, /noch unklar/)
   })
 })
 

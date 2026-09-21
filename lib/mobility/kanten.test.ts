@@ -84,7 +84,7 @@ describe('Mobilitätsabdeckung', () => {
   test('ohne Origin oder Etappe bleibt die Abdeckung unbestimmt', () => {
     const lage = mobilitaetsAbdeckung(reise({ origin: null, originPlaceId: null, stages: [] }))
     assert.equal(lage.bestimmbar, false)
-    assert.equal(lage.zusammenfassung, 'Noch keine Verbindung geplant')
+    assert.equal(lage.zusammenfassung, 'Verbindungsstand noch unklar')
   })
 
   test('eine Bahnverbindung mit passendem Start, Ziel und Datum gilt als ausgewählt', () => {
@@ -140,7 +140,7 @@ describe('Mobilitätsabdeckung', () => {
     assert.equal(lage.kanten[0]?.flightItem, null)
     assert.equal(lage.kanten.find((kante) => kante.art === 'return')?.status, 'open')
     assert.equal(lage.kanten.some((kante) => kante.status === 'covered_by_flight'), false)
-    assert.match(lage.zusammenfassung, /noch nicht vollständig bestimmbar/i)
+    assert.match(lage.zusammenfassung, /noch unklar/i)
   })
 
   test('ein anders gerouteter gleichdatiger Flug darf die Kante nicht als Flugabdeckung markieren', () => {
@@ -201,7 +201,7 @@ describe('Mobilitätsabdeckung', () => {
       }),
     )
     assert.equal(lage.kanten[0]?.status, 'unknown')
-    assert.match(lage.zusammenfassung, /noch nicht vollständig bestimmbar/i)
+    assert.match(lage.zusammenfassung, /noch unklar/i)
   })
 
   test('zwei passende Transfers machen die Zuordnung unbestimmt', () => {
