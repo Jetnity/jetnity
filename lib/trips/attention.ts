@@ -171,12 +171,12 @@ function coverageLage(lage: BereichLage): { schwere: AttentionSchwere; lage: Att
 
 function coverageTitel(bereich: 'fluege' | 'unterkunft', lage: BereichLage): string {
   if (bereich === 'fluege') {
-    if (lage === 'unbestimmt') return 'Flugabdeckung noch nicht vollständig bestimmbar'
-    if (lage === 'teilweise') return 'Flugabdeckung nur teilweise'
+    if (lage === 'unbestimmt') return 'Flugstand noch unklar'
+    if (lage === 'teilweise') return 'Flüge nur teilweise geplant'
     return 'Flugstrecke noch offen'
   }
-  if (lage === 'unbestimmt') return 'Unterkunftsabdeckung noch nicht vollständig bestimmbar'
-  if (lage === 'teilweise') return 'Unterkunftsnächte nur teilweise abgedeckt'
+  if (lage === 'unbestimmt') return 'Unterkunftsstand noch unklar'
+  if (lage === 'teilweise') return 'Unterkunftsnächte nur teilweise geplant'
   return 'Unterkunftsnächte fehlen noch'
 }
 

@@ -6,8 +6,9 @@ import { ArrowLeft } from 'lucide-react'
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import { ART_BEZEICHNUNG, betragLesbar } from '@/lib/trips/bezeichnungen'
 import {
-  DETAIL_LAGE_TEXT,
   DETAIL_SUCHE_BEZEICHNUNG,
+  gapEyebrowText,
+  gapNebenzeile,
   type GapDetailAbleitung,
   type ItemDetailAbleitung,
   type WorkspaceDetailAuswahl,
@@ -69,7 +70,7 @@ export default function TripWorkspaceDetail({
       </button>
 
       <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-        {auswahl.art === 'item' ? 'Punkt' : 'Lücke'}
+        {auswahl.art === 'item' ? 'Punkt' : gap ? gapEyebrowText(gap) : 'Bereich'}
       </p>
       <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto">
         {titel}
@@ -78,11 +79,7 @@ export default function TripWorkspaceDetail({
       {gap && (
         <div className="mt-3 grid min-w-0 gap-2">
           <p className="text-sm leading-6 text-ink-800 break-words hyphens-auto">{gap.text}</p>
-          <p className="text-xs leading-5 text-ink-700">
-            Lage: {DETAIL_LAGE_TEXT[gap.lage]}
-            {gap.istPflichtLuecke ? '' : ' · keine Pflichtlücke'}
-            {gap.coveredByFlight ? ' · über Flug abgedeckt' : ''}
-          </p>
+          <p className="text-xs leading-5 text-ink-700">{gapNebenzeile(gap)}</p>
           <p className="text-sm leading-6 text-ink-800 break-words hyphens-auto">{gap.naechsterSchritt}</p>
         </div>
       )}

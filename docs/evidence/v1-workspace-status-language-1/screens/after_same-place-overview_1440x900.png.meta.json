@@ -1,0 +1,45 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/after_same-place-overview_1440x900.png",
+  "phase": "after",
+  "name": "same-place-overview_1440x900",
+  "sha": "a71d3b5d6dce01b07ce1738c1322b9e24ba198ab",
+  "productTree": {
+    "head": "a71d3b5d6dce01b07ce1738c1322b9e24ba198ab",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-09-21T20:26:19.741Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3000/reisen/trip-v1-status-same-place",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "inject-guest",
+    "open-workspace",
+    "scroll-top"
+  ],
+  "state": "same-place-overview",
+  "wording": {
+    "eyebrow": null,
+    "heading": null,
+    "gapLage": null,
+    "gapPflicht": null,
+    "attention": [
+      "Unterkunftsnächte fehlen nochknown_gap",
+      "Unterkunftsnächte fehlen nochknown_gap",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Sicherheitsprüfung derzeit nicht verfügbarunavailable",
+      "1 weiteren Hinweis anzeigen"
+    ],
+    "fortschritt": [
+      "2 von 4 Bereichen ohne bekannten offenen Punkt · 2 noch offen",
+      "0 Punkte geplant",
+      "0 Punkte geplant"
+    ]
+  }
+}

@@ -1,0 +1,731 @@
+{
+  "phase": "before",
+  "capturedAt": "2026-09-21T20:01:31.588Z",
+  "productTree": {
+    "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M AGENTS.md",
+      "M next-env.d.ts",
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "browser": "chromium/playwright",
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "captures": [
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_unknown-overview_390x844.png",
+      "phase": "before",
+      "name": "unknown-overview_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:34.790Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-unknown",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "inject-guest",
+        "open-workspace",
+        "scroll-top"
+      ],
+      "state": "unknown-overview",
+      "wording": {
+        "eyebrow": null,
+        "heading": null,
+        "gapLage": null,
+        "gapPflicht": null,
+        "attention": [
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_unknown-flights-gap_390x844.png",
+      "phase": "before",
+      "name": "unknown-flights-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:35.022Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-unknown",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "open-workspace",
+        "click-Flüge"
+      ],
+      "state": "unknown-flights-gap",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Flüge",
+        "gapLage": "unbestimmt",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_unknown-stay-gap_390x844.png",
+      "phase": "before",
+      "name": "unknown-stay-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:35.576Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-unknown",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "return-overview",
+        "click-Unterkunft"
+      ],
+      "state": "unknown-stay-gap",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Unterkunft",
+        "gapLage": "unbestimmt",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_unknown-overview_1440x900.png",
+      "phase": "before",
+      "name": "unknown-overview_1440x900",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:36.449Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-unknown",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "inject-guest",
+        "open-workspace",
+        "scroll-top"
+      ],
+      "state": "unknown-overview",
+      "wording": {
+        "eyebrow": null,
+        "heading": null,
+        "gapLage": null,
+        "gapPflicht": null,
+        "attention": [
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_unknown-flights-gap_1440x900.png",
+      "phase": "before",
+      "name": "unknown-flights-gap_1440x900",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:36.731Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-unknown",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "open-workspace",
+        "click-Flüge"
+      ],
+      "state": "unknown-flights-gap-desktop",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Flüge",
+        "gapLage": "unbestimmt",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Flugabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Unterkunftsabdeckung noch nicht vollständig bestimmbarunknown",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-overview_390x844.png",
+      "phase": "before",
+      "name": "mixed-overview_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:37.423Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-mixed",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "inject-guest",
+        "open-workspace",
+        "scroll-top"
+      ],
+      "state": "mixed-overview",
+      "wording": {
+        "eyebrow": null,
+        "heading": null,
+        "gapLage": null,
+        "gapPflicht": null,
+        "attention": [
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-flights-gap_390x844.png",
+      "phase": "before",
+      "name": "mixed-flights-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:37.656Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-mixed",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "open-workspace",
+        "click-Flüge"
+      ],
+      "state": "mixed-flights-gap",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Flüge",
+        "gapLage": "teilweise",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-stay-gap_390x844.png",
+      "phase": "before",
+      "name": "mixed-stay-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:38.357Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-mixed",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "return-overview",
+        "click-Unterkunft"
+      ],
+      "state": "mixed-stay-gap",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Unterkunft",
+        "gapLage": "teilweise",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-overview_1440x900.png",
+      "phase": "before",
+      "name": "mixed-overview_1440x900",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:39.212Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-mixed",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "inject-guest",
+        "open-workspace",
+        "scroll-top"
+      ],
+      "state": "mixed-overview",
+      "wording": {
+        "eyebrow": null,
+        "heading": null,
+        "gapLage": null,
+        "gapPflicht": null,
+        "attention": [
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-flights-gap_1440x900.png",
+      "phase": "before",
+      "name": "mixed-flights-gap_1440x900",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:39.479Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-mixed",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "open-workspace",
+        "click-Flüge"
+      ],
+      "state": "mixed-flights-gap-desktop",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Flüge",
+        "gapLage": "teilweise",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Flugabdeckung nur teilweiseknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Unterkunftsnächte nur teilweise abgedecktknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-overview_390x844.png",
+      "phase": "before",
+      "name": "open-overview_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:40.173Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-open",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "inject-guest",
+        "open-workspace",
+        "scroll-top"
+      ],
+      "state": "open-overview",
+      "wording": {
+        "eyebrow": null,
+        "heading": null,
+        "gapLage": null,
+        "gapPflicht": null,
+        "attention": [
+          "Flugstrecke noch offenknown_gap",
+          "Flugstrecke noch offenknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-flights-gap_390x844.png",
+      "phase": "before",
+      "name": "open-flights-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:40.406Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-open",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "open-workspace",
+        "click-Flüge"
+      ],
+      "state": "open-flights-gap",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Flüge",
+        "gapLage": "offen",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugstrecke noch offenknown_gap",
+          "Flugstrecke noch offenknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-stay-gap_390x844.png",
+      "phase": "before",
+      "name": "open-stay-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:41.156Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-open",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "return-overview",
+        "click-Unterkunft"
+      ],
+      "state": "open-stay-gap",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Unterkunft",
+        "gapLage": "offen",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugstrecke noch offenknown_gap",
+          "Flugstrecke noch offenknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-activities-gap_390x844.png",
+      "phase": "before",
+      "name": "open-activities-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:41.891Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-open",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "return-overview",
+        "click-Aktivitäten"
+      ],
+      "state": "open-activities-optional",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Aktivitäten",
+        "gapLage": "offen",
+        "gapPflicht": "nein",
+        "attention": [
+          "Flugstrecke noch offenknown_gap",
+          "Flugstrecke noch offenknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-mobility-gap_390x844.png",
+      "phase": "before",
+      "name": "open-mobility-gap_390x844",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:42.725Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-open",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "return-overview",
+        "click-Mobilität"
+      ],
+      "state": "open-mobility-known-open",
+      "wording": {
+        "eyebrow": "Lücke",
+        "heading": "Mobilität",
+        "gapLage": "offen",
+        "gapPflicht": "ja",
+        "attention": [
+          "Flugstrecke noch offenknown_gap",
+          "Flugstrecke noch offenknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    },
+    {
+      "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-overview_1440x900.png",
+      "phase": "before",
+      "name": "open-overview_1440x900",
+      "sha": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+      "productTree": {
+        "head": "f6372928b994c6ac00dac8fc82deee0a856a2376",
+        "workingTree": "dirty",
+        "dirtyPaths": [
+          "M AGENTS.md",
+          "M next-env.d.ts",
+          "?? scripts/v1-workspace-status-language-1-audit.mjs"
+        ]
+      },
+      "capturedAt": "2026-09-21T20:01:43.598Z",
+      "browser": "chromium/playwright",
+      "browserVersion": "140.0.7339.16",
+      "route": "http://localhost:3016/reisen/trip-v1-status-open",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "simulationClass": "synthetic-guest + intercepted-unavailable",
+      "actionSequence": [
+        "inject-guest",
+        "open-workspace",
+        "scroll-top"
+      ],
+      "state": "open-overview",
+      "wording": {
+        "eyebrow": null,
+        "heading": null,
+        "gapLage": null,
+        "gapPflicht": null,
+        "attention": [
+          "Flugstrecke noch offenknown_gap",
+          "Flugstrecke noch offenknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Unterkunftsnächte fehlen nochknown_gap",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context",
+          "Offizielle Prüfung noch nicht möglichinsufficient_context"
+        ]
+      }
+    }
+  ],
+  "zoom": {
+    "overflow": {
+      "html": 18,
+      "body": 18
+    },
+    "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_mixed-overview-200pct_390x844.png"
+  },
+  "keyboard": {
+    "overviewReturned": true,
+    "openFile": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-flights-keyboard_390x844.png",
+    "backFile": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/before_open-flights-keyboard-back_390x844.png"
+  },
+  "forbiddenAfterHits": [],
+  "emptyImages": 0,
+  "limits": [
+    "synthetic guest localStorage only",
+    "provider/model routes intercepted",
+    "not live authenticated",
+    "not Safari / real device / whole-site E2E"
+  ]
+}

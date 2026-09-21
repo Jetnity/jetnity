@@ -1,0 +1,48 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-status-language-1/screens/after_mixed-overview-200pct_390x844.png",
+  "phase": "after",
+  "name": "mixed-overview-200pct_390x844",
+  "sha": "7a143fecdf0647bfa059653f96cc8c1eca5d6656",
+  "productTree": {
+    "head": "7a143fecdf0647bfa059653f96cc8c1eca5d6656",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? scripts/v1-workspace-status-language-1-audit.mjs"
+    ]
+  },
+  "capturedAt": "2026-09-21T20:04:46.118Z",
+  "browser": "chromium/playwright",
+  "browserVersion": "140.0.7339.16",
+  "route": "http://localhost:3018/reisen/trip-v1-status-mixed",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "actionSequence": [
+    "open-mixed-workspace",
+    "set-html-font-size-200pct"
+  ],
+  "state": "mixed-overview-200pct",
+  "wording": {
+    "eyebrow": null,
+    "heading": null,
+    "gapLage": null,
+    "gapPflicht": null,
+    "attention": [
+      "Flüge nur teilweise geplantknown_gap",
+      "Flüge nur teilweise geplantknown_gap",
+      "Unterkunftsnächte nur teilweise geplantknown_gap",
+      "Unterkunftsnächte nur teilweise geplantknown_gap",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context",
+      "Offizielle Prüfung noch nicht möglichinsufficient_context"
+    ],
+    "fortschritt": [
+      "2 nur teilweise geplant · 1 noch offen · 1 noch unklar",
+      "2 Punkte geplant, davon 1 noch nicht eingeplant",
+      "2 Punkte geplant, davon 1 noch nicht eingeplant",
+      "Noch nicht eingeplant"
+    ]
+  },
+  "textZoom": "200%"
+}
