@@ -1,0 +1,35 @@
+{
+  "issue": 514,
+  "draftPr": 517,
+  "branch": "fix/v1-guest-draft-adoption-honesty-1",
+  "dispatchBase": "19a91a2594127eb2b6104b68da69786194e13865",
+  "dispatchHead": "4f171cfa512b89a5f19ea557210b41c4c00b0701",
+  "agent": "Jetnity V1 guest draft adoption honesty 1",
+  "generation": 1,
+  "requiredModel": "Cursor Grok 4.6 High Fast",
+  "originalModelName": "cursor-grok-4.6-high-fast",
+  "session": "bc-47795181-3fb3-4cfc-82cc-ce3c05d63c3b",
+  "exclusiveFiles": [
+    "lib/trips/gastspeicher.ts",
+    "lib/trips/uebernahme.ts",
+    "components/trips/GastreiseBruecke.tsx",
+    "lib/trips/gastspeicher.test.ts",
+    "lib/trips/uebernahme.test.ts",
+    "docs/V1_GUEST_DRAFT_ADOPTION_HONESTY_1_TASK_2026-09-21.md",
+    "docs/V1_GUEST_DRAFT_ADOPTION_HONESTY_1_STATUS_2026-09-21.md",
+    "docs/V1_GUEST_DRAFT_ADOPTION_HONESTY_1_HANDOFF_2026-09-21.md",
+    "docs/V1_GUEST_DRAFT_ADOPTION_HONESTY_1_SELF_REVIEW_2026-09-21.md",
+    "docs/evidence/v1-guest-draft-adoption-honesty-1/"
+  ],
+  "notTouched": [
+    "components/trips/GastArbeitsbereich.tsx",
+    "components/trips/TripWorkspace*.tsx",
+    "Admin analyst paths",
+    "lib/trips/schema.ts",
+    "Auth/RLS/server actions/Supabase",
+    "package.json",
+    "docs/ACTIVE_WORK_STATUS.md"
+  ],
+  "evidenceClass": "mocked_browser_storage_and_mocked_server_action",
+  "authenticatedE2E": false
+}

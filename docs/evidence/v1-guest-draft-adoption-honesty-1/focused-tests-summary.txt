@@ -1,0 +1,16 @@
+# focused: lib/trips/gastspeicher.test.ts + lib/trips/uebernahme.test.ts
+# tests 129
+# suites 24
+# pass 129
+# fail 0
+# duration_ms 565.680112
+
+# npm test
+# tests 3552
+# suites 628
+# pass 3552
+# fail 0
+# duration_ms 30016.639234
+
+# evidence class: mocked localStorage + mocked server action
+# not authenticated E2E
