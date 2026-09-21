@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import AdminStatsStrip from '@/components/admin/home/AdminStatsStrip'
 import AdminTimeSeries from '@/components/admin/home/AdminTimeSeries'
+import AdminLagehinweise from '@/components/admin/home/AdminLagehinweise'
 import AdminNaechsteSchritte from '@/components/admin/home/AdminNaechsteSchritte'
 import AdminHealthCards from '@/components/admin/home/AdminHealthCards'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
@@ -23,6 +24,10 @@ export default async function AdminHomePage() {
 
       <section className="bg-card rounded-2xl border border-border p-5">
         <AdminTimeSeries />
+      </section>
+
+      <section className="bg-card rounded-2xl border border-border p-5">
+        <AdminLagehinweise />
       </section>
 
       <section className="bg-card rounded-2xl border border-border p-5">
