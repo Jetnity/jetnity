@@ -1,0 +1,583 @@
+{
+  "kind": "synthetic-component-render",
+  "authenticatedPreview": "BLOCKED_ACCESS",
+  "officialTravelAdviceValidation": "NOT_CLAIMED",
+  "browser": "playwright-chromium",
+  "productTree": {
+    "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+    "workingTree": "clean",
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-09-21T18:57:17.302Z",
+  "css": {
+    "source": "styles/globals.css",
+    "config": "tailwind.config.js",
+    "plugins": [
+      "tailwindcss/nesting",
+      "tailwindcss",
+      "autoprefixer"
+    ],
+    "bytes": 104346
+  },
+  "note": "Fixture-injected TripWorkspaceDestinationEssentials with compiled styles/globals.css. Not a real /trips session. Before frames reconstruct the previous repeated per-domain empty lines. After frames use the current component.",
+  "cases": {
+    "empty-three-before": {
+      "phase": "before",
+      "simulationClass": "reconstructed_previous_per_stage_empty_rendering",
+      "interaction": "none",
+      "screenshots": [
+        "empty-three-before_390x844.png",
+        "empty-three-before_1024x768.png"
+      ],
+      "measurements": {
+        "390x844": {
+          "section": {
+            "box": {
+              "width": 358,
+              "height": 790.5,
+              "left": 16,
+              "right": 374,
+              "top": 88,
+              "bottom": 878.5
+            },
+            "density": "voll",
+            "stages": [
+              "stage-fl",
+              "stage-rm",
+              "stage-vn"
+            ],
+            "emptyDisclosure": false,
+            "domainLabels": {
+              "einreise": false,
+              "sicherheit": false,
+              "reisezeit": false
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            }
+          },
+          "touch": null,
+          "focus": {
+            "summaryPresent": false,
+            "linkCount": 0,
+            "firstHref": null
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 614
+          },
+          "interaction": null,
+          "viewport": {
+            "name": "390x844",
+            "width": 390,
+            "height": 844
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "reconstructed_previous_per_stage_empty_rendering",
+          "actionSequence": [
+            "setContent",
+            "assert painted",
+            "screenshot"
+          ]
+        },
+        "1024x768": {
+          "section": {
+            "box": {
+              "width": 736,
+              "height": 790.5,
+              "left": 144,
+              "right": 880,
+              "top": 72,
+              "bottom": 862.5
+            },
+            "density": "voll",
+            "stages": [
+              "stage-fl",
+              "stage-rm",
+              "stage-vn"
+            ],
+            "emptyDisclosure": false,
+            "domainLabels": {
+              "einreise": false,
+              "sicherheit": false,
+              "reisezeit": false
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 1024,
+              "clientWidth": 1024,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 734,
+              "clientWidth": 734,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 768,
+              "clientWidth": 768,
+              "overflowing": false
+            }
+          },
+          "touch": null,
+          "focus": {
+            "summaryPresent": false,
+            "linkCount": 0,
+            "firstHref": null
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 614
+          },
+          "interaction": null,
+          "viewport": {
+            "name": "1024x768",
+            "width": 1024,
+            "height": 768
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "reconstructed_previous_per_stage_empty_rendering",
+          "actionSequence": [
+            "setContent",
+            "assert painted",
+            "screenshot"
+          ]
+        }
+      }
+    },
+    "empty-three-after": {
+      "phase": "after",
+      "simulationClass": "current_component_compiled_css",
+      "interaction": "none",
+      "screenshots": [
+        "empty-three-after_390x844.png",
+        "empty-three-after_1024x768.png"
+      ],
+      "measurements": {
+        "390x844": {
+          "section": {
+            "box": {
+              "width": 358,
+              "height": 292,
+              "left": 16,
+              "right": 374,
+              "top": 88,
+              "bottom": 380
+            },
+            "density": "kompakt",
+            "stages": [
+              "stage-fl",
+              "stage-rm",
+              "stage-vn"
+            ],
+            "emptyDisclosure": true,
+            "domainLabels": {
+              "einreise": true,
+              "sicherheit": true,
+              "reisezeit": true
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            }
+          },
+          "touch": null,
+          "focus": {
+            "summaryPresent": false,
+            "linkCount": 0,
+            "firstHref": null
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 229
+          },
+          "interaction": null,
+          "viewport": {
+            "name": "390x844",
+            "width": 390,
+            "height": 844
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "current_component_compiled_css",
+          "actionSequence": [
+            "setContent",
+            "assert painted",
+            "screenshot"
+          ]
+        },
+        "1024x768": {
+          "section": {
+            "box": {
+              "width": 736,
+              "height": 268,
+              "left": 144,
+              "right": 880,
+              "top": 72,
+              "bottom": 340
+            },
+            "density": "kompakt",
+            "stages": [
+              "stage-fl",
+              "stage-rm",
+              "stage-vn"
+            ],
+            "emptyDisclosure": true,
+            "domainLabels": {
+              "einreise": true,
+              "sicherheit": true,
+              "reisezeit": true
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 1024,
+              "clientWidth": 1024,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 734,
+              "clientWidth": 734,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 768,
+              "clientWidth": 768,
+              "overflowing": false
+            }
+          },
+          "touch": null,
+          "focus": {
+            "summaryPresent": false,
+            "linkCount": 0,
+            "firstHref": null
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 229
+          },
+          "interaction": null,
+          "viewport": {
+            "name": "1024x768",
+            "width": 1024,
+            "height": 768
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "current_component_compiled_css",
+          "actionSequence": [
+            "setContent",
+            "assert painted",
+            "screenshot"
+          ]
+        }
+      }
+    },
+    "mixed-after": {
+      "phase": "after",
+      "simulationClass": "current_component_compiled_css",
+      "interaction": "keyboard-details",
+      "screenshots": [
+        "mixed-after_390x844.png"
+      ],
+      "measurements": {
+        "390x844": {
+          "section": {
+            "box": {
+              "width": 358,
+              "height": 575.5,
+              "left": 16,
+              "right": 374,
+              "top": 88,
+              "bottom": 663.5
+            },
+            "density": "voll",
+            "stages": [
+              "stage-fl"
+            ],
+            "emptyDisclosure": false,
+            "domainLabels": {
+              "einreise": true,
+              "sicherheit": true,
+              "reisezeit": true
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            }
+          },
+          "touch": {
+            "summaryHeight": 44,
+            "meetsMinH11": true
+          },
+          "focus": {
+            "summaryPresent": true,
+            "linkCount": 1,
+            "firstHref": "https://example.test/official"
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 370
+          },
+          "interaction": {
+            "focusedTag": "SUMMARY",
+            "detailsOpen": 1,
+            "visibleHint": 2,
+            "visibleVisa": 2,
+            "visibleSeason": 2,
+            "activeHref": "https://example.test/official"
+          },
+          "viewport": {
+            "name": "390x844",
+            "width": 390,
+            "height": 844
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "current_component_compiled_css",
+          "actionSequence": [
+            "setContent",
+            "focus summary",
+            "Enter",
+            "assert details open",
+            "focus official source link",
+            "screenshot"
+          ]
+        }
+      }
+    },
+    "empty-long-names-after": {
+      "phase": "after",
+      "simulationClass": "current_component_compiled_css",
+      "interaction": "none",
+      "screenshots": [
+        "empty-long-names-after_390x844.png"
+      ],
+      "measurements": {
+        "390x844": {
+          "section": {
+            "box": {
+              "width": 358,
+              "height": 372,
+              "left": 16,
+              "right": 374,
+              "top": 88,
+              "bottom": 460
+            },
+            "density": "kompakt",
+            "stages": [
+              "stage-long-1",
+              "stage-long-2",
+              "stage-long-3"
+            ],
+            "emptyDisclosure": true,
+            "domainLabels": {
+              "einreise": true,
+              "sicherheit": true,
+              "reisezeit": true
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            }
+          },
+          "touch": null,
+          "focus": {
+            "summaryPresent": false,
+            "linkCount": 0,
+            "firstHref": null
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 429
+          },
+          "interaction": null,
+          "viewport": {
+            "name": "390x844",
+            "width": 390,
+            "height": 844
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "current_component_compiled_css",
+          "actionSequence": [
+            "setContent",
+            "assert painted",
+            "screenshot"
+          ]
+        }
+      }
+    },
+    "empty-large-text-after": {
+      "phase": "after",
+      "simulationClass": "current_component_compiled_css_enlarged_text",
+      "interaction": "none",
+      "screenshots": [
+        "empty-large-text-after_390x844.png"
+      ],
+      "measurements": {
+        "390x844": {
+          "section": {
+            "box": {
+              "width": 326,
+              "height": 854,
+              "left": 32,
+              "right": 358,
+              "top": 336,
+              "bottom": 1190
+            },
+            "density": "kompakt",
+            "stages": [
+              "stage-fl",
+              "stage-rm",
+              "stage-vn"
+            ],
+            "emptyDisclosure": true,
+            "domainLabels": {
+              "einreise": true,
+              "sicherheit": true,
+              "reisezeit": true
+            }
+          },
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 324,
+              "clientWidth": 324,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            }
+          },
+          "touch": null,
+          "focus": {
+            "summaryPresent": false,
+            "linkCount": 0,
+            "firstHref": null
+          },
+          "painted": {
+            "painted": true,
+            "textLength": 229
+          },
+          "interaction": null,
+          "viewport": {
+            "name": "390x844",
+            "width": 390,
+            "height": 844
+          },
+          "capturedAt": "2026-09-21T18:57:17.302Z",
+          "productTree": {
+            "head": "6f8cd923be97eb93c5b7d2cf5f92f8c6a7f20c44",
+            "workingTree": "clean",
+            "dirtyPaths": []
+          },
+          "simulationClass": "current_component_compiled_css_enlarged_text",
+          "actionSequence": [
+            "setContent",
+            "assert painted",
+            "screenshot"
+          ]
+        }
+      }
+    }
+  },
+  "heightDelta": {
+    "390x844": {
+      "before": 790.5,
+      "after": 292,
+      "delta": -498.5
+    },
+    "1024x768": {
+      "before": 790.5,
+      "after": 268,
+      "delta": -522.5
+    }
+  }
+}
