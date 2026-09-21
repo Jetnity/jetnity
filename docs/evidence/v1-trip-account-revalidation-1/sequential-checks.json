@@ -1,0 +1,77 @@
+{
+  "productSha": "c7fb9f0f693ba9f020add7b26a041263aa7e3b07",
+  "checks": [
+    {
+      "id": "S1",
+      "scenario": "create multi-stage trip -> reorder by position -> associate day/item -> derive mobility -> change dates",
+      "execution": "executed_existing_unit_tests",
+      "tests": [
+        "lib/trips/create-stages.test.ts",
+        "lib/trips/day-stage-truth-contract.test.ts",
+        "lib/mobility/kanten.test.ts",
+        "lib/trips/timeline.test.ts",
+        "lib/reiseaenderung/anwenden.test.ts"
+      ],
+      "result": "Create of Paris->Rom->Paris is two separate stages plus one Rom stage, assignmentMode=unassigned, dayStagePosition=null. Mobility edges follow position after #502. Timeline buckets unassigned days. Date shift moves trip/day dates; protected commercial startsOn stays.",
+      "notProven": "Authenticated create RPC, browser reorder UI, live mobility on a saved account trip."
+    },
+    {
+      "id": "S2",
+      "scenario": "explicit registry materialization -> later registry change does not silently mutate trip snapshot",
+      "execution": "executed_existing_unit_tests_plus_source_trace",
+      "tests": [
+        "lib/traveller/account-registry-trip.test.ts",
+        "lib/traveller/account-registry-trip-orchestrierung.test.ts",
+        "lib/traveller/account-registry.test.ts"
+      ],
+      "result": "S4 mints fresh trip-owned IDs. Registry CRUD writes account_travellers* only. Re-adoption appends a new snapshot, it does not update the previous trip traveller in place. No live FK.",
+      "notProven": "Live Supabase two-step write (change registry row, reload trip)."
+    },
+    {
+      "id": "S3",
+      "scenario": "multiple citizenship/document options -> route/transit change -> stale/unknown/recheck, never preferred passport",
+      "execution": "executed_existing_unit_tests",
+      "tests": [
+        "lib/traveller/account-registry.test.ts",
+        "lib/readiness/fingerprint.test.ts",
+        "lib/readiness/status.test.ts",
+        "lib/readiness/kontext.test.ts"
+      ],
+      "result": "Forbidden default/preferred keys remain rejected. Fingerprint includes all citizenships/documents. Persisted readiness becomes stale when fingerprint drifts. Official provider is null so official rows stay unknown/provider_unavailable.",
+      "notProven": "Real official provider evaluations."
+    },
+    {
+      "id": "S4",
+      "scenario": "guest draft -> adoption -> retry/failure -> retained facts and ownership",
+      "execution": "executed_existing_unit_tests",
+      "tests": ["lib/trips/uebernahme.test.ts", "lib/trips/gastspeicher.test.ts"],
+      "result": "Abort-on-first-error, client_ref retry, draft retained on failure, invalid schema draft becomes art=nichts and UI treats nichts as ruht.",
+      "notProven": "Live GastreiseBruecke on Preview with a real session."
+    },
+    {
+      "id": "S5",
+      "scenario": "archive -> restore -> concurrency/revision/error",
+      "execution": "executed_existing_unit_tests",
+      "tests": [
+        "lib/account/reise-archiv.test.ts",
+        "lib/trips/archiv-aktionen.test.ts",
+        "lib/account/reise-gruppen-grenzen.test.ts"
+      ],
+      "result": "Restore requires previous_status provenance. Optimistic status+updated_at guard. Unknown stand fail-closed. Guest lifecycle untouched.",
+      "notProven": "Concurrent two-tab archive against live RLS."
+    },
+    {
+      "id": "S6",
+      "scenario": "unavailable auth/data/provider -> honest recovery, not empty/healthy/not_required",
+      "execution": "executed_existing_unit_tests_plus_source_trace",
+      "tests": [
+        "lib/auth/proxy-auth-lookup-failure.test.ts",
+        "lib/account/datenexport.test.ts",
+        "lib/readiness/bezeichnungen.test.ts",
+        "lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts"
+      ],
+      "result": "#500 HTML lookup-failed is 503 unavailable, not login. Official empty rows are unknown/provider_unavailable. Account list loaders are source-traced to lese()/problem vs empty. Legal pages still absent (PO_GATED).",
+      "notProven": "Induced live Auth outage or empty-vs-error clickthrough."
+    }
+  ]
+}
