@@ -66,7 +66,7 @@ export function PlanenManuellZeiger() {
       <a
         href={`#${PLANEN_MANUELL_ZIEL_ID}`}
         onClick={aktivieren}
-        className="inline-flex min-h-11 max-w-full items-center rounded-sm font-semibold text-brand-800 underline underline-offset-2 transition hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        className="inline-block min-h-11 min-w-0 max-w-full break-words rounded-sm font-semibold text-brand-800 underline underline-offset-2 transition hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
       >
         Schritt für Schritt planen
       </a>
