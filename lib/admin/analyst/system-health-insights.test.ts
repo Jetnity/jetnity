@@ -545,6 +545,61 @@ describe('System-Health-Analyst (synthetic fixtures)', () => {
     assert.doesNotMatch(text, /analyst-lesen|copilot-ausfuehren/)
   })
 
+  test('IA-R1 mixed-clock: item-checkedAt trägt Frische, Sammlung bleibt sourceCheckedAt', () => {
+    const sammlung = JETZT
+    const itemMs = JETZT - 90_000
+    const itemZeit = new Date(itemMs).toISOString()
+    const sammlungZeit = new Date(sammlung).toISOString()
+    const roh = synthetisch(sammlung)
+    const gemischt: SystemHealthBericht = {
+      ...roh,
+      checkedAt: sammlungZeit,
+      items: roh.items.map((item) =>
+        item.id === 'supabase'
+          ? wendeEvidenceAlterAn({ ...item, checkedAt: itemZeit }, sammlung)
+          : item,
+      ),
+    }
+    const bericht = leite(ROLL, gemischt, sammlung)
+    const zugriff = bericht.insights.find((insight) => insight.sourceCheckId === 'supabase-app-datenzugriff')
+    assert.ok(zugriff)
+    assert.equal(zugriff!.checkedAt, itemZeit)
+    assert.equal(zugriff!.freshness.ageMs, 90_000)
+    assert.equal(zugriff!.freshness.state, 'stale')
+    assert.equal(bericht.sourceCheckedAt, sammlungZeit)
+    assert.notEqual(zugriff!.checkedAt, bericht.sourceCheckedAt)
+  })
+
+  test('IA-R1 item-local missing/invalid checkedAt: nur diese Beobachtung wird unknown', () => {
+    const roh = synthetisch()
+    const ohneItemZeit: SystemHealthBericht = {
+      ...roh,
+      items: roh.items.map((item) =>
+        item.id === 'supabase' ? { ...item, checkedAt: '' } : item,
+      ),
+    }
+    const ohne = leite(ROLL, ohneItemZeit)
+    const fehlend = ohne.insights.find((insight) => insight.sourceCheckId === 'supabase-app-datenzugriff')
+    assert.ok(fehlend)
+    assert.equal(fehlend!.freshness.state, 'unknown')
+    assert.equal(fehlend!.freshness.ageMs, null)
+    assert.equal(ohne.sourceCheckedAt, roh.checkedAt)
+
+    const ungueltig: SystemHealthBericht = {
+      ...roh,
+      items: roh.items.map((item) =>
+        item.id === 'supabase' ? { ...item, checkedAt: 'nicht-parsebar' } : item,
+      ),
+    }
+    const kaputt = leite(ROLL, ungueltig)
+    const ziel = kaputt.insights.find((insight) => insight.sourceCheckId === 'supabase-app-datenzugriff')
+    assert.ok(ziel)
+    assert.equal(ziel!.freshness.state, 'unknown')
+    assert.equal(ziel!.freshness.ageMs, null)
+    assert.equal(ziel!.checkedAt, 'nicht-parsebar')
+    assert.equal(kaputt.sourceCheckedAt, roh.checkedAt)
+  })
+
   test('T-home-directory: ready hrefs unverändert', () => {
     assert.deepEqual(
       ADMIN_NAECHSTE_SCHRITTE.filter((schritt) => schritt.stand === 'ready').map((schritt) => schritt.href),

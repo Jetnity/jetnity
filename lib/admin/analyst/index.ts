@@ -17,6 +17,9 @@ export { ladeAnalystBericht } from './laden'
 export { ANALYST_ACCESS_CAPABILITY, ANALYST_ACCESS_SURFACE } from './laden'
 export {
   alsUnvertrautenText,
+  beobachtungsstand,
+  formatiereAlter,
+  istGueltigerZeitpunkt,
   leiteSystemHealthInsights,
   projiziereBreakGlassSystemHealth,
 } from './system-health-insights'

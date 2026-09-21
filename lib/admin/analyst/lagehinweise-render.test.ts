@@ -7,7 +7,7 @@ import { join } from 'node:path'
 
 import { AdminLagehinweiseAnsicht } from '@/components/admin/home/AdminLagehinweise'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
-import { leiteSystemHealthInsights } from './system-health-insights'
+import { beobachtungsstand, leiteSystemHealthInsights } from './system-health-insights'
 import {
   bewerteApp,
   bewerteSupabaseAppZugriff,
@@ -80,6 +80,56 @@ describe('AdminLagehinweise Ansicht (synthetic render)', () => {
     assert.doesNotMatch(quelle, /min-w-\[\d{3,}px\]/)
     const html = htmlAus(synthetischUnavailable())
     assert.doesNotMatch(html, /width:\s*\d{3,}px/)
+  })
+
+  test('IA-R2: stale 90s zeigt time und Alter, unknown ohne dateTime', () => {
+    const ursprung = new Date(JETZT - 90_000).toISOString()
+    const stale = leiteSystemHealthInsights({
+      access: { status: 'allowed', grant: 'role' },
+      nowMs: JETZT,
+      bericht: {
+        checkedAt: new Date(JETZT).toISOString(),
+        writeActions: [],
+        items: [
+          bewerteApp({ vercelEnv: 'preview', commitSha: 'a', deploymentId: 'd', region: 'fra1' }, JETZT),
+          vercelNichtKonfiguriert(JETZT),
+          {
+            ...bewerteSupabaseAppZugriff({ configured: true, ping: { ok: true }, nowMs: JETZT - 90_000 }),
+            checkedAt: ursprung,
+          },
+          githubNichtKonfiguriert(JETZT),
+          infomaniakNichtKonfiguriert(JETZT),
+        ],
+      },
+    })
+    const html = htmlAus(stale)
+    assert.match(html, /<time dateTime="/i)
+    assert.match(html, /90 Sekunden/)
+    assert.match(html, /Beobachtet:/)
+    const stand = beobachtungsstand(stale.insights[0]!)
+    assert.equal(stand.dateTime, ursprung)
+    assert.equal(html.includes('renderContainsOriginalTimestamp=false'), false)
+
+    const unbekannt = leiteSystemHealthInsights({
+      access: { status: 'allowed', grant: 'role' },
+      nowMs: JETZT,
+      bericht: {
+        checkedAt: 'kein-datum',
+        writeActions: [],
+        items: [
+          { ...bewerteApp({ vercelEnv: null, commitSha: null, deploymentId: null, region: null }, JETZT), checkedAt: '' },
+          { ...vercelNichtKonfiguriert(JETZT), checkedAt: '' },
+          { ...bewerteSupabaseAppZugriff({ configured: true, ping: { ok: true }, nowMs: JETZT }), checkedAt: 'kein-datum' },
+          { ...githubNichtKonfiguriert(JETZT), checkedAt: '' },
+          { ...infomaniakNichtKonfiguriert(JETZT), checkedAt: '' },
+        ],
+      },
+    })
+    const unknownHtml = htmlAus(unbekannt)
+    assert.match(unknownHtml, /Prüfzeitpunkt unbekannt/)
+    assert.match(unknownHtml, /Alter unbekannt/)
+    assert.doesNotMatch(unknownHtml, /<time dateTime="kein-datum"/)
+    assert.doesNotMatch(unknownHtml, /höchstens 30s|at most 30s old/)
   })
 
   test('Denied rendert keine Coverage-Zeile und keinen Investigate-Link', () => {

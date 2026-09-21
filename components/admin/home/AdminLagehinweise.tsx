@@ -5,6 +5,7 @@ import {
   type AnalystBericht,
   type AnalystInsight,
 } from '@/lib/admin/analyst'
+import { beobachtungsstand } from '@/lib/admin/analyst/system-health-insights'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { cn } from '@/lib/utils'
 
@@ -61,7 +62,8 @@ export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht 
         {bericht.insights.map((insight) => {
           const observedLabel = ANALYST_OBSERVED_LABEL[insight.observed]
           const freshnessLabel = ANALYST_FRESHNESS_LABEL[insight.freshness.state]
-          const statusName = `${insight.title}, ${observedLabel}, ${freshnessLabel}`
+          const stand = beobachtungsstand(insight)
+          const statusName = `${insight.title}, ${observedLabel}, ${freshnessLabel}, ${stand.alterstext}`
           return (
             <li
               key={insight.id}
@@ -83,6 +85,12 @@ export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht 
                 </p>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">{insight.explanation}</p>
+              <p className="mt-2 text-xs text-muted-foreground" data-analyst-observed-at>
+                <span className="font-medium text-foreground">Beobachtet: </span>
+                {stand.dateTime ? <time dateTime={stand.dateTime}>{stand.zeittext}</time> : stand.zeittext}
+                <span aria-hidden> · </span>
+                <span data-analyst-age>{stand.alterstext}</span>
+              </p>
               <p className="mt-2 text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">Belegt: </span>
                 {insight.proves}

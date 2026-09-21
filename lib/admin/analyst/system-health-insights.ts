@@ -84,9 +84,37 @@ function istDatenbankgestuetzterCheck(id: string): boolean {
   return (DATENBANKGESTUETZTE_SYSTEM_HEALTH_CHECKS as readonly string[]).includes(id)
 }
 
-function istGueltigerZeitpunkt(wert: string | null | undefined): boolean {
+export function istGueltigerZeitpunkt(wert: string | null | undefined): boolean {
   if (!wert) return false
   return Number.isFinite(Date.parse(wert))
+}
+
+export function formatiereAlter(ageMs: number): string {
+  const sekunden = Math.max(0, Math.round(ageMs / 1000))
+  if (sekunden < 120) return `${sekunden} Sekunden`
+  const minuten = Math.round(sekunden / 60)
+  if (minuten < 120) return `${minuten} Minuten`
+  return `${Math.round(minuten / 60)} Stunden`
+}
+
+export function beobachtungsstand(insight: Pick<AnalystInsight, 'checkedAt' | 'freshness'>): {
+  dateTime: string | null
+  zeittext: string
+  alterstext: string
+} {
+  if (!istGueltigerZeitpunkt(insight.checkedAt)) {
+    return { dateTime: null, zeittext: 'Prüfzeitpunkt unbekannt', alterstext: 'Alter unbekannt' }
+  }
+  const instant = new Date(insight.checkedAt as string)
+  return {
+    dateTime: instant.toISOString(),
+    zeittext: instant.toLocaleString('de-CH', {
+      dateStyle: 'short',
+      timeStyle: 'medium',
+      timeZone: 'UTC',
+    }),
+    alterstext: insight.freshness.ageMs == null ? 'Alter unbekannt' : `vor ${formatiereAlter(insight.freshness.ageMs)}`,
+  }
 }
 
 function iso(nowMs: number): string {
@@ -212,7 +240,7 @@ export function leiteSystemHealthInsights(eingabe: AnalystInsightEingabe): Analy
     insights.push(notzugangInsight(eingabe.access, bericht, originalCheckedAt, eingabe.nowMs, [...notAttributed]))
   }
 
-  const kandidaten = sammleKandidaten(bericht, eingabe.access, notAttributed, originalCheckedAt)
+  const kandidaten = sammleKandidaten(bericht, eingabe.access, notAttributed)
   insights.push(...kandidaten)
 
   if (istKeinSignal(bericht, grant, notAttributed, insights)) {
@@ -441,7 +469,6 @@ function sammleKandidaten(
   bericht: SystemHealthBericht,
   access: AnalystAccess,
   notAttributed: Set<string>,
-  originalCheckedAt: string | null,
 ): AnalystInsight[] {
   const insights: AnalystInsight[] = []
 
@@ -467,7 +494,7 @@ function sammleKandidaten(
         if (check.id === DEPLOYMENT_ID && (check.status === 'unknown' || check.status === 'not_configured')) {
           continue
         }
-        const insight = checkInsight(item, check, access, originalCheckedAt)
+        const insight = checkInsight(item, check, access)
         if (insight) insights.push(insight)
       }
       continue
@@ -476,7 +503,7 @@ function sammleKandidaten(
     if (istErwarteteAbdeckung(item.id, item.status)) {
       continue
     }
-    const insight = itemInsight(item, access, originalCheckedAt)
+    const insight = itemInsight(item, access)
     if (insight) insights.push(insight)
   }
 
@@ -492,7 +519,6 @@ function checkInsight(
   item: SystemHealthItem,
   check: SystemHealthCheck,
   access: AnalystAccess,
-  originalCheckedAt: string | null,
 ): AnalystInsight | null {
   const klass = klassifiziere(check.status, check.freshness, check.id)
   if (!klass) return null
@@ -510,7 +536,7 @@ function checkInsight(
     sourceCheckId: check.id,
     observed: klass.observed,
     freshness: check.freshness,
-    checkedAt: originalCheckedAt || item.checkedAt || null,
+    checkedAt: item.checkedAt || null,
     materiality: klass.materiality,
     attribution: 'process-recent',
     title: checkTitel(check.name, klass.observed, stale),
@@ -528,7 +554,6 @@ function checkInsight(
 function itemInsight(
   item: SystemHealthItem,
   access: AnalystAccess,
-  originalCheckedAt: string | null,
 ): AnalystInsight | null {
   const klass = klassifiziere(item.status, item.freshness, item.id)
   if (!klass) return null
@@ -539,7 +564,7 @@ function itemInsight(
     sourceCheckId: null,
     observed: klass.observed,
     freshness: item.freshness,
-    checkedAt: originalCheckedAt || item.checkedAt || null,
+    checkedAt: item.checkedAt || null,
     materiality: klass.materiality,
     attribution: 'process-recent',
     title: checkTitel(item.name, klass.observed, stale),
@@ -734,9 +759,7 @@ function abschluss(
 ): AnalystBericht {
   const insights = teil.insights.map((insight) => ({
     ...insight,
-    checkedAt: originalCheckedAt !== null && originalCheckedAt !== undefined
-      ? originalCheckedAt || insight.checkedAt
-      : insight.checkedAt,
+    checkedAt: insight.checkedAt || null,
     proves: overlayProves(insight.proves, insight.observed),
     title: alsUnvertrautenText(insight.title),
     explanation: alsUnvertrautenText(insight.explanation),
