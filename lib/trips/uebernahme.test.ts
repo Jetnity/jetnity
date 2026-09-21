@@ -23,6 +23,8 @@
 
 import { test, describe, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   itineraryAirportChange,
@@ -34,6 +36,12 @@ import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { SCHLUESSEL, gastreiseAnlegen, kennungErzeugen } from '@/lib/trips/gastspeicher'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { gastreisenUebernehmen, type Uebernahmeantwort } from '@/lib/trips/uebernahme'
+import {
+  GASTREISE_BRUECKE_TEXTE,
+  GastreiseBrueckenAnzeige,
+  gastreiseBrueckeKopie,
+  gastreiseBrueckeStandAusBericht,
+} from '@/components/trips/GastreiseBruecke'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import type { CreateTripInput } from '@/types/trips'
 import type { FlugRouteItinerary } from '@/lib/route/domain'
@@ -55,21 +63,36 @@ const LEERE_MOBILITAET_NUTZLAST = {
 /** Ein `localStorage`, der sich wie einer verhält. */
 function speicherStellen() {
   const ablage = new Map<string, string>()
+  const schreibvorgaenge: Array<{ art: 'set' | 'remove'; schluessel: string }> = []
+  let lesenWirft = false
 
   Object.assign(globalThis, {
     window: {
       localStorage: {
-        getItem: (schluessel: string) => ablage.get(schluessel) ?? null,
-        setItem: (schluessel: string, wert: string) => ablage.set(schluessel, wert),
-        removeItem: (schluessel: string) => ablage.delete(schluessel),
+        getItem: (schluessel: string) => {
+          if (lesenWirft) throw new Error('SecurityError')
+          return ablage.get(schluessel) ?? null
+        },
+        setItem: (schluessel: string, wert: string) => {
+          schreibvorgaenge.push({ art: 'set', schluessel })
+          ablage.set(schluessel, wert)
+        },
+        removeItem: (schluessel: string) => {
+          schreibvorgaenge.push({ art: 'remove', schluessel })
+          ablage.delete(schluessel)
+        },
       },
     },
   })
 
   return {
+    schreibvorgaenge,
+    lesenWerfen: () => {
+      lesenWirft = true
+    },
     roh: (schluessel: string) => ablage.get(schluessel) ?? null,
     setzen: (schluessel: string, wert: unknown) =>
-      ablage.set(schluessel, JSON.stringify(wert)),
+      ablage.set(schluessel, typeof wert === 'string' ? wert : JSON.stringify(wert)),
   }
 }
 
@@ -988,13 +1011,16 @@ describe('Manipulationsversuche', () => {
   })
 
   test('ein unlesbarer Eintrag führt nicht zu einem Aufruf', async () => {
-    speicher.setzen(SCHLUESSEL.aktiv, '{kaputt')
+    const roh = '{kaputt'
+    speicher.setzen(SCHLUESSEL.aktiv, roh)
 
     const server = attrappe()
     const bericht = await gastreisenUebernehmen(server.senden)
 
-    assert.deepEqual(bericht, { art: 'nichts' })
+    assert.deepEqual(bericht, { art: 'ungueltig' })
     assert.equal(server.empfangen.length, 0)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
   })
 
   test('ein 0-Stage-Entwurf wird fail-closed nicht ins Konto geschickt', async () => {
@@ -1047,12 +1073,285 @@ describe('Manipulationsversuche', () => {
       updatedAt: '2026-08-01T00:00:00.000Z',
     })
 
+    const rohVorher = speicher.roh(SCHLUESSEL.aktiv)
     const server = attrappe()
     const bericht = await gastreisenUebernehmen(server.senden)
 
-    // Das Schema in lib/trips/schema.ts filtert ihn beim Lesen. Ihn zu schicken
-    // hiesse, die Ablehnung von der Datenbank zu holen – als SQLSTATE.
+    // Das Schema in lib/trips/schema.ts weist ihn beim Lesen ab. Die Übernahme
+    // darf das nicht als „kein Entwurf“ verschweigen und nicht an den Server
+    // reichen.
+    assert.deepEqual(bericht, { art: 'ungueltig' })
+    assert.equal(server.empfangen.length, 0)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), rohVorher)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+})
+
+describe('Honesty der aktiven Gastreise vor der Übernahme', () => {
+  function legacyMini(id: string, title: string) {
+    return {
+      id,
+      title,
+      destination: title,
+      origin: 'Zürich',
+      startDate: '2026-09-12',
+      endDate: '2026-09-12',
+      travelers: 1,
+      pace: 'ausgewogen',
+      interests: [],
+      days: [{ id: 'day-1', date: '2026-09-12', items: [] }],
+      createdAt: '2026-08-01T10:00:00.000Z',
+      updatedAt: '2026-08-01T10:00:00.000Z',
+    }
+  }
+
+  test('leerer Speicher bleibt still und ohne Serveraufruf', async () => {
+    const server = attrappe()
+    let gemeldet = 0
+    const bericht = await gastreisenUebernehmen(server.senden, () => {
+      gemeldet += 1
+    })
+
     assert.deepEqual(bericht, { art: 'nichts' })
     assert.equal(server.empfangen.length, 0)
+    assert.equal(gemeldet, 0)
+    assert.equal('uebernommen' in bericht, false)
+  })
+
+  test('leerer String, Primitive und JSON-null sind ungültig und bleiben liegen', async () => {
+    for (const roh of ['', 'null', '0', 'false', '"text"']) {
+      speicher.setzen(SCHLUESSEL.aktiv, roh)
+      const server = attrappe()
+      const bericht = await gastreisenUebernehmen(server.senden)
+
+      assert.deepEqual(bericht, { art: 'ungueltig' })
+      assert.equal(server.empfangen.length, 0)
+      assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+      assert.equal(speicher.schreibvorgaenge.length, 0)
+    }
+  })
+
+  test('ungültig aktiv plus gültiges Legacy wird nicht normalisiert und nicht gesendet', async () => {
+    const aktivRoh = '{kein JSON'
+    speicher.setzen(SCHLUESSEL.aktiv, aktivRoh)
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-alt', 'Barcelona')])
+    const legacyRoh = speicher.roh(SCHLUESSEL.legacy)
+    const server = attrappe()
+    let gemeldet = 0
+
+    const bericht = await gastreisenUebernehmen(server.senden, () => {
+      gemeldet += 1
+    })
+
+    assert.deepEqual(bericht, { art: 'ungueltig' })
+    assert.equal(server.empfangen.length, 0)
+    assert.equal(gemeldet, 0)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), aktivRoh)
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), legacyRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ungültig aktiv plus gültige Warteschlange wird nicht gesendet und nicht gelöscht', async () => {
+    const aktiv = gastreiseAnlegen(eingabe({ title: 'Aktiv' }))
+    speicher.setzen(SCHLUESSEL.warteschlange, [
+      { ...aktiv, id: 'trip-warte-1', clientRef: 'trip-warte-1', title: 'Wartend' },
+    ])
+    const warteschlangeRoh = speicher.roh(SCHLUESSEL.warteschlange)
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    speicher.schreibvorgaenge.length = 0
+    const server = attrappe()
+
+    const bericht = await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(bericht, { art: 'ungueltig' })
+    assert.equal(server.empfangen.length, 0)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), '{kein JSON')
+    assert.equal(speicher.roh(SCHLUESSEL.warteschlange), warteschlangeRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('fehlend aktiv plus gültiges Legacy übernimmt weiter wie bisher', async () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-alt', 'Barcelona')])
+    const server = attrappe()
+
+    const bericht = await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(bericht, { art: 'fertig', uebernommen: 1 })
+    assert.equal(server.empfangen[0]?.title, 'Barcelona')
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), null)
+  })
+
+  test('getItem-Wurf ist speicher_unlesbar und schreibt nichts', async () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-alt', 'Barcelona')])
+    const aktivRoh = speicher.roh(SCHLUESSEL.aktiv)
+    const legacyRoh = speicher.roh(SCHLUESSEL.legacy)
+    speicher.lesenWerfen()
+    const server = attrappe()
+    let gemeldet = 0
+
+    const bericht = await gastreisenUebernehmen(server.senden, () => {
+      gemeldet += 1
+    })
+
+    assert.deepEqual(bericht, { art: 'speicher_unlesbar' })
+    assert.equal(server.empfangen.length, 0)
+    assert.equal(gemeldet, 0)
+    assert.equal('uebernommen' in bericht, false)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), aktivRoh)
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), legacyRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein werfender localStorage-Getter ist speicher_unlesbar', async () => {
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: {},
+    })
+    Object.defineProperty(globalThis.window, 'localStorage', {
+      configurable: true,
+      get() {
+        throw new Error('SecurityError')
+      },
+    })
+    const server = attrappe()
+
+    const bericht = await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(bericht, { art: 'speicher_unlesbar' })
+    assert.equal(server.empfangen.length, 0)
+  })
+
+  test('ohne window bleibt die Übernahme still, kein Speicherfehler', async () => {
+    const vorher = Object.getOwnPropertyDescriptor(globalThis, 'window')
+    Reflect.deleteProperty(globalThis, 'window')
+    const server = attrappe()
+
+    try {
+      const bericht = await gastreisenUebernehmen(server.senden)
+      assert.deepEqual(bericht, { art: 'nichts' })
+      assert.equal(server.empfangen.length, 0)
+    } finally {
+      if (vorher) Object.defineProperty(globalThis, 'window', vorher)
+    }
+  })
+
+  test('Retry nach Korrektur liest frisch und übernimmt', async () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    const server = attrappe()
+
+    const erst = await gastreisenUebernehmen(server.senden)
+    assert.deepEqual(erst, { art: 'ungueltig' })
+    assert.equal(server.empfangen.length, 0)
+
+    const entwurf = gastreiseAnlegen(eingabe({ title: 'Korrigiert' }))
+    const retry = await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(retry, { art: 'fertig', uebernommen: 1 })
+    assert.equal(server.empfangen[0]?.client_ref, entwurf.clientRef)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+  })
+
+  test('Retry nach wiederhergestelltem Speicher liest frisch', async () => {
+    speicher.lesenWerfen()
+    const server = attrappe()
+    const erst = await gastreisenUebernehmen(server.senden)
+    assert.deepEqual(erst, { art: 'speicher_unlesbar' })
+
+    speicherStellen()
+    const entwurf = gastreiseAnlegen(eingabe({ title: 'Wieder da' }))
+    const retry = await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(retry, { art: 'fertig', uebernommen: 1 })
+    assert.equal(server.empfangen[0]?.title, 'Wieder da')
+    assert.equal(server.empfangen[0]?.client_ref, entwurf.clientRef)
+  })
+
+  test('ungültig und unlesbar erfinden keine Zählung', async () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    const ungueltig = await gastreisenUebernehmen(attrappe().senden)
+    assert.deepEqual(ungueltig, { art: 'ungueltig' })
+    assert.equal('uebernommen' in ungueltig, false)
+    assert.equal('offen' in ungueltig, false)
+
+    speicher = speicherStellen()
+    speicher.lesenWerfen()
+    const unlesbar = await gastreisenUebernehmen(attrappe().senden)
+    assert.deepEqual(unlesbar, { art: 'speicher_unlesbar' })
+    assert.equal('uebernommen' in unlesbar, false)
+    assert.equal('offen' in unlesbar, false)
+  })
+})
+
+describe('Brücke unterscheidet leer, ungültig und unlesbar', () => {
+  test('nichts bleibt still', () => {
+    const stand = gastreiseBrueckeStandAusBericht({ art: 'nichts' })
+    const kopie = gastreiseBrueckeKopie(stand)
+    assert.deepEqual(stand, { art: 'ruht' })
+    assert.equal(kopie.sichtbar, false)
+    assert.equal(renderToStaticMarkup(createElement(GastreiseBrueckenAnzeige, { stand })), '')
+  })
+
+  test('ungültig ist ein Alert ohne Erfolgszählung und ohne Verlustbehauptung', () => {
+    const stand = gastreiseBrueckeStandAusBericht({ art: 'ungueltig' })
+    const kopie = gastreiseBrueckeKopie(stand)
+    const html = renderToStaticMarkup(createElement(GastreiseBrueckenAnzeige, { stand }))
+
+    assert.deepEqual(stand, { art: 'ungueltig' })
+    assert.equal(kopie.rolle, 'alert')
+    assert.equal(kopie.erneut, true)
+    assert.equal(kopie.haupt, GASTREISE_BRUECKE_TEXTE.ungueltigHaupt)
+    assert.equal(kopie.neben, GASTREISE_BRUECKE_TEXTE.ungueltigNeben)
+    assert.match(html, /role="alert"/)
+    assert.match(html, /konnte nicht übernommen werden/)
+    assert.match(html, /nicht verändert/)
+    assert.match(html, /Erneut versuchen/)
+    assert.equal(html.includes('ist nicht verloren'), false)
+    assert.equal(html.includes('uebernommen'), false)
+  })
+
+  test('unlesbarer Speicher behauptet weder Leere noch sichere Erhaltung', () => {
+    const stand = gastreiseBrueckeStandAusBericht({ art: 'speicher_unlesbar' })
+    const kopie = gastreiseBrueckeKopie(stand)
+    const html = renderToStaticMarkup(createElement(GastreiseBrueckenAnzeige, { stand }))
+
+    assert.deepEqual(stand, { art: 'speicher_unlesbar' })
+    assert.equal(kopie.rolle, 'alert')
+    assert.equal(kopie.haupt, GASTREISE_BRUECKE_TEXTE.speicherHaupt)
+    assert.equal(kopie.neben, GASTREISE_BRUECKE_TEXTE.speicherNeben)
+    assert.match(html, /role="alert"/)
+    assert.match(html, /konnte nicht gelesen werden/)
+    assert.match(html, /konnte nicht geprüft werden/)
+    assert.equal(html.includes('ist nicht verloren'), false)
+    assert.equal(html.includes('kein gültiger Reiseentwurf'), false)
+  })
+
+  test('bestehender Serverfehler behält die Verlustwarnung', () => {
+    const stand = gastreiseBrueckeStandAusBericht({
+      art: 'fehler',
+      meldung: 'Die Datenbank ist nicht erreichbar.',
+      uebernommen: 0,
+      offen: 1,
+    })
+    const kopie = gastreiseBrueckeKopie(stand)
+    const html = renderToStaticMarkup(createElement(GastreiseBrueckenAnzeige, { stand }))
+
+    assert.equal(stand.art, 'fehler')
+    assert.equal(kopie.neben, GASTREISE_BRUECKE_TEXTE.fehlerNeben)
+    assert.match(html, /ist nicht verloren/)
+    assert.match(html, /Die Datenbank ist nicht erreichbar/)
+  })
+
+  test('gültige Übernahme und Lauf bleiben unverändert sichtbar', () => {
+    const fertig = gastreiseBrueckeKopie(gastreiseBrueckeStandAusBericht({ art: 'fertig', uebernommen: 1 }))
+    assert.equal(fertig.rolle, 'status')
+    assert.match(fertig.haupt, /liegt jetzt in deinem Konto/)
+
+    const laeuftHtml = renderToStaticMarkup(
+      createElement(GastreiseBrueckenAnzeige, { stand: { art: 'laeuft', anzahl: 2 } }),
+    )
+    assert.match(laeuftHtml, /role="status"/)
+    assert.match(laeuftHtml, /2 Reisen werden in dein Konto übernommen/)
   })
 })
