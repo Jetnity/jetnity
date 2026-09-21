@@ -42,6 +42,25 @@ describe('Sicherheitslage', () => {
     assert.equal(lage.blocked_ips, 2)
   })
 
+  test('historische Typen zählen mit derselben Taxonomie, lose Substrings nicht', () => {
+    const lage = fasseSicherheitslageZusammen(
+      [
+        { type: 'login_failed', created_at: '2026-08-17T09:00:00Z' },
+        { type: 'auth_failed', created_at: '2026-08-16T10:00:00Z' },
+        { type: 'something_failed', created_at: '2026-08-16T09:00:00Z' },
+        { type: 'bot', created_at: '2026-08-15T09:00:00Z' },
+        { type: 'suspicious', created_at: '2026-08-14T09:00:00Z' },
+        { type: 'ddos', created_at: '2026-08-13T09:00:00Z' },
+        { type: 'bot_detected', created_at: '2026-08-12T09:00:00Z' },
+        { type: 'anomaly_rate_limit', created_at: '2026-08-11T09:00:00Z' },
+      ],
+      [],
+    )
+
+    assert.equal(lage.failed_logins, 2)
+    assert.equal(lage.anomalies, 4)
+  })
+
   test('das letzte Ereignis ist das erste der absteigend sortierten Liste', () => {
     const lage = fasseSicherheitslageZusammen(
       [
