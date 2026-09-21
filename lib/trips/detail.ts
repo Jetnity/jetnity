@@ -45,10 +45,10 @@ export const DETAIL_SUCHE_BEZEICHNUNG: Record<DetailDomain, string> = {
 }
 
 export const DETAIL_LAGE_TEXT: Record<BereichLage, string> = {
-  offen: 'Offen',
-  teilweise: 'Teilweise',
-  belegt: 'Belegt',
-  unbestimmt: 'Noch nicht bestimmbar',
+  offen: 'Noch offen',
+  teilweise: 'Nur teilweise geplant',
+  belegt: 'Vorhanden',
+  unbestimmt: 'Noch unklar',
 }
 
 export type ItemTrust = 'notiz' | 'manuell' | 'manuell-gebucht' | 'herkunft-vorhanden'
@@ -61,6 +61,31 @@ export type GapDetailAbleitung = {
   coveredByFlight: boolean
   sucheAnbietbar: boolean
   naechsterSchritt: string
+}
+
+export type GapAnzeigeFelder = Pick<
+  GapDetailAbleitung,
+  'domain' | 'lage' | 'istPflichtLuecke' | 'coveredByFlight'
+>
+
+/**
+ * Eyebrow for the existing gap panel. Uses already-derived gap fields only.
+ * Unknown, optional and flight-covered states are not labelled as a confirmed gap.
+ */
+export function gapEyebrowText(gap: GapAnzeigeFelder): string {
+  if (gap.coveredByFlight) return 'Hinweis'
+  if (gap.domain === 'aktivitaeten') return 'Optional'
+  if (!gap.istPflichtLuecke) return gap.lage === 'belegt' ? 'Vorhanden' : 'Hinweis'
+  if (gap.lage === 'unbestimmt') return 'Noch unklar'
+  if (gap.lage === 'teilweise') return 'Teilweise offen'
+  return 'Noch offen'
+}
+
+export function gapNebenzeile(gap: GapAnzeigeFelder): string {
+  const teile = [DETAIL_LAGE_TEXT[gap.lage]]
+  if (!gap.istPflichtLuecke) teile.push('kein Pflichtpunkt')
+  if (gap.coveredByFlight) teile.push('durch den vorhandenen Flug abgedeckt')
+  return teile.join(' · ')
 }
 
 export type ItemDetailAbleitung = {
@@ -225,7 +250,7 @@ export function gapDetailAbleiten(
 ): GapDetailAbleitung {
   const status = bereichStatus(reise, ohneTag).find((eintrag) => eintrag.bereich === domain)
   const lage = status?.lage ?? 'unbestimmt'
-  const text = status?.text ?? 'Lage noch nicht bestimmbar'
+  const text = status?.text ?? 'Stand noch unklar'
   const coveredByFlight = domain === 'mobilitaet' && mobilityNurDurchFlug(reise, ohneTag)
   const istPflichtLuecke = domain !== 'aktivitaeten' && lage !== 'belegt' && !coveredByFlight
 
@@ -297,21 +322,21 @@ function gapNaechsterSchritt(
   coveredByFlight: boolean,
 ): string {
   if (domain === 'aktivitaeten') {
-    return 'Aktivitäten sind optional. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.'
+    return 'Aktivitäten sind freiwillig. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.'
   }
   if (coveredByFlight) {
-    return 'Diese Verbindung ist durch einen vorhandenen Flug abgedeckt. Das ist keine offene Bodenmobilitätslücke.'
+    return 'Diese Strecke ist durch einen vorhandenen Flug abgedeckt. Es fehlt keine Bodenverbindung.'
   }
   if (lage === 'unbestimmt') {
-    return 'Die Lage ist noch nicht vollständig bestimmbar. Es wird kein fehlender Anbieter erfunden.'
+    return 'Der Stand ist noch unklar. Prüfe Reisedaten und vorhandene Einträge. Es wird kein Anbieter oder Ergebnis vorgetäuscht.'
   }
   if (lage === 'belegt') {
-    return 'Der vorhandene Bestand kann geprüft werden. Eine Suche startet erst nach ausdrücklicher Aktion.'
+    return 'Die vorhandenen Einträge können geprüft werden. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.'
   }
   if (domain === 'mobilitaet') {
     return istPflichtLuecke
-      ? 'Vorhandene Verbindungen und manuelle Erfassung bleiben ehrlich. Es gibt keinen Live-Mobilitätsadapter.'
-      : 'Mobilität kann optional ergänzt werden. Kein Live-Adapter wird vorgetäuscht.'
+      ? 'Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Suche für Verbindungen gibt es hier nicht.'
+      : 'Mobilität kann ergänzt werden. Eine Live-Suche für Verbindungen gibt es hier nicht.'
   }
-  return 'Du kannst den vorhandenen Bestand prüfen oder eine Suche ausdrücklich öffnen.'
+  return 'Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.'
 }

@@ -84,7 +84,7 @@ function abschnittWort(abschnitt: FlugAbschnitt): string {
         ? 'ausgewählt'
         : abschnitt.status === 'open'
           ? 'offen'
-          : 'noch nicht vollständig bestimmbar'
+          : 'noch unklar'
 
   if (abschnitt.art === 'outbound') return `Hinflug ${lage}`
   if (abschnitt.art === 'return') return `Rückflug ${lage}`
@@ -97,9 +97,9 @@ function zusammenfassungAus(
   fluge: readonly TripItem[],
 ): string {
   if (!bestimmbar) {
-    if (fluge.length === 0) return 'Noch kein Flug ausgewählt'
-    if (fluge.length === 1) return '1 Flug ausgewählt · Abdeckung noch nicht vollständig bestimmbar'
-    return `${fluge.length} Flüge ausgewählt · Abdeckung noch nicht vollständig bestimmbar`
+    if (fluge.length === 0) return 'Flugstand noch unklar'
+    if (fluge.length === 1) return '1 Flug ausgewählt · Stand noch unklar'
+    return `${fluge.length} Flüge ausgewählt · Stand noch unklar`
   }
 
   if (abschnitte.length === 0) {
@@ -109,8 +109,8 @@ function zusammenfassungAus(
 
   if (abschnitte.some((abschnitt) => abschnitt.status === 'unknown')) {
     const bekannte = abschnitte.filter((abschnitt) => abschnitt.status !== 'unknown')
-    if (bekannte.length === 0) return 'noch nicht vollständig bestimmbar'
-    return `${bekannte.map(abschnittWort).join(' · ')} · weitere Abschnitte noch nicht vollständig bestimmbar`
+    if (bekannte.length === 0) return 'Flugstand noch unklar'
+    return `${bekannte.map(abschnittWort).join(' · ')} · weitere Abschnitte noch unklar`
   }
 
   if (abschnitte.every((abschnitt) => abschnitt.status === 'open') && fluge.length === 0) {

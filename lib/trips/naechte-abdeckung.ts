@@ -168,11 +168,11 @@ function lueckenAus(naechte: readonly string[], stageByNight: Map<string, Unterk
 
 function zusammenfassungAus(abdeckung: Omit<UnterkunftAbdeckung, 'zusammenfassung'>): string {
   if (!abdeckung.bekannt || abdeckung.naechteGesamt === null || abdeckung.naechteAbgedeckt === null) {
-    return 'Abdeckung noch nicht vollständig bestimmbar'
+    return 'Unterkunftsstand noch unklar'
   }
   if (abdeckung.naechteGesamt === 0) return 'Keine Übernachtung in diesem Zeitraum'
   if (abdeckung.aufenthalte.some((aufenthalt) => aufenthalt.status === 'unknown')) {
-    return 'Abdeckung noch nicht vollständig bestimmbar'
+    return 'Unterkunftsstand noch unklar'
   }
   if (abdeckung.naechteAbgedeckt === 0 && abdeckung.aufenthalte.length === 0) {
     return 'Noch keine Unterkunft ausgewählt'

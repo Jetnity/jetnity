@@ -79,7 +79,7 @@ export function uebersichtLage(
 }
 
 function uebersichtLageText(lage: UebersichtLage | null): string {
-  if (!lage) return 'Zeitliche Lage noch nicht bestimmbar'
+  if (!lage) return 'Zeitliche Einordnung noch unklar'
   return LAGE_TEXT[lage]
 }
 
@@ -110,15 +110,15 @@ function fortschrittAus(abdeckungen: readonly UebersichtAbdeckung[]): string {
   const unbestimmt = abdeckungen.filter((eintrag) => eintrag.lage === 'unbestimmt').length
   const gesamt = abdeckungen.length
 
-  if (unbestimmt === gesamt) return 'Abdeckung noch nicht vollständig bestimmbar'
+  if (unbestimmt === gesamt) return 'Stand der Bereiche noch unklar'
   if (offen === gesamt) return 'Noch nichts ausgewählt'
-  if (belegt === gesamt) return 'Wesentliche Bereiche sind belegt'
+  if (belegt === gesamt) return 'Wesentliche Bereiche sind vorhanden'
 
   const teile: string[] = []
-  if (belegt > 0) teile.push(`${belegt} von ${gesamt} Bereichen belegt`)
-  if (teilweise > 0) teile.push(`${teilweise} teilweise abgedeckt`)
-  if (offen > 0) teile.push(`${offen} offen`)
-  if (unbestimmt > 0) teile.push(`${unbestimmt} noch nicht vollständig bestimmbar`)
+  if (belegt > 0) teile.push(`${belegt} von ${gesamt} Bereichen vorhanden`)
+  if (teilweise > 0) teile.push(`${teilweise} nur teilweise geplant`)
+  if (offen > 0) teile.push(`${offen} noch offen`)
+  if (unbestimmt > 0) teile.push(`${unbestimmt} noch unklar`)
 
   return teile.join(' · ')
 }
