@@ -11,11 +11,14 @@
 // Die Reihenfolge und warum sie so ist
 // ---------------------------------------------------------------------------
 //
-//   1. `zurUebernahme()` liefert alles, was im Browser liegt: die aktive
+//   1. Read-only preflight of the active v3 key. An invalid or unreadable
+//      active draft stops this attempt before `zurUebernahme()` can migrate
+//      or write. Missing stays silent and may still adopt queue/legacy.
+//   2. `zurUebernahme()` liefert alles, was im Browser liegt: die aktive
 //      Gastreise und die Warteschlange aus der Fassung vor Phase 1.5.
-//   2. Je Entwurf ein Aufruf. Erst wenn der Server die Kennung der Reise
+//   3. Je Entwurf ein Aufruf. Erst wenn der Server die Kennung der Reise
 //      gemeldet hat, verschwindet dieser eine Entwurf aus dem Browser.
-//   3. Beim ersten Fehler bricht der Vorgang ab. Der Grund ist fast immer die
+//   4. Beim ersten Fehler bricht der Vorgang ab. Der Grund ist fast immer die
 //      Sitzung oder die Erreichbarkeit der Datenbank, und dann scheitert jeder
 //      weitere Entwurf genauso. Was noch im Browser liegt, bleibt liegen.
 //
@@ -39,7 +42,7 @@ import { partyVon } from '@/lib/readiness/party'
 import { readinessAlsUebernahme } from '@/lib/readiness/uebernahme'
 import { alsNutzlast } from '@/lib/trips/abbildung'
 import { DayStageAssignmentFehler } from '@/lib/trips/day-stage-assignment'
-import { uebernommenStreichen, zurUebernahme } from '@/lib/trips/gastspeicher'
+import { aktiveGastreiseVorpruefen, uebernommenStreichen, zurUebernahme } from '@/lib/trips/gastspeicher'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 
 /** Wie ein Aufruf ausgegangen ist – dieselbe Form wie in `lib/trips/aktionen.ts`. */
@@ -52,6 +55,17 @@ export type Uebernahmebericht =
   | { art: 'laeuft' }
   | { art: 'fertig'; uebernommen: number }
   | { art: 'fehler'; meldung: string; uebernommen: number; offen: number }
+  /**
+   * Active v3 key is present but not a valid trip. Distinct from `nichts`
+   * (no draft) and `fehler` (a counted server/adoption failure). No trip
+   * count is claimed.
+   */
+  | { art: 'ungueltig' }
+  /**
+   * Browser storage could not be read. Distinct from empty and from invalid
+   * bytes. No trip count is claimed.
+   */
+  | { art: 'speicher_unlesbar' }
 
 let laeuft = false
 
@@ -75,6 +89,10 @@ export async function gastreisenUebernehmen(
   ) => Promise<Uebernahmeantwort>,
 ): Promise<Uebernahmebericht> {
   if (laeuft) return { art: 'laeuft' }
+
+  const vorpruefung = aktiveGastreiseVorpruefen()
+  if (vorpruefung.art === 'ungueltig') return { art: 'ungueltig' }
+  if (vorpruefung.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
 
   const entwuerfe = zurUebernahme()
   if (entwuerfe.length === 0) return { art: 'nichts' }

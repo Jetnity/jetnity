@@ -45,6 +45,7 @@ import {
   uebernommenStreichen,
   VeralteteFassungFehler,
   zurUebernahme,
+  aktiveGastreiseVorpruefen,
 } from '@/lib/trips/gastspeicher'
 import { alsNutzlast } from '@/lib/trips/abbildung'
 import type { Ort } from '@/lib/places/domain'
@@ -71,16 +72,23 @@ function speicherStellen() {
   let gesperrt = false
   let stumm = false
   let loeschenGesperrt = false
+  let lesenWirft = false
   const gesperrteSchluessel = new Set<string>()
+  const schreibvorgaenge: Array<{ art: 'set' | 'remove'; schluessel: string }> = []
 
   const localStorage = {
-    getItem: (schluessel: string) => ablage.get(schluessel) ?? null,
+    getItem: (schluessel: string) => {
+      if (lesenWirft) throw new Error('SecurityError')
+      return ablage.get(schluessel) ?? null
+    },
     setItem: (schluessel: string, wert: string) => {
+      schreibvorgaenge.push({ art: 'set', schluessel })
       if (gesperrt || gesperrteSchluessel.has(schluessel)) throw new Error('QuotaExceededError')
       if (stumm) return
       ablage.set(schluessel, wert)
     },
     removeItem: (schluessel: string) => {
+      schreibvorgaenge.push({ art: 'remove', schluessel })
       if (loeschenGesperrt) throw new Error('SecurityError')
       ablage.delete(schluessel)
     },
@@ -91,6 +99,7 @@ function speicherStellen() {
 
   return {
     ablage,
+    schreibvorgaenge,
     sperren: () => {
       gesperrt = true
     },
@@ -98,6 +107,7 @@ function speicherStellen() {
       gesperrt = false
       stumm = false
       loeschenGesperrt = false
+      lesenWirft = false
       gesperrteSchluessel.clear()
     },
     sperrenFuer: (schluessel: string) => gesperrteSchluessel.add(schluessel),
@@ -106,6 +116,9 @@ function speicherStellen() {
     },
     loeschenSperren: () => {
       loeschenGesperrt = true
+    },
+    lesenWerfen: () => {
+      lesenWirft = true
     },
     roh: (schluessel: string) => ablage.get(schluessel) ?? null,
     setzen: (schluessel: string, wert: unknown) =>
@@ -1455,6 +1468,152 @@ describe('Gastreise trägt dieselbe Readiness-Form', () => {
         }),
       /sensible Daten/,
     )
+  })
+})
+
+describe('Read-only Vorprüfung des aktiven Gastschlüssels', () => {
+  test('ein fehlender Schlüssel ist fehlend, nicht ungültig', () => {
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('eine gültige aktive Reise bleibt gültig', () => {
+    gastreiseAnlegen(eingabe())
+    speicher.schreibvorgaenge.length = 0
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'gueltig' })
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('unlesbares JSON bleibt byte-genau liegen und gilt als ungültig', () => {
+    const roh = '{kein JSON'
+    speicher.setzen(SCHLUESSEL.aktiv, roh)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein schema-ungültiges Objekt bleibt liegen und gilt als ungültig', () => {
+    const roh = JSON.stringify({ id: 'trip-1', title: 'Halb' })
+    speicher.setzen(SCHLUESSEL.aktiv, roh)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein leerer String ist vorhanden und ungültig, nicht fehlend', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '')
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), '')
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('primitive und JSON-null Werte sind ungültig', () => {
+    for (const roh of ['null', '42', 'true', '"nur-text"']) {
+      speicher.setzen(SCHLUESSEL.aktiv, roh)
+      assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+      assert.equal(speicher.roh(SCHLUESSEL.aktiv), roh)
+    }
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ungültig aktiv plus gültiges Legacy bleibt unverändert', () => {
+    const aktivRoh = '{kein JSON'
+    const legacyRoh = JSON.stringify([legacyMini('trip-alt', 'Barcelona', '2026-08-01T10:00:00.000Z')])
+    speicher.setzen(SCHLUESSEL.aktiv, aktivRoh)
+    speicher.setzen(SCHLUESSEL.legacy, legacyRoh)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), aktivRoh)
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), legacyRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ungültig aktiv plus gültige Warteschlange bleibt unverändert', () => {
+    const aktivRoh = JSON.stringify({ id: 'trip-1', title: 'Halb' })
+    const warteschlange = [
+      {
+        id: 'trip-warte',
+        clientRef: 'trip-warte',
+        title: 'Wartend',
+        origin: null,
+        startDate: '2026-09-12',
+        endDate: '2026-09-12',
+        travellers: 1,
+        currency: 'CHF',
+        budgetAmount: null,
+        status: 'draft',
+        pace: 'balanced',
+        interests: [],
+        travelWish: null,
+        stages: [{ id: 'stage-1', position: 1, name: 'Paris', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null }],
+        days: [{ id: 'day-1', dayIndex: 1, dayDate: '2026-09-12', title: null, items: [], stageId: null }],
+        ohneTag: [],
+        createdAt: '2026-08-01T10:00:00.000Z',
+        updatedAt: '2026-08-01T10:00:00.000Z',
+      },
+    ]
+    speicher.setzen(SCHLUESSEL.aktiv, aktivRoh)
+    speicher.setzen(SCHLUESSEL.warteschlange, warteschlange)
+    const warteschlangeRoh = speicher.roh(SCHLUESSEL.warteschlange)
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), aktivRoh)
+    assert.equal(speicher.roh(SCHLUESSEL.warteschlange), warteschlangeRoh)
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('getItem-Wurf ist speicher_unlesbar, nicht ungültig oder fehlend', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    speicher.lesenWerfen()
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'speicher_unlesbar' })
+    assert.equal(speicher.schreibvorgaenge.length, 0)
+  })
+
+  test('ein werfender localStorage-Getter ist speicher_unlesbar', () => {
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: {},
+    })
+    Object.defineProperty(globalThis.window, 'localStorage', {
+      configurable: true,
+      get() {
+        throw new Error('SecurityError')
+      },
+    })
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'speicher_unlesbar' })
+  })
+
+  test('ohne window bleibt die Prüfung still, kein Speicherfehler', () => {
+    const vorher = Object.getOwnPropertyDescriptor(globalThis, 'window')
+    Reflect.deleteProperty(globalThis, 'window')
+
+    try {
+      assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'nicht_im_browser' })
+    } finally {
+      if (vorher) Object.defineProperty(globalThis, 'window', vorher)
+    }
+  })
+
+  test('fehlend aktiv plus gültiges Legacy bleibt für den Lader übernehmbar', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [legacyMini('trip-alt', 'Barcelona', '2026-08-01T10:00:00.000Z')])
+
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'fehlend' })
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Barcelona')
+  })
+
+  test('nach Korrektur liest die Vorprüfung frisch, ohne Cache', () => {
+    speicher.setzen(SCHLUESSEL.aktiv, '{kein JSON')
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'ungueltig' })
+
+    gastreiseAnlegen(eingabe({ title: 'Korrigiert' }))
+    assert.deepEqual(aktiveGastreiseVorpruefen(), { art: 'gueltig' })
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Korrigiert')
   })
 })
 
