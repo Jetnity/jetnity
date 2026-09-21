@@ -42,6 +42,28 @@ describe('etappenZeitraumAnzeigen', () => {
     assert.equal(etappenZeitraumAnzeigen('2026-10-12T18:00:00Z', '2026-10-16'), 'Abreise 16. Okt. 2026')
   })
 
+  test('impossible calendar days are not normalized into a real date', () => {
+    assert.equal(etappenZeitraumAnzeigen('2026-02-29', null), null)
+    assert.equal(etappenZeitraumAnzeigen('2026-02-30', null), null)
+    assert.equal(etappenZeitraumAnzeigen('2026-04-31', null), null)
+    assert.equal(etappenZeitraumAnzeigen('2026-02-29', '2026-02-30'), null)
+  })
+
+  test('a valid leap day remains visible', () => {
+    assert.equal(etappenZeitraumAnzeigen('2024-02-29', null), 'Ankunft 29. Feb. 2024')
+    assert.equal(etappenZeitraumAnzeigen('2024-02-29', '2024-03-01'), '29. Feb. – 01. März')
+  })
+
+  test('one valid endpoint with one impossible day keeps only the valid side', () => {
+    assert.equal(etappenZeitraumAnzeigen('2026-10-12', '2026-02-30'), 'Ankunft 12. Okt. 2026')
+    assert.equal(etappenZeitraumAnzeigen('2026-02-29', '2026-10-16'), 'Abreise 16. Okt. 2026')
+    const ankunft = '2026-02-29'
+    const abreise = '2026-10-16'
+    assert.equal(etappenZeitraumAnzeigen(ankunft, abreise), 'Abreise 16. Okt. 2026')
+    assert.equal(ankunft, '2026-02-29')
+    assert.equal(abreise, '2026-10-16')
+  })
+
   test('does not shift a date-only day across a timezone', () => {
     const text = etappenZeitraumAnzeigen('2026-10-12', '2026-10-16')
     assert.match(text ?? '', /12\. Okt/)

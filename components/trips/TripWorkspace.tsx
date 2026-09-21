@@ -224,29 +224,22 @@ export default function TripWorkspace({
   const detailFokusRef = React.useRef<HTMLButtonElement>(null)
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
   const vorherOffenRef = React.useRef(false)
+  const vorherKompaktRef = React.useRef(kompakt)
+  const detailAnkerRef = React.useRef<HTMLDivElement | null>(null)
+  const oeffnungsArbeitRef = React.useRef<{ rahmen: number; timeout: number } | null>(null)
+
+  const oeffnungsArbeitBeenden = () => {
+    const arbeit = oeffnungsArbeitRef.current
+    if (!arbeit) return
+    window.cancelAnimationFrame(arbeit.rahmen)
+    window.clearTimeout(arbeit.timeout)
+    oeffnungsArbeitRef.current = null
+  }
 
   const scrollDetailInSicht = (el: HTMLElement | null) => {
     if (!el) return
     const oben = el.getBoundingClientRect().top + window.scrollY
     window.scrollTo({ top: Math.max(0, oben - 72), behavior: 'auto' })
-  }
-
-  const scrollLueckeInSicht = () => {
-    const flaeche = document.querySelector('[data-arbeitsbereich="detail"]')
-    const heading = document.querySelector('[data-workspace-detail] h2')
-    if (heading instanceof HTMLElement) {
-      const rand = heading.getBoundingClientRect()
-      if (rand.top >= 80 && rand.bottom <= window.innerHeight - 8) return
-    }
-    if (flaeche instanceof HTMLElement) {
-      flaeche.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
-    }
-  }
-
-  const detailAnkerSetzen = (el: HTMLDivElement | null) => {
-    if (!el) return
-    scrollDetailInSicht(el)
-    requestAnimationFrame(() => scrollDetailInSicht(el))
   }
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
@@ -267,27 +260,45 @@ export default function TripWorkspace({
   }, [kompakt])
 
   React.useLayoutEffect(() => {
-    if (detailOffen && !vorherOffenRef.current) {
-      const fokus = kompakt ? zurueckRef.current : detailFokusRef.current
-      fokus?.focus({ preventScroll: true })
-      if (kompakt) {
-        const anker = document.querySelector('[data-workspace-detail-anker="ein"]')
-        if (anker instanceof HTMLElement) scrollDetailInSicht(anker)
-      } else {
-        scrollDetailInSicht(fokus)
-      }
-    }
-    if (!detailOffen && vorherOffenRef.current) {
+    const oeffnet = detailOffen && !vorherOffenRef.current
+    const schliesst = !detailOffen && vorherOffenRef.current
+    const sichtwechsel = detailOffen && vorherKompaktRef.current !== kompakt
+
+    if (schliesst) {
+      oeffnungsArbeitBeenden()
       letzterAusloeserRef.current?.focus?.()
     }
-    vorherOffenRef.current = detailOffen
-  }, [detailOffen, kompakt])
 
-  React.useEffect(() => {
-    if (!detailOffen || !kompakt) return
-    scrollLueckeInSicht()
-    const id = window.setTimeout(scrollLueckeInSicht, 0)
-    return () => window.clearTimeout(id)
+    if (oeffnet || sichtwechsel) {
+      oeffnungsArbeitBeenden()
+      const fokus = kompakt ? zurueckRef.current : detailFokusRef.current
+      if (oeffnet) fokus?.focus({ preventScroll: true })
+      const ziel = kompakt ? detailAnkerRef.current : fokus
+      if (ziel) scrollDetailInSicht(ziel)
+      if (kompakt) {
+        const rahmen = window.requestAnimationFrame(() => {
+          if (detailAnkerRef.current) scrollDetailInSicht(detailAnkerRef.current)
+        })
+        const timeout = window.setTimeout(() => {
+          const heading = document.querySelector('[data-workspace-detail] h2')
+          if (heading instanceof HTMLElement) {
+            const rand = heading.getBoundingClientRect()
+            if (rand.top >= 80 && rand.bottom <= window.innerHeight - 8) return
+          }
+          const flaeche = document.querySelector('[data-arbeitsbereich="detail"]')
+          if (flaeche instanceof HTMLElement) {
+            flaeche.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
+          }
+        }, 0)
+        oeffnungsArbeitRef.current = { rahmen, timeout }
+      }
+    }
+
+    vorherOffenRef.current = detailOffen
+    vorherKompaktRef.current = kompakt
+    return () => {
+      oeffnungsArbeitBeenden()
+    }
   }, [detailOffen, kompakt])
 
   const merkeAusloeser = () => {
@@ -476,7 +487,7 @@ export default function TripWorkspace({
 
         {kompakt && detailOffen ? (
           <div
-            ref={detailAnkerSetzen}
+            ref={detailAnkerRef}
             data-workspace-detail-anker="ein"
             aria-hidden="true"
             className="h-px scroll-mt-[calc(72px+env(safe-area-inset-top))]"

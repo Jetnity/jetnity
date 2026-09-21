@@ -1,0 +1,30 @@
+{
+  "id": "VUX-R2",
+  "sha": "4b5f34f9fc0ca3501f3bf3ca850f71f157764229",
+  "capturedAt": "2026-09-21T18:00:10.846Z",
+  "browser": "chromium/playwright",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "afterOpenScrollY": 433,
+  "afterManualScrollY": 1038,
+  "afterBenignUpdateScrollY": 1038,
+  "afterSearchScrollY": 1038,
+  "scrollHeightAfterOpen": 2731,
+  "scrollTarget": {
+    "top": 1038,
+    "max": 1887,
+    "scrollHeight": 2731
+  },
+  "parentUpdate": "booking-toggle",
+  "jumpAfterUpdate": 0,
+  "jumpAfterSearch": 0,
+  "resetToOpenAfterUpdate": false,
+  "resetToOpenAfterSearch": false,
+  "explicitSearchMounted": true,
+  "headingStillFluege": true,
+  "rapidCloseOverviewVisible": true,
+  "rapidCloseScrollY": 565
+}

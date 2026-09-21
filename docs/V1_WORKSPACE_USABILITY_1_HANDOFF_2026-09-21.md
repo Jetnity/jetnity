@@ -1,42 +1,37 @@
 # V1 Workspace Usability 1 — Handoff
 
 Stand: 21. September 2026  
-For: ChatGPT / Technical Lead (code + actual before/after visual/interaction review).
+For: ChatGPT / Technical Lead (code + actual before/after visual/interaction review of the **new** head).
 
 ## What to open
 
 1. Draft PR #516 / issue #513  
 2. Binding task `docs/V1_WORKSPACE_USABILITY_1_TASK_2026-09-21.md`  
-3. STATUS / SELF_REVIEW with this prefix  
-4. Before/after screens + metadata: `docs/evidence/v1-workspace-usability-1/`  
-5. VUX-4 before reproduction: `docs/evidence/v1-workspace-usability-1/vux4-before-reproduction.json`  
-6. VUX-4 after instrumentation: `docs/evidence/v1-workspace-usability-1/vux4-after-reproduction.json`  
-7. After screens + bounds: `docs/evidence/v1-workspace-usability-1/audit-after.json`
+3. TL CHANGES REQUIRED on `4b5f34f9` (VUX-R1 / VUX-R2)  
+4. STATUS / SELF_REVIEW with this prefix  
+5. Before/after screens: `docs/evidence/v1-workspace-usability-1/`  
+6. VUX-R2 interaction: `docs/evidence/v1-workspace-usability-1/vux-r2-interaction.json`  
+7. R2 screens: `screens/r2_complex-r2-scrolled-search_390x844.png`, `screens/r2_complex-r2-rapid-close_390x844.png`
 
-Do not reopen closed audit #506. Its FINAL **5269760171** and post-merge **5764730610** remain the disposition source.
+Do not reopen closed audit #506. Old-head gates on `4b5f34f9` do not approve a changed head.
 
-## Look-first screens
+## Look-first for this review fix
 
-| Question | Before | After |
-| --- | --- | --- |
-| Phone first viewport, long title | `screens/before_complex-overview_390x844.png` | `screens/after_complex-overview_390x844.png` |
-| Phone first viewport, short title | `screens/before_short-overview_390x844.png` | `screens/after_short-overview_390x844.png` |
-| 1024 landscape header | `screens/before_complex-overview_1024x768.png` | `screens/after_complex-overview_1024x768.png` |
-| Wide desktop still useful | `screens/before_complex-overview_1440x900.png` | `screens/after_complex-overview_1440x900.png` |
-| Stage dates | `screens/before_complex-day_390x844.png` | `screens/after_complex-day_390x844.png` |
-| Gap open from coverage control | `screens/before_complex-flights-from-top_390x844.png` | `screens/after_complex-flights-from-top_390x844.png` |
+| Question | Evidence |
+| --- | --- |
+| Impossible days no longer roll forward | `lib/trips/datum-anzeige.test.ts` (`2026-02-29` / `2026-02-30` / `2026-04-31` → null; `2024-02-29` kept) |
+| Manual scroll + parent update + explicit search | `vux-r2-interaction.json`: open 433 → manual 1038 → update 1038 → search 1038 |
+| Rapid close before deferred work | `screens/r2_complex-r2-rapid-close_390x844.png` + overview heading wait |
+| First-open hierarchy still accepted | existing `after_complex-overview_390x844.png` / `after_complex-flights-from-top_390x844.png` (not recaptured) |
 
-Every PNG has a sibling `.meta.json` with SHA, timestamp, viewport, browser, route, state and `synthetic-guest + intercepted-unavailable`.
+## What changed in this review fix
 
-## What changed
-
-- **VUX-1:** compact guest banner, header spacing and secondary discard; 1024 no longer uses the `lg` two-column 5xl title. 1440/1920 keep the rich two-column header. Full title remains visible. Guest browser-only + account-transfer copy remains. Discard stays confirm + 44px.
-- **VUX-2:** `etappenZeitraumAnzeigen` in `lib/trips/datum-anzeige.ts`; Plan stage line no longer joins raw ISO. Stored dates unchanged.
-- **VUX-4:** reproduced leftover `scrollY` + CSS scroll-anchoring after compact overview hide. Open transition now disables overflow-anchor on the workspace main and snaps the non-sticky detail surface into view. Sticky back + domain heading measured in view. Search still explicit (`Flug suchen`).
+- **VUX-R1:** calendar round-trip in `tagLesen` used only by `etappenZeitraumAnzeigen`. Existing `datumKurz` / `zeitraumKurz` unchanged.
+- **VUX-R2:** open-transition-only scroll; stable ref; cancel rAF/timeout on close/unmount/effect teardown. Overflow-anchor + first-open snap kept.
 
 ## Live-main drift
 
-Assigned baseline `19a91a25`. Observed later main `d3d42047` (#512 continuity). This writer did not rebase or merge main.
+Assigned baseline `19a91a25`. Re-read `origin/main` = `66af1539` (#517). Not rebased.
 
 ## Stop
 

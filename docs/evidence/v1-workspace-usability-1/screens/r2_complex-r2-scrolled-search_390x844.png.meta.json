@@ -1,0 +1,129 @@
+{
+  "file": "/workspace/docs/evidence/v1-workspace-usability-1/screens/r2_complex-r2-scrolled-search_390x844.png",
+  "phase": "r2",
+  "name": "complex-r2-scrolled-search_390x844",
+  "sha": "4b5f34f9fc0ca3501f3bf3ca850f71f157764229",
+  "capturedAt": "2026-09-21T18:00:12.916Z",
+  "browser": "chromium/playwright",
+  "route": "http://localhost:3000/reisen/trip-v1-usability-complex",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "simulationClass": "synthetic-guest + intercepted-unavailable",
+  "state": "gap-flights-after-manual-scroll-parent-update-and-explicit-search",
+  "afterOpen": {
+    "scrollY": 433,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 151.5,
+      "w": 169.421875,
+      "h": 44,
+      "top": 151.5,
+      "bottom": 195.5
+    },
+    "heading": {
+      "text": "Flüge",
+      "x": 29,
+      "y": 313.5,
+      "w": 332,
+      "h": 28,
+      "top": 313.5,
+      "bottom": 341.5
+    },
+    "scrollHeight": 2731,
+    "clientHeight": 844
+  },
+  "afterManualScroll": {
+    "scrollY": 1038,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 81,
+      "w": 169.421875,
+      "h": 44,
+      "top": 81,
+      "bottom": 125
+    },
+    "heading": {
+      "text": "Flüge",
+      "x": 29,
+      "y": -291.5,
+      "w": 332,
+      "h": 28,
+      "top": -291.5,
+      "bottom": -263.5
+    },
+    "scrollHeight": 2731,
+    "clientHeight": 844
+  },
+  "afterBenignUpdate": {
+    "scrollY": 1038,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 81,
+      "w": 169.421875,
+      "h": 44,
+      "top": 81,
+      "bottom": 125
+    },
+    "heading": {
+      "text": "Flüge",
+      "x": 29,
+      "y": -291.5,
+      "w": 332,
+      "h": 28,
+      "top": -291.5,
+      "bottom": -263.5
+    },
+    "scrollHeight": 2731,
+    "clientHeight": 844
+  },
+  "afterSearch": {
+    "scrollY": 1038,
+    "focus": {
+      "tag": "BUTTON",
+      "text": "Zurück zur Reise",
+      "aria": null
+    },
+    "zurueck": {
+      "x": 12,
+      "y": 81,
+      "w": 169.421875,
+      "h": 44,
+      "top": 81,
+      "bottom": 125
+    },
+    "heading": {
+      "text": "Flüge",
+      "x": 29,
+      "y": -291.5,
+      "w": 332,
+      "h": 28,
+      "top": -291.5,
+      "bottom": -263.5
+    },
+    "scrollHeight": 3309,
+    "clientHeight": 844
+  },
+  "scrollTarget": {
+    "top": 1038,
+    "max": 1887,
+    "scrollHeight": 2731
+  },
+  "parentUpdate": "booking-toggle"
+}

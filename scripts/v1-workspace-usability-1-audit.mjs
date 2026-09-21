@@ -414,6 +414,171 @@ async function vux4(browser) {
   }
 }
 
+function sprung(vorher, nachher) {
+  return Math.abs((nachher ?? 0) - (vorher ?? 0))
+}
+
+async function lage(page) {
+  const nav = await navigationMessen(page)
+  const overflow = await page.evaluate(() => ({
+    scrollY: window.scrollY,
+    scrollHeight: document.documentElement.scrollHeight,
+    clientHeight: document.documentElement.clientHeight,
+  }))
+  return { ...nav, ...overflow }
+}
+
+async function vuxR2(browser) {
+  const viewport = VIEWPORTS.find((v) => v.name === '390x844')
+  const r2Reise = reise({
+    days: COMPLEX.days.map((einTag, index) =>
+      index === 0
+        ? {
+            ...einTag,
+            items: [
+              {
+                id: 'item-r2-flight',
+                kind: 'flight',
+                title: 'ZRH–DPS',
+                dayId: 'day-1',
+                stageId: 'stage-1',
+                note: null,
+                position: 1,
+                startsOn: '2026-10-12',
+                startsAt: null,
+                endsOn: null,
+                endsAt: null,
+                priceAmount: null,
+                priceCurrency: null,
+                provider: null,
+                externalRef: null,
+                bookingUrl: null,
+                bookingStatus: 'unconfirmed',
+                bookingSource: null,
+                bookingConfirmedAt: null,
+                mobilityMode: null,
+                originPlaceId: null,
+                destinationPlaceId: null,
+                originName: null,
+                destinationName: null,
+                connectionRef: null,
+                mobilityChanges: null,
+                mobilityEvidence: null,
+                rentalSupplier: null,
+                vehicleClass: null,
+                transmission: null,
+                rentalEvidence: null,
+              },
+            ],
+          }
+        : einTag,
+    ),
+  })
+  const ctx = await kontext(browser, viewport)
+  const page = await ctx.newPage()
+  await workspaceOeffnen(page, r2Reise)
+
+  const oeffnen = async () => {
+    const knopf = page.getByRole('button', { name: 'Flüge', exact: true })
+    await knopf.scrollIntoViewIfNeeded()
+    await knopf.focus()
+    await knopf.evaluate((el) => el.click())
+    await page.locator('[data-workspace-detail]').waitFor({ timeout: 10_000 })
+    await page.getByText('Bestand und Status').waitFor({ timeout: 10_000 })
+    await page.waitForTimeout(200)
+  }
+
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await oeffnen()
+  const nachOeffnen = await lage(page)
+  const ziel = await page.evaluate((offen) => {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+    const oben = Math.min(max, Math.max(offen + 380, Math.round(max * 0.55)))
+    window.scrollTo({ top: oben, behavior: 'instant' })
+    return { top: window.scrollY, max, scrollHeight: document.documentElement.scrollHeight }
+  }, nachOeffnen.scrollY)
+  await page.waitForTimeout(80)
+  const nachHandscroll = await lage(page)
+
+  const buchung = page.getByRole('button', { name: 'Als gebucht markieren' })
+  let parentUpdate = 'none'
+  if (await buchung.count()) {
+    await buchung.first().evaluate((el) => el.click())
+    parentUpdate = 'booking-toggle'
+    await page.waitForTimeout(200)
+  }
+  const nachUpdate = await lage(page)
+
+  const suche = page.getByRole('button', { name: 'Flug suchen' })
+  await suche.evaluate((el) => el.click())
+  await page.waitForTimeout(220)
+  const nachSuche = await lage(page)
+  const sucheGemountet = (await page.getByText('Verbindungen für diese Reise').count()) > 0
+    || (await page.locator('[data-arbeitsbereich="flugsuche"]').count()) > 0
+  await speichern(page, 'complex-r2-scrolled-search_390x844', {
+    state: 'gap-flights-after-manual-scroll-parent-update-and-explicit-search',
+    afterOpen: nachOeffnen,
+    afterManualScroll: nachHandscroll,
+    afterBenignUpdate: nachUpdate,
+    afterSearch: nachSuche,
+    scrollTarget: ziel,
+    parentUpdate,
+  })
+
+  await ctx.close()
+
+  const schnell = await kontext(browser, viewport)
+  const schnellPage = await schnell.newPage()
+  await workspaceOeffnen(schnellPage, COMPLEX)
+  await schnellPage.evaluate(() => window.scrollTo(0, 0))
+  const knopf = schnellPage.getByRole('button', { name: 'Flüge', exact: true })
+  await knopf.scrollIntoViewIfNeeded()
+  await knopf.focus()
+  await knopf.evaluate((el) => el.click())
+  await schnellPage.locator('[data-workspace-detail]').waitFor({ timeout: 10_000 })
+  const detailZurueck = schnellPage.locator('[data-workspace-detail] button', {
+    hasText: 'Zurück zur Reise',
+  })
+  if (await detailZurueck.count()) await detailZurueck.first().focus()
+  await schnellPage.keyboard.press('Escape')
+  await schnellPage.getByRole('heading', { name: 'Deine Reise auf einen Blick' }).waitFor({
+    state: 'visible',
+    timeout: 10_000,
+  })
+  await schnellPage.waitForTimeout(120)
+  const nachSchnellClose = await lage(schnellPage)
+  const uebersicht = await schnellPage.getByRole('heading', { name: 'Deine Reise auf einen Blick' }).boundingBox()
+  await speichern(schnellPage, 'complex-r2-rapid-close_390x844', {
+    state: 'rapid-close-before-deferred-scroll',
+    after: nachSchnellClose,
+    uebersicht,
+  })
+  await schnell.close()
+
+  const resetNachUpdate = sprung(nachUpdate.scrollY, nachOeffnen.scrollY) <= 40
+    && sprung(nachHandscroll.scrollY, nachOeffnen.scrollY) > 80
+  const resetNachSuche = sprung(nachSuche.scrollY, nachOeffnen.scrollY) <= 40
+    && sprung(nachHandscroll.scrollY, nachOeffnen.scrollY) > 80
+
+  return {
+    afterOpenScrollY: nachOeffnen.scrollY,
+    afterManualScrollY: nachHandscroll.scrollY,
+    afterBenignUpdateScrollY: nachUpdate.scrollY,
+    afterSearchScrollY: nachSuche.scrollY,
+    scrollHeightAfterOpen: nachOeffnen.scrollHeight,
+    scrollTarget: ziel,
+    parentUpdate,
+    jumpAfterUpdate: sprung(nachHandscroll.scrollY, nachUpdate.scrollY),
+    jumpAfterSearch: sprung(nachHandscroll.scrollY, nachSuche.scrollY),
+    resetToOpenAfterUpdate: resetNachUpdate,
+    resetToOpenAfterSearch: resetNachSuche,
+    explicitSearchMounted: sucheGemountet,
+    headingStillFluege: nachSuche.heading?.text === 'Flüge',
+    rapidCloseOverviewVisible: Boolean(uebersicht && uebersicht.y < 844),
+    rapidCloseScrollY: nachSchnellClose.scrollY,
+  }
+}
+
 function inSicht(box, hoehe) {
   if (!box) return false
   return box.top < hoehe && box.bottom > 0
@@ -425,13 +590,24 @@ async function main() {
   const browser = await chromium.launch({ headless: true })
   const captures = []
   let navigation = null
+  let r2 = null
+  const fokus = process.env.AUDIT_FOCUS || 'all'
   try {
-    captures.push(...(await overviewSerie(browser, COMPLEX, 'complex')))
-    captures.push(...(await overviewSerie(browser, SHORT, 'short')))
-    try {
-      navigation = await vux4(browser)
-    } catch (fehler) {
-      navigation = { error: String(fehler) }
+    if (fokus === 'all') {
+      captures.push(...(await overviewSerie(browser, COMPLEX, 'complex')))
+      captures.push(...(await overviewSerie(browser, SHORT, 'short')))
+      try {
+        navigation = await vux4(browser)
+      } catch (fehler) {
+        navigation = { error: String(fehler) }
+      }
+    }
+    if (fokus === 'all' || fokus === 'r2') {
+      try {
+        r2 = await vuxR2(browser)
+      } catch (fehler) {
+        r2 = { error: String(fehler) }
+      }
     }
   } finally {
     await browser.close()
@@ -462,13 +638,27 @@ async function main() {
     },
     vux4: navigation?.error
       ? { error: navigation.error }
-      : {
-          fromTopBackInView: inSicht(navigation?.fromTop.after.zurueck, 844),
-          fromTopHeadingInView: inSicht(navigation?.fromTop.after.heading, 844),
-          fromScrolledBackInView: inSicht(navigation?.fromScrolled.after.zurueck, 844),
-          fromScrolledHeadingInView: inSicht(navigation?.fromScrolled.after.heading, 844),
-          detail: navigation,
-        },
+      : navigation
+        ? {
+            fromTopBackInView: inSicht(navigation?.fromTop.after.zurueck, 844),
+            fromTopHeadingInView: inSicht(navigation?.fromTop.after.heading, 844),
+            fromScrolledBackInView: inSicht(navigation?.fromScrolled.after.zurueck, 844),
+            fromScrolledHeadingInView: inSicht(navigation?.fromScrolled.after.heading, 844),
+            detail: navigation,
+          }
+        : null,
+    vuxR2: r2,
+  }
+  if (r2) {
+    writeFileSync(join(EVIDENZ, 'vux-r2-interaction.json'), JSON.stringify({
+      id: 'VUX-R2',
+      sha: SHA,
+      capturedAt: JETZT,
+      browser: 'chromium/playwright',
+      viewport: { width: 390, height: 844 },
+      simulationClass: 'synthetic-guest + intercepted-unavailable',
+      ...r2,
+    }, null, 2))
   }
   writeFileSync(BERICHT, JSON.stringify(bericht, null, 2))
   console.log(JSON.stringify({
@@ -478,6 +668,7 @@ async function main() {
     captures: captures.length,
     complex390: first390?.sicht,
     vux4: bericht.vux4,
+    vuxR2: r2,
   }, null, 2))
 }
 

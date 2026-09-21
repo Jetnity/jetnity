@@ -25,10 +25,22 @@ const etappenDatumMitJahr = new Intl.DateTimeFormat('de-CH', {
 })
 
 function tagLesen(wert: string | null | undefined): { iso: string; jahr: number; zeit: Date } | null {
-  if (!wert || !ISO_TAG.test(wert)) return null
-  const zeit = Date.parse(`${wert}T00:00:00Z`)
-  if (Number.isNaN(zeit)) return null
-  return { iso: wert, jahr: Number(wert.slice(0, 4)), zeit: new Date(zeit) }
+  if (!wert) return null
+  const teile = ISO_TAG.exec(wert)
+  if (!teile) return null
+  const jahr = Number(teile[1])
+  const monat = Number(teile[2])
+  const tag = Number(teile[3])
+  const zeit = new Date(Date.UTC(jahr, monat - 1, tag))
+  // Date.UTC normalizes impossible days (2026-02-29 → 1 March). Reject those.
+  if (
+    zeit.getUTCFullYear() !== jahr ||
+    zeit.getUTCMonth() !== monat - 1 ||
+    zeit.getUTCDate() !== tag
+  ) {
+    return null
+  }
+  return { iso: wert, jahr, zeit }
 }
 
 export function datumKurz(wert: string | null | undefined): string {

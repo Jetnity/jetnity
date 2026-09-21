@@ -28,4 +28,9 @@ describe('VUX-2 stage-date display', () => {
     assert.equal(etappenZeitraumAnzeigen(undefined, '2026-10-16')?.startsWith('Abreise'), true)
     assert.equal(etappenZeitraumAnzeigen(null, null), null)
   })
+
+  test('impossible days stay empty instead of rolling into the next month', () => {
+    assert.equal(etappenZeitraumAnzeigen('2026-02-29', '2026-04-31'), null)
+    assert.equal(etappenZeitraumAnzeigen('2024-02-29', '2026-02-30'), 'Ankunft 29. Feb. 2024')
+  })
 })
