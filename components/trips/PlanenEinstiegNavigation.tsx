@@ -26,10 +26,17 @@ export type PlanenManuellHistory = {
  * Fokussiert das manuelle Ziel und holt es unter den klebenden Kopf.
  * Scrollt nur auf ausdrückliche Aktivierung, nicht bei Formular-Rerenders.
  */
+function aktuelleHistory(): PlanenManuellHistory | null {
+  if (typeof window === 'undefined') return null
+  return {
+    replaceState: (data, unused, url) => window.history.replaceState(data, unused, url),
+    location: window.location,
+  }
+}
+
 export function planenManuellZielAnsteuern(
   ziel: PlanenManuellZielElement | null | undefined,
-  historyApi: PlanenManuellHistory | null | undefined =
-    typeof window === 'undefined' ? null : window,
+  historyApi: PlanenManuellHistory | null | undefined = aktuelleHistory(),
 ): boolean {
   if (!ziel) return false
   ziel.focus({ preventScroll: true })
