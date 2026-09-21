@@ -54,12 +54,12 @@ export function PlanenManuellZeiger() {
   }
 
   return (
-    <p className="text-sm leading-6 text-ink-800">
+    <p className="min-w-0 text-sm leading-6 text-ink-800">
       Lieber selbst ausfüllen?{' '}
       <a
         href={`#${PLANEN_MANUELL_ZIEL_ID}`}
         onClick={aktivieren}
-        className="inline-flex min-h-11 items-center rounded-sm font-semibold text-brand-800 underline underline-offset-2 transition hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        className="inline-flex min-h-11 max-w-full items-center rounded-sm font-semibold text-brand-800 underline underline-offset-2 transition hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
       >
         Schritt für Schritt planen
       </a>

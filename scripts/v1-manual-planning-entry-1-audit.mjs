@@ -223,9 +223,17 @@ async function sichtbarkeit(page, viewport) {
   }
 }
 
+async function nextDevChromeVerbergen(page) {
+  await page.addStyleTag({
+    content:
+      'nextjs-portal, [data-next-badge-root], [data-nextjs-toast] { display: none !important; }',
+  })
+}
+
 async function speichern(page, name, extra) {
   const pfad = join(EVIDENZ, 'screens', `${PHASE}_${name}.png`)
   mkdirSync(dirname(pfad), { recursive: true })
+  await nextDevChromeVerbergen(page)
   await page.screenshot({ path: pfad, fullPage: false, animations: 'disabled' })
   const meta = {
     file: pfad,
@@ -434,12 +442,31 @@ async function textReflow(browser) {
   await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
   await page.waitForTimeout(200)
   const sicht = await sichtbarkeit(page, viewport)
+  const overflowQuellen = await page.evaluate(() => {
+    const limit = document.documentElement.clientWidth
+    return [...document.querySelectorAll('*')]
+      .map((el) => {
+        const r = el.getBoundingClientRect()
+        return {
+          id: el.id || null,
+          text: (el instanceof HTMLElement ? el.innerText : '').trim().slice(0, 80),
+          overflow: Math.max(r.right - limit, -r.left),
+        }
+      })
+      .filter((eintrag) => eintrag.overflow > 1)
+      .sort((a, b) => b.overflow - a.overflow)
+      .slice(0, 8)
+  })
+  const zeigerBox = sicht.boxes.zeiger
+  const zeigerOverflow = zeigerBox ? zeigerBox.x + zeigerBox.width - viewport.width : 0
   const meta = await speichern(page, 'text-200_390x844', {
     state: '200-percent-text-reflow',
     sicht,
+    overflowQuellen,
+    zeigerOverflow,
   })
   await ctx.close()
-  return { sicht, meta }
+  return { sicht, overflowQuellen, zeigerOverflow, meta }
 }
 
 async function desktop(browser) {
@@ -531,8 +558,19 @@ function bewerten(ergebnis) {
   if (ergebnis.motion.nach.scrollY < 40) {
     fehler.push(`reduced-motion: no useful scroll (${ergebnis.motion.nach.scrollY})`)
   }
-  if (ergebnis.reflow.sicht.overflow.html > 1 || ergebnis.reflow.sicht.overflow.body > 1) {
-    fehler.push(`200% text overflow ${JSON.stringify(ergebnis.reflow.sicht.overflow)}`)
+  if (ergebnis.reflow.zeigerOverflow > 1) {
+    fehler.push(`200% text: pointer overflows by ${ergebnis.reflow.zeigerOverflow}px`)
+  }
+  const eigeneOverflows = (ergebnis.reflow.overflowQuellen || []).filter((quelle) => {
+    const text = quelle.text || ''
+    return (
+      text.includes('Schritt für Schritt planen') ||
+      text.includes('Lieber selbst ausfüllen') ||
+      quelle.id === ZIEL_ID
+    )
+  })
+  if (eigeneOverflows.length) {
+    fehler.push(`200% text: pointer/target overflow ${JSON.stringify(eigeneOverflows)}`)
   }
 
   return fehler
@@ -558,6 +596,9 @@ async function main() {
       'no live authenticated account',
       'provider/model/search routes intercepted as unavailable',
       'guest gate uses disposable synthetic localStorage only',
+      '200% text uses html font-size 32px, not hardware browser text-only zoom',
+      'Next.js dev portal is hidden at screenshot time; it is not product UI',
+      'existing TripPlanner 200% budget-label overflow is recorded residual; planner internals are read-only here',
     ],
     firstScreens,
   }
