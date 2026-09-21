@@ -114,8 +114,8 @@ function zeile(party: unknown): GraphZeile {
   }
 }
 
-function antwort(teil: Partial<Leseantwort<GraphZeile>> = {}): Leseantwort<GraphZeile> {
-  return { data: [], error: null, ...teil }
+function antwort(teil: Partial<Leseantwort<GraphZeile>> = {}): Promise<Leseantwort<GraphZeile>> {
+  return Promise.resolve({ data: [], error: null, ...teil })
 }
 
 function kanonischVollstaendig(): GraphZeile {
@@ -221,8 +221,8 @@ describe('Account-Graph-Read – kanonisch vollständig', () => {
       },
     )
     assert.equal(lesung.problem, null)
-    assert.equal(lesung.zeilen?.[0]?.party[0]?.citizenships.length, 0)
-    assert.equal(lesung.zeilen?.[0]?.party[0]?.documents.length, 0)
+    assert.equal(lesung.zeilen?.[0]?.party?.[0]?.citizenships.length, 0)
+    assert.equal(lesung.zeilen?.[0]?.party?.[0]?.documents.length, 0)
   })
 })
 

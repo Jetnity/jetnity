@@ -56,7 +56,17 @@ Written only the owned account-read files, named tests, own docs and evidence. S
 
 Traveller context is relevant: completeness is checked per traveller; multiple legal credential options stay multiple; loaded empties stay empty; no credential rule invented.
 
-## Author-run gates
+## Author-run gates (not TL PASS)
 
-Focused orchestration/party tests: **PASS** (18/18 on the new suites plus existing `reisende.test.ts`).  
-Full typecheck / lint / test / hygiene / build results belong in the freeze PR comment after the exact head is frozen.
+| Check | Result |
+| --- | --- |
+| focused orchestration/party tests | **PASS** 18/18 |
+| `npm run typecheck` | **PASS** |
+| `npm run lint` | **PASS** (0 errors; 139 pre-existing warnings) |
+| `npm test` | **3677/3677 PASS** |
+| `npm run build` | **PASS** |
+| `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | **PASS** |
+
+No live provider, model, account or DB probe. No UI change; no visual audit. Exact-head CI / Auth / Preview IDs belong in the freeze PR comment.
+
+Re-read `origin/main` after fetch: `e818c13ed009932bc06be1382a89467866699995` — **no drift**; ahead 4 / behind 0 before the freeze commit that records these gates.
