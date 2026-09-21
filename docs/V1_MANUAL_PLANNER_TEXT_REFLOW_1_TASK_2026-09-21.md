@@ -45,3 +45,16 @@ TA-R3 Foundation-E degraded honesty is NOT part of either task: its account mapp
 Guardian risk assessment: bounded presentation with unchanged state/selection/Truth contracts, independently reviewed by TL; no external Guardian run required at dispatch. Reassess any discovered material Truth/Auth risk. Guardian is the separate PO app, never this Cursor writer.
 
 Tracking issue: #527. Parallel status-language issue #525 / Draft PR #526.
+
+## TL review amendment — 5271421930 (same session)
+
+Reviewed head `f768db932f6d0517d54af9e20b624520124e6011`. Same writer/session; do not integrate main; #526 remains first TL slot and read-only.
+
+**RF-R1 / P2 — 360 oversized-text ownership expansion.**  
+TL authorizes the smallest layout/class-only change in `components/trips/PlanenEinstiegNavigation.tsx` and, only if causally necessary after that change, `components/trips/Reiseidee.tsx` to repair the demonstrated 360×800 / html-font-size-32px pointer/idea min-content overflow (observed 22px page overflow; pointer cut at the viewport edge). Preserve pointer href, focus, reduced-motion, hash, create gate, idea-first order, and all form/state/provider/model/create logic. No page/header/global CSS or overflow clipping. This supersedes the earlier read-only boundary for those two files only.
+
+**RF-R2 / P3 — matched visible baseline evidence.**  
+Historic `before_before_text-200_390x844_budget.png` is not budget proof (it shows the idea form). Capture one matched 390/200% budget-before from exact unmodified baseline `4278cd047b907b218fe64c122c4eed7dd61e0a7e` with compiled CSS, focused `#feld-budget` visible, scrollX reset, plus a matching corrected after. Bind 360 pointer before/after to those actual sources. Label historic captures as historic. No whole-audit recapture required.
+
+**RF-R3 / P3 — tests and mutation blocking.**  
+Remove `lib/trips/manual-planner-text-reflow-1.test.ts` (source-string / implementation-mirroring). Existing semantic tests plus browser geometry/interaction evidence remain the proof. The audit must actually abort/block unexpected mutation requests, including same-route `POST /planen` server actions, before any invalid-submit rerun. Logging alone is not blocking. Safe local Next internals may be explicitly accounted for. Report attempts versus completed calls honestly. No real mutation is authorized.
