@@ -110,12 +110,12 @@ function seite(name: string, markup: string, productCss: string): string {
 }
 
 async function messe(page: Page) {
-  return page.evaluate(() => {
+  return page.evaluate(`(() => {
     const shell = document.querySelector('[data-analyst-shell]')
     const section = document.querySelector('section')
     const cards = [...document.querySelectorAll('[data-analyst-id]')]
     const focusable = [...document.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])')]
-    const box = (el: Element | null) => {
+    const box = (el) => {
       if (!el) return null
       const r = el.getBoundingClientRect()
       return { width: r.width, height: r.height, left: r.left, right: r.right, top: r.top, bottom: r.bottom }
@@ -150,11 +150,11 @@ async function messe(page: Page) {
       focus: {
         focusableCount: focusable.length,
         first: focusable[0]
-          ? `${(focusable[0] as HTMLElement).tagName.toLowerCase()}:${focusable[0].getAttribute('href') ?? ''}`
+          ? focusable[0].tagName.toLowerCase() + ':' + (focusable[0].getAttribute('href') || '')
           : null,
       },
     }
-  })
+  })()`)
 }
 
 mkdirSync(join(ROOT, 'html'), { recursive: true })

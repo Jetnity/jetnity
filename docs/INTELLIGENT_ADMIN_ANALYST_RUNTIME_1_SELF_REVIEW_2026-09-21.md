@@ -7,7 +7,7 @@ Model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`)
 
 This is an adversarial self-review. It is **not** a Technical-Lead PASS.
 
-Addresses TL review `5269977192` (IA-R1 / IA-R2) on `1a224b642453865b105cb70842ca3673e1fde28d`.
+Addresses TL review `5269977192` (IA-R1 / IA-R2) on `1a224b64` and focused re-review `5270094225` (remaining IA-R1 no-signal + IA-R3) on `ffff328c`.
 
 ---
 
@@ -23,7 +23,7 @@ Addresses TL review `5269977192` (IA-R1 / IA-R2) on `1a224b642453865b105cb70842c
 | Original checkedAt; no universal 30s age | Yes — T-age-* / T-stale-reage / T-hint-no-universal-30s |
 | No false green / empty-zero / fabricated advice | Yes — T-overclaim, denial, expected-nc |
 | Deterministic; model disabled; writes empty | Yes — T-kind |
-| Exclusive Admin file set; no #516/#517 | Yes |
+| Exclusive Admin file set; #517 only via main | Yes |
 | No collector/cache/role/API/DB/secret/paid call | Yes |
 | Executable T-* not comments | Yes — node:test |
 | Synthetic render ≠ authenticated Preview | Yes — labelled BLOCKED_ACCESS |
@@ -55,21 +55,25 @@ No new route, API, chat, Execute button, or “Ask Copilot” control. Static `A
 
 ### 2.6 Did I touch shared continuity or sibling writers?
 
-No `docs/ACTIVE_WORK_STATUS.md`, no Foundation 1 spec rewrite, no #516/#517 files.
+No `docs/ACTIVE_WORK_STATUS.md`, no Foundation 1 spec rewrite, no #516 files. #517 arrived only as the authorized one-time main integration.
 
-### 2.7 IA-R1 — could a collection clock still overwrite item freshness?
+### 2.7 IA-R1 — could collection time still overwrite no-signal freshness?
 
-`abschluss` no longer copies `bericht.checkedAt` onto every insight. Item/check insights keep `item.checkedAt`. Mixed-clock and item-local missing/invalid tests would fail if the overwrite returned.
+`keinSignalInsight` now takes `checkedAt` from the item that owns `supabase-app-datenzugriff`. The 30-second mixed-clock no-signal test and its render assertion would fail if collection time returned.
 
-### 2.8 IA-R2 — is age still only a qualitative chip?
+### 2.8 IA-R2 — is a fixed UTC time still unlabeled?
 
-The view now renders Beobachtet with `<time dateTime>` when the timestamp is a finite instant, plus `vor N Sekunden` from the same `ageMs` used for freshness. Invalid timestamps stay `Prüfzeitpunkt unbekannt` and never enter `dateTime`.
+`beobachtungsstand` appends `UTC` to the de-CH formatted instant. Invalid timestamps stay `Prüfzeitpunkt unbekannt` and never enter `dateTime`.
+
+### 2.9 IA-R3 — did I keep approximating CSS?
+
+The harness compiles `styles/globals.css` with the repository PostCSS/Tailwind/Autoprefixer stack. Manifest overflow/focus measurements are recorded. Product classes/layout were not changed to hide the previous harness defect.
 
 ---
 
 ## 3. Residual risks for TL
 
-- Synthetic screenshots are not Preview/Production route acceptance.
+- Synthetic screenshots are still not Preview/Production route acceptance.
 - Process-wide collector cache is unchanged by design (IA-CR1).
 - Expected unconfigured platforms remain permanently visible as coverage; that is honest, not an incident.
 - A later isolated-acquisition change to `sammeln.ts` is a different, unauthorized slice.
@@ -78,4 +82,4 @@ The view now renders Beobachtet with `<time dateTime>` when the timestamp is a f
 
 ## 4. Recommendation
 
-Independent Technical-Lead review of the exact frozen HEAD. Cursor stops.
+Independent Technical-Lead review of the exact frozen HEAD after this persist. Cursor stops.

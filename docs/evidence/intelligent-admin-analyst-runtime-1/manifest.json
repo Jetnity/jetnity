@@ -1,7 +1,17 @@
 {
   "kind": "synthetic-component-render",
   "authenticatedPreview": "BLOCKED_ACCESS",
-  "note": "Dependency-injected fixtures rendered locally. Not a real /admin session.",
+  "css": {
+    "source": "styles/globals.css",
+    "config": "tailwind.config.js",
+    "plugins": [
+      "tailwindcss/nesting",
+      "tailwindcss",
+      "autoprefixer"
+    ],
+    "bytes": 103597
+  },
+  "note": "Dependency-injected fixtures rendered with compiled styles/globals.css. Not a real /admin session.",
   "cases": {
     "attention": {
       "insights": [
@@ -11,6 +21,8 @@
           "freshness": "fresh",
           "materiality": "attention",
           "attribution": "process-recent",
+          "checkedAt": "2026-09-21T12:00:00.000Z",
+          "ageMs": 0,
           "next": {
             "href": "/admin/system-health",
             "label": "System Health öffnen",
@@ -23,9 +35,12 @@
           "freshness": "fresh",
           "materiality": "coverage",
           "attribution": "process-recent",
+          "checkedAt": "2026-09-21T12:00:00.000Z",
+          "ageMs": 0,
           "next": null
         }
       ],
+      "sourceCheckedAt": "2026-09-21T12:00:00.000Z",
       "observationScope": "process-recent",
       "access": {
         "status": "allowed",
@@ -55,7 +70,81 @@
         "attention_320.png",
         "attention_390.png",
         "attention_1280.png"
-      ]
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/system-health"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/system-health"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/system-health"
+          }
+        }
+      }
     },
     "coverage": {
       "insights": [
@@ -65,9 +154,12 @@
           "freshness": "fresh",
           "materiality": "none",
           "attribution": "process-recent",
+          "checkedAt": "2026-09-21T11:59:30.000Z",
+          "ageMs": 30000,
           "next": null
         }
       ],
+      "sourceCheckedAt": "2026-09-21T12:00:00.000Z",
       "observationScope": "process-recent",
       "access": {
         "status": "allowed",
@@ -96,7 +188,81 @@
         "coverage_320.png",
         "coverage_390.png",
         "coverage_1280.png"
-      ]
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        }
+      }
     },
     "denied": {
       "insights": [
@@ -106,9 +272,12 @@
           "freshness": "unknown",
           "materiality": "attention",
           "attribution": "none",
+          "checkedAt": null,
+          "ageMs": null,
           "next": null
         }
       ],
+      "sourceCheckedAt": null,
       "observationScope": "none",
       "access": {
         "status": "denied",
@@ -125,7 +294,81 @@
         "denied_320.png",
         "denied_390.png",
         "denied_1280.png"
-      ]
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        }
+      }
     },
     "stale": {
       "insights": [
@@ -135,6 +378,8 @@
           "freshness": "stale",
           "materiality": "attention",
           "attribution": "process-recent",
+          "checkedAt": "2026-09-21T11:58:30.000Z",
+          "ageMs": 90000,
           "next": {
             "href": "/admin/system-health",
             "label": "System Health öffnen",
@@ -147,9 +392,12 @@
           "freshness": "stale",
           "materiality": "coverage",
           "attribution": "process-recent",
+          "checkedAt": "2026-09-21T11:58:30.000Z",
+          "ageMs": 90000,
           "next": null
         }
       ],
+      "sourceCheckedAt": "2026-09-21T11:58:30.000Z",
       "observationScope": "process-recent",
       "access": {
         "status": "allowed",
@@ -177,7 +425,81 @@
         "stale_320.png",
         "stale_390.png",
         "stale_1280.png"
-      ]
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/system-health"
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/system-health"
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 1,
+            "first": "a:/admin/system-health"
+          }
+        }
+      }
     },
     "break-glass": {
       "insights": [
@@ -187,6 +509,8 @@
           "freshness": "fresh",
           "materiality": "coverage",
           "attribution": "process-recent",
+          "checkedAt": "2026-09-21T12:00:00.000Z",
+          "ageMs": 0,
           "next": null
         },
         {
@@ -195,9 +519,12 @@
           "freshness": "fresh",
           "materiality": "coverage",
           "attribution": "not_attributed",
+          "checkedAt": "2026-09-21T12:00:00.000Z",
+          "ageMs": 0,
           "next": null
         }
       ],
+      "sourceCheckedAt": "2026-09-21T12:00:00.000Z",
       "observationScope": "process-recent",
       "access": {
         "status": "allowed",
@@ -227,7 +554,81 @@
         "break-glass_320.png",
         "break-glass_390.png",
         "break-glass_1280.png"
-      ]
+      ],
+      "measurements": {
+        "320": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 320,
+              "clientWidth": 320,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 318,
+              "clientWidth": 318,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 278,
+              "clientWidth": 278,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        },
+        "390": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 388,
+              "clientWidth": 388,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 348,
+              "clientWidth": 348,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        },
+        "1280": {
+          "overflow": {
+            "document": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1278,
+              "clientWidth": 1278,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1238,
+              "clientWidth": 1238,
+              "overflowing": false
+            },
+            "cardsBeyondShell": 0
+          },
+          "focus": {
+            "focusableCount": 0,
+            "first": null
+          }
+        }
+      }
     }
   }
 }

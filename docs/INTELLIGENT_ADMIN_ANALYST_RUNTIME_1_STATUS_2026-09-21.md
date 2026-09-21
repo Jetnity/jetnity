@@ -1,7 +1,7 @@
 # Intelligent Admin Analyst Runtime 1 — Status
 
 Stand: 21. September 2026  
-Status: **IA-R1 / IA-R2 ADDRESSED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
+Status: **IA-R1 no-signal + IA-R2 UTC + IA-R3 compiled CSS ADDRESSED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Issue: #515  
 Draft PR: #518  
@@ -37,9 +37,16 @@ IA-CR2 preserved:
 - unknown and stale remain;
 - no universal “höchstens 30s” / “at most 30s old” in hint, limitations or insight copy.
 
-IA-R1 (review `5269977192` on `1a224b64`): each insight keeps the **item/check timestamp that owns its freshness**. `sourceCheckedAt` remains the collection time. Mixed clocks and item-local missing/invalid timestamps are executable tests.
+IA-R1 (review `5269977192` on `1a224b64`, remaining branch in `5270094225` on `ffff328c`):
 
-IA-R2: the view renders Beobachtet as an accessible `<time dateTime>` plus a German age (`vor 90 Sekunden` / `Prüfzeitpunkt unbekannt`). Invalid strings never become `dateTime`.
+- item/check insights keep the timestamp that owns freshness;
+- `keinSignalInsight` now uses the airports-owning item timestamp, not collection time;
+- `sourceCheckedAt` remains collection time;
+- mixed-clock attention, mixed-clock fresh no-signal, and item-local missing/invalid cases are executable tests.
+
+IA-R2: Beobachtet is an accessible `<time dateTime>` plus German age. Fixed UTC instants carry an explicit `UTC` label. Invalid strings never become `dateTime`.
+
+IA-R3: synthetic captures compile `styles/globals.css` via postcss + tailwind + autoprefixer (103597 bytes). Manifest records overflow/focus measurements. All required 320/390/1280 cases reported `overflowing: false` and `cardsBeyondShell: 0`. Product layout was not changed to satisfy the old approximated harness.
 
 Deterministic only. `modelExplanation.enabled=false`. `writeActions=[]`. Safe next hop `/admin/system-health` investigate only. No live Copilot/Execute claim.
 
@@ -49,20 +56,19 @@ Traveller-context intelligence does not apply: operator Admin A–C, no travelle
 
 ## 2. Git evidence (at this persist)
 
-`origin/main` was fetched once. **No rebase. No sibling merge.**
+One clean integration of live `origin/main` after TL merged #517. **No rebase. No sibling branch merge.**
 
 | Item | Value |
 | --- | --- |
 | Task / PR baseline | `main@19a91a2594127eb2b6104b68da69786194e13865` |
-| Live `origin/main` after fetch | `19a91a2594127eb2b6104b68da69786194e13865` — identical to baseline |
+| Live `origin/main` integrated | `66af15397c1bb4e73d8e4012080bb04b7389147d` (#517 guest-draft honesty) |
 | Dispatch / seed head | `e90e2622e0f9cadd0d32b21b674289c42f457ddf` |
-| Ahead / behind vs live main before this persist | **4 ahead / 0 behind** (seed + copy + derivation + home compose) |
+| Previous freeze (historical) | `ffff328c85319a9ba75800a39c01b60bb1226405` — invalidated by this persist |
+| Ahead / behind vs live main after integration | **10 ahead / 0 behind** before this persist |
 | Rebase | **not done** |
-| Sibling PRs | #516 Workspace and #517 guest-adoption not edited or merged |
+| Sibling branches | #516 not edited or merged; #517 entered only via main |
 
-Exact freeze SHA is the commit that records this STATUS plus evidence. It is reported in the PR comment after push.
-
-Local `main` had been a stale snapshot pin at `d3d42047` before fetch. Live remote main is the dispatch baseline.
+Exact freeze SHA is the commit that records this STATUS plus recaptured evidence. It is reported in the PR comment after push.
 
 ---
 
@@ -81,7 +87,7 @@ Allowed runtime set only:
 - this STATUS / HANDOFF / SELF_REVIEW / TASK
 - `docs/evidence/intelligent-admin-analyst-runtime-1/`
 
-Not written: System Health collector/cache/guard, roles/capabilities, Security widgets, provider-ops, package/lockfile, workflows, DB/RLS/migrations, finance/Ads/Bexio/CRM, Foundation 1 specification docs, `docs/ACTIVE_WORK_STATUS.md`, #516/#517 files.
+Not written by this writer: System Health collector/cache/guard, roles/capabilities, Security widgets, provider-ops, package/lockfile, workflows, DB/RLS/migrations, finance/Ads/Bexio/CRM, Foundation 1 specification docs, `docs/ACTIVE_WORK_STATUS.md`, #516 files. #517 files arrived only through the authorized main integration.
 
 ---
 
@@ -89,21 +95,19 @@ Not written: System Health collector/cache/guard, roles/capabilities, Security w
 
 | Check | Result |
 | --- | --- |
-| Analyst T-* + loader + render | **42/42 pass** (`lib/admin/analyst/*.test.ts` + additive honest-copy) |
-| Required regressions | **84/84 pass** including System Health, navigation, admin-access, honest-copy |
-| Full `npm test` | **3559/3559 pass** |
-| `npx tsc -p tsconfig.json --noEmit` | **pass** |
-| ESLint on owned files | **pass** after removing unused import |
-| `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` | **pass** (0 orphans, 0 unused exports, no new API) |
-| `npm run build` | **pass** — `/admin` remains dynamic; no new route |
-| Synthetic render | attention / coverage / denied / stale / break-glass at 320 / 390 / 1280 |
+| Analyst T-* + loader + render + IA-R1/IA-R2/no-signal | **46/46 pass** (`lib/admin/analyst/*.test.ts` + additive honest-copy) |
+| Required System Health / navigation / admin-access regressions | run after this persist; recorded in freeze comment if later |
+| `npx tsc -p tsconfig.json --noEmit` | pending this persist |
+| ESLint on owned files | pending this persist |
+| Synthetic render | attention / coverage (mixed-clock 30s) / denied / stale / break-glass at 320 / 390 / 1280 with compiled product CSS |
+| Overflow measurements | all cases/viewports `overflowing: false`, `cardsBeyondShell: 0` |
 | Authenticated Preview click-through | **BLOCKED_ACCESS** — no login/secret/bypass |
 
 ---
 
 ## 5. Limits
 
-- Synthetic HTML/Playwright screenshots use an approximated token sheet. They prove copy, ranking, hop, denial and break-glass projection — not branded Preview pixels.
+- Synthetic HTML/Playwright screenshots now use compiled product CSS. They still prove component copy, ranking, hop, denial and break-glass projection — not an authenticated `/admin` Preview session.
 - No real-device pass. No blanket accessibility claim.
 - Process cache remains shared across allowed callers. That is accepted and labelled, not isolated.
 - Expected `not_configured` platforms stay coverage. No token-setup recommendation.

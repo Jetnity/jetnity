@@ -1,7 +1,7 @@
 # Intelligent Admin Analyst Runtime 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **IA-R1 / IA-R2 ADDRESSED / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **IA-R1 no-signal + IA-R2 UTC + IA-R3 compiled CSS ADDRESSED / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/INTELLIGENT_ADMIN_ANALYST_RUNTIME_1_TASK_2026-09-21.md`  
 Accepted contracts: Foundation 1 DECISION / SOURCE_MATRIX / RUNTIME_TASK  
@@ -20,9 +20,11 @@ This document is enough for a new Technical Lead chat to review without the impl
 | Issue | #515 |
 | Draft PR | #518 |
 | Branch | `feat/intelligent-admin-analyst-runtime-1` |
-| Task / live main baseline | `19a91a2594127eb2b6104b68da69786194e13865` |
+| Task baseline | `19a91a2594127eb2b6104b68da69786194e13865` |
+| Integrated live main | `66af15397c1bb4e73d8e4012080bb04b7389147d` (#517 via main, one merge, no rebase) |
 | Dispatch / seed | `e90e2622e0f9cadd0d32b21b674289c42f457ddf` |
-| Ahead / behind vs live main | 4 ahead / 0 behind before evidence persist; no rebase |
+| Historical freeze | `ffff328c` — invalidated by the no-signal / compiled-CSS persist |
+| Ahead / behind vs live main | 10 ahead / 0 behind before evidence persist |
 | Agent | Jetnity intelligent admin analyst runtime 1, Generation 1 |
 | Parent model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-d984b8d4-cc45-4889-96ec-2a10599881c4` |
@@ -33,8 +35,9 @@ Read first:
 2. binding task + accepted RUNTIME_TASK §5 / §8
 3. decision §6.4 / §6.4a / §6.4b
 4. `lib/admin/analyst/*` and `components/admin/home/AdminLagehinweise.tsx`
-5. STATUS, SELF_REVIEW, evidence README
-6. live PR #518 CI / Auth / Vercel on the **frozen HEAD**
+5. STATUS, SELF_REVIEW, evidence README + manifest measurements
+6. live PR #518 CI / Auth / Vercel on the **new frozen HEAD**
+7. reviews `5269977192` (on `1a224b64`) and `5270094225` (on `ffff328c`)
 
 ---
 
@@ -45,13 +48,16 @@ Read first:
 - Server section on `/admin` before the static directory.
 - Additive honest copy only; `copilotFolgtHinweis` unchanged.
 - Executable T-* cases in node:test.
+- IA-R1 remaining branch: fresh no-signal uses airports item time; collection stays on `sourceCheckedAt`.
+- IA-R2 UTC label on valid rendered instants.
+- IA-R3 harness compiles `styles/globals.css`; no product-layout change for the old harness overflow.
 
 ---
 
 ## 3. What the next reviewer must not do
 
 - Do not treat synthetic screenshots as authenticated Preview acceptance.
-- Do not rebase onto a later main or merge #516 / #517 from this writer.
+- Do not rebase or merge #516 from this writer.
 - Do not mark Ready or merge from Cursor.
 - Do not start Provider-ops `model-usage`, a model seam, or Execute.
 
@@ -61,7 +67,7 @@ Read first:
 
 1. Gate-before-load and both lookup denials.
 2. Break-glass projection vs banner-only.
-3. Original `checkedAt` / no universal 30s claim.
-4. Session overlay consistency on failed observations.
-5. Visual: attention vs coverage vs denied vs stale vs Notzugang at 320/390, including visible Beobachtet time/age.
-6. IA-R1 mixed clocks and IA-R2 `<time>` / unknown age.
+3. Fresh no-signal mixed clock: `checkedAt=11:59:30.000Z`, `ageMs=30000`, `sourceCheckedAt=12:00:00.000Z`.
+4. Visible Beobachtet time/age with UTC label.
+5. Compiled-CSS captures vs the previous approximated harness; overflow measurements in the manifest.
+6. One main integration of #517 only; exclusive Admin ownership otherwise.
