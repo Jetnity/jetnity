@@ -13,7 +13,7 @@ These files are local, dependency-injected renders of `AdminLagehinweiseAnsicht`
 | attention | `screenshots/attention_{320,390,1280}.png` | Role grant; airports unavailable; investigate link only |
 | coverage | `screenshots/coverage_{320,390,1280}.png` | No-signal / expected coverage; no investigate hop |
 | denied | `screenshots/denied_{320,390,1280}.png` | `forbidden`; no coverage line; no hop; no loader |
-| stale | `screenshots/stale_{320,390,1280}.png` | Original `checkedAt` 90s old; stale healthy is attention |
+| stale | `screenshots/stale_{320,390,1280}.png` | Original item time + `vor 90 Sekunden`; stale healthy is attention |
 | break-glass | `screenshots/break-glass_{320,390,1280}.png` | DB-backed airports not attributed; banner is not the proof |
 
 Harness: `render-harness.ts` (temporary, outside product routes). Manifest: `manifest.json`. HTML snapshots: `html/`.

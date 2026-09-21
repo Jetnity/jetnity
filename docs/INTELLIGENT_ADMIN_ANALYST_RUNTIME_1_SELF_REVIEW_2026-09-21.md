@@ -7,6 +7,8 @@ Model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`)
 
 This is an adversarial self-review. It is **not** a Technical-Lead PASS.
 
+Addresses TL review `5269977192` (IA-R1 / IA-R2) on `1a224b642453865b105cb70842ca3673e1fde28d`.
+
 ---
 
 ## 1. Did I execute only the dispatched runtime?
@@ -54,6 +56,14 @@ No new route, API, chat, Execute button, or “Ask Copilot” control. Static `A
 ### 2.6 Did I touch shared continuity or sibling writers?
 
 No `docs/ACTIVE_WORK_STATUS.md`, no Foundation 1 spec rewrite, no #516/#517 files.
+
+### 2.7 IA-R1 — could a collection clock still overwrite item freshness?
+
+`abschluss` no longer copies `bericht.checkedAt` onto every insight. Item/check insights keep `item.checkedAt`. Mixed-clock and item-local missing/invalid tests would fail if the overwrite returned.
+
+### 2.8 IA-R2 — is age still only a qualitative chip?
+
+The view now renders Beobachtet with `<time dateTime>` when the timestamp is a finite instant, plus `vor N Sekunden` from the same `ageMs` used for freshness. Invalid timestamps stay `Prüfzeitpunkt unbekannt` and never enter `dateTime`.
 
 ---
 

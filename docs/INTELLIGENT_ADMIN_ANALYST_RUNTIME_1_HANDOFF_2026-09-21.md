@@ -1,7 +1,7 @@
 # Intelligent Admin Analyst Runtime 1 — Handoff
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **IA-R1 / IA-R2 ADDRESSED / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/INTELLIGENT_ADMIN_ANALYST_RUNTIME_1_TASK_2026-09-21.md`  
 Accepted contracts: Foundation 1 DECISION / SOURCE_MATRIX / RUNTIME_TASK  
@@ -63,4 +63,5 @@ Read first:
 2. Break-glass projection vs banner-only.
 3. Original `checkedAt` / no universal 30s claim.
 4. Session overlay consistency on failed observations.
-5. Visual: attention vs coverage vs denied vs stale vs Notzugang at 320/390.
+5. Visual: attention vs coverage vs denied vs stale vs Notzugang at 320/390, including visible Beobachtet time/age.
+6. IA-R1 mixed clocks and IA-R2 `<time>` / unknown age.

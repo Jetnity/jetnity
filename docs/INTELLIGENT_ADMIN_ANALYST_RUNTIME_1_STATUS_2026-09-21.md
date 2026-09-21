@@ -1,7 +1,7 @@
 # Intelligent Admin Analyst Runtime 1 — Status
 
 Stand: 21. September 2026  
-Status: **IMPLEMENTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD CODE / AUTHORIZATION / SOURCE-TRUTH / VISUAL REVIEW**
+Status: **IA-R1 / IA-R2 ADDRESSED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Issue: #515  
 Draft PR: #518  
@@ -36,6 +36,10 @@ IA-CR2 preserved:
 - freshness comes from original timestamp + evaluation clock;
 - unknown and stale remain;
 - no universal “höchstens 30s” / “at most 30s old” in hint, limitations or insight copy.
+
+IA-R1 (review `5269977192` on `1a224b64`): each insight keeps the **item/check timestamp that owns its freshness**. `sourceCheckedAt` remains the collection time. Mixed clocks and item-local missing/invalid timestamps are executable tests.
+
+IA-R2: the view renders Beobachtet as an accessible `<time dateTime>` plus a German age (`vor 90 Sekunden` / `Prüfzeitpunkt unbekannt`). Invalid strings never become `dateTime`.
 
 Deterministic only. `modelExplanation.enabled=false`. `writeActions=[]`. Safe next hop `/admin/system-health` investigate only. No live Copilot/Execute claim.
 
