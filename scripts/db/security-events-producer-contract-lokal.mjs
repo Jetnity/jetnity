@@ -179,13 +179,14 @@ function trackedInspektion() {
   return `
     select
       (select count(*) from public.security_events e
-        where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+        where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
+      (select count(*) from jetnity_internal.security_event_producer_origin) as origins,
       (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
       (select count(*) from public.blocked_ips) as blocked,
       (select count(*) from public.security_events where type = 'login_failed') as legacy,
       (select jsonb_agg(to_jsonb(e) order by e.created_at, e.id)
          from public.security_events e
-        where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as events
+        where jetnity_internal.security_event_is_trigger_produced(e.id)) as events
   `
 }
 
@@ -193,7 +194,7 @@ function resetStand({ used = 0, cap = CAP, enabled = true } = {}) {
   psqlSql(`
 delete from public.blocked_ips;
 delete from public.security_events e
- where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra);
+ where jetnity_internal.security_event_is_trigger_produced(e.id);
 insert into public.security_event_producer_quota (id, used, cap, enabled)
 values ('tracked_producer', ${used}, ${cap === null ? 'null' : cap}, ${enabled})
 on conflict (id) do update
@@ -374,7 +375,7 @@ function pruefeDirektUndAutorisierung() {
         exists(select 1 from public.blocked_ips where ip = '192.0.2.80') as source_ok,
         exists(
           select 1 from public.security_events e
-           where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)
+           where jetnity_internal.security_event_is_trigger_produced(e.id)
              and e.extra ->> 'op' in ('INSERT', 'UPDATE', 'DELETE')
              and e.created_at > now() - interval '2 seconds'
         ) as tracked_event
@@ -425,7 +426,7 @@ function pruefeProducerIntegritaet() {
     inspektion: `
       select jsonb_agg(e.type order by e.created_at) as types
         from public.security_events e
-       where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)
+       where jetnity_internal.security_event_is_trigger_produced(e.id)
     `,
   })
   bewerte(
@@ -446,7 +447,7 @@ function pruefeProducerIntegritaet() {
   const committedTracked = () =>
     Number(
       psqlAt(`select count(*) from public.security_events e
-        where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)`),
+        where jetnity_internal.security_event_is_trigger_produced(e.id)`),
     )
   const beforeUpdate = committedTracked()
   const changed = sitzung({
@@ -573,7 +574,7 @@ function pruefePayload() {
       select e.*, octet_length(e.extra::text) as extra_bytes,
              e.created_at >= now() - interval '5 seconds' as fresh
         from public.security_events e
-       where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)
+       where jetnity_internal.security_event_is_trigger_produced(e.id)
     `,
   })
   const event = add.inspektion
@@ -616,7 +617,8 @@ select jetnity_test.sitzung(
     select
       exists(select 1 from public.blocked_ips where ip = '192.0.2.40') as source,
       (select count(*) from public.security_events e
-        where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+        where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
+      (select count(*) from jetnity_internal.security_event_producer_origin) as origins,
       (select used from public.security_event_producer_quota where id = 'tracked_producer') as used
   $i$
 );
@@ -624,12 +626,13 @@ rollback;
 `),
   )
   bewerte(
-    'injizierter Event-Insert lässt Quelle/Event/Quote nicht stehen',
+    'injizierter Event-Insert lässt Quelle/Event/Provenienz/Quote nicht stehen',
     gruppe,
     fault2.arbeit?.ok === false &&
       /injected security_events insert fault/i.test(fault2.arbeit?.message ?? '') &&
       fault2.inspektion?.source === false &&
       Number(fault2.inspektion?.tracked) === 0 &&
+      Number(fault2.inspektion?.origins) === 0 &&
       Number(fault2.inspektion?.used) === 0,
     JSON.stringify(fault2),
   )
@@ -645,7 +648,8 @@ select jetnity_test.sitzung(
     select
       exists(select 1 from public.blocked_ips where ip = '192.0.2.41') as source,
       (select count(*) from public.security_events e
-        where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+        where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
+      (select count(*) from jetnity_internal.security_event_producer_origin) as origins,
       (select used from public.security_event_producer_quota where id = 'tracked_producer') as used
   $i$
 );
@@ -658,24 +662,29 @@ select to_jsonb(q) from (
   select
     exists(select 1 from public.blocked_ips where ip = '192.0.2.41') as source,
     (select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+      where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
+    (select count(*) from jetnity_internal.security_event_producer_origin) as origins,
     (select used from public.security_event_producer_quota where id = 'tracked_producer') as used
 ) q;
 `),
   )
   bewerte(
-    'erfolgreiches Paar existiert in der offenen Transaktion',
+    'erfolgreiches Paar inkl. Provenienz existiert in der offenen Transaktion',
     gruppe,
     innerhalb.arbeit?.ok === true &&
       innerhalb.inspektion?.source === true &&
       Number(innerhalb.inspektion?.tracked) === 1 &&
+      Number(innerhalb.inspektion?.origins) === 1 &&
       Number(innerhalb.inspektion?.used) === 1,
     JSON.stringify(innerhalb),
   )
   bewerte(
-    'äusseres ROLLBACK entfernt Quelle, Event und Quote',
+    'äusseres ROLLBACK entfernt Quelle, Event, Provenienz und Quote',
     gruppe,
-    danach.source === false && Number(danach.tracked) === 0 && Number(danach.used) === 0,
+    danach.source === false &&
+      Number(danach.tracked) === 0 &&
+      Number(danach.origins) === 0 &&
+      Number(danach.used) === 0,
     JSON.stringify(danach),
   )
 }
@@ -741,7 +750,7 @@ rollback;
         (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
         exists(select 1 from public.blocked_ips where ip in ('192.0.2.52', '192.0.2.53')) as source,
         (select count(*) from public.security_events e
-          where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked
+          where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked
     `,
   })
   bewerte(
@@ -848,7 +857,7 @@ on conflict (id) do update set used = 0, cap = ${CAP}, enabled = false;
 update public.security_event_producer_quota
    set used = (
      select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)
+      where jetnity_internal.security_event_is_trigger_produced(e.id)
    )
  where id = 'tracked_producer';
 `)
@@ -884,7 +893,7 @@ function pruefeCleanupUndLegacy() {
   const oldId = psqlAt(`
     select coalesce((
       select id::text from public.security_events e
-       where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)
+       where jetnity_internal.security_event_is_trigger_produced(e.id)
        order by created_at desc
        limit 1
     ), '')
@@ -902,7 +911,7 @@ select public.security_events_cleanup_tracked_producer(interval '1 day') as dele
 select to_jsonb(q) from (
   select
     (select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+      where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
     (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
     exists(select 1 from public.security_events where id = '${oldId}') as old_row,
     exists(select 1 from public.security_events where type = 'login_failed' and ip = '203.0.113.1') as legacy,
@@ -916,7 +925,7 @@ rollback;
 select to_jsonb(q) from (
   select
     (select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+      where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
     (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
     exists(select 1 from public.security_events where id = '${oldId}') as old_row
 ) q;
@@ -929,7 +938,7 @@ select public.security_events_cleanup_tracked_producer(interval '1 day');
 select to_jsonb(q) from (
   select
     (select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+      where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
     (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
     exists(select 1 from public.security_events where id = '${oldId}') as old_row,
     exists(select 1 from public.security_events where type = 'login_failed' and ip = '203.0.113.1') as legacy,
@@ -982,7 +991,7 @@ select to_jsonb(q) from (
     exists(select 1 from public.security_events where type = 'login_failed' and ip = '203.0.113.1') as legacy_readable,
     (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
     (select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked
+      where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked
 ) q;
 `),
   )
@@ -1010,6 +1019,150 @@ select to_jsonb(q) from (
     gruppeLegacy,
     moderatorLiest.arbeit?.ok === true && Number(moderatorLiest.arbeit.row_count) === 1,
     JSON.stringify(moderatorLiest.arbeit),
+  )
+}
+
+function pruefeProvenienz() {
+  const gruppe = 'F1-provenance'
+  const forgedId = 'aaaaaaaa-0000-4000-8000-0000000000e1'
+  const exactExtra = `{"surface":"blocked_ips","result":"ok","op":"INSERT"}`
+  resetStand()
+  const usedBefore = Number(
+    psqlAt(`select used from public.security_event_producer_quota where id = 'tracked_producer'`),
+  )
+
+  const forged = festgeschrieben({
+    rolle: 'service_role',
+    sql: `insert into public.security_events (id, type, ip, user_id, extra, metadata)
+          values ('${forgedId}', 'admin_blocklist_add', null, null, '${exactExtra}'::jsonb, null)`,
+  })
+  const forgedState = jsonZeile(
+    psqlFile(`
+select to_jsonb(q) from (
+  select
+    exists(select 1 from public.security_events where id = '${forgedId}') as public_row,
+    exists(select 1 from jetnity_internal.security_event_producer_origin where event_id = '${forgedId}') as origin_row,
+    jetnity_internal.security_event_is_trigger_produced('${forgedId}'::uuid) as tracked,
+    (select used from public.security_event_producer_quota where id = 'tracked_producer') as used
+) q;
+`),
+  )
+  bewerte(
+    'service_role darf exact-shape public INSERT (Residual ALL)',
+    gruppe,
+    forged.arbeit?.ok === true && forgedState.public_row === true,
+    JSON.stringify({ arbeit: forged.arbeit, forgedState }),
+  )
+  bewerte(
+    'exact-shape privileged Zeile ist nicht trigger-tracked',
+    gruppe,
+    forgedState.origin_row === false && forgedState.tracked === false,
+    JSON.stringify(forgedState),
+  )
+  bewerte(
+    'exact-shape privileged Zeile ändert used nicht',
+    gruppe,
+    Number(forgedState.used) === usedBefore,
+    `before=${usedBefore} after=${forgedState.used}`,
+  )
+
+  const genuine = festgeschrieben({
+    rolle: 'authenticated',
+    uid: OPERATOR,
+    aal: 'aal2',
+    sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.88', 'genuine-origin')`,
+  })
+  const afterGenuine = jsonZeile(
+    psqlFile(`
+select to_jsonb(q) from (
+  select
+    (select count(*) from jetnity_internal.security_event_producer_origin) as origins,
+    (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
+    exists(select 1 from public.security_events where id = '${forgedId}') as forged_remains
+) q;
+`),
+  )
+  bewerte(
+    'echtes Trigger-Event ist tracked und erhöht used um 1',
+    gruppe,
+    genuine.arbeit?.ok === true &&
+      Number(afterGenuine.origins) === 1 &&
+      Number(afterGenuine.used) === usedBefore + 1 &&
+      afterGenuine.forged_remains === true,
+    JSON.stringify({ genuine: genuine.arbeit, afterGenuine }),
+  )
+
+  psqlSql(`update public.security_events set created_at = now() - interval '2 days' where id = '${forgedId}'`)
+  const cleanup = jsonZeile(
+    psqlFile(`
+begin;
+select public.security_events_cleanup_tracked_producer(interval '1 day');
+select to_jsonb(q) from (
+  select
+    exists(select 1 from public.security_events where id = '${forgedId}') as forged_remains,
+    (select count(*) from jetnity_internal.security_event_producer_origin) as origins,
+    (select used from public.security_event_producer_quota where id = 'tracked_producer') as used
+) q;
+commit;
+`),
+  )
+  bewerte(
+    'Cleanup löscht die privileged exact-shape Zeile nicht',
+    gruppe,
+    cleanup.forged_remains === true &&
+      Number(cleanup.origins) === 1 &&
+      Number(cleanup.used) === 1,
+    JSON.stringify(cleanup),
+  )
+
+  mussAblehnen(
+    'anon liest das Provenienzbuch nicht',
+    gruppe,
+    {
+      rolle: 'anon',
+      sql: `select * from jetnity_internal.security_event_producer_origin`,
+    },
+    '42501|permission denied',
+  )
+  mussAblehnen(
+    'authenticated liest das Provenienzbuch nicht',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: OPERATOR,
+      aal: 'aal2',
+      sql: `select * from jetnity_internal.security_event_producer_origin`,
+    },
+    '42501|permission denied',
+  )
+  mussAblehnen(
+    'service_role liest das Provenienzbuch nicht',
+    gruppe,
+    {
+      rolle: 'service_role',
+      sql: `select * from jetnity_internal.security_event_producer_origin`,
+    },
+    '42501|permission denied',
+  )
+  mussAblehnen(
+    'service_role schreibt das Provenienzbuch nicht',
+    gruppe,
+    {
+      rolle: 'service_role',
+      sql: `insert into jetnity_internal.security_event_producer_origin (event_id) values ('${forgedId}')`,
+    },
+    '42501|permission denied',
+  )
+  mussAblehnen(
+    'authenticated führt die interne Herkunftsfunktion nicht aus',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: OPERATOR,
+      aal: 'aal2',
+      sql: `select jetnity_internal.security_event_is_trigger_produced('${forgedId}'::uuid)`,
+    },
+    '42501|permission denied',
   )
 }
 
@@ -1130,6 +1283,57 @@ select to_jsonb(q) from (
     },
     '42501|permission denied',
   )
+
+  const provenanceAcl = jsonZeile(
+    psqlFile(`
+select to_jsonb(q) from (
+  select
+    has_schema_privilege('anon', 'jetnity_internal', 'USAGE') as anon_schema,
+    has_schema_privilege('authenticated', 'jetnity_internal', 'USAGE') as auth_schema,
+    has_schema_privilege('service_role', 'jetnity_internal', 'USAGE') as service_schema,
+    has_table_privilege('anon', 'jetnity_internal.security_event_producer_origin', 'SELECT') as anon_sel,
+    has_table_privilege('authenticated', 'jetnity_internal.security_event_producer_origin', 'SELECT') as auth_sel,
+    has_table_privilege('service_role', 'jetnity_internal.security_event_producer_origin', 'SELECT') as service_sel,
+    has_table_privilege('service_role', 'jetnity_internal.security_event_producer_origin', 'INSERT') as service_ins,
+    has_function_privilege(
+      'anon',
+      'jetnity_internal.security_event_is_trigger_produced(uuid)',
+      'execute'
+    ) as anon_fn,
+    has_function_privilege(
+      'authenticated',
+      'jetnity_internal.security_event_is_trigger_produced(uuid)',
+      'execute'
+    ) as auth_fn,
+    has_function_privilege(
+      'service_role',
+      'jetnity_internal.security_event_is_trigger_produced(uuid)',
+      'execute'
+    ) as service_fn,
+    exists(
+      select 1 from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public' and p.proname = 'security_event_is_tracked_producer'
+    ) as public_shape_classifier
+) q;
+`),
+  )
+  bewerte(
+    'privates Provenienzschema ist für anon/authenticated/service_role geschlossen',
+    gruppe,
+    provenanceAcl.anon_schema === false &&
+      provenanceAcl.auth_schema === false &&
+      provenanceAcl.service_schema === false &&
+      provenanceAcl.anon_sel === false &&
+      provenanceAcl.auth_sel === false &&
+      provenanceAcl.service_sel === false &&
+      provenanceAcl.service_ins === false &&
+      provenanceAcl.anon_fn === false &&
+      provenanceAcl.auth_fn === false &&
+      provenanceAcl.service_fn === false &&
+      provenanceAcl.public_shape_classifier === false,
+    JSON.stringify(provenanceAcl),
+  )
 }
 
 async function warteBisServer(ziel, extraMs) {
@@ -1222,7 +1426,7 @@ select to_jsonb(q) from (
   select
     (select used from public.security_event_producer_quota where id = 'tracked_producer') as used,
     (select count(*) from public.security_events e
-      where public.security_event_is_tracked_producer(e.type, e.ip, e.metadata, e.extra)) as tracked,
+      where jetnity_internal.security_event_is_trigger_produced(e.id)) as tracked,
     exists(select 1 from public.blocked_ips where ip = '192.0.2.201') as a_row,
     exists(select 1 from public.blocked_ips where ip = '192.0.2.202') as b_row
 ) q;
@@ -1280,6 +1484,7 @@ async function main() {
     pruefeR1()
     pruefeInvalidUndAdmission()
     pruefeCleanupUndLegacy()
+    pruefeProvenienz()
     pruefeKatalog()
     await pruefeConcurrentAdmission()
   } finally {
