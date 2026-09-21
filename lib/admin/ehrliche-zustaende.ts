@@ -34,6 +34,28 @@ export const ADMIN_EHRLICHE_TEXTE = {
   copilotFolgtHinweis: 'Kein Execute-Pfad. Automatik ist nicht verfügbar.',
   sucheFolgt: 'Befehlssuche folgt',
   sucheFolgtHinweis: 'Keine funktionierende Befehlspalette in Slice A.',
+  aktuelleHinweiseTitel: 'Aktuelle Hinweise',
+  aktuelleHinweiseHinweis:
+    'Regelbasierte Lage aus dem letzten System-Health-Stand dieses Prozesses. Alter und Frische folgen dem ursprünglichen Prüfzeitpunkt und dem Auswertezeitpunkt; unbekannt und veraltet bleiben sichtbar. Das belegt nicht die aktuelle Sitzung. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.',
+  aktuelleHinweiseKeinSignal:
+    'Aus den belegten System-Health-Quellen ergibt sich gerade keine priorisierte Untersuchung. Belegt sind Prozess-Erreichbarkeit und — wenn frisch — eine prozessweite airports-Beobachtung. Plattform-Health bleibt unbelegt.',
+  aktuelleHinweiseNotzugang:
+    'Für Notzugang werden datenbankgestützte System-Health-Fakten nicht zugeschrieben, auch nicht aus dem Prozess-Cache.',
+  aktuelleHinweiseOhnePruefung:
+    'Ohne bestandene betrieb-lesen-Prüfung wird System Health nicht gelesen.',
+  aktuelleHinweiseVeraltet: 'Stand ist veraltet.',
+  aktuelleHinweiseProzessBeweis:
+    'Ein Prozess in dieser Instanz hat public.airports in einem kürzlichen Sammellauf beantwortet. Das ist kein Nachweis für die aktuelle Sitzung.',
+  aktuelleHinweiseProzessGrenze:
+    'Die Beobachtung stammt aus einem Prozessstand. Sie belegt nicht, dass die aktuelle Sitzung den airports-Read ausgeführt hat.',
+  aktuelleHinweiseUntersuchen: 'System Health öffnen',
+  aktuelleHinweiseKeinSignalTitel: 'Keine priorisierte Untersuchung',
+  aktuelleHinweiseAbdeckungTitel: 'Erwartete Plattform-Quellen unbelegt',
+  aktuelleHinweiseAbdeckungSatz:
+    'Vercel, GitHub, Infomaniak und Supabase Management sind in diesem Stand nicht angebunden. Das ist Abdeckung, kein Auftrag, neue Tokens anzulegen.',
+  aktuelleHinweiseSammlungFehlt: 'Die System-Health-Sammlung ist fehlgeschlagen. Es wird kein leerer All-Clear erzeugt.',
+  aktuelleHinweiseUnvollstaendig:
+    'Der System-Health-Bericht ist unvollständig. Fehlende Karten werden nicht als gesund angenommen.',
 } as const
 
 export type AdminNaechsterSchrittStand = 'ready' | 'later'
