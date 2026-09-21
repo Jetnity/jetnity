@@ -17,6 +17,7 @@ import { foundationERelationFehlt } from '@/lib/trips/foundation-e-select'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import { safetyAnfrageSchema } from '@/lib/safety/schema'
 import { safetyEvaluationsPruefen, safetyReiseAufloesen } from '@/lib/safety/auswerten'
+import { partyVon } from '@/lib/readiness/party'
 import { registryTripUebernahmeOrchestrieren } from '@/lib/traveller/account-registry-trip'
 import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
 import type { TravellerZeile } from '@/lib/readiness/reisende'
@@ -455,7 +456,7 @@ describe('Account-Graph-Read – ausgeführte injizierbare Verbraucher', () => {
         // Dieselbe Abbildung wie registryTravellerInReiseUebernehmen.
         if (lesung.problem) return { problem: lesung.problem, reise: null }
         const reise = lesung.zeilen[0] ?? null
-        return { problem: null, reise: reise ? { party: reise.party } : null }
+        return { problem: null, reise: reise ? { party: partyVon(reise) } : null }
       },
       registryLesen: async () => {
         aufrufe.registryLesen += 1
