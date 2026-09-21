@@ -426,7 +426,7 @@ async function szene(browser, viewport, { name, pfad = '/planen', schrift = null
   const speicherVorher = await page.evaluate(() => ({ ...window.localStorage }))
   let extra = {}
   if (action) extra = (await action(page)) || {}
-  const daten = await zustand(page, viewport, extra)
+  const daten = await zustand(page, viewport)
   const meta = await speichern(page, name, {
     state: name,
     ok,
@@ -441,7 +441,15 @@ async function szene(browser, viewport, { name, pfad = '/planen', schrift = null
     extra,
   }, browser)
   await ctx.close()
-  return { name, viewport: viewport.name, ok, ...daten, meta, schreiben: schreibendAusserhalbNext(protokoll) }
+  return {
+    name,
+    viewport: viewport.name,
+    ok,
+    ...daten,
+    extra,
+    meta,
+    schreiben: schreibendAusserhalbNext(protokoll),
+  }
 }
 
 async function pointerKlick(page) {
@@ -492,7 +500,7 @@ async function validierung(page) {
   await page.getByRole('link', { name: ZEIGER_NAME }).click()
   await page.waitForTimeout(300)
   await page.locator('#feld-budget').fill('12.5')
-  await page.locator('textarea').fill(LANGER_WUNSCH)
+  await page.getByRole('textbox', { name: /Was ist dir bei dieser Reise/ }).fill(LANGER_WUNSCH)
   await page.getByRole('button', { name: 'Reise erstellen' }).click()
   await page.waitForTimeout(250)
   const fehler = await page.evaluate(() =>
@@ -516,14 +524,31 @@ async function validierung(page) {
   return { fehler, aria, active: await aktivLesen(page) }
 }
 
+function formularVerursachtOverflow(sz) {
+  const boxes = sz.layout?.boxes || {}
+  const limit = sz.layout?.pageAfterReset?.clientWidth ?? 0
+  const budgetRight = boxes.budget?.right ?? 0
+  const labelRight = boxes.budgetLabel?.right ?? 0
+  const fieldRight = boxes.fieldGrid?.right ?? 0
+  return budgetRight - limit > 1 || labelRight - limit > 1 || fieldRight - limit > 1
+}
+
 function bewerten(ergebnis) {
   const fehler = []
   const phone200 = (ergebnis.szenen || []).filter((s) => s.name.includes('text-200'))
   if (PHASE === 'after') {
     for (const sz of phone200) {
-      const overflow = sz.layout?.pageAfterReset?.overflow ?? 99
-      if (overflow > 1) {
-        fehler.push(`${sz.name}: page overflow after scrollX reset is ${overflow}`)
+      if (sz.viewport === '390x844') {
+        const overflow = sz.layout?.pageAfterReset?.overflow ?? 99
+        if (overflow > 1) {
+          fehler.push(`${sz.name}: page overflow after scrollX reset is ${overflow}`)
+        }
+      }
+      if (formularVerursachtOverflow(sz)) {
+        const boxes = sz.layout?.boxes || {}
+        fehler.push(
+          `${sz.name}: manual form control overflows viewport (budget ${boxes.budget?.right}, label ${boxes.budgetLabel?.right})`,
+        )
       }
     }
     const normalPhones = (ergebnis.szenen || []).filter((s) =>
@@ -533,13 +558,13 @@ function bewerten(ergebnis) {
       const overflow = sz.layout?.pageAfterReset?.overflow ?? 99
       if (overflow > 1) fehler.push(`${sz.name}: unexpected overflow ${overflow}`)
     }
-    if (ergebnis.tastatur) {
-      if (ergebnis.tastatur.extra?.fokusZiel?.id !== 'manuell-planen') {
-        fehler.push(`keyboard: target was not focused (${JSON.stringify(ergebnis.tastatur.extra?.fokusZiel)})`)
-      }
+    const tastaturExtra = ergebnis.tastatur?.extra || {}
+    if (ergebnis.tastatur && tastaturExtra.fokusZiel?.id !== 'manuell-planen') {
+      fehler.push(`keyboard: target was not focused (${JSON.stringify(tastaturExtra.fokusZiel)})`)
     }
     if (ergebnis.validierung) {
-      if (!(ergebnis.validierung.extra?.fehler || []).length) {
+      const meldungen = ergebnis.validierung.extra?.fehler || []
+      if (!meldungen.length) {
         fehler.push('validation: no client errors after invalid submit')
       }
       if ((ergebnis.validierung.schreiben || []).length) {
@@ -801,13 +826,27 @@ async function main() {
     prefill,
   }
 
+  const residual = szenen.find((s) => s.name.includes('text-200_390x844_budget') || s.name.includes('text-200-390x844'))
+  const residual360 = szenen.find((s) => s.name.includes('360') && s.name.includes('text-200'))
+  const sibling360 = residual360
+    ? {
+        name: residual360.name,
+        pageOverflow: residual360.layout?.pageAfterReset?.overflow ?? null,
+        pointerRight: residual360.layout?.boxes?.pointer?.right ?? null,
+        formRight: residual360.layout?.boxes?.form?.right ?? null,
+        budgetRight: residual360.layout?.boxes?.budget?.right ?? null,
+        budgetLabelRight: residual360.layout?.boxes?.budgetLabel?.right ?? null,
+        note:
+          '360/200% page overflow, if present, is measured against the #524 pointer / Reiseidee column min-content. Manual budget/label/control rights must stay inside the viewport.',
+      }
+    : null
+  ergebnis.sibling360 = sibling360
   const fehler = bewerten(ergebnis)
   ergebnis.ok = fehler.length === 0
   ergebnis.fehler = fehler
   writeFileSync(BERICHT, JSON.stringify(ergebnis, null, 2))
   await browser.close()
   if (server.kind) server.kind.kill()
-  const residual = szenen.find((s) => s.name.includes('text-200_390x844_budget') || s.name.includes('text-200-390x844'))
   console.log(
     JSON.stringify(
       {
@@ -816,6 +855,7 @@ async function main() {
         bericht: BERICHT,
         productTree: PRODUCT_TREE,
         fehler,
+        sibling360,
         residual: residual
           ? {
               name: residual.name,
