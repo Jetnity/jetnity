@@ -1,0 +1,9 @@
+#545 Admin navigation: merged to main as 8fcccd64 and then merge-committed
+  here by TL authorization. AdminNavigationSearch remains on layout/topbar.
+  overlap with HBX owned paths: none
+
+#547 Admin indexing: already on previous merge-base 88bf3a07 and retained.
+  IndexingStatus remains on system-health.
+  overlap with HBX owned paths: none
+
+This writer did not rebase or merge any still-unmerged sibling.
