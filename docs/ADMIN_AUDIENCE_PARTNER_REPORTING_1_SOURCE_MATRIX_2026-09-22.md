@@ -8,10 +8,10 @@ Run: https://cursor.com/agents/bc-ea4a0209-f139-4b47-8943-16ddf78e4270
 Draft PR: #549  
 Branch: `audit/admin-audience-partner-reporting-1`  
 Task: `docs/ADMIN_AUDIENCE_PARTNER_REPORTING_1_TASK_2026-09-22.md` at seed `8ebed62b565a7ab28f80b276984d12f2b535dff0`  
-Audited producer baseline: task main `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`; this R1/R2 persist merges authorized live `origin/main` `8fcccd6475f41703bd2a31deecb3067391f330b4` (#547/#545 accepted). Those merges are Admin navigation/indexing, not visitor or trip-aggregate producers.  
-Status: **DOCS-ONLY PREFLIGHT / R1+R2 CORRECTION / NOT IMPLEMENTATION / NOT READY / NOT A TECHNICAL-LEAD PASS**
+Audited producer baseline (historical): task main `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`. Intermediate authorized merge: `8fcccd6475f41703bd2a31deecb3067391f330b4` (#547/#545; Admin navigation/indexing, not audience). This integration-sync persist merges authorized live `origin/main` `e71218b47c1299397deb2ae3f6a4c264dc695b2b` (accepted #548 HBX offline hotel adapter). Those merges are not visitor or trip-aggregate producers.  
+Status: **DOCS-ONLY PREFLIGHT / CONTENT ACCEPTED ON `4d618d9a` / INTEGRATION SYNC / NOT IMPLEMENTATION / NOT READY / NOT A TECHNICAL-LEAD PASS**
 
-This matrix is repository-plus-quoted-TL-metadata truth for Admin audience, product-usage and partner-report questions. It is not a second Admin D–K audit, not a Growth OS, not a vendor decision, not public indexing, and not a launch gate. #548 remains unmerged and is **not** main truth. #548 may advance main again; do not silently claim this main pin stays current.
+This matrix is repository-plus-quoted-TL-metadata truth for Admin audience, product-usage and partner-report questions. It is not a second Admin D–K audit, not a Growth OS, not a vendor decision, not public indexing, and not a launch gate. #548 is **merged** on authorized main `e71218b4` as a fixture-only HBX hotel adapter. It is **not** a visitor, click, or trip-aggregate producer. #549 is the next integration candidate. TL stated no unrelated main merge is planned before this freeze.
 
 Traveller-context intelligence does not apply: this slice is operator-facing reporting preflight. No citizenship, document or credential is collected or proposed as a marketing segment.
 
@@ -255,7 +255,7 @@ Owner-scoped account JSON export (`lib/account/datenexport.ts`, schema `jetnity.
 | Deleted accounts vanish | Cascade deletes history. | No backfill claim. |
 | Formula injection / person export | CSV risk if any free text later appears. | Internal-raw aggregates only; neutralize `=+@-`; no person fields. |
 | Small-group risk | Not present while only global trip aggregates exist. | Gate any later breakdown. |
-| #548 still unmerged | HBX fixture adapter may later land on main. | Not a current producer. Fixture rows still would not be excluded by today’s RPCs. |
+| #548 now merged | HBX fixture-only hotel adapter is on authorized main `e71218b4`. | **Not** a visitor/click/trip-aggregate producer. Fixture-derived trips still would not be excluded by today’s RPCs. |
 
 ---
 
@@ -263,10 +263,10 @@ Owner-scoped account JSON export (`lib/account/datenexport.ts`, schema `jetnity.
 
 Checked in this session:
 
-- Authorized merge of `origin/main` `8fcccd6475f41703bd2a31deecb3067391f330b4` (accepted #547/#545). Producer citations re-checked against that checkout; trip RPC SQL is unchanged (time + `darf_betrieb_lesen()` only).
+- Authorized merge of `origin/main` `e71218b47c1299397deb2ae3f6a4c264dc695b2b` (accepted #548 after #547/#545). Historical producer baseline remains task main `9dc8926e`. Trip RPC SQL re-checked after this merge: still time + `darf_betrieb_lesen()` only. HBX adapter files add no visitor/analytics producer.
 - Named Admin, Auth, trip, legal, commercial and export files cited above.
 - Skyscanner affiliates page (public HTTP fetch, 2026-09-22).
-- #548 observed open at `2542a95b2c5de066e355a66ade920bd0846f3cea` — not used as truth; may advance main later.
+- #548 merged at `2026-09-22T18:02:01Z`; no longer an open sibling.
 
 Not checked / not claimed:
 
@@ -285,8 +285,9 @@ Not checked / not claimed:
 | Growth / Admin Marketing standard | Reuse M0 “contracts & read-only foundation”, data-quality and privacy/export rules. Do not start M1–M6. |
 | Remaining-build-map | Admin J Analytics / SEO is `DELIBERATELY_LATER` / indexing-gated. M0–M6 Growth OS is later. This preflight does **not** reorder V1. |
 | V1 binding build order | Full Admin D–K / Growth Control Plane is explicitly not V1-critical. |
-| #545 / #547 | Accepted and present on authorized main `8fcccd64`. Navigation search / indexing configuration. Not audience producers. |
-| #548 | Open; next integration candidate; may advance main. Not this owner. Not a visitor/trip-aggregate producer. |
+| #545 / #547 | Accepted on earlier main `8fcccd64`, still present under `e71218b4`. Navigation search / indexing. Not audience producers. |
+| #548 | **Merged** on authorized main `e71218b4`. Fixture-only HBX hotel adapter. Not a visitor/click/trip-aggregate producer. |
+| #549 | This preflight. Next integration candidate after this sync. |
 | Special gates that would apply to **later** collection or vendor work | Legal/consent/tracker; public launch/indexing; provider contracts/secrets/paid calls; Production migration; payments/money; spend &gt; budget; sensitive export. Clean external partner report additionally needs a validated exclusion/provenance method. Click collection needs an event/attribution/privacy contract; S5-B only if that design writes the commercial snapshot. |
 
 Canonical requirement text: [#512 comment 5780510581](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5780510581). This matrix is the inventory step. It does not implement Analytics views.

@@ -4,9 +4,9 @@ Date: 2026-09-22
 Agent: **Jetnity admin audience partner reporting preflight 1**, Generation 1  
 Session: `bc-ea4a0209-f139-4b47-8943-16ddf78e4270`  
 Source matrix: `docs/ADMIN_AUDIENCE_PARTNER_REPORTING_1_SOURCE_MATRIX_2026-09-22.md`  
-Status: **PROPOSAL ONLY / R1+R2 CORRECTED / NOT DISPATCHED / DO NOT IMPLEMENT FROM THIS PREFLIGHT**
+Status: **PROPOSAL ONLY / R1+R2 CORRECTED / TL REJECTED AUTOMATIC DISPATCH / DO NOT IMPLEMENT FROM THIS PREFLIGHT**
 
-This is the smallest independently useful implementation after the inventory. It is not a Growth OS, not an analytics vendor decision, not public indexing, and not a V1 phase reorder. Technical Lead may accept, narrow, or reject it after independent review.
+This document remains the inventory’s smallest-slice proposal as historical evidence. **Technical-Lead selection (review `5281789519`):** do **not** implement the proposed unavailable-metric overview. It adds no actual audience measurement. TL will separately scope a minimal aggregate **account** measurement with explicit source/definition and locally verified SQL authorization; any production migration/privilege apply remains Product-Owner gated. Unique visitors remain a separate measurement-purpose/privacy/collection decision; accounts never substitute. No activation/tracker/vendor/signup authority is conferred. Do not start any follow-up from PR #549.
 
 ---
 
@@ -45,7 +45,7 @@ This is the smallest independently useful implementation after the inventory. It
 - Treating `account_visits` as web visits.
 - Treating `trips.status='booked'`, local payments, or `affiliate_status` as booking/commission.
 - Inventing a test/Preview/bot/fixture SQL filter, or labelling raw RPC output as partner-ready / clean audience.
-- Editing #548 HBX, merged #545/#547 owned files, or global roadmap/start/handoff files from that writer without a new task.
+- Editing merged #545/#547/#548 owned files, or global roadmap/start/handoff files from that writer without a new task.
 - Public indexing, launch gate, Growth M1–M6, Copilot execute, Ads, Bexio.
 - Implementing this proposal from PR #549.
 
@@ -130,7 +130,7 @@ Hydrated UI checks only for the new overview states (authorised numbers vs unava
 | Question | Answer |
 | --- | --- |
 | V1 reorder? | **No.** Remaining-build-map keeps Admin J / Growth M0–M6 later. This slice is honesty over existing A–C tiles, not the Growth OS. |
-| Collision with #545 / #547 / #548? | #545/#547 are on authorized main `8fcccd64` (nav search / indexing). Later writer must not reopen those files without a new task. #548 remains open and may advance main. Do not merge the #548 branch here. |
+| Collision with #545 / #547 / #548? | All three are on authorized main `e71218b4` (nav search / indexing / HBX fixture adapter). Later writer must not reopen those files without a new task. |
 | Shared contracts? | Reuse ADR-0040 empty-vs-error, Admin AAL2, AP6A no-tracker, #472 revenue truth. Do not silently introduce `analytics.read`. Do not treat S5-B as the click-collection gate. |
 | Special Product-Owner gates in **this** smallest slice? | None if it is display + optional **internal-raw** CSV on existing RPCs, with the raw label. |
 | Gates if the slice grows? | Legal/consent/tracker; Production migration; provider/secrets/paid; public launch/indexing; money movement; spend. |
@@ -154,4 +154,4 @@ Bound the later holes. This list is **not** a tracking design and not a vendor c
 10. Historical backfill: **impossible** for visitors before collection starts; do not invent it.
 11. Clean external partner report: exclusion/provenance method still unspecified; do not pretend current RPCs implement it.
 
-Stop. Do not start this slice from PR #549.
+Stop. Do not start this slice from PR #549. Technical Lead rejected automatic dispatch of this overview.
