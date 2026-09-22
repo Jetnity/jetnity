@@ -8,28 +8,27 @@ Required and actual model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-
 
 ## 1. Ownership
 
-Named paths only. Did not edit `lib/seo/*`, robots/sitemap routes, Auth, navigation, Topbar, admin layout, SystemHealthBoard, health runtime/API, package.json, or #545 files.
+Named paths only. This persist edited only owned STATUS / HANDOFF / SELF_REVIEW and `docs/evidence/admin-indexing-status-1/PREVIEW_GATE_RECOVERY_2026-09-22.md`. Did not edit `lib/seo/*`, robots/sitemap routes, Auth, navigation, Topbar, admin layout, SystemHealthBoard, health runtime/API, package.json, Vercel config, or #545 / #548 files.
 
 ## 2. Adversarial checks
 
 | Risk | Finding |
 | --- | --- |
-| P0 leak of credentials / raw env / invalid URL | Projection and HTML tests reject userinfo, query, hash, HTML and invalid raw strings. Picker drops unrelated secrets. |
-| P0 new unauthenticated path | No new route, API or capability. Guard remains first in the page function body. |
-| P0 public indexing activation | No control, no env write, no policy rewrite. Allow copy explicitly denies launch meaning. |
-| P1 health-green / outage confusion | Section always `data-indexing-health-green="false"`. Neutral muted chip for allow and deny. |
-| P2 R1 deny-intent overclaim | Corrected: one neutral deny sentence for Preview-deny and conflicting SITE/APP. No reason classifier. No “beabsichtigter Deny / kein Ausfall”. |
-| P1 refresh confusion | Stand text names the board button and says it does not refresh this section. Data is computed once after the guard. |
-| P1 second policy | `folgtVertrag` asserts byte-for-byte helper equality. No local allow-condition rewrite. |
-| P2 authenticated Preview of the real page | Not performed. Auth boundary unchanged. Synthetic SSR + Playwright viewports only. |
-| P2 #545 integration drift | Disjoint paths; TL serializes. No unrequested sync. |
-| P3 deny reason opacity | Why-deny is not re-derived (preview vs unset vs conflict). Intentional; a second policy would violate the task. |
-| P3 dense robots list on 390 | Allow-mode lists existing D0-1 disallows as wrapping chips. Overflow is checked in the render script. |
+| P0 leak of credentials / raw env / invalid URL | Unchanged from R1 persist. Projection and HTML tests reject userinfo, query, hash, HTML and invalid raw strings. |
+| P0 new unauthenticated path | Unchanged. No new route, API or capability. |
+| P0 public indexing activation | Unchanged. No control, no env write, no policy rewrite. |
+| P1 health-green / outage confusion | Unchanged. Section always `data-indexing-health-green="false"`. Neutral deny copy from R1. |
+| P2 R1 deny-intent overclaim | Independently accepted by TL on `ae7c85fa`. Runtime not reopened here. |
+| P1 second policy | Unchanged. No local allow-condition rewrite. |
+| P1 Preview-gate bypass | Not claimed. `ae7c85fa` had no Vercel deployment/status. Exact-head retry is unavailable. This persist retriggers git integration once. The previous Preview on `cf1bd145` is not reused as this head's gate. |
+| P2 authenticated Preview of the real page | Not performed. Auth boundary unchanged. |
+| P2 #545 / #548 integration drift | Disjoint paths; TL serializes. No unrequested sync. |
+| P3 deny reason opacity | Unchanged. Why-deny is not re-derived. |
 
 ## 3. Evidence honesty
 
-Screenshots are synthetic component renders with compiled `styles/globals.css`. They are not an authenticated Admin session, not a crawler probe, and not a physical-device PASS.
+Screenshots remain synthetic component renders. They are not an authenticated Admin session, not a crawler probe, and not a physical-device PASS. The previous Preview on `cf1bd145` is not evidence for `ae7c85fa` or for this new freeze SHA.
 
 ## 4. Verdict
 
-Ready for independent Technical-Lead exact-head review of the freeze SHA. **Not Ready. Not merged. No follow-up slice.**
+Ready for independent Technical-Lead exact-head re-gating of the freeze SHA. **Not Ready. Not merged. No follow-up slice.**

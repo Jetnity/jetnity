@@ -11,3 +11,5 @@ Synthetic SSR of `IndexingStatus` with compiled `styles/globals.css`.
 See `manifest.json` for overflow/focus measurements.
 
 R1 render: deny-preview and deny-conflict must show the same neutral lock sentence and must not say beabsichtigter Deny / kein Ausfall. Conflicting App-Origin must not appear as raw text.
+
+Preview-gate recovery on 2026-09-22: TL accepted R1 code on `ae7c85fa` but that SHA had no Vercel deployment/status. Exact-head retry is unavailable. One owned-docs persist retriggers GitHub→Vercel. See `PREVIEW_GATE_RECOVERY_2026-09-22.md`. The previous `cf1bd145` Preview is not reused.
