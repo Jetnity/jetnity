@@ -1,0 +1,37 @@
+{
+  "file": "before_1440x900_text-200_konto.png",
+  "capturedAt": "2026-09-22T00:07:23.251Z",
+  "productTree": {
+    "head": "76ae4abd1a2adcf15c21757252de1afbcf8a3680",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "?? docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_DECISION_2026-09-22.md",
+      "?? docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_STATUS_2026-09-22.md",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/"
+    ],
+    "sourceNote": "baseline PublicNavbar at seed 76ae4abd plus unmodified components/layout/PublicNavbar.tsx from d89ed0b0"
+  },
+  "browser": "chromium/140.0.7339.16",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "hasTouch": false
+  },
+  "route": "/",
+  "state": {
+    "sitzung": "konto",
+    "mock": {
+      "ok": true,
+      "kind": "controlled-local-react-session-state-mock",
+      "previous": "unbekannt",
+      "next": "konto",
+      "note": "No credentials, cookies or account writes. Real PublicNavbar state only."
+    }
+  },
+  "simulationClass": "html-font-size-32px + konto",
+  "actions": [
+    "goto",
+    "compiled-css"
+  ],
+  "clip": "viewport"
+}
