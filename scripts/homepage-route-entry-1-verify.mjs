@@ -21,4 +21,9 @@ const result = spawnSync(
   { stdio: 'inherit' },
 )
 
-process.exit(result.status ?? 1)
+if (result.status) process.exit(result.status)
+
+const hydrated = spawnSync(process.execPath, ['scripts/homepage-route-entry-1-hydrated.mjs'], {
+  stdio: 'inherit',
+})
+process.exit(hydrated.status ?? 1)

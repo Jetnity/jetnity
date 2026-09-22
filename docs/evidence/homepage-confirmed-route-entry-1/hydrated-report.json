@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "ergebnisse": [
+    {
+      "name": "R1 pending replace/remove",
+      "ok": true
+    },
+    {
+      "name": "R1 replace-target switch",
+      "ok": true
+    },
+    {
+      "name": "R2 visible/model swap",
+      "ok": true
+    },
+    {
+      "name": "R2 empty and duplicate",
+      "ok": true
+    },
+    {
+      "name": "successful chips + create",
+      "ok": true
+    },
+    {
+      "name": "keyboard/focus/reflow",
+      "ok": true
+    }
+  ],
+  "method": "Locally bundled actual StartzielForm + TripPlanner. next/router, next/link and server actions stubbed. Synthetic /api/search/places. Chromium only — not physical-device acceptance, not authenticated Preview E2E."
+}
