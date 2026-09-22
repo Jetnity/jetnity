@@ -1,7 +1,7 @@
 # Registration Consent Interaction 1 — STATUS
 
 Date: 2026-09-22  
-Status: **IMPLEMENTED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **REVIEW CORRECTION DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Issue: #539  
 Draft PR: #540  
 Branch: `fix/registration-consent-interaction-1`  
@@ -9,60 +9,80 @@ Agent: Jetnity registration consent interaction 1, Generation 1
 Model: Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`)  
 Session: `bc-76b92d07-81a0-42b4-9b87-9827d868cadc`  
 Baseline: `main@fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee`  
-Task seed: `824286f69e8eae560999a9f4d0e0869390c280cc`
+Task seed: `824286f69e8eae560999a9f4d0e0869390c280cc`  
+Reviewed head (CHANGES REQUIRED): `9132adb595d18fd1fd65f8fd14a54d072ec1950b`  
+TL review: `5276799852`
 
-## What was delivered
+This is the same-session review correction. It is not a Technical-Lead PASS and is not Ready.
 
-- Hydrated before/after Playwright proof against the actual `Checkbox` plus a RegisterForm-shaped consent row.
-- One user action now toggles one native checkbox. Visible, accessible and form state stay aligned.
-- Register submit stays disabled until explicit accept; revoke disables it again.
-- Legal links still go to `/terms` and `/privacy` and do not toggle consent.
-- No signup, email, identity, role, Auth or DB writes.
+## What the first delivery already proved
 
-## Root cause (runtime, not source-only)
+Hydrated Chromium on the seed reproduced the defect: one click on the visible box fired `onCheckedChange(true)` then `false`, so native and visual state stayed unchecked. The repair is one native 44px checkbox. Independent TL review confirmed the mouse/touch/controlled/uncontrolled/indeterminate/disabled/consent-enable-revoke contract on `9132adb5`.
 
-On the seed head, one real click on the visible box produced **two** `onCheckedChange` calls (`true` then `false`). Native and visual state stayed unchecked. Two accessible checkboxes existed: a custom `role="checkbox"` span and a 1×1 `sr-only` input inside a wrapping `<label>`.
+## RC-R1 — 200% long legal-link overflow
 
-That matches the competing custom toggle + native label activation. It is emulated Chromium evidence, not a physical iPhone/Safari PASS.
+The previous `layout-200` check compared the label box to `window.innerWidth`. On mobile that width expanded with document overflow, so `labelFitsViewport` was true while `Nutzungsbedingungen` and `Datenschutzerklärung` still overflowed (TL: 390 `rowOverflowPx` 57 / innerWidth 415; 320 `rowOverflowPx` 127 / innerWidth 415).
 
-## After correction (settled state)
+Runtime change is only on the existing RegisterForm consent label and its two legal links:
 
-Chromium desktop / 390 touch / 320: one mouse click, one touch tap, one external-label click and Tab+Space each change native+visual state once. Callback count is 1. Hit area is 44×44. One accessible checkbox. Default remains unchecked.
+- label: `min-w-0 flex-1 break-words … [overflow-wrap:anywhere]`
+- links: `break-words … [overflow-wrap:anywhere]`
+- copy, destinations (`/terms`, `/privacy`), `stopPropagation`, 44px native target unchanged
+- no `overflow: hidden`, no clip, no shared Label redesign
 
-## Commands
+Measurement now uses `document.documentElement.clientWidth` / `scrollWidth` plus each legal link’s `getBoundingClientRect()` against `clientWidth`. 200% captures use isolated `?layout=consent` so rem-inflated `max-w-md` on the full fixture stack cannot fake the row. Recaptured only 320/390 at 200%.
+
+After correction (Chromium):
+
+| viewport | clientWidth | scrollWidth | documentOverflowPx | rowOverflowPx | anyLinkOverflows |
+| --- | --- | --- | --- | --- | --- |
+| 390 @ 200% | 390 | 390 | 0 | 0 | false |
+| 320 @ 200% | 320 | 320 | 0 | 0 | false |
+
+Link rights stay inside `clientWidth` (390: 349.69 / 354.20; 320: 280.56 / 287.44). Visual proof: `docs/evidence/registration-consent-interaction-1/screenshots/after-chromium-iphone-390-layout-200pct-390.png` and `after-chromium-320-layout-200pct-320.png`.
+
+## RC-R2 — honest Tab, default link navigation, optional label click
+
+The first runner’s `keyboardToggle()` called `focus()`, never Tab. Harness `LegalLink` used `preventDefault` plus a synthetic navigation array. Docs called that Tab+Space and production-like navigation. That overstated the contracts.
+
+Now:
+
+- `tabToNativeCheckbox()` clicks a preceding `data-tab-start` field, then presses Tab until the focused node is the native `#terms` checkbox. Assertions: `activeElement` id/type, accessible name contains `Ich akzeptiere`, exactly one native checkbox, zero `role="checkbox"`, then Space checks once and Space again revokes. Case name: `keyboard-tab-space`.
+- Legal links are real `<a href="/terms">` / `<a href="/privacy">`. Harness matches RegisterForm: `stopPropagation` only, **no** `preventDefault`. Runner waits for a same-origin request and `waitForURL` pathname. Consent-unchanged is a `change` listener written to `sessionStorage` before the click (`termsChanged` / `privacyChanged` are `null`). The local server returns `legal destination /terms|/privacy` so navigation is real and distinct from the harness HTML. No mocked preventDefault was added to make the case pass.
+- Optional Checkbox `label="Mit Label-Text"` is clicked via `getByText('Mit Label-Text')`, not markup presence. Case: `optional-label-click`.
+
+This remains a **label/consent-row harness**, not a hydrated full Next `/register` route. Source-string checks in `lib/ui/checkbox-interaction.test.ts` are structural locks only; the comment in that file says so.
+
+## Commands (review-correction working tree, then committed head)
 
 ```text
-CONSENT_PHASE=before node docs/evidence/registration-consent-interaction-1/interact.mjs
-# reproduced=true; one click → callbacks [true, false]; nativeChecked stayed false
-
 CONSENT_PHASE=after node docs/evidence/registration-consent-interaction-1/interact.mjs
 # pass=true on chromium-desktop, chromium-iphone-390, chromium-320
+# webkit-iphone-390 unavailable (host libraries). Not real iPhone/Safari.
 
 node --import ./scripts/server-only-test-register.mjs --import tsx --test \
   lib/ui/checkbox-interaction.test.ts \
   lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts \
   lib/auth/register-meldung.test.ts
-# 21/21 pass
+# 21/21 pass (rerun recorded on the correction commits)
 
 npx eslint components/ui/checkbox.tsx components/auth/RegisterForm.tsx lib/ui/checkbox-interaction.test.ts
-# 0 errors; 2 pre-existing RegisterForm `any` warnings untouched
-
 npx tsc -p tsconfig.json --noEmit
-# pass
 ```
 
-## Main drift (no merge performed)
+## Authorized main integration
 
-Live `origin/main` at handoff read: `5fee5f664e72a5fb946c050cc1f07efdbd50a6ec`  
-Merge-base with this branch: `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee`  
-Ahead/behind vs `origin/main`: this branch is 1 commit ahead of the seed and 5 behind later main (`#538` Admin model-usage attention). Disjoint. Not merged.
+TL review `5276799852` authorized **one** ordinary merge of `origin/main@5fee5f664e72a5fb946c050cc1f07efdbd50a6ec` into this existing branch after the bounded corrections. No rebase, no force-push, no second merge, no Admin #538 file edits. If live main had moved or conflicted, this writer would have stopped and reported instead of integrating.
 
-## Residual limitations
+## Residual limitations (unchanged honesty)
 
-- Playwright WebKit did not launch (host libraries missing). Not real iPhone/Safari evidence.
-- Full Next `/register` route was not hydrated here (no local Supabase env; page calls `getUser()`). Harness uses the actual Checkbox/Label and a RegisterForm-identical consent row.
-- Exact-head CI / Auth / Vercel Preview / independent TL visual review remain open.
+- Playwright WebKit did not launch. Emulated Chromium 390/320 is **not** a physical iPhone or Safari PASS.
+- Full authenticated Next `/register` route was not hydrated here. Evidence is the compiled product Checkbox/Label plus a RegisterForm-shaped consent row, plus isolated `?layout=consent` for 200%.
+- `/terms` and `/privacy` still 404 in the product. Unchanged legal-foundation finding. The harness server only exists so default navigation can be observed.
+- OAuth on `/register` still does not require the checkbox. Unchanged inventory lock.
+- No real signup, email, identity, role, Auth or DB writes.
+- Fresh exact-head CI / Auth / direct Vercel Preview on the post-correction (and post-merge) head remain for the Technical Lead to read live. Historical `9132adb5` gates are superseded.
 
 ## Next actor
 
-Technical Lead: independent exact-head review. Cursor will not Ready, merge or start a follow-up. Immediate review fixes reuse this session.
+Technical Lead: independent exact-head re-review of the frozen head in HANDOFF. Cursor will not Ready, merge the PR, or start a follow-up. Immediate further review fixes would reuse this session.

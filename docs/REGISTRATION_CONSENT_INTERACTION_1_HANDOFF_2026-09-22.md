@@ -1,19 +1,22 @@
 # Registration Consent Interaction 1 — HANDOFF
 
 Stand: 22. September 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
+
+Same session as the first delivery. Same Generation 1 writer. Review correction only.
 
 ## For the next reader
 
 Read in this order:
 
 1. `docs/REGISTRATION_CONSENT_INTERACTION_1_TASK_2026-09-22.md`
-2. `docs/REGISTRATION_CONSENT_INTERACTION_1_STATUS_2026-09-22.md`
-3. `docs/REGISTRATION_CONSENT_INTERACTION_1_SELF_REVIEW_2026-09-22.md`
-4. `docs/evidence/registration-consent-interaction-1/interact-before.json`
-5. `docs/evidence/registration-consent-interaction-1/interact-after.json`
-6. Live Draft PR #540 head, comments, CI, Auth, Vercel — not remembered IDs
-7. Live `origin/main` (later `#538` is disjoint; do not mix)
+2. Independent TL review `5276799852` on `9132adb595d18fd1fd65f8fd14a54d072ec1950b`
+3. `docs/REGISTRATION_CONSENT_INTERACTION_1_STATUS_2026-09-22.md`
+4. `docs/REGISTRATION_CONSENT_INTERACTION_1_SELF_REVIEW_2026-09-22.md`
+5. `docs/evidence/registration-consent-interaction-1/interact-before.json`
+6. `docs/evidence/registration-consent-interaction-1/interact-after.json`
+7. Recaptured 200% shots: `screenshots/after-chromium-iphone-390-layout-200pct-390.png`, `screenshots/after-chromium-320-layout-200pct-320.png`
+8. Live Draft PR #540 head, comments, CI, Auth, Vercel — not remembered IDs
 
 ## Exact coordinates
 
@@ -26,24 +29,48 @@ Read in this order:
 | Branch | `fix/registration-consent-interaction-1` |
 | Product baseline | `main@fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
 | Task seed | `824286f69e8eae560999a9f4d0e0869390c280cc` |
-| Main drift at handoff | `origin/main@5fee5f66` is #538 Admin; 5 ahead of merge-base; no rebase/merge by this writer |
+| First delivery head | `9132adb595d18fd1fd65f8fd14a54d072ec1950b` (historical; CHANGES REQUIRED) |
+| Authorized main parent | `5fee5f664e72a5fb946c050cc1f07efdbd50a6ec` (#538 Admin, disjoint; merged once after correction if still exact) |
 
-## What was delivered
+Frozen correction / merge SHAs are the commits on this branch after `9132adb5`. Re-read `git rev-parse HEAD` and live GitHub; do not treat this prose as the gate.
 
-- `components/ui/checkbox.tsx`: one native checkbox on a 44px hit area; decorative visual box; uncontrolled state tracked in React state; no custom `role="checkbox"` toggle.
-- `components/auth/RegisterForm.tsx`: legal links `stopPropagation` so they navigate without toggling; `min-w-0` on the consent label; wording, destinations, default unchecked, submit gate and `handleRegister` consent check unchanged.
-- Hydrated before/after runner + node structural/consent-wiring tests.
+## What changed in the review correction
+
+- `components/auth/RegisterForm.tsx`: long German legal link words wrap via `break-words` + `[overflow-wrap:anywhere]` on the existing consent `Label` and its two `Link`s. `flex-1` keeps the label in the remaining row width. `</Label>` remains. Copy, destinations, `stopPropagation`, default unchecked, submit gate and `handleRegister` consent check unchanged.
+- `docs/evidence/registration-consent-interaction-1/harness.tsx`: same wrap classes; `LegalLink` no longer `preventDefault`s or records a fake navigation array; isolated `?layout=consent`; preceding Tab start field.
+- `docs/evidence/registration-consent-interaction-1/interact.mjs`: real Tab; real same-origin `/terms` and `/privacy` request+URL; optional label text click; 200% metrics vs `documentElement.clientWidth` / link bounds / `scrollWidth`.
+- `lib/ui/checkbox-interaction.test.ts`: wrap lock + legal-block must not `preventDefault`. Markup is not interaction proof.
+
+`components/ui/checkbox.tsx` was not changed in this correction. Admin #538 files were not touched.
+
+## What the evidence does and does not prove
+
+Proves (hydrated Chromium, compiled product Checkbox/Label + consent-row harness):
+
+- one mouse click / one 390 touch tap / one external label click / optional component label click each toggle once
+- real Tab from a preceding field lands on the native `#terms` checkbox, then Space checks and revokes
+- clicking `/terms` or `/privacy` issues a same-origin request, navigates to that path, and does not fire a consent `change`
+- 320/390 at 200% text: legal links stay inside `documentElement.clientWidth`; document `scrollWidth` equals `clientWidth`
+
+Does **not** prove:
+
+- physical iPhone or Safari (WebKit unavailable)
+- full Next `/register` route, authenticated session, or production navigation
+- that `/terms` and `/privacy` exist as product pages (they still 404)
+- Ready, merge, or Production
 
 ## What the Technical Lead should decide
 
-1. Independent exact-head review of the implementation head (not this prose).
-2. Whether emulated Chromium + WebKit-unavailable is enough, or a real iPhone/Safari Preview check is required before Ready.
-3. Ready/Merge only after that review and remaining exact-head gates. Cursor will not.
+1. Independent exact-head re-review of the frozen implementation head (not this prose).
+2. Whether emulated Chromium + honest WebKit-unavailable is enough, or a real iPhone/Safari Preview check is required before Ready.
+3. Confirm the single authorized `5fee5f66` merge is the only extra parent and #538 remains untouched.
+4. Ready/Merge only after that review and remaining exact-head gates. Cursor will not.
 
 ## What the next Cursor writer must not do unless a new versioned task says so
 
 - Touch Admin #538 files or duplicate that session
 - Change signup, Auth, roles, MFA, DB, legal copy or consent bypass
-- Mark Ready, merge, or start a follow-up slice
+- Rebase, force-push, or merge main again
+- Mark Ready, merge the PR, or start a follow-up slice
 
-Immediate review corrections reuse this session.
+Immediate further review corrections reuse this session.
