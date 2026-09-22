@@ -75,7 +75,7 @@ export default function HomePage() {
           <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,27,23,0.92)_0%,rgba(7,27,23,0.78)_42%,rgba(7,27,23,0.18)_78%,rgba(7,27,23,0.28)_100%)]" />
           <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(0deg,rgba(7,27,23,0.52)_0%,transparent_46%)]" />
 
-          <div className="relative z-10 mx-auto grid min-h-[520px] max-w-7xl items-center gap-10 px-5 py-12 sm:min-h-[600px] sm:px-10 sm:py-16 lg:min-h-[720px] lg:grid-cols-[minmax(0,650px)_minmax(0,1fr)] lg:px-14 xl:px-16 short:min-h-0">
+          <div className="relative z-10 mx-auto grid min-h-[520px] max-w-7xl items-center gap-10 px-5 py-12 sm:min-h-[600px] sm:px-10 sm:py-16 lg:min-h-[720px] xl:grid-cols-[minmax(0,650px)_minmax(0,1fr)] lg:px-14 xl:px-16 short:min-h-0">
             <div className="min-w-0">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-ink-300 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5" />
@@ -103,7 +103,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="hidden justify-end lg:flex">
+            <div className="hidden justify-end xl:flex">
               <div className="w-full max-w-[390px] rotate-[1.5deg] rounded-[30px] border border-white/15 bg-white/95 p-4 text-brand-800 shadow-[0_30px_90px_rgba(0,0,0,0.24)] backdrop-blur-xl">
                 <div className="rounded-[22px] bg-surface-75 p-5">
                   <div className="flex items-start justify-between gap-4">
