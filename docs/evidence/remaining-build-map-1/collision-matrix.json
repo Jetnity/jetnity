@@ -3,7 +3,7 @@
   "rows": [
     {
       "pr": 544,
-      "head": "pending_content_commit",
+      "head": "ffcbca8d",
       "mergeBase": "35148a4ba065be1315dddf21174d7f272518d34c",
       "aheadBehindBeforePersist": "1/0",
       "class": "current_docs_writer"

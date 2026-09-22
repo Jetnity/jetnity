@@ -1,0 +1,7 @@
+content_head_before_freeze_stamp=ffcbca8d
+note=A later freeze-stamp commit, if present, is the live HEAD. Re-read git after push.
+pinned_main=35148a4ba065be1315dddf21174d7f272518d34c
+task_seed=492a35f9861a283d365cc37a3521d1c4a7559ced
+merge_base_at_content=35148a4ba065be1315dddf21174d7f272518d34c
+ahead_behind_at_content=2/0_after_this_stamp_expected
+main_drift=none_at_reconstruction
