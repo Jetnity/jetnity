@@ -14,7 +14,9 @@ import {
   chmodSync,
   existsSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
+  readlinkSync,
   rmSync,
   appendFileSync,
   writeFileSync,
@@ -57,7 +59,23 @@ const SUBPROCESS_TIMEOUT_MS = Object.freeze({
   download: 90_000,
   http: 8_000,
 })
-const MAX_HTTP_REQUESTS = 48
+const MAX_HTTP_REQUESTS = 80
+const TCP_LISTEN_STATE = '0A'
+const CHILD_TERM_TIMEOUT_MS = 1_500
+const CHILD_KILL_TIMEOUT_MS = 800
+const SCHEMA_CACHE_DEADLINE_MS = 4_000
+const SCHEMA_CACHE_PROBE_BUDGET = 8
+
+export const POSTGREST_V16_DENY = Object.freeze({
+  privilege: Object.freeze({ status: 403, code: '42501' }),
+  anon: Object.freeze({ status: 401, code: '42501' }),
+  invalidJwt: Object.freeze({ status: 401, code: 'PGRST301' }),
+  expiredJwt: Object.freeze({ status: 401, code: 'PGRST303' }),
+  missingFunction: Object.freeze({ status: 404, code: 'PGRST202' }),
+  excludedSchema: Object.freeze({ status: 406, code: 'PGRST106' }),
+  invalidPath: Object.freeze({ status: 404, code: 'PGRST125' }),
+  missingTable: Object.freeze({ status: 404, code: 'PGRST205' }),
+})
 const EXPECTED_PRESENT = '10'
 const EXPECTED_WINDOW_ZERO = '0'
 const EXPECTED_PRESENT_AFTER_RECENT = '11'
@@ -97,10 +115,13 @@ const HTTP_FORBIDDEN_KEYS = Object.freeze([
 ])
 
 const ergebnisse = []
+const beobachtungen = []
 let cluster = null
 let httpState = null
 let parseAdminAccountCountsPayload = null
 let httpRequestCount = 0
+let catalogBeforeSetup = null
+let catalogAfterSetup = null
 
 export function sha256Datei(pfad) {
   return createHash('sha256').update(readFileSync(pfad)).digest('hex')
@@ -173,6 +194,11 @@ function bewerte(name, gruppe, ok, detail) {
   console.log(`${ok ? '  ok  ' : ' FEHL '} [${gruppe}] ${name}  ${sanitized(detail)}`)
 }
 
+function beobachte(name, gruppe, detail) {
+  beobachtungen.push({ name, gruppe, detail: String(detail ?? ''), assertion: false })
+  console.log(`  obs  [${gruppe}] ${name}  ${sanitized(detail)}`)
+}
+
 function sanitized(wert) {
   return String(wert ?? '')
     .replace(/eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, '[jwt-redacted]')
@@ -241,6 +267,365 @@ export function assertConfigIsLoopbackOnly(configText) {
   if (/0\.0\.0\.0|!4|::/.test(configText)) {
     throw new Error('fail-closed: public or wildcard bind is forbidden')
   }
+}
+
+export function schemaProfileHeaders(method, schema) {
+  if (method === 'GET') return { 'Accept-Profile': schema }
+  return { 'Content-Profile': schema }
+}
+
+export function tamperJwtSignature(token) {
+  const teile = String(token).split('.')
+  if (teile.length !== 3 || !teile[2]) {
+    throw new Error('fail-closed: tamper target is not a compact JWT')
+  }
+  const sig = Buffer.from(teile[2], 'base64url')
+  if (!sig.length) {
+    throw new Error('fail-closed: JWT signature is empty')
+  }
+  const mutated = Buffer.from(sig)
+  mutated[0] = mutated[0] ^ 0xff
+  const next = `${teile[0]}.${teile[1]}.${mutated.toString('base64url')}`
+  if (next === token) {
+    throw new Error('fail-closed: JWT tamper did not change signed bytes')
+  }
+  return next
+}
+
+export function ipv4HexIsLoopback(hex) {
+  return String(hex).toUpperCase() === '0100007F'
+}
+
+export function ipv4HexIsWildcard(hex) {
+  return String(hex).toUpperCase() === '00000000'
+}
+
+export function ipv6HexIsLoopback(hex) {
+  return String(hex).toUpperCase().replace(/[^0-9A-F]/g, '') === '00000000000000000000000001000000'
+}
+
+export function ipv6HexIsWildcard(hex) {
+  return String(hex).toUpperCase().replace(/[^0-9A-F]/g, '') === '00000000000000000000000000000000'
+}
+
+export function parseProcNetListenRows(text, family = 'ipv4') {
+  const rows = []
+  for (const zeile of String(text ?? '').split('\n')) {
+    const cols = zeile.trim().split(/\s+/)
+    if (cols.length < 10 || !/^[0-9A-Fa-f]+:[0-9A-Fa-f]+$/.test(cols[1])) continue
+    if (cols[3] !== TCP_LISTEN_STATE) continue
+    const [localHex, portHex] = cols[1].split(':')
+    rows.push({
+      family,
+      localHex: localHex.toUpperCase(),
+      port: Number.parseInt(portHex, 16),
+      portHex: portHex.toLowerCase(),
+      inode: String(cols[9]),
+      state: cols[3],
+      isLoopback: family === 'ipv4' ? ipv4HexIsLoopback(localHex) : ipv6HexIsLoopback(localHex),
+      isWildcard: family === 'ipv4' ? ipv4HexIsWildcard(localHex) : ipv6HexIsWildcard(localHex),
+    })
+  }
+  return rows
+}
+
+export function readProcessSocketInodes(pid) {
+  if (!Number.isInteger(pid) || pid <= 1) {
+    throw new Error('fail-closed: owned pid is not a live process')
+  }
+  const fdDir = `/proc/${pid}/fd`
+  if (!existsSync(fdDir)) {
+    throw new Error(`fail-closed: owned pid ${pid} has no /proc fd table`)
+  }
+  const inodes = []
+  for (const name of readdirSync(fdDir)) {
+    try {
+      const target = readlinkSync(join(fdDir, name))
+      const treffer = /^socket:\[(\d+)\]$/.exec(target)
+      if (treffer) inodes.push(treffer[1])
+    } catch {
+      /* fd disappeared */
+    }
+  }
+  return inodes
+}
+
+export function assertOwnedListenLoopbackOnly({ pid, port, tcpText, tcp6Text, socketInodes }) {
+  if (!Number.isInteger(pid) || pid <= 1) {
+    throw new Error('fail-closed: listener evidence requires the owned process pid')
+  }
+  if (!Number.isInteger(port) || port <= 0) {
+    throw new Error('fail-closed: listener evidence requires a concrete TCP port')
+  }
+  const owned = new Set((socketInodes ?? []).map(String))
+  if (!owned.size) {
+    throw new Error(`fail-closed: owned pid ${pid} has no sockets`)
+  }
+  const listenRows = [
+    ...parseProcNetListenRows(tcpText ?? '', 'ipv4'),
+    ...parseProcNetListenRows(tcp6Text ?? '', 'ipv6'),
+  ].filter((row) => row.port === port)
+  const ownedListen = listenRows.filter((row) => owned.has(row.inode))
+  if (!ownedListen.length) {
+    throw new Error(
+      `fail-closed: pid ${pid} does not own a LISTEN socket on port ${port} (wrong-PID or unrelated socket)`,
+    )
+  }
+  if (ownedListen.some((row) => row.isWildcard)) {
+    throw new Error('fail-closed: owned LISTEN socket is a public/wildcard bind')
+  }
+  if (!ownedListen.every((row) => row.isLoopback)) {
+    throw new Error('fail-closed: owned LISTEN socket is not numeric loopback')
+  }
+  return {
+    pid,
+    port,
+    loopback: true,
+    listenState: TCP_LISTEN_STATE,
+    sockets: ownedListen.length,
+    families: [...new Set(ownedListen.map((row) => row.family))],
+    inodes: ownedListen.map((row) => row.inode),
+  }
+}
+
+export function assertProcessListensLoopbackOnly(pid, port, injected = {}) {
+  const tcpText =
+    injected.tcpText ?? (existsSync('/proc/net/tcp') ? readFileSync('/proc/net/tcp', 'utf8') : '')
+  const tcp6Text =
+    injected.tcp6Text ?? (existsSync('/proc/net/tcp6') ? readFileSync('/proc/net/tcp6', 'utf8') : '')
+  const socketInodes = injected.socketInodes ?? readProcessSocketInodes(pid)
+  return assertOwnedListenLoopbackOnly({ pid, port, tcpText, tcp6Text, socketInodes })
+}
+
+export function discloseCounts(body) {
+  const blob = typeof body === 'string' ? body : JSON.stringify(body ?? {})
+  return /present_registered_accounts|created_in_prior_30_days/.test(blob)
+}
+
+export function evaluateDeniedResponse(antwort, expected) {
+  const reasons = []
+  const text = String(antwort?.text ?? '')
+  const json = antwort?.json
+  if (antwort?.status === 200) reasons.push('unexpected-success')
+  if (antwort?.status === 500 || antwort?.status === 503) reasons.push('server-failure')
+  if (/<!DOCTYPE|<html[\s>]|<\/html>/i.test(text)) reasons.push('malformed-html')
+  if (json == null && text) reasons.push('malformed-body')
+  if (expected && antwort?.status !== expected.status) reasons.push('wrong-status')
+  if (expected && (json == null || json.code !== expected.code)) reasons.push('wrong-code')
+  if (discloseCounts(json) || discloseCounts(text)) reasons.push('leaked-counts')
+  if (antwort?.leakedIdentity === true) reasons.push('leaked-identity')
+  return {
+    ok: reasons.length === 0,
+    reasons,
+    status: antwort?.status ?? null,
+    code: json?.code ?? null,
+  }
+}
+
+export function evaluateCleanupAcceptance(report) {
+  const httpStopped = report?.httpStopped === true
+  const reaped = report?.httpReaped === true || report?.httpNeverStarted === true
+  const clusterStopped = report?.running === false
+  const noError = report?.error == null
+  const mayRemove = httpStopped && reaped && clusterStopped && noError
+  return {
+    ok: mayRemove && report?.cleaned === true && report?.removed === true,
+    mayRemove,
+    httpStopped,
+    reaped,
+    clusterStopped,
+  }
+}
+
+export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS } = {}) {
+  return new Promise((resolve) => {
+    if (!child) {
+      resolve({
+        started: false,
+        exited: true,
+        neverStarted: true,
+        timedOut: false,
+        exitCode: null,
+        signal: null,
+        pid: null,
+      })
+      return
+    }
+
+    let settled = false
+    const finish = (result) => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      resolve(result)
+    }
+
+    if (child.exitCode != null || child.signalCode != null) {
+      finish({
+        started: Boolean(child.pid),
+        exited: true,
+        neverStarted: !child.pid,
+        timedOut: false,
+        exitCode: child.exitCode,
+        signal: child.signalCode,
+        pid: child.pid ?? null,
+      })
+      return
+    }
+
+    const onExit = (code, signal) => {
+      finish({
+        started: Boolean(child.pid),
+        exited: true,
+        neverStarted: false,
+        timedOut: false,
+        exitCode: code,
+        signal,
+        pid: child.pid ?? null,
+      })
+    }
+    const onError = (fehler) => {
+      finish({
+        started: false,
+        exited: true,
+        neverStarted: true,
+        spawnFailed: true,
+        timedOut: false,
+        error: fehler instanceof Error ? fehler.message : String(fehler),
+        exitCode: child.exitCode,
+        signal: child.signalCode,
+        pid: child.pid ?? null,
+      })
+    }
+    child.once('exit', onExit)
+    child.once('error', onError)
+    if (child.exitCode != null || child.signalCode != null) {
+      onExit(child.exitCode, child.signalCode)
+      return
+    }
+    const timer = setTimeout(() => {
+      child.off('exit', onExit)
+      child.off('error', onError)
+      finish({
+        started: Boolean(child.pid),
+        exited: false,
+        neverStarted: !child.pid,
+        timedOut: true,
+        exitCode: child.exitCode,
+        signal: child.signalCode,
+        pid: child.pid ?? null,
+      })
+    }, timeoutMs)
+  })
+}
+
+function detachOwnedStdio(child) {
+  child?.stdout?.removeAllListeners()
+  child?.stderr?.removeAllListeners()
+  child?.stdout?.destroy?.()
+  child?.stderr?.destroy?.()
+}
+
+export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOUT_MS, killTimeoutMs = CHILD_KILL_TIMEOUT_MS } = {}) {
+  const child = state?.child
+  const report = {
+    started: Boolean(child),
+    neverStarted: !child,
+    spawnFailed: Boolean(state?.spawnError),
+    pid: child?.pid ?? null,
+    signaled: null,
+    reaped: false,
+    httpStopped: false,
+    timedOut: false,
+    exitCode: child?.exitCode ?? null,
+    signal: child?.signalCode ?? null,
+    error: state?.spawnError ? String(state.spawnError.message ?? state.spawnError) : null,
+  }
+  if (!child) {
+    report.httpStopped = true
+    report.reaped = true
+    return report
+  }
+
+  const alreadyGone = child.exitCode != null || child.signalCode != null
+  if (alreadyGone) {
+    report.httpStopped = true
+    report.reaped = true
+    report.exitCode = child.exitCode
+    report.signal = child.signalCode
+    detachOwnedStdio(child)
+    return report
+  }
+
+  if (!child.pid) {
+    const wait = await waitForOwnedChildExit(child, { timeoutMs: termTimeoutMs })
+    report.neverStarted = wait.neverStarted === true
+    report.spawnFailed = wait.spawnFailed === true || report.spawnFailed
+    report.httpStopped = wait.exited === true
+    report.reaped = wait.exited === true
+    report.timedOut = wait.timedOut === true
+    report.exitCode = wait.exitCode
+    report.signal = wait.signal
+    report.error = wait.error ?? report.error
+    if (!wait.exited) {
+      report.error = report.error || 'owned HTTP child without pid did not settle'
+    } else {
+      detachOwnedStdio(child)
+    }
+    return report
+  }
+
+  const termWait = waitForOwnedChildExit(child, { timeoutMs: termTimeoutMs })
+  try {
+    child.kill('SIGTERM')
+    report.signaled = 'SIGTERM'
+  } catch (fehler) {
+    report.error = fehler instanceof Error ? fehler.message : String(fehler)
+  }
+  let wait = await termWait
+  if (!wait.exited) {
+    const killWait = waitForOwnedChildExit(child, { timeoutMs: killTimeoutMs })
+    try {
+      child.kill('SIGKILL')
+      report.signaled = 'SIGKILL'
+    } catch (fehler) {
+      report.error = report.error || (fehler instanceof Error ? fehler.message : String(fehler))
+    }
+    wait = await killWait
+  }
+  report.reaped = wait.exited === true
+  report.httpStopped = wait.exited === true
+  report.timedOut = wait.timedOut === true
+  report.exitCode = wait.exitCode
+  report.signal = wait.signal
+  if (wait.error) report.error = wait.error
+  if (!wait.exited) {
+    report.error = report.error || 'owned HTTP child still running after SIGTERM/SIGKILL wait'
+    return report
+  }
+  detachOwnedStdio(child)
+  return report
+}
+
+export function sameCatalogIdentity(left, right) {
+  if (!left || !right) return false
+  return (
+    left.owner === right.owner &&
+    left.definition === right.definition &&
+    JSON.stringify(left.acls ?? null) === JSON.stringify(right.acls ?? null) &&
+    left.security_definer === right.security_definer
+  )
+}
+
+export function sameUsersProtection(left, right) {
+  if (!left || !right) return false
+  return (
+    left.owner === right.owner &&
+    left.rls === right.rls &&
+    left.force_rls === right.force_rls &&
+    JSON.stringify(left.policies ?? null) === JSON.stringify(right.policies ?? null) &&
+    JSON.stringify(left.acls ?? null) === JSON.stringify(right.acls ?? null)
+  )
 }
 
 function gitShow(revPath) {
@@ -435,51 +820,38 @@ function starteCluster() {
   return state
 }
 
-function stoppeCluster() {
+async function stoppeCluster() {
   const report = {
     cleaned: false,
     removed: false,
     stopped: false,
     running: postmasterLebt(cluster),
     httpStopped: false,
+    httpReaped: false,
+    httpNeverStarted: httpState?.child ? false : true,
+    httpTimedOut: false,
+    httpSignaled: null,
     error: null,
     lifecycle: cluster?.lifecycle ?? null,
     rootDir: cluster?.rootDir ?? null,
   }
-  if (httpState?.child?.pid) {
-    const pid = httpState.child.pid
-    const stillAlive = () => {
-      try {
-        return readFileSync(`/proc/${pid}/comm`, 'utf8').trim() === 'postgrest'
-      } catch {
-        return false
-      }
-    }
-    if (stillAlive()) {
-      try {
-        process.kill(pid, 'SIGTERM')
-      } catch (fehler) {
-        report.error = fehler instanceof Error ? fehler.message : String(fehler)
-      }
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200)
-    }
-    if (stillAlive()) {
-      try {
-        process.kill(pid, 'SIGKILL')
-      } catch {
-        /* already gone */
-      }
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100)
-    }
-    report.httpStopped = !stillAlive()
-    httpState.child.stdout?.removeAllListeners()
-    httpState.child.stderr?.removeAllListeners()
-    httpState.child.stdout?.destroy()
-    httpState.child.stderr?.destroy()
-    httpState.child.unref?.()
+  const http = await stoppeOwnedHttp(httpState)
+  report.httpStopped = http.httpStopped
+  report.httpReaped = http.reaped
+  report.httpNeverStarted = http.neverStarted
+  report.httpTimedOut = http.timedOut
+  report.httpSignaled = http.signaled
+  if (http.error) report.error = http.error
+  if (!http.httpStopped) {
+    report.error = report.error || 'owned HTTP child not confirmed stopped; preserving data tree'
+    return report
   }
+  if (httpState) httpState.child = null
   if (!cluster) {
     report.cleaned = true
+    report.removed = true
+    report.running = false
+    httpState = null
     return report
   }
   if (report.running || cluster.lifecycle === 'started') {
@@ -494,11 +866,15 @@ function stoppeCluster() {
     }
     report.running = postmasterLebt(cluster)
     if (report.running) {
-      report.error = report.error || 'cluster still running after stop'
+      report.error = report.error || 'cluster still running after stop; preserving data tree'
       return report
     }
     cluster.lifecycle = 'stopped'
     report.stopped = true
+  }
+  if (!evaluateCleanupAcceptance({ ...report, cleaned: true, removed: true }).mayRemove) {
+    report.error = report.error || 'cleanup acceptance refused directory removal'
+    return report
   }
   try {
     rmSync(cluster.rootDir, { recursive: true, force: true })
@@ -613,7 +989,11 @@ async function startePostgrest(sources) {
     binary,
     configFile,
     log: '',
+    spawnError: null,
   }
+  child.once('error', (fehler) => {
+    if (httpState) httpState.spawnError = fehler
+  })
   const appendLog = (chunk) => {
     if (httpState) httpState.log += sanitized(chunk.toString())
   }
@@ -624,6 +1004,9 @@ async function startePostgrest(sources) {
   const deadline = Date.now() + 8_000
   let ready = false
   while (Date.now() < deadline) {
+    if (httpState.spawnError) {
+      throw new Error(`PostgREST spawn failed: ${sanitized(httpState.spawnError.message)}`)
+    }
     if (child.exitCode != null) {
       throw new Error(`PostgREST exited early: ${sanitized(httpState.log)}`)
     }
@@ -644,24 +1027,6 @@ async function startePostgrest(sources) {
   }
   httpState.loopbackOnly = assertProcessListensLoopbackOnly(child.pid, port)
   return { ...httpState, sources, version: postgrestVersion(binary), pgVersion: psqlFile('select version()') }
-}
-
-export function assertProcessListensLoopbackOnly(pid, port) {
-  const tcp = existsSync('/proc/net/tcp') ? readFileSync('/proc/net/tcp', 'utf8') : ''
-  const portHex = port.toString(16).toLowerCase().padStart(4, '0')
-  const locals = tcp
-    .split('\n')
-    .map((zeile) => zeile.trim().split(/\s+/)[1] ?? '')
-    .filter((addr) => addr.toLowerCase().endsWith(`:${portHex}`))
-  if (!locals.length) {
-    throw new Error('fail-closed: PostgREST listen socket not found in /proc/net/tcp')
-  }
-  const loopback = locals.every((addr) => addr.toUpperCase().startsWith('0100007F:'))
-  const publicBind = locals.some((addr) => addr.toUpperCase().startsWith('00000000:'))
-  if (publicBind || !loopback) {
-    throw new Error('fail-closed: PostgREST is not bound to numeric IPv4 loopback only')
-  }
-  return { pid, port, loopback: true, sockets: locals.length }
 }
 
 function postgrestVersion(binary) {
@@ -710,48 +1075,134 @@ async function httpRpc(opts) {
   }
 }
 
-function discloseCounts(body) {
-  const blob = JSON.stringify(body ?? {})
-  return /present_registered_accounts|created_in_prior_30_days/.test(blob)
+function functionCatalog(schema, name) {
+  return jsonRow(`
+    select
+      n.nspname as schema,
+      p.proname as name,
+      pg_get_userbyid(p.proowner) as owner,
+      p.prosecdef as security_definer,
+      p.pronargs as nargs,
+      pg_get_function_identity_arguments(p.oid) as args,
+      pg_get_functiondef(p.oid) as definition,
+      (
+        select coalesce(jsonb_agg(acl::text order by acl::text), '[]'::jsonb)
+        from unnest(coalesce(p.proacl, acldefault('f', p.proowner))) as acl
+      ) as acls
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = '${schema}' and p.proname = '${name}' and p.pronargs = 0
+  `)
+}
+
+function usersProtectionCatalog() {
+  return jsonRow(`
+    select
+      pg_get_userbyid(c.relowner) as owner,
+      c.relrowsecurity as rls,
+      c.relforcerowsecurity as force_rls,
+      (
+        select coalesce(jsonb_agg(pol.polname order by pol.polname), '[]'::jsonb)
+        from pg_policy pol
+        where pol.polrelid = c.oid
+      ) as policies,
+      (
+        select coalesce(jsonb_agg(acl::text order by acl::text), '[]'::jsonb)
+        from unnest(coalesce(c.relacl, acldefault('r', c.relowner))) as acl
+      ) as acls
+    from pg_class c
+    join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'auth' and c.relname = 'users'
+  `)
+}
+
+function wrapperPresent() {
+  return jsonRow(`
+    select exists (
+      select 1
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public' and p.proname = 'admin_account_counts_v1' and p.pronargs = 0
+    ) as present
+  `).present
 }
 
 function catalogSnapshot() {
-  return jsonRow(`
+  const authenticatorExists = jsonRow(`
+    select exists (select 1 from pg_roles where rolname = 'jetnity_http_authenticator') as present
+  `).present
+  const grants = jsonRow(`
     select
-      has_function_privilege('anon', 'public.admin_account_counts_v1()', 'EXECUTE') as anon_wrap,
-      has_function_privilege('authenticated', 'public.admin_account_counts_v1()', 'EXECUTE') as auth_wrap,
-      has_function_privilege('service_role', 'public.admin_account_counts_v1()', 'EXECUTE') as svc_wrap,
       has_function_privilege('anon', 'jetnity_reporting.account_counts_v1()', 'EXECUTE') as anon_prod,
       has_function_privilege('authenticated', 'jetnity_reporting.account_counts_v1()', 'EXECUTE') as auth_prod,
       has_function_privilege('service_role', 'jetnity_reporting.account_counts_v1()', 'EXECUTE') as svc_prod,
       has_table_privilege('anon', 'auth.users', 'SELECT') as anon_users,
       has_table_privilege('authenticated', 'auth.users', 'SELECT') as auth_users,
       has_table_privilege('service_role', 'auth.users', 'SELECT') as svc_users,
-      has_table_privilege('jetnity_http_authenticator', 'auth.users', 'SELECT') as authenticator_users,
       has_schema_privilege('anon', 'jetnity_reporting', 'USAGE') as anon_reporting,
       has_schema_privilege('authenticated', 'jetnity_reporting', 'USAGE') as auth_reporting,
       has_schema_privilege('anon', 'jetnity_internal', 'USAGE') as anon_internal,
-      has_schema_privilege('authenticated', 'auth', 'USAGE') as auth_schema,
-      pg_has_role('jetnity_http_authenticator', 'authenticated', 'MEMBER') as authenticator_member,
-      pg_has_role('authenticated', 'jetnity_http_authenticator', 'MEMBER') as reverse_member,
-      (select relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
-        where n.nspname = 'auth' and c.relname = 'users') as users_rls,
-      (select relforcerowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
-        where n.nspname = 'auth' and c.relname = 'users') as users_force
+      has_schema_privilege('authenticated', 'auth', 'USAGE') as auth_schema
   `)
+  const wrapperGrants = wrapperPresent()
+    ? jsonRow(`
+        select
+          has_function_privilege('anon', 'public.admin_account_counts_v1()', 'EXECUTE') as anon_wrap,
+          has_function_privilege('authenticated', 'public.admin_account_counts_v1()', 'EXECUTE') as auth_wrap,
+          has_function_privilege('service_role', 'public.admin_account_counts_v1()', 'EXECUTE') as svc_wrap
+      `)
+    : { anon_wrap: false, auth_wrap: false, svc_wrap: false }
+  const authenticator = authenticatorExists
+    ? jsonRow(`
+        select
+          has_table_privilege('jetnity_http_authenticator', 'auth.users', 'SELECT') as authenticator_users,
+          pg_has_role('jetnity_http_authenticator', 'authenticated', 'MEMBER') as authenticator_member,
+          pg_has_role('authenticated', 'jetnity_http_authenticator', 'MEMBER') as reverse_member
+      `)
+    : { authenticator_users: false, authenticator_member: false, reverse_member: false }
+  return {
+    producer: functionCatalog('jetnity_reporting', 'account_counts_v1'),
+    users: usersProtectionCatalog(),
+    wrapper: wrapperPresent(),
+    authenticator_exists: authenticatorExists,
+    ...grants,
+    ...wrapperGrants,
+    ...authenticator,
+  }
+}
+
+function grantsNotWidened(snapshot) {
+  return (
+    snapshot.anon_users === false &&
+    snapshot.auth_users === false &&
+    snapshot.svc_users === false &&
+    snapshot.authenticator_users === false &&
+    snapshot.anon_prod === false &&
+    snapshot.svc_prod === false &&
+    snapshot.auth_prod === true &&
+    snapshot.users.rls === true &&
+    snapshot.users.force_rls === false &&
+    snapshot.users.owner === 'supabase_auth_admin' &&
+    Array.isArray(snapshot.users.policies) &&
+    snapshot.users.policies.length === 0 &&
+    snapshot.anon_internal === false &&
+    snapshot.reverse_member === false
+  )
 }
 
 function legeDatenbankAn(sources) {
   psqlSql(`create database ${DB_NAME}`, 'postgres')
+  psqlSql([readFileSync(BOOTSTRAP, 'utf8'), readFileSync(CANDIDATE, 'utf8')].join('\n\n'))
+  catalogBeforeSetup = catalogSnapshot()
   psqlSql(
     [
-      readFileSync(BOOTSTRAP, 'utf8'),
-      readFileSync(CANDIDATE, 'utf8'),
       readFileSync(sources.wrapper, 'utf8'),
       readFileSync(FIXTURE, 'utf8'),
       `grant connect on database ${DB_NAME} to ${AUTHENTICATOR};`,
     ].join('\n\n'),
   )
+  catalogAfterSetup = catalogSnapshot()
+  return { before: catalogBeforeSetup, after: catalogAfterSetup }
 }
 
 function insertRecentAccount() {
@@ -763,30 +1214,30 @@ function insertRecentAccount() {
   `)
 }
 
-function producerStillPresent() {
-  return jsonRow(`
-    select exists (
-      select 1
-      from pg_proc p
-      join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'jetnity_reporting' and p.proname = 'account_counts_v1'
-    ) as present
-  `).present
-}
-
-async function waitSchemaReload() {
+async function waitForSchemaCacheMissingWrapper() {
   psqlSql(`notify pgrst, 'reload schema';`)
-  wait(200)
-  const deadline = Date.now() + 4_000
-  while (Date.now() < deadline) {
-    const probe = await httpRpc({
-      method: 'GET',
-      path: '/',
-      token: tokenFor({ uid: IDS.user, aal: 'aal1' }),
+  const deadline = Date.now() + SCHEMA_CACHE_DEADLINE_MS
+  let last = null
+  let probes = 0
+  while (Date.now() < deadline && probes < SCHEMA_CACHE_PROBE_BUDGET) {
+    last = await httpRpc({
+      method: 'POST',
+      token: tokenFor({ uid: IDS.moderator, aal: 'aal2' }),
+      body: '{}',
     })
-    if (probe.status > 0) return
+    probes += 1
+    if (evaluateDeniedResponse(last, POSTGREST_V16_DENY.missingFunction).ok) {
+      return last
+    }
     wait(80)
   }
+  throw new Error(
+    `schema cache did not converge to 404/PGRST202 after wrapper drop: ${JSON.stringify({
+      status: last?.status ?? null,
+      code: last?.json?.code ?? null,
+      probes,
+    })}`,
+  )
 }
 
 async function pruefeErfolg() {
@@ -850,11 +1301,14 @@ async function pruefeErfolg() {
     JSON.stringify({ status: getAntwort.status, parser: getParsed.ok, present: getRow?.present_registered_accounts }),
   )
   if (getParsed.ok && firstMeasuredAt) {
-    bewerte(
+    beobachte(
       'separate HTTP clocks are not required to share measured_at',
-      'http-shape',
-      true,
-      JSON.stringify({ first: firstMeasuredAt, get: getParsed.measures.measuredAt, identical: firstMeasuredAt === getParsed.measures.measuredAt }),
+      'http-observation',
+      JSON.stringify({
+        first: firstMeasuredAt,
+        get: getParsed.measures.measuredAt,
+        identical: firstMeasuredAt === getParsed.measures.measuredAt,
+      }),
     )
   }
 }
@@ -871,8 +1325,19 @@ async function pruefeNegativ() {
     ['soft-deleted privileged profile', { uid: IDS.softDel, aal: 'aal2' }],
     ['anonymous privileged profile', { uid: IDS.anonPriv, aal: 'aal2' }],
     [
-      'metadata-only privileged claim on ordinary user',
+      'top-level metadata-only privileged claim on ordinary user',
       { uid: IDS.user, aal: 'aal2', extra: { profile_role: 'owner', app_role: 'admin' } },
+    ],
+    [
+      'user_metadata/app_metadata privileged claim on ordinary user',
+      {
+        uid: IDS.user,
+        aal: 'aal2',
+        extra: {
+          user_metadata: { role: 'owner', profile_role: 'admin' },
+          app_metadata: { role: 'admin' },
+        },
+      },
     ],
   ]
   for (const [name, opts] of faelle) {
@@ -881,20 +1346,27 @@ async function pruefeNegativ() {
       token: tokenFor(opts),
       body: '{}',
     })
+    const verdict = evaluateDeniedResponse(antwort, POSTGREST_V16_DENY.privilege)
     bewerte(
       `${name} discloses no counts`,
       gruppe,
-      antwort.status !== 200 && !discloseCounts(antwort.json) && antwort.leakedIdentity !== true,
-      JSON.stringify({ status: antwort.status, code: antwort.json?.code, message: antwort.json?.message }),
+      verdict.ok,
+      JSON.stringify({
+        status: antwort.status,
+        code: antwort.json?.code,
+        message: antwort.json?.message,
+        reasons: verdict.reasons,
+      }),
     )
   }
 
   const anon = await httpRpc({ method: 'POST', token: null, body: '{}' })
+  const anonVerdict = evaluateDeniedResponse(anon, POSTGREST_V16_DENY.anon)
   bewerte(
     'anonymous HTTP caller discloses no counts',
     gruppe,
-    anon.status !== 200 && !discloseCounts(anon.json),
-    JSON.stringify({ status: anon.status, code: anon.json?.code }),
+    anonVerdict.ok,
+    JSON.stringify({ status: anon.status, code: anon.json?.code, reasons: anonVerdict.reasons }),
   )
 
   const service = await httpRpc({
@@ -902,19 +1374,21 @@ async function pruefeNegativ() {
     token: tokenFor({ uid: IDS.owner, role: 'service_role', aal: 'aal2' }),
     body: '{}',
   })
+  const serviceVerdict = evaluateDeniedResponse(service, POSTGREST_V16_DENY.privilege)
   bewerte(
     'synthetic service_role JWT discloses no counts',
     gruppe,
-    service.status !== 200 && !discloseCounts(service.json),
-    JSON.stringify({ status: service.status, code: service.json?.code }),
+    serviceVerdict.ok,
+    JSON.stringify({ status: service.status, code: service.json?.code, reasons: serviceVerdict.reasons }),
   )
 
   const invalid = await httpRpc({ method: 'POST', token: 'not-a-jwt', body: '{}' })
+  const invalidVerdict = evaluateDeniedResponse(invalid, POSTGREST_V16_DENY.invalidJwt)
   bewerte(
     'invalid local token is rejected without counts',
     gruppe,
-    invalid.status !== 200 && !discloseCounts(invalid.json),
-    JSON.stringify({ status: invalid.status, code: invalid.json?.code }),
+    invalidVerdict.ok,
+    JSON.stringify({ status: invalid.status, code: invalid.json?.code, reasons: invalidVerdict.reasons }),
   )
 
   const expired = await httpRpc({
@@ -922,53 +1396,120 @@ async function pruefeNegativ() {
     token: tokenFor({ uid: IDS.moderator, aal: 'aal2', expOffsetSec: -90 }),
     body: '{}',
   })
+  const expiredVerdict = evaluateDeniedResponse(expired, POSTGREST_V16_DENY.expiredJwt)
   bewerte(
     'expired local token is rejected without counts',
     gruppe,
-    expired.status !== 200 && !discloseCounts(expired.json),
-    JSON.stringify({ status: expired.status, code: expired.json?.code }),
+    expiredVerdict.ok,
+    JSON.stringify({ status: expired.status, code: expired.json?.code, reasons: expiredVerdict.reasons }),
   )
 
   const good = tokenFor({ uid: IDS.moderator, aal: 'aal2' })
-  const tampered = `${good.slice(0, -2)}aa`
+  const tampered = tamperJwtSignature(good)
   const changed = await httpRpc({ method: 'POST', token: tampered, body: '{}' })
+  const tamperVerdict = evaluateDeniedResponse(changed, POSTGREST_V16_DENY.invalidJwt)
   bewerte(
     'tampered local token is rejected without counts',
     gruppe,
-    changed.status !== 200 && !discloseCounts(changed.json),
-    JSON.stringify({ status: changed.status, code: changed.json?.code }),
+    tamperVerdict.ok && tampered !== good,
+    JSON.stringify({
+      status: changed.status,
+      code: changed.json?.code,
+      reasons: tamperVerdict.reasons,
+      signatureChanged: tampered.split('.')[2] !== good.split('.')[2],
+    }),
   )
 
-  const codes = [anon.json?.code, service.json?.code, invalid.json?.code, expired.json?.code].filter(Boolean)
   bewerte(
-    'negative paths keep distinct PostgREST/SQLSTATE classes instead of one forced status',
+    'negative paths keep distinct PostgREST v16 status/code classes',
     gruppe,
-    new Set(codes).size >= 2 || [anon.status, service.status, invalid.status, expired.status].some((status, i, all) => all.indexOf(status) !== i ? false : true) && new Set([anon.status, invalid.status, expired.status, service.status]).size >= 2,
+    anonVerdict.ok &&
+      serviceVerdict.ok &&
+      invalidVerdict.ok &&
+      expiredVerdict.ok &&
+      tamperVerdict.ok &&
+      anon.status === 401 &&
+      anon.json?.code === '42501' &&
+      service.status === 403 &&
+      service.json?.code === '42501' &&
+      invalid.status === 401 &&
+      invalid.json?.code === 'PGRST301' &&
+      expired.status === 401 &&
+      expired.json?.code === 'PGRST303',
     JSON.stringify({
       anon: { status: anon.status, code: anon.json?.code },
       service: { status: service.status, code: service.json?.code },
       invalid: { status: invalid.status, code: invalid.json?.code },
       expired: { status: expired.status, code: expired.json?.code },
+      tampered: { status: changed.status, code: changed.json?.code },
     }),
   )
 }
 
 async function pruefeSchemaHttp() {
-  const gruppe = 'http-schema'
   const token = tokenFor({ uid: IDS.moderator, aal: 'aal2' })
-  const privates = [
-    ['/rpc/account_counts_v1', 'private producer name'],
-    ['/auth/users', 'auth.users table'],
-    ['/jetnity_reporting', 'private reporting schema'],
-    ['/jetnity_internal', 'internal schema'],
+  const profileProbes = [
+    ['GET', '/users', 'auth', 'Accept-Profile auth.users is an excluded schema'],
+    ['POST', '/rpc/account_counts_v1', 'jetnity_reporting', 'Content-Profile jetnity_reporting is an excluded schema'],
+    ['GET', '/rpc/account_counts_v1', 'jetnity_internal', 'Accept-Profile jetnity_internal is an excluded schema'],
   ]
-  for (const [path, name] of privates) {
-    const antwort = await httpRpc({ method: 'GET', path, token })
+  for (const [method, path, schema, name] of profileProbes) {
+    const antwort = await httpRpc({
+      method,
+      path,
+      token,
+      headers: schemaProfileHeaders(method, schema),
+      body: method === 'GET' ? undefined : '{}',
+    })
+    const verdict = evaluateDeniedResponse(antwort, POSTGREST_V16_DENY.excludedSchema)
     bewerte(
-      `${name} stays unavailable over exposed HTTP`,
-      gruppe,
-      antwort.status !== 200 && !discloseCounts(antwort.json) && !/email|@/.test(antwort.text),
-      JSON.stringify({ path, status: antwort.status, code: antwort.json?.code }),
+      name,
+      'http-schema-profile',
+      verdict.ok && !/email|@/.test(antwort.text),
+      JSON.stringify({
+        method,
+        path,
+        schema,
+        header: schemaProfileHeaders(method, schema),
+        status: antwort.status,
+        code: antwort.json?.code,
+        reasons: verdict.reasons,
+      }),
+    )
+  }
+
+  const publicProfile = await httpRpc({
+    method: 'GET',
+    path: '/rpc/admin_account_counts_v1',
+    token,
+    headers: schemaProfileHeaders('GET', 'public'),
+  })
+  const publicParsed = parseAdminAccountCountsPayload(publicProfile.json)
+  const publicRow = Array.isArray(publicProfile.json) ? publicProfile.json[0] : publicProfile.json
+  bewerte(
+    'Accept-Profile public remains the successful exposed schema',
+    'http-schema-profile',
+    publicProfile.status === 200 &&
+      publicParsed.ok === true &&
+      publicRow?.present_registered_accounts === EXPECTED_PRESENT &&
+      publicRow?.created_in_prior_30_days === EXPECTED_WINDOW_ZERO,
+    JSON.stringify({ status: publicProfile.status, parser: publicParsed.ok, present: publicRow?.present_registered_accounts }),
+  )
+
+  const routeShapes = [
+    ['/rpc/account_counts_v1', POSTGREST_V16_DENY.missingFunction, 'public-schema producer name is a missing-function route shape'],
+    ['/auth/users', POSTGREST_V16_DENY.invalidPath, 'slash-auth path is an invalid-route shape, not schema selection'],
+    ['/jetnity_reporting', POSTGREST_V16_DENY.missingTable, 'slash-schema path is a missing-public-table route shape'],
+    ['/jetnity_internal', POSTGREST_V16_DENY.missingTable, 'slash-internal path is a missing-public-table route shape'],
+  ]
+  for (const [path, expected, name] of routeShapes) {
+    const antwort = await httpRpc({ method: 'GET', path, token })
+    const verdict = evaluateDeniedResponse(antwort, expected)
+    bewerte(
+      name,
+      'http-route-shape',
+      verdict.ok && !discloseCounts(antwort.json) && !/email|@/.test(antwort.text),
+      JSON.stringify({ path, status: antwort.status, code: antwort.json?.code, reasons: verdict.reasons }),
     )
   }
 
@@ -977,11 +1518,17 @@ async function pruefeSchemaHttp() {
     token,
     body: JSON.stringify({ unexpected: 1 }),
   })
+  const extraVerdict = evaluateDeniedResponse(extra, POSTGREST_V16_DENY.missingFunction)
   bewerte(
     'extra POST arguments do not return a successful count row',
     'http-shape',
-    extra.status !== 200 || parseAdminAccountCountsPayload(extra.json).ok !== true,
-    JSON.stringify({ status: extra.status, code: extra.json?.code, parser: parseAdminAccountCountsPayload(extra.json) }),
+    extraVerdict.ok,
+    JSON.stringify({
+      status: extra.status,
+      code: extra.json?.code,
+      parser: parseAdminAccountCountsPayload(extra.json),
+      reasons: extraVerdict.reasons,
+    }),
   )
 
   const projection = await httpRpc({
@@ -1057,43 +1604,102 @@ async function pruefeLargeTransport() {
   )
 }
 
+function pruefeCatalogBeforeAfterSetup() {
+  const before = catalogBeforeSetup
+  const after = catalogAfterSetup
+  bewerte(
+    'producer definition/owner/ACL unchanged by wrapper and authenticator setup',
+    'sql-catalog',
+    sameCatalogIdentity(before.producer, after.producer) &&
+      after.producer.owner === 'postgres' &&
+      after.producer.security_definer === true,
+    JSON.stringify({
+      ownerBefore: before.producer.owner,
+      ownerAfter: after.producer.owner,
+      definitionUnchanged: before.producer.definition === after.producer.definition,
+      aclsUnchanged: JSON.stringify(before.producer.acls) === JSON.stringify(after.producer.acls),
+    }),
+  )
+  bewerte(
+    'auth.users owner/RLS/policies unchanged by wrapper and authenticator setup',
+    'sql-catalog',
+    sameUsersProtection(before.users, after.users) &&
+      after.users.owner === 'supabase_auth_admin' &&
+      after.users.rls === true &&
+      after.users.force_rls === false &&
+      Array.isArray(after.users.policies) &&
+      after.users.policies.length === 0,
+    JSON.stringify({ before: before.users, after: after.users }),
+  )
+  bewerte(
+    'setup added only the allowed wrapper and authenticator membership',
+    'sql-catalog',
+    before.wrapper === false &&
+      after.wrapper === true &&
+      before.authenticator_exists === false &&
+      after.authenticator_exists === true &&
+      after.authenticator_member === true &&
+      after.auth_wrap === true &&
+      after.anon_wrap === false &&
+      after.svc_wrap === false &&
+      grantsNotWidened(after),
+    JSON.stringify({
+      wrapperBefore: before.wrapper,
+      wrapperAfter: after.wrapper,
+      authenticatorBefore: before.authenticator_exists,
+      authenticatorMemberAfter: after.authenticator_member,
+      authenticatorUsers: after.authenticator_users,
+    }),
+  )
+}
+
 async function pruefeMissingWrapper() {
-  const before = catalogSnapshot()
   psqlSql('drop function public.admin_account_counts_v1();')
-  await waitSchemaReload()
-  const antwort = await httpRpc({
-    method: 'POST',
-    token: tokenFor({ uid: IDS.moderator, aal: 'aal2' }),
-    body: '{}',
-  })
+  const antwort = await waitForSchemaCacheMissingWrapper()
+  const verdict = evaluateDeniedResponse(antwort, POSTGREST_V16_DENY.missingFunction)
   bewerte(
-    'missing wrapper is unavailable, not a successful zero',
+    'missing wrapper converges to 404/PGRST202, not a successful zero',
     'http-schema-cache',
-    antwort.status !== 200 && !discloseCounts(antwort.json) && parseAdminAccountCountsPayload(antwort.json).ok === false,
-    JSON.stringify({ status: antwort.status, code: antwort.json?.code, message: antwort.json?.message }),
+    verdict.ok && parseAdminAccountCountsPayload(antwort.json).ok === false,
+    JSON.stringify({
+      status: antwort.status,
+      code: antwort.json?.code,
+      message: antwort.json?.message,
+      reasons: verdict.reasons,
+    }),
+  )
+  const afterDrop = catalogSnapshot()
+  bewerte(
+    'producer definition/owner/ACL unchanged after wrapper-only drop',
+    'sql-catalog',
+    sameCatalogIdentity(catalogBeforeSetup.producer, afterDrop.producer) &&
+      sameCatalogIdentity(catalogAfterSetup.producer, afterDrop.producer),
+    JSON.stringify({
+      present: Boolean(afterDrop.producer?.definition),
+      owner: afterDrop.producer.owner,
+      definitionUnchanged: catalogBeforeSetup.producer.definition === afterDrop.producer.definition,
+    }),
   )
   bewerte(
-    'dropping the wrapper leaves the accepted producer intact',
+    'auth.users owner/RLS/policies unchanged after wrapper-only drop',
     'sql-catalog',
-    producerStillPresent() === true,
-    JSON.stringify({ producer: producerStillPresent() }),
+    sameUsersProtection(catalogBeforeSetup.users, afterDrop.users) &&
+      sameUsersProtection(catalogAfterSetup.users, afterDrop.users),
+    JSON.stringify(afterDrop.users),
   )
   bewerte(
-    'accepted producer/client grants were not widened to make HTTP pass',
+    'wrapper-only drop removes the wrapper and keeps the separately allowed authenticator membership',
     'sql-catalog',
-    before.anon_users === false &&
-      before.auth_users === false &&
-      before.svc_users === false &&
-      before.authenticator_users === false &&
-      before.anon_wrap === false &&
-      before.svc_wrap === false &&
-      before.auth_wrap === true &&
-      before.users_rls === true &&
-      before.users_force === false &&
-      before.authenticator_member === true &&
-      before.reverse_member === false &&
-      before.anon_internal === false,
-    JSON.stringify(before),
+    afterDrop.wrapper === false &&
+      afterDrop.authenticator_exists === true &&
+      afterDrop.authenticator_member === true &&
+      grantsNotWidened(afterDrop),
+    JSON.stringify({
+      wrapper: afterDrop.wrapper,
+      authenticator_member: afterDrop.authenticator_member,
+      auth_prod: afterDrop.auth_prod,
+      authenticator_users: afterDrop.authenticator_users,
+    }),
   )
 }
 
@@ -1148,13 +1754,17 @@ async function main() {
     console.log(`postgrest ${started.version} loopback ${started.origin}`)
     console.log(`postgresql ${started.pgVersion}`)
     bewerte(
-      'PostgREST listens on 127.0.0.1 only',
+      'PostgREST listens on 127.0.0.1 only with owned LISTEN sockets',
       'http-isolation',
-      started.loopbackOnly?.loopback === true,
+      started.loopbackOnly?.loopback === true &&
+        started.loopbackOnly?.listenState === TCP_LISTEN_STATE &&
+        Number.isInteger(started.loopbackOnly?.pid) &&
+        started.loopbackOnly.pid === started.child.pid,
       JSON.stringify(started.loopbackOnly),
     )
 
     pruefeStatischeQuelle()
+    pruefeCatalogBeforeAfterSetup()
     await pruefeErfolg()
     await pruefeNegativ()
     await pruefeSchemaHttp()
@@ -1163,20 +1773,21 @@ async function main() {
     await pruefeMissingWrapper()
   } catch (fehler) {
     console.error(sanitized(fehler instanceof Error ? fehler.stack ?? fehler.message : String(fehler)))
-    cleanupReport = stoppeCluster()
+    cleanupReport = await stoppeCluster()
     if (cleanupReport.error) console.error('CLEANUP FAILED:', cleanupReport)
     process.exit(1)
   }
 
-  cleanupReport = stoppeCluster()
+  cleanupReport = await stoppeCluster()
   if (cleanupReport.error) {
     console.error('CLEANUP FAILED:', cleanupReport)
     process.exit(1)
   }
+  const cleanupVerdict = evaluateCleanupAcceptance(cleanupReport)
   bewerte(
     'owned cluster and PostgREST stopped before data removal',
     'cleanup-node',
-    cleanupReport.cleaned === true && cleanupReport.removed === true && cleanupReport.running === false,
+    cleanupVerdict.ok && cleanupReport.httpStopped === true && cleanupReport.httpReaped === true,
     JSON.stringify(cleanupReport),
   )
   console.log(`cleanup ${JSON.stringify(cleanupReport)}`)
@@ -1188,6 +1799,7 @@ async function main() {
   }, {})
   const fehler = ergebnisse.filter((eintrag) => !eintrag.ok)
   console.log(`\n${ergebnisse.length - fehler.length}/${ergebnisse.length} HTTP-proof assertions satisfied.`)
+  console.log(`${beobachtungen.length} observations (not counted as assertions).`)
   console.log(`assertion categories: ${JSON.stringify(byGruppe)}`)
   console.log('Target: private PostgreSQL + numeric-loopback PostgREST. Hosted Supabase untouched.')
   if (fehler.length) {
@@ -1211,13 +1823,15 @@ export {
   SNAPSHOT,
   POSTGREST_TAR_SHA256,
   POSTGREST_URL,
+  TCP_LISTEN_STATE,
 }
 
 if (invokedAsMain()) {
   main().catch((fehler) => {
     console.error(sanitized(fehler instanceof Error ? fehler.stack ?? fehler.message : String(fehler)))
-    const report = stoppeCluster()
-    if (report.error) console.error('CLEANUP FAILED:', report)
-    process.exit(1)
+    stoppeCluster().then((report) => {
+      if (report.error) console.error('CLEANUP FAILED:', report)
+      process.exit(1)
+    })
   })
 }

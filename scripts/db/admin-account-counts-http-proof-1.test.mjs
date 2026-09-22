@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
-import { spawnSync } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
+import { EventEmitter } from 'node:events'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -18,10 +19,22 @@ import {
   assertIsolatedHttpEnvironment,
   assertExactSourceHashes,
   assertConfigIsLoopbackOnly,
+  assertOwnedListenLoopbackOnly,
   buildPostgrestConfig,
   signLocalJwt,
   findPgBinsPrefer17,
   cleanProofEnv,
+  POSTGREST_V16_DENY,
+  TCP_LISTEN_STATE,
+  evaluateDeniedResponse,
+  evaluateCleanupAcceptance,
+  waitForOwnedChildExit,
+  stoppeOwnedHttp,
+  tamperJwtSignature,
+  schemaProfileHeaders,
+  parseProcNetListenRows,
+  sameCatalogIdentity,
+  sameUsersProtection,
 } from './admin-account-counts-http-proof-1.mjs'
 
 const hier = dirname(fileURLToPath(import.meta.url))
@@ -141,5 +154,291 @@ describe('admin-account-counts-http-proof-1 harness safety', () => {
     assert.match(POSTGREST_URL, /PostgREST\/postgrest\/releases\/download\/v16\.3/)
     assert.equal(POSTGREST_TAR_SHA256.length, 64)
     assert.ok(findPgBinsPrefer17())
+  })
+})
+
+function fakeLingeringChild(pid = 4242) {
+  const child = new EventEmitter()
+  child.pid = pid
+  child.exitCode = null
+  child.signalCode = null
+  child.kill = () => false
+  child.stdout = null
+  child.stderr = null
+  return child
+}
+
+function listenRow({ local, portHex, state = '0A', inode }) {
+  return `  0: ${local}:${portHex} 00000000:0000 ${state} 00000000:00000000 00:00000000 00000000     0        0 ${inode} 1 0000000000000000 100 0 0 10 0`
+}
+
+describe('admin-account-counts-http-proof-1 H1 process lifecycle', () => {
+  test('never-started child is a confirmed stop, not a cleanup PASS hole', async () => {
+    const idle = await waitForOwnedChildExit(null, { timeoutMs: 50 })
+    assert.equal(idle.neverStarted, true)
+    assert.equal(idle.exited, true)
+    const report = await stoppeOwnedHttp({ child: null })
+    assert.equal(report.neverStarted, true)
+    assert.equal(report.httpStopped, true)
+    assert.equal(report.reaped, true)
+    assert.equal(
+      evaluateCleanupAcceptance({
+        ...report,
+        running: false,
+        cleaned: true,
+        removed: true,
+        httpReaped: report.reaped,
+        httpNeverStarted: report.neverStarted,
+        error: null,
+      }).ok,
+      true,
+    )
+  })
+
+  test('normal-run owned sleep child is reaped before removal is allowed', async () => {
+    const child = spawn('sleep', ['30'], { stdio: 'ignore' })
+    assert.ok(child.pid > 1)
+    const report = await stoppeOwnedHttp({ child }, { termTimeoutMs: 1500, killTimeoutMs: 500 })
+    assert.equal(report.httpStopped, true)
+    assert.equal(report.reaped, true)
+    assert.equal(report.timedOut, false)
+    assert.ok(child.exitCode != null || child.signalCode != null)
+    assert.throws(() => process.kill(child.pid, 0), /ESRCH/)
+    const acceptance = evaluateCleanupAcceptance({
+      cleaned: true,
+      removed: true,
+      running: false,
+      httpStopped: report.httpStopped,
+      httpReaped: report.reaped,
+      error: null,
+    })
+    assert.equal(acceptance.ok, true)
+    assert.equal(acceptance.mayRemove, true)
+  })
+
+  test('lingering child / timeout refuses removal and cannot be cleanup PASS', async () => {
+    const child = fakeLingeringChild(7777)
+    const report = await stoppeOwnedHttp({ child }, { termTimeoutMs: 40, killTimeoutMs: 40 })
+    assert.equal(report.httpStopped, false)
+    assert.equal(report.reaped, false)
+    assert.equal(report.timedOut, true)
+    const historicalContradiction = evaluateCleanupAcceptance({
+      cleaned: true,
+      removed: true,
+      running: false,
+      httpStopped: false,
+      httpReaped: false,
+      error: null,
+    })
+    assert.equal(historicalContradiction.ok, false)
+    assert.equal(historicalContradiction.mayRemove, false)
+    const afterFailedStop = evaluateCleanupAcceptance({
+      cleaned: false,
+      removed: false,
+      running: false,
+      httpStopped: report.httpStopped,
+      httpReaped: report.reaped,
+      error: report.error,
+    })
+    assert.equal(afterFailedStop.mayRemove, false)
+    assert.equal(afterFailedStop.ok, false)
+  })
+
+  test('early start failure is a spawn failure, not a silent running child', async () => {
+    const child = spawn('/tmp/jetnity-http-proof-1-missing-postgrest', [], { stdio: 'ignore' })
+    const wait = await waitForOwnedChildExit(child, { timeoutMs: 1000 })
+    assert.equal(wait.exited, true)
+    assert.equal(wait.started, false)
+    assert.equal(wait.neverStarted, true)
+    assert.equal(wait.spawnFailed, true)
+    const report = await stoppeOwnedHttp({ child, spawnError: new Error('ENOENT') })
+    assert.equal(report.httpStopped, true)
+    assert.equal(report.reaped, true)
+  })
+
+  test('stop-failure keeps the data tree and rejects httpStopped:false PASS', () => {
+    const failed = evaluateCleanupAcceptance({
+      cleaned: true,
+      removed: true,
+      running: false,
+      httpStopped: false,
+      httpReaped: false,
+      error: null,
+    })
+    assert.equal(failed.ok, false)
+    assert.equal(failed.mayRemove, false)
+    const stillRunning = evaluateCleanupAcceptance({
+      cleaned: false,
+      removed: false,
+      running: true,
+      httpStopped: true,
+      httpReaped: true,
+      error: null,
+    })
+    assert.equal(stillRunning.mayRemove, false)
+  })
+
+  test('listener evidence is pid-bound LISTEN loopback and rejects wrong pid/public/non-listen', () => {
+    const header =
+      '  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode'
+    const loopback = [header, listenRow({ local: '0100007F', portHex: '1F90', inode: '5555' })].join('\n')
+    const publicBind = [header, listenRow({ local: '00000000', portHex: '1F90', inode: '5555' })].join('\n')
+    const established = [header, listenRow({ local: '0100007F', portHex: '1F90', state: '01', inode: '5555' })].join('\n')
+    const ipv6loop = [header, listenRow({ local: '00000000000000000000000001000000', portHex: '1F90', inode: '6666' })].join('\n')
+
+    const owned = assertOwnedListenLoopbackOnly({
+      pid: 99,
+      port: 8080,
+      tcpText: loopback,
+      tcp6Text: '',
+      socketInodes: ['5555'],
+    })
+    assert.equal(owned.loopback, true)
+    assert.equal(owned.listenState, TCP_LISTEN_STATE)
+    assert.deepEqual(owned.inodes, ['5555'])
+
+    assert.throws(
+      () =>
+        assertOwnedListenLoopbackOnly({
+          pid: 88,
+          port: 8080,
+          tcpText: loopback,
+          tcp6Text: '',
+          socketInodes: ['9999'],
+        }),
+      /wrong-PID|unrelated socket/,
+    )
+    assert.throws(
+      () =>
+        assertOwnedListenLoopbackOnly({
+          pid: 99,
+          port: 8080,
+          tcpText: publicBind,
+          tcp6Text: '',
+          socketInodes: ['5555'],
+        }),
+      /wildcard|public/,
+    )
+    assert.throws(
+      () =>
+        assertOwnedListenLoopbackOnly({
+          pid: 99,
+          port: 8080,
+          tcpText: established,
+          tcp6Text: '',
+          socketInodes: ['5555'],
+        }),
+      /LISTEN/,
+    )
+
+    const ipv6 = assertOwnedListenLoopbackOnly({
+      pid: 99,
+      port: 8080,
+      tcpText: '',
+      tcp6Text: ipv6loop,
+      socketInodes: ['6666'],
+    })
+    assert.deepEqual(ipv6.families, ['ipv6'])
+    assert.equal(parseProcNetListenRows(established).length, 0)
+    assert.equal(parseProcNetListenRows(loopback).length, 1)
+  })
+})
+
+describe('admin-account-counts-http-proof-1 H2 structured denials', () => {
+  test('evaluateDeniedResponse accepts the pinned PostgREST v16 pairs and rejects 500/503/HTML/success', () => {
+    const privilege = {
+      status: 403,
+      json: { code: '42501', message: 'jetnity.admin-account-counts.v1: not authorized' },
+      text: '{"code":"42501"}',
+    }
+    assert.equal(evaluateDeniedResponse(privilege, POSTGREST_V16_DENY.privilege).ok, true)
+    assert.equal(
+      evaluateDeniedResponse(
+        { status: 401, json: { code: '42501' }, text: '{"code":"42501"}' },
+        POSTGREST_V16_DENY.anon,
+      ).ok,
+      true,
+    )
+    assert.equal(
+      evaluateDeniedResponse(
+        { status: 401, json: { code: 'PGRST301' }, text: '{"code":"PGRST301"}' },
+        POSTGREST_V16_DENY.invalidJwt,
+      ).ok,
+      true,
+    )
+    assert.equal(
+      evaluateDeniedResponse(
+        { status: 401, json: { code: 'PGRST303' }, text: '{"code":"PGRST303"}' },
+        POSTGREST_V16_DENY.expiredJwt,
+      ).ok,
+      true,
+    )
+
+    const injected = [
+      { status: 500, json: { code: 'XX000' }, text: 'error' },
+      { status: 503, json: { code: '08006' }, text: 'error' },
+      { status: 500, json: { code: 'XX000' }, text: 'error' },
+      { status: 503, json: { code: '08006' }, text: 'error' },
+      { status: 200, json: { present_registered_accounts: '10' }, text: '{"present_registered_accounts":"10"}' },
+      { status: 403, json: { code: 'XX000' }, text: '{"code":"XX000"}' },
+      { status: 401, json: { code: '42501' }, text: '<html>nope</html>' },
+      { status: 503, json: null, text: '<!DOCTYPE html><html>down</html>' },
+    ]
+    const expecteds = [
+      POSTGREST_V16_DENY.privilege,
+      POSTGREST_V16_DENY.privilege,
+      POSTGREST_V16_DENY.anon,
+      POSTGREST_V16_DENY.invalidJwt,
+      POSTGREST_V16_DENY.privilege,
+      POSTGREST_V16_DENY.privilege,
+      POSTGREST_V16_DENY.anon,
+      POSTGREST_V16_DENY.expiredJwt,
+    ]
+    const failed = injected.map((antwort, i) => evaluateDeniedResponse(antwort, expecteds[i]))
+    assert.equal(failed.every((item) => item.ok === false), true)
+    assert.ok(failed[0].reasons.includes('server-failure'))
+    assert.ok(failed[1].reasons.includes('server-failure'))
+    assert.ok(failed[4].reasons.includes('unexpected-success'))
+    assert.ok(failed[4].reasons.includes('leaked-counts'))
+    assert.ok(failed[6].reasons.includes('malformed-html'))
+  })
+
+  test('JWT tamper deterministically changes signed bytes', () => {
+    const token = signLocalJwt({ role: 'authenticated', sub: '10000000-0000-4000-8000-000000000004' }, 'z'.repeat(48))
+    const tampered = tamperJwtSignature(token)
+    assert.notEqual(tampered, token)
+    assert.notEqual(tampered.split('.')[2], token.split('.')[2])
+    assert.equal(tampered.split('.')[0], token.split('.')[0])
+    assert.equal(tampered.split('.')[1], token.split('.')[1])
+  })
+})
+
+describe('admin-account-counts-http-proof-1 H3 schema profile and catalog identity', () => {
+  test('schema selection uses Accept-Profile for GET and Content-Profile for POST', () => {
+    assert.deepEqual(schemaProfileHeaders('GET', 'auth'), { 'Accept-Profile': 'auth' })
+    assert.deepEqual(schemaProfileHeaders('POST', 'jetnity_reporting'), { 'Content-Profile': 'jetnity_reporting' })
+    assert.deepEqual(schemaProfileHeaders('GET', 'public'), { 'Accept-Profile': 'public' })
+  })
+
+  test('catalog identity compare is definition/owner/ACL, not existence-only', () => {
+    const producer = {
+      owner: 'postgres',
+      definition: 'create function account_counts_v1() ...',
+      acls: ['authenticated=X/postgres'],
+      security_definer: true,
+    }
+    assert.equal(sameCatalogIdentity(producer, { ...producer }), true)
+    assert.equal(sameCatalogIdentity(producer, { ...producer, owner: 'other' }), false)
+    assert.equal(sameCatalogIdentity(producer, { ...producer, definition: 'changed' }), false)
+    const users = {
+      owner: 'supabase_auth_admin',
+      rls: true,
+      force_rls: false,
+      policies: [],
+      acls: ['postgres=arwdDxt/supabase_auth_admin'],
+    }
+    assert.equal(sameUsersProtection(users, { ...users }), true)
+    assert.equal(sameUsersProtection(users, { ...users, rls: false }), false)
+    assert.equal(sameUsersProtection(users, { ...users, policies: ['opened'] }), false)
   })
 })
