@@ -52,12 +52,14 @@ import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
-import { gastCreateGate, gastCreateVorNetzschritt } from '@/lib/trips/create-entry'
+import { gastCreateGateMeldung, gastCreateJetztPruefen } from '@/lib/trips/create-entry'
 import {
+  GastreiseBelegtOhneKennungFehler,
   GastreiseBestehtFehler,
+  GastreiseUnbrauchbarFehler,
+  GastspeicherUnlesbarFehler,
   SpeicherFehler,
   gastreiseAblegen,
-  gastspeicherLaden,
   kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
 
@@ -107,14 +109,10 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
     ereignis.preventDefault()
     if (laeuft) return
 
-    const gate = gastCreateGate({
-      angemeldet,
-      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
-    })
+    const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
-      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
-      setBestehendeReise(fehler.bestehendeId)
-      setMeldung(fehler.message)
+      setBestehendeReise(gate.grund === 'besteht' ? gate.bestehendeId : '')
+      setMeldung(gastCreateGateMeldung(gate))
       setVorschlag(null)
       setWarnungen([])
       return
@@ -145,14 +143,10 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
   const uebernehmen = async () => {
     if (!vorschlag || laeuft) return
 
-    const gate = gastCreateVorNetzschritt({
-      angemeldet,
-      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
-    })
+    const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
-      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
-      setBestehendeReise(fehler.bestehendeId)
-      setMeldung(fehler.message)
+      setBestehendeReise(gate.grund === 'besteht' ? gate.bestehendeId : '')
+      setMeldung(gastCreateGateMeldung(gate))
       return
     }
 
@@ -182,6 +176,15 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
       if (fehler instanceof GastreiseBestehtFehler) {
         setBestehendeReise(fehler.bestehendeId)
+        setMeldung(fehler.message)
+        return
+      }
+      if (
+        fehler instanceof GastreiseUnbrauchbarFehler ||
+        fehler instanceof GastspeicherUnlesbarFehler ||
+        fehler instanceof GastreiseBelegtOhneKennungFehler
+      ) {
+        setBestehendeReise('')
         setMeldung(fehler.message)
         return
       }

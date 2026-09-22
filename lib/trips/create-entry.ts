@@ -9,6 +9,14 @@
 // Progressive weitere Ziele / Stage-Create sind nicht Teil dieses Schnitts.
 
 import type { Sitzungsstand } from '@/lib/auth/oeffentliche-navigation'
+import {
+  gastspeicherCreateBelegungLesen,
+  GastreiseBelegtOhneKennungFehler,
+  GastreiseBestehtFehler,
+  GastreiseUnbrauchbarFehler,
+  GastspeicherUnlesbarFehler,
+  type AktiveGastreiseVorpruefung,
+} from '@/lib/trips/gastspeicher'
 import type { TripInterest, TripPace } from '@/types/trips'
 
 /**
@@ -25,24 +33,90 @@ export const CREATE_PERSISTENZ_INTERESSEN: TripInterest[] = []
 /** Search-Params, die /planen zu einem ziel- oder ideenspezifischen Handoff machen. */
 const PLANEN_HANDOFF_PARAMS = ['zielId', 'ziel', 'idee'] as const
 
+export type GastCreateBelegung =
+  | { art: 'nicht_beobachtet' }
+  | { art: 'speicher_unlesbar' }
+  | { art: 'ungueltig' }
+  | { art: 'gueltig'; id: string; titel?: string | null }
+  | { art: 'belegt_ohne_kennung'; titel?: string | null }
+  | { art: 'fehlend' }
+
 export type GastCreateGate =
   | { erlaubt: true }
-  | { erlaubt: false; bestehendeId: string }
+  | { erlaubt: false; grund: 'besteht'; bestehendeId: string }
+  | { erlaubt: false; grund: 'belegt_ohne_kennung' }
+  | { erlaubt: false; grund: 'ungueltig' }
+  | { erlaubt: false; grund: 'speicher_unlesbar' }
+  | { erlaubt: false; grund: 'nicht_beobachtet' }
+
+export const GAST_CREATE_ERHALTUNG_TEXTE = {
+  wartetHaupt: 'Der Browserspeicher wird geprüft.',
+  wartetNeben: 'Ob auf diesem Gerät ein Entwurf liegt, ist noch nicht bekannt.',
+  ungueltigHaupt: 'Dieser Entwurf ist nicht lesbar.',
+  unlesbarHaupt: 'Der Browserspeicher ist nicht lesbar.',
+  erneut: 'Erneut prüfen',
+} as const
+
+/**
+ * Frische Create-Belegung: zuerst der aktive Schlüssel, bei dessen
+ * Abwesenheit ein gültiger Legacy-Entwurf. Kein Loader, keine Migration.
+ * Ein gültiger Entwurf liefert Kennung und vorhandenen Titel, nie erfundenen Inhalt.
+ */
+export function gastCreateBelegungLesen(): GastCreateBelegung {
+  const belegt = gastspeicherCreateBelegungLesen()
+  if (belegt.art === 'nicht_im_browser') return { art: 'nicht_beobachtet' }
+  if (belegt.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  if (belegt.art === 'ungueltig') return { art: 'ungueltig' }
+  if (belegt.art === 'fehlend') return { art: 'fehlend' }
+  if (belegt.art === 'belegt_ohne_kennung') {
+    return { art: 'belegt_ohne_kennung', titel: belegt.titel }
+  }
+  return { art: 'gueltig', id: belegt.id, titel: belegt.titel }
+}
+
+export function gastCreateBelegungAusVorpruefung(
+  vorpruefung: AktiveGastreiseVorpruefung,
+  gueltigeId?: string | null,
+): GastCreateBelegung {
+  if (vorpruefung.art === 'nicht_im_browser') return { art: 'nicht_beobachtet' }
+  if (vorpruefung.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  if (vorpruefung.art === 'ungueltig') return { art: 'ungueltig' }
+  if (vorpruefung.art === 'fehlend') return { art: 'fehlend' }
+  const id = gueltigeId?.trim()
+  if (id) return { art: 'gueltig', id }
+  return { art: 'ungueltig' }
+}
 
 /**
  * Ob ein Create-Versuch weiterlaufen darf, bevor ein Modell- oder
  * Ortsbestätigungsaufruf Geld oder Netz kostet.
  *
- * Konten dürfen mehrere Reisen anlegen. Gäste mit aktiver Reise nicht.
- * Derselbe Gate gilt erneut unmittelbar vor einem späteren Übernehmen.
+ * Konten dürfen mehrere Reisen anlegen und lesen dafür keinen Gastspeicher.
+ * Gäste brauchen eine frische Belegung oder – für ältere Aufrufer – eine
+ * gültige Kennung. Ausbleibende Beobachtung ist kein freier Slot.
  */
 export function gastCreateGate(eingabe: {
   angemeldet: boolean
   aktiveReiseId?: string | null
+  belegung?: GastCreateBelegung
 }): GastCreateGate {
   if (eingabe.angemeldet) return { erlaubt: true }
+  if (eingabe.belegung) return gastCreateGateAusBelegung(eingabe.belegung)
   const id = eingabe.aktiveReiseId?.trim()
-  if (id) return { erlaubt: false, bestehendeId: id }
+  if (id) return { erlaubt: false, grund: 'besteht', bestehendeId: id }
+  return { erlaubt: true }
+}
+
+function gastCreateGateAusBelegung(belegung: GastCreateBelegung): GastCreateGate {
+  if (belegung.art === 'nicht_beobachtet') return { erlaubt: false, grund: 'nicht_beobachtet' }
+  if (belegung.art === 'speicher_unlesbar') return { erlaubt: false, grund: 'speicher_unlesbar' }
+  if (belegung.art === 'ungueltig') return { erlaubt: false, grund: 'ungueltig' }
+  if (belegung.art === 'belegt_ohne_kennung') {
+    return { erlaubt: false, grund: 'belegt_ohne_kennung' }
+  }
+  if (belegung.art === 'gueltig') {
+    return { erlaubt: false, grund: 'besteht', bestehendeId: belegung.id }
+  }
   return { erlaubt: true }
 }
 
@@ -50,15 +124,89 @@ export function darfCreateModellAufrufen(gate: GastCreateGate): boolean {
   return gate.erlaubt
 }
 
+export function gastCreateGateMeldung(gate: Extract<GastCreateGate, { erlaubt: false }>): string {
+  if (gate.grund === 'besteht') return new GastreiseBestehtFehler(gate.bestehendeId).message
+  if (gate.grund === 'belegt_ohne_kennung') return new GastreiseBelegtOhneKennungFehler().message
+  if (gate.grund === 'ungueltig') return new GastreiseUnbrauchbarFehler().message
+  if (gate.grund === 'speicher_unlesbar') return new GastspeicherUnlesbarFehler().message
+  return (
+    'Ob ein Entwurf vorhanden ist, konnte noch nicht geprüft werden. Es kann deshalb gerade ' +
+    'keine neue Reise angelegt werden.'
+  )
+}
+
 /**
- * Erneute Prüfung unmittelbar vor Ortsauflösung, Modell oder Persistenz.
- * Der Slot kann sich in einem anderen Tab inzwischen belegt haben.
+ * Create-Gate aus bereits übergebenem Zustand.
+ *
+ * Beobachtet den Speicher nicht selbst. Eine frische Beobachtung ist
+ * `gastCreateJetztPruefen`. Diese Funktion reicht nur den mitgegebenen
+ * Stand an `gastCreateGate` weiter.
  */
 export function gastCreateVorNetzschritt(eingabe: {
   angemeldet: boolean
   aktiveReiseId?: string | null
+  belegung?: GastCreateBelegung
 }): GastCreateGate {
   return gastCreateGate(eingabe)
+}
+
+/**
+ * Action-time Create-Prüfung. Konten inspecten den Gastspeicher nicht.
+ * Gäste lesen die aktiven Bytes jetzt, nicht den Stand vom ersten Render.
+ */
+export function gastCreateJetztPruefen(angemeldet: boolean): GastCreateGate {
+  if (angemeldet) return { erlaubt: true }
+  return gastCreateGate({
+    angemeldet: false,
+    belegung: gastCreateBelegungLesen(),
+  })
+}
+
+export type PlanenCreateGateSicht =
+  | { art: 'kinder' }
+  | { art: 'warte' }
+  | { art: 'ungueltig'; neben: string }
+  | { art: 'unlesbar'; neben: string }
+  | { art: 'besteht'; bestehendeId: string; titel: string | null; neben: string }
+  | { art: 'belegt_ohne_kennung'; titel: string | null; neben: string }
+
+/**
+ * Reine Sichtentscheidung für /planen. Kein Speicherzugriff.
+ * Konten sehen immer das Formular. Gäste brauchen eine Beobachtung.
+ */
+export function planenCreateGateSicht(eingabe: {
+  angemeldet: boolean
+  beobachtet: boolean
+  belegung: GastCreateBelegung | null
+  aktivTitel?: string | null
+}): PlanenCreateGateSicht {
+  if (eingabe.angemeldet) return { art: 'kinder' }
+  if (!eingabe.beobachtet || !eingabe.belegung) return { art: 'warte' }
+
+  const gate = gastCreateGate({ angemeldet: false, belegung: eingabe.belegung })
+  if (gate.erlaubt) return { art: 'kinder' }
+  if (gate.grund === 'besteht') {
+    return {
+      art: 'besteht',
+      bestehendeId: gate.bestehendeId,
+      titel: eingabe.aktivTitel?.trim() || null,
+      neben: new GastreiseBestehtFehler(gate.bestehendeId).message,
+    }
+  }
+  if (gate.grund === 'belegt_ohne_kennung') {
+    return {
+      art: 'belegt_ohne_kennung',
+      titel: eingabe.aktivTitel?.trim() || null,
+      neben: gastCreateGateMeldung(gate),
+    }
+  }
+  if (gate.grund === 'ungueltig') {
+    return { art: 'ungueltig', neben: gastCreateGateMeldung(gate) }
+  }
+  if (gate.grund === 'speicher_unlesbar') {
+    return { art: 'unlesbar', neben: gastCreateGateMeldung(gate) }
+  }
+  return { art: 'warte' }
 }
 
 export type CreateEinstieg =

@@ -128,6 +128,60 @@ export class GastreiseBestehtFehler extends Error {
 }
 
 /**
+ * Der aktive Gastschlüssel ist belegt, aber kein gültiger Entwurf.
+ *
+ * Das ist keine freie Kapazität. Create darf den Eintrag nicht ersetzen.
+ * Die Meldung behauptet weder Verlust noch Wiederherstellung.
+ */
+export class GastreiseUnbrauchbarFehler extends Error {
+  readonly art = 'ungueltig' as const
+
+  constructor() {
+    super(
+      'Auf diesem Gerät liegt ein Reiseentwurf, der sich nicht als Reise lesen lässt. Es kann deshalb ' +
+        'keine neue Reise angelegt werden. Der vorhandene Eintrag wurde nicht verändert.',
+    )
+    this.name = 'GastreiseUnbrauchbarFehler'
+  }
+}
+
+/**
+ * Ein migrationsfähiger Legacy-Entwurf belegt den Slot, hat aber keine
+ * gespeicherte Kennung. Create darf weder eine neue Reise schreiben noch eine
+ * vom Konverter erzeugte Kennung als Fortsetzen-Ziel ausgeben.
+ */
+export class GastreiseBelegtOhneKennungFehler extends Error {
+  readonly art = 'belegt_ohne_kennung' as const
+
+  constructor() {
+    super(
+      'Auf diesem Gerät liegt bereits ein Reiseentwurf. Er hat keine gespeicherte Kennung, ' +
+        'deshalb gibt es keinen Fortsetzen-Link. Es kann keine neue Reise angelegt werden. ' +
+        'Der vorhandene Eintrag wurde nicht verändert.',
+    )
+    this.name = 'GastreiseBelegtOhneKennungFehler'
+  }
+}
+
+/**
+ * Der Browserspeicher konnte nicht gelesen werden.
+ *
+ * Das ist weder „kein Entwurf“ noch ein beschädigter Eintrag. Create darf
+ * nicht so tun, als wäre der Slot frei.
+ */
+export class GastspeicherUnlesbarFehler extends Error {
+  readonly art = 'speicher_unlesbar' as const
+
+  constructor() {
+    super(
+      'Der Browserspeicher konnte nicht gelesen werden. Ob ein Entwurf vorhanden ist, konnte nicht ' +
+        'geprüft werden. Es kann deshalb gerade keine neue Reise angelegt werden.',
+    )
+    this.name = 'GastspeicherUnlesbarFehler'
+  }
+}
+
+/**
  * Die Gastreise im Speicher ist eine neuere Fassung als der Vorschlag.
  *
  * Dieselbe Meldung wie bei einer veralteten `trips.revision` im Konto. Die
@@ -202,18 +256,18 @@ function rohLesen(schluessel: string): unknown {
   }
 }
 
-/**
- * Liest nur die Rohbytes des aktiven Schlüssels.
- *
- * Im Gegensatz zu `rohLesen` bleibt ein vorhandener, aber unbrauchbarer
- * Eintrag von einem fehlenden Schlüssel und von einem unlesbaren Speicher
- * unterscheidbar. Kein Parse, kein Schema, kein Schreiben.
- */
-function aktiveSchluesselRohLesen():
+type SchluesselRoh =
   | { art: 'nicht_im_browser' }
   | { art: 'speicher_unlesbar' }
   | { art: 'fehlend' }
-  | { art: 'roh'; bytes: string } {
+  | { art: 'roh'; bytes: string }
+
+/**
+ * Liest Rohbytes eines Schlüssels, ohne Parse-Fehler mit Zugriffsstörungen
+ * zu vermengen. Ein Wurf von getItem oder dem Storage-Getter ist unlesbar.
+ * Vorhandene, aber unbrauchbare Bytes bleiben `roh`.
+ */
+function schluesselRohLesen(schluessel: string): SchluesselRoh {
   if (typeof window === 'undefined') return { art: 'nicht_im_browser' }
 
   let speicher: Storage
@@ -231,13 +285,17 @@ function aktiveSchluesselRohLesen():
 
   let roh: string | null
   try {
-    roh = speicher.getItem(SCHLUESSEL_AKTIV)
+    roh = speicher.getItem(schluessel)
   } catch {
     return { art: 'speicher_unlesbar' }
   }
 
   if (roh === null) return { art: 'fehlend' }
   return { art: 'roh', bytes: roh }
+}
+
+function aktiveSchluesselRohLesen(): SchluesselRoh {
+  return schluesselRohLesen(SCHLUESSEL_AKTIV)
 }
 
 /**
@@ -259,6 +317,66 @@ export function aktiveGastreiseVorpruefen(): AktiveGastreiseVorpruefung {
   }
 
   return reiseLesen(geparst) ? { art: 'gueltig' } : { art: 'ungueltig' }
+}
+
+/**
+ * Create-Belegung aus dem Gastspeicher.
+ *
+ * Ungültige oder unlesbare aktive Bytes werden zuerst erkannt und niemals
+ * durch Legacy ersetzt. Fehlt der aktive Schlüssel, zählt ein gültiger
+ * Legacy-Entwurf als belegt – nur lesen, keine Migration, kein Schreiben.
+ */
+export type GastspeicherCreateBelegung =
+  | { art: 'nicht_im_browser' }
+  | { art: 'speicher_unlesbar' }
+  | { art: 'ungueltig' }
+  | { art: 'fehlend' }
+  | { art: 'gueltig'; id: string; titel: string | null }
+  | { art: 'belegt_ohne_kennung'; titel: string | null }
+
+export function gastspeicherCreateBelegungLesen(): GastspeicherCreateBelegung {
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art === 'nicht_im_browser') return { art: 'nicht_im_browser' }
+  if (vor.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  if (vor.art === 'ungueltig') return { art: 'ungueltig' }
+
+  if (vor.art === 'gueltig') {
+    const aktiv = reiseLesen(rohLesen(SCHLUESSEL_AKTIV))
+    if (!aktiv) return { art: 'ungueltig' }
+    return { art: 'gueltig', id: aktiv.id, titel: aktiv.title?.trim() || null }
+  }
+
+  const legacy = legacyEntwuerfeBeobachten()
+  if (legacy.art === 'speicher_unlesbar') return { art: 'speicher_unlesbar' }
+  const neuester = legacy.entwuerfe[0]
+  if (!neuester) return { art: 'fehlend' }
+  const titel = neuester.reise.title?.trim() || null
+  if (neuester.persistierteId) {
+    return { art: 'gueltig', id: neuester.persistierteId, titel }
+  }
+  return { art: 'belegt_ohne_kennung', titel }
+}
+
+/**
+ * Create- und Schreibwege prüfen den aktiven Schlüssel frisch, bevor sie
+ * Kapazität annehmen. Der Loader selbst wirft hier nicht – nur Anlegen/Ablegen.
+ * Fehlt der aktive Schlüssel, darf ein unlesbarer Legacy-Schlüssel nicht als
+ * freie Kapazität gelten.
+ */
+function aktiveAblageVorSchreibenPruefen() {
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art === 'nicht_im_browser' || vor.art === 'speicher_unlesbar') {
+    throw new GastspeicherUnlesbarFehler()
+  }
+  if (vor.art === 'ungueltig') throw new GastreiseUnbrauchbarFehler()
+  if (vor.art === 'fehlend') {
+    const legacy = legacyEntwuerfeBeobachten()
+    if (legacy.art === 'speicher_unlesbar') throw new GastspeicherUnlesbarFehler()
+    const neuester = legacy.entwuerfe[0]
+    if (neuester && !neuester.persistierteId) {
+      throw new GastreiseBelegtOhneKennungFehler()
+    }
+  }
 }
 
 /**
@@ -406,6 +524,65 @@ function einzelneEtappe(
   }
 }
 
+type LegacyBeobachteterEntwurf = {
+  reise: Trip
+  persistierteId: string | null
+}
+
+type LegacyEntwuerfeBeobachtung =
+  | { art: 'speicher_unlesbar'; entwuerfe: [] }
+  | { art: 'gelesen'; entwuerfe: LegacyBeobachteterEntwurf[] }
+
+/**
+ * Dieselbe Kennungsregel wie `ausLegacy`: nur ein vorhandener nicht-leerer
+ * String gilt als gespeicherte Identität. Fehlende, leere oder nicht-string
+ * IDs werden vom Konverter erzeugt – die Beobachtung darf sie nicht als
+ * Fortsetzen-Ziel ausgeben.
+ */
+function legacyPersistierteKennung(wert: unknown): string | null {
+  if (!wert || typeof wert !== 'object') return null
+  const id = (wert as Record<string, unknown>).id
+  return typeof id === 'string' && id ? id.slice(0, 64) : null
+}
+
+/**
+ * Gültige Legacy-Entwürfe, neueste zuerst. Dieselbe Parse-/Schema-Politik
+ * wie die Übernahme – nur ohne Schreiben. Ein Wurf beim Lesen des
+ * Legacy-Schlüssels ist unlesbar, nicht „kein Entwurf“. Vorhandene, aber
+ * unbrauchbare Bytes bleiben liegen und zählen nicht als gültige Belegung.
+ */
+function legacyEntwuerfeBeobachten(): LegacyEntwuerfeBeobachtung {
+  const roh = schluesselRohLesen(SCHLUESSEL_LEGACY)
+  if (roh.art === 'nicht_im_browser' || roh.art === 'speicher_unlesbar') {
+    return { art: 'speicher_unlesbar', entwuerfe: [] }
+  }
+  if (roh.art === 'fehlend') return { art: 'gelesen', entwuerfe: [] }
+
+  let geparst: unknown
+  try {
+    geparst = JSON.parse(roh.bytes) as unknown
+  } catch {
+    return { art: 'gelesen', entwuerfe: [] }
+  }
+  if (!Array.isArray(geparst)) return { art: 'gelesen', entwuerfe: [] }
+
+  const aufgenommen: LegacyBeobachteterEntwurf[] = []
+  for (const eintrag of geparst) {
+    const reise = ausLegacy(eintrag)
+    if (!reise) continue
+    aufgenommen.push({
+      reise,
+      persistierteId: legacyPersistierteKennung(eintrag),
+    })
+  }
+  aufgenommen.sort((a, b) => b.reise.updatedAt.localeCompare(a.reise.updatedAt))
+  return { art: 'gelesen', entwuerfe: aufgenommen }
+}
+
+function legacyEntwuerfeLesen(): Trip[] {
+  return legacyEntwuerfeBeobachten().entwuerfe.map((eintrag) => eintrag.reise)
+}
+
 /**
  * Holt die Entwürfe der Fassung v2 herüber, falls es welche gibt.
  *
@@ -420,13 +597,10 @@ function einzelneEtappe(
  * den diese Datei nicht mehr macht. Er kostet je Laden ein `JSON.parse`.
  */
 function legacyUebernehmen(): Gastspeicher | null {
-  const roh = rohLesen(SCHLUESSEL_LEGACY)
-  if (!Array.isArray(roh)) return null
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art !== 'fehlend' && vor.art !== 'gueltig') return null
 
-  const entwuerfe = roh
-    .map(ausLegacy)
-    .filter((entwurf): entwurf is Trip => entwurf !== null)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  const entwuerfe = legacyEntwuerfeLesen()
 
   if (entwuerfe.length === 0) return null
 
@@ -490,7 +664,13 @@ function bestandWarteschlange(): Trip[] {
 
 /** Der gesamte Gastspeicher. Führt bei Bedarf die Übernahme aus v2 aus. */
 export function gastspeicherLaden(): Gastspeicher {
-  if (!verfuegbar()) return { aktiv: null, warteschlange: [] }
+  const vor = aktiveGastreiseVorpruefen()
+  if (vor.art === 'nicht_im_browser' || vor.art === 'speicher_unlesbar') {
+    return { aktiv: null, warteschlange: [] }
+  }
+  if (vor.art === 'ungueltig') {
+    return { aktiv: null, warteschlange: bestandWarteschlange() }
+  }
 
   const uebernommen = legacyUebernehmen()
   if (uebernommen) return uebernommen
@@ -582,6 +762,7 @@ export function gastreiseAnlegen(
   eingabe: CreateTripInput,
   bestaetigt?: { ziel: Ort; abreise: Ort; weitereZiele?: Ort[] },
 ): Trip {
+  aktiveAblageVorSchreibenPruefen()
   if (!verfuegbar()) throw new SpeicherFehler()
 
   const bestehend = gastreiseLaden()
@@ -703,6 +884,7 @@ export function gastreiseAnlegen(
  * navigiert die Oberfläche nach dem ersten Anlauf weg.
  */
 export function gastreiseAblegen(entwurf: Trip): Trip {
+  aktiveAblageVorSchreibenPruefen()
   if (!verfuegbar()) throw new SpeicherFehler()
 
   const bestehend = gastreiseLaden()

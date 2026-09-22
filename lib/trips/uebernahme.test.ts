@@ -86,6 +86,7 @@ function speicherStellen() {
   })
 
   return {
+    ablage,
     schreibvorgaenge,
     lesenWerfen: () => {
       lesenWirft = true
@@ -1245,6 +1246,8 @@ describe('Honesty der aktiven Gastreise vor der Übernahme', () => {
     assert.deepEqual(erst, { art: 'ungueltig' })
     assert.equal(server.empfangen.length, 0)
 
+    // Explicit synthetic correction: invalid raw must not be overwritten by create.
+    speicher.ablage.delete(SCHLUESSEL.aktiv)
     const entwurf = gastreiseAnlegen(eingabe({ title: 'Korrigiert' }))
     const retry = await gastreisenUebernehmen(server.senden)
 
