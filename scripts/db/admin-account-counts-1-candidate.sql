@@ -18,36 +18,25 @@
 --      hat_rolle_mindestens('moderator') AND aktuelles_admin_aal2()).
 -- Deny raises SQLSTATE 42501. It never returns a success row of zeros.
 --
+-- Trusted execution owner is the existing database role `postgres`,
+-- represented in the local fixture as NOSUPERUSER + BYPASSRLS with
+-- SELECT on auth.users. That matches the Technical-Lead 2026-09-22
+-- Production metadata used as fixture evidence. This file does not
+-- create a new BYPASSRLS / global privilege role, does not grant
+-- auth.users to clients, and does not alter managed auth.users
+-- policies. `postgres` already has broader authority than this
+-- function; a later Production port still needs a fresh
+-- metadata/ownership/ACL review and a reserved Product-Owner gate.
+--
 -- Objects are fully qualified. search_path is pinned to pg_catalog.
+-- TimeZone is pinned to UTC. The window is a fixed 720-hour
+-- (30×24) half-open interval, not session-DST calendar days.
 -- No dynamic SQL. PUBLIC / anon / service_role execution is revoked.
 -- authenticated receives only USAGE on this new schema and EXECUTE on
 -- this function. No grant is made on jetnity_internal. No SELECT on
 -- auth.users is granted to client roles.
 
-do $$
-begin
-  if not exists (select 1 from pg_roles where rolname = 'jetnity_reporting_owner') then
-    create role jetnity_reporting_owner
-      nologin
-      nosuperuser
-      nocreatedb
-      nocreaterole
-      noinherit;
-  end if;
-end
-$$;
-
-grant usage on schema auth to jetnity_reporting_owner;
-grant select on table auth.users to jetnity_reporting_owner;
-grant execute on function auth.uid() to jetnity_reporting_owner;
-grant execute on function auth.jwt() to jetnity_reporting_owner;
-grant execute on function public.rollenrang(text) to jetnity_reporting_owner;
-grant execute on function public.aktuelle_rolle() to jetnity_reporting_owner;
-grant execute on function public.hat_rolle_mindestens(text) to jetnity_reporting_owner;
-grant execute on function public.aktuelles_admin_aal2() to jetnity_reporting_owner;
-grant execute on function public.darf_konten_verwalten() to jetnity_reporting_owner;
-
-create schema if not exists jetnity_reporting authorization jetnity_reporting_owner;
+create schema if not exists jetnity_reporting;
 
 revoke all on schema jetnity_reporting from public;
 revoke all on schema jetnity_reporting from anon;
@@ -55,13 +44,13 @@ revoke all on schema jetnity_reporting from authenticated;
 revoke all on schema jetnity_reporting from service_role;
 grant usage on schema jetnity_reporting to authenticated;
 
-alter default privileges for role jetnity_reporting_owner in schema jetnity_reporting
+alter default privileges in schema jetnity_reporting
   revoke execute on functions from public;
-alter default privileges for role jetnity_reporting_owner in schema jetnity_reporting
+alter default privileges in schema jetnity_reporting
   revoke execute on functions from anon;
-alter default privileges for role jetnity_reporting_owner in schema jetnity_reporting
+alter default privileges in schema jetnity_reporting
   revoke execute on functions from authenticated;
-alter default privileges for role jetnity_reporting_owner in schema jetnity_reporting
+alter default privileges in schema jetnity_reporting
   revoke execute on functions from service_role;
 
 create or replace function jetnity_reporting.account_counts_v1()
@@ -76,6 +65,7 @@ language plpgsql
 stable
 security definer
 set search_path = pg_catalog
+set timezone = 'UTC'
 as $$
 declare
   _uid uuid;
@@ -108,10 +98,10 @@ begin
       using errcode = '42501';
   end if;
 
-  -- One transaction-stable database clock. UTC interpretation of timestamptz
-  -- is independent of the session TimeZone. Half-open [window_start, measured_at).
+  -- One transaction-stable database clock. Fixed 30×24 hours, not
+  -- session-DST calendar days. Half-open [window_start, measured_at).
   _measured_at := pg_catalog.now();
-  _window_start := _measured_at - interval '30 days';
+  _window_start := _measured_at - interval '720 hours';
 
   return query
   select
@@ -130,13 +120,13 @@ begin
 end
 $$;
 
-alter function jetnity_reporting.account_counts_v1() owner to jetnity_reporting_owner;
+alter function jetnity_reporting.account_counts_v1() owner to postgres;
 
 comment on schema jetnity_reporting is
-  'LOCAL/UNAPPLIED reporting schema. Not exposed as a Data API RPC. No grant on jetnity_internal.';
+  'LOCAL/UNAPPLIED reporting schema. Not exposed as a Data API RPC. No grant on jetnity_internal. Owned functions execute as the trusted postgres role (fixture: NOSUPERUSER+BYPASSRLS).';
 
 comment on function jetnity_reporting.account_counts_v1() is
-  'jetnity.admin-account-counts.v1: present non-anonymous auth accounts and the subset created in a fixed rolling 30-day half-open window. SECURITY DEFINER only to aggregate auth.users without granting client SELECT. Deny is 42501, never a zero success row. created_at NULL counts in present and not in the window. Future timestamps do not count in the prior 30 days. No profile join. Test/internal/unconfirmed rows are included when present. Caller must exist, not be anonymous or soft-deleted, and pass public.darf_konten_verwalten(). Authorized present_count is at least 1 because that caller is themselves a present account.';
+  'jetnity.admin-account-counts.v1: present non-anonymous auth accounts and the subset created in a fixed 720-hour half-open window. SECURITY DEFINER owned by postgres so RLS-protected auth.users can be aggregated without client SELECT or a new BYPASSRLS role. Deny is 42501, never a zero success row. created_at NULL counts in present and not in the window. Future timestamps do not count in the prior 720 hours. No profile join. Test/internal/unconfirmed rows are included when present. Caller must exist, not be anonymous or soft-deleted, and pass public.darf_konten_verwalten(). Authorized present_count is at least 1 because that caller is themselves a present account.';
 
 revoke all on function jetnity_reporting.account_counts_v1() from public;
 revoke all on function jetnity_reporting.account_counts_v1() from anon;

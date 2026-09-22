@@ -4,13 +4,22 @@
 // Starts a disposable PostgreSQL cluster on a private socket owned by this
 // process. It never imports scripts/db/sql.mjs, never uses remote defaults,
 // and refuses inherited connection overrides. Cleanup removes only the
-// cluster directory this run created.
+// cluster directory this run created, and only after the owned postmaster
+// has stopped.
 //
 //   node scripts/db/admin-account-counts-1-local-proof.mjs
 
 import { execFileSync } from 'node:child_process'
 import { createHash, randomUUID } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, rmSync, appendFileSync } from 'node:fs'
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  appendFileSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -20,6 +29,14 @@ const BOOTSTRAP = join(ROOT, 'scripts/db/admin-account-counts-1-bootstrap.sql')
 const CANDIDATE = join(ROOT, 'scripts/db/admin-account-counts-1-candidate.sql')
 const DB_NAME = 'jetnity_admin_account_counts_1'
 const CLUSTER_USER = 'jetnity_proof'
+export const PSQL_NO_STARTUP = Object.freeze(['-X', '--no-psqlrc'])
+export const PSQLRC_SENTINEL = 'JETNITY_PSQLRC_SENTINEL'
+const SUBPROCESS_TIMEOUT_MS = Object.freeze({
+  initdb: 60_000,
+  pgctl: 45_000,
+  psql: 30_000,
+})
+const FIXED_WINDOW_SECONDS = 720 * 3600
 
 export const FORBIDDEN_CONNECTION_KEYS = Object.freeze([
   'PGHOST',
@@ -54,7 +71,9 @@ export const FORBIDDEN_CONNECTION_KEYS = Object.freeze([
   'JETNITY_LOCAL_DB_URL',
 ])
 
-const IDS = {
+export const CHILD_ENV_STRIP_KEYS = Object.freeze(['PSQLRC', 'PSQL_HISTORY', 'PGSYSCONFDIR'])
+
+export const IDS = {
   owner: '10000000-0000-4000-8000-000000000001',
   admin: '10000000-0000-4000-8000-000000000002',
   operator: '10000000-0000-4000-8000-000000000003',
@@ -74,6 +93,9 @@ const IDS = {
   absent: '10000000-0000-4000-8000-000000000011',
   edgeStart: '10000000-0000-4000-8000-000000000012',
   edgeEnd: '10000000-0000-4000-8000-000000000013',
+  anonPriv: '10000000-0000-4000-8000-000000000014',
+  dstSpring: '10000000-0000-4000-8000-000000000015',
+  dstFall: '10000000-0000-4000-8000-000000000016',
 }
 
 const RESULT_KEYS = [
@@ -116,7 +138,7 @@ function bewerte(name, gruppe, ok, detail) {
   console.log(`${ok ? '  ok  ' : ' FEHL '} [${gruppe}] ${name}  ${detail ?? ''}`)
 }
 
-function findPgBin(name) {
+export function findPgBin(name) {
   const dirs = ['/usr/lib/postgresql/16/bin', '/usr/lib/postgresql/17/bin', '/usr/lib/postgresql/15/bin', '/usr/bin']
   for (const dir of dirs) {
     const pfad = join(dir, name)
@@ -125,7 +147,7 @@ function findPgBin(name) {
   return null
 }
 
-function requirePgBins() {
+export function requirePgBins() {
   const initdb = findPgBin('initdb')
   const pgCtl = findPgBin('pg_ctl')
   const postgres = findPgBin('postgres')
@@ -149,14 +171,62 @@ function requirePgBins() {
   return { initdb, pgCtl, postgres, psql }
 }
 
-function cleanChildEnv() {
-  const env = { ...process.env }
+export function cleanChildEnv(base = process.env) {
+  const env = { ...base }
   for (const schluessel of Object.keys(env)) {
-    if (schluessel.startsWith('PG') || FORBIDDEN_CONNECTION_KEYS.includes(schluessel)) {
+    if (
+      schluessel.startsWith('PG') ||
+      FORBIDDEN_CONNECTION_KEYS.includes(schluessel) ||
+      CHILD_ENV_STRIP_KEYS.includes(schluessel)
+    ) {
       delete env[schluessel]
     }
   }
+  if (cluster?.homeDir) env.HOME = cluster.homeDir
   return env
+}
+
+export function psqlSafeArgs(datenbank, extra = []) {
+  if (!cluster) {
+    throw new Error('fail-closed: psql ohne registriertes privates Cluster ist verboten.')
+  }
+  const args = [
+    ...PSQL_NO_STARTUP,
+    '-h',
+    cluster.socketDir,
+    '-U',
+    cluster.user,
+    '-d',
+    datenbank,
+    '-v',
+    'ON_ERROR_STOP=1',
+    ...extra,
+  ]
+  if (!args.includes('-X') || !args.includes('--no-psqlrc')) {
+    throw new Error('fail-closed: psql startup files are not disabled.')
+  }
+  if (args.includes('-h') && args[args.indexOf('-h') + 1] !== cluster.socketDir) {
+    throw new Error('fail-closed: psql host is not the owned private socket.')
+  }
+  return args
+}
+
+export function aktuellerCluster() {
+  return cluster
+}
+
+export function postmasterLebt(state = cluster) {
+  if (!state?.dataDir) return false
+  const pidDatei = join(state.dataDir, 'postmaster.pid')
+  if (!existsSync(pidDatei)) return false
+  const pid = Number(readFileSync(pidDatei, 'utf8').split('\n')[0])
+  if (!Number.isInteger(pid) || pid <= 1) return false
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
 }
 
 function claims({ uid, rolle = 'authenticated', aal, extra = {} }) {
@@ -181,18 +251,45 @@ function jsonZeile(roh) {
   return JSON.parse(zeile)
 }
 
-function startePrivatesCluster() {
-  const bins = requirePgBins()
+export function registrierePrivatesCluster(bins = requirePgBins()) {
   const runId = randomUUID()
   const rootDir = join(tmpdir(), `jetnity-admin-account-counts-1-${runId}`)
   const dataDir = join(rootDir, 'data')
   const socketDir = join(rootDir, 'socket')
+  const homeDir = join(rootDir, 'home')
   const logFile = join(rootDir, 'postgres.log')
-  mkdirSync(socketDir, { recursive: true })
+  const state = {
+    ...bins,
+    rootDir,
+    dataDir,
+    socketDir,
+    homeDir,
+    logFile,
+    user: CLUSTER_USER,
+    lifecycle: 'registered',
+  }
+  cluster = state
+  mkdirSync(rootDir, { recursive: true, mode: 0o700 })
+  mkdirSync(socketDir, { recursive: true, mode: 0o700 })
+  mkdirSync(homeDir, { recursive: true, mode: 0o700 })
+  chmodSync(rootDir, 0o700)
+  chmodSync(socketDir, 0o700)
+  chmodSync(homeDir, 0o700)
+  return state
+}
+
+export function startePrivatesCluster(options = {}) {
+  const bins = requirePgBins()
+  const state = cluster?.lifecycle ? cluster : registrierePrivatesCluster(bins)
+  if (options.failBeforeInit) {
+    const error = new Error('injected initialization failure')
+    error.code = 'JETNITY_PROOF_INJECT_INIT'
+    throw error
+  }
 
   const initArgs = [
     '-D',
-    dataDir,
+    state.dataDir,
     '--auth-local=trust',
     '--auth-host=reject',
     '--no-sync',
@@ -201,17 +298,32 @@ function startePrivatesCluster() {
     CLUSTER_USER,
   ]
   try {
-    execFileSync(bins.initdb, [...initArgs, '--locale=C.UTF-8'], { stdio: 'pipe', env: cleanChildEnv() })
-  } catch {
-    execFileSync(bins.initdb, [...initArgs, '--no-locale'], { stdio: 'pipe', env: cleanChildEnv() })
+    execFileSync(bins.initdb, [...initArgs, '--locale=C.UTF-8'], {
+      stdio: 'pipe',
+      env: cleanChildEnv(),
+      timeout: SUBPROCESS_TIMEOUT_MS.initdb,
+    })
+  } catch (erster) {
+    if (options.failBeforeInit) throw erster
+    try {
+      execFileSync(bins.initdb, [...initArgs, '--no-locale'], {
+        stdio: 'pipe',
+        env: cleanChildEnv(),
+        timeout: SUBPROCESS_TIMEOUT_MS.initdb,
+      })
+    } catch (zweiter) {
+      state.lifecycle = 'failed'
+      throw zweiter
+    }
   }
+  state.lifecycle = 'initialized'
 
   appendFileSync(
-    join(dataDir, 'postgresql.conf'),
+    join(state.dataDir, 'postgresql.conf'),
     [
       '',
       "listen_addresses = ''",
-      `unix_socket_directories = '${socketDir}'`,
+      `unix_socket_directories = '${state.socketDir}'`,
       'unix_socket_permissions = 0700',
       "timezone = 'UTC'",
       'logging_collector = off',
@@ -219,50 +331,106 @@ function startePrivatesCluster() {
     ].join('\n'),
   )
 
-  execFileSync(bins.pgCtl, ['-D', dataDir, '-l', logFile, '-w', '-t', '30', 'start'], {
-    stdio: 'pipe',
-    env: cleanChildEnv(),
-  })
+  if (options.failBeforeStart) {
+    const error = new Error('injected start failure before pg_ctl')
+    error.code = 'JETNITY_PROOF_INJECT_START'
+    throw error
+  }
 
-  cluster = { ...bins, rootDir, dataDir, socketDir, logFile, user: CLUSTER_USER }
-  return cluster
-}
-
-function stoppePrivatesCluster() {
-  if (!cluster) return
   try {
-    execFileSync(cluster.pgCtl, ['-D', cluster.dataDir, '-m', 'fast', '-w', '-t', '20', 'stop'], {
+    execFileSync(bins.pgCtl, ['-D', state.dataDir, '-l', state.logFile, '-w', '-t', '30', 'start'], {
       stdio: 'pipe',
       env: cleanChildEnv(),
+      timeout: SUBPROCESS_TIMEOUT_MS.pgctl,
     })
-  } catch {
-    // Best-effort stop of the cluster this run created.
+  } catch (fehler) {
+    state.lifecycle = postmasterLebt(state) ? 'started' : 'failed'
+    throw fehler
   }
-  try {
-    rmSync(cluster.rootDir, { recursive: true, force: true })
-  } catch {
-    // Best-effort removal of this run's directory only.
+  state.lifecycle = 'started'
+  if (options.failAfterStart) {
+    const error = new Error('injected start failure after postmaster is up')
+    error.code = 'JETNITY_PROOF_INJECT_START_UP'
+    throw error
   }
-  cluster = null
+  return state
 }
 
-function psqlArgs(datenbank, extra = []) {
-  return ['-h', cluster.socketDir, '-U', cluster.user, '-d', datenbank, '-v', 'ON_ERROR_STOP=1', ...extra]
+export function stoppePrivatesCluster(options = {}) {
+  if (!cluster) {
+    return { cleaned: true, removed: false, stopped: false, running: false, error: null, lifecycle: null }
+  }
+  const report = {
+    cleaned: false,
+    removed: false,
+    stopped: false,
+    running: postmasterLebt(cluster),
+    error: null,
+    lifecycle: cluster.lifecycle,
+    rootDir: cluster.rootDir,
+  }
+
+  if (report.running || cluster.lifecycle === 'started') {
+    if (options.failStop) {
+      report.error = 'injected stop failure'
+      report.running = postmasterLebt(cluster)
+      if (report.running) {
+        return report
+      }
+    }
+    try {
+      execFileSync(cluster.pgCtl, ['-D', cluster.dataDir, '-m', 'fast', '-w', '-t', '20', 'stop'], {
+        stdio: 'pipe',
+        env: cleanChildEnv(),
+        timeout: SUBPROCESS_TIMEOUT_MS.pgctl,
+      })
+    } catch (fehler) {
+      report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    }
+    report.running = postmasterLebt(cluster)
+    if (report.running) {
+      report.error = report.error || 'cluster still running after stop'
+      return report
+    }
+    cluster.lifecycle = 'stopped'
+    report.stopped = true
+  }
+
+  try {
+    rmSync(cluster.rootDir, { recursive: true, force: true })
+    report.removed = true
+    report.cleaned = true
+  } catch (fehler) {
+    report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    return report
+  }
+  cluster = null
+  return report
 }
 
 function psqlFile(sql, datenbank = DB_NAME) {
-  return execFileSync(cluster.psql, psqlArgs(datenbank, ['-At', '-q', '-f', '-']), {
+  const env = cleanChildEnv()
+  if (env.PSQLRC) {
+    throw new Error('fail-closed: PSQLRC leaked into child environment.')
+  }
+  return execFileSync(cluster.psql, psqlSafeArgs(datenbank, ['-At', '-q', '-f', '-']), {
     encoding: 'utf8',
     input: sql,
-    env: cleanChildEnv(),
+    env,
+    timeout: SUBPROCESS_TIMEOUT_MS.psql,
     stdio: ['pipe', 'pipe', 'pipe'],
   }).trim()
 }
 
 function psqlSql(sql, datenbank = DB_NAME) {
-  execFileSync(cluster.psql, psqlArgs(datenbank, ['-f', '-']), {
+  const env = cleanChildEnv()
+  if (env.PSQLRC) {
+    throw new Error('fail-closed: PSQLRC leaked into child environment.')
+  }
+  execFileSync(cluster.psql, psqlSafeArgs(datenbank, ['-f', '-']), {
     input: sql,
-    env: cleanChildEnv(),
+    env,
+    timeout: SUBPROCESS_TIMEOUT_MS.psql,
     stdio: ['pipe', 'pipe', 'pipe'],
   })
 }
@@ -345,7 +513,8 @@ insert into auth.users (id, created_at, deleted_at, confirmed_at, is_anonymous) 
   ('${IDS.hardDel}',     now() - interval '2 days',  null, now() - interval '2 days',  false),
   ('${IDS.banned}',      now() - interval '2 days',  null, now() - interval '2 days',  false),
   ('${IDS.anonUser}',    now() - interval '2 days',  null, now() - interval '2 days',  true),
-  ('${IDS.softDel}',     now() - interval '2 days',  now(), now() - interval '2 days', false);
+  ('${IDS.softDel}',     now() - interval '2 days',  now(), now() - interval '2 days', false),
+  ('${IDS.anonPriv}',    now() - interval '2 days',  null, now() - interval '2 days',  true);
 
 insert into public.profiles (user_id, role, status) values
   ('${IDS.owner}',       'owner',     'active'),
@@ -362,13 +531,16 @@ insert into public.profiles (user_id, role, status) values
   ('${IDS.hardDel}',     'user',      'active'),
   ('${IDS.banned}',      'user',      'banned'),
   ('${IDS.anonUser}',    'user',      'active'),
-  ('${IDS.softDel}',     'moderator', 'active');
+  ('${IDS.softDel}',     'moderator', 'active'),
+  ('${IDS.anonPriv}',    'moderator', 'active');
 `
 }
 
 function testHelperSql() {
   return `
 create schema if not exists jetnity_test;
+revoke all on schema jetnity_test from public, anon, service_role;
+grant usage on schema jetnity_test to authenticated;
 
 create or replace function jetnity_test.sitzung(
   _role text,
@@ -408,6 +580,156 @@ begin
   return jsonb_build_object('arbeit', arbeit, 'inspektion', inspektion);
 end
 $fn$;
+
+-- Proof-only clock seam. Not a production caller filter/time parameter.
+create or replace function jetnity_test.counts_at(_measured_at timestamp with time zone)
+returns table (
+  present_registered_accounts bigint,
+  created_in_prior_30_days bigint,
+  measured_at timestamp with time zone,
+  window_start timestamp with time zone
+)
+language sql
+stable
+set search_path = pg_catalog
+as $fn$
+  select
+    count(*)::bigint,
+    count(*) filter (
+      where u.created_at is not null
+        and u.created_at >= _measured_at - interval '720 hours'
+        and u.created_at < _measured_at
+    )::bigint,
+    _measured_at,
+    _measured_at - interval '720 hours'
+  from auth.users as u
+  where u.deleted_at is null
+    and u.is_anonymous is false;
+$fn$;
+
+create or replace function jetnity_test.fixed_minus_720_hours(_measured_at timestamp with time zone)
+returns timestamp with time zone
+language sql
+stable
+set search_path = pg_catalog
+as $fn$
+  select _measured_at - interval '720 hours'
+$fn$;
+
+create or replace function jetnity_test.calendar_minus_30_days(_measured_at timestamp with time zone)
+returns timestamp with time zone
+language sql
+stable
+set search_path = pg_catalog
+as $fn$
+  select _measured_at - interval '30 days'
+$fn$;
+
+do $role$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'jetnity_reporting_owner') then
+    create role jetnity_reporting_owner
+      nologin
+      nosuperuser
+      nocreatedb
+      nocreaterole
+      noinherit;
+  end if;
+end
+$role$;
+
+grant usage on schema auth to jetnity_reporting_owner;
+grant select on table auth.users to jetnity_reporting_owner;
+grant execute on function auth.uid() to jetnity_reporting_owner;
+grant execute on function auth.jwt() to jetnity_reporting_owner;
+grant execute on function public.rollenrang(text) to jetnity_reporting_owner;
+grant execute on function public.aktuelle_rolle() to jetnity_reporting_owner;
+grant execute on function public.hat_rolle_mindestens(text) to jetnity_reporting_owner;
+grant execute on function public.aktuelles_admin_aal2() to jetnity_reporting_owner;
+grant execute on function public.darf_konten_verwalten() to jetnity_reporting_owner;
+
+create or replace function jetnity_test.unprivileged_owner_counts()
+returns table (
+  present_registered_accounts bigint,
+  created_in_prior_30_days bigint,
+  measured_at timestamp with time zone,
+  window_start timestamp with time zone,
+  definition_version text
+)
+language plpgsql
+stable
+security definer
+set search_path = pg_catalog
+set timezone = 'UTC'
+as $fn$
+declare
+  _uid uuid;
+  _caller_present boolean;
+  _measured_at timestamp with time zone;
+  _window_start timestamp with time zone;
+begin
+  _uid := auth.uid();
+  if _uid is null then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+
+  select exists (
+    select 1
+      from auth.users as u
+     where u.id = _uid
+       and u.deleted_at is null
+       and u.is_anonymous is false
+  )
+    into _caller_present;
+
+  if not coalesce(_caller_present, false) then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+
+  if not coalesce(public.darf_konten_verwalten(), false) then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+
+  _measured_at := pg_catalog.now();
+  _window_start := _measured_at - interval '720 hours';
+
+  return query
+  select
+    count(*)::bigint,
+    count(*) filter (
+      where u.created_at is not null
+        and u.created_at >= _window_start
+        and u.created_at < _measured_at
+    )::bigint,
+    _measured_at,
+    _window_start,
+    'jetnity.admin-account-counts.v1'::text
+  from auth.users as u
+  where u.deleted_at is null
+    and u.is_anonymous is false;
+end
+$fn$;
+
+alter function jetnity_test.unprivileged_owner_counts() owner to jetnity_reporting_owner;
+
+create or replace function jetnity_test.unprivileged_owner_visible_users()
+returns bigint
+language sql
+stable
+security definer
+set search_path = pg_catalog
+as $fn$
+  select count(*)::bigint from auth.users
+$fn$;
+
+alter function jetnity_test.unprivileged_owner_visible_users() owner to jetnity_reporting_owner;
+
+revoke all on function jetnity_test.unprivileged_owner_counts() from public, anon, service_role;
+grant execute on function jetnity_test.unprivileged_owner_counts() to authenticated;
+revoke all on function jetnity_test.counts_at(timestamp with time zone) from public, anon, authenticated, service_role;
 `
 }
 
@@ -421,7 +743,7 @@ select to_jsonb(q) from (
       where deleted_at is null
         and is_anonymous is false
         and created_at is not null
-        and created_at >= now() - interval '30 days'
+        and created_at >= now() - interval '720 hours'
         and created_at < now()
     )::bigint as windowed
   from auth.users
@@ -431,7 +753,7 @@ select to_jsonb(q) from (
 }
 
 function pruefeAutorisierung() {
-  const gruppe = 'auth'
+  const gruppe = 'auth-sql'
   const erwartung = privilegedPresentWindow()
 
   for (const [name, uid] of [
@@ -561,6 +883,17 @@ function pruefeAutorisierung() {
     '42501|not authorized',
   )
   mussAblehnen(
+    'anonymes Konto mit privileged Fixture-Profil erhält keine Aggregate',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.anonPriv,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  mussAblehnen(
     'anon-Rolle erhält keine Aggregate',
     gruppe,
     {
@@ -605,7 +938,7 @@ function pruefeAutorisierung() {
 }
 
 function pruefeLebenszyklus() {
-  const gruppe = 'lifecycle'
+  const gruppe = 'lifecycle-sql'
   const basis = sitzung({
     rolle: 'authenticated',
     uid: IDS.moderator,
@@ -640,10 +973,12 @@ select to_jsonb(q) from (
 select to_jsonb(q) from (
   select
     (select is_anonymous from auth.users where id = '${IDS.anonUser}') as anon,
+    (select is_anonymous from auth.users where id = '${IDS.anonPriv}') as anon_priv,
     (select deleted_at is not null from auth.users where id = '${IDS.softDel}') as soft,
     exists(select 1 from auth.users where id = '${IDS.unconfirmed}' and confirmed_at is null) as unconfirmed,
     exists(select 1 from public.profiles where user_id = '${IDS.banned}' and status = 'banned') as banned,
-    exists(select 1 from auth.users where id = '${IDS.internal}') as internal_row
+    exists(select 1 from auth.users where id = '${IDS.internal}') as internal_row,
+    exists(select 1 from public.profiles where user_id = '${IDS.anonPriv}' and role = 'moderator') as anon_priv_profile
 ) q;
 `),
   )
@@ -651,6 +986,8 @@ select to_jsonb(q) from (
     'anonym/soft-delete sind ausgeschlossen; unconfirmed/internal/banned-Profil bleiben in der Zielmenge',
     gruppe,
     excluded.anon === true &&
+      excluded.anon_priv === true &&
+      excluded.anon_priv_profile === true &&
       excluded.soft === true &&
       excluded.unconfirmed === true &&
       excluded.banned === true &&
@@ -697,7 +1034,7 @@ select to_jsonb(q) from (
 }
 
 function pruefeFensterUndNull() {
-  const gruppe = 'window'
+  const gruppe = 'window-sql'
   const utc = sitzung({
     rolle: 'authenticated',
     uid: IDS.moderator,
@@ -722,13 +1059,15 @@ select to_jsonb(q) from (
     ) as null_present,
     count(*) filter (
       where id = '${IDS.future}' and deleted_at is null and is_anonymous is false and created_at > now()
-    ) as future_present
+    ) as future_present,
+    extract(epoch from ('${row.measured_at}'::timestamptz - '${row.window_start}'::timestamptz)) as window_seconds,
+    extract(epoch from ('${row.measured_at}'::timestamptz - jetnity_test.fixed_minus_720_hours('${row.measured_at}'::timestamptz))) as oracle_seconds
   from auth.users
 ) q;
 `),
   )
   bewerte(
-    'NULL-created_at zählt in present, nicht im Fenster; Zukunft zählt nicht in den prior 30 days',
+    'NULL-created_at zählt in present, nicht im Fenster; Zukunft zählt nicht in den prior 720 hours',
     gruppe,
     Number(row.present_registered_accounts) === Number(privileged.present) &&
       Number(row.created_in_prior_30_days) === Number(privileged.windowed) &&
@@ -736,12 +1075,22 @@ select to_jsonb(q) from (
       Number(privileged.future_present) === 1,
     JSON.stringify({ row, privileged }),
   )
+  bewerte(
+    'unabhängiges 720-Stunden-Orakel: Fensterlänge ist genau 2592000 Sekunden',
+    gruppe,
+    Number(privileged.window_seconds) === FIXED_WINDOW_SECONDS &&
+      Number(privileged.oracle_seconds) === FIXED_WINDOW_SECONDS,
+    JSON.stringify({
+      window_seconds: privileged.window_seconds,
+      oracle_seconds: privileged.oracle_seconds,
+    }),
+  )
 
   const kanten = jsonZeile(
     psqlFile(`
 begin;
 insert into auth.users (id, created_at, deleted_at, confirmed_at, is_anonymous) values
-  ('${IDS.edgeStart}', now() - interval '30 days', null, now() - interval '30 days', false),
+  ('${IDS.edgeStart}', now() - interval '720 hours', null, now() - interval '720 hours', false),
   ('${IDS.edgeEnd}', now(), null, now(), false);
 select jetnity_test.sitzung(
   'authenticated',
@@ -749,7 +1098,7 @@ select jetnity_test.sitzung(
   $a$select * from jetnity_reporting.account_counts_v1()$a$,
   $i$
     select
-      (select created_at >= now() - interval '30 days' from auth.users where id = '${IDS.edgeStart}') as start_ge,
+      (select created_at >= now() - interval '720 hours' from auth.users where id = '${IDS.edgeStart}') as start_ge,
       (select created_at = now() from auth.users where id = '${IDS.edgeEnd}') as end_eq
   $i$
 );
@@ -809,10 +1158,88 @@ rollback;
       measuredMs: Date.parse(a?.measured_at ?? ''),
     }),
   )
+
+  const dst = jsonZeile(
+    psqlFile(`
+begin;
+-- US spring-forward 2026-03-08: 30 calendar days in America/New_York is 1h
+-- longer than 720 hours. A row at 2026-02-07 07:30:00+00 is inside the
+-- fixed window and outside the session-DST calendar window.
+insert into auth.users (id, created_at, deleted_at, confirmed_at, is_anonymous) values
+  ('${IDS.dstSpring}', timestamptz '2026-02-07 07:30:00+00', null, timestamptz '2026-02-07 07:30:00+00', false),
+  ('${IDS.dstFall}', timestamptz '2026-10-03 05:30:00+00', null, timestamptz '2026-10-03 05:30:00+00', false);
+
+create temporary table dst_probe (k text, v jsonb) on commit drop;
+
+insert into dst_probe
+select 'fixed_spring', to_jsonb(q) from jetnity_test.counts_at(timestamptz '2026-03-09 07:00:00+00') q;
+
+set timezone = 'America/New_York';
+insert into dst_probe
+select 'calendar_spring_ny', jsonb_build_object(
+  'calendar_start', jetnity_test.calendar_minus_30_days(timestamptz '2026-03-09 07:00:00+00'),
+  'fixed_start', jetnity_test.fixed_minus_720_hours(timestamptz '2026-03-09 07:00:00+00'),
+  'row_in_calendar', (
+    select created_at >= jetnity_test.calendar_minus_30_days(timestamptz '2026-03-09 07:00:00+00')
+       and created_at < timestamptz '2026-03-09 07:00:00+00'
+      from auth.users where id = '${IDS.dstSpring}'
+  ),
+  'row_in_fixed', (
+    select created_at >= jetnity_test.fixed_minus_720_hours(timestamptz '2026-03-09 07:00:00+00')
+       and created_at < timestamptz '2026-03-09 07:00:00+00'
+      from auth.users where id = '${IDS.dstSpring}'
+  )
+);
+
+insert into dst_probe
+select 'fixed_fall', to_jsonb(q) from jetnity_test.counts_at(timestamptz '2026-11-02 06:00:00+00') q;
+
+insert into dst_probe
+select 'calendar_fall_ny', jsonb_build_object(
+  'calendar_start', jetnity_test.calendar_minus_30_days(timestamptz '2026-11-02 06:00:00+00'),
+  'fixed_start', jetnity_test.fixed_minus_720_hours(timestamptz '2026-11-02 06:00:00+00'),
+  'row_in_calendar', (
+    select created_at >= jetnity_test.calendar_minus_30_days(timestamptz '2026-11-02 06:00:00+00')
+       and created_at < timestamptz '2026-11-02 06:00:00+00'
+      from auth.users where id = '${IDS.dstFall}'
+  ),
+  'row_in_fixed', (
+    select created_at >= jetnity_test.fixed_minus_720_hours(timestamptz '2026-11-02 06:00:00+00')
+       and created_at < timestamptz '2026-11-02 06:00:00+00'
+      from auth.users where id = '${IDS.dstFall}'
+  )
+);
+
+set timezone = 'UTC';
+insert into dst_probe
+select 'calendar_spring_utc', jsonb_build_object(
+  'calendar_start', jetnity_test.calendar_minus_30_days(timestamptz '2026-03-09 07:00:00+00'),
+  'fixed_start', jetnity_test.fixed_minus_720_hours(timestamptz '2026-03-09 07:00:00+00')
+);
+
+select jsonb_object_agg(k, v) from dst_probe;
+rollback;
+`),
+  )
+  const springNy = dst.calendar_spring_ny
+  const fallNy = dst.calendar_fall_ny
+  const springUtc = dst.calendar_spring_utc
+  bewerte(
+    'DST spring/fall: 720-Stunden-Fenster ≠ session-DST-Kalendertag; feste Dauer bleibt UTC-invariant',
+    gruppe,
+    springNy?.row_in_fixed === true &&
+      springNy?.row_in_calendar === false &&
+      fallNy?.row_in_fixed === false &&
+      fallNy?.row_in_calendar === true &&
+      Date.parse(springNy?.fixed_start) === Date.parse(springUtc?.fixed_start) &&
+      Date.parse(springNy?.calendar_start) !== Date.parse(springNy?.fixed_start) &&
+      Date.parse(fallNy?.calendar_start) !== Date.parse(fallNy?.fixed_start),
+    JSON.stringify(dst),
+  )
 }
 
 function pruefeZeroVersusDeny() {
-  const gruppe = 'zero-vs-deny'
+  const gruppe = 'zero-vs-deny-sql'
   const deny = sitzung({
     rolle: 'authenticated',
     uid: IDS.user,
@@ -855,6 +1282,83 @@ rollback;
   )
 }
 
+function pruefeRlsContrast() {
+  const gruppe = 'rls-sql'
+  const unpriv = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from jetnity_test.unprivileged_owner_counts()',
+  })
+  bewerte(
+    'unprivilegierter Owner + SELECT-Grant scheitert unter RLS-on/default-deny auch für den legitimen Caller',
+    gruppe,
+    unpriv.arbeit?.ok === false &&
+      unpriv.arbeit?.row == null &&
+      unpriv.arbeit?.sqlstate === '42501',
+    JSON.stringify(unpriv.arbeit),
+  )
+
+  const sichtbar = jsonZeile(
+    psqlFile(`select to_jsonb(q) from (select jetnity_test.unprivileged_owner_visible_users() as n) q;`),
+  )
+  bewerte(
+    'unprivilegierter Owner sieht 0 auth.users-Zeilen trotz SELECT-Grant',
+    gruppe,
+    Number(sichtbar.n) === 0,
+    JSON.stringify(sichtbar),
+  )
+
+  const trusted = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from jetnity_reporting.account_counts_v1()',
+  })
+  bewerte(
+    'trusted-postgres-Owner besteht denselben legitimen Caller-Aufruf',
+    gruppe,
+    trusted.arbeit?.ok === true &&
+      formIstSauber(trusted.arbeit.row) &&
+      Number(trusted.arbeit.row.present_registered_accounts) >= 1,
+    JSON.stringify(trusted.arbeit),
+  )
+
+  mussAblehnen(
+    'trusted-Owner bleibt für user AAL2 verboten',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.user,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  mussAblehnen(
+    'trusted-Owner bleibt für abwesenden authenticated subject verboten',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.absent,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  mussAblehnen(
+    'trusted-Owner bleibt für anonymous+privileged Profil verboten',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.anonPriv,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+}
+
 function pruefeKatalogUndDirektzugriff() {
   const gruppe = 'catalog'
   mussAblehnen(
@@ -894,9 +1398,11 @@ select to_jsonb(q) from (
        where e.grantee = 0 and e.privilege_type = 'EXECUTE'
     ) as public_exec,
     pg_get_function_identity_arguments(p.oid) as args,
-    p.prosrc as src
+    p.prosrc as src,
+    r.rolname as owner_name
   from pg_proc p
   join pg_namespace n on n.oid = p.pronamespace
+  join pg_roles r on r.oid = p.proowner
   where n.nspname = 'jetnity_reporting' and p.proname = 'account_counts_v1'
 ) q;
 `),
@@ -904,8 +1410,12 @@ select to_jsonb(q) from (
   const searchPath = (katalog.config ?? []).some(
     (wert) => wert === 'search_path=pg_catalog' || wert === 'search_path="pg_catalog"',
   )
+  const timezonePin = (katalog.config ?? []).some(
+    (wert) => wert === 'timezone=UTC' || wert === "timezone='UTC'" || wert === 'TimeZone=UTC',
+  )
   bewerte('Candidate ist SECURITY DEFINER', gruppe, katalog.security_definer === true, JSON.stringify(katalog.security_definer))
   bewerte('search_path ist auf pg_catalog fixiert', gruppe, searchPath, JSON.stringify(katalog.config))
+  bewerte('Candidate-Owner ist das fixture-postgres (nicht eine neue Privilege-Rolle)', gruppe, katalog.owner_name === 'postgres', katalog.owner_name)
   bewerte(
     'PUBLIC/anon/service_role haben kein EXECUTE; authenticated hat EXECUTE',
     gruppe,
@@ -920,14 +1430,23 @@ select to_jsonb(q) from (
     gruppe,
     !/execute format|execute\s+'/i.test(katalog.src) &&
       katalog.args === '' &&
-      /jetnity\.admin-account-counts\.v1/.test(katalog.src),
+      /jetnity\.admin-account-counts\.v1/.test(katalog.src) &&
+      /720 hours/.test(katalog.src),
     'prosrc inspected',
   )
+  bewerte('Function-TimeZone ist auf UTC gepinnt oder 720-hours-Arithmetik ist tz-unabhängig', gruppe, timezonePin || /720 hours/.test(katalog.src), JSON.stringify(katalog.config))
 
-  const grants = jsonZeile(
+  const fixture = jsonZeile(
     psqlFile(`
 select to_jsonb(q) from (
   select
+    c.relrowsecurity as users_rls,
+    c.relforcerowsecurity as users_force_rls,
+    pg_get_userbyid(c.relowner) as users_owner,
+    (select count(*) from pg_policy p where p.polrelid = c.oid) as users_policies,
+    r.rolsuper as postgres_super,
+    r.rolbypassrls as postgres_bypass,
+    has_table_privilege('postgres', 'auth.users', 'SELECT') as postgres_sel,
     has_table_privilege('anon', 'auth.users', 'SELECT') as anon_sel,
     has_table_privilege('authenticated', 'auth.users', 'SELECT') as auth_sel,
     has_table_privilege('service_role', 'auth.users', 'SELECT') as service_sel,
@@ -937,24 +1456,59 @@ select to_jsonb(q) from (
     has_schema_privilege('authenticated', 'jetnity_reporting', 'USAGE') as auth_reporting,
     has_schema_privilege('anon', 'jetnity_reporting', 'USAGE') as anon_reporting,
     has_schema_privilege('service_role', 'jetnity_reporting', 'USAGE') as service_reporting,
-    pg_has_role('authenticated', 'jetnity_reporting_owner', 'MEMBER') as auth_inherits_owner
+    pg_has_role('authenticated', 'postgres', 'MEMBER') as auth_inherits_postgres,
+    pg_has_role('anon', 'postgres', 'MEMBER') as anon_inherits_postgres,
+    pg_has_role('service_role', 'postgres', 'MEMBER') as service_inherits_postgres,
+    (select relrowsecurity from pg_class pc join pg_namespace pn on pn.oid = pc.relnamespace
+      where pn.nspname = 'public' and pc.relname = 'profiles') as profiles_rls,
+    (select pg_get_userbyid(pc.relowner) from pg_class pc join pg_namespace pn on pn.oid = pc.relnamespace
+      where pn.nspname = 'public' and pc.relname = 'profiles') as profiles_owner
+  from pg_class c
+  join pg_namespace n on n.oid = c.relnamespace
+  join pg_roles r on r.rolname = 'postgres'
+  where n.nspname = 'auth' and c.relname = 'users'
 ) q;
 `),
   )
   bewerte(
+    'auth.users Fixture: RLS-on, FORCE-off, owner supabase_auth_admin, keine Policies',
+    gruppe,
+    fixture.users_rls === true &&
+      fixture.users_force_rls === false &&
+      fixture.users_owner === 'supabase_auth_admin' &&
+      Number(fixture.users_policies) === 0,
+    JSON.stringify(fixture),
+  )
+  bewerte(
+    'postgres Fixture: NOSUPERUSER + BYPASSRLS + SELECT; Clients erben postgres nicht',
+    gruppe,
+    fixture.postgres_super === false &&
+      fixture.postgres_bypass === true &&
+      fixture.postgres_sel === true &&
+      fixture.anon_sel === false &&
+      fixture.auth_sel === false &&
+      fixture.service_sel === false &&
+      fixture.auth_inherits_postgres === false &&
+      fixture.anon_inherits_postgres === false &&
+      fixture.service_inherits_postgres === false,
+    JSON.stringify(fixture),
+  )
+  bewerte(
     'kein client SELECT auf auth.users; jetnity_internal bleibt geschlossen',
     gruppe,
-    grants.anon_sel === false &&
-      grants.auth_sel === false &&
-      grants.service_sel === false &&
-      grants.anon_internal === false &&
-      grants.auth_internal === false &&
-      grants.service_internal === false &&
-      grants.auth_reporting === true &&
-      grants.anon_reporting === false &&
-      grants.service_reporting === false &&
-      grants.auth_inherits_owner === false,
-    JSON.stringify(grants),
+    fixture.anon_internal === false &&
+      fixture.auth_internal === false &&
+      fixture.service_internal === false &&
+      fixture.auth_reporting === true &&
+      fixture.anon_reporting === false &&
+      fixture.service_reporting === false,
+    JSON.stringify(fixture),
+  )
+  bewerte(
+    'profiles Fixture: RLS-on, owner postgres',
+    gruppe,
+    fixture.profiles_rls === true && fixture.profiles_owner === 'postgres',
+    JSON.stringify({ rls: fixture.profiles_rls, owner: fixture.profiles_owner }),
   )
 
   const acl = sitzung({
@@ -979,7 +1533,7 @@ function ohneKommentare(src) {
 }
 
 function pruefeStatischeQuelle() {
-  const gruppe = 'static'
+  const gruppe = 'static-source'
   const candidate = ohneKommentare(readFileSync(CANDIDATE, 'utf8'))
   bewerte(
     'Candidate enthält kein dynamisches SQL',
@@ -988,11 +1542,121 @@ function pruefeStatischeQuelle() {
     'source scan',
   )
   const grantStatements = candidate.split(';').filter((teil) => /^\s*grant\b/im.test(teil))
+  const createRoleStatements = candidate.split(';').filter((teil) => /^\s*create\s+role\b/im.test(teil))
   bewerte(
-    'Candidate gewährt nichts auf jetnity_internal',
+    'Candidate gewährt nichts auf jetnity_internal und kein client SELECT auf auth.users',
     gruppe,
-    grantStatements.every((teil) => !/\bjetnity_internal\b/i.test(teil)),
+    grantStatements.every((teil) => !/\bjetnity_internal\b/i.test(teil)) &&
+      !/grant\s+select\s+on(?:\s+table)?\s+auth\.users/i.test(candidate) &&
+      !/create\s+role\s+jetnity_reporting_owner/i.test(candidate) &&
+      createRoleStatements.length === 0,
     'source scan',
+  )
+  bewerte(
+    'Candidate benutzt 720-hours-Fenster und owner postgres',
+    gruppe,
+    /interval '720 hours'/.test(candidate) && /owner to postgres/.test(candidate) && !/interval '30 days'/.test(candidate),
+    'source scan',
+  )
+}
+
+export function schreibeHostileStartup(datei) {
+  writeFileSync(
+    datei,
+    [
+      `\\echo ${PSQLRC_SENTINEL}`,
+      '\\connect nonexistent_psqlrc_redirect_db',
+      '',
+    ].join('\n'),
+  )
+}
+
+export function runPsqlCapture(psqlBin, args, env) {
+  try {
+    const stdout = execFileSync(psqlBin, args, {
+      encoding: 'utf8',
+      env,
+      timeout: SUBPROCESS_TIMEOUT_MS.psql,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    })
+    return { status: 0, stdout, stderr: '' }
+  } catch (fehler) {
+    return {
+      status: typeof fehler?.status === 'number' ? fehler.status : 1,
+      stdout: String(fehler?.stdout ?? ''),
+      stderr: String(fehler?.stderr ?? ''),
+    }
+  }
+}
+
+function pruefePsqlrcIsolation() {
+  const gruppe = 'psqlrc-node'
+  const hostileDir = join(cluster.rootDir, 'hostile-psqlrc')
+  mkdirSync(hostileDir, { recursive: true, mode: 0o700 })
+  const explicitRc = join(hostileDir, 'explicit.psqlrc')
+  const homeRc = join(hostileDir, '.psqlrc')
+  schreibeHostileStartup(explicitRc)
+  schreibeHostileStartup(homeRc)
+
+  const basisEnv = cleanChildEnv()
+  const verbindungsArgs = ['-h', cluster.socketDir, '-U', cluster.user, '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-At', '-q', '-c', 'select 1']
+
+  const kontrolle = runPsqlCapture(cluster.psql, verbindungsArgs, {
+    ...basisEnv,
+    PSQLRC: explicitRc,
+    HOME: hostileDir,
+  })
+  bewerte(
+    'Lokale Kontrolle: ohne -X führt explizites PSQLRC den Sentinel aus (kein Remote-Ziel)',
+    gruppe,
+    kontrolle.stdout.includes(PSQLRC_SENTINEL),
+    `${kontrolle.status} ${kontrolle.stdout.trim()} ${kontrolle.stderr.trim()}`,
+  )
+
+  const explizit = runPsqlCapture(cluster.psql, ['-X', '--no-psqlrc', ...verbindungsArgs], {
+    ...basisEnv,
+    PSQLRC: explicitRc,
+    HOME: '/tmp',
+  })
+  bewerte(
+    'explizites PSQLRC wird mit -X/--no-psqlrc nicht ausgeführt',
+    gruppe,
+    explizit.status === 0 && !explizit.stdout.includes(PSQLRC_SENTINEL) && explizit.stdout.trim() === '1',
+    `${explizit.status} ${explizit.stdout.trim()}`,
+  )
+
+  const geerbt = runPsqlCapture(cluster.psql, ['-X', '--no-psqlrc', ...verbindungsArgs], {
+    ...basisEnv,
+    HOME: hostileDir,
+  })
+  bewerte(
+    'geerbtes HOME/.psqlrc wird mit -X/--no-psqlrc nicht ausgeführt',
+    gruppe,
+    geerbt.status === 0 && !geerbt.stdout.includes(PSQLRC_SENTINEL) && geerbt.stdout.trim() === '1',
+    `${geerbt.status} ${geerbt.stdout.trim()}`,
+  )
+
+  const runnerOut = psqlFile('select 2', 'postgres')
+  bewerte(
+    'Runner-psql (sanitized env, -X) führt keinen Startup-Sentinel aus',
+    gruppe,
+    runnerOut === '2' && !runnerOut.includes(PSQLRC_SENTINEL) && !cleanChildEnv().PSQLRC,
+    runnerOut,
+  )
+}
+
+function pruefeNormalCleanupEvidence(rootDirBeforeStop, cleanupReport) {
+  const gruppe = 'cleanup-node'
+  bewerte(
+    'Normal-Lauf: Postmaster ist nach stop beendet; owned directory entfernt',
+    gruppe,
+    cleanupReport?.cleaned === true &&
+      cleanupReport?.removed === true &&
+      cleanupReport?.running === false &&
+      !cleanupReport?.error &&
+      rootDirBeforeStop &&
+      !existsSync(rootDirBeforeStop),
+    JSON.stringify({ ...cleanupReport, exists: existsSync(rootDirBeforeStop ?? '') }),
   )
 }
 
@@ -1009,25 +1673,48 @@ async function main() {
   console.log(`candidate sha256=${candidateHash}`)
   console.log(`bootstrap sha256=${bootstrapHash}`)
 
-  startePrivatesCluster()
+  let rootDir = null
+  let cleanupReport = null
   try {
+    startePrivatesCluster()
+    rootDir = cluster.rootDir
+    console.log(`cluster lifecycle=${cluster.lifecycle} socket=${cluster.socketDir} (private; system 16/main not used)`)
     legeDatenbankAn()
-    const version = psqlFile('select version()')
+    const version = psqlFile('select version()', 'postgres')
     console.log(`postgresql ${version}`)
-    console.log(`cluster socket=${cluster.socketDir} (private; system 16/main not used)`)
 
     pruefeStatischeQuelle()
+    pruefePsqlrcIsolation()
     pruefeAutorisierung()
     pruefeLebenszyklus()
     pruefeFensterUndNull()
     pruefeZeroVersusDeny()
+    pruefeRlsContrast()
     pruefeKatalogUndDirektzugriff()
-  } finally {
-    stoppePrivatesCluster()
+  } catch (fehler) {
+    console.error(fehler)
+    cleanupReport = stoppePrivatesCluster()
+    if (cleanupReport.error) {
+      console.error('CLEANUP FAILED:', cleanupReport)
+    }
+    process.exit(1)
   }
 
+  cleanupReport = stoppePrivatesCluster()
+  if (cleanupReport.error) {
+    console.error('CLEANUP FAILED:', cleanupReport)
+    process.exit(1)
+  }
+  pruefeNormalCleanupEvidence(rootDir, cleanupReport)
+  console.log(`cleanup ${JSON.stringify(cleanupReport)}`)
+
+  const byGruppe = ergebnisse.reduce((acc, eintrag) => {
+    acc[eintrag.gruppe] = (acc[eintrag.gruppe] ?? 0) + 1
+    return acc
+  }, {})
   const fehler = ergebnisse.filter((eintrag) => !eintrag.ok)
   console.log(`\n${ergebnisse.length - fehler.length}/${ergebnisse.length} isolierte Account-Count-Nachweise erfüllt.`)
+  console.log(`assertion categories: ${JSON.stringify(byGruppe)}`)
   console.log('Ziel: privater disposable PostgreSQL-Cluster. Supabase und Production nicht berührt.')
   if (fehler.length) {
     console.error('Fehlgeschlagen:')
@@ -1041,10 +1728,9 @@ async function main() {
 if (invokedAsMain()) {
   main().catch((fehler) => {
     console.error(fehler)
-    try {
-      stoppePrivatesCluster()
-    } catch {
-      // Best-effort cleanup of this run only.
+    const report = stoppePrivatesCluster()
+    if (report.error) {
+      console.error('CLEANUP FAILED:', report)
     }
     process.exit(1)
   })

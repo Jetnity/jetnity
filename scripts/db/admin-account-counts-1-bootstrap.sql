@@ -3,20 +3,32 @@
 --
 -- Two layers are kept distinct:
 --
---   FIXTURE SUBSTITUTE — objects invented here so the disposable cluster
---   can host the candidate. They match Technical-Lead 2026-09-22 metadata
---   for auth.users field types/nullability and a minimal profiles role
---   source. They are not a claim that Production was copied wholesale.
+--   METADATA-FAITHFUL FIXTURE — objects invented here so the disposable
+--   cluster can host the candidate. They match Technical-Lead 2026-09-22
+--   Production metadata used as fixture-design evidence:
+--     PostgreSQL TimeZone UTC;
+--     auth.users RLS=true, FORCE RLS=false, owner=supabase_auth_admin,
+--     no policies (default deny);
+--     public.profiles RLS=true, owner=postgres;
+--     existing postgres role NOSUPERUSER + BYPASSRLS + SELECT on
+--     auth.users;
+--     authenticated/anon SELECT auth.users=false;
+--     authenticated/anon/service_role USAGE jetnity_internal=false;
+--     auth.users column types/nullability as verified.
+--   This is not a claim that Production was copied wholesale, and it
+--   does not change any live postgres attributes or remote schema.
 --
 --   EXTRACTED SOURCE — function bodies copied from the named current
 --   migration files. Helpers are not rewritten and not weakened.
 --
 -- #494's auth.users fixture has only `id` and cannot prove this contract.
+-- Client roles must not become members of postgres.
 
 create extension if not exists pgcrypto;
 
 -- ---------------------------------------------------------------------------
--- FIXTURE SUBSTITUTE: Data-API roles
+-- METADATA-FAITHFUL FIXTURE: Data-API roles + distinct auth owner +
+-- trusted database postgres (NOSUPERUSER + BYPASSRLS).
 -- ---------------------------------------------------------------------------
 do $$
 begin
@@ -29,10 +41,38 @@ begin
   if not exists (select 1 from pg_roles where rolname = 'service_role') then
     create role service_role nologin noinherit bypassrls;
   end if;
+  if not exists (select 1 from pg_roles where rolname = 'supabase_auth_admin') then
+    create role supabase_auth_admin
+      nologin
+      nosuperuser
+      nocreatedb
+      nocreaterole
+      noinherit;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'postgres') then
+    create role postgres
+      nologin
+      nosuperuser
+      nocreatedb
+      nocreaterole
+      noinherit
+      bypassrls;
+  else
+    alter role postgres with nosuperuser nologin nocreatedb nocreaterole noinherit bypassrls;
+  end if;
 end
 $$;
 
+comment on role postgres is
+  'METADATA-FAITHFUL FIXTURE: NOSUPERUSER + BYPASSRLS, matching TL 2026-09-22 Production metadata. Not a live attribute change. Client roles must not inherit this role. Broader existing authority is documented; this is not Production privilege activation.';
+
+comment on role supabase_auth_admin is
+  'METADATA-FAITHFUL FIXTURE: distinct owner of auth.users. Not a live role change.';
+
 create schema if not exists auth;
+grant usage on schema auth to supabase_auth_admin;
+grant usage on schema public to postgres;
+grant usage on schema auth to postgres;
 
 grant usage on schema public to anon, authenticated, service_role;
 grant usage on schema auth to anon, authenticated, service_role;
@@ -48,9 +88,10 @@ alter default privileges in schema public
   grant all on sequences to anon, authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
--- FIXTURE SUBSTITUTE: auth.users shape from TL Production METADATA ONLY
--- 2026-09-22. Verified columns/nullability only. Extra columns are not
--- invented. email/name are intentionally absent so they cannot leak.
+-- METADATA-FAITHFUL FIXTURE: auth.users shape from TL Production
+-- METADATA ONLY 2026-09-22. Verified columns/nullability only. Extra
+-- columns are not invented. email/name are intentionally absent so they
+-- cannot leak. RLS-on / FORCE RLS-off / no policies / distinct owner.
 -- ---------------------------------------------------------------------------
 create table auth.users (
   id uuid primary key,
@@ -61,14 +102,24 @@ create table auth.users (
 );
 
 comment on table auth.users is
-  'FIXTURE SUBSTITUTE matching TL-verified types: id UUID NOT NULL; created_at/deleted_at/confirmed_at timestamptz NULLABLE; is_anonymous boolean NOT NULL. Not a full Production catalog copy.';
+  'METADATA-FAITHFUL FIXTURE matching TL-verified types and RLS: id UUID NOT NULL; created_at/deleted_at/confirmed_at timestamptz NULLABLE; is_anonymous boolean NOT NULL; RLS=true; FORCE RLS=false; owner=supabase_auth_admin; no policies (default deny). Not a full Production catalog copy and not a live mutation.';
 
 revoke all on table auth.users from public;
 revoke all on table auth.users from anon;
 revoke all on table auth.users from authenticated;
 revoke all on table auth.users from service_role;
 
--- FIXTURE SUBSTITUTE: session JWT helpers (same contract as #494 bootstrap).
+alter table auth.users enable row level security;
+-- FORCE RLS remains false: table owner supabase_auth_admin bypasses RLS;
+-- postgres bypasses via BYPASSRLS, not ownership. No policies = default deny
+-- for every non-owner / non-BYPASSRLS role, including a SELECT grantee.
+alter table auth.users owner to supabase_auth_admin;
+
+-- Trusted database owner already has SELECT on live auth.users.
+-- This fixture grant is not a client grant and is not created by the candidate.
+grant select on table auth.users to postgres;
+
+-- Session JWT helpers (same contract as #494 bootstrap).
 create or replace function auth.uid()
 returns uuid
 language sql
@@ -93,8 +144,8 @@ as $$
   )::jsonb;
 $$;
 
-grant execute on function auth.uid() to anon, authenticated, service_role;
-grant execute on function auth.jwt() to anon, authenticated, service_role;
+grant execute on function auth.uid() to anon, authenticated, service_role, postgres;
+grant execute on function auth.jwt() to anon, authenticated, service_role, postgres;
 
 -- Control table: created under default privileges so the harness can prove
 -- those defaults are live while auth.users SELECT remains denied.
@@ -104,9 +155,10 @@ create table public.acl_kontrolle (
 );
 
 -- ---------------------------------------------------------------------------
--- FIXTURE SUBSTITUTE: minimal public.profiles role source.
+-- METADATA-FAITHFUL FIXTURE: minimal public.profiles role source.
 -- aktuelle_rolle() reads profiles.role by auth.uid() and does not itself
 -- establish an active/non-deleted caller (TL metadata).
+-- RLS=true, owner=postgres.
 -- ---------------------------------------------------------------------------
 create table public.profiles (
   user_id uuid primary key,
@@ -123,7 +175,10 @@ alter table public.profiles
   check (status in ('active', 'pending', 'disabled', 'banned'));
 
 comment on table public.profiles is
-  'FIXTURE SUBSTITUTE: only user_id/role/status, enough for extracted aktuelle_rolle(). Not used to count target accounts.';
+  'METADATA-FAITHFUL FIXTURE: only user_id/role/status, enough for extracted aktuelle_rolle(). RLS=true, owner=postgres. Not used to count target accounts.';
+
+alter table public.profiles enable row level security;
+alter table public.profiles owner to postgres;
 
 -- ---------------------------------------------------------------------------
 -- EXTRACTED SOURCE: public.rollenrang
@@ -218,11 +273,11 @@ revoke all on function public.hat_rolle_mindestens(text) from public, anon;
 revoke all on function public.aktuelles_admin_aal2() from public, anon;
 revoke all on function public.darf_konten_verwalten() from public, anon;
 
-grant execute on function public.rollenrang(text) to authenticated, service_role;
-grant execute on function public.aktuelle_rolle() to authenticated, service_role;
-grant execute on function public.hat_rolle_mindestens(text) to authenticated, service_role;
-grant execute on function public.aktuelles_admin_aal2() to authenticated, service_role;
-grant execute on function public.darf_konten_verwalten() to authenticated, service_role;
+grant execute on function public.rollenrang(text) to authenticated, service_role, postgres;
+grant execute on function public.aktuelle_rolle() to authenticated, service_role, postgres;
+grant execute on function public.hat_rolle_mindestens(text) to authenticated, service_role, postgres;
+grant execute on function public.aktuelles_admin_aal2() to authenticated, service_role, postgres;
+grant execute on function public.darf_konten_verwalten() to authenticated, service_role, postgres;
 
 -- New objects need explicit grants (2026 Data API default).
 alter default privileges in schema public
