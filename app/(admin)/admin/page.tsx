@@ -1,14 +1,18 @@
 export const dynamic = 'force-dynamic'
 
+import AdminAccountCounts from '@/components/admin/home/AdminAccountCounts'
 import AdminStatsStrip from '@/components/admin/home/AdminStatsStrip'
 import AdminTimeSeries from '@/components/admin/home/AdminTimeSeries'
 import AdminLagehinweise from '@/components/admin/home/AdminLagehinweise'
 import AdminModellnutzungHinweis from '@/components/admin/home/AdminModellnutzungHinweis'
 import AdminNaechsteSchritte from '@/components/admin/home/AdminNaechsteSchritte'
 import AdminHealthCards from '@/components/admin/home/AdminHealthCards'
+import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 
 export default async function AdminHomePage() {
+  const accountCountsLocal = isAdminAccountCountsRuntimeEnabled()
+
   return (
     <div className="grid gap-6">
       <section className="bg-card rounded-2xl border border-border p-5">
@@ -18,6 +22,12 @@ export default async function AdminHomePage() {
         <h2 className="mt-1 text-2xl font-semibold tracking-tight">Operative Lage</h2>
         <p className="mt-2 text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.steuerzentraleLage}</p>
       </section>
+
+      {accountCountsLocal ? (
+        <section className="bg-card rounded-2xl border border-border p-5">
+          <AdminAccountCounts />
+        </section>
+      ) : null}
 
       <section className="bg-card rounded-2xl border border-border p-5">
         <AdminStatsStrip />

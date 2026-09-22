@@ -8,6 +8,11 @@ import type { Database } from '@/types/supabase'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+/** Read-only view of the URL already captured for the session factories. */
+export function getServerSupabaseUrl(): string | undefined {
+  return SUPABASE_URL
+}
+
 /** Next 14: Store. Next 15/16: Promise<Store>. `Awaited` hält beide Linien. */
 type CookieStore = Awaited<ReturnType<typeof cookies>>
 
