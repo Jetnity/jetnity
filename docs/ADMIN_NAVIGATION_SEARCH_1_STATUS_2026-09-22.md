@@ -51,7 +51,22 @@ Local allowlisted area search over `filterAdminNav(ADMIN_NAV_ITEMS, useAdminSess
 
 Hydrated concrete `activeElement` after close: desktop/mobile trigger buttons. After Tab: option `/admin`. After foreign-modal shortcut: `#foreign-focus`. Fetches during `kosten` search: `[]`. Physical device: **not run** (Chromium emulation only).
 
-Exact-head CI/Auth/Vercel Preview must be re-read on the freeze SHA after this persist.
+## Exact-head gates on persist SHA `e029b455395f3f3cc6fd36d7d9bd1a4219f213f2`
+
+Live re-read after push, before this stamp:
+
+| Gate | Result |
+| --- | --- |
+| `origin/main` / merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` — **4 ahead / 0 behind** |
+| CI `35749140321` | SUCCESS on that exact SHA |
+| Auth-Konfiguration | SUCCESS (`106818373093`) |
+| Typecheck, Lint & Build | SUCCESS (`106818373498`) |
+| Vercel Preview | READY `4QdgtJPnmh2op4oJdvcdWpowfjvX` — https://jetnity-app-git-feat-admin-navigation-search-1-jetnity-e1b93c82.vercel.app |
+| Draft #545 | remains Draft; not Ready; not merged |
+
+A later stamp SHA invalidates these exact-head gates and must be re-read. Preview READY is not a signed-in Admin-session proof.
+
+Observed parallel Draft #547 / admin indexing status 1: read-only towards this slice's nav/Topbar/layout/honesty files. This writer did not start or edit that slice.
 
 ## Risks
 

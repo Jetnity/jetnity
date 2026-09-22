@@ -12,7 +12,7 @@ Task seed: `c0539a1940c4df4809c743bf7fd2c63b80c5294f`
 `origin/main` / merge-base: `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`  
 Synced by authorized normal merge of #546. No rebase/force. Global startup docs were inherited, not edited.
 
-Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older exact-head gates do not apply.
+Persist implementation SHA `e029b455395f3f3cc6fd36d7d9bd1a4219f213f2` has live CI `35749140321` SUCCESS, Auth SUCCESS, Vercel Preview READY. Re-read `git rev-parse HEAD` after any later stamp. A new head invalidates older exact-head gates.
 
 ## Owned files
 
@@ -33,4 +33,4 @@ Read-only: `lib/admin/navigation.ts`, `AdminSessionProvider`, roles/capabilities
 
 ## Next actor
 
-Technical Lead exact-head review of the freeze SHA only. Not Ready. Not merged. No follow-up slice. Immediate review fixes stay in this session.
+Technical Lead exact-head review of the freeze SHA only. Not Ready. Not merged. No follow-up slice. Immediate review fixes stay in this session. Do not start #547 from this writer.
