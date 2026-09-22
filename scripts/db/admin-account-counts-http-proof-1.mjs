@@ -1,0 +1,1179 @@
+#!/usr/bin/env node
+// Isolated local HTTP proof of the unchanged public.admin_account_counts_v1()
+// wrapper through real PostgREST JWT verification.
+//
+// Examines only the accepted producer/bootstrap plus the frozen #553 snapshot
+// wrapper/parser/contract. Never imports scripts/db/sql.mjs, never uses remote
+// defaults, never starts a hosted service, and never writes product runtime.
+//
+//   node --import tsx scripts/db/admin-account-counts-http-proof-1.mjs
+
+import { execFileSync, spawn } from 'node:child_process'
+import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto'
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  appendFileSync,
+  writeFileSync,
+} from 'node:fs'
+import { createServer } from 'node:net'
+import { tmpdir } from 'node:os'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+
+import {
+  FORBIDDEN_CONNECTION_KEYS,
+  CHILD_ENV_STRIP_KEYS,
+  PSQL_NO_STARTUP,
+  assertIsolatedConnectionEnvironment,
+} from './admin-account-counts-1-local-proof.mjs'
+
+const ROOT = new URL('../..', import.meta.url).pathname
+const BOOTSTRAP = join(ROOT, 'scripts/db/admin-account-counts-1-bootstrap.sql')
+const CANDIDATE = join(ROOT, 'scripts/db/admin-account-counts-1-candidate.sql')
+const FIXTURE = join(ROOT, 'scripts/db/admin-account-counts-http-proof-1-fixture.sql')
+const DB_NAME = 'jetnity_admin_account_counts_http_1'
+const CLUSTER_USER = 'jetnity_http_proof'
+const AUTHENTICATOR = 'jetnity_http_authenticator'
+const SNAPSHOT = 'dcf7bfee497ba3aa2038a43fe4bc2a09e541625f'
+const EXPECTED = Object.freeze({
+  producer: 'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420',
+  bootstrap: '0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2',
+  wrapper: '13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb',
+  parserBlob: '6205ecbba621b048fff479856c5523fab5ec4f6d',
+  contractBlob: '6826eeea70aecc0507d05624daaeac47af0be9b8',
+})
+const POSTGREST_VERSION = '16.3'
+const POSTGREST_ASSET = `postgrest-v${POSTGREST_VERSION}-linux-static-x86-64.tar.xz`
+const POSTGREST_URL = `https://github.com/PostgREST/postgrest/releases/download/v${POSTGREST_VERSION}/${POSTGREST_ASSET}`
+const POSTGREST_TAR_SHA256 = '4eb414eb948c8800863cc8c9896a17b611b2dccf9ff581f4d57f42ec9ccee40d'
+const SUBPROCESS_TIMEOUT_MS = Object.freeze({
+  initdb: 60_000,
+  pgctl: 45_000,
+  psql: 30_000,
+  download: 90_000,
+  http: 8_000,
+})
+const MAX_HTTP_REQUESTS = 48
+const EXPECTED_PRESENT = '10'
+const EXPECTED_WINDOW_ZERO = '0'
+const EXPECTED_PRESENT_AFTER_RECENT = '11'
+const EXPECTED_WINDOW_AFTER_RECENT = '1'
+
+export const IDS = Object.freeze({
+  owner: '10000000-0000-4000-8000-000000000001',
+  admin: '10000000-0000-4000-8000-000000000002',
+  operator: '10000000-0000-4000-8000-000000000003',
+  moderator: '10000000-0000-4000-8000-000000000004',
+  user: '10000000-0000-4000-8000-000000000005',
+  creator: '10000000-0000-4000-8000-000000000006',
+  noProfile: '10000000-0000-4000-8000-000000000007',
+  nullTs: '10000000-0000-4000-8000-00000000000a',
+  old: '10000000-0000-4000-8000-00000000000b',
+  banned: '10000000-0000-4000-8000-00000000000e',
+  anonUser: '10000000-0000-4000-8000-00000000000f',
+  softDel: '10000000-0000-4000-8000-000000000010',
+  absent: '10000000-0000-4000-8000-000000000011',
+  recent: '10000000-0000-4000-8000-000000000012',
+  anonPriv: '10000000-0000-4000-8000-000000000014',
+})
+
+const HTTP_FORBIDDEN_KEYS = Object.freeze([
+  ...FORBIDDEN_CONNECTION_KEYS,
+  'PGRST_DB_URI',
+  'PGRST_JWT_SECRET',
+  'PGRST_DB_ANON_ROLE',
+  'SUPABASE_URL',
+  'SUPABASE_ANON_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+])
+
+const ergebnisse = []
+let cluster = null
+let httpState = null
+let parseAdminAccountCountsPayload = null
+let httpRequestCount = 0
+
+export function sha256Datei(pfad) {
+  return createHash('sha256').update(readFileSync(pfad)).digest('hex')
+}
+
+export function assertIsolatedHttpEnvironment(env = process.env, argv = process.argv) {
+  assertIsolatedConnectionEnvironment(env, argv)
+  const gesetzt = HTTP_FORBIDDEN_KEYS.filter((schluessel) => {
+    const wert = env[schluessel]
+    return wert != null && wert !== ''
+  })
+  if (gesetzt.length) {
+    throw new Error(`Verbotene HTTP/DB-Umgebung: ${gesetzt.join(', ')}`)
+  }
+  if (argv.some((arg) => /0\.0\.0\.0|\[::\]|supabase\.(co|com)/i.test(String(arg)))) {
+    throw new Error('Öffentliches Bind-Ziel oder Remote-Host in den Argumenten ist verboten.')
+  }
+}
+
+export function findPgBinsPrefer17() {
+  const dirs = ['/usr/lib/postgresql/17/bin', '/usr/lib/postgresql/16/bin', '/usr/bin']
+  const pick = (name) => {
+    for (const dir of dirs) {
+      const pfad = join(dir, name)
+      if (existsSync(pfad)) return pfad
+    }
+    return null
+  }
+  return {
+    initdb: pick('initdb'),
+    pgCtl: pick('pg_ctl'),
+    postgres: pick('postgres'),
+    psql: pick('psql'),
+  }
+}
+
+export function requirePgBinsPrefer17() {
+  const bins = findPgBinsPrefer17()
+  const missing = Object.entries(bins)
+    .filter(([, pfad]) => !pfad)
+    .map(([name]) => name)
+  if (missing.length) {
+    const error = new Error(
+      `BLOCKED: lokale PostgreSQL-Binaries fehlen (${missing.join(', ')}). Kein Cloud-Fallback.`,
+    )
+    error.code = 'JETNITY_LOCAL_PG_MISSING'
+    throw error
+  }
+  return bins
+}
+
+export function cleanProofEnv(base = process.env) {
+  const env = { ...base }
+  for (const schluessel of Object.keys(env)) {
+    if (
+      schluessel.startsWith('PG') ||
+      schluessel.startsWith('PGRST_') ||
+      HTTP_FORBIDDEN_KEYS.includes(schluessel) ||
+      CHILD_ENV_STRIP_KEYS.includes(schluessel)
+    ) {
+      delete env[schluessel]
+    }
+  }
+  if (cluster?.homeDir) env.HOME = cluster.homeDir
+  return env
+}
+
+function bewerte(name, gruppe, ok, detail) {
+  ergebnisse.push({ name, gruppe, ok, detail: String(detail ?? '') })
+  console.log(`${ok ? '  ok  ' : ' FEHL '} [${gruppe}] ${name}  ${sanitized(detail)}`)
+}
+
+function sanitized(wert) {
+  return String(wert ?? '')
+    .replace(/eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, '[jwt-redacted]')
+    .replace(/postgres(?:ql)?:\/\/[^/\s]+/gi, '[db-uri-redacted]')
+    .replace(/jwt-secret\s*=\s*.+/gi, 'jwt-secret=[redacted]')
+}
+
+function base64urlJson(value) {
+  return Buffer.from(JSON.stringify(value)).toString('base64url')
+}
+
+export function signLocalJwt(payload, secret) {
+  const header = base64urlJson({ alg: 'HS256', typ: 'JWT' })
+  const body = base64urlJson(payload)
+  const sig = createHmac('sha256', secret).update(`${header}.${body}`).digest('base64url')
+  return `${header}.${body}.${sig}`
+}
+
+function claims({ uid, role = 'authenticated', aal, extra = {}, expOffsetSec = 300 }) {
+  const now = Math.floor(Date.now() / 1000)
+  const payload = {
+    role,
+    iat: now,
+    exp: now + expOffsetSec,
+    ...extra,
+  }
+  if (uid) payload.sub = uid
+  if (aal) payload.aal = aal
+  return payload
+}
+
+export function buildPostgrestConfig({ host, port, dbUri, jwtFile, extraSearchPath = '' }) {
+  if (host !== '127.0.0.1') {
+    throw new Error('fail-closed: PostgREST host must be numeric loopback 127.0.0.1')
+  }
+  if (!/^postgres:\/\/jetnity_http_authenticator@\//.test(dbUri)) {
+    throw new Error('fail-closed: db-uri must use the local authenticator and a socket host')
+  }
+  return [
+    `server-host = "${host}"`,
+    `server-port = ${port}`,
+    'server-reuseport = false',
+    `db-uri = "${dbUri}"`,
+    'db-schemas = "public"',
+    `db-extra-search-path = "${extraSearchPath}"`,
+    'db-anon-role = "anon"',
+    'db-config = false',
+    'db-channel-enabled = true',
+    'db-channel = "pgrst"',
+    'db-pool = 4',
+    'db-tx-end = "rollback"',
+    'openapi-mode = "disabled"',
+    'log-level = "error"',
+    'log-query = false',
+    `jwt-secret = "@${jwtFile}"`,
+    'jwt-secret-is-base64 = false',
+    'jwt-role-claim-key = ".role"',
+    '',
+  ].join('\n')
+}
+
+export function assertConfigIsLoopbackOnly(configText) {
+  if (!/server-host\s*=\s*"127\.0\.0\.1"/.test(configText)) {
+    throw new Error('fail-closed: server-host is not 127.0.0.1')
+  }
+  if (/0\.0\.0\.0|!4|::/.test(configText)) {
+    throw new Error('fail-closed: public or wildcard bind is forbidden')
+  }
+}
+
+function gitShow(revPath) {
+  return execFileSync('git', ['show', revPath], {
+    encoding: 'buffer',
+    cwd: ROOT,
+    timeout: 15_000,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+}
+
+function gitBlob(revPath) {
+  return execFileSync('git', ['rev-parse', revPath], {
+    encoding: 'utf8',
+    cwd: ROOT,
+    timeout: 15_000,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim()
+}
+
+export function exportFrozenSources(targetDir) {
+  mkdirSync(targetDir, { recursive: true, mode: 0o700 })
+  chmodSync(targetDir, 0o700)
+  const wrapper = gitShow(`${SNAPSHOT}:scripts/db/admin-account-counts-delivery-1-rpc.sql`)
+  const parser = gitShow(`${SNAPSHOT}:lib/admin/account-counts-delivery/parser.ts`)
+  const contract = gitShow(`${SNAPSHOT}:lib/admin/account-counts-delivery/contract.ts`)
+  writeFileSync(join(targetDir, 'admin-account-counts-delivery-1-rpc.sql'), wrapper, { mode: 0o600 })
+  writeFileSync(join(targetDir, 'parser.ts'), parser, { mode: 0o600 })
+  writeFileSync(join(targetDir, 'contract.ts'), contract, { mode: 0o600 })
+  const rewritten = parser
+    .toString('utf8')
+    .replace(
+      "from '@/lib/admin/account-counts-delivery/contract'",
+      "from './contract.ts'",
+    )
+  writeFileSync(join(targetDir, 'parser.local.ts'), rewritten, { mode: 0o600 })
+  return {
+    wrapper: join(targetDir, 'admin-account-counts-delivery-1-rpc.sql'),
+    parser: join(targetDir, 'parser.ts'),
+    contract: join(targetDir, 'contract.ts'),
+    parserLocal: join(targetDir, 'parser.local.ts'),
+    hashes: {
+      producer: sha256Datei(CANDIDATE),
+      bootstrap: sha256Datei(BOOTSTRAP),
+      wrapper: sha256Datei(join(targetDir, 'admin-account-counts-delivery-1-rpc.sql')),
+      parserBlob: gitBlob(`${SNAPSHOT}:lib/admin/account-counts-delivery/parser.ts`),
+      contractBlob: gitBlob(`${SNAPSHOT}:lib/admin/account-counts-delivery/contract.ts`),
+    },
+  }
+}
+
+export function assertExactSourceHashes(hashes) {
+  const mismatch = Object.entries(EXPECTED)
+    .filter(([key, expected]) => hashes[key] !== expected)
+    .map(([key]) => key)
+  if (mismatch.length) {
+    const error = new Error(`BLOCKED: source hash mismatch (${mismatch.join(', ')}). Newer #553 heads are not a silent target.`)
+    error.code = 'JETNITY_SOURCE_HASH_MISMATCH'
+    throw error
+  }
+}
+
+async function loadFrozenParser(parserLocal) {
+  const modul = await import(pathToFileURL(parserLocal).href)
+  if (typeof modul.parseAdminAccountCountsPayload !== 'function') {
+    throw new Error('Frozen parser export missing')
+  }
+  return modul.parseAdminAccountCountsPayload
+}
+
+function locatePostgrest(binDir) {
+  const envBin = process.env.JETNITY_HTTP_PROOF_POSTGREST
+  if (envBin && existsSync(envBin)) return envBin
+  const local = join(binDir, 'postgrest')
+  if (existsSync(local)) return local
+  return null
+}
+
+function downloadPostgrest(binDir) {
+  mkdirSync(binDir, { recursive: true, mode: 0o700 })
+  chmodSync(binDir, 0o700)
+  const archive = join(binDir, POSTGREST_ASSET)
+  execFileSync('curl', ['-fL', '--max-time', '90', '-o', archive, POSTGREST_URL], {
+    stdio: 'pipe',
+    timeout: SUBPROCESS_TIMEOUT_MS.download,
+    env: cleanProofEnv(),
+  })
+  const actual = sha256Datei(archive)
+  if (actual !== POSTGREST_TAR_SHA256) {
+    throw new Error(`BLOCKED: PostgREST archive hash mismatch (got ${actual})`)
+  }
+  execFileSync('tar', ['-xJf', archive, '-C', binDir], {
+    stdio: 'pipe',
+    timeout: 15_000,
+  })
+  const binary = join(binDir, 'postgrest')
+  if (!existsSync(binary)) {
+    throw new Error('BLOCKED: PostgREST binary missing after extract')
+  }
+  chmodSync(binary, 0o700)
+  return binary
+}
+
+function requirePostgrest(binDir) {
+  const existing = locatePostgrest(binDir)
+  if (existing) return existing
+  return downloadPostgrest(binDir)
+}
+
+function postmasterLebt(state = cluster) {
+  if (!state?.dataDir) return false
+  const pidDatei = join(state.dataDir, 'postmaster.pid')
+  if (!existsSync(pidDatei)) return false
+  const pid = Number(readFileSync(pidDatei, 'utf8').split('\n')[0])
+  if (!Number.isInteger(pid) || pid <= 1) return false
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function registriereCluster(bins) {
+  const runId = randomUUID()
+  const rootDir = join(tmpdir(), `jetnity-admin-account-counts-http-1-${runId}`)
+  const state = {
+    ...bins,
+    rootDir,
+    dataDir: join(rootDir, 'data'),
+    socketDir: join(rootDir, 'socket'),
+    homeDir: join(rootDir, 'home'),
+    logFile: join(rootDir, 'postgres.log'),
+    sourceDir: join(rootDir, 'sources'),
+    binDir: join(rootDir, 'bin'),
+    user: CLUSTER_USER,
+    lifecycle: 'registered',
+  }
+  cluster = state
+  mkdirSync(rootDir, { recursive: true, mode: 0o700 })
+  mkdirSync(state.socketDir, { recursive: true, mode: 0o700 })
+  mkdirSync(state.homeDir, { recursive: true, mode: 0o700 })
+  chmodSync(rootDir, 0o700)
+  return state
+}
+
+function starteCluster() {
+  const bins = requirePgBinsPrefer17()
+  const state = cluster?.lifecycle ? cluster : registriereCluster(bins)
+  const initArgs = [
+    '-D',
+    state.dataDir,
+    '--auth-local=trust',
+    '--auth-host=reject',
+    '--no-sync',
+    '--encoding=UTF8',
+    '--username',
+    CLUSTER_USER,
+  ]
+  try {
+    execFileSync(bins.initdb, [...initArgs, '--locale=C.UTF-8'], {
+      stdio: 'pipe',
+      env: cleanProofEnv(),
+      timeout: SUBPROCESS_TIMEOUT_MS.initdb,
+    })
+  } catch {
+    execFileSync(bins.initdb, [...initArgs, '--no-locale'], {
+      stdio: 'pipe',
+      env: cleanProofEnv(),
+      timeout: SUBPROCESS_TIMEOUT_MS.initdb,
+    })
+  }
+  state.lifecycle = 'initialized'
+  appendFileSync(
+    join(state.dataDir, 'postgresql.conf'),
+    [
+      '',
+      "listen_addresses = ''",
+      `unix_socket_directories = '${state.socketDir}'`,
+      'unix_socket_permissions = 0700',
+      "timezone = 'UTC'",
+      'logging_collector = off',
+      '',
+    ].join('\n'),
+  )
+  execFileSync(bins.pgCtl, ['-D', state.dataDir, '-l', state.logFile, '-w', '-t', '30', 'start'], {
+    stdio: 'pipe',
+    env: cleanProofEnv(),
+    timeout: SUBPROCESS_TIMEOUT_MS.pgctl,
+  })
+  state.lifecycle = 'started'
+  return state
+}
+
+function stoppeCluster() {
+  const report = {
+    cleaned: false,
+    removed: false,
+    stopped: false,
+    running: postmasterLebt(cluster),
+    httpStopped: false,
+    error: null,
+    lifecycle: cluster?.lifecycle ?? null,
+    rootDir: cluster?.rootDir ?? null,
+  }
+  if (httpState?.child && httpState.child.exitCode == null) {
+    try {
+      process.kill(httpState.child.pid, 'SIGTERM')
+    } catch (fehler) {
+      report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    }
+    const deadline = Date.now() + 5_000
+    while (httpState.child.exitCode == null && Date.now() < deadline) {
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50)
+    }
+    if (httpState.child.exitCode == null && httpState.child.pid) {
+      try {
+        process.kill(httpState.child.pid, 'SIGKILL')
+      } catch {
+        /* already gone */
+      }
+    }
+    report.httpStopped = httpState.child.exitCode != null
+  }
+  if (!cluster) {
+    report.cleaned = true
+    return report
+  }
+  if (report.running || cluster.lifecycle === 'started') {
+    try {
+      execFileSync(cluster.pgCtl, ['-D', cluster.dataDir, '-m', 'fast', '-w', '-t', '20', 'stop'], {
+        stdio: 'pipe',
+        env: cleanProofEnv(),
+        timeout: SUBPROCESS_TIMEOUT_MS.pgctl,
+      })
+    } catch (fehler) {
+      report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    }
+    report.running = postmasterLebt(cluster)
+    if (report.running) {
+      report.error = report.error || 'cluster still running after stop'
+      return report
+    }
+    cluster.lifecycle = 'stopped'
+    report.stopped = true
+  }
+  try {
+    rmSync(cluster.rootDir, { recursive: true, force: true })
+    report.removed = true
+    report.cleaned = true
+  } catch (fehler) {
+    report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    return report
+  }
+  cluster = null
+  httpState = null
+  return report
+}
+
+function psqlSafeArgs(datenbank, extra = []) {
+  if (!cluster) throw new Error('fail-closed: psql without a private cluster is forbidden')
+  const args = [
+    ...PSQL_NO_STARTUP,
+    '-h',
+    cluster.socketDir,
+    '-U',
+    cluster.user,
+    '-d',
+    datenbank,
+    '-v',
+    'ON_ERROR_STOP=1',
+    ...extra,
+  ]
+  if (args.includes('-h') && args[args.indexOf('-h') + 1] !== cluster.socketDir) {
+    throw new Error('fail-closed: psql host is not the owned private socket')
+  }
+  return args
+}
+
+function psqlFile(sql, datenbank = DB_NAME) {
+  return execFileSync(cluster.psql, psqlSafeArgs(datenbank, ['-At', '-q', '-f', '-']), {
+    encoding: 'utf8',
+    input: sql,
+    env: cleanProofEnv(),
+    timeout: SUBPROCESS_TIMEOUT_MS.psql,
+    stdio: ['pipe', 'pipe', 'pipe'],
+  }).trim()
+}
+
+function psqlSql(sql, datenbank = DB_NAME) {
+  execFileSync(cluster.psql, psqlSafeArgs(datenbank, ['-f', '-']), {
+    input: sql,
+    env: cleanProofEnv(),
+    timeout: SUBPROCESS_TIMEOUT_MS.psql,
+    stdio: ['pipe', 'pipe', 'pipe'],
+  })
+}
+
+function jsonRow(sql) {
+  const roh = psqlFile(`select to_jsonb(q) from (${sql}) q;`)
+  const zeile = roh
+    .split('\n')
+    .map((teil) => teil.trim())
+    .reverse()
+    .find((teil) => teil.startsWith('{') || teil.startsWith('['))
+  if (!zeile) throw new Error('no JSON row from catalog query')
+  return JSON.parse(zeile)
+}
+
+async function freeLoopbackPort() {
+  return new Promise((resolvePort, reject) => {
+    const server = createServer()
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address()
+      const port = typeof address === 'object' && address ? address.port : 0
+      server.close((fehler) => {
+        if (fehler) reject(fehler)
+        else resolvePort(port)
+      })
+    })
+    server.on('error', reject)
+  })
+}
+
+function wait(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
+}
+
+async function startePostgrest(sources) {
+  const port = await freeLoopbackPort()
+  const secret = randomBytes(48).toString('hex')
+  const jwtFile = join(cluster.rootDir, 'jwt.secret')
+  const uriFile = join(cluster.rootDir, 'db.uri')
+  const configFile = join(cluster.rootDir, 'postgrest.conf')
+  const dbUri = `postgres://${AUTHENTICATOR}@/${DB_NAME}?host=${cluster.socketDir}`
+  writeFileSync(jwtFile, secret, { mode: 0o600 })
+  writeFileSync(uriFile, dbUri, { mode: 0o600 })
+  const config = buildPostgrestConfig({
+    host: '127.0.0.1',
+    port,
+    dbUri,
+    jwtFile,
+  })
+  assertConfigIsLoopbackOnly(config)
+  writeFileSync(configFile, config, { mode: 0o600 })
+  const binary = requirePostgrest(cluster.binDir)
+  const child = spawn(binary, [configFile], {
+    env: cleanProofEnv(),
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  httpState = {
+    child,
+    port,
+    host: '127.0.0.1',
+    origin: `http://127.0.0.1:${port}`,
+    secret,
+    binary,
+    configFile,
+    log: '',
+  }
+  child.stdout.on('data', (chunk) => {
+    httpState.log += sanitized(chunk.toString())
+  })
+  child.stderr.on('data', (chunk) => {
+    httpState.log += sanitized(chunk.toString())
+  })
+  const deadline = Date.now() + 8_000
+  let ready = false
+  while (Date.now() < deadline) {
+    if (child.exitCode != null) {
+      throw new Error(`PostgREST exited early: ${sanitized(httpState.log)}`)
+    }
+    try {
+      const antwort = await fetch(`${httpState.origin}/`, {
+        signal: AbortSignal.timeout(500),
+      })
+      if (antwort.status > 0) {
+        ready = true
+        break
+      }
+    } catch {
+      wait(80)
+    }
+  }
+  if (!ready) {
+    throw new Error(`PostgREST did not become ready on loopback: ${sanitized(httpState.log)}`)
+  }
+  return { ...httpState, sources, version: postgrestVersion(binary), pgVersion: psqlFile('select version()') }
+}
+
+function postgrestVersion(binary) {
+  return execFileSync(binary, ['--version'], { encoding: 'utf8', timeout: 5_000 }).trim()
+}
+
+function tokenFor(opts) {
+  if (!httpState?.secret) throw new Error('no local signing material')
+  return signLocalJwt(claims(opts), httpState.secret)
+}
+
+async function httpRpc(opts) {
+  if (!httpState) throw new Error('PostgREST is not running')
+  if (httpRequestCount >= MAX_HTTP_REQUESTS) {
+    throw new Error('fail-closed: HTTP request budget exhausted')
+  }
+  httpRequestCount += 1
+  const method = opts.method ?? 'POST'
+  const path = opts.path ?? '/rpc/admin_account_counts_v1'
+  const headers = { Accept: 'application/json', ...(opts.headers ?? {}) }
+  if (opts.token !== undefined && opts.token !== null) {
+    headers.Authorization = `Bearer ${opts.token}`
+  }
+  if (method !== 'GET' && opts.body !== undefined) {
+    headers['Content-Type'] = 'application/json'
+  }
+  const antwort = await fetch(`${httpState.origin}${path}`, {
+    method,
+    headers,
+    body: method === 'GET' ? undefined : opts.body ?? '{}',
+    signal: AbortSignal.timeout(SUBPROCESS_TIMEOUT_MS.http),
+  })
+  const text = await antwort.text()
+  let json = null
+  try {
+    json = text ? JSON.parse(text) : null
+  } catch {
+    json = null
+  }
+  return {
+    status: antwort.status,
+    contentType: antwort.headers.get('content-type') ?? '',
+    json,
+    text: sanitized(text).slice(0, 800),
+    leakedIdentity: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(text) || /user_id|display_name/.test(text),
+  }
+}
+
+function discloseCounts(body) {
+  const blob = JSON.stringify(body ?? {})
+  return /present_registered_accounts|created_in_prior_30_days/.test(blob)
+}
+
+function catalogSnapshot() {
+  return jsonRow(`
+    select
+      has_function_privilege('anon', 'public.admin_account_counts_v1()', 'EXECUTE') as anon_wrap,
+      has_function_privilege('authenticated', 'public.admin_account_counts_v1()', 'EXECUTE') as auth_wrap,
+      has_function_privilege('service_role', 'public.admin_account_counts_v1()', 'EXECUTE') as svc_wrap,
+      has_function_privilege('anon', 'jetnity_reporting.account_counts_v1()', 'EXECUTE') as anon_prod,
+      has_function_privilege('authenticated', 'jetnity_reporting.account_counts_v1()', 'EXECUTE') as auth_prod,
+      has_function_privilege('service_role', 'jetnity_reporting.account_counts_v1()', 'EXECUTE') as svc_prod,
+      has_table_privilege('anon', 'auth.users', 'SELECT') as anon_users,
+      has_table_privilege('authenticated', 'auth.users', 'SELECT') as auth_users,
+      has_table_privilege('service_role', 'auth.users', 'SELECT') as svc_users,
+      has_table_privilege('jetnity_http_authenticator', 'auth.users', 'SELECT') as authenticator_users,
+      has_schema_privilege('anon', 'jetnity_reporting', 'USAGE') as anon_reporting,
+      has_schema_privilege('authenticated', 'jetnity_reporting', 'USAGE') as auth_reporting,
+      has_schema_privilege('anon', 'jetnity_internal', 'USAGE') as anon_internal,
+      has_schema_privilege('authenticated', 'auth', 'USAGE') as auth_schema,
+      pg_has_role('jetnity_http_authenticator', 'authenticated', 'MEMBER') as authenticator_member,
+      pg_has_role('authenticated', 'jetnity_http_authenticator', 'MEMBER') as reverse_member,
+      (select relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'auth' and c.relname = 'users') as users_rls,
+      (select relforcerowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'auth' and c.relname = 'users') as users_force
+  `)
+}
+
+function legeDatenbankAn(sources) {
+  psqlSql(`create database ${DB_NAME}`, 'postgres')
+  psqlSql(
+    [
+      readFileSync(BOOTSTRAP, 'utf8'),
+      readFileSync(CANDIDATE, 'utf8'),
+      readFileSync(sources.wrapper, 'utf8'),
+      readFileSync(FIXTURE, 'utf8'),
+      `grant connect on database ${DB_NAME} to ${AUTHENTICATOR};`,
+    ].join('\n\n'),
+  )
+}
+
+function insertRecentAccount() {
+  psqlSql(`
+    insert into auth.users (id, created_at, deleted_at, confirmed_at, is_anonymous)
+    values ('${IDS.recent}', now() - interval '2 days', null, now() - interval '2 days', false);
+    insert into public.profiles (user_id, role, status)
+    values ('${IDS.recent}', 'user', 'active');
+  `)
+}
+
+function producerStillPresent() {
+  return jsonRow(`
+    select exists (
+      select 1
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'jetnity_reporting' and p.proname = 'account_counts_v1'
+    ) as present
+  `).present
+}
+
+async function waitSchemaReload() {
+  psqlSql(`notify pgrst, 'reload schema';`)
+  wait(200)
+  const deadline = Date.now() + 4_000
+  while (Date.now() < deadline) {
+    const probe = await httpRpc({
+      method: 'GET',
+      path: '/',
+      token: tokenFor({ uid: IDS.user, aal: 'aal1' }),
+    })
+    if (probe.status > 0) return
+    wait(80)
+  }
+}
+
+async function pruefeErfolg() {
+  const gruppe = 'http-auth'
+  const caller = [
+    ['moderator AAL2 POST', IDS.moderator],
+    ['admin AAL2 POST', IDS.admin],
+    ['operator AAL2 POST', IDS.operator],
+    ['owner AAL2 POST', IDS.owner],
+  ]
+  let firstMeasuredAt = null
+  for (const [name, uid] of caller) {
+    const antwort = await httpRpc({
+      method: 'POST',
+      token: tokenFor({ uid, aal: 'aal2' }),
+      body: '{}',
+    })
+    const parsed = parseAdminAccountCountsPayload(antwort.json)
+    const row = Array.isArray(antwort.json) ? antwort.json[0] : antwort.json
+    const ok =
+      antwort.status === 200 &&
+      parsed.ok === true &&
+      row?.present_registered_accounts === EXPECTED_PRESENT &&
+      row?.created_in_prior_30_days === EXPECTED_WINDOW_ZERO &&
+      row?.definition_version === 'jetnity.admin-account-counts.v1' &&
+      typeof row?.present_registered_accounts === 'string' &&
+      typeof row?.created_in_prior_30_days === 'string' &&
+      Number(row.present_registered_accounts) >= 1 &&
+      row.created_in_prior_30_days === '0'
+    if (parsed.ok) {
+      if (!firstMeasuredAt) firstMeasuredAt = parsed.measures.measuredAt
+    }
+    bewerte(
+      `${name} returns deterministic TEXT counts and parser PASS`,
+      gruppe,
+      ok,
+      JSON.stringify({
+        status: antwort.status,
+        present: row?.present_registered_accounts,
+        window: row?.created_in_prior_30_days,
+        parser: parsed.ok,
+        measured_at: parsed.ok ? parsed.measures.measuredAt : null,
+      }),
+    )
+  }
+
+  const getAntwort = await httpRpc({
+    method: 'GET',
+    path: '/rpc/admin_account_counts_v1',
+    token: tokenFor({ uid: IDS.moderator, aal: 'aal2' }),
+  })
+  const getParsed = parseAdminAccountCountsPayload(getAntwort.json)
+  const getRow = Array.isArray(getAntwort.json) ? getAntwort.json[0] : getAntwort.json
+  bewerte(
+    'GET zero-argument RPC matches fixture counts and parser',
+    'http-shape',
+    getAntwort.status === 200 &&
+      getParsed.ok === true &&
+      getRow?.present_registered_accounts === EXPECTED_PRESENT &&
+      getRow?.created_in_prior_30_days === EXPECTED_WINDOW_ZERO,
+    JSON.stringify({ status: getAntwort.status, parser: getParsed.ok, present: getRow?.present_registered_accounts }),
+  )
+  if (getParsed.ok && firstMeasuredAt) {
+    bewerte(
+      'separate HTTP clocks are not required to share measured_at',
+      'http-shape',
+      true,
+      JSON.stringify({ first: firstMeasuredAt, get: getParsed.measures.measuredAt, identical: firstMeasuredAt === getParsed.measures.measuredAt }),
+    )
+  }
+}
+
+async function pruefeNegativ() {
+  const gruppe = 'http-deny'
+  const faelle = [
+    ['ordinary user AAL2', { uid: IDS.user, aal: 'aal2' }],
+    ['ordinary creator AAL2', { uid: IDS.creator, aal: 'aal2' }],
+    ['moderator AAL1', { uid: IDS.moderator, aal: 'aal1' }],
+    ['moderator missing AAL', { uid: IDS.moderator }],
+    ['no-profile AAL2', { uid: IDS.noProfile, aal: 'aal2' }],
+    ['missing subject AAL2', { uid: IDS.absent, aal: 'aal2' }],
+    ['soft-deleted privileged profile', { uid: IDS.softDel, aal: 'aal2' }],
+    ['anonymous privileged profile', { uid: IDS.anonPriv, aal: 'aal2' }],
+    [
+      'metadata-only privileged claim on ordinary user',
+      { uid: IDS.user, aal: 'aal2', extra: { profile_role: 'owner', app_role: 'admin' } },
+    ],
+  ]
+  for (const [name, opts] of faelle) {
+    const antwort = await httpRpc({
+      method: 'POST',
+      token: tokenFor(opts),
+      body: '{}',
+    })
+    bewerte(
+      `${name} discloses no counts`,
+      gruppe,
+      antwort.status !== 200 && !discloseCounts(antwort.json) && antwort.leakedIdentity !== true,
+      JSON.stringify({ status: antwort.status, code: antwort.json?.code, message: antwort.json?.message }),
+    )
+  }
+
+  const anon = await httpRpc({ method: 'POST', token: null, body: '{}' })
+  bewerte(
+    'anonymous HTTP caller discloses no counts',
+    gruppe,
+    anon.status !== 200 && !discloseCounts(anon.json),
+    JSON.stringify({ status: anon.status, code: anon.json?.code }),
+  )
+
+  const service = await httpRpc({
+    method: 'POST',
+    token: tokenFor({ uid: IDS.owner, role: 'service_role', aal: 'aal2' }),
+    body: '{}',
+  })
+  bewerte(
+    'synthetic service_role JWT discloses no counts',
+    gruppe,
+    service.status !== 200 && !discloseCounts(service.json),
+    JSON.stringify({ status: service.status, code: service.json?.code }),
+  )
+
+  const invalid = await httpRpc({ method: 'POST', token: 'not-a-jwt', body: '{}' })
+  bewerte(
+    'invalid local token is rejected without counts',
+    gruppe,
+    invalid.status !== 200 && !discloseCounts(invalid.json),
+    JSON.stringify({ status: invalid.status, code: invalid.json?.code }),
+  )
+
+  const expired = await httpRpc({
+    method: 'POST',
+    token: tokenFor({ uid: IDS.moderator, aal: 'aal2', expOffsetSec: -90 }),
+    body: '{}',
+  })
+  bewerte(
+    'expired local token is rejected without counts',
+    gruppe,
+    expired.status !== 200 && !discloseCounts(expired.json),
+    JSON.stringify({ status: expired.status, code: expired.json?.code }),
+  )
+
+  const good = tokenFor({ uid: IDS.moderator, aal: 'aal2' })
+  const tampered = `${good.slice(0, -2)}aa`
+  const changed = await httpRpc({ method: 'POST', token: tampered, body: '{}' })
+  bewerte(
+    'tampered local token is rejected without counts',
+    gruppe,
+    changed.status !== 200 && !discloseCounts(changed.json),
+    JSON.stringify({ status: changed.status, code: changed.json?.code }),
+  )
+
+  const codes = [anon.json?.code, service.json?.code, invalid.json?.code, expired.json?.code].filter(Boolean)
+  bewerte(
+    'negative paths keep distinct PostgREST/SQLSTATE classes instead of one forced status',
+    gruppe,
+    new Set(codes).size >= 2 || [anon.status, service.status, invalid.status, expired.status].some((status, i, all) => all.indexOf(status) !== i ? false : true) && new Set([anon.status, invalid.status, expired.status, service.status]).size >= 2,
+    JSON.stringify({
+      anon: { status: anon.status, code: anon.json?.code },
+      service: { status: service.status, code: service.json?.code },
+      invalid: { status: invalid.status, code: invalid.json?.code },
+      expired: { status: expired.status, code: expired.json?.code },
+    }),
+  )
+}
+
+async function pruefeSchemaHttp() {
+  const gruppe = 'http-schema'
+  const token = tokenFor({ uid: IDS.moderator, aal: 'aal2' })
+  const privates = [
+    ['/rpc/account_counts_v1', 'private producer name'],
+    ['/auth/users', 'auth.users table'],
+    ['/jetnity_reporting', 'private reporting schema'],
+    ['/jetnity_internal', 'internal schema'],
+  ]
+  for (const [path, name] of privates) {
+    const antwort = await httpRpc({ method: 'GET', path, token })
+    bewerte(
+      `${name} stays unavailable over exposed HTTP`,
+      gruppe,
+      antwort.status !== 200 && !discloseCounts(antwort.json) && !/email|@/.test(antwort.text),
+      JSON.stringify({ path, status: antwort.status, code: antwort.json?.code }),
+    )
+  }
+
+  const extra = await httpRpc({
+    method: 'POST',
+    token,
+    body: JSON.stringify({ unexpected: 1 }),
+  })
+  bewerte(
+    'extra POST arguments do not return a successful count row',
+    'http-shape',
+    extra.status !== 200 || parseAdminAccountCountsPayload(extra.json).ok !== true,
+    JSON.stringify({ status: extra.status, code: extra.json?.code, parser: parseAdminAccountCountsPayload(extra.json) }),
+  )
+
+  const projection = await httpRpc({
+    method: 'GET',
+    path: '/rpc/admin_account_counts_v1?select=present_registered_accounts',
+    token,
+  })
+  const projectedParse = parseAdminAccountCountsPayload(projection.json)
+  bewerte(
+    'projection/empty shapes are parser-invalid, not a successful zero',
+    'parser',
+    projectedParse.ok === false,
+    JSON.stringify({ status: projection.status, parser: projectedParse, body: projection.json }),
+  )
+
+  const emptyParse = parseAdminAccountCountsPayload([])
+  const zeroObject = parseAdminAccountCountsPayload({
+    present_registered_accounts: '0',
+    created_in_prior_30_days: '0',
+    measured_at: '2026-01-01T00:00:00Z',
+    window_start: '2025-12-02T00:00:00Z',
+    definition_version: 'jetnity.admin-account-counts.v1',
+  })
+  bewerte(
+    'frozen parser rejects empty array and a synthetic zero present row',
+    'parser',
+    emptyParse.ok === false && zeroObject.ok === false,
+    JSON.stringify({ empty: emptyParse, zero: zeroObject }),
+  )
+}
+
+async function pruefeRecentWindow() {
+  insertRecentAccount()
+  const antwort = await httpRpc({
+    method: 'POST',
+    token: tokenFor({ uid: IDS.moderator, aal: 'aal2' }),
+    body: '{}',
+  })
+  const parsed = parseAdminAccountCountsPayload(antwort.json)
+  const row = Array.isArray(antwort.json) ? antwort.json[0] : antwort.json
+  bewerte(
+    'labelled recent-account fixture yields present=11 window=1 through HTTP',
+    'http-auth',
+    antwort.status === 200 &&
+      parsed.ok === true &&
+      row?.present_registered_accounts === EXPECTED_PRESENT_AFTER_RECENT &&
+      row?.created_in_prior_30_days === EXPECTED_WINDOW_AFTER_RECENT,
+    JSON.stringify({
+      status: antwort.status,
+      present: row?.present_registered_accounts,
+      window: row?.created_in_prior_30_days,
+      parser: parsed.ok,
+    }),
+  )
+}
+
+async function pruefeLargeTransport() {
+  const antwort = await httpRpc({
+    method: 'POST',
+    path: '/rpc/jetnity_http_proof_1_large_text',
+    token: tokenFor({ uid: IDS.moderator, aal: 'aal2' }),
+    body: '{}',
+  })
+  const row = Array.isArray(antwort.json) ? antwort.json[0] : antwort.json
+  bewerte(
+    'synthetic large-value TEXT transport keeps exact 9007199254740993 and signed bigint max',
+    'http-large-transport',
+    antwort.status === 200 &&
+      row?.js_safe_overflow === '9007199254740993' &&
+      row?.signed_bigint_max === '9223372036854775807' &&
+      typeof row?.js_safe_overflow === 'string',
+    JSON.stringify({ status: antwort.status, row }),
+  )
+}
+
+async function pruefeMissingWrapper() {
+  const before = catalogSnapshot()
+  psqlSql('drop function public.admin_account_counts_v1();')
+  await waitSchemaReload()
+  const antwort = await httpRpc({
+    method: 'POST',
+    token: tokenFor({ uid: IDS.moderator, aal: 'aal2' }),
+    body: '{}',
+  })
+  bewerte(
+    'missing wrapper is unavailable, not a successful zero',
+    'http-schema-cache',
+    antwort.status !== 200 && !discloseCounts(antwort.json) && parseAdminAccountCountsPayload(antwort.json).ok === false,
+    JSON.stringify({ status: antwort.status, code: antwort.json?.code, message: antwort.json?.message }),
+  )
+  bewerte(
+    'dropping the wrapper leaves the accepted producer intact',
+    'sql-catalog',
+    producerStillPresent() === true,
+    JSON.stringify({ producer: producerStillPresent() }),
+  )
+  bewerte(
+    'accepted producer/client grants were not widened to make HTTP pass',
+    'sql-catalog',
+    before.anon_users === false &&
+      before.auth_users === false &&
+      before.svc_users === false &&
+      before.authenticator_users === false &&
+      before.anon_wrap === false &&
+      before.svc_wrap === false &&
+      before.auth_wrap === true &&
+      before.users_rls === true &&
+      before.users_force === false &&
+      before.authenticator_member === true &&
+      before.reverse_member === false &&
+      before.anon_internal === false,
+    JSON.stringify(before),
+  )
+}
+
+function pruefeStatischeQuelle() {
+  const gruppe = 'static-source'
+  const wrapper = readFileSync(join(cluster.sourceDir, 'admin-account-counts-delivery-1-rpc.sql'), 'utf8')
+  const fixture = readFileSync(FIXTURE, 'utf8')
+  const runner = readFileSync(fileURLToPath(import.meta.url), 'utf8')
+  bewerte(
+    'runner never imports sql.mjs or app env connectors',
+    gruppe,
+    !/from\s+['"][^'"]*sql\.mjs['"]/.test(runner) && !/\.env/.test(runner) && !/sudo/.test(runner),
+    'source scan',
+  )
+  bewerte(
+    'wrapper remains zero-argument SECURITY INVOKER TEXT transport',
+    gruppe,
+    /security invoker/i.test(wrapper) && /btrim\(inner_row\.present_registered_accounts::text\)/.test(wrapper),
+    'source scan',
+  )
+  bewerte(
+    'large-value fixture is labelled disposable and is not the producer',
+    gruppe,
+    /DISPOSABLE LARGE-VALUE TRANSPORT FIXTURE/.test(fixture) &&
+      /Not the guarded producer/.test(fixture) &&
+      /jetnity_http_proof_1_large_text/.test(fixture),
+    'source scan',
+  )
+}
+
+async function main() {
+  assertIsolatedHttpEnvironment()
+  const bins = requirePgBinsPrefer17()
+  const pgVersionText = execFileSync(bins.postgres, ['-V'], { encoding: 'utf8' }).trim()
+  const uses17 = /17\./.test(pgVersionText)
+  console.log(`preflight postgresql ${pgVersionText}`)
+  if (!uses17) {
+    console.log('LIMITATION: PostgreSQL 17 binaries were preferred but this run would qualify PostgreSQL 16.')
+  }
+
+  let cleanupReport = null
+  try {
+    const state = starteCluster()
+    const sources = exportFrozenSources(state.sourceDir)
+    assertExactSourceHashes(sources.hashes)
+    parseAdminAccountCountsPayload = await loadFrozenParser(sources.parserLocal)
+    console.log(`source hashes match ${SNAPSHOT}`)
+    legeDatenbankAn(sources)
+    const started = await startePostgrest(sources)
+    console.log(`postgrest ${started.version} loopback ${started.origin}`)
+    console.log(`postgresql ${started.pgVersion}`)
+
+    pruefeStatischeQuelle()
+    await pruefeErfolg()
+    await pruefeNegativ()
+    await pruefeSchemaHttp()
+    await pruefeRecentWindow()
+    await pruefeLargeTransport()
+    await pruefeMissingWrapper()
+  } catch (fehler) {
+    console.error(sanitized(fehler instanceof Error ? fehler.stack ?? fehler.message : String(fehler)))
+    cleanupReport = stoppeCluster()
+    if (cleanupReport.error) console.error('CLEANUP FAILED:', cleanupReport)
+    process.exit(1)
+  }
+
+  cleanupReport = stoppeCluster()
+  if (cleanupReport.error) {
+    console.error('CLEANUP FAILED:', cleanupReport)
+    process.exit(1)
+  }
+  bewerte(
+    'owned cluster and PostgREST stopped before data removal',
+    'cleanup-node',
+    cleanupReport.cleaned === true && cleanupReport.removed === true && cleanupReport.running === false,
+    JSON.stringify(cleanupReport),
+  )
+  console.log(`cleanup ${JSON.stringify(cleanupReport)}`)
+  console.log(`http_requests=${httpRequestCount}`)
+
+  const byGruppe = ergebnisse.reduce((acc, eintrag) => {
+    acc[eintrag.gruppe] = (acc[eintrag.gruppe] ?? 0) + 1
+    return acc
+  }, {})
+  const fehler = ergebnisse.filter((eintrag) => !eintrag.ok)
+  console.log(`\n${ergebnisse.length - fehler.length}/${ergebnisse.length} HTTP-proof assertions satisfied.`)
+  console.log(`assertion categories: ${JSON.stringify(byGruppe)}`)
+  console.log('Target: private PostgreSQL + numeric-loopback PostgREST. Hosted Supabase untouched.')
+  if (fehler.length) {
+    console.error('Failed:')
+    for (const eintrag of fehler) {
+      console.error(`- [${eintrag.gruppe}] ${eintrag.name}: ${sanitized(eintrag.detail)}`)
+    }
+    process.exit(1)
+  }
+}
+
+function invokedAsMain() {
+  const entry = process.argv[1]
+  if (!entry) return false
+  return fileURLToPath(import.meta.url) === resolve(entry)
+}
+
+export {
+  HTTP_FORBIDDEN_KEYS,
+  EXPECTED,
+  SNAPSHOT,
+  POSTGREST_TAR_SHA256,
+  POSTGREST_URL,
+}
+
+if (invokedAsMain()) {
+  main().catch((fehler) => {
+    console.error(sanitized(fehler instanceof Error ? fehler.stack ?? fehler.message : String(fehler)))
+    const report = stoppeCluster()
+    if (report.error) console.error('CLEANUP FAILED:', report)
+    process.exit(1)
+  })
+}
