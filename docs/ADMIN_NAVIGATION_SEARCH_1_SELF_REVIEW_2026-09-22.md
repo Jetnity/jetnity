@@ -8,29 +8,27 @@ Required and actual model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-
 
 ## 1. Ownership
 
-Only the task allowlist was written. `lib/admin/navigation.ts` and Auth/role/server guards were not edited. Parallel #546 global docs were merged in, not rewritten. #547 SystemHealth and #548 isolated HBX were not touched. No second Admin session was created.
+Only the task allowlist was written for this fix. Inherited #547 indexing/System Health files were merged in and not rewritten. #548 and docs-only #549 were not touched. No second Admin session.
 
 ## 2. Contract
 
-Results come from `filterAdminNav` then `kind === 'ready'`. Later placeholders stay in the sidebar and never appear in search. Destinations are resolved only from that allowlist; query text cannot become an href. Break-glass still has no Nutzer entry. Creator sees only Steuerzentrale. Honesty copy no longer says “Befehlssuche folgt”.
+Results still come from `filterAdminNav` then `kind === 'ready'`. Destinations remain allowlisted. Server guards unchanged.
 
 ## 3. Interaction
 
-One provider, one shortcut listener, one dialog. Desktop and mobile triggers share it. Cmd/Ctrl+K without Shift/Alt. Escape restores the visible invoker, not BODY. Drawer is closed before the palette; a foreign `aria-modal` keeps focus. No search fetch/localStorage.
+Round-3 TL `5281221295` on `a187e4df`: the full-size flex wrapper no longer intercepts backdrop clicks (`pointer-events-none` on the wrapper, `pointer-events-auto` on the panel). Hydrated 1024×768: `elementFromPoint(10,10)` is the backdrop, not `items-center justify-center`; after click the dialog is gone and the desktop trigger is focused. A click inside the panel leaves the dialog open.
 
-Round-2 TL `5280915630` on `22037bf4`: R2/R3 remain. R1 is now viewport-bound. The previous list-only `fullyVisible` check would still pass the rejected geometry (list `454–704`, option `616–704`, viewport `500`). The corrected assertion requires list ∩ visualViewport and also that input, close and panel sit inside that viewport. All six ready results remain; none are removed to make the short viewport fit.
+R1 viewport intersection, R2 opening-only focus, and R3 `prefetch={false}` remain and were re-run.
 
-Adversarial notes the reviewer should not miss:
+Adversarial notes:
 
-- The mobile drawer overlay covers the strip trigger while open. Coordination is the shortcut (tested), not a click through the overlay.
-- Hydrated proof is Chromium emulation of the actual shell with boundary stubs. It is not a signed-in Preview session and not a physical device.
-- R3 proves the Next `prefetch` prop is `false` at the Link boundary and is not forwarded to DOM. It does not execute production app-dir prefetch.
-- `npm test` does not run the hydrated script because the task forbade package/test-registry edits.
-- At 390×500 / 200% text the honesty hint is `line-clamp-2`. Full text remains in `title`. This is not result hiding.
+- Hydrated proof is Chromium emulation with boundary stubs, not a signed-in Preview session or physical device.
+- `npm test` does not run the hydrated script (task forbade package/test-registry edits).
+- Inherited System Health indexing UI is out of this slice's write ownership.
 
 ## 4. Main sync
 
-Merged only the authorized exact SHA `9dc8926e`. Did not rebase or force. If main later moves, that is a new authorization.
+Merged only the authorized exact SHA `88bf3a07`. Did not rebase or force. Did not merge #548 or #549.
 
 ## 5. Verdict
 
