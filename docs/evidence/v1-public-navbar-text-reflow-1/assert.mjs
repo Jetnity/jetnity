@@ -23,6 +23,57 @@ function interaction(name) {
   return gefunden
 }
 
+if (PHASE === 'integrated') {
+  const kritisch = [
+    'integrated_360x800_text-100_gast',
+    'integrated_360x800_text-200_gast',
+    'integrated_390x844_text-100_gast',
+    'integrated_390x844_text-200_gast',
+    'integrated_1024x768_text-100_gast',
+    'integrated_1024x768_text-200_gast',
+    'integrated_1024x768_text-200_konto',
+    'integrated_1024x768_text-200_unbekannt',
+    'integrated_1440x900_text-100_gast',
+    'integrated_1440x900_text-200_gast',
+    'integrated_1440x900_text-200_konto',
+    'integrated_1440x900_text-200_unbekannt',
+  ]
+  for (const name of kritisch) {
+    const szene = scene(name)
+    assert.equal((szene.geometry.navbarHorizontalOffenders || []).length, 0, `${name} horizontal ${JSON.stringify(szene.geometry.navbarHorizontalOffenders)}`)
+    assert.equal((szene.geometry.navbarVerticalOffenders || []).length, 0, `${name} vertical ${JSON.stringify(szene.geometry.navbarVerticalOffenders)}`)
+    assert.ok(szene.hero?.ok && szene.hero.painted, `${name} missing painted hero`)
+    assert.ok(szene.hero.belowHeader, `${name} hero not below header ${JSON.stringify(szene.hero)}`)
+    assert.equal(szene.schreiben.completedUnexpected, 0, `${name} unexpected mutations`)
+  }
+  const konto = scene('integrated_1024x768_text-200_konto')
+  assert.ok(konto.labels.some((label) => label.includes('Konto')))
+  assert.ok(konto.labels.some((label) => label.includes('Abmelden')))
+  const unbekannt = scene('integrated_1024x768_text-200_unbekannt')
+  assert.equal(
+    unbekannt.labels.some((label) => label === 'Anmelden' || label === 'Abmelden' || label === 'Konto'),
+    false,
+    `unbekannt ${unbekannt.labels.join('|')}`,
+  )
+  for (const name of [
+    'integrated_360x800_text-100_gast',
+    'integrated_360x800_text-200_gast',
+    'integrated_390x600_text-100_gast',
+    'integrated_390x600_text-200_gast',
+  ]) {
+    const menu = interaction(name)
+    assert.equal(menu.open.expanded, 'true', `${name} menu`)
+    assert.equal(menu.afterEscape.expanded, 'false', `${name} escape`)
+    assert.match(String(menu.afterEscape.active || ''), /Menü öffnen|BUTTON/)
+    assert.equal(menu.abortProbe.completed, false, `${name} abort completed`)
+    assert.ok(menu.schreiben.versuche >= 1, `${name} abort attempt`)
+    assert.ok(menu.schreiben.abgebrochen >= 1, `${name} abort blocked`)
+    assert.equal(menu.schreiben.completedUnexpected, 0, `${name} unexpected`)
+  }
+  console.log('assert integrated PASS')
+  process.exit(0)
+}
+
 if (PHASE === 'before') {
   const s1024 = scene('before_1024x768_text-200_gast')
   const s1440 = scene('before_1440x900_text-200_gast')

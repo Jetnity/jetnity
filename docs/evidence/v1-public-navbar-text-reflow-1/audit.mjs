@@ -459,6 +459,27 @@ async function szene(browser, { name, width, height, hasTouch, textSize, sitzung
   const mock = await seiteVorbereiten(page, { textSize, sitzung })
   const labels = await sichtbareLabels(page)
   const geometry = await page.evaluate(geometrieSkript())
+  const hero = await page.evaluate(() => {
+    const header = document.querySelector('header')
+    const h1 = document.querySelector('h1')
+    if (!header || !h1) return { ok: false }
+    const headerBox = header.getBoundingClientRect()
+    const heroBox = h1.getBoundingClientRect()
+    const style = getComputedStyle(h1)
+    const painted =
+      heroBox.width > 0 &&
+      heroBox.height > 0 &&
+      style.display !== 'none' &&
+      style.visibility !== 'hidden'
+    return {
+      ok: true,
+      text: (h1.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80),
+      painted,
+      top: Number(heroBox.top.toFixed(2)),
+      headerBottom: Number(headerBox.bottom.toFixed(2)),
+      belowHeader: heroBox.top + 0.5 >= headerBox.bottom,
+    }
+  })
   const browserLabel = browserVersion(browser)
   const meta = {
     browser: browserLabel,
@@ -479,6 +500,7 @@ async function szene(browser, { name, width, height, hasTouch, textSize, sitzung
     meta,
     labels,
     geometry,
+    hero,
     shots: { viewport: viewportShot, header: headerShot },
     schreiben: mutationskonto(protokoll),
   }
@@ -635,7 +657,23 @@ async function main() {
       { name: `${PHASE}_1920x1080_text-100_gast`, width: 1920, height: 1080, hasTouch: false, textSize: 100, sitzung: 'gast' },
     ]
 
-    const scenes = PHASE === 'before' ? beforeScenes : afterScenes
+    const integratedScenes = [
+      { name: `${PHASE}_360x800_text-100_gast`, width: 360, height: 800, hasTouch: true, textSize: 100, sitzung: 'gast' },
+      { name: `${PHASE}_360x800_text-200_gast`, width: 360, height: 800, hasTouch: true, textSize: 200, sitzung: 'gast' },
+      { name: `${PHASE}_390x844_text-100_gast`, width: 390, height: 844, hasTouch: true, textSize: 100, sitzung: 'gast' },
+      { name: `${PHASE}_390x844_text-200_gast`, width: 390, height: 844, hasTouch: true, textSize: 200, sitzung: 'gast' },
+      { name: `${PHASE}_1024x768_text-100_gast`, width: 1024, height: 768, hasTouch: false, textSize: 100, sitzung: 'gast' },
+      { name: `${PHASE}_1024x768_text-200_gast`, width: 1024, height: 768, hasTouch: false, textSize: 200, sitzung: 'gast' },
+      { name: `${PHASE}_1024x768_text-200_konto`, width: 1024, height: 768, hasTouch: false, textSize: 200, sitzung: 'konto' },
+      { name: `${PHASE}_1024x768_text-200_unbekannt`, width: 1024, height: 768, hasTouch: false, textSize: 200, sitzung: 'unbekannt' },
+      { name: `${PHASE}_1440x900_text-100_gast`, width: 1440, height: 900, hasTouch: false, textSize: 100, sitzung: 'gast' },
+      { name: `${PHASE}_1440x900_text-200_gast`, width: 1440, height: 900, hasTouch: false, textSize: 200, sitzung: 'gast' },
+      { name: `${PHASE}_1440x900_text-200_konto`, width: 1440, height: 900, hasTouch: false, textSize: 200, sitzung: 'konto' },
+      { name: `${PHASE}_1440x900_text-200_unbekannt`, width: 1440, height: 900, hasTouch: false, textSize: 200, sitzung: 'unbekannt' },
+    ]
+
+    const scenes =
+      PHASE === 'before' ? beforeScenes : PHASE === 'integrated' ? integratedScenes : afterScenes
     for (const spec of scenes) {
       bericht.scenes.push(await szene(browser, spec))
     }
@@ -648,6 +686,47 @@ async function main() {
           height: 600,
           hasTouch: true,
           textSize: 100,
+          sitzung: 'gast',
+        }),
+      )
+    } else if (PHASE === 'integrated') {
+      bericht.interactions.push(
+        await interaktion(browser, {
+          name: `${PHASE}_360x800_text-100_gast`,
+          width: 360,
+          height: 800,
+          hasTouch: true,
+          textSize: 100,
+          sitzung: 'gast',
+        }),
+      )
+      bericht.interactions.push(
+        await interaktion(browser, {
+          name: `${PHASE}_360x800_text-200_gast`,
+          width: 360,
+          height: 800,
+          hasTouch: true,
+          textSize: 200,
+          sitzung: 'gast',
+        }),
+      )
+      bericht.interactions.push(
+        await interaktion(browser, {
+          name: `${PHASE}_390x600_text-100_gast`,
+          width: 390,
+          height: 600,
+          hasTouch: true,
+          textSize: 100,
+          sitzung: 'gast',
+        }),
+      )
+      bericht.interactions.push(
+        await interaktion(browser, {
+          name: `${PHASE}_390x600_text-200_gast`,
+          width: 390,
+          height: 600,
+          hasTouch: true,
+          textSize: 200,
           sitzung: 'gast',
         }),
       )

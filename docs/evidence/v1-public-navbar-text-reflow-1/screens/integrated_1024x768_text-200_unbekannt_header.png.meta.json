@@ -1,0 +1,48 @@
+{
+  "file": "integrated_1024x768_text-200_unbekannt_header.png",
+  "capturedAt": "2026-09-22T00:33:54.310Z",
+  "productTree": {
+    "head": "757522f96930811628b0f776609898b1b906026f",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M docs/evidence/v1-public-navbar-text-reflow-1/assert.mjs",
+      "M docs/evidence/v1-public-navbar-text-reflow-1/audit.mjs"
+    ],
+    "sourceNote": "merge 757522f9 of exact main c0e32dc; navbar blob 6779bcea unchanged from freeze 05037863; page.tsx blob bc272ae9 from main only"
+  },
+  "browser": "chromium/140.0.7339.16",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "hasTouch": false
+  },
+  "route": "/",
+  "state": {
+    "sitzung": "unbekannt",
+    "mock": {
+      "ok": true,
+      "kind": "controlled-local-react-session-state-mock",
+      "previous": "gast",
+      "next": "unbekannt",
+      "note": "Held after real getSession. Re-dispatched if INITIAL_SESSION overwrote. No credentials or account writes.",
+      "labelsAfter": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Reise planen",
+        "Menü öffnen",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Reise planen"
+      ]
+    }
+  },
+  "simulationClass": "html-font-size-32px + unbekannt",
+  "actions": [
+    "goto",
+    "compiled-css"
+  ],
+  "clip": "header-only"
+}

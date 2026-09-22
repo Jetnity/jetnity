@@ -1,7 +1,41 @@
 # V1 Public Navbar Text Reflow 1 — Status
 
 Stand: 22. September 2026  
-Status: **FROZEN FOR INDEPENDENT TECHNICAL-LEAD REVIEW / DRAFT / NOT READY / NOT MERGED**
+Status: **FROZEN AFTER AUTHORIZED MAIN INTEGRATION / DRAFT / NOT READY / NOT MERGED**
+
+## Authorized main integration — same session
+
+#534 is TL-merged. This writer merged exact main **once** (not rebase). No later main/sibling.
+
+| Item | Value |
+| --- | --- |
+| Authorized / live main | `c0e32dc34b4e762f5396782c341624e7dee9c4fe` |
+| Previous freeze | `05037863815068eaf8b35c02550c67ee54fd1645` |
+| Merge commit | `757522f96930811628b0f776609898b1b906026f` |
+| PublicNavbar blob | `6779bcea` — identical to `05037863` |
+| `page.tsx` | `bc272ae9` — from main only, not edited here |
+| Main drift | none at merge and at evidence capture |
+| Coexistence proof | `docs/evidence/v1-public-navbar-text-reflow-1/audit-integrated.json` — assert integrated PASS |
+
+Integrated 360/390 menu+focus 100%/200% and 1024/1440 gast/konto/unbekannt: navbar H/V offenders 0, hero painted below header, completed unexpected mutations 0. Exact new STOP SHA/CI/Preview belong in the PR receipt.
+
+## Integrated coexistence (compiled CSS, Chromium 140.0.7339.16, after exact `c0e32dc`)
+
+Source: `audit-integrated.json` captured on merge `757522f9`. `assert.mjs` `AUDIT_PHASE=integrated` PASS.
+
+| Scene | headerH | doc overflowX | navbar H/V | Hero below header |
+| --- | ---: | ---: | ---: | --- |
+| 360/100 gast | 73 | 0 | 0 / 0 | yes — „Deine ganze Reise…“ |
+| 360/200 gast | 225 | 0 | 0 / 0 | yes |
+| 390/100 gast | 73 | 0 | 0 / 0 | yes |
+| 390/200 gast | 121 | 0 | 0 / 0 | yes |
+| 1024/100 gast | 73 | 0 | 0 / 0 | yes — single-row navbar + #534 single-column hero |
+| 1024/200 gast / konto / unbekannt | 217 | 0 | 0 / 0 | yes — wrapped navbar |
+| 1440/100 gast | 73 | 0 | 0 / 0 | yes |
+| 1440/200 gast / konto | 217 | 0 | 0 / 0 | yes |
+| 1440/200 unbekannt | 121 | 0 | 0 / 0 | yes — fewer session controls, still no overflow |
+
+Menu/Escape/abort at 360×800 and 390×600, 100% and 200%: open `aria-expanded=true`, Escape returns focus, abort probe attempts 1 / aborted 1 / completed unexpected 0. Logout was not clicked.
 
 ## Acknowledgement
 
@@ -85,11 +119,12 @@ Guest uses the real empty-cookie `getSession` path. unknown/konto are controlled
 - existing navbar/session/guest CTA tests PASS
 - `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` / `check:operating-mode` PASS
 - production build PASS
-- `assert.mjs` before PASS / after PASS
+- `assert.mjs` before PASS / after PASS / integrated PASS
+- Post-`c0e32dc` merge re-run: typecheck PASS; lint 0 errors / 139 pre-existing warnings; `npm test` **3716 / 3716**; hygiene + operating-mode PASS; production build PASS
 
 ## Limits
 
 - Simulated 32px root, not OS zoom / Safari / hardware / WCAG certification.
 - Later decorative homepage overflow is unowned. After this fix, 1024/200% document overflowX is 0 because the previous 148px was the navbar CTA.
-- TL must still integrate #534 first, then this PR, then refresh header/hero/menu on exact main.
+- Authorized exact-main merge is done. Do not merge/rebase a later main or sibling. Report drift if live main leaves `c0e32dc`.
 - Cursor does not mark Ready, merge, or start a follow-up slice.

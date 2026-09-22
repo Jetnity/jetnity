@@ -1,7 +1,9 @@
 # V1 Public Navbar Text Reflow 1 — Self-review
 
 Stand: 22. September 2026  
-Status: **AUTHOR SELF-REVIEW COMPLETE — NOT TECHNICAL-LEAD ACCEPTANCE**
+Status: **AUTHOR SELF-REVIEW AFTER MAIN INTEGRATION — NOT TECHNICAL-LEAD ACCEPTANCE**
+
+Same session. Merge of exact `c0e32dc` was once and conflict-free. PublicNavbar blob equals frozen `05037863`. `page.tsx` blob equals main. Integrated assert PASS: navbar overflow 0, hero below header, abort 1/1/0. No Ready/merge/follow-up.
 
 Green self-review is not TL acceptance.
 
@@ -31,8 +33,8 @@ PASS. Exclusive runtime write is `components/layout/PublicNavbar.tsx`. No GastCr
 
 ## Residual risks
 
-- Parallel #534 remains the first integration slot. Fresh header/hero/menu proof is required after exact-main integration.
-- Decorative later-page overflow stays unowned if it reappears after #534 lands.
+- Authorized exact-main merge `c0e32dc` plus representative coexistence proof is done. A later main move would require a new authorized integration, not an autonomous rebase.
+- Decorative later-page overflow stays unowned if it reappears below the hero.
 - Controlled React-state session mocks are not real Auth.
 
 ## Verdict
