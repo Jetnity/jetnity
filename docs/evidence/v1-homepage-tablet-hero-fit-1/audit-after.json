@@ -1,0 +1,1773 @@
+{
+  "phase": "after",
+  "capturedAt": "2026-09-21T22:17:03.282Z",
+  "productTree": {
+    "head": "da8db64223af73ab47c29b2915006a34b4945b8f",
+    "workingTree": "clean",
+    "dirtyPaths": [],
+    "sourceNote": "after coordinated xl grid/card display on compiled next CSS; page.tsx hero only"
+  },
+  "browser": "chromium/148.0.7778.96",
+  "server": {
+    "base": "http://localhost:3000",
+    "reused": true
+  },
+  "limitations": [
+    "Local Chromium compiled-CSS evidence only.",
+    "Not authenticated Preview, hardware, Safari or WCAG proof.",
+    "html font-size 32px scenes are text simulation.",
+    "Synthetic disposable guest homepage. No account or provider write."
+  ],
+  "scenes": [
+    {
+      "scene": "360x800",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 360,
+        "height": 800,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_360x800_viewport.png",
+        "hero": "screens/after_360x800_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 360,
+          "scrollWidth": 360,
+          "clientHeight": 800,
+          "scrollHeight": 6512,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 360,
+          "height": 688.02,
+          "right": 360,
+          "bottom": 761.02,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": false
+        },
+        "grid": {
+          "x": 12,
+          "y": 85,
+          "width": 336,
+          "height": 612.02,
+          "right": 348,
+          "bottom": 697.02,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "296px",
+          "columnCount": 1,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "34px",
+          "x": 32,
+          "y": 187,
+          "width": 296,
+          "height": 104.02,
+          "right": 328,
+          "bottom": 291.02,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 32,
+          "y": 459.02,
+          "width": 296,
+          "height": 134,
+          "right": 328,
+          "bottom": 593.02,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 85,
+          "y": 476.02,
+          "width": 222,
+          "height": 44,
+          "right": 307,
+          "bottom": 520.02,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 41,
+          "y": 536.02,
+          "width": 278,
+          "height": 48,
+          "right": 319,
+          "bottom": 584.02,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "390x844",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_390x844_viewport.png",
+        "hero": "screens/after_390x844_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "clientHeight": 844,
+          "scrollHeight": 6396,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 390,
+          "height": 660.02,
+          "right": 390,
+          "bottom": 733.02,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": false
+        },
+        "grid": {
+          "x": 12,
+          "y": 85,
+          "width": 366,
+          "height": 584.02,
+          "right": 378,
+          "bottom": 669.02,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "326px",
+          "columnCount": 1,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "34px",
+          "x": 32,
+          "y": 187,
+          "width": 326,
+          "height": 104.02,
+          "right": 358,
+          "bottom": 291.02,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 32,
+          "y": 431.02,
+          "width": 326,
+          "height": 134,
+          "right": 358,
+          "bottom": 565.02,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 85,
+          "y": 448.02,
+          "width": 252,
+          "height": 44,
+          "right": 337,
+          "bottom": 492.02,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 41,
+          "y": 508.02,
+          "width": 308,
+          "height": 48,
+          "right": 349,
+          "bottom": 556.02,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "768x1024",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 768,
+        "height": 1024,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_768x1024_viewport.png",
+        "hero": "screens/after_768x1024_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "clientHeight": 1024,
+          "scrollHeight": 5648,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 768,
+          "height": 708,
+          "right": 768,
+          "bottom": 781,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": false
+        },
+        "grid": {
+          "x": 20,
+          "y": 85,
+          "width": 728,
+          "height": 600,
+          "right": 748,
+          "bottom": 685,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "648px",
+          "columnCount": 1,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "53.76px",
+          "x": 60,
+          "y": 248.31,
+          "width": 648,
+          "height": 105.38,
+          "right": 708,
+          "bottom": 353.69,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 60,
+          "y": 465.69,
+          "width": 648,
+          "height": 78,
+          "right": 708,
+          "bottom": 543.69,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 113,
+          "y": 482.69,
+          "width": 413.08,
+          "height": 44,
+          "right": 526.08,
+          "bottom": 526.69,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 546.08,
+          "y": 480.69,
+          "width": 152.92,
+          "height": 48,
+          "right": 699,
+          "bottom": 528.69,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1023x768",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 1023,
+        "height": 768,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1023x768_viewport.png",
+        "hero": "screens/after_1023x768_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1023,
+          "scrollWidth": 1023,
+          "clientHeight": 768,
+          "scrollHeight": 5400,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1023,
+          "height": 708,
+          "right": 1023,
+          "bottom": 781,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": false
+        },
+        "grid": {
+          "x": 20,
+          "y": 85,
+          "width": 983,
+          "height": 600,
+          "right": 1003,
+          "bottom": 685,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "903px",
+          "columnCount": 1,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "71.61px",
+          "x": 60,
+          "y": 230.83,
+          "width": 768,
+          "height": 140.34,
+          "right": 828,
+          "bottom": 371.17,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 60,
+          "y": 483.17,
+          "width": 672,
+          "height": 78,
+          "right": 732,
+          "bottom": 561.17,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 113,
+          "y": 500.17,
+          "width": 437.08,
+          "height": 44,
+          "right": 550.08,
+          "bottom": 544.17,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 570.08,
+          "y": 498.17,
+          "width": 152.92,
+          "height": 48,
+          "right": 723,
+          "bottom": 546.17,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1024x768",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 1024,
+        "height": 768,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1024x768_viewport.png",
+        "hero": "screens/after_1024x768_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "clientHeight": 768,
+          "scrollHeight": 4250,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1024,
+          "height": 828,
+          "right": 1024,
+          "bottom": 901,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": true
+        },
+        "grid": {
+          "x": 20,
+          "y": 85,
+          "width": 984,
+          "height": 720,
+          "right": 1004,
+          "bottom": 805,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "872px",
+          "columnCount": 1,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "71.68px",
+          "x": 76,
+          "y": 290.75,
+          "width": 768,
+          "height": 140.5,
+          "right": 844,
+          "bottom": 431.25,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 76,
+          "y": 543.25,
+          "width": 672,
+          "height": 78,
+          "right": 748,
+          "bottom": 621.25,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 129,
+          "y": 560.25,
+          "width": 437.08,
+          "height": 44,
+          "right": 566.08,
+          "bottom": 604.25,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 586.08,
+          "y": 558.25,
+          "width": 152.92,
+          "height": 48,
+          "right": 739,
+          "bottom": 606.25,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1279x800",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 1279,
+        "height": 800,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1279x800_viewport.png",
+        "hero": "screens/after_1279x800_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1279,
+          "scrollWidth": 1279,
+          "clientHeight": 800,
+          "scrollHeight": 4118,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1279,
+          "height": 828,
+          "right": 1279,
+          "bottom": 901,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": true
+        },
+        "grid": {
+          "x": 20,
+          "y": 85,
+          "width": 1239,
+          "height": 720,
+          "right": 1259,
+          "bottom": 805,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "1127px",
+          "columnCount": 1,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "78px",
+          "x": 76,
+          "y": 284.56,
+          "width": 768,
+          "height": 152.88,
+          "right": 844,
+          "bottom": 437.44,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 76,
+          "y": 549.44,
+          "width": 672,
+          "height": 78,
+          "right": 748,
+          "bottom": 627.44,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 129,
+          "y": 566.44,
+          "width": 437.08,
+          "height": 44,
+          "right": 566.08,
+          "bottom": 610.44,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 586.08,
+          "y": 564.44,
+          "width": 152.92,
+          "height": 48,
+          "right": 739,
+          "bottom": 612.44,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1280x800",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1280x800_viewport.png",
+        "hero": "screens/after_1280x800_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1280,
+          "scrollWidth": 1280,
+          "clientHeight": 800,
+          "scrollHeight": 4118,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1280,
+          "height": 828,
+          "right": 1280,
+          "bottom": 901,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": true
+        },
+        "grid": {
+          "x": 20,
+          "y": 85,
+          "width": 1240,
+          "height": 720,
+          "right": 1260,
+          "bottom": 805,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "650px 422px",
+          "columnCount": 2,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "78px",
+          "x": 84,
+          "y": 246.34,
+          "width": 650,
+          "height": 229.31,
+          "right": 734,
+          "bottom": 475.66,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 84,
+          "y": 587.66,
+          "width": 650,
+          "height": 78,
+          "right": 734,
+          "bottom": 665.66,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 137,
+          "y": 604.66,
+          "width": 415.08,
+          "height": 44,
+          "right": 552.08,
+          "bottom": 648.66,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 572.08,
+          "y": 602.66,
+          "width": 152.92,
+          "height": 48,
+          "right": 725,
+          "bottom": 650.66,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": true,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 1,
+          "titleWraps": false,
+          "x": 800.62,
+          "y": 231.97,
+          "width": 400.76,
+          "height": 426.07,
+          "right": 1201.38,
+          "bottom": 658.03,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 84,
+              "scrollWidth": 84,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 123,
+              "scrollWidth": 123,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 138,
+              "scrollWidth": 138,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1440x900",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1440x900_viewport.png",
+        "hero": "screens/after_1440x900_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "clientHeight": 900,
+          "scrollHeight": 4116,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1440,
+          "height": 828,
+          "right": 1440,
+          "bottom": 901,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": false
+        },
+        "grid": {
+          "x": 80,
+          "y": 85,
+          "width": 1280,
+          "height": 720,
+          "right": 1360,
+          "bottom": 805,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "650px 462px",
+          "columnCount": 2,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "78px",
+          "x": 144,
+          "y": 246.34,
+          "width": 650,
+          "height": 229.31,
+          "right": 794,
+          "bottom": 475.66,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 144,
+          "y": 587.66,
+          "width": 650,
+          "height": 78,
+          "right": 794,
+          "bottom": 665.66,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 197,
+          "y": 604.66,
+          "width": 415.08,
+          "height": 44,
+          "right": 612.08,
+          "bottom": 648.66,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 632.08,
+          "y": 602.66,
+          "width": 152.92,
+          "height": 48,
+          "right": 785,
+          "bottom": 650.66,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": true,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 1,
+          "titleWraps": false,
+          "x": 900.62,
+          "y": 231.97,
+          "width": 400.76,
+          "height": 426.07,
+          "right": 1301.38,
+          "bottom": 658.03,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 84,
+              "scrollWidth": 84,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 123,
+              "scrollWidth": 123,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 138,
+              "scrollWidth": 138,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1920x1080",
+      "textSimulation": false,
+      "textSimulationNote": null,
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1920x1080_viewport.png",
+        "hero": "screens/after_1920x1080_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1920,
+          "scrollWidth": 1920,
+          "clientHeight": 1080,
+          "scrollHeight": 4116,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1920,
+          "height": 828,
+          "right": 1920,
+          "bottom": 901,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": false
+        },
+        "grid": {
+          "x": 320,
+          "y": 85,
+          "width": 1280,
+          "height": 720,
+          "right": 1600,
+          "bottom": 805,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "650px 462px",
+          "columnCount": 2,
+          "gap": "40px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "78px",
+          "x": 384,
+          "y": 246.34,
+          "width": 650,
+          "height": 229.31,
+          "right": 1034,
+          "bottom": 475.66,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 384,
+          "y": 587.66,
+          "width": 650,
+          "height": 78,
+          "right": 1034,
+          "bottom": 665.66,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 437,
+          "y": 604.66,
+          "width": 415.08,
+          "height": 44,
+          "right": 852.08,
+          "bottom": 648.66,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 872.08,
+          "y": 602.66,
+          "width": 152.92,
+          "height": 48,
+          "right": 1025,
+          "bottom": 650.66,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": true,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 1,
+          "titleWraps": false,
+          "x": 1140.62,
+          "y": 231.97,
+          "width": 400.76,
+          "height": 426.07,
+          "right": 1541.38,
+          "bottom": 658.03,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 84,
+              "scrollWidth": 84,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 123,
+              "scrollWidth": 123,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 138,
+              "scrollWidth": 138,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1024x768_text-200",
+      "textSimulation": true,
+      "textSimulationNote": "html { font-size: 32px } CSS text simulation. Not OS zoom, hardware, Safari or WCAG certification.",
+      "viewport": {
+        "width": 1024,
+        "height": 768,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1024x768_text-200_viewport.png",
+        "hero": "screens/after_1024x768_text-200_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1024,
+          "scrollWidth": 1172,
+          "clientHeight": 768,
+          "scrollHeight": 10643,
+          "overflowX": 148,
+          "bodyOverflowX": 148
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1024,
+          "height": 1264.5,
+          "right": 1024,
+          "bottom": 1337.5,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": true
+        },
+        "grid": {
+          "x": 40,
+          "y": 97,
+          "width": 944,
+          "height": 1048.5,
+          "right": 984,
+          "bottom": 1145.5,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "720px",
+          "columnCount": 1,
+          "gap": "80px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "71.68px",
+          "x": 152,
+          "y": 331,
+          "width": 720,
+          "height": 140.5,
+          "right": 872,
+          "bottom": 471.5,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 152,
+          "y": 751.5,
+          "width": 720,
+          "height": 154,
+          "right": 872,
+          "bottom": 905.5,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 257,
+          "y": 784.5,
+          "width": 252.16,
+          "height": 88,
+          "right": 509.16,
+          "bottom": 872.5,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 549.16,
+          "y": 780.5,
+          "width": 305.84,
+          "height": 96,
+          "right": 855,
+          "bottom": 876.5,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": false,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 0,
+          "titleWraps": false,
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 0,
+              "scrollWidth": 0,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    },
+    {
+      "scene": "1440x900_text-200",
+      "textSimulation": true,
+      "textSimulationNote": "html { font-size: 32px } CSS text simulation. Not OS zoom, hardware, Safari or WCAG certification.",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "dpr": 1
+      },
+      "route": "/",
+      "state": "anonymous-guest-homepage-no-draft",
+      "loaded": true,
+      "images": {
+        "viewport": "screens/after_1440x900_text-200_viewport.png",
+        "hero": "screens/after_1440x900_text-200_hero.png",
+        "note": "Viewport-sized capture plus hero clip bounded to the visible viewport. Not a card-only crop."
+      },
+      "geometry": {
+        "document": {
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "clientHeight": 900,
+          "scrollHeight": 8917,
+          "overflowX": 0,
+          "bodyOverflowX": 0
+        },
+        "hero": {
+          "x": 0,
+          "y": 73,
+          "width": 1440,
+          "height": 1427,
+          "right": 1440,
+          "bottom": 1500,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "exceedsViewportHeight": true
+        },
+        "grid": {
+          "x": 40,
+          "y": 97,
+          "width": 1360,
+          "height": 1211,
+          "right": 1400,
+          "bottom": 1308,
+          "display": "grid",
+          "visibility": "visible",
+          "overflow": "visible",
+          "gridTemplateColumns": "650px 374px",
+          "columnCount": 2,
+          "gap": "80px"
+        },
+        "headline": {
+          "text": "Deine ganze Reise. Einfach an einem Ort.",
+          "fontSize": "78px",
+          "x": 168,
+          "y": 339.84,
+          "width": 650,
+          "height": 229.31,
+          "right": 818,
+          "bottom": 569.16,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "form": {
+          "x": 168,
+          "y": 905.16,
+          "width": 650,
+          "height": 154,
+          "right": 818,
+          "bottom": 1059.16,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "destination": {
+          "x": 273,
+          "y": 938.16,
+          "width": 182.16,
+          "height": 88,
+          "right": 455.16,
+          "bottom": 1026.16,
+          "display": "inline-block",
+          "visibility": "visible",
+          "overflow": "clip",
+          "placeholder": "Wohin möchtest du reisen?"
+        },
+        "cta": {
+          "text": "Reise planen",
+          "x": 495.16,
+          "y": 934.16,
+          "width": 305.84,
+          "height": 96,
+          "right": 801,
+          "bottom": 1030.16,
+          "display": "flex",
+          "visibility": "visible",
+          "overflow": "visible"
+        },
+        "card": {
+          "visible": true,
+          "emptySecondColumn": false,
+          "offscreen": false,
+          "title": "Bali · 14 Tage",
+          "titleLineCount": 1,
+          "titleWraps": false,
+          "x": 885.56,
+          "y": 220.27,
+          "width": 398.87,
+          "height": 964.46,
+          "right": 1284.44,
+          "bottom": 1184.73,
+          "display": "block",
+          "visibility": "visible",
+          "overflow": "visible",
+          "tags": [
+            {
+              "text": "Natur · Kulinarik",
+              "clientWidth": 84,
+              "scrollWidth": 84,
+              "truncated": false,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Strand · Erholung",
+              "clientWidth": 84,
+              "scrollWidth": 90,
+              "truncated": true,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            },
+            {
+              "text": "Küste · Sonnenuntergänge",
+              "clientWidth": 84,
+              "scrollWidth": 138,
+              "truncated": true,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis"
+            }
+          ]
+        }
+      },
+      "mutations": {
+        "attemptedUnexpectedMutations": 0,
+        "abortedUnexpectedMutations": 0,
+        "completedUnexpectedMutations": 0,
+        "safeNextInternalMutations": 0,
+        "providerOrApiBlocked": 0,
+        "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+        "versuche": [],
+        "abgebrochen": [],
+        "unerwartetAbgeschlossen": [],
+        "abgefangen": []
+      }
+    }
+  ],
+  "interaction": {
+    "focusedDestinationId": "travel-idea",
+    "afterTab": {
+      "tag": "BUTTON",
+      "type": "submit",
+      "text": "Reise planen"
+    },
+    "validation": "Bitte wähle ein Reiseziel aus der Liste.",
+    "destinationPlaceholder": "Wohin möchtest du reisen?",
+    "ctaName": "Reise planen",
+    "mutations": {
+      "attemptedUnexpectedMutations": 0,
+      "abortedUnexpectedMutations": 0,
+      "completedUnexpectedMutations": 0,
+      "safeNextInternalMutations": 0,
+      "providerOrApiBlocked": 0,
+      "note": "Zero unexpected mutation attempts is evidence that no mutating request was observed. It is not proof that a live POST was intercepted.",
+      "versuche": [],
+      "abgebrochen": [],
+      "unerwartetAbgeschlossen": [],
+      "abgefangen": []
+    }
+  }
+}
