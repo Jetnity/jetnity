@@ -12,6 +12,7 @@ import {
   getAAL,
   MFA_API_FEHLT,
   MFA_CHALLENGE_ID_FEHLT,
+  MFA_FAKTOREN_UNLESBAR,
   MFA_TOTP_FEHLT,
   startTotpChallenge,
   type BrowserSupabase,
@@ -258,6 +259,7 @@ describe('startTotpChallenge – bestehende verifizierte Faktoren', () => {
       })
       await assert.rejects(async () => startTotpChallenge(client), (err: unknown) => {
         assert.ok(err instanceof Error)
+        assert.equal(err.message, MFA_FAKTOREN_UNLESBAR)
         assert.equal(istKeinTotpFaktorFehler(err), false)
         assert.notEqual(err.message, KEINE_TOTP_MELDUNG)
         return true
@@ -324,9 +326,10 @@ describe('Login- und Admin-Verbraucherverträge', () => {
       }),
     })
     const aal = await getAAL(client)
+    const brauchtStepUp = aal?.nextLevel === 'aal2' && aal?.currentLevel !== 'aal2'
     assert.equal(aal.currentLevel, 'aal1')
     assert.equal(aal.nextLevel, 'aal2')
-    assert.equal(aal.currentLevel !== 'aal2' && aal.nextLevel === 'aal2', true)
+    assert.equal(brauchtStepUp, true)
 
     const ids = await startTotpChallenge(client)
     assert.equal(challengeCount.n, 1)
