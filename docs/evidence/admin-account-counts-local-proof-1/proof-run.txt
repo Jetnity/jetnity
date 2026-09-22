@@ -1,0 +1,43 @@
+candidate sha256=88c98bc8023278202c80abb2078eb8a2a4dadd05e8cedf6aae5f94d9a1907a52
+bootstrap sha256=6409d90ef10fd2f7cb5c70f59496d44acc20d66d7c0adb1e5a73efac2e21fa84
+postgresql PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+cluster socket=/tmp/jetnity-admin-account-counts-1-dd777504-600d-444b-b5d0-4bd742ce6f10/socket (private; system 16/main not used)
+  ok   [static] Candidate enthält kein dynamisches SQL  source scan
+  ok   [static] Candidate gewährt nichts auf jetnity_internal  source scan
+  ok   [auth] owner AAL2 erhält die Fixture-Aggregate  present=14 window=10
+  ok   [auth] admin AAL2 erhält die Fixture-Aggregate  present=14 window=10
+  ok   [auth] operator AAL2 erhält die Fixture-Aggregate  present=14 window=10
+  ok   [auth] moderator AAL2 erhält die Fixture-Aggregate  present=14 window=10
+  ok   [auth] Moderator AAL1 erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] Moderator ohne AAL erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] Moderator AAL3 erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] gewöhnliches user-Konto AAL2 erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] creator AAL2 erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] Konto ohne Profil erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] abwesender JWT-sub erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] soft-gelöschter Moderator erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] anonymes Konto erhält keine Aggregate  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] anon-Rolle erhält keine Aggregate  42501 permission denied for schema jetnity_reporting
+  ok   [auth] service_role-Shortcut erhält keine Aggregate  42501 permission denied for schema jetnity_reporting
+  ok   [auth] Break-Glass-Claim hebt user nicht zu owner  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [auth] user_metadata.role=owner autorisiert nicht  42501 jetnity.admin-account-counts.v1: not authorized
+  ok   [lifecycle] Zielkonto ohne Profil ist vorhanden und zählt in present  {"present":14,"ohneProfil":{"target_without_profile":true}}
+  ok   [lifecycle] anonym/soft-delete sind ausgeschlossen; unconfirmed/internal/banned-Profil bleiben in der Zielmenge  {"present":14,"excluded":{"anon":true,"soft":true,"banned":true,"unconfirmed":true,"internal_row":true}}
+  ok   [lifecycle] Hard-Delete senkt den aktuellen present-Count um 1  {"beforeDelete":14,"after":{"measured_at":"2026-09-22T18:28:42.294669+00:00","window_start":"2026-08-23T18:28:42.294669+00:00","definition_version":"jetnity.admin-account-counts.v1","created_in_prior_30_days":9,"present_registered_accounts":13}}
+  ok   [lifecycle] Anonymous-zu-permanent zählt die Original-created_at-Zeile, nicht eine neue Registrierung  {"beforeConvert":13,"after":{"measured_at":"2026-09-22T18:28:42.308538+00:00","window_start":"2026-08-23T18:28:42.308538+00:00","definition_version":"jetnity.admin-account-counts.v1","created_in_prior_30_days":10,"present_registered_accounts":14}}
+  ok   [window] NULL-created_at zählt in present, nicht im Fenster; Zukunft zählt nicht in den prior 30 days  {"row":{"measured_at":"2026-09-22T18:28:42.322551+00:00","window_start":"2026-08-23T18:28:42.322551+00:00","definition_version":"jetnity.admin-account-counts.v1","created_in_prior_30_days":9,"present_registered_accounts":13},"privileged":{"present":13,"windowed":9,"null_present":1,"future_present":1}}
+  ok   [window] halboffene Kanten: window_start inklusive, measured_at exklusiv  {"arbeit":{"ok":true,"row":{"measured_at":"2026-09-22T18:28:42.335644+00:00","window_start":"2026-08-23T18:28:42.335644+00:00","definition_version":"jetnity.admin-account-counts.v1","created_in_prior_30_days":10,"present_registered_accounts":15},"row_count":1},"inspektion":{"end_eq":true,"start_ge":true}}
+  ok   [window] UTC- und Nicht-UTC-Session liefern dieselben Counts und denselben Zeitinstant  {"present":13,"window":9,"measuredMs":1790101722343}
+  ok   [zero-vs-deny] Deny liefert keine Erfolgszeile mit Nullen  {"ok":false,"message":"jetnity.admin-account-counts.v1: not authorized","sqlstate":"42501"}
+  ok   [zero-vs-deny] autorisierte leere Fenstermenge liefert window=0; present bleibt >= 1 (Caller-Constraint)  {"ok":true,"row":{"measured_at":"2026-09-22T18:28:42.359121+00:00","window_start":"2026-08-23T18:28:42.359121+00:00","definition_version":"jetnity.admin-account-counts.v1","created_in_prior_30_days":0,"present_registered_accounts":1},"row_count":1}
+  ok   [catalog] authenticated darf auth.users nicht direkt lesen  42501 permission denied for table users
+  ok   [catalog] anon darf auth.users nicht direkt lesen  42501 permission denied for table users
+  ok   [catalog] Candidate ist SECURITY DEFINER  true
+  ok   [catalog] search_path ist auf pg_catalog fixiert  ["search_path=pg_catalog"]
+  ok   [catalog] PUBLIC/anon/service_role haben kein EXECUTE; authenticated hat EXECUTE  {"src":"\ndeclare\n  _uid uuid;\n  _caller_present boolean;\n  _measured_at timestamp with time zone;\n  _window_start timestamp with time zone;\nbegin\n  _uid := auth.uid();\n  if _uid is null then\n    raise exception 'jetnity.admin-account-counts.v1: not authorized'\n      using errcode = '42501';\n  end if;\n\n  select exists (\n    select 1\n      from auth.users as u\n     where u.id = _uid\n       and u.deleted_at is null\n       and u.is_anonymous is false\n  )\n    into _caller_present;\n\n  if not coalesce(_caller_present, false) then\n    raise exception 'jetnity.admin-account-counts.v1: not authorized'\n      using errcode = '42501';\n  end if;\n\n  if not coalesce(public.darf_konten_verwalten(), false) then\n    raise exception 'jetnity.admin-account-counts.v1: not authorized'\n      using errcode = '42501';\n  end if;\n\n  -- One transaction-stable database clock. UTC interpretation of timestamptz\n  -- is independent of the session TimeZone. Half-open [window_start, measured_at).\n  _measured_at := pg_catalog.now();\n  _window_start := _measured_at - interval '30 days';\n\n  return query\n  select\n    count(*)::bigint,\n    count(*) filter (\n      where u.created_at is not null\n        and u.created_at >= _window_start\n        and u.created_at < _measured_at\n    )::bigint,\n    _measured_at,\n    _window_start,\n    'jetnity.admin-account-counts.v1'::text\n  from auth.users as u\n  where u.deleted_at is null\n    and u.is_anonymous is false;\nend\n","args":"","config":["search_path=pg_catalog"],"anon_exec":false,"auth_exec":true,"public_exec":false,"service_exec":false,"security_definer":true}
+  ok   [catalog] kein dynamisches SQL und keine Caller-Filterparameter  prosrc inspected
+  ok   [catalog] kein client SELECT auf auth.users; jetnity_internal bleibt geschlossen  {"anon_sel":false,"auth_sel":false,"service_sel":false,"anon_internal":false,"auth_internal":false,"anon_reporting":false,"auth_reporting":true,"service_internal":false,"service_reporting":false,"auth_inherits_owner":false}
+  ok   [catalog] nachgebildete Default-Privilegien bleiben für acl_kontrolle wirksam  {"ok":true,"row_count":1}
+
+36/36 isolierte Account-Count-Nachweise erfüllt.
+Ziel: privater disposable PostgreSQL-Cluster. Supabase und Production nicht berührt.

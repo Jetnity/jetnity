@@ -1,0 +1,22 @@
+{
+  "candidateSql": {
+    "path": "scripts/db/admin-account-counts-1-candidate.sql",
+    "sha256": "88c98bc8023278202c80abb2078eb8a2a4dadd05e8cedf6aae5f94d9a1907a52"
+  },
+  "bootstrapSql": {
+    "path": "scripts/db/admin-account-counts-1-bootstrap.sql",
+    "sha256": "6409d90ef10fd2f7cb5c70f59496d44acc20d66d7c0adb1e5a73efac2e21fa84"
+  },
+  "runner": {
+    "path": "scripts/db/admin-account-counts-1-local-proof.mjs",
+    "sha256": "b246fa136ad82aa6c738de3d4750d1eafbd0be575c31c5fdb511d012ae4c3c43"
+  },
+  "runnerTests": {
+    "path": "scripts/db/admin-account-counts-1-local-proof.test.mjs",
+    "sha256": "9245b5df2b7fe592f3678e79a1d03c7a75be1e101fee15bc147828350bb7caba"
+  },
+  "postgresql": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "proof": "36/36 PASS",
+  "runnerSafety": "5/5 PASS",
+  "cluster": "private initdb socket under /tmp/jetnity-admin-account-counts-1-<uuid>; system 16/main remained down and unused"
+}
