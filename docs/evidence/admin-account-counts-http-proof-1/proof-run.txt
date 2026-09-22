@@ -1,0 +1,58 @@
+preflight postgresql postgres (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg24.04+2)
+source hashes match dcf7bfee497ba3aa2038a43fe4bc2a09e541625f
+postgrest PostgREST 16.3 loopback http://127.0.0.1:46431
+postgresql PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg24.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+  ok   [http-isolation] PostgREST listens on 127.0.0.1 only with owned LISTEN sockets  {"pid":10315,"port":46431,"loopback":true,"listenState":"0A","sockets":1,"families":["ipv4"],"inodes":["22324"]}
+  ok   [static-source] runner never imports sql.mjs or app env connectors  source scan
+  ok   [static-source] wrapper remains zero-argument SECURITY INVOKER TEXT transport  source scan
+  ok   [static-source] large-value fixture is labelled disposable and is not the producer  source scan
+  ok   [sql-catalog] producer definition/owner/ACL unchanged by wrapper and authenticator setup  {"ownerBefore":"postgres","ownerAfter":"postgres","definitionUnchanged":true,"aclsUnchanged":true}
+  ok   [sql-catalog] auth.users owner/RLS/policies unchanged by wrapper and authenticator setup  {"before":{"rls":true,"acls":["postgres=r/supabase_auth_admin","supabase_auth_admin=arwdDxtm/supabase_auth_admin"],"owner":"supabase_auth_admin","policies":[],"force_rls":false},"after":{"rls":true,"acls":["postgres=r/supabase_auth_admin","supabase_auth_admin=arwdDxtm/supabase_auth_admin"],"owner":"supabase_auth_admin","policies":[],"force_rls":false}}
+  ok   [sql-catalog] setup added only the allowed wrapper and authenticator membership  {"wrapperBefore":false,"wrapperAfter":true,"authenticatorBefore":false,"authenticatorMemberAfter":true,"authenticatorUsers":false}
+  ok   [http-auth] moderator AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.750815+00:00"}
+  ok   [http-auth] admin AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.757829+00:00"}
+  ok   [http-auth] operator AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.761454+00:00"}
+  ok   [http-auth] owner AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.764186+00:00"}
+  ok   [http-shape] GET zero-argument RPC matches fixture counts and parser  {"status":200,"parser":true,"present":"10"}
+  obs  [http-observation] separate HTTP clocks are not required to share measured_at  {"first":"2026-09-22T22:32:10.750815+00:00","get":"2026-09-22T22:32:10.766474+00:00","identical":false}
+  ok   [http-deny] ordinary user AAL2 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] ordinary creator AAL2 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] moderator AAL1 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] moderator missing AAL discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] no-profile AAL2 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] missing subject AAL2 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] soft-deleted privileged profile discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] anonymous privileged profile discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] top-level metadata-only privileged claim on ordinary user discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] user_metadata/app_metadata privileged claim on ordinary user discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
+  ok   [http-deny] anonymous HTTP caller discloses no counts  {"status":401,"code":"42501","reasons":[]}
+  ok   [http-deny] synthetic service_role JWT discloses no counts  {"status":403,"code":"42501","reasons":[]}
+  ok   [http-deny] invalid local token is rejected without counts  {"status":401,"code":"PGRST301","reasons":[]}
+  ok   [http-deny] expired local token is rejected without counts  {"status":401,"code":"PGRST303","reasons":[]}
+  ok   [http-deny] tampered local token is rejected without counts  {"status":401,"code":"PGRST301","reasons":[],"signatureChanged":true}
+  ok   [http-deny] negative paths keep distinct PostgREST v16 status/code classes  {"anon":{"status":401,"code":"42501"},"service":{"status":403,"code":"42501"},"invalid":{"status":401,"code":"PGRST301"},"expired":{"status":401,"code":"PGRST303"},"tampered":{"status":401,"code":"PGRST301"}}
+  ok   [http-schema-profile] Accept-Profile auth.users is an excluded schema  {"method":"GET","path":"/users","schema":"auth","header":{"Accept-Profile":"auth"},"status":406,"code":"PGRST106","reasons":[]}
+  ok   [http-schema-profile] Content-Profile jetnity_reporting is an excluded schema  {"method":"POST","path":"/rpc/account_counts_v1","schema":"jetnity_reporting","header":{"Content-Profile":"jetnity_reporting"},"status":406,"code":"PGRST106","reasons":[]}
+  ok   [http-schema-profile] Accept-Profile jetnity_internal is an excluded schema  {"method":"GET","path":"/rpc/account_counts_v1","schema":"jetnity_internal","header":{"Accept-Profile":"jetnity_internal"},"status":406,"code":"PGRST106","reasons":[]}
+  ok   [http-schema-profile] Accept-Profile public remains the successful exposed schema  {"status":200,"parser":true,"present":"10"}
+  ok   [http-route-shape] public-schema producer name is a missing-function route shape  {"path":"/rpc/account_counts_v1","status":404,"code":"PGRST202","reasons":[]}
+  ok   [http-route-shape] slash-auth path is an invalid-route shape, not schema selection  {"path":"/auth/users","status":404,"code":"PGRST125","reasons":[]}
+  ok   [http-route-shape] slash-schema path is a missing-public-table route shape  {"path":"/jetnity_reporting","status":404,"code":"PGRST205","reasons":[]}
+  ok   [http-route-shape] slash-internal path is a missing-public-table route shape  {"path":"/jetnity_internal","status":404,"code":"PGRST205","reasons":[]}
+  ok   [http-shape] extra POST arguments do not return a successful count row  {"status":404,"code":"PGRST202","parser":{"ok":false,"reason":"invalid"},"reasons":[]}
+  ok   [parser] projection/empty shapes are parser-invalid, not a successful zero  {"status":200,"parser":{"ok":false,"reason":"invalid"},"body":[{"present_registered_accounts":"10"}]}
+  ok   [parser] frozen parser rejects empty array and a synthetic zero present row  {"empty":{"ok":false,"reason":"invalid"},"zero":{"ok":false,"reason":"invalid"}}
+  ok   [http-auth] labelled recent-account fixture yields present=11 window=1 through HTTP  {"status":200,"present":"11","window":"1","parser":true}
+  ok   [http-large-transport] synthetic large-value TEXT transport keeps exact 9007199254740993 and signed bigint max  {"status":200,"row":{"js_safe_overflow":"9007199254740993","signed_bigint_max":"9223372036854775807"}}
+  ok   [http-schema-cache] missing wrapper converges to 404/PGRST202, not a successful zero  {"status":404,"code":"PGRST202","message":"Could not find the function public.admin_account_counts_v1 without parameters in the schema cache","reasons":[]}
+  ok   [sql-catalog] producer definition/owner/ACL unchanged after wrapper-only drop  {"present":true,"owner":"postgres","definitionUnchanged":true}
+  ok   [sql-catalog] auth.users owner/RLS/policies unchanged after wrapper-only drop  {"rls":true,"acls":["postgres=r/supabase_auth_admin","supabase_auth_admin=arwdDxtm/supabase_auth_admin"],"owner":"supabase_auth_admin","policies":[],"force_rls":false}
+  ok   [sql-catalog] wrapper-only drop removes the wrapper and keeps the separately allowed authenticator membership  {"wrapper":false,"authenticator_member":true,"auth_prod":true,"authenticator_users":false}
+  ok   [cleanup-node] owned cluster and PostgREST stopped before data removal  {"cleaned":true,"removed":true,"stopped":true,"running":false,"httpStopped":true,"httpReaped":true,"httpNeverStarted":false,"httpTimedOut":false,"httpSignaled":"SIGTERM","error":null,"lifecycle":"started","rootDir":"/tmp/jetnity-admin-account-counts-http-1-018202da-2074-4675-aeb6-47715db30f9f"}
+cleanup {"cleaned":true,"removed":true,"stopped":true,"running":false,"httpStopped":true,"httpReaped":true,"httpNeverStarted":false,"httpTimedOut":false,"httpSignaled":"SIGTERM","error":null,"lifecycle":"started","rootDir":"/tmp/jetnity-admin-account-counts-http-1-018202da-2074-4675-aeb6-47715db30f9f"}
+http_requests=34
+
+46/46 HTTP-proof assertions satisfied.
+1 observations (not counted as assertions).
+assertion categories: {"http-isolation":1,"static-source":3,"sql-catalog":6,"http-auth":5,"http-shape":2,"http-deny":16,"http-schema-profile":4,"http-route-shape":4,"parser":2,"http-large-transport":1,"http-schema-cache":1,"cleanup-node":1}
+Target: private PostgreSQL + numeric-loopback PostgREST. Hosted Supabase untouched.
