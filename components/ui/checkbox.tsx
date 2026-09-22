@@ -14,8 +14,7 @@ const box = cva(
     'inline-flex items-center justify-center rounded-[4px] border',
     'bg-background text-foreground',
     'outline-none select-none transition',
-    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background',
-    // optisch konsistent mit shadcn
+    // Fokusring kommt vom nativen Input via peer-focus-visible.
     'data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
   ].join(' '),
   {
@@ -44,6 +43,9 @@ const box = cva(
  * Fingerziel zu klein. Der bedienbare Bereich ist deshalb 44 px gross und wird
  * per negativem Rand wieder auf die Groesse der Box zurueckgerechnet: das
  * Layout bleibt unveraendert, nur die Trefferflaeche waechst.
+ *
+ * Das native Input liegt auf dieser Flaeche (opacity 0). Es ist das einzige
+ * interaktive Kontrollkaestchen — kein zweites role=checkbox, kein extra Toggle.
  */
 const hit = cva('relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full', {
   variants: {
@@ -94,91 +96,75 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     },
     ref
   ) => {
+    const generatedId = React.useId()
+    const inputId = id ?? generatedId
     const inputRef = React.useRef<HTMLInputElement>(null)
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
 
-    // indeterminate an das native input weiterreichen
+    const isControlled = typeof checked !== 'undefined'
+    const [uncontrolledChecked, setUncontrolledChecked] = React.useState(!!defaultChecked)
+
+    const isIndet = checked === 'indeterminate'
+    const isChecked = isControlled ? checked === true : uncontrolledChecked
+
     React.useEffect(() => {
       if (!inputRef.current) return
-      inputRef.current.indeterminate = checked === 'indeterminate'
-    }, [checked])
+      inputRef.current.indeterminate = isIndet
+    }, [isIndet])
 
-    const isControlled = typeof checked !== 'undefined'
-    const isChecked = checked === true || (!isControlled && !!defaultChecked)
-    const isIndet = checked === 'indeterminate'
-
-    const toggle = () => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (disabled) return
-      const next = isIndet ? true : !isChecked
+      const next = event.target.checked
+      if (!isControlled) setUncontrolledChecked(next)
       onCheckedChange?.(next)
-      if (!isControlled && inputRef.current) {
-        inputRef.current.checked = next
-        inputRef.current.indeterminate = false
-      }
     }
+
+    const control = (
+      <span
+        data-checkbox-hit=""
+        className={cn(hit({ size }), disabled && 'cursor-not-allowed')}
+      >
+        <input
+          ref={inputRef}
+          id={inputId}
+          type="checkbox"
+          disabled={disabled}
+          {...(isControlled ? { checked: checked === true } : { defaultChecked })}
+          {...inputProps}
+          onChange={handleChange}
+          className="peer absolute inset-0 z-10 m-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+        />
+        <span
+          aria-hidden="true"
+          data-state={isIndet ? 'indeterminate' : isChecked ? 'checked' : 'unchecked'}
+          className={cn(
+            box({ size, invalid }),
+            'pointer-events-none',
+            'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2',
+            disabled && 'opacity-50',
+            (isChecked || isIndet) && 'border-primary bg-primary text-primary-foreground',
+            className
+          )}
+        >
+          {isIndet ? (
+            <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+          ) : isChecked ? (
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
+          ) : null}
+        </span>
+      </span>
+    )
 
     return (
       <div className={cn('flex flex-col', containerClassName)}>
-        <label className="inline-flex items-center gap-2">
-          {/* Trefferflaeche mit der sichtbaren Box darin */}
-          <span
-            role="checkbox"
-            aria-checked={isIndet ? 'mixed' : isChecked}
-            aria-disabled={disabled || undefined}
-            data-state={isIndet ? 'indeterminate' : isChecked ? 'checked' : 'unchecked'}
-            tabIndex={disabled ? -1 : 0}
-            onClick={toggle}
-            onKeyDown={(e) => {
-              if (e.key === ' ' || e.key === 'Enter') {
-                e.preventDefault()
-                toggle()
-              }
-            }}
-            className={cn(hit({ size }), 'group/cb outline-none', disabled && 'cursor-not-allowed')}
-          >
-            <span
-              aria-hidden="true"
-              className={cn(
-                box({ size, invalid }),
-                'pointer-events-none',
-                // Fokusring gehoert optisch an die kleine Box, bedient wird die
-                // umgebende Trefferflaeche.
-                'group-focus-visible/cb:ring-2 group-focus-visible/cb:ring-ring group-focus-visible/cb:ring-offset-2',
-                disabled && 'opacity-50',
-                (isChecked || isIndet) && 'border-primary bg-primary text-primary-foreground',
-                className
-              )}
-            >
-              {isIndet ? (
-                <Minus className="h-3.5 w-3.5" aria-hidden="true" />
-              ) : isChecked ? (
-                <Check className="h-3.5 w-3.5" aria-hidden="true" />
-              ) : null}
-            </span>
-          </span>
-
-          {/* Label */}
-          {label ? (
-            <span
-              className={cn('text-sm leading-5', disabled && 'opacity-70')}
-              onClick={toggle}
-            >
-              {label}
-            </span>
-          ) : null}
-
-          {/* echtes, unsichtbares Input */}
-          <input
-            ref={inputRef}
-            id={id}
-            type="checkbox"
-            className="sr-only"
-            disabled={disabled}
-            {...(isControlled ? { checked: checked === true } : { defaultChecked })}
-            onChange={(e) => onCheckedChange?.(e.target.checked)}
-            {...inputProps}
-          />
-        </label>
+        {label ? (
+          <label className="inline-flex items-center gap-2" htmlFor={inputId}>
+            {control}
+            <span className={cn('text-sm leading-5', disabled && 'opacity-70')}>{label}</span>
+          </label>
+        ) : (
+          control
+        )}
 
         {description ? (
           <p className={cn('ms-6 mt-1 text-xs text-muted-foreground', disabled && 'opacity-70')}>
