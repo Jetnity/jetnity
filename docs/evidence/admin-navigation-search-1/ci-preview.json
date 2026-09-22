@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-09-22T15:45:00Z",
+  "head": "e029b455395f3f3cc6fd36d7d9bd1a4219f213f2",
+  "originMain": "9dc8926ef859bcde2dc31dc8b96f2e61e1948f74",
+  "mergeBase": "9dc8926ef859bcde2dc31dc8b96f2e61e1948f74",
+  "aheadBehind": "4 ahead / 0 behind",
+  "ci": {
+    "runId": 35749140321,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/35749140321",
+    "conclusion": "success",
+    "headSha": "e029b455395f3f3cc6fd36d7d9bd1a4219f213f2",
+    "jobs": [
+      {
+        "name": "Auth-Konfiguration gegen config.toml",
+        "conclusion": "success",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/35749140321/job/106818373093"
+      },
+      {
+        "name": "Typecheck, Lint & Build",
+        "conclusion": "success",
+        "url": "https://github.com/Jetnity/jetnity/actions/runs/35749140321/job/106818373498"
+      }
+    ]
+  },
+  "vercel": {
+    "state": "success",
+    "description": "Deployment has completed",
+    "deployment": "https://vercel.com/jetnity-e1b93c82/jetnity-app/4QdgtJPnmh2op4oJdvcdWpowfjvX",
+    "preview": "https://jetnity-app-git-feat-admin-navigation-search-1-jetnity-e1b93c82.vercel.app",
+    "note": "Preview READY is not a signed-in Admin session proof and not a physical-device proof."
+  },
+  "pr": {
+    "number": 545,
+    "draft": true,
+    "ready": false,
+    "merged": false
+  }
+}

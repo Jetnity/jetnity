@@ -62,6 +62,18 @@ describe('ehrliche Admin-Zustände', () => {
     )
   })
 
+  test('Bereichssuche behauptet keine Datensatzsuche und kein Execute', () => {
+    assert.equal(ADMIN_EHRLICHE_TEXTE.sucheBereiche, 'Bereiche suchen')
+    assert.match(ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis, /Lokale Navigation/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis, /Keine Datensatzsuche/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis, /kein Befehl/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis, /kein Execute/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.sucheBereicheLeer, /Keine Datensatzsuche/)
+    assert.equal(ADMIN_EHRLICHE_TEXTE.sucheBereicheKeinTreffer, 'Kein passender Bereich.')
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.sucheBereiche, /Befehlssuche/)
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis, /Befehlspalette/)
+  })
+
   test('Stub-Seitenhinweis behauptet kein fertiges Modul', () => {
     assert.match(adminFolgtSeitenhinweis('Analytics'), /kein fertiges Modul/)
   })

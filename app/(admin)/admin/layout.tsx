@@ -5,6 +5,10 @@ import { usePathname } from 'next/navigation'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopbar from '@/components/layout/AdminTopbar'
+import {
+  AdminNavigationSearchProvider,
+  AdminNavigationSearchTrigger,
+} from '@/components/admin/AdminNavigationSearch'
 import { applyDark, readThemeMode, resolveDark, storeThemeMode } from '@/lib/admin/theme'
 
 /* ───────────────────────── Admin Shell Context ─────────────────────────
@@ -152,28 +156,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <AdminShellContext.Provider
       value={{ collapsed, toggleCollapsed, setCollapsed, openDrawer, closeDrawer, isDark, toggleTheme }}
     >
+      <AdminNavigationSearchProvider drawerOpen={drawerOpen} closeDrawer={closeDrawer}>
       {/* A11y: Skip to main content */}
       <SkipToContentLink targetId="admin-content" />
 
       <div className="min-h-dvh bg-muted/20 text-foreground">
-        {/* Mobile top strip with menu + collapse toggle */}
-        <div className="md:hidden sticky top-0 z-40 flex items-center justify-between border-b bg-background/75 backdrop-blur px-3 py-2">
+        {/* Mobile top strip with menu + area search + collapse toggle */}
+        <div className="md:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-background/75 backdrop-blur px-3 py-2">
           <button
             type="button"
             onClick={openDrawer}
             aria-label="Navigationsmenü öffnen"
-            className="inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-sm hover:bg-accent"
+            className="inline-flex h-11 items-center gap-2 rounded-lg border px-3 text-sm hover:bg-accent pointer-fine:h-9"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             Menü
           </button>
+          <AdminNavigationSearchTrigger surface="mobile" />
           <button
             type="button"
             onClick={toggleCollapsed}
             aria-pressed={collapsed}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-sm hover:bg-accent"
+            className="inline-flex h-11 items-center gap-2 rounded-lg border px-3 text-sm hover:bg-accent pointer-fine:h-9"
             title="Sidebar ein-/ausklappen (Ctrl/Cmd+Shift+B)"
           >
             {collapsed ? '▶︎' : '◀︎'} Sidebar
@@ -221,6 +227,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             role="dialog"
             aria-modal="true"
             aria-label="Admin Navigation"
+            data-admin-mobile-drawer="true"
             className="fixed inset-0 z-50 md:hidden"
           >
             {/* Overlay */}
@@ -255,6 +262,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}
       </div>
 
+      </AdminNavigationSearchProvider>
     </AdminShellContext.Provider>
   )
 }
