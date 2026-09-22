@@ -1,0 +1,35 @@
+{
+  "continuityPr": 512,
+  "comments": [
+    {
+      "id": 5776334794,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5776334794",
+      "role": "consolidated_handoff_after_mfa"
+    },
+    {
+      "id": 5776541884,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5776541884",
+      "role": "tl_takeover_reconstruction"
+    },
+    {
+      "id": 5776595910,
+      "url": "https://github.com/Jetnity/jetnity/pull/512#issuecomment-5776595910",
+      "role": "provider_later_correction"
+    }
+  ],
+  "providerDeferral": {
+    "issue": 395,
+    "id": 5776595577,
+    "url": "https://github.com/Jetnity/jetnity/issues/395#issuecomment-5776595577",
+    "state": "INTERNAL_UNSENT_DEFERRED"
+  },
+  "tlObservedOnBaseline": {
+    "date": "2026-09-22",
+    "main": "35148a4ba065be1315dddf21174d7f272518d34c",
+    "exactMainCi": "35724784300",
+    "ciResult": "SUCCESS",
+    "productionDeployment": "dpl_4KBe74AJFDvJnSok1dvubUbjaHZh",
+    "productionResult": "READY",
+    "measurementByThisSlice": false
+  }
+}

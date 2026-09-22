@@ -1,0 +1,16 @@
+{
+  "alreadyAssigned": [
+    {
+      "id": "C0",
+      "name": "Jetnity homepage confirmed route entry 1",
+      "pr": 543,
+      "branch": "feat/homepage-confirmed-route-entry-1",
+      "observedHeadAtCapture": "218786742e4bcd73556193b1aba8786e03f2e2f6",
+      "class": "IN_PROGRESS_NOT_MAIN",
+      "newWorkFromThisMap": false
+    }
+  ],
+  "additionalProviderIndependentSlices": [],
+  "additionalCount": 0,
+  "reason": "Accepted ungated honesty/UX repairs are already merged. Remaining V1-critical work is PO-gated activation, legal content, Production writes, or later phases. Inventing further polish would be busywork."
+}

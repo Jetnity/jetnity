@@ -1,0 +1,29 @@
+runtime_spot_checks_on_pinned_main=35148a4ba065be1315dddf21174d7f272518d34c
+
+homepage_single_confirmed_place=yes
+  file=components/places/StartzielForm.tsx
+  note=zielHref of one OrtAuswahl; planner separately accepts ziel/zielId
+
+legal_route_directories=absent
+  app/(public)/privacy=absent
+  app/(public)/terms=absent
+  app/**/impressum=absent
+
+security_events_application_insert=none_found
+  search= .from('security_events').(insert|upsert) in ts/tsx/mjs
+
+guest_invalid_draft_art=ungueltig
+  file=lib/trips/uebernahme.test.ts
+
+protected_item_date_mismatch_signal=item.date_mismatch
+  file=lib/trips/attention.ts
+
+foundation_e_header=legacy_is_not_proof_production_lacks_children
+  file=lib/trips/foundation-e-select.ts
+
+account_visits_migration=supabase/migrations/20260917120000_account_visits.sql
+account_visits_runtime=lib/account/besuche-daten.ts
+production_table_named_in_tl_catalogue=UNVERIFIED
+tl_catalogue_listed_migration_20260917120000=yes_tl_observed_2026-09-22
+
+consent_persistence_contract=AP6A_RUNTIME_VERTRAG.keineConsentPersistenz=true

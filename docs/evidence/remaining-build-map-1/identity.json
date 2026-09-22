@@ -1,0 +1,17 @@
+{
+  "logicalName": "Jetnity remaining build map 1",
+  "generation": 1,
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "actualModel": "cursor-grok-4.6-high-fast",
+  "modelSource": "cursor-cloud run-info originalModelName",
+  "sessionId": "bc-2f765cf3-6e43-493b-96d6-ab1ae9289258",
+  "sessionUrl": "https://cursor.com/agents/bc-2f765cf3-6e43-493b-96d6-ab1ae9289258",
+  "observedDisplayName": "Jetnity remaining build map overview",
+  "uiRenamePerformed": false,
+  "branch": "docs/remaining-build-map-1",
+  "draftPr": 544,
+  "baselineMain": "35148a4ba065be1315dddf21174d7f272518d34c",
+  "taskSeed": "492a35f9861a283d365cc37a3521d1c4a7559ced",
+  "operatingMode": "NORMAL",
+  "date": "2026-09-22"
+}
