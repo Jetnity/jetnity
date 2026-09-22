@@ -10,6 +10,7 @@ import {
   adminNavSearchOptionId,
   filterAdminNavSearch,
   isAdminNavSearchShortcut,
+  leseVerfuegbaresSichtfeld,
   resolveAdminNavSearchHref,
   retainAdminNavSearchHref,
   scrollDeltaToReveal,
@@ -58,6 +59,42 @@ function fokussierbare(root: HTMLElement): HTMLElement[] {
   ).filter((el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true')
 }
 
+function useVerfuegbaresSichtfeld(aktiv: boolean) {
+  const [feld, setFeld] = React.useState<ReturnType<typeof leseVerfuegbaresSichtfeld> | null>(null)
+
+  React.useEffect(() => {
+    if (!aktiv) return
+    const lesen = () => {
+      setFeld(
+        leseVerfuegbaresSichtfeld({
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight,
+          visualViewport: window.visualViewport
+            ? {
+                width: window.visualViewport.width,
+                height: window.visualViewport.height,
+                offsetTop: window.visualViewport.offsetTop,
+                offsetLeft: window.visualViewport.offsetLeft,
+              }
+            : null,
+        }),
+      )
+    }
+    lesen()
+    window.addEventListener('resize', lesen)
+    const vv = window.visualViewport
+    vv?.addEventListener('resize', lesen)
+    vv?.addEventListener('scroll', lesen)
+    return () => {
+      window.removeEventListener('resize', lesen)
+      vv?.removeEventListener('resize', lesen)
+      vv?.removeEventListener('scroll', lesen)
+    }
+  }, [aktiv])
+
+  return feld
+}
+
 type ProviderProps = {
   drawerOpen: boolean
   closeDrawer: () => void
@@ -76,6 +113,7 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
   const listeRef = React.useRef<HTMLUListElement | null>(null)
   const warOffenRef = React.useRef(false)
   const selectedHrefRef = React.useRef<string | null>(selectedHref)
+  const sichtfeld = useVerfuegbaresSichtfeld(open)
 
   const results = React.useMemo(
     () => filterAdminNavSearch(ADMIN_NAV_ITEMS, session, query),
@@ -201,10 +239,17 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
     const liste = listeRef.current
     const option = document.getElementById(adminNavSearchOptionId(sichtbareAuswahl))
     if (!liste || !option) return
-    const listRect = liste.getBoundingClientRect()
-    const optRect = option.getBoundingClientRect()
-    liste.scrollTop += scrollDeltaToReveal(listRect.top, listRect.bottom, optRect.top, optRect.bottom)
-  }, [open, sichtbareAuswahl])
+    const anwenden = () => {
+      const listRect = liste.getBoundingClientRect()
+      const optRect = option.getBoundingClientRect()
+      liste.scrollTop += scrollDeltaToReveal(listRect.top, listRect.bottom, optRect.top, optRect.bottom)
+    }
+    anwenden()
+    if (typeof ResizeObserver === 'undefined') return
+    const beobachter = new ResizeObserver(anwenden)
+    beobachter.observe(liste)
+    return () => beobachter.disconnect()
+  }, [open, sichtbareAuswahl, sichtfeld?.height, sichtfeld?.width])
 
   React.useEffect(() => {
     if (open) {
@@ -234,61 +279,82 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
           role="dialog"
           aria-modal="true"
           aria-labelledby="admin-nav-search-title"
-          className="fixed inset-0 z-[60]"
+          className="z-[60] overflow-hidden"
+          style={
+            sichtfeld
+              ? {
+                  position: 'fixed',
+                  top: sichtfeld.top,
+                  left: sichtfeld.left,
+                  width: sichtfeld.width,
+                  height: sichtfeld.height,
+                }
+              : { position: 'fixed', inset: 0 }
+          }
         >
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-black/50"
             onClick={closeSearch}
           />
-          <div className="relative mx-auto mt-[10vh] w-[min(100%-1.5rem,36rem)] overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-            <div className="border-b border-border px-4 py-3">
-              <div className="flex items-start justify-between gap-3">
-                <h2 id="admin-nav-search-title" className="text-sm font-semibold">
-                  {ADMIN_EHRLICHE_TEXTE.sucheBereiche}
-                </h2>
-                <button
-                  type="button"
-                  aria-label="Bereichssuche schliessen"
-                  onClick={closeSearch}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-md text-sm hover:bg-muted/60 pointer-fine:h-9 pointer-fine:w-9"
-                >
-                  ×
-                </button>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis}</p>
-              <label className="sr-only" htmlFor="admin-nav-search-input">
-                {ADMIN_EHRLICHE_TEXTE.sucheBereiche}
-              </label>
-              <div className="mt-3 flex items-center gap-2 rounded-xl border border-input bg-background px-3">
-                <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                <input
-                  id="admin-nav-search-input"
-                  ref={inputRef}
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={ADMIN_EHRLICHE_TEXTE.sucheBereichePlatzhalter}
-                  autoComplete="off"
-                  autoFocus
-                  spellCheck={false}
-                  role="combobox"
-                  aria-expanded="true"
-                  aria-controls="admin-nav-search-list"
-                  aria-autocomplete="list"
-                  aria-activedescendant={
-                    sichtbareAuswahl ? adminNavSearchOptionId(sichtbareAuswahl) : undefined
-                  }
-                  className="h-11 w-full bg-transparent text-base outline-none placeholder:text-muted-foreground pointer-fine:h-10 pointer-fine:text-sm"
-                />
-              </div>
-            </div>
-            <ul
-              id="admin-nav-search-list"
-              ref={listeRef}
-              role="listbox"
-              aria-label={ADMIN_EHRLICHE_TEXTE.sucheBereiche}
-              className="max-h-[min(50vh,22rem)] overflow-y-auto p-2"
+          <div className="relative flex h-full w-full items-center justify-center">
+            <div
+              data-admin-nav-search-panel
+              className="relative flex min-h-0 w-[min(calc(100%-24px),36rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
+              style={{ maxHeight: 'calc(100% - 24px)' }}
             >
+              <div className="shrink-0 border-b border-border px-3 pt-2">
+                <div className="flex items-center justify-between gap-2">
+                  <h2 id="admin-nav-search-title" className="text-sm font-semibold leading-tight">
+                    {ADMIN_EHRLICHE_TEXTE.sucheBereiche}
+                  </h2>
+                  <button
+                    type="button"
+                    aria-label="Bereichssuche schliessen"
+                    onClick={closeSearch}
+                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-sm hover:bg-muted/60 pointer-fine:h-9 pointer-fine:w-9"
+                  >
+                    ×
+                  </button>
+                </div>
+                <p
+                  className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground"
+                  title={ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis}
+                >
+                  {ADMIN_EHRLICHE_TEXTE.sucheBereicheHinweis}
+                </p>
+                <label className="sr-only" htmlFor="admin-nav-search-input">
+                  {ADMIN_EHRLICHE_TEXTE.sucheBereiche}
+                </label>
+                <div className="mb-2 mt-2 flex items-center gap-2 rounded-xl border border-input bg-background px-3">
+                  <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <input
+                    id="admin-nav-search-input"
+                    ref={inputRef}
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder={ADMIN_EHRLICHE_TEXTE.sucheBereichePlatzhalter}
+                    autoComplete="off"
+                    autoFocus
+                    spellCheck={false}
+                    role="combobox"
+                    aria-expanded="true"
+                    aria-controls="admin-nav-search-list"
+                    aria-autocomplete="list"
+                    aria-activedescendant={
+                      sichtbareAuswahl ? adminNavSearchOptionId(sichtbareAuswahl) : undefined
+                    }
+                    className="h-11 w-full bg-transparent text-base outline-none placeholder:text-muted-foreground pointer-fine:h-10 pointer-fine:text-sm"
+                  />
+                </div>
+              </div>
+              <ul
+                id="admin-nav-search-list"
+                ref={listeRef}
+                role="listbox"
+                aria-label={ADMIN_EHRLICHE_TEXTE.sucheBereiche}
+                className="min-h-[calc(2.75rem+1rem)] flex-1 overflow-y-auto p-2"
+              >
               {results.length === 0 ? (
                 <li className="px-3 py-3 text-sm text-muted-foreground" role="presentation">
                   {query.trim()
@@ -325,7 +391,8 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
                   )
                 })
               )}
-            </ul>
+              </ul>
+            </div>
           </div>
         </div>
       ) : null}

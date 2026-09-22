@@ -116,11 +116,11 @@ async function oeffnen(page, origin, suche, viewport) {
   return anfragen
 }
 
-async function speichern(page, name) {
+async function speichern(page, name, { fullPage = true } = {}) {
   const ziel = join(EVIDENCE, `${name}.png`)
   const artifact = join(ARTIFACTS, `${name}.png`)
-  await page.screenshot({ path: ziel, fullPage: true })
-  await page.screenshot({ path: artifact, fullPage: true })
+  await page.screenshot({ path: ziel, fullPage })
+  await page.screenshot({ path: artifact, fullPage })
   return ziel
 }
 
@@ -273,20 +273,83 @@ async function optionGeometrie(page, name) {
     const option = Array.from(document.querySelectorAll('#admin-nav-search-list [role="option"]')).find(
       (el) => el.textContent?.trim() === label,
     )
-    if (!(liste instanceof HTMLElement) || !(option instanceof HTMLElement)) {
+    const input = document.getElementById('admin-nav-search-input')
+    const close = document.querySelector('[aria-label="Bereichssuche schliessen"]')
+    const panel = document.querySelector('[data-admin-nav-search-panel]')
+    if (
+      !(liste instanceof HTMLElement) ||
+      !(option instanceof HTMLElement) ||
+      !(input instanceof HTMLElement) ||
+      !(close instanceof HTMLElement) ||
+      !(panel instanceof HTMLElement)
+    ) {
       return null
     }
+    const vv = window.visualViewport
+    const viewTop = vv?.offsetTop ?? 0
+    const viewLeft = vv?.offsetLeft ?? 0
+    const viewWidth = vv?.width ?? window.innerWidth
+    const viewHeight = vv?.height ?? window.innerHeight
+    const viewBottom = viewTop + viewHeight
+    const viewRight = viewLeft + viewWidth
     const listRect = liste.getBoundingClientRect()
     const optRect = option.getBoundingClientRect()
+    const inputRect = input.getBoundingClientRect()
+    const closeRect = close.getBoundingClientRect()
+    const panelRect = panel.getBoundingClientRect()
+    const imListenfenster = optRect.top >= listRect.top && optRect.bottom <= listRect.bottom
+    const optionImViewport = optRect.top >= viewTop && optRect.bottom <= viewBottom
+    const inputImViewport = inputRect.top >= viewTop && inputRect.bottom <= viewBottom
+    const closeImViewport = closeRect.top >= viewTop && closeRect.bottom <= viewBottom
     return {
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+      visualViewport: {
+        width: viewWidth,
+        height: viewHeight,
+        offsetTop: viewTop,
+        offsetLeft: viewLeft,
+        bottom: viewBottom,
+        right: viewRight,
+      },
       listTop: listRect.top,
       listBottom: listRect.bottom,
       optTop: optRect.top,
       optBottom: optRect.bottom,
+      inputTop: inputRect.top,
+      inputBottom: inputRect.bottom,
+      closeTop: closeRect.top,
+      closeBottom: closeRect.bottom,
+      panelTop: panelRect.top,
+      panelBottom: panelRect.bottom,
       scrollTop: liste.scrollTop,
-      fullyVisible: optRect.top >= listRect.top && optRect.bottom <= listRect.bottom,
+      scrollHeight: liste.scrollHeight,
+      clientHeight: liste.clientHeight,
+      optionCount: document.querySelectorAll('#admin-nav-search-list [role="option"]').length,
+      imListenfenster,
+      optionImViewport,
+      inputImViewport,
+      closeImViewport,
+      panelImViewport: panelRect.top >= viewTop && panelRect.bottom <= viewBottom,
+      fullyVisible: imListenfenster && optionImViewport,
     }
   }, name)
+}
+
+function r1SichtbarkeitPruefen(geo) {
+  assert.equal(geo !== null, true)
+  assert.equal(geo.optionCount, 6)
+  assert.equal(geo.imListenfenster, true)
+  assert.equal(geo.optionImViewport, true)
+  assert.equal(geo.inputImViewport, true)
+  assert.equal(geo.closeImViewport, true)
+  assert.equal(geo.panelImViewport, true)
+  assert.equal(geo.fullyVisible, true)
+  assert.ok(geo.optBottom <= geo.visualViewport.bottom)
+  assert.ok(geo.optTop >= geo.visualViewport.offsetTop)
+  if (geo.scrollHeight > geo.clientHeight + 1) {
+    assert.equal(geo.scrollTop > 0, true)
+  }
 }
 
 async function r1AktiveZeileSichtbar(page, origin) {
@@ -296,21 +359,76 @@ async function r1AktiveZeileSichtbar(page, origin) {
   await page.waitForFunction(() => document.activeElement?.id === 'admin-nav-search-input')
   await page.locator('#admin-nav-search-list [role="option"][aria-selected="true"]').waitFor()
   for (let i = 0; i < 5; i += 1) await page.keyboard.press('ArrowDown')
+  await page.waitForFunction(() => {
+    const option = Array.from(document.querySelectorAll('#admin-nav-search-list [role="option"]')).find(
+      (el) => el.textContent?.trim() === 'Provider & Kosten',
+    )
+    const liste = document.getElementById('admin-nav-search-list')
+    const vv = window.visualViewport
+    if (!(option instanceof HTMLElement) || !(liste instanceof HTMLElement)) return false
+    const viewTop = vv?.offsetTop ?? 0
+    const viewBottom = viewTop + (vv?.height ?? window.innerHeight)
+    const listRect = liste.getBoundingClientRect()
+    const optRect = option.getBoundingClientRect()
+    return (
+      optRect.top >= listRect.top &&
+      optRect.bottom <= listRect.bottom &&
+      optRect.top >= viewTop &&
+      optRect.bottom <= viewBottom
+    )
+  })
   const geo = await optionGeometrie(page, 'Provider & Kosten')
-  assert.equal(geo !== null, true)
-  assert.equal(geo.fullyVisible, true)
-  assert.equal(geo.scrollTop > 0, true)
-  await speichern(page, 'r1_390x500_last_row_visible')
+  r1SichtbarkeitPruefen(geo)
+  await speichern(page, 'r1_390x500_last_row_visible', { fullPage: false })
 
   await page.evaluate(() => {
     document.documentElement.style.fontSize = '200%'
   })
   await page.keyboard.press('ArrowUp')
   await page.keyboard.press('ArrowDown')
+  await page.waitForFunction(() => {
+    const option = Array.from(document.querySelectorAll('#admin-nav-search-list [role="option"]')).find(
+      (el) => el.textContent?.trim() === 'Provider & Kosten',
+    )
+    const liste = document.getElementById('admin-nav-search-list')
+    const input = document.getElementById('admin-nav-search-input')
+    const close = document.querySelector('[aria-label="Bereichssuche schliessen"]')
+    const panel = document.querySelector('[data-admin-nav-search-panel]')
+    const vv = window.visualViewport
+    if (
+      !(option instanceof HTMLElement) ||
+      !(liste instanceof HTMLElement) ||
+      !(input instanceof HTMLElement) ||
+      !(close instanceof HTMLElement) ||
+      !(panel instanceof HTMLElement)
+    ) {
+      return false
+    }
+    const viewTop = vv?.offsetTop ?? 0
+    const viewBottom = viewTop + (vv?.height ?? window.innerHeight)
+    const listRect = liste.getBoundingClientRect()
+    const optRect = option.getBoundingClientRect()
+    const inputRect = input.getBoundingClientRect()
+    const closeRect = close.getBoundingClientRect()
+    const panelRect = panel.getBoundingClientRect()
+    return (
+      optRect.top >= listRect.top &&
+      optRect.bottom <= listRect.bottom &&
+      optRect.top >= viewTop &&
+      optRect.bottom <= viewBottom &&
+      inputRect.top >= viewTop &&
+      inputRect.bottom <= viewBottom &&
+      closeRect.top >= viewTop &&
+      closeRect.bottom <= viewBottom &&
+      panelRect.bottom <= viewBottom
+    )
+  })
   const geoZoom = await optionGeometrie(page, 'Provider & Kosten')
-  assert.equal(geoZoom !== null, true)
-  assert.equal(geoZoom.fullyVisible, true)
-  await speichern(page, 'r1_390x500_200pct_last_row_visible')
+  r1SichtbarkeitPruefen(geoZoom)
+  assert.equal(geoZoom.innerHeight, 500)
+  assert.ok(geoZoom.visualViewport.height <= 500)
+  assert.ok(geoZoom.optBottom <= 500)
+  await speichern(page, 'r1_390x500_200pct_last_row_visible', { fullPage: false })
   ergebnisse.push({ name: 'r1_keyboard_row_visible', geo, geoZoom })
 }
 
@@ -391,8 +509,12 @@ try {
   await r2HoverStiehltNicht(page, origin)
   await r3PrefetchGrenze(page, origin)
 } catch (fehler) {
-  await speichern(page, 'hydrated_failure').catch(() => {})
-  writeFileSync(join(EVIDENCE, 'hydrated-report.json'), JSON.stringify({ ergebnisse, fehler: String(fehler) }, null, 2))
+  const lastGeo = await optionGeometrie(page, 'Provider & Kosten').catch(() => null)
+  await speichern(page, 'hydrated_failure', { fullPage: false }).catch(() => {})
+  writeFileSync(
+    join(EVIDENCE, 'hydrated-report.json'),
+    JSON.stringify({ ergebnisse, lastGeo, fehler: String(fehler) }, null, 2),
+  )
   await browser.close()
   server.close()
   throw fehler

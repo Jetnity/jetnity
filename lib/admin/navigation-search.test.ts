@@ -14,7 +14,10 @@ import {
   normalizeAdminNavSearchQuery,
   readyAdminNavItems,
   resolveAdminNavSearchHref,
+  leseVerfuegbaresSichtfeld,
+  optionIstErreichbar,
   optionIstImListenfenster,
+  optionIstImSichtfeld,
   retainAdminNavSearchHref,
   scrollDeltaToReveal,
   stepAdminNavSearchHref,
@@ -120,6 +123,27 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
     assert.equal(scrollDeltaToReveal(200, 450, 210, 250), 0)
     assert.equal(optionIstImListenfenster(200, 450, 430, 474), false)
     assert.equal(optionIstImListenfenster(200, 450, 210, 250), true)
+  })
+
+  test('Erreichbarkeit schneidet Listenfenster mit viewport/visualViewport', () => {
+    const layout = leseVerfuegbaresSichtfeld({ innerWidth: 390, innerHeight: 500, visualViewport: null })
+    assert.deepEqual(layout, { top: 0, left: 0, right: 390, bottom: 500, width: 390, height: 500 })
+    const visuell = leseVerfuegbaresSichtfeld({
+      innerWidth: 390,
+      innerHeight: 800,
+      visualViewport: { width: 390, height: 500, offsetTop: 0, offsetLeft: 0 },
+    })
+    assert.equal(visuell.height, 500)
+    assert.equal(visuell.bottom, 500)
+
+    // TL R2 repro at 390x500 / 200% text: option inside list, outside viewport 500.
+    assert.equal(optionIstImListenfenster(454, 704, 616, 704), true)
+    assert.equal(optionIstImSichtfeld(0, 500, 616, 704), false)
+    assert.equal(optionIstErreichbar(454, 704, 0, 500, 616, 704), false)
+
+    assert.equal(optionIstErreichbar(280, 476, 0, 500, 388, 476), true)
+    assert.equal(optionIstImSichtfeld(0, 500, 12, 56), true)
+    assert.equal(optionIstImSichtfeld(0, 500, 480, 560), false)
   })
 
   test('Shortcut ist nur Cmd/Ctrl+K ohne Shift/Alt', () => {

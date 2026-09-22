@@ -15,7 +15,7 @@ Browser: Playwright Chromium emulation only.
 - Foreign `aria-modal` keeps focus; shortcut does not steal.
 - `kosten` alias hits Provider & Kosten with zero `window.fetch` search calls.
 - 768 desktop trigger, 390 + 200% text, results list `overflow-y: auto`.
-- **R1:** 390×500 ArrowDown to last ready row; option fully inside list (`fullyVisible`, `scrollTop > 0`). Same after 200% root font-size.
+- **R1 (viewport-bound):** 390×500 ArrowDown to last ready row. Visibility is list window ∩ visualViewport, not list-only. 100%: option `408–452` in list `180–460` and viewport `500`; panel `39–461`; input/close in viewport; 6 results. 200% text: option `399–487` in list `290–487` and viewport `500`; panel `12–488`; input `192–272`; close `29–101`; `scrollTop 347`; 6 results remain. Previous list-only `fullyVisible` at option `y616–704` is rejected.
 - **R2:** Focus close button, hover Nutzer; `activeElement` remains the close BUTTON, not the input.
 - **R3:** Palette Link boundary records `prefetch: false` six times; DOM anchors have no `prefetch` attribute.
 

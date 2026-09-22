@@ -128,3 +128,62 @@ export function optionIstImListenfenster(
 ): boolean {
   return itemTop >= listTop && itemBottom <= listBottom
 }
+
+export type VerfuegbaresSichtfeld = {
+  top: number
+  left: number
+  right: number
+  bottom: number
+  width: number
+  height: number
+}
+
+/** Layout-viewport plus visualViewport, the actually visible window while overflow is locked. */
+export function leseVerfuegbaresSichtfeld(win: {
+  innerWidth: number
+  innerHeight: number
+  visualViewport?: {
+    width: number
+    height: number
+    offsetTop: number
+    offsetLeft: number
+  } | null
+}): VerfuegbaresSichtfeld {
+  const vv = win.visualViewport
+  const width = vv?.width ?? win.innerWidth
+  const height = vv?.height ?? win.innerHeight
+  const top = vv?.offsetTop ?? 0
+  const left = vv?.offsetLeft ?? 0
+  return {
+    top,
+    left,
+    right: left + width,
+    bottom: top + height,
+    width,
+    height,
+  }
+}
+
+export function optionIstImSichtfeld(
+  viewTop: number,
+  viewBottom: number,
+  itemTop: number,
+  itemBottom: number,
+): boolean {
+  return itemTop >= viewTop && itemBottom <= viewBottom
+}
+
+/** Selected row must sit fully in the list window and in the available viewport. */
+export function optionIstErreichbar(
+  listTop: number,
+  listBottom: number,
+  viewTop: number,
+  viewBottom: number,
+  itemTop: number,
+  itemBottom: number,
+): boolean {
+  return (
+    optionIstImListenfenster(listTop, listBottom, itemTop, itemBottom) &&
+    optionIstImSichtfeld(viewTop, viewBottom, itemTop, itemBottom)
+  )
+}
