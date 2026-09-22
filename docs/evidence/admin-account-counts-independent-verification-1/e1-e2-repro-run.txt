@@ -1,0 +1,42 @@
+# E2 reconstructed run — 2026-09-22 after TL 5282860545
+# Command: node docs/evidence/admin-account-counts-independent-verification-1/repro-home-psqlrc-and-dst.mjs
+# cwd=/workspace after authorized merge of main 34686af3
+# This is NOT the historical 25 mixed-probe total and NOT the exact-source 56/56 class.
+
+EXIT=0
+9/9 E2 reconstructed assertions
+
+source-hash-candidate
+  expected dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420
+  actual   dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420
+
+system-16-main-unused: no system socket; 16/main remained down
+
+home-only-without-X-runs-sentinel
+  actual: JETNITY_PSQLRC_SENTINEL then \connect nonexistent_psqlrc_redirect_db
+  failed on owned socket /tmp/jetnity-iv1-e2-repro-2efafc14-acf6-416e-9dd7-02320ad8509f/socket/.s.PGSQL.5432
+  no remote host
+
+home-only-with-X-suppresses-sentinel
+  actual: status 0, stdout 1
+
+dst-spring (America/New_York, reconstructed)
+  fixed_start    2026-02-07T02:00:00-05:00  (= 2026-02-07T07:00Z)
+  calendar_start 2026-02-07T03:00:00-05:00  (= 2026-02-07T08:00Z)
+  start_displacement_seconds +3600
+  calendar_elapsed_seconds 2588400 (719h)  — 3600s shorter than 720h
+  fixed_elapsed_seconds 2592000
+
+dst-fall (America/New_York, reconstructed)
+  fixed_start    2026-10-03T02:00:00-04:00  (= 2026-10-03T06:00Z)
+  calendar_start 2026-10-03T01:00:00-04:00  (= 2026-10-03T05:00Z)
+  start_displacement_seconds -3600
+  calendar_elapsed_seconds 2595600 (721h)  — 3600s longer than 720h
+  fixed_elapsed_seconds 2592000
+
+cleanup-removed-owned-dir-after-stop: removed
+no leftover /tmp/jetnity-iv1-e2-repro-* dirs
+
+# Re-run after owned-doc freeze edits, same session, cwd=/workspace
+# EXIT=0, 9/9 again. spring elapsed 2588400 (719h), fall 2595600 (721h).
+# system 16/main still down. no leftover /tmp/jetnity-iv1-e2-repro-* dirs.
