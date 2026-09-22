@@ -23,6 +23,7 @@ This is an adversarial self-review. It is **not** a Technical-Lead PASS.
 | Unrelated parents discarded | Yes — T-unrelated-parents |
 | Loader throw ≠ empty; no raw error | Yes — loader + insights source_failed tests |
 | Original item time; TTL 120s; future not clamped | Yes — T-original-item-time / T-boundary-120s / T-missing-invalid-future-timestamp |
+| MU-R1 collector ISO + calendar before retain | Yes — `parseEvidencedIsoInstant`; invalid strings no longer survive |
 | A then B keep original time, no session claim | Yes — T-cache-A-then-B |
 | Fixed `/admin/provider-ops` only; writes empty; model off | Yes — T-fixed-link-and-writes |
 | No costs/totals/metadata/PII in report | Yes — closed copy + leak assertions |
@@ -55,6 +56,10 @@ Selection requires exactly one `id === 'model-usage'` item that passes the close
 
 `berechneModelUsageFreshness` returns `unknown` / `ageMs: null` when `nowMs - parsed < 0`. It does not use the existing clamp helper.
 
+### 2.5a MU-R1 — could Date.parse retain free text or invent a fresh instant?
+
+The first freeze accepted any finite `Date.parse` result and copied nonempty `checkedAt` before validation. Independent TL counterexamples (RFC GMT + synthetic email marker; 2026-02-30 rolling to March 2) are now rejected: both timestamp fields are `null`, age is unknown, and the raw string is absent from JSON and HTML. Only `YYYY-MM-DDTHH:mm:ss.sssZ` values that reconstruct to the same UTC calendar instant are retained. Valid future ISO is kept and marked unknown. Board time, newest usage time and `now` are never substituted. The old `gestern-vormittag` retention assertion was replaced.
+
 ### 2.6 Could stale available look like a current all-clear?
 
 Stale available/empty is `materiality: 'attention'` and includes “Stand ist veraltet.” `none` is never emitted for this source.
@@ -80,6 +85,7 @@ No. Existing authorized Admin access was not available. Evidence is synthetic co
 - The bounded 30-day / 200-row read can miss older or additional spend. Copy states that limit; this slice does not display totals.
 - `overflow-x` was not hidden; wrapping uses `break-words` so focus outlines stay visible.
 - Denied `doesNotProve` still contains the honest phrase “nicht 0 USD” on the denial path only; source metadata never supplies that number.
+- Historical viewport screenshots from `7602a0ac` were not recaptured; standard-case rendered copy is unchanged. `unavailable_1280_focus.png` remains programmatic focus only. Keyboard evidence for this correction is `unavailable_1280_tab_focus.png` (1 Tab).
 
 ---
 

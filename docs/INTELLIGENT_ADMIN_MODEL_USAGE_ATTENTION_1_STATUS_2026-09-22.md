@@ -1,7 +1,7 @@
 # Intelligent Admin Model Usage Attention 1 — Status
 
 Stand: 22. September 2026  
-Status: **IMPLEMENTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **MU-R1 CORRECTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Issue: #537  
 Draft PR: #538  
@@ -35,7 +35,7 @@ Contracts preserved:
 - available is coverage, never healthy finances/budget/limit;
 - foundation_only / disabled / not_configured are conservative coverage with no activation recommendation;
 - original `item.checkedAt` plus evaluation now and TTL 120000; board `checkedAt` and `metadata.juengsteCreatedAt` are not substituted;
-- missing/invalid/future timestamps stay `unknown` with `ageMs: null` (future is not clamped to fresh);
+- **MU-R1:** only an evidenced collector ISO instant (`YYYY-MM-DDTHH:mm:ss.sssZ` + real calendar) is retained. Annotated, timezone-free, Date.parse-permissive and calendar-impossible values become `null` in both timestamp fields, unknown age, and never appear in JSON or render. Valid future instants stay retained and unknown, not fresh;
 - stale available/empty is attention and cannot produce a current all-clear;
 - process-recent on loaded snapshots; A then B keep the original time; no “in dieser Sitzung”;
 - closed copy map only; raw detail/metadata/free text discarded;
@@ -52,9 +52,11 @@ Traveller-context intelligence does not apply: operator Admin home, no traveller
 | --- | --- |
 | Task / PR baseline | `main@fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
 | Task seed | `94843032d28cb94056224f2ed275b45c8e7874d4` |
-| Live `origin/main` at handoff re-read | `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
+| Live `origin/main` at MU-R1 re-read | `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
 | Merge-base | `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
-| Ahead / behind vs live main before this persist | **2 ahead / 0 behind** (seed + implementation). This persist adds the wrap/evidence/docs commit. |
+| Previous freeze | `7602a0acc53a69305397f0eabdb2523cad1496d3` — **invalidated** by this MU-R1 correction |
+| TL review | `5276325319` CHANGES REQUIRED on `7602a0ac` |
+| Ahead / behind vs live main before this persist | **3 ahead / 0 behind**. This persist adds the MU-R1 correction. |
 | Rebase | **not done** |
 | Sibling integration | **not done** |
 
@@ -84,14 +86,16 @@ Not written: existing System Health/analyst source files and tests, provider-ops
 
 | Check | Result |
 | --- | --- |
+| MU-R1 JSON + render hostile/calendar/timezone cases | **pass** — invalid strings no longer retained |
 | Model-usage permission/truth/time/privacy/render tests | **pass** (`model-usage-*.test.ts` + additive honest-copy) |
 | Existing #518 analyst/loader/render + ehrliche-zustaende | **pass** |
 | Admin-access / AAL wiring / provider-ops-board regressions | **pass** |
 | `npx tsc -p tsconfig.json --noEmit` | **pass** |
 | ESLint on owned files | **pass** |
 | `check:exports` / `check:api-schutz` / `check:dead` | **pass** (12 Admin routes, no new API; 0 unused exports; 0 orphan modules) |
-| Synthetic render | available / empty / unavailable / unknown / stale / denied / break-glass at 320 / 390 / 1280; 200% text on empty/unavailable/stale; focus shot on investigate link |
-| Overflow measurements | all recorded cases/viewports `overflowing: false`, `cardsBeyondShell: 0` |
+| Synthetic render | Historical viewport captures from `7602a0ac` remain; standard-case copy/layout is unchanged. **Not recaptured.** |
+| Keyboard | New `unavailable_1280_tab_focus.png` from a real Tab sequence (1 Tab, visible outline). Historical `unavailable_1280_focus.png` is programmatic `link.focus()` only and is not a Tab sequence. |
+| Overflow measurements | historical manifest unchanged; all `overflowing: false`, `cardsBeyondShell: 0` |
 | CSS | `styles/globals.css` compiled, 105145 bytes |
 | Authenticated Preview click-through | **BLOCKED_ACCESS** — no login/secret/bypass |
 
@@ -111,6 +115,6 @@ Local `npm run build` **passed** (Next.js 16.3.3 /admin remains dynamic). Exact-
 
 ## 6. Stop
 
-**STOP FOR INDEPENDENT TECHNICAL-LEAD CODE / AUTHORIZATION / SOURCE-TRUTH / VISUAL REVIEW.**
+**STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW OF MU-R1.**
 
 No Ready. No merge. No follow-up slice by Cursor. No new source, model, secret, paid call, Production activation or Grok routine.

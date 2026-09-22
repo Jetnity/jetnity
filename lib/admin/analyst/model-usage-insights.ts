@@ -59,9 +59,46 @@ export function enthältVerbotenesModelUsageQuellleck(text: string): boolean {
   return VERBOTENE_QUELLLECKS.test(text) || SITZUNG_MUSTER.test(text)
 }
 
+/** Exact collector contract: `new Date(ms).toISOString()` → `YYYY-MM-DDTHH:mm:ss.sssZ`. */
+const COLLECTOR_ISO_INSTANT = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})Z$/
+
+/**
+ * Retain only an evidenced collector instant. Annotated, timezone-free,
+ * calendar-impossible and Date.parse-permissive strings are discarded.
+ */
+export function parseEvidencedIsoInstant(wert: string | null | undefined): string | null {
+  if (typeof wert !== 'string' || wert.length !== 24) return null
+  const treffer = COLLECTOR_ISO_INSTANT.exec(wert)
+  if (!treffer) return null
+  const jahr = Number(treffer[1])
+  const monat = Number(treffer[2])
+  const tag = Number(treffer[3])
+  const stunde = Number(treffer[4])
+  const minute = Number(treffer[5])
+  const sekunde = Number(treffer[6])
+  const milli = Number(treffer[7])
+  if (monat < 1 || monat > 12) return null
+  if (stunde > 23 || minute > 59 || sekunde > 59) return null
+  const tageImMonat = new Date(Date.UTC(jahr, monat, 0)).getUTCDate()
+  if (tag < 1 || tag > tageImMonat) return null
+  const rekonstruiert = new Date(Date.UTC(jahr, monat - 1, tag, stunde, minute, sekunde, milli))
+  if (
+    rekonstruiert.getUTCFullYear() !== jahr ||
+    rekonstruiert.getUTCMonth() !== monat - 1 ||
+    rekonstruiert.getUTCDate() !== tag ||
+    rekonstruiert.getUTCHours() !== stunde ||
+    rekonstruiert.getUTCMinutes() !== minute ||
+    rekonstruiert.getUTCSeconds() !== sekunde ||
+    rekonstruiert.getUTCMilliseconds() !== milli
+  ) {
+    return null
+  }
+  if (rekonstruiert.toISOString() !== wert) return null
+  return wert
+}
+
 function istGueltigerModelUsageZeitpunkt(wert: string | null | undefined): boolean {
-  if (!wert) return false
-  return Number.isFinite(Date.parse(wert))
+  return parseEvidencedIsoInstant(wert) !== null
 }
 
 function formatiereModelUsageAlter(ageMs: number): string {
@@ -102,10 +139,11 @@ export function berechneModelUsageFreshness(
   checkedAt: string | null | undefined,
   nowMs: number,
 ): BoardFreshness {
-  if (!istGueltigerModelUsageZeitpunkt(checkedAt)) {
+  const instant = parseEvidencedIsoInstant(checkedAt)
+  if (!instant) {
     return { ...UNBEKANNTE_FRISCHE }
   }
-  const geprueft = Date.parse(checkedAt as string)
+  const geprueft = Date.parse(instant)
   const delta = nowMs - geprueft
   if (delta < 0) {
     return { ...UNBEKANNTE_FRISCHE }
@@ -206,7 +244,7 @@ function basisInsight(
 function abschluss(teil: Omit<ModelUsageBericht, 'writeActions' | 'modelExplanation'>): ModelUsageBericht {
   const insights = teil.insights.map((insight) => ({
     ...insight,
-    checkedAt: insight.checkedAt || null,
+    checkedAt: parseEvidencedIsoInstant(insight.checkedAt),
     title: alsUnvertrautenModelUsageText(insight.title),
     explanation: alsUnvertrautenModelUsageText(insight.explanation),
     proves: alsUnvertrautenModelUsageText(insight.proves),
@@ -388,7 +426,9 @@ function statusBericht(
   item: ProviderOpsBoardItem,
   nowMs: number,
 ): ModelUsageBericht {
-  const originalCheckedAt = typeof item.checkedAt === 'string' && item.checkedAt ? item.checkedAt : null
+  const originalCheckedAt = parseEvidencedIsoInstant(
+    typeof item.checkedAt === 'string' ? item.checkedAt : null,
+  )
   const freshness = berechneModelUsageFreshness(originalCheckedAt, nowMs)
   const status = item.status
   const klass = klassifiziere(status, freshness)

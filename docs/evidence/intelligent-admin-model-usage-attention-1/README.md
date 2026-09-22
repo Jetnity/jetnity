@@ -14,7 +14,9 @@ CSS provenance: `styles/globals.css` compiled via `tailwindcss/nesting` + `tailw
 | --- | --- | --- |
 | available | `screenshots/available_{320,390,1280}.png` | Role grant; recorded rows readable; coverage, not finance |
 | empty | `screenshots/empty_{320,390,1280,390-200,1280-200}.png` | No recorded rows; not null spend; investigate hop |
-| unavailable | `screenshots/unavailable_{320,390,1280,390-200,1280-200}.png` plus `unavailable_1280_focus.png` | Failed read, not empty; visible keyboard focus on `/admin/provider-ops` |
+| unavailable | `screenshots/unavailable_{320,390,1280,390-200,1280-200}.png` | Failed read, not empty |
+| unavailable keyboard (historical) | `screenshots/unavailable_1280_focus.png` | Programmatic `link.focus()` only. **Not** a Tab sequence. Kept as historical capture from `7602a0ac`. |
+| unavailable keyboard (MU-R1) | `screenshots/unavailable_1280_tab_focus.png` | Real Tab key sequence (1 Tab) until `document.activeElement` is `/admin/provider-ops`; visible outline. See `keyboard-tab.json`. |
 | unknown | `screenshots/unknown_{320,390,1280}.png` | Evidence unknown; not empty |
 | stale | `screenshots/stale_{320,390,1280,390-200,1280-200}.png` | Original item time `11:57:00 UTC` + `vor 3 Minuten`; stale available is attention |
 | denied | `screenshots/denied_{320,390,1280}.png` | `forbidden`; no coverage line; no hop; no loader |
@@ -28,5 +30,5 @@ Measured overflow (all cases × 320/390/1280, plus 200% text on empty/unavailabl
 
 - This is compiled-product-CSS component evidence, not a branded authenticated Preview pixel match of `/admin`.
 - No real-device claim.
-- No blanket accessibility audit claim. Keyboard/focus contracts are in `lib/admin/analyst/model-usage-render.test.ts`.
+- No blanket accessibility audit claim. Keyboard/focus contracts are in `lib/admin/analyst/model-usage-render.test.ts`. Viewport captures from `7602a0ac` remain historical because standard-case rendered output did not change in MU-R1. They were not recaptured.
 - Existing authorized Admin Preview credentials were not available to this session. Access is recorded as **BLOCKED_ACCESS**, not manufactured.

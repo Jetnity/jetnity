@@ -158,6 +158,31 @@ describe('AdminModellnutzungHinweis Ansicht (synthetic render)', () => {
     assert.match(unknownHtml, /Prüfzeitpunkt unbekannt/)
     assert.match(unknownHtml, /Alter unbekannt/)
     assert.doesNotMatch(unknownHtml, /<time dateTime="kein-datum"/)
+    assert.doesNotMatch(unknownHtml, /kein-datum/)
+  })
+
+  test('MU-R1 render: feindliche und unmögliche Zeiten erscheinen nicht', () => {
+    const marker = 'test-person@example.invalid SYNTHETIC_MARKER'
+    const faelle = [
+      marker,
+      `Tue, 22 Sep 2026 12:00:00 GMT (${marker})`,
+      '2026-02-30T12:00:00.000Z',
+      '2026-09-22T12:00:00.000',
+      'gestern-vormittag',
+    ]
+    for (const checkedAt of faelle) {
+      const html = htmlAus(
+        leiteModelUsageInsights({
+          access: { status: 'allowed', grant: 'role' },
+          nowMs: JETZT,
+          board: board('available', checkedAt),
+        }),
+      )
+      assert.match(html, /Prüfzeitpunkt unbekannt/)
+      assert.match(html, /Alter unbekannt/)
+      assert.doesNotMatch(html, /<time /)
+      assert.doesNotMatch(html, /SYNTHETIC_MARKER|test-person@example\.invalid|gestern-vormittag|2026-02-30/)
+    }
   })
 
   test('Denied und Break-Glass rendern keine Coverage-Zeile und keinen Investigate-Link', () => {

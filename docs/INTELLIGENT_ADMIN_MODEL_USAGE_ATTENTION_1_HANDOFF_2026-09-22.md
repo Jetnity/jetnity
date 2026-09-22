@@ -1,7 +1,7 @@
 # Intelligent Admin Model Usage Attention 1 — Handoff
 
 Stand: 22. September 2026  
-Status: **STOP FOR TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **MU-R1 CORRECTED / STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/INTELLIGENT_ADMIN_MODEL_USAGE_ATTENTION_1_TASK_2026-09-22.md`  
 Accepted contracts: Foundation 1 DECISION / SOURCE_MATRIX / RUNTIME_TASK §10  
@@ -22,8 +22,10 @@ This document is enough for a new Technical Lead chat to review without the impl
 | Branch | `feat/intelligent-admin-model-usage-attention-1` |
 | Task baseline | `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
 | Task seed | `94843032d28cb94056224f2ed275b45c8e7874d4` |
-| Live main at handoff re-read | `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
-| Ahead / behind vs live main before docs persist | 2 ahead / 0 behind |
+| Live main at MU-R1 re-read | `fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
+| Invalidated freeze | `7602a0acc53a69305397f0eabdb2523cad1496d3` |
+| TL review | `5276325319` CHANGES REQUIRED — MU-R1 only |
+| Ahead / behind vs live main before this persist | 3 ahead / 0 behind |
 | Rebase / sibling merge | not done |
 | Agent | Jetnity intelligent admin model usage attention 1, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
@@ -48,6 +50,7 @@ Read first:
 - Additive honest copy only; #518 `aktuelleHinweise*` strings unchanged.
 - Executable permission/truth/time/privacy/render tests.
 - Compiled-product-CSS synthetic evidence, labelled BLOCKED_ACCESS.
+- **MU-R1:** `parseEvidencedIsoInstant` matches the collector `toISOString()` contract and calendar before any timestamp is retained. Invalid/annotated/timezone-free/rollover strings are `null` in both fields and absent from JSON/render. Valid future instants stay retained and unknown.
 
 ---
 
@@ -65,7 +68,7 @@ Read first:
 1. Gate-before-load for all five `AdminDenial`s and break-glass (`reachesDatabase === false`).
 2. Empty ≠ null spend; unavailable ≠ empty; unknown ≠ empty.
 3. Unique item selection: missing/duplicate/malformed ≠ first-match.
-4. Original item time vs board time vs `juengsteCreatedAt`; future timestamps stay unknown.
+4. **MU-R1 first:** hostile/RFC-annotated/timezone-free/Feb-30 timestamps are null in both fields; valid ISO is preserved; future remains unknown.
 5. 120s boundary and stale available/empty cannot become current all-clear.
 6. A then B on the same cached snapshot keep original time and process-recent.
 7. Hostile source strings/PII never appear in serialized report or render.

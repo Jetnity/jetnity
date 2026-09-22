@@ -10,6 +10,7 @@ import {
   enthältVerbotenesModelUsageQuellleck,
   leiteModelUsageInsights,
   modelUsageBerichtTexte,
+  parseEvidencedIsoInstant,
 } from './model-usage-insights'
 import {
   MODEL_USAGE_INSIGHT_KIND,
@@ -257,22 +258,62 @@ describe('Model-Usage-Analyst (synthetic fixtures)', () => {
   test('T-missing-invalid-future-timestamp: unknown ohne erfundenes Alter', () => {
     const ohne = leite(ROLL, board([{ ...modelUsageItem('available'), checkedAt: '' }]))
     const ungueltig = leite(ROLL, board([{ ...modelUsageItem('empty'), checkedAt: 'gestern-vormittag' }]))
-    const zukunft = leite(
-      ROLL,
-      board([modelUsageItem('available', new Date(JETZT + 60_000).toISOString())]),
-      JETZT,
-    )
+    const zukunftIso = new Date(JETZT + 60_000).toISOString()
+    const zukunft = leite(ROLL, board([modelUsageItem('available', zukunftIso)]), JETZT)
     for (const bericht of [ohne, ungueltig, zukunft]) {
       assert.equal(bericht.insights[0]?.freshness.state, 'unknown')
       assert.equal(bericht.insights[0]?.freshness.ageMs, null)
       assert.notEqual(bericht.insights[0]?.freshness.state, 'fresh')
     }
     assert.equal(ohne.sourceCheckedAt, null)
-    assert.equal(ungueltig.sourceCheckedAt, 'gestern-vormittag')
-    assert.equal(zukunft.insights[0]?.freshness.ageMs, null)
+    assert.equal(ohne.insights[0]?.checkedAt, null)
+    assert.equal(ungueltig.sourceCheckedAt, null)
+    assert.equal(ungueltig.insights[0]?.checkedAt, null)
+    assert.doesNotMatch(serialisiert(ungueltig), /gestern-vormittag/)
+    assert.equal(zukunft.sourceCheckedAt, zukunftIso)
+    assert.equal(zukunft.insights[0]?.checkedAt, zukunftIso)
     const clamped = berechneModelUsageFreshness(new Date(JETZT + 1).toISOString(), JETZT)
     assert.equal(clamped.state, 'unknown')
     assert.equal(clamped.ageMs, null)
+  })
+
+  test('MU-R1: nur Collector-ISO wird behalten; feindliche und unmögliche Zeiten werden verworfen', () => {
+    const marker = 'test-person@example.invalid SYNTHETIC_MARKER'
+    const rfcAnnotiert = `Tue, 22 Sep 2026 12:00:00 GMT (${marker})`
+    const feindlich = leite(ROLL, board([{ ...modelUsageItem('available'), checkedAt: marker }]))
+    const annotiert = leite(ROLL, board([{ ...modelUsageItem('available'), checkedAt: rfcAnnotiert }]), JETZT + 1_000)
+    const rollover = leite(
+      ROLL,
+      board([{ ...modelUsageItem('empty'), checkedAt: '2026-02-30T12:00:00.000Z' }]),
+      Date.parse('2026-03-02T12:00:01.000Z'),
+    )
+    const ohneZone = leite(ROLL, board([{ ...modelUsageItem('available'), checkedAt: '2026-09-22T12:00:00.000' }]))
+    const offset = leite(ROLL, board([{ ...modelUsageItem('available'), checkedAt: '2026-09-22T12:00:00.000+00:00' }]))
+    const frei = leite(ROLL, board([{ ...modelUsageItem('empty'), checkedAt: '2026-09-22 12:00:00' }]))
+    const leapUngueltig = leite(ROLL, board([{ ...modelUsageItem('available'), checkedAt: '2026-02-29T12:00:00.000Z' }]))
+    const gültig = leite(ROLL, board([modelUsageItem('available', '2026-09-22T12:00:00.000Z')]), JETZT)
+    const zukunft = leite(ROLL, board([modelUsageItem('empty', '2026-09-22T12:00:01.000Z')]), JETZT)
+
+    for (const bericht of [feindlich, annotiert, rollover, ohneZone, offset, frei, leapUngueltig]) {
+      assert.equal(bericht.sourceCheckedAt, null)
+      assert.equal(bericht.insights[0]?.checkedAt, null)
+      assert.equal(bericht.insights[0]?.freshness.state, 'unknown')
+      assert.equal(bericht.insights[0]?.freshness.ageMs, null)
+      assert.notEqual(bericht.insights[0]?.freshness.state, 'fresh')
+      assert.doesNotMatch(serialisiert(bericht), /SYNTHETIC_MARKER|test-person@example\.invalid|gestern-vormittag|Tue, 22 Sep|2026-02-30|2026-02-29T12:00:00\.000Z|12:00:00\.000\+00:00/)
+    }
+    assert.equal(parseEvidencedIsoInstant(rfcAnnotiert), null)
+    assert.equal(parseEvidencedIsoInstant('2026-02-30T12:00:00.000Z'), null)
+    assert.equal(parseEvidencedIsoInstant('2026-09-22T12:00:00.000'), null)
+    assert.equal(parseEvidencedIsoInstant('2026-09-22T12:00:00.000Z'), '2026-09-22T12:00:00.000Z')
+    assert.equal(gültig.sourceCheckedAt, '2026-09-22T12:00:00.000Z')
+    assert.equal(gültig.insights[0]?.checkedAt, '2026-09-22T12:00:00.000Z')
+    assert.equal(gültig.insights[0]?.freshness.state, 'fresh')
+    assert.equal(gültig.insights[0]?.freshness.ageMs, 0)
+    assert.equal(zukunft.sourceCheckedAt, '2026-09-22T12:00:01.000Z')
+    assert.equal(zukunft.insights[0]?.checkedAt, '2026-09-22T12:00:01.000Z')
+    assert.equal(zukunft.insights[0]?.freshness.state, 'unknown')
+    assert.doesNotMatch(serialisiert(gültig), /SYNTHETIC_MARKER|juengsteCreatedAt/)
   })
 
   test('T-cache-A-then-B: identisches Objekt, originale Zeit, process-recent, keine Sitzung', () => {
