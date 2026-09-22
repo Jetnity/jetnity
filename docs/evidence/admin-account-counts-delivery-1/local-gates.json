@@ -1,9 +1,9 @@
 {
-  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3883, "fail": 0 },
+  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3887, "fail": 0 },
   "deliveryApplicationTests": {
     "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/account-counts-delivery/*.test.ts",
     "exitCode": 0,
-    "tests": 26,
+    "tests": 30,
     "fail": 0
   },
   "wrapperSafetyTests": {
@@ -48,7 +48,7 @@
   "build": { "command": "npm run build", "exitCode": 0, "next": "16.3.3" },
   "hygiene": {
     "check:schema-bezug": 0,
-    "check:schema-bezugNote": "green against generated types only; named-constant LOCAL RPC is invisible to the checker until a later TL addendum",
+    "check:schema-bezugNote": "generated structures plus disclosed LOCAL/UNAPPLIED admin_account_counts_v1; not a live-schema claim",
     "check:dead": 0,
     "check:exports": 0,
     "check:deps": 0,

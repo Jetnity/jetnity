@@ -3,7 +3,10 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
 
-import { ADMIN_ACCOUNT_COUNTS_DEFINITION_VERSION } from '@/lib/admin/account-counts-delivery/contract'
+import {
+  ADMIN_ACCOUNT_COUNTS_DEFINITION_VERSION,
+  ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC,
+} from '@/lib/admin/account-counts-delivery/contract'
 import {
   classifyAdminAccountCountsRpcError,
   containAdminAccountCountsLoad,
@@ -316,7 +319,7 @@ describe('Admin account-counts session reader', () => {
     assert.deepEqual(contained, { status: 'failed' })
   })
 
-  test('wrapper invoker uses the named constant and does not claim generated-schema coverage', async () => {
+  test('wrapper invoker uses a scanner-visible literal and does not claim generated-schema coverage', async () => {
     const seen: string[] = []
     await invokeAdminAccountCountsWrapper({
       rpc: async (name) => {
@@ -324,8 +327,10 @@ describe('Admin account-counts session reader', () => {
         return { data: VALID_ROW, error: null }
       },
     })
-    assert.deepEqual(seen, ['admin_account_counts_v1'])
+    assert.deepEqual(seen, [ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC])
+    assert.equal(ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC, 'admin_account_counts_v1')
     const readerSource = readFileSync(join(process.cwd(), 'lib/admin/account-counts-delivery/reader.ts'), 'utf8')
+    assert.match(readerSource, /\.rpc\(\s*['"`]admin_account_counts_v1['"`]/)
     const pageSource = readFileSync(join(process.cwd(), 'app/(admin)/admin/page.tsx'), 'utf8')
     const componentSource = readFileSync(
       join(process.cwd(), 'components/admin/home/AdminAccountCounts.tsx'),

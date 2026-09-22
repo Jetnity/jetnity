@@ -21,7 +21,7 @@
 // Schema nicht gibt. Die Prüfung liest nur die erzeugte Typdatei und braucht
 // deshalb keinen Datenbankzugang – sie läuft in der CI mit.
 
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 
 const IGNORIERTE_PFADE = [
@@ -48,16 +48,36 @@ const FROM_RE = /\.from\(\s*['"`]([\w.]+)['"`]/g
 const RPC_RE = /\.rpc\(\s*['"`]([\w.]+)['"`]/g
 
 /**
- * Liefert `{ tabellen, rpcs }` – jeweils Name -> Liste der Fundstellen.
+ * One reviewed LOCAL/UNAPPLIED public wrapper. Not a live generated-schema
+ * claim and not a generic unknown-RPC exemption.
  */
-export function verwendung() {
+export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
+  Object.freeze({
+    name: 'admin_account_counts_v1',
+    sourcePath: 'lib/admin/account-counts-delivery/reader.ts',
+    sqlPath: 'scripts/db/admin-account-counts-delivery-1-rpc.sql',
+  }),
+])
+
+function lokaleRpcRegel(name) {
+  const kurz = name.replace(/^public\./, '')
+  return LOCAL_UNAPPLIED_RPCS.find((regel) => regel.name === kurz) ?? null
+}
+
+/**
+ * Liefert `{ tabellen, rpcs }` – jeweils Name -> Liste der Fundstellen.
+ * Tests may inject `dateien` and `lese` instead of walking the live git tree.
+ */
+export function verwendung(optionen = {}) {
   const tabellen = new Map()
   const rpcs = new Map()
+  const dateien = optionen.dateien ?? quelldateien()
+  const lese = optionen.lese ?? ((datei) => readFileSync(datei, 'utf8'))
 
-  for (const datei of quelldateien()) {
+  for (const datei of dateien) {
     let inhalt
     try {
-      inhalt = readFileSync(datei, 'utf8')
+      inhalt = lese(datei)
     } catch {
       continue
     }
@@ -105,10 +125,19 @@ function namenAusTypen(inhalt, abschnitt) {
   return namen
 }
 
+function sqlDateiPruefen(regel, optionen) {
+  const vorhanden =
+    optionen.sqlVorhanden?.(regel.sqlPath) ?? existsSync(regel.sqlPath)
+  if (!vorhanden) return { ok: false, grund: 'missing-sql' }
+  const inhalt = optionen.sqlInhalt?.(regel.sqlPath) ?? readFileSync(regel.sqlPath, 'utf8')
+  if (!inhalt.includes(regel.name)) return { ok: false, grund: 'missing-sql' }
+  return { ok: true }
+}
+
 /** Vergleicht die Fundstellen im Code mit dem Schema und liefert die Befunde. */
-export function pruefe() {
-  const { tabellen, rpcs } = verwendung()
-  const inhalt = readFileSync(TYPEN_DATEI, 'utf8')
+export function pruefe(optionen = {}) {
+  const { tabellen, rpcs } = verwendung(optionen)
+  const inhalt = optionen.typenInhalt ?? readFileSync(TYPEN_DATEI, 'utf8')
 
   const bekannteTabellen = new Set([
     ...namenAusTypen(inhalt, 'Tables'),
@@ -117,6 +146,7 @@ export function pruefe() {
   const bekannteFunktionen = namenAusTypen(inhalt, 'Functions')
 
   const befunde = []
+  const lokaleUnapplied = []
   for (const [art, benutzt, bekannt] of [
     ['Tabelle', tabellen, bekannteTabellen],
     ['RPC', rpcs, bekannteFunktionen],
@@ -124,24 +154,56 @@ export function pruefe() {
     for (const [name, stellen] of [...benutzt.entries()].sort()) {
       // Ein Schemapräfix kommt in der Typdatei nicht vor; nur `public` zählt.
       const kurz = name.replace(/^public\./, '')
-      if (!bekannt.has(kurz)) befunde.push({ art, name, stellen })
+      if (bekannt.has(kurz)) continue
+
+      if (art === 'RPC') {
+        const regel = lokaleRpcRegel(name)
+        if (regel) {
+          const fremd = stellen.filter((stelle) => !stelle.startsWith(`${regel.sourcePath}:`))
+          if (fremd.length > 0) {
+            befunde.push({ art, name, stellen: fremd, grund: 'wrong-source' })
+            continue
+          }
+          const sql = sqlDateiPruefen(regel, optionen)
+          if (!sql.ok) {
+            befunde.push({ art, name, stellen, grund: sql.grund })
+            continue
+          }
+          lokaleUnapplied.push({
+            art,
+            name: regel.name,
+            stellen,
+            sourcePath: regel.sourcePath,
+            sqlPath: regel.sqlPath,
+            classification: 'LOCAL/UNAPPLIED',
+          })
+          continue
+        }
+      }
+
+      befunde.push({ art, name, stellen })
     }
   }
-  return { befunde, bekannteTabellen, bekannteFunktionen }
+  return { befunde, lokaleUnapplied, bekannteTabellen, bekannteFunktionen }
 }
 
 function main() {
   if (process.argv.includes('--pruefen')) {
-    const { befunde, bekannteTabellen, bekannteFunktionen } = pruefe()
+    const { befunde, lokaleUnapplied, bekannteTabellen, bekannteFunktionen } = pruefe()
     if (befunde.length === 0) {
       console.log(
-        `Jede angesprochene Struktur existiert – geprüft gegen ${bekannteTabellen.size} Tabellen/Views und ${bekannteFunktionen.size} Funktionen in ${TYPEN_DATEI}.`,
+        `Jede angesprochene generierte Struktur existiert – geprüft gegen ${bekannteTabellen.size} Tabellen/Views und ${bekannteFunktionen.size} Funktionen in ${TYPEN_DATEI}.`,
       )
+      for (const lokal of lokaleUnapplied) {
+        console.log(
+          `LOCAL/UNAPPLIED ${lokal.art} ${lokal.name} from ${lokal.sourcePath} → ${lokal.sqlPath} (not in generated schema)`,
+        )
+      }
       return
     }
     console.error(`${befunde.length} Zugriff(e) auf Strukturen, die es im Schema nicht gibt:\n`)
-    for (const { art, name, stellen } of befunde) {
-      console.error(`  ${art} ${name}`)
+    for (const { art, name, stellen, grund } of befunde) {
+      console.error(`  ${art} ${name}${grund ? ` [${grund}]` : ''}`)
       for (const stelle of stellen) console.error(`    ${stelle}`)
     }
     console.error(
@@ -157,7 +219,11 @@ function main() {
   ]) {
     console.log(`\n=== ${titel} (${map.size}) ===`)
     for (const [name, stellen] of [...map.entries()].sort()) {
-      console.log(`  ${name.padEnd(34)} ${stellen.length}x  ${stellen.slice(0, 3).join('  ')}`)
+      const lokal = titel === 'RPCs' && lokaleRpcRegel(name)
+      const marke = lokal ? ' LOCAL/UNAPPLIED (not in generated schema)' : ''
+      console.log(
+        `  ${name.padEnd(34)} ${stellen.length}x${marke}  ${stellen.slice(0, 3).join('  ')}`,
+      )
     }
   }
 }

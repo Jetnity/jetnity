@@ -5,7 +5,6 @@ import type { AdminDecision } from '@/lib/auth/admin-access'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
 import {
-  ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC,
   type AdminAccountCountsExpectedRpc,
   type AdminAccountCountsReadResult,
 } from '@/lib/admin/account-counts-delivery/contract'
@@ -97,7 +96,7 @@ type WrapperClient = {
 export async function invokeAdminAccountCountsWrapper(
   client: WrapperClient,
 ): Promise<AdminAccountCountsRpcResponse> {
-  return client.rpc(ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC)
+  return client.rpc('admin_account_counts_v1')
 }
 
 export async function loadAdminAccountCountsFromDependencies(options: {

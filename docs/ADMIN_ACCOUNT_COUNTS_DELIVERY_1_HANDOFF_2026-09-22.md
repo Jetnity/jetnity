@@ -32,7 +32,7 @@ Status: **R1–R4 FIX PACKAGE FROZEN / AWAITING INDEPENDENT TECHNICAL-LEAD EXACT
 
 ## Exact next step
 
-Independent Technical-Lead exact-head re-review of this R1–R4 package. Do not Ready. Do not merge the PR. Do not start another agent. Production activation remains a separate reserved gate. Schema-reference LOCAL/UNAPPLIED inventory remains a later TL-owned addendum.
+Independent Technical-Lead exact-head re-review of this R1–R4 package including the addendum-authorized checker change. Do not Ready. Do not merge the PR. Do not start another agent. Production activation remains a separate reserved gate.
 
 ## Limitations to preserve
 
@@ -40,5 +40,5 @@ Independent Technical-Lead exact-head re-review of this R1–R4 package. Do not 
 - No hosted/Production/Preview enablement
 - No authenticated PostgREST/browser E2E
 - PostgreSQL 16.15, not Production 17.6
-- Schema-reference green does not cover the named-constant wrapper
+- Schema-reference now classifies the wrapper as LOCAL/UNAPPLIED, not generated-schema present
 - Author run-info is not TL control-plane model inspection
