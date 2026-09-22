@@ -39,6 +39,12 @@ const faelle: Record<string, OriginUmgebung> = {
     NEXT_PUBLIC_SITE_URL: longPreviewOrigin,
     VERCEL_ENV: 'preview',
   },
+  'deny-conflict': {
+    NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
+    NEXT_PUBLIC_APP_URL: 'https://alt.example',
+    VERCEL_ENV: 'production',
+    NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+  },
 }
 
 const verboteneRohwerte = [
@@ -121,6 +127,15 @@ async function main() {
     }
     if (/<a |<button|<form|<input/.test(markup)) {
       fehler.push(`${name}: Aktivierungs- oder Link-Kontrolle im Markup`)
+    }
+    if (/beabsichtigt|kein Ausfall|keine operative Störung/.test(markup)) {
+      fehler.push(`${name}: Deny-Text unterstellt Absicht oder fehlende Störung`)
+    }
+    if (stand.entscheidung === 'deny' && !markup.includes('sperrt die Indexierung')) {
+      fehler.push(`${name}: neutraler Deny-Hinweis fehlt`)
+    }
+    if (markup.includes('alt.example')) {
+      fehler.push(`${name}: widersprüchliche App-Origin geleakt`)
     }
     const html = seite(name, markup, compiled.css)
     writeFileSync(join(ROOT, 'html', `${name}.html`), html)

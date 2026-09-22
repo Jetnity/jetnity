@@ -29,7 +29,7 @@ export const SEO_STATUS_TEXTE = {
   allowHinweis:
     'Die aktuelle Konfiguration erlaubt Indexing. Das ist keine Product-Owner-Launch-Freigabe, kein Nachweis tatsächlicher Indexierung und kein SEO-, Traffic- oder Production-Ready-Beleg.',
   denyHinweis:
-    'Die aktuelle Konfiguration verweigert Indexing. Das ist beabsichtigter Deny — kein Ausfall und keine operative Störung.',
+    'Die aktuelle Konfiguration sperrt die Indexierung. Diese Anzeige allein bewertet keine Betriebsstörung.',
   sitemapLeer: 'Keine öffentlichen Sitemap-URLs. Im Deny-Modus wird keine Sitemap beworben.',
   sitemapBeworben: 'ja',
   sitemapNichtBeworben: 'nein',

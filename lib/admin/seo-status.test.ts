@@ -276,6 +276,35 @@ describe('projiziereSeoStatus folgt den bestehenden SEO-Helfern', () => {
     assert.equal(previewHost.technischeOrigin, longPreviewOrigin)
     assert.equal(previewHost.originQuelle, 'site')
   })
+
+  test('Deny-Hinweis bleibt für Preview-Deny und widersprüchliche Origins derselbe neutrale Satz', () => {
+    const preview = folgtVertrag(previewDeny)
+    const konflikt = folgtVertrag({
+      NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
+      NEXT_PUBLIC_APP_URL: 'https://alt.example',
+      VERCEL_ENV: 'production',
+      NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+    })
+    assert.equal(preview.entscheidung, 'deny')
+    assert.equal(konflikt.entscheidung, 'deny')
+    assert.equal(preview.entscheidungHinweis, SEO_STATUS_TEXTE.denyHinweis)
+    assert.equal(konflikt.entscheidungHinweis, preview.entscheidungHinweis)
+    assert.match(SEO_STATUS_TEXTE.denyHinweis, /sperrt die Indexierung/)
+    assert.match(SEO_STATUS_TEXTE.denyHinweis, /bewertet keine Betriebsstörung/)
+    assert.doesNotMatch(SEO_STATUS_TEXTE.denyHinweis, /beabsichtigt|kein Ausfall|keine operative Störung/)
+    const previewHtml = htmlAus(previewDeny)
+    const konfliktHtml = htmlAus({
+      NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
+      NEXT_PUBLIC_APP_URL: 'https://alt.example',
+      VERCEL_ENV: 'production',
+      NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+    })
+    assert.match(previewHtml, /sperrt die Indexierung/)
+    assert.match(konfliktHtml, /sperrt die Indexierung/)
+    assert.doesNotMatch(previewHtml, /beabsichtigt|kein Ausfall|keine operative Störung/)
+    assert.doesNotMatch(konfliktHtml, /beabsichtigt|kein Ausfall|keine operative Störung/)
+    assert.equal(konfliktHtml.includes('alt.example'), false)
+  })
 })
 
 describe('IndexingStatus rendert die Projektion ohne Aktivierung', () => {
@@ -300,7 +329,7 @@ describe('IndexingStatus rendert die Projektion ohne Aktivierung', () => {
     assert.doesNotMatch(html, /NEXT_PUBLIC_|process\.env|dangerouslySetInnerHTML/)
   })
 
-  test('Deny zeigt leeren Sitemap-Zustand und keinen Ausfall', () => {
+  test('Deny zeigt leeren Sitemap-Zustand und einen neutralen Hinweis', () => {
     const html = htmlAus({
       NEXT_PUBLIC_APP_URL: LOKALER_ORIGIN_FALLBACK,
       VERCEL_ENV: 'preview',
@@ -308,8 +337,10 @@ describe('IndexingStatus rendert die Projektion ohne Aktivierung', () => {
     assert.match(html, /data-indexing-decision="deny"/)
     assert.match(html, /verweigert/)
     assert.match(html, /Keine öffentlichen Sitemap-URLs/)
-    assert.match(html, /kein Ausfall/)
+    assert.match(html, /sperrt die Indexierung/)
+    assert.match(html, /bewertet keine Betriebsstörung/)
     assert.match(html, /technischer Fallback|App-Origin/)
+    assert.doesNotMatch(html, /beabsichtigt|kein Ausfall|keine operative Störung/)
     assert.doesNotMatch(html, /<a |<button|<form/)
     assert.doesNotMatch(html, /Indexing aktivieren|Allow Indexing|public launch/i)
   })
