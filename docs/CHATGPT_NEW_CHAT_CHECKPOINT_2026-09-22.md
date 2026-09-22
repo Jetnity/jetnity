@@ -2,9 +2,9 @@
 
 Status: **PERSISTED RESTART CHECKPOINT / CONTINUITY REFRESH 2 / NOT A PRODUCT-REVIEW PASS**
 Repository: `Jetnity/jetnity`
-Checkpoint branch: `docs/v1-continuity-refresh-2` / Draft PR #546
+Checkpoint path: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`
 
-This checkpoint is immediately usable on this branch. Until Technical-Lead merge of #546, do not claim the canonical entry documents on `main` have been corrected. After integration it supersedes the 21 September checkpoint for present continuation only. Historical evidence, accepted OS/Grok limitations, disabled Technical-Lead automation, three-phase order, provider-later and reserved gates remain intact.
+This checkpoint supersedes the 21 September checkpoint for present continuation only. Historical evidence, accepted OS/Grok limitations, disabled Technical-Lead automation, three-phase order, provider-later and reserved gates remain intact. Re-fetch live PR #546: if still open, read this file from branch `docs/v1-continuity-refresh-2` and treat `main` startup prose as possibly still stale; if merged, read this file from `main` and do not reactivate session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`.
 
 **LIVE EVIDENCE WINS.** Stored SHAs are dated pins, not a permanently current head. Reconstruct live `main`, open PRs, exact heads, Actions, Vercel and available session footers before acting.
 
@@ -21,7 +21,7 @@ Read in this order:
 5. This checkpoint.
 6. `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`.
 7. Programme remainder: `docs/JETNITY_REMAINING_BUILD_MAP_1_REPORT_2026-09-22.md` (merged via #544; its delivery Draft header is **historical source evidence**, not a new writer).
-8. Live GitHub: `origin/main`, Draft #546, Draft #545, later #512 comments.
+8. Live GitHub: `origin/main`, PR #546 (open or merged), PR #545, later #512 comments.
 
 Only ChatGPT / Technical Lead may Ready/merge after independent exact-head review. Cursor never Ready/merges. Agent self-review is not PASS. A changed head invalidates older exact-head gates. Same slice / immediate review fix uses the same logical agent, generation and session.
 
@@ -50,36 +50,36 @@ Historical #435 Assistant Runtime and #480 Production Auth verification remain v
 
 Latest application-runtime-changing baseline on live main: **#543** (`d03a0486` / accepted `63905739`). Historical later-than-Assistant pins include #504 (`9f386d10…`) and #542 (`35148a4b` / reviewed `5b0764c4`). #494 remains a disposable local PostgreSQL harness + docs/package script, not rendered product runtime.
 
-## 3. Current writers (reconstruct live)
+## 3. Dated 22 September 2026 delivery observation (reconstruct live)
 
-The Product Owner authorized the Technical Lead to choose the next bounded slices. Two disjoint writers were selected. They do not replace each other. Technical Lead serializes integration — normally Admin first, then this current-state refresh updated against that closure.
+The Product Owner authorized the Technical Lead to choose the next bounded slices. Two disjoint assignments were selected. They do not replace each other. This table is a dated pin, not a permanent current-writer claim after #546 merges.
 
-### A. Draft PR #546 — Continuity refresh 2 (this writer)
+### A. PR #546 — Continuity refresh 2 (this persist)
 
 - Branch: `docs/v1-continuity-refresh-2`.
 - Task seed: `0df59b646ca247779bf3759f27eac0bad156a6e5`.
 - Agent: **Jetnity V1 continuity refresh 2**, Generation 1.
-- Required and actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=cursor-grok-4.6-high-fast` via cursor-cloud run-info).
+- Required and actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=cursor-grok-4.6-high-fast` via cursor-cloud run-info — separate from footer/UI evidence).
 - Session: `bc-a65f0017-f2c2-4617-a825-7197c4409c44`.
 - Session URL: https://cursor.com/agents/bc-a65f0017-f2c2-4617-a825-7197c4409c44
-- Observed display name: `Current startup handoff pointers`. UI rename was **not** available/performed.
-- Session footer: **UNVERIFIED** (not invented). PR acknowledgement `5778458780` is “Taking a look”, not a footer.
-- Task: `docs/V1_CONTINUITY_REFRESH_2_TASK_2026-09-22.md`.
-- Classification: **commissioned / this persist / not independently reviewed / not merged**.
+- Observed display name: `Current startup handoff pointers`. UI rename was **not** performed.
+- Session footer: **verified** from raw comment [`5778458780`](https://github.com/Jetnity/jetnity/pull/546#issuecomment-5778458780) HTML: “Taking a look!” plus Open in Web / Open in Cursor links for `bc-a65f0017-f2c2-4617-a825-7197c4409c44`. TL [`5778475747`](https://github.com/Jetnity/jetnity/pull/546#issuecomment-5778475747) already confirms that session. This is not a TL UI/model verification.
+- Task: `docs/V1_CONTINUITY_REFRESH_2_TASK_2026-09-22.md` (v2).
+- Live rule: if #546 is still open, continue independent review/fixes of the exact current head. If merged, do not reactivate this session.
 - Owns only the named global startup/current-state files listed in the task. No runtime, `.jetnity`, policy/guard, schema, Auth, provider, automation or cost writes.
 
-### B. Draft PR #545 — Admin navigation search 1 (sibling; exclusive Admin runtime)
+### B. PR #545 — Admin navigation search 1 (reserved sibling)
 
 - Branch: `feat/admin-navigation-search-1`.
 - Observed head at this reconstruction: `c0539a1940c4df4809c743bf7fd2c63b80c5294f` (task-only seed). Re-fetch; do not freeze this SHA as permanently current.
 - Binding task: `docs/ADMIN_NAVIGATION_SEARCH_1_TASK_2026-09-22.md` — lives on the sibling branch, **not** on this docs branch.
 - Agent logical name: **Jetnity admin navigation search 1**, Generation 1.
-- Dispatches: [#545 comment 5778449555](https://github.com/Jetnity/jetnity/pull/545#issuecomment-5778449555) and reuse instruction [5778475465](https://github.com/Jetnity/jetnity/pull/545#issuecomment-5778475465).
-- Session / footer at this observation: **UNVERIFIED**. TL [5778475747](https://github.com/Jetnity/jetnity/pull/546#issuecomment-5778475747) said the sibling footer was not yet visible; this run’s accessible cloud-agent list showed only the refresh-2 session. Do **not** invent a session or mark Admin merged/completed.
-- Classification: **`IN_PROGRESS_NOT_MAIN` / commissioned / implementation not claimed complete / not merged**.
+- Dispatches: [#545 comment 5778449555](https://github.com/Jetnity/jetnity/pull/545#issuecomment-5778449555) and reuse instruction [5778475465](https://github.com/Jetnity/jetnity/pull/545#issuecomment-5778475465). TL start-status [5778868340](https://github.com/Jetnity/jetnity/pull/545#issuecomment-5778868340).
+- Session / footer at this observation: **UNVERIFIED**. Do **not** invent a session, create a duplicate, or launch Admin from this docs session. First Admin action is establishing existing-session/start evidence.
+- Classification: **`DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`**. Reserved runtime assignment, not a verified running writer, not a launch blocker, not `IN_PROGRESS_NOT_MAIN`.
 - Scope: existing ready-area local Admin navigation search only. No records/API/DB/Auth/provider/model/cost changes. Not a new V1 launch prerequisite and not full Phase-2 Admin.
 
-Do not edit sibling files from this writer. Do not wait here and invent Admin closure. If #545 later merges, a later exact-head continuity persist may record that fact.
+Do not edit sibling files from this writer. Do not wait here and invent Admin start or closure.
 
 ## 4. What is closed — do not restart
 
@@ -101,10 +101,10 @@ Do not reuse those completed Cursor sessions.
 
 ## 5. First unfinished action
 
-1. Independent Technical-Lead exact-head review of **this** persist / Draft #546.
-2. Observe live #545. Technical Lead serializes merges. Normally Admin first, then refresh current-state docs against that closure if main moved.
+1. Re-fetch live #546. If still open, independent Technical-Lead exact-head re-review of this persist. If merged, do not reactivate this session; reconstruct the next unfinished work.
+2. Observe reserved #545 as `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`. Do not launch it from this docs session.
 3. Do **not** start a follow-up slice from this checkpoint. Cursor has no Ready/merge/follow-up authority.
-4. Programme remainder stays in the #544 report: TW-8 after real commercial truth; TW-9 release proof; legal `/privacy` `/terms`; SMTP; deletion/retention; observability; finding 5.2 / gate G; provider-later. Those are not this writer’s implementation.
+4. Programme remainder stays in the #544 report: TW-8 after real commercial truth; TW-9 release proof; legal `/privacy` `/terms`; SMTP; deletion/retention; observability; finding 5.2 / gate G; provider-later. Those are not this writer’s implementation. Unpublished #545 is not a P2 launch blocker.
 
 ## 6. Historical OS / Grok limitations — unchanged
 
@@ -139,4 +139,4 @@ Generic `weiter` / `bauen` / `start` does not open a gate. Three-phase order rem
 
 ## 8. One-message restart instruction
 
-Continue as Technical Lead for Jetnity/jetnity. Read `JETNITY_START_HERE.md`, the Technical-Lead/Cursor operating standard and `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`. If the 22 September checkpoint is not yet on main, read it from `docs/v1-continuity-refresh-2` and Draft PR #546. Then reconstruct live `main` `d03a0486` (re-fetch), closed #543/#544/#512/#506/#509/#510, live Draft #545 Admin navigation search 1 (`IN_PROGRESS_NOT_MAIN`, session footer only if independently visible), and this refresh. Do not restart completed sessions. Do not treat `.jetnity/operating-mode.json` `activeMetaScope` #511/#512 as the live writer. Preserve provider-later, disabled TL automation, OS/Grok accepted limitations and reserved gates. No Ready, merge or follow-up by Cursor. Continue at the first independently verified unfinished step.
+Continue as Technical Lead for Jetnity/jetnity. Read `JETNITY_START_HERE.md`, the Technical-Lead/Cursor operating standard and `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`. If that checkpoint is not yet on main, read it from `docs/v1-continuity-refresh-2` and PR #546; if merged, read it from main and do not reactivate session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`. Then reconstruct live `main` (re-fetch), closed #543/#544/#512/#506/#509/#510, reserved #545 (`DISPATCHED_START_UNVERIFIED` / `TASK_ONLY` unless later start evidence exists), and live #546 state. Do not restart completed sessions. Do not treat `.jetnity/operating-mode.json` `activeMetaScope` #511/#512 as the live writer. Preserve provider-later, disabled TL automation, OS/Grok accepted limitations and reserved gates. No Ready, merge or follow-up by Cursor. Continue at the first independently verified unfinished step.

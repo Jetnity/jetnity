@@ -2,7 +2,7 @@
 
 Status: **HISTORICAL OS-2 / HOLD-EXIT CHECKPOINT / SUPERSEDED FOR CURRENT WORK BY 22 SEPTEMBER 2026 / LIVE-EVIDENCE WINS**
 
-> **SUPERSEDED FOR PRESENT CONTINUATION.** Current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`. Until continuity refresh 2 / Draft PR #546 merges, read that checkpoint from branch `docs/v1-continuity-refresh-2`. The 21 September checkpoint remains historical #512-era capture, not current-writer authority. This 18 September file remains historical evidence for OS-2 / HOLD-exit receipts and accepted limitations. Do not rewrite the body below as if it was captured today. Live `main` is `NORMAL`; #492/#487/#494/#512/#543/#544 are closed. Do not treat §0 “#492 is the live writer / #487 parked / live main remains HOLD” as current.
+> **SUPERSEDED FOR PRESENT CONTINUATION.** Current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`. If that file is not yet on `main`, read it from branch `docs/v1-continuity-refresh-2` / PR #546; if merged, read it from `main` and do not reactivate the refresh-2 session. The 21 September checkpoint remains historical #512-era capture, not current-writer authority. This 18 September file remains historical evidence for OS-2 / HOLD-exit receipts and accepted limitations. Do not rewrite the body below as if it was captured today. Live `main` is `NORMAL`; #492/#487/#494/#512/#543/#544 are closed. Do not treat §0 “#492 is the live writer / #487 parked / live main remains HOLD” as current.
 
 The body below is **unchanged historical evidence** from the OS-2 / HOLD-closure window.
 

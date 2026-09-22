@@ -1,7 +1,7 @@
 # Jetnity – V1 Continuity Refresh 2 — STATUS
 
 Stand: 22. September 2026  
-Status: **DOCS ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD CONTINUITY REVIEW**
+Status: **R1–R3 + C1 CORRECTION / DOCS ONLY / DATED DELIVERY EVIDENCE / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Draft PR: #546  
 Branch: `docs/v1-continuity-refresh-2`  
@@ -14,7 +14,7 @@ Session: `bc-a65f0017-f2c2-4617-a825-7197c4409c44`
 Session URL: https://cursor.com/agents/bc-a65f0017-f2c2-4617-a825-7197c4409c44  
 Observed display name: `Current startup handoff pointers`  
 UI rename: not available / not performed  
-Session footer: **UNVERIFIED** (not invented). PR ack `5778458780` is “Taking a look”.
+Session footer: **verified** from raw comment `5778458780` HTML (Open in Web / Open in Cursor for this `bc-` id); TL `5778475747` confirms the session. UI rename not performed. Model evidence is run-info, not a TL UI/model verification.
 
 This file is point-in-time evidence. A new head invalidates older exact-head gates. Agent self-review is not Technical-Lead PASS.
 
@@ -28,7 +28,7 @@ A reader following START_HERE → current handoff → ACTIVE_WORK_STATUS → the
 
 - latest verified main / runtime `#543` `d03a0486`;
 - completed `#543` / `#544` / `#512` / `#506` / `#509` / `#510`;
-- live Admin task/session state (`#545`, `IN_PROGRESS_NOT_MAIN`, session footer unverified);
+- reserved Admin assignment (`#545`, `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`, session unverified; not a launch blocker);
 - this docs task/session;
 - current review state / first unfinished action;
 - reserved gates and source links.
@@ -47,7 +47,7 @@ Allowed files only:
 | `JETNITY_START_HERE.md` | Current headers/pointers/current-work sections and repeated stale present-tense claims |
 | `docs/ACTIVE_WORK_STATUS.md` | Current work / last-completed / next-action table; historical closure blocks labelled historical |
 | `JETNITY_HANDOFF.md` | Concise current pointers and historical baseline labels |
-| `ROADMAP.md` | Introductory status/entry paragraph, checkpoint pointers, and the stale “#510 now requested” current-pointer note |
+| `ROADMAP.md` | Introductory status/entry paragraph and checkpoint pointers only. Programme-body Admin D–K line restored to historical wording |
 | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` | Supersession banner only; historical body unchanged |
 | `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` | Current-pointer banner only; historical body unchanged |
 | `docs/CONTINUITY_STANDARD.md` | Single §3 stale “current August 29 checkpoint” pointer |
@@ -68,7 +68,8 @@ No `app/`, `components/`, `lib/`, hooks, styles, product tests, package, scripts
 | Task / live `origin/main` | `d03a048624b42cb0b2a1cb0e146aed238e23041f` — Merge pull request #543 |
 | Merge-base `HEAD`…`origin/main` at reconstruction | `d03a048624b42cb0b2a1cb0e146aed238e23041f` |
 | Task seed / dispatch head | `0df59b646ca247779bf3759f27eac0bad156a6e5` |
-| Ahead / behind before this persist | 1 / **0** |
+| Invalidated previous reviewed head | `6423644a8a8953f3871dbe7cc9dc0d4b38757ccb` |
+| Ahead / behind before this persist | 2 / **0** |
 | Main drift vs task baseline | **None** — live main re-fetched; no rebase / merge / force / cherry-pick |
 
 ### 3.1 Exact content head
@@ -85,8 +86,8 @@ The exact content head is the commit that adds this STATUS, HANDOFF, SELF_REVIEW
 
 | PR | Observed head | Classification | Next actor |
 | --- | --- | --- | --- |
-| #545 | `c0539a1940c4df4809c743bf7fd2c63b80c5294f` (task-only seed) | `IN_PROGRESS_NOT_MAIN` / commissioned / implementation not claimed complete / session footer **UNVERIFIED** | Existing Admin writer if already created; otherwise TL dispatch already posted. This writer does not wait or invent closure. |
-| #546 | this persist | commissioned / not TL-reviewed / not merged | Independent TL continuity review |
+| #545 | `c0539a1940c4df4809c743bf7fd2c63b80c5294f` (task-only seed) | `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`; session footer **UNVERIFIED**; not a launch blocker | First Admin action is existing-session/start evidence. This writer does not launch it. |
+| #546 | this R1–R3/C1 persist | dated delivery / not a permanent current-writer claim | Independent TL re-review of the new head |
 
 Accessible cloud-agent list for this environment after `2026-09-22T14:30:00Z` returned only this refresh-2 session. Do not invent an Admin `bc-` id.
 
@@ -131,7 +132,7 @@ From the #544 report and later #543/#512 comments, not a new audit:
 | --- | --- |
 | P0 launch | Missing legal pages; SMTP; no live commercial/official truth |
 | P1 launch | Account erasure; retention; consent persistence after 1.1; finding 5.2 / gate G; MFA backup codes; Billing-P1 residual |
-| P2 launch | Production redirect write (historical #480 values, not freshly re-read here); formal release-gate run; whole-journey real-device proof; #545 still unpublished |
+| P2 launch | Production redirect write (historical #480 values, not freshly re-read here); formal release-gate run; whole-journey real-device proof. Unpublished #545 is a bounded enhancement, **not** a P2 launch blocker |
 | P3 / accepted | Grok `native_scheduled_pass=false` / `native_material_archive_proof=false`; Path-C off-session gap; credential isolation accepted limitation; #544 report Draft header is historical source evidence |
 
 This slice does not close those risks.

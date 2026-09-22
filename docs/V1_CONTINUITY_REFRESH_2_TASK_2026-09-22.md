@@ -1,11 +1,23 @@
-# Jetnity V1 Continuity Refresh 2 — Binding Task v1
+# Jetnity V1 Continuity Refresh 2 — Binding Task v2
 
 Date: 2026-09-22
 Cursor-Agent: **Jetnity V1 continuity refresh 2**, Generation **1**.
-Required model: **Cursor Grok 4.6 High Fast / cursor-grok-4.6-high-fast**, no Auto/substitution. Fresh session; report actual run-info/session evidence; UI rename only if available and performed.
+Required model: **Cursor Grok 4.6 High Fast / cursor-grok-4.6-high-fast**, no Auto/substitution. Same session `bc-a65f0017-f2c2-4617-a825-7197c4409c44` for immediate review fixes. Report actual run-info/session evidence; UI rename only if available and performed.
 Baseline: **main@d03a048624b42cb0b2a1cb0e146aed238e23041f**.
 Branch: **docs/v1-continuity-refresh-2**.
-Mode NORMAL. TL explicitly delegates the named global continuity documents to this one docs writer; TL retains all strategy/Ready/merge decisions. Read START_HERE, TL/Cursor standard, latest #512 comments, handoff/ACTIVE_WORK_STATUS, remaining-build-map, this task and relevant multi-agent/continuity standards.
+Mode NORMAL. TL explicitly delegates the named global continuity documents to this one docs writer; TL retains all strategy/Ready/merge decisions.
+
+## v2 clarification (TL review `5279891358` / C1)
+
+This supersedes only the coarse v1 live-Admin label. The v1 body below remains the original ownership/scope contract.
+
+- Live #545 remains Draft/open at task-only seed `c0539a1940c4df4809c743bf7fd2c63b80c5294f` with two dispatches and no ack/footer/implementation. Classification: **`DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`**. It is a reserved runtime assignment, not a verified running writer and not `IN_PROGRESS_NOT_MAIN`.
+- First Admin action is establishing existing-session/start evidence without creating a duplicate. Do **not** launch Admin from this docs session.
+- Unpublished #545 is a bounded enhancement, **not** a new V1 launch prerequisite and **not** a P2 launch blocker.
+- Current entry headers must stay merge-neutral: dated pre-merge observation, then live PR reconstruction. Do not leave an unqualified permanent PENDING/#546-current-writer assertion that becomes false on merge.
+- Session footer for this refresh is the HTML Open in Web / Open in Cursor block in comment `5778458780`, confirmed by `5778475747`. UI rename and model run-info remain separate evidence classes.
+
+## v1 body (original binding task)
 
 ## Concrete defect and outcome
 START_HERE, ACTIVE_WORK_STATUS and JETNITY_HANDOFF still say #512 pending merge and #506/#509/#510 active. Current pointers lead through September-21 work instead of the completed repairs, #544 map and #543 route entry. Historical #435/#480 baselines are still called latest/current. Correct this bounded entry-chain contradiction so a new chat resumes real current work without waking closed sessions or requesting the same project history again.
@@ -38,8 +50,8 @@ Provide meaningful path/pointer/source/link checks and exact file diff; no runti
 
 ## Multi-Agent Suitability
 Decision: **MULTI_AGENT**, disjoint from **Jetnity admin navigation search 1**, Generation1, feat/admin-navigation-search-1.
-You own only named global/continuity docs; sibling owns Admin shell/runtime and own task/evidence. Independent Draft PRs from verified baseline. No unmerged sibling dependency; document live runtime writer as IN_PROGRESS_NOT_MAIN until TL merges it.
-TL serializes integrations; normally Admin first, then your current-state refresh updated against that closure. Re-read main at handoff, report drift, no unrequested merge/rebase/force/cherry-pick. If Admin is still in progress your report must say so; do not wait/fake closure.
+You own only named global/continuity docs; sibling owns Admin shell/runtime and own task/evidence. Independent Draft PRs from verified baseline. No unmerged sibling dependency. v2: document #545 as `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY` until independently verified start evidence exists. Do not launch it from this session.
+TL serializes integrations. Re-read main at handoff, report drift, no unrequested merge/rebase/force/cherry-pick. If Admin start remains unverified, say so; do not wait/fake closure.
 
 ## STOP and gates
 No runtime, DB/RLS/migrations/Auth/security contract changes, provider/secret/live calls/model activation, costs, automation/tool config, Ready/merge, new issues or follow-up dispatch, build-order changes. This task grants only bounded docs ownership, not governance policy authority.

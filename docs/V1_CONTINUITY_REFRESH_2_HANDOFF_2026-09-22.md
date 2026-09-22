@@ -1,7 +1,7 @@
 # Jetnity – V1 Continuity Refresh 2 — HANDOFF
 
 Stand: 22. September 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD CONTINUITY REVIEW**
+Status: **R1–R3 + C1 CORRECTION DELIVERED / DATED DELIVERY EVIDENCE / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 ## For the next reader
 
@@ -14,7 +14,7 @@ Read in this order:
 5. Live Draft PR #546 head, comments, CI, Auth, Vercel — not remembered IDs
 6. Live `origin/main` and Draft #545 (observe only)
 
-Until #546 is merged, use the 22 September checkpoint from branch `docs/v1-continuity-refresh-2`. Do not tell the Product Owner that main startup cleanup is already complete.
+If #546 is still open, use the 22 September checkpoint from branch `docs/v1-continuity-refresh-2`. If merged, read it from `main` and do not reactivate this session. Do not claim a future merge or future SHA.
 
 ## Exact coordinates
 
@@ -24,7 +24,7 @@ Until #546 is merged, use the 22 September checkpoint from branch `docs/v1-conti
 | Model | Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) |
 | Session | `bc-a65f0017-f2c2-4617-a825-7197c4409c44` |
 | Display name | `Current startup handoff pointers` (no UI rename) |
-| Session footer | UNVERIFIED |
+| Session footer | verified in comment `5778458780` HTML (Open in Web / Open in Cursor); TL `5778475747` confirms session |
 | Issue / PR | Draft #546 (no separate coding issue required by this task) |
 | Branch | `docs/v1-continuity-refresh-2` |
 | Product / continuity baseline | `main@d03a048624b42cb0b2a1cb0e146aed238e23041f` |
@@ -38,7 +38,7 @@ A restart-safe current-state surface:
 - 22-Sep checkpoint created;
 - START_HERE / ACTIVE_WORK_STATUS / HANDOFF / ROADMAP / 21-Sep supersession / 18-Sep banner / Continuity Standard §3 pointer now lead to that checkpoint;
 - `#543`/`#544` recorded closed; `#512`/`#506`/`#509`/`#510` recorded closed;
-- `#545` recorded live `IN_PROGRESS_NOT_MAIN` with unverified session footer;
+- `#545` recorded `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY` (not a launch blocker; not launched from here);
 - historical OS/Grok limitations, disabled TL automation, three-phase order, provider-later and reserved gates preserved;
 - `.jetnity/operating-mode.json` left untouched and labelled historical for stale `activeMetaScope`.
 

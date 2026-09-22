@@ -1,7 +1,7 @@
 # Jetnity – V1 Continuity Refresh 2 — ADVERSARIAL SELF-REVIEW
 
 Stand: 22. September 2026  
-Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
+Status: **AGENT SELF-REVIEW OF R1–R3 + C1 CORRECTION — NOT A TECHNICAL-LEAD PASS**
 
 Draft PR: #546  
 Branch: `docs/v1-continuity-refresh-2`  
@@ -13,9 +13,11 @@ This document argues against the implementation. It cannot replace an independen
 
 | Attack | Result |
 | --- | --- |
-| Claim main startup cleanup is already done | **Rejected.** Until #546 merges, main still has stale pending-#512 / active-#506/#509/#510 / latest-#480 prose. |
-| Treat #545 as merged or implemented | **Rejected.** Observed seed is still task-only. Session footer unverified. Classification is `IN_PROGRESS_NOT_MAIN`. |
-| Invent an Admin `bc-` session | **Rejected.** Accessible agent list showed only this refresh. TL `5778475747` said the sibling footer was not yet visible. |
+| Leave an unqualified permanent PENDING/#546-current-writer header | **Rejected (R1).** Headers are merge-neutral; dated observation + live PR reconstruction. |
+| Treat #545 as merged, running, or a P2 launch blocker | **Rejected (C1).** Task-only seed. `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`. |
+| Treat footer as unverified “Taking a look” only | **Rejected (R2).** Raw `5778458780` HTML contains Open in Web / Open in Cursor for this session. |
+| Rewrite Sep21 Status/opening or ROADMAP programme line 378 | **Rejected (R3).** Sep21 body after banner equals `origin/main`. ROADMAP Admin D–K line restored. |
+| Invent an Admin `bc-` session or launch Admin from here | **Rejected.** No sibling start evidence. First Admin action is reuse-if-created. |
 | Treat #544 report Draft header as a live writer | **Rejected.** Labelled historical source evidence. Programme remainder is used, not re-audited. |
 | Treat #543 as still in progress because the #544 report said so | **Rejected.** Live API: #543 merged; main is `d03a0486`. The report’s `IN_PROGRESS_NOT_MAIN` row is dated map evidence. |
 | Call #435 or #480 the latest runtime baseline | **Rejected.** Latest application-runtime-changing main is #543. Older pins are labelled historical. |
@@ -46,7 +48,7 @@ Only the single “aktueller … Checkpoint” pointer was changed, as tasked. L
 
 ### 2.5 Session footer and UI name
 
-Required model is confirmed. The external display name remains `Current startup handoff pointers`. Footer is unverified. This is honest, but a reviewer looking only for a renamed “Jetnity V1 continuity refresh 2” UI title will not find it.
+Footer is now verified from `5778458780` HTML. Required model is confirmed via run-info, a separate evidence class. The external display name remains `Current startup handoff pointers`. A reviewer looking only for a renamed “Jetnity V1 continuity refresh 2” UI title will not find it.
 
 ### 2.6 I did not re-run product tests
 
@@ -56,20 +58,19 @@ Docs-only. Existing required CI/Auth/Preview on **this persist SHA** are uncheck
 
 | Requirement | Met? | Note |
 | --- | --- | --- |
-| Fresh session; required model confirmed | Yes | `originalModelName=cursor-grok-4.6-high-fast` |
-| Read binding task at seed `0df59b64` | Yes | |
-| Sole global-doc writer; observe #545 live | Yes | |
-| Repair only named current-state files | Yes | |
-| Preserve historical OS/Grok limits, disabled TL automation, three-phase, provider-later, gates | Yes | |
+| Same session; required model confirmed | Yes | `bc-a65f0017-…`; `originalModelName=cursor-grok-4.6-high-fast` |
+| R1 merge-neutral entry text | Yes | dated observation + live PR reconstruction |
+| R2 verified footer source | Yes | `5778458780` HTML |
+| R3 historical body / exact scope | Yes | Sep21 body-equal; #480 originals restored; ROADMAP line 378 restored |
+| C1 task v2 + Admin TASK_ONLY | Yes | not a launch blocker |
 | Do not edit `.jetnity` / policy / runtime / Admin docs / remaining-build-map original delivery | Yes | |
-| Do not reuse completed prior docs sessions | Yes | New session `bc-a65f0017-…` |
-| No Ready / merge / follow-up | Yes | |
+| No Ready / merge / follow-up / sibling launch | Yes | |
 | Freeze SHA + fresh gates in PR comment | Pending this persist | |
 
 ## 4. Residual risks this slice does not close
 
-- Main remains stale until TL merge.
-- #545 remains unpublished.
+- If #546 is still open, `main` startup prose may still be stale.
+- #545 remains `TASK_ONLY`; that is not a launch blocker.
 - Finding 5.2 / gate G remain OPEN.
 - External Grok native-proof limitations remain false.
 - Remote CI/Vercel on **this persist SHA** are unchecked until after push.
