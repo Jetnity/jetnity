@@ -14,11 +14,13 @@ import {
   routeAbsendenPruefen,
   routeEinstiegHref,
   routePendingText,
-  routeVorkommenEntfernen,
-  routeVorkommenErsetzen,
-  routeVorkommenHinzufuegen,
   routeVorkommenVerschieben,
+  startzielAuswahlUebernehmen,
+  startzielErsetzenStarten,
+  startzielHatUnbestaetigtenEntwurf,
+  startzielVorkommenEntfernen,
   type RouteVorkommen,
+  type StartzielStand,
 } from '@/lib/places/route-einstieg'
 import { GRENZEN } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
@@ -176,16 +178,20 @@ export function StartzielFormSicht({
   )
 }
 
+const leererStartzielStand = (): StartzielStand => ({
+  vorkommen: [],
+  sucheText: '',
+  sucheAuswahl: null,
+  sucheOffen: true,
+  ersetzenKey: null,
+  meldung: '',
+  naechsterKey: 1,
+})
+
 export default function StartzielForm() {
   const router = useRouter()
-  const [vorkommen, setVorkommen] = React.useState<RouteVorkommen[]>([])
-  const [sucheText, setSucheText] = React.useState('')
-  const [sucheAuswahl, setSucheAuswahl] = React.useState<OrtAuswahl | null>(null)
-  const [sucheOffen, setSucheOffen] = React.useState(true)
+  const [stand, setStand] = React.useState<StartzielStand>(leererStartzielStand)
   const [sucheKey, setSucheKey] = React.useState(0)
-  const [ersetzenKey, setErsetzenKey] = React.useState<string | null>(null)
-  const [meldung, setMeldung] = React.useState('')
-  const [naechsterKey, setNaechsterKey] = React.useState(1)
   const eingabe = React.useRef<HTMLInputElement>(null)
   const weiteresZiel = React.useRef<HTMLButtonElement>(null)
   const fokusZiel = React.useRef<'suche' | 'weiteres' | null>(null)
@@ -194,53 +200,42 @@ export default function StartzielForm() {
     if (fokusZiel.current === 'suche') feldInSichtNehmen(eingabe.current)
     if (fokusZiel.current === 'weiteres') feldInSichtNehmen(weiteresZiel.current)
     fokusZiel.current = null
-  }, [sucheOffen, vorkommen.length, sucheKey])
+  }, [stand.sucheOffen, stand.vorkommen.length, sucheKey, stand.sucheText])
 
-  const sucheZuruecksetzen = (fokus: 'suche' | 'weiteres') => {
-    setSucheText('')
-    setSucheAuswahl(null)
-    setErsetzenKey(null)
+  const sucheLeerenNachAuswahl = () => {
     setSucheKey((bisher) => bisher + 1)
-    setSucheOffen(fokus === 'suche')
-    fokusZiel.current = fokus
-  }
-
-  const auswahlUebernehmen = (wert: OrtAuswahl) => {
-    if (ersetzenKey) {
-      setVorkommen((bisher) => routeVorkommenErsetzen(bisher, ersetzenKey, wert))
-    } else {
-      const key = String(naechsterKey)
-      setNaechsterKey((bisher) => bisher + 1)
-      setVorkommen((bisher) => routeVorkommenHinzufuegen(bisher, wert, key))
-    }
-    setMeldung('')
-    sucheZuruecksetzen('weiteres')
+    fokusZiel.current = 'weiteres'
   }
 
   const onSuche = (wert: OrtAuswahl | null, roh: string) => {
-    setSucheAuswahl(wert)
-    setSucheText(roh)
     if (wert) {
-      auswahlUebernehmen(wert)
+      setStand((bisher) => startzielAuswahlUebernehmen({ ...bisher, sucheText: roh, sucheAuswahl: wert }, wert))
+      sucheLeerenNachAuswahl()
       return
     }
-    if (roh.trim()) setMeldung('')
+    setStand((bisher) => ({
+      ...bisher,
+      sucheAuswahl: null,
+      sucheText: roh,
+      meldung: roh.trim() ? '' : bisher.meldung,
+    }))
   }
 
   const absenden = (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
-    const geprueft = routeAbsendenPruefen(vorkommen, sucheText, ersetzenKey)
+    const geprueft = routeAbsendenPruefen(stand.vorkommen, stand.sucheText, stand.ersetzenKey)
     if (!geprueft.ok) {
-      setMeldung(geprueft.meldung)
-      if (vorkommen.length === 0 || routePendingText(sucheText) || ersetzenKey) {
-        setSucheOffen(true)
-        feldInSichtNehmen(eingabe.current)
-      }
+      setStand((bisher) => ({
+        ...bisher,
+        meldung: geprueft.meldung,
+        sucheOffen: true,
+      }))
+      feldInSichtNehmen(eingabe.current)
       return
     }
     const href = routeEinstiegHref(geprueft.ziele)
     if (!href) {
-      setMeldung(ROUTE_EINSTIEG_MELDUNG.fehlt)
+      setStand((bisher) => ({ ...bisher, meldung: ROUTE_EINSTIEG_MELDUNG.fehlt, sucheOffen: true }))
       feldInSichtNehmen(eingabe.current)
       return
     }
@@ -249,51 +244,54 @@ export default function StartzielForm() {
 
   return (
     <StartzielFormSicht
-      vorkommen={vorkommen}
-      sucheText={sucheText}
-      sucheAuswahl={sucheAuswahl}
-      sucheOffen={sucheOffen || vorkommen.length === 0}
+      vorkommen={stand.vorkommen}
+      sucheText={stand.sucheText}
+      sucheAuswahl={stand.sucheAuswahl}
+      sucheOffen={stand.sucheOffen || stand.vorkommen.length === 0}
       sucheKey={sucheKey}
-      ersetzenKey={ersetzenKey}
-      meldung={meldung}
+      ersetzenKey={stand.ersetzenKey}
+      meldung={stand.meldung}
       onSuche={onSuche}
       onAbsenden={absenden}
       onWeiteresZiel={() => {
-        setSucheOffen(true)
-        setSucheKey((bisher) => bisher + 1)
+        setStand((bisher) => ({ ...bisher, sucheOffen: true }))
         fokusZiel.current = 'suche'
       }}
       onEntfernen={(key) => {
-        const naechste = routeVorkommenEntfernen(vorkommen, key)
-        setVorkommen(naechste)
-        if (ersetzenKey === key) {
-          setErsetzenKey(null)
-          setSucheText('')
-          setSucheAuswahl(null)
-        }
-        setMeldung('')
-        if (naechste.length === 0) {
-          sucheZuruecksetzen('suche')
-          return
-        }
-        fokusZiel.current = 'weiteres'
-      }}
-      onErsetzen={(key) => {
-        const ziel = vorkommen.find((eintrag) => eintrag.key === key)
-        setErsetzenKey(key)
-        setSucheAuswahl(null)
-        setSucheText(ziel?.ort?.name ?? '')
-        setSucheOffen(true)
-        setSucheKey((bisher) => bisher + 1)
-        setMeldung('')
+        setStand((bisher) => startzielVorkommenEntfernen(bisher, key))
         fokusZiel.current = 'suche'
       }}
+      onErsetzen={(key) => {
+        setStand((bisher) => {
+          const naechste = startzielErsetzenStarten(bisher, key)
+          if (
+            startzielHatUnbestaetigtenEntwurf(bisher) &&
+            naechste.meldung === ROUTE_EINSTIEG_MELDUNG.pending
+          ) {
+            fokusZiel.current = 'suche'
+            return naechste
+          }
+          fokusZiel.current = 'suche'
+          return naechste
+        })
+      }}
       onVerschieben={(key, richtung) => {
-        setVorkommen((bisher) => routeVorkommenVerschieben(bisher, key, richtung))
+        setStand((bisher) => ({
+          ...bisher,
+          vorkommen: routeVorkommenVerschieben(bisher.vorkommen, key, richtung),
+        }))
       }}
       onVerwerfen={() => {
-        setMeldung('')
-        sucheZuruecksetzen(vorkommen.length === 0 ? 'suche' : 'weiteres')
+        setStand((bisher) => ({
+          ...bisher,
+          sucheText: '',
+          sucheAuswahl: null,
+          ersetzenKey: null,
+          meldung: '',
+          sucheOffen: bisher.vorkommen.length === 0,
+        }))
+        setSucheKey((bisher) => bisher + 1)
+        fokusZiel.current = stand.vorkommen.length === 0 ? 'suche' : 'weiteres'
       }}
       eingabeRef={eingabe}
       weiteresZielRef={weiteresZiel}

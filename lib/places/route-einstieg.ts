@@ -238,7 +238,7 @@ export function tripPlannerRouteVorbelegen(eingabe: {
   destinationId?: string
   destination?: string
   weitereZiele?: { id: string; name: string }[]
-}): { primaer: OrtAuswahl | null; weitere: RouteVorkommen[] } {
+}): { primaer: OrtAuswahl | null; primaerKey: string; weitere: RouteVorkommen[] } {
   const primaer =
     eingabe.destinationId && eingabe.destination
       ? { id: eingabe.destinationId, name: eingabe.destination }
@@ -246,6 +246,116 @@ export function tripPlannerRouteVorbelegen(eingabe: {
   const weitere = (eingabe.weitereZiele ?? []).map((ziel, index) =>
     neuesRouteVorkommen(`handoff-${index + 1}`, { id: ziel.id, name: ziel.name }),
   )
-  return { primaer, weitere }
+  return { primaer, primaerKey: 'primary', weitere }
+}
+
+export type TripPlannerRouteStand = {
+  primaerKey: string
+  primaerOrt: OrtAuswahl | null
+  primaerText: string
+  weitere: RouteVorkommen[]
+}
+
+/**
+ * Tauscht Primary mit einem Extra inklusive Vorkommen-Identität und
+ * unbestätigtem Text. Kein Deduplizieren, kein stilles Verwerfen.
+ */
+export function tripPlannerPrimaerMitWeiteremTauschen(
+  stand: TripPlannerRouteStand,
+  extraIndex: number,
+): TripPlannerRouteStand {
+  const extra = stand.weitere[extraIndex]
+  if (!extra) return stand
+  const weitere = [...stand.weitere]
+  weitere[extraIndex] = {
+    key: stand.primaerKey,
+    ort: stand.primaerOrt,
+    text: stand.primaerText,
+  }
+  return {
+    primaerKey: extra.key,
+    primaerOrt: extra.ort,
+    primaerText: extra.ort?.name ?? extra.text,
+    weitere,
+  }
+}
+
+export type StartzielStand = {
+  vorkommen: RouteVorkommen[]
+  sucheText: string
+  sucheAuswahl: OrtAuswahl | null
+  sucheOffen: boolean
+  ersetzenKey: string | null
+  meldung: string
+  naechsterKey: number
+}
+
+export function startzielHatUnbestaetigtenEntwurf(stand: {
+  sucheText: string
+  sucheAuswahl: OrtAuswahl | null
+  ersetzenKey: string | null
+  vorkommen: readonly RouteVorkommen[]
+}): boolean {
+  if (stand.sucheAuswahl) return false
+  if (!routePendingText(stand.sucheText)) return false
+  if (!stand.ersetzenKey) return true
+  const ziel = stand.vorkommen.find((eintrag) => eintrag.key === stand.ersetzenKey)
+  return (ziel?.ort?.name ?? '') !== stand.sucheText
+}
+
+export function startzielErsetzenStarten(stand: StartzielStand, key: string): StartzielStand {
+  if (stand.ersetzenKey === key) {
+    return stand
+  }
+  if (startzielHatUnbestaetigtenEntwurf(stand)) {
+    return { ...stand, sucheOffen: true, meldung: ROUTE_EINSTIEG_MELDUNG.pending }
+  }
+  const ziel = stand.vorkommen.find((eintrag) => eintrag.key === key)
+  return {
+    ...stand,
+    ersetzenKey: key,
+    sucheAuswahl: null,
+    sucheText: ziel?.ort?.name ?? ziel?.text ?? '',
+    sucheOffen: true,
+    meldung: '',
+  }
+}
+
+export function startzielVorkommenEntfernen(stand: StartzielStand, key: string): StartzielStand {
+  const naechste = routeVorkommenEntfernen(stand.vorkommen, key)
+  const ersetzeDiese = stand.ersetzenKey === key
+  return {
+    ...stand,
+    vorkommen: naechste,
+    ersetzenKey: ersetzeDiese ? null : stand.ersetzenKey,
+    sucheOffen: true,
+    sucheAuswahl: stand.sucheAuswahl,
+    sucheText: stand.sucheText,
+    meldung: '',
+  }
+}
+
+export function startzielAuswahlUebernehmen(stand: StartzielStand, wert: OrtAuswahl): StartzielStand {
+  if (stand.ersetzenKey) {
+    return {
+      ...stand,
+      vorkommen: routeVorkommenErsetzen(stand.vorkommen, stand.ersetzenKey, wert),
+      ersetzenKey: null,
+      sucheAuswahl: null,
+      sucheText: '',
+      sucheOffen: false,
+      meldung: '',
+    }
+  }
+  const key = String(stand.naechsterKey)
+  return {
+    ...stand,
+    vorkommen: routeVorkommenHinzufuegen(stand.vorkommen, wert, key),
+    naechsterKey: stand.naechsterKey + 1,
+    sucheAuswahl: null,
+    sucheText: '',
+    sucheOffen: false,
+    meldung: '',
+  }
 }
 

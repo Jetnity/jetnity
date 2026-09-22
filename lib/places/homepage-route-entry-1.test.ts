@@ -203,9 +203,16 @@ describe('homepage-route-entry-1 – Planner-Handoff und Create-Graph', () => {
       [PARIS.id, ROM.id, PARIS.id],
     )
 
+    const suche = quelle('../../components/places/OrtSuche.tsx')
+    assert.match(suche, /letzterAnzeigetext/)
+    assert.match(suche, /initialText !== letzterAnzeigetext.current/)
     const planner = quelle('../../components/trips/TripPlanner.tsx')
     assert.match(planner, /initialWeitereZiele/)
     assert.match(planner, /tripPlannerRouteVorbelegen/)
+    assert.match(planner, /tripPlannerPrimaerMitWeiteremTauschen/)
+    assert.match(planner, /primaerKey/)
+    assert.match(planner, /key=\{primaerKey\}/)
+    assert.match(planner, /key=\{ziel.key\}/)
     assert.match(planner, /gastreiseAnlegen/)
     assert.match(planner, /reiseAnlegen/)
     assert.equal(planner.includes('useEffect(() => {\n    void reiseAnlegen'), false)

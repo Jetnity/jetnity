@@ -64,10 +64,19 @@ export default function OrtSuche({
   const wurzel = React.useRef<HTMLDivElement>(null)
   const anfrage = React.useRef({ aktuell: 0 })
   const listeId = React.useId()
+  const letzterAnzeigetext = React.useRef(value?.name ?? initialText)
 
   React.useEffect(() => {
-    if (value?.name) setText(value.name)
-  }, [value?.id, value?.name])
+    if (value?.name) {
+      letzterAnzeigetext.current = value.name
+      setText(value.name)
+      return
+    }
+    if (initialText !== letzterAnzeigetext.current) {
+      letzterAnzeigetext.current = initialText
+      setText(initialText)
+    }
+  }, [value?.id, value?.name, initialText])
 
   React.useEffect(() => {
     const suche = text.trim()

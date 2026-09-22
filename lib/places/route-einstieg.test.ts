@@ -17,7 +17,13 @@ import {
   routeVorkommenHinzufuegen,
   routeVorkommenVerschieben,
   routeZieleBestaetigen,
+  startzielAuswahlUebernehmen,
+  startzielErsetzenStarten,
+  startzielHatUnbestaetigtenEntwurf,
+  startzielVorkommenEntfernen,
+  tripPlannerPrimaerMitWeiteremTauschen,
   tripPlannerRouteVorbelegen,
+  type StartzielStand,
 } from '@/lib/places/route-einstieg'
 import { GRENZEN } from '@/lib/trips/schema'
 
@@ -216,6 +222,7 @@ describe('Homepage-Route-Entry Auswahl', () => {
       ],
     })
     assert.equal(handoff.primaer?.id, PARIS.id)
+    assert.equal(handoff.primaerKey, 'primary')
     assert.equal(handoff.weitere[0]?.ort?.id, ROM.id)
     const route = [
       neuesRouteVorkommen('p', handoff.primaer),
@@ -225,5 +232,130 @@ describe('Homepage-Route-Entry Auswahl', () => {
     assert.equal(verschoben[0].ort?.id, ROM.id)
     assert.equal(verschoben[1].ort?.id, PARIS.id)
     assert.equal(verschoben[2].ort?.id, PARIS.id)
+  })
+})
+
+function startzielStand(teil: Partial<StartzielStand> = {}): StartzielStand {
+  return {
+    vorkommen: [neuesRouteVorkommen('1', { id: PARIS.id, name: 'Paris' })],
+    sucheText: '',
+    sucheAuswahl: null,
+    sucheOffen: true,
+    ersetzenKey: null,
+    meldung: '',
+    naechsterKey: 2,
+    ...teil,
+  }
+}
+
+describe('Homepage-Route-Entry Startziel-Controller', () => {
+  test('Ersetzen mit fremdem Pending-Text bleibt blockiert und behält Cusco', () => {
+    const stand = startzielStand({ sucheText: 'Cusco' })
+    const naechste = startzielErsetzenStarten(stand, '1')
+    assert.equal(naechste.sucheText, 'Cusco')
+    assert.equal(naechste.ersetzenKey, null)
+    assert.equal(naechste.meldung, ROUTE_EINSTIEG_MELDUNG.pending)
+    assert.equal(startzielHatUnbestaetigtenEntwurf(stand), true)
+  })
+
+  test('Letztes Chip entfernen löscht den Pending-Text nicht', () => {
+    const stand = startzielStand({ sucheText: 'Cusco' })
+    const naechste = startzielVorkommenEntfernen(stand, '1')
+    assert.deepEqual(naechste.vorkommen, [])
+    assert.equal(naechste.sucheText, 'Cusco')
+    assert.equal(naechste.ersetzenKey, null)
+  })
+
+  test('Ersetzen-Zielwechsel und Löschen des ersetzten Vorkommens behalten den Entwurf', () => {
+    const zwei = startzielStand({
+      vorkommen: [
+        neuesRouteVorkommen('1', { id: PARIS.id, name: 'Paris' }),
+        neuesRouteVorkommen('2', { id: ROM.id, name: 'Rom' }),
+      ],
+    })
+    const ersetzenParis = startzielErsetzenStarten(zwei, '1')
+    assert.equal(ersetzenParis.ersetzenKey, '1')
+    assert.equal(ersetzenParis.sucheText, 'Paris')
+
+    const mitCusco = { ...ersetzenParis, sucheText: 'Cusco' }
+    const wechsel = startzielErsetzenStarten(mitCusco, '2')
+    assert.equal(wechsel.ersetzenKey, '1')
+    assert.equal(wechsel.sucheText, 'Cusco')
+    assert.equal(wechsel.meldung, ROUTE_EINSTIEG_MELDUNG.pending)
+
+    const gleicheTaste = startzielErsetzenStarten(mitCusco, '1')
+    assert.equal(gleicheTaste.sucheText, 'Cusco')
+    assert.equal(gleicheTaste.ersetzenKey, '1')
+
+    const entfernt = startzielVorkommenEntfernen(mitCusco, '1')
+    assert.equal(entfernt.vorkommen.length, 1)
+    assert.equal(entfernt.vorkommen[0]?.key, '2')
+    assert.equal(entfernt.ersetzenKey, null)
+    assert.equal(entfernt.sucheText, 'Cusco')
+  })
+
+  test('Bestätigte Auswahl hängt an und leert den Entwurf erst nach Bestätigung', () => {
+    const stand = startzielStand({ sucheText: 'Cusco' })
+    const naechste = startzielAuswahlUebernehmen(stand, { id: CUSCO.id, name: 'Cusco' })
+    assert.equal(naechste.vorkommen.length, 2)
+    assert.equal(naechste.vorkommen[1]?.ort?.id, CUSCO.id)
+    assert.equal(naechste.sucheText, '')
+    assert.equal(naechste.ersetzenKey, null)
+  })
+})
+
+describe('Homepage-Route-Entry TripPlanner-Tausch', () => {
+  test('Primary und Extra tauschen Identität inklusive Pending-Text', () => {
+    const nachOben = tripPlannerPrimaerMitWeiteremTauschen(
+      {
+        primaerKey: 'primary',
+        primaerOrt: { id: PARIS.id, name: 'Paris' },
+        primaerText: 'Paris',
+        weitere: [{ key: 'extra-1', ort: null, text: 'Cusco' }],
+      },
+      0,
+    )
+    assert.equal(nachOben.primaerKey, 'extra-1')
+    assert.equal(nachOben.primaerOrt, null)
+    assert.equal(nachOben.primaerText, 'Cusco')
+    assert.equal(nachOben.weitere[0]?.key, 'primary')
+    assert.equal(nachOben.weitere[0]?.ort?.id, PARIS.id)
+    assert.equal(nachOben.weitere[0]?.text, 'Paris')
+
+    const zurueck = tripPlannerPrimaerMitWeiteremTauschen(nachOben, 0)
+    assert.equal(zurueck.primaerKey, 'primary')
+    assert.equal(zurueck.primaerOrt?.id, PARIS.id)
+    assert.equal(zurueck.primaerText, 'Paris')
+    assert.equal(zurueck.weitere[0]?.key, 'extra-1')
+    assert.equal(zurueck.weitere[0]?.text, 'Cusco')
+    assert.equal(zurueck.weitere[0]?.ort, null)
+  })
+
+  test('Leeres Extra und Duplikat bleiben beim Tausch erhalten', () => {
+    const leer = tripPlannerPrimaerMitWeiteremTauschen(
+      {
+        primaerKey: 'primary',
+        primaerOrt: { id: PARIS.id, name: 'Paris' },
+        primaerText: 'Paris',
+        weitere: [{ key: 'extra-1', ort: null, text: '' }],
+      },
+      0,
+    )
+    assert.equal(leer.primaerOrt, null)
+    assert.equal(leer.primaerText, '')
+    assert.equal(leer.weitere[0]?.ort?.name, 'Paris')
+
+    const duplikat = tripPlannerPrimaerMitWeiteremTauschen(
+      {
+        primaerKey: 'primary',
+        primaerOrt: { id: PARIS.id, name: 'Paris' },
+        primaerText: 'Paris',
+        weitere: [{ key: 'extra-1', ort: { id: PARIS.id, name: 'Paris' }, text: 'Paris' }],
+      },
+      0,
+    )
+    assert.equal(duplikat.primaerOrt?.id, PARIS.id)
+    assert.equal(duplikat.weitere[0]?.ort?.id, PARIS.id)
+    assert.equal(duplikat.primaerKey, 'extra-1')
   })
 })

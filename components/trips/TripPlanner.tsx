@@ -55,7 +55,10 @@ import { feldInSichtNehmen } from '@/lib/formular/sicht'
 import { reiseorteBestaetigen } from '@/lib/places/aktionen'
 import { type OrtAuswahl } from '@/lib/places/auswahl'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
-import { tripPlannerRouteVorbelegen } from '@/lib/places/route-einstieg'
+import {
+  tripPlannerPrimaerMitWeiteremTauschen,
+  tripPlannerRouteVorbelegen,
+} from '@/lib/places/route-einstieg'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import {
   CREATE_PERSISTENZ_INTERESSEN,
@@ -133,6 +136,7 @@ export default function TripPlanner({
     destination: initialDestination,
     weitereZiele: initialWeitereZiele,
   })
+  const [primaerKey, setPrimaerKey] = React.useState(handoff.primaerKey)
   const [destination, setDestination] = React.useState(handoff.primaer?.name ?? initialDestination)
   const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(handoff.primaer)
   const [zusaetzlicheZiele, setZusaetzlicheZiele] = React.useState<ZusaetzlichesZiel[]>(
@@ -191,13 +195,32 @@ export default function TripPlanner({
     if (index === 0) {
       const extra = zusaetzlicheZiele[0]
       if (!extra) return
-      setZusaetzlicheZiele((bisher) => [
-        { key: extra.key, ort: destinationOrt, text: destination },
-        ...bisher.slice(1),
-      ])
-      setDestinationOrt(extra.ort)
-      setDestination(extra.ort?.name ?? extra.text)
-      if (extra.ort) feldKorrigieren('destination')
+      const stand = tripPlannerPrimaerMitWeiteremTauschen(
+        {
+          primaerKey,
+          primaerOrt: destinationOrt,
+          primaerText: destination,
+          weitere: zusaetzlicheZiele,
+        },
+        0,
+      )
+      setPrimaerKey(stand.primaerKey)
+      setDestinationOrt(stand.primaerOrt)
+      setDestination(stand.primaerText)
+      setZusaetzlicheZiele(stand.weitere)
+      setFeldfehler((bisher) => {
+        const extraFeld = zusaetzlichesZielFeld(extra.key)
+        const neuesExtra = stand.weitere[0]
+        const naechste: Feldfehler<string> = { ...bisher }
+        const destFehler = naechste.destination
+        const extraFehler = naechste[extraFeld]
+        delete naechste.destination
+        delete naechste[extraFeld]
+        if (extraFehler && !stand.primaerOrt) naechste.destination = extraFehler
+        if (destFehler && neuesExtra) naechste[zusaetzlichesZielFeld(neuesExtra.key)] = destFehler
+        if (stand.primaerOrt) delete naechste.destination
+        return naechste
+      })
       return
     }
     setZusaetzlicheZiele((bisher) => {
@@ -428,6 +451,7 @@ export default function TripPlanner({
               icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
             >
               <OrtSuche
+                key={primaerKey}
                 rolle="ziel"
                 variante="field"
                 value={destinationOrt}
@@ -503,6 +527,7 @@ export default function TripPlanner({
                     icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
                   >
                     <OrtSuche
+                      key={ziel.key}
                       rolle="ziel"
                       variante="field"
                       value={ziel.ort}
