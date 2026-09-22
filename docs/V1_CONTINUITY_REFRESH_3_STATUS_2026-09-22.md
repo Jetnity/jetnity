@@ -30,7 +30,7 @@ A reader following START_HERE → current handoff → ACTIVE_WORK_STATUS → the
 - latest application-runtime-changing merge `#548` offline HBX (not live provider);
 - completed `#545` / `#546` / `#547` / `#548` / `#549`;
 - current product stream `#550` at `b5bbe211` — correction delivered / not TL PASS / integration priority;
-- independent Cursor reviewer `#552` `DISPATCHED / ACKNOWLEDGED / TASK_ONLY` (not Guardian);
+- independent Cursor reviewer `#552` `SPECIALIST_EVIDENCE_DELIVERED / AWAITING_TL_CONSOLIDATION` (not Guardian, not TL PASS);
 - this docs task/session;
 - current review state / first unfinished action;
 - reserved gates, `jetnity.com` primary-domain decision, and source links.
@@ -84,7 +84,7 @@ The exact content head is the commit that adds this STATUS, HANDOFF, SELF_REVIEW
 | PR | Observed head | Classification | Next actor |
 | --- | --- | --- | --- |
 | #550 | `b5bbe211bc82c16da34bc8f48b58f39920af5f5a` | correction delivered / awaiting independent review / **NOT TL PASS**; local/unapplied; integration priority | Independent TL re-review of exact current head after #552 evidence. This writer does not edit it. |
-| #552 | `34f7586e75e7d77ce59998afed54e5dd1775d52f` (task-only seed) | `DISPATCHED / ACKNOWLEDGED / TASK_ONLY`; footer **verified** in `5782508582`; Cursor specialist, **not Guardian** | Observe only. Do not launch, duplicate or implement findings from here. |
+| #552 | `cbba1264aa1686382629fd1bae11e8d4b2851431` | `SPECIALIST_EVIDENCE_DELIVERED / AWAITING_TL_CONSOLIDATION`; footer **verified** in `5782508582`; pointer `5782601481`; Cursor specialist, **not Guardian**, **not TL PASS** | Observe only. Do not launch, duplicate or implement findings from here. |
 | #551 | this persist | dated delivery / not a permanent current-writer claim | Independent TL review of the new head |
 
 Older open drafts #52 / #50 / #40 / #39 / #28 remain historical open PRs, not current writers.
@@ -102,7 +102,7 @@ Older open drafts #52 / #50 / #40 / #39 / #28 remain historical open PRs, not cu
 | #550 head | independently re-read `b5bbe211`; CI `35772116946` SUCCESS on that SHA — **re-read now** |
 | #550 verdict | TL `5782510116`: correction delivered / not PASS. Only review on file: `5282427169` on old head `9219e31e` |
 | #550 author proof | 56/56 + 10/10 **author-reported** in `5782471633`; **not** independently re-executed here |
-| #552 assignment | live Draft + footer `5782508582`; no delivery freeze at this reconstruction |
+| #552 assignment | live Draft head `cbba1264` + footer `5782508582` + pointer `5782601481`; specialist report author-delivered; **not** independently re-executed here |
 | Later #512 activation | [5782516195](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5782516195) — #551/#552 acknowledged, not finished; supersedes proposed/not-dispatched wording in `5782408305` |
 | Provider-later | #512 `5776595910`; #395 `5776595577` |
 | Primary domain | #512 `5781400067` — `jetnity.com`; no cutover |

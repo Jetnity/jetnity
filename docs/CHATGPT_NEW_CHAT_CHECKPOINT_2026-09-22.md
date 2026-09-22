@@ -91,14 +91,15 @@ The Product Owner approved the Technical Lead additional-agent recommendation in
 ### C. PR #552 — Independent account-count verification 1 (read-only specialist; not Guardian)
 
 - Branch: `audit/admin-account-counts-independent-verification-1`.
-- Observed head at this freeze: `34f7586e75e7d77ce59998afed54e5dd1775d52f` (task-only seed). Re-fetch.
+- Observed head at this freeze: `cbba1264aa1686382629fd1bae11e8d4b2851431` (2 commits / 9 files). Seed was `34f7586e…`. Re-fetch.
 - Binding task: `docs/ADMIN_ACCOUNT_COUNTS_INDEPENDENT_VERIFICATION_1_TASK_2026-09-22.md` — lives on the sibling evidence branch, **not** on this docs branch.
 - Agent logical name: **Jetnity admin account counts independent verification 1**, Generation 1.
 - Dispatch: [#552 5782506228](https://github.com/Jetnity/jetnity/pull/552#issuecomment-5782506228). TL assignment [#550 5782510116](https://github.com/Jetnity/jetnity/pull/550#issuecomment-5782510116).
-- Session / footer: **verified** from raw comment [`5782508582`](https://github.com/Jetnity/jetnity/pull/552#issuecomment-5782508582) HTML for `bc-4a3288b3-eb42-480b-9c37-f74b584e2419`. No delivery freeze observed at this reconstruction. Do **not** invent completion, treat this as Guardian evidence, or launch/fix from this docs session.
-- Product review target only: **#550 @ `b5bbe211`**. A changed #550 head stale-dates reviewer evidence and requires TL retargeting.
-- Classification: **`DISPATCHED / ACKNOWLEDGED / TASK_ONLY`**. Cursor specialist evidence only. **Not Guardian. Not TL PASS. Not a product writer.**
-- Do not edit sibling files from this writer. Do not wait here and invent reviewer PASS or #550 closure.
+- Session / footer: **verified** from raw comment [`5782508582`](https://github.com/Jetnity/jetnity/pull/552#issuecomment-5782508582) HTML for `bc-4a3288b3-eb42-480b-9c37-f74b584e2419`. Display name reported as `Admin account counts independent verification`; UI rename not performed.
+- Author persist + #550 pointer [`5782601481`](https://github.com/Jetnity/jetnity/pull/550#issuecomment-5782601481): specialist report says R1–R4 hold on exact `#550 @ b5bbe211` after independent local PostgreSQL execution; 56/56 + 10/10 **re-executed by that reviewer**, plus additional probes. **Author/specialist evidence only. Not independently re-executed here. Not Guardian. Not TL PASS.**
+- Product review target only: **#550 @ `b5bbe211`** (reviewer reports start=finish unchanged). A later changed #550 head stale-dates reviewer evidence and requires TL retargeting.
+- Classification: **`SPECIALIST_EVIDENCE_DELIVERED / AWAITING_TL_CONSOLIDATION`**. Cursor specialist evidence only. **Not Guardian. Not TL PASS. Not a product writer.**
+- Do not edit sibling files from this writer. Do not invent #550 Ready/merge from this evidence.
 
 Do not merge, rebase or force-push unmerged siblings. Report drift instead. Historical Drafts #52 / #50 / #40 / #39 / #28 are not current writers.
 
@@ -128,7 +129,7 @@ Do not reuse those completed Cursor sessions.
 ## 5. First unfinished action
 
 1. **#550 has integration priority.** Independent Technical-Lead exact-head **re-review** of frozen `b5bbe211` after specialist #552 evidence. The builder is frozen; do not start a second #550 writer. Old-head review `5282427169` is historical. Author 56/56 is not independent verification. This is **not** Ready, merge or Production activation.
-2. Observe #552 as `DISPATCHED / ACKNOWLEDGED / TASK_ONLY`. Do not launch, duplicate or implement its findings from this docs session. Cursor reviewer output is **not** Guardian evidence and **not** TL PASS.
+2. Observe #552 as `SPECIALIST_EVIDENCE_DELIVERED / AWAITING_TL_CONSOLIDATION`. Do not launch, duplicate or implement its findings from this docs session. Cursor reviewer output is **not** Guardian evidence and **not** TL PASS.
 3. Independent Technical-Lead exact-head review of **this #551 persist**. If #551 is still open, continue review/fixes of the exact current head. If merged, do not reactivate this session.
 4. Do **not** start a follow-up slice from this checkpoint. Cursor has no Ready/merge/follow-up authority.
 5. Programme remainder stays in the #544 report, as later-closed: TW-8 after real commercial truth; TW-9 release proof; legal `/privacy` `/terms`; SMTP; deletion/retention; observability; finding 5.2 / gate G; provider-later. Those are not this writer’s implementation.

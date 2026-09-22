@@ -39,7 +39,7 @@ A restart-safe current-state surface:
 - START_HERE / ACTIVE_WORK_STATUS / HANDOFF now lead to that checkpoint via #551;
 - `#545`/`#546`/`#547`/`#548`/`#549` recorded closed;
 - `#550` recorded correction-delivered / not TL PASS / local/unapplied / integration priority;
-- `#552` recorded `DISPATCHED / ACKNOWLEDGED / TASK_ONLY` (Cursor specialist, not Guardian);
+- `#552` recorded `SPECIALIST_EVIDENCE_DELIVERED / AWAITING_TL_CONSOLIDATION` (Cursor specialist, not Guardian, not TL PASS);
 - latest runtime baseline updated from `#543`/`#480` to `#548` offline HBX, with `#549` as current docs-only `main`;
 - historical OS/Grok limitations, disabled TL automation, three-phase / Flight-first order, provider-later, `jetnity.com` primary-domain decision and reserved gates preserved;
 - `.jetnity/operating-mode.json` left untouched and labelled historical for stale `activeMetaScope`.

@@ -16,7 +16,7 @@ This document argues against the implementation. It cannot replace an independen
 | Leave #546 / #545 as the current writers | **Rejected.** Owned current-state prose now names #550 / #551 / #552 and records #545–#549 closed. |
 | Treat #550 author freeze as TL PASS or activation | **Rejected.** TL `5782510116` is correction delivered / not PASS. Local/unapplied. No Production migration/RPC/UI. |
 | Invent #550 closure or hide R1–R4 | **Rejected.** Old-head CHANGES REQUIRED `5282427169` remains historical; new-head independent re-review is the unfinished product action. |
-| Invent a reviewer start that did not exist | **Rejected.** #552 is recorded only after live Draft + dispatch `5782506228` + footer `5782508582`. Commissioning text that said “not dispatched” is superseded by later live evidence. |
+| Invent a reviewer start that did not exist | **Rejected.** #552 is recorded only after live Draft + dispatch `5782506228` + footer `5782508582`. Later persist `cbba1264` / pointer `5782601481` is recorded as specialist evidence, not TL PASS. |
 | Label #552 Cursor reviewer as Guardian | **Rejected.** Explicitly Cursor specialist evidence, not Guardian, not TL PASS. |
 | Keep #543 or #480 labelled latest runtime | **Rejected.** Merged-diff evidence: #548 offline HBX is the latest application-runtime-changing merge; #549 is later docs-only `main`. |
 | Treat offline HBX as live provider activation | **Rejected.** Distinguished. No secret/contract/paid call/S6. |
@@ -33,7 +33,7 @@ This document argues against the implementation. It cannot replace an independen
 
 ### 2.1 #550 and #552 will move
 
-Observed `#550 @ b5bbe211` and `#552 @ 34f7586e` are live pins. If either writer pushes before review, the observation is already stale. The files say to re-fetch and not invent completion or PASS.
+Observed `#550 @ b5bbe211` and `#552 @ cbba1264` are live pins. If either writer pushes before review, the observation is already stale. The files say to re-fetch and not invent completion or PASS.
 
 ### 2.2 Production READY was not re-queried via Vercel API
 
@@ -62,7 +62,7 @@ Docs-only. Existing required CI/Auth/Preview on **this persist SHA** are uncheck
 | New dedicated session; required model confirmed | Yes | `bc-e268a98c-…`; `originalModelName=cursor-grok-4.6-high-fast`; not #546 / not #550 |
 | Four named central files plus three deliverables only | Yes | task already on seed; no ROADMAP / older-checkpoint / Continuity Standard / `.jetnity` edits |
 | Re-fetch #550 at freeze; do not invent closure | Yes | `b5bbe211` + `5782471633` + `5782510116` not PASS |
-| Record only actual #552 assignment | Yes | live Draft / footer; no delivery invented |
+| Record only actual #552 assignment | Yes | live Draft / footer / persist `cbba1264` / pointer `5782601481`; not converted to TL PASS |
 | Preserve OS/Grok residuals, TL automation, gates, `jetnity.com`, three-phase / Flight-first | Yes | |
 | No Ready / merge / follow-up / sibling launch | Yes | |
 | Freeze SHA + fresh gates in PR comment | Pending this persist | |
@@ -71,7 +71,7 @@ Docs-only. Existing required CI/Auth/Preview on **this persist SHA** are uncheck
 
 - If #551 is still open, `main` startup prose may still be stale.
 - #550 remains not PASS and local/unapplied.
-- #552 delivery is unverified at this reconstruction.
+- #552 specialist persist `cbba1264` is author-delivered; this writer did not re-execute it and it is not TL PASS.
 - Finding 5.2 / gate G remain OPEN.
 - External Grok native-proof limitations remain false.
 - Remote CI/Vercel on **this persist SHA** are unchecked until after push.
