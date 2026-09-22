@@ -1,91 +1,47 @@
 # Jetnity Remaining Build Map 1 — HANDOFF
 
 Stand: 22. September 2026  
-Status: **REPORT DELIVERED / DOCS-EVIDENCE ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **R1–R3 CORRECTION DELIVERED / DOCS-EVIDENCE ONLY / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Draft PR: #544  
 Branch: `docs/remaining-build-map-1`  
-Pinned baseline: `main@35148a4ba065be1315dddf21174d7f272518d34c`
+Invalidated previous head: `962b2209a7ab59262dc8ef1a18d360d443742dcb`  
+Pinned baseline at last read: `main@35148a4ba065be1315dddf21174d7f272518d34c`
 
 ---
 
-## 1. What a new agent or chat must read, in this order
+## 1. Read order
 
-1. `.jetnity/operating-mode.json` — live mode is `NORMAL`.  
-2. `docs/JETNITY_REMAINING_BUILD_MAP_1_TASK_2026-09-22.md` — binding task.  
-3. `docs/JETNITY_REMAINING_BUILD_MAP_1_REPORT_2026-09-22.md` — substance.  
-4. This HANDOFF, then STATUS and SELF_REVIEW.  
-5. Latest #512 comments `5776334794`, `5776541884`, `5776595910` and #395 `5776595577`.  
-6. Live GitHub: PR #544, sibling PR #543, current `origin/main`.  
-7. Do **not** treat September-1 Phase-1 gap rows, #509 NEXT_SLICES, or #28 “start collaboration now” as current open work.
+1. `.jetnity/operating-mode.json` — `NORMAL`.  
+2. Binding task + TL review `5776971757`.  
+3. `docs/JETNITY_REMAINING_BUILD_MAP_1_REPORT_2026-09-22.md` — especially §3.1a–d and bounded §4.  
+4. This HANDOFF, STATUS, SELF_REVIEW.  
+5. Live GitHub #544 / #543 / current `origin/main`.
 
-Global `JETNITY_START_HERE.md` / `docs/ACTIVE_WORK_STATUS.md` still contain leftover “until #512 merges” / workstream-table framing. #512 is already merged. Live comments win. This writer did not edit those files.
+Do not treat `962b2209` gates as valid. Do not treat the Account plan’s AP-7/AP-10 absence sentences as current. Do not treat TW-9 as closed because UX repairs merged. Do not fold Guardian/What-if into Advanced Companion.
 
 ---
 
-## 2. Current state in one paragraph
+## 2. Current state
 
-Jetnity’s remaining work is no longer “rebuild the product.” Phase-1 architecture, World Map + confirmed visits, PWA installability, assistant runtime, provider-neutral flight/hotel/activity ports, S4–S8 foundations, and the 21–22 September honesty/UX/MFA closures are on pinned main. What still blocks real travellers is live activation and reserved gates: providers, official truth, legal content, SMTP, deletion, retention, observability, Production Auth writes, and persistent security ingestion. The only assigned provider-independent runtime slice is #543 homepage confirmed-route entry; it is in progress and not main. This map found **no additional** bounded implementation candidate worth dispatching. Historical Drafts are stale. Provider contact remains deferred.
+The map now answers the PO question for Trip Workspace, Account and Admin with named programme units. AP-7 and AP-10-S1 are built. AP-8/9/11/12 remain. Admin letters are classified individually; Billing-P1 is an open local-ledger residual before Finance-Live; Admin F is a later ungated scoped option, deferred. TW-9 programme closure is release-proof, not another polish slice. Additional **V1-critical** ungated candidates remain none. Provider-later and the V1 build order are unchanged. #543 remains the only assigned runtime writer; live draft head is now `676d64b4`, still `IN_PROGRESS_NOT_MAIN`.
 
 ---
 
 ## 3. Recommended next step
 
-**Technical-Lead exact-head review of #544. Then stop.**
+**Technical-Lead exact-head re-review of this correction. Then stop.**
 
-This writer / Cursor / Guardian:
-
-- do not mark Ready;  
-- do not merge;  
-- do not start a follow-up slice;  
-- do not implement homepage route work (belongs to #543);  
-- do not contact providers or re-request KAYAK approval;  
-- do not resume #28/#20;  
-- do not edit global continuity or the binding build order.
-
-If the Technical Lead later wants implementation, the already-assigned #543 is the live runtime owner. This report’s §4 says **none additional**. That is a valid close, not a vacancy to fill.
+Cursor must not Ready, merge, dispatch Admin F, implement Billing-P1, start Guardian/What-if, contact providers, or edit global continuity.
 
 ---
 
-## 4. Parallel ownership that remains live
+## 4. Parallel ownership
 
-| PR | Owns | Relation |
-| --- | --- | --- |
-| #543 | Homepage confirmed multi-destination route entry runtime | Disjoint; IN_PROGRESS; never cite as integrated main |
-| #544 | Only this remaining-build report/evidence | This slice |
-| Historical #52/#50/#40/#39/#28 | Nothing current | Read-only |
-
-Either merge order of #543 and #544 is technically valid. TL decides serial integration and re-gates changed heads.
+Unchanged: #543 owns homepage route runtime; #544 owns only these docs/evidence files.
 
 ---
 
-## 5. Identity freeze (pre-persist)
+## 5. Stop
 
-| Field | Value |
-| --- | --- |
-| Logical name | Jetnity remaining build map 1 |
-| Generation | 1 |
-| Model | cursor-grok-4.6-high-fast (confirmed via run-info) |
-| Session | bc-2f765cf3-6e43-493b-96d6-ab1ae9289258 |
-| Branch | docs/remaining-build-map-1 |
-| Baseline | 35148a4ba065be1315dddf21174d7f272518d34c |
-| Task seed | 492a35f9861a283d365cc37a3521d1c4a7559ced |
-
-Post-persist frozen HEAD, merge-base, ahead/behind must be re-read from git after the content commit and written in the PR comment.
-
----
-
-## 6. Deliberately not done
-
-- No runtime, DB, Auth, provider, secret, cost, or tool-configuration change.  
-- No Ready / merge / rebase / force-push / main merge.  
-- No new issue, slice dispatch, or build-order change.  
-- No blanket QA/security re-audit.  
-- No legal text.  
-- No session UI rename.
-
----
-
-## 7. Stop
-
-**STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.**
+**STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.**

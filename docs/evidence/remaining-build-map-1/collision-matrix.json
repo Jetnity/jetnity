@@ -1,20 +1,30 @@
 {
   "pinnedMain": "35148a4ba065be1315dddf21174d7f272518d34c",
+  "correction": "R1-R3",
   "rows": [
     {
       "pr": 544,
-      "head": "ffcbca8d",
+      "invalidatedPreviousHead": "962b2209a7ab59262dc8ef1a18d360d443742dcb",
       "mergeBase": "35148a4ba065be1315dddf21174d7f272518d34c",
-      "aheadBehindBeforePersist": "1/0",
-      "class": "current_docs_writer"
+      "aheadBehindBeforePersist": "3/0",
+      "class": "current_docs_writer",
+      "ownedPaths": [
+        "docs/JETNITY_REMAINING_BUILD_MAP_1_*",
+        "docs/evidence/remaining-build-map-1/"
+      ]
     },
     {
       "pr": 543,
-      "head": "218786742e4bcd73556193b1aba8786e03f2e2f6",
+      "headAtFirstCapture": "218786742e4bcd73556193b1aba8786e03f2e2f6",
+      "headAtR1R3Correction": "676d64b44db3080744b5ccda1354a7f3dd0590f5",
       "githubBase": "35148a4ba065be1315dddf21174d7f272518d34c",
+      "draft": true,
+      "commitsAtCorrection": 4,
+      "changedFilesAtCorrection": 28,
       "localMergeBase": "UNVERIFIED_shallow_fetch",
       "class": "IN_PROGRESS_NOT_MAIN",
-      "exclusiveOwner": "homepage_confirmed_route"
+      "exclusiveOwner": "homepage_confirmed_route",
+      "auditedByThisMap": false
     },
     {
       "pr": 52,

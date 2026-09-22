@@ -12,6 +12,9 @@
   "draftPr": 544,
   "baselineMain": "35148a4ba065be1315dddf21174d7f272518d34c",
   "taskSeed": "492a35f9861a283d365cc37a3521d1c4a7559ced",
+  "invalidatedPreviousHead": "962b2209a7ab59262dc8ef1a18d360d443742dcb",
+  "bindingReview": "https://github.com/Jetnity/jetnity/pull/544#issuecomment-5776971757",
+  "correction": "R1-R3",
   "operatingMode": "NORMAL",
   "date": "2026-09-22"
 }

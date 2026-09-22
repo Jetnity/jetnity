@@ -23,6 +23,14 @@
     "url": "https://github.com/Jetnity/jetnity/issues/395#issuecomment-5776595577",
     "state": "INTERNAL_UNSENT_DEFERRED"
   },
+  "thisPrReview": {
+    "pr": 544,
+    "id": 5776971757,
+    "url": "https://github.com/Jetnity/jetnity/pull/544#issuecomment-5776971757",
+    "role": "tl_changes_required_r1_r3",
+    "reviewedHead": "962b2209a7ab59262dc8ef1a18d360d443742dcb",
+    "sameSessionCorrectionRequired": true
+  },
   "tlObservedOnBaseline": {
     "date": "2026-09-22",
     "main": "35148a4ba065be1315dddf21174d7f272518d34c",
