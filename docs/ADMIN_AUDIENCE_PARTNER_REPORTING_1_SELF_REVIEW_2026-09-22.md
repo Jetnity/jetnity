@@ -4,6 +4,7 @@ Date: 2026-09-22
 Agent: **Jetnity admin audience partner reporting preflight 1**, Generation 1  
 Session: `bc-ea4a0209-f139-4b47-8943-16ddf78e4270`  
 Model: Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — matches required; no Auto/substitution  
+Scope of this persist: TL review `5281490348` R1 + R2 on `904122a0`  
 This review is **producer evidence**, not Technical-Lead PASS.
 
 ---
@@ -12,21 +13,18 @@ This review is **producer evidence**, not Technical-Lead PASS.
 
 | Question | Answer |
 | --- | --- |
-| Did I reuse #545 / #547 / #548 sessions? | No. New session `bc-ea4a0209-f139-4b47-8943-16ddf78e4270`. Sibling heads observed only. |
-| Did I treat unmerged runtime as main truth? | No. |
+| Did I reuse #545 / #547 / #548 sessions? | No. Same audience session only. |
+| Did I rebase, force-push, or merge #548? | No. Fetched and merged authorized main `8fcccd64` only. |
+| Did I claim current trip RPCs exclude fixtures/test/Preview? | No. R1 states only time + `darf_betrieb_lesen()`. |
+| Did I call raw trip CSV partner-ready or clean-audience? | No. **INTERNAL RAW OPERATIONS ONLY**; clean external report gated. |
+| Did I invent a filter or SQL? | No. |
+| Did I tie all click collection to S5-B? | No. R2: missing event/attribution/privacy contract; S5-B conditional on snapshot write. |
 | Did I implement analytics, tracking, SQL, UI, or a vendor? | No. Docs only. |
-| Did I turn TL function metadata into personal-row access or a Production PASS? | No. Quoted; limits stated. |
-| Did I claim `last_seen_at` is activity? | No. No writer found. |
-| Did I treat Users `count` as audience? | No. Filter/RLS/profile-only. |
-| Did I confuse `account_visits` with web visits? | No. |
-| Did I treat affiliate columns as clicks/bookings/commission? | No. |
-| Did I invent historical traffic or unique humans? | No. |
-| Did I reorder V1 or start Growth M0–M6? | No. Proposal is honesty over existing A–C measures. |
-| Did I contact a partner or select a vendor? | No. Public Skyscanner FAQ fetch only. |
-| Did I mark Ready / merge / start the follow-up? | No. |
+| Did I rewrite the task or global docs? | No. |
+| Did I treat #545/#547 unmerged runtime as truth? | They are now on authorized main; cited only as nav/indexing, not audience. |
+| Did I claim `last_seen_at` is activity or Users `count` as audience? | No. |
+| Did I mark Ready / merge #549 / start the follow-up? | No. |
 | Did I claim UI rename? | No. |
-| Did I edit global status/start/roadmap or runtime? | No. |
-| Did I require fake runtime tests? | No. Docs path/link checks only. |
 
 ---
 
@@ -34,13 +32,10 @@ This review is **producer evidence**, not Technical-Lead PASS.
 
 | Risk | Severity | Mitigation / residual |
 | --- | --- | --- |
-| A hidden `profiles` insert exists outside `app/**` + `lib/**` (edge, dashboard hook, later migration). | P1 | Searched those trees, auth callback, SQL triggers on `auth.users`, and scripts (test-only inserts). Residual: a live Production hook **not in this repo** is **NOT VERIFIED**. |
-| Hosted DB timezone is not UTC, so rolling 30d / `current_date` buckets differ from operator expectation. | P1 | Labelled `NOT VERIFIED`. First implementation must not print “UTC” as fact. |
-| Production `admin_reisen_kennzahlen` body drifted from the migration. | P2 | TL metadata matches the migration shape. Accuracy/exclusions still unverified. |
-| Operators already treat Users “Nutzer gesamt” as registrations. | P1 | Documented. First overview must not repeat that number as audience. |
-| I under-counted later event tables. | P2 | No versioned marketing event table found; Growth D0/G0 and AP6A agree. Residual: a non-analytics log I did not name. |
-| Skyscanner criterion page can change. | P2 | Fetched 2026-09-22; dated pin, not a permanent partner policy. |
-| Sibling heads move after this pin. | P3 | Observation only. |
+| A later reader still treats “honest now” as partner-ready. | P1 | Report class table + CSV label + gated clean-external section. Residual: wording elsewhere still says “honest”. |
+| #548 or another merge moves main after freeze. | P2 | Dispatch said report drift; do not silently claim current. |
+| A hidden click logger exists that I still missed. | P2 | No versioned event table found; residual unnamed log. |
+| A hidden `profiles` insert exists outside the repo. | P1 | Unchanged residual. |
 
 ---
 
@@ -48,49 +43,32 @@ This review is **producer evidence**, not Technical-Lead PASS.
 
 | ID | Sev | Finding |
 | --- | --- | --- |
-| P0-1 | P0 | Unique visitors, the metric partners actually ask for, have **no producer**. Any current “audience” number that is not a trip aggregate would be a lie. |
-| P0-2 | P0 | `last_seen_at` and Users profile counts must not be shipped as active users or registrations. |
-| P1-1 | P1 | Auth account and profile are different objects; product does not insert profiles on signup in this repository. |
-| P1-2 | P1 | Trip aggregates have no test/Preview/bot exclusion and lose deleted accounts. |
-| P1-3 | P1 | Commercial affiliate fields and local `booked`/payments cannot underwrite partner revenue claims. |
-| P2-1 | P2 | `reisen_gesamt` exists but is hidden; timezone unlabelled. |
-| P2-2 | P2 | `/admin/analytics` still says reports are not built — true, and must stay true until a later honesty slice. |
-| P3-1 | P3 | Seed-head Preview/CI are not content-head gates. |
-| P3-2 | P3 | Session display name was not renamed. |
+| P0-1 | P0 | Unique visitors still have no producer. |
+| P0-2 | P0 | `last_seen_at` / Users `count` still must not be shipped as audience. |
+| P1-2 | P1 | Trip aggregates have no test/Preview/bot exclusion — now explicitly **not** partner-ready. |
+| R1 | P2 closed in docs | Internal raw vs clean external partner report distinguished. |
+| R2 | P2 closed in docs | Click collection no longer blocked on the wrong S5-B gate. |
+| P3-1 | P3 | `904122a0` gates are invalid after this persist. |
+| P3-2 | P3 | #548 may advance main; pin is dated. |
 
-No P0 **in this docs delivery** (scope kept). The P0s above are **product-truth risks for any later implementation**, not defects of these files.
+No P0 in this docs correction. R1/R2 are documentation-contract fixes, not runtime.
 
 ---
 
 ## 4. Docs-only validation
 
-Checked after writing, before freeze:
+- Task path unchanged and not rewritten.
+- Five owned docs updated; internal links still use those filenames.
+- Cited producer paths still exist after the authorized merge (`admin_reisen_kennzahlen` SQL still time + capability only).
+- This writer’s new diff vs merged main must be the five owned docs only (plus the already-present task).
+- No `app/` `lib/` `components/` `supabase/` edits from this correction.
 
-- All five owned paths exist; task still present and not rewritten.
-- Cited repo paths exist on this checkout: AdminStatsStrip, AdminTimeSeries, analytics page, users page, UsersTable, navigation, ehrliche-zustaende, AP6A inventory test, reise_anlegen migration (RPC), trip schema, commercial provenance migration, datenexport, RegisterForm, auth callback, roles, DATENBANK.md, AUTH.md, remaining-build map, Growth + Admin Marketing standards, Copilot source matrix.
-- No `app/` `lib/` `components/` `supabase/` diffs staged.
-- Internal doc links among the five files use the exact filenames.
-
-Not a substitute for exact-head CI/Auth/Preview on the content SHA.
-
----
-
-## 5. Scope fidelity
-
-| Required deliverable | Present |
-| --- | --- |
-| Source/producer matrix including metric/report proposals | Yes |
-| Smallest implementation task PROPOSAL | Yes |
-| STATUS | Yes |
-| HANDOFF | Yes |
-| Adversarial SELF_REVIEW | Yes |
-
-Non-scope held: no runtime/UI/tests/packages/global docs/SQL; no trackers; no sibling edits; no Ready/merge/follow-up.
+Not a substitute for new exact-head CI/Auth/Preview.
 
 ---
 
-## 6. Verdict
+## 5. Verdict
 
-Deliver the five docs and stop. The inventory is strong enough for an independent TL review. The proposed next slice is deliberately smaller than the Product-Owner wish-list: it makes existing trip truth reusable and refuses to mint visitor/account/revenue numbers that do not exist.
+R1 and R2 are corrected consistently across matrix, proposal, status, handoff and self-review. Same session. No follow-up implementation.
 
-I would fail this review if the later implementer used `last_seen_at`, Users `count`, or `0` for unique visitors.
+I would fail this review again if a later implementer labelled raw trip CSV partner-ready, claimed exclusions implemented, or blocked all click work on `production_write_path_allocated`.

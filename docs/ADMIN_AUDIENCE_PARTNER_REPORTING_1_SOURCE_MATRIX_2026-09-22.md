@@ -8,10 +8,10 @@ Run: https://cursor.com/agents/bc-ea4a0209-f139-4b47-8943-16ddf78e4270
 Draft PR: #549  
 Branch: `audit/admin-audience-partner-reporting-1`  
 Task: `docs/ADMIN_AUDIENCE_PARTNER_REPORTING_1_TASK_2026-09-22.md` at seed `8ebed62b565a7ab28f80b276984d12f2b535dff0`  
-Audited code baseline: live `origin/main` `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`  
-Status: **DOCS-ONLY PREFLIGHT / NOT IMPLEMENTATION / NOT READY / NOT A TECHNICAL-LEAD PASS**
+Audited producer baseline: task main `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`; this R1/R2 persist merges authorized live `origin/main` `8fcccd6475f41703bd2a31deecb3067391f330b4` (#547/#545 accepted). Those merges are Admin navigation/indexing, not visitor or trip-aggregate producers.  
+Status: **DOCS-ONLY PREFLIGHT / R1+R2 CORRECTION / NOT IMPLEMENTATION / NOT READY / NOT A TECHNICAL-LEAD PASS**
 
-This matrix is repository-plus-quoted-TL-metadata truth for Admin audience, product-usage and partner-report questions. It is not a second Admin D–K audit, not a Growth OS, not a vendor decision, not public indexing, and not a launch gate. Unmerged #545 / #547 / #548 runtime is **not** main truth.
+This matrix is repository-plus-quoted-TL-metadata truth for Admin audience, product-usage and partner-report questions. It is not a second Admin D–K audit, not a Growth OS, not a vendor decision, not public indexing, and not a launch gate. #548 remains unmerged and is **not** main truth. #548 may advance main again; do not silently claim this main pin stays current.
 
 Traveller-context intelligence does not apply: this slice is operator-facing reporting preflight. No citizenship, document or credential is collected or proposed as a marketing segment.
 
@@ -128,10 +128,10 @@ TL production metadata (2026-09-22, project `qscbgcdmivbbnzrcyegn` ACTIVE_HEALTH
 
 | Metric | Definition | Source / producer | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| Outbound referral / click | User left Jetnity via a provider deeplink, with time and partner | Deeplink fields exist on normalised offers (`lib/providers/flights/domain.ts`). Skyscanner fixture adapter **rejects** non-https deeplinks and does **not** expose `affiliate` on the offer (`lib/providers/skyscanner/flights/adapter.test.ts`). **No outbound click event is persisted.** | **ABSENT** as a count. Deeplink presence ≠ click. | repo |
-| Affiliate provenance on a trip item | Snapshot says affiliate evidence was `unknown` / `absent` / `present` | `public.trip_item_commercial_provenance` (`20260829140000_trip_item_commercial_provenance.sql`). `affiliate_status` check + beleg. Write only via `jetnity_internal.trip_item_commercial_provenance_schreiben`. `commercial_write_runtime_gate.production_write_path_allocated` defaults **false**. No backfill. | **PARTIAL** schema; **GATED** write path; **ABSENT** as referral volume | repo |
+| Outbound referral / click | User left Jetnity via a provider deeplink, with time and partner | Deeplink fields exist on normalised offers (`lib/providers/flights/domain.ts`). Skyscanner fixture adapter **rejects** non-https deeplinks and does **not** expose `affiliate` on the offer (`lib/providers/skyscanner/flights/adapter.test.ts`). **No versioned outbound click / attribution event producer exists.** | **ABSENT** as a count. Deeplink presence ≠ click. The gap is a missing event/attribution/privacy/collection contract, **not** the S5-B snapshot-writer flag. | repo |
+| Affiliate provenance on a trip item | Snapshot says affiliate evidence was `unknown` / `absent` / `present` | `public.trip_item_commercial_provenance` (`20260829140000_trip_item_commercial_provenance.sql`). `affiliate_status` check + beleg. Write only via `jetnity_internal.trip_item_commercial_provenance_schreiben`. `commercial_write_runtime_gate.production_write_path_allocated` defaults **false**. No backfill. | **PARTIAL** schema; **GATED** only for that snapshot writer; **ABSENT** as referral volume | repo |
 
-`affiliate_status='present'` means at least one of `affiliate_partner_id`, `affiliate_click_id`, `affiliate_attribution_ref` was stored on a snapshot. It does **not** prove an outbound click, a completed booking, or commission.
+`affiliate_status='present'` means at least one of `affiliate_partner_id`, `affiliate_click_id`, `affiliate_attribution_ref` was stored on a snapshot. It does **not** prove an outbound click, a completed booking, or commission. `production_write_path_allocated` gates `trip_item_commercial_provenance_schreiben` only. A later click-event implementation hits that flag **only if** it writes this commercial snapshot.
 
 ### 2.6 Provider-confirmed bookings and commission
 
@@ -168,8 +168,8 @@ Proposed metric-contract version: **`jetnity.admin-audience-metrics.v0`** (prefl
 | `profiles.rows` | Profilzeilen | `count(profiles)` | profiles | as-of | n/a | ≠ auth accounts; ≠ visitors | Do not use Users `count` as this metric |
 | `accounts.active` | Aktive Konten | count of accounts with a **named v1 event** | accounts | rolling30d **or** calendar month, never mixed silently | unique-over-period | `last_seen_at` is not this event | collection-not-started |
 | `visitors.unique` | Unique visitors | distinct consented visit id | visit-ids, not humans | **calendar month** when used for partner admission; otherwise labelled | unique-over-period ≠ sum of daily uniques | bots/internal/Preview/test once a method exists; never claim perfect | collection-not-started |
-| `referrals.outbound` | Outbound referrals | persisted click/handoff events | events | labelled | n/a | Fixtures/synthetic | collection-not-started |
-| `bookings.provider_confirmed` | Provider-confirmed bookings | provider attestation | bookings | labelled | n/a | Local `booked`; fixtures | gated / absent |
+| `referrals.outbound` | Outbound referrals | persisted click/handoff events | events | labelled | n/a | Desired later: fixtures/synthetic. **Not collected today.** | collection-not-started |
+| `bookings.provider_confirmed` | Provider-confirmed bookings | provider attestation | bookings | labelled | n/a | Local `booked` is not this metric. Desired later: exclude fixtures. | gated / absent |
 | `commission.{pending,approved,reversed,paid}` | Commission states | provider/network ledger | money + state | labelled | n/a | Local payments table | gated / absent |
 
 Rules:
@@ -177,50 +177,62 @@ Rules:
 - Rolling 30 days and calendar month are different metrics. Do not compare them silently.
 - Unique-over-period is not the sum of daily uniques.
 - Deletion cannot be backfilled from these RPCs.
-- Synthetic/test/Preview activity must not enter a partner report.
+- Current trip RPCs implement **only** time + `darf_betrieb_lesen()` predicates. They do **not** exclude test, Preview, internal, bot or fixture-derived rows. Guest drafts are absent only because they never enter `public.trips`.
+- A later **clean external partner report** must not treat those raw counts as filtered real-user volume. That is a future exclusion/provenance gate, **not** a property of today’s SQL.
 - Observed zero, unavailable, forbidden and collection-not-started stay four states.
 
 ---
 
 ## 4. Minimal partner-report contract (documentation only)
 
-Proposed report version: **`jetnity.partner-report.v0`**. An internal report does **not** guarantee partner acceptance.
+Two report classes. Do not mix them:
 
-### 4.1 Required header
+| Class | Version (proposed) | What it may contain | Partner-ready? |
+| --- | --- | --- | --- |
+| **Internal raw operations** | `jetnity.admin-ops-report.v0` | Authorised trip RPC output as-is | **No** |
+| **Clean external partner report** | `jetnity.partner-report.v0` | Metrics after a validated exclusion/provenance method | **GATED** until that method exists and is reviewed |
+
+An internal report does **not** guarantee partner acceptance.
+
+### 4.1 Required header (both classes)
 
 | Field | Rule |
 | --- | --- |
+| Report class | `INTERNAL RAW OPERATIONS` or `CLEAN EXTERNAL PARTNER` — never implied |
 | Date range | Explicit calendar month **or** trailing 30 days; never both under one label |
 | Timezone | Named IANA zone; until verified, state `NOT VERIFIED` rather than invent UTC |
 | As-of | Query timestamp |
 | Metric set / version | `jetnity.admin-audience-metrics.v0` (or later) |
 | Source / coverage | Producer id + first reliable coverage + known holes |
-| Exclusions | Guest drafts; deleted accounts; fixtures; (later) bot/internal/Preview |
-| Caveats | Partner may require **their** approved analytics evidence |
+| Exclusions implemented | Only predicates the producer actually applies. Today: time window + `darf_betrieb_lesen()`. Guest drafts never persisted. Deletes cascade. |
+| Exclusions **not** implemented | Test / Preview / internal / bot / fixture-derived rows. Do not list these as if they were filtered. |
+| Caveats | Raw trip volume ≠ unique visitors ≠ clean audience. Partner may require **their** approved analytics evidence |
 
-### 4.2 What can be honest **now**
+### 4.2 What can be honest **now** (internal raw operations only)
 
-Only the authorised trip aggregates in §2.3, with the caveats above. They answer “how many persisted account trips were created?” They do **not** answer Skyscanner-style unique-visitor volume.
+The authorised trip aggregates in §2.3 may be shown as **internal raw operations**: “how many persisted `public.trips` rows match the time predicate?” They **cannot** prove clean real-user volume. They are **not** partner-ready and **not** a clean-audience claim.
 
 Independently fetched 2026-09-22 from https://www.partners.skyscanner.net/product/affiliates :
 
 > The website’s traffic volume is higher than 5,000 unique visitors per month.
 
-That is **unique visitors**, not accounts, not profiles, not trips. No partner contact or signup was performed. [#512 comment 5780349486](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5780349486) already separates affiliate admission from API access.
+That is **unique visitors**, not accounts, not profiles, not raw trip counts. No partner contact or signup was performed. [#512 comment 5780349486](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5780349486) already separates affiliate admission from API access.
 
-### 4.3 What must stay unavailable
+### 4.3 What must stay unavailable / gated
 
 Unique visitors, sessions, pageviews, returning humans, acquisition mix, device/language/market, outbound clicks, provider bookings, commission states. Missing values stay **unavailable**, not `0`.
 
+A **clean external partner report** (filtered audience, fixture-free volume, partner CSV/PDF presented as admission evidence) stays **GATED** until an exclusion/provenance method is specified, implemented, and independently validated. Do not invent that filter in SQL from this preflight.
+
 ### 4.4 Export shape
 
-- **First:** aggregate CSV (one row per metric, or one row per day for the authorised trip series).
-- **Later optional:** PDF/board summary. Not in the smallest next slice unless TL asks.
+- **First, if exported at all:** aggregate CSV labelled **`INTERNAL RAW OPERATIONS ONLY`**. One row per metric, or one row per day for the authorised trip series. Header must state exclusions **not** implemented and must **not** claim partner-ready or clean-audience.
+- **Clean external partner CSV/PDF:** gated (see §4.3). Not in the smallest next slice.
 - **No** real-person fields (name, email, user id, IP, trip title, destination, documents).
 - **No** automatic external sending.
 - Formula-injection: any text cell that could start with `=`, `+`, `-`, `@` must be prefixed (for example `'`) before CSV write. Documented only here; not implemented.
 - Authorisation: same capability as the read (`betrieb-lesen` + AAL2 for trip aggregates). Export is not a second, weaker door.
-- Audit: later Growth standard §30 requires an audit trail when exports are sensitive. First aggregate-only CSV can reuse existing Admin gate; person-level export is a **privacy gate** and is out of scope.
+- Audit: later Growth standard §30 requires an audit trail when exports are sensitive. First internal-raw CSV can reuse existing Admin gate; person-level export is a **privacy gate** and is out of scope.
 - Small-group disclosure: if a later breakdown could isolate a person (for example one trip in a market), suppress or roll up. No market/device breakdown exists today.
 
 Owner-scoped account JSON export (`lib/account/datenexport.ts`, schema `jetnity.account-export.v1`) is a **user privacy download**, not an Admin partner report. It includes `last_seen_at` and must not be reused as audience evidence.
@@ -236,14 +248,14 @@ Owner-scoped account JSON export (`lib/account/datenexport.ts`, schema `jetnity.
 | No profile insert in the product | Signup ≠ profile. Users page under-counts auth accounts if profiles were never created. | If a later slice needs “accounts”, decide auth.users vs profiles **explicitly**; new aggregate RPC + Production-migration gate. |
 | `last_seen_at` displayed but never written | Operators may read “—” as “never seen”. It is “never produced”. | Do not use for active accounts. Optional later: hide or label unused column (separate UX slice). |
 | No visitor collection + AP6A no-tracker contract | Partner unique-visitor claims are impossible without a later legal/consent decision. | Keep collection-not-started. Do not restore a banner/SDK in the first implementation. |
-| Affiliate columns ≠ commercial events | Provenance snapshot + closed write gate. | Do not report clicks/bookings/commission from this table. |
+| Affiliate columns ≠ commercial events | Provenance snapshot + closed S5-B snapshot writer. | Do not report clicks/bookings/commission from this table. Click collection is a separate missing event contract. |
 | Local payments / `booked` status | Revenue-truth #472. | Keep unavailable. |
-| No test/Preview/bot exclusion | Any current trip number may include operator and test trips. | Document in the report header; do not invent a filter. |
+| No test/Preview/bot exclusion | Current trip RPCs have only time + capability predicates. Any number may include operator, test or Preview-created trips. | Label **INTERNAL RAW OPERATIONS**. Do not invent a filter. Do not call it partner-ready. |
 | No freshness object on trip RPCs | Figures are “whatever this request returned”. | Label as-of = request time. |
 | Deleted accounts vanish | Cascade deletes history. | No backfill claim. |
-| Formula injection / person export | CSV risk if any free text later appears. | Aggregate-only; neutralize `=+@-`; no person fields. |
+| Formula injection / person export | CSV risk if any free text later appears. | Internal-raw aggregates only; neutralize `=+@-`; no person fields. |
 | Small-group risk | Not present while only global trip aggregates exist. | Gate any later breakdown. |
-| Unmerged siblings | #545 navigation, #547 indexing, #548 HBX fixtures. | Do not treat as main producers. Fixture activity must never become partner metrics. |
+| #548 still unmerged | HBX fixture adapter may later land on main. | Not a current producer. Fixture rows still would not be excluded by today’s RPCs. |
 
 ---
 
@@ -251,10 +263,10 @@ Owner-scoped account JSON export (`lib/account/datenexport.ts`, schema `jetnity.
 
 Checked in this session:
 
-- Repository on `origin/main` `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` (fetched).
+- Authorized merge of `origin/main` `8fcccd6475f41703bd2a31deecb3067391f330b4` (accepted #547/#545). Producer citations re-checked against that checkout; trip RPC SQL is unchanged (time + `darf_betrieb_lesen()` only).
 - Named Admin, Auth, trip, legal, commercial and export files cited above.
 - Skyscanner affiliates page (public HTTP fetch, 2026-09-22).
-- Live sibling PR heads (GitHub): #545 `a187e4df53b85b6ee9a130968506543bbd39532c`, #547 `ed25bd07b7dfe0b4f0ebfd71ca9dc6c96ae97d59`, #548 `5417569dd97833c240c43e1132f5f7c36e0cdc75` — observed, not used as truth.
+- #548 observed open at `2542a95b2c5de066e355a66ade920bd0846f3cea` — not used as truth; may advance main later.
 
 Not checked / not claimed:
 
@@ -273,7 +285,8 @@ Not checked / not claimed:
 | Growth / Admin Marketing standard | Reuse M0 “contracts & read-only foundation”, data-quality and privacy/export rules. Do not start M1–M6. |
 | Remaining-build-map | Admin J Analytics / SEO is `DELIBERATELY_LATER` / indexing-gated. M0–M6 Growth OS is later. This preflight does **not** reorder V1. |
 | V1 binding build order | Full Admin D–K / Growth Control Plane is explicitly not V1-critical. |
-| #545 / #547 / #548 | Isolated writers; pending TL review. Not merged; not this owner. |
-| Special gates that would apply to **later** collection or vendor work | Legal/consent/tracker; public launch/indexing; provider contracts/secrets/paid calls; Production migration; payments/money; spend &gt; budget; sensitive export. |
+| #545 / #547 | Accepted and present on authorized main `8fcccd64`. Navigation search / indexing configuration. Not audience producers. |
+| #548 | Open; next integration candidate; may advance main. Not this owner. Not a visitor/trip-aggregate producer. |
+| Special gates that would apply to **later** collection or vendor work | Legal/consent/tracker; public launch/indexing; provider contracts/secrets/paid calls; Production migration; payments/money; spend &gt; budget; sensitive export. Clean external partner report additionally needs a validated exclusion/provenance method. Click collection needs an event/attribution/privacy contract; S5-B only if that design writes the commercial snapshot. |
 
 Canonical requirement text: [#512 comment 5780510581](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5780510581). This matrix is the inventory step. It does not implement Analytics views.
