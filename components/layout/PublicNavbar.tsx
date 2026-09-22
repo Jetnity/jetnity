@@ -142,15 +142,15 @@ export default function PublicNavbar() {
 
   return (
     <header
-      className="sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
+      className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
                  pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
     >
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
+      <div className="mx-auto flex min-h-[72px] w-full max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 py-2 sm:px-8">
         <Link
           href="/"
           aria-label="Jetnity Startseite"
           className={cn(
-            '-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2 text-brand-800',
+            '-mx-2 inline-flex min-h-11 shrink-0 items-center gap-2.5 px-2 text-brand-800',
             FOKUS_RING,
           )}
         >
@@ -161,7 +161,7 @@ export default function PublicNavbar() {
           <span className="text-lg font-bold tracking-[-0.04em]">Jetnity</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Hauptnavigation">
+        <nav className="hidden min-w-0 flex-wrap items-center gap-1 md:flex" aria-label="Hauptnavigation">
           {HAUPTNAVIGATION.map((item) => (
             <Link
               key={item.href}
@@ -169,7 +169,7 @@ export default function PublicNavbar() {
               className={cn(
                 // Ab md sichtbar, auf Tablets also weiterhin per Finger bedient:
                 // volle Trefferhoehe auf Touch-Geraeten, kompakte Pille mit Maus.
-                'inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-medium transition pointer-fine:min-h-0',
+                'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-medium transition pointer-fine:min-h-0',
                 FOKUS_RING,
                 isActive(item.href)
                   ? 'bg-surface-100 text-brand-800'
@@ -181,7 +181,7 @@ export default function PublicNavbar() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex">
           {eintraege.map((eintrag) => (
             <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
           ))}
@@ -189,7 +189,7 @@ export default function PublicNavbar() {
             createHref="/planen"
             createLabel="Reise planen"
             className={cn(
-              'inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0',
+              'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0',
               FOKUS_RING,
             )}
           />
@@ -216,7 +216,7 @@ export default function PublicNavbar() {
         aria-label="Mobile Navigation"
         hidden={!mobileOpen}
         inert={!mobileOpen}
-        className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
+        className="min-h-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
       >
         <div className="grid gap-1">
           {HAUPTNAVIGATION.map((item) => (
@@ -292,7 +292,7 @@ function Sitzungseintrag({
       <Link
         href={eintrag.href}
         className={cn(
-          'inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+          'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
           FOKUS_RING,
         )}
       >
@@ -358,7 +358,7 @@ function AbmeldenKnopf({
               FOKUS_RING,
             )
           : cn(
-              'inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
+              'inline-flex min-h-11 min-w-0 items-center gap-2 whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0',
               FOKUS_RING,
             )
       }
