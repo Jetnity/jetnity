@@ -10,6 +10,7 @@ type HarnessWindow = Window & {
   __hydrateReady?: boolean
   __routerPushes?: string[]
   __fetchCalls?: string[]
+  __linkPrefetch?: Array<{ href: string; prefetch: boolean | undefined }>
 }
 
 const params = new URLSearchParams(window.location.search)
@@ -23,6 +24,7 @@ const originalFetch = window.fetch.bind(window)
 const win = window as HarnessWindow
 win.__fetchCalls = []
 win.__routerPushes = []
+win.__linkPrefetch = []
 window.fetch = async (input, init) => {
   win.__fetchCalls!.push(String(input))
   return originalFetch(input, init)

@@ -107,3 +107,24 @@ export function stepAdminNavSearchHref(
 export function adminNavSearchOptionId(href: string): string {
   return `admin-nav-search-option-${href.replace(/[^a-z0-9-]/gi, '-')}`
 }
+
+/** Pixel delta to keep an item fully inside a scroll container. Positive = scroll down. */
+export function scrollDeltaToReveal(
+  listTop: number,
+  listBottom: number,
+  itemTop: number,
+  itemBottom: number,
+): number {
+  if (itemBottom > listBottom) return itemBottom - listBottom
+  if (itemTop < listTop) return itemTop - listTop
+  return 0
+}
+
+export function optionIstImListenfenster(
+  listTop: number,
+  listBottom: number,
+  itemTop: number,
+  itemBottom: number,
+): boolean {
+  return itemTop >= listTop && itemBottom <= listBottom
+}

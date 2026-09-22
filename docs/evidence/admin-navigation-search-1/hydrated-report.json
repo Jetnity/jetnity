@@ -1,5 +1,5 @@
 {
-  "pass": 8,
+  "pass": 11,
   "ergebnisse": [
     {
       "name": "desktop_shortcut_select_users",
@@ -66,6 +66,74 @@
       "name": "alias_kosten_no_network",
       "fetches": [],
       "pageRequests": 1
+    },
+    {
+      "name": "r1_keyboard_row_visible",
+      "geo": {
+        "listTop": 202,
+        "listBottom": 452,
+        "optTop": 408,
+        "optBottom": 452,
+        "scrollTop": 22,
+        "fullyVisible": true
+      },
+      "geoZoom": {
+        "listTop": 454,
+        "listBottom": 704,
+        "optTop": 616,
+        "optBottom": 704,
+        "scrollTop": 294,
+        "fullyVisible": true
+      }
+    },
+    {
+      "name": "r2_hover_does_not_steal_focus",
+      "vor": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Bereichssuche schliessen",
+        "trigger": null
+      },
+      "nach": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Bereichssuche schliessen",
+        "trigger": null
+      }
+    },
+    {
+      "name": "r3_prefetch_false_boundary",
+      "optionCount": 6,
+      "palette": [
+        {
+          "href": "/admin",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/users",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/payments",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/security",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/system-health",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/provider-ops",
+          "prefetch": false
+        }
+      ],
+      "alleFalse": true,
+      "sidebarOhneProp": true,
+      "domPrefetchAttr": false,
+      "limit": "Harness Link stub records the Next prefetch prop and must not forward it to DOM. This does not execute production app-dir prefetch."
     }
   ],
   "browser": "playwright-chromium",

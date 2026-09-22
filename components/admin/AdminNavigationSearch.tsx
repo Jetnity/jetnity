@@ -12,6 +12,7 @@ import {
   isAdminNavSearchShortcut,
   resolveAdminNavSearchHref,
   retainAdminNavSearchHref,
+  scrollDeltaToReveal,
   stepAdminNavSearchHref,
 } from '@/lib/admin/navigation-search'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
@@ -72,12 +73,18 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
   const invokerRef = React.useRef<HTMLElement | null>(null)
   const dialogRef = React.useRef<HTMLDivElement | null>(null)
   const inputRef = React.useRef<HTMLInputElement | null>(null)
+  const listeRef = React.useRef<HTMLUListElement | null>(null)
   const warOffenRef = React.useRef(false)
+  const selectedHrefRef = React.useRef<string | null>(selectedHref)
 
   const results = React.useMemo(
     () => filterAdminNavSearch(ADMIN_NAV_ITEMS, session, query),
     [session, query],
   )
+  const resultsRef = React.useRef(results)
+
+  resultsRef.current = results
+  selectedHrefRef.current = selectedHref
 
   React.useEffect(() => {
     setSelectedHref((aktuell) => retainAdminNavSearchHref(aktuell, results))
@@ -120,12 +127,19 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
 
   React.useEffect(() => {
     if (!open) return
-    const root = dialogRef.current
     const id = window.setTimeout(() => inputRef.current?.focus(), 0)
     const vorher = document.documentElement.style.overflow
     document.documentElement.style.overflow = 'hidden'
+    return () => {
+      window.clearTimeout(id)
+      document.documentElement.style.overflow = vorher
+    }
+  }, [open])
 
+  React.useEffect(() => {
+    if (!open) return
     const onKey = (event: KeyboardEvent) => {
+      const aktuelle = resultsRef.current
       if (event.key === 'Escape') {
         event.preventDefault()
         closeSearch()
@@ -133,22 +147,31 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
       }
       if (event.key === 'ArrowDown') {
         event.preventDefault()
-        setSelectedHref((aktuell) => stepAdminNavSearchHref(aktuell, results, 1))
+        setSelectedHref((aktuell) => {
+          const next = stepAdminNavSearchHref(aktuell, aktuelle, 1)
+          selectedHrefRef.current = next
+          return next
+        })
         return
       }
       if (event.key === 'ArrowUp') {
         event.preventDefault()
-        setSelectedHref((aktuell) => stepAdminNavSearchHref(aktuell, results, -1))
+        setSelectedHref((aktuell) => {
+          const next = stepAdminNavSearchHref(aktuell, aktuelle, -1)
+          selectedHrefRef.current = next
+          return next
+        })
         return
       }
       if (event.key === 'Enter' && inputRef.current === document.activeElement) {
-        const ziel = resolveAdminNavSearchHref(selectedHref ?? '', results)
+        const ziel = resolveAdminNavSearchHref(selectedHrefRef.current ?? '', aktuelle)
         if (!ziel) return
         event.preventDefault()
         const option = document.getElementById(adminNavSearchOptionId(ziel))
         option?.click()
         return
       }
+      const root = dialogRef.current
       if (event.key === 'Tab' && root) {
         const nodes = fokussierbare(root)
         if (nodes.length === 0) return
@@ -166,12 +189,18 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
     }
 
     document.addEventListener('keydown', onKey)
-    return () => {
-      window.clearTimeout(id)
-      document.documentElement.style.overflow = vorher
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [open, closeSearch, results, selectedHref])
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open, closeSearch])
+
+  React.useEffect(() => {
+    if (!open || !selectedHref) return
+    const liste = listeRef.current
+    const option = document.getElementById(adminNavSearchOptionId(selectedHref))
+    if (!liste || !option) return
+    const listRect = liste.getBoundingClientRect()
+    const optRect = option.getBoundingClientRect()
+    liste.scrollTop += scrollDeltaToReveal(listRect.top, listRect.bottom, optRect.top, optRect.bottom)
+  }, [open, selectedHref])
 
   React.useEffect(() => {
     if (open) {
@@ -251,6 +280,7 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
             </div>
             <ul
               id="admin-nav-search-list"
+              ref={listeRef}
               role="listbox"
               aria-label={ADMIN_EHRLICHE_TEXTE.sucheBereiche}
               className="max-h-[min(50vh,22rem)] overflow-y-auto p-2"
@@ -271,9 +301,13 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
                       <Link
                         id={adminNavSearchOptionId(item.href)}
                         href={ziel}
+                        prefetch={false}
                         role="option"
                         aria-selected={aktiv}
-                        onMouseEnter={() => setSelectedHref(item.href)}
+                        onMouseEnter={() => {
+                          selectedHrefRef.current = item.href
+                          setSelectedHref(item.href)
+                        }}
                         onClick={closeSearch}
                         className={cn(
                           'flex min-h-11 items-center rounded-xl px-3 py-2 text-sm outline-none',

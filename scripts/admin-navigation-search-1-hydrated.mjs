@@ -267,6 +267,99 @@ async function zoomUndViewports(page, origin) {
   ergebnisse.push({ name: 'viewport_768_and_390_200pct', overflowY: scroll })
 }
 
+async function optionGeometrie(page, name) {
+  return page.evaluate((label) => {
+    const liste = document.getElementById('admin-nav-search-list')
+    const option = Array.from(document.querySelectorAll('#admin-nav-search-list [role="option"]')).find(
+      (el) => el.textContent?.trim() === label,
+    )
+    if (!(liste instanceof HTMLElement) || !(option instanceof HTMLElement)) {
+      return null
+    }
+    const listRect = liste.getBoundingClientRect()
+    const optRect = option.getBoundingClientRect()
+    return {
+      listTop: listRect.top,
+      listBottom: listRect.bottom,
+      optTop: optRect.top,
+      optBottom: optRect.bottom,
+      scrollTop: liste.scrollTop,
+      fullyVisible: optRect.top >= listRect.top && optRect.bottom <= listRect.bottom,
+    }
+  }, name)
+}
+
+async function r1AktiveZeileSichtbar(page, origin) {
+  await oeffnen(page, origin, 'role=operator&grant=role', { width: 390, height: 500 })
+  await page.keyboard.press('Control+K')
+  await page.locator('#admin-nav-search-dialog').waitFor()
+  await page.waitForFunction(() => document.activeElement?.id === 'admin-nav-search-input')
+  await page.locator('#admin-nav-search-list [role="option"][aria-selected="true"]').waitFor()
+  for (let i = 0; i < 5; i += 1) await page.keyboard.press('ArrowDown')
+  const geo = await optionGeometrie(page, 'Provider & Kosten')
+  assert.equal(geo !== null, true)
+  assert.equal(geo.fullyVisible, true)
+  assert.equal(geo.scrollTop > 0, true)
+  await speichern(page, 'r1_390x500_last_row_visible')
+
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%'
+  })
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('ArrowDown')
+  const geoZoom = await optionGeometrie(page, 'Provider & Kosten')
+  assert.equal(geoZoom !== null, true)
+  assert.equal(geoZoom.fullyVisible, true)
+  await speichern(page, 'r1_390x500_200pct_last_row_visible')
+  ergebnisse.push({ name: 'r1_keyboard_row_visible', geo, geoZoom })
+}
+
+async function r2HoverStiehltNicht(page, origin) {
+  await oeffnen(page, origin, 'role=operator&grant=role', { width: 1024, height: 768 })
+  await page.keyboard.press('Control+K')
+  await page.waitForFunction(() => document.activeElement?.id === 'admin-nav-search-input')
+  await page.getByRole('button', { name: 'Bereichssuche schliessen' }).focus()
+  const vor = await active(page)
+  assert.equal(vor.tag, 'BUTTON')
+  assert.match(vor.label ?? '', /Bereichssuche schliessen/)
+  await page.getByRole('option', { name: 'Nutzer' }).hover()
+  await page.waitForTimeout(80)
+  const nach = await active(page)
+  assert.equal(nach.tag, 'BUTTON')
+  assert.equal(nach.id, vor.id)
+  assert.equal(nach.label, vor.label)
+  assert.notEqual(nach.id, 'admin-nav-search-input')
+  await speichern(page, 'r2_hover_keeps_close_focus')
+  ergebnisse.push({ name: 'r2_hover_does_not_steal_focus', vor, nach })
+}
+
+async function r3PrefetchGrenze(page, origin) {
+  await oeffnen(page, origin, 'role=operator&grant=role', { width: 1024, height: 768 })
+  await page.keyboard.press('Control+K')
+  await page.getByRole('option', { name: 'Steuerzentrale' }).waitFor()
+  const evidenz = await page.evaluate(() => {
+    const eintraege = window.__linkPrefetch ?? []
+    const optionen = Array.from(document.querySelectorAll('#admin-nav-search-list a'))
+    const palette = eintraege.slice(-optionen.length)
+    return {
+      optionCount: optionen.length,
+      palette,
+      alleFalse: palette.length > 0 && palette.every((eintrag) => eintrag.prefetch === false),
+      sidebarOhneProp: eintraege.some((eintrag) => eintrag.prefetch === undefined),
+      domPrefetchAttr: optionen.some((el) => el.hasAttribute('prefetch')),
+    }
+  })
+  assert.equal(evidenz.alleFalse, true)
+  assert.equal(evidenz.domPrefetchAttr, false)
+  await speichern(page, 'r3_prefetch_false_boundary')
+  ergebnisse.push({
+    name: 'r3_prefetch_false_boundary',
+    ...evidenz,
+    limit:
+      'Harness Link stub records the Next prefetch prop and must not forward it to DOM. This does not execute production app-dir prefetch.',
+  })
+}
+
 async function keineFetchSuche(page, origin) {
   const anfragen = await oeffnen(page, origin, 'role=operator&grant=role', { width: 1024, height: 768 })
   await page.keyboard.press('Control+K')
@@ -294,6 +387,9 @@ try {
   await fremdesModal(page, origin)
   await zoomUndViewports(page, origin)
   await keineFetchSuche(page, origin)
+  await r1AktiveZeileSichtbar(page, origin)
+  await r2HoverStiehltNicht(page, origin)
+  await r3PrefetchGrenze(page, origin)
 } catch (fehler) {
   await speichern(page, 'hydrated_failure').catch(() => {})
   writeFileSync(join(EVIDENCE, 'hydrated-report.json'), JSON.stringify({ ergebnisse, fehler: String(fehler) }, null, 2))

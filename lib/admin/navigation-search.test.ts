@@ -14,7 +14,9 @@ import {
   normalizeAdminNavSearchQuery,
   readyAdminNavItems,
   resolveAdminNavSearchHref,
+  optionIstImListenfenster,
   retainAdminNavSearchHref,
+  scrollDeltaToReveal,
   stepAdminNavSearchHref,
 } from './navigation-search'
 
@@ -110,6 +112,14 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
     assert.equal(clampAdminNavSearchIndex(0, 0), -1)
     assert.match(adminNavSearchHaystack(alle[0]!), /steuerzentrale/)
     assert.match(adminNavSearchOptionId('/admin/users'), /admin-nav-search-option/)
+  })
+
+  test('scrollt nur so weit, dass die aktive Zeile vollständig im Listenfenster liegt', () => {
+    assert.equal(scrollDeltaToReveal(200, 450, 430, 474), 24)
+    assert.equal(scrollDeltaToReveal(200, 450, 180, 220), -20)
+    assert.equal(scrollDeltaToReveal(200, 450, 210, 250), 0)
+    assert.equal(optionIstImListenfenster(200, 450, 430, 474), false)
+    assert.equal(optionIstImListenfenster(200, 450, 210, 250), true)
   })
 
   test('Shortcut ist nur Cmd/Ctrl+K ohne Shift/Alt', () => {
