@@ -46,7 +46,7 @@ Binding current tasks:
 
 Do not restart, wake or create completed prior docs/runtime sessions from this file. Do not merge sibling #550/#552 branches into this one. Do not infer #550 PASS, activation or merge. Uncommitted local work is not claimed backed up. Green CI/Preview on a sibling is not a product/SQL PASS.
 
-First unfinished action: #550 has integration priority — independent Technical-Lead exact-head re-review of `b5bbe211` after #552 specialist evidence. Observe #552 without launching it from here. Independent Technical-Lead exact-head review of this #551 persist. Cursor does not Ready, merge or start a follow-up.
+First unfinished action: #550 has integration priority — independent Technical-Lead exact-head re-review of `b5bbe211` after #552 specialist evidence. Observe #552 without launching it from here. Independent Technical-Lead exact-head review of this #551 persist. Later #512 activation [5782516195](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5782516195) confirms both additional sessions acknowledged, not finished. Cursor does not Ready, merge or start a follow-up.
 
 Sections 1+ below are **historical closures** and remain valid as dated evidence. They are not the current writer. Current work is reconstructed live from §0 plus GitHub.
 

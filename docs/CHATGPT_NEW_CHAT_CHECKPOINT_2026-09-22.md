@@ -57,7 +57,7 @@ Historical #435 Assistant Runtime and #480 Production Auth verification remain v
 
 ## 3. Dated 22 September 2026 delivery observation (reconstruct live)
 
-The Product Owner approved the Technical Lead additional-agent recommendation in [#512 5782408305](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5782408305). Three disjoint current streams exist. They do not replace each other. This table is a dated pin, not a permanent current-writer claim after #551 merges. **#550 retains integration priority.**
+The Product Owner approved the Technical Lead additional-agent recommendation in [#512 5782408305](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5782408305). Later TL activation [#512 5782516195](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5782516195) records #551 and #552 as acknowledged, not finished. Three disjoint current streams exist. They do not replace each other. This table is a dated pin, not a permanent current-writer claim after #551 merges. **#550 retains integration priority.**
 
 ### A. PR #550 — Admin account counts local proof 1 (product / integration priority)
 

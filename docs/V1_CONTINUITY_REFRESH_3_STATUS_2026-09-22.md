@@ -103,6 +103,7 @@ Older open drafts #52 / #50 / #40 / #39 / #28 remain historical open PRs, not cu
 | #550 verdict | TL `5782510116`: correction delivered / not PASS. Only review on file: `5282427169` on old head `9219e31e` |
 | #550 author proof | 56/56 + 10/10 **author-reported** in `5782471633`; **not** independently re-executed here |
 | #552 assignment | live Draft + footer `5782508582`; no delivery freeze at this reconstruction |
+| Later #512 activation | [5782516195](https://github.com/Jetnity/jetnity/pull/512#issuecomment-5782516195) — #551/#552 acknowledged, not finished; supersedes proposed/not-dispatched wording in `5782408305` |
 | Provider-later | #512 `5776595910`; #395 `5776595577` |
 | Primary domain | #512 `5781400067` — `jetnity.com`; no cutover |
 | TL automation disabled | #512 `5776334794` / `5773426033` |
