@@ -56,6 +56,39 @@ export const ADMIN_EHRLICHE_TEXTE = {
   aktuelleHinweiseSammlungFehlt: 'Die System-Health-Sammlung ist fehlgeschlagen. Es wird kein leerer All-Clear erzeugt.',
   aktuelleHinweiseUnvollstaendig:
     'Der System-Health-Bericht ist unvollständig. Fehlende Karten werden nicht als gesund angenommen.',
+  modellnutzungTitel: 'Modellnutzung',
+  modellnutzungHinweis:
+    'Status und Frische der aufgezeichneten Modellnutzung aus dem bestehenden Provider-Ops-Stand. Nur ein begrenzter Read der letzten 30 Tage, höchstens 200 Zeilen. Das ist kein vollständiges Ausgabenbild, keine Providerrechnung und kein globales Budget. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.',
+  modellnutzungOhnePruefung:
+    'Ohne bestandene betrieb-lesen-Prüfung wird die Modellnutzung nicht gelesen.',
+  modellnutzungNotzugang:
+    'Für Notzugang werden datenbankgestützte Modellnutzungs-Fakten nicht zugeschrieben, auch nicht aus dem Prozess-Cache.',
+  modellnutzungVeraltet: 'Stand ist veraltet.',
+  modellnutzungProzessGrenze:
+    'Die Beobachtung stammt aus einem Prozessstand. Sie belegt nicht, dass die aktuelle Sitzung model_usage gelesen hat.',
+  modellnutzungFensterGrenze:
+    'Der Read umfasst höchstens die letzten 30 Tage und höchstens 200 Zeilen. Das ist kein vollständiges Monats- oder Provider-Ledger.',
+  modellnutzungUntersuchen: 'Provider & Kosten öffnen',
+  modellnutzungAvailable:
+    'Aufgezeichnete Modellnutzungszeilen waren in diesem begrenzten Read lesbar. Das ist Abdeckung, keine Finanz-, Budget- oder Limitaussage.',
+  modellnutzungEmpty:
+    'Im begrenzten Read der letzten 30 Tage, höchstens 200 Zeilen, wurden keine aufgezeichneten Modellnutzungszeilen gefunden. Das ist kein Beleg für null Ausgaben und keine vollständige Ausgabenaussage.',
+  modellnutzungUnavailable:
+    'Die Modellnutzungsquelle konnte nicht gelesen werden. Das ist kein leeres Kostenprotokoll und kein Beleg für null Ausgaben.',
+  modellnutzungUnknown:
+    'Der Modellnutzungsstand ist unbekannt. Unbekannt ist nicht leer und kein Beleg für null Ausgaben.',
+  modellnutzungFoundation:
+    'Dieser Stand liefert keine nutzbare Modellnutzungs-Evidenz. Das ist keine Empfehlung, Provider zu aktivieren oder Tokens anzulegen.',
+  modellnutzungSammlungFehlt:
+    'Die Modellnutzungsquelle ist fehlgeschlagen. Es wird kein leerer All-Clear und kein Beleg für null Ausgaben erzeugt.',
+  modellnutzungUnvollstaendig:
+    'Die Modellnutzungs-Karte im Provider-Ops-Stand fehlt, ist doppelt oder unbrauchbar. Es wird kein erster Treffer und kein gesunder Fallback erzeugt.',
+  modellnutzungKeinFinanzClaim:
+    'Nicht gesunde Finanzen, kein Budget, kein Limit und keine vollständigen Providerkosten.',
+  modellnutzungKeinNullSpend:
+    'Nicht, dass keine Kosten entstanden sind, und nicht ein vollständiges Ausgabenbild.',
+  modellnutzungKeineAktivierung:
+    'Nicht, dass ein Provider aktiviert oder ein Token angelegt werden muss.',
 } as const
 
 export type AdminNaechsterSchrittStand = 'ready' | 'later'
