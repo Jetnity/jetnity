@@ -1,0 +1,50 @@
+# Historical mixed-probe list from cbba1264 (2026-09-22T19:22Z).
+# Distinct from builder 56/56 and from the E2 reconstructed 9/9 run.
+# Probe helper then: session-local /tmp script (not archived in this folder).
+# Do not treat this 25 mixed-probe total as a SQL-only count.
+
+I-HASH-candidate PASS dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420
+I-HASH-bootstrap PASS 0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2
+I-R3-private-socket-only PASS
+I-R3-system-cluster-unused PASS
+I-R1-HOME-only-negative-control-executes-sentinel PASS
+  without -X, HOME/.psqlrc echoed JETNITY_PSQLRC_SENTINEL then \connect nonexistent_psqlrc_redirect_db
+  failed on private socket .../socket/.s.PGSQL.5432 — no remote host
+I-R1-HOME-only-redirect-stays-on-private-socket PASS
+I-R1-HOME-only-suppressed-with-X PASS stdout=1
+I-R1-negative-control-can-fail PASS (sentinel present without -X; absent with -X)
+I-R1-psqlSafeArgs-has-X-and-no-psqlrc PASS
+I-R2-independent-epoch-oracle-2592000 PASS
+I-R2-NY-spring-calendar-is-3600s-longer-than-720h  HISTORICAL MISLABEL
+  Measured start displacement calendar_start - fixed_start = +3600s.
+  That is a later start, so elapsed calendar window is 719h (3600s shorter), not longer.
+I-R2-NY-fall-calendar-is-3600s-shorter-than-720h  HISTORICAL MISLABEL
+  Measured start displacement = -3600s (earlier start).
+  Elapsed calendar window is 721h (3600s longer), not shorter.
+I-R2-candidate-prosrc-is-720h-not-30days PASS
+I-R2-live-candidate-window-is-exactly-2592000s PASS present=8 (smaller reviewer seed)
+I-ADV-banned-moderator-AAL2-authorized-by-current-helpers OBSERVED
+  aktuelle_rolle() does not read profiles.status; banned+moderator+AAL2 returns a success row.
+  Out of scope / existing helper contract. Not a new product requirement.
+I-ADV-authenticated-without-sub-is-deny-not-zero PASS 42501
+I-ADV-authenticated-cannot-set-role-postgres HARNESS ARTIFACT
+  SET ROLE postgres succeeded because session_user is initdb superuser jetnity_proof.
+  Not candidate SQL. Catalog: authenticated is not a member of postgres.
+I-ADV-output-allowlist-only PASS five keys, no identities
+I-R4-SELECT-grant-to-authenticated-still-RLS-zero PASS granted=true n=0
+I-R4-table-owner-and-superuser-can-see-rows-force-off PASS
+I-ADV-no-CREATE-on-reporting-schema-and-no-args PASS
+I-R4-trusted-postgres-is-NOSUPERUSER-BYPASSRLS PASS
+I-ADV-soft-deleted-owner-leftover-privileged-profile-is-deny PASS 42501
+I-ADV-service-role-even-with-moderator-jwt-cannot-execute PASS 42501 schema deny
+I-ADV-user-AAL2-deny-is-not-success-zero PASS 42501
+I-R3-cluster-still-owned-before-stop PASS
+I-R3-reviewer-cleanup PASS directory removed after verified stop
+
+Historical mixed total: 25 candidate-relevant PASS + 1 harness-artifact observation.
+The two DST labels above are wording defects (E1); inclusion/720h candidate checks were unaffected.
+
+# E2 reconstructed 2026-09-22 after TL 5282860545 — separate class
+# Script: repro-home-psqlrc-and-dst.mjs
+# Receipt: e1-e2-repro-run.txt
+# Result: 9/9 PASS. Not added into the 25 mixed-probe total.
