@@ -198,6 +198,68 @@
           "controls": []
         }
       }
+    },
+    "deny-conflict": {
+      "entscheidung": "deny",
+      "originQuelle": "site",
+      "technischeOrigin": "https://jetnity.com",
+      "sitemapAnzahl": 0,
+      "screenshots": [
+        "deny-conflict_390.png",
+        "deny-conflict_1440.png"
+      ],
+      "measurements": {
+        "390": {
+          "decision": "deny",
+          "sitemapCount": "0",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        },
+        "1440": {
+          "decision": "deny",
+          "sitemapCount": "0",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 1440,
+              "clientWidth": 1440,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1246,
+              "clientWidth": 1246,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        }
+      }
     }
   },
   "result": {
@@ -210,7 +272,8 @@
     "cases": [
       "deny-preview",
       "allow-canonical",
-      "deny-long-origin"
+      "deny-long-origin",
+      "deny-conflict"
     ]
   }
 }

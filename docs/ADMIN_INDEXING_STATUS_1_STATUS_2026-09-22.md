@@ -1,7 +1,7 @@
 # Jetnity Admin Indexing Status 1 — STATUS
 
 Stand: 22. September 2026  
-Status: **IMPLEMENTATION COMPLETE / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **R1 CORRECTION / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Draft PR: #547  
 Branch: `feat/admin-indexing-status-1`  
@@ -63,10 +63,12 @@ Unchanged on purpose: `lib/seo/*`, `app/robots.ts`, `app/sitemap.ts`, Auth/guard
 
 Focused `node --test`:
 
-- `lib/admin/seo-status.test.ts` — 13/13 PASS
+- `lib/admin/seo-status.test.ts` — 14/14 PASS
 - existing `lib/seo/*.test.ts` — run unchanged, PASS
 
-Synthetic browser evidence: `scripts/admin-indexing-status-1-render.mjs` (deny-preview, allow-canonical, deny-long-origin × 390/1440). Not an authenticated `/admin` session and not a physical-device PASS.
+Synthetic browser evidence: `scripts/admin-indexing-status-1-render.mjs` (deny-preview, allow-canonical, deny-long-origin, deny-conflict × 390/1440). Not an authenticated `/admin` session and not a physical-device PASS.
+
+R1: deny copy is one neutral sentence for Preview-deny and conflicting SITE/APP. No reason classifier. No “beabsichtigter Deny / kein Ausfall”.
 
 Typecheck / lint / build / hygiene and exact-head CI/Auth/Preview are recorded after the freeze push, in the PR comment.
 

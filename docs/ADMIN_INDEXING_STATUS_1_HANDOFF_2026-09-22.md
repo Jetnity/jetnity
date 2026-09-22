@@ -1,7 +1,7 @@
 # Jetnity Admin Indexing Status 1 — HANDOFF
 
 Date: 2026-09-22  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **R1 CORRECTION / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Draft PR: https://github.com/Jetnity/jetnity/pull/547  
 Branch: `feat/admin-indexing-status-1`  
 Agent: Jetnity admin indexing status 1, Generation 1  
@@ -12,7 +12,7 @@ Ahead/behind at start of this session: **1 / 0** (task-only seed). Re-read `git 
 
 ## What this persist is
 
-A bounded J-lite Admin visibility cut: the existing System Health page now shows this deployment's computed indexing configuration at page load. Existing SEO helpers remain the only policy. No public indexing activation, settings, raw env dump, arbitrary fetch, tracking or launch claim.
+R1 correction on the same Generation-1 session: deny copy no longer claims intent or absence of an incident. Preview-deny and conflicting SITE/APP share one neutral sentence. No reason classifier, no policy duplication, no guard/runtime change.
 
 ## Parallel ownership
 
@@ -20,7 +20,7 @@ A bounded J-lite Admin visibility cut: the existing System Health page now shows
 
 ## Tests before this persist
 
-`lib/admin/seo-status.test.ts` 13 PASS. Existing SEO policy tests run unchanged. Synthetic 390/1440 component evidence in `docs/evidence/admin-indexing-status-1/`. Typecheck/lint/build/hygiene and live CI/Auth/Preview belong to the freeze comment, not a later SHA-stamp commit.
+`lib/admin/seo-status.test.ts` 14 PASS. Existing SEO policy tests run unchanged. Synthetic 390/1440 evidence now includes deny-preview and deny-conflict with the same neutral lock sentence. Typecheck/lint/build/hygiene and live CI/Auth/Preview belong to the freeze comment, not a later SHA-stamp commit.
 
 ## Next actor
 

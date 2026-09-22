@@ -17,7 +17,8 @@ Named paths only. Did not edit `lib/seo/*`, robots/sitemap routes, Auth, navigat
 | P0 leak of credentials / raw env / invalid URL | Projection and HTML tests reject userinfo, query, hash, HTML and invalid raw strings. Picker drops unrelated secrets. |
 | P0 new unauthenticated path | No new route, API or capability. Guard remains first in the page function body. |
 | P0 public indexing activation | No control, no env write, no policy rewrite. Allow copy explicitly denies launch meaning. |
-| P1 health-green / outage confusion | Section always `data-indexing-health-green="false"`. Deny copy says intentional, not an outage. Neutral muted chip for allow and deny. |
+| P1 health-green / outage confusion | Section always `data-indexing-health-green="false"`. Neutral muted chip for allow and deny. |
+| P2 R1 deny-intent overclaim | Corrected: one neutral deny sentence for Preview-deny and conflicting SITE/APP. No reason classifier. No “beabsichtigter Deny / kein Ausfall”. |
 | P1 refresh confusion | Stand text names the board button and says it does not refresh this section. Data is computed once after the guard. |
 | P1 second policy | `folgtVertrag` asserts byte-for-byte helper equality. No local allow-condition rewrite. |
 | P2 authenticated Preview of the real page | Not performed. Auth boundary unchanged. Synthetic SSR + Playwright viewports only. |
