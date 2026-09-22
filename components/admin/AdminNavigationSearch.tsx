@@ -82,13 +82,15 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
     [session, query],
   )
   const resultsRef = React.useRef(results)
-
-  resultsRef.current = results
-  selectedHrefRef.current = selectedHref
+  const sichtbareAuswahl = retainAdminNavSearchHref(selectedHref, results)
 
   React.useEffect(() => {
-    setSelectedHref((aktuell) => retainAdminNavSearchHref(aktuell, results))
+    resultsRef.current = results
   }, [results])
+
+  React.useEffect(() => {
+    selectedHrefRef.current = sichtbareAuswahl
+  }, [sichtbareAuswahl])
 
   const closeSearch = React.useCallback(() => {
     setOpen(false)
@@ -148,7 +150,8 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
       if (event.key === 'ArrowDown') {
         event.preventDefault()
         setSelectedHref((aktuell) => {
-          const next = stepAdminNavSearchHref(aktuell, aktuelle, 1)
+          const basis = retainAdminNavSearchHref(aktuell, aktuelle)
+          const next = stepAdminNavSearchHref(basis, aktuelle, 1)
           selectedHrefRef.current = next
           return next
         })
@@ -157,7 +160,8 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
       if (event.key === 'ArrowUp') {
         event.preventDefault()
         setSelectedHref((aktuell) => {
-          const next = stepAdminNavSearchHref(aktuell, aktuelle, -1)
+          const basis = retainAdminNavSearchHref(aktuell, aktuelle)
+          const next = stepAdminNavSearchHref(basis, aktuelle, -1)
           selectedHrefRef.current = next
           return next
         })
@@ -193,14 +197,14 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
   }, [open, closeSearch])
 
   React.useEffect(() => {
-    if (!open || !selectedHref) return
+    if (!open || !sichtbareAuswahl) return
     const liste = listeRef.current
-    const option = document.getElementById(adminNavSearchOptionId(selectedHref))
+    const option = document.getElementById(adminNavSearchOptionId(sichtbareAuswahl))
     if (!liste || !option) return
     const listRect = liste.getBoundingClientRect()
     const optRect = option.getBoundingClientRect()
     liste.scrollTop += scrollDeltaToReveal(listRect.top, listRect.bottom, optRect.top, optRect.bottom)
-  }, [open, selectedHref])
+  }, [open, sichtbareAuswahl])
 
   React.useEffect(() => {
     if (open) {
@@ -272,7 +276,7 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
                   aria-controls="admin-nav-search-list"
                   aria-autocomplete="list"
                   aria-activedescendant={
-                    selectedHref ? adminNavSearchOptionId(selectedHref) : undefined
+                    sichtbareAuswahl ? adminNavSearchOptionId(sichtbareAuswahl) : undefined
                   }
                   className="h-11 w-full bg-transparent text-base outline-none placeholder:text-muted-foreground pointer-fine:h-10 pointer-fine:text-sm"
                 />
@@ -293,7 +297,7 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
                 </li>
               ) : (
                 results.map((item) => {
-                  const aktiv = item.href === selectedHref
+                  const aktiv = item.href === sichtbareAuswahl
                   const ziel = resolveAdminNavSearchHref(item.href, results)
                   if (!ziel) return null
                   return (
