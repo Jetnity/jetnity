@@ -17,7 +17,9 @@ The earlier `homepage_*.webp` / `planen_*.webp` set remains initial/pending/erro
 | `r4_origin_reselect_after_edit.png` | Later canonical Zürich re-selection still applies |
 | `r4_minimal_ortsuche_without_initialtext.png` | Shared OrtSuche without `initialText` keeps post-selection edit |
 | `r4_parent_seed_and_reset.png` | Explicit parent seed/empty reset still works |
-| `hydrated-report.json` | 9 PASS machine report |
+| `r5_focus_after_extra_up.png` | After Enter on Cusco Nach-oben; focus should be Ziel-1 Nach-unten |
+| `r5_focus_after_primary_down.png` | After Enter on Ziel-1 Nach-unten; focus should be Ziel-2 Nach-oben |
+| `hydrated-report.json` | 10 PASS machine report |
 
 Previous STATUS on `0a66982c` incorrectly claimed origin without `initialText` did not wipe typing after confirmation. That claim is withdrawn; R4 was that wipe.
 
@@ -25,4 +27,4 @@ Harness screenshots do not load the Next font pipeline.
 
 ## Tests
 
-`scripts/homepage-route-entry-1-verify.mjs`: 148 node:test pass / 0 fail, then hydrated 9 PASS on the working tree used for these captures.
+`scripts/homepage-route-entry-1-verify.mjs`: 148 node:test pass / 0 fail, then hydrated 10 PASS on the working tree used for these captures.

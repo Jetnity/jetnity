@@ -6,22 +6,18 @@ Agent: Jetnity homepage confirmed route entry 1, Generation 1
 Session: `bc-63084de2-f351-4c8c-be85-c36cda45935e`  
 Required and actual model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`)
 
-## 1. Did we stay inside the owned surface?
+## 1. Ownership
 
-Yes. R4 is a narrow OrtSuche synchronization fix plus owned tests/harness/docs. AccountBesuchFormular was not edited. #544 paths were not edited. No schema/Auth/Production/provider writes. No rebase onto the new main.
+R5 is TripPlanner focus after the existing keyed swap. R4 remains the narrow OrtSuche contract. #544 remaining-build documents were merged in, not rewritten. Account product files were not edited.
 
-## 2. Was the previous origin claim corrected?
+## 2. R5 focus
 
-Yes. STATUS on `0a66982c` claimed origin without `initialText` did not wipe typing. That was false after a confirmed selection. The claim is withdrawn. The fix compares the last parent seed, not the last displayed confirmed name, and treats an omitted seed as “no reset”.
+Nach-oben on pending Cusco focuses `Cusco, Ziel 1, nach unten` after the remount. Nach-unten then focuses `Cusco, Ziel 2, nach oben`. The test reads `document.activeElement.tagName`, `id` and `aria-label`. BODY is an explicit fail.
 
-## 3. Did R1/R2 stay green?
+## 3. Main sync
 
-Yes. The same hydrated suite still runs those scenarios. Parent-driven seed/reset coverage was added so replace/swap seeds remain possible.
+Merged only the authorized exact SHA `0b0c7bcc`. Did not rebase or force. If main later moves, that is a new authorization.
 
-## 4. Are the tests real?
-
-Helper unit tests plus hydrated actual OrtSuche / TripPlanner origin / a minimal consumer without `initialText`. Not Preview E2E, not a physical device, not Account page work.
-
-## 5. Verdict
+## 4. Verdict
 
 Ready for independent Technical-Lead exact-head re-review of the freeze SHA. **Not Ready. Not merged. No follow-up slice.**
