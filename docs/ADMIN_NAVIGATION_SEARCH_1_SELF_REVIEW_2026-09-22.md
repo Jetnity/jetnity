@@ -18,10 +18,13 @@ Results come from `filterAdminNav` then `kind === 'ready'`. Later placeholders s
 
 One provider, one shortcut listener, one dialog. Desktop and mobile triggers share it. Cmd/Ctrl+K without Shift/Alt. Escape restores the visible invoker, not BODY. Drawer is closed before the palette; a foreign `aria-modal` keeps focus. No search fetch/localStorage.
 
+R1–R3 from TL `929250d5` are addressed in this same session: list-local scroll of the active row, opening-only focus lifecycle, explicit `prefetch={false}` with stub-recorded boundary evidence.
+
 Adversarial notes the reviewer should not miss:
 
 - The mobile drawer overlay covers the strip trigger while open. Coordination is the shortcut (tested), not a click through the overlay.
 - Hydrated proof is Chromium emulation of the actual shell with boundary stubs. It is not a signed-in Preview session and not a physical device.
+- R3 proves the Next `prefetch` prop is `false` at the Link boundary and is not forwarded to DOM. It does not execute production app-dir prefetch.
 - `npm test` does not run the hydrated script because the task forbade package/test-registry edits.
 
 ## 4. Main sync
@@ -30,4 +33,4 @@ Merged only the authorized exact SHA `9dc8926e`. Did not rebase or force. If mai
 
 ## 5. Verdict
 
-Ready for independent Technical-Lead exact-head review of the freeze SHA. **Not Ready. Not merged. No follow-up slice.**
+Ready for independent Technical-Lead exact-head re-review of the freeze SHA. **Not Ready. Not merged. No follow-up slice.**

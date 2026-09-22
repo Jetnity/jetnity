@@ -1,7 +1,7 @@
 # Jetnity Admin Navigation Search 1 — HANDOFF
 
 Date: 2026-09-22  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Draft PR: https://github.com/Jetnity/jetnity/pull/545  
 Branch: `feat/admin-navigation-search-1`  
 Agent: Jetnity admin navigation search 1, Generation 1  
@@ -12,7 +12,7 @@ Task seed: `c0539a1940c4df4809c743bf7fd2c63b80c5294f`
 `origin/main` / merge-base: `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`  
 Synced by authorized normal merge of #546. No rebase/force. Global startup docs were inherited, not edited.
 
-Persist implementation SHA `e029b455395f3f3cc6fd36d7d9bd1a4219f213f2` has live CI `35749140321` SUCCESS, Auth SUCCESS, Vercel Preview READY. Re-read `git rev-parse HEAD` after any later stamp. A new head invalidates older exact-head gates.
+R1–R3 review fixes are on this branch. Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older gates on `929250d5` / `e029b455` are invalid.
 
 ## Owned files
 
@@ -29,8 +29,8 @@ Read-only: `lib/admin/navigation.ts`, `AdminSessionProvider`, roles/capabilities
 
 ## Tests before this persist
 
-3820 `npm test` PASS. Hydrated 8 PASS with concrete `activeElement` (desktop/mobile trigger, option after Tab, `#foreign-focus`). `typecheck` / `lint` / `build` / hygiene PASS.
+3821 `npm test` PASS. Hydrated 11 PASS including R1 geometry at 390×500, R2 hover `activeElement` stays close-button, R3 `prefetch={false}` boundary. `typecheck` / `build` / hygiene PASS.
 
 ## Next actor
 
-Technical Lead exact-head review of the freeze SHA only. Not Ready. Not merged. No follow-up slice. Immediate review fixes stay in this session. Do not start #547 from this writer.
+Technical Lead exact-head re-review of the freeze SHA only. Not Ready. Not merged. No follow-up slice. Immediate review fixes stay in this session. Do not start #547 or #548 from this writer.

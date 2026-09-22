@@ -1,7 +1,7 @@
 # Jetnity Admin Navigation Search 1 — STATUS
 
 Date: 2026-09-22  
-Status: **IMPLEMENTED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **R1–R3 ADDRESSED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Parent: existing Admin foundation completion; not a new V1 prerequisite  
 Draft PR: #545  
 Branch: `feat/admin-navigation-search-1`  
@@ -36,15 +36,25 @@ Local allowlisted area search over `filterAdminNav(ADMIN_NAV_ITEMS, useAdminSess
 - Honesty copy now says area/navigation search, not command/records/execute.
 - No API/DB/Auth/role/provider/model/cost/package changes. No global-current-state-doc edits.
 
+## Review fixes (same session)
+
+Binding TL CHANGES REQUIRED on `929250d5`. No rebase/force/unrequested main merge. `origin/main` remains `9dc8926e`.
+
+- **R1:** Keyboard-active option is scrolled inside `#admin-nav-search-list` via `scrollDeltaToReveal`. Hydrated 390×500: last row Provider & Kosten `optTop 408 / optBottom 452` inside `listTop 202 / listBottom 452`, `scrollTop 22`, `fullyVisible true`. 200% text also fully visible.
+- **R2:** Open-only focus + scroll-lock. Hover/selection no longer re-runs `input.focus()`. After focusing „Bereichssuche schliessen“ and hovering Nutzer, `activeElement` stays that BUTTON.
+- **R3:** Palette `Link` has `prefetch={false}`. Harness stub records the prop and does not forward it to DOM. Six palette entries `prefetch: false`; `domPrefetchAttr: false`. This is not a production app-dir prefetch execution.
+
+Previous exact-head gates on `929250d5` / `e029b455` are invalid.
+
 ## Local gates before persist
 
 | Check | Result |
 | --- | --- |
-| `lib/admin/navigation-search.test.ts` + navigation + honesty | 22 pass / 0 fail |
-| `npm test` | 3820 pass / 0 fail |
-| Hydrated actual component + shell | 8 PASS (`scripts/admin-navigation-search-1-hydrated.mjs`) |
+| `lib/admin/navigation-search.test.ts` + navigation + honesty | 23 pass / 0 fail |
+| `npm test` | 3821 pass / 0 fail |
+| Hydrated actual component + shell | 11 PASS including R1/R2/R3 exact repros |
+| Owned `eslint` on `AdminNavigationSearch.tsx` | 0 errors (pre-existing pathname-close warning) |
 | `npm run typecheck` | pass |
-| `npm run lint` | pass |
 | `npm run build` | pass (Next.js 16.3.3) |
 | `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | pass |
 | Auth / Production / provider / DB | not mutated |
@@ -77,4 +87,4 @@ Observed parallel Draft #547 / admin indexing status 1: read-only towards this s
 
 ## Next unfinished step
 
-Independent Technical-Lead exact-head review of the freeze SHA. Same session for immediate TL review fixes. No follow-up slice.
+Independent Technical-Lead exact-head re-review of the new freeze SHA. Same session for immediate further review fixes. No follow-up slice. Do not start #547 or #548 from this writer.

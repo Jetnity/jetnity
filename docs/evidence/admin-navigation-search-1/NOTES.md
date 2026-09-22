@@ -15,9 +15,13 @@ Browser: Playwright Chromium emulation only.
 - Foreign `aria-modal` keeps focus; shortcut does not steal.
 - `kosten` alias hits Provider & Kosten with zero `window.fetch` search calls.
 - 768 desktop trigger, 390 + 200% text, results list `overflow-y: auto`.
+- **R1:** 390×500 ArrowDown to last ready row; option fully inside list (`fullyVisible`, `scrollTop > 0`). Same after 200% root font-size.
+- **R2:** Focus close button, hover Nutzer; `activeElement` remains the close BUTTON, not the input.
+- **R3:** Palette Link boundary records `prefetch: false` six times; DOM anchors have no `prefetch` attribute.
 
 ## Not proven here
 
 - Physical device / real touch hardware.
 - Vercel Preview with a real Admin session (Auth/MFA).
+- Production Next app-dir prefetch execution (R3 is a boundary-prop contract only).
 - Server authorization changes (none were made).
