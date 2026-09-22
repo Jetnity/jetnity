@@ -116,11 +116,12 @@ export function AdminAccountCountsAnsicht({ result }: { result: AdminAccountCoun
 }
 
 export default async function AdminAccountCounts() {
+  let result: AdminAccountCountsReadResult
   try {
-    const result = await loadAdminAccountCounts()
-    if (result.status === 'disabled') return null
-    return <AdminAccountCountsAnsicht result={result} />
+    result = await loadAdminAccountCounts()
   } catch {
-    return <AdminAccountCountsAnsicht result={{ status: 'failed' }} />
+    result = { status: 'failed' }
   }
+  if (result.status === 'disabled') return null
+  return <AdminAccountCountsAnsicht result={result} />
 }
