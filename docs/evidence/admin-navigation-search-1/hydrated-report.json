@@ -1,0 +1,211 @@
+{
+  "pass": 12,
+  "ergebnisse": [
+    {
+      "name": "desktop_shortcut_select_users",
+      "activeAfterClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "desktop"
+      },
+      "nachTab": {
+        "tag": "A",
+        "id": "admin-nav-search-option--admin",
+        "label": null,
+        "trigger": null
+      },
+      "pushes": [
+        "/admin/users"
+      ]
+    },
+    {
+      "name": "desktop_escape_restores_trigger",
+      "activeAfterClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "desktop"
+      }
+    },
+    {
+      "name": "mobile_drawer_then_search",
+      "activeAfterShortcutClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "mobile"
+      },
+      "activeAfterTriggerClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "mobile"
+      }
+    },
+    {
+      "name": "role_creator_no_users"
+    },
+    {
+      "name": "role_break_glass_no_users"
+    },
+    {
+      "name": "foreign_modal_no_steal",
+      "activeAfterShortcut": {
+        "tag": "BUTTON",
+        "id": "foreign-focus",
+        "label": null,
+        "trigger": null
+      }
+    },
+    {
+      "name": "viewport_768_and_390_200pct",
+      "overflowY": "auto"
+    },
+    {
+      "name": "alias_kosten_no_network",
+      "fetches": [],
+      "pageRequests": 1
+    },
+    {
+      "name": "r1_keyboard_row_visible",
+      "geo": {
+        "innerWidth": 390,
+        "innerHeight": 500,
+        "visualViewport": {
+          "width": 390,
+          "height": 500,
+          "offsetTop": 0,
+          "offsetLeft": 0,
+          "bottom": 500,
+          "right": 390
+        },
+        "listTop": 180,
+        "listBottom": 460,
+        "optTop": 408,
+        "optBottom": 452,
+        "inputTop": 130,
+        "inputBottom": 170,
+        "closeTop": 48,
+        "closeBottom": 84,
+        "panelTop": 39,
+        "panelBottom": 461,
+        "scrollTop": 0,
+        "scrollHeight": 280,
+        "clientHeight": 280,
+        "optionCount": 6,
+        "imListenfenster": true,
+        "optionImViewport": true,
+        "inputImViewport": true,
+        "closeImViewport": true,
+        "panelImViewport": true,
+        "fullyVisible": true
+      },
+      "geoZoom": {
+        "innerWidth": 390,
+        "innerHeight": 500,
+        "visualViewport": {
+          "width": 390,
+          "height": 500,
+          "offsetTop": 0,
+          "offsetLeft": 0,
+          "bottom": 500,
+          "right": 390
+        },
+        "listTop": 290,
+        "listBottom": 487,
+        "optTop": 399,
+        "optBottom": 487,
+        "inputTop": 192,
+        "inputBottom": 272,
+        "closeTop": 29,
+        "closeBottom": 101,
+        "panelTop": 12,
+        "panelBottom": 488,
+        "scrollTop": 347,
+        "scrollHeight": 560,
+        "clientHeight": 197,
+        "optionCount": 6,
+        "imListenfenster": true,
+        "optionImViewport": true,
+        "inputImViewport": true,
+        "closeImViewport": true,
+        "panelImViewport": true,
+        "fullyVisible": true
+      }
+    },
+    {
+      "name": "r2_hover_does_not_steal_focus",
+      "vor": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Bereichssuche schliessen",
+        "trigger": null
+      },
+      "nach": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Bereichssuche schliessen",
+        "trigger": null
+      }
+    },
+    {
+      "name": "r3_prefetch_false_boundary",
+      "optionCount": 6,
+      "palette": [
+        {
+          "href": "/admin",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/users",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/payments",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/security",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/system-health",
+          "prefetch": false
+        },
+        {
+          "href": "/admin/provider-ops",
+          "prefetch": false
+        }
+      ],
+      "alleFalse": true,
+      "sidebarOhneProp": true,
+      "domPrefetchAttr": false,
+      "limit": "Harness Link stub records the Next prefetch prop and must not forward it to DOM. This does not execute production app-dir prefetch."
+    },
+    {
+      "name": "r4_outside_dismiss_inside_keep",
+      "aussen": {
+        "tag": "DIV",
+        "backdrop": true,
+        "panel": false,
+        "className": "absolute inset-0 bg-black/50"
+      },
+      "nachAussen": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "desktop"
+      },
+      "innen": {
+        "x": 248,
+        "y": 189,
+        "panel": true
+      },
+      "dialogAfterInside": 1
+    }
+  ],
+  "browser": "playwright-chromium",
+  "physicalDevice": false,
+  "note": "Chromium emulation only. Not Preview E2E and not physical-device acceptance."
+}

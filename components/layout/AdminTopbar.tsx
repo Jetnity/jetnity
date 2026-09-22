@@ -3,12 +3,13 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, Search, Sun, Moon, ChevronDown, LogOut, UserCircle2 } from 'lucide-react'
+import { Menu, Sun, Moon, ChevronDown, LogOut, UserCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
 import { globalesAbmeldenMenueOffen } from '@/lib/auth/globales-sign-out'
 import { useAdminShell } from '@/app/(admin)/admin/layout'
+import { AdminNavigationSearchTrigger } from '@/components/admin/AdminNavigationSearch'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 
 type Props = {
@@ -134,16 +135,7 @@ export default function AdminTopbar({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            disabled
-            className="group hidden items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm text-muted-foreground sm:flex"
-            aria-label={ADMIN_EHRLICHE_TEXTE.sucheFolgtHinweis}
-            title={ADMIN_EHRLICHE_TEXTE.sucheFolgtHinweis}
-          >
-            <Search className="h-4 w-4 opacity-80" />
-            <span>{ADMIN_EHRLICHE_TEXTE.sucheFolgt}</span>
-          </button>
+          <AdminNavigationSearchTrigger surface="desktop" />
 
           <span
             className="hidden items-center rounded-lg border border-dashed border-border bg-card px-2.5 py-1.5 text-xs text-muted-foreground sm:inline-flex"

@@ -32,8 +32,13 @@ export const ADMIN_EHRLICHE_TEXTE = {
   ipUnblockErfolgPrefix: 'Aus Blockliste entfernt (nicht enforced):',
   copilotFolgt: 'Copilot Pro folgt',
   copilotFolgtHinweis: 'Kein Execute-Pfad. Automatik ist nicht verfügbar.',
-  sucheFolgt: 'Befehlssuche folgt',
-  sucheFolgtHinweis: 'Keine funktionierende Befehlspalette in Slice A.',
+  sucheBereiche: 'Bereiche suchen',
+  sucheBereicheHinweis:
+    'Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.',
+  sucheBereichePlatzhalter: 'Bereich suchen',
+  sucheBereicheLeer: 'Vorhandene Bereiche dieser Sitzung. Keine Datensatzsuche.',
+  sucheBereicheKeinTreffer: 'Kein passender Bereich.',
+  sucheBereicheKuerzel: 'Strg+K',
   aktuelleHinweiseTitel: 'Aktuelle Hinweise',
   aktuelleHinweiseHinweis:
     'Regelbasierte Lage aus dem letzten System-Health-Stand dieses Prozesses. Alter und Frische folgen dem ursprünglichen Prüfzeitpunkt und dem Auswertezeitpunkt; unbekannt und veraltet bleiben sichtbar. Das belegt nicht die aktuelle Sitzung. Kein Copilot-Execute, keine Live-Überwachung, keine Modellantwort.',
