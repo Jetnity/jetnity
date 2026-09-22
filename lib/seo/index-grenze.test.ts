@@ -76,7 +76,7 @@ describe('/planen bleibt als Basis öffentlich', () => {
   })
 
   test('überwacht genau die von der Route akzeptierten Params', () => {
-    assert.deepEqual([...PLANEN_INDEX_PARAMS], ['idee', 'ziel', 'zielId'])
+    assert.deepEqual([...PLANEN_INDEX_PARAMS], ['idee', 'ziel', 'zielId', 'zielIds'])
   })
 
   test('die Präsenz von idee, ziel oder zielId wird noindex, unabhängig vom Wert', () => {
@@ -88,6 +88,8 @@ describe('/planen bleibt als Basis öffentlich', () => {
     assert.deepEqual(planenRobots({ idee: [''] }), NICHT_INDEXIEREN)
     assert.deepEqual(planenRobots({ ziel: ['Lissabon'] }), NICHT_INDEXIEREN)
     assert.deepEqual(planenRobots({ zielId: ['geonames:1650535'] }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ zielIds: '' }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ zielIds: ['geonames:2988507'] }), NICHT_INDEXIEREN)
   })
 
   test('die Seite übernimmt die Werte weiter und setzt nur robots', () => {

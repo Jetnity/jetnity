@@ -68,3 +68,17 @@ export function zielHref(auswahl: OrtAuswahl | null, idee?: string): string | nu
   if (idee?.trim()) params.set('idee', idee.trim())
   return `/planen?${params.toString()}`
 }
+
+/**
+ * Kompatibler Handoff: ein Ziel bleibt `zielId`, mehrere nutzen wiederholtes `zielIds`.
+ * Ungültige IDs erzeugen keinen Link. Die Route-Transportregeln liegen in route-einstieg.
+ */
+export function zielHrefAusListe(auswahlen: OrtAuswahl[], idee?: string): string | null {
+  if (auswahlen.length === 0) return null
+  if (auswahlen.length === 1) return zielHref(auswahlen[0], idee)
+  if (auswahlen.some((auswahl) => !istOrtId(auswahl.id))) return null
+  const params = new URLSearchParams()
+  for (const auswahl of auswahlen) params.append('zielIds', auswahl.id)
+  if (idee?.trim()) params.set('idee', idee.trim())
+  return `/planen?${params.toString()}`
+}

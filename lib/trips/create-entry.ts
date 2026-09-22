@@ -31,7 +31,7 @@ export const CREATE_PERSISTENZ_TEMPO: TripPace = 'balanced'
 export const CREATE_PERSISTENZ_INTERESSEN: TripInterest[] = []
 
 /** Search-Params, die /planen zu einem ziel- oder ideenspezifischen Handoff machen. */
-const PLANEN_HANDOFF_PARAMS = ['zielId', 'ziel', 'idee'] as const
+const PLANEN_HANDOFF_PARAMS = ['zielId', 'ziel', 'idee', 'zielIds'] as const
 
 export type GastCreateBelegung =
   | { art: 'nicht_beobachtet' }
@@ -223,14 +223,15 @@ export function createEinstiegFuerGast(aktiv: { id: string } | null | undefined)
 
 /**
  * Nur nacktes `/planen` ist ein generischer Create-CTA.
- * `zielId` / `ziel` / `idee` bleiben ein zielgerichteter Handoff – die
+ * `zielId` / `ziel` / `idee` / `zielIds` bleiben ein zielgerichteter Handoff –
+ * auch leer oder unvollständig, sobald der Key vorhanden ist. Die
  * /planen-Gate fängt den zweiten Gast-Versuch dort ehrlich ab.
  */
 export function istGenerischerCreateHref(href: string): boolean {
   try {
     const url = new URL(href, 'https://jetnity.invalid')
     if (url.pathname !== '/planen') return false
-    return PLANEN_HANDOFF_PARAMS.every((name) => !url.searchParams.get(name)?.trim())
+    return PLANEN_HANDOFF_PARAMS.every((name) => !url.searchParams.has(name))
   } catch {
     return false
   }
@@ -286,12 +287,14 @@ export function planenVorbelegung(eingabe: {
   idee?: string | null
   originId?: string | null
   originName?: string | null
+  weitereZiele?: { id: string; name: string }[] | null
 }): {
   destinationId: string
   destination: string
   idee: string
   originId: string
   origin: string
+  weitereZiele: { id: string; name: string }[]
 } {
   return {
     destinationId: eingabe.zielId?.trim() ?? '',
@@ -299,5 +302,8 @@ export function planenVorbelegung(eingabe: {
     idee: eingabe.idee?.trim() ?? '',
     originId: '',
     origin: '',
+    weitereZiele: (eingabe.weitereZiele ?? [])
+      .map((ziel) => ({ id: ziel.id.trim(), name: ziel.name.trim() }))
+      .filter((ziel) => ziel.id && ziel.name),
   }
 }

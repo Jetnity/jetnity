@@ -181,6 +181,12 @@ describe('TW6-TL-03 – generischer Helper darf zielspezifische Handoffs nicht u
     assert.equal(istGenerischerCreateHref(bali), false)
     assert.equal(istGenerischerCreateHref('/planen?ziel=Bali'), false)
     assert.equal(istGenerischerCreateHref('/planen?idee=Strand'), false)
+    assert.equal(
+      istGenerischerCreateHref('/planen?zielIds=geonames%3A2988507&zielIds=geonames%3A3169070'),
+      false,
+    )
+    assert.equal(istGenerischerCreateHref('/planen?zielIds='), false)
+    assert.equal(istGenerischerCreateHref('/planen?zielId='), false)
   })
 
   test('generisches /planen + aktive Reise -> Fortsetzen', () => {
@@ -192,6 +198,13 @@ describe('TW6-TL-03 – generischer Helper darf zielspezifische Handoffs nicht u
   test('zielHref + aktive Reise bleibt semantisch ehrlich', () => {
     const ziel = genericCreateHrefFuerGast(bali, { id: 'trip-lissabon' }, 'gast')
     assert.equal(ziel.href, bali)
+    assert.equal(ziel.labelErsetzen, false)
+  })
+
+  test('zielIds-Handoff wird nicht zum generischen Create umgeschrieben', () => {
+    const href = '/planen?zielIds=geonames%3A2988507&zielIds=geonames%3A3169070'
+    const ziel = genericCreateHrefFuerGast(href, { id: 'trip-lissabon' }, 'gast')
+    assert.equal(ziel.href, href)
     assert.equal(ziel.labelErsetzen, false)
   })
 
@@ -305,6 +318,18 @@ describe('TW6-A Create-Entry – Input Truth', () => {
     assert.equal(vorbelegung.idee, 'Strand')
     assert.equal(vorbelegung.originId, '')
     assert.equal(vorbelegung.origin, '')
+    assert.deepEqual(vorbelegung.weitereZiele, [])
+  })
+
+  test('Routen-Vorbelegung trägt weitere bestätigte Ziele ohne Startort', () => {
+    const vorbelegung = planenVorbelegung({
+      zielId: 'geonames:2988507',
+      zielName: 'Paris',
+      weitereZiele: [{ id: 'geonames:3169070', name: 'Rom' }],
+    })
+    assert.equal(vorbelegung.destinationId, 'geonames:2988507')
+    assert.deepEqual(vorbelegung.weitereZiele, [{ id: 'geonames:3169070', name: 'Rom' }])
+    assert.equal(vorbelegung.originId, '')
   })
 
   test('Homepage-Handoff gibt nur zielId und optional idee weiter', () => {
