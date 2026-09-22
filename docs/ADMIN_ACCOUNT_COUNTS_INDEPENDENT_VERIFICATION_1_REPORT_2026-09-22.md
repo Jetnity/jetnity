@@ -1,7 +1,7 @@
 # Admin Account Counts Independent Verification 1 — REPORT
 
 Date: 2026-09-22  
-Status: **CURSOR SPECIALIST EVIDENCE / R1–R4 HOLD ON EXACT HEAD / NOT A TL PASS / NOT GUARDIAN**  
+Status: **CURSOR SPECIALIST EVIDENCE / LOCAL R1–R4 CORRECTIONS VERIFIED IN SPECIFIED SCOPE / NOT OPERATING-MODE HOLD / NOT A TL PASS / NOT GUARDIAN**  
 Cursor-Agent: **Jetnity admin account counts independent verification 1**  
 Generation: **1**  
 Required / actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=cursor-grok-4.6-high-fast`)  
@@ -12,27 +12,27 @@ Not reused: builder `bc-49dd67e9-5979-44af-9476-1df8bcdfff93`, continuity `bc-e2
 
 Evidence PR: Draft **#552** · branch `audit/admin-account-counts-independent-verification-1`  
 Task seed: `34f7586e75e7d77ce59998afed54e5dd1775d52f`  
-Evidence-branch baseline / live main: `e28ab43b53faf38aef163ccea82c45aedf3a7d06` · mode **NORMAL**
+Evidence-branch baseline at commissioning: `e28ab43b53faf38aef163ccea82c45aedf3a7d06` · mode **NORMAL**  
+Authorized later main (E3): `34686af3a12317d5eb40ab12056a1188298e04c6` — Merge #550, identical tree to `b5bbe211`.
 
 ## Reviewed product target (separate from this evidence SHA)
 
 | Item | Value |
 | --- | --- |
-| Product PR | Draft **#550**, unmerged |
-| Product head start | `b5bbe211bc82c16da34bc8f48b58f39920af5f5a` |
-| Product head finish | `b5bbe211bc82c16da34bc8f48b58f39920af5f5a` — **unchanged; evidence not stale** |
-| Merge-base / main | `e28ab43b53faf38aef163ccea82c45aedf3a7d06` |
-| Ahead / behind | **5 / 0** |
+| Historical product target | `b5bbe211bc82c16da34bc8f48b58f39920af5f5a` — unchanged; still the reviewed SQL |
+| Product PR | **#550 MERGED** after TL PASS **5282850421** |
+| Identical-tree merge | `34686af3a12317d5eb40ab12056a1188298e04c6` (`b5bbe211^{tree}` == `34686af3^{tree}`) |
+| Prior main at first persist | `e28ab43b53faf38aef163ccea82c45aedf3a7d06` |
 | Builder freeze | comment **5782471633** |
-| Prior TL review | **5282427169** CHANGES REQUIRED R1–R4 on historical `9219e31e` |
-| Allowlist vs main | 12 files only (4 docs, 4 receipts, 4 scripts). No app/lib/types/package/CI/migration. |
+| Prior product TL review | **5282427169** CHANGES REQUIRED R1–R4 on historical `9219e31e` |
+| This evidence TL review | **5282860545** E1–E3 on `cbba1264` |
 
-Inspection/execution used a detached worktree at `/tmp/jetnity-review-550`. **No product import, merge, or cherry-pick into this evidence branch.**
+First persist used a detached worktree at `/tmp/jetnity-review-550` and did **not** import unmerged #550 code. E3 later merged **accepted** main `34686af3` into this same branch (no rebase/force/cherry-pick). Incoming product files were left byte-unmodified (candidate/bootstrap/runner hashes unchanged).
 
 ## Verdict
 
-**Specialist evidence: R1–R4 hold on exact head `b5bbe211` after independent local PostgreSQL execution.**  
-No P0 or P1 candidate defect was reproduced. Builder 56/56 and 10/10 were **re-executed**, not accepted as this reviewer's evidence. Additional reviewer probes passed on the candidate/bootstrap. This is **not** Technical-Lead PASS and **not** Guardian evidence. Production apply / RPC / UI / privilege activation remain reserved.
+**Specialist evidence: the local R1–R4 corrections on historical target `b5bbe211` were independently executed and verified in the specified local PostgreSQL 16.15 scope.**  
+This is **not** operating-mode HOLD, **not** a Technical-Lead PASS, and **not** Guardian evidence. Builder 56/56 and 10/10 were **re-executed** in the first persist, not accepted as this reviewer's evidence. The first persist's 25 mixed-probe total stays a separate class from SQL counts and from the E2 reconstructed 9/9 run. Production apply / RPC / UI / privilege activation remain reserved.
 
 ## Isolation before execution
 
@@ -55,7 +55,8 @@ Ordinary Ubuntu packages installed PostgreSQL **16.15**. Production dated metada
 | --- | --- | --- |
 | `node scripts/db/admin-account-counts-1-local-proof.mjs` on detached `b5bbe211` | **56/56** | 0 |
 | `node --test scripts/db/admin-account-counts-1-local-proof.test.mjs` | **10/10** | 0 |
-| Reviewer-owned probes | **25** candidate-relevant PASS | 0 after classifying 1 harness artifact |
+| Reviewer-owned mixed probes (cbba1264, historical) | **25** mixed-class PASS + 1 harness artifact | not a SQL-only count |
+| E2 reconstructed HOME/DST repro (after 5282860545) | **9/9** | 0 |
 
 Assertion categories actually counted in the exact-source run (do not relabel as all-SQL):
 
@@ -90,9 +91,16 @@ Exact-source run also showed the builder explicit-`PSQLRC` control executing the
 
 ## R2 — fixed 720-hour window
 
-**Holds.** Candidate prosrc uses `_measured_at - interval '720 hours'` and one `pg_catalog.now()`. No caller time/filter argument. Function `TimeZone=UTC`.
+**Verified in this local scope.** Candidate prosrc uses `_measured_at - interval '720 hours'` and one `pg_catalog.now()`. No caller time/filter argument. Function `TimeZone=UTC`. Live candidate window on the first persist was exactly **2592000** seconds. Candidate source contains no `interval '30 days'`.
 
-Independent oracle: `extract(epoch from t - interval '720 hours') = epoch(t) - 2592000`. Live candidate window on this run was exactly **2592000** seconds. America/New_York spring calendar-30d is **+3600s** vs 720h; fall is **−3600s**. Candidate source contains no `interval '30 days'`.
+E1 correction (start displacement ≠ elapsed duration), reconstructed 2026-09-22 in `repro-home-psqlrc-and-dst.mjs`:
+
+| Anchor (UTC) | Fixed start | NY calendar start | Start displacement | Calendar elapsed | vs 720h |
+| --- | --- | --- | --- | --- | --- |
+| 2026-03-09T07:00Z | 2026-02-07T07:00Z | 2026-02-07T08:00Z | **+3600s** (later start) | **2588400s / 719h** | 3600s **shorter** |
+| 2026-11-02T06:00Z | 2026-10-03T06:00Z | 2026-10-03T05:00Z | **−3600s** (earlier start) | **2595600s / 721h** | 3600s **longer** |
+
+The first persist labeled spring “longer” and fall “shorter” from the start-displacement sign. That wording was wrong; candidate 720h and raw inclusion checks were unaffected. The historical 25 mixed-probe list keeps those two IDs as **HISTORICAL MISLABEL**.
 
 `jetnity_test.counts_at` is a proof-only reimplementation with the same 720h / present filter. DST *row inclusion* is proven on that seam plus interval arithmetic, not by calling the unparameterized candidate at a historical instant. That is the correct production shape.
 
@@ -147,6 +155,15 @@ No incident / unauthorized success-zero / remote-DSN fallback / PUBLIC execute l
 - **Class:** FACT
 - **Remediation:** optional same-session test clarification only if TL wants builder-owned evidence symmetry. **Not required to accept R1.**
 
+### IV1-P3-4 — first persist confused start displacement with elapsed duration
+
+- **Severity:** P3 wording (closed in this persist)
+- **Path:** REPORT R2; historical `independent-probes.txt` I-R2-NY-spring/fall labels
+- **Expected:** spring calendar-30d elapsed is 719h (shorter); fall is 721h (longer).
+- **Actual at cbba1264:** labels said the opposite because they described `calendar_start - fixed_start`.
+- **Class:** FACT
+- **Remediation:** labels corrected; reconstructed oracle 9/9. Do not edit builder code.
+
 ### IV1-P3-3 — `cleanChildEnv` does not strip non-PG secrets
 
 - **Severity:** P3 residual
@@ -173,4 +190,4 @@ Traveller-context intelligence does not apply (no travel-document / route logic)
 
 ## Specialist recommendation to Technical Lead
 
-Treat #550 `@ b5bbe211` as **independently executed local evidence that the R1–R4 correction package holds**. Consolidate any optional P3 hygiene in one TL package if desired. Do **not** treat this as apply authority. #551 remains the central-doc writer. This reviewer stops.
+Treat historical target `b5bbe211` (now identically merged as `34686af3`) as independently executed local evidence that the R1–R4 corrections work in the specified disposable PostgreSQL 16.15 scope. #550 is already merged. This persist only closes evidence wording/reproducibility/sync (E1–E3). Do **not** treat this as apply authority. #551 remains the central-doc writer. This reviewer stops.

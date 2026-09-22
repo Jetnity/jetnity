@@ -1,26 +1,37 @@
 {
   "reviewedProductHead": "b5bbe211bc82c16da34bc8f48b58f39920af5f5a",
-  "headUnchangedFromStartToFinish": true,
-  "mergeBaseMain": "e28ab43b53faf38aef163ccea82c45aedf3a7d06",
-  "aheadBehindVsMain": "5 / 0",
+  "historicalProductHeadUnchanged": true,
+  "acceptedIdenticalTreeMain": "34686af3a12317d5eb40ab12056a1188298e04c6",
+  "treesIdenticalB5bbe211And34686af3": true,
+  "authorizedMergeCommit": "3af1c42f07e769e4b52c494edec9ee4e2aee6225",
+  "previousEvidencePersist": "cbba1264aa1686382629fd1bae11e8d4b2851431",
+  "commissioningMain": "e28ab43b53faf38aef163ccea82c45aedf3a7d06",
+  "mergeBaseMainAfterE3": "34686af3a12317d5eb40ab12056a1188298e04c6",
+  "aheadBehindVsAcceptedMainBeforeThisPersist": "3 / 0",
+  "aheadBehindNote": "After this E1–E2 persist the branch is one more evidence commit ahead of 34686af3. Final diff versus accepted main must remain evidence-only.",
   "candidateSqlSha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
   "bootstrapSqlSha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
   "runnerSha256": "796e98ac2d71240bb786f5e8c9f3391125c38ca0d6f36358159fb6b56edc3f5b",
   "runnerTestsSha256": "c57c68b8f7237ab42fac61fbf8fbbb4383cdd215ea7ad8237e9a1c80576bc20a",
   "hashMatchBuilderReceipt5782471633": true,
+  "incomingProductFilesByteUnmodifiedAfterE3": true,
   "postgresql": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
   "postgresqlLimitation": "Production metadata dated 2026-09-22 is 17.6 UTC. This review executed 16.15. Interval/RLS/psql -X semantics used here are not claimed as a 17.6 binary re-run.",
   "systemCluster16Main": "down_unused",
   "exactSourceRunner": "56/56 PASS exit 0",
   "exactSourceNodeTests": "10/10 PASS exit 0",
-  "independentReviewerProbes": "25 candidate-relevant PASS; 1 harness-artifact SET ROLE observation (not a candidate defect)",
+  "historicalMixedProbesCbba1264": "25 candidate-relevant PASS; 1 harness-artifact SET ROLE observation (not a candidate defect); two DST IDs HISTORICAL MISLABEL",
+  "e2ReconstructedHomeDstRepro": "9/9 PASS; script repro-home-psqlrc-and-dst.mjs; receipt e1-e2-repro-run.txt; not added into the 25 mixed-probe total",
   "extractedHelpersEqualToNamedMigrations": true,
-  "ciReRead": {
+  "firstPersistCiHistorical": {
     "run": 35772116946,
     "authJob": 106896128209,
     "tlbJob": 106896127697,
     "vercelPreviewComments": 106896306511,
     "vercelDeployment": "6da5vghJfNPMqw3k3BSF65jnL8xg",
-    "note": "integration only; not SQL proof"
+    "note": "CI of first persist cbba1264 only; not SQL proof; not this freeze head"
+  },
+  "freshEvidenceHeadCi": {
+    "note": "Posted in the PR conversation after this freeze. Not invented here."
   }
 }

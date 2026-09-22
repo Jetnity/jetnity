@@ -15,9 +15,15 @@
   "evidenceBranch": "audit/admin-account-counts-independent-verification-1",
   "taskSeed": "34f7586e75e7d77ce59998afed54e5dd1775d52f",
   "productTarget": "b5bbe211bc82c16da34bc8f48b58f39920af5f5a",
+  "productTargetNote": "historical reviewed target; identical tree now on accepted main",
   "productPr": 550,
+  "productPrState": "merged_after_tl_pass_5282850421",
   "evidencePr": 552,
-  "mainBaseline": "e28ab43b53faf38aef163ccea82c45aedf3a7d06",
+  "commissioningMain": "e28ab43b53faf38aef163ccea82c45aedf3a7d06",
+  "authorizedMain": "34686af3a12317d5eb40ab12056a1188298e04c6",
+  "authorizedMergeCommit": "3af1c42f07e769e4b52c494edec9ee4e2aee6225",
+  "previousEvidencePersist": "cbba1264aa1686382629fd1bae11e8d4b2851431",
+  "tlReviewThisPackage": "5282860545",
   "operatingMode": "NORMAL",
   "role": "cursor_specialist_evidence_not_guardian_not_tl_pass"
 }

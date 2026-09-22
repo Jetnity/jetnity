@@ -1,5 +1,7 @@
-# Reviewer-owned probes against exact candidate+bootstrap
-# Distinct from builder 56/56. Probe helper: jetnity_reviewer.sitzung (not candidate).
+# Historical mixed-probe list from cbba1264 (2026-09-22T19:22Z).
+# Distinct from builder 56/56 and from the E2 reconstructed 9/9 run.
+# Probe helper then: session-local /tmp script (not archived in this folder).
+# Do not treat this 25 mixed-probe total as a SQL-only count.
 
 I-HASH-candidate PASS dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420
 I-HASH-bootstrap PASS 0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2
@@ -13,8 +15,12 @@ I-R1-HOME-only-suppressed-with-X PASS stdout=1
 I-R1-negative-control-can-fail PASS (sentinel present without -X; absent with -X)
 I-R1-psqlSafeArgs-has-X-and-no-psqlrc PASS
 I-R2-independent-epoch-oracle-2592000 PASS
-I-R2-NY-spring-calendar-is-3600s-longer-than-720h PASS
-I-R2-NY-fall-calendar-is-3600s-shorter-than-720h PASS
+I-R2-NY-spring-calendar-is-3600s-longer-than-720h  HISTORICAL MISLABEL
+  Measured start displacement calendar_start - fixed_start = +3600s.
+  That is a later start, so elapsed calendar window is 719h (3600s shorter), not longer.
+I-R2-NY-fall-calendar-is-3600s-shorter-than-720h  HISTORICAL MISLABEL
+  Measured start displacement = -3600s (earlier start).
+  Elapsed calendar window is 721h (3600s longer), not shorter.
 I-R2-candidate-prosrc-is-720h-not-30days PASS
 I-R2-live-candidate-window-is-exactly-2592000s PASS present=8 (smaller reviewer seed)
 I-ADV-banned-moderator-AAL2-authorized-by-current-helpers OBSERVED
@@ -35,5 +41,10 @@ I-ADV-user-AAL2-deny-is-not-success-zero PASS 42501
 I-R3-cluster-still-owned-before-stop PASS
 I-R3-reviewer-cleanup PASS directory removed after verified stop
 
-25 candidate-relevant PASS + 1 harness-artifact observation.
-system 16/main remained down; no leftover reviewer cluster dirs.
+Historical mixed total: 25 candidate-relevant PASS + 1 harness-artifact observation.
+The two DST labels above are wording defects (E1); inclusion/720h candidate checks were unaffected.
+
+# E2 reconstructed 2026-09-22 after TL 5282860545 — separate class
+# Script: repro-home-psqlrc-and-dst.mjs
+# Receipt: e1-e2-repro-run.txt
+# Result: 9/9 PASS. Not added into the 25 mixed-probe total.
