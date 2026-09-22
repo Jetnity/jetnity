@@ -13,5 +13,8 @@
   "taskSeed": "91270eafc00887bc24b345924b22239af3cc94a4",
   "baselineMain": "9dc8926ef859bcde2dc31dc8b96f2e61e1948f74",
   "operatingMode": "NORMAL",
-  "tlStartEvidenceComment": 5779757780
+  "tlStartEvidenceComment": 5779757780,
+  "invalidatedFreeze": "328464dfe26adff95a2a937e602b300994a0ef74",
+  "tlChangesRequiredReview": 5280919883,
+  "r1Implementation": "ce11d9a83728f61d9b8653d41d7d6348f553ecc4"
 }

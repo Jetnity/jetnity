@@ -1,7 +1,7 @@
 # HBX Hotels Adapter Foundation 1 — Handoff
 
 Stand: 22. September 2026  
-Status: **IMPLEMENTED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **R1 RATEKEY IDENTITY FIXED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md`  
 Status: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_STATUS_2026-09-22.md`  
@@ -21,8 +21,10 @@ This document is enough for a new Technical Lead chat to review without the impl
 | Task seed | `91270eafc00887bc24b345924b22239af3cc94a4` |
 | Baseline / live main | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
 | Merge-base | same as live main |
-| Implementation commit | `f4413cd4b01730702c14d4954367ab1766ceb778` |
-| Ahead / behind before this persist | 2 ahead / 0 behind |
+| Invalidated freeze | `328464dfe26adff95a2a937e602b300994a0ef74` |
+| TL CHANGES REQUIRED | review `5280919883` — P2 silent rateKey trim |
+| R1 implementation | `ce11d9a83728f61d9b8653d41d7d6348f553ecc4` |
+| Ahead / behind before this persist | 4 ahead / 0 behind |
 | Rebase / sibling merge | not done |
 | Agent | Jetnity HBX hotels adapter foundation 1, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
@@ -45,6 +47,7 @@ Read first:
 - Adapter-local fixture schema `jetnity.hbx.hotels.availability.normalized.v1`.
 - Explicit stay/pricing/currency context for fixture tests only.
 - Fail-closed pricing matrix, date/identity/shape validation, opaque rate IDs.
+- **R1:** `rateKeyLesen` validates nonblank/length and hashes original bytes. `'rate-A'` and `' rate-A '` are distinct; whitespace-only still rejects; raw keys stay out of output.
 - Tests for pricing, malformed input, leap/DST nights, multi-rate identity, partial semantics and forbidden truth fields.
 - No runtime factory, HTTP, secrets, DB, UI or global-doc edits.
 
@@ -66,7 +69,7 @@ Immediate CHANGES REQUIRED return to this same agent/session.
 
 1. Unknown pricing model never mints a consumer price.
 2. Net is never displayed; `hotelMandatory` and `packaging` are strict booleans.
-3. `rateKey` opacity and deterministic duplicate identity.
+3. `rateKey` opacity: original bytes hashed; padded keys no longer collapse onto the trimmed digest `c2b264a5ce7dae15d4716be4e65c2e12`.
 4. Invalid dates/context empty the whole result; offer defects drop only that offer.
 5. No production import / factory registration / shared-domain edit.
 6. Cancellation/breakfast/stars remain null in this slice, even when fixture fields exist.

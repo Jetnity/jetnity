@@ -10,3 +10,6 @@ Import boundary: `import-boundary.txt`
 
 Sibling Admin PRs #545 and #547 were re-read for path disjointness only.
 They remain TL-review-pending and were not merged into this branch.
+
+R1 (review 5280919883): first freeze 328464df silently trimmed rateKey before
+hash. Adapter now hashes original bytes after nonblank/length validation.

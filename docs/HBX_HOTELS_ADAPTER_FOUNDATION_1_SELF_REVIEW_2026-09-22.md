@@ -19,7 +19,8 @@ This is an adversarial self-review. It is **not** a Technical-Lead PASS.
 | Unknown model => no HotelOption | Yes — dedicated test |
 | Never display net / no markup / no FX | Yes — sellingRate only; mismatch rejects |
 | No invented availability/cancellation/breakfast | Yes — those HotelOption fields stay null |
-| rateKey opaque; no raw key in IDs/logs | Yes — sha256 digest; JSON leak tests |
+| rateKey opaque; no raw key in IDs/logs | Yes — sha256 of original bytes; JSON leak tests |
+| R1: no silent trim before hash/dedup | Yes — `rateKeyLesen`; TL `rate-A` / ` rate-A ` regression |
 | Deterministic multi-rate IDs; duplicate first-wins | Yes |
 | Strict malformed input / impossible dates | Yes — stronger than Skyscanner Date.parse |
 | No factory/HTTP/env/secrets/UI/DB/Production | Yes |
@@ -52,7 +53,11 @@ Nights are `UTC date difference / 86400000` and must be a positive integer. 2026
 
 ### 2.6 Could raw rateKey leak into identity or output?
 
-IDs use `sha256(rateKey).slice(0,32)`. Tests stringify the result and options and fail if the fixture keys appear. No logging exists in the adapter.
+IDs use `sha256(original rateKey bytes).slice(0,32)`. Tests stringify the result and options and fail if the fixture keys appear. No logging exists in the adapter.
+
+### 2.6a R1 — could trim collapse `'rate-A'` and `' rate-A '`?
+
+The first freeze hashed `nichtLeer()`’s trimmed value, so both keys became `hbx:12345:c2b264a5ce7dae15d4716be4e65c2e12` and a combined input kept one option with `partial=true`. `rateKeyLesen` now rejects only blank/whitespace-only/overlong strings and returns the original bytes. Combined padded+unpadded input now yields two options. The old collapsed digest is asserted not to be used for the padded key.
 
 ### 2.7 Could injected live_api / persistenz / affiliate promote the fixture?
 

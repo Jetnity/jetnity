@@ -1,17 +1,17 @@
-Local gates run on implementation commit f4413cd4b01730702c14d4954367ab1766ceb778
-before the freeze persist. Existing repo lint warnings are distinguished from
-new regressions: ESLint 0 errors / 135 pre-existing warnings; no warning in
-lib/providers/hotelbeds/**.
+R1 local gates run on implementation commit ce11d9a83728f61d9b8653d41d7d6348f553ecc4
+before the re-freeze persist. Old gates on 328464df are invalid.
 
 git fetch origin main feat/hbx-hotels-adapter-foundation-1
   origin/main = 9dc8926ef859bcde2dc31dc8b96f2e61e1948f74
   merge-base  = 9dc8926ef859bcde2dc31dc8b96f2e61e1948f74
-  after implementation commit: 2 ahead / 0 behind
+  after R1 implementation commit: 4 ahead / 0 behind
   rebase/force-push: not done
 
 node --import ./scripts/server-only-test-register.mjs --import tsx --test \
   lib/providers/hotelbeds/hotels/adapter.test.ts
-  tests 20 / pass 20 / fail 0
+  tests 21 / pass 21 / fail 0
+  includes TL counterexample: 'rate-A' vs ' rate-A ' distinct IDs;
+  combined input keeps both; whitespace-only rejects; no raw key leak
 
 node --import ./scripts/server-only-test-register.mjs --import tsx --test \
   lib/hotels/schema.test.ts lib/hotels/suche.test.ts \
@@ -44,8 +44,7 @@ npm run check:operating-mode
 
 npm run build
   prebuild check:setup: 1 existing warning (no .env/.local in this environment)
-  next build: compiled successfully; TypeScript finished; 23 static pages
-  /api/hotels/search remains the existing route; this module is not imported
+  next build: compiled successfully
 
 Not run, and not required for this offline slice:
   db:rechte, db:rls, db:sicherheit, auth:pruefen, setup-fix, migrations,

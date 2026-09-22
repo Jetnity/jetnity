@@ -1,7 +1,7 @@
 # HBX Hotels Adapter Foundation 1 — STATUS
 
 Date: 2026-09-22  
-Status: **IMPLEMENTED / FROZEN / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT READY / NOT MERGED**  
+Status: **R1 RATEKEY IDENTITY FIXED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / NOT READY / NOT MERGED**  
 Draft PR: #548  
 Branch: `feat/hbx-hotels-adapter-foundation-1`  
 Binding task: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md`  
@@ -45,7 +45,7 @@ Other truth cuts for this slice:
 - `stornierbar` and `stornierungBis` stay `null` (a single date/amount is not a complete policy).
 - address, stars, rating/count, quartier, breakfast stay `null` (no category/board heuristics).
 - `taxesAllIncluded` passes only a real boolean.
-- `rateKey` stays opaque; Jetnity IDs are `hbx:{hotelCode}:{sha256(rateKey)[0:32]}`. Raw keys do not appear in IDs, user-facing fields or serialized output.
+- `rateKey` stays opaque; Jetnity IDs are `hbx:{hotelCode}:{sha256(original rateKey bytes)[0:32]}`. Nonblank/length are validated, but the key is **not trimmed** before hash or dedup. Whitespace-only keys reject. Raw keys do not appear in IDs, user-facing fields or serialized output.
 - `retrievedAt` must be an offset-bearing real-calendar ISO instant and is not copied onto `HotelOption`.
 - No factory/import wiring, HTTP, env, secrets, UI or Production changes.
 
@@ -59,10 +59,11 @@ Traveller-context intelligence does not apply: fixture mapping only, no eligibil
 | --- | --- |
 | Live `origin/main` re-fetched | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
 | Merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
-| Implementation commit | `f4413cd4b01730702c14d4954367ab1766ceb778` |
-| Ahead / behind vs live main before this persist | **2 ahead / 0 behind**. This persist adds named docs/evidence. |
+| Invalidated freeze | `328464dfe26adff95a2a937e602b300994a0ef74` — **invalidated** by TL CHANGES REQUIRED `5280919883` (P2 silent rateKey trim) |
+| R1 implementation | `ce11d9a83728f61d9b8653d41d7d6348f553ecc4` |
+| Ahead / behind vs live main before this persist | **4 ahead / 0 behind**. This persist adds the R1 status/evidence. |
 | Rebase / sibling merge | **not done** |
-| Review threads | none |
+| Review threads | none; review is a top-level PR review, not a line thread |
 
 Exact-head CI / Auth / Vercel Preview must be re-read on the freeze SHA after this persist and reported in a PR comment. Vercel Ready on a pre-freeze or implementation-only SHA is not the freeze gate.
 
@@ -74,7 +75,7 @@ See `docs/evidence/hbx-hotels-adapter-foundation-1/commands-results.txt`.
 
 | Check | Result |
 | --- | --- |
-| Focused adapter tests | 20 pass / 0 fail |
+| Focused adapter tests | 21 pass / 0 fail (includes TL `rate-A` / ` rate-A ` regression) |
 | Unchanged hotel schema/suche/anfrage + Skyscanner fixture tests | 25 pass / 0 fail |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors; 135 pre-existing warnings, none in owned files |
