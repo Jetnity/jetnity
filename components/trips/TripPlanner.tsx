@@ -26,6 +26,8 @@ import { useRouter } from 'next/navigation'
 import {
   ArrowRight,
   CalendarDays,
+  ChevronDown,
+  ChevronUp,
   Cloud,
   MapPin,
   ShieldCheck,
@@ -53,6 +55,7 @@ import { feldInSichtNehmen } from '@/lib/formular/sicht'
 import { reiseorteBestaetigen } from '@/lib/places/aktionen'
 import { type OrtAuswahl } from '@/lib/places/auswahl'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
+import { tripPlannerRouteVorbelegen } from '@/lib/places/route-einstieg'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import {
   CREATE_PERSISTENZ_INTERESSEN,
@@ -84,6 +87,7 @@ type TripPlannerProps = {
   initialDestination?: string
   initialDestinationId?: string
   initialIdea?: string
+  initialWeitereZiele?: { id: string; name: string }[]
 }
 
 /**
@@ -121,15 +125,19 @@ export default function TripPlanner({
   initialDestination = '',
   initialDestinationId = '',
   initialIdea = '',
+  initialWeitereZiele = [],
 }: TripPlannerProps) {
   const router = useRouter()
-  const [destination, setDestination] = React.useState(initialDestination)
-  const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(
-    initialDestinationId && initialDestination
-      ? { id: initialDestinationId, name: initialDestination }
-      : null,
+  const handoff = tripPlannerRouteVorbelegen({
+    destinationId: initialDestinationId,
+    destination: initialDestination,
+    weitereZiele: initialWeitereZiele,
+  })
+  const [destination, setDestination] = React.useState(handoff.primaer?.name ?? initialDestination)
+  const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(handoff.primaer)
+  const [zusaetzlicheZiele, setZusaetzlicheZiele] = React.useState<ZusaetzlichesZiel[]>(
+    handoff.weitere.map((ziel) => ({ key: ziel.key, ort: ziel.ort, text: ziel.text })),
   )
-  const [zusaetzlicheZiele, setZusaetzlicheZiele] = React.useState<ZusaetzlichesZiel[]>([])
   const [origin, setOrigin] = React.useState('')
   const [originOrt, setOriginOrt] = React.useState<OrtAuswahl | null>(null)
   const [startDate, setStartDate] = React.useState('')
@@ -144,7 +152,7 @@ export default function TripPlanner({
   const felder = React.useRef<Partial<Record<ReiseFormularFeld, HTMLInputElement | null>>>({})
   const zusaetzlicheFelder = React.useRef<Record<string, HTMLInputElement | null>>({})
   const anvisiert = React.useRef<string | null>(null)
-  const naechsterExtraKey = React.useRef(1)
+  const naechsterExtraKey = React.useRef(handoff.weitere.length + 1)
 
   // Bleibt über einen erneuten Anlauf hinweg gleich. Das ist der ganze Zweck:
   // dieselbe Kennung, dieselbe Reise.
@@ -177,6 +185,43 @@ export default function TripPlanner({
     setZusaetzlicheZiele((bisher) => bisher.filter((ziel) => ziel.key !== key))
     setFeldfehler((bisher) => feldfehlerLoeschen(bisher, zusaetzlichesZielFeld(key)))
     delete zusaetzlicheFelder.current[zusaetzlichesZielFeld(key)]
+  }
+
+  const extraNachOben = (index: number) => {
+    if (index === 0) {
+      const extra = zusaetzlicheZiele[0]
+      if (!extra) return
+      setZusaetzlicheZiele((bisher) => [
+        { key: extra.key, ort: destinationOrt, text: destination },
+        ...bisher.slice(1),
+      ])
+      setDestinationOrt(extra.ort)
+      setDestination(extra.ort?.name ?? extra.text)
+      if (extra.ort) feldKorrigieren('destination')
+      return
+    }
+    setZusaetzlicheZiele((bisher) => {
+      const naechste = [...bisher]
+      const aktuell = naechste[index]
+      naechste[index] = naechste[index - 1]
+      naechste[index - 1] = aktuell
+      return naechste
+    })
+  }
+
+  const extraNachUnten = (index: number) => {
+    if (index < 0 || index >= zusaetzlicheZiele.length - 1) return
+    setZusaetzlicheZiele((bisher) => {
+      const naechste = [...bisher]
+      const aktuell = naechste[index]
+      naechste[index] = naechste[index + 1]
+      naechste[index + 1] = aktuell
+      return naechste
+    })
+  }
+
+  const primaerNachUnten = () => {
+    extraNachOben(0)
   }
 
   const absenden = async (ereignis: React.FormEvent<HTMLFormElement>) => {
@@ -374,33 +419,46 @@ export default function TripPlanner({
         </div>
 
         <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
-          <Feld
-            id="feld-ziel"
-            label="Reiseziel"
-            className={feldReflowClass}
-            fehler={feldfehler.destination}
-            icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
-          >
-            <OrtSuche
-              rolle="ziel"
-              variante="field"
-              value={destinationOrt}
-              initialText={destination}
-              inputId="feld-ziel"
-              ungueltig={Boolean(feldfehler.destination)}
-              describedBy={feldfehler.destination ? feldFehlerId('feld-ziel') : undefined}
-              inputRef={(el) => {
-                felder.current.destination = el
-              }}
-              onChange={(wert, roh) => {
-                setDestinationOrt(wert)
-                setDestination(wert?.name ?? roh)
-                if (wert) feldKorrigieren('destination')
-              }}
-              placeholder="z. B. Japan"
-              inputClassName={cn(fieldClass, 'pr-10', feldfehler.destination && FELD_FEHLER_RAHMEN)}
-            />
-          </Feld>
+          <div className="grid gap-3">
+            <Feld
+              id="feld-ziel"
+              label="Reiseziel"
+              className={feldReflowClass}
+              fehler={feldfehler.destination}
+              icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
+            >
+              <OrtSuche
+                rolle="ziel"
+                variante="field"
+                value={destinationOrt}
+                initialText={destination}
+                inputId="feld-ziel"
+                ungueltig={Boolean(feldfehler.destination)}
+                describedBy={feldfehler.destination ? feldFehlerId('feld-ziel') : undefined}
+                inputRef={(el) => {
+                  felder.current.destination = el
+                }}
+                onChange={(wert, roh) => {
+                  setDestinationOrt(wert)
+                  setDestination(wert?.name ?? roh)
+                  if (wert) feldKorrigieren('destination')
+                }}
+                placeholder="z. B. Japan"
+                inputClassName={cn(fieldClass, 'pr-10', feldfehler.destination && FELD_FEHLER_RAHMEN)}
+              />
+            </Feld>
+            {zusaetzlicheZiele.length > 0 ? (
+              <button
+                type="button"
+                onClick={primaerNachUnten}
+                aria-label={`${destinationOrt?.name || destination || 'Reiseziel'}, Ziel 1, nach unten`}
+                className="inline-flex min-h-11 w-fit items-center justify-center gap-1 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              >
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                Nach unten
+              </button>
+            ) : null}
+          </div>
 
           <Feld
             id="feld-abreiseort"
@@ -469,15 +527,36 @@ export default function TripPlanner({
                       inputClassName={cn(fieldClass, 'pr-10', fehler && FELD_FEHLER_RAHMEN)}
                     />
                   </Feld>
-                  <button
-                    type="button"
-                    onClick={() => extraEntfernen(ziel.key)}
-                    aria-label={`Weiteres Ziel ${nummer} entfernen`}
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                    Entfernen
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => extraNachOben(index)}
+                      aria-label={`${ziel.ort?.name || ziel.text || `Weiteres Ziel ${nummer}`}, Ziel ${nummer + 1}, nach oben`}
+                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                    >
+                      <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                      Nach oben
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => extraNachUnten(index)}
+                      disabled={index >= zusaetzlicheZiele.length - 1}
+                      aria-label={`${ziel.ort?.name || ziel.text || `Weiteres Ziel ${nummer}`}, Ziel ${nummer + 1}, nach unten`}
+                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-40"
+                    >
+                      <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                      Nach unten
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => extraEntfernen(ziel.key)}
+                      aria-label={`Weiteres Ziel ${nummer} entfernen`}
+                      className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                      Entfernen
+                    </button>
+                  </div>
                 </div>
               )
             })}

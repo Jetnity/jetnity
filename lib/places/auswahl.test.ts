@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { auswahlFehlt, reiseorteFehler, reiseortePflicht, zielHref } from '@/lib/places/auswahl'
+import { auswahlFehlt, reiseorteFehler, reiseortePflicht, zielHref, zielHrefAusListe } from '@/lib/places/auswahl'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
 import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
 import { istOrtId } from '@/lib/places/domain'
@@ -61,6 +61,27 @@ describe('Gemeinsame Ortsauswahl', () => {
     assert.equal(zielHref(null), null)
     assert.equal(zielHref({ id: 'Test', name: 'Test' }), null)
     assert.equal(zielHref({ id: 'geonames:1650535', name: 'Bali' }), '/planen?zielId=geonames%3A1650535')
+  })
+
+  test('eine Liste mit einem Ziel bleibt der bestehende zielId-Handoff', () => {
+    assert.equal(
+      zielHrefAusListe([{ id: 'geonames:1650535', name: 'Bali' }]),
+      '/planen?zielId=geonames%3A1650535',
+    )
+    assert.equal(zielHrefAusListe([]), null)
+    assert.equal(zielHrefAusListe([{ id: 'Test', name: 'Test' }]), null)
+  })
+
+  test('mehrere Ziele nutzen wiederholtes zielIds in Eingabereihenfolge', () => {
+    const href = zielHrefAusListe([
+      { id: 'geonames:2988507', name: 'Paris' },
+      { id: 'geonames:3169070', name: 'Rom' },
+      { id: 'geonames:2988507', name: 'Paris' },
+    ])
+    assert.equal(
+      href,
+      '/planen?zielIds=geonames%3A2988507&zielIds=geonames%3A3169070&zielIds=geonames%3A2988507',
+    )
   })
 
   test('Inspirationskarten tragen echte GeoNames-IDs, keine erfundenen Orte', () => {

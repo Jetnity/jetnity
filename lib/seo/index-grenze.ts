@@ -5,7 +5,7 @@
 // Private Reise-Surfaces und sensitive Hilfsflächen dürfen nicht indexierbar
 // sein, unabhängig davon, ob robots.txt gerade deny-all oder Allow-Modus ist.
 // `/planen` bleibt als Basisseite bewusst öffentlich; parametrisierte Varianten
-// mit vorhandenem idee/ziel/zielId-Key sind es nicht, unabhängig vom Wert.
+// mit vorhandenem idee/ziel/zielId/zielIds-Key sind es nicht, unabhängig vom Wert.
 //
 // Canonicals und die gemeinsame Origin liegen in oeffentlicher-origin.ts.
 // Kein hreflang, kein JSON-LD-Ausbau, kein Tracking.
@@ -13,7 +13,7 @@
 export const NICHT_INDEXIEREN = { index: false, follow: false } as const
 
 /** Search-Params, die /planen zu einer intentbezogenen Variante machen. */
-export const PLANEN_INDEX_PARAMS = ['idee', 'ziel', 'zielId'] as const
+export const PLANEN_INDEX_PARAMS = ['idee', 'ziel', 'zielId', 'zielIds'] as const
 
 /** Öffentliche Sitemap-Pfade nach D0-1. Keine Reiseübersicht, keine Trip-URLs. */
 export const SITEMAP_OEFFENTLICHE_PFADE = ['/', '/planen'] as const
