@@ -8,30 +8,20 @@ Required and actual model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-
 
 ## 1. Did we stay inside the owned surface?
 
-Yes. Review-fix writes are OrtSuche (narrow sync only), StartzielForm, TripPlanner, route-einstieg, owned tests/scripts, and owned docs/evidence. #544 remaining-build paths were not edited. No schema, Auth, secrets, Production, provider, lockfile, or global-doc writes.
+Yes. R4 is a narrow OrtSuche synchronization fix plus owned tests/harness/docs. AccountBesuchFormular was not edited. #544 paths were not edited. No schema/Auth/Production/provider writes. No rebase onto the new main.
 
-## 2. Did we fake natural language?
+## 2. Was the previous origin claim corrected?
 
-No. There is no comma/`und` split and no model/parser path. UI copy does not promise sentence understanding. #110 stays open.
+Yes. STATUS on `0a66982c` claimed origin without `initialText` did not wipe typing. That was false after a confirmed selection. The claim is withdrawn. The fix compares the last parent seed, not the last displayed confirmed name, and treats an omitted seed as “no reset”.
 
-## 3. Did R1/R2 actually get fixed?
+## 3. Did R1/R2 stay green?
 
-R1: `startzielErsetzenStarten` blocks when an unrelated pending draft exists; `startzielVorkommenEntfernen` keeps `sucheText`; re-clicking the same replace target does not reset typed text. Hydrated Chromium reproduced the TL sequences and kept `Cusco`.
-
-R2: `tripPlannerPrimaerMitWeiteremTauschen` swaps occurrence keys and pending text. OrtSuche is keyed by occurrence and also syncs a null value + changed `initialText`. After Nach-oben, the primary input shows Cusco and the extra input shows Paris; accessible names match.
+Yes. The same hydrated suite still runs those scenarios. Parent-driven seed/reset coverage was added so replace/swap seeds remain possible.
 
 ## 4. Are the tests real?
 
-Unit tests now cover the controller helpers. Hydrated tests mount the actual components (not source-string only) with synthetic search and stubbed Next/server actions. They are not Production E2E, not authenticated Preview, and not a physical device.
+Helper unit tests plus hydrated actual OrtSuche / TripPlanner origin / a minimal consumer without `initialText`. Not Preview E2E, not a physical device, not Account page work.
 
-## 5. Guest/Account and hero
-
-Guest gate and Account independence were not rewritten. `app/(public)/page.tsx` was not edited. Hero remains the current hero.
-
-## 6. Browser honesty
-
-390/768/1024/1440 and 200% zoom were exercised on the hydrated harness. Successful chip route and duplicate ordered create were captured. Emulation is not a physical-device PASS.
-
-## 7. Verdict
+## 5. Verdict
 
 Ready for independent Technical-Lead exact-head re-review of the freeze SHA. **Not Ready. Not merged. No follow-up slice.**

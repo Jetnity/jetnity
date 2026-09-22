@@ -7,28 +7,22 @@ Model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`)
 
 ## What these images are
 
-Two sets exist:
+Hydrated controller evidence from `scripts/homepage-route-entry-1-hydrated.mjs`. Actual `StartzielForm`, `TripPlanner` and a minimal `OrtSuche` consumer were bundled; Next router/link and server actions were stubbed; `/api/search/places` was synthetic. **Not** physical-device acceptance and **not** authenticated Production/Preview E2E.
 
-1. Earlier Chromium DevTools-emulated viewports against local `http://localhost:3000` (`homepage_*.webp`, `planen_*.webp`). Those showed initial/pending/error states only. Local `/api/search/places` returned `[]`, so live chip-add was not available there.
-2. Hydrated controller evidence from `scripts/homepage-route-entry-1-hydrated.mjs`. Actual `StartzielForm` and `TripPlanner` were bundled; Next router/link and server actions were stubbed; `/api/search/places` was synthetic. These are **not** physical-device acceptance and **not** authenticated Production/Preview E2E.
+The earlier `homepage_*.webp` / `planen_*.webp` set remains initial/pending/error-only against empty local GeoNames.
 
 | File | Observation |
 | --- | --- |
-| `r1_replace_keeps_pending_cusco.png` | Paris confirmed; pending Cusco kept after replace click; pending alert visible |
-| `r1_remove_last_chip_keeps_pending.png` | Last chip removed; Cusco remains in the input |
-| `r1_replace_target_and_delete_keeps_draft.png` | Replace-target switch / delete-while-replacing keeps the draft |
-| `r2_swap_pending_cusco_becomes_primary.png` | After Nach-oben: primary input Cusco, extra Paris |
-| `successful_chips_paris_rom_paris.png` | Ordered duplicate chips before handoff |
-| `successful_duplicate_ordered_create.png` | Planner create with Paris/Rom/Paris + Zürich + dates |
-| `keyboard_reorder_390.png` | Keyboard reorder at 390 |
-| `layout_768_selected_chips.png` | 768 selected chips |
-| `layout_1024_selected_chips.png` | 1024 selected chips |
-| `layout_1440_selected_chips.png` | 1440 selected chips |
-| `reflow_390_200pct.png` | 390 with `zoom: 2` |
-| `hydrated-report.json` | 6 PASS machine report |
+| `r4_origin_confirmed_edit_keeps_text.png` | After confirmed Paris in origin, edit to Parix remains visible (R4) |
+| `r4_origin_reselect_after_edit.png` | Later canonical Zürich re-selection still applies |
+| `r4_minimal_ortsuche_without_initialtext.png` | Shared OrtSuche without `initialText` keeps post-selection edit |
+| `r4_parent_seed_and_reset.png` | Explicit parent seed/empty reset still works |
+| `hydrated-report.json` | 9 PASS machine report |
 
-Harness screenshots do not load the Next font pipeline. Use them for controller state, not brand-font QA.
+Previous STATUS on `0a66982c` incorrectly claimed origin without `initialText` did not wipe typing after confirmation. That claim is withdrawn; R4 was that wipe.
+
+Harness screenshots do not load the Next font pipeline.
 
 ## Tests
 
-`scripts/homepage-route-entry-1-verify.mjs`: 146 node:test pass / 0 fail, then hydrated 6 PASS on the working tree used for these captures.
+`scripts/homepage-route-entry-1-verify.mjs`: 148 node:test pass / 0 fail, then hydrated 9 PASS on the working tree used for these captures.
