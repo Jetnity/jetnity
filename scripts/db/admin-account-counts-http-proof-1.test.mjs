@@ -43,7 +43,7 @@ function spawnRunner(envExtra = {}, args = []) {
 
 describe('admin-account-counts-http-proof-1 harness safety', () => {
   test('rejects inherited PG and PostgREST/Supabase connection defaults before any process starts', () => {
-    for (const schluessel of ['PGHOST', 'PGRST_DB_URI', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']) {
+    for (const schluessel of ['PGHOST', 'PGRST_DB_URI', 'SUPABASE_URL', 'SUPABASE_ACCESS_TOKEN', 'SUPABASE_PROJECT_REF']) {
       assert.throws(
         () => assertIsolatedHttpEnvironment({ [schluessel]: 'example' }, ['node', runner]),
         /Verbotene/,

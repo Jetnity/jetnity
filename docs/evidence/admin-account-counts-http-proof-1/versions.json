@@ -1,0 +1,22 @@
+{
+  "node": "v22.14.0",
+  "postgresql": {
+    "preferred": "17",
+    "used": "17.11",
+    "package": "17.11-1.pgdg24.04+2",
+    "provenance": "official PGDG apt noble-pgdg, one bounded install",
+    "limitation": "Not Production PostgreSQL 17.6 equivalence. System cluster 17/main was created by apt, remained down, and was never queried."
+  },
+  "postgrest": {
+    "used": "16.3",
+    "asset": "postgrest-v16.3-linux-static-x86-64.tar.xz",
+    "url": "https://github.com/PostgREST/postgrest/releases/download/v16.3/postgrest-v16.3-linux-static-x86-64.tar.xz",
+    "archiveSha256": "4eb414eb948c8800863cc8c9896a17b611b2dccf9ff581f4d57f42ec9ccee40d",
+    "limitation": "Local PostgREST 16.3 is not assumed to match hosted Supabase PostgREST."
+  },
+  "docsConsulted": [
+    "https://docs.postgrest.org/en/v16/references/api/functions.html",
+    "https://docs.postgrest.org/en/v16/references/auth.html"
+  ],
+  "docsNote": "Official v16 HTML was Cloudflare-interstitial in this session; the installed binary --example config and actual HTTP status/code classes were used. No hosted upgrade."
+}

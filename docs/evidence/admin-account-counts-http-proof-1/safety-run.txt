@@ -1,0 +1,31 @@
+TAP version 13
+# Subtest: admin-account-counts-http-proof-1 harness safety
+    # Subtest: rejects inherited PG and PostgREST/Supabase connection defaults before any process starts
+    ok 1 - rejects inherited PG and PostgREST/Supabase connection defaults before any process starts
+    # Subtest: rejects public bind arguments and remote allow-flag
+    ok 2 - rejects public bind arguments and remote allow-flag
+    # Subtest: spawned runner fails closed on PGHOST and does not print the override
+    ok 3 - spawned runner fails closed on PGHOST and does not print the override
+    # Subtest: cleanProofEnv strips PSQLRC, PG* and PGRST_* keys
+    ok 4 - cleanProofEnv strips PSQLRC, PG* and PGRST_* keys
+    # Subtest: PostgREST config builder refuses non-loopback hosts and wildcard binds
+    ok 5 - PostgREST config builder refuses non-loopback hosts and wildcard binds
+    # Subtest: source hash helper stays fail-closed on mismatch
+    ok 6 - source hash helper stays fail-closed on mismatch
+    # Subtest: local JWT helper signs HS256 without logging the token in this assertion
+    ok 7 - local JWT helper signs HS256 without logging the token in this assertion
+    # Subtest: runner, fixture and accepted SQL stay local-only in source
+    ok 8 - runner, fixture and accepted SQL stay local-only in source
+    1..8
+ok 1 - admin-account-counts-http-proof-1 harness safety
+  ---
+  type: 'suite'
+  ...
+1..1
+# tests 8
+# suites 1
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0

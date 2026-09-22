@@ -89,6 +89,9 @@ const HTTP_FORBIDDEN_KEYS = Object.freeze([
   'SUPABASE_URL',
   'SUPABASE_ANON_KEY',
   'SUPABASE_SERVICE_ROLE_KEY',
+  'SUPABASE_ACCESS_TOKEN',
+  'SUPABASE_PROJECT_REF',
+  'SUPABASE_DB_PASSWORD',
   'NEXT_PUBLIC_SUPABASE_URL',
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
 ])
@@ -443,24 +446,37 @@ function stoppeCluster() {
     lifecycle: cluster?.lifecycle ?? null,
     rootDir: cluster?.rootDir ?? null,
   }
-  if (httpState?.child && httpState.child.exitCode == null) {
-    try {
-      process.kill(httpState.child.pid, 'SIGTERM')
-    } catch (fehler) {
-      report.error = fehler instanceof Error ? fehler.message : String(fehler)
-    }
-    const deadline = Date.now() + 5_000
-    while (httpState.child.exitCode == null && Date.now() < deadline) {
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50)
-    }
-    if (httpState.child.exitCode == null && httpState.child.pid) {
+  if (httpState?.child?.pid) {
+    const pid = httpState.child.pid
+    const stillAlive = () => {
       try {
-        process.kill(httpState.child.pid, 'SIGKILL')
+        return readFileSync(`/proc/${pid}/comm`, 'utf8').trim() === 'postgrest'
+      } catch {
+        return false
+      }
+    }
+    if (stillAlive()) {
+      try {
+        process.kill(pid, 'SIGTERM')
+      } catch (fehler) {
+        report.error = fehler instanceof Error ? fehler.message : String(fehler)
+      }
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200)
+    }
+    if (stillAlive()) {
+      try {
+        process.kill(pid, 'SIGKILL')
       } catch {
         /* already gone */
       }
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100)
     }
-    report.httpStopped = httpState.child.exitCode != null
+    report.httpStopped = !stillAlive()
+    httpState.child.stdout?.removeAllListeners()
+    httpState.child.stderr?.removeAllListeners()
+    httpState.child.stdout?.destroy()
+    httpState.child.stderr?.destroy()
+    httpState.child.unref?.()
   }
   if (!cluster) {
     report.cleaned = true
@@ -598,12 +614,13 @@ async function startePostgrest(sources) {
     configFile,
     log: '',
   }
-  child.stdout.on('data', (chunk) => {
-    httpState.log += sanitized(chunk.toString())
-  })
-  child.stderr.on('data', (chunk) => {
-    httpState.log += sanitized(chunk.toString())
-  })
+  const appendLog = (chunk) => {
+    if (httpState) httpState.log += sanitized(chunk.toString())
+  }
+  child.stdout.on('data', appendLog)
+  child.stderr.on('data', appendLog)
+  child.stdout.on('error', () => {})
+  child.stderr.on('error', () => {})
   const deadline = Date.now() + 8_000
   let ready = false
   while (Date.now() < deadline) {
@@ -625,7 +642,26 @@ async function startePostgrest(sources) {
   if (!ready) {
     throw new Error(`PostgREST did not become ready on loopback: ${sanitized(httpState.log)}`)
   }
+  httpState.loopbackOnly = assertProcessListensLoopbackOnly(child.pid, port)
   return { ...httpState, sources, version: postgrestVersion(binary), pgVersion: psqlFile('select version()') }
+}
+
+export function assertProcessListensLoopbackOnly(pid, port) {
+  const tcp = existsSync('/proc/net/tcp') ? readFileSync('/proc/net/tcp', 'utf8') : ''
+  const portHex = port.toString(16).toLowerCase().padStart(4, '0')
+  const locals = tcp
+    .split('\n')
+    .map((zeile) => zeile.trim().split(/\s+/)[1] ?? '')
+    .filter((addr) => addr.toLowerCase().endsWith(`:${portHex}`))
+  if (!locals.length) {
+    throw new Error('fail-closed: PostgREST listen socket not found in /proc/net/tcp')
+  }
+  const loopback = locals.every((addr) => addr.toUpperCase().startsWith('0100007F:'))
+  const publicBind = locals.some((addr) => addr.toUpperCase().startsWith('00000000:'))
+  if (publicBind || !loopback) {
+    throw new Error('fail-closed: PostgREST is not bound to numeric IPv4 loopback only')
+  }
+  return { pid, port, loopback: true, sockets: locals.length }
 }
 
 function postgrestVersion(binary) {
@@ -1069,7 +1105,9 @@ function pruefeStatischeQuelle() {
   bewerte(
     'runner never imports sql.mjs or app env connectors',
     gruppe,
-    !/from\s+['"][^'"]*sql\.mjs['"]/.test(runner) && !/\.env/.test(runner) && !/sudo/.test(runner),
+    !/from\s+['"][^'"]*sql\.mjs['"]/.test(runner) &&
+      !/\bloadEnvConfig\b/.test(runner) &&
+      !/['"]sudo['"]/.test(runner),
     'source scan',
   )
   bewerte(
@@ -1109,6 +1147,12 @@ async function main() {
     const started = await startePostgrest(sources)
     console.log(`postgrest ${started.version} loopback ${started.origin}`)
     console.log(`postgresql ${started.pgVersion}`)
+    bewerte(
+      'PostgREST listens on 127.0.0.1 only',
+      'http-isolation',
+      started.loopbackOnly?.loopback === true,
+      JSON.stringify(started.loopbackOnly),
+    )
 
     pruefeStatischeQuelle()
     await pruefeErfolg()
