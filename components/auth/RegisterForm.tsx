@@ -348,12 +348,25 @@ export default function RegisterForm({
               htmlFor="terms"
               multiline
               invalid={Boolean(feldfehler.terms)}
-              className="text-sm font-normal leading-6 text-muted-foreground"
+              className="min-w-0 text-sm font-normal leading-6 text-muted-foreground"
             >
               Ich akzeptiere die{' '}
-              <Link href="/terms" className="text-primary hover:underline">Nutzungsbedingungen</Link>{' '}
+              <Link
+                href="/terms"
+                className="text-primary hover:underline"
+                onClick={(event) => event.stopPropagation()}
+              >
+                Nutzungsbedingungen
+              </Link>{' '}
               und die{' '}
-              <Link href="/privacy" className="text-primary hover:underline">Datenschutzerklärung</Link>.
+              <Link
+                href="/privacy"
+                className="text-primary hover:underline"
+                onClick={(event) => event.stopPropagation()}
+              >
+                Datenschutzerklärung
+              </Link>
+              .
             </Label>
           </div>
           {feldfehler.terms ? (
