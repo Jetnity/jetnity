@@ -1,7 +1,7 @@
 # V1 Homepage Tablet Hero Fit 1 — Handoff
 
-Stand: 21. September 2026  
-Status: **HT-E1/HT-E2 EVIDENCE CORRECTION FROZEN / NOT TL FINAL / NOT READY / NOT MERGED**
+Stand: 22. September 2026  
+Status: **AUTHORIZED MAIN INTEGRATED / NOT TL FINAL / NOT READY / NOT MERGED**
 
 ## Owner
 
@@ -18,7 +18,9 @@ No Auto / no substitute. Immediate review fixes reuse this exact session.
 4. After-proof at 360/390/768/1023/1024/1279/1280/1440/1920 plus 1024/1440 @32px. 1440/1920 keep the branded card (~401px, tags complete at 100% text).
 5. Keyboard/CTA interaction unchanged. Empty submit shows the existing list-validation message. Mutation attempts/completed 0.
 6. 1024/200% document overflow attributed to pre-existing navbar / later sections; matched on restored baseline `lg` homepage.
-7. **HT-E1/HT-E2** (same session): full-hero + scrolled form/CTA images; reproducible matched baseline blob `1bd46c82`; raw offender selectors/bounds/`painted`; `assert.mjs` PASS. First-round screens left immutable. No runtime edit.
+7. **HT-E1/HT-E2** accepted in TL review `5272704979` on exact `cdb7cfe1`.
+8. **Authorized exact-main merge** of `d89ed0b0` once (`b7634c1e`, not rebase). Guest/account files from main only. Navbar not edited.
+9. Representative integrated 1024/1440 normal+200% proof in `integrated-d89ed0b0/`. Old evidence immutable. `assert.mjs` PASS.
 
 ## Changed-path manifest
 
@@ -29,15 +31,15 @@ No Auto / no substitute. Immediate review fixes reuse this exact session.
 | `docs/V1_HOMEPAGE_TABLET_HERO_FIT_1_{STATUS,HANDOFF,SELF_REVIEW,DECISION}_2026-09-21.md` | own continuity |
 | `docs/evidence/v1-homepage-tablet-hero-fit-1/**` | capture harness + before/after images + geometry |
 
-Read-only: `StartzielForm`, `GastCreateLink`, navbar, tokens, other homepage sections, #531/#532 files, package/workflows, DB/Auth/provider.
+Read-only: `StartzielForm`, `GastCreateLink`, `PublicNavbar`, tokens, other homepage sections, guest/account files (now from main), package/workflows, DB/Auth/provider.
 
 ## What a successor must know
 
-- Product/runtime source remains `da8db642` / page blob `bc272ae9`. This correction only adds `ht-e1-e2/` evidence and docs.
-- Live main was `65db24b6` after **#531 merged**. Re-read ahead/behind at STOP. Do **not** rebase from this writer. #532 still outstanding.
-- #532 remains an active Draft and is behind. Do not start or reuse its session.
-- Integration remains Technical-Lead-owned. Latest documented order was 531 → 532 → 534 unless TL updates it after the #531 merge.
-- Stay Draft. No Ready. No merge. No follow-up slice from Cursor.
+- Session remains `bc-c2e8ff5a-c507-40a7-b0ac-0ed324dd45da`. No new session was opened for this integration.
+- Hero runtime remains page blob `bc272ae9` / source `da8db642`. Integration added main's #531/#532 files unchanged.
+- Authorized main `d89ed0b0` still matched `origin/main` at this write. Do not absorb a later main without a new TL authorization.
+- NavbarTextReflow1 owns `components/layout/PublicNavbar.tsx` exclusively and comes **after** this PR.
+- Stay Draft. No Ready. No PR merge. No follow-up slice from Cursor.
 
 ## Honest limits
 
@@ -48,4 +50,4 @@ Read-only: `StartzielForm`, `GastCreateLink`, navbar, tokens, other homepage sec
 
 ## Next owner
 
-Independent Technical Lead. Verify exact freeze head, live main CI/Auth/direct Production separately, and decide whether this presentation slice waits for #532 or is reviewed in parallel. Cursor stops here.
+Independent Technical Lead. Review the integrated delta plus fresh exact-head CI/Auth/direct Preview/threads. Navbar work is a later independent writer. Cursor stops here.

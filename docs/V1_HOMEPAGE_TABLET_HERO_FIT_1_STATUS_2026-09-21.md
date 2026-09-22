@@ -1,7 +1,7 @@
 # V1 Homepage Tablet Hero Fit 1 — Status
 
-Stand: 21. September 2026  
-Status: **HT-E1/HT-E2 EVIDENCE CORRECTION FROZEN / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
+Stand: 22. September 2026  
+Status: **AUTHORIZED MAIN INTEGRATED / DRAFT / NOT READY / NOT MERGED / NOT TL FINAL**
 
 ## Arbeitsblock / Ziel
 
@@ -27,10 +27,12 @@ Generation 1 of **Jetnity V1 homepage tablet hero fit 1**. New isolated session.
 | Draft PR | #534 |
 | Seed | `195f6bc566854f07044064a3690f7d1df68602da` |
 | Assigned baseline main | `e818c13ed009932bc06be1382a89467866699995` |
-| Product/runtime source | `da8db64223af73ab47c29b2915006a34b4945b8f` |
-| Live `origin/main` at freeze write | `65db24b6dda2ab0830b88fa749838ee298e243a0` (#531 merged) |
-| Merge-base with live main | `e818c13ed009932bc06be1382a89467866699995` |
-| Ahead / behind live main | **3 ahead / 9 behind** — reported, **not** autonomously rebased |
+| Product/runtime source | `da8db64223af73ab47c29b2915006a34b4945b8f` (hero two-class fix; page blob `bc272ae9`) |
+| Authorized exact main | `d89ed0b01070e47f93918fa64126ff0aeb18a17b` (#532 TL-merged and postmerge verified) |
+| Integration merge | `b7634c1e5daa8ea587f14d8295a1eaf43f1bd358` — **merge once, not rebase** |
+| Live `origin/main` at integration write | `d89ed0b01070e47f93918fa64126ff0aeb18a17b` — MATCH, no later-main drift |
+| Merge-base with live main | `d89ed0b01070e47f93918fa64126ff0aeb18a17b` |
+| Ahead / behind live main after merge | **6 ahead / 0 behind** before the evidence commit |
 | Operating mode | `NORMAL` |
 
 Exact freeze SHA after this docs commit belongs in the PR STOP receipt.
@@ -75,17 +77,17 @@ Interaction at after 1024: focus `#travel-idea` → Tab → `Reise planen` → c
 | --- | --- |
 | `npm run typecheck` | PASS |
 | eslint owned `page.tsx` + capture script | PASS |
-| `npm test` | PASS **3661 / 3661** |
+| `npm test` | PASS **3716 / 3716** (includes #532 tests from authorized main) |
 | `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` / `operating-mode` | PASS |
 | `npm run build` | PASS (warning only: no `.env/.local` in this environment) |
 
 Exact-head CI / Auth / direct Preview belong in the PR STOP receipt after the freeze push.
 
-## Live sibling drift (do not autonomously integrate)
+## Live sibling drift
 
-- **#531 MERGED** onto live main `65db24b6`. This writer did not merge it.
-- **#532** remains open Draft and is behind. This writer did not touch it.
-- Documented TL order was 531 → 532 → 534. Latest explicit TL boundary still forbids this writer from rebasing/merging main or siblings.
+- **#531** and **#532** are on authorized exact main `d89ed0b0`. Guest/account files came solely from that merge. This writer did not edit them.
+- `components/layout/PublicNavbar.tsx` is exclusive to the later NavbarTextReflow1 writer. This slice did not edit it. Integration order remains **#534 first, navbar afterward**.
+- Authorized main still matches `origin/main` at this write. A later main/sibling would be reported, not absorbed.
 
 ## Risks / non-claims
 
@@ -105,6 +107,18 @@ Delivered (evidence only; `page.tsx` blob still `bc272ae9`):
 2. Full-hero + scrolled form/CTA images at baseline 1024/200%, after 1024/200%, after 1440/200%. Form bottoms 905.5 / 1059.16 match the TL review numbers. First-paint viewport images still omit the form; that is why the scroll/full-hero images exist.
 3. `ht-e1-e2/overflow-attribution.json`: raw selectors/bounds, `painted`, `firstHeroDescendant`. Document overflowX **148 = 148**. Painted first-hero overflow is **non-empty on baseline** (squeezed card) and **empty after**. Hidden-card ghost boxes are `painted=false`.
 4. `ht-e1-e2/assert.mjs` **PASS** (fails on wrong measurements). No class-string tests.
-5. No main/#532 integrate. Fresh gates + STOP after this freeze.
+5. Closed by TL review `5272704979` on exact `cdb7cfe1`. Not a new audit.
 
 Destination placeholder can clip at 200% inside unchanged `StartzielForm`. CTA remains complete. Not a navbar/form rewrite.
+
+## Authorized exact-main integration (same session)
+
+TL authorized one merge of exact main `d89ed0b0` into this existing PR. Session remains `bc-c2e8ff5a-c507-40a7-b0ac-0ed324dd45da`. No new session.
+
+Delivered:
+
+1. `origin/main` verified equal to `d89ed0b0` before merge. No drift.
+2. `git merge --no-ff d89ed0b0` → `b7634c1e`. Not a rebase. Hero page blob still `bc272ae9`.
+3. Representative refresh only under `docs/evidence/v1-homepage-tablet-hero-fit-1/integrated-d89ed0b0/`. Old first-round and HT-E1/HT-E2 evidence left immutable.
+4. Integrated compiled-CSS: 1024 single column / card absent / overflowX 0; 1440 two columns / card visible / overflowX 0; 1024/200% form bottom 905.5, overflowX 148 pre-existing; 1440/200% form bottom 1059.16, card retained. Focus / empty-submit / completed unexpected mutations 0.
+5. `integrated-d89ed0b0/assert.mjs` **PASS**. No class-string tests. No navbar edit.

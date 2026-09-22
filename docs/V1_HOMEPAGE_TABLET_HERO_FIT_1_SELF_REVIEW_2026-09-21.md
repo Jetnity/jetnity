@@ -1,7 +1,7 @@
 # V1 Homepage Tablet Hero Fit 1 — Adversarial self-review
 
-Stand: 21. September 2026  
-Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
+Stand: 22. September 2026  
+Status: **AGENT SELF-REVIEW AFTER AUTHORIZED MAIN MERGE — NOT A TECHNICAL-LEAD PASS**
 
 ## 1. Did we implement only accepted VUX-8?
 
@@ -35,6 +35,10 @@ Focus `#travel-idea`, Tab to `Reise planen`, empty submit shows the existing val
 
 Yes. `ht-e1-e2/assert.mjs` fails on wrong column/card/overflow/interaction measurements. It passed after the painted-flag honesty fix. It does not read class strings from `page.tsx`.
 
-## 9. Verdict
+## 9. Did the authorized main merge stay inside the grant?
 
-Author self-review: HT-E1/HT-E2 evidence gaps are addressed without touching runtime. **Not TL PASS.**
+Yes. One `--no-ff` merge of exact `d89ed0b0`. Not a rebase. `origin/main` still matched that SHA. Guest/account files were taken from main and not edited. `PublicNavbar.tsx` was not touched. Hero page blob remains `bc272ae9`. Old evidence remains. Only representative 1024/1440 proof was added.
+
+## 10. Verdict
+
+Author self-review: HT-E1/HT-E2 remain closed; the authorized main merge plus representative refresh are ready for independent TL review of the **new exact head**. **Not TL PASS. Not Ready.**

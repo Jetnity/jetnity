@@ -31,4 +31,4 @@ At 1024 CSS px the first column can consume 650px plus `gap-10`, leaving ~195px 
 
 ## Non-decisions
 
-No VUX-6 next-section peek. No issue-110 destination-intent change. No navbar/200% overflow repair (pre-existing, out of ownership). No autonomous main rebase after #531 merged.
+No VUX-6 next-section peek. No issue-110 destination-intent change. No navbar/200% overflow repair (pre-existing; NavbarTextReflow1 owns `PublicNavbar.tsx` later). No rebase. The 22 September 2026 integration is one authorized merge of exact main `d89ed0b0` only.
