@@ -30,9 +30,13 @@ Read in this order:
 | Product baseline | `main@fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee` |
 | Task seed | `824286f69e8eae560999a9f4d0e0869390c280cc` |
 | First delivery head | `9132adb595d18fd1fd65f8fd14a54d072ec1950b` (historical; CHANGES REQUIRED) |
-| Authorized main parent | `5fee5f664e72a5fb946c050cc1f07efdbd50a6ec` (#538 Admin, disjoint; merged once after correction if still exact) |
+| Correction wrap | `eb1e7bc1` |
+| Correction harness | `44b8bb58` |
+| Correction docs | `60fc04c9` |
+| Authorized merge | `faf7bf0d772ab208f0a75f9df1d96e0769db5480` (parents `60fc04c9` + `5fee5f66`) |
+| After-run capture | `interact-after.json` `productTree.head` = `faf7bf0d…` clean |
 
-Frozen correction / merge SHAs are the commits on this branch after `9132adb5`. Re-read `git rev-parse HEAD` and live GitHub; do not treat this prose as the gate.
+The live branch HEAD after the evidence/docs persist is the gate. Re-read `git rev-parse HEAD` and GitHub; do not treat remembered IDs as current.
 
 ## What changed in the review correction
 

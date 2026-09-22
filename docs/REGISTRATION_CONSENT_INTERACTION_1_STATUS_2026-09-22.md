@@ -11,7 +11,11 @@ Session: `bc-76b92d07-81a0-42b4-9b87-9827d868cadc`
 Baseline: `main@fb4c9ece0a139e2ceebc85dcba35effd0bb5ceee`  
 Task seed: `824286f69e8eae560999a9f4d0e0869390c280cc`  
 Reviewed head (CHANGES REQUIRED): `9132adb595d18fd1fd65f8fd14a54d072ec1950b`  
-TL review: `5276799852`
+TL review: `5276799852`  
+Correction commits: `eb1e7bc1` (wrap) · `44b8bb58` (harness/metrics) · `60fc04c9` (docs)  
+Authorized merge: `faf7bf0d772ab208f0a75f9df1d96e0769db5480`  
+Merge parents: `60fc04c977a4edf9525e31eba61d8f714cffb3bb` + `5fee5f664e72a5fb946c050cc1f07efdbd50a6ec`  
+After-run `productTree.head`: `faf7bf0d772ab208f0a75f9df1d96e0769db5480` (clean tree at capture)
 
 This is the same-session review correction. It is not a Technical-Lead PASS and is not Ready.
 
@@ -72,7 +76,7 @@ npx tsc -p tsconfig.json --noEmit
 
 ## Authorized main integration
 
-TL review `5276799852` authorized **one** ordinary merge of `origin/main@5fee5f664e72a5fb946c050cc1f07efdbd50a6ec` into this existing branch after the bounded corrections. No rebase, no force-push, no second merge, no Admin #538 file edits. If live main had moved or conflicted, this writer would have stopped and reported instead of integrating.
+TL review `5276799852` authorized **one** ordinary merge of `origin/main@5fee5f664e72a5fb946c050cc1f07efdbd50a6ec` into this existing branch after the bounded corrections. Live `origin/main` was still exactly that SHA; the merge was clean (`ort`) with no conflicts. Merge commit `faf7bf0d772ab208f0a75f9df1d96e0769db5480`. No rebase, no force-push, no second merge. Admin #538 files arrived only through that merge and were not edited on this branch.
 
 ## Residual limitations (unchanged honesty)
 

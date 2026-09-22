@@ -53,7 +53,7 @@ This document argues against the correction. It cannot replace an independent Te
 | RC-R2 optional label click | Yes | `optional-label-click` |
 | Honest harness vs full RegisterForm | Yes | STATUS/HANDOFF say harness |
 | No signup/Auth/DB writes | Yes | |
-| Disjoint #538; one authorized main merge | Yes, if live main stayed `5fee5f66` |
+| Disjoint #538; one authorized main merge | Yes | Live main stayed `5fee5f66`; merge `faf7bf0d`; #538 files not edited |
 | STOP for TL; no Ready/merge/follow-up | Yes | |
 
 ## 4. What remains before Technical-Lead re-review

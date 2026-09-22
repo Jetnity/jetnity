@@ -3,16 +3,11 @@
   "phase": "after",
   "expectPass": true,
   "productTree": {
-    "head": "9132adb595d18fd1fd65f8fd14a54d072ec1950b",
-    "workingTree": "dirty",
-    "dirtyPaths": [
-      "M components/auth/RegisterForm.tsx",
-      "M docs/evidence/registration-consent-interaction-1/harness.tsx",
-      "M docs/evidence/registration-consent-interaction-1/interact.mjs",
-      "M lib/ui/checkbox-interaction.test.ts"
-    ]
+    "head": "faf7bf0d772ab208f0a75f9df1d96e0769db5480",
+    "workingTree": "clean",
+    "dirtyPaths": []
   },
-  "capturedAt": "2026-09-22T10:28:36.940Z",
+  "capturedAt": "2026-09-22T10:32:29.975Z",
   "browserNote": {
     "chromium": "hydrated Playwright Chromium — emulated 390/320 touch, not a physical iPhone",
     "webkit": "Playwright WebKit unavailable: Error: browserType.launch: . Not real iPhone/Safari evidence."
