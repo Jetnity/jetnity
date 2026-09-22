@@ -3,17 +3,16 @@
   "phase": "after",
   "expectPass": true,
   "productTree": {
-    "head": "824286f69e8eae560999a9f4d0e0869390c280cc",
+    "head": "9132adb595d18fd1fd65f8fd14a54d072ec1950b",
     "workingTree": "dirty",
     "dirtyPaths": [
       "M components/auth/RegisterForm.tsx",
-      "M components/ui/checkbox.tsx",
-      "M next-env.d.ts",
-      "?? docs/evidence/registration-consent-interaction-1/",
-      "?? lib/ui/"
+      "M docs/evidence/registration-consent-interaction-1/harness.tsx",
+      "M docs/evidence/registration-consent-interaction-1/interact.mjs",
+      "M lib/ui/checkbox-interaction.test.ts"
     ]
   },
-  "capturedAt": "2026-09-22T10:15:44.050Z",
+  "capturedAt": "2026-09-22T10:28:36.940Z",
   "browserNote": {
     "chromium": "hydrated Playwright Chromium — emulated 390/320 touch, not a physical iPhone",
     "webkit": "Playwright WebKit unavailable: Error: browserType.launch: . Not real iPhone/Safari evidence."
@@ -41,7 +40,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -61,7 +59,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -82,7 +79,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -103,7 +99,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -123,7 +118,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -144,7 +138,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -164,7 +157,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -185,7 +177,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -205,7 +196,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -226,7 +216,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -246,7 +235,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -267,7 +255,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -285,7 +272,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -306,7 +292,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -326,7 +311,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -347,7 +331,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -368,7 +351,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -388,7 +370,45 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "0",
+            "inputWidth": 44,
+            "inputHeight": 44,
+            "accessibleCheckboxCount": 1
+          }
+        },
+        {
+          "name": "optional-label-click",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 0,
+            "roleAriaChecked": null,
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "0",
+            "inputWidth": 44,
+            "inputHeight": 44,
+            "accessibleCheckboxCount": 1
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 0,
+            "roleAriaChecked": null,
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": true,
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -409,7 +429,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -417,50 +436,25 @@
             "inputHeight": 44,
             "accessibleCheckboxCount": 1
           },
-          "after": {
-            "nativeChecked": false,
-            "nativeIndeterminate": false,
-            "nativeDisabled": false,
-            "roleCheckboxCount": 0,
-            "roleAriaChecked": null,
-            "visualState": "unchecked",
-            "callbackCount": 0,
-            "callbacks": [],
-            "submitDisabled": true,
-            "legalNavigations": [
-              "/terms"
-            ],
-            "registerSubmitCount": 0,
-            "inputTabIndex": 0,
-            "inputOpacity": "0",
-            "inputWidth": 44,
-            "inputHeight": 44,
-            "accessibleCheckboxCount": 1
-          },
-          "privacy": {
-            "nativeChecked": false,
-            "nativeIndeterminate": false,
-            "nativeDisabled": false,
-            "roleCheckboxCount": 0,
-            "roleAriaChecked": null,
-            "visualState": "unchecked",
-            "callbackCount": 0,
-            "callbacks": [],
-            "submitDisabled": true,
-            "legalNavigations": [
-              "/terms",
-              "/privacy"
-            ],
-            "registerSubmitCount": 0,
-            "inputTabIndex": 0,
-            "inputOpacity": "0",
-            "inputWidth": 44,
-            "inputHeight": 44,
-            "accessibleCheckboxCount": 1
-          }
+          "termsPath": "/terms",
+          "termsChanged": null,
+          "privacyPath": "/privacy",
+          "privacyChanged": null
         },
         {
-          "name": "keyboard-space",
+          "name": "keyboard-tab-space",
+          "focused": {
+            "id": "terms",
+            "type": "checkbox",
+            "tag": "INPUT"
+          },
+          "a11y": {
+            "activeId": "terms",
+            "activeType": "checkbox",
+            "nativeCount": 1,
+            "roleCount": 0,
+            "labelText": "Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung."
+          },
           "after": {
             "nativeChecked": true,
             "nativeIndeterminate": false,
@@ -473,7 +467,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -494,7 +487,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -512,26 +504,16 @@
               "height": 44
             },
             "label": {
-              "width": 384,
-              "height": 48
+              "width": 1216,
+              "height": 24
             },
             "submit": {
-              "width": 416,
+              "width": 1248,
               "height": 44
             },
             "inputMeets44": true,
             "roleCheckboxOnPage": 0,
             "nativeCheckboxOnPage": 8
-          }
-        },
-        {
-          "name": "layout-200",
-          "metrics": {
-            "rowOverflowPx": 0,
-            "labelRight": 1056,
-            "viewportWidth": 1280,
-            "labelFitsViewport": true,
-            "labelBesideBox": true
           }
         }
       ],
@@ -559,7 +541,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -579,7 +560,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -600,7 +580,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -621,7 +600,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -641,7 +619,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -662,7 +639,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -682,7 +658,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -703,7 +678,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -723,7 +697,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -744,7 +717,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -764,7 +736,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -785,7 +756,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -803,7 +773,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -824,7 +793,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -844,7 +812,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -865,7 +832,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -886,7 +852,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -906,7 +871,45 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "0",
+            "inputWidth": 44,
+            "inputHeight": 44,
+            "accessibleCheckboxCount": 1
+          }
+        },
+        {
+          "name": "optional-label-click",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 0,
+            "roleAriaChecked": null,
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "0",
+            "inputWidth": 44,
+            "inputHeight": 44,
+            "accessibleCheckboxCount": 1
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 0,
+            "roleAriaChecked": null,
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": true,
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -927,7 +930,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -935,50 +937,25 @@
             "inputHeight": 44,
             "accessibleCheckboxCount": 1
           },
-          "after": {
-            "nativeChecked": false,
-            "nativeIndeterminate": false,
-            "nativeDisabled": false,
-            "roleCheckboxCount": 0,
-            "roleAriaChecked": null,
-            "visualState": "unchecked",
-            "callbackCount": 0,
-            "callbacks": [],
-            "submitDisabled": true,
-            "legalNavigations": [
-              "/terms"
-            ],
-            "registerSubmitCount": 0,
-            "inputTabIndex": 0,
-            "inputOpacity": "0",
-            "inputWidth": 44,
-            "inputHeight": 44,
-            "accessibleCheckboxCount": 1
-          },
-          "privacy": {
-            "nativeChecked": false,
-            "nativeIndeterminate": false,
-            "nativeDisabled": false,
-            "roleCheckboxCount": 0,
-            "roleAriaChecked": null,
-            "visualState": "unchecked",
-            "callbackCount": 0,
-            "callbacks": [],
-            "submitDisabled": true,
-            "legalNavigations": [
-              "/terms",
-              "/privacy"
-            ],
-            "registerSubmitCount": 0,
-            "inputTabIndex": 0,
-            "inputOpacity": "0",
-            "inputWidth": 44,
-            "inputHeight": 44,
-            "accessibleCheckboxCount": 1
-          }
+          "termsPath": "/terms",
+          "termsChanged": null,
+          "privacyPath": "/privacy",
+          "privacyChanged": null
         },
         {
-          "name": "keyboard-space",
+          "name": "keyboard-tab-space",
+          "focused": {
+            "id": "terms",
+            "type": "checkbox",
+            "tag": "INPUT"
+          },
+          "a11y": {
+            "activeId": "terms",
+            "activeType": "checkbox",
+            "nativeCount": 1,
+            "roleCount": 0,
+            "labelText": "Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung."
+          },
           "after": {
             "nativeChecked": true,
             "nativeIndeterminate": false,
@@ -991,7 +968,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1012,7 +988,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1033,7 +1008,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1053,7 +1027,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1086,11 +1059,38 @@
         {
           "name": "layout-200",
           "metrics": {
-            "rowOverflowPx": 42,
-            "labelRight": 358,
-            "viewportWidth": 400,
-            "labelFitsViewport": true,
-            "labelBesideBox": true
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "documentOverflowPx": 0,
+            "rowOverflowPx": 0,
+            "label": {
+              "left": 96,
+              "right": 358,
+              "width": 262,
+              "height": 240
+            },
+            "links": [
+              {
+                "href": "/terms",
+                "text": "Nutzungsbedingungen",
+                "left": 96,
+                "right": 349.69,
+                "width": 253.69,
+                "height": 86,
+                "overflowsClient": false
+              },
+              {
+                "href": "/privacy",
+                "text": "Datenschutzerklärung",
+                "left": 96,
+                "right": 354.2,
+                "width": 258.2,
+                "height": 86,
+                "overflowsClient": false
+              }
+            ],
+            "documentOverflows": false,
+            "anyLinkOverflows": false
           }
         }
       ],
@@ -1118,7 +1118,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1138,7 +1137,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1159,7 +1157,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1180,7 +1177,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1200,7 +1196,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1221,7 +1216,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1241,7 +1235,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1262,7 +1255,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1282,7 +1274,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1303,7 +1294,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1323,7 +1313,6 @@
               true
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1344,7 +1333,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1362,7 +1350,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1383,7 +1370,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1403,7 +1389,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1424,7 +1409,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1445,7 +1429,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1465,7 +1448,45 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "0",
+            "inputWidth": 44,
+            "inputHeight": 44,
+            "accessibleCheckboxCount": 1
+          }
+        },
+        {
+          "name": "optional-label-click",
+          "before": {
+            "nativeChecked": false,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 0,
+            "roleAriaChecked": null,
+            "visualState": "unchecked",
+            "callbackCount": 0,
+            "callbacks": [],
+            "submitDisabled": true,
+            "registerSubmitCount": 0,
+            "inputTabIndex": 0,
+            "inputOpacity": "0",
+            "inputWidth": 44,
+            "inputHeight": 44,
+            "accessibleCheckboxCount": 1
+          },
+          "after": {
+            "nativeChecked": true,
+            "nativeIndeterminate": false,
+            "nativeDisabled": false,
+            "roleCheckboxCount": 0,
+            "roleAriaChecked": null,
+            "visualState": "checked",
+            "callbackCount": 1,
+            "callbacks": [
+              true
+            ],
+            "submitDisabled": true,
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1486,7 +1507,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1494,50 +1514,25 @@
             "inputHeight": 44,
             "accessibleCheckboxCount": 1
           },
-          "after": {
-            "nativeChecked": false,
-            "nativeIndeterminate": false,
-            "nativeDisabled": false,
-            "roleCheckboxCount": 0,
-            "roleAriaChecked": null,
-            "visualState": "unchecked",
-            "callbackCount": 0,
-            "callbacks": [],
-            "submitDisabled": true,
-            "legalNavigations": [
-              "/terms"
-            ],
-            "registerSubmitCount": 0,
-            "inputTabIndex": 0,
-            "inputOpacity": "0",
-            "inputWidth": 44,
-            "inputHeight": 44,
-            "accessibleCheckboxCount": 1
-          },
-          "privacy": {
-            "nativeChecked": false,
-            "nativeIndeterminate": false,
-            "nativeDisabled": false,
-            "roleCheckboxCount": 0,
-            "roleAriaChecked": null,
-            "visualState": "unchecked",
-            "callbackCount": 0,
-            "callbacks": [],
-            "submitDisabled": true,
-            "legalNavigations": [
-              "/terms",
-              "/privacy"
-            ],
-            "registerSubmitCount": 0,
-            "inputTabIndex": 0,
-            "inputOpacity": "0",
-            "inputWidth": 44,
-            "inputHeight": 44,
-            "accessibleCheckboxCount": 1
-          }
+          "termsPath": "/terms",
+          "termsChanged": null,
+          "privacyPath": "/privacy",
+          "privacyChanged": null
         },
         {
-          "name": "keyboard-space",
+          "name": "keyboard-tab-space",
+          "focused": {
+            "id": "terms",
+            "type": "checkbox",
+            "tag": "INPUT"
+          },
+          "a11y": {
+            "activeId": "terms",
+            "activeType": "checkbox",
+            "nativeCount": 1,
+            "roleCount": 0,
+            "labelText": "Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung."
+          },
           "after": {
             "nativeChecked": true,
             "nativeIndeterminate": false,
@@ -1550,7 +1545,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1571,7 +1565,6 @@
               false
             ],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1592,7 +1585,6 @@
             "callbackCount": 0,
             "callbacks": [],
             "submitDisabled": true,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1612,7 +1604,6 @@
               true
             ],
             "submitDisabled": false,
-            "legalNavigations": [],
             "registerSubmitCount": 0,
             "inputTabIndex": 0,
             "inputOpacity": "0",
@@ -1645,11 +1636,38 @@
         {
           "name": "layout-200",
           "metrics": {
-            "rowOverflowPx": 112,
-            "labelRight": 288,
-            "viewportWidth": 400,
-            "labelFitsViewport": true,
-            "labelBesideBox": true
+            "clientWidth": 320,
+            "scrollWidth": 320,
+            "documentOverflowPx": 0,
+            "rowOverflowPx": 0,
+            "label": {
+              "left": 96,
+              "right": 288,
+              "width": 192,
+              "height": 336
+            },
+            "links": [
+              {
+                "href": "/terms",
+                "text": "Nutzungsbedingungen",
+                "left": 96,
+                "right": 280.56,
+                "width": 184.56,
+                "height": 86,
+                "overflowsClient": false
+              },
+              {
+                "href": "/privacy",
+                "text": "Datenschutzerklärung",
+                "left": 96,
+                "right": 287.44,
+                "width": 191.44,
+                "height": 86,
+                "overflowsClient": false
+              }
+            ],
+            "documentOverflows": false,
+            "anyLinkOverflows": false
           }
         }
       ],

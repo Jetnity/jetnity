@@ -1,5 +1,6 @@
 // Disposable hydrated harness for registration consent interaction.
-// Not a product route. No Auth/signup/email. Compiled product components + CSS.
+// Label/consent-row harness — not the full Next /register route.
+// No Auth/signup/email. Compiled product Checkbox + Label + CSS.
 
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
@@ -10,9 +11,7 @@ import { Label } from '@/components/ui/label'
 declare global {
   interface Window {
     __consentCallbacks?: Record<string, boolean[]>
-    __pushConsent?: (id: string, next: boolean) => void
     __registerSubmitCount?: number
-    __legalNavigations?: string[]
   }
 }
 
@@ -32,12 +31,10 @@ function LegalLink({
   return (
     <a
       href={href}
-      className="text-primary hover:underline"
+      className="break-words text-primary hover:underline [overflow-wrap:anywhere]"
       onClick={(event) => {
-        event.preventDefault()
+        // Same as RegisterForm: stop label activation, do not preventDefault.
         event.stopPropagation()
-        window.__legalNavigations ??= []
-        window.__legalNavigations.push(href)
       }}
     >
       {children}
@@ -116,6 +113,12 @@ function RegisterConsentRow() {
       }}
       className="space-y-5"
     >
+      <input
+        data-tab-start="1"
+        type="text"
+        aria-label="Vorfeld für echten Tab"
+        className="block w-full rounded-md border border-input px-3 py-2 text-sm"
+      />
       <div className="flex items-start gap-3" data-fixture="terms">
         <Checkbox
           id="terms"
@@ -128,7 +131,7 @@ function RegisterConsentRow() {
         <Label
           htmlFor="terms"
           multiline
-          className="min-w-0 text-sm font-normal leading-6 text-muted-foreground"
+          className="min-w-0 flex-1 break-words text-sm font-normal leading-6 text-muted-foreground [overflow-wrap:anywhere]"
         >
           Ich akzeptiere die{' '}
           <LegalLink href="/terms">Nutzungsbedingungen</LegalLink>
@@ -150,11 +153,22 @@ function RegisterConsentRow() {
   )
 }
 
-function Harness() {
+function IsolatedConsent() {
   return (
-    <main className="mx-auto max-w-md space-y-8 bg-background px-4 py-8 text-foreground">
+    <main className="w-full max-w-full bg-background px-4 py-8 text-foreground">
+      <p className="mb-4 text-xs text-muted-foreground" data-harness-banner="1">
+        SYNTHETIC CONSENT LAYOUT — isolated consent row, not /register Preview.
+      </p>
+      <RegisterConsentRow />
+    </main>
+  )
+}
+
+function FullHarness() {
+  return (
+    <main className="mx-auto w-full max-w-full space-y-8 bg-background px-4 py-8 text-foreground">
       <p className="text-xs text-muted-foreground" data-harness-banner="1">
-        SYNTHETIC CONSENT HARNESS — not /register Preview. No signup.
+        SYNTHETIC CONSENT HARNESS — label/consent-row only, not /register Preview. No signup.
       </p>
       <section>
         <h2 className="mb-2 text-sm font-medium">controlled-unchecked</h2>
@@ -198,6 +212,7 @@ function Harness() {
   )
 }
 
+const isolated = new URLSearchParams(window.location.search).get('layout') === 'consent'
 const mount = document.getElementById('root')
 if (!mount) throw new Error('missing #root')
-createRoot(mount).render(<Harness />)
+createRoot(mount).render(isolated ? <IsolatedConsent /> : <FullHarness />)

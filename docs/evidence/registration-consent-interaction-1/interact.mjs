@@ -113,7 +113,6 @@ async function readState(page, inputId) {
       callbackCount: callbacks.length,
       callbacks: [...callbacks],
       submitDisabled: submit ? submit.disabled : null,
-      legalNavigations: [...(window.__legalNavigations ?? [])],
       registerSubmitCount: window.__registerSubmitCount ?? 0,
       inputTabIndex: input ? input.tabIndex : null,
       inputOpacity: input ? getComputedStyle(input).opacity : null,
@@ -154,15 +153,57 @@ async function tapInput(page, inputId) {
   await settle()
 }
 
-async function keyboardToggle(page, inputId) {
-  const roleBox = page.locator(`[data-fixture="${inputId}"] [role="checkbox"]`)
-  if (await roleBox.count()) {
-    await roleBox.focus()
-  } else {
-    await page.locator(`#${inputId}`).focus()
+async function tabToNativeCheckbox(page, inputId) {
+  await page.locator('[data-tab-start]').click()
+  for (let i = 0; i < 12; i += 1) {
+    const focused = await page.evaluate(() => {
+      const el = document.activeElement
+      if (!(el instanceof HTMLElement)) return { id: null, type: null, tag: null }
+      return {
+        id: el.id || null,
+        type: el.getAttribute('type'),
+        tag: el.tagName,
+      }
+    })
+    if (focused.id === inputId && focused.type === 'checkbox') return focused
+    await page.keyboard.press('Tab')
+    await settle()
   }
-  await page.keyboard.press('Space')
-  await settle()
+  throw new Error(`Tab did not reach native checkbox #${inputId}`)
+}
+
+function measureConsentOverflow() {
+  const clientWidth = document.documentElement.clientWidth
+  const scrollWidth = document.documentElement.scrollWidth
+  const row = document.querySelector('[data-fixture="terms"]')
+  const label = document.querySelector('label[for="terms"]')
+  const links = [...document.querySelectorAll('label[for="terms"] a')]
+  const box = (node) => {
+    if (!node) return null
+    const r = node.getBoundingClientRect()
+    return {
+      left: Number(r.left.toFixed(2)),
+      right: Number(r.right.toFixed(2)),
+      width: Number(r.width.toFixed(2)),
+      height: Number(r.height.toFixed(2)),
+    }
+  }
+  const linkBounds = links.map((link) => ({
+    href: link.getAttribute('href'),
+    text: (link.textContent || '').trim(),
+    ...box(link),
+    overflowsClient: Boolean(link && (link.getBoundingClientRect().right > clientWidth + 1 || link.getBoundingClientRect().left < -1)),
+  }))
+  return {
+    clientWidth,
+    scrollWidth,
+    documentOverflowPx: scrollWidth - clientWidth,
+    rowOverflowPx: row ? row.scrollWidth - row.clientWidth : null,
+    label: box(label),
+    links: linkBounds,
+    documentOverflows: scrollWidth > clientWidth + 1,
+    anyLinkOverflows: linkBounds.some((link) => link.overflowsClient),
+  }
 }
 
 function assert(condition, message, failures) {
@@ -271,7 +312,7 @@ async function runEngine(engineName, launcher, options) {
 
   {
     const before = await readState(page, 'disabled-unchecked')
-    await page.locator('#disabled-unchecked').click({ force: false }).catch(() => {})
+    await page.locator('#disabled-unchecked').click({ force: false, timeout: 1500 }).catch(() => {})
     await settle()
     const after = await readState(page, 'disabled-unchecked')
     assert(after.nativeChecked === false, 'disabled stays unchecked', failures)
@@ -308,34 +349,104 @@ async function runEngine(engineName, launcher, options) {
   {
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.locator('[data-harness-banner]').waitFor()
-    const before = await readState(page, 'terms')
-    await page.locator('a[href="/terms"]').first().click()
+    const before = await readState(page, 'with-label')
+    await page.getByText('Mit Label-Text', { exact: true }).click()
     await settle()
-    const after = await readState(page, 'terms')
-    assert(after.nativeChecked === false, 'terms link does not toggle consent', failures)
-    assert(after.callbackCount === 0, 'terms link emits no consent callback', failures)
-    assert(after.legalNavigations.includes('/terms'), 'terms link records navigation', failures)
-    assert(after.submitDisabled === true, 'submit stays disabled after terms link', failures)
-    await page.locator('a[href="/privacy"]').first().click()
-    await settle()
-    const privacy = await readState(page, 'terms')
-    assert(privacy.nativeChecked === false, 'privacy link does not toggle consent', failures)
-    assert(privacy.legalNavigations.includes('/privacy'), 'privacy link records navigation', failures)
-    cases.push({ name: 'legal-links', before, after, privacy })
+    const after = await readState(page, 'with-label')
+    assert(after.nativeChecked === true, 'optional component label text checks once', failures)
+    assert(after.callbackCount === 1 && after.callbacks[0] === true, 'optional label one true callback', failures)
+    cases.push({ name: 'optional-label-click', before, after })
   }
 
   {
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.locator('[data-harness-banner]').waitFor()
-    await page.locator('#terms').focus()
-    await keyboardToggle(page, 'terms')
+    const before = await readState(page, 'terms')
+    await page.evaluate(() => {
+      sessionStorage.removeItem('consent-changed-by-link')
+      document.getElementById('terms')?.addEventListener('change', () => {
+        sessionStorage.setItem('consent-changed-by-link', '1')
+      })
+    })
+    const [termsRequest] = await Promise.all([
+      page.waitForRequest((request) => {
+        try {
+          return new URL(request.url()).pathname === '/terms'
+        } catch {
+          return false
+        }
+      }),
+      page.locator('a[href="/terms"]').first().click(),
+    ])
+    await page.waitForURL((url) => url.pathname === '/terms')
+    const termsChanged = await page.evaluate(() => sessionStorage.getItem('consent-changed-by-link'))
+    const termsPath = new URL(termsRequest.url()).pathname
+    assert(before.nativeChecked === false, 'terms link starts unchecked', failures)
+    assert(termsChanged === null, 'terms link does not change consent before navigation', failures)
+    assert(termsPath === '/terms', 'terms link issues same-origin /terms request', failures)
+    assert(new URL(page.url()).pathname === '/terms', 'terms link navigates to /terms', failures)
+    await page.goto(options.url, { waitUntil: 'domcontentloaded' })
+    await page.locator('[data-harness-banner]').waitFor()
+    await page.evaluate(() => {
+      sessionStorage.removeItem('consent-changed-by-link')
+      document.getElementById('terms')?.addEventListener('change', () => {
+        sessionStorage.setItem('consent-changed-by-link', '1')
+      })
+    })
+    const [privacyRequest] = await Promise.all([
+      page.waitForRequest((request) => {
+        try {
+          return new URL(request.url()).pathname === '/privacy'
+        } catch {
+          return false
+        }
+      }),
+      page.locator('a[href="/privacy"]').first().click(),
+    ])
+    await page.waitForURL((url) => url.pathname === '/privacy')
+    const privacyChanged = await page.evaluate(() => sessionStorage.getItem('consent-changed-by-link'))
+    assert(privacyChanged === null, 'privacy link does not change consent before navigation', failures)
+    assert(new URL(privacyRequest.url()).pathname === '/privacy', 'privacy link issues same-origin /privacy request', failures)
+    assert(new URL(page.url()).pathname === '/privacy', 'privacy link navigates to /privacy', failures)
+    cases.push({
+      name: 'legal-links',
+      before,
+      termsPath,
+      termsChanged,
+      privacyPath: new URL(privacyRequest.url()).pathname,
+      privacyChanged,
+    })
+    await page.goto(options.url, { waitUntil: 'domcontentloaded' })
+    await page.locator('[data-harness-banner]').waitFor()
+  }
+
+  {
+    const focused = await tabToNativeCheckbox(page, 'terms')
+    const a11y = await page.evaluate(() => {
+      const input = document.getElementById('terms')
+      const labels = input ? [...document.querySelectorAll('label[for="terms"]')].map((el) => el.textContent || '') : []
+      return {
+        activeId: document.activeElement instanceof HTMLElement ? document.activeElement.id : null,
+        activeType: document.activeElement instanceof HTMLInputElement ? document.activeElement.type : null,
+        nativeCount: document.querySelectorAll('[data-fixture="terms"] input[type="checkbox"]').length,
+        roleCount: document.querySelectorAll('[data-fixture="terms"] [role="checkbox"]').length,
+        labelText: labels.join(' '),
+      }
+    })
+    assert(focused.id === 'terms' && focused.type === 'checkbox', 'Tab lands on the native terms checkbox', failures)
+    assert(a11y.activeId === 'terms' && a11y.activeType === 'checkbox', 'active element is the native checkbox', failures)
+    assert(a11y.nativeCount === 1 && a11y.roleCount === 0, 'one native checkbox, no custom role=checkbox', failures)
+    assert(a11y.labelText.includes('Ich akzeptiere'), 'checkbox is named by the consent sentence', failures)
+    await page.keyboard.press('Space')
+    await settle()
     const after = await readState(page, 'terms')
-    assert(after.nativeChecked === true, 'Tab/Space checks once', failures)
+    assert(after.nativeChecked === true, 'Tab then Space checks once', failures)
     assert(after.callbackCount === 1, 'keyboard one callback', failures)
-    await keyboardToggle(page, 'terms')
+    await page.keyboard.press('Space')
+    await settle()
     const revoked = await readState(page, 'terms')
     assert(revoked.nativeChecked === false, 'Space revokes', failures)
-    cases.push({ name: 'keyboard-space', after, revoked })
+    cases.push({ name: 'keyboard-tab-space', focused, a11y, after, revoked })
   }
 
   if (options.hasTouch) {
@@ -379,32 +490,21 @@ async function runEngine(engineName, launcher, options) {
     await shot(`layout-${options.viewport.width}`)
   }
 
-  const html200 = await page.evaluate(() => {
-    document.documentElement.style.fontSize = '32px'
-    const row = document.querySelector('[data-fixture="terms"]')
-    const label = document.querySelector('label[for="terms"]')
-    const input = document.getElementById('terms')
-    const rowBox = row?.getBoundingClientRect()
-    const labelBox = label?.getBoundingClientRect()
-    const inputBox = input?.getBoundingClientRect()
-    const rowOverflowPx = row ? row.scrollWidth - row.clientWidth : 99
-    return {
-      rowOverflowPx,
-      labelRight: labelBox ? Number(labelBox.right.toFixed(2)) : null,
-      viewportWidth: window.innerWidth,
-      labelFitsViewport: labelBox ? labelBox.right <= window.innerWidth + 1 : false,
-      labelBesideBox: Boolean(
-        rowBox && labelBox && inputBox && labelBox.left >= inputBox.left && labelBox.top < inputBox.bottom + 8,
-      ),
-    }
-  })
-  await settle()
-  // The 44px hit area uses a documented negative margin (~12px). That is not
-  // label overflow. Fail only if the consent sentence leaves the viewport.
-  assert(html200.labelFitsViewport === true, 'consent label stays in the viewport at 200% text', failures)
-  assert(html200.labelBesideBox === true, 'consent label remains beside the box at 200% text', failures)
-  cases.push({ name: 'layout-200', metrics: html200 })
-  await shot(`layout-200pct-${options.viewport.width}`)
+  if (options.capture200) {
+    await page.goto(options.layoutUrl, { waitUntil: 'domcontentloaded' })
+    await page.locator('[data-harness-banner]').waitFor()
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '32px'
+    })
+    await settle()
+    await page.evaluate(() => document.fonts?.ready)
+    const html200 = await page.evaluate(measureConsentOverflow)
+    assert(html200.documentOverflows === false, `200% document scrollWidth ${html200.scrollWidth} exceeds clientWidth ${html200.clientWidth}`, failures)
+    assert(html200.anyLinkOverflows === false, '200% legal link text overflows documentElement.clientWidth', failures)
+    assert((html200.rowOverflowPx ?? 99) <= 16, `200% consent row overflow ${html200.rowOverflowPx}px exceeds hit-area margin`, failures)
+    cases.push({ name: 'layout-200', metrics: html200 })
+    await shot(`layout-200pct-${options.viewport.width}`)
+  }
 
   await browser.close()
   return {
@@ -428,22 +528,29 @@ async function main() {
   writeFileSync(join(EVIDENCE, `harness-${PHASE}.html`), html)
 
   const server = createServer((req, res) => {
+    const path = (req.url || '/').split('?')[0]
+    if (path === '/terms' || path === '/privacy') {
+      res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' })
+      res.end(`legal destination ${path}`)
+      return
+    }
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
     res.end(html)
   })
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
   const { port } = server.address()
   const url = `http://127.0.0.1:${port}/`
+  const layoutUrl = `${url}?layout=consent`
 
   const viewports = [
-    { name: 'chromium-desktop', launcher: chromium, viewport: { width: 1280, height: 800 }, hasTouch: false, isMobile: false },
-    { name: 'chromium-iphone-390', launcher: chromium, viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true },
-    { name: 'chromium-320', launcher: chromium, viewport: { width: 320, height: 720 }, hasTouch: true, isMobile: true },
+    { name: 'chromium-desktop', launcher: chromium, viewport: { width: 1280, height: 800 }, hasTouch: false, isMobile: false, capture200: false },
+    { name: 'chromium-iphone-390', launcher: chromium, viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, capture200: true },
+    { name: 'chromium-320', launcher: chromium, viewport: { width: 320, height: 720 }, hasTouch: true, isMobile: true, capture200: true },
   ]
 
   const reports = []
   for (const viewport of viewports) {
-    reports.push(await runEngine(viewport.name, viewport.launcher, { ...viewport, url }))
+    reports.push(await runEngine(viewport.name, viewport.launcher, { ...viewport, url, layoutUrl }))
   }
 
   let webkitReport
@@ -452,7 +559,9 @@ async function main() {
       viewport: { width: 390, height: 844 },
       hasTouch: true,
       isMobile: true,
+      capture200: true,
       url,
+      layoutUrl,
     })
   } catch (error) {
     webkitReport = {

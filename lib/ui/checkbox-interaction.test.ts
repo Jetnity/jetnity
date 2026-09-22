@@ -62,6 +62,8 @@ describe('Checkbox consent interaction contract', () => {
     assert.equal(html.includes('role="checkbox"'), false)
   })
 })
+// Markup locks are not interaction proof. Real Tab, label click and
+// default link navigation are in the hydrated harness runner.
 
 describe('RegisterForm consent wiring remains explicit', () => {
   const register = quelle('components/auth/RegisterForm.tsx')
@@ -80,5 +82,8 @@ describe('RegisterForm consent wiring remains explicit', () => {
     assert.equal(register.includes('Nutzungsbedingungen'), true)
     assert.equal(register.includes('Datenschutzerklärung'), true)
     assert.equal(register.includes('event.stopPropagation()'), true)
+    assert.equal(register.includes('[overflow-wrap:anywhere]'), true)
+    const legalBlock = register.slice(register.indexOf('Ich akzeptiere die'), register.indexOf('Konto erstellen'))
+    assert.equal(legalBlock.includes('preventDefault'), false)
   })
 })
