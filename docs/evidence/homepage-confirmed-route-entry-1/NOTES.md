@@ -7,25 +7,28 @@ Model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`)
 
 ## What these images are
 
-Chromium DevTools-emulated viewports against local `http://localhost:3000` after the implementation commits. They are **not** physical-device acceptance and **not** authenticated Production E2E.
+Two sets exist:
 
-| File | Viewport | Observation |
-| --- | --- | --- |
-| `homepage_390_initial.webp` | 390×844 | Hero preserved; one search; citrus submit |
-| `homepage_390_empty_submit.webp` | 390×844 | Empty submit keeps the existing list-selection error |
-| `homepage_390_pending_text.webp` | 390×844 | Typed `Paris` without a list choice; pending text is blocked |
-| `homepage_768_tablet.webp` | 768×1024 | Form still usable; no Ziel1/2/3 block |
-| `homepage_1024_form.webp` | 1024×768 | Form remains in the first hero column |
-| `homepage_1440_keyboard.webp` | 1440×900 | Keyboard tab to submit |
-| `planen_invalid_zielids.webp` | 1440×900 | `/planen?zielIds=kein-ort` recoverable error, Zur Startseite |
-| `planen_conflict_zielids.webp` | 1440×900 | `zielIds` + `zielId` conflict, no planner prefill |
+1. Earlier Chromium DevTools-emulated viewports against local `http://localhost:3000` (`homepage_*.webp`, `planen_*.webp`). Those showed initial/pending/error states only. Local `/api/search/places` returned `[]`, so live chip-add was not available there.
+2. Hydrated controller evidence from `scripts/homepage-route-entry-1-hydrated.mjs`. Actual `StartzielForm` and `TripPlanner` were bundled; Next router/link and server actions were stubbed; `/api/search/places` was synthetic. These are **not** physical-device acceptance and **not** authenticated Production/Preview E2E.
 
-## Local place search
+| File | Observation |
+| --- | --- |
+| `r1_replace_keeps_pending_cusco.png` | Paris confirmed; pending Cusco kept after replace click; pending alert visible |
+| `r1_remove_last_chip_keeps_pending.png` | Last chip removed; Cusco remains in the input |
+| `r1_replace_target_and_delete_keeps_draft.png` | Replace-target switch / delete-while-replacing keeps the draft |
+| `r2_swap_pending_cusco_becomes_primary.png` | After Nach-oben: primary input Cusco, extra Paris |
+| `successful_chips_paris_rom_paris.png` | Ordered duplicate chips before handoff |
+| `successful_duplicate_ordered_create.png` | Planner create with Paris/Rom/Paris + Zürich + dates |
+| `keyboard_reorder_390.png` | Keyboard reorder at 390 |
+| `layout_768_selected_chips.png` | 768 selected chips |
+| `layout_1024_selected_chips.png` | 1024 selected chips |
+| `layout_1440_selected_chips.png` | 1440 selected chips |
+| `reflow_390_200pct.png` | 390 with `zoom: 2` |
+| `hydrated-report.json` | 6 PASS machine report |
 
-`GET /api/search/places?q=Paris&rolle=ziel` returned HTTP 200 and `[]`. The combobox showed the existing unknown-destination copy. No confirmed multi-place chip flow could be exercised against this local places table. That gap is Preview/physical-device, not a silent auto-select.
-
-A screen recording was started and discarded after the ffmpeg stop timed out. Screenshots remain the browser evidence.
+Harness screenshots do not load the Next font pipeline. Use them for controller state, not brand-font QA.
 
 ## Tests
 
-`scripts/homepage-route-entry-1-verify.mjs` plus owned/related node:test files: 140 pass / 0 fail on the working tree used for these captures.
+`scripts/homepage-route-entry-1-verify.mjs`: 146 node:test pass / 0 fail, then hydrated 6 PASS on the working tree used for these captures.
