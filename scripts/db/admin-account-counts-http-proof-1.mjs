@@ -439,8 +439,30 @@ export function evaluateCleanupAcceptance(report) {
 
 export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS } = {}) {
   return new Promise((resolve) => {
+    let settled = false
+    let timer = null
+    let onExit = null
+    let onError = null
+    let recordedError = null
+
+    const detach = () => {
+      if (child && onExit) child.off('exit', onExit)
+      if (child && onError) child.off('error', onError)
+      if (timer != null) {
+        clearTimeout(timer)
+        timer = null
+      }
+    }
+
+    const finish = (result) => {
+      if (settled) return
+      settled = true
+      detach()
+      resolve(result)
+    }
+
     if (!child) {
-      resolve({
+      finish({
         started: false,
         exited: true,
         neverStarted: true,
@@ -452,60 +474,64 @@ export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS
       return
     }
 
-    let settled = false
-    const finish = (result) => {
-      if (settled) return
-      settled = true
-      clearTimeout(timer)
-      resolve(result)
-    }
+    const endedResult = () => ({
+      started: Boolean(child.pid),
+      exited: true,
+      neverStarted: !child.pid,
+      spawnFailed: !child.pid,
+      timedOut: false,
+      exitCode: child.exitCode,
+      signal: child.signalCode,
+      pid: child.pid ?? null,
+      ...(recordedError ? { error: recordedError } : {}),
+    })
 
     if (child.exitCode != null || child.signalCode != null) {
+      finish(endedResult())
+      return
+    }
+
+    onExit = (code, signal) => {
       finish({
         started: Boolean(child.pid),
         exited: true,
         neverStarted: !child.pid,
-        timedOut: false,
-        exitCode: child.exitCode,
-        signal: child.signalCode,
-        pid: child.pid ?? null,
-      })
-      return
-    }
-
-    const onExit = (code, signal) => {
-      finish({
-        started: Boolean(child.pid),
-        exited: true,
-        neverStarted: false,
+        spawnFailed: !child.pid,
         timedOut: false,
         exitCode: code,
         signal,
         pid: child.pid ?? null,
+        ...(recordedError ? { error: recordedError } : {}),
       })
     }
-    const onError = (fehler) => {
-      finish({
-        started: false,
-        exited: true,
-        neverStarted: true,
-        spawnFailed: true,
-        timedOut: false,
-        error: fehler instanceof Error ? fehler.message : String(fehler),
-        exitCode: child.exitCode,
-        signal: child.signalCode,
-        pid: child.pid ?? null,
-      })
+    onError = (fehler) => {
+      recordedError = fehler instanceof Error ? fehler.message : String(fehler)
+      if (child.exitCode != null || child.signalCode != null) {
+        finish(endedResult())
+        return
+      }
+      if (!child.pid) {
+        finish({
+          started: false,
+          exited: true,
+          neverStarted: true,
+          spawnFailed: true,
+          timedOut: false,
+          error: recordedError,
+          exitCode: null,
+          signal: null,
+          pid: null,
+        })
+      }
+      // After-spawn error is not termination. Keep waiting for exit or timeout.
     }
     child.once('exit', onExit)
     child.once('error', onError)
     if (child.exitCode != null || child.signalCode != null) {
-      onExit(child.exitCode, child.signalCode)
+      finish(endedResult())
       return
     }
-    const timer = setTimeout(() => {
-      child.off('exit', onExit)
-      child.off('error', onError)
+    timer = setTimeout(() => {
       finish({
         started: Boolean(child.pid),
         exited: false,
@@ -514,6 +540,7 @@ export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS
         exitCode: child.exitCode,
         signal: child.signalCode,
         pid: child.pid ?? null,
+        ...(recordedError ? { error: recordedError } : {}),
       })
     }, timeoutMs)
   })
@@ -526,6 +553,23 @@ function detachOwnedStdio(child) {
   child?.stderr?.destroy?.()
 }
 
+function applyOwnedStopOutcome(report, child, wait) {
+  const exited = wait?.exited === true && (wait.exitCode != null || wait.signal != null || wait.neverStarted === true)
+  report.neverStarted = wait?.neverStarted === true
+  report.spawnFailed = wait?.spawnFailed === true || report.spawnFailed
+  report.timedOut = wait?.timedOut === true
+  report.exitCode = wait?.exitCode ?? child?.exitCode ?? null
+  report.signal = wait?.signal ?? child?.signalCode ?? null
+  if (wait?.error) report.error = wait.error
+  report.reaped = exited
+  report.httpStopped = exited
+  report.ownershipRetained = !exited && Boolean(child)
+  if (!exited) {
+    report.error = report.error || 'owned HTTP child still running after stop wait'
+  }
+  return exited
+}
+
 export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOUT_MS, killTimeoutMs = CHILD_KILL_TIMEOUT_MS } = {}) {
   const child = state?.child
   const report = {
@@ -536,6 +580,7 @@ export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOU
     signaled: null,
     reaped: false,
     httpStopped: false,
+    ownershipRetained: Boolean(child),
     timedOut: false,
     exitCode: child?.exitCode ?? null,
     signal: child?.signalCode ?? null,
@@ -544,6 +589,7 @@ export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOU
   if (!child) {
     report.httpStopped = true
     report.reaped = true
+    report.ownershipRetained = false
     return report
   }
 
@@ -551,6 +597,7 @@ export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOU
   if (alreadyGone) {
     report.httpStopped = true
     report.reaped = true
+    report.ownershipRetained = false
     report.exitCode = child.exitCode
     report.signal = child.signalCode
     detachOwnedStdio(child)
@@ -559,19 +606,7 @@ export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOU
 
   if (!child.pid) {
     const wait = await waitForOwnedChildExit(child, { timeoutMs: termTimeoutMs })
-    report.neverStarted = wait.neverStarted === true
-    report.spawnFailed = wait.spawnFailed === true || report.spawnFailed
-    report.httpStopped = wait.exited === true
-    report.reaped = wait.exited === true
-    report.timedOut = wait.timedOut === true
-    report.exitCode = wait.exitCode
-    report.signal = wait.signal
-    report.error = wait.error ?? report.error
-    if (!wait.exited) {
-      report.error = report.error || 'owned HTTP child without pid did not settle'
-    } else {
-      detachOwnedStdio(child)
-    }
+    if (applyOwnedStopOutcome(report, child, wait)) detachOwnedStdio(child)
     return report
   }
 
@@ -593,17 +628,7 @@ export async function stoppeOwnedHttp(state, { termTimeoutMs = CHILD_TERM_TIMEOU
     }
     wait = await killWait
   }
-  report.reaped = wait.exited === true
-  report.httpStopped = wait.exited === true
-  report.timedOut = wait.timedOut === true
-  report.exitCode = wait.exitCode
-  report.signal = wait.signal
-  if (wait.error) report.error = wait.error
-  if (!wait.exited) {
-    report.error = report.error || 'owned HTTP child still running after SIGTERM/SIGKILL wait'
-    return report
-  }
-  detachOwnedStdio(child)
+  if (applyOwnedStopOutcome(report, child, wait)) detachOwnedStdio(child)
   return report
 }
 
@@ -842,7 +867,7 @@ async function stoppeCluster() {
   report.httpTimedOut = http.timedOut
   report.httpSignaled = http.signaled
   if (http.error) report.error = http.error
-  if (!http.httpStopped) {
+  if (!http.httpStopped || http.ownershipRetained === true) {
     report.error = report.error || 'owned HTTP child not confirmed stopped; preserving data tree'
     return report
   }

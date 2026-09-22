@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
-import { EventEmitter } from 'node:events'
+import { EventEmitter, once } from 'node:events'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -341,6 +341,66 @@ describe('admin-account-counts-http-proof-1 H1 process lifecycle', () => {
     assert.deepEqual(ipv6.families, ['ipv6'])
     assert.equal(parseProcNetListenRows(established).length, 0)
     assert.equal(parseProcNetListenRows(loopback).length, 1)
+  })
+
+  test('exported waiter resolves a real already-exited child without timer TDZ', async () => {
+    const child = spawn(process.execPath, ['-e', 'process.exit(0)'], { stdio: 'ignore' })
+    await once(child, 'exit')
+    const wait = await waitForOwnedChildExit(child, { timeoutMs: 100 })
+    assert.equal(wait.exited, true)
+    assert.equal(wait.timedOut, false)
+    assert.equal(wait.exitCode, 0)
+    assert.equal(wait.neverStarted, false)
+  })
+
+  test('exported waiter resolves a real already-signaled child', async () => {
+    const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' })
+    await once(child, 'spawn')
+    child.kill('SIGTERM')
+    await once(child, 'exit')
+    const wait = await waitForOwnedChildExit(child, { timeoutMs: 100 })
+    assert.equal(wait.exited, true)
+    assert.equal(wait.signal, 'SIGTERM')
+    assert.equal(wait.timedOut, false)
+  })
+
+  test('post-spawn kill EPERM error is not exit and retains the living child', async () => {
+    const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' })
+    await once(child, 'spawn')
+    const realKill = child.kill.bind(child)
+    try {
+      child.kill = () => {
+        queueMicrotask(() =>
+          child.emit('error', Object.assign(new Error('injected EPERM kill failure'), { code: 'EPERM' })),
+        )
+        return false
+      }
+      const first = await stoppeOwnedHttp({ child }, { termTimeoutMs: 80, killTimeoutMs: 80 })
+      assert.equal(first.httpStopped, false)
+      assert.equal(first.reaped, false)
+      assert.equal(first.ownershipRetained, true)
+      assert.equal(first.exitCode, null)
+      assert.equal(first.signal, null)
+      assert.match(String(first.error), /EPERM|still running|injected/)
+      process.kill(child.pid, 0)
+      const acceptance = evaluateCleanupAcceptance({
+        cleaned: false,
+        removed: false,
+        running: false,
+        httpStopped: first.httpStopped,
+        httpReaped: first.reaped,
+        error: first.error,
+      })
+      assert.equal(acceptance.mayRemove, false)
+      const second = await stoppeOwnedHttp({ child }, { termTimeoutMs: 80, killTimeoutMs: 80 })
+      assert.equal(second.httpStopped, false)
+      assert.equal(second.ownershipRetained, true)
+      process.kill(child.pid, 0)
+    } finally {
+      child.kill = realKill
+      realKill('SIGKILL')
+      await once(child, 'exit')
+    }
   })
 })
 
