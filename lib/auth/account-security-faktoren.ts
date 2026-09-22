@@ -49,6 +49,46 @@ export function istTotpFaktor(faktor: Pick<MfaFaktor, 'id' | 'factor_type' | 'ty
   return typeof faktor.id === 'string' && faktor.id.length > 0 && totpFaktorTyp(faktor) === 'totp'
 }
 
+export function istVerifizierterTotpFaktor(
+  faktor: Pick<MfaFaktor, 'id' | 'factor_type' | 'type' | 'status'>,
+): boolean {
+  return istTotpFaktor(faktor) && faktor.status === 'verified'
+}
+
+export type MfaFaktorenLesung =
+  | { status: 'ok'; liste: MfaFaktor[] }
+  | { status: 'unlesbar' }
+
+function alsFaktorliste(wert: unknown): MfaFaktor[] | null {
+  if (!Array.isArray(wert)) return null
+  if (wert.some((eintrag) => eintrag == null || typeof eintrag !== 'object' || Array.isArray(eintrag))) {
+    return null
+  }
+  return wert as MfaFaktor[]
+}
+
+/**
+ * Liest unterstützte listFactors-Formen. Current Truth ist `all`, danach `totp`,
+ * danach legacy `factors`. Fehlt jede dieser Listen oder ist sie keine Array-
+ * von-Objekten-Form, ist die Antwort unlesbar — nicht „keine Faktoren“.
+ */
+export function mfaFaktorenListeLesen(data: unknown): MfaFaktorenLesung {
+  if (data == null || typeof data !== 'object' || Array.isArray(data)) {
+    return { status: 'unlesbar' }
+  }
+
+  const roh = data as MfaListFactorsData
+  const kandidat =
+    roh.all !== undefined ? roh.all : roh.totp !== undefined ? roh.totp : roh.factors !== undefined ? roh.factors : undefined
+  const liste = alsFaktorliste(kandidat)
+  if (liste == null) return { status: 'unlesbar' }
+  return { status: 'ok', liste }
+}
+
+export function waehleVerifiziertenTotpFaktor(liste: readonly MfaFaktor[]): MfaFaktor | null {
+  return liste.find(istVerifizierterTotpFaktor) ?? null
+}
+
 export function totpFaktorenAusAntwort(data: MfaListFactorsData | null | undefined): TotpFaktorAnzeige[] {
   const liste = data?.all ?? data?.totp ?? data?.factors ?? []
   return liste.filter(istTotpFaktor).map((faktor) => ({
