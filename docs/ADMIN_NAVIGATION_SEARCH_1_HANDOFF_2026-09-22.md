@@ -12,7 +12,7 @@ Task seed: `c0539a1940c4df4809c743bf7fd2c63b80c5294f`
 `origin/main` / merge-base: `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`  
 Synced by authorized normal merge of #546. No rebase/force. Global startup docs were inherited, not edited.
 
-R1–R3 review fixes are on this branch. Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older gates on `929250d5` / `e029b455` are invalid.
+R1 viewport-bound review fix is on this branch. R2/R3 from the prior round remain. Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older gates on `22037bf4` / `929250d5` / `e029b455` are invalid.
 
 ## Owned files
 
@@ -29,7 +29,7 @@ Read-only: `lib/admin/navigation.ts`, `AdminSessionProvider`, roles/capabilities
 
 ## Tests before this persist
 
-3821 `npm test` PASS. Hydrated 11 PASS including R1 geometry at 390×500, R2 hover `activeElement` stays close-button, R3 `prefetch={false}` boundary. `typecheck` / `build` / hygiene PASS.
+3822 `npm test` PASS. Hydrated 11 PASS including viewport-aware R1 at 390×500 / 200% text (option `399–487` inside list `290–487` and viewport `500`), R2 hover `activeElement` stays close-button, R3 `prefetch={false}` boundary. `typecheck` / `build` / hygiene PASS.
 
 ## Next actor
 

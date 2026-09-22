@@ -1,7 +1,7 @@
 # Jetnity Admin Navigation Search 1 — STATUS
 
 Date: 2026-09-22  
-Status: **R1–R3 ADDRESSED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **R1 VIEWPORT-BOUND ADDRESSED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Parent: existing Admin foundation completion; not a new V1 prerequisite  
 Draft PR: #545  
 Branch: `feat/admin-navigation-search-1`  
@@ -9,22 +9,22 @@ Cursor-Agent: **Jetnity admin navigation search 1**, Generation **1**
 Required and actual model: Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`) — run-info `originalModelName`  
 Session: `bc-65468a42-a473-4d29-8fdb-5f48564db44d`  
 Session URL: https://cursor.com/agents/bc-65468a42-a473-4d29-8fdb-5f48564db44d  
-Session footer: **verified from run-info** for this fresh session. UI rename not performed. Not completed docs session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`. Not completed #543 session.  
+Session footer: **verified from run-info** for this same session. UI rename not performed.  
 Operating mode re-read: `NORMAL`
 
 This is not a Technical-Lead PASS and is not Ready. Agent self-review is not TL PASS. Do not merge. Do not start a follow-up slice.
 
 ## Session acknowledgement
 
-- Product Owner confirmed no second Admin writer and authorized this fresh session.
-- Same-day cloud-agent list showed this run as the only RUNNING Admin navigation-search writer.
-- Completed continuity session `bc-a65f0017-f2c2-4617-a825-7197c4409c44` remains IDLE and was not reused.
+- Same session `bc-65468a42-a473-4d29-8fdb-5f48564db44d` continues for this review-fix round.
+- Required model remains `cursor-grok-4.6-high-fast` (`originalModelName`).
+- No second Admin writer. #547 SystemHealth and #548 isolated HBX were not edited.
 
 ## Main sync
 
-Authorized normal merge of exact docs-only `main@9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` (#546 CLOSED/MERGED/POST-MERGE VERIFIED). `git merge`, no rebase/force. Task-only seed `c0539a1940c4df4809c743bf7fd2c63b80c5294f` preserved. File overlap with this branch: none. Unexpected product/runtime drift: none. Live re-read before this persist: `origin/main` still `9dc8926e`, merge-base `9dc8926e`, **3 ahead / 0 behind** before this persist commit.
+`origin/main` re-read: still `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74`. Merge-base `9dc8926e`. No rebase, no force-push, no unrequested main merge. Previous authorized docs-only merge of #546 remains the only main sync.
 
-## What landed
+## What landed (unchanged contract)
 
 Local allowlisted area search over `filterAdminNav(ADMIN_NAV_ITEMS, useAdminSession())` then `kind === 'ready'` only.
 
@@ -38,21 +38,21 @@ Local allowlisted area search over `filterAdminNav(ADMIN_NAV_ITEMS, useAdminSess
 
 ## Review fixes (same session)
 
-Binding TL CHANGES REQUIRED on `929250d5`. No rebase/force/unrequested main merge. `origin/main` remains `9dc8926e`.
+Binding TL CHANGES REQUIRED review `5280915630` on `22037bf4`. R2 and R3 remain resolved and were not reopened.
 
-- **R1:** Keyboard-active option is scrolled inside `#admin-nav-search-list` via `scrollDeltaToReveal`. Hydrated 390×500: last row Provider & Kosten `optTop 408 / optBottom 452` inside `listTop 202 / listBottom 452`, `scrollTop 22`, `fullyVisible true`. 200% text also fully visible.
-- **R2:** Open-only focus + scroll-lock. Hover/selection no longer re-runs `input.focus()`. After focusing „Bereichssuche schliessen“ and hovering Nutzer, `activeElement` stays that BUTTON.
-- **R3:** Palette `Link` has `prefetch={false}`. Harness stub records the prop and does not forward it to DOM. Six palette entries `prefetch: false`; `domPrefetchAttr: false`. This is not a production app-dir prefetch execution.
+- **R1 (this round):** The whole dialog is bound to `visualViewport` (fallback `innerWidth`/`innerHeight`). The panel is a flex column with `max-height: calc(100% - 24px)`. Header (input + close) stays `shrink-0`; the list is `flex-1` with a one-row minimum and scrolls. Hydrated 390×500 at 200% text: panel `12–488`, list `290–487`, selected Provider & Kosten `399–487`, input `192–272`, close `29–101`, `scrollTop 347`, `optionCount 6`. Visibility now requires list window ∩ viewport, not list-only. The previous list-only pass at option `y616–704` vs viewport `500` is rejected by the new assertion.
+- **R2 (preserved):** Open-only focus + scroll-lock. Hover/selection does not re-run `input.focus()`.
+- **R3 (preserved):** Palette `Link` has `prefetch={false}`. Harness records the prop and does not forward it to DOM.
 
-Previous exact-head gates on `929250d5` / `e029b455` are invalid.
+Previous exact-head gates on `22037bf4` / `929250d5` / `e029b455` are invalid.
 
 ## Local gates before persist
 
 | Check | Result |
 | --- | --- |
-| `lib/admin/navigation-search.test.ts` + navigation + honesty | 23 pass / 0 fail |
-| `npm test` | 3821 pass / 0 fail |
-| Hydrated actual component + shell | 11 PASS including R1/R2/R3 exact repros |
+| `lib/admin/navigation-search.test.ts` + navigation + honesty | 24 pass / 0 fail |
+| `npm test` | 3822 pass / 0 fail |
+| Hydrated actual component + shell | 11 PASS including viewport-aware R1 plus preserved R2/R3 |
 | Owned `eslint` on `AdminNavigationSearch.tsx` | 0 errors (pre-existing pathname-close warning) |
 | `npm run typecheck` | pass |
 | `npm run build` | pass (Next.js 16.3.3) |
@@ -61,28 +61,25 @@ Previous exact-head gates on `929250d5` / `e029b455` are invalid.
 
 Hydrated concrete `activeElement` after close: desktop/mobile trigger buttons. After Tab: option `/admin`. After foreign-modal shortcut: `#foreign-focus`. Fetches during `kosten` search: `[]`. Physical device: **not run** (Chromium emulation only).
 
-## Exact-head gates on persist SHA `e029b455395f3f3cc6fd36d7d9bd1a4219f213f2`
+## Exact-head gates
 
-Live re-read after push, before this stamp:
+Implementation SHA `383309af2557cbd0a212ff8b9a162c9471ebbd20` is on the branch. This persist creates the freeze SHA; re-read `git rev-parse HEAD` after commit. Exact-head CI / Auth / Vercel Preview are stamped only after live SUCCESS/READY on that SHA.
+
+Live re-read before this persist:
 
 | Gate | Result |
 | --- | --- |
-| `origin/main` / merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` — **4 ahead / 0 behind** |
-| CI `35749140321` | SUCCESS on that exact SHA |
-| Auth-Konfiguration | SUCCESS (`106818373093`) |
-| Typecheck, Lint & Build | SUCCESS (`106818373498`) |
-| Vercel Preview | READY `4QdgtJPnmh2op4oJdvcdWpowfjvX` — https://jetnity-app-git-feat-admin-navigation-search-1-jetnity-e1b93c82.vercel.app |
+| `origin/main` / merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` — **9 ahead / 0 behind** before this persist |
 | Draft #545 | remains Draft; not Ready; not merged |
 
-A later stamp SHA invalidates these exact-head gates and must be re-read. Preview READY is not a signed-in Admin-session proof.
-
-Observed parallel Draft #547 / admin indexing status 1: read-only towards this slice's nav/Topbar/layout/honesty files. This writer did not start or edit that slice.
+A later stamp SHA invalidates older exact-head gates and must be re-read. Preview READY is not a signed-in Admin-session proof.
 
 ## Risks
 
 - **P1** Physical-device / real Admin Preview session not executed here.
 - **P2** While the mobile drawer overlay is open, the strip trigger is covered; Ctrl/Cmd+K closes the drawer then opens the palette (tested).
 - **P3** Dedicated hydrated script is not registered in `package.json` (task forbade test-registry edits). CI `npm test` covers the pure tests; hydrated must be run via the owned script.
+- **P3** At 390×500 / 200% text the honesty hint is `line-clamp-2` with the full text in `title`; results are not hidden.
 - Search remains UX filtering only. Server guards are unchanged.
 
 ## Next unfinished step

@@ -8,7 +8,7 @@ Required and actual model: Cursor Grok 4.6 High Fast (`originalModelName=cursor-
 
 ## 1. Ownership
 
-Only the task allowlist was written. `lib/admin/navigation.ts` and Auth/role/server guards were not edited. Parallel #546 global docs were merged in, not rewritten. No second Admin session was created.
+Only the task allowlist was written. `lib/admin/navigation.ts` and Auth/role/server guards were not edited. Parallel #546 global docs were merged in, not rewritten. #547 SystemHealth and #548 isolated HBX were not touched. No second Admin session was created.
 
 ## 2. Contract
 
@@ -18,7 +18,7 @@ Results come from `filterAdminNav` then `kind === 'ready'`. Later placeholders s
 
 One provider, one shortcut listener, one dialog. Desktop and mobile triggers share it. Cmd/Ctrl+K without Shift/Alt. Escape restores the visible invoker, not BODY. Drawer is closed before the palette; a foreign `aria-modal` keeps focus. No search fetch/localStorage.
 
-R1–R3 from TL `929250d5` are addressed in this same session: list-local scroll of the active row, opening-only focus lifecycle, explicit `prefetch={false}` with stub-recorded boundary evidence.
+Round-2 TL `5280915630` on `22037bf4`: R2/R3 remain. R1 is now viewport-bound. The previous list-only `fullyVisible` check would still pass the rejected geometry (list `454–704`, option `616–704`, viewport `500`). The corrected assertion requires list ∩ visualViewport and also that input, close and panel sit inside that viewport. All six ready results remain; none are removed to make the short viewport fit.
 
 Adversarial notes the reviewer should not miss:
 
@@ -26,6 +26,7 @@ Adversarial notes the reviewer should not miss:
 - Hydrated proof is Chromium emulation of the actual shell with boundary stubs. It is not a signed-in Preview session and not a physical device.
 - R3 proves the Next `prefetch` prop is `false` at the Link boundary and is not forwarded to DOM. It does not execute production app-dir prefetch.
 - `npm test` does not run the hydrated script because the task forbade package/test-registry edits.
+- At 390×500 / 200% text the honesty hint is `line-clamp-2`. Full text remains in `title`. This is not result hiding.
 
 ## 4. Main sync
 
