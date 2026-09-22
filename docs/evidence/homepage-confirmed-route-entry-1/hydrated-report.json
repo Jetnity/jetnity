@@ -34,6 +34,10 @@
       "ok": true
     },
     {
+      "name": "R5 keyboard focus after swap",
+      "ok": true
+    },
+    {
       "name": "keyboard/focus/reflow",
       "ok": true
     }

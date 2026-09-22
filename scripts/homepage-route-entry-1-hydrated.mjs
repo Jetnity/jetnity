@@ -330,6 +330,52 @@ async function r4ParentSamen(page, origin) {
   await speichern(page, 'r4_parent_seed_and_reset')
 }
 
+async function aktiverFokus(page) {
+  return page.evaluate(() => ({
+    tag: document.activeElement?.tagName ?? null,
+    id: document.activeElement?.id ?? '',
+    label: document.activeElement?.getAttribute('aria-label'),
+  }))
+}
+
+async function r5TastaturFokusNachTausch(page, origin) {
+  await oeffnen(
+    page,
+    origin,
+    `surface=planner&ziel=Paris&zielId=${encodeURIComponent(PARIS)}&weitere=${encodeURIComponent(`${ROM},Rom`)}`,
+    { width: 1024, height: 900 },
+  )
+  const extra = page.locator('#feld-ziel-handoff-1')
+  await extra.click()
+  await extra.fill('')
+  await extra.pressSequentially('Cusco', { delay: 15 })
+  await page.getByRole('button', { name: 'Cusco, Ziel 2, nach oben' }).focus()
+  let fokus = await aktiverFokus(page)
+  assert.equal(fokus.tag, 'BUTTON')
+  assert.equal(fokus.label, 'Cusco, Ziel 2, nach oben')
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-ziel').inputValue(), 'Cusco')
+  assert.equal(await page.locator('#feld-ziel-primary').inputValue(), 'Paris')
+  fokus = await aktiverFokus(page)
+  assert.notEqual(fokus.tag, 'BODY')
+  assert.equal(fokus.tag, 'BUTTON')
+  assert.equal(fokus.id, 'ziel-reihenfolge-1-runter')
+  assert.equal(fokus.label, 'Cusco, Ziel 1, nach unten')
+  await speichern(page, 'r5_focus_after_extra_up')
+
+  await page.keyboard.press('Enter')
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-ziel').inputValue(), 'Paris')
+  assert.equal(await page.locator('#feld-ziel-handoff-1').inputValue(), 'Cusco')
+  fokus = await aktiverFokus(page)
+  assert.notEqual(fokus.tag, 'BODY')
+  assert.equal(fokus.tag, 'BUTTON')
+  assert.equal(fokus.id, 'ziel-reihenfolge-2-hoch')
+  assert.equal(fokus.label, 'Cusco, Ziel 2, nach oben')
+  await speichern(page, 'r5_focus_after_primary_down')
+}
+
 async function tastaturFokusReflow(page, origin) {
   await oeffnen(page, origin, 'surface=startziel', { width: 390, height: 844 })
   await waehleOrt(page, page.locator('#travel-idea'), 'Paris')
@@ -384,6 +430,7 @@ try {
     ['R4 origin confirmed edit', r4BestaetigtDannEdit],
     ['R4 minimal OrtSuche without seed', r4MinimaleSucheOhneSamen],
     ['R4 parent seed/reset', r4ParentSamen],
+    ['R5 keyboard focus after swap', r5TastaturFokusNachTausch],
     ['keyboard/focus/reflow', tastaturFokusReflow],
   ]) {
     await lauf(page, origin)

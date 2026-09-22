@@ -157,6 +157,9 @@ export default function TripPlanner({
   const zusaetzlicheFelder = React.useRef<Record<string, HTMLInputElement | null>>({})
   const anvisiert = React.useRef<string | null>(null)
   const naechsterExtraKey = React.useRef(handoff.weitere.length + 1)
+  const fokusNachTausch = React.useRef<'primaer-runter' | 'extra-hoch' | null>(null)
+  const primaerRunter = React.useRef<HTMLButtonElement>(null)
+  const extraHoch = React.useRef<HTMLButtonElement>(null)
 
   // Bleibt über einen erneuten Anlauf hinweg gleich. Das ist der ganze Zweck:
   // dieselbe Kennung, dieselbe Reise.
@@ -172,6 +175,14 @@ export default function TripPlanner({
     }
     feldInSichtNehmen(felder.current[feld as ReiseFormularFeld])
   }, [feldfehler])
+
+  React.useLayoutEffect(() => {
+    const ziel = fokusNachTausch.current
+    if (!ziel) return
+    fokusNachTausch.current = null
+    if (ziel === 'primaer-runter') feldInSichtNehmen(primaerRunter.current)
+    if (ziel === 'extra-hoch') feldInSichtNehmen(extraHoch.current)
+  }, [primaerKey, destination, destinationOrt, zusaetzlicheZiele])
 
   const feldKorrigieren = (feld: string) => {
     setFeldfehler((bisher) => feldfehlerLoeschen(bisher, feld))
@@ -191,7 +202,7 @@ export default function TripPlanner({
     delete zusaetzlicheFelder.current[zusaetzlichesZielFeld(key)]
   }
 
-  const extraNachOben = (index: number) => {
+  const extraNachOben = (index: number, fokus: 'mitgenommen' | 'zurueckgelassen' = 'mitgenommen') => {
     if (index === 0) {
       const extra = zusaetzlicheZiele[0]
       if (!extra) return
@@ -221,6 +232,7 @@ export default function TripPlanner({
         if (stand.primaerOrt) delete naechste.destination
         return naechste
       })
+      fokusNachTausch.current = fokus === 'mitgenommen' ? 'primaer-runter' : 'extra-hoch'
       return
     }
     setZusaetzlicheZiele((bisher) => {
@@ -244,7 +256,7 @@ export default function TripPlanner({
   }
 
   const primaerNachUnten = () => {
-    extraNachOben(0)
+    extraNachOben(0, 'zurueckgelassen')
   }
 
   const absenden = async (ereignis: React.FormEvent<HTMLFormElement>) => {
@@ -474,6 +486,8 @@ export default function TripPlanner({
             {zusaetzlicheZiele.length > 0 ? (
               <button
                 type="button"
+                ref={primaerRunter}
+                id="ziel-reihenfolge-1-runter"
                 onClick={primaerNachUnten}
                 aria-label={`${destinationOrt?.name || destination || 'Reiseziel'}, Ziel 1, nach unten`}
                 className="inline-flex min-h-11 w-fit items-center justify-center gap-1 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
@@ -555,6 +569,8 @@ export default function TripPlanner({
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
+                      ref={index === 0 ? extraHoch : undefined}
+                      id={index === 0 ? 'ziel-reihenfolge-2-hoch' : undefined}
                       onClick={() => extraNachOben(index)}
                       aria-label={`${ziel.ort?.name || ziel.text || `Weiteres Ziel ${nummer}`}, Ziel ${nummer + 1}, nach oben`}
                       className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
