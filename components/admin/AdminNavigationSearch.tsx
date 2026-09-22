@@ -236,6 +236,7 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder={ADMIN_EHRLICHE_TEXTE.sucheBereichePlatzhalter}
                   autoComplete="off"
+                  autoFocus
                   spellCheck={false}
                   role="combobox"
                   aria-expanded="true"

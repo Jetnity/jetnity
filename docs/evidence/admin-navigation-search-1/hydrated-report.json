@@ -1,0 +1,74 @@
+{
+  "pass": 8,
+  "ergebnisse": [
+    {
+      "name": "desktop_shortcut_select_users",
+      "activeAfterClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "desktop"
+      },
+      "nachTab": {
+        "tag": "A",
+        "id": "admin-nav-search-option--admin",
+        "label": null,
+        "trigger": null
+      },
+      "pushes": [
+        "/admin/users"
+      ]
+    },
+    {
+      "name": "desktop_escape_restores_trigger",
+      "activeAfterClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "desktop"
+      }
+    },
+    {
+      "name": "mobile_drawer_then_search",
+      "activeAfterShortcutClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "mobile"
+      },
+      "activeAfterTriggerClose": {
+        "tag": "BUTTON",
+        "id": "",
+        "label": "Lokale Navigation über vorhandene Admin-Bereiche. Keine Datensatzsuche, kein Befehl, kein Execute.",
+        "trigger": "mobile"
+      }
+    },
+    {
+      "name": "role_creator_no_users"
+    },
+    {
+      "name": "role_break_glass_no_users"
+    },
+    {
+      "name": "foreign_modal_no_steal",
+      "activeAfterShortcut": {
+        "tag": "BUTTON",
+        "id": "foreign-focus",
+        "label": null,
+        "trigger": null
+      }
+    },
+    {
+      "name": "viewport_768_and_390_200pct",
+      "overflowY": "auto"
+    },
+    {
+      "name": "alias_kosten_no_network",
+      "fetches": [],
+      "pageRequests": 1
+    }
+  ],
+  "browser": "playwright-chromium",
+  "physicalDevice": false,
+  "note": "Chromium emulation only. Not Preview E2E and not physical-device acceptance."
+}

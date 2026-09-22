@@ -147,11 +147,19 @@ async function desktopShortcutUndFokus(page, origin) {
   await desktop.focus()
   await page.keyboard.press('Control+K')
   await page.locator('#admin-nav-search-dialog').waitFor()
+  await page.waitForFunction(() => document.activeElement?.id === 'admin-nav-search-input')
   const nachOpen = await active(page)
   assert.equal(nachOpen.id, 'admin-nav-search-input')
   assert.equal(await page.locator('#admin-nav-search-dialog').count(), 1)
   await page.getByRole('option', { name: 'Steuerzentrale' }).waitFor()
   await page.getByRole('option', { name: 'Nutzer' }).waitFor()
+  await page.keyboard.press('Tab')
+  const nachTab = await active(page)
+  assert.notEqual(nachTab.id, 'admin-nav-search-input')
+  assert.notEqual(nachTab.tag, 'BODY')
+  await page.keyboard.press('Shift+Tab')
+  await page.waitForFunction(() => document.activeElement?.id === 'admin-nav-search-input')
+  await speichern(page, 'desktop_palette_open')
   await page.keyboard.type('???')
   await page.getByText('Kein passender Bereich.').waitFor()
   await page.locator('#admin-nav-search-input').fill('')
@@ -164,7 +172,7 @@ async function desktopShortcutUndFokus(page, origin) {
   assert.notEqual(nachNav.tag, 'BODY')
   assert.equal(sucheAnfragen(anfragen).length, 0)
   await speichern(page, 'desktop_shortcut_select_users')
-  ergebnisse.push({ name: 'desktop_shortcut_select_users', activeAfterClose: nachNav, pushes })
+  ergebnisse.push({ name: 'desktop_shortcut_select_users', activeAfterClose: nachNav, nachTab, pushes })
 }
 
 async function desktopEscapeRestore(page, origin) {
@@ -188,15 +196,25 @@ async function mobileTriggerUndDrawer(page, origin) {
   assert.equal(await desktop.isVisible(), false)
   await page.getByRole('button', { name: 'Navigationsmenü öffnen' }).click()
   await page.getByRole('dialog', { name: 'Admin Navigation' }).waitFor()
-  await mobile.click()
+  await page.keyboard.press('Control+K')
   await page.getByRole('dialog', { name: 'Admin Navigation' }).waitFor({ state: 'detached' })
   await page.locator('#admin-nav-search-dialog').waitFor()
   assert.equal(await page.locator('#admin-nav-search-dialog').count(), 1)
+  await speichern(page, 'mobile_palette_open')
+  await page.keyboard.press('Escape')
+  const nachShortcut = await active(page)
+  assert.notEqual(nachShortcut.tag, 'BODY')
+  await mobile.click()
+  await page.locator('#admin-nav-search-dialog').waitFor()
   await page.keyboard.press('Escape')
   const nach = await active(page)
   assert.equal(nach.trigger, 'mobile')
   await speichern(page, 'mobile_drawer_then_search')
-  ergebnisse.push({ name: 'mobile_drawer_then_search', activeAfterClose: nach })
+  ergebnisse.push({
+    name: 'mobile_drawer_then_search',
+    activeAfterShortcutClose: nachShortcut,
+    activeAfterTriggerClose: nach,
+  })
 }
 
 async function rollenFilter(page, origin) {
