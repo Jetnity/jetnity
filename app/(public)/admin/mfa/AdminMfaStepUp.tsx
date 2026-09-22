@@ -5,11 +5,8 @@ import Link from 'next/link'
 
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog'
 import { supabase } from '@/lib/supabase/client'
-import { startTotpChallenge } from '@/lib/auth/mfa'
-import {
-  ADMIN_MFA_EINRICHTUNG,
-  istKeinTotpFaktorFehler,
-} from '@/lib/auth/admin-aal'
+import { starteTotpChallengeAnzeige } from '@/lib/auth/mfa'
+import { ADMIN_MFA_EINRICHTUNG } from '@/lib/auth/admin-aal'
 import { bestaetigeAdminAal2Action } from './actions'
 
 export function AdminMfaStepUp({
@@ -33,23 +30,23 @@ export function AdminMfaStepUp({
 
     let abgebrochen = false
     setBusy(true)
-    void startTotpChallenge(supabase)
-      .then(({ factorId: faktor, challengeId: herausforderung }) => {
+    void starteTotpChallengeAnzeige(supabase)
+      .then((anzeige) => {
         if (abgebrochen) return
-        setFactorId(faktor)
-        setChallengeId(herausforderung)
-        setMfaOpen(true)
-        setKeinFaktor(false)
-        setError(null)
-      })
-      .catch((err: unknown) => {
-        if (abgebrochen) return
-        if (istKeinTotpFaktorFehler(err)) {
+        if (anzeige.art === 'dialog') {
+          setFactorId(anzeige.factorId)
+          setChallengeId(anzeige.challengeId)
+          setMfaOpen(true)
+          setKeinFaktor(false)
+          setError(null)
+          return
+        }
+        if (anzeige.art === 'setup') {
           setKeinFaktor(true)
           setError(null)
           return
         }
-        setError(err instanceof Error ? err.message : 'Die Zwei-Faktor-Prüfung konnte nicht gestartet werden.')
+        setError(anzeige.meldung)
       })
       .finally(() => {
         if (!abgebrochen) setBusy(false)
@@ -94,22 +91,19 @@ export function AdminMfaStepUp({
             onClick={() => {
               setBusy(true)
               setError(null)
-              void startTotpChallenge(supabase)
-                .then(({ factorId: faktor, challengeId: herausforderung }) => {
-                  setFactorId(faktor)
-                  setChallengeId(herausforderung)
-                  setMfaOpen(true)
-                })
-                .catch((err: unknown) => {
-                  if (istKeinTotpFaktorFehler(err)) {
+              void starteTotpChallengeAnzeige(supabase)
+                .then((anzeige) => {
+                  if (anzeige.art === 'dialog') {
+                    setFactorId(anzeige.factorId)
+                    setChallengeId(anzeige.challengeId)
+                    setMfaOpen(true)
+                    return
+                  }
+                  if (anzeige.art === 'setup') {
                     setKeinFaktor(true)
                     return
                   }
-                  setError(
-                    err instanceof Error
-                      ? err.message
-                      : 'Die Zwei-Faktor-Prüfung konnte nicht gestartet werden.',
-                  )
+                  setError(anzeige.meldung)
                 })
                 .finally(() => setBusy(false))
             }}

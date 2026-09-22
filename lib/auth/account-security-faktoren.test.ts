@@ -115,9 +115,49 @@ describe('AP-5-S1 TOTP-Faktorvertrag', () => {
       status: 'ok',
       liste: [VERIFIZIERTER_TOTP],
     })
+    assert.deepEqual(mfaFaktorenListeLesen({ totp: [VERIFIZIERTER_TOTP] }), {
+      status: 'ok',
+      liste: [VERIFIZIERTER_TOTP],
+    })
     assert.equal(mfaFaktorenListeLesen(null).status, 'unlesbar')
     assert.equal(mfaFaktorenListeLesen({}).status, 'unlesbar')
     assert.equal(mfaFaktorenListeLesen({ all: 'nope' }).status, 'unlesbar')
+  })
+
+  test('malformed Faktor-Records machen die Challenge-Liste unlesbar', () => {
+    assert.equal(mfaFaktorenListeLesen({ all: [{}] }).status, 'unlesbar')
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ factor_type: 'totp', status: 'verified' }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ id: '', factor_type: 'totp', status: 'verified' }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ id: 12, factor_type: 'totp', status: 'verified' }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ id: 'synthetic', factor_type: 'totp', status: {} }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({
+        all: [{ id: 'synthetic', factor_type: { totp: true }, status: 'verified' }],
+      }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{}, VERIFIZIERTER_TOTP] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      totpFaktorenAusAntwort({
+        all: [{ id: '', factor_type: 'totp', status: 'verified' } as MfaFaktor],
+      }).length,
+      0,
+    )
   })
 
   test('Challenge-Auswahl nimmt nur verified TOTP und nicht Phone', () => {

@@ -9,12 +9,14 @@ import { fileURLToPath } from 'node:url'
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog'
 import { istKeinTotpFaktorFehler } from '@/lib/auth/admin-aal'
 import {
+  brauchtLoginTotpStepUp,
   getAAL,
   MFA_API_FEHLT,
   MFA_CHALLENGE_ID_FEHLT,
   MFA_FAKTOREN_UNLESBAR,
   MFA_TOTP_FEHLT,
   startTotpChallenge,
+  starteTotpChallengeAnzeige,
   type BrowserSupabase,
 } from '@/lib/auth/mfa'
 import type { MfaFaktor, MfaListFactorsData } from '@/lib/auth/account-security-faktoren'
@@ -106,6 +108,19 @@ describe('startTotpChallenge – bestehende verifizierte Faktoren', () => {
     const ergebnis = await startTotpChallenge(client)
     assert.deepEqual(ergebnis, { factorId: SYNTHETIC_VERIFIED_ID, challengeId: SYNTHETIC_CHALLENGE_ID })
     assert.equal(listCount.n, 1)
+    assert.equal(challengeCount.n, 1)
+    assert.deepEqual(challenges, [{ factorId: SYNTHETIC_VERIFIED_ID }])
+  })
+
+  test('aktuelle totp-only Form ohne all startet genau eine Challenge', async () => {
+    const { client, challengeCount, challenges } = supabaseAttrappe({
+      listFactors: async () => ({
+        data: { totp: [AKTUELLER_VERIFIZIERTER_TOTP], phone: [] },
+        error: null,
+      }),
+    })
+    const ergebnis = await startTotpChallenge(client)
+    assert.equal(ergebnis.factorId, SYNTHETIC_VERIFIED_ID)
     assert.equal(challengeCount.n, 1)
     assert.deepEqual(challenges, [{ factorId: SYNTHETIC_VERIFIED_ID }])
   })
@@ -268,12 +283,37 @@ describe('startTotpChallenge – bestehende verifizierte Faktoren', () => {
     }
   })
 
-  test('verified TOTP ohne gültige ID ist no-factor ohne Challenge', async () => {
+  test('unvollständige oder ungültige Faktor-Records sind Lookup-Fehler, nicht Setup', async () => {
+    const datensaetze = [
+      { all: [{}] },
+      { all: [{ factor_type: 'totp', status: 'verified' }] },
+      { all: [{ id: '', factor_type: 'totp', status: 'verified' }] },
+      { all: [{ id: 12, factor_type: 'totp', status: 'verified' }] },
+      { all: [{ id: 'synthetic', factor_type: 'totp', status: {} }] },
+      { all: [{ id: 'synthetic', factor_type: { totp: true }, status: 'verified' }] },
+      { all: [{}, AKTUELLER_VERIFIZIERTER_TOTP] },
+    ]
+
+    for (const data of datensaetze) {
+      const { client, challengeCount } = supabaseAttrappe({
+        listFactors: async () => ({ data, error: null }),
+      })
+      await assert.rejects(async () => startTotpChallenge(client), (err: unknown) => {
+        assert.ok(err instanceof Error)
+        assert.equal(err.message, MFA_FAKTOREN_UNLESBAR)
+        assert.equal(istKeinTotpFaktorFehler(err), false)
+        return true
+      })
+      assert.equal(challengeCount.n, 0)
+    }
+  })
+
+  test('vorwärtskompatibler nicht-TOTP-String bleibt echter no-factor-Pfad', async () => {
     const { client, challengeCount } = supabaseAttrappe({
       listFactors: async () => ({
         data: {
-          all: [{ id: '', factor_type: 'totp', status: 'verified' }],
-          totp: [{ id: '', factor_type: 'totp', status: 'verified' }],
+          all: [{ id: 'future-factor', factor_type: 'webauthn', status: 'verified' }],
+          totp: [],
           phone: [],
         },
         error: null,
@@ -326,20 +366,23 @@ describe('Login- und Admin-Verbraucherverträge', () => {
       }),
     })
     const aal = await getAAL(client)
-    const brauchtStepUp = aal?.nextLevel === 'aal2' && aal?.currentLevel !== 'aal2'
-    assert.equal(aal.currentLevel, 'aal1')
-    assert.equal(aal.nextLevel, 'aal2')
-    assert.equal(brauchtStepUp, true)
+    assert.equal(brauchtLoginTotpStepUp(aal), true)
+    assert.match(login, /brauchtLoginTotpStepUp\(aal\)/)
 
-    const ids = await startTotpChallenge(client)
+    const anzeige = await starteTotpChallengeAnzeige(client)
+    assert.deepEqual(anzeige, {
+      art: 'dialog',
+      factorId: SYNTHETIC_VERIFIED_ID,
+      challengeId: SYNTHETIC_CHALLENGE_ID,
+    })
     assert.equal(challengeCount.n, 1)
     const html = renderToStaticMarkup(
       createElement(MFATotpDialog, {
-        open: true,
+        open: anzeige.art === 'dialog',
         onClose: () => undefined,
         supabase: client,
-        factorId: ids.factorId,
-        challengeId: ids.challengeId,
+        factorId: anzeige.art === 'dialog' ? anzeige.factorId : '',
+        challengeId: anzeige.art === 'dialog' ? anzeige.challengeId : '',
       }),
     )
     assert.match(html, /Bestätige deinen TOTP-Code/)
@@ -358,43 +401,40 @@ describe('Login- und Admin-Verbraucherverträge', () => {
       }),
     })
     const aal = await getAAL(client)
-    const brauchtStepUp = aal?.nextLevel === 'aal2' && aal?.currentLevel !== 'aal2'
-    assert.equal(brauchtStepUp, false)
+    assert.equal(brauchtLoginTotpStepUp(aal), false)
     assert.equal(challengeCount.n, 0)
-    assert.match(login, /aal\?\.nextLevel === 'aal2' && aal\?\.currentLevel !== 'aal2'/)
+    assert.match(login, /brauchtLoginTotpStepUp\(aal\)/)
     assert.match(adminSeite, /if \(decision\.allowed\) redirect\(ziel\)/)
   })
 
-  test('echter no-factor-Pfad bleibt Setup, Lookup-Fehler nicht', async () => {
+  test('Admin-Anzeige trennt Dialog, Setup und Lookup-Fehler', async () => {
+    const bereit = supabaseAttrappe({})
+    assert.deepEqual(await starteTotpChallengeAnzeige(bereit.client), {
+      art: 'dialog',
+      factorId: SYNTHETIC_VERIFIED_ID,
+      challengeId: SYNTHETIC_CHALLENGE_ID,
+    })
+
     const leer = supabaseAttrappe({
       listFactors: async () => ({ data: { all: [], totp: [], phone: [] }, error: null }),
     })
-    await assert.rejects(async () => {
-      try {
-        await startTotpChallenge(leer.client)
-      } catch (err) {
-        assert.equal(istKeinTotpFaktorFehler(err), true)
-        throw err
-      }
-    }, (err: unknown) => err instanceof Error && err.message === KEINE_TOTP_MELDUNG)
+    assert.deepEqual(await starteTotpChallengeAnzeige(leer.client), { art: 'setup' })
     assert.equal(leer.challengeCount.n, 0)
 
     const kaputt = supabaseAttrappe({
-      listFactors: async () => ({ data: null, error: new Error('AAL lookup failed') }),
+      listFactors: async () => ({ data: { all: [{}] }, error: null }),
     })
-    await assert.rejects(async () => {
-      try {
-        await startTotpChallenge(kaputt.client)
-      } catch (err) {
-        assert.equal(istKeinTotpFaktorFehler(err), false)
-        throw err
-      }
-    })
+    const anzeige = await starteTotpChallengeAnzeige(kaputt.client)
+    assert.deepEqual(anzeige, { art: 'fehler', meldung: MFA_FAKTOREN_UNLESBAR })
     assert.equal(kaputt.challengeCount.n, 0)
-    assert.match(admin, /istKeinTotpFaktorFehler/)
+
+    assert.match(admin, /starteTotpChallengeAnzeige/)
+    assert.match(admin, /anzeige\.art === 'setup'/)
+    assert.match(admin, /anzeige\.art === 'dialog'/)
     assert.match(admin, /TOTP unter Sicherheit einrichten/)
     assert.match(admin, /lookupFailed/)
     assert.equal(admin.includes('Authenticator-App hinzufügen'), false)
+    assert.equal(admin.includes('startTotpChallenge('), false)
   })
 
   test('Server-Nachprüfung bleibt evaluateAdminAccess / AAL2', () => {
@@ -404,7 +444,7 @@ describe('Login- und Admin-Verbraucherverträge', () => {
     assert.match(admin, /bestaetigeAdminAal2Action/)
     assert.match(login, /startTotpChallenge/)
     assert.match(login, /MFATotpDialog/)
-    assert.match(admin, /startTotpChallenge/)
+    assert.match(admin, /starteTotpChallengeAnzeige/)
     assert.match(admin, /MFATotpDialog/)
   })
 })

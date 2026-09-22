@@ -1,6 +1,7 @@
 // lib/auth/mfa.ts
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { istKeinTotpFaktorFehler } from "@/lib/auth/admin-aal";
 import {
   mfaFaktorenListeLesen,
   waehleVerifiziertenTotpFaktor,
@@ -13,6 +14,19 @@ export const MFA_FAKTOREN_UNLESBAR = "TOTP-Faktoren konnten nicht gelesen werden
 export const MFA_TOTP_FEHLT =
   "Kein TOTP-Faktor gefunden. Bitte zuerst TOTP in den Sicherheitseinstellungen einrichten.";
 export const MFA_CHALLENGE_ID_FEHLT = "challengeId fehlt.";
+const MFA_CHALLENGE_START_FEHLER =
+  "Die Zwei-Faktor-Prüfung konnte nicht gestartet werden.";
+
+export type TotpChallengeAnzeige =
+  | { art: "dialog"; factorId: string; challengeId: string }
+  | { art: "setup" }
+  | { art: "fehler"; meldung: string };
+
+export function brauchtLoginTotpStepUp(
+  aal: { currentLevel?: string | null; nextLevel?: string | null } | null | undefined,
+): boolean {
+  return aal?.nextLevel === "aal2" && aal?.currentLevel !== "aal2";
+}
 
 type MfaListFactorsAntwort = {
   data?: unknown;
@@ -72,4 +86,23 @@ export async function startTotpChallenge(supabase: BrowserSupabase) {
   }
 
   return { factorId: totp.id, challengeId };
+}
+
+/**
+ * Admin-Step-up-Anzeige: Dialog, echter Setup-Pfad oder Lookup-Fehler.
+ * Eine gestartete Challenge ist keine erfolgreiche Verifikation.
+ */
+export async function starteTotpChallengeAnzeige(
+  supabase: BrowserSupabase,
+): Promise<TotpChallengeAnzeige> {
+  try {
+    const ids = await startTotpChallenge(supabase);
+    return { art: "dialog", factorId: ids.factorId, challengeId: ids.challengeId };
+  } catch (err: unknown) {
+    if (istKeinTotpFaktorFehler(err)) return { art: "setup" };
+    return {
+      art: "fehler",
+      meldung: err instanceof Error ? err.message : MFA_CHALLENGE_START_FEHLER,
+    };
+  }
 }

@@ -59,12 +59,47 @@ export type MfaFaktorenLesung =
   | { status: 'ok'; liste: MfaFaktor[] }
   | { status: 'unlesbar' }
 
-function alsFaktorliste(wert: unknown): MfaFaktor[] | null {
-  if (!Array.isArray(wert)) return null
-  if (wert.some((eintrag) => eintrag == null || typeof eintrag !== 'object' || Array.isArray(eintrag))) {
+function istNichtleererString(wert: unknown): wert is string {
+  return typeof wert === 'string' && wert.length > 0
+}
+
+/**
+ * Challenge-Lesung: ein Datensatz ist nur lesbar, wenn ID, Typ und Status
+ * klassifizierbar sind. Ein Record, der verified TOTP behauptet, aber keine
+ * gültige ID hat, ist unlesbar — nicht „kein Faktor“.
+ * `totpFaktorenAusAntwort` bleibt der unveränderte Anzeige-Normalizer.
+ */
+function faktorDatensatzLesen(eintrag: unknown): MfaFaktor | null {
+  if (eintrag == null || typeof eintrag !== 'object' || Array.isArray(eintrag)) {
     return null
   }
-  return wert as MfaFaktor[]
+
+  const roh = eintrag as Record<string, unknown>
+  if (!istNichtleererString(roh.id)) return null
+
+  const factorType = roh.factor_type
+  const legacyType = roh.type
+  if (factorType !== undefined && factorType !== null && factorType !== '') {
+    if (typeof factorType !== 'string') return null
+  } else if (legacyType !== undefined && legacyType !== null && legacyType !== '') {
+    if (typeof legacyType !== 'string') return null
+  } else {
+    return null
+  }
+
+  if (!istNichtleererString(roh.status)) return null
+  return roh as unknown as MfaFaktor
+}
+
+function alsFaktorliste(wert: unknown): MfaFaktor[] | null {
+  if (!Array.isArray(wert)) return null
+  const liste: MfaFaktor[] = []
+  for (const eintrag of wert) {
+    const faktor = faktorDatensatzLesen(eintrag)
+    if (faktor == null) return null
+    liste.push(faktor)
+  }
+  return liste
 }
 
 /**
