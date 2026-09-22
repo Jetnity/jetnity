@@ -15,8 +15,9 @@
     "limitation": "Local PostgREST 16.3 is not assumed to match hosted Supabase PostgREST."
   },
   "docsConsulted": [
-    "https://docs.postgrest.org/en/v16/references/api/functions.html",
-    "https://docs.postgrest.org/en/v16/references/auth.html"
+    "https://docs.postgrest.org/en/stable/references/errors.html",
+    "https://docs.postgrest.org/en/stable/references/api/schemas.html",
+    "https://nodejs.org/api/child_process.html"
   ],
-  "docsNote": "Official v16 HTML was Cloudflare-interstitial in this session; the installed binary --example config and actual HTTP status/code classes were used. No hosted upgrade."
+  "docsNote": "Pinned PostgREST 16.3 status/code pairs and Accept-Profile/Content-Profile schema selection were asserted from the local binary responses. No hosted upgrade."
 }

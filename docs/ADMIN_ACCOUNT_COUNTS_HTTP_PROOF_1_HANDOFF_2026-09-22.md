@@ -1,7 +1,7 @@
 # Admin Account Counts HTTP Proof 1 — HANDOFF
 
 Stand: 22. September 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW / KEIN READY / KEIN MERGE / KEINE PRODUCTION-AKTIVIERUNG / KEIN ZWEITER #553-WRITER**
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEINE PRODUCTION-AKTIVIERUNG / KEIN NEUES AGENT**
 
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_TASK_2026-09-22.md` (TL-owned; do not rewrite)  
 Status: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_STATUS_2026-09-22.md`  
@@ -18,8 +18,11 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Draft PR | #554 |
 | Branch | `audit/admin-account-counts-http-proof-1` |
 | Task seed | `c19d7d92807db97187bb3770cc61c5dc4eb1f738` |
-| Authorized main | `ff054f76c14cf1c434890ba342af4df5e536dd05` |
+| Authorized / current main | `72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed` |
+| Merge-base | `72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed` |
 | Examined snapshot | `dcf7bfee497ba3aa2038a43fe4bc2a09e541625f` |
+| Review corrected | `5284332971` (H1–H3) |
+| Historical freeze | `0109fce2c17d6a85d8eb1bd651dc7b8f3259fe4e` (dated; not this rerun) |
 | Agent / session | Generation 1 / `bc-e1622174-d101-44e3-bb7d-d4fad18cd016` |
 | Session URL | https://cursor.com/agents/bc-e1622174-d101-44e3-bb7d-d4fad18cd016 |
 | Required / actual model | Cursor Grok 4.6 High Fast / `cursor-grok-4.6-high-fast` |
@@ -33,11 +36,13 @@ Allowed slice files only:
 
 1. `scripts/db/admin-account-counts-http-proof-1.mjs`
 2. `scripts/db/admin-account-counts-http-proof-1.test.mjs`
-3. `scripts/db/admin-account-counts-http-proof-1-fixture.sql`
+3. `scripts/db/admin-account-counts-http-proof-1-fixture.sql` (unchanged in H1–H3)
 4. this STATUS / HANDOFF / SELF_REVIEW
 5. `docs/evidence/admin-account-counts-http-proof-1/*`
 
-No `docs/ACTIVE_WORK_STATUS.md`. No `supabase/migrations/`. No package/CI/shared-client edits. No #553 product files.
+Authorized merge of exact main `72291ee6` is already on the branch (`20a8efc0`). Incoming #553/product/central-doc files stay read-only.
+
+No `docs/ACTIVE_WORK_STATUS.md`. No `supabase/migrations/`. No package/CI/shared-client edits.
 
 ## 3. How to re-run
 
@@ -51,30 +56,22 @@ node --import tsx --test scripts/db/admin-account-counts-http-proof-1.test.mjs
 node --import tsx scripts/db/admin-account-counts-http-proof-1.mjs
 ```
 
-The harness:
+Last verified local run after H1–H3: **46/46 PASS** + 1 observation on PostgreSQL 17.11 + PostgREST 16.3. Runner safety/fault controls: **18/18 PASS**. Cleanup `httpStopped:true` / `httpReaped:true`.
 
-- refuses inherited remote/Supabase/PostgREST connection defaults;
-- exports wrapper/parser/contract from `dcf7bfee` into a private temp dir and fail-closes on hash mismatch;
-- starts a private `initdb` cluster (`listen_addresses=''`, socket 0700);
-- starts PostgREST on `127.0.0.1` only with a per-run JWT secret file;
-- never imports `scripts/db/sql.mjs`.
+## 4. #553 status — do not reactivate
 
-Last verified local run: **38/38 PASS** on PostgreSQL 17.11 + PostgREST 16.3. Runner safety: **8/8 PASS**.
-
-## 4. Sibling drift — do not sync
-
-#553 observed head `f9a41701f0dfcacc23efb605089169d330dc1ed4` is two commits after the examined snapshot (v3 addendum + residual R1 shared-URL bind). This reviewer must not merge/rebase/cherry-pick/import that loader. Findings return to TL. #553 retains first main integration priority.
-
-Live `origin/main` re-read at freeze time: `ff054f76c14cf1c434890ba342af4df5e536dd05` (0 behind).
+#553 is CLOSED / MERGED / POST-MERGE VERIFIED. Accepted head `f9a41701` is in main `72291ee6`. The five examined sources are unchanged through that merge. Do not start a second product writer. Do not rebase/force/reset/cherry-pick. If `origin/main` moves past `72291ee6`, report drift and wait for an exact-SHA dispatch.
 
 ## 5. What a reviewer should verify first
 
-1. Diff stays inside the allowed proof/evidence/deliverable paths.
-2. Source manifest hashes still match `dcf7bfee` / accepted main producer+bootstrap.
-3. Evidence distinguishes HTTP/signature/role, SQL/catalog, parser, synthetic large-value, and not-run classes.
-4. No Ready/merge, no second product writer, no hosted apply.
-5. Fresh exact-head CI/Auth/Preview from the frozen SHA, in a PR comment.
+1. Diff stays inside the allowed proof/evidence/deliverable paths plus the already-authorized main merge.
+2. Source manifest hashes still match `dcf7bfee` and are identical on `72291ee6`.
+3. Cleanup acceptance requires `httpStopped` / reap; listener evidence is pid-bound LISTEN.
+4. Denials assert exact v16 pairs and reject 500/503/HTML/success in executable tests.
+5. Schema probes use Accept-Profile/Content-Profile; catalog is before/after definition/owner/ACL/RLS.
+6. Observation vs assertion counts stay honest.
+7. Fresh exact-head CI/Auth/Preview from the frozen SHA.
 
 ## 6. Next actor
 
-Technical Lead: independent exact-head review of this evidence. Reconcile source hashes to the final accepted #553 product before deciding applicability. Same-session review fixes only if TL dispatches them on this assignment. Do not start another agent or follow-up slice from this task.
+Technical Lead: independent exact-head re-review of this corrected evidence. Same session only if TL dispatches a further review fix. Do not start another agent or follow-up slice from this task. Cursor must not Ready or merge.

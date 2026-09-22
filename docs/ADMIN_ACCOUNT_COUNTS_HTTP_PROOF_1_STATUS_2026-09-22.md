@@ -1,94 +1,106 @@
 # Admin Account Counts HTTP Proof 1 — STATUS
 
 Stand: 22. September 2026  
-Status: **LOCAL HTTP TRANSPORT PROOF COMPLETE / FROZEN FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT A PRODUCT PASS / NOT AN ACCEPTANCE OF #553 / DRAFT / NOT READY / NOT MERGED**
+Status: **H1–H3 REVIEW FIX RERUN COMPLETE / FROZEN FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / NOT A PRODUCT PASS / DRAFT / NOT READY / NOT MERGED**
 
 Draft PR: #554  
 Branch: `audit/admin-account-counts-http-proof-1`  
-Binding task: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_TASK_2026-09-22.md` v1 at seed `c19d7d92807db97187bb3770cc61c5dc4eb1f738`  
-Verified branch baseline: `main@ff054f76c14cf1c434890ba342af4df5e536dd05`; mode NORMAL  
-Examined immutable snapshot: `dcf7bfee497ba3aa2038a43fe4bc2a09e541625f`
+Binding task: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_TASK_2026-09-22.md` v1 at seed `c19d7d92807db97187bb3770cc61c5dc4eb1f738` (immutable)  
+Authorized / current main: `72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed` (fetched; no newer drift)  
+Original branch baseline: `ff054f76c14cf1c434890ba342af4df5e536dd05`  
+Examined immutable snapshot: `dcf7bfee497ba3aa2038a43fe4bc2a09e541625f`  
+Review being corrected: `5284332971` on historical freeze `0109fce2c17d6a85d8eb1bd651dc7b8f3259fe4e`  
+Mode: NORMAL
 
 Cursor-Agent: **Jetnity admin account counts HTTP proof 1**, Generation 1  
 Required / actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=cursor-grok-4.6-high-fast`)  
 Session: `bc-e1622174-d101-44e3-bb7d-d4fad18cd016`  
 Session URL: https://cursor.com/agents/bc-e1622174-d101-44e3-bb7d-d4fad18cd016  
-Observed run-info display name: `Admin account counts HTTP proof`. UI rename was **not** performed (no rename capability in this session).
+Observed run-info display name: `Admin account counts HTTP proof`. UI rename was **not** performed.
 
-This file is point-in-time evidence. Agent self-review is not Technical-Lead PASS. Exact-head CI / Auth / Preview belong in a **PR comment**, not a later evidence-only commit. #553 keeps first main integration priority.
+This file is point-in-time evidence. Agent self-review is not Technical-Lead PASS. Exact-head CI / Auth / Preview belong in conversation after this freeze, not in a later status-only commit.
+
+**#553 is CLOSED / MERGED / POST-MERGE VERIFIED** (accepted `f9a41701`, TL PASS `5284282407`, closure `5784907079`). Incoming product/shared/central-doc files from the authorized main merge were not edited.
 
 ---
 
 ## 1. Goal
 
-Fill the still-unverified **real local PostgREST HTTP / signature / role / JSON** boundary for the accepted account-count producer and the frozen zero-argument wrapper. This is not another broad audit, not a repeat of #552 inner SQL, and not a competing correction of #553 residual R1.
+Fill the missing **real local PostgREST HTTP / signature / role / JSON** boundary for the pinned producer/bootstrap/wrapper/parser/contract, then correct review H1–H3 in the same evidence lane.
 
-## 2. Implemented
+## 2. Implemented (allowed paths only)
 
-Allowed paths only:
-
-- `scripts/db/admin-account-counts-http-proof-1.mjs` — isolated harness
-- `scripts/db/admin-account-counts-http-proof-1.test.mjs` — harness-safety tests
-- `scripts/db/admin-account-counts-http-proof-1-fixture.sql` — labelled authenticator / seed / large-value transport
+- `scripts/db/admin-account-counts-http-proof-1.mjs` — H1 owned-process reap + pid/LISTEN readback; H2 structured PostgREST v16 pairs + schema-cache convergence; H3 Accept-Profile/Content-Profile + before/after catalog snapshots
+- `scripts/db/admin-account-counts-http-proof-1.test.mjs` — 18 isolation/fault controls
+- `scripts/db/admin-account-counts-http-proof-1-fixture.sql` — unchanged labelled authenticator / seed / large-value transport
 - `docs/evidence/admin-account-counts-http-proof-1/*`
 - this STATUS / HANDOFF / SELF_REVIEW
 
-No product runtime, shared client, checker, migration, package/lock/CI, central-doc or #553 file edits. No public app audit route.
+No product runtime, shared client, checker, migration, package/lock/CI, central-doc or #553 file edits. No public app audit route. No new agent.
 
-## 3. Source pin
+## 3. Source pin (unchanged)
 
-| Source | Pin | Measured |
-| --- | --- | --- |
-| producer | sha256 `dcf4d35d…ccd4420` | match |
-| bootstrap | sha256 `0413821d…e6f6ea2` | match |
-| wrapper @ dcf7bfee | sha256 `13fa3fe2…d63a6fb` | match |
-| parser @ dcf7bfee | blob `6205ecbb…f6d` | match |
-| contract @ dcf7bfee | blob `6826eeea…e9b8` | match |
+| Source | Pin | dcf7bfee | main 72291ee6 |
+| --- | --- | --- | --- |
+| producer | sha256 `dcf4d35d…ccd4420` | match | match |
+| bootstrap | sha256 `0413821d…e6f6ea2` | match | match |
+| wrapper | sha256 `13fa3fe2…d63a6fb` | match | identical |
+| parser | blob `6205ecbb…f6d` | match | identical |
+| contract | blob `6826eeea…e9b8` | match | identical |
 
-Observed #553 head at freeze time: `f9a41701f0dfcacc23efb605089169d330dc1ed4` (`fix: bind account-count activation to the shared captured URL` plus addendum `86f5d484`). **Not imported. Not accepted. Residual R1 remains the existing implementer's.**
+The harness still exports wrapper/parser/contract from **dcf7bfee**, not from a silent working-tree retarget.
 
-## 4. Local HTTP proof (verified on this freeze)
+## 4. Local HTTP proof (this H1–H3 rerun)
 
 | Gate | Result |
 | --- | --- |
-| PostgreSQL | **17.11** private `initdb` socket cluster; system `17/main` down/unused |
-| PostgREST | **16.3** numeric loopback `127.0.0.1` only; 29 requests |
-| `node --import tsx scripts/db/admin-account-counts-http-proof-1.mjs` | **38/38 PASS**, exit 0 |
-| `node --import tsx --test scripts/db/admin-account-counts-http-proof-1.test.mjs` | **8/8 PASS**, exit 0 |
-| Remote/hosted DB | unused; inherited Supabase/PG/PostgREST defaults rejected |
-| Frozen parser on real HTTP bodies | PASS for authorized rows; rejects projection/empty/zero-present |
+| PostgreSQL | **17.11** private `initdb` socket; system `17/main` down/unused |
+| PostgREST | **16.3** numeric loopback; owned LISTEN `0A`; 34 requests |
+| Proof command | **46/46 PASS**, 1 observation, exit 0 |
+| Safety / fault tests | **18/18 PASS**, exit 0 |
+| Cleanup | `httpStopped:true`, `httpReaped:true`, SIGTERM, tree removed after confirmed stop |
+| Remote/hosted DB | unused |
+
+Historical `0109fce2` 38/38 run remains dated author observation and is not this result.
 
 ### Assertion categories
 
 | Category | Count | Kind |
 | --- | --- | --- |
-| `http-isolation` | 1 | `/proc/net/tcp` local `0100007F` |
+| `http-isolation` | 1 | owned pid + LISTEN loopback |
 | `http-auth` | 5 | JWT + wrapper + parser; present `10`/`11`, window `0`/`1` |
-| `http-deny` | 15 | 403/`42501`, 401/`42501`, 401/`PGRST301`, 401/`PGRST303` |
-| `http-shape` | 3 | POST `{}`, GET, extra args |
-| `http-schema` | 4 | producer/auth.users/reporting/internal unavailable |
-| `http-schema-cache` | 1 | dropped wrapper → 404 `PGRST202`, not zero |
+| `http-deny` | 16 | exact 403/42501, 401/42501, 401/PGRST301, 401/PGRST303 |
+| `http-shape` | 2 | GET; extra args 404/PGRST202 |
+| `http-schema-profile` | 4 | 406/PGRST106 + public-profile 200 |
+| `http-route-shape` | 4 | labelled invalid path / missing public object |
+| `http-schema-cache` | 1 | waited for 404/PGRST202 |
 | `http-large-transport` | 1 | TEXT `9007199254740993` / `9223372036854775807` |
 | `parser` | 2 | frozen parser negatives |
-| `sql-catalog` | 2 | producer intact; grants not widened |
+| `sql-catalog` | 6 | before/after definition/owner/ACL/RLS |
 | `static-source` | 3 | source scans |
-| `cleanup-node` | 1 | owned stop + removal |
-| runner-safety | 8 | Node isolation tests |
+| `cleanup-node` | 1 | stop confirmed before removal |
+| `http-observation` | 1 | clocks; not counted as an assertion |
+| runner-safety | 18 | Node isolation + H1/H2/H3 controls |
 
 ## 5. Findings for Technical Lead
 
-No product HTTP/signature/role disclosure defect was established against the **frozen dcf7bfee** wrapper/producer/parser.
+No product HTTP/signature/role disclosure defect was established against the **frozen dcf7bfee** wrapper/producer/parser on this local cluster.
+
+H1–H3 harness defects from review 5284332971 were corrected and re-executed:
+
+- H1: `httpStopped:false` can no longer be cleanup PASS; removal is refused unless the owned child exit/close is observed.
+- H2: synthetic 500/503/HTML/wrong-code/success fail `evaluateDeniedResponse`; live denials use the pinned pairs; schema cache waits for 404/PGRST202.
+- H3: excluded schemas were selected with Accept-Profile/Content-Profile (406/PGRST106); catalog compares definition/owner/ACL/RLS before setup, after setup, and after wrapper-only drop.
 
 P3 limitations, not product defects:
 
 - Local PostgREST 16.3 ≠ hosted Supabase PostgREST.
 - Local PostgreSQL 17.11 ≠ Production 17.6.
 - Not GoTrue / login / MFA / browser / Production E2E and not Guardian.
-- Cleanup JSON still reports `httpStopped=false` (conservative `/proc/<pid>/comm` field) while post-run process/dir checks found no leftover PostgREST or proof cluster; system `17/main` remained down.
-- #553 changing R1 loader was not run and cannot be accepted from this evidence.
+- No local production-app build was re-run; only proof/harness tests. Product files were not edited. CI/TLB on the frozen head is the integration gate.
 
 ## 6. What this is not
 
-Not Ready. Not merge. Not a second #553 writer. Not Production/exposure activation. Not a live-count claim. Preview for this PR is integration evidence only.
+Not Ready. Not merge of this PR. Not Production/exposure activation. Not a live-count claim. Preview for this PR is integration evidence only.
 
-**STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.**
+**STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.**

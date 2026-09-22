@@ -1,34 +1,38 @@
 {
   "examinedSnapshot": "dcf7bfee497ba3aa2038a43fe4bc2a09e541625f",
-  "exportMethod": "read-only git show into a run-owned temporary directory; no sibling merge/cherry-pick/runtime import",
+  "acceptedMainCompared": "72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed",
+  "exportMethod": "read-only git show of the pinned snapshot into a run-owned temporary directory; no silent retarget to the merged working tree",
   "sources": {
     "producer": {
       "path": "scripts/db/admin-account-counts-1-candidate.sql",
-      "origin": "accepted main",
+      "origin": "accepted main and working tree",
       "sha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420"
     },
     "bootstrap": {
       "path": "scripts/db/admin-account-counts-1-bootstrap.sql",
-      "origin": "accepted main",
+      "origin": "accepted main and working tree",
       "sha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2"
     },
     "wrapper": {
       "path": "scripts/db/admin-account-counts-delivery-1-rpc.sql",
       "origin": "dcf7bfee497ba3aa2038a43fe4bc2a09e541625f",
       "sha256": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb",
-      "gitBlob": "73bc115763f00a2052123497e0a79273a340f0be"
+      "gitBlob": "73bc115763f00a2052123497e0a79273a340f0be",
+      "identicalOnAcceptedMain72291ee6": true
     },
     "parser": {
       "path": "lib/admin/account-counts-delivery/parser.ts",
       "origin": "dcf7bfee497ba3aa2038a43fe4bc2a09e541625f",
-      "gitBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d"
+      "gitBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d",
+      "identicalOnAcceptedMain72291ee6": true
     },
     "contract": {
       "path": "lib/admin/account-counts-delivery/contract.ts",
       "origin": "dcf7bfee497ba3aa2038a43fe4bc2a09e541625f",
-      "gitBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8"
+      "gitBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+      "identicalOnAcceptedMain72291ee6": true
     }
   },
   "hashMatch": true,
-  "newer553HeadNotTargeted": "f9a41701f0dfcacc23efb605089169d330dc1ed4"
+  "retarget": false
 }

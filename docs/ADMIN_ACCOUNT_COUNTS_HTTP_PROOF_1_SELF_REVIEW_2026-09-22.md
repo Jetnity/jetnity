@@ -10,48 +10,56 @@ This is not a Technical-Lead PASS.
 
 ## 1. Scope fidelity
 
-I stayed inside the task-owned proof harness, fixture, evidence directory and three deliverables. I exported wrapper/parser/contract from `dcf7bfee` into a private temp directory. I did not edit #553 files, accepted #550/#552 sources, shared client/auth, checker, migrations, package/lock/CI, central docs or app routes.
+I stayed inside the task-owned proof harness, fixture, evidence directory and three deliverables. I exported wrapper/parser/contract from `dcf7bfee` into a private temp directory. I did not edit #553 product files, accepted #550/#552 sources, shared client/auth, checker, migrations, package/lock/CI, central docs or app routes.
 
-I did not run, fix or accept the changing #553 R1 loader at `f9a41701`. I reported that drift.
+I merged exact authorized main `72291ee6` only (`20a8efc0`, no rebase/force/reset/cherry-pick). Incoming merged files were not modified. The experiment still targets snapshot `dcf7bfee`.
 
 ## 2. Isolation
 
 - Fail-closed on inherited `PG*`, `PGRST_*`, `SUPABASE_*`, `NEXT_PUBLIC_SUPABASE_*` and `JETNITY_ALLOW_REMOTE_DB`.
 - Private PostgreSQL socket; `listen_addresses=''`; `--auth-host=reject`.
-- PostgREST `server-host=127.0.0.1`; local-address check on `/proc/net/tcp`.
+- PostgREST `server-host=127.0.0.1`; owned-pid socket inode + `/proc/net/tcp{,6}` LISTEN `0A`.
 - Synthetic identities and per-run HS256 material only. Logs/evidence contain no raw JWT or connection URI.
-- System cluster `17/main` was created by the PGDG package install, remained down, and was not used.
-- Cleanup removed the owned `/tmp/jetnity-admin-account-counts-http-1-*` tree. No leftover PostgREST process after the passing run.
+- System cluster `17/main` remained down and was not used.
+- Cleanup now observes ChildProcess exit/close before `rmSync`. Confirmed `httpStopped:true` / `httpReaped:true`. No leftover PostgREST or proof directory after the passing run.
 
 ## 3. Evidence honesty
 
 | Claim | Status |
 | --- | --- |
-| Real PostgREST HTTP + JWT signature verification | **Yes** — 29 loopback requests |
+| Real PostgREST HTTP + JWT signature verification | **Yes** — 34 loopback requests |
 | SET ROLE in psql labelled as HTTP auth | **No** |
 | Deterministic fixture counts + genuine window 0 | **Yes** — present `10` / window `0`, then labelled `11`/`1` |
 | Frozen parser on real HTTP bodies | **Yes** |
-| Distinct denial classes | **Yes** — 403/42501, 401/42501, PGRST301, PGRST303 |
+| Distinct denial classes | **Yes** — exact 403/42501, 401/42501, PGRST301, PGRST303 |
+| Excluded-schema selection | **Yes** — Accept-Profile/Content-Profile → 406/PGRST106 |
+| Invalid-path `/auth/users` as schema unexposure | **No** — labelled `http-route-shape` only |
+| Catalog before/after definition/owner/ACL | **Yes** — not existence-only |
 | Large-value TEXT transport | **Yes**, separately labelled; not the producer |
+| Separate HTTP clocks | **Observation only** |
 | GoTrue / browser / Production E2E | **Not run** |
 | Hosted Supabase parity | **Not claimed** |
-| #553 residual R1 accepted | **No** |
+| Local production-app build | **Not re-run** (no product-file edits) |
+| Historical 0109fce2 38/38 | **Dated; not this rerun** |
 
-The cleanup JSON field `httpStopped=false` is a conservative comm-name check. I verified separately that no PostgREST process and no proof cluster directory remained. I do not treat that field as a leftover-process incident.
+## 4. H1–H3 correction
 
-## 4. What I would tell TL
+I agree with review 5284332971 that the first freeze's reusable acceptance tests were insufficient:
 
-The frozen SQL-to-HTTP boundary at `dcf7bfee` behaved as specified on this local PostgreSQL 17.11 + PostgREST 16.3 cluster: authorized AAL2 moderator-or-higher callers received canonical TEXT counts; unauthorized/signature-invalid callers did not; private schemas stayed unexposed; a dropped wrapper became unavailable rather than zero.
+- H1: `stoppeCluster()` could report cleaned/removed while `httpStopped:false`. That is now a failing acceptance.
+- H2: `status!==200 && !count-fields` accepted injected 500/503. Denials now require the pinned pairs; executable tests prove the counterexample fails.
+- H3: `/auth/users` without a profile header is a route-shape 404/PGRST125. Schema unexposure is now 406/PGRST106 via profile headers, with before/after catalog snapshots.
 
-That does **not** make #553 Ready, does not prove hosted Supabase, and does not close residual R1. Applicability waits for TL hash reconciliation to the final accepted product.
+## 5. What I would tell TL
 
-## 5. Errors I made and corrected in-session
+The frozen SQL-to-HTTP boundary at `dcf7bfee` still behaved as specified on this local PostgreSQL 17.11 + PostgREST 16.3 cluster after the harness corrections. That does **not** make #554 Ready and does not prove hosted Supabase. #553 is already closed; do not reactivate its implementer.
 
-- First PostgREST asset URL used `linux-static-x64` (404). Correct asset is `linux-static-x86-64`.
-- `/proc/net/tcp` first treated rem_address `0.0.0.0:0` as a public bind. Fixed to local-address only.
-- A static-source regex matched `process.env` / its own `dotenv` literal. Narrowed.
-- A post-cleanup stdio handler crashed after 38/38 PASS. Guarded/destroyed streams; re-ran to exit 0.
+## 6. Errors I made and corrected in-session
 
-## 6. Stop
+- First freeze accepted comm-name cleanup and any-non-200 denials. Corrected in this same session after 5284332971.
+- Duplicate ESM export of helper names during the H1–H3 edit; removed.
+- Sleep-child unit test first required `exitCode !== null`; SIGTERM leaves `signalCode` set instead. Fixed to accept either and to assert ESRCH.
+
+## 7. Stop
 
 No Ready. No merge. No follow-up slice. No second product writer.
