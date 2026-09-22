@@ -1,23 +1,23 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 21. September 2026  
-Status: **CURRENT-WORK POINTERS UPDATED 21 SEP 2026 / NORMAL ON LIVE MAIN / CONTINUITY REFRESH #511 PENDING TL MERGE / THREE DISTINCT WORKSTREAMS #506 #509 #510 / HISTORICAL CLOSURES BELOW REMAIN HISTORICAL / LIVE-EVIDENCE GEWINNT**
+Stand: 22. September 2026  
+Status: **CURRENT-WORK POINTERS UPDATED 22 SEP 2026 / NORMAL ON LIVE MAIN / #543 #544 CLOSED / #512 #506 #509 #510 CLOSED / HISTORICAL CLOSURES BELOW REMAIN HISTORICAL / LIVE-EVIDENCE GEWINNT**
 
 Canonical current-work checkpoint:
 
-`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md`
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`
 
-Until Draft PR #512 is merged, read that file from branch `docs/v1-continuity-refresh-1`. The 18 September checkpoint remains historical OS-2 / HOLD-exit evidence:
+If that file is not yet on `main`, read it from branch `docs/v1-continuity-refresh-2` / PR #546. If #546 is merged, read it from `main` and do not reactivate session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`. The 21 September checkpoint remains historical Continuity Refresh 1 capture. The 18 September checkpoint remains historical OS-2 / HOLD-exit evidence:
 
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md`  
 `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`
 
-Current required workstreams (reconstruct live; do not treat a stored SHA as permanently current):
+### 22 September 2026 delivery observation (dated pin; reconstruct live)
 
-- #506 / #505 visual UX/device evidence — session `bc-89494e60-e648-4519-bb84-0213d85bb04f`
-- #509 / #507 Trip Workspace + Account functional revalidation — session `bc-18cfea6b-09d5-4bb8-ac73-10332a6079eb`
-- #510 / #508 first read-only Intelligent Admin / Copilot Pro foundation — session `bc-cc0fed7b-39ba-4c81-8b39-7030dc14264c`
+- #546 / `docs/v1-continuity-refresh-2` — **Jetnity V1 continuity refresh 2**, Generation 1, session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`; footer verified in comment `5778458780` HTML; display name `Current startup handoff pointers`; UI rename not performed. If #546 is still open, continue review/fixes. If merged, do not reactivate this session.
+- #545 / `feat/admin-navigation-search-1` — **Jetnity admin navigation search 1**, Generation 1; observed seed `c0539a19…`; session **UNVERIFIED**; `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`. Reserved assignment, not a verified running writer, not a launch blocker. Do not launch from this docs session.
 
-They do not replace each other. Full Admin D–K remains later-phase and is not a new V1 launch prerequisite. The first read-only foundation is not dropped. Finding 5.2 / release-gate G remain OPEN after merged local-proof #494. Uncommitted work is not claimed backed up. Sections below are historical closures and remain valid as such.
+Closed #512/#506/#509/#510/#543/#544 are not current writers. Full Admin D–K remains later-phase and is not a new V1 launch prerequisite. The first read-only foundation is already specified/merged and is not dropped. Finding 5.2 / release-gate G remain OPEN after merged local-proof #494. Scheduled Technical-Lead automation remains disabled. Uncommitted work is not claimed backed up. Sections below are historical closures and remain valid as such.
 
 Binding operating standards:
 
@@ -26,6 +26,10 @@ Binding operating standards:
 - `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`
 
 ## 1. Verifizierter aktueller Runtime-Stand
+
+Latest application-runtime-changing main (re-read 22 September 2026): **#543** merge `d03a048624b42cb0b2a1cb0e146aed238e23041f`, accepted `63905739b189f751a121e16f6ba1e6c2b5f62874`. Post-merge CI `35740738689` SUCCESS. Production `dpl_BQHGqWfiYNKNZ3zeiSofbJEHmkjD` READY. Full #110 NLP remains open. Physical-device/browser-matrix and authenticated create E2E were not claimed.
+
+The Assistant Runtime 1 and #480 pins below are **historical dated closures**, not the current baseline.
 
 Assistant Runtime 1 is **CLOSED / MERGED / POST-MERGE VERIFIED**.
 
@@ -47,6 +51,8 @@ Integration evidence:
 - no automatic Production Supabase migration occurred.
 
 Always re-fetch live `main` in the next chat. The exact SHA above is a verified Assistant Runtime transition baseline, not an instruction to assume no later commits exist.
+
+Dated historical #480 evidence (original wording; not the current runtime baseline — later #543 is):
 
 Latest verified product/runtime closure baseline: `main@581e8ad1f0d3f80e2631b967568fec51e67555af` after PR #480. Accepted exact head `b7a9764331ec813361f850c52129f624c42c45ca` had CI `35348781454` SUCCESS, Auth job `105611618459` SUCCESS (Development-only), Vercel Preview `dpl_EHxhGsfhLBpbJVimzmryaw2RL9hb` READY and external Jetnity Guardian exact-head PASS. Accepted head -> merge has 0 changed files. Exact-merge Vercel Production `dpl_C58unv1yazveBQ1v7MjdUAiQEaSE` is READY on the merge SHA. The current GitHub connector does not expose push-triggered main-run evidence, so no invisible post-merge Actions run is claimed. A later docs-only continuity merge may advance `main`.
 
@@ -98,6 +104,8 @@ Generation: **1**
 Session: `bc-c94275d6-9625-464f-9cbb-ea932c703043`
 
 Status: **COMPLETED / NOT ACTIVE**.
+
+Dated historical #480-era agent wording (reconstruct current writers live from the header observation; later completed slices include #542 and #543):
 
 No active Cursor coding agent is known at this handoff.
 
@@ -349,7 +357,7 @@ The next Technical Lead must:
 2. read `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
 3. read `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
 4. read `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`;
-5. read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` (from `docs/v1-continuity-refresh-1` until #512 merges);
+5. read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md` (from `docs/v1-continuity-refresh-2` / PR #546 if not yet on `main`);
 6. read `docs/ACTIVE_WORK_STATUS.md` and this handoff;
 7. fetch live `main`, all open PRs/issues and relevant branches;
 8. verify GitHub Actions, Vercel, review threads and current agent/Guardian evidence;
@@ -359,4 +367,4 @@ The next Technical Lead must:
 
 Verified transition baseline after PR #453 integration: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later continuity-only merge may advance repository `main`; always re-fetch live.
 
-**LIVE-EVIDENCE GEWINNT IMMER. MACHINE MODE NORMAL. CURRENT-WORK CHECKPOINT 21 SEP 2026. DREI GETRENNTE WORKSTREAMS #506 #509 #510. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. V1 SUPPORT PROCESS 1 / #470 IST CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 IST CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 IST CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 IST CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 IST CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+**LIVE-EVIDENCE GEWINNT IMMER. MACHINE MODE NORMAL. CURRENT-WORK CHECKPOINT 22 SEP 2026. RE-FETCH LIVE #546. #543/#544 CLOSED. #545 DISPATCHED_START_UNVERIFIED / TASK_ONLY. #512/#506/#509/#510 CLOSED. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. V1 SUPPORT PROCESS 1 / #470 IST CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 IST CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 IST CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 IST CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 IST CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. TL AUTOMATION DISABLED. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
