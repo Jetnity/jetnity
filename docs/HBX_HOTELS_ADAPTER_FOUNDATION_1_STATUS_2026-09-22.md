@@ -1,7 +1,7 @@
 # HBX Hotels Adapter Foundation 1 — STATUS
 
 Date: 2026-09-22  
-Status: **R1 RATEKEY IDENTITY FIXED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / NOT READY / NOT MERGED**  
+Status: **MAIN-SYNCED AFTER #547 / STOP FOR INDEPENDENT TL FINAL RE-GATING / NOT READY / NOT MERGED**  
 Draft PR: #548  
 Branch: `feat/hbx-hotels-adapter-foundation-1`  
 Binding task: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md`  
@@ -57,13 +57,15 @@ Traveller-context intelligence does not apply: fixture mapping only, no eligibil
 
 | Item | Value |
 | --- | --- |
-| Live `origin/main` re-fetched | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
-| Merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
-| Invalidated freeze | `328464dfe26adff95a2a937e602b300994a0ef74` — **invalidated** by TL CHANGES REQUIRED `5280919883` (P2 silent rateKey trim) |
-| R1 implementation | `ce11d9a83728f61d9b8653d41d7d6348f553ecc4` |
-| Ahead / behind vs live main before this persist | **4 ahead / 0 behind**. This persist adds the R1 status/evidence. |
-| Rebase / sibling merge | **not done** |
-| Review threads | none; review is a top-level PR review, not a line thread |
+| Task baseline main | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
+| Live `origin/main` after #547 | `88bf3a07d687a99479ad4a3f5a621d244a7aea5b` |
+| Merge-base | `88bf3a07d687a99479ad4a3f5a621d244a7aea5b` |
+| TL code review accepted | `5281225218` on `5417569dd97833c240c43e1132f5f7c36e0cdc75` — integration pending, not Ready |
+| Invalidated R1 freeze | `5417569dd97833c240c43e1132f5f7c36e0cdc75` — **invalidated** by authorized main merge |
+| Merge commit | `06f024942ceb4dc41cfa67044307ee76a8cd04f8` (`ort`, no rebase) |
+| Ahead / behind vs live main before this persist | **6 ahead / 0 behind**. This persist is the single post-sync freeze. |
+| Rebase / force-push / extra sibling merge | **not done** |
+| Review threads | none |
 
 Exact-head CI / Auth / Vercel Preview must be re-read on the freeze SHA after this persist and reported in a PR comment. Vercel Ready on a pre-freeze or implementation-only SHA is not the freeze gate.
 
@@ -75,8 +77,8 @@ See `docs/evidence/hbx-hotels-adapter-foundation-1/commands-results.txt`.
 
 | Check | Result |
 | --- | --- |
-| Focused adapter tests | 21 pass / 0 fail (includes TL `rate-A` / ` rate-A ` regression) |
-| Unchanged hotel schema/suche/anfrage + Skyscanner fixture tests | 25 pass / 0 fail |
+| Focused adapter + hotel/Skyscanner | 46 pass / 0 fail (21 HBX + 25) |
+| Merged indexing `lib/admin/seo-status.test.ts` | 14 pass / 0 fail; `IndexingStatus` remains on System Health |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors; 135 pre-existing warnings, none in owned files |
 | `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` / `operating-mode` | pass |
@@ -92,5 +94,5 @@ Fixture tests are not a live HBX compatibility claim.
 - No HotelProvider registration. `hotelProviderAus()` remains `null`.
 - External HBX API/contract/mTLS/certification/pricing/redirect feasibility stays unresolved.
 - Historical audit docs still carry DRAFT/PROPOSAL labels; this task is the implementation authorization.
-- Parallel #545 and #547 remain independent TL-review-pending writers.
-- Exact-head CI/Preview are asynchronous after this persist.
+- Parallel #545 remains an independent TL-review-pending writer. #547 is now on main and was merged here only.
+- Exact-head CI/Preview are asynchronous after this persist. Old gates on `5417569d` / `328464df` are invalid.

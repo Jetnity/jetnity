@@ -3,8 +3,8 @@
   paths: admin layout/topbar/navigation-search, own docs/evidence/scripts
   overlap with this slice: none
 
-#547 Admin indexing (TL-review-pending, not used):
-  paths: system-health page, IndexingStatus, seo-status, own docs/evidence/scripts
-  overlap with this slice: none
+#547 Admin indexing: merged to main as 88bf3a07 and then merge-committed here
+  by TL authorization. IndexingStatus / seo-status files were imported unchanged.
+  overlap with HBX owned paths: none
 
-This writer did not rebase, merge, or depend on either unmerged PR.
+This writer did not rebase or merge unmerged #545.

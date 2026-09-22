@@ -71,6 +71,10 @@ Output is a freshly built object. Forbidden keys are asserted absent at result a
 
 No. Fixture tests are transformation tests. Preview is not HBX access. Exact-head CI after this persist is a later comment, not this self-review.
 
+### 2.10 Did the main sync rewrite HBX or drop indexing?
+
+No. `git diff 5417569d HEAD -- lib/providers/hotelbeds/hotels` is empty. Merge brought in #547 only. `IndexingStatus` is still imported on `/admin/system-health`. `seo-status` tests 14/14. No rebase.
+
 ---
 
 ## 3. Residual risks

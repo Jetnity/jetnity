@@ -13,3 +13,6 @@ They remain TL-review-pending and were not merged into this branch.
 
 R1 (review 5280919883): first freeze 328464df silently trimmed rateKey before
 hash. Adapter now hashes original bytes after nonblank/length validation.
+
+Main sync: TL-authorized merge of 88bf3a07 (#547). R1 freeze 5417569d invalidated.
+No HBX runtime change. Indexing section preserved.

@@ -1,7 +1,7 @@
 # HBX Hotels Adapter Foundation 1 — Handoff
 
 Stand: 22. September 2026  
-Status: **R1 RATEKEY IDENTITY FIXED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **MAIN-SYNCED AFTER #547 / STOP FOR INDEPENDENT TL FINAL RE-GATING / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md`  
 Status: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_STATUS_2026-09-22.md`  
@@ -19,13 +19,13 @@ This document is enough for a new Technical Lead chat to review without the impl
 | Draft PR | #548 |
 | Branch | `feat/hbx-hotels-adapter-foundation-1` |
 | Task seed | `91270eafc00887bc24b345924b22239af3cc94a4` |
-| Baseline / live main | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
-| Merge-base | same as live main |
-| Invalidated freeze | `328464dfe26adff95a2a937e602b300994a0ef74` |
-| TL CHANGES REQUIRED | review `5280919883` — P2 silent rateKey trim |
-| R1 implementation | `ce11d9a83728f61d9b8653d41d7d6348f553ecc4` |
-| Ahead / behind before this persist | 4 ahead / 0 behind |
-| Rebase / sibling merge | not done |
+| Task baseline | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
+| Live main / merge-base | `88bf3a07d687a99479ad4a3f5a621d244a7aea5b` |
+| TL code review accepted | `5281225218` on `5417569d` |
+| Invalidated R1 freeze | `5417569dd97833c240c43e1132f5f7c36e0cdc75` |
+| Authorized merge | `06f024942ceb4dc41cfa67044307ee76a8cd04f8` |
+| Ahead / behind before this persist | 6 ahead / 0 behind |
+| Rebase / force-push | not done |
 | Agent | Jetnity HBX hotels adapter foundation 1, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
 | Session | `bc-c538c2b5-3cc6-4f9f-8f00-2ccac1bb9cf1` |
@@ -50,6 +50,7 @@ Read first:
 - **R1:** `rateKeyLesen` validates nonblank/length and hashes original bytes. `'rate-A'` and `' rate-A '` are distinct; whitespace-only still rejects; raw keys stay out of output.
 - Tests for pricing, malformed input, leap/DST nights, multi-rate identity, partial semantics and forbidden truth fields.
 - No runtime factory, HTTP, secrets, DB, UI or global-doc edits.
+- **Main sync:** TL-authorized `git merge` of `88bf3a07` (#547 indexing). HBX adapter files unchanged vs `5417569d`. `IndexingStatus` remains on `/admin/system-health`. No extra implementation.
 
 ---
 
@@ -57,7 +58,7 @@ Read first:
 
 - Do not treat fixture tests as HBX API or live-price proof.
 - Do not treat Vercel Preview as HBX access evidence.
-- Do not rebase onto later main or merge sibling #545 / #547 from this writer.
+- Do not rebase. Do not merge sibling #545. #547 is already on this main merge-base.
 - Do not mark Ready or merge from Cursor.
 - Do not start Viator, TEST-transport, signup, keys, mTLS or HotelProvider wiring.
 

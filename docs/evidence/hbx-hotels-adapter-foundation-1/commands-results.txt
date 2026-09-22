@@ -1,51 +1,36 @@
-R1 local gates run on implementation commit ce11d9a83728f61d9b8653d41d7d6348f553ecc4
-before the re-freeze persist. Old gates on 328464df are invalid.
+Main-sync local gates after authorized merge of origin/main
+88bf3a07d687a99479ad4a3f5a621d244a7aea5b. Merge commit
+06f024942ceb4dc41cfa67044307ee76a8cd04f8. HBX adapter files unchanged
+vs accepted R1 freeze 5417569d. Old gates on 5417569d / 328464df are invalid.
 
 git fetch origin main feat/hbx-hotels-adapter-foundation-1
-  origin/main = 9dc8926ef859bcde2dc31dc8b96f2e61e1948f74
-  merge-base  = 9dc8926ef859bcde2dc31dc8b96f2e61e1948f74
-  after R1 implementation commit: 4 ahead / 0 behind
+  origin/main = 88bf3a07d687a99479ad4a3f5a621d244a7aea5b
+  merge-base  = 88bf3a07d687a99479ad4a3f5a621d244a7aea5b
+  after merge, before this persist: 6 ahead / 0 behind
   rebase/force-push: not done
+  git diff 5417569d HEAD -- lib/providers/hotelbeds/hotels: empty
+  IndexingStatus remains imported on app/(admin)/admin/system-health/page.tsx
 
 node --import ./scripts/server-only-test-register.mjs --import tsx --test \
-  lib/providers/hotelbeds/hotels/adapter.test.ts
-  tests 21 / pass 21 / fail 0
-  includes TL counterexample: 'rate-A' vs ' rate-A ' distinct IDs;
-  combined input keeps both; whitespace-only rejects; no raw key leak
-
-node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/providers/hotelbeds/hotels/adapter.test.ts \
   lib/hotels/schema.test.ts lib/hotels/suche.test.ts \
   lib/hotels/anfrage.test.ts lib/providers/skyscanner/flights/adapter.test.ts
-  tests 25 / pass 25 / fail 0
+  tests 46 / pass 46 / fail 0
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/seo-status.test.ts
+  tests 14 / pass 14 / fail 0
 
 npm run typecheck
-  next typegen + tsc --noEmit: PASS
+  PASS
 
 npm run lint
-  eslint .: 0 errors, 135 pre-existing warnings (none in owned hotelbeds files)
+  0 errors, 135 pre-existing warnings
 
-npm run check:dead
-  verwaist: 0
-
-npm run check:exports
-  Exporte ohne Aufrufer: 0
-
-npm run check:deps
-  dependencies 11/0 unused; scoped devDependencies 2/0 unused
-
-npm run check:api-schutz
-  12 Admin-Routen, alle requireAdminApi()
-
-npm run check:schema-bezug
-  PASS against types/supabase.ts
-
-npm run check:operating-mode
-  operating-mode guard: PASS
+npm run check:dead / exports / deps / api-schutz / schema-bezug / operating-mode
+  PASS (dead: 0 orphan; exports: 0 unused)
 
 npm run build
-  prebuild check:setup: 1 existing warning (no .env/.local in this environment)
-  next build: compiled successfully
+  PASS; setup warning = missing .env/.local in this environment
 
-Not run, and not required for this offline slice:
-  db:rechte, db:rls, db:sicherheit, auth:pruefen, setup-fix, migrations,
-  live HBX/API, Production DB, browser/Preview functional proof
+Not run / not required: live HBX, Production DB, Ready/merge, extra implementation
