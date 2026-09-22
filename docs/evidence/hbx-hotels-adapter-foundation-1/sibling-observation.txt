@@ -1,10 +1,9 @@
-#545 Admin navigation (TL-review-pending, not used):
-  head observed via PR files API at review time of this persist
-  paths: admin layout/topbar/navigation-search, own docs/evidence/scripts
-  overlap with this slice: none
-
-#547 Admin indexing: merged to main as 88bf3a07 and then merge-committed here
-  by TL authorization. IndexingStatus / seo-status files were imported unchanged.
+#545 Admin navigation: merged to main as 8fcccd64 and then merge-committed
+  here by TL authorization. AdminNavigationSearch remains on layout/topbar.
   overlap with HBX owned paths: none
 
-This writer did not rebase or merge unmerged #545.
+#547 Admin indexing: already on previous merge-base 88bf3a07 and retained.
+  IndexingStatus remains on system-health.
+  overlap with HBX owned paths: none
+
+This writer did not rebase or merge any still-unmerged sibling.

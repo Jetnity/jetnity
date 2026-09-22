@@ -1,7 +1,7 @@
 # HBX Hotels Adapter Foundation 1 — STATUS
 
 Date: 2026-09-22  
-Status: **MAIN-SYNCED AFTER #547 / STOP FOR INDEPENDENT TL FINAL RE-GATING / NOT READY / NOT MERGED**  
+Status: **FINAL MAIN-SYNC AFTER #545 / STOP FOR TL FINAL RE-GATING / NOT READY / NOT MERGED**  
 Draft PR: #548  
 Branch: `feat/hbx-hotels-adapter-foundation-1`  
 Binding task: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md`  
@@ -58,12 +58,11 @@ Traveller-context intelligence does not apply: fixture mapping only, no eligibil
 | Item | Value |
 | --- | --- |
 | Task baseline main | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
-| Live `origin/main` after #547 | `88bf3a07d687a99479ad4a3f5a621d244a7aea5b` |
-| Merge-base | `88bf3a07d687a99479ad4a3f5a621d244a7aea5b` |
-| TL code review accepted | `5281225218` on `5417569dd97833c240c43e1132f5f7c36e0cdc75` — integration pending, not Ready |
-| Invalidated R1 freeze | `5417569dd97833c240c43e1132f5f7c36e0cdc75` — **invalidated** by authorized main merge |
-| Merge commit | `06f024942ceb4dc41cfa67044307ee76a8cd04f8` (`ort`, no rebase) |
-| Ahead / behind vs live main before this persist | **6 ahead / 0 behind**. This persist is the single post-sync freeze. |
+| Live `origin/main` after #545 | `8fcccd6475f41703bd2a31deecb3067391f330b4` |
+| Merge-base | `8fcccd6475f41703bd2a31deecb3067391f330b4` |
+| TL verified previous freeze | `2542a95b2c5de066e355a66ade920bd0846f3cea` — code accepted; **invalidated** by this authorized sync |
+| Final merge commit | `78b2e22069beb3cc416fe16dacb728bec72c7ec7` (`ort`, no rebase) |
+| Ahead / behind vs live main before this persist | **8 ahead / 0 behind**. This persist is the single final freeze. |
 | Rebase / force-push / extra sibling merge | **not done** |
 | Review threads | none |
 
@@ -78,9 +77,10 @@ See `docs/evidence/hbx-hotels-adapter-foundation-1/commands-results.txt`.
 | Check | Result |
 | --- | --- |
 | Focused adapter + hotel/Skyscanner | 46 pass / 0 fail (21 HBX + 25) |
-| Merged indexing `lib/admin/seo-status.test.ts` | 14 pass / 0 fail; `IndexingStatus` remains on System Health |
+| Inherited indexing `seo-status` | 14 pass / 0 fail; `IndexingStatus` remains on System Health |
+| Inherited Admin navigation-search | 10 pass / 0 fail; search trigger remains on Admin layout/topbar |
 | `npm run typecheck` | pass |
-| `npm run lint` | 0 errors; 135 pre-existing warnings, none in owned files |
+| `npm run lint` | 0 errors; 136 inherited warnings (was 135 before #545), none in owned hotelbeds files |
 | `check:dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` / `operating-mode` | pass |
 | `npm run build` | pass; setup warning = missing `.env/.local` in this environment |
 | Auth / Production / provider / DB | not mutated and not probed |
@@ -94,5 +94,5 @@ Fixture tests are not a live HBX compatibility claim.
 - No HotelProvider registration. `hotelProviderAus()` remains `null`.
 - External HBX API/contract/mTLS/certification/pricing/redirect feasibility stays unresolved.
 - Historical audit docs still carry DRAFT/PROPOSAL labels; this task is the implementation authorization.
-- Parallel #545 remains an independent TL-review-pending writer. #547 is now on main and was merged here only.
-- Exact-head CI/Preview are asynchronous after this persist. Old gates on `5417569d` / `328464df` are invalid.
+- #545 and #547 are now on this merge-base. No further sibling merge is authorized unless TL reports an incident.
+- Exact-head CI/Preview are asynchronous after this persist. Old gates on `2542a95b` / `5417569d` / `328464df` are invalid.

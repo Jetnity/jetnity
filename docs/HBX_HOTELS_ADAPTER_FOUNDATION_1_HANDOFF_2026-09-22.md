@@ -1,7 +1,7 @@
 # HBX Hotels Adapter Foundation 1 — Handoff
 
 Stand: 22. September 2026  
-Status: **MAIN-SYNCED AFTER #547 / STOP FOR INDEPENDENT TL FINAL RE-GATING / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Status: **FINAL MAIN-SYNC AFTER #545 / STOP FOR TL FINAL RE-GATING / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Binding task: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md`  
 Status: `docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_STATUS_2026-09-22.md`  
@@ -20,11 +20,10 @@ This document is enough for a new Technical Lead chat to review without the impl
 | Branch | `feat/hbx-hotels-adapter-foundation-1` |
 | Task seed | `91270eafc00887bc24b345924b22239af3cc94a4` |
 | Task baseline | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` |
-| Live main / merge-base | `88bf3a07d687a99479ad4a3f5a621d244a7aea5b` |
-| TL code review accepted | `5281225218` on `5417569d` |
-| Invalidated R1 freeze | `5417569dd97833c240c43e1132f5f7c36e0cdc75` |
-| Authorized merge | `06f024942ceb4dc41cfa67044307ee76a8cd04f8` |
-| Ahead / behind before this persist | 6 ahead / 0 behind |
+| Live main / merge-base | `8fcccd6475f41703bd2a31deecb3067391f330b4` |
+| Invalidated previous freeze | `2542a95b2c5de066e355a66ade920bd0846f3cea` |
+| Authorized final merge | `78b2e22069beb3cc416fe16dacb728bec72c7ec7` |
+| Ahead / behind before this persist | 8 ahead / 0 behind |
 | Rebase / force-push | not done |
 | Agent | Jetnity HBX hotels adapter foundation 1, Generation 1 |
 | Model | Cursor Grok 4.6 High Fast (`originalModelName=cursor-grok-4.6-high-fast`) |
@@ -50,7 +49,7 @@ Read first:
 - **R1:** `rateKeyLesen` validates nonblank/length and hashes original bytes. `'rate-A'` and `' rate-A '` are distinct; whitespace-only still rejects; raw keys stay out of output.
 - Tests for pricing, malformed input, leap/DST nights, multi-rate identity, partial semantics and forbidden truth fields.
 - No runtime factory, HTTP, secrets, DB, UI or global-doc edits.
-- **Main sync:** TL-authorized `git merge` of `88bf3a07` (#547 indexing). HBX adapter files unchanged vs `5417569d`. `IndexingStatus` remains on `/admin/system-health`. No extra implementation.
+- **Final main sync:** TL-authorized `git merge` of `8fcccd64` (#545 search after #547 indexing). HBX files unchanged vs `2542a95b`. Admin search and `IndexingStatus` remain. No extra implementation.
 
 ---
 
@@ -58,7 +57,7 @@ Read first:
 
 - Do not treat fixture tests as HBX API or live-price proof.
 - Do not treat Vercel Preview as HBX access evidence.
-- Do not rebase. Do not merge sibling #545. #547 is already on this main merge-base.
+- Do not rebase. #545 and #547 are already on this merge-base. Do not start a follow-up slice.
 - Do not mark Ready or merge from Cursor.
 - Do not start Viator, TEST-transport, signup, keys, mTLS or HotelProvider wiring.
 
