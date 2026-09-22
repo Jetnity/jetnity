@@ -81,12 +81,10 @@ function ersterWert(wert?: string | string[]) {
   return Array.isArray(wert) ? wert[0] : wert
 }
 
-async function routeOrteLesen(
-  client: Awaited<ReturnType<typeof createServerComponentClient>>,
-  ids: string[],
-): Promise<Ort[] | null> {
+async function routeOrteLesen(ids: string[]): Promise<Ort[] | null> {
   const eindeutig = [...new Set(ids.filter((id) => istOrtId(id)))]
   if (eindeutig.length === 0) return []
+  const client = await createServerComponentClient()
   const gelesen = await lese(() => client.from('places').select(ORT_SPALTEN).in('id', eindeutig))
   if (gelesen.problem) return null
   return gelesen.zeilen
@@ -108,7 +106,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
   if (route.art === 'konflikt' || route.art === 'transport_ungueltig') {
     handoffFehler = route.meldung
   } else if (route.art === 'ok') {
-    const bestand = await routeOrteLesen(supabase, route.ids)
+    const bestand = await routeOrteLesen(route.ids)
     const bestaetigt = routeZieleBestaetigen(route.ids, bestand)
     if (bestaetigt.art !== 'bestaetigt') {
       handoffFehler = bestaetigt.meldung
