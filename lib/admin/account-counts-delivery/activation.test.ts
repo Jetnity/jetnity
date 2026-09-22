@@ -2,13 +2,13 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 
 import {
-  ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL,
   adminAccountCountsActivationEnvFromProcess,
   isAdminAccountCountsLocallyEnabled,
   isAdminAccountCountsRuntimeEnabled,
   isLoopbackSupabaseUrl,
   type AdminAccountCountsActivationEnv,
 } from '@/lib/admin/account-counts-delivery/activation'
+import { getServerSupabaseUrl } from '@/lib/supabase/server'
 
 const LOCAL: AdminAccountCountsActivationEnv = {
   NODE_ENV: 'test',
@@ -113,7 +113,7 @@ describe('Admin account-counts local activation', () => {
     assert.equal(isAdminAccountCountsLocallyEnabled(snapshot) && !isLoopbackSupabaseUrl(snapshot.NEXT_PUBLIC_SUPABASE_URL), false)
   })
 
-  test('runtime enablement stays off when the module-captured URL is not loopback', () => {
+  test('runtime enablement stays off when the shared captured URL is not loopback', () => {
     const previousFlag = process.env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED
     const previousUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const previousVercel = process.env.VERCEL
@@ -127,7 +127,7 @@ describe('Admin account-counts local activation', () => {
         NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
       })
       assert.equal(laterProcessLooksLocal, true)
-      if (!isLoopbackSupabaseUrl(ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL)) {
+      if (!isLoopbackSupabaseUrl(getServerSupabaseUrl())) {
         assert.equal(isAdminAccountCountsRuntimeEnabled(), false)
       }
     } finally {

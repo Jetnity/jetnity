@@ -1,10 +1,18 @@
 {
-  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3887, "fail": 0 },
+  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3893, "fail": 0 },
   "deliveryApplicationTests": {
     "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/account-counts-delivery/*.test.ts",
     "exitCode": 0,
-    "tests": 30,
-    "fail": 0
+    "tests": 36,
+    "fail": 0,
+    "breakdown": {
+      "activationHelpers": 6,
+      "isolatedActualLoaderAndDefaultComponent": 6,
+      "parser": 7,
+      "readerIncludingInjectedRuntimeEnabled": 10,
+      "syntheticAnsichtRenders": 3,
+      "schemaReferenceChecker": 4
+    }
   },
   "wrapperSafetyTests": {
     "command": "node --test scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs",
@@ -17,6 +25,8 @@
     "exitCode": 0,
     "passed": 24,
     "failed": 0,
+    "newExecutionOnThisPersist": true,
+    "sqlSourcesUnchanged": true,
     "mix": {
       "sql": { "wrapper-transport-sql": 1, "wrapper-auth-sql": 13, "wrapper-acl-sql": 1, "total": 15 },
       "catalogIncludingExecutedNoArgRejection": 6,
@@ -31,9 +41,15 @@
     "tests": 35,
     "fail": 0
   },
+  "ssrFactoryContractTests": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/next/request-api-compat.test.ts",
+    "exitCode": 0,
+    "tests": 14,
+    "note": "includes the 3 existing server-factory assertions; factories still use SUPABASE_URL"
+  },
   "typecheck": { "command": "npm run typecheck", "exitCode": 0 },
   "lintDeliveryFiles": {
-    "command": "npx eslint lib/admin/account-counts-delivery components/admin/home/AdminAccountCounts.tsx app/(admin)/admin/page.tsx scripts/db/admin-account-counts-delivery-1-*.mjs",
+    "command": "npx eslint lib/admin/account-counts-delivery lib/supabase/server.ts components/admin/home/AdminAccountCounts.tsx app/(admin)/admin/page.tsx scripts/db/admin-account-counts-delivery-1-*.mjs",
     "exitCode": 0
   },
   "repoLintHistory": {
@@ -65,5 +81,12 @@
     "reviewedHead": "d1d18daca96bb72c4ed6645c46b765e867bd5615",
     "review": 5283659145,
     "items": ["R1", "R2", "R3", "R4"]
+  },
+  "residualR1": {
+    "reviewedHead": "dcf7bfee497ba3aa2038a43fe4bc2a09e541625f",
+    "review": 5284045489,
+    "addendum": "86f5d4847fe3c8779d137ba110b04207c9468577",
+    "sharedDelta": "lib/supabase/server.ts getServerSupabaseUrl() returns existing SUPABASE_URL only",
+    "note": "Not a Production incident. Split-capture counterexample is a no-network local/test containment defect."
   }
 }

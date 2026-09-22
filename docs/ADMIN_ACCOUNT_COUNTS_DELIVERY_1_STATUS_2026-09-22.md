@@ -1,12 +1,13 @@
 # Admin Account Counts Delivery 1 — STATUS
 
 Stand: 22. September 2026  
-Status: **R1–R4 REVIEW FIX PACKAGE / FROZEN FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / NO PRODUCTION APPLY**
+Status: **RESIDUAL R1 EFFECTIVE-TARGET CORRECTION / FROZEN FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / NO PRODUCTION APPLY**
 
 Draft PR: #553  
 Branch: `feat/admin-account-counts-delivery-1`  
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_DELIVERY_1_TASK_2026-09-22.md` v1 at seed `6666b02795a080fdb10f73158503e009f7d853c2`  
-Reviewed head that required changes: `d1d18daca96bb72c4ed6645c46b765e867bd5615` (review 5283659145)  
+Reviewed product head that left residual R1: `dcf7bfee497ba3aa2038a43fe4bc2a09e541625f` (review 5284045489)  
+Addendum v3: `docs/ADMIN_ACCOUNT_COUNTS_DELIVERY_1_REVIEW_FIX_2_TASK_2026-09-22.md` at `86f5d4847fe3c8779d137ba110b04207c9468577`  
 Authorized exact-main sync / live main / merge-base: `ff054f76c14cf1c434890ba342af4df5e536dd05`  
 Original task baseline remains recorded: `0d4c871867e7c4daac45af4a737cc032723863ae`
 
@@ -15,52 +16,56 @@ Required / actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=curso
 Session: `bc-3d009635-3ebd-40d6-b47e-dc8328cf309b`  
 Observed run-info display name: `Jetnity admin account counts delivery`. UI rename was **not** performed.
 
-This persist is not Technical-Lead PASS, not live statistics, and not Production activation.
+This persist is not Technical-Lead PASS, not live statistics, and not Production activation. Reviewed head `dcf7bfee` is **not** this residual fix.
 
 ---
 
-## 1. R1–R4 package
+## 1. Residual R1 correction
 
-- **R1:** `loadAdminAccountCounts()` accepts no environment snapshot. Synthetic leftover arguments are ignored. Pure `isAdminAccountCountsLocallyEnabled(env)` cannot invoke the session client. Page and loader use `isAdminAccountCountsRuntimeEnabled()`, which requires the current process snapshot **and** the module-captured `NEXT_PUBLIC_SUPABASE_URL`. A later dynamic loopback mutation cannot authorize a remote or empty capture.
-- **R2:** Parser now requires the PostgreSQL JSON timestamptz grammar, real calendar days, explicit-zone offsets, and a 720-hour interval at microsecond resolution. Original valid strings are retained. Counts are bounded to the nonnegative signed-bigint range before `BigInt`. Impossible February 30, 720h+1µs, `9223372036854775808`, excess fraction digits and English month-name strings are rejected. Leap-day, non-UTC, equal-microsecond and maximum-bigint rows remain accepted.
-- **R3:** The scanner-invisibility lock-in test was removed. Addendum `docs/ADMIN_ACCOUNT_COUNTS_DELIVERY_1_REVIEW_FIX_1_TASK_2026-09-22.md` (`e726b1ac`) authorized a bounded change to `scripts/db/verwendung.mjs` only. The reader now uses a scanner-visible `.rpc('admin_account_counts_v1')`. The checker records that one path-and-RPC pair as **LOCAL/UNAPPLIED**, bound to `scripts/db/admin-account-counts-delivery-1-rpc.sql`, and does not claim generated-schema existence. Unknown names, wrong source paths and missing local SQL still fail. Generated types and migrations were not edited.
-- **R4:** RPC classification uses structured codes only (`42883`/`PGRST202` unavailable; `42501`/`42503`/`PGRST301`/`PGRST302`/401/403 forbidden). Message substrings such as `does not exist` no longer imply a missing wrapper; `42P01` is failed. `lookup-failed` and `aal-lookup-failed` are failed; genuine denials and break-glass are forbidden. Gate throws and client-factory throws are failed. The default component uses `containAdminAccountCountsLoad`.
+The accepted R2/R3/R4 implementation on `dcf7bfee` is preserved. The remaining defect was a second environment capture in the activation module. That copy was not the earlier captured URL used by `createServerComponentClient`.
 
-Shared auth/client, #550/#552, central #551 docs, package/lock/CI and operating-mode were not edited.
+This package:
+
+- Adds only `getServerSupabaseUrl()` to `lib/supabase/server.ts`. It returns the existing `SUPABASE_URL` constant. Factories still pass that same constant. No key getter, setter, reconfiguration, new client, cookie, identity, role or AAL change.
+- Makes `isAdminAccountCountsRuntimeEnabled()` consume that getter instead of `ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL`.
+- Keeps the runtime loader no-argument. A leftover synthetic env argument still cannot enable the path.
+- Rejects before guard / cookies / client / RPC when the current process snapshot or the effective shared target is not local.
+
+This is **not** a Production incident. Normal Production/default-off controls already passed on the reviewed head.
 
 ## 2. Activation / security
 
-Runtime enablement still requires the exact flag `true`, `NODE_ENV` `development`|`test`, no Vercel/CI/GitHub Actions marker, loopback current URL **and** loopback module-captured URL. Hosted/Production/Preview stay disabled even when the flag is set. Disabled means no new section and no RPC.
+Runtime enablement still requires the exact flag `true`, `NODE_ENV` `development`|`test`, no Vercel/CI/GitHub Actions marker, a current loopback process URL **and** a loopback effective shared-client URL. Hosted/Production/Preview stay disabled even when the flag is set. Disabled means no new section and no RPC.
 
-## 3. Schema-reference LOCAL/UNAPPLIED coverage (R3)
+## 3. Schema-reference LOCAL/UNAPPLIED coverage (unchanged R3)
 
-`npm run check:schema-bezug` now reports generated-schema coverage **and** discloses `LOCAL/UNAPPLIED RPC admin_account_counts_v1 from lib/admin/account-counts-delivery/reader.ts → scripts/db/admin-account-counts-delivery-1-rpc.sql (not in generated schema)`. That is an explicit reviewed local-reference classification, not installation. Executable checker regressions live in `lib/admin/account-counts-delivery/schema-reference.test.ts`. Later Production promotion must reconcile this classification separately.
+`npm run check:schema-bezug` reports generated-schema coverage **and** discloses `LOCAL/UNAPPLIED RPC admin_account_counts_v1 from lib/admin/account-counts-delivery/reader.ts → scripts/db/admin-account-counts-delivery-1-rpc.sql (not in generated schema)`. That remains a reviewed local-reference classification, not installation.
 
-## 4. Verification after the R1–R4 package (this writer)
+## 4. Verification after the residual R1 correction (this writer)
 
 | Class | Result | Kind |
 | --- | --- | --- |
-| wrapper checks | 24/24 PASS | mixed: 15 SQL + 6 catalog + 2 source + 1 Node cleanup |
+| wrapper checks | 24/24 PASS | **new execution** of the unchanged disposable harness; mixed: 15 SQL + 6 catalog including executed no-argument rejection + 2 source + 1 Node cleanup |
 | wrapper runner safety | 2/2 PASS | Node fail-closed + source |
-| application/renderer | 30/30 PASS | activation, parser, actual loader, synthetic render, schema-reference |
-| `npm test` | 3887/3887 PASS | full repo unit suite including the 30 delivery tests |
+| application/module tests | 36/36 PASS | 6 activation + 6 isolated actual-loader/default-component + 7 parser + 10 reader + 3 Ansicht renders + 4 checker |
+| `npm test` | 3893/3893 PASS | full repo unit suite including the 36 delivery tests |
 | existing auth/capability | 35/35 PASS | unchanged shared helpers |
+| existing SSR factory contract | 3/3 PASS | `lib/next/request-api-compat.test.ts` factories still await cookies and use `SUPABASE_URL` |
 | typecheck | PASS | Next 16.3.3 |
-| lint (delivery files) | PASS | no JSX-in-try regression |
+| lint (delivery files + shared getter) | PASS | pre-existing unused-arg warnings in cookie adapters unchanged |
 | production build | PASS | `/admin` remains dynamic |
-| hygiene | PASS | schema-bezug discloses LOCAL/UNAPPLIED; see §3 |
+| hygiene | PASS | schema-bezug discloses LOCAL/UNAPPLIED; dead/exports include isolated harness files |
 
-Wrapper group mix (do not label all 24 as executed SQL):
-- SQL: `wrapper-transport-sql` 1, `wrapper-auth-sql` 13, `wrapper-acl-sql` 1
-- Catalog (includes executed no-arg rejection): 6
-- Static source: 2
-- Node cleanup: 1
+Do not collapse those 36 tests into one class:
 
-Historical slice lint: an earlier try/catch JSX construction on this branch produced `npm run lint` exit 1. That was a **slice-introduced** error, later moved out of JSX, and is not a pre-existing baseline defect. This head's delivery-file eslint is exit 0. Repo-wide lint still reports unrelated baseline warnings. Exact-head CI lint after this push is the integration record.
+- Isolated harness tests exercise the **actual** exported `loadAdminAccountCounts()` and the **actual** default `AdminAccountCounts` component with the real shared factory and intercepted `@supabase/ssr` transport.
+- Reader helper tests can still inject `runtimeEnabled` and do **not** replace those entrypoints.
+- The 3 `render.test.ts` cases render `AdminAccountCountsAnsicht` from a prepared result. They are not the default component and not browser E2E.
+- Wrapper 24 remains 15 SQL + 6 catalog + 2 source + 1 Node cleanup. Historical transcripts stay dated evidence; this persist also has a new 24/24 execution.
 
 **Not run / not claimed:** authenticated local PostgREST/browser E2E; hosted Admin session; remote DB read/apply; live statistics PASS.
 
-Engine: PostgreSQL **16.15**, explicitly qualified; not Production 17.6. Synthetic renders are not browser E2E. Author run-info is not TL control-plane model inspection.
+Engine: PostgreSQL **16.15**, explicitly qualified; not Production 17.6. Author run-info is not TL control-plane model inspection.
 
 ## 5. Later activation checklist (not this slice)
 
@@ -71,4 +76,4 @@ Engine: PostgreSQL **16.15**, explicitly qualified; not Production 17.6. Synthet
 5. Production/hosted enablement needs a separate TL-reviewed plan and Product-Owner Production gate.
 6. Production promotion must reconcile the LOCAL/UNAPPLIED schema-reference classification.
 
-**Do not mark Ready. Do not merge. STOP FOR INDEPENDENT TL EXACT-HEAD REVIEW.**
+**Do not mark Ready. Do not merge. STOP FOR INDEPENDENT TL EXACT-HEAD RE-REVIEW.**

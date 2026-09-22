@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { getServerSupabaseUrl } from '@/lib/supabase/server'
 import {
   ADMIN_ACCOUNT_COUNTS_LOCAL_FLAG,
 } from '@/lib/admin/account-counts-delivery/contract'
@@ -28,14 +29,6 @@ export type AdminAccountCountsActivationEnv = {
   CI?: string
   GITHUB_ACTIONS?: string
 }
-
-/**
- * URL captured when this module first loads. Next inlines NEXT_PUBLIC_ values
- * at build time; the session client in lib/supabase/server.ts also captures
- * that variable at its own module load. A later process.env mutation must not
- * authorize a remote or empty capture.
- */
-export const ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 
 export function adminAccountCountsActivationEnvFromProcess(
   env: NodeJS.ProcessEnv = process.env,
@@ -92,12 +85,13 @@ export function isAdminAccountCountsLocallyEnabled(
 
 /**
  * Non-overridable runtime gate used by the page and the exported loader.
- * Requires the current process snapshot AND the module-captured client URL
- * both to be a genuine local loopback configuration.
+ * Requires the current process snapshot AND the shared session factory's
+ * captured URL. A later process.env mutation cannot authorize an earlier
+ * remote or empty client target.
  */
 export function isAdminAccountCountsRuntimeEnabled(): boolean {
   if (!isAdminAccountCountsLocallyEnabled(adminAccountCountsActivationEnvFromProcess())) {
     return false
   }
-  return isLoopbackSupabaseUrl(ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL)
+  return isLoopbackSupabaseUrl(getServerSupabaseUrl())
 }

@@ -5,29 +5,36 @@ Author self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity
 
-- Same session as the reviewed implementation. R1–R4 only. No new product surface.
+- Same session as the reviewed implementation. Residual R1 only. R2/R3/R4 implementation preserved.
 - Existing Admin trip tiles unchanged.
 - Default-off. Hosted/Production/Preview hard-disabled even with the local flag.
+- Shared edit is only the authorized read-only getter on `lib/supabase/server.ts`.
 - #550/#552 and central docs read-only. Checker ownership unchanged.
 
-## R1–R4 response
+## Residual R1 response
 
-- Runtime loader no longer accepts a substitute environment. Pure evaluator cannot call shared dependencies.
-- Parser rejects the four executed TL counterexamples and keeps the requested positive controls.
-- Scanner-invisibility lock-in test removed. Addendum-authorized checker change records one LOCAL/UNAPPLIED path-and-RPC pair. Generated types unchanged.
-- Structured error/denial mapping: missing function by code only; lookup failures failed; denials/break-glass forbidden; containment preserved.
+- Activation no longer captures `NEXT_PUBLIC_SUPABASE_URL` a second time.
+- Runtime enablement reads `getServerSupabaseUrl()`, which returns the same `SUPABASE_URL` already used by the three session factories.
+- Isolated regressions import the shared server first with a synthetic remote URL, then change only the process URL to loopback, then call the no-argument loader. Result is disabled with zero guard/cookie/client/RPC calls.
+- Inverse/stale, default-off, hosted and missing-target cases stay disabled.
+- Genuine local shared target: one role-backed authorized path, one wrapper RPC, validated counts.
+- Default `AdminAccountCounts` is exercised for disabled/success/failed rendering. That is not `AdminAccountCountsAnsicht` given a prepared result and not browser E2E.
 
 ## Tests distinguished
 
 | Class | Count | Claim |
 | --- | --- | --- |
-| Wrapper checks | 24 mixed | 15 SQL, 6 catalog, 2 source, 1 Node cleanup |
+| Wrapper checks | 24 mixed | 15 SQL + 6 catalog including executed no-argument rejection + 2 source + 1 Node cleanup. New execution on this persist; SQL sources unchanged. |
 | Runner safety Node tests | 2 | env reject + local-only source |
-| Application/renderer tests | 30 | actual modules, including exported loader and checker |
-| Full `npm test` | 3887 | includes the 30 delivery tests |
+| Application/module tests | 36 | not one bucket: 6 activation helpers, 6 isolated actual-loader/default-component, 7 parser, 10 reader (including injected `runtimeEnabled` helpers), 3 Ansicht renders, 4 checker |
+| Isolated actual loader / default component | 6 of the 36 | real shared factory + intercepted SSR; would fail the reviewed split-capture implementation |
+| Synthetic Ansicht renders | 3 of the 36 | prepared-result UI only; not the default component; not browser E2E |
+| Checker regressions | 4 of the 36 | LOCAL/UNAPPLIED path/RPC inventory, not SQL semantic validation |
+| Full `npm test` | 3893 | includes the 36 delivery tests |
 | Existing auth/capability | 35 | unchanged shared helpers |
-| Synthetic UI render | 3 of the 26 | component-tested, not browser E2E |
 | Authenticated PostgREST/browser E2E | 0 | **not run** |
+
+The earlier `3 of the 26` wording was stale after the R1–R4 package (then 30 tests) and is replaced by the table above.
 
 ## Residual risks
 
