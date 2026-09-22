@@ -1,4 +1,4 @@
-import { loadAdminAccountCounts } from '@/lib/admin/account-counts-delivery/reader'
+import { containAdminAccountCountsLoad } from '@/lib/admin/account-counts-delivery/reader'
 import type {
   AdminAccountCountsMeasures,
   AdminAccountCountsReadResult,
@@ -116,12 +116,7 @@ export function AdminAccountCountsAnsicht({ result }: { result: AdminAccountCoun
 }
 
 export default async function AdminAccountCounts() {
-  let result: AdminAccountCountsReadResult
-  try {
-    result = await loadAdminAccountCounts()
-  } catch {
-    result = { status: 'failed' }
-  }
+  const result = await containAdminAccountCountsLoad()
   if (result.status === 'disabled') return null
   return <AdminAccountCountsAnsicht result={result} />
 }

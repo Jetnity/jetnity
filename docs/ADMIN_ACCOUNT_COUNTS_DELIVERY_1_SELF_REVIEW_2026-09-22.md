@@ -5,39 +5,34 @@ Author self-review is **not** Technical-Lead PASS.
 
 ## Scope fidelity
 
-- Delivery implementation only; not another inventory and not the rejected #549 unavailable-metric dashboard.
-- Two accepted measures only. Existing Admin trip tiles unchanged.
+- Same session as the reviewed implementation. R1–R4 only. No new product surface.
+- Existing Admin trip tiles unchanged.
 - Default-off. Hosted/Production/Preview hard-disabled even with the local flag.
-- No new HTTP route, tracking, partner report, placeholder dashboard, or migration-directory file.
-- #550/#552 files read-only. Central docs were not edited by this writer; the authorized merge imported already-merged #551 docs-only files unchanged.
-- Exact-main sync `ff054f76` was merged into the same branch after preserving `a88159b5`. No rebase, force, reset, or cherry-pick.
+- #550/#552 and central docs read-only. Checker ownership unchanged.
 
-## Security
+## R1–R4 response
 
-- Wrapper is SECURITY INVOKER, not a second DEFINER, and does not read `auth.users`.
-- EXECUTE granted only to authenticated; PUBLIC/anon/service_role revoked.
-- Reader uses the existing SSR/session client. No service role.
-- Break-glass cannot read counts. Role-backed `konten-verwalten` + AAL2 is required before RPC.
-- Error/empty/denial never becomes successful zero. Missing function is unavailable.
-- Counts stay canonical decimal strings. Numbers and `?? 0` are rejected.
-- No credentials, no remote Supabase client calls, no browser persistence.
+- Runtime loader no longer accepts a substitute environment. Pure evaluator cannot call shared dependencies.
+- Parser rejects the four executed TL counterexamples and keeps the requested positive controls.
+- Scanner-invisibility lock-in test removed. Schema-reference gap reported as an exact TL-addendum blocker.
+- Structured error/denial mapping: missing function by code only; lookup failures failed; denials/break-glass forbidden; containment preserved.
 
-## Tests distinguished (re-gated after authorized merge)
+## Tests distinguished
 
 | Class | Count | Claim |
 | --- | --- | --- |
-| Executed SQL wrapper proof | 24 | real disposable PostgreSQL 16.15 |
+| Wrapper checks | 24 mixed | 15 SQL, 6 catalog, 2 source, 1 Node cleanup |
 | Runner safety Node tests | 2 | env reject + local-only source |
-| Application/renderer tests | 16 | actual modules, not only regex |
-| Full `npm test` | 3873 | includes the 16 new tests |
+| Application/renderer tests | 26 | actual modules, including exported loader |
+| Full `npm test` | 3883 | includes the 26 delivery tests |
 | Existing auth/capability | 35 | unchanged shared helpers |
-| Synthetic UI render | 3 of the 16 | component-tested, not browser E2E |
+| Synthetic UI render | 3 of the 26 | component-tested, not browser E2E |
 | Authenticated PostgREST/browser E2E | 0 | **not run** |
 
 ## Residual risks
 
-- P1 prevention holds in this slice: hosted activation requires several independent mistakes plus a later apply that this PR does not perform.
-- P2: later trusted-postgres breadth and the existing banned-profile helper observation remain for the Production checklist.
+- P2: schema-reference still cannot inventory the named-constant LOCAL RPC until the later TL addendum.
+- P2: trusted-postgres breadth and the banned-profile helper observation remain for the Production checklist.
 - P3: local engine is 16.15, not Production 17.6; no PostgREST/browser E2E.
 
 ## STOP

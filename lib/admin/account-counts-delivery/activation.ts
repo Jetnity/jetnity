@@ -29,6 +29,14 @@ export type AdminAccountCountsActivationEnv = {
   GITHUB_ACTIONS?: string
 }
 
+/**
+ * URL captured when this module first loads. Next inlines NEXT_PUBLIC_ values
+ * at build time; the session client in lib/supabase/server.ts also captures
+ * that variable at its own module load. A later process.env mutation must not
+ * authorize a remote or empty capture.
+ */
+export const ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+
 export function adminAccountCountsActivationEnvFromProcess(
   env: NodeJS.ProcessEnv = process.env,
 ): AdminAccountCountsActivationEnv {
@@ -68,16 +76,28 @@ function hasHostedMarker(env: AdminAccountCountsActivationEnv): boolean {
 }
 
 /**
- * Server-only local activation. Default false. Host/query/browser inputs are
- * not read. Hosted/Production/Preview/unknown/remote stays disabled even when
- * the local flag is the exact string `true`.
+ * Pure evaluator. Callers supply the environment snapshot. This function
+ * never reads process.env itself, never imports the session client, and never
+ * authorizes a count query.
  */
 export function isAdminAccountCountsLocallyEnabled(
-  env: AdminAccountCountsActivationEnv = adminAccountCountsActivationEnvFromProcess(),
+  env: AdminAccountCountsActivationEnv,
 ): boolean {
   if (env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED !== 'true') return false
   if (!LOCAL_RUNTIMES.has(env.NODE_ENV ?? '')) return false
   if (hasHostedMarker(env)) return false
   if (!isLoopbackSupabaseUrl(env.NEXT_PUBLIC_SUPABASE_URL)) return false
   return true
+}
+
+/**
+ * Non-overridable runtime gate used by the page and the exported loader.
+ * Requires the current process snapshot AND the module-captured client URL
+ * both to be a genuine local loopback configuration.
+ */
+export function isAdminAccountCountsRuntimeEnabled(): boolean {
+  if (!isAdminAccountCountsLocallyEnabled(adminAccountCountsActivationEnvFromProcess())) {
+    return false
+  }
+  return isLoopbackSupabaseUrl(ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL)
 }

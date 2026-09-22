@@ -1,8 +1,30 @@
 {
-  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3873, "fail": 0 },
-  "deliveryApplicationTests": { "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/account-counts-delivery/*.test.ts", "exitCode": 0, "tests": 16, "fail": 0 },
-  "wrapperSafetyTests": { "command": "node --test scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs", "exitCode": 0, "tests": 2, "fail": 0 },
-  "wrapperSqlProof": { "command": "node scripts/db/admin-account-counts-delivery-1-local-proof.mjs", "exitCode": 0, "passed": 24, "failed": 0 },
+  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3883, "fail": 0 },
+  "deliveryApplicationTests": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/account-counts-delivery/*.test.ts",
+    "exitCode": 0,
+    "tests": 26,
+    "fail": 0
+  },
+  "wrapperSafetyTests": {
+    "command": "node --test scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs",
+    "exitCode": 0,
+    "tests": 2,
+    "fail": 0
+  },
+  "wrapperChecks": {
+    "command": "node scripts/db/admin-account-counts-delivery-1-local-proof.mjs",
+    "exitCode": 0,
+    "passed": 24,
+    "failed": 0,
+    "mix": {
+      "sql": { "wrapper-transport-sql": 1, "wrapper-auth-sql": 13, "wrapper-acl-sql": 1, "total": 15 },
+      "catalogIncludingExecutedNoArgRejection": 6,
+      "staticSource": 2,
+      "nodeCleanup": 1
+    },
+    "doNotLabelAllAsExecutedSql": true
+  },
   "authCapabilityTests": {
     "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/auth/admin-aal2-alignment.test.ts lib/auth/faehigkeiten-datenbank.test.ts lib/auth/admin-aal-wiring.test.ts",
     "exitCode": 0,
@@ -10,11 +32,23 @@
     "fail": 0
   },
   "typecheck": { "command": "npm run typecheck", "exitCode": 0 },
-  "lintDeliveryFiles": { "command": "npx eslint lib/admin/account-counts-delivery components/admin/home/AdminAccountCounts.tsx app/(admin)/admin/page.tsx scripts/db/admin-account-counts-delivery-1-*.mjs", "exitCode": 0 },
-  "repoLint": { "command": "npm run lint", "exitCode": 1, "note": "1 pre-existing error was in this slice's try/catch JSX and is fixed; remaining 136 warnings are baseline-unrelated files" },
+  "lintDeliveryFiles": {
+    "command": "npx eslint lib/admin/account-counts-delivery components/admin/home/AdminAccountCounts.tsx app/(admin)/admin/page.tsx scripts/db/admin-account-counts-delivery-1-*.mjs",
+    "exitCode": 0
+  },
+  "repoLintHistory": {
+    "command": "npm run lint",
+    "historicalSliceIntroducedJsxTryCatch": {
+      "wasPreExistingBaseline": false,
+      "note": "An earlier head on this branch put JSX inside a reader try/catch and eslint failed. That was a slice-introduced error, later moved out of JSX. It is not a pre-existing baseline defect."
+    },
+    "thisHeadDeliveryEslint": 0,
+    "exactHeadCiLint": "record after push; do not treat local repo-wide warning count as that CI job"
+  },
   "build": { "command": "npm run build", "exitCode": 0, "next": "16.3.3" },
   "hygiene": {
     "check:schema-bezug": 0,
+    "check:schema-bezugNote": "green against generated types only; named-constant LOCAL RPC is invisible to the checker until a later TL addendum",
     "check:dead": 0,
     "check:exports": 0,
     "check:deps": 0,
@@ -27,18 +61,9 @@
     "remote database read or apply",
     "auth:pruefen against live secrets"
   ],
-  "reGatedAfterAuthorizedMainSync": {
-    "preservedImplementationCheckpoint": "a88159b52cac8251b16776cf4b7c7b79a8facdec",
-    "authorizedMain": "ff054f76c14cf1c434890ba342af4df5e536dd05",
-    "mergeCommit": "1d45dec7810a537f821744250dc20ab6578bd6b7",
-    "npmTest": 3873,
-    "deliveryApplicationTests": 16,
-    "wrapperSafetyTests": 2,
-    "wrapperSqlProof": 24,
-    "authCapabilityTests": 35,
-    "typecheck": 0,
-    "lintDeliveryFiles": 0,
-    "build": 0,
-    "hygiene": "all 0"
+  "reviewFix": {
+    "reviewedHead": "d1d18daca96bb72c4ed6645c46b765e867bd5615",
+    "review": 5283659145,
+    "items": ["R1", "R2", "R3", "R4"]
   }
 }

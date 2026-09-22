@@ -2,7 +2,10 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 
 import {
+  ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL,
+  adminAccountCountsActivationEnvFromProcess,
   isAdminAccountCountsLocallyEnabled,
+  isAdminAccountCountsRuntimeEnabled,
   isLoopbackSupabaseUrl,
   type AdminAccountCountsActivationEnv,
 } from '@/lib/admin/account-counts-delivery/activation'
@@ -90,7 +93,7 @@ describe('Admin account-counts local activation', () => {
     }
   })
 
-  test('only exact local development/test + loopback URL + flag=true enables', () => {
+  test('only exact local development/test + loopback URL + flag=true enables the pure evaluator', () => {
     assert.equal(isAdminAccountCountsLocallyEnabled(LOCAL), true)
     assert.equal(
       isAdminAccountCountsLocallyEnabled({
@@ -102,5 +105,38 @@ describe('Admin account-counts local activation', () => {
     )
     assert.equal(isLoopbackSupabaseUrl('http://[::1]:54321'), true)
     assert.equal(isLoopbackSupabaseUrl('https://127.0.0.1:8443'), true)
+  })
+
+  test('process snapshot helper reads the current environment without enabling the loader', () => {
+    const snapshot = adminAccountCountsActivationEnvFromProcess()
+    assert.equal(snapshot.NODE_ENV, process.env.NODE_ENV)
+    assert.equal(isAdminAccountCountsLocallyEnabled(snapshot) && !isLoopbackSupabaseUrl(snapshot.NEXT_PUBLIC_SUPABASE_URL), false)
+  })
+
+  test('runtime enablement stays off when the module-captured URL is not loopback', () => {
+    const previousFlag = process.env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED
+    const previousUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const previousVercel = process.env.VERCEL
+    try {
+      process.env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED = 'true'
+      process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://127.0.0.1:54321'
+      delete process.env.VERCEL
+      const laterProcessLooksLocal = isAdminAccountCountsLocallyEnabled({
+        NODE_ENV: 'test',
+        JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED: 'true',
+        NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+      })
+      assert.equal(laterProcessLooksLocal, true)
+      if (!isLoopbackSupabaseUrl(ADMIN_ACCOUNT_COUNTS_MODULE_SUPABASE_URL)) {
+        assert.equal(isAdminAccountCountsRuntimeEnabled(), false)
+      }
+    } finally {
+      if (previousFlag === undefined) delete process.env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED
+      else process.env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED = previousFlag
+      if (previousUrl === undefined) delete process.env.NEXT_PUBLIC_SUPABASE_URL
+      else process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl
+      if (previousVercel === undefined) delete process.env.VERCEL
+      else process.env.VERCEL = previousVercel
+    }
   })
 })

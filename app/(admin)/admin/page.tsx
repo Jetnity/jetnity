@@ -7,11 +7,11 @@ import AdminLagehinweise from '@/components/admin/home/AdminLagehinweise'
 import AdminModellnutzungHinweis from '@/components/admin/home/AdminModellnutzungHinweis'
 import AdminNaechsteSchritte from '@/components/admin/home/AdminNaechsteSchritte'
 import AdminHealthCards from '@/components/admin/home/AdminHealthCards'
-import { isAdminAccountCountsLocallyEnabled } from '@/lib/admin/account-counts-delivery/activation'
+import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 
 export default async function AdminHomePage() {
-  const accountCountsLocal = isAdminAccountCountsLocallyEnabled()
+  const accountCountsLocal = isAdminAccountCountsRuntimeEnabled()
 
   return (
     <div className="grid gap-6">

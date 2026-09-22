@@ -1,12 +1,9 @@
 import 'server-only'
 
 import { evaluateAdminAccess } from '@/lib/auth/admin-guard'
+import type { AdminDecision } from '@/lib/auth/admin-access'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import {
-  adminAccountCountsActivationEnvFromProcess,
-  isAdminAccountCountsLocallyEnabled,
-  type AdminAccountCountsActivationEnv,
-} from '@/lib/admin/account-counts-delivery/activation'
+import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
 import {
   ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC,
   type AdminAccountCountsExpectedRpc,
@@ -16,7 +13,7 @@ import { parseAdminAccountCountsPayload } from '@/lib/admin/account-counts-deliv
 
 export type AdminAccountCountsAccessDecision =
   | { allowed: true; grant: 'role' | 'break-glass' }
-  | { allowed: false }
+  | { allowed: false; kind: 'forbidden' | 'failed' }
 
 export type AdminAccountCountsAccessGate = () => Promise<AdminAccountCountsAccessDecision>
 
@@ -36,22 +33,27 @@ export type AdminAccountCountsRpcCall = () => Promise<AdminAccountCountsRpcRespo
 const MISSING_FUNCTION = new Set(['42883', 'PGRST202'])
 const FORBIDDEN = new Set(['42501', '42503', 'PGRST301', 'PGRST302'])
 
-function classifyRpcError(error: AdminAccountCountsRpcError, status?: number): Exclude<
-  AdminAccountCountsReadResult['status'],
-  'disabled' | 'available'
-> {
+export function classifyAdminAccountCountsRpcError(
+  error: AdminAccountCountsRpcError,
+  status?: number,
+): Exclude<AdminAccountCountsReadResult['status'], 'disabled' | 'available'> {
   const code = (error.code ?? '').trim()
   if (MISSING_FUNCTION.has(code)) return 'unavailable'
   if (FORBIDDEN.has(code) || status === 401 || status === 403) return 'forbidden'
-  const message = (error.message ?? '').toLowerCase()
-  if (message.includes('could not find the function') || message.includes('does not exist')) {
-    return 'unavailable'
-  }
-  if (message.includes('permission denied') || message.includes('not authorized')) {
-    return 'forbidden'
-  }
   if (status === 0) return 'failed'
   return 'failed'
+}
+
+export function mapAdminAccessToAccountCountsDecision(
+  decision: AdminDecision,
+): AdminAccountCountsAccessDecision {
+  if (decision.allowed) {
+    return { allowed: true, grant: decision.grant }
+  }
+  if (decision.denial === 'lookup-failed' || decision.denial === 'aal-lookup-failed') {
+    return { allowed: false, kind: 'failed' }
+  }
+  return { allowed: false, kind: 'forbidden' }
 }
 
 export async function readAdminAccountCounts(options: {
@@ -61,8 +63,14 @@ export async function readAdminAccountCounts(options: {
 }): Promise<AdminAccountCountsReadResult> {
   if (!options.enabled) return { status: 'disabled' }
 
-  const access = await options.gate()
-  if (!access.allowed || access.grant !== 'role') return { status: 'forbidden' }
+  let access: AdminAccountCountsAccessDecision
+  try {
+    access = await options.gate()
+  } catch {
+    return { status: 'failed' }
+  }
+  if (!access.allowed) return { status: access.kind }
+  if (access.grant !== 'role') return { status: 'forbidden' }
 
   let response: AdminAccountCountsRpcResponse
   try {
@@ -71,7 +79,9 @@ export async function readAdminAccountCounts(options: {
     return { status: 'failed' }
   }
 
-  if (response.error) return { status: classifyRpcError(response.error, response.status) }
+  if (response.error) {
+    return { status: classifyAdminAccountCountsRpcError(response.error, response.status) }
+  }
 
   const parsed = parseAdminAccountCountsPayload(response.data)
   if (!parsed.ok) return { status: 'failed' }
@@ -90,27 +100,49 @@ export async function invokeAdminAccountCountsWrapper(
   return client.rpc(ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC)
 }
 
-export async function loadAdminAccountCounts(
-  env?: AdminAccountCountsActivationEnv,
-): Promise<AdminAccountCountsReadResult> {
-  const enabled = isAdminAccountCountsLocallyEnabled(
-    env ?? adminAccountCountsActivationEnvFromProcess(),
-  )
-  if (!enabled) return { status: 'disabled' }
-
+export async function loadAdminAccountCountsFromDependencies(options: {
+  runtimeEnabled: boolean
+  gate: AdminAccountCountsAccessGate
+  rpc: AdminAccountCountsRpcCall
+}): Promise<AdminAccountCountsReadResult> {
   return readAdminAccountCounts({
-    enabled: true,
-    gate: async () => {
-      const decision = await evaluateAdminAccess({
-        capability: 'konten-verwalten',
-        surface: 'admin-account-counts',
-      })
-      if (!decision.allowed) return { allowed: false }
-      return { allowed: true, grant: decision.grant }
-    },
-    rpc: async () => {
-      const client = await createServerComponentClient()
-      return invokeAdminAccountCountsWrapper(client as unknown as WrapperClient)
-    },
+    enabled: options.runtimeEnabled,
+    gate: options.gate,
+    rpc: options.rpc,
   })
+}
+
+async function defaultAccountCountsGate(): Promise<AdminAccountCountsAccessDecision> {
+  const decision = await evaluateAdminAccess({
+    capability: 'konten-verwalten',
+    surface: 'admin-account-counts',
+  })
+  return mapAdminAccessToAccountCountsDecision(decision)
+}
+
+async function defaultAccountCountsRpc(): Promise<AdminAccountCountsRpcResponse> {
+  const client = await createServerComponentClient()
+  return invokeAdminAccountCountsWrapper(client as unknown as WrapperClient)
+}
+
+/**
+ * Runtime loader. Accepts no environment snapshot. A synthetic activation
+ * object passed as a leftover argument is ignored.
+ */
+export async function loadAdminAccountCounts(): Promise<AdminAccountCountsReadResult> {
+  return loadAdminAccountCountsFromDependencies({
+    runtimeEnabled: isAdminAccountCountsRuntimeEnabled(),
+    gate: defaultAccountCountsGate,
+    rpc: defaultAccountCountsRpc,
+  })
+}
+
+export async function containAdminAccountCountsLoad(
+  load: () => Promise<AdminAccountCountsReadResult> = loadAdminAccountCounts,
+): Promise<AdminAccountCountsReadResult> {
+  try {
+    return await load()
+  } catch {
+    return { status: 'failed' }
+  }
 }
