@@ -1,0 +1,31 @@
+Owned paths vs origin/main at implementation persist (before this evidence commit
+adds the named docs/evidence files):
+
+docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md
+lib/providers/hotelbeds/hotels/adapter.test.ts
+lib/providers/hotelbeds/hotels/adapter.ts
+lib/providers/hotelbeds/hotels/contracts.ts
+
+Allowlist from Task v1:
+- lib/providers/hotelbeds/hotels/*
+- docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_STATUS_2026-09-22.md
+- docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_HANDOFF_2026-09-22.md
+- docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_SELF_REVIEW_2026-09-22.md
+- docs/evidence/hbx-hotels-adapter-foundation-1/*
+
+READ ONLY preserved: lib/hotels/*, lib/server/providers/core/*,
+lib/commercial-provenance/*, lib/providers/skyscanner/*, app/, components/,
+scripts/, package.json, lock, CI, global startup/status/roadmap/ADRs.
+
+Sibling #545 paths (Admin navigation): app/(admin)/admin/layout.tsx,
+components/admin/AdminNavigationSearch.tsx, components/layout/AdminTopbar.tsx,
+lib/admin/navigation-search*, lib/admin/ehrliche-zustaende*,
+docs/ADMIN_NAVIGATION_SEARCH_1_*, docs/evidence/admin-navigation-search-1/*,
+scripts/admin-navigation-search-1-*. No overlap.
+
+Sibling #547 paths (Admin indexing): app/(admin)/admin/system-health/page.tsx,
+components/admin/system-health/IndexingStatus.tsx, lib/admin/seo-status*,
+docs/ADMIN_INDEXING_STATUS_1_*, docs/evidence/admin-indexing-status-1/*,
+scripts/admin-indexing-status-1-*. No overlap.
+
+No unmerged sibling was merged or depended on.

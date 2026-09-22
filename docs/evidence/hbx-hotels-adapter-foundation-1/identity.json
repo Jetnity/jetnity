@@ -1,0 +1,17 @@
+{
+  "agent": "Jetnity HBX hotels adapter foundation 1",
+  "generation": 1,
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "actualModelFromRunInfo": "cursor-grok-4.6-high-fast",
+  "session": "bc-c538c2b5-3cc6-4f9f-8f00-2ccac1bb9cf1",
+  "runUrl": "https://cursor.com/agents/bc-c538c2b5-3cc6-4f9f-8f00-2ccac1bb9cf1",
+  "uiRename": "not performed; no programmable session-rename capability was exposed",
+  "reusedAdminOrHistoricalAuditSession": false,
+  "draftPr": 548,
+  "branch": "feat/hbx-hotels-adapter-foundation-1",
+  "task": "docs/HBX_HOTELS_ADAPTER_FOUNDATION_1_TASK_2026-09-22.md",
+  "taskSeed": "91270eafc00887bc24b345924b22239af3cc94a4",
+  "baselineMain": "9dc8926ef859bcde2dc31dc8b96f2e61e1948f74",
+  "operatingMode": "NORMAL",
+  "tlStartEvidenceComment": 5779757780
+}

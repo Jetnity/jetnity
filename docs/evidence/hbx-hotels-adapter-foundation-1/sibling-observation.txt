@@ -1,0 +1,10 @@
+#545 Admin navigation (TL-review-pending, not used):
+  head observed via PR files API at review time of this persist
+  paths: admin layout/topbar/navigation-search, own docs/evidence/scripts
+  overlap with this slice: none
+
+#547 Admin indexing (TL-review-pending, not used):
+  paths: system-health page, IndexingStatus, seo-status, own docs/evidence/scripts
+  overlap with this slice: none
+
+This writer did not rebase, merge, or depend on either unmerged PR.

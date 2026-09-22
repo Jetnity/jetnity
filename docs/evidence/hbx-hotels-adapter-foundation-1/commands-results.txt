@@ -1,0 +1,52 @@
+Local gates run on implementation commit f4413cd4b01730702c14d4954367ab1766ceb778
+before the freeze persist. Existing repo lint warnings are distinguished from
+new regressions: ESLint 0 errors / 135 pre-existing warnings; no warning in
+lib/providers/hotelbeds/**.
+
+git fetch origin main feat/hbx-hotels-adapter-foundation-1
+  origin/main = 9dc8926ef859bcde2dc31dc8b96f2e61e1948f74
+  merge-base  = 9dc8926ef859bcde2dc31dc8b96f2e61e1948f74
+  after implementation commit: 2 ahead / 0 behind
+  rebase/force-push: not done
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/providers/hotelbeds/hotels/adapter.test.ts
+  tests 20 / pass 20 / fail 0
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/hotels/schema.test.ts lib/hotels/suche.test.ts \
+  lib/hotels/anfrage.test.ts lib/providers/skyscanner/flights/adapter.test.ts
+  tests 25 / pass 25 / fail 0
+
+npm run typecheck
+  next typegen + tsc --noEmit: PASS
+
+npm run lint
+  eslint .: 0 errors, 135 pre-existing warnings (none in owned hotelbeds files)
+
+npm run check:dead
+  verwaist: 0
+
+npm run check:exports
+  Exporte ohne Aufrufer: 0
+
+npm run check:deps
+  dependencies 11/0 unused; scoped devDependencies 2/0 unused
+
+npm run check:api-schutz
+  12 Admin-Routen, alle requireAdminApi()
+
+npm run check:schema-bezug
+  PASS against types/supabase.ts
+
+npm run check:operating-mode
+  operating-mode guard: PASS
+
+npm run build
+  prebuild check:setup: 1 existing warning (no .env/.local in this environment)
+  next build: compiled successfully; TypeScript finished; 23 static pages
+  /api/hotels/search remains the existing route; this module is not imported
+
+Not run, and not required for this offline slice:
+  db:rechte, db:rls, db:sicherheit, auth:pruefen, setup-fix, migrations,
+  live HBX/API, Production DB, browser/Preview functional proof
