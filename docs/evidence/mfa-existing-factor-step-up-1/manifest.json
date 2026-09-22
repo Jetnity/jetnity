@@ -1,0 +1,28 @@
+{
+  "slice": "mfa-existing-factor-step-up-1",
+  "issue": 541,
+  "pr": 542,
+  "branch": "fix/mfa-existing-factor-step-up-1",
+  "agent": "Jetnity MFA existing factor step-up 1",
+  "generation": 1,
+  "model": "cursor-grok-4.6-high-fast",
+  "session": "bc-7a6af588-d7cf-4bd4-8707-fb4b3b8127a6",
+  "baselineMain": "a3eb83b86d5aec604fb77d5d2b75d58c6a653ef1",
+  "taskSeed": "fde86ba3b4fb7439e7386f8e4efbbd3ef132804d",
+  "implementationCommit": "e3c1c3d14b9bbec4f4ab22cfce4bf44d20f813f9",
+  "reviewedHead": "9b93efe468dadd2156202f404dbd50a2013643bf",
+  "correctionCommit": "7163f91a74c7bc17da51fb8a3b6013800ab559a9",
+  "files": [
+    "repro-before.json",
+    "local-gates.json",
+    "tests-after.json",
+    "r1-malformed-records.json"
+  ],
+  "runtimeChanged": [
+    "lib/auth/mfa.ts",
+    "lib/auth/account-security-faktoren.ts"
+  ],
+  "uiChanged": false,
+  "productionWrites": false,
+  "realDeviceAcceptance": false
+}

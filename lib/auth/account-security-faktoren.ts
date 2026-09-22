@@ -49,6 +49,81 @@ export function istTotpFaktor(faktor: Pick<MfaFaktor, 'id' | 'factor_type' | 'ty
   return typeof faktor.id === 'string' && faktor.id.length > 0 && totpFaktorTyp(faktor) === 'totp'
 }
 
+export function istVerifizierterTotpFaktor(
+  faktor: Pick<MfaFaktor, 'id' | 'factor_type' | 'type' | 'status'>,
+): boolean {
+  return istTotpFaktor(faktor) && faktor.status === 'verified'
+}
+
+export type MfaFaktorenLesung =
+  | { status: 'ok'; liste: MfaFaktor[] }
+  | { status: 'unlesbar' }
+
+function istNichtleererString(wert: unknown): wert is string {
+  return typeof wert === 'string' && wert.length > 0
+}
+
+/**
+ * Challenge-Lesung: ein Datensatz ist nur lesbar, wenn ID, Typ und Status
+ * klassifizierbar sind. Ein Record, der verified TOTP behauptet, aber keine
+ * gültige ID hat, ist unlesbar — nicht „kein Faktor“.
+ * `totpFaktorenAusAntwort` bleibt der unveränderte Anzeige-Normalizer.
+ */
+function faktorDatensatzLesen(eintrag: unknown): MfaFaktor | null {
+  if (eintrag == null || typeof eintrag !== 'object' || Array.isArray(eintrag)) {
+    return null
+  }
+
+  const roh = eintrag as Record<string, unknown>
+  if (!istNichtleererString(roh.id)) return null
+
+  const factorType = roh.factor_type
+  const legacyType = roh.type
+  if (factorType !== undefined && factorType !== null && factorType !== '') {
+    if (typeof factorType !== 'string') return null
+  } else if (legacyType !== undefined && legacyType !== null && legacyType !== '') {
+    if (typeof legacyType !== 'string') return null
+  } else {
+    return null
+  }
+
+  if (!istNichtleererString(roh.status)) return null
+  return roh as unknown as MfaFaktor
+}
+
+function alsFaktorliste(wert: unknown): MfaFaktor[] | null {
+  if (!Array.isArray(wert)) return null
+  const liste: MfaFaktor[] = []
+  for (const eintrag of wert) {
+    const faktor = faktorDatensatzLesen(eintrag)
+    if (faktor == null) return null
+    liste.push(faktor)
+  }
+  return liste
+}
+
+/**
+ * Liest unterstützte listFactors-Formen. Current Truth ist `all`, danach `totp`,
+ * danach legacy `factors`. Fehlt jede dieser Listen oder ist sie keine Array-
+ * von-Objekten-Form, ist die Antwort unlesbar — nicht „keine Faktoren“.
+ */
+export function mfaFaktorenListeLesen(data: unknown): MfaFaktorenLesung {
+  if (data == null || typeof data !== 'object' || Array.isArray(data)) {
+    return { status: 'unlesbar' }
+  }
+
+  const roh = data as MfaListFactorsData
+  const kandidat =
+    roh.all !== undefined ? roh.all : roh.totp !== undefined ? roh.totp : roh.factors !== undefined ? roh.factors : undefined
+  const liste = alsFaktorliste(kandidat)
+  if (liste == null) return { status: 'unlesbar' }
+  return { status: 'ok', liste }
+}
+
+export function waehleVerifiziertenTotpFaktor(liste: readonly MfaFaktor[]): MfaFaktor | null {
+  return liste.find(istVerifizierterTotpFaktor) ?? null
+}
+
 export function totpFaktorenAusAntwort(data: MfaListFactorsData | null | undefined): TotpFaktorAnzeige[] {
   const liste = data?.all ?? data?.totp ?? data?.factors ?? []
   return liste.filter(istTotpFaktor).map((faktor) => ({

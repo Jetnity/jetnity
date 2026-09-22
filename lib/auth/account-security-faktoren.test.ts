@@ -3,8 +3,11 @@ import assert from 'node:assert/strict'
 
 import {
   istTotpFaktor,
+  istVerifizierterTotpFaktor,
+  mfaFaktorenListeLesen,
   totpFaktorenAusAntwort,
   totpFaktorTyp,
+  waehleVerifiziertenTotpFaktor,
   type MfaFaktor,
 } from '@/lib/auth/account-security-faktoren'
 import { totpFaktorAnzeigename, totpListeLage } from '@/lib/auth/account-security-lage'
@@ -101,5 +104,78 @@ describe('AP-5-S1 TOTP-Faktorvertrag', () => {
     })
     assert.equal(nurLegacyType.length, 1)
     assert.equal(totpFaktorAnzeigename(nurLegacyType[0].friendly_name), 'Altes Gerät')
+  })
+
+  test('listFactors-Lesen unterscheidet leere Liste und unlesbare Antwort', () => {
+    assert.deepEqual(mfaFaktorenListeLesen({ all: [], totp: [], phone: [] }), {
+      status: 'ok',
+      liste: [],
+    })
+    assert.deepEqual(mfaFaktorenListeLesen({ factors: [VERIFIZIERTER_TOTP] }), {
+      status: 'ok',
+      liste: [VERIFIZIERTER_TOTP],
+    })
+    assert.deepEqual(mfaFaktorenListeLesen({ totp: [VERIFIZIERTER_TOTP] }), {
+      status: 'ok',
+      liste: [VERIFIZIERTER_TOTP],
+    })
+    assert.equal(mfaFaktorenListeLesen(null).status, 'unlesbar')
+    assert.equal(mfaFaktorenListeLesen({}).status, 'unlesbar')
+    assert.equal(mfaFaktorenListeLesen({ all: 'nope' }).status, 'unlesbar')
+  })
+
+  test('malformed Faktor-Records machen die Challenge-Liste unlesbar', () => {
+    assert.equal(mfaFaktorenListeLesen({ all: [{}] }).status, 'unlesbar')
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ factor_type: 'totp', status: 'verified' }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ id: '', factor_type: 'totp', status: 'verified' }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ id: 12, factor_type: 'totp', status: 'verified' }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{ id: 'synthetic', factor_type: 'totp', status: {} }] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({
+        all: [{ id: 'synthetic', factor_type: { totp: true }, status: 'verified' }],
+      }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      mfaFaktorenListeLesen({ all: [{}, VERIFIZIERTER_TOTP] }).status,
+      'unlesbar',
+    )
+    assert.equal(
+      totpFaktorenAusAntwort({
+        all: [{ id: '', factor_type: 'totp', status: 'verified' } as MfaFaktor],
+      }).length,
+      0,
+    )
+  })
+
+  test('Challenge-Auswahl nimmt nur verified TOTP und nicht Phone', () => {
+    const unverified: MfaFaktor = {
+      id: 'unverified-totp',
+      factor_type: 'totp',
+      status: 'unverified',
+    }
+    const phone: MfaFaktor = {
+      id: 'verified-phone',
+      factor_type: 'phone',
+      type: 'totp',
+      status: 'verified',
+    }
+    assert.equal(istVerifizierterTotpFaktor(VERIFIZIERTER_TOTP), true)
+    assert.equal(istVerifizierterTotpFaktor(unverified), false)
+    assert.equal(istVerifizierterTotpFaktor(phone), false)
+    assert.equal(waehleVerifiziertenTotpFaktor([unverified, phone, VERIFIZIERTER_TOTP])?.id, VERIFIZIERTER_TOTP.id)
+    assert.equal(waehleVerifiziertenTotpFaktor([unverified, phone]), null)
   })
 })

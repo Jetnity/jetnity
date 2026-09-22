@@ -12,7 +12,7 @@ import { erstesFehlerfeld, feldfehlerLoeschen, type Feldfehler } from '@/lib/for
 import { feldInSichtNehmen } from '@/lib/formular/sicht';
 import OauthAnbieter from '@/components/auth/OauthAnbieter';
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog';
-import { getAAL, startTotpChallenge } from '@/lib/auth/mfa';
+import { brauchtLoginTotpStepUp, getAAL, startTotpChallenge } from '@/lib/auth/mfa';
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel';
 import type { OauthAnbieter as OauthName, OauthFreigabe } from '@/lib/auth/oauth-anbieter';
 import {
@@ -109,7 +109,7 @@ export default function LoginForm({
 
       // 2) Prüfen, ob ein Step-Up auf AAL2 (MFA) benötigt wird
       const aal = await getAAL(supabase);
-      if (aal?.nextLevel === 'aal2' && aal?.currentLevel !== 'aal2') {
+      if (brauchtLoginTotpStepUp(aal)) {
         // 3) TOTP-Challenge starten und Dialog öffnen
         const { factorId, challengeId } = await startTotpChallenge(supabase);
         setFactorId(factorId);
