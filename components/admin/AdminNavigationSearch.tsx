@@ -294,13 +294,15 @@ export function AdminNavigationSearchProvider({ drawerOpen, closeDrawer, childre
         >
           <div
             aria-hidden="true"
+            data-admin-nav-search-backdrop
             className="absolute inset-0 bg-black/50"
             onClick={closeSearch}
           />
-          <div className="relative flex h-full w-full items-center justify-center">
+          <div className="pointer-events-none relative flex h-full w-full items-center justify-center">
             <div
               data-admin-nav-search-panel
-              className="relative flex min-h-0 w-[min(calc(100%-24px),36rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
+              className="pointer-events-auto relative flex min-h-0 w-[min(calc(100%-24px),36rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
+              onClick={(event) => event.stopPropagation()}
               style={{ maxHeight: 'calc(100% - 24px)' }}
             >
               <div className="shrink-0 border-b border-border px-3 pt-2">

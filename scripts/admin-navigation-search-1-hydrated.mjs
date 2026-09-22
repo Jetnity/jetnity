@@ -478,6 +478,62 @@ async function r3PrefetchGrenze(page, origin) {
   })
 }
 
+async function r4AussenklickSchliesst(page, origin) {
+  await oeffnen(page, origin, 'role=operator&grant=role', { width: 1024, height: 768 })
+  const desktop = page.locator('[data-admin-nav-search-trigger="desktop"]')
+  await desktop.click()
+  await page.locator('#admin-nav-search-dialog').waitFor()
+  await page.waitForFunction(() => document.activeElement?.id === 'admin-nav-search-input')
+
+  const aussen = await page.evaluate(() => {
+    const el = document.elementFromPoint(10, 10)
+    return {
+      tag: el?.tagName ?? null,
+      backdrop: el instanceof HTMLElement && el.hasAttribute('data-admin-nav-search-backdrop'),
+      panel: Boolean(el?.closest('[data-admin-nav-search-panel]')),
+      className: el instanceof HTMLElement ? el.className : null,
+    }
+  })
+  assert.equal(aussen.backdrop, true)
+  assert.equal(aussen.panel, false)
+  assert.equal(/items-center justify-center/.test(aussen.className ?? ''), false)
+  await page.mouse.click(10, 10)
+  await page.locator('#admin-nav-search-dialog').waitFor({ state: 'detached' })
+  const nachAussen = await active(page)
+  assert.equal(nachAussen.trigger, 'desktop')
+  await speichern(page, 'r4_outside_click_closes')
+
+  await desktop.click()
+  await page.locator('#admin-nav-search-dialog').waitFor()
+  const innen = await page.evaluate(() => {
+    const panel = document.querySelector('[data-admin-nav-search-panel]')
+    if (!(panel instanceof HTMLElement)) return null
+    const rect = panel.getBoundingClientRect()
+    const x = rect.left + Math.min(24, rect.width / 2)
+    const y = rect.top + Math.min(16, rect.height / 2)
+    const el = document.elementFromPoint(x, y)
+    return {
+      x,
+      y,
+      panel: Boolean(el?.closest('[data-admin-nav-search-panel]')),
+    }
+  })
+  assert.equal(innen !== null, true)
+  assert.equal(innen.panel, true)
+  await page.mouse.click(innen.x, innen.y)
+  assert.equal(await page.locator('#admin-nav-search-dialog').count(), 1)
+  await page.locator('#admin-nav-search-input').click()
+  assert.equal(await page.locator('#admin-nav-search-dialog').count(), 1)
+  await speichern(page, 'r4_inside_click_keeps_open')
+  ergebnisse.push({
+    name: 'r4_outside_dismiss_inside_keep',
+    aussen,
+    nachAussen,
+    innen,
+    dialogAfterInside: 1,
+  })
+}
+
 async function keineFetchSuche(page, origin) {
   const anfragen = await oeffnen(page, origin, 'role=operator&grant=role', { width: 1024, height: 768 })
   await page.keyboard.press('Control+K')
@@ -508,6 +564,7 @@ try {
   await r1AktiveZeileSichtbar(page, origin)
   await r2HoverStiehltNicht(page, origin)
   await r3PrefetchGrenze(page, origin)
+  await r4AussenklickSchliesst(page, origin)
 } catch (fehler) {
   const lastGeo = await optionGeometrie(page, 'Provider & Kosten').catch(() => null)
   await speichern(page, 'hydrated_failure', { fullPage: false }).catch(() => {})
