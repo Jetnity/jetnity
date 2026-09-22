@@ -1,20 +1,20 @@
 preflight postgresql postgres (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg24.04+2)
 source hashes match dcf7bfee497ba3aa2038a43fe4bc2a09e541625f
-postgrest PostgREST 16.3 loopback http://127.0.0.1:38639
+postgrest PostgREST 16.3 loopback http://127.0.0.1:46431
 postgresql PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg24.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
-  ok   [http-isolation] PostgREST listens on 127.0.0.1 only with owned LISTEN sockets  {"pid":8874,"port":38639,"loopback":true,"listenState":"0A","sockets":1,"families":["ipv4"],"inodes":["20523"]}
+  ok   [http-isolation] PostgREST listens on 127.0.0.1 only with owned LISTEN sockets  {"pid":10315,"port":46431,"loopback":true,"listenState":"0A","sockets":1,"families":["ipv4"],"inodes":["22324"]}
   ok   [static-source] runner never imports sql.mjs or app env connectors  source scan
   ok   [static-source] wrapper remains zero-argument SECURITY INVOKER TEXT transport  source scan
   ok   [static-source] large-value fixture is labelled disposable and is not the producer  source scan
   ok   [sql-catalog] producer definition/owner/ACL unchanged by wrapper and authenticator setup  {"ownerBefore":"postgres","ownerAfter":"postgres","definitionUnchanged":true,"aclsUnchanged":true}
   ok   [sql-catalog] auth.users owner/RLS/policies unchanged by wrapper and authenticator setup  {"before":{"rls":true,"acls":["postgres=r/supabase_auth_admin","supabase_auth_admin=arwdDxtm/supabase_auth_admin"],"owner":"supabase_auth_admin","policies":[],"force_rls":false},"after":{"rls":true,"acls":["postgres=r/supabase_auth_admin","supabase_auth_admin=arwdDxtm/supabase_auth_admin"],"owner":"supabase_auth_admin","policies":[],"force_rls":false}}
   ok   [sql-catalog] setup added only the allowed wrapper and authenticator membership  {"wrapperBefore":false,"wrapperAfter":true,"authenticatorBefore":false,"authenticatorMemberAfter":true,"authenticatorUsers":false}
-  ok   [http-auth] moderator AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:10:08.743058+00:00"}
-  ok   [http-auth] admin AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:10:08.748801+00:00"}
-  ok   [http-auth] operator AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:10:08.751375+00:00"}
-  ok   [http-auth] owner AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:10:08.75359+00:00"}
+  ok   [http-auth] moderator AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.750815+00:00"}
+  ok   [http-auth] admin AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.757829+00:00"}
+  ok   [http-auth] operator AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.761454+00:00"}
+  ok   [http-auth] owner AAL2 POST returns deterministic TEXT counts and parser PASS  {"status":200,"present":"10","window":"0","parser":true,"measured_at":"2026-09-22T22:32:10.764186+00:00"}
   ok   [http-shape] GET zero-argument RPC matches fixture counts and parser  {"status":200,"parser":true,"present":"10"}
-  obs  [http-observation] separate HTTP clocks are not required to share measured_at  {"first":"2026-09-22T22:10:08.743058+00:00","get":"2026-09-22T22:10:08.755697+00:00","identical":false}
+  obs  [http-observation] separate HTTP clocks are not required to share measured_at  {"first":"2026-09-22T22:32:10.750815+00:00","get":"2026-09-22T22:32:10.766474+00:00","identical":false}
   ok   [http-deny] ordinary user AAL2 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
   ok   [http-deny] ordinary creator AAL2 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
   ok   [http-deny] moderator AAL1 discloses no counts  {"status":403,"code":"42501","message":"jetnity.admin-account-counts.v1: not authorized","reasons":[]}
@@ -48,8 +48,8 @@ postgresql PostgreSQL 17.11 (Ubuntu 17.11-1.pgdg24.04+2) on x86_64-pc-linux-gnu,
   ok   [sql-catalog] producer definition/owner/ACL unchanged after wrapper-only drop  {"present":true,"owner":"postgres","definitionUnchanged":true}
   ok   [sql-catalog] auth.users owner/RLS/policies unchanged after wrapper-only drop  {"rls":true,"acls":["postgres=r/supabase_auth_admin","supabase_auth_admin=arwdDxtm/supabase_auth_admin"],"owner":"supabase_auth_admin","policies":[],"force_rls":false}
   ok   [sql-catalog] wrapper-only drop removes the wrapper and keeps the separately allowed authenticator membership  {"wrapper":false,"authenticator_member":true,"auth_prod":true,"authenticator_users":false}
-  ok   [cleanup-node] owned cluster and PostgREST stopped before data removal  {"cleaned":true,"removed":true,"stopped":true,"running":false,"httpStopped":true,"httpReaped":true,"httpNeverStarted":false,"httpTimedOut":false,"httpSignaled":"SIGTERM","error":null,"lifecycle":"started","rootDir":"/tmp/jetnity-admin-account-counts-http-1-35cc7132-e28f-4d30-b36f-94bf36713e0f"}
-cleanup {"cleaned":true,"removed":true,"stopped":true,"running":false,"httpStopped":true,"httpReaped":true,"httpNeverStarted":false,"httpTimedOut":false,"httpSignaled":"SIGTERM","error":null,"lifecycle":"started","rootDir":"/tmp/jetnity-admin-account-counts-http-1-35cc7132-e28f-4d30-b36f-94bf36713e0f"}
+  ok   [cleanup-node] owned cluster and PostgREST stopped before data removal  {"cleaned":true,"removed":true,"stopped":true,"running":false,"httpStopped":true,"httpReaped":true,"httpNeverStarted":false,"httpTimedOut":false,"httpSignaled":"SIGTERM","error":null,"lifecycle":"started","rootDir":"/tmp/jetnity-admin-account-counts-http-1-018202da-2074-4675-aeb6-47715db30f9f"}
+cleanup {"cleaned":true,"removed":true,"stopped":true,"running":false,"httpStopped":true,"httpReaped":true,"httpNeverStarted":false,"httpTimedOut":false,"httpSignaled":"SIGTERM","error":null,"lifecycle":"started","rootDir":"/tmp/jetnity-admin-account-counts-http-1-018202da-2074-4675-aeb6-47715db30f9f"}
 http_requests=34
 
 46/46 HTTP-proof assertions satisfied.

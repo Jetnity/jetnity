@@ -42,13 +42,14 @@ I merged exact authorized main `72291ee6` only (`20a8efc0`, no rebase/force/rese
 | Local production-app build | **Not re-run** (no product-file edits) |
 | Historical 0109fce2 38/38 | **Dated; not this rerun** |
 
-## 4. H1–H3 correction
+## 4. Residual H1-A / H1-B
 
-I agree with review 5284332971 that the first freeze's reusable acceptance tests were insufficient:
+H2/H3 and the H1 listener/removal-gate on `c9f5df59` are accepted at their bounded scope. I agree with review 5284606563 that two residual lifecycle defects remained:
 
-- H1: `stoppeCluster()` could report cleaned/removed while `httpStopped:false`. That is now a failing acceptance.
-- H2: `status!==200 && !count-fields` accepted injected 500/503. Denials now require the pinned pairs; executable tests prove the counterexample fails.
-- H3: `/auth/users` without a profile header is a route-shape 404/PGRST125. Schema unexposure is now 406/PGRST106 via profile headers, with before/after catalog snapshots.
+- H1-A: `waitForOwnedChildExit` called `clearTimeout(timer)` before `const timer` was initialized. A real already-exited child now resolves; timer/listeners are created before any settlement.
+- H1-B: `onError` treated every ChildProcess `error` as spawn-failure exit. A post-spawn kill EPERM on a living child now keeps `httpStopped/reaped=false`, retains ownership, and still fails the removal gate because `error` is non-null. No data-loss or Production incident is claimed.
+
+These author tests (21) and the 46 mixed HTTP-proof checks are not TL's 88 helper checks or four lifecycle probes.
 
 ## 5. What I would tell TL
 
@@ -59,6 +60,7 @@ The frozen SQL-to-HTTP boundary at `dcf7bfee` still behaved as specified on this
 - First freeze accepted comm-name cleanup and any-non-200 denials. Corrected in this same session after 5284332971.
 - Duplicate ESM export of helper names during the H1–H3 edit; removed.
 - Sleep-child unit test first required `exitCode !== null`; SIGTERM leaves `signalCode` set instead. Fixed to accept either and to assert ESRCH.
+- Residual H1-A/H1-B on `c9f5df59`: waiter TDZ and post-spawn error-as-exit. Corrected in this same session after 5284606563.
 
 ## 7. Stop
 

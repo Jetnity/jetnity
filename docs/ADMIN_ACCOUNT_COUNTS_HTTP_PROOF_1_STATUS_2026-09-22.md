@@ -1,7 +1,7 @@
 # Admin Account Counts HTTP Proof 1 — STATUS
 
 Stand: 22. September 2026  
-Status: **H1–H3 REVIEW FIX RERUN COMPLETE / FROZEN FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / NOT A PRODUCT PASS / DRAFT / NOT READY / NOT MERGED**
+Status: **RESIDUAL H1-A/H1-B LIFECYCLE FIX RERUN COMPLETE / FROZEN FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / NOT A PRODUCT PASS / DRAFT / NOT READY / NOT MERGED**
 
 Draft PR: #554  
 Branch: `audit/admin-account-counts-http-proof-1`  
@@ -9,7 +9,7 @@ Binding task: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_TASK_2026-09-22.md` v1 at 
 Authorized / current main: `72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed` (fetched; no newer drift)  
 Original branch baseline: `ff054f76c14cf1c434890ba342af4df5e536dd05`  
 Examined immutable snapshot: `dcf7bfee497ba3aa2038a43fe4bc2a09e541625f`  
-Review being corrected: `5284332971` on historical freeze `0109fce2c17d6a85d8eb1bd651dc7b8f3259fe4e`  
+Reviews: `5284332971` (H1–H3; historical `0109fce2`) then residual `5284606563` on `c9f5df59a1b31e3387f4645e9d3c21046c62b704`  
 Mode: NORMAL
 
 Cursor-Agent: **Jetnity admin account counts HTTP proof 1**, Generation 1  
@@ -31,7 +31,7 @@ Fill the missing **real local PostgREST HTTP / signature / role / JSON** boundar
 ## 2. Implemented (allowed paths only)
 
 - `scripts/db/admin-account-counts-http-proof-1.mjs` — H1 owned-process reap + pid/LISTEN readback; H2 structured PostgREST v16 pairs + schema-cache convergence; H3 Accept-Profile/Content-Profile + before/after catalog snapshots
-- `scripts/db/admin-account-counts-http-proof-1.test.mjs` — 18 isolation/fault controls
+- `scripts/db/admin-account-counts-http-proof-1.test.mjs` — 21 isolation/fault controls, including direct already-ended waiter and post-spawn EPERM error retention
 - `scripts/db/admin-account-counts-http-proof-1-fixture.sql` — unchanged labelled authenticator / seed / large-value transport
 - `docs/evidence/admin-account-counts-http-proof-1/*`
 - this STATUS / HANDOFF / SELF_REVIEW
@@ -56,8 +56,8 @@ The harness still exports wrapper/parser/contract from **dcf7bfee**, not from a 
 | --- | --- |
 | PostgreSQL | **17.11** private `initdb` socket; system `17/main` down/unused |
 | PostgREST | **16.3** numeric loopback; owned LISTEN `0A`; 34 requests |
-| Proof command | **46/46 PASS**, 1 observation, exit 0 |
-| Safety / fault tests | **18/18 PASS**, exit 0 |
+| Proof command | **46/46 PASS**, 1 observation, exit 0 (author mixed HTTP/SQL/parser/cleanup; not TL's 88 helper checks) |
+| Safety / fault tests | **21/21 PASS**, exit 0 (includes H1-A already-ended waiter + H1-B emitted EPERM; not TL's four lifecycle probes) |
 | Cleanup | `httpStopped:true`, `httpReaped:true`, SIGTERM, tree removed after confirmed stop |
 | Remote/hosted DB | unused |
 
@@ -80,17 +80,20 @@ Historical `0109fce2` 38/38 run remains dated author observation and is not this
 | `static-source` | 3 | source scans |
 | `cleanup-node` | 1 | stop confirmed before removal |
 | `http-observation` | 1 | clocks; not counted as an assertion |
-| runner-safety | 18 | Node isolation + H1/H2/H3 controls |
+| runner-safety | 21 | Node isolation + H1/H2/H3 + residual H1-A/H1-B |
 
 ## 5. Findings for Technical Lead
 
 No product HTTP/signature/role disclosure defect was established against the **frozen dcf7bfee** wrapper/producer/parser on this local cluster.
 
-H1–H3 harness defects from review 5284332971 were corrected and re-executed:
+H2/H3 and the H1 listener/removal-gate work on `c9f5df59` remain accepted at their bounded scope and were not redesigned.
 
-- H1: `httpStopped:false` can no longer be cleanup PASS; removal is refused unless the owned child exit/close is observed.
-- H2: synthetic 500/503/HTML/wrong-code/success fail `evaluateDeniedResponse`; live denials use the pinned pairs; schema cache waits for 404/PGRST202.
-- H3: excluded schemas were selected with Accept-Profile/Content-Profile (406/PGRST106); catalog compares definition/owner/ACL/RLS before setup, after setup, and after wrapper-only drop.
+Residual review `5284606563` H1-A/H1-B:
+
+- H1-A: `waitForOwnedChildExit` now initializes timer/listener state before any settlement. A real already-exited / already-signaled child resolves; no `timer` TDZ.
+- H1-B: a post-spawn ChildProcess `error` (including injected kill EPERM) is recorded as failure and does **not** set exited/reaped/httpStopped. Ownership is retained until exit evidence. The no-error/no-running/no-unreaped removal gate is unchanged. No data-loss or Production incident is claimed.
+
+Normal-run teardown on this rerun again observed `httpStopped:true` / `httpReaped:true` via SIGTERM. That is distinct from the EPERM fault-control evidence.
 
 P3 limitations, not product defects:
 

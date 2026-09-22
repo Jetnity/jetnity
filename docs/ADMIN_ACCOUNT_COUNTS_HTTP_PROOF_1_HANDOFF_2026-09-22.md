@@ -1,7 +1,7 @@
 # Admin Account Counts HTTP Proof 1 — HANDOFF
 
 Stand: 22. September 2026  
-Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEINE PRODUCTION-AKTIVIERUNG / KEIN NEUES AGENT**
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW OF RESIDUAL H1-A/H1-B / KEIN READY / KEIN MERGE / KEINE PRODUCTION-AKTIVIERUNG / KEIN NEUES AGENT**
 
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_TASK_2026-09-22.md` (TL-owned; do not rewrite)  
 Status: `docs/ADMIN_ACCOUNT_COUNTS_HTTP_PROOF_1_STATUS_2026-09-22.md`  
@@ -21,8 +21,8 @@ This document is enough for a new agent or Technical Lead to continue without th
 | Authorized / current main | `72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed` |
 | Merge-base | `72291ee6b2d99e6ef9e1deab925f41baf7a2f0ed` |
 | Examined snapshot | `dcf7bfee497ba3aa2038a43fe4bc2a09e541625f` |
-| Review corrected | `5284332971` (H1–H3) |
-| Historical freeze | `0109fce2c17d6a85d8eb1bd651dc7b8f3259fe4e` (dated; not this rerun) |
+| Review corrected | residual `5284606563` H1-A/H1-B (H2/H3 accepted on `c9f5df59`) |
+| Historical freezes | `0109fce2` then `c9f5df59` (dated; not this rerun) |
 | Agent / session | Generation 1 / `bc-e1622174-d101-44e3-bb7d-d4fad18cd016` |
 | Session URL | https://cursor.com/agents/bc-e1622174-d101-44e3-bb7d-d4fad18cd016 |
 | Required / actual model | Cursor Grok 4.6 High Fast / `cursor-grok-4.6-high-fast` |
@@ -56,7 +56,7 @@ node --import tsx --test scripts/db/admin-account-counts-http-proof-1.test.mjs
 node --import tsx scripts/db/admin-account-counts-http-proof-1.mjs
 ```
 
-Last verified local run after H1–H3: **46/46 PASS** + 1 observation on PostgreSQL 17.11 + PostgREST 16.3. Runner safety/fault controls: **18/18 PASS**. Cleanup `httpStopped:true` / `httpReaped:true`.
+Last verified local run after residual H1-A/H1-B: **46/46 PASS** + 1 observation on PostgreSQL 17.11 + PostgREST 16.3 (author mixed checks; not TL 88 helper checks). Runner safety/fault controls: **21/21 PASS** (includes already-ended waiter + emitted EPERM retention; not TL's four lifecycle probes). Normal-run cleanup `httpStopped:true` / `httpReaped:true` via SIGTERM.
 
 ## 4. #553 status — do not reactivate
 
