@@ -9,8 +9,8 @@ Author self-review is **not** Technical-Lead PASS.
 - Two accepted measures only. Existing Admin trip tiles unchanged.
 - Default-off. Hosted/Production/Preview hard-disabled even with the local flag.
 - No new HTTP route, tracking, partner report, placeholder dashboard, or migration-directory file.
-- #550/#552 files read-only. Central docs left to #551.
-- No merge/rebase/force/import of #551. Main drift reported as none.
+- #550/#552 files read-only. Central docs were not edited by this writer; the authorized merge imported already-merged #551 docs-only files unchanged.
+- Exact-main sync `ff054f76` was merged into the same branch after preserving `a88159b5`. No rebase, force, reset, or cherry-pick.
 
 ## Security
 
@@ -22,7 +22,7 @@ Author self-review is **not** Technical-Lead PASS.
 - Counts stay canonical decimal strings. Numbers and `?? 0` are rejected.
 - No credentials, no remote Supabase client calls, no browser persistence.
 
-## Tests distinguished
+## Tests distinguished (re-gated after authorized merge)
 
 | Class | Count | Claim |
 | --- | --- | --- |
@@ -42,4 +42,4 @@ Author self-review is **not** Technical-Lead PASS.
 
 ## STOP
 
-I do not mark Ready. I do not merge. I do not start another agent.
+I do not mark Ready. I do not merge the PR. I do not start another agent.

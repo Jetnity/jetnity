@@ -26,5 +26,19 @@
     "hosted Admin session",
     "remote database read or apply",
     "auth:pruefen against live secrets"
-  ]
+  ],
+  "reGatedAfterAuthorizedMainSync": {
+    "preservedImplementationCheckpoint": "a88159b52cac8251b16776cf4b7c7b79a8facdec",
+    "authorizedMain": "ff054f76c14cf1c434890ba342af4df5e536dd05",
+    "mergeCommit": "1d45dec7810a537f821744250dc20ab6578bd6b7",
+    "npmTest": 3873,
+    "deliveryApplicationTests": 16,
+    "wrapperSafetyTests": 2,
+    "wrapperSqlProof": 24,
+    "authCapabilityTests": 35,
+    "typecheck": 0,
+    "lintDeliveryFiles": 0,
+    "build": 0,
+    "hygiene": "all 0"
+  }
 }

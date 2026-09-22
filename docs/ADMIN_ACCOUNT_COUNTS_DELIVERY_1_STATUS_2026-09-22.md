@@ -1,12 +1,16 @@
 # Admin Account Counts Delivery 1 — STATUS
 
 Stand: 22. September 2026  
-Status: **LOCAL DELIVERY IMPLEMENTED / FROZEN FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / NO PRODUCTION APPLY**
+Status: **LOCAL DELIVERY IMPLEMENTED / AUTHORIZED MAIN SYNC APPLIED / FROZEN FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / NO PRODUCTION APPLY**
 
 Draft PR: #553  
 Branch: `feat/admin-account-counts-delivery-1`  
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_DELIVERY_1_TASK_2026-09-22.md` v1 at seed `6666b02795a080fdb10f73158503e009f7d853c2`  
-Authorized / live main / merge-base: `0d4c871867e7c4daac45af4a737cc032723863ae` (#552 evidence-only; **no main drift**)
+Preserved implementation checkpoint: `a88159b52cac8251b16776cf4b7c7b79a8facdec`  
+Authorized exact-main sync: `ff054f76c14cf1c434890ba342af4df5e536dd05` (comment 5783708994)  
+Merge commit: `1d45dec7810a537f821744250dc20ab6578bd6b7`  
+Live / authorized main / merge-base: `ff054f76c14cf1c434890ba342af4df5e536dd05`  
+Original task baseline remains recorded: `0d4c871867e7c4daac45af4a737cc032723863ae`
 
 Cursor-Agent: **Jetnity admin account counts delivery 1**, Generation 1  
 Required / actual model: **Cursor Grok 4.6 High Fast** (`originalModelName=cursor-grok-4.6-high-fast`)  
@@ -30,7 +34,7 @@ Build the local-only application delivery path for the two accepted account meas
 - `components/admin/home/AdminAccountCounts.tsx` — server load + isolated Ansicht.
 - `app/(admin)/admin/page.tsx` — mounts the section only when the server-side local gate is true.
 
-Incoming #550/#552 files were not edited. Central startup/handoff/status/checkpoint files were not edited (#551 owns them). package/lock/CI/operating-mode/governance were not edited.
+Incoming #550/#552 files were not edited. Central startup/handoff/status/checkpoint files were not edited by this writer. The authorized merge brought #551's already-merged docs-only files into this branch unchanged. package/lock/CI/operating-mode/governance were not edited.
 
 ## 3. Activation / security
 
@@ -38,9 +42,9 @@ Incoming #550/#552 files were not edited. Central startup/handoff/status/checkpo
 
 ## 4. Schema-reference interaction
 
-`npm run check:schema-bezug` **PASS** (22 tables/views, 25 functions in `types/supabase.ts`). The generated schema does **not** list `admin_account_counts_v1`. Application code therefore calls `client.rpc(ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC)` through a local expected-RPC type extension. A literal `.rpc('admin_account_counts_v1')` **would** fail schema-reference and was not added. The checker and generated types were not weakened. This is not a claim that the unapplied wrapper exists live.
+`npm run check:schema-bezug` **PASS** after the authorized merge (22 tables/views, 25 functions in `types/supabase.ts`). The generated schema does **not** list `admin_account_counts_v1`. Application code therefore calls `client.rpc(ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC)` through a local expected-RPC type extension. A literal `.rpc('admin_account_counts_v1')` **would** fail schema-reference and was not added. The checker and generated types were not weakened. This is not a claim that the unapplied wrapper exists live.
 
-## 5. Verification (this writer)
+## 5. Verification after authorized main sync (this writer)
 
 | Class | Result | Kind |
 | --- | --- | --- |
@@ -50,7 +54,7 @@ Incoming #550/#552 files were not edited. Central startup/handoff/status/checkpo
 | `npm test` | 3873/3873 PASS | full repo unit suite including the 16 new tests |
 | existing auth/capability | 35/35 PASS | AAL2 wiring, capability matrix, DB/app alignment |
 | typecheck | PASS | Next 16.3.3 |
-| lint (delivery files) | PASS | try/catch JSX construction fixed |
+| lint (delivery files) | PASS | try/catch JSX construction remains outside the reader |
 | production build | PASS | `/admin` remains dynamic |
 | hygiene | PASS | schema-bezug, dead, exports, deps, api-schutz, operating-mode |
 
@@ -62,7 +66,7 @@ Engine: PostgreSQL **16.15**, explicitly qualified. Major 17 was not in the Ubun
 
 ## 6. Parallelism / drift
 
-#551 remains Draft at observed head `cc1dc599c60adafe5491ecc6fe57417a4cb97b73`, base `0d4c8718`. It still has first integration priority. This writer did not merge, rebase, force-push, or import #551. Live main matches the authorized baseline (**0 behind**).
+#551 is CLOSED / MERGED / POST-MERGE VERIFIED at exact `ff054f76c14cf1c434890ba342af4df5e536dd05`. This writer merged that exact SHA into the same branch after preserving `a88159b5`. No rebase, force, reset, or cherry-pick. Incoming files were the eight #551 docs-only paths; no delivery-file overlap. Live main was re-read as the same pin before the merge. If main advances beyond this pin, that is new drift and needs a later exact-SHA authorization.
 
 ## 7. Later activation checklist (not this slice)
 
