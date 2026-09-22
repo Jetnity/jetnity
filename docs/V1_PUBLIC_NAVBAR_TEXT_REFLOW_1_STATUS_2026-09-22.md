@@ -1,7 +1,7 @@
 # V1 Public Navbar Text Reflow 1 — Status
 
 Stand: 22. September 2026  
-Status: **IN IMPLEMENTATION / DRAFT / NOT READY / NOT MERGED**
+Status: **FROZEN FOR INDEPENDENT TECHNICAL-LEAD REVIEW / DRAFT / NOT READY / NOT MERGED**
 
 ## Acknowledgement
 
@@ -16,39 +16,80 @@ New bounded task and session, not a reuse of completed #532 or ongoing #534.
 | Branch | `fix/v1-public-navbar-text-reflow-1` |
 | Seed | `76ae4abd1a2adcf15c21757252de1afbcf8a3680` |
 | Assigned baseline | `d89ed0b01070e47f93918fa64126ff0aeb18a17b` |
+| Product/runtime source | `components/layout/PublicNavbar.tsx` only |
 | Operating mode | NORMAL |
-| Parallel | #534 / session `bc-c2e8ff5a-c507-40a7-b0ac-0ed324dd45da` owns homepage first hero only |
+| Parallel | #534 / `bc-c2e8ff5a-c507-40a7-b0ac-0ed324dd45da` owns homepage first hero |
 | Integration order | **#534 first, this PR second** — no autonomous main/sibling merge/rebase |
 
-Immediate review fixes must reuse this exact session.
-
-## Short plan
-
-1. Read binding task at seed, standards, PR #512 handoff, current PublicNavbar.
-2. Reproduce exact-baseline 1024/200 and 1440/200 navbar overflow with compiled CSS and raw bounds.
-3. Apply the smallest presentation/layout change in `components/layout/PublicNavbar.tsx` only.
-4. Prove after geometry, menu/focus/short-viewport/touch and controlled synthetic session variants.
-5. Run existing navigation/session/guest CTA tests plus typecheck/lint/fulltests/hygiene/build.
-6. Freeze once; STOP for independent Technical-Lead review. Do not mark Ready. Do not merge. Do not start a follow-up slice.
+Immediate review fixes must reuse this exact session. Exact final SHA, ahead/behind, CI, Auth, direct Preview and threads are in the PR STOP receipt so a later bookkeeping commit is not required.
 
 ## Ownership manifest
 
 | Path | Role |
 | --- | --- |
 | `components/layout/PublicNavbar.tsx` | exclusive runtime write — presentation/layout/responsive/menu-height only |
-| `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_TASK_2026-09-22.md` | binding task (seed) |
-| `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_STATUS_2026-09-22.md` | this file |
-| `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_HANDOFF_2026-09-22.md` | handoff |
-| `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_SELF_REVIEW_2026-09-22.md` | self-review |
-| `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_DECISION_2026-09-22.md` | slice decision |
+| `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_{TASK,STATUS,HANDOFF,SELF_REVIEW,DECISION}_2026-09-22.md` | own docs |
 | `docs/evidence/v1-public-navbar-text-reflow-1/**` | own screens, geometry, assert, audit |
 
-Read-only: `app/(public)/page.tsx`, StartzielForm, GastCreateLink, shared/global styles/tokens, Auth/session/sign-out actions and navigation helpers, GlobalesAbmeldenForm, guest/account/admin/provider runtime, DB/schema/secrets/workflows/packages, #534 evidence (context only).
+Read-only: homepage first hero, StartzielForm, GastCreateLink, shared/global CSS/tokens, Auth/session/sign-out helpers and actions, GlobalesAbmeldenForm, guest/account/admin/provider runtime, DB/schema/secrets/workflows/packages.
+
+## What changed
+
+Natural `min-h-[72px]` wrapping row, `min-w-0` / `whitespace-normal` on desktop clusters, header `max-h-dvh flex-col`, mobile menu `min-h-0 flex-1 overflow-y-auto`. `md` breakpoint, routes, labels, session classification, `GastCreateLink`, sign-out form, Escape/inert/focus, sticky and safe areas unchanged.
+
+## Before (compiled CSS, Chromium 140.0.7339.16, `html { font-size: 32px }`)
+
+Source: unmodified PublicNavbar on seed `76ae4abd` / baseline `d89ed0b0`.
+
+| Scene | Navbar painted overflow | Raw bound |
+| --- | --- | --- |
+| 1024×768 / 200% gast | horizontal **1** + vertical **4** | `Reise planen` right **1171.88** / overflowX **147.88**; row height **72**; CTA height **120** |
+| 1440×900 / 200% gast | horizontal **0** + vertical **4** | CTA bottom **96** vs header **73**; logo height **88** |
+| Document overflowX at 1024/200% | **148** | equals the navbar CTA, not a later-hero-only number |
+
+Konto mock on the first before pass was overwritten by `getSession` and is labelled as such in `audit-before.json`. After evidence uses a held mock.
+
+## After (same simulation, assert.mjs PASS)
+
+| Scene | headerH | document overflowX | navbar H/V offenders | Visible |
+| --- | --- | --- | --- | --- |
+| 1024/200% gast | 217 | **0** | **0 / 0** | Entdecken, Meine Reisen, Jetnity Pro, Anmelden, Reise planen |
+| 1440/200% gast | 217 | 0 | 0 / 0 | same |
+| 1024/200% konto | 217 | 0 | 0 / 0 | Konto, Abmelden, Reise planen |
+| 1440/200% konto | 217 | 0 | 0 / 0 | Konto, Abmelden, Reise planen |
+| 1024/200% unbekannt | 217 | 0 | 0 / 0 | no Anmelden/Konto/Abmelden |
+| 360/390/767 100% | 73 | 0 | 0 / 0 | hamburger |
+| 768/769/1024/1440/1920 100% | 73 | 0 | 0 / 0 | desktop bar + CTA |
+| 360/200% | 225 | 0 | 0 / 0 | logo + hamburger stacked, both fully on-screen |
+| 390/200% | 121 | 0 | 0 / 0 | logo + hamburger one row |
+
+360/200% stacking is accepted simulated-text composition, not clipping.
+
+## Interactions
+
+390×600 100% and 200%, plus 390×844/200% konto:
+
+- open: `aria-expanded=true`, menu not hidden, not inert
+- Escape returns focus to `Menü öffnen`
+- `/#entdecken` closes the menu
+- controlled `POST /` probe: attempts **1**, aborted **1**, completed unexpected **0**
+- Logout was not clicked
+
+Guest uses the real empty-cookie `getSession` path. unknown/konto are controlled local React-state mocks of the real PublicNavbar, labelled in the audit JSON. No credentials or account writes.
+
+## Local gates
+
+- typecheck PASS
+- lint 0 errors (pre-existing warnings only)
+- `npm test` **3716 / 3716**
+- existing navbar/session/guest CTA tests PASS
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` / `check:operating-mode` PASS
+- production build PASS
+- `assert.mjs` before PASS / after PASS
 
 ## Limits
 
-- Simulated oversized text (`html { font-size: 32px }`), not OS zoom, real-device or WCAG certification.
-- Controlled local session mocks for unknown/konto; guest uses the real empty-cookie `getSession` path when the client exists.
-- No real sign-in/sign-out/account writes. Mutation abort is armed before interaction. Logout is not clicked.
-- Navbar-only painted overflow is scored separately from unchanged lower-page overflow.
-- Cursor never Ready/merges.
+- Simulated 32px root, not OS zoom / Safari / hardware / WCAG certification.
+- Later decorative homepage overflow is unowned. After this fix, 1024/200% document overflowX is 0 because the previous 148px was the navbar CTA.
+- TL must still integrate #534 first, then this PR, then refresh header/hero/menu on exact main.
+- Cursor does not mark Ready, merge, or start a follow-up slice.

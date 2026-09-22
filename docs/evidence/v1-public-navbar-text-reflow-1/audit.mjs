@@ -323,13 +323,8 @@ async function warteAufGast(page) {
   }, { timeout: 8_000 }).catch(() => null)
 }
 
-async function setzeSitzung(page, stand) {
-  await warteAufGast(page)
-  if (stand === 'gast') {
-    return { ok: true, kind: 'real-empty-cookie-getSession', next: 'gast' }
-  }
-
-  const mock = await page.evaluate((ziel) => {
+async function dispatchSitzung(page, stand) {
+  return page.evaluate((ziel) => {
     const header = document.querySelector('header')
     if (!header) return { ok: false, reason: 'no-header' }
     const fiberKey = Object.keys(header).find((name) => name.startsWith('__reactFiber'))
@@ -358,32 +353,42 @@ async function setzeSitzung(page, stand) {
           kind: 'controlled-local-react-session-state-mock',
           previous,
           next: ziel,
-          note: 'Dispatched after real getSession settled. No credentials, cookies or account writes.',
+          note: 'Held after real getSession. Re-dispatched if INITIAL_SESSION overwrote. No credentials or account writes.',
         }
       }
       fiber = fiber.return
     }
     return { ok: false, reason: 'sitzung-hook-not-found' }
   }, stand)
+}
 
-  if (stand === 'konto') {
-    await page.waitForFunction(() => {
-      const header = document.querySelector('header')
-      if (!header) return false
-      const texte = [...header.querySelectorAll('a, button')].map((el) => el.textContent || '')
-      return texte.some((text) => text.includes('Konto')) && texte.some((text) => text.includes('Abmelden'))
-    }, { timeout: 4_000 })
-  }
-  if (stand === 'unbekannt') {
-    await page.waitForFunction(() => {
-      const header = document.querySelector('header')
-      if (!header) return false
-      const texte = [...header.querySelectorAll('a, button')].map((el) => (el.textContent || '').trim())
-      return !texte.includes('Anmelden') && !texte.includes('Abmelden') && !texte.includes('Konto')
-    }, { timeout: 4_000 })
+function sitzungPasst(labels, stand) {
+  const hatKonto = labels.some((label) => label.includes('Konto'))
+  const hatAbmelden = labels.some((label) => label.includes('Abmelden'))
+  const hatAnmelden = labels.some((label) => label.includes('Anmelden'))
+  if (stand === 'konto') return hatKonto && hatAbmelden
+  if (stand === 'unbekannt') return !hatKonto && !hatAbmelden && !hatAnmelden
+  if (stand === 'gast') return hatAnmelden
+  return false
+}
+
+async function setzeSitzung(page, stand) {
+  await warteAufGast(page)
+  if (stand === 'gast') {
+    return { ok: true, kind: 'real-empty-cookie-getSession', next: 'gast', labelsAfter: await headerTexte(page) }
   }
 
-  return { ...mock, labelsAfter: await headerTexte(page) }
+  let mock = { ok: false }
+  const deadline = Date.now() + 4_000
+  while (Date.now() < deadline) {
+    mock = await dispatchSitzung(page, stand)
+    await page.waitForTimeout(80)
+    const labels = await headerTexte(page)
+    if (sitzungPasst(labels, stand)) {
+      return { ...mock, labelsAfter: labels }
+    }
+  }
+  throw new Error(`session mock did not hold for ${stand}: ${(await sichtbareLabels(page)).join('|')}`)
 }
 
 async function sichtbareLabels(page) {
@@ -570,8 +575,8 @@ async function interaktion(browser, { name, width, height, hasTouch, textSize, s
 
   const abortProbe = await page.evaluate(async () => {
     try {
-      await fetch('/api/audit-abort-probe', { method: 'POST', body: '{}' })
-      return { completed: true }
+      const antwort = await fetch('/', { method: 'POST', body: 'audit-abort-probe=1' })
+      return { completed: true, status: antwort.status }
     } catch (fehler) {
       return { completed: false, name: fehler.name, message: String(fehler.message || fehler) }
     }

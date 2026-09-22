@@ -1,24 +1,36 @@
 # V1 Public Navbar Text Reflow 1 — Handoff
 
 Stand: 22. September 2026  
-Status: **IMPLEMENTATION COMMITTED / AFTER-EVIDENCE PENDING / DRAFT / NOT READY / NOT MERGED**
+Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD CODE / VISUAL / INTERACTION REVIEW**
 
 ## For the next reader
 
-This is Generation 1 of **Jetnity V1 public navbar text reflow 1**, session `bc-27f8ce53-e09e-43d6-9778-7a131c6cdec4`. Immediate review fixes reuse this session. Not #532 and not #534.
+Read in this order:
 
-Read: task, STATUS, DECISION, this handoff, SELF_REVIEW, live Draft PR #536, then live `origin/main` and parallel #534.
+1. `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_TASK_2026-09-22.md`
+2. `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_DECISION_2026-09-22.md`
+3. `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_STATUS_2026-09-22.md`
+4. `docs/V1_PUBLIC_NAVBAR_TEXT_REFLOW_1_SELF_REVIEW_2026-09-22.md`
+5. Live Draft PR #536 head, comments, CI, Auth, Vercel — not remembered IDs
+6. Parallel #534 live head; do not edit it
 
-## Exclusive ownership
+This writer is **Jetnity V1 public navbar text reflow 1**, Generation 1, session `bc-27f8ce53-e09e-43d6-9778-7a131c6cdec4`, model Cursor Grok 4.6 High Fast / no Auto. Immediate review fixes reuse this session.
 
-Runtime write: `components/layout/PublicNavbar.tsx` presentation/layout only.  
-Own docs/evidence listed in STATUS.  
-#534 owns `app/(public)/page.tsx` first hero. TL integrates #534 first, this PR second. No autonomous merge/rebase.
+## What was delivered
 
-## What changed
+- Reproduced the #534 residual on this baseline: 1024/200% `Reise planen` right 1171.88 (overflow 147.88); 1440/200% controls taller than the fixed 72px row.
+- Wrapped/min-height PublicNavbar presentation only. Menu height follows the remaining viewport.
+- After 1024/1440 @ 32px: every visible navbar control fits; unknown/guest/account variants proved; menu/focus/short-viewport/touch proved; mutations aborted; logout not clicked.
+- Own evidence under `docs/evidence/v1-public-navbar-text-reflow-1/`.
 
-Natural `min-h-[72px]` wrap row, `min-w-0` clusters, menu uses remaining viewport instead of `100dvh-72px`. Session/sign-out/GastCreateLink/routes unchanged.
+## What the Technical Lead should decide
 
-## Stop rule
+1. Independent exact-head code / visual / interaction review.
+2. Integrate **#534 first**, then this PR, then one exact-main refresh of header/hero/menu proof.
+3. Ready/Merge only after that review. Cursor will not.
 
-Cursor does not mark Ready, merge, or start a follow-up slice. Independent Technical Lead reviews the exact freeze head.
+## What the next Cursor writer must not do unless a new versioned task says so
+
+- Edit homepage hero, GastCreateLink, auth helpers, global CSS, or shared contracts
+- Merge/rebase main or #534
+- Mark Ready, merge, or start a follow-up slice

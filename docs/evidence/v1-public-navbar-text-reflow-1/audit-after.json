@@ -1,0 +1,3793 @@
+{
+  "phase": "after",
+  "capturedAt": "2026-09-22T00:10:46.219Z",
+  "productTree": {
+    "head": "e3ed8fd6c295422cc499cf6779d55b5985e27c14",
+    "workingTree": "dirty",
+    "dirtyPaths": [
+      "M docs/evidence/v1-public-navbar-text-reflow-1/audit.mjs",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/audit-after.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_konto.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_konto.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_konto_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_konto_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_unbekannt.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_unbekannt.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_unbekannt_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_unbekannt_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_konto.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_konto.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_konto_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_konto_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1920x1080_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1920x1080_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1920x1080_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1920x1080_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-200_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-200_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-200_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-200_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-100_gast_menu-focus.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-100_gast_menu-focus.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-100_gast_menu-open.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-100_gast_menu-open.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-100_gast_menu-open_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-100_gast_menu-open_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-200_gast_menu-focus.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-200_gast_menu-focus.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-200_gast_menu-open.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-200_gast_menu-open.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-200_gast_menu-open_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x600_text-200_gast_menu-open_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_konto_menu-focus.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_konto_menu-focus.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_konto_menu-open.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_konto_menu-open.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_konto_menu-open_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_konto_menu-open_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_767x800_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_767x800_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_767x800_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_767x800_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_768x800_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_768x800_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_768x800_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_768x800_text-100_gast_header.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_769x800_text-100_gast.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_769x800_text-100_gast.png.meta.json",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_769x800_text-100_gast_header.png",
+      "?? docs/evidence/v1-public-navbar-text-reflow-1/screens/after_769x800_text-100_gast_header.png.meta.json"
+    ],
+    "sourceNote": "PublicNavbar wrap/min-height after e3ed8fd6 plus held session mock"
+  },
+  "browser": "chromium/140.0.7339.16",
+  "base": "http://localhost:3000",
+  "server": "reused",
+  "note": "Navbar-only painted overflow is scored separately from later homepage overflow.",
+  "scenes": [
+    {
+      "name": "after_1024x768_text-200_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1024,
+          "height": 768,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowX": 0,
+          "clientHeight": 768,
+          "scrollHeight": 10949,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1024,
+          "bottom": 217,
+          "width": 1024,
+          "height": 217,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1024,
+          "height": 216,
+          "right": 1024,
+          "bottom": 216
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 48,
+            "y": 16,
+            "right": 273.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 304.16,
+            "y": 24,
+            "right": 505.64,
+            "bottom": 96,
+            "width": 201.48,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 513.64,
+            "y": 24,
+            "right": 753.38,
+            "bottom": 96,
+            "width": 239.73,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 761.38,
+            "y": 24,
+            "right": 960,
+            "bottom": 96,
+            "width": 198.63,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 64,
+            "y": 124,
+            "right": 270.97,
+            "bottom": 196,
+            "width": 206.97,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 286.97,
+            "y": 120,
+            "right": 544.81,
+            "bottom": 200,
+            "width": 257.84,
+            "height": 80,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1440x900_text-200_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": 0,
+          "clientHeight": 900,
+          "scrollHeight": 9061,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1440,
+          "bottom": 217,
+          "width": 1440,
+          "height": 217,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1440,
+          "height": 216,
+          "right": 1440,
+          "bottom": 216
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 48,
+            "y": 16,
+            "right": 273.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 720.16,
+            "y": 24,
+            "right": 921.64,
+            "bottom": 96,
+            "width": 201.48,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 929.64,
+            "y": 24,
+            "right": 1169.38,
+            "bottom": 96,
+            "width": 239.73,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 1177.38,
+            "y": 24,
+            "right": 1376,
+            "bottom": 96,
+            "width": 198.63,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 64,
+            "y": 124,
+            "right": 270.97,
+            "bottom": 196,
+            "width": 206.97,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 286.97,
+            "y": 120,
+            "right": 544.81,
+            "bottom": 200,
+            "width": 257.84,
+            "height": 80,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1024x768_text-200_konto",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1024,
+          "height": 768,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "konto",
+          "mock": {
+            "ok": true,
+            "kind": "controlled-local-react-session-state-mock",
+            "previous": "gast",
+            "next": "konto",
+            "note": "Held after real getSession. Re-dispatched if INITIAL_SESSION overwrote. No credentials or account writes.",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Konto",
+              "Abmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Konto",
+              "Abmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + konto",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Konto",
+        "Abmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowX": 0,
+          "clientHeight": 768,
+          "scrollHeight": 10949,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1024,
+          "bottom": 217,
+          "width": 1024,
+          "height": 217,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1024,
+          "height": 216,
+          "right": 1024,
+          "bottom": 216
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 48,
+            "y": 16,
+            "right": 273.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 304.16,
+            "y": 24,
+            "right": 505.64,
+            "bottom": 96,
+            "width": 201.48,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 513.64,
+            "y": 24,
+            "right": 753.38,
+            "bottom": 96,
+            "width": 239.73,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 761.38,
+            "y": 24,
+            "right": 960,
+            "bottom": 96,
+            "width": 198.63,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Konto",
+            "tag": "A",
+            "href": "/account",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 64,
+            "y": 124,
+            "right": 211.81,
+            "bottom": 196,
+            "width": 147.81,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Abmelden",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "submit",
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 227.81,
+            "y": 124,
+            "right": 482.11,
+            "bottom": 196,
+            "width": 254.3,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 498.11,
+            "y": 120,
+            "right": 755.95,
+            "bottom": 200,
+            "width": 257.84,
+            "height": 80,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_konto.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_konto_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1440x900_text-200_konto",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "konto",
+          "mock": {
+            "ok": true,
+            "kind": "controlled-local-react-session-state-mock",
+            "previous": "gast",
+            "next": "konto",
+            "note": "Held after real getSession. Re-dispatched if INITIAL_SESSION overwrote. No credentials or account writes.",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Konto",
+              "Abmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Konto",
+              "Abmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + konto",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Konto",
+        "Abmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": 0,
+          "clientHeight": 900,
+          "scrollHeight": 9061,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1440,
+          "bottom": 217,
+          "width": 1440,
+          "height": 217,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1440,
+          "height": 216,
+          "right": 1440,
+          "bottom": 216
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 48,
+            "y": 16,
+            "right": 273.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 720.16,
+            "y": 24,
+            "right": 921.64,
+            "bottom": 96,
+            "width": 201.48,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 929.64,
+            "y": 24,
+            "right": 1169.38,
+            "bottom": 96,
+            "width": 239.73,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 1177.38,
+            "y": 24,
+            "right": 1376,
+            "bottom": 96,
+            "width": 198.63,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Konto",
+            "tag": "A",
+            "href": "/account",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 64,
+            "y": 124,
+            "right": 211.81,
+            "bottom": 196,
+            "width": 147.81,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Abmelden",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "submit",
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 227.81,
+            "y": 124,
+            "right": 482.11,
+            "bottom": 196,
+            "width": 254.3,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 498.11,
+            "y": 120,
+            "right": 755.95,
+            "bottom": 200,
+            "width": 257.84,
+            "height": 80,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_konto.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-200_konto_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1024x768_text-200_unbekannt",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1024,
+          "height": 768,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "unbekannt",
+          "mock": {
+            "ok": true,
+            "kind": "controlled-local-react-session-state-mock",
+            "previous": "gast",
+            "next": "unbekannt",
+            "note": "Held after real getSession. Re-dispatched if INITIAL_SESSION overwrote. No credentials or account writes.",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + unbekannt",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowX": 0,
+          "clientHeight": 768,
+          "scrollHeight": 10949,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1024,
+          "bottom": 217,
+          "width": 1024,
+          "height": 217,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1024,
+          "height": 216,
+          "right": 1024,
+          "bottom": 216
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 48,
+            "y": 16,
+            "right": 273.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 304.16,
+            "y": 24,
+            "right": 505.64,
+            "bottom": 96,
+            "width": 201.48,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 513.64,
+            "y": 24,
+            "right": 753.38,
+            "bottom": 96,
+            "width": 239.73,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 761.38,
+            "y": 24,
+            "right": 960,
+            "bottom": 96,
+            "width": 198.63,
+            "height": 72,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 64,
+            "y": 120,
+            "right": 321.84,
+            "bottom": 200,
+            "width": 257.84,
+            "height": 80,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_unbekannt.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-200_unbekannt_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_360x800_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 360,
+          "height": 800,
+          "hasTouch": true
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Menü öffnen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 360,
+          "scrollWidth": 360,
+          "overflowX": 0,
+          "clientHeight": 800,
+          "scrollHeight": 6512,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 360,
+          "bottom": 73,
+          "width": 360,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 360,
+          "height": 72,
+          "right": 360,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 12,
+            "y": 14,
+            "right": 124.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Menü öffnen",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "button",
+            "ariaExpanded": "false",
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 296,
+            "y": 14,
+            "right": 340,
+            "bottom": 58,
+            "width": 44,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_390x844_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "hasTouch": true
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Menü öffnen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowX": 0,
+          "clientHeight": 844,
+          "scrollHeight": 6396,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 390,
+          "bottom": 73,
+          "width": 390,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 390,
+          "height": 72,
+          "right": 390,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 12,
+            "y": 14,
+            "right": 124.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Menü öffnen",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "button",
+            "ariaExpanded": "false",
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 326,
+            "y": 14,
+            "right": 370,
+            "bottom": 58,
+            "width": 44,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_360x800_text-200_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 360,
+          "height": 800,
+          "hasTouch": true
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Menü öffnen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 360,
+          "scrollWidth": 360,
+          "overflowX": 0,
+          "clientHeight": 800,
+          "scrollHeight": 15801,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 360,
+          "bottom": 225,
+          "width": 360,
+          "height": 225,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 360,
+          "height": 224,
+          "right": 360,
+          "bottom": 224
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 24,
+            "y": 16,
+            "right": 249.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Menü öffnen",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "button",
+            "ariaExpanded": "false",
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 40,
+            "y": 120,
+            "right": 128,
+            "bottom": 208,
+            "width": 88,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-200_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_360x800_text-200_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_390x844_text-200_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "hasTouch": true
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-32px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Menü öffnen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "htmlFontSize": "32px",
+        "document": {
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "overflowX": 0,
+          "clientHeight": 844,
+          "scrollHeight": 14938,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 390,
+          "bottom": 121,
+          "width": 390,
+          "height": 121,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 390,
+          "height": 120,
+          "right": 390,
+          "bottom": 120
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 24,
+            "y": 16,
+            "right": 249.48,
+            "bottom": 104,
+            "width": 225.48,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Menü öffnen",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "button",
+            "ariaExpanded": "false",
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 262,
+            "y": 16,
+            "right": 350,
+            "bottom": 104,
+            "width": 88,
+            "height": 88,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_390x844_text-200_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_767x800_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 767,
+          "height": 800,
+          "hasTouch": true
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Menü öffnen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 767,
+          "height": 800
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 767,
+          "scrollWidth": 767,
+          "overflowX": 0,
+          "clientHeight": 800,
+          "scrollHeight": 6025,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 767,
+          "bottom": 73,
+          "width": 767,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 767,
+          "height": 72,
+          "right": 767,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 24,
+            "y": 14,
+            "right": 136.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Menü öffnen",
+            "tag": "BUTTON",
+            "href": null,
+            "type": "button",
+            "ariaExpanded": "false",
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 691,
+            "y": 14,
+            "right": 735,
+            "bottom": 58,
+            "width": 44,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_767x800_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_767x800_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_768x800_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 768,
+          "height": 800,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 768,
+          "height": 800
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 768,
+          "scrollWidth": 768,
+          "overflowX": 0,
+          "clientHeight": 800,
+          "scrollHeight": 5572,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 768,
+          "bottom": 73,
+          "width": 768,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 768,
+          "height": 72,
+          "right": 768,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 24,
+            "y": 14,
+            "right": 136.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 148.2,
+            "y": 18,
+            "right": 248.95,
+            "bottom": 54,
+            "width": 100.75,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 252.95,
+            "y": 18,
+            "right": 372.83,
+            "bottom": 54,
+            "width": 119.88,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 376.83,
+            "y": 18,
+            "right": 476.14,
+            "bottom": 54,
+            "width": 99.31,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 495.59,
+            "y": 18,
+            "right": 599.08,
+            "bottom": 54,
+            "width": 103.48,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 607.08,
+            "y": 16,
+            "right": 736,
+            "bottom": 56,
+            "width": 128.92,
+            "height": 40,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_768x800_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_768x800_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_769x800_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 769,
+          "height": 800,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 769,
+          "height": 800
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 769,
+          "scrollWidth": 769,
+          "overflowX": 0,
+          "clientHeight": 800,
+          "scrollHeight": 5572,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 769,
+          "bottom": 73,
+          "width": 769,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 769,
+          "height": 72,
+          "right": 769,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 24,
+            "y": 14,
+            "right": 136.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 148.7,
+            "y": 18,
+            "right": 249.45,
+            "bottom": 54,
+            "width": 100.75,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 253.45,
+            "y": 18,
+            "right": 373.33,
+            "bottom": 54,
+            "width": 119.88,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 377.33,
+            "y": 18,
+            "right": 476.64,
+            "bottom": 54,
+            "width": 99.31,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 496.59,
+            "y": 18,
+            "right": 600.08,
+            "bottom": 54,
+            "width": 103.48,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 608.08,
+            "y": 16,
+            "right": 737,
+            "bottom": 56,
+            "width": 128.92,
+            "height": 40,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_769x800_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_769x800_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1024x768_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1024,
+          "height": 768,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 1024,
+          "scrollWidth": 1024,
+          "overflowX": 0,
+          "clientHeight": 768,
+          "scrollHeight": 4250,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1024,
+          "bottom": 73,
+          "width": 1024,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1024,
+          "height": 72,
+          "right": 1024,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 24,
+            "y": 14,
+            "right": 136.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 276.2,
+            "y": 18,
+            "right": 376.95,
+            "bottom": 54,
+            "width": 100.75,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 380.95,
+            "y": 18,
+            "right": 500.83,
+            "bottom": 54,
+            "width": 119.88,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 504.83,
+            "y": 18,
+            "right": 604.14,
+            "bottom": 54,
+            "width": 99.31,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 751.59,
+            "y": 18,
+            "right": 855.08,
+            "bottom": 54,
+            "width": 103.48,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 863.08,
+            "y": 16,
+            "right": 992,
+            "bottom": 56,
+            "width": 128.92,
+            "height": 40,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1024x768_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1440x900_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 1440,
+          "scrollWidth": 1440,
+          "overflowX": 0,
+          "clientHeight": 900,
+          "scrollHeight": 4116,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1440,
+          "bottom": 73,
+          "width": 1440,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1280,
+          "height": 72,
+          "right": 1360,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 104,
+            "y": 14,
+            "right": 216.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 484.2,
+            "y": 18,
+            "right": 584.95,
+            "bottom": 54,
+            "width": 100.75,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 588.95,
+            "y": 18,
+            "right": 708.83,
+            "bottom": 54,
+            "width": 119.88,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 712.83,
+            "y": 18,
+            "right": 812.14,
+            "bottom": 54,
+            "width": 99.31,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 1087.59,
+            "y": 18,
+            "right": 1191.08,
+            "bottom": 54,
+            "width": 103.48,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 1199.08,
+            "y": 16,
+            "right": 1328,
+            "bottom": 56,
+            "width": 128.92,
+            "height": 40,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1440x900_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    },
+    {
+      "name": "after_1920x1080_text-100_gast",
+      "meta": {
+        "browser": "chromium/140.0.7339.16",
+        "viewport": {
+          "width": 1920,
+          "height": 1080,
+          "hasTouch": false
+        },
+        "route": "/",
+        "state": {
+          "sitzung": "gast",
+          "mock": {
+            "ok": true,
+            "kind": "real-empty-cookie-getSession",
+            "next": "gast",
+            "labelsAfter": [
+              "Jetnity Startseite",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen",
+              "Menü öffnen",
+              "Entdecken",
+              "Meine Reisen",
+              "Jetnity Pro",
+              "Anmelden",
+              "Reise planen"
+            ]
+          }
+        },
+        "simulationClass": "html-font-size-16px + gast",
+        "actions": [
+          "goto",
+          "compiled-css"
+        ]
+      },
+      "labels": [
+        "Jetnity Startseite",
+        "Entdecken",
+        "Meine Reisen",
+        "Jetnity Pro",
+        "Anmelden",
+        "Reise planen"
+      ],
+      "geometry": {
+        "ok": true,
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "htmlFontSize": "16px",
+        "document": {
+          "clientWidth": 1920,
+          "scrollWidth": 1920,
+          "overflowX": 0,
+          "clientHeight": 1080,
+          "scrollHeight": 4116,
+          "scrollX": 0,
+          "scrollY": 0
+        },
+        "bodyOverflowX": 0,
+        "header": {
+          "x": 0,
+          "y": 0,
+          "right": 1920,
+          "bottom": 73,
+          "width": 1920,
+          "height": 73,
+          "overflowX": 0
+        },
+        "row": {
+          "width": 1280,
+          "height": 72,
+          "right": 1600,
+          "bottom": 72
+        },
+        "menu": {
+          "hidden": true,
+          "inert": true,
+          "display": "none",
+          "overflowY": "auto",
+          "maxHeight": "none",
+          "height": 0,
+          "scrollHeight": 0,
+          "clientHeight": 0,
+          "canScroll": false
+        },
+        "controls": [
+          {
+            "text": "Jetnity Startseite",
+            "tag": "A",
+            "href": "/",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 344,
+            "y": 14,
+            "right": 456.75,
+            "bottom": 58,
+            "width": 112.75,
+            "height": 44,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Entdecken",
+            "tag": "A",
+            "href": "/#entdecken",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 724.2,
+            "y": 18,
+            "right": 824.95,
+            "bottom": 54,
+            "width": 100.75,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Meine Reisen",
+            "tag": "A",
+            "href": "/reisen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 828.95,
+            "y": 18,
+            "right": 948.83,
+            "bottom": 54,
+            "width": 119.88,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Jetnity Pro",
+            "tag": "A",
+            "href": "/#pro",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 952.83,
+            "y": 18,
+            "right": 1052.14,
+            "bottom": 54,
+            "width": 99.31,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Anmelden",
+            "tag": "A",
+            "href": "/login",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 1327.59,
+            "y": 18,
+            "right": 1431.08,
+            "bottom": 54,
+            "width": 103.48,
+            "height": 36,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          },
+          {
+            "text": "Reise planen",
+            "tag": "A",
+            "href": "/planen",
+            "type": null,
+            "ariaExpanded": null,
+            "hiddenAttr": false,
+            "painted": true,
+            "x": 1439.08,
+            "y": 16,
+            "right": 1568,
+            "bottom": 56,
+            "width": 128.92,
+            "height": 40,
+            "overflowX": 0,
+            "overflowBelowHeader": 0,
+            "overflowAboveHeader": 0
+          }
+        ],
+        "navbarHorizontalOffenders": [],
+        "navbarVerticalOffenders": []
+      },
+      "shots": {
+        "viewport": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1920x1080_text-100_gast.png",
+        "header": "/workspace/docs/evidence/v1-public-navbar-text-reflow-1/screens/after_1920x1080_text-100_gast_header.png"
+      },
+      "schreiben": {
+        "versuche": 0,
+        "abgebrochen": 0,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 0,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": []
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "after_390x600_text-100_gast",
+      "mock": {
+        "ok": true,
+        "kind": "real-empty-cookie-getSession",
+        "next": "gast",
+        "labelsAfter": [
+          "Jetnity Startseite",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Anmelden",
+          "Reise planen",
+          "Menü öffnen",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Anmelden",
+          "Reise planen"
+        ]
+      },
+      "beforeOpen": {
+        "expanded": "false",
+        "hidden": "",
+        "inert": true
+      },
+      "open": {
+        "expanded": "true",
+        "hidden": false,
+        "inert": false,
+        "labels": [
+          "Jetnity Startseite",
+          "Menü schließen",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Anmelden",
+          "Reise planen"
+        ],
+        "geometry": {
+          "ok": true,
+          "viewport": {
+            "width": 390,
+            "height": 600
+          },
+          "htmlFontSize": "16px",
+          "document": {
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "overflowX": 0,
+            "clientHeight": 600,
+            "scrollHeight": 6694,
+            "scrollX": 0,
+            "scrollY": 0
+          },
+          "bodyOverflowX": 0,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "right": 390,
+            "bottom": 371,
+            "width": 390,
+            "height": 371,
+            "overflowX": 0
+          },
+          "row": {
+            "width": 390,
+            "height": 72,
+            "right": 390,
+            "bottom": 72
+          },
+          "menu": {
+            "hidden": false,
+            "inert": false,
+            "display": "block",
+            "overflowY": "auto",
+            "maxHeight": "none",
+            "height": 298,
+            "scrollHeight": 297,
+            "clientHeight": 297,
+            "canScroll": false
+          },
+          "controls": [
+            {
+              "text": "Jetnity Startseite",
+              "tag": "A",
+              "href": "/",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 12,
+              "y": 14,
+              "right": 124.75,
+              "bottom": 58,
+              "width": 112.75,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Menü schließen",
+              "tag": "BUTTON",
+              "href": null,
+              "type": "button",
+              "ariaExpanded": "true",
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 326,
+              "y": 14,
+              "right": 370,
+              "bottom": 58,
+              "width": 44,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Entdecken",
+              "tag": "A",
+              "href": "/#entdecken",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 20,
+              "y": 89,
+              "right": 370,
+              "bottom": 133,
+              "width": 350,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Meine Reisen",
+              "tag": "A",
+              "href": "/reisen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 20,
+              "y": 137,
+              "right": 370,
+              "bottom": 181,
+              "width": 350,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Jetnity Pro",
+              "tag": "A",
+              "href": "/#pro",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 20,
+              "y": 185,
+              "right": 370,
+              "bottom": 229,
+              "width": 350,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Anmelden",
+              "tag": "A",
+              "href": "/login",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 20,
+              "y": 258,
+              "right": 370,
+              "bottom": 302,
+              "width": 350,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Reise planen",
+              "tag": "A",
+              "href": "/planen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 20,
+              "y": 310,
+              "right": 370,
+              "bottom": 354,
+              "width": 350,
+              "height": 44,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            }
+          ],
+          "navbarHorizontalOffenders": [],
+          "navbarVerticalOffenders": []
+        }
+      },
+      "focusVisible": {
+        "text": "Entdecken",
+        "outline": "rgba(0, 0, 0, 0) solid 2px",
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "width": 350,
+        "height": 44
+      },
+      "afterEscape": {
+        "expanded": "false",
+        "hidden": true,
+        "inert": true,
+        "active": "Menü öffnen"
+      },
+      "afterHash": {
+        "expanded": "false",
+        "hidden": true,
+        "hash": "#entdecken"
+      },
+      "abortProbe": {
+        "completed": false,
+        "name": "TypeError",
+        "message": "Failed to fetch"
+      },
+      "schreiben": {
+        "versuche": 1,
+        "abgebrochen": 1,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 1,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": [
+          "POST http://localhost:3000/"
+        ]
+      }
+    },
+    {
+      "name": "after_390x600_text-200_gast",
+      "mock": {
+        "ok": true,
+        "kind": "real-empty-cookie-getSession",
+        "next": "gast",
+        "labelsAfter": [
+          "Jetnity Startseite",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Anmelden",
+          "Reise planen",
+          "Menü öffnen",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Anmelden",
+          "Reise planen"
+        ]
+      },
+      "beforeOpen": {
+        "expanded": "false",
+        "hidden": "",
+        "inert": true
+      },
+      "open": {
+        "expanded": "true",
+        "hidden": false,
+        "inert": false,
+        "labels": [
+          "Jetnity Startseite",
+          "Menü schließen",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Anmelden",
+          "Reise planen"
+        ],
+        "geometry": {
+          "ok": true,
+          "viewport": {
+            "width": 390,
+            "height": 600
+          },
+          "htmlFontSize": "32px",
+          "document": {
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "overflowX": 0,
+            "clientHeight": 600,
+            "scrollHeight": 15417,
+            "scrollX": 0,
+            "scrollY": 0
+          },
+          "bodyOverflowX": 0,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "right": 390,
+            "bottom": 600,
+            "width": 390,
+            "height": 600,
+            "overflowX": 0
+          },
+          "row": {
+            "width": 390,
+            "height": 103.59,
+            "right": 390,
+            "bottom": 103.59
+          },
+          "menu": {
+            "hidden": false,
+            "inert": false,
+            "display": "block",
+            "overflowY": "auto",
+            "maxHeight": "none",
+            "height": 495.41,
+            "scrollHeight": 593,
+            "clientHeight": 494,
+            "canScroll": true
+          },
+          "controls": [
+            {
+              "text": "Jetnity Startseite",
+              "tag": "A",
+              "href": "/",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 24,
+              "y": 16,
+              "right": 249.48,
+              "bottom": 104,
+              "width": 225.48,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Menü schließen",
+              "tag": "BUTTON",
+              "href": null,
+              "type": "button",
+              "ariaExpanded": "true",
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 262,
+              "y": 16,
+              "right": 350,
+              "bottom": 104,
+              "width": 88,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Entdecken",
+              "tag": "A",
+              "href": "/#entdecken",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 136.59,
+              "right": 350,
+              "bottom": 224.59,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Meine Reisen",
+              "tag": "A",
+              "href": "/reisen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 232.59,
+              "right": 350,
+              "bottom": 320.59,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Jetnity Pro",
+              "tag": "A",
+              "href": "/#pro",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 328.59,
+              "right": 350,
+              "bottom": 416.59,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Anmelden",
+              "tag": "A",
+              "href": "/login",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 473.59,
+              "right": 350,
+              "bottom": 561.59,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Reise planen",
+              "tag": "A",
+              "href": "/planen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 577.59,
+              "right": 350,
+              "bottom": 665.59,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 65.59,
+              "overflowAboveHeader": 0
+            }
+          ],
+          "navbarHorizontalOffenders": [],
+          "navbarVerticalOffenders": [
+            {
+              "text": "Reise planen",
+              "tag": "A",
+              "href": "/planen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 577.59,
+              "right": 350,
+              "bottom": 665.59,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 65.59,
+              "overflowAboveHeader": 0
+            }
+          ]
+        }
+      },
+      "focusVisible": {
+        "text": "Entdecken",
+        "outline": "rgba(0, 0, 0, 0) solid 2px",
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "width": 310,
+        "height": 88
+      },
+      "afterEscape": {
+        "expanded": "false",
+        "hidden": true,
+        "inert": true,
+        "active": "Menü öffnen"
+      },
+      "afterHash": {
+        "expanded": "false",
+        "hidden": true,
+        "hash": "#entdecken"
+      },
+      "abortProbe": {
+        "completed": false,
+        "name": "TypeError",
+        "message": "Failed to fetch"
+      },
+      "schreiben": {
+        "versuche": 1,
+        "abgebrochen": 1,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 1,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": [
+          "POST http://localhost:3000/"
+        ]
+      }
+    },
+    {
+      "name": "after_390x844_text-200_konto",
+      "mock": {
+        "ok": true,
+        "kind": "controlled-local-react-session-state-mock",
+        "previous": "gast",
+        "next": "konto",
+        "note": "Held after real getSession. Re-dispatched if INITIAL_SESSION overwrote. No credentials or account writes.",
+        "labelsAfter": [
+          "Jetnity Startseite",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Konto",
+          "Abmelden",
+          "Reise planen",
+          "Menü öffnen",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Konto",
+          "Abmelden",
+          "Reise planen"
+        ]
+      },
+      "beforeOpen": {
+        "expanded": "false",
+        "hidden": "",
+        "inert": true
+      },
+      "open": {
+        "expanded": "true",
+        "hidden": false,
+        "inert": false,
+        "labels": [
+          "Jetnity Startseite",
+          "Menü schließen",
+          "Entdecken",
+          "Meine Reisen",
+          "Jetnity Pro",
+          "Konto",
+          "Abmelden",
+          "Reise planen"
+        ],
+        "geometry": {
+          "ok": true,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "htmlFontSize": "32px",
+          "document": {
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "overflowX": 0,
+            "clientHeight": 844,
+            "scrollHeight": 15636,
+            "scrollX": 0,
+            "scrollY": 0
+          },
+          "bodyOverflowX": 0,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "right": 390,
+            "bottom": 819,
+            "width": 390,
+            "height": 819,
+            "overflowX": 0
+          },
+          "row": {
+            "width": 390,
+            "height": 120,
+            "right": 390,
+            "bottom": 120
+          },
+          "menu": {
+            "hidden": false,
+            "inert": false,
+            "display": "block",
+            "overflowY": "auto",
+            "maxHeight": "none",
+            "height": 698,
+            "scrollHeight": 697,
+            "clientHeight": 697,
+            "canScroll": false
+          },
+          "controls": [
+            {
+              "text": "Jetnity Startseite",
+              "tag": "A",
+              "href": "/",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 24,
+              "y": 16,
+              "right": 249.48,
+              "bottom": 104,
+              "width": 225.48,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Menü schließen",
+              "tag": "BUTTON",
+              "href": null,
+              "type": "button",
+              "ariaExpanded": "true",
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 262,
+              "y": 16,
+              "right": 350,
+              "bottom": 104,
+              "width": 88,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Entdecken",
+              "tag": "A",
+              "href": "/#entdecken",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 153,
+              "right": 350,
+              "bottom": 241,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Meine Reisen",
+              "tag": "A",
+              "href": "/reisen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 249,
+              "right": 350,
+              "bottom": 337,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Jetnity Pro",
+              "tag": "A",
+              "href": "/#pro",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 345,
+              "right": 350,
+              "bottom": 433,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Konto",
+              "tag": "A",
+              "href": "/account",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 490,
+              "right": 350,
+              "bottom": 578,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Abmelden",
+              "tag": "BUTTON",
+              "href": null,
+              "type": "submit",
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 594,
+              "right": 350,
+              "bottom": 682,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            },
+            {
+              "text": "Reise planen",
+              "tag": "A",
+              "href": "/planen",
+              "type": null,
+              "ariaExpanded": null,
+              "hiddenAttr": false,
+              "painted": true,
+              "x": 40,
+              "y": 698,
+              "right": 350,
+              "bottom": 786,
+              "width": 310,
+              "height": 88,
+              "overflowX": 0,
+              "overflowBelowHeader": 0,
+              "overflowAboveHeader": 0
+            }
+          ],
+          "navbarHorizontalOffenders": [],
+          "navbarVerticalOffenders": []
+        }
+      },
+      "focusVisible": {
+        "text": "Entdecken",
+        "outline": "rgba(0, 0, 0, 0) solid 2px",
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(29, 113, 94, 0.15) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "width": 310,
+        "height": 88
+      },
+      "afterEscape": {
+        "expanded": "false",
+        "hidden": true,
+        "inert": true,
+        "active": "Menü öffnen"
+      },
+      "afterHash": {
+        "expanded": "false",
+        "hidden": true,
+        "hash": "#entdecken"
+      },
+      "abortProbe": {
+        "completed": false,
+        "name": "TypeError",
+        "message": "Failed to fetch"
+      },
+      "schreiben": {
+        "versuche": 1,
+        "abgebrochen": 1,
+        "interneSchreiben": 0,
+        "interneAbgeschlossen": 0,
+        "completedUnexpected": 0,
+        "blockedUnexpected": 1,
+        "unerwartetAbgeschlossen": [],
+        "abgebrochenUrls": [
+          "POST http://localhost:3000/"
+        ]
+      }
+    }
+  ]
+}
