@@ -1,0 +1,216 @@
+{
+  "kind": "synthetic-component-render",
+  "authenticatedPreview": "BLOCKED_ACCESS",
+  "css": {
+    "source": "styles/globals.css",
+    "config": "tailwind.config.js",
+    "plugins": [
+      "tailwindcss/nesting",
+      "tailwindcss",
+      "autoprefixer"
+    ],
+    "bytes": 105324
+  },
+  "note": "Dependency-injected fixtures rendered with compiled styles/globals.css. Not a real /admin session, not live crawler/Production evidence, not a device PASS.",
+  "cases": {
+    "deny-preview": {
+      "entscheidung": "deny",
+      "originQuelle": "site",
+      "technischeOrigin": "https://jetnity.com",
+      "sitemapAnzahl": 0,
+      "screenshots": [
+        "deny-preview_390.png",
+        "deny-preview_1440.png"
+      ],
+      "measurements": {
+        "390": {
+          "decision": "deny",
+          "sitemapCount": "0",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        },
+        "1440": {
+          "decision": "deny",
+          "sitemapCount": "0",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 1440,
+              "clientWidth": 1440,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1246,
+              "clientWidth": 1246,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        }
+      }
+    },
+    "allow-canonical": {
+      "entscheidung": "allow",
+      "originQuelle": "site",
+      "technischeOrigin": "https://jetnity.com",
+      "sitemapAnzahl": 2,
+      "screenshots": [
+        "allow-canonical_390.png",
+        "allow-canonical_1440.png"
+      ],
+      "measurements": {
+        "390": {
+          "decision": "allow",
+          "sitemapCount": "2",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        },
+        "1440": {
+          "decision": "allow",
+          "sitemapCount": "2",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 1440,
+              "clientWidth": 1440,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1246,
+              "clientWidth": 1246,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        }
+      }
+    },
+    "deny-long-origin": {
+      "entscheidung": "deny",
+      "originQuelle": "site",
+      "technischeOrigin": "https://jetnity-app-git-feat-admin-indexing-status-1-jetnity-e1b93c82.vercel.app",
+      "sitemapAnzahl": 0,
+      "screenshots": [
+        "deny-long-origin_390.png",
+        "deny-long-origin_1440.png"
+      ],
+      "measurements": {
+        "390": {
+          "decision": "deny",
+          "sitemapCount": "0",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 390,
+              "clientWidth": 390,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 356,
+              "clientWidth": 356,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        },
+        "1440": {
+          "decision": "deny",
+          "sitemapCount": "0",
+          "healthGreen": "false",
+          "overflow": {
+            "document": {
+              "scrollWidth": 1440,
+              "clientWidth": 1440,
+              "overflowing": false
+            },
+            "shell": {
+              "scrollWidth": 1280,
+              "clientWidth": 1280,
+              "overflowing": false
+            },
+            "section": {
+              "scrollWidth": 1246,
+              "clientWidth": 1246,
+              "overflowing": false
+            }
+          },
+          "originOverflowing": 0,
+          "focusableCount": 0,
+          "controls": []
+        }
+      }
+    }
+  },
+  "result": {
+    "ok": true,
+    "fehler": [],
+    "viewports": [
+      "390",
+      "1440"
+    ],
+    "cases": [
+      "deny-preview",
+      "allow-canonical",
+      "deny-long-origin"
+    ]
+  }
+}
