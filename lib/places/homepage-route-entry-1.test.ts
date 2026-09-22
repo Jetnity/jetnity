@@ -9,6 +9,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import RouteZielHandoffFehler from '@/components/places/RouteZielHandoffFehler'
 import RouteZielListe from '@/components/places/RouteZielListe'
 import { StartzielFormSicht } from '@/components/places/StartzielForm'
+import { ortSucheAnzeigetextAbstimmen } from '@/components/places/OrtSuche'
 import { zielHref } from '@/lib/places/auswahl'
 import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
 import {
@@ -204,8 +205,8 @@ describe('homepage-route-entry-1 – Planner-Handoff und Create-Graph', () => {
     )
 
     const suche = quelle('../../components/places/OrtSuche.tsx')
-    assert.match(suche, /letzterAnzeigetext/)
-    assert.match(suche, /initialText !== letzterAnzeigetext.current/)
+    assert.match(suche, /ortSucheAnzeigetextAbstimmen/)
+    assert.match(suche, /letzterSamen/)
     const planner = quelle('../../components/trips/TripPlanner.tsx')
     assert.match(planner, /initialWeitereZiele/)
     assert.match(planner, /tripPlannerRouteVorbelegen/)
@@ -268,5 +269,43 @@ describe('homepage-route-entry-1 – Guest-Schutz, noindex, kein NLP-Fake', () =
     assert.match(page, /RouteZielHandoffFehler/)
     assert.match(page, /VORSCHLAG_GRENZEN/)
     assert.equal(page.includes('closes #110'), false)
+  })
+})
+
+describe('homepage-route-entry-1 – OrtSuche-Samen', () => {
+  test('bestätigte Auswahl gewinnt, fehlender Samen nach Invalidierung leert nicht', () => {
+    const bestaetigt = ortSucheAnzeigetextAbstimmen({
+      valueName: 'Paris',
+      initialText: undefined,
+      letzterSamen: undefined,
+    })
+    assert.equal(bestaetigt.uebernehmen, 'Paris')
+    const nachEdit = ortSucheAnzeigetextAbstimmen({
+      valueName: undefined,
+      initialText: undefined,
+      letzterSamen: undefined,
+    })
+    assert.equal(nachEdit.uebernehmen, null)
+  })
+
+  test('Parent-Samenwechsel und bewusstes Leeren bleiben möglich', () => {
+    const ersetzen = ortSucheAnzeigetextAbstimmen({
+      valueName: undefined,
+      initialText: 'Cusco',
+      letzterSamen: 'Paris',
+    })
+    assert.equal(ersetzen.uebernehmen, 'Cusco')
+    const leer = ortSucheAnzeigetextAbstimmen({
+      valueName: undefined,
+      initialText: '',
+      letzterSamen: 'Paris',
+    })
+    assert.equal(leer.uebernehmen, '')
+    const unveraendert = ortSucheAnzeigetextAbstimmen({
+      valueName: undefined,
+      initialText: 'Paris',
+      letzterSamen: 'Paris',
+    })
+    assert.equal(unveraendert.uebernehmen, null)
   })
 })

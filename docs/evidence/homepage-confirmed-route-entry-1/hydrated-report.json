@@ -22,6 +22,18 @@
       "ok": true
     },
     {
+      "name": "R4 origin confirmed edit",
+      "ok": true
+    },
+    {
+      "name": "R4 minimal OrtSuche without seed",
+      "ok": true
+    },
+    {
+      "name": "R4 parent seed/reset",
+      "ok": true
+    },
+    {
       "name": "keyboard/focus/reflow",
       "ok": true
     }

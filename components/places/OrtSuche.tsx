@@ -23,6 +23,10 @@ type OrtSucheProps = {
   variante: 'hero' | 'field'
   value: OrtAuswahl | null
   onChange: (wert: OrtAuswahl | null, text: string) => void
+  /**
+   * Externer Samen. Weglassen bedeutet: kein Parent-Reset.
+   * `""` ist ein bewusstes Leeren. Nicht mit Tipptext verwechseln.
+   */
   initialText?: string
   placeholder?: string
   inputId?: string
@@ -41,12 +45,33 @@ function typText(typ: OrtOption['typ']): string {
   return 'Stadt'
 }
 
+/**
+ * Trennt Parent-Samen von Auswahl-Invalidierung.
+ * Ein fehlender Samen nach bestätigter Auswahl ist kein Reset.
+ */
+export function ortSucheAnzeigetextAbstimmen(eingabe: {
+  valueName?: string
+  initialText: string | undefined
+  letzterSamen: string | undefined
+}): { uebernehmen: string | null; samen: string | undefined } {
+  if (eingabe.valueName) {
+    return { uebernehmen: eingabe.valueName, samen: eingabe.initialText }
+  }
+  if (eingabe.initialText === undefined) {
+    return { uebernehmen: null, samen: undefined }
+  }
+  if (eingabe.initialText !== eingabe.letzterSamen) {
+    return { uebernehmen: eingabe.initialText, samen: eingabe.initialText }
+  }
+  return { uebernehmen: null, samen: eingabe.letzterSamen }
+}
+
 export default function OrtSuche({
   rolle,
   variante,
   value,
   onChange,
-  initialText = '',
+  initialText,
   placeholder,
   inputId,
   inputClassName,
@@ -55,7 +80,7 @@ export default function OrtSuche({
   describedBy,
   inputRef,
 }: OrtSucheProps) {
-  const [text, setText] = React.useState(value?.name ?? initialText)
+  const [text, setText] = React.useState(value?.name ?? initialText ?? '')
   const [treffer, setTreffer] = React.useState<OrtOption[]>([])
   const [offen, setOffen] = React.useState(false)
   const [laedt, setLaedt] = React.useState(false)
@@ -64,17 +89,17 @@ export default function OrtSuche({
   const wurzel = React.useRef<HTMLDivElement>(null)
   const anfrage = React.useRef({ aktuell: 0 })
   const listeId = React.useId()
-  const letzterAnzeigetext = React.useRef(value?.name ?? initialText)
+  const letzterSamen = React.useRef(initialText)
 
   React.useEffect(() => {
-    if (value?.name) {
-      letzterAnzeigetext.current = value.name
-      setText(value.name)
-      return
-    }
-    if (initialText !== letzterAnzeigetext.current) {
-      letzterAnzeigetext.current = initialText
-      setText(initialText)
+    const abgleich = ortSucheAnzeigetextAbstimmen({
+      valueName: value?.name,
+      initialText,
+      letzterSamen: letzterSamen.current,
+    })
+    letzterSamen.current = abgleich.samen
+    if (abgleich.uebernehmen !== null) {
+      setText(abgleich.uebernehmen)
     }
   }, [value?.id, value?.name, initialText])
 

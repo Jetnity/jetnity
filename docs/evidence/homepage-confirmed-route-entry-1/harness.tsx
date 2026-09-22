@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 
+import OrtSuche from '@/components/places/OrtSuche'
 import StartzielForm from '@/components/places/StartzielForm'
 import TripPlanner from '@/components/trips/TripPlanner'
+import type { OrtAuswahl } from '@/lib/places/auswahl'
 
 const ORTE = [
   {
@@ -65,7 +67,62 @@ function weitereAusParams() {
   })
 }
 
+function MinimaleOrtSuche() {
+  const [ort, setOrt] = React.useState<OrtAuswahl | null>(null)
+  const [roh, setRoh] = React.useState('')
+  return (
+    <div className="min-h-screen bg-white p-4">
+      <OrtSuche
+        rolle="abreise"
+        variante="field"
+        value={ort}
+        inputId="feld-minimal"
+        onChange={(wert, text) => {
+          setOrt(wert)
+          setRoh(wert?.name ?? text)
+        }}
+        inputClassName="h-12 w-full rounded-2xl border border-line-200 px-4"
+      />
+      <p data-model-name={ort?.name ?? ''}>{ort ? 'confirmed' : 'pending'}</p>
+      <p data-roh={roh}>{roh}</p>
+    </div>
+  )
+}
+
+function GesteuerteOrtSuche() {
+  const [ort, setOrt] = React.useState<OrtAuswahl | null>(null)
+  const [samen, setSamen] = React.useState('Paris')
+  return (
+    <div className="min-h-screen bg-white p-4">
+      <OrtSuche
+        rolle="ziel"
+        variante="field"
+        value={ort}
+        initialText={samen}
+        inputId="feld-samen"
+        onChange={(wert, text) => {
+          setOrt(wert)
+          setSamen(wert?.name ?? text)
+        }}
+        inputClassName="h-12 w-full rounded-2xl border border-line-200 px-4"
+      />
+      <button type="button" onClick={() => { setOrt(null); setSamen('Cusco') }}>
+        seed-cusco
+      </button>
+      <button type="button" onClick={() => { setOrt(null); setSamen('') }}>
+        reset-empty
+      </button>
+    </div>
+  )
+}
+
 function App() {
+  if (flaeche === 'ortsuche') {
+    return <MinimaleOrtSuche />
+  }
+  if (flaeche === 'ortsuche-samen') {
+    return <GesteuerteOrtSuche />
+  }
   if (flaeche === 'planner') {
     return (
       <div className="min-h-screen bg-[var(--background,#f6f3ea)] p-4">

@@ -272,6 +272,64 @@ async function erfolgreicheRouteUndCreate(page, origin) {
   await speichern(page, 'successful_duplicate_ordered_create')
 }
 
+async function r4BestaetigtDannEdit(page, origin) {
+  await oeffnen(page, origin, 'surface=planner', { width: 1024, height: 900 })
+  await waehleOrt(page, page.locator('#feld-abreiseort'), 'Paris')
+  assert.equal(await page.locator('#feld-abreiseort').inputValue(), 'Paris')
+  await page.locator('#feld-abreiseort').press('End')
+  await page.locator('#feld-abreiseort').press('Backspace')
+  await page.locator('#feld-abreiseort').pressSequentially('x', { delay: 15 })
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-abreiseort').inputValue(), 'Parix')
+  await speichern(page, 'r4_origin_confirmed_edit_keeps_text')
+  await page.locator('#feld-abreiseort').fill('Cusco')
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-abreiseort').inputValue(), 'Cusco')
+  await waehleOrt(page, page.locator('#feld-abreiseort'), 'Zürich')
+  assert.equal(await page.locator('#feld-abreiseort').inputValue(), 'Zürich')
+  await speichern(page, 'r4_origin_reselect_after_edit')
+
+  const ziel = page.locator('#feld-ziel')
+  await ziel.click()
+  await ziel.fill('')
+  await ziel.pressSequentially('Parix', { delay: 15 })
+  await page.waitForTimeout(80)
+  assert.equal(await ziel.inputValue(), 'Parix')
+}
+
+async function r4MinimaleSucheOhneSamen(page, origin) {
+  await oeffnen(page, origin, 'surface=ortsuche', { width: 768, height: 1024 })
+  await waehleOrt(page, page.locator('#feld-minimal'), 'Paris')
+  assert.equal(await page.locator('#feld-minimal').inputValue(), 'Paris')
+  assert.equal(await page.locator('[data-model-name]').getAttribute('data-model-name'), 'Paris')
+  await page.locator('#feld-minimal').press('End')
+  await page.locator('#feld-minimal').press('Backspace')
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-minimal').inputValue(), 'Pari')
+  assert.equal(await page.locator('[data-model-name]').getAttribute('data-model-name'), '')
+  assert.equal(await page.locator('[data-roh]').getAttribute('data-roh'), 'Pari')
+  await page.locator('#feld-minimal').fill('Cusco')
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-minimal').inputValue(), 'Cusco')
+  await waehleOrt(page, page.locator('#feld-minimal'), 'Cusco')
+  assert.equal(await page.locator('#feld-minimal').inputValue(), 'Cusco')
+  assert.equal(await page.locator('[data-model-name]').getAttribute('data-model-name'), 'Cusco')
+  await speichern(page, 'r4_minimal_ortsuche_without_initialtext')
+}
+
+async function r4ParentSamen(page, origin) {
+  await oeffnen(page, origin, 'surface=ortsuche-samen', { width: 768, height: 1024 })
+  await page.getByRole('button', { name: 'seed-cusco' }).click()
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-samen').inputValue(), 'Cusco')
+  await waehleOrt(page, page.locator('#feld-samen'), 'Paris')
+  assert.equal(await page.locator('#feld-samen').inputValue(), 'Paris')
+  await page.getByRole('button', { name: 'reset-empty' }).click()
+  await page.waitForTimeout(80)
+  assert.equal(await page.locator('#feld-samen').inputValue(), '')
+  await speichern(page, 'r4_parent_seed_and_reset')
+}
+
 async function tastaturFokusReflow(page, origin) {
   await oeffnen(page, origin, 'surface=startziel', { width: 390, height: 844 })
   await waehleOrt(page, page.locator('#travel-idea'), 'Paris')
@@ -323,6 +381,9 @@ try {
     ['R2 visible/model swap', r2SichtVsModell],
     ['R2 empty and duplicate', r2LeerUndDuplikat],
     ['successful chips + create', erfolgreicheRouteUndCreate],
+    ['R4 origin confirmed edit', r4BestaetigtDannEdit],
+    ['R4 minimal OrtSuche without seed', r4MinimaleSucheOhneSamen],
+    ['R4 parent seed/reset', r4ParentSamen],
     ['keyboard/focus/reflow', tastaturFokusReflow],
   ]) {
     await lauf(page, origin)
