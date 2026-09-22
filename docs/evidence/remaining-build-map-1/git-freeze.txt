@@ -1,0 +1,11 @@
+correction=R1-R3
+invalidated_previous_head=962b2209a7ab59262dc8ef1a18d360d443742dcb
+content_head_before_freeze_stamp=bec6b12b13684f4692ed780ac2a4ebef32a48fdf
+note=A later freeze-stamp commit, if present, is the live HEAD. Re-read git after push.
+pinned_main=35148a4ba065be1315dddf21174d7f272518d34c
+task_seed=492a35f9861a283d365cc37a3521d1c4a7559ced
+merge_base_at_content=35148a4ba065be1315dddf21174d7f272518d34c
+ahead_behind_at_content=expected_4/0_after_content_5/0_after_stamp
+main_drift=none_at_reconstruction
+pr543_observed_head=676d64b44db3080744b5ccda1354a7f3dd0590f5
+binding_review=5776971757
