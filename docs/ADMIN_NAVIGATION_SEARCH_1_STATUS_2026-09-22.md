@@ -61,18 +61,20 @@ Previous exact-head gates on `22037bf4` / `929250d5` / `e029b455` are invalid.
 
 Hydrated concrete `activeElement` after close: desktop/mobile trigger buttons. After Tab: option `/admin`. After foreign-modal shortcut: `#foreign-focus`. Fetches during `kosten` search: `[]`. Physical device: **not run** (Chromium emulation only).
 
-## Exact-head gates
+## Exact-head gates on persist SHA `bf1c5cab4efe17a38016d698b33b532bbb2ec977`
 
-Implementation SHA `383309af2557cbd0a212ff8b9a162c9471ebbd20` is on the branch. This persist creates the freeze SHA; re-read `git rev-parse HEAD` after commit. Exact-head CI / Auth / Vercel Preview are stamped only after live SUCCESS/READY on that SHA.
-
-Live re-read before this persist:
+Live re-read after push, before this stamp:
 
 | Gate | Result |
 | --- | --- |
-| `origin/main` / merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` — **9 ahead / 0 behind** before this persist |
+| `origin/main` / merge-base | `9dc8926ef859bcde2dc31dc8b96f2e61e1948f74` — **10 ahead / 0 behind** on `bf1c5cab`; this stamp is +1 |
+| CI `35756339862` | SUCCESS on exact SHA `bf1c5cab` |
+| Auth-Konfiguration | SUCCESS (`106843422327`) |
+| Typecheck, Lint & Build | SUCCESS (`106843422661`) |
+| Vercel Preview | SUCCESS/completed `21WQKKywgcDSp69r6vupfZ9mfyEC` — https://jetnity-app-git-feat-admin-navigation-search-1-jetnity-e1b93c82.vercel.app |
 | Draft #545 | remains Draft; not Ready; not merged |
 
-A later stamp SHA invalidates older exact-head gates and must be re-read. Preview READY is not a signed-in Admin-session proof.
+This stamp SHA invalidates the `bf1c5cab` exact-head gates and must be re-read after push. Preview READY is not a signed-in Admin-session proof.
 
 ## Risks
 
