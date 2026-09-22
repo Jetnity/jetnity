@@ -1,23 +1,24 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 22. September 2026  
-Status: **CURRENT-WORK POINTERS UPDATED 22 SEP 2026 / NORMAL ON LIVE MAIN / #543 #544 CLOSED / #512 #506 #509 #510 CLOSED / HISTORICAL CLOSURES BELOW REMAIN HISTORICAL / LIVE-EVIDENCE GEWINNT**
+Stand: 22. September 2026
+Status: **CURRENT-WORK POINTERS UPDATED 22 SEP 2026 / CONTINUITY REFRESH 3 C1–C3 / NORMAL ON LIVE MAIN / #545–#550 #552 CLOSED / #551 REMAINING / HISTORICAL CLOSURES BELOW REMAIN HISTORICAL / LIVE-EVIDENCE GEWINNT**
 
 Canonical current-work checkpoint:
 
 `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`
 
-If that file is not yet on `main`, read it from branch `docs/v1-continuity-refresh-2` / PR #546. If #546 is merged, read it from `main` and do not reactivate session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`. The 21 September checkpoint remains historical Continuity Refresh 1 capture. The 18 September checkpoint remains historical OS-2 / HOLD-exit evidence:
+That dated file already exists on `main` from #546. Branch fallback depends on **PR #551 merge / content-version state**, not mere file existence. While Draft #551 is open, read the corrected Refresh-3 content from branch `docs/v1-continuity-refresh-3`. If #551 is merged, read it from `main` and do not reactivate session `bc-e268a98c-10c1-428f-94ae-99f3246f460a`. The 21 September checkpoint remains historical Continuity Refresh 1 capture. The 18 September checkpoint remains historical OS-2 / HOLD-exit evidence:
 
-`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md`  
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md`
 `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md`
 
-### 22 September 2026 delivery observation (dated pin; reconstruct live)
+### 22 September 2026 Continuity Refresh 3 C1–C3 observation (dated pin; reconstruct live)
 
-- #546 / `docs/v1-continuity-refresh-2` — **Jetnity V1 continuity refresh 2**, Generation 1, session `bc-a65f0017-f2c2-4617-a825-7197c4409c44`; footer verified in comment `5778458780` HTML; display name `Current startup handoff pointers`; UI rename not performed. If #546 is still open, continue review/fixes. If merged, do not reactivate this session.
-- #545 / `feat/admin-navigation-search-1` — **Jetnity admin navigation search 1**, Generation 1; observed seed `c0539a19…`; session **UNVERIFIED**; `DISPATCHED_START_UNVERIFIED` / `TASK_ONLY`. Reserved assignment, not a verified running writer, not a launch blocker. Do not launch from this docs session.
+- #550 / `feat/admin-account-counts-local-proof-1` — **CLOSED / MERGED / POST-MERGE VERIFIED.** Accepted product head `b5bbe211bc82c16da34bc8f48b58f39920af5f5a`. TL PASS [5282850421](https://github.com/Jetnity/jetnity/pull/550#pullrequestreview-5282850421). Merge `34686af3a12317d5eb40ab12056a1188298e04c6`. Closure [5782888984](https://github.com/Jetnity/jetnity/pull/550#issuecomment-5782888984). **LOCAL / UNAPPLIED** only. Session `bc-49dd67e9-5979-44af-9476-1df8bcdfff93` **COMPLETED / NOT ACTIVE**. Do not restart. Earlier R1–R4 and intake `5782510116` are historical.
+- #552 / `audit/admin-account-counts-independent-verification-1` — **CLOSED / MERGED / POST-MERGE VERIFIED.** Accepted evidence `3bb98706cb70383f8e9dd41b7250009e1d99ebd1`. TL PASS [5283137155](https://github.com/Jetnity/jetnity/pull/552#pullrequestreview-5283137155). Merge / current main `0d4c871867e7c4daac45af4a737cc032723863ae`. Closure [5783340076](https://github.com/Jetnity/jetnity/pull/552#issuecomment-5783340076). Cursor specialist, **not Guardian**. Session `bc-4a3288b3-eb42-480b-9c37-f74b584e2419` **COMPLETED / NOT ACTIVE**. Do not restart. Intermediate head `cbba1264` is historical.
+- #551 / `docs/v1-continuity-refresh-3` — **Jetnity V1 continuity refresh 3**, Generation 1, session `bc-e268a98c-10c1-428f-94ae-99f3246f460a`; footer verified in comment `5782480321` HTML; display name `Jetnity V1 continuity refresh`; UI rename not performed. Remaining assigned current work. If #551 is still open, continue review/fixes. If merged, do not reactivate this session. Do not invent a future merge SHA.
 
-Closed #512/#506/#509/#510/#543/#544 are not current writers. Full Admin D–K remains later-phase and is not a new V1 launch prerequisite. The first read-only foundation is already specified/merged and is not dropped. Finding 5.2 / release-gate G remain OPEN after merged local-proof #494. Scheduled Technical-Lead automation remains disabled. Uncommitted work is not claimed backed up. Sections below are historical closures and remain valid as such.
+Closed #512/#506/#509/#510/#543/#544/#545/#546/#547/#548/#549/#550/#552 are not current writers. Full Admin D–K remains later-phase and is not a new V1 launch prerequisite. Finding 5.2 / release-gate G remain OPEN after merged local-proof #494. Scheduled Technical-Lead automation remains disabled. Product-Owner primary domain is `jetnity.com` with no implied cutover. After #551, account-count Production/exposure remains separately gated and is not auto-dispatched. Historical OS residuals remain unchanged: `native_scheduled_pass=false`; `native_material_archive_proof=false`; Path-C off-session gap OPEN; credential/role isolation SATISFIED BY EXPLICIT ACCEPTED LIMITATION `5757763756`. Uncommitted work is not claimed backed up. Sections below are historical closures and remain valid as such.
 
 Binding operating standards:
 
@@ -27,7 +28,11 @@ Binding operating standards:
 
 ## 1. Verifizierter aktueller Runtime-Stand
 
-Latest application-runtime-changing main (re-read 22 September 2026): **#543** merge `d03a048624b42cb0b2a1cb0e146aed238e23041f`, accepted `63905739b189f751a121e16f6ba1e6c2b5f62874`. Post-merge CI `35740738689` SUCCESS. Production `dpl_BQHGqWfiYNKNZ3zeiSofbJEHmkjD` READY. Full #110 NLP remains open. Physical-device/browser-matrix and authenticated create E2E were not claimed.
+Current repository `main` (re-read 22 September 2026, Continuity Refresh 3 C1–C3): **#552** merge `0d4c871867e7c4daac45af4a737cc032723863ae` — independently reviewed account-count verification evidence (**evidence-only**; not application runtime). Post-merge CI `35777992016` SUCCESS — independently re-read now. Production `dpl_8tg95sUyqkVE6Hw96ra1smAvdbvZ` READY is a dated TL / connected-Vercel receipt in closure `5783340076`; this persist did not re-query the Vercel private API.
+
+Latest application-runtime-changing merge (merged-diff evidence): **#548** `e71218b47c1299397deb2ae3f6a4c264dc695b2b`, accepted `125f2936ef8628c88ac1667d9676317e1feb0885`. Offline HBX hotel adapter foundation only. No live provider activation. Later #549 is docs-only inventory (`e28ab43b`). Later #550 merge `34686af3` is **LOCAL / UNAPPLIED** proof, not a rendered-product runtime baseline. Later #552 is evidence-only. Earlier later-than-#543 runtime: #547 read-only Admin indexing display, then #545 Admin navigation search. #543 / #480 / #435 remain valid dated closures, not the current baseline.
+
+Full #110 NLP remains open. Physical-device/browser-matrix and authenticated create E2E were not claimed.
 
 The Assistant Runtime 1 and #480 pins below are **historical dated closures**, not the current baseline.
 
@@ -52,7 +57,7 @@ Integration evidence:
 
 Always re-fetch live `main` in the next chat. The exact SHA above is a verified Assistant Runtime transition baseline, not an instruction to assume no later commits exist.
 
-Dated historical #480 evidence (original wording; not the current runtime baseline — later #543 is):
+Dated historical #480 evidence (original wording; not the current runtime baseline — later #548 offline HBX is the latest application-runtime-changing merge; current `main` is later #552 evidence `0d4c8718`):
 
 Latest verified product/runtime closure baseline: `main@581e8ad1f0d3f80e2631b967568fec51e67555af` after PR #480. Accepted exact head `b7a9764331ec813361f850c52129f624c42c45ca` had CI `35348781454` SUCCESS, Auth job `105611618459` SUCCESS (Development-only), Vercel Preview `dpl_EHxhGsfhLBpbJVimzmryaw2RL9hb` READY and external Jetnity Guardian exact-head PASS. Accepted head -> merge has 0 changed files. Exact-merge Vercel Production `dpl_C58unv1yazveBQ1v7MjdUAiQEaSE` is READY on the merge SHA. The current GitHub connector does not expose push-triggered main-run evidence, so no invisible post-merge Actions run is claimed. A later docs-only continuity merge may advance `main`.
 
@@ -99,8 +104,8 @@ The migration chronology is unusual because Production has a later migration but
 
 Assistant Runtime 1 Cursor agent:
 
-**`Jetnity assistant runtime 1`**  
-Generation: **1**  
+**`Jetnity assistant runtime 1`**
+Generation: **1**
 Session: `bc-c94275d6-9625-464f-9cbb-ea932c703043`
 
 Status: **COMPLETED / NOT ACTIVE**.
@@ -357,7 +362,7 @@ The next Technical Lead must:
 2. read `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
 3. read `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md`;
 4. read `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md`;
-5. read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md` (from `docs/v1-continuity-refresh-2` / PR #546 if not yet on `main`);
+5. read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md` (file already exists on `main` from #546; while #551 is open, read the corrected Refresh-3 content from `docs/v1-continuity-refresh-3`);
 6. read `docs/ACTIVE_WORK_STATUS.md` and this handoff;
 7. fetch live `main`, all open PRs/issues and relevant branches;
 8. verify GitHub Actions, Vercel, review threads and current agent/Guardian evidence;
@@ -367,4 +372,4 @@ The next Technical Lead must:
 
 Verified transition baseline after PR #453 integration: `30855fbb91e11e19f74afbaf1578dc67828714f2`. A later continuity-only merge may advance repository `main`; always re-fetch live.
 
-**LIVE-EVIDENCE GEWINNT IMMER. MACHINE MODE NORMAL. CURRENT-WORK CHECKPOINT 22 SEP 2026. RE-FETCH LIVE #546. #543/#544 CLOSED. #545 DISPATCHED_START_UNVERIFIED / TASK_ONLY. #512/#506/#509/#510 CLOSED. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. V1 SUPPORT PROCESS 1 / #470 IST CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 IST CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 IST CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 IST CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 IST CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. TL AUTOMATION DISABLED. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
+**LIVE-EVIDENCE GEWINNT IMMER. MACHINE MODE NORMAL. CURRENT-WORK CHECKPOINT 22 SEP 2026. RE-FETCH LIVE #551. MAIN 0d4c8718 = #552 EVIDENCE-ONLY. LATEST RUNTIME-CHANGING MERGE #548 OFFLINE HBX, NOT LIVE PROVIDER. #545–#550 #552 CLOSED. #550 LOCAL/UNAPPLIED CLOSED. #551 REMAINING ASSIGNED CURRENT WORK. #512/#506/#509/#510 CLOSED. JETNITY.COM IS PO PRIMARY DOMAIN, NO CUTOVER. ASSISTANT RUNTIME 1 IST CLOSED. MULTI-AGENT OPERATING SYSTEM IST KANONISCH. EXPLICIT VISIT HISTORY / #441 IST CLOSED. V1 LEGAL CLAIM HYGIENE 1 / #457 IST CLOSED. V1 ADMIN MFA LOSS RECOVERY RUNBOOK 1 / #460 IST CLOSED. V1 INCIDENT PROCESS 1 / #464 IST CLOSED. V1 SUPPORT PROCESS 1 / #470 IST CLOSED. V1 ACCOUNT ERROR BOUNDARY 1 / #471 IST CLOSED. V1 ADMIN REVENUE TRUTH 1 / #472 IST CLOSED. V1 COOKIE CONSENT HYGIENE 1 / #477 IST CLOSED. V1 ACCOUNT DATA EXPORT 1 / #476 IST CLOSED. V1 PRODUCTION AUTH VERIFICATION 1 / #480 IST CLOSED. JETNITY GUARDIAN = SEPARATE PRODUCT-OWNER GUARDIAN APP, NIE CURSOR. CURRENT CURSOR MODEL: GROK 4.6 HIGH FAST, KEIN AUTO. TL AUTOMATION DISABLED. PRODUCTION ASSISTANT MIGRATION/MODELLAKTIVIERUNG BLEIBT GESCHLOSSEN. KEIN AUTOMATISCHER FOLGESLICE.**
