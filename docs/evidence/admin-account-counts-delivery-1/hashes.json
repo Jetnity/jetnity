@@ -1,0 +1,16 @@
+{
+  "slice": "admin-account-counts-delivery-1",
+  "agent": "Jetnity admin account counts delivery 1",
+  "generation": 1,
+  "session": "bc-3d009635-3ebd-40d6-b47e-dc8328cf309b",
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "actualModel": "cursor-grok-4.6-high-fast",
+  "taskSeed": "6666b02795a080fdb10f73158503e009f7d853c2",
+  "baselineMain": "0d4c871867e7c4daac45af4a737cc032723863ae",
+  "acceptedCandidateSha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
+  "acceptedBootstrapSha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
+  "wrapperSha256": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb",
+  "engine": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "engineQualification": "major16 explicitly qualified; major17 not available in Ubuntu 24.04 archive",
+  "systemCluster": "not created; create_main_cluster=false; private initdb only"
+}

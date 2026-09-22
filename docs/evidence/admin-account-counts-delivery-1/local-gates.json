@@ -1,0 +1,30 @@
+{
+  "npmTest": { "command": "npm test", "exitCode": 0, "tests": 3873, "fail": 0 },
+  "deliveryApplicationTests": { "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/account-counts-delivery/*.test.ts", "exitCode": 0, "tests": 16, "fail": 0 },
+  "wrapperSafetyTests": { "command": "node --test scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs", "exitCode": 0, "tests": 2, "fail": 0 },
+  "wrapperSqlProof": { "command": "node scripts/db/admin-account-counts-delivery-1-local-proof.mjs", "exitCode": 0, "passed": 24, "failed": 0 },
+  "authCapabilityTests": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/auth/admin-aal2-alignment.test.ts lib/auth/faehigkeiten-datenbank.test.ts lib/auth/admin-aal-wiring.test.ts",
+    "exitCode": 0,
+    "tests": 35,
+    "fail": 0
+  },
+  "typecheck": { "command": "npm run typecheck", "exitCode": 0 },
+  "lintDeliveryFiles": { "command": "npx eslint lib/admin/account-counts-delivery components/admin/home/AdminAccountCounts.tsx app/(admin)/admin/page.tsx scripts/db/admin-account-counts-delivery-1-*.mjs", "exitCode": 0 },
+  "repoLint": { "command": "npm run lint", "exitCode": 1, "note": "1 pre-existing error was in this slice's try/catch JSX and is fixed; remaining 136 warnings are baseline-unrelated files" },
+  "build": { "command": "npm run build", "exitCode": 0, "next": "16.3.3" },
+  "hygiene": {
+    "check:schema-bezug": 0,
+    "check:dead": 0,
+    "check:exports": 0,
+    "check:deps": 0,
+    "check:api-schutz": 0,
+    "check:operating-mode": 0
+  },
+  "notRun": [
+    "authenticated local PostgREST browser E2E",
+    "hosted Admin session",
+    "remote database read or apply",
+    "auth:pruefen against live secrets"
+  ]
+}
