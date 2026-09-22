@@ -19,6 +19,7 @@ import {
 const MAX_PREIS = 9_999_999_999.99
 const MAX_NAME = 160
 const MAX_ZIMMER_NAME = 120
+const MAX_RATE_KEY = 4_096
 const MAX_ID = 120
 const TAG_MS = 86_400_000
 
@@ -131,6 +132,17 @@ function nichtLeer(wert: unknown, max: number): string | null {
   return trimmed
 }
 
+/**
+ * Opaque rateKey: reject blank/whitespace-only/overlong keys, but never trim
+ * before hashing or identity. Leading/trailing bytes are part of the key.
+ */
+function rateKeyLesen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
+  if (wert.length === 0 || wert.length > MAX_RATE_KEY) return null
+  if (wert.trim() === '') return null
+  return wert
+}
+
 function punktLesen(lat: unknown, lon: unknown): GeoPunkt | null {
   if (typeof lat !== 'number' || typeof lon !== 'number') return null
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
@@ -213,7 +225,7 @@ function optionBauen(
   if (!roh) return null
   const hotelCode = hotelCodeLesen(roh.hotelCode)
   const hotelName = nichtLeer(roh.hotelName, MAX_NAME)
-  const rateKey = nichtLeer(roh.rateKey, 4_096)
+  const rateKey = rateKeyLesen(roh.rateKey)
   const punkt = punktLesen(roh.latitude, roh.longitude)
   const currency = waehrungLesen(roh.currency)
   const retrievedAt = retrievedAtLesen(roh.retrievedAt)

@@ -298,6 +298,38 @@ describe('hbxHotelsFixtureNormalisieren — identities, partial, truth boundary'
     assert.equal(hbxHotelsFixtureNormalisieren(input, kontext()).options[0]?.id, ergebnis.options[0]?.id)
   })
 
+  test('edge-whitespace rateKeys stay distinct; whitespace-only keys are rejected', () => {
+    const padded = ' rate-A '
+    const unpadded = 'rate-A'
+    const einzelnUnpadded = hbxHotelsFixtureNormalisieren(fixture([offer({ rateKey: unpadded })]), kontext())
+    const einzelnPadded = hbxHotelsFixtureNormalisieren(fixture([offer({ rateKey: padded })]), kontext())
+    assert.equal(einzelnUnpadded.options.length, 1)
+    assert.equal(einzelnPadded.options.length, 1)
+    assert.equal(einzelnUnpadded.options[0]?.id, `hbx:12345:${digest(unpadded)}`)
+    assert.equal(einzelnPadded.options[0]?.id, `hbx:12345:${digest(padded)}`)
+    assert.notEqual(einzelnUnpadded.options[0]?.id, einzelnPadded.options[0]?.id)
+    assert.notEqual(einzelnPadded.options[0]?.id, 'hbx:12345:c2b264a5ce7dae15d4716be4e65c2e12')
+
+    const kombiniert = hbxHotelsFixtureNormalisieren(
+      fixture([
+        offer({ rateKey: unpadded, sellingRate: 210, roomName: 'Unpadded' }),
+        offer({ rateKey: padded, sellingRate: 199, roomName: 'Padded' }),
+      ]),
+      kontext(),
+    )
+    assert.equal(kombiniert.options.length, 2)
+    assert.equal(kombiniert.partial, false)
+    assert.equal(kombiniert.options[0]?.zimmerName, 'Unpadded')
+    assert.equal(kombiniert.options[1]?.zimmerName, 'Padded')
+    assert.equal(JSON.stringify(kombiniert).includes(unpadded), false)
+    assert.equal(JSON.stringify(kombiniert).includes(padded), false)
+    assert.equal('rateKey' in (kombiniert.options[0] as object), false)
+
+    for (const leerKey of ['', '   ', '\t', '\n', ' \t\n ']) {
+      leer(hbxHotelsFixtureNormalisieren(fixture([offer({ rateKey: leerKey })]), kontext()))
+    }
+  })
+
   test('mixed valid/invalid is partial; all invalid is empty and not partial', () => {
     const gemischt = hbxHotelsFixtureNormalisieren(
       fixture([offer(), offer({ sellingRate: Number.NaN })]),
