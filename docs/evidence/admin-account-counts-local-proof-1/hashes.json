@@ -1,0 +1,36 @@
+{
+  "candidateSql": {
+    "path": "scripts/db/admin-account-counts-1-candidate.sql",
+    "sha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420"
+  },
+  "bootstrapSql": {
+    "path": "scripts/db/admin-account-counts-1-bootstrap.sql",
+    "sha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2"
+  },
+  "runner": {
+    "path": "scripts/db/admin-account-counts-1-local-proof.mjs",
+    "sha256": "796e98ac2d71240bb786f5e8c9f3391125c38ca0d6f36358159fb6b56edc3f5b"
+  },
+  "runnerTests": {
+    "path": "scripts/db/admin-account-counts-1-local-proof.test.mjs",
+    "sha256": "c57c68b8f7237ab42fac61fbf8fbbb4383cdd215ea7ad8237e9a1c80576bc20a"
+  },
+  "postgresql": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "proof": "56/56 PASS",
+  "assertionCategories": {
+    "auth-sql": 18,
+    "lifecycle-sql": 4,
+    "window-sql": 5,
+    "zero-vs-deny-sql": 2,
+    "rls-sql": 6,
+    "catalog": 13,
+    "static-source": 3,
+    "psqlrc-node": 4,
+    "cleanup-node": 1
+  },
+  "runnerSafety": "10/10 PASS",
+  "cluster": "private initdb socket under /tmp/jetnity-admin-account-counts-1-<uuid>; system 16/main unused; startup files disabled; owned resources registered before init/start; live cluster not recursively deleted",
+  "previousFrozenHead": "9219e31e5d646c267915812a359aad957ab3cff4",
+  "review": "5282427169 R1-R4",
+  "remoteDb": "unused; Production metadata used only as fixture-design evidence"
+}
