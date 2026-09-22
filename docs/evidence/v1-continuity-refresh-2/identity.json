@@ -1,0 +1,20 @@
+{
+  "logicalName": "Jetnity V1 continuity refresh 2",
+  "generation": 1,
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "actualModel": "cursor-grok-4.6-high-fast",
+  "modelSource": "cursor-cloud run-info originalModelName",
+  "sessionId": "bc-a65f0017-f2c2-4617-a825-7197c4409c44",
+  "sessionUrl": "https://cursor.com/agents/bc-a65f0017-f2c2-4617-a825-7197c4409c44",
+  "observedDisplayName": "Current startup handoff pointers",
+  "uiRenamePerformed": false,
+  "sessionFooter": "unverified",
+  "acknowledgementComment": 5778458780,
+  "branch": "docs/v1-continuity-refresh-2",
+  "draftPr": 546,
+  "baselineMain": "d03a048624b42cb0b2a1cb0e146aed238e23041f",
+  "taskSeed": "0df59b646ca247779bf3759f27eac0bad156a6e5",
+  "operatingMode": "NORMAL",
+  "operatingModeJsonEdited": false,
+  "date": "2026-09-22"
+}

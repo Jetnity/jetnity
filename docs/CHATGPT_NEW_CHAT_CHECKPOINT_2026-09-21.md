@@ -1,10 +1,12 @@
 # Jetnity — New-Chat Continuity Checkpoint — 21 September 2026
 
-Status: **PERSISTED RESTART CHECKPOINT / CONTINUITY REFRESH #511 / NOT A PRODUCT-REVIEW PASS**
+> **SUPERSEDED FOR PRESENT CONTINUATION.** Current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md` (until Draft PR #546 merges, read it from branch `docs/v1-continuity-refresh-2`). This 21 September file remains historical capture for Continuity Refresh 1 / #511 / #512 and the then-current #506/#509/#510 tables. Do not treat those PRs as live writers. Live `main` later closed #543/#544; #512/#506/#509/#510 are merged. The body below is **unchanged historical evidence**.
+
+Status: **HISTORICAL RESTART CHECKPOINT / SUPERSEDED FOR CURRENT WORK BY 22 SEPTEMBER 2026 / CONTINUITY REFRESH #511 WAS MERGED VIA #512**
 Repository: `Jetnity/jetnity`
 Checkpoint branch: `docs/v1-continuity-refresh-1`
 
-This checkpoint is immediately usable on its branch. Until its continuity PR is merged, do not claim the canonical entry documents on main have been corrected. Re-fetch the live continuity PR for its status. After integration it supersedes the 18 September checkpoint for current work only; historical evidence and accepted limitations remain intact.
+This checkpoint was immediately usable on its branch. After #512 merged, it was the then-current entry. It is now historical. Re-fetch live PRs. Historical evidence and accepted limitations remain intact.
 
 Continuity refresh 1 observation (21 September 2026, this writer, session `bc-b4248ba4-ebbd-4416-ab07-61a1acb98d7b`): live `origin/main` remains `c7fb9f0f693ba9f020add7b26a041263aa7e3b07`; Draft PR #512 / branch `docs/v1-continuity-refresh-1` is the single writer for these global pointers. The original TL capture fields below remain the restart baseline. Where a later live observation differs, it is labelled as observation, not as a new accepted product state. Mutable heads must be re-fetched; this file does not freeze sibling PRs as eternally current.
 

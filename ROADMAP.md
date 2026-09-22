@@ -1,11 +1,11 @@
 # Jetnity – Roadmap
 
-Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety, Seasonal, AP-1–AP-4, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime, Visitor Search UX, TW7-A, D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2 einschließlich Production-Alignment sowie P2-TA-06 sind integriert. Kein Produkt-Folgeslice ist automatisch gestartet. Live-`main` immer live prüfen.**
+Stand: 22. September 2026  
+Status: **Kanonischer Post-PR-#113/#114-Programmstand. Foundation C/D/E, Safety, Seasonal, AP-1–AP-4, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime, Visitor Search UX, TW7-A, D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2 einschließlich Production-Alignment sowie P2-TA-06 sind integriert. Live-`main` immer live prüfen.**
 
 > **Live-Evidence gewinnt immer.** Diese Roadmap definiert Reihenfolge und Programmstatus, aber keine alte SHA oder alte Slice-Aussage darf einen neueren Live-Zustand überschreiben.
 
-Aktueller Einstieg (21. September 2026; Heads live rekonstruieren, nicht hier einfrieren): Machine mode auf live `main` ist `NORMAL`. Canonical current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` (bis Merge von Draft PR #512 von Branch `docs/v1-continuity-refresh-1` lesen). Drei getrennte laufende Workstreams: Visual UX/Device Audit #506 / #505; Trip Workspace + Account Functional Revalidation #509 / #507; erste read-only Intelligent Admin / Copilot-Pro-Foundation #510 / #508. Sie ersetzen einander nicht. Assistant Runtime 1, Mobile Accessibility 1, Assistant Truth Context 1, World Map 1, Destination Essentials 1, Flight Multi-Leg (ADR-0207) und 0..N orchestration (ADR-0208 / #414) sind auf `main` geschlossen. HOLD-Closure #492, Architecture #487 und lokaler Producer-Proof #494 sind geschlossen; Finding 5.2 / Gate G bleiben offen. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge durch diese Roadmap. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen aktuellen Stand nicht überschreiben.
+Aktueller Einstieg (22. September 2026; Heads live rekonstruieren, nicht hier einfrieren): Machine mode auf live `main` ist `NORMAL`. Canonical current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md` (bis Merge von Draft PR #546 von Branch `docs/v1-continuity-refresh-2` lesen). Live `main` ist `d03a048624b42cb0b2a1cb0e146aed238e23041f` nach geschlossenem Homepage-Routeneintrag #543 und Remaining-Build-Map #544. #512/#506/#509/#510 sind geschlossen, keine aktuellen Writer. Einziger neu ausgewählter Runtime-Writer: Admin-Navigationssuche #545 / `feat/admin-navigation-search-1` (`IN_PROGRESS_NOT_MAIN`; Session-Footer nur bei unabhängiger Evidence). Continuity Refresh 2 (#546) besitzt nur die benannten globalen Current-State-Dateien. Assistant Runtime 1, Mobile Accessibility 1, Assistant Truth Context 1, World Map 1, Destination Essentials 1, Flight Multi-Leg (ADR-0207) und 0..N orchestration (ADR-0208 / #414) bleiben auf `main` geschlossen. HOLD-Closure #492, Architecture #487 und lokaler Producer-Proof #494 sind geschlossen; Finding 5.2 / Gate G bleiben offen. Provider-later, drei Phasen und besondere Product-Owner-Gates bleiben. Keine Providerwahl, kein Live-Transport, kein Ready, kein Merge durch diese Roadmap. Historische Abschnitte unten bleiben Programm-Evidence und dürfen diesen aktuellen Stand nicht überschreiben.
 
 Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -375,7 +375,7 @@ Kein Ready, kein Merge, kein Folgeslice durch den Coding-Agenten. Technical-Lead
 - TW-8
 - TW-9
 - Direction A
-- Admin D–K — später; **kein neues V1-Launch-Prerequisite**. Die separat beauftragte erste read-only Intelligent Admin / Copilot-Pro-Foundation (#510 / #508) bleibt jetzt angefordert und wird dadurch nicht gestrichen.
+- Admin D–K — später; **kein neues V1-Launch-Prerequisite**. Die erste read-only Intelligent Admin / Copilot-Pro-Foundation (#510 / #508) ist spezifiziert/gemergt und wird dadurch nicht gestrichen.
 - D1 / G1
 - Issue #109 CLOSED / COMPLETED — Residual P2 Mobile Safari für den nächsten Search-/Homepage-UX-Slice; kein automatischer Folgeslice
 - Issue #110
