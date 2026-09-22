@@ -48,7 +48,7 @@ export function AdminModellnutzungHinweisAnsicht({ bericht }: { bericht: ModelUs
   const hinweis = ADMIN_EHRLICHE_TEXTE.modellnutzungHinweis
 
   return (
-    <section aria-labelledby="admin-modellnutzung-titel" className="min-w-0 w-full max-w-full">
+    <section aria-labelledby="admin-modellnutzung-titel" className="min-w-0 w-full max-w-full break-words">
       <h2 id="admin-modellnutzung-titel" className="text-lg font-semibold">
         {titel}
       </h2>
@@ -67,7 +67,7 @@ export function AdminModellnutzungHinweisAnsicht({ bericht }: { bericht: ModelUs
           return (
             <li
               key={insight.id}
-              className="min-w-0 w-full rounded-xl border border-border bg-background p-4"
+              className="min-w-0 w-full break-words rounded-xl border border-border bg-background p-4"
               data-model-usage-id={insight.id}
               data-model-usage-materiality={insight.materiality}
               data-model-usage-observed={insight.observed}
@@ -76,7 +76,7 @@ export function AdminModellnutzungHinweisAnsicht({ bericht }: { bericht: ModelUs
             >
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
                 <h3 className="min-w-0 text-sm font-medium">{insight.title}</h3>
-                <p className={cn('rounded-md border px-2 py-0.5 text-xs font-medium', chipKlassen(insight))}>
+                <p className={cn('max-w-full shrink-0 rounded-md border px-2 py-0.5 text-xs font-medium', chipKlassen(insight))}>
                   <span>{observedLabel}</span>
                   <span className="mx-1" aria-hidden>
                     ·

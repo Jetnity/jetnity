@@ -1,7 +1,6 @@
 import type { AdminDenial } from '@/lib/auth/admin-access'
 import {
   FRESHNESS_LABEL,
-  PROVIDER_OPS_BOARD_STATUSES,
   type BoardFreshness,
   type ProviderOpsBoardStatus,
 } from '@/lib/admin/provider-ops-board/typen'
@@ -19,11 +18,8 @@ export type ModelUsageMateriality = (typeof MODEL_USAGE_MATERIALITY)[number]
 export const MODEL_USAGE_SAFE_HREFS = ['/admin/provider-ops'] as const
 export type ModelUsageSafeHref = (typeof MODEL_USAGE_SAFE_HREFS)[number]
 
-export const MODEL_USAGE_BOARD_STATUSES = PROVIDER_OPS_BOARD_STATUSES
-export type ModelUsageBoardStatus = ProviderOpsBoardStatus
-
 export type ModelUsageObserved =
-  | ModelUsageBoardStatus
+  | ProviderOpsBoardStatus
   | 'access_denied'
   | 'lookup-failed'
   | 'source_failed'

@@ -43,7 +43,7 @@ export type ModelUsageInsightEingabe = {
   sourceFailed?: boolean
 }
 
-export function alsUnvertrautenModelUsageText(wert: string): string {
+function alsUnvertrautenModelUsageText(wert: string): string {
   return wert
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<[^>]+>/g, '')
@@ -59,12 +59,12 @@ export function enthältVerbotenesModelUsageQuellleck(text: string): boolean {
   return VERBOTENE_QUELLLECKS.test(text) || SITZUNG_MUSTER.test(text)
 }
 
-export function istGueltigerModelUsageZeitpunkt(wert: string | null | undefined): boolean {
+function istGueltigerModelUsageZeitpunkt(wert: string | null | undefined): boolean {
   if (!wert) return false
   return Number.isFinite(Date.parse(wert))
 }
 
-export function formatiereModelUsageAlter(ageMs: number): string {
+function formatiereModelUsageAlter(ageMs: number): string {
   const sekunden = Math.max(0, Math.round(ageMs / 1000))
   if (sekunden < 120) return `${sekunden} Sekunden`
   const minuten = Math.round(sekunden / 60)
@@ -117,7 +117,7 @@ export function berechneModelUsageFreshness(
   }
 }
 
-export function istGueltigesModelUsageItem(wert: unknown): wert is ProviderOpsBoardItem {
+function istGueltigesModelUsageItem(wert: unknown): wert is ProviderOpsBoardItem {
   if (!wert || typeof wert !== 'object') return false
   const item = wert as Record<string, unknown>
   if (item.id !== MODEL_USAGE_ITEM_ID) return false
