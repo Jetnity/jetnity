@@ -1,5 +1,8 @@
 # Jetnity — New-Chat Continuity Checkpoint — 21 September 2026
 
+> **SUPERSEDED FOR PRESENT CONTINUATION.** Current-work checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`. If that file is not yet on `main`, read it from branch `docs/v1-continuity-refresh-2` / PR #546. This 21 September file remains historical capture for Continuity Refresh 1 / #511 / #512 and the then-current #506/#509/#510 tables. Do not treat those PRs as live writers. The body below is unchanged historical evidence.
+
+
 Status: **PERSISTED RESTART CHECKPOINT / CONTINUITY REFRESH #511 / NOT A PRODUCT-REVIEW PASS**
 Repository: `Jetnity/jetnity`
 Checkpoint branch: `docs/v1-continuity-refresh-1`

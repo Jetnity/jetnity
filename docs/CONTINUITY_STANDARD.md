@@ -54,7 +54,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` – verbindlicher Technical-Lead-/Cursor-Workflow, exklusive Ready-/Merge-Autorität und Session-Rotation
 - `JETNITY_VISION.md` – verbindlicher Produkt-Nordstern; was Jetnity ist, was es nicht ist und welche Nutzerentlastung das Produkt erreichen soll
 - `JETNITY_HANDOFF.md` – kompakter aktueller Übergabestand. Operative Git-/PR-Wahrheit steht hier, in `docs/ACTIVE_WORK_STATUS.md` und im jeweils neuesten `docs/CHATGPT_*_CHECKPOINT_*.md`, nicht in historischen Slice-/Provider-Statusdateien
-- `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` – aktueller Post-Merge-Continuity-Checkpoint nach Search #109 + PrivacyBee #169; `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` und ältere Checkpoints bleiben historical evidence
+- Current operational checkpoint is reached via `JETNITY_START_HERE.md` and the latest `docs/CHATGPT_NEW_CHAT_CHECKPOINT_*.md` (currently `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`). `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` is historical Search #109 + PrivacyBee #169 evidence; `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` and older checkpoints remain historical evidence
 - `ROADMAP.md` – fertig / in Arbeit / als Nächstes / blockiert / bewusst verschoben
 - `ARCHITECTURE.md` – aktuelle System- und Datenflussarchitektur
 - `DECISIONS.md` – ADRs für wichtige Entscheidungen
