@@ -1,0 +1,35 @@
+# Exact-source run — independent reviewer, not builder receipt
+# scratch: /tmp/jetnity-review-550 @ b5bbe211bc82c16da34bc8f48b58f39920af5f5a
+# env: PG* / DSN / JETNITY_ALLOW_REMOTE_DB / PSQLRC / SUPABASE_* unset
+# system 16/main: down
+
+HEAD=b5bbe211bc82c16da34bc8f48b58f39920af5f5a
+candidate sha256=dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420
+bootstrap sha256=0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2
+postgresql PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+cluster socket=/tmp/jetnity-admin-account-counts-1-b9b5685f-de3d-4e9e-a892-34df3f3fba09/socket
+EXACT_RUNNER_EXIT=0
+56/56 isolierte Account-Count-Nachweise erfüllt.
+assertion categories: {"static-source":3,"psqlrc-node":4,"auth-sql":18,"lifecycle-sql":4,"window-sql":5,"zero-vs-deny-sql":2,"rls-sql":6,"catalog":13,"cleanup-node":1}
+
+selected measurements (this run, not builder 19:10 UTC):
+- owner/admin/operator/moderator AAL2 present=14 window=10
+- deny paths 42501 (AAL1/missing/AAL3/user/creator/no-profile/absent/soft-del/anon/anon+priv/break-glass/user_metadata)
+- anon/service_role: 42501 permission denied for schema jetnity_reporting
+- hard-delete 14→13; anonymous conversion 13→14 using original created_at
+- window oracle 2592000 seconds
+- half-open edges: present +2, window +1
+- authorized empty window: window=0 present=1
+- unprivileged owner: 42501 not authorized; visible users=0
+- trusted owner: present=13 window=9 after lifecycle mutations
+- cleanup removed owned directory; postmaster gone
+
+NODE_TEST_EXIT=0
+# tests 10
+# pass 10
+# fail 0
+
+after:
+16 main down
+no leftover /tmp/jetnity-admin-account-counts-1-* dirs
+foreign node-test marker /tmp/jetnity-unrelated-cluster-must-remain/keep.txt left intact
