@@ -102,8 +102,10 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs, exportArtifac
         created: network?.created === true || Boolean(network?.id),
         inventoryComplete: stack?.inventoryComplete === true,
         runId: network?.runId || registry?.runId || state.runId,
+        projectId: registry?.projectId || state.projectId || network?.projectId,
       },
       execFile: registry?.execFile || state.execFile,
+      projectId: registry?.projectId || state.projectId || network?.projectId,
     })
     reports.push({ kind: 'stack', ...stackReport })
   }

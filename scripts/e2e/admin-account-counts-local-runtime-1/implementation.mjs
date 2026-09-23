@@ -18,12 +18,12 @@ export const IMPLEMENTATION = Object.freeze({
   serverRpcObservation: 'IMPLEMENTED',
   browserSessionFactory: 'REVIEW_FIX_F3',
   frozenContext: 'IMPLEMENTED',
-  orchestration: 'REVIEW_FIX_N01_N02_N03',
+  orchestration: 'REVIEW_FIX_O1',
   browserFlows: 'SIBLING_OWNED',
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'N01–N03 from review 5295892822. Screenshot publication is limited to RGB/RGBA bit depths 8/16 with IHDR/IDAT/IEND only; CRC-valid type2/depth1 and tEXt/eXIf/unknown ancillary images are refused before durable write. thisInvocation.observedResults must match the G6–G19 gate results in order. Producer-shaped safe metadata, truthful FAIL/BLOCKED/NOT RUN, exclusive writes, whole-string fill/otpauth redaction, C1/C2 and F1–F3 stay. Official binaries, Docker and the real stack were not executed in this correction.',
+    'O1 from review 5296288833. Container and volume identity are classified from each resource\'s own inspect metadata. Container labels do not authorize mounted volumes; network membership does not override an explicit foreign container label; a stale owned record cannot suppress live foreign identity. Exact-project CLI stop is skipped when foreign, unresolved or conflicting identity is present. Official CLI objects are recognized from inspected com.supabase.cli.project, not by inventing or applying labels. Genuinely owned teardown and already-absent idempotence remain. N01–N03 image/result controls and earlier evidence fixes stay unchanged. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {

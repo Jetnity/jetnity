@@ -71,6 +71,7 @@ export async function defaultStartRuntime({
   registerHandle(registry, 'workdir', prepared.workdir)
   registerHandle(registry, 'childEnv', childEnv)
   registerHandle(registry, 'execFile', execFile)
+  registerHandle(registry, 'projectId', prepared.projectId)
   owned.network = registry.network
   owned.dockerBin = docker.selected.path
   owned.cliBin = cli.resolved

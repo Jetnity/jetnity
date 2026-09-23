@@ -17,6 +17,7 @@ import {
   HISTORICAL_REFUSED_PRODUCER_SHA256,
   PRODUCT_BASELINE,
   CLI,
+  CLI_PROJECT_LABEL,
   RUN_LABEL,
   ROOT,
 } from './constants.mjs'
@@ -62,11 +63,11 @@ import {
   appListenArgs,
 } from './app.mjs'
 import { baueAcceptanceContext, validateAcceptanceContext } from './context.mjs'
-import { createOwnershipRegistry } from './ownership.mjs'
+import { createOwnershipRegistry, recordDockerResources, registerHandle } from './ownership.mjs'
 import { newBrowserSession, closeBrowserSession, assertLocalBrowserTraffic, closeOwnedBrowserHandle } from './browser-session.mjs'
 import { resolveUpstreamTarget, isRemoteRedirect, readBoundedBody } from './observer.mjs'
 import { assertInstalledCatalog, assertInstalledRelation, installProducerAndWrapper, parseJsonRow, acceptedCatalogFixture, requiredCount, extractExactDollarBody, EXPECTED_PRODUCER_RESULT } from './schema.mjs'
-import { starteOwnedStack, stoppeOwnedStack, inspectDockerResource, classifyDockerInspectError, collectOwnedDockerResources, classifyVolumeOwnership, RESOURCE_STATE } from './stack.mjs'
+import { starteOwnedStack, stoppeOwnedStack, inspectDockerResource, classifyDockerInspectError, collectOwnedDockerResources, classifyVolumeOwnership, classifyContainerOwnership, RESOURCE_STATE } from './stack.mjs'
 import { bewerteCleanup } from './cleanup.mjs'
 import { assertNoPublicBindPlan, planeLoopbackDienste, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { assertLoopbackBindings, parseDockerPortBindings, baueStartArgumente } from './stack.mjs'
@@ -1461,6 +1462,9 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
           Mounts: [{ Type: 'volume', Name: 'fixture-volume' }],
         }])
       }
+      if (args[0] === 'volume' && args[1] === 'inspect') {
+        return JSON.stringify([{ Name: 'fixture-volume', Driver: 'local', Labels: {} }])
+      }
       throw new Error(`unexpected ${args}`)
     },
   })
@@ -1484,6 +1488,9 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
           Mounts: [{ Type: 'volume', Name: 'owned-volume' }],
         }])
       }
+      if (args[0] === 'volume' && args[1] === 'inspect') {
+        return JSON.stringify([{ Name: 'owned-volume', Driver: 'local', Labels: { [RUN_LABEL]: 'run-1' } }])
+      }
       throw new Error(`unexpected ${args}`)
     },
   })
@@ -1494,7 +1501,8 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
   const foreign = await stoppeOwnedStack({
     dockerBin: 'docker',
     state: {
-      network: { name: 'owned-net', created: true },
+      network: { name: 'owned-net', created: true, runId: 'run-1' },
+      runId: 'run-1',
       containers: [],
       volumes: [{ name: 'foreign-vol', ownership: 'foreign' }],
       inventoryComplete: true,
@@ -1502,6 +1510,9 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
     execFile: (_bin, args) => {
       volumeCalls.push(args.slice())
       if (args[0] === 'ps') return ''
+      if (args[0] === 'volume' && args[1] === 'inspect') {
+        return JSON.stringify([{ Name: 'foreign-vol', Labels: { [RUN_LABEL]: 'OTHER-RUN' } }])
+      }
       if (args[0] === 'volume') throw new Error('foreign volume must not be deleted')
       if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
         throw new Error(`No such network: ${args[2]}`)
@@ -1509,9 +1520,10 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
       return ''
     },
   })
-  assert.deepEqual(foreign.foreignRetained, ['foreign-vol'])
+  assert.deepEqual(foreign.foreignVolumes, ['foreign-vol'])
+  assert.ok(foreign.foreignRetained.includes('foreign-vol'))
   assert.equal(foreign.volumesRemoved, true)
-  assert.ok(!volumeCalls.some((args) => args[0] === 'volume'))
+  assert.ok(!volumeCalls.some((args) => args[0] === 'volume' && args[1] === 'rm'))
 
   const unresolvedCleanup = await stoppeOwnedStack({
     dockerBin: 'docker',
@@ -1592,6 +1604,339 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
   })
   assert.equal(again.dockerServicesStopped, true)
   assert.equal(again.unknown, false)
+})
+
+function o1ResourceExec({
+  container,
+  volume,
+  removed = { containers: new Set(), volumes: new Set() },
+  calls,
+} = {}) {
+  return (_bin, args) => {
+    calls.push({ bin: String(_bin), args: args.slice() })
+    if (args[0] === 'ps') {
+      return removed.containers.has(container.Id) ? '' : container.Id
+    }
+    if (args[0] === 'inspect') {
+      if (removed.containers.has(args[1]) || args[1] !== container.Id) {
+        throw new Error(`No such container: ${args[1]}`)
+      }
+      return JSON.stringify([container])
+    }
+    if (args[0] === 'stop' && args.length === 1) return ''
+    if ((args[0] === 'stop' && args[1]) || args[0] === 'rm') {
+      if (removed.containers.has(args[1])) throw new Error(`No such container: ${args[1]}`)
+      removed.containers.add(args[1])
+      return ''
+    }
+    if (args[0] === 'volume' && args[1] === 'inspect') {
+      if (removed.volumes.has(args[2]) || (volume && args[2] !== volume.Name)) {
+        throw new Error(`No such volume: ${args[2]}`)
+      }
+      return JSON.stringify([volume])
+    }
+    if (args[0] === 'volume' && args[1] === 'rm') {
+      const name = args[2] === '-f' ? args[3] : args[2]
+      if (removed.volumes.has(name)) throw new Error(`No such volume: ${name}`)
+      removed.volumes.add(name)
+      return ''
+    }
+    if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+      throw new Error(`No such network: ${args[2]}`)
+    }
+    throw new Error(`unexpected ${args}`)
+  }
+}
+
+test('O1 collector→reconcile→stop refuses foreign identity and keeps owned teardown', async () => {
+  const runId = 'aaclr1-diagnostic-9fff'
+  const label = RUN_LABEL
+  const networkName = 'owned-network'
+  const ownedContainer = {
+    Id: 'container-1',
+    Name: '/synthetic-owned-db',
+    Config: { Labels: { [label]: runId } },
+    HostConfig: {
+      NetworkMode: networkName,
+      PortBindings: { '5432/tcp': [{ HostIp: '127.0.0.1', HostPort: '32100' }] },
+    },
+    NetworkSettings: { Networks: { [networkName]: {} } },
+    Mounts: [{ Type: 'volume', Name: 'synthetic-volume', Destination: '/data' }],
+  }
+  const foreignVolume = { Name: 'synthetic-volume', Driver: 'local', Labels: { [label]: 'OTHER-RUN' } }
+  const ownedVolume = { Name: 'synthetic-volume', Driver: 'local', Labels: { [label]: runId } }
+
+  assert.equal(
+    classifyContainerOwnership({ labels: { [label]: 'OTHER-RUN' }, runId }).ownership,
+    'foreign',
+  )
+  assert.equal(
+    classifyVolumeOwnership({
+      mount: { Type: 'volume', Name: 'synthetic-volume' },
+      labels: foreignVolume.Labels,
+      runId,
+    }).ownership,
+    'foreign',
+  )
+
+  const s02Calls = []
+  const s02 = collectOwnedDockerResources({
+    dockerBin: 'docker',
+    networkName,
+    env: {},
+    runId,
+    projectId: runId,
+    execFile: o1ResourceExec({ container: ownedContainer, volume: foreignVolume, calls: s02Calls }),
+  })
+  assert.equal(s02.containers[0].ownership, 'owned')
+  assert.equal(s02.volumes[0].ownership, 'foreign')
+  assert.ok(s02Calls.some((item) => item.args[0] === 'volume' && item.args[1] === 'inspect'))
+  const s02StopCalls = []
+  const s02Removed = { containers: new Set(), volumes: new Set() }
+  const s02Stop = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-o1s02-')),
+    projectId: runId,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: runId,
+      containers: s02.containers,
+      volumes: [{ name: 'synthetic-volume', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: o1ResourceExec({
+      container: ownedContainer,
+      volume: foreignVolume,
+      removed: s02Removed,
+      calls: s02StopCalls,
+    }),
+  })
+  assert.equal(s02Stop.volumes[0], undefined)
+  assert.ok(s02Stop.foreignVolumes.includes('synthetic-volume'))
+  assert.equal(s02Stop.conflicts.includes('synthetic-volume'), true)
+  assert.ok(!s02StopCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.ok(!s02StopCalls.some((item) => item.bin === 'supabase' || (item.args[0] === 'stop' && item.args.length === 1)))
+  assert.equal(s02Stop.cliStopSkipped, 'foreign-or-unresolved-identity')
+  assert.equal(s02Stop.dockerServicesStopped, false)
+
+  const foreignAttached = {
+    ...ownedContainer,
+    Config: { Labels: { [label]: 'OTHER-RUN' } },
+    Mounts: [],
+  }
+  const s03Collect = collectOwnedDockerResources({
+    dockerBin: 'docker',
+    networkName,
+    env: {},
+    runId,
+    projectId: runId,
+    execFile: o1ResourceExec({ container: foreignAttached, volume: null, calls: [] }),
+  })
+  assert.equal(s03Collect.containers[0].ownership, 'foreign')
+  const s03Calls = []
+  const s03 = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-o1s03-')),
+    projectId: runId,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: runId,
+      containers: s03Collect.containers,
+      volumes: [],
+      inventoryComplete: true,
+    },
+    execFile: o1ResourceExec({ container: foreignAttached, volume: null, calls: s03Calls }),
+  })
+  assert.ok(s03.foreignContainers.includes('container-1'))
+  assert.ok(!s03Calls.some((item) => item.args[0] === 'stop' && item.args[1] === 'container-1'))
+  assert.ok(!s03Calls.some((item) => item.args[0] === 'rm' && item.args[1] === 'container-1'))
+  assert.ok(!s03Calls.some((item) => item.args[0] === 'stop' && item.args.length === 1))
+  assert.equal(s03.cliStopSkipped, 'foreign-or-unresolved-identity')
+  assert.equal(s03.dockerServicesStopped, false)
+
+  const s04Calls = []
+  const s04 = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    projectId: runId,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: runId,
+      containers: [{ id: 'container-1', ownership: 'owned' }],
+      volumes: [{ name: 'synthetic-volume', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: o1ResourceExec({ container: ownedContainer, volume: foreignVolume, calls: s04Calls }),
+  })
+  assert.equal(s04.conflicts.includes('synthetic-volume'), true)
+  assert.ok(s04.foreignVolumes.includes('synthetic-volume'))
+  assert.ok(!s04Calls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.equal(s04.dockerServicesStopped, false)
+
+  const ownedCalls = []
+  const ownedRemoved = { containers: new Set(), volumes: new Set() }
+  const ownedSuccess = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-o1ok-')),
+    projectId: runId,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: runId,
+      containers: [{ id: 'container-1', ownership: 'owned' }],
+      volumes: [{ name: 'synthetic-volume', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: o1ResourceExec({
+      container: ownedContainer,
+      volume: ownedVolume,
+      removed: ownedRemoved,
+      calls: ownedCalls,
+    }),
+  })
+  assert.equal(ownedSuccess.dockerServicesStopped, true)
+  assert.ok(ownedCalls.some((item) => item.args[0] === 'stop' && item.args[1] === 'container-1'))
+  assert.ok(ownedCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.ok(ownedCalls.some((item) => item.args[0] === 'stop' && item.args.length === 1))
+
+  const cliProject = 'aaclr1-cli-project'
+  const cliContainer = {
+    ...ownedContainer,
+    Config: { Labels: { [CLI_PROJECT_LABEL]: cliProject } },
+    Mounts: [{ Type: 'volume', Name: 'synthetic-volume', Destination: '/data' }],
+  }
+  const cliVolume = { Name: 'synthetic-volume', Driver: 'local', Labels: { [CLI_PROJECT_LABEL]: cliProject } }
+  assert.equal(
+    classifyContainerOwnership({ labels: cliContainer.Config.Labels, runId, projectId: cliProject }).ownership,
+    'owned',
+  )
+  const cliCalls = []
+  const cliRemoved = { containers: new Set(), volumes: new Set() }
+  const cliOwned = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-o1cli-')),
+    projectId: cliProject,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: cliProject,
+      containers: [{ id: 'container-1', ownership: 'owned' }],
+      volumes: [{ name: 'synthetic-volume', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: o1ResourceExec({
+      container: cliContainer,
+      volume: cliVolume,
+      removed: cliRemoved,
+      calls: cliCalls,
+    }),
+  })
+  assert.equal(cliOwned.dockerServicesStopped, true)
+  assert.ok(cliCalls.some((item) => item.args[0] === 'stop' && item.args[1] === 'container-1'))
+  assert.ok(cliCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.ok(cliCalls.some((item) => item.args[0] === 'stop' && item.args.length === 1))
+
+  const daemonCalls = []
+  const daemonDown = Object.assign(new Error('Cannot connect to the Docker daemon'), { code: 'ETIMEDOUT' })
+  const daemon = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-o1daemon-')),
+    projectId: runId,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: runId,
+      containers: [{ id: 'container-1', ownership: 'owned' }],
+      volumes: [{ name: 'synthetic-volume', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      daemonCalls.push({ bin: String(_bin), args: args.slice() })
+      throw daemonDown
+    },
+  })
+  assert.equal(daemon.unknown, true)
+  assert.equal(daemon.dockerServicesStopped, false)
+  assert.equal(daemon.cliStopSkipped, 'discovery-unknown')
+  assert.ok(!daemonCalls.some((item) => item.args[0] === 'stop'))
+  assert.ok(!daemonCalls.some((item) => item.args[0] === 'rm'))
+  assert.ok(!daemonCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.ok(!daemonCalls.some((item) => item.args[0] === 'network' && item.args[1] === 'rm'))
+
+  const partialCalls = []
+  const partial = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-o1partial-')),
+    projectId: runId,
+    state: {
+      network: { name: networkName, created: true, runId },
+      runId,
+      projectId: runId,
+      containers: [],
+      volumes: [],
+      inventoryComplete: false,
+    },
+    execFile: (_bin, args) => {
+      partialCalls.push({ bin: String(_bin), args: args.slice() })
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'inspect') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'stop' || args[0] === 'rm') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'volume') throw new Error(`No such volume: ${args[2] === '-f' ? args[3] : args[2]}`)
+      if (args[0] === 'network' && args[1] === 'rm') return ''
+      if (args[0] === 'network' && args[1] === 'inspect') throw new Error(`No such network: ${args[2]}`)
+      if (args[0] === 'stop' && args.length === 1) return ''
+      throw new Error(`unexpected ${args}`)
+    },
+  })
+  assert.equal(partial.containerState, RESOURCE_STATE.ABSENT)
+  assert.equal(partial.volumeState, RESOURCE_STATE.ABSENT)
+  assert.equal(partial.networkRemoved, true)
+  assert.equal(partial.dockerServicesStopped, true)
+  assert.ok(!partialCalls.some((item) => item.args[0] === 'stop' && item.args[1]))
+  assert.ok(!partialCalls.some((item) => item.args[0] === 'rm'))
+  assert.ok(!partialCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.ok(partialCalls.some((item) => item.args[0] === 'network' && item.args[1] === 'rm'))
+
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-o1hand-'))
+  const registry = createOwnershipRegistry({ runId, privateHome: home, evidenceDir: home })
+  registerHandle(registry, 'network', { name: networkName, created: true, runId })
+  registerHandle(registry, 'dockerBin', 'docker')
+  registerHandle(registry, 'projectId', runId)
+  registerHandle(registry, 'cliBin', 'supabase')
+  registerHandle(registry, 'workdir', home)
+  const handoffCalls = []
+  registerHandle(registry, 'execFile', o1ResourceExec({
+    container: ownedContainer,
+    volume: foreignVolume,
+    calls: handoffCalls,
+  }))
+  recordDockerResources(registry, {
+    containers: [{ id: 'container-1', ownership: 'owned' }],
+    volumes: [{ name: 'synthetic-volume', ownership: 'owned' }],
+  })
+  const handoff = await raeumeOwnedAuf({
+    privateHome: home,
+    registry,
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: home,
+    projectId: runId,
+    execFile: registry.execFile,
+  })
+  assert.equal(handoff.neverStarted, false)
+  assert.ok(handoff.reports.some((item) => item.kind === 'stack'))
+  assert.ok(!handoffCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.ok(!handoffCalls.some((item) => item.args[0] === 'stop' && item.args.length === 1))
+  assert.equal(bewerteCleanup(handoff, { registry }), false)
+  rmSync(home, { recursive: true, force: true })
 })
 
 function writeSizedMemberTar(dir, size, memberName = 'supabase') {

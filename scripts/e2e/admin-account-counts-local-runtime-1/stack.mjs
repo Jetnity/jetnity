@@ -5,6 +5,9 @@
 // live ownership registry before fallible work continues.
 // Resource queries return PRESENT / ABSENT / UNKNOWN. Daemon, permission,
 // timeout and parse failures are UNKNOWN, never absence.
+// Ownership is per-resource: inspect the volume itself before classify/rm;
+// network membership is discovery only; live foreign wins over stale owned;
+// CLI stop requires exact project authority and no blocking identity.
 
 import { spawn } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
@@ -12,7 +15,7 @@ import { join } from 'node:path'
 import { waitForOwnedChildExit, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
 import { refuseBootstrapOverlay } from '../admin-account-counts-browser-acceptance-1/source-manifest.mjs'
 import { SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
-import { CLI, RUN_LABEL, TIMEOUTS } from './constants.mjs'
+import { CLI, CLI_PROJECT_LABEL, RUN_LABEL, TIMEOUTS } from './constants.mjs'
 import { selectSafeExcludes } from './cli-identity.mjs'
 import { assertNoPublicBindPlan } from './overlay.mjs'
 import { notACompletedExecution } from './implementation.mjs'
@@ -199,18 +202,121 @@ export function inspectDockerResource({
   }
 }
 
-export function classifyVolumeOwnership({ mount, labels = {}, runId } = {}) {
+export function parseInspectDocs(raw) {
+  const parsed = JSON.parse(String(raw || '').trim() || '[]')
+  return Array.isArray(parsed) ? parsed : [parsed]
+}
+
+export function classifyResourceIdentity(labels = {}, { runId = null, projectId = null } = {}) {
+  const run = labels[RUN_LABEL]
+  const project = labels[CLI_PROJECT_LABEL]
+  const foreignRun = Boolean(run && runId && run !== runId)
+  const foreignProject = Boolean(project && projectId && project !== projectId)
+  if (foreignRun || foreignProject) {
+    return {
+      ownership: 'foreign',
+      reason: foreignRun ? 'other run label' : 'other CLI project',
+    }
+  }
+  if (run && runId && run === runId) {
+    return { ownership: 'owned', reason: 'run label' }
+  }
+  if (project && projectId && project === projectId) {
+    return { ownership: 'owned', reason: 'exact CLI project' }
+  }
+  return { ownership: 'unresolved', reason: 'no matching creation authority' }
+}
+
+export function classifyContainerOwnership({ labels = {}, runId, projectId } = {}) {
+  return classifyResourceIdentity(labels, { runId, projectId })
+}
+
+export function classifyVolumeOwnership({ mount, labels = {}, runId, projectId } = {}) {
   const name = mount?.Name
   if (!name || mount?.Type !== 'volume') {
     return { name, ownership: 'unresolved', reason: 'unnamed or non-volume mount' }
   }
-  if (runId && labels[RUN_LABEL] === runId) {
-    return { name, ownership: 'owned', reason: 'run label', containerId: mount.containerId }
+  return {
+    name,
+    containerId: mount.containerId,
+    ...classifyResourceIdentity(labels, { runId, projectId }),
   }
-  if (labels[RUN_LABEL] && labels[RUN_LABEL] !== runId) {
-    return { name, ownership: 'foreign', reason: 'other run label' }
+}
+
+export function inspectVolumeDocument({
+  execFile,
+  dockerBin,
+  env,
+  name,
+} = {}) {
+  const inspected = inspectDockerResource({
+    execFile,
+    dockerBin,
+    env,
+    args: ['volume', 'inspect', name],
+  })
+  if (inspected.state !== RESOURCE_STATE.PRESENT) {
+    return { state: inspected.state, error: inspected.error, labels: {} }
   }
-  return { name, ownership: 'unresolved', reason: 'volume mount lacks this run label' }
+  try {
+    const docs = parseInspectDocs(inspected.raw)
+    const doc = docs[0] || {}
+    return {
+      state: RESOURCE_STATE.PRESENT,
+      doc,
+      labels: doc.Labels || {},
+    }
+  } catch (error) {
+    return {
+      state: RESOURCE_STATE.UNKNOWN,
+      error: error instanceof Error ? error.message : String(error),
+      labels: {},
+    }
+  }
+}
+
+function classifyMountedVolume({
+  mount,
+  containerId,
+  execFile,
+  dockerBin,
+  env,
+  runId,
+  projectId,
+}) {
+  const volumeInspect = inspectVolumeDocument({ execFile, dockerBin, env, name: mount.Name })
+  if (volumeInspect.state === RESOURCE_STATE.UNKNOWN) {
+    return {
+      name: mount.Name,
+      containerId,
+      ownership: 'unresolved',
+      reason: 'volume inspect unknown',
+      state: RESOURCE_STATE.UNKNOWN,
+    }
+  }
+  if (volumeInspect.state === RESOURCE_STATE.ABSENT) {
+    return {
+      name: mount.Name,
+      containerId,
+      ownership: 'absent',
+      reason: 'volume already absent',
+      state: RESOURCE_STATE.ABSENT,
+    }
+  }
+  const classified = classifyVolumeOwnership({
+    mount: { ...mount, containerId },
+    labels: volumeInspect.labels,
+    runId,
+    projectId,
+  })
+  return {
+    name: mount.Name,
+    containerId,
+    labels: volumeInspect.labels,
+    ownership: classified.ownership,
+    reason: classified.reason,
+    state: RESOURCE_STATE.PRESENT,
+  }
 }
 
 export function collectOwnedDockerResources({
@@ -219,6 +325,7 @@ export function collectOwnedDockerResources({
   env,
   execFile,
   runId,
+  projectId,
 } = {}) {
   const idsText = execFile(dockerBin, ['ps', '-aq', '--filter', `network=${networkName}`], {
     encoding: 'utf8',
@@ -229,47 +336,99 @@ export function collectOwnedDockerResources({
   const containers = []
   const volumes = []
   const bindings = []
+  const seenVolumes = new Set()
   for (const id of ids) {
     const raw = execFile(dockerBin, ['inspect', id], { encoding: 'utf8', env, timeout: 15_000 })
-    const docs = JSON.parse(raw)
+    const docs = parseInspectDocs(raw)
     for (const doc of docs) {
       const labels = doc.Config?.Labels || {}
-      const ownedByRun = !runId
-        || labels[RUN_LABEL] === runId
-        || doc.HostConfig?.NetworkMode === networkName
-        || Object.keys(doc.NetworkSettings?.Networks || {}).includes(networkName)
-      if (!ownedByRun) continue
+      const classified = classifyContainerOwnership({ labels, runId, projectId })
       containers.push({
         id: doc.Id || id,
         name: doc.Name,
         labels,
+        ownership: classified.ownership,
+        reason: classified.reason,
+        state: RESOURCE_STATE.PRESENT,
       })
-      for (const mount of doc.Mounts || []) {
-        if (mount.Type !== 'volume' || !mount.Name) continue
-        const classified = classifyVolumeOwnership({
-          mount: { ...mount, containerId: doc.Id || id },
-          labels,
-          runId,
-        })
-        volumes.push({
-          name: mount.Name,
-          containerId: doc.Id || id,
-          ownership: classified.ownership,
-          reason: classified.reason,
-        })
+      if (classified.ownership === 'owned') {
+        bindings.push(...parseDockerPortBindings(doc))
       }
-      bindings.push(...parseDockerPortBindings(doc))
+      for (const mount of doc.Mounts || []) {
+        if (mount.Type !== 'volume' || !mount.Name || seenVolumes.has(mount.Name)) continue
+        seenVolumes.add(mount.Name)
+        volumes.push(classifyMountedVolume({
+          mount,
+          containerId: doc.Id || id,
+          execFile,
+          dockerBin,
+          env,
+          runId,
+          projectId,
+        }))
+      }
     }
   }
-  const unresolved = volumes.filter((item) => item.ownership === 'unresolved')
+  const unresolvedVolumes = volumes.filter((item) => item.ownership === 'unresolved')
+  const unresolvedContainers = containers.filter((item) => item.ownership === 'unresolved')
   return {
     containers,
     volumes,
     bindings,
-    inventoryComplete: unresolved.length === 0,
+    inventoryComplete: unresolvedVolumes.length === 0 && unresolvedContainers.length === 0,
     discoveryState: RESOURCE_STATE.PRESENT,
-    unresolvedVolumes: unresolved,
+    unresolvedVolumes,
+    foreignContainers: containers.filter((item) => item.ownership === 'foreign'),
+    foreignVolumes: volumes.filter((item) => item.ownership === 'foreign'),
   }
+}
+
+export function reconcileOneResource(recorded, live) {
+  const liveOwn = volumeOwnershipOf(live)
+  const recOwn = recorded ? volumeOwnershipOf(recorded) : null
+  if (liveOwn === 'foreign') {
+    return {
+      ...live,
+      ownership: 'foreign',
+      conflict: recOwn === 'owned',
+      reason: recOwn === 'owned' ? 'stale owned record vs live foreign' : live.reason,
+    }
+  }
+  if (recOwn === 'foreign' && liveOwn === 'owned') {
+    return {
+      ...live,
+      ownership: 'conflict',
+      reason: 'stale foreign record vs live owned',
+    }
+  }
+  if (recOwn === 'owned' && (liveOwn === 'unresolved' || liveOwn === 'absent')) {
+    return {
+      ...live,
+      ownership: liveOwn === 'absent' ? 'absent' : 'unresolved',
+      reason: liveOwn === 'absent' ? live.reason : 'stale owned record cannot replace missing live authority',
+    }
+  }
+  return live
+}
+
+export function reconcileDockerResources(recorded = [], live = [], keyOf) {
+  const out = []
+  const seen = new Set()
+  for (const liveItem of live) {
+    const key = keyOf(liveItem)
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    const recordedItem = recorded.find((item) => keyOf(item) === key)
+    out.push(reconcileOneResource(recordedItem, liveItem))
+  }
+  for (const recordedItem of recorded) {
+    const normalized = typeof recordedItem === 'object' ? recordedItem : { id: recordedItem, name: recordedItem }
+    const key = keyOf(normalized)
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    out.push({ ...normalized, discovery: 'recorded-only' })
+  }
+  return out
 }
 
 export function discoverOwnedResources({
@@ -278,6 +437,7 @@ export function discoverOwnedResources({
   env,
   execFile,
   runId,
+  projectId,
   recordedContainers = [],
   recordedVolumes = [],
 } = {}) {
@@ -294,14 +454,12 @@ export function discoverOwnedResources({
   }
   try {
     const live = networkName
-      ? collectOwnedDockerResources({ dockerBin, networkName, env, execFile, runId })
+      ? collectOwnedDockerResources({ dockerBin, networkName, env, execFile, runId, projectId })
       : { containers: [], volumes: [], bindings: [], inventoryComplete: true, discoveryState: RESOURCE_STATE.ABSENT }
-    const containers = mergeNamed(recordedContainers, live.containers, (item) => item.id || item.Id)
-    const volumes = mergeNamed(recordedVolumes, live.volumes, (item) => item.name || item.Name)
     return {
       ...live,
-      containers,
-      volumes,
+      containers: reconcileDockerResources(recordedContainers, live.containers, (item) => item.id || item.Id),
+      volumes: reconcileDockerResources(recordedVolumes, live.volumes, (item) => item.name || item.Name),
       inventoryComplete: live.inventoryComplete === true,
       discoveryState: live.discoveryState || RESOURCE_STATE.PRESENT,
       unknown: false,
@@ -317,18 +475,6 @@ export function discoverOwnedResources({
       error: error instanceof Error ? error.message : String(error),
     }
   }
-}
-
-function mergeNamed(recorded, live, keyOf) {
-  const out = []
-  const seen = new Set()
-  for (const item of [...recorded, ...live]) {
-    const key = keyOf(item) || item
-    if (!key || seen.has(key)) continue
-    seen.add(key)
-    out.push(typeof item === 'object' ? item : { id: item, name: item })
-  }
-  return out
 }
 
 export async function starteOwnedStack({
@@ -413,6 +559,123 @@ function anyUnknown(states) {
   return states.some((state) => state === RESOURCE_STATE.UNKNOWN)
 }
 
+function revalidateRecordedContainer(item, { execFile, dockerBin, env, runId, projectId }) {
+  const id = item.id || item.Id || item.name
+  const inspected = inspectDockerResource({
+    execFile,
+    dockerBin,
+    args: ['inspect', id],
+    env,
+  })
+  if (inspected.state === RESOURCE_STATE.ABSENT) {
+    return {
+      ...item,
+      ownership: 'absent',
+      state: RESOURCE_STATE.ABSENT,
+      reason: item.reason || 'already absent',
+    }
+  }
+  if (inspected.state === RESOURCE_STATE.UNKNOWN) {
+    return {
+      ...item,
+      ownership: 'unresolved',
+      state: RESOURCE_STATE.UNKNOWN,
+      reason: 'container inspect unknown',
+    }
+  }
+  try {
+    const doc = parseInspectDocs(inspected.raw)[0] || {}
+    const classified = classifyContainerOwnership({
+      labels: doc.Config?.Labels || {},
+      runId,
+      projectId,
+    })
+    return {
+      ...item,
+      ...classified,
+      labels: doc.Config?.Labels || {},
+      state: RESOURCE_STATE.PRESENT,
+    }
+  } catch (error) {
+    return {
+      ...item,
+      ownership: 'unresolved',
+      state: RESOURCE_STATE.UNKNOWN,
+      reason: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+function revalidateRecordedVolume(item, { execFile, dockerBin, env, runId, projectId }) {
+  const name = item.name || item.Name
+  const inspected = inspectVolumeDocument({ execFile, dockerBin, env, name })
+  if (inspected.state === RESOURCE_STATE.ABSENT) {
+    return {
+      ...item,
+      ownership: 'absent',
+      state: RESOURCE_STATE.ABSENT,
+      reason: item.reason || 'already absent',
+    }
+  }
+  if (inspected.state === RESOURCE_STATE.UNKNOWN) {
+    return {
+      ...item,
+      ownership: 'unresolved',
+      state: RESOURCE_STATE.UNKNOWN,
+      reason: 'volume inspect unknown',
+    }
+  }
+  const classified = classifyVolumeOwnership({
+    mount: { Type: 'volume', Name: name },
+    labels: inspected.labels,
+    runId,
+    projectId,
+  })
+  if (classified.ownership === 'foreign' && volumeOwnershipOf(item) === 'owned') {
+    return {
+      ...item,
+      ...classified,
+      ownership: 'foreign',
+      conflict: true,
+      reason: 'stale owned record vs live foreign',
+      state: RESOURCE_STATE.PRESENT,
+    }
+  }
+  if (classified.ownership === 'unresolved' && volumeOwnershipOf(item) === 'foreign') {
+    return {
+      ...item,
+      ownership: 'foreign',
+      labels: inspected.labels,
+      reason: 'recorded foreign identity retained',
+      state: RESOURCE_STATE.PRESENT,
+    }
+  }
+  return {
+    ...item,
+    ...classified,
+    labels: inspected.labels,
+    state: RESOURCE_STATE.PRESENT,
+  }
+}
+
+function isAbsent(item) {
+  return item?.state === RESOURCE_STATE.ABSENT || volumeOwnershipOf(item) === 'absent'
+}
+
+function isBlockingIdentity(item) {
+  if (isAbsent(item)) return false
+  const ownership = volumeOwnershipOf(item)
+  return ownership === 'foreign' || ownership === 'unresolved' || ownership === 'conflict'
+}
+
+function isOwnedPresent(item) {
+  return volumeOwnershipOf(item) === 'owned' && item.state === RESOURCE_STATE.PRESENT
+}
+
+function presentUnresolved(items = []) {
+  return items.filter((item) => volumeOwnershipOf(item) === 'unresolved' && !isAbsent(item))
+}
+
 export async function stoppeOwnedStack({
   dockerBin,
   cliBin,
@@ -420,6 +683,7 @@ export async function stoppeOwnedStack({
   env,
   state,
   execFile,
+  projectId,
 } = {}) {
   const report = {
     cliChild: null,
@@ -454,33 +718,72 @@ export async function stoppeOwnedStack({
   const recordedVolumes = (state?.volumes || []).map((item) => (
     typeof item === 'object' ? item : { name: item }
   ))
+  const runId = state?.network?.runId || state?.runId
+  const exactProjectId = projectId || state?.projectId || state?.network?.projectId || null
   const discovered = discoverOwnedResources({
     dockerBin,
     networkName: state?.network?.name,
     env,
     execFile,
-    runId: state?.network?.runId || state?.runId,
+    runId,
+    projectId: exactProjectId,
     recordedContainers,
     recordedVolumes,
   })
   report.discoveryState = discovered.discoveryState
   if (discovered.unknown) report.unknown = true
-  const unresolved = (discovered.volumes || []).filter((item) => volumeOwnershipOf(item) === 'unresolved')
-  if (unresolved.length || discovered.inventoryComplete === false) {
-    report.unresolvedVolumes = unresolved
+  const identityCtx = { execFile, dockerBin, env, runId, projectId: exactProjectId }
+  const containers = (discovered.containers || []).map((item) => (
+    item.discovery === 'recorded-only'
+      ? revalidateRecordedContainer(item, identityCtx)
+      : item
+  ))
+  const volumes = (discovered.volumes || []).map((item) => (
+    item.discovery === 'recorded-only' || !item.labels
+      ? revalidateRecordedVolume(item, identityCtx)
+      : item
+  ))
+  const unresolved = presentUnresolved(volumes).concat(presentUnresolved(containers))
+  const foreignContainers = containers.filter((item) => volumeOwnershipOf(item) === 'foreign' && !isAbsent(item))
+  const foreignVolumes = volumes.filter((item) => volumeOwnershipOf(item) === 'foreign' && !isAbsent(item))
+  const conflicts = [...containers, ...volumes].filter((item) => (
+    (item.conflict === true || volumeOwnershipOf(item) === 'conflict') && !isAbsent(item)
+  ))
+  report.foreignContainers = foreignContainers.map((item) => item.id || item.Id || item.name)
+  report.foreignVolumes = foreignVolumes.map((item) => item.name || item.Name)
+  report.foreignRetained = [...report.foreignContainers, ...report.foreignVolumes]
+  report.conflicts = conflicts.map((item) => item.id || item.name)
+  const discoveryFailed = discovered.unknown === true
+  if (unresolved.length || discovered.inventoryComplete === false || conflicts.length) {
+    report.unresolvedVolumes = unresolved.filter((item) => item.name || item.Name)
     report.inventoryComplete = false
     report.unknown = true
+    if (conflicts.length) report.conflictReason = 'fresh identity conflicts with recorded ownership'
+  } else if (!discoveryFailed) {
+    report.inventoryComplete = true
   }
-
-  try {
-    if (cliBin && workdir) {
+  const blocking = [...containers, ...volumes].filter(isBlockingIdentity)
+  const mayCliStop = Boolean(
+    cliBin
+    && workdir
+    && exactProjectId
+    && blocking.length === 0
+    && !discoveryFailed,
+  )
+  if (mayCliStop) {
+    try {
       execFile(cliBin, ['stop'], { encoding: 'utf8', env, cwd: workdir, timeout: 60_000 })
+    } catch (error) {
+      report.cliStopError = error instanceof Error ? error.message : String(error)
     }
-  } catch (error) {
-    report.cliStopError = error instanceof Error ? error.message : String(error)
+  } else if (cliBin && workdir) {
+    report.cliStopSkipped = discoveryFailed
+      ? 'discovery-unknown'
+      : (blocking.length ? 'foreign-or-unresolved-identity' : 'exact-project-authority-missing')
   }
 
-  const containerIds = discovered.containers.map((item) => item.id || item.Id).filter(Boolean)
+  const ownedContainers = discoveryFailed ? [] : containers.filter(isOwnedPresent)
+  const containerIds = ownedContainers.map((item) => item.id || item.Id).filter(Boolean)
   report.containers = containerIds
   const containerStates = []
   for (const id of containerIds) {
@@ -501,10 +804,10 @@ export async function stoppeOwnedStack({
     })
     containerStates.push(inspected.state)
   }
-  if (discovered.unknown && containerIds.length === 0) {
+  if (discoveryFailed && containerIds.length === 0) {
     report.containerState = RESOURCE_STATE.UNKNOWN
     report.containersRemoved = false
-  } else if (containerIds.length === 0 && state?.inventoryComplete === true && !discovered.unknown) {
+  } else if (containerIds.length === 0 && unresolved.length === 0 && !discoveryFailed) {
     report.containerState = RESOURCE_STATE.ABSENT
     report.containersRemoved = true
   } else if (containerIds.length === 0) {
@@ -523,10 +826,7 @@ export async function stoppeOwnedStack({
     report.containersRemoved = false
   }
 
-  const ownedVolumes = discovered.volumes.filter((item) => volumeOwnershipOf(item) === 'owned')
-  const foreignVolumes = discovered.volumes.filter((item) => volumeOwnershipOf(item) === 'foreign')
-  report.foreignVolumes = foreignVolumes.map((item) => item.name || item.Name)
-  report.foreignRetained = report.foreignVolumes
+  const ownedVolumes = discoveryFailed ? [] : volumes.filter(isOwnedPresent)
   const volumeNames = ownedVolumes.map((item) => item.name || item.Name).filter(Boolean)
   const volumeStates = []
   for (const name of volumeNames) {
@@ -547,17 +847,13 @@ export async function stoppeOwnedStack({
     volumeStates.push(inspected.state)
   }
   report.volumes = volumeNames
-  if (unresolved.length || discovered.unknown) {
+  if (unresolved.length || discoveryFailed) {
     report.volumeState = RESOURCE_STATE.UNKNOWN
     report.volumesRemoved = false
     report.unknown = true
-  } else if (volumeNames.length === 0 && state?.inventoryComplete === true) {
+  } else if (volumeNames.length === 0) {
     report.volumeState = RESOURCE_STATE.ABSENT
     report.volumesRemoved = true
-  } else if (volumeNames.length === 0) {
-    report.volumeState = RESOURCE_STATE.UNKNOWN
-    report.volumesRemoved = false
-    report.unknown = true
   } else if (anyUnknown(volumeStates)) {
     report.volumeState = RESOURCE_STATE.UNKNOWN
     report.volumesRemoved = false
@@ -570,8 +866,15 @@ export async function stoppeOwnedStack({
     report.volumesRemoved = false
   }
 
+  const foreignContainersPresent = foreignContainers.some((item) => item.state !== RESOURCE_STATE.ABSENT)
+  const blockingContainersPresent = containers.some(isBlockingIdentity)
   if (state?.network?.name) {
-    if (state.network.created === true || state.network.id) {
+    if (
+      (state.network.created === true || state.network.id)
+      && !foreignContainersPresent
+      && !blockingContainersPresent
+      && !discoveryFailed
+    ) {
       try {
         execFile(dockerBin, ['network', 'rm', state.network.name], { encoding: 'utf8', env, timeout: 15_000 })
       } catch (error) {
@@ -595,11 +898,13 @@ export async function stoppeOwnedStack({
     report.networkRemoved = true
   }
 
+  const blockingPresent = blocking.some((item) => item.state !== RESOURCE_STATE.ABSENT)
   report.dockerServicesStopped = report.containersRemoved === true
     && report.volumesRemoved === true
     && report.networkRemoved === true
     && report.unknown !== true
     && report.inventoryComplete !== false
+    && !blockingPresent
     && !report.containerError
     && !report.volumeError
     && !report.networkError
@@ -607,6 +912,7 @@ export async function stoppeOwnedStack({
 }
 
 function volumeOwnershipOf(item) {
+  if (item?.state === RESOURCE_STATE.ABSENT && !item?.ownership) return 'absent'
   if (item?.ownership) return item.ownership
   if (item?.owned === false) return 'foreign'
   if (item?.owned === true) return 'owned'

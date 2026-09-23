@@ -122,6 +122,9 @@ export const TIMEOUTS = Object.freeze({
 })
 
 export const RUN_LABEL = 'jetnity.aaclr1.run'
+// Official CLI 2.117.0 default creation label from config.toml project_id.
+// Read from inspect; do not assume our custom RUN_LABEL exists on CLI objects.
+export const CLI_PROJECT_LABEL = 'com.supabase.cli.project'
 export const DOTENV_NAME = /^(?:\.env|\.env\..+)$/
 
 export const RUNTIME_GATES = Object.freeze([

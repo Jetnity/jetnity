@@ -77,6 +77,14 @@ fields and fill/otpauth/JWT material are refused or redacted as whole strings.
 Receipt writes are exclusive and never overwrite history.
 Preflight/runtime-only do not require those files.
 
+Owned Docker teardown classifies each container and each volume from that
+resource's own inspect metadata. A container label does not authorize its
+mounted volumes. Attachment to the run network does not override an explicit
+foreign container label. A stale same-name owned record cannot suppress live
+foreign identity. Exact-project CLI stop is skipped when foreign, unresolved
+or conflicting identity is present. Official CLI objects are recognized from
+inspected `com.supabase.cli.project`, not by inventing or applying labels.
+
 ## Forbidden substitutes
 
 - Hosted Production / Development query, DDL, grant, exposure or activation
