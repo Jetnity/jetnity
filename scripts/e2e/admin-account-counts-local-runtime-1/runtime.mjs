@@ -20,6 +20,7 @@ import {
 } from './schema.mjs'
 import { provisioniereUeberGoTrue, profileMutationSql, createdAtMutationSql, emailFor, generateFixturePassword } from './fixtures.mjs'
 import { createRpcObserver } from './observer.mjs'
+import { baueRuntimeAppUmgebung } from './env.mjs'
 import { prepareAppForLaunch, starteOwnedApp, warteAufAppBereitschaft } from './app.mjs'
 import { baueAcceptanceContext } from './context.mjs'
 import { materialisiereAppCheckout } from './source.mjs'
@@ -216,21 +217,30 @@ export async function defaultStartRuntime({
   })
   owned.checkoutDir = checkoutDir
   registerHandle(registry, 'checkoutDir', checkoutDir)
+  const appPort = plan.services.find((item) => item.name === 'app').port
+  const siteUrl = `http://127.0.0.1:${appPort}`
+  const appEnv = baueRuntimeAppUmgebung({
+    parentEnv: {},
+    privateHome: owned.privateHome,
+    loopbackUrl: observed.origin,
+    syntheticAnonKey: anonKey,
+    siteUrl,
+    countsEnabled: true,
+  })
   await prepareAppForLaunch({
     checkoutDir,
-    env: childEnv,
+    env: appEnv,
     execFile,
     install,
     build,
   })
-  const appPort = plan.services.find((item) => item.name === 'app').port
   const app = await starteOwnedApp({
     checkoutDir,
     parentEnv: {},
     privateHome: owned.privateHome,
     loopbackUrl: observed.origin,
     syntheticAnonKey: anonKey,
-    siteUrl: `http://127.0.0.1:${appPort}`,
+    siteUrl,
     countsEnabled: true,
     port: appPort,
     spawnFn,
@@ -238,6 +248,9 @@ export async function defaultStartRuntime({
     signal,
     registry,
   })
+  if (app.envBoundary?.supabaseUrl !== observed.origin || app.envBoundary?.LOCAL_FLAG !== 'true') {
+    throw notACompletedExecution('runtime rehearsal', 'effective application URL/key/flag is not bound to the isolated observer origin')
+  }
   if (app.ready !== true || app.child?.exitCode != null) {
     throw notACompletedExecution('runtime rehearsal', 'application did not remain running after readiness')
   }
@@ -303,13 +316,12 @@ export async function defaultStartRuntime({
         privateHome: owned.privateHome,
         loopbackUrl: observed.origin,
         syntheticAnonKey: anonKey,
-        siteUrl: `http://127.0.0.1:${appPort}`,
+        siteUrl,
         port: appPort,
         spawnFn,
         waitUntilReady: waitUntilReady === undefined ? warteAufAppBereitschaft : waitUntilReady,
         signal,
         execFile,
-        childEnv,
         registry,
         owned,
       },

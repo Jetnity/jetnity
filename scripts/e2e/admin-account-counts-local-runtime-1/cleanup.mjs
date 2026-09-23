@@ -104,9 +104,24 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     reports.push({ kind: 'stack', ...stackReport })
   }
 
-  const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true
+  const resourceUnknown = Boolean(
+    stackReport?.unknown === true
+    || stackReport?.networkState === 'UNKNOWN'
+    || stackReport?.containerState === 'UNKNOWN'
+    || stackReport?.volumeState === 'UNKNOWN'
+    || stackReport?.discoveryState === 'UNKNOWN',
+  )
+  const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true || resourceUnknown
   const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false)
-  const volumesUnconfirmed = Boolean(stackReport && stackReport.volumesRemoved !== true && (volumes?.length || stackReport.volumes?.length))
+  const volumesUnconfirmed = Boolean(
+    stackReport
+    && (
+      stackReport.volumesRemoved !== true
+      || stackReport.volumeState === 'UNKNOWN'
+      || stackReport.volumeState === 'PRESENT'
+    )
+    && (volumes?.length || stackReport.volumes?.length || stackReport.volumeState === 'UNKNOWN' || stackRequired),
+  )
   const dockerServicesUnverified = Boolean(
     stackReport
     && stackReport.dockerServicesStopped !== true
@@ -135,9 +150,22 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     ownershipRetained,
     dockerServicesUnverified,
     volumesUnconfirmed,
-    incompleteRegistry: Boolean(registry?.hadFallibleAcquisition && !stackRequired && !appChild && !observer && !(browserRegistry && browserRegistry.size)),
+    incompleteRegistry: Boolean(
+      registry?.hadFallibleAcquisition
+      && (
+        (!stackRequired && !appChild && !observer && !(browserRegistry && browserRegistry.size))
+        || stackReport?.inventoryComplete === false
+        || resourceUnknown
+      ),
+    ),
     stopUnknown: registry?.stopUnknown === true,
   }
+  const retainPrivate = flags.unknown
+    || flags.ownershipRetained
+    || flags.incompleteRegistry
+    || flags.stopUnknown
+    || flags.dockerServicesUnverified
+    || flags.volumesUnconfirmed
   const removals = []
   const dirs = [
     registry?.checkoutDir || state.checkoutDir,
@@ -153,12 +181,19 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
       removals.push({ kind: 'dir', path: dir, removed: true, alreadyAbsent: true })
       continue
     }
-    if (!darfOwnedVerzeichnisEntfernen({ ...flags, dockerServicesUnverified: flags.dockerServicesUnverified || flags.volumesUnconfirmed })) {
+    if (
+      retainPrivate
+      || !darfOwnedVerzeichnisEntfernen({
+        ...flags,
+        unknown: flags.unknown || retainPrivate,
+        dockerServicesUnverified: flags.dockerServicesUnverified || flags.volumesUnconfirmed || retainPrivate,
+      })
+    ) {
       removals.push({
         kind: 'dir',
         path: dir,
         removed: false,
-        reason: 'owned process still active, unknown, close unconfirmed, leftover volume, or Docker services unverified',
+        reason: 'owned process still active, unknown, close unconfirmed, leftover volume, incomplete registry, or Docker services unverified',
         recovery: `Inspect ${dir} and owned Docker network/containers/volumes before manual removal. Do not prune global Docker state.`,
       })
       continue

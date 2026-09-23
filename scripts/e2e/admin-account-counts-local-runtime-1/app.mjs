@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 // Launch the unchanged Jetnity application on a numeric loopback origin.
-// ON/OFF uses a controlled owned restart and fresh runtime state. No app
-// patch, guard bypass or environment-snapshot trick. Default path waits
-// for bounded readiness and detects early child failure.
+// TL local-harness decision: locked `next dev` with the isolated app
+// environment applied before spawn/compile. No product-activation change.
+// ON/OFF uses a confirmed owned stop, then a replacement. Default path
+// waits for a meaningful non-500 response while the owned child is live.
 
 import { spawn } from 'node:child_process'
-import { existsSync, rmSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
 import { baueRuntimeAppUmgebung, refuseDotenvInCheckout } from './env.mjs'
@@ -13,11 +14,12 @@ import { TIMEOUTS } from './constants.mjs'
 import { notACompletedExecution } from './implementation.mjs'
 import { markStopUnknown, syncAppOwnership } from './ownership.mjs'
 
-export function appListenArgs({ host = '127.0.0.1', port, startScript = 'start' } = {}) {
+export function appListenArgs({ host = '127.0.0.1', port } = {}) {
   if (host !== '127.0.0.1') throw new Error(`App host must be 127.0.0.1, got ${host}`)
   return {
     command: 'npx',
-    args: ['--no-install', 'next', startScript === 'dev' ? 'dev' : 'start', '-H', host, '-p', String(port)],
+    args: ['--no-install', 'next', 'dev', '-H', host, '-p', String(port)],
+    script: 'dev',
     host,
     port,
   }
@@ -25,6 +27,12 @@ export function appListenArgs({ host = '127.0.0.1', port, startScript = 'start' 
 
 export function nextBinaryPath(checkoutDir) {
   return join(checkoutDir, 'node_modules/next/dist/bin/next')
+}
+
+function childIsLive(child, exitCode, signalCode) {
+  return (exitCode == null && signalCode == null)
+    && (child?.exitCode == null)
+    && (child?.signalCode == null)
 }
 
 export async function warteAufAppBereitschaft({
@@ -48,16 +56,33 @@ export async function warteAufAppBereitschaft({
   try {
     while (Date.now() - started < timeoutMs) {
       if (signal?.aborted) throw new Error('app readiness aborted')
-      if (exitCode != null || signalCode != null) {
+      if (!childIsLive(child, exitCode, signalCode)) {
         throw notACompletedExecution(
           'owned app launch',
-          `child exited ${exitCode ?? signalCode} before readiness`,
+          `child exited ${exitCode ?? signalCode ?? child?.exitCode ?? child?.signalCode} before readiness`,
         )
       }
       try {
         const response = await fetchImpl(origin, { signal: AbortSignal.timeout(500) })
-        if (response) return { ready: true, origin, status: response.status ?? null }
-      } catch {
+        const status = response?.status
+        if (status == null) {
+          await new Promise((resolve) => setTimeout(resolve, 50))
+          continue
+        }
+        if (status >= 500) {
+          throw notACompletedExecution(
+            'owned app launch',
+            `application returned server error ${status}; a returned origin is not readiness`,
+          )
+        }
+        if (status >= 200 && status < 400) {
+          if (!childIsLive(child, exitCode, signalCode)) {
+            throw notACompletedExecution('owned app launch', 'child exited after the readiness response')
+          }
+          return { ready: true, origin, status }
+        }
+      } catch (error) {
+        if (error && error.code === 'NOT_COMPLETED_EXECUTION') throw error
         await new Promise((resolve) => setTimeout(resolve, 50))
       }
     }
@@ -116,18 +141,22 @@ export async function prepareAppForLaunch({
   env,
   execFile,
   install = defaultInstallLockedDependencies,
-  build = defaultBuildLocalApp,
+  build,
 } = {}) {
   refuseDotenvInCheckout(checkoutDir)
   const installed = await install({ checkoutDir, env, execFile })
-  const built = await build({ checkoutDir, env, execFile })
   if (!existsSync(nextBinaryPath(checkoutDir))) {
     throw notACompletedExecution('owned app launch', 'locked next binary missing after install')
   }
-  if (!existsSync(join(checkoutDir, '.next'))) {
-    throw notACompletedExecution('owned app launch', 'local build output missing')
+  if (typeof build === 'function') {
+    const built = await build({ checkoutDir, env, execFile })
+    return { installed, built, launchScript: 'dev' }
   }
-  return { installed, built }
+  return {
+    installed,
+    built: { skipped: true, reason: 'next dev compiles from locked dependencies in the isolated app environment' },
+    launchScript: 'dev',
+  }
 }
 
 export async function stoppeOwnedApp(child) {
@@ -158,9 +187,6 @@ export async function starteOwnedApp({
   if (!existsSync(nextBin)) {
     throw notACompletedExecution('owned app launch', 'verified locked next binary is missing')
   }
-  if (!existsSync(join(checkoutDir, '.next'))) {
-    throw notACompletedExecution('owned app launch', 'supported local build output is missing')
-  }
   const env = baueRuntimeAppUmgebung({
     parentEnv,
     privateHome,
@@ -173,7 +199,7 @@ export async function starteOwnedApp({
   const origin = `http://127.0.0.1:${port}`
   const child = spawnFn(process.execPath, [
     nextBin,
-    launch.args[2],
+    launch.script,
     '-H',
     host,
     '-p',
@@ -194,9 +220,12 @@ export async function starteOwnedApp({
     countsEnabled: countsEnabled === true,
     ready: false,
     checkoutDir,
+    launchScript: launch.script,
     envBoundary: {
       LOCAL_FLAG: env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED,
       supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
+      anonKeyPresent: Boolean(env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+      nodeEnv: env.NODE_ENV,
     },
   }
   syncAppOwnership(registry, handle)
@@ -204,13 +233,14 @@ export async function starteOwnedApp({
   if (wait) {
     const readiness = await wait({ child, origin, timeoutMs, signal })
     handle.ready = readiness?.ready === true
+    handle.readinessStatus = readiness?.status ?? null
     if (handle.ready !== true) {
       throw notACompletedExecution('owned app launch', 'bounded readiness was not confirmed')
     }
   } else {
     throw notACompletedExecution('owned app launch', 'default path requires bounded readiness')
   }
-  if (child.exitCode != null || child.signalCode != null) {
+  if (!childIsLive(child, child.exitCode, child.signalCode)) {
     throw notACompletedExecution('owned app launch', `child exited ${child.exitCode ?? child.signalCode} after readiness`)
   }
   return handle
@@ -227,18 +257,6 @@ export async function restartOwnedApp(current, options = {}) {
       })
     }
     if (options.registry) options.registry.appChild = null
-  }
-  if (current?.checkoutDir && options.freshBuild !== false && existsSync(join(current.checkoutDir, '.next'))) {
-    if (options.clearRuntimeState === true) {
-      rmSync(join(current.checkoutDir, '.next'), { recursive: true, force: true })
-      if (options.build !== false) {
-        await (options.buildApp || defaultBuildLocalApp)({
-          checkoutDir: options.checkoutDir || current.checkoutDir,
-          env: options.childEnv || options.env,
-          execFile: options.execFile,
-        })
-      }
-    }
   }
   const next = await starteOwnedApp({
     ...options,

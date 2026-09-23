@@ -23,7 +23,7 @@ export const IMPLEMENTATION = Object.freeze({
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'R1–R5 review corrections are implemented in owned runtime files. Helper/contract/subprocess/loopback-stand-in tests are not full local execution. Missing Docker remains an execution blocker; it was not the only prior defect. Default invocation is no-start. Full acceptance still requires the sibling browser module and a later TL-gated real integrated run.',
+    'Remaining R1–R5 default-wiring corrections from review 5292919754 are in this head. Official CLI identity is archive-byte + sidecar rehash, not injected PASS objects. Isolated next dev uses the app environment before spawn. Docker cleanup uses PRESENT/ABSENT/UNKNOWN. Observer contains foreign redirects and bounds the streamed body. Catalog PASS requires typed ACL/signature/executable body. Helper tests are not full local execution. Default invocation is no-start. Full acceptance still requires the sibling browser module and a later TL-gated real integrated run.',
 })
 
 export function notACompletedExecution(kind, reason) {

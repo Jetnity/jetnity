@@ -31,6 +31,8 @@ import {
   selectSafeExcludes,
   verifyResolvedCli,
   bindCliExecutableIdentity,
+  prepareOfficialCliIdentity,
+  sha256File,
 } from './cli-identity.mjs'
 import {
   assertRuntimeSources,
@@ -45,13 +47,15 @@ import {
   starteOwnedApp,
   restartOwnedApp,
   stoppeOwnedApp,
+  warteAufAppBereitschaft,
+  appListenArgs,
 } from './app.mjs'
 import { baueAcceptanceContext, validateAcceptanceContext } from './context.mjs'
 import { createOwnershipRegistry } from './ownership.mjs'
 import { newBrowserSession, closeBrowserSession, assertLocalBrowserTraffic } from './browser-session.mjs'
-import { resolveUpstreamTarget } from './observer.mjs'
-import { assertInstalledCatalog, installProducerAndWrapper, parseJsonRow } from './schema.mjs'
-import { starteOwnedStack, stoppeOwnedStack } from './stack.mjs'
+import { resolveUpstreamTarget, isRemoteRedirect, readBoundedBody } from './observer.mjs'
+import { assertInstalledCatalog, installProducerAndWrapper, parseJsonRow, acceptedCatalogFixture, requiredCount, executableFunctionBody } from './schema.mjs'
+import { starteOwnedStack, stoppeOwnedStack, inspectDockerResource, RESOURCE_STATE } from './stack.mjs'
 import { bewerteCleanup } from './cleanup.mjs'
 import { assertNoPublicBindPlan, planeLoopbackDienste, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { assertLoopbackBindings, parseDockerPortBindings, baueStartArgumente } from './stack.mjs'
@@ -457,7 +461,7 @@ async function freePort() {
   return port
 }
 
-test('R1 default cold checkout cannot claim a running app without locked deps, build and readiness', async () => {
+test('R1 default cold checkout cannot claim a running app without locked deps and readiness', async () => {
   const empty = mkdtempSync(join(tmpdir(), 'aaclr1-empty-'))
   writeFileSync(join(empty, 'package.json'), '{}')
   await assert.rejects(
@@ -476,27 +480,54 @@ test('R1 default cold checkout cannot claim a running app without locked deps, b
   writeFileSync(join(dest, 'package.json'), '{}')
   writeFileSync(join(dest, 'package-lock.json'), '{}')
   const calls = []
-  await prepareAppForLaunch({
+  const prepared = await prepareAppForLaunch({
     checkoutDir: dest,
-    env: { PATH: '/usr/bin', HOME: dest },
-    execFile: (bin, args) => {
-      calls.push([String(bin), args[0], args[1]])
+    env: {
+      PATH: '/usr/bin',
+      HOME: dest,
+      NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+      JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED: 'true',
+    },
+    execFile: (bin, args, options) => {
+      calls.push({ bin: String(bin), args, env: options?.env })
       if (args[0] === 'ci') {
         mkdirSync(join(dest, 'node_modules/next/dist/bin'), { recursive: true })
         writeFileSync(join(dest, 'node_modules/next/dist/bin/next'), 'ok')
       }
-      if (args.includes('build')) {
-        mkdirSync(join(dest, '.next'), { recursive: true })
-        writeFileSync(join(dest, '.next/BUILD_ID'), 'x')
-      }
       return ''
     },
   })
-  assert.ok(calls.some((item) => item[1] === 'ci'))
-  assert.ok(calls.some((item) => item.includes('build') || item[1] === 'build' || item[2] === 'build'))
-  assert.equal(existsSync(join(dest, '.next')), true)
+  assert.ok(calls.some((item) => item.args[0] === 'ci'))
+  assert.equal(calls.some((item) => item.args.includes('build')), false)
+  assert.equal(prepared.launchScript, 'dev')
+  assert.equal(prepared.built.skipped, true)
+  assert.equal(calls[0].env.NEXT_PUBLIC_SUPABASE_URL, 'http://127.0.0.1:54321')
   rmSync(empty, { recursive: true, force: true })
   rmSync(dest, { recursive: true, force: true })
+})
+
+test('A1/A2 readiness rejects HTTP 500 and an already-exited child; A2-script is next dev', async () => {
+  assert.equal(appListenArgs({ port: 3000 }).script, 'dev')
+  assert.equal(appListenArgs({ port: 3000 }).args[2], 'dev')
+  const live = { exitCode: null, signalCode: null, once() {}, off() {} }
+  await assert.rejects(
+    () => warteAufAppBereitschaft({
+      child: live,
+      origin: 'http://127.0.0.1:3000',
+      timeoutMs: 200,
+      fetchImpl: async () => ({ status: 500 }),
+    }),
+    /server error 500|not a completed/,
+  )
+  await assert.rejects(
+    () => warteAufAppBereitschaft({
+      child: { exitCode: 1, signalCode: null, once() {}, off() {} },
+      origin: 'http://127.0.0.1:3000',
+      timeoutMs: 200,
+      fetchImpl: async () => ({ status: 200 }),
+    }),
+    /child exited 1|not a completed/,
+  )
 })
 
 test('R1 default wiring waits for a live loopback app and returns a contract-conforming §4 context', async () => {
@@ -507,6 +538,7 @@ test('R1 default wiring waits for a live loopback app and returns a contract-con
   const evidenceDir = mkdtempSync(join(home, 'evidence-'))
   const port = await freePort()
   const registry = createOwnershipRegistry({ privateHome: home, evidenceDir })
+  const spawned = []
   const app = await starteOwnedApp({
     checkoutDir: checkout,
     parentEnv: { PATH: process.env.PATH },
@@ -517,11 +549,23 @@ test('R1 default wiring waits for a live loopback app and returns a contract-con
     countsEnabled: true,
     port,
     registry,
+    spawnFn: (cmd, args, options) => {
+      spawned.push({ cmd, args, env: options.env })
+      return spawn(cmd, args, options)
+    },
   })
   assert.equal(app.ready, true)
   assert.match(app.origin, /^http:\/\/127\.0\.0\.1:\d+$/)
   assert.equal(app.countsEnabled, true)
   assert.equal(app.child.exitCode, null)
+  assert.equal(app.launchScript, 'dev')
+  assert.equal(app.envBoundary.LOCAL_FLAG, 'true')
+  assert.equal(app.envBoundary.supabaseUrl, 'http://127.0.0.1:54321')
+  assert.equal(spawned[0].args[1], 'dev')
+  assert.equal(spawned[0].env.NEXT_PUBLIC_SUPABASE_URL, 'http://127.0.0.1:54321')
+  assert.equal(spawned[0].env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'local-anon')
+  assert.equal(spawned[0].env.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED, 'true')
+  assert.equal(spawned[0].env.NODE_ENV, 'development')
   const context = baueAcceptanceContext({
     runId: 'r1-context',
     productHead: PRODUCT_BASELINE,
@@ -633,6 +677,45 @@ test('R2 partial stack failure stays owned; leftover volume and traversal do not
   })
   assert.equal(volumeReport.volumesRemoved, false)
   assert.equal(volumeReport.dockerServicesStopped, false)
+  const daemonDown = Object.assign(new Error('Cannot connect to the Docker daemon'), { code: 'ETIMEDOUT' })
+  const d1 = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: home,
+    state: {
+      network: { name: 'owned-test', created: true },
+      containers: [],
+      volumes: [],
+    },
+    execFile: () => {
+      throw daemonDown
+    },
+  })
+  assert.equal(d1.networkState, RESOURCE_STATE.UNKNOWN)
+  assert.equal(d1.containerState, RESOURCE_STATE.UNKNOWN)
+  assert.equal(d1.volumeState, RESOURCE_STATE.UNKNOWN)
+  assert.equal(d1.networkRemoved, false)
+  assert.equal(d1.volumesRemoved, false)
+  assert.equal(d1.dockerServicesStopped, false)
+  assert.equal(d1.unknown, true)
+  assert.equal(inspectDockerResource({
+    execFile: () => { throw daemonDown },
+    dockerBin: 'docker',
+    args: ['network', 'inspect', 'owned-test'],
+    env: {},
+  }).state, RESOURCE_STATE.UNKNOWN)
+  const d2 = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    state: {
+      network: { name: 'owned-test', created: true },
+      containers: [],
+      volumes: [],
+      inventoryComplete: true,
+    },
+    execFile: () => '{"Name":"owned-test"}',
+  })
+  assert.equal(d2.networkRemoved, false)
+  assert.equal(d2.dockerServicesStopped, false)
   const foreign = mkdtempSync(join(tmpdir(), 'aaclr1-foreign2-'))
   writeFileSync(join(foreign, 'sentinel'), 'keep')
   const withForeign = await raeumeOwnedAuf({
@@ -831,12 +914,24 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
   assert.equal(pathOnly.pinned, false)
   assert.equal(pathOnly.archiveBound, false)
   const official = CLI.archives['linux-x64'].apiDigest.replace('sha256:', '')
+  const missingDigest = bindCliExecutableIdentity({
+    resolved: cliScript,
+    provenance: {
+      archiveVerified: true,
+      archiveSha256: official,
+      extractedBinPath: cliScript,
+    },
+    platformId: 'linux-x64',
+  })
+  assert.equal(missingDigest.archiveBound, false)
+  const binarySha256 = sha256File(cliScript)
   const bound = bindCliExecutableIdentity({
     resolved: cliScript,
     provenance: {
       archiveVerified: true,
       archiveSha256: official,
       extractedBinPath: cliScript,
+      binarySha256,
     },
     platformId: 'linux-x64',
   })
@@ -849,10 +944,60 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
       archiveVerified: true,
       archiveSha256: official,
       extractedBinPath: cliScript,
+      binarySha256,
     },
     platformId: 'linux-x64',
   })
   assert.equal(verified.identityVerified, true)
+  writeFileSync(cliScript, 'mutated-bytes\n')
+  const mutated = bindCliExecutableIdentity({
+    resolved: cliScript,
+    provenance: {
+      archiveVerified: true,
+      archiveSha256: official,
+      extractedBinPath: cliScript,
+      binarySha256,
+    },
+    platformId: 'linux-x64',
+  })
+  assert.equal(mutated.archiveBound, false)
+  const link = join(repo, 'linked-supabase')
+  symlinkSync(cliScript, link)
+  const linked = bindCliExecutableIdentity({
+    resolved: link,
+    provenance: {
+      archiveVerified: true,
+      archiveSha256: official,
+      extractedBinPath: link,
+      binarySha256: sha256File(cliScript),
+    },
+    platformId: 'linux-x64',
+  })
+  assert.equal(linked.archiveBound, false)
+  const toolingDir = join(repo, 'tooling')
+  mkdirSync(join(toolingDir, 'bin'), { recursive: true })
+  const extracted = join(toolingDir, 'bin', 'supabase')
+  writeFileSync(extracted, 'official-extract-placeholder\n')
+  writeFileSync(join(toolingDir, 'provenance.json'), `${JSON.stringify({
+    archiveVerified: true,
+    archiveSha256: official,
+    extractedBinPath: extracted,
+    binarySha256: sha256File(extracted),
+    version: CLI.version,
+    platformId: 'linux-x64',
+  }, null, 2)}\n`)
+  const prepared = prepareOfficialCliIdentity({
+    toolingDir,
+    env: { PATH: repo },
+    execFile: execFakeCli,
+    platformId: 'linux-x64',
+  })
+  assert.equal(prepared.identityVerified, true)
+  const emptyTooling = join(repo, 'empty-tooling')
+  mkdirSync(emptyTooling)
+  const blocked = prepareOfficialCliIdentity({ toolingDir: emptyTooling, platformId: 'linux-x64' })
+  assert.equal(blocked.identityVerified, false)
+  assert.match(blocked.note, /does not download/)
   rmSync(repo, { recursive: true, force: true })
   rmSync(dest, { recursive: true, force: true })
 })
@@ -899,9 +1044,18 @@ test('R4 observer rejects origin escape, uses manual redirects, and incomplete i
     body: '{}',
     redirect: 'manual',
   })
-  assert.equal(redirected.status, 302)
+  assert.equal(redirected.status, 502)
+  assert.equal(redirected.headers.get('location'), null)
+  assert.match(await redirected.text(), /out-of-scope redirect/)
   assert.equal(seen.at(-1).redirect, 'manual')
   assert.equal(seen.at(-1).url.startsWith('http://127.0.0.1:9'), true)
+  assert.equal(isRemoteRedirect('http://outside.invalid/x', 'http://127.0.0.1:9'), true)
+  assert.equal(isRemoteRedirect('http://127.0.0.1:9/next', 'http://127.0.0.1:9'), false)
+  const oversize = await readBoundedBody(
+    { arrayBuffer: async () => new Uint8Array(8) },
+    { maxBytes: 4, deadlineMs: Date.now() + 1000 },
+  ).catch((error) => error)
+  assert.match(String(oversize.message || oversize), /too large/)
   let release
   const hanging = createRpcObserver({
     listenHost: '127.0.0.1',
@@ -921,74 +1075,17 @@ test('R4 observer rejects origin escape, uses manual redirects, and incomplete i
   assert.equal(observer.since(mark).calls.some((item) => JSON.stringify(item).includes('Bearer')), false)
 })
 
-test('R5 catalog verification requires definition, owner, ACL and config; name-only is not PASS', async () => {
-  const sql = leseUnveraenderteSql()
-  assert.throws(
-    () => assertInstalledCatalog({
-      prereq: { server_version: '17.6', auth_schema: 1, migrations_schema: 1 },
-      producer: { proname: 'account_counts_v1' },
-      wrapper: { proname: 'admin_account_counts_v1' },
-    }, sql),
-    /definition is missing|name-only/,
-  )
-  assert.throws(
-    () => assertInstalledCatalog({
-      prereq: { server_version: '17.6', auth_schema: 1, migrations_schema: 1 },
-      producer: {
-        schema: 'jetnity_reporting',
-        proname: 'account_counts_v1',
-        owner: 'anon',
-        security_definer: true,
-        config: ['search_path=pg_catalog', 'TimeZone=UTC'],
-        definition: 'account_counts_v1 darf_konten_verwalten 720 hours',
-        execute_roles: 'authenticated',
-      },
-      wrapper: {
-        schema: 'public',
-        proname: 'admin_account_counts_v1',
-        owner: 'postgres',
-        security_definer: false,
-        config: ['search_path=pg_catalog'],
-        definition: 'admin_account_counts_v1 jetnity_reporting.account_counts_v1',
-        execute_roles: 'authenticated',
-      },
-    }, sql),
-    /owner/,
-  )
-  assert.throws(
-    () => assertInstalledCatalog({
-      prereq: { server_version: '17.6', auth_schema: 1, migrations_schema: 1 },
-      producer: {
-        schema: 'jetnity_reporting',
-        proname: 'account_counts_v1',
-        owner: 'postgres',
-        security_definer: true,
-        config: ['search_path=pg_catalog', 'TimeZone=UTC'],
-        definition: 'account_counts_v1 darf_konten_verwalten 720 hours',
-        execute_roles: 'anon,public',
-      },
-      wrapper: {
-        schema: 'public',
-        proname: 'admin_account_counts_v1',
-        owner: 'postgres',
-        security_definer: false,
-        config: ['search_path=pg_catalog'],
-        definition: 'admin_account_counts_v1 jetnity_reporting.account_counts_v1',
-        execute_roles: 'authenticated',
-      },
-    }, sql),
-    /EXECUTE is granted/,
-  )
-  const ok = assertInstalledCatalog({
-    prereq: { server_version: '17.6', timezone: 'UTC', auth_schema: 1, migrations_schema: 1 },
+test('R5 S1–S7 catalog verification requires typed ACL, signature and executable body', async () => {
+  const markerOnly = {
+    prereq: { server_version: '17.6', auth_schema: 1, migrations_schema: 1 },
     producer: {
       schema: 'jetnity_reporting',
       proname: 'account_counts_v1',
       owner: 'postgres',
       security_definer: true,
       config: ['search_path=pg_catalog', 'TimeZone=UTC'],
-      definition: 'create function account_counts_v1() ... darf_konten_verwalten ... 720 hours',
-      execute_roles: 'authenticated',
+      execute_roles: 'postgres,authenticated',
+      definition: "CREATE FUNCTION account_counts_v1() RETURNS integer LANGUAGE sql AS 'SELECT 1 /* darf_konten_verwalten 720 hours */';",
     },
     wrapper: {
       schema: 'public',
@@ -996,22 +1093,55 @@ test('R5 catalog verification requires definition, owner, ACL and config; name-o
       owner: 'postgres',
       security_definer: false,
       config: ['search_path=pg_catalog'],
-      definition: 'create function admin_account_counts_v1() ... jetnity_reporting.account_counts_v1()',
-      execute_roles: 'authenticated',
+      execute_roles: 'postgres,authenticated',
+      definition: "CREATE FUNCTION admin_account_counts_v1() RETURNS integer LANGUAGE sql AS 'SELECT 1 /* jetnity_reporting.account_counts_v1 */';",
     },
-  }, sql)
-  assert.equal(ok.catalogVerified, true)
+  }
+  assert.match(executableFunctionBody(markerOnly.producer.definition), /^SELECT 1$/i)
+  assert.throws(() => assertInstalledCatalog(markerOnly), /schema-access|typed ACL|signature|executable body|comments are not catalog/)
+  const s2 = acceptedCatalogFixture()
+  s2.producer.acls = [
+    { grantor: 'postgres', grantee: 'authenticated', privilege: 'EXECUTE', is_grantable: false },
+    { grantor: 'postgres', grantee: 'rogue_role', privilege: 'EXECUTE', is_grantable: false },
+  ]
+  assert.throws(() => assertInstalledCatalog(s2), /unexpected rogue_role/)
+  const s3 = acceptedCatalogFixture()
+  s3.producer.acls = []
+  s3.wrapper.acls = []
+  assert.throws(() => assertInstalledCatalog(s3), /required EXECUTE for authenticated/)
+  const s4 = { prereq: { server_version: '17.6' }, producer: markerOnly.producer, wrapper: markerOnly.wrapper }
+  assert.throws(() => requiredCount(s4.prereq.auth_schema, 'auth_schema'), /missing|Number\(undefined\)/)
+  assert.throws(() => assertInstalledCatalog(s4), /auth_schema|missing/)
+  const ok = acceptedCatalogFixture()
+  assert.equal(assertInstalledCatalog(ok).catalogVerified, true)
+  const s5 = structuredClone(ok)
+  s5.producer.owner = 'anon'
+  assert.throws(() => assertInstalledCatalog(s5), /owner/)
+  const s6 = structuredClone(ok)
+  s6.wrapper.definition = ''
+  assert.throws(() => assertInstalledCatalog(s6), /definition is missing|name-only/)
+  const s7 = structuredClone(ok)
+  s7.wrapper.acls = [
+    { grantor: 'postgres', grantee: 'public', privilege: 'EXECUTE', is_grantable: false },
+    { grantor: 'postgres', grantee: 'authenticated', privilege: 'EXECUTE', is_grantable: false },
+  ]
+  assert.throws(() => assertInstalledCatalog(s7), /unexpected public|granted to public/)
   await assert.rejects(
     () => installProducerAndWrapper({
       applySql: async () => {},
-      verify: async () => ({
-        prereq: { server_version: '17.6', auth_schema: 1, migrations_schema: 1 },
-        producer: { proname: 'account_counts_v1' },
-        wrapper: { proname: 'admin_account_counts_v1' },
-      }),
+      verify: async () => markerOnly,
     }),
-    /definition is missing|name-only/,
+    /schema-access|typed ACL|signature|executable body|comments are not catalog/,
   )
+  const verified = await installProducerAndWrapper({
+    applySql: async () => {},
+    verify: async ({ producerSql, wrapperSql, prereqSql }) => {
+      if (!producerSql || !wrapperSql || !prereqSql) throw new Error('verify callback must receive catalog SQL')
+      return acceptedCatalogFixture()
+    },
+  })
+  assert.equal(verified.catalogVerified, true)
+  assert.equal(verified.sourceHashIsNotCatalogPass, true)
   assert.equal(parseJsonRow('{"a":1}').a, 1)
 })
 
@@ -1034,37 +1164,42 @@ test('R1/R3 defaultStartRuntime refuses missing archive-bound CLI and missing pr
   )
 })
 
-test('R2 failure receipt is persisted when setup throws after fallible acquisition', async () => {
+test('R2 failure receipt is persisted after default CLI/docker verification and a fallible start', async () => {
   const evidence = mkdtempSync(join(tmpdir(), 'aaclr1-fail-'))
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-failhome-'))
+  const toolingDir = join(home, 'tooling')
+  mkdirSync(join(toolingDir, 'bin'), { recursive: true, mode: 0o700 })
+  const extracted = join(toolingDir, 'bin', 'supabase')
+  writeFileSync(extracted, 'official-extract-placeholder\n', { mode: 0o700 })
+  const official = CLI.archives[platformKey() === 'linux-arm64' ? 'linux-arm64' : 'linux-x64'].apiDigest.replace('sha256:', '')
+  writeFileSync(join(toolingDir, 'provenance.json'), `${JSON.stringify({
+    archiveVerified: true,
+    archiveSha256: official,
+    extractedBinPath: extracted,
+    binarySha256: sha256File(extracted),
+    version: CLI.version,
+    platformId: platformKey() === 'linux-arm64' ? 'linux-arm64' : 'linux-x64',
+  }, null, 2)}\n`)
   await assert.rejects(
     () => run({
       env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
       argv: ['--runtime-only'],
       evidenceDir: evidence,
+      privateHome: home,
       execFile: (bin, args) => {
         if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
-        throw new Error(`unexpected ${bin}`)
+        const joined = (args || []).join(' ')
+        if (joined.includes('--version') && String(bin).includes('supabase')) return '2.117.0\n'
+        if (joined.includes('start') && String(bin).includes('supabase')) return 'Start containers for Supabase local development\n'
+        if (String(bin).includes('supabase')) return 'supabase start\nsupabase stop\nsupabase status\n'
+        if (String(bin).includes('docker') || bin === '/bin/docker') {
+          if (joined.includes('--version')) return 'Docker version 27.0.0\n'
+          if (args[0] === 'info') return 'Server Version: 27.0.0\n'
+          if (args[0] === 'context') return 'default\n'
+        }
+        throw new Error(`unexpected ${bin} ${joined}`)
       },
-      resolve: () => null,
-      dockerResult: {
-        usable: true,
-        present: true,
-        selected: { path: '/bin/true' },
-        sockets: [],
-        commands: [],
-        note: 'test double',
-        installAttempted: false,
-      },
-      cliResult: {
-        identityVerified: true,
-        archiveBound: true,
-        resolved: '/bin/true',
-        version: '2.117.0',
-        helpVerified: true,
-        startHelpVerified: true,
-        excludeNames: [],
-        note: 'test double',
-      },
+      resolve: (name) => (name === 'docker' ? '/bin/docker' : null),
       startRuntime: async ({ owned }) => {
         owned.registry.hadFallibleAcquisition = true
         owned.network = { name: 'aaclr1-partial', created: true, option: 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1' }
@@ -1078,6 +1213,34 @@ test('R2 failure receipt is persisted when setup throws after fallible acquisiti
   assert.equal(names.length, 1)
   const payload = JSON.parse(readFileSync(join(evidence, names[0]), 'utf8'))
   assert.match(payload.error, /partial stack failed/)
+  rmSync(evidence, { recursive: true, force: true })
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('default run ignores injected cliResult/dockerResult and stays on the official-byte path', async () => {
+  const evidence = mkdtempSync(join(tmpdir(), 'aaclr1-inject-'))
+  const result = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: [],
+    evidenceDir: evidence,
+    execFile: (bin, args) => {
+      if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+      throw new Error(`unexpected ${bin} ${args}`)
+    },
+    resolve: () => null,
+    cliResult: {
+      identityVerified: true,
+      archiveBound: true,
+      resolved: '/bin/true',
+      version: '2.117.0',
+      helpVerified: true,
+      startHelpVerified: true,
+    },
+    dockerResult: { usable: true, present: true, selected: { path: '/bin/true' } },
+  })
+  assert.equal(result.cli.identityVerified, false)
+  assert.equal(result.cli.archiveBound, false)
+  assert.notEqual(result.verdict, 'LOCAL_FULL_STACK_PASS')
   rmSync(evidence, { recursive: true, force: true })
 })
 

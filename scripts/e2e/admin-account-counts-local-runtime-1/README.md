@@ -43,7 +43,9 @@ are present, `--runtime-only` / `--full` can:
    `612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de` /
    `13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb`.
 6. Provision synthetic actors through the local GoTrue Admin API.
-7. Launch unchanged Jetnity ON/OFF on the same numeric loopback origin.
+7. Launch unchanged Jetnity ON/OFF via locked `next dev` with the isolated
+   app environment applied before spawn/compile. Readiness requires a
+   meaningful non-500 response while the owned child is still live.
 8. Observe the actual app-to-Supabase HTTP boundary with a transparent
    forwarding proxy. Page request events are not used as server-side proof.
 

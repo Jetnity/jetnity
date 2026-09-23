@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Official Supabase CLI v2.117.0 identity. PATH presence is not a pin.
-// Acquisition, if requested, is one hash-checked official archive into
-// run-owned tooling. Never apt, curl-pipe-shell, unpinned npx, or a silent
-// version switch.
+// The only verified path is: official archive bytes → extract → hash the
+// exact selected file → then version/help. Version/help never precedes
+// provenance. Default no-start does not download.
 
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { arch, platform } from 'node:os'
 import { join, resolve } from 'node:path'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
@@ -84,6 +84,18 @@ export function officialArchiveDigest(platformId) {
   return expected ? digestHex(expected.apiDigest) : null
 }
 
+export function sha256File(path) {
+  return createHash('sha256').update(readFileSync(path)).digest('hex')
+}
+
+export function assertRegularOwnedFile(path) {
+  if (!path || !existsSync(path)) throw new Error(`CLI executable missing: ${path || '(empty)'}`)
+  const stat = lstatSync(path)
+  if (stat.isSymbolicLink()) throw new Error(`CLI executable is a symlink and is refused: ${path}`)
+  if (!stat.isFile()) throw new Error(`CLI executable is not a regular file: ${path}`)
+  return true
+}
+
 export function bindCliExecutableIdentity({
   resolved,
   provenance,
@@ -91,16 +103,25 @@ export function bindCliExecutableIdentity({
 } = {}) {
   const official = officialArchiveDigest(platformId)
   if (!resolved) {
+    return { archiveBound: false, pinned: false, reason: 'No executable selected.', binarySha256: null }
+  }
+  let binarySha256 = null
+  try {
+    assertRegularOwnedFile(resolved)
+    binarySha256 = sha256File(resolved)
+  } catch (error) {
     return {
       archiveBound: false,
       pinned: false,
-      reason: 'No executable selected.',
+      binarySha256: null,
+      reason: error instanceof Error ? error.message : String(error),
     }
   }
   if (!provenance?.archiveVerified || !provenance.archiveSha256 || !provenance.extractedBinPath) {
     return {
       archiveBound: false,
       pinned: false,
+      binarySha256,
       reason: 'PATH version/help is not official archive/checksum provenance.',
     }
   }
@@ -108,6 +129,7 @@ export function bindCliExecutableIdentity({
     return {
       archiveBound: false,
       pinned: false,
+      binarySha256,
       reason: `archive sha256 ${provenance.archiveSha256 || 'missing'} != official ${official}`,
     }
   }
@@ -115,17 +137,33 @@ export function bindCliExecutableIdentity({
     return {
       archiveBound: false,
       pinned: false,
+      binarySha256,
       reason: 'selected executable is not the owned extracted official binary',
     }
   }
-  if (provenance.binarySha256 && provenance.expectedBinarySha256 && provenance.binarySha256 !== provenance.expectedBinarySha256) {
+  if (!provenance.binarySha256) {
     return {
       archiveBound: false,
       pinned: false,
-      reason: 'extracted binary digest does not match the verified archive member',
+      binarySha256,
+      reason: 'provenance is missing the extracted binary digest; refuse optional digest absence',
     }
   }
-  return { archiveBound: true, pinned: true, reason: null, archiveSha256: digestHex(provenance.archiveSha256) }
+  if (binarySha256 !== provenance.binarySha256) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      binarySha256,
+      reason: 'selected file digest does not match recorded official extract; file mutated or substituted',
+    }
+  }
+  return {
+    archiveBound: true,
+    pinned: true,
+    reason: null,
+    archiveSha256: digestHex(provenance.archiveSha256),
+    binarySha256,
+  }
 }
 
 export function verifyResolvedCli({
@@ -145,6 +183,21 @@ export function verifyResolvedCli({
       helpVerified: false,
       startHelpVerified: false,
       note: 'No supabase executable on the isolated PATH or in run-owned tooling.',
+    }
+  }
+  const bound = bindCliExecutableIdentity({ resolved, provenance, platformId })
+  if (!bound.archiveBound) {
+    return {
+      available: false,
+      identityVerified: false,
+      pinned: false,
+      archiveBound: false,
+      resolved,
+      version: null,
+      helpVerified: false,
+      startHelpVerified: false,
+      binarySha256: bound.binarySha256,
+      note: `${bound.reason} Version/help was not consulted before official-byte binding.`,
     }
   }
   const version = tryExec(execFile, resolved, ['--version'], env)
@@ -177,9 +230,7 @@ export function verifyResolvedCli({
   } catch {
     startHelpOk = false
   }
-  const textOk = versionOk && helpOk && startHelpOk
-  const bound = bindCliExecutableIdentity({ resolved, provenance, platformId })
-  const identityVerified = textOk && bound.archiveBound === true
+  const identityVerified = versionOk && helpOk && startHelpOk && bound.archiveBound === true
   return {
     available: identityVerified,
     identityVerified,
@@ -191,12 +242,13 @@ export function verifyResolvedCli({
     startHelpVerified: startHelpOk,
     startHelpTextPresent: Boolean(startHelp.full),
     excludeNames: listExcludeNames(startHelp.full || ''),
-    provenance: bound.archiveBound ? { archiveSha256: bound.archiveSha256, extractedBinPath: provenance.extractedBinPath } : null,
+    provenance: identityVerified
+      ? { archiveSha256: bound.archiveSha256, extractedBinPath: provenance.extractedBinPath, binarySha256: bound.binarySha256 }
+      : null,
+    binarySha256: bound.binarySha256,
     note: identityVerified
-      ? `Selected executable is the owned extract of official ${CLI.version} archive ${bound.archiveSha256} and matched version/help.`
-      : bound.archiveBound
-        ? `Official archive is bound but observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`
-        : `${bound.reason} Observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`,
+      ? `Selected executable ${bound.binarySha256} is the owned extract of official ${CLI.version} archive ${bound.archiveSha256} and matched version/help.`
+      : `Official archive is bound but observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`,
   }
 }
 
@@ -221,6 +273,26 @@ export function selectSafeExcludes(availableNames) {
   return preferred.filter((name) => available.size === 0 || available.has(name))
 }
 
+export function provenancePath(toolingDir) {
+  return join(toolingDir, 'provenance.json')
+}
+
+export function writeCliProvenance(toolingDir, provenance) {
+  mkdirSync(toolingDir, { recursive: true, mode: 0o700 })
+  writeFileSync(provenancePath(toolingDir), `${JSON.stringify(provenance, null, 2)}\n`, { mode: 0o600 })
+  return provenancePath(toolingDir)
+}
+
+export function loadCliProvenance(toolingDir) {
+  const path = provenancePath(toolingDir)
+  if (!existsSync(path)) return null
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
 export async function acquireOfficialCli({
   toolingDir,
   checksumsText,
@@ -233,6 +305,7 @@ export async function acquireOfficialCli({
   if (!platformId || !CLI.archives[platformId]) {
     throw new Error(`CLI ${CLI.version} has no official archive for this platform.`)
   }
+  if (!archiveBytes) throw new Error('Official archive bytes are required; PATH text is not provenance.')
   const identity = assertOfficialArchiveIdentity({
     platformId,
     checksumsText,
@@ -253,9 +326,10 @@ export async function acquireOfficialCli({
     mkdirSync(binDir, { recursive: true, mode: 0o700 })
     execFile('tar', ['-xzf', archivePath, '-C', binDir], { encoding: 'utf8' })
     extractedBinPath = markExtractedBinary(join(binDir, 'supabase'))
+    assertRegularOwnedFile(extractedBinPath)
     binarySha256 = sha256File(extractedBinPath)
   }
-  return {
+  const provenance = {
     ...identity,
     archivePath,
     platformId,
@@ -264,6 +338,15 @@ export async function acquireOfficialCli({
     archiveVerified: true,
     archiveSha256: actual,
   }
+  writeCliProvenance(toolingDir, {
+    archiveSha256: actual,
+    extractedBinPath,
+    binarySha256,
+    archiveVerified: true,
+    version: CLI.version,
+    platformId,
+  })
+  return provenance
 }
 
 export function markExtractedBinary(binPath) {
@@ -277,6 +360,45 @@ export function resolveCliCandidate({ env, toolingBin, resolve = findeAusfuehrba
   return resolve('supabase', env)
 }
 
-export function sha256File(path) {
-  return createHash('sha256').update(readFileSync(path)).digest('hex')
+export function defaultReadOfficialArtifacts() {
+  return null
+}
+
+export function prepareOfficialCliIdentity({
+  toolingDir,
+  env,
+  execFile = execFileSync,
+  platformId = platformKey(),
+  readOfficialArtifacts = defaultReadOfficialArtifacts,
+} = {}) {
+  if (!toolingDir) {
+    return {
+      available: false,
+      identityVerified: false,
+      pinned: false,
+      archiveBound: false,
+      note: 'Run-owned tooling directory is required for official CLI provenance.',
+    }
+  }
+  const existing = loadCliProvenance(toolingDir)
+  if (existing?.extractedBinPath) {
+    return verifyResolvedCli({
+      resolved: existing.extractedBinPath,
+      provenance: existing,
+      env,
+      execFile,
+      platformId,
+    })
+  }
+  const artifacts = typeof readOfficialArtifacts === 'function' ? readOfficialArtifacts({ toolingDir, platformId }) : null
+  if (!artifacts?.archiveBytes) {
+    return {
+      available: false,
+      identityVerified: false,
+      pinned: false,
+      archiveBound: false,
+      note: `Official ${CLI.version} archive bytes are not present in run-owned tooling. Default no-start does not download or execute an official binary.`,
+    }
+  }
+  throw new Error('Official archive acquisition is implemented but not executed in this correction. Supply already-prepared provenance or authorize a later bounded download.')
 }

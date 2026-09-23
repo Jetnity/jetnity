@@ -3,7 +3,7 @@
 // --runtime-only may validate setup and cannot report full acceptance.
 // --full must load the sibling browser module; absence is NOT_IMPLEMENTED.
 
-import { mkdtempSync } from 'node:fs'
+import { mkdirSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
@@ -24,7 +24,7 @@ import {
 import { IMPLEMENTATION } from './implementation.mjs'
 import { baueDockerCliUmgebung, baueRuntimePreflightUmgebung, klassifiziereRuntimeUmgebung } from './env.mjs'
 import { pruefeDockerFaehigkeit } from './docker-capability.mjs'
-import { resolveCliCandidate, verifyResolvedCli, platformKey } from './cli-identity.mjs'
+import { prepareOfficialCliIdentity, defaultReadOfficialArtifacts, platformKey } from './cli-identity.mjs'
 import { assertRuntimeSources, leseRuntimeSourceManifest, assertCleanProductHead } from './source.mjs'
 import { planeLoopbackDienste, bereiteOwnedWorkdir, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { plannedSql } from './schema.mjs'
@@ -55,15 +55,17 @@ export async function run({
   resolve = findeAusfuehrbare,
   importer,
   startRuntime = defaultStartRuntime,
-  dockerResult,
-  cliResult,
+  privateHome: providedHome,
+  readOfficialArtifacts = defaultReadOfficialArtifacts,
 } = {}) {
   const mode = parseMode(argv)
   const runId = nowId(now)
   const abort = new AbortController()
   const timer = setTimeout(() => abort.abort(), TIMEOUTS.runtimeBudgetMs)
   const matrix = leereMatrix('NOT RUN')
-  const privateHome = mkdtempSync(join(tmpdir(), `${RUN_LABEL_PREFIX}-home-`))
+  const privateHome = providedHome || mkdtempSync(join(tmpdir(), `${RUN_LABEL_PREFIX}-home-`))
+  const toolingDir = join(privateHome, 'tooling')
+  mkdirSync(toolingDir, { recursive: true, mode: 0o700 })
   const privateEvidence = mkdtempSync(join(privateHome, 'evidence-'))
   const registry = createOwnershipRegistry({
     runId,
@@ -74,6 +76,7 @@ export async function run({
   registry.execFile = execFile
   const owned = {
     privateHome,
+    toolingDir,
     evidenceDir: privateEvidence,
     preflightOwned: { privateHome, homeCreated: true },
     browserRegistry: registry.browserRegistry,
@@ -89,9 +92,13 @@ export async function run({
     const childEnv = baueRuntimePreflightUmgebung({ parentEnv: env, privateHome })
     owned.childEnv = childEnv
     const dockerEnv = baueDockerCliUmgebung({ parentEnv: env, privateHome })
-    const docker = dockerResult || pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve })
-    const cliResolved = resolveCliCandidate({ env: childEnv, resolve })
-    const cli = cliResult || verifyResolvedCli({ resolved: cliResolved, env: childEnv, execFile })
+    const docker = pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve })
+    const cli = prepareOfficialCliIdentity({
+      toolingDir,
+      env: childEnv,
+      execFile,
+      readOfficialArtifacts,
+    })
     const platform = platformKey()
     const source = leseRuntimeSourceManifest()
     try {
@@ -247,10 +254,12 @@ export async function run({
       cli: {
         selected: '2.117.0',
         identityVerified: cli.identityVerified,
+        archiveBound: cli.archiveBound === true,
         version: cli.version,
         helpVerified: cli.helpVerified,
         startHelpVerified: cli.startHelpVerified,
         resolved: cli.resolved || null,
+        binarySha256: cli.binarySha256 || null,
         note: cli.note,
       },
       environment: {

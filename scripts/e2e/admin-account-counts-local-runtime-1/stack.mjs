@@ -3,6 +3,8 @@
 // before any listener starts. CLI child exit is not Docker teardown.
 // Partial network/child/container/volume handles are recorded on the
 // live ownership registry before fallible work continues.
+// Resource queries return PRESENT / ABSENT / UNKNOWN. Daemon, permission,
+// timeout and parse failures are UNKNOWN, never absence.
 
 import { spawn } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
@@ -17,6 +19,12 @@ import { notACompletedExecution } from './implementation.mjs'
 import { recordDockerResources, registerHandle } from './ownership.mjs'
 
 const FORBIDDEN_HOSTS = new Set(['0.0.0.0', '::', '[::]', '', '*'])
+
+export const RESOURCE_STATE = Object.freeze({
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  UNKNOWN: 'UNKNOWN',
+})
 
 export function assertLoopbackBindings(bindings = []) {
   if (!bindings.length) throw new Error('No published bindings to verify.')
@@ -127,6 +135,41 @@ export function baueStartArgumente({ networkId, excludeNames = [] } = {}) {
   return args
 }
 
+export function classifyDockerInspectError(error) {
+  const message = error instanceof Error ? error.message : String(error)
+  const code = error?.code
+  if (/No such (object|network|container|volume)|not found|does not exist/i.test(message)) {
+    return RESOURCE_STATE.ABSENT
+  }
+  if (
+    /Cannot connect|daemon|permission denied|timeout|ETIMEDOUT|ECONNREFUSED|EACCES|EPERM|ENOTFOUND|EHOSTUNREACH/i.test(message)
+    || ['ETIMEDOUT', 'ECONNREFUSED', 'EACCES', 'EPERM', 'ENOTFOUND'].includes(code)
+  ) {
+    return RESOURCE_STATE.UNKNOWN
+  }
+  if (/Unexpected token|JSON|parse/i.test(message)) return RESOURCE_STATE.UNKNOWN
+  return RESOURCE_STATE.UNKNOWN
+}
+
+export function inspectDockerResource({
+  execFile,
+  dockerBin,
+  args,
+  env,
+} = {}) {
+  try {
+    const out = execFile(dockerBin, args, { encoding: 'utf8', env, timeout: 10_000 })
+    const text = String(out ?? '').trim()
+    if (!text) return { state: RESOURCE_STATE.UNKNOWN, reason: 'empty inspect output' }
+    return { state: RESOURCE_STATE.PRESENT, raw: text }
+  } catch (error) {
+    return {
+      state: classifyDockerInspectError(error),
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
 export function collectOwnedDockerResources({
   dockerBin,
   networkName,
@@ -148,7 +191,10 @@ export function collectOwnedDockerResources({
     const docs = JSON.parse(raw)
     for (const doc of docs) {
       const labels = doc.Config?.Labels || {}
-      const ownedByRun = !runId || labels[RUN_LABEL] === runId || doc.HostConfig?.NetworkMode === networkName || Object.keys(doc.NetworkSettings?.Networks || {}).includes(networkName)
+      const ownedByRun = !runId
+        || labels[RUN_LABEL] === runId
+        || doc.HostConfig?.NetworkMode === networkName
+        || Object.keys(doc.NetworkSettings?.Networks || {}).includes(networkName)
       if (!ownedByRun) continue
       containers.push({
         id: doc.Id || id,
@@ -156,14 +202,73 @@ export function collectOwnedDockerResources({
         labels,
       })
       for (const mount of doc.Mounts || []) {
-        if (mount.Type === 'volume' && mount.Name) {
-          volumes.push({ name: mount.Name, containerId: doc.Id || id })
+        if (mount.Type === 'volume' && mount.Name && (labels[RUN_LABEL] === runId || !runId)) {
+          volumes.push({ name: mount.Name, containerId: doc.Id || id, owned: true })
         }
       }
       bindings.push(...parseDockerPortBindings(doc))
     }
   }
-  return { containers, volumes, bindings }
+  return { containers, volumes, bindings, inventoryComplete: true, discoveryState: RESOURCE_STATE.PRESENT }
+}
+
+export function discoverOwnedResources({
+  dockerBin,
+  networkName,
+  env,
+  execFile,
+  runId,
+  recordedContainers = [],
+  recordedVolumes = [],
+} = {}) {
+  if (!dockerBin || !execFile) {
+    return {
+      containers: recordedContainers,
+      volumes: recordedVolumes,
+      bindings: [],
+      inventoryComplete: false,
+      discoveryState: RESOURCE_STATE.UNKNOWN,
+      unknown: true,
+      reason: 'docker binary or execFile missing',
+    }
+  }
+  try {
+    const live = networkName
+      ? collectOwnedDockerResources({ dockerBin, networkName, env, execFile, runId })
+      : { containers: [], volumes: [], bindings: [], inventoryComplete: true, discoveryState: RESOURCE_STATE.ABSENT }
+    const containers = mergeNamed(recordedContainers, live.containers, (item) => item.id || item.Id)
+    const volumes = mergeNamed(recordedVolumes, live.volumes, (item) => item.name || item.Name)
+    return {
+      ...live,
+      containers,
+      volumes,
+      inventoryComplete: live.inventoryComplete === true,
+      discoveryState: live.discoveryState || RESOURCE_STATE.PRESENT,
+      unknown: false,
+    }
+  } catch (error) {
+    return {
+      containers: recordedContainers,
+      volumes: recordedVolumes,
+      bindings: [],
+      inventoryComplete: false,
+      discoveryState: RESOURCE_STATE.UNKNOWN,
+      unknown: true,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+function mergeNamed(recorded, live, keyOf) {
+  const out = []
+  const seen = new Set()
+  for (const item of [...recorded, ...live]) {
+    const key = keyOf(item) || item
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    out.push(typeof item === 'object' ? item : { id: item, name: item })
+  }
+  return out
 }
 
 export async function starteOwnedStack({
@@ -191,7 +296,15 @@ export async function starteOwnedStack({
   }
   assertNoPublicBindPlan(plan)
   refuseBootstrapOverlay({ plannedSqlPaths: [SOURCE_PATHS.producer, SOURCE_PATHS.wrapper], target: 'gotrue' })
-  const started = { child: null, network: { name: networkName, created: false }, workdir, dockerServicesConfirmed: false, containers: [], volumes: [] }
+  const started = {
+    child: null,
+    network: { name: networkName, created: false },
+    workdir,
+    dockerServicesConfirmed: false,
+    containers: [],
+    volumes: [],
+    inventoryComplete: false,
+  }
   registerHandle(registry, 'stack', started)
   try {
     const network = await erzeugeOwnedNetwork({ dockerBin, env, networkName, execFile, runId })
@@ -214,13 +327,14 @@ export async function starteOwnedStack({
       throw notACompletedExecution('owned supabase start', wait.error || `CLI exited ${wait.exitCode}`)
     }
     const resources = inspectBindings
-      ? { bindings: await inspectBindings({ dockerBin, env, networkName: network.name, execFile }), containers: [], volumes: [] }
+      ? { bindings: await inspectBindings({ dockerBin, env, networkName: network.name, execFile }), containers: [], volumes: [], inventoryComplete: false }
       : collectOwnedDockerResources({ dockerBin, networkName: network.name, env, execFile, runId })
     assertLoopbackBindings(resources.bindings)
     started.dockerServicesConfirmed = true
     started.bindings = resources.bindings
     started.containers = resources.containers || []
     started.volumes = resources.volumes || []
+    started.inventoryComplete = resources.inventoryComplete === true
     recordDockerResources(registry, started)
     registerHandle(registry, 'stack', started)
     return started
@@ -229,6 +343,14 @@ export async function starteOwnedStack({
     registerHandle(registry, 'stack', started)
     throw Object.assign(error instanceof Error ? error : new Error(String(error)), { ownedPartial: started })
   }
+}
+
+function allAbsent(states) {
+  return states.length > 0 && states.every((state) => state === RESOURCE_STATE.ABSENT)
+}
+
+function anyUnknown(states) {
+  return states.some((state) => state === RESOURCE_STATE.UNKNOWN)
 }
 
 export async function stoppeOwnedStack({
@@ -247,17 +369,42 @@ export async function stoppeOwnedStack({
     volumesRemoved: false,
     usedGlobalPrune: false,
     usedDefaultProjectStop: false,
+    networkState: null,
+    containerState: null,
+    volumeState: null,
+    discoveryState: null,
+    unknown: false,
+    inventoryComplete: state?.inventoryComplete === true,
   }
   if (state?.child) {
     report.cliChild = await stoppeOwnedChild(state.child)
   }
   if (!dockerBin || !execFile) {
     report.dockerServicesUnverified = Boolean(state?.network?.name || state?.containers?.length || state?.volumes?.length)
+    report.unknown = Boolean(state?.network?.name || state?.containers?.length || state?.volumes?.length)
+    report.networkState = state?.network?.name ? RESOURCE_STATE.UNKNOWN : RESOURCE_STATE.ABSENT
+    report.containerState = RESOURCE_STATE.UNKNOWN
+    report.volumeState = RESOURCE_STATE.UNKNOWN
     return report
   }
 
-  const recordedContainers = (state?.containers || []).map((item) => item.id || item.Id || item).filter(Boolean)
-  const recordedVolumes = (state?.volumes || []).map((item) => item.name || item.Name || item).filter(Boolean)
+  const recordedContainers = (state?.containers || []).map((item) => (
+    typeof item === 'object' ? item : { id: item }
+  ))
+  const recordedVolumes = (state?.volumes || []).map((item) => (
+    typeof item === 'object' ? item : { name: item }
+  ))
+  const discovered = discoverOwnedResources({
+    dockerBin,
+    networkName: state?.network?.name,
+    env,
+    execFile,
+    runId: state?.network?.runId || state?.runId,
+    recordedContainers,
+    recordedVolumes,
+  })
+  report.discoveryState = discovered.discoveryState
+  if (discovered.unknown) report.unknown = true
 
   try {
     if (cliBin && workdir) {
@@ -267,33 +414,85 @@ export async function stoppeOwnedStack({
     report.cliStopError = error instanceof Error ? error.message : String(error)
   }
 
-  const ids = recordedContainers.length
-    ? recordedContainers
-    : []
-  report.containers = ids
-  for (const id of ids) {
+  const containerIds = discovered.containers.map((item) => item.id || item.Id).filter(Boolean)
+  report.containers = containerIds
+  const containerStates = []
+  for (const id of containerIds) {
     try {
       execFile(dockerBin, ['stop', id], { encoding: 'utf8', env, timeout: 20_000 })
       execFile(dockerBin, ['rm', id], { encoding: 'utf8', env, timeout: 20_000 })
     } catch (error) {
       report.containerError = error instanceof Error ? error.message : String(error)
     }
+    const inspected = inspectDockerResource({
+      execFile,
+      dockerBin,
+      args: ['inspect', id],
+      env,
+    })
+    containerStates.push(inspected.state)
   }
-  const leftoverContainers = ids.filter((id) => resourceExists(execFile, dockerBin, ['inspect', id], env))
-  report.containersRemoved = leftoverContainers.length === 0
+  if (discovered.unknown && containerIds.length === 0) {
+    report.containerState = RESOURCE_STATE.UNKNOWN
+    report.containersRemoved = false
+  } else if (containerIds.length === 0 && state?.inventoryComplete === true && !discovered.unknown) {
+    report.containerState = RESOURCE_STATE.ABSENT
+    report.containersRemoved = true
+  } else if (containerIds.length === 0) {
+    report.containerState = RESOURCE_STATE.UNKNOWN
+    report.containersRemoved = false
+    report.unknown = true
+  } else if (anyUnknown(containerStates)) {
+    report.containerState = RESOURCE_STATE.UNKNOWN
+    report.containersRemoved = false
+    report.unknown = true
+  } else if (allAbsent(containerStates)) {
+    report.containerState = RESOURCE_STATE.ABSENT
+    report.containersRemoved = true
+  } else {
+    report.containerState = RESOURCE_STATE.PRESENT
+    report.containersRemoved = false
+  }
 
-  let volumeError = null
-  for (const name of recordedVolumes) {
+  const volumeNames = discovered.volumes.map((item) => item.name || item.Name).filter(Boolean)
+  const volumeStates = []
+  for (const name of volumeNames) {
     try {
       execFile(dockerBin, ['volume', 'rm', '-f', name], { encoding: 'utf8', env, timeout: 20_000 })
     } catch (error) {
-      volumeError = error instanceof Error ? error.message : String(error)
-      report.volumeError = volumeError
+      report.volumeError = error instanceof Error ? error.message : String(error)
     }
+    const inspected = inspectDockerResource({
+      execFile,
+      dockerBin,
+      args: ['volume', 'inspect', name],
+      env,
+    })
+    volumeStates.push(inspected.state)
   }
-  const leftoverVolumes = recordedVolumes.filter((name) => resourceExists(execFile, dockerBin, ['volume', 'inspect', name], env))
-  report.volumes = recordedVolumes
-  report.volumesRemoved = leftoverVolumes.length === 0 && !volumeError
+  report.volumes = volumeNames
+  if (discovered.unknown && volumeNames.length === 0) {
+    report.volumeState = RESOURCE_STATE.UNKNOWN
+    report.volumesRemoved = false
+    report.unknown = true
+  } else if (volumeNames.length === 0 && state?.inventoryComplete === true && !discovered.unknown) {
+    report.volumeState = RESOURCE_STATE.ABSENT
+    report.volumesRemoved = true
+  } else if (volumeNames.length === 0) {
+    report.volumeState = RESOURCE_STATE.UNKNOWN
+    report.volumesRemoved = false
+    report.unknown = true
+  } else if (anyUnknown(volumeStates)) {
+    report.volumeState = RESOURCE_STATE.UNKNOWN
+    report.volumesRemoved = false
+    report.unknown = true
+  } else if (allAbsent(volumeStates)) {
+    report.volumeState = RESOURCE_STATE.ABSENT
+    report.volumesRemoved = true
+  } else {
+    report.volumeState = RESOURCE_STATE.PRESENT
+    report.volumesRemoved = false
+  }
 
   if (state?.network?.name) {
     if (state.network.created === true || state.network.id) {
@@ -302,25 +501,27 @@ export async function stoppeOwnedStack({
       } catch (error) {
         report.networkError = error instanceof Error ? error.message : String(error)
       }
-      report.networkRemoved = !resourceExists(execFile, dockerBin, ['network', 'inspect', state.network.name], env)
-    } else {
-      report.networkRemoved = !resourceExists(execFile, dockerBin, ['network', 'inspect', state.network.name], env)
     }
+    const inspected = inspectDockerResource({
+      execFile,
+      dockerBin,
+      args: ['network', 'inspect', state.network.name],
+      env,
+    })
+    report.networkState = inspected.state
+    report.networkRemoved = inspected.state === RESOURCE_STATE.ABSENT
+    if (inspected.state === RESOURCE_STATE.UNKNOWN) report.unknown = true
   } else {
+    report.networkState = RESOURCE_STATE.ABSENT
     report.networkRemoved = true
   }
 
-  report.dockerServicesStopped = report.containersRemoved && report.volumesRemoved && report.networkRemoved && !report.containerError
+  report.dockerServicesStopped = report.containersRemoved === true
+    && report.volumesRemoved === true
+    && report.networkRemoved === true
+    && report.unknown !== true
+    && !report.containerError
   return report
-}
-
-function resourceExists(execFile, dockerBin, args, env) {
-  try {
-    execFile(dockerBin, args, { encoding: 'utf8', env, timeout: 10_000 })
-    return true
-  } catch {
-    return false
-  }
 }
 
 export function leseOverlayConfig(configPath) {
