@@ -51,7 +51,9 @@ export function zusammenfassung(matrix) {
   for (const gate of Object.values(matrix)) {
     counts[gate.result] = (counts[gate.result] || 0) + 1
   }
-  const applicationIds = GATE_IDS.filter((id) => id !== 'G0_preflight' && id !== 'G1_source_pins')
+  const applicationIds = GATE_IDS.filter(
+    (id) => id !== 'G0_preflight' && id !== 'G1_source_pins' && id !== 'G20_owned_cleanup',
+  )
   const applicationRan = applicationIds.some((id) => ['PASS', 'FAIL', 'PARTIAL'].includes(matrix[id].result))
   return {
     counts,

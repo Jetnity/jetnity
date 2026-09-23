@@ -81,10 +81,12 @@ test('gate matrix does not treat preflight BLOCKED as a full-stack PASS', () => 
   const matrix = leereMatrix('NOT RUN')
   setzeGate(matrix, 'G0_preflight', { result: 'BLOCKED' })
   setzeGate(matrix, 'G1_source_pins', { result: 'PASS' })
+  setzeGate(matrix, 'G20_owned_cleanup', { result: 'PASS' })
   const summary = zusammenfassung(matrix)
   assert.equal(summary.fullLocalExecution, false)
   assert.equal(summary.preflightBlocked, true)
-  assert.equal(summary.counts['NOT RUN'], GATE_IDS.length - 2)
+  assert.equal(summary.applicationRan, false)
+  assert.equal(summary.counts['NOT RUN'], GATE_IDS.length - 3)
 })
 
 test('fixture plan is not the old HTTP 10/0 proof', () => {
