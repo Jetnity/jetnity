@@ -1,0 +1,43 @@
+{
+  "agent": "Jetnity admin account counts rollout preparation 1",
+  "generation": 1,
+  "localOnly": true,
+  "engine": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit",
+  "pins": {
+    "candidate": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
+    "bootstrap": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
+    "wrapper": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb",
+    "contractBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+    "parserBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d"
+  },
+  "counts": {
+    "passed": 136,
+    "total": 136
+  },
+  "categories": {
+    "source-pin": 8,
+    "unexpected-object": 9,
+    "fault-closed": 2,
+    "install-repeat": 6,
+    "authorization": 11,
+    "owner-acl": 1,
+    "adversarial-drift": 70,
+    "rollback": 3,
+    "reinstall-revoke": 13,
+    "staged-unexposed": 12,
+    "cleanup-node": 1
+  },
+  "failures": [],
+  "cleanup": {
+    "cleaned": true,
+    "removed": true,
+    "running": false
+  },
+  "notes": [
+    "PostgreSQL version is the local disposable engine, not Production 17.6.",
+    "Banned/disabled privileged callers remaining authorized is an honest NO-GO for later exposure.",
+    "No hosted SQL, live accounts, or secrets were used.",
+    "Exact ACL compares grantor/grantee/privilege/is_grantable. WITH GRANT OPTION is INCOMPATIBLE.",
+    "Staged install commits only after client EXECUTE/USAGE revoke (REVOKED_EXACT). Granted local-test is database-exposed."
+  ]
+}

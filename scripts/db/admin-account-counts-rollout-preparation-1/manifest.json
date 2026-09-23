@@ -1,0 +1,50 @@
+{
+  "package": "admin-account-counts-rollout-preparation-1",
+  "agent": "Jetnity admin account counts rollout preparation 1",
+  "generation": 1,
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "localOnly": true,
+  "notAMigration": true,
+  "notHostedInstaller": true,
+  "bootstrapIsLocalFixtureOnly": true,
+  "acceptedSources": {
+    "candidate": {
+      "path": "scripts/db/admin-account-counts-1-candidate.sql",
+      "sha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420"
+    },
+    "bootstrap": {
+      "path": "scripts/db/admin-account-counts-1-bootstrap.sql",
+      "sha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
+      "note": "Lightweight LOCAL fixture. Never a GoTrue schema or hosted installer."
+    },
+    "wrapper": {
+      "path": "scripts/db/admin-account-counts-delivery-1-rpc.sql",
+      "sha256": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb"
+    },
+    "contractBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+    "parserBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d"
+  },
+  "installs": [
+    "schema jetnity_reporting",
+    "function jetnity_reporting.account_counts_v1()",
+    "function public.admin_account_counts_v1()"
+  ],
+  "never": [
+    "hosted URL or inherited connection default",
+    "DROP CASCADE",
+    "client SELECT on auth.users",
+    "new BYPASSRLS / privilege role",
+    "managed auth.users policy change",
+    "jetnity_internal grant",
+    "bootstrap on a hosted database"
+  ],
+  "pinnedFunctiondef": {
+    "engine": "PostgreSQL 16.15",
+    "producerSha256": "0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef",
+    "wrapperSha256": "15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609",
+    "note": "pg_get_functiondef digest of the unchanged accepted sources. A different major pretty-printer is BLOCKED, not a repair."
+  },
+  "removableStates": ["ALREADY_INSTALLED", "REVOKED_EXACT"],
+  "stagedInstallCommitsAs": "REVOKED_EXACT",
+  "grantedLocalTestIs": "database_exposed_application_off"
+}

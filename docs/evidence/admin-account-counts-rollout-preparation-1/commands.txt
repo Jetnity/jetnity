@@ -1,0 +1,31 @@
+Jetnity admin account counts rollout preparation 1 — local commands
+Session bc-4bf6acab-25f3-4d63-9199-ac365b9c011a
+Model cursor-grok-4.6-high-fast
+Same session continued for TL residual R1 + R3. No hosted SQL. No live accounts.
+
+# Hash / hosted-reject (exit 0)
+node --test scripts/db/admin-account-counts-rollout-preparation-1/runner.test.mjs
+# tests 5, pass 5
+
+# Disposable private PostgreSQL rehearsal (exit 0)
+node scripts/db/admin-account-counts-rollout-preparation-1/runner.mjs
+# 136/136
+# engine: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) — NOT Production 17.6
+# categories: source-pin 8, unexpected-object 9, fault-closed 2, install-repeat 6,
+# authorization 11, owner-acl 1, adversarial-drift 70, rollback 3,
+# reinstall-revoke 13, staged-unexposed 12, cleanup-node 1
+
+# Unchanged accepted module tests (exit 0)
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/activation.test.ts \
+  lib/admin/account-counts-delivery/reader.test.ts \
+  lib/admin/account-counts-delivery/parser.test.ts
+# tests 23, pass 23
+
+# Hygiene (exit 0)
+npm run check:dead          # 0 orphans
+npm run check:exports       # 0 unused exports
+npm run check:operating-mode
+
+NOT RUN: full npm test, production build, typecheck, lint, hosted CI/Auth/Preview,
+browser/MFA, remote metadata re-read.
