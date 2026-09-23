@@ -33,7 +33,10 @@ allowlist; it does not rewrite accepted runtime files.
    Receipts are sanitized, run-scoped and fail closed.
 5. Returns `{ contractVersion, gates }` for **G6–G19 only**. It never returns
    `fullLocalExecution` or a whole-run PASS. `evidenceDir` is required; this
-   lane does not default it.
+   lane does not default it. Run-scoped receipts omit `realExecution`,
+   `runtimeIntegration` and `thisInvocation.realBrowserOrMfaExecution` because
+   this consumer cannot distinguish a controlled double from a future real run.
+   Runtime owns that verdict.
 
 ## What this module does not do
 

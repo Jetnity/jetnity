@@ -48,6 +48,7 @@ import {
   createRunIdentity,
 } from '../admin-account-counts-local-runtime-1/evidence.mjs'
 import {
+  assertNoExecutionProvenanceClaim,
   assertProducerCompatibleReceipt,
   consumerArtifactNames,
   containedEvidencePath,
@@ -1040,9 +1041,8 @@ test('B4 value-aware redaction, path escape, exclusive write and fail-closed rec
       contractVersion: CONTRACT_VERSION,
       gates: [{ id: 'G6_login_ui_password', result: 'NOT RUN', notes: 'locator.fill("Aa1!SYNTHETIC-PASSWORD")' }],
       implementationMetadata: { scenarioCode: 'delivered' },
-      thisInvocation: { kind: 'consumer-gates', realBrowserOrMfaExecution: 'NOT RUN' },
+      thisInvocation: { kind: 'consumer-gates' },
       implementation: 'delivered',
-      realExecution: 'NOT RUN',
     }, { secrets })
     const written = JSON.parse(readFileSync(join(dir, 'ok.json'), 'utf8'))
     assert.doesNotMatch(JSON.stringify(written), /Aa1!SYNTHETIC-PASSWORD/)
@@ -1114,6 +1114,26 @@ test('now-main producer artifact names, identity and receipt allowlist stay alig
   assertValidPng(stripped, { path: 'stripped.png' })
 })
 
+test('T1 all-PASS receipt omits execution yes/no and remains producer-compatible', async (t) => {
+  const { context, world, evidenceDir } = createContextDouble(t)
+  stubFetch(world, t)
+  const result = await runBrowserFlows(context)
+  assert.equal(result.gates.every((gate) => gate.result === 'PASS'), true)
+  const receipt = JSON.parse(readFileSync(
+    join(evidenceDir, runScopedName('unit-double', 'browser-flows-gates.json')),
+    'utf8',
+  ))
+  assertNoExecutionProvenanceClaim(receipt)
+  assert.doesNotMatch(JSON.stringify(receipt), /"realExecution"|"runtimeIntegration"|"realBrowserOrMfaExecution"|"defaultRealExecutionClaim"/)
+  assert.doesNotMatch(String(receipt.notes), /NOT RUN|pending/i)
+  assert.deepEqual(receipt.thisInvocation.observedResults, result.gates.map((gate) => gate.result))
+  assertConsumerGatesJson(receipt, {
+    path: 'unit-double-browser-flows-gates.json',
+    identity: createRunIdentity({ runId: 'unit-double' }),
+    productHead: BASELINE,
+  })
+})
+
 test('controlled doubles can walk G6–G19 without claiming a real-browser PASS', async (t) => {
   const { context, world, evidenceDir } = createContextDouble(t)
   stubFetch(world, t)
@@ -1125,11 +1145,15 @@ test('controlled doubles can walk G6–G19 without claiming a real-browser PASS'
   assert.deepEqual(failed, [], failed.map((gate) => `${gate.id}:${gate.notes}`).join('; '))
   const receiptName = runScopedName('unit-double', 'browser-flows-gates.json')
   const receipt = JSON.parse(readFileSync(join(evidenceDir, receiptName), 'utf8'))
-  assert.equal(receipt.realExecution, 'NOT RUN')
   assert.equal(receipt.implementation, 'delivered')
-  assert.equal(receipt.thisInvocation.realBrowserOrMfaExecution, 'NOT RUN')
   assert.equal(receipt.implementationMetadata.scenarioCode, 'delivered')
+  assert.equal(Object.hasOwn(receipt, 'realExecution'), false)
+  assert.equal(Object.hasOwn(receipt, 'runtimeIntegration'), false)
+  assert.equal(Object.hasOwn(receipt.thisInvocation, 'realBrowserOrMfaExecution'), false)
+  assert.equal(Object.hasOwn(receipt.implementationMetadata, 'defaultRealExecutionClaim'), false)
+  assert.equal(Object.hasOwn(receipt.implementationMetadata, 'runtimeIntegration'), false)
   assert.equal(looksSecretBearing(receipt), false)
+  assertNoExecutionProvenanceClaim(receipt)
   assertProducerCompatibleReceipt(receipt, { runId: 'unit-double', productHead: BASELINE })
   assertConsumerGatesJson(receipt, {
     path: receiptName,

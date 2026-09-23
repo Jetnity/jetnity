@@ -65,10 +65,13 @@ import {
 
 export const IMPLEMENTATION = Object.freeze({
   implementation: 'delivered',
+  // Author-delivery facts for this persist only. Never written into run-scoped receipts.
   realExecution: 'NOT RUN',
   runtimeIntegration: 'pending',
+  receiptNote:
+    'Runtime owns fullLocalExecution and the overall execution verdict. This consumer returns G6–G19 only.',
   note:
-    'Awaited Playwright G6–G19 scenario code is implemented against frozen §4. #558 is merged at main 86534228; this lane consumed that producer evidence/identity contract. Real browser/MFA/Admin execution stays NOT RUN until TL authorizes the integrated run. Helper/double PASS is not a full local execution PASS.',
+    'Awaited Playwright G6–G19 scenario code is implemented against frozen §4. Author delivery of this persist did not run real Playwright/MFA. Helper/double PASS is not a full local execution PASS.',
 })
 
 function failClosed(error) {
@@ -657,10 +660,8 @@ export async function runBrowserFlows(context) {
         runId: validated.runId,
         productHead: validated.productHead,
         gates: sanitizedGates,
-        notes: IMPLEMENTATION.note,
+        notes: IMPLEMENTATION.receiptNote,
         implementation: IMPLEMENTATION.implementation,
-        realExecution: IMPLEMENTATION.realExecution,
-        runtimeIntegration: IMPLEMENTATION.runtimeIntegration,
       }),
       { secrets: runSecrets },
     )

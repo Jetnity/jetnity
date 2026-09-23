@@ -47,6 +47,28 @@ export const THIS_INVOCATION_KEYS = Object.freeze([
   'observedResults',
 ])
 
+export const TIMELESS_IMPLEMENTATION_METADATA_KEYS = Object.freeze([
+  'agent',
+  'generation',
+  'contractVersion',
+  'scenarioCode',
+])
+
+export const TIMELESS_THIS_INVOCATION_KEYS = Object.freeze([
+  'kind',
+  'observedResults',
+])
+
+export const EXECUTION_PROVENANCE_RECEIPT_KEYS = Object.freeze([
+  'realExecution',
+  'runtimeIntegration',
+])
+
+export const EXECUTION_PROVENANCE_METADATA_KEYS = Object.freeze([
+  'defaultRealExecutionClaim',
+  'runtimeIntegration',
+])
+
 export const GATE_KEYS = Object.freeze(['id', 'result', 'evidence', 'notes'])
 
 export const CONSUMER_ARTIFACT_SPECS = Object.freeze([
@@ -104,7 +126,36 @@ function assertAllowedKeys(value, allowed, path) {
   }
 }
 
-export function assertProducerCompatibleReceipt(value, { runId, productHead } = {}) {
+export function assertNoExecutionProvenanceClaim(value, path = 'receipt') {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(`${path} must be a JSON object`)
+  }
+  for (const key of EXECUTION_PROVENANCE_RECEIPT_KEYS) {
+    if (Object.hasOwn(value, key)) {
+      throw new Error(`${path} must omit execution provenance field ${key}`)
+    }
+  }
+  if (value.thisInvocation && Object.hasOwn(value.thisInvocation, 'realBrowserOrMfaExecution')) {
+    throw new Error(`${path}.thisInvocation must omit realBrowserOrMfaExecution`)
+  }
+  if (value.implementationMetadata) {
+    for (const key of EXECUTION_PROVENANCE_METADATA_KEYS) {
+      if (Object.hasOwn(value.implementationMetadata, key)) {
+        throw new Error(`${path}.implementationMetadata must omit mutable execution claim ${key}`)
+      }
+    }
+  }
+  const notes = typeof value.notes === 'string' ? value.notes : ''
+  if (/\brealExecution\b|\bruntimeIntegration\b|\brealBrowserOrMfaExecution\b/.test(notes)) {
+    throw new Error(`${path}.notes must not name omitted execution-provenance fields`)
+  }
+  if (/\bNOT RUN\b/i.test(notes) || /\bpending\b/i.test(notes)) {
+    throw new Error(`${path}.notes must not self-attest current execution state`)
+  }
+  return true
+}
+
+export function assertProducerCompatibleReceipt(value, { runId, productHead, omitExecutionProvenance = true } = {}) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error('receipt must be a JSON object')
   }
@@ -129,6 +180,9 @@ export function assertProducerCompatibleReceipt(value, { runId, productHead } = 
   }
   if (value.thisInvocation != null) {
     assertAllowedKeys(value.thisInvocation, THIS_INVOCATION_KEYS, 'thisInvocation')
+  }
+  if (omitExecutionProvenance) {
+    assertNoExecutionProvenanceClaim(value)
   }
   if (!Array.isArray(value.gates) || value.gates.length !== FLOW_GATE_IDS.length) {
     throw new Error('receipt must include the exact G6–G19 gate set')
@@ -164,8 +218,6 @@ export function buildProducerShapedReceipt({
   gates,
   notes,
   implementation,
-  realExecution,
-  runtimeIntegration,
 }) {
   const receipt = {
     contractVersion: CONTRACT_VERSION,
@@ -176,12 +228,9 @@ export function buildProducerShapedReceipt({
     implementationMetadata: staticImplementationMetadata(),
     thisInvocation: {
       kind: 'consumer-gates',
-      realBrowserOrMfaExecution: 'NOT RUN',
       observedResults: gates.map((gate) => gate.result),
     },
     implementation,
-    realExecution,
-    runtimeIntegration,
     gates: gates.map(({ id, result, notes: gateNotes, evidence }) => ({
       id,
       result,
@@ -297,7 +346,5 @@ export function staticImplementationMetadata() {
     generation: GENERATION,
     contractVersion: CONTRACT_VERSION,
     scenarioCode: 'delivered',
-    defaultRealExecutionClaim: 'NOT RUN until reviewed runtime integration',
-    runtimeIntegration: 'pending',
   }
 }
