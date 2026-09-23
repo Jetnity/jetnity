@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Acceptance gates. Unrun gates stay NOT RUN. Never convert environment
-// failure into a product PASS.
+// Acceptance gates. Unrun or unimplemented gates stay honest.
+// fullLocalExecution requires every mandatory gate PASS. Missing/unknown fail closed.
 
 export const GATE_IDS = Object.freeze([
   'G0_preflight',
@@ -26,6 +26,19 @@ export const GATE_IDS = Object.freeze([
   'G20_owned_cleanup',
 ])
 
+export const GATE_RESULTS = Object.freeze([
+  'PASS',
+  'FAIL',
+  'BLOCKED',
+  'NOT RUN',
+  'PARTIAL',
+  'NOT IMPLEMENTED',
+])
+
+const APPLICATION_IDS = GATE_IDS.filter(
+  (id) => id !== 'G0_preflight' && id !== 'G1_source_pins' && id !== 'G20_owned_cleanup',
+)
+
 export function leereMatrix(reason = 'NOT RUN') {
   return Object.fromEntries(
     GATE_IDS.map((id) => [
@@ -47,18 +60,34 @@ export function setzeGate(matrix, id, { result, evidence = null, notes = null })
 }
 
 export function zusammenfassung(matrix) {
-  const counts = { PASS: 0, FAIL: 0, BLOCKED: 0, 'NOT RUN': 0, PARTIAL: 0 }
-  for (const gate of Object.values(matrix)) {
-    counts[gate.result] = (counts[gate.result] || 0) + 1
+  const counts = {
+    PASS: 0,
+    FAIL: 0,
+    BLOCKED: 0,
+    'NOT RUN': 0,
+    PARTIAL: 0,
+    'NOT IMPLEMENTED': 0,
+    UNKNOWN: 0,
   }
-  const applicationIds = GATE_IDS.filter(
-    (id) => id !== 'G0_preflight' && id !== 'G1_source_pins' && id !== 'G20_owned_cleanup',
+  let allMandatoryPass = true
+  for (const id of GATE_IDS) {
+    const gate = matrix?.[id]
+    const result = gate?.result
+    if (!gate || !GATE_RESULTS.includes(result)) {
+      counts.UNKNOWN += 1
+      allMandatoryPass = false
+      continue
+    }
+    counts[result] += 1
+    if (result !== 'PASS') allMandatoryPass = false
+  }
+  const applicationRan = APPLICATION_IDS.some((id) =>
+    ['PASS', 'FAIL', 'PARTIAL'].includes(matrix?.[id]?.result),
   )
-  const applicationRan = applicationIds.some((id) => ['PASS', 'FAIL', 'PARTIAL'].includes(matrix[id].result))
   return {
     counts,
-    fullLocalExecution: applicationIds.every((id) => matrix[id].result === 'PASS'),
+    fullLocalExecution: allMandatoryPass,
     applicationRan,
-    preflightBlocked: matrix.G0_preflight.result === 'BLOCKED',
+    preflightBlocked: matrix?.G0_preflight?.result === 'BLOCKED',
   }
 }

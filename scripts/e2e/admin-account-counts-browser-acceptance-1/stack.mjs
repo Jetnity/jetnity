@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-// Official local stack only. Never overlay the #550 bootstrap on GoTrue.
-// Test-only workdir + disclosed overlay. Product supabase/config.toml stays read-only.
+// Official local stack helpers and overlay contract only.
+// Stack start is NOT IMPLEMENTED in this command. Never overlay the #550
+// bootstrap on GoTrue. Product supabase/config.toml stays read-only.
 
-import { spawn } from 'node:child_process'
-import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { ROOT, SOURCE_PATHS } from './constants.mjs'
+import { IMPLEMENTATION, notImplementedError } from './implementation.mjs'
+import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from './owned-lifecycle.mjs'
 import { refuseBootstrapOverlay } from './source-manifest.mjs'
-import { stoppeOwnedChild } from './owned-lifecycle.mjs'
 
 export const DISCLOSED_OVERLAY = Object.freeze({
   projectIdPrefix: 'aacba1',
@@ -41,6 +42,11 @@ export const DISCLOSED_OVERLAY = Object.freeze({
   whyStudioDisabled: 'Reduce local surface; Studio is not the acceptance path.',
 })
 
+export const STACK_EXECUTION = Object.freeze({
+  status: IMPLEMENTATION.stackStart,
+  reason: IMPLEMENTATION.note,
+})
+
 export function baueConfigOverlay(acceptedToml, { projectId, apiPort, dbPort, siteUrl, inbucketPort }) {
   let next = acceptedToml
   next = next.replace(/^project_id = ".*"$/m, `project_id = "${projectId}"`)
@@ -70,11 +76,13 @@ export function bereiteOwnedWorkdir({ runId, overlayPorts, privateDir }) {
     inbucketPort: overlayPorts.inbucketPort,
   })
   writeFileSync(join(configDir, 'config.toml'), overlay, { mode: 0o600 })
-  const migrationsLink = join(configDir, 'migrations')
-  if (!existsSync(migrationsLink)) {
-    symlinkSync(join(ROOT, 'supabase/migrations'), migrationsLink)
+  return {
+    workdir,
+    configPath: join(configDir, 'config.toml'),
+    overlayDifferences: DISCLOSED_OVERLAY,
+    migrationsLinked: false,
+    migrationReplay: IMPLEMENTATION.migrationReplay,
   }
-  return { workdir, configPath: join(configDir, 'config.toml'), overlayDifferences: DISCLOSED_OVERLAY }
 }
 
 export function geplanteSqlAnwendung() {
@@ -84,31 +92,25 @@ export function geplanteSqlAnwendung() {
 }
 
 export async function starteOwnedStack() {
-  throw new Error(
-    'Owned supabase start is not invoked while preflight reports no Docker-compatible runtime. Calling this would either no-op-fail or require a forbidden privileged daemon / hosted fallback.',
-  )
+  throw notImplementedError('Owned supabase start')
 }
 
 export async function stoppeOwnedStack(state) {
-  if (!state) return { neverStarted: true, reaped: true }
+  if (!state) return { neverStarted: true, reaped: true, dockerServicesUnverified: false }
   const childReport = await stoppeOwnedChild(state.child)
-  return { ...childReport, workdir: state.workdir || null }
+  return {
+    ...childReport,
+    workdir: state.workdir || null,
+    dockerServicesUnverified: state.dockerServicesConfirmed !== true,
+    note: 'CLI child exit is not Docker service/container teardown.',
+  }
 }
 
-export function entferneOwnedWorkdir(workdir, { processesStopped, reaped, neverStarted }) {
+export function entferneOwnedWorkdir(workdir, flags = {}) {
   if (!workdir || !existsSync(workdir)) return { removed: false, reason: 'absent' }
-  if (!((processesStopped && reaped) || neverStarted)) {
-    return { removed: false, reason: 'owned process still active' }
+  if (!darfOwnedVerzeichnisEntfernen(flags)) {
+    return { removed: false, reason: 'owned process still active, unknown, or Docker services unverified' }
   }
   rmSync(workdir, { recursive: true, force: true })
   return { removed: true }
 }
-
-// Keep spawn imported so a later exact-head execution can start the official CLI
-// without adding a new dependency in the same change. The current environment
-// must not reach this branch.
-export const OFFICIAL_START = Object.freeze({
-  bin: 'npx',
-  args: ['--yes', 'supabase', 'start', '--yes'],
-  spawn,
-})

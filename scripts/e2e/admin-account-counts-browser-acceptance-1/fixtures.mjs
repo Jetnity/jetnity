@@ -3,6 +3,8 @@
 // Admin API when a stack exists. Expected counts come from the live inventory,
 // never the old HTTP proof's 10/0 assumption.
 
+import { notImplementedError } from './implementation.mjs'
+
 export const FIXTURE_PLAN = Object.freeze({
   domain: 'aacba1.invalid',
   accounts: [
@@ -100,7 +102,5 @@ export function sanitizeFixtureManifest(plan, { runId, inventory = null } = {}) 
 }
 
 export async function provisioniereUeberGoTrue() {
-  throw new Error(
-    'GoTrue fixture provisioning is not invoked without an owned local Auth stack. Forging JWTs or writing auth.users via the #550 bootstrap is forbidden.',
-  )
+  throw notImplementedError('GoTrue fixture provisioning')
 }

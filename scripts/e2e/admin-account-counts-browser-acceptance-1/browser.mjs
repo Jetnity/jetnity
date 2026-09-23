@@ -1,8 +1,20 @@
 #!/usr/bin/env node
-// Real application path. Login UI, request cookies, unchanged guard/reader.
-// No mocked Auth, no injected session cookie, no response substitution.
+// Planned real application path. Login UI, request cookies, unchanged guard/reader.
+// Page request events cannot prove server-side RPC absence. Server-boundary
+// observation is NOT IMPLEMENTED. No mocked Auth, no injected session cookie.
 
 import { COPY, SELECTORS, WRAPPER_RPC } from './constants.mjs'
+import { IMPLEMENTATION, notImplementedError } from './implementation.mjs'
+
+export const SERVER_RPC_OBSERVATION = Object.freeze({
+  status: IMPLEMENTATION.serverRpcObservation,
+  reason:
+    'Admin counts are produced by a server-side reader. Playwright page request events cannot establish server-side OFF/no-RPC. A future claim needs an observer at the actual server/HTTP boundary, a positive observed-call control, and no response substitution.',
+})
+
+export function kannServerSeitigesRpcSchweigenBeweisen() {
+  return false
+}
 
 export function beobachteRpcOhneSubstitution(page, observer) {
   page.on('request', (request) => {
@@ -18,11 +30,19 @@ export function beobachteRpcOhneSubstitution(page, observer) {
       observer.rpcStatuses.push(response.status())
     }
   })
+  observer.canProveServerSideAbsence = false
+  observer.limitation = SERVER_RPC_OBSERVATION
   return observer
 }
 
 export function neuerObserver() {
-  return { rpcRequests: 0, methods: [], rpcStatuses: [] }
+  return {
+    rpcRequests: 0,
+    methods: [],
+    rpcStatuses: [],
+    canProveServerSideAbsence: false,
+    limitation: SERVER_RPC_OBSERVATION,
+  }
 }
 
 export const VIEWPORTS = Object.freeze({
@@ -43,6 +63,7 @@ export function screenshotPolicy() {
       'email+code together',
     ],
     redact: 'clip to the counts section when possible; never capture #totp-code or QR img',
+    execution: IMPLEMENTATION.browserAcceptance,
   }
 }
 
@@ -76,7 +97,5 @@ export const FLOW = Object.freeze({
 })
 
 export async function fuehreBrowserAkzeptanz() {
-  throw new Error(
-    'Browser acceptance is not invoked without the owned local application and Auth stack. A Playwright about:blank preflight is not browser acceptance.',
-  )
+  throw notImplementedError('Browser acceptance')
 }

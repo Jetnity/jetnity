@@ -1,11 +1,32 @@
 #!/usr/bin/env node
-// Owned-process lifecycle. Pattern reviewed on the accepted HTTP proof:
-// wait for the exact child, SIGTERM then SIGKILL, never shell-wide pkill.
+// Owned-process lifecycle. Reviewed HTTP-proof pattern: wait for the exact
+// child, bounded SIGTERM then SIGKILL, never treat child.killed as exit,
+// never treat a thrown signal as reaped. No shell-wide pkill.
 
+import { existsSync, rmSync } from 'node:fs'
 import { createServer } from 'node:net'
 
 const CHILD_TERM_TIMEOUT_MS = 1_500
 const CHILD_KILL_TIMEOUT_MS = 800
+
+export function istPidLebendig(pid) {
+  if (pid == null || pid === 0) return false
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function hatExitbeweis(child, wait) {
+  if (wait?.neverStarted === true) return true
+  if (child && (child.exitCode != null || child.signalCode != null)) return true
+  if (wait?.exited === true && (wait.exitCode != null || wait.signal != null || wait.neverStarted === true)) {
+    return true
+  }
+  return false
+}
 
 export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS } = {}) {
   return new Promise((resolve) => {
@@ -13,6 +34,7 @@ export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS
     let timer = null
     let onExit = null
     let onError = null
+    let recordedError = null
 
     const detach = () => {
       if (child && onExit) child.off('exit', onExit)
@@ -43,7 +65,7 @@ export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS
       return
     }
 
-    const ended = () => ({
+    const endedResult = () => ({
       started: Boolean(child.pid),
       exited: true,
       neverStarted: !child.pid && child.exitCode == null && child.signalCode == null,
@@ -51,17 +73,53 @@ export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS
       exitCode: child.exitCode,
       signal: child.signalCode,
       pid: child.pid ?? null,
+      ...(recordedError ? { error: recordedError } : {}),
     })
 
-    if (child.killed || child.exitCode != null || child.signalCode != null) {
-      finish(ended())
+    // child.killed means a signal was sent, not that the process terminated.
+    if (child.exitCode != null || child.signalCode != null) {
+      finish(endedResult())
       return
     }
 
-    onExit = () => finish(ended())
-    onError = () => finish({ ...ended(), error: true })
+    onExit = (code, signal) => {
+      finish({
+        started: Boolean(child.pid),
+        exited: true,
+        neverStarted: !child.pid,
+        timedOut: false,
+        exitCode: code,
+        signal,
+        pid: child.pid ?? null,
+        ...(recordedError ? { error: recordedError } : {}),
+      })
+    }
+    onError = (fehler) => {
+      recordedError = fehler instanceof Error ? fehler.message : String(fehler)
+      if (child.exitCode != null || child.signalCode != null) {
+        finish(endedResult())
+        return
+      }
+      if (!child.pid) {
+        finish({
+          started: false,
+          exited: true,
+          neverStarted: true,
+          timedOut: false,
+          error: recordedError,
+          exitCode: null,
+          signal: null,
+          pid: null,
+        })
+      }
+      // After-spawn error is not termination.
+    }
     child.once('exit', onExit)
     child.once('error', onError)
+    if (child.exitCode != null || child.signalCode != null) {
+      finish(endedResult())
+      return
+    }
     timer = setTimeout(() => {
       finish({
         started: Boolean(child.pid),
@@ -71,9 +129,29 @@ export function waitForOwnedChildExit(child, { timeoutMs = CHILD_TERM_TIMEOUT_MS
         exitCode: child.exitCode,
         signal: child.signalCode,
         pid: child.pid ?? null,
+        ...(recordedError ? { error: recordedError } : {}),
       })
     }, timeoutMs)
   })
+}
+
+function applyOwnedStopOutcome(report, child, wait) {
+  const confirmed = hatExitbeweis(child, wait)
+  const stillAlive = Boolean(child?.pid) && istPidLebendig(child.pid)
+  report.neverStarted = wait?.neverStarted === true || report.neverStarted
+  report.timedOut = wait?.timedOut === true
+  report.exitCode = wait?.exitCode ?? child?.exitCode ?? null
+  report.signal = wait?.signal ?? child?.signalCode ?? null
+  if (wait?.error) report.signalError = wait.error
+  report.reaped = confirmed && !stillAlive
+  report.ownershipRetained = !report.reaped && Boolean(child)
+  report.unknown = !report.reaped && !report.neverStarted && !stillAlive && !confirmed
+  if (stillAlive) {
+    report.error = report.error || 'owned child still running after stop wait'
+  } else if (!report.reaped && !report.neverStarted) {
+    report.error = report.error || 'owned child termination unconfirmed'
+  }
+  return report.reaped
 }
 
 export async function stoppeOwnedChild(child, { termTimeoutMs = CHILD_TERM_TIMEOUT_MS, killTimeoutMs = CHILD_KILL_TIMEOUT_MS } = {}) {
@@ -84,47 +162,95 @@ export async function stoppeOwnedChild(child, { termTimeoutMs = CHILD_TERM_TIMEO
     killSent: false,
     reaped: false,
     neverStarted: !child,
+    ownershipRetained: Boolean(child),
+    unknown: false,
+    exitCode: child?.exitCode ?? null,
+    signal: child?.signalCode ?? null,
+    error: null,
   }
   if (!child) {
     report.reaped = true
     report.neverStarted = true
+    report.ownershipRetained = false
     return report
   }
   if (child.exitCode != null || child.signalCode != null) {
     report.reaped = true
+    report.ownershipRetained = false
+    report.exitCode = child.exitCode
+    report.signal = child.signalCode
     return report
   }
-  const first = await waitForOwnedChildExit(child, { timeoutMs: 20 })
-  if (first.exited) {
-    report.reaped = true
+  if (!child.pid) {
+    const wait = await waitForOwnedChildExit(child, { timeoutMs: termTimeoutMs })
+    applyOwnedStopOutcome(report, child, wait)
     return report
   }
+
+  const termWait = waitForOwnedChildExit(child, { timeoutMs: termTimeoutMs })
   try {
     child.kill('SIGTERM')
     report.termSent = true
-  } catch {
-    report.reaped = true
-    return report
+  } catch (fehler) {
+    report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    report.signalError = report.error
   }
-  const afterTerm = await waitForOwnedChildExit(child, { timeoutMs: termTimeoutMs })
-  if (afterTerm.exited) {
-    report.reaped = true
-    return report
+  let wait = await termWait
+  if (!hatExitbeweis(child, wait) && istPidLebendig(child.pid)) {
+    const killWait = waitForOwnedChildExit(child, { timeoutMs: killTimeoutMs })
+    try {
+      child.kill('SIGKILL')
+      report.killSent = true
+    } catch (fehler) {
+      report.error = report.error || (fehler instanceof Error ? fehler.message : String(fehler))
+      report.signalError = report.error
+    }
+    wait = await killWait
   }
-  try {
-    child.kill('SIGKILL')
-    report.killSent = true
-  } catch {
-    report.reaped = true
-    return report
-  }
-  const afterKill = await waitForOwnedChildExit(child, { timeoutMs: killTimeoutMs })
-  report.reaped = afterKill.exited === true
+  applyOwnedStopOutcome(report, child, wait)
   return report
 }
 
-export function darfOwnedVerzeichnisEntfernen({ processesStopped, reaped, neverStarted }) {
-  return (processesStopped === true && reaped === true) || neverStarted === true
+export function darfOwnedVerzeichnisEntfernen({
+  processesStopped,
+  reaped,
+  neverStarted,
+  unknown,
+  ownershipRetained,
+  dockerServicesUnverified,
+} = {}) {
+  if (unknown === true || ownershipRetained === true || dockerServicesUnverified === true) return false
+  if (neverStarted === true) return true
+  return processesStopped === true && reaped === true
+}
+
+export async function schliesseOwnedBrowser(handle = {}) {
+  const report = {
+    closeCalled: false,
+    closed: false,
+    profileRemoved: false,
+    error: null,
+  }
+  try {
+    if (handle.context && typeof handle.context.close === 'function') {
+      report.closeCalled = true
+      await handle.context.close()
+      report.closed = true
+    } else if (handle.context) {
+      report.error = 'browser context has no close()'
+    }
+  } catch (fehler) {
+    report.error = fehler instanceof Error ? fehler.message : String(fehler)
+    report.closed = false
+  }
+  if (report.closed && handle.profileDir && existsSync(handle.profileDir)) {
+    rmSync(handle.profileDir, { recursive: true, force: true })
+    report.profileRemoved = !existsSync(handle.profileDir)
+  } else if (handle.profileDir && existsSync(handle.profileDir) && !report.closed) {
+    report.profileRemoved = false
+    report.error = report.error || 'browser context close not proved; profile retained'
+  }
+  return report
 }
 
 export function findeFreienLoopbackPort() {

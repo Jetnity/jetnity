@@ -1,0 +1,150 @@
+{
+  "agent": "Jetnity admin account counts browser acceptance 1",
+  "generation": 1,
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_BROWSER_ACCEPTANCE_1_TASK_2026-09-23.md",
+  "taskSeed": "74e939882e9e9bfe94f1f3e032d397ca0b2bbe50",
+  "branch": "audit/admin-account-counts-browser-acceptance-1",
+  "productBaseline": "f0237baf8809e5528b5f73e918f0e37a7d9b4477",
+  "integrationBaseline": "87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b",
+  "historicalReceiptId": "aacba1-20260923T020045Z",
+  "historicalReceiptPreserved": true,
+  "runId": "aacba1-review-fix-20260923T101352Z",
+  "verdict": "BLOCKED_ENVIRONMENT",
+  "implementation": {
+    "preflight": "IMPLEMENTED",
+    "sourcePins": "IMPLEMENTED",
+    "ownedLifecycle": "IMPLEMENTED",
+    "envGuard": "IMPLEMENTED",
+    "stackStart": "NOT IMPLEMENTED",
+    "fixtureProvision": "NOT IMPLEMENTED",
+    "browserAcceptance": "NOT IMPLEMENTED",
+    "serverRpcObservation": "NOT IMPLEMENTED",
+    "migrationReplay": "NOT IMPLEMENTED",
+    "note": "This command implements isolated preflight, working-tree source identity, effective-environment construction, and confirmed owned-process cleanup only. It does not start containers, apply SQL, provision Auth, or drive login/TOTP/Admin rendering. Missing Docker is an execution blocker, not a Production P0 incident."
+  },
+  "summary": {
+    "counts": {
+      "PASS": 2,
+      "FAIL": 0,
+      "BLOCKED": 1,
+      "NOT RUN": 0,
+      "PARTIAL": 0,
+      "NOT IMPLEMENTED": 18,
+      "UNKNOWN": 0
+    },
+    "fullLocalExecution": false,
+    "applicationRan": false,
+    "preflightBlocked": true
+  },
+  "plannedSql": [
+    "scripts/db/admin-account-counts-1-candidate.sql",
+    "scripts/db/admin-account-counts-delivery-1-rpc.sql"
+  ],
+  "fixtureManifest": {
+    "runId": "aacba1-review-fix-20260923T101352Z",
+    "domain": "aacba1.invalid",
+    "accounts": [
+      {
+        "id": "privileged-moderator",
+        "role": "moderator",
+        "laterRole": null,
+        "status": "active",
+        "enrollTotpViaUi": true,
+        "purpose": "AAL2 happy path and existing-factor fresh session",
+        "emailPattern": "privileged-moderator.<runId>@aacba1.invalid"
+      },
+      {
+        "id": "ordinary-user",
+        "role": "user",
+        "laterRole": null,
+        "status": "active",
+        "enrollTotpViaUi": false,
+        "purpose": "ordinary account must not disclose counts",
+        "emailPattern": "ordinary-user.<runId>@aacba1.invalid"
+      },
+      {
+        "id": "ordinary-creator",
+        "role": "creator",
+        "laterRole": null,
+        "status": "active",
+        "enrollTotpViaUi": false,
+        "purpose": "creator must not disclose counts",
+        "emailPattern": "ordinary-creator.<runId>@aacba1.invalid"
+      },
+      {
+        "id": "role-downgrade",
+        "role": "moderator",
+        "laterRole": "user",
+        "status": "active",
+        "enrollTotpViaUi": true,
+        "purpose": "same Auth session / later reload after profile role downgrade",
+        "emailPattern": "role-downgrade.<runId>@aacba1.invalid"
+      },
+      {
+        "id": "restricted-banned-privileged",
+        "role": "moderator",
+        "laterRole": null,
+        "status": "banned",
+        "enrollTotpViaUi": true,
+        "purpose": "profile.status banned while role remains moderator — record actual enforcement; missing denial is a rollout blocker, not a harness failure to hide",
+        "emailPattern": "restricted-banned-privileged.<runId>@aacba1.invalid"
+      },
+      {
+        "id": "restricted-disabled-privileged",
+        "role": "moderator",
+        "laterRole": null,
+        "status": "disabled",
+        "enrollTotpViaUi": false,
+        "purpose": "profile.status disabled vs Auth-level ban vs role downgrade",
+        "emailPattern": "restricted-disabled-privileged.<runId>@aacba1.invalid"
+      }
+    ],
+    "expectedCounts": {
+      "presentRegisteredAccounts": null,
+      "createdInPrior30Days": null,
+      "source": "pending-owned-stack"
+    },
+    "deletedAnonymousNoSubject": {
+      "planned": false,
+      "reason": "Anonymous sign-in stays disabled in accepted config. Deleted/no-subject identities are NOT RUN unless the owned GoTrue catalog already exposes them source-faithfully. This harness will not enable anonymous sign-in or forge those rows."
+    },
+    "notAssumed": {
+      "presentRegisteredAccounts": null,
+      "createdInPrior30Days": null,
+      "note": "Do not reuse the isolated HTTP proof 10/0 fixture totals."
+    }
+  },
+  "screenshotPolicy": {
+    "allowed": "final non-secret Admin UI after AAL2, and scoped desktop/mobile count section",
+    "forbidden": [
+      "QR codes",
+      "otpauth strings",
+      "TOTP secrets",
+      "cookies",
+      "raw JWT",
+      "passwords",
+      "email+code together"
+    ],
+    "redact": "clip to the counts section when possible; never capture #totp-code or QR img",
+    "execution": "NOT IMPLEMENTED"
+  },
+  "parentEnvClassification": {
+    "forbiddenConnectionKeysPresent": [
+      "SUPABASE_ACCESS_TOKEN",
+      "SUPABASE_PROJECT_REF",
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    ],
+    "hostedMarkersPresent": [],
+    "outboundProviderKeysPresent": [],
+    "parentHasHostedSupabaseNames": true
+  },
+  "notDone": [
+    "No hosted Production or Development access.",
+    "No Ready/merge.",
+    "No sibling #555 import as the browser path.",
+    "No #550 bootstrap overlay.",
+    "No forged AAL2.",
+    "Login → TOTP/AAL2 → Admin render remains NOT IMPLEMENTED / NOT RUN."
+  ]
+}
