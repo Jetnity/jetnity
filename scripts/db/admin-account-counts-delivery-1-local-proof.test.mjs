@@ -56,6 +56,8 @@ describe('admin-account-counts-delivery-1 local proof runner safety', () => {
     assert.doesNotMatch(runnerSrc, /execFileSync\([^)]*pg_ctlcluster/)
     assert.match(candidateSrc, /jetnity_reporting\.account_counts_v1/)
     assert.match(runnerSrc, /admin-account-counts-1-candidate\.sql/)
+    assert.match(runnerSrc, /612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de/)
     assert.match(runnerSrc, /dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420/)
+    assert.match(runnerSrc, /HISTORICAL_REFUSED_CANDIDATE_SHA256/)
   })
 })

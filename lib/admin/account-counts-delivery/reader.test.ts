@@ -7,6 +7,7 @@ import {
   ADMIN_ACCOUNT_COUNTS_DEFINITION_VERSION,
   ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC,
 } from '@/lib/admin/account-counts-delivery/contract'
+import { applyAccountCountsCallerStatus } from '@/lib/admin/account-counts-delivery/caller-status'
 import {
   classifyAdminAccountCountsRpcError,
   containAdminAccountCountsLoad,
@@ -29,11 +30,15 @@ describe('Admin account-counts session reader', () => {
   test('does not invoke the RPC while disabled', async () => {
     let rpcCalls = 0
     let gateCalls = 0
+    let statusLookups = 0
     const result = await readAdminAccountCounts({
       enabled: false,
       gate: async () => {
         gateCalls += 1
-        return { allowed: true, grant: 'role' }
+        return applyAccountCountsCallerStatus({ allowed: true, grant: 'role' }, 'user-1', async () => {
+          statusLookups += 1
+          return { ok: true, status: 'active' }
+        })
       },
       rpc: async () => {
         rpcCalls += 1
@@ -43,6 +48,60 @@ describe('Admin account-counts session reader', () => {
     assert.deepEqual(result, { status: 'disabled' })
     assert.equal(rpcCalls, 0)
     assert.equal(gateCalls, 0)
+    assert.equal(statusLookups, 0)
+  })
+
+  test('blocked persisted status forbids before RPC even when role+AAL2 is otherwise valid', async () => {
+    let rpcCalls = 0
+    const statuses = ['active', 'banned', 'disabled', 'pending', 'unknown']
+    const results = []
+    for (const status of statuses) {
+      results.push(
+        await readAdminAccountCounts({
+          enabled: true,
+          gate: async () =>
+            applyAccountCountsCallerStatus({ allowed: true, grant: 'role' }, 'same-user', async () => ({
+              ok: true,
+              status,
+            })),
+          rpc: async () => {
+            rpcCalls += 1
+            return { data: VALID_ROW, error: null }
+          },
+        }),
+      )
+    }
+    const missing = await readAdminAccountCounts({
+      enabled: true,
+      gate: async () =>
+        applyAccountCountsCallerStatus({ allowed: true, grant: 'role' }, 'same-user', async () => ({
+          ok: false,
+          reason: 'missing',
+        })),
+      rpc: async () => {
+        rpcCalls += 1
+        return { data: VALID_ROW, error: null }
+      },
+    })
+    const lookupFailed = await readAdminAccountCounts({
+      enabled: true,
+      gate: async () =>
+        applyAccountCountsCallerStatus({ allowed: true, grant: 'role' }, 'same-user', async () => {
+          throw new Error('status lookup exploded')
+        }),
+      rpc: async () => {
+        rpcCalls += 1
+        return { data: VALID_ROW, error: null }
+      },
+    })
+    assert.equal(results[0]?.status, 'available')
+    assert.deepEqual(results[1], { status: 'forbidden' })
+    assert.deepEqual(results[2], { status: 'forbidden' })
+    assert.deepEqual(results[3], { status: 'forbidden' })
+    assert.deepEqual(results[4], { status: 'forbidden' })
+    assert.deepEqual(missing, { status: 'forbidden' })
+    assert.deepEqual(lookupFailed, { status: 'failed' })
+    assert.equal(rpcCalls, 1)
   })
 
   test('requires a role-backed AAL/capability grant before any count query', async () => {
@@ -331,12 +390,16 @@ describe('Admin account-counts session reader', () => {
     assert.equal(ADMIN_ACCOUNT_COUNTS_WRAPPER_RPC, 'admin_account_counts_v1')
     const readerSource = readFileSync(join(process.cwd(), 'lib/admin/account-counts-delivery/reader.ts'), 'utf8')
     assert.match(readerSource, /\.rpc\(\s*['"`]admin_account_counts_v1['"`]/)
+    assert.match(readerSource, /applyAccountCountsCallerStatus/)
+    assert.match(readerSource, /\.from\(\s*['"`]profiles['"`]\)/)
+    assert.match(readerSource, /\.select\(\s*['"`]status['"`]\)/)
+    assert.doesNotMatch(readerSource, /service[_-]?role/i)
     const pageSource = readFileSync(join(process.cwd(), 'app/(admin)/admin/page.tsx'), 'utf8')
     const componentSource = readFileSync(
       join(process.cwd(), 'components/admin/home/AdminAccountCounts.tsx'),
       'utf8',
     )
-    for (const source of [readerSource, pageSource, componentSource]) {
+    for (const source of [pageSource, componentSource]) {
       assert.doesNotMatch(source, /service[_-]?role/i)
     }
     assert.match(pageSource, /isAdminAccountCountsRuntimeEnabled/)

@@ -358,7 +358,7 @@ function pruefeInstallUndRepeat() {
       after.inventory?.wrapper_owner &&
       after.inventory?.wrapper_owner === after.inventory?.schema_owner &&
       !['anon', 'authenticated', 'service_role'].includes(after.inventory.wrapper_owner) &&
-      after.inventory?.producer_def_sha256 === '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef' &&
+      after.inventory?.producer_def_sha256 === 'b9cec2b3cad0052688f5f396cfd1d532d4035bd1d51254723c1d650dc0d1048b' &&
       after.inventory?.wrapper_def_sha256 === '15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609' &&
       after.inventory?.identity_core_ok === true,
     JSON.stringify({
@@ -436,17 +436,82 @@ function pruefeAutorisierung() {
     aal: 'aal2',
     sql: 'select * from public.admin_account_counts_v1()',
   })
+  const bannedText = `${banned.arbeit?.sqlstate ?? ''} ${banned.arbeit?.message ?? ''}`
+  const disabledText = `${disabled.arbeit?.sqlstate ?? ''} ${disabled.arbeit?.message ?? ''}`
   bewerte(
-    'HONEST: banned moderator+AAL2 still receives counts (profiles.status is not a producer/app-role gate)',
+    'banned moderator+AAL2 is 42501 and not a zero success row',
     gruppe,
-    banned.arbeit?.ok === true && banned.arbeit?.row?.definition_version === 'jetnity.admin-account-counts.v1',
-    JSON.stringify(banned.arbeit),
+    banned.arbeit?.ok === false && banned.arbeit?.row == null && /42501|not authorized/i.test(bannedText),
+    bannedText || JSON.stringify(banned.arbeit),
   )
   bewerte(
-    'HONEST: disabled admin+AAL2 still receives counts (profiles.status is not a producer/app-role gate)',
+    'disabled admin+AAL2 is 42501 and not a zero success row',
     gruppe,
-    disabled.arbeit?.ok === true && disabled.arbeit?.row?.definition_version === 'jetnity.admin-account-counts.v1',
-    JSON.stringify(disabled.arbeit),
+    disabled.arbeit?.ok === false && disabled.arbeit?.row == null && /42501|not authorized/i.test(disabledText),
+    disabledText || JSON.stringify(disabled.arbeit),
+  )
+
+  const beforeFlip = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  const presentBefore = Number(beforeFlip.arbeit?.row?.present_registered_accounts)
+  const windowBefore = Number(beforeFlip.arbeit?.row?.created_in_prior_30_days)
+  psqlSql(`update public.profiles set status = 'pending' where user_id = '${IDS.moderator}'`)
+  const pendingSelf = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  const pendingInner = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from jetnity_reporting.account_counts_v1()',
+  })
+  const pendingText = `${pendingSelf.arbeit?.sqlstate ?? ''} ${pendingSelf.arbeit?.message ?? ''}`
+  const pendingInnerText = `${pendingInner.arbeit?.sqlstate ?? ''} ${pendingInner.arbeit?.message ?? ''}`
+  bewerte(
+    'pending moderator+AAL2 is 42501 on wrapper and producer without changing JWT claims',
+    gruppe,
+    pendingSelf.arbeit?.ok === false &&
+      pendingSelf.arbeit?.row == null &&
+      /42501|not authorized/i.test(pendingText) &&
+      pendingInner.arbeit?.ok === false &&
+      pendingInner.arbeit?.row == null &&
+      /42501|not authorized/i.test(pendingInnerText),
+    `${pendingText} / ${pendingInnerText}`,
+  )
+  const stillOwner = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.owner,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  bewerte(
+    'metric population is unchanged solely because a privileged caller status changed',
+    gruppe,
+    stillOwner.arbeit?.ok === true &&
+      Number(stillOwner.arbeit.row.present_registered_accounts) === presentBefore &&
+      Number(stillOwner.arbeit.row.created_in_prior_30_days) === windowBefore,
+    JSON.stringify({ before: beforeFlip.arbeit?.row, still: stillOwner.arbeit?.row }),
+  )
+  psqlSql(`update public.profiles set status = 'active' where user_id = '${IDS.moderator}'`)
+  const restored = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  bewerte(
+    'same authenticated moderator is allowed again after status returns to active',
+    gruppe,
+    restored.arbeit?.ok === true &&
+      Number(restored.arbeit.row.present_registered_accounts) === presentBefore,
+    JSON.stringify(restored.arbeit),
   )
 
   const clientSelect = sitzung({
@@ -747,7 +812,7 @@ function pruefeReinstallRevoke() {
     klass.state === 'REVOKED_EXACT' &&
       klass.inventory?.identity_core_ok === true &&
       klass.inventory?.acl_revoked_exact === true &&
-      klass.inventory?.producer_def_sha256 === '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef',
+      klass.inventory?.producer_def_sha256 === 'b9cec2b3cad0052688f5f396cfd1d532d4035bd1d51254723c1d650dc0d1048b',
     JSON.stringify(klass),
   )
   const already = psqlCapture(composeInstallTransaction({ mode: 'already' }))

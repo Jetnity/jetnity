@@ -15,7 +15,11 @@
 --   2. that caller exists in auth.users, is not soft-deleted and is
 --      not anonymous;
 --   3. public.darf_konten_verwalten() (extracted current contract:
---      hat_rolle_mindestens('moderator') AND aktuelles_admin_aal2()).
+--      hat_rolle_mindestens('moderator') AND aktuelles_admin_aal2());
+--   4. that same caller has a persisted public.profiles row whose
+--      status is exactly active. banned / disabled / pending / NULL /
+--      missing / unrecognized status denies. This is a feature-local
+--      caller prerequisite, not a filter on the counted population.
 -- Deny raises SQLSTATE 42501. It never returns a success row of zeros.
 --
 -- Trusted execution owner is the existing database role `postgres`,
@@ -70,6 +74,7 @@ as $$
 declare
   _uid uuid;
   _caller_present boolean;
+  _caller_status text;
   _measured_at timestamp with time zone;
   _window_start timestamp with time zone;
 begin
@@ -94,6 +99,20 @@ begin
   end if;
 
   if not coalesce(public.darf_konten_verwalten(), false) then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+
+  -- Feature-local caller-status prerequisite. Fully qualified because
+  -- search_path is pinned to pg_catalog. A missing row leaves
+  -- _caller_status NULL. Only exactly active may continue. This does
+  -- not join the metric population.
+  select p.status
+    into _caller_status
+    from public.profiles as p
+   where p.user_id = _uid;
+
+  if _caller_status is distinct from 'active' then
     raise exception 'jetnity.admin-account-counts.v1: not authorized'
       using errcode = '42501';
   end if;
@@ -126,7 +145,7 @@ comment on schema jetnity_reporting is
   'LOCAL/UNAPPLIED reporting schema. Not exposed as a Data API RPC. No grant on jetnity_internal. Owned functions execute as the trusted postgres role (fixture: NOSUPERUSER+BYPASSRLS).';
 
 comment on function jetnity_reporting.account_counts_v1() is
-  'jetnity.admin-account-counts.v1: present non-anonymous auth accounts and the subset created in a fixed 720-hour half-open window. SECURITY DEFINER owned by postgres so RLS-protected auth.users can be aggregated without client SELECT or a new BYPASSRLS role. Deny is 42501, never a zero success row. created_at NULL counts in present and not in the window. Future timestamps do not count in the prior 720 hours. No profile join. Test/internal/unconfirmed rows are included when present. Caller must exist, not be anonymous or soft-deleted, and pass public.darf_konten_verwalten(). Authorized present_count is at least 1 because that caller is themselves a present account.';
+  'jetnity.admin-account-counts.v1: present non-anonymous auth accounts and the subset created in a fixed 720-hour half-open window. SECURITY DEFINER owned by postgres so RLS-protected auth.users can be aggregated without client SELECT or a new BYPASSRLS role. Deny is 42501, never a zero success row. created_at NULL counts in present and not in the window. Future timestamps do not count in the prior 720 hours. Metric population has no profile join; banned/internal/unconfirmed rows remain counted when the auth account belongs to the accepted population. Caller must exist, not be anonymous or soft-deleted, pass public.darf_konten_verwalten(), and have a persisted public.profiles.status of exactly active. Authorized present_count is at least 1 because that caller is themselves a present account.';
 
 revoke all on function jetnity_reporting.account_counts_v1() from public;
 revoke all on function jetnity_reporting.account_counts_v1() from anon;

@@ -5,6 +5,10 @@ import type { AdminDecision } from '@/lib/auth/admin-access'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
 import {
+  applyAccountCountsCallerStatus,
+  loadOwnAccountCountsCallerStatus,
+} from '@/lib/admin/account-counts-delivery/caller-status'
+import {
   type AdminAccountCountsExpectedRpc,
   type AdminAccountCountsReadResult,
 } from '@/lib/admin/account-counts-delivery/contract'
@@ -116,7 +120,13 @@ async function defaultAccountCountsGate(): Promise<AdminAccountCountsAccessDecis
     capability: 'konten-verwalten',
     surface: 'admin-account-counts',
   })
-  return mapAdminAccessToAccountCountsDecision(decision)
+  const mapped = mapAdminAccessToAccountCountsDecision(decision)
+  return applyAccountCountsCallerStatus(mapped, decision.user?.id ?? null, async (userId) => {
+    const client = await createServerComponentClient()
+    return loadOwnAccountCountsCallerStatus(async () =>
+      client.from('profiles').select('status').eq('user_id', userId).maybeSingle(),
+    )
+  })
 }
 
 async function defaultAccountCountsRpc(): Promise<AdminAccountCountsRpcResponse> {

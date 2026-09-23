@@ -42,7 +42,7 @@ const CLUSTER_USER = 'jetnity_http_proof'
 const AUTHENTICATOR = 'jetnity_http_authenticator'
 const SNAPSHOT = 'dcf7bfee497ba3aa2038a43fe4bc2a09e541625f'
 const EXPECTED = Object.freeze({
-  producer: 'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420',
+  producer: '612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de',
   bootstrap: '0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2',
   wrapper: '13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb',
   parserBlob: '6205ecbba621b048fff479856c5523fab5ec4f6d',

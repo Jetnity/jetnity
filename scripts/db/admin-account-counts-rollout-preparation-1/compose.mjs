@@ -13,10 +13,18 @@ import { fileURLToPath } from 'node:url'
 const hier = dirname(fileURLToPath(import.meta.url))
 export const ROOT = join(hier, '../../..')
 
+export const HISTORICAL_REFUSED_PRODUCER = Object.freeze({
+  source: 'merged #555 producer without caller-status',
+  candidateSha256: 'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420',
+  producerSha256: '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef',
+  applicability: 'historical only; not ALREADY_INSTALLED for this slice',
+  upgrade: 'later controlled upgrade after #556 stops writing; leftover #555 installs classify INCOMPATIBLE and are not rewritten in place',
+})
+
 export const ACCEPTED = Object.freeze({
   candidate: Object.freeze({
     path: join(ROOT, 'scripts/db/admin-account-counts-1-candidate.sql'),
-    sha256: 'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420',
+    sha256: '612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de',
   }),
   bootstrap: Object.freeze({
     path: join(ROOT, 'scripts/db/admin-account-counts-1-bootstrap.sql'),
@@ -43,9 +51,11 @@ export const PACKAGE_SQL = Object.freeze({
 })
 
 export const PINNED_FUNCTIONDEF = Object.freeze({
-  engineNote: 'PostgreSQL 16.15 pg_get_functiondef SHA-256 of the unchanged accepted sources',
-  producerSha256: '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef',
+  engineNote:
+    'PostgreSQL 16.15 pg_get_functiondef SHA-256 of the caller-status candidate installed on a clean disposable reference. The #555 producer fingerprint is refused, not dual-accepted.',
+  producerSha256: 'b9cec2b3cad0052688f5f396cfd1d532d4035bd1d51254723c1d650dc0d1048b',
   wrapperSha256: '15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609',
+  historicalRefusedProducerSha256: HISTORICAL_REFUSED_PRODUCER.producerSha256,
 })
 
 export const HOSTED_ARGV_PATTERN =
@@ -72,6 +82,11 @@ export function pinAcceptedSources() {
   const contractBlob = gitBlobHash(ACCEPTED.contractPath)
   const parserBlob = gitBlobHash(ACCEPTED.parserPath)
   const mismatches = []
+  if (candidate === HISTORICAL_REFUSED_PRODUCER.candidateSha256) {
+    mismatches.push(
+      `candidate still has refused #555 identity ${candidate}; caller-status producer is required`,
+    )
+  }
   if (candidate !== ACCEPTED.candidate.sha256) {
     mismatches.push(`candidate ${candidate} != ${ACCEPTED.candidate.sha256}`)
   }
