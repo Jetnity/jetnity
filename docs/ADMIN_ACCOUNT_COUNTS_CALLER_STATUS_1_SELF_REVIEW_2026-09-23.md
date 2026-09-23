@@ -11,7 +11,7 @@ This is not a merge recommendation.
 
 ## Scope kept
 
-Writes stayed inside the named producer, feature-local reader/caller-status module, existing `scripts/db/admin-account-counts*` proof compatibility paths, own STATUS/HANDOFF/SELF_REVIEW and new sanitized evidence. Shared Auth, activation, wrapper SQL, parser/contract, package/lock/CI, central docs, #556 e2e/docs/evidence and old evidence files were not edited. Historical #555 `local-rehearsal.json` was restored after the rehearsal runner tried to overwrite it.
+Writes stayed inside the named producer, feature-local reader/caller-status module, existing `scripts/db/admin-account-counts*` proof compatibility paths, the existing account-counts-delivery effective-target harness, own STATUS/HANDOFF/SELF_REVIEW and new sanitized evidence. Shared Auth, activation, wrapper SQL, parser/contract, package/lock/CI, central docs, #556 e2e/docs/evidence and old evidence files were not edited. Historical #555 `local-rehearsal.json` was restored after the rehearsal runner tried to overwrite it. The later harness repair only taught the existing delivery SSR stub to return active own-status for the role-backed harness user.
 
 ## What was actually executed
 
@@ -23,7 +23,7 @@ Writes stayed inside the named producer, feature-local reader/caller-status modu
 - 139/139 rollout install/grant/staged-unexposed/revoke/rollback/drift proofs, exit 0, owned cluster removed
 - `check:dead` / `check:exports` / `check:operating-mode` PASS
 
-Full suite, production build, typecheck, lint and hosted gates were not run by this persist.
+After exact-head CI `35852662043` failed on invalidated freeze `0e7cebe6` (2 effective-target tests), the existing delivery SSR stub was taught to return active own-status. Re-run: 22/22 caller-status/reader/effective-target PASS; 20/20 activation/parser/render/schema-reference PASS. Full suite, production build, typecheck, lint and hosted gates were not run by this persist. New exact-head CI/Auth/Preview are not claimed here.
 
 ## Contract self-check
 

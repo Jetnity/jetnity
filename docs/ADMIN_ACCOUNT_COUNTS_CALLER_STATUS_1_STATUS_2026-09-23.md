@@ -8,6 +8,8 @@ Branch: `fix/admin-account-counts-caller-status-1`
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_CALLER_STATUS_1_TASK_2026-09-23.md` v1 at `99fa42dca4c46116498d0cc74ea7cd26e467b591`  
 Exact baseline / merge-base: `main@87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`  
 Implementation persist: `bd44228d7ced523b85ff699b209fd42794900349`  
+Harness repair persist: `1f38a9689b79af81d7fa0742e83f851ec264f3d1`  
+Previous freeze (invalidated): `0e7cebe6953e429e89c209916178a786a0c93099`  
 Docs persist / freeze candidate: this STATUS commit on `fix/admin-account-counts-caller-status-1`  
 Mode: NORMAL
 
@@ -61,6 +63,27 @@ Authorized active privileged AAL2 still received fixture aggregates (`present=14
 - No Browser / GoTrue / MFA / hosted PG17 parity PASS. #556 owns preflight helper B1/B2 on its own branch; this slice did not import it.
 - Connected hosted Production objects remain ABSENT per dated TL metadata. This agent did not connect, apply, grant or activate.
 - Local 16.15 functiondef pins are that engine's pretty-print. A later hosted 17.6 apply must recapture or treat mismatch as BLOCKED.
-- Full `npm test`, production build, typecheck and lint were not run by this persist. Exact-head CI/Auth/Preview belong to the frozen head after this docs persist.
+- Full `npm test`, production build, typecheck and lint were not run by this persist. Exact-head CI/Auth/Preview belong to the new frozen head after this docs persist. The previous freeze `0e7cebe6` is invalidated.
+
+## 5. Exact-head CI failure on the previous freeze — repaired locally
+
+Invalidated freeze `0e7cebe6953e429e89c209916178a786a0c93099`:
+- Workflow `35852662043` Typecheck/Lint/Build job `107153751087` **FAILED** (`npm test` 3897 pass / 2 fail).
+- Auth job `107153750758` SUCCESS on that old head only.
+- Preview comments job `107153867866` SUCCESS on that old head only. Those gates do not transfer.
+
+Root cause: `defaultAccountCountsGate` now reads `profiles.status` through `createServerComponentClient()`. The existing effective-target SSR stub implemented only `rpc()`. The role-backed local-positive path therefore threw, mapped to `failed`, and did not invoke the wrapper. This is existing delivery-proof compatibility, not a product-contract change.
+
+Harness repair `1f38a9689b79af81d7fa0742e83f851ec264f3d1`:
+- Stub returns `{ status: 'active' }` for the harness user's own `profiles.status` lookup.
+- Unsupported or other-user lookups fail closed.
+- Local-positive now expects two authenticated creates / two cookie reads (own-status then wrapper RPC) and still exactly one `admin_account_counts_v1` RPC.
+- Runtime OFF / remote / missing-target paths still have zero create / rpc / guard / cookies.
+
+Re-run on this writer after the repair:
+- caller-status + reader + effective-target: **22/22 PASS**
+- activation + parser + render + schema-reference: **20/20 PASS**
+
+This persist does not claim a new exact-head CI/Auth/Preview PASS. Those belong to the new frozen head after push.
 
 **Do not mark Ready. Do not merge. STOP FOR INDEPENDENT TL EXACT-HEAD REVIEW.**

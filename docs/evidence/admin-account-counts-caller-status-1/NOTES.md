@@ -5,6 +5,8 @@
 - New 16.15 functiondef SHA-256 `b9cec2b3cad0052688f5f396cfd1d532d4035bd1d51254723c1d650dc0d1048b` from a clean disposable install.
 - Historical #555 hashes remain recorded and are refused.
 - Local PostgreSQL 16.15 package was installed because proof binaries were missing. Apt created unused system `16/main`; proofs used private sockets only.
+- Invalidated freeze `0e7cebe6`: CI `35852662043` Typecheck/Lint/Build FAILED (2 effective-target tests). Auth/Preview on that head do not transfer.
+- Harness repair `1f38a968`: existing delivery SSR stub returns active own-status for `harness-user`; local-positive expects 2 creates / 2 cookie reads / 1 RPC. Runtime OFF remains zero transport.
 - No hosted query, grant, apply, secret or live account access.
 - No Browser / MFA / hosted-parity PASS.
 - #556 files were not written.

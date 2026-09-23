@@ -29,3 +29,17 @@ npm run check:dead
 npm run check:exports
 npm run check:operating-mode
 # all PASS
+
+# After invalidated freeze 0e7cebe6 CI 35852662043 Typecheck/Lint/Build FAILED:
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/effective-target.test.ts \
+  lib/admin/account-counts-delivery/reader.test.ts \
+  lib/admin/account-counts-delivery/caller-status.test.ts
+# 22/22 PASS
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/activation.test.ts \
+  lib/admin/account-counts-delivery/parser.test.ts \
+  lib/admin/account-counts-delivery/schema-reference.test.ts \
+  lib/admin/account-counts-delivery/render.test.ts
+# 20/20 PASS

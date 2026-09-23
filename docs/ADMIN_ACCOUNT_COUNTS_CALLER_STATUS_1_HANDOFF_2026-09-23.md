@@ -16,6 +16,8 @@ Für den nächsten unabhängigen Technical-Lead-Review. Nicht für einen neuen P
 - Baseline: `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`
 - Task v1: `99fa42dca4c46116498d0cc74ea7cd26e467b591`
 - Implementation persist: `bd44228d7ced523b85ff699b209fd42794900349`
+- Harness repair persist: `1f38a9689b79af81d7fa0742e83f851ec264f3d1`
+- Previous freeze (invalidated by CI fail + this repair): `0e7cebe6953e429e89c209916178a786a0c93099`
 - Do not resume closed #555 or active #556 sessions
 - Do not import unmerged #556 work
 
@@ -27,8 +29,8 @@ New identity pins were taken from a clean disposable PostgreSQL 16.15 install of
 
 ## First unread action for Technical Lead
 
-1. Independent exact-head review of this caller-status PR only.
-2. Record exact-head CI/Auth/Preview in the PR conversation after the frozen docs persist; a new head invalidates older gates.
+1. Independent exact-head review of the **new** frozen head after this harness-repair persist. Do not review invalidated `0e7cebe6`.
+2. Record exact-head CI/Auth/Preview for the new head only. Workflow `35852662043` on `0e7cebe6` is historical: Typecheck/Lint/Build FAILED because the delivery harness SSR stub lacked `profiles.status`.
 3. Keep integration order: accept/integrate #556 first if ready, then this slice only after an explicit exact-main synchronization / compatibility re-pin instruction.
 4. Do not merge. Do not mark Ready. Do not start a follow-up slice from Cursor.
 
