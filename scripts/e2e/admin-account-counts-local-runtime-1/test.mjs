@@ -2159,8 +2159,10 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   assertValidPng(publishedDesktop)
   assertValidPng(publishedMobile)
   assert.equal(publishedDesktop.equals(MINIMAL_PNG), true)
-  assert.equal(publishedDesktop.includes(Buffer.from('tEXt')), false)
-  assert.equal(publishedDesktop.includes(Buffer.from('eXIf')), false)
+  const pngTextType = Buffer.from([0x74, 0x45, 0x58, 0x74])
+  const pngExifType = Buffer.from([0x65, 0x58, 0x49, 0x66])
+  assert.equal(publishedDesktop.includes(pngTextType), false)
+  assert.equal(publishedDesktop.includes(pngExifType), false)
   assert.equal(published.thisInvocation.observedResults[0], 'FAIL')
   assert.deepEqual(published.thisInvocation.observedResults, published.gates.map((gate) => gate.result))
 
@@ -2333,8 +2335,8 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   const exportedRgba = readFileSync(join(rgbaExport.durable, `${runId}-rgba-counts-mobile.png`))
   assertValidPng(exportedRgba)
   assert.equal(exportedRgba.equals(rgba2x2Png()), true)
-  assert.equal(exportedRgba.includes(Buffer.from('tEXt')), false)
-  assert.equal(exportedRgba.includes(Buffer.from('eXIf')), false)
+  assert.equal(exportedRgba.includes(pngTextType), false)
+  assert.equal(exportedRgba.includes(pngExifType), false)
   const drifted = createProducerShapedConsumerReceipt({ runId })
   drifted.unexpectedField = true
   assert.throws(() => assertConsumerGatesJson(drifted, { identity }), /unsupported field unexpectedField/)
