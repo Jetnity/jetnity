@@ -16,18 +16,19 @@ Für den nächsten unabhängigen Technical-Lead-**Re-Review**. Nicht für einen 
 - Baseline / merge-base: `fa7f651c023eb361fb142cbb931bc702f3a3d213`
 - Task v1 unchanged: `58afaa15d15dce87c180f4f0eb73b8dc248e896e`
 - Frozen interface: §4 of `docs/ADMIN_ACCOUNT_COUNTS_LOCAL_RUNTIME_1_TASK_2026-09-23.md` at `0aa33e88a021756a5cee64a130d544122977880a`
-- Previous reviewed head: `d12ec6e9637ff3cd66113c2540f1ae2418520f9d`
-- TL review `5291538166`: CHANGES REQUIRED (B1–B4)
+- Previous reviewed head: `9fc883927a001f9e7785a7b63f369e15144d6f2d`
+- TL re-review `5292928238`: CHANGES REQUIRED (remaining B1–B3)
+- Diagnostic: `#558` comment `5797455875` (evidence only)
 
 ## What was delivered
 
-Same-session B1–B4 correction of the awaited Playwright consumer for G6–G19. Assertions now use the accepted count parser, exact caller-status semantics, exact local-project Auth capture, true zero→one/+1 and active-restoration facts, bounded waits, ownership-stop after failed close/restore, secret-safe returned gates, and exclusive fail-closed receipts. Historical receipt `aacbf1-20260923T123800Z` was not overwritten.
+Same-session remaining B1–B3 correction of the awaited Playwright consumer for G6–G19. UI denials now require ready application copy on the exact local origin/path plus a valid navigation response. Anonymous/no-EXECUTE and invalid-JWT stay distinct source-contract kinds. The JS payload port is compared to the unchanged accepted TypeScript parser through locked `tsx`. Auth capture binds actor + session epoch and invalidates pending json after detach. A timeout marks the run terminal, refuses later resource-using gates, and still allows bounded cleanup of late handles. Historical receipts `aacbf1-20260923T123800Z` and `aacbf1-review-fix-b1-b4-20260923T133051Z` were not overwritten.
 
-Controlled-context unit tests: **22/22 PASS**. They are **not** real UI/Auth/MFA execution.
+Controlled-context unit tests: **28/28 PASS**. They are **not** real UI/Auth/MFA execution.
 
 ## First unread action for Technical Lead
 
-1. Independent exact-head re-review of **this frozen head**. Cover B1–B4: HTTP/UI denial, success contract, Auth origin/session binding, G12/G16/budgets/ownership-stop, receipt privacy/exclusivity.
+1. Independent exact-head re-review of **this frozen head**. Cover remaining B1–B3: ready UI vs URL/absence, anonymous vs invalid-JWT plus accepted-parser equivalence, actor/session-epoch capture + pending invalidation, terminal timeout with late-handle cleanup and consumer sequencing.
 2. Do not treat helper/double PASS, Preview READY, or later CI as a browser PASS or whole-run PASS.
 3. Integration order remains **#558 then #559** after a specific TL instruction naming the merged main SHA. Neither agent auto-syncs. #558 must fix its own `evidenceDir`.
 4. Actual integrated browser execution is a later explicit TL gate. It is not authorized on the user's incoming Mac by this task.
