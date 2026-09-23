@@ -35,12 +35,16 @@ import {
   validateContext,
 } from './contract.mjs'
 import { assertNoCountDisclosure, classifyDenialUi } from './counts.mjs'
+import { inspectNavigationResponse } from './navigation.mjs'
 import { containedEvidencePath, runScopedName, writeSanitizedReceipt } from './evidence.mjs'
 import {
   IMPLEMENTATION,
   runBrowserFlows,
+  runG7Aal1Denial,
   runG10ExistingFactor,
+  runG11DefaultOff,
   runG12ZeroAndDelta,
+  runG14Unauthenticated,
 } from './flows.mjs'
 import {
   SYNTHETIC_INVALID_JWT,
@@ -210,19 +214,27 @@ function createScriptedPage(world) {
 
   const ownerUser = { id: OWNER.id, email: OWNER.email }
 
+  const documentResponse = () => {
+    if (world.gotoReturns === null) return null
+    const status = world.navigationStatus ?? 200
+    return {
+      status: () => status,
+      url: () => world.url,
+      ok: () => status >= 200 && status < 400,
+    }
+  }
+
   const page = {
-    lastNavigation: { status: 200 },
     goto: async (url) => {
-      page.lastNavigation = { status: 200 }
       const next = new URL(url, 'http://127.0.0.1:3000')
       if (next.pathname.startsWith('/admin') && next.pathname !== '/admin/login') {
         if (!world.loggedIn) {
           world.url = 'http://127.0.0.1:3000/admin/login'
-          return
+          return documentResponse()
         }
         if (world.aal < 2 && next.pathname === '/admin') {
           world.url = 'http://127.0.0.1:3000/admin/mfa'
-          return
+          return documentResponse()
         }
       }
       world.url = String(url)
@@ -233,6 +245,7 @@ function createScriptedPage(world) {
           status: 200,
         })
       }
+      return documentResponse()
     },
     reload: async () => page.goto(world.url),
     url: () => world.url,
@@ -409,6 +422,8 @@ function createWorld(overrides = {}) {
     localApi: 'http://127.0.0.1:54321',
     loginError: null,
     failedCounts: false,
+    navigationStatus: 200,
+    gotoReturns: undefined,
     ...overrides,
   }
 }
@@ -542,10 +557,17 @@ function stubFetch(world, t) {
   })
 }
 
-function pageFromBody(text, url = 'http://127.0.0.1:3000/admin', { status = 200 } = {}) {
+function documentResponse(url, status = 200) {
+  return {
+    status: () => status,
+    url: () => url,
+    ok: () => status >= 200 && status < 400,
+  }
+}
+
+function pageFromBody(text, url = 'http://127.0.0.1:3000/admin') {
   return {
     url: () => url,
-    lastNavigation: { status },
     locator: (selector) => ({
       count: async () => 0,
       first: () => ({ innerText: async () => '' }),
@@ -774,7 +796,10 @@ test('B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both 
     /failed|generic/,
   )
   await assert.rejects(
-    () => assertNoCountDisclosure(pageFromBody(UI_COPY.unavailable), { allowForbidden: true }),
+    () => assertNoCountDisclosure(pageFromBody(UI_COPY.unavailable), {
+      allowForbidden: true,
+      response: documentResponse('http://127.0.0.1:3000/admin'),
+    }),
     /unavailable|expected denial/,
   )
   await assert.rejects(
@@ -783,7 +808,6 @@ test('B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both 
   )
   const leaked = {
     url: () => 'http://127.0.0.1:3000/admin',
-    lastNavigation: { status: 200 },
     locator: (selector) => ({
       count: async () => (selector.includes('window') || selector.includes('present') ? 1 : 0),
       first: () => ({ innerText: async () => '4' }),
@@ -791,10 +815,16 @@ test('B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both 
     }),
   }
   await assert.rejects(() => assertNoCountDisclosure(leaked, { allowForbidden: true }), /aggregate/)
-  const forbidden = pageFromBody(UI_COPY.forbidden)
-  const denied = await assertNoCountDisclosure(forbidden, { allowForbidden: true })
+  const forbiddenUrl = 'http://127.0.0.1:3000/admin'
+  const forbidden = pageFromBody(UI_COPY.forbidden, forbiddenUrl)
+  const denied = await assertNoCountDisclosure(forbidden, {
+    allowForbidden: true,
+    response: documentResponse(forbiddenUrl),
+  })
   assert.equal(denied.kind, 'forbidden')
-  const classified = await classifyDenialUi(pageFromBody(UI_COPY.unavailable))
+  const classified = await classifyDenialUi(pageFromBody(UI_COPY.unavailable, forbiddenUrl), {
+    response: documentResponse(forbiddenUrl),
+  })
   assert.equal(classified.kind, 'unavailable')
 })
 
@@ -1082,31 +1112,140 @@ test('B1 remaining UI requires exact origin/path and ready application copy', as
   const prefix = await classifyDenialUi(pageFromBody(UI_COPY.login, `${origin}/admin/login/extra`))
   assert.equal(prefix.kind, 'unknown')
 
-  const readyLogin = await classifyDenialUi(pageFromBody(UI_COPY.login, `${origin}/admin/login`), { expectedOrigin: origin })
+  const loginUrl = `${origin}/admin/login`
+  const readyLogin = await classifyDenialUi(pageFromBody(UI_COPY.login, loginUrl), {
+    expectedOrigin: origin,
+    response: documentResponse(loginUrl),
+  })
   assert.equal(readyLogin.kind, 'login')
   const denied = await assertNoCountDisclosure(
-    pageFromBody(UI_COPY.login, `${origin}/admin/login`),
-    { expectKind: 'login', expectedOrigin: origin },
+    pageFromBody(UI_COPY.login, loginUrl),
+    { expectKind: 'login', expectedOrigin: origin, response: documentResponse(loginUrl) },
   )
   assert.equal(denied.kind, 'login')
 
+  const adminUrl = `${origin}/admin`
   const off = await classifyDenialUi(
-    pageFromBody(`${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`, `${origin}/admin`),
-    { expectedOrigin: origin },
+    pageFromBody(`${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`, adminUrl),
+    { expectedOrigin: origin, response: documentResponse(adminUrl) },
   )
   assert.equal(off.kind, 'disabled')
   const offPass = await assertNoCountDisclosure(
-    pageFromBody(`${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`, `${origin}/admin`),
-    { expectKind: 'disabled', expectedOrigin: origin },
+    pageFromBody(`${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`, adminUrl),
+    { expectKind: 'disabled', expectedOrigin: origin, response: documentResponse(adminUrl) },
   )
   assert.equal(offPass.kind, 'disabled')
 
   await assert.rejects(
     () => assertNoCountDisclosure(
-      pageFromBody(UI_COPY.login, `${origin}/admin/login`, { status: 500 }),
-      { expectKind: 'login', expectedOrigin: origin },
+      pageFromBody(UI_COPY.login, loginUrl),
+      { expectKind: 'login', expectedOrigin: origin, response: documentResponse(loginUrl, 500) },
     ),
     /navigation/,
+  )
+  await assert.rejects(
+    () => assertNoCountDisclosure(
+      pageFromBody(UI_COPY.login, loginUrl),
+      { expectKind: 'login', expectedOrigin: origin },
+    ),
+    /missing-navigation/,
+  )
+})
+
+function playwrightShapedPage(world) {
+  const scripted = createScriptedPage(world)
+  return {
+    goto: scripted.goto,
+    reload: scripted.reload,
+    url: scripted.url,
+    locator: scripted.locator,
+    waitForURL: scripted.waitForURL,
+    waitForLoadState: scripted.waitForLoadState,
+    waitForResponse: scripted.waitForResponse,
+    on: scripted.on,
+    off: scripted.off,
+    setViewportSize: scripted.setViewportSize,
+    evaluate: scripted.evaluate,
+    getByRole: scripted.getByRole,
+    getByText: scripted.getByText,
+  }
+}
+
+test('B1 Playwright-shaped page: G7/G11/G14 need the current goto Response', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const timing = { timeoutMs: 2000 }
+
+  const g7world = createWorld({
+    loggedIn: OWNER.email,
+    aal: 1,
+    url: `${origin}/admin/mfa`,
+  })
+  const g7page = playwrightShapedPage(g7world)
+  assert.equal(Object.hasOwn(g7page, 'lastNavigation'), false)
+  assert.equal(Object.hasOwn(g7page, 'lastResponse'), false)
+  const g7ok = await runG7Aal1Denial(g7page, origin, timing)
+  assert.match(g7ok, /AAL2|role/)
+
+  g7world.navigationStatus = 500
+  await assert.rejects(() => runG7Aal1Denial(g7page, origin, timing), /navigation-500/)
+  g7world.navigationStatus = 404
+  await assert.rejects(() => runG7Aal1Denial(g7page, origin, timing), /navigation-404/)
+  g7world.navigationStatus = 200
+  g7world.gotoReturns = null
+  await assert.rejects(() => runG7Aal1Denial(g7page, origin, timing), /missing-navigation/)
+  g7world.gotoReturns = undefined
+
+  const g14world = createWorld({ loggedIn: null, aal: 0, url: `${origin}/admin/login` })
+  const g14page = playwrightShapedPage(g14world)
+  const g14ok = await runG14Unauthenticated(g14page, origin, timing)
+  assert.match(g14ok, /unauthenticated/)
+  g14world.navigationStatus = 500
+  await assert.rejects(() => runG14Unauthenticated(g14page, origin, timing), /navigation-500/)
+
+  const g11world = createWorld({
+    loggedIn: OWNER.email,
+    aal: 2,
+    countsEnabled: false,
+    url: `${origin}/admin`,
+  })
+  const g11page = playwrightShapedPage(g11world)
+  const mark = { value: 0 }
+  const g11context = {
+    rpcObserver: {
+      mark: () => {
+        mark.value += 1
+        return mark.value
+      },
+      since: () => ({ complete: true, calls: [] }),
+    },
+  }
+  const g11ok = await runG11DefaultOff(g11page, origin, { positiveRpcControl: true }, g11context, timing)
+  assert.match(g11ok, /OFF/)
+
+  const stale = documentResponse(`${origin}/admin/login`)
+  assert.equal(
+    inspectNavigationResponse(stale, { expectedOrigin: origin, pageUrl: `${origin}/admin` }).reason,
+    'stale-navigation',
+  )
+  const foreign = documentResponse('http://127.0.0.1:3999/admin/mfa')
+  assert.equal(
+    inspectNavigationResponse(foreign, { expectedOrigin: origin, pageUrl: `${origin}/admin/mfa` }).reason,
+    'foreign-origin',
+  )
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody('', `${origin}/admin/login`), {
+      expectKind: 'login',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin/login`),
+    }),
+    /blank/,
+  )
+  await assert.rejects(
+    () => assertNoCountDisclosure(
+      pageFromBody('Something went wrong', `${origin}/admin`),
+      { expectKind: 'disabled', expectedOrigin: origin, response: documentResponse(`${origin}/admin`) },
+    ),
+    /unknown|generic/,
   )
 })
 

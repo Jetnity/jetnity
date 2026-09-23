@@ -4,6 +4,7 @@
 import { generateTotp, looksLikeTotpCode } from '../admin-account-counts-browser-acceptance-1/totp.mjs'
 import { PATHS, SELECTORS, UI_COPY } from './constants.mjs'
 import { OwnershipUncertaintyError, sameExactOrigin } from './contract.mjs'
+import { requireReadyNavigation } from './navigation.mjs'
 
 export function secretFromOtpauth(uri) {
   if (typeof uri !== 'string' || !uri.startsWith('otpauth://')) return null
@@ -181,12 +182,16 @@ export async function openPage(browserContext) {
 
 export async function loginViaUi(page, origin, account, timing = {}) {
   if (timing.signal?.aborted) throw new Error('aborted before login')
-  await boundAction(timing, 'login.goto', (timeoutMs) =>
+  const loginNav = await boundAction(timing, 'login.goto', (timeoutMs) =>
     page.goto(`${origin}${PATHS.login}`, {
       waitUntil: 'domcontentloaded',
       timeout: timeoutMs,
     }),
   )
+  requireReadyNavigation(loginNav, {
+    expectedOrigin: origin,
+    pageUrl: typeof page.url === 'function' ? page.url() : undefined,
+  })
   await boundAction(timing, 'login.form', (timeoutMs) =>
     page.locator(SELECTORS.loginForm).waitFor({ timeout: timeoutMs }),
   )
@@ -270,12 +275,16 @@ export async function enrollTotpViaUi(page, origin, store, timing = {}) {
   if (store.totpSecret && store.forceNewEnrollment) {
     throw new Error('G10/existing-factor path must not force a new enrollment')
   }
-  await boundAction(timing, 'enroll.goto', (timeoutMs) =>
+  const enrollNav = await boundAction(timing, 'enroll.goto', (timeoutMs) =>
     page.goto(`${origin}${PATHS.security}`, {
       waitUntil: 'domcontentloaded',
       timeout: timeoutMs,
     }),
   )
+  requireReadyNavigation(enrollNav, {
+    expectedOrigin: origin,
+    pageUrl: typeof page.url === 'function' ? page.url() : undefined,
+  })
   const enroll = page.getByRole
     ? page.getByRole('button', { name: SELECTORS.enrollButtonText })
     : page.locator(`text=${SELECTORS.enrollButtonText}`)
@@ -345,12 +354,16 @@ export async function stepUpViaExistingFactor(page, origin, store, timing = {}) 
   if (!allowEnroll && store.clickedEnrollOnThisPage) {
     throw new Error('fresh session must reuse the existing factor, not enroll again')
   }
-  await boundAction(timing, 'stepUp.goto', (timeoutMs) =>
+  const stepUpNav = await boundAction(timing, 'stepUp.goto', (timeoutMs) =>
     page.goto(`${origin}${PATHS.stepUp}`, {
       waitUntil: 'domcontentloaded',
       timeout: timeoutMs,
     }),
   )
+  requireReadyNavigation(stepUpNav, {
+    expectedOrigin: origin,
+    pageUrl: typeof page.url === 'function' ? page.url() : undefined,
+  })
   const codeInput = page.locator(SELECTORS.stepUpCode)
   const visible = await codeInput.isVisible?.({ timeout: Math.min(3_000, timing.timeoutMs ?? 3_000) }).catch(() => false)
   if (!visible) {

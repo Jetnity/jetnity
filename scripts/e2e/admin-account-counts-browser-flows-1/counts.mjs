@@ -3,6 +3,7 @@
 
 import { COUNT_VALUE_SELECTORS, PATHS, SELECTORS, UI_COPY, WINDOW_HOURS } from './constants.mjs'
 import { parseAbsoluteHttpUrl, sameExactOrigin } from './contract.mjs'
+import { inspectNavigationResponse } from './navigation.mjs'
 import { WINDOW_US, parsePgTimestamptz } from './payload.mjs'
 
 export function normalizeCount(value) {
@@ -55,78 +56,76 @@ function exactPath(url) {
   return parsed.pathname.replace(/\/+$/, '') || '/'
 }
 
-function hasReadyNavigation(page) {
-  const nav = page.lastNavigation ?? page.lastResponse ?? null
-  if (!nav) return { ok: false, reason: 'missing-navigation' }
-  const status = typeof nav.status === 'function' ? nav.status() : nav.status
-  if (typeof status !== 'number') return { ok: false, reason: 'missing-navigation' }
-  if (status >= 400) return { ok: false, reason: `navigation-${status}` }
-  return { ok: true, status }
-}
-
 function hasAdminShell(text) {
   return text.includes(UI_COPY.adminShellTitle) && text.includes(UI_COPY.adminShellKicker)
 }
 
-export async function classifyDenialUi(page, { expectedOrigin } = {}) {
+export async function classifyDenialUi(page, { expectedOrigin, response, navigation } = {}) {
   const url = typeof page.url === 'function' ? String(page.url()) : ''
   const text = await page.locator('body').innerText()
   const trimmed = String(text ?? '')
   const path = exactPath(url)
   const originOk = expectedOrigin ? sameExactOrigin(url, expectedOrigin) : Boolean(parseAbsoluteHttpUrl(url))
-  const navigation = hasReadyNavigation(page)
+  const observed = navigation ?? inspectNavigationResponse(response, {
+    expectedOrigin,
+    pageUrl: url,
+  })
 
   if (!originOk) {
-    return { kind: 'wrong-origin', url, text: trimmed, path, navigation }
+    return { kind: 'wrong-origin', url, text: trimmed, path, navigation: observed }
   }
   if (trimmed.includes(UI_COPY.failed) || /internal server error/i.test(trimmed)) {
-    return { kind: 'failed', url, text: trimmed, path, navigation }
+    return { kind: 'failed', url, text: trimmed, path, navigation: observed }
   }
   if (!trimmed.trim()) {
-    return { kind: 'blank', url, text: trimmed, path, navigation }
+    return { kind: 'blank', url, text: trimmed, path, navigation: observed }
   }
 
   if (path === PATHS.login) {
     if (!trimmed.includes(UI_COPY.login)) {
-      return { kind: 'unknown', url, text: trimmed, path, navigation }
+      return { kind: 'unknown', url, text: trimmed, path, navigation: observed }
     }
     if (trimmed.includes(UI_COPY.ordinaryDenied)) {
-      return { kind: 'login-denied', url, text: trimmed, path, navigation }
+      return { kind: 'login-denied', url, text: trimmed, path, navigation: observed }
     }
-    return { kind: 'login', url, text: trimmed, path, navigation }
+    return { kind: 'login', url, text: trimmed, path, navigation: observed }
   }
 
   if (path === PATHS.stepUp) {
     if (!trimmed.includes(UI_COPY.stepUp)) {
-      return { kind: 'unknown', url, text: trimmed, path, navigation }
+      return { kind: 'unknown', url, text: trimmed, path, navigation: observed }
     }
-    return { kind: 'step-up', url, text: trimmed, path, navigation }
+    return { kind: 'step-up', url, text: trimmed, path, navigation: observed }
   }
 
   if (path === PATHS.unauthorized) {
-    return { kind: 'unauthorized', url, text: trimmed, path, navigation }
+    return { kind: 'unauthorized', url, text: trimmed, path, navigation: observed }
   }
 
   if (path === PATHS.admin) {
     if (trimmed.includes(UI_COPY.forbidden)) {
-      return { kind: 'forbidden', url, text: trimmed, path, navigation }
+      return { kind: 'forbidden', url, text: trimmed, path, navigation: observed }
     }
     if (trimmed.includes(UI_COPY.unavailable)) {
-      return { kind: 'unavailable', url, text: trimmed, path, navigation }
+      return { kind: 'unavailable', url, text: trimmed, path, navigation: observed }
     }
     const counts = await sectionPresent(page)
     if (hasAdminShell(trimmed) && !counts) {
-      return { kind: 'disabled', url, text: trimmed, path, navigation }
+      return { kind: 'disabled', url, text: trimmed, path, navigation: observed }
     }
-    return { kind: 'unknown', url, text: trimmed, path, navigation }
+    return { kind: 'unknown', url, text: trimmed, path, navigation: observed }
   }
 
-  return { kind: 'unknown', url, text: trimmed, path, navigation }
+  return { kind: 'unknown', url, text: trimmed, path, navigation: observed }
 }
 
 export async function assertNoCountDisclosure(page, options = {}) {
   await bothAggregatesUndisclosed(page)
-  const classified = await classifyDenialUi(page, { expectedOrigin: options.expectedOrigin })
+  const classified = await classifyDenialUi(page, {
+    expectedOrigin: options.expectedOrigin,
+    response: options.response,
+    navigation: options.navigation,
+  })
   if (['failed', 'blank', 'unknown', 'wrong-origin'].includes(classified.kind)) {
     throw new Error(`generic ${classified.kind} page cannot become a denial PASS`)
   }

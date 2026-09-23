@@ -22,8 +22,9 @@ and honest controlled-context unit tests.
    runtime observer interval for ON/OFF RPC claims, and restores fixture
    mutations in `finally`. A timeout/abort marks the run terminal; later
    resource-using gates stay NOT RUN while late create/close/restore remain
-   tracked for bounded cleanup. HTTP/UI denials require exact status+code and
-   ready application copy — not a matching URL or missing count selectors.
+   tracked for bounded cleanup.    HTTP/UI denials require exact status+code,
+   the current awaited goto/reload Response, and ready application copy —
+   not a matching URL, a test-only Page field, or missing count selectors.
    Anonymous/no-EXECUTE and invalid-JWT stay distinct source-contract kinds.
    Auth capture is bound to the exact local project, current session epoch and
    expected actor; pending json after detach cannot mutate later state.

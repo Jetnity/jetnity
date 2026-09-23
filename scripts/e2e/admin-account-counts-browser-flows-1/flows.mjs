@@ -32,6 +32,7 @@ import {
   screenshotCountSection,
   sectionPresent,
 } from './counts.mjs'
+import { navigateDocument, reloadDocument } from './navigation.mjs'
 import {
   reserveExclusiveArtifact,
   runScopedName,
@@ -140,15 +141,20 @@ export async function runG6Login(page, origin, account, store, timing) {
 }
 
 export async function runG7Aal1Denial(page, origin, timing) {
-  await page.goto(`${origin}${PATHS.admin}`, {
+  const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   const url = typeof page.url === 'function' ? page.url() : ''
   if (!String(url).includes(PATHS.stepUp)) {
     throw new Error(`AAL1 /admin must stay on step-up, landed on ${url}`)
   }
-  await assertNoCountDisclosure(page, { expectKind: 'step-up', expectedOrigin: origin })
+  await assertNoCountDisclosure(page, {
+    expectKind: 'step-up',
+    expectedOrigin: origin,
+    response,
+  })
   return 'role alone did not disclose counts before AAL2'
 }
 
@@ -160,9 +166,10 @@ export async function runG8Enroll(page, origin, store, timing) {
 export async function runG9Aal2CountsOn(page, origin, store, context, timing) {
   await stepUpViaExistingFactor(page, origin, store, { ...timing, allowEnroll: true })
   const mark = context.rpcObserver.mark()
-  await page.goto(`${origin}${PATHS.admin}`, {
+  await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   await waitForRequestsToSettle(page, timing)
   const expected = await context.fixture.expectedCounts()
@@ -209,15 +216,20 @@ export async function runG11DefaultOff(page, origin, store, context, timing) {
     throw new Error('OFF/no-call requires a prior real positive observed-call control')
   }
   const mark = context.rpcObserver.mark()
-  await page.goto(`${origin}${PATHS.admin}`, {
+  const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   await waitForRequestsToSettle(page, timing)
   if (await sectionPresent(page)) {
     throw new Error('counts section rendered while the OFF application instance is active')
   }
-  await assertNoCountDisclosure(page, { expectKind: 'disabled', expectedOrigin: origin })
+  await assertNoCountDisclosure(page, {
+    expectKind: 'disabled',
+    expectedOrigin: origin,
+    response,
+  })
   assertNoWrapperCalls(context.rpcObserver.since(mark), {
     priorPositiveControl: store.positiveRpcControl,
   })
@@ -226,9 +238,10 @@ export async function runG11DefaultOff(page, origin, store, context, timing) {
 
 export async function runG12ZeroAndDelta(page, origin, store, context, timing) {
   await context.fixture.prepareCountScenario('zero-window')
-  await page.goto(`${origin}${PATHS.admin}`, {
+  await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'networkidle',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   const zero = await context.fixture.expectedCounts()
   if (normalizeCount(zero.recent) !== '0') {
@@ -236,13 +249,12 @@ export async function runG12ZeroAndDelta(page, origin, store, context, timing) {
   }
   await assertCountsMatchExpected(page, zero)
   await context.fixture.prepareCountScenario('one-recent')
-  await page.reload?.({ waitUntil: 'networkidle', timeout: timing.timeoutMs })
-  if (!page.reload) {
-    await page.goto(`${origin}${PATHS.admin}`, {
-      waitUntil: 'networkidle',
-      timeout: timing.timeoutMs,
-    })
-  }
+  await reloadDocument(page, {
+    waitUntil: 'networkidle',
+    timeout: timing.timeoutMs,
+    fallbackUrl: `${origin}${PATHS.admin}`,
+    expectedOrigin: origin,
+  })
   const one = await context.fixture.expectedCounts()
   if (normalizeCount(one.recent) !== '1') {
     throw new Error(`one-recent recent must be 1, got ${one.recent}`)
@@ -259,27 +271,34 @@ export async function runG12ZeroAndDelta(page, origin, store, context, timing) {
 export async function runG13Ordinary(page, origin, account, timing) {
   await loginViaUi(page, origin, account, timing)
   await expectOrdinaryDenial(page, timing)
-  await page.goto(`${origin}${PATHS.admin}`, {
+  const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   await assertNoCountDisclosure(page, {
     expectKind: ['forbidden', 'login-denied', 'login', 'unauthorized'],
     expectedOrigin: origin,
+    response,
   })
   return 'insufficient role did not disclose protected aggregates'
 }
 
 export async function runG14Unauthenticated(page, origin, timing) {
-  await page.goto(`${origin}${PATHS.admin}`, {
+  const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   const url = typeof page.url === 'function' ? page.url() : ''
   if (!String(url).includes(PATHS.login)) {
     throw new Error(`unauthenticated /admin must redirect to login, landed on ${url}`)
   }
-  await assertNoCountDisclosure(page, { expectKind: 'login', expectedOrigin: origin })
+  await assertNoCountDisclosure(page, {
+    expectKind: 'login',
+    expectedOrigin: origin,
+    response,
+  })
   return 'fresh unauthenticated context did not obtain protected counts'
 }
 
@@ -288,13 +307,15 @@ export async function runG15Downgrade(page, origin, context, timing) {
     () => context.fixture.setRole(PRIVILEGED_ACTOR, 'owner'),
     async () => {
       await context.fixture.setRole(PRIVILEGED_ACTOR, ROLE_DOWNGRADE)
-      await page.goto(`${origin}${PATHS.admin}`, {
+      const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
         waitUntil: 'domcontentloaded',
         timeout: timing.timeoutMs,
+        expectedOrigin: origin,
       })
       await assertNoCountDisclosure(page, {
         expectKind: ['forbidden', 'login-denied', 'unauthorized'],
         expectedOrigin: origin,
+        response,
       })
       return 'same privileged session was denied after fixture role downgrade'
     },
@@ -308,19 +329,22 @@ export async function runG16RestrictedStatus(page, origin, context, timing) {
     async () => {
       for (const status of RESTRICTED_STATUSES) {
         await context.fixture.setStatus(PRIVILEGED_ACTOR, status)
-        await page.goto(`${origin}${PATHS.admin}`, {
+        const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
           waitUntil: 'domcontentloaded',
           timeout: timing.timeoutMs,
+          expectedOrigin: origin,
         })
         await assertNoCountDisclosure(page, {
           expectKind: ['forbidden', 'login-denied', 'unauthorized'],
           expectedOrigin: origin,
+          response,
         })
       }
       await context.fixture.setStatus(PRIVILEGED_ACTOR, 'active')
-      await page.goto(`${origin}${PATHS.admin}`, {
+      await navigateDocument(page, `${origin}${PATHS.admin}`, {
         waitUntil: 'domcontentloaded',
         timeout: timing.timeoutMs,
+        expectedOrigin: origin,
       })
       const expected = await context.fixture.expectedCounts()
       await assertCountsMatchExpected(page, expected)
@@ -335,11 +359,12 @@ export async function runG17MissingWrapper(page, origin, context, timing) {
     () => context.fixture.setWrapperPresent(true),
     async () => {
       await context.fixture.setWrapperPresent(false)
-      await page.goto(`${origin}${PATHS.admin}`, {
+      const { response } = await navigateDocument(page, `${origin}${PATHS.admin}`, {
         waitUntil: 'domcontentloaded',
         timeout: timing.timeoutMs,
+        expectedOrigin: origin,
       })
-      await assertUnavailableNotZero(page, { expectedOrigin: origin })
+      await assertUnavailableNotZero(page, { expectedOrigin: origin, response })
       return 'missing wrapper rendered unavailable, not 0 accounts'
     },
     { budget: timing.budget },
@@ -350,9 +375,10 @@ export async function runG18Viewport(page, origin, store, viewport, evidencePath
   if (typeof page.setViewportSize === 'function') {
     await page.setViewportSize(viewport)
   }
-  await page.goto(`${origin}${PATHS.admin}`, {
+  await navigateDocument(page, `${origin}${PATHS.admin}`, {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
+    expectedOrigin: origin,
   })
   await page.locator(SELECTORS.countsTitle).waitFor({ state: 'visible', timeout: timing.timeoutMs })
   const expected = store.lastExpected ?? null
