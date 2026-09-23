@@ -1,0 +1,155 @@
+TAP version 13
+# Subtest: implementation is delivered and real execution stays NOT RUN
+ok 1 - implementation is delivered and real execution stays NOT RUN
+  ---
+  duration_ms: 0.71906
+  ...
+# Subtest: accepted product selectors and copy still match the baseline UI
+ok 2 - accepted product selectors and copy still match the baseline UI
+  ---
+  duration_ms: 0.585689
+  ...
+# Subtest: read-only source pins still include caller-status and the \#557 producer
+ok 3 - read-only source pins still include caller-status and the \#557 producer
+  ---
+  duration_ms: 202.306511
+  ...
+# Subtest: real-mode API cannot enable fake or session injection
+ok 4 - real-mode API cannot enable fake or session injection
+  ---
+  duration_ms: 0.765893
+  ...
+# Subtest: wrong context version or missing methods fail closed before steps
+ok 5 - wrong context version or missing methods fail closed before steps
+  ---
+  duration_ms: 0.738321
+  ...
+# Subtest: mandatory gate completeness rejects missing or extra IDs
+ok 6 - mandatory gate completeness rejects missing or extra IDs
+  ---
+  duration_ms: 0.290329
+  ...
+# Subtest: new context second-factor path refuses a forced enroll click
+ok 7 - new context second-factor path refuses a forced enroll click
+  ---
+  duration_ms: 3.183969
+  ...
+# Subtest: complete observer can assert no wrapper calls while OFF; incomplete cannot
+ok 8 - complete observer can assert no wrapper calls while OFF; incomplete cannot
+  ---
+  duration_ms: 0.252097
+  ...
+# Subtest: B1 denied-caller counterexamples cannot become authorization PASS
+ok 9 - B1 denied-caller counterexamples cannot become authorization PASS
+  ---
+  duration_ms: 0.504311
+  ...
+# Subtest: B1 success parser rejects multirow, invalid time and recent>present
+ok 10 - B1 success parser rejects multirow, invalid time and recent>present
+  ---
+  duration_ms: 0.716331
+  ...
+# Subtest: B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both aggregates
+ok 11 - B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both aggregates
+  ---
+  duration_ms: 1.062164
+  ...
+# Subtest: B2 Auth capture requires exact local project origin
+ok 12 - B2 Auth capture requires exact local project origin
+  ---
+  duration_ms: 0.247497
+  ...
+# Subtest: direct wrapper rejects remote URL, protocol-relative and foreign redirect
+ok 13 - direct wrapper rejects remote URL, protocol-relative and foreign redirect
+  ---
+  duration_ms: 0.350993
+  ...
+# Subtest: restore runs after an assertion failure and close errors propagate
+ok 14 - restore runs after an assertion failure and close errors propagate
+  ---
+  duration_ms: 0.95944
+  ...
+# Subtest: downstream gates stay NOT RUN after a prerequisite failure
+ok 15 - downstream gates stay NOT RUN after a prerequisite failure
+  ---
+  duration_ms: 3.394788
+  ...
+# Subtest: B3 hanging close and failed restore stop later resource-using gates
+ok 16 - B3 hanging close and failed restore stop later resource-using gates
+  ---
+  duration_ms: 516.583471
+  ...
+# Subtest: B3 G12 rejects a 2→3 delta that never started at recent=0
+ok 17 - B3 G12 rejects a 2→3 delta that never started at recent=0
+  ---
+  duration_ms: 0.504573
+  ...
+# Subtest: B4 value-aware redaction, path escape, exclusive write and fail-closed receipt
+ok 18 - B4 value-aware redaction, path escape, exclusive write and fail-closed receipt
+  ---
+  duration_ms: 0.9143
+  ...
+# Subtest: B2 beginBrowserSession clears stale access tokens and keeps the factor secret
+ok 19 - B2 beginBrowserSession clears stale access tokens and keeps the factor secret
+  ---
+  duration_ms: 0.084036
+  ...
+# Subtest: B4 duplicate receipt write invalidates consumer PASS
+ok 20 - B4 duplicate receipt write invalidates consumer PASS
+  ---
+  duration_ms: 9.505269
+  ...
+# Subtest: TOTP helper and enroll extractor stay in-memory only
+ok 21 - TOTP helper and enroll extractor stay in-memory only
+  ---
+  duration_ms: 0.337034
+  ...
+# Subtest: controlled doubles can walk G6–G19 without claiming a real-browser PASS
+ok 22 - controlled doubles can walk G6–G19 without claiming a real-browser PASS
+  ---
+  duration_ms: 8.264959
+  ...
+# Subtest: B1 remaining UI requires exact origin/path and ready application copy
+ok 23 - B1 remaining UI requires exact origin/path and ready application copy
+  ---
+  duration_ms: 0.59321
+  ...
+# Subtest: B1 Playwright-shaped page: G7/G11/G14 need the current goto Response
+ok 24 - B1 Playwright-shaped page: G7/G11/G14 need the current goto Response
+  ---
+  duration_ms: 0.646005
+  ...
+# Subtest: B1 anonymous no-EXECUTE and invalid-JWT stay distinct source-contract kinds
+ok 25 - B1 anonymous no-EXECUTE and invalid-JWT stay distinct source-contract kinds
+  ---
+  duration_ms: 0.075073
+  ...
+# Subtest: B1 JS payload port matches the accepted parser through locked tsx tooling
+ok 26 - B1 JS payload port matches the accepted parser through locked tsx tooling
+  ---
+  duration_ms: 146.684657
+  ...
+# Subtest: B2 capture binds actor/session epoch and invalidates pending json after detach
+ok 27 - B2 capture binds actor/session epoch and invalidates pending json after detach
+  ---
+  duration_ms: 121.84457
+  ...
+# Subtest: B3 timeout leaves late work running but refuses the next resource action
+ok 28 - B3 timeout leaves late work running but refuses the next resource action
+  ---
+  duration_ms: 251.193737
+  ...
+# Subtest: B3 deferred session create after timeout is closed and later gates stay NOT RUN
+ok 29 - B3 deferred session create after timeout is closed and later gates stay NOT RUN
+  ---
+  duration_ms: 151.458943
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1482.697377
