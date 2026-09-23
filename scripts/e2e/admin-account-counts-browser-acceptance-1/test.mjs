@@ -6,7 +6,16 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { COPY, BLOB_PINS, PINS, SOURCE_PATHS } from './constants.mjs'
+import {
+  COPY,
+  BLOB_PINS,
+  EXECUTABLE_SOURCE_BASELINE,
+  HISTORICAL_REFUSED_PINS,
+  INTEGRATION_BASELINE,
+  PINS,
+  PRODUCT_BASELINE,
+  SOURCE_PATHS,
+} from './constants.mjs'
 import { assertPinnedSources, leseSourceManifest, refuseBootstrapOverlay, workingTreeBlob } from './source-manifest.mjs'
 import {
   assertIsolatedConnectionEnvironment,
@@ -71,7 +80,26 @@ test('accepted working-tree source pins match the full applicable set', () => {
   assert.equal(manifest.files.config.workingTreeBlob, BLOB_PINS.config)
   assert.equal(manifest.files.countsUi.workingTreeBlob, BLOB_PINS.countsUi)
   assert.equal(manifest.files.client.workingTreeBlob, BLOB_PINS.client)
+  assert.equal(manifest.files.reader.workingTreeBlob, BLOB_PINS.reader)
+  assert.equal(manifest.files.callerStatus.workingTreeBlob, BLOB_PINS.callerStatus)
+  assert.equal(manifest.files.callerStatus.path, SOURCE_PATHS.callerStatus)
   assert.equal(manifest.migrations.replay, 'NOT IMPLEMENTED')
+})
+
+test('executable source contract is the #557 caller-status set, not historical permissive pins', () => {
+  assert.equal(PRODUCT_BASELINE, 'f0237baf8809e5528b5f73e918f0e37a7d9b4477')
+  assert.equal(INTEGRATION_BASELINE, '4381d20bfaa7f60f140823cc311d44409934197a')
+  assert.equal(EXECUTABLE_SOURCE_BASELINE, '9cf7aedd8dd190b4764d8ac178e23d9f8b42c773')
+  assert.equal(SOURCE_PATHS.callerStatus, 'lib/admin/account-counts-delivery/caller-status.ts')
+  assert.equal(BLOB_PINS.callerStatus, 'b820c799046585dff743553fb6231e60a6a42cff')
+  assert.equal(BLOB_PINS.reader, 'eb5b1b0d54bd649bd511ce3ed17b0a63b8adae92')
+  assert.equal(BLOB_PINS.producer, 'b912eecb55cfa519dcd8b5d4a4ca9222aea0a0c1')
+  assert.equal(PINS.producerSha256, '612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de')
+  assert.notEqual(PINS.producerSha256, HISTORICAL_REFUSED_PINS.producerSha256)
+  assert.notEqual(BLOB_PINS.producer, HISTORICAL_REFUSED_PINS.producerBlob)
+  assert.notEqual(BLOB_PINS.reader, HISTORICAL_REFUSED_PINS.readerBlob)
+  assert.equal(Object.hasOwn(BLOB_PINS, 'callerStatus'), true)
+  assert.equal(Object.hasOwn(SOURCE_PATHS, 'callerStatus'), true)
 })
 
 test('refuses the reduced #550 bootstrap as a GoTrue overlay', () => {
