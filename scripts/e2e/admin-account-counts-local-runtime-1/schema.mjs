@@ -43,6 +43,7 @@ const FUNCTION_CATALOG_FIELDS = `
   'security_definer', p.prosecdef,
   'config', p.proconfig,
   'definition', pg_get_functiondef(p.oid),
+  'prosrc', p.prosrc,
   'nargs', p.pronargs,
   'proargtypes', p.proargtypes::text,
   'prorettype', pg_get_function_result(p.oid),
@@ -113,17 +114,8 @@ export const EXPECTED_WRAPPER_RESULT = 'TABLE(present_registered_accounts text, 
 const ALLOWED_EXECUTE_GRANTEES = Object.freeze(['postgres', 'authenticated'])
 const REQUIRED_EXECUTE_GRANTEES = Object.freeze(['authenticated'])
 const FORBIDDEN_EXECUTE_GRANTEES = Object.freeze(['anon', 'public', 'service_role'])
-const PRODUCER_BODY_TOKENS = Object.freeze([
-  'darf_konten_verwalten',
-  '720 hours',
-  'auth.uid',
-  '42501',
-  'public.profiles',
-  'auth.users',
-])
-const WRAPPER_BODY_TOKENS = Object.freeze([
-  'jetnity_reporting.account_counts_v1',
-])
+export const EXPECTED_PRODUCER_CONFIG = Object.freeze(['search_path=pg_catalog', 'TimeZone=UTC'])
+export const EXPECTED_WRAPPER_CONFIG = Object.freeze(['search_path=pg_catalog'])
 
 export function plannedSql() {
   const planned = [SOURCE_PATHS.producer, SOURCE_PATHS.wrapper]
@@ -236,18 +228,40 @@ export function extractQuotedSqlBody(definition) {
   return source
 }
 
+export function extractExactDollarBody(sqlText) {
+  const source = String(sqlText || '')
+  const match = source.match(/\bas\s+(\$[A-Za-z0-9_]*\$)/i)
+  if (!match) return null
+  const delim = match[1]
+  const start = source.indexOf(match[0]) + match[0].length
+  const end = source.indexOf(delim, start)
+  if (end < 0) return null
+  return source.slice(start, end)
+}
+
 export function executableFunctionBody(definition) {
   const body = extractQuotedSqlBody(definition)
   return stripSqlComments(body).replace(/\s+/g, ' ').trim()
 }
 
-export function normalizeTypeText(value) {
-  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase()
+export function assertExactProconfig(config, expected, label) {
+  const actual = Array.isArray(config) ? config.map((item) => String(item)) : []
+  const wanted = [...expected]
+  if (actual.length !== wanted.length) {
+    throw new Error(`${label} proconfig cardinality ${actual.length} != ${wanted.length}: ${actual.join(',')}`)
+  }
+  const left = [...actual].sort()
+  const right = [...wanted].sort()
+  for (let i = 0; i < right.length; i += 1) {
+    if (left[i] !== right[i]) {
+      throw new Error(`${label} proconfig ${left.join(',')} != ${right.join(',')}`)
+    }
+  }
+  return true
 }
 
-function configText(value) {
-  if (Array.isArray(value)) return value.join(',')
-  return String(value || '')
+export function normalizeTypeText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase()
 }
 
 export function assertManagedSchemaPrereq(prereq) {
@@ -325,12 +339,14 @@ export function assertInstalledRelation(row, {
   securityDefiner,
   language,
   expectedResult,
-  requiredBody = [],
+  expectedProsrc,
+  expectedConfig,
+  expectedVolatile = 's',
   forbiddenExecute = FORBIDDEN_EXECUTE_GRANTEES,
 } = {}) {
   if (!row?.proname) throw new Error(`${proname} is missing from the owned catalog`)
   if (row.proname !== proname) throw new Error(`Catalog name ${row.proname} != ${proname}`)
-  if (!row.definition) throw new Error(`${proname} definition is missing; name-only is not catalog evidence`)
+  if (!row.definition && row.prosrc == null) throw new Error(`${proname} definition is missing; name-only is not catalog evidence`)
   if (row.schema !== schema) throw new Error(`${proname} schema ${row.schema} != ${schema}`)
   if (row.owner !== 'postgres') throw new Error(`${proname} owner ${row.owner} != postgres`)
   const definer = row.security_definer === true || row.security_definer === 't'
@@ -347,55 +363,54 @@ export function assertInstalledRelation(row, {
   if (language && String(row.language || '').toLowerCase() !== language) {
     throw new Error(`${proname} language ${row.language} != ${language}`)
   }
-  const cfg = configText(row.config)
-  if (!/search_path\s*=\s*pg_catalog/i.test(cfg)) {
-    throw new Error(`${proname} search_path is not pinned to pg_catalog`)
+  if (expectedVolatile && row.volatile != null && String(row.volatile) !== expectedVolatile) {
+    throw new Error(`${proname} volatility ${row.volatile} != ${expectedVolatile}`)
   }
-  const body = executableFunctionBody(row.definition)
-  if (!body || body === 'select 1') {
-    throw new Error(`${proname} executable body is not the accepted implementation`)
-  }
-  for (const token of requiredBody) {
-    if (!body.includes(token)) {
-      throw new Error(`${proname} executable body does not contain ${token}; comments are not catalog evidence`)
-    }
+  if (expectedConfig) assertExactProconfig(row.config, expectedConfig, proname)
+  if (!expectedProsrc) throw new Error(`${proname} accepted prosrc is required`)
+  const actualProsrc = row.prosrc != null ? String(row.prosrc) : extractExactDollarBody(row.definition)
+  if (actualProsrc !== expectedProsrc) {
+    throw new Error(`${proname} installed prosrc is not the accepted function body`)
   }
   assertTypedAcls(row.acls, {
     label: proname,
     forbiddenGrantees: forbiddenExecute,
   })
-  return { body }
+  return { prosrc: actualProsrc }
 }
 
-export function assertInstalledCatalog(catalog) {
+export function assertInstalledCatalog(catalog, { producerSql, wrapperSql } = {}) {
+  const sources = (producerSql && wrapperSql)
+    ? { producerSql, wrapperSql }
+    : leseUnveraenderteSql()
+  const expectedProducer = extractExactDollarBody(sources.producerSql)
+  const expectedWrapper = extractExactDollarBody(sources.wrapperSql)
+  if (!expectedProducer || !expectedWrapper) {
+    throw new Error('Accepted candidate/wrapper function bodies could not be extracted')
+  }
   assertManagedSchemaPrereq(catalog?.prereq)
   if (catalog?.prereq?.schema_acls) {
     assertSchemaAccess(catalog.prereq.schema_acls, { schema: 'jetnity_reporting' })
   } else {
     throw new Error('schema-access ACL evidence is required')
   }
-  const producer = assertInstalledRelation(catalog?.producer, {
+  assertInstalledRelation(catalog?.producer, {
     schema: 'jetnity_reporting',
     proname: 'account_counts_v1',
     securityDefiner: true,
     language: 'plpgsql',
     expectedResult: EXPECTED_PRODUCER_RESULT,
-    requiredBody: PRODUCER_BODY_TOKENS,
+    expectedProsrc: expectedProducer,
+    expectedConfig: EXPECTED_PRODUCER_CONFIG,
   })
-  const producerCfg = configText(catalog.producer.config)
-  if (!/timezone\s*=\s*UTC/i.test(producerCfg)) {
-    throw new Error('Producer TimeZone is not pinned to UTC')
-  }
-  if (!/'active'/.test(producer.body)) {
-    throw new Error('Producer executable body does not enforce caller status active')
-  }
   assertInstalledRelation(catalog?.wrapper, {
     schema: 'public',
     proname: 'admin_account_counts_v1',
     securityDefiner: false,
     language: 'sql',
     expectedResult: EXPECTED_WRAPPER_RESULT,
-    requiredBody: WRAPPER_BODY_TOKENS,
+    expectedProsrc: expectedWrapper,
+    expectedConfig: EXPECTED_WRAPPER_CONFIG,
   })
   return {
     catalogVerified: true,
@@ -441,7 +456,7 @@ export async function installProducerAndWrapper({ applySql, verify, root = ROOT 
     wrapperSql: WRAPPER_CATALOG_SQL,
     prereqSql: MANAGED_SCHEMA_PREREQ_SQL,
   })
-  const verified = assertInstalledCatalog(catalog)
+  const verified = assertInstalledCatalog(catalog, sql)
   return {
     producerSha: sql.producerSha,
     wrapperSha: sql.wrapperSha,
@@ -480,6 +495,8 @@ export function acceptedCatalogFixture() {
       security_definer: true,
       config: ['search_path=pg_catalog', 'TimeZone=UTC'],
       definition: sql.producerSql,
+      prosrc: extractExactDollarBody(sql.producerSql),
+      volatile: 's',
       nargs: 0,
       proargtypes: '',
       prorettype: EXPECTED_PRODUCER_RESULT,
@@ -495,6 +512,8 @@ export function acceptedCatalogFixture() {
       security_definer: false,
       config: ['search_path=pg_catalog'],
       definition: sql.wrapperSql,
+      prosrc: extractExactDollarBody(sql.wrapperSql),
+      volatile: 's',
       nargs: 0,
       proargtypes: '',
       prorettype: EXPECTED_WRAPPER_RESULT,

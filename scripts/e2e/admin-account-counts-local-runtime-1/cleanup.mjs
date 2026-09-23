@@ -98,6 +98,8 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
         containers,
         volumes,
         created: network?.created === true || Boolean(network?.id),
+        inventoryComplete: stack?.inventoryComplete === true,
+        runId: network?.runId || registry?.runId || state.runId,
       },
       execFile: registry?.execFile || state.execFile,
     })
@@ -109,7 +111,8 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     || stackReport?.networkState === 'UNKNOWN'
     || stackReport?.containerState === 'UNKNOWN'
     || stackReport?.volumeState === 'UNKNOWN'
-    || stackReport?.discoveryState === 'UNKNOWN',
+    || stackReport?.discoveryState === 'UNKNOWN'
+    || (Array.isArray(stackReport?.unresolvedVolumes) && stackReport.unresolvedVolumes.length > 0),
   )
   const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true || resourceUnknown
   const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false)

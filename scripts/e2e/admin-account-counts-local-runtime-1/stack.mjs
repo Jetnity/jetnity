@@ -45,7 +45,8 @@ export function parseDockerPortBindings(inspectJson) {
   const list = []
   const ports = parsed.HostConfig?.PortBindings || parsed.NetworkSettings?.Ports || parsed
   for (const [containerPort, maps] of Object.entries(ports || {})) {
-    for (const map of maps || []) {
+    if (!Array.isArray(maps)) continue
+    for (const map of maps) {
       list.push({
         containerPort,
         HostIp: map.HostIp,
@@ -135,20 +136,47 @@ export function baueStartArgumente({ networkId, excludeNames = [] } = {}) {
   return args
 }
 
-export function classifyDockerInspectError(error) {
+function escapeRegExp(value) {
+  return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+export function classifyDockerInspectError(error, { kind, name } = {}) {
   const message = error instanceof Error ? error.message : String(error)
   const code = error?.code
-  if (/No such (object|network|container|volume)|not found|does not exist/i.test(message)) {
-    return RESOURCE_STATE.ABSENT
-  }
   if (
-    /Cannot connect|daemon|permission denied|timeout|ETIMEDOUT|ECONNREFUSED|EACCES|EPERM|ENOTFOUND|EHOSTUNREACH/i.test(message)
+    /Cannot connect|daemon|permission denied|timeout|ETIMEDOUT|ECONNREFUSED|EACCES|EPERM|ENOTFOUND|EHOSTUNREACH|context .*not found|context not found/i.test(message)
     || ['ETIMEDOUT', 'ECONNREFUSED', 'EACCES', 'EPERM', 'ENOTFOUND'].includes(code)
   ) {
     return RESOURCE_STATE.UNKNOWN
   }
   if (/Unexpected token|JSON|parse/i.test(message)) return RESOURCE_STATE.UNKNOWN
+  if (kind && name) {
+    const exact = escapeRegExp(name)
+    if (kind === 'container' && new RegExp(`No such (container|object):\\s*${exact}\\b`, 'i').test(message)) {
+      return RESOURCE_STATE.ABSENT
+    }
+    if (kind === 'network' && new RegExp(`No such network:\\s*${exact}\\b`, 'i').test(message)) {
+      return RESOURCE_STATE.ABSENT
+    }
+    if (kind === 'volume' && new RegExp(`No such volume:\\s*${exact}\\b`, 'i').test(message)) {
+      return RESOURCE_STATE.ABSENT
+    }
+  }
   return RESOURCE_STATE.UNKNOWN
+}
+
+export function resourceKindFromDockerArgs(args = []) {
+  if (args[0] === 'network' && (args[1] === 'inspect' || args[1] === 'rm')) {
+    return { kind: 'network', name: args[2] }
+  }
+  if (args[0] === 'volume' && (args[1] === 'inspect' || args[1] === 'rm')) {
+    const name = args[1] === 'rm' && args[2] === '-f' ? args[3] : args[2]
+    return { kind: 'volume', name }
+  }
+  if (args[0] === 'inspect' || args[0] === 'stop' || args[0] === 'rm') {
+    return { kind: 'container', name: args[1] }
+  }
+  return { kind: null, name: null }
 }
 
 export function inspectDockerResource({
@@ -163,11 +191,26 @@ export function inspectDockerResource({
     if (!text) return { state: RESOURCE_STATE.UNKNOWN, reason: 'empty inspect output' }
     return { state: RESOURCE_STATE.PRESENT, raw: text }
   } catch (error) {
+    const target = resourceKindFromDockerArgs(args)
     return {
-      state: classifyDockerInspectError(error),
+      state: classifyDockerInspectError(error, target),
       error: error instanceof Error ? error.message : String(error),
     }
   }
+}
+
+export function classifyVolumeOwnership({ mount, labels = {}, runId } = {}) {
+  const name = mount?.Name
+  if (!name || mount?.Type !== 'volume') {
+    return { name, ownership: 'unresolved', reason: 'unnamed or non-volume mount' }
+  }
+  if (runId && labels[RUN_LABEL] === runId) {
+    return { name, ownership: 'owned', reason: 'run label', containerId: mount.containerId }
+  }
+  if (labels[RUN_LABEL] && labels[RUN_LABEL] !== runId) {
+    return { name, ownership: 'foreign', reason: 'other run label' }
+  }
+  return { name, ownership: 'unresolved', reason: 'volume mount lacks this run label' }
 }
 
 export function collectOwnedDockerResources({
@@ -202,14 +245,31 @@ export function collectOwnedDockerResources({
         labels,
       })
       for (const mount of doc.Mounts || []) {
-        if (mount.Type === 'volume' && mount.Name && (labels[RUN_LABEL] === runId || !runId)) {
-          volumes.push({ name: mount.Name, containerId: doc.Id || id, owned: true })
-        }
+        if (mount.Type !== 'volume' || !mount.Name) continue
+        const classified = classifyVolumeOwnership({
+          mount: { ...mount, containerId: doc.Id || id },
+          labels,
+          runId,
+        })
+        volumes.push({
+          name: mount.Name,
+          containerId: doc.Id || id,
+          ownership: classified.ownership,
+          reason: classified.reason,
+        })
       }
       bindings.push(...parseDockerPortBindings(doc))
     }
   }
-  return { containers, volumes, bindings, inventoryComplete: true, discoveryState: RESOURCE_STATE.PRESENT }
+  const unresolved = volumes.filter((item) => item.ownership === 'unresolved')
+  return {
+    containers,
+    volumes,
+    bindings,
+    inventoryComplete: unresolved.length === 0,
+    discoveryState: RESOURCE_STATE.PRESENT,
+    unresolvedVolumes: unresolved,
+  }
 }
 
 export function discoverOwnedResources({
@@ -405,6 +465,12 @@ export async function stoppeOwnedStack({
   })
   report.discoveryState = discovered.discoveryState
   if (discovered.unknown) report.unknown = true
+  const unresolved = (discovered.volumes || []).filter((item) => volumeOwnershipOf(item) === 'unresolved')
+  if (unresolved.length || discovered.inventoryComplete === false) {
+    report.unresolvedVolumes = unresolved
+    report.inventoryComplete = false
+    report.unknown = true
+  }
 
   try {
     if (cliBin && workdir) {
@@ -422,7 +488,10 @@ export async function stoppeOwnedStack({
       execFile(dockerBin, ['stop', id], { encoding: 'utf8', env, timeout: 20_000 })
       execFile(dockerBin, ['rm', id], { encoding: 'utf8', env, timeout: 20_000 })
     } catch (error) {
-      report.containerError = error instanceof Error ? error.message : String(error)
+      const classified = classifyDockerInspectError(error, { kind: 'container', name: id })
+      if (classified !== RESOURCE_STATE.ABSENT) {
+        report.containerError = error instanceof Error ? error.message : String(error)
+      }
     }
     const inspected = inspectDockerResource({
       execFile,
@@ -454,13 +523,20 @@ export async function stoppeOwnedStack({
     report.containersRemoved = false
   }
 
-  const volumeNames = discovered.volumes.map((item) => item.name || item.Name).filter(Boolean)
+  const ownedVolumes = discovered.volumes.filter((item) => volumeOwnershipOf(item) === 'owned')
+  const foreignVolumes = discovered.volumes.filter((item) => volumeOwnershipOf(item) === 'foreign')
+  report.foreignVolumes = foreignVolumes.map((item) => item.name || item.Name)
+  report.foreignRetained = report.foreignVolumes
+  const volumeNames = ownedVolumes.map((item) => item.name || item.Name).filter(Boolean)
   const volumeStates = []
   for (const name of volumeNames) {
     try {
       execFile(dockerBin, ['volume', 'rm', '-f', name], { encoding: 'utf8', env, timeout: 20_000 })
     } catch (error) {
-      report.volumeError = error instanceof Error ? error.message : String(error)
+      const classified = classifyDockerInspectError(error, { kind: 'volume', name })
+      if (classified !== RESOURCE_STATE.ABSENT) {
+        report.volumeError = error instanceof Error ? error.message : String(error)
+      }
     }
     const inspected = inspectDockerResource({
       execFile,
@@ -471,11 +547,11 @@ export async function stoppeOwnedStack({
     volumeStates.push(inspected.state)
   }
   report.volumes = volumeNames
-  if (discovered.unknown && volumeNames.length === 0) {
+  if (unresolved.length || discovered.unknown) {
     report.volumeState = RESOURCE_STATE.UNKNOWN
     report.volumesRemoved = false
     report.unknown = true
-  } else if (volumeNames.length === 0 && state?.inventoryComplete === true && !discovered.unknown) {
+  } else if (volumeNames.length === 0 && state?.inventoryComplete === true) {
     report.volumeState = RESOURCE_STATE.ABSENT
     report.volumesRemoved = true
   } else if (volumeNames.length === 0) {
@@ -499,7 +575,10 @@ export async function stoppeOwnedStack({
       try {
         execFile(dockerBin, ['network', 'rm', state.network.name], { encoding: 'utf8', env, timeout: 15_000 })
       } catch (error) {
-        report.networkError = error instanceof Error ? error.message : String(error)
+        const classified = classifyDockerInspectError(error, { kind: 'network', name: state.network.name })
+        if (classified !== RESOURCE_STATE.ABSENT) {
+          report.networkError = error instanceof Error ? error.message : String(error)
+        }
       }
     }
     const inspected = inspectDockerResource({
@@ -520,8 +599,18 @@ export async function stoppeOwnedStack({
     && report.volumesRemoved === true
     && report.networkRemoved === true
     && report.unknown !== true
+    && report.inventoryComplete !== false
     && !report.containerError
+    && !report.volumeError
+    && !report.networkError
   return report
+}
+
+function volumeOwnershipOf(item) {
+  if (item?.ownership) return item.ownership
+  if (item?.owned === false) return 'foreign'
+  if (item?.owned === true) return 'owned'
+  return 'unresolved'
 }
 
 export function leseOverlayConfig(configPath) {

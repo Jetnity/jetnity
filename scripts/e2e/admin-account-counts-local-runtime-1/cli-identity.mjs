@@ -96,10 +96,18 @@ export function assertRegularOwnedFile(path) {
   return true
 }
 
+export function hashTarMember(archivePath, member, execFile = execFileSync) {
+  const bytes = execFile('tar', ['-xOf', archivePath, member])
+  return createHash('sha256').update(bytes).digest('hex')
+}
+
 export function bindCliExecutableIdentity({
   resolved,
   provenance,
   platformId = platformKey(),
+  archiveBytes,
+  archivePath,
+  execFile = execFileSync,
 } = {}) {
   const official = officialArchiveDigest(platformId)
   if (!resolved) {
@@ -117,23 +125,69 @@ export function bindCliExecutableIdentity({
       reason: error instanceof Error ? error.message : String(error),
     }
   }
-  if (!provenance?.archiveVerified || !provenance.archiveSha256 || !provenance.extractedBinPath) {
+  const bytes = archiveBytes
+    ?? (archivePath && existsSync(archivePath) ? readFileSync(archivePath) : null)
+  if (!bytes) {
     return {
       archiveBound: false,
       pinned: false,
       binarySha256,
-      reason: 'PATH version/help is not official archive/checksum provenance.',
+      reason: 'Sidecar or archiveVerified is not a trust root. Official archive bytes must be hashed in this process.',
     }
   }
-  if (!official || digestHex(provenance.archiveSha256) !== official) {
+  const archiveBytesSha256 = createHash('sha256').update(bytes).digest('hex')
+  if (!official || archiveBytesSha256 !== official) {
     return {
       archiveBound: false,
       pinned: false,
       binarySha256,
-      reason: `archive sha256 ${provenance.archiveSha256 || 'missing'} != official ${official}`,
+      reason: `archive bytes sha256 ${archiveBytesSha256} != official ${official}`,
     }
   }
-  if (resolve(resolved) !== resolve(provenance.extractedBinPath)) {
+  let ownedArchive = null
+  if (archivePath && existsSync(archivePath) && sha256File(archivePath) === archiveBytesSha256) {
+    ownedArchive = archivePath
+  } else if (provenance?.archivePath && existsSync(provenance.archivePath) && sha256File(provenance.archivePath) === archiveBytesSha256) {
+    ownedArchive = provenance.archivePath
+  }
+  if (!ownedArchive) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      binarySha256,
+      reason: 'Verified archive path is missing after hashing official bytes; sidecar cannot substitute the archive.',
+    }
+  }
+  let memberSha
+  try {
+    const members = listTarMembers(ownedArchive, execFile)
+    const member = members.find((name) => name === 'supabase' || name.endsWith('/supabase'))
+    if (!member) {
+      return {
+        archiveBound: false,
+        pinned: false,
+        binarySha256,
+        reason: `Verified archive is missing the supabase member; found: ${members.join(',') || 'none'}`,
+      }
+    }
+    memberSha = hashTarMember(ownedArchive, member, execFile)
+  } catch (error) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      binarySha256,
+      reason: error instanceof Error ? error.message : String(error),
+    }
+  }
+  if (memberSha !== binarySha256) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      binarySha256,
+      reason: 'selected executable is not the supabase member of the verified archive',
+    }
+  }
+  if (provenance?.extractedBinPath && resolve(resolved) !== resolve(provenance.extractedBinPath)) {
     return {
       archiveBound: false,
       pinned: false,
@@ -141,27 +195,11 @@ export function bindCliExecutableIdentity({
       reason: 'selected executable is not the owned extracted official binary',
     }
   }
-  if (!provenance.binarySha256) {
-    return {
-      archiveBound: false,
-      pinned: false,
-      binarySha256,
-      reason: 'provenance is missing the extracted binary digest; refuse optional digest absence',
-    }
-  }
-  if (binarySha256 !== provenance.binarySha256) {
-    return {
-      archiveBound: false,
-      pinned: false,
-      binarySha256,
-      reason: 'selected file digest does not match recorded official extract; file mutated or substituted',
-    }
-  }
   return {
     archiveBound: true,
     pinned: true,
     reason: null,
-    archiveSha256: digestHex(provenance.archiveSha256),
+    archiveSha256: archiveBytesSha256,
     binarySha256,
   }
 }
@@ -172,6 +210,8 @@ export function verifyResolvedCli({
   execFile = execFileSync,
   provenance,
   platformId = platformKey(),
+  archiveBytes,
+  archivePath,
 } = {}) {
   if (!resolved) {
     return {
@@ -185,7 +225,14 @@ export function verifyResolvedCli({
       note: 'No supabase executable on the isolated PATH or in run-owned tooling.',
     }
   }
-  const bound = bindCliExecutableIdentity({ resolved, provenance, platformId })
+  const bound = bindCliExecutableIdentity({
+    resolved,
+    provenance,
+    platformId,
+    archiveBytes,
+    archivePath: archivePath || provenance?.archivePath,
+    execFile,
+  })
   if (!bound.archiveBound) {
     return {
       available: false,
@@ -243,7 +290,12 @@ export function verifyResolvedCli({
     startHelpTextPresent: Boolean(startHelp.full),
     excludeNames: listExcludeNames(startHelp.full || ''),
     provenance: identityVerified
-      ? { archiveSha256: bound.archiveSha256, extractedBinPath: provenance.extractedBinPath, binarySha256: bound.binarySha256 }
+      ? {
+        archiveBytesSha256: bound.archiveSha256,
+        extractedBinPath: provenance.extractedBinPath,
+        binarySha256: bound.binarySha256,
+        boundFromArchiveBytes: true,
+      }
       : null,
     binarySha256: bound.binarySha256,
     note: identityVerified
@@ -293,7 +345,7 @@ export function loadCliProvenance(toolingDir) {
   }
 }
 
-export async function acquireOfficialCli({
+export function acquireOfficialCli({
   toolingDir,
   checksumsText,
   checksumsBytes,
@@ -322,12 +374,12 @@ export async function acquireOfficialCli({
   let extractedBinPath = null
   let binarySha256 = null
   if (extract) {
-    const binDir = join(toolingDir, 'bin')
-    mkdirSync(binDir, { recursive: true, mode: 0o700 })
-    execFile('tar', ['-xzf', archivePath, '-C', binDir], { encoding: 'utf8' })
-    extractedBinPath = markExtractedBinary(join(binDir, 'supabase'))
-    assertRegularOwnedFile(extractedBinPath)
-    binarySha256 = sha256File(extractedBinPath)
+    return materializeVerifiedArchive({
+      toolingDir,
+      archiveBytes,
+      identity: { ...identity, sha256: actual, name: identity.name },
+      execFile,
+    })
   }
   const provenance = {
     ...identity,
@@ -335,17 +387,104 @@ export async function acquireOfficialCli({
     platformId,
     extractedBinPath,
     binarySha256,
+    archiveBytesSha256: actual,
+    boundFromArchiveBytes: true,
     archiveVerified: true,
     archiveSha256: actual,
   }
   writeCliProvenance(toolingDir, {
     archiveSha256: actual,
+    archiveBytesSha256: actual,
     extractedBinPath,
     binarySha256,
+    boundFromArchiveBytes: true,
     archiveVerified: true,
     version: CLI.version,
     platformId,
   })
+  return provenance
+}
+
+export function parseCliArtifactArgs(argv = []) {
+  let archivePath = null
+  let checksumsPath = null
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i] === '--cli-archive') {
+      archivePath = argv[i + 1] || null
+      i += 1
+    } else if (argv[i] === '--cli-checksums') {
+      checksumsPath = argv[i + 1] || null
+      i += 1
+    }
+  }
+  if ((archivePath && !checksumsPath) || (!archivePath && checksumsPath)) {
+    throw new Error('Both --cli-archive and --cli-checksums are required together.')
+  }
+  return { archivePath, checksumsPath }
+}
+
+export function readOfflineOfficialArtifacts({ archivePath, checksumsPath } = {}) {
+  if (!archivePath || !checksumsPath) return null
+  if (!existsSync(archivePath) || !existsSync(checksumsPath)) {
+    throw new Error('Official CLI archive or checksums input is missing.')
+  }
+  assertRegularOwnedFile(archivePath)
+  assertRegularOwnedFile(checksumsPath)
+  const archiveBytes = readFileSync(archivePath)
+  const checksumsBytes = readFileSync(checksumsPath)
+  return {
+    archiveBytes,
+    checksumsBytes,
+    checksumsText: checksumsBytes.toString('utf8'),
+    sourceArchivePath: archivePath,
+    sourceChecksumsPath: checksumsPath,
+  }
+}
+
+export function listTarMembers(archivePath, execFile = execFileSync) {
+  const out = execFile('tar', ['-tzf', archivePath], { encoding: 'utf8' })
+  return String(out).split(/\r?\n/).map((line) => line.replace(/^\.\//, '').replace(/\/$/, '')).filter(Boolean)
+}
+
+export function materializeVerifiedArchive({
+  toolingDir,
+  archiveBytes,
+  identity,
+  execFile = execFileSync,
+} = {}) {
+  if (!identity?.sha256) throw new Error('Verified archive identity is required before extract.')
+  if (!archiveBytes) throw new Error('Archive bytes are required before extract.')
+  const actual = createHash('sha256').update(archiveBytes).digest('hex')
+  if (actual !== digestHex(identity.sha256)) {
+    throw new Error(`Archive bytes sha256 ${actual} != verified identity ${identity.sha256}`)
+  }
+  mkdirSync(toolingDir, { recursive: true, mode: 0o700 })
+  const archivePath = join(toolingDir, identity.name || 'supabase.tar.gz')
+  writeFileSync(archivePath, archiveBytes, { mode: 0o600 })
+  const members = listTarMembers(archivePath, execFile)
+  const member = members.find((name) => name === 'supabase' || name.endsWith('/supabase'))
+  if (!member) {
+    throw new Error(`Verified archive is missing the supabase member; found: ${members.join(',') || 'none'}`)
+  }
+  const binDir = join(toolingDir, 'bin')
+  mkdirSync(binDir, { recursive: true, mode: 0o700 })
+  execFile('tar', ['-xzf', archivePath, '-C', binDir, '--strip-components', member.includes('/') ? String(member.split('/').length - 1) : '0'], {
+    encoding: 'utf8',
+  })
+  const extractedBinPath = markExtractedBinary(join(binDir, 'supabase'))
+  assertRegularOwnedFile(extractedBinPath)
+  const binarySha256 = sha256File(extractedBinPath)
+  const provenance = {
+    ...identity,
+    archivePath,
+    extractedBinPath,
+    binarySha256,
+    archiveBytesSha256: actual,
+    boundFromArchiveBytes: true,
+    archiveVerified: true,
+    archiveSha256: actual,
+  }
+  writeCliProvenance(toolingDir, provenance)
   return provenance
 }
 
@@ -369,6 +508,9 @@ export function prepareOfficialCliIdentity({
   env,
   execFile = execFileSync,
   platformId = platformKey(),
+  archivePath,
+  checksumsPath,
+  invokeBinary = false,
   readOfficialArtifacts = defaultReadOfficialArtifacts,
 } = {}) {
   if (!toolingDir) {
@@ -380,18 +522,21 @@ export function prepareOfficialCliIdentity({
       note: 'Run-owned tooling directory is required for official CLI provenance.',
     }
   }
-  const existing = loadCliProvenance(toolingDir)
-  if (existing?.extractedBinPath) {
-    return verifyResolvedCli({
-      resolved: existing.extractedBinPath,
-      provenance: existing,
-      env,
-      execFile,
-      platformId,
-    })
+  let artifacts = null
+  try {
+    artifacts = archivePath && checksumsPath
+      ? readOfflineOfficialArtifacts({ archivePath, checksumsPath })
+      : (typeof readOfficialArtifacts === 'function' ? readOfficialArtifacts({ toolingDir, platformId }) : null)
+  } catch (error) {
+    return {
+      available: false,
+      identityVerified: false,
+      pinned: false,
+      archiveBound: false,
+      note: error instanceof Error ? error.message : String(error),
+    }
   }
-  const artifacts = typeof readOfficialArtifacts === 'function' ? readOfficialArtifacts({ toolingDir, platformId }) : null
-  if (!artifacts?.archiveBytes) {
+  if (!artifacts?.archiveBytes || !artifacts?.checksumsBytes) {
     return {
       available: false,
       identityVerified: false,
@@ -400,5 +545,44 @@ export function prepareOfficialCliIdentity({
       note: `Official ${CLI.version} archive bytes are not present in run-owned tooling. Default no-start does not download or execute an official binary.`,
     }
   }
-  throw new Error('Official archive acquisition is implemented but not executed in this correction. Supply already-prepared provenance or authorize a later bounded download.')
+  try {
+    const provenance = acquireOfficialCli({
+      toolingDir,
+      checksumsText: artifacts.checksumsText,
+      checksumsBytes: artifacts.checksumsBytes,
+      archiveBytes: artifacts.archiveBytes,
+      platformId,
+      extract: true,
+      execFile,
+    })
+    if (invokeBinary === true) {
+      return verifyResolvedCli({
+        resolved: provenance.extractedBinPath,
+        provenance,
+        env,
+        execFile,
+        platformId,
+        archiveBytes: artifacts.archiveBytes,
+        archivePath: provenance.archivePath,
+      })
+    }
+    return {
+      available: false,
+      identityVerified: false,
+      pinned: true,
+      archiveBound: true,
+      resolved: provenance.extractedBinPath,
+      binarySha256: provenance.binarySha256,
+      provenance,
+      note: `Official ${CLI.version} archive bytes were hashed and extracted into run-owned tooling. Version/help/start were not invoked in this correction.`,
+    }
+  } catch (error) {
+    return {
+      available: false,
+      identityVerified: false,
+      pinned: false,
+      archiveBound: false,
+      note: error instanceof Error ? error.message : String(error),
+    }
+  }
 }

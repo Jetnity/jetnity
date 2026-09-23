@@ -24,7 +24,7 @@ import {
 import { IMPLEMENTATION } from './implementation.mjs'
 import { baueDockerCliUmgebung, baueRuntimePreflightUmgebung, klassifiziereRuntimeUmgebung } from './env.mjs'
 import { pruefeDockerFaehigkeit } from './docker-capability.mjs'
-import { prepareOfficialCliIdentity, defaultReadOfficialArtifacts, platformKey } from './cli-identity.mjs'
+import { prepareOfficialCliIdentity, defaultReadOfficialArtifacts, parseCliArtifactArgs, platformKey } from './cli-identity.mjs'
 import { assertRuntimeSources, leseRuntimeSourceManifest, assertCleanProductHead } from './source.mjs'
 import { planeLoopbackDienste, bereiteOwnedWorkdir, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { plannedSql } from './schema.mjs'
@@ -93,10 +93,14 @@ export async function run({
     owned.childEnv = childEnv
     const dockerEnv = baueDockerCliUmgebung({ parentEnv: env, privateHome })
     const docker = pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve })
+    const artifactArgs = parseCliArtifactArgs(argv)
     const cli = prepareOfficialCliIdentity({
       toolingDir,
       env: childEnv,
       execFile,
+      archivePath: artifactArgs.archivePath,
+      checksumsPath: artifactArgs.checksumsPath,
+      invokeBinary: false,
       readOfficialArtifacts,
     })
     const platform = platformKey()

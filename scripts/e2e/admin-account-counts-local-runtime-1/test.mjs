@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
 import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
@@ -15,6 +16,7 @@ import {
   HISTORICAL_REFUSED_PRODUCER_SHA256,
   PRODUCT_BASELINE,
   CLI,
+  RUN_LABEL,
 } from './constants.mjs'
 import {
   assertIsolatedConnectionEnvironment,
@@ -33,6 +35,10 @@ import {
   bindCliExecutableIdentity,
   prepareOfficialCliIdentity,
   sha256File,
+  parseCliArtifactArgs,
+  materializeVerifiedArchive,
+  acquireOfficialCli,
+  readOfflineOfficialArtifacts,
 } from './cli-identity.mjs'
 import {
   assertRuntimeSources,
@@ -54,8 +60,8 @@ import { baueAcceptanceContext, validateAcceptanceContext } from './context.mjs'
 import { createOwnershipRegistry } from './ownership.mjs'
 import { newBrowserSession, closeBrowserSession, assertLocalBrowserTraffic } from './browser-session.mjs'
 import { resolveUpstreamTarget, isRemoteRedirect, readBoundedBody } from './observer.mjs'
-import { assertInstalledCatalog, installProducerAndWrapper, parseJsonRow, acceptedCatalogFixture, requiredCount, executableFunctionBody } from './schema.mjs'
-import { starteOwnedStack, stoppeOwnedStack, inspectDockerResource, RESOURCE_STATE } from './stack.mjs'
+import { assertInstalledCatalog, assertInstalledRelation, installProducerAndWrapper, parseJsonRow, acceptedCatalogFixture, requiredCount, extractExactDollarBody, EXPECTED_PRODUCER_RESULT } from './schema.mjs'
+import { starteOwnedStack, stoppeOwnedStack, inspectDockerResource, classifyDockerInspectError, collectOwnedDockerResources, classifyVolumeOwnership, RESOURCE_STATE } from './stack.mjs'
 import { bewerteCleanup } from './cleanup.mjs'
 import { assertNoPublicBindPlan, planeLoopbackDienste, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { assertLoopbackBindings, parseDockerPortBindings, baueStartArgumente } from './stack.mjs'
@@ -914,49 +920,26 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
   assert.equal(pathOnly.pinned, false)
   assert.equal(pathOnly.archiveBound, false)
   const official = CLI.archives['linux-x64'].apiDigest.replace('sha256:', '')
-  const missingDigest = bindCliExecutableIdentity({
+  const cli1 = bindCliExecutableIdentity({
     resolved: cliScript,
     provenance: {
       archiveVerified: true,
       archiveSha256: official,
       extractedBinPath: cliScript,
+      binarySha256: sha256File(cliScript),
     },
     platformId: 'linux-x64',
   })
-  assert.equal(missingDigest.archiveBound, false)
-  const binarySha256 = sha256File(cliScript)
-  const bound = bindCliExecutableIdentity({
-    resolved: cliScript,
-    provenance: {
-      archiveVerified: true,
-      archiveSha256: official,
-      extractedBinPath: cliScript,
-      binarySha256,
-    },
-    platformId: 'linux-x64',
-  })
-  assert.equal(bound.archiveBound, true)
-  const verified = verifyResolvedCli({
-    resolved: cliScript,
-    env: { PATH: repo },
-    execFile: execFakeCli,
-    provenance: {
-      archiveVerified: true,
-      archiveSha256: official,
-      extractedBinPath: cliScript,
-      binarySha256,
-    },
-    platformId: 'linux-x64',
-  })
-  assert.equal(verified.identityVerified, true)
+  assert.equal(cli1.archiveBound, false)
+  assert.match(cli1.reason, /not a trust root/)
   writeFileSync(cliScript, 'mutated-bytes\n')
   const mutated = bindCliExecutableIdentity({
     resolved: cliScript,
     provenance: {
-      archiveVerified: true,
-      archiveSha256: official,
+      boundFromArchiveBytes: true,
+      archiveBytesSha256: official,
       extractedBinPath: cliScript,
-      binarySha256,
+      binarySha256: sha256File(join(repo, 'fake-supabase')),
     },
     platformId: 'linux-x64',
   })
@@ -966,8 +949,8 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
   const linked = bindCliExecutableIdentity({
     resolved: link,
     provenance: {
-      archiveVerified: true,
-      archiveSha256: official,
+      boundFromArchiveBytes: true,
+      archiveBytesSha256: official,
       extractedBinPath: link,
       binarySha256: sha256File(cliScript),
     },
@@ -992,7 +975,8 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
     execFile: execFakeCli,
     platformId: 'linux-x64',
   })
-  assert.equal(prepared.identityVerified, true)
+  assert.equal(prepared.identityVerified, false)
+  assert.equal(prepared.archiveBound, false)
   const emptyTooling = join(repo, 'empty-tooling')
   mkdirSync(emptyTooling)
   const blocked = prepareOfficialCliIdentity({ toolingDir: emptyTooling, platformId: 'linux-x64' })
@@ -1097,8 +1081,7 @@ test('R5 S1–S7 catalog verification requires typed ACL, signature and executab
       definition: "CREATE FUNCTION admin_account_counts_v1() RETURNS integer LANGUAGE sql AS 'SELECT 1 /* jetnity_reporting.account_counts_v1 */';",
     },
   }
-  assert.match(executableFunctionBody(markerOnly.producer.definition), /^SELECT 1$/i)
-  assert.throws(() => assertInstalledCatalog(markerOnly), /schema-access|typed ACL|signature|executable body|comments are not catalog/)
+  assert.throws(() => assertInstalledCatalog(markerOnly), /schema-access|typed ACL|signature|prosrc|accepted function body/)
   const s2 = acceptedCatalogFixture()
   s2.producer.acls = [
     { grantor: 'postgres', grantee: 'authenticated', privilege: 'EXECUTE', is_grantable: false },
@@ -1119,7 +1102,39 @@ test('R5 S1–S7 catalog verification requires typed ACL, signature and executab
   assert.throws(() => assertInstalledCatalog(s5), /owner/)
   const s6 = structuredClone(ok)
   s6.wrapper.definition = ''
-  assert.throws(() => assertInstalledCatalog(s6), /definition is missing|name-only/)
+  s6.wrapper.prosrc = null
+  assert.throws(() => assertInstalledCatalog(s6), /definition is missing|name-only|prosrc/)
+  const sql1 = structuredClone(ok)
+  sql1.producer.prosrc = "BEGIN PERFORM 'darf_konten_verwalten 720 hours auth.uid 42501 public.profiles auth.users'; PERFORM 'active'; RETURN QUERY SELECT 999::bigint, 0::bigint, now(), now()-interval '720 hours', 'jetnity.admin-account-counts.v1'::text; END"
+  assert.throws(() => assertInstalledCatalog(sql1), /prosrc is not the accepted/)
+  const sql2 = structuredClone(ok)
+  sql2.producer.config = ['search_path=pg_catalog, attacker', 'TimeZone=UTC']
+  assert.throws(() => assertInstalledCatalog(sql2), /proconfig/)
+  const mutatedActive = structuredClone(ok)
+  mutatedActive.producer.prosrc = extractExactDollarBody(leseUnveraenderteSql().producerSql).replace(
+    "is distinct from 'active'",
+    "is not distinct from 'active'",
+  )
+  assert.throws(() => assertInstalledCatalog(mutatedActive), /prosrc is not the accepted/)
+  const sqlRelation = structuredClone(ok.producer)
+  sqlRelation.prosrc = sql1.producer.prosrc
+  assert.throws(
+    () => assertInstalledRelation(sqlRelation, {
+      schema: 'jetnity_reporting',
+      proname: 'account_counts_v1',
+      securityDefiner: true,
+      language: 'plpgsql',
+      expectedResult: EXPECTED_PRODUCER_RESULT,
+      expectedProsrc: extractExactDollarBody(leseUnveraenderteSql().producerSql),
+      expectedConfig: ['search_path=pg_catalog', 'TimeZone=UTC'],
+    }),
+    /prosrc is not the accepted/,
+  )
+  const grantOption = structuredClone(ok)
+  grantOption.wrapper.acls = [
+    { grantor: 'postgres', grantee: 'authenticated', privilege: 'EXECUTE', is_grantable: true },
+  ]
+  assert.throws(() => assertInstalledCatalog(grantOption), /must not be grantable/)
   const s7 = structuredClone(ok)
   s7.wrapper.acls = [
     { grantor: 'postgres', grantee: 'public', privilege: 'EXECUTE', is_grantable: false },
@@ -1131,7 +1146,7 @@ test('R5 S1–S7 catalog verification requires typed ACL, signature and executab
       applySql: async () => {},
       verify: async () => markerOnly,
     }),
-    /schema-access|typed ACL|signature|executable body|comments are not catalog/,
+    /schema-access|typed ACL|signature|prosrc|accepted function body/,
   )
   const verified = await installProducerAndWrapper({
     applySql: async () => {},
@@ -1164,13 +1179,13 @@ test('R1/R3 defaultStartRuntime refuses missing archive-bound CLI and missing pr
   )
 })
 
-test('R2 failure receipt is persisted after default CLI/docker verification and a fallible start', async () => {
+test('R1/R3 seeded sidecar cannot manufacture official archive provenance', async () => {
   const evidence = mkdtempSync(join(tmpdir(), 'aaclr1-fail-'))
   const home = mkdtempSync(join(tmpdir(), 'aaclr1-failhome-'))
   const toolingDir = join(home, 'tooling')
   mkdirSync(join(toolingDir, 'bin'), { recursive: true, mode: 0o700 })
   const extracted = join(toolingDir, 'bin', 'supabase')
-  writeFileSync(extracted, 'official-extract-placeholder\n', { mode: 0o700 })
+  writeFileSync(extracted, 'not an official executable\n', { mode: 0o700 })
   const official = CLI.archives[platformKey() === 'linux-arm64' ? 'linux-arm64' : 'linux-x64'].apiDigest.replace('sha256:', '')
   writeFileSync(join(toolingDir, 'provenance.json'), `${JSON.stringify({
     archiveVerified: true,
@@ -1180,39 +1195,25 @@ test('R2 failure receipt is persisted after default CLI/docker verification and 
     version: CLI.version,
     platformId: platformKey() === 'linux-arm64' ? 'linux-arm64' : 'linux-x64',
   }, null, 2)}\n`)
-  await assert.rejects(
-    () => run({
-      env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
-      argv: ['--runtime-only'],
-      evidenceDir: evidence,
-      privateHome: home,
-      execFile: (bin, args) => {
-        if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
-        const joined = (args || []).join(' ')
-        if (joined.includes('--version') && String(bin).includes('supabase')) return '2.117.0\n'
-        if (joined.includes('start') && String(bin).includes('supabase')) return 'Start containers for Supabase local development\n'
-        if (String(bin).includes('supabase')) return 'supabase start\nsupabase stop\nsupabase status\n'
-        if (String(bin).includes('docker') || bin === '/bin/docker') {
-          if (joined.includes('--version')) return 'Docker version 27.0.0\n'
-          if (args[0] === 'info') return 'Server Version: 27.0.0\n'
-          if (args[0] === 'context') return 'default\n'
-        }
-        throw new Error(`unexpected ${bin} ${joined}`)
-      },
-      resolve: (name) => (name === 'docker' ? '/bin/docker' : null),
-      startRuntime: async ({ owned }) => {
-        owned.registry.hadFallibleAcquisition = true
-        owned.network = { name: 'aaclr1-partial', created: true, option: 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1' }
-        owned.registry.network = owned.network
-        throw new Error('partial stack failed')
-      },
-    }),
-    /partial stack failed/,
-  )
-  const names = (await import('node:fs')).readdirSync(evidence).filter((name) => name.endsWith('-failure.json'))
-  assert.equal(names.length, 1)
-  const payload = JSON.parse(readFileSync(join(evidence, names[0]), 'utf8'))
-  assert.match(payload.error, /partial stack failed/)
+  let startReached = false
+  const result = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--runtime-only'],
+    evidenceDir: evidence,
+    privateHome: home,
+    execFile: (bin, args) => {
+      if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+      throw new Error(`binary must not be invoked from a sidecar: ${bin} ${args}`)
+    },
+    resolve: () => null,
+    startRuntime: async () => {
+      startReached = true
+      throw new Error('start must not run from sidecar provenance')
+    },
+  })
+  assert.equal(result.cli.identityVerified, false)
+  assert.equal(result.cli.archiveBound, false)
+  assert.equal(startReached, false)
   rmSync(evidence, { recursive: true, force: true })
   rmSync(home, { recursive: true, force: true })
 })
@@ -1259,3 +1260,292 @@ test('G20 does not PASS an incomplete registry after fallible work', () => {
 function probeTraversal() {
   return cleanupDryRunKontrolle().traversalBlocked === true
 }
+
+function writeOwnedTar(dir, { memberName = 'supabase', contents = 'owned-member-bytes\n' } = {}) {
+  writeFileSync(join(dir, memberName), contents)
+  const archivePath = join(dir, `${memberName}.tar.gz`)
+  execFileSync('tar', ['-czf', archivePath, memberName], { cwd: dir })
+  return { archivePath, bytes: readFileSync(archivePath), sha256: createHash('sha256').update(readFileSync(archivePath)).digest('hex') }
+}
+
+test('R1/R3 explicit --cli-archive/--cli-checksums consume bytes; sidecar/corrupt/wrong-member fail before invoke', async () => {
+  assert.deepEqual(parseCliArtifactArgs([]), { archivePath: null, checksumsPath: null })
+  assert.throws(() => parseCliArtifactArgs(['--cli-archive', '/tmp/a']), /together/)
+  assert.throws(() => parseCliArtifactArgs(['--cli-checksums', '/tmp/c']), /together/)
+  const parsed = parseCliArtifactArgs(['--runtime-only', '--cli-archive', '/tmp/a', '--cli-checksums', '/tmp/c'])
+  assert.equal(parsed.archivePath, '/tmp/a')
+  assert.equal(parsed.checksumsPath, '/tmp/c')
+
+  const workspace = mkdtempSync(join(tmpdir(), 'aaclr1-cli-'))
+  const owned = writeOwnedTar(workspace)
+  const tooling = join(workspace, 'tooling')
+  const provenance = materializeVerifiedArchive({
+    toolingDir: tooling,
+    archiveBytes: owned.bytes,
+    identity: { name: 'owned.tar.gz', sha256: owned.sha256, version: 'test' },
+  })
+  assert.equal(readFileSync(provenance.extractedBinPath, 'utf8'), 'owned-member-bytes\n')
+  assert.equal(provenance.boundFromArchiveBytes, true)
+  assert.equal(provenance.archiveBytesSha256, owned.sha256)
+  const boundNonOfficial = bindCliExecutableIdentity({
+    resolved: provenance.extractedBinPath,
+    provenance,
+    platformId: 'linux-x64',
+    archiveBytes: owned.bytes,
+    archivePath: provenance.archivePath,
+  })
+  assert.equal(boundNonOfficial.archiveBound, false)
+  assert.match(boundNonOfficial.reason, /!= official/)
+
+  writeFileSync(join(workspace, 'readme'), 'not-the-cli\n')
+  execFileSync('tar', ['-czf', 'wrong.tar.gz', 'readme'], { cwd: workspace })
+  const wrongBytes = readFileSync(join(workspace, 'wrong.tar.gz'))
+  await assert.rejects(async () => {
+    materializeVerifiedArchive({
+      toolingDir: join(workspace, 'wrong-tooling'),
+      archiveBytes: wrongBytes,
+      identity: {
+        name: 'wrong.tar.gz',
+        sha256: createHash('sha256').update(wrongBytes).digest('hex'),
+      },
+    })
+  }, /missing the supabase member/)
+
+  assert.throws(
+    () => materializeVerifiedArchive({
+      toolingDir: join(workspace, 'corrupt-tooling'),
+      archiveBytes: Buffer.from('not-a-tar'),
+      identity: {
+        name: 'c.tar.gz',
+        sha256: createHash('sha256').update('not-a-tar').digest('hex'),
+      },
+    }),
+    /tar|archive|member|gzip|not in gzip/,
+  )
+
+  const fakeChecksums = `${'a'.repeat(64)}  supabase_2.117.0_linux_amd64.tar.gz\n`
+  assert.throws(
+    () => acquireOfficialCli({
+      toolingDir: join(workspace, 'acq'),
+      checksumsText: fakeChecksums,
+      checksumsBytes: Buffer.from(fakeChecksums),
+      archiveBytes: owned.bytes,
+      platformId: 'linux-x64',
+    }),
+    /digest|mismatch/,
+  )
+  const missing = prepareOfficialCliIdentity({
+    toolingDir: join(workspace, 'missing-prep'),
+    archivePath: join(workspace, 'missing.tar.gz'),
+    checksumsPath: join(workspace, 'missing.txt'),
+    platformId: 'linux-x64',
+  })
+  assert.equal(missing.archiveBound, false)
+  assert.equal(missing.identityVerified, false)
+  assert.match(missing.note, /missing/)
+
+  const archive = join(workspace, 'not-official.tar.gz')
+  const checksums = join(workspace, 'checksums.txt')
+  writeFileSync(archive, 'nope\n')
+  writeFileSync(checksums, fakeChecksums)
+  const offline = readOfflineOfficialArtifacts({ archivePath: archive, checksumsPath: checksums })
+  assert.equal(offline.archiveBytes.toString(), 'nope\n')
+  const invoked = []
+  const result = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--runtime-only', '--cli-archive', archive, '--cli-checksums', checksums],
+    evidenceDir: join(workspace, 'evidence'),
+    execFile: (bin, args) => {
+      invoked.push({ bin: String(bin), args })
+      if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+      throw new Error(`must not invoke ${bin} ${args}`)
+    },
+    resolve: () => null,
+  })
+  assert.equal(result.cli.archiveBound, false)
+  assert.equal(result.cli.identityVerified, false)
+  assert.equal(result.summary.fullLocalExecution, false)
+  assert.ok(!invoked.some((item) => String(item.bin).includes('supabase') || item.args?.includes('--version')))
+  rmSync(workspace, { recursive: true, force: true })
+})
+
+test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign volumes are retained', async () => {
+  assert.equal(
+    classifyDockerInspectError(new Error('context local-test: context not found'), {
+      kind: 'container',
+      name: 'owned',
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error('No such container: owned'), {
+      kind: 'container',
+      name: 'owned',
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    inspectDockerResource({
+      execFile: () => { throw new Error('context local-test: context not found') },
+      dockerBin: 'docker',
+      args: ['inspect', 'owned'],
+      env: {},
+    }).state,
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyVolumeOwnership({
+      mount: { Type: 'volume', Name: 'fixture-volume' },
+      labels: { 'com.supabase.cli.project': 'probe' },
+      runId: 'run-1',
+    }).ownership,
+    'unresolved',
+  )
+  const volume1 = collectOwnedDockerResources({
+    dockerBin: 'docker',
+    networkName: 'owned-network',
+    env: {},
+    runId: 'run-1',
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return 'owned-container'
+      if (args[0] === 'inspect') {
+        return JSON.stringify([{
+          Id: 'owned-container',
+          Config: { Labels: { 'com.supabase.cli.project': 'probe' } },
+          HostConfig: { NetworkMode: 'owned-network', PortBindings: {} },
+          NetworkSettings: { Ports: {} },
+          Mounts: [{ Type: 'volume', Name: 'fixture-volume' }],
+        }])
+      }
+      throw new Error(`unexpected ${args}`)
+    },
+  })
+  assert.equal(volume1.volumes.length, 1)
+  assert.equal(volume1.volumes[0].name, 'fixture-volume')
+  assert.equal(volume1.volumes[0].ownership, 'unresolved')
+  assert.equal(volume1.inventoryComplete, false)
+  const volume2 = collectOwnedDockerResources({
+    dockerBin: 'docker',
+    networkName: 'owned-network',
+    env: {},
+    runId: 'run-1',
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return 'owned-container'
+      if (args[0] === 'inspect') {
+        return JSON.stringify([{
+          Id: 'owned-container',
+          Config: { Labels: { 'com.supabase.cli.project': 'probe', [RUN_LABEL]: 'run-1' } },
+          HostConfig: { NetworkMode: 'owned-network', PortBindings: {} },
+          NetworkSettings: { Ports: {} },
+          Mounts: [{ Type: 'volume', Name: 'owned-volume' }],
+        }])
+      }
+      throw new Error(`unexpected ${args}`)
+    },
+  })
+  assert.equal(volume2.volumes[0].ownership, 'owned')
+  assert.equal(volume2.inventoryComplete, true)
+
+  const volumeCalls = []
+  const foreign = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    state: {
+      network: { name: 'owned-net', created: true },
+      containers: [],
+      volumes: [{ name: 'foreign-vol', ownership: 'foreign' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      volumeCalls.push(args.slice())
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'volume') throw new Error('foreign volume must not be deleted')
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`No such network: ${args[2]}`)
+      }
+      return ''
+    },
+  })
+  assert.deepEqual(foreign.foreignRetained, ['foreign-vol'])
+  assert.equal(foreign.volumesRemoved, true)
+  assert.ok(!volumeCalls.some((args) => args[0] === 'volume'))
+
+  const unresolvedCleanup = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    state: {
+      network: { name: 'owned-net', created: true },
+      containers: [],
+      volumes: [{ name: 'mystery-vol' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'volume') throw new Error('unresolved volume must not be deleted blindly')
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`No such network: ${args[2]}`)
+      }
+      return ''
+    },
+  })
+  assert.equal(unresolvedCleanup.unknown, true)
+  assert.equal(unresolvedCleanup.inventoryComplete, false)
+  assert.equal(unresolvedCleanup.dockerServicesStopped, false)
+  assert.equal(unresolvedCleanup.volumesRemoved, false)
+
+  const alreadyGone = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: mkdtempSync(join(tmpdir(), 'aaclr1-idemp-')),
+    state: {
+      network: { name: 'owned-net', created: true },
+      containers: [{ id: 'ctr1' }],
+      volumes: [{ name: 'vol1', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'stop' || args[0] === 'rm') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'inspect') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'volume' && args[1] === 'rm') throw new Error(`No such volume: ${args[3]}`)
+      if (args[0] === 'volume' && args[1] === 'inspect') throw new Error(`No such volume: ${args[2]}`)
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`No such network: ${args[2]}`)
+      }
+      if (args[0] === 'stop' && args.length === 1) return ''
+      return ''
+    },
+  })
+  assert.equal(alreadyGone.containerError, undefined)
+  assert.equal(alreadyGone.volumeError, undefined)
+  assert.equal(alreadyGone.networkError, undefined)
+  assert.equal(alreadyGone.containerState, RESOURCE_STATE.ABSENT)
+  assert.equal(alreadyGone.volumeState, RESOURCE_STATE.ABSENT)
+  assert.equal(alreadyGone.networkState, RESOURCE_STATE.ABSENT)
+  assert.equal(alreadyGone.containersRemoved, true)
+  assert.equal(alreadyGone.volumesRemoved, true)
+  assert.equal(alreadyGone.networkRemoved, true)
+  assert.equal(alreadyGone.dockerServicesStopped, true)
+  assert.equal(alreadyGone.unknown, false)
+
+  const again = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    state: {
+      network: { name: 'owned-net', created: true },
+      containers: [{ id: 'ctr1' }],
+      volumes: [{ name: 'vol1', ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'stop' || args[0] === 'rm') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'inspect') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'volume' && args[1] === 'rm') throw new Error(`No such volume: ${args[3]}`)
+      if (args[0] === 'volume' && args[1] === 'inspect') throw new Error(`No such volume: ${args[2]}`)
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`No such network: ${args[2]}`)
+      }
+      return ''
+    },
+  })
+  assert.equal(again.dockerServicesStopped, true)
+  assert.equal(again.unknown, false)
+})

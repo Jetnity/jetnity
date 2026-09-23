@@ -10,8 +10,14 @@ unmerged sibling implementation.
 ## What the command actually does
 
 ```bash
-# Safe default: isolated preflight + source identity + owned cleanup. No stack start.
+# Safe default: isolated preflight + source identity + owned cleanup. No stack start,
+# no official-archive download.
 node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs
+
+# Explicit later offline inputs (do not invent HOME layout). Both flags are required.
+# Hashes official bytes, extracts into newly owned tooling. This correction does not
+# execute the official binary.
+node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs --cli-archive <path> --cli-checksums <path>
 
 # Setup validation only. Cannot report fullLocalExecution=true.
 node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs --runtime-only

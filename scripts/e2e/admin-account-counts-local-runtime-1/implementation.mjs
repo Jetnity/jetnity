@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 // Truthful capability map. Code-completeness and actual execution stay distinct.
-// Review 5291528414 found default-path defects beyond missing Docker.
-// Those R1–R5 corrections are in this head. Real stack execution remains NOT RUN.
+// Review 5293516993 found remaining CLI provenance, cleanup inventory and
+// exact-SQL-identity defects. Those R1/R2/R5 corrections are in this head.
+// Real stack execution remains NOT RUN.
 
 export const IMPLEMENTATION = Object.freeze({
   preflight: 'IMPLEMENTED',
   sourcePins: 'IMPLEMENTED',
   ownedLifecycle: 'REVIEW_FIX_R2',
   envGuard: 'REUSED_AND_EXTENDED',
-  cliIdentity: 'REVIEW_FIX_R3',
+  cliIdentity: 'REVIEW_FIX_R1_R3',
   dockerCapability: 'IMPLEMENTED',
   stackStart: 'REVIEW_FIX_R2',
   migrationReplay: 'REVIEW_FIX_R5',
@@ -23,7 +24,7 @@ export const IMPLEMENTATION = Object.freeze({
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'Remaining R1–R5 default-wiring corrections from review 5292919754 are in this head. Official CLI identity is archive-byte + sidecar rehash, not injected PASS objects. Isolated next dev uses the app environment before spawn. Docker cleanup uses PRESENT/ABSENT/UNKNOWN. Observer contains foreign redirects and bounds the streamed body. Catalog PASS requires typed ACL/signature/executable body. Helper tests are not full local execution. Default invocation is no-start. Full acceptance still requires the sibling browser module and a later TL-gated real integrated run.',
+    'Focused remaining R1/R3/R2/R5 corrections from review 5293516993. Explicit --cli-archive/--cli-checksums hash official input bytes and extract into newly owned tooling; sidecar/archiveVerified is never a trust root. Default remains no-start/no-download. Docker cleanup uses resource-specific ABSENT vs tool/context UNKNOWN, classifies every mount as owned/foreign/unresolved, and treats already-removed resources as idempotent ABSENT. Catalog PASS compares exact accepted prosrc and proconfig, not token heuristics. Helper tests are not full local execution. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {
