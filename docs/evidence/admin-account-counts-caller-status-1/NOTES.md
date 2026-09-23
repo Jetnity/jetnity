@@ -9,4 +9,7 @@
 - Harness repair `1f38a968`: existing delivery SSR stub returns active own-status for `harness-user`; local-positive expects 2 creates / 2 cookie reads / 1 RPC. Runtime OFF remains zero transport.
 - No hosted query, grant, apply, secret or live account access.
 - No Browser / MFA / hosted-parity PASS.
-- #556 files were not written.
+- Closed #556 was merged on exact main `4381d20` and then C1-merged once into this branch (`90c943d`). Later main drift was not consumed.
+- After that merge, only incoming `constants.mjs` and `test.mjs` were edited for the executable source re-pin. Other #556 helper/README/docs/evidence files stayed read-only. Historical #556 receipts were not rewritten.
+- Executable source baseline remains `9cf7aedd` (unchanged producer/reader/caller-status bytes). Integration baseline is `4381d20`. Historical product snapshot `f0237baf` stays historical.
+- Old permissive producer `dcf4d35d…` / blob `63974e65…` and old reader `02dcafd8…` are refused. New caller-status blob `b820c799…` is in SOURCE_PATHS + BLOB_PINS.

@@ -13,13 +13,17 @@ Für den nächsten unabhängigen Technical-Lead-Review. Nicht für einen neuen P
 - UI rename: **not performed**
 - PR: #557 draft
 - Branch: `fix/admin-account-counts-caller-status-1`
-- Baseline: `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`
-- Task v1: `99fa42dca4c46116498d0cc74ea7cd26e467b591`
+- Original baseline: `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`
+- C1 integration baseline / merge-base: `4381d20bfaa7f60f140823cc311d44409934197a`
+- Executable source baseline: `9cf7aedd8dd190b4764d8ac178e23d9f8b42c773`
+- Task v1 unchanged: `99fa42dca4c46116498d0cc74ea7cd26e467b591`
+- Addendum: C1 exact-main sync + minimal source compatibility
 - Implementation persist: `bd44228d7ced523b85ff699b209fd42794900349`
 - Harness repair persist: `1f38a9689b79af81d7fa0742e83f851ec264f3d1`
-- Previous freeze (invalidated by CI fail + this repair): `0e7cebe6953e429e89c209916178a786a0c93099`
-- Do not resume closed #555 or active #556 sessions
-- Do not import unmerged #556 work
+- Authorized C1 merge: `90c943d48e58fd48b308b7b27b147647c33795ef`
+- Previous freeze (invalidated by C1): `9cf7aedd8dd190b4764d8ac178e23d9f8b42c773`
+- Do not resume closed #555 or closed #556 sessions
+- Do not rewrite historical #556 receipts
 
 ## What was delivered
 
@@ -29,9 +33,9 @@ New identity pins were taken from a clean disposable PostgreSQL 16.15 install of
 
 ## First unread action for Technical Lead
 
-1. Independent exact-head review of the **new** frozen head after this harness-repair persist. Do not review invalidated `0e7cebe6`.
-2. Record exact-head CI/Auth/Preview for the new head only. Workflow `35852662043` on `0e7cebe6` is historical: Typecheck/Lint/Build FAILED because the delivery harness SSR stub lacked `profiles.status`.
-3. Keep integration order: accept/integrate #556 first if ready, then this slice only after an explicit exact-main synchronization / compatibility re-pin instruction.
+1. Independent exact-head review of the **C1 resulting frozen head** after this persist. Cover the complete resulting diff, including `caller-status.ts`, new helper pins, old-producer refusal, and fresh exact-head CI/Auth/Preview.
+2. Do not treat `9cf7aedd` CI `35853481624` or `0e7cebe6` CI `35852662043` as gates of the new head.
+3. #556 is merged as preflight fallback only. Historical browser receipts are not tests of this source. No final TL PASS is implied by author C1 tests.
 4. Do not merge. Do not mark Ready. Do not start a follow-up slice from Cursor.
 
 ## Do not do

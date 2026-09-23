@@ -23,7 +23,9 @@ Writes stayed inside the named producer, feature-local reader/caller-status modu
 - 139/139 rollout install/grant/staged-unexposed/revoke/rollback/drift proofs, exit 0, owned cluster removed
 - `check:dead` / `check:exports` / `check:operating-mode` PASS
 
-After exact-head CI `35852662043` failed on invalidated freeze `0e7cebe6` (2 effective-target tests), the existing delivery SSR stub was taught to return active own-status. Re-run: 22/22 caller-status/reader/effective-target PASS; 20/20 activation/parser/render/schema-reference PASS. Full suite, production build, typecheck, lint and hosted gates were not run by this persist. New exact-head CI/Auth/Preview are not claimed here.
+After exact-head CI `35852662043` failed on invalidated freeze `0e7cebe6` (2 effective-target tests), the existing delivery SSR stub was taught to return active own-status. That repair plus `9cf7aedd` CI `35853481624` SUCCESS are historical for the pre-C1 head.
+
+C1: one merge of exact main `4381d20`; helper constants/test re-pinned to new producer/reader plus `caller-status.ts`. Re-run: helper 34/34 PASS; feature 28/28 PASS; identity/isolation 17/17 PASS. Full disposable SQL 70/36/139 not re-run (candidate bytes unchanged). Full suite, production build and new exact-head CI/Auth/Preview are not claimed here. Candidate source is not labeled final-TL-accepted.
 
 ## Contract self-check
 

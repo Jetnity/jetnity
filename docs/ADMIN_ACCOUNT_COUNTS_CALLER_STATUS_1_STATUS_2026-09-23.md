@@ -6,10 +6,14 @@ Status: **LOCAL IMPLEMENTATION + PROOFS FROZEN FOR INDEPENDENT TECHNICAL-LEAD RE
 Draft PR: #557  
 Branch: `fix/admin-account-counts-caller-status-1`  
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_CALLER_STATUS_1_TASK_2026-09-23.md` v1 at `99fa42dca4c46116498d0cc74ea7cd26e467b591`  
-Exact baseline / merge-base: `main@87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`  
+Original exact baseline: `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`  
+C1 integration baseline / merge-base: `main@4381d20bfaa7f60f140823cc311d44409934197a`  
+Executable source baseline (unchanged product bytes): `9cf7aedd8dd190b4764d8ac178e23d9f8b42c773`  
 Implementation persist: `bd44228d7ced523b85ff699b209fd42794900349`  
 Harness repair persist: `1f38a9689b79af81d7fa0742e83f851ec264f3d1`  
-Previous freeze (invalidated): `0e7cebe6953e429e89c209916178a786a0c93099`  
+Authorized C1 merge: `90c943d48e58fd48b308b7b27b147647c33795ef`  
+Previous freeze (invalidated by C1 merge): `9cf7aedd8dd190b4764d8ac178e23d9f8b42c773`  
+Earlier invalidated freeze: `0e7cebe6953e429e89c209916178a786a0c93099`  
 Docs persist / freeze candidate: this STATUS commit on `fix/admin-account-counts-caller-status-1`  
 Mode: NORMAL
 
@@ -85,5 +89,29 @@ Re-run on this writer after the repair:
 - activation + parser + render + schema-reference: **20/20 PASS**
 
 This persist does not claim a new exact-head CI/Auth/Preview PASS. Those belong to the new frozen head after push.
+
+## 6. Addendum C1 — exact-main sync + minimal source compatibility
+
+Same session, no replacement agent. Fetched `origin/main` equals **4381d20bfaa7f60f140823cc311d44409934197a**. One normal merge of that exact commit produced `90c943d48e58fd48b308b7b27b147647c33795ef`. No rebase, force, reset, cherry-pick, new branch, or merge to main. Later main drift was not consumed.
+
+#556 remains CLOSED only as the safe preflight/blocker fallback. Historical #556 receipts and `PRODUCT_BASELINE` `f0237baf8809e5528b5f73e918f0e37a7d9b4477` stay historical. They are not tests of this new source. Candidate/reader/caller-status bytes were unchanged from executable baseline `9cf7aedd` and are **not** labeled final-TL-accepted.
+
+Narrow writes after the merge: only incoming `scripts/e2e/admin-account-counts-browser-acceptance-1/constants.mjs` and `test.mjs`. Other incoming #556 helper/README/docs/evidence files stayed read-only. Original task file unchanged.
+
+| Pin | Historical / refused | Executable now |
+| --- | --- | --- |
+| Producer SHA-256 | `dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420` | `612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de` |
+| Producer blob | `63974e6509bf42963d2028d99567c4b4062c36d8` | `b912eecb55cfa519dcd8b5d4a4ca9222aea0a0c1` |
+| Reader blob | `02dcafd80502067935eee78f3d8a7b21e417d720` | `eb5b1b0d54bd649bd511ce3ed17b0a63b8adae92` |
+| caller-status.ts | absent from #556 pin set | blob `b820c799046585dff743553fb6231e60a6a42cff` in SOURCE_PATHS + BLOB_PINS |
+| Wrapper / Auth / activation / parser | unchanged | unchanged |
+
+Old permissive producer is still refused. No dual-accept. Leftover #555 installs remain `INCOMPATIBLE`.
+
+C1 local verification (this writer):
+- incoming helper unit/source-pin tests **34/34 PASS** (controlled substitutes; not browser/Auth/MFA evidence)
+- caller-status + reader + effective-target + activation **28/28 PASS**
+- existing local/delivery/rollout identity + isolation **17/17 PASS**
+- disposable SQL 70/36/139 were **not** re-executed; candidate bytes are unchanged from `9cf7aedd`
 
 **Do not mark Ready. Do not merge. STOP FOR INDEPENDENT TL EXACT-HEAD REVIEW.**

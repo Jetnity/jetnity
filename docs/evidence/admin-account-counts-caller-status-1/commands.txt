@@ -43,3 +43,20 @@ node --import ./scripts/server-only-test-register.mjs --import tsx --test \
   lib/admin/account-counts-delivery/schema-reference.test.ts \
   lib/admin/account-counts-delivery/render.test.ts
 # 20/20 PASS
+
+# Addendum C1 — after exact merge of main 4381d20
+node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs
+# 34/34 PASS; controlled substitutes; not browser evidence
+
+node --import ./scripts/server-only-test-register.mjs --import tsx --test \
+  lib/admin/account-counts-delivery/effective-target.test.ts \
+  lib/admin/account-counts-delivery/reader.test.ts \
+  lib/admin/account-counts-delivery/caller-status.test.ts \
+  lib/admin/account-counts-delivery/activation.test.ts
+# 28/28 PASS
+
+node --test \
+  scripts/db/admin-account-counts-rollout-preparation-1/runner.test.mjs \
+  scripts/db/admin-account-counts-delivery-1-local-proof.test.mjs \
+  scripts/db/admin-account-counts-1-local-proof.test.mjs
+# 17/17 PASS
