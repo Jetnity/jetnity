@@ -85,6 +85,9 @@ export const UI_COPY = Object.freeze({
   windowExact: `genau ${WINDOW_HOURS} Stunden, halboffen`,
   measuredLabel: 'Stand der Datenbankuhr',
   windowStartLabel: 'Fensterbeginn',
+  adminShellTitle: 'Operative Lage',
+  adminShellKicker: 'Steuerzentrale',
+  adminShellAria: 'Jetnity Admin',
 })
 
 export const FORBIDDEN_CONTEXT_KEYS = Object.freeze([

@@ -7,16 +7,29 @@ import { isPermittedSuccessShape, parseAdminAccountCountsPayload } from './paylo
 
 export const WRAPPER_HTTP_PATH = `/rest/v1/rpc/${WRAPPER_RPC}`
 
+// Selected source-contract kinds. These are not a measured local-gateway result.
+// anonymous/no-EXECUTE: public apikey, no bearer → privilege/EXECUTE denial.
+// invalidJwt: Authorization present but not a valid current JWT → PGRST301.
+// forbidden: identified caller without the required grant/status.
 export const DENIED_CALLER = Object.freeze({
-  unauthenticated: Object.freeze({
+  anonymous: Object.freeze({
+    statuses: Object.freeze([401, 403]),
+    codes: Object.freeze(['42501', '42503']),
+    note: 'no-EXECUTE / privilege denial for apikey-only anonymous role',
+  }),
+  invalidJwt: Object.freeze({
     statuses: Object.freeze([401]),
     codes: Object.freeze(['PGRST301']),
+    note: 'invalid or expired JWT, not an anonymous apikey-only call',
   }),
   forbidden: Object.freeze({
     statuses: Object.freeze([401, 403]),
     codes: Object.freeze(['42501', '42503']),
+    note: 'identified caller denied by grant or status',
   }),
 })
+
+export const SYNTHETIC_INVALID_JWT = 'not-a-jwt.invalid-session.token'
 
 export function machineCode(json) {
   if (!json || typeof json !== 'object' || Array.isArray(json)) return null
@@ -68,7 +81,9 @@ export async function callLocalWrapper({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   }
-  if (accessToken) headers.Authorization = `Bearer ${accessToken}`
+  if (accessToken != null && accessToken !== '') {
+    headers.Authorization = `Bearer ${accessToken}`
+  }
   const response = await fetchImpl(url, {
     method: 'POST',
     headers,

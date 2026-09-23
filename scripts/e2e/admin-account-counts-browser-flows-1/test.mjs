@@ -4,6 +4,8 @@
 // reported as fullLocalExecution or a browser PASS.
 
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
+import { EventEmitter } from 'node:events'
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -22,7 +24,9 @@ import {
 } from './constants.mjs'
 import {
   ContextContractError,
+  OwnershipUncertaintyError,
   assertGateSetComplete,
+  createRunBudget,
   emptyGates,
   isNumericLoopbackOrigin,
   rejectRemoteRedirect,
@@ -39,6 +43,7 @@ import {
   runG12ZeroAndDelta,
 } from './flows.mjs'
 import {
+  SYNTHETIC_INVALID_JWT,
   assertDeniedWrapper,
   assertPermittedWrapper,
   callLocalWrapper,
@@ -55,10 +60,13 @@ import {
   sanitizeReturnedGates,
 } from './privacy.mjs'
 import {
+  attachAuthCapture,
+  authCaptureKind,
   beginBrowserSession,
   extractTotpSecret,
   isIntendedAuthResponse,
   isLocalAuthResponse,
+  payloadMatchesExpectedActor,
   withBrowserSession,
   withFixtureRestore,
 } from './session.mjs'
@@ -166,7 +174,9 @@ function createScriptedPage(world) {
         : 'Authenticator-App einrichten'
     }
     if (world.url.includes('/unauthorized')) return 'unauthorized'
-    if (world.url.includes('/admin') && !world.countsEnabled) return 'Operative Lage'
+    if (world.url.includes('/admin') && !world.countsEnabled) {
+      return `${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`
+    }
     if (world.url.includes('/admin') && world.status !== 'active') return UI_COPY.forbidden
     if (world.url.includes('/admin') && world.role === 'user') return UI_COPY.forbidden
     if (world.url.includes('/admin') && !world.wrapperPresent) return UI_COPY.unavailable
@@ -198,8 +208,12 @@ function createScriptedPage(world) {
     world.status === 'active' &&
     !world.failedCounts
 
+  const ownerUser = { id: OWNER.id, email: OWNER.email }
+
   const page = {
+    lastNavigation: { status: 200 },
     goto: async (url) => {
+      page.lastNavigation = { status: 200 }
       const next = new URL(url, 'http://127.0.0.1:3000')
       if (next.pathname.startsWith('/admin') && next.pathname !== '/admin/login') {
         if (!world.loggedIn) {
@@ -230,9 +244,9 @@ function createScriptedPage(world) {
     waitForLoadState: async () => {},
     waitForResponse: async (predicate) => {
       const candidates = [
-        makeAuthResponse(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken }),
+        makeAuthResponse(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken, user: ownerUser }),
         makeAuthResponse(`${world.localApi}/auth/v1/factors`, { totp: { secret: world.enrollSecret } }),
-        makeAuthResponse(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken }),
+        makeAuthResponse(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken, user: ownerUser }),
       ]
       for (const response of candidates) {
         if (typeof predicate !== 'function' || predicate(response)) return response
@@ -281,7 +295,7 @@ function createScriptedPage(world) {
             world.aal = 1
             world.loginError = null
             world.url = 'http://127.0.0.1:3000/admin/mfa'
-            emitJson(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken })
+            emitJson(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken, user: ownerUser })
           },
         })
       }
@@ -343,13 +357,13 @@ function createScriptedPage(world) {
               world.enrolled = true
               world.enrollOpen = false
               world.enrollSucceeded = true
-              emitJson(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken })
+              emitJson(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken, user: ownerUser })
               return
             }
             if (world.url.includes('/admin/mfa')) {
               world.aal = 2
               world.url = 'http://127.0.0.1:3000/admin'
-              emitJson(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken })
+              emitJson(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken, user: ownerUser })
             }
             void enrollCode
             void stepUpCode
@@ -490,8 +504,15 @@ function stubFetch(world, t) {
     if (!href.startsWith('http://127.0.0.1:54321/rest/v1/rpc/')) {
       throw new Error(`unexpected fetch ${href}`)
     }
-    const authorized = Boolean(init?.headers?.Authorization)
-    if (!authorized) {
+    const authorization = init?.headers?.Authorization
+    if (!authorization) {
+      return {
+        status: 401,
+        headers: { get: () => null },
+        text: async () => JSON.stringify({ code: '42501' }),
+      }
+    }
+    if (String(authorization).includes('not-a-jwt')) {
       return {
         status: 401,
         headers: { get: () => null },
@@ -521,9 +542,10 @@ function stubFetch(world, t) {
   })
 }
 
-function pageFromBody(text, url = 'http://127.0.0.1:3000/admin') {
+function pageFromBody(text, url = 'http://127.0.0.1:3000/admin', { status = 200 } = {}) {
   return {
     url: () => url,
+    lastNavigation: { status },
     locator: (selector) => ({
       count: async () => 0,
       first: () => ({ innerText: async () => '' }),
@@ -644,6 +666,8 @@ test('new context second-factor path refuses a forced enroll click', async () =>
     totpSecret: world.enrollSecret,
     localApiOrigin: world.localApi,
     clickedEnrollOnThisPage: false,
+    expectedActor: OWNER,
+    sessionEpoch: 1,
   }
   world.enrolled = true
   await runG10ExistingFactor(
@@ -689,7 +713,7 @@ test('B1 denied-caller counterexamples cannot become authorization PASS', () => 
   assert.equal(isDeniedCallerResponse({ status: 500, json: { code: '42501' } }, 'forbidden'), false)
   assert.equal(isDeniedCallerResponse({ status: 403, json: null }, 'forbidden'), false)
   assert.equal(isDeniedCallerResponse({ status: 403, json: {} }, 'forbidden'), false)
-  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST202' } }, 'unauthenticated'), false)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST202' } }, 'invalidJwt'), false)
   assert.throws(
     () => assertDeniedWrapper({ status: 404, json: { code: 'PGRST202' } }, 'forbidden'),
     /missing wrapper|authorization/,
@@ -703,9 +727,9 @@ test('B1 denied-caller counterexamples cannot become authorization PASS', () => 
     /denied forbidden semantics/,
   )
   assert.equal(isDeniedCallerResponse({ status: 403, json: { code: '42501' } }, 'forbidden'), true)
-  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST301' } }, 'unauthenticated'), true)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST301' } }, 'invalidJwt'), true)
   assertDeniedWrapper({ status: 403, json: { code: '42501' } }, 'forbidden')
-  assertDeniedWrapper({ status: 401, json: { code: 'PGRST301' } }, 'unauthenticated')
+  assertDeniedWrapper({ status: 401, json: { code: 'PGRST301' } }, 'invalidJwt')
 })
 
 test('B1 success parser rejects multirow, invalid time and recent>present', () => {
@@ -759,6 +783,7 @@ test('B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both 
   )
   const leaked = {
     url: () => 'http://127.0.0.1:3000/admin',
+    lastNavigation: { status: 200 },
     locator: (selector) => ({
       count: async () => (selector.includes('window') || selector.includes('present') ? 1 : 0),
       first: () => ({ innerText: async () => '4' }),
@@ -1028,3 +1053,306 @@ test('controlled doubles can walk G6–G19 without claiming a real-browser PASS'
   assertPermittedWrapper({ status: 200, json: [permittedRow()] })
   assertDeniedWrapper({ status: 401, json: { code: '42501' } }, 'forbidden')
 })
+
+test('B1 remaining UI requires exact origin/path and ready application copy', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const blankLogin = await classifyDenialUi(pageFromBody('', `${origin}/admin/login`))
+  assert.equal(blankLogin.kind, 'blank')
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody('', `${origin}/admin/login`), { expectKind: 'login', expectedOrigin: origin }),
+    /blank/,
+  )
+
+  const arbitrary = await classifyDenialUi(pageFromBody('Something went wrong', `${origin}/admin`))
+  assert.equal(arbitrary.kind, 'unknown')
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody('Something went wrong', `${origin}/admin`), {
+      expectKind: 'disabled',
+      expectedOrigin: origin,
+    }),
+    /unknown|generic/,
+  )
+
+  const wrongOrigin = await classifyDenialUi(
+    pageFromBody(UI_COPY.login, 'http://127.0.0.1:3999/admin/login'),
+    { expectedOrigin: origin },
+  )
+  assert.equal(wrongOrigin.kind, 'wrong-origin')
+
+  const prefix = await classifyDenialUi(pageFromBody(UI_COPY.login, `${origin}/admin/login/extra`))
+  assert.equal(prefix.kind, 'unknown')
+
+  const readyLogin = await classifyDenialUi(pageFromBody(UI_COPY.login, `${origin}/admin/login`), { expectedOrigin: origin })
+  assert.equal(readyLogin.kind, 'login')
+  const denied = await assertNoCountDisclosure(
+    pageFromBody(UI_COPY.login, `${origin}/admin/login`),
+    { expectKind: 'login', expectedOrigin: origin },
+  )
+  assert.equal(denied.kind, 'login')
+
+  const off = await classifyDenialUi(
+    pageFromBody(`${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`, `${origin}/admin`),
+    { expectedOrigin: origin },
+  )
+  assert.equal(off.kind, 'disabled')
+  const offPass = await assertNoCountDisclosure(
+    pageFromBody(`${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`, `${origin}/admin`),
+    { expectKind: 'disabled', expectedOrigin: origin },
+  )
+  assert.equal(offPass.kind, 'disabled')
+
+  await assert.rejects(
+    () => assertNoCountDisclosure(
+      pageFromBody(UI_COPY.login, `${origin}/admin/login`, { status: 500 }),
+      { expectKind: 'login', expectedOrigin: origin },
+    ),
+    /navigation/,
+  )
+})
+
+test('B1 anonymous no-EXECUTE and invalid-JWT stay distinct source-contract kinds', () => {
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: '42501' } }, 'anonymous'), true)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: '42501' } }, 'invalidJwt'), false)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST301' } }, 'invalidJwt'), true)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST301' } }, 'anonymous'), false)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: '42501' } }, 'unauthenticated'), false)
+  assertDeniedWrapper({ status: 401, json: { code: '42501' } }, 'anonymous')
+  assertDeniedWrapper({ status: 401, json: { code: 'PGRST301' } }, 'invalidJwt')
+  assert.equal(SYNTHETIC_INVALID_JWT.startsWith('eyJ'), false)
+})
+
+test('B1 JS payload port matches the accepted parser through locked tsx tooling', () => {
+  const valid = {
+    present_registered_accounts: '12',
+    created_in_prior_30_days: '0',
+    measured_at: '2026-09-22T12:00:00.000Z',
+    window_start: '2026-08-23T12:00:00.000Z',
+    definition_version: 'jetnity.admin-account-counts.v1',
+  }
+  const fixtures = [
+    valid,
+    [valid, valid],
+    { ...valid, extra: 'no' },
+    { ...valid, created_in_prior_30_days: '13' },
+    { ...valid, present_registered_accounts: '0' },
+    { ...valid, present_registered_accounts: 12 },
+    { ...valid, measured_at: '2026-02-30T12:00:00Z' },
+    { ...valid, measured_at: '2026-09-22T12:00:00' },
+    { ...valid, window_start: '2026-08-23T11:00:00.000Z' },
+    { ...valid, measured_at: '2024-02-29T15:30:00+01:00', window_start: '2024-01-30T15:30:00+01:00' },
+    { ...valid, present_registered_accounts: '9007199254740993', created_in_prior_30_days: '9007199254740993' },
+    { ...valid, present_registered_accounts: '9223372036854775807', created_in_prior_30_days: '9223372036854775807' },
+    { ...valid, present_registered_accounts: '9223372036854775808' },
+    { ...valid, measured_at: '2026-09-22T12:00:00.123456Z', window_start: '2026-08-23T12:00:00.123456Z' },
+    { ...valid, measured_at: '2026-09-22T12:00:00.000001Z', window_start: '2026-08-23T12:00:00.000000Z' },
+    { ...valid, measured_at: 'September 22, 2026 12:00:00Z', window_start: 'August 23, 2026 12:00:00Z' },
+    { ...valid, definition_version: 'jetnity.admin-account-counts.v0' },
+    { ...valid, present_registered_accounts: '01' },
+    [],
+  ]
+  const port = fixtures.map((payload) => parseAdminAccountCountsPayload(payload).ok)
+  const accepted = acceptedParserResults(fixtures)
+  assert.deepEqual(port, accepted)
+  assert.deepEqual(port, [
+    true, false, false, false, false, false, false, false, false, true,
+    true, true, false, true, false, false, false, false, false,
+  ])
+})
+
+test('B2 capture binds actor/session epoch and invalidates pending json after detach', async () => {
+  const page = new EventEmitter()
+  const store = {
+    sessionEpoch: 0,
+    accessToken: null,
+    totpSecret: null,
+    expectedActor: OWNER,
+    localApiOrigin: 'http://127.0.0.1:54321',
+  }
+  beginBrowserSession(store, OWNER)
+  const detach = attachAuthCapture(page, store, {
+    localApiOrigin: store.localApiOrigin,
+    expectedActor: OWNER,
+  })
+  page.emit('response', {
+    url: () => 'http://127.0.0.1:54321/auth/v1/token',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+    json: async () => ({ user: { id: 'not-the-owner' }, access_token: 'synthetic-other-user-token' }),
+  })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  assert.equal(store.accessToken, null)
+
+  page.emit('response', {
+    url: () => 'http://127.0.0.1:54322/auth/v1/token',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+    json: async () => ({ user: { id: OWNER.id }, access_token: 'foreign-port-token' }),
+  })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  assert.equal(store.accessToken, null)
+
+  let resolveJson
+  const deferred = new Promise((resolve) => {
+    resolveJson = resolve
+  })
+  page.emit('response', {
+    url: () => 'http://127.0.0.1:54321/auth/v1/token',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+    json: () => deferred,
+  })
+  await detach()
+  beginBrowserSession(store, OWNER)
+  store.accessToken = 'new-session-token'
+  resolveJson({ user: { id: OWNER.id }, access_token: 'old-session-token' })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  assert.equal(store.accessToken, 'new-session-token')
+
+  const detach2 = attachAuthCapture(page, store, {
+    localApiOrigin: store.localApiOrigin,
+    expectedActor: OWNER,
+  })
+  page.emit('response', {
+    url: () => 'http://127.0.0.1:54321/auth/v1/logout',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+    json: async () => ({ user: { id: OWNER.id }, access_token: 'unrelated-logout-token' }),
+  })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  assert.equal(store.accessToken, 'new-session-token')
+  assert.equal(authCaptureKind('http://127.0.0.1:54321/auth/v1/logout'), null)
+  assert.equal(payloadMatchesExpectedActor({ user: { id: 'not-the-owner' } }, OWNER), false)
+
+  page.emit('response', {
+    url: () => 'http://127.0.0.1:54321/auth/v1/token',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+    json: async () => ({ error: 'invalid', access_token: 'malformed-error-token' }),
+  })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  assert.equal(store.accessToken, 'new-session-token')
+
+  page.emit('response', {
+    url: () => 'http://127.0.0.1:54321/auth/v1/token',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+    json: async () => ({ user: { id: OWNER.id }, access_token: 'current-session-token' }),
+  })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  assert.equal(store.accessToken, 'current-session-token')
+  await detach2()
+})
+
+test('B3 timeout leaves late work running but refuses the next resource action', async () => {
+  const effects = []
+  const budget = createRunBudget({
+    timeoutMs: 1000,
+    signal: new AbortController().signal,
+  })
+  await assert.rejects(
+    () => budget.bound('slow mutation', 10, async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      effects.push('late original mutation')
+    }),
+    OwnershipUncertaintyError,
+  )
+  await assert.rejects(
+    () => budget.action('next scenario permitted', async () => {
+      effects.push('next scenario permitted')
+      return 1
+    }),
+    /terminal/,
+  )
+  await new Promise((resolve) => setTimeout(resolve, 80))
+  assert.deepEqual(effects, ['late original mutation'])
+  assert.equal(budget.isTerminal(), true)
+  assert.equal(budget.signal.aborted, true)
+  const ok = createRunBudget({ timeoutMs: 1000, signal: new AbortController().signal })
+  assert.equal(await ok.action('immediate', async () => 42), 42)
+
+  const sequenced = createRunBudget({
+    timeoutMs: 400,
+    signal: new AbortController().signal,
+  })
+  const lateCreate = new Promise((resolve) => {
+    setTimeout(() => {
+      effects.push('late session created')
+      resolve({ id: 'late-session' })
+    }, 80)
+  })
+  await assert.rejects(
+    () => sequenced.bound('deferred create', 10, () => lateCreate),
+    OwnershipUncertaintyError,
+  )
+  await assert.rejects(
+    () => sequenced.action('next mutation', async () => {
+      effects.push('next mutation started')
+    }),
+    /terminal/,
+  )
+  let closedLate = false
+  lateCreate.then((handle) => {
+    sequenced.trackLateHandle(handle)
+    return sequenced.cleanup('close late session', async () => {
+      closedLate = true
+      effects.push(`late close ${handle.id}`)
+    })
+  }).catch(() => {})
+  await new Promise((resolve) => setTimeout(resolve, 150))
+  assert.equal(closedLate, true)
+  assert.ok(!effects.includes('next mutation started'))
+  assert.ok(effects.includes('late session created'))
+  assert.ok(effects.includes('late close late-session'))
+})
+
+test('B3 deferred session create after timeout is closed and later gates stay NOT RUN', async (t) => {
+  const { context } = createContextDouble(t)
+  context.timeoutMs = 80
+  let resolveCreate
+  const late = new Promise((resolve) => {
+    resolveCreate = resolve
+  })
+  let closed = 0
+  context.newBrowserSession = async () => late
+  context.closeBrowserSession = async () => {
+    closed += 1
+  }
+  const pending = runBrowserFlows(context)
+  await new Promise((resolve) => setTimeout(resolve, 120))
+  resolveCreate({ newPage: async () => ({ goto: async () => {}, locator: () => createLocator(() => '') }) })
+  const result = await pending
+  assert.equal(result.gates[0].result, 'FAIL')
+  assert.equal(result.gates.slice(1).every((gate) => gate.result === 'NOT RUN'), true)
+  await new Promise((resolve) => setTimeout(resolve, 30))
+  assert.ok(closed >= 1)
+})
+
+function acceptedParserResults(fixtures) {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--import',
+      './scripts/server-only-test-register.mjs',
+      '--import',
+      'tsx',
+      'scripts/e2e/admin-account-counts-browser-flows-1/parser-equivalence.ts',
+    ],
+    {
+      cwd: ROOT,
+      encoding: 'utf8',
+      timeout: 30_000,
+      input: `${JSON.stringify(fixtures)}\n`,
+    },
+  )
+  if (result.status !== 0) {
+    throw new Error(`accepted parser harness failed: ${result.stderr || result.stdout}`)
+  }
+  const compared = JSON.parse(result.stdout)
+  if (!Array.isArray(compared) || compared.length !== fixtures.length) {
+    throw new Error('accepted parser harness returned a truncated comparison')
+  }
+  if (compared.some((row) => row.accepted !== row.port)) {
+    throw new Error('JS port diverged from the accepted TypeScript parser')
+  }
+  return compared.map((row) => row.accepted)
+}

@@ -232,42 +232,98 @@ export function budgets(context) {
 export function createRunBudget(context) {
   const started = Date.now()
   const total = context.timeoutMs
-  const signal = context.signal
+  const external = context.signal
+  const local = new AbortController()
   const parts = budgets(context)
+  const inflight = []
+  const lateHandles = []
+  let terminal = false
+  let terminalReason = null
+
+  if (typeof external?.addEventListener === 'function') {
+    external.addEventListener('abort', () => {
+      terminal = true
+      terminalReason = terminalReason ?? 'context.signal aborted'
+      if (!local.signal.aborted) local.abort()
+    }, { once: true })
+  }
 
   function remainingMs() {
     return Math.max(0, total - (Date.now() - started))
   }
 
+  function isTerminal() {
+    return terminal || local.signal.aborted || Boolean(external?.aborted)
+  }
+
+  function markTerminal(reason) {
+    terminal = true
+    terminalReason = terminalReason ?? reason
+    if (!local.signal.aborted) local.abort()
+  }
+
   function assertLive(label) {
-    if (signal?.aborted) {
-      throw new Error(`aborted during ${label}`)
+    if (isTerminal()) {
+      throw new OwnershipUncertaintyError(
+        `run is terminal (${terminalReason ?? 'aborted'}); refusing ${label}`,
+      )
     }
     if (remainingMs() <= 0) {
-      throw new Error(`overall budget exhausted during ${label}`)
+      markTerminal('overall budget exhausted')
+      throw new OwnershipUncertaintyError(`overall budget exhausted during ${label}`)
     }
   }
 
-  async function bound(label, ms, fn) {
-    assertLive(label)
-    const cap = Math.max(1, Math.min(ms, remainingMs()))
+  async function bound(label, ms, fn, { allowWhenTerminal = false } = {}) {
+    if (!allowWhenTerminal) assertLive(label)
+    const remaining = remainingMs()
+    // Cleanup still gets a bounded window after exhaustion; it does not
+    // pretend the raced work was cancelled.
+    const cap = allowWhenTerminal
+      ? Math.max(100, Math.min(ms, remaining > 0 ? remaining : 250))
+      : Math.max(1, Math.min(ms, remaining))
+    const work = Promise.resolve().then(() => fn(cap))
+    const tracked = { label, work, settled: false }
+    inflight.push(tracked)
+    work.finally(() => {
+      tracked.settled = true
+    }).catch(() => {})
     let timer
-    let onAbort
     const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(`${label} exceeded ${cap}ms`)), cap)
-      if (typeof signal?.addEventListener === 'function') {
-        onAbort = () => reject(new Error(`aborted during ${label}`))
-        signal.addEventListener('abort', onAbort, { once: true })
-      }
+      timer = setTimeout(() => {
+        markTerminal(`${label} exceeded ${cap}ms`)
+        reject(new OwnershipUncertaintyError(
+          `${label} exceeded ${cap}ms; run is terminal until cleanup`,
+        ))
+      }, cap)
     })
     try {
-      return await Promise.race([Promise.resolve().then(() => fn(cap)), timeout])
+      return await Promise.race([work, timeout])
     } finally {
       clearTimeout(timer)
-      if (onAbort && typeof signal?.removeEventListener === 'function') {
-        signal.removeEventListener('abort', onAbort)
-      }
     }
+  }
+
+  function trackLateHandle(handle) {
+    if (handle != null && !lateHandles.includes(handle)) lateHandles.push(handle)
+    return handle
+  }
+
+  function forgetLateHandle(handle) {
+    const index = lateHandles.indexOf(handle)
+    if (index >= 0) lateHandles.splice(index, 1)
+    return handle
+  }
+
+  async function drain(ms = 50) {
+    await Promise.race([
+      Promise.allSettled(inflight.map((item) => item.work)),
+      new Promise((resolve) => setTimeout(resolve, ms)),
+    ])
+  }
+
+  function cleanup(label, fn) {
+    return bound(label, parts.actionMs, fn, { allowWhenTerminal: true })
   }
 
   return {
@@ -283,6 +339,14 @@ export function createRunBudget(context) {
     scenario(label, fn) {
       return bound(label, Math.min(parts.scenarioMs, remainingMs() || parts.scenarioMs), fn)
     },
-    signal,
+    cleanup,
+    signal: local.signal,
+    isTerminal,
+    markTerminal,
+    inflight,
+    lateHandles,
+    trackLateHandle,
+    forgetLateHandle,
+    drain,
   }
 }

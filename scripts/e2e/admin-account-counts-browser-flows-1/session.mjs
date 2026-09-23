@@ -37,15 +37,35 @@ export function isLocalAuthResponse(url, localApiOrigin) {
   }
 }
 
+export function authCaptureKind(url) {
+  try {
+    const path = new URL(url).pathname
+    if (path.includes('/auth/v1/token')) return 'token'
+    if (path.includes('/auth/v1/factors') && path.includes('/verify')) return 'verify'
+    if (path.includes('/auth/v1/factors') && !path.includes('/challenge') && !path.includes('/verify')) {
+      return 'enroll'
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
 export function isIntendedAuthResponse(response, localApiOrigin, {
   pathIncludes,
   method = 'POST',
   statuses = [200, 201],
+  kinds = null,
 } = {}) {
   if (!response || typeof response.url !== 'function') return false
   const url = response.url()
   if (!isLocalAuthResponse(url, localApiOrigin)) return false
   if (pathIncludes && !new URL(url).pathname.includes(pathIncludes)) return false
+  if (kinds) {
+    const kind = authCaptureKind(url)
+    const allowed = Array.isArray(kinds) ? kinds : [kinds]
+    if (!kind || !allowed.includes(kind)) return false
+  }
   const observedMethod = response.request?.()?.method?.()
   if (method && observedMethod && observedMethod !== method) return false
   if (Array.isArray(statuses) && statuses.length > 0) {
@@ -55,39 +75,84 @@ export function isIntendedAuthResponse(response, localApiOrigin, {
   return true
 }
 
-export function beginBrowserSession(store) {
+export function payloadActorId(payload) {
+  if (!payload || typeof payload !== 'object') return null
+  const user = payload.user ?? payload.session?.user ?? null
+  if (user && typeof user === 'object') {
+    if (typeof user.id === 'string' && user.id.trim()) return user.id.trim()
+  }
+  if (typeof payload.user_id === 'string' && payload.user_id.trim()) return payload.user_id.trim()
+  return null
+}
+
+export function payloadMatchesExpectedActor(payload, expectedActor) {
+  if (!expectedActor) return false
+  const actorId = payloadActorId(payload)
+  if (actorId) return actorId === expectedActor.id
+  const email = payload?.user?.email ?? payload?.session?.user?.email
+  if (typeof email === 'string' && email.trim()) return email === expectedActor.email
+  return false
+}
+
+export function isSuccessfulAuthPayload(payload, { requireToken = false, requireSecret = false } = {}) {
+  if (!payload || typeof payload !== 'object') return false
+  if (payload.error || payload.error_code || payload.msg === 'invalid') return false
+  if (requireToken && !extractAccessToken(payload)) return false
+  if (requireSecret && !extractTotpSecret(payload)) return false
+  return true
+}
+
+export function beginBrowserSession(store, expectedActor = store?.expectedActor ?? null) {
   if (!store || typeof store !== 'object') return store
+  store.sessionEpoch = (store.sessionEpoch ?? 0) + 1
   store.accessToken = null
   store.clickedEnrollOnThisPage = false
+  if (expectedActor) store.expectedActor = expectedActor
+  store.captureGeneration = store.sessionEpoch
   return store
 }
 
-export function attachAuthCapture(page, store, { localApiOrigin }) {
-  const onResponse = async (response) => {
-    try {
+export function attachAuthCapture(page, store, { localApiOrigin, expectedActor = store.expectedActor } = {}) {
+  const generation = store.sessionEpoch ?? 0
+  let invalidated = false
+  const pending = new Set()
+
+  const onResponse = (response) => {
+    const work = (async () => {
+      if (invalidated || store.sessionEpoch !== generation) return
       if (!isIntendedAuthResponse(response, localApiOrigin, {
-        pathIncludes: '/auth/v1/',
         method: 'POST',
+        kinds: ['token', 'enroll', 'verify'],
       })) {
         return
       }
+      const kind = authCaptureKind(response.url())
       const payload = await response.json().catch(() => null)
-      const secret = extractTotpSecret(payload)
-      if (secret) store.totpSecret = secret
+      if (invalidated || store.sessionEpoch !== generation) return
+      if (kind === 'enroll') {
+        if (!isSuccessfulAuthPayload(payload, { requireSecret: true })) return
+        const secret = extractTotpSecret(payload)
+        if (secret) store.totpSecret = secret
+        return
+      }
+      if (!isSuccessfulAuthPayload(payload, { requireToken: true })) return
+      if (!payloadMatchesExpectedActor(payload, expectedActor ?? store.expectedActor)) return
       const token = extractAccessToken(payload)
       if (token) store.accessToken = token
-    } catch {
-      // Capture must never convert a later assertion into PASS.
-    }
+    })().catch(() => {})
+    pending.add(work)
+    work.finally(() => pending.delete(work))
   }
+
   page.on('response', onResponse)
-  let detached = false
-  return () => {
-    if (detached) return
-    detached = true
+
+  const detach = async () => {
+    invalidated = true
     if (typeof page.off === 'function') page.off('response', onResponse)
     else if (typeof page.removeListener === 'function') page.removeListener('response', onResponse)
+    pending.clear()
   }
+  return detach
 }
 
 async function visibleText(page) {
@@ -129,6 +194,7 @@ export async function loginViaUi(page, origin, account, timing = {}) {
   if (!String(heading ?? '').includes(UI_COPY.login)) {
     throw new Error(`login heading mismatch: ${String(heading)}`)
   }
+  const expectedActor = timing.expectedActor ?? timing.store?.expectedActor ?? account
   const tokenWait = typeof page.waitForResponse === 'function'
     ? page.waitForResponse((response) => (
       isIntendedAuthResponse(response, timing.localApiOrigin ?? origin, {
@@ -148,10 +214,19 @@ export async function loginViaUi(page, origin, account, timing = {}) {
   )
   if (tokenWait) {
     const response = await tokenWait
-    if (response && timing.store) {
+    if (!response) {
+      if (timing.store) timing.store.accessToken = null
+    } else {
       const payload = await response.json().catch(() => null)
-      const token = extractAccessToken(payload)
-      if (token) timing.store.accessToken = token
+      if (
+        isSuccessfulAuthPayload(payload, { requireToken: true })
+        && payloadMatchesExpectedActor(payload, expectedActor)
+        && timing.store
+      ) {
+        timing.store.accessToken = extractAccessToken(payload)
+      } else if (timing.store) {
+        timing.store.accessToken = null
+      }
     }
   }
   await page.waitForLoadState?.('domcontentloaded', { timeout: timing.timeoutMs }).catch(() => {})
@@ -244,10 +319,16 @@ export async function enrollTotpViaUi(page, origin, store, timing = {}) {
   await boundAction(timing, 'enroll.confirm', (timeoutMs) => confirm.click({ timeout: timeoutMs }))
   if (verifyResponse) {
     const response = await verifyResponse
-    if (response) {
+    if (!response) {
+      store.accessToken = null
+    } else {
       const payload = await response.json().catch(() => null)
-      const token = extractAccessToken(payload)
-      if (token) store.accessToken = token
+      const expectedActor = timing.expectedActor ?? store.expectedActor
+      if (isSuccessfulAuthPayload(payload, { requireToken: true }) && payloadMatchesExpectedActor(payload, expectedActor)) {
+        store.accessToken = extractAccessToken(payload)
+      } else {
+        store.accessToken = null
+      }
     }
   }
   if (page.getByText) {
@@ -300,9 +381,17 @@ export async function stepUpViaExistingFactor(page, origin, store, timing = {}) 
   await boundAction(timing, 'stepUp.confirm', (timeoutMs) => confirm.click({ timeout: timeoutMs }))
   if (verifyResponse) {
     const response = await verifyResponse
-    const payload = await response.json().catch(() => null)
-    const token = extractAccessToken(payload)
-    if (token) store.accessToken = token
+    if (!response) {
+      store.accessToken = null
+    } else {
+      const payload = await response.json().catch(() => null)
+      const expectedActor = timing.expectedActor ?? store.expectedActor
+      if (isSuccessfulAuthPayload(payload, { requireToken: true }) && payloadMatchesExpectedActor(payload, expectedActor)) {
+        store.accessToken = extractAccessToken(payload)
+      } else {
+        store.accessToken = null
+      }
+    }
   }
   if (typeof page.waitForURL === 'function') {
     await boundAction(timing, 'stepUp.admin', (timeoutMs) =>
@@ -324,11 +413,25 @@ export async function withCapturedPage(browserContext, store, fn) {
   }
 }
 
-export async function withBrowserSession(context, viewport, fn, { store, budget } = {}) {
-  if (store) beginBrowserSession(store)
-  const browserContext = budget
-    ? await budget.action('newBrowserSession', () => context.newBrowserSession({ viewport }))
-    : await context.newBrowserSession({ viewport })
+export async function withBrowserSession(context, viewport, fn, { store, budget, expectedActor } = {}) {
+  if (store) beginBrowserSession(store, expectedActor ?? store.expectedActor)
+  const created = Promise.resolve().then(() => context.newBrowserSession({ viewport }))
+  let browserContext
+  try {
+    browserContext = budget
+      ? await budget.action('newBrowserSession', () => created)
+      : await created
+  } catch (error) {
+    created.then((handle) => {
+      if (!handle) return
+      budget?.trackLateHandle?.(handle)
+      return Promise.resolve(context.closeBrowserSession(handle)).catch(() => {})
+    }).catch(() => {})
+    throw error instanceof OwnershipUncertaintyError
+      ? error
+      : new OwnershipUncertaintyError('newBrowserSession failed; later resource-using scenarios must stop', error)
+  }
+  budget?.trackLateHandle?.(browserContext)
   let fnError = null
   let result
   try {
@@ -338,11 +441,13 @@ export async function withBrowserSession(context, viewport, fn, { store, budget 
   }
   try {
     if (budget) {
-      await budget.action('closeBrowserSession', () => context.closeBrowserSession(browserContext))
+      await budget.cleanup('closeBrowserSession', () => context.closeBrowserSession(browserContext))
     } else {
       await context.closeBrowserSession(browserContext)
     }
+    budget?.forgetLateHandle?.(browserContext)
   } catch (closeError) {
+    budget?.markTerminal?.('closeBrowserSession failed')
     const wrapped = new OwnershipUncertaintyError(
       'closeBrowserSession failed; later resource-using scenarios must stop',
       closeError,
@@ -364,11 +469,12 @@ export async function withFixtureRestore(restore, fn, { budget } = {}) {
   }
   try {
     if (budget) {
-      await budget.action('fixture.restore', () => restore())
+      await budget.cleanup('fixture.restore', () => restore())
     } else {
       await restore()
     }
   } catch (restoreError) {
+    budget?.markTerminal?.('fixture restore failed')
     throw new OwnershipUncertaintyError(
       'fixture restore failed; later resource-using scenarios must stop',
       restoreError,

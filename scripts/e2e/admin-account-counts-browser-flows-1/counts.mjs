@@ -2,6 +2,7 @@
 // Compare rendered Admin counts to the runtime's independent expectedCounts().
 
 import { COUNT_VALUE_SELECTORS, PATHS, SELECTORS, UI_COPY, WINDOW_HOURS } from './constants.mjs'
+import { parseAbsoluteHttpUrl, sameExactOrigin } from './contract.mjs'
 import { WINDOW_US, parsePgTimestamptz } from './payload.mjs'
 
 export function normalizeCount(value) {
@@ -48,45 +49,89 @@ export async function bothAggregatesUndisclosed(page) {
   }
 }
 
-export async function classifyDenialUi(page) {
+function exactPath(url) {
+  const parsed = parseAbsoluteHttpUrl(url)
+  if (!parsed) return ''
+  return parsed.pathname.replace(/\/+$/, '') || '/'
+}
+
+function hasReadyNavigation(page) {
+  const nav = page.lastNavigation ?? page.lastResponse ?? null
+  if (!nav) return { ok: false, reason: 'missing-navigation' }
+  const status = typeof nav.status === 'function' ? nav.status() : nav.status
+  if (typeof status !== 'number') return { ok: false, reason: 'missing-navigation' }
+  if (status >= 400) return { ok: false, reason: `navigation-${status}` }
+  return { ok: true, status }
+}
+
+function hasAdminShell(text) {
+  return text.includes(UI_COPY.adminShellTitle) && text.includes(UI_COPY.adminShellKicker)
+}
+
+export async function classifyDenialUi(page, { expectedOrigin } = {}) {
   const url = typeof page.url === 'function' ? String(page.url()) : ''
   const text = await page.locator('body').innerText()
   const trimmed = String(text ?? '')
+  const path = exactPath(url)
+  const originOk = expectedOrigin ? sameExactOrigin(url, expectedOrigin) : Boolean(parseAbsoluteHttpUrl(url))
+  const navigation = hasReadyNavigation(page)
+
+  if (!originOk) {
+    return { kind: 'wrong-origin', url, text: trimmed, path, navigation }
+  }
   if (trimmed.includes(UI_COPY.failed) || /internal server error/i.test(trimmed)) {
-    return { kind: 'failed', url, text: trimmed }
-  }
-  if (trimmed.includes(UI_COPY.unavailable)) {
-    return { kind: 'unavailable', url, text: trimmed }
-  }
-  if (trimmed.includes(UI_COPY.forbidden)) {
-    return { kind: 'forbidden', url, text: trimmed }
-  }
-  if (trimmed.includes(UI_COPY.ordinaryDenied)) {
-    return { kind: 'login-denied', url, text: trimmed }
-  }
-  if (url.includes(PATHS.unauthorized)) {
-    return { kind: 'unauthorized', url, text: trimmed }
-  }
-  if (url.includes(PATHS.login)) {
-    return { kind: 'login', url, text: trimmed }
-  }
-  if (url.includes(PATHS.stepUp)) {
-    return { kind: 'step-up', url, text: trimmed }
+    return { kind: 'failed', url, text: trimmed, path, navigation }
   }
   if (!trimmed.trim()) {
-    return { kind: 'blank', url, text: trimmed }
+    return { kind: 'blank', url, text: trimmed, path, navigation }
   }
-  if (url.includes(PATHS.admin) && !(await sectionPresent(page))) {
-    return { kind: 'disabled', url, text: trimmed }
+
+  if (path === PATHS.login) {
+    if (!trimmed.includes(UI_COPY.login)) {
+      return { kind: 'unknown', url, text: trimmed, path, navigation }
+    }
+    if (trimmed.includes(UI_COPY.ordinaryDenied)) {
+      return { kind: 'login-denied', url, text: trimmed, path, navigation }
+    }
+    return { kind: 'login', url, text: trimmed, path, navigation }
   }
-  return { kind: 'unknown', url, text: trimmed }
+
+  if (path === PATHS.stepUp) {
+    if (!trimmed.includes(UI_COPY.stepUp)) {
+      return { kind: 'unknown', url, text: trimmed, path, navigation }
+    }
+    return { kind: 'step-up', url, text: trimmed, path, navigation }
+  }
+
+  if (path === PATHS.unauthorized) {
+    return { kind: 'unauthorized', url, text: trimmed, path, navigation }
+  }
+
+  if (path === PATHS.admin) {
+    if (trimmed.includes(UI_COPY.forbidden)) {
+      return { kind: 'forbidden', url, text: trimmed, path, navigation }
+    }
+    if (trimmed.includes(UI_COPY.unavailable)) {
+      return { kind: 'unavailable', url, text: trimmed, path, navigation }
+    }
+    const counts = await sectionPresent(page)
+    if (hasAdminShell(trimmed) && !counts) {
+      return { kind: 'disabled', url, text: trimmed, path, navigation }
+    }
+    return { kind: 'unknown', url, text: trimmed, path, navigation }
+  }
+
+  return { kind: 'unknown', url, text: trimmed, path, navigation }
 }
 
 export async function assertNoCountDisclosure(page, options = {}) {
   await bothAggregatesUndisclosed(page)
-  const classified = await classifyDenialUi(page)
-  if (classified.kind === 'failed' || classified.kind === 'blank' || classified.kind === 'unknown') {
+  const classified = await classifyDenialUi(page, { expectedOrigin: options.expectedOrigin })
+  if (['failed', 'blank', 'unknown', 'wrong-origin'].includes(classified.kind)) {
     throw new Error(`generic ${classified.kind} page cannot become a denial PASS`)
+  }
+  if (classified.navigation && classified.navigation.ok === false) {
+    throw new Error(`navigation was not a ready application response (${classified.navigation.reason})`)
   }
 
   let allowed
@@ -174,8 +219,8 @@ export async function assertDefinitionAndWindow(page, expected = null) {
   await assertDisplayedTimestamps(page, expected)
 }
 
-export async function assertUnavailableNotZero(page) {
-  const classified = await assertNoCountDisclosure(page, { expectKind: 'unavailable' })
+export async function assertUnavailableNotZero(page, options = {}) {
+  const classified = await assertNoCountDisclosure(page, { expectKind: 'unavailable', ...options })
   if (classified.text.includes('0 accounts') || classified.text.includes('0 Konten')) {
     throw new Error('unavailable wrapper must not present 0 accounts')
   }

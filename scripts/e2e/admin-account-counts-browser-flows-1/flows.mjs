@@ -39,6 +39,7 @@ import {
   writeSanitizedReceipt,
 } from './evidence.mjs'
 import {
+  SYNTHETIC_INVALID_JWT,
   assertDeniedWrapper,
   assertPermittedWrapper,
   callLocalWrapper,
@@ -110,7 +111,10 @@ async function runNamedGate(id, fn, { evidence = null, secrets = [] } = {}) {
 }
 
 function withPageCapture(page, store, fn) {
-  const detach = attachAuthCapture(page, store, { localApiOrigin: store.localApiOrigin })
+  const detach = attachAuthCapture(page, store, {
+    localApiOrigin: store.localApiOrigin,
+    expectedActor: store.expectedActor,
+  })
   return Promise.resolve()
     .then(() => fn())
     .finally(() => detach())
@@ -144,7 +148,7 @@ export async function runG7Aal1Denial(page, origin, timing) {
   if (!String(url).includes(PATHS.stepUp)) {
     throw new Error(`AAL1 /admin must stay on step-up, landed on ${url}`)
   }
-  await assertNoCountDisclosure(page, { expectKind: 'step-up' })
+  await assertNoCountDisclosure(page, { expectKind: 'step-up', expectedOrigin: origin })
   return 'role alone did not disclose counts before AAL2'
 }
 
@@ -213,7 +217,7 @@ export async function runG11DefaultOff(page, origin, store, context, timing) {
   if (await sectionPresent(page)) {
     throw new Error('counts section rendered while the OFF application instance is active')
   }
-  await assertNoCountDisclosure(page, { expectKind: 'disabled' })
+  await assertNoCountDisclosure(page, { expectKind: 'disabled', expectedOrigin: origin })
   assertNoWrapperCalls(context.rpcObserver.since(mark), {
     priorPositiveControl: store.positiveRpcControl,
   })
@@ -259,7 +263,10 @@ export async function runG13Ordinary(page, origin, account, timing) {
     waitUntil: 'domcontentloaded',
     timeout: timing.timeoutMs,
   })
-  await assertNoCountDisclosure(page, { expectKind: ['forbidden', 'login-denied', 'login', 'unauthorized'] })
+  await assertNoCountDisclosure(page, {
+    expectKind: ['forbidden', 'login-denied', 'login', 'unauthorized'],
+    expectedOrigin: origin,
+  })
   return 'insufficient role did not disclose protected aggregates'
 }
 
@@ -272,7 +279,7 @@ export async function runG14Unauthenticated(page, origin, timing) {
   if (!String(url).includes(PATHS.login)) {
     throw new Error(`unauthenticated /admin must redirect to login, landed on ${url}`)
   }
-  await assertNoCountDisclosure(page, { expectKind: 'login' })
+  await assertNoCountDisclosure(page, { expectKind: 'login', expectedOrigin: origin })
   return 'fresh unauthenticated context did not obtain protected counts'
 }
 
@@ -285,7 +292,10 @@ export async function runG15Downgrade(page, origin, context, timing) {
         waitUntil: 'domcontentloaded',
         timeout: timing.timeoutMs,
       })
-      await assertNoCountDisclosure(page, { expectKind: ['forbidden', 'login-denied', 'unauthorized'] })
+      await assertNoCountDisclosure(page, {
+        expectKind: ['forbidden', 'login-denied', 'unauthorized'],
+        expectedOrigin: origin,
+      })
       return 'same privileged session was denied after fixture role downgrade'
     },
     { budget: timing.budget },
@@ -302,7 +312,10 @@ export async function runG16RestrictedStatus(page, origin, context, timing) {
           waitUntil: 'domcontentloaded',
           timeout: timing.timeoutMs,
         })
-        await assertNoCountDisclosure(page, { expectKind: ['forbidden', 'login-denied', 'unauthorized'] })
+        await assertNoCountDisclosure(page, {
+          expectKind: ['forbidden', 'login-denied', 'unauthorized'],
+          expectedOrigin: origin,
+        })
       }
       await context.fixture.setStatus(PRIVILEGED_ACTOR, 'active')
       await page.goto(`${origin}${PATHS.admin}`, {
@@ -326,7 +339,7 @@ export async function runG17MissingWrapper(page, origin, context, timing) {
         waitUntil: 'domcontentloaded',
         timeout: timing.timeoutMs,
       })
-      await assertUnavailableNotZero(page)
+      await assertUnavailableNotZero(page, { expectedOrigin: origin })
       return 'missing wrapper rendered unavailable, not 0 accounts'
     },
     { budget: timing.budget },
@@ -360,12 +373,18 @@ export async function runG19HttpBoundary(store, context, signal) {
     signal,
   })
   assertPermittedWrapper(permitted, { expected })
-  const unauthenticated = await callLocalWrapper({
+  const anonymous = await callLocalWrapper({
     localApi: context.localApi,
     accessToken: null,
     signal,
   })
-  assertDeniedWrapper(unauthenticated, 'unauthenticated')
+  assertDeniedWrapper(anonymous, 'anonymous')
+  const invalidJwt = await callLocalWrapper({
+    localApi: context.localApi,
+    accessToken: SYNTHETIC_INVALID_JWT,
+    signal,
+  })
+  assertDeniedWrapper(invalidJwt, 'invalidJwt')
   await withFixtureRestore(
     () => context.fixture.setStatus(PRIVILEGED_ACTOR, 'active'),
     async () => {
@@ -384,7 +403,7 @@ export async function runG19HttpBoundary(store, context, signal) {
     signal,
   })
   assertPermittedWrapper(restored, { expected })
-  return 'current issued token permitted, then unauthenticated/banned denied, then active restored'
+  return 'current issued token permitted, then anonymous/invalid-JWT/banned denied, then active restored'
 }
 
 export async function runBrowserFlows(context) {
@@ -409,6 +428,8 @@ export async function runBrowserFlows(context) {
     localApiOrigin: validated.localApi.origin,
     lastExpected: null,
     clickedEnrollOnThisPage: false,
+    sessionEpoch: 0,
+    expectedActor: validated.accounts[PRIVILEGED_ACTOR],
   }
   const runBudget = createRunBudget(validated)
   const secrets = () => collectRunSecrets(validated, store)
@@ -574,10 +595,10 @@ export async function runBrowserFlows(context) {
       push(makeGate(id, { result: 'NOT RUN', notes: 'context.signal aborted or overall budget exhausted' }))
       continue
     }
-    if (ownershipUncertain) {
+    if (ownershipUncertain || runBudget.isTerminal()) {
       push(makeGate(id, {
         result: 'NOT RUN',
-        notes: 'prior close/restore left ownership uncertain',
+        notes: 'prior timeout/close/restore left ownership uncertain',
       }))
       continue
     }
@@ -587,6 +608,15 @@ export async function runBrowserFlows(context) {
       continue
     }
     push(await runNamedGate(id, () => runBudget.scenario(id, fn), { secrets: secrets() }))
+  }
+
+  for (const handle of [...runBudget.lateHandles]) {
+    try {
+      await runBudget.cleanup('final.closeBrowserSession', () => validated.closeBrowserSession(handle))
+      runBudget.forgetLateHandle(handle)
+    } catch {
+      runBudget.markTerminal('final close of a late session handle failed')
+    }
   }
 
   assertGateSetComplete(gates)
