@@ -6,7 +6,7 @@ Das ist kein Nachweis, dass eine Freigabe erfolgt ist. Es ist kein Live-Zähler 
 
 ## Kurz
 
-Jetnity kann intern zwei Rohzahlen zeigen: vorhandene registrierte Konten und deren Teilmenge aus den letzten festen 720 Stunden. Die Technik dafür ist lokal vorbereitet und auf einer wegwerfbaren PostgreSQL geprobt (**93/93**, inkl. exakter Objektidentität und sicherem Entfernen nach REVOKE). **Production, Preview und jeder gehostete Datenbankzugriff bleiben aus.**
+Jetnity kann intern zwei Rohzahlen zeigen: vorhandene registrierte Konten und deren Teilmenge aus den letzten festen 720 Stunden. Die Technik dafür ist lokal vorbereitet und auf einer wegwerfbaren PostgreSQL geprobt (**136/136**, inkl. exakter ACL mit Grantor/`is_grantable` und gestaffelter Installation ohne Client-EXECUTE). **Production, Preview und jeder gehostete Datenbankzugriff bleiben aus.**
 
 Nutzen: ein Admin sieht, wie viele Konten wirklich existieren, ohne Excel, ohne Anbieter, ohne Tracking. Keine Besucher, keine „aktiven Nutzer“, kein Partner-Reach, kein Umsatz.
 
@@ -15,7 +15,7 @@ Nutzen: ein Admin sieht, wie viele Konten wirklich existieren, ohne Excel, ohne 
 | Lage | Bedeutung |
 | --- | --- |
 | **PREPARED** | Lokales Installations-/Prüf-/Rollback-Paket und Enablement-Design sind geschrieben. Akzeptierte SQL-Quellen unverändert, Hashes geprüft. |
-| **TESTED** | Disposable PostgreSQL 16.15, privater Socket: frische Installation, Wiederholung, künstlicher Fehler ohne Rest, unerwartete Objekte verweigert, Rollback mit Sentinel, Neuinstallation, REVOKE → `REVOKED_EXACT` → exakte Entfernung → `FRESH`. Adversariale Body-/Owner-/ACL-/Schema-/Default-Privilege-/Abhängigkeitsdrift wird verweigert, nicht repariert. Erlaubter Moderator+AAL2 bekam 16/12. Abgelehnte Aufrufer bekamen 42501, keine Null. |
+| **TESTED** | Disposable PostgreSQL 16.15, privater Socket: gewährter Lokaltest, gestaffelte Installation (Apply+REVOKE in einer Transaktion, Zustand `REVOKED_EXACT`, kein Zwischen-Commit mit Grant), Wiederholung, Fehler ohne Rest, Overloads/`WITH GRANT OPTION`/unerwartete Default-ACL verweigert. Erlaubter Moderator+AAL2 bekam 16/12 nur im gewährten Lokaltest. Abgelehnte und gestaffelte Aufrufer bekamen 42501, keine Null. |
 | **NOT RUN** | Echter Browser/MFA-Adminweg; gehostete Session; Production-/Preview-Installation; frische Production-Metadaten durch diesen Agenten; voller App-Build. |
 | **BLOCKED** für späteres Live-Zeigen | Ein gesperrtes Moderator-Konto und ein deaktiviertes Admin-Konto **sahen die Zahlen trotzdem**, sobald Rolle und AAL2 passten. Browserbelege der parallelen Spur fehlen. Production-Objekte fehlen noch und dürfen hier nicht erzeugt werden. |
 
@@ -29,9 +29,11 @@ Nutzen: ein Admin sieht, wie viele Konten wirklich existieren, ohne Excel, ohne 
 
 ## Drei getrennte Aus-Schalter
 
-- **Oberfläche aus:** bleibt der heutige Default. Schaltet die Anzeige aus, entzieht aber kein Datenbankrecht.
-- **Recht sofort entziehen:** `REVOKE` inklusive ausdrücklich `PUBLIC`. Lokal nachgewiesen: der berechtigte Aufrufer erhält danach 42501; die Objekte bleiben mit unveränderter Definition als `REVOKED_EXACT` liegen.
-- **Objekte entfernen:** nur bei `ALREADY_INSTALLED` oder `REVOKED_EXACT` nach derselben starken Identitätsprüfung (exakte `pg_get_functiondef`-Fingerprints, Owner, Schema, ACL, Default Privileges, keine Extra-Objekte/Abhängigkeiten). Kein cascading Drop. Jede andere Drift nach dem REVOKE bleibt liegen und wird verweigert.
+- **Oberfläche aus:** bleibt der heutige Default. Schaltet die Anzeige aus, entzieht aber kein Datenbankrecht. Gewährtes EXECUTE bei ausgeschalteter UI ist **datenbankseitig exponiert**, nicht „unexposed“.
+- **Recht sofort entziehen / gestaffelt installieren:** `REVOKE` inklusive ausdrücklich `PUBLIC`, in derselben Transaktion wie die Objekterzeugung für den gestaffelten Weg. Dann ist der Zustand `REVOKED_EXACT`: kein Client-EXECUTE/USAGE, kein Zwischen-Commit mit Grant.
+- **Objekte entfernen:** nur bei `ALREADY_INSTALLED` oder `REVOKED_EXACT` nach derselben starken Identitätsprüfung (exakte `pg_get_functiondef`-Fingerprints, Owner, Schema, ACL inklusive Grantor/`is_grantable`, Default Privileges leer, keine Extra-Signaturen/Abhängigkeiten). Kein cascading Drop. `WITH GRANT OPTION` und andere Drift bleiben liegen und werden verweigert.
+
+Die Product-Owner-Production-Freigabe für **Datenbankrechte / aufrufbare API** steht **vor** dem ersten gehosteten Grant, nicht erst vor der UI.
 
 ## Owner-/ACL-Risiko, ehrlich
 

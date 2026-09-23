@@ -1,6 +1,6 @@
 {
   "package": "admin-account-counts-rollout-preparation-1",
-  "pinnedAt": "post-tl-r1-r2-rehearsal-93-of-93",
+  "pinnedAt": "post-tl-residual-r1-r3-rehearsal-136-of-136",
   "accepted": {
     "candidateSha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
     "bootstrapSha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
@@ -14,9 +14,11 @@
     "wrapperSha256": "15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609"
   },
   "removableStates": ["ALREADY_INSTALLED", "REVOKED_EXACT"],
+  "stagedInstallCommitsAs": "REVOKED_EXACT",
+  "grantedLocalTestIs": "database_exposed_application_off",
   "taskSha256": "1bc663c565fc0bb65c24909930a502230841a79e718ad983461f898a078f0c8f",
   "taskCommit": "7d24b78b413c80ff82ae1f5c03b045fc9b5e17a4",
   "mainBaseline": "f0237baf8809e5528b5f73e918f0e37a7d9b4477",
-  "supersededHead": "79e5ec6dfa096c7ce19e7df40a4a403fc9f8fa30",
+  "supersededHead": "9ad07d64066218ff87005581236f4987e117cf42",
   "newerMainDrift": "none_vs_local_main_and_origin_main"
 }

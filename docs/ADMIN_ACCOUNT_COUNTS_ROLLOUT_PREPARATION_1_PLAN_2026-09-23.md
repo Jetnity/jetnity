@@ -80,10 +80,10 @@ A different major pretty-printer is **BLOCKED**, not a repair. Drift is never au
 
 | State | Meaning | Action |
 | --- | --- | --- |
-| `FRESH` | schema, producer and wrapper all absent | transactional apply of exact candidate+wrapper |
-| `ALREADY_INSTALLED` | `identity_core_ok` and the package's granted ACL (authenticated EXECUTE on both functions + schema USAGE; no other non-owner grantee) | verify only; **no** `CREATE OR REPLACE` |
-| `REVOKED_EXACT` | same strong object/owner/ADP/dependency identity; the only permitted ACL delta is this package's explicit REVOKE of authenticated EXECUTE/USAGE (PUBLIC/anon/service_role stay revoked) | eventual object removal may proceed; not an already-installed rewrite |
-| `INCOMPATIBLE` | any unexpected object, owner, body, ACL, signature, ADP, extra or partial residue | refuse; do not repair in place |
+| `FRESH` | reporting schema absent **and** no `account_counts_v1` / `admin_account_counts_v1` of any signature | transactional apply; refuse same-name overloads |
+| `ALREADY_INSTALLED` | `identity_core_ok` and the package's **exact** granted ACL tuples (grantor/grantee/privilege/`is_grantable=false`) | granted **local-test** verify only; this is database-exposed |
+| `REVOKED_EXACT` | same strong object/owner/ADP/dependency/signature identity; ACL is the package revoke (empty function ACL, owner-only schema UC, no GRANT OPTION) | staged/unexposed install target **and** removable |
+| `INCOMPATIBLE` | any unexpected object, owner, body, ACL (including WITH GRANT OPTION), signature/overload, ADP row, extra or partial residue | refuse; do not repair in place |
 
 Install is one transaction with `lock_timeout=3s`, `statement_timeout=20s`, `idle_in_transaction_session_timeout=30s` and `pg_advisory_xact_lock(hashtext('jetnity.admin-account-counts.v1'))`. Failure rolls back to FRESH. Repeat of an exact install is a verify. A second "fresh" apply is refused.
 
@@ -99,14 +99,16 @@ A revoked-but-present database whose definitions/owners/ADP/dependencies remain 
 
 | State | Database | Application / UI | Who may enter |
 | --- | --- | --- | --- |
-| **OFF** | objects may be absent (current Production metadata: absent) | runtime gate false; no section; no RPC | default; unknown; Preview; target mismatch |
-| **isolated_test** | disposable local fixture + package | local flag + loopback process **and** captured client URL | this rehearsal only |
-| **candidate_installed_not_exposed** | objects exist; EXECUTE may exist | runtime remains OFF; Preview/unknown/mismatch stay OFF | later TL-authorized hosted install still does **not** enable UI |
-| **authorized_production** | later exact apply after fresh metadata | later separate UI enable pinned to the exact project/URL | reserved PO Production gate after independent TL review |
+| **OFF** | objects absent (current Production metadata: absent) | runtime gate false; no section; no RPC | default; unknown; Preview; target mismatch |
+| **isolated_test / database_exposed_application_off** | disposable local fixture with **granted** EXECUTE/USAGE (`ALREADY_INSTALLED`) | local flag + loopback process **and** captured client URL may show UI | local rehearsal only. Granted RPC + UI OFF is **database exposed**, not unexposed. |
+| **candidate_installed_not_exposed** | objects exist as **`REVOKED_EXACT`**: client EXECUTE/USAGE revoked in the same transaction that created them; no intermediate committed grant | runtime remains OFF | later TL-authorized hosted *object* install still must not grant callable client EXECUTE until the reserved PO exposure gate |
+| **authorized_production** | later exact apply **and** later grant of callable EXECUTE after fresh metadata | later separate UI enable pinned to the exact project/URL | reserved PO Production **privilege/exposure** gate first, then a later UI gate |
+
+The reserved Product-Owner Production/privilege/exposure approval sits **before the first hosted grant / callable Data API state**, not merely before UI enablement. A hosted database that grants `authenticated` EXECUTE on the public wrapper is already exposed even if the Jetnity page stays OFF.
 
 Effective target is the shared client's captured URL, not a mutable independent flag. Cache/visibility: failure is `failed` or `forbidden` or `unavailable`, never a zero success row. Fast disable: turn the local flag off / keep hosted markers; that does not revoke SQL EXECUTE.
 
-Smallest later change (not done here): a dedicated activation module that pins Production project/URL after PO approval. Do **not** weaken `activation.ts` to obtain a green packet.
+Smallest later change (not done here): a dedicated activation module that pins Production project/URL after PO approval, plus a later hosted grant step that is itself a reserved gate. Do **not** weaken `activation.ts` to obtain a green packet.
 
 ## 9. Authorization review (honest, not greened)
 
@@ -152,7 +154,7 @@ P3: local-vs-hosted/browser coverage.
 ## 11. Tests
 
 - Node: hash pin, hosted reject, CASCADE absence, shared identity embed, pinned functiondef hashes
-- Disposable PostgreSQL: unexpected-object refuse, fault-closed residue, fresh install, already-installed repeat, authorized and denied callers, banned/disabled honesty, owner/ACL, adversarial body/owner/ACL/schema/ADP/dependency drift refusal, rollback+sentinel, reinstall, revoke → `REVOKED_EXACT` → exact removal → FRESH, revoke-plus-drift refusal
+- Disposable PostgreSQL: unexpected-object refuse, same-name overload refuse, fault-closed residue, fresh granted install, already-installed repeat, authorized and denied callers, banned/disabled honesty, owner/ACL, adversarial body/owner/ACL/GRANT OPTION/schema/ADP/dependency/overload drift refusal, rollback+sentinel, reinstall, revoke → `REVOKED_EXACT` → exact removal → FRESH, revoke-plus-drift refusal, staged unexposed install (apply+revoke in one transaction) + staged fault leaves FRESH
 - Applicable existing repository tests/hygiene without changing rules
 - Not claimed: browser E2E, hosted Admin session, remote apply, live statistics
 
