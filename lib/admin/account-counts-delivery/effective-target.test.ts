@@ -77,9 +77,11 @@ describe('Admin account-counts effective shared-client target', () => {
     assert.equal(result.measures?.createdInPrior30Days, '1')
     assert.deepEqual(result.transport.guard, ['konten-verwalten'])
     assert.deepEqual(result.transport.rpc, ['admin_account_counts_v1'])
-    assert.equal(result.transport.create.length, 1)
+    // Own-status lookup and wrapper RPC each create an authenticated server client.
+    assert.equal(result.transport.create.length, 2)
     assert.equal(result.transport.create[0]?.url, LOCAL_EFFECTIVE_TARGET)
-    assert.equal(result.transport.cookies, 1)
+    assert.equal(result.transport.create[1]?.url, LOCAL_EFFECTIVE_TARGET)
+    assert.equal(result.transport.cookies, 2)
   })
 
   test('hosted, default-off and missing shared targets stay disabled', () => {
