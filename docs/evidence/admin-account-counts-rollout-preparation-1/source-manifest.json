@@ -1,6 +1,6 @@
 {
   "package": "admin-account-counts-rollout-preparation-1",
-  "pinnedAt": "post-rehearsal-41-of-41",
+  "pinnedAt": "post-tl-r1-r2-rehearsal-93-of-93",
   "accepted": {
     "candidateSha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
     "bootstrapSha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
@@ -8,8 +8,15 @@
     "contractBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
     "parserBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d"
   },
+  "pinnedFunctiondef": {
+    "engine": "PostgreSQL 16.15",
+    "producerSha256": "0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef",
+    "wrapperSha256": "15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609"
+  },
+  "removableStates": ["ALREADY_INSTALLED", "REVOKED_EXACT"],
   "taskSha256": "1bc663c565fc0bb65c24909930a502230841a79e718ad983461f898a078f0c8f",
   "taskCommit": "7d24b78b413c80ff82ae1f5c03b045fc9b5e17a4",
   "mainBaseline": "f0237baf8809e5528b5f73e918f0e37a7d9b4477",
+  "supersededHead": "79e5ec6dfa096c7ce19e7df40a4a403fc9f8fa30",
   "newerMainDrift": "none_vs_local_main_and_origin_main"
 }

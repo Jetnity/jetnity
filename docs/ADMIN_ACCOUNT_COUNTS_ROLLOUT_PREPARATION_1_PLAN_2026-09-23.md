@@ -69,11 +69,21 @@ Client roles must not receive SELECT on `auth.users`. No new BYPASSRLS role. No 
 
 ## 6. Installation states
 
+Classification and rollback share **one** identity contract (`sql/identity.sql`), embedded into verify/rollback. They do not use a weaker ILIKE/attribute duplicate.
+
+Exact installed identity is the SHA-256 of `pg_get_functiondef` on PostgreSQL 16.15 of the unchanged accepted sources, plus owner / SECURITY / volatility / zero-arg identity / pinned `search_path` / producer `TimeZone=UTC`, plus schema owner = wrapper owner = classify executor (not a client role), plus executor-sensitive default privileges with no non-grantor function EXECUTE, plus no extra reporting objects and no unexpected dependents. Pinned functiondef digests:
+
+- producer `0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef`
+- wrapper `15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609`
+
+A different major pretty-printer is **BLOCKED**, not a repair. Drift is never auto-repaired.
+
 | State | Meaning | Action |
 | --- | --- | --- |
 | `FRESH` | schema, producer and wrapper all absent | transactional apply of exact candidate+wrapper |
-| `ALREADY_INSTALLED` | all three exist with exact owner/signature/ACL/definition contracts and no extras | verify only; **no** `CREATE OR REPLACE` |
-| `INCOMPATIBLE` | any unexpected object, owner, ACL, signature, extra or partial residue | refuse; do not repair in place |
+| `ALREADY_INSTALLED` | `identity_core_ok` and the package's granted ACL (authenticated EXECUTE on both functions + schema USAGE; no other non-owner grantee) | verify only; **no** `CREATE OR REPLACE` |
+| `REVOKED_EXACT` | same strong object/owner/ADP/dependency identity; the only permitted ACL delta is this package's explicit REVOKE of authenticated EXECUTE/USAGE (PUBLIC/anon/service_role stay revoked) | eventual object removal may proceed; not an already-installed rewrite |
+| `INCOMPATIBLE` | any unexpected object, owner, body, ACL, signature, ADP, extra or partial residue | refuse; do not repair in place |
 
 Install is one transaction with `lock_timeout=3s`, `statement_timeout=20s`, `idle_in_transaction_session_timeout=30s` and `pg_advisory_xact_lock(hashtext('jetnity.admin-account-counts.v1'))`. Failure rolls back to FRESH. Repeat of an exact install is a verify. A second "fresh" apply is refused.
 
@@ -81,9 +91,9 @@ Install is one transaction with `lock_timeout=3s`, `statement_timeout=20s`, `idl
 
 1. **Application disable** — `isAdminAccountCountsRuntimeEnabled()` stays false unless flag=`true`, `NODE_ENV` is `development`|`test`, no Vercel/CI marker, and **both** the current process URL and the shared client's captured URL are loopback. A flag cannot enable Production. Disabling the UI is **not** revocation of RPC EXECUTE.
 2. **Immediate access revocation** — explicit `REVOKE ALL ... FROM PUBLIC` **and** from `anon`/`authenticated`/`service_role` on both functions and schema USAGE. PostgreSQL does not revoke PUBLIC by revoking a named role.
-3. **Eventual object removal** — identity-strict `DROP FUNCTION` of the wrapper, then the producer, then `DROP SCHEMA jetnity_reporting`. No CASCADE. Refuse if classify ≠ `ALREADY_INSTALLED` (including after revoke, because ACL no longer matches the installed identity). Unrelated sentinel objects stay.
+3. **Eventual object removal** — identity-strict `DROP FUNCTION` of the wrapper, then the producer, then `DROP SCHEMA jetnity_reporting`. No CASCADE. Removable states are `ALREADY_INSTALLED` or `REVOKED_EXACT` after the shared strong identity check. Every other drift is refused. Unrelated sentinel objects stay.
 
-A revoked-but-present database is `INCOMPATIBLE`. This package will not silently drop drifted ACL objects. A dedicated post-revoke removal path needs a later TL task if wanted.
+A revoked-but-present database whose definitions/owners/ADP/dependencies remain exact is `REVOKED_EXACT` and can be removed by this same package. Extra ACL/body/owner/dependency drift after revoke remains `INCOMPATIBLE` and is not dropped.
 
 ## 8. Environment state machine (enablement design, not activation)
 
@@ -141,8 +151,8 @@ P3: local-vs-hosted/browser coverage.
 
 ## 11. Tests
 
-- Node: hash pin, hosted reject, CASCADE absence
-- Disposable PostgreSQL: unexpected-object refuse, fault-closed residue, fresh install, already-installed repeat, authorized and denied callers, banned/disabled honesty, owner/ACL, rollback+sentinel, reinstall, revoke vs identity-strict rollback
+- Node: hash pin, hosted reject, CASCADE absence, shared identity embed, pinned functiondef hashes
+- Disposable PostgreSQL: unexpected-object refuse, fault-closed residue, fresh install, already-installed repeat, authorized and denied callers, banned/disabled honesty, owner/ACL, adversarial body/owner/ACL/schema/ADP/dependency drift refusal, rollback+sentinel, reinstall, revoke → `REVOKED_EXACT` → exact removal → FRESH, revoke-plus-drift refusal
 - Applicable existing repository tests/hygiene without changing rules
 - Not claimed: browser E2E, hosted Admin session, remote apply, live statistics
 

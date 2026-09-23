@@ -1,7 +1,7 @@
 Jetnity admin account counts rollout preparation 1 — local commands
 Session bc-4bf6acab-25f3-4d63-9199-ac365b9c011a
 Model cursor-grok-4.6-high-fast
-No hosted SQL. No live accounts. System cluster not used.
+Same session continued for TL R1/R2. No hosted SQL. No live accounts. System cluster not used.
 
 # Hash / hosted-reject (exit 0)
 node --test scripts/db/admin-account-counts-rollout-preparation-1/runner.test.mjs
@@ -9,10 +9,12 @@ node --test scripts/db/admin-account-counts-rollout-preparation-1/runner.test.mj
 
 # Disposable private PostgreSQL rehearsal (exit 0)
 node scripts/db/admin-account-counts-rollout-preparation-1/runner.mjs
-# 41/41
+# 93/93
 # engine: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) — NOT Production 17.6
 # categories: source-pin 7, unexpected-object 4, fault-closed 2, install-repeat 6,
-# authorization 11, owner-acl 1, rollback 3, reinstall-revoke 6, cleanup-node 1
+# authorization 11, owner-acl 1, adversarial-drift 45, rollback 3,
+# reinstall-revoke 13, cleanup-node 1
+# REVOKED_EXACT removal proven. Adversarial drift refused, not repaired.
 
 # Unchanged accepted module tests (exit 0)
 node --import ./scripts/server-only-test-register.mjs --import tsx --test \

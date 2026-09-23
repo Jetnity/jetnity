@@ -17,6 +17,7 @@
   "taskSeed": "7d24b78b413c80ff82ae1f5c03b045fc9b5e17a4",
   "baseline": "f0237baf8809e5528b5f73e918f0e37a7d9b4477",
   "operatingMode": "NORMAL",
+  "continuedFor": "TL CHANGES REQUIRED R1/R2 on 79e5ec6dfa096c7ce19e7df40a4a403fc9f8fa30",
   "notResumedSessions": [
     "bc-49dd67e9-5979-44af-9476-1df8bcdfff93",
     "bc-4a3288b3-eb42-480b-9c37-f74b584e2419",

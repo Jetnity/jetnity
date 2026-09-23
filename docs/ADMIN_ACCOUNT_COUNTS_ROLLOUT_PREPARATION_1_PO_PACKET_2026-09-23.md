@@ -6,7 +6,7 @@ Das ist kein Nachweis, dass eine Freigabe erfolgt ist. Es ist kein Live-Zähler 
 
 ## Kurz
 
-Jetnity kann intern zwei Rohzahlen zeigen: vorhandene registrierte Konten und deren Teilmenge aus den letzten festen 720 Stunden. Die Technik dafür ist lokal vorbereitet und auf einer wegwerfbaren PostgreSQL geprobt (**41/41**). **Production, Preview und jeder gehostete Datenbankzugriff bleiben aus.**
+Jetnity kann intern zwei Rohzahlen zeigen: vorhandene registrierte Konten und deren Teilmenge aus den letzten festen 720 Stunden. Die Technik dafür ist lokal vorbereitet und auf einer wegwerfbaren PostgreSQL geprobt (**93/93**, inkl. exakter Objektidentität und sicherem Entfernen nach REVOKE). **Production, Preview und jeder gehostete Datenbankzugriff bleiben aus.**
 
 Nutzen: ein Admin sieht, wie viele Konten wirklich existieren, ohne Excel, ohne Anbieter, ohne Tracking. Keine Besucher, keine „aktiven Nutzer“, kein Partner-Reach, kein Umsatz.
 
@@ -15,7 +15,7 @@ Nutzen: ein Admin sieht, wie viele Konten wirklich existieren, ohne Excel, ohne 
 | Lage | Bedeutung |
 | --- | --- |
 | **PREPARED** | Lokales Installations-/Prüf-/Rollback-Paket und Enablement-Design sind geschrieben. Akzeptierte SQL-Quellen unverändert, Hashes geprüft. |
-| **TESTED** | Disposable PostgreSQL 16.15, privater Socket: frische Installation, Wiederholung, künstlicher Fehler ohne Rest, unerwartete Objekte verweigert, Rollback mit Sentinel, Neuinstallation, REVOKE. Erlaubter Moderator+AAL2 bekam 16/12. Abgelehnte Aufrufer bekamen 42501, keine Null. |
+| **TESTED** | Disposable PostgreSQL 16.15, privater Socket: frische Installation, Wiederholung, künstlicher Fehler ohne Rest, unerwartete Objekte verweigert, Rollback mit Sentinel, Neuinstallation, REVOKE → `REVOKED_EXACT` → exakte Entfernung → `FRESH`. Adversariale Body-/Owner-/ACL-/Schema-/Default-Privilege-/Abhängigkeitsdrift wird verweigert, nicht repariert. Erlaubter Moderator+AAL2 bekam 16/12. Abgelehnte Aufrufer bekamen 42501, keine Null. |
 | **NOT RUN** | Echter Browser/MFA-Adminweg; gehostete Session; Production-/Preview-Installation; frische Production-Metadaten durch diesen Agenten; voller App-Build. |
 | **BLOCKED** für späteres Live-Zeigen | Ein gesperrtes Moderator-Konto und ein deaktiviertes Admin-Konto **sahen die Zahlen trotzdem**, sobald Rolle und AAL2 passten. Browserbelege der parallelen Spur fehlen. Production-Objekte fehlen noch und dürfen hier nicht erzeugt werden. |
 
@@ -30,8 +30,8 @@ Nutzen: ein Admin sieht, wie viele Konten wirklich existieren, ohne Excel, ohne 
 ## Drei getrennte Aus-Schalter
 
 - **Oberfläche aus:** bleibt der heutige Default. Schaltet die Anzeige aus, entzieht aber kein Datenbankrecht.
-- **Recht sofort entziehen:** `REVOKE` inklusive ausdrücklich `PUBLIC`. Lokal nachgewiesen: der berechtigte Aufrufer erhält danach 42501, die Funktionen bleiben liegen.
-- **Objekte entfernen:** nur wenn Signatur/Owner/ACL noch exakt zum Paket passen. Kein cascading Drop. Nach einem REVOKE verweigert das strikte Rollback — lokal nachgewiesen, Absicht.
+- **Recht sofort entziehen:** `REVOKE` inklusive ausdrücklich `PUBLIC`. Lokal nachgewiesen: der berechtigte Aufrufer erhält danach 42501; die Objekte bleiben mit unveränderter Definition als `REVOKED_EXACT` liegen.
+- **Objekte entfernen:** nur bei `ALREADY_INSTALLED` oder `REVOKED_EXACT` nach derselben starken Identitätsprüfung (exakte `pg_get_functiondef`-Fingerprints, Owner, Schema, ACL, Default Privileges, keine Extra-Objekte/Abhängigkeiten). Kein cascading Drop. Jede andere Drift nach dem REVOKE bleibt liegen und wird verweigert.
 
 ## Owner-/ACL-Risiko, ehrlich
 
