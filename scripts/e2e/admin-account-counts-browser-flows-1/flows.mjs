@@ -34,9 +34,9 @@ import {
 } from './counts.mjs'
 import { navigateDocument, reloadDocument } from './navigation.mjs'
 import {
+  buildProducerShapedReceipt,
   reserveExclusiveArtifact,
   runScopedName,
-  staticImplementationMetadata,
   writeSanitizedReceipt,
 } from './evidence.mjs'
 import {
@@ -68,7 +68,7 @@ export const IMPLEMENTATION = Object.freeze({
   realExecution: 'NOT RUN',
   runtimeIntegration: 'pending',
   note:
-    'Awaited Playwright G6–G19 scenario code is implemented against the frozen §4 context. Real browser execution stays NOT RUN until reviewed #558 exists and TL authorizes the exact sync/run. Helper/double PASS is not a full local execution PASS.',
+    'Awaited Playwright G6–G19 scenario code is implemented against frozen §4. #558 is merged at main 86534228; this lane consumed that producer evidence/identity contract. Real browser/MFA/Admin execution stays NOT RUN until TL authorizes the integrated run. Helper/double PASS is not a full local execution PASS.',
 })
 
 function failClosed(error) {
@@ -653,24 +653,15 @@ export async function runBrowserFlows(context) {
     writeSanitizedReceipt(
       validated.evidenceDir,
       runScopedName(validated.runId, 'browser-flows-gates.json'),
-      {
-        contractVersion: CONTRACT_VERSION,
-        agent: 'Jetnity admin account counts browser flows 1',
-        generation: 1,
+      buildProducerShapedReceipt({
         runId: validated.runId,
         productHead: validated.productHead,
-        implementationMetadata: staticImplementationMetadata(),
-        thisInvocation: {
-          kind: 'consumer-gates',
-          realBrowserOrMfaExecution: 'NOT RUN',
-          observedResults: sanitizedGates.map((gate) => gate.result),
-        },
+        gates: sanitizedGates,
+        notes: IMPLEMENTATION.note,
         implementation: IMPLEMENTATION.implementation,
         realExecution: IMPLEMENTATION.realExecution,
         runtimeIntegration: IMPLEMENTATION.runtimeIntegration,
-        gates: sanitizedGates.map(({ id, result, notes }) => ({ id, result, notes })),
-        notes: IMPLEMENTATION.note,
-      },
+      }),
       { secrets: runSecrets },
     )
   } catch {

@@ -1,7 +1,7 @@
 # Admin Account Counts Browser Flows 1 — HANDOFF
 
 Stand: 2026-09-23  
-Für den nächsten unabhängigen Technical-Lead-**Re-Review**. Nicht für einen neuen Produkt-Agenten. Nicht für #556, #557 oder #558.
+Für den nächsten unabhängigen Technical-Lead-Review. Nicht für einen neuen Produkt-Agenten. Nicht für #556, #557 oder a completed #558 runtime session.
 
 ## Identity
 
@@ -13,18 +13,24 @@ Für den nächsten unabhängigen Technical-Lead-**Re-Review**. Nicht für einen 
 - UI rename: **not performed**
 - PR: #559 draft
 - Branch: `test/admin-account-counts-browser-flows-1`
-- Baseline / merge-base: `fa7f651c023eb361fb142cbb931bc702f3a3d213`
+- Product baseline: `fa7f651c023eb361fb142cbb931bc702f3a3d213`
+- Authorized main / merge-base: `86534228bad59d2951e5586400a93b524aac9cd1`
+- Merge commit: `eced386af126dd50f73ff5605102ff7c14d86b5a`
 - Task v1 unchanged: `58afaa15d15dce87c180f4f0eb73b8dc248e896e`
 - Frozen interface: §4 of `docs/ADMIN_ACCOUNT_COUNTS_LOCAL_RUNTIME_1_TASK_2026-09-23.md` at `0aa33e88a021756a5cee64a130d544122977880a`
-- Previous reviewed head: `9fb5ecbdf4a643696cc59b95857cedc5ad643e80`
-- TL re-review `5293522604`: CHANGES REQUIRED (navigation Response only on the test double)
-- Diagnostic: `#558` comment `5798281067` (evidence only)
+- Prior NAV acceptance: TL review `5294272571` on `3e5e5039` (bounded NAV only)
 
 ## What was delivered
 
-Same-session correction: document navigations now keep the actual awaited Playwright `goto`/`reload` Response and pass that current Response into UI assertions. `page.lastNavigation` / `page.lastResponse` are not used. Playwright-shaped G7 / G11 OFF / G14 paths prove a current 200 can progress while 500/404/null/stale/foreign-origin and blank/mismatched UI fail. Prior B2/B3 controls remain. Historical receipts were not overwritten.
+Authorized exact-main synchronization after #558 CLOSED / MERGED / POST-MERGE VERIFIED. Merge of `86534228` into this existing branch, then consumer-only alignment to the now-main producer evidence contract:
 
-Controlled-context unit tests: **29/29 PASS**. They are **not** real UI/Auth/MFA execution.
+- artifact names `${runId}-counts-desktop.png` / `${runId}-counts-mobile.png` / `${runId}-browser-flows-gates.json`
+- exact G6–G19 output ids matching now-main `BROWSER_GATES`
+- receipt `runId` + `productHead` identity; extra keys fail closed
+- PNG screenshot profile IHDR/IDAT/IEND
+- no rewrite of accepted runtime files; no merge conflicts
+
+Controlled-context unit tests: **30/30 PASS**. They are **not** real UI/Auth/MFA execution.
 
 Accepted-parser equivalence (separate command):
 
@@ -32,15 +38,15 @@ Accepted-parser equivalence (separate command):
 
 ## First unread action for Technical Lead
 
-1. Independent exact-head re-review of **this frozen head**, especially current-navigation Response wiring on G7/G11/G14 and the other goto/reload transitions.
+1. Independent exact-head review of **this frozen post-sync head**.
 2. Do not treat helper/double PASS, Preview READY, or later CI as a browser PASS or whole-run PASS.
-3. Integration order remains **#558 then #559** after a specific TL instruction naming the merged main SHA. #558 still owns R1/R2/R3/R5 and `evidenceDir`.
+3. Real integrated login→TOTP/AAL2→Admin remains a later explicit TL gate and is not authorized on the user's Mac.
 4. Do not merge. Do not mark Ready. Do not start a follow-up slice from Cursor.
 
 ## Do not do
 
 - Hosted SQL / account read / grant / apply / activation
-- Sync/rebase/merge/force onto newer main without an exact later TL instruction
-- Import unmerged #558 implementation or invent Page properties on the runtime API
+- Rebase/force/reset/cherry-pick
+- Rewrite accepted #558 runtime files
 - Inject cookies, forged AAL2, `storageState` or Auth mocks labeled as real execution
 - Start another agent or follow-up from Cursor

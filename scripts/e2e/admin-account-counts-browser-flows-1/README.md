@@ -3,9 +3,11 @@
 Consumer lane for gates **G6–G19** against the frozen local-acceptance contract
 `jetnity.account-counts.local-acceptance.v1`.
 
-Sibling runtime **#558** owns stack, fixtures, application, observer, cleanup and
-the whole-run verdict. This folder owns only awaited Playwright UI scenario code
-and honest controlled-context unit tests.
+Sibling runtime **#558** is now on exact main `86534228`. It owns stack,
+fixtures, application, observer, cleanup and the whole-run verdict. This folder
+owns only awaited Playwright UI scenario code and honest controlled-context
+unit tests. It consumes the now-main producer evidence names and receipt
+allowlist; it does not rewrite accepted runtime files.
 
 ## What this module actually does
 
@@ -38,8 +40,8 @@ and honest controlled-context unit tests.
 - Start Docker, Supabase, Next.js or provision GoTrue fixtures.
 - Claim a real-browser / MFA / Admin PASS from unit doubles or quiet page
   requests.
-- Resume closed #556 fallback, rewrite #557 product guards, or import unmerged
-  #558 implementation.
+- Resume closed #556 fallback, rewrite #557 product guards, or rewrite accepted
+  #558 runtime files.
 - Contact hosted Supabase, follow remote redirects with credentials, or write
   QR/secret/token/HAR/trace/`storageState` evidence.
 
@@ -57,11 +59,11 @@ Do not add a root `package.json` script. Do not treat helper PASS as
 
 ## Integration
 
-1. Independent TL review of this exact head.
-2. #558 runtime first, after its own review.
-3. This PR only after a specific TL instruction naming the merged main SHA.
-4. Actual integrated browser execution is a later explicit TL gate. It is not
-   authorized on the user's incoming Mac by this task.
+1. Authorized exact-main sync of `86534228` is done on this branch.
+2. Independent TL review of this exact post-sync head.
+3. Actual integrated browser execution is a later explicit TL gate. It is not
+   authorized on the user's incoming Mac by this task. No whole-run PASS from
+   this lane.
 
 Historical #556 command `scripts/e2e/admin-account-counts-browser-acceptance-1/run.mjs`
 remains a preflight/helper fallback and is not this consumer.

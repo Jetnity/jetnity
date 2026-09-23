@@ -36,7 +36,26 @@ import {
 } from './contract.mjs'
 import { assertNoCountDisclosure, classifyDenialUi } from './counts.mjs'
 import { inspectNavigationResponse } from './navigation.mjs'
-import { containedEvidencePath, runScopedName, writeSanitizedReceipt } from './evidence.mjs'
+import {
+  BROWSER_GATES,
+  PRODUCT_BASELINE as RUNTIME_PRODUCT_BASELINE,
+} from '../admin-account-counts-local-runtime-1/constants.mjs'
+import {
+  MINIMAL_PNG,
+  assertConsumerGatesJson,
+  assertValidPng,
+  consumerArtifactNames as runtimeConsumerArtifactNames,
+  createRunIdentity,
+} from '../admin-account-counts-local-runtime-1/evidence.mjs'
+import {
+  assertProducerCompatibleReceipt,
+  consumerArtifactNames,
+  containedEvidencePath,
+  pngChunkForTests,
+  runScopedName,
+  stripPngToScreenshotProfile,
+  writeSanitizedReceipt,
+} from './evidence.mjs'
 import {
   IMPLEMENTATION,
   runBrowserFlows,
@@ -134,7 +153,7 @@ function createLocator(getText, actions = {}, attrs = {}) {
     isVisible: async () => Boolean(getText()),
     getAttribute: async (name) => attrs[name] ?? null,
     screenshot: async ({ path }) => {
-      if (path) writeFileSync(path, 'clip')
+      if (path) writeFileSync(path, MINIMAL_PNG)
     },
     locator: () => createLocator(getText, actions, attrs),
   }
@@ -1010,6 +1029,13 @@ test('B4 value-aware redaction, path escape, exclusive write and fail-closed rec
       () => writeSanitizedReceipt(dir, 'trace.har', { contractVersion: CONTRACT_VERSION }),
       /secret-bearing artifact/,
     )
+    assert.throws(
+      () => writeSanitizedReceipt(dir, 'extra.json', {
+        contractVersion: CONTRACT_VERSION,
+        sourcePins: { ignored: true },
+      }),
+      /unsupported field sourcePins/,
+    )
     writeSanitizedReceipt(dir, 'ok.json', {
       contractVersion: CONTRACT_VERSION,
       gates: [{ id: 'G6_login_ui_password', result: 'NOT RUN', notes: 'locator.fill("Aa1!SYNTHETIC-PASSWORD")' }],
@@ -1062,6 +1088,32 @@ test('TOTP helper and enroll extractor stay in-memory only', () => {
   )
 })
 
+test('now-main producer artifact names, identity and receipt allowlist stay aligned', () => {
+  assert.deepEqual(FLOW_GATE_IDS, BROWSER_GATES)
+  assert.equal(PRODUCT_BASELINE, RUNTIME_PRODUCT_BASELINE)
+  const runId = 'aaclr1-20260923T220000Z'
+  const projectId = 'aaclr1-aaclr1-20260923T220000Z'.slice(0, 40)
+  assert.deepEqual(consumerArtifactNames(runId), runtimeConsumerArtifactNames(runId))
+  assert.deepEqual(consumerArtifactNames(runId), [
+    `${runId}-counts-desktop.png`,
+    `${runId}-counts-mobile.png`,
+    `${runId}-browser-flows-gates.json`,
+  ])
+  const identity = createRunIdentity({ runId, projectId })
+  assert.equal(identity.runId, runId)
+  assert.equal(identity.projectId, projectId)
+  assert.deepEqual([...identity.aliases], [runId, projectId])
+
+  const dirty = Buffer.concat([
+    MINIMAL_PNG.subarray(0, MINIMAL_PNG.length - 12),
+    pngChunkForTests('tEXt', Buffer.from('Software\0Playwright')),
+    MINIMAL_PNG.subarray(MINIMAL_PNG.length - 12),
+  ])
+  assert.throws(() => assertValidPng(dirty, { path: 'dirty.png' }), /unreviewed PNG metadata/)
+  const stripped = stripPngToScreenshotProfile(dirty)
+  assertValidPng(stripped, { path: 'stripped.png' })
+})
+
 test('controlled doubles can walk G6–G19 without claiming a real-browser PASS', async (t) => {
   const { context, world, evidenceDir } = createContextDouble(t)
   stubFetch(world, t)
@@ -1078,6 +1130,16 @@ test('controlled doubles can walk G6–G19 without claiming a real-browser PASS'
   assert.equal(receipt.thisInvocation.realBrowserOrMfaExecution, 'NOT RUN')
   assert.equal(receipt.implementationMetadata.scenarioCode, 'delivered')
   assert.equal(looksSecretBearing(receipt), false)
+  assertProducerCompatibleReceipt(receipt, { runId: 'unit-double', productHead: BASELINE })
+  assertConsumerGatesJson(receipt, {
+    path: receiptName,
+    identity: createRunIdentity({ runId: 'unit-double' }),
+    productHead: BASELINE,
+  })
+  const desktop = join(evidenceDir, runScopedName('unit-double', 'counts-desktop.png'))
+  const mobile = join(evidenceDir, runScopedName('unit-double', 'counts-mobile.png'))
+  assertValidPng(readFileSync(desktop), { path: 'counts-desktop.png' })
+  assertValidPng(readFileSync(mobile), { path: 'counts-mobile.png' })
   assert.equal(looksSecretBearing(result.gates, [OWNER.password, world.accessToken, world.enrollSecret]), false)
   assert.equal(isPermittedSuccessShape([permittedRow()]), true)
   assertPermittedWrapper({ status: 200, json: [permittedRow()] })

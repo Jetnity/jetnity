@@ -3,6 +3,7 @@
 
 import { COUNT_VALUE_SELECTORS, PATHS, SELECTORS, UI_COPY, WINDOW_HOURS } from './constants.mjs'
 import { parseAbsoluteHttpUrl, sameExactOrigin } from './contract.mjs'
+import { rewriteScreenshotPng } from './evidence.mjs'
 import { inspectNavigationResponse } from './navigation.mjs'
 import { WINDOW_US, parsePgTimestamptz } from './payload.mjs'
 
@@ -235,10 +236,12 @@ export async function screenshotCountSection(page, filePath, timing = {}) {
     await timing.budget.action('screenshot.write', () =>
       section.screenshot({ path: filePath, animations: 'disabled' }),
     )
+    await timing.budget.action('screenshot.sanitize', () => rewriteScreenshotPng(filePath))
     return
   }
   await section.waitFor({ state: 'visible' })
   await section.screenshot({ path: filePath, animations: 'disabled' })
+  rewriteScreenshotPng(filePath)
 }
 
 export async function assertNoHorizontalOverflow(page, viewport) {
