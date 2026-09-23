@@ -41,6 +41,7 @@ import {
   acquireOfficialCli,
   readOfflineOfficialArtifacts,
   hashTarMember,
+  shouldInvokeOfficialCli,
 } from './cli-identity.mjs'
 import {
   assertRuntimeSources,
@@ -82,8 +83,16 @@ import { createRpcObserver } from './observer.mjs'
 import { BROWSER_GATES } from './constants.mjs'
 import { decideVerdict, loadBrowserModule, mergeBrowserGates, leereMatrix, markBrowserNotImplemented } from './gates.mjs'
 import { cleanupDryRunKontrolle, raeumeOwnedAuf, assertOwnedPath } from './cleanup.mjs'
-import { redactSecrets, writeEvidence, assertSafeEvidence, exportSanitizedRunArtifacts } from './evidence.mjs'
-import { persistFailureReceipt, run } from './run.mjs'
+import {
+  redactSecrets,
+  writeEvidence,
+  assertSafeEvidence,
+  exportSanitizedRunArtifacts,
+  createRunIdentity,
+  consumerArtifactNames,
+  expectedConsumerArtifacts,
+} from './evidence.mjs'
+import { persistFailureReceipt, run, parseMode } from './run.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
 import { SOURCE_PATHS as ACCEPTED_SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 
@@ -1748,57 +1757,154 @@ test('F3 one registry records Context before policy failure; pending/foreign/tim
   rmSync(timeoutHome, { recursive: true, force: true })
 })
 
-test('F4 sanitized artifacts survive cleanup; secrets never export; G20 does not recreate private HOME', async () => {
-  const home = mkdtempSync(join(tmpdir(), 'aaclr1-evhome-'))
+function writeExactConsumerArtifacts(dir, runId, { gates = {}, desktop = 'desktop-placeholder', mobile = 'mobile-placeholder' } = {}) {
+  const names = consumerArtifactNames(runId)
+  writeFileSync(join(dir, names[0]), desktop)
+  writeFileSync(join(dir, names[1]), mobile)
+  writeFileSync(join(dir, names[2]), `${JSON.stringify(gates)}\n`)
+  return names
+}
+
+test('C1 exact consumer artifacts survive cleanup; wrong-run/missing/secret fail; no-start needs none', async () => {
+  const runId = 'aaclr1-20260923T172002Z'
+  const identity = createRunIdentity({ runId, projectId: 'aaclr1-aaclr1-20260923T172002Z'.slice(0, 40) })
+  assert.deepEqual(consumerArtifactNames(runId), [
+    `${runId}-counts-desktop.png`,
+    `${runId}-counts-mobile.png`,
+    `${runId}-browser-flows-gates.json`,
+  ])
+  assert.deepEqual(expectedConsumerArtifacts({ mode: 'preflight', runId }), [])
+  assert.deepEqual(expectedConsumerArtifacts({ mode: 'runtime-only', runId }), [])
+  assert.equal(expectedConsumerArtifacts({ mode: 'full', consumerCompleted: true, runId }).length, 3)
+
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-e1-'))
   const privateEv = mkdtempSync(join(home, 'evidence-'))
-  const durable = mkdtempSync(join(tmpdir(), 'aaclr1-evdur-'))
-  writeFileSync(join(privateEv, 'aaclr1-run1-consumer-receipt.json'), '{"ok":true,"notes":"clip"}\n')
-  writeFileSync(join(privateEv, 'aaclr1-run1-screenshot-g9.png'), Buffer.from([137, 80, 78, 71]))
+  const durable = mkdtempSync(join(tmpdir(), 'aaclr1-e1d-'))
+  writeExactConsumerArtifacts(privateEv, runId)
+  writeFileSync(join(privateEv, 'aaclr1-another-run-consumer-receipt.json'), '{"ok":true}\n')
   writeFileSync(join(privateEv, 'session.har'), '{"pages":[]}')
   mkdirSync(join(privateEv, 'profile'))
   writeFileSync(join(privateEv, 'profile/Cookies'), 'token')
-  const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: privateEv })
+  const registry = createOwnershipRegistry({ runId, privateHome: home, evidenceDir: privateEv })
   const cleanup = await raeumeOwnedAuf({
     privateHome: home,
     registry,
     evidenceDir: privateEv,
+    browserRegistry: registry.browsers,
   }, {
     exportArtifacts: () => exportSanitizedRunArtifacts({
       sourceDir: privateEv,
       destDir: durable,
-      runId: 'aaclr1-run1',
+      runId,
+      runIdentity: identity,
       ownedRoots: [home],
+      mode: 'full',
+      consumerCompleted: true,
     }),
   })
-  assert.equal(existsSync(join(durable, 'aaclr1-run1-consumer-receipt.json')), true)
-  assert.equal(existsSync(join(durable, 'aaclr1-run1-screenshot-g9.png')), true)
+  assert.equal(existsSync(join(durable, `${runId}-counts-desktop.png`)), true)
+  assert.equal(existsSync(join(durable, `${runId}-counts-mobile.png`)), true)
+  assert.equal(existsSync(join(durable, `${runId}-browser-flows-gates.json`)), true)
+  assert.equal(existsSync(join(durable, 'aaclr1-another-run-consumer-receipt.json')), false)
   assert.equal(existsSync(join(durable, 'session.har')), false)
   assert.equal(existsSync(join(durable, 'profile')), false)
   assert.equal(cleanup.exportFailed, false)
+  assert.equal(cleanup.artifactExport.ok, true)
+  assert.equal(cleanup.artifactExport.exported.length, 3)
+  assert.ok(cleanup.artifactExport.skipped.some((item) => item.name.includes('another-run') && item.reason === 'wrong-run'))
   assert.equal(existsSync(home), false)
+
+  const missHome = mkdtempSync(join(tmpdir(), 'aaclr1-e1m-'))
+  const missPrivate = mkdtempSync(join(missHome, 'evidence-'))
+  const missDurable = mkdtempSync(join(tmpdir(), 'aaclr1-e1md-'))
+  writeFileSync(join(missPrivate, `${runId}-counts-desktop.png`), 'only-one')
+  const missReg = createOwnershipRegistry({ runId, privateHome: missHome, evidenceDir: missPrivate })
+  const missing = await raeumeOwnedAuf({
+    privateHome: missHome,
+    registry: missReg,
+    evidenceDir: missPrivate,
+    browserRegistry: missReg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: missPrivate,
+      destDir: missDurable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [missHome],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  assert.equal(missing.exportFailed, true)
+  assert.equal(bewerteCleanup(missing, { registry: missReg }), false)
+  assert.equal(existsSync(missHome), true)
 
   const failHome = mkdtempSync(join(tmpdir(), 'aaclr1-evfail-'))
   const failPrivate = mkdtempSync(join(failHome, 'evidence-'))
   const failDurable = mkdtempSync(join(tmpdir(), 'aaclr1-evfaild-'))
-  writeFileSync(join(failPrivate, 'aaclr1-run2-consumer-receipt.json'), '{"password":"synthetic"}\n')
+  writeExactConsumerArtifacts(failPrivate, 'aaclr1-run2', { gates: { password: 'synthetic' } })
   const failReg = createOwnershipRegistry({ privateHome: failHome, evidenceDir: failPrivate })
   const failed = await raeumeOwnedAuf({
     privateHome: failHome,
     registry: failReg,
     evidenceDir: failPrivate,
+    browserRegistry: failReg.browsers,
   }, {
     exportArtifacts: () => exportSanitizedRunArtifacts({
       sourceDir: failPrivate,
       destDir: failDurable,
       runId: 'aaclr1-run2',
       ownedRoots: [failHome],
+      mode: 'full',
+      consumerCompleted: true,
     }),
   })
   assert.equal(failed.exportFailed, true)
   assert.equal(failed.unknown, true)
   assert.equal(bewerteCleanup(failed, { registry: failReg }), false)
   assert.equal(existsSync(failHome), true)
-  assert.equal(existsSync(join(failDurable, 'aaclr1-run2-consumer-receipt.json')), false)
+  assert.equal(existsSync(join(failDurable, 'aaclr1-run2-browser-flows-gates.json')), false)
+
+  const overwrite = mkdtempSync(join(tmpdir(), 'aaclr1-e7-'))
+  const overwriteSrc = mkdtempSync(join(overwrite, 'evidence-'))
+  const overwriteDest = mkdtempSync(join(tmpdir(), 'aaclr1-e7d-'))
+  writeExactConsumerArtifacts(overwriteSrc, runId)
+  writeFileSync(join(overwriteDest, `${runId}-counts-desktop.png`), 'original-bytes')
+  assert.throws(
+    () => exportSanitizedRunArtifacts({
+      sourceDir: overwriteSrc,
+      destDir: overwriteDest,
+      runId,
+      ownedRoots: [overwrite],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+    /overwrite/,
+  )
+  assert.equal(readFileSync(join(overwriteDest, `${runId}-counts-desktop.png`), 'utf8'), 'original-bytes')
+
+  const noStartHome = mkdtempSync(join(tmpdir(), 'aaclr1-ns-'))
+  const noStartPrivate = mkdtempSync(join(noStartHome, 'evidence-'))
+  const noStartDurable = mkdtempSync(join(tmpdir(), 'aaclr1-nsd-'))
+  const noStartReg = createOwnershipRegistry({ runId, privateHome: noStartHome, evidenceDir: noStartPrivate })
+  const noStart = await raeumeOwnedAuf({
+    privateHome: noStartHome,
+    registry: noStartReg,
+    evidenceDir: noStartPrivate,
+    browserRegistry: noStartReg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: noStartPrivate,
+      destDir: noStartDurable,
+      runId,
+      ownedRoots: [noStartHome],
+      mode: 'preflight',
+    }),
+  })
+  assert.equal(noStart.exportFailed, false)
+  assert.equal(noStart.artifactExport.exported.length, 0)
+  assert.equal(existsSync(noStartHome), false)
+
   persistFailureReceipt({
     evidenceDir: failDurable,
     runId: 'aaclr1-run2',
@@ -1817,4 +1923,168 @@ test('F4 sanitized artifacts survive cleanup; secrets never export; G20 does not
   assert.equal(existsSync(failHome), false)
   rmSync(durable, { recursive: true, force: true })
   rmSync(failDurable, { recursive: true, force: true })
+  rmSync(missHome, { recursive: true, force: true })
+  rmSync(missDurable, { recursive: true, force: true })
+  rmSync(overwrite, { recursive: true, force: true })
+  rmSync(overwriteSrc, { recursive: true, force: true })
+  rmSync(overwriteDest, { recursive: true, force: true })
+})
+
+function writeTestCliPins(dir) {
+  const owned = writeOwnedTar(dir, { contents: 'test-cli-member\n' })
+  const archiveName = 'supabase_2.117.0_linux_amd64.tar.gz'
+  const archivePath = join(dir, archiveName)
+  writeFileSync(archivePath, owned.bytes)
+  const checksumsText = `${owned.sha256}  ${archiveName}\n`
+  const checksumsPath = join(dir, 'checksums.txt')
+  writeFileSync(checksumsPath, checksumsText)
+  const checksumsSha = createHash('sha256').update(checksumsText).digest('hex')
+  const pin = { name: archiveName, apiDigest: `sha256:${owned.sha256}` }
+  return {
+    archivePath,
+    checksumsPath,
+    pins: {
+      version: CLI.version,
+      checksumsApiDigest: `sha256:${checksumsSha}`,
+      archives: {
+        'linux-x64': pin,
+        'linux-arm64': pin,
+        'darwin-arm64': pin,
+        'darwin-x64': pin,
+      },
+    },
+  }
+}
+
+function controlledRuntimeExecFile(invoked) {
+  return (bin, args, options) => {
+    invoked.push({ bin: String(bin), args: [...(args || [])] })
+    const name = String(bin)
+    if (name.endsWith('git') || name === 'git') return execGit(args)
+    if (name === 'tar' || name.endsWith('/tar')) return execFileSync('tar', args, options)
+    if (name.includes('docker')) {
+      if (args[0] === '--version') return 'Docker version 24.0.0'
+      if (args[0] === 'info') return 'Server Version: 24.0.0\n'
+      if (args[0] === 'context') return 'default'
+      throw new Error(`unexpected docker ${args}`)
+    }
+    if (args?.[0] === '--version') return '2.117.0\n'
+    if (args?.[0] === '--help') return 'supabase start\nsupabase stop\nsupabase status\n'
+    if (args?.[0] === 'start' && args?.[1] === '--help') {
+      return 'Start containers for Supabase local development\n'
+    }
+    throw new Error(`must not invoke ${name} ${args}`)
+  }
+}
+
+test('C2 explicit modes invoke verified archive/member/version/help; default stays no-start', async () => {
+  assert.equal(parseMode([]), 'preflight')
+  assert.equal(parseMode(['--runtime-only']), 'runtime-only')
+  assert.equal(parseMode(['--full']), 'full')
+  assert.equal(shouldInvokeOfficialCli('preflight'), false)
+  assert.equal(shouldInvokeOfficialCli('runtime-only'), true)
+  assert.equal(shouldInvokeOfficialCli('full'), true)
+
+  const workspace = mkdtempSync(join(tmpdir(), 'aaclr1-c2-'))
+  const pins = writeTestCliPins(workspace)
+  const setupBoundary = {
+    G2_owned_stack: { result: 'NOT RUN', notes: 'C2 setup-boundary control; stack not started' },
+    G3_auth_schema_not_bootstrap: { result: 'NOT RUN', notes: 'C2 setup-boundary control' },
+    G4_fixtures_via_gotrue: { result: 'NOT RUN', notes: 'C2 setup-boundary control' },
+    G5_app_boot_loopback: { result: 'NOT RUN', notes: 'C2 setup-boundary control' },
+  }
+
+  const defaultInvoked = []
+  let defaultStart = false
+  const defaultResult = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--cli-archive', pins.archivePath, '--cli-checksums', pins.checksumsPath],
+    evidenceDir: join(workspace, 'default-evidence'),
+    execFile: controlledRuntimeExecFile(defaultInvoked),
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    cliPins: pins.pins,
+    startRuntime: async () => {
+      defaultStart = true
+      throw new Error('default no-start must not reach startRuntime')
+    },
+  })
+  assert.equal(defaultResult.mode, 'preflight')
+  assert.equal(defaultResult.invokeBinary, false)
+  assert.equal(defaultResult.cli.archiveBound, true)
+  assert.equal(defaultResult.cli.identityVerified, false)
+  assert.equal(defaultStart, false)
+  assert.ok(!defaultInvoked.some((item) => item.args?.[0] === '--version' && !String(item.bin).includes('docker')))
+  assert.equal(defaultResult.summary.fullLocalExecution, false)
+
+  const missingInvoked = []
+  let missingStart = false
+  const missing = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--runtime-only'],
+    evidenceDir: join(workspace, 'missing-evidence'),
+    execFile: controlledRuntimeExecFile(missingInvoked),
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    startRuntime: async () => {
+      missingStart = true
+      throw new Error('missing archive must not reach startRuntime')
+    },
+  })
+  assert.equal(missing.invokeBinary, true)
+  assert.equal(missing.cli.identityVerified, false)
+  assert.equal(missingStart, false)
+  assert.ok(!missingInvoked.some((item) => item.args?.[0] === '--version' && !String(item.bin).includes('docker')))
+
+  const runtimeInvoked = []
+  let runtimeStart = false
+  const runtimeOnly = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--runtime-only', '--cli-archive', pins.archivePath, '--cli-checksums', pins.checksumsPath],
+    evidenceDir: join(workspace, 'runtime-evidence'),
+    execFile: controlledRuntimeExecFile(runtimeInvoked),
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    cliPins: pins.pins,
+    startRuntime: async ({ cli, owned }) => {
+      runtimeStart = true
+      assert.equal(cli.identityVerified, true)
+      assert.equal(cli.archiveBound, true)
+      assert.equal(cli.helpVerified, true)
+      assert.equal(cli.startHelpVerified, true)
+      assert.ok(owned.runIdentity.runId)
+      assert.equal(owned.runIdentity.runId, owned.runId)
+      return { owned, gates: setupBoundary }
+    },
+  })
+  assert.equal(runtimeOnly.mode, 'runtime-only')
+  assert.equal(runtimeOnly.invokeBinary, true)
+  assert.equal(runtimeOnly.cli.identityVerified, true)
+  assert.equal(runtimeStart, true)
+  assert.ok(runtimeInvoked.some((item) => item.args?.[0] === '--version' && !String(item.bin).includes('docker')))
+  assert.ok(runtimeInvoked.some((item) => item.args?.[0] === '--help'))
+  assert.ok(runtimeInvoked.some((item) => item.args?.[0] === 'start' && item.args?.[1] === '--help'))
+  assert.notEqual(runtimeOnly.verdict, 'LOCAL_FULL_STACK_PASS')
+  assert.equal(runtimeOnly.summary.fullLocalExecution, false)
+
+  const fullInvoked = []
+  let fullStart = false
+  const fullMissingConsumer = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--full', '--cli-archive', pins.archivePath, '--cli-checksums', pins.checksumsPath],
+    evidenceDir: join(workspace, 'full-evidence'),
+    execFile: controlledRuntimeExecFile(fullInvoked),
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    cliPins: pins.pins,
+    importer: async () => ({ notTheConsumer: true }),
+    startRuntime: async ({ cli }) => {
+      fullStart = true
+      assert.equal(cli.identityVerified, true)
+      return { owned: {}, gates: setupBoundary, context: { runId: 'x' } }
+    },
+  })
+  assert.equal(fullStart, true)
+  assert.equal(fullMissingConsumer.mode, 'full')
+  assert.equal(fullMissingConsumer.browserPresent, false)
+  assert.equal(fullMissingConsumer.verdict, 'NOT_IMPLEMENTED')
+  assert.equal(fullMissingConsumer.summary.fullLocalExecution, false)
+
+  rmSync(workspace, { recursive: true, force: true })
 })

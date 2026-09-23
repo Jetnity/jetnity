@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 // Whitelisted evidence serialization. Secrets and historical receipts are
 // refused. This lane never rewrites older receipts.
+// Consumer artifact names are the TL-confirmed §4 contract from review
+// 5294684706: ${runId}-counts-desktop.png, ${runId}-counts-mobile.png,
+// ${runId}-browser-flows-gates.json. No broad any-aaclr1 exception.
 
 import { copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { basename, join, resolve } from 'node:path'
+import { join, resolve } from 'node:path'
 import { HISTORICAL_EVIDENCE_BASENAMES } from './constants.mjs'
 import { assertOwnedPath } from './cleanup.mjs'
 
@@ -41,18 +44,109 @@ export function assertSafeEvidence(value, path = 'root') {
   return true
 }
 
-export const EXPORTABLE_BASENAME = /^(?:aaclr1-[A-Za-z0-9._-]+-(?:consumer-receipt|screenshot-[A-Za-z0-9._-]+|clip-[A-Za-z0-9._-]+)\.(?:json|png|webp))$/
+export const CONSUMER_ARTIFACT_SPECS = Object.freeze([
+  Object.freeze({ kind: 'counts-desktop', suffix: '-counts-desktop.png', type: 'png' }),
+  Object.freeze({ kind: 'counts-mobile', suffix: '-counts-mobile.png', type: 'png' }),
+  Object.freeze({ kind: 'browser-flows-gates', suffix: '-browser-flows-gates.json', type: 'json' }),
+])
+
 export const FORBIDDEN_EXPORT_BASENAME = /(?:^|[-_.])(?:profile|session|qr|har|trace|cookie|token|password|otpauth)(?:[-_.]|$)/i
+
+export function createRunIdentity({ runId, projectId = null } = {}) {
+  if (!runId) throw new Error('run identity requires runId')
+  const aliases = [runId]
+  if (projectId && projectId !== runId) aliases.push(projectId)
+  return Object.freeze({
+    runId,
+    projectId: projectId || runId,
+    aliases: Object.freeze(aliases),
+  })
+}
+
+export function consumerArtifactNames(runId) {
+  return CONSUMER_ARTIFACT_SPECS.map((spec) => `${runId}${spec.suffix}`)
+}
+
+export function expectedConsumerArtifacts({
+  mode = 'preflight',
+  consumerCompleted = false,
+  consumerAttempted = false,
+  runId,
+} = {}) {
+  if (!runId) return []
+  if (mode === 'full' && (consumerCompleted === true || consumerAttempted === true)) {
+    return consumerArtifactNames(runId)
+  }
+  return []
+}
+
+export function belongsToCurrentRun(name, identity) {
+  const aliases = identity?.aliases || (identity?.runId ? [identity.runId] : [])
+  return aliases.some((id) => typeof id === 'string' && id.length > 0 && name.startsWith(`${id}-`))
+}
+
+export function matchConsumerArtifact(name, identity) {
+  const aliases = identity?.aliases || (identity?.runId ? [identity.runId] : [])
+  for (const spec of CONSUMER_ARTIFACT_SPECS) {
+    for (const id of aliases) {
+      if (name === `${id}${spec.suffix}`) return spec
+    }
+  }
+  return null
+}
+
+export function assertConsumerGatesJson(value, path = 'browser-flows-gates.json') {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(`${path} must be a JSON object`)
+  }
+  assertSafeEvidence(value, path)
+  return true
+}
+
+function classifyExportableName(name, identity) {
+  if (FORBIDDEN_EXPORT_BASENAME.test(name) || HISTORICAL_EVIDENCE_BASENAMES.includes(name) || name === 'README.md') {
+    return { ok: false, reason: 'forbidden-or-historical' }
+  }
+  if (identity?.runId && !belongsToCurrentRun(name, identity)) {
+    return { ok: false, reason: 'wrong-run' }
+  }
+  if (!matchConsumerArtifact(name, identity)) {
+    return { ok: false, reason: 'not-whitelisted' }
+  }
+  return { ok: true }
+}
 
 export function exportSanitizedRunArtifacts({
   sourceDir,
   destDir,
   runId,
+  runIdentity,
   ownedRoots = [],
+  expectedArtifacts,
+  mode = 'preflight',
+  consumerCompleted = false,
+  consumerAttempted = false,
 } = {}) {
   if (!destDir) throw new Error('Durable evidence directory is required for artifact export')
+  const identity = runIdentity || (runId ? createRunIdentity({ runId }) : null)
+  const expected = expectedArtifacts
+    || expectedConsumerArtifacts({
+      mode,
+      consumerCompleted,
+      consumerAttempted,
+      runId: identity?.runId,
+    })
   if (!sourceDir || !existsSync(sourceDir)) {
-    return { ok: true, exported: [], skipped: [], note: 'no private evidence to export' }
+    if (expected.length) {
+      return {
+        ok: false,
+        exported: [],
+        skipped: [],
+        missing: expected,
+        error: 'required consumer artifacts are missing because the private evidence directory is absent',
+      }
+    }
+    return { ok: true, exported: [], skipped: [], missing: [], note: 'no private evidence to export' }
   }
   if (lstatSync(sourceDir).isSymbolicLink()) {
     throw new Error('Private evidence directory must not be a symlink')
@@ -73,16 +167,9 @@ export function exportSanitizedRunArtifacts({
       skipped.push({ name, reason: 'directory-not-exported' })
       continue
     }
-    if (FORBIDDEN_EXPORT_BASENAME.test(name) || HISTORICAL_EVIDENCE_BASENAMES.includes(name) || name === 'README.md') {
-      skipped.push({ name, reason: 'forbidden-or-historical' })
-      continue
-    }
-    if (!EXPORTABLE_BASENAME.test(name)) {
-      skipped.push({ name, reason: 'not-whitelisted' })
-      continue
-    }
-    if (runId && !name.startsWith(`${runId}-`) && !name.startsWith('aaclr1-')) {
-      skipped.push({ name, reason: 'run-scoped-name-required' })
+    const classified = classifyExportableName(name, identity)
+    if (!classified.ok) {
+      skipped.push({ name, reason: classified.reason })
       continue
     }
     const dest = join(destDir, name)
@@ -91,7 +178,11 @@ export function exportSanitizedRunArtifacts({
     }
     if (name.endsWith('.json')) {
       const parsed = JSON.parse(readFileSync(source, 'utf8'))
-      assertSafeEvidence(parsed, name)
+      if (name.endsWith('-browser-flows-gates.json')) {
+        assertConsumerGatesJson(parsed, name)
+      } else {
+        assertSafeEvidence(parsed, name)
+      }
     }
     copyFileSync(source, dest)
     if (lstatSync(dest).isSymbolicLink()) {
@@ -99,7 +190,28 @@ export function exportSanitizedRunArtifacts({
     }
     exported.push({ name, bytes: stat.size, dest: resolve(dest) })
   }
-  return { ok: true, exported, skipped }
+  const exportedNames = new Set(exported.map((item) => item.name))
+  const exportedKinds = new Set(
+    exported
+      .map((item) => matchConsumerArtifact(item.name, identity)?.kind)
+      .filter(Boolean),
+  )
+  const missing = expected.filter((name) => {
+    if (exportedNames.has(name)) return false
+    const spec = CONSUMER_ARTIFACT_SPECS.find((item) => name.endsWith(item.suffix))
+    return !spec || !exportedKinds.has(spec.kind)
+  })
+  const skippedRequired = skipped.filter((item) => expected.includes(item.name))
+  if (missing.length || skippedRequired.length) {
+    return {
+      ok: false,
+      exported,
+      skipped,
+      missing,
+      error: `required consumer artifacts missing or skipped: ${(missing.length ? missing : skippedRequired.map((item) => item.name)).join(', ')}`,
+    }
+  }
+  return { ok: true, exported, skipped, missing: [] }
 }
 
 export function writeEvidence(evidenceDir, name, value) {

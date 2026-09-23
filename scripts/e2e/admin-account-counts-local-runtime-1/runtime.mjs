@@ -300,7 +300,7 @@ export async function defaultStartRuntime({
   }
 
   const context = baueAcceptanceContext({
-    runId: prepared.projectId,
+    runId: owned.runIdentity?.runId || owned.runId || prepared.projectId,
     productHead: PRODUCT_BASELINE,
     signal,
     timeoutMs: TIMEOUTS.runtimeBudgetMs,

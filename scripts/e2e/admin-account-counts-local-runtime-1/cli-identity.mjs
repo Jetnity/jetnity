@@ -33,13 +33,28 @@ export function digestHex(digest) {
   return String(digest || '').replace(/^sha256:/i, '').toLowerCase()
 }
 
-export function assertOfficialArchiveIdentity({ platformId, checksumsText, checksumsBytes, apiDigest }) {
-  const expected = CLI.archives[platformId]
-  if (!expected) throw new Error(`Unsupported platform for CLI ${CLI.version}: ${platformId}`)
+export function resolveCliPins(pins = CLI) {
+  return {
+    version: pins.version || CLI.version,
+    checksumsApiDigest: pins.checksumsApiDigest || CLI.checksumsApiDigest,
+    archives: pins.archives || CLI.archives,
+  }
+}
+
+export function assertOfficialArchiveIdentity({
+  platformId,
+  checksumsText,
+  checksumsBytes,
+  apiDigest,
+  pins = CLI,
+} = {}) {
+  const resolvedPins = resolveCliPins(pins)
+  const expected = resolvedPins.archives[platformId]
+  if (!expected) throw new Error(`Unsupported platform for CLI ${resolvedPins.version}: ${platformId}`)
   if (checksumsBytes) {
     const actual = createHash('sha256').update(checksumsBytes).digest('hex')
-    if (actual !== digestHex(CLI.checksumsApiDigest)) {
-      throw new Error(`checksums.txt digest ${actual} != ${digestHex(CLI.checksumsApiDigest)}`)
+    if (actual !== digestHex(resolvedPins.checksumsApiDigest)) {
+      throw new Error(`checksums.txt digest ${actual} != ${digestHex(resolvedPins.checksumsApiDigest)}`)
     }
   }
   const parsed = parseChecksums(checksumsText)
@@ -49,7 +64,7 @@ export function assertOfficialArchiveIdentity({ platformId, checksumsText, check
   if (fileDigest !== api) {
     throw new Error(`CLI checksum mismatch for ${expected.name}: checksums.txt ${fileDigest} != API ${api}`)
   }
-  return { name: expected.name, sha256: fileDigest, version: CLI.version }
+  return { name: expected.name, sha256: fileDigest, version: resolvedPins.version }
 }
 
 export function assertCliVersionText(text) {
@@ -79,8 +94,8 @@ function tryExec(execFile, bin, args, env, timeout = TIMEOUTS.cliHelpMs) {
   }
 }
 
-export function officialArchiveDigest(platformId) {
-  const expected = CLI.archives[platformId]
+export function officialArchiveDigest(platformId, pins = CLI) {
+  const expected = resolveCliPins(pins).archives[platformId]
   return expected ? digestHex(expected.apiDigest) : null
 }
 
@@ -161,8 +176,9 @@ export function bindCliExecutableIdentity({
   archiveBytes,
   archivePath,
   execFile = execFileSync,
+  pins = CLI,
 } = {}) {
-  const official = officialArchiveDigest(platformId)
+  const official = officialArchiveDigest(platformId, pins)
   if (!resolved) {
     return { archiveBound: false, pinned: false, reason: 'No executable selected.', binarySha256: null }
   }
@@ -268,6 +284,7 @@ export function verifyResolvedCli({
   platformId = platformKey(),
   archiveBytes,
   archivePath,
+  pins = CLI,
 } = {}) {
   if (!resolved) {
     return {
@@ -288,6 +305,7 @@ export function verifyResolvedCli({
     archiveBytes,
     archivePath: archivePath || provenance?.archivePath,
     execFile,
+    pins,
   })
   if (!bound.archiveBound) {
     return {
@@ -409,16 +427,19 @@ export function acquireOfficialCli({
   platformId = platformKey(),
   extract = true,
   execFile = execFileSync,
+  pins = CLI,
 } = {}) {
-  if (!platformId || !CLI.archives[platformId]) {
-    throw new Error(`CLI ${CLI.version} has no official archive for this platform.`)
+  const resolvedPins = resolveCliPins(pins)
+  if (!platformId || !resolvedPins.archives[platformId]) {
+    throw new Error(`CLI ${resolvedPins.version} has no official archive for this platform.`)
   }
   if (!archiveBytes) throw new Error('Official archive bytes are required; PATH text is not provenance.')
   const identity = assertOfficialArchiveIdentity({
     platformId,
     checksumsText,
     checksumsBytes,
-    apiDigest: CLI.archives[platformId].apiDigest,
+    apiDigest: resolvedPins.archives[platformId].apiDigest,
+    pins: resolvedPins,
   })
   const actual = createHash('sha256').update(archiveBytes).digest('hex')
   if (actual !== identity.sha256) {
@@ -559,6 +580,10 @@ export function defaultReadOfficialArtifacts() {
   return null
 }
 
+export function shouldInvokeOfficialCli(mode) {
+  return mode === 'runtime-only' || mode === 'full'
+}
+
 export function prepareOfficialCliIdentity({
   toolingDir,
   env,
@@ -568,6 +593,7 @@ export function prepareOfficialCliIdentity({
   checksumsPath,
   invokeBinary = false,
   readOfficialArtifacts = defaultReadOfficialArtifacts,
+  pins = CLI,
 } = {}) {
   if (!toolingDir) {
     return {
@@ -610,6 +636,7 @@ export function prepareOfficialCliIdentity({
       platformId,
       extract: true,
       execFile,
+      pins,
     })
     if (invokeBinary === true) {
       return verifyResolvedCli({
@@ -620,6 +647,7 @@ export function prepareOfficialCliIdentity({
         platformId,
         archiveBytes: artifacts.archiveBytes,
         archivePath: provenance.archivePath,
+        pins,
       })
     }
     return {

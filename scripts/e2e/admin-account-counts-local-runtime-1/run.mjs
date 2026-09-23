@@ -24,23 +24,25 @@ import {
 import { IMPLEMENTATION } from './implementation.mjs'
 import { baueDockerCliUmgebung, baueRuntimePreflightUmgebung, klassifiziereRuntimeUmgebung } from './env.mjs'
 import { pruefeDockerFaehigkeit } from './docker-capability.mjs'
-import { prepareOfficialCliIdentity, defaultReadOfficialArtifacts, parseCliArtifactArgs, platformKey } from './cli-identity.mjs'
+import { prepareOfficialCliIdentity, defaultReadOfficialArtifacts, parseCliArtifactArgs, platformKey, shouldInvokeOfficialCli } from './cli-identity.mjs'
 import { assertRuntimeSources, leseRuntimeSourceManifest, assertCleanProductHead } from './source.mjs'
 import { planeLoopbackDienste, bereiteOwnedWorkdir, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { plannedSql } from './schema.mjs'
 import { leereMatrix, setzeGate, loadBrowserModule, mergeBrowserGates, markBrowserNotImplemented, decideVerdict } from './gates.mjs'
 import { raeumeOwnedAuf, cleanupDryRunKontrolle, bewerteCleanup } from './cleanup.mjs'
-import { writeEvidence, redactSecrets, exportSanitizedRunArtifacts } from './evidence.mjs'
+import { writeEvidence, redactSecrets, exportSanitizedRunArtifacts, createRunIdentity } from './evidence.mjs'
 import { leseOverlayConfig } from './stack.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
 import { createOwnershipRegistry } from './ownership.mjs'
 
-function parseMode(argv = process.argv.slice(2)) {
+export function parseMode(argv = process.argv.slice(2)) {
   if (argv.includes('--full')) return 'full'
   if (argv.includes('--runtime-only')) return 'runtime-only'
   return 'preflight'
 }
+
+export { shouldInvokeOfficialCli }
 
 function nowId(now) {
   return `${RUN_LABEL_PREFIX}-${now.toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')}`
@@ -57,9 +59,12 @@ export async function run({
   startRuntime = defaultStartRuntime,
   privateHome: providedHome,
   readOfficialArtifacts = defaultReadOfficialArtifacts,
+  cliPins,
 } = {}) {
   const mode = parseMode(argv)
+  const invokeBinary = shouldInvokeOfficialCli(mode)
   const runId = nowId(now)
+  const runIdentity = createRunIdentity({ runId })
   const abort = new AbortController()
   const timer = setTimeout(() => abort.abort(), TIMEOUTS.runtimeBudgetMs)
   const matrix = leereMatrix('NOT RUN')
@@ -73,6 +78,7 @@ export async function run({
     evidenceDir: privateEvidence,
   })
   registry.execFile = execFile
+  registry.runIdentity = runIdentity
   const owned = {
     privateHome,
     toolingDir,
@@ -81,10 +87,14 @@ export async function run({
     browserRegistry: registry.browsers,
     execFile,
     registry,
+    runId,
+    runIdentity,
   }
   let verdict = 'NOT_IMPLEMENTED'
   let summary = null
   let browserPresent = false
+  let consumerAttempted = false
+  let consumerCompleted = false
   let cleanup = null
   try {
     const parentClass = klassifiziereRuntimeUmgebung(env)
@@ -99,8 +109,9 @@ export async function run({
       execFile,
       archivePath: artifactArgs.archivePath,
       checksumsPath: artifactArgs.checksumsPath,
-      invokeBinary: false,
+      invokeBinary,
       readOfficialArtifacts,
+      pins: cliPins,
     })
     const platform = platformKey()
     const source = leseRuntimeSourceManifest()
@@ -171,6 +182,8 @@ export async function run({
         migrations: source.migrations,
       })
       owned.workdir = prepared.workdir
+      owned.runIdentity = createRunIdentity({ runId, projectId: prepared.projectId })
+      registry.runIdentity = owned.runIdentity
       assertOverlayKeepsAuthSemantics(leseOverlayConfig(prepared.configPath))
       const runtime = await startRuntime({
         owned,
@@ -194,8 +207,10 @@ export async function run({
         if (!loaded.present) {
           markBrowserNotImplemented(matrix, 'Sibling browser module is absent. Full mode cannot PASS.')
         } else {
+          consumerAttempted = true
           const flows = await loaded.module.runBrowserFlows(runtime.context)
           mergeBrowserGates(matrix, flows)
+          consumerCompleted = true
         }
       } else {
         markBrowserNotImplemented(matrix, '--runtime-only cannot claim full acceptance.')
@@ -225,7 +240,11 @@ export async function run({
         sourceDir: owned.evidenceDir,
         destDir: evidenceDir,
         runId,
+        runIdentity: owned.runIdentity,
         ownedRoots: [privateHome],
+        mode,
+        consumerCompleted,
+        consumerAttempted,
       }),
     })
     const cleanupOk = probe.blocked === false
@@ -332,7 +351,22 @@ export async function run({
       ],
     })
 
-    return { verdict, mode, runId, matrix, summary, cleanup, docker, cli, source, browserPresent }
+    return {
+      verdict,
+      mode,
+      runId,
+      runIdentity: owned.runIdentity,
+      invokeBinary,
+      matrix,
+      summary,
+      cleanup,
+      docker,
+      cli,
+      source,
+      browserPresent,
+      consumerCompleted,
+      consumerAttempted,
+    }
   } catch (error) {
     try {
       cleanup = await raeumeOwnedAuf(owned, {
@@ -340,7 +374,11 @@ export async function run({
           sourceDir: owned.evidenceDir,
           destDir: evidenceDir,
           runId,
+          runIdentity: owned.runIdentity,
           ownedRoots: [privateHome],
+          mode,
+          consumerCompleted,
+          consumerAttempted,
         }),
       })
     } catch (cleanupError) {

@@ -15,12 +15,15 @@ unmerged sibling implementation.
 node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs
 
 # Explicit later offline inputs (do not invent HOME layout). Both flags are required.
-# Hashes official bytes, extracts into newly owned tooling. This correction does not
-# execute the official binary.
+# Hashes official bytes and extracts into newly owned tooling. Default no-start still
+# does not invoke version/help.
 node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs --cli-archive <path> --cli-checksums <path>
 
-# Setup validation only. Cannot report fullLocalExecution=true.
-node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs --runtime-only
+# Explicit local-execution acknowledgement. After verified offline archive/member
+# binding, invokes --version / --help / start --help, then the runtime stages.
+# Cannot report fullLocalExecution=true. This correction does not download or run
+# an official binary.
+node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs --runtime-only --cli-archive <path> --cli-checksums <path>
 
 # Full mode. Loads scripts/e2e/admin-account-counts-browser-flows-1/flows.mjs.
 # Absent sibling module => NOT_IMPLEMENTED, never an empty successful flow.
@@ -60,9 +63,10 @@ and not a Production P0 incident. This command never installs Docker.
 
 Tracked dotenv templates such as `.env.example` are excluded from the isolated
 checkout snapshot. Inherited `.env*` files and symlinks remain forbidden.
-Browser ownership uses one registry map. Sanitized consumer receipts and
-screenshots are exported to the durable evidence directory before private HOME
-removal.
+Browser ownership uses one registry map. The durable exporter preserves only
+`${runId}-counts-desktop.png`, `${runId}-counts-mobile.png` and
+`${runId}-browser-flows-gates.json` for a completed full consumer, then deletes
+private HOME. Preflight/runtime-only do not require those files.
 
 ## Forbidden substitutes
 
