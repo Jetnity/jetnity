@@ -18,12 +18,12 @@ export const IMPLEMENTATION = Object.freeze({
   serverRpcObservation: 'IMPLEMENTED',
   browserSessionFactory: 'REVIEW_FIX_F3',
   frozenContext: 'IMPLEMENTED',
-  orchestration: 'REVIEW_FIX_E1_E2',
+  orchestration: 'REVIEW_FIX_E1A_E1B_E1C',
   browserFlows: 'SIBLING_OWNED',
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'E1/E2 from review 5294965628. Consumer export validates contractVersion, current-run identity, expected product head, exact G6–G19, permitted results and metadata; refuses access_token/refresh_token/JWT/otpauth/fill material; requires nonempty bounded structurally valid PNGs; publishes only after the whole set validates. writeEvidence and consumer copies use exclusive wx creation and refuse overwrite. Failed/NOT RUN receipts stay truthful. C1 names/mapping, C2 explicit/default routing and F1–F3 stay. Official binaries, Docker and the real stack were not executed in this correction.',
+    'E1a–E1c from review 5295504615. Consumer export accepts the actual producer-shaped receipt (agent/generation/implementationMetadata/thisInvocation/implementation/realExecution/runtimeIntegration plus G6–G19) and still rejects unknown/secret/drift. PNG verification requires nonzero dimensions, CRC-valid chunks, IDAT and an inflated payload that matches IHDR; the TL-supplied 2x2 RGB fixture is the positive inert image. fill/otpauth/JWT/token values are redacted or refused as whole strings. E2 exclusive writes stay. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {

@@ -8,6 +8,7 @@
 
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { crc32, inflateSync } from 'node:zlib'
 import {
   BROWSER_GATE_RESULTS,
   BROWSER_GATES,
@@ -21,14 +22,16 @@ const SECRET_KEY = /^(password|secret|token|access_token|refresh_token|accessTok
 const SECRET_EMBEDDED = /Bearer\s+\S+|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*|otpauth:\/\/|locator\.fill\s*\(|\bsk-[A-Za-z0-9]{8,}|\bsbp_[A-Za-z0-9]+/i
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
 export const PNG_MAX_BYTES = 2 * 1024 * 1024
+export const PNG_MAX_DIMENSION = 4096
+export const CONSUMER_AGENT = 'Jetnity admin account counts browser flows 1'
 export const MINIMAL_PNG = Buffer.from(
-  '89504e470d0a1a0a0000000d4948445200000002000000020806000000f4e295f00000000d49444154789c636000020000050001aa5072260000000049454e44ae426082',
+  '89504e470d0a1a0a0000000d4948445200000002000000020802000000fdd49a730000001649444154789c63aca8a8606060606260606060600000110a016c6f1c016f0000000049454e44ae426082',
   'hex',
 )
 
 export function redactSecrets(value) {
   if (typeof value === 'string') {
-    return value.replace(new RegExp(SECRET_EMBEDDED.source, 'gi'), '[redacted]')
+    return SECRET_EMBEDDED.test(value) ? '[redacted]' : value
   }
   if (Array.isArray(value)) return value.map((item) => redactSecrets(item))
   if (value && typeof value === 'object') {
@@ -107,19 +110,78 @@ export function matchConsumerArtifact(name, identity) {
   return null
 }
 
+function readPngChunks(bytes, path) {
+  const chunks = []
+  let offset = 8
+  while (offset + 12 <= bytes.length) {
+    const length = bytes.readUInt32BE(offset)
+    if (length > PNG_MAX_BYTES) throw new Error(`${path} has an oversized PNG chunk`)
+    if (offset + 12 + length > bytes.length) throw new Error(`${path} has a truncated PNG chunk`)
+    const type = bytes.toString('ascii', offset + 4, offset + 8)
+    if (!/^[A-Za-z]{4}$/.test(type)) throw new Error(`${path} has an invalid PNG chunk type`)
+    const data = bytes.subarray(offset + 8, offset + 8 + length)
+    const storedCrc = bytes.readUInt32BE(offset + 8 + length)
+    const actualCrc = crc32(bytes.subarray(offset + 4, offset + 8 + length)) >>> 0
+    if (actualCrc !== storedCrc) throw new Error(`${path} has an invalid PNG CRC`)
+    chunks.push({ type, data })
+    offset += 12 + length
+    if (type === 'IEND') break
+  }
+  if (offset !== bytes.length) throw new Error(`${path} has trailing bytes after the PNG chunks`)
+  return chunks
+}
+
 export function assertValidPng(bytes, { maxBytes = PNG_MAX_BYTES, path = 'png' } = {}) {
   if (!Buffer.isBuffer(bytes)) bytes = Buffer.from(bytes || [])
   if (!bytes.length) throw new Error(`${path} is an empty image and is not a usable PNG`)
   if (bytes.length > maxBytes) throw new Error(`${path} exceeds PNG maxBytes ${maxBytes}`)
-  if (bytes.length < 33) throw new Error(`${path} is too small to be a PNG`)
+  if (bytes.length < 57) throw new Error(`${path} is too small to be a usable PNG`)
   if (!bytes.subarray(0, 8).equals(PNG_SIGNATURE)) {
     throw new Error(`${path} is not a structurally valid PNG`)
   }
-  if (bytes.toString('ascii', 12, 16) !== 'IHDR') {
+  const chunks = readPngChunks(bytes, path)
+  if (chunks[0]?.type !== 'IHDR' || chunks[0].data.length !== 13) {
     throw new Error(`${path} is missing a PNG IHDR chunk`)
   }
-  if (bytes.length < 12 || bytes.toString('ascii', bytes.length - 8, bytes.length - 4) !== 'IEND') {
+  if (chunks.at(-1)?.type !== 'IEND' || chunks.at(-1).data.length !== 0) {
     throw new Error(`${path} is missing a PNG IEND chunk`)
+  }
+  const ihdr = chunks[0].data
+  const width = ihdr.readUInt32BE(0)
+  const height = ihdr.readUInt32BE(4)
+  const bitDepth = ihdr[8]
+  const colorType = ihdr[9]
+  const compression = ihdr[10]
+  const filter = ihdr[11]
+  const interlace = ihdr[12]
+  if (!width || !height) throw new Error(`${path} has zero PNG dimensions`)
+  if (width > PNG_MAX_DIMENSION || height > PNG_MAX_DIMENSION) {
+    throw new Error(`${path} exceeds bounded PNG dimensions`)
+  }
+  if (compression !== 0 || filter !== 0 || interlace !== 0) {
+    throw new Error(`${path} uses unsupported PNG options`)
+  }
+  if (![1, 2, 4, 8, 16].includes(bitDepth)) throw new Error(`${path} has an illegal PNG bit depth`)
+  if (![0, 2, 3, 4, 6].includes(colorType)) throw new Error(`${path} has an illegal PNG color type`)
+  if (colorType === 3 && !chunks.some((chunk) => chunk.type === 'PLTE')) {
+    throw new Error(`${path} is missing a PNG PLTE chunk`)
+  }
+  const idat = chunks.filter((chunk) => chunk.type === 'IDAT').map((chunk) => chunk.data)
+  if (!idat.length) throw new Error(`${path} is missing PNG image data`)
+  let inflated
+  try {
+    inflated = inflateSync(Buffer.concat(idat), { maxOutputLength: 8 * 1024 * 1024 })
+  } catch {
+    throw new Error(`${path} has an invalid PNG image payload`)
+  }
+  const samples = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 }[colorType]
+  const bytesPerPixel = Math.ceil((bitDepth * samples) / 8)
+  const rowBytes = 1 + width * bytesPerPixel
+  if (inflated.length !== height * rowBytes) {
+    throw new Error(`${path} image payload does not match IHDR dimensions`)
+  }
+  for (let row = 0; row < height; row += 1) {
+    if (inflated[row * rowBytes] > 4) throw new Error(`${path} has an illegal PNG filter`)
   }
   return true
 }
@@ -130,27 +192,83 @@ export const ALLOWED_CONSUMER_RECEIPT_KEYS = Object.freeze([
   'productHead',
   'gates',
   'notes',
+  'agent',
+  'generation',
+  'implementationMetadata',
+  'thisInvocation',
+  'implementation',
+  'realExecution',
+  'runtimeIntegration',
+])
+
+export const ALLOWED_IMPLEMENTATION_METADATA_KEYS = Object.freeze([
+  'agent',
+  'generation',
+  'contractVersion',
+  'scenarioCode',
+  'defaultRealExecutionClaim',
+  'runtimeIntegration',
+])
+
+export const ALLOWED_THIS_INVOCATION_KEYS = Object.freeze([
+  'kind',
+  'realBrowserOrMfaExecution',
+  'observedResults',
 ])
 
 export const ALLOWED_GATE_KEYS = Object.freeze(['id', 'result', 'evidence', 'notes'])
 
-export function createControlledConsumerReceipt({
+function assertOptionalString(value, path) {
+  if (value != null && typeof value !== 'string') throw new Error(`${path} must be a string or null`)
+}
+
+function assertOptionalNumber(value, path) {
+  if (value != null && (typeof value !== 'number' || !Number.isFinite(value))) {
+    throw new Error(`${path} must be a finite number`)
+  }
+}
+
+export function createProducerShapedConsumerReceipt({
   runId,
   productHead = PRODUCT_BASELINE,
   notes = 'synthetic/no browser execution',
+  gateResults,
 } = {}) {
+  const agent = CONSUMER_AGENT
+  const gates = BROWSER_GATES.map((id) => ({
+    id,
+    result: gateResults?.[id] || 'NOT RUN',
+    notes,
+  }))
   return {
     contractVersion: CONTRACT_VERSION,
+    agent,
+    generation: 1,
     runId,
     productHead,
+    implementationMetadata: {
+      agent,
+      generation: 1,
+      contractVersion: CONTRACT_VERSION,
+      scenarioCode: 'delivered',
+      defaultRealExecutionClaim: 'NOT RUN until reviewed runtime integration',
+      runtimeIntegration: 'pending',
+    },
+    thisInvocation: {
+      kind: 'consumer-gates',
+      realBrowserOrMfaExecution: 'NOT RUN',
+      observedResults: gates.map((gate) => gate.result),
+    },
+    implementation: 'delivered',
+    realExecution: 'NOT RUN',
+    runtimeIntegration: 'pending',
+    gates,
     notes,
-    gates: Object.fromEntries(BROWSER_GATES.map((id) => [id, {
-      id,
-      result: 'NOT RUN',
-      evidence: null,
-      notes,
-    }])),
   }
+}
+
+export function createControlledConsumerReceipt(options = {}) {
+  return createProducerShapedConsumerReceipt(options)
 }
 
 function assertAllowedKeys(value, allowed, path) {
@@ -182,6 +300,48 @@ export function assertConsumerGatesJson(value, options = {}) {
   }
   if (value.notes != null && typeof value.notes !== 'string') {
     throw new Error(`${path} notes must be a string or null`)
+  }
+  assertOptionalString(value.agent, `${path}.agent`)
+  assertOptionalNumber(value.generation, `${path}.generation`)
+  assertOptionalString(value.implementation, `${path}.implementation`)
+  assertOptionalString(value.realExecution, `${path}.realExecution`)
+  assertOptionalString(value.runtimeIntegration, `${path}.runtimeIntegration`)
+  if (value.implementationMetadata != null) {
+    if (typeof value.implementationMetadata !== 'object' || Array.isArray(value.implementationMetadata)) {
+      throw new Error(`${path}.implementationMetadata must be an object`)
+    }
+    assertSafeEvidence(value.implementationMetadata, `${path}.implementationMetadata`)
+    assertAllowedKeys(value.implementationMetadata, ALLOWED_IMPLEMENTATION_METADATA_KEYS, `${path}.implementationMetadata`)
+    assertOptionalString(value.implementationMetadata.agent, `${path}.implementationMetadata.agent`)
+    assertOptionalNumber(value.implementationMetadata.generation, `${path}.implementationMetadata.generation`)
+    if (value.implementationMetadata.contractVersion != null && value.implementationMetadata.contractVersion !== CONTRACT_VERSION) {
+      throw new Error(`${path}.implementationMetadata.contractVersion must be ${CONTRACT_VERSION}`)
+    }
+    assertOptionalString(value.implementationMetadata.scenarioCode, `${path}.implementationMetadata.scenarioCode`)
+    assertOptionalString(value.implementationMetadata.defaultRealExecutionClaim, `${path}.implementationMetadata.defaultRealExecutionClaim`)
+    assertOptionalString(value.implementationMetadata.runtimeIntegration, `${path}.implementationMetadata.runtimeIntegration`)
+  }
+  if (value.thisInvocation != null) {
+    if (typeof value.thisInvocation !== 'object' || Array.isArray(value.thisInvocation)) {
+      throw new Error(`${path}.thisInvocation must be an object`)
+    }
+    assertSafeEvidence(value.thisInvocation, `${path}.thisInvocation`)
+    assertAllowedKeys(value.thisInvocation, ALLOWED_THIS_INVOCATION_KEYS, `${path}.thisInvocation`)
+    assertOptionalString(value.thisInvocation.kind, `${path}.thisInvocation.kind`)
+    assertOptionalString(value.thisInvocation.realBrowserOrMfaExecution, `${path}.thisInvocation.realBrowserOrMfaExecution`)
+    if (value.thisInvocation.observedResults != null) {
+      if (!Array.isArray(value.thisInvocation.observedResults)) {
+        throw new Error(`${path}.thisInvocation.observedResults must be an array`)
+      }
+      if (value.thisInvocation.observedResults.length !== BROWSER_GATES.length) {
+        throw new Error(`${path}.thisInvocation.observedResults must cover G6–G19`)
+      }
+      for (const result of value.thisInvocation.observedResults) {
+        if (!BROWSER_GATE_RESULTS.includes(result)) {
+          throw new Error(`${path}.thisInvocation.observedResults has illegal result ${result}`)
+        }
+      }
+    }
   }
   let gates = value.gates
   if (Array.isArray(gates)) {

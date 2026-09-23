@@ -92,6 +92,7 @@ import {
   consumerArtifactNames,
   expectedConsumerArtifacts,
   createControlledConsumerReceipt,
+  createProducerShapedConsumerReceipt,
   assertConsumerGatesJson,
   assertValidPng,
   MINIMAL_PNG,
@@ -396,6 +397,14 @@ test('secret redaction and historical receipt protection', () => {
   assert.throws(() => assertSafeEvidence({ refresh_token: 'SYNTHETIC-REFRESH-TOKEN' }), /must not contain secrets/)
   const jwtMarker = `eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`
   assert.throws(() => assertSafeEvidence({ notes: `request failed while using Bearer ${jwtMarker}` }), /must not contain secrets/)
+  const fillError = "locator.fill('SYNTHETIC-NOT-A-REAL-PASSWORD-491') timed out"
+  const otpError = 'setup error otpauth://totp/test?secret=SYNTHETIC-NOT-A-REAL-TOTP-SECRET'
+  assert.equal(redactSecrets(fillError), '[redacted]')
+  assert.equal(redactSecrets(otpError), '[redacted]')
+  assert.doesNotMatch(redactSecrets(fillError), /SYNTHETIC-NOT-A-REAL-PASSWORD/)
+  assert.doesNotMatch(redactSecrets(otpError), /SYNTHETIC-NOT-A-REAL-TOTP/)
+  assert.throws(() => assertSafeEvidence({ error: fillError }), /must not contain secrets/)
+  assert.throws(() => assertSafeEvidence({ error: otpError }), /must not contain secrets/)
   const dir = mkdtempSync(join(tmpdir(), 'aaclr1-ev-'))
   assert.throws(() => writeEvidence(dir, 'README.md', { ok: true }), /historical evidence/)
   writeEvidence(dir, 'aaclr1-unit-receipt.json', { ok: true, note: 'unit' })
@@ -406,6 +415,14 @@ test('secret redaction and historical receipt protection', () => {
     /overwrite existing durable evidence/,
   )
   assert.equal(readFileSync(join(dir, 'aaclr1-unit-receipt.json'), 'utf8'), firstBytes)
+  writeEvidence(dir, 'aaclr1-fill-receipt.json', { error: fillError })
+  const fillWritten = JSON.parse(readFileSync(join(dir, 'aaclr1-fill-receipt.json'), 'utf8'))
+  assert.equal(fillWritten.error, '[redacted]')
+  assert.doesNotMatch(readFileSync(join(dir, 'aaclr1-fill-receipt.json'), 'utf8'), /SYNTHETIC-NOT-A-REAL-PASSWORD/)
+  writeEvidence(dir, 'aaclr1-otp-receipt.json', { error: otpError })
+  const otpWritten = JSON.parse(readFileSync(join(dir, 'aaclr1-otp-receipt.json'), 'utf8'))
+  assert.equal(otpWritten.error, '[redacted]')
+  assert.doesNotMatch(readFileSync(join(dir, 'aaclr1-otp-receipt.json'), 'utf8'), /SYNTHETIC-NOT-A-REAL-TOTP/)
   rmSync(dir, { recursive: true, force: true })
 })
 
@@ -1950,17 +1967,43 @@ test('C1 exact consumer artifacts survive cleanup; wrong-run/missing/secret fail
   rmSync(overwriteDest, { recursive: true, force: true })
 })
 
+function gateMap(receipt) {
+  const gates = receipt.gates
+  if (Array.isArray(gates)) return Object.fromEntries(gates.map((gate) => [gate.id, gate]))
+  return gates
+}
+
+function zeroDimensionPng() {
+  const bytes = Buffer.alloc(45)
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(bytes, 0)
+  bytes.writeUInt32BE(13, 8)
+  bytes.write('IHDR', 12)
+  bytes.write('IEND', 37)
+  return bytes
+}
+
+const MALFORMED_MINIMAL_PNG = Buffer.from(
+  '89504e470d0a1a0a0000000d4948445200000002000000020806000000f4e295f00000000d49444154789c636000020000050001aa5072260000000049454e44ae426082',
+  'hex',
+)
+
 test('E1 E2 validate consumer contents and refuse receipt overwrite', async () => {
   const runId = 'aaclr1-20260923T180000Z'
   const identity = createRunIdentity({ runId })
   assertValidPng(MINIMAL_PNG)
-  const validReceipt = createControlledConsumerReceipt({ runId })
-  assert.equal(validReceipt.gates.G6_login_ui_password.result, 'NOT RUN')
+  const validReceipt = createProducerShapedConsumerReceipt({ runId })
+  assert.equal(gateMap(validReceipt).G6_login_ui_password.result, 'NOT RUN')
+  assert.equal(validReceipt.agent, 'Jetnity admin account counts browser flows 1')
+  assert.equal(validReceipt.realExecution, 'NOT RUN')
   assertConsumerGatesJson(validReceipt, { identity })
 
-  const failReceipt = createControlledConsumerReceipt({ runId })
-  failReceipt.gates.G6_login_ui_password.result = 'FAIL'
-  failReceipt.gates.G6_login_ui_password.notes = 'synthetic/no browser execution'
+  const failReceipt = createProducerShapedConsumerReceipt({
+    runId,
+    gateResults: { G6_login_ui_password: 'FAIL' },
+  })
+  assert.equal(gateMap(failReceipt).G6_login_ui_password.result, 'FAIL')
+  assert.equal(failReceipt.thisInvocation.observedResults.includes('FAIL'), true)
+  assert.equal(failReceipt.realExecution, 'NOT RUN')
   assertConsumerGatesJson(failReceipt, { identity })
 
   const home = mkdtempSync(join(tmpdir(), 'aaclr1-e1ok-'))
@@ -1989,8 +2032,10 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   assert.equal(bewerteCleanup(cleanup, { registry }), true)
   assert.equal(existsSync(home), false)
   const published = JSON.parse(readFileSync(join(durable, `${runId}-browser-flows-gates.json`), 'utf8'))
-  assert.equal(published.gates.G6_login_ui_password.result, 'FAIL')
-  assert.notEqual(published.gates.G6_login_ui_password.result, 'PASS')
+  assert.equal(published.agent, 'Jetnity admin account counts browser flows 1')
+  assert.equal(gateMap(published).G6_login_ui_password.result, 'FAIL')
+  assert.notEqual(gateMap(published).G6_login_ui_password.result, 'PASS')
+  assert.equal(published.realExecution, 'NOT RUN')
   assertValidPng(readFileSync(join(durable, `${runId}-counts-desktop.png`)))
 
   const jwtMarker = `eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`
@@ -2084,17 +2129,52 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   assert.equal(existsSync(n3Home), true)
   assert.equal(existsSync(join(n3Durable, `${runId}-browser-flows-gates.json`)), false)
 
-  const incomplete = createControlledConsumerReceipt({ runId })
-  delete incomplete.gates.G19_http_boundary_same_session
+  const incomplete = createProducerShapedConsumerReceipt({ runId })
+  incomplete.gates = incomplete.gates.filter((gate) => gate.id !== 'G19_http_boundary_same_session')
   assert.throws(() => assertConsumerGatesJson(incomplete, { identity }), /missing gate/)
-  const duplicate = createControlledConsumerReceipt({ runId })
+  const duplicate = createProducerShapedConsumerReceipt({ runId })
   duplicate.gates = [
-    ...BROWSER_GATES.map((id) => duplicate.gates[id]),
-    { id: 'G6_login_ui_password', result: 'NOT RUN', evidence: null, notes: 'dup' },
+    ...duplicate.gates,
+    { id: 'G6_login_ui_password', result: 'NOT RUN', notes: 'dup' },
   ]
   assert.throws(() => assertConsumerGatesJson(duplicate, { identity }), /duplicate gate/)
-  assert.throws(() => assertValidPng(Buffer.alloc(40, 0x41)), /not a structurally valid PNG/)
+  assert.throws(() => assertValidPng(Buffer.alloc(40, 0x41)), /not a structurally valid PNG|too small/)
   assert.throws(() => assertValidPng(Buffer.alloc(0)), /empty image/)
+  assert.throws(() => assertValidPng(zeroDimensionPng()), /zero PNG dimensions|missing PNG image data|invalid PNG CRC|too small/)
+  assert.throws(() => assertValidPng(MALFORMED_MINIMAL_PNG), /invalid PNG image payload|invalid PNG CRC|does not match IHDR/)
+  const drifted = createProducerShapedConsumerReceipt({ runId })
+  drifted.unexpectedField = true
+  assert.throws(() => assertConsumerGatesJson(drifted, { identity }), /unsupported field unexpectedField/)
+
+  const fakeHome = mkdtempSync(join(tmpdir(), 'aaclr1-fakepng-'))
+  const fakePrivate = mkdtempSync(join(fakeHome, 'evidence-'))
+  const fakeDurable = mkdtempSync(join(tmpdir(), 'aaclr1-fakepngd-'))
+  writeExactConsumerArtifacts(fakePrivate, runId, {
+    receipt: createProducerShapedConsumerReceipt({ runId }),
+    desktop: zeroDimensionPng(),
+    mobile: MALFORMED_MINIMAL_PNG,
+  })
+  const fakeReg = createOwnershipRegistry({ runId, privateHome: fakeHome, evidenceDir: fakePrivate })
+  const fake = await raeumeOwnedAuf({
+    privateHome: fakeHome,
+    registry: fakeReg,
+    evidenceDir: fakePrivate,
+    browserRegistry: fakeReg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: fakePrivate,
+      destDir: fakeDurable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [fakeHome],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  assert.equal(fake.exportFailed, true)
+  assert.equal(bewerteCleanup(fake, { registry: fakeReg }), false)
+  assert.equal(existsSync(fakeHome), true)
+  assert.equal(readdirSync(fakeDurable).length, 0)
 
   const rtHome = mkdtempSync(join(tmpdir(), 'aaclr1-rt-'))
   const rtPrivate = mkdtempSync(join(rtHome, 'evidence-'))
@@ -2146,6 +2226,33 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   assert.equal(secondFailure.collision, true)
   assert.equal(readFileSync(join(receiptDir, `${runId}-failure.json`), 'utf8'), originalFailure)
 
+  const fillError = "locator.fill('SYNTHETIC-NOT-A-REAL-PASSWORD-491') timed out"
+  const otpError = 'setup error otpauth://totp/test?secret=SYNTHETIC-NOT-A-REAL-TOTP-SECRET'
+  const writerDir = mkdtempSync(join(tmpdir(), 'aaclr1-e1c-'))
+  const fillPersist = persistFailureReceipt({
+    evidenceDir: writerDir,
+    runId: `${runId}-fill`,
+    error: new Error(fillError),
+    cleanup: { note: otpError },
+    matrix: { G20_owned_cleanup: { result: 'FAIL' } },
+  })
+  assert.equal(fillPersist.ok, true)
+  const fillFailure = JSON.parse(readFileSync(join(writerDir, `${runId}-fill-failure.json`), 'utf8'))
+  assert.equal(fillFailure.error, '[redacted]')
+  assert.equal(fillFailure.cleanup.note, '[redacted]')
+  assert.doesNotMatch(JSON.stringify(fillFailure), /SYNTHETIC-NOT-A-REAL-PASSWORD|SYNTHETIC-NOT-A-REAL-TOTP|otpauth:\/\/|locator\.fill/)
+  const otpPersist = persistFailureReceipt({
+    evidenceDir: writerDir,
+    runId: `${runId}-otp`,
+    error: new Error(otpError),
+    cleanup: {},
+    matrix: {},
+  })
+  assert.equal(otpPersist.ok, true)
+  const otpFailure = JSON.parse(readFileSync(join(writerDir, `${runId}-otp-failure.json`), 'utf8'))
+  assert.equal(otpFailure.error, '[redacted]')
+  assert.doesNotMatch(JSON.stringify(otpFailure), /SYNTHETIC-NOT-A-REAL-TOTP|otpauth:\/\//)
+
   const runnerNow = new Date('2026-09-23T18:15:00.000Z')
   const runnerId = 'aaclr1-20260923T181500Z'
   const runnerEvidence = mkdtempSync(join(tmpdir(), 'aaclr1-runner-'))
@@ -2184,6 +2291,9 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   rmSync(n3Durable, { recursive: true, force: true })
   rmSync(rtDurable, { recursive: true, force: true })
   rmSync(receiptDir, { recursive: true, force: true })
+  rmSync(writerDir, { recursive: true, force: true })
+  rmSync(fakeHome, { recursive: true, force: true })
+  rmSync(fakeDurable, { recursive: true, force: true })
   rmSync(runnerEvidence, { recursive: true, force: true })
 })
 
