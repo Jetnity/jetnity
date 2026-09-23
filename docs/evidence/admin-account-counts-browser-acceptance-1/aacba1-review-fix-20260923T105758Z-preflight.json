@@ -1,0 +1,84 @@
+{
+  "at": "2026-09-23T10:57:58.778Z",
+  "selectedRoute": "official-supabase-cli-local-development + docker-api-runtime + playwright-chrome",
+  "implementation": "preflight-and-source-only",
+  "canRunFullStack": false,
+  "toolingReadyForLaterImplementation": false,
+  "blockers": [
+    {
+      "id": "container-runtime",
+      "exact": "No Docker-compatible runtime or local Docker API socket.",
+      "command": "resolved docker/podman/nerdctl; docker info; ls /var/run/docker.sock",
+      "error": "executable not found / socket absent",
+      "policy": "Official Supabase local-development requires a usable container manager. Privileged container/daemon setup, remote Docker context, and hosted Supabase fallback are forbidden.",
+      "severity": "execution-blocker",
+      "notAProductionIncident": true
+    },
+    {
+      "id": "supabase-cli",
+      "exact": "No supabase executable on the isolated PATH. Unpinned npx --yes latest is forbidden.",
+      "resolved": null,
+      "version": null,
+      "helpVerified": false,
+      "identityVerified": false,
+      "severity": "execution-blocker",
+      "notAProductionIncident": true
+    }
+  ],
+  "container": {
+    "present": false,
+    "usable": false,
+    "commands": [],
+    "sockets": [],
+    "note": "No docker/podman/nerdctl executable on the isolated PATH and no local Docker/Podman socket.",
+    "severity": "execution-blocker",
+    "notAProductionIncident": true
+  },
+  "supabase": {
+    "available": false,
+    "via": null,
+    "pinned": false,
+    "identityVerified": false,
+    "identity": "absent",
+    "resolved": null,
+    "version": null,
+    "helpVerified": false,
+    "startRequiresContainerRuntime": true,
+    "officialRoute": "https://supabase.com/docs/guides/local-development",
+    "totpDocs": "https://supabase.com/docs/guides/auth/auth-mfa/totp",
+    "note": "No supabase executable on the isolated PATH. Unpinned npx --yes / remote latest resolution is forbidden. Treat as a NOT RUN tooling prerequisite."
+  },
+  "browser": {
+    "available": false,
+    "launched": false,
+    "chromeVersion": "Google Chrome 148.0.7778.96",
+    "playwrightIsolated": false,
+    "closeProved": true,
+    "closeTimedOut": null,
+    "note": "Browser launch skipped because container/CLI prerequisites already block. Avoid leftover profile/HOME from an unnecessary Chrome start."
+  },
+  "node": {
+    "available": true,
+    "version": "v22.14.0",
+    "resolved": "/exec-daemon/node"
+  },
+  "environment": {
+    "hostedMarkersPresent": [],
+    "parentHasHostedSupabaseNames": true,
+    "childHasHostedSupabaseNames": false,
+    "childForbiddenKeyCount": 0,
+    "forbiddenConnectionKeyCount": 4,
+    "outboundProviderKeyCount": 0,
+    "usedAllowlistedChildEnv": true,
+    "privateHome": true,
+    "note": "Parent process may contain hosted connector names. Classification uses names only. Actual subprocesses receive a rebuilt allowlisted environment with a private HOME and no inherited connector/database/provider credentials."
+  },
+  "limitations": [
+    "This command does not start a stack, provision GoTrue, or drive the application even if tooling is present.",
+    "Exact self-hosted gateway/image versions are NOT RUN until an owned `supabase start` is implemented and succeeds.",
+    "Do not assume historical Compose or Kong defaults.",
+    "Hosted Production/Development and the parent connector credentials are unused.",
+    "Missing Docker is an execution blocker, not a Production P0 incident.",
+    "A PATH binary is not a pinned tooling identity."
+  ]
+}

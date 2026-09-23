@@ -1,0 +1,7 @@
+# Run-owned private state must never enter Git.
+private/
+local-stack/.temp/
+*.secret
+*.otpauth
+*.jwt
+*.cookie

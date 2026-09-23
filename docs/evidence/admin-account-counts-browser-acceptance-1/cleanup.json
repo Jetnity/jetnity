@@ -1,0 +1,16 @@
+{
+  "cleanup": {
+    "processesStopped": true,
+    "reaped": true,
+    "neverStarted": true,
+    "reports": [],
+    "removals": [],
+    "usedPkill": false,
+    "usedDockerPrune": false
+  },
+  "cleanupProbe": {
+    "blocked": false,
+    "allowed": true,
+    "unused": true
+  }
+}
