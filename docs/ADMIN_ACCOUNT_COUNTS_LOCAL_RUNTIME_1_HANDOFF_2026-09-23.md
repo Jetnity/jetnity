@@ -1,0 +1,49 @@
+# Admin Account Counts Local Runtime 1 — HANDOFF
+
+Read this file instead of chat memory.
+
+## Authority
+
+1. Latest explicit Product-Owner / Technical-Lead instruction
+2. Immutable task `docs/ADMIN_ACCOUNT_COUNTS_LOCAL_RUNTIME_1_TASK_2026-09-23.md` v1 at `0aa33e88a021756a5cee64a130d544122977880a`
+3. Binding TL re-review on `b74eadee32d9044586d95018b1401eedaa57cbe5` (CHANGES REQUIRED) — this head is the same-session O2a/O2b package
+4. Prior accepted O1 foreign-resource correction on that head
+5. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+6. This STATUS / SELF_REVIEW
+
+Machine mode is `NORMAL`. Special Product-Owner gates remain. Cursor never Ready/merges.
+
+## Same-session vs new session
+
+- Immediate TL re-review of this exact PR/head = **same** logical agent, Generation 1, session `bc-1054a840-ce3b-4451-9903-7836344b5149`, model `cursor-grok-4.6-high-fast`
+- A new logical slice, Auto, or model substitution = **forbidden** from this handoff
+- Do not resume completed #550/#552/#551/#553/#554/#555/#556/#557 sessions
+- Do not duplicate this O2 correction if already present on the current head
+- #559 remains stopped at `3e5e5039`; do not import or reopen it
+
+## How to continue
+
+1. Do not change product, Auth, SQL, config, migration, root package/lock or CI files. Do not edit the accepted #556 lifecycle module.
+2. Do not import unmerged sibling browser-flow code.
+3. `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs`
+4. `node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs` — default no-start. Exit 2 is BLOCKED / not a full PASS.
+5. `--cli-archive` / `--cli-checksums` remain the offline official-byte path. Do not download or run an official binary unless a later TL gate authorizes it.
+6. `--full` must load `scripts/e2e/admin-account-counts-browser-flows-1/flows.mjs`. Absence is `NOT_IMPLEMENTED`.
+7. Historical receipts stay dated. Exclusive creation refuses overwrite.
+8. Integration order: this runtime lane first, then browser lane after exact TL-authorized main sync.
+
+## Code vs actual execution
+
+| Capability | Code after O2 | Executed here |
+| --- | --- | --- |
+| Isolated env / source pins / cleanup | yes | helper/contract tests |
+| Per-resource container/volume identity (O1) | yes | unchanged; still 38+ prior cases |
+| Stack CLI-child stop in final cleanup (O2a) | yes | controlled non-reaping child; HOME retained |
+| Exact project id in default start discovery (O2b) | yes | actual defaultStartRuntime; CLI-project labels only |
+| Official CLI / Docker / GoTrue / Next / live observer | yes (prior wiring) | **NOT RUN** |
+| Sibling UI G6–G19 | sibling-owned | **NOT RUN** |
+| Code-complete claim | **false** | n/a |
+
+## Secrets
+
+Per-run passwords, TOTP, JWT, cookies, service-role and database URLs stay out of Git. Durable receipts are the public evidence folder. Consumer export refuses credential-shaped fields and unreviewed PNG metadata.

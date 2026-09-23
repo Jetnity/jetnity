@@ -1,0 +1,60 @@
+{
+  "agent": "Jetnity admin account counts local runtime 1",
+  "generation": 1,
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_LOCAL_RUNTIME_1_TASK_2026-09-23.md",
+  "taskSeed": "0aa33e88a021756a5cee64a130d544122977880a",
+  "branch": "test/admin-account-counts-local-runtime-1",
+  "productBaseline": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "runId": "aaclr1-20260923T161949Z",
+  "mode": "preflight",
+  "verdict": "BLOCKED_ENVIRONMENT",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+  "implementation": {
+    "preflight": "IMPLEMENTED",
+    "sourcePins": "IMPLEMENTED",
+    "ownedLifecycle": "REVIEW_FIX_R2",
+    "envGuard": "REUSED_AND_EXTENDED",
+    "cliIdentity": "REVIEW_FIX_R1_R3",
+    "dockerCapability": "IMPLEMENTED",
+    "stackStart": "REVIEW_FIX_R2",
+    "migrationReplay": "REVIEW_FIX_R5",
+    "catalogVerification": "REVIEW_FIX_R5",
+    "fixtureProvision": "IMPLEMENTED",
+    "appLaunch": "REVIEW_FIX_R1",
+    "serverRpcObservation": "REVIEW_FIX_R4",
+    "browserSessionFactory": "REVIEW_FIX_R4",
+    "frozenContext": "IMPLEMENTED",
+    "orchestration": "REVIEW_FIX_R1_R2",
+    "browserFlows": "SIBLING_OWNED",
+    "realStackExecution": "NOT_RUN",
+    "codeCompleteClaim": false,
+    "note": "Focused remaining R1/R3/R2/R5 corrections from review 5293516993. Explicit --cli-archive/--cli-checksums hash official input bytes and extract into newly owned tooling; sidecar/archiveVerified is never a trust root. Default remains no-start/no-download. Docker cleanup uses resource-specific ABSENT vs tool/context UNKNOWN, classifies every mount as owned/foreign/unresolved, and treats already-removed resources as idempotent ABSENT. Catalog PASS compares exact accepted prosrc and proconfig, not token heuristics. Helper tests are not full local execution. Official binaries, Docker and the real stack were not executed in this correction."
+  },
+  "summary": {
+    "counts": {
+      "PASS": 2,
+      "FAIL": 0,
+      "BLOCKED": 1,
+      "NOT RUN": 18,
+      "PARTIAL": 0,
+      "NOT IMPLEMENTED": 0,
+      "UNKNOWN": 0
+    },
+    "fullLocalExecution": false,
+    "applicationRan": false,
+    "preflightBlocked": true
+  },
+  "plannedSql": [
+    "scripts/db/admin-account-counts-1-candidate.sql",
+    "scripts/db/admin-account-counts-delivery-1-rpc.sql"
+  ],
+  "browserPresent": false,
+  "fullLocalExecution": false,
+  "notDone": [
+    "No hosted Production or Development access.",
+    "No Ready/merge.",
+    "No sibling-code import.",
+    "No #550 bootstrap overlay.",
+    "Integrated full-browser PASS remains a later TL gate."
+  ]
+}
