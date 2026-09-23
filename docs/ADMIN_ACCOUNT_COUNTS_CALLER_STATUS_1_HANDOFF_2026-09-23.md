@@ -15,6 +15,7 @@ Für den nächsten unabhängigen Technical-Lead-Review. Nicht für einen neuen P
 - Branch: `fix/admin-account-counts-caller-status-1`
 - Baseline: `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`
 - Task v1: `99fa42dca4c46116498d0cc74ea7cd26e467b591`
+- Implementation persist: `bd44228d7ced523b85ff699b209fd42794900349`
 - Do not resume closed #555 or active #556 sessions
 - Do not import unmerged #556 work
 

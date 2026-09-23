@@ -7,6 +7,8 @@ Draft PR: #557
 Branch: `fix/admin-account-counts-caller-status-1`  
 Binding task: `docs/ADMIN_ACCOUNT_COUNTS_CALLER_STATUS_1_TASK_2026-09-23.md` v1 at `99fa42dca4c46116498d0cc74ea7cd26e467b591`  
 Exact baseline / merge-base: `main@87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`  
+Implementation persist: `bd44228d7ced523b85ff699b209fd42794900349`  
+Docs persist / freeze candidate: this STATUS commit on `fix/admin-account-counts-caller-status-1`  
 Mode: NORMAL
 
 Cursor-Agent: **Jetnity admin account counts caller status 1**, Generation 1  
