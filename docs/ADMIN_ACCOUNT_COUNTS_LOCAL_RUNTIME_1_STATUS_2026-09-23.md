@@ -1,7 +1,7 @@
 # Admin Account Counts Local Runtime 1 — STATUS
 
 Stand: 2026-09-23  
-Slice: **O1 REVIEW 5296288833 FIX APPLIED / NOT CLAIMED CODE-COMPLETE / REAL STACK NOT RUN / STOP for independent TL exact-head re-review**
+Slice: **O2a/O2b REVIEW FIX APPLIED / NOT CLAIMED CODE-COMPLETE / REAL STACK NOT RUN / STOP for independent TL exact-head re-review**
 
 ## Live pins (reconstruct if they move)
 
@@ -10,8 +10,8 @@ Slice: **O1 REVIEW 5296288833 FIX APPLIED / NOT CLAIMED CODE-COMPLETE / REAL STA
 | Mode | `NORMAL` (`.jetnity/operating-mode.json`) |
 | Product / integration baseline | `fa7f651c023eb361fb142cbb931bc702f3a3d213` |
 | Task seed | `0aa33e88a021756a5cee64a130d544122977880a` |
-| Binding TL re-review | `5296288833` on `9fff0491303c1e05a5deffefbbb3408702df97a0` = CHANGES REQUIRED |
-| Independent diagnostic spec | comment `5802215478` |
+| Binding TL re-review | exact head `b74eadee32d9044586d95018b1401eedaa57cbe5` = CHANGES REQUIRED (O2a/O2b) |
+| Prior accepted ownership | O1 on `b74eadee` retained |
 | Branch | `test/admin-account-counts-local-runtime-1` |
 | PR | https://github.com/Jetnity/jetnity/pull/558 (Draft) |
 | Frozen interface | Task §4 `jetnity.account-counts.local-acceptance.v1` (unchanged) |
@@ -29,23 +29,21 @@ Slice: **O1 REVIEW 5296288833 FIX APPLIED / NOT CLAIMED CODE-COMPLETE / REAL STA
 
 ## What this correction did
 
-Same-session O1 package from review `5296288833` in owned runtime files only. Preserved accepted N01–N03 image/result controls, E1a producer format, E1c whole-string fill/otpauth redaction, E2 exclusive writes, C1 names/run mapping, C2 explicit/default routing, and F1–F3. Task §4 unchanged. #556 lifecycle module not edited. #559 stays stopped at `3e5e5039`.
+Same-session O2a/O2b package on the accepted O1 head. Preserved O1 per-resource identity, N01–N03 image/result controls, E1a/E1c/E2, C1/C2 and F1–F3. Task §4 unchanged. #556 lifecycle module not edited. #559 stays stopped at `3e5e5039`.
 
-- **S02** — Volume identity comes from `volume inspect` labels. A parent container's run label cannot authorize `volume rm` of a foreign/other-run volume.
-- **S03** — Network membership is discovery only. An explicit foreign container label is not overridden by attachment to the run network; no stop/rm is attempted.
-- **S04** — Live foreign identity wins over a stale same-name `owned` registry record. Conflict retains the foreign resource and refuses destructive commands, including exact-project CLI `stop`.
-- Genuinely owned container/volume teardown still runs, including official CLI objects recognized from inspected `com.supabase.cli.project`. Already-absent resources stay idempotent. Daemon failure attempts no stop/rm/volume rm/network rm.
+- **O2a** — `raeumeOwnedAuf` emits `stack-cli-child` from `stoppeOwnedStack().cliChild`. Unconfirmed termination sets unknown/ownershipRetained, keeps `processesStopped` false, retains private HOME, and `bewerteCleanup`/G20 fail. Confirmed reaped and never-started remain safe. No pkill.
+- **O2b** — `defaultStartRuntime` passes `prepared.projectId` into `starteOwnedStack` → `collectOwnedDockerResources`. A CLI-project-labelled container/volume without `jetnity.aaclr1.run` is owned only for the exact project, contributes loopback bindings, and keeps that authority for teardown. Wrong project fails closed (no bindings / no destroy).
 
-`IMPLEMENTATION.codeCompleteClaim` is **false**. Helper ownership tests are not a Docker or official-CLI run.
+`IMPLEMENTATION.codeCompleteClaim` is **false**.
 
 ## What is not done
 
 - No owned GoTrue/PostgREST/Next.js/Playwright stack was started
 - No Docker/CLI install, official-binary download, hosted fallback, Mac access, sibling-code import, main sync
 - No Ready, merge, rebase, force, reset, cherry-pick, or follow-up agent
-- Helper/contract tests **38/38 PASS**; they are not full local execution
-- Default no-start receipt `aaclr1-20260923T202757Z` is `BLOCKED_ENVIRONMENT` / exit 2 / `fullLocalExecution=false` / `codeCompleteClaim=false`
+- Helper/contract tests **40/40 PASS**; they are not full local execution
+- Default no-start receipt `aaclr1-20260923T220919Z` is `BLOCKED_ENVIRONMENT` / exit 2 / `fullLocalExecution=false` / `codeCompleteClaim=false`
 
 ## First unfinished action
 
-Independent Technical-Lead exact-head re-review of this 5296288833 head. Helper PASS is not full local execution. Cursor does not Ready or merge.
+Independent Technical-Lead exact-head re-review of this O2 head. Helper PASS is not full local execution. Cursor does not Ready or merge.

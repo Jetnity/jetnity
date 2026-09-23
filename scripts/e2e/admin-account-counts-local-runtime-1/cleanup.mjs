@@ -108,6 +108,16 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs, exportArtifac
       projectId: registry?.projectId || state.projectId || network?.projectId,
     })
     reports.push({ kind: 'stack', ...stackReport })
+    if (stackChild || stackReport?.cliChild) {
+      const cliChild = stackReport?.cliChild || {
+        reaped: false,
+        neverStarted: false,
+        unknown: true,
+        ownershipRetained: true,
+        error: 'stack CLI child stop outcome missing',
+      }
+      reports.push({ kind: 'stack-cli-child', ...cliChild })
+    }
   }
 
   let artifactExport = null
@@ -135,8 +145,20 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs, exportArtifac
     || (Array.isArray(stackReport?.unresolvedVolumes) && stackReport.unresolvedVolumes.length > 0),
   )
   const exportFailed = artifactExport?.ok === false
-  const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true || resourceUnknown || exportFailed
-  const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false) || exportFailed
+  const cliChild = stackReport?.cliChild
+  const cliChildUnconfirmed = Boolean(
+    (stackChild || cliChild)
+    && cliChild?.reaped !== true
+    && cliChild?.neverStarted !== true
+  )
+  const unknown = reports.some((item) => item.unknown === true)
+    || registry?.stopUnknown === true
+    || resourceUnknown
+    || exportFailed
+    || cliChildUnconfirmed
+  const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false)
+    || exportFailed
+    || cliChildUnconfirmed
   const volumesUnconfirmed = Boolean(
     stackReport
     && (
@@ -167,7 +189,7 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs, exportArtifac
     || registry?.hadFallibleAcquisition,
   )
   const flags = {
-    processesStopped: processesStopped || (!appChild && !stackChild),
+    processesStopped: processesStopped || (!appChild && !stackChild && !cliChild),
     reaped: !ownershipRetained && !unknown,
     neverStarted: !live,
     unknown,
@@ -252,6 +274,7 @@ export function bewerteCleanup(cleanup, { registry = null, mode = 'preflight' } 
   if (cleanup.incompleteRegistry === true) return false
   if (cleanup.dockerServicesUnverified === true && registry?.hadFallibleAcquisition) return false
   if (cleanup.exportFailed === true) return false
+  if (cleanup.processesStopped === false && cleanup.neverStarted !== true) return false
   void mode
   return true
 }

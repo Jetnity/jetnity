@@ -493,6 +493,7 @@ export async function starteOwnedStack({
   timeoutMs = TIMEOUTS.stackStartMs,
   registry,
   runId,
+  projectId,
 } = {}) {
   if (!cliBin || !existsSync(cliBin)) {
     throw notACompletedExecution('owned supabase start', 'verified CLI binary is absent')
@@ -504,8 +505,10 @@ export async function starteOwnedStack({
   refuseBootstrapOverlay({ plannedSqlPaths: [SOURCE_PATHS.producer, SOURCE_PATHS.wrapper], target: 'gotrue' })
   const started = {
     child: null,
-    network: { name: networkName, created: false },
+    network: { name: networkName, created: false, projectId: projectId || null },
     workdir,
+    runId: runId || null,
+    projectId: projectId || null,
     dockerServicesConfirmed: false,
     containers: [],
     volumes: [],
@@ -514,8 +517,8 @@ export async function starteOwnedStack({
   registerHandle(registry, 'stack', started)
   try {
     const network = await erzeugeOwnedNetwork({ dockerBin, env, networkName, execFile, runId })
-    started.network = network
-    registerHandle(registry, 'network', network)
+    started.network = { ...network, projectId: projectId || network.projectId || null }
+    registerHandle(registry, 'network', started.network)
     const publication = assertPreLaunchPublication({ plan, network })
     started.publication = publication
     const args = baueStartArgumente({ networkId: network.name, excludeNames })
@@ -534,7 +537,14 @@ export async function starteOwnedStack({
     }
     const resources = inspectBindings
       ? { bindings: await inspectBindings({ dockerBin, env, networkName: network.name, execFile }), containers: [], volumes: [], inventoryComplete: false }
-      : collectOwnedDockerResources({ dockerBin, networkName: network.name, env, execFile, runId })
+      : collectOwnedDockerResources({
+        dockerBin,
+        networkName: network.name,
+        env,
+        execFile,
+        runId,
+        projectId,
+      })
     assertLoopbackBindings(resources.bindings)
     started.dockerServicesConfirmed = true
     started.bindings = resources.bindings

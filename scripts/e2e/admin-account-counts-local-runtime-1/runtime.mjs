@@ -91,6 +91,7 @@ export async function defaultStartRuntime({
     timeoutMs: TIMEOUTS.stackStartMs,
     registry,
     runId: prepared.projectId,
+    projectId: prepared.projectId,
   })
   owned.stack = stack
   owned.stackChild = stack.child

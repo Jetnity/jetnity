@@ -1939,6 +1939,169 @@ test('O1 collector→reconcile→stop refuses foreign identity and keeps owned t
   rmSync(home, { recursive: true, force: true })
 })
 
+function hideExitProof(child) {
+  return {
+    get pid() { return child.pid },
+    get exitCode() { return null },
+    get signalCode() { return null },
+    kill() { return true },
+    on: (...args) => child.on(...args),
+    off: (...args) => child.off(...args),
+    once: (...args) => child.once(...args),
+  }
+}
+
+test('O2a unconfirmed stack CLI child retains HOME and fails G20; confirmed stop remains safe', async () => {
+  const absentDocker = (_bin, args) => {
+    if (args[0] === 'ps') return ''
+    if (args[0] === 'inspect') throw new Error(`No such container: ${args[1]}`)
+    if (args[0] === 'volume' && args[1] === 'inspect') throw new Error(`No such volume: ${args[2]}`)
+    if (args[0] === 'volume' && args[1] === 'rm') throw new Error(`No such volume: ${args[3] || args[2]}`)
+    if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+      throw new Error(`No such network: ${args[2]}`)
+    }
+    if (args[0] === 'stop' && args.length === 1) return ''
+    return ''
+  }
+
+  await withOwnedChild(IGNORE_TERM, async (real) => {
+    const home = mkdtempSync(join(tmpdir(), 'aaclr1-o2a-live-'))
+    const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: home })
+    registerHandle(registry, 'network', { name: 'owned-net', created: true, runId: 'aaclr1-o2a' })
+    registerHandle(registry, 'stackChild', hideExitProof(real))
+    registerHandle(registry, 'stack', { child: registry.stackChild, inventoryComplete: true })
+    registerHandle(registry, 'dockerBin', 'docker')
+    const cleanup = await raeumeOwnedAuf({
+      privateHome: home,
+      registry,
+      dockerBin: 'docker',
+      execFile: absentDocker,
+    })
+    assert.ok(cleanup.reports.some((item) => item.kind === 'stack-cli-child' && item.reaped !== true))
+    assert.equal(cleanup.ownershipRetained, true)
+    assert.equal(cleanup.unknown, true)
+    assert.equal(cleanup.processesStopped, false)
+    assert.equal(existsSync(home), true)
+    assert.ok(cleanup.removals.some((item) => item.path === home && item.removed === false))
+    assert.equal(bewerteCleanup(cleanup, { registry }), false)
+    rmSync(home, { recursive: true, force: true })
+  })
+
+  const doneHome = mkdtempSync(join(tmpdir(), 'aaclr1-o2a-done-'))
+  const doneChild = spawn(process.execPath, ['-e', 'process.exit(0)'], {
+    stdio: ['ignore', 'ignore', 'ignore'],
+  })
+  await once(doneChild, 'exit')
+  const doneReg = createOwnershipRegistry({ privateHome: doneHome, evidenceDir: doneHome })
+  registerHandle(doneReg, 'network', { name: 'owned-net', created: true, runId: 'aaclr1-o2a' })
+  registerHandle(doneReg, 'stackChild', doneChild)
+  registerHandle(doneReg, 'stack', { child: doneChild, inventoryComplete: true })
+  registerHandle(doneReg, 'dockerBin', 'docker')
+  const confirmed = await raeumeOwnedAuf({
+    privateHome: doneHome,
+    registry: doneReg,
+    dockerBin: 'docker',
+    execFile: absentDocker,
+  })
+  assert.ok(confirmed.reports.some((item) => item.kind === 'stack-cli-child' && item.reaped === true))
+  assert.equal(confirmed.ownershipRetained, false)
+  assert.equal(confirmed.unknown, false)
+  assert.equal(confirmed.processesStopped, true)
+  assert.equal(existsSync(doneHome), false)
+  assert.equal(bewerteCleanup(confirmed, { registry: doneReg }), true)
+})
+
+test('O2b default start threads exact CLI project identity into discovery and teardown', async () => {
+  const projectId = 'aaclr1-o2b-exact'
+  const otherProject = 'aaclr1-o2b-other'
+  const networkName = `aaclr1-${projectId}`.slice(0, 60)
+  const cliContainer = {
+    Id: 'cli-db-1',
+    Name: '/supabase_db_aaclr1-o2b-exact',
+    Config: { Labels: { [CLI_PROJECT_LABEL]: projectId } },
+    HostConfig: {
+      NetworkMode: networkName,
+      PortBindings: { '5432/tcp': [{ HostIp: '127.0.0.1', HostPort: '54322' }] },
+    },
+    NetworkSettings: { Networks: { [networkName]: {} } },
+    Mounts: [{ Type: 'volume', Name: 'cli-volume', Destination: '/var/lib/postgresql/data' }],
+  }
+  const cliVolume = { Name: 'cli-volume', Driver: 'local', Labels: { [CLI_PROJECT_LABEL]: projectId } }
+
+  async function startWithLabels(labels, volumeLabels) {
+    const home = mkdtempSync(join(tmpdir(), 'aaclr1-o2b-'))
+    const evidenceDir = mkdtempSync(join(home, 'evidence-'))
+    const workdir = mkdtempSync(join(home, 'workdir-'))
+    const registry = createOwnershipRegistry({ runId: 'aaclr1-o2b-run', privateHome: home, evidenceDir })
+    const owned = { evidenceDir, registry, privateHome: home, browserRegistry: registry.browsers }
+    const calls = []
+    const removed = { containers: new Set(), volumes: new Set() }
+    const container = { ...cliContainer, Config: { Labels: labels } }
+    const volume = { ...cliVolume, Labels: volumeLabels }
+    try {
+      await defaultStartRuntime({
+        owned,
+        plan: planeLoopbackDienste({ apiPort: 54321, dbPort: 54322, appPort: 3000, observerPort: 3999 }),
+        prepared: { projectId, workdir },
+        source: {},
+        cli: { identityVerified: true, archiveBound: true, resolved: process.execPath },
+        docker: { usable: true, selected: { path: 'docker' } },
+        childEnv: { PATH: '/usr/bin' },
+        execFile: (bin, args) => {
+          calls.push({ bin: String(bin), args: args.slice() })
+          if (args[0] === 'status') throw new Error('status-after-stack')
+          if (args[0] === 'network' && args[1] === 'create') return 'netid'
+          return o1ResourceExec({ container, volume, removed, calls: [] })(bin, args)
+        },
+        spawnFn: () => spawn(process.execPath, ['-e', 'process.exit(0)'], {
+          stdio: ['ignore', 'ignore', 'ignore'],
+        }),
+      })
+    } catch (error) {
+      return { owned, home, calls, error, removed }
+    }
+    return { owned, home, calls, error: null, removed }
+  }
+
+  const exact = await startWithLabels({ [CLI_PROJECT_LABEL]: projectId }, { [CLI_PROJECT_LABEL]: projectId })
+  assert.match(String(exact.error?.message || ''), /status-after-stack/)
+  assert.equal(exact.owned.stack.projectId, projectId)
+  assert.equal(exact.owned.registry.projectId, projectId)
+  assert.equal(exact.owned.stack.containers[0].ownership, 'owned')
+  assert.equal(exact.owned.stack.containers[0].reason, 'exact CLI project')
+  assert.equal(exact.owned.stack.volumes[0].ownership, 'owned')
+  assert.ok(exact.owned.stack.bindings.some((item) => item.HostIp === '127.0.0.1' && item.HostPort === '54322'))
+  assert.equal(exact.owned.stack.dockerServicesConfirmed, true)
+  const teardownCalls = []
+  registerHandle(exact.owned.registry, 'execFile', o1ResourceExec({
+    container: cliContainer,
+    volume: cliVolume,
+    removed: { containers: new Set(), volumes: new Set() },
+    calls: teardownCalls,
+  }))
+  const teardown = await raeumeOwnedAuf({
+    privateHome: exact.home,
+    registry: exact.owned.registry,
+    dockerBin: 'docker',
+    cliBin: process.execPath,
+    workdir: exact.owned.stack.workdir,
+    projectId,
+    execFile: exact.owned.registry.execFile,
+  })
+  assert.ok(teardownCalls.some((item) => item.args[0] === 'stop' && item.args[1] === 'cli-db-1'))
+  assert.ok(teardownCalls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  assert.equal(exact.owned.registry.projectId, projectId)
+  assert.equal(teardown.neverStarted, false)
+  rmSync(exact.home, { recursive: true, force: true })
+
+  const wrong = await startWithLabels({ [CLI_PROJECT_LABEL]: otherProject }, { [CLI_PROJECT_LABEL]: otherProject })
+  assert.match(String(wrong.error?.message || ''), /No published bindings|not a completed/)
+  assert.equal(wrong.owned.stack, undefined)
+  assert.ok(!wrong.calls.some((item) => item.args[0] === 'stop' && item.args[1] === 'cli-db-1'))
+  assert.ok(!wrong.calls.some((item) => item.args[0] === 'volume' && item.args[1] === 'rm'))
+  rmSync(wrong.home, { recursive: true, force: true })
+})
+
 function writeSizedMemberTar(dir, size, memberName = 'supabase') {
   writeFileSync(join(dir, memberName), Buffer.alloc(size, 65))
   const archivePath = join(dir, `${memberName}-${size}.tar.gz`)

@@ -18,12 +18,12 @@ export const IMPLEMENTATION = Object.freeze({
   serverRpcObservation: 'IMPLEMENTED',
   browserSessionFactory: 'REVIEW_FIX_F3',
   frozenContext: 'IMPLEMENTED',
-  orchestration: 'REVIEW_FIX_O1',
+  orchestration: 'REVIEW_FIX_O2',
   browserFlows: 'SIBLING_OWNED',
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'O1 from review 5296288833. Container and volume identity are classified from each resource\'s own inspect metadata. Container labels do not authorize mounted volumes; network membership does not override an explicit foreign container label; a stale owned record cannot suppress live foreign identity. Exact-project CLI stop is skipped when foreign, unresolved or conflicting identity is present. Official CLI objects are recognized from inspected com.supabase.cli.project, not by inventing or applying labels. Genuinely owned teardown and already-absent idempotence remain. N01–N03 image/result controls and earlier evidence fixes stay unchanged. Official binaries, Docker and the real stack were not executed in this correction.',
+    'O2a/O2b on the O1 head. Final cleanup treats the nested stack CLI-child stop as authoritative: unconfirmed termination retains private HOME and fails G20; confirmed reaped/never-started remains safe. defaultStartRuntime threads prepared.projectId through starteOwnedStack into first collectOwnedDockerResources so CLI-project-labelled containers/volumes without RUN_LABEL are owned only for the exact project and keep that authority for teardown. O1 foreign-resource rules and N01–N03/E1/E2/C1/C2/F1–F3 stay. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {

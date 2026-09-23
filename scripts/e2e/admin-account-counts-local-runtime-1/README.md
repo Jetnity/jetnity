@@ -84,6 +84,9 @@ foreign container label. A stale same-name owned record cannot suppress live
 foreign identity. Exact-project CLI stop is skipped when foreign, unresolved
 or conflicting identity is present. Official CLI objects are recognized from
 inspected `com.supabase.cli.project`, not by inventing or applying labels.
+The exact prepared project id is passed through default start into first
+resource discovery. An unconfirmed stack CLI-child stop retains private
+HOME and cannot PASS G20.
 
 ## Forbidden substitutes
 
