@@ -1,0 +1,54 @@
+{
+  "receiptId": "aacbf1-review-fix-nav-response-20260923T161207Z",
+  "kind": "author-self-evidence",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1",
+  "agent": "Jetnity admin account counts browser flows 1",
+  "generation": 1,
+  "session": "bc-9495c303-3b54-4a76-a467-665b3f1a8eb9",
+  "modelRequired": "cursor-grok-4.6-high-fast",
+  "modelActual": "cursor-grok-4.6-high-fast",
+  "uiRename": "not performed",
+  "branch": "test/admin-account-counts-browser-flows-1",
+  "pr": 559,
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_BROWSER_FLOWS_1_TASK_2026-09-23.md",
+  "taskSeed": "58afaa15d15dce87c180f4f0eb73b8dc248e896e",
+  "reviewedHead": "9fb5ecbdf4a643696cc59b95857cedc5ad643e80",
+  "tlReview": "5293522604",
+  "tlVerdict": "CHANGES REQUIRED",
+  "diagnosticComment": "5798281067",
+  "correction": "carry actual Playwright goto/reload Response into UI assertions",
+  "productBaseline": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "mergeBase": "fa7f651c023eb361fb142cbb931bc702f3a3d213",
+  "implementationMetadata": {
+    "scenarioCode": "delivered",
+    "defaultRealExecutionClaim": "NOT RUN until reviewed runtime integration",
+    "runtimeIntegration": "pending"
+  },
+  "thisInvocation": {
+    "kind": "controlled-context-unit",
+    "realBrowserOrMfaExecution": "NOT RUN",
+    "command": "node --test scripts/e2e/admin-account-counts-browser-flows-1/test.mjs",
+    "node": "v22.14.0",
+    "tests": 29,
+    "pass": 29,
+    "fail": 0,
+    "tapSha256": "b2c0614dc533333dc08a26080855d5756f2d1add1edaa1bbe8c33c7268080655",
+    "notFullLocalExecution": true
+  },
+  "acceptedParserEquivalence": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/e2e/admin-account-counts-browser-flows-1/parser-equivalence.ts",
+    "input": "JSON array of payloads on stdin",
+    "observed": "accepted and JS port agreed on a valid one-row fixture and a multirow reject",
+    "separateFromMockSuite": true
+  },
+  "historicalReceiptsPreserved": [
+    "aacbf1-20260923T123800Z",
+    "aacbf1-review-fix-b1-b4-20260923T133051Z",
+    "aacbf1-review-fix-remaining-b1-b3-20260923T152543Z"
+  ],
+  "docker": "not attempted",
+  "hostedFallback": "not attempted",
+  "closed556Fallback": "not invoked as a full application run",
+  "sibling558": "not imported; evidenceDir remains required with no unsafe default",
+  "notes": "Author self-evidence only. Helper/double PASS is not a browser PASS. Runtime #558 owns stack/observer/cleanup and the whole-run verdict."
+}

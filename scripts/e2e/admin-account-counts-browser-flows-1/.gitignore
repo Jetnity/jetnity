@@ -1,0 +1,11 @@
+# Run-owned private state and forbidden browser artifacts must never enter Git.
+private/
+*.secret
+*.otpauth
+*.jwt
+*.cookie
+*.har
+*.storageState
+trace/
+test-results/
+playwright-report/
