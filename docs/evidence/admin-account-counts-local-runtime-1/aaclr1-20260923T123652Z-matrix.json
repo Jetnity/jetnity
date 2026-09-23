@@ -1,0 +1,142 @@
+{
+  "verdict": "BLOCKED_ENVIRONMENT",
+  "summary": {
+    "counts": {
+      "PASS": 2,
+      "FAIL": 0,
+      "BLOCKED": 1,
+      "NOT RUN": 18,
+      "PARTIAL": 0,
+      "NOT IMPLEMENTED": 0,
+      "UNKNOWN": 0
+    },
+    "fullLocalExecution": false,
+    "applicationRan": false,
+    "preflightBlocked": true
+  },
+  "matrix": {
+    "G0_preflight": {
+      "id": "G0_preflight",
+      "result": "BLOCKED",
+      "evidence": "aaclr1-20260923T123652Z-preflight.json",
+      "notes": "container-runtime, supabase-cli"
+    },
+    "G1_source_pins": {
+      "id": "G1_source_pins",
+      "result": "PASS",
+      "evidence": "aaclr1-20260923T123652Z-source-manifest.json",
+      "notes": "Working-tree identity for the accepted #557 source set plus package/lock/proxy/next config and the committed migration inventory."
+    },
+    "G2_owned_stack": {
+      "id": "G2_owned_stack",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Default no-start, or preflight/source blocked."
+    },
+    "G3_auth_schema_not_bootstrap": {
+      "id": "G3_auth_schema_not_bootstrap",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Schema replay not started."
+    },
+    "G4_fixtures_via_gotrue": {
+      "id": "G4_fixtures_via_gotrue",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "GoTrue provisioning not started."
+    },
+    "G5_app_boot_loopback": {
+      "id": "G5_app_boot_loopback",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "App launch not started."
+    },
+    "G6_login_ui_password": "[redacted]",
+    "G7_aal1_denied_step_up": {
+      "id": "G7_aal1_denied_step_up",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G8_totp_enroll_via_ui": {
+      "id": "G8_totp_enroll_via_ui",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G9_aal2_admin_counts_on": {
+      "id": "G9_aal2_admin_counts_on",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G10_existing_factor_fresh_session": {
+      "id": "G10_existing_factor_fresh_session",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G11_default_off_no_section_no_rpc": {
+      "id": "G11_default_off_no_section_no_rpc",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G12_zero_window_and_delta": {
+      "id": "G12_zero_window_and_delta",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G13_ordinary_user_no_disclosure": {
+      "id": "G13_ordinary_user_no_disclosure",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G14_unauthenticated_no_disclosure": {
+      "id": "G14_unauthenticated_no_disclosure",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G15_role_downgrade_no_disclosure": {
+      "id": "G15_role_downgrade_no_disclosure",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G16_restricted_privileged_status": {
+      "id": "G16_restricted_privileged_status",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G17_missing_wrapper_unavailable": {
+      "id": "G17_missing_wrapper_unavailable",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G18_desktop_mobile_ui": {
+      "id": "G18_desktop_mobile_ui",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G19_http_boundary_same_session": {
+      "id": "G19_http_boundary_same_session",
+      "result": "NOT RUN",
+      "evidence": null,
+      "notes": "Browser module is a sibling lane; default/runtime-only does not execute UI gates."
+    },
+    "G20_owned_cleanup": {
+      "id": "G20_owned_cleanup",
+      "result": "PASS",
+      "evidence": "aaclr1-20260923T123652Z-cleanup.json",
+      "notes": "Owned preflight HOME/resources were confirmed stopped and then removed. Dry-run still refuses unsafe delete."
+    }
+  },
+  "mode": "preflight",
+  "contractVersion": "jetnity.account-counts.local-acceptance.v1"
+}
