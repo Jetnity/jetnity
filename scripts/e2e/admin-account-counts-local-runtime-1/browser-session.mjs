@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Run-owned Playwright sessions. Ownership is registered BEFORE launch.
-// Actual abort-only local traffic enforcement is attached to the live context.
+// The acquired Context is recorded BEFORE fallible policy setup.
+// Request-event violations are contained on the handle, never thrown.
 
 import { mkdtempSync } from 'node:fs'
 import { join } from 'node:path'
@@ -17,7 +18,17 @@ export function assertLocalBrowserTraffic(url) {
   return true
 }
 
-export async function attachLocalTrafficPolicy(context) {
+export function recordTrafficViolation(handle, error) {
+  const message = error instanceof Error ? error.message : String(error)
+  if (handle) {
+    handle.trafficViolation = message
+    handle.unknown = true
+    handle.ownershipRetained = true
+  }
+  return message
+}
+
+export async function attachLocalTrafficPolicy(context, handle = null) {
   if (!context || typeof context.route !== 'function') {
     throw new Error('Browser context cannot enforce local-only traffic')
   }
@@ -25,16 +36,59 @@ export async function attachLocalTrafficPolicy(context) {
     try {
       assertLocalBrowserTraffic(route.request().url())
       await route.continue()
-    } catch {
+    } catch (error) {
+      recordTrafficViolation(handle, error)
       await route.abort('blockedbyclient')
     }
   })
   if (typeof context.on === 'function') {
     context.on('request', (request) => {
-      assertLocalBrowserTraffic(request.url())
+      try {
+        assertLocalBrowserTraffic(request.url())
+      } catch (error) {
+        recordTrafficViolation(handle, error)
+      }
     })
   }
   return true
+}
+
+export function pendingBrowserCloseReport(handle, reason) {
+  return {
+    closeCalled: false,
+    closed: false,
+    profileRemoved: false,
+    timedOut: false,
+    unknown: true,
+    ownershipRetained: true,
+    error: reason,
+    launchPending: handle?.launchPending === true,
+  }
+}
+
+export async function closeOwnedBrowserHandle(handle, { closeTimeoutMs = TIMEOUTS.browserCloseMs } = {}) {
+  if (!handle) {
+    return pendingBrowserCloseReport(null, 'missing browser handle')
+  }
+  if (handle.unknown || handle.trafficViolation) {
+    if (handle.context && typeof handle.context.close === 'function') {
+      const report = await schliesseOwnedBrowser(handle, { closeTimeoutMs })
+      return {
+        ...report,
+        unknown: true,
+        ownershipRetained: true,
+        trafficViolation: handle.trafficViolation || null,
+      }
+    }
+    return pendingBrowserCloseReport(handle, handle.trafficViolation || 'browser session is unknown')
+  }
+  if (handle.launchPending && !handle.context) {
+    return pendingBrowserCloseReport(handle, 'pending launch is not harmless absence')
+  }
+  if (!handle.context) {
+    return pendingBrowserCloseReport(handle, 'acquired Context is missing; refuse delete-authorizing close')
+  }
+  return schliesseOwnedBrowser(handle, { closeTimeoutMs })
 }
 
 export async function newBrowserSession({
@@ -55,6 +109,8 @@ export async function newBrowserSession({
     context: null,
     profileDir,
     launchPending: true,
+    acquired: false,
+    policyPending: false,
   }
   registry.set(handle.id, handle)
   try {
@@ -65,9 +121,12 @@ export async function newBrowserSession({
       env,
       args: ['--no-sandbox', '--disable-dev-shm-usage'],
     })
-    await attachLocalTrafficPolicy(context)
     handle.context = context
+    handle.acquired = true
     handle.launchPending = false
+    handle.policyPending = true
+    await attachLocalTrafficPolicy(context, handle)
+    handle.policyPending = false
     return Object.assign(context, { __runtimeSessionId: handle.id })
   } catch (error) {
     handle.launchError = error instanceof Error ? error.message : String(error)
@@ -81,10 +140,14 @@ export async function closeBrowserSession(browserContext, { registry, closeTimeo
   if (!handle) {
     throw Object.assign(new Error('Rejected close of unknown browser session'), { code: 'UNKNOWN_BROWSER_SESSION' })
   }
-  const report = await schliesseOwnedBrowser(handle, { closeTimeoutMs })
-  if (!report.closed) {
-    handle.closeReport = report
-    throw Object.assign(new Error(report.error || 'browser close not proved'), { code: 'BROWSER_CLOSE_UNCONFIRMED', report, handle })
+  const report = await closeOwnedBrowserHandle(handle, { closeTimeoutMs })
+  handle.closeReport = report
+  if (!report.closed || report.unknown === true) {
+    throw Object.assign(new Error(report.error || 'browser close not proved'), {
+      code: 'BROWSER_CLOSE_UNCONFIRMED',
+      report,
+      handle,
+    })
   }
   registry.delete(id)
   return report

@@ -8,6 +8,7 @@ export function createOwnershipRegistry({
   privateHome = null,
   evidenceDir = null,
 } = {}) {
+  const browsers = new Map()
   return {
     runId,
     privateHome,
@@ -22,8 +23,8 @@ export function createOwnershipRegistry({
     appChild: null,
     app: null,
     observer: null,
-    browsers: new Map(),
-    browserRegistry: null,
+    browsers,
+    browserRegistry: browsers,
     workdir: null,
     checkoutDir: null,
     cliBin: null,
@@ -31,6 +32,18 @@ export function createOwnershipRegistry({
     childEnv: null,
     execFile: null,
   }
+}
+
+export function authoritativeBrowserRegistry(registry, fallback = null) {
+  if (!registry) return fallback
+  if (!(registry.browsers instanceof Map)) registry.browsers = new Map()
+  if (registry.browserRegistry instanceof Map && registry.browserRegistry !== registry.browsers) {
+    for (const [id, handle] of registry.browserRegistry) {
+      if (!registry.browsers.has(id)) registry.browsers.set(id, handle)
+    }
+  }
+  registry.browserRegistry = registry.browsers
+  return registry.browsers
 }
 
 export function markFallible(registry) {

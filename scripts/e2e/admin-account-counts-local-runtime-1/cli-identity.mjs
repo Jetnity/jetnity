@@ -6,8 +6,8 @@
 
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { chmodSync, existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { arch, platform } from 'node:os'
+import { chmodSync, closeSync, existsSync, lstatSync, mkdirSync, mkdtempSync, openSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
+import { arch, platform, tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
 import { CLI, TIMEOUTS } from './constants.mjs'
@@ -96,9 +96,62 @@ export function assertRegularOwnedFile(path) {
   return true
 }
 
-export function hashTarMember(archivePath, member, execFile = execFileSync) {
-  const bytes = execFile('tar', ['-xOf', archivePath, member])
-  return createHash('sha256').update(bytes).digest('hex')
+export function isolatedTarEnv() {
+  return {
+    PATH: '/usr/bin:/bin',
+    LANG: 'C',
+    LC_ALL: 'C',
+    TZ: 'UTC',
+    HOME: '/nonexistent-aaclr1-tar',
+  }
+}
+
+export function hashTarMember(archivePath, member, options = {}) {
+  const opts = typeof options === 'function' ? { execFile: options } : (options || {})
+  const execFile = opts.execFile || execFileSync
+  const maxBytes = opts.maxBytes ?? TIMEOUTS.tarMemberMaxBytes
+  const timeoutMs = opts.timeoutMs ?? TIMEOUTS.tarMemberMs
+  const env = opts.env || isolatedTarEnv()
+  const workDir = opts.workDir || mkdtempSync(join(tmpdir(), 'aaclr1-tar-'))
+  mkdirSync(workDir, { recursive: true, mode: 0o700 })
+  const destPath = opts.destPath || join(workDir, 'member.bin')
+  const fd = openSync(destPath, 'w', 0o600)
+  try {
+    execFile('tar', ['-xOf', archivePath, member], {
+      stdio: ['ignore', fd, 'pipe'],
+      timeout: timeoutMs,
+      env,
+      maxBuffer: 1024 * 1024,
+    })
+  } catch (error) {
+    try { closeSync(fd) } catch { /* already closed */ }
+    try { unlinkSync(destPath) } catch { /* best-effort */ }
+    const code = error?.code
+    const signal = error?.signal
+    const msg = error instanceof Error ? error.message : String(error)
+    if (code === 'ETIMEDOUT' || signal === 'SIGTERM' || /ETIMEDOUT|timeout|TIMEDOUT/i.test(msg)) {
+      throw new Error(`tar member extract timed out after ${timeoutMs}ms`)
+    }
+    if (code === 'ENOBUFS') {
+      throw new Error(`tar member extract exceeded the isolated file budget; refuse default stdout buffering: ${msg}`)
+    }
+    throw error instanceof Error ? error : new Error(msg)
+  }
+  try { closeSync(fd) } catch { /* already closed */ }
+  const size = existsSync(destPath) ? statSync(destPath).size : 0
+  if (size > maxBytes) {
+    try { unlinkSync(destPath) } catch { /* best-effort */ }
+    throw new Error(`tar member ${member} size ${size} exceeds maxBytes ${maxBytes}`)
+  }
+  if (size === 0) {
+    try { unlinkSync(destPath) } catch { /* best-effort */ }
+    throw new Error(`tar member ${member} extracted empty or missing bytes`)
+  }
+  const digest = sha256File(destPath)
+  if (opts.keepDest !== true) {
+    try { unlinkSync(destPath) } catch { /* best-effort */ }
+  }
+  return digest
 }
 
 export function bindCliExecutableIdentity({
@@ -170,7 +223,10 @@ export function bindCliExecutableIdentity({
         reason: `Verified archive is missing the supabase member; found: ${members.join(',') || 'none'}`,
       }
     }
-    memberSha = hashTarMember(ownedArchive, member, execFile)
+    memberSha = hashTarMember(ownedArchive, member, {
+      execFile,
+      workDir: resolve(ownedArchive, '..'),
+    })
   } catch (error) {
     return {
       archiveBound: false,

@@ -5,7 +5,9 @@
 
 import { existsSync, lstatSync, realpathSync, rmSync } from 'node:fs'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
-import { darfOwnedVerzeichnisEntfernen, schliesseOwnedBrowser, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
+import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
+import { closeOwnedBrowserHandle } from './browser-session.mjs'
+import { authoritativeBrowserRegistry } from './ownership.mjs'
 import { stoppeOwnedStack } from './stack.mjs'
 
 export function canonicalizeOwnedPath(path) {
@@ -43,10 +45,10 @@ function privateRoots(state) {
   return [state.privateHome || state.privateDir || state.preflightOwned?.privateHome].filter(Boolean)
 }
 
-export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
+export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs, exportArtifacts } = {}) {
   const registry = state.registry || null
   const ownedRoots = privateRoots(state)
-  const browserRegistry = registry?.browsers || state.browserRegistry
+  const browserRegistry = authoritativeBrowserRegistry(registry, state.browserRegistry)
   const network = registry?.network || state.network
   const stack = registry?.stack || state.stack
   const stackChild = registry?.stackChild || state.stackChild || stack?.child
@@ -63,10 +65,10 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
   const reports = []
   if (browserRegistry instanceof Map) {
     for (const handle of browserRegistry.values()) {
-      reports.push({ kind: 'browser-context', ...(await schliesseOwnedBrowser(handle, { closeTimeoutMs })) })
+      reports.push({ kind: 'browser-context', ...(await closeOwnedBrowserHandle(handle, { closeTimeoutMs })) })
     }
   } else if (state.browserHandle) {
-    reports.push({ kind: 'browser-context', ...(await schliesseOwnedBrowser(state.browserHandle, { closeTimeoutMs })) })
+    reports.push({ kind: 'browser-context', ...(await closeOwnedBrowserHandle(state.browserHandle, { closeTimeoutMs })) })
   }
 
   if (appChild) reports.push({ kind: 'app', ...(await stoppeOwnedChild(appChild)) })
@@ -106,6 +108,22 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     reports.push({ kind: 'stack', ...stackReport })
   }
 
+  let artifactExport = null
+  if (typeof exportArtifacts === 'function') {
+    try {
+      artifactExport = await exportArtifacts({
+        reports,
+        registry,
+        evidenceDir: registry?.evidenceDir || state.evidenceDir,
+      })
+    } catch (error) {
+      artifactExport = {
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      }
+    }
+  }
+
   const resourceUnknown = Boolean(
     stackReport?.unknown === true
     || stackReport?.networkState === 'UNKNOWN'
@@ -114,8 +132,9 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     || stackReport?.discoveryState === 'UNKNOWN'
     || (Array.isArray(stackReport?.unresolvedVolumes) && stackReport.unresolvedVolumes.length > 0),
   )
-  const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true || resourceUnknown
-  const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false)
+  const exportFailed = artifactExport?.ok === false
+  const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true || resourceUnknown || exportFailed
+  const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false) || exportFailed
   const volumesUnconfirmed = Boolean(
     stackReport
     && (
@@ -162,6 +181,7 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
       ),
     ),
     stopUnknown: registry?.stopUnknown === true,
+    exportFailed,
   }
   const retainPrivate = flags.unknown
     || flags.ownershipRetained
@@ -169,6 +189,7 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     || flags.stopUnknown
     || flags.dockerServicesUnverified
     || flags.volumesUnconfirmed
+    || flags.exportFailed
   const removals = []
   const dirs = [
     registry?.checkoutDir || state.checkoutDir,
@@ -215,6 +236,7 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     usedPkill: false,
     usedDockerPrune: false,
     stack: stackReport,
+    artifactExport,
   }
 }
 
@@ -227,6 +249,7 @@ export function bewerteCleanup(cleanup, { registry = null, mode = 'preflight' } 
   if (registry?.hadFallibleAcquisition && cleanup.neverStarted === true) return false
   if (cleanup.incompleteRegistry === true) return false
   if (cleanup.dockerServicesUnverified === true && registry?.hadFallibleAcquisition) return false
+  if (cleanup.exportFailed === true) return false
   void mode
   return true
 }

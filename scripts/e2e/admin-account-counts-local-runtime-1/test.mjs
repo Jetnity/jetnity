@@ -17,6 +17,7 @@ import {
   PRODUCT_BASELINE,
   CLI,
   RUN_LABEL,
+  ROOT,
 } from './constants.mjs'
 import {
   assertIsolatedConnectionEnvironment,
@@ -39,6 +40,7 @@ import {
   materializeVerifiedArchive,
   acquireOfficialCli,
   readOfflineOfficialArtifacts,
+  hashTarMember,
 } from './cli-identity.mjs'
 import {
   assertRuntimeSources,
@@ -47,6 +49,7 @@ import {
   materialisiereAppCheckout,
   classifyMigrationApplicability,
   refuseSymlinksAndDotenv,
+  SAFE_SNAPSHOT_DOTENV_EXCLUDES,
 } from './source.mjs'
 import {
   prepareAppForLaunch,
@@ -58,7 +61,7 @@ import {
 } from './app.mjs'
 import { baueAcceptanceContext, validateAcceptanceContext } from './context.mjs'
 import { createOwnershipRegistry } from './ownership.mjs'
-import { newBrowserSession, closeBrowserSession, assertLocalBrowserTraffic } from './browser-session.mjs'
+import { newBrowserSession, closeBrowserSession, assertLocalBrowserTraffic, closeOwnedBrowserHandle } from './browser-session.mjs'
 import { resolveUpstreamTarget, isRemoteRedirect, readBoundedBody } from './observer.mjs'
 import { assertInstalledCatalog, assertInstalledRelation, installProducerAndWrapper, parseJsonRow, acceptedCatalogFixture, requiredCount, extractExactDollarBody, EXPECTED_PRODUCER_RESULT } from './schema.mjs'
 import { starteOwnedStack, stoppeOwnedStack, inspectDockerResource, classifyDockerInspectError, collectOwnedDockerResources, classifyVolumeOwnership, RESOURCE_STATE } from './stack.mjs'
@@ -79,8 +82,8 @@ import { createRpcObserver } from './observer.mjs'
 import { BROWSER_GATES } from './constants.mjs'
 import { decideVerdict, loadBrowserModule, mergeBrowserGates, leereMatrix, markBrowserNotImplemented } from './gates.mjs'
 import { cleanupDryRunKontrolle, raeumeOwnedAuf, assertOwnedPath } from './cleanup.mjs'
-import { redactSecrets, writeEvidence, assertSafeEvidence } from './evidence.mjs'
-import { run } from './run.mjs'
+import { redactSecrets, writeEvidence, assertSafeEvidence, exportSanitizedRunArtifacts } from './evidence.mjs'
+import { persistFailureReceipt, run } from './run.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
 import { SOURCE_PATHS as ACCEPTED_SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 
@@ -595,7 +598,7 @@ test('R1 default wiring waits for a live loopback app and returns a contract-con
       applySql: async () => {},
     },
     evidenceDir,
-    browserRegistry: new Map(),
+    browserRegistry: registry.browsers,
     privateHome: home,
     childEnv: { PATH: '/usr/bin' },
   })
@@ -1548,4 +1551,270 @@ test('R2 context-not-found is UNKNOWN; unlabeled mounts stay unresolved; foreign
   })
   assert.equal(again.dockerServicesStopped, true)
   assert.equal(again.unknown, false)
+})
+
+function writeSizedMemberTar(dir, size, memberName = 'supabase') {
+  writeFileSync(join(dir, memberName), Buffer.alloc(size, 65))
+  const archivePath = join(dir, `${memberName}-${size}.tar.gz`)
+  execFileSync('tar', ['-czf', archivePath, memberName], { cwd: dir })
+  return {
+    archivePath,
+    expected: createHash('sha256').update(readFileSync(join(dir, memberName))).digest('hex'),
+  }
+}
+
+test('F1 hashTarMember streams realistic members; 2MiB ENOBUFS path hashes; oversize/timeout/corrupt fail', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'aaclr1-tar-'))
+  const control = writeSizedMemberTar(dir, 64 * 1024)
+  assert.equal(hashTarMember(control.archivePath, 'supabase'), control.expected)
+  const twoMiB = writeSizedMemberTar(dir, 2 * 1024 * 1024)
+  assert.equal(hashTarMember(twoMiB.archivePath, 'supabase'), twoMiB.expected)
+  assert.throws(
+    () => hashTarMember(twoMiB.archivePath, 'supabase', { maxBytes: 1024 }),
+    /exceeds maxBytes/,
+  )
+  const timedOut = Object.assign(new Error('spawn ETIMEDOUT'), { code: 'ETIMEDOUT' })
+  assert.throws(
+    () => hashTarMember(control.archivePath, 'supabase', {
+      execFile: () => { throw timedOut },
+    }),
+    /timed out/,
+  )
+  const corrupt = join(dir, 'corrupt.tar.gz')
+  writeFileSync(corrupt, 'not-a-tar')
+  assert.throws(() => hashTarMember(corrupt, 'supabase'), /tar|gzip|not in gzip|child/)
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('F2 baseline .env.example is excluded from snapshots; secrets and symlinks still fail', () => {
+  assert.ok(SAFE_SNAPSHOT_DOTENV_EXCLUDES.includes('.env.example'))
+  const repo = mkdtempSync(join(tmpdir(), 'aaclr1-snap-'))
+  execFileSync('git', ['-c', 'init.defaultBranch=main', 'init'], { cwd: repo })
+  execFileSync('git', ['config', 'user.email', 't@aaclr1.invalid'], { cwd: repo })
+  execFileSync('git', ['config', 'user.name', 'fixture'], { cwd: repo })
+  writeFileSync(join(repo, 'app.js'), 'ok\n')
+  writeFileSync(join(repo, '.env.example'), 'NEXT_PUBLIC_EXAMPLE=\n')
+  execFileSync('git', ['add', '.'], { cwd: repo })
+  execFileSync('git', ['commit', '-m', 'seed'], { cwd: repo })
+  const rev = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim()
+  const dest = mkdtempSync(join(tmpdir(), 'aaclr1-snapdest-'))
+  const prepared = materialisiereAppCheckout({
+    sourceRoot: repo,
+    destDir: dest,
+    rev,
+    migrations: { files: [] },
+  })
+  assert.equal(existsSync(join(dest, 'app.js')), true)
+  assert.equal(existsSync(join(dest, '.env.example')), false)
+  assert.equal(prepared.inheritedEnv, false)
+  assert.ok(prepared.snapshotExcludes.includes('.env.example'))
+  writeFileSync(join(dest, '.env.development.local'), 'SECRET=1')
+  assert.throws(() => refuseSymlinksAndDotenv(dest), /\.env/)
+  rmSync(join(dest, '.env.development.local'))
+  symlinkSync('/tmp/aaclr1-foreign-target', join(dest, 'escape-link'))
+  assert.throws(() => refuseSymlinksAndDotenv(dest), /Symlink/)
+  rmSync(join(dest, 'escape-link'))
+  const baselineDest = mkdtempSync(join(tmpdir(), 'aaclr1-base-'))
+  const baseline = materialisiereAppCheckout({
+    sourceRoot: ROOT,
+    destDir: baselineDest,
+    rev: PRODUCT_BASELINE,
+  })
+  assert.equal(existsSync(join(baselineDest, '.env.example')), false)
+  assert.equal(existsSync(join(baselineDest, 'package.json')), true)
+  assert.ok(baseline.snapshotExcludes.includes('.env.example'))
+  assert.equal(baseline.inheritedEnv, false)
+  assert.equal(baseline.macosExtractUnverified, true)
+  rmSync(repo, { recursive: true, force: true })
+  rmSync(dest, { recursive: true, force: true })
+  rmSync(baselineDest, { recursive: true, force: true })
+})
+
+test('F3 one registry records Context before policy failure; pending/foreign/timeout stay unknown', async () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-breg-'))
+  const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: home })
+  assert.equal(registry.browsers, registry.browserRegistry)
+  let closeCount = 0
+  const failing = {
+    route: async () => { throw new Error('synthetic route registration failure') },
+    close: async () => { closeCount += 1 },
+    on() {},
+  }
+  await assert.rejects(
+    () => newBrowserSession({
+      viewport: { width: 800, height: 600 },
+      privateHome: home,
+      launchPersistentContext: async () => failing,
+      registry: registry.browsers,
+    }),
+    /synthetic route registration failure/,
+  )
+  const failedHandle = [...registry.browsers.values()][0]
+  assert.equal(failedHandle.context, failing)
+  assert.equal(failedHandle.acquired, true)
+  assert.equal(failedHandle.launchPending, false)
+  const afterPolicyFail = await raeumeOwnedAuf({ privateHome: home, registry })
+  assert.equal(closeCount, 1)
+  assert.ok(afterPolicyFail.reports.some((item) => item.kind === 'browser-context' && item.closeCalled === true))
+
+  const pendingHome = mkdtempSync(join(tmpdir(), 'aaclr1-bpend-'))
+  const pendingReg = createOwnershipRegistry({ privateHome: pendingHome, evidenceDir: pendingHome })
+  await assert.rejects(
+    () => newBrowserSession({
+      viewport: { width: 800, height: 600 },
+      privateHome: pendingHome,
+      launchPersistentContext: async () => { throw new Error('launch failed') },
+      registry: pendingReg.browsers,
+    }),
+    /launch failed/,
+  )
+  const pendingHandle = [...pendingReg.browsers.values()][0]
+  assert.equal(pendingHandle.context, null)
+  assert.equal(pendingHandle.launchPending, true)
+  const pendingClose = await closeOwnedBrowserHandle(pendingHandle)
+  assert.equal(pendingClose.closed, false)
+  assert.equal(pendingClose.profileRemoved, false)
+  assert.equal(pendingClose.unknown, true)
+  const pendingCleanup = await raeumeOwnedAuf({ privateHome: pendingHome, registry: pendingReg })
+  assert.equal(pendingCleanup.unknown, true)
+  assert.equal(bewerteCleanup(pendingCleanup, { registry: pendingReg }), false)
+  assert.equal(existsSync(pendingHome), true)
+
+  const eventHome = mkdtempSync(join(tmpdir(), 'aaclr1-bevt-'))
+  const eventReg = createOwnershipRegistry({ privateHome: eventHome, evidenceDir: eventHome })
+  const listeners = []
+  const live = {
+    route: async () => {},
+    on(event, fn) { if (event === 'request') listeners.push(fn) },
+    close: async () => {},
+  }
+  const session = await newBrowserSession({
+    viewport: { width: 800, height: 600 },
+    privateHome: eventHome,
+    launchPersistentContext: async () => live,
+    registry: eventReg.browsers,
+  })
+  assert.equal(eventReg.browsers, eventReg.browserRegistry)
+  assert.doesNotThrow(() => listeners.forEach((fn) => fn({ url: () => 'https://blocked.invalid/test' })))
+  const violated = eventReg.browsers.get(session.__runtimeSessionId)
+  assert.match(violated.trafficViolation, /not local-only/)
+  assert.equal(violated.unknown, true)
+  const eventCleanup = await raeumeOwnedAuf({ privateHome: eventHome, registry: eventReg })
+  assert.equal(eventCleanup.unknown, true)
+  assert.equal(bewerteCleanup(eventCleanup, { registry: eventReg }), false)
+
+  const okHome = mkdtempSync(join(tmpdir(), 'aaclr1-bok-'))
+  const okReg = createOwnershipRegistry({ privateHome: okHome, evidenceDir: okHome })
+  let okClosed = 0
+  const okCtx = {
+    route: async () => {},
+    on() {},
+    close: async () => { okClosed += 1 },
+  }
+  const okSession = await newBrowserSession({
+    viewport: { width: 800, height: 600 },
+    privateHome: okHome,
+    launchPersistentContext: async () => okCtx,
+    registry: okReg.browsers,
+  })
+  await closeBrowserSession(okSession, { registry: okReg.browsers })
+  assert.equal(okClosed, 1)
+  assert.equal(okReg.browsers.size, 0)
+  const timeoutHome = mkdtempSync(join(tmpdir(), 'aaclr1-bto-'))
+  const timeoutReg = createOwnershipRegistry({ privateHome: timeoutHome, evidenceDir: timeoutHome })
+  const hanging = {
+    route: async () => {},
+    on() {},
+    close: () => new Promise(() => {}),
+  }
+  const hangingSession = await newBrowserSession({
+    viewport: { width: 800, height: 600 },
+    privateHome: timeoutHome,
+    launchPersistentContext: async () => hanging,
+    registry: timeoutReg.browsers,
+  })
+  await assert.rejects(
+    () => closeBrowserSession(hangingSession, { registry: timeoutReg.browsers, closeTimeoutMs: 20 }),
+    /browser close|UNKNOWN|not proved/,
+  )
+  assert.equal(timeoutReg.browsers.has(hangingSession.__runtimeSessionId), true)
+  const timeoutCleanup = await raeumeOwnedAuf({ privateHome: timeoutHome, registry: timeoutReg, closeTimeoutMs: 20 })
+  assert.equal(timeoutCleanup.unknown, true)
+  assert.equal(bewerteCleanup(timeoutCleanup, { registry: timeoutReg }), false)
+  rmSync(home, { recursive: true, force: true })
+  rmSync(pendingHome, { recursive: true, force: true })
+  rmSync(eventHome, { recursive: true, force: true })
+  rmSync(okHome, { recursive: true, force: true })
+  rmSync(timeoutHome, { recursive: true, force: true })
+})
+
+test('F4 sanitized artifacts survive cleanup; secrets never export; G20 does not recreate private HOME', async () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-evhome-'))
+  const privateEv = mkdtempSync(join(home, 'evidence-'))
+  const durable = mkdtempSync(join(tmpdir(), 'aaclr1-evdur-'))
+  writeFileSync(join(privateEv, 'aaclr1-run1-consumer-receipt.json'), '{"ok":true,"notes":"clip"}\n')
+  writeFileSync(join(privateEv, 'aaclr1-run1-screenshot-g9.png'), Buffer.from([137, 80, 78, 71]))
+  writeFileSync(join(privateEv, 'session.har'), '{"pages":[]}')
+  mkdirSync(join(privateEv, 'profile'))
+  writeFileSync(join(privateEv, 'profile/Cookies'), 'token')
+  const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: privateEv })
+  const cleanup = await raeumeOwnedAuf({
+    privateHome: home,
+    registry,
+    evidenceDir: privateEv,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: privateEv,
+      destDir: durable,
+      runId: 'aaclr1-run1',
+      ownedRoots: [home],
+    }),
+  })
+  assert.equal(existsSync(join(durable, 'aaclr1-run1-consumer-receipt.json')), true)
+  assert.equal(existsSync(join(durable, 'aaclr1-run1-screenshot-g9.png')), true)
+  assert.equal(existsSync(join(durable, 'session.har')), false)
+  assert.equal(existsSync(join(durable, 'profile')), false)
+  assert.equal(cleanup.exportFailed, false)
+  assert.equal(existsSync(home), false)
+
+  const failHome = mkdtempSync(join(tmpdir(), 'aaclr1-evfail-'))
+  const failPrivate = mkdtempSync(join(failHome, 'evidence-'))
+  const failDurable = mkdtempSync(join(tmpdir(), 'aaclr1-evfaild-'))
+  writeFileSync(join(failPrivate, 'aaclr1-run2-consumer-receipt.json'), '{"password":"synthetic"}\n')
+  const failReg = createOwnershipRegistry({ privateHome: failHome, evidenceDir: failPrivate })
+  const failed = await raeumeOwnedAuf({
+    privateHome: failHome,
+    registry: failReg,
+    evidenceDir: failPrivate,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: failPrivate,
+      destDir: failDurable,
+      runId: 'aaclr1-run2',
+      ownedRoots: [failHome],
+    }),
+  })
+  assert.equal(failed.exportFailed, true)
+  assert.equal(failed.unknown, true)
+  assert.equal(bewerteCleanup(failed, { registry: failReg }), false)
+  assert.equal(existsSync(failHome), true)
+  assert.equal(existsSync(join(failDurable, 'aaclr1-run2-consumer-receipt.json')), false)
+  persistFailureReceipt({
+    evidenceDir: failDurable,
+    runId: 'aaclr1-run2',
+    error: new Error('export failed'),
+    cleanup: failed,
+    matrix: {},
+  })
+  rmSync(failHome, { recursive: true, force: true })
+  persistFailureReceipt({
+    evidenceDir: failDurable,
+    runId: 'aaclr1-run2b',
+    error: new Error('after G20'),
+    cleanup: failed,
+    matrix: {},
+  })
+  assert.equal(existsSync(failHome), false)
+  rmSync(durable, { recursive: true, force: true })
+  rmSync(failDurable, { recursive: true, force: true })
 })

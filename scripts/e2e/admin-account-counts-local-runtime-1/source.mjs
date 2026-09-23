@@ -6,11 +6,14 @@
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import {
+  closeSync,
   existsSync,
   lstatSync,
   mkdirSync,
+  openSync,
   readdirSync,
   rmSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'
@@ -183,6 +186,48 @@ function containedIn(candidate, root) {
   return rel === '' || (!rel.startsWith(`..${sep}`) && rel !== '..' && !rel.startsWith('..') && !rel.startsWith(sep))
 }
 
+export const SAFE_SNAPSHOT_DOTENV_EXCLUDES = Object.freeze([
+  '.env',
+  '.env.example',
+  '.env.local',
+  '.env.development',
+  '.env.development.local',
+  '.env.production',
+  '.env.production.local',
+  '.env.test',
+  '.env.test.local',
+])
+
+export function snapshotDotenvExcludes(extraSkip = []) {
+  return [...new Set([...SAFE_SNAPSHOT_DOTENV_EXCLUDES, ...extraSkip])]
+}
+
+export function gitArchiveSnapshotArgs(rev, extraSkip = []) {
+  const excluded = snapshotDotenvExcludes(extraSkip)
+  const args = ['archive', '--format=tar', rev, '--', '.']
+  for (const name of excluded) {
+    args.push(`:(glob,exclude)${name}`)
+    args.push(`:(glob,exclude)**/${name}`)
+  }
+  return { args, excluded }
+}
+
+export function removeDisclosedDotenvTemplates(destDir, names = SAFE_SNAPSHOT_DOTENV_EXCLUDES) {
+  const removed = []
+  for (const name of names) {
+    const full = join(destDir, name)
+    if (!existsSync(full)) continue
+    const stat = lstatSync(full)
+    if (stat.isSymbolicLink()) {
+      throw new Error(`Disclosed snapshot template ${name} is a symlink and is refused`)
+    }
+    if (!stat.isFile()) continue
+    unlinkSync(full)
+    removed.push(name)
+  }
+  return removed
+}
+
 export function refuseSymlinksAndDotenv(destDir) {
   const stack = [destDir]
   const dotenv = []
@@ -232,17 +277,33 @@ export function materialisiereAppCheckout({
 } = {}) {
   if (!destDir) throw new Error('Dedicated checkout requires a destination.')
   mkdirSync(destDir, { recursive: true, mode: 0o700 })
-  const archive = execFile('git', ['archive', '--format=tar', rev], {
-    cwd: sourceRoot,
-    encoding: 'buffer',
-    maxBuffer: 80 * 1024 * 1024,
-  })
-  execFile('tar', ['-x', '--no-same-owner', '--no-overwrite-dir', '-C', destDir], {
-    input: archive,
-    encoding: 'buffer',
-    maxBuffer: 80 * 1024 * 1024,
-  })
-  void extraSkip
+  const snapshot = gitArchiveSnapshotArgs(rev, extraSkip)
+  const archivePath = join(destDir, '.aaclr1-snapshot.tar')
+  const archiveFd = openSync(archivePath, 'w', 0o600)
+  try {
+    execFile('git', snapshot.args, {
+      cwd: sourceRoot,
+      stdio: ['ignore', archiveFd, 'pipe'],
+      maxBuffer: 1024 * 1024,
+    })
+  } finally {
+    try { closeSync(archiveFd) } catch { /* already closed */ }
+  }
+  try {
+    try {
+      execFile('tar', ['-x', '--no-same-owner', '--no-overwrite-dir', '-C', destDir, '-f', archivePath], {
+        maxBuffer: 1024 * 1024,
+      })
+    } catch (error) {
+      execFile('tar', ['-x', '-C', destDir, '-f', archivePath], {
+        maxBuffer: 1024 * 1024,
+      })
+      void error
+    }
+  } finally {
+    if (existsSync(archivePath)) unlinkSync(archivePath)
+  }
+  const excludedDotenvTemplates = removeDisclosedDotenvTemplates(destDir, snapshot.excluded)
   if (existsSync(join(destDir, '.next'))) {
     rmSync(join(destDir, '.next'), { recursive: true, force: true })
   }
@@ -259,6 +320,9 @@ export function materialisiereAppCheckout({
     nodeModulesLinked: false,
     baselineRev: rev,
     copiedMigrations,
+    excludedDotenvTemplates,
+    snapshotExcludes: snapshot.excluded,
+    macosExtractUnverified: true,
   }
 }
 

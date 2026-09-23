@@ -117,6 +117,8 @@ export const TIMEOUTS = Object.freeze({
   observerCloseMs: 2_000,
   observerMaxBodyBytes: 1_000_000,
   runtimeBudgetMs: 15 * 60 * 1000,
+  tarMemberMs: 30_000,
+  tarMemberMaxBytes: 80 * 1024 * 1024,
 })
 
 export const RUN_LABEL = 'jetnity.aaclr1.run'

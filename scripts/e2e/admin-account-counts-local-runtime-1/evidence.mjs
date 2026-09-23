@@ -2,9 +2,10 @@
 // Whitelisted evidence serialization. Secrets and historical receipts are
 // refused. This lane never rewrites older receipts.
 
-import { mkdirSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { basename, join, resolve } from 'node:path'
 import { HISTORICAL_EVIDENCE_BASENAMES } from './constants.mjs'
+import { assertOwnedPath } from './cleanup.mjs'
 
 const SECRET_KEY = /^(password|secret|token|authorization|cookie|otpauth|jwt|serviceRole|service_role|serviceRoleKey|apikey|anonKey|anon_key)$/i
 const SECRET_VALUE = /^(Bearer\s+\S+|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.|sk-|sbp_)/
@@ -38,6 +39,67 @@ export function assertSafeEvidence(value, path = 'root') {
     }
   }
   return true
+}
+
+export const EXPORTABLE_BASENAME = /^(?:aaclr1-[A-Za-z0-9._-]+-(?:consumer-receipt|screenshot-[A-Za-z0-9._-]+|clip-[A-Za-z0-9._-]+)\.(?:json|png|webp))$/
+export const FORBIDDEN_EXPORT_BASENAME = /(?:^|[-_.])(?:profile|session|qr|har|trace|cookie|token|password|otpauth)(?:[-_.]|$)/i
+
+export function exportSanitizedRunArtifacts({
+  sourceDir,
+  destDir,
+  runId,
+  ownedRoots = [],
+} = {}) {
+  if (!destDir) throw new Error('Durable evidence directory is required for artifact export')
+  if (!sourceDir || !existsSync(sourceDir)) {
+    return { ok: true, exported: [], skipped: [], note: 'no private evidence to export' }
+  }
+  if (lstatSync(sourceDir).isSymbolicLink()) {
+    throw new Error('Private evidence directory must not be a symlink')
+  }
+  if (ownedRoots.length && assertOwnedPath(sourceDir, ownedRoots) !== true) {
+    throw new Error('Private evidence directory is outside owned roots')
+  }
+  mkdirSync(destDir, { recursive: true, mode: 0o755 })
+  const exported = []
+  const skipped = []
+  for (const name of readdirSync(sourceDir)) {
+    const source = join(sourceDir, name)
+    const stat = lstatSync(source)
+    if (stat.isSymbolicLink()) {
+      throw new Error(`Refusing to export symlink ${name}`)
+    }
+    if (stat.isDirectory()) {
+      skipped.push({ name, reason: 'directory-not-exported' })
+      continue
+    }
+    if (FORBIDDEN_EXPORT_BASENAME.test(name) || HISTORICAL_EVIDENCE_BASENAMES.includes(name) || name === 'README.md') {
+      skipped.push({ name, reason: 'forbidden-or-historical' })
+      continue
+    }
+    if (!EXPORTABLE_BASENAME.test(name)) {
+      skipped.push({ name, reason: 'not-whitelisted' })
+      continue
+    }
+    if (runId && !name.startsWith(`${runId}-`) && !name.startsWith('aaclr1-')) {
+      skipped.push({ name, reason: 'run-scoped-name-required' })
+      continue
+    }
+    const dest = join(destDir, name)
+    if (existsSync(dest)) {
+      throw new Error(`Refusing to overwrite existing durable evidence ${name}`)
+    }
+    if (name.endsWith('.json')) {
+      const parsed = JSON.parse(readFileSync(source, 'utf8'))
+      assertSafeEvidence(parsed, name)
+    }
+    copyFileSync(source, dest)
+    if (lstatSync(dest).isSymbolicLink()) {
+      throw new Error(`Export produced a symlink ${name}`)
+    }
+    exported.push({ name, bytes: stat.size, dest: resolve(dest) })
+  }
+  return { ok: true, exported, skipped }
 }
 
 export function writeEvidence(evidenceDir, name, value) {

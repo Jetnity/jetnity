@@ -30,7 +30,7 @@ import { planeLoopbackDienste, bereiteOwnedWorkdir, assertOverlayKeepsAuthSemant
 import { plannedSql } from './schema.mjs'
 import { leereMatrix, setzeGate, loadBrowserModule, mergeBrowserGates, markBrowserNotImplemented, decideVerdict } from './gates.mjs'
 import { raeumeOwnedAuf, cleanupDryRunKontrolle, bewerteCleanup } from './cleanup.mjs'
-import { writeEvidence, redactSecrets } from './evidence.mjs'
+import { writeEvidence, redactSecrets, exportSanitizedRunArtifacts } from './evidence.mjs'
 import { leseOverlayConfig } from './stack.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
@@ -72,14 +72,13 @@ export async function run({
     privateHome,
     evidenceDir: privateEvidence,
   })
-  registry.browserRegistry = new Map()
   registry.execFile = execFile
   const owned = {
     privateHome,
     toolingDir,
     evidenceDir: privateEvidence,
     preflightOwned: { privateHome, homeCreated: true },
-    browserRegistry: registry.browserRegistry,
+    browserRegistry: registry.browsers,
     execFile,
     registry,
   }
@@ -221,7 +220,14 @@ export async function run({
     }
 
     const probe = cleanupDryRunKontrolle()
-    cleanup = await raeumeOwnedAuf(owned)
+    cleanup = await raeumeOwnedAuf(owned, {
+      exportArtifacts: () => exportSanitizedRunArtifacts({
+        sourceDir: owned.evidenceDir,
+        destDir: evidenceDir,
+        runId,
+        ownedRoots: [privateHome],
+      }),
+    })
     const cleanupOk = probe.blocked === false
       && probe.allowed === true
       && probe.signalFailureBlocked === true
@@ -329,7 +335,14 @@ export async function run({
     return { verdict, mode, runId, matrix, summary, cleanup, docker, cli, source, browserPresent }
   } catch (error) {
     try {
-      cleanup = await raeumeOwnedAuf(owned)
+      cleanup = await raeumeOwnedAuf(owned, {
+        exportArtifacts: () => exportSanitizedRunArtifacts({
+          sourceDir: owned.evidenceDir,
+          destDir: evidenceDir,
+          runId,
+          ownedRoots: [privateHome],
+        }),
+      })
     } catch (cleanupError) {
       cleanup = {
         unknown: true,
@@ -344,7 +357,6 @@ export async function run({
     })
     persistFailureReceipt({
       evidenceDir,
-      privateEvidenceDir: owned.evidenceDir,
       runId,
       error,
       cleanup,
@@ -356,7 +368,7 @@ export async function run({
   }
 }
 
-function persistFailureReceipt({ evidenceDir, privateEvidenceDir, runId, error, cleanup, matrix }) {
+export function persistFailureReceipt({ evidenceDir, runId, error, cleanup, matrix }) {
   const payload = {
     at: new Date().toISOString(),
     runId,
@@ -364,12 +376,11 @@ function persistFailureReceipt({ evidenceDir, privateEvidenceDir, runId, error, 
     cleanup: redactSecrets(cleanup || {}),
     gates: Object.fromEntries(Object.entries(matrix || {}).map(([id, gate]) => [id, { result: gate.result }])),
   }
-  for (const dir of [privateEvidenceDir, evidenceDir].filter(Boolean)) {
-    try {
-      writeEvidence(dir, `${runId}-failure.json`, payload)
-    } catch {
-      /* still fail the run; receipt write must not hide the original error */
-    }
+  if (!evidenceDir) return null
+  try {
+    return writeEvidence(evidenceDir, `${runId}-failure.json`, payload)
+  } catch {
+    return null
   }
 }
 

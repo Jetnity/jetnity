@@ -4,34 +4,33 @@ This is author self-review, not an independent Technical-Lead PASS.
 
 ## Scope
 
-Same-session focused completion of review `5293516993` on `07da4bdd07df73c0ee586e1e899841a3163389fc`. Owned only `scripts/e2e/admin-account-counts-local-runtime-1/**`, own STATUS/HANDOFF/SELF_REVIEW, and new sanitized receipts. Product/Auth/SQL/config/migration/root package/lock/CI were not changed. Task §4 was not drifted. No sibling-code import or writes.
+Same-session consolidated F1–F4 correction of review `5294264491` on `12f42ab2ab2a8a9b67086dece9f0b76fd84f767c`. Owned only `scripts/e2e/admin-account-counts-local-runtime-1/**`, own STATUS/HANDOFF/SELF_REVIEW, and new sanitized receipts. Product/Auth/SQL/config/migration/root package/lock/CI and the accepted #556 lifecycle module were not changed. Task §4 was not drifted. No sibling-code import or writes.
 
 ## Review mapping
 
 | ID | Correction |
 | --- | --- |
-| R1/R3 | Default no-start still does not download. Explicit `--cli-archive` + `--cli-checksums` hash real input bytes, validate pinned checksums/archive identity, extract into newly owned tooling, and compare the selected file to the archive member. `bindCliExecutableIdentity` rehashes supplied archive bytes; sidecar/`archiveVerified` cannot bind. CLI1 text-file+sidecar is unbound. Version/help is not invoked in this correction (`invokeBinary: false`). |
-| R2 | `classifyDockerInspectError` requires resource-specific `No such <kind>: <name>`. Generic `not found` and `context … not found` are UNKNOWN (DOCKER2). `collectOwnedDockerResources` records every volume mount as owned/foreign/unresolved; VOLUME1 unlabeled mount is unresolved and `inventoryComplete=false`. Foreign volumes are retained. Already-removed owned resources after CLI stop stay ABSENT without permanently invalidating independently proved postconditions. Unqueryable daemon stays UNKNOWN. |
-| R5 | `assertInstalledRelation` compares exact accepted dollar-quoted `prosrc` and exact proconfig set equality. SQL1 inert-literal tokens, SQL2 `search_path=pg_catalog, attacker`, and mutating `is distinct from 'active'` to `is not distinct from 'active'` fail. Rogue-grantee / missing-grant / grant-option controls remain. Accepted product SQL was not changed. |
+| F1 | `hashTarMember` extracts via isolated `tar -xOf` stdout-to-file, timeout, isolated env and `maxBytes`. T2 2MiB member hashes. Oversize/timeout/corrupt fail. Sidecar is still not a trust root. |
+| F2 | `SAFE_SNAPSHOT_DOTENV_EXCLUDES` is applied as git-archive pathspecs, then leftover disclosed templates are unlinked before `refuseSymlinksAndDotenv`. Actual baseline inventory no longer fails on tracked `.env.example`. Secrets/symlinks still fail. Archive is file-backed. `macosExtractUnverified=true`. |
+| F3 | One `browsers` map from `createOwnershipRegistry` through `run`/`context`/`newBrowserSession` to `raeumeOwnedAuf`. Context is assigned before `attachLocalTrafficPolicy`. Pending launch is not `closed:true`. Request listeners record `trafficViolation` and do not throw. Unknown fails G20. |
+| F4 | Cleanup order is stop → `exportSanitizedRunArtifacts` → delete. Whitelist is consumer-receipt/screenshot/clip only. Secret JSON fails closed and retains private HOME. `persistFailureReceipt` writes only the durable dir. |
 
 ## Misleading claims corrected
 
-`IMPLEMENTATION.codeCompleteClaim = false`. STATUS does not say CODE-COMPLETE. Docker absence is an execution blocker **and** was not the only remaining defect on `07da4bdd`. Implementing the official-byte path is not executing official binaries.
+`IMPLEMENTATION.codeCompleteClaim = false`. STATUS does not say CODE-COMPLETE. Implementing supported paths is not executing official binaries, Docker or Playwright.
 
 ## Tests actually run
 
-`node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **31/31 PASS** on Node v22.14.0. Includes CLI1 sidecar unbound, `--cli-archive`/`--cli-checksums` fail-closed assembly, `materializeVerifiedArchive` valid extract of a local test tar (not official pins), DOCKER2, VOLUME1/VOLUME2, foreign retain, unresolved inventory, idempotent already-removed resources, SQL1/SQL2/active-mutation, and preserved A1/A2/D1/S1–S7.
+`node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **35/35 PASS** on Node v22.14.0. Includes F1 64KiB/2MiB/oversize/timeout/corrupt, F2 synthetic + actual baseline snapshot, F3 policy-failure/pending/foreign-request/timeout/normal-close, F4 happy-path export + secret fail-closed + no HOME recreation, and preserved prior CLI/catalog/Docker/app/observer cases.
 
-`node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs` — default no-start. Verdict `BLOCKED_ENVIRONMENT`, `fullLocalExecution=false`, `codeCompleteClaim=false`, exit 2. Receipt `aaclr1-20260923T161949Z`. Official archive bytes are not present; default does not download. G2–G19 NOT RUN.
-
-No Docker retry. No official binary download or execution. No real stack. No Mac. No hosted query. No production build.
+`node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs` — default no-start. Verdict `BLOCKED_ENVIRONMENT`, `fullLocalExecution=false`, `codeCompleteClaim=false`, exit 2. Receipt `aaclr1-20260923T172002Z`. Official binaries/Docker/real stack/Mac/Playwright: **NOT RUN**.
 
 ## Residual risks
 
-- P1: isolation/secret exposure/false full PASS — additional archive-byte and inventory regressions added; real stack still unverified
-- P2: actual official CLI 2.117.0 extract, PG17 catalog, Next compile and GoTrue provisioning remain **NOT RUN**
-- P3: Darwin/container execution still unverified
-- A direct observer probe is still not the app-server RPC positive control; that remains an integrated-run proof
+- P1: isolation/secret exposure/false full PASS — F3/F4 regressions added; real browser still unverified
+- P2: official CLI extract, PG17 catalog, Next compile, GoTrue and Playwright remain **NOT RUN**
+- P3: Darwin tar/`--no-same-owner` extract still unverified
+- #559 navigation wait is independent and was not imported
 
 ## Not claimed
 

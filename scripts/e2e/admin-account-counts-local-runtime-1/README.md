@@ -58,6 +58,12 @@ are present, `--runtime-only` / `--full` can:
 Missing Docker is an **execution blocker**, not permission to ship placeholders
 and not a Production P0 incident. This command never installs Docker.
 
+Tracked dotenv templates such as `.env.example` are excluded from the isolated
+checkout snapshot. Inherited `.env*` files and symlinks remain forbidden.
+Browser ownership uses one registry map. Sanitized consumer receipts and
+screenshots are exported to the durable evidence directory before private HOME
+removal.
+
 ## Forbidden substitutes
 
 - Hosted Production / Development query, DDL, grant, exposure or activation
