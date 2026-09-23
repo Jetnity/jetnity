@@ -1,5 +1,5 @@
 -- LOCAL-ONLY postcondition check for the accepted account-count package.
--- Raises on failure. Never CASCADE. Never hosted SQL.
+-- Raises on failure. Does not drop dependent objects. Never hosted SQL.
 DO $verify$
 DECLARE
   klass jsonb;

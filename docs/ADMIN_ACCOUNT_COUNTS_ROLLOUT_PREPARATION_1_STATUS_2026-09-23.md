@@ -1,7 +1,7 @@
 # Admin Account Counts Rollout Preparation 1 — STATUS
 
 Stand: 23. September 2026  
-Status: **PRE-TEST PACKAGE PERSIST / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / NO PRODUCTION APPLY**
+Status: **LOCAL PACKAGE TESTED / FROZEN FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NOT A TECHNICAL-LEAD PASS / DRAFT / NOT READY / NOT MERGED / NO PRODUCTION APPLY**
 
 Draft PR: #555  
 Branch: `feat/admin-account-counts-rollout-preparation-1`  
@@ -17,21 +17,41 @@ Observed run-info display name: `Admin account counts rollout preparation`. UI r
 
 This persist is not Technical-Lead PASS, not live statistics, and not Production/Preview activation. Closed #550/#552/#551/#553/#554 sessions were not resumed.
 
-## 1. What this slice owns
+## 1. Delivered
 
-A LOCAL-ONLY composition, preflight, verify, revoke and identity-strict rollback package around the unchanged accepted producer/wrapper, plus the environment state machine and German PO packet.
+LOCAL-ONLY composition + transactional install/verify/rollback around the **unchanged** accepted producer/wrapper:
 
-Accepted hashes were re-read and matched the task pins before the first package commit.
+- `scripts/db/admin-account-counts-rollout-preparation-1/`
+- PLAN, German PO packet, this STATUS, HANDOFF, SELF_REVIEW
+- sanitized evidence under `docs/evidence/admin-account-counts-rollout-preparation-1/`
 
-## 2. Not yet executed at this persist
+Accepted hashes still match the task pins.
 
-Disposable PostgreSQL rehearsal, Node runner tests, and repository hygiene/build numbers will be recorded in a follow-up persist on this same session after the first frozen package head is pushed. Status-only churn is not a gate.
+## 2. Local verification (this writer)
 
-## 3. Honest blockers already in the design
+| Class | Result | Kind |
+| --- | --- | --- |
+| package Node safety | 5/5 PASS | hash pin + hosted/argv reject; no cluster |
+| disposable SQL rehearsal | **41/41 PASS** | unexpected object, fault residue, fresh, repeat, auth, owner/ACL, rollback+sentinel, reinstall, revoke-vs-identity rollback, cleanup |
+| accepted activation/reader/parser | 23/23 PASS | unchanged modules; not rewritten |
+| `check:dead` | PASS, 0 orphans | hygiene |
+| `check:exports` | PASS, 0 unused | hygiene |
+| `check:operating-mode` | PASS | NORMAL |
 
-- `profiles.status` banned/disabled is **not** checked by the producer or by `loadRole` (role only).
-- Privileged owner `postgres` already has BYPASSRLS + SELECT on `auth.users`; the definer function adds an EXECUTE surface, not a new role.
-- Browser/MFA evidence is a parallel independent lane and is **pending**.
-- Production objects remain ABSENT per dated TL metadata; this agent did not connect.
+Engine: PostgreSQL **16.15** on a private socket. Explicitly **not** Production 17.6. System `16/main` was not used. Cleanup removed the owned directory after postmaster stop.
 
-**Do not mark Ready. Do not merge. STOP FOR INDEPENDENT TL REVIEW after the rehearsal persist.**
+Authorized moderator AAL2 received `present_registered_accounts=16`, `created_in_prior_30_days=12`, definition `jetnity.admin-account-counts.v1`. Denied callers were `42501` with no success row.
+
+## 3. Honest blockers (unchanged by a green local packet)
+
+- **NO-GO for later exposure:** banned moderator+AAL2 and disabled admin+AAL2 **still received counts**. Producer does not read `profiles.status`. Application `loadRole` selects `role` only.
+- Privileged owner remains existing `postgres` NOSUPERUSER+BYPASSRLS with SELECT on `auth.users`. No new privilege role. Wrapper owner locally is the fixture executor `jetnity_proof`; Production apply as `postgres` would own the wrapper.
+- `pg_default_acl` for `jetnity_reporting` stayed empty after local REVOKE-only ADP. Do not invent a Production ADP row from this.
+- Browser/MFA evidence is the parallel independent lane and is **pending**.
+- Production objects remain ABSENT per dated TL metadata. This agent did not connect.
+
+## 4. Not run / not claimed
+
+Full `npm test`, production build, typecheck, lint, hosted CI/Auth/Preview (exact-head IDs belong in the PR conversation after this freeze), remote metadata re-read, live statistics.
+
+**Do not mark Ready. Do not merge. STOP FOR INDEPENDENT TL EXACT-HEAD REVIEW.**

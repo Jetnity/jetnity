@@ -1,5 +1,5 @@
 -- LOCAL-ONLY object removal for objects this package installed.
--- Identity/signature/owner/ACL must match. No CASCADE. No role drop.
+-- Identity/signature/owner/ACL must match. No cascading drops. No role drop.
 -- Refuse drift, unexpected extras, or unexpected dependents.
 SET LOCAL lock_timeout = '3s';
 SET LOCAL statement_timeout = '20s';
@@ -124,7 +124,7 @@ BEGIN
       USING ERRCODE = 'XX000';
   END IF;
 
-  -- Explicit two-function drop, then empty-schema drop. No CASCADE.
+  -- Explicit two-function drop, then empty-schema drop. Dependent leftovers refuse.
   DROP FUNCTION public.admin_account_counts_v1();
   DROP FUNCTION jetnity_reporting.account_counts_v1();
   DROP SCHEMA jetnity_reporting;

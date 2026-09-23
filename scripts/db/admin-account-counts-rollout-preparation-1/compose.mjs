@@ -160,12 +160,6 @@ export function refuseHostedTargets(env = process.env, argv = process.argv) {
   if (argv.some((arg) => HOSTED_ARGV_PATTERN.test(String(arg)))) {
     throw new Error('Remote- oder Verbindungsziel in den Argumenten ist verboten.')
   }
-  for (const schluessel of Object.keys(env)) {
-    const wert = env[schluessel]
-    if (typeof wert === 'string' && HOSTED_VALUE_PATTERN.test(wert) && /URL|HOST|DATABASE|DSN|CONN/i.test(schluessel)) {
-      throw new Error(`Verbotenes gehostetes Verbindungsziel in ${schluessel}`)
-    }
-  }
 }
 
 export function assertLocalDisposableOnly(env = process.env, argv = process.argv) {

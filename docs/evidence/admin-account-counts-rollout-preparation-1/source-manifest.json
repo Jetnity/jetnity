@@ -1,6 +1,6 @@
 {
   "package": "admin-account-counts-rollout-preparation-1",
-  "pinnedAt": "pre-rehearsal",
+  "pinnedAt": "post-rehearsal-41-of-41",
   "accepted": {
     "candidateSha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
     "bootstrapSha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
