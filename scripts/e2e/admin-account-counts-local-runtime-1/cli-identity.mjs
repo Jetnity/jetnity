@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { arch, platform } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
 import { CLI, TIMEOUTS } from './constants.mjs'
 
@@ -79,12 +79,68 @@ function tryExec(execFile, bin, args, env, timeout = TIMEOUTS.cliHelpMs) {
   }
 }
 
-export function verifyResolvedCli({ resolved, env, execFile = execFileSync }) {
+export function officialArchiveDigest(platformId) {
+  const expected = CLI.archives[platformId]
+  return expected ? digestHex(expected.apiDigest) : null
+}
+
+export function bindCliExecutableIdentity({
+  resolved,
+  provenance,
+  platformId = platformKey(),
+} = {}) {
+  const official = officialArchiveDigest(platformId)
+  if (!resolved) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      reason: 'No executable selected.',
+    }
+  }
+  if (!provenance?.archiveVerified || !provenance.archiveSha256 || !provenance.extractedBinPath) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      reason: 'PATH version/help is not official archive/checksum provenance.',
+    }
+  }
+  if (!official || digestHex(provenance.archiveSha256) !== official) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      reason: `archive sha256 ${provenance.archiveSha256 || 'missing'} != official ${official}`,
+    }
+  }
+  if (resolve(resolved) !== resolve(provenance.extractedBinPath)) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      reason: 'selected executable is not the owned extracted official binary',
+    }
+  }
+  if (provenance.binarySha256 && provenance.expectedBinarySha256 && provenance.binarySha256 !== provenance.expectedBinarySha256) {
+    return {
+      archiveBound: false,
+      pinned: false,
+      reason: 'extracted binary digest does not match the verified archive member',
+    }
+  }
+  return { archiveBound: true, pinned: true, reason: null, archiveSha256: digestHex(provenance.archiveSha256) }
+}
+
+export function verifyResolvedCli({
+  resolved,
+  env,
+  execFile = execFileSync,
+  provenance,
+  platformId = platformKey(),
+} = {}) {
   if (!resolved) {
     return {
       available: false,
       identityVerified: false,
       pinned: false,
+      archiveBound: false,
       version: null,
       helpVerified: false,
       startHelpVerified: false,
@@ -121,20 +177,26 @@ export function verifyResolvedCli({ resolved, env, execFile = execFileSync }) {
   } catch {
     startHelpOk = false
   }
-  const identityVerified = versionOk && helpOk && startHelpOk
+  const textOk = versionOk && helpOk && startHelpOk
+  const bound = bindCliExecutableIdentity({ resolved, provenance, platformId })
+  const identityVerified = textOk && bound.archiveBound === true
   return {
     available: identityVerified,
     identityVerified,
     pinned: identityVerified,
+    archiveBound: bound.archiveBound,
     resolved,
     version: version.ok ? version.text : null,
     helpVerified: helpOk,
     startHelpVerified: startHelpOk,
     startHelpTextPresent: Boolean(startHelp.full),
     excludeNames: listExcludeNames(startHelp.full || ''),
+    provenance: bound.archiveBound ? { archiveSha256: bound.archiveSha256, extractedBinPath: provenance.extractedBinPath } : null,
     note: identityVerified
-      ? `Resolved supabase matched official ${CLI.version} version and help.`
-      : `Selected candidate is ${CLI.version}. Observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`,
+      ? `Selected executable is the owned extract of official ${CLI.version} archive ${bound.archiveSha256} and matched version/help.`
+      : bound.archiveBound
+        ? `Official archive is bound but observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`
+        : `${bound.reason} Observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`,
   }
 }
 
@@ -165,6 +227,8 @@ export async function acquireOfficialCli({
   checksumsBytes,
   archiveBytes,
   platformId = platformKey(),
+  extract = true,
+  execFile = execFileSync,
 } = {}) {
   if (!platformId || !CLI.archives[platformId]) {
     throw new Error(`CLI ${CLI.version} has no official archive for this platform.`)
@@ -182,7 +246,24 @@ export async function acquireOfficialCli({
   mkdirSync(toolingDir, { recursive: true, mode: 0o700 })
   const archivePath = join(toolingDir, identity.name)
   writeFileSync(archivePath, archiveBytes, { mode: 0o600 })
-  return { ...identity, archivePath, platformId }
+  let extractedBinPath = null
+  let binarySha256 = null
+  if (extract) {
+    const binDir = join(toolingDir, 'bin')
+    mkdirSync(binDir, { recursive: true, mode: 0o700 })
+    execFile('tar', ['-xzf', archivePath, '-C', binDir], { encoding: 'utf8' })
+    extractedBinPath = markExtractedBinary(join(binDir, 'supabase'))
+    binarySha256 = sha256File(extractedBinPath)
+  }
+  return {
+    ...identity,
+    archivePath,
+    platformId,
+    extractedBinPath,
+    binarySha256,
+    archiveVerified: true,
+    archiveSha256: actual,
+  }
 }
 
 export function markExtractedBinary(binPath) {

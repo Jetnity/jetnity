@@ -27,7 +27,7 @@ Helper / contract tests (no GoTrue, no real app, no hosted DB):
 node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs
 ```
 
-## Implemented execution path (code-complete, execution distinct)
+## Implemented execution path (review-fix head; execution remains distinct)
 
 When an already-working local Docker daemon and verified official CLI **v2.117.0**
 are present, `--runtime-only` / `--full` can:

@@ -29,11 +29,12 @@ import { assertRuntimeSources, leseRuntimeSourceManifest, assertCleanProductHead
 import { planeLoopbackDienste, bereiteOwnedWorkdir, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
 import { plannedSql } from './schema.mjs'
 import { leereMatrix, setzeGate, loadBrowserModule, mergeBrowserGates, markBrowserNotImplemented, decideVerdict } from './gates.mjs'
-import { raeumeOwnedAuf, cleanupDryRunKontrolle } from './cleanup.mjs'
-import { writeEvidence } from './evidence.mjs'
+import { raeumeOwnedAuf, cleanupDryRunKontrolle, bewerteCleanup } from './cleanup.mjs'
+import { writeEvidence, redactSecrets } from './evidence.mjs'
 import { leseOverlayConfig } from './stack.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
+import { createOwnershipRegistry } from './ownership.mjs'
 
 function parseMode(argv = process.argv.slice(2)) {
   if (argv.includes('--full')) return 'full'
@@ -54,6 +55,8 @@ export async function run({
   resolve = findeAusfuehrbare,
   importer,
   startRuntime = defaultStartRuntime,
+  dockerResult,
+  cliResult,
 } = {}) {
   const mode = parseMode(argv)
   const runId = nowId(now)
@@ -61,11 +64,21 @@ export async function run({
   const timer = setTimeout(() => abort.abort(), TIMEOUTS.runtimeBudgetMs)
   const matrix = leereMatrix('NOT RUN')
   const privateHome = mkdtempSync(join(tmpdir(), `${RUN_LABEL_PREFIX}-home-`))
+  const privateEvidence = mkdtempSync(join(privateHome, 'evidence-'))
+  const registry = createOwnershipRegistry({
+    runId,
+    privateHome,
+    evidenceDir: privateEvidence,
+  })
+  registry.browserRegistry = new Map()
+  registry.execFile = execFile
   const owned = {
     privateHome,
+    evidenceDir: privateEvidence,
     preflightOwned: { privateHome, homeCreated: true },
-    browserRegistry: new Map(),
+    browserRegistry: registry.browserRegistry,
     execFile,
+    registry,
   }
   let verdict = 'NOT_IMPLEMENTED'
   let summary = null
@@ -76,9 +89,9 @@ export async function run({
     const childEnv = baueRuntimePreflightUmgebung({ parentEnv: env, privateHome })
     owned.childEnv = childEnv
     const dockerEnv = baueDockerCliUmgebung({ parentEnv: env, privateHome })
-    const docker = pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve })
+    const docker = dockerResult || pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve })
     const cliResolved = resolveCliCandidate({ env: childEnv, resolve })
-    const cli = verifyResolvedCli({ resolved: cliResolved, env: childEnv, execFile })
+    const cli = cliResult || verifyResolvedCli({ resolved: cliResolved, env: childEnv, execFile })
     const platform = platformKey()
     const source = leseRuntimeSourceManifest()
     try {
@@ -202,16 +215,14 @@ export async function run({
       && probe.allowed === true
       && probe.signalFailureBlocked === true
       && probe.dockerUnverifiedBlocked === true
-      && cleanup.unknown !== true
-      && cleanup.ownershipRetained !== true
-      && cleanup.usedPkill === false
-      && cleanup.usedDockerPrune === false
+      && probe.traversalBlocked === true
+      && bewerteCleanup(cleanup, { registry: owned.registry, mode })
     setzeGate(matrix, 'G20_owned_cleanup', {
       result: cleanupOk ? 'PASS' : 'FAIL',
       evidence: `${runId}-cleanup.json`,
       notes: cleanupOk
         ? 'Owned preflight HOME/resources were confirmed stopped and then removed. Dry-run still refuses unsafe delete.'
-        : 'Ownership was retained, teardown was unconfirmed, or a foreign resource was at risk.',
+        : 'Ownership was retained, teardown was unconfirmed, the registry was incomplete after fallible work, or a foreign resource was at risk.',
     })
 
     const decided = decideVerdict({ mode, matrix, cleanupOk, browserPresent })
@@ -306,16 +317,46 @@ export async function run({
   } catch (error) {
     try {
       cleanup = await raeumeOwnedAuf(owned)
-    } catch {
-      cleanup = { unknown: true, ownershipRetained: true }
+    } catch (cleanupError) {
+      cleanup = {
+        unknown: true,
+        ownershipRetained: true,
+        error: cleanupError instanceof Error ? cleanupError.message : String(cleanupError),
+      }
     }
+    const cleanupOk = bewerteCleanup(cleanup, { registry: owned.registry, mode })
     setzeGate(matrix, 'G20_owned_cleanup', {
-      result: cleanup?.ownershipRetained || cleanup?.unknown ? 'FAIL' : 'PASS',
+      result: cleanupOk ? 'PASS' : 'FAIL',
       notes: error instanceof Error ? error.message : String(error),
+    })
+    persistFailureReceipt({
+      evidenceDir,
+      privateEvidenceDir: owned.evidenceDir,
+      runId,
+      error,
+      cleanup,
+      matrix,
     })
     throw error
   } finally {
     clearTimeout(timer)
+  }
+}
+
+function persistFailureReceipt({ evidenceDir, privateEvidenceDir, runId, error, cleanup, matrix }) {
+  const payload = {
+    at: new Date().toISOString(),
+    runId,
+    error: error instanceof Error ? error.message : String(error),
+    cleanup: redactSecrets(cleanup || {}),
+    gates: Object.fromEntries(Object.entries(matrix || {}).map(([id, gate]) => [id, { result: gate.result }])),
+  }
+  for (const dir of [privateEvidenceDir, evidenceDir].filter(Boolean)) {
+    try {
+      writeEvidence(dir, `${runId}-failure.json`, payload)
+    } catch {
+      /* still fail the run; receipt write must not hide the original error */
+    }
   }
 }
 

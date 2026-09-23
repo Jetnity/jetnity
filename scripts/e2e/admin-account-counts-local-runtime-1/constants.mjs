@@ -108,12 +108,19 @@ export const TIMEOUTS = Object.freeze({
   stackStartMs: 180_000,
   httpMs: 8_000,
   appBootMs: 120_000,
+  installMs: 180_000,
+  buildMs: 180_000,
   browserCloseMs: 3_000,
   childTermMs: 1_500,
   childKillMs: 800,
   drainMs: 2_000,
+  observerCloseMs: 2_000,
+  observerMaxBodyBytes: 1_000_000,
   runtimeBudgetMs: 15 * 60 * 1000,
 })
+
+export const RUN_LABEL = 'jetnity.aaclr1.run'
+export const DOTENV_NAME = /^(?:\.env|\.env\..+)$/
 
 export const RUNTIME_GATES = Object.freeze([
   'G0_preflight',

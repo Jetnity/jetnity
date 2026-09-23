@@ -3,6 +3,7 @@
 // Password, confirmation, TOTP/MFA, anonymous-sign-in and security semantics
 // stay unchanged. Seed is disabled only here, and that is disclosed.
 
+import { execFileSync } from 'node:child_process'
 import { chmodSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { baueConfigOverlay, DISCLOSED_OVERLAY as ACCEPTED_OVERLAY } from '../admin-account-counts-browser-acceptance-1/stack.mjs'
@@ -77,9 +78,20 @@ export function bereiteOwnedWorkdir({ runId, overlayPorts, privateDir, migration
   writeFileSync(join(configDir, 'config.toml'), overlay, { mode: 0o600 })
   const migrationsDir = join(configDir, 'migrations')
   mkdirSync(migrationsDir, { recursive: true, mode: 0o700 })
+  const copiedMigrations = []
   for (const file of migrations?.files || []) {
     const bytes = readFileSync(join(ROOT, file.path))
-    writeFileSync(join(migrationsDir, file.path.split('/').pop()), bytes, { mode: 0o600 })
+    const dest = join(migrationsDir, file.path.split('/').pop())
+    writeFileSync(dest, bytes, { mode: 0o600 })
+    const copiedBlob = execFileSync('git', ['hash-object', dest], { encoding: 'utf8' }).trim()
+    if (file.baselineBlob && copiedBlob !== file.baselineBlob) {
+      throw new Error(`Copied overlay migration ${file.path} ${copiedBlob} != baseline ${file.baselineBlob}`)
+    }
+    copiedMigrations.push({
+      path: file.path,
+      copiedBlob,
+      baselineBlob: file.baselineBlob || null,
+    })
   }
   return {
     workdir,
@@ -90,6 +102,7 @@ export function bereiteOwnedWorkdir({ runId, overlayPorts, privateDir, migration
     migrationsLinked: true,
     migrationReplay: 'IMPLEMENTED',
     seedEnabled: false,
+    copiedMigrations,
   }
 }
 

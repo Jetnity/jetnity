@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Official CLI-managed local stack. Loopback publication is configured
 // before any listener starts. CLI child exit is not Docker teardown.
+// Partial network/child/container/volume handles are recorded on the
+// live ownership registry before fallible work continues.
 
 import { spawn } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
@@ -8,10 +10,11 @@ import { join } from 'node:path'
 import { waitForOwnedChildExit, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
 import { refuseBootstrapOverlay } from '../admin-account-counts-browser-acceptance-1/source-manifest.mjs'
 import { SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
-import { CLI, TIMEOUTS } from './constants.mjs'
+import { CLI, RUN_LABEL, TIMEOUTS } from './constants.mjs'
 import { selectSafeExcludes } from './cli-identity.mjs'
 import { assertNoPublicBindPlan } from './overlay.mjs'
 import { notACompletedExecution } from './implementation.mjs'
+import { recordDockerResources, registerHandle } from './ownership.mjs'
 
 const FORBIDDEN_HOSTS = new Set(['0.0.0.0', '::', '[::]', '', '*'])
 
@@ -74,11 +77,27 @@ function redactUrl(value) {
   }
 }
 
+export function assertPreLaunchPublication({ plan, network }) {
+  assertNoPublicBindPlan(plan)
+  if (!network?.name) throw new Error('Owned network must be named before listeners start.')
+  if (network.created !== true && !network.id) {
+    throw new Error('Owned network must exist before listeners start.')
+  }
+  if (network.option !== 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1') {
+    throw new Error('Network was not created with loopback host binding.')
+  }
+  return {
+    configuredBeforeStart: true,
+    services: (plan.services || []).map((item) => ({ name: item.name, host: item.host, port: item.port })),
+  }
+}
+
 export async function erzeugeOwnedNetwork({
   dockerBin,
   env,
   networkName,
   execFile,
+  runId,
 } = {}) {
   if (!dockerBin) throw notACompletedExecution('owned Docker network', 'docker binary missing')
   const createArgs = [
@@ -86,10 +105,18 @@ export async function erzeugeOwnedNetwork({
     'create',
     '-o',
     'com.docker.network.bridge.host_binding_ipv4=127.0.0.1',
+    '--label',
+    `${RUN_LABEL}=${runId || networkName}`,
     networkName,
   ]
   const out = execFile(dockerBin, createArgs, { encoding: 'utf8', env, timeout: 20_000 })
-  return { name: networkName, id: String(out).trim(), option: 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1' }
+  return {
+    name: networkName,
+    id: String(out).trim(),
+    option: 'com.docker.network.bridge.host_binding_ipv4=127.0.0.1',
+    created: true,
+    runId: runId || networkName,
+  }
 }
 
 export function baueStartArgumente({ networkId, excludeNames = [] } = {}) {
@@ -98,6 +125,45 @@ export function baueStartArgumente({ networkId, excludeNames = [] } = {}) {
     args.push('-x', name)
   }
   return args
+}
+
+export function collectOwnedDockerResources({
+  dockerBin,
+  networkName,
+  env,
+  execFile,
+  runId,
+} = {}) {
+  const idsText = execFile(dockerBin, ['ps', '-aq', '--filter', `network=${networkName}`], {
+    encoding: 'utf8',
+    env,
+    timeout: 15_000,
+  })
+  const ids = String(idsText).trim().split(/\s+/).filter(Boolean)
+  const containers = []
+  const volumes = []
+  const bindings = []
+  for (const id of ids) {
+    const raw = execFile(dockerBin, ['inspect', id], { encoding: 'utf8', env, timeout: 15_000 })
+    const docs = JSON.parse(raw)
+    for (const doc of docs) {
+      const labels = doc.Config?.Labels || {}
+      const ownedByRun = !runId || labels[RUN_LABEL] === runId || doc.HostConfig?.NetworkMode === networkName || Object.keys(doc.NetworkSettings?.Networks || {}).includes(networkName)
+      if (!ownedByRun) continue
+      containers.push({
+        id: doc.Id || id,
+        name: doc.Name,
+        labels,
+      })
+      for (const mount of doc.Mounts || []) {
+        if (mount.Type === 'volume' && mount.Name) {
+          volumes.push({ name: mount.Name, containerId: doc.Id || id })
+        }
+      }
+      bindings.push(...parseDockerPortBindings(doc))
+    }
+  }
+  return { containers, volumes, bindings }
 }
 
 export async function starteOwnedStack({
@@ -110,10 +176,12 @@ export async function starteOwnedStack({
   excludeNames = [],
   spawnFn = spawn,
   execFile,
-  inspectBindings = defaultInspect,
+  inspectBindings,
   waitForStatus,
   signal,
   timeoutMs = TIMEOUTS.stackStartMs,
+  registry,
+  runId,
 } = {}) {
   if (!cliBin || !existsSync(cliBin)) {
     throw notACompletedExecution('owned supabase start', 'verified CLI binary is absent')
@@ -123,46 +191,44 @@ export async function starteOwnedStack({
   }
   assertNoPublicBindPlan(plan)
   refuseBootstrapOverlay({ plannedSqlPaths: [SOURCE_PATHS.producer, SOURCE_PATHS.wrapper], target: 'gotrue' })
-  const network = await erzeugeOwnedNetwork({ dockerBin, env, networkName, execFile })
-  const args = baueStartArgumente({ networkId: network.name, excludeNames })
-  const child = spawnFn(cliBin, args, {
-    cwd: workdir,
-    env,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  })
-  const started = { child, network, workdir, dockerServicesConfirmed: false, containers: [], volumes: [] }
+  const started = { child: null, network: { name: networkName, created: false }, workdir, dockerServicesConfirmed: false, containers: [], volumes: [] }
+  registerHandle(registry, 'stack', started)
   try {
+    const network = await erzeugeOwnedNetwork({ dockerBin, env, networkName, execFile, runId })
+    started.network = network
+    registerHandle(registry, 'network', network)
+    const publication = assertPreLaunchPublication({ plan, network })
+    started.publication = publication
+    const args = baueStartArgumente({ networkId: network.name, excludeNames })
+    const child = spawnFn(cliBin, args, {
+      cwd: workdir,
+      env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+    started.child = child
+    registerHandle(registry, 'stackChild', child)
     const wait = waitForStatus
       ? await waitForStatus({ child, timeoutMs, signal })
       : await waitForOwnedChildExit(child, { timeoutMs })
     if (wait.timedOut || (wait.exitCode != null && wait.exitCode !== 0)) {
       throw notACompletedExecution('owned supabase start', wait.error || `CLI exited ${wait.exitCode}`)
     }
-    const bindings = await inspectBindings({ dockerBin, env, networkName: network.name, execFile })
-    assertLoopbackBindings(bindings)
+    const resources = inspectBindings
+      ? { bindings: await inspectBindings({ dockerBin, env, networkName: network.name, execFile }), containers: [], volumes: [] }
+      : collectOwnedDockerResources({ dockerBin, networkName: network.name, env, execFile, runId })
+    assertLoopbackBindings(resources.bindings)
     started.dockerServicesConfirmed = true
-    started.bindings = bindings
+    started.bindings = resources.bindings
+    started.containers = resources.containers || []
+    started.volumes = resources.volumes || []
+    recordDockerResources(registry, started)
+    registerHandle(registry, 'stack', started)
     return started
   } catch (error) {
     started.error = error instanceof Error ? error.message : String(error)
-    throw error
+    registerHandle(registry, 'stack', started)
+    throw Object.assign(error instanceof Error ? error : new Error(String(error)), { ownedPartial: started })
   }
-}
-
-async function defaultInspect({ dockerBin, env, networkName, execFile }) {
-  const idsText = execFile(dockerBin, ['ps', '-q', '--filter', `network=${networkName}`], {
-    encoding: 'utf8',
-    env,
-    timeout: 15_000,
-  })
-  const ids = String(idsText).trim().split(/\s+/).filter(Boolean)
-  const bindings = []
-  for (const id of ids) {
-    const raw = execFile(dockerBin, ['inspect', id], { encoding: 'utf8', env, timeout: 15_000 })
-    const docs = JSON.parse(raw)
-    for (const doc of docs) bindings.push(...parseDockerPortBindings(doc))
-  }
-  return bindings
 }
 
 export async function stoppeOwnedStack({
@@ -185,10 +251,14 @@ export async function stoppeOwnedStack({
   if (state?.child) {
     report.cliChild = await stoppeOwnedChild(state.child)
   }
-  if (!dockerBin || !state?.network?.name) {
-    report.dockerServicesUnverified = true
+  if (!dockerBin || !execFile) {
+    report.dockerServicesUnverified = Boolean(state?.network?.name || state?.containers?.length || state?.volumes?.length)
     return report
   }
+
+  const recordedContainers = (state?.containers || []).map((item) => item.id || item.Id || item).filter(Boolean)
+  const recordedVolumes = (state?.volumes || []).map((item) => item.name || item.Name || item).filter(Boolean)
+
   try {
     if (cliBin && workdir) {
       execFile(cliBin, ['stop'], { encoding: 'utf8', env, cwd: workdir, timeout: 60_000 })
@@ -196,12 +266,10 @@ export async function stoppeOwnedStack({
   } catch (error) {
     report.cliStopError = error instanceof Error ? error.message : String(error)
   }
-  const idsText = execFile(dockerBin, ['ps', '-aq', '--filter', `network=${state.network.name}`], {
-    encoding: 'utf8',
-    env,
-    timeout: 15_000,
-  })
-  const ids = String(idsText).trim().split(/\s+/).filter(Boolean)
+
+  const ids = recordedContainers.length
+    ? recordedContainers
+    : []
   report.containers = ids
   for (const id of ids) {
     try {
@@ -211,18 +279,52 @@ export async function stoppeOwnedStack({
       report.containerError = error instanceof Error ? error.message : String(error)
     }
   }
-  try {
-    execFile(dockerBin, ['network', 'rm', state.network.name], { encoding: 'utf8', env, timeout: 15_000 })
-    report.networkRemoved = true
-  } catch (error) {
-    report.networkError = error instanceof Error ? error.message : String(error)
+  const leftoverContainers = ids.filter((id) => resourceExists(execFile, dockerBin, ['inspect', id], env))
+  report.containersRemoved = leftoverContainers.length === 0
+
+  let volumeError = null
+  for (const name of recordedVolumes) {
+    try {
+      execFile(dockerBin, ['volume', 'rm', '-f', name], { encoding: 'utf8', env, timeout: 20_000 })
+    } catch (error) {
+      volumeError = error instanceof Error ? error.message : String(error)
+      report.volumeError = volumeError
+    }
   }
-  report.dockerServicesStopped = !report.containerError && report.networkRemoved
+  const leftoverVolumes = recordedVolumes.filter((name) => resourceExists(execFile, dockerBin, ['volume', 'inspect', name], env))
+  report.volumes = recordedVolumes
+  report.volumesRemoved = leftoverVolumes.length === 0 && !volumeError
+
+  if (state?.network?.name) {
+    if (state.network.created === true || state.network.id) {
+      try {
+        execFile(dockerBin, ['network', 'rm', state.network.name], { encoding: 'utf8', env, timeout: 15_000 })
+      } catch (error) {
+        report.networkError = error instanceof Error ? error.message : String(error)
+      }
+      report.networkRemoved = !resourceExists(execFile, dockerBin, ['network', 'inspect', state.network.name], env)
+    } else {
+      report.networkRemoved = !resourceExists(execFile, dockerBin, ['network', 'inspect', state.network.name], env)
+    }
+  } else {
+    report.networkRemoved = true
+  }
+
+  report.dockerServicesStopped = report.containersRemoved && report.volumesRemoved && report.networkRemoved && !report.containerError
   return report
+}
+
+function resourceExists(execFile, dockerBin, args, env) {
+  try {
+    execFile(dockerBin, args, { encoding: 'utf8', env, timeout: 10_000 })
+    return true
+  } catch {
+    return false
+  }
 }
 
 export function leseOverlayConfig(configPath) {
   return readFileSync(configPath, 'utf8')
 }
 
-export { join }
+export { join, CLI }

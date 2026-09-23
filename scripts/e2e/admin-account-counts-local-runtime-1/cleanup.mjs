@@ -1,75 +1,150 @@
 #!/usr/bin/env node
 // Owned teardown. CLI child exit is not Docker service teardown.
 // Foreign sentinels are never deleted. Unknown ownership retains resources.
+// Roots are the private HOME only; target paths are not self-authorizing.
 
-import { existsSync, rmSync } from 'node:fs'
+import { existsSync, lstatSync, realpathSync, rmSync } from 'node:fs'
+import { isAbsolute, relative, resolve, sep } from 'node:path'
 import { darfOwnedVerzeichnisEntfernen, schliesseOwnedBrowser, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
 import { stoppeOwnedStack } from './stack.mjs'
 
+export function canonicalizeOwnedPath(path) {
+  if (!path) return null
+  const resolved = resolve(String(path))
+  try {
+    if (existsSync(resolved)) {
+      const stat = lstatSync(resolved)
+      if (stat.isSymbolicLink()) return realpathSync(resolved)
+      return realpathSync(resolved)
+    }
+  } catch {
+    return resolved
+  }
+  return resolved
+}
+
 export function assertOwnedPath(path, ownedRoots = []) {
   if (!path) return false
-  return ownedRoots.some((root) => root && (path === root || String(path).startsWith(`${root}/`)))
+  const candidate = canonicalizeOwnedPath(path)
+  if (!candidate) return false
+  return ownedRoots.some((root) => {
+    if (!root) return false
+    const canonicalRoot = canonicalizeOwnedPath(root)
+    if (!canonicalRoot) return false
+    const rel = relative(canonicalRoot, candidate)
+    if (rel === '') return true
+    if (rel.startsWith(`..${sep}`) || rel === '..' || rel.startsWith('..')) return false
+    if (isAbsolute(rel)) return false
+    return true
+  })
+}
+
+function privateRoots(state) {
+  return [state.privateHome || state.privateDir || state.preflightOwned?.privateHome].filter(Boolean)
 }
 
 export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
-  const ownedRoots = [state.privateDir, state.workdir, state.checkoutDir, state.preflightOwned?.privateHome].filter(Boolean)
+  const registry = state.registry || null
+  const ownedRoots = privateRoots(state)
+  const browserRegistry = registry?.browsers || state.browserRegistry
+  const network = registry?.network || state.network
+  const stack = registry?.stack || state.stack
+  const stackChild = registry?.stackChild || state.stackChild || stack?.child
+  const appChild = registry?.appChild !== undefined ? registry.appChild : state.appChild
+  const containers = registry?.containers || state.containers || stack?.containers || []
+  const volumes = registry?.volumes || state.volumes || stack?.volumes || []
+  const observer = registry?.observer || state.observer
+
   if (state.foreignSentinel && existsSync(state.foreignSentinel)) {
     if (assertOwnedPath(state.foreignSentinel, ownedRoots) !== true) {
       /* keep the sentinel */
     }
   }
   const reports = []
-  const registry = state.browserRegistry
-  if (registry instanceof Map) {
-    for (const handle of registry.values()) {
+  if (browserRegistry instanceof Map) {
+    for (const handle of browserRegistry.values()) {
       reports.push({ kind: 'browser-context', ...(await schliesseOwnedBrowser(handle, { closeTimeoutMs })) })
     }
   } else if (state.browserHandle) {
     reports.push({ kind: 'browser-context', ...(await schliesseOwnedBrowser(state.browserHandle, { closeTimeoutMs })) })
   }
 
-  if (state.appChild) reports.push({ kind: 'app', ...(await stoppeOwnedChild(state.appChild)) })
-  if (state.observer?.close) {
+  if (appChild) reports.push({ kind: 'app', ...(await stoppeOwnedChild(appChild)) })
+  if (observer?.close) {
     try {
-      await state.observer.close()
+      await observer.close({ timeoutMs: closeTimeoutMs })
       reports.push({ kind: 'observer', closed: true })
     } catch (error) {
       reports.push({ kind: 'observer', closed: false, error: error instanceof Error ? error.message : String(error), ownershipRetained: true })
     }
   }
-  let stack = null
-  if (state.stack || state.stackChild) {
-    stack = await stoppeOwnedStack({
-      dockerBin: state.dockerBin,
-      cliBin: state.cliBin,
-      workdir: state.workdir,
-      env: state.childEnv,
-      state: state.stack || { child: state.stackChild, network: state.network },
-      execFile: state.execFile,
+  const stackRequired = Boolean(
+    stack
+    || stackChild
+    || network?.name
+    || (containers && containers.length)
+    || (volumes && volumes.length),
+  )
+  let stackReport = null
+  if (stackRequired) {
+    stackReport = await stoppeOwnedStack({
+      dockerBin: registry?.dockerBin || state.dockerBin,
+      cliBin: registry?.cliBin || state.cliBin,
+      workdir: registry?.workdir || state.workdir,
+      env: registry?.childEnv || state.childEnv,
+      state: {
+        child: stackChild,
+        network,
+        containers,
+        volumes,
+        created: network?.created === true || Boolean(network?.id),
+      },
+      execFile: registry?.execFile || state.execFile,
     })
-    reports.push({ kind: 'stack', ...stack })
+    reports.push({ kind: 'stack', ...stackReport })
   }
 
-  const unknown = reports.some((item) => item.unknown === true)
+  const unknown = reports.some((item) => item.unknown === true) || registry?.stopUnknown === true
   const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false)
-  const dockerServicesUnverified = Boolean(stack && stack.dockerServicesStopped !== true && (state.stack || state.stackChild))
+  const volumesUnconfirmed = Boolean(stackReport && stackReport.volumesRemoved !== true && (volumes?.length || stackReport.volumes?.length))
+  const dockerServicesUnverified = Boolean(
+    stackReport
+    && stackReport.dockerServicesStopped !== true
+    && stackRequired,
+  )
   const processesStopped = reports
     .filter((item) => item.kind === 'app' || item.kind === 'stack-cli-child')
     .every((item) => item.reaped === true || item.neverStarted === true || item.cliChild?.reaped === true)
   const browserClosed = reports
     .filter((item) => item.kind === 'browser-context')
     .every((item) => item.closed === true || item.skipped === true)
+  const live = Boolean(
+    appChild
+    || stack
+    || stackChild
+    || network?.name
+    || state.browserHandle
+    || browserRegistry?.size
+    || registry?.hadFallibleAcquisition,
+  )
   const flags = {
-    processesStopped: processesStopped || (!state.appChild && !state.stackChild),
+    processesStopped: processesStopped || (!appChild && !stackChild),
     reaped: !ownershipRetained && !unknown,
-    neverStarted: !state.appChild && !state.stack && !state.stackChild && !state.browserHandle && !registry?.size,
+    neverStarted: !live,
     unknown,
     ownershipRetained,
     dockerServicesUnverified,
+    volumesUnconfirmed,
+    incompleteRegistry: Boolean(registry?.hadFallibleAcquisition && !stackRequired && !appChild && !observer && !(browserRegistry && browserRegistry.size)),
+    stopUnknown: registry?.stopUnknown === true,
   }
   const removals = []
-  for (const dir of [state.checkoutDir, state.workdir, state.privateDir || state.preflightOwned?.privateHome]) {
-    if (!dir) continue
+  const dirs = [
+    registry?.checkoutDir || state.checkoutDir,
+    registry?.workdir || state.workdir,
+    state.privateDir || state.privateHome || state.preflightOwned?.privateHome,
+  ].filter(Boolean).sort((a, b) => b.length - a.length)
+  for (const dir of dirs) {
     if (!assertOwnedPath(dir, ownedRoots)) {
       removals.push({ kind: 'foreign', path: dir, removed: false, reason: 'foreign sentinel/path retained' })
       continue
@@ -78,13 +153,13 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
       removals.push({ kind: 'dir', path: dir, removed: true, alreadyAbsent: true })
       continue
     }
-    if (!darfOwnedVerzeichnisEntfernen(flags)) {
+    if (!darfOwnedVerzeichnisEntfernen({ ...flags, dockerServicesUnverified: flags.dockerServicesUnverified || flags.volumesUnconfirmed })) {
       removals.push({
         kind: 'dir',
         path: dir,
         removed: false,
-        reason: 'owned process still active, unknown, close unconfirmed, or Docker services unverified',
-        recovery: `Inspect ${dir} and owned Docker network/containers before manual removal. Do not prune global Docker state.`,
+        reason: 'owned process still active, unknown, close unconfirmed, leftover volume, or Docker services unverified',
+        recovery: `Inspect ${dir} and owned Docker network/containers/volumes before manual removal. Do not prune global Docker state.`,
       })
       continue
     }
@@ -101,8 +176,21 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs } = {}) {
     removals,
     usedPkill: false,
     usedDockerPrune: false,
-    stack,
+    stack: stackReport,
   }
+}
+
+export function bewerteCleanup(cleanup, { registry = null, mode = 'preflight' } = {}) {
+  if (!cleanup) return false
+  if (cleanup.usedPkill === true || cleanup.usedDockerPrune === true) return false
+  if (cleanup.unknown === true || cleanup.ownershipRetained === true) return false
+  if (cleanup.stopUnknown === true || registry?.stopUnknown === true) return false
+  if (cleanup.volumesUnconfirmed === true) return false
+  if (registry?.hadFallibleAcquisition && cleanup.neverStarted === true) return false
+  if (cleanup.incompleteRegistry === true) return false
+  if (cleanup.dockerServicesUnverified === true && registry?.hadFallibleAcquisition) return false
+  void mode
+  return true
 }
 
 export function cleanupDryRunKontrolle() {
@@ -123,5 +211,6 @@ export function cleanupDryRunKontrolle() {
       dockerServicesUnverified: true,
     }) === false,
     foreignBlocked: assertOwnedPath('/tmp/foreign-sentinel', ['/tmp/aaclr1-owned']) === false,
+    traversalBlocked: assertOwnedPath('/tmp/owned/../foreign', ['/tmp/owned']) === false,
   }
 }

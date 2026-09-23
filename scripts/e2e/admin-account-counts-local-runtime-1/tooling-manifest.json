@@ -18,5 +18,7 @@
   },
   "acquisition": "one bounded official hash-checked archive into run-owned tooling, never apt/npx-latest/system install",
   "pathPresenceIsNotAPin": true,
+  "versionHelpIsNotBinaryProof": true,
+  "executableMustBindOfficialArchive": true,
   "silentVersionSwitchForbidden": true
 }

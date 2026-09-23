@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Run-owned Playwright sessions. The browser consumer must not launch
-// browsers or inject storageState. Unknown/rejected close stays owned.
+// Run-owned Playwright sessions. Ownership is registered BEFORE launch.
+// Actual abort-only local traffic enforcement is attached to the live context.
 
 import { mkdtempSync } from 'node:fs'
 import { join } from 'node:path'
@@ -17,6 +17,26 @@ export function assertLocalBrowserTraffic(url) {
   return true
 }
 
+export async function attachLocalTrafficPolicy(context) {
+  if (!context || typeof context.route !== 'function') {
+    throw new Error('Browser context cannot enforce local-only traffic')
+  }
+  await context.route('**/*', async (route) => {
+    try {
+      assertLocalBrowserTraffic(route.request().url())
+      await route.continue()
+    } catch {
+      await route.abort('blockedbyclient')
+    }
+  })
+  if (typeof context.on === 'function') {
+    context.on('request', (request) => {
+      assertLocalBrowserTraffic(request.url())
+    })
+  }
+  return true
+}
+
 export async function newBrowserSession({
   viewport,
   privateHome,
@@ -26,17 +46,33 @@ export async function newBrowserSession({
 } = {}) {
   if (!viewport?.width || !viewport?.height) throw new Error('Browser session requires a viewport.')
   if (!privateHome) throw new Error('Browser session requires a run-owned HOME.')
+  if (!registry || typeof registry.set !== 'function') {
+    throw new Error('Browser session requires the live ownership registry before launch.')
+  }
   const profileDir = mkdtempSync(join(privateHome, 'browser-'))
-  const factory = launchPersistentContext || defaultLaunch
-  const context = await factory({
+  const handle = {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    context: null,
     profileDir,
-    viewport,
-    env,
-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
-  })
-  const handle = { id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, context, profileDir }
+    launchPending: true,
+  }
   registry.set(handle.id, handle)
-  return Object.assign(context, { __runtimeSessionId: handle.id })
+  try {
+    const factory = launchPersistentContext || defaultLaunch
+    const context = await factory({
+      profileDir,
+      viewport,
+      env,
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    })
+    await attachLocalTrafficPolicy(context)
+    handle.context = context
+    handle.launchPending = false
+    return Object.assign(context, { __runtimeSessionId: handle.id })
+  } catch (error) {
+    handle.launchError = error instanceof Error ? error.message : String(error)
+    throw error
+  }
 }
 
 export async function closeBrowserSession(browserContext, { registry, closeTimeoutMs = TIMEOUTS.browserCloseMs } = {}) {

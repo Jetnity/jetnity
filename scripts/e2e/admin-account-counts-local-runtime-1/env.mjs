@@ -4,7 +4,7 @@
 // remote Docker context, connector/provider/model/SMTP keys, NODE_OPTIONS,
 // preload, .env files or authenticated cloud configuration.
 
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import {
   FORBIDDEN_CONNECTION_KEYS,
@@ -56,12 +56,25 @@ export function assertKeineGeerbteLaufzeit(env = {}, argv = process.argv) {
   }
 }
 
+export function isDotenvName(name) {
+  return name === '.env' || String(name).startsWith('.env.')
+}
+
 export function assertKeinDotenv(paths = []) {
   for (const path of paths) {
     if (path && existsSync(path)) {
       throw new Error(`Inherited .env file is forbidden in the dedicated checkout: ${path}`)
     }
   }
+}
+
+export function refuseDotenvInCheckout(checkoutDir) {
+  if (!checkoutDir || !existsSync(checkoutDir)) return []
+  const found = readdirSync(checkoutDir).filter((name) => isDotenvName(name)).map((name) => join(checkoutDir, name))
+  if (found.length) {
+    throw new Error(`Inherited .env file is forbidden in the dedicated checkout: ${found.join(', ')}`)
+  }
+  return found
 }
 
 export function baueRuntimePreflightUmgebung({ parentEnv = {}, privateHome } = {}) {
