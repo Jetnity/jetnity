@@ -9,8 +9,9 @@ URL: https://cursor.com/agents/bc-7a3a3769-52a4-4d68-863e-4e750246fb64
 Observed display name: `Jetnity admin account counts acceptance`. UI rename was **not** performed.  
 Task: `docs/ADMIN_ACCOUNT_COUNTS_BROWSER_ACCEPTANCE_1_TASK_2026-09-23.md` v1, seed `74e939882e9e9bfe94f1f3e032d397ca0b2bbe50`  
 Branch: `audit/admin-account-counts-browser-acceptance-1`  
-Product baseline: accepted **main@f0237baf8809e5528b5f73e918f0e37a7d9b4477**, NORMAL  
-This is not a Technical-Lead PASS, not Guardian, not hosted parity.
+Historical product snapshot (original tested sources): **main@f0237baf8809e5528b5f73e918f0e37a7d9b4477**  
+Current integration baseline (authorized after #555 closure): **main@87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b**  
+This is not a Technical-Lead PASS, not Guardian, not hosted parity, and **not** a new browser-acceptance PASS.
 
 ## 1. Verdict
 
@@ -107,15 +108,31 @@ Synthetic `@aacba1.invalid` accounts only. Expected counts stay `pending-owned-s
 
 **P3 — parent connector names.** This process has hosted Supabase name keys. The harness classifies names only, never reads values, never uses them.
 
-No product/Auth/SQL/config file was edited. No Ready/merge. No sibling #555 import. Parallel #555 remains `7d24b78b` at task-only seed on the same baseline; integration order stays #555 first, then this evidence after an explicit TL SHA.
+No product/Auth/SQL/config file was edited by this writer. No Ready. No merge to main. Incoming #555 artifacts arrived only through the authorized exact-main merge and stay read-only; they are **not** a substitute for the browser-acceptance path.
 
 ## 7. Tests run here
 
-- `node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs` — **10/10 PASS**
-- `node scripts/e2e/admin-account-counts-browser-acceptance-1/run.mjs` — exit **2**, verdict `BLOCKED_ENVIRONMENT`
+- `node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs` — **10/10 PASS** (original freeze and again after the authorized main merge)
+- `node scripts/e2e/admin-account-counts-browser-acceptance-1/run.mjs` — exit **2**, verdict `BLOCKED_ENVIRONMENT`, receipt `aacba1-20260923T020045Z` (not re-run after sync)
 - Production app build — **NOT RUN** (no product files changed)
-- Hosted CI/Auth/Preview of this new head — record after content freeze; do not treat Vercel Preview as local browser acceptance
+- Hosted CI/Auth/Preview of the sync freeze head — record after this content freeze; do not treat Vercel Preview or a green CI as local browser acceptance
 
 ## 8. Reproduction
 
 See `scripts/e2e/admin-account-counts-browser-acceptance-1/README.md`. On a machine with an official Docker-API runtime, the same commands are the only supported continuation. Do not start another agent from this report.
+
+## 9. Authorized exact-main synchronization (same session, 23 September 2026)
+
+TL instruction: one normal merge of exact `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b` after #555 CLOSED/MERGED (TL PASS `5289076013`; post-merge CI `35842183345`; Production `dpl_4UDqvtGwJYtKdtRgVYnf1rUY1zeX` READY). Fetched `origin/main` equalled that SHA before merge. No later-head drift. No rebase/force/reset/cherry-pick.
+
+| Pin | Role | SHA |
+| --- | --- | --- |
+| Historical product snapshot | original tested sources for this lane | `f0237baf8809e5528b5f73e918f0e37a7d9b4477` |
+| Integration baseline | authorized #555 merge on main | `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b` |
+| Previous freeze head | harness + BLOCKED evidence | `9ccf32c8509959236fdd9e035b0fe0cf6aa83749` |
+| Merge commit | `merge: integrate authorized main 87cdc1e6 after #555 closure` | `edf99dad1bc7107625de0a6bada1f97a257509d5` |
+| Existing environment receipt | unchanged; not re-executed | `aacba1-20260923T020045Z` |
+
+Producer/wrapper/parser/contract/activation/reader and `lib/supabase/server.ts` / `lib/auth/admin-guard.ts` / `lib/auth/admin-aal.ts` / `lib/auth/admin-access.ts` / `supabase/config.toml` blobs are **identical** at HEAD, `87cdc1e6` and `f0237baf`. The immutable TASK blob is unchanged (`b049ddcda8b6f351a58ccb6b684e9bb7c2fa0fc7`). Incoming #555 files have **zero** post-merge diff versus `87cdc1e6`.
+
+The missing local Docker/Auth stack is **unchanged**. Login → TOTP/AAL2 → Admin rendering remains **NOT RUN**. This sync and any later green CI/Preview do **not** promote that path.

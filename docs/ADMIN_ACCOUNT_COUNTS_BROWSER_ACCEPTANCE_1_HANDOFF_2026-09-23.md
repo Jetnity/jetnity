@@ -15,22 +15,24 @@ Machine mode is `NORMAL`. Special Product-Owner gates remain. Cursor never Ready
 
 - Immediate TL review-fix on this PR = **same** logical agent, Generation 1, session `bc-7a3a3769-52a4-4d68-863e-4e750246fb64`, model `cursor-grok-4.6-high-fast`
 - A new logical slice or model substitution = **forbidden** from this handoff
-- Do not reuse closed #550/#552/#551/#553/#554 sessions or the #555 rollout session
+- Do not reuse closed #550/#552/#551/#553/#554 sessions or the completed #555 rollout session
+
+## Integration state
+
+The reserved exact-main synchronization is **done**: one normal merge of `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b` after fetched `origin/main` matched. Historical product snapshot `f0237baf` remains the original tested source pin; those hashes still apply. Incoming #555 files are read-only and are **not** the browser-acceptance path.
+
+No further main sync unless TL gives another exact SHA. No rebase/force/reset/cherry-pick.
 
 ## How to continue if Docker becomes available
 
-1. Do not change product files.
+1. Do not change product files or incoming #555 files.
 2. `node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs`
 3. `node scripts/e2e/admin-account-counts-browser-acceptance-1/run.mjs`
-4. If G0 is still BLOCKED, persist a new receipt. Do not fake PASS.
+4. If G0 is still BLOCKED, persist a new receipt. Do not fake PASS and do not treat the `87cdc1e6` sync as application acceptance.
 5. If G0 PASSes, the orchestrator must still refuse `#550` bootstrap overlay, hosted connector values, public binds, and response substitution.
 6. Expected counts come from the owned Auth inventory after fixtures, not 10/0.
 7. Record banned/disabled privileged actual behavior as a rollout finding if the page still discloses counts.
 8. Freeze content once. Later exact-head CI/Auth/Preview goes into conversation.
-
-## Integration
-
-#555 preparation integrates first when independently acceptable. This lane waits for an explicit TL SHA before any main sync. No autonomous merge/rebase/force/reset/cherry-pick.
 
 ## Secrets
 

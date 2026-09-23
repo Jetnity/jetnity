@@ -8,7 +8,7 @@ This is not a Technical-Lead PASS.
 
 ## 1. Scope fidelity
 
-I stayed inside the named write paths: `scripts/e2e/admin-account-counts-browser-acceptance-1/`, the four 2026-09-23 deliverables, and `docs/evidence/admin-account-counts-browser-acceptance-1/`. I did not edit product, Auth, shared client, SQL proofs, migrations, `package.json`, CI, checkers or central startup docs. I did not import #555.
+I stayed inside the named write paths: `scripts/e2e/admin-account-counts-browser-acceptance-1/`, the four 2026-09-23 deliverables, and `docs/evidence/admin-account-counts-browser-acceptance-1/`. I did not edit product, Auth, shared client, SQL proofs, migrations, `package.json`, CI, checkers or central startup docs. The later authorized exact-main merge brought #555 artifacts in as incoming main; I did not edit them and did not adopt that rehearsal as the browser path. The immutable TASK is unchanged.
 
 ## 2. Model / session honesty
 
@@ -27,6 +27,9 @@ Run-info `originalModelName=cursor-grok-4.6-high-fast` matches the required mode
 | #550 bootstrap over GoTrue | **Refused** |
 | Hosted DB / live account used | **No** |
 | Cleanup dry-run treated as application run | **No** (classifier corrected in-session) |
+| Exact-main sync of `87cdc1e6` | **Yes** — fetched `origin/main` matched; one `--no-ff` merge; no rebase/force |
+| Source pins still applicable after sync | **Yes** — identical to `f0237baf` and `87cdc1e6` |
+| Sync or CI treated as browser PASS | **No** — login/TOTP/Admin render remains NOT RUN |
 
 ## 4. Errors I made and corrected in-session
 
@@ -36,4 +39,4 @@ A shared Chrome CLI screenshot hung. I stopped that owned Chrome process by PID 
 
 ## 5. What I would tell TL
 
-This lane now has a reproducible source-bound harness and an honest BLOCKED matrix. It does **not** close the missing local application path. Give it a Docker-API machine or accept the environment limitation. Do not treat Vercel Preview on this Draft as the required browser acceptance. Do not mark Ready from this self-review.
+This lane now has a reproducible source-bound harness, an honest BLOCKED matrix, and the reserved exact-main sync onto `87cdc1e6`. It still does **not** close the missing local application path. A truthful blocker plus a green post-sync CI is not independent acceptance of the full harness. Do not treat Vercel Preview as browser acceptance. Do not mark Ready from this self-review.
