@@ -22,7 +22,11 @@ Same-session R1–R5 correction of review `5291528414`. Owned only `scripts/e2e/
 
 ## Tests actually run
 
-Recorded after the test pass on this head. Helper/contract/subprocess/loopback-stand-in only. No Docker retry. No real stack. No Mac. No hosted query.
+`node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **27/27 PASS** on Node v22.14.0. Includes the R1–R5 review counterexamples (cold checkout, evidenceDir, partial stack, failed stop, two restarts, leftover volume, traversal, browser launch/close, dotenv/symlink, PATH-only CLI, observer escape/redirect/in-flight, catalog name-only/owner/ACL, failure receipt, incomplete G20).
+
+`node scripts/e2e/admin-account-counts-local-runtime-1/run.mjs` — verdict `BLOCKED_ENVIRONMENT`, mode `preflight`, `fullLocalExecution=false`, `codeCompleteClaim=false`, exit 2. Receipt `aaclr1-20260923T133632Z`. G0 BLOCKED (container-runtime, supabase-cli). G2–G19 NOT RUN. G20 PASS for the default never-started path.
+
+No Docker retry. No real stack. No Mac. No hosted query. No production build.
 
 ## Residual risks
 

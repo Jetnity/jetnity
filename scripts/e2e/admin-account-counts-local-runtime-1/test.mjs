@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
 import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs'
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -38,6 +38,7 @@ import {
   refuseBootstrapOverlay,
   materialisiereAppCheckout,
   classifyMigrationApplicability,
+  refuseSymlinksAndDotenv,
 } from './source.mjs'
 import {
   prepareAppForLaunch,
@@ -760,7 +761,7 @@ test('R2 failed browser launch and unconfirmed close remain owned', async () => 
   rmSync(home, { recursive: true, force: true })
 })
 
-test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding is required', () => {
+test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding is required', async () => {
   const repo = mkdtempSync(join(tmpdir(), 'aaclr1-src-'))
   execFileSync('git', ['-c', 'init.defaultBranch=main', 'init'], { cwd: repo })
   execFileSync('git', ['config', 'user.email', 't@aaclr1.invalid'], { cwd: repo })
@@ -786,7 +787,7 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
   })
   assert.equal(existsSync(join(dest, '.env.development.local')), false)
   writeFileSync(join(dest, '.env.development.local'), 'SECRET=1')
-  assert.throws(
+  await assert.rejects(
     () => prepareAppForLaunch({
       checkoutDir: dest,
       env: {},
@@ -794,6 +795,9 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
     }),
     /\.env/,
   )
+  rmSync(join(dest, '.env.development.local'), { force: true })
+  symlinkSync('/tmp/aaclr1-foreign-target', join(dest, 'escape-link'))
+  assert.throws(() => refuseSymlinksAndDotenv(dest), /Symlink/)
   assert.throws(
     () => classifyMigrationApplicability({
       file: { path: 'supabase/migrations/20260101000000_x.sql' },
@@ -806,17 +810,22 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
   assert.throws(
     () => classifyMigrationApplicability({
       file: { path: 'supabase/migrations/20260101000000_x.sql' },
-      appliedVersions: ['20260101-extra'],
+      appliedVersions: ['20260101'],
     }),
     /prefix-only/,
   )
   const cliScript = join(repo, 'fake-supabase')
-  writeFileSync(cliScript, '#!/usr/bin/env node\nconst a=process.argv.slice(2).join(" "); if(a.includes("version")) console.log("2.117.0"); else console.log("Start containers for Supabase local development\\nsupabase start\\nsupabase stop\\nsupabase status");\n', { mode: 0o755 })
-  chmodSync(cliScript, 0o755)
+  writeFileSync(cliScript, 'official-extract-placeholder\n')
+  const execFakeCli = (_bin, args) => {
+    const joined = args.join(' ')
+    if (joined.includes('--version')) return '2.117.0\n'
+    if (joined.includes('start')) return 'Start containers for Supabase local development\n'
+    return 'supabase start\nsupabase stop\nsupabase status\n'
+  }
   const pathOnly = verifyResolvedCli({
     resolved: cliScript,
     env: { PATH: repo },
-    execFile: execFileSync,
+    execFile: execFakeCli,
   })
   assert.equal(pathOnly.identityVerified, false)
   assert.equal(pathOnly.pinned, false)
@@ -835,7 +844,7 @@ test('R3 dotenv, symlink and PATH-only CLI identity fail closed; archive binding
   const verified = verifyResolvedCli({
     resolved: cliScript,
     env: { PATH: repo },
-    execFile: execFileSync,
+    execFile: execFakeCli,
     provenance: {
       archiveVerified: true,
       archiveSha256: official,

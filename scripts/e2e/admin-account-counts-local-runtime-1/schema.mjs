@@ -154,8 +154,8 @@ export function assertInstalledRelation(row, {
 } = {}) {
   if (!row?.proname) throw new Error(`${proname} is missing from the owned catalog`)
   if (row.proname !== proname) throw new Error(`Catalog name ${row.proname} != ${proname}`)
-  if (row.schema !== schema) throw new Error(`${proname} schema ${row.schema} != ${schema}`)
   if (!row.definition) throw new Error(`${proname} definition is missing; name-only is not catalog evidence`)
+  if (row.schema !== schema) throw new Error(`${proname} schema ${row.schema} != ${schema}`)
   if (row.owner !== 'postgres') throw new Error(`${proname} owner ${row.owner} != postgres`)
   const definer = row.security_definer === true || row.security_definer === 't'
   if (definer !== Boolean(securityDefiner)) {

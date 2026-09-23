@@ -43,7 +43,8 @@ Same-session consolidated R1–R5 package in owned runtime files only:
 - No owned GoTrue/PostgREST/Next.js stack was started in this VM
 - No Docker/CLI install, hosted fallback, Mac access, sibling-code import, main sync
 - No Ready, merge, rebase, force, reset, cherry-pick, or follow-up agent
-- Helper/contract/subprocess/loopback-stand-in tests ≠ full local execution
+- Helper/contract/subprocess/loopback-stand-in tests **27/27 PASS**; they are not full local execution
+- Default no-start receipt `aaclr1-20260923T133632Z` is `BLOCKED_ENVIRONMENT` / exit 2 / `codeCompleteClaim=false`
 
 ## First unfinished action
 
