@@ -37,5 +37,12 @@
     "managed auth.users policy change",
     "jetnity_internal grant",
     "bootstrap on a hosted database"
-  ]
+  ],
+  "pinnedFunctiondef": {
+    "engine": "PostgreSQL 16.15",
+    "producerSha256": "0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef",
+    "wrapperSha256": "15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609",
+    "note": "pg_get_functiondef digest of the unchanged accepted sources. A different major pretty-printer is BLOCKED, not a repair."
+  },
+  "removableStates": ["ALREADY_INSTALLED", "REVOKED_EXACT"]
 }

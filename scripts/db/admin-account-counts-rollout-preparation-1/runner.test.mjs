@@ -9,6 +9,7 @@ import { FORBIDDEN_CONNECTION_KEYS } from '../admin-account-counts-1-local-proof
 import {
   ACCEPTED,
   HOSTED_ARGV_PATTERN,
+  PINNED_FUNCTIONDEF,
   assertLocalDisposableOnly,
   composeInstallTransaction,
   composeProducerAndWrapper,
@@ -52,7 +53,16 @@ describe('admin-account-counts-rollout-preparation-1 source pin', () => {
     assert.match(composeInstallTransaction({ mode: 'fault' }), /JETNITY_ROLLOUT_FAULT_INJECT/)
     assert.match(composeRollbackTransaction(), /DROP FUNCTION public\.admin_account_counts_v1\(\)/)
     assert.doesNotMatch(composeRollbackTransaction(), /\bCASCADE\b/)
-    for (const name of ['classify', 'verify', 'rollback', 'revokeExecute', 'sentinel']) {
+    assert.match(composeRollbackTransaction(), new RegExp(PINNED_FUNCTIONDEF.producerSha256))
+    assert.match(composeRollbackTransaction(), new RegExp(PINNED_FUNCTIONDEF.wrapperSha256))
+    assert.match(composeRollbackTransaction(), /REVOKED_EXACT/)
+    assert.match(composeRollbackTransaction(), /identity_core_ok/)
+    assert.match(composeRollbackTransaction(), /acl_revoked_exact/)
+    assert.match(composeInstallTransaction({ mode: 'fresh' }), new RegExp(PINNED_FUNCTIONDEF.producerSha256))
+    assert.match(readPackageSql('verify'), /JETNITY_IDENTITY_SUBQUERY/)
+    assert.match(readPackageSql('rollback'), /JETNITY_IDENTITY_SUBQUERY/)
+    assert.match(readPackageSql('identity'), new RegExp(PINNED_FUNCTIONDEF.wrapperSha256))
+    for (const name of ['identity', 'verify', 'rollback', 'revokeExecute', 'sentinel']) {
       const sql = readPackageSql(name)
       assert.doesNotMatch(sql, /\bCASCADE\b/)
       assert.doesNotMatch(sql, /postgres(?:ql)?:\/\//i)

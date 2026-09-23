@@ -257,7 +257,7 @@ function pruefeQuelle() {
       !composed.sql.includes('create role jetnity_reporting_owner'),
     'composed',
   )
-  for (const name of ['classify', 'verify', 'rollback', 'revokeExecute', 'sentinel']) {
+  for (const name of ['identity', 'verify', 'rollback', 'revokeExecute', 'sentinel']) {
     const sql = readPackageSql(name)
     bewerte(
       `${name} has no CASCADE and no hosted DSN`,
@@ -310,15 +310,22 @@ function pruefeInstallUndRepeat() {
   const after = classify()
   bewerte('post-install state is ALREADY_INSTALLED', gruppe, after.state === 'ALREADY_INSTALLED', JSON.stringify(after))
   bewerte(
-    'producer owner is postgres; wrapper owner is not a client role',
+    'producer owner is postgres; wrapper owner equals schema owner and is not a client role',
     gruppe,
     after.inventory?.producer_owner === 'postgres' &&
       after.inventory?.wrapper_owner &&
-      !['anon', 'authenticated', 'service_role'].includes(after.inventory.wrapper_owner),
+      after.inventory?.wrapper_owner === after.inventory?.schema_owner &&
+      !['anon', 'authenticated', 'service_role'].includes(after.inventory.wrapper_owner) &&
+      after.inventory?.producer_def_sha256 === '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef' &&
+      after.inventory?.wrapper_def_sha256 === '15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609' &&
+      after.inventory?.identity_core_ok === true,
     JSON.stringify({
       producer: after.inventory?.producer_owner,
       wrapper: after.inventory?.wrapper_owner,
+      schema: after.inventory?.schema_owner,
       executor: after.executor,
+      producerSha: after.inventory?.producer_def_sha256,
+      wrapperSha: after.inventory?.wrapper_def_sha256,
     }),
   )
   const againFresh = psqlCapture(composeInstallTransaction({ mode: 'fresh' }))
@@ -451,6 +458,181 @@ select to_jsonb(q) from (
   )
 }
 
+function dropPackageObjectsForTestCleanup() {
+  psqlSql(`
+drop function if exists public.admin_account_counts_v1();
+drop function if exists public.unexpected_public_dep();
+drop function if exists jetnity_reporting.account_counts_v1();
+drop function if exists jetnity_reporting.unexpected_dep();
+drop table if exists jetnity_reporting.unexpected_drift;
+drop schema if exists jetnity_reporting;
+drop role if exists jetnity_acl_drift;
+`)
+}
+
+function restoreExactInstall() {
+  dropPackageObjectsForTestCleanup()
+  const lauf = psqlCapture(composeInstallTransaction({ mode: 'fresh' }))
+  if (lauf.status !== 0 || classify().state !== 'ALREADY_INSTALLED') {
+    throw new Error(`test cleanup failed to restore exact install: ${lauf.stderr || lauf.stdout}`)
+  }
+}
+
+function refuseDrift(name, injectSql) {
+  const gruppe = 'adversarial-drift'
+  psqlSql(injectSql)
+  const klass = classify()
+  bewerte(
+    `${name} classifies INCOMPATIBLE and is not auto-repaired`,
+    gruppe,
+    klass.state === 'INCOMPATIBLE',
+    JSON.stringify({ state: klass.state, inventory: klass.inventory }),
+  )
+  const fresh = psqlCapture(composeInstallTransaction({ mode: 'fresh' }))
+  bewerte(
+    `${name} fresh install refuses`,
+    gruppe,
+    fresh.status !== 0,
+    `${fresh.status}`,
+  )
+  const already = psqlCapture(composeInstallTransaction({ mode: 'already' }))
+  bewerte(
+    `${name} already-installed repeat refuses`,
+    gruppe,
+    already.status !== 0,
+    `${already.status}`,
+  )
+  const rollback = psqlCapture(composeRollbackTransaction())
+  bewerte(
+    `${name} rollback refuses instead of dropping drifted objects`,
+    gruppe,
+    rollback.status !== 0 && /rollback refused|drifted|dependents/i.test(`${rollback.stdout}\n${rollback.stderr}`),
+    `${rollback.status} ${String(rollback.stderr || rollback.stdout).slice(0, 220)}`,
+  )
+  const stillThere = classify()
+  bewerte(
+    `${name} left the drifted objects in place`,
+    gruppe,
+    stillThere.inventory?.schema_exists === true && stillThere.inventory?.producer_exists === true,
+    stillThere.state,
+  )
+  restoreExactInstall()
+}
+
+function pruefeAdversarialDrift() {
+  refuseDrift(
+    'body mutation keeping 720 hours / 42501 / darf_konten_verwalten',
+    `
+create or replace function jetnity_reporting.account_counts_v1()
+returns table (
+  present_registered_accounts bigint,
+  created_in_prior_30_days bigint,
+  measured_at timestamp with time zone,
+  window_start timestamp with time zone,
+  definition_version text
+)
+language plpgsql
+stable
+security definer
+set search_path = pg_catalog
+set timezone = 'UTC'
+as $$
+declare
+  _uid uuid;
+  _caller_present boolean;
+  _measured_at timestamp with time zone;
+  _window_start timestamp with time zone;
+begin
+  _uid := auth.uid();
+  if _uid is null then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+  select exists (
+    select 1 from auth.users as u
+     where u.id = _uid and u.deleted_at is null and u.is_anonymous is false
+  ) into _caller_present;
+  if not coalesce(_caller_present, false) then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+  if not coalesce(public.darf_konten_verwalten(), false) then
+    raise exception 'jetnity.admin-account-counts.v1: not authorized'
+      using errcode = '42501';
+  end if;
+  _measured_at := pg_catalog.now();
+  _window_start := _measured_at - interval '720 hours';
+  return query
+  select
+    0::bigint,
+    0::bigint,
+    _measured_at,
+    _window_start,
+    'jetnity.admin-account-counts.v1'::text;
+end
+$$;
+alter function jetnity_reporting.account_counts_v1() owner to postgres;
+`,
+  )
+  refuseDrift(
+    'producer owner drift',
+    `alter function jetnity_reporting.account_counts_v1() owner to jetnity_proof;`,
+  )
+  refuseDrift(
+    'wrapper owner drift away from executor/schema owner',
+    `alter function public.admin_account_counts_v1() owner to postgres;`,
+  )
+  refuseDrift(
+    'schema owner drift',
+    `alter schema jetnity_reporting owner to postgres;`,
+  )
+  refuseDrift(
+    'client ACL widening to anon',
+    `grant execute on function jetnity_reporting.account_counts_v1() to anon;`,
+  )
+  refuseDrift(
+    'non-client extra EXECUTE grantee',
+    `
+do $drift$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'jetnity_acl_drift') then
+    create role jetnity_acl_drift nologin;
+  end if;
+end
+$drift$;
+grant execute on function public.admin_account_counts_v1() to jetnity_acl_drift;
+`,
+  )
+  refuseDrift(
+    'executor-sensitive default privilege grant',
+    `alter default privileges for role jetnity_proof in schema jetnity_reporting grant execute on functions to authenticated;`,
+  )
+  refuseDrift(
+    'unexpected dependent function',
+    `
+create function jetnity_reporting.unexpected_dep()
+returns bigint
+language sql
+stable
+as $fn$
+  select present_registered_accounts from jetnity_reporting.account_counts_v1()
+$fn$;
+`,
+  )
+  refuseDrift(
+    'unexpected public dependent of the producer',
+    `
+create function public.unexpected_public_dep()
+returns bigint
+language sql
+stable
+as $fn$
+  select present_registered_accounts from jetnity_reporting.account_counts_v1()
+$fn$;
+`,
+  )
+}
+
 function pruefeRollbackUndSentinel() {
   const gruppe = 'rollback'
   const sentinelBefore = psqlFile(`select count(*) from public.jetnity_rollout_sentinel`)
@@ -489,35 +671,89 @@ function pruefeReinstallRevoke() {
   )
   const klass = classify()
   bewerte(
-    'revoked ACL is INCOMPATIBLE for identity-strict rollback/repeat',
+    'package revoke is REVOKED_EXACT, not a generic incompatible drift',
     gruppe,
-    klass.state === 'INCOMPATIBLE',
+    klass.state === 'REVOKED_EXACT' &&
+      klass.inventory?.identity_core_ok === true &&
+      klass.inventory?.acl_revoked_exact === true &&
+      klass.inventory?.producer_def_sha256 === '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef',
     JSON.stringify(klass),
+  )
+  const already = psqlCapture(composeInstallTransaction({ mode: 'already' }))
+  bewerte(
+    'REVOKED_EXACT is not treated as already-installed rewrite',
+    gruppe,
+    already.status !== 0 && /expected ALREADY_INSTALLED/i.test(`${already.stdout}\n${already.stderr}`),
+    `${already.status}`,
   )
   const rollback = psqlCapture(composeRollbackTransaction())
   bewerte(
-    'rollback refuses revoked/drifted ACL instead of dropping a non-matching object',
+    'identity-strict rollback removes REVOKED_EXACT objects',
     gruppe,
-    rollback.status !== 0 && /rollback refused|drifted/i.test(`${rollback.stdout}\n${rollback.stderr}`),
-    `${rollback.status} ${String(rollback.stderr || rollback.stdout).slice(0, 240)}`,
+    rollback.status === 0,
+    rollback.stderr || rollback.stdout.slice(-200),
   )
-  const objectsRemain = jsonZeile(
-    psqlFile(`
-select to_jsonb(q) from (
-  select
-    exists(select 1 from pg_namespace where nspname = 'jetnity_reporting') as schema_exists,
-    exists(
-      select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'public' and p.proname = 'admin_account_counts_v1'
-    ) as wrapper_exists
-) q;
-`),
-  )
+  bewerte('post-revoke removal returns FRESH', gruppe, packageAbsent(), JSON.stringify(classify()))
+  const sentinel = psqlFile(`select count(*) from public.jetnity_rollout_sentinel`)
+  bewerte('sentinel survives revoked-exact removal', gruppe, sentinel === '1', sentinel)
+
+  const again = psqlCapture(composeInstallTransaction({ mode: 'fresh' }))
+  bewerte('reinstall after revoked-exact removal succeeds', gruppe, again.status === 0, again.stderr)
+  psqlSql(composeRevokeExecute())
+  psqlSql(`grant execute on function public.admin_account_counts_v1() to anon;`)
+  const drifted = classify()
   bewerte(
-    'refused rollback left objects in place; UI disable remains a separate application layer',
+    'revoke plus extra anon grant is INCOMPATIBLE, not REVOKED_EXACT',
     gruppe,
-    objectsRemain.schema_exists === true && objectsRemain.wrapper_exists === true,
-    JSON.stringify(objectsRemain),
+    drifted.state === 'INCOMPATIBLE',
+    JSON.stringify(drifted),
+  )
+  const refused = psqlCapture(composeRollbackTransaction())
+  bewerte(
+    'rollback refuses revoked objects after extra ACL drift',
+    gruppe,
+    refused.status !== 0 && /rollback refused|drifted/i.test(`${refused.stdout}\n${refused.stderr}`),
+    `${refused.status}`,
+  )
+  restoreExactInstall()
+  psqlSql(composeRevokeExecute())
+  psqlSql(`
+create or replace function public.admin_account_counts_v1()
+returns table (
+  present_registered_accounts text,
+  created_in_prior_30_days text,
+  measured_at timestamp with time zone,
+  window_start timestamp with time zone,
+  definition_version text
+)
+language sql
+stable
+security invoker
+set search_path = pg_catalog
+as $$
+  select
+    pg_catalog.btrim(inner_row.present_registered_accounts::text),
+    pg_catalog.btrim(inner_row.created_in_prior_30_days::text),
+    inner_row.measured_at,
+    inner_row.window_start,
+    inner_row.definition_version
+  from jetnity_reporting.account_counts_v1() as inner_row
+  where true;
+$$;
+`)
+  const bodyDrift = classify()
+  bewerte(
+    'revoke plus wrapper body drift keeping btrim/inner call is INCOMPATIBLE',
+    gruppe,
+    bodyDrift.state === 'INCOMPATIBLE',
+    JSON.stringify({ state: bodyDrift.state, sha: bodyDrift.inventory?.wrapper_def_sha256 }),
+  )
+  const bodyRefuse = psqlCapture(composeRollbackTransaction())
+  bewerte(
+    'rollback refuses revoked objects after body drift',
+    gruppe,
+    bodyRefuse.status !== 0,
+    `${bodyRefuse.status}`,
   )
 }
 
@@ -563,6 +799,7 @@ export function runRolloutRehearsal() {
     pruefeInstallUndRepeat()
     pruefeAutorisierung()
     pruefeOwnerUndAcl()
+    pruefeAdversarialDrift()
     pruefeRollbackUndSentinel()
     pruefeReinstallRevoke()
   } catch (fehler) {

@@ -33,11 +33,18 @@ export const ACCEPTED = Object.freeze({
 })
 
 export const PACKAGE_SQL = Object.freeze({
-  classify: join(hier, 'sql/classify.sql'),
+  identity: join(hier, 'sql/identity.sql'),
+  classify: join(hier, 'sql/identity.sql'),
   verify: join(hier, 'sql/verify.sql'),
   rollback: join(hier, 'sql/rollback.sql'),
   revokeExecute: join(hier, 'sql/revoke-execute.sql'),
   sentinel: join(hier, 'sql/sentinel.sql'),
+})
+
+export const PINNED_FUNCTIONDEF = Object.freeze({
+  engineNote: 'PostgreSQL 16.15 pg_get_functiondef SHA-256 of the unchanged accepted sources',
+  producerSha256: '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef',
+  wrapperSha256: '15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609',
 })
 
 export const HOSTED_ARGV_PATTERN =
@@ -95,6 +102,17 @@ export function pinAcceptedSources() {
   }
 }
 
+export function identitySubquery() {
+  return readPackageSql('identity').trim().replace(/;+\s*$/, '')
+}
+
+export function embedIdentity(sql) {
+  if (!sql.includes('/* JETNITY_IDENTITY_SUBQUERY */')) {
+    throw new Error('fail-closed: SQL is missing the shared identity subquery placeholder')
+  }
+  return sql.replaceAll('/* JETNITY_IDENTITY_SUBQUERY */', identitySubquery())
+}
+
 export function readPackageSql(name) {
   const pfad = PACKAGE_SQL[name]
   if (!pfad) throw new Error(`unknown package SQL '${name}'`)
@@ -104,6 +122,20 @@ export function readPackageSql(name) {
   }
   if (HOSTED_VALUE_PATTERN.test(text)) {
     throw new Error(`fail-closed: package SQL ${name} must not embed a hosted target`)
+  }
+  if ((name === 'rollback' || name === 'verify') && !text.includes('/* JETNITY_IDENTITY_SUBQUERY */')) {
+    throw new Error(`fail-closed: ${name} must embed the shared identity contract`)
+  }
+  if (name === 'identity' || name === 'classify') {
+    if (
+      !text.includes(PINNED_FUNCTIONDEF.producerSha256) ||
+      !text.includes(PINNED_FUNCTIONDEF.wrapperSha256)
+    ) {
+      throw new Error('fail-closed: identity contract missing pinned functiondef hashes')
+    }
+    if (!text.includes('REVOKED_EXACT') || !text.includes('identity_core_ok')) {
+      throw new Error('fail-closed: identity contract missing REVOKED_EXACT / identity_core_ok')
+    }
   }
   return text
 }
@@ -169,8 +201,8 @@ export function assertLocalDisposableOnly(env = process.env, argv = process.argv
 
 export function composeInstallTransaction({ mode = 'fresh' } = {}) {
   pinAcceptedSources()
-  const classify = readPackageSql('classify')
-  const verify = readPackageSql('verify')
+  const identity = identitySubquery()
+  const verify = embedIdentity(readPackageSql('verify'))
   const producerAndWrapper = composeProducerAndWrapper().sql
   const header = `
 -- LOCAL-ONLY install transaction. Not a migration. Not hosted SQL.
@@ -188,7 +220,7 @@ SELECT pg_advisory_xact_lock(hashtext('jetnity.admin-account-counts.v1'));
 DECLARE
   klass jsonb;
 BEGIN
-  klass := (${classify.trim().replace(/;+\s*$/, '')});
+  klass := (${identity});
   IF klass ->> 'state' IS DISTINCT FROM 'ALREADY_INSTALLED' THEN
     RAISE EXCEPTION 'jetnity.rollout-prep.v1: expected ALREADY_INSTALLED, got %', klass
       USING ERRCODE = 'XX000';
@@ -208,7 +240,7 @@ $already$;`,
 DECLARE
   klass jsonb;
 BEGIN
-  klass := (${classify.trim().replace(/;+\s*$/, '')});
+  klass := (${identity});
   IF klass ->> 'state' IS DISTINCT FROM 'FRESH' THEN
     RAISE EXCEPTION 'jetnity.rollout-prep.v1: expected FRESH before apply, got %', klass
       USING ERRCODE = 'XX000';
@@ -238,7 +270,7 @@ $fault$;`,
 DECLARE
   klass jsonb;
 BEGIN
-  klass := (${classify.trim().replace(/;+\s*$/, '')});
+  klass := (${identity});
   IF klass ->> 'state' IS DISTINCT FROM 'FRESH' THEN
     RAISE EXCEPTION 'jetnity.rollout-prep.v1: expected FRESH before apply, got %', klass
       USING ERRCODE = 'XX000';
@@ -252,7 +284,7 @@ $fresh$;`,
 }
 
 export function composeRollbackTransaction() {
-  return ['BEGIN;', readPackageSql('rollback'), 'COMMIT;'].join('\n\n')
+  return ['BEGIN;', embedIdentity(readPackageSql('rollback')), 'COMMIT;'].join('\n\n')
 }
 
 export function composeRevokeExecute() {
