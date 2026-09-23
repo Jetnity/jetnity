@@ -26,25 +26,39 @@ import {
   emptyGates,
   isNumericLoopbackOrigin,
   rejectRemoteRedirect,
+  rejectUnsafeRedirect,
+  sameExactOrigin,
   validateContext,
 } from './contract.mjs'
-import { assertNoCountDisclosure } from './counts.mjs'
-import { writeSanitizedReceipt } from './evidence.mjs'
+import { assertNoCountDisclosure, classifyDenialUi } from './counts.mjs'
+import { containedEvidencePath, runScopedName, writeSanitizedReceipt } from './evidence.mjs'
 import {
   IMPLEMENTATION,
   runBrowserFlows,
   runG10ExistingFactor,
+  runG12ZeroAndDelta,
 } from './flows.mjs'
 import {
   assertDeniedWrapper,
   assertPermittedWrapper,
   callLocalWrapper,
+  isDeniedCallerResponse,
   isPermittedSuccessShape,
+  isUnavailableWrapperResponse,
 } from './http.mjs'
 import { assertNoWrapperCalls, assertObservedWrapper } from './observer.mjs'
-import { assertSanitized, looksSecretBearing } from './privacy.mjs'
+import { parseAdminAccountCountsPayload } from './payload.mjs'
 import {
+  assertSanitized,
+  looksSecretBearing,
+  redactFreeForm,
+  sanitizeReturnedGates,
+} from './privacy.mjs'
+import {
+  beginBrowserSession,
   extractTotpSecret,
+  isIntendedAuthResponse,
+  isLocalAuthResponse,
   withBrowserSession,
   withFixtureRestore,
 } from './session.mjs'
@@ -75,21 +89,25 @@ const ACCOUNTS = {
   },
 }
 
+const VALID_MEASURED_AT = '2026-09-23T12:00:00Z'
+const VALID_WINDOW_START = '2026-08-24T12:00:00Z'
+
 function lese(rel) {
   return readFileSync(join(ROOT, rel), 'utf8')
 }
 
-function permittedRow() {
+function permittedRow(overrides = {}) {
   return {
     present_registered_accounts: '4',
     created_in_prior_30_days: '0',
-    measured_at: '2026-09-23T12:00:00Z',
-    window_start: '2026-08-24T12:00:00Z',
+    measured_at: VALID_MEASURED_AT,
+    window_start: VALID_WINDOW_START,
     definition_version: 'jetnity.admin-account-counts.v1',
+    ...overrides,
   }
 }
 
-function createLocator(getText, actions = {}) {
+function createLocator(getText, actions = {}, attrs = {}) {
   const locator = {
     waitFor: async () => {
       if (!getText()) throw new Error('locator not visible')
@@ -99,12 +117,14 @@ function createLocator(getText, actions = {}) {
     textContent: async () => getText(),
     innerText: async () => getText(),
     count: async () => (getText() ? 1 : 0),
-    first: () => createLocator(getText, actions),
+    first: () => createLocator(getText, actions, attrs),
+    nth: (index) => createLocator(getText, actions, attrs),
     isVisible: async () => Boolean(getText()),
+    getAttribute: async (name) => attrs[name] ?? null,
     screenshot: async ({ path }) => {
       if (path) writeFileSync(path, 'clip')
     },
-    locator: () => createLocator(getText, actions),
+    locator: () => createLocator(getText, actions, attrs),
   }
   return locator
 }
@@ -116,12 +136,15 @@ function createScriptedPage(world) {
   let enrollCode = ''
   let stepUpCode = ''
 
+  const makeAuthResponse = (url, payload, method = 'POST', status = 200) => ({
+    url: () => url,
+    json: async () => payload,
+    request: () => ({ method: () => method }),
+    status: () => status,
+  })
+
   const emitJson = (url, payload) => {
-    const response = {
-      url: () => url,
-      json: async () => payload,
-      request: () => ({ method: () => 'POST' }),
-    }
+    const response = makeAuthResponse(url, payload)
     for (const listener of responseListeners) listener(response)
     return response
   }
@@ -156,6 +179,8 @@ function createScriptedPage(world) {
         UI_COPY.windowStartLabel,
         world.expected.present,
         world.expected.recent,
+        world.expected.measuredAt,
+        world.expected.windowStart,
       ].join('\n')
     }
     if (world.url.includes('/admin') && world.failedCounts) return UI_COPY.failed
@@ -204,15 +229,15 @@ function createScriptedPage(world) {
     },
     waitForLoadState: async () => {},
     waitForResponse: async (predicate) => {
-      const response = {
-        url: () => `${world.localApi}/auth/v1/factors`,
-        json: async () => ({ totp: { secret: world.enrollSecret } }),
-        request: () => ({ method: () => 'POST' }),
+      const candidates = [
+        makeAuthResponse(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken }),
+        makeAuthResponse(`${world.localApi}/auth/v1/factors`, { totp: { secret: world.enrollSecret } }),
+        makeAuthResponse(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken }),
+      ]
+      for (const response of candidates) {
+        if (typeof predicate !== 'function' || predicate(response)) return response
       }
-      if (typeof predicate === 'function' && !predicate(response)) {
-        throw new Error('enroll response predicate rejected')
-      }
-      return response
+      throw new Error('auth response predicate rejected')
     },
     on: (event, listener) => {
       if (event === 'response') responseListeners.push(listener)
@@ -253,10 +278,10 @@ function createScriptedPage(world) {
               world.url = 'http://127.0.0.1:3000/admin/login'
               return
             }
-            world.aal = world.enrolled ? 1 : 1
+            world.aal = 1
             world.loginError = null
             world.url = 'http://127.0.0.1:3000/admin/mfa'
-            emitJson(`${world.localApi}/auth/v1/token`, {})
+            emitJson(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken })
           },
         })
       }
@@ -286,9 +311,18 @@ function createScriptedPage(world) {
         return createLocator(() => (showCounts() ? bodyText() : ''))
       }
       if (selector === '[aria-labelledby="admin-account-counts-titel"] time') {
-        return createLocator(() => (showCounts() ? 'time' : ''), {
-          // count() uses getText truthiness; provide two via custom count below
-        })
+        const measured = () => (showCounts() ? world.expected.measuredAt : '')
+        const windowStart = () => (showCounts() ? world.expected.windowStart : '')
+        const loc = createLocator(measured, {}, { dateTime: world.expected.measuredAt })
+        loc.count = async () => (showCounts() ? 2 : 0)
+        loc.nth = (index) =>
+          createLocator(
+            index === 0 ? measured : windowStart,
+            {},
+            { dateTime: index === 0 ? world.expected.measuredAt : world.expected.windowStart },
+          )
+        loc.first = () => createLocator(measured, {}, { dateTime: world.expected.measuredAt })
+        return loc
       }
       return createLocator(() => '')
     },
@@ -330,16 +364,6 @@ function createScriptedPage(world) {
     getByText: (text) => createLocator(() => (bodyText().includes(text) ? text : '')),
   }
 
-  page.locator = new Proxy(page.locator, {
-    apply(target, thisArg, [selector]) {
-      const located = target.call(thisArg, selector)
-      if (selector === '[aria-labelledby="admin-account-counts-titel"] time') {
-        located.count = async () => (showCounts() ? 2 : 0)
-      }
-      return located
-    },
-  })
-
   return page
 }
 
@@ -358,7 +382,12 @@ function createWorld(overrides = {}) {
     enrollClicked: false,
     enrollSecret: 'JBSWY3DPEHPK3PXP',
     accessToken: 'local-memory-access-token',
-    expected: { present: '4', recent: '0' },
+    expected: {
+      present: '4',
+      recent: '0',
+      measuredAt: VALID_MEASURED_AT,
+      windowStart: VALID_WINDOW_START,
+    },
     observerCalls: [],
     observerComplete: true,
     observeOnAdmin: true,
@@ -395,6 +424,7 @@ function createContextDouble(t, world = createWorld()) {
         world.viewport = viewport
         world.loggedIn = null
         world.aal = 0
+        world.loginError = null
         world.url = 'http://127.0.0.1:3000/admin/login'
         const page = createScriptedPage(world)
         return {
@@ -411,8 +441,22 @@ function createContextDouble(t, world = createWorld()) {
           if (actor === 'owner') world.role = role
         },
         async prepareCountScenario(name) {
-          if (name === 'zero-window') world.expected = { present: '4', recent: '0' }
-          if (name === 'one-recent') world.expected = { present: '5', recent: '1' }
+          if (name === 'zero-window') {
+            world.expected = {
+              present: '4',
+              recent: '0',
+              measuredAt: VALID_MEASURED_AT,
+              windowStart: VALID_WINDOW_START,
+            }
+          }
+          if (name === 'one-recent') {
+            world.expected = {
+              present: '5',
+              recent: '1',
+              measuredAt: VALID_MEASURED_AT,
+              windowStart: VALID_WINDOW_START,
+            }
+          }
         },
         async expectedCounts() {
           return { ...world.expected }
@@ -464,12 +508,28 @@ function stubFetch(world, t) {
     return {
       status: 200,
       headers: { get: () => null },
-      text: async () => JSON.stringify([permittedRow()]),
+      text: async () => JSON.stringify([permittedRow({
+        present_registered_accounts: String(world.expected.present),
+        created_in_prior_30_days: String(world.expected.recent),
+        measured_at: world.expected.measuredAt,
+        window_start: world.expected.windowStart,
+      })]),
     }
   }
   t.after(() => {
     globalThis.fetch = previous
   })
+}
+
+function pageFromBody(text, url = 'http://127.0.0.1:3000/admin') {
+  return {
+    url: () => url,
+    locator: (selector) => ({
+      count: async () => 0,
+      first: () => ({ innerText: async () => '' }),
+      innerText: async () => (selector === 'body' ? text : ''),
+    }),
+  }
 }
 
 test('implementation is delivered and real execution stays NOT RUN', () => {
@@ -623,28 +683,119 @@ test('complete observer can assert no wrapper calls while OFF; incomplete cannot
   )
 })
 
-test('banned or generic server error cannot become a status PASS', async () => {
-  const failedPage = {
-    locator: (selector) => ({
-      count: async () => (selector.includes('present') ? 0 : 1),
-      first: () => ({ innerText: async () => '0' }),
-      innerText: async () => UI_COPY.failed,
-    }),
-  }
-  await assert.rejects(() => assertNoCountDisclosure(failedPage, { allowForbidden: true }), /generic failed/)
-
-  const forbiddenPage = {
-    locator: (selector) => ({
-      count: async () => 0,
-      first: () => ({ innerText: async () => '' }),
-      innerText: async () => (selector === 'body' ? UI_COPY.forbidden : ''),
-    }),
-  }
-  const denied = await assertNoCountDisclosure(forbiddenPage, { allowForbidden: true })
-  assert.equal(denied.kind, 'forbidden')
+test('B1 denied-caller counterexamples cannot become authorization PASS', () => {
+  assert.equal(isUnavailableWrapperResponse({ status: 404, json: { code: 'PGRST202' } }), true)
+  assert.equal(isDeniedCallerResponse({ status: 404, json: { code: 'PGRST202' } }, 'forbidden'), false)
+  assert.equal(isDeniedCallerResponse({ status: 500, json: { code: '42501' } }, 'forbidden'), false)
+  assert.equal(isDeniedCallerResponse({ status: 403, json: null }, 'forbidden'), false)
+  assert.equal(isDeniedCallerResponse({ status: 403, json: {} }, 'forbidden'), false)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST202' } }, 'unauthenticated'), false)
+  assert.throws(
+    () => assertDeniedWrapper({ status: 404, json: { code: 'PGRST202' } }, 'forbidden'),
+    /missing wrapper|authorization/,
+  )
+  assert.throws(
+    () => assertDeniedWrapper({ status: 500, json: { code: '42501' } }, 'forbidden'),
+    /server failure/,
+  )
+  assert.throws(
+    () => assertDeniedWrapper({ status: 403, json: null }, 'forbidden'),
+    /denied forbidden semantics/,
+  )
+  assert.equal(isDeniedCallerResponse({ status: 403, json: { code: '42501' } }, 'forbidden'), true)
+  assert.equal(isDeniedCallerResponse({ status: 401, json: { code: 'PGRST301' } }, 'unauthenticated'), true)
+  assertDeniedWrapper({ status: 403, json: { code: '42501' } }, 'forbidden')
+  assertDeniedWrapper({ status: 401, json: { code: 'PGRST301' } }, 'unauthenticated')
 })
 
-test('direct wrapper rejects remote URL and remote redirect with credentials', async () => {
+test('B1 success parser rejects multirow, invalid time and recent>present', () => {
+  const invalid = [
+    {
+      present_registered_accounts: '1',
+      created_in_prior_30_days: '999',
+      measured_at: 'not-a-date',
+      window_start: null,
+      definition_version: 'jetnity.admin-account-counts.v1',
+    },
+    {
+      present_registered_accounts: '1',
+      created_in_prior_30_days: '999',
+      measured_at: 'not-a-date',
+      window_start: null,
+      definition_version: 'jetnity.admin-account-counts.v1',
+    },
+  ]
+  assert.equal(isPermittedSuccessShape(invalid), false)
+  assert.equal(isPermittedSuccessShape([invalid[0]]), false)
+  assert.equal(parseAdminAccountCountsPayload(invalid).ok, false)
+  assert.equal(isPermittedSuccessShape([permittedRow(), permittedRow()]), false)
+  assert.equal(isPermittedSuccessShape([permittedRow({ created_in_prior_30_days: '9' })]), false)
+  assert.equal(isPermittedSuccessShape([permittedRow({ measured_at: 'not-a-date' })]), false)
+  assert.equal(isPermittedSuccessShape([permittedRow({ window_start: null })]), false)
+  assert.equal(isPermittedSuccessShape([permittedRow()]), true)
+  assertPermittedWrapper({ status: 200, json: [permittedRow()] }, { expected: { present: '4', recent: '0' } })
+  assert.throws(
+    () => assertPermittedWrapper({ status: 200, json: invalid }, { expected: { present: '1', recent: '999' } }),
+    /count\/time contract/,
+  )
+})
+
+test('B1 UI denial rejects blank, ISE, unavailable-as-forbidden and checks both aggregates', async () => {
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody(''), { allowForbidden: true }),
+    /blank|denial/,
+  )
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody('Internal Server Error'), { allowForbidden: true }),
+    /failed|generic/,
+  )
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody(UI_COPY.unavailable), { allowForbidden: true }),
+    /unavailable|expected denial/,
+  )
+  await assert.rejects(
+    () => assertNoCountDisclosure(pageFromBody(UI_COPY.failed), { allowForbidden: true }),
+    /generic failed/,
+  )
+  const leaked = {
+    url: () => 'http://127.0.0.1:3000/admin',
+    locator: (selector) => ({
+      count: async () => (selector.includes('window') || selector.includes('present') ? 1 : 0),
+      first: () => ({ innerText: async () => '4' }),
+      innerText: async () => UI_COPY.forbidden,
+    }),
+  }
+  await assert.rejects(() => assertNoCountDisclosure(leaked, { allowForbidden: true }), /aggregate/)
+  const forbidden = pageFromBody(UI_COPY.forbidden)
+  const denied = await assertNoCountDisclosure(forbidden, { allowForbidden: true })
+  assert.equal(denied.kind, 'forbidden')
+  const classified = await classifyDenialUi(pageFromBody(UI_COPY.unavailable))
+  assert.equal(classified.kind, 'unavailable')
+})
+
+test('B2 Auth capture requires exact local project origin', () => {
+  const origin = 'http://127.0.0.1:54321'
+  assert.equal(sameExactOrigin('http://127.0.0.1:54321/auth/v1/token', origin), true)
+  assert.equal(isLocalAuthResponse('http://127.0.0.1:54321/auth/v1/token', origin), true)
+  assert.equal(isLocalAuthResponse('http://127.0.0.1:54321.outside.invalid/auth/v1/token', origin), false)
+  assert.equal(isLocalAuthResponse('http://127.0.0.1:54322/auth/v1/token', origin), false)
+  assert.equal(isLocalAuthResponse('//127.0.0.1:54321/auth/v1/token', origin), false)
+  assert.equal(isLocalAuthResponse('https://example.supabase.co/auth/v1/token', origin), false)
+  const foreign = {
+    url: () => 'http://127.0.0.1:54322/auth/v1/factors',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+  }
+  assert.equal(isIntendedAuthResponse(foreign, origin, { pathIncludes: '/auth/v1/factors' }), false)
+  const local = {
+    url: () => 'http://127.0.0.1:54321/auth/v1/factors',
+    request: () => ({ method: () => 'POST' }),
+    status: () => 200,
+  }
+  assert.equal(isIntendedAuthResponse(local, origin, { pathIncludes: '/auth/v1/factors', method: 'POST' }), true)
+})
+
+test('direct wrapper rejects remote URL, protocol-relative and foreign redirect', async () => {
   await assert.rejects(
     () =>
       callLocalWrapper({
@@ -654,8 +805,14 @@ test('direct wrapper rejects remote URL and remote redirect with credentials', a
     /remote|loopback/,
   )
   assert.throws(() => rejectRemoteRedirect('https://example.supabase.co/auth', true), /remote redirect/)
+  assert.throws(() => rejectUnsafeRedirect('//evil.example/auth', true, 'http://127.0.0.1:54321'), /protocol-relative/)
+  assert.throws(
+    () => rejectUnsafeRedirect('http://127.0.0.1:54322/auth', true, 'http://127.0.0.1:54321'),
+    /foreign|remote/,
+  )
   assert.equal(isNumericLoopbackOrigin('http://127.0.0.1:54321'), true)
   assert.equal(isNumericLoopbackOrigin('http://localhost:54321'), false)
+  assert.equal(sameExactOrigin('http://127.0.0.1:54321', 'http://127.0.0.1:54321/'), true)
 })
 
 test('restore runs after an assertion failure and close errors propagate', async () => {
@@ -684,7 +841,7 @@ test('restore runs after an assertion failure and close errors propagate', async
           throw new Error('assertion failed')
         },
       ),
-    /restore failed/,
+    /ownership uncertain|restore failed/,
   )
 
   await assert.rejects(
@@ -699,7 +856,7 @@ test('restore runs after an assertion failure and close errors propagate', async
         VIEWPORTS.desktop,
         async () => 'ok',
       ),
-    /close failed/,
+    /ownership uncertain|close/,
   )
 })
 
@@ -721,26 +878,123 @@ test('downstream gates stay NOT RUN after a prerequisite failure', async (t) => 
   assert.ok(['FAIL', 'NOT RUN', 'PASS'].includes(byId.G14_unauthenticated_no_disclosure.result))
 })
 
-test('receipt writer refuses secret-bearing and trace artifacts', () => {
-  assert.equal(looksSecretBearing({ password: 'x' }), true)
-  assert.equal(looksSecretBearing({ totpSecret: 'JBSWY3DPEHPK3PXP' }), true)
-  assert.equal(looksSecretBearing({ notes: 'aal2 counts compared' }), false)
-  assert.throws(() => assertSanitized({ accessToken: 'eyJhbGciOiJI.eyJzdWIiOiIx.sig' }), /secret-bearing/)
+test('B3 hanging close and failed restore stop later resource-using gates', async (t) => {
+  const hanging = createContextDouble(t)
+  hanging.context.timeoutMs = 250
+  hanging.context.closeBrowserSession = () => new Promise(() => {})
+  const hung = await runBrowserFlows(hanging.context)
+  assertGateSetComplete(hung.gates)
+  assert.equal(hung.gates[0].result, 'FAIL')
+  assert.match(hung.gates[0].notes, /exceeded|budget|aborted|ownership|closeBrowserSession|stop/)
+  assert.equal(hung.gates.slice(1).every((gate) => gate.result === 'NOT RUN'), true)
+
+  const restoring = createContextDouble(t)
+  stubFetch(restoring.world, t)
+  const originalSetStatus = restoring.context.fixture.setStatus.bind(restoring.context.fixture)
+  restoring.context.fixture.setStatus = async (actor, status) => {
+    if (status === 'active' && restoring.world.status !== 'active') {
+      throw new Error('restore failed')
+    }
+    return originalSetStatus(actor, status)
+  }
+  const restored = await runBrowserFlows(restoring.context)
+  const byId = Object.fromEntries(restored.gates.map((gate) => [gate.id, gate]))
+  assert.equal(byId.G16_restricted_privileged_status.result, 'FAIL')
+  assert.match(byId.G16_restricted_privileged_status.notes, /ownership uncertain|restore/)
+  assert.equal(byId.G17_missing_wrapper_unavailable.result, 'NOT RUN')
+  assert.equal(byId.G18_desktop_mobile_ui.result, 'NOT RUN')
+  assert.equal(byId.G19_http_boundary_same_session.result, 'NOT RUN')
+})
+
+test('B3 G12 rejects a 2→3 delta that never started at recent=0', async () => {
+  const world = createWorld({
+    enrolled: true,
+    aal: 2,
+    loggedIn: OWNER.email,
+    url: 'http://127.0.0.1:3000/admin',
+    expected: { present: '2', recent: '2', measuredAt: VALID_MEASURED_AT, windowStart: VALID_WINDOW_START },
+  })
+  const page = createScriptedPage(world)
+  const context = {
+    fixture: {
+      async prepareCountScenario(name) {
+        if (name === 'zero-window') world.expected.recent = '2'
+        if (name === 'one-recent') {
+          world.expected.present = '3'
+          world.expected.recent = '3'
+        }
+      },
+      async expectedCounts() {
+        return { ...world.expected }
+      },
+    },
+  }
+  await assert.rejects(
+    () => runG12ZeroAndDelta(page, 'http://127.0.0.1:3000', {}, context, { timeoutMs: 1000 }),
+    /recent must be 0/,
+  )
+})
+
+test('B4 value-aware redaction, path escape, exclusive write and fail-closed receipt', () => {
+  const secrets = ['Aa1!SYNTHETIC-PASSWORD', 'JBSWY3DPEHPK3PXP', OWNER.password]
+  const nested = { gates: [{ notes: 'locator.fill("Aa1!SYNTHETIC-PASSWORD")' }] }
+  assert.equal(looksSecretBearing(nested, secrets), true)
+  const redacted = redactFreeForm(nested.gates[0].notes, secrets)
+  assert.doesNotMatch(redacted, /Aa1!SYNTHETIC-PASSWORD/)
+  assert.match(redacted, /\[redacted\]/)
+  const sanitized = sanitizeReturnedGates(nested.gates, secrets)
+  assert.equal(looksSecretBearing(sanitized, secrets), false)
+  assert.doesNotMatch(JSON.stringify(sanitized), /Aa1!SYNTHETIC-PASSWORD/)
+  assert.equal(looksSecretBearing({ notes: `nested ${OWNER.password} token` }, secrets), true)
+
   const dir = mkdtempSync(join(tmpdir(), 'aacbf1-receipt-'))
   try {
+    assert.throws(() => containedEvidencePath(dir, '../escape.json'), /basename|escaped/)
+    assert.throws(() => containedEvidencePath(dir, 'sub/dir.json'), /basename/)
     assert.throws(
       () => writeSanitizedReceipt(dir, 'trace.har', { contractVersion: CONTRACT_VERSION }),
       /secret-bearing artifact/,
     )
     writeSanitizedReceipt(dir, 'ok.json', {
       contractVersion: CONTRACT_VERSION,
-      gates: [{ id: 'G6_login_ui_password', result: 'NOT RUN', notes: 'unit' }],
+      gates: [{ id: 'G6_login_ui_password', result: 'NOT RUN', notes: 'locator.fill("Aa1!SYNTHETIC-PASSWORD")' }],
+      implementationMetadata: { scenarioCode: 'delivered' },
+      thisInvocation: { kind: 'consumer-gates', realBrowserOrMfaExecution: 'NOT RUN' },
       implementation: 'delivered',
       realExecution: 'NOT RUN',
-    })
+    }, { secrets })
+    const written = JSON.parse(readFileSync(join(dir, 'ok.json'), 'utf8'))
+    assert.doesNotMatch(JSON.stringify(written), /Aa1!SYNTHETIC-PASSWORD/)
+    assert.throws(
+      () => writeSanitizedReceipt(dir, 'ok.json', { contractVersion: CONTRACT_VERSION, gates: [] }, { secrets }),
+      /EEXIST|exclusive|exists/,
+    )
   } finally {
     rmSync(dir, { recursive: true, force: true })
   }
+})
+
+test('B2 beginBrowserSession clears stale access tokens and keeps the factor secret', () => {
+  const store = {
+    totpSecret: 'JBSWY3DPEHPK3PXP',
+    accessToken: 'stale-previous-session-token',
+    clickedEnrollOnThisPage: true,
+    enrolled: true,
+  }
+  beginBrowserSession(store)
+  assert.equal(store.accessToken, null)
+  assert.equal(store.clickedEnrollOnThisPage, false)
+  assert.equal(store.totpSecret, 'JBSWY3DPEHPK3PXP')
+  assert.equal(store.enrolled, true)
+})
+
+test('B4 duplicate receipt write invalidates consumer PASS', async (t) => {
+  const { context, world, evidenceDir } = createContextDouble(t)
+  stubFetch(world, t)
+  writeFileSync(join(evidenceDir, runScopedName('unit-double', 'browser-flows-gates.json')), 'occupied\n')
+  const result = await runBrowserFlows(context)
+  assert.equal(result.gates.some((gate) => gate.result === 'PASS'), false)
+  assert.ok(result.gates.some((gate) => /receipt write failed/.test(String(gate.notes))))
 })
 
 test('TOTP helper and enroll extractor stay in-memory only', () => {
@@ -762,11 +1016,15 @@ test('controlled doubles can walk G6–G19 without claiming a real-browser PASS'
   assertGateSetComplete(result.gates)
   const failed = result.gates.filter((gate) => gate.result !== 'PASS')
   assert.deepEqual(failed, [], failed.map((gate) => `${gate.id}:${gate.notes}`).join('; '))
-  const receipt = JSON.parse(readFileSync(join(evidenceDir, 'browser-flows-gates.json'), 'utf8'))
+  const receiptName = runScopedName('unit-double', 'browser-flows-gates.json')
+  const receipt = JSON.parse(readFileSync(join(evidenceDir, receiptName), 'utf8'))
   assert.equal(receipt.realExecution, 'NOT RUN')
   assert.equal(receipt.implementation, 'delivered')
+  assert.equal(receipt.thisInvocation.realBrowserOrMfaExecution, 'NOT RUN')
+  assert.equal(receipt.implementationMetadata.scenarioCode, 'delivered')
   assert.equal(looksSecretBearing(receipt), false)
+  assert.equal(looksSecretBearing(result.gates, [OWNER.password, world.accessToken, world.enrollSecret]), false)
   assert.equal(isPermittedSuccessShape([permittedRow()]), true)
   assertPermittedWrapper({ status: 200, json: [permittedRow()] })
-  assertDeniedWrapper({ status: 401, json: { code: '42501' } })
+  assertDeniedWrapper({ status: 401, json: { code: '42501' } }, 'forbidden')
 })

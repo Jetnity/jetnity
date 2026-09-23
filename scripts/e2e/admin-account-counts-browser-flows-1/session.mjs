@@ -3,7 +3,7 @@
 
 import { generateTotp, looksLikeTotpCode } from '../admin-account-counts-browser-acceptance-1/totp.mjs'
 import { PATHS, SELECTORS, UI_COPY } from './constants.mjs'
-import { isNumericLoopbackOrigin } from './contract.mjs'
+import { OwnershipUncertaintyError, sameExactOrigin } from './contract.mjs'
 
 export function secretFromOtpauth(uri) {
   if (typeof uri !== 'string' || !uri.startsWith('otpauth://')) return null
@@ -28,15 +28,49 @@ export function extractAccessToken(payload) {
 }
 
 export function isLocalAuthResponse(url, localApiOrigin) {
-  if (!isNumericLoopbackOrigin(url) && !String(url).startsWith(localApiOrigin)) return false
-  return String(url).includes('/auth/v1/')
+  if (!sameExactOrigin(url, localApiOrigin)) return false
+  try {
+    const parsed = new URL(url)
+    return parsed.pathname.includes('/auth/v1/')
+  } catch {
+    return false
+  }
+}
+
+export function isIntendedAuthResponse(response, localApiOrigin, {
+  pathIncludes,
+  method = 'POST',
+  statuses = [200, 201],
+} = {}) {
+  if (!response || typeof response.url !== 'function') return false
+  const url = response.url()
+  if (!isLocalAuthResponse(url, localApiOrigin)) return false
+  if (pathIncludes && !new URL(url).pathname.includes(pathIncludes)) return false
+  const observedMethod = response.request?.()?.method?.()
+  if (method && observedMethod && observedMethod !== method) return false
+  if (Array.isArray(statuses) && statuses.length > 0) {
+    const status = typeof response.status === 'function' ? response.status() : response.status
+    if (typeof status === 'number' && !statuses.includes(status)) return false
+  }
+  return true
+}
+
+export function beginBrowserSession(store) {
+  if (!store || typeof store !== 'object') return store
+  store.accessToken = null
+  store.clickedEnrollOnThisPage = false
+  return store
 }
 
 export function attachAuthCapture(page, store, { localApiOrigin }) {
   const onResponse = async (response) => {
     try {
-      const url = response.url()
-      if (!isLocalAuthResponse(url, localApiOrigin)) return
+      if (!isIntendedAuthResponse(response, localApiOrigin, {
+        pathIncludes: '/auth/v1/',
+        method: 'POST',
+      })) {
+        return
+      }
       const payload = await response.json().catch(() => null)
       const secret = extractTotpSecret(payload)
       if (secret) store.totpSecret = secret
@@ -47,8 +81,12 @@ export function attachAuthCapture(page, store, { localApiOrigin }) {
     }
   }
   page.on('response', onResponse)
+  let detached = false
   return () => {
+    if (detached) return
+    detached = true
     if (typeof page.off === 'function') page.off('response', onResponse)
+    else if (typeof page.removeListener === 'function') page.removeListener('response', onResponse)
   }
 }
 
@@ -59,6 +97,16 @@ async function visibleText(page) {
   return ''
 }
 
+async function boundAction(timing, label, fn) {
+  if (timing?.budget?.action) {
+    return timing.budget.action(label, fn)
+  }
+  if (timing?.signal?.aborted) {
+    throw new Error(`aborted during ${label}`)
+  }
+  return fn(timing?.timeoutMs)
+}
+
 export async function openPage(browserContext) {
   if (typeof browserContext.newPage !== 'function') {
     throw new Error('browser context must provide newPage()')
@@ -66,21 +114,47 @@ export async function openPage(browserContext) {
   return browserContext.newPage()
 }
 
-export async function loginViaUi(page, origin, account, { timeoutMs, signal } = {}) {
-  if (signal?.aborted) throw new Error('aborted before login')
-  await page.goto(`${origin}${PATHS.login}`, {
-    waitUntil: 'domcontentloaded',
-    timeout: timeoutMs,
-  })
-  await page.locator(SELECTORS.loginForm).waitFor({ timeout: timeoutMs })
+export async function loginViaUi(page, origin, account, timing = {}) {
+  if (timing.signal?.aborted) throw new Error('aborted before login')
+  await boundAction(timing, 'login.goto', (timeoutMs) =>
+    page.goto(`${origin}${PATHS.login}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: timeoutMs,
+    }),
+  )
+  await boundAction(timing, 'login.form', (timeoutMs) =>
+    page.locator(SELECTORS.loginForm).waitFor({ timeout: timeoutMs }),
+  )
   const heading = await page.locator(SELECTORS.stepUpTitle).first().textContent()
   if (!String(heading ?? '').includes(UI_COPY.login)) {
     throw new Error(`login heading mismatch: ${String(heading)}`)
   }
-  await page.locator(SELECTORS.loginEmail).fill(account.email)
-  await page.locator(SELECTORS.loginPassword).fill(account.password)
-  await page.locator(SELECTORS.loginSubmit).click()
-  await page.waitForLoadState?.('domcontentloaded', { timeout: timeoutMs }).catch(() => {})
+  const tokenWait = typeof page.waitForResponse === 'function'
+    ? page.waitForResponse((response) => (
+      isIntendedAuthResponse(response, timing.localApiOrigin ?? origin, {
+        pathIncludes: '/auth/v1/token',
+        method: 'POST',
+      })
+    ), { timeout: timing.timeoutMs }).catch(() => null)
+    : null
+  await boundAction(timing, 'login.email', (timeoutMs) =>
+    page.locator(SELECTORS.loginEmail).fill(account.email, { timeout: timeoutMs }),
+  )
+  await boundAction(timing, 'login.password', (timeoutMs) =>
+    page.locator(SELECTORS.loginPassword).fill(account.password, { timeout: timeoutMs }),
+  )
+  await boundAction(timing, 'login.submit', (timeoutMs) =>
+    page.locator(SELECTORS.loginSubmit).click({ timeout: timeoutMs }),
+  )
+  if (tokenWait) {
+    const response = await tokenWait
+    if (response && timing.store) {
+      const payload = await response.json().catch(() => null)
+      const token = extractAccessToken(payload)
+      if (token) timing.store.accessToken = token
+    }
+  }
+  await page.waitForLoadState?.('domcontentloaded', { timeout: timing.timeoutMs }).catch(() => {})
 }
 
 export async function expectPrivilegedAal1(page, { timeoutMs } = {}) {
@@ -101,9 +175,10 @@ export async function expectPrivilegedAal1(page, { timeoutMs } = {}) {
   }
 }
 
-export async function expectOrdinaryDenial(page, { timeoutMs } = {}) {
+export async function expectOrdinaryDenial(page, { timeoutMs, signal } = {}) {
   const deadline = Date.now() + (timeoutMs ?? 8_000)
   while (Date.now() < deadline) {
+    if (signal?.aborted) throw new Error('aborted while waiting for ordinary denial')
     const url = typeof page.url === 'function' ? page.url() : ''
     const text = await visibleText(page)
     if (text.includes(UI_COPY.ordinaryDenied)) return { kind: 'login-denied' }
@@ -116,30 +191,31 @@ export async function expectOrdinaryDenial(page, { timeoutMs } = {}) {
   throw new Error('ordinary/creator login did not produce an honest denial')
 }
 
-export async function enrollTotpViaUi(page, origin, store, { timeoutMs } = {}) {
+export async function enrollTotpViaUi(page, origin, store, timing = {}) {
   if (store.totpSecret && store.forceNewEnrollment) {
     throw new Error('G10/existing-factor path must not force a new enrollment')
   }
-  await page.goto(`${origin}${PATHS.security}`, {
-    waitUntil: 'domcontentloaded',
-    timeout: timeoutMs,
-  })
+  await boundAction(timing, 'enroll.goto', (timeoutMs) =>
+    page.goto(`${origin}${PATHS.security}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: timeoutMs,
+    }),
+  )
   const enroll = page.getByRole
     ? page.getByRole('button', { name: SELECTORS.enrollButtonText })
     : page.locator(`text=${SELECTORS.enrollButtonText}`)
-  await enroll.waitFor({ timeout: timeoutMs })
-  const enrollResponse = page.waitForResponse
-    ? page.waitForResponse((response) => {
-        const url = response.url()
-        return (
-          url.includes('/auth/v1/factors') &&
-          !url.includes('/challenge') &&
-          !url.includes('/verify') &&
-          response.request().method() === 'POST'
-        )
-      }, { timeout: timeoutMs })
+  await boundAction(timing, 'enroll.button', (timeoutMs) => enroll.waitFor({ timeout: timeoutMs }))
+  const enrollResponse = typeof page.waitForResponse === 'function'
+    ? page.waitForResponse((response) => (
+      isIntendedAuthResponse(response, store.localApiOrigin, {
+        pathIncludes: '/auth/v1/factors',
+        method: 'POST',
+      })
+      && !new URL(response.url()).pathname.includes('/challenge')
+      && !new URL(response.url()).pathname.includes('/verify')
+    ), { timeout: timing.timeoutMs })
     : null
-  await enroll.click()
+  await boundAction(timing, 'enroll.click', (timeoutMs) => enroll.click({ timeout: timeoutMs }))
   if (enrollResponse) {
     const response = await enrollResponse
     const payload = await response.json().catch(() => null)
@@ -151,54 +227,108 @@ export async function enrollTotpViaUi(page, origin, store, { timeoutMs } = {}) {
   }
   const code = generateTotp(store.totpSecret)
   if (!looksLikeTotpCode(code)) throw new Error('generated TOTP code is not 6 digits')
-  await page.locator(SELECTORS.enrollCode).fill(code)
+  await boundAction(timing, 'enroll.code', (timeoutMs) =>
+    page.locator(SELECTORS.enrollCode).fill(code, { timeout: timeoutMs }),
+  )
   const confirm = page.getByRole
     ? page.getByRole('button', { name: UI_COPY.enrollConfirm })
     : page.locator(`text=${UI_COPY.enrollConfirm}`)
-  await confirm.click()
+  const verifyResponse = typeof page.waitForResponse === 'function'
+    ? page.waitForResponse((response) => (
+      isIntendedAuthResponse(response, store.localApiOrigin, {
+        pathIncludes: '/verify',
+        method: 'POST',
+      })
+    ), { timeout: timing.timeoutMs }).catch(() => null)
+    : null
+  await boundAction(timing, 'enroll.confirm', (timeoutMs) => confirm.click({ timeout: timeoutMs }))
+  if (verifyResponse) {
+    const response = await verifyResponse
+    if (response) {
+      const payload = await response.json().catch(() => null)
+      const token = extractAccessToken(payload)
+      if (token) store.accessToken = token
+    }
+  }
   if (page.getByText) {
-    await page.getByText(UI_COPY.enrollSuccess).waitFor({ timeout: timeoutMs })
+    await boundAction(timing, 'enroll.success', (timeoutMs) =>
+      page.getByText(UI_COPY.enrollSuccess).waitFor({ timeout: timeoutMs }),
+    )
   }
   store.enrolled = true
 }
 
-export async function stepUpViaExistingFactor(page, origin, store, { timeoutMs, allowEnroll = false } = {}) {
+export async function stepUpViaExistingFactor(page, origin, store, timing = {}) {
+  const { allowEnroll = false } = timing
   if (!store.totpSecret) throw new Error('existing-factor step-up requires the in-memory secret')
   if (!allowEnroll && store.clickedEnrollOnThisPage) {
     throw new Error('fresh session must reuse the existing factor, not enroll again')
   }
-  await page.goto(`${origin}${PATHS.stepUp}`, {
-    waitUntil: 'domcontentloaded',
-    timeout: timeoutMs,
-  })
+  await boundAction(timing, 'stepUp.goto', (timeoutMs) =>
+    page.goto(`${origin}${PATHS.stepUp}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: timeoutMs,
+    }),
+  )
   const codeInput = page.locator(SELECTORS.stepUpCode)
-  const visible = await codeInput.isVisible?.({ timeout: Math.min(3_000, timeoutMs ?? 3_000) }).catch(() => false)
+  const visible = await codeInput.isVisible?.({ timeout: Math.min(3_000, timing.timeoutMs ?? 3_000) }).catch(() => false)
   if (!visible) {
     const retry = page.getByRole
       ? page.getByRole('button', { name: UI_COPY.enrollRetry })
       : null
     if (retry && (await retry.isVisible?.().catch(() => false))) {
-      await retry.click()
+      await boundAction(timing, 'stepUp.retry', (timeoutMs) => retry.click({ timeout: timeoutMs }))
     }
   }
-  await codeInput.waitFor({ timeout: timeoutMs })
+  await boundAction(timing, 'stepUp.codeWait', (timeoutMs) => codeInput.waitFor({ timeout: timeoutMs }))
   const code = generateTotp(store.totpSecret)
   if (!looksLikeTotpCode(code)) throw new Error('generated TOTP code is not 6 digits')
-  await codeInput.fill(code)
+  await boundAction(timing, 'stepUp.code', (timeoutMs) =>
+    codeInput.fill(code, { timeout: timeoutMs }),
+  )
   const confirm = page.getByRole
     ? page.getByRole('button', { name: UI_COPY.enrollConfirm })
     : page.locator(`text=${UI_COPY.enrollConfirm}`)
-  await confirm.click()
+  const verifyResponse = typeof page.waitForResponse === 'function'
+    ? page.waitForResponse((response) => (
+      isIntendedAuthResponse(response, store.localApiOrigin, {
+        pathIncludes: '/verify',
+        method: 'POST',
+      })
+    ), { timeout: timing.timeoutMs })
+    : null
+  await boundAction(timing, 'stepUp.confirm', (timeoutMs) => confirm.click({ timeout: timeoutMs }))
+  if (verifyResponse) {
+    const response = await verifyResponse
+    const payload = await response.json().catch(() => null)
+    const token = extractAccessToken(payload)
+    if (token) store.accessToken = token
+  }
   if (typeof page.waitForURL === 'function') {
-    await page.waitForURL((url) => {
-      const text = String(url)
-      return text.includes(PATHS.admin) && !text.includes(PATHS.stepUp) && !text.includes(PATHS.login)
-    }, { timeout: timeoutMs })
+    await boundAction(timing, 'stepUp.admin', (timeoutMs) =>
+      page.waitForURL((url) => {
+        const text = String(url)
+        return text.includes(PATHS.admin) && !text.includes(PATHS.stepUp) && !text.includes(PATHS.login)
+      }, { timeout: timeoutMs }),
+    )
   }
 }
 
-export async function withBrowserSession(context, viewport, fn) {
-  const browserContext = await context.newBrowserSession({ viewport })
+export async function withCapturedPage(browserContext, store, fn) {
+  const page = await openPage(browserContext)
+  const detach = attachAuthCapture(page, store, { localApiOrigin: store.localApiOrigin })
+  try {
+    return await fn(page)
+  } finally {
+    detach()
+  }
+}
+
+export async function withBrowserSession(context, viewport, fn, { store, budget } = {}) {
+  if (store) beginBrowserSession(store)
+  const browserContext = budget
+    ? await budget.action('newBrowserSession', () => context.newBrowserSession({ viewport }))
+    : await context.newBrowserSession({ viewport })
   let fnError = null
   let result
   try {
@@ -207,16 +337,24 @@ export async function withBrowserSession(context, viewport, fn) {
     fnError = error
   }
   try {
-    await context.closeBrowserSession(browserContext)
+    if (budget) {
+      await budget.action('closeBrowserSession', () => context.closeBrowserSession(browserContext))
+    } else {
+      await context.closeBrowserSession(browserContext)
+    }
   } catch (closeError) {
-    if (fnError) closeError.cause = fnError
-    throw closeError
+    const wrapped = new OwnershipUncertaintyError(
+      'closeBrowserSession failed; later resource-using scenarios must stop',
+      closeError,
+    )
+    if (fnError) wrapped.cause = closeError
+    throw wrapped
   }
   if (fnError) throw fnError
   return result
 }
 
-export async function withFixtureRestore(restore, fn) {
+export async function withFixtureRestore(restore, fn, { budget } = {}) {
   let fnError = null
   let result
   try {
@@ -225,10 +363,16 @@ export async function withFixtureRestore(restore, fn) {
     fnError = error
   }
   try {
-    await restore()
+    if (budget) {
+      await budget.action('fixture.restore', () => restore())
+    } else {
+      await restore()
+    }
   } catch (restoreError) {
-    if (fnError) restoreError.cause = fnError
-    throw restoreError
+    throw new OwnershipUncertaintyError(
+      'fixture restore failed; later resource-using scenarios must stop',
+      restoreError,
+    )
   }
   if (fnError) throw fnError
   return result

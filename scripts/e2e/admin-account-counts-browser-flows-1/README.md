@@ -20,9 +20,13 @@ and honest controlled-context unit tests.
    or substitutes Auth/RPC bodies.
 4. Compares rendered counts to `fixture.expectedCounts()`, requires a complete
    runtime observer interval for ON/OFF RPC claims, and restores fixture
-   mutations in `finally`. Failed close/restore is propagated.
+   mutations in `finally`. Failed close/restore stops later resource-using
+   gates. HTTP/UI denials require exact status+code or the intended application
+   state. Auth capture is bound to the exact local project origin and current
+   session. Receipts are sanitized, run-scoped and fail closed.
 5. Returns `{ contractVersion, gates }` for **G6–G19 only**. It never returns
-   `fullLocalExecution` or a whole-run PASS.
+   `fullLocalExecution` or a whole-run PASS. `evidenceDir` is required; this
+   lane does not default it.
 
 ## What this module does not do
 

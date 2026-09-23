@@ -16,28 +16,73 @@ export class ContextContractError extends Error {
   }
 }
 
-export function isNumericLoopbackOrigin(raw) {
-  if (typeof raw !== 'string' || raw.trim() === '') return false
-  let url
-  try {
-    url = new URL(raw)
-  } catch {
-    return false
+export class OwnershipUncertaintyError extends Error {
+  constructor(message, cause) {
+    super(message)
+    this.name = 'OwnershipUncertaintyError'
+    if (cause) this.cause = cause
   }
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return false
-  if (url.username || url.password) return false
+}
+
+export function parseAbsoluteHttpUrl(raw) {
+  if (raw instanceof URL) {
+    if (raw.protocol !== 'http:' && raw.protocol !== 'https:') return null
+    return raw
+  }
+  if (typeof raw !== 'string' || raw.trim() === '') return null
+  const text = raw.trim()
+  if (text.startsWith('//')) return null
+  try {
+    const url = new URL(text)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null
+    if (url.username || url.password) return null
+    return url
+  } catch {
+    return null
+  }
+}
+
+export function effectivePort(url) {
+  if (url.port) return url.port
+  if (url.protocol === 'https:') return '443'
+  if (url.protocol === 'http:') return '80'
+  return ''
+}
+
+export function sameExactOrigin(candidate, allowedOrigin) {
+  const left = parseAbsoluteHttpUrl(candidate)
+  const right = parseAbsoluteHttpUrl(allowedOrigin)
+  if (!left || !right) return false
+  return (
+    left.protocol === right.protocol &&
+    left.hostname.toLowerCase() === right.hostname.toLowerCase() &&
+    effectivePort(left) === effectivePort(right)
+  )
+}
+
+export function isNumericLoopbackOrigin(raw) {
+  const url = parseAbsoluteHttpUrl(raw)
+  if (!url) return false
   const host = url.hostname.toLowerCase()
   return host === '127.0.0.1' || host === '[::1]' || host === '::1'
 }
 
-export function rejectRemoteRedirect(location, credentialsPresent) {
+export function rejectUnsafeRedirect(location, credentialsPresent, allowedOrigin = null) {
   if (!location) return false
-  let url
-  try {
-    url = new URL(location)
-  } catch {
-    if (String(location).startsWith('/')) return false
-    throw new Error(`refusing unparseable redirect: ${location}`)
+  const text = String(location)
+  if (text.startsWith('//')) {
+    throw new Error('refusing protocol-relative redirect')
+  }
+  if (text.startsWith('/') && !text.startsWith('//')) return false
+  const url = parseAbsoluteHttpUrl(text)
+  if (!url) {
+    throw new Error('refusing unparseable redirect')
+  }
+  if (allowedOrigin && !sameExactOrigin(url, allowedOrigin)) {
+    if (credentialsPresent) {
+      throw new Error('refusing remote redirect with credentials')
+    }
+    throw new Error('refusing foreign redirect origin')
   }
   if (!isNumericLoopbackOrigin(url.origin)) {
     if (credentialsPresent) {
@@ -46,6 +91,10 @@ export function rejectRemoteRedirect(location, credentialsPresent) {
     throw new Error(`refusing remote URL ${url.origin}`)
   }
   return false
+}
+
+export function rejectRemoteRedirect(location, credentialsPresent) {
+  return rejectUnsafeRedirect(location, credentialsPresent)
 }
 
 function requireFunction(value, name) {
@@ -177,5 +226,63 @@ export function budgets(context) {
     actionMs: Math.max(1_000, Math.min(15_000, total)),
     scenarioMs: Math.max(2_000, Math.min(60_000, total)),
     settleMs: Math.max(500, Math.min(8_000, total)),
+  }
+}
+
+export function createRunBudget(context) {
+  const started = Date.now()
+  const total = context.timeoutMs
+  const signal = context.signal
+  const parts = budgets(context)
+
+  function remainingMs() {
+    return Math.max(0, total - (Date.now() - started))
+  }
+
+  function assertLive(label) {
+    if (signal?.aborted) {
+      throw new Error(`aborted during ${label}`)
+    }
+    if (remainingMs() <= 0) {
+      throw new Error(`overall budget exhausted during ${label}`)
+    }
+  }
+
+  async function bound(label, ms, fn) {
+    assertLive(label)
+    const cap = Math.max(1, Math.min(ms, remainingMs()))
+    let timer
+    let onAbort
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`${label} exceeded ${cap}ms`)), cap)
+      if (typeof signal?.addEventListener === 'function') {
+        onAbort = () => reject(new Error(`aborted during ${label}`))
+        signal.addEventListener('abort', onAbort, { once: true })
+      }
+    })
+    try {
+      return await Promise.race([Promise.resolve().then(() => fn(cap)), timeout])
+    } finally {
+      clearTimeout(timer)
+      if (onAbort && typeof signal?.removeEventListener === 'function') {
+        signal.removeEventListener('abort', onAbort)
+      }
+    }
+  }
+
+  return {
+    actionMs: parts.actionMs,
+    scenarioMs: parts.scenarioMs,
+    settleMs: parts.settleMs,
+    remainingMs,
+    assertLive,
+    bound,
+    action(label, fn) {
+      return bound(label, parts.actionMs, fn)
+    },
+    scenario(label, fn) {
+      return bound(label, Math.min(parts.scenarioMs, remainingMs() || parts.scenarioMs), fn)
+    },
+    signal,
   }
 }

@@ -1,10 +1,44 @@
 #!/usr/bin/env node
 // Same-session HTTP against the local wrapper. Isolated from G11 observer marks.
 
-import { DEFINITION_VERSION, WRAPPER_RPC } from './constants.mjs'
-import { isNumericLoopbackOrigin, rejectRemoteRedirect } from './contract.mjs'
+import { WRAPPER_RPC } from './constants.mjs'
+import { isNumericLoopbackOrigin, rejectUnsafeRedirect, sameExactOrigin } from './contract.mjs'
+import { isPermittedSuccessShape, parseAdminAccountCountsPayload } from './payload.mjs'
 
 export const WRAPPER_HTTP_PATH = `/rest/v1/rpc/${WRAPPER_RPC}`
+
+export const DENIED_CALLER = Object.freeze({
+  unauthenticated: Object.freeze({
+    statuses: Object.freeze([401]),
+    codes: Object.freeze(['PGRST301']),
+  }),
+  forbidden: Object.freeze({
+    statuses: Object.freeze([401, 403]),
+    codes: Object.freeze(['42501', '42503']),
+  }),
+})
+
+export function machineCode(json) {
+  if (!json || typeof json !== 'object' || Array.isArray(json)) return null
+  const code = json.code
+  return typeof code === 'string' && code.trim() ? code.trim() : null
+}
+
+export function isUnavailableWrapperResponse({ status, json }) {
+  return status === 404 && machineCode(json) === 'PGRST202'
+}
+
+export function isDeniedCallerResponse(result, kind) {
+  const spec = DENIED_CALLER[kind]
+  if (!spec) return false
+  if (typeof result?.status !== 'number') return false
+  if (result.status >= 500) return false
+  if (isUnavailableWrapperResponse(result)) return false
+  if (!spec.statuses.includes(result.status)) return false
+  const code = machineCode(result.json)
+  if (!code) return false
+  return spec.codes.includes(code)
+}
 
 export function permittedPayloadKeys() {
   return [
@@ -14,32 +48,6 @@ export function permittedPayloadKeys() {
     'window_start',
     'definition_version',
   ]
-}
-
-export function isPermittedSuccessShape(payload) {
-  const row = Array.isArray(payload) ? payload[0] : payload
-  if (!row || typeof row !== 'object' || Array.isArray(row)) return false
-  const keys = Object.keys(row)
-  const expected = permittedPayloadKeys()
-  if (keys.length !== expected.length) return false
-  if (expected.some((key) => !keys.includes(key))) return false
-  if (row.definition_version !== DEFINITION_VERSION) return false
-  if (!/^\d+$/.test(String(row.present_registered_accounts))) return false
-  if (!/^\d+$/.test(String(row.created_in_prior_30_days))) return false
-  return true
-}
-
-export function isDeniedCallerResponse({ status, json }) {
-  if (status === 401 || status === 403) return true
-  const code = json?.code ?? json?.error ?? json?.message
-  const text = String(code ?? '')
-  return (
-    text.includes('42501') ||
-    text.includes('42503') ||
-    text.includes('PGRST301') ||
-    text.includes('PGRST302') ||
-    text.includes('PGRST202')
-  )
 }
 
 export async function callLocalWrapper({
@@ -52,6 +60,9 @@ export async function callLocalWrapper({
     throw new Error('direct wrapper call refuses a non-loopback or remote URL')
   }
   const url = new URL(WRAPPER_HTTP_PATH, localApi.origin)
+  if (!sameExactOrigin(url, localApi.origin)) {
+    throw new Error('direct wrapper call refuses a foreign origin')
+  }
   const headers = {
     apikey: localApi.anonKey,
     Accept: 'application/json',
@@ -67,7 +78,7 @@ export async function callLocalWrapper({
   })
   const location = response.headers?.get?.('location')
   if (response.status >= 300 && response.status < 400) {
-    rejectRemoteRedirect(location, Boolean(accessToken))
+    rejectUnsafeRedirect(location, Boolean(accessToken), localApi.origin)
   }
   const text = await response.text()
   let json = null
@@ -79,19 +90,40 @@ export async function callLocalWrapper({
   return { status: response.status, json, text, url: String(url) }
 }
 
-export function assertPermittedWrapper(result) {
-  if (result.status !== 200 || !isPermittedSuccessShape(result.json)) {
-    throw new Error(`permitted wrapper shape missing (status ${result.status})`)
+export function assertPermittedWrapper(result, { expected } = {}) {
+  if (result.status !== 200) {
+    throw new Error('permitted wrapper did not return HTTP 200')
+  }
+  const parsed = parseAdminAccountCountsPayload(result.json)
+  if (!parsed.ok) {
+    throw new Error('permitted wrapper failed the accepted count/time contract')
+  }
+  if (expected) {
+    if (parsed.measures.presentRegisteredAccounts !== String(expected.present)) {
+      throw new Error('permitted wrapper present count != independent expected')
+    }
+    if (parsed.measures.createdInPrior30Days !== String(expected.recent)) {
+      throw new Error('permitted wrapper recent count != independent expected')
+    }
+  }
+  return parsed.measures
+}
+
+export function assertDeniedWrapper(result, kind) {
+  const parsed = parseAdminAccountCountsPayload(result.json)
+  if (result.status === 200 && parsed.ok) {
+    throw new Error('denied caller received a success count row')
+  }
+  if (isUnavailableWrapperResponse(result)) {
+    throw new Error('missing wrapper is not an authorization denial')
+  }
+  if (result.status >= 500) {
+    throw new Error('server failure is not a caller-status denial')
+  }
+  if (!isDeniedCallerResponse(result, kind)) {
+    throw new Error(`denied ${kind} semantics missing`)
   }
   return result
 }
 
-export function assertDeniedWrapper(result) {
-  if (isPermittedSuccessShape(result.json) && result.status === 200) {
-    throw new Error('denied caller received a success count row')
-  }
-  if (!isDeniedCallerResponse(result)) {
-    throw new Error(`denied caller semantics missing (status ${result.status})`)
-  }
-  return result
-}
+export { isPermittedSuccessShape, parseAdminAccountCountsPayload }

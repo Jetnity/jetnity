@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Compare rendered Admin counts to the runtime's independent expectedCounts().
 
-import { COUNT_VALUE_SELECTORS, SELECTORS, UI_COPY, WINDOW_HOURS } from './constants.mjs'
+import { COUNT_VALUE_SELECTORS, PATHS, SELECTORS, UI_COPY, WINDOW_HOURS } from './constants.mjs'
+import { WINDOW_US, parsePgTimestamptz } from './payload.mjs'
 
 export function normalizeCount(value) {
   return String(value ?? '').replace(/\./g, '').replace(/\s/g, '').trim()
@@ -30,6 +31,120 @@ export async function readRenderedCounts(page) {
   }
 }
 
+async function locatorCount(locator) {
+  return typeof locator.count === 'function' ? await locator.count() : 0
+}
+
+export async function bothAggregatesUndisclosed(page) {
+  for (const key of ['present', 'window']) {
+    const locator = page.locator(COUNT_VALUE_SELECTORS[key])
+    const count = await locatorCount(locator)
+    if (count > 0) {
+      const value = normalizeCount(await locator.first().innerText())
+      if (value !== '') {
+        throw new Error(`protected ${key} aggregate ${value} was disclosed`)
+      }
+    }
+  }
+}
+
+export async function classifyDenialUi(page) {
+  const url = typeof page.url === 'function' ? String(page.url()) : ''
+  const text = await page.locator('body').innerText()
+  const trimmed = String(text ?? '')
+  if (trimmed.includes(UI_COPY.failed) || /internal server error/i.test(trimmed)) {
+    return { kind: 'failed', url, text: trimmed }
+  }
+  if (trimmed.includes(UI_COPY.unavailable)) {
+    return { kind: 'unavailable', url, text: trimmed }
+  }
+  if (trimmed.includes(UI_COPY.forbidden)) {
+    return { kind: 'forbidden', url, text: trimmed }
+  }
+  if (trimmed.includes(UI_COPY.ordinaryDenied)) {
+    return { kind: 'login-denied', url, text: trimmed }
+  }
+  if (url.includes(PATHS.unauthorized)) {
+    return { kind: 'unauthorized', url, text: trimmed }
+  }
+  if (url.includes(PATHS.login)) {
+    return { kind: 'login', url, text: trimmed }
+  }
+  if (url.includes(PATHS.stepUp)) {
+    return { kind: 'step-up', url, text: trimmed }
+  }
+  if (!trimmed.trim()) {
+    return { kind: 'blank', url, text: trimmed }
+  }
+  if (url.includes(PATHS.admin) && !(await sectionPresent(page))) {
+    return { kind: 'disabled', url, text: trimmed }
+  }
+  return { kind: 'unknown', url, text: trimmed }
+}
+
+export async function assertNoCountDisclosure(page, options = {}) {
+  await bothAggregatesUndisclosed(page)
+  const classified = await classifyDenialUi(page)
+  if (classified.kind === 'failed' || classified.kind === 'blank' || classified.kind === 'unknown') {
+    throw new Error(`generic ${classified.kind} page cannot become a denial PASS`)
+  }
+
+  let allowed
+  if (options.expectKind) {
+    allowed = Array.isArray(options.expectKind) ? options.expectKind : [options.expectKind]
+  } else if (options.allowUnavailable) {
+    allowed = ['unavailable']
+  } else if (options.allowForbidden) {
+    allowed = ['forbidden', 'login-denied', 'unauthorized', 'login']
+  } else {
+    allowed = ['step-up', 'login', 'login-denied', 'disabled']
+  }
+
+  if (!allowed.includes(classified.kind)) {
+    throw new Error(`expected denial ${allowed.join('|')}, got ${classified.kind}`)
+  }
+  return classified
+}
+
+export async function readDisplayedTimestamps(page) {
+  const times = page.locator(`${COUNT_VALUE_SELECTORS.section} time`)
+  const timeCount = await locatorCount(times)
+  if (timeCount < 2) {
+    throw new Error('measured-at and window-start <time> stamps missing')
+  }
+  const first = typeof times.nth === 'function' ? times.nth(0) : times.first()
+  const second = typeof times.nth === 'function' ? times.nth(1) : times.locator?.(':nth-of-type(2)') ?? times.first()
+  const measuredAt =
+    (typeof first.getAttribute === 'function' ? await first.getAttribute('dateTime') : null) ??
+    (await first.innerText())
+  const windowStart =
+    (typeof second.getAttribute === 'function' ? await second.getAttribute('dateTime') : null) ??
+    (await second.innerText())
+  return { measuredAt: String(measuredAt ?? '').trim(), windowStart: String(windowStart ?? '').trim() }
+}
+
+export async function assertDisplayedTimestamps(page, expected = null) {
+  const displayed = await readDisplayedTimestamps(page)
+  const measured = parsePgTimestamptz(displayed.measuredAt)
+  const windowStart = parsePgTimestamptz(displayed.windowStart)
+  if (!measured || !windowStart) {
+    throw new Error('displayed timestamps failed the accepted timestamptz contract')
+  }
+  if (windowStart.utcUs >= measured.utcUs) {
+    throw new Error('displayed window_start is not before measured_at')
+  }
+  if (measured.utcUs - windowStart.utcUs !== WINDOW_US) {
+    throw new Error('displayed window is not the exact 720h contract')
+  }
+  if (expected?.measuredAt && displayed.measuredAt !== expected.measuredAt) {
+    throw new Error('displayed measured_at != independent expected')
+  }
+  if (expected?.windowStart && displayed.windowStart !== expected.windowStart) {
+    throw new Error('displayed window_start != independent expected')
+  }
+  return displayed
+}
+
 export async function assertCountsMatchExpected(page, expected) {
   const rendered = await readRenderedCounts(page)
   const wantPresent = normalizeCount(expected.present)
@@ -45,7 +160,7 @@ export async function assertCountsMatchExpected(page, expected) {
   return rendered
 }
 
-export async function assertDefinitionAndWindow(page) {
+export async function assertDefinitionAndWindow(page, expected = null) {
   const text = await page.locator(COUNT_VALUE_SELECTORS.section).innerText()
   if (!text.includes(UI_COPY.countsTitle)) {
     throw new Error('count section title missing')
@@ -56,50 +171,28 @@ export async function assertDefinitionAndWindow(page) {
   if (!text.includes(UI_COPY.measuredLabel) || !text.includes(UI_COPY.windowStartLabel)) {
     throw new Error('measured-time / window-start presentation missing')
   }
-  const times = page.locator(`${COUNT_VALUE_SELECTORS.section} time`)
-  const timeCount = typeof times.count === 'function' ? await times.count() : 0
-  if (timeCount < 2) {
-    throw new Error('measured-at and window-start <time> stamps missing')
-  }
-}
-
-export async function assertNoCountDisclosure(page, { allowForbidden = false, allowUnavailable = false } = {}) {
-  const presentValues = page.locator(COUNT_VALUE_SELECTORS.present)
-  const presentCount = typeof presentValues.count === 'function' ? await presentValues.count() : 0
-  if (presentCount > 0) {
-    const value = normalizeCount(await presentValues.first().innerText())
-    throw new Error(`protected aggregate ${value} was disclosed`)
-  }
-  const text = await page.locator('body').innerText()
-  if (text.includes(UI_COPY.failed)) {
-    throw new Error('generic failed count load cannot become a denial PASS')
-  }
-  if (allowForbidden && text.includes(UI_COPY.forbidden)) return { kind: 'forbidden' }
-  if (allowUnavailable && text.includes(UI_COPY.unavailable)) {
-    if (/\b0\b/.test(UI_COPY.unavailable)) {
-      throw new Error('unavailable copy must not be a zero statistic')
-    }
-    return { kind: 'unavailable' }
-  }
-  if (await sectionPresent(page) && !allowForbidden && !allowUnavailable) {
-    throw new Error('counts section rendered without an allowed denial state')
-  }
-  return { kind: 'absent' }
+  await assertDisplayedTimestamps(page, expected)
 }
 
 export async function assertUnavailableNotZero(page) {
-  const text = await page.locator('body').innerText()
-  if (!text.includes(UI_COPY.unavailable)) {
-    throw new Error('missing wrapper did not render the honest unavailable state')
-  }
-  if (text.includes('0 accounts') || text.includes('0 Konten')) {
+  const classified = await assertNoCountDisclosure(page, { expectKind: 'unavailable' })
+  if (classified.text.includes('0 accounts') || classified.text.includes('0 Konten')) {
     throw new Error('unavailable wrapper must not present 0 accounts')
   }
-  return assertNoCountDisclosure(page, { allowUnavailable: true })
+  return classified
 }
 
-export async function screenshotCountSection(page, filePath) {
+export async function screenshotCountSection(page, filePath, timing = {}) {
   const section = page.locator(COUNT_VALUE_SELECTORS.section)
+  if (timing.budget?.action) {
+    await timing.budget.action('screenshot.wait', (timeoutMs) =>
+      section.waitFor({ state: 'visible', timeout: timeoutMs }),
+    )
+    await timing.budget.action('screenshot.write', () =>
+      section.screenshot({ path: filePath, animations: 'disabled' }),
+    )
+    return
+  }
   await section.waitFor({ state: 'visible' })
   await section.screenshot({ path: filePath, animations: 'disabled' })
 }
