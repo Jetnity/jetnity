@@ -8,7 +8,12 @@
 -- grantee, privilege and is_grantable. WITH GRANT OPTION is never accepted.
 --
 -- Pinned pg_get_functiondef SHA-256: PostgreSQL 16.15 pretty-print of the
--- unchanged accepted sources. A different major is BLOCKED, not a repair.
+-- caller-status candidate installed on a clean disposable reference.
+-- Historical #555 producer fingerprint
+-- 0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef
+-- is refused. A leftover #555 install is INCOMPATIBLE and is not rewritten
+-- in place; a later controlled upgrade is required. A different major is
+-- BLOCKED, not a repair.
 -- States: FRESH | ALREADY_INSTALLED | REVOKED_EXACT | INCOMPATIBLE
 select jsonb_build_object(
   'state',
@@ -191,7 +196,9 @@ from (
       (
         select
           encode(sha256(convert_to(pg_get_functiondef(p.oid), 'UTF8')), 'hex')
-            = '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef'
+            = 'b9cec2b3cad0052688f5f396cfd1d532d4035bd1d51254723c1d650dc0d1048b'
+          and encode(sha256(convert_to(pg_get_functiondef(p.oid), 'UTF8')), 'hex')
+            is distinct from '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef'
           and pg_get_userbyid(p.proowner) = 'postgres'
           and p.prosecdef is true
           and p.provolatile = 's'

@@ -28,7 +28,9 @@ const BOOTSTRAP = join(ROOT, 'scripts/db/admin-account-counts-1-bootstrap.sql')
 const CANDIDATE = join(ROOT, 'scripts/db/admin-account-counts-1-candidate.sql')
 const WRAPPER = join(ROOT, 'scripts/db/admin-account-counts-delivery-1-rpc.sql')
 const DB_NAME = 'jetnity_admin_account_counts_delivery_1'
-const ACCEPTED_CANDIDATE_SHA256 = 'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420'
+const ACCEPTED_CANDIDATE_SHA256 = '612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de'
+const HISTORICAL_REFUSED_CANDIDATE_SHA256 =
+  'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420'
 const SUBPROCESS_TIMEOUT_MS = 30_000
 
 const ergebnisse = []
@@ -436,6 +438,99 @@ function pruefeWrapper() {
     },
     'function.*does not exist|42883',
   )
+
+  pruefeCallerStatus()
+}
+
+function privilegedOwnerWrapperCounts() {
+  const ergebnis = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.owner,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  return {
+    ok: ergebnis.arbeit?.ok === true,
+    present: Number(ergebnis.arbeit?.row?.present_registered_accounts),
+    windowed: Number(ergebnis.arbeit?.row?.created_in_prior_30_days),
+    raw: ergebnis.arbeit,
+  }
+}
+
+function pruefeCallerStatus() {
+  const gruppe = 'caller-status-sql'
+  const basis = privilegedOwnerWrapperCounts()
+  bewerte(
+    'active owner AAL2 still receives wrapper aggregates',
+    gruppe,
+    basis.ok && Number.isInteger(basis.present) && basis.present >= 1,
+    JSON.stringify(basis.raw),
+  )
+
+  for (const [name, uid, status] of [
+    ['banned moderator', IDS.moderator, 'banned'],
+    ['disabled admin', IDS.admin, 'disabled'],
+    ['pending operator', IDS.operator, 'pending'],
+  ]) {
+    psqlSql(`update public.profiles set status = '${status}' where user_id = '${uid}'`)
+    mussAblehnen(
+      `${name}+AAL2 is 42501 on the wrapper; not a zero success row`,
+      gruppe,
+      {
+        rolle: 'authenticated',
+        uid,
+        aal: 'aal2',
+        sql: 'select * from public.admin_account_counts_v1()',
+      },
+      '42501|not authorized',
+    )
+    mussAblehnen(
+      `${name}+AAL2 is 42501 on the inner producer`,
+      gruppe,
+      {
+        rolle: 'authenticated',
+        uid,
+        aal: 'aal2',
+        sql: 'select * from jetnity_reporting.account_counts_v1()',
+      },
+      '42501|not authorized',
+    )
+    const still = privilegedOwnerWrapperCounts()
+    bewerte(
+      `wrapper metric population unchanged while ${name} is blocked`,
+      gruppe,
+      still.ok && still.present === basis.present && still.windowed === basis.windowed,
+      JSON.stringify({ basis: basis.raw, still: still.raw }),
+    )
+    psqlSql(`update public.profiles set status = 'active' where user_id = '${uid}'`)
+  }
+
+  psqlSql(`update public.profiles set status = 'banned' where user_id = '${IDS.moderator}'`)
+  mussAblehnen(
+    'direct SQL status change denies the same JWT on the next wrapper call',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.moderator,
+      aal: 'aal2',
+      sql: 'select * from public.admin_account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  psqlSql(`update public.profiles set status = 'active' where user_id = '${IDS.moderator}'`)
+  const restored = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  bewerte(
+    'same authenticated moderator receives the wrapper again after status returns to active',
+    gruppe,
+    restored.arbeit?.ok === true &&
+      Number(restored.arbeit.row.present_registered_accounts) === basis.present,
+    JSON.stringify(restored.arbeit),
+  )
 }
 
 function pruefeKatalog(vorherInner, nachherInner) {
@@ -517,6 +612,11 @@ async function main() {
   const version = execFileSync(bins.postgres, ['--version'], { encoding: 'utf8' }).trim()
   const candidateSha = sha256Datei(CANDIDATE)
   const wrapperSha = sha256Datei(WRAPPER)
+  if (candidateSha === HISTORICAL_REFUSED_CANDIDATE_SHA256) {
+    throw new Error(
+      `Refused historical #555 candidate identity: ${candidateSha}. Caller-status producer is required.`,
+    )
+  }
   if (candidateSha !== ACCEPTED_CANDIDATE_SHA256) {
     throw new Error(`Accepted candidate hash mismatch: ${candidateSha}`)
   }

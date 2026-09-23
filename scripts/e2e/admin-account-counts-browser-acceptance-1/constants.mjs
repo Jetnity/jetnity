@@ -13,8 +13,13 @@ export const AGENT = 'Jetnity admin account counts browser acceptance 1'
 export const GENERATION = 1
 export const TASK = 'docs/ADMIN_ACCOUNT_COUNTS_BROWSER_ACCEPTANCE_1_TASK_2026-09-23.md'
 export const TASK_SEED = '74e939882e9e9bfe94f1f3e032d397ca0b2bbe50'
+// Historical #556 product snapshot only. Not the executable #557 source contract.
 export const PRODUCT_BASELINE = 'f0237baf8809e5528b5f73e918f0e37a7d9b4477'
-export const INTEGRATION_BASELINE = '87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b'
+// Authorized C1 integration baseline: merged #556 preflight fallback on main.
+export const INTEGRATION_BASELINE = '4381d20bfaa7f60f140823cc311d44409934197a'
+// #557 commit that already contains the executable producer/reader/caller-status bytes.
+export const EXECUTABLE_SOURCE_BASELINE = '9cf7aedd8dd190b4764d8ac178e23d9f8b42c773'
+// Historical #556 reviewed helper head. Not a #557 product acceptance.
 export const REVIEWED_HEAD = 'ef61f0eaaf504c866a179fabaa927fe1472fefe6'
 export const BRANCH = 'audit/admin-account-counts-browser-acceptance-1'
 export const RUN_LABEL_PREFIX = 'aacba1'
@@ -35,8 +40,15 @@ export const PERMITTED_TOOL_IDENTITY = Object.freeze({
 export const EVIDENCE_DIR = join(ROOT, 'docs/evidence/admin-account-counts-browser-acceptance-1')
 export const PRIVATE_STATE_DIR_NAME = 'aacba1-private'
 
-export const PINS = Object.freeze({
+export const HISTORICAL_REFUSED_PINS = Object.freeze({
   producerSha256: 'dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420',
+  producerBlob: '63974e6509bf42963d2028d99567c4b4062c36d8',
+  readerBlob: '02dcafd80502067935eee78f3d8a7b21e417d720',
+  note: 'Historical #555/#556 permissive producer and pre-status reader. Not executable for this slice.',
+})
+
+export const PINS = Object.freeze({
+  producerSha256: '612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de',
   wrapperSha256: '13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb',
   bootstrapSha256: '0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2',
 })
@@ -44,13 +56,14 @@ export const PINS = Object.freeze({
 // Working-tree git hash-object pins for every source this lane may execute.
 // Historical committed HEAD:path names are recorded separately at read time.
 export const BLOB_PINS = Object.freeze({
-  producer: '63974e6509bf42963d2028d99567c4b4062c36d8',
+  producer: 'b912eecb55cfa519dcd8b5d4a4ca9222aea0a0c1',
   wrapper: '73bc115763f00a2052123497e0a79273a340f0be',
   bootstrap: '269bab3e4ad9d5e400f90ef09ce4cac86cb6f473',
   contract: '6826eeea70aecc0507d05624daaeac47af0be9b8',
   parser: '6205ecbba621b048fff479856c5523fab5ec4f6d',
   activation: '10f1bf99ac3d71eca6b1c69f04325947d0786c20',
-  reader: '02dcafd80502067935eee78f3d8a7b21e417d720',
+  reader: 'eb5b1b0d54bd649bd511ce3ed17b0a63b8adae92',
+  callerStatus: 'b820c799046585dff743553fb6231e60a6a42cff',
   server: '1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18',
   client: '94c45e4c3324e244f743d6e6d07ae676b53ce554',
   guard: 'b650a5e25a4db6572bbb7267e3735a746649497b',
@@ -78,6 +91,7 @@ export const SOURCE_PATHS = Object.freeze({
   parser: 'lib/admin/account-counts-delivery/parser.ts',
   activation: 'lib/admin/account-counts-delivery/activation.ts',
   reader: 'lib/admin/account-counts-delivery/reader.ts',
+  callerStatus: 'lib/admin/account-counts-delivery/caller-status.ts',
   server: 'lib/supabase/server.ts',
   client: 'lib/supabase/client.ts',
   guard: 'lib/auth/admin-guard.ts',

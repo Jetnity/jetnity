@@ -1,0 +1,14 @@
+{
+  "bcId": "bc-4bf98f13-10aa-4cff-af82-dee79ebc920c",
+  "name": "Admin account counts caller status",
+  "branchName": "fix/admin-account-counts-caller-status-1",
+  "repoUrl": "github.com/Jetnity/jetnity",
+  "originalModelName": "cursor-grok-4.6-high-fast",
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "substitution": false,
+  "generation": 1,
+  "url": "https://cursor.com/agents/bc-4bf98f13-10aa-4cff-af82-dee79ebc920c",
+  "uiRenamePerformed": false,
+  "resumedClosed555": false,
+  "resumedActive556": false
+}

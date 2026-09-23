@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 import { FORBIDDEN_CONNECTION_KEYS } from '../admin-account-counts-1-local-proof.mjs'
 import {
   ACCEPTED,
+  HISTORICAL_REFUSED_PRODUCER,
   HOSTED_ARGV_PATTERN,
   PINNED_FUNCTIONDEF,
   assertLocalDisposableOnly,
@@ -41,6 +42,15 @@ describe('admin-account-counts-rollout-preparation-1 source pin', () => {
     assert.equal(pins.wrapper, ACCEPTED.wrapper.sha256)
     assert.equal(pins.contractBlob, ACCEPTED.contractBlob)
     assert.equal(pins.parserBlob, ACCEPTED.parserBlob)
+    assert.notEqual(ACCEPTED.candidate.sha256, HISTORICAL_REFUSED_PRODUCER.candidateSha256)
+    assert.notEqual(PINNED_FUNCTIONDEF.producerSha256, HISTORICAL_REFUSED_PRODUCER.producerSha256)
+    const identity = readPackageSql('identity')
+    assert.match(identity, new RegExp(PINNED_FUNCTIONDEF.producerSha256))
+    assert.match(identity, /is distinct from '0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef'/)
+    assert.doesNotMatch(
+      identity,
+      /encode\(sha256\(convert_to\(pg_get_functiondef\(p\.oid\), 'UTF8'\)\), 'hex'\)\s*=\s*'0c936c2a5a693cefe051d3a0c92e9a47f51e902f9e273efcebb82113d834d7ef'/,
+    )
   })
 
   test('composition is unchanged candidate then wrapper and package SQL forbids CASCADE', () => {

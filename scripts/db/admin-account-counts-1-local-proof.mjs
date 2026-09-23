@@ -937,6 +937,146 @@ function pruefeAutorisierung() {
   )
 }
 
+function privilegedOwnerCounts() {
+  const ergebnis = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.owner,
+    aal: 'aal2',
+    sql: 'select * from jetnity_reporting.account_counts_v1()',
+  })
+  return {
+    ok: ergebnis.arbeit?.ok === true,
+    present: Number(ergebnis.arbeit?.row?.present_registered_accounts),
+    windowed: Number(ergebnis.arbeit?.row?.created_in_prior_30_days),
+    raw: ergebnis.arbeit,
+  }
+}
+
+function pruefeCallerStatus() {
+  const gruppe = 'caller-status-sql'
+  const basis = privilegedOwnerCounts()
+  bewerte(
+    'active owner AAL2 still receives fixture aggregates after existing gates',
+    gruppe,
+    basis.ok && Number.isInteger(basis.present) && basis.present >= 1,
+    JSON.stringify(basis.raw),
+  )
+
+  for (const [name, uid, status] of [
+    ['banned moderator', IDS.moderator, 'banned'],
+    ['disabled admin', IDS.admin, 'disabled'],
+    ['pending operator', IDS.operator, 'pending'],
+  ]) {
+    psqlSql(`update public.profiles set status = '${status}' where user_id = '${uid}'`)
+    mussAblehnen(
+      `${name}+AAL2 is 42501 before counts; not a zero success row`,
+      gruppe,
+      {
+        rolle: 'authenticated',
+        uid,
+        aal: 'aal2',
+        sql: 'select * from jetnity_reporting.account_counts_v1()',
+      },
+      '42501|not authorized',
+    )
+    const still = privilegedOwnerCounts()
+    bewerte(
+      `metric population unchanged while ${name} is blocked`,
+      gruppe,
+      still.ok && still.present === basis.present && still.windowed === basis.windowed,
+      JSON.stringify({ basis: basis.raw, still: still.raw }),
+    )
+    psqlSql(`update public.profiles set status = 'active' where user_id = '${uid}'`)
+  }
+
+  const first = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from jetnity_reporting.account_counts_v1()',
+  })
+  bewerte(
+    'same authenticated moderator is allowed while persisted status is active',
+    gruppe,
+    first.arbeit?.ok === true &&
+      Number(first.arbeit.row.present_registered_accounts) === basis.present,
+    JSON.stringify(first.arbeit),
+  )
+  psqlSql(`update public.profiles set status = 'banned' where user_id = '${IDS.moderator}'`)
+  mussAblehnen(
+    'direct SQL status change denies the same JWT/claims on the next producer call',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.moderator,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  const duringBlock = privilegedOwnerCounts()
+  bewerte(
+    'blocked caller status does not change the counted population',
+    gruppe,
+    duringBlock.ok &&
+      duringBlock.present === basis.present &&
+      duringBlock.windowed === basis.windowed,
+    JSON.stringify(duringBlock.raw),
+  )
+  psqlSql(`update public.profiles set status = 'active' where user_id = '${IDS.moderator}'`)
+  const restored = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from jetnity_reporting.account_counts_v1()',
+  })
+  bewerte(
+    'same authenticated moderator is allowed again after status returns to active',
+    gruppe,
+    restored.arbeit?.ok === true &&
+      Number(restored.arbeit.row.present_registered_accounts) === basis.present &&
+      Number(restored.arbeit.row.created_in_prior_30_days) === basis.windowed,
+    JSON.stringify(restored.arbeit),
+  )
+
+  psqlSql(`
+alter table public.profiles drop constraint if exists profiles_status_check;
+alter table public.profiles alter column status drop not null;
+update public.profiles set status = null where user_id = '${IDS.moderator}';
+`)
+  mussAblehnen(
+    'NULL persisted caller status is 42501',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.moderator,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  psqlSql(`update public.profiles set status = 'unrecognized' where user_id = '${IDS.moderator}'`)
+  mussAblehnen(
+    'unrecognized persisted caller status is 42501',
+    gruppe,
+    {
+      rolle: 'authenticated',
+      uid: IDS.moderator,
+      aal: 'aal2',
+      sql: 'select * from jetnity_reporting.account_counts_v1()',
+    },
+    '42501|not authorized',
+  )
+  psqlSql(`
+update public.profiles set status = 'active' where user_id = '${IDS.moderator}';
+alter table public.profiles alter column status set default 'active';
+alter table public.profiles alter column status set not null;
+alter table public.profiles
+  add constraint profiles_status_check
+  check (status in ('active', 'pending', 'disabled', 'banned'));
+`)
+}
+
 function pruefeLebenszyklus() {
   const gruppe = 'lifecycle-sql'
   const basis = sitzung({
@@ -1558,6 +1698,14 @@ function pruefeStatischeQuelle() {
     /interval '720 hours'/.test(candidate) && /owner to postgres/.test(candidate) && !/interval '30 days'/.test(candidate),
     'source scan',
   )
+  bewerte(
+    'Candidate verlangt persisted active caller status without joining the metric population',
+    gruppe,
+    /from public\.profiles as p/.test(candidate) &&
+      /_caller_status is distinct from 'active'/.test(candidate) &&
+      !/from auth\.users as u\s+join\s+public\.profiles/i.test(candidate),
+    'source scan',
+  )
 }
 
 export function schreibeHostileStartup(datei) {
@@ -1686,6 +1834,7 @@ async function main() {
     pruefeStatischeQuelle()
     pruefePsqlrcIsolation()
     pruefeAutorisierung()
+    pruefeCallerStatus()
     pruefeLebenszyklus()
     pruefeFensterUndNull()
     pruefeZeroVersusDeny()
