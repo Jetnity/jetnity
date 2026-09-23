@@ -23,6 +23,9 @@ const SECRET_EMBEDDED = /Bearer\s+\S+|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.[A-
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
 export const PNG_MAX_BYTES = 2 * 1024 * 1024
 export const PNG_MAX_DIMENSION = 4096
+export const SCREENSHOT_COLOR_TYPES = Object.freeze({ rgb: 2, rgba: 6 })
+export const SCREENSHOT_BIT_DEPTHS = Object.freeze([8, 16])
+export const ALLOWED_PNG_CHUNKS = Object.freeze(['IHDR', 'IDAT', 'IEND'])
 export const CONSUMER_AGENT = 'Jetnity admin account counts browser flows 1'
 export const MINIMAL_PNG = Buffer.from(
   '89504e470d0a1a0a0000000d4948445200000002000000020802000000fdd49a730000001649444154789c63aca8a8606060606260606060600000110a016c6f1c016f0000000049454e44ae426082',
@@ -161,10 +164,13 @@ export function assertValidPng(bytes, { maxBytes = PNG_MAX_BYTES, path = 'png' }
   if (compression !== 0 || filter !== 0 || interlace !== 0) {
     throw new Error(`${path} uses unsupported PNG options`)
   }
-  if (![1, 2, 4, 8, 16].includes(bitDepth)) throw new Error(`${path} has an illegal PNG bit depth`)
-  if (![0, 2, 3, 4, 6].includes(colorType)) throw new Error(`${path} has an illegal PNG color type`)
-  if (colorType === 3 && !chunks.some((chunk) => chunk.type === 'PLTE')) {
-    throw new Error(`${path} is missing a PNG PLTE chunk`)
+  if (!SCREENSHOT_BIT_DEPTHS.includes(bitDepth) || !Object.values(SCREENSHOT_COLOR_TYPES).includes(colorType)) {
+    throw new Error(`${path} is outside the RGB/RGBA screenshot profile`)
+  }
+  for (const chunk of chunks) {
+    if (!ALLOWED_PNG_CHUNKS.includes(chunk.type)) {
+      throw new Error(`${path} has unreviewed PNG metadata chunk ${chunk.type}`)
+    }
   }
   const idat = chunks.filter((chunk) => chunk.type === 'IDAT').map((chunk) => chunk.data)
   if (!idat.length) throw new Error(`${path} is missing PNG image data`)
@@ -174,7 +180,7 @@ export function assertValidPng(bytes, { maxBytes = PNG_MAX_BYTES, path = 'png' }
   } catch {
     throw new Error(`${path} has an invalid PNG image payload`)
   }
-  const samples = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 }[colorType]
+  const samples = colorType === SCREENSHOT_COLOR_TYPES.rgba ? 4 : 3
   const bytesPerPixel = Math.ceil((bitDepth * samples) / 8)
   const rowBytes = 1 + width * bytesPerPixel
   if (inflated.length !== height * rowBytes) {
@@ -379,6 +385,21 @@ export function assertConsumerGatesJson(value, options = {}) {
   }
   for (const id of Object.keys(gates)) {
     if (!BROWSER_GATES.includes(id)) throw new Error(`${path} has unknown gate ${id}`)
+  }
+  if (Array.isArray(value.gates)) {
+    for (let index = 0; index < BROWSER_GATES.length; index += 1) {
+      if (value.gates[index]?.id !== BROWSER_GATES[index]) {
+        throw new Error(`${path} gate order does not match G6–G19`)
+      }
+    }
+  }
+  if (value.thisInvocation?.observedResults) {
+    for (let index = 0; index < BROWSER_GATES.length; index += 1) {
+      const id = BROWSER_GATES[index]
+      if (value.thisInvocation.observedResults[index] !== gates[id].result) {
+        throw new Error(`${path}.thisInvocation.observedResults does not match gate ${id}`)
+      }
+    }
   }
   return true
 }

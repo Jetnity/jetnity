@@ -18,12 +18,12 @@ export const IMPLEMENTATION = Object.freeze({
   serverRpcObservation: 'IMPLEMENTED',
   browserSessionFactory: 'REVIEW_FIX_F3',
   frozenContext: 'IMPLEMENTED',
-  orchestration: 'REVIEW_FIX_E1A_E1B_E1C',
+  orchestration: 'REVIEW_FIX_N01_N02_N03',
   browserFlows: 'SIBLING_OWNED',
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'E1a–E1c from review 5295504615. Consumer export accepts the actual producer-shaped receipt (agent/generation/implementationMetadata/thisInvocation/implementation/realExecution/runtimeIntegration plus G6–G19) and still rejects unknown/secret/drift. PNG verification requires nonzero dimensions, CRC-valid chunks, IDAT and an inflated payload that matches IHDR; the TL-supplied 2x2 RGB fixture is the positive inert image. fill/otpauth/JWT/token values are redacted or refused as whole strings. E2 exclusive writes stay. Official binaries, Docker and the real stack were not executed in this correction.',
+    'N01–N03 from review 5295892822. Screenshot publication is limited to RGB/RGBA bit depths 8/16 with IHDR/IDAT/IEND only; CRC-valid type2/depth1 and tEXt/eXIf/unknown ancillary images are refused before durable write. thisInvocation.observedResults must match the G6–G19 gate results in order. Producer-shaped safe metadata, truthful FAIL/BLOCKED/NOT RUN, exclusive writes, whole-string fill/otpauth redaction, C1/C2 and F1–F3 stay. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {

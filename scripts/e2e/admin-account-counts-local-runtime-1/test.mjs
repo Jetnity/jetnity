@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { crc32, deflateSync } from 'node:zlib'
 import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
 import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
@@ -1987,6 +1988,123 @@ const MALFORMED_MINIMAL_PNG = Buffer.from(
   'hex',
 )
 
+function encodePngChunk(type, data) {
+  const length = Buffer.alloc(4)
+  length.writeUInt32BE(data.length)
+  const typeBytes = Buffer.from(type)
+  const crc = Buffer.alloc(4)
+  crc.writeUInt32BE(crc32(Buffer.concat([typeBytes, data])) >>> 0)
+  return Buffer.concat([length, typeBytes, data, crc])
+}
+
+function encodePng(chunks) {
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    ...chunks.map(([type, data]) => encodePngChunk(type, data)),
+  ])
+}
+
+function illegalRgbDepth1Png() {
+  const ihdr = Buffer.alloc(13)
+  ihdr.writeUInt32BE(2, 0)
+  ihdr.writeUInt32BE(2, 4)
+  ihdr[8] = 1
+  ihdr[9] = 2
+  return encodePng([
+    ['IHDR', ihdr],
+    ['IDAT', deflateSync(Buffer.alloc(6))],
+    ['IEND', Buffer.alloc(0)],
+  ])
+}
+
+function textMetadataPng(marker = `Bearer eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`) {
+  const chunks = []
+  let offset = 8
+  const source = MINIMAL_PNG
+  while (offset + 12 <= source.length) {
+    const length = source.readUInt32BE(offset)
+    const type = source.toString('ascii', offset + 4, offset + 8)
+    const data = source.subarray(offset + 8, offset + 8 + length)
+    chunks.push([type, Buffer.from(data)])
+    offset += 12 + length
+    if (type === 'IEND') break
+  }
+  const ihdr = chunks.find((chunk) => chunk[0] === 'IHDR')
+  const rest = chunks.filter((chunk) => chunk[0] !== 'IHDR')
+  return encodePng([
+    ihdr,
+    ['tEXt', Buffer.from(`Comment\0${marker}`)],
+    ...rest,
+  ])
+}
+
+function rgba2x2Png() {
+  const ihdr = Buffer.alloc(13)
+  ihdr.writeUInt32BE(2, 0)
+  ihdr.writeUInt32BE(2, 4)
+  ihdr[8] = 8
+  ihdr[9] = 6
+  const row = Buffer.alloc(1 + 2 * 4)
+  const payload = Buffer.concat([row, row])
+  return encodePng([
+    ['IHDR', ihdr],
+    ['IDAT', deflateSync(payload)],
+    ['IEND', Buffer.alloc(0)],
+  ])
+}
+
+function ancillaryMetadataPng(type = 'eXIf') {
+  const chunks = []
+  let offset = 8
+  const source = MINIMAL_PNG
+  while (offset + 12 <= source.length) {
+    const length = source.readUInt32BE(offset)
+    const chunkType = source.toString('ascii', offset + 4, offset + 8)
+    const data = source.subarray(offset + 8, offset + 8 + length)
+    chunks.push([chunkType, Buffer.from(data)])
+    offset += 12 + length
+    if (chunkType === 'IEND') break
+  }
+  const ihdr = chunks.find((chunk) => chunk[0] === 'IHDR')
+  const rest = chunks.filter((chunk) => chunk[0] !== 'IHDR')
+  return encodePng([
+    ihdr,
+    [type, Buffer.from('unreviewed-ancillary')],
+    ...rest,
+  ])
+}
+
+async function exportFullConsumer({
+  runId,
+  identity,
+  receipt,
+  desktop = MINIMAL_PNG,
+  mobile = MINIMAL_PNG,
+}) {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-n01-'))
+  const privateEv = mkdtempSync(join(home, 'evidence-'))
+  const durable = mkdtempSync(join(tmpdir(), 'aaclr1-n01d-'))
+  writeExactConsumerArtifacts(privateEv, runId, { receipt, desktop, mobile })
+  const registry = createOwnershipRegistry({ runId, privateHome: home, evidenceDir: privateEv })
+  const cleanup = await raeumeOwnedAuf({
+    privateHome: home,
+    registry,
+    evidenceDir: privateEv,
+    browserRegistry: registry.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: privateEv,
+      destDir: durable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [home],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  return { home, durable, registry, cleanup }
+}
+
 test('E1 E2 validate consumer contents and refuse receipt overwrite', async () => {
   const runId = 'aaclr1-20260923T180000Z'
   const identity = createRunIdentity({ runId })
@@ -2036,7 +2154,15 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   assert.equal(gateMap(published).G6_login_ui_password.result, 'FAIL')
   assert.notEqual(gateMap(published).G6_login_ui_password.result, 'PASS')
   assert.equal(published.realExecution, 'NOT RUN')
-  assertValidPng(readFileSync(join(durable, `${runId}-counts-desktop.png`)))
+  const publishedDesktop = readFileSync(join(durable, `${runId}-counts-desktop.png`))
+  const publishedMobile = readFileSync(join(durable, `${runId}-counts-mobile.png`))
+  assertValidPng(publishedDesktop)
+  assertValidPng(publishedMobile)
+  assert.equal(publishedDesktop.equals(MINIMAL_PNG), true)
+  assert.equal(publishedDesktop.includes(Buffer.from('tEXt')), false)
+  assert.equal(publishedDesktop.includes(Buffer.from('eXIf')), false)
+  assert.equal(published.thisInvocation.observedResults[0], 'FAIL')
+  assert.deepEqual(published.thisInvocation.observedResults, published.gates.map((gate) => gate.result))
 
   const jwtMarker = `eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`
   const secretReceipt = createControlledConsumerReceipt({ runId })
@@ -2142,6 +2268,73 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   assert.throws(() => assertValidPng(Buffer.alloc(0)), /empty image/)
   assert.throws(() => assertValidPng(zeroDimensionPng()), /zero PNG dimensions|missing PNG image data|invalid PNG CRC|too small/)
   assert.throws(() => assertValidPng(MALFORMED_MINIMAL_PNG), /invalid PNG image payload|invalid PNG CRC|does not match IHDR/)
+  assert.throws(() => assertValidPng(illegalRgbDepth1Png()), /screenshot profile/)
+  const jwtTextMarker = `Bearer eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`
+  const textPng = textMetadataPng(jwtTextMarker)
+  assert.throws(() => assertValidPng(textPng), /unreviewed PNG metadata chunk tEXt/)
+  assert.throws(() => assertValidPng(ancillaryMetadataPng('eXIf')), /unreviewed PNG metadata chunk eXIf/)
+  assert.throws(() => assertValidPng(ancillaryMetadataPng('pHYs')), /unreviewed PNG metadata chunk pHYs/)
+  assertValidPng(rgba2x2Png())
+  const blockedReceipt = createProducerShapedConsumerReceipt({
+    runId,
+    gateResults: { G6_login_ui_password: 'BLOCKED' },
+  })
+  assert.equal(gateMap(blockedReceipt).G6_login_ui_password.result, 'BLOCKED')
+  assert.equal(blockedReceipt.thisInvocation.observedResults[0], 'BLOCKED')
+  assertConsumerGatesJson(blockedReceipt, { identity })
+  const mismatched = createProducerShapedConsumerReceipt({ runId })
+  mismatched.thisInvocation.observedResults = BROWSER_GATES.map(() => 'PASS')
+  assert.throws(() => assertConsumerGatesJson(mismatched, { identity }), /observedResults does not match/)
+  const n01 = await exportFullConsumer({
+    runId,
+    identity,
+    receipt: createProducerShapedConsumerReceipt({ runId }),
+    desktop: illegalRgbDepth1Png(),
+    mobile: illegalRgbDepth1Png(),
+  })
+  assert.equal(n01.cleanup.exportFailed, true)
+  assert.equal(bewerteCleanup(n01.cleanup, { registry: n01.registry }), false)
+  assert.equal(existsSync(n01.home), true)
+  assert.equal(readdirSync(n01.durable).length, 0)
+  const n02 = await exportFullConsumer({
+    runId,
+    identity,
+    receipt: createProducerShapedConsumerReceipt({ runId }),
+    desktop: textPng,
+    mobile: MINIMAL_PNG,
+  })
+  assert.equal(n02.cleanup.exportFailed, true)
+  assert.equal(bewerteCleanup(n02.cleanup, { registry: n02.registry }), false)
+  assert.equal(existsSync(n02.home), true)
+  assert.equal(readdirSync(n02.durable).length, 0)
+  for (const name of readdirSync(n02.durable)) {
+    assert.equal(readFileSync(join(n02.durable, name)).includes(Buffer.from(jwtTextMarker)), false)
+  }
+  const n03 = await exportFullConsumer({
+    runId,
+    identity,
+    receipt: mismatched,
+  })
+  assert.equal(n03.cleanup.exportFailed, true)
+  assert.equal(bewerteCleanup(n03.cleanup, { registry: n03.registry }), false)
+  assert.equal(existsSync(n03.home), true)
+  assert.equal(existsSync(join(n03.durable, `${runId}-browser-flows-gates.json`)), false)
+  const rgbaExport = await exportFullConsumer({
+    runId: `${runId}-rgba`,
+    identity: createRunIdentity({ runId: `${runId}-rgba` }),
+    receipt: createProducerShapedConsumerReceipt({ runId: `${runId}-rgba` }),
+    desktop: MINIMAL_PNG,
+    mobile: rgba2x2Png(),
+  })
+  assert.equal(rgbaExport.cleanup.artifactExport.ok, true)
+  assert.equal(rgbaExport.cleanup.artifactExport.exported.length, 3)
+  assert.equal(bewerteCleanup(rgbaExport.cleanup, { registry: rgbaExport.registry }), true)
+  assert.equal(existsSync(rgbaExport.home), false)
+  const exportedRgba = readFileSync(join(rgbaExport.durable, `${runId}-rgba-counts-mobile.png`))
+  assertValidPng(exportedRgba)
+  assert.equal(exportedRgba.equals(rgba2x2Png()), true)
+  assert.equal(exportedRgba.includes(Buffer.from('tEXt')), false)
+  assert.equal(exportedRgba.includes(Buffer.from('eXIf')), false)
   const drifted = createProducerShapedConsumerReceipt({ runId })
   drifted.unexpectedField = true
   assert.throws(() => assertConsumerGatesJson(drifted, { identity }), /unsupported field unexpectedField/)
@@ -2289,6 +2482,13 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   rmSync(n2Durable, { recursive: true, force: true })
   rmSync(n3Home, { recursive: true, force: true })
   rmSync(n3Durable, { recursive: true, force: true })
+  rmSync(n01.home, { recursive: true, force: true })
+  rmSync(n01.durable, { recursive: true, force: true })
+  rmSync(n02.home, { recursive: true, force: true })
+  rmSync(n02.durable, { recursive: true, force: true })
+  rmSync(n03.home, { recursive: true, force: true })
+  rmSync(n03.durable, { recursive: true, force: true })
+  rmSync(rgbaExport.durable, { recursive: true, force: true })
   rmSync(rtDurable, { recursive: true, force: true })
   rmSync(receiptDir, { recursive: true, force: true })
   rmSync(writerDir, { recursive: true, force: true })
