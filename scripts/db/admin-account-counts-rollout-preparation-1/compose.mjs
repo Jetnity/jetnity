@@ -36,6 +36,7 @@ export const PACKAGE_SQL = Object.freeze({
   identity: join(hier, 'sql/identity.sql'),
   classify: join(hier, 'sql/identity.sql'),
   verify: join(hier, 'sql/verify.sql'),
+  verifyRevoked: join(hier, 'sql/verify-revoked.sql'),
   rollback: join(hier, 'sql/rollback.sql'),
   revokeExecute: join(hier, 'sql/revoke-execute.sql'),
   sentinel: join(hier, 'sql/sentinel.sql'),
@@ -123,7 +124,10 @@ export function readPackageSql(name) {
   if (HOSTED_VALUE_PATTERN.test(text)) {
     throw new Error(`fail-closed: package SQL ${name} must not embed a hosted target`)
   }
-  if ((name === 'rollback' || name === 'verify') && !text.includes('/* JETNITY_IDENTITY_SUBQUERY */')) {
+  if (
+    (name === 'rollback' || name === 'verify' || name === 'verifyRevoked') &&
+    !text.includes('/* JETNITY_IDENTITY_SUBQUERY */')
+  ) {
     throw new Error(`fail-closed: ${name} must embed the shared identity contract`)
   }
   if (name === 'identity' || name === 'classify') {
@@ -135,6 +139,9 @@ export function readPackageSql(name) {
     }
     if (!text.includes('REVOKED_EXACT') || !text.includes('identity_core_ok')) {
       throw new Error('fail-closed: identity contract missing REVOKED_EXACT / identity_core_ok')
+    }
+    if (!text.includes('is_grantable') || !text.includes('wrapper_name_count')) {
+      throw new Error('fail-closed: identity contract missing exact ACL / overload fields')
     }
   }
   return text
@@ -232,6 +239,26 @@ $already$;`,
     ].join('\n\n')
   }
 
+  if (mode === 'stagedAlready') {
+    return [
+      'BEGIN;',
+      header,
+      `DO $staged_already$
+DECLARE
+  klass jsonb;
+BEGIN
+  klass := (${identity});
+  IF klass ->> 'state' IS DISTINCT FROM 'REVOKED_EXACT' THEN
+    RAISE EXCEPTION 'jetnity.rollout-prep.v1: expected REVOKED_EXACT, got %', klass
+      USING ERRCODE = 'XX000';
+  END IF;
+END
+$staged_already$;`,
+      embedIdentity(readPackageSql('verifyRevoked')),
+      'COMMIT;',
+    ].join('\n\n')
+  }
+
   if (mode === 'fault') {
     return [
       'BEGIN;',
@@ -259,14 +286,7 @@ $fault$;`,
     ].join('\n\n')
   }
 
-  if (mode !== 'fresh') {
-    throw new Error(`unknown install mode '${mode}'`)
-  }
-
-  return [
-    'BEGIN;',
-    header,
-    `DO $fresh$
+  const freshGate = `DO $fresh$
 DECLARE
   klass jsonb;
 BEGIN
@@ -276,7 +296,40 @@ BEGIN
       USING ERRCODE = 'XX000';
   END IF;
 END
-$fresh$;`,
+$fresh$;`
+
+  if (mode === 'staged' || mode === 'stagedFault') {
+    const revoke = readPackageSql('revokeExecute')
+    const verifyRevoked = embedIdentity(readPackageSql('verifyRevoked'))
+    const fault =
+      mode === 'stagedFault'
+        ? `DO $fault$
+BEGIN
+  RAISE EXCEPTION 'JETNITY_ROLLOUT_FAULT_INJECT'
+    USING ERRCODE = 'XX000';
+END
+$fault$;`
+        : null
+    return [
+      'BEGIN;',
+      header,
+      freshGate,
+      producerAndWrapper,
+      ...(fault ? [fault] : []),
+      revoke,
+      verifyRevoked,
+      'COMMIT;',
+    ].join('\n\n')
+  }
+
+  if (mode !== 'fresh') {
+    throw new Error(`unknown install mode '${mode}'`)
+  }
+
+  return [
+    'BEGIN;',
+    header,
+    freshGate,
     producerAndWrapper,
     verify,
     'COMMIT;',

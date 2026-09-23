@@ -44,5 +44,7 @@
     "wrapperSha256": "15fc07ede14dd74eb5f77382b730c85c27a2004199f272d76ee1967525efc609",
     "note": "pg_get_functiondef digest of the unchanged accepted sources. A different major pretty-printer is BLOCKED, not a repair."
   },
-  "removableStates": ["ALREADY_INSTALLED", "REVOKED_EXACT"]
+  "removableStates": ["ALREADY_INSTALLED", "REVOKED_EXACT"],
+  "stagedInstallCommitsAs": "REVOKED_EXACT",
+  "grantedLocalTestIs": "database_exposed_application_off"
 }

@@ -257,7 +257,7 @@ function pruefeQuelle() {
       !composed.sql.includes('create role jetnity_reporting_owner'),
     'composed',
   )
-  for (const name of ['identity', 'verify', 'rollback', 'revokeExecute', 'sentinel']) {
+  for (const name of ['identity', 'verify', 'verifyRevoked', 'rollback', 'revokeExecute', 'sentinel']) {
     const sql = readPackageSql(name)
     bewerte(
       `${name} has no CASCADE and no hosted DSN`,
@@ -266,6 +266,48 @@ function pruefeQuelle() {
       name,
     )
   }
+}
+
+function pruefeNamenskollision() {
+  const gruppe = 'unexpected-object'
+  psqlSql(`
+create function public.admin_account_counts_v1(p text default null)
+returns text
+language sql
+stable
+as $fn$
+  select 'pre-existing-overload'
+$fn$;
+`)
+  const vor = classify()
+  bewerte(
+    'pre-existing same-name public wrapper overload is INCOMPATIBLE, not FRESH',
+    gruppe,
+    vor.state === 'INCOMPATIBLE' && vor.inventory?.wrapper_name_count === 1,
+    JSON.stringify(vor),
+  )
+  const lauf = psqlCapture(composeInstallTransaction({ mode: 'fresh' }))
+  bewerte(
+    'fresh install refuses a same-name public wrapper overload',
+    gruppe,
+    lauf.status !== 0 && /expected FRESH|INCOMPATIBLE/i.test(`${lauf.stdout}\n${lauf.stderr}`),
+    `${lauf.status}`,
+  )
+  const staged = psqlCapture(composeInstallTransaction({ mode: 'staged' }))
+  bewerte(
+    'staged install also refuses a same-name public wrapper overload',
+    gruppe,
+    staged.status !== 0,
+    `${staged.status}`,
+  )
+  const still = psqlFile(`
+select count(*) from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'admin_account_counts_v1'
+`)
+  bewerte('overload left in place; package did not repair it', gruppe, still === '1', still)
+  psqlSql(`drop function public.admin_account_counts_v1(text);`)
+  bewerte('overload cleaned without CASCADE', gruppe, packageAbsent(), classify().state)
 }
 
 function pruefeUnerwartetesObjekt() {
@@ -461,6 +503,7 @@ select to_jsonb(q) from (
 function dropPackageObjectsForTestCleanup() {
   psqlSql(`
 drop function if exists public.admin_account_counts_v1();
+drop function if exists public.admin_account_counts_v1(text);
 drop function if exists public.unexpected_public_dep();
 drop function if exists jetnity_reporting.account_counts_v1();
 drop function if exists jetnity_reporting.unexpected_dep();
@@ -631,6 +674,34 @@ as $fn$
 $fn$;
 `,
   )
+  refuseDrift(
+    'producer EXECUTE WITH GRANT OPTION',
+    `grant execute on function jetnity_reporting.account_counts_v1() to authenticated with grant option;`,
+  )
+  refuseDrift(
+    'wrapper EXECUTE WITH GRANT OPTION',
+    `grant execute on function public.admin_account_counts_v1() to authenticated with grant option;`,
+  )
+  refuseDrift(
+    'schema USAGE WITH GRANT OPTION',
+    `grant usage on schema jetnity_reporting to authenticated with grant option;`,
+  )
+  refuseDrift(
+    'unexpected default-ACL GRANT SELECT ON TABLES',
+    `alter default privileges for role jetnity_proof in schema jetnity_reporting grant select on tables to authenticated;`,
+  )
+  refuseDrift(
+    'same-name public wrapper overload',
+    `
+create function public.admin_account_counts_v1(p text default null)
+returns text
+language sql
+stable
+as $fn$
+  select 'unrelated-overload'
+$fn$;
+`,
+  )
 }
 
 function pruefeRollbackUndSentinel() {
@@ -757,6 +828,84 @@ $$;
   )
 }
 
+function pruefeStagedInstall() {
+  const gruppe = 'staged-unexposed'
+  dropPackageObjectsForTestCleanup()
+  bewerte('staged path starts from FRESH', gruppe, packageAbsent(), JSON.stringify(classify()))
+
+  const fault = psqlCapture(composeInstallTransaction({ mode: 'stagedFault' }))
+  bewerte(
+    'staged fault after apply and before revoke leaves FRESH (no committed grant)',
+    gruppe,
+    fault.status !== 0 &&
+      /JETNITY_ROLLOUT_FAULT_INJECT/.test(`${fault.stdout}\n${fault.stderr}`) &&
+      packageAbsent(),
+    `${fault.status} ${classify().state}`,
+  )
+
+  const staged = psqlCapture(composeInstallTransaction({ mode: 'staged' }))
+  bewerte('staged install commits REVOKED_EXACT', gruppe, staged.status === 0, staged.stderr)
+  const klass = classify()
+  bewerte(
+    'staged install is REVOKED_EXACT, not granted / not unexposed-with-execute',
+    gruppe,
+    klass.state === 'REVOKED_EXACT' &&
+      klass.inventory?.identity_core_ok === true &&
+      klass.inventory?.acl_revoked_exact === true &&
+      klass.inventory?.acl_granted_exact === false,
+    JSON.stringify(klass),
+  )
+
+  const wrapperCall = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from public.admin_account_counts_v1()',
+  })
+  const innerCall = sitzung({
+    rolle: 'authenticated',
+    uid: IDS.moderator,
+    aal: 'aal2',
+    sql: 'select * from jetnity_reporting.account_counts_v1()',
+  })
+  bewerte(
+    'staged: authorized caller cannot execute the public wrapper',
+    gruppe,
+    wrapperCall.arbeit?.ok === false && /42501|permission denied/i.test(`${wrapperCall.arbeit?.sqlstate} ${wrapperCall.arbeit?.message}`),
+    JSON.stringify(wrapperCall.arbeit),
+  )
+  bewerte(
+    'staged: authorized caller cannot execute the inner producer',
+    gruppe,
+    innerCall.arbeit?.ok === false && /42501|permission denied/i.test(`${innerCall.arbeit?.sqlstate} ${innerCall.arbeit?.message}`),
+    JSON.stringify(innerCall.arbeit),
+  )
+
+  const alreadyStaged = psqlCapture(composeInstallTransaction({ mode: 'stagedAlready' }))
+  bewerte('staged already-revoked repeat verifies without rewrite', gruppe, alreadyStaged.status === 0, alreadyStaged.stderr)
+
+  const grantedFresh = psqlCapture(composeInstallTransaction({ mode: 'fresh' }))
+  bewerte(
+    'granted local-test apply refuses a REVOKED_EXACT database',
+    gruppe,
+    grantedFresh.status !== 0,
+    `${grantedFresh.status}`,
+  )
+  const grantedAlready = psqlCapture(composeInstallTransaction({ mode: 'already' }))
+  bewerte(
+    'granted already-installed verify refuses REVOKED_EXACT',
+    gruppe,
+    grantedAlready.status !== 0,
+    `${grantedAlready.status}`,
+  )
+
+  const rollback = psqlCapture(composeRollbackTransaction())
+  bewerte('REVOKED_EXACT staged objects are removable', gruppe, rollback.status === 0, rollback.stderr)
+  bewerte('staged removal returns FRESH', gruppe, packageAbsent(), JSON.stringify(classify()))
+  const sentinel = psqlFile(`select count(*) from public.jetnity_rollout_sentinel`)
+  bewerte('sentinel survives staged removal', gruppe, sentinel === '1', sentinel)
+}
+
 function schreibeEvidence(payload) {
   mkdirSync(EVIDENCE_DIR, { recursive: true, mode: 0o755 })
   const ziel = join(EVIDENCE_DIR, 'local-rehearsal.json')
@@ -795,6 +944,7 @@ export function runRolloutRehearsal() {
 
     pruefeQuelle()
     pruefeUnerwartetesObjekt()
+    pruefeNamenskollision()
     pruefeFehlerOhneRest()
     pruefeInstallUndRepeat()
     pruefeAutorisierung()
@@ -802,6 +952,7 @@ export function runRolloutRehearsal() {
     pruefeAdversarialDrift()
     pruefeRollbackUndSentinel()
     pruefeReinstallRevoke()
+    pruefeStagedInstall()
   } catch (fehler) {
     console.error(fehler)
     cleanupReport = stoppePrivatesCluster()
@@ -861,6 +1012,8 @@ export function runRolloutRehearsal() {
       'PostgreSQL version is the local disposable engine, not Production 17.6.',
       'Banned/disabled privileged callers remaining authorized is an honest NO-GO for later exposure.',
       'No hosted SQL, live accounts, or secrets were used.',
+      'Exact ACL compares grantor/grantee/privilege/is_grantable. WITH GRANT OPTION is INCOMPATIBLE.',
+      'Staged install commits only after client EXECUTE/USAGE revoke (REVOKED_EXACT). Granted local-test is database-exposed.',
     ],
   }
   const evidencePath = schreibeEvidence(receipt)

@@ -1,21 +1,21 @@
 -- LOCAL-ONLY shared identity contract for the accepted account-count package.
 -- Single source for classify / verify / rollback. Never a migration. Never hosted SQL.
 --
--- Pinned pg_get_functiondef SHA-256 values were captured from a disposable
--- PostgreSQL 16.15 install of the unchanged accepted sources. A different
--- major engine that pretty-prints differently is a BLOCKED mismatch, not a
--- repair. States: FRESH | ALREADY_INSTALLED | REVOKED_EXACT | INCOMPATIBLE
+-- Expected ACL/default-ACL/signature identity is derived from the immutable
+-- accepted sources, not from the target catalog. NULL ACL is treated as the
+-- engine default (PUBLIC execute / PUBLIC schema usage) and is not the
+-- package state. Comparison is order-independent and includes grantor,
+-- grantee, privilege and is_grantable. WITH GRANT OPTION is never accepted.
 --
--- identity_core_ok is exact definition/owner/schema/ADP/dependency identity
--- plus "no unexpected ACL grantee". The only permitted ACL delta between
--- ALREADY_INSTALLED and REVOKED_EXACT is this package's explicit REVOKE of
--- authenticated EXECUTE/USAGE (PUBLIC/anon/service_role stay revoked).
+-- Pinned pg_get_functiondef SHA-256: PostgreSQL 16.15 pretty-print of the
+-- unchanged accepted sources. A different major is BLOCKED, not a repair.
+-- States: FRESH | ALREADY_INSTALLED | REVOKED_EXACT | INCOMPATIBLE
 select jsonb_build_object(
   'state',
   case
     when not coalesce(inv.schema_exists, false)
-     and not coalesce(inv.producer_exists, false)
-     and not coalesce(inv.wrapper_exists, false)
+     and coalesce(inv.producer_name_count, 0) = 0
+     and coalesce(inv.wrapper_name_count, 0) = 0
       then 'FRESH'
     when coalesce(inv.identity_core_ok, false)
      and coalesce(inv.acl_granted_exact, false)
@@ -37,7 +37,8 @@ from (
       and coalesce(raw.wrapper_identity_ok, false)
       and coalesce(raw.schema_owner_ok, false)
       and coalesce(raw.default_privileges_ok, false)
-      and coalesce(raw.acl_no_unexpected_grantee, false)
+      and coalesce(raw.producer_name_count, 0) = 1
+      and coalesce(raw.wrapper_name_count, 0) = 1
       and coalesce(raw.extra_object_count, 0) = 0
       and coalesce(raw.unexpected_deps, 0) = 0
       and not coalesce(raw.unexpected_privilege_role, false)
@@ -46,15 +47,17 @@ from (
       coalesce(raw.producer_exists, false)
       and coalesce(raw.wrapper_exists, false)
       and coalesce(raw.schema_exists, false)
-      and coalesce(raw.authenticated_execute_granted, false)
-      and coalesce(raw.authenticated_schema_usage_granted, false)
+      and raw.producer_acl = raw.expected_granted_function_acl_postgres
+      and raw.wrapper_acl = raw.expected_granted_function_acl_executor
+      and raw.schema_acl = raw.expected_granted_schema_acl
     ) as acl_granted_exact,
     (
       coalesce(raw.producer_exists, false)
       and coalesce(raw.wrapper_exists, false)
       and coalesce(raw.schema_exists, false)
-      and coalesce(raw.authenticated_execute_revoked, false)
-      and coalesce(raw.authenticated_schema_usage_revoked, false)
+      and raw.producer_acl = raw.expected_revoked_function_acl_postgres
+      and raw.wrapper_acl = raw.expected_revoked_function_acl_executor
+      and raw.schema_acl = raw.expected_revoked_schema_acl
     ) as acl_revoked_exact
   from (
     select
@@ -78,6 +81,20 @@ from (
           and p.proname = 'admin_account_counts_v1'
           and p.pronargs = 0
       ) as wrapper_exists,
+      (
+        select count(*)::int
+        from pg_proc p
+        join pg_namespace n on n.oid = p.pronamespace
+        where n.nspname = 'jetnity_reporting'
+          and p.proname = 'account_counts_v1'
+      ) as producer_name_count,
+      (
+        select count(*)::int
+        from pg_proc p
+        join pg_namespace n on n.oid = p.pronamespace
+        where n.nspname = 'public'
+          and p.proname = 'admin_account_counts_v1'
+      ) as wrapper_name_count,
       (
         select count(*)::int
         from (
@@ -224,100 +241,134 @@ from (
         select 1
         from pg_default_acl d
         join pg_namespace n on n.oid = d.defaclnamespace
-        cross join lateral aclexplode(coalesce(d.defaclacl, array[]::aclitem[])) e
         where n.nspname = 'jetnity_reporting'
-          and d.defaclobjtype = 'f'
-          and e.privilege_type = 'EXECUTE'
-          and e.grantee is distinct from d.defaclrole
       ) as default_privileges_ok,
       (
-        not exists (
-          select 1
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', case when x.grantee = 0 then 'PUBLIC' else pg_get_userbyid(x.grantee) end,
+            'grantor', pg_get_userbyid(x.grantor),
+            'privilege', x.privilege_type,
+            'is_grantable', x.is_grantable
+          ) as entry
           from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace
-          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) e
-          where (
-              (n.nspname = 'jetnity_reporting' and p.proname = 'account_counts_v1' and p.pronargs = 0)
-              or (n.nspname = 'public' and p.proname = 'admin_account_counts_v1' and p.pronargs = 0)
-            )
-            and e.privilege_type = 'EXECUTE'
-            and e.grantee is distinct from p.proowner
-            and e.grantee not in (select oid from pg_roles where rolname = 'authenticated')
-        )
-        and not exists (
-          select 1
-          from pg_namespace n
-          cross join lateral aclexplode(coalesce(n.nspacl, acldefault('n', n.nspowner))) e
+          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) x
           where n.nspname = 'jetnity_reporting'
-            and e.privilege_type in ('USAGE', 'CREATE')
-            and e.grantee is distinct from n.nspowner
-            and not (
-              e.privilege_type = 'USAGE'
-              and e.grantee in (select oid from pg_roles where rolname = 'authenticated')
-            )
-        )
-      ) as acl_no_unexpected_grantee,
+            and p.proname = 'account_counts_v1'
+            and p.pronargs = 0
+        ) e
+      ) as producer_acl,
       (
-        exists (
-          select 1
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', case when x.grantee = 0 then 'PUBLIC' else pg_get_userbyid(x.grantee) end,
+            'grantor', pg_get_userbyid(x.grantor),
+            'privilege', x.privilege_type,
+            'is_grantable', x.is_grantable
+          ) as entry
           from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace
-          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) e
-          where n.nspname = 'jetnity_reporting'
-            and p.proname = 'account_counts_v1' and p.pronargs = 0
-            and e.privilege_type = 'EXECUTE'
-            and e.grantee = (select oid from pg_roles where rolname = 'authenticated')
-        )
-        and exists (
-          select 1
-          from pg_proc p
-          join pg_namespace n on n.oid = p.pronamespace
-          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) e
+          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) x
           where n.nspname = 'public'
-            and p.proname = 'admin_account_counts_v1' and p.pronargs = 0
-            and e.privilege_type = 'EXECUTE'
-            and e.grantee = (select oid from pg_roles where rolname = 'authenticated')
-        )
-      ) as authenticated_execute_granted,
+            and p.proname = 'admin_account_counts_v1'
+            and p.pronargs = 0
+        ) e
+      ) as wrapper_acl,
       (
-        not exists (
-          select 1
-          from pg_proc p
-          join pg_namespace n on n.oid = p.pronamespace
-          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) e
-          where n.nspname = 'jetnity_reporting'
-            and p.proname = 'account_counts_v1' and p.pronargs = 0
-            and e.privilege_type = 'EXECUTE'
-            and e.grantee = (select oid from pg_roles where rolname = 'authenticated')
-        )
-        and not exists (
-          select 1
-          from pg_proc p
-          join pg_namespace n on n.oid = p.pronamespace
-          cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) e
-          where n.nspname = 'public'
-            and p.proname = 'admin_account_counts_v1' and p.pronargs = 0
-            and e.privilege_type = 'EXECUTE'
-            and e.grantee = (select oid from pg_roles where rolname = 'authenticated')
-        )
-      ) as authenticated_execute_revoked,
-      exists (
-        select 1
-        from pg_namespace n
-        cross join lateral aclexplode(coalesce(n.nspacl, acldefault('n', n.nspowner))) e
-        where n.nspname = 'jetnity_reporting'
-          and e.privilege_type = 'USAGE'
-          and e.grantee = (select oid from pg_roles where rolname = 'authenticated')
-      ) as authenticated_schema_usage_granted,
-      (
-        not exists (
-          select 1
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', case when x.grantee = 0 then 'PUBLIC' else pg_get_userbyid(x.grantee) end,
+            'grantor', pg_get_userbyid(x.grantor),
+            'privilege', x.privilege_type,
+            'is_grantable', x.is_grantable
+          ) as entry
           from pg_namespace n
-          cross join lateral aclexplode(coalesce(n.nspacl, acldefault('n', n.nspowner))) e
+          cross join lateral aclexplode(coalesce(n.nspacl, acldefault('n', n.nspowner))) x
           where n.nspname = 'jetnity_reporting'
-            and e.privilege_type = 'USAGE'
-            and e.grantee = (select oid from pg_roles where rolname = 'authenticated')
-        )
-      ) as authenticated_schema_usage_revoked
+        ) e
+      ) as schema_acl,
+      (
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', v.grantee,
+            'grantor', 'postgres',
+            'privilege', 'EXECUTE',
+            'is_grantable', false
+          ) as entry
+          from (values ('authenticated'), ('postgres')) v(grantee)
+        ) e
+      ) as expected_granted_function_acl_postgres,
+      (
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', v.grantee,
+            'grantor', current_user,
+            'privilege', 'EXECUTE',
+            'is_grantable', false
+          ) as entry
+          from (values ('authenticated'), (current_user)) v(grantee)
+        ) e
+      ) as expected_granted_function_acl_executor,
+      (
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', 'postgres',
+            'grantor', 'postgres',
+            'privilege', 'EXECUTE',
+            'is_grantable', false
+          ) as entry
+        ) e
+      ) as expected_revoked_function_acl_postgres,
+      (
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', current_user,
+            'grantor', current_user,
+            'privilege', 'EXECUTE',
+            'is_grantable', false
+          ) as entry
+        ) e
+      ) as expected_revoked_function_acl_executor,
+      (
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', v.grantee,
+            'grantor', current_user,
+            'privilege', v.privilege,
+            'is_grantable', false
+          ) as entry
+          from (
+            values
+              (current_user, 'CREATE'),
+              (current_user, 'USAGE'),
+              ('authenticated', 'USAGE')
+          ) v(grantee, privilege)
+        ) e
+      ) as expected_granted_schema_acl,
+      (
+        select coalesce(jsonb_agg(e.entry order by e.entry->>'grantee', e.entry->>'privilege', e.entry->>'grantor', e.entry->>'is_grantable'), '[]'::jsonb)
+        from (
+          select jsonb_build_object(
+            'grantee', v.grantee,
+            'grantor', current_user,
+            'privilege', v.privilege,
+            'is_grantable', false
+          ) as entry
+          from (
+            values
+              (current_user, 'CREATE'),
+              (current_user, 'USAGE')
+          ) v(grantee, privilege)
+        ) e
+      ) as expected_revoked_schema_acl
   ) raw
 ) inv;
