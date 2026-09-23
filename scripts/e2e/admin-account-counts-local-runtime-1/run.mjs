@@ -245,6 +245,7 @@ export async function run({
         mode,
         consumerCompleted,
         consumerAttempted,
+        productHead: PRODUCT_BASELINE,
       }),
     })
     const cleanupOk = probe.blocked === false
@@ -379,6 +380,7 @@ export async function run({
           mode,
           consumerCompleted,
           consumerAttempted,
+          productHead: PRODUCT_BASELINE,
         }),
       })
     } catch (cleanupError) {
@@ -393,13 +395,16 @@ export async function run({
       result: cleanupOk ? 'PASS' : 'FAIL',
       notes: error instanceof Error ? error.message : String(error),
     })
-    persistFailureReceipt({
+    const failureReceipt = persistFailureReceipt({
       evidenceDir,
       runId,
       error,
       cleanup,
       matrix,
     })
+    if (error && typeof error === 'object') {
+      error.failureReceipt = failureReceipt
+    }
     throw error
   } finally {
     clearTimeout(timer)
@@ -414,11 +419,19 @@ export function persistFailureReceipt({ evidenceDir, runId, error, cleanup, matr
     cleanup: redactSecrets(cleanup || {}),
     gates: Object.fromEntries(Object.entries(matrix || {}).map(([id, gate]) => [id, { result: gate.result }])),
   }
-  if (!evidenceDir) return null
+  if (!evidenceDir) return { ok: false, error: 'no durable evidence directory' }
   try {
-    return writeEvidence(evidenceDir, `${runId}-failure.json`, payload)
-  } catch {
-    return null
+    return {
+      ok: true,
+      path: writeEvidence(evidenceDir, `${runId}-failure.json`, payload),
+    }
+  } catch (persistError) {
+    const message = persistError instanceof Error ? persistError.message : String(persistError)
+    return {
+      ok: false,
+      collision: /overwrite existing durable evidence/.test(message),
+      error: message,
+    }
   }
 }
 

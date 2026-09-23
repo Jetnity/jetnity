@@ -18,12 +18,12 @@ export const IMPLEMENTATION = Object.freeze({
   serverRpcObservation: 'IMPLEMENTED',
   browserSessionFactory: 'REVIEW_FIX_F3',
   frozenContext: 'IMPLEMENTED',
-  orchestration: 'REVIEW_FIX_C1_C2',
+  orchestration: 'REVIEW_FIX_E1_E2',
   browserFlows: 'SIBLING_OWNED',
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'C1/C2 from review 5294684706. Consumer export uses the exact TL names ${runId}-counts-desktop.png, ${runId}-counts-mobile.png and ${runId}-browser-flows-gates.json under one run identity; wrong-run/aaclr1-prefix exceptions are refused; required full-consumer artifacts cannot be skipped into a clean delete. Default remains no-start/no-download. --runtime-only/--full are the explicit local-execution acknowledgements and invoke archive→member→version/help after verified offline inputs. Runtime-only cannot become full acceptance. Official binaries, Docker and the real stack were not executed in this correction.',
+    'E1/E2 from review 5294965628. Consumer export validates contractVersion, current-run identity, expected product head, exact G6–G19, permitted results and metadata; refuses access_token/refresh_token/JWT/otpauth/fill material; requires nonempty bounded structurally valid PNGs; publishes only after the whole set validates. writeEvidence and consumer copies use exclusive wx creation and refuse overwrite. Failed/NOT RUN receipts stay truthful. C1 names/mapping, C2 explicit/default routing and F1–F3 stay. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {

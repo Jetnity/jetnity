@@ -4,7 +4,7 @@ import { execFileSync, spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -91,6 +91,10 @@ import {
   createRunIdentity,
   consumerArtifactNames,
   expectedConsumerArtifacts,
+  createControlledConsumerReceipt,
+  assertConsumerGatesJson,
+  assertValidPng,
+  MINIMAL_PNG,
 } from './evidence.mjs'
 import { persistFailureReceipt, run, parseMode } from './run.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
@@ -388,10 +392,20 @@ test('secret redaction and historical receipt protection', () => {
   assert.equal(redacted.G6_login_ui_password.result, 'NOT RUN')
   assert.deepEqual(redacted.extraDeniedPresent, ['SUPABASE_ACCESS_TOKEN'])
   assert.throws(() => assertSafeEvidence({ authorization: 'Bearer abc' }), /must not contain secrets/)
+  assert.throws(() => assertSafeEvidence({ access_token: 'SYNTHETIC-ACCESS-TOKEN' }), /must not contain secrets/)
+  assert.throws(() => assertSafeEvidence({ refresh_token: 'SYNTHETIC-REFRESH-TOKEN' }), /must not contain secrets/)
+  const jwtMarker = `eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`
+  assert.throws(() => assertSafeEvidence({ notes: `request failed while using Bearer ${jwtMarker}` }), /must not contain secrets/)
   const dir = mkdtempSync(join(tmpdir(), 'aaclr1-ev-'))
   assert.throws(() => writeEvidence(dir, 'README.md', { ok: true }), /historical evidence/)
   writeEvidence(dir, 'aaclr1-unit-receipt.json', { ok: true, note: 'unit' })
   assert.equal(JSON.parse(readFileSync(join(dir, 'aaclr1-unit-receipt.json'), 'utf8')).ok, true)
+  const firstBytes = readFileSync(join(dir, 'aaclr1-unit-receipt.json'), 'utf8')
+  assert.throws(
+    () => writeEvidence(dir, 'aaclr1-unit-receipt.json', { ok: false, note: 'replacement' }),
+    /overwrite existing durable evidence/,
+  )
+  assert.equal(readFileSync(join(dir, 'aaclr1-unit-receipt.json'), 'utf8'), firstBytes)
   rmSync(dir, { recursive: true, force: true })
 })
 
@@ -1757,11 +1771,17 @@ test('F3 one registry records Context before policy failure; pending/foreign/tim
   rmSync(timeoutHome, { recursive: true, force: true })
 })
 
-function writeExactConsumerArtifacts(dir, runId, { gates = {}, desktop = 'desktop-placeholder', mobile = 'mobile-placeholder' } = {}) {
+function writeExactConsumerArtifacts(dir, runId, {
+  receipt,
+  gates,
+  desktop = MINIMAL_PNG,
+  mobile = MINIMAL_PNG,
+} = {}) {
   const names = consumerArtifactNames(runId)
   writeFileSync(join(dir, names[0]), desktop)
   writeFileSync(join(dir, names[1]), mobile)
-  writeFileSync(join(dir, names[2]), `${JSON.stringify(gates)}\n`)
+  const body = receipt || gates || createControlledConsumerReceipt({ runId })
+  writeFileSync(join(dir, names[2]), `${JSON.stringify(body)}\n`)
   return names
 }
 
@@ -1817,7 +1837,7 @@ test('C1 exact consumer artifacts survive cleanup; wrong-run/missing/secret fail
   const missHome = mkdtempSync(join(tmpdir(), 'aaclr1-e1m-'))
   const missPrivate = mkdtempSync(join(missHome, 'evidence-'))
   const missDurable = mkdtempSync(join(tmpdir(), 'aaclr1-e1md-'))
-  writeFileSync(join(missPrivate, `${runId}-counts-desktop.png`), 'only-one')
+  writeFileSync(join(missPrivate, `${runId}-counts-desktop.png`), MINIMAL_PNG)
   const missReg = createOwnershipRegistry({ runId, privateHome: missHome, evidenceDir: missPrivate })
   const missing = await raeumeOwnedAuf({
     privateHome: missHome,
@@ -1928,6 +1948,243 @@ test('C1 exact consumer artifacts survive cleanup; wrong-run/missing/secret fail
   rmSync(overwrite, { recursive: true, force: true })
   rmSync(overwriteSrc, { recursive: true, force: true })
   rmSync(overwriteDest, { recursive: true, force: true })
+})
+
+test('E1 E2 validate consumer contents and refuse receipt overwrite', async () => {
+  const runId = 'aaclr1-20260923T180000Z'
+  const identity = createRunIdentity({ runId })
+  assertValidPng(MINIMAL_PNG)
+  const validReceipt = createControlledConsumerReceipt({ runId })
+  assert.equal(validReceipt.gates.G6_login_ui_password.result, 'NOT RUN')
+  assertConsumerGatesJson(validReceipt, { identity })
+
+  const failReceipt = createControlledConsumerReceipt({ runId })
+  failReceipt.gates.G6_login_ui_password.result = 'FAIL'
+  failReceipt.gates.G6_login_ui_password.notes = 'synthetic/no browser execution'
+  assertConsumerGatesJson(failReceipt, { identity })
+
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-e1ok-'))
+  const privateEv = mkdtempSync(join(home, 'evidence-'))
+  const durable = mkdtempSync(join(tmpdir(), 'aaclr1-e1okd-'))
+  writeExactConsumerArtifacts(privateEv, runId, { receipt: failReceipt })
+  const registry = createOwnershipRegistry({ runId, privateHome: home, evidenceDir: privateEv })
+  const cleanup = await raeumeOwnedAuf({
+    privateHome: home,
+    registry,
+    evidenceDir: privateEv,
+    browserRegistry: registry.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: privateEv,
+      destDir: durable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [home],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  assert.equal(cleanup.artifactExport.ok, true)
+  assert.equal(cleanup.artifactExport.exported.length, 3)
+  assert.equal(bewerteCleanup(cleanup, { registry }), true)
+  assert.equal(existsSync(home), false)
+  const published = JSON.parse(readFileSync(join(durable, `${runId}-browser-flows-gates.json`), 'utf8'))
+  assert.equal(published.gates.G6_login_ui_password.result, 'FAIL')
+  assert.notEqual(published.gates.G6_login_ui_password.result, 'PASS')
+  assertValidPng(readFileSync(join(durable, `${runId}-counts-desktop.png`)))
+
+  const jwtMarker = `eyJ${'A'.repeat(30)}.${'B'.repeat(30)}.${'C'.repeat(30)}`
+  const secretReceipt = createControlledConsumerReceipt({ runId })
+  secretReceipt.notes = `request failed while using Bearer ${jwtMarker}`
+  secretReceipt.access_token = 'SYNTHETIC-ACCESS-TOKEN'
+  secretReceipt.refresh_token = 'SYNTHETIC-REFRESH-TOKEN'
+  const n1Home = mkdtempSync(join(tmpdir(), 'aaclr1-n1-'))
+  const n1Private = mkdtempSync(join(n1Home, 'evidence-'))
+  const n1Durable = mkdtempSync(join(tmpdir(), 'aaclr1-n1d-'))
+  writeExactConsumerArtifacts(n1Private, runId, { receipt: secretReceipt })
+  const n1Reg = createOwnershipRegistry({ runId, privateHome: n1Home, evidenceDir: n1Private })
+  const n1 = await raeumeOwnedAuf({
+    privateHome: n1Home,
+    registry: n1Reg,
+    evidenceDir: n1Private,
+    browserRegistry: n1Reg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: n1Private,
+      destDir: n1Durable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [n1Home],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  assert.equal(n1.exportFailed, true)
+  assert.equal(bewerteCleanup(n1, { registry: n1Reg }), false)
+  assert.equal(existsSync(n1Home), true)
+  assert.equal(existsSync(join(n1Durable, `${runId}-browser-flows-gates.json`)), false)
+  assert.equal(existsSync(join(n1Durable, `${runId}-counts-desktop.png`)), false)
+
+  const n2Home = mkdtempSync(join(tmpdir(), 'aaclr1-n2-'))
+  const n2Private = mkdtempSync(join(n2Home, 'evidence-'))
+  const n2Durable = mkdtempSync(join(tmpdir(), 'aaclr1-n2d-'))
+  writeExactConsumerArtifacts(n2Private, runId, {
+    receipt: {},
+    desktop: Buffer.alloc(0),
+    mobile: Buffer.alloc(0),
+  })
+  const n2Reg = createOwnershipRegistry({ runId, privateHome: n2Home, evidenceDir: n2Private })
+  const n2 = await raeumeOwnedAuf({
+    privateHome: n2Home,
+    registry: n2Reg,
+    evidenceDir: n2Private,
+    browserRegistry: n2Reg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: n2Private,
+      destDir: n2Durable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [n2Home],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  assert.equal(n2.exportFailed, true)
+  assert.equal(bewerteCleanup(n2, { registry: n2Reg }), false)
+  assert.equal(existsSync(n2Home), true)
+  assert.equal(readdirSync(n2Durable).length, 0)
+
+  const n3Receipt = createControlledConsumerReceipt({
+    runId: 'aaclr1-wrong-run',
+    productHead: '0'.repeat(40),
+  })
+  const n3Home = mkdtempSync(join(tmpdir(), 'aaclr1-n3-'))
+  const n3Private = mkdtempSync(join(n3Home, 'evidence-'))
+  const n3Durable = mkdtempSync(join(tmpdir(), 'aaclr1-n3d-'))
+  writeExactConsumerArtifacts(n3Private, runId, { receipt: n3Receipt })
+  const n3Reg = createOwnershipRegistry({ runId, privateHome: n3Home, evidenceDir: n3Private })
+  const n3 = await raeumeOwnedAuf({
+    privateHome: n3Home,
+    registry: n3Reg,
+    evidenceDir: n3Private,
+    browserRegistry: n3Reg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: n3Private,
+      destDir: n3Durable,
+      runId,
+      runIdentity: identity,
+      ownedRoots: [n3Home],
+      mode: 'full',
+      consumerCompleted: true,
+    }),
+  })
+  assert.equal(n3.exportFailed, true)
+  assert.equal(existsSync(n3Home), true)
+  assert.equal(existsSync(join(n3Durable, `${runId}-browser-flows-gates.json`)), false)
+
+  const incomplete = createControlledConsumerReceipt({ runId })
+  delete incomplete.gates.G19_http_boundary_same_session
+  assert.throws(() => assertConsumerGatesJson(incomplete, { identity }), /missing gate/)
+  const duplicate = createControlledConsumerReceipt({ runId })
+  duplicate.gates = [
+    ...BROWSER_GATES.map((id) => duplicate.gates[id]),
+    { id: 'G6_login_ui_password', result: 'NOT RUN', evidence: null, notes: 'dup' },
+  ]
+  assert.throws(() => assertConsumerGatesJson(duplicate, { identity }), /duplicate gate/)
+  assert.throws(() => assertValidPng(Buffer.alloc(40, 0x41)), /not a structurally valid PNG/)
+  assert.throws(() => assertValidPng(Buffer.alloc(0)), /empty image/)
+
+  const rtHome = mkdtempSync(join(tmpdir(), 'aaclr1-rt-'))
+  const rtPrivate = mkdtempSync(join(rtHome, 'evidence-'))
+  const rtDurable = mkdtempSync(join(tmpdir(), 'aaclr1-rtd-'))
+  const rtReg = createOwnershipRegistry({ runId, privateHome: rtHome, evidenceDir: rtPrivate })
+  const runtimeOnly = await raeumeOwnedAuf({
+    privateHome: rtHome,
+    registry: rtReg,
+    evidenceDir: rtPrivate,
+    browserRegistry: rtReg.browsers,
+  }, {
+    exportArtifacts: () => exportSanitizedRunArtifacts({
+      sourceDir: rtPrivate,
+      destDir: rtDurable,
+      runId,
+      ownedRoots: [rtHome],
+      mode: 'runtime-only',
+    }),
+  })
+  assert.equal(runtimeOnly.exportFailed, false)
+  assert.equal(runtimeOnly.artifactExport.exported.length, 0)
+  assert.equal(existsSync(rtHome), false)
+
+  const receiptDir = mkdtempSync(join(tmpdir(), 'aaclr1-n4-'))
+  writeEvidence(receiptDir, `${runId}-run-receipt.json`, { runId, verdict: 'ORIGINAL' })
+  const originalReceipt = readFileSync(join(receiptDir, `${runId}-run-receipt.json`), 'utf8')
+  assert.throws(
+    () => writeEvidence(receiptDir, `${runId}-run-receipt.json`, { runId, verdict: 'REPLACEMENT' }),
+    /overwrite existing durable evidence/,
+  )
+  assert.equal(readFileSync(join(receiptDir, `${runId}-run-receipt.json`), 'utf8'), originalReceipt)
+  const firstFailure = persistFailureReceipt({
+    evidenceDir: receiptDir,
+    runId,
+    error: new Error('first failure'),
+    cleanup: {},
+    matrix: {},
+  })
+  assert.equal(firstFailure.ok, true)
+  const originalFailure = readFileSync(join(receiptDir, `${runId}-failure.json`), 'utf8')
+  const secondFailure = persistFailureReceipt({
+    evidenceDir: receiptDir,
+    runId,
+    error: new Error('second failure'),
+    cleanup: {},
+    matrix: {},
+  })
+  assert.equal(secondFailure.ok, false)
+  assert.equal(secondFailure.collision, true)
+  assert.equal(readFileSync(join(receiptDir, `${runId}-failure.json`), 'utf8'), originalFailure)
+
+  const runnerNow = new Date('2026-09-23T18:15:00.000Z')
+  const runnerId = 'aaclr1-20260923T181500Z'
+  const runnerEvidence = mkdtempSync(join(tmpdir(), 'aaclr1-runner-'))
+  writeFileSync(join(runnerEvidence, `${runnerId}-preflight.json`), '{"verdict":"ORIGINAL-PREFLIGHT"}\n')
+  writeFileSync(join(runnerEvidence, `${runnerId}-failure.json`), '{"verdict":"ORIGINAL-FAILURE"}\n')
+  let runnerError = null
+  try {
+    await run({
+      now: runnerNow,
+      evidenceDir: runnerEvidence,
+      env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+      argv: [],
+      execFile: (bin, args) => {
+        if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+        throw new Error(`unexpected ${bin} ${args}`)
+      },
+      resolve: (name) => (name === 'node' ? process.execPath : null),
+    })
+  } catch (error) {
+    runnerError = error
+  }
+  assert.ok(runnerError)
+  assert.match(runnerError.message, /overwrite existing durable evidence/)
+  assert.equal(runnerError.failureReceipt?.ok, false)
+  assert.equal(runnerError.failureReceipt?.collision, true)
+  assert.equal(readFileSync(join(runnerEvidence, `${runnerId}-preflight.json`), 'utf8'), '{"verdict":"ORIGINAL-PREFLIGHT"}\n')
+  assert.equal(readFileSync(join(runnerEvidence, `${runnerId}-failure.json`), 'utf8'), '{"verdict":"ORIGINAL-FAILURE"}\n')
+  assert.equal(existsSync(join(runnerEvidence, `${runnerId}-run-receipt.json`)), false)
+
+  rmSync(durable, { recursive: true, force: true })
+  rmSync(n1Home, { recursive: true, force: true })
+  rmSync(n1Durable, { recursive: true, force: true })
+  rmSync(n2Home, { recursive: true, force: true })
+  rmSync(n2Durable, { recursive: true, force: true })
+  rmSync(n3Home, { recursive: true, force: true })
+  rmSync(n3Durable, { recursive: true, force: true })
+  rmSync(rtDurable, { recursive: true, force: true })
+  rmSync(receiptDir, { recursive: true, force: true })
+  rmSync(runnerEvidence, { recursive: true, force: true })
 })
 
 function writeTestCliPins(dir) {

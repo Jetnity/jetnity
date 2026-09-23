@@ -66,7 +66,11 @@ checkout snapshot. Inherited `.env*` files and symlinks remain forbidden.
 Browser ownership uses one registry map. The durable exporter preserves only
 `${runId}-counts-desktop.png`, `${runId}-counts-mobile.png` and
 `${runId}-browser-flows-gates.json` for a completed full consumer, then deletes
-private HOME. Preflight/runtime-only do not require those files.
+private HOME. Those files are validated before publication: current-run identity,
+expected product head, exact G6–G19 with permitted results, and nonempty bounded
+structurally valid PNGs. Credential-shaped fields and embedded JWT/otpauth/fill
+material are refused. Receipt writes are exclusive and never overwrite history.
+Preflight/runtime-only do not require those files.
 
 ## Forbidden substitutes
 
