@@ -22,11 +22,13 @@ import {
 import { GATE_IDS, leereMatrix, setzeGate, zusammenfassung } from './gates.mjs'
 import { baueConfigOverlay, DISCLOSED_OVERLAY, geplanteSqlAnwendung, starteOwnedStack } from './stack.mjs'
 import { FIXTURE_PLAN, emailFor, provisioniereUeberGoTrue, sanitizeFixtureManifest } from './fixtures.mjs'
-import { cleanupDryRunKontrolle } from './cleanup.mjs'
+import { cleanupDryRunKontrolle, raeumeOwnedAuf } from './cleanup.mjs'
 import { generateTotp, looksLikeTotpCode } from './totp.mjs'
 import { kannServerSeitigesRpcSchweigenBeweisen, fuehreBrowserAkzeptanz } from './browser.mjs'
 import { IMPLEMENTATION } from './implementation.mjs'
 import { runPreflight } from './preflight.mjs'
+import { defaultWhich, findeAusfuehrbare } from './resolve-executable.mjs'
+import { run } from './run.mjs'
 
 const IGNORE_TERM = "process.on('SIGTERM',()=>{}); process.stdout.write('ready\\n'); setInterval(()=>{},1000)"
 const NORMAL_CHILD = "process.stdout.write('ready\\n'); setInterval(()=>{},1000)"
@@ -518,3 +520,217 @@ test('honest unavailable copy is not a zero', () => {
   assert.doesNotMatch(COPY.unavailable, /\b0\b/)
   assert.doesNotMatch(COPY.failed, /\b0\b/)
 })
+
+function writeTempExecutable(dir, name, body) {
+  const path = join(dir, name)
+  writeFileSync(path, `#!/bin/sh\n${body}\n`, { mode: 0o755 })
+  return path
+}
+
+test('default discovery is shell-free and finds harmless PATH executables', () => {
+  const bin = mkdtempSync(join(tmpdir(), 'aacba1-default-which-'))
+  try {
+    writeTempExecutable(bin, 'docker', 'exit 0')
+    writeTempExecutable(bin, 'supabase', 'exit 0')
+    const env = { PATH: bin }
+    assert.equal(defaultWhich('docker', env), true)
+    assert.equal(findeAusfuehrbare('docker', env), join(bin, 'docker'))
+    assert.equal(findeAusfuehrbare('supabase', env), join(bin, 'supabase'))
+    assert.equal(findeAusfuehrbare('nerdctl', env), null)
+    assert.equal(findeAusfuehrbare('docker', { PATH: '' }), null)
+  } finally {
+    rmSync(bin, { recursive: true, force: true })
+  }
+})
+
+test('default preflight records resolved PATH binaries without treating them as pins', async () => {
+  const bin = mkdtempSync(join(tmpdir(), 'aacba1-default-path-'))
+  const home = mkdtempSync(join(tmpdir(), 'aacba1-default-home-'))
+  try {
+    writeTempExecutable(
+      bin,
+      'docker',
+      'if [ "$1" = "--version" ]; then echo "Docker version 28.0.0, build synthetic"; exit 0; fi; echo "Cannot connect to the Docker daemon" >&2; exit 1',
+    )
+    writeTempExecutable(
+      bin,
+      'supabase',
+      'if [ "$1" = "--version" ]; then echo "2.0.0"; exit 0; fi; if [ "$1" = "start" ]; then echo "Start containers for Supabase local development"; exit 0; fi; exit 1',
+    )
+    const result = await runPreflight({
+      env: { PATH: bin, LANG: 'C' },
+      privateHome: home,
+    })
+    assert.equal(result.container.resolved.docker, join(bin, 'docker'))
+    assert.equal(result.container.status, 'present-unusable')
+    assert.equal(result.container.usable, false)
+    assert.equal(result.supabase.resolved, join(bin, 'supabase'))
+    assert.equal(result.supabase.version, '2.0.0')
+    assert.equal(result.supabase.helpVerified, true)
+    assert.equal(result.supabase.identityVerified, false)
+    assert.equal(result.supabase.pinned, false)
+    assert.equal(result.browser.launched, false)
+    assert.equal(result.toolingReadyForLaterImplementation, false)
+  } finally {
+    rmSync(bin, { recursive: true, force: true })
+    rmSync(home, { recursive: true, force: true })
+  }
+})
+
+test('failed supabase help probe is not toolingReady', async () => {
+  const bin = mkdtempSync(join(tmpdir(), 'aacba1-help-fail-'))
+  const home = mkdtempSync(join(tmpdir(), 'aacba1-help-home-'))
+  try {
+    writeTempExecutable(bin, 'supabase', 'if [ "$1" = "--version" ]; then echo "2.0.0"; exit 0; fi; exit 1')
+    const result = await runPreflight({
+      env: { PATH: bin, LANG: 'C' },
+      privateHome: home,
+    })
+    assert.equal(result.supabase.helpVerified, false)
+    assert.equal(result.supabase.identityVerified, false)
+    assert.equal(result.toolingReadyForLaterImplementation, false)
+    assert.equal(result.blockers.some((item) => item.id === 'supabase-cli'), true)
+  } finally {
+    rmSync(bin, { recursive: true, force: true })
+    rmSync(home, { recursive: true, force: true })
+  }
+})
+
+test('empty cleanup state is unknown, not a G20 never-started PASS', async () => {
+  const report = await raeumeOwnedAuf({})
+  assert.equal(report.unknown, true)
+  assert.equal(report.neverStarted, false)
+  assert.equal(report.ownershipRetained, true)
+})
+
+test('nonsettling browser close is bounded and retains the profile', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'aacba1-hang-close-'))
+  writeFileSync(join(dir, 'keep'), '1')
+  const started = Date.now()
+  const report = await schliesseOwnedBrowser({
+    context: { close: () => new Promise(() => {}) },
+    profileDir: dir,
+  }, { closeTimeoutMs: 80 })
+  assert.equal(Date.now() - started < 500, true)
+  assert.equal(report.closeCalled, true)
+  assert.equal(report.closed, false)
+  assert.equal(report.timedOut, true)
+  assert.equal(report.ownershipRetained, true)
+  assert.equal(report.profileRemoved, false)
+  assert.equal(existsSync(join(dir, 'keep')), true)
+  rmSync(dir, { recursive: true, force: true })
+})
+
+test('orchestrator G20 cleans skipped-browser preflight HOME', async () => {
+  const evidence = mkdtempSync(join(tmpdir(), 'aacba1-orch-ok-'))
+  const home = mkdtempSync(join(tmpdir(), 'aacba1-orch-home-'))
+  const result = await run({
+    env: { PATH: '/usr/bin', LANG: 'C' },
+    evidenceDir: evidence,
+    now: new Date('2026-09-23T11:00:00Z'),
+    preflightOptions: { privateHome: home },
+  })
+  assert.equal(result.preflight.browser.launched, false)
+  assert.equal(result.matrix.G20_owned_cleanup.result, 'PASS')
+  assert.equal(result.cleanup.privateHomeRemoved, true)
+  assert.equal(existsSync(home), false)
+  assert.equal(result.verdict, 'BLOCKED_ENVIRONMENT')
+  assert.equal(result.summary.fullLocalExecution, false)
+  rmSync(evidence, { recursive: true, force: true })
+})
+
+test('orchestrator G20 fails on rejected close and retains private HOME', async () => {
+  const evidence = mkdtempSync(join(tmpdir(), 'aacba1-orch-rej-'))
+  const home = mkdtempSync(join(tmpdir(), 'aacba1-orch-rej-home-'))
+  try {
+    const result = await run({
+      env: { PATH: '/usr/bin', LANG: 'C' },
+      evidenceDir: evidence,
+      now: new Date('2026-09-23T11:01:00Z'),
+      preflightOptions: {
+        privateHome: home,
+        closeTimeoutMs: 80,
+        browserFactory: async ({ profileDir }) => ({
+          context: {
+            pages: () => [{ goto: async () => {} }],
+            close: async () => {
+              throw new Error('synthetic close rejection')
+            },
+          },
+          envExplicit: true,
+        }),
+      },
+    })
+    assert.equal(result.matrix.G20_owned_cleanup.result, 'FAIL')
+    assert.equal(result.verdict, 'CLEANUP_FAIL')
+    assert.equal(result.cleanup.ownershipRetained, true)
+    assert.equal(existsSync(home), true)
+  } finally {
+    if (existsSync(home)) rmSync(home, { recursive: true, force: true })
+    rmSync(evidence, { recursive: true, force: true })
+  }
+})
+
+test('orchestrator G20 fails on nonsettling close without hanging', async () => {
+  const evidence = mkdtempSync(join(tmpdir(), 'aacba1-orch-hang-'))
+  const home = mkdtempSync(join(tmpdir(), 'aacba1-orch-hang-home-'))
+  try {
+    const started = Date.now()
+    const result = await run({
+      env: { PATH: '/usr/bin', LANG: 'C' },
+      evidenceDir: evidence,
+      now: new Date('2026-09-23T11:02:00Z'),
+      preflightOptions: {
+        privateHome: home,
+        closeTimeoutMs: 80,
+        browserFactory: async () => ({
+          context: {
+            pages: () => [{ goto: async () => {} }],
+            close: () => new Promise(() => {}),
+          },
+          envExplicit: true,
+        }),
+      },
+    })
+    assert.equal(Date.now() - started < 2000, true)
+    assert.equal(result.matrix.G20_owned_cleanup.result, 'FAIL')
+    assert.equal(result.preflight.owned.closeReport.timedOut, true)
+    assert.equal(existsSync(home), true)
+  } finally {
+    if (existsSync(home)) rmSync(home, { recursive: true, force: true })
+    rmSync(evidence, { recursive: true, force: true })
+  }
+})
+
+test('orchestrator G20 passes after navigation failure when close is confirmed', async () => {
+  const evidence = mkdtempSync(join(tmpdir(), 'aacba1-orch-nav-'))
+  const home = mkdtempSync(join(tmpdir(), 'aacba1-orch-nav-home-'))
+  const result = await run({
+    env: { PATH: '/usr/bin', LANG: 'C' },
+    evidenceDir: evidence,
+    now: new Date('2026-09-23T11:03:00Z'),
+    preflightOptions: {
+      privateHome: home,
+      closeTimeoutMs: 200,
+      browserFactory: async () => ({
+        context: {
+          pages: () => [],
+          newPage: async () => ({
+            goto: async () => {
+              throw new Error('synthetic navigation error')
+            },
+          }),
+          close: async () => {},
+        },
+        envExplicit: true,
+      }),
+    },
+  })
+  assert.equal(result.preflight.browser.playwright.ok, false)
+  assert.equal(result.preflight.owned.closeReport.closed, true)
+  assert.equal(result.matrix.G20_owned_cleanup.result, 'PASS')
+  assert.equal(existsSync(home), false)
+  assert.notEqual(result.verdict, 'LOCAL_FULL_STACK_PASS')
+  rmSync(evidence, { recursive: true, force: true })
+})
+

@@ -102,9 +102,10 @@ No product/Auth/SQL/config file was edited by this writer. No Ready. No merge to
 
 ## 7. Tests run here
 
-- `node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs` — **24/24 PASS** (owned-child TERM/signal/never-started/normal, browser close/nav failure, effective-env spawn, version-only Docker, fail-closed verdicts, working-tree identity, dirty-tree/wrong-fingerprint controls)
+- `node --test scripts/e2e/admin-account-counts-browser-acceptance-1/test.mjs` — **33/33 PASS**
 - Historical orchestrator `aacba1-20260923T020045Z` — **not rewritten**
-- New orchestrator receipt `aacba1-review-fix-20260923T101352Z` — `BLOCKED_ENVIRONMENT`, G2–G19 NOT IMPLEMENTED, `fullLocalExecution=false`; historical basenames untouched
+- H1–H4 receipt `aacba1-review-fix-20260923T101352Z` — **not rewritten**
+- B1/B2 receipt `aacba1-review-fix-20260923T105758Z` — `BLOCKED_ENVIRONMENT`, G20 PASS from actual skipped-browser HOME cleanup, G2–G19 NOT IMPLEMENTED, `fullLocalExecution=false`
 - Production app build — **NOT RUN** (no product files changed)
 
 ## 8. Reproduction
@@ -118,3 +119,16 @@ One normal merge of exact `87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b`. No rebase/
 ## 10. H1–H4 package
 
 Corrected as one same-session package against review `5289540491`. Independent counterexamples are inverted in the owned tests. Historical blocked receipt remains distinct from the new helper/subprocess checks.
+
+## 11. Residual B1/B2 (review 5290012842)
+
+| Item | Result |
+| --- | --- |
+| Bounded `close()` | Yes — timeout retains profile; nonsettling close no longer hangs preflight |
+| G20 uses actual preflight HOME/browser | Yes — empty `{}` cleanup is unknown, not PASS |
+| Rejected / nonsettling close | G20 FAIL + `CLEANUP_FAIL`; HOME retained; independent test teardown |
+| Default discovery | Shell-free PATH walk; no `command -v` |
+| PATH binary as pin | No — recorded resolved path + version; `identityVerified=false` without a permitted identity + help |
+| Browser launched when Docker already absent | No — skipped unless a test factory is supplied |
+| Helper tests | **33/33 PASS** |
+| Historical receipts rewritten | **No** |

@@ -5,6 +5,21 @@
 
 import { existsSync, rmSync } from 'node:fs'
 import { createServer } from 'node:net'
+import { BROWSER_CLOSE_TIMEOUT_MS } from './constants.mjs'
+
+function withTimeout(promise, timeoutMs, label) {
+  let timer = null
+  return Promise.race([
+    Promise.resolve(promise).finally(() => {
+      if (timer != null) clearTimeout(timer)
+    }),
+    new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        reject(Object.assign(new Error(label), { code: 'CLOSE_TIMEOUT' }))
+      }, timeoutMs)
+    }),
+  ])
+}
 
 const CHILD_TERM_TIMEOUT_MS = 1_500
 const CHILD_KILL_TIMEOUT_MS = 800
@@ -224,30 +239,41 @@ export function darfOwnedVerzeichnisEntfernen({
   return processesStopped === true && reaped === true
 }
 
-export async function schliesseOwnedBrowser(handle = {}) {
+export async function schliesseOwnedBrowser(handle = {}, { closeTimeoutMs = BROWSER_CLOSE_TIMEOUT_MS } = {}) {
   const report = {
     closeCalled: false,
     closed: false,
     profileRemoved: false,
+    timedOut: false,
+    unknown: false,
+    ownershipRetained: false,
     error: null,
   }
   try {
     if (handle.context && typeof handle.context.close === 'function') {
       report.closeCalled = true
-      await handle.context.close()
+      await withTimeout(handle.context.close(), closeTimeoutMs, 'browser close timed out')
       report.closed = true
     } else if (handle.context) {
       report.error = 'browser context has no close()'
+      report.unknown = true
+      report.ownershipRetained = true
+    } else {
+      report.closed = true
     }
   } catch (fehler) {
     report.error = fehler instanceof Error ? fehler.message : String(fehler)
     report.closed = false
+    report.timedOut = Boolean(fehler && fehler.code === 'CLOSE_TIMEOUT')
+    report.unknown = report.timedOut
+    report.ownershipRetained = true
   }
   if (report.closed && handle.profileDir && existsSync(handle.profileDir)) {
     rmSync(handle.profileDir, { recursive: true, force: true })
     report.profileRemoved = !existsSync(handle.profileDir)
   } else if (handle.profileDir && existsSync(handle.profileDir) && !report.closed) {
     report.profileRemoved = false
+    report.ownershipRetained = true
     report.error = report.error || 'browser context close not proved; profile retained'
   }
   return report

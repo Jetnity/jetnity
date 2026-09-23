@@ -7,10 +7,10 @@ This is not Production activation, hosted parity, Guardian evidence, a second pr
 
 `node scripts/e2e/admin-account-counts-browser-acceptance-1/run.mjs` implements only:
 
-1. Isolated capability preflight (usable local daemon, **pinned** `supabase` binary, isolated browser close-always).
+1. Isolated capability preflight (usable local daemon, **verified** supabase identity — a PATH `--version` is not a pin). Browser launch is skipped when container/CLI already block.
 2. Working-tree source identity for the full applicable Auth/shared/client/UI/config/SQL set.
 3. Allowlisted child environments with a private HOME. No inherited connector/provider credentials. No security-sensitive passthrough.
-4. Confirmed owned-process / browser shutdown before any directory removal.
+4. Confirmed owned-process / bounded browser close, then HOME removal. G20 uses the actual preflight owned state. Unconfirmed close retains the profile.
 
 It does **not** start containers, apply SQL, provision GoTrue, boot the app, or drive login → TOTP/AAL2 → Admin rendering. Docker installation alone cannot make this command execute that path. Those steps are **NOT IMPLEMENTED**. A later authorized writer must implement them; this runbook is the continuation plan, not a hidden execution path.
 
@@ -21,8 +21,8 @@ Missing Docker is an **execution blocker**, not a Production P0 incident.
 Official Supabase local development only:
 
 1. A **usable** Docker-API daemon (`docker info` or equivalent), not a version-only binary.
-2. A **pinned** local `supabase` binary. Unpinned `npx --yes supabase` / remote latest install is forbidden.
-3. Real browser via Playwright `chromium.launchPersistentContext`, explicit child `env`, and `close()` on every path before profile removal.
+2. A **verified** local `supabase` identity (resolved executable + permitted version + successful `start --help`). Unpinned `npx --yes supabase` / remote latest install is forbidden. This repo currently has **no** permitted CLI version, so a PATH binary stays unverified.
+3. Real browser via Playwright `chromium.launchPersistentContext`, explicit child `env`, and a **bounded** `close()` before profile removal. Do not launch Chrome when Docker/CLI already block.
 
 References:
 

@@ -63,6 +63,9 @@ function sanitizePreflight(preflight) {
       available: preflight.supabase.available,
       via: preflight.supabase.via,
       pinned: preflight.supabase.pinned,
+      identityVerified: preflight.supabase.identityVerified,
+      identity: preflight.supabase.identity,
+      resolved: preflight.supabase.resolved,
       version: preflight.supabase.version,
       helpVerified: preflight.supabase.helpVerified,
       startRequiresContainerRuntime: preflight.supabase.startRequiresContainerRuntime,
@@ -72,9 +75,11 @@ function sanitizePreflight(preflight) {
     },
     browser: {
       available: preflight.browser.available,
+      launched: preflight.browser.launched,
       chromeVersion: preflight.browser.chromeVersion,
       playwrightIsolated: preflight.browser.playwrightIsolated,
       closeProved: preflight.browser.closeReport?.closed ?? null,
+      closeTimedOut: preflight.browser.closeReport?.timedOut ?? null,
       note: preflight.browser.note,
     },
     node: preflight.node,
@@ -87,6 +92,7 @@ export async function run({
   env = process.env,
   now = new Date(),
   evidenceDir = EVIDENCE_DIR,
+  preflightOptions = {},
 } = {}) {
   const runId = `${RUN_LABEL_PREFIX}-review-fix-${now.toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')}`
   mkdirSync(evidenceDir, { recursive: true })
@@ -101,7 +107,7 @@ export async function run({
   })
 
   geplanteSqlAnwendung()
-  const preflight = await runPreflight({ env })
+  const preflight = await runPreflight({ env, ...preflightOptions })
   setzeGate(matrix, 'G0_preflight', {
     result: preflight.toolingReadyForLaterImplementation ? 'PASS' : 'BLOCKED',
     evidence: `${runId}-preflight.json`,
@@ -119,24 +125,36 @@ export async function run({
   }
 
   const cleanupProbe = cleanupDryRunKontrolle()
-  const cleanup = await raeumeOwnedAuf({})
-  const cleanupOk = cleanup.neverStarted
-    && cleanupProbe.blocked === false
+  const cleanup = await raeumeOwnedAuf({
+    preflightOwned: preflight.owned,
+    browserHandle: preflight.owned.closeReport?.closed ? null : preflight.owned.browserHandle,
+    privateDir: preflight.owned.privateHome,
+    browserCloseReport: preflight.owned.closeReport,
+  }, { closeTimeoutMs: preflightOptions.closeTimeoutMs })
+  const cleanupOk = cleanupProbe.blocked === false
     && cleanupProbe.allowed === true
     && cleanupProbe.signalFailureBlocked === true
     && cleanupProbe.dockerUnverifiedBlocked === true
+    && cleanup.unknown !== true
+    && cleanup.ownershipRetained !== true
+    && cleanup.browserClosed === true
+    && cleanup.privateHomeRemoved === true
   setzeGate(matrix, 'G20_owned_cleanup', {
     result: cleanupOk ? 'PASS' : 'FAIL',
     evidence: `${runId}-cleanup.json`,
-    notes: 'No owned stack/app was started. Dry-run refuses delete while a process remains active, after signal failure, or when Docker services are unverified.',
+    notes: cleanupOk
+      ? 'Preflight owned HOME/browser were confirmed stopped and then removed. Dry-run still refuses unsafe delete.'
+      : 'Preflight ownership was retained, close was unconfirmed, or private HOME was not removed.',
   })
 
   const summary = zusammenfassung(matrix)
-  const verdict = summary.fullLocalExecution
-    ? 'LOCAL_FULL_STACK_PASS'
-    : summary.preflightBlocked
-      ? 'BLOCKED_ENVIRONMENT'
-      : 'NOT_IMPLEMENTED_CONTINUATION'
+  const verdict = !cleanupOk
+    ? 'CLEANUP_FAIL'
+    : summary.fullLocalExecution
+      ? 'LOCAL_FULL_STACK_PASS'
+      : summary.preflightBlocked
+        ? 'BLOCKED_ENVIRONMENT'
+        : 'NOT_IMPLEMENTED_CONTINUATION'
 
   const receipt = {
     agent: AGENT,
@@ -204,7 +222,7 @@ export async function run({
     writeJson(join(evidenceDir, name), value)
   }
 
-  return { verdict, preflight, matrix, summary, runId, receipt }
+  return { verdict, preflight, matrix, summary, runId, receipt, cleanup }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -214,7 +232,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     runId: result.runId,
     blockers: result.preflight.blockers.map((item) => item.id),
     summary: result.summary,
+    cleanupUnknown: result.cleanup.unknown,
     implementation: IMPLEMENTATION,
   }, null, 2))
-  process.exit(result.verdict === 'LOCAL_FULL_STACK_PASS' ? EXIT.pass : EXIT.blocked)
+  const code = result.verdict === 'LOCAL_FULL_STACK_PASS'
+    ? EXIT.pass
+    : result.verdict === 'CLEANUP_FAIL'
+      ? EXIT.failed
+      : EXIT.blocked
+  process.exit(code)
 }

@@ -24,14 +24,13 @@ The reserved exact-main synchronization is **done** and was accepted as delivere
 
 No further main sync unless TL gives another exact SHA. No rebase/force/reset/cherry-pick.
 
-## H1–H4 review fix (this session)
+## H1–H4 retained; B1/B2 residual (this session)
 
-Implemented on owned harness paths only. Historical receipt `aacba1-20260923T020045Z` is unchanged.
+Historical receipts `aacba1-20260923T020045Z` and `aacba1-review-fix-20260923T101352Z` stay dated.
 
-- **H1:** `stoppeOwnedChild` / `schliesseOwnedBrowser` require confirmed termination/close. Thrown kill is not reaped. Directory removal is refused when alive, unknown, ownership retained, or Docker services unverified.
-- **H2:** Preflight and later children use one allowlisted effective env and a private HOME. `passthrough` is rejected. Unpinned `npx --yes` is not used.
-- **H3:** `run.mjs` does not start stack/fixtures/browser. G2–G19 are **NOT IMPLEMENTED**. `fullLocalExecution` requires every mandatory gate PASS. Missing Docker is an execution blocker, not a Production P0 incident. CLI `--version` is not a usable daemon.
-- **H4:** Source identity is working-tree `git hash-object` for the full applicable set. Migration inventory is recorded; replay is NOT IMPLEMENTED. Page requests cannot prove server-side RPC absence.
+- **H1–H4** remain as previously delivered.
+- **B1:** `schliesseOwnedBrowser` has a close timeout. `runPreflight` returns `owned` HOME/browser handles created before fallible work. `run()` passes that state into `raeumeOwnedAuf`. G20 FAIL + `CLEANUP_FAIL` when close is rejected, times out, or HOME is retained. Empty `{}` cleanup is unknown, not PASS. Browser launch is skipped when container/CLI already block.
+- **B2:** `findeAusfuehrbare` walks PATH without spawning the `command` builtin. Resolved path + observed version are recorded. `pinned` / `identityVerified` stay false unless a permitted identity matches **and** `start --help` succeeds. Default-discovery tests use temp executables, not an injected `which`.
 
 ## How to continue
 

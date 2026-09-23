@@ -15,10 +15,22 @@ export const TASK = 'docs/ADMIN_ACCOUNT_COUNTS_BROWSER_ACCEPTANCE_1_TASK_2026-09
 export const TASK_SEED = '74e939882e9e9bfe94f1f3e032d397ca0b2bbe50'
 export const PRODUCT_BASELINE = 'f0237baf8809e5528b5f73e918f0e37a7d9b4477'
 export const INTEGRATION_BASELINE = '87cdc1e6858ff0fb57481dd9c3d56fd618f1e03b'
-export const REVIEWED_HEAD = '0cf22b3b0238e9e17f7ecc5686fa3c2cb2afbe41'
+export const REVIEWED_HEAD = 'ef61f0eaaf504c866a179fabaa927fe1472fefe6'
 export const BRANCH = 'audit/admin-account-counts-browser-acceptance-1'
 export const RUN_LABEL_PREFIX = 'aacba1'
 export const HISTORICAL_RECEIPT_ID = 'aacba1-20260923T020045Z'
+export const REVIEW_FIX_RECEIPT_ID = 'aacba1-review-fix-20260923T101352Z'
+
+export const BROWSER_CLOSE_TIMEOUT_MS = 3_000
+
+// A PATH binary that answers --version is not a pin. This repo has no
+// committed Supabase CLI version permit, so identity stays unverified.
+export const PERMITTED_TOOL_IDENTITY = Object.freeze({
+  supabase: {
+    permittedVersionPatterns: Object.freeze([]),
+    note: 'No package.json or repo pin for the Supabase CLI. Record resolved path and observed version; do not set pinned=true from PATH presence alone.',
+  },
+})
 
 export const EVIDENCE_DIR = join(ROOT, 'docs/evidence/admin-account-counts-browser-acceptance-1')
 export const PRIVATE_STATE_DIR_NAME = 'aacba1-private'

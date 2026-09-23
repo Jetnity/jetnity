@@ -39,4 +39,4 @@ An overlay unit assertion was mistyped (`db.seed` enabled true) and corrected be
 
 ## 5. What I would tell TL
 
-H1–H4 are corrected on owned paths only. Helper/subprocess tests invert the independent counterexamples. The lane still does **not** close the missing local application path. Do not treat helper PASS, Vercel Preview, or green CI as browser acceptance. Do not mark Ready from this self-review.
+H1–H4 stay in place. Residual B1/B2 are corrected: G20 now sees the actual preflight HOME/browser, close is bounded, and default discovery no longer calls the `command` builtin or treats a PATH binary as a pin. The lane still does **not** close the missing local application path. Do not treat helper PASS, Vercel Preview, or green CI as browser acceptance. Do not mark Ready from this self-review.

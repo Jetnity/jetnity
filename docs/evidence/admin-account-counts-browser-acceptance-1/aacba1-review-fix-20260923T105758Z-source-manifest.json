@@ -1,0 +1,228 @@
+{
+  "identityKind": "working-tree-git-hash-object",
+  "pins": {
+    "producer": "63974e6509bf42963d2028d99567c4b4062c36d8",
+    "wrapper": "73bc115763f00a2052123497e0a79273a340f0be",
+    "bootstrap": "269bab3e4ad9d5e400f90ef09ce4cac86cb6f473",
+    "contract": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+    "parser": "6205ecbba621b048fff479856c5523fab5ec4f6d",
+    "activation": "10f1bf99ac3d71eca6b1c69f04325947d0786c20",
+    "reader": "02dcafd80502067935eee78f3d8a7b21e417d720",
+    "server": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+    "client": "94c45e4c3324e244f743d6e6d07ae676b53ce554",
+    "guard": "b650a5e25a4db6572bbb7267e3735a746649497b",
+    "adminAal": "4617a2951cffd58be45b06d95bb42953a9650548",
+    "adminAccess": "777edac72b8637192379fa8d0afc04a1ba0e7278",
+    "roles": "487a1dded0a4bac9294e09f6df392232f704d63c",
+    "mfa": "14b1e62699b494ab6e41001e6b8a4de886d408e7",
+    "loginPage": "bad46e48de7f1886c8137fc7e819c574ad871e7b",
+    "loginActions": "ce6bb6b399ed19a6ef7b39f8b2abdf2344b0a0bc",
+    "mfaPage": "3cd5a0ca008604f6b64ea444d134c2c56a80402a",
+    "mfaStepUp": "2fa47a19be6f3fd0e5a4f9ed201dd31f3dfdc211",
+    "adminHome": "0a3a0c0722622dd03c08700f0b046779490bf231",
+    "countsUi": "8b6d770a0537af95e9f4b410914129426766a984",
+    "securityPage": "72095b16ba00d32ea7875969f13d5a3f691b3678",
+    "securityMfa": "38a3893a6abeab1f10a886a465bfda814032fab0",
+    "mfaTotpDialog": "175a308b45116e59c5fc257f6f043332f60f1c5c",
+    "config": "4f029b9abdaef85951a8a4d948a6dd7044f899bf"
+  },
+  "files": {
+    "producer": {
+      "path": "scripts/db/admin-account-counts-1-candidate.sql",
+      "workingTreeBlob": "63974e6509bf42963d2028d99567c4b4062c36d8",
+      "committedBlob": "63974e6509bf42963d2028d99567c4b4062c36d8",
+      "dirtyWorktree": false,
+      "sha256": "dcf4d35d894975b3c36860454ca8b0714af11c243fdcef900159a9929ccd4420",
+      "note": null
+    },
+    "wrapper": {
+      "path": "scripts/db/admin-account-counts-delivery-1-rpc.sql",
+      "workingTreeBlob": "73bc115763f00a2052123497e0a79273a340f0be",
+      "committedBlob": "73bc115763f00a2052123497e0a79273a340f0be",
+      "dirtyWorktree": false,
+      "sha256": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb",
+      "note": null
+    },
+    "bootstrap": {
+      "path": "scripts/db/admin-account-counts-1-bootstrap.sql",
+      "workingTreeBlob": "269bab3e4ad9d5e400f90ef09ce4cac86cb6f473",
+      "committedBlob": "269bab3e4ad9d5e400f90ef09ce4cac86cb6f473",
+      "dirtyWorktree": false,
+      "sha256": "0413821d7c75c76908dd437527d623fcbed59c524135adbf5e5974730e6f6ea2",
+      "note": "Identified only so this harness can refuse overlaying it on GoTrue."
+    },
+    "contract": {
+      "path": "lib/admin/account-counts-delivery/contract.ts",
+      "workingTreeBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+      "committedBlob": "6826eeea70aecc0507d05624daaeac47af0be9b8",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "parser": {
+      "path": "lib/admin/account-counts-delivery/parser.ts",
+      "workingTreeBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d",
+      "committedBlob": "6205ecbba621b048fff479856c5523fab5ec4f6d",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "activation": {
+      "path": "lib/admin/account-counts-delivery/activation.ts",
+      "workingTreeBlob": "10f1bf99ac3d71eca6b1c69f04325947d0786c20",
+      "committedBlob": "10f1bf99ac3d71eca6b1c69f04325947d0786c20",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "reader": {
+      "path": "lib/admin/account-counts-delivery/reader.ts",
+      "workingTreeBlob": "02dcafd80502067935eee78f3d8a7b21e417d720",
+      "committedBlob": "02dcafd80502067935eee78f3d8a7b21e417d720",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "server": {
+      "path": "lib/supabase/server.ts",
+      "workingTreeBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "committedBlob": "1d394cfb6cc158ad0f979d7cd5bfe6526ece8f18",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "client": {
+      "path": "lib/supabase/client.ts",
+      "workingTreeBlob": "94c45e4c3324e244f743d6e6d07ae676b53ce554",
+      "committedBlob": "94c45e4c3324e244f743d6e6d07ae676b53ce554",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "guard": {
+      "path": "lib/auth/admin-guard.ts",
+      "workingTreeBlob": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "committedBlob": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "adminAal": {
+      "path": "lib/auth/admin-aal.ts",
+      "workingTreeBlob": "4617a2951cffd58be45b06d95bb42953a9650548",
+      "committedBlob": "4617a2951cffd58be45b06d95bb42953a9650548",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "adminAccess": {
+      "path": "lib/auth/admin-access.ts",
+      "workingTreeBlob": "777edac72b8637192379fa8d0afc04a1ba0e7278",
+      "committedBlob": "777edac72b8637192379fa8d0afc04a1ba0e7278",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "roles": {
+      "path": "lib/auth/roles.ts",
+      "workingTreeBlob": "487a1dded0a4bac9294e09f6df392232f704d63c",
+      "committedBlob": "487a1dded0a4bac9294e09f6df392232f704d63c",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "mfa": {
+      "path": "lib/auth/mfa.ts",
+      "workingTreeBlob": "14b1e62699b494ab6e41001e6b8a4de886d408e7",
+      "committedBlob": "14b1e62699b494ab6e41001e6b8a4de886d408e7",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "loginPage": {
+      "path": "app/(public)/admin/login/page.tsx",
+      "workingTreeBlob": "bad46e48de7f1886c8137fc7e819c574ad871e7b",
+      "committedBlob": "bad46e48de7f1886c8137fc7e819c574ad871e7b",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "loginActions": {
+      "path": "app/(public)/admin/login/actions.ts",
+      "workingTreeBlob": "ce6bb6b399ed19a6ef7b39f8b2abdf2344b0a0bc",
+      "committedBlob": "ce6bb6b399ed19a6ef7b39f8b2abdf2344b0a0bc",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "mfaPage": {
+      "path": "app/(public)/admin/mfa/page.tsx",
+      "workingTreeBlob": "3cd5a0ca008604f6b64ea444d134c2c56a80402a",
+      "committedBlob": "3cd5a0ca008604f6b64ea444d134c2c56a80402a",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "mfaStepUp": {
+      "path": "app/(public)/admin/mfa/AdminMfaStepUp.tsx",
+      "workingTreeBlob": "2fa47a19be6f3fd0e5a4f9ed201dd31f3dfdc211",
+      "committedBlob": "2fa47a19be6f3fd0e5a4f9ed201dd31f3dfdc211",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "adminHome": {
+      "path": "app/(admin)/admin/page.tsx",
+      "workingTreeBlob": "0a3a0c0722622dd03c08700f0b046779490bf231",
+      "committedBlob": "0a3a0c0722622dd03c08700f0b046779490bf231",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "countsUi": {
+      "path": "components/admin/home/AdminAccountCounts.tsx",
+      "workingTreeBlob": "8b6d770a0537af95e9f4b410914129426766a984",
+      "committedBlob": "8b6d770a0537af95e9f4b410914129426766a984",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "securityPage": {
+      "path": "app/account/security/page.tsx",
+      "workingTreeBlob": "72095b16ba00d32ea7875969f13d5a3f691b3678",
+      "committedBlob": "72095b16ba00d32ea7875969f13d5a3f691b3678",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "securityMfa": {
+      "path": "components/account/SecurityMFA.tsx",
+      "workingTreeBlob": "38a3893a6abeab1f10a886a465bfda814032fab0",
+      "committedBlob": "38a3893a6abeab1f10a886a465bfda814032fab0",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "mfaTotpDialog": {
+      "path": "components/auth/MFATotpDialog.tsx",
+      "workingTreeBlob": "175a308b45116e59c5fc257f6f043332f60f1c5c",
+      "committedBlob": "175a308b45116e59c5fc257f6f043332f60f1c5c",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    },
+    "config": {
+      "path": "supabase/config.toml",
+      "workingTreeBlob": "4f029b9abdaef85951a8a4d948a6dd7044f899bf",
+      "committedBlob": "4f029b9abdaef85951a8a4d948a6dd7044f899bf",
+      "dirtyWorktree": false,
+      "sha256": null,
+      "note": null
+    }
+  },
+  "migrations": {
+    "replay": "NOT IMPLEMENTED",
+    "count": 62,
+    "note": "Inventory only. This command does not apply or replay migrations."
+  }
+}
