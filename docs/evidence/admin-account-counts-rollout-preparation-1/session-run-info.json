@@ -1,0 +1,25 @@
+{
+  "logicalAgent": "Jetnity admin account counts rollout preparation 1",
+  "generation": 1,
+  "requiredModel": "cursor-grok-4.6-high-fast",
+  "actualModel": "cursor-grok-4.6-high-fast",
+  "originalModelName": "cursor-grok-4.6-high-fast",
+  "substitution": false,
+  "auto": false,
+  "session": "bc-4bf6acab-25f3-4d63-9199-ac365b9c011a",
+  "url": "https://cursor.com/agents/bc-4bf6acab-25f3-4d63-9199-ac365b9c011a",
+  "observedDisplayName": "Admin account counts rollout preparation",
+  "uiRenamePerformed": false,
+  "uiRenameClaimed": false,
+  "source": "cursor-cloud run-info",
+  "branch": "feat/admin-account-counts-rollout-preparation-1",
+  "task": "docs/ADMIN_ACCOUNT_COUNTS_ROLLOUT_PREPARATION_1_TASK_2026-09-23.md",
+  "taskSeed": "7d24b78b413c80ff82ae1f5c03b045fc9b5e17a4",
+  "baseline": "f0237baf8809e5528b5f73e918f0e37a7d9b4477",
+  "operatingMode": "NORMAL",
+  "notResumedSessions": [
+    "bc-49dd67e9-5979-44af-9476-1df8bcdfff93",
+    "bc-4a3288b3-eb42-480b-9c37-f74b584e2419",
+    "bc-e268a98c-10c1-428f-94ae-99f3246f460a"
+  ]
+}
