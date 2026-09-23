@@ -1,0 +1,23 @@
+{
+  "cleanup": {
+    "processesStopped": true,
+    "reaped": true,
+    "neverStarted": true,
+    "unknown": false,
+    "ownershipRetained": false,
+    "dockerServicesUnverified": false,
+    "browserClosed": true,
+    "reports": [],
+    "removals": [],
+    "usedPkill": false,
+    "usedDockerPrune": false,
+    "stackExecution": "NOT IMPLEMENTED"
+  },
+  "cleanupProbe": {
+    "blocked": false,
+    "allowed": true,
+    "unused": true,
+    "signalFailureBlocked": true,
+    "dockerUnverifiedBlocked": true
+  }
+}
