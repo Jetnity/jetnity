@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-26T10:26:41.153Z",
+  "mode": "preflight",
+  "platform": "linux-x64",
+  "supportedPlatforms": [
+    "linux-x64",
+    "darwin-arm64"
+  ],
+  "executedPlatform": "linux-x64",
+  "docker": {
+    "present": false,
+    "usable": false,
+    "sockets": [],
+    "commands": [],
+    "note": "No docker/podman/nerdctl executable and no local Docker/Podman socket.",
+    "installAttempted": false,
+    "notAProductionIncident": true,
+    "endpoint": {
+      "ok": false,
+      "verified": false,
+      "kind": null,
+      "source": null,
+      "contextName": null,
+      "hostSanitized": null,
+      "remoteRefused": false,
+      "note": "No docker executable was resolved from the parent environment."
+    },
+    "usedExplicitLocalHost": false
+  },
+  "cli": {
+    "selected": "2.117.0",
+    "identityVerified": false,
+    "archiveBound": false,
+    "versionVerified": false,
+    "failedIdentityChecks": [],
+    "resolved": null,
+    "binarySha256": null,
+    "note": "Official 2.117.0 archive bytes are not present in run-owned tooling. Default no-start does not download or execute an official binary."
+  },
+  "environment": {
+    "parentHasHostedSupabaseNames": true,
+    "extraDeniedPresent": [
+      "SUPABASE_ACCESS_TOKEN"
+    ],
+    "usedAllowlistedChildEnv": true
+  },
+  "officialDocs": {
+    "localDevelopment": "https://supabase.com/docs/guides/local-development",
+    "changelog": "https://supabase.com/changelog",
+    "dockerPorts": "https://docs.docker.com/engine/network/port-publishing/"
+  },
+  "limitations": [
+    "Default command is no-start.",
+    "Missing Docker is an execution blocker, not a Production P0 incident.",
+    "Full acceptance requires the sibling browser module and a later TL-gated integrated run.",
+    "No hosted Production/Development query or activation."
+  ]
+}
