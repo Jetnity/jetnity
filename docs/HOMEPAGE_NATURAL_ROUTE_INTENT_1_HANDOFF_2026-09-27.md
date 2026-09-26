@@ -10,7 +10,7 @@ Model: Cursor Grok 4.6 High Fast (`cursor-grok-4.6-high-fast`)
 Task base: `8faa0447a89d613cb7d00c8173c3bda57a3524fc`  
 Prerequisite #543: `d03a048624b42cb0b2a1cb0e146aed238e23041f` (merged)
 
-Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older exact-head gates do not apply.
+Evidence persist: `ae66d8ff7a23b844041a4b0d14a3614e61e69e1a`. Re-read `git rev-parse HEAD` after this freeze persist. That SHA is the freeze. Older exact-head gates do not apply.
 
 ## This persist covers
 
