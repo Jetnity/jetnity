@@ -49,10 +49,73 @@ function isPlainPortMap(value) {
   return value != null && typeof value === 'object' && !Array.isArray(value)
 }
 
+function configuredPublishedPorts(inspectDoc) {
+  const configured = inspectDoc?.HostConfig?.PortBindings
+  if (!isPlainPortMap(configured)) return []
+  return Object.keys(configured)
+}
+
+function isWellFormedRuntimeMap(map) {
+  if (map == null || typeof map !== 'object' || Array.isArray(map)) return false
+  if (map.HostIp == null) return false
+  return String(map.HostPort ?? '') !== ''
+}
+
+function unresolvedRuntimeBinding(containerPort, reason) {
+  return {
+    containerPort,
+    HostIp: '',
+    HostPort: '',
+    reason,
+  }
+}
+
 function collectPublishedPortMaps(ports) {
   const list = []
   if (!isPlainPortMap(ports)) return list
   for (const [containerPort, maps] of Object.entries(ports)) {
+    if (!Array.isArray(maps)) continue
+    for (const map of maps) {
+      list.push({
+        containerPort,
+        HostIp: map?.HostIp,
+        HostPort: map?.HostPort,
+      })
+    }
+  }
+  return list
+}
+
+function collectAuthoritativeRuntimeBindings(inspectDoc) {
+  const runtimePorts = isPlainPortMap(inspectDoc.NetworkSettings.Ports)
+    ? inspectDoc.NetworkSettings.Ports
+    : {}
+  const list = []
+  const configured = configuredPublishedPorts(inspectDoc)
+  const seenConfigured = new Set()
+
+  for (const containerPort of configured) {
+    seenConfigured.add(containerPort)
+    const maps = runtimePorts[containerPort]
+    if (!Array.isArray(maps) || maps.length === 0) {
+      list.push(unresolvedRuntimeBinding(containerPort, 'missing-or-malformed-runtime-publication'))
+      continue
+    }
+    for (const map of maps) {
+      if (!isWellFormedRuntimeMap(map)) {
+        list.push(unresolvedRuntimeBinding(containerPort, 'malformed-runtime-publication'))
+        continue
+      }
+      list.push({
+        containerPort,
+        HostIp: map.HostIp,
+        HostPort: map.HostPort,
+      })
+    }
+  }
+
+  for (const [containerPort, maps] of Object.entries(runtimePorts)) {
+    if (seenConfigured.has(containerPort)) continue
     if (!Array.isArray(maps)) continue
     for (const map of maps) {
       list.push({
@@ -75,7 +138,8 @@ export function parseDockerPortBindings(inspectJson) {
   if (hasResolvedRuntimePortMappings(parsed)) {
     // Actual post-start publication. Do not fall back to HostConfig to
     // manufacture PASS when this field exists, even if it is empty/public.
-    return collectPublishedPortMaps(parsed.NetworkSettings.Ports)
+    // Configured published ports must still appear as well-formed runtime maps.
+    return collectAuthoritativeRuntimeBindings(parsed)
   }
   const configured = parsed?.HostConfig?.PortBindings
   if (configured !== undefined) {

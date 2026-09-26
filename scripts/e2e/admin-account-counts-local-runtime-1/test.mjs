@@ -284,8 +284,9 @@ test('post-start observation prefers resolved NetworkSettings.Ports over empty H
     HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '127.0.0.1', HostPort: '54324' }] } },
     NetworkSettings: { Ports: {} },
   })
-  assert.deepEqual(emptyPresentRuntime, [])
-  assert.throws(() => assertLoopbackBindings(emptyPresentRuntime), /No published bindings/)
+  assert.equal(emptyPresentRuntime[0].containerPort, '8025/tcp')
+  assert.equal(emptyPresentRuntime[0].HostIp, '')
+  assert.throws(() => assertLoopbackBindings(emptyPresentRuntime), /Public or unspecified/)
 
   const multiOk = parseDockerPortBindings({
     HostConfig: {
@@ -319,6 +320,79 @@ test('post-start observation prefers resolved NetworkSettings.Ports over empty H
     },
   })
   assert.throws(() => assertLoopbackBindings(multiPublic), /Public or unspecified/)
+})
+
+test('authoritative runtime mappings fail closed when a configured published port is missing or malformed', () => {
+  const safePlusMissing = parseDockerPortBindings({
+    HostConfig: {
+      PortBindings: {
+        '54321/tcp': [{ HostIp: '', HostPort: '54321' }],
+        '8025/tcp': [{ HostIp: '', HostPort: '54324' }],
+      },
+    },
+    NetworkSettings: {
+      Ports: {
+        '54321/tcp': [{ HostIp: '127.0.0.1', HostPort: '54321' }],
+      },
+    },
+  })
+  assert.ok(safePlusMissing.some((item) => item.containerPort === '54321/tcp' && item.HostIp === '127.0.0.1'))
+  assert.ok(safePlusMissing.some((item) => item.containerPort === '8025/tcp' && item.HostIp === ''))
+  assert.throws(() => assertLoopbackBindings(safePlusMissing), /Public or unspecified/)
+
+  const configuredNull = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': null } },
+  })
+  assert.equal(configuredNull[0].containerPort, '8025/tcp')
+  assert.equal(configuredNull[0].HostIp, '')
+  assert.throws(() => assertLoopbackBindings(configuredNull), /Public or unspecified/)
+
+  const configuredEmpty = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [] } },
+  })
+  assert.throws(() => assertLoopbackBindings(configuredEmpty), /Public or unspecified/)
+
+  const configuredMalformed = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': { HostIp: '127.0.0.1', HostPort: '54324' } } },
+  })
+  assert.throws(() => assertLoopbackBindings(configuredMalformed), /Public or unspecified/)
+
+  const missingHostPort = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [{ HostIp: '127.0.0.1' }] } },
+  })
+  assert.throws(() => assertLoopbackBindings(missingHostPort), /Public or unspecified/)
+
+  const unconfiguredInternalNull = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '54321/tcp': [{ HostIp: '', HostPort: '54321' }] } },
+    NetworkSettings: {
+      Ports: {
+        '54321/tcp': [{ HostIp: '127.0.0.1', HostPort: '54321' }],
+        '5432/tcp': null,
+      },
+    },
+  })
+  assert.equal(unconfiguredInternalNull.length, 1)
+  assert.equal(unconfiguredInternalNull[0].containerPort, '54321/tcp')
+  assert.equal(unconfiguredInternalNull[0].HostIp, '127.0.0.1')
+  assert.equal(assertLoopbackBindings(unconfiguredInternalNull), true)
+
+  const mailpitResolved = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [{ HostIp: '127.0.0.1', HostPort: '54324' }] } },
+  })
+  assert.equal(mailpitResolved[0].HostIp, '127.0.0.1')
+  assert.equal(assertLoopbackBindings(mailpitResolved), true)
+
+  const publicRuntime = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [{ HostIp: '0.0.0.0', HostPort: '54324' }] } },
+  })
+  assert.equal(publicRuntime[0].HostIp, '0.0.0.0')
+  assert.throws(() => assertLoopbackBindings(publicRuntime), /Public or unspecified/)
 })
 
 test('wrong CLI checksum, version and help fail closed', () => {
