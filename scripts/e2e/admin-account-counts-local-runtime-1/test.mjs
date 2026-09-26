@@ -4367,7 +4367,7 @@ test('owned stack start stays blocked when the docker publish shim is missing', 
 function writeFakeNpm(binDir) {
   mkdirSync(binDir, { recursive: true })
   const npmPath = join(binDir, 'npm')
-  writeFileSync(npmPath, `#!/usr/bin/env node
+  writeFileSync(npmPath, `#!${process.execPath}
 const { mkdirSync, writeFileSync } = require('node:fs')
 const { dirname, join } = require('node:path')
 const nextBin = join(process.cwd(), 'node_modules/next/dist/bin/next')
