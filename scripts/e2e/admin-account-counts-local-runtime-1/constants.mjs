@@ -28,6 +28,13 @@ export const MACOS_DOCKER_FIX_1 = Object.freeze({
   branch: 'fix/admin-account-counts-macos-docker-runtime-1',
   productBaseline: 'b440a6759c7c479d1b7509ecbefcac7b95c4ea35',
 })
+export const DOCKER_PUBLISH_SHIM_1 = Object.freeze({
+  agent: 'Jetnity admin account counts docker publish shim 1',
+  generation: 1,
+  task: 'docs/ADMIN_ACCOUNT_COUNTS_DOCKER_PUBLISH_SHIM_1_TASK_2026-09-26.md',
+  branch: 'fix/admin-account-counts-docker-publish-shim-1',
+  productBaseline: '8bb9dd31d5b1a585262c3e773bddab0693d0d3ba',
+})
 export const RUN_LABEL_PREFIX = 'aaclr1'
 export const CONTRACT_VERSION = 'jetnity.account-counts.local-acceptance.v1'
 

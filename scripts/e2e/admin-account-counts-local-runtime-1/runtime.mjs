@@ -27,6 +27,7 @@ import { materialisiereAppCheckout } from './source.mjs'
 import { leseUnveraenderteSql } from './schema.mjs'
 import { markFallible, registerHandle, syncAppOwnership } from './ownership.mjs'
 import { ROOT } from './constants.mjs'
+import { prepareDockerPublishShim } from './docker-publish-shim.mjs'
 
 function quoteIdent(value) {
   return `'${String(value).replace(/'/g, "''")}'`
@@ -61,6 +62,9 @@ export async function defaultStartRuntime({
   if (!owned?.evidenceDir || !existsSync(owned.evidenceDir)) {
     throw notACompletedExecution('runtime rehearsal', 'private §4 evidenceDir is missing')
   }
+  if (!owned?.privateHome) {
+    throw notACompletedExecution('runtime rehearsal', 'run-owned private HOME is missing')
+  }
 
   const registry = owned.registry
   markFallible(registry)
@@ -69,7 +73,6 @@ export async function defaultStartRuntime({
   registerHandle(registry, 'dockerBin', docker.selected.path)
   registerHandle(registry, 'cliBin', cli.resolved)
   registerHandle(registry, 'workdir', prepared.workdir)
-  registerHandle(registry, 'childEnv', childEnv)
   registerHandle(registry, 'execFile', execFile)
   registerHandle(registry, 'projectId', prepared.projectId)
   owned.network = registry.network
@@ -77,11 +80,31 @@ export async function defaultStartRuntime({
   owned.cliBin = cli.resolved
   owned.workdir = prepared.workdir
 
+  const preparedShim = prepareDockerPublishShim({
+    privateHome: owned.privateHome,
+    toolingDir: owned.toolingDir,
+    realDockerBin: docker.selected.path,
+    childEnv,
+    cli,
+    docker,
+    runId: prepared.projectId || owned.runId,
+  })
+  registerHandle(registry, 'dockerPublishShim', preparedShim.shim)
+  registerHandle(registry, 'harnessDockerEnv', childEnv)
+  registerHandle(registry, 'cliChildEnv', preparedShim.cliEnv)
+  registerHandle(registry, 'childEnv', preparedShim.cliEnv)
+  owned.dockerPublishShim = preparedShim.shim
+  owned.cliChildEnv = preparedShim.cliEnv
+
   const stack = await starteOwnedStack({
     cliBin: cli.resolved,
     dockerBin: docker.selected.path,
     workdir: prepared.workdir,
     env: childEnv,
+    cliEnv: preparedShim.cliEnv,
+    dockerPublishShim: preparedShim.shim,
+    cliIdentity: cli,
+    privateHome: owned.privateHome,
     plan,
     networkName,
     excludeNames: cli.excludeNames || [],

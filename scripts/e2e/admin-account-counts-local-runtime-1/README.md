@@ -62,12 +62,18 @@ are present, `--runtime-only` / `--full` can:
    `com.docker.network.bridge.host_binding_ipv4=127.0.0.1` **before** start.
 3. Start the official CLI against a disclosed overlay (unique project id,
    numeric loopback ports, Studio off, seed off). Auth semantics stay unchanged.
-   Post-start publication is read from resolved `NetworkSettings.Ports` when
-   that field exists. Empty `HostConfig.PortBindings` HostIp placeholders cannot
-   override a concrete runtime mapping, and they cannot manufacture PASS when
-   the runtime mapping is public, empty or malformed. HostConfig is only a
-   bounded fallback when `NetworkSettings.Ports` is genuinely absent, and only
-   explicit `127.0.0.1` can pass. Mailpit stays enabled.
+   The official CLI child is the only process that sees a private run-owned
+   PATH shim named `docker`; that shim rewrites `create -p` / `--publish` to
+   explicit `127.0.0.1` before any container starts. Harness Docker operations
+   keep the exact verified real binary. Official CLI archive/binary bytes stay
+   unchanged. Post-start publication is read from resolved
+   `NetworkSettings.Ports` when that field exists. Empty
+   `HostConfig.PortBindings` HostIp placeholders cannot override a concrete
+   runtime mapping, and they cannot manufacture PASS when the runtime mapping
+   is public, empty or malformed. HostConfig is only a bounded fallback when
+   `NetworkSettings.Ports` is genuinely absent, and only explicit `127.0.0.1`
+   can pass. Mailpit stays enabled. The shim is prevention; runtime inspection
+   remains independent verification.
 4. Replay the committed migration inventory into that owned catalog.
 5. Install the unchanged #557 producer + wrapper only. SHA256 must remain
    `612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de` /

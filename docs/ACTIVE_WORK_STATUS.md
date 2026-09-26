@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #564 C1 REVIEW-FIX FROZEN FOR TL RE-REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #565 DOCKER PUBLISH SHIM 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,25 +11,26 @@ Status: **NORMAL / DRAFT PR #564 C1 REVIEW-FIX FROZEN FOR TL RE-REVIEW / NOT REA
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts Runtime Binding Observation Fix 1 |
-| Branch / PR | `fix/admin-account-counts-runtime-binding-observation-1` / Draft https://github.com/Jetnity/jetnity/pull/564 |
-| Base | `40fffe38102012ae3ffa5f5b7e2bc24c1a100b42` |
-| Implementation persist | `7509ae3f38883895855936170b9c6ba36b1ab7d4` (C1; prior freeze `fc5473e3` historical) |
-| Status | C1 review-fix / wartet auf unabhängigen Technical-Lead exact-head Re-Review |
-| Agent | Jetnity admin account counts runtime binding observation fix 1, Gen 1, session `bc-abaf4d85-1737-4b3d-b5d4-802ea7bc697a` |
+| Arbeitsblock | Admin Account Counts Docker Publish Shim 1 |
+| Branch / PR | `fix/admin-account-counts-docker-publish-shim-1` / Draft https://github.com/Jetnity/jetnity/pull/565 |
+| Base | `8bb9dd31d5b1a585262c3e773bddab0693d0d3ba` |
+| Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
+| Agent | Jetnity admin account counts docker publish shim 1, Gen 1, session `bc-71eec955-6442-47db-83e9-404c7be6d4d3` |
 | Model | cursor-grok-4.6-high-fast |
 
-#563 Effect root-usage parser is **MERGED** on this base. The first authorized real-Mac stack start after that merge created the dedicated owned network with `com.docker.network.bridge.host_binding_ipv4=127.0.0.1`, then false-blocked on Mailpit `8025/tcp -> 54324` because the harness preferred empty `HostConfig.PortBindings` HostIp over resolved `NetworkSettings.Ports`.
+#564 runtime-binding observation is **MERGED** on this base. The next authorized real-Mac stack start on exact main `8bb9dd31` (`aaclr1-20260926T113202Z`) correctly reported Mailpit `8025/tcp -> 0.0.0.0:54324` and aborted. That is a real public bind, not a parser defect. The owned-network option `com.docker.network.bridge.host_binding_ipv4=127.0.0.1` is not sufficient on that Docker Desktop path.
 
-Bereits umgesetzt: NetworkSettings-first observation preserved; C1 now fails closed when a HostConfig-published port is missing/`null`/`[]`/malformed in authoritative `NetworkSettings.Ports`, including when another owned port is valid `127.0.0.1`; unconfigured internal `null` ports do not false-fail; Mailpit HostConfig-empty + runtime `127.0.0.1` still PASS; public runtime mapping still FAIL; loopback policy and pre-launch network option unchanged; Mailpit stays enabled; CLI identity / Docker endpoint / runtime / fixtures / browser / Auth / SQL / Production untouched; controlled tests 48/48 PASS (prior 47 preserved); default no-start receipt `aaclr1-20260926T111109Z` is `BLOCKED_ENVIRONMENT`.
+Bereits umgesetzt: private run-owned PATH shim named `docker` for the official Supabase CLI child only; `docker create -p` / `--publish` rewritten to explicit `127.0.0.1` before start; public/ambiguous publish syntax fail closed; harness Docker keeps the exact real binary; official CLI archive/binary stays byte-identical; #564 NetworkSettings inspection unchanged and still authoritative; Mailpit stays enabled; product/Auth/SQL/config/CI untouched; controlled tests 55/55 PASS (prior 48 preserved); default no-start receipt `aaclr1-20260926T114704Z` is `BLOCKED_ENVIRONMENT`.
 
-Noch offen: independent TL exact-head re-review of C1; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac rerun. No Production/hosted mutation.
+Noch offen: independent TL exact-head review of this head; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac rerun. No Production/hosted mutation.
 
-DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed.
+DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: Technical Lead re-reviews the exact current head of Draft PR #564 after C1. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #565. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_RUNTIME_BINDING_OBSERVATION_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `stack.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_DOCKER_PUBLISH_SHIM_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `docker-publish-shim.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+
+#564 C1 is merged on this base and is not the current writer.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
