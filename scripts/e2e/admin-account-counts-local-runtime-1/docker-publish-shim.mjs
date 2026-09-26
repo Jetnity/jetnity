@@ -48,6 +48,57 @@ function isPort(value) {
   return Number.isInteger(port) && port >= 1 && port <= 65535
 }
 
+export function parseDockerPublishValue(value) {
+  if (value == null) {
+    throw new Error('missing docker create publish value')
+  }
+  const raw = String(value)
+  if (raw === '') throw new Error('missing docker create publish value')
+  if (/[\s,]/.test(raw)) throw new Error('ambiguous docker create publish value')
+  if (raw.includes('[') || raw.includes(']')) {
+    throw new Error('IPv6 docker create publish syntax is refused')
+  }
+  if (raw.includes('-')) {
+    throw new Error('docker create publish port ranges are refused')
+  }
+
+  let rest = raw
+  let protocol = ''
+  const proto = rest.match(/^(.*)\/([A-Za-z0-9]+)$/)
+  if (proto) {
+    rest = proto[1]
+    protocol = proto[2].toLowerCase()
+    if (protocol !== 'tcp' && protocol !== 'udp') {
+      throw new Error('unexpected docker create publish protocol')
+    }
+  }
+
+  const parts = rest.split(':')
+  if (parts.length === 2) {
+    const [hostPort, containerPort] = parts
+    if (!isPort(hostPort) || !isPort(containerPort)) {
+      throw new Error('malformed docker create publish hostPort:containerPort')
+    }
+    return { host: null, hostPort, containerPort, protocol }
+  }
+  if (parts.length === 3) {
+    const [host, hostPort, containerPort] = parts
+    if (host !== LOOPBACK_HOST) {
+      throw new Error(`docker create publish host ${host || '<empty>'} is refused`)
+    }
+    if (!isPort(hostPort) || !isPort(containerPort)) {
+      throw new Error('malformed docker create publish 127.0.0.1:hostPort:containerPort')
+    }
+    return { host, hostPort, containerPort, protocol }
+  }
+  throw new Error('unexpected docker create publish syntax')
+}
+
+export function formatLoopbackPublishValue(parsed) {
+  const proto = parsed.protocol ? `/${parsed.protocol}` : ''
+  return `${LOOPBACK_HOST}:${parsed.hostPort}:${parsed.containerPort}${proto}`
+}
+
 export function locateDockerCommand(tokens = []) {
   // Pinned v2.117 calls the container CLI with "create" as argv[0].
   // Every other command is delegated byte-for-byte. A future "docker container
@@ -90,6 +141,10 @@ export function rewriteDockerArgv(argv = []) {
       out.push(token)
       index += 1
       continue
+    }
+
+    if (token === '-P' || token === '--publish-all') {
+      throw new Error('docker create --publish-all is refused')
     }
 
     if (!CREATE_VALUE_OPTIONS.has(token)) {

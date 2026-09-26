@@ -4099,6 +4099,8 @@ test('run-owned docker shim is self-contained and provenance-bound', () => {
   const beforeBytes = readFileSync(prep.shim.path, 'utf8')
   const beforeHash = sha256File(prep.shim.path)
   assert.equal(beforeHash, prep.shim.sha256)
+  assert.match(beforeBytes, /function parseDockerPublishValue/)
+  assert.match(beforeBytes, /function formatLoopbackPublishValue/)
   assert.match(beforeBytes, /function rewriteDockerArgv/)
   assert.match(beforeBytes, /spawnSync/)
   assert.doesNotMatch(beforeBytes, /import\s*\(/)
