@@ -31,6 +31,7 @@ import {
   parseCountDelta,
   screenshotCountSection,
   sectionPresent,
+  waitForAccountCountsTerminalState,
 } from './counts.mjs'
 import { navigateDocument, reloadDocument } from './navigation.mjs'
 import {
@@ -337,6 +338,12 @@ export async function runG16RestrictedStatus(page, origin, context, timing) {
           timeout: timing.timeoutMs,
           expectedOrigin: origin,
         })
+        await waitForAccountCountsTerminalState(page, {
+          kind: 'forbidden',
+          expectedOrigin: origin,
+          response,
+          timing,
+        })
         await assertNoCountDisclosure(page, {
           expectKind: ['forbidden', 'login-denied', 'unauthorized'],
           expectedOrigin: origin,
@@ -366,6 +373,12 @@ export async function runG17MissingWrapper(page, origin, context, timing) {
         waitUntil: 'domcontentloaded',
         timeout: timing.timeoutMs,
         expectedOrigin: origin,
+      })
+      await waitForAccountCountsTerminalState(page, {
+        kind: 'unavailable',
+        expectedOrigin: origin,
+        response,
+        timing,
       })
       await assertUnavailableNotZero(page, { expectedOrigin: origin, response })
       return 'missing wrapper rendered unavailable, not 0 accounts'

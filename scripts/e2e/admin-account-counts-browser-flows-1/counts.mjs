@@ -2,10 +2,14 @@
 // Compare rendered Admin counts to the runtime's independent expectedCounts().
 
 import { COUNT_VALUE_SELECTORS, PATHS, SELECTORS, UI_COPY, WINDOW_HOURS } from './constants.mjs'
-import { parseAbsoluteHttpUrl, sameExactOrigin } from './contract.mjs'
+import { OwnershipUncertaintyError, parseAbsoluteHttpUrl, sameExactOrigin } from './contract.mjs'
 import { rewriteScreenshotPng } from './evidence.mjs'
-import { inspectNavigationResponse } from './navigation.mjs'
+import { inspectNavigationResponse, requireReadyNavigation } from './navigation.mjs'
+import { waitForRequestsToSettle } from './observer.mjs'
 import { WINDOW_US, parsePgTimestamptz } from './payload.mjs'
+
+export const ACCOUNT_COUNTS_TERMINAL_KINDS = Object.freeze(['forbidden', 'unavailable'])
+const ACCOUNT_COUNTS_INTERMEDIATE_KINDS = Object.freeze(['unknown', 'disabled', 'blank'])
 
 export function normalizeCount(value) {
   return String(value ?? '').replace(/\./g, '').replace(/\s/g, '').trim()
@@ -225,6 +229,85 @@ export async function assertUnavailableNotZero(page, options = {}) {
     throw new Error('unavailable wrapper must not present 0 accounts')
   }
   return classified
+}
+
+function waitSignalAborted(timing = {}) {
+  return Boolean(timing.signal?.aborted || timing.budget?.signal?.aborted)
+}
+
+async function classifyAccountCountsWaitState(page, { kind, expectedOrigin, response }) {
+  await bothAggregatesUndisclosed(page)
+  const classified = await classifyDenialUi(page, { expectedOrigin, response })
+  if (classified.navigation && classified.navigation.ok === false) {
+    throw new Error(`navigation was not a ready application response (${classified.navigation.reason})`)
+  }
+  if (classified.kind === kind && classified.path === PATHS.admin) {
+    return { done: true, classified }
+  }
+  if (ACCOUNT_COUNTS_TERMINAL_KINDS.includes(classified.kind)) {
+    throw new Error(`account-counts terminal wait expected ${kind}, got ${classified.kind}`)
+  }
+  if (classified.kind === 'wrong-origin') {
+    throw new Error(`account-counts terminal wait saw wrong origin (${classified.url})`)
+  }
+  if (classified.kind === 'failed') {
+    throw new Error('account-counts terminal wait saw failed copy')
+  }
+  if (
+    ['login', 'login-denied', 'step-up', 'unauthorized'].includes(classified.kind)
+    || classified.path !== PATHS.admin
+  ) {
+    throw new Error(
+      `account-counts terminal wait saw unexpected path/kind ${classified.kind} on ${classified.path}`,
+    )
+  }
+  if (!ACCOUNT_COUNTS_INTERMEDIATE_KINDS.includes(classified.kind)) {
+    throw new Error(`account-counts terminal wait saw unexpected ${classified.kind}`)
+  }
+  return { done: false, classified }
+}
+
+export async function waitForAccountCountsTerminalState(page, {
+  kind,
+  expectedOrigin,
+  response,
+  timing = {},
+} = {}) {
+  if (!ACCOUNT_COUNTS_TERMINAL_KINDS.includes(kind)) {
+    throw new Error(`unsupported account-counts terminal kind ${kind}`)
+  }
+  if (waitSignalAborted(timing)) {
+    throw new Error('aborted while waiting for account-counts terminal state')
+  }
+
+  const pageUrl = typeof page.url === 'function' ? page.url() : undefined
+  requireReadyNavigation(response, { expectedOrigin, pageUrl })
+
+  const poll = async (capMs) => {
+    const budgetMs = Math.max(1, Number(capMs) || 1)
+    const deadline = Date.now() + budgetMs
+    const settleMs = Math.min(Math.max(1, Number(timing.settleMs) || 500), budgetMs)
+    await waitForRequestsToSettle(page, {
+      timeoutMs: settleMs,
+      signal: timing.signal ?? timing.budget?.signal,
+    })
+    while (Date.now() < deadline) {
+      if (waitSignalAborted(timing)) {
+        throw new Error('aborted while waiting for account-counts terminal state')
+      }
+      const observed = await classifyAccountCountsWaitState(page, { kind, expectedOrigin, response })
+      if (observed.done) return observed.classified
+      await new Promise((resolve) => setTimeout(resolve, 20))
+    }
+    throw new OwnershipUncertaintyError(
+      'accountCounts.terminal did not observe the exact source-backed state; run is terminal until cleanup',
+    )
+  }
+
+  if (timing.budget?.action) {
+    return timing.budget.action('accountCounts.terminal', (timeoutMs) => poll(timeoutMs))
+  }
+  return poll(timing.timeoutMs)
 }
 
 export async function screenshotCountSection(page, filePath, timing = {}) {
