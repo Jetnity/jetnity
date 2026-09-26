@@ -4038,6 +4038,99 @@ test('docker publish shim rejects public, ambiguous and malformed create publish
   )
 })
 
+test('docker publish shim stops parsing at the pinned v2.117 image boundary', () => {
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '-p', '54324:8025', 'image', '-p', 'literal-cmd-arg']).argv,
+    ['create', '-p', '127.0.0.1:54324:8025', 'image', '-p', 'literal-cmd-arg'],
+  )
+  assert.deepEqual(
+    rewriteDockerArgv(['create', 'image', '--publish', 'literal-cmd-arg']).argv,
+    ['create', 'image', '--publish', 'literal-cmd-arg'],
+  )
+
+  const builderShaped = [
+    'create',
+    '--name', 'mailpit',
+    '--rm',
+    '--hostname', '127.0.0.1',
+    '-e', 'KEY',
+    '-v', 'vol:/data',
+    '--volumes-from', 'storage',
+    '--tmpfs', '/tmp',
+    '-p', '54324:8025',
+    '--expose', '8025',
+    '--health-cmd', 'CMD /mailpit readyz',
+    '--health-interval', '10s',
+    '--health-timeout', '2s',
+    '--health-retries', '3',
+    '--health-start-period', '10s',
+    '--restart', 'unless-stopped',
+    '--security-opt', 'label:disable',
+    '--add-host', 'host.docker.internal:host-gateway',
+    '--network', 'aaclr1-network',
+    '--network-alias', 'inbucket',
+    '--label', 'com.supabase.cli.project=test',
+    '--entrypoint', 'sh',
+    'mailpit/image:pin',
+    '-c', 'echo -p literal-cmd-arg --publish untouched',
+  ]
+  const expected = [...builderShaped]
+  expected[builderShaped.indexOf('54324:8025')] = '127.0.0.1:54324:8025'
+  assert.deepEqual(rewriteDockerArgv(builderShaped).argv, expected)
+
+  assert.throws(
+    () => rewriteDockerArgv(['create', '--privileged', 'image']),
+    /unexpected docker create option before image/,
+  )
+  assert.throws(
+    () => rewriteDockerArgv(['container', 'create', '-p', '54324:8025', 'image']),
+    /unexpected docker container create/,
+  )
+})
+
+test('run-owned docker shim is self-contained and provenance-bound', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-self-contained-'))
+  const recorderPath = join(home, 'real.json')
+  const prep = prepareTestDockerShim(home, {
+    recorderPath,
+    runId: 'aaclr1-self-contained',
+    childEnv: { PATH: '/usr/bin' },
+  })
+  const beforeBytes = readFileSync(prep.shim.path, 'utf8')
+  const beforeHash = sha256File(prep.shim.path)
+  assert.equal(beforeHash, prep.shim.sha256)
+  assert.match(beforeBytes, /function rewriteDockerArgv/)
+  assert.match(beforeBytes, /spawnSync/)
+  assert.doesNotMatch(beforeBytes, /import\s*\(/)
+  assert.doesNotMatch(beforeBytes, /docker-publish-shim\.mjs/)
+  assert.doesNotMatch(beforeBytes, /moduleHref/)
+
+  // A repository-side lookalike can change after creation without being
+  // consulted: all enforcement code is already frozen into the hashed shim.
+  const mutableRepoLookalike = join(home, 'docker-publish-shim.mjs')
+  writeFileSync(mutableRepoLookalike, 'throw new Error("mutated repository module")\n')
+  execFileSync(prep.shim.path, ['create', '-p', '54324:8025', 'image'], {
+    encoding: 'utf8',
+    env: prep.cliEnv,
+  })
+  assert.deepEqual(
+    JSON.parse(readFileSync(recorderPath, 'utf8')),
+    ['create', '-p', '127.0.0.1:54324:8025', 'image'],
+  )
+  writeFileSync(mutableRepoLookalike, 'process.exit(99)\n')
+  execFileSync(prep.shim.path, ['create', '-p', '54324:8025', 'image', '-p', 'cmd-literal'], {
+    encoding: 'utf8',
+    env: prep.cliEnv,
+  })
+  assert.deepEqual(
+    JSON.parse(readFileSync(recorderPath, 'utf8')),
+    ['create', '-p', '127.0.0.1:54324:8025', 'image', '-p', 'cmd-literal'],
+  )
+  assert.equal(sha256File(prep.shim.path), beforeHash)
+  assert.equal(readFileSync(prep.shim.path, 'utf8'), beforeBytes)
+  rmSync(home, { recursive: true, force: true })
+})
+
 test('docker publish shim file uses the exact real Docker binary and ignores hostile PATH', () => {
   const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-exec-'))
   const first = assertShimDelegates(home, ['create', '-p', '54324:8025', 'img'], ['create', '-p', '127.0.0.1:54324:8025', 'img'])
