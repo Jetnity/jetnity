@@ -73,9 +73,18 @@ export const COUNT_VALUE_SELECTORS = Object.freeze({
   section: '[aria-labelledby="admin-account-counts-titel"]',
 })
 
+export const ENROLL_SUCCESS_SELECTORS = Object.freeze({
+  lageReady: '[data-security-lage="ready"]',
+})
+
 export const UI_COPY = Object.freeze({
   ...COPY,
+  // Fleeting handleVerify toast. refreshFactors() immediately setMessage(null).
   enrollSuccess: 'Authenticator-App erfolgreich aktiviert.',
+  // Durable post-verify product state after listFactors refresh.
+  enrollConfirmedList: 'Eingerichtete Authenticator-Apps',
+  enrollVerifiedStatus: 'bestätigt',
+  enrollFormStep: 'Schritt 2',
   stepUpDialogTitle: 'Bestätige deinen TOTP-Code',
   noFactor: 'Für diesen Zugang fehlt ein bestätigter Authenticator',
   ordinaryDenied: 'Dieses Konto hat keinen Zugang zur Administration.',

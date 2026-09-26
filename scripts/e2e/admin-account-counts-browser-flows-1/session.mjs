@@ -2,7 +2,7 @@
 // Actual Playwright UI login, enroll and step-up. Secrets stay in memory.
 
 import { generateTotp, looksLikeTotpCode } from '../admin-account-counts-browser-acceptance-1/totp.mjs'
-import { PATHS, SELECTORS, UI_COPY } from './constants.mjs'
+import { ENROLL_SUCCESS_SELECTORS, PATHS, SELECTORS, UI_COPY } from './constants.mjs'
 import { OwnershipUncertaintyError, sameExactOrigin } from './contract.mjs'
 import { requireReadyNavigation } from './navigation.mjs'
 
@@ -101,6 +101,74 @@ export function isSuccessfulAuthPayload(payload, { requireToken = false, require
   if (requireToken && !extractAccessToken(payload)) return false
   if (requireSecret && !extractTotpSecret(payload)) return false
   return true
+}
+
+export function isSourceBackedEnrollSuccessText(text) {
+  const body = String(text ?? '')
+  if (!body.includes(UI_COPY.enrollConfirmedList)) return false
+  if (!body.includes(UI_COPY.enrollVerifiedStatus)) return false
+  if (body.includes(UI_COPY.enrollFormStep)) return false
+  return true
+}
+
+export async function observeSourceBackedEnrollSuccess(page) {
+  const text = await visibleText(page)
+  const textOk = isSourceBackedEnrollSuccessText(text)
+  let formVisible = false
+  let lageReady = false
+  if (typeof page.locator === 'function') {
+    const code = page.locator(SELECTORS.enrollCode)
+    if (typeof code?.isVisible === 'function') {
+      formVisible = await code.isVisible().catch(() => false)
+    }
+    const lage = page.locator(ENROLL_SUCCESS_SELECTORS.lageReady)
+    if (typeof lage?.isVisible === 'function') {
+      lageReady = await lage.isVisible().catch(() => false)
+    } else if (typeof lage?.count === 'function') {
+      lageReady = (await lage.count()) > 0
+    }
+  }
+  return {
+    ok: textOk && !formVisible,
+    textOk,
+    formVisible,
+    lageReady,
+  }
+}
+
+export async function waitForSourceBackedEnrollSuccess(page, timeoutMs, signal) {
+  const deadline = Date.now() + Math.max(1, Number(timeoutMs) || 8_000)
+  while (Date.now() < deadline) {
+    if (signal?.aborted) throw new Error('aborted while waiting for enroll success')
+    const observed = await observeSourceBackedEnrollSuccess(page)
+    if (observed.ok) return observed
+    await new Promise((resolve) => setTimeout(resolve, 20))
+  }
+  throw new Error('source-backed enroll success state was not observed')
+}
+
+export async function applyObservedEnrollVerify(response, store, expectedActor) {
+  if (!response) {
+    if (store) store.accessToken = null
+    return { observed: false }
+  }
+  const payload = await response.json().catch(() => null)
+  const status = typeof response.status === 'function' ? response.status() : response.status
+  if (typeof status === 'number' && (status < 200 || status >= 300)) {
+    if (store) store.accessToken = null
+    throw new Error('enroll verify response was not successful')
+  }
+  if (!isSuccessfulAuthPayload(payload, { requireToken: true })) {
+    if (store) store.accessToken = null
+    throw new Error('enroll verify response was not successful')
+  }
+  if (!payloadMatchesExpectedActor(payload, expectedActor)) {
+    if (store) store.accessToken = null
+    throw new Error('enroll verify payload did not match the expected actor')
+  }
+  const token = extractAccessToken(payload)
+  if (store) store.accessToken = token
+  return { observed: true, payload }
 }
 
 export function beginBrowserSession(store, expectedActor = store?.expectedActor ?? null) {
@@ -328,23 +396,11 @@ export async function enrollTotpViaUi(page, origin, store, timing = {}) {
   await boundAction(timing, 'enroll.confirm', (timeoutMs) => confirm.click({ timeout: timeoutMs }))
   if (verifyResponse) {
     const response = await verifyResponse
-    if (!response) {
-      store.accessToken = null
-    } else {
-      const payload = await response.json().catch(() => null)
-      const expectedActor = timing.expectedActor ?? store.expectedActor
-      if (isSuccessfulAuthPayload(payload, { requireToken: true }) && payloadMatchesExpectedActor(payload, expectedActor)) {
-        store.accessToken = extractAccessToken(payload)
-      } else {
-        store.accessToken = null
-      }
-    }
+    await applyObservedEnrollVerify(response, store, timing.expectedActor ?? store.expectedActor)
   }
-  if (page.getByText) {
-    await boundAction(timing, 'enroll.success', (timeoutMs) =>
-      page.getByText(UI_COPY.enrollSuccess).waitFor({ timeout: timeoutMs }),
-    )
-  }
+  await boundAction(timing, 'enroll.success', (timeoutMs) =>
+    waitForSourceBackedEnrollSuccess(page, timeoutMs, timing.signal),
+  )
   store.enrolled = true
 }
 
