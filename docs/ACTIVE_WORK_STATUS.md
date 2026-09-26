@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 27. September 2026
-Status: **NORMAL / ADMIN ACCOUNT COUNTS LOCAL FULL-STACK PASS CLOSED / PRODUCTION ACTIVATION GATED / NEXT NORMAL SLICE SELECTION**
+Status: **NORMAL / HOMEPAGE NATURAL ROUTE INTENT MERGED / NO V1-CRITICAL UNGATED RUNTIME SLICE PROVEN / NEXT STEP REQUIRES GATED LAUNCH DECISION OR RELEASE PROOF**
 
 > Live evidence wins. This file is continuity only; always re-fetch GitHub/Vercel/Supabase before acting.
 
@@ -14,7 +14,9 @@ Status: **NORMAL / ADMIN ACCOUNT COUNTS LOCAL FULL-STACK PASS CLOSED / PRODUCTIO
 - Account-count Production migration/RPC/grant/live exposure remains a **separate Production/Product-Owner gate** and is **not auto-started**.
 - No hosted Supabase mutation occurred in the local acceptance run.
 - PR #573 is merged and no longer a writer.
-- Next normal product candidate to precheck: issue #110 natural multi-destination homepage intent, now that #543 confirmed-route entry is merged. No runtime starts until the Technical Lead completes the fresh Binding Slice Precheck.
+- Homepage natural multi-destination intent #575 is merged on `f517da74a187a26db387a6578fe66893c8646782`; #110 runtime scope is integrated. Physical-device acceptance remains release proof, not an unimplemented runtime foundation.
+- Visitor Search country-alias correctness was already integrated via PR #168; issue #109 remains only as historical/device-proof tracker.
+- Fresh remaining-work reconciliation finds no additional V1-critical ungated runtime slice proven ready for autonomous dispatch. Remaining V1 launch work is primarily provider/legal/SMTP/deletion-retention/observability/security-ingestion/Production/release-proof gated.
 
 Canonical closure:
 `docs/ADMIN_ACCOUNT_COUNTS_LOCAL_FULL_STACK_PASS_CLOSURE_2026-09-27.md`
@@ -143,7 +145,7 @@ Latest verified governance integration baseline:
 
 Normal bounded work may be selected by the Technical Lead while mode is NORMAL and no special Product-Owner gate is crossed. Reconstruct live #551, #550 and #552 before treating any as the current writer. Direct Cursor UI/session state must still be re-fetched when accessible. Scheduled Technical-Lead automation remains disabled. Product-Owner primary domain is `jetnity.com` with no implied cutover.
 
-Current Product-Owner Cursor model preference: **Cursor Grok 4.6 High Fast**. Do not use Auto. If that model is unavailable, stop/report instead of silently substituting. This supersedes prior Opus requirements until the Product Owner changes it.
+Current Product-Owner Cursor model preference: **Cursor Grok 4.7 High Fast** for every NEW Cursor agent/session. Do not use Auto. Existing already-bound sessions keep their explicitly versioned model (for example historical 4.6 sessions) through their same-session review/fix loop. If Grok 4.7 High Fast is unavailable for a new slice, stop/report instead of silently substituting.
 
 Always reconstruct live state before acting. A later continuity-only merge may move `main` without changing runtime truth.
 
