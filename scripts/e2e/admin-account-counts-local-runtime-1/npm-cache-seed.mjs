@@ -2,6 +2,8 @@
 // Seed the run-owned private npm cache from the original user's local
 // content-addressable cache only. Never copy .npmrc, auth, logs, or npm
 // config. The isolated npm ci stays offline, ignore-scripts and lockfile-bound.
+// Original HOME / source _cacache stay strict (visible === real). The
+// harness-created private HOME may have a visible/canonical ancestor alias.
 
 import {
   chmodSync,
@@ -13,7 +15,7 @@ import {
   readdirSync,
   realpathSync,
 } from 'node:fs'
-import { isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { basename, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { notACompletedExecution } from './implementation.mjs'
 
 export const NPM_CACHE_SEED = Object.freeze({
@@ -97,6 +99,170 @@ export function assertNoSymlinkPathComponents(path, root) {
   return resolved
 }
 
+function lstatOrNull(path) {
+  try {
+    return lstatSync(path)
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return null
+    throw error
+  }
+}
+
+export function asRunOwnedPrivateHome(privateHome) {
+  if (privateHome && typeof privateHome === 'object' && privateHome.visibleRoot && privateHome.canonicalRoot) {
+    return privateHome
+  }
+  return assertRunOwnedPrivateHome(privateHome)
+}
+
+export function assertRunOwnedPrivateHome(path) {
+  const visibleRoot = refuseRemoteOrRelativePath(path, 'private HOME')
+  const visible = lstatOrNull(visibleRoot)
+  if (!visible) throw seedError('private HOME is absent')
+  if (visible.isSymbolicLink()) throw seedError('private HOME is a symlink and is refused')
+  if (!visible.isDirectory()) throw seedError('private HOME is not a directory')
+  const canonicalRoot = realpathSync(visibleRoot)
+  if (!canonicalRoot || !isAbsolute(canonicalRoot) || String(canonicalRoot).includes('\0')) {
+    throw seedError('private HOME canonical root is not a local path')
+  }
+  const canonical = lstatSync(canonicalRoot)
+  if (canonical.isSymbolicLink()) throw seedError('private HOME canonical root is a symlink and is refused')
+  if (!canonical.isDirectory()) throw seedError('private HOME canonical root is not a directory')
+  if (basename(visibleRoot) !== basename(canonicalRoot)) {
+    throw seedError('private HOME canonical identity does not match its visible name')
+  }
+  return { visibleRoot, canonicalRoot }
+}
+
+export function visibleRelativeSuffix(path, visibleRoot) {
+  const resolved = resolve(path)
+  const root = resolve(visibleRoot)
+  if (!pathIsUnderRoot(resolved, root)) {
+    throw seedError('path is outside the required local root')
+  }
+  return relative(root, resolved)
+}
+
+export function canonicalPathForVisibleSuffix(canonicalRoot, suffix) {
+  const root = resolve(canonicalRoot)
+  if (suffix == null || suffix === '') return root
+  const rel = String(suffix)
+  if (rel.startsWith(`..${sep}`) || rel === '..' || rel.startsWith('..') || isAbsolute(rel)) {
+    throw seedError('canonical suffix escaped the run-owned private HOME')
+  }
+  return join(root, rel)
+}
+
+export function assertRealPathMatchesVisibleSuffix({
+  realPath,
+  canonicalRoot,
+  suffix,
+  label = 'run-owned path',
+} = {}) {
+  const expected = canonicalPathForVisibleSuffix(canonicalRoot, suffix)
+  const real = resolve(String(realPath))
+  if (!pathIsUnderRoot(real, canonicalRoot)) {
+    throw seedError(`${label} escaped the canonical private HOME`)
+  }
+  if (real !== expected) {
+    throw seedError(`${label} real path escaped the canonical private HOME suffix`)
+  }
+  return real
+}
+
+export function assertNoRunOwnedSymlinkComponents(path, visibleRoot) {
+  const resolved = resolve(path)
+  const rootResolved = resolve(visibleRoot)
+  if (!pathIsUnderRoot(resolved, rootResolved)) {
+    throw seedError('path is outside the required local root')
+  }
+  let current = rootResolved
+  const rel = relative(rootResolved, resolved)
+  if (rel === '') return resolved
+  for (const part of rel.split(sep)) {
+    current = join(current, part)
+    const st = lstatOrNull(current)
+    if (!st) continue
+    if (st.isSymbolicLink()) {
+      throw seedError(`nested symlink is refused: ${current}`)
+    }
+  }
+  return resolved
+}
+
+export function nearestExistingAncestor(path, visibleRoot) {
+  let current = resolve(path)
+  const root = resolve(visibleRoot)
+  if (!pathIsUnderRoot(current, root)) {
+    throw seedError('path is outside the required local root')
+  }
+  while (true) {
+    if (lstatOrNull(current)) return current
+    if (current === root) throw seedError('private HOME is absent')
+    const parent = resolve(current, '..')
+    if (parent === current) throw seedError('path escaped while locating an ancestor')
+    if (!pathIsUnderRoot(parent, root) && parent !== root) {
+      throw seedError('nearest ancestor escaped private HOME')
+    }
+    current = parent
+  }
+}
+
+export function assertRunOwnedContainedPath({
+  path,
+  privateHome,
+  owned,
+  label = 'run-owned path',
+  allowMissing = false,
+} = {}) {
+  const home = asRunOwnedPrivateHome(owned || privateHome)
+  const resolved = refuseRemoteOrRelativePath(path, label)
+  if (!pathIsUnderRoot(resolved, home.visibleRoot)) {
+    throw seedError(`${label} escaped private HOME`)
+  }
+  const suffix = visibleRelativeSuffix(resolved, home.visibleRoot)
+  assertNoRunOwnedSymlinkComponents(resolved, home.visibleRoot)
+  const visible = lstatOrNull(resolved)
+  if (visible) {
+    if (visible.isSymbolicLink()) throw seedError(`${label} is a symlink and is refused`)
+    assertRealPathMatchesVisibleSuffix({
+      realPath: realpathSync(resolved),
+      canonicalRoot: home.canonicalRoot,
+      suffix,
+      label,
+    })
+    return {
+      path: resolved,
+      suffix,
+      canonicalPath: canonicalPathForVisibleSuffix(home.canonicalRoot, suffix),
+      existed: true,
+      owned: home,
+    }
+  }
+  if (!allowMissing) throw seedError(`${label} is absent`)
+  const ancestor = nearestExistingAncestor(resolved, home.visibleRoot)
+  const ancestorSuffix = visibleRelativeSuffix(ancestor, home.visibleRoot)
+  assertNoRunOwnedSymlinkComponents(ancestor, home.visibleRoot)
+  const ancestorVisible = lstatSync(ancestor)
+  if (ancestorVisible.isSymbolicLink()) {
+    throw seedError(`${label} nearest ancestor is a symlink and is refused`)
+  }
+  assertRealPathMatchesVisibleSuffix({
+    realPath: realpathSync(ancestor),
+    canonicalRoot: home.canonicalRoot,
+    suffix: ancestorSuffix,
+    label: `${label} nearest ancestor`,
+  })
+  return {
+    path: resolved,
+    suffix,
+    canonicalPath: canonicalPathForVisibleSuffix(home.canonicalRoot, suffix),
+    existed: false,
+    ancestor,
+    owned: home,
+  }
+}
+
 export function leseOriginalHome(candidate) {
   const home = candidate === undefined ? process.env.HOME : candidate
   return assertLocalNonSymlinkDirectory(home, 'original HOME')
@@ -130,14 +296,23 @@ export function discoverSourceCacache({ originalHome, sourceCacache } = {}) {
 }
 
 export function resolveDestinationCacache({ privateHome, npmConfigCache } = {}) {
-  const home = assertLocalNonSymlinkDirectory(privateHome, 'private HOME')
+  const owned = assertRunOwnedPrivateHome(privateHome)
   const cacheRoot = npmConfigCache == null
-    ? join(home, ...NPM_CACHE_SEED.destCacheSegments)
+    ? join(owned.visibleRoot, ...NPM_CACHE_SEED.destCacheSegments)
     : refuseRemoteOrRelativePath(npmConfigCache, 'run-owned npm cache')
   const dest = join(cacheRoot, NPM_CACHE_SEED.destCacacheName)
-  if (!pathIsUnderRoot(cacheRoot, home) || !pathIsUnderRoot(dest, home)) {
-    throw seedError('destination cache escaped private HOME')
-  }
+  assertRunOwnedContainedPath({
+    path: cacheRoot,
+    owned,
+    label: 'destination cache root',
+    allowMissing: true,
+  })
+  assertRunOwnedContainedPath({
+    path: dest,
+    owned,
+    label: 'destination cache',
+    allowMissing: true,
+  })
   if (existsSync(cacheRoot) && lstatSync(cacheRoot).isSymbolicLink()) {
     throw seedError('destination cache root is a symlink and is refused')
   }
@@ -145,19 +320,41 @@ export function resolveDestinationCacache({ privateHome, npmConfigCache } = {}) 
     const visible = lstatSync(dest)
     if (visible.isSymbolicLink()) throw seedError('destination cache is a symlink and is refused')
     if (!visible.isDirectory()) throw seedError('destination cache is not a directory')
+    assertRunOwnedContainedPath({
+      path: dest,
+      owned,
+      label: 'destination cache',
+      allowMissing: false,
+    })
   }
-  return { cacheRoot: resolve(cacheRoot), dest: resolve(dest), privateHome: home }
+  return {
+    cacheRoot: resolve(cacheRoot),
+    dest: resolve(dest),
+    privateHome: owned.visibleRoot,
+    canonicalPrivateHome: owned.canonicalRoot,
+    owned,
+  }
 }
 
-function mkdirOwned(path, root) {
-  if (!pathIsUnderRoot(path, root)) {
-    throw seedError('refusing to create a directory outside private HOME')
-  }
+function mkdirOwned(path, privateHome) {
+  const owned = asRunOwnedPrivateHome(privateHome)
+  assertRunOwnedContainedPath({
+    path,
+    owned,
+    label: 'destination directory',
+    allowMissing: true,
+  })
   mkdirSync(path, { recursive: true, mode: 0o700 })
   chmodSync(path, 0o700)
   if (lstatSync(path).isSymbolicLink()) {
     throw seedError('destination directory became a symlink')
   }
+  assertRunOwnedContainedPath({
+    path,
+    owned,
+    label: 'destination directory',
+    allowMissing: false,
+  })
 }
 
 export function isNpmRegistryTarballUrl(value) {
@@ -281,9 +478,13 @@ export function copyCacacheBounded({
 } = {}) {
   const sourceDir = assertLocalNonSymlinkDirectory(source, 'source cache')
   if (!privateHome) throw seedError('copy requires the run-owned private HOME')
-  if (!pathIsUnderRoot(dest, privateHome)) {
-    throw seedError('destination cache escaped private HOME')
-  }
+  const owned = asRunOwnedPrivateHome(privateHome)
+  assertRunOwnedContainedPath({
+    path: dest,
+    owned,
+    label: 'destination cache',
+    allowMissing: true,
+  })
   if (sourceDir === resolve(dest) || pathIsUnderRoot(dest, sourceDir) || pathIsUnderRoot(sourceDir, dest)) {
     throw seedError('source and destination cache trees must stay disjoint')
   }
@@ -295,30 +496,47 @@ export function copyCacacheBounded({
   if (totalBytes > maxBytes) {
     throw seedError(`source cache exceeds the byte cap ${maxBytes}`)
   }
-  mkdirOwned(dest, privateHome)
+  mkdirOwned(dest, owned)
   for (const directory of inventory.directories) {
     const rel = relative(sourceDir, directory)
-    mkdirOwned(join(dest, rel), privateHome)
+    mkdirOwned(join(dest, rel), owned)
   }
   for (const file of inventory.files) {
     const rel = relative(sourceDir, file.path)
     const target = join(dest, rel)
-    if (!pathIsUnderRoot(target, privateHome)) {
-      throw seedError('refusing to write a cache file outside private HOME')
-    }
-    mkdirOwned(join(target, '..'), privateHome)
+    assertRunOwnedContainedPath({
+      path: target,
+      owned,
+      label: 'destination cache file',
+      allowMissing: true,
+    })
+    mkdirOwned(join(target, '..'), owned)
     copyFileSync(file.path, target)
     chmodSync(target, 0o644)
     if (lstatSync(target).isSymbolicLink()) {
       throw seedError('destination cache file became a symlink')
     }
+    assertRunOwnedContainedPath({
+      path: target,
+      owned,
+      label: 'destination cache file',
+      allowMissing: false,
+    })
   }
+  assertRunOwnedContainedPath({
+    path: dest,
+    owned,
+    label: 'destination cache',
+    allowMissing: false,
+  })
   return {
     files: inventory.files.length,
     bytes: totalBytes,
     directories: inventory.directories.length,
     dest: resolve(dest),
     source: sourceDir,
+    privateHome: owned.visibleRoot,
+    canonicalPrivateHome: owned.canonicalRoot,
   }
 }
 
@@ -341,10 +559,16 @@ export function assertOfflineLockedInstallEnv(env, { privateHome, cacheRoot } = 
   if (cacheRoot && resolvedCache !== resolve(cacheRoot)) {
     throw seedError('install environment cache is not the run-owned destination')
   }
-  if (privateHome && !pathIsUnderRoot(resolvedCache, privateHome)) {
-    throw seedError('install environment cache escaped private HOME')
+  const owned = privateHome ? asRunOwnedPrivateHome(privateHome) : null
+  if (owned) {
+    assertRunOwnedContainedPath({
+      path: resolvedCache,
+      owned,
+      label: 'install environment cache',
+      allowMissing: true,
+    })
   }
-  if (env.HOME && privateHome && resolve(String(env.HOME)) !== resolve(privateHome)) {
+  if (env.HOME && owned && resolve(String(env.HOME)) !== owned.visibleRoot) {
     throw seedError('install HOME is not the run-owned private HOME')
   }
   return {
@@ -389,6 +613,7 @@ export function seedOfflineNpmCache({
     dest: dest.dest,
     cacheRoot: dest.cacheRoot,
     privateHome: dest.privateHome,
+    canonicalPrivateHome: dest.canonicalPrivateHome,
     lock,
     copy,
     installEnv,

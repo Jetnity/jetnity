@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #568 OFFLINE NPM CACHE SEED 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #569 MACOS PRIVATE HOME CANONICALIZATION 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,28 +11,27 @@ Status: **NORMAL / DRAFT PR #568 OFFLINE NPM CACHE SEED 1 FROZEN FOR TL REVIEW /
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts Offline npm Cache Seed 1 |
-| Branch / PR | `fix/admin-account-counts-offline-npm-cache-seed-1` / Draft https://github.com/Jetnity/jetnity/pull/568 |
-| Base | `418f008f134d925edb45701a806b1a9bc17201c8` (Merge #567) |
-| Code commit | `31f2f4eb574a3ffb9e5481759cc258174bcfb6d3` — seed run-owned npm cache from local `_cacache` only |
-| First persist head with exact-head gates | `318dbefe6ac8359e40d710be6bd9b88d8f515603` — CI `36250359496` SUCCESS, Auth SUCCESS, Vercel `FYizaAyjM9WPRM14svo61jgajQvx` READY |
+| Arbeitsblock | Admin Account Counts macOS Private HOME Canonicalization 1 |
+| Branch / PR | `fix/admin-account-counts-macos-private-home-canonicalization-1` / Draft https://github.com/Jetnity/jetnity/pull/569 |
+| Base | `c599077e9cb4eeb114e1bd2a89afc81cbb492c45` (Merge #568) |
+| Task seed | `4541637f147d08bce43e4de593178f95c03f2328` |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts offline npm cache seed 1, Gen 1, session `bc-4d56d48b-bb5f-42e9-a4e7-b5e2321b64d0` |
+| Agent | Jetnity admin account counts macOS private home canonicalization 1, Gen 1, session `bc-8b4a0114-fce4-4a28-bd40-a367a1f78ae2` |
 | Model | cursor-grok-4.6-high-fast |
 
-Authorized real-Mac run `aaclr1-20260926T144930Z` on exact main `418f008f` started the local stack, resolved npm through the sanitized PATH, then failed locked `npm ci` with `ENOTCACHED` because the new private cache was empty. This head copies only the original user's `~/.npm/_cacache` into the run-owned `NPM_CONFIG_CACHE`. `.npmrc`/auth/logs are not copied. npm stays offline + ignore_scripts + lockfile-bound. Incomplete cache still fails truthfully.
+Authorized real-Mac run `aaclr1-20260926T162500Z` on exact main `c599077e` started the local stack, reached the #568 offline cache seed, then fail-closed only on `private HOME real path escaped its visible path`. That is the normal macOS `/var/folders/... -> /private/var/folders/...` canonicalization of the harness-created tmpdir root, not a symlink inside the run HOME.
 
-Bereits umgesetzt: `seedOfflineNpmCache` before `npm ci`; lockfile HTTPS/integrity validation; symlink/outside-HOME/cap fail-closed; controlled suite **67/67 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/root-dep/CI change. No registry fetch.
+Bereits umgesetzt: separate run-owned private-HOME helper; visible/canonical ancestor alias accepted; private HOME itself being a symlink still refused; inner symlink/escape still refused; dest containment uses visible suffix + canonical root; original HOME/source `_cacache` stay strict; controlled suite **78/78 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/root-dep/CI change. No registry fetch. npm stays offline.
 
-Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `318dbefe` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #568. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #569. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_OFFLINE_NPM_CACHE_SEED_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `npm-cache-seed.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_MACOS_PRIVATE_HOME_CANONICALIZATION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `npm-cache-seed.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
 
-#567 is **MERGED** on this base and is not the current writer. #566 / #565 / #564 remain merged and are not the current writer.
+#568 is **MERGED** on this base and is not the current writer. #567 / #566 / #565 / #564 remain merged and are not the current writer.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 

@@ -5,9 +5,9 @@ import { createHash } from 'node:crypto'
 import { crc32, deflateSync } from 'node:zlib'
 import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
-import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
+import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { delimiter, dirname, isAbsolute, join, relative } from 'node:path'
+import { delimiter, dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { test } from 'node:test'
 import { BLOB_PINS, PINS, SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
@@ -117,12 +117,19 @@ import {
 import { persistFailureReceipt, run, parseMode } from './run.mjs'
 import { baueRuntimeAppParentQuelle, defaultStartRuntime } from './runtime.mjs'
 import {
+  assertLocalNonSymlinkDirectory,
   assertOfflineLockedInstallEnv,
+  assertRealPathMatchesVisibleSuffix,
+  assertRunOwnedContainedPath,
+  assertRunOwnedPrivateHome,
+  canonicalPathForVisibleSuffix,
   copyCacacheBounded,
   discoverSourceCacache,
   leseOriginalHome,
+  resolveDestinationCacache,
   seedOfflineNpmCache,
   validateLockfileRegistryIntegrity,
+  visibleRelativeSuffix,
 } from './npm-cache-seed.mjs'
 import { SOURCE_PATHS as ACCEPTED_SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
@@ -4943,6 +4950,263 @@ writeFileSync(nextBin, 'fake-next')
   assert.equal(calls[0].env.npm_config_offline, 'true')
   assert.equal(calls[0].env.NPM_CONFIG_CACHE, join(privateHome, 'cache', 'npm'))
   assert.notEqual(calls[0].env.NPM_CONFIG_CACHE, join(originalHome, '.npm'))
+  rmSync(root, { recursive: true, force: true })
+})
+
+function createMacOsStyleAliasHome(root, name = 'home-XXXX') {
+  const canonicalHome = join(root, 'canonical', 'folders', 'xx', name)
+  mkdirSync(canonicalHome, { recursive: true, mode: 0o700 })
+  symlinkSync(join(root, 'canonical'), join(root, 'visible'))
+  return {
+    visibleHome: join(root, 'visible', 'folders', 'xx', name),
+    canonicalHome,
+  }
+}
+
+test('run-owned private HOME accepts visible==real and seeds dest under it', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-eq-'))
+  const originalHome = join(root, 'user')
+  const privateHome = join(root, 'private')
+  mkdirSync(privateHome, { recursive: true, mode: 0o700 })
+  const owned = assertRunOwnedPrivateHome(privateHome)
+  assert.equal(owned.visibleRoot, resolve(privateHome))
+  assert.equal(owned.canonicalRoot, realpathSync(privateHome))
+  assert.equal(owned.visibleRoot, owned.canonicalRoot)
+  writeFixtureCacache(originalHome, { 'content-v2/ab/one': 'ok' })
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  const env = isolatedInstallEnv(privateHome)
+  const seeded = seedOfflineNpmCache({ originalHome, privateHome, env, checkoutDir: checkout })
+  assert.equal(seeded.dest, join(privateHome, 'cache', 'npm', '_cacache'))
+  assert.equal(seeded.canonicalPrivateHome, realpathSync(privateHome))
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned private HOME accepts ancestor alias above the owned root', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-alias-'))
+  const originalHome = join(root, 'user')
+  const { visibleHome, canonicalHome } = createMacOsStyleAliasHome(root)
+  assert.notEqual(resolve(visibleHome), resolve(canonicalHome))
+  assert.equal(lstatSync(visibleHome).isSymbolicLink(), false)
+  assert.equal(lstatSync(visibleHome).isDirectory(), true)
+  assert.equal(realpathSync(visibleHome), resolve(canonicalHome))
+  const owned = assertRunOwnedPrivateHome(visibleHome)
+  assert.equal(owned.visibleRoot, resolve(visibleHome))
+  assert.equal(owned.canonicalRoot, resolve(canonicalHome))
+  writeFixtureCacache(originalHome, { 'content-v2/ab/one': 'alias-ok' })
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  const env = isolatedInstallEnv(visibleHome)
+  const seeded = seedOfflineNpmCache({
+    originalHome,
+    privateHome: visibleHome,
+    env,
+    checkoutDir: checkout,
+  })
+  assert.equal(seeded.dest, join(visibleHome, 'cache', 'npm', '_cacache'))
+  assert.equal(seeded.canonicalPrivateHome, resolve(canonicalHome))
+  assert.equal(realpathSync(seeded.dest), join(canonicalHome, 'cache', 'npm', '_cacache'))
+  assert.equal(readFileSync(join(seeded.dest, 'content-v2/ab/one'), 'utf8'), 'alias-ok')
+  const observed = assertOfflineLockedInstallEnv(env, {
+    privateHome: visibleHome,
+    cacheRoot: seeded.cacheRoot,
+  })
+  assert.equal(observed.cache, join(visibleHome, 'cache', 'npm'))
+  assert.equal(env.HOME, visibleHome)
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned private HOME refuses when the final HOME entry is a symlink', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-selflink-'))
+  const real = join(root, 'real-home')
+  const linked = join(root, 'linked-home')
+  mkdirSync(real, { recursive: true, mode: 0o700 })
+  symlinkSync(real, linked)
+  assert.throws(() => assertRunOwnedPrivateHome(linked), /symlink/)
+  assert.throws(() => resolveDestinationCacache({ privateHome: linked }), /symlink/)
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned private HOME refuses a symlink inside the cache path', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-innerlink-'))
+  const { visibleHome } = createMacOsStyleAliasHome(root)
+  const escaped = join(root, 'escaped')
+  mkdirSync(escaped, { recursive: true })
+  mkdirSync(join(visibleHome, 'cache'), { recursive: true })
+  symlinkSync(escaped, join(visibleHome, 'cache', 'npm'))
+  assert.throws(
+    () => resolveDestinationCacache({ privateHome: visibleHome }),
+    /symlink/,
+  )
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned cache root visible path maps to the canonical suffix', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-suffix-'))
+  const { visibleHome, canonicalHome } = createMacOsStyleAliasHome(root)
+  const dest = resolveDestinationCacache({ privateHome: visibleHome })
+  const suffix = visibleRelativeSuffix(dest.cacheRoot, visibleHome)
+  assert.equal(suffix, join('cache', 'npm'))
+  assert.equal(
+    canonicalPathForVisibleSuffix(canonicalHome, suffix),
+    join(canonicalHome, 'cache', 'npm'),
+  )
+  mkdirSync(dest.cacheRoot, { recursive: true, mode: 0o700 })
+  assert.equal(realpathSync(dest.cacheRoot), join(canonicalHome, 'cache', 'npm'))
+  assertRealPathMatchesVisibleSuffix({
+    realPath: realpathSync(dest.cacheRoot),
+    canonicalRoot: canonicalHome,
+    suffix,
+    label: 'destination cache root',
+  })
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned path fails when the real path maps to a different canonical suffix', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-badsuffix-'))
+  const { canonicalHome } = createMacOsStyleAliasHome(root)
+  mkdirSync(join(canonicalHome, 'other'), { recursive: true })
+  assert.throws(
+    () => assertRealPathMatchesVisibleSuffix({
+      realPath: join(canonicalHome, 'other'),
+      canonicalRoot: canonicalHome,
+      suffix: join('cache', 'npm'),
+      label: 'destination cache',
+    }),
+    /canonical private HOME suffix/,
+  )
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned destination outside the visible private HOME fails', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-outside-'))
+  const { visibleHome } = createMacOsStyleAliasHome(root)
+  const outside = join(root, 'outside', 'cache', 'npm')
+  mkdirSync(outside, { recursive: true })
+  assert.throws(
+    () => resolveDestinationCacache({
+      privateHome: visibleHome,
+      npmConfigCache: outside,
+    }),
+    /escaped private HOME/,
+  )
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned destination canonical escape fails', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-escape-'))
+  const { visibleHome, canonicalHome } = createMacOsStyleAliasHome(root)
+  const escaped = join(root, 'escaped')
+  mkdirSync(escaped, { recursive: true })
+  assert.throws(
+    () => assertRealPathMatchesVisibleSuffix({
+      realPath: escaped,
+      canonicalRoot: canonicalHome,
+      suffix: join('cache', 'npm'),
+      label: 'destination cache',
+    }),
+    /escaped the canonical private HOME/,
+  )
+  mkdirSync(join(visibleHome, 'cache'), { recursive: true })
+  symlinkSync(escaped, join(visibleHome, 'cache', 'npm'))
+  assert.throws(
+    () => assertRunOwnedContainedPath({
+      path: join(visibleHome, 'cache', 'npm', '_cacache'),
+      privateHome: visibleHome,
+      label: 'destination cache',
+      allowMissing: true,
+    }),
+    /symlink|canonical/,
+  )
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned missing destination uses nearest existing ancestor canonical relation', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-missing-'))
+  const { visibleHome, canonicalHome } = createMacOsStyleAliasHome(root)
+  const dest = join(visibleHome, 'cache', 'npm', '_cacache')
+  assert.equal(existsSync(dest), false)
+  const checked = assertRunOwnedContainedPath({
+    path: dest,
+    privateHome: visibleHome,
+    label: 'destination cache',
+    allowMissing: true,
+  })
+  assert.equal(checked.existed, false)
+  assert.equal(checked.ancestor, resolve(visibleHome))
+  assert.equal(realpathSync(checked.ancestor), resolve(canonicalHome))
+  const destInfo = resolveDestinationCacache({ privateHome: visibleHome })
+  assert.equal(destInfo.dest, dest)
+  const escaped = join(root, 'escaped-ancestor')
+  mkdirSync(escaped, { recursive: true })
+  mkdirSync(join(visibleHome, 'cache'), { recursive: true })
+  symlinkSync(escaped, join(visibleHome, 'cache', 'npm'))
+  assert.throws(
+    () => assertRunOwnedContainedPath({
+      path: dest,
+      privateHome: visibleHome,
+      label: 'destination cache',
+      allowMissing: true,
+    }),
+    /symlink/,
+  )
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('run-owned post-copy destination symlink or escape remains refused', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-postcopy-'))
+  const originalHome = join(root, 'user')
+  const { visibleHome } = createMacOsStyleAliasHome(root)
+  const source = writeFixtureCacache(originalHome, { 'content-v2/ab/one': 'copy-me' })
+  const dest = join(visibleHome, 'cache', 'npm', '_cacache')
+  const copied = copyCacacheBounded({ source, dest, privateHome: visibleHome })
+  assert.equal(copied.files, 1)
+  assertRunOwnedContainedPath({
+    path: dest,
+    privateHome: visibleHome,
+    label: 'destination cache',
+    allowMissing: false,
+  })
+  const payload = join(dest, 'content-v2', 'ab', 'one')
+  const escaped = join(root, 'escaped-file')
+  writeFileSync(escaped, 'nope')
+  rmSync(payload)
+  symlinkSync(escaped, payload)
+  assert.throws(
+    () => assertRunOwnedContainedPath({
+      path: payload,
+      privateHome: visibleHome,
+      label: 'destination cache file',
+      allowMissing: false,
+    }),
+    /symlink/,
+  )
+  rmSync(dest, { recursive: true, force: true })
+  symlinkSync(escaped, dest)
+  assert.throws(
+    () => copyCacacheBounded({ source, dest, privateHome: visibleHome }),
+    /symlink/,
+  )
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('original HOME and source cache still require visible===real', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-phome-source-strict-'))
+  const { visibleHome } = createMacOsStyleAliasHome(root, 'user-home')
+  writeFixtureCacache(visibleHome, { 'content-v2/ab/one': 'source' })
+  assert.notEqual(resolve(visibleHome), realpathSync(visibleHome))
+  assert.throws(() => leseOriginalHome(visibleHome), /real path escaped its visible path/)
+  assert.throws(
+    () => assertLocalNonSymlinkDirectory(visibleHome, 'original HOME'),
+    /real path escaped its visible path/,
+  )
+  assert.throws(
+    () => discoverSourceCacache({ originalHome: visibleHome }),
+    /real path escaped its visible path/,
+  )
+  const strictHome = join(root, 'strict-user')
+  mkdirSync(strictHome, { recursive: true })
+  const source = writeFixtureCacache(strictHome, { 'content-v2/ab/one': 'ok' })
+  assert.equal(leseOriginalHome(strictHome), resolve(strictHome))
+  assert.equal(discoverSourceCacache({ originalHome: strictHome }), resolve(source))
   rmSync(root, { recursive: true, force: true })
 })
 
