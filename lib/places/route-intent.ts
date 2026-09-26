@@ -84,7 +84,7 @@ function textVorbereiten(text: string): string {
  * Nur starke Trenner. Konjunktionen bleiben im Block, bis ein
  * kanonischer Ganzort-Beweis den Block freigibt oder schützt.
  */
-export function routeIntentStarkBloecke(text: string): string[] | null {
+function routeIntentStarkBloecke(text: string): string[] | null {
   const vorbereitet = textVorbereiten(text)
   if (!vorbereitet) return null
   const bloecke: string[] = []
@@ -96,7 +96,7 @@ export function routeIntentStarkBloecke(text: string): string[] | null {
   return bloecke.length > 0 ? bloecke : null
 }
 
-export function routeIntentKonjunktionsTeile(block: string): string[] | null {
+function routeIntentKonjunktionsTeile(block: string): string[] | null {
   const teile = block.split(KONJUNKTION_TRENNER).map((teil) => teil.replace(/\s+/g, ' ').trim())
   if (teile.some((teil) => !phraseGueltig(teil))) return null
   return teile.length > 0 ? teile : null
@@ -108,7 +108,7 @@ function indexImBlock(block: string, nadel: string, erste: boolean): number {
   return erste ? heu.indexOf(such) : heu.lastIndexOf(such)
 }
 
-export function routeIntentPhraseAusSpanne(
+function routeIntentPhraseAusSpanne(
   block: string,
   teile: readonly string[],
   von: number,
