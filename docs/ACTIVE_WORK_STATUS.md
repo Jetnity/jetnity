@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #569 MACOS PRIVATE HOME CANONICALIZATION 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #570 DOCKER CLEANUP ABSENT MESSAGES 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,27 +11,27 @@ Status: **NORMAL / DRAFT PR #569 MACOS PRIVATE HOME CANONICALIZATION 1 FROZEN FO
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts macOS Private HOME Canonicalization 1 |
-| Branch / PR | `fix/admin-account-counts-macos-private-home-canonicalization-1` / Draft https://github.com/Jetnity/jetnity/pull/569 |
-| Base | `c599077e9cb4eeb114e1bd2a89afc81cbb492c45` (Merge #568) |
-| Task seed | `4541637f147d08bce43e4de593178f95c03f2328` |
+| Arbeitsblock | Admin Account Counts Docker Cleanup Absent Messages 1 |
+| Branch / PR | `fix/admin-account-counts-docker-cleanup-absent-messages-1` / Draft https://github.com/Jetnity/jetnity/pull/570 |
+| Base | `26b763016322fb1c929e131b4ff5bf467533e809` (Merge #569) |
+| Task seed | `4fcd047f16081ac486169b564baaf0f107d3b76d` |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts macOS private home canonicalization 1, Gen 1, session `bc-8b4a0114-fce4-4a28-bd40-a367a1f78ae2` |
+| Agent | Jetnity admin account counts docker cleanup absent messages 1, Gen 1, session `bc-6bb7e4e7-64ee-407b-8dc3-f3d62f1a576a` |
 | Model | cursor-grok-4.6-high-fast |
 
-Authorized real-Mac run `aaclr1-20260926T162500Z` on exact main `c599077e` started the local stack, reached the #568 offline cache seed, then fail-closed only on `private HOME real path escaped its visible path`. That is the normal macOS `/var/folders/... -> /private/var/folders/...` canonicalization of the harness-created tmpdir root, not a symlink inside the run HOME.
+Authorized real-Mac run `aaclr1-20260926T182151Z` reached final cleanup with processes reaped, browser closed, inventoryComplete=true and containerState=ABSENT. Volume/network became UNKNOWN only because Docker Desktop used `get <volume>: no such volume` and `network <name> not found`. Missing desktop/mobile screenshots from the same run remain a separate later evidence matter.
 
-Bereits umgesetzt: separate run-owned private-HOME helper; visible/canonical ancestor alias accepted; private HOME itself being a symlink still refused; inner symlink/escape still refused; dest containment uses visible suffix + canonical root; original HOME/source `_cacache` stay strict; controlled suite **78/78 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/root-dep/CI change. No registry fetch. npm stays offline.
+Bereits umgesetzt: exact-resource ABSENT classification for historical plus Desktop volume/network forms; name-bounded so a different resource cannot PASS; daemon/permission/timeout stay UNKNOWN; foreign/unresolved still block; browser artifact/export untouched. Controlled suite **79/79 PASS, 0 FAIL**.
 
 Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #569. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #570. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_MACOS_PRIVATE_HOME_CANONICALIZATION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `npm-cache-seed.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_DOCKER_CLEANUP_ABSENT_MESSAGES_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `classifyDockerInspectError()` in `scripts/e2e/admin-account-counts-local-runtime-1/stack.mjs`.
 
-#568 is **MERGED** on this base and is not the current writer. #567 / #566 / #565 / #564 remain merged and are not the current writer.
+#569 is **MERGED** on this base and is not the current writer. #568 / #567 / #566 / #565 remain merged and are not the current writer.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 

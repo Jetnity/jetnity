@@ -5236,3 +5236,243 @@ test('prepareAppForLaunch fails closed before install when the source cache is m
   rmSync(root, { recursive: true, force: true })
 })
 
+test('Docker Desktop already-absent messages classify ABSENT only for the exact resource', async () => {
+  const containerId = 'aaclr1-desktop-ctr'
+  const volumeName = 'aaclr1-desktop-vol'
+  const networkName = 'aaclr1-desktop-net'
+  const otherContainer = 'aaclr1-other-ctr'
+  const otherVolume = 'aaclr1-other-vol'
+  const otherNetwork = 'aaclr1-other-net'
+
+  assert.equal(
+    classifyDockerInspectError(new Error(`Error response from daemon: No such container: ${containerId}`), {
+      kind: 'container',
+      name: containerId,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`Error response from daemon: No such container: ${otherContainer}`), {
+      kind: 'container',
+      name: containerId,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`Error response from daemon: get ${volumeName}: no such volume`), {
+      kind: 'volume',
+      name: volumeName,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`Error response from daemon: get ${otherVolume}: no such volume`), {
+      kind: 'volume',
+      name: volumeName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`get ${volumeName}-extra: no such volume`), {
+      kind: 'volume',
+      name: volumeName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`Error response from daemon: network ${networkName} not found`), {
+      kind: 'network',
+      name: networkName,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`Error response from daemon: network ${otherNetwork} not found`), {
+      kind: 'network',
+      name: networkName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`network ${networkName}-extra not found`), {
+      kind: 'network',
+      name: networkName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`${volumeName} not found`), {
+      kind: 'volume',
+      name: volumeName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`Cannot connect to the Docker daemon: get ${volumeName}: no such volume`), {
+      kind: 'volume',
+      name: volumeName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`permission denied while inspecting ${containerId}`), {
+      kind: 'container',
+      name: containerId,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(Object.assign(
+      new Error(`timeout waiting for network ${networkName} not found`),
+      { code: 'ETIMEDOUT' },
+    ), {
+      kind: 'network',
+      name: networkName,
+    }),
+    RESOURCE_STATE.UNKNOWN,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`No such container: ${containerId}`), {
+      kind: 'container',
+      name: containerId,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`No such object: ${containerId}`), {
+      kind: 'container',
+      name: containerId,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`No such volume: ${volumeName}`), {
+      kind: 'volume',
+      name: volumeName,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    classifyDockerInspectError(new Error(`No such network: ${networkName}`), {
+      kind: 'network',
+      name: networkName,
+    }),
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    inspectDockerResource({
+      execFile: () => { throw new Error(`get ${volumeName}: no such volume`) },
+      dockerBin: 'docker',
+      args: ['volume', 'inspect', volumeName],
+      env: {},
+    }).state,
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    inspectDockerResource({
+      execFile: () => { throw new Error(`network ${networkName} not found`) },
+      dockerBin: 'docker',
+      args: ['network', 'inspect', networkName],
+      env: {},
+    }).state,
+    RESOURCE_STATE.ABSENT,
+  )
+  assert.equal(
+    inspectDockerResource({
+      execFile: () => { throw new Error(`get ${otherVolume}: no such volume`) },
+      dockerBin: 'docker',
+      args: ['volume', 'inspect', volumeName],
+      env: {},
+    }).state,
+    RESOURCE_STATE.UNKNOWN,
+  )
+
+  const alreadyGoneWorkdir = mkdtempSync(join(tmpdir(), 'aaclr1-desktop-idemp-'))
+  const alreadyGone = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    cliBin: 'supabase',
+    workdir: alreadyGoneWorkdir,
+    state: {
+      network: { name: networkName, created: true },
+      containers: [{ id: containerId }],
+      volumes: [{ name: volumeName, ownership: 'owned' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'stop' || args[0] === 'rm') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'inspect') throw new Error(`No such container: ${args[1]}`)
+      if (args[0] === 'volume' && args[1] === 'rm') throw new Error(`get ${args[3]}: no such volume`)
+      if (args[0] === 'volume' && args[1] === 'inspect') throw new Error(`get ${args[2]}: no such volume`)
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`network ${args[2]} not found`)
+      }
+      if (args[0] === 'stop' && args.length === 1) return ''
+      return ''
+    },
+  })
+  assert.equal(alreadyGone.containerError, undefined)
+  assert.equal(alreadyGone.volumeError, undefined)
+  assert.equal(alreadyGone.networkError, undefined)
+  assert.equal(alreadyGone.containerState, RESOURCE_STATE.ABSENT)
+  assert.equal(alreadyGone.volumeState, RESOURCE_STATE.ABSENT)
+  assert.equal(alreadyGone.networkState, RESOURCE_STATE.ABSENT)
+  assert.equal(alreadyGone.containersRemoved, true)
+  assert.equal(alreadyGone.volumesRemoved, true)
+  assert.equal(alreadyGone.networkRemoved, true)
+  assert.equal(alreadyGone.dockerServicesStopped, true)
+  assert.equal(alreadyGone.unknown, false)
+  assert.equal(alreadyGone.inventoryComplete, true)
+  rmSync(alreadyGoneWorkdir, { recursive: true, force: true })
+
+  const foreignCalls = []
+  const foreign = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    state: {
+      network: { name: networkName, created: true, runId: 'run-1' },
+      runId: 'run-1',
+      containers: [],
+      volumes: [{ name: 'foreign-vol', ownership: 'foreign' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      foreignCalls.push(args.slice())
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'volume' && args[1] === 'inspect') {
+        return JSON.stringify([{ Name: 'foreign-vol', Labels: { [RUN_LABEL]: 'OTHER-RUN' } }])
+      }
+      if (args[0] === 'volume') throw new Error('foreign volume must not be deleted')
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`network ${args[2]} not found`)
+      }
+      return ''
+    },
+  })
+  assert.deepEqual(foreign.foreignVolumes, ['foreign-vol'])
+  assert.ok(foreign.foreignRetained.includes('foreign-vol'))
+  assert.equal(foreign.dockerServicesStopped, false)
+  assert.ok(!foreignCalls.some((args) => args[0] === 'volume' && args[1] === 'rm'))
+
+  const unresolvedCleanup = await stoppeOwnedStack({
+    dockerBin: 'docker',
+    state: {
+      network: { name: networkName, created: true },
+      containers: [],
+      volumes: [{ name: 'mystery-vol' }],
+      inventoryComplete: true,
+    },
+    execFile: (_bin, args) => {
+      if (args[0] === 'ps') return ''
+      if (args[0] === 'volume') throw new Error('unresolved volume must not be deleted blindly')
+      if (args[0] === 'network' && (args[1] === 'rm' || args[1] === 'inspect')) {
+        throw new Error(`network ${args[2]} not found`)
+      }
+      return ''
+    },
+  })
+  assert.equal(unresolvedCleanup.unknown, true)
+  assert.equal(unresolvedCleanup.inventoryComplete, false)
+  assert.equal(unresolvedCleanup.dockerServicesStopped, false)
+  assert.equal(unresolvedCleanup.volumesRemoved, false)
+})
+
