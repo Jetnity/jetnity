@@ -83,9 +83,16 @@ export const CLI = Object.freeze({
   }),
   versionPattern: /^(?:supabase\s+)?(?:v)?2\.117\.0\b/i,
   startHelpPattern: /Start containers for Supabase local development/i,
-  // Official v2.117 Cobra root help lists command + description, not
-  // `supabase start` on each line. Keep this fail-closed and structural.
-  rootHelpCommands: Object.freeze({
+  // Primary required form: official v2.117 Effect CLI root help from the
+  // SHA-verified release binary and tag source. Do not mix with Cobra.
+  effectRootHelpCommands: Object.freeze({
+    start: 'Start local Supabase stack',
+    status: 'Show status of local Supabase containers',
+    stop: 'Stop all local Supabase containers',
+  }),
+  // Separate complete historical Go/Cobra alternative. Accepted only when
+  // that form is structurally complete on its own.
+  cobraRootHelpCommands: Object.freeze({
     start: 'Start containers for Supabase local development',
     status: 'Show status of local Supabase containers',
     stop: 'Stop all local Supabase containers',

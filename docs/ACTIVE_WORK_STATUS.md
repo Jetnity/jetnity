@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #561 CLI ROOT HELP FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #562 CLI EFFECT ROOT HELP FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,25 +11,25 @@ Status: **NORMAL / DRAFT PR #561 CLI ROOT HELP FIX 1 FROZEN FOR TL REVIEW / NOT 
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts CLI Root Help Fix 1 |
-| Branch / PR | `fix/admin-account-counts-cli-root-help-1` / Draft https://github.com/Jetnity/jetnity/pull/561 |
-| Base | `4df0a8bff16f050314a3a0bc75827a9764173eb7` |
-| Implementation persist | `8756b87e9e0ad99285e38fb23fa8df7521342710` |
+| Arbeitsblock | Admin Account Counts CLI Effect Root Help Fix 1 |
+| Branch / PR | `fix/admin-account-counts-cli-effect-root-help-1` / Draft https://github.com/Jetnity/jetnity/pull/562 |
+| Base | `6cdc357f2759bda8b4196e5643ba3847e13151b3` |
+| Implementation persist | `89b4922bcbebdaf4c3a4725046f3447f5d2f471e` |
 | Status | technisch review-bereit / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts CLI root help fix 1, Gen 1, session `bc-107166c0-7d11-4d69-8bd8-c01cbdb5c26b` |
+| Agent | Jetnity admin account counts CLI effect root help fix 1, Gen 1, session `bc-e00055d4-896d-4c02-b3e5-0ab38d659aa8` |
 | Model | cursor-grok-4.6-high-fast |
 
-#560 macOS Docker runtime fix is **MERGED** on this base. Second authorized real-Mac preflight proved Docker endpoint PASS on `desktop-linux`; remaining fail is `helpVerified=false` / `failedIdentityChecks=["help"]`.
+#561 Cobra root-help parser is **MERGED** on this base. Third authorized real-Mac preflight plus direct SHA-verified v2.117 binary capture proved Docker / archive / version / start-help PASS; remaining fail is `helpVerified=false` because the release binary emits Effect CLI root help (`supabase [flags]` + short descriptions), not the historical Cobra root.
 
-Bereits umgesetzt: general/root `supabase --help` parser now requires official v2.117 Cobra root usage identity plus `start` / `status` / `stop` command entries; start-help and arbitrary `supabase start` text fail closed; CLI 2.117.0 pins unchanged; Docker endpoint / start-help / archive provenance unchanged; controlled tests 45/45 PASS (prior 44 preserved); default no-start receipt `aaclr1-20260926T014638Z` is `BLOCKED_ENVIRONMENT`.
+Bereits umgesetzt: general/root `supabase --help` parser now requires the official v2.117 Effect usage identity plus the three short-description command entries; historical Cobra remains only as a separate complete alternative; mixed Effect usage + Cobra-only start description fails closed; start-help and arbitrary sentences fail closed; CLI 2.117.0 pins unchanged; Docker endpoint / start-help / archive provenance unchanged; controlled tests 46/46 PASS (prior 45 preserved); default no-start receipt `aaclr1-20260926T095843Z` is `BLOCKED_ENVIRONMENT`.
 
 Noch offen: independent TL exact-head review; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac preflight. No Production/hosted mutation.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #561. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #562. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_CLI_ROOT_HELP_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `cli-identity.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_CLI_EFFECT_ROOT_HELP_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `cli-identity.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 

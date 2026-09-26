@@ -82,37 +82,75 @@ function whitespaceFlexible(text) {
   return String(text).trim().split(/\s+/).map(escapeRegExp).join('\\s+')
 }
 
-export function hasOfficialCliRootUsageIdentity(text) {
+export function hasOfficialCliCobraRootUsageIdentity(text) {
   return /(?:^|\n)\s*Usage:\s*(?:\r?\n[ \t]*)?supabase[ \t]+\[command\]/i.test(String(text || ''))
 }
 
+export function hasOfficialCliRootUsageIdentity(text) {
+  return hasOfficialCliCobraRootUsageIdentity(text)
+}
+
+export function hasOfficialCliEffectRootUsageIdentity(text) {
+  return /(?:^|\n)\s*(?:(?:USAGE|Usage):?\s*(?:\r?\n[ \t]*)?)?supabase[ \t]+\[flags\]/i.test(String(text || ''))
+}
+
 export function isOfficialCliSubcommandHelp(text) {
-  return /(?:^|\n)\s*Usage:\s*(?:\r?\n[ \t]*)?supabase[ \t]+(?:start|status|stop)\b/i.test(String(text || ''))
+  const source = String(text || '')
+  if (/(?:^|\n)\s*Usage:\s*(?:\r?\n[ \t]*)?supabase[ \t]+(?:start|status|stop)\b/i.test(source)) {
+    return true
+  }
+  return /(?:^|\n)\s*supabase[ \t]+(?:start|status|stop)[ \t]+\[flags\]/i.test(source)
 }
 
 export function hasOfficialCliRootCommandEntry(text, command, description) {
   const source = String(text || '')
   const name = escapeRegExp(command)
   const desc = whitespaceFlexible(description)
-  const cobraEntry = new RegExp(`(?:^|\\n)[ \\t]*${name}[ \\t]+${desc}`, 'i')
-  const historicalLine = new RegExp(
+  return new RegExp(`(?:^|\\n)[ \\t]*${name}[ \\t]+${desc}`, 'i').test(source)
+}
+
+function hasHistoricalCobraCommandLine(text, command, description) {
+  const source = String(text || '')
+  const name = escapeRegExp(command)
+  const desc = whitespaceFlexible(description)
+  return new RegExp(
     `(?:^|\\n)[ \\t]*supabase[ \\t]+${name}(?:[ \\t]+${desc})?[ \\t]*$`,
     'im',
+  ).test(source)
+}
+
+function hasAllRootCommandEntries(text, commands, matcher) {
+  return (
+    matcher(text, 'start', commands.start)
+    && matcher(text, 'status', commands.status)
+    && matcher(text, 'stop', commands.stop)
   )
-  return cobraEntry.test(source) || historicalLine.test(source)
+}
+
+export function isOfficialCliEffectRootHelp(text) {
+  const source = String(text || '')
+  if (!source.trim()) return false
+  if (isOfficialCliSubcommandHelp(source)) return false
+  if (!hasOfficialCliEffectRootUsageIdentity(source)) return false
+  return hasAllRootCommandEntries(source, CLI.effectRootHelpCommands, hasOfficialCliRootCommandEntry)
+}
+
+export function isOfficialCliCobraRootHelp(text) {
+  const source = String(text || '')
+  if (!source.trim()) return false
+  if (isOfficialCliSubcommandHelp(source)) return false
+  if (!hasOfficialCliCobraRootUsageIdentity(source)) return false
+  return (
+    hasAllRootCommandEntries(source, CLI.cobraRootHelpCommands, hasOfficialCliRootCommandEntry)
+    || hasAllRootCommandEntries(source, CLI.cobraRootHelpCommands, hasHistoricalCobraCommandLine)
+  )
 }
 
 export function isOfficialCliRootHelp(text) {
   const source = String(text || '')
   if (!source.trim()) return false
   if (isOfficialCliSubcommandHelp(source)) return false
-  if (!hasOfficialCliRootUsageIdentity(source)) return false
-  const commands = CLI.rootHelpCommands
-  return (
-    hasOfficialCliRootCommandEntry(source, 'start', commands.start)
-    && hasOfficialCliRootCommandEntry(source, 'status', commands.status)
-    && hasOfficialCliRootCommandEntry(source, 'stop', commands.stop)
-  )
+  return isOfficialCliEffectRootHelp(source) || isOfficialCliCobraRootHelp(source)
 }
 
 export function assertCliHelpText(text, { kind = 'help' } = {}) {
@@ -124,7 +162,7 @@ export function assertCliHelpText(text, { kind = 'help' } = {}) {
     return true
   }
   if (!isOfficialCliRootHelp(source)) {
-    throw new Error('CLI --help did not match the official v2.117 Cobra root-help structure.')
+    throw new Error('CLI --help did not match the official v2.117 root-help structure.')
   }
   return true
 }
