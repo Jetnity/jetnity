@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #563 CLI EFFECT USAGE FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #564 RUNTIME BINDING OBSERVATION FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,25 +11,25 @@ Status: **NORMAL / DRAFT PR #563 CLI EFFECT USAGE FIX 1 FROZEN FOR TL REVIEW / N
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts CLI Effect Usage Fix 1 |
-| Branch / PR | `fix/admin-account-counts-cli-effect-usage-1` / Draft https://github.com/Jetnity/jetnity/pull/563 |
-| Base | `4beaca99586c4f7f1a25e0ab90ed37a3eae965fb` |
-| Implementation persist | `9e094128da4044bc9e01f8d35a80f2d42ed4c93d` |
+| Arbeitsblock | Admin Account Counts Runtime Binding Observation Fix 1 |
+| Branch / PR | `fix/admin-account-counts-runtime-binding-observation-1` / Draft https://github.com/Jetnity/jetnity/pull/564 |
+| Base | `40fffe38102012ae3ffa5f5b7e2bc24c1a100b42` |
+| Implementation persist | `3ee98cb665ca2682962821bd2c6096d74f15e7de` |
 | Status | technisch review-bereit / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts CLI effect usage fix 1, Gen 1, session `bc-cd3af49c-ac29-4834-a409-907aa3342058` |
+| Agent | Jetnity admin account counts runtime binding observation fix 1, Gen 1, session `bc-abaf4d85-1737-4b3d-b5d4-802ea7bc697a` |
 | Model | cursor-grok-4.6-high-fast |
 
-#562 Effect short-description parser is **MERGED** on this base. Fourth authorized real-Mac preflight plus direct SHA-verified v2.117 binary capture proved Docker / archive / version / start-help still good; remaining fail is `cliVerified=false` because the release binary emits `supabase <subcommand> [flags]`, not the previously modelled `supabase [flags]`.
+#563 Effect root-usage parser is **MERGED** on this base. The first authorized real-Mac stack start after that merge created the dedicated owned network with `com.docker.network.bridge.host_binding_ipv4=127.0.0.1`, then false-blocked on Mailpit `8025/tcp -> 54324` because the harness preferred empty `HostConfig.PortBindings` HostIp over resolved `NetworkSettings.Ports`.
 
-Bereits umgesetzt: primary Effect root usage identity now requires `supabase <subcommand> [flags]`; previously modelled `supabase [flags]` remains only a separate compatibility alternative and still needs all three Effect command entries; historical Cobra remains only as a separate complete alternative; mixed Effect usage + Cobra-only start description fails closed for both Effect usage forms; start-help and arbitrary sentences fail closed; CLI 2.117.0 pins unchanged; Docker endpoint / start-help / archive provenance unchanged; controlled tests 46/46 PASS (prior 46 preserved); default no-start receipt `aaclr1-20260926T102641Z` is `BLOCKED_ENVIRONMENT`.
+Bereits umgesetzt: post-start observation now prefers `NetworkSettings.Ports` when present; empty HostConfig cannot override a concrete runtime mapping and cannot manufacture PASS if the runtime mapping is public/empty/malformed; HostConfig is only a bounded fallback when Ports is genuinely absent and only explicit `127.0.0.1` can pass; loopback policy and pre-launch network option unchanged; Mailpit stays enabled; CLI identity / Docker endpoint / runtime / fixtures / browser / Auth / SQL / Production untouched; controlled tests 47/47 PASS (prior 46 preserved); default no-start receipt `aaclr1-20260926T110432Z` is `BLOCKED_ENVIRONMENT`.
 
-Noch offen: independent TL exact-head review; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac preflight. No Production/hosted mutation.
+Noch offen: independent TL exact-head review; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac rerun. No Production/hosted mutation.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #563. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #564. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_CLI_EFFECT_USAGE_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `cli-identity.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_RUNTIME_BINDING_OBSERVATION_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `stack.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
