@@ -8,7 +8,9 @@
 // Partial network/child/container/volume handles are recorded on the
 // live ownership registry before fallible work continues.
 // Resource queries return PRESENT / ABSENT / UNKNOWN. Daemon, permission,
-// timeout and parse failures are UNKNOWN, never absence.
+// timeout and parse failures are UNKNOWN, never absence. Exact Docker Desktop
+// already-absent forms for the requested resource are ABSENT; a different
+// name or a generic "not found" stays UNKNOWN.
 // Ownership is per-resource: inspect the volume itself before classify/rm;
 // network membership is discovery only; live foreign wins over stale owned;
 // CLI stop requires exact project authority and no blocking identity.
@@ -234,27 +236,47 @@ function escapeRegExp(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+function dockerNameBoundary(exact) {
+  return `${exact}(?![A-Za-z0-9_.-])`
+}
+
+function isHardUnknownResourceFailure(error, message) {
+  const code = error?.code
+  if (['ETIMEDOUT', 'ECONNREFUSED', 'EACCES', 'EPERM', 'ENOTFOUND'].includes(code)) {
+    return true
+  }
+  // Genuine unavailable / permission / timeout / context failures stay UNKNOWN
+  // even when the text also names a resource. The Docker CLI envelope
+  // "Error response from daemon: <detail>" is surrounding prefix text, not a
+  // daemon-unavailability signal by itself.
+  if (/Cannot connect|permission denied|timeout|ETIMEDOUT|ECONNREFUSED|EACCES|EPERM|ENOTFOUND|EHOSTUNREACH|context .*not found|context not found|Is the docker daemon running|daemon is not running/i.test(message)) {
+    return true
+  }
+  return /Unexpected token|JSON|parse/i.test(message)
+}
+
+function isExactResourceAbsentMessage(kind, exact, message) {
+  const named = dockerNameBoundary(exact)
+  if (kind === 'container') {
+    return new RegExp(`No such (container|object):\\s*${named}`, 'i').test(message)
+  }
+  if (kind === 'volume') {
+    return new RegExp(`No such volume:\\s*${named}`, 'i').test(message)
+      || new RegExp(`\\bget\\s+${named}\\s*:\\s*no such volume\\b`, 'i').test(message)
+  }
+  if (kind === 'network') {
+    return new RegExp(`No such network:\\s*${named}`, 'i').test(message)
+      || new RegExp(`\\bnetwork\\s+${named}\\s+not found\\b`, 'i').test(message)
+  }
+  return false
+}
+
 export function classifyDockerInspectError(error, { kind, name } = {}) {
   const message = error instanceof Error ? error.message : String(error)
-  const code = error?.code
-  if (
-    /Cannot connect|daemon|permission denied|timeout|ETIMEDOUT|ECONNREFUSED|EACCES|EPERM|ENOTFOUND|EHOSTUNREACH|context .*not found|context not found/i.test(message)
-    || ['ETIMEDOUT', 'ECONNREFUSED', 'EACCES', 'EPERM', 'ENOTFOUND'].includes(code)
-  ) {
-    return RESOURCE_STATE.UNKNOWN
-  }
-  if (/Unexpected token|JSON|parse/i.test(message)) return RESOURCE_STATE.UNKNOWN
+  if (isHardUnknownResourceFailure(error, message)) return RESOURCE_STATE.UNKNOWN
   if (kind && name) {
     const exact = escapeRegExp(name)
-    if (kind === 'container' && new RegExp(`No such (container|object):\\s*${exact}\\b`, 'i').test(message)) {
-      return RESOURCE_STATE.ABSENT
-    }
-    if (kind === 'network' && new RegExp(`No such network:\\s*${exact}\\b`, 'i').test(message)) {
-      return RESOURCE_STATE.ABSENT
-    }
-    if (kind === 'volume' && new RegExp(`No such volume:\\s*${exact}\\b`, 'i').test(message)) {
-      return RESOURCE_STATE.ABSENT
-    }
+    if (isExactResourceAbsentMessage(kind, exact, message)) return RESOURCE_STATE.ABSENT
   }
   return RESOURCE_STATE.UNKNOWN
 }
