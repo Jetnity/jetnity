@@ -39,11 +39,14 @@ node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs
 ## Implemented execution path (review-fix head; execution remains distinct)
 
 Official CLI **v2.117.0** general `--help` must match the official Effect CLI
-root-help structure: `supabase [flags]` plus the short-description `start` /
-`status` / `stop` command entries. The historical Cobra form
-(`Usage: supabase [command]` plus long local-development descriptions) remains
-a separate complete alternative. `start --help` text alone is not root help.
-The old `supabase start|stop|status` substring is not sufficient.
+root-help structure: primary usage `supabase <subcommand> [flags]` plus the
+short-description `start` / `status` / `stop` command entries. The previously
+modelled `supabase [flags]` usage remains only a separate compatibility
+alternative and is never sufficient without those same three entries. The
+historical Cobra form (`Usage: supabase [command]` plus long
+local-development descriptions) remains a separate complete alternative.
+`start --help` text alone is not root help. The old
+`supabase start|stop|status` substring is not sufficient.
 
 When an already-working local Docker daemon and verified official CLI **v2.117.0**
 are present, `--runtime-only` / `--full` can:

@@ -90,8 +90,21 @@ export function hasOfficialCliRootUsageIdentity(text) {
   return hasOfficialCliCobraRootUsageIdentity(text)
 }
 
-export function hasOfficialCliEffectRootUsageIdentity(text) {
+// Primary v2.117 Effect root usage from the SHA-verified release binary:
+// `supabase <subcommand> [flags]`. Optional USAGE/Usage heading and leading
+// whitespace are accepted. The earlier `supabase [flags]` model is only a
+// separate compatibility alternative and is never sufficient without the
+// three Effect command entries.
+export function hasOfficialCliEffectSubcommandRootUsageIdentity(text) {
+  return /(?:^|\n)\s*(?:(?:USAGE|Usage):?\s*(?:\r?\n[ \t]*)?)?supabase[ \t]+<subcommand>[ \t]+\[flags\]/i.test(String(text || ''))
+}
+
+export function hasOfficialCliEffectFlagsOnlyRootUsageIdentity(text) {
   return /(?:^|\n)\s*(?:(?:USAGE|Usage):?\s*(?:\r?\n[ \t]*)?)?supabase[ \t]+\[flags\]/i.test(String(text || ''))
+}
+
+export function hasOfficialCliEffectRootUsageIdentity(text) {
+  return hasOfficialCliEffectSubcommandRootUsageIdentity(text)
 }
 
 export function isOfficialCliSubcommandHelp(text) {
@@ -131,7 +144,11 @@ export function isOfficialCliEffectRootHelp(text) {
   const source = String(text || '')
   if (!source.trim()) return false
   if (isOfficialCliSubcommandHelp(source)) return false
-  if (!hasOfficialCliEffectRootUsageIdentity(source)) return false
+  const hasUsage = (
+    hasOfficialCliEffectSubcommandRootUsageIdentity(source)
+    || hasOfficialCliEffectFlagsOnlyRootUsageIdentity(source)
+  )
+  if (!hasUsage) return false
   return hasAllRootCommandEntries(source, CLI.effectRootHelpCommands, hasOfficialCliRootCommandEntry)
 }
 
