@@ -38,6 +38,9 @@ import {
 import {
   assertCliHelpText,
   assertCliVersionText,
+  hasOfficialCliEffectFlagsOnlyRootUsageIdentity,
+  hasOfficialCliEffectRootUsageIdentity,
+  hasOfficialCliEffectSubcommandRootUsageIdentity,
   isOfficialCliCobraRootHelp,
   isOfficialCliEffectRootHelp,
   isOfficialCliRootHelp,
@@ -336,6 +339,7 @@ test('official v2.117 Cobra root --help is recognized; fragments and start-help 
 test('official v2.117 Effect root --help is recognized; mixed and start-help fail closed', async () => {
   const exactMac = officialEffectRootHelpExact()
   const headed = officialEffectRootHelpHeaded()
+  const flagsOnly = officialEffectRootHelpFlagsOnlyCompatibility()
   const cobra = officialCobraRootHelp()
   const historical = historicalRootHelp()
   const startHelp = [
@@ -351,19 +355,38 @@ test('official v2.117 Effect root --help is recognized; mixed and start-help fai
     '',
   ].join('\n')
   const missingStop = exactMac.replace(/^[ \t]*stop[ \t]+Stop all local Supabase containers.*$/m, '')
-  const mixedEffectUsageCobraStart = [
+  const flagsOnlyMissingStop = flagsOnly.replace(/^[ \t]*stop[ \t]+Stop all local Supabase containers.*$/m, '')
+  const mixedPrimaryUsageCobraStart = [
+    'supabase <subcommand> [flags]',
+    'start  Start containers for Supabase local development',
+    'status Show status of local Supabase containers',
+    'stop   Stop all local Supabase containers',
+  ].join('\n')
+  const mixedFlagsOnlyUsageCobraStart = [
     'supabase [flags]',
     'start  Start containers for Supabase local development',
     'status Show status of local Supabase containers',
     'stop   Stop all local Supabase containers',
   ].join('\n')
 
+  assert.equal(hasOfficialCliEffectSubcommandRootUsageIdentity(exactMac), true)
+  assert.equal(hasOfficialCliEffectRootUsageIdentity(exactMac), true)
+  assert.equal(hasOfficialCliEffectFlagsOnlyRootUsageIdentity(exactMac), false)
+  assert.equal(hasOfficialCliEffectSubcommandRootUsageIdentity(headed), true)
+  assert.equal(hasOfficialCliEffectFlagsOnlyRootUsageIdentity(flagsOnly), true)
+  assert.equal(hasOfficialCliEffectSubcommandRootUsageIdentity(flagsOnly), false)
+  assert.equal(hasOfficialCliEffectRootUsageIdentity(flagsOnly), false)
   assert.equal(isOfficialCliEffectRootHelp(exactMac), true)
   assert.equal(isOfficialCliCobraRootHelp(exactMac), false)
   assert.equal(isOfficialCliRootHelp(exactMac), true)
   assert.equal(assertCliHelpText(exactMac, { kind: 'help' }), true)
   assert.equal(isOfficialCliEffectRootHelp(headed), true)
   assert.equal(isOfficialCliRootHelp(headed), true)
+  assert.equal(isOfficialCliEffectRootHelp(flagsOnly), true)
+  assert.equal(isOfficialCliCobraRootHelp(flagsOnly), false)
+  assert.equal(isOfficialCliRootHelp(flagsOnly), true)
+  assert.equal(isOfficialCliEffectRootHelp('supabase <subcommand> [flags]'), false)
+  assert.equal(isOfficialCliEffectRootHelp('supabase [flags]'), false)
   assert.equal(isOfficialCliEffectRootHelp(cobra), false)
   assert.equal(isOfficialCliCobraRootHelp(cobra), true)
   assert.equal(isOfficialCliRootHelp(cobra), true)
@@ -376,11 +399,20 @@ test('official v2.117 Effect root --help is recognized; mixed and start-help fai
   assert.equal(assertCliHelpText(startHelp, { kind: 'start' }), true)
   assert.equal(isOfficialCliRootHelp(missingStop), false)
   assert.throws(() => assertCliHelpText(missingStop, { kind: 'help' }), /root-help structure/)
-  assert.equal(isOfficialCliEffectRootHelp(mixedEffectUsageCobraStart), false)
-  assert.equal(isOfficialCliCobraRootHelp(mixedEffectUsageCobraStart), false)
-  assert.equal(isOfficialCliRootHelp(mixedEffectUsageCobraStart), false)
+  assert.equal(isOfficialCliRootHelp(flagsOnlyMissingStop), false)
+  assert.throws(() => assertCliHelpText(flagsOnlyMissingStop, { kind: 'help' }), /root-help structure/)
+  assert.equal(isOfficialCliEffectRootHelp(mixedPrimaryUsageCobraStart), false)
+  assert.equal(isOfficialCliCobraRootHelp(mixedPrimaryUsageCobraStart), false)
+  assert.equal(isOfficialCliRootHelp(mixedPrimaryUsageCobraStart), false)
   assert.throws(
-    () => assertCliHelpText(mixedEffectUsageCobraStart, { kind: 'help' }),
+    () => assertCliHelpText(mixedPrimaryUsageCobraStart, { kind: 'help' }),
+    /root-help structure/,
+  )
+  assert.equal(isOfficialCliEffectRootHelp(mixedFlagsOnlyUsageCobraStart), false)
+  assert.equal(isOfficialCliCobraRootHelp(mixedFlagsOnlyUsageCobraStart), false)
+  assert.equal(isOfficialCliRootHelp(mixedFlagsOnlyUsageCobraStart), false)
+  assert.throws(
+    () => assertCliHelpText(mixedFlagsOnlyUsageCobraStart, { kind: 'help' }),
     /root-help structure/,
   )
   assert.throws(
@@ -3192,10 +3224,10 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
 
 function officialEffectRootHelpExact() {
   return [
-    'supabase [flags]',
-    'start  Start local Supabase stack',
-    'status Show status of local Supabase containers',
-    'stop   Stop all local Supabase containers',
+    'supabase <subcommand> [flags]',
+    'start   Start local Supabase stack',
+    'status  Show status of local Supabase containers',
+    'stop    Stop all local Supabase containers',
   ].join('\n')
 }
 
@@ -3203,7 +3235,7 @@ function officialEffectRootHelpHeaded() {
   return [
     'USAGE',
     '',
-    '  supabase [flags]',
+    '  supabase <subcommand> [flags]',
     '',
     'COMMANDS',
     '',
@@ -3211,6 +3243,15 @@ function officialEffectRootHelpHeaded() {
     '  status  Show status of local Supabase containers',
     '  stop    Stop all local Supabase containers',
     '',
+  ].join('\n')
+}
+
+function officialEffectRootHelpFlagsOnlyCompatibility() {
+  return [
+    'supabase [flags]',
+    'start  Start local Supabase stack',
+    'status Show status of local Supabase containers',
+    'stop   Stop all local Supabase containers',
   ].join('\n')
 }
 
