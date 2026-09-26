@@ -244,22 +244,22 @@ function renderShimSource({ realDockerBin, nodeBin }) {
     throw notACompletedExecution('docker publish shim', 'refusing unsafe node interpreter path')
   }
 
-  // Self-contained executable: every byte that enforces the publish policy is
-  // inside this single run-owned, SHA256-verified 0700 file. No repository
-  // module is imported after creation.
+  // Self-contained executable: freeze the already-reviewed enforcement
+  // functions into this single run-owned, SHA256-verified 0700 file. Later
+  // shim invocations do not import repository enforcement code.
   return `#!${nodeBin}\n`
     + `'use strict'\n`
     + `const { spawnSync } = require('node:child_process')\n`
     + `const realDockerBin = ${JSON.stringify(realDockerBin)}\n`
     + `const LOOPBACK_HOST = ${JSON.stringify(LOOPBACK_HOST)}\n`
-    + `const CREATE_VALUE_OPTIONS = new Set(${JSON.stringify(["--name","--hostname","-e","-v","--volumes-from","--tmpfs","-p","--publish","--expose","--health-cmd","--health-interval","--health-timeout","--health-retries","--health-start-period","--restart","--security-opt","--add-host","--network","--network-alias","--label","--entrypoint"])})\n`
-    + `const CREATE_FLAG_OPTIONS = new Set(${JSON.stringify(["--rm"])})\n`
-    + `const CREATE_PUBLISH_OPTIONS = new Set(${JSON.stringify(["-p","--publish"])})\n`
-    + "function isPort(value) {\n  if (!/^[1-9][0-9]{0,4}$/.test(String(value || ''))) return false\n  const port = Number(value)\n  return Number.isInteger(port) && port >= 1 && port <= 65535\n}\n"
-    + "function parseDockerPublishValue(value) {\n  if (value == null) throw new Error('missing docker create publish value')\n  const raw = String(value)\n  if (raw === '') throw new Error('missing docker create publish value')\n  if (/[\\\\s,]/.test(raw)) throw new Error('ambiguous docker create publish value')\n  if (raw.includes('[') || raw.includes(']')) throw new Error('IPv6 docker create publish syntax is refused')\n  if (raw.includes('-')) throw new Error('docker create publish port ranges are refused')\n  let rest = raw\n  let protocol = ''\n  const proto = rest.match(/^(.*)\\\\/([A-Za-z0-9]+)$/)\n  if (proto) {\n    rest = proto[1]\n    protocol = proto[2].toLowerCase()\n    if (protocol !== 'tcp' && protocol !== 'udp') throw new Error('unexpected docker create publish protocol')\n  }\n  const parts = rest.split(':')\n  if (parts.length === 2) {\n    const [hostPort, containerPort] = parts\n    if (!isPort(hostPort) || !isPort(containerPort)) throw new Error('malformed docker create publish hostPort:containerPort')\n    return { host: null, hostPort, containerPort, protocol }\n  }\n  if (parts.length === 3) {\n    const [host, hostPort, containerPort] = parts\n    if (host !== LOOPBACK_HOST) throw new Error(`docker create publish host ${host || '<empty>'} is refused`)\n    if (!isPort(hostPort) || !isPort(containerPort)) throw new Error('malformed docker create publish 127.0.0.1:hostPort:containerPort')\n    return { host, hostPort, containerPort, protocol }\n  }\n  throw new Error('unexpected docker create publish syntax')\n}\n"
-    + "function formatLoopbackPublishValue(parsed) {\n  const proto = parsed.protocol ? `/${parsed.protocol}` : ''\n  return `${LOOPBACK_HOST}:${parsed.hostPort}:${parsed.containerPort}${proto}`\n}\n"
-    + "function locateDockerCommand(tokens = []) {\n  if (tokens[0] === 'create') return { isCreate: true, index: 0 }\n  if (tokens[0] === 'container' && tokens[1] === 'create') throw new Error('unexpected docker container create command shape')\n  return { isCreate: false, index: -1 }\n}\n"
-    + "function rewriteDockerArgv(argv = []) {\n  const tokens = Array.from(argv, (item) => String(item))\n  const command = locateDockerCommand(tokens)\n  if (!command.isCreate) return { argv: tokens, rewritten: false, command }\n  const out = [tokens[command.index]]\n  let index = command.index + 1\n  let rewritten = false\n  while (index < tokens.length) {\n    const token = tokens[index]\n    if (!String(token).startsWith('-')) {\n      out.push(...tokens.slice(index))\n      return { argv: out, rewritten, command, imageIndex: index }\n    }\n    if (token === '--') throw new Error('unexpected docker create option terminator before image')\n    if (CREATE_FLAG_OPTIONS.has(token)) {\n      out.push(token)\n      index += 1\n      continue\n    }\n    if (!CREATE_VALUE_OPTIONS.has(token)) throw new Error(`unexpected docker create option before image: ${token}`)\n    if (tokens[index + 1] == null) throw new Error(`docker create option ${token} is missing a value`)\n    const value = tokens[index + 1]\n    if (CREATE_PUBLISH_OPTIONS.has(token)) {\n      out.push(token, formatLoopbackPublishValue(parseDockerPublishValue(value)))\n      rewritten = true\n    } else {\n      out.push(token, value)\n    }\n    index += 2\n  }\n  throw new Error('docker create image is missing')\n}\n"
+    + `const CREATE_VALUE_OPTIONS = new Set(${JSON.stringify([...CREATE_VALUE_OPTIONS])})\n`
+    + `const CREATE_FLAG_OPTIONS = new Set(${JSON.stringify([...CREATE_FLAG_OPTIONS])})\n`
+    + `const CREATE_PUBLISH_OPTIONS = new Set(${JSON.stringify([...CREATE_PUBLISH_OPTIONS])})\n`
+    + `${isPort.toString()}\n`
+    + `${parseDockerPublishValue.toString()}\n`
+    + `${formatLoopbackPublishValue.toString()}\n`
+    + `${locateDockerCommand.toString()}\n`
+    + `${rewriteDockerArgv.toString()}\n`
     + `let next\n`
     + `try { next = rewriteDockerArgv(process.argv.slice(2)).argv } catch (error) {\n`
     + `  console.error(error && error.message ? error.message : 'docker publish shim refused command')\n`
