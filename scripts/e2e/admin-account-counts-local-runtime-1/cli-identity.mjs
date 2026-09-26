@@ -74,13 +74,57 @@ export function assertCliVersionText(text) {
   return true
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function whitespaceFlexible(text) {
+  return String(text).trim().split(/\s+/).map(escapeRegExp).join('\\s+')
+}
+
+export function hasOfficialCliRootUsageIdentity(text) {
+  return /(?:^|\n)\s*Usage:\s*(?:\r?\n[ \t]*)?supabase[ \t]+\[command\]/i.test(String(text || ''))
+}
+
+export function isOfficialCliSubcommandHelp(text) {
+  return /(?:^|\n)\s*Usage:\s*(?:\r?\n[ \t]*)?supabase[ \t]+(?:start|status|stop)\b/i.test(String(text || ''))
+}
+
+export function hasOfficialCliRootCommandEntry(text, command, description) {
+  const source = String(text || '')
+  const name = escapeRegExp(command)
+  const desc = whitespaceFlexible(description)
+  const cobraEntry = new RegExp(`(?:^|\\n)[ \\t]*${name}[ \\t]+${desc}`, 'i')
+  const historicalLine = new RegExp(
+    `(?:^|\\n)[ \\t]*supabase[ \\t]+${name}(?:[ \\t]+${desc})?[ \\t]*$`,
+    'im',
+  )
+  return cobraEntry.test(source) || historicalLine.test(source)
+}
+
+export function isOfficialCliRootHelp(text) {
+  const source = String(text || '')
+  if (!source.trim()) return false
+  if (isOfficialCliSubcommandHelp(source)) return false
+  if (!hasOfficialCliRootUsageIdentity(source)) return false
+  const commands = CLI.rootHelpCommands
+  return (
+    hasOfficialCliRootCommandEntry(source, 'start', commands.start)
+    && hasOfficialCliRootCommandEntry(source, 'status', commands.status)
+    && hasOfficialCliRootCommandEntry(source, 'stop', commands.stop)
+  )
+}
+
 export function assertCliHelpText(text, { kind = 'help' } = {}) {
   const source = String(text || '')
-  if (kind === 'start' && !CLI.startHelpPattern.test(source)) {
-    throw new Error('CLI start --help did not match the official local-development start help.')
+  if (kind === 'start') {
+    if (!CLI.startHelpPattern.test(source)) {
+      throw new Error('CLI start --help did not match the official local-development start help.')
+    }
+    return true
   }
-  if (kind !== 'start' && !CLI.helpPattern.test(source) && !CLI.startHelpPattern.test(source)) {
-    throw new Error('CLI --help did not mention official start/stop/status commands.')
+  if (!isOfficialCliRootHelp(source)) {
+    throw new Error('CLI --help did not match the official v2.117 Cobra root-help structure.')
   }
   return true
 }

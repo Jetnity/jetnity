@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #560 MACOS DOCKER RUNTIME FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #561 CLI ROOT HELP FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,23 +11,25 @@ Status: **NORMAL / DRAFT PR #560 MACOS DOCKER RUNTIME FIX 1 FROZEN FOR TL REVIEW
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts macOS Docker Runtime Fix 1 |
-| Branch / PR | `fix/admin-account-counts-macos-docker-runtime-1` / Draft https://github.com/Jetnity/jetnity/pull/560 |
-| Base | `b440a6759c7c479d1b7509ecbefcac7b95c4ea35` |
-| Implementation persist | `49efbd95903c45d8a7e21c5bf9719da0a4e06707` |
+| Arbeitsblock | Admin Account Counts CLI Root Help Fix 1 |
+| Branch / PR | `fix/admin-account-counts-cli-root-help-1` / Draft https://github.com/Jetnity/jetnity/pull/561 |
+| Base | `4df0a8bff16f050314a3a0bc75827a9764173eb7` |
+| Implementation persist | `8756b87e9e0ad99285e38fb23fa8df7521342710` |
 | Status | technisch review-bereit / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts macOS Docker runtime fix 1, Gen 1, session `bc-11e9fb78-8111-4af3-8af7-73aa0ed1c9f6` |
+| Agent | Jetnity admin account counts CLI root help fix 1, Gen 1, session `bc-107166c0-7d11-4d69-8bd8-c01cbdb5c26b` |
 | Model | cursor-grok-4.6-high-fast |
 
-Bereits umgesetzt: isolated harness no longer forces `unix:///var/run/docker.sock`; only a verified local Unix endpoint is written into the private child env; remote/tcp/ssh/cloud fail closed; Linux default remains; Docker Desktop macOS local Unix is supported without a hard-coded username; official CLI 2.117.0 pins unchanged; controlled tests 44/44 PASS; default no-start receipt `aaclr1-20260926T010618Z` is `BLOCKED_ENVIRONMENT`.
+#560 macOS Docker runtime fix is **MERGED** on this base. Second authorized real-Mac preflight proved Docker endpoint PASS on `desktop-linux`; remaining fail is `helpVerified=false` / `failedIdentityChecks=["help"]`.
 
-Noch offen: independent TL exact-head review; fresh exact-head CI/Auth/Preview after this persist; authorized real-Mac Docker Desktop run. No Production/hosted mutation.
+Bereits umgesetzt: general/root `supabase --help` parser now requires official v2.117 Cobra root usage identity plus `start` / `status` / `stop` command entries; start-help and arbitrary `supabase start` text fail closed; CLI 2.117.0 pins unchanged; Docker endpoint / start-help / archive provenance unchanged; controlled tests 45/45 PASS (prior 44 preserved); default no-start receipt `aaclr1-20260926T014638Z` is `BLOCKED_ENVIRONMENT`.
 
-DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied.
+Noch offen: independent TL exact-head review; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac preflight. No Production/hosted mutation.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #560. Cursor starts no follow-up.
+DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_MACOS_DOCKER_RUNTIME_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then the runtime lane under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #561. Cursor starts no follow-up.
+
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_CLI_ROOT_HELP_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `cli-identity.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 

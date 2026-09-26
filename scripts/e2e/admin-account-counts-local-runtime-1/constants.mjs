@@ -83,7 +83,13 @@ export const CLI = Object.freeze({
   }),
   versionPattern: /^(?:supabase\s+)?(?:v)?2\.117\.0\b/i,
   startHelpPattern: /Start containers for Supabase local development/i,
-  helpPattern: /supabase\s+(start|stop|status)/i,
+  // Official v2.117 Cobra root help lists command + description, not
+  // `supabase start` on each line. Keep this fail-closed and structural.
+  rootHelpCommands: Object.freeze({
+    start: 'Start containers for Supabase local development',
+    status: 'Show status of local Supabase containers',
+    stop: 'Stop all local Supabase containers',
+  }),
 })
 
 export const ACTOR_KEYS = Object.freeze(['owner', 'moderator', 'ordinary', 'creator'])
