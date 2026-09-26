@@ -38,6 +38,8 @@ import {
 import {
   assertCliHelpText,
   assertCliVersionText,
+  isOfficialCliCobraRootHelp,
+  isOfficialCliEffectRootHelp,
   isOfficialCliRootHelp,
   assertOfficialArchiveIdentity,
   parseChecksums,
@@ -328,6 +330,93 @@ test('official v2.117 Cobra root --help is recognized; fragments and start-help 
   assert.equal(helpOnlyStart.startHelpVerified, true)
   assert.equal(helpOnlyStart.identityVerified, false)
   assert.deepEqual(helpOnlyStart.failedIdentityChecks, ['help'])
+  rmSync(workspace, { recursive: true, force: true })
+})
+
+test('official v2.117 Effect root --help is recognized; mixed and start-help fail closed', async () => {
+  const exactMac = officialEffectRootHelpExact()
+  const headed = officialEffectRootHelpHeaded()
+  const cobra = officialCobraRootHelp()
+  const historical = historicalRootHelp()
+  const startHelp = [
+    'Start containers for Supabase local development',
+    '',
+    'Usage:',
+    '  supabase start [flags]',
+    '',
+  ].join('\n')
+  const effectStartHelp = [
+    'supabase start [flags]',
+    'Start containers for Supabase local development',
+    '',
+  ].join('\n')
+  const missingStop = exactMac.replace(/^[ \t]*stop[ \t]+Stop all local Supabase containers.*$/m, '')
+  const mixedEffectUsageCobraStart = [
+    'supabase [flags]',
+    'start  Start containers for Supabase local development',
+    'status Show status of local Supabase containers',
+    'stop   Stop all local Supabase containers',
+  ].join('\n')
+
+  assert.equal(isOfficialCliEffectRootHelp(exactMac), true)
+  assert.equal(isOfficialCliCobraRootHelp(exactMac), false)
+  assert.equal(isOfficialCliRootHelp(exactMac), true)
+  assert.equal(assertCliHelpText(exactMac, { kind: 'help' }), true)
+  assert.equal(isOfficialCliEffectRootHelp(headed), true)
+  assert.equal(isOfficialCliRootHelp(headed), true)
+  assert.equal(isOfficialCliEffectRootHelp(cobra), false)
+  assert.equal(isOfficialCliCobraRootHelp(cobra), true)
+  assert.equal(isOfficialCliRootHelp(cobra), true)
+  assert.equal(isOfficialCliCobraRootHelp(historical), true)
+  assert.equal(isOfficialCliEffectRootHelp(historical), false)
+  assert.equal(isOfficialCliRootHelp(startHelp), false)
+  assert.equal(isOfficialCliRootHelp(effectStartHelp), false)
+  assert.throws(() => assertCliHelpText(startHelp, { kind: 'help' }), /root-help structure/)
+  assert.throws(() => assertCliHelpText(effectStartHelp, { kind: 'help' }), /root-help structure/)
+  assert.equal(assertCliHelpText(startHelp, { kind: 'start' }), true)
+  assert.equal(isOfficialCliRootHelp(missingStop), false)
+  assert.throws(() => assertCliHelpText(missingStop, { kind: 'help' }), /root-help structure/)
+  assert.equal(isOfficialCliEffectRootHelp(mixedEffectUsageCobraStart), false)
+  assert.equal(isOfficialCliCobraRootHelp(mixedEffectUsageCobraStart), false)
+  assert.equal(isOfficialCliRootHelp(mixedEffectUsageCobraStart), false)
+  assert.throws(
+    () => assertCliHelpText(mixedEffectUsageCobraStart, { kind: 'help' }),
+    /root-help structure/,
+  )
+  assert.throws(
+    () => assertCliHelpText('Please run supabase start before continuing.', { kind: 'help' }),
+    /root-help structure/,
+  )
+  assert.throws(
+    () => assertCliHelpText('start Start local Supabase stack in any sentence about status and stop.', { kind: 'help' }),
+    /root-help structure/,
+  )
+  assert.throws(() => assertCliHelpText('unrelated binary', { kind: 'help' }), /root-help structure/)
+
+  const workspace = mkdtempSync(join(tmpdir(), 'aaclr1-effect-root-help-'))
+  const pins = writeTestCliPins(workspace)
+  const composed = prepareOfficialCliIdentity({
+    toolingDir: join(workspace, 'tooling'),
+    env: { PATH: '/usr/bin', LANG: 'C', TZ: 'UTC' },
+    archivePath: pins.archivePath,
+    checksumsPath: pins.checksumsPath,
+    platformId: 'linux-x64',
+    invokeBinary: true,
+    pins: pins.pins,
+    execFile: (bin, args, options) => {
+      if (String(bin) === 'tar' || String(bin).endsWith('/tar')) return execFileSync('tar', args, options)
+      if (args?.[0] === '--version') return '2.117.0\n'
+      if (args?.[0] === '--help') return exactMac
+      if (args?.[0] === 'start' && args?.[1] === '--help') return startHelp
+      throw new Error(`unexpected ${bin} ${args}`)
+    },
+  })
+  assert.equal(composed.archiveBound, true)
+  assert.equal(composed.versionVerified, true)
+  assert.equal(composed.helpVerified, true)
+  assert.equal(composed.startHelpVerified, true)
+  assert.equal(composed.identityVerified, true)
+  assert.deepEqual(composed.failedIdentityChecks, [])
   rmSync(workspace, { recursive: true, force: true })
 })
 
@@ -3100,6 +3189,30 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   rmSync(fakeDurable, { recursive: true, force: true })
   rmSync(runnerEvidence, { recursive: true, force: true })
 })
+
+function officialEffectRootHelpExact() {
+  return [
+    'supabase [flags]',
+    'start  Start local Supabase stack',
+    'status Show status of local Supabase containers',
+    'stop   Stop all local Supabase containers',
+  ].join('\n')
+}
+
+function officialEffectRootHelpHeaded() {
+  return [
+    'USAGE',
+    '',
+    '  supabase [flags]',
+    '',
+    'COMMANDS',
+    '',
+    '  start   Start local Supabase stack',
+    '  status  Show status of local Supabase containers',
+    '  stop    Stop all local Supabase containers',
+    '',
+  ].join('\n')
+}
 
 function officialCobraRootHelp() {
   return [
