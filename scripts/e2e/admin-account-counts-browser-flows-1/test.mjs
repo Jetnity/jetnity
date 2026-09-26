@@ -35,7 +35,7 @@ import {
   sameExactOrigin,
   validateContext,
 } from './contract.mjs'
-import { assertNoCountDisclosure, classifyDenialUi } from './counts.mjs'
+import { assertNoCountDisclosure, classifyDenialUi, waitForAccountCountsTerminalState } from './counts.mjs'
 import { inspectNavigationResponse } from './navigation.mjs'
 import {
   BROWSER_GATES,
@@ -66,6 +66,9 @@ import {
   runG11DefaultOff,
   runG12ZeroAndDelta,
   runG14Unauthenticated,
+  runG15Downgrade,
+  runG16RestrictedStatus,
+  runG17MissingWrapper,
 } from './flows.mjs'
 import {
   SYNTHETIC_INVALID_JWT,
@@ -215,9 +218,17 @@ function createScriptedPage(world) {
     if (world.url.includes('/admin') && !world.countsEnabled) {
       return `${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`
     }
-    if (world.url.includes('/admin') && world.status !== 'active') return UI_COPY.forbidden
-    if (world.url.includes('/admin') && world.role === 'user') return UI_COPY.forbidden
-    if (world.url.includes('/admin') && !world.wrapperPresent) return UI_COPY.unavailable
+    const streamedCountsReady = !world.streamDelayMs
+      || Date.now() - (world.streamStartedAt ?? Date.now()) >= world.streamDelayMs
+    if (world.url.includes('/admin') && world.status !== 'active') {
+      return streamedCountsReady ? UI_COPY.forbidden : `${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`
+    }
+    if (world.url.includes('/admin') && world.role === 'user') {
+      return streamedCountsReady ? UI_COPY.forbidden : `${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`
+    }
+    if (world.url.includes('/admin') && !world.wrapperPresent) {
+      return streamedCountsReady ? UI_COPY.unavailable : `${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`
+    }
     if (world.url.includes('/admin') && world.aal >= 2 && world.countsEnabled) {
       return [
         UI_COPY.countsTitle,
@@ -272,6 +283,9 @@ function createScriptedPage(world) {
         }
       }
       world.url = String(url)
+      if (new URL(world.url).pathname === '/admin') {
+        world.streamStartedAt = Date.now()
+      }
       if (showCounts() && world.observeOnAdmin) {
         world.observerCalls.push({
           method: 'POST',
@@ -480,6 +494,8 @@ function createWorld(overrides = {}) {
     failedCounts: false,
     navigationStatus: 200,
     gotoReturns: undefined,
+    streamDelayMs: 0,
+    streamStartedAt: 0,
     ...overrides,
   }
 }
@@ -1767,6 +1783,425 @@ test('G10 existing-factor path still refuses a forced new enrollment', async () 
     /G10\/existing-factor path must not force a new enrollment/,
   )
   assert.equal(world.enrollClicked, false)
+})
+
+function adminShellText() {
+  return `${UI_COPY.adminShellKicker}\n${UI_COPY.adminShellTitle}`
+}
+
+function mutableAdminCountsPage({
+  text = adminShellText(),
+  url = 'http://127.0.0.1:3000/admin',
+  present = '',
+  recent = '',
+} = {}) {
+  const state = { text, url, present, recent }
+  const page = {
+    url: () => state.url,
+    waitForLoadState: async () => {},
+    locator: (selector) => {
+      if (selector === 'body') {
+        return {
+          innerText: async () => state.text,
+          count: async () => 1,
+        }
+      }
+      if (selector === '[aria-labelledby="admin-account-counts-present"]') {
+        return {
+          count: async () => (state.present ? 1 : 0),
+          first: () => ({ innerText: async () => state.present }),
+          innerText: async () => state.present,
+        }
+      }
+      if (selector === '[aria-labelledby="admin-account-counts-window"]') {
+        return {
+          count: async () => (state.recent ? 1 : 0),
+          first: () => ({ innerText: async () => state.recent }),
+          innerText: async () => state.recent,
+        }
+      }
+      if (selector === SELECTORS.countsTitle) {
+        return {
+          count: async () => (state.text.includes(UI_COPY.countsTitle) ? 1 : 0),
+        }
+      }
+      return {
+        count: async () => 0,
+        first: () => ({ innerText: async () => '' }),
+        innerText: async () => '',
+      }
+    },
+  }
+  return { page, state }
+}
+
+function laterText(state, text, delayMs = 40) {
+  setTimeout(() => {
+    state.text = text
+  }, delayMs)
+}
+
+function privilegedAdminWorld(overrides = {}) {
+  return createWorld({
+    loggedIn: OWNER.email,
+    aal: 2,
+    enrolled: true,
+    url: 'http://127.0.0.1:3000/admin',
+    ...overrides,
+  })
+}
+
+function statusFixture(world) {
+  return {
+    async setStatus(actor, status) {
+      if (actor === 'owner') world.status = status
+    },
+    async expectedCounts() {
+      return { ...world.expected }
+    },
+  }
+}
+
+test('G16/G17 wait is pinned to current AdminAccountCounts terminal copy', () => {
+  const counts = lese('components/admin/home/AdminAccountCounts.tsx')
+  const admin = lese('app/(admin)/admin/page.tsx')
+  assert.match(admin, /<AdminAccountCounts \/>/)
+  assert.match(counts, /export default async function AdminAccountCounts/)
+  assert.ok(counts.includes(UI_COPY.forbidden))
+  assert.ok(counts.includes(UI_COPY.unavailable))
+  assert.ok(counts.includes(UI_COPY.failed))
+  assert.equal(
+    UI_COPY.forbidden,
+    'Für diese Kontenzahlen fehlt eine rollengebundene Berechtigung „konten-verwalten“ mit aktueller AAL2. Notzugang über die Oberfläche reicht nicht.',
+  )
+  assert.equal(
+    UI_COPY.unavailable,
+    'Die lokale Zählfunktion ist in dieser Umgebung nicht vorhanden. Das ist keine leere Statistik.',
+  )
+})
+
+test('G16 intermediate /admin shell then exact forbidden PASSes', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const { page, state } = mutableAdminCountsPage()
+  laterText(state, UI_COPY.forbidden, 40)
+  const classified = await waitForAccountCountsTerminalState(page, {
+    kind: 'forbidden',
+    expectedOrigin: origin,
+    response: documentResponse(`${origin}/admin`),
+    timing: { timeoutMs: 400 },
+  })
+  assert.equal(classified.kind, 'forbidden')
+  const denied = await assertNoCountDisclosure(page, {
+    expectKind: ['forbidden', 'login-denied', 'unauthorized'],
+    expectedOrigin: origin,
+    response: documentResponse(`${origin}/admin`),
+  })
+  assert.equal(denied.kind, 'forbidden')
+
+  const world = privilegedAdminWorld({ streamDelayMs: 40 })
+  const notes = await runG16RestrictedStatus(
+    createScriptedPage(world),
+    origin,
+    { fixture: statusFixture(world) },
+    { timeoutMs: 2000 },
+  )
+  assert.match(notes, /banned\/disabled\/pending denied/)
+})
+
+test('G17 intermediate /admin shell then exact unavailable PASSes', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const { page, state } = mutableAdminCountsPage()
+  laterText(state, UI_COPY.unavailable, 40)
+  const classified = await waitForAccountCountsTerminalState(page, {
+    kind: 'unavailable',
+    expectedOrigin: origin,
+    response: documentResponse(`${origin}/admin`),
+    timing: { timeoutMs: 400 },
+  })
+  assert.equal(classified.kind, 'unavailable')
+
+  const world = privilegedAdminWorld({ streamDelayMs: 40, wrapperPresent: true })
+  const notes = await runG17MissingWrapper(
+    createScriptedPage(world),
+    origin,
+    {
+      fixture: {
+        async setWrapperPresent(present) {
+          world.wrapperPresent = present
+        },
+      },
+    },
+    { timeoutMs: 2000 },
+  )
+  assert.match(notes, /unavailable, not 0 accounts/)
+})
+
+test('G16/G17 wait fails immediately on mismatched terminal copy', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const forbiddenPage = mutableAdminCountsPage({ text: UI_COPY.unavailable })
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(forbiddenPage.page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 200 },
+    }),
+    /expected forbidden, got unavailable/,
+  )
+  const unavailablePage = mutableAdminCountsPage({ text: UI_COPY.forbidden })
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(unavailablePage.page, {
+      kind: 'unavailable',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 200 },
+    }),
+    /expected unavailable, got forbidden/,
+  )
+})
+
+test('G16/G17 wait fails immediately when available aggregates appear', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const { page, state } = mutableAdminCountsPage({
+    text: `${adminShellText()}\n4\n0`,
+    present: '4',
+    recent: '0',
+  })
+  const started = Date.now()
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 400 },
+    }),
+    /aggregate/,
+  )
+  assert.ok(Date.now() - started < 200)
+  laterText(state, UI_COPY.forbidden, 80)
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(page, {
+      kind: 'unavailable',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 400 },
+    }),
+    /aggregate/,
+  )
+})
+
+test('G16/G17 wait fails immediately on failed copy, wrong origin or path', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(mutableAdminCountsPage({ text: UI_COPY.failed }).page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 200 },
+    }),
+    /failed copy/,
+  )
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(
+      mutableAdminCountsPage({
+        text: UI_COPY.forbidden,
+        url: 'http://127.0.0.1:3999/admin',
+      }).page,
+      {
+        kind: 'forbidden',
+        expectedOrigin: origin,
+        response: documentResponse(`${origin}/admin`),
+        timing: { timeoutMs: 200 },
+      },
+    ),
+    /wrong origin|foreign-origin/,
+  )
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(
+      mutableAdminCountsPage({
+        text: UI_COPY.login,
+        url: `${origin}/admin/login`,
+      }).page,
+      {
+        kind: 'forbidden',
+        expectedOrigin: origin,
+        response: documentResponse(`${origin}/admin/login`),
+        timing: { timeoutMs: 200 },
+      },
+    ),
+    /unexpected path\/kind login/,
+  )
+  const readyPage = mutableAdminCountsPage({ text: UI_COPY.forbidden })
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(readyPage.page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: null,
+      timing: { timeoutMs: 200 },
+    }),
+    /missing-navigation/,
+  )
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(readyPage.page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`, 500),
+      timing: { timeoutMs: 200 },
+    }),
+    /navigation-500/,
+  )
+})
+
+test('G16/G17 wait timeout on generic shell stays ownership-safe FAIL', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const { page } = mutableAdminCountsPage()
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 80 },
+    }),
+    (error) => {
+      assert.equal(error instanceof OwnershipUncertaintyError, true)
+      assert.match(String(error.message), /did not observe the exact source-backed state|terminal/)
+      return true
+    },
+  )
+  const budget = createRunBudget({
+    timeoutMs: 160,
+    signal: new AbortController().signal,
+  })
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(page, {
+      kind: 'unavailable',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 80, budget },
+    }),
+    (error) => {
+      assert.equal(error instanceof OwnershipUncertaintyError, true)
+      assert.match(String(error.message), /accountCounts.terminal exceeded|did not observe|terminal/)
+      return true
+    },
+  )
+})
+
+test('G16/G17 wait fails on AbortSignal and does not treat generic shell as PASS', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const { page } = mutableAdminCountsPage()
+  const aborted = new AbortController()
+  aborted.abort()
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(page, {
+      kind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 200, signal: aborted.signal },
+    }),
+    /aborted while waiting for account-counts terminal state/,
+  )
+  const later = new AbortController()
+  setTimeout(() => later.abort(), 30)
+  await assert.rejects(
+    () => waitForAccountCountsTerminalState(page, {
+      kind: 'unavailable',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+      timing: { timeoutMs: 400, signal: later.signal },
+    }),
+    /aborted while waiting for account-counts terminal state/,
+  )
+  const generic = await classifyDenialUi(page, {
+    expectedOrigin: origin,
+    response: documentResponse(`${origin}/admin`),
+  })
+  assert.equal(generic.kind, 'disabled')
+  await assert.rejects(
+    () => assertNoCountDisclosure(page, {
+      expectKind: 'forbidden',
+      expectedOrigin: origin,
+      response: documentResponse(`${origin}/admin`),
+    }),
+    /expected denial forbidden, got disabled/,
+  )
+})
+
+test('G15 existing redirect/denial semantics remain immediate and unchanged', async () => {
+  const origin = 'http://127.0.0.1:3000'
+  const world = privilegedAdminWorld()
+  const notes = await runG15Downgrade(
+    createScriptedPage(world),
+    origin,
+    {
+      fixture: {
+        async setRole(actor, role) {
+          if (actor === 'owner') world.role = role
+        },
+      },
+    },
+    { timeoutMs: 2000 },
+  )
+  assert.match(notes, /denied after fixture role downgrade/)
+
+  const delayed = privilegedAdminWorld({ streamDelayMs: 5000 })
+  const started = Date.now()
+  await assert.rejects(
+    () => runG15Downgrade(
+      createScriptedPage(delayed),
+      origin,
+      {
+        fixture: {
+          async setRole(actor, role) {
+            if (actor === 'owner') delayed.role = role
+          },
+        },
+      },
+      { timeoutMs: 2000 },
+    ),
+    /generic|disabled|expected denial/,
+  )
+  assert.ok(Date.now() - started < 1000, 'G15 must not poll for later forbidden copy')
+
+  const flows = lese('scripts/e2e/admin-account-counts-browser-flows-1/flows.mjs')
+  const g15 = flows.slice(
+    flows.indexOf('export async function runG15Downgrade'),
+    flows.indexOf('export async function runG16RestrictedStatus'),
+  )
+  const g16 = flows.slice(
+    flows.indexOf('export async function runG16RestrictedStatus'),
+    flows.indexOf('export async function runG17MissingWrapper'),
+  )
+  const g17 = flows.slice(
+    flows.indexOf('export async function runG17MissingWrapper'),
+    flows.indexOf('export async function runG18Viewport'),
+  )
+  const g18 = flows.slice(
+    flows.indexOf('export async function runG18Viewport'),
+    flows.indexOf('export async function runG19HttpBoundary'),
+  )
+  const g19 = flows.slice(flows.indexOf('export async function runG19HttpBoundary'))
+  assert.doesNotMatch(g15, /waitForAccountCountsTerminalState/)
+  assert.match(g16, /waitForAccountCountsTerminalState/)
+  assert.match(g16, /kind: 'forbidden'/)
+  assert.match(g16, /assertNoCountDisclosure/)
+  assert.match(g17, /waitForAccountCountsTerminalState/)
+  assert.match(g17, /kind: 'unavailable'/)
+  assert.match(g17, /assertUnavailableNotZero/)
+  assert.doesNotMatch(g18, /waitForAccountCountsTerminalState/)
+  assert.doesNotMatch(g19, /waitForAccountCountsTerminalState/)
+})
+
+test('G18/G19 stay outside the G16/G17 streamed-state wait', async (t) => {
+  const { context, world } = createContextDouble(t)
+  stubFetch(world, t)
+  const result = await runBrowserFlows(context)
+  const byId = Object.fromEntries(result.gates.map((gate) => [gate.id, gate]))
+  assert.equal(byId.G15_role_downgrade_no_disclosure.result, 'PASS')
+  assert.equal(byId.G16_restricted_privileged_status.result, 'PASS')
+  assert.equal(byId.G17_missing_wrapper_unavailable.result, 'PASS')
+  assert.equal(byId.G18_desktop_mobile_ui.result, 'PASS')
+  assert.equal(byId.G19_http_boundary_same_session.result, 'PASS')
 })
 
 function acceptedParserResults(fixtures) {

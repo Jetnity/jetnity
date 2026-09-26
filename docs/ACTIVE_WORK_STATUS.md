@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #572 G8 ENROLL SUCCESS OBSERVATION INTEGRATION / WAITING EXACT-HEAD GATES / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #573 G16/G17 STREAMED STATE WAIT / WAITING EXACT-HEAD REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,25 +11,24 @@ Status: **NORMAL / DRAFT PR #572 G8 ENROLL SUCCESS OBSERVATION INTEGRATION / WAI
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts G8 Enroll Success Observation 1 — integration after parallel #570 |
-| Branch / PR | `fix/admin-account-counts-g8-enroll-success-observation-1-integration` / Draft https://github.com/Jetnity/jetnity/pull/572 |
-| Base | `cb64aee413341a0d5bffc6cff48c30f03c185996` (Merge #570) |
-| Source reviewed head | `4d535878d054b4380f32c9d67806cd895b7480bc` (PR #571 exact reviewed head) |
+| Arbeitsblock | Admin Account Counts G16/G17 Streamed State Wait 1 |
+| Branch / PR | `fix/admin-account-counts-g16-g17-streamed-state-wait-1` / Draft https://github.com/Jetnity/jetnity/pull/573 |
+| Base | `a82aa92dc9b5f06582e88e21c2e50453042256fa` (Merge #572) |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts G8 enroll success observation 1, Gen 1, session `bc-684e6634-d146-403e-a86c-1f44c18cd3d6` |
+| Agent | Jetnity admin account counts G16 G17 streamed state wait 1, Gen 1, session `bc-b06cf43d-9f72-4e03-8aa1-6cb4b8972676` |
 | Model | cursor-grok-4.6-high-fast |
 
-Authorized real-Mac run `aaclr1-20260926T182151Z` proved G6/G7 PASS and G8 failed only on stale post-verify success observation. Product source confirms the success toast is immediately cleared by `refreshFactors()`, while the durable verified-factor list remains. PR #571 implemented the source-backed G8 observation and controlled suite **42/42 PASS, 0 FAIL**. Because #570 merged in parallel, this PR #572 carries that exact reviewed code/docs onto current main for fresh exact-head gating.
+Authorized real-Mac run `aaclr1-20260926T204346Z` proved cleanup PASS, artifacts exported, G6–G15/G18/G19 PASS, and only G16/G17 FAIL as `generic unknown page cannot become a denial PASS`. Product source confirms those states are async `AdminAccountCounts` copy inside `/admin`. This Draft PR adds a bounded exact-state wait, then keeps the existing fail-closed disclosure asserts. Controlled suite **52/52 PASS, 0 FAIL**. No real Mac rerun from this writer.
 
 Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: fresh exact-head CI/Auth/Vercel gates for PR #572, then Technical-Lead integration review. No real Mac rerun before merge.
+Exakter nächster Schritt: independent Technical-Lead exact-head review of Draft PR #573. Cursor does not Ready, merge, or start a follow-up. No real Mac rerun before that review.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_G8_ENROLL_SUCCESS_OBSERVATION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW, then `scripts/e2e/admin-account-counts-browser-flows-1/session.mjs`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_G16_G17_STREAMED_STATE_WAIT_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW, then `scripts/e2e/admin-account-counts-browser-flows-1/counts.mjs` and `flows.mjs`.
 
-#570 is **MERGED** on this base. Original parallel PR #571 is superseded by this integration PR #572 and must not be merged independently. #569/#568/#567/#566/#565 remain merged.
+#572 is **MERGED** on this base. #571 remains the superseded G8 observation PR and must not be merged independently. #570/#569/#568/#567/#566/#565 remain merged.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
