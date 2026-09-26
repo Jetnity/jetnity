@@ -30,6 +30,9 @@ export function createOwnershipRegistry({
     cliBin: null,
     dockerBin: null,
     childEnv: null,
+    harnessDockerEnv: null,
+    cliChildEnv: null,
+    dockerPublishShim: null,
     execFile: null,
   }
 }

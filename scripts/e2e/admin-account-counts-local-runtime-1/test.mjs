@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { crc32, deflateSync } from 'node:zlib'
 import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
+import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
@@ -116,6 +116,14 @@ import {
 import { persistFailureReceipt, run, parseMode } from './run.mjs'
 import { defaultStartRuntime } from './runtime.mjs'
 import { SOURCE_PATHS as ACCEPTED_SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
+import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
+import {
+  assertDockerPublishShimUsable,
+  baueCliChildUmgebung,
+  prepareDockerPublishShim,
+  rewriteDockerArgv,
+  shimOwnershipUnknown,
+} from './docker-publish-shim.mjs'
 
 const IGNORE_TERM = "process.on('SIGTERM',()=>{}); process.stdout.write('ready\\n'); setInterval(()=>{},1000)"
 
@@ -1057,16 +1065,50 @@ test('R1 assembled context without a private evidenceDir is rejected', () => {
   )
 })
 
+function writeFakeDockerBinary(dir, { recorderPath, name = 'real-docker' } = {}) {
+  const path = join(dir, name)
+  const body = recorderPath
+    ? `#!${process.execPath}\n'use strict'\nrequire('node:fs').writeFileSync(${JSON.stringify(recorderPath)}, JSON.stringify(process.argv.slice(2)))\n`
+    : `#!${process.execPath}\n'use strict'\nprocess.exit(0)\n`
+  writeFileSync(path, body, { mode: 0o700 })
+  chmodSync(path, 0o700)
+  return path
+}
+
+function prepareTestDockerShim(home, { runId = 'aaclr1-shim', childEnv = { PATH: '/usr/bin' }, recorderPath } = {}) {
+  const realDockerBin = writeFakeDockerBinary(home, { recorderPath })
+  const cli = { identityVerified: true, archiveBound: true, version: '2.117.0' }
+  const docker = { usable: true, selected: { path: realDockerBin } }
+  return {
+    realDockerBin,
+    cli,
+    docker,
+    ...prepareDockerPublishShim({
+      privateHome: home,
+      realDockerBin,
+      childEnv,
+      cli,
+      docker,
+      runId,
+    }),
+  }
+}
+
 test('R2 partial stack failure stays owned; leftover volume and traversal do not PASS cleanup', async () => {
   const home = mkdtempSync(join(tmpdir(), 'aaclr1-partial-'))
   const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: home })
   registry.hadFallibleAcquisition = true
+  const shimPrep = prepareTestDockerShim(home, { runId: 'aaclr1-partial' })
   await assert.rejects(
     () => starteOwnedStack({
       cliBin: process.execPath,
-      dockerBin: 'docker',
+      dockerBin: shimPrep.realDockerBin,
       workdir: home,
       env: { PATH: '/usr/bin' },
+      cliEnv: shimPrep.cliEnv,
+      dockerPublishShim: shimPrep.shim,
+      cliIdentity: shimPrep.cli,
+      privateHome: home,
       plan: { bind: '127.0.0.1', services: [{ name: 'api-gateway', host: '127.0.0.1', port: 1 }] },
       networkName: 'aaclr1-partial',
       registry,
@@ -2421,14 +2463,15 @@ test('O2b default start threads exact CLI project identity into discovery and te
     const removed = { containers: new Set(), volumes: new Set() }
     const container = { ...cliContainer, Config: { Labels: labels } }
     const volume = { ...cliVolume, Labels: volumeLabels }
+    const realDockerBin = writeFakeDockerBinary(home)
     try {
       await defaultStartRuntime({
         owned,
         plan: planeLoopbackDienste({ apiPort: 54321, dbPort: 54322, appPort: 3000, observerPort: 3999 }),
         prepared: { projectId, workdir },
         source: {},
-        cli: { identityVerified: true, archiveBound: true, resolved: process.execPath },
-        docker: { usable: true, selected: { path: 'docker' } },
+        cli: { identityVerified: true, archiveBound: true, resolved: process.execPath, version: '2.117.0' },
+        docker: { usable: true, selected: { path: realDockerBin } },
         childEnv: { PATH: '/usr/bin' },
         execFile: (bin, args) => {
           calls.push({ bin: String(bin), args: args.slice() })
@@ -3940,5 +3983,287 @@ test('missing or non-responsive local endpoint blocks; CLI start-help failure is
   assert.equal(cliFail.docker.usable, true)
   assert.equal(cliFail.matrix.G0_preflight.result, 'BLOCKED')
   rmSync(workspace, { recursive: true, force: true })
+  rmSync(home, { recursive: true, force: true })
+})
+
+function assertShimDelegates(home, argv, expected) {
+  const recorderPath = join(home, `argv-${Date.now()}-${Math.random().toString(16).slice(2)}.json`)
+  const prep = prepareTestDockerShim(home, { recorderPath, runId: `aaclr1-shim-${expected.length}` })
+  execFileSync(prep.shim.path, argv, { encoding: 'utf8', env: prep.cliEnv })
+  assert.deepEqual(JSON.parse(readFileSync(recorderPath, 'utf8')), expected)
+  assert.equal(prep.shim.realDockerBin, prep.realDockerBin)
+  assert.notEqual(prep.realDockerBin, prep.shim.path)
+  return prep
+}
+
+test('docker publish shim rewrites create -p and --publish to explicit 127.0.0.1', () => {
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '-p', '54324:8025', 'img']).argv,
+    ['create', '-p', '127.0.0.1:54324:8025', 'img'],
+  )
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '-p', '54324:8025/tcp', 'img']).argv,
+    ['create', '-p', '127.0.0.1:54324:8025/tcp', 'img'],
+  )
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '-p', '54321:54321', '-p', '54324:8025', 'img']).argv,
+    ['create', '-p', '127.0.0.1:54321:54321', '-p', '127.0.0.1:54324:8025', 'img'],
+  )
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '--publish', '54324:8025', 'img']).argv,
+    ['create', '--publish', '127.0.0.1:54324:8025', 'img'],
+  )
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '-p', '127.0.0.1:54324:8025', 'img']).argv,
+    ['create', '-p', '127.0.0.1:54324:8025', 'img'],
+  )
+})
+
+test('docker publish shim rejects public, ambiguous and malformed create publish syntax', () => {
+  for (const value of ['0.0.0.0:54324:8025', '::1:54324:8025', '[::]:54324:8025', 'localhost:54324:8025', '192.168.1.9:54324:8025']) {
+    assert.throws(() => rewriteDockerArgv(['create', '-p', value, 'img']), /refused|IPv6|unexpected|host/)
+  }
+  assert.throws(() => rewriteDockerArgv(['create', '-p', '8025', 'img']), /unexpected|malformed|single/)
+  assert.throws(() => rewriteDockerArgv(['create', '-p', 'img']), /unexpected|malformed|missing/)
+  assert.throws(() => rewriteDockerArgv(['create', '-p']), /missing/)
+  assert.throws(() => rewriteDockerArgv(['create', '-P', 'img']), /publish-all/)
+  assert.throws(() => rewriteDockerArgv(['create', '-p', '8000-8010:8025', 'img']), /range/)
+  assert.deepEqual(
+    rewriteDockerArgv(['inspect', '-p', '54324:8025', 'ctr']).argv,
+    ['inspect', '-p', '54324:8025', 'ctr'],
+  )
+  assert.deepEqual(
+    rewriteDockerArgv(['create', '--expose', '8025', '-p', '54324:8025', 'img']).argv,
+    ['create', '--expose', '8025', '-p', '127.0.0.1:54324:8025', 'img'],
+  )
+})
+
+test('docker publish shim file uses the exact real Docker binary and ignores hostile PATH', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-exec-'))
+  const first = assertShimDelegates(home, ['create', '-p', '54324:8025', 'img'], ['create', '-p', '127.0.0.1:54324:8025', 'img'])
+  rmSync(first.shim.dir, { recursive: true, force: true })
+  const protocolHome = mkdtempSync(join(home, 'proto-'))
+  assertShimDelegates(protocolHome, ['create', '-p', '54324:8025/udp', 'img'], ['create', '-p', '127.0.0.1:54324:8025/udp', 'img'])
+  const multiHome = mkdtempSync(join(home, 'multi-'))
+  assertShimDelegates(multiHome, ['create', '-p', '1:2', '--publish', '3:4', 'img'], ['create', '-p', '127.0.0.1:1:2', '--publish', '127.0.0.1:3:4', 'img'])
+  const inspectHome = mkdtempSync(join(home, 'inspect-'))
+  assertShimDelegates(inspectHome, ['inspect', 'abc'], ['inspect', 'abc'])
+  const exposeHome = mkdtempSync(join(home, 'expose-'))
+  assertShimDelegates(exposeHome, ['create', '--expose', '8025', 'img'], ['create', '--expose', '8025', 'img'])
+
+  const hostile = mkdtempSync(join(home, 'hostile-'))
+  const hostileDocker = join(hostile, 'docker')
+  const hostileOut = join(home, 'hostile.json')
+  writeFileSync(hostileDocker, `#!${process.execPath}\n'use strict'\nrequire('node:fs').writeFileSync(${JSON.stringify(hostileOut)}, 'hostile')\n`, { mode: 0o700 })
+  chmodSync(hostileDocker, 0o700)
+  const recorderPath = join(home, 'real.json')
+  const prep = prepareTestDockerShim(home, {
+    recorderPath,
+    runId: 'aaclr1-hostile',
+    childEnv: { PATH: `${hostile}:/usr/bin` },
+  })
+  assert.equal(findeAusfuehrbare('docker', prep.cliEnv), prep.shim.path)
+  assert.equal(findeAusfuehrbare('docker', { PATH: `${hostile}:/usr/bin` }), hostileDocker)
+  execFileSync(prep.shim.path, ['ps', '-aq'], { encoding: 'utf8', env: { ...prep.cliEnv, PATH: `${hostile}:${prep.cliEnv.PATH}` } })
+  assert.deepEqual(JSON.parse(readFileSync(recorderPath, 'utf8')), ['ps', '-aq'])
+  assert.equal(existsSync(hostileOut), false)
+  assert.throws(
+    () => execFileSync(prep.shim.path, ['create', '-p', '0.0.0.0:54324:8025', 'img'], { encoding: 'utf8', env: prep.cliEnv }),
+    /refused|host/,
+  )
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('docker publish shim hash, symlink, mode and caller boolean fail closed', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-proof-'))
+  const prep = prepareTestDockerShim(home, { runId: 'aaclr1-proof' })
+  assert.equal(lstatSync(prep.shim.path).isSymbolicLink(), false)
+  assert.equal(lstatSync(prep.shim.path).mode & 0o777, 0o700)
+  assert.equal(lstatSync(prep.shim.dir).mode & 0o777, 0o700)
+  assert.equal(
+    assertDockerPublishShimUsable({
+      shim: prep.shim,
+      cli: prep.cli,
+      docker: prep.docker,
+      cliEnv: prep.cliEnv,
+      privateHome: home,
+      runId: 'aaclr1-proof',
+      shimVerified: true,
+    }),
+    true,
+  )
+
+  writeFileSync(prep.shim.path, `${readFileSync(prep.shim.path, 'utf8')}\n`, { mode: 0o700 })
+  chmodSync(prep.shim.path, 0o700)
+  assert.throws(
+    () => assertDockerPublishShimUsable({
+      shim: prep.shim,
+      cli: prep.cli,
+      docker: prep.docker,
+      cliEnv: prep.cliEnv,
+      privateHome: home,
+      runId: 'aaclr1-proof',
+      shimVerified: true,
+    }),
+    /SHA256/,
+  )
+
+  const linkHome = mkdtempSync(join(tmpdir(), 'aaclr1-shim-link-'))
+  const realDockerBin = writeFakeDockerBinary(linkHome)
+  const linkDir = join(linkHome, 'tooling', 'docker-publish-shim')
+  mkdirSync(linkDir, { recursive: true, mode: 0o700 })
+  chmodSync(linkDir, 0o700)
+  symlinkSync(realDockerBin, join(linkDir, 'docker'))
+  assert.throws(
+    () => assertDockerPublishShimUsable({
+      shim: {
+        path: join(linkDir, 'docker'),
+        dir: linkDir,
+        sha256: 'x',
+        realDockerBin,
+        runId: 'aaclr1-link',
+      },
+      cli: { identityVerified: true, archiveBound: true },
+      docker: { usable: true, selected: { path: realDockerBin } },
+      cliEnv: baueCliChildUmgebung({ childEnv: { PATH: '/usr/bin' }, shimDir: linkDir }),
+      privateHome: linkHome,
+      runId: 'aaclr1-link',
+      shimVerified: true,
+    }),
+    /symlink/,
+  )
+
+  chmodSync(prep.shim.path, 0o777)
+  assert.throws(
+    () => assertDockerPublishShimUsable({
+      shim: { ...prep.shim, sha256: createHash('sha256').update(readFileSync(prep.shim.path)).digest('hex') },
+      cli: prep.cli,
+      docker: prep.docker,
+      cliEnv: prep.cliEnv,
+      privateHome: home,
+      runId: 'aaclr1-proof',
+    }),
+    /mode/,
+  )
+
+  assert.throws(
+    () => prepareDockerPublishShim({
+      privateHome: home,
+      realDockerBin: prep.realDockerBin,
+      childEnv: { PATH: '/usr/bin' },
+      cli: { identityVerified: false, archiveBound: false },
+      docker: prep.docker,
+      runId: 'aaclr1-bypass',
+      shimVerified: true,
+    }),
+    /archiveBound|identityVerified/,
+  )
+  assert.equal(shimOwnershipUnknown({ path: null, dir: null }, [home]), true)
+  rmSync(home, { recursive: true, force: true })
+  rmSync(linkHome, { recursive: true, force: true })
+})
+
+test('composed start gives the official CLI child the shim PATH and keeps harness Docker on the real binary', async () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-compose-'))
+  const evidenceDir = mkdtempSync(join(home, 'evidence-'))
+  const workdir = mkdtempSync(join(home, 'workdir-'))
+  const registry = createOwnershipRegistry({ runId: 'aaclr1-shim-compose', privateHome: home, evidenceDir })
+  const owned = { evidenceDir, registry, privateHome: home, browserRegistry: registry.browsers }
+  const realDockerBin = writeFakeDockerBinary(home)
+  const spawnEnvs = []
+  const dockerBins = []
+  const projectId = 'aaclr1-shim-compose'
+  const networkName = `aaclr1-${projectId}`.slice(0, 60)
+  const container = {
+    Id: 'cli-db-1',
+    Name: '/supabase_db_aaclr1-shim-compose',
+    Config: { Labels: { [CLI_PROJECT_LABEL]: projectId } },
+    HostConfig: {
+      NetworkMode: networkName,
+      PortBindings: { '5432/tcp': [{ HostIp: '127.0.0.1', HostPort: '54322' }] },
+    },
+    NetworkSettings: {
+      Ports: { '5432/tcp': [{ HostIp: '127.0.0.1', HostPort: '54322' }] },
+      Networks: { [networkName]: {} },
+    },
+    Mounts: [],
+  }
+  await assert.rejects(
+    () => defaultStartRuntime({
+      owned,
+      plan: planeLoopbackDienste({ apiPort: 54321, dbPort: 54322, appPort: 3000, observerPort: 3999 }),
+      prepared: { projectId, workdir },
+      source: {},
+      cli: { identityVerified: true, archiveBound: true, resolved: process.execPath, version: '2.117.0' },
+      docker: { usable: true, selected: { path: realDockerBin } },
+      childEnv: { PATH: '/usr/bin' },
+      execFile: (bin, args) => {
+        dockerBins.push(String(bin))
+        if (args[0] === 'status') throw new Error('status-after-stack')
+        if (args[0] === 'network' && args[1] === 'create') return 'netid'
+        if (args[0] === 'ps') return container.Id
+        if (args[0] === 'inspect') return JSON.stringify([container])
+        return ''
+      },
+      spawnFn: (_bin, _args, options) => {
+        spawnEnvs.push(options.env)
+        return spawn(process.execPath, ['-e', 'process.exit(0)'], {
+          stdio: ['ignore', 'ignore', 'ignore'],
+        })
+      },
+    }),
+    /status-after-stack/,
+  )
+  assert.ok(owned.dockerPublishShim?.path)
+  assert.equal(findeAusfuehrbare('docker', spawnEnvs[0]), owned.dockerPublishShim.path)
+  assert.ok(dockerBins.every((bin) => bin === realDockerBin || bin === process.execPath))
+  assert.ok(dockerBins.includes(realDockerBin))
+  assert.ok(!dockerBins.includes(owned.dockerPublishShim.path))
+  assert.equal(registry.dockerBin, realDockerBin)
+  assert.notEqual(registry.childEnv.PATH, '/usr/bin')
+  assert.equal(findeAusfuehrbare('docker', registry.childEnv), owned.dockerPublishShim.path)
+  assert.notEqual(findeAusfuehrbare('docker', registry.harnessDockerEnv), owned.dockerPublishShim.path)
+  assert.equal(String(registry.harnessDockerEnv.PATH).startsWith(owned.dockerPublishShim.dir), false)
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('cleanup retains private HOME when shim ownership is unknown', async () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-unknown-'))
+  const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: home })
+  registerHandle(registry, 'dockerPublishShim', { path: null, dir: null })
+  const cleanup = await raeumeOwnedAuf({ privateHome: home, registry })
+  assert.equal(existsSync(home), true)
+  assert.equal(cleanup.unknown, true)
+  assert.equal(cleanup.ownershipRetained, true)
+  assert.ok(cleanup.removals.some((item) => item.path === home && item.removed === false))
+  assert.equal(bewerteCleanup(cleanup, { registry }), false)
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('owned stack start stays blocked when the docker publish shim is missing', async () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-shim-missing-'))
+  const registry = createOwnershipRegistry({ privateHome: home, evidenceDir: home })
+  let created = false
+  await assert.rejects(
+    () => starteOwnedStack({
+      cliBin: process.execPath,
+      dockerBin: writeFakeDockerBinary(home),
+      workdir: home,
+      env: { PATH: '/usr/bin' },
+      plan: { bind: '127.0.0.1', services: [{ name: 'api-gateway', host: '127.0.0.1', port: 1 }] },
+      networkName: 'aaclr1-missing-shim',
+      registry,
+      execFile: () => {
+        created = true
+        return 'netid'
+      },
+      spawnFn: () => {
+        throw new Error('CLI must not start without shim')
+      },
+    }),
+    /shim|not a completed/,
+  )
+  assert.equal(created, false)
+  assert.notEqual(registry.network?.created, true)
   rmSync(home, { recursive: true, force: true })
 })

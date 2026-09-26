@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Official CLI-managed local stack. Loopback publication is configured
-// before any listener starts. Post-start safety prefers resolved
+// before any listener starts. The official CLI child sees a private
+// run-owned docker publish shim on PATH; harness Docker calls keep the
+// exact verified real binary. Post-start safety prefers resolved
 // NetworkSettings.Ports over empty HostConfig.PortBindings placeholders.
 // CLI child exit is not Docker teardown.
 // Partial network/child/container/volume handles are recorded on the
@@ -22,6 +24,7 @@ import { selectSafeExcludes } from './cli-identity.mjs'
 import { assertNoPublicBindPlan } from './overlay.mjs'
 import { notACompletedExecution } from './implementation.mjs'
 import { recordDockerResources, registerHandle } from './ownership.mjs'
+import { assertDockerPublishShimUsable } from './docker-publish-shim.mjs'
 
 const FORBIDDEN_HOSTS = new Set(['0.0.0.0', '::', '[::]', '', '*'])
 
@@ -570,6 +573,10 @@ export async function starteOwnedStack({
   dockerBin,
   workdir,
   env,
+  cliEnv,
+  dockerPublishShim,
+  cliIdentity,
+  privateHome,
   plan,
   networkName,
   excludeNames = [],
@@ -589,6 +596,18 @@ export async function starteOwnedStack({
   if (!dockerBin) {
     throw notACompletedExecution('owned supabase start', 'usable local Docker daemon is absent')
   }
+  if (!cliEnv || !dockerPublishShim) {
+    throw notACompletedExecution('owned supabase start', 'docker publish shim/PATH proof is missing')
+  }
+  assertDockerPublishShimUsable({
+    shim: dockerPublishShim,
+    cli: cliIdentity,
+    docker: { usable: true, selected: { path: dockerBin } },
+    cliEnv,
+    privateHome: privateHome || registry?.privateHome,
+    runId: runId || registry?.runId,
+    shimVerified: true,
+  })
   assertNoPublicBindPlan(plan)
   refuseBootstrapOverlay({ plannedSqlPaths: [SOURCE_PATHS.producer, SOURCE_PATHS.wrapper], target: 'gotrue' })
   const started = {
@@ -612,7 +631,7 @@ export async function starteOwnedStack({
     const args = baueStartArgumente({ networkId: network.name, excludeNames })
     const child = spawnFn(cliBin, args, {
       cwd: workdir,
-      env,
+      env: cliEnv,
       stdio: ['ignore', 'pipe', 'pipe'],
     })
     started.child = child

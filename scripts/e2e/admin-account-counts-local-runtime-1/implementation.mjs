@@ -10,6 +10,7 @@ export const IMPLEMENTATION = Object.freeze({
   envGuard: 'REUSED_AND_EXTENDED',
   cliIdentity: 'REVIEW_FIX_C2',
   dockerCapability: 'MACOS_ENDPOINT_FIX_1',
+  dockerPublishShim: 'IMPLEMENTED',
   stackStart: 'IMPLEMENTED',
   migrationReplay: 'IMPLEMENTED',
   catalogVerification: 'IMPLEMENTED',
@@ -23,7 +24,7 @@ export const IMPLEMENTATION = Object.freeze({
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'macOS Docker runtime fix 1: isolated child env no longer invents unix:///var/run/docker.sock. A parent-only read of the active Docker CLI/context may select one verified local Unix endpoint; remote/tcp/ssh/cloud fail closed; private HOME is not given copied Docker credentials/config. Linux default sockets remain supported. Docker Desktop macOS local Unix endpoints are supported without a hard-coded username. Official CLI 2.117.0 archive identity and version/help/start-help checks are unchanged. Official binaries, Docker and the real stack were not executed in this correction. O1/O2 and N01–N03/E1/E2/C1/C2/F1–F3 stay.',
+    'Docker publish shim 1: official CLI 2.117.0 archive/binary stays byte-identical. The official CLI child receives a private run-owned PATH shim named docker that rewrites create -p/--publish to explicit 127.0.0.1 before container start. Harness Docker operations keep the exact verified real binary. #564 NetworkSettings inspection remains authoritative. Official binaries, Docker and the real stack were not executed in this correction.',
 })
 
 export function notACompletedExecution(kind, reason) {

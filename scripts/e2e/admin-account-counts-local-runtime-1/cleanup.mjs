@@ -9,6 +9,7 @@ import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from '../admin-accoun
 import { closeOwnedBrowserHandle } from './browser-session.mjs'
 import { authoritativeBrowserRegistry } from './ownership.mjs'
 import { stoppeOwnedStack } from './stack.mjs'
+import { shimOwnershipUnknown } from './docker-publish-shim.mjs'
 
 export function canonicalizeOwnedPath(path) {
   if (!path) return null
@@ -151,14 +152,20 @@ export async function raeumeOwnedAuf(state = {}, { closeTimeoutMs, exportArtifac
     && cliChild?.reaped !== true
     && cliChild?.neverStarted !== true
   )
+  const shimUnknown = shimOwnershipUnknown(
+    registry?.dockerPublishShim || state.dockerPublishShim,
+    ownedRoots,
+  )
   const unknown = reports.some((item) => item.unknown === true)
     || registry?.stopUnknown === true
     || resourceUnknown
     || exportFailed
     || cliChildUnconfirmed
+    || shimUnknown
   const ownershipRetained = reports.some((item) => item.ownershipRetained === true || item.closed === false)
     || exportFailed
     || cliChildUnconfirmed
+    || shimUnknown
   const volumesUnconfirmed = Boolean(
     stackReport
     && (
