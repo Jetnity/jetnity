@@ -38,7 +38,7 @@ Unrelated workspace drift `next-env.d.ts` was restored and never staged.
 | Already-absent stop/remove can reach stopped=true | Desktop forms through `stoppeOwnedStack` |
 | Foreign / unresolved still block | live foreign inspect / generic unresolved inspect unchanged |
 | No generic `not found` | bare `<name> not found` stays UNKNOWN |
-| Entire helper suite green | reconstruct after the controlled-test persist |
+| Entire helper suite green | **79/79 PASS** |
 
 ## Misleading claims corrected
 
@@ -52,7 +52,9 @@ This writer did not run `run.mjs`, official binaries, Docker, Playwright, or any
 
 ## Tests actually run
 
-Record the live helper-suite result on the test persist. GitHub CI / Auth / Vercel Preview are not claimed on this implementation persist. Re-read those gates on the live SHA before review.
+`node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **79/79 PASS, 0 FAIL** on this Linux agent (14.2s). Log: `/opt/cursor/artifacts/aaclr1-docker-cleanup-absent-messages-controlled-tests.log`.
+
+GitHub CI / Auth / Vercel Preview are not claimed on this implementation persist. Re-read those gates on the live SHA before review.
 
 Real Docker / official CLI / user's Mac / hosted Supabase / Production: **NOT RUN / NOT MUTATED**.
 

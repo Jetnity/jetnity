@@ -25,7 +25,7 @@ Machine mode is `NORMAL`. Special Product-Owner gates remain. Cursor never Ready
 2. Keep ABSENT narrowly anchored to the exact requested resource name. A different name, hyphen suffix, or generic `not found` must stay UNKNOWN.
 3. Keep genuine daemon/permission/timeout/JSON/context failures UNKNOWN even if the text also names the resource. Do not restore a bare `|daemon|` match that would treat the Docker CLI envelope as unavailability.
 4. Do not weaken foreign/unresolved/conflict ownership or add global prune.
-5. `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` is the only authorized verification for this writer.
+5. `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — this writer observed **79/79 PASS**.
 6. Do not run the real full acceptance run or real Docker from this slice.
 7. A later authorized real-Mac rerun must prove cleanup now reaches Docker services stopped when resources are already absent with Desktop message forms, while missing browser screenshots remain independently visible.
 8. Historical receipts stay dated. Exclusive creation refuses overwrite. This writer did not mutate the cited Mac cleanup receipt.

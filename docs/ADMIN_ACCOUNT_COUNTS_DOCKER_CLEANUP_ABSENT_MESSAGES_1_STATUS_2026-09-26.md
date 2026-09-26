@@ -60,7 +60,8 @@ The same run also reported missing desktop/mobile browser screenshots. That rema
 
 | Class | Result | Kind |
 | --- | --- | --- |
-| `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` | pending on this persist; reconstruct after the test commit | controlled helpers only |
+| `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` | **79/79 PASS, 0 FAIL** (14.2s) | controlled helpers only |
+| Artifact | `/opt/cursor/artifacts/aaclr1-docker-cleanup-absent-messages-controlled-tests.log` | local agent evidence |
 | Real Docker / official binary / user's Mac / hosted Supabase / Production | **NOT RUN / NOT MUTATED** | forbidden by task |
 | Outbound registry/package fetch | **NOT PERFORMED** | forbidden by task |
 

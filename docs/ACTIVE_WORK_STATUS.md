@@ -21,7 +21,7 @@ Status: **NORMAL / DRAFT PR #570 DOCKER CLEANUP ABSENT MESSAGES 1 FROZEN FOR TL 
 
 Authorized real-Mac run `aaclr1-20260926T182151Z` reached final cleanup with processes reaped, browser closed, inventoryComplete=true and containerState=ABSENT. Volume/network became UNKNOWN only because Docker Desktop used `get <volume>: no such volume` and `network <name> not found`. Missing desktop/mobile screenshots from the same run remain a separate later evidence matter.
 
-Bereits umgesetzt: exact-resource ABSENT classification for historical plus Desktop volume/network forms; name-bounded so a different resource cannot PASS; daemon/permission/timeout stay UNKNOWN; foreign/unresolved still block; browser artifact/export untouched. Controlled helper suite is the only authorized verification; reconstruct the live PASS count from the test persist.
+Bereits umgesetzt: exact-resource ABSENT classification for historical plus Desktop volume/network forms; name-bounded so a different resource cannot PASS; daemon/permission/timeout stay UNKNOWN; foreign/unresolved still block; browser artifact/export untouched. Controlled suite **79/79 PASS, 0 FAIL**.
 
 Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation. No real Docker from this writer.
 
