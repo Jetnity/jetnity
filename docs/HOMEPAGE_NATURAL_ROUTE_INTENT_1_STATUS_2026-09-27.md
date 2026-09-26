@@ -28,7 +28,7 @@ Deterministic homepage intent on top of merged #543, plus TL R1:
 
 ## Local gates on the persist working tree
 
-Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older exact-head gates, including `cc819d2253361e38e6ac5d9fed328c39521b1ba7`, do not apply.
+Evidence persist: `42e7e378435f7d3de1c9ba095344f1927042d19a`. Re-read `git rev-parse HEAD` after this freeze persist. That SHA is the freeze. Older exact-head gates, including `cc819d2253361e38e6ac5d9fed328c39521b1ba7`, do not apply.
 
 | Check | Result |
 | --- | --- |

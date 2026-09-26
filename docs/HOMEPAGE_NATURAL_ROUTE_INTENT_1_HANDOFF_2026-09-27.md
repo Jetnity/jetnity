@@ -11,7 +11,7 @@ Task base: `8faa0447a89d613cb7d00c8173c3bda57a3524fc`
 Prerequisite #543: `d03a048624b42cb0b2a1cb0e146aed238e23041f` (merged)  
 Current main synced: `35ea065536649c20740a6d6bbd24294c2366aee3` (#574 docs-only Account Counts closure)
 
-Re-read `git rev-parse HEAD` after this persist. That SHA is the freeze. Older exact-head gates do not apply.
+Evidence persist: `42e7e378435f7d3de1c9ba095344f1927042d19a`. Re-read `git rev-parse HEAD` after this freeze persist. That SHA is the freeze. Older exact-head gates do not apply.
 
 ## This persist covers
 
