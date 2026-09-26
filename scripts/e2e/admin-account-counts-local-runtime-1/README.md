@@ -41,8 +41,13 @@ node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs
 When an already-working local Docker daemon and verified official CLI **v2.117.0**
 are present, `--runtime-only` / `--full` can:
 
-1. Rebuild an allowlisted child env with a private HOME. No inherited connector,
-   provider, SMTP, NODE_OPTIONS, preload, `.env` or remote Docker context.
+1. Rebuild an allowlisted child env with a private HOME. Discover one verified
+   local Unix Docker endpoint from the parent CLI/context first; set only that
+   `DOCKER_HOST` in the child. Linux default sockets remain supported. Docker
+   Desktop macOS local Unix endpoints are supported without a hard-coded
+   username. Remote/tcp/ssh/cloud contexts fail closed. No inherited connector,
+   provider, SMTP, NODE_OPTIONS, preload, `.env`, Docker credentials or remote
+   Docker context. Private HOME never receives copied Docker config.
 2. Create a run-owned Docker network with
    `com.docker.network.bridge.host_binding_ipv4=127.0.0.1` **before** start.
 3. Start the official CLI against a disclosed overlay (unique project id,

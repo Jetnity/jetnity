@@ -21,6 +21,13 @@ export const TASK = 'docs/ADMIN_ACCOUNT_COUNTS_LOCAL_RUNTIME_1_TASK_2026-09-23.m
 export const TASK_SEED = '0aa33e88a021756a5cee64a130d544122977880a'
 export const PRODUCT_BASELINE = 'fa7f651c023eb361fb142cbb931bc702f3a3d213'
 export const BRANCH = 'test/admin-account-counts-local-runtime-1'
+export const MACOS_DOCKER_FIX_1 = Object.freeze({
+  agent: 'Jetnity admin account counts macOS Docker runtime fix 1',
+  generation: 1,
+  task: 'docs/ADMIN_ACCOUNT_COUNTS_MACOS_DOCKER_RUNTIME_FIX_1_TASK_2026-09-26.md',
+  branch: 'fix/admin-account-counts-macos-docker-runtime-1',
+  productBaseline: 'b440a6759c7c479d1b7509ecbefcac7b95c4ea35',
+})
 export const RUN_LABEL_PREFIX = 'aaclr1'
 export const CONTRACT_VERSION = 'jetnity.account-counts.local-acceptance.v1'
 

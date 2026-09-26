@@ -1,9 +1,34 @@
 # Jetnity – Active Work Status
 
-Stand: 22. September 2026
-Status: **NORMAL ON LIVE MAIN / CURRENT CHECKPOINT 22 SEP 2026 / CONTINUITY REFRESH 3 C1–C3 / #545–#550 #552 CLOSED / #551 REMAINING / LIVE-EVIDENCE WINS**
+Stand: 26. September 2026
+Status: **NORMAL / DRAFT PR #560 MACOS DOCKER RUNTIME FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
+
+## 0. Current work boundary — 26 September 2026
+
+**Live `main` machine mode is `NORMAL`.** Special Product-Owner gates remain. Cursor does not Ready or merge.
+
+| Field | Value |
+| --- | --- |
+| Arbeitsblock | Admin Account Counts macOS Docker Runtime Fix 1 |
+| Branch / PR | `fix/admin-account-counts-macos-docker-runtime-1` / Draft https://github.com/Jetnity/jetnity/pull/560 |
+| Base | `b440a6759c7c479d1b7509ecbefcac7b95c4ea35` |
+| Status | technisch review-bereit / wartet auf unabhängigen Technical-Lead exact-head Review |
+| Agent | Jetnity admin account counts macOS Docker runtime fix 1, Gen 1, session `bc-11e9fb78-8111-4af3-8af7-73aa0ed1c9f6` |
+| Model | cursor-grok-4.6-high-fast |
+
+Bereits umgesetzt: isolated harness no longer forces `unix:///var/run/docker.sock`; only a verified local Unix endpoint is written into the private child env; remote/tcp/ssh/cloud fail closed; Linux default remains; Docker Desktop macOS local Unix is supported without a hard-coded username; official CLI 2.117.0 pins unchanged; controlled tests 44/44 PASS; default no-start receipt `aaclr1-20260926T010618Z` is `BLOCKED_ENVIRONMENT`.
+
+Noch offen: independent TL exact-head review; fresh exact-head CI/Auth/Preview after this persist; authorized real-Mac Docker Desktop run. No Production/hosted mutation.
+
+DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied.
+
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #560. Cursor starts no follow-up.
+
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_MACOS_DOCKER_RUNTIME_FIX_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then the runtime lane under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+
+The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
 Canonical current-work checkpoint:
 

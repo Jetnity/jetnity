@@ -293,8 +293,10 @@ export function verifyResolvedCli({
       pinned: false,
       archiveBound: false,
       version: null,
+      versionVerified: false,
       helpVerified: false,
       startHelpVerified: false,
+      failedIdentityChecks: [],
       note: 'No supabase executable on the isolated PATH or in run-owned tooling.',
     }
   }
@@ -315,8 +317,10 @@ export function verifyResolvedCli({
       archiveBound: false,
       resolved,
       version: null,
+      versionVerified: false,
       helpVerified: false,
       startHelpVerified: false,
+      failedIdentityChecks: [],
       binarySha256: bound.binarySha256,
       note: `${bound.reason} Version/help was not consulted before official-byte binding.`,
     }
@@ -352,6 +356,11 @@ export function verifyResolvedCli({
     startHelpOk = false
   }
   const identityVerified = versionOk && helpOk && startHelpOk && bound.archiveBound === true
+  const failedIdentityChecks = [
+    ...(!versionOk ? ['version'] : []),
+    ...(versionOk && !helpOk ? ['help'] : []),
+    ...(versionOk && !startHelpOk ? ['start-help'] : []),
+  ]
   return {
     available: identityVerified,
     identityVerified,
@@ -359,8 +368,10 @@ export function verifyResolvedCli({
     archiveBound: bound.archiveBound,
     resolved,
     version: version.ok ? version.text : null,
+    versionVerified: versionOk,
     helpVerified: helpOk,
     startHelpVerified: startHelpOk,
+    failedIdentityChecks,
     startHelpTextPresent: Boolean(startHelp.full),
     excludeNames: listExcludeNames(startHelp.full || ''),
     provenance: identityVerified
@@ -374,7 +385,7 @@ export function verifyResolvedCli({
     binarySha256: bound.binarySha256,
     note: identityVerified
       ? `Selected executable ${bound.binarySha256} is the owned extract of official ${CLI.version} archive ${bound.archiveSha256} and matched version/help.`
-      : `Official archive is bound but observed ${version.ok ? version.text : 'no version'}; help=${helpOk}; startHelp=${startHelpOk}.`,
+      : `Official archive is bound but version=${versionOk}; help=${helpOk}; startHelp=${startHelpOk}. Failed checks: ${failedIdentityChecks.join(',') || 'none'}.`,
   }
 }
 

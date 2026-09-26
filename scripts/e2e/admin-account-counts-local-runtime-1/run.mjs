@@ -3,7 +3,7 @@
 // --runtime-only may validate setup and cannot report full acceptance.
 // --full must load the sibling browser module; absence is NOT_IMPLEMENTED.
 
-import { mkdirSync, mkdtempSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
@@ -15,6 +15,7 @@ import {
   EVIDENCE_DIR,
   EXIT,
   GENERATION,
+  MACOS_DOCKER_FIX_1,
   PRODUCT_BASELINE,
   RUN_LABEL_PREFIX,
   TASK,
@@ -24,6 +25,11 @@ import {
 import { IMPLEMENTATION } from './implementation.mjs'
 import { baueDockerCliUmgebung, baueRuntimePreflightUmgebung, klassifiziereRuntimeUmgebung } from './env.mjs'
 import { pruefeDockerFaehigkeit } from './docker-capability.mjs'
+import {
+  sanitizeDockerEndpunktBeweis,
+  verifiziereLokalenUnixDockerEndpunkt,
+  waehleLokalenUnixDockerEndpunkt,
+} from './docker-endpoint.mjs'
 import { prepareOfficialCliIdentity, defaultReadOfficialArtifacts, parseCliArtifactArgs, platformKey, shouldInvokeOfficialCli } from './cli-identity.mjs'
 import { assertRuntimeSources, leseRuntimeSourceManifest, assertCleanProductHead } from './source.mjs'
 import { planeLoopbackDienste, bereiteOwnedWorkdir, assertOverlayKeepsAuthSemantics } from './overlay.mjs'
@@ -60,6 +66,8 @@ export async function run({
   privateHome: providedHome,
   readOfficialArtifacts = defaultReadOfficialArtifacts,
   cliPins,
+  exists = existsSync,
+  platform: hostPlatform = process.platform,
 } = {}) {
   const mode = parseMode(argv)
   const invokeBinary = shouldInvokeOfficialCli(mode)
@@ -98,14 +106,49 @@ export async function run({
   let cleanup = null
   try {
     const parentClass = klassifiziereRuntimeUmgebung(env)
-    const childEnv = baueRuntimePreflightUmgebung({ parentEnv: env, privateHome })
+    const selection = waehleLokalenUnixDockerEndpunkt({
+      parentEnv: env,
+      execFile,
+      resolve,
+      exists,
+      platform: hostPlatform,
+    })
+    let childEnv = baueRuntimePreflightUmgebung({ parentEnv: env, privateHome })
+    let dockerEnv = childEnv
+    let endpoint = selection
+    if (selection.ok) {
+      const candidateEnv = baueDockerCliUmgebung({
+        parentEnv: env,
+        privateHome,
+        dockerHost: selection.host,
+      })
+      endpoint = verifiziereLokalenUnixDockerEndpunkt({
+        selection,
+        isolatedEnv: candidateEnv,
+        execFile,
+        resolve,
+        exists,
+      })
+      if (endpoint.verified) {
+        childEnv = baueRuntimePreflightUmgebung({
+          parentEnv: env,
+          privateHome,
+          dockerHost: endpoint.host,
+        })
+        dockerEnv = candidateEnv
+      }
+    }
     owned.childEnv = childEnv
-    const dockerEnv = baueDockerCliUmgebung({ parentEnv: env, privateHome })
-    const docker = pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve })
+    const dockerProbe = pruefeDockerFaehigkeit({ env: dockerEnv, execFile, resolve, exists })
+    const docker = {
+      ...dockerProbe,
+      usable: dockerProbe.usable === true && endpoint.verified === true,
+      endpoint: sanitizeDockerEndpunktBeweis(endpoint, { parentHome: env.HOME }),
+    }
     const artifactArgs = parseCliArtifactArgs(argv)
     const cli = prepareOfficialCliIdentity({
       toolingDir,
-      env: childEnv,
+      env: dockerEnv,
       execFile,
       archivePath: artifactArgs.archivePath,
       checksumsPath: artifactArgs.checksumsPath,
@@ -280,14 +323,18 @@ export async function run({
         note: docker.note,
         installAttempted: false,
         notAProductionIncident: true,
+        endpoint: docker.endpoint,
+        usedExplicitLocalHost: docker.usedExplicitLocalHost === true,
       },
       cli: {
         selected: '2.117.0',
         identityVerified: cli.identityVerified,
         archiveBound: cli.archiveBound === true,
         version: cli.version,
+        versionVerified: cli.versionVerified === true,
         helpVerified: cli.helpVerified,
         startHelpVerified: cli.startHelpVerified,
+        failedIdentityChecks: cli.failedIdentityChecks || [],
         resolved: cli.resolved || null,
         binarySha256: cli.binarySha256 || null,
         note: cli.note,
@@ -330,6 +377,7 @@ export async function run({
     writeEvidence(evidenceDir, `${runId}-run-receipt.json`, {
       agent: AGENT,
       generation: GENERATION,
+      macosDockerFix1: MACOS_DOCKER_FIX_1,
       task: TASK,
       taskSeed: TASK_SEED,
       branch: BRANCH,
@@ -363,6 +411,7 @@ export async function run({
       cleanup,
       docker,
       cli,
+      endpoint,
       source,
       browserPresent,
       consumerCompleted,
