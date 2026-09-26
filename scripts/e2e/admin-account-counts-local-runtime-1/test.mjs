@@ -227,6 +227,100 @@ test('no public bind in the pre-start plan or observed Docker mappings', () => {
   assert.equal(parsed[0].HostIp, '127.0.0.1')
 })
 
+test('post-start observation prefers resolved NetworkSettings.Ports over empty HostConfig', () => {
+  const mailpitResolved = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [{ HostIp: '127.0.0.1', HostPort: '54324' }] } },
+  })
+  assert.equal(mailpitResolved.length, 1)
+  assert.equal(mailpitResolved[0].containerPort, '8025/tcp')
+  assert.equal(mailpitResolved[0].HostIp, '127.0.0.1')
+  assert.equal(mailpitResolved[0].HostPort, '54324')
+  assert.equal(assertLoopbackBindings(mailpitResolved), true)
+
+  const publicRuntime = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [{ HostIp: '0.0.0.0', HostPort: '54324' }] } },
+  })
+  assert.equal(publicRuntime[0].HostIp, '0.0.0.0')
+  assert.throws(() => assertLoopbackBindings(publicRuntime), /Public or unspecified/)
+
+  const emptyRuntime = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '127.0.0.1', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+  })
+  assert.equal(emptyRuntime[0].HostIp, '')
+  assert.throws(() => assertLoopbackBindings(emptyRuntime), /Public or unspecified/)
+
+  const fallback = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '54321/tcp': [{ HostIp: '127.0.0.1', HostPort: '54321' }] } },
+    NetworkSettings: { Networks: { owned: {} } },
+  })
+  assert.equal(fallback[0].HostIp, '127.0.0.1')
+  assert.equal(assertLoopbackBindings(fallback), true)
+
+  const emptyFallback = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '', HostPort: '54324' }] } },
+  })
+  assert.throws(() => assertLoopbackBindings(emptyFallback), /Public or unspecified/)
+  const publicFallback = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '0.0.0.0', HostPort: '54324' }] } },
+  })
+  assert.throws(() => assertLoopbackBindings(publicFallback), /Public or unspecified/)
+  assert.throws(
+    () => assertLoopbackBindings(parseDockerPortBindings({
+      HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '::', HostPort: '54324' }] } },
+    })),
+    /Public or unspecified/,
+  )
+  assert.throws(
+    () => assertLoopbackBindings(parseDockerPortBindings({
+      HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: 'localhost', HostPort: '54324' }] } },
+    })),
+    /Non-numeric loopback/,
+  )
+
+  const emptyPresentRuntime = parseDockerPortBindings({
+    HostConfig: { PortBindings: { '8025/tcp': [{ HostIp: '127.0.0.1', HostPort: '54324' }] } },
+    NetworkSettings: { Ports: {} },
+  })
+  assert.deepEqual(emptyPresentRuntime, [])
+  assert.throws(() => assertLoopbackBindings(emptyPresentRuntime), /No published bindings/)
+
+  const multiOk = parseDockerPortBindings({
+    HostConfig: {
+      PortBindings: {
+        '54321/tcp': [{ HostIp: '', HostPort: '54321' }],
+        '8025/tcp': [{ HostIp: '', HostPort: '54324' }],
+      },
+    },
+    NetworkSettings: {
+      Ports: {
+        '54321/tcp': [{ HostIp: '127.0.0.1', HostPort: '54321' }],
+        '8025/tcp': [{ HostIp: '127.0.0.1', HostPort: '54324' }],
+      },
+    },
+  })
+  assert.equal(multiOk.length, 2)
+  assert.equal(assertLoopbackBindings(multiOk), true)
+
+  const multiPublic = parseDockerPortBindings({
+    HostConfig: {
+      PortBindings: {
+        '54321/tcp': [{ HostIp: '', HostPort: '54321' }],
+        '8025/tcp': [{ HostIp: '', HostPort: '54324' }],
+      },
+    },
+    NetworkSettings: {
+      Ports: {
+        '54321/tcp': [{ HostIp: '127.0.0.1', HostPort: '54321' }],
+        '8025/tcp': [{ HostIp: '0.0.0.0', HostPort: '54324' }],
+      },
+    },
+  })
+  assert.throws(() => assertLoopbackBindings(multiPublic), /Public or unspecified/)
+})
+
 test('wrong CLI checksum, version and help fail closed', () => {
   const checksums = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  supabase_2.117.0_linux_amd64.tar.gz\n'
   assert.throws(

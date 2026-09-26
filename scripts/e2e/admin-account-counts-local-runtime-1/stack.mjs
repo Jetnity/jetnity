@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Official CLI-managed local stack. Loopback publication is configured
-// before any listener starts. CLI child exit is not Docker teardown.
+// before any listener starts. Post-start safety prefers resolved
+// NetworkSettings.Ports over empty HostConfig.PortBindings placeholders.
+// CLI child exit is not Docker teardown.
 // Partial network/child/container/volume handles are recorded on the
 // live ownership registry before fallible work continues.
 // Resource queries return PRESENT / ABSENT / UNKNOWN. Daemon, permission,
@@ -43,21 +45,43 @@ export function assertLoopbackBindings(bindings = []) {
   return true
 }
 
-export function parseDockerPortBindings(inspectJson) {
-  const parsed = typeof inspectJson === 'string' ? JSON.parse(inspectJson) : inspectJson
+function isPlainPortMap(value) {
+  return value != null && typeof value === 'object' && !Array.isArray(value)
+}
+
+function collectPublishedPortMaps(ports) {
   const list = []
-  const ports = parsed.HostConfig?.PortBindings || parsed.NetworkSettings?.Ports || parsed
-  for (const [containerPort, maps] of Object.entries(ports || {})) {
+  if (!isPlainPortMap(ports)) return list
+  for (const [containerPort, maps] of Object.entries(ports)) {
     if (!Array.isArray(maps)) continue
     for (const map of maps) {
       list.push({
         containerPort,
-        HostIp: map.HostIp,
-        HostPort: map.HostPort,
+        HostIp: map?.HostIp,
+        HostPort: map?.HostPort,
       })
     }
   }
   return list
+}
+
+export function hasResolvedRuntimePortMappings(inspectDoc) {
+  return isPlainPortMap(inspectDoc?.NetworkSettings)
+    && Object.prototype.hasOwnProperty.call(inspectDoc.NetworkSettings, 'Ports')
+}
+
+export function parseDockerPortBindings(inspectJson) {
+  const parsed = typeof inspectJson === 'string' ? JSON.parse(inspectJson) : inspectJson
+  if (hasResolvedRuntimePortMappings(parsed)) {
+    // Actual post-start publication. Do not fall back to HostConfig to
+    // manufacture PASS when this field exists, even if it is empty/public.
+    return collectPublishedPortMaps(parsed.NetworkSettings.Ports)
+  }
+  const configured = parsed?.HostConfig?.PortBindings
+  if (configured !== undefined) {
+    return collectPublishedPortMaps(configured)
+  }
+  return collectPublishedPortMaps(parsed)
 }
 
 export function parseStatusEnv(text) {
