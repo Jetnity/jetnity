@@ -38,6 +38,7 @@ import {
 import {
   assertCliHelpText,
   assertCliVersionText,
+  isOfficialCliRootHelp,
   assertOfficialArchiveIdentity,
   parseChecksums,
   platformKey,
@@ -243,6 +244,91 @@ test('wrong CLI checksum, version and help fail closed', () => {
     ['realtime', 'studio'],
   )
   assert.ok(!baueStartArgumente({ networkId: 'n1', excludeNames: ['kong', 'gotrue'] }).includes('kong'))
+})
+
+test('official v2.117 Cobra root --help is recognized; fragments and start-help fail closed', async () => {
+  const official = officialCobraRootHelp()
+  const historicalCompatible = historicalRootHelp()
+  const startHelp = [
+    'Start containers for Supabase local development',
+    '',
+    'Usage:',
+    '  supabase start [flags]',
+    '',
+  ].join('\n')
+  const missingStop = official.replace(/^[ \t]*stop[ \t]+Stop all local Supabase containers.*$/m, '')
+  const wrappedOfficial = official.replace(
+    'Start containers for Supabase local development',
+    'Start containers for Supabase\n                    local development',
+  )
+
+  assert.equal(isOfficialCliRootHelp(official), true)
+  assert.equal(assertCliHelpText(official, { kind: 'help' }), true)
+  assert.equal(isOfficialCliRootHelp(wrappedOfficial), true)
+  assert.equal(assertCliHelpText(historicalCompatible, { kind: 'help' }), true)
+  assert.equal(isOfficialCliRootHelp(missingStop), false)
+  assert.throws(() => assertCliHelpText(missingStop, { kind: 'help' }), /root-help structure/)
+  assert.equal(isOfficialCliRootHelp(startHelp), false)
+  assert.throws(() => assertCliHelpText(startHelp, { kind: 'help' }), /root-help structure/)
+  assert.equal(assertCliHelpText(startHelp, { kind: 'start' }), true)
+  assert.throws(
+    () => assertCliHelpText('Please run supabase start before continuing.', { kind: 'help' }),
+    /root-help structure/,
+  )
+  assert.throws(
+    () => assertCliHelpText('Start containers for Supabase local development', { kind: 'help' }),
+    /root-help structure/,
+  )
+  assert.throws(() => assertCliHelpText('unrelated binary', { kind: 'help' }), /root-help structure/)
+
+  const workspace = mkdtempSync(join(tmpdir(), 'aaclr1-root-help-'))
+  const pins = writeTestCliPins(workspace)
+  const composed = prepareOfficialCliIdentity({
+    toolingDir: join(workspace, 'tooling'),
+    env: { PATH: '/usr/bin', LANG: 'C', TZ: 'UTC' },
+    archivePath: pins.archivePath,
+    checksumsPath: pins.checksumsPath,
+    platformId: 'linux-x64',
+    invokeBinary: true,
+    pins: pins.pins,
+    execFile: (bin, args, options) => {
+      if (String(bin) === 'tar' || String(bin).endsWith('/tar')) return execFileSync('tar', args, options)
+      if (args?.[0] === '--version') return '2.117.0\n'
+      if (args?.[0] === '--help') return official
+      if (args?.[0] === 'start' && args?.[1] === '--help') return startHelp
+      throw new Error(`unexpected ${bin} ${args}`)
+    },
+  })
+  assert.equal(composed.archiveBound, true)
+  assert.equal(composed.versionVerified, true)
+  assert.equal(composed.helpVerified, true)
+  assert.equal(composed.startHelpVerified, true)
+  assert.equal(composed.identityVerified, true)
+  assert.deepEqual(composed.failedIdentityChecks, [])
+
+  const helpOnlyStart = prepareOfficialCliIdentity({
+    toolingDir: join(workspace, 'tooling-start-help'),
+    env: { PATH: '/usr/bin', LANG: 'C', TZ: 'UTC' },
+    archivePath: pins.archivePath,
+    checksumsPath: pins.checksumsPath,
+    platformId: 'linux-x64',
+    invokeBinary: true,
+    pins: pins.pins,
+    execFile: (bin, args, options) => {
+      if (String(bin) === 'tar' || String(bin).endsWith('/tar')) return execFileSync('tar', args, options)
+      if (args?.[0] === '--version') return '2.117.0\n'
+      if (args?.[0] === '--help') return startHelp
+      if (args?.[0] === 'start' && args?.[1] === '--help') return startHelp
+      throw new Error(`unexpected ${bin} ${args}`)
+    },
+  })
+  assert.equal(helpOnlyStart.archiveBound, true)
+  assert.equal(helpOnlyStart.versionVerified, true)
+  assert.equal(helpOnlyStart.helpVerified, false)
+  assert.equal(helpOnlyStart.startHelpVerified, true)
+  assert.equal(helpOnlyStart.identityVerified, false)
+  assert.deepEqual(helpOnlyStart.failedIdentityChecks, ['help'])
+  rmSync(workspace, { recursive: true, force: true })
 })
 
 test('fixture actor ownership rejects foreign keys and keep secrets out of manifests', async () => {
@@ -3015,6 +3101,38 @@ test('E1 E2 validate consumer contents and refuse receipt overwrite', async () =
   rmSync(runnerEvidence, { recursive: true, force: true })
 })
 
+function officialCobraRootHelp() {
+  return [
+    'Supabase CLI',
+    '',
+    'Usage:',
+    '  supabase [command]',
+    '',
+    'Local Development:',
+    '  start             Start containers for Supabase local development',
+    '  status            Show status of local Supabase containers',
+    '  stop              Stop all local Supabase containers',
+    '',
+    'Flags:',
+    '  -h, --help        help for supabase',
+    '',
+    'Use "supabase [command] --help" for more information about a command.',
+    '',
+  ].join('\n')
+}
+
+function historicalRootHelp() {
+  return [
+    'Usage:',
+    '  supabase [command]',
+    '',
+    'supabase start',
+    'supabase stop',
+    'supabase status',
+    '',
+  ].join('\n')
+}
+
 function writeTestCliPins(dir) {
   const owned = writeOwnedTar(dir, { contents: 'test-cli-member\n' })
   const archiveName = 'supabase_2.117.0_linux_amd64.tar.gz'
@@ -3056,7 +3174,7 @@ function controlledRuntimeExecFile(invoked) {
       throw new Error(`unexpected docker ${args}`)
     }
     if (args?.[0] === '--version') return '2.117.0\n'
-    if (args?.[0] === '--help') return 'supabase start\nsupabase stop\nsupabase status\n'
+    if (args?.[0] === '--help') return officialCobraRootHelp()
     if (args?.[0] === 'start' && args?.[1] === '--help') {
       return 'Start containers for Supabase local development\n'
     }
@@ -3329,7 +3447,7 @@ test('macOS Docker Desktop local Unix endpoint works with private HOME and redac
         throw new Error(`unexpected docker ${args}`)
       }
       if (args?.[0] === '--version') return '2.117.0\n'
-      if (args?.[0] === '--help') return 'supabase start\nsupabase stop\nsupabase status\n'
+      if (args?.[0] === '--help') return officialCobraRootHelp()
       if (args?.[0] === 'start' && args?.[1] === '--help') {
         assert.equal(options.env.DOCKER_HOST, host)
         assert.equal(options.env.HOME, privateHome)
@@ -3481,7 +3599,7 @@ test('missing or non-responsive local endpoint blocks; CLI start-help failure is
         if (args[0] === 'context' && args[1] === 'inspect') return 'unix:///var/run/docker.sock'
       }
       if (args?.[0] === '--version') return '2.117.0\n'
-      if (args?.[0] === '--help') return 'supabase start\nsupabase stop\nsupabase status\n'
+      if (args?.[0] === '--help') return officialCobraRootHelp()
       if (args?.[0] === 'start' && args?.[1] === '--help') {
         throw new Error(`failed to connect to the docker API at ${options.env.DOCKER_HOST}`)
       }
