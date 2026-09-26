@@ -11,17 +11,29 @@ import { feldInSichtNehmen } from '@/lib/formular/sicht'
 import { type OrtAuswahl } from '@/lib/places/auswahl'
 import {
   ROUTE_EINSTIEG_MELDUNG,
-  routeAbsendenPruefen,
   routeEinstiegHref,
   routePendingText,
   routeVorkommenVerschieben,
-  startzielAuswahlUebernehmen,
   startzielErsetzenStarten,
   startzielHatUnbestaetigtenEntwurf,
   startzielVorkommenEntfernen,
   type RouteVorkommen,
-  type StartzielStand,
 } from '@/lib/places/route-einstieg'
+import {
+  ganzerOrtSucheLesen,
+  leererStartzielIntentStand,
+  routeIntentEntscheiden,
+  startzielIntentAbsendenPruefen,
+  startzielIntentAuswahlUebernehmen,
+  startzielIntentPlatzhalter,
+  startzielIntentSchlangeAbbrechen,
+  startzielIntentSchlangeAktiv,
+  startzielIntentSchlangeOeffnen,
+  startzielIntentStatus,
+  startzielIntentTextVerwerfen,
+  type GanzerOrtSuche,
+  type StartzielIntentStand,
+} from '@/lib/places/route-intent'
 import { GRENZEN } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
 
@@ -35,6 +47,9 @@ export type StartzielFormSichtProps = {
   sucheKey: number
   ersetzenKey: string | null
   meldung: string
+  intentStatus?: string
+  intentPlatzhalter?: string | null
+  intentLaedt?: boolean
   onSuche: (wert: OrtAuswahl | null, roh: string) => void
   onAbsenden: (ereignis: React.FormEvent<HTMLFormElement>) => void
   onWeiteresZiel: () => void
@@ -42,6 +57,7 @@ export type StartzielFormSichtProps = {
   onErsetzen: (key: string) => void
   onVerschieben: (key: string, richtung: 'hoch' | 'runter') => void
   onVerwerfen: () => void
+  onSchlangeAbbrechen?: () => void
   eingabeRef?: React.Ref<HTMLInputElement>
   weiteresZielRef?: React.Ref<HTMLButtonElement>
 }
@@ -54,6 +70,9 @@ export function StartzielFormSicht({
   sucheKey,
   ersetzenKey,
   meldung,
+  intentStatus = '',
+  intentPlatzhalter = null,
+  intentLaedt = false,
   onSuche,
   onAbsenden,
   onWeiteresZiel,
@@ -61,17 +80,19 @@ export function StartzielFormSicht({
   onErsetzen,
   onVerschieben,
   onVerwerfen,
+  onSchlangeAbbrechen,
   eingabeRef,
   weiteresZielRef,
 }: StartzielFormSichtProps) {
   const sucheSichtbar = sucheOffen || vorkommen.length === 0
   const weiteresMoeglich = vorkommen.length > 0 && vorkommen.length < GRENZEN.etappenJeReise
-  const pending = routePendingText(sucheText) || Boolean(ersetzenKey)
+  const pending = routePendingText(sucheText) || Boolean(ersetzenKey) || Boolean(intentStatus)
 
   return (
     <form
       noValidate
       onSubmit={onAbsenden}
+      aria-busy={intentLaedt || undefined}
       className="mt-8 max-w-2xl rounded-[24px] border border-white/15 bg-white p-2 shadow-[0_22px_60px_rgba(0,0,0,0.22)]"
     >
       {vorkommen.length > 0 ? (
@@ -89,7 +110,11 @@ export function StartzielFormSicht({
       {sucheSichtbar ? (
         <>
           <label htmlFor={FELD_ID} className="sr-only">
-            {vorkommen.length === 0 ? 'Wohin möchtest du reisen?' : 'Weiteres Reiseziel wählen'}
+            {intentPlatzhalter
+              ? intentPlatzhalter
+              : vorkommen.length === 0
+                ? 'Wohin möchtest du reisen?'
+                : 'Weiteres Reiseziel wählen'}
           </label>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <div
@@ -111,10 +136,13 @@ export function StartzielFormSicht({
                   inputRef={eingabeRef}
                   ungueltig={Boolean(meldung)}
                   describedBy={meldung ? feldFehlerId(FELD_ID) : undefined}
+                  disabled={intentLaedt}
                   placeholder={
-                    vorkommen.length === 0
-                      ? 'Wohin möchtest du reisen?'
-                      : 'Weiteres Ziel aus der Liste wählen'
+                    intentPlatzhalter
+                      ? intentPlatzhalter
+                      : vorkommen.length === 0
+                        ? 'Wohin möchtest du reisen?'
+                        : 'Weiteres Ziel aus der Liste wählen'
                   }
                   inputClassName="h-11 w-full min-w-0 flex-1 bg-transparent text-base text-brand-800 outline-none placeholder:text-ink-650"
                 />
@@ -122,7 +150,8 @@ export function StartzielFormSicht({
             </div>
             <button
               type="submit"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-citrus-400 px-5 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:bg-citrus-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40"
+              disabled={intentLaedt}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-citrus-400 px-5 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:bg-citrus-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40 disabled:translate-y-0 disabled:opacity-70"
             >
               Reise planen
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -145,7 +174,8 @@ export function StartzielFormSicht({
           </div>
           <button
             type="submit"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-citrus-400 px-5 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:bg-citrus-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40"
+            disabled={intentLaedt}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-citrus-400 px-5 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:bg-citrus-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40 disabled:translate-y-0 disabled:opacity-70"
           >
             Reise planen
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -153,15 +183,38 @@ export function StartzielFormSicht({
         </div>
       )}
 
+      {intentStatus ? (
+        <p role="status" aria-live="polite" aria-atomic="true" className="px-4 pb-1 pt-2 text-sm text-ink-650">
+          {intentStatus}
+        </p>
+      ) : null}
+
+      {intentLaedt ? (
+        <p role="status" aria-live="polite" className="px-4 pb-1 pt-1 text-sm text-ink-650">
+          Die Angabe wird geprüft.
+        </p>
+      ) : null}
+
       {pending && sucheSichtbar ? (
         <div className="flex flex-wrap items-center gap-2 px-4 pb-1 pt-1">
-          <button
-            type="button"
-            onClick={onVerwerfen}
-            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-line-200 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-          >
-            Unbestätigten Text verwerfen
-          </button>
+          {routePendingText(sucheText) || ersetzenKey ? (
+            <button
+              type="button"
+              onClick={onVerwerfen}
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-line-200 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            >
+              Unbestätigten Text verwerfen
+            </button>
+          ) : null}
+          {intentStatus && onSchlangeAbbrechen ? (
+            <button
+              type="button"
+              onClick={onSchlangeAbbrechen}
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-line-200 bg-white px-3 text-sm font-semibold text-brand-800 transition hover:border-brand-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            >
+              Erkannte Route verwerfen
+            </button>
+          ) : null}
         </div>
       ) : null}
 
@@ -178,23 +231,47 @@ export function StartzielFormSicht({
   )
 }
 
-const leererStartzielStand = (): StartzielStand => ({
-  vorkommen: [],
-  sucheText: '',
-  sucheAuswahl: null,
-  sucheOffen: true,
-  ersetzenKey: null,
-  meldung: '',
-  naechsterKey: 1,
-})
+function intentFelderBewahren(
+  bisher: StartzielIntentStand,
+  naechste: Omit<StartzielIntentStand, 'intentPhrasen' | 'intentIndex'> &
+    Partial<Pick<StartzielIntentStand, 'intentPhrasen' | 'intentIndex'>>,
+): StartzielIntentStand {
+  return {
+    ...naechste,
+    intentPhrasen: naechste.intentPhrasen ?? bisher.intentPhrasen,
+    intentIndex: naechste.intentIndex ?? bisher.intentIndex,
+  }
+}
+
+async function ganzerOrtHolen(frage: string, signal: AbortSignal): Promise<GanzerOrtSuche> {
+  try {
+    const res = await fetch(`/api/search/places?q=${encodeURIComponent(frage)}&rolle=ziel`, { signal })
+    let json: unknown = null
+    try {
+      json = await res.json()
+    } catch {
+      return { art: 'ausfall' }
+    }
+    return ganzerOrtSucheLesen(res.status, json)
+  } catch (err) {
+    if ((err as { name?: string }).name === 'AbortError') return { art: 'ausfall' }
+    return { art: 'ausfall' }
+  }
+}
 
 export default function StartzielForm() {
   const router = useRouter()
-  const [stand, setStand] = React.useState<StartzielStand>(leererStartzielStand)
+  const [stand, setStand] = React.useState<StartzielIntentStand>(leererStartzielIntentStand)
   const [sucheKey, setSucheKey] = React.useState(0)
+  const [laedt, setLaedt] = React.useState(false)
   const eingabe = React.useRef<HTMLInputElement>(null)
   const weiteresZiel = React.useRef<HTMLButtonElement>(null)
   const fokusZiel = React.useRef<'suche' | 'weiteres' | null>(null)
+  const standRef = React.useRef(stand)
+  const anfrage = React.useRef(0)
+  const sucheSteuer = React.useRef<AbortController | null>(null)
+
+  standRef.current = stand
 
   React.useLayoutEffect(() => {
     if (fokusZiel.current === 'suche') feldInSichtNehmen(eingabe.current)
@@ -202,15 +279,25 @@ export default function StartzielForm() {
     fokusZiel.current = null
   }, [stand.sucheOffen, stand.vorkommen.length, sucheKey, stand.sucheText])
 
-  const sucheLeerenNachAuswahl = () => {
+  React.useEffect(() => {
+    return () => {
+      sucheSteuer.current?.abort()
+    }
+  }, [])
+
+  const sucheNeuAufsetzen = (ziel: 'suche' | 'weiteres') => {
     setSucheKey((bisher) => bisher + 1)
-    fokusZiel.current = 'weiteres'
+    fokusZiel.current = ziel
   }
 
   const onSuche = (wert: OrtAuswahl | null, roh: string) => {
     if (wert) {
-      setStand((bisher) => startzielAuswahlUebernehmen({ ...bisher, sucheText: roh, sucheAuswahl: wert }, wert))
-      sucheLeerenNachAuswahl()
+      const naechste = startzielIntentAuswahlUebernehmen(
+        { ...standRef.current, sucheText: roh, sucheAuswahl: wert },
+        wert,
+      )
+      setStand(naechste)
+      sucheNeuAufsetzen(startzielIntentSchlangeAktiv(naechste) ? 'suche' : 'weiteres')
       return
     }
     setStand((bisher) => ({
@@ -221,9 +308,52 @@ export default function StartzielForm() {
     }))
   }
 
-  const absenden = (ereignis: React.FormEvent<HTMLFormElement>) => {
+  const absenden = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
-    const geprueft = routeAbsendenPruefen(stand.vorkommen, stand.sucheText, stand.ersetzenKey)
+    if (laedt) return
+
+    const aktuell = standRef.current
+    const schlangeAktiv = startzielIntentSchlangeAktiv(aktuell)
+    const unbestaetigt = routePendingText(aktuell.sucheText) && !aktuell.sucheAuswahl
+
+    if (!schlangeAktiv && !aktuell.ersetzenKey && unbestaetigt) {
+      const frage = aktuell.sucheText
+      const id = ++anfrage.current
+      sucheSteuer.current?.abort()
+      const steuer = new AbortController()
+      sucheSteuer.current = steuer
+      setLaedt(true)
+      const suche = await ganzerOrtHolen(frage, steuer.signal)
+      if (id !== anfrage.current) return
+      setLaedt(false)
+
+      const entscheidung = routeIntentEntscheiden(frage, suche, aktuell.vorkommen.length)
+      if (entscheidung.art === 'zuViele' || entscheidung.art === 'ungueltig') {
+        setStand((bisher) => ({
+          ...bisher,
+          meldung: entscheidung.meldung,
+          sucheOffen: true,
+        }))
+        feldInSichtNehmen(eingabe.current)
+        return
+      }
+      if (entscheidung.art === 'route') {
+        setStand((bisher) => startzielIntentSchlangeOeffnen(bisher, entscheidung.phrasen))
+        sucheNeuAufsetzen('suche')
+        return
+      }
+      setStand((bisher) => ({
+        ...bisher,
+        sucheText: entscheidung.phrase,
+        sucheAuswahl: null,
+        sucheOffen: true,
+        meldung: ROUTE_EINSTIEG_MELDUNG.pending,
+      }))
+      sucheNeuAufsetzen('suche')
+      return
+    }
+
+    const geprueft = startzielIntentAbsendenPruefen(aktuell)
     if (!geprueft.ok) {
       setStand((bisher) => ({
         ...bisher,
@@ -251,6 +381,9 @@ export default function StartzielForm() {
       sucheKey={sucheKey}
       ersetzenKey={stand.ersetzenKey}
       meldung={stand.meldung}
+      intentStatus={startzielIntentStatus(stand)}
+      intentPlatzhalter={startzielIntentPlatzhalter(stand)}
+      intentLaedt={laedt}
       onSuche={onSuche}
       onAbsenden={absenden}
       onWeiteresZiel={() => {
@@ -258,12 +391,12 @@ export default function StartzielForm() {
         fokusZiel.current = 'suche'
       }}
       onEntfernen={(key) => {
-        setStand((bisher) => startzielVorkommenEntfernen(bisher, key))
+        setStand((bisher) => intentFelderBewahren(bisher, startzielVorkommenEntfernen(bisher, key)))
         fokusZiel.current = 'suche'
       }}
       onErsetzen={(key) => {
         setStand((bisher) => {
-          const naechste = startzielErsetzenStarten(bisher, key)
+          const naechste = intentFelderBewahren(bisher, startzielErsetzenStarten(bisher, key))
           if (
             startzielHatUnbestaetigtenEntwurf(bisher) &&
             naechste.meldung === ROUTE_EINSTIEG_MELDUNG.pending
@@ -282,16 +415,13 @@ export default function StartzielForm() {
         }))
       }}
       onVerwerfen={() => {
-        setStand((bisher) => ({
-          ...bisher,
-          sucheText: '',
-          sucheAuswahl: null,
-          ersetzenKey: null,
-          meldung: '',
-          sucheOffen: bisher.vorkommen.length === 0,
-        }))
-        setSucheKey((bisher) => bisher + 1)
-        fokusZiel.current = stand.vorkommen.length === 0 ? 'suche' : 'weiteres'
+        setStand((bisher) => startzielIntentTextVerwerfen(bisher))
+        sucheNeuAufsetzen(stand.vorkommen.length === 0 || startzielIntentSchlangeAktiv(stand) ? 'suche' : 'weiteres')
+      }}
+      onSchlangeAbbrechen={() => {
+        const naechste = startzielIntentSchlangeAbbrechen(standRef.current)
+        setStand(naechste)
+        sucheNeuAufsetzen(naechste.vorkommen.length === 0 ? 'suche' : 'weiteres')
       }}
       eingabeRef={eingabe}
       weiteresZielRef={weiteresZiel}
