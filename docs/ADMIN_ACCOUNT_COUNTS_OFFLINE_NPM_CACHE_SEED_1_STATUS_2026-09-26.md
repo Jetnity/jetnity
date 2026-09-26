@@ -13,10 +13,11 @@ Slice: **IMPLEMENTATION FROZEN FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT A TEC
 | Branch | `fix/admin-account-counts-offline-npm-cache-seed-1` |
 | PR | https://github.com/Jetnity/jetnity/pull/568 (Draft) |
 | Code commit | `31f2f4eb574a3ffb9e5481759cc258174bcfb6d3` — seed run-owned npm cache from local `_cacache` only |
+| First persist head with exact-head gates | `318dbefe6ac8359e40d710be6bd9b88d8f515603` — CI `36250359496` SUCCESS, Auth SUCCESS, Vercel `FYizaAyjM9WPRM14svo61jgajQvx` READY |
 | Frozen interface | Task §4 `jetnity.account-counts.local-acceptance.v1` (unchanged) |
 | Official CLI pin | v2.117.0 / unchanged |
 
-This persist is later than `31f2f4eb`. Reconstruct live HEAD after this persist; a later commit invalidates older gates. Exact-head GitHub CI / Auth / Preview must be re-read on the live SHA.
+This evidence persist is later than `318dbefe`. Reconstruct live HEAD after this persist; a later commit invalidates older gates. The IDs below were read from GitHub/Vercel for exact `318dbefe` and do not automatically cover a newer head.
 
 ## This writer
 
@@ -69,7 +70,19 @@ This writer did not add, rewrite or re-run that receipt. The file is not present
 | Real Docker / official binary / user's Mac / hosted Supabase / Production | **NOT RUN / NOT MUTATED** | forbidden by task |
 | Outbound registry/package fetch | **NOT PERFORMED** | forbidden by task |
 
-Exact-head GitHub CI / Auth / Preview are not claimed on this persist SHA. Re-read them on the live head.
+## Exact-head GitHub / Vercel on `318dbefe`
+
+Read after the first persist push. All four completed on that SHA:
+
+| Gate | Result | ID |
+| --- | --- | --- |
+| GitHub CI `Typecheck, Lint & Build` | **SUCCESS** | run `36250359496` / job `108427163235` |
+| GitHub Auth `Auth-Konfiguration gegen config.toml` | **SUCCESS** | run `36250359496` / job `108427163277` |
+| Combined commit status | **success** | SHA `318dbefe6ac8359e40d710be6bd9b88d8f515603` |
+| Vercel Preview | **READY** | `FYizaAyjM9WPRM14svo61jgajQvx` — https://vercel.com/jetnity-e1b93c82/jetnity-app/FYizaAyjM9WPRM14svo61jgajQvx |
+| Review threads | **none claimed here** | re-read on the live head |
+
+This evidence persist will create a newer head. Re-read CI/Auth/Preview on the live SHA before review.
 
 ## What is not done
 

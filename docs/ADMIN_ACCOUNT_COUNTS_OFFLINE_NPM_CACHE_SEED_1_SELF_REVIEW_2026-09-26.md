@@ -60,6 +60,8 @@ This writer did not run `run.mjs`, official binaries, Docker, Playwright, or any
 
 `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **67/67 PASS, 0 FAIL** on this Linux agent (14.5s). Log: `/opt/cursor/artifacts/aaclr1-offline-npm-cache-seed-controlled-tests.log`.
 
+Exact `318dbefe` GitHub CI run `36250359496` SUCCESS, Auth job `108427163277` SUCCESS, Vercel Preview `FYizaAyjM9WPRM14svo61jgajQvx` READY. Re-read those gates on any later head.
+
 Real Docker / official CLI / user's Mac / hosted Supabase / Production: **NOT RUN / NOT MUTATED**.
 
 ## Residual risks

@@ -15,6 +15,7 @@ Status: **NORMAL / DRAFT PR #568 OFFLINE NPM CACHE SEED 1 FROZEN FOR TL REVIEW /
 | Branch / PR | `fix/admin-account-counts-offline-npm-cache-seed-1` / Draft https://github.com/Jetnity/jetnity/pull/568 |
 | Base | `418f008f134d925edb45701a806b1a9bc17201c8` (Merge #567) |
 | Code commit | `31f2f4eb574a3ffb9e5481759cc258174bcfb6d3` — seed run-owned npm cache from local `_cacache` only |
+| First persist head with exact-head gates | `318dbefe6ac8359e40d710be6bd9b88d8f515603` — CI `36250359496` SUCCESS, Auth SUCCESS, Vercel `FYizaAyjM9WPRM14svo61jgajQvx` READY |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
 | Agent | Jetnity admin account counts offline npm cache seed 1, Gen 1, session `bc-4d56d48b-bb5f-42e9-a4e7-b5e2321b64d0` |
 | Model | cursor-grok-4.6-high-fast |
@@ -23,7 +24,7 @@ Authorized real-Mac run `aaclr1-20260926T144930Z` on exact main `418f008f` start
 
 Bereits umgesetzt: `seedOfflineNpmCache` before `npm ci`; lockfile HTTPS/integrity validation; symlink/outside-HOME/cap fail-closed; controlled suite **67/67 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/root-dep/CI change. No registry fetch.
 
-Noch offen: independent TL exact-head review of the live head; re-read CI/Auth/Preview on that SHA; authorized later real-Mac full acceptance run. No Production/hosted mutation. No real Docker from this writer.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `318dbefe` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 

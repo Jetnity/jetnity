@@ -27,6 +27,7 @@ Machine mode is `NORMAL`. Special Product-Owner gates remain. Cursor never Ready
 4. Keep lockfile validation fail-closed for missing integrity and git/file/http/custom sources. Do not rewrite `package-lock.json`.
 5. Keep `npm ci --no-audit --no-fund` with `npm_config_offline=true` and `npm_config_ignore_scripts=true`.
 6. `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — this writer observed **67/67 PASS**.
+6a. Exact `318dbefe` GitHub CI run `36250359496` SUCCESS, Auth job `108427163277` SUCCESS, Vercel Preview `FYizaAyjM9WPRM14svo61jgajQvx` READY. Re-read those gates on the live head after later persists.
 7. Do not run the real full acceptance run or real Docker from this slice.
 8. A later authorized real-Mac rerun must prove live locked `npm ci` now resolves from the seeded private cache and still keeps the isolation contract.
 9. Historical receipts stay dated. Exclusive creation refuses overwrite. This writer did not mutate the cited Mac failure receipt.
