@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #566 DOCKER PUBLISH SHIM REGRESSION 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #567 APP TOOLCHAIN PATH FIX 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,28 +11,28 @@ Status: **NORMAL / DRAFT PR #566 DOCKER PUBLISH SHIM REGRESSION 1 FROZEN FOR TL 
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts Docker Publish Shim Regression 1 |
-| Branch / PR | `fix/admin-account-counts-docker-publish-shim-regression-1` / Draft https://github.com/Jetnity/jetnity/pull/566 |
-| Base | `0e08e22cb859818d902bfff1ecdea654f33abc39` (Merge #565) |
-| Code commit | `6b6218730f77af43e52b953f0de2e32969dffa95` |
-| First persist head with exact-head gates | `4a1fe07ba84d68ce9eaf5a4be0d6d7384f2c5d41` — CI `36247114473` SUCCESS, Auth SUCCESS, Vercel `8n4rmHqTxFovMWqDG2LzKRdEafHi` READY |
+| Arbeitsblock | Admin Account Counts App Toolchain PATH Fix 1 |
+| Branch / PR | `fix/admin-account-counts-app-toolchain-path-1` / Draft https://github.com/Jetnity/jetnity/pull/567 |
+| Base | `58962638d4b3b55824497d9b77ad5b3f75025168` (Merge #566) |
+| Code commit | `6b6b6334fd218ac260c701c79ea06babfa2464c8` — reuse sanitized runtime `childEnv` as app parent |
+| First persist head with exact-head gates | `e73e4900fc0fc2aec7b07a8cac281900bc59d030` — CI `36249011359` SUCCESS, Auth SUCCESS, Vercel `3Uiipr7arCNmwRd5JMyNgZMfnbQ4` READY |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts docker publish shim regression 1, Gen 1, session `bc-059589a4-a529-4c73-97b9-3a9e3f093fc4` |
+| Agent | Jetnity admin account counts app toolchain path 1, Gen 1, session `bc-95f0abec-5902-4d07-8efe-7f939ba33521` |
 | Model | cursor-grok-4.6-high-fast |
 
-Exact main `0e08e22c` failed the Product-Owner Mac controlled suite **57/48/9** because merged `docker-publish-shim.mjs` called `parseDockerPublishValue` / `formatLoopbackPublishValue` without module-scope definitions. This head restores those exact strict helpers, keeps C1 hashed self-contained shim provenance and C2 image/CMD boundary, and pins the helper names in generated shim bytes.
+Authorized real-Mac run `aaclr1-20260926T142727Z` on exact main `58962638` started the local stack, then failed app preparation with `spawnSync npm ENOENT` because `runtime.mjs` passed `parentEnv: {}`. This head reuses the already-sanitized runtime `childEnv` for app prepare, launch and controller restart. Allowlist rebuild, private HOME and locked `npm ci` stay unchanged.
 
-Bereits umgesetzt: module-scope parser/formatter restored; C1 `.toString()` freeze preserved; C2 image/CMD boundary preserved; `-P` / `--publish-all` still fail closed; no CLI/config/Auth/SQL/product/CI change. Controlled helper suite on this agent: **57/57 PASS, 0 FAIL**.
+Bereits umgesetzt: `baueRuntimeAppParentQuelle(childEnv)`; same parent source for prepare/launch/restart; raw `process.env` refused; controlled suite **61/61 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/CI change.
 
-Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `4a1fe07b` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `e73e4900` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #566. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #567. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_DOCKER_PUBLISH_SHIM_REGRESSION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `docker-publish-shim.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_APP_TOOLCHAIN_PATH_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `runtime.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
 
-#565 is **MERGED** on this base and is not the current writer. #564 C1 remains merged and is not the current writer.
+#566 is **MERGED** on this base and is not the current writer. #565 / #564 remain merged and are not the current writer.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 

@@ -7,7 +7,7 @@ import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
 import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { delimiter, dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { BLOB_PINS, PINS, SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
@@ -70,6 +70,7 @@ import {
 } from './source.mjs'
 import {
   prepareAppForLaunch,
+  defaultInstallLockedDependencies,
   starteOwnedApp,
   restartOwnedApp,
   stoppeOwnedApp,
@@ -114,7 +115,7 @@ import {
   MINIMAL_PNG,
 } from './evidence.mjs'
 import { persistFailureReceipt, run, parseMode } from './run.mjs'
-import { defaultStartRuntime } from './runtime.mjs'
+import { baueRuntimeAppParentQuelle, defaultStartRuntime } from './runtime.mjs'
 import { SOURCE_PATHS as ACCEPTED_SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
 import {
@@ -4361,4 +4362,203 @@ test('owned stack start stays blocked when the docker publish shim is missing', 
   assert.equal(created, false)
   assert.notEqual(registry.network?.created, true)
   rmSync(home, { recursive: true, force: true })
+})
+
+function writeFakeNpm(binDir) {
+  mkdirSync(binDir, { recursive: true })
+  const npmPath = join(binDir, 'npm')
+  writeFileSync(npmPath, `#!${process.execPath}
+const { mkdirSync, writeFileSync } = require('node:fs')
+const { dirname, join } = require('node:path')
+const nextBin = join(process.cwd(), 'node_modules/next/dist/bin/next')
+mkdirSync(dirname(nextBin), { recursive: true })
+writeFileSync(nextBin, 'fake-next')
+writeFileSync(join(process.cwd(), 'npm-ci-receipt.json'), JSON.stringify({
+  argv: process.argv.slice(2),
+  path: process.env.PATH || null,
+  nodeOptions: process.env.NODE_OPTIONS || null,
+  nodePath: process.env.NODE_PATH || null,
+  dockerHost: process.env.DOCKER_HOST || null,
+  dockerContext: process.env.DOCKER_CONTEXT || null,
+  accessToken: process.env.SUPABASE_ACCESS_TOKEN || null,
+  openai: process.env.OPENAI_API_KEY || null,
+  vercel: process.env.VERCEL || null,
+  smtp: process.env.SMTP_PASSWORD || null,
+  offline: process.env.npm_config_offline || null,
+  ignoreScripts: process.env.npm_config_ignore_scripts || null,
+  home: process.env.HOME || null,
+}))
+`, { mode: 0o755 })
+  chmodSync(npmPath, 0o755)
+  return npmPath
+}
+
+test('empty parentEnv still drops PATH; sanitized childEnv is the only accepted app parent source', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-app-parent-'))
+  const empty = baueRuntimeAppUmgebung({
+    parentEnv: {},
+    privateHome: join(home, 'empty'),
+    loopbackUrl: 'http://127.0.0.1:54321',
+    syntheticAnonKey: 'local-anon',
+    countsEnabled: true,
+  })
+  assert.equal(empty.PATH, undefined)
+  assert.throws(() => baueRuntimeAppParentQuelle(), /already-sanitized runtime childEnv/)
+  assert.throws(() => baueRuntimeAppParentQuelle(null), /already-sanitized runtime childEnv/)
+  assert.throws(() => baueRuntimeAppParentQuelle([]), /already-sanitized runtime childEnv/)
+  assert.throws(() => baueRuntimeAppParentQuelle(process.env), /must not be raw process\.env/)
+  const childEnv = { PATH: '/controlled/bin' }
+  const parent = baueRuntimeAppParentQuelle(childEnv)
+  assert.equal(parent, childEnv)
+  assert.equal(baueRuntimeAppParentQuelle(childEnv), parent)
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('sanitized runtime PATH survives into app env and restart source; forbidden values do not', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-app-path-'))
+  const fakeBin = join(home, 'bin')
+  writeFakeNpm(fakeBin)
+  const usersHome = join(home, 'Users', 'fixture-user')
+  const childEnv = {
+    PATH: `${fakeBin}${delimiter}${join(home, 'empty')}`,
+    LANG: 'C.UTF-8',
+    LC_ALL: 'C',
+    TZ: 'UTC',
+    HOME: usersHome,
+    NODE_OPTIONS: '--require ./preload.js',
+    NODE_PATH: '/tmp/evil-node-path',
+    NODE_PRELOAD: './preload.js',
+    NODE_EXTRA_CA_CERTS: '/tmp/evil-ca.pem',
+    DOCKER_HOST: 'tcp://203.0.113.9:2376',
+    DOCKER_CONTEXT: 'desktop-linux',
+    DOCKER_CERT_PATH: '/tmp/certs',
+    DOCKER_TLS_VERIFY: '1',
+    SUPABASE_ACCESS_TOKEN: 'parent-token',
+    SUPABASE_SERVICE_ROLE_KEY: 'parent-service',
+    SUPABASE_DB_URL: 'postgresql://hosted.example/postgres',
+    NEXT_PUBLIC_SUPABASE_URL: 'https://hosted.supabase.co',
+    OPENAI_API_KEY: 'parent-model',
+    SMTP_PASSWORD: 'parent-smtp',
+    VERCEL: '1',
+    VERCEL_URL: 'hosted.example',
+  }
+  const appParentEnv = baueRuntimeAppParentQuelle(childEnv)
+  const privateHome = join(home, 'private')
+  const launchEnv = baueRuntimeAppUmgebung({
+    parentEnv: appParentEnv,
+    privateHome,
+    loopbackUrl: 'http://127.0.0.1:54321',
+    syntheticAnonKey: 'local-anon',
+    siteUrl: 'http://127.0.0.1:3000',
+    countsEnabled: true,
+  })
+  const restartEnv = baueRuntimeAppUmgebung({
+    parentEnv: appParentEnv,
+    privateHome,
+    loopbackUrl: 'http://127.0.0.1:54321',
+    syntheticAnonKey: 'local-anon',
+    siteUrl: 'http://127.0.0.1:3000',
+    countsEnabled: false,
+  })
+  assert.equal(appParentEnv, childEnv)
+  assert.equal(launchEnv.PATH, childEnv.PATH)
+  assert.equal(restartEnv.PATH, launchEnv.PATH)
+  assert.equal(launchEnv.LANG, 'C.UTF-8')
+  assert.equal(launchEnv.HOME, privateHome)
+  assert.equal(launchEnv.npm_config_offline, 'true')
+  assert.equal(launchEnv.npm_config_ignore_scripts, 'true')
+  assert.equal(launchEnv.NEXT_PUBLIC_SUPABASE_URL, 'http://127.0.0.1:54321')
+  assert.equal(launchEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'local-anon')
+  assert.equal(launchEnv.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED, 'true')
+  assert.equal(restartEnv.JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED, 'false')
+  for (const env of [launchEnv, restartEnv]) {
+    assert.equal(env.NODE_OPTIONS, undefined)
+    assert.equal(env.NODE_PATH, undefined)
+    assert.equal(env.NODE_PRELOAD, undefined)
+    assert.equal(env.NODE_EXTRA_CA_CERTS, undefined)
+    assert.equal(env.DOCKER_HOST, undefined)
+    assert.equal(env.DOCKER_CONTEXT, undefined)
+    assert.equal(env.DOCKER_CERT_PATH, undefined)
+    assert.equal(env.DOCKER_TLS_VERIFY, undefined)
+    assert.equal(env.SUPABASE_ACCESS_TOKEN, undefined)
+    assert.equal(env.SUPABASE_SERVICE_ROLE_KEY, undefined)
+    assert.equal(env.SUPABASE_DB_URL, undefined)
+    assert.equal(env.OPENAI_API_KEY, undefined)
+    assert.equal(env.SMTP_PASSWORD, undefined)
+    assert.equal(env.VERCEL, undefined)
+    assert.equal(env.VERCEL_URL, undefined)
+    assert.notEqual(env.HOME, usersHome)
+  }
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('defaultInstallLockedDependencies resolves fake npm through sanitized PATH and fails closed without it', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-npm-path-'))
+  const fakeBin = join(home, 'bin')
+  const emptyBin = join(home, 'empty')
+  writeFakeNpm(fakeBin)
+  mkdirSync(emptyBin, { recursive: true })
+  const childEnv = {
+    PATH: `${fakeBin}${delimiter}${emptyBin}`,
+    LANG: 'C.UTF-8',
+    NODE_OPTIONS: '--inspect',
+    DOCKER_HOST: 'tcp://203.0.113.9:2376',
+    SUPABASE_ACCESS_TOKEN: 'parent-token',
+    OPENAI_API_KEY: 'parent-model',
+    SMTP_PASSWORD: 'parent-smtp',
+    VERCEL: '1',
+  }
+  const appEnv = baueRuntimeAppUmgebung({
+    parentEnv: baueRuntimeAppParentQuelle(childEnv),
+    privateHome: join(home, 'private'),
+    loopbackUrl: 'http://127.0.0.1:54321',
+    syntheticAnonKey: 'local-anon',
+    countsEnabled: true,
+  })
+  const checkout = join(home, 'checkout')
+  mkdirSync(checkout)
+  writeFileSync(join(checkout, 'package.json'), '{"name":"fixture","private":true}\n')
+  writeFileSync(join(checkout, 'package-lock.json'), '{"lockfileVersion":3}\n')
+  const installed = defaultInstallLockedDependencies({
+    checkoutDir: checkout,
+    env: appEnv,
+    execFile: execFileSync,
+  })
+  const receipt = JSON.parse(readFileSync(join(checkout, 'npm-ci-receipt.json'), 'utf8'))
+  assert.deepEqual(receipt.argv, ['ci', '--no-audit', '--no-fund'])
+  assert.equal(receipt.path, childEnv.PATH)
+  assert.equal(receipt.nodeOptions, null)
+  assert.equal(receipt.dockerHost, null)
+  assert.equal(receipt.accessToken, null)
+  assert.equal(receipt.openai, null)
+  assert.equal(receipt.vercel, null)
+  assert.equal(receipt.smtp, null)
+  assert.equal(receipt.offline, 'true')
+  assert.equal(receipt.ignoreScripts, 'true')
+  assert.equal(receipt.home, join(home, 'private'))
+  assert.equal(installed.lockfile, true)
+  assert.equal(installed.nextBin, join(checkout, 'node_modules/next/dist/bin/next'))
+  assert.equal(existsSync(installed.nextBin), true)
+
+  const missing = join(home, 'missing')
+  mkdirSync(missing)
+  writeFileSync(join(missing, 'package.json'), '{"name":"fixture","private":true}\n')
+  writeFileSync(join(missing, 'package-lock.json'), '{"lockfileVersion":3}\n')
+  assert.throws(
+    () => defaultInstallLockedDependencies({
+      checkoutDir: missing,
+      env: { ...appEnv, PATH: emptyBin },
+      execFile: execFileSync,
+    }),
+    /ENOENT|spawnSync npm/,
+  )
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('defaultStartRuntime reuses sanitized childEnv for app prepare, launch and controller restart', () => {
+  const source = readFileSync(join(ROOT, 'scripts/e2e/admin-account-counts-local-runtime-1/runtime.mjs'), 'utf8')
+  assert.equal(source.includes('parentEnv: {}'), false)
+  assert.equal(source.includes('parentEnv: process.env'), false)
+  assert.match(source, /const appParentEnv = baueRuntimeAppParentQuelle\(childEnv\)/)
+  assert.equal((source.match(/parentEnv:\s*appParentEnv/g) || []).length, 3)
 })
