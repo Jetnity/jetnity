@@ -14,6 +14,7 @@ Status: **NORMAL / DRAFT PR #560 MACOS DOCKER RUNTIME FIX 1 FROZEN FOR TL REVIEW
 | Arbeitsblock | Admin Account Counts macOS Docker Runtime Fix 1 |
 | Branch / PR | `fix/admin-account-counts-macos-docker-runtime-1` / Draft https://github.com/Jetnity/jetnity/pull/560 |
 | Base | `b440a6759c7c479d1b7509ecbefcac7b95c4ea35` |
+| Implementation persist | `49efbd95903c45d8a7e21c5bf9719da0a4e06707` |
 | Status | technisch review-bereit / wartet auf unabhängigen Technical-Lead exact-head Review |
 | Agent | Jetnity admin account counts macOS Docker runtime fix 1, Gen 1, session `bc-11e9fb78-8111-4af3-8af7-73aa0ed1c9f6` |
 | Model | cursor-grok-4.6-high-fast |

@@ -15,7 +15,7 @@ Slice: **IMPLEMENTATION FROZEN FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT A TEC
 | Frozen interface | Task §4 `jetnity.account-counts.local-acceptance.v1` (unchanged) |
 | Official CLI pin | v2.117.0 / checksums `afcec54b3b19d8c73957cafb4956bb10cb7493207c29df60cdcd9afe6317cdb0` / darwin-arm64 `c8a298065b374836a42945f5d78ab9348d328bcfd099c14d3e5b0b537791209b` |
 
-Exact freeze SHA is the current branch head after this persist. Older heads are invalidated.
+Implementation persist / current freeze candidate: `49efbd95903c45d8a7e21c5bf9719da0a4e06707`. A later docs-only SHA pin on this branch invalidates this candidate and becomes the new exact head.
 
 ## This writer
 
