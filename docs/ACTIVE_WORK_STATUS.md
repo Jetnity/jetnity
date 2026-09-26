@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #569 MACOS PRIVATE HOME CANONICALIZATION 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #571 G8 ENROLL SUCCESS OBSERVATION 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,27 +11,27 @@ Status: **NORMAL / DRAFT PR #569 MACOS PRIVATE HOME CANONICALIZATION 1 FROZEN FO
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts macOS Private HOME Canonicalization 1 |
-| Branch / PR | `fix/admin-account-counts-macos-private-home-canonicalization-1` / Draft https://github.com/Jetnity/jetnity/pull/569 |
-| Base | `c599077e9cb4eeb114e1bd2a89afc81cbb492c45` (Merge #568) |
-| Task seed | `4541637f147d08bce43e4de593178f95c03f2328` |
+| Arbeitsblock | Admin Account Counts G8 Enroll Success Observation 1 |
+| Branch / PR | `fix/admin-account-counts-g8-enroll-success-observation-1` / Draft https://github.com/Jetnity/jetnity/pull/571 |
+| Base | `26b763016322fb1c929e131b4ff5bf467533e809` (Merge #569) |
+| Task seed | `8e743142c31fe74966cf9bf5acf72940c94f1870` |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts macOS private home canonicalization 1, Gen 1, session `bc-8b4a0114-fce4-4a28-bd40-a367a1f78ae2` |
+| Agent | Jetnity admin account counts G8 enroll success observation 1, Gen 1, session `bc-684e6634-d146-403e-a86c-1f44c18cd3d6` |
 | Model | cursor-grok-4.6-high-fast |
 
-Authorized real-Mac run `aaclr1-20260926T162500Z` on exact main `c599077e` started the local stack, reached the #568 offline cache seed, then fail-closed only on `private HOME real path escaped its visible path`. That is the normal macOS `/var/folders/... -> /private/var/folders/...` canonicalization of the harness-created tmpdir root, not a symlink inside the run HOME.
+Authoritative real-Mac receipt `aaclr1-20260926T182151Z` proved G6/G7 PASS and G8 FAIL only at `enroll.success exceeded 15000ms`. Product source shows `handleVerify` sets `Authenticator-App erfolgreich aktiviert.` then `refreshFactors()` immediately `setMessage(null)`. The durable post-verify UI is the confirmed-factor list (`Eingerichtete Authenticator-Apps` + `bestätigt` + form gone).
 
-Bereits umgesetzt: separate run-owned private-HOME helper; visible/canonical ancestor alias accepted; private HOME itself being a symlink still refused; inner symlink/escape still refused; dest containment uses visible suffix + canonical root; original HOME/source `_cacache` stay strict; controlled suite **78/78 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/root-dep/CI change. No registry fetch. npm stays offline.
+Bereits umgesetzt: G8 success observation aligned to that source-backed state; verify/secret/TOTP/actor checks remain mandatory and fail closed; controlled suite **42/42 PASS, 0 FAIL**. No Docker/npm/cache/artifact-export/SQL/Auth/product/root-dep/CI change. No real Mac/browser run.
 
-Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation. No real Docker from this writer.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation.
 
-DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
+DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #569. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #571. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_MACOS_PRIVATE_HOME_CANONICALIZATION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `npm-cache-seed.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_G8_ENROLL_SUCCESS_OBSERVATION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `session.mjs` under `scripts/e2e/admin-account-counts-browser-flows-1/`.
 
-#568 is **MERGED** on this base and is not the current writer. #567 / #566 / #565 / #564 remain merged and are not the current writer.
+#569 is **MERGED** on this base and is not the current writer. #568 / #567 / #566 / #565 / #564 remain merged and are not the current writer.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
