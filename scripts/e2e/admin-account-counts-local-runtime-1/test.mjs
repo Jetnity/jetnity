@@ -7,7 +7,7 @@ import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
 import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { delimiter, dirname, join } from 'node:path'
+import { delimiter, dirname, isAbsolute, join, relative } from 'node:path'
 import { test } from 'node:test'
 import { BLOB_PINS, PINS, SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
@@ -116,6 +116,14 @@ import {
 } from './evidence.mjs'
 import { persistFailureReceipt, run, parseMode } from './run.mjs'
 import { baueRuntimeAppParentQuelle, defaultStartRuntime } from './runtime.mjs'
+import {
+  assertOfflineLockedInstallEnv,
+  copyCacacheBounded,
+  discoverSourceCacache,
+  leseOriginalHome,
+  seedOfflineNpmCache,
+  validateLockfileRegistryIntegrity,
+} from './npm-cache-seed.mjs'
 import { SOURCE_PATHS as ACCEPTED_SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
 import {
@@ -886,6 +894,29 @@ const server = createServer((req, res) => { res.writeHead(200); res.end('ok') })
 server.listen(port, '127.0.0.1')
 `
 
+const VALID_REGISTRY_LOCK = `${JSON.stringify({
+  lockfileVersion: 3,
+  packages: {
+    '': { name: 'fixture', version: '1.0.0' },
+    'node_modules/zod-validation-error': {
+      version: '4.0.2',
+      resolved: 'https://registry.npmjs.org/zod-validation-error/-/zod-validation-error-4.0.2.tgz',
+      integrity: 'sha512-abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUV==',
+    },
+  },
+}, null, 2)}\n`
+
+function writeFixtureCacache(originalHome, files = { 'content-v2/ab/fixture': 'seed-bytes' }) {
+  const source = join(originalHome, '.npm', '_cacache')
+  mkdirSync(source, { recursive: true, mode: 0o700 })
+  for (const [rel, body] of Object.entries(files)) {
+    const full = join(source, rel)
+    mkdirSync(dirname(full), { recursive: true, mode: 0o700 })
+    writeFileSync(full, body)
+  }
+  return source
+}
+
 function writeFakeAppCheckout(dir) {
   writeFileSync(join(dir, 'package.json'), '{"name":"fixture","private":true}\n')
   writeFileSync(join(dir, 'package-lock.json'), '{"lockfileVersion":3}\n')
@@ -920,22 +951,33 @@ test('R1 default cold checkout cannot claim a running app without locked deps an
     /locked next binary|not a completed execution/,
   )
   const dest = mkdtempSync(join(tmpdir(), 'aaclr1-prep-'))
-  writeFileSync(join(dest, 'package.json'), '{}')
-  writeFileSync(join(dest, 'package-lock.json'), '{}')
+  const originalHome = join(dest, 'user')
+  const privateHome = join(dest, 'private')
+  const checkout = join(dest, 'checkout')
+  writeFixtureCacache(originalHome, { 'content-v2/ab/fixture': 'seed-bytes' })
+  mkdirSync(privateHome, { recursive: true, mode: 0o700 })
+  mkdirSync(checkout, { recursive: true })
+  writeFileSync(join(checkout, 'package.json'), '{"name":"fixture","private":true}\n')
+  writeFileSync(join(checkout, 'package-lock.json'), VALID_REGISTRY_LOCK)
   const calls = []
   const prepared = await prepareAppForLaunch({
-    checkoutDir: dest,
+    checkoutDir: checkout,
+    originalHome,
+    privateHome,
     env: {
       PATH: '/usr/bin',
-      HOME: dest,
+      HOME: privateHome,
+      NPM_CONFIG_CACHE: join(privateHome, 'cache', 'npm'),
+      npm_config_offline: 'true',
+      npm_config_ignore_scripts: 'true',
       NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
       JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED: 'true',
     },
     execFile: (bin, args, options) => {
       calls.push({ bin: String(bin), args, env: options?.env })
       if (args[0] === 'ci') {
-        mkdirSync(join(dest, 'node_modules/next/dist/bin'), { recursive: true })
-        writeFileSync(join(dest, 'node_modules/next/dist/bin/next'), 'ok')
+        mkdirSync(join(checkout, 'node_modules/next/dist/bin'), { recursive: true })
+        writeFileSync(join(checkout, 'node_modules/next/dist/bin/next'), 'ok')
       }
       return ''
     },
@@ -944,6 +986,7 @@ test('R1 default cold checkout cannot claim a running app without locked deps an
   assert.equal(calls.some((item) => item.args.includes('build')), false)
   assert.equal(prepared.launchScript, 'dev')
   assert.equal(prepared.built.skipped, true)
+  assert.equal(prepared.seeded.copy.files > 0, true)
   assert.equal(calls[0].env.NEXT_PUBLIC_SUPABASE_URL, 'http://127.0.0.1:54321')
   rmSync(empty, { recursive: true, force: true })
   rmSync(dest, { recursive: true, force: true })
@@ -4387,6 +4430,11 @@ writeFileSync(join(process.cwd(), 'npm-ci-receipt.json'), JSON.stringify({
   offline: process.env.npm_config_offline || null,
   ignoreScripts: process.env.npm_config_ignore_scripts || null,
   home: process.env.HOME || null,
+  cache: process.env.NPM_CONFIG_CACHE || null,
+  npmCache: process.env.npm_config_cache || null,
+  userconfig: process.env.npm_config_userconfig || null,
+  globalconfig: process.env.npm_config_globalconfig || null,
+  preferOnline: process.env.npm_config_prefer_online || null,
 }))
 `, { mode: 0o755 })
   chmodSync(npmPath, 0o755)
@@ -4536,6 +4584,10 @@ test('defaultInstallLockedDependencies resolves fake npm through sanitized PATH 
   assert.equal(receipt.offline, 'true')
   assert.equal(receipt.ignoreScripts, 'true')
   assert.equal(receipt.home, join(home, 'private'))
+  assert.equal(receipt.cache, join(home, 'private', 'cache', 'npm'))
+  assert.equal(receipt.preferOnline, null)
+  assert.equal(receipt.userconfig, null)
+  assert.equal(receipt.globalconfig, null)
   assert.equal(installed.lockfile, true)
   assert.equal(installed.nextBin, join(checkout, 'node_modules/next/dist/bin/next'))
   assert.equal(existsSync(installed.nextBin), true)
@@ -4561,4 +4613,362 @@ test('defaultStartRuntime reuses sanitized childEnv for app prepare, launch and 
   assert.equal(source.includes('parentEnv: process.env'), false)
   assert.match(source, /const appParentEnv = baueRuntimeAppParentQuelle\(childEnv\)/)
   assert.equal((source.match(/parentEnv:\s*appParentEnv/g) || []).length, 3)
+  assert.match(source, /originalHome: originalHome === undefined \? leseOriginalHome\(\) : originalHome/)
+  assert.match(source, /privateHome: owned\.privateHome/)
 })
+
+function hashTree(root) {
+  const entries = []
+  const stack = [root]
+  while (stack.length) {
+    const dir = stack.pop()
+    for (const name of readdirSync(dir).sort()) {
+      const full = join(dir, name)
+      const stat = lstatSync(full)
+      if (stat.isDirectory()) {
+        stack.push(full)
+        continue
+      }
+      entries.push(`${relative(root, full)}:${createHash('sha256').update(readFileSync(full)).digest('hex')}`)
+    }
+  }
+  return entries.join('\n')
+}
+
+function writeCheckoutLock(dir, lock = VALID_REGISTRY_LOCK) {
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'package.json'), '{"name":"fixture","private":true}\n')
+  writeFileSync(join(dir, 'package-lock.json'), lock)
+  return dir
+}
+
+function isolatedInstallEnv(privateHome, extra = {}) {
+  mkdirSync(privateHome, { recursive: true, mode: 0o700 })
+  return {
+    PATH: extra.PATH || '/usr/bin',
+    HOME: privateHome,
+    NPM_CONFIG_CACHE: join(privateHome, 'cache', 'npm'),
+    npm_config_offline: 'true',
+    npm_config_ignore_scripts: 'true',
+    ...extra,
+  }
+}
+
+test('offline npm cache seed copies only local _cacache into private HOME and keeps source identical', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-npm-seed-ok-'))
+  const originalHome = join(root, 'Users', 'fixture-user')
+  const privateHome = join(root, 'private')
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  const source = writeFixtureCacache(originalHome, {
+    'content-v2/ab/fixture': 'payload-one',
+    'index-v5/cd/index': 'payload-two',
+  })
+  mkdirSync(join(originalHome, '.npm', '_logs'), { recursive: true })
+  writeFileSync(join(originalHome, '.npm', '_logs', 'last.log'), 'secret-log')
+  writeFileSync(join(originalHome, '.npm', '.npmrc'), '//registry.npmjs.org/:_authToken=secret-token')
+  writeFileSync(join(originalHome, '.npm', 'auth.json'), '{"token":"secret"}')
+  writeFileSync(join(originalHome, '.npmrc'), 'registry=https://example.invalid')
+  const before = hashTree(source)
+  const env = isolatedInstallEnv(privateHome)
+  const seeded = seedOfflineNpmCache({
+    originalHome,
+    privateHome,
+    env,
+    checkoutDir: checkout,
+  })
+  assert.equal(seeded.source, source)
+  assert.equal(seeded.dest, join(privateHome, 'cache', 'npm', '_cacache'))
+  assert.equal(pathIsPrivate(seeded.dest, privateHome), true)
+  assert.equal(existsSync(join(seeded.dest, 'content-v2/ab/fixture')), true)
+  assert.equal(readFileSync(join(seeded.dest, 'content-v2/ab/fixture'), 'utf8'), 'payload-one')
+  assert.equal(existsSync(join(seeded.dest, 'index-v5/cd/index')), true)
+  assert.equal(existsSync(join(seeded.dest, '.npmrc')), false)
+  assert.equal(existsSync(join(seeded.dest, '_logs')), false)
+  assert.equal(existsSync(join(seeded.dest, 'auth.json')), false)
+  assert.equal(existsSync(join(privateHome, '.npmrc')), false)
+  assert.equal(hashTree(source), before)
+  assert.equal(readFileSync(join(originalHome, '.npm', '.npmrc'), 'utf8').includes('secret-token'), true)
+  const observed = assertOfflineLockedInstallEnv(env, {
+    privateHome,
+    cacheRoot: seeded.cacheRoot,
+  })
+  assert.equal(observed.cache, join(privateHome, 'cache', 'npm'))
+  assert.equal(observed.offline, 'true')
+  assert.equal(observed.ignoreScripts, 'true')
+  rmSync(root, { recursive: true, force: true })
+})
+
+function pathIsPrivate(path, root) {
+  const rel = relative(root, path)
+  return rel !== '' && !rel.startsWith('..') && !isAbsolute(rel)
+}
+
+test('offline npm cache seed refuses symlink, nested symlink and outside-HOME sources', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-npm-seed-refuse-'))
+  const originalHome = join(root, 'user')
+  const foreign = join(root, 'foreign')
+  const privateHome = join(root, 'private')
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  mkdirSync(join(originalHome, '.npm'), { recursive: true })
+  mkdirSync(foreign, { recursive: true })
+  writeFileSync(join(foreign, 'payload'), 'foreign')
+  symlinkSync(foreign, join(originalHome, '.npm', '_cacache'))
+  const env = isolatedInstallEnv(privateHome)
+  assert.throws(
+    () => seedOfflineNpmCache({ originalHome, privateHome, env, checkoutDir: checkout }),
+    /symlink/,
+  )
+  rmSync(join(originalHome, '.npm', '_cacache'), { force: true })
+  const nested = writeFixtureCacache(originalHome, { 'content-v2/ab/real': 'ok' })
+  symlinkSync(join(foreign, 'payload'), join(nested, 'content-v2', 'ab', 'link'))
+  assert.throws(
+    () => seedOfflineNpmCache({ originalHome, privateHome, env, checkoutDir: checkout }),
+    /nested symlink/,
+  )
+  rmSync(join(originalHome, '.npm'), { recursive: true, force: true })
+  writeFixtureCacache(foreign, { 'content-v2/ab/foreign': 'nope' })
+  mkdirSync(join(originalHome, '.npm'), { recursive: true })
+  assert.throws(
+    () => seedOfflineNpmCache({
+      originalHome,
+      privateHome,
+      env,
+      checkoutDir: checkout,
+      sourceCacache: join(foreign, '.npm', '_cacache'),
+    }),
+    /outside original HOME/,
+  )
+  const linkedHome = join(root, 'linked-home')
+  symlinkSync(originalHome, linkedHome)
+  assert.throws(() => leseOriginalHome(linkedHome), /symlink/)
+  assert.throws(() => discoverSourceCacache({ originalHome: linkedHome }), /symlink/)
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('offline npm cache seed enforces byte and file caps before copy', () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-npm-seed-cap-'))
+  const originalHome = join(root, 'user')
+  const privateHome = join(root, 'private')
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  writeFixtureCacache(originalHome, {
+    'content-v2/ab/one': '12345',
+    'content-v2/cd/two': '67890',
+  })
+  const env = isolatedInstallEnv(privateHome)
+  assert.throws(
+    () => seedOfflineNpmCache({
+      originalHome,
+      privateHome,
+      env,
+      checkoutDir: checkout,
+      maxFiles: 1,
+    }),
+    /file cap/,
+  )
+  assert.equal(existsSync(join(privateHome, 'cache', 'npm', '_cacache', 'content-v2/ab/one')), false)
+  assert.throws(
+    () => seedOfflineNpmCache({
+      originalHome,
+      privateHome,
+      env,
+      checkoutDir: checkout,
+      maxBytes: 6,
+    }),
+    /byte cap/,
+  )
+  assert.equal(existsSync(join(privateHome, 'cache', 'npm', '_cacache', 'content-v2/ab/one')), false)
+  const copied = copyCacacheBounded({
+    source: join(originalHome, '.npm', '_cacache'),
+    dest: join(privateHome, 'cache', 'npm', '_cacache'),
+    privateHome,
+    maxFiles: 2,
+    maxBytes: 20,
+  })
+  assert.equal(copied.files, 2)
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('offline npm cache seed validates lockfile registry integrity and refuses non-registry sources', () => {
+  assert.equal(validateLockfileRegistryIntegrity({ lockfilePath: join(ROOT, 'package-lock.json') }).ok, true)
+  assert.deepEqual(validateLockfileRegistryIntegrity({
+    lockfile: JSON.parse(VALID_REGISTRY_LOCK),
+  }).hosts, ['registry.npmjs.org'])
+  assert.throws(
+    () => validateLockfileRegistryIntegrity({
+      lockfile: {
+        lockfileVersion: 3,
+        packages: {
+          '': {},
+          'node_modules/missing-integrity': {
+            version: '1.0.0',
+            resolved: 'https://registry.npmjs.org/missing-integrity/-/missing-integrity-1.0.0.tgz',
+          },
+        },
+      },
+    }),
+    /integrity/,
+  )
+  assert.throws(
+    () => validateLockfileRegistryIntegrity({
+      lockfile: {
+        lockfileVersion: 3,
+        packages: {
+          '': {},
+          'node_modules/http-pkg': {
+            version: '1.0.0',
+            resolved: 'http://registry.npmjs.org/http-pkg/-/http-pkg-1.0.0.tgz',
+            integrity: 'sha512-abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUV==',
+          },
+        },
+      },
+    }),
+    /http|refused/,
+  )
+  assert.throws(
+    () => validateLockfileRegistryIntegrity({
+      lockfile: {
+        lockfileVersion: 3,
+        packages: {
+          '': {},
+          'node_modules/git-pkg': {
+            version: '1.0.0',
+            resolved: 'git+https://github.com/example/git-pkg.git',
+            integrity: 'sha512-abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUV==',
+          },
+        },
+      },
+    }),
+    /git/,
+  )
+  assert.throws(
+    () => validateLockfileRegistryIntegrity({
+      lockfile: {
+        lockfileVersion: 3,
+        packages: {
+          '': {},
+          'node_modules/file-pkg': {
+            version: '1.0.0',
+            resolved: 'file:../file-pkg',
+          },
+        },
+      },
+    }),
+    /file/,
+  )
+  assert.throws(
+    () => validateLockfileRegistryIntegrity({
+      lockfile: {
+        lockfileVersion: 3,
+        packages: {
+          '': {},
+          'node_modules/custom-pkg': {
+            version: '1.0.0',
+            resolved: 'https://pkgs.example.invalid/custom-pkg/-/custom-pkg-1.0.0.tgz',
+            integrity: 'sha512-abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUV==',
+          },
+        },
+      },
+    }),
+    /expected npm registry host/,
+  )
+})
+
+test('prepareAppForLaunch seeds private cache for fake npm and keeps incomplete cache offline', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-npm-seed-install-'))
+  const originalHome = join(root, 'user')
+  const privateHome = join(root, 'private')
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  const source = writeFixtureCacache(originalHome, { 'content-v2/ab/present': 'cached' })
+  writeFileSync(join(originalHome, '.npm', '.npmrc'), '_authToken=do-not-copy')
+  const fakeBin = join(root, 'bin')
+  mkdirSync(fakeBin, { recursive: true })
+  const npmPath = join(fakeBin, 'npm')
+  writeFileSync(npmPath, `#!${process.execPath}
+const { existsSync, mkdirSync, writeFileSync } = require('node:fs')
+const { dirname, join } = require('node:path')
+const receipt = {
+  argv: process.argv.slice(2),
+  cache: process.env.NPM_CONFIG_CACHE || null,
+  home: process.env.HOME || null,
+  offline: process.env.npm_config_offline || null,
+  ignoreScripts: process.env.npm_config_ignore_scripts || null,
+  preferOnline: process.env.npm_config_prefer_online || null,
+  userconfig: process.env.npm_config_userconfig || null,
+  sourceHint: process.env.JETNITY_SOURCE_NPM_CACHE || null,
+}
+writeFileSync(join(process.cwd(), 'npm-ci-receipt.json'), JSON.stringify(receipt))
+const required = join(process.env.NPM_CONFIG_CACHE || '', '_cacache', 'content-v2', 'zz', 'required')
+if (!existsSync(required)) {
+  console.error("npm error code ENOTCACHED")
+  console.error("request to https://registry.npmjs.org/zod-validation-error/-/zod-validation-error-4.0.2.tgz failed: cache mode is 'only-if-cached' but no cached response is available")
+  process.exit(1)
+}
+const nextBin = join(process.cwd(), 'node_modules/next/dist/bin/next')
+mkdirSync(dirname(nextBin), { recursive: true })
+writeFileSync(nextBin, 'fake-next')
+`, { mode: 0o755 })
+  chmodSync(npmPath, 0o755)
+  const env = isolatedInstallEnv(privateHome, {
+    PATH: `${fakeBin}${delimiter}${join(root, 'empty')}`,
+  })
+  mkdirSync(join(root, 'empty'), { recursive: true })
+  const calls = []
+  await assert.rejects(
+    () => prepareAppForLaunch({
+      checkoutDir: checkout,
+      originalHome,
+      privateHome,
+      env,
+      execFile: (bin, args, options) => {
+        calls.push({ bin: String(bin), args: [...args], env: options?.env })
+        return execFileSync(bin, args, options)
+      },
+    }),
+    /ENOTCACHED|only-if-cached/,
+  )
+  const receipt = JSON.parse(readFileSync(join(checkout, 'npm-ci-receipt.json'), 'utf8'))
+  assert.deepEqual(receipt.argv, ['ci', '--no-audit', '--no-fund'])
+  assert.equal(receipt.cache, join(privateHome, 'cache', 'npm'))
+  assert.equal(receipt.home, privateHome)
+  assert.equal(receipt.offline, 'true')
+  assert.equal(receipt.ignoreScripts, 'true')
+  assert.equal(receipt.preferOnline, null)
+  assert.equal(receipt.userconfig, null)
+  assert.equal(receipt.sourceHint, null)
+  assert.equal(String(receipt.cache).includes(source), false)
+  assert.equal(String(receipt.home).includes(originalHome), false)
+  assert.equal(existsSync(join(privateHome, 'cache', 'npm', '_cacache', 'content-v2/ab/present')), true)
+  assert.equal(existsSync(join(privateHome, 'cache', 'npm', '_cacache', '.npmrc')), false)
+  assert.equal(calls.length, 1)
+  assert.equal(calls[0].env.npm_config_offline, 'true')
+  assert.equal(calls[0].env.NPM_CONFIG_CACHE, join(privateHome, 'cache', 'npm'))
+  assert.notEqual(calls[0].env.NPM_CONFIG_CACHE, join(originalHome, '.npm'))
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('prepareAppForLaunch fails closed before install when the source cache is missing', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'aaclr1-npm-seed-missing-'))
+  const originalHome = join(root, 'user')
+  const privateHome = join(root, 'private')
+  const checkout = writeCheckoutLock(join(root, 'checkout'))
+  mkdirSync(originalHome, { recursive: true })
+  const env = isolatedInstallEnv(privateHome)
+  let installed = false
+  await assert.rejects(
+    () => prepareAppForLaunch({
+      checkoutDir: checkout,
+      originalHome,
+      privateHome,
+      env,
+      execFile: () => {
+        installed = true
+        return ''
+      },
+    }),
+    /source cache is absent|not a completed/,
+  )
+  assert.equal(installed, false)
+  assert.equal(existsSync(join(privateHome, 'cache', 'npm', '_cacache')), false)
+  rmSync(root, { recursive: true, force: true })
+})
+

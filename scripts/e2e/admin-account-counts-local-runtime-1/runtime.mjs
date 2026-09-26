@@ -22,6 +22,7 @@ import { provisioniereUeberGoTrue, profileMutationSql, createdAtMutationSql, ema
 import { createRpcObserver } from './observer.mjs'
 import { baueRuntimeAppUmgebung } from './env.mjs'
 import { prepareAppForLaunch, starteOwnedApp, warteAufAppBereitschaft } from './app.mjs'
+import { leseOriginalHome } from './npm-cache-seed.mjs'
 import { baueAcceptanceContext } from './context.mjs'
 import { materialisiereAppCheckout } from './source.mjs'
 import { leseUnveraenderteSql } from './schema.mjs'
@@ -62,6 +63,7 @@ export async function defaultStartRuntime({
   waitUntilReady,
   install,
   build,
+  originalHome,
 } = {}) {
   if (!docker?.usable) {
     throw notACompletedExecution('runtime rehearsal', 'usable local Docker daemon is absent')
@@ -266,6 +268,8 @@ export async function defaultStartRuntime({
   await prepareAppForLaunch({
     checkoutDir,
     env: appEnv,
+    originalHome: originalHome === undefined ? leseOriginalHome() : originalHome,
+    privateHome: owned.privateHome,
     execFile,
     install,
     build,

@@ -12,6 +12,7 @@ import { stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/o
 import { baueRuntimeAppUmgebung, refuseDotenvInCheckout } from './env.mjs'
 import { TIMEOUTS } from './constants.mjs'
 import { notACompletedExecution } from './implementation.mjs'
+import { seedOfflineNpmCache } from './npm-cache-seed.mjs'
 import { markStopUnknown, syncAppOwnership } from './ownership.mjs'
 
 export function appListenArgs({ host = '127.0.0.1', port } = {}) {
@@ -142,19 +143,35 @@ export async function prepareAppForLaunch({
   execFile,
   install = defaultInstallLockedDependencies,
   build,
+  originalHome,
+  privateHome,
+  sourceCacache,
+  maxFiles,
+  maxBytes,
+  seedCache = seedOfflineNpmCache,
 } = {}) {
   refuseDotenvInCheckout(checkoutDir)
+  const seeded = seedCache({
+    originalHome,
+    privateHome: privateHome || env?.HOME,
+    env,
+    checkoutDir,
+    sourceCacache,
+    maxFiles,
+    maxBytes,
+  })
   const installed = await install({ checkoutDir, env, execFile })
   if (!existsSync(nextBinaryPath(checkoutDir))) {
     throw notACompletedExecution('owned app launch', 'locked next binary missing after install')
   }
   if (typeof build === 'function') {
     const built = await build({ checkoutDir, env, execFile })
-    return { installed, built, launchScript: 'dev' }
+    return { installed, built, seeded, launchScript: 'dev' }
   }
   return {
     installed,
     built: { skipped: true, reason: 'next dev compiles from locked dependencies in the isolated app environment' },
+    seeded,
     launchScript: 'dev',
   }
 }
