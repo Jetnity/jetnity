@@ -1,5 +1,26 @@
 # Jetnity – Active Work Status
 
+Stand: 27. September 2026
+Status: **NORMAL / ADMIN ACCOUNT COUNTS LOCAL FULL-STACK PASS CLOSED / PRODUCTION ACTIVATION GATED / NEXT NORMAL SLICE SELECTION**
+
+> Live evidence wins. This file is continuity only; always re-fetch GitHub/Vercel/Supabase before acting.
+
+## 0. Current work boundary — 27 September 2026
+
+- Live main before this docs persist: `8faa0447a89d613cb7d00c8173c3bda57a3524fc`.
+- Real Product-Owner Mac run `aaclr1-20260926T214335Z`: **LOCAL_FULL_STACK_PASS**, `fullLocalExecution=true`, `dockerUsable=true`, `cliVerified=true`.
+- Local Account Counts acceptance is **CLOSED**.
+- Raw Mac run artifacts are not claimed repository-backed by this docs persist.
+- Account-count Production migration/RPC/grant/live exposure remains a **separate Production/Product-Owner gate** and is **not auto-started**.
+- No hosted Supabase mutation occurred in the local acceptance run.
+- PR #573 is merged and no longer a writer.
+- Next normal product candidate to precheck: issue #110 natural multi-destination homepage intent, now that #543 confirmed-route entry is merged. No runtime starts until the Technical Lead completes the fresh Binding Slice Precheck.
+
+Canonical closure:
+`docs/ADMIN_ACCOUNT_COUNTS_LOCAL_FULL_STACK_PASS_CLOSURE_2026-09-27.md`
+
+---
+
 Stand: 26. September 2026
 Status: **NORMAL / DRAFT PR #573 G16/G17 STREAMED STATE WAIT / WAITING EXACT-HEAD REVIEW / NOT READY / NOT MERGED**
 
