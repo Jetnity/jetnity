@@ -26,6 +26,7 @@ Machine mode is `NORMAL`. Special Product-Owner gates remain. Cursor never Ready
 3. Keep the allowlist rebuild authoritative. Forbidden Docker/Node/hosted/provider/SMTP/Vercel values must still fail to survive.
 4. Keep private HOME and offline/no-script npm protections. Keep locked `npm ci --no-audit --no-fund`.
 5. `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — this writer observed **61/61 PASS**.
+5a. Exact `e73e4900` GitHub CI run `36249011359` SUCCESS, Auth job `108423446864` SUCCESS, Vercel Preview `3Uiipr7arCNmwRd5JMyNgZMfnbQ4` READY. Re-read those gates on the live head after later persists.
 6. Do not run the real full acceptance run or real Docker from this slice.
 7. A later authorized real-Mac rerun must prove that locked app preparation now resolves npm through the sanitized PATH and still keeps the isolation contract.
 8. Historical receipts stay dated. Exclusive creation refuses overwrite. This writer did not mutate the cited Mac failure receipt.

@@ -51,6 +51,8 @@ The first fake-npm test revision used `#!/usr/bin/env node`. Isolated PATH corre
 
 `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **61/61 PASS, 0 FAIL** on this Linux agent (13.7s). Log: `/opt/cursor/artifacts/aaclr1-app-toolchain-path-controlled-tests.log`.
 
+Exact `e73e4900` GitHub CI run `36249011359` SUCCESS, Auth job `108423446864` SUCCESS, Vercel Preview `3Uiipr7arCNmwRd5JMyNgZMfnbQ4` READY. Re-read those gates on any later head.
+
 Real Docker / official CLI / user's Mac / hosted Supabase / Production: **NOT RUN / NOT MUTATED**.
 
 ## Residual risks

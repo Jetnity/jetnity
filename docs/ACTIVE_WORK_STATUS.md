@@ -15,6 +15,7 @@ Status: **NORMAL / DRAFT PR #567 APP TOOLCHAIN PATH FIX 1 FROZEN FOR TL REVIEW /
 | Branch / PR | `fix/admin-account-counts-app-toolchain-path-1` / Draft https://github.com/Jetnity/jetnity/pull/567 |
 | Base | `58962638d4b3b55824497d9b77ad5b3f75025168` (Merge #566) |
 | Code commit | `6b6b6334fd218ac260c701c79ea06babfa2464c8` — reuse sanitized runtime `childEnv` as app parent |
+| First persist head with exact-head gates | `e73e4900fc0fc2aec7b07a8cac281900bc59d030` — CI `36249011359` SUCCESS, Auth SUCCESS, Vercel `3Uiipr7arCNmwRd5JMyNgZMfnbQ4` READY |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
 | Agent | Jetnity admin account counts app toolchain path 1, Gen 1, session `bc-95f0abec-5902-4d07-8efe-7f939ba33521` |
 | Model | cursor-grok-4.6-high-fast |
@@ -23,7 +24,7 @@ Authorized real-Mac run `aaclr1-20260926T142727Z` on exact main `58962638` start
 
 Bereits umgesetzt: `baueRuntimeAppParentQuelle(childEnv)`; same parent source for prepare/launch/restart; raw `process.env` refused; controlled suite **61/61 PASS, 0 FAIL**. No Docker/CLI/config/Auth/SQL/product/CI change.
 
-Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact-head CI/Auth/Preview for this persist were not bound at write time. No Production/hosted mutation. No real Docker from this writer.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `e73e4900` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 

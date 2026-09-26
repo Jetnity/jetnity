@@ -13,10 +13,11 @@ Slice: **IMPLEMENTATION FROZEN FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT A TEC
 | Branch | `fix/admin-account-counts-app-toolchain-path-1` |
 | PR | https://github.com/Jetnity/jetnity/pull/567 (Draft) |
 | Code commit | `6b6b6334fd218ac260c701c79ea06babfa2464c8` — `fix: reuse sanitized runtime PATH for isolated app env` |
+| First persist head with exact-head gates | `e73e4900fc0fc2aec7b07a8cac281900bc59d030` |
 | Frozen interface | Task §4 `jetnity.account-counts.local-acceptance.v1` (unchanged) |
 | Official CLI pin | v2.117.0 / unchanged |
 
-Reconstruct live HEAD after this persist; a later commit invalidates older gates. Exact-head CI/Auth/Preview were not yet bound to this persist when these files were written.
+This evidence persist is later than `e73e4900`. Reconstruct live HEAD after this persist; a later commit invalidates older gates. The IDs below were read from GitHub/Vercel for exact `e73e4900` and do not automatically cover a newer head.
 
 ## This writer
 
@@ -63,13 +64,26 @@ This writer did not add, rewrite or re-run that receipt. The file is not present
 | Artifact | `/opt/cursor/artifacts/aaclr1-app-toolchain-path-controlled-tests.log` | local agent evidence |
 | Real Docker / official binary / user's Mac / hosted Supabase / Production | **NOT RUN / NOT MUTATED** | forbidden by task |
 
+## Exact-head GitHub / Vercel on `e73e4900`
+
+Read after the first persist push. All three completed on that SHA:
+
+| Gate | Result | ID |
+| --- | --- | --- |
+| GitHub CI `Typecheck, Lint & Build` | **SUCCESS** | run `36249011359` / job `108423447054` |
+| GitHub Auth `Auth-Konfiguration gegen config.toml` | **SUCCESS** | run `36249011359` / job `108423446864` |
+| Combined commit status | **success** | SHA `e73e4900fc0fc2aec7b07a8cac281900bc59d030` |
+| Vercel Preview | **READY** | `3Uiipr7arCNmwRd5JMyNgZMfnbQ4` — https://vercel.com/jetnity-e1b93c82/jetnity-app/3Uiipr7arCNmwRd5JMyNgZMfnbQ4 |
+| Review threads | **none claimed here** | re-read on the live head |
+
+This evidence persist will create a newer head. Re-read CI/Auth/Preview on the live SHA before review.
+
 ## What is not done
 
 - No real Docker daemon, no user's Mac, no official CLI download, no stack/browser execution
 - No product/Auth/SQL/root dependency/CI change
 - Independent Technical-Lead exact-head review has not happened
 - Authorized later real-Mac full acceptance rerun after merge remains a later TL step
-- Exact-head CI/Auth/Preview for the persist head were not recorded in this file at write time
 
 ## First unfinished action
 
