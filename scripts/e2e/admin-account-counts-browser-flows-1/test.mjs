@@ -15,6 +15,7 @@ import { COPY, SELECTORS, SOURCE_PATHS } from '../admin-account-counts-browser-a
 import { generateTotp, looksLikeTotpCode } from '../admin-account-counts-browser-acceptance-1/totp.mjs'
 import {
   CONTRACT_VERSION,
+  ENROLL_SUCCESS_SELECTORS,
   FLOW_GATE_IDS,
   PRODUCT_BASELINE,
   ROOT,
@@ -87,9 +88,11 @@ import {
   attachAuthCapture,
   authCaptureKind,
   beginBrowserSession,
+  enrollTotpViaUi,
   extractTotpSecret,
   isIntendedAuthResponse,
   isLocalAuthResponse,
+  isSourceBackedEnrollSuccessText,
   payloadMatchesExpectedActor,
   withBrowserSession,
   withFixtureRestore,
@@ -192,9 +195,20 @@ function createScriptedPage(world) {
         : `${UI_COPY.stepUp}\n${UI_COPY.noFactor}`
     }
     if (world.url.includes('/account/security')) {
-      if (world.enrollSucceeded) return UI_COPY.enrollSuccess
+      if (world.securityBodyOverride != null) return world.securityBodyOverride
+      if (world.enrollSucceeded) {
+        const durable = [
+          `${UI_COPY.enrollConfirmedList}.`,
+          UI_COPY.enrollConfirmedList,
+          'Authenticator-App',
+          UI_COPY.enrollVerifiedStatus,
+        ].join('\n')
+        return world.includeStaleEnrollSuccess
+          ? `${UI_COPY.enrollSuccess}\n${durable}`
+          : durable
+      }
       return world.enrollOpen
-        ? 'Authenticator-App (TOTP)\nSchritt 2'
+        ? 'Authenticator-App (TOTP)\nSchritt 2: 6-stelligen Code eingeben'
         : 'Authenticator-App einrichten'
     }
     if (world.url.includes('/unauthorized')) return 'unauthorized'
@@ -276,11 +290,19 @@ function createScriptedPage(world) {
     },
     waitForLoadState: async () => {},
     waitForResponse: async (predicate) => {
+      const verifyPayload = world.verifyPayload ?? { access_token: world.accessToken, user: ownerUser }
       const candidates = [
         makeAuthResponse(`${world.localApi}/auth/v1/token`, { access_token: world.accessToken, user: ownerUser }),
         makeAuthResponse(`${world.localApi}/auth/v1/factors`, { totp: { secret: world.enrollSecret } }),
-        makeAuthResponse(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken, user: ownerUser }),
       ]
+      if (!world.verifyAbsent) {
+        candidates.push(makeAuthResponse(
+          `${world.localApi}/auth/v1/factors/1/verify`,
+          verifyPayload,
+          'POST',
+          world.verifyStatus ?? 200,
+        ))
+      }
       for (const response of candidates) {
         if (typeof predicate !== 'function' || predicate(response)) return response
       }
@@ -340,6 +362,9 @@ function createScriptedPage(world) {
           fill: (value) => { enrollCode = value },
         })
       }
+      if (selector === ENROLL_SUCCESS_SELECTORS.lageReady) {
+        return createLocator(() => (world.enrollSucceeded ? UI_COPY.enrollConfirmedList : ''))
+      }
       if (selector === SELECTORS.stepUpCode) {
         return createLocator(() => (world.url.includes('/admin/mfa') && world.enrolled ? 'code' : ''), {
           fill: (value) => { stepUpCode = value },
@@ -389,8 +414,13 @@ function createScriptedPage(world) {
             if (world.enrollOpen) {
               world.enrolled = true
               world.enrollOpen = false
-              world.enrollSucceeded = true
-              emitJson(`${world.localApi}/auth/v1/factors/1/verify`, { access_token: world.accessToken, user: ownerUser })
+              if (!world.blockEnrollSuccess) world.enrollSucceeded = true
+              if (!world.verifyAbsent) {
+                emitJson(
+                  `${world.localApi}/auth/v1/factors/1/verify`,
+                  world.verifyPayload ?? { access_token: world.accessToken, user: ownerUser },
+                )
+              }
               return
             }
             if (world.url.includes('/admin/mfa')) {
@@ -428,6 +458,12 @@ function createWorld(overrides = {}) {
     enrollSucceeded: false,
     enrollClicked: false,
     enrollSecret: 'JBSWY3DPEHPK3PXP',
+    verifyPayload: undefined,
+    verifyStatus: 200,
+    verifyAbsent: false,
+    blockEnrollSuccess: false,
+    includeStaleEnrollSuccess: false,
+    securityBodyOverride: null,
     accessToken: 'local-memory-access-token',
     expected: {
       present: '4',
@@ -618,6 +654,8 @@ test('accepted product selectors and copy still match the baseline UI', () => {
   assert.match(dialog, /id="mfa-totp"|htmlFor="mfa-totp"/)
   assert.match(security, /Authenticator-App einrichten/)
   assert.match(security, /id="totp-code"/)
+  assert.match(security, /data-security-lage=\{totpLage\}/)
+  assert.match(security, /Eingerichtete Authenticator-Apps/)
   assert.match(counts, /admin-account-counts-titel/)
   assert.match(counts, /ADMIN_ACCOUNT_COUNTS_WINDOW_HOURS/)
   assert.match(contract, /ADMIN_ACCOUNT_COUNTS_WINDOW_HOURS = 720/)
@@ -1550,6 +1588,185 @@ test('B3 deferred session create after timeout is closed and later gates stay NO
   assert.equal(result.gates.slice(1).every((gate) => gate.result === 'NOT RUN'), true)
   await new Promise((resolve) => setTimeout(resolve, 30))
   assert.ok(closed >= 1)
+})
+
+function enrollStore(world, overrides = {}) {
+  return {
+    totpSecret: null,
+    accessToken: null,
+    localApiOrigin: world.localApi,
+    expectedActor: OWNER,
+    enrolled: false,
+    ...overrides,
+  }
+}
+
+async function runEnrollOnWorld(world, timingOverrides = {}) {
+  const page = createScriptedPage(world)
+  world.url = 'http://127.0.0.1:3000/account/security'
+  const store = enrollStore(world)
+  await enrollTotpViaUi(page, 'http://127.0.0.1:3000', store, {
+    timeoutMs: 400,
+    expectedActor: OWNER,
+    ...timingOverrides,
+  })
+  return { page, store }
+}
+
+test('G8 post-verify observation is pinned to current SecurityMFA source', () => {
+  const security = lese('components/account/SecurityMFA.tsx')
+  const lage = lese('lib/auth/account-security-lage.ts')
+  const refreshStart = security.indexOf('async function refreshFactors')
+  assert.ok(refreshStart >= 0)
+  const refreshBody = security.slice(refreshStart, security.indexOf('async function handleEnroll'))
+  assert.match(refreshBody, /setMessage\(null\)/)
+  const verifyStart = security.indexOf('async function handleVerify')
+  const verifyBody = security.slice(verifyStart, security.indexOf('function stepUpAuth'))
+  assert.match(
+    verifyBody,
+    /setMessage\(\{ type: "success", text: "Authenticator-App erfolgreich aktiviert\." \}\);[\s\S]*await refreshFactors\(\)/,
+  )
+  assert.match(lage, /ready: 'Eingerichtete Authenticator-Apps\.'/)
+  assert.match(lage, /if \(status === 'verified'\) return 'bestätigt'/)
+  assert.equal(UI_COPY.enrollConfirmedList, 'Eingerichtete Authenticator-Apps')
+  assert.equal(UI_COPY.enrollVerifiedStatus, 'bestätigt')
+  assert.equal(isSourceBackedEnrollSuccessText(UI_COPY.enrollSuccess), false)
+  assert.equal(isSourceBackedEnrollSuccessText('lorem ipsum Authenticator-App'), false)
+  assert.equal(
+    isSourceBackedEnrollSuccessText(`${UI_COPY.enrollConfirmedList}\n${UI_COPY.enrollVerifiedStatus}`),
+    true,
+  )
+  assert.equal(
+    isSourceBackedEnrollSuccessText(`${UI_COPY.enrollConfirmedList}\n${UI_COPY.enrollVerifiedStatus}\n${UI_COPY.enrollFormStep}`),
+    false,
+  )
+})
+
+test('G8 current source-backed post-verify state PASSes without the fleeting toast', async () => {
+  const world = createWorld()
+  const { store } = await runEnrollOnWorld(world)
+  const body = await createScriptedPage(world).locator('body').innerText()
+  assert.equal(store.enrolled, true)
+  assert.equal(store.totpSecret, world.enrollSecret)
+  assert.equal(store.accessToken, world.accessToken)
+  assert.equal(world.enrollSucceeded, true)
+  assert.match(body, /Eingerichtete Authenticator-Apps/)
+  assert.match(body, /bestätigt/)
+  assert.doesNotMatch(body, /Authenticator-App erfolgreich aktiviert/)
+  assert.equal(isSourceBackedEnrollSuccessText(body), true)
+  assert.equal(isSourceBackedEnrollSuccessText(UI_COPY.enrollSuccess), false)
+})
+
+test('G8 PASSes when stale success copy is absent and confirmed-factor UI is present', async () => {
+  const world = createWorld({ includeStaleEnrollSuccess: false })
+  const { store } = await runEnrollOnWorld(world)
+  const body = await createScriptedPage(world).locator('body').innerText()
+  assert.doesNotMatch(body, /Authenticator-App erfolgreich aktiviert/)
+  assert.match(body, /Eingerichtete Authenticator-Apps/)
+  assert.match(body, /bestätigt/)
+  assert.equal(store.enrolled, true)
+})
+
+test('G8 still PASSes when the fleeting toast is also visible beside confirmed-factor UI', async () => {
+  const world = createWorld({ includeStaleEnrollSuccess: true })
+  const { store } = await runEnrollOnWorld(world)
+  const body = await createScriptedPage(world).locator('body').innerText()
+  assert.match(body, /Authenticator-App erfolgreich aktiviert/)
+  assert.equal(isSourceBackedEnrollSuccessText(body), true)
+  assert.equal(store.enrolled, true)
+})
+
+test('G8 fails when the observed verify response is unsuccessful', async () => {
+  const world = createWorld({
+    verifyPayload: { error: 'invalid', msg: 'invalid', access_token: 'synthetic-error-token', user: OWNER },
+  })
+  await assert.rejects(
+    () => runEnrollOnWorld(world),
+    /verify response was not successful/,
+  )
+})
+
+test('G8 fails when verify payload/token belongs to the wrong actor', async () => {
+  const world = createWorld({
+    verifyPayload: {
+      access_token: 'synthetic-other-user-token',
+      user: { id: '99999999-9999-4999-8999-999999999999', email: 'other@aacbf1.invalid' },
+    },
+  })
+  await assert.rejects(
+    () => runEnrollOnWorld(world),
+    /expected actor/,
+  )
+})
+
+test('G8 fails when verify is absent and no deterministic success state appears', async () => {
+  const world = createWorld({
+    verifyAbsent: true,
+    blockEnrollSuccess: true,
+    securityBodyOverride: 'Authenticator-App (TOTP)\nNoch keine Authenticator-App eingerichtet.',
+  })
+  await assert.rejects(
+    () => runEnrollOnWorld(world, { timeoutMs: 80 }),
+    /source-backed enroll success state was not observed|auth response predicate rejected/,
+  )
+})
+
+test('G8 fails when enrollment response has no TOTP secret', async () => {
+  const world = createWorld({ enrollSecret: null })
+  await assert.rejects(
+    () => runEnrollOnWorld(world),
+    /did not yield an in-memory TOTP secret/,
+  )
+})
+
+test('G8 timeout without success state stays ownership-uncertain / FAIL', async () => {
+  const world = createWorld({
+    blockEnrollSuccess: true,
+    securityBodyOverride: 'Authenticator-App einrichten',
+  })
+  const budget = createRunBudget({
+    timeoutMs: 160,
+    signal: new AbortController().signal,
+  })
+  await assert.rejects(
+    () => runEnrollOnWorld(world, { timeoutMs: 80, budget }),
+    (error) => {
+      assert.match(
+        String(error.message),
+        /enroll\.success exceeded|source-backed enroll success state was not observed|terminal/,
+      )
+      return true
+    },
+  )
+})
+
+test('G8 does not PASS from arbitrary or stale-only success text', async () => {
+  assert.equal(isSourceBackedEnrollSuccessText('Something went wrong'), false)
+  assert.equal(isSourceBackedEnrollSuccessText(UI_COPY.enrollSuccess), false)
+  assert.equal(isSourceBackedEnrollSuccessText('Authenticator-App erfolgreich'), false)
+  const world = createWorld({
+    blockEnrollSuccess: true,
+    securityBodyOverride: UI_COPY.enrollSuccess,
+  })
+  await assert.rejects(
+    () => runEnrollOnWorld(world, { timeoutMs: 80 }),
+    /source-backed enroll success state was not observed/,
+  )
+})
+
+test('G10 existing-factor path still refuses a forced new enrollment', async () => {
+  const world = createWorld({ enrolled: true })
+  const page = createScriptedPage(world)
+  world.url = 'http://127.0.0.1:3000/account/security'
+  const store = enrollStore(world, {
+    totpSecret: world.enrollSecret,
+    forceNewEnrollment: true,
+  })
+  await assert.rejects(
+    () => enrollTotpViaUi(page, 'http://127.0.0.1:3000', store, { timeoutMs: 200, expectedActor: OWNER }),
+    /G10\/existing-factor path must not force a new enrollment/,
+  )
+  assert.equal(world.enrollClicked, false)
 })
 
 function acceptedParserResults(fixtures) {
