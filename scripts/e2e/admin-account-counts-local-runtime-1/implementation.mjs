@@ -9,7 +9,7 @@ export const IMPLEMENTATION = Object.freeze({
   ownedLifecycle: 'REVIEW_FIX_F3_F4',
   envGuard: 'REUSED_AND_EXTENDED',
   cliIdentity: 'REVIEW_FIX_C2',
-  dockerCapability: 'IMPLEMENTED',
+  dockerCapability: 'MACOS_ENDPOINT_FIX_1',
   stackStart: 'IMPLEMENTED',
   migrationReplay: 'IMPLEMENTED',
   catalogVerification: 'IMPLEMENTED',
@@ -23,7 +23,7 @@ export const IMPLEMENTATION = Object.freeze({
   realStackExecution: 'NOT_RUN',
   codeCompleteClaim: false,
   note:
-    'O2a/O2b on the O1 head. Final cleanup treats the nested stack CLI-child stop as authoritative: unconfirmed termination retains private HOME and fails G20; confirmed reaped/never-started remains safe. defaultStartRuntime threads prepared.projectId through starteOwnedStack into first collectOwnedDockerResources so CLI-project-labelled containers/volumes without RUN_LABEL are owned only for the exact project and keep that authority for teardown. O1 foreign-resource rules and N01–N03/E1/E2/C1/C2/F1–F3 stay. Official binaries, Docker and the real stack were not executed in this correction.',
+    'macOS Docker runtime fix 1: isolated child env no longer invents unix:///var/run/docker.sock. A parent-only read of the active Docker CLI/context may select one verified local Unix endpoint; remote/tcp/ssh/cloud fail closed; private HOME is not given copied Docker credentials/config. Linux default sockets remain supported. Docker Desktop macOS local Unix endpoints are supported without a hard-coded username. Official CLI 2.117.0 archive identity and version/help/start-help checks are unchanged. Official binaries, Docker and the real stack were not executed in this correction. O1/O2 and N01–N03/E1/E2/C1/C2/F1–F3 stay.',
 })
 
 export function notACompletedExecution(kind, reason) {

@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { findeAusfuehrbare } from '../admin-account-counts-browser-acceptance-1/resolve-executable.mjs'
 import { TIMEOUTS } from './constants.mjs'
+import { istLokalerUnixDockerHost, istRemoteDockerHinweis, unixPfadAusDockerHost } from './docker-endpoint.mjs'
 
 const COMMANDS = ['docker', 'podman', 'nerdctl']
 const SOCKETS = [
@@ -25,7 +26,7 @@ function tryExec(execFile, bin, args, env, timeout = TIMEOUTS.dockerInfoMs) {
 }
 
 function contextIsRemote(text) {
-  return /cloud|ecs|aci|ssh:|tcp:\/\/(?!127\.0\.0\.1|localhost)/i.test(String(text || ''))
+  return istRemoteDockerHinweis(text) || /cloud|ecs|aci|ssh:|tcp:\/\/(?!127\.0\.0\.1|localhost)/i.test(String(text || ''))
 }
 
 export function pruefeDockerFaehigkeit({
@@ -47,6 +48,9 @@ export function pruefeDockerFaehigkeit({
     const daemon = tryExec(execFile, path, ['info'], env, TIMEOUTS.dockerInfoMs)
     info[name] = daemon
     if (daemon.ok && !usable) {
+      if (name === 'docker' && !istLokalerUnixDockerHost(env?.DOCKER_HOST)) {
+        continue
+      }
       usable = true
       selected = { name, path }
     }
@@ -63,6 +67,9 @@ export function pruefeDockerFaehigkeit({
     if (context.remote) usable = false
   }
   const present = Object.keys(resolved).length > 0 || sockets.length > 0
+  const dockerHostPath = unixPfadAusDockerHost(env?.DOCKER_HOST)
+  const usedExplicitLocalHost = istLokalerUnixDockerHost(env?.DOCKER_HOST)
+  if (selected?.name === 'docker' && !usedExplicitLocalHost) usable = false
   return {
     present,
     usable: usable && !context.remote,
@@ -73,7 +80,11 @@ export function pruefeDockerFaehigkeit({
     versions,
     info,
     context,
-    localUnixSocket: sockets.includes('/var/run/docker.sock') || sockets.includes('/run/docker.sock'),
+    localUnixSocket: usedExplicitLocalHost
+      || sockets.includes('/var/run/docker.sock')
+      || sockets.includes('/run/docker.sock'),
+    usedExplicitLocalHost,
+    dockerHostPathPresent: Boolean(dockerHostPath),
     note: usable && !context.remote
       ? 'A local Docker-API daemon answered info and the active context is not remote.'
       : present

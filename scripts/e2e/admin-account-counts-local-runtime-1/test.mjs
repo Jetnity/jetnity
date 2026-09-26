@@ -7,7 +7,7 @@ import { createServer, request as httpRequest } from 'node:http'
 import { once } from 'node:events'
 import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { BLOB_PINS, PINS, SOURCE_PATHS } from '../admin-account-counts-browser-acceptance-1/constants.mjs'
 import { darfOwnedVerzeichnisEntfernen, stoppeOwnedChild } from '../admin-account-counts-browser-acceptance-1/owned-lifecycle.mjs'
@@ -23,10 +23,18 @@ import {
 } from './constants.mjs'
 import {
   assertIsolatedConnectionEnvironment,
+  baueDockerCliUmgebung,
   baueRuntimeAppUmgebung,
+  baueRuntimePreflightUmgebung,
   klassifiziereRuntimeUmgebung,
 } from './env.mjs'
 import { pruefeDockerFaehigkeit } from './docker-capability.mjs'
+import {
+  istLokalerUnixDockerHost,
+  sanitizeDockerHost,
+  verifiziereLokalenUnixDockerEndpunkt,
+  waehleLokalenUnixDockerEndpunkt,
+} from './docker-endpoint.mjs'
 import {
   assertCliHelpText,
   assertCliVersionText,
@@ -3042,6 +3050,8 @@ function controlledRuntimeExecFile(invoked) {
     if (name.includes('docker')) {
       if (args[0] === '--version') return 'Docker version 24.0.0'
       if (args[0] === 'info') return 'Server Version: 24.0.0\n'
+      if (args[0] === 'context' && args[1] === 'show') return 'default'
+      if (args[0] === 'context' && args[1] === 'inspect') return 'unix:///var/run/docker.sock'
       if (args[0] === 'context') return 'default'
       throw new Error(`unexpected docker ${args}`)
     }
@@ -3079,6 +3089,8 @@ test('C2 explicit modes invoke verified archive/member/version/help; default sta
     evidenceDir: join(workspace, 'default-evidence'),
     execFile: controlledRuntimeExecFile(defaultInvoked),
     resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    exists: (path) => path === '/var/run/docker.sock' || path === '/run/docker.sock',
+    platform: 'linux',
     cliPins: pins.pins,
     startRuntime: async () => {
       defaultStart = true
@@ -3101,6 +3113,8 @@ test('C2 explicit modes invoke verified archive/member/version/help; default sta
     evidenceDir: join(workspace, 'missing-evidence'),
     execFile: controlledRuntimeExecFile(missingInvoked),
     resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    exists: (path) => path === '/var/run/docker.sock' || path === '/run/docker.sock',
+    platform: 'linux',
     startRuntime: async () => {
       missingStart = true
       throw new Error('missing archive must not reach startRuntime')
@@ -3119,6 +3133,8 @@ test('C2 explicit modes invoke verified archive/member/version/help; default sta
     evidenceDir: join(workspace, 'runtime-evidence'),
     execFile: controlledRuntimeExecFile(runtimeInvoked),
     resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    exists: (path) => path === '/var/run/docker.sock' || path === '/run/docker.sock',
+    platform: 'linux',
     cliPins: pins.pins,
     startRuntime: async ({ cli, owned }) => {
       runtimeStart = true
@@ -3149,8 +3165,20 @@ test('C2 explicit modes invoke verified archive/member/version/help; default sta
     evidenceDir: join(workspace, 'full-evidence'),
     execFile: controlledRuntimeExecFile(fullInvoked),
     resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    exists: (path) => path === '/var/run/docker.sock' || path === '/run/docker.sock',
+    platform: 'linux',
     cliPins: pins.pins,
-    importer: async () => ({ notTheConsumer: true }),
+    importer: async () => ({
+      runBrowserFlows: async () => ({
+        contractVersion: CONTRACT_VERSION,
+        gates: Object.fromEntries(BROWSER_GATES.map((id) => [id, {
+          id,
+          result: 'NOT RUN',
+          evidence: null,
+          notes: 'C2 importer is not a real sibling consumer',
+        }])),
+      }),
+    }),
     startRuntime: async ({ cli }) => {
       fullStart = true
       assert.equal(cli.identityVerified, true)
@@ -3159,9 +3187,318 @@ test('C2 explicit modes invoke verified archive/member/version/help; default sta
   })
   assert.equal(fullStart, true)
   assert.equal(fullMissingConsumer.mode, 'full')
-  assert.equal(fullMissingConsumer.browserPresent, false)
-  assert.equal(fullMissingConsumer.verdict, 'NOT_IMPLEMENTED')
+  assert.equal(fullMissingConsumer.browserPresent, true)
+  assert.notEqual(fullMissingConsumer.verdict, 'LOCAL_FULL_STACK_PASS')
   assert.equal(fullMissingConsumer.summary.fullLocalExecution, false)
 
   rmSync(workspace, { recursive: true, force: true })
+})
+
+function writeUnixSocket(dir, rel = 'docker.sock') {
+  const sock = join(dir, rel)
+  mkdirSync(dirname(sock), { recursive: true })
+  writeFileSync(sock, '')
+  return sock
+}
+
+function desktopInspectExec(host, contextName = 'desktop-linux') {
+  return (bin, args) => {
+    if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+    if (String(bin).includes('docker')) {
+      if (args[0] === '--version') return 'Docker version 29.8.0'
+      if (args[0] === 'info') {
+        return 'Server Version: 29.8.0\nName: desktop-linux\n'
+      }
+      if (args[0] === 'context' && args[1] === 'show') return `${contextName}\n`
+      if (args[0] === 'context' && args[1] === 'inspect') return `${host}\n`
+    }
+    throw new Error(`unexpected ${bin} ${args}`)
+  }
+}
+
+test('Linux default local Unix socket is selected and verified without inheriting parent Docker vars', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-linux-home-'))
+  const sock = writeUnixSocket(home, 'var/run/docker.sock')
+  const parent = {
+    PATH: '/usr/bin',
+    HOME: home,
+    DOCKER_HOST: 'unix:///var/run/docker.sock',
+    DOCKER_CONTEXT: 'default',
+    DOCKER_CERT_PATH: '/tmp/certs',
+    DOCKER_TLS_VERIFY: '1',
+  }
+  const selected = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: parent,
+    platform: 'linux',
+    exists: (path) => path === sock || path === '/var/run/docker.sock',
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec('unix:///var/run/docker.sock', 'default'),
+  })
+  assert.equal(selected.ok, true)
+  assert.equal(selected.host, 'unix:///var/run/docker.sock')
+  assert.equal(selected.kind, 'linux-var-run-sock')
+  const isolated = baueDockerCliUmgebung({
+    parentEnv: parent,
+    privateHome: join(home, 'private'),
+    dockerHost: selected.host,
+  })
+  assert.equal(isolated.DOCKER_HOST, 'unix:///var/run/docker.sock')
+  assert.equal(isolated.DOCKER_CONTEXT, undefined)
+  assert.equal(isolated.DOCKER_CERT_PATH, undefined)
+  assert.equal(isolated.DOCKER_TLS_VERIFY, undefined)
+  assert.equal(isolated.HOME, join(home, 'private'))
+  const verified = verifiziereLokalenUnixDockerEndpunkt({
+    selection: selected,
+    isolatedEnv: isolated,
+    exists: (path) => path === '/var/run/docker.sock',
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec('unix:///var/run/docker.sock', 'default'),
+  })
+  assert.equal(verified.verified, true)
+  const capability = pruefeDockerFaehigkeit({
+    env: isolated,
+    exists: (path) => path === '/var/run/docker.sock',
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec('unix:///var/run/docker.sock', 'default'),
+  })
+  assert.equal(capability.usable, true)
+  assert.equal(capability.usedExplicitLocalHost, true)
+  const bare = baueRuntimePreflightUmgebung({ parentEnv: parent, privateHome: join(home, 'bare') })
+  assert.equal(bare.DOCKER_HOST, undefined)
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('macOS Docker Desktop local Unix endpoint works with private HOME and redacted evidence', async () => {
+  const parentHome = mkdtempSync(join(tmpdir(), 'aaclr1-mac-parent-'))
+  const usersHome = join(parentHome, 'Users', 'fixture-user')
+  const sock = writeUnixSocket(usersHome, '.docker/run/docker.sock')
+  writeFileSync(join(usersHome, '.docker', 'config.json'), '{"auths":{"https://index.docker.io/v1/":{}}}\n')
+  const host = `unix://${sock}`
+  assert.equal(istLokalerUnixDockerHost(host), true)
+  const privateHome = mkdtempSync(join(tmpdir(), 'aaclr1-mac-private-'))
+  const selected = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: { PATH: '/usr/bin', HOME: usersHome },
+    platform: 'darwin',
+    exists: (path) => path === sock,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec(host, 'desktop-linux'),
+  })
+  assert.equal(selected.ok, true)
+  assert.equal(selected.host, host)
+  assert.equal(selected.source, 'docker-context')
+  assert.equal(selected.contextName, 'desktop-linux')
+  assert.equal(selected.kind, 'docker-desktop-unix')
+  const isolated = baueDockerCliUmgebung({
+    parentEnv: { PATH: '/usr/bin', HOME: usersHome, DOCKER_CONTEXT: 'desktop-linux' },
+    privateHome,
+    dockerHost: selected.host,
+  })
+  assert.equal(isolated.HOME, privateHome)
+  assert.equal(isolated.DOCKER_HOST, host)
+  assert.equal(isolated.DOCKER_CONTEXT, undefined)
+  assert.equal(existsSync(join(privateHome, '.docker', 'config.json')), false)
+  const sanitized = sanitizeDockerHost(host, { parentHome: usersHome })
+  assert.equal(sanitized, 'unix://<redacted-home>/.docker/run/docker.sock')
+  assert.doesNotMatch(sanitized, /fixture-user/)
+  const workspace = mkdtempSync(join(tmpdir(), 'aaclr1-mac-run-'))
+  const pins = writeTestCliPins(workspace)
+  const invoked = []
+  const result = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC', HOME: usersHome },
+    argv: ['--runtime-only', '--cli-archive', pins.archivePath, '--cli-checksums', pins.checksumsPath],
+    evidenceDir: join(workspace, 'evidence'),
+    privateHome,
+    platform: 'darwin',
+    exists: (path) => path === sock,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    cliPins: pins.pins,
+    execFile: (bin, args, options) => {
+      invoked.push({ bin: String(bin), args: [...(args || [])], envHost: options?.env?.DOCKER_HOST, envHome: options?.env?.HOME, envContext: options?.env?.DOCKER_CONTEXT })
+      if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+      if (String(bin) === 'tar' || String(bin).endsWith('/tar')) return execFileSync('tar', args, options)
+      if (String(bin).includes('docker')) {
+        if (args[0] === '--version') return 'Docker version 29.8.0'
+        if (args[0] === 'info') {
+          assert.equal(options.env.DOCKER_HOST, host)
+          assert.equal(options.env.HOME, privateHome)
+          assert.equal(options.env.DOCKER_CONTEXT, undefined)
+          return 'Server Version: 29.8.0\nName: desktop-linux\n'
+        }
+        if (args[0] === 'context' && args[1] === 'show') return 'desktop-linux\n'
+        if (args[0] === 'context' && args[1] === 'inspect') return `${host}\n`
+        throw new Error(`unexpected docker ${args}`)
+      }
+      if (args?.[0] === '--version') return '2.117.0\n'
+      if (args?.[0] === '--help') return 'supabase start\nsupabase stop\nsupabase status\n'
+      if (args?.[0] === 'start' && args?.[1] === '--help') {
+        assert.equal(options.env.DOCKER_HOST, host)
+        assert.equal(options.env.HOME, privateHome)
+        return 'Start containers for Supabase local development\n'
+      }
+      throw new Error(`must not invoke ${bin} ${args}`)
+    },
+    startRuntime: async ({ childEnv, docker, cli }) => {
+      assert.equal(childEnv.DOCKER_HOST, host)
+      assert.equal(docker.usable, true)
+      assert.equal(cli.identityVerified, true)
+      assert.equal(cli.startHelpVerified, true)
+      return {
+        owned: {},
+        gates: {
+          G2_owned_stack: { result: 'NOT RUN', notes: 'endpoint control' },
+          G3_auth_schema_not_bootstrap: { result: 'NOT RUN', notes: 'endpoint control' },
+          G4_fixtures_via_gotrue: { result: 'NOT RUN', notes: 'endpoint control' },
+          G5_app_boot_loopback: { result: 'NOT RUN', notes: 'endpoint control' },
+        },
+      }
+    },
+  })
+  assert.equal(result.docker.usable, true)
+  assert.equal(result.endpoint.verified, true)
+  assert.equal(result.cli.identityVerified, true)
+  assert.doesNotMatch(result.docker.endpoint.hostSanitized, /fixture-user/)
+  assert.match(result.docker.endpoint.hostSanitized, /<redacted-home>|\.docker\/run\/docker\.sock/)
+  assert.ok(invoked.some((item) => item.args?.[0] === 'info' && item.envHost === host))
+  assert.ok(invoked.some((item) => item.args?.[0] === 'start' && item.args?.[1] === '--help' && item.envHost === host))
+  assert.equal(existsSync(join(privateHome, '.docker', 'config.json')), false)
+  rmSync(workspace, { recursive: true, force: true })
+  rmSync(parentHome, { recursive: true, force: true })
+  rmSync(privateHome, { recursive: true, force: true })
+})
+
+test('remote tcp/ssh contexts and hostile parent DOCKER_HOST fail closed', () => {
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-remote-'))
+  const sock = writeUnixSocket(home, '.docker/run/docker.sock')
+  const localHost = `unix://${sock}`
+  const tcp = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: { PATH: '/usr/bin', HOME: home, DOCKER_HOST: 'tcp://203.0.113.9:2376' },
+    platform: 'darwin',
+    exists: (path) => path === sock,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec(localHost, 'desktop-linux'),
+  })
+  assert.equal(tcp.ok, false)
+  assert.equal(tcp.remoteRefused, true)
+  const ssh = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: { PATH: '/usr/bin', HOME: home, DOCKER_CONTEXT: 'ssh' },
+    platform: 'linux',
+    exists: () => false,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec('ssh://operator@203.0.113.9', 'ssh'),
+  })
+  assert.equal(ssh.ok, false)
+  assert.equal(ssh.remoteRefused, true)
+  const cloud = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: { PATH: '/usr/bin', HOME: home },
+    platform: 'linux',
+    exists: () => false,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec('https://cloud.example.invalid', 'cloud'),
+  })
+  assert.equal(cloud.ok, false)
+  assert.equal(cloud.remoteRefused, true)
+  assert.throws(
+    () => baueRuntimePreflightUmgebung({
+      parentEnv: { PATH: '/usr/bin' },
+      privateHome: join(home, 'private'),
+      dockerHost: 'tcp://203.0.113.9:2376',
+    }),
+    /local Unix Docker socket/,
+  )
+  const isolated = baueRuntimePreflightUmgebung({
+    parentEnv: { PATH: '/usr/bin', DOCKER_HOST: 'tcp://203.0.113.9:2376', DOCKER_CONTEXT: 'desktop-linux' },
+    privateHome: join(home, 'child'),
+  })
+  assert.equal(isolated.DOCKER_HOST, undefined)
+  assert.equal(isolated.DOCKER_CONTEXT, undefined)
+  rmSync(home, { recursive: true, force: true })
+})
+
+test('missing or non-responsive local endpoint blocks; CLI start-help failure is named', async () => {
+  const missing = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: { PATH: '/usr/bin', HOME: '/tmp' },
+    platform: 'darwin',
+    exists: () => false,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: () => {
+      throw new Error('no such file or directory')
+    },
+  })
+  assert.equal(missing.ok, false)
+  const home = mkdtempSync(join(tmpdir(), 'aaclr1-dead-'))
+  const sock = writeUnixSocket(home, 'docker.sock')
+  const host = `unix://${sock}`
+  const selected = waehleLokalenUnixDockerEndpunkt({
+    parentEnv: { PATH: '/usr/bin', HOME: home, DOCKER_HOST: host },
+    platform: 'linux',
+    exists: (path) => path === sock,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec(host, 'default'),
+  })
+  const isolated = baueDockerCliUmgebung({
+    parentEnv: { PATH: '/usr/bin' },
+    privateHome: join(home, 'private'),
+    dockerHost: selected.host,
+  })
+  const dead = verifiziereLokalenUnixDockerEndpunkt({
+    selection: selected,
+    isolatedEnv: isolated,
+    exists: (path) => path === sock,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: () => {
+      throw new Error('failed to connect to the docker API at unix:///missing.sock')
+    },
+  })
+  assert.equal(dead.verified, false)
+  assert.match(dead.note, /docker info failed|non-responsive|failed to connect/)
+  const gone = verifiziereLokalenUnixDockerEndpunkt({
+    selection: selected,
+    isolatedEnv: isolated,
+    exists: () => false,
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    execFile: desktopInspectExec(host, 'default'),
+  })
+  assert.equal(gone.verified, false)
+  assert.match(gone.note, /missing/)
+
+  const workspace = mkdtempSync(join(tmpdir(), 'aaclr1-cli-fail-'))
+  const pins = writeTestCliPins(workspace)
+  const cliFail = await run({
+    env: { PATH: process.env.PATH, LANG: 'C.UTF-8', TZ: 'UTC' },
+    argv: ['--runtime-only', '--cli-archive', pins.archivePath, '--cli-checksums', pins.checksumsPath],
+    evidenceDir: join(workspace, 'evidence'),
+    platform: 'linux',
+    exists: (path) => path === '/var/run/docker.sock',
+    resolve: (name) => (name === 'docker' ? '/usr/bin/docker' : null),
+    cliPins: pins.pins,
+    execFile: (bin, args, options) => {
+      if (String(bin).endsWith('git') || bin === 'git') return execGit(args)
+      if (String(bin) === 'tar' || String(bin).endsWith('/tar')) return execFileSync('tar', args, options)
+      if (String(bin).includes('docker')) {
+        if (args[0] === 'info') return 'Server Version: 24.0.0\n'
+        if (args[0] === '--version') return 'Docker version 24.0.0'
+        if (args[0] === 'context' && args[1] === 'show') return 'default'
+        if (args[0] === 'context' && args[1] === 'inspect') return 'unix:///var/run/docker.sock'
+      }
+      if (args?.[0] === '--version') return '2.117.0\n'
+      if (args?.[0] === '--help') return 'supabase start\nsupabase stop\nsupabase status\n'
+      if (args?.[0] === 'start' && args?.[1] === '--help') {
+        throw new Error(`failed to connect to the docker API at ${options.env.DOCKER_HOST}`)
+      }
+      throw new Error(`must not invoke ${bin} ${args}`)
+    },
+    startRuntime: async () => {
+      throw new Error('start must not run when start-help fails')
+    },
+  })
+  assert.equal(cliFail.cli.identityVerified, false)
+  assert.equal(cliFail.cli.versionVerified, true)
+  assert.equal(cliFail.cli.helpVerified, true)
+  assert.equal(cliFail.cli.startHelpVerified, false)
+  assert.deepEqual(cliFail.cli.failedIdentityChecks, ['start-help'])
+  assert.match(cliFail.cli.note, /startHelp=false/)
+  assert.equal(cliFail.docker.usable, true)
+  assert.equal(cliFail.matrix.G0_preflight.result, 'BLOCKED')
+  rmSync(workspace, { recursive: true, force: true })
+  rmSync(home, { recursive: true, force: true })
 })

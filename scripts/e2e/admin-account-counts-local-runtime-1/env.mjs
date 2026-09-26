@@ -18,6 +18,7 @@ import {
   klassifiziereUmgebung,
 } from '../admin-account-counts-browser-acceptance-1/env-guard.mjs'
 import { LOCAL_FLAG, PRIVATE_STATE_DIR_NAME } from './constants.mjs'
+import { istLokalerUnixDockerHost } from './docker-endpoint.mjs'
 
 const EXTRA_DENIED = Object.freeze([
   'NODE_OPTIONS',
@@ -77,13 +78,25 @@ export function refuseDotenvInCheckout(checkoutDir) {
   return found
 }
 
-export function baueRuntimePreflightUmgebung({ parentEnv = {}, privateHome } = {}) {
+function entferneGeerbteDockerVariablen(kind) {
+  delete kind.DOCKER_HOST
+  delete kind.DOCKER_CONTEXT
+  delete kind.DOCKER_CERT_PATH
+  delete kind.DOCKER_TLS_VERIFY
+  return kind
+}
+
+export function baueRuntimePreflightUmgebung({ parentEnv = {}, privateHome, dockerHost } = {}) {
   if (!privateHome) throw new Error('Runtime preflight requires a run-owned private HOME.')
   const kind = bauePreflightUmgebung({ parentEnv, privateHome })
   delete kind.NODE_OPTIONS
-  delete kind.DOCKER_HOST
-  delete kind.DOCKER_CONTEXT
-  kind.DOCKER_HOST = `unix:///var/run/docker.sock`
+  entferneGeerbteDockerVariablen(kind)
+  if (dockerHost != null && dockerHost !== '') {
+    if (!istLokalerUnixDockerHost(dockerHost)) {
+      throw new Error('Only an explicit local Unix Docker socket is accepted.')
+    }
+    kind.DOCKER_HOST = dockerHost
+  }
   kind.HOME = privateHome
   return kind
 }
@@ -103,8 +116,7 @@ export function baueRuntimeAppUmgebung({
   if (!syntheticAnonKey) throw new Error('App environment requires the local public anon key.')
   const kind = bauePreflightUmgebung({ parentEnv, privateHome })
   delete kind.NODE_OPTIONS
-  delete kind.DOCKER_HOST
-  delete kind.DOCKER_CONTEXT
+  entferneGeerbteDockerVariablen(kind)
   kind.NODE_ENV = 'development'
   kind[LOCAL_FLAG] = countsEnabled === true ? 'true' : 'false'
   kind.NEXT_PUBLIC_SUPABASE_URL = loopbackUrl
@@ -131,15 +143,13 @@ export function baueRuntimeAppUmgebung({
   return kind
 }
 
-export function baueDockerCliUmgebung({ parentEnv = {}, privateHome, dockerHost = 'unix:///var/run/docker.sock' } = {}) {
-  const kind = baueRuntimePreflightUmgebung({ parentEnv, privateHome })
-  if (!/^unix:\/\//.test(dockerHost) && dockerHost !== '') {
-    throw new Error('Only an explicit local Unix Docker socket is accepted.')
+export function baueDockerCliUmgebung({ parentEnv = {}, privateHome, dockerHost } = {}) {
+  if (!istLokalerUnixDockerHost(dockerHost)) {
+    throw new Error('Only an explicit verified local Unix Docker socket is accepted.')
   }
+  const kind = baueRuntimePreflightUmgebung({ parentEnv, privateHome, dockerHost })
+  entferneGeerbteDockerVariablen(kind)
   kind.DOCKER_HOST = dockerHost
-  delete kind.DOCKER_CONTEXT
-  delete kind.DOCKER_CERT_PATH
-  delete kind.DOCKER_TLS_VERIFY
   return kind
 }
 
