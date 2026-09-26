@@ -45,6 +45,8 @@ The merged #565 regression was a missing module-scope materialization after C1 s
 
 `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — **57/57 PASS, 0 FAIL** on this Linux agent (14.2s). Log: `/opt/cursor/artifacts/aaclr1-controlled-tests.log`.
 
+Exact `4a1fe07b` GitHub CI run `36247114473` SUCCESS, Auth job `108418378030` SUCCESS, Vercel Preview `8n4rmHqTxFovMWqDG2LzKRdEafHi` READY. Review threads: none. Re-read those gates on any later head.
+
 Real Docker / official CLI / user's Mac / hosted Supabase / Production: **NOT RUN / NOT MUTATED**.
 
 ## Residual risks

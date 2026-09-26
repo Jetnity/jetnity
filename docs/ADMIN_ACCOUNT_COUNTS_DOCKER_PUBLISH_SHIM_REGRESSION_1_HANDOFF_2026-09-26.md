@@ -26,6 +26,7 @@ Machine mode is `NORMAL`. Special Product-Owner gates remain. Cursor never Ready
 3. Do not weaken #564. PASS remains only resolved `127.0.0.1` from authoritative `NetworkSettings.Ports`.
 4. Do not put the shim on the user/parent PATH or change Docker Desktop/daemon settings.
 5. `node --test scripts/e2e/admin-account-counts-local-runtime-1/test.mjs` — this writer observed **57/57 PASS**.
+5a. Exact `4a1fe07b` GitHub CI run `36247114473` SUCCESS, Auth job `108418378030` SUCCESS, Vercel Preview `8n4rmHqTxFovMWqDG2LzKRdEafHi` READY. Re-read those gates on the live head after later persists.
 6. Do not run the real full acceptance run or real Docker from this slice.
 7. A later authorized real-Mac rerun must use the isolated harness against the already-verified Docker Desktop Unix endpoint. The remaining question is whether live Mailpit `8025/tcp -> 54324` now starts as `127.0.0.1` and #564 inspection PASSes.
 8. Historical receipts stay dated. Exclusive creation refuses overwrite.

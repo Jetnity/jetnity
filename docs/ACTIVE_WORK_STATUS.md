@@ -15,6 +15,7 @@ Status: **NORMAL / DRAFT PR #566 DOCKER PUBLISH SHIM REGRESSION 1 FROZEN FOR TL 
 | Branch / PR | `fix/admin-account-counts-docker-publish-shim-regression-1` / Draft https://github.com/Jetnity/jetnity/pull/566 |
 | Base | `0e08e22cb859818d902bfff1ecdea654f33abc39` (Merge #565) |
 | Code commit | `6b6218730f77af43e52b953f0de2e32969dffa95` |
+| First persist head with exact-head gates | `4a1fe07ba84d68ce9eaf5a4be0d6d7384f2c5d41` — CI `36247114473` SUCCESS, Auth SUCCESS, Vercel `8n4rmHqTxFovMWqDG2LzKRdEafHi` READY |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
 | Agent | Jetnity admin account counts docker publish shim regression 1, Gen 1, session `bc-059589a4-a529-4c73-97b9-3a9e3f093fc4` |
 | Model | cursor-grok-4.6-high-fast |
@@ -23,7 +24,7 @@ Exact main `0e08e22c` failed the Product-Owner Mac controlled suite **57/48/9** 
 
 Bereits umgesetzt: module-scope parser/formatter restored; C1 `.toString()` freeze preserved; C2 image/CMD boundary preserved; `-P` / `--publish-all` still fail closed; no CLI/config/Auth/SQL/product/CI change. Controlled helper suite on this agent: **57/57 PASS, 0 FAIL**.
 
-Noch offen: independent TL exact-head review of this head; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac full acceptance run. No Production/hosted mutation. No real Docker from this writer.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `4a1fe07b` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
