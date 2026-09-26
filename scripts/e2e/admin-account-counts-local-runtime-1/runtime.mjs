@@ -37,6 +37,16 @@ export function bauePsqlArgs({ container, sql }) {
   return ['exec', '-i', container, 'psql', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-c', sql]
 }
 
+export function baueRuntimeAppParentQuelle(childEnv) {
+  if (childEnv == null || typeof childEnv !== 'object' || Array.isArray(childEnv)) {
+    throw new Error('App parent environment requires the already-sanitized runtime childEnv')
+  }
+  if (childEnv === process.env) {
+    throw new Error('App parent environment must not be raw process.env')
+  }
+  return childEnv
+}
+
 export async function defaultStartRuntime({
   owned,
   plan,
@@ -244,8 +254,9 @@ export async function defaultStartRuntime({
   registerHandle(registry, 'checkoutDir', checkoutDir)
   const appPort = plan.services.find((item) => item.name === 'app').port
   const siteUrl = `http://127.0.0.1:${appPort}`
+  const appParentEnv = baueRuntimeAppParentQuelle(childEnv)
   const appEnv = baueRuntimeAppUmgebung({
-    parentEnv: {},
+    parentEnv: appParentEnv,
     privateHome: owned.privateHome,
     loopbackUrl: observed.origin,
     syntheticAnonKey: anonKey,
@@ -261,7 +272,7 @@ export async function defaultStartRuntime({
   })
   const app = await starteOwnedApp({
     checkoutDir,
-    parentEnv: {},
+    parentEnv: appParentEnv,
     privateHome: owned.privateHome,
     loopbackUrl: observed.origin,
     syntheticAnonKey: anonKey,
@@ -337,7 +348,7 @@ export async function defaultStartRuntime({
       registry,
       options: {
         checkoutDir,
-        parentEnv: {},
+        parentEnv: appParentEnv,
         privateHome: owned.privateHome,
         loopbackUrl: observed.origin,
         syntheticAnonKey: anonKey,
