@@ -124,7 +124,7 @@ export function StartzielFormSicht({
               )}
             >
               <MapPin className="h-5 w-5 shrink-0 text-brand-600" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
+              <div className="relative z-40 min-w-0 flex-1">
                 <OrtSuche
                   key={sucheKey}
                   rolle="ziel"
@@ -190,9 +190,7 @@ export function StartzielFormSicht({
       ) : null}
 
       {intentLaedt ? (
-        <p role="status" aria-live="polite" className="px-4 pb-1 pt-1 text-sm text-ink-650">
-          Die Angabe wird geprüft.
-        </p>
+        <p className="px-4 pb-1 pt-1 text-sm text-ink-650">Die Angabe wird geprüft.</p>
       ) : null}
 
       {pending && sucheSichtbar ? (
@@ -267,11 +265,8 @@ export default function StartzielForm() {
   const eingabe = React.useRef<HTMLInputElement>(null)
   const weiteresZiel = React.useRef<HTMLButtonElement>(null)
   const fokusZiel = React.useRef<'suche' | 'weiteres' | null>(null)
-  const standRef = React.useRef(stand)
   const anfrage = React.useRef(0)
   const sucheSteuer = React.useRef<AbortController | null>(null)
-
-  standRef.current = stand
 
   React.useLayoutEffect(() => {
     if (fokusZiel.current === 'suche') feldInSichtNehmen(eingabe.current)
@@ -293,7 +288,7 @@ export default function StartzielForm() {
   const onSuche = (wert: OrtAuswahl | null, roh: string) => {
     if (wert) {
       const naechste = startzielIntentAuswahlUebernehmen(
-        { ...standRef.current, sucheText: roh, sucheAuswahl: wert },
+        { ...stand, sucheText: roh, sucheAuswahl: wert },
         wert,
       )
       setStand(naechste)
@@ -312,7 +307,7 @@ export default function StartzielForm() {
     ereignis.preventDefault()
     if (laedt) return
 
-    const aktuell = standRef.current
+    const aktuell = stand
     const schlangeAktiv = startzielIntentSchlangeAktiv(aktuell)
     const unbestaetigt = routePendingText(aktuell.sucheText) && !aktuell.sucheAuswahl
 
@@ -419,7 +414,7 @@ export default function StartzielForm() {
         sucheNeuAufsetzen(stand.vorkommen.length === 0 || startzielIntentSchlangeAktiv(stand) ? 'suche' : 'weiteres')
       }}
       onSchlangeAbbrechen={() => {
-        const naechste = startzielIntentSchlangeAbbrechen(standRef.current)
+        const naechste = startzielIntentSchlangeAbbrechen(stand)
         setStand(naechste)
         sucheNeuAufsetzen(naechste.vorkommen.length === 0 ? 'suche' : 'weiteres')
       }}

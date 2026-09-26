@@ -134,11 +134,16 @@ async function tippe(page, text) {
 async function waehleOption(page, name) {
   const option = page.getByRole('option', { name })
   await option.waitFor({ timeout: 4000 })
-  await option.click()
+  await option.scrollIntoViewIfNeeded()
+  await option.click({ timeout: 8000 })
 }
 
 async function absenden(page) {
   await page.getByRole('button', { name: 'Reise planen' }).click()
+}
+
+function queueStatus(page) {
+  return page.getByRole('status').filter({ hasText: 'Ziele erkannt' })
 }
 
 async function resets(page, origin) {
@@ -156,7 +161,7 @@ async function peruBleibtEinZiel(page, origin) {
   await page.getByRole('alert').waitFor({ timeout: 4000 })
   assert.equal(await page.getByText('Ziele erkannt').count(), 0)
   await waehleOption(page, 'Peru, Land')
-  assert.equal(await page.getByRole('button', { name: /Peru, Ziel 1/ }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Peru, Ziel 1, entfernen' }).count(), 1)
   const pushes = await page.evaluate(() => window.__routerPushes ?? [])
   assert.equal(pushes.length, 0)
   await speichern(page, 'peru_one_place_390')
@@ -170,7 +175,7 @@ async function ganzortKonjunktion(page, origin) {
   assert.equal(await page.getByText('Ziele erkannt').count(), 0)
   assert.equal(await page.locator('#travel-idea').inputValue(), 'Bosnien und Herzegowina')
   await waehleOption(page, 'Bosnien und Herzegowina, Land')
-  assert.equal(await page.getByRole('button', { name: /Bosnien und Herzegowina, Ziel 1/ }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Bosnien und Herzegowina, Ziel 1, entfernen' }).count(), 1)
 
   await resets(page, origin)
   await tippe(page, 'Trinidad und Tobago')
@@ -188,7 +193,7 @@ async function limaPeruKontext(page, origin) {
   assert.equal(await page.getByText('Ziele erkannt').count(), 0)
   assert.equal(await page.locator('#travel-idea').inputValue(), 'Lima, Peru')
   await waehleOption(page, 'Lima, Stadt')
-  assert.equal(await page.getByRole('button', { name: /Lima, Ziel 1/ }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Lima, Ziel 1, entfernen' }).count(), 1)
   await speichern(page, 'lima_peru_context_390')
 }
 
@@ -196,11 +201,11 @@ async function limaUndCuscoSchlange(page, origin) {
   await resets(page, origin)
   await tippe(page, 'Lima und Cusco')
   await absenden(page)
-  await page.getByRole('status').waitFor({ timeout: 4000 })
-  assert.match(await page.getByRole('status').innerText(), /2 Ziele erkannt – bitte Ziel 1 von 2/)
+  await queueStatus(page).waitFor({ timeout: 4000 })
+  assert.match(await queueStatus(page).innerText(), /2 Ziele erkannt – bitte Ziel 1 von 2/)
   assert.equal(await page.locator('#travel-idea').inputValue(), 'Lima')
   await waehleOption(page, 'Lima, Stadt')
-  assert.match(await page.getByRole('status').innerText(), /Ziel 2 von 2/)
+  assert.match(await queueStatus(page).innerText(), /Ziel 2 von 2/)
   assert.equal(await page.locator('#travel-idea').inputValue(), 'Cusco')
   await waehleOption(page, 'Cusco, Stadt')
   assert.equal(await page.getByText('Ziele erkannt').count(), 0)
@@ -219,18 +224,18 @@ async function dreiZieleUndDuplikat(page, origin) {
   await resets(page, origin)
   await tippe(page, 'Thailand, Kambodscha und Vietnam')
   await absenden(page)
-  await page.getByRole('status').waitFor({ timeout: 4000 })
-  assert.match(await page.getByRole('status').innerText(), /3 Ziele erkannt – bitte Ziel 1 von 3/)
+  await queueStatus(page).waitFor({ timeout: 4000 })
+  assert.match(await queueStatus(page).innerText(), /3 Ziele erkannt – bitte Ziel 1 von 3/)
   await waehleOption(page, 'Thailand, Land')
   await waehleOption(page, 'Kambodscha, Land')
   await waehleOption(page, 'Vietnam, Land')
-  assert.equal(await page.getByRole('button', { name: /Thailand, Ziel 1/ }).count(), 1)
-  assert.equal(await page.getByRole('button', { name: /Vietnam, Ziel 3/ }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Thailand, Ziel 1, entfernen' }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Vietnam, Ziel 3, entfernen' }).count(), 1)
 
   await resets(page, origin)
   await tippe(page, 'Paris, Rom, Paris')
   await absenden(page)
-  await page.getByRole('status').waitFor({ timeout: 4000 })
+  await queueStatus(page).waitFor({ timeout: 4000 })
   await waehleOption(page, 'Paris, Stadt')
   await waehleOption(page, 'Rom, Stadt')
   await waehleOption(page, 'Paris, Stadt')
@@ -263,20 +268,18 @@ async function mehrdeutigUndKeinTreffer(page, origin) {
   await resets(page, origin)
   await tippe(page, 'Springfield und Springfield')
   await absenden(page)
-  await page.getByRole('status').waitFor({ timeout: 4000 })
+  await queueStatus(page).waitFor({ timeout: 4000 })
   const optionen = page.getByRole('option', { name: /Springfield/ })
   await optionen.first().waitFor({ timeout: 4000 })
   assert.ok((await optionen.count()) >= 2)
-  const vor = await page.getByRole('status').innerText()
-  await page.keyboard.press('Escape')
-  assert.equal(await page.getByRole('status').innerText(), vor)
-  await optionen.nth(1).click()
-  assert.match(await page.getByRole('status').innerText(), /Ziel 2 von 2/)
+  assert.equal(await page.getByRole('button', { name: /Ziel 1, entfernen/ }).count(), 0)
+  await page.getByRole('option', { name: 'Springfield, Stadt · Missouri' }).click()
+  assert.match(await queueStatus(page).innerText(), /Ziel 2 von 2/)
 
   await page.locator('#travel-idea').fill('Xyzzyyx')
   await page.waitForTimeout(350)
   assert.equal(await page.getByRole('option').count(), 0)
-  assert.match(await page.getByRole('status').innerText(), /Ziel 2 von 2/)
+  assert.match(await queueStatus(page).innerText(), /Ziel 2 von 2/)
   await speichern(page, 'ambiguous_and_no_result_kept_390')
 }
 
@@ -284,11 +287,11 @@ async function queueAbbrechen(page, origin) {
   await resets(page, origin)
   await tippe(page, 'Lima und Cusco')
   await absenden(page)
-  await page.getByRole('status').waitFor({ timeout: 4000 })
+  await queueStatus(page).waitFor({ timeout: 4000 })
   await waehleOption(page, 'Lima, Stadt')
   await page.getByRole('button', { name: 'Erkannte Route verwerfen' }).click()
   assert.equal(await page.getByText('Ziele erkannt').count(), 0)
-  assert.equal(await page.getByRole('button', { name: /Lima, Ziel 1/ }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Lima, Ziel 1, entfernen' }).count(), 1)
   assert.equal(await page.getByRole('button', { name: /Cusco/ }).count(), 0)
   await page.getByRole('button', { name: 'Reise planen' }).click()
   const pushes = await page.evaluate(() => window.__routerPushes ?? [])
@@ -300,12 +303,12 @@ async function tastaturUndViewports(page, origin) {
   await resets(page, origin)
   await tippe(page, 'Lima und Cusco')
   await page.locator('#travel-idea').press('Enter')
-  await page.getByRole('status').waitFor({ timeout: 4000 })
+  await queueStatus(page).waitFor({ timeout: 4000 })
   await page.locator('#travel-idea').focus()
   await page.waitForTimeout(350)
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
-  assert.match(await page.getByRole('status').innerText(), /Ziel 2 von 2/)
+  assert.match(await queueStatus(page).innerText(), /Ziel 2 von 2/)
   const fokus = await page.evaluate(() => ({
     tag: document.activeElement?.tagName ?? null,
     id: document.activeElement?.id ?? '',
