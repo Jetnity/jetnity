@@ -1,0 +1,54 @@
+{
+  "ok": true,
+  "ergebnisse": [
+    {
+      "name": "Peru remains one place",
+      "ok": true
+    },
+    {
+      "name": "whole-place conjunctions",
+      "ok": true
+    },
+    {
+      "name": "Lima, Peru context",
+      "ok": true
+    },
+    {
+      "name": "Lima und Cusco queue + handoff",
+      "ok": true
+    },
+    {
+      "name": "three destinations and duplicate Paris",
+      "ok": true
+    },
+    {
+      "name": "compound country inside comma route",
+      "ok": true
+    },
+    {
+      "name": "triple und groups to two",
+      "ok": true
+    },
+    {
+      "name": "per-segment 503 does not guess-split",
+      "ok": true
+    },
+    {
+      "name": "503 does not split",
+      "ok": true
+    },
+    {
+      "name": "ambiguous/no-result kept",
+      "ok": true
+    },
+    {
+      "name": "cancel remaining queue",
+      "ok": true
+    },
+    {
+      "name": "keyboard + 390/768/1440",
+      "ok": true
+    }
+  ],
+  "method": "Locally bundled actual StartzielForm. next/navigation stubbed. Synthetic /api/search/places. Chromium only — not physical-device acceptance, not authenticated Preview E2E."
+}
