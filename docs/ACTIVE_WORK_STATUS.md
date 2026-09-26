@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #570 DOCKER CLEANUP ABSENT MESSAGES 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #572 G8 ENROLL SUCCESS OBSERVATION INTEGRATION / WAITING EXACT-HEAD GATES / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,27 +11,25 @@ Status: **NORMAL / DRAFT PR #570 DOCKER CLEANUP ABSENT MESSAGES 1 FROZEN FOR TL 
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts Docker Cleanup Absent Messages 1 |
-| Branch / PR | `fix/admin-account-counts-docker-cleanup-absent-messages-1` / Draft https://github.com/Jetnity/jetnity/pull/570 |
-| Base | `26b763016322fb1c929e131b4ff5bf467533e809` (Merge #569) |
-| Task seed | `4fcd047f16081ac486169b564baaf0f107d3b76d` |
+| Arbeitsblock | Admin Account Counts G8 Enroll Success Observation 1 — integration after parallel #570 |
+| Branch / PR | `fix/admin-account-counts-g8-enroll-success-observation-1-integration` / Draft https://github.com/Jetnity/jetnity/pull/572 |
+| Base | `cb64aee413341a0d5bffc6cff48c30f03c185996` (Merge #570) |
+| Source reviewed head | `4d535878d054b4380f32c9d67806cd895b7480bc` (PR #571 exact reviewed head) |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts docker cleanup absent messages 1, Gen 1, session `bc-6bb7e4e7-64ee-407b-8dc3-f3d62f1a576a` |
+| Agent | Jetnity admin account counts G8 enroll success observation 1, Gen 1, session `bc-684e6634-d146-403e-a86c-1f44c18cd3d6` |
 | Model | cursor-grok-4.6-high-fast |
 
-Authorized real-Mac run `aaclr1-20260926T182151Z` reached final cleanup with processes reaped, browser closed, inventoryComplete=true and containerState=ABSENT. Volume/network became UNKNOWN only because Docker Desktop used `get <volume>: no such volume` and `network <name> not found`. Missing desktop/mobile screenshots from the same run remain a separate later evidence matter.
-
-Bereits umgesetzt: exact-resource ABSENT classification for historical plus Desktop volume/network forms; name-bounded so a different resource cannot PASS; daemon/permission/timeout stay UNKNOWN; foreign/unresolved still block; browser artifact/export untouched. Controlled suite **79/79 PASS, 0 FAIL**.
+Authorized real-Mac run `aaclr1-20260926T182151Z` proved G6/G7 PASS and G8 failed only on stale post-verify success observation. Product source confirms the success toast is immediately cleared by `refreshFactors()`, while the durable verified-factor list remains. PR #571 implemented the source-backed G8 observation and controlled suite **42/42 PASS, 0 FAIL**. Because #570 merged in parallel, this PR #572 carries that exact reviewed code/docs onto current main for fresh exact-head gating.
 
 Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. CI/Auth/Preview are not claimed on this persist. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #570. Cursor starts no follow-up.
+Exakter nächster Schritt: fresh exact-head CI/Auth/Vercel gates for PR #572, then Technical-Lead integration review. No real Mac rerun before merge.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_DOCKER_CLEANUP_ABSENT_MESSAGES_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `classifyDockerInspectError()` in `scripts/e2e/admin-account-counts-local-runtime-1/stack.mjs`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_G8_ENROLL_SUCCESS_OBSERVATION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW, then `scripts/e2e/admin-account-counts-browser-flows-1/session.mjs`.
 
-#569 is **MERGED** on this base and is not the current writer. #568 / #567 / #566 / #565 remain merged and are not the current writer.
+#570 is **MERGED** on this base. Original parallel PR #571 is superseded by this integration PR #572 and must not be merged independently. #569/#568/#567/#566/#565 remain merged.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
