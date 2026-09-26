@@ -122,6 +122,7 @@ describe('homepage-natural-route-intent-1 – kein freier Text als Ort', () => {
     const einstieg = quelle('route-einstieg.ts')
     assert.match(intent, /ganzerOrtGlaubwuerdig/)
     assert.match(intent, /routeIntentPhrasenLesen/)
+    assert.match(intent, /routeIntentZusatzsuchen/)
     assert.match(intent, /Keine Place-IDs|keine Place-IDs|keine Place-IDs, kein Modell/)
     assert.equal(intent.includes('fetch('), false)
     assert.equal(intent.includes('openai'), false)
@@ -130,8 +131,10 @@ describe('homepage-natural-route-intent-1 – kein freier Text als Ort', () => {
     assert.equal(start.includes('.split(",")'), false)
     assert.equal(einstieg.includes(".split('und')"), false)
     assert.match(start, /ganzerOrtSucheLesen/)
+    assert.match(start, /routeIntentZusatzsuchen/)
     assert.match(start, /startzielIntentAuswahlUebernehmen/)
     assert.match(start, /startzielIntentAbsendenPruefen/)
+    assert.match(start, /mehrdeutig/)
     assert.equal(start.includes('vorschlagErzeugen'), false)
   })
 

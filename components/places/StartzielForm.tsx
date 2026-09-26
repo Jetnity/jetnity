@@ -23,6 +23,8 @@ import {
   ganzerOrtSucheLesen,
   leererStartzielIntentStand,
   routeIntentEntscheiden,
+  routeIntentTextNormalisieren,
+  routeIntentZusatzsuchen,
   startzielIntentAbsendenPruefen,
   startzielIntentAuswahlUebernehmen,
   startzielIntentPlatzhalter,
@@ -32,6 +34,7 @@ import {
   startzielIntentStatus,
   startzielIntentTextVerwerfen,
   type GanzerOrtSuche,
+  type RouteIntentBeweise,
   type StartzielIntentStand,
 } from '@/lib/places/route-intent'
 import { GRENZEN } from '@/lib/trips/schema'
@@ -318,12 +321,24 @@ export default function StartzielForm() {
       const steuer = new AbortController()
       sucheSteuer.current = steuer
       setLaedt(true)
-      const suche = await ganzerOrtHolen(frage, steuer.signal)
+      const extraFragen = routeIntentZusatzsuchen(frage)
+      const [suche, ...extraErgebnisse] = await Promise.all([
+        ganzerOrtHolen(frage, steuer.signal),
+        ...extraFragen.map((extra) => ganzerOrtHolen(extra, steuer.signal)),
+      ])
       if (id !== anfrage.current) return
       setLaedt(false)
 
-      const entscheidung = routeIntentEntscheiden(frage, suche, aktuell.vorkommen.length)
-      if (entscheidung.art === 'zuViele' || entscheidung.art === 'ungueltig') {
+      const beweise: RouteIntentBeweise = {}
+      extraFragen.forEach((extra, index) => {
+        beweise[routeIntentTextNormalisieren(extra)] = extraErgebnisse[index]!
+      })
+      const entscheidung = routeIntentEntscheiden(frage, suche, aktuell.vorkommen.length, beweise)
+      if (
+        entscheidung.art === 'zuViele' ||
+        entscheidung.art === 'ungueltig' ||
+        entscheidung.art === 'mehrdeutig'
+      ) {
         setStand((bisher) => ({
           ...bisher,
           meldung: entscheidung.meldung,

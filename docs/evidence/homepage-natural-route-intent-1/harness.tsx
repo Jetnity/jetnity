@@ -90,6 +90,14 @@ const ORTE: OrtOption[] = [
     landAliasMatch: true,
   },
   {
+    id: 'geonames:3202326',
+    label: 'Kroatien',
+    description: 'Land',
+    typ: 'country',
+    ariaLabel: 'Kroatien, Land',
+    landAliasMatch: true,
+  },
+  {
     id: 'geonames:4250542',
     label: 'Springfield',
     description: 'Stadt · Illinois, Vereinigte Staaten',
@@ -123,7 +131,15 @@ function ganzeTreffer(frage: string): OrtOption[] | null {
   if (q === falten('Peru')) {
     return ORTE.filter((ort) => ort.id === 'geonames:3932480')
   }
-  if (q === falten('Lima und Cusco') || q === falten('Thailand, Kambodscha und Vietnam')) {
+  if (
+    q === falten('Lima und Cusco') ||
+    q === falten('Thailand, Kambodscha und Vietnam') ||
+    q === falten('Bosnien und Herzegowina, Kroatien') ||
+    q === falten('Trinidad und Tobago, Peru') ||
+    q === falten('Bosnien und Herzegowina und Kroatien') ||
+    q === falten('Kambodscha und Vietnam') ||
+    q === falten('Herzegowina und Kroatien')
+  ) {
     return []
   }
   if (q === falten('Paris, Rom, Paris')) return []
@@ -135,13 +151,14 @@ window.fetch = async (input, init) => {
   const url = String(input)
   if (url.includes('/api/search/places')) {
     const fail = (window as Window & { __placesFailStatus?: number }).__placesFailStatus
-    if (fail) {
+    const frage = new URL(url, 'http://harness.local').searchParams.get('q') ?? ''
+    const failQueries = (window as Window & { __placesFailQueries?: string[] }).__placesFailQueries
+    if (fail || failQueries?.some((eintrag) => falten(eintrag) === falten(frage))) {
       return new Response(JSON.stringify({ error: 'unavailable' }), {
-        status: fail,
+        status: fail ?? 503,
         headers: { 'Content-Type': 'application/json' },
       })
     }
-    const frage = new URL(url, 'http://harness.local').searchParams.get('q') ?? ''
     const ganz = ganzeTreffer(frage)
     const treffer =
       ganz ??

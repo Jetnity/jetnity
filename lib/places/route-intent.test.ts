@@ -11,6 +11,7 @@ import {
   routeIntentPhrasenLesen,
   routeIntentStatusText,
   routeIntentTextNormalisieren,
+  routeIntentZusatzsuchen,
   startzielIntentAbsendenPruefen,
   startzielIntentAuswahlUebernehmen,
   startzielIntentSchlangeAbbrechen,
@@ -59,6 +60,14 @@ const LIMA = option({
 const CUSCO = option({ id: 'geonames:3941584', label: 'Cusco', description: 'Stadt · Cusco, Peru' })
 const PARIS = option({ id: 'geonames:2988507', label: 'Paris', description: 'Stadt · Frankreich' })
 const ROM = option({ id: 'geonames:3169070', label: 'Rom', description: 'Stadt · Italien' })
+const KROATIEN = option({
+  id: 'geonames:3202326',
+  label: 'Kroatien',
+  typ: 'country',
+  description: 'Land',
+  landAliasMatch: true,
+})
+const leerOk = { art: 'ok' as const, optionen: [] }
 
 describe('route-intent – Normalisierung und Syntax', () => {
   test('Whitespace wird zusammengezogen, ohne den Inhalt zu erfinden', () => {
@@ -141,13 +150,122 @@ describe('route-intent – Ganzort vor jeder Segmentierung', () => {
   })
 
   test('Thailand, Kambodscha und Vietnam wird drei geordnete Phrasen', () => {
-    const entscheidung = routeIntentEntscheiden('Thailand, Kambodscha und Vietnam', {
-      art: 'ok',
-      optionen: [LIMA],
-    })
+    const entscheidung = routeIntentEntscheiden(
+      'Thailand, Kambodscha und Vietnam',
+      leerOk,
+      0,
+      { 'Kambodscha und Vietnam': leerOk },
+    )
     assert.deepEqual(entscheidung, {
       art: 'route',
       phrasen: ['Thailand', 'Kambodscha', 'Vietnam'],
+    })
+  })
+
+  test('Bosnien und Herzegowina, Kroatien behält das zusammengesetzte Land', () => {
+    assert.deepEqual(routeIntentZusatzsuchen('Bosnien und Herzegowina, Kroatien'), [
+      'Bosnien und Herzegowina',
+    ])
+    const entscheidung = routeIntentEntscheiden(
+      'Bosnien und Herzegowina, Kroatien',
+      leerOk,
+      0,
+      { 'Bosnien und Herzegowina': { art: 'ok', optionen: [BOSNIEN] } },
+    )
+    assert.deepEqual(entscheidung, {
+      art: 'route',
+      phrasen: ['Bosnien und Herzegowina', 'Kroatien'],
+    })
+  })
+
+  test('Trinidad und Tobago, Peru behält das zusammengesetzte Land', () => {
+    const entscheidung = routeIntentEntscheiden('Trinidad und Tobago, Peru', leerOk, 0, {
+      'Trinidad und Tobago': { art: 'ok', optionen: [TRINIDAD] },
+    })
+    assert.deepEqual(entscheidung, {
+      art: 'route',
+      phrasen: ['Trinidad und Tobago', 'Peru'],
+    })
+  })
+
+  test('Bosnien und Herzegowina und Kroatien gruppiert kanonisch in zwei Phrasen', () => {
+    const extra = routeIntentZusatzsuchen('Bosnien und Herzegowina und Kroatien')
+    assert.deepEqual(extra.sort(), ['Bosnien und Herzegowina', 'Herzegowina und Kroatien'].sort())
+    const entscheidung = routeIntentEntscheiden(
+      'Bosnien und Herzegowina und Kroatien',
+      leerOk,
+      0,
+      {
+        'Bosnien und Herzegowina': { art: 'ok', optionen: [BOSNIEN] },
+        'Herzegowina und Kroatien': leerOk,
+      },
+    )
+    assert.deepEqual(entscheidung, {
+      art: 'route',
+      phrasen: ['Bosnien und Herzegowina', 'Kroatien'],
+    })
+    assert.notEqual(entscheidung.art === 'route' && entscheidung.phrasen.length, 3)
+  })
+
+  test('Bosnien und Herzegowina und Kroatien ohne belegbare Gruppe bleibt ehrlich unklar', () => {
+    const entscheidung = routeIntentEntscheiden(
+      'Bosnien und Herzegowina und Kroatien',
+      leerOk,
+      0,
+      {
+        'Bosnien und Herzegowina': leerOk,
+        'Herzegowina und Kroatien': leerOk,
+      },
+    )
+    assert.deepEqual(entscheidung, {
+      art: 'mehrdeutig',
+      meldung: ROUTE_INTENT_MELDUNG.mehrdeutig,
+    })
+  })
+
+  test('überlappende belegte Gruppen werden nicht still aufgelöst', () => {
+    const entscheidung = routeIntentEntscheiden(
+      'Bosnien und Herzegowina und Kroatien',
+      leerOk,
+      0,
+      {
+        'Bosnien und Herzegowina': { art: 'ok', optionen: [BOSNIEN] },
+        'Herzegowina und Kroatien': { art: 'ok', optionen: [KROATIEN] },
+      },
+    )
+    assert.equal(entscheidung.art, 'mehrdeutig')
+  })
+
+  test('fehlender Blockbeweis darf einen Konjunktionsblock nicht raten-splitten', () => {
+    const ohneBeweis = routeIntentEntscheiden('Thailand, Kambodscha und Vietnam', leerOk)
+    assert.deepEqual(ohneBeweis, {
+      art: 'route',
+      phrasen: ['Thailand', 'Kambodscha und Vietnam'],
+    })
+  })
+
+  test('Segment-Ausfall 503 splitet den betroffenen Block nicht', () => {
+    const komma = routeIntentEntscheiden('Thailand, Kambodscha und Vietnam', leerOk, 0, {
+      'Kambodscha und Vietnam': { art: 'ausfall' },
+    })
+    assert.deepEqual(komma, {
+      art: 'route',
+      phrasen: ['Thailand', 'Kambodscha und Vietnam'],
+    })
+
+    const dreifach = routeIntentEntscheiden(
+      'Bosnien und Herzegowina und Kroatien',
+      leerOk,
+      0,
+      {
+        'Bosnien und Herzegowina': { art: 'ausfall' },
+        'Herzegowina und Kroatien': leerOk,
+      },
+    )
+    assert.deepEqual(dreifach, {
+      art: 'eine',
+      phrase: 'Bosnien und Herzegowina und Kroatien',
+      grund: 'eine_phrase',
     })
   })
 

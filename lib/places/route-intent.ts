@@ -3,7 +3,8 @@
 // Deterministische Erkennung natürlicher Routenangaben.
 // Kein Netz, keine DB, keine Place-IDs, kein Modell.
 // Segmentierung erst, nachdem der ganze Eingabetext nicht als
-// ein kanonischer Ort belegt ist.
+// ein kanonischer Ort belegt ist. Jeder weitere Konjunktionsblock
+// wird erneut gegen denselben Ganzort-Beweis geprüft.
 
 import { gleichGefaltet, enthaeltGefaltet } from '@/lib/airports/normalisieren'
 import type { OrtAuswahl } from '@/lib/places/auswahl'
@@ -21,6 +22,8 @@ export const ROUTE_INTENT_MELDUNG = {
   zuViele: ROUTE_EINSTIEG_MELDUNG.zuViele,
   ungueltig:
     'Diese Angabe enthält keine klaren Reiseziele. Bitte formuliere die Ziele neu oder wähle sie aus der Liste.',
+  mehrdeutig:
+    'Diese Angabe ist nicht eindeutig. Bitte trenne die Ziele mit Kommas oder wähle sie nacheinander aus der Liste.',
   pendingSchlange:
     'Bitte bestätige das erkannte Ziel aus der Liste oder verwirf die erkannte Route.',
 } as const
@@ -35,6 +38,7 @@ export type RouteIntentEntscheidung =
   | { art: 'route'; phrasen: string[] }
   | { art: 'zuViele'; anzahl: number; meldung: string }
   | { art: 'ungueltig'; meldung: string }
+  | { art: 'mehrdeutig'; meldung: string }
 
 export type StartzielIntentStand = StartzielStand & {
   intentPhrasen: string[]
@@ -69,27 +73,198 @@ function phraseGueltig(phrase: string): boolean {
   return /\p{L}/u.test(phrase)
 }
 
-/**
- * Syntax-Segmentierung. Darf erst nach gescheiterter Ganzort-Prüfung
- * verwendet werden. Leere oder nur-Zeichensetzungsteile machen die
- * gesamte Angabe ungültig – keine Teilliste.
- */
-export function routeIntentPhrasenLesen(text: string): string[] | null {
-  const vorbereitet = text
+function textVorbereiten(text: string): string {
+  return text
     .replace(/[ \t\f\v]+/g, ' ')
     .replace(/[ \t]*\n[ \t]*/g, '\n')
     .trim()
-  if (!vorbereitet) return null
+}
 
-  const phrasen: string[] = []
+/**
+ * Nur starke Trenner. Konjunktionen bleiben im Block, bis ein
+ * kanonischer Ganzort-Beweis den Block freigibt oder schützt.
+ */
+export function routeIntentStarkBloecke(text: string): string[] | null {
+  const vorbereitet = textVorbereiten(text)
+  if (!vorbereitet) return null
+  const bloecke: string[] = []
   for (const block of vorbereitet.split(STARKER_TRENNER)) {
-    for (const stueck of block.split(KONJUNKTION_TRENNER)) {
-      const phrase = stueck.replace(/\s+/g, ' ').trim()
-      if (!phraseGueltig(phrase)) return null
-      phrasen.push(phrase)
-    }
+    const phrase = block.replace(/\s+/g, ' ').trim()
+    if (!phraseGueltig(phrase)) return null
+    bloecke.push(phrase)
+  }
+  return bloecke.length > 0 ? bloecke : null
+}
+
+export function routeIntentKonjunktionsTeile(block: string): string[] | null {
+  const teile = block.split(KONJUNKTION_TRENNER).map((teil) => teil.replace(/\s+/g, ' ').trim())
+  if (teile.some((teil) => !phraseGueltig(teil))) return null
+  return teile.length > 0 ? teile : null
+}
+
+function indexImBlock(block: string, nadel: string, erste: boolean): number {
+  const heu = block.toLowerCase()
+  const such = nadel.toLowerCase()
+  return erste ? heu.indexOf(such) : heu.lastIndexOf(such)
+}
+
+export function routeIntentPhraseAusSpanne(
+  block: string,
+  teile: readonly string[],
+  von: number,
+  bisExkl: number,
+): string {
+  if (von === 0 && bisExkl === teile.length) return routeIntentTextNormalisieren(block)
+  const anfang = teile[von]
+  const ende = teile[bisExkl - 1]
+  if (!anfang || !ende) return ''
+  const start = indexImBlock(block, anfang, true)
+  const letztes = indexImBlock(block, ende, false)
+  if (start < 0 || letztes < 0) return teile.slice(von, bisExkl).join(' und ')
+  return routeIntentTextNormalisieren(block.slice(start, letztes + ende.length))
+}
+
+/**
+ * Reine Syntax. Nicht die Produktionsentscheidung für zusammengesetzte
+ * Ortsnamen. Die kanonische Prüfung liegt in `routeIntentEntscheiden`.
+ */
+export function routeIntentPhrasenLesen(text: string): string[] | null {
+  const bloecke = routeIntentStarkBloecke(text)
+  if (!bloecke) return null
+  const phrasen: string[] = []
+  for (const block of bloecke) {
+    const teile = routeIntentKonjunktionsTeile(block)
+    if (!teile) return null
+    phrasen.push(...teile)
   }
   return phrasen.length > 0 ? phrasen : null
+}
+
+export type RouteIntentBeweise = Record<string, GanzerOrtSuche>
+
+function beweisFuer(
+  frage: string,
+  beweise: RouteIntentBeweise | undefined,
+): GanzerOrtSuche | undefined {
+  return beweise?.[routeIntentTextNormalisieren(frage)]
+}
+
+/**
+ * Zusätzliche Ganzort-Suchen nach der Gesamteingabe: jeder
+ * Konjunktionsblock ungleich dem Gesamtwortlaut plus alle
+ * zusammengesetzten Spannen bei drei oder mehr Teilen.
+ */
+export function routeIntentZusatzsuchen(text: string): string[] {
+  const frage = routeIntentTextNormalisieren(text)
+  const bloecke = routeIntentStarkBloecke(text)
+  if (!bloecke || !frage) return []
+  const suchen = new Set<string>()
+  for (const block of bloecke) {
+    const teile = routeIntentKonjunktionsTeile(block)
+    if (!teile || teile.length < 2) continue
+    const norm = routeIntentTextNormalisieren(block)
+    if (norm !== frage) suchen.add(norm)
+    if (teile.length < 3) continue
+    for (let von = 0; von < teile.length; von += 1) {
+      for (let bis = von + 2; bis <= teile.length; bis += 1) {
+        const phrase = routeIntentTextNormalisieren(
+          routeIntentPhraseAusSpanne(block, teile, von, bis),
+        )
+        if (phrase && phrase !== frage) suchen.add(phrase)
+      }
+    }
+  }
+  return [...suchen]
+}
+
+function blockBeweis(
+  block: string,
+  suche: GanzerOrtSuche,
+  frage: string,
+  beweise: RouteIntentBeweise | undefined,
+): GanzerOrtSuche | undefined {
+  const direkt = beweisFuer(block, beweise)
+  if (direkt) return direkt
+  if (routeIntentTextNormalisieren(block) === frage) return suche
+  return undefined
+}
+
+function maximaleBelegteSpannen(
+  belegte: readonly { von: number; bis: number; phrase: string }[],
+): { von: number; bis: number; phrase: string }[] {
+  return belegte.filter(
+    (span) =>
+      !belegte.some(
+        (andere) =>
+          (andere.von !== span.von || andere.bis !== span.bis) &&
+          andere.von <= span.von &&
+          andere.bis >= span.bis,
+      ),
+  )
+}
+
+function konjunktionsBlockZerlegen(
+  block: string,
+  suche: GanzerOrtSuche,
+  frage: string,
+  beweise: RouteIntentBeweise | undefined,
+): { art: 'phrasen'; phrasen: string[] } | { art: 'mehrdeutig' } | { art: 'ungueltig' } {
+  const teile = routeIntentKonjunktionsTeile(block)
+  if (!teile) return { art: 'ungueltig' }
+  const ganz = routeIntentTextNormalisieren(block)
+  if (teile.length === 1) return { art: 'phrasen', phrasen: [ganz] }
+
+  const beweis = blockBeweis(block, suche, frage, beweise)
+  if (!beweis || beweis.art === 'ausfall') {
+    return { art: 'phrasen', phrasen: [ganz] }
+  }
+  if (ganzerOrtGlaubwuerdig(block, beweis.optionen)) {
+    return { art: 'phrasen', phrasen: [ganz] }
+  }
+
+  if (teile.length === 2) {
+    return { art: 'phrasen', phrasen: teile }
+  }
+
+  const belegte: { von: number; bis: number; phrase: string }[] = []
+  for (let von = 0; von < teile.length; von += 1) {
+    for (let bis = von + 2; bis <= teile.length; bis += 1) {
+      const phrase = routeIntentPhraseAusSpanne(block, teile, von, bis)
+      const spanBeweis = blockBeweis(phrase, suche, frage, beweise)
+      if (!spanBeweis || spanBeweis.art === 'ausfall') {
+        return { art: 'phrasen', phrasen: [ganz] }
+      }
+      if (ganzerOrtGlaubwuerdig(phrase, spanBeweis.optionen)) {
+        belegte.push({ von, bis, phrase })
+      }
+    }
+  }
+
+  if (belegte.length === 0) return { art: 'mehrdeutig' }
+
+  const maximal = maximaleBelegteSpannen(belegte).sort((links, rechts) => links.von - rechts.von)
+  for (let index = 1; index < maximal.length; index += 1) {
+    if (maximal[index]!.von < maximal[index - 1]!.bis) {
+      return { art: 'mehrdeutig' }
+    }
+  }
+
+  const phrasen: string[] = []
+  let position = 0
+  let spanIndex = 0
+  while (position < teile.length) {
+    const span = maximal[spanIndex]
+    if (span && span.von === position) {
+      phrasen.push(routeIntentTextNormalisieren(span.phrase))
+      position = span.bis
+      spanIndex += 1
+      continue
+    }
+    if (span && span.von < position) return { art: 'mehrdeutig' }
+    phrasen.push(teile[position]!)
+    position += 1
+  }
+  return { art: 'phrasen', phrasen }
 }
 
 function labelMitOrtskontext(frage: string, option: OrtOption): boolean {
@@ -141,6 +316,7 @@ export function routeIntentEntscheiden(
   text: string,
   suche: GanzerOrtSuche,
   bereitsBestaetigt = 0,
+  beweise?: RouteIntentBeweise,
 ): RouteIntentEntscheidung {
   const frage = routeIntentTextNormalisieren(text)
   if (!frage) return { art: 'ungueltig', meldung: ROUTE_INTENT_MELDUNG.ungueltig }
@@ -153,10 +329,23 @@ export function routeIntentEntscheiden(
     return { art: 'eine', phrase: frage, grund: 'ganzer_ort' }
   }
 
-  const phrasen = routeIntentPhrasenLesen(text)
-  if (phrasen === null) {
+  const bloecke = routeIntentStarkBloecke(text)
+  if (!bloecke) {
     return { art: 'ungueltig', meldung: ROUTE_INTENT_MELDUNG.ungueltig }
   }
+
+  const phrasen: string[] = []
+  for (const block of bloecke) {
+    const zerlegt = konjunktionsBlockZerlegen(block, suche, frage, beweise)
+    if (zerlegt.art === 'ungueltig') {
+      return { art: 'ungueltig', meldung: ROUTE_INTENT_MELDUNG.ungueltig }
+    }
+    if (zerlegt.art === 'mehrdeutig') {
+      return { art: 'mehrdeutig', meldung: ROUTE_INTENT_MELDUNG.mehrdeutig }
+    }
+    phrasen.push(...zerlegt.phrasen)
+  }
+
   if (phrasen.length === 1) {
     return { art: 'eine', phrase: phrasen[0]!, grund: 'eine_phrase' }
   }

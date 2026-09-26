@@ -151,6 +151,7 @@ async function resets(page, origin) {
   await page.evaluate(() => {
     window.__routerPushes = []
     window.__placesFailStatus = undefined
+    window.__placesFailQueries = undefined
   })
 }
 
@@ -246,6 +247,74 @@ async function dreiZieleUndDuplikat(page, origin) {
     `/planen?zielIds=${encodeURIComponent(PARIS)}&zielIds=${encodeURIComponent(ROM)}&zielIds=${encodeURIComponent(PARIS)}`,
   )
   await speichern(page, 'paris_rom_paris_handoff_390')
+}
+
+async function verbundImKommaRoute(page, origin) {
+  await resets(page, origin)
+  await tippe(page, 'Bosnien und Herzegowina, Kroatien')
+  await absenden(page)
+  await queueStatus(page).waitFor({ timeout: 4000 })
+  assert.match(await queueStatus(page).innerText(), /2 Ziele erkannt – bitte Ziel 1 von 2/)
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Bosnien und Herzegowina')
+  await waehleOption(page, 'Bosnien und Herzegowina, Land')
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Kroatien')
+  await waehleOption(page, 'Kroatien, Land')
+  assert.equal(await page.getByRole('button', { name: 'Bosnien und Herzegowina, Ziel 1, entfernen' }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Kroatien, Ziel 2, entfernen' }).count(), 1)
+  await speichern(page, 'bosnia_croatia_compound_390')
+
+  await resets(page, origin)
+  await tippe(page, 'Trinidad und Tobago, Peru')
+  await absenden(page)
+  await queueStatus(page).waitFor({ timeout: 4000 })
+  assert.match(await queueStatus(page).innerText(), /2 Ziele erkannt/)
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Trinidad und Tobago')
+  await waehleOption(page, 'Trinidad und Tobago, Land')
+  await waehleOption(page, 'Peru, Land')
+  assert.equal(await page.getByRole('button', { name: 'Trinidad und Tobago, Ziel 1, entfernen' }).count(), 1)
+  await speichern(page, 'trinidad_peru_compound_390')
+}
+
+async function dreifachUndKanonisch(page, origin) {
+  await resets(page, origin)
+  await tippe(page, 'Bosnien und Herzegowina und Kroatien')
+  await absenden(page)
+  await queueStatus(page).waitFor({ timeout: 4000 })
+  assert.match(await queueStatus(page).innerText(), /2 Ziele erkannt – bitte Ziel 1 von 2/)
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Bosnien und Herzegowina')
+  assert.equal(await page.getByText('3 Ziele erkannt').count(), 0)
+  await waehleOption(page, 'Bosnien und Herzegowina, Land')
+  await waehleOption(page, 'Kroatien, Land')
+  assert.equal(await page.getByRole('button', { name: 'Bosnien und Herzegowina, Ziel 1, entfernen' }).count(), 1)
+  assert.equal(await page.getByRole('button', { name: 'Kroatien, Ziel 2, entfernen' }).count(), 1)
+  await speichern(page, 'bosnia_und_croatia_grouped_390')
+}
+
+async function segmentAusfallKeinSplit(page, origin) {
+  await resets(page, origin)
+  await page.evaluate(() => {
+    window.__placesFailQueries = ['Kambodscha und Vietnam']
+  })
+  await tippe(page, 'Thailand, Kambodscha und Vietnam')
+  await absenden(page)
+  await queueStatus(page).waitFor({ timeout: 4000 })
+  assert.match(await queueStatus(page).innerText(), /2 Ziele erkannt – bitte Ziel 1 von 2/)
+  assert.equal(await page.getByText('3 Ziele erkannt').count(), 0)
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Thailand')
+  await waehleOption(page, 'Thailand, Land')
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Kambodscha und Vietnam')
+  await speichern(page, 'segment_503_no_guess_split_390')
+
+  await resets(page, origin)
+  await page.evaluate(() => {
+    window.__placesFailQueries = ['Bosnien und Herzegowina']
+  })
+  await tippe(page, 'Bosnien und Herzegowina und Kroatien')
+  await absenden(page)
+  await page.getByRole('alert').waitFor({ timeout: 4000 })
+  assert.equal(await page.getByText('Ziele erkannt').count(), 0)
+  assert.equal(await page.locator('#travel-idea').inputValue(), 'Bosnien und Herzegowina und Kroatien')
+  await speichern(page, 'triple_und_segment_503_390')
 }
 
 async function ausfallKeinSplit(page, origin) {
@@ -346,6 +415,9 @@ try {
     ['Lima, Peru context', limaPeruKontext],
     ['Lima und Cusco queue + handoff', limaUndCuscoSchlange],
     ['three destinations and duplicate Paris', dreiZieleUndDuplikat],
+    ['compound country inside comma route', verbundImKommaRoute],
+    ['triple und groups to two', dreifachUndKanonisch],
+    ['per-segment 503 does not guess-split', segmentAusfallKeinSplit],
     ['503 does not split', ausfallKeinSplit],
     ['ambiguous/no-result kept', mehrdeutigUndKeinTreffer],
     ['cancel remaining queue', queueAbbrechen],
