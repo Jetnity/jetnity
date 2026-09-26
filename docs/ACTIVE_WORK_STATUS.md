@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. September 2026
-Status: **NORMAL / DRAFT PR #565 DOCKER PUBLISH SHIM 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / DRAFT PR #566 DOCKER PUBLISH SHIM REGRESSION 1 FROZEN FOR TL REVIEW / NOT READY / NOT MERGED**
 
 > This file is a current-state continuity aid, not a substitute for live reconstruction. Every new chat must re-fetch GitHub/Vercel and relevant Supabase truth before acting. Mutable heads below are observation pins, not permanently current.
 
@@ -11,26 +11,28 @@ Status: **NORMAL / DRAFT PR #565 DOCKER PUBLISH SHIM 1 FROZEN FOR TL REVIEW / NO
 
 | Field | Value |
 | --- | --- |
-| Arbeitsblock | Admin Account Counts Docker Publish Shim 1 |
-| Branch / PR | `fix/admin-account-counts-docker-publish-shim-1` / Draft https://github.com/Jetnity/jetnity/pull/565 |
-| Base | `8bb9dd31d5b1a585262c3e773bddab0693d0d3ba` |
+| Arbeitsblock | Admin Account Counts Docker Publish Shim Regression 1 |
+| Branch / PR | `fix/admin-account-counts-docker-publish-shim-regression-1` / Draft https://github.com/Jetnity/jetnity/pull/566 |
+| Base | `0e08e22cb859818d902bfff1ecdea654f33abc39` (Merge #565) |
+| Code commit | `6b6218730f77af43e52b953f0de2e32969dffa95` |
+| First persist head with exact-head gates | `4a1fe07ba84d68ce9eaf5a4be0d6d7384f2c5d41` — CI `36247114473` SUCCESS, Auth SUCCESS, Vercel `8n4rmHqTxFovMWqDG2LzKRdEafHi` READY |
 | Status | Implementation frozen / wartet auf unabhängigen Technical-Lead exact-head Review |
-| Agent | Jetnity admin account counts docker publish shim 1, Gen 1, session `bc-71eec955-6442-47db-83e9-404c7be6d4d3` |
+| Agent | Jetnity admin account counts docker publish shim regression 1, Gen 1, session `bc-059589a4-a529-4c73-97b9-3a9e3f093fc4` |
 | Model | cursor-grok-4.6-high-fast |
 
-#564 runtime-binding observation is **MERGED** on this base. The next authorized real-Mac stack start on exact main `8bb9dd31` (`aaclr1-20260926T113202Z`) correctly reported Mailpit `8025/tcp -> 0.0.0.0:54324` and aborted. That is a real public bind, not a parser defect. The owned-network option `com.docker.network.bridge.host_binding_ipv4=127.0.0.1` is not sufficient on that Docker Desktop path.
+Exact main `0e08e22c` failed the Product-Owner Mac controlled suite **57/48/9** because merged `docker-publish-shim.mjs` called `parseDockerPublishValue` / `formatLoopbackPublishValue` without module-scope definitions. This head restores those exact strict helpers, keeps C1 hashed self-contained shim provenance and C2 image/CMD boundary, and pins the helper names in generated shim bytes.
 
-Bereits umgesetzt: private run-owned PATH shim named `docker` for the official Supabase CLI child only; `docker create -p` / `--publish` rewritten to explicit `127.0.0.1` before start; public/ambiguous publish syntax fail closed; harness Docker keeps the exact real binary; official CLI archive/binary stays byte-identical; #564 NetworkSettings inspection unchanged and still authoritative; Mailpit stays enabled; product/Auth/SQL/config/CI untouched; controlled tests 55/55 PASS (prior 48 preserved); default no-start receipt `aaclr1-20260926T114704Z` is `BLOCKED_ENVIRONMENT`.
+Bereits umgesetzt: module-scope parser/formatter restored; C1 `.toString()` freeze preserved; C2 image/CMD boundary preserved; `-P` / `--publish-all` still fail closed; no CLI/config/Auth/SQL/product/CI change. Controlled helper suite on this agent: **57/57 PASS, 0 FAIL**.
 
-Noch offen: independent TL exact-head review of this head; fresh exact-head CI/Auth/Preview after this persist; authorized later real-Mac rerun. No Production/hosted mutation.
+Noch offen: independent TL exact-head review of the live head; authorized later real-Mac full acceptance run. Exact `4a1fe07b` CI/Auth/Preview were SUCCESS/READY; re-read those gates if HEAD moved. No Production/hosted mutation. No real Docker from this writer.
 
 DB / RLS / Production-Grenze: none crossed. Kosten / Provider / Secrets: none added. Docker credentials were not copied. Official CLI was not downloaded or executed. No Docker Desktop/global setting was changed.
 
-Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #565. Cursor starts no follow-up.
+Exakter nächster Schritt: Technical Lead reviews the exact current head of Draft PR #566. Cursor starts no follow-up.
 
-Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_DOCKER_PUBLISH_SHIM_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `docker-publish-shim.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
+Zuerst lesen: `docs/ADMIN_ACCOUNT_COUNTS_DOCKER_PUBLISH_SHIM_REGRESSION_1_TASK_2026-09-26.md`, STATUS / HANDOFF / SELF_REVIEW of this slice, then `docker-publish-shim.mjs` under `scripts/e2e/admin-account-counts-local-runtime-1/`.
 
-#564 C1 is merged on this base and is not the current writer.
+#565 is **MERGED** on this base and is not the current writer. #564 C1 remains merged and is not the current writer.
 
 The 22 September Continuity Refresh 3 checkpoint below is historical observation, not this writer.
 
