@@ -1,11 +1,12 @@
 // app/account/settings/page.tsx
 //
-// Einstellungen: vorhandene Sicherheit und den V1-Kontoexport auffindbar machen.
-// Keine Privacy-/Billing-/MFA-/Lösch-Vertragsänderung.
+// Einstellungen: Sicherheit, V1-Kontoexport und die endgültige Kontolöschung.
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Download, Shield } from 'lucide-react'
+
+import KontoLoeschen from '@/components/account/KontoLoeschen'
 
 export const metadata: Metadata = {
   title: 'Einstellungen',
@@ -22,8 +23,8 @@ export default function AccountEinstellungenSeite() {
           Einstellungen
         </h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
-          Hier verwaltest du die vorhandenen Kontoeinstellungen. Weitere Bereiche folgen, sobald sie
-          fachlich bereit sind.
+          Hier prüfst du die Sicherheit, lädst deine Konto- und Reisedaten herunter oder löschst das
+          Konto dauerhaft.
         </p>
 
         <div className="mt-10 space-y-6">
@@ -76,6 +77,8 @@ export default function AccountEinstellungenSeite() {
               </div>
             </div>
           </section>
+
+          <KontoLoeschen />
         </div>
       </div>
     </main>

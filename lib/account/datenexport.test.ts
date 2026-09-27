@@ -298,7 +298,12 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     assert.match(settings, /keine Kontolöschung/)
     assert.equal(settings.includes('/account/delete'), false)
     assert.equal(settings.includes('DSGVO-konform'), false)
-    assert.equal(settings.includes('Konto löschen'), false)
+    const exportTeil = settings.slice(
+      settings.indexOf('id="account-datenexport-title"'),
+      settings.indexOf('<KontoLoeschen'),
+    )
+    assert.equal(exportTeil.includes('Konto löschen'), false)
+    assert.match(exportTeil, /keine Kontolöschung/)
     assert.match(settings, /aktuelle Sitzung/)
     assert.match(settings, /href="\/account\/security"/)
     assert.match(settings, /min-h-11/)

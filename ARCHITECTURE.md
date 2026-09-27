@@ -196,6 +196,14 @@ AP-1–AP-4 sind integriert und werden nicht neu geplant. AP-5 Gate 0 rekonstrui
 
 Die Kopfzeile dieser Architekturdatei kann hinter neueren Production-AAL2-/Continuity-Ständen liegen. Live-Evidence und `JETNITY_HANDOFF.md` gewinnen.
 
+## 4d. V1-Kontolöschung
+
+Die Löschung eines Kontos ist eine privilegierte, eng begrenzte Operation. Sie liegt nicht in einer Next-Route und nicht in einem allgemeinen Admin-Client. Die Quelle ist die Edge Function `supabase/functions/account-delete-v1`. Das Gateway verlangt ein JWT (`verify_jwt = true`). Die Funktion leitet die Identität zusätzlich mit `auth.getUser()` aus der Bearer-Sitzung ab und akzeptiert kein Ziel-`user_id`.
+
+Der Ablauf prüft die genaue Bestätigung `KONTO LÖSCHEN`, einen frischen Passwortbeweis gegen die E-Mail des geprüften Nutzers und, wenn ein verifizierter TOTP-Faktor existiert, AAL2 nur für diesen Vorgang. Danach löscht Supabase Auth den Nutzer hart. Konto, Reisen, Reisende und Besuche fallen über die bestehenden Fremdschlüssel. `security_events` hat keine solche Kaskade und wird für genau diese Nutzerkennung danach entfernt. Bleibt dabei ein Rest, ist das kein voller Erfolg.
+
+Storage wird nicht per SQL gelöscht. Die registrierten kontoeigenen Flächen sind leer. Blockiert die Auth-Löschung wegen Storage-Besitz, gilt das Konto als nicht gelöscht. `jetnity-legacy-recovery` wird nicht angefasst. Diese Funktion ist im Slice nicht auf ein gehostetes Supabase-Projekt deployed und nicht für Production freigegeben. Entscheidung: [DECISIONS.md](DECISIONS.md) ADR-0215.
+
 ---
 
 ## 5. Datenfluss der V2-Reiseschicht

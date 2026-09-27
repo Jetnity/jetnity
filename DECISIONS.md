@@ -5653,6 +5653,31 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0215 – V1-Kontolöschung: sofortiges Hard-Delete nur in Development
+
+**Datum:** 27. September 2026
+**Status:** Implementiert auf Draft-Branch `feat/v1-account-deletion-1`. Kein Ready, kein Merge, kein PASS. Binding: `docs/V1_ACCOUNT_DELETION_1_TASK_2026-09-27.md`. Product-Owner-Freigabe nur für Development-Implementierung und Beweis, Issue #588.
+
+**Entscheidung:**
+
+1. Ein Konto wird sofort und unwiderruflich gelöscht. Es gibt keine Frist und keinen Soft-Delete.
+2. Die einzige privilegierte Grenze ist die Edge Function `account-delete-v1`. Sie nimmt kein Ziel-`user_id` an. Die Identität kommt aus der Bearer-Sitzung und wird mit `auth.getUser()` geprüft. Das Gateway verlangt `verify_jwt = true`.
+3. Der Passwortbeweis passiert in dieser Funktion, nicht nur in der Oberfläche. Die zurückgegebene Identität muss der Bearer-Identität entsprechen. Die Beweis-Sitzung wird nicht gespeichert und nicht an den Aufrufer gegeben.
+4. Ein verifizierter TOTP-Faktor verlangt für diesen Vorgang AAL2. Ohne verifizierten Faktor entsteht keine Zwei-Faktor-Pflicht. OAuth-only und jeder andere nicht passwortfähige Beweis enden fail-closed.
+5. Konto, Reisen, Reisende und Besuche werden nicht noch einmal von Hand gelöscht. Dafür gelten die bestehenden Fremdschlüssel. `security_events.user_id` ist nicht kaskadiert und wird für genau diesen Nutzer danach entfernt. Ein verbleibender Rest ist kein voller Erfolg.
+6. Storage wird nur über die Storage-API und nur für ausdrücklich registrierte kontoeigene Flächen gelöscht. Die Registrierung ist leer. Unbekannter Besitz oder eine Auth-Ablehnung wegen Storage ist kein Löscherfolg. `jetnity-legacy-recovery` bleibt unberührt.
+7. Cursor deployed die Funktion nicht und löscht keinen Production-Nutzer. Keine Production-Migration, kein RLS-Wechsel, kein öffentliches Indexing.
+
+**Kontext:** #588 erlaubt die Development-Umsetzung. Production-Auth löscht einen Nutzer nicht, solange er Storage-Objekte besitzt, und die Objekte dürfen nicht per SQL entfernt werden. `security_events` behält sonst eine Nutzerkennung ohne Aufbewahrungsgrund.
+
+**Alternativen:** Soft-Delete mit Frist; Löschung in einer Next-Route mit Service-Role; manuelles Nachlöschen der Kaskaden; ein Storage-Scan über alle Buckets; OAuth-Löschung ohne Passwortbeweis.
+
+**Begründung:** Eine Next-Route mit Service-Role würde die Admin-Grenze verbreitern. Ein Storage-Scan würde Besitz raten. Eine zweite Löschung der Kaskaden würde die Datenbankverträge doppeln. OAuth ist abgeschaltet und hätte keinen gleichwertigen Frischbeweis.
+
+**Konsequenzen:** Eine spätere Upload-Fläche muss ihre Storage-Fläche registrieren, bevor sie live geht. Die gehostete Development-Funktion und der Wegwerf-Beweis bleiben beim Technical Lead. Traveller-Kontext wird nicht erhoben: die Löschung gilt für das ganze Konto, nicht für einen einzelnen Reisepass.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
