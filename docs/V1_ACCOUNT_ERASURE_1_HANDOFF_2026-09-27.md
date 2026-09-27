@@ -17,13 +17,14 @@ Self-review: `docs/V1_ACCOUNT_ERASURE_1_SELF_REVIEW_2026-09-27.md`
 | Draft PR | #590 |
 | Branch | `feat/v1-account-erasure-1` |
 | Base | `main@95e9da45ceeacbc8b461541f810a7c8011d2151a` |
-| Implementierung vor den Dokumenten | `65f8f936425909ce7d10044f8de434e885757949`, `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0` |
-| Ahead / behind vor diesem Dokument | **3 / 0** gegen `origin/main` |
+| Implementierung | `65f8f936`, `76e6bf9c`, Nachweis-Zuordnung `f8a1470b` |
+| Erster Evidence-Commit | `d09acc247acf4299e4d1595b6644faf6f7f07cce` |
+| Ahead / behind auf `d09acc24` | **5 / 0** gegen `origin/main` |
 | Agent | Jetnity V1 account erasure 1, Generation 1 |
 | Modell | Grok 4.7 High Fast (`originalModelName=grok-4.7-high-fast`) |
 | Session | `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d` |
 
-Der Review-Head ist der Commit, der diese drei Dokumente enthält. Ein späterer Commit entwertet ihn.
+Der Review-Head ist der Commit, der die Ahead/Behind-Korrektur enthält. `d09acc24` ist der erste Evidence-Stand und durch diese Korrektur entwertet. Ein weiterer Commit entwertet den neuen Head erneut.
 
 ## 2. Was der Review zuerst prüfen sollte
 

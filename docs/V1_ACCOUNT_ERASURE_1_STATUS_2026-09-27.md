@@ -8,8 +8,9 @@ Draft PR: #590
 Branch: `feat/v1-account-erasure-1`  
 Binding task: `docs/V1_ACCOUNT_ERASURE_1_TASK_2026-09-27.md`  
 Base: `main@95e9da45ceeacbc8b461541f810a7c8011d2151a`  
-Parent before this evidence commit: `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0`  
-Ahead / behind gegen `origin/main`: **3 / 0** vor diesem Dokument; dieses Dokument verschiebt den Head.
+Erster Evidence-Commit: `d09acc247acf4299e4d1595b6644faf6f7f07cce`  
+Sein Parent: `f8a1470b` (Management-401-Zuordnung), davor `76e6bf9c`  
+Ahead / behind gegen `origin/main` auf `d09acc24`: **5 / 0**. Diese Korrektur ist nur Dokumentation und wird der Review-Head.
 
 Cursor-Agent: **Jetnity V1 account erasure 1**, Generation 1  
 Required model: **Grok 4.7 High Fast** — bestätigt (`originalModelName=grok-4.7-high-fast`)  
