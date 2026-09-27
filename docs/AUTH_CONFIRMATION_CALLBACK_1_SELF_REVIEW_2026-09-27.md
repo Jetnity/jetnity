@@ -13,7 +13,7 @@ Der UI-Titel ist `Auth callback PKCE conflict`. Eine programmierbare Umbenennung
 
 ## Scope
 
-Geändert in der Review-Korrektur: `lib/auth/callback-abschluss.ts`, seine Tests, `lib/supabase/client.ts` (Boolean vor dem Konstruktor), AUTH.md, ARCHITECTURE.md, ADR-0214, Task-Status, Active Work, dieser Status/Handoff/Self-Review.
+Geändert in Review-Runde 2: `lib/auth/callback-abschluss.ts`, seine Tests, `lib/supabase/client.ts` (Sitzungsbezug statt Projekt-Boolean), AUTH.md, ARCHITECTURE.md, ADR-0214, Task-Status, Active Work, dieser Status/Handoff/Self-Review.
 
 Nicht geändert: Callback-Komponente, Login, Register, Update-Password-Seite, `erlaubtesNaechstesZiel`, Middleware, Supabase-Host, Abhängigkeiten, `detectSessionInUrl`.
 
@@ -23,7 +23,9 @@ Der alte Ablauf ist mit den gesperrten Bibliotheken nachgestellt: zwei Tausche, 
 
 Geprüft ausserdem: Client schon vorher initialisiert, Recovery-Verifier, direkte Passwortseite, fremdes `next`, fehlender Verifier bei liegender Sitzung, ungültiger Code, Netzfehler, expliziter URL-Fehler ohne Rohtext, Hash-Recovery, leerer Callback, Sitzung ohne Code, zweiter Aufruf derselben Adresse.
 
-Review-Korrektur, an den gesperrten Bibliotheken, ohne Live-Mail: derselbe Code nach geleertem Glas scheitert; eine code-freie Adresse liest eine später entstandene Sitzung neu; `initialize()` vor dem Helfer und ein noch laufender Tausch mit schon gelöschtem Verifier gehen nach `/auth/update-password`; eine frühe Anmeldung bleibt auf `next`; nach Abmelden übernimmt eine neue Sitzung die Wiederherstellung nicht. Abgeschlossene Läufe liegen nicht mehr in der Map. Der Schlüssel speichert keinen Code und keine Hash-Tokens.
+Review-Runde 1 bleibt grün: derselbe Code nach geleertem Glas scheitert; eine code-freie Adresse liest eine später entstandene Sitzung neu; früher und noch laufender Recovery-Tausch gehen nach `/auth/update-password`.
+
+Review-Runde 2 korrigiert eine falsche Behauptung. Der frühere Test „fremde Sitzung“ rief dazwischen einen abgemeldeten Callback auf und hat die Wiederherstellung damit selbst gelöscht. Ohne diesen Besuch bleibt die Wiederherstellung an der Sitzung des Versuchs: nach Abmelden und neuer Anmeldung ist das Ziel `/reisen`. Die direkte Passwortseite merkt keine Callback-Wiederherstellung. Zwei verschiedene Codes und zwei verschiedene Hash-Links teilen sich keinen laufenden Versuch. Der Schlüssel speichert den Link nicht im Klartext und nur, solange der Versuch läuft.
 
 ## Ehrliche Lücken
 
@@ -31,9 +33,9 @@ Review-Korrektur, an den gesperrten Bibliotheken, ohne Live-Mail: derselbe Code 
 - Der Bibliotheksnachweis ist kein Live-Trace der iPhone-Sitzung.
 - Ein Netzfehler im automatischen Tausch entfernt den Verifier. Die Meldung ist ehrlich, der Link ist danach verbraucht.
 - Die deutschen Sätze ersetzen die rohe GoTrue-Meldung. Sie nennen nicht den internen Fehlercode.
-- `npm test` 3968/3968, Typecheck, Lint der geänderten Dateien und Production-Build sind grün. Das ersetzt keinen Geräte-Klick.
+- `npm test` 3971/3971, Typecheck, Lint der geänderten Dateien und Production-Build sind grün. Das ersetzt keinen Geräte-Klick.
 - `npm run auth:pruefen` ist in dieser Umgebung mit 401 abgebrochen, weil der Ref weder als Projekt noch als Branch angenommen wurde. Das ist kein Callback-PASS und keine hosted Änderung.
-- Der alte Head `716d708d1673e2e96c4028d82332a633baf677a4` ist nicht mehr gegated. `origin/main` bleibt `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3`.
+- Die Heads `3bce9ff3a4bc230db3c5e7c511fa1c5888bf67cd` und `716d708d1673e2e96c4028d82332a633baf677a4` sind nicht mehr gegated. `origin/main` bleibt `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3`.
 - Im lokalen Browser sind der explizite Fehler und der leere Callback geprüft. Der gültige Tausch nicht: dafür bräuchte es einen echten Code.
 
 ## Traveller-Kontext
