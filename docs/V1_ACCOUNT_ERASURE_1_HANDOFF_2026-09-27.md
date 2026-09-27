@@ -24,7 +24,7 @@ Self-review: `docs/V1_ACCOUNT_ERASURE_1_SELF_REVIEW_2026-09-27.md`
 | Modell | Grok 4.7 High Fast (`originalModelName=grok-4.7-high-fast`) |
 | Session | `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d` |
 
-Der Review-Head ist der Commit, der die Ahead/Behind-Korrektur enthält. `d09acc24` ist der erste Evidence-Stand und durch diese Korrektur entwertet. Ein weiterer Commit entwertet den neuen Head erneut.
+Zählkorrektur: `8b3126d064e9ebe869bd530f60fd26a181a964b0`. Der Review-Head ist der folgende Commit, der Status, Handoff und Self-Review auf dieselbe Kopfzeile setzt. Ein weiterer Commit entwertet ihn.
 
 ## 2. Was der Review zuerst prüfen sollte
 
