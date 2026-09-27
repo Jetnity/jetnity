@@ -513,7 +513,9 @@ Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrat
 | `jetnity.com` | **kanonische Produktdomain; live weiterhin keine öffentliche DNS-Auflösung. Kein Cutover. Kein Public Indexing.** |
 | `jetnity.ch` | **Entry-/Redirect-Domain, nicht zweite indexierte Plattform; live keine öffentliche DNS-Auflösung. Kein Cutover.** |
 
-Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false. `/robots.txt` bleibt deny-all, solange Indexing nicht ausdrücklich aktiviert ist. `/privacy` und `/terms` bleiben 404 (D0-P1-03).
+Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false. `/robots.txt` bleibt deny-all, solange Indexing nicht ausdrücklich aktiviert ist. `/terms` bleibt ohne Page (D0-P1-03).
+
+**PrivacyBee integration 1 (Branch, noch nicht auf `main`):** `/privacy` und `/impressum` binden die offiziellen Widgets von `app.privacybee.io` nur, wenn der Request-Host exakt `jetnity.com` ist und die geprüfte Aktivierung gilt. Ein Server-Kill-Switch `PRIVACYBEE_KILL_SWITCH=aus` entfernt die Scripts. Localhost und Preview bekommen keinen Vendor-Script. Der Inhalt bleibt bei PrivacyBee. Kein Cookie-Banner, keine Indexierung, keine behauptete Rechtskonformität. Siehe ADR-0213. Production-Beweis entsteht erst nach Technical-Lead-Merge.
 
 `vercel.json` enthält seit Phase 1.1 **keine** Cron-Jobs mehr. Die vier vorherigen Jobs zeigten ausschließlich auf Alt-Endpunkte und sind entfernt.
 

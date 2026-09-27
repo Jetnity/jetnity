@@ -5599,6 +5599,30 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0213 – PrivacyBee integration 1: offizielle Embeds nur auf jetnity.com
+
+**Datum:** 27. September 2026
+**Status:** Implementiert auf `feat/privacybee-integration-1`. Kein Ready, kein Merge. Keine Production-Env-Änderung, kein Indexing, kein Banner, kein neuer Vertrag.
+
+**Entscheidung:**
+
+1. `/privacy` und `/impressum` zeigen die offiziellen PrivacyBee-Widgets. PrivacyBee erzeugt und pflegt den Text. Jetnity kopiert ihn nicht, schreibt keine Ersatzpolicy und blendet keine Vendor-Absätze aus.
+2. Die geprüfte Aktivierung `PRIVACYBEE_GEPRUEFTE_AKTIVIERUNG` ist für diesen Slice an. Der Server-Kill-Switch `PRIVACYBEE_KILL_SWITCH=aus` schaltet die Scripts ab. Ein fehlender Env-Wert lässt die geprüfte Aktivierung gelten. Dafür ist kein neues Secret und keine Production-Env-Änderung nötig.
+3. Vendor-Scripts werden nur eingefügt, wenn diese Aktivierung gilt und der Request-Host exakt `jetnity.com` ist. Der Browser-Host wird vor dem Einfügen erneut geprüft. Localhost, Preview und jede andere Hostkennung bleiben ohne Script.
+4. Script-`onload` ist keine Fertigmeldung. Sichtbares Laden, Vendor-Fehler, Timeout und leerer Payload enden in einem ehrlichen Hinweis. Datenschutz verlinkt die gehostete PrivacyBee-Fassung. Impressum nennt `info@jetnity.ch`. Es gibt keine erfundene Impressum-URL.
+5. `/terms` und `/datenschutz` bleiben ungebaut. `cookie-banner.js`, Tracking, Consent-Persistenz, Indexing und Account-/Trip-Payloads an PrivacyBee gehören nicht zu diesem Slice.
+6. Bekannte Vendor-Formulierungen (Banner trotz Abschaltung, nicht belegte Löschaussagen, generische Analytics) bleiben dokumentierte Inhaltsreste. Sie sind kein Support-Blocker und keine Konformitätsaussage.
+
+**Kontext:** Der Product Owner hat am 27. September 2026 angewiesen, PrivacyBee auf der bestehenden Prelaunch-Domain abzuschliessen und nicht auf Support zu warten. Domain Gate A ist bereits bestanden. Die Vorbereitung #578 hatte die Veröffentlichung standardmässig aus. Diese Entscheidung gilt nur für die hier beschriebene technische Einbindung und ersetzt die Default-aus-Sperre für diesen Slice. Sie ersetzt nicht das Indexing-Gate und nicht die Product-Owner-Gates für Verträge, Billing, Secrets und Production-Env.
+
+**Alternativen:** Default-aus bis zu einem separaten Env-Flag auf Production; statische Kopie des Vendor-Textes; iFrame statt Custom Element; eigene Rechtstexte.
+
+**Begründung:** Ein Env-Flag, das niemand setzt, würde die angewiesene Einbindung auf jetnity.com nach dem Merge stumm lassen. Die Host-Schranke bleibt trotzdem zwingend, weil die Lizenz an die Zieldomain gebunden ist. Eine Kopie des Textes widerspricht dem Vendor-Embed und würde veralten.
+
+**Konsequenzen:** Nach dem Merge prüft der Technical Lead die lizenzierte Domain selbst. Preview ist kein Production-Beweis. `/terms` bleibt 404. Ein Rollback ist der Kill-Switch oder das Umlegen der Aktivierungskonstante. Traveller-Kontext wird nicht erhoben und nicht an PrivacyBee gesendet.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -7,8 +7,11 @@ export const AP6A_LEGAL_ROUTEN = ['/privacy', '/terms'] as const
 
 export type Ap6aLegalRoute = (typeof AP6A_LEGAL_ROUTEN)[number]
 
-/** Live ebenfalls 404, aber nicht AP-6a-Pflichtroute. Alias/Impressum = PO/Legal. */
-export const AP6A_VERWANDTE_FEHLENDE_ROUTEN = ['/impressum', '/datenschutz'] as const
+/**
+ * Weiterhin ohne Page. `/impressum` ist seit PrivacyBee integration 1 eine
+ * eigene Route und keine AP-6a-Pflichtroute. `/datenschutz` ist kein Alias.
+ */
+export const AP6A_VERWANDTE_FEHLENDE_ROUTEN = ['/datenschutz'] as const
 
 export const LEGAL_INPUT_KLASSEN = [
   'belegt',
