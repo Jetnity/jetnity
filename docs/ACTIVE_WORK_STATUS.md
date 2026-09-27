@@ -1,6 +1,33 @@
 # Jetnity – Active Work Status
 
 Stand: 27. September 2026
+Status: **NORMAL / AUTH CALLBACK #583 MERGED / PRODUCTION READY / #582 PHYSICAL RETEST AND PRIVACYBEE FOLLOW-UP OPEN**
+
+## 0. Technical-Lead closure — Auth Confirmation Callback 1
+
+- PR #583 merged at `1969ac5f1bfb31b6ac9090415dbac4601b84ac6c`; accepted exact head `7bd68e52a7839840901d3b5ca98bbd5279e2cf13`. Accepted head → merge has **0 changed files**.
+- Independent TL PASS: https://github.com/Jetnity/jetnity/pull/583#issuecomment-5857892496. All prior R1–R6 findings resolved. Pinned-SDK isolated callback suite: **37 passed / 0 failed**, including the two retained independent TL reproductions.
+- Exact-head CI `36334752924` SUCCESS; Auth configuration and Typecheck/Lint/Tests/Production build independently read. Exact-head Preview `dpl_FrryecVViX3ezJqosjJQMsSvto7h` READY. No unresolved GitHub review threads or branch Vercel toolbar feedback.
+- Exact-merge Production `dpl_63V1Rqh17T5u9CpLHjZMRZYjVVJS` READY, alias `jetnity.com`, Git SHA matches merge. Post-merge CI `36335244515` is being verified; latest result must be read live and from #582/#583 closure comments before claiming completion.
+- Live readback after deployment: https://jetnity.com HTTP 200 with `noindex, nofollow`; https://jetnity.com/robots.txt HTTP 200 with `User-Agent: *` and `Disallow: /`.
+- Writer **Jetnity auth confirmation callback 1**, Generation 1, session `bc-bdb579ac-f2b5-452e-8e48-0aeb403f4c4d`, actual model `grok-4.7-high-fast`, completed. Do not restart this writer. No active runtime writer. Older draft/no-PASS wording below is historical delivery evidence superseded by this closure.
+- No hosted Auth/SMTP/OAuth/MFA/AAL/DB/RLS/DNS/provider configuration was changed by this code integration. No extra auth email, new cost, public launch or indexing activation.
+
+### #582 remains open — precise remaining work
+
+1. **First unfinished acceptance step:** obtain bounded authorization for one fresh signup-confirmation email and perform a physical iPhone first-load retest on this deployed version. Exactly the original two auth smokes were previously authorized and used; do not send additional messages automatically. A fresh confirmation must reach the intended Jetnity destination on first opening without PKCE error or refresh. Never publish token-bearing links, session data or passwords.
+2. Original reset smoke: delivered from Jetnity / `no-reply@jetnity.com` to `admin@jetnity.com`; user confirmed `https://jetnity.com/auth/update-password` and the new-password form. Original signup smoke: delivery to `booking@jetnity.com` passed, first opening failed, refresh reached Meine Reisen. The physical first-load defect is **not yet accepted as resolved** merely by automated tests/deployment.
+3. PrivacyBee follow-up for newly configured Infomaniak SMTP remains open. Existing domain/PrivacyBee technical integration from #579/#580 is completed; do not rebuild it or replace vendor legal content with handwritten text. Last observed PrivacyBee app access required login. Canonical public contact `info@jetnity.ch` remains unchanged. No support wait is required as a blanket prerequisite.
+4. SMTP credentials remain private. Previously verified custom SMTP: `no-reply@jetnity.com`, sender name Jetnity, `mail.infomaniak.com`, port 587 / STARTTLS, minimum interval 60. Mailbox used an included free slot; other addresses unchanged. DNS before/after evidence is in #582; no speculative DNS changes.
+5. #581 URL configuration was completed previously. No OAuth enablement, MFA/AAL change, DB/RLS/migration change or Public Launch is authorized by this closure.
+
+This continuity-only update does not change runtime or claim a new physical smoke. Re-fetch current GitHub/Vercel state before subsequent action.
+
+---
+
+## Historical writer handoff before independent TL acceptance
+
+Stand: 27. September 2026
 Status: **NORMAL / AUTH CONFIRMATION CALLBACK 1 REVIEW ROUND 3 / DRAFT / NO PASS / NO READY / NO MERGE**
 
 ## 0. Current work — Auth Confirmation Callback 1
