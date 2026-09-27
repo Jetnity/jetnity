@@ -108,6 +108,7 @@ async function preflight() {
   const b=await management(`/branches/${DEV}`);report.observations.branch_preflight={status:b.status,ref_matches:b.data?.ref===DEV};must(b.status===200 && b.data?.ref===DEV,'development_branch_guard');
   const f=await management(`/projects/${DEV}/functions`);
   const fn=Array.isArray(f.data)?f.data.find(x=>x.slug==='account-delete-v1'):null;
+  report.observations.function_preflight={http_status:f.status,response_shape:Array.isArray(f.data)?'array':typeof f.data,function_found:!!fn,version:fn?.version,status:fn?.status,verify_jwt:fn?.verify_jwt,hash_present:!!fn?.ezbr_sha256,hash_matches:fn?.ezbr_sha256===FN_HASH};
   must(f.status===200 && fn?.status==='ACTIVE' && fn.version===1 && fn.verify_jwt===true && fn.ezbr_sha256===FN_HASH,'function_drift');
   const keys=await management(`/projects/${DEV}/api-keys?reveal=true`);
   must(keys.status===200 && Array.isArray(keys.data),'existing_keys_unavailable');
