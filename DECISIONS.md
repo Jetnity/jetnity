@@ -5602,7 +5602,7 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 ## ADR-0213 – PrivacyBee integration 1: offizielle Embeds nur auf jetnity.com
 
 **Datum:** 27. September 2026
-**Status:** Implementiert auf `feat/privacybee-integration-1`. Kein Ready, kein Merge. Keine Production-Env-Änderung, kein Indexing, kein Banner, kein neuer Vertrag.
+**Status:** PR #579 gemergt am 27. September 2026, Runtime-Baseline `39eeaa1de87fc396b080b293c6c97b4a5e397640`. Production READY und beide Widgets auf jetnity.com samt Navigation live durch den Technical Lead geprüft. Keine Production-Env-Änderung, kein Indexing, kein Banner, kein neuer Vertrag.
 
 **Entscheidung:**
 
@@ -5619,7 +5619,7 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Begründung:** Ein Env-Flag, das niemand setzt, würde die angewiesene Einbindung auf jetnity.com nach dem Merge stumm lassen. Die Host-Schranke bleibt trotzdem zwingend, weil die Lizenz an die Zieldomain gebunden ist. Eine Kopie des Textes widerspricht dem Vendor-Embed und würde veralten.
 
-**Konsequenzen:** Nach dem Merge prüft der Technical Lead die lizenzierte Domain selbst. Preview ist kein Production-Beweis. `/terms` bleibt 404. Ein Rollback ist der Kill-Switch oder das Umlegen der Aktivierungskonstante. Traveller-Kontext wird nicht erhoben und nicht an PrivacyBee gesendet.
+**Konsequenzen:** Die lizenzierte Domain wurde nach dem Merge durch den Technical Lead selbst geprüft; Nachweis in `docs/PRIVACYBEE_INTEGRATION_1_STATUS_2026-09-27.md`. Preview allein ist kein Production-Beweis. `/terms` bleibt 404. Ein Rollback ist der Kill-Switch oder das Umlegen der Aktivierungskonstante. Traveller-Kontext wird nicht erhoben und nicht an PrivacyBee gesendet.
 
 ---
 

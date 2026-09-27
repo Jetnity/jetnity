@@ -112,7 +112,7 @@ Weiterhin gilt:
 
 P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence.
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist durch PR #157 integriert. AP-5-S4 ist durch PR #160 integriert. AP-5-S5 ist durch PR #164 integriert. AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist durch PR #157 integriert. AP-5-S4 ist durch PR #160 integriert. AP-5-S5 ist durch PR #164 integriert. AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence. `/privacy` und `/impressum` sind seit PR #579 als offizielle PrivacyBee-Embeds integriert und live geprüft (27. September 2026, ADR-0213); `/terms` bleibt ungebaut und Legal-/PO-Content-gegatet.
 
 Nicht automatisch starten:
 
@@ -126,7 +126,7 @@ Nicht automatisch starten:
 - AP-5-S3 Account Security Logout Scopes — PR #157 integriert auf `main @ 5920860e`
 - AP-5-S4 Account Security MFA Step-up — PR #160 integriert auf `main @ 934d43da`
 - AP-5-S5 Honest Current Session / Device View — PR #164 integriert auf `main @ 765fc547`
-- AP-6a Gate 0 Legal Foundation / Trust Boundary — PR #166 / ADR-0195 integriert; `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet; kein AP-6a-Runtime / AP-6b / AP-7 automatisch
+- AP-6a Gate 0 Legal Foundation / Trust Boundary — PR #166 / ADR-0195 integriert; `/privacy` und `/impressum` seit PR #579 als offizielle PrivacyBee-Embeds live geprüft; `/terms` weiterhin ungebaut und Legal-/PO-Content-gegatet; kein AP-6a-Runtime / AP-6b / AP-7 automatisch
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -150,7 +150,7 @@ TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gega
 Separate Search-/Homepage-Themen:
 
 - Issue #109 – Country-Alias-Ranking: PR #172 plus Recovery-PR #173 auf `main @ ade03511` integriert. Live Production API smoke PASS. Technical Lead hat #109 **CLOSED / COMPLETED**. Residual P2: Mobile Safari Real-Device. PR #178 ist nur Docs/Continuity-Träger; Live-Zustand prüfen. Auf `main` ist die Pre-Merge-#178-Klausel historisch.
-- Issue #169 – PrivacyBee Schweiz Gate 0: über #175/#176 auf `main` integriert, **CLOSED / COMPLETED**. Keine Vendor-Aktivierung. Keine neuen Kosten.
+- Issue #169 – PrivacyBee Schweiz Gate 0: über #175/#176 auf `main` integriert, **CLOSED / COMPLETED**. Damals keine Vendor-Aktivierung. Technische Aktivierung später mit PO-Auftrag in #579 umgesetzt und live geprüft. Keine neuen Kosten durch #579.
 - Issue #110 – natürliche Homepage-Mehrziel-Eingabe: dokumentiert, **nicht gestartet**.
 
 ## 4. Provider / Commercial Provenance
@@ -293,7 +293,7 @@ Abgeschlossen:
 42. ✅ AP-5-S3 Account Security Logout Scopes / PR #157 – integriert auf `main @ 5920860e`; explizite `local`/`others`/`global` in `/account/security`
 43. ✅ AP-5-S4 Account Security MFA Step-up / PR #160 – integriert auf `main @ 934d43da`
 44. ✅ AP-5-S5 Honest Current Session / Device View / PR #164 – integriert auf `main @ 765fc547`
-45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
+45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy` und `/impressum` seit PR #579 als offizielle PrivacyBee-Embeds live geprüft; `/terms` weiterhin ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. ✅ Provider S5-B Persistence / PR #182 + Recovery #183 – Schema + RLS + Write-Authority integriert (ADR-0198). Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Ältere „#182 offen / Production-Apply pending“-Sätze sind Pre-Apply-Evidence.
 48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review-Fixes aus `5463879179` im Repository. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Autor setzt kein Ready/Merge.
@@ -302,7 +302,7 @@ Nächster Schritt:
 
 - **Self-expiring #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463879179`. Nach Merge → Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck (PR #196). Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
 - S5-B Persistenz und Production-Migration sind integriert/verifiziert. Offener Residual: Runtime-Write-Pfad/Principal und realer Snapshot; TW-8 bleibt geschlossen. PR #180/#182/#183 sind historische Integrations-Evidence, kein offener Apply-Auftrag.
-- AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
+- AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/impressum` sind seit PR #579 als offizielle PrivacyBee-Embeds integriert und live geprüft (27. September 2026, ADR-0213); `/terms` bleibt ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
 ## 9a. Destination Essentials 1 – CLOSED on main

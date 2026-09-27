@@ -1,5 +1,13 @@
 # Jetnity – Handoff und nächste Schritte
 
+## Aktueller Abschluss: Domain / PrivacyBee, 27. September 2026
+
+Domain Gate A und offizielle PrivacyBee-Einbindung sind technisch abgeschlossen. PR #579 ist gemergt, Runtime-Baseline `39eeaa1de87fc396b080b293c6c97b4a5e397640`, Production `dpl_G4ooyWRW1gnHqdDBnhjMpzXGMnaU` READY; `/privacy` und `/impressum` auf `jetnity.com` samt Navigation live geprüft. Kein Support-Warten, kein Public Indexing. Writer beendet.
+
+Zuerst `docs/ACTIVE_WORK_STATUS.md` und `docs/PRIVACYBEE_INTEGRATION_1_STATUS_2026-09-27.md` lesen. Ältere Aussagen über fehlende Domain-Anbindung oder ungebautes `/privacy` sind durch diesen Abschluss überholt. Andere historische Gates bleiben bestehen; Live-Evidence gewinnt.
+
+## Historische Continuity vom 22. September 2026
+
 Stand: 22. September 2026
 Status: **CURRENT-WORK POINTERS UPDATED 22 SEP 2026 / CONTINUITY REFRESH 3 C1–C3 / NORMAL ON LIVE MAIN / #545–#550 #552 CLOSED / #551 REMAINING / HISTORICAL CLOSURES BELOW REMAIN HISTORICAL / LIVE-EVIDENCE GEWINNT**
 

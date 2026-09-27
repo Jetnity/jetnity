@@ -504,18 +504,18 @@ Die datenbanknahen Prüfungen aus `scripts/db/` laufen nicht in der CI. Sie brau
 
 Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrationsbranch; größere Umbauten laufen über Feature-Branch und Preview. Ein Push auf `main` löst automatisch einen Production-Deploy aus.
 
-**Erreichbarkeit (Stand 15. August 2026, verifiziert):**
+**Erreichbarkeit (jetnity.com aktualisiert und verifiziert am 27. September 2026):**
 
 | Adresse | Zustand |
 | --- | --- |
 | `jetnity-app.vercel.app` | öffentlich erreichbar, aktueller Production-Alias. Nach PR #86: HTML `noindex, nofollow`; Canonical/OG auf `https://jetnity.com`. Niemals kanonische Produktdomain. |
 | Deployment-URLs (`jetnity-<hash>-…vercel.app`) | durch Vercel Deployment Protection geschützt, liefern die Vercel-Login-Seite |
-| `jetnity.com` | **kanonische Produktdomain; live weiterhin keine öffentliche DNS-Auflösung. Kein Cutover. Kein Public Indexing.** |
-| `jetnity.ch` | **Entry-/Redirect-Domain, nicht zweite indexierte Plattform; live keine öffentliche DNS-Auflösung. Kein Cutover.** |
+| `jetnity.com` | **Kanonische Produktdomain, Infomaniak-DNS mit Vercel verbunden. HTTPS 200, HTTP→HTTPS; Domain Gate A bestanden. Kein Public Indexing.** |
+| `jetnity.ch` | Entry-/Redirect-Zieldomain, nicht zweite indexierte Plattform. Aktueller Anschluss in diesem Abschluss nicht neu geprüft oder verändert. |
 
-Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false. `/robots.txt` bleibt deny-all, solange Indexing nicht ausdrücklich aktiviert ist. `/terms` bleibt ohne Page (D0-P1-03).
+`jetnity.com` ist mit dem Vercel-Projekt verbunden und kann für Production-Prüfungen verwendet werden. Domain Gate A und technische PrivacyBee-Publikation sind kein Public-Indexing-/Launch-Gate. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false. `/robots.txt` bleibt deny-all, solange Indexing nicht ausdrücklich aktiviert ist. `/terms` bleibt ohne Page (D0-P1-03).
 
-**PrivacyBee integration 1 (Branch, noch nicht auf `main`):** `/privacy` und `/impressum` binden die offiziellen Widgets von `app.privacybee.io` nur, wenn der Request-Host exakt `jetnity.com` ist und die geprüfte Aktivierung gilt. Ein Server-Kill-Switch `PRIVACYBEE_KILL_SWITCH=aus` entfernt die Scripts. Localhost und Preview bekommen keinen Vendor-Script. Der Inhalt bleibt bei PrivacyBee. Kein Cookie-Banner, keine Indexierung, keine behauptete Rechtskonformität. Siehe ADR-0213. Production-Beweis entsteht erst nach Technical-Lead-Merge.
+**PrivacyBee integration 1 (PR #579 gemergt, Production live geprüft):** `/privacy` und `/impressum` binden die offiziellen Widgets von `app.privacybee.io` nur, wenn der Request-Host exakt `jetnity.com` ist und die geprüfte Aktivierung gilt. Ein Server-Kill-Switch `PRIVACYBEE_KILL_SWITCH=aus` entfernt die Scripts. Localhost und Preview bekommen keinen Vendor-Script. Der Inhalt bleibt bei PrivacyBee. Kein Cookie-Banner, keine Indexierung, keine behauptete Rechtskonformität. Siehe ADR-0213. Production-Beweis für beide Widgets und Rücknavigation auf Runtime-Baseline `39eeaa1de87fc396b080b293c6c97b4a5e397640` siehe `docs/PRIVACYBEE_INTEGRATION_1_STATUS_2026-09-27.md`.
 
 `vercel.json` enthält seit Phase 1.1 **keine** Cron-Jobs mehr. Die vier vorherigen Jobs zeigten ausschließlich auf Alt-Endpunkte und sind entfernt.
 
