@@ -1,74 +1,72 @@
 # Jetnity – V1 Account Erasure 1 STATUS
 
 Stand: 27. September 2026  
-Status: **DENO-BUNDLER-KORREKTUR UMGESETZT / DEVELOPMENT-DEPLOY UND NACHWEIS WEITER OFFEN / DRAFT / NOT PASS / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD RE-REVIEW**
+Status: **DIREKTER DEVELOPMENT-SCHLÜSSELMODUS UMGESETZT / LIVE-NACHWEIS NICHT AUSGEFÜHRT / DRAFT / NOT PASS / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD RE-REVIEW**
 
 Issue: #588  
 Draft PR: #590  
 Branch: `feat/v1-account-erasure-1`  
 Binding task: `docs/V1_ACCOUNT_ERASURE_1_TASK_2026-09-27.md`  
-Vorheriger TL-Kommentar: `5859179668` auf abgelehntem Head `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0`  
-Diese Korrektur: Deno-Bundler auf abgelehntem Head `b9cd6b1fd86591bcc0bcccf71c2c52ac2ff89d6c`  
-Parent vor dieser Korrektur: `b9cd6b1fd86591bcc0bcccf71c2c52ac2ff89d6c`  
-Base: `main@95e9da45ceeacbc8b461541f810a7c8011d2151a` (behind 0)  
-Review head: der Commit, der diese Bundler-Korrektur und dieses Dokument enthält.
+Diese Korrektur: direkter Development-Zugang, ohne Management-PAT  
+Parent vor dieser Korrektur: `ab0d38a4c7130a648514bd0f4b518c64e27992e6`  
+Base: `main@95e9da45ceeacbc8b461541f810a7c8011d2151a` (behind 0 zum Schreibzeitpunkt des Parents)  
+Review head: der Commit, der diesen Direktmodus und dieses Dokument enthält.
 
 Cursor-Agent: **Jetnity V1 account erasure 1**, Generation 1  
 Required model: **Grok 4.7 High Fast** — bestätigt (`originalModelName=grok-4.7-high-fast`)  
 Session: `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d`
 
-Kein Ready. Kein Merge. Keine Production-Aktivierung. Kein Folgeslice. Agent-Self-Review ist kein Technical-Lead-PASS. Der Disposable-Development-Nachweis ist **nicht** bestanden.
+Kein Ready. Kein Merge. Keine Production-Aktivierung. Kein Folgeslice. Agent-Self-Review ist kein Technical-Lead-PASS. Der Disposable-Development-Nachweis ist **nicht** gelaufen und **nicht** 11/11.
 
 ---
 
-## 1. Bundler-Korrektur
+## 1. Direkter Development-Zugang
 
-Der unabhängige Development-Deploy des Heads `b9cd6b1f` ist vor der Aktivierung am Deno-Bundler gescheitert:
+`lib/account/kontoloeschung-direkt.ts` entscheidet vor jedem Netzaufruf.
 
-`Module not found ".../lib/account/kontoloeschung-vertrag". Maybe add a '.ts' extension at lib/account/kontoloeschung-ausfuehrung.ts`
+Direkter Modus nur, wenn alle Bedingungen gelten:
 
-Live-Readback danach: Development Edge Functions leer, keine Function-Version, keine Production-Mutation.
+- `SUPABASE_PROJECT_REF` ist die Development-Konstante `ENTWICKLUNGS_PROJEKT_REF`
+- `NEXT_PUBLIC_SUPABASE_URL` ist exakt `https://` plus dieser Ref plus `.supabase.co`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` und `SUPABASE_SERVICE_ROLE_KEY` sind beide gesetzt
+- Ref und URL sind nicht das Production-Projekt
 
-Korrektur, ohne die Sicherheitslogik zu kopieren:
+Dann ruft der Nachweis `ziel()`, `projektSchluessel()` und `api.supabase.com` nicht auf und verlangt `SUPABASE_ACCESS_TOKEN` nicht. Die Schlüssel bleiben im Prozess. Sie stehen nicht im Bericht, nicht in Fehlermeldungen und nicht in Dateien. `nachweisGrund` lässt nur eine feste Allowlist durch; jeder andere Text, auch ein Schlüssel, wird `ausnahme`.
 
-- `lib/account/kontoloeschung-ausfuehrung.ts` importiert `./kontoloeschung-vertrag.ts`.
-- Die Function-Einstiege importierten die gemeinsamen Dateien bereits mit `.ts`.
-- `kontoloeschung-speicher.ts` und `kontoloeschung-vertrag.ts` haben keine relativen Importe.
-- `tsconfig.json` setzt `allowImportingTsExtensions` neben dem bestehenden `noEmit`. `npm run typecheck` bleibt grün. Next importiert die Ausführungsdatei nicht.
-- `supabase/config.toml` bleibt `[functions.account-delete-v1] verify_jwt = true`.
-- Production bleibt in `loeschUmgebungErlaubt` und in der Function geschlossen.
+Geschlossen, bevor das Netz gefragt wird:
 
-Lokaler Nachweis des Graphen: `deno bundle --node-modules-dir=none` auf `supabase/functions/account-delete-v1/index.ts` endet mit Exit 0, 71 Module. Das ist kein Deploy und kein Disposable-Nachweis.
+- nur einer der beiden Schlüssel: `direkt_unvollstaendig`
+- Production-Ref oder Production-URL: `produktion`
+- anderer Ref: `projekt_ref`
+- andere URL: `url_abweichung`
 
-`deno check` derselben Datei meldet weiterhin fünf `TS2345` auf den Supabase-Client-Generics in `index.ts`. Das ist nicht der gemeldete Module-not-found-Fehler. Dieser Slice ändert die Client-Signaturen nicht.
+Ohne beide Schlüssel bleibt der bisherige Management-PAT-Weg. Ein direkter Lauf prüft danach `GET /auth/v1/admin/users` gegen genau diese Development-URL. Antwort ungleich 200 ist `auth_admin`, noch bevor Fixtures entstehen.
 
-Dieser Agent hat die Function nicht deployt. Der Management-Zugriff dieses Laufs bleibt 401. Die Function-URL wurde in diesem Korrekturlauf nicht erneut aufgerufen.
+Tabellen, Profile, Zähler und `security_events` laufen dann über REST mit dem Service-Role-Schlüssel. `schema_kaskade` ist in diesem Modus die nach der Löschung beobachtete Kaskade, nicht ein Lesezugriff auf `pg_constraint`. Der Management-Weg liest die Fremdschlüssel weiter per SQL.
 
-## 2. R1 — Development-Nachweis: nicht ausgeführt
+## 2. Live-Nachweis
 
-Der frühere Deploy-Versuch dieses Agenten endete mit HTTP 401, die Function-URL mit 404, der Nachweis mit `management_401`. Es wurde kein Disposable-User, kein Bucket und keine Policy angelegt. Der spätere authentifizierte Deploy ist am Bundler gescheitert, bevor eine Version existierte.
+Dieser Agent hat `scripts/account/kontoloeschung-nachweis.ts` nicht ausgeführt. Es gibt keinen neuen 11/11-Beleg. Der frühere anonyme Fall bleibt der einzige ausgeführte Live-Fall. Die Function auf Development wurde hier nicht neu deployt. Production wurde nicht gelesen und nicht verändert.
 
-R1 ist **nicht** bestanden. Dieses Dokument meldet keinen PASS.
+Rest aus dem Direktmodus: ohne Management-SQL legt der Lauf keine Insert-Policy an. Lehnt Storage den Upload der Nutzersitzung ab, endet der Lauf mit `speicher_policy`. Das Aufräumen der bis dahin entstandenen Fixtures läuft trotzdem. Der Management-Weg erzeugt die Policy weiterhin.
 
 ## 3. R2 und R3 bleiben
 
-`loeschUmgebungErlaubt` entscheidet anhand der konfigurierten `NEXT_PUBLIC_SUPABASE_URL`. Production, ein fremdes Hosted-Projekt und eine fehlende URL rendern den Löschabschnitt nicht. Die Function wurde nicht production-fähig gemacht.
-
-Die Oberfläche spricht nur vom Jetnity-Konto und den dazu gespeicherten Reisen, Reisenden und Besuchen. Nach einem begonnenen Remove oder einem Fehlschlag nach erfolgreichem Storage bleibt die Klasse `teilweise_entfernt`. Ein Fehler vor dem ersten Remove bleibt `aufraeumen_fehlgeschlagen`.
+Die Löschfläche hängt an der konfigurierten Projekt-URL. Production bleibt in der Fläche und in der Function geschlossen. `verify_jwt` bleibt true. Die Copy bleibt auf das Jetnity-Konto und die gespeicherten Reisen, Reisenden und Besuche begrenzt. `teilweise_entfernt` bleibt die Klasse nach einem begonnenen Remove.
 
 ## 4. Lokale Gates auf diesem Korrekturbaum
 
 | Gate | Ergebnis |
 | --- | --- |
-| `deno bundle` der Function | PASS – Exit 0, 71 Module |
-| `npm test` | PASS – **4000** Tests, 0 fail. Ein früherer Lauf scheiterte nur an `supabase/.temp/cli-latest`; das Verzeichnis wurde entfernt, der Lauf danach war grün |
+| `npm test` | PASS – **4003** Tests, 0 fail |
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS – 0 errors, **145** Warnings, keine in den Löschdateien |
 | `npm run build` | PASS – `○ /konto-geloescht` |
 | Hygiene `dead` / `exports` / `deps` / `api-schutz` / `schema-bezug` | PASS. Vorbestehender Hinweis `admin_account_counts_v1` bleibt außerhalb |
+| Zusätzlicher `tsc` über den Nachweis und den Direktmodus | PASS |
 
-Exact-Head-CI und Vercel Preview gelten erst für den Commit dieses Dokuments. Ältere Ready-Previews sind nicht dieser Head. Grün wäre keine Merge-Begründung.
+Exact-Head-CI und Vercel Preview gelten erst für den Commit dieses Dokuments. Ältere grüne Läufe, einschließlich CI `36347549727` und Preview `dpl_9CtyPwaiHRYr4DePfCuJmpJJxpgi` auf `ab0d38a4`, sind nicht dieser Head.
 
 ## 5. Browser
 
-Diese Korrektur ändert keine Oberfläche. Die engere Copy und das Ausblenden auf Production bleiben die bereits reviewten Stände. Es gibt keinen neuen Browser-Lauf.
+Diese Korrektur ändert keine Oberfläche. Es gibt keinen neuen Browser-Lauf.

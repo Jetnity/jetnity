@@ -2,13 +2,16 @@
 //
 // Development-only Nachweis für die V1-Kontolöschung.
 // Läuft ausschließlich gegen den bestätigten Development-Branch.
+// Mit beiden Branch-Schlüsseln und exakt der Development-URL spricht der Lauf
+// Auth, REST und Storage direkt an und ruft die Management API nicht auf.
 // Ausgabe ist eine Allowlist aus Ja/Nein-Feldern. Keine Tokens, Pfade,
 // Adressen oder Schlüssel.
 
 import { randomBytes, createHmac, randomUUID } from 'node:crypto'
 
 import { projektSchluessel, ziel } from '../auth/ziel'
-import { ENTWICKLUNGS_PROJEKT_REF, PRODUKTIONS_PROJEKT_REF } from '../../lib/account/kontoloeschung-vertrag'
+import { zugangAufloesen, nachweisGrund, type Zugang } from '../../lib/account/kontoloeschung-direkt'
+import { ENTWICKLUNGS_PROJEKT_REF } from '../../lib/account/kontoloeschung-vertrag'
 
 const BUCKET = 'jetnity-erasure-proof'
 const API = 'https://api.supabase.com/v1'
@@ -61,17 +64,6 @@ class Abbruch extends Error {
 
 function ende(bericht: Bericht): never {
   throw new Abbruch(bericht)
-}
-
-function grundSicher(text: string): string {
-  if (!/^[a-z0-9_]{1,40}$/.test(text)) return 'ausnahme'
-  return text
-}
-
-function grundAusFehler(text: string): string {
-  if (text === 'SUPABASE_ACCESS_TOKEN fehlt' || text === 'SUPABASE_PROJECT_REF fehlt') return 'token_fehlt'
-  if (text.includes('(401)') || text.includes('HTTP 401')) return 'management_401'
-  return grundSicher(text)
 }
 
 function uuid(wert: string): boolean {
@@ -140,9 +132,10 @@ function zahl(wert: unknown): number | null {
   return null
 }
 
+const TABELLEN = new Set(['profiles', 'trips', 'account_travellers', 'account_visits', 'security_events'])
+
 async function zaehlen(ref: string, token: string, tabelle: string, id: string): Promise<number> {
-  const erlaubt = new Set(['profiles', 'trips', 'account_travellers', 'account_visits', 'security_events'])
-  if (!erlaubt.has(tabelle)) throw new Error('tabelle')
+  if (!TABELLEN.has(tabelle)) throw new Error('tabelle')
   const zeilen = await sql(
     ref,
     token,
@@ -151,6 +144,119 @@ async function zaehlen(ref: string, token: string, tabelle: string, id: string):
   const n = zahl(zeilen[0])
   if (n === null) throw new Error('zahl')
   return n
+}
+
+function dienstKopf(geheim: string): Record<string, string> {
+  return { apikey: geheim, Authorization: `Bearer ${geheim}` }
+}
+
+async function tabelleZaehlen(kanal: Zugang, tabelle: string, id: string): Promise<number> {
+  if (kanal.modus === 'management') return zaehlen(kanal.ref, kanal.token, tabelle, id)
+  if (!TABELLEN.has(tabelle) || !uuid(id)) throw new Error('tabelle')
+  const res = await fetch(`${kanal.url}/rest/v1/${tabelle}?user_id=eq.${id}&select=user_id`, {
+    method: 'HEAD',
+    headers: { ...dienstKopf(kanal.geheim), Prefer: 'count=exact' },
+  })
+  if (res.status !== 200 && res.status !== 206 && res.status !== 416) throw new Error('zahl')
+  const kopf = res.headers.get('content-range') ?? ''
+  const treffer = kopf.match(/\/(\d+)$/)
+  if (!treffer) throw new Error('zahl')
+  return Number(treffer[1])
+}
+
+async function tabellenLesbar(kanal: Zugang): Promise<boolean> {
+  for (const tabelle of TABELLEN) {
+    const res = await fetch(`${kanal.url}/rest/v1/${tabelle}?select=user_id&limit=1`, {
+      headers: dienstKopf(kanal.geheim),
+    })
+    await res.arrayBuffer()
+    if (!res.ok) return false
+  }
+  return true
+}
+
+async function profilSchreiben(kanal: Zugang, id: string) {
+  if (!uuid(id)) throw new Error('id')
+  if (kanal.modus === 'management') {
+    await sql(
+      kanal.ref,
+      kanal.token,
+      `insert into public.profiles (user_id, display_name, role, status)
+       values (${zitat(id)}, 'Nachweis', 'user', 'active')
+       on conflict (user_id) do nothing`,
+    )
+    return
+  }
+  const res = await fetch(`${kanal.url}/rest/v1/profiles`, {
+    method: 'POST',
+    headers: {
+      ...dienstKopf(kanal.geheim),
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=ignore-duplicates',
+    },
+    body: JSON.stringify({ user_id: id, display_name: 'Nachweis', role: 'user', status: 'active' }),
+  })
+  if (![200, 201, 204, 409].includes(res.status)) throw new Error('profil')
+}
+
+async function ereignisseEntfernen(kanal: Zugang, id: string) {
+  if (!uuid(id)) return
+  if (kanal.modus === 'management') {
+    await sql(kanal.ref, kanal.token, `delete from public.security_events where user_id = ${zitat(id)}`).catch(
+      () => undefined,
+    )
+    return
+  }
+  await fetch(`${kanal.url}/rest/v1/security_events?user_id=eq.${id}`, {
+    method: 'DELETE',
+    headers: dienstKopf(kanal.geheim),
+  }).catch(() => undefined)
+}
+
+async function bucketAnlegen(kanal: Zugang) {
+  if (kanal.modus === 'management') {
+    await sql(
+      kanal.ref,
+      kanal.token,
+      `insert into storage.buckets (id, name, public)
+       values ('${BUCKET}', '${BUCKET}', false)
+       on conflict (id) do nothing;
+       drop policy if exists jetnity_erasure_proof_insert on storage.objects;
+       create policy jetnity_erasure_proof_insert on storage.objects
+         for insert to authenticated
+         with check (
+           bucket_id = '${BUCKET}'
+           and (storage.foldername(name))[1] = (select auth.uid())::text
+         );`,
+    )
+    return
+  }
+  // Ohne Management-SQL gibt es hier keine Insert-Policy. Ein Upload mit der
+  // Nutzersitzung, den Storage ablehnt, endet als `speicher_policy`.
+  const res = await fetch(`${kanal.url}/storage/v1/bucket`, {
+    method: 'POST',
+    headers: { ...dienstKopf(kanal.geheim), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: BUCKET, name: BUCKET, public: false }),
+  })
+  if (![200, 201, 409].includes(res.status)) throw new Error('bucket')
+}
+
+async function bucketEntfernen(kanal: Zugang) {
+  if (kanal.modus === 'management') {
+    await sql(
+      kanal.ref,
+      kanal.token,
+      `drop policy if exists jetnity_erasure_proof_insert on storage.objects;
+       delete from storage.buckets where id = '${BUCKET}' and not exists (
+         select 1 from storage.objects where bucket_id = '${BUCKET}'
+       );`,
+    ).catch(() => undefined)
+    return
+  }
+  await fetch(`${kanal.url}/storage/v1/bucket/${BUCKET}`, {
+    method: 'DELETE',
+    headers: dienstKopf(kanal.geheim),
+  }).catch(() => undefined)
 }
 
 async function funktion(
@@ -223,21 +329,15 @@ async function nutzerAnlegen(url: string, anon: string, geheim: string): Promise
   return { id, email, password }
 }
 
-async function nutzerEntfernen(url: string, anon: string, geheim: string, ref: string, token: string, id: string) {
+async function nutzerEntfernen(kanal: Zugang, id: string) {
   if (!uuid(id)) return
-  await sql(ref, token, `delete from public.security_events where user_id = ${zitat(id)}`).catch(() => undefined)
-  await auth(url, anon, geheim, `/auth/v1/admin/users/${id}`, 'DELETE')
+  await ereignisseEntfernen(kanal, id)
+  await auth(kanal.url, kanal.anon, kanal.geheim, `/auth/v1/admin/users/${id}`, 'DELETE')
 }
 
-async function graphAnlegen(url: string, anon: string, access: string, ref: string, token: string, id: string) {
-  await sql(
-    ref,
-    token,
-    `insert into public.profiles (user_id, display_name, role, status)
-     values (${zitat(id)}, 'Nachweis', 'user', 'active')
-     on conflict (user_id) do nothing`,
-  )
-  const reise = await auth(url, anon, anon, '/rest/v1/rpc/reise_anlegen', 'POST', {
+async function graphAnlegen(kanal: Zugang, access: string, id: string) {
+  await profilSchreiben(kanal, id)
+  const reise = await auth(kanal.url, kanal.anon, kanal.anon, '/rest/v1/rpc/reise_anlegen', 'POST', {
     _reise: {
       client_ref: `proof-${id.slice(0, 8)}`,
       title: 'Nachweis',
@@ -264,13 +364,13 @@ async function graphAnlegen(url: string, anon: string, access: string, ref: stri
     },
   }, access)
   if (reise.status !== 200 && reise.status !== 201) throw new Error('reise')
-  const reisende = await auth(url, anon, anon, '/rest/v1/account_travellers', 'POST', {
+  const reisende = await auth(kanal.url, kanal.anon, kanal.anon, '/rest/v1/account_travellers', 'POST', {
     user_id: id,
     client_ref: randomUUID(),
     label: 'Nachweis',
   }, access)
   if (reisende.status !== 200 && reisende.status !== 201 && reisende.status !== 204) throw new Error('reisende')
-  const besuch = await auth(url, anon, anon, '/rest/v1/rpc/account_visit_bestaetigen', 'POST', {
+  const besuch = await auth(kanal.url, kanal.anon, kanal.anon, '/rest/v1/rpc/account_visit_bestaetigen', 'POST', {
     _place_id: null,
     _country_code: 'CH',
     _jahr: null,
@@ -282,85 +382,72 @@ async function graphAnlegen(url: string, anon: string, access: string, ref: stri
 
 async function main() {
   const bericht: Bericht = { ...LEER }
-  const ref = process.env.SUPABASE_PROJECT_REF ?? ''
-  if (ref !== ENTWICKLUNGS_PROJEKT_REF || ref === PRODUKTIONS_PROJEKT_REF) {
-    bericht.grund = 'projekt_ref'
-    ende(bericht)
+  const env = {
+    SUPABASE_PROJECT_REF: process.env.SUPABASE_PROJECT_REF,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   }
-  bericht.entwicklung = true
-  const url = `https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`
-  const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-  if (envUrl && envUrl !== url) {
-    bericht.grund = 'url_abweichung'
-    ende(bericht)
-  }
-
-  let token = ''
-  let anon = ''
-  let geheim = ''
+  let kanal: Zugang | null = null
   const erzeugt: string[] = []
   try {
-    const zielRef = await ziel()
-    if (zielRef.ref !== ENTWICKLUNGS_PROJEKT_REF) {
-      bericht.grund = 'projekt_ref'
-      ende(bericht)
-    }
-    token = zielRef.token
-    const schluessel = await projektSchluessel(zielRef)
-    anon = schluessel.anon
-    geheim = schluessel.geheim
+    kanal = await zugangAufloesen(env, async () => {
+      const zielRef = await ziel()
+      if (zielRef.ref !== ENTWICKLUNGS_PROJEKT_REF) throw new Error('projekt_ref')
+      const schluessel = await projektSchluessel(zielRef)
+      return { anon: schluessel.anon, geheim: schluessel.geheim, token: zielRef.token }
+    })
+    bericht.entwicklung = true
+    const { url, anon, geheim } = kanal
 
-    const kaskade = await sql(
-      ref,
-      token,
-      `select c.conrelid::regclass::text as tabelle, c.confdeltype as aktion
-       from pg_constraint c
-       where c.contype = 'f'
-         and c.confrelid = 'auth.users'::regclass
-         and c.conrelid::regclass::text in (
-           'profiles', 'public.profiles',
-           'trips', 'public.trips',
-           'account_travellers', 'public.account_travellers',
-           'account_visits', 'public.account_visits'
-         )`,
-    )
-    const tabellen = new Set(
-      kaskade
-        .filter((zeile) => zeile && typeof zeile === 'object' && (zeile as { aktion?: string }).aktion === 'c')
-        .map((zeile) => String((zeile as { tabelle?: string }).tabelle).replace(/^public\./, '')),
-    )
-    bericht.schema_kaskade =
-      tabellen.has('profiles') &&
-      tabellen.has('trips') &&
-      tabellen.has('account_travellers') &&
-      tabellen.has('account_visits')
-    const spalte = await sql(
-      ref,
-      token,
-      `select count(*)::int as n
-       from information_schema.columns
-       where table_schema = 'public' and table_name = 'security_events' and column_name = 'user_id'`,
-    )
-    bericht.security_events_spalte = zahl(spalte[0]) === 1
-    if (!bericht.schema_kaskade || !bericht.security_events_spalte) {
-      bericht.grund = 'schema'
-      ende(bericht)
+    if (kanal.modus === 'direkt') {
+      const admin = await auth(url, anon, geheim, '/auth/v1/admin/users?page=1&per_page=1', 'GET')
+      if (admin.status !== 200) throw new Error('auth_admin')
+      bericht.security_events_spalte = await tabellenLesbar(kanal)
+      if (!bericht.security_events_spalte) {
+        bericht.grund = 'schema'
+        ende(bericht)
+      }
+    } else {
+      const kaskade = await sql(
+        kanal.ref,
+        kanal.token,
+        `select c.conrelid::regclass::text as tabelle, c.confdeltype as aktion
+         from pg_constraint c
+         where c.contype = 'f'
+           and c.confrelid = 'auth.users'::regclass
+           and c.conrelid::regclass::text in (
+             'profiles', 'public.profiles',
+             'trips', 'public.trips',
+             'account_travellers', 'public.account_travellers',
+             'account_visits', 'public.account_visits'
+           )`,
+      )
+      const tabellen = new Set(
+        kaskade
+          .filter((zeile) => zeile && typeof zeile === 'object' && (zeile as { aktion?: string }).aktion === 'c')
+          .map((zeile) => String((zeile as { tabelle?: string }).tabelle).replace(/^public\./, '')),
+      )
+      bericht.schema_kaskade =
+        tabellen.has('profiles') &&
+        tabellen.has('trips') &&
+        tabellen.has('account_travellers') &&
+        tabellen.has('account_visits')
+      const spalte = await sql(
+        kanal.ref,
+        kanal.token,
+        `select count(*)::int as n
+         from information_schema.columns
+         where table_schema = 'public' and table_name = 'security_events' and column_name = 'user_id'`,
+      )
+      bericht.security_events_spalte = zahl(spalte[0]) === 1
+      if (!bericht.schema_kaskade || !bericht.security_events_spalte) {
+        bericht.grund = 'schema'
+        ende(bericht)
+      }
     }
 
-    await sql(
-      ref,
-      token,
-      `insert into storage.buckets (id, name, public)
-       values ('${BUCKET}', '${BUCKET}', false)
-       on conflict (id) do nothing;
-       drop policy if exists jetnity_erasure_proof_insert on storage.objects;
-       create policy jetnity_erasure_proof_insert on storage.objects
-         for insert to authenticated
-         with check (
-           bucket_id = '${BUCKET}'
-           and (storage.foldername(name))[1] = (select auth.uid())::text
-         );`,
-    )
+    await bucketAnlegen(kanal)
 
     const zielNutzer = await nutzerAnlegen(url, anon, geheim)
     const fremd = await nutzerAnlegen(url, anon, geheim)
@@ -372,8 +459,8 @@ async function main() {
     const mfaToken = await anmelden(url, anon, mfaNutzer.email, mfaNutzer.password)
     if (!zielToken || !fremdToken || !mfaToken) throw new Error('anmeldung')
 
-    await graphAnlegen(url, anon, zielToken, ref, token, zielNutzer.id)
-    await graphAnlegen(url, anon, fremdToken, ref, token, fremd.id)
+    await graphAnlegen(kanal, zielToken, zielNutzer.id)
+    await graphAnlegen(kanal, fremdToken, fremd.id)
     const zielEreignis = await auth(url, anon, geheim, '/rest/v1/security_events', 'POST', {
       type: 'account_erasure_proof',
       user_id: zielNutzer.id,
@@ -399,6 +486,7 @@ async function main() {
         },
         body: 'proof',
       })
+      if (res.status === 401 || res.status === 403) throw new Error('speicher_policy')
       if (!res.ok) throw new Error('upload')
     }
     await hochladen(zielToken, zielNutzer.id)
@@ -413,7 +501,7 @@ async function main() {
     const ohne = await funktion(url, anon, null, 'KONTO LÖSCHEN')
     bericht.sitzung_fehlt = ohne === 'nicht_angemeldet' || ohne === 'unbekannt'
     const falschesPasswort = await anmelden(url, anon, zielNutzer.email, 'falsch-Aa1!-passwort')
-    bericht.passwort_falsch = falschesPasswort === null && (await zaehlen(ref, token, 'profiles', zielNutzer.id)) === 1
+    bericht.passwort_falsch = falschesPasswort === null && (await tabelleZaehlen(kanal, 'profiles', zielNutzer.id)) === 1
 
     const einschreiben = await auth(url, anon, anon, '/auth/v1/factors', 'POST', {
       factor_type: 'totp',
@@ -433,11 +521,11 @@ async function main() {
     bericht.mfa_umgehung_verweigert = umgangen === 'mfa_erforderlich' && nochDa.status === 200
     if (!bericht.mfa_umgehung_verweigert) throw new Error('mfa_umgehung')
 
-    const fremdProfileVorher = await zaehlen(ref, token, 'profiles', fremd.id)
-    const fremdReiseVorher = await zaehlen(ref, token, 'trips', fremd.id)
-    const fremdReisendeVorher = await zaehlen(ref, token, 'account_travellers', fremd.id)
-    const fremdBesuchVorher = await zaehlen(ref, token, 'account_visits', fremd.id)
-    const fremdEreignisVorher = await zaehlen(ref, token, 'security_events', fremd.id)
+    const fremdProfileVorher = await tabelleZaehlen(kanal, 'profiles', fremd.id)
+    const fremdReiseVorher = await tabelleZaehlen(kanal, 'trips', fremd.id)
+    const fremdReisendeVorher = await tabelleZaehlen(kanal, 'account_travellers', fremd.id)
+    const fremdBesuchVorher = await tabelleZaehlen(kanal, 'account_visits', fremd.id)
+    const fremdEreignisVorher = await tabelleZaehlen(kanal, 'security_events', fremd.id)
 
     const frisch = await anmelden(url, anon, zielNutzer.email, zielNutzer.password)
     if (!frisch) throw new Error('reauth')
@@ -445,12 +533,13 @@ async function main() {
     if (geloescht !== 'geloescht') throw new Error('loeschung')
 
     bericht.speicher_entfernt = (await speicherZahl(url, geheim, zielNutzer.id)) === 0
-    bericht.security_event_entfernt = (await zaehlen(ref, token, 'security_events', zielNutzer.id)) === 0
+    bericht.security_event_entfernt = (await tabelleZaehlen(kanal, 'security_events', zielNutzer.id)) === 0
     bericht.graph_kaskade =
-      (await zaehlen(ref, token, 'profiles', zielNutzer.id)) === 0 &&
-      (await zaehlen(ref, token, 'trips', zielNutzer.id)) === 0 &&
-      (await zaehlen(ref, token, 'account_travellers', zielNutzer.id)) === 0 &&
-      (await zaehlen(ref, token, 'account_visits', zielNutzer.id)) === 0
+      (await tabelleZaehlen(kanal, 'profiles', zielNutzer.id)) === 0 &&
+      (await tabelleZaehlen(kanal, 'trips', zielNutzer.id)) === 0 &&
+      (await tabelleZaehlen(kanal, 'account_travellers', zielNutzer.id)) === 0 &&
+      (await tabelleZaehlen(kanal, 'account_visits', zielNutzer.id)) === 0
+    if (kanal.modus === 'direkt') bericht.schema_kaskade = bericht.graph_kaskade
     const wiederUser = await auth(url, anon, anon, '/auth/v1/user', 'GET', undefined, frisch)
     const wiederReise = await auth(url, anon, anon, '/rest/v1/trips', 'POST', {
       title: 'veraltet',
@@ -460,11 +549,11 @@ async function main() {
     bericht.veraltetes_token_ohne_autoritaet = wiederUser.status !== 200 && wiederReise.status !== 201
     bericht.zweite_loeschung_kein_erfolg = zweite !== 'geloescht'
     bericht.fremde_daten_unberuehrt =
-      (await zaehlen(ref, token, 'profiles', fremd.id)) === fremdProfileVorher &&
-      (await zaehlen(ref, token, 'trips', fremd.id)) === fremdReiseVorher &&
-      (await zaehlen(ref, token, 'account_travellers', fremd.id)) === fremdReisendeVorher &&
-      (await zaehlen(ref, token, 'account_visits', fremd.id)) === fremdBesuchVorher &&
-      (await zaehlen(ref, token, 'security_events', fremd.id)) === fremdEreignisVorher &&
+      (await tabelleZaehlen(kanal, 'profiles', fremd.id)) === fremdProfileVorher &&
+      (await tabelleZaehlen(kanal, 'trips', fremd.id)) === fremdReiseVorher &&
+      (await tabelleZaehlen(kanal, 'account_travellers', fremd.id)) === fremdReisendeVorher &&
+      (await tabelleZaehlen(kanal, 'account_visits', fremd.id)) === fremdBesuchVorher &&
+      (await tabelleZaehlen(kanal, 'security_events', fremd.id)) === fremdEreignisVorher &&
       (await speicherZahl(url, geheim, fremd.id)) === 1 &&
       fremdProfileVorher > 0 &&
       fremdReiseVorher > 0 &&
@@ -510,22 +599,15 @@ async function main() {
   } catch (fehler) {
     if (fehler instanceof Abbruch) throw fehler
     bericht.status = bericht.schema_kaskade ? 'fail' : 'blockiert'
-    bericht.grund = grundAusFehler(fehler instanceof Error ? fehler.message : 'ausnahme')
+    bericht.grund = nachweisGrund(fehler instanceof Error ? fehler.message : 'ausnahme')
     ende(bericht)
   } finally {
-    if (token && anon && geheim) {
+    if (kanal && kanal.anon && kanal.geheim) {
       for (const id of erzeugt) {
-        await speicherEntfernen(url, geheim, id).catch(() => undefined)
-        await nutzerEntfernen(url, anon, geheim, ref, token, id).catch(() => undefined)
+        await speicherEntfernen(kanal.url, kanal.geheim, id).catch(() => undefined)
+        await nutzerEntfernen(kanal, id).catch(() => undefined)
       }
-      await sql(
-        ref,
-        token,
-        `drop policy if exists jetnity_erasure_proof_insert on storage.objects;
-         delete from storage.buckets where id = '${BUCKET}' and not exists (
-           select 1 from storage.objects where bucket_id = '${BUCKET}'
-         );`,
-      ).catch(() => undefined)
+      await bucketEntfernen(kanal)
     }
   }
 }

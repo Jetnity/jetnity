@@ -23,6 +23,12 @@ import {
 } from '@/lib/account/kontoloeschung-client'
 import { eigeneSpeicherObjekteLoeschen, type SpeicherClient, type SpeicherEintrag } from '@/lib/account/kontoloeschung-speicher'
 import {
+  direktZugangPruefen,
+  entwicklungsUrl,
+  nachweisGrund,
+  zugangAufloesen,
+} from '@/lib/account/kontoloeschung-direkt'
+import {
   ENTWICKLUNGS_PROJEKT_REF,
   KONTO_GELOESCHT_PFAD,
   KONTO_LOESCHEN_BESTAETIGUNG,
@@ -572,14 +578,19 @@ describe('Kontolöschung – Browser', () => {
     assert.match(funktion, /eigeneSpeicherObjekteLoeschen/)
     assert.equal(funktion.includes('storage.objects'), false)
     const nachweis = quelle('../../scripts/account/kontoloeschung-nachweis.ts')
+    const direkt = quelle('./kontoloeschung-direkt.ts')
     assert.equal(nachweis.includes("'/auth/v1/factors', 'GET'"), false)
     assert.match(nachweis, /'\/auth\/v1\/factors', 'POST'/)
     assert.match(nachweis, /\/auth\/v1\/user/)
     assert.match(nachweis, /randomUUID\(\)/)
     assert.equal(nachweis.includes('delete from storage.objects'), false)
-    assert.match(nachweis, /management_401/)
-    assert.match(nachweis, /grundAusFehler/)
-    assert.equal(nachweis.includes(PRODUKTIONS_PROJEKT_REF) || nachweis.includes('PRODUKTIONS_PROJEKT_REF'), true)
+    assert.match(direkt, /management_401/)
+    assert.match(direkt, /nachweisGrund/)
+    assert.match(nachweis, /zugangAufloesen/)
+    assert.equal(direkt.includes('api.supabase.com'), false)
+    assert.equal(direkt.includes('process.env.SUPABASE_ACCESS_TOKEN'), false)
+    assert.equal(direkt.includes(PRODUKTIONS_PROJEKT_REF) || direkt.includes('PRODUKTIONS_PROJEKT_REF'), true)
+    assert.equal(funktion.includes('kontoloeschung-direkt'), false)
     assert.equal(funktion.includes('user_id:'), false)
     assert.match(seite, /Konto gelöscht/)
     assert.match(seite, /index: false/)
@@ -598,5 +609,119 @@ describe('Kontolöschung – Browser', () => {
     assert.deepEqual(importe.filter((pfad) => !pfad.endsWith('.ts')), [])
     assert.ok(importe.some((pfad) => pfad.endsWith('kontoloeschung-vertrag.ts')))
     assert.match(quelle('../../supabase/config.toml'), /\[functions\.account-delete-v1\][\s\S]*verify_jwt = true/)
+  })
+})
+
+describe('Kontolöschung Direktmodus', () => {
+  const anon = 'anon-test-material'
+  const geheim = 'service-test-material'
+  const entwicklung = {
+    SUPABASE_PROJECT_REF: ENTWICKLUNGS_PROJEKT_REF,
+    NEXT_PUBLIC_SUPABASE_URL: entwicklungsUrl(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: anon,
+    SUPABASE_SERVICE_ROLE_KEY: geheim,
+  }
+
+  test('Development-Ref, URL und beide Schlüssel öffnen den Direktmodus ohne Netz', async () => {
+    const vorher = globalThis.fetch
+    let netz = false
+    globalThis.fetch = (async () => {
+      netz = true
+      throw new Error('netz')
+    }) as typeof fetch
+    try {
+      const entscheidung = direktZugangPruefen(entwicklung)
+      assert.equal(entscheidung.modus, 'direkt')
+      const text = JSON.stringify(entscheidung)
+      assert.equal(text.includes(anon), false)
+      assert.equal(text.includes(geheim), false)
+      let management = 0
+      const zugang = await zugangAufloesen(entwicklung, async () => {
+        management += 1
+        throw new Error('management')
+      })
+      assert.equal(management, 0)
+      assert.equal(netz, false)
+      assert.equal(zugang.modus, 'direkt')
+      assert.equal(zugang.token, '')
+      assert.equal(zugang.url, entwicklungsUrl())
+    } finally {
+      globalThis.fetch = vorher
+    }
+  })
+
+  test('ein fehlender Schlüssel und Production scheitern vor dem Netz', async () => {
+    const vorher = globalThis.fetch
+    let netz = false
+    globalThis.fetch = (async () => {
+      netz = true
+      throw new Error('netz')
+    }) as typeof fetch
+    try {
+      const faelle = [
+        { ...entwicklung, SUPABASE_SERVICE_ROLE_KEY: undefined },
+        { ...entwicklung, NEXT_PUBLIC_SUPABASE_ANON_KEY: '   ' },
+        {
+          ...entwicklung,
+          SUPABASE_PROJECT_REF: PRODUKTIONS_PROJEKT_REF,
+          NEXT_PUBLIC_SUPABASE_URL: `https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`,
+        },
+        {
+          ...entwicklung,
+          NEXT_PUBLIC_SUPABASE_URL: `https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`,
+        },
+        { ...entwicklung, NEXT_PUBLIC_SUPABASE_URL: 'https://example.supabase.co' },
+        { ...entwicklung, SUPABASE_PROJECT_REF: 'aaaaaaaaaaaaaaaaaaaa' },
+        { SUPABASE_PROJECT_REF: PRODUKTIONS_PROJEKT_REF },
+      ]
+      const grunde = [
+        'direkt_unvollstaendig',
+        'direkt_unvollstaendig',
+        'produktion',
+        'produktion',
+        'url_abweichung',
+        'projekt_ref',
+        'produktion',
+      ]
+      for (let i = 0; i < faelle.length; i += 1) {
+        let management = 0
+        await assert.rejects(
+          () =>
+            zugangAufloesen(faelle[i] ?? {}, async () => {
+              management += 1
+              return { anon, geheim, token: 'management-token' }
+            }),
+          (fehler: unknown) => {
+            assert.ok(fehler instanceof Error)
+            assert.equal(fehler.message, grunde[i])
+            assert.equal(fehler.message.includes(anon), false)
+            assert.equal(fehler.message.includes(geheim), false)
+            assert.equal(fehler.message.includes('management-token'), false)
+            return true
+          },
+        )
+        assert.equal(management, 0)
+      }
+      assert.equal(netz, false)
+      assert.equal(nachweisGrund(`abgelehnt ${geheim}`), 'ausnahme')
+      assert.equal(nachweisGrund(geheim), 'ausnahme')
+      assert.equal(nachweisGrund('auth_admin'), 'auth_admin')
+    } finally {
+      globalThis.fetch = vorher
+    }
+  })
+
+  test('ohne beide Schlüssel bleibt der Management-Weg', async () => {
+    let management = 0
+    const zugang = await zugangAufloesen(
+      { SUPABASE_PROJECT_REF: ENTWICKLUNGS_PROJEKT_REF },
+      async () => {
+        management += 1
+        return { anon: 'geladen-anon', geheim: 'geladen-geheim', token: 'geladen-token' }
+      },
+    )
+    assert.equal(management, 1)
+    assert.equal(zugang.modus, 'management')
+    assert.equal(zugang.ref, ENTWICKLUNGS_PROJEKT_REF)
   })
 })
