@@ -1,7 +1,9 @@
 # Legal content preparation 1 — Status
 
 Date: 27 September 2026
-Status: **DELIVERED FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT READY / NOT MERGED**
+Status: **CORRECTION DELIVERED FOR INDEPENDENT TECHNICAL-LEAD REVIEW / NOT READY / NOT MERGED**
+Reviewed head: `ce0b8cefada1c1128ec343550110be1ec01bf2be` — CHANGES REQUIRED in #578 comment 5851644810
+Correction: R1–R5 in the same five documents. The new pushed head is stated in the #578 comment after push, not in this file.
 Logical agent: **Jetnity legal content preparation 1**
 Generation: **1** — replacement attempt after the model-binding STOP, not a new slice
 Session: `bc-efbd2a0c-d64b-4e37-b054-b7c583cabdac`
@@ -24,6 +26,7 @@ Prior stopped session, not resumed for the dossier: `bc-87b242df-9b25-49c4-b0c8-
 - Processing matrix and Preview integration specification: `docs/LEGAL_CONTENT_PREPARATION_1_REPORT_2026-09-27.md`
 - German supplement, corrected imprint, vendor correction brief, decision list: `docs/LEGAL_CONTENT_PREPARATION_1_DRAFTS_2026-09-27.md`
 - This status, the handoff, and the self-review.
+- Correction of R1–R5 from #578 comment 5851644810, mapped in the handoff and the self-review.
 
 ## Not done, on purpose
 
@@ -35,9 +38,11 @@ Prior stopped session, not resumed for the dossier: `bc-87b242df-9b25-49c4-b0c8-
 
 ## Tests performed
 
-- Diff scope is limited to the five new documents. Checked after the commit in the delivery comment.
-- Cited repository paths and line numbers were checked against the seed tree: 37 files, every cited line number in range.
-- Public PrivacyBee pages listed in the drafts file were fetched read-only on 27 September 2026.
+- Diff scope after the correction commit: only the five named documents. Confirmed in the #578 comment. The TASK and `docs/ACTIVE_WORK_STATUS.md` stay unmodified.
+- Cited repository paths and line numbers were range-checked again after the correction. The result is in the #578 comment. A line that exists is not proof that the sentence’s reading is right.
+- Trailing-whitespace check on the five documents. Result in the #578 comment.
+- `origin/main` re-fetched before the correction handoff. Result in the #578 comment.
+- Public PrivacyBee pages listed in the drafts file were fetched read-only on 27 September 2026, during the first delivery. They were not fetched again for this correction. The Technical Lead independently read the generated-text article, Diensterkennung, and public ALB §§4.3–4.4 the same day. This correction follows those readings. It does not claim a new fetch or acceptance of the terms.
 
 ## Tests not performed
 
@@ -48,10 +53,12 @@ Prior stopped session, not resumed for the dossier: `bc-87b242df-9b25-49c4-b0c8-
 
 ## Known gaps
 
-- Legal basis, retention, region, and transfer tools stay unknown.
-- Production model activation stays unknown. Historical `docs/MODELL.md` is not a fresh env read.
-- Hosted presence of later traveller and visit tables is unresolved against migration headers.
+- Legal basis, retention, recipients/transfer, and vendor-contract facts stay unresolved. Leaving them out of the visitor article does not close them. Publication still needs their approval. Report §5.3.
+- Production `JETNITY_MODELL_AKTIV` was not re-read. The last recorded state is not activated. The conditional visitor variant stays outside the default article until a fresh read exists.
+- `account_visits` is last recorded as applied. Traveller and account-registry tables are in the merged export closure. Neither statement is a fresh catalog read. The old migration headers are not treated as proof of non-application.
 - Account-specific AVV/TOM/TIA was not in the evidence.
+- Cookie banner and analytics are not launch prerequisites. The banner stays off unless a later, real non-essential tracker requires it.
+- The already approved PrivacyBee continuation at CHF 59.35/year is not a new approval item.
 - `/terms` remains separate.
 
 ## First unfinished action
