@@ -105,7 +105,7 @@ async function stepUp(token,id,secret) {
 function claims(token) {return JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString());}
 async function preflight() {
   must(process.env.SUPABASE_PROJECT_REF===DEV && pat,'existing_authority_missing_or_wrong_target');
-  const b=await management(`/branches/${DEV}`);must(b.status===200 && b.data?.project_ref===DEV,'development_branch_guard');
+  const b=await management(`/branches/${DEV}`);report.observations.branch_preflight={status:b.status,fields:b.data && typeof b.data==='object'?Object.keys(b.data):[],project_ref_matches:b.data?.project_ref===DEV};must(b.status===200 && b.data?.project_ref===DEV,'development_branch_guard');
   const f=await management(`/projects/${DEV}/functions`);
   const fn=Array.isArray(f.data)?f.data.find(x=>x.slug==='account-delete-v1'):null;
   must(f.status===200 && fn?.status==='ACTIVE' && fn.version===1 && fn.verify_jwt===true && fn.ezbr_sha256===FN_HASH,'function_drift');
