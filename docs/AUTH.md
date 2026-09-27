@@ -265,7 +265,7 @@ Geprüft ist stattdessen alles, was die Registrierung ablehnt, und der gesamte W
 
 **Magic Link.** Das öffentliche Login-/Register-Formular bietet ihn nicht an. Die Admin-Anmeldung sendet einen Magic Link auf `/admin`; Zugang entscheidet danach derselbe zentrale Guard, einschliesslich AAL2. Ein Magic Link umgeht AAL2 nicht.
 
-**Der tatsächliche E-Mail-Versand.** Es gibt keinen eigenen SMTP-Server; Supabase versendet selbst und begrenzt hart auf zwei E-Mails je Stunde. Der credentialed Production-Snapshot vom 18. September 2026 bestätigt `rate_limit_email_sent = 2` und löst das nicht. Für den Launch reicht das nicht ([ROADMAP.md](../ROADMAP.md)). Das bleibt der getrennte P0-Blocker.
+**Der tatsächliche E-Mail-Versand.** Im ursprünglichen Auth-Verifikationslauf vom 18. September 2026 war kein Production-SMTP vorhanden; Supabase versendete selbst und `rate_limit_email_sent = 2` war der bestätigte P0-Blocker. **Update 27. September 2026:** Gate #582 hat Production Custom SMTP über die dedizierte Infomaniak-Mailbox `no-reply@jetnity.com` aktiviert (`mail.infomaniak.com:587`, STARTTLS) und ohne neue laufende Kosten end-to-end verifiziert. Passwort-Reset und Signup-Bestätigung wurden zugestellt; nach dem Callback-Fix #583 bestand der physische iPhone-Erstlade-Retest ohne Refresh. SMTP-Zugangsdaten bleiben geheim und stehen nicht im Repository.
 
 ---
 
@@ -318,8 +318,8 @@ Der Vorgang selbst, seine Reihenfolge und die 23 geprüften Fälle stehen in [do
 | Punkt | Stand |
 | --- | --- |
 | Google und Apple sind in beiden Formularen als Schaltfläche sichtbar, auf dem Branch aber aus. Ein Klick endet in einer Fehlermeldung von Supabase | festgehalten, nicht behoben – Einschalten braucht Client-ID und Secret beider Anbieter, also eine Handlung ausserhalb dieses Repositories |
-| kein ausgelieferter Ursprung in `additional_redirect_urls` | offen für den Branch, Abschnitt 4. Production ist live localhost + leere Allowlist und **nicht launch-ready** (P2, Write-gated). Abschnitt 12 |
-| kein eigener SMTP-Server; zwei E-Mails je Stunde | offen. **P0 vor dem Launch.** Production bestätigt `rate_limit_email_sent = 2`; das ersetzt keinen production-fähigen SMTP |
+| kein ausgelieferter Ursprung in `additional_redirect_urls` | **Production geschlossen durch Gate #581.** Site URL ist `https://jetnity.com`; erlaubte Redirects sind `https://jetnity.com/auth/callback**` und `https://jetnity.com/auth/update-password`. Development/config.toml bleibt davon getrennt. |
+| kein eigener SMTP-Server; zwei E-Mails je Stunde | **Production geschlossen durch Gate #582.** Custom SMTP über Infomaniak ist aktiv; Zustellung und Auth-Redirects wurden verifiziert. Der historische 2/h-Snapshot beschreibt nur den Zustand vor #582. |
 | `auth_db_connections_absolute` (Performance-Advisor) | Kapazitätsplanung vor dem Launch, kein Sicherheitsbefund |
 | Production ist kein config-as-code-Ziel | Absicht. `auth:pruefen` / `auth:anwenden` verwalten nur Development. Abschnitt 12 ist ein GET-only Allowlist-Nachweis, kein Write-Pfad und kein vollständiger Abgleich |
 | Die CI-Prüfung braucht `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` als Repository-Secrets | fehlen sie, schlägt der Job fehl. Fail-closed, siehe Abschnitt 2 – nur ein Pull Request aus einem Fork überspringt sich |
@@ -328,6 +328,8 @@ Der Vorgang selbst, seine Reihenfolge und die 23 geprüften Fälle stehen in [do
 ---
 
 ## 12. Production-Nachweis 18. September 2026
+
+> **Historischer Snapshot.** Die URL- und SMTP-Werte dieses Abschnitts wurden am 27. September 2026 durch die separat freigegebenen Production-Gates #581 und #582 geändert. Die unveränderten Sicherheits-/MFA-Felder bleiben als damaliger Readback gültig; aktuelle Live-Evidence gewinnt.
 
 `supabase/config.toml` und `npm run auth:pruefen` beschreiben weiterhin nur den Development-Branch. Sie sind keine Production-Wahrheit.
 
@@ -349,8 +351,8 @@ Unabhängig gelesen vom Technical Lead aus CI-Job `105603875234` (Head `66ee5fe5
 | `mfa_allow_low_aal` | `false` | verifiziert |
 | `mailer_allow_unverified_email_sign_ins` | `false` | verifiziert |
 
-**Redirect.** Production hat dieselben localhost-Werte wie der Branch. Das ist kein PASS für einen ausgelieferten Ursprung. Eine Änderung dieser Werte ist ein Production-Auth-Write und gehört nicht in diesen Slice.
+**Redirect — historischer Snapshot vom 18. September 2026.** Production hatte zu diesem Zeitpunkt dieselben localhost-Werte wie der Branch. **Update 27. September 2026:** Gate #581 änderte ausschließlich die Production URL Configuration auf `https://jetnity.com` mit `https://jetnity.com/auth/callback**` und `https://jetnity.com/auth/update-password`; Readback und Live-Routen wurden verifiziert. Der Development-Branch bleibt config-as-code-Schreibziel.
 
-**SMTP.** Es gibt weiterhin keinen production-fähigen SMTP. `rate_limit_email_sent = 2` bestätigt nur die vorhandene Decke. Das bleibt der getrennte P0-Launch-Blocker (Abschnitt 8 und 11).
+**SMTP — historischer Snapshot vom 18. September 2026.** Zu diesem Zeitpunkt gab es keinen production-fähigen SMTP. **Update 27. September 2026:** Gate #582 aktivierte Production Custom SMTP über Infomaniak mit `no-reply@jetnity.com`; Reset- und Bestätigungs-E-Mail wurden zugestellt. Nach PR #583 bestand der physische Erstlade-Retest des Bestätigungslinks ohne Refresh. Der P0-SMTP-Blocker ist damit technisch geschlossen. Die getrennte PrivacyBee-Rechtsgrundlagenformulierung für Infomaniak wird in Issue #585 verfolgt und ist keine SMTP-Rollback-Anweisung.
 
 **Admin-AAL2-Datenplane.** `aktuelles_admin_aal2()` ist live; die Alignment-Migration ist angewendet. Kein zweiter Apply. Siehe [docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md](QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md).
