@@ -14,6 +14,7 @@ import {
   merkeCallbackLage,
   offeneCallbackLaeufe,
   schliesseAuthCallbackAb,
+  verknuepfeCallbackSitzung,
   type CallbackAbschlussEingabe,
   type CallbackAuthClient,
 } from './callback-abschluss'
@@ -24,9 +25,13 @@ const LEERER_VERIFIER = 'invalid request: both auth code and code verifier shoul
 const jar = new Map<string, string>()
 let href = 'https://jetnity.test/register'
 const clients: Array<{ auth: { stopAutoRefresh: () => Promise<void> } }> = []
-let pkce: Array<{ codeLeer: boolean; verifierLeer: boolean }> = []
+let pkce: Array<{ codeLeer: boolean; verifierLeer: boolean; code: string }> = []
 let pkceSperre: Promise<void> | null = null
 let pkceAngekommen = false
+let userSperre: Promise<void> | null = null
+let userAngekommen = 0
+let ungueltigeCodes = new Set<string>()
+let ungueltigeTokens = new Set<string>()
 let pkceVerhalten: 'ok' | 'ungueltig' | 'netz' = 'ok'
 let userCalls = 0
 let fall = 0
@@ -156,6 +161,12 @@ function installiereFetch() {
     if (url.includes('/recover') || url.includes('/authorize') || url.includes('/logout')) return json(200, {})
     if (url.endsWith('/user') || url.includes('/user?')) {
       userCalls += 1
+      userAngekommen += 1
+      if (userSperre) await userSperre
+      const auth = authorization(init)
+      if ([...ungueltigeTokens].some((token) => auth.includes(token))) {
+        return json(401, { msg: 'invalid', error: 'invalid_token', error_description: 'invalid' })
+      }
       return json(200, user)
     }
     if (url.includes('grant_type=pkce')) {
@@ -163,9 +174,10 @@ function installiereFetch() {
       if (pkceSperre) await pkceSperre
       const codeLeer = !body?.auth_code
       const verifierLeer = !body?.code_verifier
-      pkce.push({ codeLeer, verifierLeer })
+      const authCode = typeof body?.auth_code === 'string' ? body.auth_code : ''
+      pkce.push({ codeLeer, verifierLeer, code: authCode })
       if (pkceVerhalten === 'netz') throw new TypeError('Failed to fetch')
-      if (pkceVerhalten === 'ungueltig' || codeLeer || verifierLeer) {
+      if (pkceVerhalten === 'ungueltig' || codeLeer || verifierLeer || ungueltigeCodes.has(authCode)) {
         const msg = codeLeer || verifierLeer
           ? LEERER_VERIFIER
           : 'Invalid code or code verifier'
@@ -183,6 +195,29 @@ function installiereFetch() {
   }) as unknown as typeof fetch
 }
 
+function authorization(init?: RequestInit): string {
+  const headers = init?.headers
+  if (!headers) return ''
+  if (headers instanceof Headers) return headers.get('authorization') ?? headers.get('Authorization') ?? ''
+  if (Array.isArray(headers)) {
+    const fund = headers.find(([name]) => name.toLowerCase() === 'authorization')
+    return fund ? String(fund[1]) : ''
+  }
+  const record = headers as Record<string, string>
+  return record.Authorization ?? record.authorization ?? ''
+}
+
+function token(kennzeichen: string) {
+  const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url')
+  const payload = Buffer.from(JSON.stringify({
+    exp: Math.floor(Date.now() / 1000) + 3600,
+    sub: user.id,
+    email: user.email,
+    jti: kennzeichen,
+  })).toString('base64url')
+  return `${header}.${payload}.sig`
+}
+
 function supabaseUrl() {
   fall += 1
   return `https://cb${fall}.supabase.co`
@@ -192,6 +227,7 @@ function client(url: string) {
   const cookieHeader = (globalThis as { document: { cookie: string } }).document.cookie
   merkeCallbackLage(cookieHeader, href, url)
   const erzeugt = createBrowserClient(url, 'test-anon-key', { isSingleton: false })
+  verknuepfeCallbackSitzung(url, erzeugt)
   clients.push(erzeugt)
   return erzeugt
 }
@@ -208,6 +244,10 @@ function zurueck() {
   pkce = []
   pkceSperre = null
   pkceAngekommen = false
+  userSperre = null
+  userAngekommen = 0
+  ungueltigeCodes = new Set()
+  ungueltigeTokens = new Set()
   pkceVerhalten = 'ok'
   userCalls = 0
 }
@@ -279,7 +319,9 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
     const callback = readFileSync(join(hier, '../../app/auth/callback/CallbackClient.tsx'), 'utf8')
     const marker = quelle.indexOf('merkeCallbackLage(')
     const erzeugt = quelle.indexOf('_createBrowserClient(')
+    const verknuepft = quelle.indexOf('verknuepfeCallbackSitzung(')
     assert.equal(marker >= 0 && erzeugt >= 0 && marker < erzeugt, true)
+    assert.equal(verknuepft > erzeugt, true)
     assert.equal(quelle.includes('detectSessionInUrl'), false)
     assert.equal(callback.includes('exchangeCodeForSession'), false)
     assert.equal(callback.includes('clearTimeout'), true)
@@ -624,23 +666,106 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
     zurueck()
     const url = supabaseUrl()
     await pflanze(url, 'wiederherstellung')
-    href = 'https://jetnity.test/auth/callback?code=fremde-recovery&next=%2Freisen'
+    href = 'https://jetnity.test/auth/callback?code=tl-recovery-next&next=%2Freisen'
     const sdk = client(url)
     await sdk.auth.initialize()
-    const erste = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
-    assert.deepEqual(erste, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+    assert.deepEqual(await schliesseAuthCallbackAb(eingabe(url, () => sdk)), { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
     const abmeldung = await sdk.auth.signOut({ scope: 'local' })
     assert.equal(abmeldung.error, null)
-    href = 'https://jetnity.test/auth/callback?next=%2Freisen'
-    const leer = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
-    assert.deepEqual(leer, { art: 'fehler', meldung: CALLBACK_MELDUNG_LEER })
+    href = 'https://jetnity.test/login'
     const gesetzt = await sdk.auth.setSession({
       access_token: accessToken(),
       refresh_token: 'refresh-token-value',
     })
     assert.equal(gesetzt.error, null)
-    const zweite = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
-    assert.deepEqual(zweite, { art: 'ok', ziel: '/reisen' })
+    href = 'https://jetnity.test/auth/callback?next=%2Freisen'
+    assert.deepEqual(await schliesseAuthCallbackAb(eingabe(url, () => sdk)), { art: 'ok', ziel: '/reisen' })
+    await anhalten()
+  })
+
+  test('die Passwortseite merkt keine Callback-Wiederherstellung', async () => {
+    zurueck()
+    const url = supabaseUrl()
+    await pflanze(url, 'wiederherstellung')
+    href = 'https://jetnity.test/auth/update-password?code=reset-direkt'
+    const sdk = client(url)
+    await sdk.auth.initialize()
+    assert.equal(pkce.length, 1)
+    assert.equal(new URL(href).searchParams.has('code'), false)
+    const abmeldung = await sdk.auth.signOut({ scope: 'local' })
+    assert.equal(abmeldung.error, null)
+    const gesetzt = await sdk.auth.setSession({
+      access_token: accessToken(),
+      refresh_token: 'refresh-token-value',
+    })
+    assert.equal(gesetzt.error, null)
+    href = 'https://jetnity.test/auth/callback?next=%2Freisen'
+    const ergebnis = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    assert.deepEqual(ergebnis, { art: 'ok', ziel: '/reisen' })
+    await anhalten()
+  })
+
+  test('zwei verschiedene Codes teilen sich keinen laufenden Versuch', async () => {
+    zurueck()
+    const url = supabaseUrl()
+    await pflanze(url, 'anmeldung')
+    href = 'https://jetnity.test/auth/callback?code=tl-valid-A&next=%2Freisen'
+    let freigabe: () => void = () => {}
+    pkceSperre = new Promise((resolve) => {
+      freigabe = resolve
+    })
+    const sdk = client(url)
+    const laufA = schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    for (let i = 0; i < 20 && !pkceAngekommen; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    }
+    assert.equal(pkceAngekommen, true)
+    href = 'https://jetnity.test/auth/callback?code=tl-invalid-B&next=%2Freisen'
+    ungueltigeCodes.add('tl-invalid-B')
+    const laufB = schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    assert.equal(offeneCallbackLaeufe(), 2)
+    freigabe()
+    const [a, b] = await Promise.all([laufA, laufB])
+    assert.deepEqual(a, { art: 'ok', ziel: '/reisen' })
+    assert.equal(b.art, 'fehler')
+    if (b.art === 'fehler') {
+      assert.equal(b.meldung, CALLBACK_MELDUNG_UNGUELTIG)
+      assert.equal(b.meldung.includes('tl-invalid-B'), false)
+    }
+    assert.equal(pkce.some((eintrag) => eintrag.code === 'tl-invalid-B'), true)
+    assert.equal(offeneCallbackLaeufe(), 0)
+    await anhalten()
+  })
+
+  test('zwei verschiedene Hash-Links teilen sich keinen laufenden Versuch', async () => {
+    zurueck()
+    const url = supabaseUrl()
+    href = 'https://jetnity.test/login'
+    const sdk = client(url)
+    await sdk.auth.initialize()
+    const tokenA = token('hash-a')
+    const tokenB = token('hash-b')
+    ungueltigeTokens.add(tokenB)
+    href = `https://jetnity.test/auth/callback?next=%2Freisen#access_token=${tokenA}&refresh_token=refresh-a&type=recovery`
+    const parameterA = eingabe(url, () => sdk)
+    href = `https://jetnity.test/auth/callback?next=%2Freisen#access_token=${tokenB}&refresh_token=refresh-b&type=recovery`
+    const parameterB = eingabe(url, () => sdk)
+    let freigabe: () => void = () => {}
+    userSperre = new Promise((resolve) => {
+      freigabe = resolve
+    })
+    const laufA = schliesseAuthCallbackAb(parameterA)
+    for (let i = 0; i < 20 && userAngekommen < 1; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    }
+    assert.equal(userAngekommen >= 1, true)
+    const laufB = schliesseAuthCallbackAb(parameterB)
+    assert.equal(offeneCallbackLaeufe(), 2)
+    freigabe()
+    const [a, b] = await Promise.all([laufA, laufB])
+    assert.deepEqual(a, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+    assert.equal(b.art, 'fehler')
+    assert.equal(offeneCallbackLaeufe(), 0)
     await anhalten()
   })
 

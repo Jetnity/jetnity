@@ -11,11 +11,17 @@
 //
 // Diese Funktion liest den Verifier, bevor der Client entsteht, und tauscht
 // nur, wenn die Initialisierung den Code nicht selbst verbraucht hat.
-// Entsteht der gemeinsame Client zuerst, merkt er nur die Wiederherstellung,
-// nicht den Verifier und nicht den Code. detectSessionInUrl bleibt an, damit
-// die Passwort-Rücksetzung auf /auth/update-password weiter dem SDK gehört.
-// Abgeschlossene Läufe bleiben nicht liegen. Nur ein noch laufender Versuch
-// derselben Form wird geteilt.
+// Besitz und Aufräumen:
+// - Ein laufender Versuch gehört zu seinem eigenen Code oder Hash. Der
+//   Schlüssel ist ein Fingerabdruck und wird mit dem Abschluss verworfen.
+//   Dieselbe Adresse im selben Moment teilt sich den Lauf. Ein anderer Link
+//   nicht. Ein älterer Abschluss löscht keinen neueren Code.
+// - Wiederherstellung gehört zur Sitzung dieses Versuchs, nur wenn der Client
+//   auf /auth/callback entstand. Abmelden oder eine andere Sitzung verwirft
+//   sie. Dieselbe Sitzung, auch bei frühem Abschluss oder erneutem Mounten,
+//   bleibt auf /auth/update-password. Die Passwortseite selbst merkt das
+//   nicht; ihr Code bleibt beim SDK.
+// detectSessionInUrl bleibt an.
 
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel'
 
@@ -73,36 +79,120 @@ export type CallbackAbschlussEingabe = {
 const laeufe = new Map<string, Promise<CallbackAbschluss>>()
 
 type CallbackLage = {
-  codeWarDa: boolean
   wiederherstellung: boolean
+  codeFinger: string | null
+  sitzungsFinger: string | null
 }
 
-/** Nur booleans. Kein Code, kein Verifier, kein Hash. */
+/** Fingerabdrücke, keine Codes, Verifier oder Tokens. */
 const lagen = new Map<string, CallbackLage>()
+const verknuepfteClients = new WeakSet<object>()
+
+function fingerabdruck(wert: string): string {
+  let a = 0x811c9dc5
+  let b = 0x811c9dc5 ^ 0x01000193
+  for (let i = 0; i < wert.length; i += 1) {
+    const zeichencode = wert.charCodeAt(i)
+    a ^= zeichencode
+    a = Math.imul(a, 0x01000193)
+    b ^= zeichencode + i
+    b = Math.imul(b, 0x01000193)
+  }
+  return `${wert.length.toString(16)}:${(a >>> 0).toString(16)}:${(b >>> 0).toString(16)}`
+}
+
+function istCallbackPfad(href: string): boolean {
+  try {
+    return new URL(href).pathname === '/auth/callback'
+  } catch {
+    return false
+  }
+}
+
+function sitzungsFinger(session: unknown): string | null {
+  if (!session || typeof session !== 'object' || !('access_token' in session)) return null
+  const token = (session as { access_token?: unknown }).access_token
+  return typeof token === 'string' && token ? fingerabdruck(token) : null
+}
+
+function leereLage(): CallbackLage {
+  return { wiederherstellung: false, codeFinger: null, sitzungsFinger: null }
+}
 
 /**
- * Vor createBrowserClient aufrufen. Die Initialisierung löscht den
- * Wiederherstellungs-Verifier, sobald sie den Code tauscht. Danach ist an der
- * Sitzung nicht mehr zu erkennen, dass es eine Wiederherstellung war.
+ * Vor createBrowserClient aufrufen. Nur ein Callback-Versuch mit
+ * Wiederherstellungs-Verifier wird gemerkt, und nur als Fingerabdruck des
+ * Codes. Die Passwortseite bleibt aussen vor.
  */
 export function merkeCallbackLage(cookieHeader: string, href: string, supabaseUrl: string): void {
-  const codeWarDa = Boolean(codeAusHref(href))
-  const wiederherstellung = codeWarDa && istPasswortWiederherstellung(
+  const bisher = lagen.get(supabaseUrl)
+  if (!istCallbackPfad(href)) {
+    if (!bisher) lagen.set(supabaseUrl, leereLage())
+    return
+  }
+  const code = codeAusHref(href)
+  const wiederherstellung = Boolean(code) && istPasswortWiederherstellung(
     liesPkceCodeVerifier(cookieHeader, supabaseUrl),
   )
-  const bisher = lagen.get(supabaseUrl)
-  if (!codeWarDa && !wiederherstellung && bisher) return
-  lagen.set(supabaseUrl, { codeWarDa, wiederherstellung })
-}
-
-function wiederherstellungOffen(supabaseUrl: string): boolean {
-  return Boolean(lagen.get(supabaseUrl)?.wiederherstellung)
+  if (!code && !wiederherstellung && bisher) return
+  lagen.set(supabaseUrl, {
+    wiederherstellung,
+    codeFinger: code ? fingerabdruck(code) : null,
+    sitzungsFinger: null,
+  })
 }
 
 function verwerfeWiederherstellung(supabaseUrl: string): void {
   const lage = lagen.get(supabaseUrl)
+  if (!lage?.wiederherstellung && !lage?.sitzungsFinger) return
+  lagen.set(supabaseUrl, leereLage())
+}
+
+function verwerfeDiesenVersuch(supabaseUrl: string, code: string | null): void {
+  const lage = lagen.get(supabaseUrl)
   if (!lage?.wiederherstellung) return
-  lagen.set(supabaseUrl, { codeWarDa: lage.codeWarDa, wiederherstellung: false })
+  if (code && lage.codeFinger && fingerabdruck(code) !== lage.codeFinger) return
+  verwerfeWiederherstellung(supabaseUrl)
+}
+
+function bindWiederherstellung(supabaseUrl: string, session: unknown): void {
+  const finger = sitzungsFinger(session)
+  const lage = lagen.get(supabaseUrl)
+  if (!lage?.wiederherstellung || !finger) return
+  lage.sitzungsFinger = finger
+}
+
+type SitzungsClient = {
+  auth: {
+    onAuthStateChange: (
+      callback: (event: string, session: unknown) => void,
+    ) => { data: { subscription: { unsubscribe: () => void } } }
+  }
+}
+
+/** Hängt die Wiederherstellung an die Sitzung dieses Clients. */
+export function verknuepfeCallbackSitzung(supabaseUrl: string, client: SitzungsClient): void {
+  if (verknuepfteClients.has(client)) return
+  verknuepfteClients.add(client)
+  client.auth.onAuthStateChange((event, session) => {
+    const lage = lagen.get(supabaseUrl)
+    if (!lage?.wiederherstellung) return
+    if (event === 'SIGNED_OUT' || !sitzungDa(session)) {
+      verwerfeWiederherstellung(supabaseUrl)
+      return
+    }
+    const finger = sitzungsFinger(session)
+    if (!finger) return
+    if (event === 'TOKEN_REFRESHED') {
+      lage.sitzungsFinger = finger
+      return
+    }
+    if (!lage.sitzungsFinger) {
+      lage.sitzungsFinger = finger
+      return
+    }
+    if (lage.sitzungsFinger !== finger) verwerfeWiederherstellung(supabaseUrl)
+  })
 }
 
 /** Nur für den Nachweis, dass abgeschlossene Läufe nicht liegen bleiben. */
@@ -253,18 +343,30 @@ function fehler(meldung: string): CallbackAbschluss {
   return { art: 'fehler', meldung }
 }
 
+function dieserCode(supabaseUrl: string, code: string): boolean {
+  const lage = lagen.get(supabaseUrl)
+  return Boolean(lage?.codeFinger && lage.codeFinger === fingerabdruck(code))
+}
+
 function zielNachErfolg(
   eingabe: CallbackAbschlussEingabe,
   verifier: string | null,
   umleitung: string | null,
   next: string,
+  session: unknown,
 ): string {
-  const wiederherstellung = istPasswortWiederherstellung(verifier) || wiederherstellungOffen(eingabe.supabaseUrl)
-  if (wiederherstellung || umleitung === 'PASSWORD_RECOVERY') return PASSWORT_AKTUALISIEREN
+  if (istPasswortWiederherstellung(verifier) || umleitung === 'PASSWORD_RECOVERY') {
+    bindWiederherstellung(eingabe.supabaseUrl, session)
+    return PASSWORT_AKTUALISIEREN
+  }
+  const lage = lagen.get(eingabe.supabaseUrl)
+  const finger = sitzungsFinger(session)
+  if (lage?.wiederherstellung && finger && lage.sitzungsFinger === finger) return PASSWORT_AKTUALISIEREN
   return next
 }
 
-function codeAusAdresseEntfernen(eingabe: CallbackAbschlussEingabe) {
+function codeAusAdresseEntfernen(eingabe: CallbackAbschlussEingabe, code: string) {
+  if (codeAusHref(eingabe.hrefLesen()) !== code) return
   const bereinigt = ohneAuthCode(eingabe.hrefLesen())
   if (bereinigt) eingabe.adresseSchreiben(bereinigt)
 }
@@ -278,12 +380,12 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
     const code = codeAusSuche(eingabe.suche)
 
     if (hash.get('error') || hash.get('error_description') || hash.get('error_code')) {
-      verwerfeWiederherstellung(eingabe.supabaseUrl)
+      verwerfeDiesenVersuch(eingabe.supabaseUrl, code)
       return fehler(CALLBACK_MELDUNG_ABBRUCH)
     }
 
     if (suche.get('error') || suche.get('error_description') || suche.get('error_code')) {
-      verwerfeWiederherstellung(eingabe.supabaseUrl)
+      verwerfeDiesenVersuch(eingabe.supabaseUrl, code)
       return fehler(CALLBACK_MELDUNG_ABBRUCH)
     }
 
@@ -298,44 +400,47 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
       if (gesetzt.error) return fehler(meldungFuerFehler(gesetzt.error.message))
       const ziel = hash.get('type') === 'recovery'
         ? PASSWORT_AKTUALISIEREN
-        : zielNachErfolg(eingabe, verifier, null, next)
+        : zielNachErfolg(eingabe, verifier, null, next, null)
       return { art: 'ok', ziel }
     }
 
     if (code) {
       const client = eingabe.client()
       const init = await client.auth.initialize()
-      const verbraucht = codeAusHref(eingabe.hrefLesen()) !== code
+      const jetzt = codeAusHref(eingabe.hrefLesen())
+      const ersetzt = Boolean(jetzt && jetzt !== code)
+      const weg = jetzt !== code
+      const unserCode = dieserCode(eingabe.supabaseUrl, code)
 
-      if (verbraucht) {
+      if (unserCode && weg) {
         if (init.error) {
-          verwerfeWiederherstellung(eingabe.supabaseUrl)
+          verwerfeDiesenVersuch(eingabe.supabaseUrl, code)
           return fehler(meldungFuerFehler(init.error.message))
         }
         const { data, error } = await client.auth.getSession()
         if (error) return fehler(meldungFuerFehler(error.message))
         if (!sitzungDa(data.session)) {
-          verwerfeWiederherstellung(eingabe.supabaseUrl)
+          verwerfeDiesenVersuch(eingabe.supabaseUrl, code)
           return fehler(CALLBACK_MELDUNG_ABBRUCH)
         }
-        codeAusAdresseEntfernen(eingabe)
-        return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next) }
+        if (!ersetzt) codeAusAdresseEntfernen(eingabe, code)
+        return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, data.session) }
       }
 
       if (init.error) {
-        verwerfeWiederherstellung(eingabe.supabaseUrl)
+        verwerfeDiesenVersuch(eingabe.supabaseUrl, code)
         return fehler(meldungFuerFehler(init.error.message))
       }
 
       const getauscht = await client.auth.exchangeCodeForSession(code)
       if (getauscht.error || !sitzungDa(sitzungAusTausch(getauscht.data))) {
-        verwerfeWiederherstellung(eingabe.supabaseUrl)
+        verwerfeDiesenVersuch(eingabe.supabaseUrl, code)
         return fehler(meldungFuerFehler(getauscht.error?.message))
       }
-      codeAusAdresseEntfernen(eingabe)
+      codeAusAdresseEntfernen(eingabe, code)
       return {
         art: 'ok',
-        ziel: zielNachErfolg(eingabe, verifier, umleitungsart(getauscht.data), next),
+        ziel: zielNachErfolg(eingabe, verifier, umleitungsart(getauscht.data), next, sitzungAusTausch(getauscht.data)),
       }
     }
 
@@ -351,7 +456,17 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
       verwerfeWiederherstellung(eingabe.supabaseUrl)
       return fehler(CALLBACK_MELDUNG_LEER)
     }
-    return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next) }
+    const lage = lagen.get(eingabe.supabaseUrl)
+    const finger = sitzungsFinger(data.session)
+    const ersterAbschluss = Boolean(
+      lage?.wiederherstellung &&
+      lage.codeFinger &&
+      !lage.sitzungsFinger &&
+      finger &&
+      !codeAusHref(eingabe.hrefLesen()),
+    )
+    if (ersterAbschluss) bindWiederherstellung(eingabe.supabaseUrl, data.session)
+    return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, data.session) }
   } catch (error) {
     const message = error instanceof Error ? error.message : undefined
     return fehler(meldungFuerFehler(message))
@@ -366,22 +481,20 @@ function sitzungAusTausch(data: unknown): unknown {
 function versuchSchluessel(eingabe: CallbackAbschlussEingabe): string {
   const suche = suchParameter(eingabe.suche)
   const hash = hashParameter(eingabe.hash)
-  const hatCode = Boolean(codeAusSuche(eingabe.suche))
-  const hatHash = Boolean(hash.get('access_token') && hash.get('refresh_token'))
+  const code = codeAusSuche(eingabe.suche)
+  const access = hash.get('access_token')
+  const refresh = hash.get('refresh_token')
+  const next = erlaubtesNaechstesZiel(suche.get('next'))
+  if (code) return [eingabe.supabaseUrl, 'code', fingerabdruck(code), next].join('\n')
+  if (access && refresh) {
+    const art = hash.get('type') === 'recovery' ? 'recovery' : 'sonst'
+    return [eingabe.supabaseUrl, 'hash', fingerabdruck(`${access}\n${refresh}`), art, next].join('\n')
+  }
   const hatFehler = Boolean(
     hash.get('error') || hash.get('error_description') || hash.get('error_code')
     || suche.get('error') || suche.get('error_description') || suche.get('error_code'),
   )
-  const art = hash.get('type') === 'recovery' ? 'recovery' : 'sonst'
-  const next = erlaubtesNaechstesZiel(suche.get('next'))
-  return [
-    eingabe.supabaseUrl,
-    hatCode ? 'code' : 'ohne-code',
-    hatHash ? 'hash' : 'ohne-hash',
-    hatFehler ? 'fehler' : 'ohne-fehler',
-    art,
-    next,
-  ].join('\n')
+  return [eingabe.supabaseUrl, 'ohne', hatFehler ? 'fehler' : 'ohne-fehler', next].join('\n')
 }
 
 /**
