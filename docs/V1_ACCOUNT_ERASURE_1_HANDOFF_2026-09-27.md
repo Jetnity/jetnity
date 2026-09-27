@@ -1,4 +1,16 @@
 # Jetnity – V1 Account Erasure 1 HANDOFF
+Stand: 28. September 2026  
+Status: **CLOSED / DO NOT RESTART WRITER**
+
+- Writer `Jetnity V1 account erasure 1`, Generation 1, session `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d` is complete.
+- PR #590 is merged on `84356ba1830adf1d1ebd5c84a29df355ff8f2b30`.
+- Accepted head `8d1755e926756776bd6f62e0e042bfb3169844e3` passed 11/11 disposable Development acceptance.
+- Do not reopen this implementation slice.
+- Any next step is a new, separately gated **Production activation** decision: Production Edge Function deployment + Production graph-cascade migration + exposure of account deletion.
+- No real Production user may be used as acceptance evidence.
+---
+
+## Historical pre-closure evidence
 
 Stand: 27. September 2026  
 Status: **STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN PASS / KEIN READY / KEIN MERGE**

@@ -1,5 +1,31 @@
 # Jetnity – Active Work Status
 
+Stand: 28. September 2026
+Status: **NORMAL / V1 ACCOUNT ERASURE DEVELOPMENT 11/11 PASS + MERGED / PRODUCTION ACTIVATION GATED / NO PUBLIC INDEXING**
+
+## 0. Current work boundary — V1 Account Erasure closure
+
+- Live `main`: `84356ba1830adf1d1ebd5c84a29df355ff8f2b30` (Merge #590).
+- Accepted PR #590 exact head: `8d1755e926756776bd6f62e0e042bfb3169844e3`.
+- Vercel Production `dpl_A5kkmrKWwztUF6PwLvD5Su1Yxpv2`: **READY** on that exact merge SHA.
+- Final exact-head CI `36359427168`: **SUCCESS**; Vercel Preview `dpl_8o4EHxvjFutr2ZFLbbypsTZC2afV`: **READY**.
+- Development Supabase: `yfvbxvijcorffwxbxahl`.
+- Development `account-delete-v1`: **ACTIVE v2**, `verify_jwt=true`.
+- Development-only migration `reise_graph_kaskade_tiefe` is applied and live-read back.
+- Final disposable Development proof on exact accepted head: **11/11 PASS**, `status=pass`, `grund=pass`, `Proof exit=0`.
+- Passed cases: wrong confirmation; missing session; wrong password; MFA bypass rejection; AAL2/TOTP deletion; owned Storage removal; linked security-event removal; account graph cascade; stale-token authority rejection; second-delete no false success; foreign synthetic data unchanged.
+- Final cleanup readback: proof users **0**, proof events **0**, proof buckets **0**, proof objects **0**, proof policies **0**, temporary `account_visits` SELECT grant **absent**.
+- Production Supabase `qscbgcdmivbbnzrcyegn`: **0 Edge Functions**. Migration `20260927230000_reise_graph_kaskade_tiefe.sql` is **not applied** to Production. No real Production account was deleted.
+- Production activation of account erasure remains a **separate Product-Owner gate**. Do not deploy `account-delete-v1`, apply the graph-cascade migration, expose the deletion UI, or delete a real Production user without that gate.
+- Public launch/indexing remains disabled.
+- Issue #587 AGB/legal-content purchase path remains on HOLD because the current paid option was rejected as too expensive.
+- PrivacyBee legal-basis wording residual remains tracked separately in #585.
+
+The sections below are historical continuity snapshots and must not override this current block.
+
+---
+
+
 Stand: 27. September 2026
 Status: **NORMAL / PRODUCTION SMTP + AUTH CALLBACK PHYSICAL ACCEPTANCE CLOSED / PRIVACYBEE LEGAL-BASIS RESIDUAL #585 / NO PUBLIC INDEXING**
 

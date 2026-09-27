@@ -1,4 +1,18 @@
 # Jetnity – V1 Account Erasure 1 SELF-REVIEW
+Stand: 28. September 2026  
+Status: **HISTORICAL AGENT SELF-REVIEW / SUPERSEDED BY INDEPENDENT TL PASS**
+
+The agent self-review below remains historical evidence only. Independent Technical-Lead acceptance on exact head `8d1755e926756776bd6f62e0e042bfb3169844e3` completed after:
+- 11/11 disposable Development proof;
+- zero-residue cleanup;
+- exact-head CI/Preview PASS;
+- Development-only Function/migration verification;
+- Production-unmodified verification.
+
+PR #590 is merged at `84356ba1830adf1d1ebd5c84a29df355ff8f2b30`. Production activation is not authorized by this closure.
+---
+
+## Historical pre-closure evidence
 
 Stand: 27. September 2026  
 Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
