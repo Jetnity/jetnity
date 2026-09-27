@@ -6,8 +6,7 @@ Status: **STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN PASS / KEIN READY / KEIN MERG
 Binding task: `docs/V1_ACCOUNT_ERASURE_1_TASK_2026-09-27.md`  
 Status: `docs/V1_ACCOUNT_ERASURE_1_STATUS_2026-09-27.md`  
 Self-review: `docs/V1_ACCOUNT_ERASURE_1_SELF_REVIEW_2026-09-27.md`  
-Technical-Lead-Kommentar: `5860625071`  
-Parent vor dieser Korrektur: `823618eda90310f123ca0b345398a5a88183c524`
+Parent vor dieser Korrektur: `be92f8fdeb25f4bb57030b2f3b862ea11fce7025`
 
 ---
 
@@ -19,20 +18,19 @@ Parent vor dieser Korrektur: `823618eda90310f123ca0b345398a5a88183c524`
 | Draft PR | #590 |
 | Branch | `feat/v1-account-erasure-1` |
 | Base | `main@95e9da45ceeacbc8b461541f810a7c8011d2151a` (behind 0) |
-| Review-Head | der Commit dieser Graph-Kaskade |
+| Review-Head | der Commit dieser Nachweis-Warte |
 | Agent | Jetnity V1 account erasure 1, Generation 1 |
 | Modell | Grok 4.7 High Fast (`originalModelName=grok-4.7-high-fast`) |
 | Session | `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d` |
 
 ## 2. Was der Review zuerst prüfen sollte
 
-1. `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` ersetzt nur `public.reise_graph_geaendert()`. Die Funktion bleibt `SECURITY INVOKER`. Die neun Trigger bleiben. Kein `GRANT`. Kein Rollenname der Auth-Verwaltung.
-2. Reihenfolge: `jetnity.graph_mutation`, dann `pg_trigger_depth() > 1`, dann die Frage, ob eine betroffene Reise noch sichtbar ist. Erst danach das `UPDATE`.
-3. Auf PostgreSQL 16 ist die Tiefe bei der Fremdschlüssel-Kaskade 1. Die unsichtbare Elternzeile ist der Fall, der `42501` auf `trips` beseitigt. Der lokale Nachweis zeigt das an der alten Funktion und danach an der neuen.
-4. `npm run db:graph-kaskade-tiefe-lokal` ist 6/6. Direkte Kindänderungen zählen weiter. `graph_mutation` bleibt. Eltern- und Auth-Löschung schreiben `trips` nicht an.
-5. Die Migration ist nicht auf Development und nicht auf Production angewendet. Der Live-Nachweis ist nicht gelaufen. Kein 11/11.
-6. Storage-Besitz, Direktmodus, Production-Sperre und `verify_jwt` aus den vorherigen Köpfen bleiben.
+1. `speicher_entfernt` benutzt `objektAbwesenheitWarten` nur für `zielNutzer`. Intervall 50 ms, Frist 1000 ms.
+2. Das fremde Objekt bleibt ein einzelnes `objektDa`. `speicherEntfernen` löscht weiter ohne Poll.
+3. Edge Function, `kontoloeschung-speicher`, `kontoloeschung-ausfuehrung` und die Migration sind in diesem Commit nicht geändert.
+4. Die Tests decken sofort weg, verzögert weg, Frist ohne Erfolg, stehenbleibende Uhr und Lesefehler. 4011/4011.
+5. Der Live-Nachweis ist nicht gelaufen. Kein 11/11. Production unverändert.
 
 ## 3. Nächster Schritt
 
-Unabhängiges Technical-Lead-Re-Review dieses Heads. Danach die Migration nur auf Supabase Development anwenden, die Function nicht neu deuten müssen, und den Disposable-Nachweis erneut laufen. Nicht Ready. Nicht mergen. Production `qscbgcdmivbbnzrcyegn` bleibt unverändert.
+Unabhängiges Technical-Lead-Re-Review dieses Heads. Danach den Disposable-Nachweis auf Development erneut laufen. Nicht Ready. Nicht mergen. Production bleibt zu.

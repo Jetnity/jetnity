@@ -12,6 +12,7 @@ import { randomBytes, createHmac, randomUUID } from 'node:crypto'
 import { projektSchluessel, ziel } from '../auth/ziel'
 import { zugangAufloesen, nachweisGrund, type Zugang } from '../../lib/account/kontoloeschung-direkt'
 import { ENTWICKLUNGS_PROJEKT_REF } from '../../lib/account/kontoloeschung-vertrag'
+import { objektAbwesenheitWarten } from './kontoloeschung-objekt-abwesenheit'
 
 const BUCKET = 'jetnity-erasure-proof'
 const API = 'https://api.supabase.com/v1'
@@ -532,7 +533,9 @@ async function main() {
     const geloescht = await funktion(url, anon, frisch, 'KONTO LÖSCHEN')
     if (geloescht !== 'geloescht') throw new Error('loeschung')
 
-    bericht.speicher_entfernt = !(await objektDa(url, geheim, zielNutzer.id))
+    // Die Storage-API kann das Objekt noch kurz als vorhanden melden, nachdem
+    // das Löschen schon gelungen ist. Nur die eigene Fixture wartet begrenzt.
+    bericht.speicher_entfernt = await objektAbwesenheitWarten(() => objektDa(url, geheim, zielNutzer.id))
     bericht.security_event_entfernt = (await tabelleZaehlen(kanal, 'security_events', zielNutzer.id)) === 0
     bericht.graph_kaskade =
       (await tabelleZaehlen(kanal, 'profiles', zielNutzer.id)) === 0 &&

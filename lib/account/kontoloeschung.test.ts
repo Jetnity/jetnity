@@ -34,6 +34,11 @@ import {
   zugangAufloesen,
 } from '@/lib/account/kontoloeschung-direkt'
 import {
+  OBJEKT_ABWESENHEIT_FRIST_MS,
+  OBJEKT_ABWESENHEIT_INTERVALL_MS,
+  objektAbwesenheitWarten,
+} from '../../scripts/account/kontoloeschung-objekt-abwesenheit'
+import {
   ENTWICKLUNGS_PROJEKT_REF,
   KONTO_GELOESCHT_PFAD,
   KONTO_LOESCHEN_BESTAETIGUNG,
@@ -759,5 +764,113 @@ describe('Kontolöschung Direktmodus', () => {
     assert.equal(management, 1)
     assert.equal(zugang.modus, 'management')
     assert.equal(zugang.ref, ENTWICKLUNGS_PROJEKT_REF)
+  })
+})
+
+describe('Kontolöschung Speicher-Abwesenheit im Nachweis', () => {
+  function uhr() {
+    let zeit = 0
+    const pausen: number[] = []
+    return {
+      jetzt: () => zeit,
+      warten: async (ms: number) => {
+        pausen.push(ms)
+        zeit += ms
+      },
+      pausen,
+    }
+  }
+
+  test('sofort weg: ein Blick, keine Pause', async () => {
+    const zeit = uhr()
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(async () => {
+      blicke += 1
+      return false
+    }, zeit)
+    assert.equal(weg, true)
+    assert.equal(blicke, 1)
+    assert.deepEqual(zeit.pausen, [])
+  })
+
+  test('verzögert weg: innerhalb der Frist, danach nicht weiter', async () => {
+    const zeit = uhr()
+    const folgen = [true, true, false]
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(async () => folgen[blicke++] ?? true, zeit)
+    assert.equal(weg, true)
+    assert.equal(blicke, 3)
+    assert.equal(zeit.pausen.length, 2)
+    assert.ok(zeit.pausen.every((ms) => ms === OBJEKT_ABWESENHEIT_INTERVALL_MS))
+    const summe = zeit.pausen.reduce((gesamt, ms) => gesamt + ms, 0)
+    assert.ok(summe < OBJEKT_ABWESENHEIT_FRIST_MS)
+  })
+
+  test('bleibt vorhanden: endet an der Frist und meldet nicht entfernt', async () => {
+    const zeit = uhr()
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(async () => {
+      blicke += 1
+      return true
+    }, zeit)
+    assert.equal(weg, false)
+    const summe = zeit.pausen.reduce((gesamt, ms) => gesamt + ms, 0)
+    assert.equal(summe, OBJEKT_ABWESENHEIT_FRIST_MS)
+    assert.ok(blicke > 1)
+    assert.ok(blicke < 100)
+  })
+
+  test('eine stehenbleibende Uhr beendet die Warteschleife', async () => {
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(
+      async () => {
+        blicke += 1
+        return true
+      },
+      { jetzt: () => 0, warten: async () => undefined },
+    )
+    assert.equal(weg, false)
+    assert.equal(blicke, 1)
+  })
+
+  test('ein Lesefehler bricht ab und zählt nicht als entfernt', async () => {
+    const zeit = uhr()
+    await assert.rejects(
+      () => objektAbwesenheitWarten(async () => {
+        throw new Error('speicher')
+      }, zeit),
+      (fehler: unknown) => {
+        assert.ok(fehler instanceof Error)
+        assert.equal(fehler.message, 'speicher')
+        return true
+      },
+    )
+    assert.deepEqual(zeit.pausen, [])
+  })
+
+  test('nur die eigene Fixture nach dem Löschen wartet; fremdes Objekt und Aufräumen nicht', () => {
+    assert.ok(OBJEKT_ABWESENHEIT_INTERVALL_MS > 0)
+    assert.ok(OBJEKT_ABWESENHEIT_INTERVALL_MS <= 100)
+    assert.ok(OBJEKT_ABWESENHEIT_FRIST_MS >= 200)
+    assert.ok(OBJEKT_ABWESENHEIT_FRIST_MS <= 2000)
+
+    const nachweis = quelle('../../scripts/account/kontoloeschung-nachweis.ts')
+    assert.match(
+      nachweis,
+      /speicher_entfernt = await objektAbwesenheitWarten\(\(\) => objektDa\(url, geheim, zielNutzer\.id\)\)/,
+    )
+    assert.match(nachweis, /await objektDa\(url, geheim, fremd\.id\)/)
+    assert.equal(nachweis.includes('objektAbwesenheitWarten(() => objektDa(url, geheim, fremd.id)'), false)
+    const aufraeumen = nachweis.slice(nachweis.indexOf('async function speicherEntfernen'))
+    assert.equal(aufraeumen.includes('objektAbwesenheitWarten'), false)
+    assert.match(aufraeumen, /method: 'DELETE'/)
+
+    for (const datei of [
+      './kontoloeschung-speicher.ts',
+      './kontoloeschung-ausfuehrung.ts',
+      '../../supabase/functions/account-delete-v1/index.ts',
+    ]) {
+      assert.equal(quelle(datei).includes('objektAbwesenheitWarten'), false)
+    }
   })
 })
