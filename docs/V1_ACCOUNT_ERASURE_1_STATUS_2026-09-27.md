@@ -1,4 +1,21 @@
 # Jetnity – V1 Account Erasure 1 STATUS
+Stand: 28. September 2026  
+Status: **CLOSED / DEVELOPMENT 11/11 PASS / PR #590 MERGED / PRODUCTION ACTIVATION SEPARATELY GATED**
+
+- Accepted exact head: `8d1755e926756776bd6f62e0e042bfb3169844e3`.
+- Merge/main: `84356ba1830adf1d1ebd5c84a29df355ff8f2b30`.
+- Final exact-head CI `36359427168`: **SUCCESS**.
+- Preview `dpl_8o4EHxvjFutr2ZFLbbypsTZC2afV`: **READY**.
+- Production deployment of merged app code `dpl_A5kkmrKWwztUF6PwLvD5Su1Yxpv2`: **READY**.
+- Final disposable Development proof: **11/11 PASS**, `status=pass`, `grund=pass`, `Proof exit=0`.
+- Development cleanup: 0 proof users/events/buckets/objects/policies; temporary grant removed.
+- Development Function: `account-delete-v1` ACTIVE v2, JWT verification enabled.
+- Development migration `reise_graph_kaskade_tiefe` applied.
+- Production Supabase: 0 Edge Functions; graph-cascade migration unapplied; no real account deletion.
+- Production activation remains a separate Product-Owner gate.
+---
+
+## Historical pre-closure evidence
 
 Stand: 27. September 2026  
 Status: **NACHWEIS LIEST OBJECT INFO / LIVE-NACHWEIS NICHT AUSGEFÜHRT / DRAFT / NOT PASS / NOT READY / NOT MERGED / STOP FOR TECHNICAL-LEAD RE-REVIEW**
