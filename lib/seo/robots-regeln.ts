@@ -29,6 +29,7 @@ export const ROBOTS_DISALLOW_ALLOW_MODUS = [
   '/reisen/',
   '/auth/',
   '/unauthorized',
+  '/konto-geloescht',
   '/*?*preview=*',
 ] as const
 

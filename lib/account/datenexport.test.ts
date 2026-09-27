@@ -288,7 +288,7 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     }
   })
 
-  test('Einstellungen bieten den Export ehrlich und ohne Löschversprechen', () => {
+  test('Einstellungen bieten den Export ehrlich und die Löschung getrennt an', () => {
     assert.match(settings, /href="\/api\/account\/export"/)
     assert.match(settings, /aria-labelledby="account-datenexport-title"/)
     assert.match(settings, /<h2[\s\S]*id="account-datenexport-title"/)
@@ -297,8 +297,9 @@ describe('V1 Account Data Export 1 Vertrag', () => {
     assert.match(settings, /kein[\s\S]*vollständiger rechtlicher Datenauszug/)
     assert.match(settings, /keine Kontolöschung/)
     assert.equal(settings.includes('/account/delete'), false)
-    assert.equal(settings.includes('DSGVO-konform'), false)
-    assert.equal(settings.includes('Konto löschen'), false)
+    assert.equal(settings.includes('DSGVO'), false)
+    assert.equal(settings.includes('CH-DSG'), false)
+    assert.match(settings, /KontoLoeschen/)
     assert.match(settings, /aktuelle Sitzung/)
     assert.match(settings, /href="\/account\/security"/)
     assert.match(settings, /min-h-11/)

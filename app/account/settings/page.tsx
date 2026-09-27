@@ -1,11 +1,12 @@
 // app/account/settings/page.tsx
 //
-// Einstellungen: vorhandene Sicherheit und den V1-Kontoexport auffindbar machen.
-// Keine Privacy-/Billing-/MFA-/Lösch-Vertragsänderung.
+// Einstellungen: Sicherheit, vorhandener JSON-Export und die V1-Kontolöschung.
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Download, Shield } from 'lucide-react'
+
+import KontoLoeschen from '@/components/account/KontoLoeschen'
 
 export const metadata: Metadata = {
   title: 'Einstellungen',
@@ -76,6 +77,8 @@ export default function AccountEinstellungenSeite() {
               </div>
             </div>
           </section>
+
+          <KontoLoeschen />
         </div>
       </div>
     </main>

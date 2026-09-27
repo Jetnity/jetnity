@@ -352,6 +352,11 @@ enabled = false
 # Obtain from https://clerk.com/setup/supabase
 # domain = "example.clerk.accounts.dev"
 
+# V1 Kontolöschung. Das Gateway verlangt ein JWT. Die Funktion leitet die
+# Person daraus ab und akzeptiert keine fremde user_id.
+[functions.account-delete-v1]
+verify_jwt = true
+
 [edge_runtime]
 enabled = true
 # Configure one of the supported request policies: `oneshot`, `per_worker`.
