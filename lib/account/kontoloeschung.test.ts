@@ -507,6 +507,8 @@ describe('Kontolöschung – Browser', () => {
     assert.match(nachweis, /\/auth\/v1\/user/)
     assert.match(nachweis, /randomUUID\(\)/)
     assert.equal(nachweis.includes('delete from storage.objects'), false)
+    assert.match(nachweis, /management_401/)
+    assert.match(nachweis, /grundAusFehler/)
     assert.equal(nachweis.includes(PRODUKTIONS_PROJEKT_REF) || nachweis.includes('PRODUKTIONS_PROJEKT_REF'), true)
     assert.equal(funktion.includes('user_id:'), false)
     assert.match(seite, /Konto gelöscht/)

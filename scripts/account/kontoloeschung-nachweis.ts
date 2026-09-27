@@ -68,6 +68,12 @@ function grundSicher(text: string): string {
   return text
 }
 
+function grundAusFehler(text: string): string {
+  if (text === 'SUPABASE_ACCESS_TOKEN fehlt' || text === 'SUPABASE_PROJECT_REF fehlt') return 'token_fehlt'
+  if (text.includes('(401)') || text.includes('HTTP 401')) return 'management_401'
+  return grundSicher(text)
+}
+
 function uuid(wert: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(wert)
 }
@@ -504,7 +510,7 @@ async function main() {
   } catch (fehler) {
     if (fehler instanceof Abbruch) throw fehler
     bericht.status = bericht.schema_kaskade ? 'fail' : 'blockiert'
-    bericht.grund = grundSicher(fehler instanceof Error ? fehler.message : 'ausnahme')
+    bericht.grund = grundAusFehler(fehler instanceof Error ? fehler.message : 'ausnahme')
     ende(bericht)
   } finally {
     if (token && anon && geheim) {
