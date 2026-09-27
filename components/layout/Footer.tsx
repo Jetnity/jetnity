@@ -76,6 +76,16 @@ export default function Footer() {
           <div>
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">Jetnity</h2>
             <ul className={footerListClass}>
+              <li>
+                <Link href="/privacy" className={footerLinkClass}>
+                  Datenschutzerklärung
+                </Link>
+              </li>
+              <li>
+                <Link href="/impressum" className={footerLinkClass}>
+                  Impressum
+                </Link>
+              </li>
               <FooterSitzung />
             </ul>
           </div>

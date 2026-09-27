@@ -64,11 +64,12 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
   const dateien = QUELL_VERZEICHNISSE.flatMap((name) => dateienSammeln(join(wurzel, name)))
   const inhalte = dateien.map((pfad) => ({ pfad: rel(pfad), text: quelle(rel(pfad)) }))
 
-  test('Pflichtrouten /privacy und /terms haben keine App-Page', () => {
+  test('Pflichtroute /privacy existiert, /terms und /datenschutz bleiben ohne App-Page', () => {
     assert.deepEqual([...AP6A_LEGAL_ROUTEN], ['/privacy', '/terms'])
-    for (const route of AP6A_LEGAL_ROUTEN) {
-      assert.equal(hatAppPage(route), false, `${route} darf in Gate 0 keine Page haben`)
-    }
+    assert.equal(hatAppPage('/privacy'), true)
+    assert.equal(hatAppPage('/terms'), false)
+    assert.equal(hatAppPage('/impressum'), true)
+    assert.deepEqual([...AP6A_VERWANDTE_FEHLENDE_ROUTEN], ['/datenschutz'])
     for (const route of AP6A_VERWANDTE_FEHLENDE_ROUTEN) {
       assert.equal(hatAppPage(route), false)
     }
@@ -153,14 +154,16 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
     )
   })
 
-  test('Footer und Navbar haben keine Legal-Links', () => {
+  test('Footer verlinkt Datenschutz und Impressum, nicht /terms; Navbar bleibt ohne Legal-Links', () => {
     const footer = quelle('components/layout/Footer.tsx')
     const navbar = quelle('components/layout/PublicNavbar.tsx')
-    assert.equal(footer.includes('href="/privacy"'), false)
+    assert.equal(footer.includes('href="/privacy"'), true)
+    assert.equal(footer.includes('href="/impressum"'), true)
     assert.equal(footer.includes('href="/terms"'), false)
     assert.equal(footer.includes('mailto:info@jetnity.ch'), true)
     assert.equal(navbar.includes('href="/privacy"'), false)
     assert.equal(navbar.includes('href="/terms"'), false)
+    assert.equal(navbar.includes('href="/impressum"'), false)
   })
 
   test('Sitemap und Indexing-Vertrag halten Legal-Routen draußen', () => {

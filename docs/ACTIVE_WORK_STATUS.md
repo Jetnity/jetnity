@@ -1,6 +1,33 @@
 # Jetnity – Active Work Status
 
 Stand: 27. September 2026
+Status: **NORMAL / PRIVACYBEE INTEGRATION 1 DRAFT / NOT READY / NOT MERGED**
+
+## 0. Current work boundary — PrivacyBee integration 1
+
+| Field | Value |
+| --- | --- |
+| Arbeitsblock | PrivacyBee integration 1 |
+| Branch / PR | `feat/privacybee-integration-1` / Draft https://github.com/Jetnity/jetnity/pull/579 |
+| Base | `4d1888f95aec3395e35c785bcb3e0d83301d5cec` |
+| Task seed | `5277b53ebd0ad7b4591df44dd177c19164211867` |
+| Status | Implementation on this branch. Wartet auf unabhängigen Technical-Lead exact-head Review |
+| Agent | Jetnity PrivacyBee integration 1, Generation 1 |
+| Session | `bc-a147647d-4bb1-4136-a0a2-045e201f5c6a` |
+| Model | `grok-4.7-high-fast` (run-info `originalModelName`; required Grok 4.7 High Fast, not Auto) |
+| Issue | #577 |
+
+Offizielle PrivacyBee-Widgets für `/privacy` und `/impressum`, nur bei Request- und Browser-Host `jetnity.com`, mit geprüfter Aktivierung und Kill-Switch `PRIVACYBEE_KILL_SWITCH=aus`. Kein Banner, kein Indexing, kein kopierter Vendor-Text. #578 bleibt read-only und ist keine Merge-Abhängigkeit. Production-Beweis ist nach dem Merge Sache des Technical Lead.
+
+Exakter nächster Schritt: unabhängiger Technical-Lead exact-head Review dieses Draft-PR. Cursor setzt nicht Ready, mergt nicht und startet keinen Folgeslice.
+
+Zuerst lesen: `docs/PRIVACYBEE_INTEGRATION_1_TASK_2026-09-27.md`, dann STATUS / HANDOFF / SELF_REVIEW vom 27. September 2026 und ADR-0213.
+
+Der Abschnitt darunter ist der vorherige Continuity-Stand und nicht dieser Writer.
+
+---
+
+Stand: 27. September 2026
 Status: **NORMAL / HOMEPAGE NATURAL ROUTE INTENT MERGED / NO V1-CRITICAL UNGATED RUNTIME SLICE PROVEN / NEXT STEP REQUIRES GATED LAUNCH DECISION OR RELEASE PROOF**
 
 > Live evidence wins. This file is continuity only; always re-fetch GitHub/Vercel/Supabase before acting.
