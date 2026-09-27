@@ -791,4 +791,134 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
     assert.equal(offeneCallbackLaeufe(), 0)
     await anhalten()
   })
+
+  test('schon offener Client behält die Wiederherstellung nach dem Remount und verwirft sie bei einer neuen Sitzung', async () => {
+    zurueck()
+    const url = supabaseUrl()
+    const sdk = await pflanze(url, 'wiederherstellung')
+    href = 'https://jetnity.test/auth/callback?code=tl-spa-recovery&next=%2Freisen'
+    const erste = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    assert.deepEqual(erste, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+    assert.equal(new URL(href).searchParams.has('code'), false)
+    const remount = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    assert.deepEqual(remount, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+    const abmeldung = await sdk.auth.signOut({ scope: 'local' })
+    assert.equal(abmeldung.error, null)
+    href = 'https://jetnity.test/login'
+    const gesetzt = await sdk.auth.setSession({
+      access_token: accessToken(),
+      refresh_token: 'refresh-token-value',
+    })
+    assert.equal(gesetzt.error, null)
+    href = 'https://jetnity.test/auth/callback?next=%2Freisen'
+    assert.deepEqual(await schliesseAuthCallbackAb(eingabe(url, () => sdk)), { art: 'ok', ziel: '/reisen' })
+    await anhalten()
+  })
+
+  test('Hash-Wiederherstellung bleibt nach dem Remount an derselben Sitzung', async () => {
+    zurueck()
+    const url = supabaseUrl()
+    href = 'https://jetnity.test/login'
+    const sdk = client(url)
+    await sdk.auth.initialize()
+    const zugang = accessToken()
+    href = `https://jetnity.test/auth/callback?next=%2Freisen#access_token=${zugang}&refresh_token=refresh-token-value&type=recovery`
+    const erste = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    assert.deepEqual(erste, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+    href = 'https://jetnity.test/auth/callback?next=%2Freisen'
+    const remount = await schliesseAuthCallbackAb(eingabe(url, () => sdk))
+    assert.deepEqual(remount, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+    const abmeldung = await sdk.auth.signOut({ scope: 'local' })
+    assert.equal(abmeldung.error, null)
+    href = 'https://jetnity.test/login'
+    const gesetzt = await sdk.auth.setSession({
+      access_token: accessToken(),
+      refresh_token: 'refresh-token-value',
+    })
+    assert.equal(gesetzt.error, null)
+    href = 'https://jetnity.test/auth/callback?next=%2Freisen'
+    assert.deepEqual(await schliesseAuthCallbackAb(eingabe(url, () => sdk)), { art: 'ok', ziel: '/reisen' })
+    await anhalten()
+  })
+
+  for (const feld of ['error', 'error_description', 'error_code'] as const) {
+    test(`ein laufender Code-Erfolg gilt nicht für denselben Code mit ${feld}`, async () => {
+      zurueck()
+      const url = supabaseUrl()
+      await pflanze(url, 'anmeldung')
+      href = 'https://jetnity.test/auth/callback?code=tl-shared-code&next=%2Freisen'
+      let freigabe: () => void = () => {}
+      pkceSperre = new Promise((resolve) => {
+        freigabe = resolve
+      })
+      const sdk = client(url)
+      const lauf = schliesseAuthCallbackAb(eingabe(url, () => sdk))
+      for (let i = 0; i < 20 && !pkceAngekommen; i += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 0))
+      }
+      assert.equal(pkceAngekommen, true)
+      const roh = feld === 'error' ? 'access_denied' : feld === 'error_description' ? 'roher-fehlertext' : 'otp_expired'
+      href = `https://jetnity.test/auth/callback?code=tl-shared-code&next=%2Freisen&${feld}=${roh}`
+      const fehlerLauf = schliesseAuthCallbackAb(eingabe(url, () => sdk))
+      const schnell = await Promise.race([
+        fehlerLauf.then((wert) => ({ fertig: true as const, wert })),
+        new Promise<{ fertig: false }>((resolve) => setTimeout(() => resolve({ fertig: false }), 50)),
+      ])
+      assert.equal(schnell.fertig, true)
+      if (schnell.fertig) {
+        assert.equal(schnell.wert.art, 'fehler')
+        if (schnell.wert.art === 'fehler') {
+          assert.equal(schnell.wert.meldung, CALLBACK_MELDUNG_ABBRUCH)
+          assert.equal(schnell.wert.meldung.includes(roh), false)
+          assert.equal(schnell.wert.meldung.includes('tl-shared-code'), false)
+        }
+      }
+      assert.equal(offeneCallbackLaeufe(), 1)
+      freigabe()
+      assert.deepEqual(await lauf, { art: 'ok', ziel: '/reisen' })
+      assert.equal(offeneCallbackLaeufe(), 0)
+      await anhalten()
+    })
+
+    test(`ein laufender Hash-Erfolg gilt nicht für denselben Hash mit ${feld}`, async () => {
+      zurueck()
+      const url = supabaseUrl()
+      href = 'https://jetnity.test/login'
+      const sdk = client(url)
+      await sdk.auth.initialize()
+      const zugang = token(`hash-${feld}`)
+      href = `https://jetnity.test/auth/callback?next=%2Freisen#access_token=${zugang}&refresh_token=refresh-token-value&type=recovery`
+      const parameter = eingabe(url, () => sdk)
+      let freigabe: () => void = () => {}
+      userSperre = new Promise((resolve) => {
+        freigabe = resolve
+      })
+      const lauf = schliesseAuthCallbackAb(parameter)
+      for (let i = 0; i < 20 && userAngekommen < 1; i += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 0))
+      }
+      assert.equal(userAngekommen >= 1, true)
+      const roh = feld === 'error' ? 'access_denied' : feld === 'error_description' ? 'roher-fehlertext' : 'otp_expired'
+      href = `https://jetnity.test/auth/callback?next=%2Freisen#access_token=${zugang}&refresh_token=refresh-token-value&type=recovery&${feld}=${roh}`
+      const fehlerLauf = schliesseAuthCallbackAb(eingabe(url, () => sdk))
+      const schnell = await Promise.race([
+        fehlerLauf.then((wert) => ({ fertig: true as const, wert })),
+        new Promise<{ fertig: false }>((resolve) => setTimeout(() => resolve({ fertig: false }), 50)),
+      ])
+      assert.equal(schnell.fertig, true)
+      if (schnell.fertig) {
+        assert.equal(schnell.wert.art, 'fehler')
+        if (schnell.wert.art === 'fehler') {
+          assert.equal(schnell.wert.meldung, CALLBACK_MELDUNG_ABBRUCH)
+          assert.equal(schnell.wert.meldung.includes(roh), false)
+          assert.equal(schnell.wert.meldung.includes(zugang), false)
+        }
+      }
+      assert.equal(offeneCallbackLaeufe(), 1)
+      freigabe()
+      assert.deepEqual(await lauf, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
+      assert.equal(offeneCallbackLaeufe(), 0)
+      await anhalten()
+    })
+  }
 })

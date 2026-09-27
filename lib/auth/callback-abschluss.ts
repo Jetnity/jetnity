@@ -16,11 +16,14 @@
 //   Schlüssel ist ein Fingerabdruck und wird mit dem Abschluss verworfen.
 //   Dieselbe Adresse im selben Moment teilt sich den Lauf. Ein anderer Link
 //   nicht. Ein älterer Abschluss löscht keinen neueren Code.
-// - Wiederherstellung gehört zur Sitzung dieses Versuchs, nur wenn der Client
-//   auf /auth/callback entstand. Abmelden oder eine andere Sitzung verwirft
-//   sie. Dieselbe Sitzung, auch bei frühem Abschluss oder erneutem Mounten,
-//   bleibt auf /auth/update-password. Die Passwortseite selbst merkt das
-//   nicht; ihr Code bleibt beim SDK.
+// - Wiederherstellung gehört zur Sitzung, die dieser Versuch erzeugt hat.
+//   Das gilt, wenn der Client auf /auth/callback entstand, und auch, wenn ein
+//   schon offener Client den Tausch selbst ausführt oder ein Hash
+//   type=recovery setzt. Dieselbe Sitzung bleibt auf /auth/update-password.
+//   Abmelden oder eine andere Sitzung verwirft sie. Die Passwortseite merkt
+//   das nicht.
+// - Ein expliziter Fehler in Adresse oder Hash ist kein Erfolg desselben
+//   Links. Er wird beantwortet, bevor ein laufender Tausch übernommen wird.
 // detectSessionInUrl bleibt an.
 
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel'
@@ -155,11 +158,15 @@ function verwerfeDiesenVersuch(supabaseUrl: string, code: string | null): void {
   verwerfeWiederherstellung(supabaseUrl)
 }
 
-function bindWiederherstellung(supabaseUrl: string, session: unknown): void {
+function bindWiederherstellung(supabaseUrl: string, session: unknown, code: string | null): void {
   const finger = sitzungsFinger(session)
-  const lage = lagen.get(supabaseUrl)
-  if (!lage?.wiederherstellung || !finger) return
-  lage.sitzungsFinger = finger
+  if (!finger) return
+  const bisher = lagen.get(supabaseUrl)
+  lagen.set(supabaseUrl, {
+    wiederherstellung: true,
+    codeFinger: code ? fingerabdruck(code) : bisher?.codeFinger ?? null,
+    sitzungsFinger: finger,
+  })
 }
 
 type SitzungsClient = {
@@ -354,9 +361,10 @@ function zielNachErfolg(
   umleitung: string | null,
   next: string,
   session: unknown,
+  code: string | null,
 ): string {
   if (istPasswortWiederherstellung(verifier) || umleitung === 'PASSWORD_RECOVERY') {
-    bindWiederherstellung(eingabe.supabaseUrl, session)
+    bindWiederherstellung(eingabe.supabaseUrl, session, code)
     return PASSWORT_AKTUALISIEREN
   }
   const lage = lagen.get(eingabe.supabaseUrl)
@@ -398,10 +406,11 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
         refresh_token: refreshToken,
       })
       if (gesetzt.error) return fehler(meldungFuerFehler(gesetzt.error.message))
-      const ziel = hash.get('type') === 'recovery'
-        ? PASSWORT_AKTUALISIEREN
-        : zielNachErfolg(eingabe, verifier, null, next, null)
-      return { art: 'ok', ziel }
+      if (hash.get('type') === 'recovery') {
+        bindWiederherstellung(eingabe.supabaseUrl, { access_token: accessToken }, null)
+        return { art: 'ok', ziel: PASSWORT_AKTUALISIEREN }
+      }
+      return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, null, null) }
     }
 
     if (code) {
@@ -424,7 +433,7 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
           return fehler(CALLBACK_MELDUNG_ABBRUCH)
         }
         if (!ersetzt) codeAusAdresseEntfernen(eingabe, code)
-        return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, data.session) }
+        return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, data.session, code) }
       }
 
       if (init.error) {
@@ -440,7 +449,14 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
       codeAusAdresseEntfernen(eingabe, code)
       return {
         art: 'ok',
-        ziel: zielNachErfolg(eingabe, verifier, umleitungsart(getauscht.data), next, sitzungAusTausch(getauscht.data)),
+        ziel: zielNachErfolg(
+          eingabe,
+          verifier,
+          umleitungsart(getauscht.data),
+          next,
+          sitzungAusTausch(getauscht.data),
+          code,
+        ),
       }
     }
 
@@ -465,8 +481,8 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
       finger &&
       !codeAusHref(eingabe.hrefLesen()),
     )
-    if (ersterAbschluss) bindWiederherstellung(eingabe.supabaseUrl, data.session)
-    return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, data.session) }
+    if (ersterAbschluss) bindWiederherstellung(eingabe.supabaseUrl, data.session, null)
+    return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next, data.session, null) }
   } catch (error) {
     const message = error instanceof Error ? error.message : undefined
     return fehler(meldungFuerFehler(message))
@@ -478,6 +494,15 @@ function sitzungAusTausch(data: unknown): unknown {
   return (data as { session?: unknown }).session ?? null
 }
 
+function hatExplizitenFehler(eingabe: CallbackAbschlussEingabe): boolean {
+  const suche = suchParameter(eingabe.suche)
+  const hash = hashParameter(eingabe.hash)
+  return Boolean(
+    suche.get('error') || suche.get('error_description') || suche.get('error_code')
+    || hash.get('error') || hash.get('error_description') || hash.get('error_code'),
+  )
+}
+
 function versuchSchluessel(eingabe: CallbackAbschlussEingabe): string {
   const suche = suchParameter(eingabe.suche)
   const hash = hashParameter(eingabe.hash)
@@ -485,16 +510,13 @@ function versuchSchluessel(eingabe: CallbackAbschlussEingabe): string {
   const access = hash.get('access_token')
   const refresh = hash.get('refresh_token')
   const next = erlaubtesNaechstesZiel(suche.get('next'))
+  if (hatExplizitenFehler(eingabe)) return [eingabe.supabaseUrl, 'fehler', next].join('\n')
   if (code) return [eingabe.supabaseUrl, 'code', fingerabdruck(code), next].join('\n')
   if (access && refresh) {
     const art = hash.get('type') === 'recovery' ? 'recovery' : 'sonst'
     return [eingabe.supabaseUrl, 'hash', fingerabdruck(`${access}\n${refresh}`), art, next].join('\n')
   }
-  const hatFehler = Boolean(
-    hash.get('error') || hash.get('error_description') || hash.get('error_code')
-    || suche.get('error') || suche.get('error_description') || suche.get('error_code'),
-  )
-  return [eingabe.supabaseUrl, 'ohne', hatFehler ? 'fehler' : 'ohne-fehler', next].join('\n')
+  return [eingabe.supabaseUrl, 'ohne', next].join('\n')
 }
 
 /**
@@ -503,6 +525,7 @@ function versuchSchluessel(eingabe: CallbackAbschlussEingabe): string {
  * Mal verbraucht. Nach dem Abschluss wird der Lauf verworfen.
  */
 export function schliesseAuthCallbackAb(eingabe: CallbackAbschlussEingabe): Promise<CallbackAbschluss> {
+  if (hatExplizitenFehler(eingabe)) return Promise.resolve(fehler(CALLBACK_MELDUNG_ABBRUCH))
   const schluessel = versuchSchluessel(eingabe)
   const vorhanden = laeufe.get(schluessel)
   if (vorhanden) return vorhanden
