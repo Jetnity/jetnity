@@ -1,8 +1,12 @@
 // lib/account/kontoloeschung-ausfuehrung.ts
 //
 // Orchestriert eine Kontolöschung, ohne selbst Schlüssel, HTTP oder Storage
-// anzufassen. Die Edge Function setzt die Abhängigkeiten. Schlägt ein
-// Aufräumschritt fehl, wird der Auth-Nutzer nicht gelöscht.
+// anzufassen. Die Edge Function setzt die Abhängigkeiten.
+//
+// Die Löschung ist nicht atomar: Storage muss vor dem Auth-Nutzer weg sein.
+// Schlägt ein späterer Schritt fehl, bleibt das Konto bestehen, obwohl schon
+// Daten entfernt sein können. Das ist `teilweise_entfernt`, nicht „nichts
+// geändert“. Ein Fehler vor dem ersten Remove bestätigt keine Datenänderung.
 
 import {
   LOESCH_STATUS,
@@ -23,7 +27,7 @@ export type LoeschAbhaengigkeiten = {
   jetztSekunden: () => number
   nutzer: (jwt: string) => Promise<LoeschNutzerErgebnis>
   faktoren: (userId: string) => Promise<number | null>
-  speicherLoeschen: (userId: string) => Promise<'ok' | 'fehler'>
+  speicherLoeschen: (userId: string) => Promise<'ok' | 'fehler' | 'teilweise'>
   ereignisseLoeschen: (userId: string) => Promise<'ok' | 'fehler'>
   nutzerLoeschen: (userId: string) => Promise<'ok' | 'nicht_gefunden' | 'fehler'>
 }
@@ -72,14 +76,15 @@ export async function kontoLoeschungAusfuehren(eingabe: {
   if (!berechtigt.ok) return ergebnis(berechtigt.klasse, 'beweis')
 
   const speicher = await eingabe.deps.speicherLoeschen(nutzer.id)
+  if (speicher === 'teilweise') return ergebnis('teilweise_entfernt', 'speicher')
   if (speicher !== 'ok') return ergebnis('aufraeumen_fehlgeschlagen', 'speicher')
 
   const ereignisse = await eingabe.deps.ereignisseLoeschen(nutzer.id)
-  if (ereignisse !== 'ok') return ergebnis('aufraeumen_fehlgeschlagen', 'ereignisse')
+  if (ereignisse !== 'ok') return ergebnis('teilweise_entfernt', 'ereignisse')
 
   const geloescht = await eingabe.deps.nutzerLoeschen(nutzer.id)
   if (geloescht === 'nicht_gefunden') return ergebnis('nicht_gefunden', 'konto')
-  if (geloescht !== 'ok') return ergebnis('aufraeumen_fehlgeschlagen', 'konto')
+  if (geloescht !== 'ok') return ergebnis('teilweise_entfernt', 'konto')
   return ergebnis('geloescht', 'fertig')
 }
 

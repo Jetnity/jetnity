@@ -213,6 +213,39 @@ describe('Kontolöschung – Ausführung', () => {
     assert.deepEqual(abh.rufe, ['nutzer', 'faktoren', 'speicher'])
   })
 
+  test('ein späterer Fehlschlag ist teilweise und löscht den Auth-Nutzer nicht als Erfolg', async () => {
+    const speicher = deps({
+      speicherLoeschen: async () => {
+        speicher.rufe.push('speicher')
+        return 'teilweise'
+      },
+    })
+    const nachSpeicher = await kontoLoeschungAusfuehren({
+      jwt,
+      koerper: { confirmation: 'KONTO LÖSCHEN' },
+      supabaseUrl: `https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`,
+      deps: speicher,
+    })
+    assert.equal(nachSpeicher.klasse, 'teilweise_entfernt')
+    assert.deepEqual(speicher.rufe, ['nutzer', 'faktoren', 'speicher'])
+
+    const konto = deps({
+      nutzerLoeschen: async () => {
+        konto.rufe.push('konto')
+        return 'fehler'
+      },
+    })
+    const nachKonto = await kontoLoeschungAusfuehren({
+      jwt,
+      koerper: { confirmation: 'KONTO LÖSCHEN' },
+      supabaseUrl: `https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`,
+      deps: konto,
+    })
+    assert.equal(nachKonto.klasse, 'teilweise_entfernt')
+    assert.equal(nachKonto.schritt, 'konto')
+    assert.notEqual(nachKonto.klasse, 'geloescht')
+  })
+
   test('lässt einen AAL1-Faktor nicht durch und löscht auf Production nichts', async () => {
     const mitFaktor = deps({
       faktoren: async () => {
@@ -335,7 +368,17 @@ describe('Kontolöschung – Storage-API', () => {
     })
     speicher.remove = async () => 'ok'
     const ergebnis = await eigeneSpeicherObjekteLoeschen(speicher, NUTZER)
+    assert.equal(ergebnis, 'teilweise')
+  })
+
+  test('ein Fehler vor dem ersten Remove bestätigt keine Datenänderung', async () => {
+    const speicher = client({
+      beweise: [{ name: 'bleibt.bin', id: 'datei-1', owner: NUTZER, ownerId: null }],
+    })
+    speicher.buckets = async () => ({ fehler: true })
+    const ergebnis = await eigeneSpeicherObjekteLoeschen(speicher, NUTZER)
     assert.equal(ergebnis, 'fehler')
+    assert.deepEqual(speicher.entfernt, [])
   })
 })
 
@@ -462,6 +505,23 @@ describe('Kontolöschung – Browser', () => {
     assert.equal(ziel.rufe.includes('signOut'), false)
   })
 
+  test('eine teilweise Löschung bestätigt keinen Erfolg und sagt nicht, nichts habe sich geändert', async () => {
+    const ziel = port({
+      loeschen: async () => ({ klasse: 'teilweise_entfernt', netz: false }),
+    })
+    const ereignis = await kontoloeschungAnstossen(ziel, {
+      bestaetigung: KONTO_LOESCHEN_BESTAETIGUNG,
+      passwort: 'richtig-passwort',
+    })
+    assert.equal(ereignis.typ, 'teilweise')
+    const text = kontoloeschungStatusText(kontoloeschungWeiter(KONTOLOESCHUNG_ANFANG, ereignis))
+    assert.match(text, /kann bereits entfernt sein/)
+    assert.match(text, /Support/)
+    assert.equal(text.includes('keine bestätigte Datenänderung'), false)
+    assert.equal(ziel.rufe.includes('signOut'), false)
+    assert.deepEqual(ziel.pfade, [])
+  })
+
   test('der Löschkörper enthält keine user_id und die Copy kein Rechtsversprechen', async () => {
     const koerper = kontoloeschungLoeschkoerper()
     assert.deepEqual(Object.keys(koerper), ['confirmation'])
@@ -479,9 +539,11 @@ describe('Kontolöschung – Browser', () => {
     assert.equal(gesehen, JSON.stringify({ confirmation: 'KONTO LÖSCHEN' }))
     assert.equal(geholt.klasse, 'geloescht')
     assert.equal(kontoloeschungFunktionsUrl(`https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`), `https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co/functions/v1/account-delete-v1`)
+    assert.equal(kontoloeschungFunktionsUrl(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), null)
     assert.equal(kontoloeschungFunktionsUrl('http://evil.example'), null)
 
     const oberflaeche = quelle('../../components/account/KontoLoeschen.tsx')
+    const einstellungen = quelle('../../app/account/settings/page.tsx')
     const seite = quelle('../../app/(public)/konto-geloescht/page.tsx')
     const funktion = quelle('../../supabase/functions/account-delete-v1/index.ts')
     for (const text of [oberflaeche, seite]) {
@@ -490,6 +552,14 @@ describe('Kontolöschung – Browser', () => {
     assert.match(oberflaeche, /Daten zuerst exportieren/)
     assert.match(oberflaeche, /href="\/api\/account\/export"/)
     assert.match(oberflaeche, /Konto löschen/)
+    assert.match(oberflaeche, /dazu gespeicherten Reisen, Reisenden/)
+    assert.equal(oberflaeche.includes('übrigen'), false)
+    assert.equal(oberflaeche.includes('unwiderruflich'), false)
+    assert.match(oberflaeche, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
+    assert.match(einstellungen, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
+    assert.match(einstellungen, /loeschungAngeboten \? <KontoLoeschen \/> : null/)
+    assert.equal(einstellungen.includes('headers('), false)
+    assert.equal(einstellungen.includes('next/headers'), false)
     assert.match(oberflaeche, /KONTO LÖSCHEN/)
     assert.match(oberflaeche, /Aktuelles Passwort/)
     assert.match(oberflaeche, /aria-live="polite"/)

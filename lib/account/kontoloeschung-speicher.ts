@@ -2,6 +2,8 @@
 //
 // Löscht nur Storage-Objekte, deren Owner die verifizierte Nutzer-ID ist.
 // Der Aufrufer spricht die Storage-API. SQL auf storage.objects ist hier nicht vorgesehen.
+// `teilweise` heißt: ein Remove wurde versucht oder bestätigt, der zweite Walk
+// ist aber nicht leer. Der Auth-Nutzer darf danach nicht gelöscht werden.
 
 export type SpeicherEintrag = {
   name: string
@@ -28,23 +30,25 @@ const MAX_TIEFE = 8
 export async function eigeneSpeicherObjekteLoeschen(
   client: SpeicherClient,
   userId: string,
-): Promise<'ok' | 'fehler'> {
+): Promise<'ok' | 'fehler' | 'teilweise'> {
   if (!/^[0-9a-f-]{36}$/i.test(userId)) return 'fehler'
   const buckets = await client.buckets()
   if ('fehler' in buckets) return 'fehler'
 
+  let removeVersucht = false
   for (const bucket of buckets.ids) {
-    if (!bucketIstSicher(bucket)) return 'fehler'
+    if (!bucketIstSicher(bucket)) return removeVersucht ? 'teilweise' : 'fehler'
     const erste = await eigenePfade(client, bucket, userId)
-    if (erste === 'fehler') return 'fehler'
+    if (erste === 'fehler') return removeVersucht ? 'teilweise' : 'fehler'
     for (let i = 0; i < erste.length; i += SEITENGROESSE) {
       const stueck = erste.slice(i, i + SEITENGROESSE)
       if (stueck.length === 0) continue
+      removeVersucht = true
       const entfernt = await client.remove(bucket, stueck)
-      if (entfernt !== 'ok') return 'fehler'
+      if (entfernt !== 'ok') return 'teilweise'
     }
     const rest = await eigenePfade(client, bucket, userId)
-    if (rest === 'fehler' || rest.length > 0) return 'fehler'
+    if (rest === 'fehler' || rest.length > 0) return removeVersucht ? 'teilweise' : 'fehler'
   }
   return 'ok'
 }

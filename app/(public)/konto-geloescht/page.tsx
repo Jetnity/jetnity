@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Konto gelöscht',
-  description: 'Dieses Jetnity-Konto wurde dauerhaft gelöscht.',
+  description: 'Dieses Jetnity-Konto und die dazu gespeicherten Reisedaten wurden gelöscht.',
   robots: { index: false, follow: false },
 }
 
@@ -14,8 +14,8 @@ export default function KontoGeloeschtSeite() {
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Konto</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">Konto gelöscht</h1>
         <p className="mt-4 text-sm leading-6 text-ink-700">
-          Dieses Jetnity-Konto wurde dauerhaft gelöscht. Reisen, Reisende, Besuche und die übrigen
-          Kontodaten sind entfernt. Eine Wiederherstellung ist nicht möglich.
+          Dieses Jetnity-Konto wurde gelöscht. Die dazu gespeicherten Reisen, Reisenden und Besuche
+          sind entfernt. Eine Wiederherstellung dieses Kontos ist nicht vorgesehen.
         </p>
         <Link
           href="/"

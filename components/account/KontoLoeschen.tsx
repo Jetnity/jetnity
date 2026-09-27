@@ -24,6 +24,7 @@ import {
   type KontoloeschungPort,
   type KontoloeschungZustand,
 } from '@/lib/account/kontoloeschung-client'
+import { loeschUmgebungErlaubt } from '@/lib/account/kontoloeschung-vertrag'
 import { mfaStepUpChallengeIdLesen } from '@/lib/auth/account-mfa-step-up'
 import { createBrowserClient } from '@/lib/supabase/client'
 
@@ -150,6 +151,8 @@ export default function KontoLoeschen() {
     }
   }
 
+  if (!loeschUmgebungErlaubt(process.env.NEXT_PUBLIC_SUPABASE_URL)) return null
+
   return (
     <section
       aria-labelledby="konto-loeschen-titel"
@@ -165,8 +168,8 @@ export default function KontoLoeschen() {
             Konto löschen
           </h2>
           <p id="konto-loeschen-hinweis" className="mt-1 text-sm leading-6 text-ink-700">
-            Das Löschen entfernt dieses Konto dauerhaft. Reisen, Reisende, Besuche und die übrigen
-            Kontodaten werden unwiderruflich gelöscht. Eine Wiederherstellung ist nicht möglich.
+            Das Löschen entfernt dieses Jetnity-Konto und die dazu gespeicherten Reisen, Reisenden
+            und Besuche. Eine Wiederherstellung dieses Kontos ist nicht vorgesehen.
           </p>
           <p className="mt-3 text-sm leading-6 text-ink-700">
             Bevor du löschst, kannst du die vorhandenen Konto- und Reisedaten herunterladen.

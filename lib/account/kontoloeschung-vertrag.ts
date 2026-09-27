@@ -25,6 +25,7 @@ const LOESCH_KLASSEN = [
   'mfa_erforderlich',
   'beweis_unvollstaendig',
   'aufraeumen_fehlgeschlagen',
+  'teilweise_entfernt',
   'umgebung_gesperrt',
   'nicht_verfuegbar',
 ] as const
@@ -41,6 +42,7 @@ export const LOESCH_STATUS: Record<LoeschKlasse, number> = {
   mfa_erforderlich: 403,
   beweis_unvollstaendig: 403,
   aufraeumen_fehlgeschlagen: 500,
+  teilweise_entfernt: 500,
   umgebung_gesperrt: 403,
   nicht_verfuegbar: 503,
 }

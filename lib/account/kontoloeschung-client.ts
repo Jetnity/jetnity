@@ -9,6 +9,7 @@ import {
   KONTO_GELOESCHT_PFAD,
   KONTO_LOESCHEN_BESTAETIGUNG,
   loeschAntwortKlasse,
+  loeschUmgebungErlaubt,
 } from '@/lib/account/kontoloeschung-vertrag'
 
 /** Dieselben Schlüssel wie der Gastreisespeicher. Der Abgleich steht im Test. */
@@ -37,6 +38,7 @@ export type KontoloeschungFehlerCode =
   | 'veraltet'
   | 'nicht_gefunden'
   | 'aufraeumen'
+  | 'teilweise'
   | 'umgebung'
   | 'netz'
   | 'unbekannt'
@@ -66,6 +68,7 @@ export type KontoloeschungEreignis =
   | { typ: 'veraltet' }
   | { typ: 'nicht_gefunden' }
   | { typ: 'aufraeumen' }
+  | { typ: 'teilweise' }
   | { typ: 'umgebung' }
   | { typ: 'netz' }
   | { typ: 'unbekannt' }
@@ -115,7 +118,9 @@ const TEXTE: Record<KontoloeschungFehlerCode, string> = {
     'Dieses Konto kann hier nicht gelöscht werden. Eine Anmeldung ohne Passwort ist dafür nicht freigegeben.',
   veraltet: 'Die Anmeldung ist nicht mehr frisch genug. Bitte bestätige das aktuelle Passwort erneut.',
   nicht_gefunden: 'Dieses Konto ist nicht mehr vorhanden.',
-  aufraeumen: 'Das Konto konnte nicht gelöscht werden. Es wurde nicht als gelöscht bestätigt.',
+  aufraeumen: 'Das Konto wurde nicht gelöscht. Es liegt keine bestätigte Datenänderung vor. Bitte versuche es erneut.',
+  teilweise:
+    'Das Konto wurde nicht als gelöscht bestätigt. Ein Teil der in Jetnity gespeicherten Reisen, Reisenden oder Besuche kann bereits entfernt sein. Bitte versuche es erneut. Wenn das Konto danach noch besteht, wende dich an den Support.',
   umgebung: 'Das Löschen ist in dieser Umgebung nicht verfügbar.',
   netz: 'Die Verbindung war unterbrochen. Bitte prüfe das Netz und versuche es erneut.',
   unbekannt: 'Das hat gerade nicht geklappt. Bitte versuche es erneut.',
@@ -168,16 +173,9 @@ export function kontoloeschungLoeschkoerper(): { confirmation: typeof KONTO_LOES
 }
 
 export function kontoloeschungFunktionsUrl(supabaseUrl: string | null | undefined): string | null {
-  if (!supabaseUrl) return null
+  if (!loeschUmgebungErlaubt(supabaseUrl) || !supabaseUrl) return null
   try {
-    const url = new URL(supabaseUrl)
-    if (url.protocol === 'http:') {
-      const host = url.hostname
-      if (host !== '127.0.0.1' && host !== 'localhost') return null
-    } else if (url.protocol !== 'https:') {
-      return null
-    }
-    return `${url.origin}/functions/v1/account-delete-v1`
+    return `${new URL(supabaseUrl).origin}/functions/v1/account-delete-v1`
   } catch {
     return null
   }
@@ -237,6 +235,8 @@ export function kontoloeschungWeiter(
       return fehlerZustand('nicht_gefunden')
     case 'aufraeumen':
       return fehlerZustand('aufraeumen')
+    case 'teilweise':
+      return fehlerZustand('teilweise')
     case 'umgebung':
       return fehlerZustand('umgebung')
     case 'netz':
@@ -323,6 +323,8 @@ function ereignisAusKlasse(klasse: string): KontoloeschungEreignis {
       return { typ: 'mfa_erforderlich' }
     case 'aufraeumen_fehlgeschlagen':
       return { typ: 'aufraeumen' }
+    case 'teilweise_entfernt':
+      return { typ: 'teilweise' }
     case 'umgebung_gesperrt':
     case 'nicht_verfuegbar':
       return { typ: 'umgebung' }
