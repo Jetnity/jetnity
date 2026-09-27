@@ -6,8 +6,8 @@ Status: **STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN PASS / KEIN READY / KEIN MERG
 Binding task: `docs/V1_ACCOUNT_ERASURE_1_TASK_2026-09-27.md`  
 Status: `docs/V1_ACCOUNT_ERASURE_1_STATUS_2026-09-27.md`  
 Self-review: `docs/V1_ACCOUNT_ERASURE_1_SELF_REVIEW_2026-09-27.md`  
-TL CHANGES REQUIRED: Kommentar `5859179668`  
-Abgelehnter Head: `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0`
+Vorheriger TL-Kommentar: `5859179668`  
+Abgelehnter Bundler-Head: `b9cd6b1fd86591bcc0bcccf71c2c52ac2ff89d6c`
 
 ---
 
@@ -19,8 +19,8 @@ Abgelehnter Head: `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0`
 | Draft PR | #590 |
 | Branch | `feat/v1-account-erasure-1` |
 | Base | `main@95e9da45ceeacbc8b461541f810a7c8011d2151a`, behind 0 |
-| Parent vor dieser Korrektur | `efbdc7acab51fe87a630a0dd867b25ade70fde6a` |
-| Review-Head | der Commit dieser Korrektur |
+| Parent vor dieser Korrektur | `b9cd6b1fd86591bcc0bcccf71c2c52ac2ff89d6c` |
+| Review-Head | der Commit dieser Bundler-Korrektur |
 | Agent | Jetnity V1 account erasure 1, Generation 1 |
 | Modell | Grok 4.7 High Fast (`originalModelName=grok-4.7-high-fast`) |
 | Session | `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d` |
@@ -29,14 +29,13 @@ Abgelehnter Head: `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0`
 
 ## 2. Was der Review zuerst prüfen sollte
 
-1. R1 ist offen. Deploy endete mit HTTP 401. Die Function-URL antwortet 404. Der Disposable-Nachweis ist nicht gelaufen. Nichts wurde angelegt, also gibt es nichts zu säubern. Kein PASS.
-2. R2: `app/account/settings/page.tsx` rendert `<KontoLoeschen />` nur, wenn `loeschUmgebungErlaubt(process.env.NEXT_PUBLIC_SUPABASE_URL)` wahr ist. Kein `headers()`, kein Anfrage-Host. Production-URL ergibt `null` als Funktions-URL. Die Function lehnt Production weiter vor jedem privilegierten Aufruf ab.
-3. R3: Copy nennt nur Jetnity-Konto, Reisen, Reisende und Besuche. `teilweise_entfernt` ist die ehrliche Klasse nach einem begonnenen Remove oder nach einem Fehlschlag, der auf erfolgreiches Storage folgt. Der Auth-Nutzer wird dann nicht gelöscht.
-4. Keine Migration, kein Production-Schreiben, keine globalen Kontinuitätsdateien.
-5. Production-Aktivierung bleibt ein eigenes Product-Owner-Gate.
+1. `lib/account/kontoloeschung-ausfuehrung.ts` importiert `./kontoloeschung-vertrag.ts`. Jeder relative Import im Function-Graphen endet auf `.ts`. `verify_jwt` bleibt true. Die Sicherheitslogik ist nicht dupliziert.
+2. Lokales `deno bundle` der Function endet mit Exit 0. Das ist kein Deploy. Development Edge Functions wurden von diesem Agenten nicht aktiviert. Der Disposable-Nachweis ist nicht gelaufen. Kein PASS.
+3. `deno check` meldet weiter fünf `TS2345` auf Supabase-Client-Generics. Das ist nicht der gemeldete Module-not-found-Fehler und wurde in diesem Slice nicht umgebaut.
+4. R2 und R3 von `b9cd6b1f` bleiben: konfigurierte Projekt-URL, engere Copy, Klasse `teilweise_entfernt`. Production bleibt geschlossen.
+5. Keine Migration, kein Production-Schreiben, keine globalen Kontinuitätsdateien.
+6. Production-Aktivierung bleibt ein eigenes Product-Owner-Gate.
 
 ## 3. Nächster Schritt
 
-Unabhängiges Technical-Lead-Re-Review dieses Heads. Nicht Ready. Nicht mergen.
-
-Ein autorisierter Development-Management-Token kann danach dieselbe Function nur auf das Development-Projekt deployen (`verify_jwt` bleibt true) und `scripts/account/kontoloeschung-nachweis.ts` ausführen. Das ist kein Auftrag dieses Agenten und kein Folgeslice.
+Unabhängiges Technical-Lead-Re-Review dieses Heads. Danach kann der Technical Lead denselben Function-Stand nur auf Development deployen und `scripts/account/kontoloeschung-nachweis.ts` ausführen. Nicht Ready. Nicht mergen. Kein Folgeslice.

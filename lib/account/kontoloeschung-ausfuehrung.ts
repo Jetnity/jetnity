@@ -15,7 +15,8 @@ import {
   loeschBerechtigungPruefen,
   loeschUmgebungErlaubt,
   type LoeschKlasse,
-} from './kontoloeschung-vertrag'
+// `.ts` ist die Auflösung des Deno-Bundlers. Ohne Endung bricht das Development-Deploy ab.
+} from './kontoloeschung-vertrag.ts'
 
 export type LoeschNutzerErgebnis =
   | { art: 'ok'; id: string; providers: string[] | null }

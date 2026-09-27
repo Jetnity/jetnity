@@ -5,11 +5,10 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #588  
 Draft PR: #590  
-TL comment: `5859179668`  
-Abgelehnter Head: `76e6bf9c153f94f3478cd11bcdbd26fd1794c2f0`  
-Parent vor der Korrektur: `efbdc7acab51fe87a630a0dd867b25ade70fde6a`
+Abgelehnter Bundler-Head: `b9cd6b1fd86591bcc0bcccf71c2c52ac2ff89d6c`  
+Parent vor dieser Korrektur: `b9cd6b1fd86591bcc0bcccf71c2c52ac2ff89d6c`
 
-Dieses Dokument ersetzt keinen unabhängigen Technical-Lead-PASS.
+Dieses Dokument ersetzt keinen unabhängigen Technical-Lead-PASS. Der Development-Nachweis ist nicht bestanden.
 
 ---
 
@@ -17,22 +16,22 @@ Dieses Dokument ersetzt keinen unabhängigen Technical-Lead-PASS.
 
 | Angriff | Ergebnis |
 | --- | --- |
-| R1 als bestanden dokumentieren, weil die Quellen hochgeladen wurden | Abgelehnt. Deploy-Status 401, Function 404, Nachweis `management_401`. Kein User, kein Bucket. |
-| Production-UI über den Anfrage-Host freischalten | Abgelehnt. Gate ist die konfigurierte Projekt-URL. |
-| Die Function für Production öffnen, damit die UI nicht ins Leere zeigt | Abgelehnt. Production bleibt in `loeschUmgebungErlaubt` geschlossen. |
-| „Übrige Kontodaten“ oder gesetzliche Vollständigkeit behaupten | Abgelehnt. Copy ist auf den Jetnity-Konto-Graphen begrenzt. |
-| Nach einem späten Fehlschlag „nichts geändert“ sagen | Abgelehnt. Klasse `teilweise_entfernt`, ohne interne Schritte. |
-| Auth-Nutzer löschen, obwohl Storage nicht sauber leer ist | Abgelehnt. `teilweise` stoppt vor Ereignissen und vor `deleteUser`. |
+| Den endungslosen Import stehen lassen | Abgelehnt. Der Deploy brach genau dort ab. Der Import endet auf `.ts`. |
+| Eine zweite, ungetestete Kopie der Löschlogik für Deno anlegen | Abgelehnt. Dieselbe Datei bleibt die Quelle. |
+| `verify_jwt` ausschalten, damit der Bundler leichter deployt | Abgelehnt. `verify_jwt = true` bleibt. |
+| Production öffnen, weil der Development-Deploy scheitert | Abgelehnt. UI und Function bleiben für Production geschlossen. |
+| `deno bundle` Exit 0 als Disposable-Nachweis lesen | Abgelehnt. Es wurde nichts deployt und kein User gelöscht. |
+| Die fünf `deno check`-TS2345 in diesem Slice still mit umbauen | Abgelehnt. Sie sind nicht der gemeldete Bundler-Fehler. Die Signaturen bleiben. |
 | Globale Kontinuität oder Ready/Merge | Abgelehnt. |
 
 ## 2. Restrisiken
 
-- Ohne Deploy kann Development die Löschung nicht ausführen. Der Client darf das nicht als Erfolg zeigen.
-- Die angemeldete Maske wurde nicht mit einem echten Development-Konto bedient.
-- Ein Remove, den die Storage-API mit Fehler beantwortet, kann serverseitig schon Objekte entfernt haben. Dafür steht `teilweise`, nicht eine Garantie, welche Objekte noch liegen.
-- Vendor-Logs, Backups und Aufbewahrungspflichten sind außerhalb dieses Pfads und werden nicht versprochen.
+- Ob der Supabase-Deploy-Bundler denselben Graphen akzeptiert, entscheidet der nächste authentifizierte Development-Deploy. Dieser Agent hat ihn nicht ausgeführt.
+- `deno check` bleibt mit fünf Generic-Fehlern rot. `deno bundle` ist grün. Ein Deploy, der zusätzlich typecheckt, kann daran noch scheitern.
+- Ohne aktivierte Function kann Development die Löschung nicht ausführen.
+- Die nicht-atomare Grenze bleibt: Storage vor Auth, späterer Fehlschlag kann Daten schon entfernt haben.
 - Ein späterer Commit entwertet diesen Head. CI dieses Heads ist zum Schreibzeitpunkt noch nicht belegt.
 
 ## 3. Empfehlung
 
-R2 und R3 reviewen. R1 nicht als PASS lesen. Nicht mergen, bevor der Development-Nachweis tatsächlich gelaufen ist und ein unabhängiger Exact-Head-Review das so entscheidet. Production bleibt zu.
+Den Bundler-Graphen reviewen und den Development-Deploy selbst erneut ausführen. Den Nachweis nicht als PASS lesen. Nicht mergen. Production bleibt zu.

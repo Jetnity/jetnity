@@ -584,4 +584,19 @@ describe('Kontolöschung – Browser', () => {
     assert.match(seite, /Konto gelöscht/)
     assert.match(seite, /index: false/)
   })
+
+  test('relative Importe im Edge-Bundle enden auf .ts', () => {
+    const dateien = [
+      quelle('../../supabase/functions/account-delete-v1/index.ts'),
+      quelle('./kontoloeschung-ausfuehrung.ts'),
+      quelle('./kontoloeschung-speicher.ts'),
+      quelle('./kontoloeschung-vertrag.ts'),
+    ]
+    const importe = dateien.flatMap((text) =>
+      [...text.matchAll(/from\s+['"](\.[^'"]+)['"]/g)].map((treffer) => treffer[1] ?? ''),
+    )
+    assert.deepEqual(importe.filter((pfad) => !pfad.endsWith('.ts')), [])
+    assert.ok(importe.some((pfad) => pfad.endsWith('kontoloeschung-vertrag.ts')))
+    assert.match(quelle('../../supabase/config.toml'), /\[functions\.account-delete-v1\][\s\S]*verify_jwt = true/)
+  })
 })
