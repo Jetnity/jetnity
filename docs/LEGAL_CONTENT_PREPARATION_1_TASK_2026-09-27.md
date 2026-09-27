@@ -9,6 +9,23 @@ Branch: `docs/legal-content-preparation-1`
 Baseline main: `4d1888f95aec3395e35c785bcb3e0d83301d5cec`
 Task owner: Technical Lead. Cursor must not edit this task.
 
+## 0. Binding continuation amendment — 27 September 2026, 12:13 Europe/Zurich
+
+PO says “Wir bauen weiter” after the vendor-managed-policy clarification and hosted-link review. Continue this existing preparation PR with the same logical writer, Generation 1, session `bc-efbd2a0c-d64b-4e37-b054-b7c583cabdac`. Do not restart stopped session `bc-87b242df-9b25-49c4-b0c8-198f11dfbb8e`. Existing accepted same-session model evidence remains sufficient; no repeated tier-selection loop.
+
+This amendment supersedes conflicting composition/next-step requirements below and in the five deliverables. It does not authorize runtime or publication. Main remains `4d1888f95aec3395e35c785bcb3e0d83301d5cec`; previously accepted preparation head is `c09dbd5cb9979ef0d0fa0ca101e80986cbea72a3`, ahead 3 / behind 0, with successful exact-head CI. That preparation PASS is historical, not final content approval.
+
+### Required correction, same five writable deliverables
+
+1. PrivacyBee is the PO-selected generator and maintainer of the privacy policy. Remove the Jetnity-authored static supplement plus optional widget composition as the selected/default implementation. Retain useful processing facts; label prior visitor-copy drafts as superseded proposals, not approved fallback text. No bespoke policy drafting as a default deliverable.
+2. Read #577 receipts 5854336548, 5854401589, 5854680409, 5854791796 and 5854846134. Incorporate their bounded current evidence and stop repeating resolved Supabase-service, Vercel-plan, region and contact gaps as unknown. Do not extend evidence to all processing locations or total retention.
+3. The hosted policy URL is https://app.privacybee.io/v/cmuj24t7p05512zwul6dghfhu?lang=de&type=dsgvo . Supabase, Vercel and PrivacyBee are present. Public configuration updated 2026-09-27T09:42:13.297Z has banner disabled and marketing/product-development false. German DSGVO template still asserts a displayed banner and session-end logfile deletion; these remain unresolved, along with generic analytics/pixel wording. Do not turn those assertions into implementation requirements.
+4. Produce a concrete implementation specification for vendor-managed /privacy and /impressum: exact existing integration points, chosen supported embed approach, lifecycle/navigation behavior, loading/failure accessibility, approved public hosted-policy link as a possible fallback, prelaunch metadata and hostname/license boundaries. Distinguish a link from copying vendor text. Do not assume that a preview domain is licensed or that an imprint hosted URL exists. Keep /terms separate.
+5. Distinguish work technically preparable before publication from genuine publication blockers. Identify the smallest next code slice and acceptance checks; do not dispatch or implement it. No arbitrary new approval requirements or broad vendor-support checklist. Any remaining vendor questions must be narrowly tied to observed contradictions; do not contact support.
+6. Update STATUS/HANDOFF/SELF_REVIEW consistently. First unfinished action after delivery is independent TL review of the new exact head and selection of the bounded implementation scope, not another request for the same screenshots or billing approval.
+
+No change to writable scope: only the five preparation deliverables. TASK remains TL-owned. No runtime, production/env/DB/auth, DNS, scripts/banner/tracking, billing/contract, support messaging, Ready/merge or follow-up. No additional agent. Source/diff/scope verification is enough for this docs correction; no fabricated runtime evidence.
+
 ## 1. Authority, context and model
 
 PO approved starting proposal v1 (issue comment 5851396768), recorded in [5851434120](https://github.com/Jetnity/jetnity/issues/577#issuecomment-5851434120). Gate A/B domain enablement and PrivacyBee validation/scan/generation/snippet retrieval were completed separately; see 5851358367. Do not repeat completed domain work.
