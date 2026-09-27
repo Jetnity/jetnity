@@ -2,6 +2,7 @@
 
 import { createBrowserClient as _createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { merkeCallbackLage } from '@/lib/auth/callback-abschluss';
 import type { Database } from '@/types/supabase';
 
 function getEnv() {
@@ -21,6 +22,12 @@ function getSupabaseBrowser(): SupabaseClient<Database> {
   if (_sb) return _sb;
 
   const { url, anon } = getEnv();
+
+  // Vor dem Konstruktor. initialize() kann den Recovery-Verifier löschen,
+  // bevor der Callback ihn selbst liest. Gemerkt wird nur ein Boolean.
+  if (typeof document !== 'undefined' && typeof window !== 'undefined') {
+    merkeCallbackLage(document.cookie, window.location.href, url);
+  }
 
   // Typ-Stabilisierung zwischen @supabase/ssr und supabase-js unter TS5/strict:
   const sb = _createBrowserClient(url, anon) as unknown as SupabaseClient<Database>;

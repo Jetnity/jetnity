@@ -11,8 +11,11 @@
 //
 // Diese Funktion liest den Verifier, bevor der Client entsteht, und tauscht
 // nur, wenn die Initialisierung den Code nicht selbst verbraucht hat.
-// detectSessionInUrl bleibt an, damit die Passwort-Rücksetzung auf
-// /auth/update-password weiter dem SDK gehört.
+// Entsteht der gemeinsame Client zuerst, merkt er nur die Wiederherstellung,
+// nicht den Verifier und nicht den Code. detectSessionInUrl bleibt an, damit
+// die Passwort-Rücksetzung auf /auth/update-password weiter dem SDK gehört.
+// Abgeschlossene Läufe bleiben nicht liegen. Nur ein noch laufender Versuch
+// derselben Form wird geteilt.
 
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel'
 
@@ -68,6 +71,44 @@ export type CallbackAbschlussEingabe = {
 }
 
 const laeufe = new Map<string, Promise<CallbackAbschluss>>()
+
+type CallbackLage = {
+  codeWarDa: boolean
+  wiederherstellung: boolean
+}
+
+/** Nur booleans. Kein Code, kein Verifier, kein Hash. */
+const lagen = new Map<string, CallbackLage>()
+
+/**
+ * Vor createBrowserClient aufrufen. Die Initialisierung löscht den
+ * Wiederherstellungs-Verifier, sobald sie den Code tauscht. Danach ist an der
+ * Sitzung nicht mehr zu erkennen, dass es eine Wiederherstellung war.
+ */
+export function merkeCallbackLage(cookieHeader: string, href: string, supabaseUrl: string): void {
+  const codeWarDa = Boolean(codeAusHref(href))
+  const wiederherstellung = codeWarDa && istPasswortWiederherstellung(
+    liesPkceCodeVerifier(cookieHeader, supabaseUrl),
+  )
+  const bisher = lagen.get(supabaseUrl)
+  if (!codeWarDa && !wiederherstellung && bisher) return
+  lagen.set(supabaseUrl, { codeWarDa, wiederherstellung })
+}
+
+function wiederherstellungOffen(supabaseUrl: string): boolean {
+  return Boolean(lagen.get(supabaseUrl)?.wiederherstellung)
+}
+
+function verwerfeWiederherstellung(supabaseUrl: string): void {
+  const lage = lagen.get(supabaseUrl)
+  if (!lage?.wiederherstellung) return
+  lagen.set(supabaseUrl, { codeWarDa: lage.codeWarDa, wiederherstellung: false })
+}
+
+/** Nur für den Nachweis, dass abgeschlossene Läufe nicht liegen bleiben. */
+export function offeneCallbackLaeufe(): number {
+  return laeufe.size
+}
 
 function sicherDekodieren(wert: string): string {
   try {
@@ -212,7 +253,13 @@ function fehler(meldung: string): CallbackAbschluss {
   return { art: 'fehler', meldung }
 }
 
-function zielNachErfolg(wiederherstellung: boolean, umleitung: string | null, next: string): string {
+function zielNachErfolg(
+  eingabe: CallbackAbschlussEingabe,
+  verifier: string | null,
+  umleitung: string | null,
+  next: string,
+): string {
+  const wiederherstellung = istPasswortWiederherstellung(verifier) || wiederherstellungOffen(eingabe.supabaseUrl)
   if (wiederherstellung || umleitung === 'PASSWORD_RECOVERY') return PASSWORT_AKTUALISIEREN
   return next
 }
@@ -225,17 +272,18 @@ function codeAusAdresseEntfernen(eingabe: CallbackAbschlussEingabe) {
 async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAbschluss> {
   try {
     const verifier = liesPkceCodeVerifier(eingabe.cookieHeader, eingabe.supabaseUrl)
-    const wiederherstellung = istPasswortWiederherstellung(verifier)
     const suche = suchParameter(eingabe.suche)
     const hash = hashParameter(eingabe.hash)
     const next = erlaubtesNaechstesZiel(suche.get('next'))
     const code = codeAusSuche(eingabe.suche)
 
     if (hash.get('error') || hash.get('error_description') || hash.get('error_code')) {
+      verwerfeWiederherstellung(eingabe.supabaseUrl)
       return fehler(CALLBACK_MELDUNG_ABBRUCH)
     }
 
     if (suche.get('error') || suche.get('error_description') || suche.get('error_code')) {
+      verwerfeWiederherstellung(eingabe.supabaseUrl)
       return fehler(CALLBACK_MELDUNG_ABBRUCH)
     }
 
@@ -250,7 +298,7 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
       if (gesetzt.error) return fehler(meldungFuerFehler(gesetzt.error.message))
       const ziel = hash.get('type') === 'recovery'
         ? PASSWORT_AKTUALISIEREN
-        : zielNachErfolg(wiederherstellung, null, next)
+        : zielNachErfolg(eingabe, verifier, null, next)
       return { art: 'ok', ziel }
     }
 
@@ -260,31 +308,50 @@ async function ausfuehren(eingabe: CallbackAbschlussEingabe): Promise<CallbackAb
       const verbraucht = codeAusHref(eingabe.hrefLesen()) !== code
 
       if (verbraucht) {
-        if (init.error) return fehler(meldungFuerFehler(init.error.message))
+        if (init.error) {
+          verwerfeWiederherstellung(eingabe.supabaseUrl)
+          return fehler(meldungFuerFehler(init.error.message))
+        }
         const { data, error } = await client.auth.getSession()
-        if (error || !sitzungDa(data.session)) return fehler(CALLBACK_MELDUNG_ABBRUCH)
+        if (error) return fehler(meldungFuerFehler(error.message))
+        if (!sitzungDa(data.session)) {
+          verwerfeWiederherstellung(eingabe.supabaseUrl)
+          return fehler(CALLBACK_MELDUNG_ABBRUCH)
+        }
         codeAusAdresseEntfernen(eingabe)
-        return { art: 'ok', ziel: zielNachErfolg(wiederherstellung, null, next) }
+        return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next) }
       }
 
-      if (init.error) return fehler(meldungFuerFehler(init.error.message))
+      if (init.error) {
+        verwerfeWiederherstellung(eingabe.supabaseUrl)
+        return fehler(meldungFuerFehler(init.error.message))
+      }
 
       const getauscht = await client.auth.exchangeCodeForSession(code)
       if (getauscht.error || !sitzungDa(sitzungAusTausch(getauscht.data))) {
+        verwerfeWiederherstellung(eingabe.supabaseUrl)
         return fehler(meldungFuerFehler(getauscht.error?.message))
       }
       codeAusAdresseEntfernen(eingabe)
       return {
         art: 'ok',
-        ziel: zielNachErfolg(wiederherstellung, umleitungsart(getauscht.data), next),
+        ziel: zielNachErfolg(eingabe, verifier, umleitungsart(getauscht.data), next),
       }
     }
 
     const client = eingabe.client()
+    const init = await client.auth.initialize()
+    if (init.error) {
+      verwerfeWiederherstellung(eingabe.supabaseUrl)
+      return fehler(meldungFuerFehler(init.error.message))
+    }
     const { data, error } = await client.auth.getSession()
     if (error) return fehler(meldungFuerFehler(error.message))
-    if (sitzungDa(data.session)) return { art: 'ok', ziel: next }
-    return fehler(CALLBACK_MELDUNG_LEER)
+    if (!sitzungDa(data.session)) {
+      verwerfeWiederherstellung(eingabe.supabaseUrl)
+      return fehler(CALLBACK_MELDUNG_LEER)
+    }
+    return { art: 'ok', ziel: zielNachErfolg(eingabe, verifier, null, next) }
   } catch (error) {
     const message = error instanceof Error ? error.message : undefined
     return fehler(meldungFuerFehler(message))
@@ -296,16 +363,39 @@ function sitzungAusTausch(data: unknown): unknown {
   return (data as { session?: unknown }).session ?? null
 }
 
+function versuchSchluessel(eingabe: CallbackAbschlussEingabe): string {
+  const suche = suchParameter(eingabe.suche)
+  const hash = hashParameter(eingabe.hash)
+  const hatCode = Boolean(codeAusSuche(eingabe.suche))
+  const hatHash = Boolean(hash.get('access_token') && hash.get('refresh_token'))
+  const hatFehler = Boolean(
+    hash.get('error') || hash.get('error_description') || hash.get('error_code')
+    || suche.get('error') || suche.get('error_description') || suche.get('error_code'),
+  )
+  const art = hash.get('type') === 'recovery' ? 'recovery' : 'sonst'
+  const next = erlaubtesNaechstesZiel(suche.get('next'))
+  return [
+    eingabe.supabaseUrl,
+    hatCode ? 'code' : 'ohne-code',
+    hatHash ? 'hash' : 'ohne-hash',
+    hatFehler ? 'fehler' : 'ohne-fehler',
+    art,
+    next,
+  ].join('\n')
+}
+
 /**
- * Schliesst den Callback einmal ab. Gleiche Adresse im selben Dokument teilt
- * sich einen Lauf, damit ein erneutes Mounten den Code nicht ein zweites Mal
- * verbraucht.
+ * Schliesst den Callback einmal ab. Nur ein noch laufender Versuch derselben
+ * Form wird geteilt, damit ein erneutes Mounten den Code nicht ein zweites
+ * Mal verbraucht. Nach dem Abschluss wird der Lauf verworfen.
  */
 export function schliesseAuthCallbackAb(eingabe: CallbackAbschlussEingabe): Promise<CallbackAbschluss> {
-  const schluessel = `${eingabe.supabaseUrl}\n${eingabe.suche}\n${eingabe.hash}`
+  const schluessel = versuchSchluessel(eingabe)
   const vorhanden = laeufe.get(schluessel)
   if (vorhanden) return vorhanden
-  const lauf = ausfuehren(eingabe)
+  const lauf = ausfuehren(eingabe).finally(() => {
+    if (laeufe.get(schluessel) === lauf) laeufe.delete(schluessel)
+  })
   laeufe.set(schluessel, lauf)
   return lauf
 }
