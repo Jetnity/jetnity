@@ -7,15 +7,15 @@ This is an author self-review, not an independent Technical-Lead PASS.
 
 ## Modell
 
-Der Auftrag bindet `cursor-grok-4.6-high-fast`. `run-info.originalModelName` ist `grok-4.7-high-fast`. Die Session wurde so gestartet. Es gibt in diesem Lauf keinen Wechsel auf 4.6. Die Continuity auf main nennt für neue Sessions Grok 4.7 High Fast. Beides steht hier, damit niemand die Session als 4.6 liest.
+Der Auftrag band `cursor-grok-4.6-high-fast`. Der Technical Lead hat diesen Pin im Review als veraltet korrigiert: für neue Sessions gilt Grok 4.7 High Fast. Diese bestehende Session ist `grok-4.7-high-fast` und bleibt es. Es gab keinen Modellwechsel und keinen neuen Agenten.
 
 Der UI-Titel ist `Auth callback PKCE conflict`. Eine programmierbare Umbenennung wurde nicht ausgeführt und nicht behauptet.
 
 ## Scope
 
-Geändert: Callback-Abschluss, Callback-Komponente, fokussierte Tests, zwei bestehende Allowlist-Verweise, AUTH.md, ARCHITECTURE.md, ADR-0214, Task-Status, Active Work, dieser Status/Handoff/Self-Review.
+Geändert in der Review-Korrektur: `lib/auth/callback-abschluss.ts`, seine Tests, `lib/supabase/client.ts` (Boolean vor dem Konstruktor), AUTH.md, ARCHITECTURE.md, ADR-0214, Task-Status, Active Work, dieser Status/Handoff/Self-Review.
 
-Nicht geändert: `lib/supabase/client.ts`, Login, Register, Update-Password-Seite, `erlaubtesNaechstesZiel`, Middleware, Supabase-Host, Abhängigkeiten.
+Nicht geändert: Callback-Komponente, Login, Register, Update-Password-Seite, `erlaubtesNaechstesZiel`, Middleware, Supabase-Host, Abhängigkeiten, `detectSessionInUrl`.
 
 ## Verhalten
 
@@ -23,13 +23,17 @@ Der alte Ablauf ist mit den gesperrten Bibliotheken nachgestellt: zwei Tausche, 
 
 Geprüft ausserdem: Client schon vorher initialisiert, Recovery-Verifier, direkte Passwortseite, fremdes `next`, fehlender Verifier bei liegender Sitzung, ungültiger Code, Netzfehler, expliziter URL-Fehler ohne Rohtext, Hash-Recovery, leerer Callback, Sitzung ohne Code, zweiter Aufruf derselben Adresse.
 
+Review-Korrektur, an den gesperrten Bibliotheken, ohne Live-Mail: derselbe Code nach geleertem Glas scheitert; eine code-freie Adresse liest eine später entstandene Sitzung neu; `initialize()` vor dem Helfer und ein noch laufender Tausch mit schon gelöschtem Verifier gehen nach `/auth/update-password`; eine frühe Anmeldung bleibt auf `next`; nach Abmelden übernimmt eine neue Sitzung die Wiederherstellung nicht. Abgeschlossene Läufe liegen nicht mehr in der Map. Der Schlüssel speichert keinen Code und keine Hash-Tokens.
+
 ## Ehrliche Lücken
 
 - Kein physisches Gerät, kein erneuter Production-Mail-Klick. #582 ist nicht bestanden.
 - Der Bibliotheksnachweis ist kein Live-Trace der iPhone-Sitzung.
 - Ein Netzfehler im automatischen Tausch entfernt den Verifier. Die Meldung ist ehrlich, der Link ist danach verbraucht.
 - Die deutschen Sätze ersetzen die rohe GoTrue-Meldung. Sie nennen nicht den internen Fehlercode.
-- `npm test` 3960/3960, Typecheck, Lint der geänderten Dateien und Production-Build sind grün. Das ersetzt keinen Geräte-Klick.
+- `npm test` 3968/3968, Typecheck, Lint der geänderten Dateien und Production-Build sind grün. Das ersetzt keinen Geräte-Klick.
+- `npm run auth:pruefen` ist in dieser Umgebung mit 401 abgebrochen, weil der Ref weder als Projekt noch als Branch angenommen wurde. Das ist kein Callback-PASS und keine hosted Änderung.
+- Der alte Head `716d708d1673e2e96c4028d82332a633baf677a4` ist nicht mehr gegated. `origin/main` bleibt `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3`.
 - Im lokalen Browser sind der explizite Fehler und der leere Callback geprüft. Der gültige Tausch nicht: dafür bräuchte es einen echten Code.
 
 ## Traveller-Kontext

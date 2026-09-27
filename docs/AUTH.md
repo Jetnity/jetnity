@@ -299,7 +299,7 @@ Seit Phase 1.5 hat eine Anmeldung eine Folge, die über die Sitzung hinausgeht: 
 | OAuth (Schaltfläche nur bei `auth.external.*.enabled = true`) | `/auth/callback` → erlaubtes `next`, sonst `/reisen` |
 | Rücksetzung des Passworts | `/auth/callback` → `/auth/update-password` → `/reisen` |
 
-Der Bestätigungslink tauscht seinen PKCE-Code genau einmal (`lib/auth/callback-abschluss.ts`, ADR-0214). Die automatische URL-Erkennung des Browser-Clients bleibt an: ein Rücksetzlink, der direkt auf `/auth/update-password` landet, bekommt seine Sitzung weiter vom SDK. Ein Wiederherstellungs-Verifier oder `type=recovery` im Callback führt nach `/auth/update-password` und nicht über `next`.
+Der Bestätigungslink tauscht seinen PKCE-Code genau einmal (`lib/auth/callback-abschluss.ts`, ADR-0214). Die automatische URL-Erkennung des Browser-Clients bleibt an: ein Rücksetzlink, der direkt auf `/auth/update-password` landet, bekommt seine Sitzung weiter vom SDK. Ein Wiederherstellungs-Verifier oder `type=recovery` im Callback führt nach `/auth/update-password` und nicht über `next`. Hat der Browser-Client den Tausch schon abgeschlossen, bevor der Callback den Verifier liest, bleibt das Ziel trotzdem `/auth/update-password`: beim Erzeugen merkt der Client nur, dass es eine Wiederherstellung war. Abgeschlossene Auswertungen bleiben nicht liegen. Nur ein noch laufender Versuch wird geteilt.
 
 Die Übernahme in jedes Formular zu bauen wären fünf Stellen, an denen sie fehlen kann. Auf `/reisen` greift sie zusätzlich in Fällen, in denen keiner dieser Wege beteiligt war: bei einer Sitzung, die in einem anderen Tab entstanden ist, und nach einem Versuch, der beim letzten Mal an der Datenbank gescheitert ist.
 
