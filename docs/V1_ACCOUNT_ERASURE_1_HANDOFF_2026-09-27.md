@@ -6,7 +6,8 @@ Status: **STOP FOR TECHNICAL-LEAD RE-REVIEW / KEIN PASS / KEIN READY / KEIN MERG
 Binding task: `docs/V1_ACCOUNT_ERASURE_1_TASK_2026-09-27.md`  
 Status: `docs/V1_ACCOUNT_ERASURE_1_STATUS_2026-09-27.md`  
 Self-review: `docs/V1_ACCOUNT_ERASURE_1_SELF_REVIEW_2026-09-27.md`  
-Parent vor dieser Korrektur: `0119f9c2a8e8440373ac8f224c7d6c57b64c423f`
+Technical-Lead-Kommentar: `5860625071`  
+Parent vor dieser Korrektur: `823618eda90310f123ca0b345398a5a88183c524`
 
 ---
 
@@ -17,21 +18,21 @@ Parent vor dieser Korrektur: `0119f9c2a8e8440373ac8f224c7d6c57b64c423f`
 | Issue | #588 |
 | Draft PR | #590 |
 | Branch | `feat/v1-account-erasure-1` |
-| Base | `main@95e9da45ceeacbc8b461541f810a7c8011d2151a` |
-| Review-Head | der Commit dieser Besitzgrenze |
+| Base | `main@95e9da45ceeacbc8b461541f810a7c8011d2151a` (behind 0) |
+| Review-Head | der Commit dieser Graph-Kaskade |
 | Agent | Jetnity V1 account erasure 1, Generation 1 |
 | Modell | Grok 4.7 High Fast (`originalModelName=grok-4.7-high-fast`) |
 | Session | `bc-83c9d71e-a18d-49d5-8057-dfa34cfcaf9d` |
 
 ## 2. Was der Review zuerst prüfen sollte
 
-1. `BESITZ_SQL` ist nur `select bucket_id, name from storage.objects where owner_id = $1`. Die Nutzer-ID steht nicht im SQL-Text. `delete`/`update` auf `storage.objects` kommen in der Function und im Modul nicht vor.
-2. `remove` erhält nur Pfade, die der Leser für genau diese Nutzer-ID geliefert hat. Fremde Pfade, kaputte Buckets und kaputte Pfade gehen nicht an die Storage-API.
-3. Eine zweite Besitzlesung nach dem Remove entscheidet `teilweise`, wenn noch eigene Zeilen da sind.
-4. Die Function ruft `storage.list` nicht mehr auf. Der Nachweis ebenfalls nicht, und er liest `owner_id` nicht aus einer List-Antwort.
-5. `SUPABASE_DB_URL` wird nicht protokolliert. Production und `verify_jwt` bleiben geschlossen beziehungsweise wahr.
-6. Der Live-Nachweis ist nicht gelaufen. Kein 11/11. Keine Production-Änderung. Der Direktmodus von `0119f9c2` bleibt.
+1. `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` ersetzt nur `public.reise_graph_geaendert()`. Die Funktion bleibt `SECURITY INVOKER`. Die neun Trigger bleiben. Kein `GRANT`. Kein Rollenname der Auth-Verwaltung.
+2. Reihenfolge: `jetnity.graph_mutation`, dann `pg_trigger_depth() > 1`, dann die Frage, ob eine betroffene Reise noch sichtbar ist. Erst danach das `UPDATE`.
+3. Auf PostgreSQL 16 ist die Tiefe bei der Fremdschlüssel-Kaskade 1. Die unsichtbare Elternzeile ist der Fall, der `42501` auf `trips` beseitigt. Der lokale Nachweis zeigt das an der alten Funktion und danach an der neuen.
+4. `npm run db:graph-kaskade-tiefe-lokal` ist 6/6. Direkte Kindänderungen zählen weiter. `graph_mutation` bleibt. Eltern- und Auth-Löschung schreiben `trips` nicht an.
+5. Die Migration ist nicht auf Development und nicht auf Production angewendet. Der Live-Nachweis ist nicht gelaufen. Kein 11/11.
+6. Storage-Besitz, Direktmodus, Production-Sperre und `verify_jwt` aus den vorherigen Köpfen bleiben.
 
 ## 3. Nächster Schritt
 
-Unabhängiges Technical-Lead-Re-Review dieses Heads. Danach kann der Development-Nachweis erneut laufen. Nicht Ready. Nicht mergen.
+Unabhängiges Technical-Lead-Re-Review dieses Heads. Danach die Migration nur auf Supabase Development anwenden, die Function nicht neu deuten müssen, und den Disposable-Nachweis erneut laufen. Nicht Ready. Nicht mergen. Production `qscbgcdmivbbnzrcyegn` bleibt unverändert.
