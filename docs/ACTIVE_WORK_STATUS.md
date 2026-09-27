@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 27. September 2026
-Status: **NORMAL / AUTH CONFIRMATION CALLBACK 1 REVIEW ROUND 2 / DRAFT / NO PASS / NO READY / NO MERGE**
+Status: **NORMAL / AUTH CONFIRMATION CALLBACK 1 REVIEW ROUND 3 / DRAFT / NO PASS / NO READY / NO MERGE**
 
 ## 0. Current work — Auth Confirmation Callback 1
 
@@ -11,13 +11,13 @@ Status: **NORMAL / AUTH CONFIRMATION CALLBACK 1 REVIEW ROUND 2 / DRAFT / NO PASS
 | Branch / PR | `fix/auth-confirmation-callback-1` / Draft https://github.com/Jetnity/jetnity/pull/583 |
 | Parent | #582 bleibt offen |
 | Base | `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3` plus Task-Scaffold `82b4f44b9924df8a523cc3f55a38a2faad095334` |
-| Status | Review-Runde 2, R3/R4, auf demselben Draft. Wartet auf unabhängigen Technical-Lead exact-head Review. Head `3bce9ff3a4bc230db3c5e7c511fa1c5888bf67cd` gilt nicht weiter. |
+| Status | Review-Runde 3, R5/R6, auf demselben Draft. Wartet auf unabhängigen Technical-Lead exact-head Review. Head `239e7917cff4914cf4385f66b9740daa0021de9a` gilt nicht weiter. Implementierung `d8e26143490764847d161c67ade2a4fbc636b883`. |
 | Agent | Jetnity auth confirmation callback 1, Generation 1, Session `bc-bdb579ac-f2b5-452e-8e48-0aeb403f4c4d` |
 | Model laut Auftrag | `cursor-grok-4.6-high-fast` war der Pin dieses Tasks. Der Technical Lead hat ihn als veraltet korrigiert: neue Sessions sollen Grok 4.7 High Fast nutzen. |
 | Model dieser Session | `grok-4.7-high-fast`. Dieselbe Session, kein Wechsel, kein neuer Agent. |
 | UI-Titel | `Auth callback PKCE conflict`. Keine programmierbare Umbenennung ausgeführt. |
 
-Der erste Ladevorgang eines gültigen Bestätigungslinks soll ohne zweiten PKCE-Tausch zum erlaubten Ziel führen. Wiederherstellung hängt an der Sitzung dieses Callback-Versuchs und endet bei Abmelden oder einer anderen Sitzung. Zwei verschiedene Links teilen sich keinen laufenden Versuch. `origin/main` beim Handoff: `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3`, unverändert. Physischer Erstlade-Test bleibt offen. Kein Ready, kein Merge, kein Follow-up.
+Der erste Ladevorgang eines gültigen Bestätigungslinks soll ohne zweiten PKCE-Tausch zum erlaubten Ziel führen. Wiederherstellung hängt an der Sitzung dieses Versuchs, auch wenn der Client den Tausch erst selbst ausführt, und endet bei Abmelden oder einer anderen Sitzung. Ein expliziter Fehler in der Adresse übernimmt keinen laufenden Erfolg. Zwei verschiedene Links teilen sich keinen laufenden Versuch. `origin/main` beim Handoff: `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3`, unverändert. Physischer Erstlade-Test bleibt offen. Kein Ready, kein Merge, kein Follow-up.
 
 Details: `docs/AUTH_CONFIRMATION_CALLBACK_1_STATUS_2026-09-27.md`, HANDOFF, SELF_REVIEW, ADR-0214.
 
