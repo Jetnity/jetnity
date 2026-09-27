@@ -4,8 +4,10 @@
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
-import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel'
+import { schliesseAuthCallbackAb } from '@/lib/auth/callback-abschluss'
 import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
+
+const WEITERLEITUNG_MS = 600
 
 export default function CallbackClient() {
   const router = useRouter()
@@ -14,75 +16,41 @@ export default function CallbackClient() {
 
   React.useEffect(() => {
     let cancelled = false
+    let timer: number | undefined
 
     const finish = (nextState: 'ok' | 'error', msg: string, redirectTo?: string) => {
       if (cancelled) return
       setState(nextState)
       setMessage(msg)
       if (nextState === 'ok' && redirectTo) {
-        // kleine Verzögerung für UI-Feedback
-        setTimeout(() => router.replace(redirectTo), 600)
+        timer = window.setTimeout(() => {
+          if (!cancelled) router.replace(redirectTo)
+        }, WEITERLEITUNG_MS)
       }
     }
 
-    ;(async () => {
-      try {
-        const qs = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
-        const nachAnmeldung = erlaubtesNaechstesZiel(qs?.get('next'))
-
-        // 1) Prüfe Magic-Link / Recovery (Token im Hash-Fragment #access_token=…)
-        const hash = typeof window !== 'undefined' ? window.location.hash : ''
-        if (hash?.startsWith('#')) {
-          const params = new URLSearchParams(hash.substring(1))
-          const access_token = params.get('access_token')
-          const refresh_token = params.get('refresh_token')
-          const type = params.get('type') // z.B. 'recovery'
-          const error_description = params.get('error_description')
-
-          if (error_description) {
-            return finish('error', error_description)
-          }
-
-          if (access_token && refresh_token) {
-            const { error } = await supabase.auth.setSession({ access_token, refresh_token })
-            if (error) throw error
-
-            const redirect = type === 'recovery'
-              ? '/auth/update-password'
-              : nachAnmeldung
-            return finish('ok', 'Erfolgreich angemeldet.', redirect)
-          }
-        }
-
-        // 2) OAuth Code Flow (?code=…)
-        const code = qs?.get('code')
-        const oauthError = qs?.get('error') || qs?.get('error_description')
-        if (oauthError) {
-          return finish('error', String(oauthError))
-        }
-
-        if (code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) throw error
-          return finish('ok', 'Erfolgreich angemeldet.', nachAnmeldung)
-        }
-
-        // 3) Fallback: gibt es bereits eine Session?
-        const { data, error } = await supabase.auth.getSession()
-        if (error) throw error
-        if (data.session) {
-          return finish('ok', 'Erfolgreich angemeldet.', nachAnmeldung)
-        }
-
-        // Nichts gefunden → Fehler
-        return finish('error', 'Ungültiger Callback: Kein Token/Code gefunden.')
-      } catch (e: any) {
-        return finish('error', e?.message ?? 'Anmeldung fehlgeschlagen.')
+    void (async () => {
+      const ergebnis = await schliesseAuthCallbackAb({
+        suche: window.location.search,
+        hash: window.location.hash,
+        cookieHeader: document.cookie,
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+        hrefLesen: () => window.location.href,
+        adresseSchreiben: (href) => {
+          window.history.replaceState(window.history.state, '', href)
+        },
+        client: () => supabase,
+      })
+      if (ergebnis.art === 'ok') {
+        finish('ok', 'Erfolgreich angemeldet.', ergebnis.ziel)
+        return
       }
+      finish('error', ergebnis.meldung)
     })()
 
     return () => {
       cancelled = true
+      if (timer !== undefined) window.clearTimeout(timer)
     }
   }, [router])
 

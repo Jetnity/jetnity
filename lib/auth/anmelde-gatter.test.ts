@@ -20,7 +20,10 @@ describe('Login/Register-Gate', () => {
 
   test('der Auth-Callback folgt derselben Allowlist', () => {
     const callback = readFileSync(join(hier, '../../app/auth/callback/CallbackClient.tsx'), 'utf8')
-    assert.equal(callback.includes('erlaubtesNaechstesZiel'), true)
+    const abschluss = readFileSync(join(hier, './callback-abschluss.ts'), 'utf8')
+    assert.equal(callback.includes('schliesseAuthCallbackAb'), true)
+    assert.equal(abschluss.includes('erlaubtesNaechstesZiel'), true)
     assert.equal(callback.includes('AFTER_LOGIN_ROUTE'), false)
+    assert.equal(abschluss.includes('AFTER_LOGIN_ROUTE'), false)
   })
 })

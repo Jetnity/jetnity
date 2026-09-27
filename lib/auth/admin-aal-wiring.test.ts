@@ -57,7 +57,8 @@ describe('Zentraler Admin-AAL2-Guard – Verdrahtung', () => {
   test('12. Magic-Link, OAuth und bestehende Sessions haben keinen schwächeren Pfad', () => {
     assert.match(login, /emailRedirectTo: `\$\{site\}\/admin`/)
     assert.equal(login.includes('emailRedirectTo: `http'), false)
-    assert.match(callback, /erlaubtesNaechstesZiel/)
+    assert.match(callback, /schliesseAuthCallbackAb/)
+    assert.match(lese('./callback-abschluss.ts'), /erlaubtesNaechstesZiel/)
     assert.match(naechstes, /pathname === '\/account'/)
     assert.equal(naechstes.includes("pathname === '/admin'"), false)
     assert.match(consumerLogin, /erlaubtesNaechstesZiel/)

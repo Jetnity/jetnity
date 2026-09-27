@@ -5623,6 +5623,36 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0214 – Auth Confirmation Callback 1: ein PKCE-Tausch
+
+**Datum:** 27. September 2026
+**Status:** Implementiert auf Draft-Branch `fix/auth-confirmation-callback-1`. Kein Ready, kein Merge, kein PASS. Binding: `docs/AUTH_CONFIRMATION_CALLBACK_1_TASK_2026-09-27.md`. Parent: #582.
+
+**Entscheidung:**
+
+1. Der Callback hat genau einen Eigentümer für den Tausch eines PKCE-Codes. `lib/auth/callback-abschluss.ts` liest den Verifier, bevor der Browser-Client entsteht. Hat `initialize()` den Code schon verbraucht, wird nicht erneut getauscht. War der Client schon vorher initialisiert und der Code liegt noch in der Adresse, tauscht nur der explizite Aufruf.
+2. `detectSessionInUrl` bleibt der Default von `createBrowserClient`. Die Passwortseite `/auth/update-password` erkennt ihren Code weiter selbst.
+3. Ein Verifier mit `PASSWORD_RECOVERY`, `redirectType=PASSWORD_RECOVERY` oder ein Hash mit `type=recovery` führt nach `/auth/update-password`. Jedes andere Ziel läuft durch `erlaubtesNaechstesZiel`.
+4. Fehlender Verifier, ungültiger Code, expliziter Callback-Fehler, fehlende Sitzung und Netzausfall bleiben Fehler. Eine schon vorhandene Sitzung macht aus einem gescheiterten Code keinen Erfolg.
+5. Die Oberfläche zeigt feste deutsche Sätze. Code, Verifier und Rohtext aus der Adresse werden nicht angezeigt.
+6. Dieselbe Adresse im selben Dokument teilt sich einen noch laufenden Versuch, damit ein erneutes Mounten den Code nicht ein zweites Mal tauscht. Nach dem Abschluss wird der Lauf verworfen. Der Schlüssel enthält keinen Code und keine Hash-Tokens. Der Weiterleitungs-Timer wird beim Unmount gelöscht.
+
+**Nachtrag, 27. September 2026, Review-Korrektur auf demselben Draft:** Zwei Befunde am Head `716d708d1673e2e96c4028d82332a633baf677a4`. Erstens bleibt ein abgeschlossener Lauf nicht liegen: dieselbe Adresse nach gelöschter Sitzung oder eine code-freie Adresse nach einer neu entstandenen Sitzung wird neu gelesen. Zweitens merkt `lib/supabase/client.ts` vor `createBrowserClient`, wenn dieser Callback-Versuch eine Wiederherstellung ist. Eine schon abgeschlossene oder noch laufende Initialisierung führt dadurch nach `/auth/update-password`, auch wenn der Verifier bereits gelöscht ist. `detectSessionInUrl` bleibt an.
+
+**Nachtrag, 27. September 2026, zweite Review-Korrektur:** Zwei Befunde am Head `3bce9ff3a4bc230db3c5e7c511fa1c5888bf67cd`. Die Wiederherstellung ist kein Projekt-Boolean. Sie gehört zur Sitzung des Callback-Versuchs: der Client merkt sie auf `/auth/callback`, bindet sie an den Fingerabdruck dieser Sitzung und verwirft sie bei `SIGNED_OUT` oder einer anderen Sitzung. Dafür ist kein Besuch des Callbacks in abgemeldetem Zustand nötig. `/auth/update-password` merkt sie nicht. Ein laufender Versuch wird am Fingerabdruck seines eigenen Codes oder Hash-Paars erkannt und nach dem Abschluss verworfen. Ein anderer Link teilt das Ergebnis nicht, und ein älterer Abschluss löscht keinen neueren Code.
+
+**Nachtrag, 27. September 2026, dritte Review-Korrektur:** Zwei Befunde am Head `239e7917cff4914cf4385f66b9740daa0021de9a`. Die Wiederherstellung entsteht an drei Stellen desselben Lebenszyklus: der Konstruktor auf `/auth/callback` sieht den Verifier, ein schon offener Client bindet sie beim erfolgreichen expliziten Tausch, und ein Hash `type=recovery` bindet sie an das gesetzte Token. Ein Remount derselben Sitzung bleibt auf `/auth/update-password`, auch wenn der Client vor dem Callback schon existierte. Abmelden oder eine andere Sitzung verwirft sie weiter. Ein `error`, `error_description` oder `error_code` in Query oder Hash wird beantwortet, bevor ein laufender Erfolg desselben Links übernommen wird. Der laufende gültige Tausch wird dadurch nicht abgebrochen.
+
+**Kontext:** Die bestätigte Production-Mail kam an. Der erste Öffnen auf dem iPhone zeigte `invalid request: both auth code and code verifier should be non-empty`. Erst ein Neuladen landete in Meine Reisen. An den gesperrten Fassungen `@supabase/ssr` 0.6.1, `supabase-js` 2.57.2 und `auth-js` 2.71.1 lässt sich der zweite Tausch ohne Live-Mail nachstellen: der erste Tausch speichert die Sitzung und entfernt den Verifier, der zweite schickt ihn leer. Das ist ein Bibliotheksnachweis, kein Mitschnitt des Geräts.
+
+**Alternativen:** `detectSessionInUrl` global aus; den Code immer selbst tauschen und die Initialisierung ignorieren; eine neue Auth-Architektur oder ein SDK-Upgrade.
+
+**Begründung:** Global aus würde die bereits bestandene Rücksetzung auf `/auth/update-password` der automatischen Erkennung berauben. Immer selbst tauschen läuft in denselben zweiten Aufruf, sobald der Konstruktor den Code schon gesehen hat. Ein Upgrade wäre eine neue Auth-Abhängigkeit für einen Konflikt, den die gesperrte Fassung bereits erklärt.
+
+**Konsequenzen:** Der erste Ladevorgang eines gültigen Links soll ohne Neuladen zum erlaubten Ziel führen. Ein physischer Erstlade-Test auf dem Gerät bleibt offen und ist kein PASS. #582 bleibt offen. Keine hosted Änderung, keine weitere echte Mail, keine neuen Kosten.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
