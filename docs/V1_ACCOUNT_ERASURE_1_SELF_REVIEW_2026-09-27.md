@@ -5,7 +5,7 @@ Status: **AGENT SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 
 Issue: #588  
 Draft PR: #590  
-Parent vor dieser Korrektur: `be92f8fdeb25f4bb57030b2f3b862ea11fce7025`
+Parent vor dieser Korrektur: `fbd6d50f160106a796b8f86530f219bd973dd22b`
 
 Dieses Dokument ersetzt keinen unabhängigen Technical-Lead-PASS. Der Development-Nachweis ist nicht ausgeführt.
 
@@ -15,19 +15,21 @@ Dieses Dokument ersetzt keinen unabhängigen Technical-Lead-PASS. Der Developmen
 
 | Angriff | Ergebnis |
 | --- | --- |
-| Das fremde Objekt mit derselben Warteschleife lesen | Abgelehnt. Es bleibt ein GET. Eine Pause würde ein noch vorhandenes fremdes Objekt als verschwunden werten, sobald die Frist um ist. |
-| Die Aufräum-Löschung pollen | Abgelehnt. `speicherEntfernen` löscht weiter einmal und wertet den Status nicht als `speicher_entfernt`. |
-| Unbegrenzt warten | Abgelehnt. Die Summe der Pausen ist die Frist von 1000 ms. Eine Uhr, die nicht vorrückt, beendet die Schleife. |
-| Einen Lesefehler als entfernt werten | Abgelehnt. `speicher` fliegt weiter und ist nicht `true`. |
-| Die Laufzeit oder die Migration anfassen, damit der Nachweis grün wird | Abgelehnt. Diese Dateien sind unverändert. |
+| Den Objektinhalt als Existenz lesen | Abgelehnt. Der Blick geht auf `/object/info/`. |
+| Metadaten 200 als entfernt werten | Abgelehnt. 200 bleibt vorhanden. |
+| 400 oder 404 als Fehler werten | Abgelehnt. Beides ist Abwesenheit. |
+| 500 oder 401 als weg werten | Abgelehnt. Das ist `speicher`, ohne Pause. |
+| Das fremde Objekt weiter über den Inhalt lesen | Abgelehnt. Es nutzt dieselbe Info-Regel. |
+| Die Info-Antwort protokollieren oder den Dienstschlüssel in den Test schreiben | Abgelehnt. Der Körper wird verworfen. Tests nennen nur `example.test`. |
+| Die Laufzeit oder die Migration ändern | Abgelehnt. Diese Dateien enthalten `object/info` nicht. |
 | Den Live-Nachweis als 11/11 ausgeben | Abgelehnt. Er ist nicht gelaufen. |
 
 ## 2. Restrisiken
 
-- Liegt `ObjectRemoved` später als 1000 ms, bleibt `speicher_entfernt` falsch. Der beobachtete Abstand war etwa 17 ms.
-- CI dieses Heads ist zum Schreibzeitpunkt noch nicht belegt. Der grüne Lauf auf `be92f8fd` gilt nicht hier.
+- Wenn auch Object Info länger als 1000 ms hinter dem Lebenszyklus zurückbleibt, bleibt `speicher_entfernt` falsch.
+- CI dieses Heads ist zum Schreibzeitpunkt noch nicht belegt.
 - Ob Development die Graph-Migration schon trägt, entscheidet der nächste Lauf, nicht dieser Commit.
 
 ## 3. Empfehlung
 
-Die Warte im Nachweis reviewen. Danach den Disposable-Nachweis selbst ausführen. Nicht mergen. Production bleibt zu.
+Die Info-Prüfung im Nachweis reviewen. Danach den Disposable-Nachweis selbst ausführen. Nicht mergen. Production bleibt zu.

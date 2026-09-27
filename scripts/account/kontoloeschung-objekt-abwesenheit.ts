@@ -1,10 +1,21 @@
-// Kurzes, begrenztes Warten, bis ein Storage-Objekt nach dem Löschen weg ist.
-// Supabase kann die GET-Antwort noch einen Augenblick als vorhanden melden,
-// obwohl das Entfernen schon gelungen ist. Der Nachweis pollt nur die eigene
-// Fixture. Fremde Objekte und die Aufräum-Löschung benutzen das nicht.
+// Existenz der Nachweis-Fixture über Storage Object Info, nicht über den
+// Objektinhalt. Der Inhalts-GET kann nach dem Löschen noch kurz 200 liefern.
+// Info-Status 200 heißt vorhanden, 400 und 404 heißen weg. Nur die eigene
+// Fixture nach dem Löschen wartet begrenzt. Das fremde Objekt nutzt dieselbe
+// Statusregel, aber einen einzigen Blick. Die Aufräum-Löschung pollt nicht.
 
 export const OBJEKT_ABWESENHEIT_INTERVALL_MS = 50
 export const OBJEKT_ABWESENHEIT_FRIST_MS = 1000
+
+export function objektInfoAdresse(url: string, bucket: string, id: string): string {
+  return `${url}/storage/v1/object/info/${bucket}/${id}/proof.bin`
+}
+
+export function objektAusInfoStatus(status: number): boolean {
+  if (status === 200) return true
+  if (status === 400 || status === 404) return false
+  throw new Error('speicher')
+}
 
 export async function objektAbwesenheitWarten(
   objektDa: () => Promise<boolean>,

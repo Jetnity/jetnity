@@ -12,7 +12,11 @@ import { randomBytes, createHmac, randomUUID } from 'node:crypto'
 import { projektSchluessel, ziel } from '../auth/ziel'
 import { zugangAufloesen, nachweisGrund, type Zugang } from '../../lib/account/kontoloeschung-direkt'
 import { ENTWICKLUNGS_PROJEKT_REF } from '../../lib/account/kontoloeschung-vertrag'
-import { objektAbwesenheitWarten } from './kontoloeschung-objekt-abwesenheit'
+import {
+  objektAbwesenheitWarten,
+  objektAusInfoStatus,
+  objektInfoAdresse,
+} from './kontoloeschung-objekt-abwesenheit'
 
 const BUCKET = 'jetnity-erasure-proof'
 const API = 'https://api.supabase.com/v1'
@@ -533,8 +537,8 @@ async function main() {
     const geloescht = await funktion(url, anon, frisch, 'KONTO LÖSCHEN')
     if (geloescht !== 'geloescht') throw new Error('loeschung')
 
-    // Die Storage-API kann das Objekt noch kurz als vorhanden melden, nachdem
-    // das Löschen schon gelungen ist. Nur die eigene Fixture wartet begrenzt.
+    // Object Info, nicht der Objektinhalt: der Inhalts-GET kann nach dem
+    // Löschen noch 200 liefern. Nur die eigene Fixture wartet begrenzt.
     bericht.speicher_entfernt = await objektAbwesenheitWarten(() => objektDa(url, geheim, zielNutzer.id))
     bericht.security_event_entfernt = (await tabelleZaehlen(kanal, 'security_events', zielNutzer.id)) === 0
     bericht.graph_kaskade =
@@ -617,7 +621,7 @@ async function main() {
 
 async function objektDa(url: string, geheim: string, id: string): Promise<boolean> {
   if (!uuid(id)) throw new Error('id')
-  const res = await fetch(`${url}/storage/v1/object/${BUCKET}/${id}/proof.bin`, {
+  const res = await fetch(objektInfoAdresse(url, BUCKET, id), {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${geheim}`,
@@ -625,9 +629,7 @@ async function objektDa(url: string, geheim: string, id: string): Promise<boolea
     },
   })
   await res.arrayBuffer()
-  if (res.status === 200) return true
-  if (res.status === 400 || res.status === 404) return false
-  throw new Error('speicher')
+  return objektAusInfoStatus(res.status)
 }
 
 function totpFenster(secret: string): string[] {

@@ -37,6 +37,8 @@ import {
   OBJEKT_ABWESENHEIT_FRIST_MS,
   OBJEKT_ABWESENHEIT_INTERVALL_MS,
   objektAbwesenheitWarten,
+  objektAusInfoStatus,
+  objektInfoAdresse,
 } from '../../scripts/account/kontoloeschung-objekt-abwesenheit'
 import {
   ENTWICKLUNGS_PROJEKT_REF,
@@ -848,6 +850,72 @@ describe('Kontolöschung Speicher-Abwesenheit im Nachweis', () => {
     assert.deepEqual(zeit.pausen, [])
   })
 
+  test('Object Info 200 ist vorhanden, 404 ist sofort weg', async () => {
+    assert.equal(objektAusInfoStatus(200), true)
+    assert.equal(objektAusInfoStatus(404), false)
+    assert.equal(objektAusInfoStatus(400), false)
+    const adresse = objektInfoAdresse(
+      'https://example.test',
+      'jetnity-erasure-proof',
+      '11111111-1111-4111-8111-111111111111',
+    )
+    assert.equal(
+      adresse,
+      'https://example.test/storage/v1/object/info/jetnity-erasure-proof/11111111-1111-4111-8111-111111111111/proof.bin',
+    )
+    assert.equal(adresse.includes('/object/info/'), true)
+    assert.equal(/\/object\/jetnity-erasure-proof\//.test(adresse), false)
+
+    const zeit = uhr()
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(async () => {
+      blicke += 1
+      return objektAusInfoStatus(404)
+    }, zeit)
+    assert.equal(weg, true)
+    assert.equal(blicke, 1)
+    assert.deepEqual(zeit.pausen, [])
+  })
+
+  test('verspätetes Verschwinden über Object Info endet innerhalb der Frist', async () => {
+    const zeit = uhr()
+    const stati = [200, 200, 404]
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(async () => objektAusInfoStatus(stati[blicke++] ?? 200), zeit)
+    assert.equal(weg, true)
+    assert.equal(blicke, 3)
+    assert.equal(zeit.pausen.length, 2)
+    const summe = zeit.pausen.reduce((gesamt, ms) => gesamt + ms, 0)
+    assert.ok(summe < OBJEKT_ABWESENHEIT_FRIST_MS)
+  })
+
+  test('ein anderer Info-Status ist ein Fehler und keine Abwesenheit', async () => {
+    const zeit = uhr()
+    await assert.rejects(
+      () => objektAbwesenheitWarten(async () => objektAusInfoStatus(500), zeit),
+      (fehler: unknown) => fehler instanceof Error && fehler.message === 'speicher',
+    )
+    assert.throws(() => objektAusInfoStatus(401), (fehler: unknown) => {
+      assert.ok(fehler instanceof Error)
+      assert.equal(fehler.message, 'speicher')
+      return true
+    })
+    assert.deepEqual(zeit.pausen, [])
+  })
+
+  test('bleibendes Info 200 endet an der Frist ohne Entfernt-Meldung', async () => {
+    const zeit = uhr()
+    let blicke = 0
+    const weg = await objektAbwesenheitWarten(async () => {
+      blicke += 1
+      return objektAusInfoStatus(200)
+    }, zeit)
+    assert.equal(weg, false)
+    const summe = zeit.pausen.reduce((gesamt, ms) => gesamt + ms, 0)
+    assert.equal(summe, OBJEKT_ABWESENHEIT_FRIST_MS)
+    assert.ok(blicke > 1)
+  })
+
   test('nur die eigene Fixture nach dem Löschen wartet; fremdes Objekt und Aufräumen nicht', () => {
     assert.ok(OBJEKT_ABWESENHEIT_INTERVALL_MS > 0)
     assert.ok(OBJEKT_ABWESENHEIT_INTERVALL_MS <= 100)
@@ -855,6 +923,11 @@ describe('Kontolöschung Speicher-Abwesenheit im Nachweis', () => {
     assert.ok(OBJEKT_ABWESENHEIT_FRIST_MS <= 2000)
 
     const nachweis = quelle('../../scripts/account/kontoloeschung-nachweis.ts')
+    const blick = nachweis.slice(nachweis.indexOf('async function objektDa'), nachweis.indexOf('function totpFenster'))
+    assert.match(blick, /objektInfoAdresse\(url, BUCKET, id\)/)
+    assert.match(blick, /objektAusInfoStatus\(res\.status\)/)
+    assert.equal(blick.includes('/storage/v1/object/${BUCKET}/'), false)
+    assert.equal(blick.includes('console.'), false)
     assert.match(
       nachweis,
       /speicher_entfernt = await objektAbwesenheitWarten\(\(\) => objektDa\(url, geheim, zielNutzer\.id\)\)/,
@@ -870,7 +943,9 @@ describe('Kontolöschung Speicher-Abwesenheit im Nachweis', () => {
       './kontoloeschung-ausfuehrung.ts',
       '../../supabase/functions/account-delete-v1/index.ts',
     ]) {
-      assert.equal(quelle(datei).includes('objektAbwesenheitWarten'), false)
+      const text = quelle(datei)
+      assert.equal(text.includes('objektAbwesenheitWarten'), false)
+      assert.equal(text.includes('object/info'), false)
     }
   })
 })
