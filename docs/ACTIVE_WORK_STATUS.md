@@ -1,6 +1,36 @@
 # Jetnity – Active Work Status
 
 Stand: 27. September 2026
+Status: **NORMAL / PRODUCTION SMTP + AUTH CALLBACK PHYSICAL ACCEPTANCE CLOSED / PRIVACYBEE LEGAL-BASIS RESIDUAL #585 / NO PUBLIC INDEXING**
+
+## 0. Current work boundary — SMTP/Auth closure
+
+- Live `main`: `58b419193dc1bf0ddd3c6b738cc945592e76cd9c`.
+- Vercel Production `dpl_5nv4Dd1u3u33wYtAYWmBuELgoN2v`: **READY** on that exact SHA with alias `jetnity.com`.
+- Push CI `36335635086`: **SUCCESS** on exact main.
+- Production Auth URL gate #581 is **CLOSED / completed**:
+  - Site URL `https://jetnity.com`;
+  - redirects `https://jetnity.com/auth/callback**` and `https://jetnity.com/auth/update-password`.
+- Production SMTP gate #582 is **CLOSED / technically completed**:
+  - dedicated included-slot mailbox `no-reply@jetnity.com`;
+  - Infomaniak SMTP `mail.infomaniak.com:587` / STARTTLS;
+  - no added recurring cost;
+  - SMTP credential remains private and is not repository evidence;
+  - existing public/support mailboxes remain unchanged.
+- Password-reset delivery passed and reached Jetnity's new-password UI on `jetnity.com`.
+- Signup-confirmation delivery passed. The first-load callback defect discovered during the original smoke was fixed by PR #583, merged at `1969ac5f1bfb31b6ac9090415dbac4601b84ac6c`.
+- Physical iPhone first-load signup confirmation retest after #583: **PASS without refresh**. No further live auth-email send is authorized by this closure.
+- PR #584 is the docs-only callback/acceptance continuity merge that advanced main to `58b419193d...`.
+- Live `https://jetnity.com/` remains `noindex, nofollow`; live `/robots.txt` remains `User-Agent: * / Disallow: /`. **No public launch/indexing approval.**
+- PrivacyBee now lists Infomaniak as the SMTP processor and its cookie-banner classification is `Nicht verwendet`. The vendor-generated Infomaniak paragraph still names consent under Art. 6(1)(a) GDPR. This is split to **Issue #585** as a launch-legal/vendor-text residual. It is **not** a SMTP/Auth technical blocker and must not be hand-edited in Jetnity code.
+- No active Cursor/runtime writer from #582/#583. Choose the next prelaunch slice only after fresh live reconstruction; do not reopen #581/#582/#583.
+
+The sections below are historical continuity snapshots and must not override this current block.
+
+---
+
+
+Stand: 27. September 2026
 Status: **NORMAL / AUTH CALLBACK #583 MERGED / PRODUCTION READY / #582 PHYSICAL RETEST AND PRIVACYBEE FOLLOW-UP OPEN**
 
 ## 0. Technical-Lead closure — Auth Confirmation Callback 1
