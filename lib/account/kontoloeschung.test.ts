@@ -21,7 +21,12 @@ import {
   kontoloeschungWeiter,
   type KontoloeschungPort,
 } from '@/lib/account/kontoloeschung-client'
-import { eigeneSpeicherObjekteLoeschen, type SpeicherClient, type SpeicherEintrag } from '@/lib/account/kontoloeschung-speicher'
+import {
+  BESITZ_SQL,
+  besitzAbfrage,
+  eigeneSpeicherObjekteLoeschen,
+  type SpeicherBesitz,
+} from '@/lib/account/kontoloeschung-speicher'
 import {
   direktZugangPruefen,
   entwicklungsUrl,
@@ -314,77 +319,106 @@ describe('Kontolöschung – Ausführung', () => {
   })
 })
 
-describe('Kontolöschung – Storage-API', () => {
-  function client(dateien: Record<string, SpeicherEintrag[]>): SpeicherClient & { entfernt: string[] } {
-    const entfernt: string[] = []
+describe('Kontolöschung – Storage-Besitz', () => {
+  const fremdPfad = `${ANDERER}/fremd.bin`
+
+  function client(eigene: Array<{ bucketId: string; name: string }>, restlich = false): SpeicherBesitz & {
+    entfernt: Array<{ bucket: string; pfade: string[] }>
+    gelesen: string[]
+  } {
+    const entfernt: Array<{ bucket: string; pfade: string[] }> = []
+    const gelesen: string[] = []
+    let runde = 0
     return {
       entfernt,
-      async buckets() {
-        return { ids: Object.keys(dateien) }
-      },
-      async list(bucket, prefix) {
-        const alle = dateien[bucket] ?? []
-        const eintraege = alle.filter((eintrag) => {
-          const ordner = eintrag.name.includes('/') ? eintrag.name.slice(0, eintrag.name.lastIndexOf('/')) : ''
-          const name = eintrag.name.includes('/') ? eintrag.name.slice(eintrag.name.lastIndexOf('/') + 1) : eintrag.name
-          if (ordner !== prefix) return false
-          return name.length > 0
-        }).map((eintrag) => ({
-          ...eintrag,
-          name: eintrag.name.includes('/') ? eintrag.name.slice(eintrag.name.lastIndexOf('/') + 1) : eintrag.name,
-        }))
-        const ordner = new Set<string>()
-        for (const eintrag of alle) {
-          if (!eintrag.name.startsWith(prefix ? `${prefix}/` : '')) continue
-          const rest = prefix ? eintrag.name.slice(prefix.length + 1) : eintrag.name
-          if (rest.includes('/')) ordner.add(rest.slice(0, rest.indexOf('/')))
-        }
-        for (const name of ordner) {
-          if (!eintraege.some((eintrag) => eintrag.name === name)) {
-            eintraege.push({ name, id: null, owner: null, ownerId: null })
-          }
-        }
-        return { eintraege }
+      gelesen,
+      async lesen(userId) {
+        gelesen.push(userId)
+        runde += 1
+        if (runde > 1 && !restlich) return { zeilen: [] }
+        return { zeilen: eigene.map((zeile) => ({ ...zeile })) }
       },
       async remove(bucket, pfade) {
-        entfernt.push(...pfade)
-        const vorhanden = dateien[bucket] ?? []
-        dateien[bucket] = vorhanden.filter((eintrag) => !pfade.includes(eintrag.name))
+        entfernt.push({ bucket, pfade: [...pfade] })
+        assert.equal(pfade.includes(fremdPfad), false)
         return 'ok'
       },
     }
   }
 
-  test('löscht nur Objekte dieser Nutzer-ID, auch in Ordnern, und lässt fremde liegen', async () => {
-    const speicher = client({
-      beweise: [
-        { name: `${NUTZER}/proof.bin`, id: 'datei-1', owner: NUTZER, ownerId: null },
-        { name: `${ANDERER}/fremd.bin`, id: 'datei-2', owner: ANDERER, ownerId: null },
-        { name: 'verwaist.bin', id: 'datei-3', owner: null, ownerId: null },
-      ],
-    })
+  test('die Besitzabfrage ist parametrisiert und schreibt storage.objects nicht', () => {
+    const eigene = besitzAbfrage(NUTZER)
+    const fremde = besitzAbfrage(ANDERER)
+    assert.ok(eigene)
+    assert.ok(fremde)
+    assert.equal(eigene.text, BESITZ_SQL)
+    assert.equal(fremde.text, eigene.text)
+    assert.equal(eigene.text.includes(NUTZER), false)
+    assert.equal(eigene.text.includes(ANDERER), false)
+    assert.deepEqual(eigene.werte, [NUTZER])
+    assert.deepEqual(fremde.werte, [ANDERER])
+    assert.match(eigene.text, /where owner_id = \$1$/)
+    assert.equal(/\b(delete|update|insert|drop|alter)\b/i.test(eigene.text), false)
+    assert.equal(besitzAbfrage('nicht-eine-uuid'), null)
+    assert.equal(besitzAbfrage(`${NUTZER}' or true`), null)
+    const quelleSpeicher = quelle('./kontoloeschung-speicher.ts')
+    const funktion = quelle('../../supabase/functions/account-delete-v1/index.ts')
+    assert.equal(/\bdelete\s+from\s+storage\.objects\b/i.test(quelleSpeicher + funktion), false)
+    assert.equal(/\bupdate\s+storage\.objects\b/i.test(quelleSpeicher + funktion), false)
+    assert.equal(funktion.includes('.list('), false)
+    assert.equal(quelleSpeicher.includes('.list('), false)
+    assert.match(funktion, /besitzAbfrage/)
+    assert.match(funktion, /SUPABASE_DB_URL/)
+    assert.equal(funktion.includes('console.log(dbUrl'), false)
+    assert.equal(funktion.includes('console.log(userId'), false)
+  })
+
+  test('die Storage-API erhält nur Pfade des Besitzlesers und lässt fremde liegen', async () => {
+    const speicher = client([
+      { bucketId: 'beweise', name: `${NUTZER}/proof.bin` },
+      { bucketId: 'beweise', name: `${NUTZER}/ordner/zweite.bin` },
+      { bucketId: 'anderes', name: `${NUTZER}/nur-eigen.bin` },
+    ])
     const ergebnis = await eigeneSpeicherObjekteLoeschen(speicher, NUTZER)
     assert.equal(ergebnis, 'ok')
-    assert.deepEqual(speicher.entfernt, [`${NUTZER}/proof.bin`])
+    assert.deepEqual(speicher.gelesen, [NUTZER, NUTZER])
+    assert.deepEqual(speicher.entfernt, [
+      { bucket: 'beweise', pfade: [`${NUTZER}/proof.bin`, `${NUTZER}/ordner/zweite.bin`] },
+      { bucket: 'anderes', pfade: [`${NUTZER}/nur-eigen.bin`] },
+    ])
+    assert.equal(JSON.stringify(speicher.entfernt).includes(fremdPfad), false)
   })
 
-  test('bricht ab, wenn nach dem Entfernen noch ein eigenes Objekt liegt', async () => {
-    const speicher = client({
-      beweise: [{ name: 'bleibt.bin', id: 'datei-1', owner: NUTZER, ownerId: null }],
-    })
-    speicher.remove = async () => 'ok'
+  test('ein kaputter Bucket oder Pfad löscht nichts', async () => {
+    const kaputt = ['../x', 'a/../b', 'a\\b', 'a/\0/b', '/absolut', 'a/', 'a//b', '.']
+    for (const name of kaputt) {
+      const speicher = client([{ bucketId: 'beweise', name }])
+      const ergebnis = await eigeneSpeicherObjekteLoeschen(speicher, NUTZER)
+      assert.equal(ergebnis, 'fehler')
+      assert.deepEqual(speicher.entfernt, [])
+    }
+    const bucket = client([{ bucketId: 'nicht sicher', name: 'proof.bin' }])
+    assert.equal(await eigeneSpeicherObjekteLoeschen(bucket, NUTZER), 'fehler')
+    assert.deepEqual(bucket.entfernt, [])
+  })
+
+  test('verbleibende eigene Zeilen nach dem Remove sind teilweise und kein Erfolg', async () => {
+    const speicher = client([{ bucketId: 'beweise', name: `${NUTZER}/proof.bin` }], true)
     const ergebnis = await eigeneSpeicherObjekteLoeschen(speicher, NUTZER)
     assert.equal(ergebnis, 'teilweise')
+    assert.notEqual(ergebnis, 'ok')
   })
 
-  test('ein Fehler vor dem ersten Remove bestätigt keine Datenänderung', async () => {
-    const speicher = client({
-      beweise: [{ name: 'bleibt.bin', id: 'datei-1', owner: NUTZER, ownerId: null }],
-    })
-    speicher.buckets = async () => ({ fehler: true })
-    const ergebnis = await eigeneSpeicherObjekteLoeschen(speicher, NUTZER)
-    assert.equal(ergebnis, 'fehler')
-    assert.deepEqual(speicher.entfernt, [])
+  test('ein Remove-Fehler ist teilweise und ein Lesefehler davor ändert nichts', async () => {
+    const speicher = client([{ bucketId: 'beweise', name: `${NUTZER}/proof.bin` }])
+    speicher.remove = async () => 'fehler'
+    assert.equal(await eigeneSpeicherObjekteLoeschen(speicher, NUTZER), 'teilweise')
+
+    const lesefehler = client([])
+    lesefehler.lesen = async () => ({ fehler: true })
+    assert.equal(await eigeneSpeicherObjekteLoeschen(lesefehler, NUTZER), 'fehler')
+    assert.deepEqual(lesefehler.entfernt, [])
+    assert.equal(await eigeneSpeicherObjekteLoeschen(client([]), 'kein-uuid'), 'fehler')
   })
 })
 
@@ -584,6 +618,8 @@ describe('Kontolöschung – Browser', () => {
     assert.match(nachweis, /\/auth\/v1\/user/)
     assert.match(nachweis, /randomUUID\(\)/)
     assert.equal(nachweis.includes('delete from storage.objects'), false)
+    assert.equal(nachweis.includes('owner_id'), false)
+    assert.equal(nachweis.includes('object/list'), false)
     assert.match(direkt, /management_401/)
     assert.match(direkt, /nachweisGrund/)
     assert.match(nachweis, /zugangAufloesen/)

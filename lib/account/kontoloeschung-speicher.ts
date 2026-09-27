@@ -1,120 +1,86 @@
 // lib/account/kontoloeschung-speicher.ts
 //
-// Löscht nur Storage-Objekte, deren Owner die verifizierte Nutzer-ID ist.
-// Der Aufrufer spricht die Storage-API. SQL auf storage.objects ist hier nicht vorgesehen.
-// `teilweise` heißt: ein Remove wurde versucht oder bestätigt, der zweite Walk
-// ist aber nicht leer. Der Auth-Nutzer darf danach nicht gelöscht werden.
+// Besitz steht in storage.objects.owner_id. Die Storage-List-Antwort hat
+// dieses Feld nicht. Diese Datei liest nur bucket_id und name für genau eine
+// verifizierte Nutzer-ID und löscht die Pfade ausschließlich über die
+// Storage-API. SQL schreibt storage.objects nicht.
 
-export type SpeicherEintrag = {
+export type BesitzZeile = {
+  bucketId: string
   name: string
-  id: string | null
-  owner: string | null
-  ownerId: string | null
 }
 
-export type SpeicherClient = {
-  buckets: () => Promise<{ ids: string[] } | { fehler: true }>
-  list: (
-    bucket: string,
-    prefix: string,
-    offset: number,
-    limit: number,
-  ) => Promise<{ eintraege: SpeicherEintrag[] } | { fehler: true }>
+export type SpeicherBesitz = {
+  lesen: (userId: string) => Promise<{ zeilen: BesitzZeile[] } | { fehler: true }>
   remove: (bucket: string, pfade: string[]) => Promise<'ok' | 'fehler'>
 }
 
 const SEITENGROESSE = 100
 const MAX_OBJEKTE = 2000
-const MAX_TIEFE = 8
+
+const NUTZER_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/** Feste, parametrisierte Leseabfrage. Die Nutzer-ID steht nur in `werte`. */
+export const BESITZ_SQL = 'select bucket_id, name from storage.objects where owner_id = $1'
+
+export function besitzAbfrage(userId: string): { text: string; werte: [string] } | null {
+  if (!nutzerIdIstSicher(userId)) return null
+  return { text: BESITZ_SQL, werte: [userId] }
+}
 
 export async function eigeneSpeicherObjekteLoeschen(
-  client: SpeicherClient,
+  client: SpeicherBesitz,
   userId: string,
 ): Promise<'ok' | 'fehler' | 'teilweise'> {
-  if (!/^[0-9a-f-]{36}$/i.test(userId)) return 'fehler'
-  const buckets = await client.buckets()
-  if ('fehler' in buckets) return 'fehler'
+  if (!nutzerIdIstSicher(userId)) return 'fehler'
+  const erste = await client.lesen(userId)
+  if ('fehler' in erste) return 'fehler'
+  const gruppen = gruppenVon(erste.zeilen)
+  if (gruppen === 'fehler') return 'fehler'
 
   let removeVersucht = false
-  for (const bucket of buckets.ids) {
-    if (!bucketIstSicher(bucket)) return removeVersucht ? 'teilweise' : 'fehler'
-    const erste = await eigenePfade(client, bucket, userId)
-    if (erste === 'fehler') return removeVersucht ? 'teilweise' : 'fehler'
-    for (let i = 0; i < erste.length; i += SEITENGROESSE) {
-      const stueck = erste.slice(i, i + SEITENGROESSE)
+  for (const [bucket, pfade] of gruppen) {
+    for (let i = 0; i < pfade.length; i += SEITENGROESSE) {
+      const stueck = pfade.slice(i, i + SEITENGROESSE)
       if (stueck.length === 0) continue
       removeVersucht = true
       const entfernt = await client.remove(bucket, stueck)
       if (entfernt !== 'ok') return 'teilweise'
     }
-    const rest = await eigenePfade(client, bucket, userId)
-    if (rest === 'fehler' || rest.length > 0) return removeVersucht ? 'teilweise' : 'fehler'
   }
+
+  const rest = await client.lesen(userId)
+  if ('fehler' in rest) return removeVersucht ? 'teilweise' : 'fehler'
+  const uebrig = gruppenVon(rest.zeilen)
+  if (uebrig === 'fehler' || uebrig.size > 0) return removeVersucht ? 'teilweise' : 'fehler'
   return 'ok'
 }
 
-async function eigenePfade(
-  client: SpeicherClient,
-  bucket: string,
-  userId: string,
-): Promise<string[] | 'fehler'> {
-  const pfade: string[] = []
+function gruppenVon(zeilen: BesitzZeile[]): Map<string, string[]> | 'fehler' {
+  const gruppen = new Map<string, string[]>()
   const gesehen = new Set<string>()
-  const ergebnis = await gehen(client, bucket, userId, '', 0, pfade, gesehen)
-  if (ergebnis !== 'ok') return 'fehler'
-  return pfade
-}
-
-async function gehen(
-  client: SpeicherClient,
-  bucket: string,
-  userId: string,
-  prefix: string,
-  tiefe: number,
-  pfade: string[],
-  gesehen: Set<string>,
-): Promise<'ok' | 'fehler'> {
-  if (tiefe > MAX_TIEFE) return 'fehler'
-  const schluessel = `${bucket}\0${prefix}`
-  if (gesehen.has(schluessel)) return 'fehler'
-  gesehen.add(schluessel)
-
-  let offset = 0
-  for (;;) {
-    const seite = await client.list(bucket, prefix, offset, SEITENGROESSE)
-    if ('fehler' in seite) return 'fehler'
-    if (seite.eintraege.length === 0) return 'ok'
-    for (const eintrag of seite.eintraege) {
-      if (!nameIstSicher(eintrag.name)) return 'fehler'
-      const pfad = prefix ? `${prefix}/${eintrag.name}` : eintrag.name
-      if (!eintrag.id) {
-        const tiefer = await gehen(client, bucket, userId, pfad, tiefe + 1, pfade, gesehen)
-        if (tiefer !== 'ok') return 'fehler'
-        continue
-      }
-      if (gehoert(eintrag, userId)) {
-        pfade.push(pfad)
-        if (pfade.length > MAX_OBJEKTE) return 'fehler'
-      }
-    }
-    if (seite.eintraege.length < SEITENGROESSE) return 'ok'
-    offset += seite.eintraege.length
+  if (zeilen.length > MAX_OBJEKTE) return 'fehler'
+  for (const zeile of zeilen) {
+    if (!bucketIstSicher(zeile.bucketId) || !pfadIstSicher(zeile.name)) return 'fehler'
+    const schluessel = `${zeile.bucketId}\0${zeile.name}`
+    if (gesehen.has(schluessel)) continue
+    gesehen.add(schluessel)
+    const vorhanden = gruppen.get(zeile.bucketId) ?? []
+    vorhanden.push(zeile.name)
+    gruppen.set(zeile.bucketId, vorhanden)
   }
+  return gruppen
 }
 
-function gehoert(eintrag: SpeicherEintrag, userId: string): boolean {
-  const ziel = userId.toLowerCase()
-  if (eintrag.owner && eintrag.owner.toLowerCase() === ziel) return true
-  if (eintrag.ownerId && eintrag.ownerId.toLowerCase() === ziel) return true
-  return false
+function nutzerIdIstSicher(userId: string): boolean {
+  return NUTZER_ID.test(userId)
 }
 
-function nameIstSicher(name: string): boolean {
-  if (!name || name.length > 512) return false
-  if (name.includes('/') || name.includes('\\') || name.includes('..') || name.includes('\0')) {
-    return false
-  }
-  return true
+function pfadIstSicher(name: string): boolean {
+  if (!name || name.length > 1024) return false
+  if (name.startsWith('/') || name.endsWith('/')) return false
+  if (name.includes('\\') || name.includes('\0') || name.includes('..')) return false
+  return name.split('/').every((teil) => teil.length > 0 && teil !== '.')
 }
 
 function bucketIstSicher(id: string): boolean {

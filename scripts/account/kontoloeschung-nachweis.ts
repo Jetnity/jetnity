@@ -492,9 +492,9 @@ async function main() {
     await hochladen(zielToken, zielNutzer.id)
     await hochladen(fremdToken, fremd.id)
 
-    const eigeneVorher = await speicherZahl(url, geheim, zielNutzer.id)
-    const fremdeVorher = await speicherZahl(url, geheim, fremd.id)
-    if (eigeneVorher !== 1 || fremdeVorher !== 1) throw new Error('speicher')
+    const eigeneVorher = await objektDa(url, geheim, zielNutzer.id)
+    const fremdeVorher = await objektDa(url, geheim, fremd.id)
+    if (!eigeneVorher || !fremdeVorher) throw new Error('speicher')
 
     const falsch = await funktion(url, anon, zielToken, 'NEIN')
     bericht.bestaetigung_abgelehnt = falsch === 'anfrage_ungueltig'
@@ -532,7 +532,7 @@ async function main() {
     const geloescht = await funktion(url, anon, frisch, 'KONTO LÖSCHEN')
     if (geloescht !== 'geloescht') throw new Error('loeschung')
 
-    bericht.speicher_entfernt = (await speicherZahl(url, geheim, zielNutzer.id)) === 0
+    bericht.speicher_entfernt = !(await objektDa(url, geheim, zielNutzer.id))
     bericht.security_event_entfernt = (await tabelleZaehlen(kanal, 'security_events', zielNutzer.id)) === 0
     bericht.graph_kaskade =
       (await tabelleZaehlen(kanal, 'profiles', zielNutzer.id)) === 0 &&
@@ -554,7 +554,7 @@ async function main() {
       (await tabelleZaehlen(kanal, 'account_travellers', fremd.id)) === fremdReisendeVorher &&
       (await tabelleZaehlen(kanal, 'account_visits', fremd.id)) === fremdBesuchVorher &&
       (await tabelleZaehlen(kanal, 'security_events', fremd.id)) === fremdEreignisVorher &&
-      (await speicherZahl(url, geheim, fremd.id)) === 1 &&
+      (await objektDa(url, geheim, fremd.id)) &&
       fremdProfileVorher > 0 &&
       fremdReiseVorher > 0 &&
       fremdReisendeVorher > 0 &&
@@ -612,22 +612,19 @@ async function main() {
   }
 }
 
-async function speicherZahl(url: string, geheim: string, id: string): Promise<number> {
-  const res = await fetch(`${url}/storage/v1/object/list/${BUCKET}`, {
-    method: 'POST',
+async function objektDa(url: string, geheim: string, id: string): Promise<boolean> {
+  if (!uuid(id)) throw new Error('id')
+  const res = await fetch(`${url}/storage/v1/object/${BUCKET}/${id}/proof.bin`, {
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${geheim}`,
       apikey: geheim,
-      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prefix: id, limit: 100, offset: 0 }),
   })
-  if (!res.ok) throw new Error('speicher')
-  const daten = (await res.json()) as Array<{ owner?: string | null; owner_id?: string | null; id?: string | null }>
-  return daten.filter((eintrag) => {
-    const owner = (eintrag.owner ?? eintrag.owner_id ?? '').toLowerCase()
-    return eintrag.id && owner === id.toLowerCase()
-  }).length
+  await res.arrayBuffer()
+  if (res.status === 200) return true
+  if (res.status === 400 || res.status === 404) return false
+  throw new Error('speicher')
 }
 
 function totpFenster(secret: string): string[] {
@@ -658,21 +655,7 @@ async function faktorBestaetigen(
 }
 
 async function speicherEntfernen(url: string, geheim: string, id: string) {
-  const res = await fetch(`${url}/storage/v1/object/list/${BUCKET}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${geheim}`,
-      apikey: geheim,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ prefix: id, limit: 100, offset: 0 }),
-  })
-  if (!res.ok) return
-  const daten = (await res.json()) as Array<{ name?: string; id?: string | null }>
-  const pfade = daten
-    .filter((eintrag) => eintrag.id && eintrag.name && !eintrag.name.includes('/'))
-    .map((eintrag) => `${id}/${eintrag.name}`)
-  if (pfade.length === 0) return
+  if (!uuid(id)) return
   await fetch(`${url}/storage/v1/object/${BUCKET}`, {
     method: 'DELETE',
     headers: {
@@ -680,7 +663,7 @@ async function speicherEntfernen(url: string, geheim: string, id: string) {
       apikey: geheim,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prefixes: pfade }),
+    body: JSON.stringify({ prefixes: [`${id}/proof.bin`] }),
   })
 }
 

@@ -1,13 +1,20 @@
 // supabase/functions/account-delete-v1/index.ts
 //
 // Schmale privilegierte Kontolöschung. Die Zielperson kommt nur aus dem
-// verifizierten JWT. Storage geht über die Storage-API, bevor der Auth-Nutzer
-// hart gelöscht wird. Protokollzeilen tragen nur Klasse und Schritt.
+// verifizierten JWT. Besitz an Storage-Objekten wird nur lesend über
+// SUPABASE_DB_URL gelesen. Gelöscht wird ausschließlich über die Storage-API,
+// bevor der Auth-Nutzer hart gelöscht wird. Protokollzeilen tragen nur Klasse
+// und Schritt, nie die Datenbank-URL, eine Nutzer-ID oder einen Pfad.
 
 import { createClient } from 'npm:@supabase/supabase-js@2.50.2'
+import postgres from 'npm:postgres@3.4.5'
 
 import { kontoLoeschungAusfuehren } from '../../../lib/account/kontoloeschung-ausfuehrung.ts'
-import { eigeneSpeicherObjekteLoeschen, type SpeicherEintrag } from '../../../lib/account/kontoloeschung-speicher.ts'
+import {
+  besitzAbfrage,
+  eigeneSpeicherObjekteLoeschen,
+  type BesitzZeile,
+} from '../../../lib/account/kontoloeschung-speicher.ts'
 import { loeschProtokollZeile, type LoeschKlasse } from '../../../lib/account/kontoloeschung-vertrag.ts'
 
 type Admin = ReturnType<typeof createClient>
@@ -53,7 +60,7 @@ Deno.serve(async (req) => {
       jetztSekunden: () => Math.floor(Date.now() / 1000),
       nutzer: (token) => nutzerLesen(admin, token),
       faktoren: (userId) => faktorZahl(admin, userId),
-      speicherLoeschen: (userId) => eigeneSpeicherObjekteLoeschen(speicherVon(admin), userId),
+      speicherLoeschen: (userId) => speicherLeeren(admin, userId),
       ereignisseLoeschen: (userId) => ereignisseLoeschen(admin, userId),
       nutzerLoeschen: (userId) => nutzerHartLoeschen(admin, userId),
     },
@@ -123,42 +130,48 @@ async function nutzerHartLoeschen(
   return 'fehler'
 }
 
-function speicherVon(admin: Admin) {
-  return {
-    async buckets() {
-      const { data, error } = await admin.storage.listBuckets()
-      if (error || !data) return { fehler: true as const }
-      return { ids: data.map((bucket) => bucket.id).filter((id) => typeof id === 'string' && id.length > 0) }
+function speicherLeeren(admin: Admin, userId: string) {
+  const dbUrl = Deno.env.get('SUPABASE_DB_URL')
+  if (!dbUrl) return Promise.resolve('fehler' as const)
+  return eigeneSpeicherObjekteLoeschen(
+    {
+      lesen: (id) => besitzLesen(dbUrl, id),
+      remove: async (bucket, pfade) => {
+        const { error } = await admin.storage.from(bucket).remove(pfade)
+        return error ? ('fehler' as const) : ('ok' as const)
+      },
     },
-    async list(bucket: string, prefix: string, offset: number, limit: number) {
-      const { data, error } = await admin.storage.from(bucket).list(prefix, {
-        limit,
-        offset,
-        sortBy: { column: 'name', order: 'asc' },
-      })
-      if (error || !data) return { fehler: true as const }
-      return {
-        eintraege: data.map((row) => eintragVon(row)),
-      }
-    },
-    async remove(bucket: string, pfade: string[]) {
-      const { error } = await admin.storage.from(bucket).remove(pfade)
-      return error ? ('fehler' as const) : ('ok' as const)
-    },
-  }
+    userId,
+  )
 }
 
-function eintragVon(row: {
-  name: string
-  id?: string | null
-  owner?: string | null
-  owner_id?: string | null
-}): SpeicherEintrag {
-  const extra = row as { owner?: string | null; owner_id?: string | null; id?: string | null }
-  return {
-    name: row.name,
-    id: typeof extra.id === 'string' && extra.id.length > 0 ? extra.id : null,
-    owner: typeof extra.owner === 'string' ? extra.owner : null,
-    ownerId: typeof extra.owner_id === 'string' ? extra.owner_id : null,
+async function besitzLesen(
+  dbUrl: string,
+  userId: string,
+): Promise<{ zeilen: BesitzZeile[] } | { fehler: true }> {
+  const abfrage = besitzAbfrage(userId)
+  if (!abfrage) return { fehler: true }
+  const sql = postgres(dbUrl, {
+    max: 1,
+    idle_timeout: 0,
+    connect_timeout: 5,
+    prepare: false,
+    onnotice: () => undefined,
+  })
+  try {
+    const rows = await sql.unsafe(abfrage.text, [...abfrage.werte])
+    const zeilen: BesitzZeile[] = []
+    for (const row of rows) {
+      if (!row || typeof row !== 'object') return { fehler: true }
+      const bucketId = (row as { bucket_id?: unknown }).bucket_id
+      const name = (row as { name?: unknown }).name
+      if (typeof bucketId !== 'string' || typeof name !== 'string') return { fehler: true }
+      zeilen.push({ bucketId, name })
+    }
+    return { zeilen }
+  } catch {
+    return { fehler: true }
+  } finally {
+    await sql.end({ timeout: 2 }).catch(() => undefined)
   }
 }
