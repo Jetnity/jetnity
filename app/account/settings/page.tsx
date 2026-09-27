@@ -1,11 +1,13 @@
 // app/account/settings/page.tsx
 //
-// Einstellungen: vorhandene Sicherheit und den V1-Kontoexport auffindbar machen.
-// Keine Privacy-/Billing-/MFA-/Lösch-Vertragsänderung.
+// Einstellungen: Sicherheit, vorhandener JSON-Export und die V1-Kontolöschung.
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Download, Shield } from 'lucide-react'
+
+import KontoLoeschen from '@/components/account/KontoLoeschen'
+import { loeschUmgebungErlaubt } from '@/lib/account/kontoloeschung-vertrag'
 
 export const metadata: Metadata = {
   title: 'Einstellungen',
@@ -14,6 +16,9 @@ export const metadata: Metadata = {
 }
 
 export default function AccountEinstellungenSeite() {
+  // Sichtbarkeit kommt aus der konfigurierten Supabase-Projekt-URL, nicht aus
+  // dem Host der Anfrage. Production bleibt ohne Löschangebot.
+  const loeschungAngeboten = loeschUmgebungErlaubt(process.env.NEXT_PUBLIC_SUPABASE_URL)
   return (
     <main className="px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-3xl">
@@ -76,6 +81,8 @@ export default function AccountEinstellungenSeite() {
               </div>
             </div>
           </section>
+
+          {loeschungAngeboten ? <KontoLoeschen /> : null}
         </div>
       </div>
     </main>
