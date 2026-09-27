@@ -5623,6 +5623,30 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0214 – Auth Confirmation Callback 1: ein PKCE-Tausch
+
+**Datum:** 27. September 2026
+**Status:** Implementiert auf Draft-Branch `fix/auth-confirmation-callback-1`. Kein Ready, kein Merge, kein PASS. Binding: `docs/AUTH_CONFIRMATION_CALLBACK_1_TASK_2026-09-27.md`. Parent: #582.
+
+**Entscheidung:**
+
+1. Der Callback hat genau einen Eigentümer für den Tausch eines PKCE-Codes. `lib/auth/callback-abschluss.ts` liest den Verifier, bevor der Browser-Client entsteht. Hat `initialize()` den Code schon verbraucht, wird nicht erneut getauscht. War der Client schon vorher initialisiert und der Code liegt noch in der Adresse, tauscht nur der explizite Aufruf.
+2. `detectSessionInUrl` bleibt der Default von `createBrowserClient`. Die Passwortseite `/auth/update-password` erkennt ihren Code weiter selbst.
+3. Ein Verifier mit `PASSWORD_RECOVERY`, `redirectType=PASSWORD_RECOVERY` oder ein Hash mit `type=recovery` führt nach `/auth/update-password`. Jedes andere Ziel läuft durch `erlaubtesNaechstesZiel`.
+4. Fehlender Verifier, ungültiger Code, expliziter Callback-Fehler, fehlende Sitzung und Netzausfall bleiben Fehler. Eine schon vorhandene Sitzung macht aus einem gescheiterten Code keinen Erfolg.
+5. Die Oberfläche zeigt feste deutsche Sätze. Code, Verifier und Rohtext aus der Adresse werden nicht angezeigt.
+6. Dieselbe Adresse im selben Dokument teilt sich einen Lauf. Der Weiterleitungs-Timer wird beim Unmount gelöscht.
+
+**Kontext:** Die bestätigte Production-Mail kam an. Der erste Öffnen auf dem iPhone zeigte `invalid request: both auth code and code verifier should be non-empty`. Erst ein Neuladen landete in Meine Reisen. An den gesperrten Fassungen `@supabase/ssr` 0.6.1, `supabase-js` 2.57.2 und `auth-js` 2.71.1 lässt sich der zweite Tausch ohne Live-Mail nachstellen: der erste Tausch speichert die Sitzung und entfernt den Verifier, der zweite schickt ihn leer. Das ist ein Bibliotheksnachweis, kein Mitschnitt des Geräts.
+
+**Alternativen:** `detectSessionInUrl` global aus; den Code immer selbst tauschen und die Initialisierung ignorieren; eine neue Auth-Architektur oder ein SDK-Upgrade.
+
+**Begründung:** Global aus würde die bereits bestandene Rücksetzung auf `/auth/update-password` der automatischen Erkennung berauben. Immer selbst tauschen läuft in denselben zweiten Aufruf, sobald der Konstruktor den Code schon gesehen hat. Ein Upgrade wäre eine neue Auth-Abhängigkeit für einen Konflikt, den die gesperrte Fassung bereits erklärt.
+
+**Konsequenzen:** Der erste Ladevorgang eines gültigen Links soll ohne Neuladen zum erlaubten Ziel führen. Ein physischer Erstlade-Test auf dem Gerät bleibt offen und ist kein PASS. #582 bleibt offen. Keine hosted Änderung, keine weitere echte Mail, keine neuen Kosten.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

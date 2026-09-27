@@ -299,6 +299,8 @@ Seit Phase 1.5 hat eine Anmeldung eine Folge, die über die Sitzung hinausgeht: 
 | OAuth (Schaltfläche nur bei `auth.external.*.enabled = true`) | `/auth/callback` → erlaubtes `next`, sonst `/reisen` |
 | Rücksetzung des Passworts | `/auth/callback` → `/auth/update-password` → `/reisen` |
 
+Der Bestätigungslink tauscht seinen PKCE-Code genau einmal (`lib/auth/callback-abschluss.ts`, ADR-0214). Die automatische URL-Erkennung des Browser-Clients bleibt an: ein Rücksetzlink, der direkt auf `/auth/update-password` landet, bekommt seine Sitzung weiter vom SDK. Ein Wiederherstellungs-Verifier oder `type=recovery` im Callback führt nach `/auth/update-password` und nicht über `next`.
+
 Die Übernahme in jedes Formular zu bauen wären fünf Stellen, an denen sie fehlen kann. Auf `/reisen` greift sie zusätzlich in Fällen, in denen keiner dieser Wege beteiligt war: bei einer Sitzung, die in einem anderen Tab entstanden ist, und nach einem Versuch, der beim letzten Mal an der Datenbank gescheitert ist.
 
 **Die Übernahme hängt an keiner Reihenfolge, die niemand garantieren kann.** `trips.user_id` verweist auf `auth.users` und nicht auf `profiles`. Ein frisch registriertes Konto hat kein Profil – auf `auth.users` liegt kein Trigger (Abschnitt 3 von [docs/DATENBANK.md](DATENBANK.md)) – und kann trotzdem sofort speichern. Ohne diese Wahl wäre die erste Reise eines neuen Kontos davon abhängig, dass vorher irgendwo eine Profilzeile entstanden ist.

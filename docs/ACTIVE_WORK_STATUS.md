@@ -1,6 +1,31 @@
 # Jetnity – Active Work Status
 
 Stand: 27. September 2026
+Status: **NORMAL / AUTH CONFIRMATION CALLBACK 1 IMPLEMENTED / DRAFT / NO PASS / NO READY / NO MERGE**
+
+## 0. Current work — Auth Confirmation Callback 1
+
+| Field | Value |
+| --- | --- |
+| Arbeitsblock | Auth Confirmation Callback 1 |
+| Branch / PR | `fix/auth-confirmation-callback-1` / Draft https://github.com/Jetnity/jetnity/pull/583 |
+| Parent | #582 bleibt offen |
+| Base | `2ae99dc0d37e325fe6a021d6767aca18d24ad4f3` plus Task-Scaffold `82b4f44b9924df8a523cc3f55a38a2faad095334` |
+| Status | Implementiert, wartet auf unabhängigen Technical-Lead exact-head Review |
+| Agent | Jetnity auth confirmation callback 1, Generation 1, Session `bc-bdb579ac-f2b5-452e-8e48-0aeb403f4c4d` |
+| Model laut Auftrag | `cursor-grok-4.6-high-fast` |
+| Model dieser Session | `grok-4.7-high-fast` (`originalModelName`). Nicht still als 4.6 ausgegeben. |
+| UI-Titel | `Auth callback PKCE conflict`. Keine programmierbare Umbenennung ausgeführt. |
+
+Der erste Ladevorgang eines gültigen Bestätigungslinks soll ohne zweiten PKCE-Tausch zum erlaubten Ziel führen. Nachweis an den gesperrten SDKs: der alte zweite Tausch scheitert am leeren Verifier, die neue Abschlussfunktion tauscht einmal. Physischer Erstlade-Test bleibt offen. Kein Ready, kein Merge, kein Follow-up.
+
+Details: `docs/AUTH_CONFIRMATION_CALLBACK_1_STATUS_2026-09-27.md`, HANDOFF, SELF_REVIEW, ADR-0214.
+
+Die folgenden Abschnitte sind vorherige Abschlüsse und keine aktiven Writer.
+
+---
+
+Stand: 27. September 2026
 Status: **NORMAL / DOMAIN UND PRIVACYBEE TECHNISCH ABGESCHLOSSEN / NO PUBLIC INDEXING**
 
 ## Technical-Lead-Abschluss — 27. September 2026, 10:58 UTC
