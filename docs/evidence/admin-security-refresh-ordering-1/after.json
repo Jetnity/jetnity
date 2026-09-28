@@ -1,0 +1,83 @@
+{
+  "mode": "fixed-actual-SecurityWidget",
+  "synthetic": true,
+  "signedInAdmin": false,
+  "physicalDevice": false,
+  "productionMutation": false,
+  "sourceHasGuard": true,
+  "faelle": [
+    {
+      "name": "success-success-inversion",
+      "ok": true,
+      "newerStays": true,
+      "getsBeforeExtraPoll": 2,
+      "getsAfterOneMorePoll": 3,
+      "consoleErrors": []
+    },
+    {
+      "name": "newer-failure-keeps-older-success-out",
+      "ok": true,
+      "newerFailureStays": true,
+      "consoleErrors": []
+    },
+    {
+      "name": "newer-success-keeps-older-failure-out",
+      "ok": true,
+      "newerSuccessStays": true,
+      "consoleErrors": []
+    },
+    {
+      "name": "stale-completion-does-not-clear-loading",
+      "ok": true,
+      "loadingFollowsNewest": true,
+      "consoleErrors": []
+    },
+    {
+      "name": "manual-refresh",
+      "ok": true,
+      "manualUpdates": true,
+      "gets": 2,
+      "consoleErrors": []
+    },
+    {
+      "name": "current-failure-keeps-prior-data",
+      "ok": true,
+      "priorDataKept": true,
+      "consoleErrors": []
+    },
+    {
+      "name": "filter-miss-stays-a-filter",
+      "ok": true,
+      "filter": "Keine aufgezeichneten Events passen zu diesem Filter.",
+      "consoleErrors": []
+    },
+    {
+      "name": "event-bound-200",
+      "ok": true,
+      "eventsBound": true,
+      "blockBound": false,
+      "consoleErrors": []
+    },
+    {
+      "name": "blocklist-bound-200",
+      "ok": true,
+      "blockBound": true,
+      "eventsBound": false,
+      "consoleErrors": []
+    },
+    {
+      "name": "block-triggers-one-refresh",
+      "ok": true,
+      "blockRefresh": true,
+      "body": "{\"ip\":\"203.0.113.42\",\"reason\":\"synthetic-reason\"}",
+      "consoleErrors": []
+    },
+    {
+      "name": "unblock-triggers-one-refresh",
+      "ok": true,
+      "unblockRefresh": true,
+      "body": "{\"ip\":\"203.0.113.42\"}",
+      "consoleErrors": []
+    }
+  ]
+}

@@ -30,6 +30,10 @@ import {
   securityReadIstAnDerGrenze,
 } from '@/lib/admin/security/filter-ehrlichkeit'
 import {
+  naechsteRefreshIdentitaet,
+  refreshIstAutoritaer,
+} from '@/lib/admin/security/refresh-reihenfolge'
+import {
   istAufgezeichneterLoginFehler,
   istAufgezeichneteAuffaelligkeit,
 } from '@/lib/admin/security-event-taxonomy'
@@ -65,8 +69,13 @@ export default function SecurityWidget() {
   const [filter, setFilter] = React.useState('')
   const [banIp, setBanIp] = React.useState('')
   const [banReason, setBanReason] = React.useState('admin block')
+  // Jede Lesung bekommt eine Identität. Antwortet eine ältere nach einer
+  // neueren, darf sie Daten, Fehler und den Ladezustand nicht mehr schreiben.
+  const juengsteLesung = React.useRef(0)
 
   const refresh = React.useCallback(async () => {
+    const diese = naechsteRefreshIdentitaet(juengsteLesung.current)
+    juengsteLesung.current = diese
     setLoading(true)
     const ergebnis = await lade(
       () => fetch('/api/admin/security/list', { cache: 'no-store' }),
@@ -75,6 +84,8 @@ export default function SecurityWidget() {
         blocklist: liste<BlockEntry>(koerper, 'blocklist'),
       }),
     )
+    if (!refreshIstAutoritaer(diese, juengsteLesung.current)) return
+
     setLoading(false)
 
     if (ergebnis.fehler) {
