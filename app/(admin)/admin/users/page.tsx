@@ -17,6 +17,7 @@ import {
 import UsersTable, { type UserRow } from '@/components/admin/UsersTable'
 import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { ausProblem } from '@/lib/admin/ladezustand'
+import { profilErstellt } from '@/lib/admin/profil-erstellt'
 import { problemAus } from '@/lib/api/datenbank-lesen'
 import { textSuchfilter } from '@/lib/api/suchfilter'
 
@@ -88,7 +89,7 @@ export default async function UsersPage({
     display_name: r?.display_name ?? null,
     role: parseRole(r?.role) ?? DEFAULT_ROLE,
     status: isAccountStatus(r?.status) ? r.status : 'active',
-    created_at: r?.created_at ?? new Date().toISOString(),
+    created_at: profilErstellt(r?.created_at),
     last_seen_at: r?.last_seen_at ?? null,
   }))
 

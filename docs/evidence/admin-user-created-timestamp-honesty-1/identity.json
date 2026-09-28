@@ -1,0 +1,16 @@
+{
+  "logicalAgent": "Jetnity admin user created timestamp honesty 1",
+  "generation": 1,
+  "requiredModel": "Grok 4.7 High Fast",
+  "originalModelName": "grok-4.7-high-fast",
+  "notAuto": true,
+  "session": "https://cursor.com/agents/bc-decff300-3d45-499e-9b41-8c26cc8116ce",
+  "issue": 615,
+  "pullRequest": 616,
+  "branch": "fix/admin-user-created-timestamp-honesty-1",
+  "baselineMain": "135558c485baf7de844056d81190824eed3ad84e",
+  "parallelPullRequest": 614,
+  "signedInAdmin": false,
+  "productionRead": false,
+  "productionMutation": false
+}
