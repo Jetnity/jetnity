@@ -1,7 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / #592 PRODUCTION BACKEND ACTIVE / PR #597 PRE-MERGE RE-GATE / KAYAK RESPONSE PENDING**
+Status: **NORMAL / #597 MERGED + POST-MERGE VERIFIED / PRODUCTION ACCOUNT ERASURE ACTIVE / SYNTHETIC SMOKE BLOCKED / KAYAK RESPONSE PENDING**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
@@ -106,20 +106,19 @@ Purpose: repository continuity closure so old NOT-PASS wording does not become c
 
 ### #592 — Production account erasure activation
 
-**PRODUCT OWNER APPROVED THE BOUNDED ACTIVATION. MIGRATION + PRODUCTION FUNCTION ARE ACTIVE. PR #597 POST-DEPLOY DOCS HEAD MUST RE-GATE BEFORE MERGE; SYNTHETIC PRODUCTION SMOKE REMAINS AFTER MERGE.**
+**MERGED / POST-MERGE VERIFIED / SYNTHETIC PRODUCTION SMOKE BLOCKED**
 
-Historical task-creation list below is not the current migration state.
+Runtime baseline:
+- PR #597 merge: `929d671edbcd673d336f97b9b6734ba9f0babe89`;
+- GitHub post-merge run `36429943337`: SUCCESS;
+- Vercel Production `dpl_2zC37wt2pNRBEraSy1K2H6J1irpQ`: READY on exact runtime SHA, aliases include `jetnity.com`;
+- migration history: `20260927230000 reise_graph_kaskade_tiefe`;
+- `reise_graph_geaendert()`: SECURITY INVOKER, 9 triggers;
+- `account-delete-v1`: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
 
-The Technical Lead has applied the migration and deployed `account-delete-v1` after FINAL PASS on exact PR head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa`. Current Function truth: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`. The TL post-deploy continuity commit now requires fresh exact-head CI/Preview/TL re-gating before merge. After merge, verify Production and perform a bounded synthetic account smoke if a safe synthetic-account path is available.
+No real Production account has been used or deleted. No Auth/MFA/OAuth/indexing/provider/payment configuration was changed.
 
-The task-creation list was:
-
-- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql` — **done by the Technical Lead**; current history version `20260927230000`, name `reise_graph_kaskade_tiefe`;
-- Production deployment of `account-delete-v1`;
-- Production UI activation;
-- bounded Production smoke design.
-
-Never use an existing real Production account as acceptance evidence.
+The only remaining #592 evidence residual is the bounded synthetic Production deletion smoke. It is **BLOCKED / NOT RUN** because current authorized tooling exposes no safe Supabase Auth Admin create-user path and the repository has no approved Production synthetic-account creation workflow. Do not use a real account, direct `auth.users` SQL insertion, or an unreviewed privileged test endpoint.
 
 ### #587 — Jetnity Nutzungsbedingungen / AGB
 
