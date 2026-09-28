@@ -1,14 +1,44 @@
-# Admin F Reconciliation 1 — TL reconstruction / dispatch status
+# Admin F Reconciliation 1 — Status
 
 Date: 2026-09-28
 Issue: #605
 Draft PR: #606
 Branch: `docs/admin-f-reconciliation-1`
 Task v1.1 commit: `a5fc6b05f235a7d9c422b87edcbd890671c3b0c4`
-Status: **PREPARED / DISPATCH BLOCKED BY CURSOR ACCESS / NOT READY / NOT MERGED**
-Cursor-Agent reserved logical name: **Jetnity admin F reconciliation 1**, Generation 1.
+Status: **DELIVERED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Cursor-Agent: **Jetnity admin F reconciliation 1**, Generation 1.
 Required model: **Grok 4.7 High Fast**, no Auto/substitution.
-Actual session/model: **none dispatched or verified in this workstream**.
+Tool model field: `originalModelName=grok-4.7` from cursor-cloud `run-info`. The dispatch states High Fast was visibly selected. That qualifier is not a separate `run-info` field.
+Session: https://cursor.com/agents/bc-ef444eaa-ff16-4737-97a8-2a5c11e8aa83 (`bc-ef444eaa-ff16-4737-97a8-2a5c11e8aa83`). Visible run name: `Jetnity admin f reconciliation 1`.
+
+## Delivery
+
+The bounded palette is the #545 implementation. Named source paths match accepted head `43720a65ca5296e2009158ccd0bce6b30796ca95` (`git diff --exit-code` = 0). No runtime defect was reproduced. No runtime edit.
+
+Fresh evidence, this session only:
+
+- Unit tests: **24 pass / 0 fail / 0 skipped**. `docs/evidence/admin-f-reconciliation-1/unit-tests.log`
+- Existing Chromium harness, redirected copy: **12 pass**. `docs/evidence/admin-f-reconciliation-1/hydrated-report.json`
+- Not claimed: `npm ci`, full suite, production build, signed-in Admin, physical device, production prefetch.
+
+Open pull requests re-read here: #606 and historical drafts #28, #39, #40, #50, #52. No overlapping GitHub writer observed. The Technical Lead’s dispatch observation of the agent list is recorded in the handoff and is not upgraded to absolute knowledge.
+
+Exact delivery head is the commit that contains this status update. Checks on parent `ef866098faaa6b46aaa13c3ccb4975c360bd1283` are seed evidence only. Main at dispatch reconstruction remains `6d5299f73e8da1b8eec7604686e5d272b70fd256`; re-fetch before the freeze note in the PR.
+
+Report: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`  
+Handoff: `docs/ADMIN_F_RECONCILIATION_1_HANDOFF_2026-09-28.md`  
+Self-review: `docs/ADMIN_F_RECONCILIATION_1_SELF_REVIEW_2026-09-28.md`
+
+Exact next unfinished step: independent Technical-Lead review of the delivery head. Cursor does not Ready, merge, or open a follow-up.
+
+---
+
+## Historical — TL reconstruction before dispatch
+
+The block below is the pre-dispatch status. Its login-blocked conclusion is superseded by the delivery section above. Its source findings remain the baseline this delivery re-checked.
+
+Status at that time: **PREPARED / DISPATCH BLOCKED BY CURSOR ACCESS / NOT READY / NOT MERGED**
+Actual session/model at that time: **none dispatched or verified in this workstream**.
 
 ## Verified finding
 

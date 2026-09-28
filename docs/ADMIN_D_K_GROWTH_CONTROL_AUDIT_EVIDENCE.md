@@ -66,6 +66,8 @@ Legende Wirkung: `UI` sichtbar · `DB` lokale Persistenz · `EXT` externe/provid
 | Analytics / Content / Marketing / Settings / Localization | A stubs | `AdminFolgtSeite` + Nav-Badge `folgt` | keine APIs | nein | nur Bereichs-Gate | n/a | n/a (kein Datenclaim) | `ehrliche-zustaende.test.ts` | **placeholder (honest)** |
 | Copilot-Button / Befehlssuche | A | disabled / „folgt“ | keine Route | nein | n/a | n/a | n/a | Copy-Tests | **placeholder (honest)** |
 
+**Datierte Korrektur 28. September 2026 — nur diese Zeile.** Sie beschreibt den Audit-Stand vom 26. August 2026. Die Befehlssuche ist seit PR #545 eine lokale Bereichspalette auf vorhandenen ready-Zielen (`RUNTIME_BUILT` für diese begrenzte Navigation; akzeptierter Head `43720a65ca5296e2009158ccd0bce6b30796ca95`). Der getrennte Hinweis „Copilot Pro folgt“ bleibt ein ehrlicher Platzhalter ohne Execute. Diese Notiz ändert keine andere Zeile der Matrix. Bericht: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`.
+
 ### 2.1 Wirkungsgrenzen der Writes
 
 | Aktion | UI-Text | Tatsächliche Backendwirkung | Externe Wirkung |
@@ -260,7 +262,8 @@ Keine Monster-PR. Kein Folgeslice durch diesen Agenten.
 ### Nach TL-Review dieses Audits – kleinste konfliktarme Admin-Schritte
 
 1. **Admin F – Command Palette**  
-   Keine DB, keine neuen Capabilities. Sucht nur bereits autorisierte Routen/Listen. Schließt den toten Such-Button.
+   Keine DB, keine neuen Capabilities. Sucht nur bereits autorisierte Routen/Listen. Schließt den toten Such-Button.  
+   **Superseded 28. September 2026:** dieser Schritt ist durch PR #545 erledigt. Nicht erneut starten. Der übrige Absatz bleibt der historische Audit-Vorschlag.
 
 2. **Optional Admin IA-M0-Nav**  
    Eigener kleiner Docs+Nav-Slice: Growth-Bereich als `folgt`-Unterpunkte laut Standard-IA, **ohne** KPIs. Nur wenn TL das von F trennt. Keine zweite Wahrheit.

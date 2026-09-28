@@ -1,9 +1,21 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / V1 PREFLIGHT #603 MERGED + POST-MERGE VERIFIED / THREE EXTERNAL RESPONSES PENDING / NO ACTIVE WRITER**
+Status: **NORMAL / ADMIN F RECONCILIATION #606 DELIVERED FOR TL REVIEW / V1 PREFLIGHT #603 MERGED / THREE EXTERNAL RESPONSES PENDING / NO FOLLOW-UP WRITER**
 
-## 0. Current work boundary — V1 preflight closure / external response wait
+## 0. Current work boundary — Admin F reconciliation 1
+
+- Draft PR #606, branch `docs/admin-f-reconciliation-1`, Issue #605.
+- Cursor-Agent: **Jetnity admin F reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-ef444eaa-ff16-4737-97a8-2a5c11e8aa83. Tool model field `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected.
+- Admin F palette is already on main via #545. Accepted `43720a65ca5296e2009158ccd0bce6b30796ca95`. Merge `8fcccd6475f41703bd2a31deecb3067391f330b4`. Do not rebuild.
+- This slice is docs/evidence only. Fresh checks: 24 unit pass, 12 harness pass, under `docs/evidence/admin-f-reconciliation-1/`. Signed-in and device proof not claimed. Seed checks on `ef866098` are not the delivery gate.
+- While KAYAK, Sherpa and IATA are pending, safe provider-independent useful residuals may be considered only after a fresh precheck. No second Admin F, no Phase-2 bulk rollout, no new API/data/permission contract, no special gate.
+- Exact next step: independent Technical-Lead review of the exact delivery head. Cursor does not Ready, merge, or start a follow-up.
+- Report: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`.
+
+The preflight block below remains the external-wait record.
+
+## 0a. Previous current block — V1 preflight closure / external response wait
 
 - PR #603 **MERGED** at `d961a5402fc363a481918f1a5830aff22dcc878e`; Issue #602 **CLOSED / completed**.
 - Accepted exact head: `5c2f0ef25c90ccdbda5bef06ff38db7a38420fcc`.

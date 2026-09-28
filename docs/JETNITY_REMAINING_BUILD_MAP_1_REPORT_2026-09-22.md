@@ -22,6 +22,18 @@ Live-evidence rule: later accepted closures outrank the 1–2 September 2026 Pha
 
 ---
 
+## 0. Dated supersession — Admin F only — 28 September 2026
+
+This report stays the 22 September 2026 historical snapshot pinned to `main@35148a4ba065be1315dddf21174d7f272518d34c`. Rows other than Admin F are not reclassified by this note.
+
+On that pin, Admin F was a disabled `Befehlssuche folgt` control and `REMAINING_IMPLEMENTATION`. That description was accurate for the pin. PR #545 later merged the bounded authorized-area palette. Accepted head `43720a65ca5296e2009158ccd0bce6b30796ca95`. Merge `8fcccd6475f41703bd2a31deecb3067391f330b4`. Reconciliation 1 on 28 September 2026 re-read `main@6d5299f73e8da1b8eec7604686e5d272b70fd256` and found those implementation files unchanged. Current class for that bounded palette: `RUNTIME_BUILT`. It is local ready-area navigation. It is not record search, not a command runner, and not authorization.
+
+The §1 sentence, the §3.1c F row and the §4 Admin F option remain visible as the historical snapshot and are marked as such. Read them through this section. Do not dispatch a second palette.
+
+Admin E, AP-8, AP-9, AP-11, AP-12, Billing-P1 and every other row are unchanged by this supersession. Canonical write-up: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`.
+
+---
+
 ## 1. Product-Owner overview (German, ≤350 words)
 
 Jetnity bleibt ein zusammenhängendes Reisesystem: eine Idee wird zur strukturierten, bearbeitbaren Reise um denselben Reisegraphen. Flug, Unterkunft, Aktivitäten, Route, Reisende und Vorbereitung sollen dieselbe Wahrheit teilen — nicht isolierte Suchmaschinen.
@@ -30,7 +42,7 @@ Wir sind in Phase 1, Jetnity Core. Die schwierige Kernarchitektur steht auf `mai
 
 Was für echte Reisende noch fehlt, ist vor allem keine neue Feature-Liste. Es fehlen echte Wahrheitsquellen und Launch-Gates: kein live Provider für Flug, Hotel oder Activities; keine Official-Entry-Evidence; keine Production-SMTP; keine genehmigten Rechtstexte (`/privacy` und `/terms` bleiben 404); keine Kontolöschung; keine erzwungene Retention; keine Observability; keine persistente Security-Ingestion. Commercial-Workspace (TW-8) braucht echte Angebote. Akzeptierte UX-Reparaturen sind nicht das volle TW-9-Closure. Feature Complete ist nicht Production Ready.
 
-Account: AP-7 Registry und AP-10-S1 Buchungsordner sind integriert; AP-8 Präferenzen, AP-9 Favoriten, AP-11 Notifications und AP-12 Entitlements bleiben benannte Restarbeit. Admin A–C plus read-only Analyst/Usage sind gebaut; der lokale Refund-Pfad ist nicht atomar; Admin F existiert als deaktivierte Befehlssuche. Guardian/Reise-Autopilot und What-if bleiben benannte Langfristziele und dürfen nicht in „Advanced Companion“ verschwinden.
+Account: AP-7 Registry und AP-10-S1 Buchungsordner sind integriert; AP-8 Präferenzen, AP-9 Favoriten, AP-11 Notifications und AP-12 Entitlements bleiben benannte Restarbeit. Admin A–C plus read-only Analyst/Usage sind gebaut; der lokale Refund-Pfad ist nicht atomar; Admin F existiert als deaktivierte Befehlssuche. [Historical on this 22 September pin. §0 supersedes Admin F only; #545 later built the bounded palette.] Guardian/Reise-Autopilot und What-if bleiben benannte Langfristziele und dürfen nicht in „Advanced Companion“ verschwinden.
 
 Phase 2 und 3 bleiben bewusst später. Provider kommen erst, wenn eine konkrete Abhängigkeit das erzwingt. Der einzige bereits vergebene Runtime-Slice ist die Homepage-Routenübergabe. Zusätzliche **V1-kritische** ungated Implementierung ist hier nicht nachgewiesen. Spätere scoped Optionen wie Admin F bleiben benannt und werden nicht dispatcht.
 
@@ -136,7 +148,7 @@ Target register: `docs/ADMIN_D_K_GROWTH_CONTROL_AUDIT_EVIDENCE.md`. Old AAL2-abs
 | C Provider / cost | S1 + `model_usage` + #538 attention | No zero-spend claim; no live provider | `RUNTIME_BUILT` | #538 `5fee5f66` | No paid activation |
 | D Security hardening | Honest coverage #485; architecture #487; local proof #494; KPI #504; Admin AAL2 alignment #480 | Persistent ingestion / gate G; `admin_audit_events`; write confirm | Mixed: presentation/architecture `RUNTIME_BUILT`; ingestion `LIVE_ACTIVATION_MISSING` | #480/#485/#487/#494/#504 | Persistent apply closed; do not rebuild architecture |
 | E Support user+trip RO | Process runbook #470; account error + Fehler-ID | Support RPC / minimised trip card still absent | Process `RUNTIME_BUILT`; RPC `REMAINING_IMPLEMENTATION` | #470/#483; Evidence E | Privacy/RLS if new privilege |
-| F Command palette | Disabled `Befehlssuche folgt` control exists | Real authorized-list search | `REMAINING_IMPLEMENTATION` (later ungated scoped option) | `components/layout/AdminTopbar.tsx` L137–146; `ADMIN_EHRLICHE_TEXTE.sucheFolgt`; Evidence F | No DB/secret if lists-only. **Not V1-critical. Named in §4. Deferred, not dispatched.** |
+| F Command palette | Disabled `Befehlssuche folgt` control exists | Real authorized-list search | `REMAINING_IMPLEMENTATION` (later ungated scoped option). **Historical 22 Sep pin. Current class is §0 `RUNTIME_BUILT` via #545.** | `components/layout/AdminTopbar.tsx` L137–146; `ADMIN_EHRLICHE_TEXTE.sucheFolgt`; Evidence F | No DB/secret if lists-only. **Not V1-critical. Named in §4. Deferred, not dispatched.** Do not rebuild. |
 | G Finance-readiness | Fake revenue tiles removed #472 | Honest local ledger view; no Bexio | `REMAINING_IMPLEMENTATION` after Billing-P1 | #472; Evidence G | **Billing-P1 first**; no live Bexio/Stripe |
 | H Infomaniak RO | Absent | Domain/mail metadata | `PO_GATED` | Evidence H | Secret/OAuth/cost |
 | I Copilot analyst | First read-only foundation #510/#518/#538 | Copilot Pro / execute later | Read-only `RUNTIME_BUILT`; Pro `DELIBERATELY_LATER` | #510/#518/#538 (old “I placeholder” superseded for the first foundation) | Cost/model gates for expansion |
@@ -200,7 +212,7 @@ Named later / scoped options assessed and **deferred** (no automatic dispatch; b
 
 | Option | Why it is real | Value | Phase / priority | Why deferred now |
 | --- | --- | --- | --- | --- |
-| Admin F command palette | Disabled search control already exists (`AdminTopbar` + `sucheFolgt`) | Faster authorized Admin navigation | Admin programme; **not** V1 traveller-critical | Does not unblock legal/SMTP/official/commercial launch cluster or #543. Evidence lists it as smallest Admin step, not a Core-journey blocker. Keep named; do not dispatch from this map |
+| Admin F command palette | Disabled search control already exists (`AdminTopbar` + `sucheFolgt`). **Historical reason on this pin. §0: #545 already shipped the palette.** | Faster authorized Admin navigation | Admin programme; **not** V1 traveller-critical | Does not unblock legal/SMTP/official/commercial launch cluster or #543. Evidence lists it as smallest Admin step, not a Core-journey blocker. Keep the historical row; do not dispatch a second palette |
 | Admin J-lite SEO-health RO | Evidence names it after D0-2 | Honest robots/sitemap read | Indexing/launch-adjacent | Depends on D0-2; public indexing remains a reserved gate |
 | Admin IA-M0-Nav | Optional docs+nav `folgt` labels | IA honesty only | Admin IA | No new truth; TL may separate from F later |
 | Billing-P1 refund integrity | Route still INSERT → read → update without transaction/idempotency | Prevents local ledger lie before Finance-Live | Before Admin G/K | Real residual. Requires a Billing contract; schema/money gates possible. **Not implemented here.** Not a substitute for PO payment-live |
