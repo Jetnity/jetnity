@@ -16,7 +16,7 @@ This directory is new proof for reconciliation 1. It does not replace `docs/evid
 
 ## Fresh checks
 
-- `unit-tests.log`: existing Node test runner, 24 pass / 0 fail / 0 skipped. Files: `lib/admin/navigation-search.test.ts`, `lib/admin/navigation.test.ts`, `lib/admin/ehrliche-zustaende.test.ts`. Existing local `node_modules`. Not `npm ci`, not the full suite, not a production build.
+- `unit-tests.txt`: existing Node test runner, 24 pass / 0 fail / 0 skipped. Files: `lib/admin/navigation-search.test.ts`, `lib/admin/navigation.test.ts`, `lib/admin/ehrliche-zustaende.test.ts`. Existing local `node_modules`. Not `npm ci`, not the full suite, not a production build. Stored as `.txt` because repository `.gitignore` ignores `*.log`.
 - `hydrated-report.json`: existing actual-component harness, 12 pass. Playwright Chromium 140.0.7339.16, headless. The runner was a disposable uncommitted copy of `scripts/admin-navigation-search-1-hydrated.mjs` with output redirected here and screenshots under `/opt/cursor/artifacts/`. The copy was deleted and is not part of the commit. Historical evidence files were not overwritten.
 
 ## What this is not

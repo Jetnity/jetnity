@@ -17,7 +17,7 @@ The bounded palette is the #545 implementation. Named source paths match accepte
 
 Fresh evidence, this session only:
 
-- Unit tests: **24 pass / 0 fail / 0 skipped**. `docs/evidence/admin-f-reconciliation-1/unit-tests.log`
+- Unit tests: **24 pass / 0 fail / 0 skipped**. `docs/evidence/admin-f-reconciliation-1/unit-tests.txt`
 - Existing Chromium harness, redirected copy: **12 pass**. `docs/evidence/admin-f-reconciliation-1/hydrated-report.json`
 - Not claimed: `npm ci`, full suite, production build, signed-in Admin, physical device, production prefetch.
 

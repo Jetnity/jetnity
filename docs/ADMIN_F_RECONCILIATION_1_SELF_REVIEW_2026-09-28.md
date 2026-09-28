@@ -11,7 +11,7 @@ This file is the author’s self-review. It is not an independent Technical-Lead
 | The palette was rebuilt or drifted after #545 | Refuted for the named files. `git diff --exit-code` against `43720a65` exited 0. See `docs/evidence/admin-f-reconciliation-1/source-diff.txt`. |
 | `sucheFolgt` still disables search | Refuted in current `lib/admin/ehrliche-zustaende.ts`. The key is gone. Top bar search is a real trigger. The dashed control is Copilot Pro. |
 | Filtering was described as authorization | Guarded in the report. `filterAdminNav` and `adminNavIstNurUx` say UX only. Server `requireAdminPage` remains the gate. Tests still assert that hiding Nutzer does not imply a server block. |
-| Fresh tests were skipped and called green | Unit log says 24 pass, 0 fail, 0 skipped. Harness log says 12 pass. Both files are in the new evidence directory. |
+| Fresh tests were skipped and called green | `unit-tests.txt` says 24 pass, 0 fail, 0 skipped. Harness JSON says 12 pass. Both files are in the new evidence directory. `*.log` is gitignored, so the unit transcript is text. |
 | Historical evidence was overwritten | The harness copy wrote JSON only under `docs/evidence/admin-f-reconciliation-1/` and screenshots under `/opt/cursor/artifacts/`. `git status` did not show edits under `docs/evidence/admin-navigation-search-1/`. The copy was deleted before commit. |
 | Signed-in or device proof was implied | Report and notes refuse that claim. R3 is a stub prop, not production prefetch. |
 | Seed CI on `ef866098` was reused as the delivery gate | Refused. Delivery CI belongs to the commit that contains these files. |

@@ -46,7 +46,7 @@ No reproducible runtime defect was found in the re-read or in the fresh checks b
 | --- | --- | --- |
 | Runtime-built | Palette on main since #545 | Source unchanged versus `43720a65` |
 | Historically verified | #545 TL PASS review `5281481739`; post-merge comment `5781083393`; historical harness notes in `docs/evidence/admin-navigation-search-1/NOTES.md` | Not re-labeled as today’s proof |
-| Newly rechecked | 24 unit tests; 12 Chromium harness cases | 24 pass, 0 fail, 0 skipped; 12 pass. Logs in `docs/evidence/admin-f-reconciliation-1/` |
+| Newly rechecked | 24 unit tests; 12 Chromium harness cases | 24 pass, 0 fail, 0 skipped; 12 pass. `docs/evidence/admin-f-reconciliation-1/unit-tests.txt` and `hydrated-report.json` |
 | Still unverified | Signed-in Admin, Vercel Preview as a real session, physical device, production prefetch execution | Not claimed |
 
 Seed-head CI on `ef866098` is not this delivery’s gate. Exact-head CI, Auth and Vercel for the delivery commit are reported only after that commit exists.
