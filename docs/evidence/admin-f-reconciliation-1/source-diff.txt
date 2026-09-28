@@ -1,0 +1,5 @@
+command: git diff --exit-code 43720a65ca5296e2009158ccd0bce6b30796ca95 -- components/admin/AdminNavigationSearch.tsx components/layout/AdminTopbar.tsx app/(admin)/admin/layout.tsx app/(admin)/layout.tsx lib/admin/navigation.ts lib/admin/navigation-search.ts lib/admin/ehrliche-zustaende.ts lib/admin/navigation-search.test.ts lib/admin/navigation.test.ts lib/admin/ehrliche-zustaende.test.ts scripts/admin-navigation-search-1-hydrated.mjs scripts/admin-navigation-search-1-verify.mjs docs/evidence/admin-navigation-search-1
+exit: 0
+meaning: no content difference on those paths between accepted PR #545 head and this worktree before the reconciliation delivery commit
+date: 2026-09-28
+baseline_main: 6d5299f73e8da1b8eec7604686e5d272b70fd256

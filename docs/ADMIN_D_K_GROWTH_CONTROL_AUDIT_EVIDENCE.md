@@ -66,6 +66,8 @@ Legende Wirkung: `UI` sichtbar · `DB` lokale Persistenz · `EXT` externe/provid
 | Analytics / Content / Marketing / Settings / Localization | A stubs | `AdminFolgtSeite` + Nav-Badge `folgt` | keine APIs | nein | nur Bereichs-Gate | n/a | n/a (kein Datenclaim) | `ehrliche-zustaende.test.ts` | **placeholder (honest)** |
 | Copilot-Button / Befehlssuche | A | disabled / „folgt“ | keine Route | nein | n/a | n/a | n/a | Copy-Tests | **placeholder (honest)** |
 
+**Datierte Korrektur 28. September 2026 — Befehlssuche in dieser Zeile.** Sie beschreibt den Audit-Stand vom 26. August 2026. Die Befehlssuche ist seit PR #545 eine lokale Bereichspalette auf vorhandenen ready-Zielen (`RUNTIME_BUILT` für diese begrenzte Navigation; akzeptierter Head `43720a65ca5296e2009158ccd0bce6b30796ca95`). Der getrennte Hinweis „Copilot Pro folgt“ bleibt ein ehrlicher Platzhalter ohne Execute. Dieselbe Suche-Korrektur steht direkt in der §3-Zeile `F Command Palette`. Andere Audit-Schlüsse bleiben unverändert. Bericht: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`.
+
 ### 2.1 Wirkungsgrenzen der Writes
 
 | Aktion | UI-Text | Tatsächliche Backendwirkung | Externe Wirkung |
@@ -92,7 +94,7 @@ Quelle Plan: PR #40 `docs/ADMIN_PLATFORM_IMPLEMENTATION_PLAN.md`. Growth-Standar
 | C Provider/Kosten | S1 + `model_usage` | **auf main** | S1 | `lib/provider-ops` read-only | keine Aktivierung | Provider-Workstream | erledigt |
 | D Security-Härtung | Audit-Trail, Confirm, Taxonomie, AAL2-Entscheidung | **absent** | Slice 0 | `admin_audit_events`, Admin-AAL2, Capability | Migration; AAL/MFA wenn erzwungen | Auth/Identity | Confirm-UI + Write-Logging **ohne** neue Tabelle nur als Zwischenlösung unzureichend |
 | E Support Nutzer + Reise RO | minimierte Reise | **absent** | Slice 0 RPC | Trip-RLS, Privacy, Traveller | Support-RPC / keine `trips` Admin-SELECT-Policy | Account/TW/Traveller | eine RPC, eine User-Detail-Karte, kein Dokument-Klartext |
-| F Command Palette | echte Suche | **placeholder** | A | keine | nein | – | autorisierte Listen + Routen, kein Service-Role |
+| F Command Palette | echte Suche | **placeholder** (historical snapshot 26 Aug 2026). **Superseded 28 Sep 2026 by [#545](https://github.com/Jetnity/jetnity/pull/545)**; bounded palette `RUNTIME_BUILT`. Reconciliation: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`. | A | keine | nein | – | autorisierte Listen + Routen, kein Service-Role |
 | G Finance-Readiness | ehrliche Finance, Bexio-Contract | **absent** | **Billing-P1 zuerst** | Billing/Payment | kein Live-Bexio/Stripe | Finance | Ledger-Sicht lokal, Connector `not_configured` |
 | H Infomaniak RO | Domain/Mail-Metadaten | **absent** | Secret-Architektur | Connector/Secrets | OAuth/Secret/Kosten | Settings-Stub | read-only, Token nie im Client |
 | I Copilot Analyst | Evidence-Briefing | **placeholder** | A–C Evidence | `model_usage` Kosten | KI-Kostenlimits | – | read-only Analyse, kein Execute |
@@ -142,7 +144,7 @@ Ehrlich beschriftet (kein Fake-Ready):
 
 - Nav `Analytics`, `Content`, `Marketing`, `Einstellungen`, `Lokalisierung` mit Badge `folgt`
 - `AdminFolgtSeite` Copy
-- Copilot/Suche disabled
+- Copilot disabled („Copilot Pro folgt“; dieser Platzhalter bleibt). Suche disabled gilt nur als historischer Audit-Stand 26. August 2026; nur die Suche ist seit [#545](https://github.com/Jetnity/jetnity/pull/545) superseded (28. September 2026).
 - Payments/Refund/IP-Block Copy
 
 Trotzdem riskant / irreführend:
@@ -202,7 +204,7 @@ Keine neue Production-Incident-Klasse in diesem Audit. Kein Live-Money, keine Ad
 
 ### P3
 
-1. Copilot/Suche/Marketing-Nav als sichtbare Folgt-Flächen.
+1. Copilot und Marketing-Nav als sichtbare Folgt-Flächen. Die Suche stand am 26. August 2026 in dieser Gruppe; nur die Suche ist seit #545 superseded (28. September 2026).
 2. PR #40 Plan nicht auf `main`.
 3. Keine Vier-Augen-Capabilities.
 4. Home RLS-Katalog vs System-Health-Namenskollision.
@@ -260,7 +262,8 @@ Keine Monster-PR. Kein Folgeslice durch diesen Agenten.
 ### Nach TL-Review dieses Audits – kleinste konfliktarme Admin-Schritte
 
 1. **Admin F – Command Palette**  
-   Keine DB, keine neuen Capabilities. Sucht nur bereits autorisierte Routen/Listen. Schließt den toten Such-Button.
+   Keine DB, keine neuen Capabilities. Sucht nur bereits autorisierte Routen/Listen. Schließt den toten Such-Button.  
+   **Superseded 28. September 2026:** dieser Schritt ist durch PR #545 erledigt. Nicht erneut starten. Der übrige Absatz bleibt der historische Audit-Vorschlag.
 
 2. **Optional Admin IA-M0-Nav**  
    Eigener kleiner Docs+Nav-Slice: Growth-Bereich als `folgt`-Unterpunkte laut Standard-IA, **ohne** KPIs. Nur wenn TL das von F trennt. Keine zweite Wahrheit.

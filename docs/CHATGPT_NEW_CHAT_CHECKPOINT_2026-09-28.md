@@ -1,11 +1,29 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / V1 PREFLIGHT #603 MERGED + POST-MERGE VERIFIED / KAYAK + SHERPA + IATA RESPONSES PENDING / NO ACTIVE WRITER**
+Status: **NORMAL / #606 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / V1 PREFLIGHT #603 MERGED / KAYAK + SHERPA + IATA RESPONSES PENDING**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
-## 0. Latest current handoff — V1 preflight closure / external response wait
+## 0. Delivery-time snapshot — Admin F reconciliation 1
+
+[PR #606](https://github.com/Jetnity/jetnity/pull/606) / Issue #605 reconciles continuity only. Calling it a Draft in Technical-Lead review is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a post-merge deployment.
+
+Live-state rule: while #606 is open, the next step is independent Technical-Lead review of the exact head. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work.
+
+The bounded Admin area palette shipped in #545 and was unchanged on `main@6d5299f73e8da1b8eec7604686e5d272b70fd256` at that reconstruction. Accepted #545 head `43720a65ca5296e2009158ccd0bce6b30796ca95`; merge `8fcccd6475f41703bd2a31deecb3067391f330b4`. Do not rebuild it and do not treat the 22 September remaining-build-map F row as current.
+
+Writer: **Jetnity admin F reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-ef444eaa-ff16-4737-97a8-2a5c11e8aa83. `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected; that qualifier is not a separate run-info field.
+
+Fresh evidence is `docs/evidence/admin-f-reconciliation-1/` (24 unit pass, 12 Chromium harness pass on the earlier delivery). Not signed-in Admin and not a physical device. Do not reuse seed `ef866098` or reviewed head `27776ca5` checks as the correction head's gate.
+
+Direction: while KAYAK, Sherpa and IATA responses remain pending, safe provider-independent useful residuals may be considered only after the fresh precheck in the live-state rule. No second Admin F, no Phase-2 bulk rollout, no new API/data/permission contract, no special gate.
+
+R1 review `5343870824` and its resolution: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md` §10. Cursor does not Ready or merge.
+
+The section below remains the V1 preflight / external-response record.
+
+## 0b. Previous current handoff — V1 preflight closure / external response wait
 
 Immediately before this continuity persist, live `main` was:
 

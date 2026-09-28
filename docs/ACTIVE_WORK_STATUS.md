@@ -1,9 +1,22 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / V1 PREFLIGHT #603 MERGED + POST-MERGE VERIFIED / THREE EXTERNAL RESPONSES PENDING / NO ACTIVE WRITER**
+Status: **NORMAL / #606 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / V1 PREFLIGHT #603 MERGED / THREE EXTERNAL RESPONSES PENDING**
 
-## 0. Current work boundary — V1 preflight closure / external response wait
+## 0. Delivery-time snapshot — Admin F reconciliation 1
+
+- [PR #606](https://github.com/Jetnity/jetnity/pull/606), branch `docs/admin-f-reconciliation-1`, Issue #605. Draft/review wording here is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a post-merge deployment.
+- Live-state rule: while #606 is open, the next step is independent Technical-Lead review of the exact head. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work.
+- Cursor-Agent: **Jetnity admin F reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-ef444eaa-ff16-4737-97a8-2a5c11e8aa83. Tool model field `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected.
+- Admin F palette is already on main via #545. Accepted `43720a65ca5296e2009158ccd0bce6b30796ca95`. Merge `8fcccd6475f41703bd2a31deecb3067391f330b4`. Do not rebuild.
+- This slice is docs/evidence only. Fresh checks at the earlier delivery: 24 unit pass, 12 harness pass, under `docs/evidence/admin-f-reconciliation-1/`. Signed-in and device proof not claimed. Those checks and any checks on `27776ca5` are not a gate for a later head.
+- While KAYAK, Sherpa and IATA are pending, safe provider-independent useful residuals may be considered only after the fresh precheck in the live-state rule. No second Admin F, no Phase-2 bulk rollout, no new API/data/permission contract, no special gate.
+- R1 review `5343870824` and its resolution: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md` §10.
+- Cursor does not Ready or merge.
+
+The preflight block below remains the external-wait record.
+
+## 0a. Previous current block — V1 preflight closure / external response wait
 
 - PR #603 **MERGED** at `d961a5402fc363a481918f1a5830aff22dcc878e`; Issue #602 **CLOSED / completed**.
 - Accepted exact head: `5c2f0ef25c90ccdbda5bef06ff38db7a38420fcc`.
