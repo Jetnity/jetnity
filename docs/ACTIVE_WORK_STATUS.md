@@ -1,6 +1,40 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
+Status: **NORMAL / CLEAN HANDOFF / NO ACTIVE WRITER / NEXT PROVIDER ACCESS READINESS REFRESH / EXTERNAL PROVIDER ACTION GATED**
+
+## 0. Current work boundary — post-#588/#590/#591 handoff
+
+- Live `main`: `f611235aeb8cf224dd43a2018e3976b160567d17` (Merge #591).
+- Vercel Production `dpl_Cgo5twZAURgjGBNn7q72qSVv8xyJ`: **READY** on that exact SHA.
+- #588 V1 Account Erasure Development: **CLOSED / 11/11 PASS**.
+- #590 implementation: **MERGED**; accepted head `8d1755e926756776bd6f62e0e042bfb3169844e3`.
+- #591 continuity closure: **MERGED**.
+- #589 older deletion Draft: **CLOSED / superseded by #590**.
+- Production account-erasure activation remains separately gated in **#592**; Production Supabase still has **0 Edge Functions** and the graph-cascade migration is unapplied there.
+- #587 AGB remains on HOLD because the identified paid legal path was rejected as too expensive.
+- #585 PrivacyBee/Infomaniak legal-basis wording remains a prelaunch legal/vendor-text residual.
+- No current Cursor/runtime writer is authorized by this handoff.
+- Old open Drafts #52/#50/#40/#39/#28 are historical/stale and must not be resumed or merged merely because they remain open.
+- Public indexing remains disabled.
+
+### Preferred next action
+
+Run a **read-only Provider Access Readiness Refresh** against current public conditions and current Jetnity truth.
+
+Refresh KAYAK, Skyscanner, Wego, Duffel and Travelfusion (plus another serious candidate only if fresh evidence justifies it), distinguish affiliate/API/sandbox/production access, compare current provider requirements to Jetnity's real website/product/Admin evidence, and return a concrete smallest Product-Owner decision package.
+
+This refresh does **not** authorize provider application/contact, Terms acceptance, provider selection, secrets, paid/live calls, Production activation or new recurring cost.
+
+Canonical handoff:
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md`
+
+The sections below are historical continuity snapshots and must not override this current block.
+
+---
+
+
+Stand: 28. September 2026
 Status: **NORMAL / V1 ACCOUNT ERASURE DEVELOPMENT 11/11 PASS + MERGED / PRODUCTION ACTIVATION GATED / NO PUBLIC INDEXING**
 
 ## 0. Current work boundary — V1 Account Erasure closure
