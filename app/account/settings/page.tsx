@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function AccountEinstellungenSeite() {
   // Sichtbarkeit kommt aus der konfigurierten Supabase-Projekt-URL, nicht aus
-  // dem Host der Anfrage. Production bleibt ohne Löschangebot.
+  // dem Host der Anfrage. Exaktes Production-HTTPS ist eine erlaubte Umgebung.
   const loeschungAngeboten = loeschUmgebungErlaubt(process.env.NEXT_PUBLIC_SUPABASE_URL)
   return (
     <main className="px-4 py-10 sm:px-6 sm:py-14">

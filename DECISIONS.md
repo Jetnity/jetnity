@@ -5653,6 +5653,23 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0215 – Production-Kontolöschung nur für das exakte HTTPS-Projekt
+
+**Datum:** 28. September 2026
+**Status:** Repository-Vertrag auf Draft-Branch `feat/production-account-erasure-activation-1`. Kein Ready, kein Merge, kein PASS. Binding: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`, Issue #592. Die Product-Owner-Freigabe gilt der begrenzten Aktivierung des bereits akzeptierten V1-Löschwegs. Sie gilt nicht als ausgeführte Production-Migration, nicht als Function-Deploy und nicht als Löschung eines echten Production-Kontos.
+
+**Entscheidung:** `loeschUmgebungErlaubt()` erlaubt das exakte Production-Projekt `qscbgcdmivbbnzrcyegn.supabase.co` nur über HTTPS, neben dem exakten Development-Projekt über HTTPS und den bereits geprüften lokalen HTTP-Hosts. Unbekannte `*.supabase.co`-Projekte, fremde Hosts, fehlerhafte URLs und Production oder Development über HTTP bleiben geschlossen. Es gibt keinen zweiten Schalter. Edge Function, Einstellungen und `KontoLoeschen` benutzen weiter denselben Vertrag. Bestätigung, frisches Passwort, MFA/AAL2, JWT-Identität, Storage-Besitz, Ereignis-Löschung, Auth-Löschung erst nach dem Aufräumen, OAuth-Sperre und generische Klassen bleiben unverändert. Der Development-Nachweis in `kontoloeschung-direkt.ts` bricht bei Production weiter vor dem Netz ab.
+
+**Kontext:** PR #590 ist gemergt. Der Development-Nachweis war 11/11. Die Function und die Oberfläche hängen an derselben Umgebungssperre. Ohne diese Änderung bliebe ein späteres Production-Deploy fail-closed als `umgebung_gesperrt`. Zum Zeitpunkt dieser Entscheidung ist die Graph-Kaskade auf Production nicht angewandt, und Production hat keine Edge Function `account-delete-v1`.
+
+**Alternativen:** Ein separates Production-Flag; die Sperre bis nach dem Deploy lassen; Production-HTTP ebenfalls öffnen.
+
+**Begründung:** Ein zweites Flag würde zwei Wahrheiten erzeugen. Die Sperre nach dem Deploy würde die Löschung stumm lassen. HTTP für die gehosteten Projekte wäre kein exaktes Supabase-Projekt.
+
+**Konsequenzen:** Sobald die gemergte App auf das exakte Production-Projekt zeigt, bietet `/account/settings` die vorhandene Löschoberfläche an, und die Function lehnt das Projekt nicht mehr allein wegen der Umgebung ab. Migration, Deploy, Secrets, Auth, OAuth, Indexing und der Production-Smoke bleiben beim Technical Lead. Dieser ADR ist keine Freigabe dafür.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

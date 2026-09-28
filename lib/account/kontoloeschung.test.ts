@@ -93,14 +93,28 @@ describe('Kontolöschung – Anfrage, Umgebung, Beweis', () => {
     assert.equal(loeschAnfragePruefen(null).ok, false)
   })
 
-  test('erlaubt nur Development und Loopback, nie Production oder ein fremdes Projekt', () => {
+  test('erlaubt exaktes Production- und Development-HTTPS und geprüfte lokale HTTP-Hosts', () => {
+    assert.equal(loeschUmgebungErlaubt(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), true)
+    assert.equal(loeschUmgebungErlaubt(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co/`), true)
+    assert.equal(loeschUmgebungErlaubt(`HTTPS://${PRODUKTIONS_PROJEKT_REF}.SUPABASE.CO`), true)
     assert.equal(loeschUmgebungErlaubt(`https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`), true)
     assert.equal(loeschUmgebungErlaubt('http://127.0.0.1:54321'), true)
     assert.equal(loeschUmgebungErlaubt('http://localhost:54321'), true)
-    assert.equal(loeschUmgebungErlaubt(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), false)
+    assert.equal(loeschUmgebungErlaubt('http://[::1]:54321'), true)
+    assert.equal(loeschUmgebungErlaubt('http://kong:8000'), true)
+    assert.equal(loeschUmgebungErlaubt(`http://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), false)
+    assert.equal(loeschUmgebungErlaubt(`http://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`), false)
     assert.equal(loeschUmgebungErlaubt('https://abcdefghijklmnopqrst.supabase.co'), false)
+    assert.equal(loeschUmgebungErlaubt(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co.evil.example`), false)
+    assert.equal(loeschUmgebungErlaubt('https://evil.example'), false)
     assert.equal(loeschUmgebungErlaubt('http://evil.example'), false)
+    assert.equal(loeschUmgebungErlaubt('https://127.0.0.1:54321'), false)
+    assert.equal(loeschUmgebungErlaubt('https://localhost:54321'), false)
+    assert.equal(loeschUmgebungErlaubt(`ftp://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), false)
+    assert.equal(loeschUmgebungErlaubt('not a url'), false)
+    assert.equal(loeschUmgebungErlaubt(''), false)
     assert.equal(loeschUmgebungErlaubt(null), false)
+    assert.equal(loeschUmgebungErlaubt(undefined), false)
   })
 
   test('verlangt frisches Passwort und bei verifiziertem Faktor AAL2 plus frisches TOTP', () => {
@@ -264,7 +278,7 @@ describe('Kontolöschung – Ausführung', () => {
     assert.notEqual(nachKonto.klasse, 'geloescht')
   })
 
-  test('lässt einen AAL1-Faktor nicht durch und löscht auf Production nichts', async () => {
+  test('lässt einen AAL1-Faktor nicht durch und sperrt unsichere Umgebungen', async () => {
     const mitFaktor = deps({
       faktoren: async () => {
         mitFaktor.rufe.push('faktoren')
@@ -280,15 +294,55 @@ describe('Kontolöschung – Ausführung', () => {
     assert.equal(mfa.klasse, 'mfa_erforderlich')
     assert.deepEqual(mitFaktor.rufe, ['nutzer', 'faktoren'])
 
+    const produktionMfa = deps({
+      faktoren: async () => {
+        produktionMfa.rufe.push('faktoren')
+        return 1
+      },
+    })
+    const mfaProduktion = await kontoLoeschungAusfuehren({
+      jwt,
+      koerper: { confirmation: 'KONTO LÖSCHEN' },
+      supabaseUrl: `https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`,
+      deps: produktionMfa,
+    })
+    assert.equal(mfaProduktion.klasse, 'mfa_erforderlich')
+    assert.deepEqual(produktionMfa.rufe, ['nutzer', 'faktoren'])
+
+    const httpProduktion = deps()
+    const httpGesperrt = await kontoLoeschungAusfuehren({
+      jwt,
+      koerper: { confirmation: 'KONTO LÖSCHEN' },
+      supabaseUrl: `http://${PRODUKTIONS_PROJEKT_REF}.supabase.co`,
+      deps: httpProduktion,
+    })
+    assert.equal(httpGesperrt.klasse, 'umgebung_gesperrt')
+    assert.equal(httpGesperrt.schritt, 'umgebung')
+    assert.deepEqual(httpProduktion.rufe, [])
+
+    const fremd = deps()
+    const fremdGesperrt = await kontoLoeschungAusfuehren({
+      jwt,
+      koerper: { confirmation: 'KONTO LÖSCHEN' },
+      supabaseUrl: 'https://abcdefghijklmnopqrst.supabase.co',
+      deps: fremd,
+    })
+    assert.equal(fremdGesperrt.klasse, 'umgebung_gesperrt')
+    assert.deepEqual(fremd.rufe, [])
+  })
+
+  test('exaktes Production-HTTPS ist nicht allein wegen der Umgebung gesperrt', async () => {
     const produktion = deps()
-    const gesperrt = await kontoLoeschungAusfuehren({
+    const ergebnis = await kontoLoeschungAusfuehren({
       jwt,
       koerper: { confirmation: 'KONTO LÖSCHEN' },
       supabaseUrl: `https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`,
       deps: produktion,
     })
-    assert.equal(gesperrt.klasse, 'umgebung_gesperrt')
-    assert.deepEqual(produktion.rufe, [])
+    assert.notEqual(ergebnis.klasse, 'umgebung_gesperrt')
+    assert.equal(ergebnis.klasse, 'geloescht')
+    assert.equal(ergebnis.schritt, 'fertig')
+    assert.deepEqual(produktion.rufe, ['nutzer', 'faktoren', 'speicher', 'ereignisse', 'konto'])
   })
 
   test('eine zweite Löschung ohne Nutzer ist nicht gefunden und kein Erfolg', async () => {
@@ -585,9 +639,23 @@ describe('Kontolöschung – Browser', () => {
     )
     assert.equal(gesehen, JSON.stringify({ confirmation: 'KONTO LÖSCHEN' }))
     assert.equal(geholt.klasse, 'geloescht')
-    assert.equal(kontoloeschungFunktionsUrl(`https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`), `https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co/functions/v1/account-delete-v1`)
-    assert.equal(kontoloeschungFunktionsUrl(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), null)
+    assert.equal(
+      kontoloeschungFunktionsUrl(`https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`),
+      `https://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co/functions/v1/account-delete-v1`,
+    )
+    assert.equal(
+      kontoloeschungFunktionsUrl(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co`),
+      `https://${PRODUKTIONS_PROJEKT_REF}.supabase.co/functions/v1/account-delete-v1`,
+    )
+    assert.equal(
+      kontoloeschungFunktionsUrl(`https://${PRODUKTIONS_PROJEKT_REF}.supabase.co/rest/v1`),
+      `https://${PRODUKTIONS_PROJEKT_REF}.supabase.co/functions/v1/account-delete-v1`,
+    )
+    assert.equal(kontoloeschungFunktionsUrl(`http://${PRODUKTIONS_PROJEKT_REF}.supabase.co`), null)
+    assert.equal(kontoloeschungFunktionsUrl(`http://${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`), null)
+    assert.equal(kontoloeschungFunktionsUrl('https://abcdefghijklmnopqrst.supabase.co'), null)
     assert.equal(kontoloeschungFunktionsUrl('http://evil.example'), null)
+    assert.equal(kontoloeschungFunktionsUrl('not a url'), null)
 
     const oberflaeche = quelle('../../components/account/KontoLoeschen.tsx')
     const einstellungen = quelle('../../app/account/settings/page.tsx')
