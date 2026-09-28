@@ -25,6 +25,9 @@ export const ADMIN_EHRLICHE_TEXTE = {
   securityKpiAuffaelligkeiten24h: 'Aufgezeichnete Auffälligkeiten (24h)',
   securityTabelleTitel: 'Aufgezeichnete Security-Events (7 Tage)',
   securityTabelleLeer: 'Keine aufgezeichneten Events in diesem Zeitraum.',
+  securityTabelleFilterLeer: 'Keine aufgezeichneten Events passen zu diesem Filter.',
+  securityTabelleBegrenzt:
+    'Es werden höchstens 200 aufgezeichnete Zeilen gezeigt. Tabelle und 24h-Kennzahlen zählen nur diese Zeilen und können unvollständig sein.',
   ipBlockHinweis:
     'Die IP-Blockliste wird derzeit nicht enforced. Einträge stehen in blocked_ips; Middleware und Edge prüfen sie nicht.',
   ipBlockButton: 'In Blockliste schreiben',
