@@ -1,7 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / #592 PRODUCTION ACCOUNT ERASURE E2E PASS + CLOSED / KAYAK RESPONSE PENDING**
+Status: **NORMAL / TERMS CH-DE 1.0 LIVE + #587 CLOSED / #592 E2E PASS / KAYAK RESPONSE PENDING**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
@@ -124,9 +124,19 @@ The prior smoke-blocked residual is superseded. #592 is closed. No unrelated Pro
 
 ### #587 — Jetnity Nutzungsbedingungen / AGB
 
-**OPEN / HOLD**
+**CLOSED / CH-DE 1.0 LIVE / PRODUCTION VERIFIED**
 
-The currently identified external legal option is considered too expensive by the Product Owner. Do not purchase or generate substitute final AGB. Registration currently references `/terms`; public launch remains blocked until approved legal content exists.
+- Product Owner superseded the earlier HOLD for the exact approved CH-DE 1.0 document.
+- PR #600 merge: `e1f72431a7097744375875fe29cf8f8136f8d7cf`.
+- Post-merge CI `36445805345`: SUCCESS.
+- Vercel Production `dpl_5tJ2rR9PYCveg4CwpsNpVGPNVZkY`: READY on exact merge SHA.
+- `/terms`: HTTP 200; title/version/Stand/Inkrafttreten verified; canonical `https://jetnity.com/terms`; `noindex, nofollow`.
+- `/register`: HTTP 200 and links `/terms` + `/privacy`.
+- `/privacy` and `/impressum`: HTTP 200.
+- Footer links all three legal surfaces.
+- `robots.txt` remains disallow-all.
+- No consent persistence was added and no retroactive acceptance by existing accounts is claimed.
+- Public indexing remains disabled.
 
 ### #585 — PrivacyBee Infomaniak legal-basis wording
 
