@@ -24,7 +24,7 @@ Current Production truth at task creation (historical; not the live migration st
 - no real Production user deletion has occurred;
 - public indexing remains disabled.
 
-Later Technical-Lead live fact, 28 September 2026: Production migration `20260928123859_reise_graph_kaskade_tiefe` is applied and independently verified. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not apply it and did not deploy the Function.
+Later Technical-Lead live fact, 28 September 2026: the Production migration is applied and history is repaired to canonical `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859_reise_graph_kaskade_tiefe` was the intermediate history version before that repair, not the current version. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not apply it, did not repair history, and did not deploy the Function.
 
 ## Logical agent
 

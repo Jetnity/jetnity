@@ -1,16 +1,16 @@
 # Jetnity – Production Account Erasure Activation 1 STATUS
 
 Stand: 28. September 2026  
-Status: **IMPLEMENTED / LOCAL EXACT-HEAD GATES BELOW / NOT A TECHNICAL-LEAD PASS / NOT READY / NOT MERGED / STOP FOR INDEPENDENT REVIEW**
+Status: **R1/R2 CORRECTED / NOT A TECHNICAL-LEAD PASS / NOT READY / NOT MERGED / STOP FOR RE-REVIEW**
 
 Issue: #592  
 Draft PR: #597  
 Branch: `feat/production-account-erasure-activation-1`  
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84`  
 Binding task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
-Previous stamp, not the review head: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`  
 Runtime contract commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Exact review head: the commit that contains this reconciliation. It supersedes `2c39f7ba`. Any later commit invalidates the gate.
+Superseded, not the review head: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c` (CHANGES REQUIRED) and `494d4226fa84c7006146291b476a3777711156c2` (recorded the intermediate history version before the repair).  
+Exact review head: the commit that contains this R1/R2 correction. Any later commit invalidates the gate.
 
 Cursor-Agent: **Jetnity production account erasure activation 1**, Generation 1  
 Required model: **Grok 4.7 High Fast** — confirmed (`originalModelName=grok-4.7-high-fast`)  
@@ -20,11 +20,24 @@ No Ready. No Merge. No Production Function deploy. No follow-up slice.
 
 ## Live Production migration fact
 
-Technical Lead, 28 September 2026: Production migration `20260928123859_reise_graph_kaskade_tiefe` is **APPLIED** and independently verified on `qscbgcdmivbbnzrcyegn`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
+The Production graph-cascade migration is **APPLIED** and independently verified on `qscbgcdmivbbnzrcyegn`. Migration history is the canonical repository version `20260927230000_reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
 
-That application is not a Cursor action. The repository file `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` is unchanged (blob `6ca1a19c70958729f3bd6b9e57fa5ef2a07ebadd`). The task-creation statement that the migration was not yet applied is historical only.
+`20260928123859_reise_graph_kaskade_tiefe` was an intermediate history version before that repair. It is not the current history version. Cursor did not apply the migration and did not repair the history. The repository file is unchanged (blob `6ca1a19c70958729f3bd6b9e57fa5ef2a07ebadd`). Wording that the migration was not yet applied is historical task-creation state only.
 
-The Production Edge Function `account-delete-v1` is still not deployed by Cursor. No Production user was created or deleted by Cursor.
+The Production Edge Function `account-delete-v1` is not deployed. No Production user was created or deleted by Cursor.
+
+## Production sequence
+
+Migration apply is not an open step. After an independent exact-head PASS the Technical Lead sequence is:
+
+1. exact-head PASS;
+2. deploy the accepted `account-delete-v1` bundle to Production with `verify_jwt=true`;
+3. verify the Function live, its version and its bundle;
+4. integrate the app change deliberately;
+5. post-merge CI and Production READY;
+6. bounded synthetic Production account smoke.
+
+No real Production account is smoke evidence.
 
 ## What changed in the repository
 
@@ -52,7 +65,7 @@ Confirmation, reauth, MFA/AAL, JWT identity, Storage ownership, security-event d
 
 ## Local gates
 
-The table is the local run of this slice tree. The exact review head is the commit that contains the filled table. A clean post-commit rerun of the same commands is the binding check for that SHA; it is not a further commit when the results match.
+The commands below are the fresh local gates for this R1/R2 commit. `2c39f7ba` and `494d4226` are not gated by this table. The binding evidence is the clean post-commit run of the commit that contains this correction.
 
 | Gate | Result |
 | --- | --- |

@@ -7,8 +7,8 @@ Issue: #592
 Draft PR: #597  
 Branch: `feat/production-account-erasure-activation-1`  
 Runtime commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Superseded stamp: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`  
-Exact review head: the commit that contains this reconciliation. This self-review does not replace an independent PASS.
+Superseded: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c` and `494d4226fa84c7006146291b476a3777711156c2`.  
+Exact review head: the commit that contains this R1/R2 correction. This self-review does not replace an independent PASS.
 
 Session: `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`  
 Model: `grok-4.7-high-fast`
@@ -27,8 +27,10 @@ Model: `grok-4.7-high-fast`
 | Open the Development proof script against Production | Rejected. `direktZugangPruefen` still returns `produktion` before fetch. |
 | Add a second Production flag | Not done. Settings, the component and the Edge Function use `loeschUmgebungErlaubt()`. |
 | Change the accepted migration file | Not done. Blob unchanged. |
-| Treat the Technical Lead migration application as Cursor work | Not done. History version `20260928123859_reise_graph_kaskade_tiefe` is recorded as a TL fact. |
-| Leave current prose saying the migration is unapplied | Corrected. Remaining unapplied wording is labelled historical task-creation state. |
+| Treat the Technical Lead migration application as Cursor work | Not done. Current history is canonical `20260927230000_reise_graph_kaskade_tiefe`. |
+| Leave `20260928123859` as the current history version | Corrected. That version is the intermediate history entry before the repair. |
+| Leave current prose saying the migration is unapplied or still to be applied | Corrected. Remaining unapplied wording is labelled historical task-creation state. |
+| Start the remaining sequence with migration apply | Corrected. The sequence starts with Function deploy after exact-head PASS. |
 | Log a secret or claim legal compliance | Not done. Copy tests still forbid DSGVO/GDPR/restore promises. |
 | Deploy the Production Function | Not done. |
 
@@ -38,9 +40,9 @@ The previous allowlist named `::1`, but Node's hostname for `http://[::1]:54321`
 
 ## Residual risks
 
-- Merging the app before `account-delete-v1` exists on Production exposes the delete UI. The call fails closed. It is not a successful delete. The graph-cascade migration is already applied by the Technical Lead. The Technical Lead owns Function deploy, smoke, Ready and merge.
+- Integrating the app before `account-delete-v1` exists on Production exposes the delete UI. The call fails closed. It is not a successful delete. The graph-cascade migration is already applied. History is canonical `20260927230000_reise_graph_kaskade_tiefe`.
 - This document is not an independent PASS.
 
 ## Recommendation
 
-Review the branch tip. Do not Ready or merge from this review. After PASS, the Technical Lead deploys the Function and runs the disposable Production smoke. No follow-up slice starts from this agent.
+Review this R1/R2 head. Do not Ready or merge from this review. After PASS, deploy `account-delete-v1` with `verify_jwt=true`, verify the live bundle, integrate the app change, confirm post-merge CI and Production READY, then run the synthetic Production smoke. No follow-up slice starts from this agent.

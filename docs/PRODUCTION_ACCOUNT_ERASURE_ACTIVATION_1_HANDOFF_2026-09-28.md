@@ -11,8 +11,8 @@ Draft PR: #597
 Branch: `feat/production-account-erasure-activation-1`  
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84`  
 Runtime commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Superseded stamp: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`  
-Exact review head: the commit that contains this reconciliation. Do not review `2c39f7ba` as the gated head.
+Superseded: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c` (CHANGES REQUIRED) and `494d4226fa84c7006146291b476a3777711156c2` (intermediate history version, before the repair).  
+Exact review head: the commit that contains this R1/R2 correction. Do not review those superseded SHAs.
 
 Task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
 Status: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_STATUS_2026-09-28.md`  
@@ -23,15 +23,20 @@ Cursor does not mark Ready, does not merge, and does not start a follow-up slice
 
 ## Production migration
 
-Applied and independently verified by the Technical Lead, not by Cursor:
+**APPLIED.** Current migration history is the canonical repository version `20260927230000_reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
 
-- history version `20260928123859_reise_graph_kaskade_tiefe`
-- `reise_graph_geaendert()` remains SECURITY INVOKER
-- trigger count remains 9
+`20260928123859_reise_graph_kaskade_tiefe` is only the intermediate history version from before the Technical Lead repaired history to that canonical version. Cursor did not apply or repair it. The repository file is unchanged. Statements that the migration is currently unapplied are historical task-creation state only.
 
-The repository migration file is unchanged. Statements that the migration is currently unapplied are historical task-creation state only.
+## Production sequence
 
-The Production Function `account-delete-v1` is not deployed by this slice.
+Do not start this sequence with a migration apply. After independent exact-head PASS:
+
+1. exact-head PASS;
+2. deploy the accepted `account-delete-v1` bundle to Production with `verify_jwt=true`;
+3. verify the Function live, its version and its bundle;
+4. integrate the app change deliberately;
+5. post-merge CI and Production READY;
+6. bounded synthetic Production account smoke. Never a real Production user.
 
 ## Read first
 
@@ -46,16 +51,11 @@ The Production Function `account-delete-v1` is not deployed by this slice.
 1. Exact Production HTTPS is allowed. Production HTTP, Development HTTP, unknown `*.supabase.co`, arbitrary hosts and malformed URLs are denied.
 2. The Function URL for exact Production HTTPS is `https://qscbgcdmivbbnzrcyegn.supabase.co/functions/v1/account-delete-v1`.
 3. A valid mocked deletion on that URL is no longer `umgebung_gesperrt`. MFA/reauth/JWT/Storage/OAuth tests still pass. The request body is still only `{ confirmation: "KONTO LÖSCHEN" }`.
-4. The graph-cascade migration file in the repository is unchanged. Live Production history `20260928123859_reise_graph_kaskade_tiefe` is a Technical Lead fact, not a Cursor migration.
+4. The graph-cascade migration file in the repository is unchanged. Live Production history is canonical `20260927230000_reise_graph_kaskade_tiefe`, already applied. `20260928123859` is not the current history version.
 5. No Production Function, user, secret, Auth, OAuth, indexing, provider or payment mutation is claimed for Cursor.
+6. The current sequence starts at Function deploy after PASS, not at migration apply.
 
-## Still Technical Lead only
-
-- deploy `account-delete-v1` with `verify_jwt=true`
-- disposable Production smoke, never a real user
-- Ready and merge
-
-If the app merge reaches Vercel Production while `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project and the Function is still absent, `/account/settings` will show the existing delete control. A submit reauthenticates and then fails closed. It does not delete the Auth user. The graph-cascade migration is already applied. This slice does not add a second flag.
+If the app change is integrated while `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project and the Function is still absent, `/account/settings` will show the existing delete control. A submit reauthenticates and then fails closed. It does not delete the Auth user. The graph-cascade migration is already applied. This slice does not add a second flag.
 
 ## Do not
 

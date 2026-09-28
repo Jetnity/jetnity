@@ -6,7 +6,7 @@ Status: **CLOSED / DO NOT RESTART WRITER**
 - PR #590 is merged on `84356ba1830adf1d1ebd5c84a29df355ff8f2b30`.
 - Accepted head `8d1755e926756776bd6f62e0e042bfb3169844e3` passed 11/11 disposable Development acceptance.
 - Do not reopen this implementation slice.
-- Any next step at this Development closure was a separately gated **Production activation** decision: Production Edge Function deployment + Production graph-cascade migration + exposure of account deletion. Historical task-creation state: the migration was not yet applied. On 28 September 2026 the Technical Lead applied and verified `20260928123859_reise_graph_kaskade_tiefe`. Function deployment remains gated.
+- Any next step at this Development closure was a separately gated **Production activation** decision: Production Edge Function deployment + Production graph-cascade migration + exposure of account deletion. Historical task-creation state: the migration was not yet applied. On 28 September 2026 the Technical Lead applied the migration and repaired history to canonical `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859` was only the intermediate history version. Function deployment remains gated.
 - No real Production user may be used as acceptance evidence.
 ---
 
