@@ -26,6 +26,6 @@ A Product-Owner-authorized disposable Production test account was deleted via `j
 
 No open account-erasure activation or smoke residual remains.
 
-Do not restart the completed Cursor writer. Future account-erasure work requires a genuinely new issue/scope triggered by new evidence.
+Do not restart the completed Cursor writer. Future account-erasure work requires new evidence or a new scope.
 
 KAYAK remains WAITING FOR RESPONSE separately.
