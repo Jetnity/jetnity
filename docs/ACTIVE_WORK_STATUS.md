@@ -1,28 +1,33 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / #592 PRODUCTION ACCOUNT ERASURE COMPLETE / E2E PASS / NO ACTIVE WRITER**
+Status: **NORMAL / TERMS CH-DE 1.0 LIVE + #587 CLOSED / #592 ACCOUNT ERASURE E2E PASS / NO ACTIVE WRITER**
 
-## 0. Current work boundary — Production account erasure CLOSED
+## 0. Current work boundary — Legal runtime + account-erasure closures
 
-- Product Owner explicitly authorized deletion of a disposable Production test account for final E2E verification.
-- Live UI result: `/konto-geloescht` and signed-out application state.
-- Production Function log: `kontoloeschung klasse=geloescht schritt=fertig` at `2026-09-28T14:20:41.117Z`.
-- Post-delete Auth readback: `auth.users=0`, `auth.identities=0`, `auth.sessions=0`, `auth.mfa_factors=0`, `auth.one_time_tokens=0`.
-- Post-delete Jetnity/storage readback: `profiles=0`, `trips=0`, `account_travellers=0`, `account_visits=0`, `security_events=0`, `storage.objects=0`.
-- #592 therefore has a **Production E2E DELETE PASS**; the previous smoke-blocked residual is superseded.
-- #597 runtime activation is merged at `929d671edbcd673d336f97b9b6734ba9f0babe89`.
-- #598 docs closure is merged; current docs-only main at this checkpoint is `7342aabe54b9ef8c196d88811bbca38acf1033ca`.
-- CI `36433054255`: SUCCESS; Vercel Production `dpl_12MrSETHMWbo4a1rpAskgPWKsS8M`: READY on exact docs-only main, including `jetnity.com`.
-- Production migration remains `20260927230000 reise_graph_kaskade_tiefe`; graph function SECURITY INVOKER; 9 triggers.
-- `account-delete-v1`: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
-- No unrelated Production Auth/MFA/OAuth/indexing/provider/payment configuration was changed.
-- Cursor writer **Jetnity production account erasure activation 1** is complete/stopped. Do not restart it.
-- KAYAK inquiry remains **WAITING FOR RESPONSE** and is separate from #592.
-- This E2E closure is docs-only and does not change the already accepted runtime.
+- PR #600 is **MERGED** at `e1f72431a7097744375875fe29cf8f8136f8d7cf`.
+- Jetnity Nutzungsbedingungen / AGB **CH-DE 1.0** are live at `/terms`.
+- Post-merge GitHub Actions `36445805345`: **SUCCESS**.
+- Vercel Production `dpl_5tJ2rR9PYCveg4CwpsNpVGPNVZkY`: **READY** on exact #600 merge SHA; aliases include `jetnity.com`.
+- Live `/terms`: HTTP 200, visible title `Jetnity Nutzungsbedingungen / AGB`, Version `CH-DE 1.0`, Stand and Inkrafttreten `28. September 2026`, canonical `https://jetnity.com/terms`, robots `noindex, nofollow`.
+- Live `/register`: HTTP 200 and links `/terms` + `/privacy`.
+- Live `/privacy`: HTTP 200.
+- Live `/impressum`: HTTP 200.
+- Footer exposes `/privacy`, `/terms`, `/impressum`.
+- `/robots.txt`: HTTP 200 and remains `User-Agent: *\nDisallow: /`.
+- Issue #587 is **CLOSED / completed**. Historical HOLD language is superseded for the approved CH-DE 1.0 document.
+- No consent persistence was added; existing accounts are not claimed to have retroactively accepted CH-DE 1.0.
+- Public indexing remains disabled. No provider/payment/OAuth/Auth/RLS/Supabase Production mutation accompanied #600.
+- #592 Production account erasure remains **COMPLETE / E2E PASS**.
+- #585 PrivacyBee Infomaniak legal-basis wording remains OPEN as a vendor-text/legal residual.
+- #395 KAYAK inquiry remains **WAITING FOR RESPONSE**. No application/signup/Terms/API key/API call/spend/provider activation follows automatically.
+- No current Cursor/runtime writer is authorized.
 
-Canonical closure:
-`docs/PRODUCTION_ACCOUNT_ERASURE_POST_MERGE_CLOSURE_2026-09-28.md`
+Canonical Terms task:
+`docs/TERMS_CH_DE_1_0_INTEGRATION_TASK_2026-09-28.md`
+
+Canonical Terms closure:
+`docs/TERMS_CH_DE_1_0_INTEGRATION_CLOSURE_2026-09-28.md`
 
 The sections below are historical continuity snapshots and must not override this current block.
 
