@@ -37,7 +37,7 @@ export type UserRow = {
   display_name: string | null
   role: Role
   status: AccountStatus
-  created_at: string
+  created_at: string | null
   last_seen_at: string | null
 }
 
@@ -267,7 +267,7 @@ export default function UsersTable({
                 <td className="p-3">{u.email ? <Link href={`mailto:${u.email}`} className="hover:underline">{u.email}</Link> : '—'}</td>
                 <td className="p-3"><RoleBadge role={u.role} /></td>
                 <td className="p-3"><StatusBadge status={u.status} /></td>
-                <td className="p-3">{dtf.format(new Date(u.created_at))}</td>
+                <td className="p-3">{u.created_at ? dtf.format(new Date(u.created_at)) : '—'}</td>
                 <td className="p-3">{u.last_seen_at ? dtf.format(new Date(u.last_seen_at)) : '—'}</td>
                 <td className="p-3">
                   <div className="flex justify-end">
