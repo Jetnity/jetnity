@@ -9,17 +9,15 @@ Status: **NORMAL / CLEAN CHAT HANDOFF / V1 ACCOUNT ERASURE DEVELOPMENT CLOSED / 
 
 Repository: `Jetnity/jetnity`
 
-Live `main` at handoff:
+Application/closure baseline immediately before the handoff-docs merge:
 
 `f611235aeb8cf224dd43a2018e3976b160567d17`
 
 This is Merge #591, the docs-only closure after V1 Account Erasure Development acceptance.
 
-Vercel Production on this exact SHA:
+PR #593 subsequently merged this handoff documentation. Therefore **do not treat the baseline SHA above as the permanently current `main`**; fetch the exact current `main` live at startup.
 
-- deployment `dpl_Cgo5twZAURgjGBNn7q72qSVv8xyJ`
-- state: **READY**
-- target: Production
+The #593 merge received a **READY** Production deployment. Later docs-only continuity merges may move `main` again without changing the application runtime.
 
 Machine mode:
 

@@ -5,8 +5,9 @@ Status: **NORMAL / CLEAN HANDOFF / NO ACTIVE WRITER / NEXT PROVIDER ACCESS READI
 
 ## 0. Current work boundary — post-#588/#590/#591 handoff
 
-- Live `main`: `f611235aeb8cf224dd43a2018e3976b160567d17` (Merge #591).
-- Vercel Production `dpl_Cgo5twZAURgjGBNn7q72qSVv8xyJ`: **READY** on that exact SHA.
+- Application/closure baseline immediately before the handoff-docs merge: `f611235aeb8cf224dd43a2018e3976b160567d17` (Merge #591).
+- Handoff docs were merged through PR #593; the exact current `main` must be fetched live rather than inferred from this static file.
+- Vercel Production for #593 merge was **READY**; subsequent docs-only continuity merges may advance `main` without changing the product runtime.
 - #588 V1 Account Erasure Development: **CLOSED / 11/11 PASS**.
 - #590 implementation: **MERGED**; accepted head `8d1755e926756776bd6f62e0e042bfb3169844e3`.
 - #591 continuity closure: **MERGED**.
