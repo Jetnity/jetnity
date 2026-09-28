@@ -110,6 +110,34 @@ export function forwardUsersSearch() {
   notify()
 }
 
+/**
+ * Same-document history.pushState. Real browsers do not emit popstate for this.
+ * The current store entry follows the new query so the mounted table sees it.
+ * Held replaces stay held.
+ */
+export function pushUsersHistory(search: string) {
+  const next = search.replace(/^\?/, '')
+  const state = store()
+  const target = next.length > 0 ? `?${next}` : window.location.pathname
+  window.history.pushState({ usersNav: 'push' }, '', target)
+  state.history[state.index] = next
+  notify()
+}
+
+function installNativeTraversalSync() {
+  if (typeof window === 'undefined') return
+  const win = window as Window & { __usersNavPopstate?: boolean }
+  if (win.__usersNavPopstate) return
+  win.__usersNavPopstate = true
+  window.addEventListener('popstate', () => {
+    const state = store()
+    state.history[state.index] = window.location.search.replace(/^\?/, '')
+    notify()
+  })
+}
+
+installNativeTraversalSync()
+
 function searchFromHref(href: string): string {
   const query = href.split('?')[1] ?? ''
   return query.replace(/^\?/, '')

@@ -610,6 +610,82 @@ async function gruen(browser, origin) {
   await fall(
     browser,
     origin,
+    'native-back-equals-pending-own-search',
+    'q=bob&page=1&source=support&reviewHold=1',
+    { width: 1280, height: 800 },
+    async (page) => {
+      await page.evaluate(() => window.__usersNav.delayCommits(true))
+      await page.evaluate(() =>
+        window.__usersNav.pushHistory('q=anna&page=3&source=support&reviewHold=1'),
+      )
+      await page.waitForFunction(() => window.__usersNav.input() === 'anna')
+      const pushed = await snapshot(page)
+      assert.equal(paramsOf(pushed.search).get('q'), 'anna')
+      assert.equal(paramsOf(pushed.search).get('page'), '3')
+      assert.equal(paramsOf(pushed.search).get('source'), 'support')
+      assert.equal(paramsOf(pushed.search).get('reviewHold'), '1')
+      assert.deepEqual(pushed.replaces, [])
+      const input = page.locator('input[placeholder="Suche nach Name oder E-Mail…"]')
+      await input.fill('bob')
+      await page.waitForFunction(
+        () => window.__usersNav.replaces().length === 1 && window.__usersNav.pendingCommits().length === 1,
+      )
+      const held = await snapshot(page)
+      const heldParams = paramsOf(held.replaces[0].href.split('?')[1])
+      assert.equal(heldParams.get('q'), 'bob')
+      assert.equal(heldParams.get('page'), '1')
+      assert.equal(heldParams.get('source'), 'support')
+      assert.equal(heldParams.get('reviewHold'), '1')
+      assert.equal(paramsOf(held.search).get('q'), 'anna')
+      await input.fill('bobby')
+      const beforeBack = await snapshot(page)
+      assert.equal(beforeBack.input, 'bobby')
+      assert.equal(beforeBack.replaces.length, 1)
+      await page.evaluate(
+        () =>
+          new Promise((resolve) => {
+            window.addEventListener('popstate', () => resolve(true), { once: true })
+            history.back()
+          }),
+      )
+      await page.waitForFunction(() => window.__usersNav.input() === 'bob')
+      await warteStill(page, 700)
+      const afterBack = await snapshot(page)
+      assert.equal(afterBack.replaces.length, 1)
+      assert.equal(afterBack.input, 'bob')
+      assert.equal(paramsOf(afterBack.search).get('q'), 'bob')
+      assert.equal(paramsOf(afterBack.search).get('page'), '1')
+      assert.equal(paramsOf(afterBack.search).get('source'), 'support')
+      assert.equal(paramsOf(afterBack.search).get('reviewHold'), '1')
+      assert.equal(afterBack.pageText, '1 / 3')
+      const pending = await page.evaluate(() => window.__usersNav.pendingCommits())
+      assert.equal(pending.length, 1)
+      await page.evaluate(
+        () =>
+          new Promise((resolve) => {
+            window.addEventListener('popstate', () => resolve(true), { once: true })
+            history.forward()
+          }),
+      )
+      await page.waitForFunction(() => window.__usersNav.input() === 'anna')
+      await warteStill(page, 700)
+      const afterForward = await snapshot(page)
+      assert.equal(afterForward.replaces.length, 1)
+      assert.equal(afterForward.input, 'anna')
+      assert.equal(paramsOf(afterForward.search).get('q'), 'anna')
+      assert.equal(paramsOf(afterForward.search).get('page'), '3')
+      assert.equal(paramsOf(afterForward.search).get('source'), 'support')
+      assert.equal(paramsOf(afterForward.search).get('reviewHold'), '1')
+      assert.equal(afterForward.pageText, '3 / 3')
+      const pendingAfter = await page.evaluate(() => window.__usersNav.pendingCommits())
+      assert.equal(pendingAfter.length, 1)
+      return { afterBack, afterForward }
+    },
+  )
+
+  await fall(
+    browser,
+    origin,
     'mobile-visual',
     'q=anna&page=3&source=support',
     { width: 390, height: 844 },

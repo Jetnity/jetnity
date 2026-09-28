@@ -1,7 +1,7 @@
 # Admin Users Search Navigation 1 — handoff
 
 Stand: 28 September 2026
-Status: **R1 CORRECTION STOPPED FOR INDEPENDENT WORK/TL REVIEW**
+Status: **R2 CORRECTION STOPPED FOR INDEPENDENT WORK/TL REVIEW**
 
 ## Current writer
 
@@ -15,7 +15,8 @@ Status: **R1 CORRECTION STOPPED FOR INDEPENDENT WORK/TL REVIEW**
 
 - Issue #607. Existing Draft PR #608. Branch `fix/admin-users-search-navigation-1`.
 - Baseline main `46b35d9808dc8929fae6adf96aef3572249bf2f8`. Seed `cbef14d1b31c22b5a8068d15f689c81c88d4ffc9`.
-- R1 review `5344508093` on `433e9a25426c93f9949c017ef36229c569996d5b` is addressed in this tip: a delayed acknowledgement of our own search no longer drops a newer draft. External, Back/Forward and pagination still win.
+- R1 review `5344508093` on `433e9a25426c93f9949c017ef36229c569996d5b` remains addressed: a delayed acknowledgement of our own search does not drop a newer draft.
+- R2 review `5344639303` on `99d2ab4a30b3915db35890bd4f5a395ae8cd8c89` is addressed in this tip: native Back/Forward are `popstate` traversals, not own-search acknowledgements, even when the restored query equals a pending replace. External navigation and pagination still win. Review this tip; `99d2ab4a` is not the R2 gate.
 - The unsolicited page-3 reset was reproduced on the actual `UsersTable`, then fixed.
 - Report: `docs/ADMIN_USERS_SEARCH_NAVIGATION_1_REPORT_2026-09-28.md`.
 - Evidence: `docs/evidence/admin-users-search-navigation-1/`.

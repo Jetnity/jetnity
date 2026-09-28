@@ -70,6 +70,8 @@ export default function UsersTable({
   const [search, setSearch] = React.useState(() => normalizeUserSearch(q ?? ''))
   const [trackedUrl, setTrackedUrl] = React.useState(urlQuery)
   const [ownSearchAcks, setOwnSearchAcks] = React.useState<string[]>([])
+  const [historyTraversal, setHistoryTraversal] = React.useState(0)
+  const [seenTraversal, setSeenTraversal] = React.useState(0)
   const [pendingId, setPendingId] = React.useState<string | null>(null)
   const epoch = React.useRef(0)
   const spRef = React.useRef(sp)
@@ -80,16 +82,30 @@ export default function UsersTable({
     routerRef.current = router
   }, [sp, router])
 
-  if (trackedUrl !== urlQuery) {
+  // pushState/replaceState feuern kein popstate. Natives Zurück/Vor schon.
+  // Eine Adressgleichheit allein darf das nicht als eigene Suchbestätigung lesen.
+  React.useEffect(() => {
+    const onPopState = () => {
+      epoch.current += 1
+      setOwnSearchAcks([])
+      setHistoryTraversal((value) => value + 1)
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  const nativeTraversal = historyTraversal !== seenTraversal
+  if (trackedUrl !== urlQuery || nativeTraversal) {
     const hrefNow = usersListHrefFromParams(sp)
     const ackIndex = ownSearchAcks.findIndex((href) => usersListHrefMatches(href, hrefNow))
-    const ownAck = ackIndex >= 0
-    setTrackedUrl(urlQuery)
+    const ownAck = !nativeTraversal && ackIndex >= 0
+    if (trackedUrl !== urlQuery) setTrackedUrl(urlQuery)
+    if (nativeTraversal) setSeenTraversal(historyTraversal)
     if (ownAck) setOwnSearchAcks(ownSearchAcks.slice(ackIndex + 1))
     else if (ownSearchAcks.length > 0) setOwnSearchAcks([])
-    // Nur fremde Navigation, Zurück/Vor und Seitenwechsel übernehmen die URL
-    // ins Feld. Die verspätete Bestätigung der eigenen Suche lässt einen
-    // inzwischen neueren Entwurf stehen.
+    // Nur fremde Navigation, natives Zurück/Vor und Seitenwechsel übernehmen
+    // die URL ins Feld. Die verspätete Bestätigung der eigenen Suche lässt
+    // einen inzwischen neueren Entwurf stehen.
     if (!ownAck && search !== urlQ) setSearch(urlQ)
   }
 

@@ -11,6 +11,7 @@ import {
   externalUsersSearch,
   forwardUsersSearch,
   pendingUsersNavCommits,
+  pushUsersHistory,
   setUsersNavDelayCommit,
   usersNavActionCalls,
   usersNavReplaces,
@@ -98,6 +99,7 @@ function HarnessApp() {
       commitNext: () => commitNextUsersNav(),
       back: () => backUsersSearch(),
       forward: () => forwardUsersSearch(),
+      pushHistory: (search: string) => pushUsersHistory(search),
       unmount: () => setMounted(false),
       remount: () => {
         setMounted(true)

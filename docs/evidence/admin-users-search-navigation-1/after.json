@@ -35,7 +35,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=berta&page=1&source=support",
-            "at": 1790629144191
+            "at": 1790629871502
           }
         ],
         "search": "q=berta&page=1&source=support",
@@ -52,7 +52,7 @@
         "replaces": [
           {
             "href": "/admin/users?page=1&source=support",
-            "at": 1790629145128
+            "at": 1790629872446
           }
         ],
         "search": "page=1&source=support",
@@ -87,7 +87,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=anna&page=2&source=support",
-            "at": 1790629147312
+            "at": 1790629874734
           }
         ],
         "search": "q=anna&page=2&source=support",
@@ -154,7 +154,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=anna&page=2&source=support",
-            "at": 1790629152711
+            "at": 1790629880266
           }
         ],
         "search": "q=anna&page=2&source=support",
@@ -171,7 +171,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=ber&page=1&source=support",
-            "at": 1790629154244
+            "at": 1790629881822
           }
         ],
         "search": "q=ber&page=1&source=support",
@@ -200,11 +200,11 @@
         "replaces": [
           {
             "href": "/admin/users?q=bob&page=1&source=support",
-            "at": 1790629156160
+            "at": 1790629883766
           },
           {
             "href": "/admin/users?q=bobby&page=1&source=support",
-            "at": 1790629156602
+            "at": 1790629884206
           }
         ],
         "search": "q=bobby&page=1&source=support",
@@ -221,11 +221,11 @@
         "replaces": [
           {
             "href": "/admin/users?q=bob&page=1&source=support",
-            "at": 1790629157945
+            "at": 1790629885552
           },
           {
             "href": "/admin/users?q=anna&page=1&source=support",
-            "at": 1790629158384
+            "at": 1790629885992
           }
         ],
         "search": "q=anna&page=1&source=support",
@@ -242,7 +242,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=bob&page=1&source=support",
-            "at": 1790629159722
+            "at": 1790629887355
           }
         ],
         "search": "q=elsa&page=2&source=support",
@@ -259,16 +259,45 @@
         "replaces": [
           {
             "href": "/admin/users?q=bob&page=1&source=support",
-            "at": 1790629161097
+            "at": 1790629888723
           },
           {
             "href": "/admin/users?q=bobby&page=1&source=support",
-            "at": 1790629161521
+            "at": 1790629889151
           }
         ],
         "search": "q=bobby&page=1&source=support",
         "input": "bobby",
         "pageText": "1 / 3",
+        "actionCalls": []
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "native-back-equals-pending-own-search",
+      "ok": true,
+      "afterBack": {
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support&reviewHold=1",
+            "at": 1790629890523
+          }
+        ],
+        "search": "q=bob&page=1&source=support&reviewHold=1",
+        "input": "bob",
+        "pageText": "1 / 3",
+        "actionCalls": []
+      },
+      "afterForward": {
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support&reviewHold=1",
+            "at": 1790629890523
+          }
+        ],
+        "search": "q=anna&page=3&source=support&reviewHold=1",
+        "input": "anna",
+        "pageText": "3 / 3",
         "actionCalls": []
       },
       "consoleErrors": []
