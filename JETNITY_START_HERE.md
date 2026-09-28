@@ -1,9 +1,9 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 22. September 2026
-Status: **NORMAL ON LIVE MAIN / CURRENT CHECKPOINT 22 SEP 2026 / CONTINUITY REFRESH 3 C1–C3 / #545–#550 #552 CLOSED / #551 REMAINING / KANONISCHER EINSTIEG / LIVE-EVIDENCE WINS**
+Stand: 28. September 2026
+Status: **NORMAL / CURRENT CHECKPOINT 28 SEP 2026 / V1 ACCOUNT ERASURE DEVELOPMENT CLOSED / NEXT PROVIDER ACCESS READINESS REFRESH / LIVE-EVIDENCE WINS**
 
-> **Live `main` machine mode is `NORMAL`.** Dedicated HOLD-closure PR #492 is merged. Security-event architecture #487 is merged, not parked. Local disposable producer-contract proof #494 is merged. Finding 5.2 / release-gate G / persistent security ingestion remain OPEN. Present continuation starts at `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md`. That dated file already exists on `main` from #546. While Draft #551 is open, the corrected Refresh-3 content lives on `docs/v1-continuity-refresh-3`; after #551 merges, read it from `main` and do not reactivate session `bc-e268a98c-10c1-428f-94ae-99f3246f460a`.
+> **Current handoff — 28 September 2026.** Live `main` at handoff is `f611235aeb8cf224dd43a2018e3976b160567d17` (Merge #591). Machine mode is `NORMAL`. V1 Account Erasure Development is CLOSED: #588 completed, #590 merged after 11/11 Development PASS, #591 merged as continuity closure. Production activation is NOT authorized and is tracked separately in #592. Present continuation starts at `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md`. No current Cursor/runtime writer is authorized by this handoff. Preferred next work after fresh live reconstruction is a read-only Provider Access Readiness Refresh; no provider application, contact, Terms acceptance, secret, paid/live call or Production activation is authorized by that refresh.
 
 > **Dated 22 September 2026 Continuity Refresh 3 C1–C3 observation (not a permanent current-writer claim).** #545–#550 and #552 are **CLOSED / MERGED / POST-MERGE VERIFIED**. Current `main` is `0d4c871867e7c4daac45af4a737cc032723863ae` (#552). #550 accepted `b5bbe211` / merge `34686af3` is **LOCAL / UNAPPLIED** proof only — session `bc-49dd67e9-5979-44af-9476-1df8bcdfff93` completed, do not restart. #552 accepted `3bb98706` / merge `0d4c8718` is Cursor specialist evidence, not Guardian — session `bc-4a3288b3-eb42-480b-9c37-f74b584e2419` completed, do not restart. Latest application-runtime-changing merge remains **#548 offline HBX**, not #550 or #552. Remaining assigned current work is this docs persist (#551) in session `bc-e268a98c-10c1-428f-94ae-99f3246f460a` (footer verified in comment `5782480321` HTML; display name `Jetnity V1 continuity refresh`; UI rename not performed). After #551, account-count Production/exposure remains separately gated and is not auto-dispatched. Closed #512 / #506 / #509 / #510 / #543 / #544 / #545 / #546 / #547 / #548 / #549 / #550 / #552 must not be reconstructed as pending. Full Admin D–K is later-phase. Reserved Product-Owner gates remain. Uncommitted local work is not claimed backed up.
 
@@ -15,7 +15,7 @@ Status: **NORMAL ON LIVE MAIN / CURRENT CHECKPOINT 22 SEP 2026 / CONTINUITY REFR
 
 > Dieses Dokument ist verbindlich für geschlossene Wahrheiten, Grenzen und Gates. Es ist **keine** Quelle für den momentanen Arbeitsstand: welche PRs, Branches, Heads, Slices oder Agenten gerade aktiv sind, wird ausschließlich live rekonstruiert. Wo gespeicherter Text und Live-Evidence sich widersprechen, gewinnt Live-Evidence, und der gespeicherte Text wird danach korrigiert.
 
-> **Re-fetch live #551 before treating `main` startup prose as already corrected.** The dated checkpoint file already exists on `main` from #546. While #551 is open, read the corrected Refresh-3 content from `docs/v1-continuity-refresh-3`. After #551 merges, read it from `main` and do not reactivate this session. Reconstruct closed #545–#550 / #552 and live Draft #551. Historical HOLD-closure record: `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_STATUS_2026-09-21.md`. ChatGPT / Technical Lead alone decides PASS / Ready / Merge. Cursor never Ready/merges.
+> **Current startup rule — 28 September 2026.** Read `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md` and then re-fetch live main/open PRs/open issues/Actions/Vercel before selecting work. Historical #551/#552/#550/HOLD-era prose below is audit history, not current-writer authority. ChatGPT / Technical Lead alone decides PASS / Ready / Merge. Cursor never Ready/merges.
 
 ## 1. Zuerst lesen
 
@@ -23,7 +23,7 @@ Status: **NORMAL ON LIVE MAIN / CURRENT CHECKPOINT 22 SEP 2026 / CONTINUITY REFR
 1. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` ← **binding Technical-Lead/Cursor operating standard**
 1a. `docs/JETNITY_MULTI_AGENT_OPERATING_SYSTEM.md` ← **binding orchestrated multi-agent governance; one-writer/many-readers, specialist review and common evidence-bus standard**
 1b. `docs/JETNITY_GROK_BOT_OPERATING_STANDARD.md` ← **binding Guardian / Grok-Bot operating standard (Release / QA / Continuity Operator); Pflichtlektüre für jeden Technical Lead, jeden Guardian-Lauf und jeden Agenten, dessen Arbeit Guardian-Evidence berührt**
-2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-22.md` ← **canonical current-work checkpoint. File already exists on `main` from #546; while #551 is open, the corrected Refresh-3 content is on this branch. Supersedes the 2026-09-21 checkpoint for present continuation only**
+2. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md` ← **canonical current-work checkpoint for this handoff; live evidence still wins**
 2a. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-21.md` ← **historical Continuity Refresh 1 / #512 checkpoint; keep for that capture, not current-writer authority**
 2a0. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-18.md` ← **historical OS-2 / HOLD-exit checkpoint; keep for accepted-limitation evidence, not current-writer authority**
 2a1. `docs/JETNITY_FULL_POTENTIAL_AI_OPERATING_SYSTEM_2_HOLD_CLOSURE_HANDOFF_2026-09-21.md` ← historical merged-#492 HOLD-closure handoff
