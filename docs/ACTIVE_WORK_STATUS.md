@@ -1,9 +1,23 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / #606 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / V1 PREFLIGHT #603 MERGED / THREE EXTERNAL RESPONSES PENDING**
+Status: **NORMAL / #608 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / ADMIN USERS SEARCH NAVIGATION 1 AWAITING WORK/TL REVIEW**
 
-## 0. Delivery-time snapshot — Admin F reconciliation 1
+## 0. Delivery-time snapshot — Admin Users Search Navigation 1
+
+- [PR #608](https://github.com/Jetnity/jetnity/pull/608), branch `fix/admin-users-search-navigation-1`, Issue #607. Draft wording here is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a deployment.
+- Live-state rule: while #608 is open, the next step is independent Work/Technical-Lead review of the exact branch tip. Once #608 is merged, this slice is closed: do not redispatch it, read the Technical Lead closure on #608, and run a fresh precheck before any next bounded work.
+- Cursor-Agent: **Jetnity admin users search navigation 1**, Generation 1. Session https://cursor.com/agents/bc-32378ddb-57fe-45cb-8134-62721416684c. Tool model field `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected. Not Auto. Session UI rename was not available.
+- Baseline main `46b35d9808dc8929fae6adf96aef3572249bf2f8` (merge #606, CI `36476538615` SUCCESS). Seed `cbef14d1b31c22b5a8068d15f689c81c88d4ffc9`.
+- R1 review `5344508093` on `433e9a25426c93f9949c017ef36229c569996d5b` found that a delayed own-search acknowledgement dropped a newer draft. That correction remains in the tip.
+- R2 review `5344639303` on `99d2ab4a30b3915db35890bd4f5a395ae8cd8c89` found that native Back to a pending own-search URL was classified as that acknowledgement. The current tip distinguishes `popstate` from own acknowledgement. Evidence: `docs/evidence/admin-users-search-navigation-1/`. Not signed-in Admin and not a physical device. Exact-head CI/Auth/Vercel on the pushed tip are TL gates; `99d2ab4a` is not the correction gate.
+- Admin F palette stays the #545 shipment. Admin E and AP-8 remain gated. No new data/permission contract.
+- Cursor does not Ready or merge. Same session for a head-bound fix only. No follow-up slice. Normal ChatGPT main chat keeps later selection.
+- Canonical report: `docs/ADMIN_USERS_SEARCH_NAVIGATION_1_REPORT_2026-09-28.md`.
+
+The Admin F block below remains the previous delivery-time snapshot.
+
+## 0b. Previous delivery-time snapshot — Admin F reconciliation 1
 
 - [PR #606](https://github.com/Jetnity/jetnity/pull/606), branch `docs/admin-f-reconciliation-1`, Issue #605. Draft/review wording here is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a post-merge deployment.
 - Live-state rule: while #606 is open, the next step is independent Technical-Lead review of the exact head. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work.

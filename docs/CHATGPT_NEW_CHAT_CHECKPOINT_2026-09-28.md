@@ -1,11 +1,27 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / #606 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / V1 PREFLIGHT #603 MERGED / KAYAK + SHERPA + IATA RESPONSES PENDING**
+Status: **NORMAL / #608 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / ADMIN USERS SEARCH NAVIGATION 1 AWAITING WORK/TL REVIEW / KAYAK + SHERPA + IATA RESPONSES PENDING**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
-## 0. Delivery-time snapshot — Admin F reconciliation 1
+## 0. Delivery-time snapshot — Admin Users Search Navigation 1
+
+[PR #608](https://github.com/Jetnity/jetnity/pull/608) / Issue #607 fixes the Admin user-list search so an existing page/query is not reset without an edit. Calling it a Draft in Work/Technical-Lead review is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a deployment.
+
+Live-state rule: while #608 is open, the next step is independent review of the exact branch tip. Once #608 is merged, this slice is closed: do not redispatch it, read the Technical Lead closure on #608, and run a fresh precheck before any next bounded work.
+
+Writer: **Jetnity admin users search navigation 1**, Generation 1. Session https://cursor.com/agents/bc-32378ddb-57fe-45cb-8134-62721416684c. `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected; that qualifier is not a separate run-info field. Not Auto.
+
+R1 review `5344508093` on `433e9a25426c93f9949c017ef36229c569996d5b` stays corrected: delayed own-search acknowledgement keeps a newer draft. R2 review `5344639303` on `99d2ab4a30b3915db35890bd4f5a395ae8cd8c89` is corrected on the current tip: native Back/Forward (`popstate`) win even when the restored query equals a pending own-search href. Fresh evidence is `docs/evidence/admin-users-search-navigation-1/`. Not signed-in Admin and not a physical device. Do not reuse seed `cbef14d1`, reviewed head `433e9a25`, or reviewed head `99d2ab4a` checks as the correction head's gate.
+
+Admin F remains the shipped #545 palette. Admin E and AP-8 stay gated. KAYAK, Sherpa and IATA responses remain pending. No provider, Production, or special-gate action follows from this slice.
+
+Cursor does not Ready or merge. Report: `docs/ADMIN_USERS_SEARCH_NAVIGATION_1_REPORT_2026-09-28.md`.
+
+The section below remains the Admin F reconciliation snapshot.
+
+## 0a. Previous delivery-time snapshot — Admin F reconciliation 1
 
 [PR #606](https://github.com/Jetnity/jetnity/pull/606) / Issue #605 reconciles continuity only. Calling it a Draft in Technical-Lead review is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a post-merge deployment.
 
