@@ -9,8 +9,8 @@ Branch: `feat/production-account-erasure-activation-1`
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84`  
 Binding task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
 Runtime contract commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Superseded, not the review head: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c` (CHANGES REQUIRED) and `494d4226fa84c7006146291b476a3777711156c2` (recorded the intermediate history version before the repair).  
-Exact review head: the commit that contains this R1/R2 correction. Any later commit invalidates the gate.
+Superseded, not the review head: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`, `494d4226fa84c7006146291b476a3777711156c2`, and `7cbf1c7bf400f3b354fdc4a0ca468766dd0f4e18`.  
+Exact review head: the commit that contains this history clarification. Any later commit invalidates the gate.
 
 Cursor-Agent: **Jetnity production account erasure activation 1**, Generation 1  
 Required model: **Grok 4.7 High Fast** — confirmed (`originalModelName=grok-4.7-high-fast`)  
@@ -20,9 +20,9 @@ No Ready. No Merge. No Production Function deploy. No follow-up slice.
 
 ## Live Production migration fact
 
-The Production graph-cascade migration is **APPLIED** and independently verified on `qscbgcdmivbbnzrcyegn`. Migration history is the canonical repository version `20260927230000_reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
+The Production graph-cascade migration is **APPLIED** and independently verified on `qscbgcdmivbbnzrcyegn`. Current history version is `20260927230000`, name `reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
 
-`20260928123859_reise_graph_kaskade_tiefe` was an intermediate history version before that repair. It is not the current history version. Cursor did not apply the migration and did not repair the history. The repository file is unchanged (blob `6ca1a19c70958729f3bd6b9e57fa5ef2a07ebadd`). Wording that the migration was not yet applied is historical task-creation state only.
+The Technical Lead repaired the remote history so it matches that repository filename. Cursor did not apply the migration and did not repair the history. The repository file is unchanged (blob `6ca1a19c70958729f3bd6b9e57fa5ef2a07ebadd`). Wording that the migration was not yet applied is historical task-creation state only.
 
 The Production Edge Function `account-delete-v1` is not deployed. No Production user was created or deleted by Cursor.
 
@@ -57,15 +57,12 @@ Confirmation, reauth, MFA/AAL, JWT identity, Storage ownership, security-event d
 - `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_STATUS_2026-09-28.md`
 - `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_HANDOFF_2026-09-28.md`
 - `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_SELF_REVIEW_2026-09-28.md`
-- `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md` (task-creation state labelled; later TL fact recorded)
-- `docs/V1_ACCOUNT_ERASURE_1_STATUS_2026-09-27.md`
-- `docs/V1_ACCOUNT_ERASURE_1_HANDOFF_2026-09-27.md`
+- `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md` (task-creation state remains historical)
 - `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md`
-- `docs/PROVIDER_ACCESS_READINESS_REFRESH_2026-09-28.md`
 
 ## Local gates
 
-The commands below are the fresh local gates for this R1/R2 commit. `2c39f7ba` and `494d4226` are not gated by this table. The binding evidence is the clean post-commit run of the commit that contains this correction.
+The commands below are the fresh local gates for this clarification commit. `2c39f7ba`, `494d4226`, and `7cbf1c7b` are not gated by this table. The binding evidence is the clean post-commit run of the commit that contains this clarification.
 
 | Gate | Result |
 | --- | --- |

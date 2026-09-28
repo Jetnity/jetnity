@@ -16,15 +16,13 @@ Development implementation remains closed:
 - Development Function `account-delete-v1` ACTIVE v2 with `verify_jwt=true`;
 - Development graph-cascade migration applied.
 
-Current Production truth at task creation (historical; not the live migration state):
+Current Production truth at task creation (historical task-creation state, not the live migration state):
 - project `qscbgcdmivbbnzrcyegn`;
 - 0 Edge Functions;
 - graph-cascade migration not yet applied;
 - UI/environment contract still hard-blocks Production;
 - no real Production user deletion has occurred;
 - public indexing remains disabled.
-
-Later Technical-Lead live fact, 28 September 2026: the Production migration is applied and history is repaired to canonical `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859_reise_graph_kaskade_tiefe` was the intermediate history version before that repair, not the current version. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not apply it, did not repair history, and did not deploy the Function.
 
 ## Logical agent
 

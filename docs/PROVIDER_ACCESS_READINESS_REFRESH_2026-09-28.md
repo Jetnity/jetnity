@@ -288,7 +288,7 @@ Current `main` CI is green, current Vercel Production is READY on exact main, an
    - This should not be disguised by hand-written legal text.
 
 3. **#592 — Production account-erasure activation.**
-   - Development proof is closed 11/11. Historical task-creation state in this refresh: Production Edge Function and graph-cascade activation were still gated. Later on 28 September 2026 the Technical Lead applied the migration and repaired history to canonical `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859` was only the intermediate history version. Function deployment remains gated. This refresh did not apply the migration.
+   - Development proof is closed 11/11, but Production Edge Function + graph-cascade activation remains explicitly Product-Owner gated.
    - This is a pre-launch/privacy capability gate, not a current Production incident.
 
 ### P2 — material pre-launch residual

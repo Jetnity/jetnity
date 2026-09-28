@@ -92,7 +92,7 @@ Production Supabase at this checkpoint's task-creation state:
 - no real Production user was deleted
 - deletion UI remained fail-closed for the Production environment at that time
 
-Later live fact, 28 September 2026, Technical Lead: the Production migration is **APPLIED** and history is the canonical repository version `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859_reise_graph_kaskade_tiefe` was the intermediate history version before that repair. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not apply it or repair the history. The Production Function `account-delete-v1` is still not deployed by Cursor.
+Later live fact, 28 September 2026, Technical Lead: the Production migration is **APPLIED**. Current history version is `20260927230000`, name `reise_graph_kaskade_tiefe`. The remote history was repaired to that repository filename. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not apply it or repair the history. The Production Function `account-delete-v1` is still not deployed by Cursor.
 
 PR #591: **MERGED**
 
@@ -110,7 +110,7 @@ Purpose: repository continuity closure so old NOT-PASS wording does not become c
 
 Historical task-creation list below is not the current migration state.
 
-The Technical Lead has applied the migration. Current history is canonical `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859` was the intermediate history version before the repair. Still separately gated, and not done by Cursor:
+The Technical Lead has applied the migration. Current history version is `20260927230000`, name `reise_graph_kaskade_tiefe`. Still separately gated, and not done by Cursor:
 
 - Production deployment of `account-delete-v1`;
 - repository environment contract on Draft PR #597, then independent review;
@@ -118,7 +118,7 @@ The Technical Lead has applied the migration. Current history is canonical `2026
 
 The task-creation list was:
 
-- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql` — **done by the Technical Lead**, current history version `20260927230000_reise_graph_kaskade_tiefe`;
+- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql` — **done by the Technical Lead**; current history version `20260927230000`, name `reise_graph_kaskade_tiefe`;
 - Production deployment of `account-delete-v1`;
 - Production UI activation;
 - bounded Production smoke design.

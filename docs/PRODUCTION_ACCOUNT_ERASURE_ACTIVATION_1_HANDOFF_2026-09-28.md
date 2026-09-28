@@ -11,8 +11,8 @@ Draft PR: #597
 Branch: `feat/production-account-erasure-activation-1`  
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84`  
 Runtime commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Superseded: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c` (CHANGES REQUIRED) and `494d4226fa84c7006146291b476a3777711156c2` (intermediate history version, before the repair).  
-Exact review head: the commit that contains this R1/R2 correction. Do not review those superseded SHAs.
+Superseded: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`, `494d4226fa84c7006146291b476a3777711156c2`, and `7cbf1c7bf400f3b354fdc4a0ca468766dd0f4e18`.  
+Exact review head: the commit that contains this history clarification. Do not review those superseded SHAs.
 
 Task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
 Status: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_STATUS_2026-09-28.md`  
@@ -23,9 +23,9 @@ Cursor does not mark Ready, does not merge, and does not start a follow-up slice
 
 ## Production migration
 
-**APPLIED.** Current migration history is the canonical repository version `20260927230000_reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
+**APPLIED.** Current history version is `20260927230000`, name `reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9.
 
-`20260928123859_reise_graph_kaskade_tiefe` is only the intermediate history version from before the Technical Lead repaired history to that canonical version. Cursor did not apply or repair it. The repository file is unchanged. Statements that the migration is currently unapplied are historical task-creation state only.
+The Technical Lead repaired the remote history so it matches that repository filename. Cursor did not apply or repair it. The repository file is unchanged. Statements that the migration is currently unapplied are historical task-creation state only.
 
 ## Production sequence
 
@@ -51,7 +51,7 @@ Do not start this sequence with a migration apply. After independent exact-head 
 1. Exact Production HTTPS is allowed. Production HTTP, Development HTTP, unknown `*.supabase.co`, arbitrary hosts and malformed URLs are denied.
 2. The Function URL for exact Production HTTPS is `https://qscbgcdmivbbnzrcyegn.supabase.co/functions/v1/account-delete-v1`.
 3. A valid mocked deletion on that URL is no longer `umgebung_gesperrt`. MFA/reauth/JWT/Storage/OAuth tests still pass. The request body is still only `{ confirmation: "KONTO LÖSCHEN" }`.
-4. The graph-cascade migration file in the repository is unchanged. Live Production history is canonical `20260927230000_reise_graph_kaskade_tiefe`, already applied. `20260928123859` is not the current history version.
+4. The graph-cascade migration file in the repository is unchanged. Live Production history is version `20260927230000`, name `reise_graph_kaskade_tiefe`, already applied.
 5. No Production Function, user, secret, Auth, OAuth, indexing, provider or payment mutation is claimed for Cursor.
 6. The current sequence starts at Function deploy after PASS, not at migration apply.
 

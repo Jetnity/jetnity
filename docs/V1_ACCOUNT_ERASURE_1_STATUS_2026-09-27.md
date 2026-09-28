@@ -11,8 +11,8 @@ Status: **CLOSED / DEVELOPMENT 11/11 PASS / PR #590 MERGED / PRODUCTION ACTIVATI
 - Development cleanup: 0 proof users/events/buckets/objects/policies; temporary grant removed.
 - Development Function: `account-delete-v1` ACTIVE v2, JWT verification enabled.
 - Development migration `reise_graph_kaskade_tiefe` applied.
-- Production Supabase at this Development closure: 0 Edge Functions; graph-cascade migration unapplied; no real account deletion. This sentence is historical task-creation/closure state. On 28 September 2026 the Technical Lead applied the migration and repaired history to canonical `20260927230000_reise_graph_kaskade_tiefe`. `20260928123859` was only the intermediate history version.
-- Production Function deployment remains a separate gate. The migration application itself is no longer open.
+- Production Supabase: 0 Edge Functions; graph-cascade migration unapplied; no real account deletion.
+- Production activation remains a separate Product-Owner gate.
 ---
 
 ## Historical pre-closure evidence
