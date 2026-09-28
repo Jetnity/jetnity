@@ -1,9 +1,56 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / TERMS CH-DE 1.0 LIVE + #587 CLOSED / #592 E2E PASS / KAYAK RESPONSE PENDING**
+Status: **NORMAL / V1 PREFLIGHT #603 MERGED + POST-MERGE VERIFIED / KAYAK + SHERPA + IATA RESPONSES PENDING / NO ACTIVE WRITER**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
+
+## 0. Latest current handoff — V1 preflight closure / external response wait
+
+Immediately before this continuity persist, live `main` was:
+
+`d961a5402fc363a481918f1a5830aff22dcc878e` — Merge #603, V1 Release Readiness Preflight 1.
+
+Accepted exact head:
+`5c2f0ef25c90ccdbda5bef06ff38db7a38420fcc`
+
+Technical-Lead FINAL PASS:
+review `5343161510`
+
+Verification:
+- exact-head CI `36466410801`: **SUCCESS**;
+- exact-head Vercel Preview `dpl_Fd6xxmKdbUtQPi2F3aYMFN8MS7N8`: **READY**;
+- post-merge CI `36467497747`: **SUCCESS**;
+- Vercel Production `dpl_HjBdggZpQx79CvPjdrTeigxtJf3M`: **READY** on exact merge SHA with alias `jetnity.com`;
+- Issue #602: **CLOSED / completed**.
+
+Independent Technical-Lead Production readback after agent delivery:
+- migration `20260927230000_reise_graph_kaskade_tiefe` present;
+- `account-delete-v1`: **ACTIVE v1**, `verify_jwt=true`, expected bundle hash;
+- Supabase Security Advisor currently reports WARN-only schema-visibility / authenticated SECURITY DEFINER findings; independent catalog readback confirms RLS on the flagged tables and reviewed ownership/role+AAL2 checks. These warnings remain final-security-gate evidence and do **not** close finding 5.2 or Security Gate B.
+
+Current external waits:
+- **KAYAK #395** — inquiry sent / waiting;
+- **Sherpa #294** — inquiry sent / waiting;
+- **IATA Timatic #294** — business enquiry sent / waiting.
+
+No provider or Official Truth source is selected. No signup, additional Terms/DPA/commercial acceptance, credentials, API calls, spend, runtime adapter or Production provider activation follows automatically.
+
+#585 remains deferred and is not a current engineering task. Public indexing remains disabled.
+
+The accepted A–O preflight concludes that there is **no justified ungated V1-critical implementation slice while these three external responses are pending**. This is not a final Release Readiness PASS.
+
+**Exact first unfinished step:** wait for the first material KAYAK/Sherpa/IATA reply; Technical Lead reviews the full response and every linked term before any subsequent action.
+
+No current Cursor/runtime writer is authorized.
+
+Canonical report:
+`docs/V1_RELEASE_READINESS_PREFLIGHT_1_REPORT_2026-09-28.md`
+
+Canonical closure:
+`docs/V1_RELEASE_READINESS_PREFLIGHT_1_CLOSURE_2026-09-28.md`
+
+A later docs-only continuity merge may advance `main`; always fetch live before asserting the current SHA.
 
 ## 1. Startzustand für den nächsten Chat
 
