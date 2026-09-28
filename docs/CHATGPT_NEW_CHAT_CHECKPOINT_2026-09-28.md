@@ -120,7 +120,7 @@ Final Production E2E:
 - Auth residues: users/identities/sessions/MFA/one-time tokens = 0;
 - Jetnity/Storage residues: profiles/trips/travellers/visits/security events/owned objects = 0.
 
-The prior synthetic-smoke-blocked residual is superseded. #592 is closed. No unrelated Production configuration changed.
+The prior smoke-blocked residual is superseded. #592 is closed. No unrelated Production configuration changed.
 
 ### #587 — Jetnity Nutzungsbedingungen / AGB
 
