@@ -1,9 +1,34 @@
 # Jetnity – Active Work Status
 
-Stand: 28. September 2026
-Status: **NORMAL / #608 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / ADMIN USERS SEARCH NAVIGATION 1 AWAITING WORK/TL REVIEW**
+Stand: 29. September 2026
+Status: **NORMAL / PREFLIGHT 2 CLOSURE IS THE CURRENT RELEASE BOUNDARY / NO UNGATED V1 IMPLEMENTATION / THIS CONTINUITY PR IS THE ONLY DOCS WRITER WHILE OPEN**
 
-## 0. Delivery-time snapshot — Admin Users Search Navigation 1
+## 0. Current work boundary — accepted Preflight 2
+
+- Canonical release boundary: accepted V1 Release Readiness Preflight 2. Closure: `docs/V1_RELEASE_READINESS_PREFLIGHT_2_CLOSURE_2026-09-29.md`. Checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-29.md`.
+- Live `main` at this reconstruction: `a9a8898ca2362b2ef86ccb1817a62eaa439c2d30` (Merge #622). Re-fetch before treating any later SHA as current.
+- Issue #621: **CLOSED**. PR #622: **MERGED**. Accepted exact head `5b2cb44e500323e6a3573fb5709b6c7769afccc4`. Technical-Lead FINAL PASS review `5345955245`.
+- Exact-head CI `36498483601`: **SUCCESS**. Exact-head Vercel Preview `dpl_2RTuPAkn9iUUWcYQuLTYbizHFUHD`: GitHub Preview deployment `6722939513` **success** on that SHA.
+- Post-merge CI `36499178855`: **SUCCESS** on the merge SHA (Auth configuration and Typecheck, Lint & Build).
+- Post-merge Vercel Production: GitHub commit status **success**, inspector `dpl_9EAtK55s6XSyAf2yLZgv17fkrQdw`, GitHub Deployment `6723050820`, environment Production, same SHA. Public-alias bytes were not re-proven in this session.
+- This closure is **not** a launch PASS and authorizes no provider, Production, payment, indexing or legal-text action.
+- Immediate ungated V1 implementation candidates: **NONE**.
+- Machine mode: `NORMAL`. The older `activeMetaScope` object inside `.jetnity/operating-mode.json` still names historical Continuity Refresh 1. It is not the current writer. This slice does not edit that file.
+- Current writer while Draft [PR #625](https://github.com/Jetnity/jetnity/pull/625) is open: this docs continuity persist only (`docs/v1-preflight-2-continuity-persist`). No other product or runtime writer is active.
+- After this continuity slice ends, no runtime writer is authorized. Idle Cursor is not a reason to start one.
+- Waiting tracks: KAYAK #395, Sherpa #294 and IATA Timatic #294 remain **SENT / WAITING FOR RESPONSE**. Latest comments re-read in this session are still the send records. No reply is recorded.
+- Gated residuals that remain: finding 5.2 persistent security-event ingestion; retention and consent persistence; observability/alerting; backup/restore proof; real provider/Official-Truth E2E; final device proof; public indexing/launch. The last Production Supabase readback is the Preflight 1 closure. Preflight 2 did not repeat it, and this persist did not either.
+- #585 remains deliberately deferred. Do not hand-edit PrivacyBee.
+- Admin F palette is the #545 shipment. Do not rebuild it.
+- Recent Admin/runtime work #606, #608, #610, #612, #614, #616, #618 and #620 is **CLOSED**. Do not redispatch any of it.
+- Exact next rule: wait for a material provider or Official Truth reply, or for fresh evidence of a genuine ungated defect. Technical Lead reviews that evidence before any next gate. Do not invent work.
+- Cursor does not Ready or merge and does not start a follow-up slice.
+
+The sections below are historical continuity snapshots. They must not be read as the current writer.
+
+## 0-historical. Delivery-time snapshot — Admin Users Search Navigation 1
+
+Historical as of 29 September 2026. #608 is closed. This section records the 28 September delivery-time state. It is not an open review.
 
 - [PR #608](https://github.com/Jetnity/jetnity/pull/608), branch `fix/admin-users-search-navigation-1`, Issue #607. Draft wording here is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a deployment.
 - Live-state rule: while #608 is open, the next step is independent Work/Technical-Lead review of the exact branch tip. Once #608 is merged, this slice is closed: do not redispatch it, read the Technical Lead closure on #608, and run a fresh precheck before any next bounded work.
@@ -15,9 +40,9 @@ Status: **NORMAL / #608 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / ADMIN USERS
 - Cursor does not Ready or merge. Same session for a head-bound fix only. No follow-up slice. Normal ChatGPT main chat keeps later selection.
 - Canonical report: `docs/ADMIN_USERS_SEARCH_NAVIGATION_1_REPORT_2026-09-28.md`.
 
-The Admin F block below remains the previous delivery-time snapshot.
+The Admin F block below is an earlier historical delivery-time snapshot.
 
-## 0b. Previous delivery-time snapshot — Admin F reconciliation 1
+## 0b-historical. Previous delivery-time snapshot — Admin F reconciliation 1
 
 - [PR #606](https://github.com/Jetnity/jetnity/pull/606), branch `docs/admin-f-reconciliation-1`, Issue #605. Draft/review wording here is the 28 September 2026 delivery-time snapshot. It does not preclaim PASS, merge, or a post-merge deployment.
 - Live-state rule: while #606 is open, the next step is independent Technical-Lead review of the exact head. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work.
@@ -28,9 +53,9 @@ The Admin F block below remains the previous delivery-time snapshot.
 - R1 review `5343870824` and its resolution: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md` §10.
 - Cursor does not Ready or merge.
 
-The preflight block below remains the external-wait record.
+The preflight block below is the historical Preflight 1 external-wait record. Accepted Preflight 2 in section 0 supersedes it as the current release boundary.
 
-## 0a. Previous current block — V1 preflight closure / external response wait
+## 0a-historical. Previous current block — V1 Preflight 1 closure / external response wait
 
 - PR #603 **MERGED** at `d961a5402fc363a481918f1a5830aff22dcc878e`; Issue #602 **CLOSED / completed**.
 - Accepted exact head: `5c2f0ef25c90ccdbda5bef06ff38db7a38420fcc`.
