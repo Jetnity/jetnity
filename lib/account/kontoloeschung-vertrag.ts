@@ -117,7 +117,8 @@ export function loeschUmgebungErlaubt(supabaseUrl: string | null | undefined): b
     return url.protocol === 'https:'
   }
   if (url.protocol !== 'http:') return false
-  return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === 'kong'
+  // Node liefert die IPv6-Loopback-Adresse als `[::1]`, nicht als `::1`.
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]' || host === 'kong'
 }
 
 export function jwtAnspruecheLesen(
