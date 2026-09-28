@@ -96,8 +96,9 @@ export function loeschAnfragePruefen(koerper: unknown): { ok: true } | { ok: fal
 }
 
 /**
- * Nur das Development-Projekt und eine lokale Supabase-Laufzeit.
- * Jede andere gehostete URL, einschliesslich Production, ist geschlossen.
+ * Exaktes Development- und Production-Projekt nur über HTTPS, plus die
+ * geprüften lokalen HTTP-Hosts. Jede andere gehostete URL bleibt geschlossen.
+ * Production- und Development-HTTP bleiben geschlossen.
  */
 export function loeschUmgebungErlaubt(supabaseUrl: string | null | undefined): boolean {
   if (!supabaseUrl) return false
@@ -109,10 +110,15 @@ export function loeschUmgebungErlaubt(supabaseUrl: string | null | undefined): b
   }
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return false
   const host = url.hostname.toLowerCase()
-  if (host === `${PRODUKTIONS_PROJEKT_REF}.supabase.co`) return false
-  if (host === `${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`) return url.protocol === 'https:'
+  if (
+    host === `${PRODUKTIONS_PROJEKT_REF}.supabase.co` ||
+    host === `${ENTWICKLUNGS_PROJEKT_REF}.supabase.co`
+  ) {
+    return url.protocol === 'https:'
+  }
   if (url.protocol !== 'http:') return false
-  return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === 'kong'
+  // Node liefert die IPv6-Loopback-Adresse als `[::1]`, nicht als `::1`.
+  return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]' || host === 'kong'
 }
 
 export function jwtAnspruecheLesen(

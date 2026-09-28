@@ -1,7 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / A-KAYAK-INQUIRY-1 SENT / WAITING FOR KAYAK RESPONSE / NO FURTHER PROVIDER ACTION YET**
+Status: **NORMAL / #592 PRODUCTION BACKEND ACTIVE / PR #597 PRE-MERGE RE-GATE / KAYAK RESPONSE PENDING**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
@@ -84,13 +84,15 @@ Development Supabase:
 - bundle sha256 `3719e8762717d05cb5cb89db0f4f8c7f8bdf70f78c1c2b0b12a83cfccc2586e6`
 - Development-only migration `reise_graph_kaskade_tiefe` applied and verified
 
-Production Supabase:
+Production Supabase at this checkpoint's task-creation state:
 
 - ref `qscbgcdmivbbnzrcyegn`
 - Edge Functions: **0**
-- `20260927230000_reise_graph_kaskade_tiefe.sql`: **NOT applied**
+- `20260927230000_reise_graph_kaskade_tiefe.sql`: **NOT applied** at the time of this checkpoint
 - no real Production user was deleted
-- deletion UI remains fail-closed for Production environment
+- deletion UI remained fail-closed for the Production environment at that time
+
+Later live fact, 28 September 2026, Technical Lead: the Production migration is **APPLIED**. Current history version is `20260927230000`, name `reise_graph_kaskade_tiefe`. The remote history was repaired to that repository filename. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. After TL FINAL PASS on PR #597 exact head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa`, the Technical Lead deployed Production `account-delete-v1`: **ACTIVE v1**, `verify_jwt=true`, Function id `58a3892d-2743-4a6d-a301-acd311ad7fa7`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`. No real Production account has been used or deleted. Cursor did not apply the migration, repair history, or deploy the Production Function.
 
 PR #591: **MERGED**
 
@@ -104,11 +106,15 @@ Purpose: repository continuity closure so old NOT-PASS wording does not become c
 
 ### #592 — Production account erasure activation
 
-**OPEN / PRODUCT-OWNER GATE / NOT AUTHORIZED YET**
+**PRODUCT OWNER APPROVED THE BOUNDED ACTIVATION. MIGRATION + PRODUCTION FUNCTION ARE ACTIVE. PR #597 POST-DEPLOY DOCS HEAD MUST RE-GATE BEFORE MERGE; SYNTHETIC PRODUCTION SMOKE REMAINS AFTER MERGE.**
 
-A future explicit approval must separately authorize:
+Historical task-creation list below is not the current migration state.
 
-- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql`;
+The Technical Lead has applied the migration and deployed `account-delete-v1` after FINAL PASS on exact PR head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa`. Current Function truth: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`. The TL post-deploy continuity commit now requires fresh exact-head CI/Preview/TL re-gating before merge. After merge, verify Production and perform a bounded synthetic account smoke if a safe synthetic-account path is available.
+
+The task-creation list was:
+
+- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql` — **done by the Technical Lead**; current history version `20260927230000`, name `reise_graph_kaskade_tiefe`;
 - Production deployment of `account-delete-v1`;
 - Production UI activation;
 - bounded Production smoke design.

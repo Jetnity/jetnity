@@ -5653,6 +5653,27 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0215 – Production-Kontolöschung nur für das exakte HTTPS-Projekt
+
+**Datum:** 28. September 2026
+**Status:** Repository-Vertrag auf Draft-Branch `feat/production-account-erasure-activation-1`. Technical-Lead FINAL PASS wurde auf exact head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa` erteilt; Production-Backend ist aktiv. Der post-deploy Continuity-Head ist noch nicht Ready oder gemergt und muss vor Integration frisch gegatet werden. Binding: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`, Issue #592. Die Product-Owner-Freigabe gilt der begrenzten Aktivierung des bereits akzeptierten V1-Löschwegs. Dieser ADR ist nicht selbst das Ausführen der Migration, nicht das Function-Deploy und nicht die Löschung eines echten Production-Kontos.
+
+**Entscheidung:** `loeschUmgebungErlaubt()` erlaubt das exakte Production-Projekt `qscbgcdmivbbnzrcyegn.supabase.co` nur über HTTPS, neben dem exakten Development-Projekt über HTTPS und den bereits geprüften lokalen HTTP-Hosts. Unbekannte `*.supabase.co`-Projekte, fremde Hosts, fehlerhafte URLs und Production oder Development über HTTP bleiben geschlossen. Es gibt keinen zweiten Schalter. Edge Function, Einstellungen und `KontoLoeschen` benutzen weiter denselben Vertrag. Bestätigung, frisches Passwort, MFA/AAL2, JWT-Identität, Storage-Besitz, Ereignis-Löschung, Auth-Löschung erst nach dem Aufräumen, OAuth-Sperre und generische Klassen bleiben unverändert. Der Development-Nachweis in `kontoloeschung-direkt.ts` bricht bei Production weiter vor dem Netz ab.
+
+**Kontext:** PR #590 ist gemergt. Der Development-Nachweis war 11/11. Die Function und die Oberfläche hängen an derselben Umgebungssperre. Ohne diese Änderung bliebe ein späteres Production-Deploy fail-closed als `umgebung_gesperrt`. Historischer task-creation state, 28. September 2026, vor der Technical-Lead-Anwendung: die Graph-Kaskade war auf Production noch nicht angewandt, und Production hatte keine Edge Function `account-delete-v1`. Das ist nicht der aktuelle Stand.
+
+**Nachtrag, 28. September 2026, Technical-Lead-Livebefund:** Die Production-Migration ist angewandt und unabhängig verifiziert. Die aktuelle Historie ist Version `20260927230000`, Name `reise_graph_kaskade_tiefe`. Der Technical Lead hat die Remote-Historie auf diesen Repository-Dateinamen repariert. `reise_graph_geaendert()` bleibt SECURITY INVOKER. Die Trigger-Anzahl bleibt 9. Cursor hat die Anwendung und die Reparatur nicht ausgeführt und die Migrationsdatei nicht verändert.
+
+**Nachtrag, 28. September 2026, Production-Function:** Nach Technical-Lead FINAL PASS auf PR #597 exact head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa` hat der Technical Lead `account-delete-v1` auf Production deployt und live zurückgelesen: ACTIVE v1, `verify_jwt=true`, Function id `58a3892d-2743-4a6d-a301-acd311ad7fa7`, Bundle-SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`. Kein reales Production-Konto wurde benutzt oder gelöscht. Die post-deploy Continuity-Änderung erzeugt einen neuen docs-only Head und muss vor Merge erneut exakt gegatet werden.
+
+**Alternativen:** Ein separates Production-Flag; die Sperre bis nach dem Deploy lassen; Production-HTTP ebenfalls öffnen.
+
+**Begründung:** Ein zweites Flag würde zwei Wahrheiten erzeugen. Die Sperre nach dem Deploy würde die Löschung stumm lassen. HTTP für die gehosteten Projekte wäre kein exaktes Supabase-Projekt.
+
+**Konsequenzen:** Sobald die gemergte App auf das exakte Production-Projekt zeigt, bietet `/account/settings` die vorhandene Löschoberfläche an, und die Function lehnt das Projekt nicht mehr allein wegen der Umgebung ab. Graph-Kaskade und `account-delete-v1` sind auf Production durch den Technical Lead aktiv. Secrets, Auth, OAuth und Indexing wurden nicht verändert. Vor Merge ist der post-deploy Docs-Head erneut zu gaten; nach Merge folgen Production-Readback und ein bounded synthetischer Smoke, sofern ein sicherer synthetischer Account-Weg verfügbar ist.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
