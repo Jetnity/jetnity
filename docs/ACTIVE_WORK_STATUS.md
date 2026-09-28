@@ -11,7 +11,8 @@ Status: **NORMAL / PRODUCTION ACCOUNT ERASURE ACTIVATION 1 IMPLEMENTED / STOP FO
 - Issue: #592. Draft PR: #597. Branch: `feat/production-account-erasure-activation-1`.
 - Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84` (behind 0 at this writing).
 - Runtime contract commit verified by local gates: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`.
-- Exact review head: the branch tip that contains this status update together with the slice STATUS, HANDOFF and SELF_REVIEW. Do not gate `2a2bc1d0` or any earlier SHA. A newer commit invalidates this gate.
+- Evidence narrative commit: `acd0aa8d214829aaad64a36de837266f134b982e`.
+- Exact review head: the child of that evidence commit. Confirm with `git rev-parse HEAD` and `git rev-parse HEAD^`. Do not gate `2a2bc1d0` or `acd0aa8d`. A newer commit invalidates this gate.
 - Repository change: `loeschUmgebungErlaubt()` allows exact `https://qscbgcdmivbbnzrcyegn.supabase.co` and still denies Production/Development HTTP, unknown Supabase projects, arbitrary hosts and malformed URLs.
 - Cursor did not apply a Production migration, deploy `account-delete-v1`, change secrets, Auth, OAuth or indexing, create or delete a Production user, mark Ready, or merge.
 - The accepted migration `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` is unchanged.

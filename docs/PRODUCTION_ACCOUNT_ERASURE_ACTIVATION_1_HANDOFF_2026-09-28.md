@@ -11,7 +11,8 @@ Draft PR: #597
 Branch: `feat/production-account-erasure-activation-1`  
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84`  
 Runtime commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Exact review head: branch tip containing this handoff. Do not review `2a2bc1d0` as the gated head.
+Evidence narrative commit: `acd0aa8d214829aaad64a36de837266f134b982e`  
+Exact review head: child of that evidence commit; `git rev-parse HEAD` after this stamp. Do not review `2a2bc1d0` or `acd0aa8d` as the gated head.
 
 Task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
 Status: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_STATUS_2026-09-28.md`  

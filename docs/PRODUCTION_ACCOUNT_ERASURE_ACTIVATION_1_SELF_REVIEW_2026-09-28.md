@@ -7,7 +7,8 @@ Issue: #592
 Draft PR: #597  
 Branch: `feat/production-account-erasure-activation-1`  
 Runtime commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Exact review head: the branch tip that contains this file. This self-review does not gate that tip.
+Evidence narrative commit: `acd0aa8d214829aaad64a36de837266f134b982e`  
+Exact review head: child of that evidence commit. This self-review does not replace an independent PASS.
 
 Session: `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`  
 Model: `grok-4.7-high-fast`

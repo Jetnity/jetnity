@@ -9,7 +9,8 @@ Branch: `feat/production-account-erasure-activation-1`
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84` (behind 0, ahead by the task commit plus this slice)  
 Binding task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
 Runtime commit covered by the local gates below: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Exact review head: the tip of this branch that contains this STATUS, the HANDOFF and the SELF_REVIEW. `2a2bc1d0` is the runtime parent, not the review head. Any later commit invalidates the gate.
+Evidence narrative commit: `acd0aa8d214829aaad64a36de837266f134b982e`  
+Exact review head: the child of `acd0aa8d214829aaad64a36de837266f134b982e` whose only change is this exact-head stamp. Read it with `git rev-parse HEAD`. Do not gate `2a2bc1d0` or `acd0aa8d`. Any commit after the stamp invalidates the gate.
 
 Cursor-Agent: **Jetnity production account erasure activation 1**, Generation 1  
 Required model: **Grok 4.7 High Fast** — confirmed (`originalModelName=grok-4.7-high-fast`)  
