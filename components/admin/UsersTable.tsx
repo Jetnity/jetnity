@@ -19,8 +19,10 @@ import { setUserRole, setUserStatus } from '@/app/(admin)/admin/users/actions'
 import {
   buildUsersListHref,
   normalizeUserSearch,
+  userSearchHrefCarriesDraft,
   USERS_SEARCH_DEBOUNCE_MS,
   usersListHrefFromParams,
+  usersListHrefMatches,
 } from '@/lib/admin/users-search-navigation'
 import {
   rankOf,
@@ -67,6 +69,7 @@ export default function UsersTable({
   const urlQ = sp?.has('q') ? normalizeUserSearch(sp.get('q') ?? '') : ''
   const [search, setSearch] = React.useState(() => normalizeUserSearch(q ?? ''))
   const [trackedUrl, setTrackedUrl] = React.useState(urlQuery)
+  const [ownSearchAcks, setOwnSearchAcks] = React.useState<string[]>([])
   const [pendingId, setPendingId] = React.useState<string | null>(null)
   const epoch = React.useRef(0)
   const spRef = React.useRef(sp)
@@ -78,8 +81,16 @@ export default function UsersTable({
   }, [sp, router])
 
   if (trackedUrl !== urlQuery) {
+    const hrefNow = usersListHrefFromParams(sp)
+    const ackIndex = ownSearchAcks.findIndex((href) => usersListHrefMatches(href, hrefNow))
+    const ownAck = ackIndex >= 0
     setTrackedUrl(urlQuery)
-    if (search !== urlQ) setSearch(urlQ)
+    if (ownAck) setOwnSearchAcks(ownSearchAcks.slice(ackIndex + 1))
+    else if (ownSearchAcks.length > 0) setOwnSearchAcks([])
+    // Nur fremde Navigation, Zurück/Vor und Seitenwechsel übernehmen die URL
+    // ins Feld. Die verspätete Bestätigung der eigenen Suche lässt einen
+    // inzwischen neueren Entwurf stehen.
+    if (!ownAck && search !== urlQ) setSearch(urlQ)
   }
 
   // Nur ein normalisiert anderer Entwurf bestätigt nach 400 ms und setzt dann
@@ -87,19 +98,23 @@ export default function UsersTable({
   React.useEffect(() => {
     const draft = normalizeUserSearch(search)
     if (draft === urlQ) return
+    if (ownSearchAcks.some((href) => userSearchHrefCarriesDraft(href, draft))) return
     const ticket = ++epoch.current
     const handle = window.setTimeout(() => {
       if (ticket !== epoch.current) return
       const aktuell = spRef.current
       const href = buildUsersListHref(aktuell, { q: draft, page: 1 })
       if (href === usersListHrefFromParams(aktuell)) return
+      setOwnSearchAcks((current) =>
+        current.some((item) => usersListHrefMatches(item, href)) ? current : [...current, href],
+      )
       routerRef.current.replace(href)
     }, USERS_SEARCH_DEBOUNCE_MS)
     return () => {
       window.clearTimeout(handle)
       if (epoch.current === ticket) epoch.current += 1
     }
-  }, [search, urlQ, urlQuery])
+  }, [search, urlQ, urlQuery, ownSearchAcks])
 
   const maxPage = Math.max(1, Math.ceil(total / pageSize))
 
@@ -110,6 +125,7 @@ export default function UsersTable({
     // und der laufende Timer kann die neue Seite nicht zurücksetzen.
     epoch.current += 1
     if (search !== urlQ) setSearch(urlQ)
+    if (ownSearchAcks.length > 0) setOwnSearchAcks([])
     const href = buildUsersListHref(sp, { q: urlQ, page: np })
     if (href === usersListHrefFromParams(sp)) return
     router.replace(href)

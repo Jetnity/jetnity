@@ -13,7 +13,7 @@ Live-state rule: while #608 is open, the next step is independent review of the 
 
 Writer: **Jetnity admin users search navigation 1**, Generation 1. Session https://cursor.com/agents/bc-32378ddb-57fe-45cb-8134-62721416684c. `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected; that qualifier is not a separate run-info field. Not Auto.
 
-The page-3 reset was reproduced on the actual rendered `UsersTable` before the fix. Fresh evidence is `docs/evidence/admin-users-search-navigation-1/`. Not signed-in Admin and not a physical device. Do not reuse seed `cbef14d1` checks as the pushed head's gate.
+R1 review `5344508093` on `433e9a25426c93f9949c017ef36229c569996d5b` is corrected on the current tip: delayed own-search acknowledgement keeps a newer draft; external navigation still wins. Fresh evidence is `docs/evidence/admin-users-search-navigation-1/`. Not signed-in Admin and not a physical device. Do not reuse seed `cbef14d1` or reviewed head `433e9a25` checks as the correction head's gate.
 
 Admin F remains the shipped #545 palette. Admin E and AP-8 stay gated. KAYAK, Sherpa and IATA responses remain pending. No provider, Production, or special-gate action follows from this slice.
 

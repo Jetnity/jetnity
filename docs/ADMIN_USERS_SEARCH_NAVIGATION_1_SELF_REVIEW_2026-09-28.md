@@ -4,6 +4,12 @@ Stand: 28 September 2026
 Role: implementation writer, not the independent reviewer.
 Head rule: the branch tip that contains this file is the delivery. It is not a Technical-Lead PASS.
 
+## R1
+
+Reviewed head `433e9a25426c93f9949c017ef36229c569996d5b`, review `5344508093`. The finding is accepted. Copying `urlQ` on every URL change treated our own delayed search commit as external navigation and deleted a newer draft. The synchronous harness could not catch that.
+
+The refutation now includes a held `replace`: `bobby` survives the older `bob` commit and is replaced once; editing back to `anna` survives and is written once; external navigation still cancels the held search; an older commit that arrives after the newer replace was already issued does not add a third replace or restore `bob` into the field. Pagination, unmount and StrictMode cases remain in the same harness run.
+
 ## Attempts to refute the fix
 
 1. Mount with `q=anna&page=3&source=support` under React StrictMode still rewrites page 1.

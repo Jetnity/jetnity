@@ -1,7 +1,7 @@
 # Admin Users Search Navigation 1 — report
 
 Stand: 28 September 2026
-Status: **DELIVERY FOR INDEPENDENT WORK/TL REVIEW — NOT PASS — NOT MERGED**
+Status: **R1 CORRECTION FOR INDEPENDENT WORK/TL REVIEW — NOT PASS — NOT MERGED**
 Task: `docs/ADMIN_USERS_SEARCH_NAVIGATION_1_TASK_2026-09-28.md` v1.0
 Issue: #607
 Draft PR: #608
@@ -13,7 +13,7 @@ Writer: **Jetnity admin users search navigation 1**, Generation 1.
 Session: https://cursor.com/agents/bc-32378ddb-57fe-45cb-8134-62721416684c
 `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected; that qualifier is not a separate run-info field. Not Auto. The session UI name remained `Admin users search navigation` because this run exposed no programmable rename.
 
-Behavior commit `c03b7d76e1ba5b868d14d362d11c8d174592c724` contains the fix, harness and this report's first body. Review the branch tip that contains this line. Live `git rev-parse` wins. This delivery does not claim Technical-Lead PASS, Ready, or merge.
+Work/TL R1 review `5344508093` required changes on exact head `433e9a25426c93f9949c017ef36229c569996d5b`. Review the branch tip that contains this R1 section. Live `git rev-parse` wins. This correction does not claim Technical-Lead PASS, Ready, or merge.
 
 ## 1. Live reconstruction before writes
 
@@ -55,9 +55,9 @@ The page label uses `shrink-0 whitespace-nowrap`. The baseline screenshot wrappe
 | Command | Result |
 | --- | --- |
 | `node scripts/admin-users-search-navigation-1-verify.mjs --baseline` | Defect reproduced on the unfixed component. Exit 0. |
-| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/users-search-navigation.test.ts` | 7 pass, 0 fail |
-| `node scripts/admin-users-search-navigation-1-verify.mjs` | 14 cases pass after the fix, including a second run after the ref-in-effect lint fix. Exit 0. No console or page errors. |
-| `npm test` | 4024 pass, 0 fail |
+| `node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/admin/users-search-navigation.test.ts` | 8 pass, 0 fail, including own-ack href matching |
+| `node scripts/admin-users-search-navigation-1-verify.mjs` | 18 cases pass after R1, including four delayed-commit cases plus pagination, unmount and StrictMode remount. Exit 0. No console or page errors. |
+| `npm test` | 4025 pass, 0 fail on the R1 correction |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors, 145 warnings, all pre-existing. Two `any` warnings remain in the untouched role/status handlers. |
 | `npm run check:dead` | 0 unreached files |
@@ -69,6 +69,14 @@ The page label uses `shrink-0 whitespace-nowrap`. The baseline screenshot wrappe
 | `npm run build` | pass. `check:setup` warned that no `.env` file is present and continued. |
 
 Focused ESLint on the edited runtime and harness files: 0 errors. Exact-head CI, Auth and Vercel for the pushed head are Technical-Lead gates. The green checks on seed `cbef14d1` are not this head's gate.
+
+## 4a. R1 — delayed own-search acknowledgement
+
+Review `5344508093` reproduced a P2 on the actual component with a delayed Next navigation boundary. Start `anna` / page 3, type `bob` and let the debounce call `replace` while holding the URL commit, type `bobby`, then commit the older `bob` URL before `bobby`'s timer. The previous render copied `urlQ` into the field whenever `trackedUrl` changed, so `bobby` was discarded and no `bobby` replace followed. Unchanged main keeps that newer edit. The synchronous stub could not see it.
+
+The correction treats a URL that matches a replace this table already issued as acknowledgement of our own search. That acknowledgement does not overwrite a newer draft, including a draft edited back to the previous committed value, and a draft whose replace is already queued is not queued again. A URL that does not match is external, Back/Forward, or pagination: it still replaces the field and cancels stale work.
+
+New harness cases, all passing on the actual `UsersTable`: `delayed-own-ack-keeps-newer-draft`, `delayed-own-ack-keeps-edit-back-to-previous`, `delayed-external-wins-over-held-search`, `delayed-older-ack-after-newer-replace-once`. The earlier pagination, unmount, remount/StrictMode and external cases still pass. No extra replace loop was observed after the delayed commits settled.
 
 ## 5. Limits
 

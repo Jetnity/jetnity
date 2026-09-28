@@ -13,6 +13,8 @@ type Store = {
   listeners: Set<Listener>
   replaces: UsersNavReplace[]
   actionCalls: string[]
+  delayCommit: boolean
+  pendingCommits: string[]
 }
 
 function store(): Store {
@@ -25,6 +27,8 @@ function store(): Store {
       listeners: new Set(),
       replaces: [],
       actionCalls: [],
+      delayCommit: false,
+      pendingCommits: [],
     }
   }
   return win.__usersNavStore
@@ -55,9 +59,32 @@ export function recordUsersNavAction(name: string) {
   store().actionCalls.push(name)
 }
 
+export function setUsersNavDelayCommit(delay: boolean) {
+  store().delayCommit = delay
+}
+
+export function pendingUsersNavCommits(): string[] {
+  return [...store().pendingCommits]
+}
+
+/** Applies the oldest held router.replace. Returns null when none is waiting. */
+export function commitNextUsersNav(): string | null {
+  const state = store()
+  const href = state.pendingCommits.shift()
+  if (!href) return null
+  state.history[state.index] = searchFromHref(href)
+  notify()
+  return href
+}
+
+function dropPendingCommits() {
+  store().pendingCommits.length = 0
+}
+
 /** Authoritative history change, as in Back/Forward or an external URL update. */
 export function externalUsersSearch(search: string, mode: 'push' | 'replace' = 'push') {
   const state = store()
+  dropPendingCommits()
   const next = search.replace(/^\?/, '')
   if (mode === 'replace') {
     state.history[state.index] = next
@@ -71,12 +98,14 @@ export function externalUsersSearch(search: string, mode: 'push' | 'replace' = '
 
 export function backUsersSearch() {
   const state = store()
+  dropPendingCommits()
   if (state.index > 0) state.index -= 1
   notify()
 }
 
 export function forwardUsersSearch() {
   const state = store()
+  dropPendingCommits()
   if (state.index < state.history.length - 1) state.index += 1
   notify()
 }
@@ -98,6 +127,10 @@ export function useRouter() {
     replace(href: string) {
       const state = store()
       state.replaces.push({ href, at: Date.now() })
+      if (state.delayCommit) {
+        state.pendingCommits.push(href)
+        return
+      }
       state.history[state.index] = searchFromHref(href)
       notify()
     },

@@ -36,3 +36,24 @@ export function usersListHrefFromParams(current: URLSearchParams | string | null
   const qs = typeof current === 'string' ? current.replace(/^\?/, '') : (current?.toString() ?? '')
   return qs.length > 0 ? `/admin/users?${qs}` : '/admin/users'
 }
+
+function searchParamsOfHref(href: string): URLSearchParams {
+  const query = href.includes('?') ? href.slice(href.indexOf('?') + 1) : ''
+  return new URLSearchParams(query)
+}
+
+/** Vergleicht zwei Benutzerlisten-Adressen unabhängig von der Parameterreihenfolge. */
+export function usersListHrefMatches(left: string, right: string): boolean {
+  const a = searchParamsOfHref(left)
+  const b = searchParamsOfHref(right)
+  const keys = new Set([...a.keys(), ...b.keys()])
+  for (const key of keys) {
+    if (a.get(key) !== b.get(key)) return false
+  }
+  return true
+}
+
+/** True, wenn diese Adresse genau den normalisierten Entwurf als bestätigte Suche trägt. */
+export function userSearchHrefCarriesDraft(href: string, draft: string): boolean {
+  return normalizeUserSearch(searchParamsOfHref(href).get('q') ?? '') === normalizeUserSearch(draft)
+}

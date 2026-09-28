@@ -6,7 +6,9 @@ import {
   buildUsersListHref,
   normalizeUserSearch,
   userSearchEditChangesFilter,
+  userSearchHrefCarriesDraft,
   usersListHrefFromParams,
+  usersListHrefMatches,
 } from './users-search-navigation'
 
 describe('Admin-Benutzersuche Navigation', () => {
@@ -60,6 +62,16 @@ describe('Admin-Benutzersuche Navigation', () => {
     assert.equal(params.get('q'), text)
     assert.equal(params.get('page'), '3')
     assert.equal(params.get('source'), 'support')
+  })
+
+  test('erkennt die eigene Suchbestaetigung und einen neueren Entwurf', () => {
+    const bob = buildUsersListHref('q=anna&page=3&source=support', { q: 'bob', page: 1 })
+    const same = usersListHrefFromParams('source=support&page=1&q=bob')
+    assert.equal(usersListHrefMatches(bob, same), true)
+    assert.equal(usersListHrefMatches(bob, '/admin/users?q=bobby&page=1&source=support'), false)
+    assert.equal(userSearchHrefCarriesDraft(bob, 'bob'), true)
+    assert.equal(userSearchHrefCarriesDraft(bob, ' bobby '), false)
+    assert.equal(userSearchHrefCarriesDraft(bob, 'anna'), false)
   })
 
   test('ungueltige Seite wird zu 1, gleiche Adresse bleibt vergleichbar', () => {

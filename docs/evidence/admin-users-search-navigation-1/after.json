@@ -35,7 +35,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=berta&page=1&source=support",
-            "at": 1790628412515
+            "at": 1790629144191
           }
         ],
         "search": "q=berta&page=1&source=support",
@@ -52,7 +52,7 @@
         "replaces": [
           {
             "href": "/admin/users?page=1&source=support",
-            "at": 1790628413444
+            "at": 1790629145128
           }
         ],
         "search": "page=1&source=support",
@@ -87,7 +87,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=anna&page=2&source=support",
-            "at": 1790628415642
+            "at": 1790629147312
           }
         ],
         "search": "q=anna&page=2&source=support",
@@ -154,7 +154,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=anna&page=2&source=support",
-            "at": 1790628421058
+            "at": 1790629152711
           }
         ],
         "search": "q=anna&page=2&source=support",
@@ -171,7 +171,7 @@
         "replaces": [
           {
             "href": "/admin/users?q=ber&page=1&source=support",
-            "at": 1790628422585
+            "at": 1790629154244
           }
         ],
         "search": "q=ber&page=1&source=support",
@@ -189,6 +189,86 @@
         "search": "q=anna&page=3&source=support",
         "input": null,
         "pageText": null,
+        "actionCalls": []
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "delayed-own-ack-keeps-newer-draft",
+      "ok": true,
+      "done": {
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support",
+            "at": 1790629156160
+          },
+          {
+            "href": "/admin/users?q=bobby&page=1&source=support",
+            "at": 1790629156602
+          }
+        ],
+        "search": "q=bobby&page=1&source=support",
+        "input": "bobby",
+        "pageText": "1 / 3",
+        "actionCalls": []
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "delayed-own-ack-keeps-edit-back-to-previous",
+      "ok": true,
+      "done": {
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support",
+            "at": 1790629157945
+          },
+          {
+            "href": "/admin/users?q=anna&page=1&source=support",
+            "at": 1790629158384
+          }
+        ],
+        "search": "q=anna&page=1&source=support",
+        "input": "anna",
+        "pageText": "1 / 3",
+        "actionCalls": []
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "delayed-external-wins-over-held-search",
+      "ok": true,
+      "done": {
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support",
+            "at": 1790629159722
+          }
+        ],
+        "search": "q=elsa&page=2&source=support",
+        "input": "elsa",
+        "pageText": "2 / 3",
+        "actionCalls": []
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "delayed-older-ack-after-newer-replace-once",
+      "ok": true,
+      "done": {
+        "replaces": [
+          {
+            "href": "/admin/users?q=bob&page=1&source=support",
+            "at": 1790629161097
+          },
+          {
+            "href": "/admin/users?q=bobby&page=1&source=support",
+            "at": 1790629161521
+          }
+        ],
+        "search": "q=bobby&page=1&source=support",
+        "input": "bobby",
+        "pageText": "1 / 3",
         "actionCalls": []
       },
       "consoleErrors": []

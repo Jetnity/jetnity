@@ -483,6 +483,133 @@ async function gruen(browser, origin) {
   await fall(
     browser,
     origin,
+    'delayed-own-ack-keeps-newer-draft',
+    'q=anna&page=3&source=support',
+    { width: 1280, height: 800 },
+    async (page) => {
+      await page.evaluate(() => window.__usersNav.delayCommits(true))
+      const input = page.locator('input[placeholder="Suche nach Name oder E-Mail…"]')
+      await input.fill('bob')
+      await page.waitForFunction(() => window.__usersNav.replaces().length === 1 && window.__usersNav.pendingCommits().length === 1)
+      const held = await snapshot(page)
+      assert.equal(paramsOf(held.search).get('q'), 'anna')
+      assert.equal(paramsOf(held.search).get('page'), '3')
+      await input.fill('bobby')
+      const acked = await page.evaluate(() => window.__usersNav.commitNext())
+      assert.equal(paramsOf(acked.split('?')[1]).get('q'), 'bob')
+      await page.waitForFunction(() => window.__usersNav.input() === 'bobby' && window.__usersNav.search().includes('q=bob'))
+      const during = await snapshot(page)
+      assert.equal(during.replaces.length, 1)
+      assert.equal(during.input, 'bobby')
+      await page.waitForFunction(() => window.__usersNav.replaces().length === 2)
+      const queued = await snapshot(page)
+      assert.equal(paramsOf(queued.replaces[1].href.split('?')[1]).get('q'), 'bobby')
+      assert.equal(queued.input, 'bobby')
+      await page.evaluate(() => window.__usersNav.commitNext())
+      await warteStill(page, 700)
+      const done = await snapshot(page)
+      assert.equal(done.replaces.length, 2)
+      assert.equal(done.input, 'bobby')
+      assert.equal(paramsOf(done.search).get('q'), 'bobby')
+      assert.equal(paramsOf(done.search).get('page'), '1')
+      assert.equal(paramsOf(done.search).get('source'), 'support')
+      return { done }
+    },
+  )
+
+  await fall(
+    browser,
+    origin,
+    'delayed-own-ack-keeps-edit-back-to-previous',
+    'q=anna&page=3&source=support',
+    { width: 1280, height: 800 },
+    async (page) => {
+      await page.evaluate(() => window.__usersNav.delayCommits(true))
+      const input = page.locator('input[placeholder="Suche nach Name oder E-Mail…"]')
+      await input.fill('bob')
+      await page.waitForFunction(() => window.__usersNav.pendingCommits().length === 1)
+      await input.fill('anna')
+      await page.evaluate(() => window.__usersNav.commitNext())
+      await page.waitForFunction(() => window.__usersNav.input() === 'anna' && window.__usersNav.search().includes('q=bob'))
+      await page.waitForFunction(() => window.__usersNav.replaces().length === 2)
+      const queued = await snapshot(page)
+      assert.equal(paramsOf(queued.replaces[1].href.split('?')[1]).get('q'), 'anna')
+      assert.equal(queued.input, 'anna')
+      await page.evaluate(() => window.__usersNav.commitNext())
+      await warteStill(page, 700)
+      const done = await snapshot(page)
+      assert.equal(done.replaces.length, 2)
+      assert.equal(done.input, 'anna')
+      assert.equal(paramsOf(done.search).get('q'), 'anna')
+      assert.equal(paramsOf(done.search).get('page'), '1')
+      assert.equal(paramsOf(done.search).get('source'), 'support')
+      return { done }
+    },
+  )
+
+  await fall(
+    browser,
+    origin,
+    'delayed-external-wins-over-held-search',
+    'q=anna&page=3&source=support',
+    { width: 1280, height: 800 },
+    async (page) => {
+      await page.evaluate(() => window.__usersNav.delayCommits(true))
+      const input = page.locator('input[placeholder="Suche nach Name oder E-Mail…"]')
+      await input.fill('bob')
+      await page.waitForFunction(() => window.__usersNav.pendingCommits().length === 1)
+      await input.fill('bobby')
+      await page.evaluate(() => window.__usersNav.external('q=elsa&page=2&source=support'))
+      await page.waitForFunction(() => window.__usersNav.input() === 'elsa')
+      await warteStill(page, 700)
+      const done = await snapshot(page)
+      assert.equal(done.replaces.length, 1)
+      assert.equal(paramsOf(done.replaces[0].href.split('?')[1]).get('q'), 'bob')
+      assert.equal(done.input, 'elsa')
+      assert.equal(paramsOf(done.search).get('q'), 'elsa')
+      assert.equal(paramsOf(done.search).get('page'), '2')
+      assert.equal(paramsOf(done.search).get('source'), 'support')
+      const pending = await page.evaluate(() => window.__usersNav.pendingCommits())
+      assert.deepEqual(pending, [])
+      return { done }
+    },
+  )
+
+  await fall(
+    browser,
+    origin,
+    'delayed-older-ack-after-newer-replace-once',
+    'q=anna&page=3&source=support',
+    { width: 1280, height: 800 },
+    async (page) => {
+      await page.evaluate(() => window.__usersNav.delayCommits(true))
+      const input = page.locator('input[placeholder="Suche nach Name oder E-Mail…"]')
+      await input.fill('bob')
+      await page.waitForFunction(() => window.__usersNav.replaces().length === 1)
+      await input.fill('bobby')
+      await page.waitForFunction(() => window.__usersNav.replaces().length === 2)
+      const beforeAck = await snapshot(page)
+      assert.equal(paramsOf(beforeAck.search).get('q'), 'anna')
+      assert.equal(beforeAck.input, 'bobby')
+      await page.evaluate(() => window.__usersNav.commitNext())
+      const afterOld = await snapshot(page)
+      assert.equal(afterOld.input, 'bobby')
+      assert.equal(paramsOf(afterOld.search).get('q'), 'bob')
+      assert.equal(afterOld.replaces.length, 2)
+      await page.evaluate(() => window.__usersNav.commitNext())
+      await warteStill(page, 700)
+      const done = await snapshot(page)
+      assert.equal(done.replaces.length, 2)
+      assert.equal(done.input, 'bobby')
+      assert.equal(paramsOf(done.search).get('q'), 'bobby')
+      assert.equal(paramsOf(done.search).get('page'), '1')
+      return { done }
+    },
+  )
+
+  await fall(
+    browser,
+    origin,
     'mobile-visual',
     'q=anna&page=3&source=support',
     { width: 390, height: 844 },

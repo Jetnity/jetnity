@@ -20,6 +20,17 @@ This folder is the actual-component harness for `components/admin/UsersTable.tsx
 
 A page click keeps the committed URL filter, discards the uncommitted input, and cancels the debounce. The field then matches the filter that produced the list. It does not apply the draft on the requested page.
 
+## R1 delayed own-search acknowledgement
+
+Work/TL review `5344508093` on head `433e9a25426c93f9949c017ef36229c569996d5b`: a synchronous `replace` hid a regression. The harness can now hold `router.replace` and commit it later.
+
+- `delayed-own-ack-keeps-newer-draft`: anna/page 3, type bob, let replace queue, type bobby, then commit bob. The field stays `bobby`, and one later replace carries `bobby`.
+- `delayed-own-ack-keeps-edit-back-to-previous`: after the held bob replace, edit back to `anna`, then commit bob. The field stays `anna`, and one later replace restores `q=anna`.
+- `delayed-external-wins-over-held-search`: external navigation drops the held commit and the newer draft.
+- `delayed-older-ack-after-newer-replace-once`: bobby's replace is already queued; committing the older bob URL does not wipe bobby or schedule a third replace.
+
+Own-search URL acknowledgement does not copy `urlQ` into the field. Back, Forward, external navigation and pagination still do. A draft whose replace was already issued is not issued again.
+
 ## Probe flag
 
 `node scripts/admin-users-search-navigation-1-verify.mjs --baseline` is the pre-fix probe. On the fixed head it exits non-zero because the unsolicited reset is gone. The gate is the script without `--baseline`.
