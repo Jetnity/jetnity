@@ -1,7 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / #597 MERGED + POST-MERGE VERIFIED / PRODUCTION ACCOUNT ERASURE ACTIVE / SYNTHETIC SMOKE BLOCKED / KAYAK RESPONSE PENDING**
+Status: **NORMAL / #592 PRODUCTION ACCOUNT ERASURE E2E PASS + CLOSED / KAYAK RESPONSE PENDING**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
@@ -106,19 +106,21 @@ Purpose: repository continuity closure so old NOT-PASS wording does not become c
 
 ### #592 — Production account erasure activation
 
-**MERGED / POST-MERGE VERIFIED / SYNTHETIC PRODUCTION SMOKE BLOCKED**
+**COMPLETE / PRODUCTION E2E DELETE PASS**
 
-Runtime baseline:
+Integrated runtime:
 - PR #597 merge: `929d671edbcd673d336f97b9b6734ba9f0babe89`;
-- GitHub post-merge run `36429943337`: SUCCESS;
-- Vercel Production `dpl_2zC37wt2pNRBEraSy1K2H6J1irpQ`: READY on exact runtime SHA, aliases include `jetnity.com`;
-- migration history: `20260927230000 reise_graph_kaskade_tiefe`;
-- `reise_graph_geaendert()`: SECURITY INVOKER, 9 triggers;
+- migration: `20260927230000 reise_graph_kaskade_tiefe`;
 - `account-delete-v1`: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
 
-No real Production account has been used or deleted. No Auth/MFA/OAuth/indexing/provider/payment configuration was changed.
+Final Production E2E:
+- Product Owner authorized a disposable Production test account;
+- UI deletion completed and redirected to `/konto-geloescht` with signed-out state;
+- Function log: `kontoloeschung klasse=geloescht schritt=fertig`;
+- Auth residues: users/identities/sessions/MFA/one-time tokens = 0;
+- Jetnity/Storage residues: profiles/trips/travellers/visits/security events/owned objects = 0.
 
-The only remaining #592 evidence residual is the bounded synthetic Production deletion smoke. It is **BLOCKED / NOT RUN** because current authorized tooling exposes no safe Supabase Auth Admin create-user path and the repository has no approved Production synthetic-account creation workflow. Do not use a real account, direct `auth.users` SQL insertion, or an unreviewed privileged test endpoint.
+The prior synthetic-smoke-blocked residual is superseded. #592 is closed. No unrelated Production configuration changed.
 
 ### #587 — Jetnity Nutzungsbedingungen / AGB
 
