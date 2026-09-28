@@ -5,7 +5,7 @@ Issue: #605
 Draft PR: #606
 Branch: `docs/admin-f-reconciliation-1`
 Cursor-Agent: **Jetnity admin F reconciliation 1**, Generation 1
-Status: **STOPPED / DRAFT / NOT READY / NOT MERGED**
+Status: **R1 CORRECTION STOPPED / DELIVERY-TIME SNAPSHOT / NOT A PASS / NOT MERGED**
 
 ## Session
 
@@ -26,11 +26,13 @@ Fresh evidence is only under `docs/evidence/admin-f-reconciliation-1/`. Historic
 
 Open GitHub pull requests re-read during this session: #606 plus historical drafts #28, #39, #40, #50 and #52. That is a bounded GitHub check. The Technical Lead’s dispatch says the existing Jetnity agent workspace showed no overlapping running writer. This agent did not repeat that UI inventory.
 
-## Exact next unfinished step
+## Live-state rule
 
-Technical Lead independently reviews the exact delivery head of #606 after its own CI, Auth and Vercel evidence exist. Do not reuse the seed-head checks on `ef866098`. Route any fix to this same session and logical name. Only the Technical Lead may Ready or merge, and only after a new exact-head PASS.
+[PR #606](https://github.com/Jetnity/jetnity/pull/606) being Draft and in review is a delivery-time snapshot from 28 September 2026. It does not preclaim PASS, merge, or a post-merge deployment.
 
-After that review, external KAYAK, Sherpa and IATA replies are still pending. A safe provider-independent residual may be considered only through a fresh precheck and a new task. This handoff does not start that task.
+While #606 is open, the unfinished step is independent Technical-Lead review of the exact R1 correction head. Route any further fix to this same session and logical name. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work. Only the Technical Lead may Ready or merge.
+
+External KAYAK, Sherpa and IATA replies stay pending. A safe provider-independent residual still needs that fresh precheck and a new task. This handoff does not start that task. Checks on `27776ca5d215500ace5018694546164a5f217486` and on seed `ef866098` are not the correction head's gate. R1 is recorded in `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md` §10.
 
 ## Do not
 

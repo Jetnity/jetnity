@@ -5,7 +5,7 @@ Issue: #605
 Draft PR: #606
 Branch: `docs/admin-f-reconciliation-1`
 Task v1.1 commit: `a5fc6b05f235a7d9c422b87edcbd890671c3b0c4`
-Status: **DELIVERED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **R1 CORRECTION / DELIVERY-TIME SNAPSHOT / NOT A PASS / NOT MERGED**
 Cursor-Agent: **Jetnity admin F reconciliation 1**, Generation 1.
 Required model: **Grok 4.7 High Fast**, no Auto/substitution.
 Tool model field: `originalModelName=grok-4.7` from cursor-cloud `run-info`. The dispatch states High Fast was visibly selected. That qualifier is not a separate `run-info` field.
@@ -29,7 +29,13 @@ Report: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`
 Handoff: `docs/ADMIN_F_RECONCILIATION_1_HANDOFF_2026-09-28.md`  
 Self-review: `docs/ADMIN_F_RECONCILIATION_1_SELF_REVIEW_2026-09-28.md`
 
-Exact next unfinished step: independent Technical-Lead review of the delivery head. Cursor does not Ready, merge, or open a follow-up.
+## Live-state rule
+
+[PR #606](https://github.com/Jetnity/jetnity/pull/606) Draft/review wording in this file is a delivery-time snapshot. It does not preclaim PASS, merge, or a post-merge deployment.
+
+While #606 is open, the unfinished step is independent Technical-Lead review of the exact head that contains the R1 correction. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work. Cursor does not Ready or merge.
+
+R1 review `5343870824` on `27776ca5d215500ace5018694546164a5f217486` and its resolution are in `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md` §10. Checks on `27776ca5` are not the correction head's gate.
 
 ---
 

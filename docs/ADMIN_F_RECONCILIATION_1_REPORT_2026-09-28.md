@@ -7,7 +7,9 @@ Branch: `docs/admin-f-reconciliation-1`
 Baseline: `main@6d5299f73e8da1b8eec7604686e5d272b70fd256`
 Task: `docs/ADMIN_F_RECONCILIATION_1_TASK_2026-09-28.md` v1.1 at `a5fc6b05f235a7d9c422b87edcbd890671c3b0c4`
 Cursor-Agent: **Jetnity admin F reconciliation 1**, Generation 1
-Status: **DELIVERED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **R1 CORRECTION DELIVERED / DELIVERY-TIME SNAPSHOT / NOT A PASS / NOT MERGED**
+
+Delivery-time snapshot for [PR #606](https://github.com/Jetnity/jetnity/pull/606). While #606 is open, the next step is independent Technical-Lead review of the exact head that contains this correction. Once #606 is merged, this reconciliation is closed: do not redispatch it, read the Technical Lead closure evidence on #606, and run a fresh precheck before any next bounded work. This status does not preclaim PASS, merge, or a post-merge deployment.
 
 ## 1. Verdict
 
@@ -92,4 +94,14 @@ No runtime, Auth, role, RLS, migration, database, Production, provider, payment,
 
 ## 9. Stop
 
-Independent Technical-Lead review of the exact delivery head is the next unfinished step. A new head invalidates this gate.
+Live-state rule for [PR #606](https://github.com/Jetnity/jetnity/pull/606): while it is open, independent Technical-Lead review of the exact correction head is the unfinished step. Once it is merged, this reconciliation is closed. Do not redispatch it. Read the Technical Lead closure evidence on #606 and run a fresh precheck before any next bounded work. Cursor does not Ready or merge. This section does not preclaim PASS, merge, or a post-merge deployment. A new head invalidates the previous gate, including checks on `27776ca5d215500ace5018694546164a5f217486`.
+
+## 10. R1 and resolution
+
+Independent Technical-Lead review [5343870824](https://github.com/Jetnity/jetnity/pull/606#pullrequestreview-5343870824) on head `27776ca5d215500ace5018694546164a5f217486` required two documentation fixes before PASS. That review is COMMENT, not PASS. Its observation that CI was still in progress and that a Preview existed at `27776ca5` does not transfer to the correction head.
+
+R1.1: The separate §3 row `F Command Palette` in `docs/ADMIN_D_K_GROWTH_CONTROL_AUDIT_EVIDENCE.md` now keeps `placeholder` as the 26 August 2026 snapshot and marks it superseded by #545. Grouped “Copilot/Suche disabled” prose is qualified for search only. Copilot Pro stays a disabled placeholder. Other audit conclusions are unchanged.
+
+R1.2: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md`, `ROADMAP.md`, this report, the status file and the handoff describe Draft/review as a delivery-time snapshot. Each carries the #606 link and the live-state rule above.
+
+Resolution is the commit that contains this section. It is not a PASS and not a merge.

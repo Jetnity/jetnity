@@ -1,10 +1,14 @@
 # Jetnity – Handoff und nächste Schritte
 
-## Aktueller Stand: Admin F reconciliation, 28. September 2026
+## Lieferzeitpunkt-Snapshot: Admin F reconciliation, 28. September 2026
 
-Die begrenzte Admin-Bereichspalette ist seit PR #545 auf `main` (akzeptierter Head `43720a65ca5296e2009158ccd0bce6b30796ca95`, Merge `8fcccd6475f41703bd2a31deecb3067391f330b4`). Draft PR #606 gleicht nur die veralteten Platzhalter-Hinweise ab und stoppt für unabhängiges Technical-Lead-Review. Nicht erneut bauen. Bericht: `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md`.
+[PR #606](https://github.com/Jetnity/jetnity/pull/606) war beim Schreiben dieses Absatzes ein Draft im unabhängigen Technical-Lead-Review. Das ist kein dauerhafter Writer-Status und kein Vorgriff auf PASS, Merge oder ein Deployment nach dem Merge.
 
-Solange KAYAK, Sherpa und IATA unbeantwortet sind, dürfen sichere provider-unabhängige nützliche Reste nur nach neuem Precheck erwogen werden. Das erlaubt keine zweite Admin-F-Palette, keinen Phase-2-Sammelausbau, keinen neuen API-/Daten-/Rechtevertrag und kein besonderes Gate. Cursor setzt kein Ready und mergt nicht.
+Live-Regel: Solange #606 offen ist, ist der nächste Schritt das unabhängige Technical-Lead-Review des exakten Heads. Sobald #606 gemergt ist, ist diese Reconciliation geschlossen: nicht erneut dispatchen, die Technical-Lead-Closure auf #606 lesen, und vor jeder nächsten begrenzten Arbeit einen frischen Precheck machen.
+
+Die begrenzte Admin-Bereichspalette ist seit PR #545 auf `main` (akzeptierter Head `43720a65ca5296e2009158ccd0bce6b30796ca95`, Merge `8fcccd6475f41703bd2a31deecb3067391f330b4`). Nicht erneut bauen. R1 `5343870824` und die Auflösung stehen in `docs/ADMIN_F_RECONCILIATION_1_REPORT_2026-09-28.md` §10.
+
+Solange KAYAK, Sherpa und IATA unbeantwortet sind, dürfen sichere provider-unabhängige nützliche Reste nur nach diesem frischen Precheck erwogen werden. Das erlaubt keine zweite Admin-F-Palette, keinen Phase-2-Sammelausbau, keinen neuen API-/Daten-/Rechtevertrag und kein besonderes Gate. Cursor setzt kein Ready und mergt nicht.
 
 Der Domain-/PrivacyBee-Abschluss darunter bleibt ein früherer Abschluss. Der 28-September-Checkpoint bleibt die externe Warteliste.
 
