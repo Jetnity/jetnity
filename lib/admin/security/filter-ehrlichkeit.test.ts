@@ -52,6 +52,32 @@ describe('Admin-Security Filter-Ehrlichkeit', () => {
     assert.throws(() => securityEreignisLeerart(1.5), /nichtnegative/)
   })
 
+  test('die Blockliste nennt dieselbe Grenze erst bei einer vollen Blocklisten-Nutzlast', () => {
+    assert.match(
+      ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt,
+      new RegExp(String(SECURITY_LISTEN_MAX_ZEILEN)),
+    )
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /können unvollständig sein/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /Gesperrte IPs/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /gelesenen Zeilen/)
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /24h-Kennzahlen/)
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /aufgezeichnete Zeilen/)
+    assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt, /abgeschnitten|weitere Einträge|alle gesperrten/i)
+    assert.notEqual(
+      ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt,
+      ADMIN_EHRLICHE_TEXTE.securityTabelleBegrenzt,
+    )
+    assert.match(widget, /securityReadIstAnDerGrenze\(data\.blocklist\.length\)/)
+    assert.match(widget, /ADMIN_EHRLICHE_TEXTE\.securityBlocklisteBegrenzt/)
+    assert.match(widget, /data-security-read-bound="blocklist"/)
+    assert.match(widget, /data-security-read-bound="events"/)
+    assert.match(widget, /Blockliste \(nicht enforced\)/)
+    assert.match(widget, /'\/api\/admin\/security\/block'/)
+    assert.match(widget, /'\/api\/admin\/security\/unblock'/)
+    assert.match(widget, /\{ ip, reason \}/)
+    assert.match(widget, /\{ ip \}/)
+  })
+
   test('das Widget trennt die Sätze und lässt Kennzahlen und Grenzen stehen', () => {
     assert.match(widget, /securityEreignisLeerart\(data\.events\.length\)/)
     assert.match(widget, /securityReadIstAnDerGrenze\(data\.events\.length\)/)
