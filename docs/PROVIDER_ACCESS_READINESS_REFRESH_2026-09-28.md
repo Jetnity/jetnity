@@ -1,10 +1,34 @@
 # Jetnity — Provider Access Readiness Refresh
 
 Date: 28 September 2026  
-Status: **READ-ONLY REFRESH COMPLETE / NO PROVIDER CONTACT / ONE PRODUCT-OWNER EXTERNAL-ACTION GATE IDENTIFIED**
+Status: **READ-ONLY REFRESH COMPLETE / A-KAYAK-INQUIRY-1 SENT / WAITING FOR KAYAK RESPONSE**
 
 Task: `docs/PROVIDER_ACCESS_READINESS_REFRESH_TASK_2026-09-28.md`  
 Task base: `main@d86aabbea373e47f5f7b8eda789aecfc31c39224`
+
+## Follow-up — A-KAYAK-INQUIRY-1 executed
+
+Product Owner approved the bounded inquiry and sent it from `info@jetnity.ch` to KAYAK's published `partnerships@kayak.com` contact.
+
+Subject: `Jetnity – Pre-launch inquiry for KAYAK Flights API Sandbox access`
+
+The sent message:
+- describes Jetnity truthfully as a Switzerland-first pre-launch travel-planning platform;
+- states interest in evaluating KAYAK for a possible long-term partnership;
+- asks for Flights Sandbox eligibility and Production traffic/cost/rate-limit/cache/attribution/Swiss-market/privacy terms;
+- does not claim a traffic threshold, public launch, existing provider relationship or Production access.
+
+Not performed:
+- no KAYAK public-form submission;
+- no Terms/Privacy acceptance;
+- no signup/account creation;
+- no API key/secret;
+- no Sandbox/live API call;
+- no spend;
+- no runtime adapter work;
+- no Production activation or indexing change.
+
+Current boundary: **WAITING FOR KAYAK RESPONSE**. The Technical Lead must review the full reply and any linked terms before any next external, contractual, credential, API or implementation step.
 
 ## 1. Executive conclusion
 
@@ -345,6 +369,4 @@ Do not approve Wego spend, Duffel business-model change, Travelfusion sales onbo
 
 ## 9. Stop boundary
 
-After this report is integrated, work stops at the external-action gate until the Product Owner explicitly approves or rejects `A-KAYAK-INQUIRY-1`.
-
-No automatic provider contact is permitted.
+The bounded inquiry has been sent. Work now stops until KAYAK responds. No signup, form submission, Terms acceptance, credential creation, API call, spend, runtime implementation or Production activation follows automatically.
