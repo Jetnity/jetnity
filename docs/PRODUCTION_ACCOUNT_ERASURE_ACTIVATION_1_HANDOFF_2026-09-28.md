@@ -11,15 +11,27 @@ Draft PR: #597
 Branch: `feat/production-account-erasure-activation-1`  
 Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84`  
 Runtime commit: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`  
-Evidence narrative commit: `acd0aa8d214829aaad64a36de837266f134b982e`  
-Exact review head: child of that evidence commit; `git rev-parse HEAD` after this stamp. Do not review `2a2bc1d0` or `acd0aa8d` as the gated head.
+Superseded stamp: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`  
+Exact review head: the commit that contains this reconciliation. Do not review `2c39f7ba` as the gated head.
 
 Task: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`  
 Status: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_STATUS_2026-09-28.md`  
 Self-review: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_SELF_REVIEW_2026-09-28.md`  
-Decision: ADR-0215
+Decision: ADR-0215, including the 28 September Nachtrag
 
 Cursor does not mark Ready, does not merge, and does not start a follow-up slice.
+
+## Production migration
+
+Applied and independently verified by the Technical Lead, not by Cursor:
+
+- history version `20260928123859_reise_graph_kaskade_tiefe`
+- `reise_graph_geaendert()` remains SECURITY INVOKER
+- trigger count remains 9
+
+The repository migration file is unchanged. Statements that the migration is currently unapplied are historical task-creation state only.
+
+The Production Function `account-delete-v1` is not deployed by this slice.
 
 ## Read first
 
@@ -27,29 +39,28 @@ Cursor does not mark Ready, does not merge, and does not start a follow-up slice
 2. `lib/account/kontoloeschung.test.ts` — Production HTTPS allow, HTTP deny, Function URL, MFA still blocks deletion
 3. `lib/account/kontoloeschung-direkt.ts` — Development proof still aborts on Production; not an activation switch
 4. `app/account/settings/page.tsx` and `components/account/KontoLoeschen.tsx` — same contract, no second flag
-5. ADR-0215
+5. ADR-0215 Nachtrag
 
 ## What the reviewer should check
 
 1. Exact Production HTTPS is allowed. Production HTTP, Development HTTP, unknown `*.supabase.co`, arbitrary hosts and malformed URLs are denied.
 2. The Function URL for exact Production HTTPS is `https://qscbgcdmivbbnzrcyegn.supabase.co/functions/v1/account-delete-v1`.
 3. A valid mocked deletion on that URL is no longer `umgebung_gesperrt`. MFA/reauth/JWT/Storage/OAuth tests still pass. The request body is still only `{ confirmation: "KONTO LÖSCHEN" }`.
-4. The graph-cascade migration file is unchanged.
-5. No Production project mutation is claimed or performed in this slice.
+4. The graph-cascade migration file in the repository is unchanged. Live Production history `20260928123859_reise_graph_kaskade_tiefe` is a Technical Lead fact, not a Cursor migration.
+5. No Production Function, user, secret, Auth, OAuth, indexing, provider or payment mutation is claimed for Cursor.
 
-## Production sequence — Technical Lead only
+## Still Technical Lead only
 
-Do not treat this repository change as a live deletion path. Production still needs, after an independent PASS:
+- deploy `account-delete-v1` with `verify_jwt=true`
+- disposable Production smoke, never a real user
+- Ready and merge
 
-- apply the already accepted graph-cascade migration;
-- deploy `account-delete-v1` with `verify_jwt=true`;
-- smoke only with a disposable Production identity, never a real user.
-
-If the app merge reaches Vercel Production while `NEXT_PUBLIC_SUPABASE_URL` is `https://qscbgcdmivbbnzrcyegn.supabase.co` and the Function or migration is still absent, `/account/settings` will show the existing delete control. A submit reauthenticates and then fails closed against a missing Function. It does not delete the Auth user by itself. Order the backend activation and the app merge deliberately. This slice does not add a second flag to hide that window.
+If the app merge reaches Vercel Production while `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project and the Function is still absent, `/account/settings` will show the existing delete control. A submit reauthenticates and then fails closed. It does not delete the Auth user. The graph-cascade migration is already applied. This slice does not add a second flag.
 
 ## Do not
 
 - Do not restart this writer for a new slice.
-- Do not modify the accepted migration unless a safety defect is found.
+- Do not modify the accepted migration file.
+- Do not deploy the Production Function from Cursor.
 - Do not use the Development proof script against Production.
 - Do not mark Ready or merge from Cursor.

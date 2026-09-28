@@ -84,13 +84,15 @@ Development Supabase:
 - bundle sha256 `3719e8762717d05cb5cb89db0f4f8c7f8bdf70f78c1c2b0b12a83cfccc2586e6`
 - Development-only migration `reise_graph_kaskade_tiefe` applied and verified
 
-Production Supabase:
+Production Supabase at this checkpoint's task-creation state:
 
 - ref `qscbgcdmivbbnzrcyegn`
 - Edge Functions: **0**
-- `20260927230000_reise_graph_kaskade_tiefe.sql`: **NOT applied**
+- `20260927230000_reise_graph_kaskade_tiefe.sql`: **NOT applied** at the time of this checkpoint
 - no real Production user was deleted
-- deletion UI remains fail-closed for Production environment
+- deletion UI remained fail-closed for the Production environment at that time
+
+Later live fact, 28 September 2026, Technical Lead: Production migration `20260928123859_reise_graph_kaskade_tiefe` is **APPLIED** and independently verified. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not apply it. The Production Function `account-delete-v1` is still not deployed by Cursor.
 
 PR #591: **MERGED**
 
@@ -104,11 +106,19 @@ Purpose: repository continuity closure so old NOT-PASS wording does not become c
 
 ### #592 — Production account erasure activation
 
-**OPEN / PRODUCT-OWNER GATE / NOT AUTHORIZED YET**
+**PRODUCT OWNER APPROVED THE BOUNDED ACTIVATION. MIGRATION APPLIED BY THE TECHNICAL LEAD. FUNCTION DEPLOY AND SMOKE STILL GATED.**
 
-A future explicit approval must separately authorize:
+Historical task-creation list below is not the current migration state.
 
-- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql`;
+The Technical Lead has applied and independently verified `20260928123859_reise_graph_kaskade_tiefe`. Still separately gated, and not done by Cursor:
+
+- Production deployment of `account-delete-v1`;
+- repository environment contract on Draft PR #597, then independent review;
+- bounded Production smoke design.
+
+The task-creation list was:
+
+- Production application of `20260927230000_reise_graph_kaskade_tiefe.sql` — **done by the Technical Lead**, history version `20260928123859_reise_graph_kaskade_tiefe`;
 - Production deployment of `account-delete-v1`;
 - Production UI activation;
 - bounded Production smoke design.

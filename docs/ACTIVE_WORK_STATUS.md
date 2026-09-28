@@ -14,11 +14,14 @@ Status: **NORMAL / PRODUCTION ACCOUNT ERASURE ACTIVATION 1 IMPLEMENTED / STOP FO
 - Evidence narrative commit: `acd0aa8d214829aaad64a36de837266f134b982e`.
 - Exact review head: the child of that evidence commit. Confirm with `git rev-parse HEAD` and `git rev-parse HEAD^`. Do not gate `2a2bc1d0` or `acd0aa8d`. A newer commit invalidates this gate.
 - Repository change: `loeschUmgebungErlaubt()` allows exact `https://qscbgcdmivbbnzrcyegn.supabase.co` and still denies Production/Development HTTP, unknown Supabase projects, arbitrary hosts and malformed URLs.
-- Cursor did not apply a Production migration, deploy `account-delete-v1`, change secrets, Auth, OAuth or indexing, create or delete a Production user, mark Ready, or merge.
-- The accepted migration `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` is unchanged.
+- Cursor did not apply a Production migration, deploy `account-delete-v1`, change secrets, Auth, OAuth, indexing, providers or payments, create or delete a Production user, mark Ready, or merge.
+- Technical Lead live fact: Production migration `20260928123859_reise_graph_kaskade_tiefe` is **APPLIED** and independently verified. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. Cursor did not do that application.
+- The repository file `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` is unchanged.
 - The Development proof guard in `kontoloeschung-direkt.ts` still aborts on Production before any network call.
-- Exact next step: independent Technical-Lead review of the branch tip. Technical Lead alone decides Production migration, Function deployment and smoke after PASS. Cursor does not start a follow-up slice.
-- Merge of this app change onto a Production deployment whose `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project will show the existing delete UI before the Function and graph-cascade migration exist, unless the Technical Lead orders deploy and migration first. That sequence is a Technical-Lead decision, not a second feature flag.
+- The Production Edge Function `account-delete-v1` is still not deployed by Cursor.
+- Local gates on this reconciliation tree: `npm test` 4016/4016, typecheck, lint (0 errors, 145 existing warnings), hygiene and production build PASS. The exact review head is the commit that contains this reconciliation. A clean post-commit rerun of those commands binds that SHA.
+- Exact next step: independent Technical-Lead review of the branch tip. Technical Lead alone deploys the Function and runs the disposable Production smoke after PASS. Cursor does not start a follow-up slice.
+- Merge of this app change onto a Production deployment whose `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project will show the existing delete UI while the Function is still absent. A submit then fails closed. It does not delete the Auth user. The graph-cascade migration is already applied. That order stays a Technical-Lead decision, not a second feature flag.
 
 KAYAK inquiry remains an external wait owned outside this writer. It is not resumed here.
 
@@ -78,7 +81,7 @@ Status: **HISTORICAL SNAPSHOT / NORMAL / CLEAN HANDOFF / NO ACTIVE WRITER / NEXT
 - #590 implementation: **MERGED**; accepted head `8d1755e926756776bd6f62e0e042bfb3169844e3`.
 - #591 continuity closure: **MERGED**.
 - #589 older deletion Draft: **CLOSED / superseded by #590**.
-- Production account-erasure activation remains separately gated in **#592**; Production Supabase still has **0 Edge Functions** and the graph-cascade migration is unapplied there.
+- Production account-erasure activation remains separately gated in **#592**; Production Supabase still has **0 Edge Functions** and the graph-cascade migration is unapplied there. This sentence is historical task-creation state from before the Technical Lead application on 28 September 2026. Current truth is the block at the top: `20260928123859_reise_graph_kaskade_tiefe` is applied.
 - #587 AGB remains on HOLD because the identified paid legal path was rejected as too expensive.
 - #585 PrivacyBee/Infomaniak legal-basis wording remains a prelaunch legal/vendor-text residual.
 - No current Cursor/runtime writer is authorized by this handoff.
@@ -116,8 +119,8 @@ Status: **NORMAL / V1 ACCOUNT ERASURE DEVELOPMENT 11/11 PASS + MERGED / PRODUCTI
 - Final disposable Development proof on exact accepted head: **11/11 PASS**, `status=pass`, `grund=pass`, `Proof exit=0`.
 - Passed cases: wrong confirmation; missing session; wrong password; MFA bypass rejection; AAL2/TOTP deletion; owned Storage removal; linked security-event removal; account graph cascade; stale-token authority rejection; second-delete no false success; foreign synthetic data unchanged.
 - Final cleanup readback: proof users **0**, proof events **0**, proof buckets **0**, proof objects **0**, proof policies **0**, temporary `account_visits` SELECT grant **absent**.
-- Production Supabase `qscbgcdmivbbnzrcyegn`: **0 Edge Functions**. Migration `20260927230000_reise_graph_kaskade_tiefe.sql` is **not applied** to Production. No real Production account was deleted.
-- Production activation of account erasure remains a **separate Product-Owner gate**. Do not deploy `account-delete-v1`, apply the graph-cascade migration, expose the deletion UI, or delete a real Production user without that gate.
+- Production Supabase `qscbgcdmivbbnzrcyegn`: **0 Edge Functions**. Migration `20260927230000_reise_graph_kaskade_tiefe.sql` is **not applied** to Production. No real Production account was deleted. This sentence is historical task-creation state from before the Technical Lead application on 28 September 2026. Current truth is the block at the top: `20260928123859_reise_graph_kaskade_tiefe` is applied. The Function was still absent at that earlier closure.
+- Production activation of account erasure remains a **separate Product-Owner gate** in this historical closure. Do not deploy `account-delete-v1`, expose the deletion UI, or delete a real Production user without the remaining Function and smoke gates. The graph-cascade migration is no longer an open application step.
 - Public launch/indexing remains disabled.
 - Issue #587 AGB/legal-content purchase path remains on HOLD because the current paid option was rejected as too expensive.
 - PrivacyBee legal-basis wording residual remains tracked separately in #585.
