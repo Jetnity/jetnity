@@ -13,7 +13,7 @@ Writer: **Jetnity admin users search navigation 1**, Generation 1.
 Session: https://cursor.com/agents/bc-32378ddb-57fe-45cb-8134-62721416684c
 `originalModelName=grok-4.7`. Dispatch states Grok 4.7 High Fast was visibly selected; that qualifier is not a separate run-info field. Not Auto. The session UI name remained `Admin users search navigation` because this run exposed no programmable rename.
 
-Review head is the tip of this branch that contains this report. Live `git rev-parse` wins over any SHA typed earlier. This delivery does not claim Technical-Lead PASS, Ready, or merge.
+Behavior commit `c03b7d76e1ba5b868d14d362d11c8d174592c724` contains the fix, harness and this report's first body. Review the branch tip that contains this line. Live `git rev-parse` wins. This delivery does not claim Technical-Lead PASS, Ready, or merge.
 
 ## 1. Live reconstruction before writes
 
