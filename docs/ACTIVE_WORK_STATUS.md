@@ -1,9 +1,9 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / PROVIDER ACCESS READINESS REFRESH COMPLETE / A-KAYAK-INQUIRY-1 PRODUCT-OWNER GATE / NO ACTIVE WRITER**
+Status: **NORMAL / A-KAYAK-INQUIRY-1 SENT / WAITING FOR KAYAK RESPONSE / NO ACTIVE WRITER**
 
-## 0. Current work boundary — Provider Access Readiness Refresh
+## 0. Current work boundary — KAYAK inquiry sent / waiting for response
 
 - Read-only refresh completed in `docs/PROVIDER_ACCESS_READINESS_REFRESH_2026-09-28.md`.
 - Task base was `main@d86aabbea373e47f5f7b8eda789aecfc31c39224`; always re-fetch live main after this docs branch merges.
@@ -15,9 +15,10 @@ Status: **NORMAL / PROVIDER ACCESS READINESS REFRESH COMPLETE / A-KAYAK-INQUIRY-
   - **Duffel**: accessible test mode, but sandbox prices are not real; live path is transactional search-to-order with public order/search fees.
   - **Travelfusion**: sales/licence-led Search & Book/API path with contract-defined fees.
   - **Amadeus extra check**: current portal states Self-Service was decommissioned on 17 July; not promoted into the active shortlist.
-- Exact first unfinished step: Product-Owner decision on **A-KAYAK-INQUIRY-1**.
-- Recommended gate: authorize one non-binding email inquiry to KAYAK's published partnership contact for pre-launch Flights Sandbox eligibility and Production/commercial/licence facts.
-- This gate does **not** authorize the KAYAK public form, KAYAK Terms/Privacy acceptance, signup, credentials, API calls, payment, runtime adapter work or Production activation.
+- Product Owner **approved `A-KAYAK-INQUIRY-1`** and sent the bounded inquiry from `info@jetnity.ch` to `partnerships@kayak.com`.
+- Sent subject: `Jetnity – Pre-launch inquiry for KAYAK Flights API Sandbox access`.
+- No KAYAK public form was submitted; no KAYAK Terms/Privacy were accepted; no signup/account, credentials, API calls, payment, runtime adapter work or Production activation occurred.
+- Exact first unfinished step: **wait for KAYAK response; Technical Lead reviews the full reply and any linked terms before any next action**.
 - No current Cursor/runtime writer is authorized.
 - Existing special gates remain: #592 account-erasure Production activation, #587 AGB/legal content, #585 PrivacyBee wording, #395 provider access.
 - Public indexing remains disabled.
