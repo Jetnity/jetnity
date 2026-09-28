@@ -1,0 +1,32 @@
+{
+  "mode": "baseline-actual-SecurityWidget",
+  "synthetic": true,
+  "postInHarness": false,
+  "blocklist": {
+    "zeilen": 200,
+    "zaehler": "200 Einträge",
+    "bound": null,
+    "leer": null,
+    "entfernen": 200
+  },
+  "events": {
+    "zeilen": 0,
+    "zaehler": "0 Einträge",
+    "bound": null
+  },
+  "gesperrteIps": "200",
+  "title": true,
+  "coverage": true,
+  "ipHinweis": true,
+  "blockBoundText": false,
+  "eventBoundText": false,
+  "calls": [
+    {
+      "url": "/api/admin/security/list",
+      "method": "GET"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "defectReproduced": true
+}
