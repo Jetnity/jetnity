@@ -1,59 +1,48 @@
 # Jetnity – Production Account Erasure Activation 1 STATUS
 
 Stand: 28. September 2026  
-Status: **MERGED / PRODUCTION ACTIVE / POST-MERGE VERIFIED / SYNTHETIC SMOKE BLOCKED**
+Status: **COMPLETE / MERGED / PRODUCTION ACTIVE / E2E DELETE PASS**
 
 Issue: #592  
-PR: #597 — **MERGED**  
-Runtime merge SHA: `929d671edbcd673d336f97b9b6734ba9f0babe89`
+PR #597 runtime merge: `929d671edbcd673d336f97b9b6734ba9f0babe89`  
+PR #598 docs closure merge: `7342aabe54b9ef8c196d88811bbca38acf1033ca`
 
-Cursor-Agent **Jetnity production account erasure activation 1**, Generation 1, session `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`, is complete/stopped. Do not restart it.
+## Production backend
 
-## Accepted repository/runtime path
-
-Final pre-merge exact head: `9c6ed8fc32adc0bfe878ebbc67602223afb276c6`.
-
-Final Technical-Lead PASS review: `5339432881`.
-
-Pre-merge gates on that head:
-- GitHub Actions `36429429035`: SUCCESS;
-- Vercel Preview `dpl_BJFdTrubhp93hufKtX3GeJWExaUY`: READY;
-- 0 unresolved review threads;
-- branch 0 behind main and mergeable before SHA-locked merge.
-
-## Production backend — ACTIVE
-
-Production Supabase: `qscbgcdmivbbnzrcyegn`.
-
-- migration: `20260927230000 reise_graph_kaskade_tiefe` — APPLIED;
+- migration `20260927230000 reise_graph_kaskade_tiefe`: APPLIED;
 - `public.reise_graph_geaendert()`: SECURITY INVOKER;
 - trigger count: 9;
 - `account-delete-v1`: ACTIVE v1;
-- Function id: `58a3892d-2743-4a6d-a301-acd311ad7fa7`;
 - `verify_jwt=true`;
-- bundle SHA256: `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`;
-- live source readback completed after deployment.
+- bundle SHA256: `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
 
-## Post-merge verification
+## Final Production E2E proof
 
-- live runtime `main`: `929d671edbcd673d336f97b9b6734ba9f0babe89`;
-- GitHub Actions run `36429943337`: **SUCCESS**;
-- Vercel Production `dpl_2zC37wt2pNRBEraSy1K2H6J1irpQ`: **READY** on exact runtime SHA;
-- `jetnity.com` is an alias of that exact Production deployment.
+A Product-Owner-authorized disposable Production test account was deleted through the live Jetnity UI.
 
-No real Production account was used or deleted. No Production Auth/MFA/OAuth/indexing/provider/payment setting was changed.
+Observed application result:
+- redirect to `/konto-geloescht`;
+- signed-out navigation state.
 
-## Synthetic Production deletion smoke
+Function evidence:
+- `2026-09-28T14:20:41.117Z`;
+- `kontoloeschung klasse=geloescht schritt=fertig`.
 
-Status: **BLOCKED / NOT RUN**.
+Post-delete independent readback:
+- `auth.users=0`;
+- `auth.identities=0`;
+- `auth.sessions=0`;
+- `auth.mfa_factors=0`;
+- `auth.one_time_tokens=0`;
+- `profiles=0`;
+- `trips=0`;
+- `account_travellers=0`;
+- `account_visits=0`;
+- `security_events=0`;
+- `storage.objects=0`.
 
-Reason:
-- current connected Supabase tool surface has no Auth Admin create-user action;
-- repository search found no approved Production synthetic-account creation/authentication workflow;
-- direct insertion into `auth.users` is not an acceptable substitute;
-- a real user/account must never be used as acceptance evidence;
-- no unreviewed privileged Production test endpoint will be introduced merely to manufacture a test identity.
+Conclusion: **PRODUCTION E2E DELETE PASS**.
 
-Therefore #592 is complete for Production activation and post-merge infrastructure/runtime verification, with one explicit evidence residual: end-to-end deletion of a purpose-created disposable Production Auth identity.
+The previous synthetic-smoke evidence residual is superseded. No unrelated Production Auth/MFA/OAuth/indexing/provider/payment configuration was changed.
 
-KAYAK inquiry remains WAITING FOR RESPONSE and is unrelated to this residual.
+Cursor session `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06` remains completed/stopped and must not be restarted.

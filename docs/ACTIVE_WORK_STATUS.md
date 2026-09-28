@@ -1,26 +1,25 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / #597 MERGED / PRODUCTION ACCOUNT ERASURE POST-MERGE VERIFIED / SYNTHETIC SMOKE BLOCKED / NO ACTIVE WRITER**
+Status: **NORMAL / #592 PRODUCTION ACCOUNT ERASURE COMPLETE / E2E PASS / NO ACTIVE WRITER**
 
-## 0. Current work boundary — #592 Production account erasure activation
+## 0. Current work boundary — Production account erasure CLOSED
 
-- Product Owner explicitly approved the bounded #592 activation.
-- PR #597 is **MERGED**. Runtime merge SHA: `929d671edbcd673d336f97b9b6734ba9f0babe89`.
-- Post-merge GitHub Actions run `36429943337`: **SUCCESS** including Auth config, typecheck, lint, tests, admin API protection, schema reference, dead code, unused exports/packages and Production build.
-- Vercel Production `dpl_2zC37wt2pNRBEraSy1K2H6J1irpQ`: **READY** on exact runtime SHA `929d671edbcd673d336f97b9b6734ba9f0babe89`; aliases include `jetnity.com`.
-- Production migration: **APPLIED**, canonical history version `20260927230000`, name `reise_graph_kaskade_tiefe`.
-- `public.reise_graph_geaendert()`: SECURITY INVOKER; trigger count 9.
-- Production `account-delete-v1`: **ACTIVE v1**, Function id `58a3892d-2743-4a6d-a301-acd311ad7fa7`, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
-- Exact Production HTTPS account-erasure environment contract is merged. Production/Development HTTP, unknown hosted Supabase projects, arbitrary hosts and malformed URLs remain fail-closed.
-- No Production Auth/MFA/OAuth/indexing/provider/payment setting was changed.
-- No real Production account has been used or deleted.
-- Cursor writer **Jetnity production account erasure activation 1**, Generation 1, session `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`, is complete/stopped. No writer is active.
-- **Synthetic Production deletion smoke: BLOCKED / NOT RUN.** The authorized Supabase tool surface has no Auth Admin create-user action, and repository search found no approved Production synthetic-account creation/authentication workflow.
-- Safety boundary: never use an existing real account; never insert directly into `auth.users`; never add an unreviewed privileged Production test endpoint merely to create a test identity.
-- #592 therefore remains an evidence residual only for the end-to-end synthetic Production deletion smoke. The activation itself is merged and post-merge verified.
+- Product Owner explicitly authorized deletion of a disposable Production test account for final E2E verification.
+- Live UI result: `/konto-geloescht` and signed-out application state.
+- Production Function log: `kontoloeschung klasse=geloescht schritt=fertig` at `2026-09-28T14:20:41.117Z`.
+- Post-delete Auth readback: `auth.users=0`, `auth.identities=0`, `auth.sessions=0`, `auth.mfa_factors=0`, `auth.one_time_tokens=0`.
+- Post-delete Jetnity/storage readback: `profiles=0`, `trips=0`, `account_travellers=0`, `account_visits=0`, `security_events=0`, `storage.objects=0`.
+- #592 therefore has a **Production E2E DELETE PASS**; the previous smoke-blocked residual is superseded.
+- #597 runtime activation is merged at `929d671edbcd673d336f97b9b6734ba9f0babe89`.
+- #598 docs closure is merged; current docs-only main at this checkpoint is `7342aabe54b9ef8c196d88811bbca38acf1033ca`.
+- CI `36433054255`: SUCCESS; Vercel Production `dpl_12MrSETHMWbo4a1rpAskgPWKsS8M`: READY on exact docs-only main, including `jetnity.com`.
+- Production migration remains `20260927230000 reise_graph_kaskade_tiefe`; graph function SECURITY INVOKER; 9 triggers.
+- `account-delete-v1`: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
+- No unrelated Production Auth/MFA/OAuth/indexing/provider/payment configuration was changed.
+- Cursor writer **Jetnity production account erasure activation 1** is complete/stopped. Do not restart it.
 - KAYAK inquiry remains **WAITING FOR RESPONSE** and is separate from #592.
-- This post-merge closure is docs-only. Its merge may advance `main`; the latest application/runtime-changing baseline remains `929d671edbcd673d336f97b9b6734ba9f0babe89` unless live evidence later shows otherwise.
+- This E2E closure is docs-only and does not change the already accepted runtime.
 
 Canonical closure:
 `docs/PRODUCTION_ACCOUNT_ERASURE_POST_MERGE_CLOSURE_2026-09-28.md`
