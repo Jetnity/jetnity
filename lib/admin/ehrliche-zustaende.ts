@@ -28,6 +28,8 @@ export const ADMIN_EHRLICHE_TEXTE = {
   securityTabelleFilterLeer: 'Keine aufgezeichneten Events passen zu diesem Filter.',
   securityTabelleBegrenzt:
     'Es werden höchstens 200 aufgezeichnete Zeilen gezeigt. Tabelle und 24h-Kennzahlen zählen nur diese Zeilen und können unvollständig sein.',
+  securityBlocklisteBegrenzt:
+    'Es werden höchstens 200 Blocklisteneinträge gezeigt. Die Liste und die Kachel Gesperrte IPs zählen nur diese gelesenen Zeilen und können unvollständig sein.',
   ipBlockHinweis:
     'Die IP-Blockliste wird derzeit nicht enforced. Einträge stehen in blocked_ips; Middleware und Edge prüfen sie nicht.',
   ipBlockButton: 'In Blockliste schreiben',

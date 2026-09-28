@@ -155,6 +155,9 @@ export default function SecurityWidget() {
   // volle Nutzlast darf die Grenze nennen; weniger Zeilen sind kein Beleg
   // für einen abgeschnittenen Read.
   const eventsBegrenzt = data !== null && securityReadIstAnDerGrenze(data.events.length)
+  // Dieselbe Listengrenze gilt für blocked_ips. Sie hängt nur an der
+  // Blocklisten-Nutzlast, nicht an den Events.
+  const blocklistBegrenzt = data !== null && securityReadIstAnDerGrenze(data.blocklist.length)
 
   // 24h-KPIs kommen aus der ungefilterten aufgezeichneten Menge.
   // Die Suche gilt nur für die Tabelle; sonst würde „Aufgezeichnete Events (24h)"
@@ -255,9 +258,16 @@ export default function SecurityWidget() {
 
       {/* Blocklist */}
       <section className="rounded-2xl border bg-card">
-        <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 className="text-sm font-semibold">Blockliste (nicht enforced)</h2>
-          <span className="text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 border-b">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold">Blockliste (nicht enforced)</h2>
+            {blocklistBegrenzt && (
+              <p className="mt-1 text-xs text-muted-foreground" data-security-read-bound="blocklist">
+                {ADMIN_EHRLICHE_TEXTE.securityBlocklisteBegrenzt}
+              </p>
+            )}
+          </div>
+          <span className="shrink-0 text-xs text-muted-foreground">
             {blockedCount === null ? '—' : `${blockedCount} Einträge`}
           </span>
         </div>
