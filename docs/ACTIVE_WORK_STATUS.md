@@ -1,33 +1,39 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / TERMS CH-DE 1.0 LIVE + #587 CLOSED / #592 ACCOUNT ERASURE E2E PASS / NO ACTIVE WRITER**
+Status: **NORMAL / V1 PREFLIGHT #603 MERGED + POST-MERGE VERIFIED / THREE EXTERNAL RESPONSES PENDING / NO ACTIVE WRITER**
 
-## 0. Current work boundary — Legal runtime + account-erasure closures
+## 0. Current work boundary — V1 preflight closure / external response wait
 
-- PR #600 is **MERGED** at `e1f72431a7097744375875fe29cf8f8136f8d7cf`.
-- Jetnity Nutzungsbedingungen / AGB **CH-DE 1.0** are live at `/terms`.
-- Post-merge GitHub Actions `36445805345`: **SUCCESS**.
-- Vercel Production `dpl_5tJ2rR9PYCveg4CwpsNpVGPNVZkY`: **READY** on exact #600 merge SHA; aliases include `jetnity.com`.
-- Live `/terms`: HTTP 200, visible title `Jetnity Nutzungsbedingungen / AGB`, Version `CH-DE 1.0`, Stand and Inkrafttreten `28. September 2026`, canonical `https://jetnity.com/terms`, robots `noindex, nofollow`.
-- Live `/register`: HTTP 200 and links `/terms` + `/privacy`.
-- Live `/privacy`: HTTP 200.
-- Live `/impressum`: HTTP 200.
-- Footer exposes `/privacy`, `/terms`, `/impressum`.
-- `/robots.txt`: HTTP 200 and remains `User-Agent: *\nDisallow: /`.
-- Issue #587 is **CLOSED / completed**. Historical HOLD language is superseded for the approved CH-DE 1.0 document.
-- No consent persistence was added; existing accounts are not claimed to have retroactively accepted CH-DE 1.0.
-- Public indexing remains disabled. No provider/payment/OAuth/Auth/RLS/Supabase Production mutation accompanied #600.
-- #592 Production account erasure remains **COMPLETE / E2E PASS**.
-- #585 PrivacyBee Infomaniak legal-basis wording remains OPEN as a vendor-text/legal residual.
-- #395 KAYAK inquiry remains **WAITING FOR RESPONSE**. No application/signup/Terms/API key/API call/spend/provider activation follows automatically.
+- PR #603 **MERGED** at `d961a5402fc363a481918f1a5830aff22dcc878e`; Issue #602 **CLOSED / completed**.
+- Accepted exact head: `5c2f0ef25c90ccdbda5bef06ff38db7a38420fcc`.
+- Technical-Lead FINAL PASS review: `5343161510`.
+- Exact-head CI `36466410801`: **SUCCESS**.
+- Exact-head Vercel Preview `dpl_Fd6xxmKdbUtQPi2F3aYMFN8MS7N8`: **READY**.
+- Post-merge CI `36467497747`: **SUCCESS**.
+- Vercel Production `dpl_HjBdggZpQx79CvPjdrTeigxtJf3M`: **READY** on exact merge SHA with alias `jetnity.com`.
+- #603 is docs/evidence only. It is **not** the final V1 Release Readiness Gate and creates no launch/indexing authority.
+- Independent TL Production readback reconfirmed:
+  - migration `20260927230000_reise_graph_kaskade_tiefe` present;
+  - `account-delete-v1` ACTIVE v1, `verify_jwt=true`, expected bundle hash;
+  - current Supabase Security Advisor output is WARN-only on reviewed GraphQL-visibility / authenticated SECURITY DEFINER surfaces; RLS is enabled on advisor-flagged tables and reviewed user/admin RPCs preserve ownership or role+AAL2 gates. This does **not** close Security Gate B or finding 5.2.
+- External Official/Commercial truth:
+  - **KAYAK #395** — SENT / WAITING FOR RESPONSE;
+  - **Sherpa #294** — SENT / WAITING FOR RESPONSE;
+  - **IATA Timatic #294** — SENT / WAITING FOR RESPONSE.
+- No provider or Official Truth source is selected.
+- No signup/account creation, further Terms/DPA/commercial acceptance, credentials, Sandbox/live calls, spend, runtime adapter work or Production provider activation follows automatically.
+- #585 PrivacyBee wording remains deferred by Product-Owner decision and is not a current engineering task.
+- Public indexing remains disabled.
+- Accepted preflight result: **no justified ungated V1-critical implementation slice while KAYAK, Sherpa and IATA are waiting**.
+- Exact next step: **wait for the first material external response; Technical Lead reviews the complete reply and every linked term before any registration, acceptance, credential/API use, spend or implementation decision.**
 - No current Cursor/runtime writer is authorized.
 
-Canonical Terms task:
-`docs/TERMS_CH_DE_1_0_INTEGRATION_TASK_2026-09-28.md`
+Canonical preflight report:
+`docs/V1_RELEASE_READINESS_PREFLIGHT_1_REPORT_2026-09-28.md`
 
-Canonical Terms closure:
-`docs/TERMS_CH_DE_1_0_INTEGRATION_CLOSURE_2026-09-28.md`
+Canonical TL closure:
+`docs/V1_RELEASE_READINESS_PREFLIGHT_1_CLOSURE_2026-09-28.md`
 
 The sections below are historical continuity snapshots and must not override this current block.
 
