@@ -82,6 +82,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/terms" className={footerLinkClass}>
+                  Nutzungsbedingungen / AGB
+                </Link>
+              </li>
+              <li>
                 <Link href="/impressum" className={footerLinkClass}>
                   Impressum
                 </Link>
