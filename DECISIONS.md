@@ -19,7 +19,7 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 
 **Begründung:** Der bestehende Stack, das Auth-Setup, die Supabase-Anbindung und die Build-Infrastruktur sind brauchbar. Die Produktidee ist es nicht. Ein Neuaufbau würde funktionierende Infrastruktur ohne Not verwerfen.
 
-**Konsequenzen:** Bestehender Code wird gegen die Vision geprüft, nicht umgekehrt. Alt-Module werden abgebaut statt weiterentwickelt.
+**Konsequenzen:** Die Kontolöschung ist technisch auf Production aktiviert und nach dem Merge auf Infrastruktur-/Runtime-Ebene verifiziert. Graph-Kaskade und `account-delete-v1` sind aktiv; `jetnity.com` läuft auf dem verifizierten Merge-SHA. Secrets, Auth, OAuth und Indexing wurden nicht verändert. End-to-End-Löschung eines synthetischen Production-Kontos ist kein behaupteter PASS: Dieser Proof bleibt blockiert, bis ein sicherer, freigegebener Weg zur Erstellung/Authentifizierung einer wegwerfbaren Production-Auth-Identität verfügbar ist. Ein reales Konto, direkte `auth.users`-Insertion oder ein unreviewter privilegierter Test-Endpunkt sind ausdrücklich kein Ersatz.
 
 ---
 
@@ -5656,7 +5656,7 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 ## ADR-0215 – Production-Kontolöschung nur für das exakte HTTPS-Projekt
 
 **Datum:** 28. September 2026
-**Status:** Repository-Vertrag auf Draft-Branch `feat/production-account-erasure-activation-1`. Technical-Lead FINAL PASS wurde auf exact head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa` erteilt; Production-Backend ist aktiv. Der post-deploy Continuity-Head ist noch nicht Ready oder gemergt und muss vor Integration frisch gegatet werden. Binding: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`, Issue #592. Die Product-Owner-Freigabe gilt der begrenzten Aktivierung des bereits akzeptierten V1-Löschwegs. Dieser ADR ist nicht selbst das Ausführen der Migration, nicht das Function-Deploy und nicht die Löschung eines echten Production-Kontos.
+**Status:** #597 ist **MERGED / POST-MERGE VERIFIED**. Runtime merge `929d671edbcd673d336f97b9b6734ba9f0babe89`; Post-Merge-CI `36429943337` SUCCESS; Vercel Production `dpl_2zC37wt2pNRBEraSy1K2H6J1irpQ` READY auf exakt diesem Runtime-SHA. Production-Backend ist aktiv. Der synthetische Production-Lösch-Smoke bleibt BLOCKED, weil aktuell kein sicherer synthetischer Auth-Testnutzerweg über die autorisierte Tool-/Repository-Oberfläche verfügbar ist. Binding: `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_TASK_2026-09-28.md`, Issue #592. Die Product-Owner-Freigabe gilt der begrenzten Aktivierung des bereits akzeptierten V1-Löschwegs. Dieser ADR ist nicht selbst das Ausführen der Migration, nicht das Function-Deploy und nicht die Löschung eines echten Production-Kontos.
 
 **Entscheidung:** `loeschUmgebungErlaubt()` erlaubt das exakte Production-Projekt `qscbgcdmivbbnzrcyegn.supabase.co` nur über HTTPS, neben dem exakten Development-Projekt über HTTPS und den bereits geprüften lokalen HTTP-Hosts. Unbekannte `*.supabase.co`-Projekte, fremde Hosts, fehlerhafte URLs und Production oder Development über HTTP bleiben geschlossen. Es gibt keinen zweiten Schalter. Edge Function, Einstellungen und `KontoLoeschen` benutzen weiter denselben Vertrag. Bestätigung, frisches Passwort, MFA/AAL2, JWT-Identität, Storage-Besitz, Ereignis-Löschung, Auth-Löschung erst nach dem Aufräumen, OAuth-Sperre und generische Klassen bleiben unverändert. Der Development-Nachweis in `kontoloeschung-direkt.ts` bricht bei Production weiter vor dem Netz ab.
 
