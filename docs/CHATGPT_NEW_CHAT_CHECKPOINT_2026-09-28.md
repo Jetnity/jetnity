@@ -1,7 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / CLEAN CHAT HANDOFF / V1 ACCOUNT ERASURE DEVELOPMENT CLOSED / NEXT: PROVIDER ACCESS READINESS REFRESH / NO EXTERNAL PROVIDER ACTION YET**
+Status: **NORMAL / PROVIDER ACCESS READINESS REFRESH COMPLETE / A-KAYAK-INQUIRY-1 PRODUCT-OWNER GATE / NO EXTERNAL PROVIDER ACTION YET**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
@@ -133,38 +133,50 @@ Do not hand-edit PrivacyBee vendor text in Jetnity code. Non-blocking for contin
 
 No real Flight provider is selected or activated. No application/contact, terms acceptance, provider secret, fee, paid call, Production S6, or final provider activation is authorized merely by this checkpoint.
 
-## 4. Next Technical-Lead action after fresh reconstruction
+## 4. Provider Access Readiness Refresh — COMPLETE / next action is a Product-Owner gate
 
-The preferred next work is a **read-only Provider Access Readiness Refresh**.
+Canonical report:
 
-Reason:
+`docs/PROVIDER_ACCESS_READINESS_REFRESH_2026-09-28.md`
 
-- Jetnity now has a real Production website/domain and substantially more product evidence than at the 1 September provider prechecks;
-- the provider-neutral Flight architecture already exists;
-- provider access conditions, thresholds and application requirements may have changed;
-- Jetnity needs a path to real travel inventory before adding more speculative provider-neutral infrastructure.
+Task:
 
-Required refresh scope:
+`docs/PROVIDER_ACCESS_READINESS_REFRESH_TASK_2026-09-28.md`
 
-- re-check current public access conditions for KAYAK, Skyscanner, Wego, Duffel and Travelfusion, and add another serious candidate only if current evidence justifies it;
-- compare each provider's current requirements to Jetnity's actual live/prelaunch state;
-- identify what can truthfully be supplied now: website, product screenshots/features, user/account metrics available in Admin, legal/company details, technical integration readiness;
-- distinguish API access, affiliate/referral access, sandbox/demo access and production access;
-- identify fees, traffic thresholds, commercial/attribution constraints, privacy/legal blockers and contact/application steps;
-- recommend the smallest external Product-Owner gate that would unlock the best candidate.
+The refresh was completed read-only. It performed **no** provider contact, application, Terms acceptance, credential action, API call, spend or Production mutation.
 
-Hard boundary for this refresh:
+Fresh current public evidence:
 
-- **no provider application submission**
-- **no external contact**
-- **no Terms acceptance**
-- **no API key/secret creation**
-- **no paid/sandbox/live call**
-- **no provider selection presented as already binding**
-- **no Production activation**
-- **no new recurring cost**
+- **KAYAK**: API publicly positioned for startups and enterprises; free Sandbox request is available; reviewed API pages publish no numeric traffic threshold. Production approval and provider-specific commercial/licence/privacy truth remain external.
+- **Skyscanner**: Travel API still requires at least **100K MAU**; separate affiliate programme requires **>5,000 unique visitors/month**, complete HTTPS site, current travel content and other acceptance conditions.
+- **Wego**: current developer API remains metasearch/referral capable, but public company material still states **USD 1,000/year**; 5% Search-to-Click and material user/data contract language remain.
+- **Duffel**: accessible test mode, but sandbox fares are not real; live route is transactional Search-to-Book with published order/search economics.
+- **Travelfusion**: serious enterprise/meta candidate, but registration/licence/sales-led and contract-fee based.
+- **Amadeus** extra check: current portal states Self-Service was decommissioned on 17 July 2026; not promoted into the active shortlist.
 
-The refresh may use current public web evidence and repository/Admin truth. It should end with a concrete PO decision package, not with a speculative implementation.
+Jetnity itself can truthfully present a live prelaunch product at `jetnity.com`, a real Production deployment, a provider-neutral Flight architecture and official privacy/imprint surfaces. It must **not** claim public launch, 5K unique visitors, 100K MAU, booking/conversion/revenue metrics, a live provider or Production API access without evidence. `/terms` remains separately gated in #587 and indexing remains disabled.
+
+### Exact first unfinished step
+
+**Product-Owner gate `A-KAYAK-INQUIRY-1`.**
+
+Recommended authorization is deliberately smaller than a KAYAK application:
+
+> Allow exactly one non-binding inquiry to KAYAK's published partnership contact, identifying Jetnity truthfully as a Switzerland-first prelaunch product and asking for Flights Sandbox eligibility plus Production traffic/cost/rate-limit/cache/attribution/Swiss-market/privacy terms.
+
+This gate does **not** authorize:
+
+- public KAYAK form submission;
+- KAYAK Terms/Privacy acceptance;
+- affiliate/API account creation;
+- provider secrets;
+- Sandbox or live API calls;
+- fees or recurring cost;
+- KAYAK adapter/runtime coding;
+- Production S6 or Commercial Provenance writer activation;
+- public launch/indexing.
+
+Do not start a Cursor writer while this is the exact current boundary. Wait only for the Product Owner's explicit approve/reject of `A-KAYAK-INQUIRY-1`.
 
 ## 5. Open PR hygiene at handoff
 
