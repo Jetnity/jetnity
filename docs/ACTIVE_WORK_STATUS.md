@@ -1,29 +1,24 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
-Status: **NORMAL / PRODUCTION ACCOUNT ERASURE ACTIVATION 1 IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW / NOT READY / NOT MERGED**
+Status: **NORMAL / PRODUCTION ACCOUNT ERASURE BACKEND ACTIVE / PR #597 POST-DEPLOY CONTINUITY RE-GATE / NOT MERGED**
 
 ## 0. Current work boundary — Production account erasure activation 1
 
-- Writer: **Jetnity production account erasure activation 1**, Generation **1**.
-- Session: `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`.
-- Model: `grok-4.7-high-fast` (confirmed on this run).
-- Issue: #592. Draft PR: #597. Branch: `feat/production-account-erasure-activation-1`.
-- Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84` (behind 0 at this writing).
-- Runtime contract commit verified by local gates: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`.
-- Superseded heads: `2c39f7ba06794ac4f23ce5bbc470361ca50ff23c`, `494d4226fa84c7006146291b476a3777711156c2`, and `7cbf1c7bf400f3b354fdc4a0ca468766dd0f4e18`. Do not gate them.
-- Exact review head: the commit that contains this history clarification. A newer commit invalidates the gate.
-- Repository change: `loeschUmgebungErlaubt()` allows exact `https://qscbgcdmivbbnzrcyegn.supabase.co` and still denies Production/Development HTTP, unknown Supabase projects, arbitrary hosts and malformed URLs. No runtime change in the R1/R2 correction.
-- Cursor did not apply a Production migration, repair migration history, deploy `account-delete-v1`, change secrets, Auth, OAuth, indexing, providers or payments, create or delete a Production user, mark Ready, or merge.
-- Technical Lead live fact: the Production graph-cascade migration is **APPLIED**. Current history version is `20260927230000`, name `reise_graph_kaskade_tiefe`. `reise_graph_geaendert()` remains SECURITY INVOKER. Trigger count remains 9. An initially generated remote history version was repaired by the Technical Lead to that repository filename. Cursor did not apply or repair it.
-- The repository file `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` is unchanged.
-- The Development proof guard in `kontoloeschung-direkt.ts` still aborts on Production before any network call.
-- The Production Edge Function `account-delete-v1` is not deployed.
-- Current sequence after exact-head PASS: deploy `account-delete-v1` with `verify_jwt=true`; verify live version and bundle; integrate the app change deliberately; post-merge CI and Production READY; bounded synthetic Production smoke. Do not begin with a migration apply.
-- Exact next step: independent Technical-Lead re-review of this R1/R2 head. Cursor does not start a follow-up slice.
-- Integrating the app while `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project and the Function is still absent shows the delete UI. A submit fails closed. The migration is already applied.
-
-KAYAK inquiry remains an external wait owned outside this writer. It is not resumed here.
+- Product Owner explicitly approved bounded #592 Production activation.
+- Cursor writer **Jetnity production account erasure activation 1**, Generation 1, session `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`, is complete/stopped. No current Cursor/runtime writer is authorized.
+- Draft PR #597 / branch `feat/production-account-erasure-activation-1`.
+- Base remains `main@a2645cfa622e272ee224b77d7c6478e84931fd84`; fetch live before any integration.
+- Technical Lead FINAL PASS was issued on exact head `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa` after exact-head GitHub CI SUCCESS, Vercel Preview READY and 0 unresolved review threads.
+- Repository runtime delta: `loeschUmgebungErlaubt()` allows only exact Production/Development Supabase HTTPS plus reviewed local HTTP; unknown hosted projects, arbitrary hosts, malformed URLs and hosted HTTP remain denied.
+- Production graph-cascade migration is **APPLIED**. Canonical history: version `20260927230000`, name `reise_graph_kaskade_tiefe`; `reise_graph_geaendert()` is SECURITY INVOKER; trigger count 9.
+- Production Edge Function `account-delete-v1` is now **ACTIVE v1** (Technical Lead deployment), `verify_jwt=true`, Function id `58a3892d-2743-4a6d-a301-acd311ad7fa7`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
+- Live Function source was read back after deployment and matches the accepted bundle inputs from the PR head.
+- No Production Auth/MFA/OAuth/indexing/provider/payment configuration was changed. No real Production account was used or deleted.
+- This Technical-Lead post-deploy continuity update creates a newer docs-only PR head, so the previous exact-head gate is intentionally invalidated for integration. **Fresh CI + Vercel Preview + TL exact-head re-gate are required before Ready/merge.**
+- After SHA-locked merge: verify post-merge GitHub CI and Vercel Production on exact new main; then run a bounded **synthetic Production account** deletion smoke only if a safe synthetic-account creation/authentication path is available. Never use an existing real account as acceptance evidence.
+- If no safe synthetic-account path is available through the authorized tool surface, STOP before smoke and preserve that dependency explicitly; do not substitute raw `auth.users` SQL insertion or a real user.
+- KAYAK inquiry remains **WAITING FOR RESPONSE** and is not resumed by #592.
 
 Canonical slice handoff:
 `docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_HANDOFF_2026-09-28.md`
