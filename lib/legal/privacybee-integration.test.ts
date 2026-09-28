@@ -342,7 +342,7 @@ describe('PrivacyBee Routengrenze', () => {
       assert.equal(text.includes('cookie-banner'), false)
       assert.equal(text.includes('app.privacybee.io'), false)
     }
-    assert.equal(existsSync(join(wurzel, 'app/(public)/terms/page.tsx')), false)
+    assert.equal(existsSync(join(wurzel, 'app/(public)/terms/page.tsx')), true)
     assert.equal(existsSync(join(wurzel, 'app/(public)/datenschutz/page.tsx')), false)
     assert.deepEqual([...SITEMAP_OEFFENTLICHE_PFADE], ['/', '/planen'])
   })
@@ -368,7 +368,7 @@ describe('PrivacyBee Routengrenze', () => {
     const footer = quelle('components/layout/Footer.tsx')
     assert.equal(footer.includes('href="/privacy"'), true)
     assert.equal(footer.includes('href="/impressum"'), true)
-    assert.equal(footer.includes('href="/terms"'), false)
+    assert.equal(footer.includes('href="/terms"'), true)
     assert.equal(quelle('app/robots.ts').includes('app.privacybee.io'), false)
   })
 })

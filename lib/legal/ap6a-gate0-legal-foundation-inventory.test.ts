@@ -64,10 +64,10 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
   const dateien = QUELL_VERZEICHNISSE.flatMap((name) => dateienSammeln(join(wurzel, name)))
   const inhalte = dateien.map((pfad) => ({ pfad: rel(pfad), text: quelle(rel(pfad)) }))
 
-  test('Pflichtroute /privacy existiert, /terms und /datenschutz bleiben ohne App-Page', () => {
+  test('Pflichtrouten /privacy und /terms existieren; /datenschutz bleibt ohne App-Page', () => {
     assert.deepEqual([...AP6A_LEGAL_ROUTEN], ['/privacy', '/terms'])
     assert.equal(hatAppPage('/privacy'), true)
-    assert.equal(hatAppPage('/terms'), false)
+    assert.equal(hatAppPage('/terms'), true)
     assert.equal(hatAppPage('/impressum'), true)
     assert.deepEqual([...AP6A_VERWANDTE_FEHLENDE_ROUTEN], ['/datenschutz'])
     for (const route of AP6A_VERWANDTE_FEHLENDE_ROUTEN) {
@@ -75,7 +75,7 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
     }
   })
 
-  test('RegisterForm verlangt Zustimmung und verlinkt beide 404-Routen', () => {
+  test('RegisterForm verlangt Zustimmung und verlinkt Terms und Datenschutz', () => {
     const register = quelle('components/auth/RegisterForm.tsx')
     assert.equal(register.includes('href="/terms"'), true)
     assert.equal(register.includes('href="/privacy"'), true)
@@ -154,16 +154,30 @@ describe('AP-6a Gate 0 Legal-Foundation-Vertragsinventar', () => {
     )
   })
 
-  test('Footer verlinkt Datenschutz und Impressum, nicht /terms; Navbar bleibt ohne Legal-Links', () => {
+  test('Footer verlinkt Datenschutz, Terms und Impressum; Navbar bleibt ohne Legal-Links', () => {
     const footer = quelle('components/layout/Footer.tsx')
     const navbar = quelle('components/layout/PublicNavbar.tsx')
     assert.equal(footer.includes('href="/privacy"'), true)
     assert.equal(footer.includes('href="/impressum"'), true)
-    assert.equal(footer.includes('href="/terms"'), false)
+    assert.equal(footer.includes('href="/terms"'), true)
     assert.equal(footer.includes('mailto:info@jetnity.ch'), true)
     assert.equal(navbar.includes('href="/privacy"'), false)
     assert.equal(navbar.includes('href="/terms"'), false)
     assert.equal(navbar.includes('href="/impressum"'), false)
+  })
+
+
+  test('Terms-Seite trägt die freigegebene CH-DE 1.0 Fassung und keine internen Entwurfsmarker', () => {
+    const terms = quelle('app/(public)/terms/page.tsx')
+    assert.equal(terms.includes('Jetnity Nutzungsbedingungen / AGB'), true)
+    assert.equal(terms.includes('CH-DE 1.0'), true)
+    assert.equal(terms.includes('28. September 2026'), true)
+    assert.equal(terms.includes('Feirov Global Trading, Einzelunternehmen'), true)
+    assert.equal(terms.includes('CHE-432.441.385'), true)
+    assert.equal(terms.includes('robots: { index: false, follow: false }'), true)
+    for (const verboten of ['ChatGPT', 'künstliche Intelligenz', 'Anwaltsprüfung', 'D1 –', 'D2 –', 'D3 –']) {
+      assert.equal(terms.includes(verboten), false)
+    }
   })
 
   test('Sitemap und Indexing-Vertrag halten Legal-Routen draußen', () => {
