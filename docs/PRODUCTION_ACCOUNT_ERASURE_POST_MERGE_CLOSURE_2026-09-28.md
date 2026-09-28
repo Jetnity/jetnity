@@ -5,7 +5,7 @@ Status: **COMPLETE / PRODUCTION E2E DELETE PASS**
 ## Integrated runtime
 
 - PR #597 runtime merge: `929d671edbcd673d336f97b9b6734ba9f0babe89`
-- PR #598 post-merge docs closure: `7342aabe54b9ef8c196d88811bbca38acf1033ca`
+- PR #598 docs closure merge: `7342aabe54b9ef8c196d88811bbca38acf1033ca`
 - #598 post-merge CI: `36433054255` — SUCCESS
 - #598 Vercel Production: `dpl_12MrSETHMWbo4a1rpAskgPWKsS8M` — READY
 - Production alias: `jetnity.com`
@@ -38,4 +38,4 @@ The earlier blocked synthetic-account residual is superseded by this Product-Own
 
 ## External/provider boundary
 
-KAYAK remains WAITING FOR RESPONSE. No provider signup, Terms acceptance, credentials, paid calls or implementation follows automatically.
+KAYAK remains WAITING FOR RESPONSE after the already sent bounded pre-application inquiry. No provider signup, Terms acceptance, credentials, paid calls or provider implementation follows automatically.
