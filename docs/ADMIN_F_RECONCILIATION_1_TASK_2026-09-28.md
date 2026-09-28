@@ -1,4 +1,4 @@
-# Admin F Reconciliation 1 — Binding Task v1
+# Admin F Reconciliation 1 — Binding Task v1.1
 
 Date: 2026-09-28
 Issue: #605
@@ -29,6 +29,8 @@ Read AGENTS.md, operating mode, TL/Cursor standard, multi-agent operating system
 - PR #545 closed/merged 2026-09-22; accepted head `43720a65ca5296e2009158ccd0bce6b30796ca95`; merge `8fcccd6475f41703bd2a31deecb3067391f330b4`.
 - Independent historical TL PASS review 5281481739; post-merge verification https://github.com/Jetnity/jetnity/pull/545#issuecomment-5781083393.
 - On current baseline, TL reran 24 existing navigation/search/honesty tests: 24 pass, 0 fail. Existing local dependencies reused; not a fresh npm-ci, full build, hydrated browser or signed-in Production proof.
+- Exact Git diff against accepted #545 head is empty for AdminNavigationSearch, AdminTopbar, admin shell, navigation.ts, navigation-search.ts, ehrliche-zustaende.ts, search tests and the hydrated harness. The requested feature is still the accepted implementation.
+- `docs/ADMIN_PLATFORM_IMPLEMENTATION_PLAN.md` is absent on current main (older unmerged audit material references it). Do not create it or import historical Draft #40 merely to satisfy an old pointer.
 - Prior #545 actual-component harness passed 12 cases including R1 viewport clipping, R2 hover focus, R3 prefetch false and R4 outside dismissal. This is historical Chromium harness evidence, not today's authenticated/physical-device acceptance.
 
 ## 3. Dispatch preconditions / one writer
@@ -55,7 +57,7 @@ Fresh generation for this separate reconciliation; do not restart completed #545
 - `docs/evidence/admin-f-reconciliation-1/**`
 - Dated Admin-F correction only in `docs/JETNITY_REMAINING_BUILD_MAP_1_REPORT_2026-09-22.md`
 - Targeted current pointers / dated supersession in `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md`, `ROADMAP.md`
-- Targeted dated Admin-F implementation note in `docs/ADMIN_PLATFORM_IMPLEMENTATION_PLAN.md` and `docs/ADMIN_D_K_GROWTH_CONTROL_AUDIT_EVIDENCE.md` only where the actual stale F claim is present.
+- Targeted dated Admin-F implementation note in `docs/ADMIN_D_K_GROWTH_CONTROL_AUDIT_EVIDENCE.md` where the actual stale F claim is present.
 
 No AGENTS, governance, operating-mode, CI, dependencies, runtime, Auth, roles, RLS, migration or DB changes. No global cleanup.
 
