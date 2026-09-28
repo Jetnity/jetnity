@@ -1,7 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
 Stand: 28. September 2026  
-Status: **NORMAL / PROVIDER ACCESS READINESS REFRESH COMPLETE / A-KAYAK-INQUIRY-1 PRODUCT-OWNER GATE / NO EXTERNAL PROVIDER ACTION YET**
+Status: **NORMAL / A-KAYAK-INQUIRY-1 SENT / WAITING FOR KAYAK RESPONSE / NO FURTHER PROVIDER ACTION YET**
 
 > Live evidence wins. This checkpoint is the canonical handoff for the next ChatGPT Technical Lead, but it never replaces fresh live reconstruction.
 
@@ -156,15 +156,15 @@ Fresh current public evidence:
 
 Jetnity itself can truthfully present a live prelaunch product at `jetnity.com`, a real Production deployment, a provider-neutral Flight architecture and official privacy/imprint surfaces. It must **not** claim public launch, 5K unique visitors, 100K MAU, booking/conversion/revenue metrics, a live provider or Production API access without evidence. `/terms` remains separately gated in #587 and indexing remains disabled.
 
-### Exact first unfinished step
+### Gate execution update — `A-KAYAK-INQUIRY-1` SENT
 
-**Product-Owner gate `A-KAYAK-INQUIRY-1`.**
+The Product Owner explicitly approved the bounded inquiry and sent it from `info@jetnity.ch` to KAYAK's published `partnerships@kayak.com` contact with subject `Jetnity – Pre-launch inquiry for KAYAK Flights API Sandbox access`.
 
-Recommended authorization is deliberately smaller than a KAYAK application:
+The inquiry states Jetnity's pre-launch status truthfully, expresses interest in a possible long-term partnership, and asks for Flights Sandbox eligibility plus Production traffic/cost/rate-limit/cache/attribution/Swiss-market/privacy terms.
 
-> Allow exactly one non-binding inquiry to KAYAK's published partnership contact, identifying Jetnity truthfully as a Switzerland-first prelaunch product and asking for Flights Sandbox eligibility plus Production traffic/cost/rate-limit/cache/attribution/Swiss-market/privacy terms.
+Current state: **WAITING FOR KAYAK RESPONSE**.
 
-This gate does **not** authorize:
+The executed gate does **not** authorize:
 
 - public KAYAK form submission;
 - KAYAK Terms/Privacy acceptance;
@@ -176,7 +176,7 @@ This gate does **not** authorize:
 - Production S6 or Commercial Provenance writer activation;
 - public launch/indexing.
 
-Do not start a Cursor writer while this is the exact current boundary. Wait only for the Product Owner's explicit approve/reject of `A-KAYAK-INQUIRY-1`.
+Do not start a Cursor writer while this is the exact current boundary. When KAYAK replies, review the complete response and any linked terms first. No signup, Terms acceptance, credential creation, API call, spend or implementation follows automatically.
 
 ## 5. Open PR hygiene at handoff
 
