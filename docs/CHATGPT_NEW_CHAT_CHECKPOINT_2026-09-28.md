@@ -152,7 +152,7 @@ Fresh current public evidence:
 - **Wego**: current developer API remains metasearch/referral capable, but public company material still states **USD 1,000/year**; 5% Search-to-Click and material user/data contract language remain.
 - **Duffel**: accessible test mode, but sandbox fares are not real; live route is transactional Search-to-Book with published order/search economics.
 - **Travelfusion**: serious enterprise/meta candidate, but registration/licence/sales-led and contract-fee based.
-- **Amadeus** extra check: current portal states Self-Service was decommissioned on 17 July 2026; not promoted into the active shortlist.
+- **Amadeus** extra check: current portal states Self-Service was decommissioned on 17 July; not promoted into the active shortlist.
 
 Jetnity itself can truthfully present a live prelaunch product at `jetnity.com`, a real Production deployment, a provider-neutral Flight architecture and official privacy/imprint surfaces. It must **not** claim public launch, 5K unique visitors, 100K MAU, booking/conversion/revenue metrics, a live provider or Production API access without evidence. `/terms` remains separately gated in #587 and indexing remains disabled.
 
