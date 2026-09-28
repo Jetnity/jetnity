@@ -17,6 +17,12 @@ import {
 import { ChevronLeft, ChevronRight, MoreHorizontal, Shield } from 'lucide-react'
 import { setUserRole, setUserStatus } from '@/app/(admin)/admin/users/actions'
 import {
+  buildUsersListHref,
+  normalizeUserSearch,
+  USERS_SEARCH_DEBOUNCE_MS,
+  usersListHrefFromParams,
+} from '@/lib/admin/users-search-navigation'
+import {
   rankOf,
   ROLE_LABELS,
   type AccountStatus,
@@ -55,31 +61,58 @@ export default function UsersTable({
 }) {
   const router = useRouter()
   const sp = useSearchParams()
-  const [search, setSearch] = React.useState(q ?? '')
+  const urlQuery = sp?.toString() ?? ''
+  // Die Adresse ist die bestätigte Suche. `q` initialisiert nur und darf einen
+  // inzwischen geänderten URL-Stand nicht wiederherstellen.
+  const urlQ = sp?.has('q') ? normalizeUserSearch(sp.get('q') ?? '') : ''
+  const [search, setSearch] = React.useState(() => normalizeUserSearch(q ?? ''))
+  const [trackedUrl, setTrackedUrl] = React.useState(urlQuery)
   const [pendingId, setPendingId] = React.useState<string | null>(null)
+  const epoch = React.useRef(0)
+  const spRef = React.useRef(sp)
+  const routerRef = React.useRef(router)
 
-  // Debounced Suche → URL (preserve other params)
   React.useEffect(() => {
-    const t = setTimeout(() => {
-      const params = new URLSearchParams(sp?.toString())
-      if (search.trim()) params.set('q', search.trim())
-      else params.delete('q')
-      params.set('page', '1')
-      router.replace(`/admin/users?${params.toString()}`)
-    }, 400)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search])
+    spRef.current = sp
+    routerRef.current = router
+  }, [sp, router])
+
+  if (trackedUrl !== urlQuery) {
+    setTrackedUrl(urlQuery)
+    if (search !== urlQ) setSearch(urlQ)
+  }
+
+  // Nur ein normalisiert anderer Entwurf bestätigt nach 400 ms und setzt dann
+  // auf Seite 1. Öffnen, Neuladen und dieselbe Suche schreiben die URL nicht um.
+  React.useEffect(() => {
+    const draft = normalizeUserSearch(search)
+    if (draft === urlQ) return
+    const ticket = ++epoch.current
+    const handle = window.setTimeout(() => {
+      if (ticket !== epoch.current) return
+      const aktuell = spRef.current
+      const href = buildUsersListHref(aktuell, { q: draft, page: 1 })
+      if (href === usersListHrefFromParams(aktuell)) return
+      routerRef.current.replace(href)
+    }, USERS_SEARCH_DEBOUNCE_MS)
+    return () => {
+      window.clearTimeout(handle)
+      if (epoch.current === ticket) epoch.current += 1
+    }
+  }, [search, urlQ, urlQuery])
 
   const maxPage = Math.max(1, Math.ceil(total / pageSize))
 
   function goto(p: number) {
     const np = Math.min(Math.max(1, p), maxPage)
-    const params = new URLSearchParams(sp?.toString())
-    if (search.trim()) params.set('q', search.trim())
-    else params.delete('q')
-    params.set('page', String(np))
-    router.replace(`/admin/users?${params.toString()}`)
+    // Seitenwechsel behält den bestätigten Filter. Ein noch nicht bestätigter
+    // Entwurf wird verworfen, damit Feld und Ergebnisliste übereinstimmen,
+    // und der laufende Timer kann die neue Seite nicht zurücksetzen.
+    epoch.current += 1
+    if (search !== urlQ) setSearch(urlQ)
+    const href = buildUsersListHref(sp, { q: urlQ, page: np })
+    if (href === usersListHrefFromParams(sp)) return
+    router.replace(href)
   }
 
   /**
@@ -174,7 +207,7 @@ export default function UsersTable({
           <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => goto(page - 1)} aria-label="Vorherige Seite">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm tabular-nums">{page} / {maxPage}</span>
+          <span className="shrink-0 whitespace-nowrap text-sm tabular-nums">{page} / {maxPage}</span>
           <Button variant="outline" size="sm" disabled={page >= maxPage} onClick={() => goto(page + 1)} aria-label="Nächste Seite">
             <ChevronRight className="h-4 w-4" />
           </Button>
