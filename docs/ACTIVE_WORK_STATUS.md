@@ -1,6 +1,36 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
+Status: **NORMAL / PRODUCTION ACCOUNT ERASURE ACTIVATION 1 IMPLEMENTED / STOP FOR TECHNICAL-LEAD REVIEW / NOT READY / NOT MERGED**
+
+## 0. Current work boundary — Production account erasure activation 1
+
+- Writer: **Jetnity production account erasure activation 1**, Generation **1**.
+- Session: `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06`.
+- Model: `grok-4.7-high-fast` (confirmed on this run).
+- Issue: #592. Draft PR: #597. Branch: `feat/production-account-erasure-activation-1`.
+- Base: `main@a2645cfa622e272ee224b77d7c6478e84931fd84` (behind 0 at this writing).
+- Runtime contract commit verified by local gates: `2a2bc1d0afb1c30b972ffbbb7687540a91170a06`.
+- Exact review head: the branch tip that contains this status update together with the slice STATUS, HANDOFF and SELF_REVIEW. Do not gate `2a2bc1d0` or any earlier SHA. A newer commit invalidates this gate.
+- Repository change: `loeschUmgebungErlaubt()` allows exact `https://qscbgcdmivbbnzrcyegn.supabase.co` and still denies Production/Development HTTP, unknown Supabase projects, arbitrary hosts and malformed URLs.
+- Cursor did not apply a Production migration, deploy `account-delete-v1`, change secrets, Auth, OAuth or indexing, create or delete a Production user, mark Ready, or merge.
+- The accepted migration `supabase/migrations/20260927230000_reise_graph_kaskade_tiefe.sql` is unchanged.
+- The Development proof guard in `kontoloeschung-direkt.ts` still aborts on Production before any network call.
+- Exact next step: independent Technical-Lead review of the branch tip. Technical Lead alone decides Production migration, Function deployment and smoke after PASS. Cursor does not start a follow-up slice.
+- Merge of this app change onto a Production deployment whose `NEXT_PUBLIC_SUPABASE_URL` is the exact Production project will show the existing delete UI before the Function and graph-cascade migration exist, unless the Technical Lead orders deploy and migration first. That sequence is a Technical-Lead decision, not a second feature flag.
+
+KAYAK inquiry remains an external wait owned outside this writer. It is not resumed here.
+
+Canonical slice handoff:
+`docs/PRODUCTION_ACCOUNT_ERASURE_ACTIVATION_1_HANDOFF_2026-09-28.md`
+
+The sections below are historical continuity snapshots and must not override this current block.
+
+---
+
+### Historical pre-activation snapshot — superseded by the current block above
+
+Stand: 28. September 2026
 Status: **NORMAL / A-KAYAK-INQUIRY-1 SENT / WAITING FOR KAYAK RESPONSE / NO ACTIVE WRITER**
 
 ## 0. Current work boundary — KAYAK inquiry sent / waiting for response
