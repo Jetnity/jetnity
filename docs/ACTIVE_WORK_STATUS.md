@@ -14,7 +14,7 @@ Status: **NORMAL / PROVIDER ACCESS READINESS REFRESH COMPLETE / A-KAYAK-INQUIRY-
   - **Wego**: live Affiliate API remains technically suitable, but public company material still states USD 1,000/year; 5% Search-to-Click; current Terms retain material Wego-customer/user-information language.
   - **Duffel**: accessible test mode, but sandbox prices are not real; live path is transactional search-to-order with public order/search fees.
   - **Travelfusion**: sales/licence-led Search & Book/API path with contract-defined fees.
-  - **Amadeus extra check**: current portal states Self-Service was decommissioned on 17 July 2026; not promoted into the active shortlist.
+  - **Amadeus extra check**: current portal states Self-Service was decommissioned on 17 July; not promoted into the active shortlist.
 - Exact first unfinished step: Product-Owner decision on **A-KAYAK-INQUIRY-1**.
 - Recommended gate: authorize one non-binding email inquiry to KAYAK's published partnership contact for pre-launch Flights Sandbox eligibility and Production/commercial/licence facts.
 - This gate does **not** authorize the KAYAK public form, KAYAK Terms/Privacy acceptance, signup, credentials, API calls, payment, runtime adapter work or Production activation.
@@ -32,8 +32,10 @@ The sections below are historical continuity snapshots and must not override thi
 
 ---
 
+### Historical pre-refresh snapshot — superseded by the current block above
+
 Stand: 28. September 2026
-Status: **NORMAL / CLEAN HANDOFF / NO ACTIVE WRITER / NEXT PROVIDER ACCESS READINESS REFRESH / EXTERNAL PROVIDER ACTION GATED**
+Status: **HISTORICAL SNAPSHOT / NORMAL / CLEAN HANDOFF / NO ACTIVE WRITER / NEXT PROVIDER ACCESS READINESS REFRESH / EXTERNAL PROVIDER ACTION GATED**
 
 ## 0. Current work boundary — post-#588/#590/#591 handoff
 
