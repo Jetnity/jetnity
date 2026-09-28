@@ -1,6 +1,38 @@
 # Jetnity – Active Work Status
 
 Stand: 28. September 2026
+Status: **NORMAL / PROVIDER ACCESS READINESS REFRESH COMPLETE / A-KAYAK-INQUIRY-1 PRODUCT-OWNER GATE / NO ACTIVE WRITER**
+
+## 0. Current work boundary — Provider Access Readiness Refresh
+
+- Read-only refresh completed in `docs/PROVIDER_ACCESS_READINESS_REFRESH_2026-09-28.md`.
+- Task base was `main@d86aabbea373e47f5f7b8eda789aecfc31c39224`; always re-fetch live main after this docs branch merges.
+- No provider contact, application, registration, Terms acceptance, secret, Sandbox/live call, spend or Production mutation occurred.
+- Current public evidence:
+  - **KAYAK**: startup/enterprise API posture; free Sandbox request available; no numeric traffic threshold stated on reviewed API pages; Production terms/cost/licence details remain externally unknown.
+  - **Skyscanner**: Travel API still requires at least 100K MAU; affiliate programme requires >5,000 unique visitors/month plus a complete HTTPS travel site.
+  - **Wego**: live Affiliate API remains technically suitable, but public company material still states USD 1,000/year; 5% Search-to-Click; current Terms retain material Wego-customer/user-information language.
+  - **Duffel**: accessible test mode, but sandbox prices are not real; live path is transactional search-to-order with public order/search fees.
+  - **Travelfusion**: sales/licence-led Search & Book/API path with contract-defined fees.
+  - **Amadeus extra check**: current portal states Self-Service was decommissioned on 17 July 2026; not promoted into the active shortlist.
+- Exact first unfinished step: Product-Owner decision on **A-KAYAK-INQUIRY-1**.
+- Recommended gate: authorize one non-binding email inquiry to KAYAK's published partnership contact for pre-launch Flights Sandbox eligibility and Production/commercial/licence facts.
+- This gate does **not** authorize the KAYAK public form, KAYAK Terms/Privacy acceptance, signup, credentials, API calls, payment, runtime adapter work or Production activation.
+- No current Cursor/runtime writer is authorized.
+- Existing special gates remain: #592 account-erasure Production activation, #587 AGB/legal content, #585 PrivacyBee wording, #395 provider access.
+- Public indexing remains disabled.
+
+Canonical provider refresh:
+`docs/PROVIDER_ACCESS_READINESS_REFRESH_2026-09-28.md`
+
+Canonical handoff:
+`docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-28.md`
+
+The sections below are historical continuity snapshots and must not override this current block.
+
+---
+
+Stand: 28. September 2026
 Status: **NORMAL / CLEAN HANDOFF / NO ACTIVE WRITER / NEXT PROVIDER ACCESS READINESS REFRESH / EXTERNAL PROVIDER ACTION GATED**
 
 ## 0. Current work boundary — post-#588/#590/#591 handoff
