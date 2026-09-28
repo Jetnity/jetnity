@@ -10,7 +10,7 @@ PR #598 docs closure merge: `7342aabe54b9ef8c196d88811bbca38acf1033ca`
 ## Production backend
 
 - migration `20260927230000 reise_graph_kaskade_tiefe`: APPLIED;
-- `reise_graph_geaendert()`: SECURITY INVOKER;
+- `public.reise_graph_geaendert()`: SECURITY INVOKER;
 - trigger count: 9;
 - `account-delete-v1`: ACTIVE v1;
 - `verify_jwt=true`;
