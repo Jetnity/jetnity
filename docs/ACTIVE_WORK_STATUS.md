@@ -8,7 +8,7 @@ Status: **NORMAL / #592 PRODUCTION ACCOUNT ERASURE COMPLETE / E2E PASS / NO ACTI
 - Product Owner explicitly authorized deletion of a disposable Production test account for final E2E verification.
 - Live UI result: `/konto-geloescht` and signed-out application state.
 - Production Function log: `kontoloeschung klasse=geloescht schritt=fertig` at `2026-09-28T14:20:41.117Z`.
-- Post-delete Auth readback for the disposable test identity: `auth.users=0`, `auth.identities=0`, `auth.sessions=0`, `auth.mfa_factors=0`, `auth.one_time_tokens=0`.
+- Post-delete Auth readback: `auth.users=0`, `auth.identities=0`, `auth.sessions=0`, `auth.mfa_factors=0`, `auth.one_time_tokens=0`.
 - Post-delete Jetnity/storage readback: `profiles=0`, `trips=0`, `account_travellers=0`, `account_visits=0`, `security_events=0`, `storage.objects=0`.
 - #592 therefore has a **Production E2E DELETE PASS**; the previous smoke-blocked residual is superseded.
 - #597 runtime activation is merged at `929d671edbcd673d336f97b9b6734ba9f0babe89`.
@@ -18,7 +18,8 @@ Status: **NORMAL / #592 PRODUCTION ACCOUNT ERASURE COMPLETE / E2E PASS / NO ACTI
 - `account-delete-v1`: ACTIVE v1, `verify_jwt=true`, bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
 - No unrelated Production Auth/MFA/OAuth/indexing/provider/payment configuration was changed.
 - Cursor writer **Jetnity production account erasure activation 1** is complete/stopped. Do not restart it.
-- KAYAK inquiry remains **WAITING FOR RESPONSE** and is the current external dependency; no provider signup/Terms/API action follows automatically.
+- KAYAK inquiry remains **WAITING FOR RESPONSE** and is separate from #592.
+- This E2E closure is docs-only and does not change the already accepted runtime.
 
 Canonical closure:
 `docs/PRODUCTION_ACCOUNT_ERASURE_POST_MERGE_CLOSURE_2026-09-28.md`
