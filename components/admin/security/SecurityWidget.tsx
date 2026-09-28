@@ -26,6 +26,10 @@ import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { lade, liste, type Fehler } from '@/lib/admin/ladezustand'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import {
+  securityEreignisLeerart,
+  securityReadIstAnDerGrenze,
+} from '@/lib/admin/security/filter-ehrlichkeit'
+import {
   istAufgezeichneterLoginFehler,
   istAufgezeichneteAuffaelligkeit,
 } from '@/lib/admin/security-event-taxonomy'
@@ -139,6 +143,18 @@ export default function SecurityWidget() {
         (e.user_id ?? '').toLowerCase().includes(t)
     )
   }, [data, filter])
+
+  // Eine leere Tabelle ist nur dann „nichts in diesem Zeitraum“, wenn die
+  // Lesung selbst leer war. Stehen Zeilen in der Nutzlast und der Filter
+  // trifft keine, bleibt das eine Filteraussage.
+  const ereignisLeerart =
+    events !== null && events.length === 0 && data !== null
+      ? securityEreignisLeerart(data.events.length)
+      : null
+  // Die Route liefert höchstens 200 Zeilen und sagt das nicht. Erst eine
+  // volle Nutzlast darf die Grenze nennen; weniger Zeilen sind kein Beleg
+  // für einen abgeschnittenen Read.
+  const eventsBegrenzt = data !== null && securityReadIstAnDerGrenze(data.events.length)
 
   // 24h-KPIs kommen aus der ungefilterten aufgezeichneten Menge.
   // Die Suche gilt nur für die Tabelle; sonst würde „Aufgezeichnete Events (24h)"
@@ -304,9 +320,16 @@ export default function SecurityWidget() {
 
       {/* Events */}
       <section className="rounded-2xl border bg-card">
-        <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 className="text-sm font-semibold">{ADMIN_EHRLICHE_TEXTE.securityTabelleTitel}</h2>
-          <span className="text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 border-b">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold">{ADMIN_EHRLICHE_TEXTE.securityTabelleTitel}</h2>
+            {eventsBegrenzt && (
+              <p className="mt-1 text-xs text-muted-foreground" data-security-read-bound="events">
+                {ADMIN_EHRLICHE_TEXTE.securityTabelleBegrenzt}
+              </p>
+            )}
+          </div>
+          <span className="shrink-0 text-xs text-muted-foreground">
             {events === null ? '—' : `${events.length} Einträge`}
           </span>
         </div>
@@ -358,10 +381,16 @@ export default function SecurityWidget() {
                   </td>
                 </tr>
               ))}
-              {events !== null && events.length === 0 && (
+              {ereignisLeerart !== null && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                    {ADMIN_EHRLICHE_TEXTE.securityTabelleLeer}
+                  <td
+                    colSpan={6}
+                    className="px-4 py-8 text-center text-muted-foreground"
+                    data-security-events-leer={ereignisLeerart}
+                  >
+                    {ereignisLeerart === 'filter'
+                      ? ADMIN_EHRLICHE_TEXTE.securityTabelleFilterLeer
+                      : ADMIN_EHRLICHE_TEXTE.securityTabelleLeer}
                   </td>
                 </tr>
               )}
