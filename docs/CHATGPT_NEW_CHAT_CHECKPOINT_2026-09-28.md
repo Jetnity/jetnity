@@ -1,5 +1,7 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 28. September 2026
 
+> **Historical.** Superseded for current startup by `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-29.md`. The status line and sections below are the 28 September 2026 record. They are not the current writer map. Live evidence wins.
+
 Stand: 28. September 2026  
 Status: **NORMAL / #608 DELIVERY-TIME SNAPSHOT — LIVE-STATE RULE / ADMIN USERS SEARCH NAVIGATION 1 AWAITING WORK/TL REVIEW / KAYAK + SHERPA + IATA RESPONSES PENDING**
 
