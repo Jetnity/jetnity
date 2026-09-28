@@ -16,6 +16,16 @@ import { Badge } from '@/components/ui/badge'
 import { Fehlerflaeche, Fehlerzeile } from '@/components/admin/Ladezustand'
 import { fortsetzung, lade, liste, type Fehler } from '@/lib/admin/ladezustand'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
+import {
+  beginTransactionRead,
+  isTransactionStatus,
+  transactionFilterSnapshot,
+  transactionFiltersMatch,
+  transactionListQuery,
+  transactionReadIsCurrent,
+  type TransactionFilterSnapshot,
+  type TransactionStatus,
+} from '@/lib/admin/payments/transaction-read-filter'
 import { cn } from '@/lib/utils'
 import { CreditCard, RefreshCw, Search, RotateCcw, Activity, Webhook } from 'lucide-react'
 import {
@@ -175,33 +185,81 @@ function TransactionsCard() {
   const [done, setDone] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [q, setQ] = React.useState('')
-  const [status, setStatus] = React.useState<'all' | 'paid' | 'pending' | 'failed' | 'refunded'>('all')
+  const [status, setStatus] = React.useState<TransactionStatus>('all')
 
-  const load = async (reset=false) => {
-    if (loading) return
-    setLoading(true); setFehler(null)
+  // Der Filter, zu dem die gerade gezeigte Liste gehört. Ein Entwurf im Suchfeld
+  // gilt erst nach Filtern, Enter oder einer Statuswahl. „Mehr laden“ liest
+  // diesen Stand, nicht den unbestätigten Entwurf.
+  const committed = React.useRef<TransactionFilterSnapshot>(transactionFilterSnapshot('', 'all'))
+  const cursorRef = React.useRef<string | null>(null)
+  const doneRef = React.useRef(false)
+  const loadingRef = React.useRef(false)
+  const clock = React.useRef({ latest: 0 })
 
-    const url = new URL('/api/admin/payments/list', window.location.origin)
-    if (!reset && cursor) url.searchParams.set('cursor', cursor)
-    if (q.trim()) url.searchParams.set('q', q.trim())
-    if (status!=='all') url.searchParams.set('status', status)
+  const requestPage = React.useCallback(async (
+    mode: 'replace' | 'append',
+    snapshot: TransactionFilterSnapshot,
+  ) => {
+    const requestId = beginTransactionRead(clock.current)
+    const filter = transactionFilterSnapshot(snapshot.q, snapshot.status)
+    const pageCursor = mode === 'append' ? cursorRef.current : null
 
+    if (mode === 'replace') {
+      const changed = !transactionFiltersMatch(filter, committed.current)
+      committed.current = filter
+      cursorRef.current = null
+      doneRef.current = false
+      setCursor(null)
+      setDone(false)
+      // Ein anderer Filter darf die vorherigen Zeilen nicht als aktuelle Liste
+      // stehen lassen. Dieselbe Abfrage behält sie, bis die neue Seite da ist.
+      if (changed) setRows(null)
+    }
+
+    loadingRef.current = true
+    setLoading(true)
+    setFehler(null)
+
+    const url = new URL(transactionListQuery(filter, pageCursor), window.location.origin)
     const ergebnis = await lade(
       () => fetch(url.toString(), { cache: 'no-store' }),
       (koerper) => ({ rows: liste<PaymentRow>(koerper, 'rows'), weiter: fortsetzung(koerper) }),
     )
 
-    setLoading(false)
-    if (ergebnis.fehler) { setFehler(ergebnis.fehler); return }
+    if (!transactionReadIsCurrent(clock.current, requestId)) return
 
-    setRows(reset ? ergebnis.daten.rows : [...(rows ?? []), ...ergebnis.daten.rows])
+    loadingRef.current = false
+    setLoading(false)
+    if (ergebnis.fehler) {
+      setFehler(ergebnis.fehler)
+      return
+    }
+
+    setRows((current) => (
+      mode === 'replace' ? ergebnis.daten.rows : [...(current ?? []), ...ergebnis.daten.rows]
+    ))
+    cursorRef.current = ergebnis.daten.weiter
     setCursor(ergebnis.daten.weiter)
-    if (!ergebnis.daten.weiter) setDone(true)
+    doneRef.current = !ergebnis.daten.weiter
+    setDone(doneRef.current)
+  }, [])
+
+  const commitVisible = (nextQ: string, nextStatus: TransactionStatus) => {
+    void requestPage('replace', transactionFilterSnapshot(nextQ, nextStatus))
   }
 
-  const filtern = () => { setDone(false); setCursor(null); load(true) }
+  const loadMore = () => {
+    if (loadingRef.current || doneRef.current || !cursorRef.current) return
+    void requestPage('append', committed.current)
+  }
 
-  React.useEffect(()=>{ load(true) /* initial */ }, []) // eslint-disable-line
+  React.useEffect(() => {
+    // Erste Seite der Liste. Der Ladezustand wird hier gesetzt, weil die
+    // Anfrage erst nach dem Mount starten kann. Das ist dieselbe Stelle wie
+    // bisher, nur mit der sichtbaren Abfrage statt mit dem alten Abschluss.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void requestPage('replace', transactionFilterSnapshot('', 'all'))
+  }, [requestPage])
 
   return (
     <section className="rounded-2xl border bg-card p-4">
@@ -218,13 +276,21 @@ function TransactionsCard() {
               className="pl-8 w-64"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e)=>{ if(e.key==='Enter'){ filtern() } }}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter') return
+                commitVisible(e.currentTarget.value, status)
+              }}
             />
           </div>
           <select
             className="rounded-md border bg-background px-2 py-2 text-sm"
             value={status}
-            onChange={(e)=>{ setStatus(e.target.value as any); filtern() }}
+            onChange={(e) => {
+              const next = e.target.value
+              if (!isTransactionStatus(next)) return
+              setStatus(next)
+              commitVisible(q, next)
+            }}
           >
             <option value="all">Alle</option>
             <option value="paid">paid</option>
@@ -232,7 +298,7 @@ function TransactionsCard() {
             <option value="failed">failed</option>
             <option value="refunded">refunded</option>
           </select>
-          <Button variant="outline" size="sm" onClick={filtern}>
+          <Button variant="outline" size="sm" onClick={() => commitVisible(q, status)}>
             Filtern
           </Button>
         </div>
@@ -265,7 +331,7 @@ function TransactionsCard() {
               <Fehlerzeile
                 spalten={5}
                 fehler={fehler}
-                onWiederholen={filtern}
+                onWiederholen={() => commitVisible(q, status)}
                 laeuft={loading}
                 veraltet={Boolean(rows?.length)}
               />
@@ -285,7 +351,7 @@ function TransactionsCard() {
           damit ein zweites Angebot neben „Erneut versuchen“. */}
       {rows !== null && !fehler && (
         <div className="mt-3 flex items-center justify-center">
-          <Button variant="outline" onClick={()=>load()} disabled={loading || done}>
+          <Button variant="outline" onClick={loadMore} disabled={loading || done || !cursor}>
             {done ? 'Ende' : 'Mehr laden'}
           </Button>
         </div>
