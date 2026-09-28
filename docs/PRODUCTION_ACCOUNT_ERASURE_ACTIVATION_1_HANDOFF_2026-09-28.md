@@ -1,49 +1,36 @@
 # Jetnity – Production Account Erasure Activation 1 HANDOFF
 
 Stand: 28. September 2026  
-Status: **PRODUCTION BACKEND ACTIVE / PR #597 POST-DEPLOY CONTINUITY RE-GATE / NOT MERGED**
+Status: **#597 MERGED / POST-MERGE VERIFIED / SYNTHETIC SMOKE BLOCKED**
 
 Issue: #592  
-Draft PR: #597  
-Branch: `feat/production-account-erasure-activation-1`  
-Cursor session: `bc-27f20108-d06f-4bf1-b5d4-b9629f5a5b06` — completed/stopped  
-Accepted pre-deploy exact head: `1b5e2b708c26e294c7216b4cd65559ff7d0d34aa`  
-TL FINAL PASS review: `5339269517`
+PR #597 merge: `929d671edbcd673d336f97b9b6734ba9f0babe89`
 
-## Live Production truth
+## Live truth
 
-Production project: `qscbgcdmivbbnzrcyegn`.
-
-- migration history: `20260927230000 reise_graph_kaskade_tiefe`;
-- `reise_graph_geaendert()`: SECURITY INVOKER;
-- trigger count: 9;
+Production:
+- Vercel deployment `dpl_2zC37wt2pNRBEraSy1K2H6J1irpQ`: READY on `929d671edbcd673d336f97b9b6734ba9f0babe89`, including `jetnity.com`;
+- GitHub post-merge CI `36429943337`: SUCCESS;
+- migration `20260927230000 reise_graph_kaskade_tiefe`: APPLIED;
+- `reise_graph_geaendert()`: SECURITY INVOKER, 9 triggers;
 - `account-delete-v1`: ACTIVE v1;
-- Function id: `58a3892d-2743-4a6d-a301-acd311ad7fa7`;
 - `verify_jwt=true`;
-- bundle SHA256: `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`;
-- live Function source was read back after deployment;
-- no real Production account has been used or deleted.
+- bundle SHA256 `b338776f80c35d70393deb31b1843a190b153244f8ed246720f0b5802f96a3cc`.
 
-The Product Owner authorized this bounded activation. Technical Lead performed the Production migration/history alignment and Function deployment. Cursor performed neither.
+Security contract:
+- exact Production/Development Supabase hosts require HTTPS;
+- hosted HTTP, unknown Supabase projects, arbitrary hosts and malformed URLs remain denied;
+- typed confirmation, fresh password, MFA/AAL, JWT-derived identity, Storage cleanup and Auth-delete ordering remain intact;
+- OAuth-only account deletion remains fail-closed.
 
-## Repository contract
+No real Production account was used/deleted. No Production Auth/MFA/OAuth/indexing/provider/payment configuration changed.
 
-- exact Production HTTPS is allowed;
-- Production HTTP and Development HTTP are denied;
-- unknown `*.supabase.co`, arbitrary hosts and malformed URLs are denied;
-- no second feature flag was added;
-- fresh password/MFA/JWT identity/Storage cleanup/Auth-delete order remain unchanged;
-- OAuth-only deletion remains unsupported/fail-closed.
+## Remaining evidence residual
 
-## Current next step
+Bounded synthetic Production deletion smoke is **BLOCKED / NOT RUN**.
 
-The post-deploy continuity edits create a newer docs-only PR head. Do **not** merge using the old pre-deploy PASS alone.
+Do not improvise. Current tool surface has no safe Auth Admin create-user action, and the repo has no approved Production synthetic test-account creation path. Never use an existing real account, direct `auth.users` insertion or an unreviewed privileged test endpoint.
 
-1. Gate the new exact head with GitHub CI and Vercel Preview.
-2. TL re-review that exact head.
-3. Mark Ready and merge only with expected-head SHA locking.
-4. Verify post-merge CI + Vercel Production on exact main.
-5. Run bounded synthetic Production account deletion proof only if a safe synthetic-account creation/authentication path is available.
-6. If no safe path exists, STOP before smoke and document the dependency. Do not use a real account and do not insert directly into `auth.users`.
+If a safe disposable Production Auth identity path becomes available later, reconstruct live state first and run only the bounded smoke. That future proof does not require reopening the completed Cursor writer.
 
-KAYAK remains a separate external WAITING FOR RESPONSE path.
+KAYAK remains WAITING FOR RESPONSE separately.
