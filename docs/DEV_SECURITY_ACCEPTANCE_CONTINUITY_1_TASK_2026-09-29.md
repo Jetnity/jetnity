@@ -93,3 +93,12 @@ The repository is public. Never include the disposable user's ID, email, exact a
 Before committing: inspect the entire diff; `git diff --check`; verify the changed-file allowlist; verify source links and state ordering; check no private values or contradictory current writer/activation statements were introduced. Keep the historical text explicitly historical. Run relevant existing non-network documentation/governance checks; CI runs normally. Do not execute hosted tests for a documentation PASS.
 
 Return exact branch/head, merge-base/ahead/behind, all changed filenames, validation results and limits, session URL/model evidence, and concise self-review in the report/PR. Do not preclaim future CI, Vercel, TL PASS, Ready or merge. New head means new TL review. Remain Draft and STOP for independent main-chat TL review. #629 may close only on accepted docs merge; #626 must remain open.
+
+## 8. Dispatch addendum — session evidence only
+
+This addendum does not change sections 1–7.
+
+- Verified before editing: session https://cursor.com/agents/bc-bb32b1dd-327b-48c7-be4f-36750d37de75
+- Tool field `originalModelName=grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. No UI rename.
+- Later public comments read before writing: #626 `5899271083` (no newer acceptance evidence; this docs repair selected) and #294 `5889155160` (the provider-question pause remains; no provider selected).
+- Delivery evidence is `docs/DEV_SECURITY_ACCEPTANCE_CONTINUITY_1_REPORT_2026-09-29.md`. The header status above remains the task-seed statement. No TL PASS.

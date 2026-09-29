@@ -1,11 +1,15 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 29. September 2026
 
 Stand: 29. September 2026  
-Status: **NORMAL / PREFLIGHT 2 ACCEPTED AS THE RELEASE BOUNDARY / DEVELOPMENT SECURITY-EVENT RETENTION 1 IS A LATER APPROVED WRITER / EXTERNAL WAITS OPEN**
+Status: **NORMAL / PREFLIGHT 2 REMAINS THE RELEASE BOUNDARY / #628 MERGED / #626 OPEN — POPULATED ERASURE BLOCKED / SHERPA RESPONSE RECEIVED — OUTGOING QUESTIONS PAUSED**
 
-> **Later writer, recorded 29 September 2026 without rewriting this checkpoint's historical body.** Product Owner comment `5887161416` approved the #626 Development proposal. Draft PR #628 on `feat/dev-security-event-logging-retention-1` is that package. Logical agent **Jetnity development security event logging retention 1**, Generation 1, session https://cursor.com/agents/bc-b1f79b09-d5cb-4f74-97a5-50bb9a4ee7ab, `originalModelName=grok-4.7-high-fast`. Baseline `main@e785cd00b090042ac6622383bceebd7f6ddfed88`. R2 review `5351648702` is a later correction on this same branch. The reviewed head `51ad3a38` is not the current tip. The R1 trigger check was not exact function, predicate, and column identity. Local proof only, including a local PostgreSQL 17 run. Hosted apply and Production were not run. Finding 5.2 stays partial. #626 stays open. Handoff: `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_HANDOFF_2026-09-29.md`. The sections below remain the Preflight 2 continuity persist, including its then-current `main` pin `a9a8898c` and its "no ungated implementation" conclusion. Live evidence still wins over both.
+> **Current acceptance — Development acceptance continuity 1, 29 September 2026.** Read `docs/DEV_SECURITY_ACCEPTANCE_CONTINUITY_1_REPORT_2026-09-29.md` first. Machine mode is `NORMAL`. Preflight 2 remains the release boundary. #628/#627 are merged and closed; do not restart that writer. Accepted head `80bccb5abb7d56479b65c548e15edde852bec51f`; merge and current `main` at this reconstruction `94f2747137e2a788c7120f27dc1f23cde12cbcf1`. #626 stays **OPEN**. Last recorded producer state: installed/active, seven-day retention, hourly cleanup, cap 1,000, five triggers, healthy, zero owned events ([5898958642](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5898958642)). Native scheduler execution was observed. Manual rolled-back rehearsals and the local-package full rollback are not populated scheduled-expiry or authenticated HTTP erasure evidence. D1 and the D2-MFA observation stay accepted inside their recorded bounds, including one verified TOTP factor and current AAL2 at that observation time. Temporary operator permission is **NOT established**. Three genuine producer events are **NOT STARTED**. Authenticated populated erasure is **NOT RUN**. No current runtime or browser task. While Draft PR #630 is open, that docs writer is the only new bounded writer. Sherpa: response received / Product Owner consideration / outgoing questions paused. KAYAK and IATA remain at their last recorded sent/waiting comments. Finding 5.2, Gate G, launch, provider selection and reserved Production gates stay open. Cursor does not Ready or merge.
 
-> Live evidence wins. Read this checkpoint, then re-fetch `main`, open PRs, open issues, Actions, Vercel, and the latest #395, #294 and #585 comments before selecting work.
+> **Historical delivery-time writer note, recorded 29 September 2026 before the #628 merge, without rewriting this checkpoint's Preflight 2 body.** When this note was written, hosted apply had not run. The acceptance block above is the current #626 pointer. Product Owner comment `5887161416` approved the #626 Development proposal. Draft PR #628 on `feat/dev-security-event-logging-retention-1` is that package. Logical agent **Jetnity development security event logging retention 1**, Generation 1, session https://cursor.com/agents/bc-b1f79b09-d5cb-4f74-97a5-50bb9a4ee7ab, `originalModelName=grok-4.7-high-fast`. Baseline `main@e785cd00b090042ac6622383bceebd7f6ddfed88`. R2 review `5351648702` is a later correction on this same branch. The reviewed head `51ad3a38` is not the current tip. The R1 trigger check was not exact function, predicate, and column identity. Local proof only, including a local PostgreSQL 17 run. Hosted apply and Production were not run. Finding 5.2 stays partial. #626 stays open. Handoff: `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_HANDOFF_2026-09-29.md`. The sections below remain the Preflight 2 continuity persist, including its then-current `main` pin `a9a8898c` and its "no ungated implementation" conclusion. Live evidence still wins over both.
+
+> Live evidence wins. Read the acceptance report and this checkpoint's current block, then re-fetch `main`, open PRs, open issues, Actions, Vercel, and the latest #626, #395, #294 and #585 comments before selecting work.
+
+The numbered sections below are the historical Preflight 2 continuity persist. Their then-current `main` pin, #625 writer and WAITING labels were not rewritten after the #628 merge or the Sherpa pause.
 
 ## 0. Current main and operating mode
 
@@ -122,6 +126,8 @@ Cursor is the writer only. Cursor does not Ready, does not merge, does not conta
 Special Product-Owner gates remain in force, including Production migration, provider contract/secret/spend, payment, sensitive document storage, and public launch.
 
 ## 9. Current writer
+
+Historical Preflight 2 persist. The current writer is the acceptance block at the top of this file.
 
 While Draft PR #625 is open, the only current writer is:
 
