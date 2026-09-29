@@ -152,3 +152,18 @@ Recorded before editing. This addendum does not change scope, allowlist, gates o
 - Required model **Grok 4.7 High Fast** was available. No Auto substitution. Editing was allowed to proceed.
 - Live `main` at reconstruction matched the dispatch baseline `60148274765f2143722b2742607ee3cf03730bcb`.
 - Hosted catalog read was not completed: the Management API returned 401. No alternate credential or SQL path was used.
+
+## 12. R1 review-scope addendum
+
+Head-bound review: `5359714624` on `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51`, state COMMENTED, body **CHANGES REQUIRED**. This addendum does not loosen scope, the allowlist, or the candidate rule. It does not authorize a dependency change in this PR.
+
+R1 requires the same writer and the same session to:
+
+1. Assess the Next.js security evidence in PR comment `5900828960` and separate version exposure, ImageResponse non-use, undetailed September advisories, and package compatibility.
+2. Incorporate the Production and producer evidence in PR comment `5900885296` and review `5359714624` with attribution. An agent 401 does not override that evidence and is not a personal re-execution of those reads.
+3. Rebuild the A–O matrix, risk matrix, and candidate decision.
+4. If a framework patch is an immediate ungated V1 maintenance candidate, name the smallest later slice and its non-scope. If none qualifies, state the evidence-backed reason.
+5. Leave #626 OPEN and blocked. Leave provider, Production, launch, payment, and indexing gates unchanged.
+6. Stop on the new exact head for a full Technical-Lead re-review.
+
+No `package.json` or lockfile edit belongs in this PR.

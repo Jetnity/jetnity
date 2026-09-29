@@ -1,7 +1,7 @@
 # Jetnity V1 Release Readiness Preflight 3 — REPORT
 
 Stand: 30. September 2026
-Status: **PREFLIGHT COMPLETE / NOT A PUBLIC-LAUNCH VERDICT / DRAFT / NOT READY / NOT MERGED**
+Status: **R1 CORRECTION AFTER CHANGES REQUIRED `5359714624` / NOT A PUBLIC-LAUNCH VERDICT / DRAFT / NOT READY / NOT MERGED**
 
 Issue: #631
 Draft PR: #632
@@ -21,7 +21,9 @@ Session URL: https://cursor.com/agents/bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2
 
 Live-evidence window: 2026-09-29T23:08Z–23:13Z, plus the mandatory pre-handoff `main` re-fetch recorded in the handoff. Public HTTP was read in this session. No separate evidence-directory file was created; the task allowlist does not include one.
 
-This preflight implements nothing. It does not authorize public launch, indexing, provider activation, Production mutation, #626 closure, or a final gate PASS. No section has current evidence sufficient to treat it as preflight-closed.
+Reviewed head `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51` received CHANGES REQUIRED in review `5359714624`. This correction is the same writer and the same session. It is the R1 head only after the delivery commit. That reviewed head is not the re-review head.
+
+This preflight implements nothing. It does not authorize public launch, indexing, provider activation, a Next.js upgrade, Production mutation, #626 closure, or a final gate PASS. No section has current evidence sufficient to treat it as preflight-closed.
 
 State rule, same as Preflight 2:
 
@@ -50,8 +52,9 @@ Seit Preflight 2 ist Material passiert, und keines davon öffnet einen sofort au
 - #626 ist **OPEN** und wurde nach dem Merge von #630 ausdrücklich wieder geöffnet. D1 und das begrenzte D2-MFA sind nur in ihren aufgezeichneten Grenzen akzeptiert. Die temporäre Operator-Berechtigung ist **nicht** hergestellt. Drei echte Producer-Events sind **NOT STARTED**. Authentifiziertes populated Erasure ist **NOT RUN**. Die blockierte privilegierte Rollen-/Fixture-Operation darf nicht wiederholt, umformuliert, delegiert oder umgangen werden.
 - #630 / #629 sind geschlossen. Akzeptierter Head `895ac7575bb1c130f0f78c7eaaebd97283faf80f`. Technical-Lead FINAL PASS Review `5359458734`. Merge `60148274765f2143722b2742607ee3cf03730bcb`. Post-Merge-CI `36642027878` **SUCCESS**, inklusive Auth 55/55. Vercel-Production-Status auf diesem SHA ist success, Inspector `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`.
 - Sherpa hat geantwortet. Der Product Owner hat ausgehende Provider-Fragen pausiert. KAYAK und IATA stehen auf den letzten gesendeten Repository-Kommentaren. Kein Provider ist gewählt.
+- R1 prüft die Next.js-Linie. `next` und `eslint-config-next` stehen auf `16.3.3`. npm `latest` ist `16.3.7`. Der offizielle September-Sicherheitshinweis sagt in der aktuellen Fassung, dass `16.3.7` ein Bugfix ist und die neun Schwachstellen nicht enthält. Erwartet wird `16.3.8` / `15.5.27`. `next@16.3.8` ist nicht im Registry.
 
-**Immediate ungated V1 implementation candidates: NONE.**
+**Immediate ungated V1 implementation candidates: NONE.** Der September-Sicherheitspatch ist nicht installierbar, solange `16.3.8` nicht veröffentlicht ist. `16.3.7` ist dafür das falsche Ziel. Begründung in §8.
 
 ---
 
@@ -78,6 +81,9 @@ Seit Preflight 2 ist Material passiert, und keines davon öffnet einen sofort au
 | Indexing | Live pages send `noindex, nofollow`. `robots.txt` is `Disallow: /`. `sitemap.xml` is an empty `urlset`. |
 | `www` | `www.jetnity.com` does not resolve. Apex resolves. |
 | Manifest | Live, `display=standalone`, `scope=/`, `start_url=/`. Three PNG icons return **200**. `/sw.js` is **404**. |
+| Public deployment binding | This R1 session re-read `https://jetnity.com/` HTML and found `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`, the #630 Production deployment. The same binding is in TL comment `5900885296`. Root HTML also contains `noindex`. |
+| Production advisor / erasure / producer | Attributed to TL comment `5900885296` and review `5359714624`. This session did not run those hosted queries. The earlier Management API **401** is an agent-access limit and does not override those receipts. |
+| Next.js pin | `package.json` pins `next` and `eslint-config-next` at `16.3.3`. React `19.2.8`, eslint `9.39.5`, TypeScript `5.9.3`. Repository search: **0** `next/og`, **0** `ImageResponse`. |
 
 ---
 
@@ -93,8 +99,9 @@ Facts above are the live reads. The inference is that the readiness classificati
 | --- | --- | --- |
 | A real commercial journey | `STILL_OPEN_GATED` | KAYAK is still the sent inquiry. Outgoing questions are paused, so this preflight does not chase it. Production search remains hard-off in source. |
 | A Official Truth | `CHANGED_DETAIL_STILL_OPEN_GATED` | Sherpa is **RESPONSE RECEIVED / PO CONSIDERATION / OUTGOING FOLLOW-UP PAUSED**. That is no longer “waiting for the first reply”. It is also not a selected source, contract, credential, or adapter. IATA remains sent/waiting on GitHub. The alternatives note selects nothing. |
-| B finding 5.2 persistent ingestion | `CHANGED_DETAIL_STILL_OPEN_GATED` | #628 installed the approved Development producer. Recorded Development health is active/healthy inside the seven-day / hourly / cap-1000 scope. Production ingestion and Release Gate G are not closed. #626’s populated proof is blocked. |
-| B fresh advisor replay | `INSUFFICIENT_CURRENT_EVIDENCE` | Not repeated. The last recorded Production advisor read remains the Preflight 1 closure. |
+| B finding 5.2 persistent ingestion | `CHANGED_DETAIL_STILL_OPEN_GATED` | #628 installed the approved Development producer. Review `5359714624` records post-#630 Development health: active/healthy, seven-day retention, hourly job, cap 1000 / used 0, five triggers, zero origin rows, no trigger/catalog fault. Production metadata in that review has none of those objects and zero matching triggers. Production ingestion and Release Gate G are not closed. #626’s populated proof is blocked. |
+| B fresh advisor replay | Current attributed read, residual WARN | TL comment `5900885296` is a fresh Production Security Advisor result: WARN, not ERROR. RLS, ownership, capability and AAL2 controls were re-read with it. This is not a closure of every warning and not a personal query by this session. The Preflight 1 closure is no longer the latest advisor receipt. |
+| Framework security line | `CHANGED_DETAIL` / not an executable slice yet | Pin remains `16.3.3`. Published `16.3.7` is a bugfix. The nine-vulnerability release is expected as unpublished `16.3.8`. See §8. |
 | C legal pages | Already closed; reconfirmed | Live `/privacy`, `/terms`, `/impressum` are HTTP 200. |
 | C retention and consent | `UNCHANGED_SINCE_PREFLIGHT_2` / `STILL_OPEN_GATED` | `keineConsentPersistenz` remains `true`. |
 | C #585 | `DELIBERATELY_LATER` | Deferral comment unchanged. |
@@ -102,12 +109,13 @@ Facts above are the live reads. The inference is that the readiness classificati
 | D KAYAK | `STILL_OPEN_GATED` | No newer GitHub comment. Pause says not to start a new enquiry. |
 | E Sherpa and IATA | `CHANGED_DETAIL_STILL_OPEN_GATED` | See row A Official Truth. |
 | F SMTP / Auth URL / callback | Already closed; #630 reconciled the repository Development redirect expectation | #630 does not apply Auth config and does not reopen the closed Production Auth/SMTP gates. This session did not send mail and did not read Auth users. |
-| F Production erasure inventory | `INSUFFICIENT_CURRENT_EVIDENCE` for a fresh read | #592 remains the closed historical Production erasure record. This session did not re-read Production. |
+| F Production erasure function | Current attributed read | TL comment `5900885296` lists Production `account-delete-v1` ACTIVE v1 with `verify_jwt=true`. This session did not call the Supabase API. |
+| F public alias binding | Reconfirmed by this session | Root HTML `data-dpl-id` is `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. |
 | F indexing off | Reconfirmed, correct hold | Not a defect. |
 | F missing CSP and `ACAO: *` | `DELIBERATELY_LATER` | Re-observed. `/` and `/terms` sent `ACAO: *`. `/privacy` and `/impressum` did not. |
 | F `www` does not resolve | `DELIBERATELY_LATER` | Reconfirmed. Apex HTTPS works. |
 | G alerting vendor | `STILL_OPEN_GATED` | Incident runbook still names no selected Sentry/Datadog/Axiom/Logtail/PagerDuty provider. The Development producer is not that vendor. |
-| G Development producer | `CHANGED_DETAIL_STILL_OPEN_GATED` | Installed on Development per recorded receipts. Not Production detection. |
+| G Development producer | `CHANGED_DETAIL_STILL_OPEN_GATED` | Post-#630 non-personal health is the TL statement in review `5359714624`. Production has none of those producer objects in that same statement. Not Production detection. |
 | H backup/restore proof | `RELEASE_PROOF_MISSING` | Not re-run. Supabase backup settings were not readable. |
 | I real revenue / account counts | `STILL_OPEN_GATED` | No live provider. Production account-count exposure stays separately gated. |
 | J fresh CWV / accessibility proof | `RELEASE_PROOF_MISSING` | No UI was retested. |
@@ -137,13 +145,13 @@ Facts above are the live reads. The inference is that the readiness classificati
 ### B. Security — `PARTIAL` — P1
 
 1. **State:** `PARTIAL`.
-2. **Changed since Preflight 2:** `CHANGED_DETAIL_STILL_OPEN_GATED` for finding 5.2. Fresh advisor replay and a fresh hosted catalog read are `INSUFFICIENT_CURRENT_EVIDENCE`.
-3. **Evidence:** Auth/RLS/MFA/AAL work remains merged. Production provider calls stay hard-off in source. Ruleset `21875372` remains the documented live baseline; this session did not mutate it and did not re-call the ruleset API. Admin security routes read `security_events`. Account deletion deletes linked events. No application INSERT was found in `app/api/admin/security/**` or `supabase/functions/account-delete-v1/index.ts`. The Development producer SQL lives under `scripts/db/security-events-dev-1/` and is not a `supabase/migrations` Production apply. Review `5359458734` records a fresh Development readback at 2026-09-29T22:51:37Z: producer active/healthy, seven-day retention, hourly scheduler, cap 1000 / used 0, five producer triggers, no trigger/catalog fault, and Production without those Development producer objects/triggers. Comment `5898958642` is the earlier non-personal receipt of the same shape. This session called the Management API and received **401**, so it did not repeat that query and does not treat the 401 as an outage. #626 comment `5900593201` keeps temporary operator permission **NOT established**, three genuine events **NOT STARTED**, and authenticated populated erasure **NOT RUN**. The blocked role operation in comment `5898480236` was not retried.
-4. **Missing action:** do not continue #626, do not generate events, and do not start a Production ingestion writer. A later persistent-ingestion activation remains a reserved security/migration gate.
-5. **Gate owner:** Product Owner for persistent Production ingestion and any Production security change. Technical Lead for any later read-only advisor replay. No current actor is authorized to route around the #626 tool-safety block.
-6. **Engineering without a special gate:** no.
-7. **V1 versus later:** V1 launch-critical as gate G. The Development stage is a bounded partial step. It is not Gate G and it is not a new P0 incident.
-8. **Uncertainty:** empty producer quota must not be read as “no incidents”. The hosted health age since 22:51Z was not re-measured. Unread advisories are an evidence gap, not a discovered vulnerability. Dependabot and code scanning were not queried.
+2. **Changed since Preflight 2:** `CHANGED_DETAIL_STILL_OPEN_GATED` for finding 5.2. The Production advisor residual is a fresh attributed WARN read, not an insufficient-evidence gap. The Next.js security line is assessed in §8 and is not an executable bump in this PR.
+3. **Evidence:** Auth/RLS/MFA/AAL work remains merged. Production provider calls stay hard-off in source. Ruleset `21875372` remains the documented live baseline; this session did not mutate it and did not re-call the ruleset API. Admin security routes read `security_events`. Account deletion deletes linked events. No application INSERT was found in `app/api/admin/security/**` or `supabase/functions/account-delete-v1/index.ts`. The Development producer SQL lives under `scripts/db/security-events-dev-1/` and is not a `supabase/migrations` Production apply. Review `5359714624` records post-#630 non-personal Development health: producer active/healthy, seven-day retention, hourly job active, cap 1000 / used 0, five producer triggers, zero origin rows, no trigger/catalog fault. The same review says Production metadata has none of those Development producer objects and zero matching triggers. Comment `5898958642` and review `5359458734` are the earlier receipts of the same shape. This session’s Management API **401** is an access limit. It does not replace and does not contradict the Technical-Lead receipts. This session did not personally run the hosted SQL. TL comment `5900885296` records a fresh Production Security Advisor result at WARN, not ERROR: GraphQL visibility warnings for `airports` / `places` to anon and 22 public tables to authenticated, plus 9 authenticated-callable `SECURITY DEFINER` functions. The same comment records RLS enabled on the reviewed sensitive/account/trip tables, `auth.uid() = user_id` ownership on account/traveller/trip tables, operational capability predicates on `blocked_ips`, `payments`, `refunds`, `security_events`, `stripe_webhooks`, and `model_usage`, AAL2 inside `darf_betrieb_lesen()`, `darf_betrieb_eingreifen()`, and `darf_konten_verwalten()`, uid-constrained visit writers, `darf_betrieb_lesen()` inside admin aggregate functions, and a bounded `search_path` on the inspected SECURITY DEFINER functions. Those warnings stay open as visibility/definer notices. They are not evidence of a proven cross-account defect, and this preflight does not propose an ACL or RLS rewrite. #626 comment `5900593201` keeps temporary operator permission **NOT established**, three genuine events **NOT STARTED**, and authenticated populated erasure **NOT RUN**. The blocked role operation in comment `5898480236` was not retried.
+4. **Missing action:** do not continue #626, do not generate events, do not rewrite Production RLS from the WARN list, and do not start a Production ingestion writer. A later persistent-ingestion activation remains a reserved security/migration gate. The framework maintenance decision is §8, not a second security writer inside this draft.
+5. **Gate owner:** Product Owner for persistent Production ingestion and any Production security change. Technical Lead for the attributed advisor classification. No current actor is authorized to route around the #626 tool-safety block.
+6. **Engineering without a special gate:** no for ingestion, RLS, or #626. The unpublished Next.js security release is also not executable yet; see §8.
+7. **V1 versus later:** V1 launch-critical as gate G. The Development stage is a bounded partial step. It is not Gate G and it is not a new P0 incident. Advisor WARNs with the recorded controls are a residual, not a new P0.
+8. **Uncertainty:** empty producer quota must not be read as “no incidents”. This session did not re-measure the hourly cleanup age; the post-#630 receipt is the Technical-Lead statement in review `5359714624`. Dependabot and code scanning were not queried. The advisor paragraph is attributed evidence, not a query this session executed.
 
 ### C. Privacy / Legal / Compliance — `PARTIAL` — P1
 
@@ -154,7 +162,7 @@ Facts above are the live reads. The inference is that the readiness classificati
 5. **Gate owner:** Product Owner for retention, consent persistence, and any future provider DPA. Later legal sign-off re-reads #585.
 6. **Engineering without a special gate:** no.
 7. **V1 versus later:** retention and consent records are V1 launch-critical once real processing is in market. #585 is not a current engineering blocker. The old “legal pages 404” P0 stays closed.
-8. **Uncertainty:** this session did not archive the full privacy HTML. Production erasure liveness was not re-read.
+8. **Uncertainty:** this session did not archive the full privacy HTML. Production `account-delete-v1` ACTIVE v1 / `verify_jwt=true` is the attributed listing in TL comment `5900885296`, not a function invocation by this session.
 
 ### D. Provider / Commercial / Licensing — `BLOCKED` — P0
 
@@ -181,24 +189,24 @@ Facts above are the live reads. The inference is that the readiness classificati
 ### F. Production Configuration — `PARTIAL` — P2
 
 1. **State:** `PARTIAL`.
-2. **Changed since Preflight 2:** indexing and public legal pages reconfirmed. #630 changed the repository Development redirect expectation only. Fresh Supabase inventory remains `INSUFFICIENT_CURRENT_EVIDENCE`. Header and `www` notes stay `DELIBERATELY_LATER`.
-3. **Evidence:** Public alias serves Terms CH-DE 1.0. HTTP 308 redirects to HTTPS. HSTS is present. `www` does not resolve. Apex address resolves. Robots disallow-all, empty sitemap, and `noindex, nofollow` match the prelaunch rule. Manifest is live. GitHub records Production deployment success for `60148274765f2143722b2742607ee3cf03730bcb`. No CSP header was present on `GET /`. `access-control-allow-origin: *` was present on `GET /` and `GET /terms`, and absent on `GET /privacy` and `GET /impressum`.
-4. **Missing action:** do not mutate Supabase, DNS, headers or indexing. A later final-gate artifact needs a fresh Production read by someone with that read path.
-5. **Gate owner:** Technical Lead for the read-only inventory. Product Owner for indexing, DNS cutover, or any Production config change.
+2. **Changed since Preflight 2:** indexing and public legal pages reconfirmed. #630 changed the repository Development redirect expectation only. The public alias is now bound to the #630 Production deployment by `data-dpl-id`. Header and `www` notes stay `DELIBERATELY_LATER`. Backup settings remain unread.
+3. **Evidence:** This R1 session re-read `https://jetnity.com/` and found `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm` together with `noindex`. TL comment `5900885296` records the same deployment id, robots `Disallow: /`, an empty sitemap, HSTS, no CSP on the root response, and root `access-control-allow-origin: *`. This writer’s earlier public read also saw `ACAO: *` on `/` and `/terms`, and no `ACAO` on `/privacy` and `/impressum`. HTTP 308 redirects to HTTPS. `www` does not resolve. Apex address resolves. Manifest is live. GitHub records Production deployment success for `60148274765f2143722b2742607ee3cf03730bcb`. TL comment `5900885296` lists Production `account-delete-v1` ACTIVE v1, `verify_jwt=true`.
+4. **Missing action:** do not mutate Supabase, DNS, headers or indexing. Header hardening stays a later residual unless a concrete exploit on that path is proven.
+5. **Gate owner:** Product Owner for indexing, DNS cutover, or any Production config change.
 6. **Engineering without a special gate:** no for the residuals that matter. Header hardening is not authorized from this preflight.
-7. **V1 versus later:** indexing-off is the correct V1 prelaunch state. Unread inventory is final-gate evidence, severity P2, not a reason to rebuild Auth or SMTP.
-8. **Uncertainty:** the alias HTML is not SHA-locked to `60148274765f2143722b2742607ee3cf03730bcb` by this read. The recorded deployment URL was not used as product truth. DNSSEC was not re-checked. Auth Site URL and SMTP were not re-read in Supabase; their GitHub closures stay the record. #630’s repository expectation is not a new hosted Auth mutation.
+7. **V1 versus later:** indexing-off is the correct V1 prelaunch state. The bound deployment is still a prelaunch deploy.
+8. **Uncertainty:** DNSSEC was not re-checked. Auth Site URL and SMTP were not re-read in Supabase; their GitHub closures stay the record. #630’s repository expectation is not a new hosted Auth mutation. The hosted advisor and function listing are attributed to the Technical Lead, not re-executed here.
 
 ### G. Monitoring / Logging / Alerting — `PARTIAL` — P1
 
 1. **State:** `PARTIAL`.
 2. **Changed since Preflight 2:** `CHANGED_DETAIL_STILL_OPEN_GATED`. Development blocklist logging exists on the recorded Development branch. An alerting vendor does not.
-3. **Evidence:** Finding 5.2 remains open as B describes. Admin honesty copy remains on `main`. `docs/V1_INCIDENT_PROCESS_RUNBOOK_2026-09-18.md` still says no Sentry, Datadog, Axiom, Logtail or PagerDuty provider is selected. None was contacted. The Development producer does not page anyone and does not cover login, MFA or platform logs.
+3. **Evidence:** Finding 5.2 remains open as B describes. Admin honesty copy remains on `main`. `docs/V1_INCIDENT_PROCESS_RUNBOOK_2026-09-18.md` still says no Sentry, Datadog, Axiom, Logtail or PagerDuty provider is selected. None was contacted. The Development producer does not page anyone and does not cover login, MFA or platform logs. Its post-#630 health and Production isolation are the Technical-Lead statement in review `5359714624`.
 4. **Missing action:** keep the honest not-configured disclosure. Do not install an observability vendor from this map.
 5. **Gate owner:** Product Owner. A new processor and possible cost are reserved gates. Persistent Production ingestion is the same reserved security gate as B.
 6. **Engineering without a special gate:** no.
 7. **V1 versus later:** gate O treats missing operational detection as a launch block. The Development producer is not a substitute.
-8. **Uncertainty:** provider-health alerts are also untestable while providers are hard-off. This session did not re-measure the hourly cleanup age.
+8. **Uncertainty:** provider-health alerts are also untestable while providers are hard-off. This session did not personally re-measure the hourly cleanup age.
 
 ### H. Backup / Recovery / Incident — `PARTIAL` — P1
 
@@ -275,13 +283,13 @@ Facts above are the live reads. The inference is that the readiness classificati
 5. **Gate owner:** Product Owner.
 6. **Engineering without a special gate:** no.
 7. **V1 versus later:** a public launch attempt would be P0. The current hold is the correct state.
-8. **Uncertainty:** the public alias read and the GitHub deployment record agree that a Production deploy exists. They do not agree, by byte identity, that this session viewed the exact `60148274765f2143722b2742607ee3cf03730bcb` HTML.
+8. **Uncertainty:** the public root HTML is bound to deployment `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm` by `data-dpl-id`. That is the #630 Production deployment recorded for merge SHA `60148274765f2143722b2742607ee3cf03730bcb`. This session did not hash the full document against the Git tree.
 
 ### O. Final blocker rules — `BLOCKED` — P0
 
 1. **State:** `BLOCKED`.
 2. **Changed since Preflight 2:** `STILL_OPEN_GATED`.
-3. **Evidence:** The binding rule still blocks public launch while an open P0 remains, while P1 residuals remain in the core journey, security, privacy, truth, provider or reliability path, while a provider contract or DPA is unresolved, while real-path E2E is untested, while backup/recovery proof is missing, or while fixture data would be used as hard truth. Those conditions are still true for A, D, E, G, and the unread parts of F and H. The Sherpa reply and the Development producer do not remove them. Fixture hotel data is not wired as Production hotel truth. Indexing is not on.
+3. **Evidence:** The binding rule still blocks public launch while an open P0 remains, while P1 residuals remain in the core journey, security, privacy, truth, provider or reliability path, while a provider contract or DPA is unresolved, while real-path E2E is untested, while backup/recovery proof is missing, or while fixture data would be used as hard truth. Those conditions are still true for A, D, E, G, backup/restore in H, and the header/`www` residuals in F. The public deployment binding and the attributed Production advisor read do not remove them. The unpublished Next.js security release does not remove them either. The Sherpa reply and the Development producer do not remove them. Fixture hotel data is not wired as Production hotel truth. Indexing is not on.
 4. **Missing action:** stop for independent exact-head review. Do not convert this document into the launch gate.
 5. **Gate owner:** Technical Lead for this review. Product Owner for launch approval. Neither is granted here.
 6. **Engineering without a special gate:** no.
@@ -302,11 +310,11 @@ Their absence is a launch blocker and it is `GATED`. The public-alternatives not
 
 ## 7. Security, privacy and production boundary
 
-Not done: Production mutation, Supabase schema/RLS/policy/migration/function/job change, Auth-user/profile/factor/private identity read, role or MFA operation, fixture creation, producer-event generation, erasure, retention change, observability install, payment, or secret use.
+Not done: Production mutation, Supabase schema/RLS/policy/migration/function/job change, Auth-user/profile/factor/private identity read, role or MFA operation, fixture creation, producer-event generation, erasure, retention change, observability install, payment, secret use, or a Next.js/npm upgrade.
 
-The Management API token in this environment returned 401. That stopped the hosted catalog read. It was not retried through another credential, dashboard, SQL reformulation, or anon-key query.
+The Management API token in this environment returned 401. That stopped this session’s own hosted catalog read. It was not retried through another credential, dashboard, SQL reformulation, or anon-key query. Review `5359714624` and comment `5900885296` are the current Technical-Lead receipts for producer health, Production isolation, the advisor WARN list, and `account-delete-v1`. This report cites them. It does not claim this session executed them.
 
-Local source reads and public HTTPS GETs are not a Production PASS. The Technical-Lead Development/Production isolation sentence in review `5359458734` is a recorded receipt, not a query repeated here. PrivacyBee HTML is not a legal-completeness verdict. #626 remains open.
+This session did re-read public `https://jetnity.com/` and found `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. Local source reads and public HTTPS GETs are not a launch PASS. PrivacyBee HTML is not a legal-completeness verdict. #626 remains open. The advisor WARN list is not a Production ACL rewrite.
 
 ---
 
@@ -314,21 +322,33 @@ Local source reads and public HTTPS GETs are not a Production PASS. The Technica
 
 **Immediate ungated V1 implementation candidates: NONE.**
 
-No current residual is all of: genuinely V1-useful, not already built, free of an external wait, free of a reserved Product-Owner gate, executable now with available truth, and more than final-proof of a journey that cannot yet be tested.
+R1 required a real framework assessment, not a copied NONE. The assessment is below. The nine-vulnerability patch is not executable now. `next@16.3.7` is the wrong package for that patch.
 
-The dominant launch items are listed so the review can see them. Each is `GATED`. None is recommended for Technical-Lead dispatch.
+### Framework security assessment
+
+1. **Confirmed version exposure.** `package.json` pins `next` and `eslint-config-next` at `16.3.3`. That pin is below the published ImageResponse patch line `16.3.6` (2026-09-22T16:19:00Z) and below npm `latest` `16.3.7` (2026-09-29T09:04:19Z). React `19.2.8` sits inside the `next@16.3.7` peer range `^19.0.0`. eslint `9.39.5` and TypeScript `5.9.3` satisfy `eslint-config-next@16.3.7` peers (`eslint >=9`, `typescript >=3.3.1`). `eslint-config-next@16.3.7` is published. Compatibility of `16.3.8` cannot be checked. That version is not in the registry.
+2. **ImageResponse applicability.** GHSA-vcvr-r3jv-pc5j affects `next` `>=16.2.0 <16.3.6` and is patched in `16.3.6`. The vulnerable behavior is the Node.js `ImageResponse` path in `next/og` when attacker-controlled values are passed into SVG content, attributes, or styles. This repository has **0** matches for `next/og` and **0** matches for `ImageResponse`. The advisory’s own condition for a reachable RCE is absent. This report does not claim that RCE is exploitable in Jetnity. The version range still contains the pin.
+3. **September advisories.** Comment `5900828960` and review `5359714624` correctly required this check and correctly quoted the 23 September plan, which named `16.3.7` for nine vulnerabilities (1 critical, 2 high, 5 medium, 1 low). The same official post, `https://nextjs.org/blog/upcoming-nextjs-security-release-september-2026`, re-read in this R1 session, now says: `16.3.7` was published as a bugfix and does not include the security fixes planned for 30 September 2026. Those fixes are now expected in `16.3.8` and `15.5.27`, together with the full advisories. The GitHub release `v16.3.7` describes a turbo-tasks bugfix backport. `npm view next@16.3.8` returns **404**. Affected-version conditions for the nine vulnerabilities are not public.
+4. **Resulting decision.** A bump to `16.3.7` would install a bugfix, leave the nine-vulnerability release unapplied, and clear only an ImageResponse line whose call site is absent. That is not the security patch R1 asked this preflight to judge. The security patch is not executable because the package is not published.
+
+The other launch items stay `GATED`. None of them is a dispatch.
 
 | # | Title | Class | Why it is not dispatch |
 | --- | --- | --- | --- |
-| 1 | KAYAK reply, then flight commercial truth | `GATED` | #395 has no newer comment. Outgoing questions are paused. A reply still requires Technical-Lead review and a Product-Owner gate before signup, terms, credentials, spend or an adapter. |
-| 2 | Sherpa follow-up or Official Entry truth | `GATED` | A reply exists and the Product Owner paused outgoing questions. The alternatives note selects nothing. Do not invent visa or transit rules. |
-| 3 | Finish #626 populated producer acceptance | `GATED` | Temporary operator permission is not established. The privileged role/fixture operation is blocked and must not be retried or routed around. Three events and authenticated populated erasure are not started. This is not a new feature slice. |
-| 4 | Production persistent ingestion / alerting / Gate G | `GATED` | Development activation did not close finding 5.2 or Gate G. Production activation and an alerting vendor remain reserved gates. |
+| 1 | September Next.js security bump | Not executable yet | Expected package `next@16.3.8` is not published. `16.3.7` is a bugfix and is the wrong target. ImageResponse has no Jetnity call site. |
+| 2 | KAYAK reply, then flight commercial truth | `GATED` | #395 has no newer comment. Outgoing questions are paused. A reply still requires Technical-Lead review and a Product-Owner gate before signup, terms, credentials, spend or an adapter. |
+| 3 | Sherpa follow-up or Official Entry truth | `GATED` | A reply exists and the Product Owner paused outgoing questions. The alternatives note selects nothing. Do not invent visa or transit rules. |
+| 4 | Finish #626 populated producer acceptance | `GATED` | Temporary operator permission is not established. The privileged role/fixture operation is blocked and must not be retried or routed around. Three events and authenticated populated erasure are not started. This is not a new feature slice. |
+| 5 | Production persistent ingestion / alerting / Gate G | `GATED` | Development activation did not close finding 5.2 or Gate G. Production activation and an alerting vendor remain reserved gates. The fresh WARN advisor list is not an RLS rewrite. |
 
 Also gated, and not promoted: retention and consent persistence, backup/restore proof, Production account-count exposure, public launch/indexing, header/`www` hardening, and TW-8. TW-9 remains release proof after those dependencies. #585 stays deferred. Binding build order S4–S8 is not an idle-Cursor slice while no provider is selected.
 
-Explicitly not candidates:
+Explicitly not candidates, and not part of any later framework slice:
 
+- A dependency edit inside PR #632.
+- A bump to `16.3.7` or to canary in place of the unpublished security release.
+- A claim that the ImageResponse RCE is reachable.
+- An ACL/RLS rewrite driven only by the WARN list in comment `5900885296`.
 - Another flight, hotel or activity engine.
 - Another Official Truth model or a GOV.UK/Timatic/Visamundi adapter from the alternatives note.
 - Legal-page copy or a PrivacyBee hand edit.
@@ -339,15 +359,26 @@ Explicitly not candidates:
 - Historical drafts #52, #50, #40, #39 and #28.
 - A workaround, delegation, or owner-run replacement for the blocked #626 role operation.
 
+### Smallest later slice, only after the package exists
+
+When npm publishes the September security release, currently expected as `next@16.3.8`, and the accompanying advisories name the affected versions, the smallest bounded slice is:
+
+- bump `next` and `eslint-config-next` together to that published security version;
+- refresh the lockfile only as far as that bump requires;
+- pass the existing typecheck, lint, test, build, and Auth CI gates.
+
+Non-scope for that later slice: application features, #626, provider work, Production Supabase, RLS/ACL edits, CSP/`ACAO`, indexing, launch, a new vendor, and any claim that the unused ImageResponse path was exploitable. If the published advisories show every affected condition is absent from Jetnity, the Technical Lead re-decides before implementation. This PR does not start that slice.
+
 ### Exact first next step when a gate or evidence changes
 
-Nothing in that list is executable now. The first step that becomes executable is whichever of these gates actually moves, and only that step:
+The first framework step becomes executable when `next@16.3.8`, or the version the published advisories actually name, is on npm. Until that publish, there is no framework maintenance slice to dispatch.
 
-1. If the Product Owner releases the outgoing-question pause, the first step is a Technical-Lead review of the already-received Sherpa reply and every linked term. That review does not itself authorize sending, signup, credentials, spend, or an adapter. KAYAK and IATA stay on their last sent comments until a newer repository comment or an explicitly reviewed mailbox reply exists.
+The provider and #626 gates are unchanged:
+
+1. If the Product Owner releases the outgoing-question pause, the first provider step is a Technical-Lead review of the already-received Sherpa reply and every linked term. That review does not itself authorize sending, signup, credentials, spend, or an adapter.
 2. If a genuinely new authorized route for the remaining #626 temporary operator preparation is later established, and that route is not a retry, reformulation, delegation, dashboard path, or replacement SQL for comment `5898480236`, the first step is the already-defined remainder: three genuine producer events, then authenticated populated erasure. No such route exists now.
-3. If fresh evidence shows a genuine ungated V1 defect that can be fixed without those gates, the Technical Lead may select that defect after a new precheck. This preflight did not find one.
 
-Until one of those changes, do not manufacture a V1 implementation because Cursor is available.
+Do not manufacture a V1 implementation because Cursor is available.
 
 ---
 
@@ -358,11 +389,12 @@ Until one of those changes, do not manufacture a V1 implementation because Curso
 | P0 | No live flight, hotel or activity truth | External, then Product Owner | Core commercial journey cannot be real. KAYAK is still sent. Questions are paused. |
 | P0 | No contracted Official Truth | Product Owner pause, then external IATA | Sherpa replied and is not selected. Hard truth must stay unknown. |
 | P0 | Public launch / indexing not approved | Product Owner | Production deploy is not launch |
-| P1 | Finding 5.2 / Gate G still open | Product Owner | Development producer is a partial, blocked acceptance. It is not Production ingestion. |
+| P1 | Next.js pin `16.3.3` is below the published `16.3.6` line and the unpublished September line | Vendor publish | `16.3.7` is a bugfix. `16.3.8` is not on npm. ImageResponse has no call site. Not an executable slice until the security version is published. |
+| P1 | Finding 5.2 / Gate G still open | Product Owner | Development producer is active on the attributed post-#630 receipt and is not Production ingestion. |
 | P1 | #626 populated erasure not run | Tool-safety block | Not a code defect and not a permitted retry |
 | P1 | No alerting vendor | Product Owner | Detection half of incidents unmet |
 | P1 | Retention undecided; consent not persisted | Product Owner | Legal pages exist; lifecycle record does not |
-| P1 | Backup/restore and a fresh Supabase inventory not proven at this SHA | Final proof / insufficient | This session’s Management API was 401. Last hosted isolation sentence is review `5359458734`. |
+| P1 | Backup/restore still unproven | Final proof | Advisor WARNs, RLS/AAL2 controls, `account-delete-v1` ACTIVE v1, and Development/Production producer isolation are current through TL comment `5900885296` and review `5359714624`. Backup settings were not in those receipts. |
 | P1 | Real provider/official E2E impossible | External / pause | Fail-closed is correct |
 | P2 | CSP absent and `ACAO: *` on public `GET /` and `GET /terms` | Later hardening | Re-observed. `/privacy` and `/impressum` did not send `ACAO` |
 | P2 | `www` does not resolve | Later DNS decision | Apex HTTPS works |
@@ -376,13 +408,14 @@ Until one of those changes, do not manufacture a V1 implementation because Curso
 
 ## 10. Limits
 
-- No hosted Supabase SQL in this session. Management API returned 401. The 401 is not evidence that the producer stopped.
+- No hosted Supabase SQL by this session. Management API returned 401. That 401 does not override review `5359714624` or comment `5900885296`, and it is not evidence that the producer stopped.
 - No Auth-user, profile, factor, MFA, role, fixture, event-generation or erasure operation.
 - No provider mailbox was opened. No Sherpa quotation amount was copied.
 - No browser journey, no CWV, no device lab, no test rerun beyond reading the existing main CI and Auth log result.
 - No claim that GitHub has zero security advisories.
 - No percentage-complete claim.
-- Public `jetnity.com` HTML was not byte-locked to the merge SHA.
+- Public root HTML carries `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. The full HTML was not hashed against the Git tree.
+- `next@16.3.7` was inspected as a published bugfix. It was not installed. `next@16.3.8` returned npm 404 during this R1 read.
 - `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-29.md` still describes Draft #630 as the open writer. It is outside this task allowlist and was not rewritten. The pointer correction in `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` is the current writer map.
 - `next-env.d.ts` local drift is not part of this delivery.
 - This report does not preclaim CI, Vercel, Technical-Lead PASS, Ready or Merge for the new branch head.

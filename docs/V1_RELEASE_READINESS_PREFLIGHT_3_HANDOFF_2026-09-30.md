@@ -1,7 +1,7 @@
 # Jetnity V1 Release Readiness Preflight 3 — HANDOFF
 
 Stand: 30. September 2026
-Status: **STOP FOR INDEPENDENT MAIN-CHAT TECHNICAL-LEAD REVIEW**
+Status: **R1 CORRECTION / STOP FOR FULL MAIN-CHAT TECHNICAL-LEAD RE-REVIEW**
 
 ## Who this is for
 
@@ -23,9 +23,13 @@ Then re-fetch live `main`, open PRs, open issues, #626, #294, #395, #585, Action
 
 Docs/evidence only, on Draft PR #632, against the same A–O dimensions as Preflight 2.
 
+Reviewed head `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51` is **not accepted**. Review `5359714624` is CHANGES REQUIRED. This file is the R1 correction. The re-review head is the branch tip after the R1 commit.
+
 **Immediate ungated V1 implementation candidates: NONE.**
 
-This is not a launch PASS. #626 stays **OPEN**. Finding 5.2 and Release Gate G stay open. No provider is selected. Sherpa outgoing questions stay paused.
+The R1 framework check is the reason, not a copied Preflight 2 sentence. `next@16.3.7` is a published bugfix. The official post now expects the nine-vulnerability release in unpublished `next@16.3.8`. npm returned 404 for `16.3.8` in this session. ImageResponse / `next/og` has no repository use. Do not bump dependencies in #632.
+
+This is not a launch PASS. #626 stays **OPEN**. Finding 5.2 and Release Gate G stay open. No provider is selected. Sherpa outgoing questions stay paused. TL comment `5900885296` and review `5359714624` supply the current Production advisor, erasure-function, and Development producer receipts. This session did not execute those hosted reads. This session did re-read public root HTML `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`.
 
 ## Exact git state
 
@@ -51,17 +55,19 @@ Changed paths must stay inside:
 
 1. Whether the A–O classification matches the fresh evidence, including the Sherpa pause and the still-open #626 blocker.
 2. Whether any quoted GitHub, CI, Vercel or public-HTTP fact has gone stale since the read window.
-3. Whether a later hosted catalog read is required before anyone relies on the 22:51Z producer-health sentence. This session could not repeat it: Management API **401**. That 401 is an access limit, not a recorded producer failure.
-4. Do not dispatch a Cursor writer while the candidate decision remains NONE.
+3. Whether the attributed Production and producer receipts in comment `5900885296` and review `5359714624` are enough. This session’s Management API **401** does not override them and is not a personal re-execution.
+4. Whether NONE remains correct because `next@16.3.8` is unpublished and `16.3.7` is a bugfix. Do not dispatch a writer while that decision remains NONE.
 5. Do not treat review `5359458734` as authorization to finish #626. The privileged role/fixture operation stays blocked.
 
 ## Exact first next step when a gate changes
 
-If the Product Owner releases the outgoing-question pause, the first step is a Technical-Lead review of the already-received Sherpa reply and every linked term. That review does not authorize sending, signup, credentials, spend or an adapter.
+When npm publishes the September security release, currently expected as `next@16.3.8`, the first framework step is a later bounded bump of `next` and `eslint-config-next` to that published version, plus the existing CI gates. Non-scope: no #632 dependency edit, no `16.3.7` stand-in, no ImageResponse exploit claim, no #626, provider, RLS, header, or launch work. If the published advisories show Jetnity is outside every affected condition, the Technical Lead re-decides before that slice starts.
+
+If the Product Owner releases the outgoing-question pause, the first provider step is a Technical-Lead review of the already-received Sherpa reply and every linked term. That review does not authorize sending, signup, credentials, spend or an adapter.
 
 If a genuinely new authorized #626 route appears, and it is not a retry or workaround of comment `5898480236`, the first step is the already-defined remainder: three genuine producer events, then authenticated populated erasure. No such route exists now.
 
-If neither changes, do not invent work.
+Until one of those changes, do not invent work.
 
 ## Explicitly not handed off as work
 
@@ -83,16 +89,18 @@ Open product writers: none besides this Draft. #626 is an open acceptance track,
 
 ## Validation note
 
-Pre-handoff re-fetch of `origin/main` on 30 September 2026 returned `60148274765f2143722b2742607ee3cf03730bcb`. Merge-base with this branch was that SHA. Ahead/behind before the delivery commit: 1 ahead / 0 behind.
+First delivery, historical for head `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51`: `origin/main` was `60148274765f2143722b2742607ee3cf03730bcb`, then 1 ahead / 0 behind before that commit. `git diff --check` was clean and the operating-mode guard passed. Review `5359714624` did not accept that head.
 
-`git diff --check` reported no whitespace errors. `node scripts/operating-mode-guard.mjs` exited 0 (`operating-mode guard: PASS`). The dirty `next-env.d.ts` worktree file is excluded from the commit.
+R1 re-fetch, before the R1 commit: `origin/main` remained `60148274765f2143722b2742607ee3cf03730bcb`. Merge-base was that SHA. The branch was 2 ahead / 0 behind at `e21a876b`. The R1 re-review head is the branch tip after the R1 commit.
 
-Changed paths in this delivery:
+On the R1 diff, `git diff --check` reported no whitespace errors and `node scripts/operating-mode-guard.mjs` exited 0 (`operating-mode guard: PASS`). The dirty `next-env.d.ts` worktree file stays uncommitted.
+
+Changed paths in the R1 commit stay inside:
 
 - `docs/V1_RELEASE_READINESS_PREFLIGHT_3_REPORT_2026-09-30.md`
 - `docs/V1_RELEASE_READINESS_PREFLIGHT_3_HANDOFF_2026-09-30.md`
-- `docs/V1_RELEASE_READINESS_PREFLIGHT_3_TASK_2026-09-30.md` (session addendum only)
+- `docs/V1_RELEASE_READINESS_PREFLIGHT_3_TASK_2026-09-30.md` (R1 addendum only)
 - `JETNITY_START_HERE.md`
 - `docs/ACTIVE_WORK_STATUS.md`
 
-CI, Vercel Preview and Technical-Lead PASS for the new head are not claimed. The review head is the branch tip after the delivery commit, not the task seed `75909f49b90e2635b6c316e97c87198ac6b1a62c`.
+No dependency file changes. CI, Vercel Preview and Technical-Lead PASS for the R1 head are not claimed.
