@@ -1,7 +1,9 @@
 # Jetnity – ChatGPT New Chat Checkpoint – 29. September 2026
 
 Stand: 29. September 2026  
-Status: **NORMAL / PREFLIGHT 2 ACCEPTED / NO UNGATED V1 IMPLEMENTATION / EXTERNAL WAITS OPEN / NO RUNTIME WRITER AFTER THIS CONTINUITY SLICE**
+Status: **NORMAL / PREFLIGHT 2 ACCEPTED AS THE RELEASE BOUNDARY / DEVELOPMENT SECURITY-EVENT RETENTION 1 IS A LATER APPROVED WRITER / EXTERNAL WAITS OPEN**
+
+> **Later writer, recorded 29 September 2026 without rewriting this checkpoint's historical body.** Product Owner comment `5887161416` approved the #626 Development proposal. Draft PR #628 on `feat/dev-security-event-logging-retention-1` is that package. Logical agent **Jetnity development security event logging retention 1**, Generation 1, session https://cursor.com/agents/bc-b1f79b09-d5cb-4f74-97a5-50bb9a4ee7ab, `originalModelName=grok-4.7-high-fast`. Baseline `main@e785cd00b090042ac6622383bceebd7f6ddfed88`. Local proof only. Hosted apply and Production were not run. Finding 5.2 stays partial. #626 stays open. Handoff: `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_HANDOFF_2026-09-29.md`. The sections below remain the Preflight 2 continuity persist, including its then-current `main` pin `a9a8898c` and its "no ungated implementation" conclusion. Live evidence still wins over both.
 
 > Live evidence wins. Read this checkpoint, then re-fetch `main`, open PRs, open issues, Actions, Vercel, and the latest #395, #294 and #585 comments before selecting work.
 
