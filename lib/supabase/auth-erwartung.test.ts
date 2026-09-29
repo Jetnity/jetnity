@@ -133,11 +133,31 @@ describe('Die echte config.toml', () => {
     assert.equal(sollwerte().get('disable_signup'), false)
   })
 
-  test('die leere Redirect-Liste wird eine leere Zeichenkette', () => {
+  test('die eine gespeicherte Development-Weiterleitung bleibt ein Eintrag mit literalem Backslash', () => {
+    // Readback #626 5893640399. Ein Backslash vor `?` ist das persistierte Glob.
+    // Die bestehende Abbildung hängt die Liste mit Komma zusammen; ein Eintrag
+    // muss unverändert als `uri_allow_list` ankommen. site_url bleibt lokal.
+    const eintrag =
+      'https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen'
+    const liste = tomlWert(CONFIG, 'auth.additional_redirect_urls')
+
+    assert.deepEqual(liste, [eintrag])
+    assert.equal(sollwerte().get('uri_allow_list'), eintrag)
+    assert.equal(sollwerte().get('site_url'), 'http://localhost:3000')
+    assert.equal(eintrag.split('\\').length - 1, 1)
+  })
+
+  test('eine synthetisch leere Redirect-Liste wird eine leere Zeichenkette', () => {
     // Die API führt `uri_allow_list` als Zeichenkette mit Kommas. Aus `[]`
-    // muss `""` werden, nicht `"[]"` und nicht `undefined`.
-    assert.deepEqual(tomlWert(CONFIG, 'auth.additional_redirect_urls'), [])
-    assert.equal(sollwerte().get('uri_allow_list'), '')
+    // muss `""` werden, nicht `"[]"` und nicht `undefined`. Die echte Datei
+    // hat diesen Leerstand nicht mehr; die Abbildung bleibt daran geprüft.
+    const config = leseToml(['[auth]', 'additional_redirect_urls = []'].join('\n'))
+    const roh = tomlWert(config, 'auth.additional_redirect_urls')
+    const abbildung = AUTH_ABBILDUNG.find((eintrag) => eintrag.api === 'uri_allow_list')
+
+    assert.deepEqual(roh, [])
+    assert.equal(typeof abbildung?.wandel, 'function')
+    assert.equal(abbildung?.wandel?.(roh ?? []), '')
   })
 
   test('secure_password_change verlangt erneute Anmeldung, nicht das alte Passwort', () => {

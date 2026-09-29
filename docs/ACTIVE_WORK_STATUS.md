@@ -1,9 +1,25 @@
 # Jetnity – Active Work Status
 
 Stand: 29. September 2026
-Status: **NORMAL / PREFLIGHT 2 REMAINS THE RELEASE BOUNDARY / DEVELOPMENT SECURITY-EVENT RETENTION 1 IS THE CURRENT WRITER / HOSTED APPLY NOT RUN**
+Status: **NORMAL / PREFLIGHT 2 REMAINS THE RELEASE BOUNDARY / #628 MERGED / #626 OPEN — POPULATED ERASURE BLOCKED / SHERPA RESPONSE RECEIVED — OUTGOING QUESTIONS PAUSED**
 
-## 0-current. Development security event logging retention 1
+## 0-current. Development acceptance continuity 1
+
+- Current pointer: `docs/DEV_SECURITY_ACCEPTANCE_CONTINUITY_1_REPORT_2026-09-29.md`. Issue #629. Draft [PR #630](https://github.com/Jetnity/jetnity/pull/630), branch `docs/dev-security-acceptance-continuity-1`. Logical agent **Jetnity Development acceptance continuity 1**, Generation 1. Session https://cursor.com/agents/bc-bb32b1dd-327b-48c7-be4f-36750d37de75. `originalModelName=grok-4.7-high-fast`. No UI rename.
+- Baseline `main@94f2747137e2a788c7120f27dc1f23cde12cbcf1`. Task seed `39f96019a957ef0ebfad7491c8cb9ab6e9ddc193` is not the review head.
+- #628/#627 implementation is completed and closed. Accepted head `80bccb5abb7d56479b65c548e15edde852bec51f`. Do not restart that writer. Closure: https://github.com/Jetnity/jetnity/pull/628#issuecomment-5890198290.
+- #626 remains **OPEN**. Last recorded producer health is the dated receipt https://github.com/Jetnity/jetnity/issues/626#issuecomment-5898958642: active/healthy, seven-day retention, hourly cleanup, cap 1,000, zero owned events, five triggers. This line cites that receipt. Native scheduler execution was observed in https://github.com/Jetnity/jetnity/issues/626#issuecomment-5891138087. Manual rolled-back expiry, cap and erasure rehearsals are not populated scheduled-expiry or authenticated HTTP erasure evidence. The full hosted rollback sequence remains local-package evidence.
+- Deployed client evidence, the Development Settings receipt and one correlated shared-server read are bounded proofs. D1 `JETNITY-626-D1-20260929` is accepted on attributed Work observations, the owner-supplied view and limited independent operational corroboration. D2-MFA `JETNITY-626-D2-MFA-20260929` is accepted at its observation time: one verified TOTP factor and current AAL2. That session observation is not an indefinitely valid AAL2 guarantee.
+- Temporary operator permission: **NOT established**. Three genuine producer events: **NOT STARTED**. Authenticated populated erasure: **NOT RUN**. The blocked SQL/Auth/profile operations stay blocked.
+- No current runtime or browser task. While this Draft PR is open, it is the only new bounded writer. After it closes, do not restart the blocked test or auto-start another slice.
+- Sherpa: response received / Product Owner consideration / outgoing follow-up paused (https://github.com/Jetnity/jetnity/issues/294#issuecomment-5888189192, https://github.com/Jetnity/jetnity/issues/294#issuecomment-5888940598). The later read-only alternatives note https://github.com/Jetnity/jetnity/issues/294#issuecomment-5889155160 selects nothing and leaves the pause in force. KAYAK #395 comment `5869751056` and IATA #294 comment `5875963553` remain the last recorded sent/waiting repository states. This persist did not read a mailbox.
+- Preflight 2 remains the release boundary. Finding 5.2, Release Gate G, launch, provider selection and reserved Production gates are not closed here.
+- Resume only after genuinely new authorized evidence resolves the recorded tooling restriction. The sequence is in the acceptance report. Cursor does not Ready or merge.
+- R1 correction, same writer and Draft PR: the repository expectation in `supabase/config.toml` now records the one already saved Development callback from #626 receipt `5893640399`. Reviewed head `8d21b1ec` received CHANGES REQUIRED `5900016686`. The review head is the branch tip after that correction. Closure is the main-chat Technical Lead review of #630. Until a closure comment on #630 names a merge SHA, fetch live `main`. The automatic Preview of #630 is not the #626 acceptance Preview `dpl_HatmCkzhDDbbdVCGMkoCMmjmPCcu`. This correction does not apply Auth config and does not unblock #626.
+
+The #628 section below is the historical delivery-time snapshot. Its hosted-apply sentence was true when written.
+
+## 0-historical. Delivery-time snapshot — Development security event logging retention 1
 
 - Product Owner approval: https://github.com/Jetnity/jetnity/issues/626#issuecomment-5887161416. This opens the already-presented Development stage only. Other reserved gates stay closed.
 - Draft [PR #628](https://github.com/Jetnity/jetnity/pull/628), branch `feat/dev-security-event-logging-retention-1`. Implementation issue #627 may close with the PR. Parent #626 stays open until hosted Development acceptance.

@@ -129,29 +129,15 @@ file_size_limit = "50MiB"
 [auth]
 enabled = true
 # Ziel jeder Bestätigungs- und Rücksetz-E-Mail, wenn die Anwendung kein
-# `redirectTo` mitgibt. Der Development-Branch wird ausschliesslich vom
-# lokalen Entwicklungsserver aus benutzt.
+# `redirectTo` mitgibt. site_url bleibt der lokale Entwicklungsserver.
 site_url = "http://localhost:3000"
-# Leer – und das ist kein Versehen, sondern nachgemessen.
-#
-# Die Vorlage nannte hier `["https://127.0.0.1:3000"]`, der Branch führt eine
-# leere Liste. Naheliegend wäre, das für einen Defekt zu halten: Die offizielle
-# Musterregel für Redirect-URLs legt nahe, dass `site_url` ohne `/**` keinen
-# Unterpfad abdeckt, der Rücksetzlink auf `/auth/update-password` also auf der
-# Startseite landen müsste. Nachgestellt an einem echten Rücksetzlink des
-# Branches trifft das nicht zu (docs/AUTH.md, Abschnitt „Redirect-Ziele"):
-#
-#   /auth/update-password am eigenen Ursprung  → wird übernommen
-#   /reisen am eigenen Ursprung                → wird übernommen
-#   derselbe Pfad auf 127.0.0.1 statt localhost → wird übernommen
-#   ein fremder Host                            → fällt auf site_url zurück
-#
-# Die Liste bleibt deshalb leer: Sie zu füllen würde den Kreis erlaubter Ziele
-# erweitern, ohne einen Weg zu öffnen, der heute fehlt – und ein Muster wie
-# `https://*.vercel.app/**` würde Hosts einschliessen, die Jetnity nicht
-# besitzt. Sobald es einen ausgelieferten Ursprung gibt, muss er hier stehen;
-# bis dahin ist er nicht erfunden. Offener Punkt in ROADMAP.md.
-additional_redirect_urls = []
+# Genau ein zusätzliches Ziel. Es ist der bereits freigegebene und gespeicherte
+# Development-Preview-Callback aus #626: Freigabe 5893108838, Readback 5893640399.
+# `\\` in dieser Zeichenkette ist ein literaler Backslash vor `?`, das persistierte
+# Glob. Der Browser-Callback enthält keinen Backslash. Kein zweites Ziel, kein
+# Wildcard und keine Production-URL. Die frühere leere Liste bleibt historische
+# Beobachtung in docs/AUTH.md.
+additional_redirect_urls = ["https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen"]
 # Gültigkeitsdauer des Access-Tokens in Sekunden.
 jwt_expiry = 3600
 # Ein benutztes Refresh-Token wird ersetzt; ein zweiter Gebrauch entwertet die
