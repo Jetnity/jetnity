@@ -141,3 +141,14 @@ Before handoff:
 STOP for independent main-chat Technical-Lead review.
 
 Cursor does not Ready, merge, contact providers, mutate Production, continue #626, or start a follow-up slice.
+
+## 11. Session evidence addendum
+
+Recorded before editing. This addendum does not change scope, allowlist, gates or the candidate rule.
+
+- Session URL: https://cursor.com/agents/bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2
+- Session id: `bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2`
+- `originalModelName`: `grok-4.7-high-fast`
+- Required model **Grok 4.7 High Fast** was available. No Auto substitution. Editing was allowed to proceed.
+- Live `main` at reconstruction matched the dispatch baseline `60148274765f2143722b2742607ee3cf03730bcb`.
+- Hosted catalog read was not completed: the Management API returned 401. No alternate credential or SQL path was used.

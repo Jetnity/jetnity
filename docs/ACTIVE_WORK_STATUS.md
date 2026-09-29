@@ -1,9 +1,24 @@
 # Jetnity – Active Work Status
 
-Stand: 29. September 2026
-Status: **NORMAL / PREFLIGHT 2 REMAINS THE RELEASE BOUNDARY / #628 MERGED / #626 OPEN — POPULATED ERASURE BLOCKED / SHERPA RESPONSE RECEIVED — OUTGOING QUESTIONS PAUSED**
+Stand: 30. September 2026
+Status: **NORMAL / PREFLIGHT 3 DRAFT IN REVIEW / PREFLIGHT 2 REMAINS THE ACCEPTED RELEASE BOUNDARY UNTIL TL ACCEPTS THIS REASSESSMENT / #630 MERGED / #626 OPEN / NO UNGATED V1 IMPLEMENTATION**
 
-## 0-current. Development acceptance continuity 1
+## 0-current. V1 Release Readiness Preflight 3
+
+- Current pointer: `docs/V1_RELEASE_READINESS_PREFLIGHT_3_REPORT_2026-09-30.md` and `docs/V1_RELEASE_READINESS_PREFLIGHT_3_HANDOFF_2026-09-30.md`. Issue #631. Draft [PR #632](https://github.com/Jetnity/jetnity/pull/632), branch `audit/v1-release-readiness-preflight-3`. Logical agent **Jetnity V1 release readiness preflight 3**, Generation 1. Session https://cursor.com/agents/bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2. `originalModelName=grok-4.7-high-fast`.
+- Baseline `main@60148274765f2143722b2742607ee3cf03730bcb` (`Merge #630`). Re-fetch before treating any later SHA as current. Task seed `75909f49b90e2635b6c316e97c87198ac6b1a62c` is not the review head after the delivery commit.
+- #630 and #629 are merged and closed. Do not treat Draft #630 as the open writer. #628/#627 stay merged and closed. Do not restart that implementation writer.
+- #626 remains **OPEN** and was explicitly reopened in https://github.com/Jetnity/jetnity/issues/626#issuecomment-5900593201 after the #630 merge closed it. D1 and D2-MFA stay accepted only inside their recorded bounds. Temporary operator permission: **NOT established**. Three genuine producer events: **NOT STARTED**. Authenticated populated erasure: **NOT RUN**. Do not retry, reformulate, delegate or route around the blocked privileged role operation.
+- This session did not repeat the hosted producer-health query. Management API access returned 401. The latest recorded non-personal readback is Technical-Lead review `5359458734` at 2026-09-29T22:51:37Z, not a fresh query and not a producer-outage finding.
+- Post-merge CI `36642027878` **SUCCESS** on the merge SHA, including Auth 55/55. Vercel commit status success, inspector `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. GitHub Deployment `6747268585`, environment Production, same SHA. Public-alias bytes were not re-proven.
+- Sherpa: response received / Product Owner consideration / outgoing follow-up paused. KAYAK #395 comment `5869751056` and IATA #294 comment `5875963553` remain the last recorded sent/waiting repository states. This preflight did not read a mailbox.
+- Immediate ungated V1 implementation candidates: **NONE**. Preflight 2 remains the accepted release boundary until independent main-chat Technical-Lead review accepts this reassessment. Finding 5.2, Release Gate G, launch, provider selection and reserved Production gates stay open.
+- While this Draft PR is open, it is the only new bounded writer. After it closes, do not auto-start another slice. Cursor does not Ready or merge.
+- `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-29.md` still says Draft #630 is open. That file was outside this allowlist and was not rewritten.
+
+The #630 section below is the historical delivery-time snapshot. Its “Draft PR is open” sentence was true when written.
+
+## 0-historical. Delivery-time snapshot — Development acceptance continuity 1
 
 - Current pointer: `docs/DEV_SECURITY_ACCEPTANCE_CONTINUITY_1_REPORT_2026-09-29.md`. Issue #629. Draft [PR #630](https://github.com/Jetnity/jetnity/pull/630), branch `docs/dev-security-acceptance-continuity-1`. Logical agent **Jetnity Development acceptance continuity 1**, Generation 1. Session https://cursor.com/agents/bc-bb32b1dd-327b-48c7-be4f-36750d37de75. `originalModelName=grok-4.7-high-fast`. No UI rename.
 - Baseline `main@94f2747137e2a788c7120f27dc1f23cde12cbcf1`. Task seed `39f96019a957ef0ebfad7491c8cb9ab6e9ddc193` is not the review head.
