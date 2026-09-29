@@ -1,7 +1,7 @@
 # Jetnity V1 Release Readiness Preflight 3 — REPORT
 
 Stand: 30. September 2026
-Status: **R1 CORRECTION AFTER CHANGES REQUIRED `5359714624` / NOT A PUBLIC-LAUNCH VERDICT / DRAFT / NOT READY / NOT MERGED**
+Status: **R2 CORRECTION AFTER CHANGES REQUIRED ON `d1589bc74f3c08be5c5e912d64b2a5310bd1629a` / NOT A PUBLIC-LAUNCH VERDICT / DRAFT / NOT READY / NOT MERGED**
 
 Issue: #631
 Draft PR: #632
@@ -21,7 +21,7 @@ Session URL: https://cursor.com/agents/bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2
 
 Live-evidence window: 2026-09-29T23:08Z–23:13Z, plus the mandatory pre-handoff `main` re-fetch recorded in the handoff. Public HTTP was read in this session. No separate evidence-directory file was created; the task allowlist does not include one.
 
-Reviewed head `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51` received CHANGES REQUIRED in review `5359714624`. This correction is the same writer and the same session. It is the R1 head only after the delivery commit. That reviewed head is not the re-review head.
+Reviewed head `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51` received CHANGES REQUIRED in review `5359714624`. R1 head `d1589bc74f3c08be5c5e912d64b2a5310bd1629a` then received R2 CHANGES REQUIRED. This correction is the same writer and the same session. It is the R2 head only after the delivery commit. Those reviewed heads are not the re-review head. R2 changes evidence wording. It does not add a new vendor fetch.
 
 This preflight implements nothing. It does not authorize public launch, indexing, provider activation, a Next.js upgrade, Production mutation, #626 closure, or a final gate PASS. No section has current evidence sufficient to treat it as preflight-closed.
 
@@ -52,9 +52,9 @@ Seit Preflight 2 ist Material passiert, und keines davon öffnet einen sofort au
 - #626 ist **OPEN** und wurde nach dem Merge von #630 ausdrücklich wieder geöffnet. D1 und das begrenzte D2-MFA sind nur in ihren aufgezeichneten Grenzen akzeptiert. Die temporäre Operator-Berechtigung ist **nicht** hergestellt. Drei echte Producer-Events sind **NOT STARTED**. Authentifiziertes populated Erasure ist **NOT RUN**. Die blockierte privilegierte Rollen-/Fixture-Operation darf nicht wiederholt, umformuliert, delegiert oder umgangen werden.
 - #630 / #629 sind geschlossen. Akzeptierter Head `895ac7575bb1c130f0f78c7eaaebd97283faf80f`. Technical-Lead FINAL PASS Review `5359458734`. Merge `60148274765f2143722b2742607ee3cf03730bcb`. Post-Merge-CI `36642027878` **SUCCESS**, inklusive Auth 55/55. Vercel-Production-Status auf diesem SHA ist success, Inspector `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`.
 - Sherpa hat geantwortet. Der Product Owner hat ausgehende Provider-Fragen pausiert. KAYAK und IATA stehen auf den letzten gesendeten Repository-Kommentaren. Kein Provider ist gewählt.
-- R1 prüft die Next.js-Linie. `next` und `eslint-config-next` stehen auf `16.3.3`. npm `latest` ist `16.3.7`. Der offizielle September-Sicherheitshinweis sagt in der aktuellen Fassung, dass `16.3.7` ein Bugfix ist und die neun Schwachstellen nicht enthält. Erwartet wird `16.3.8` / `15.5.27`. `next@16.3.8` ist nicht im Registry.
+- R2 korrigiert die Framework-Formulierung. `next` und `eslint-config-next` stehen auf `16.3.3`. Unabhängig belegt ist: npm `latest` und das GitHub-Release `v16.3.7` sind veröffentlicht, und dieses Release ist ein Bugfix-Backport. Es ist nicht als das angekündigte Neun-Schwachstellen-Paket belegt. Diese Advisories sind in diesem Review nicht unabhängig als veröffentlicht belegt. Der nächste Framework-Schnitt wird ausführbar, wenn das vom Vendor veröffentlichte Security-Release und die vollständigen Advisories unabhängig abrufbar sind. Die genaue gepatchte Version wird dann aus diesen Advisories gewählt. Ein Sprung auf `16.3.7` ersetzt dieses Release nicht. Die ImageResponse-Bewertung bleibt davon getrennt. Siehe §8.
 
-**Immediate ungated V1 implementation candidates: NONE.** Der September-Sicherheitspatch ist nicht installierbar, solange `16.3.8` nicht veröffentlicht ist. `16.3.7` ist dafür das falsche Ziel. Begründung in §8.
+**Immediate ungated V1 implementation candidates: NONE.** Der September-Sicherheitspatch ist nicht ausführbar, solange das Vendor-Security-Release und die vollständigen Advisories nicht unabhängig abrufbar sind. Begründung in §8.
 
 ---
 
@@ -71,9 +71,9 @@ Seit Preflight 2 ist Material passiert, und keines davon öffnet einen sofort au
 | #628 | **MERGED** 2026-09-29T12:09:24Z at `94f2747137e2a788c7120f27dc1f23cde12cbcf1`. Do not restart that writer. |
 | #630 | **MERGED**. Review `5359458734` is GitHub state `COMMENTED` on `895ac7575bb1c130f0f78c7eaaebd97283faf80f`; the review body is the Technical-Lead FINAL PASS. An earlier review `5359223515` on the same SHA is also `COMMENTED`. |
 | Post-merge CI | Run `36642027878` **SUCCESS** on the merge SHA. Jobs `Auth-Konfiguration gegen config.toml` and `Typecheck, Lint & Build` both success. Auth log: 55 values, 243 keys, all 55 expected values match. |
-| Post-merge Vercel | Commit status context `Vercel` **success**, “Deployment has completed”, updated 2026-09-29T22:52:19Z. Inspector path `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. GitHub Deployment `6747268585`, environment **Production**, state **success**, same SHA. This session did not open the Vercel dashboard and did not prove that the public alias bytes are that SHA. |
+| Post-merge Vercel | Commit status context `Vercel` **success**, “Deployment has completed”, updated 2026-09-29T22:52:19Z. Inspector path `dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. GitHub Deployment `6747268585`, environment **Production**, state **success**, same SHA. The R1 public read of `https://jetnity.com/` found that same `data-dpl-id` in the live root HTML, so the public alias is bound to the #630 Production deployment. This session did not open the Vercel dashboard. The full HTML was not hashed against the Git tree. |
 | #626 | **OPEN**, `state_reason=reopened`, updated 2026-09-29T22:52:55Z. Latest comment `5900593201` reopens it after GitHub closed it on the #630 merge. No new acceptance evidence in that comment. |
-| Development producer | This session’s Management API call returned **401**. No hosted SQL was run. The latest recorded non-personal health remains the Technical-Lead readback inside review `5359458734` (2026-09-29T22:51:37Z) and the earlier receipt `5898958642`. Those receipts are not a fresh query by this session. |
+| Development producer | Current non-personal health is the Technical-Lead statement in review `5359714624`: post-#630 Development producer active/healthy, seven-day retention, hourly job active, cap 1000 / used 0, five producer triggers, zero origin rows, no trigger/catalog fault. The same review records Production isolation: Production metadata has none of those Development producer objects and zero matching triggers. Comment `5900885296` is the companion Production security read. This session’s Management API **401** is an access limit and is not the latest producer truth. Earlier receipts `5359458734` (2026-09-29T22:51:37Z) and `5898958642` predate that review. This session did not run the hosted query. |
 | KAYAK #395 | Latest comment `5869751056` at 2026-09-28T12:22:55Z: `A-KAYAK-INQUIRY-1` sent. No later comment. |
 | Sherpa / IATA #294 | Latest comments are the Sherpa intake `5888189192` (2026-09-29T10:16:15Z), the Product-Owner pause `5888940598` (2026-09-29T11:03:26Z), and the read-only alternatives note `5889155160` (2026-09-29T11:17:03Z). IATA remains the sent-form comment `5875963553` at 2026-09-28T18:21:25Z. |
 | #585 | Latest comment `5874769319` at 2026-09-28T17:03:16Z. Deferral unchanged. Issue `updated_at` matches that comment. |
@@ -101,7 +101,7 @@ Facts above are the live reads. The inference is that the readiness classificati
 | A Official Truth | `CHANGED_DETAIL_STILL_OPEN_GATED` | Sherpa is **RESPONSE RECEIVED / PO CONSIDERATION / OUTGOING FOLLOW-UP PAUSED**. That is no longer “waiting for the first reply”. It is also not a selected source, contract, credential, or adapter. IATA remains sent/waiting on GitHub. The alternatives note selects nothing. |
 | B finding 5.2 persistent ingestion | `CHANGED_DETAIL_STILL_OPEN_GATED` | #628 installed the approved Development producer. Review `5359714624` records post-#630 Development health: active/healthy, seven-day retention, hourly job, cap 1000 / used 0, five triggers, zero origin rows, no trigger/catalog fault. Production metadata in that review has none of those objects and zero matching triggers. Production ingestion and Release Gate G are not closed. #626’s populated proof is blocked. |
 | B fresh advisor replay | Current attributed read, residual WARN | TL comment `5900885296` is a fresh Production Security Advisor result: WARN, not ERROR. RLS, ownership, capability and AAL2 controls were re-read with it. This is not a closure of every warning and not a personal query by this session. The Preflight 1 closure is no longer the latest advisor receipt. |
-| Framework security line | `CHANGED_DETAIL` / not an executable slice yet | Pin remains `16.3.3`. Published `16.3.7` is a bugfix. The nine-vulnerability release is expected as unpublished `16.3.8`. See §8. |
+| Framework security line | `CHANGED_DETAIL` / not an executable slice yet | Pin remains `16.3.3`. Published `16.3.7` is a bugfix backport and is not evidenced as the nine-vulnerability package. That release and its full advisories are not independently verified as published. The exact patched version is selected later from those advisories. ImageResponse non-use is a separate fact. See §8. |
 | C legal pages | Already closed; reconfirmed | Live `/privacy`, `/terms`, `/impressum` are HTTP 200. |
 | C retention and consent | `UNCHANGED_SINCE_PREFLIGHT_2` / `STILL_OPEN_GATED` | `keineConsentPersistenz` remains `true`. |
 | C #585 | `DELIBERATELY_LATER` | Deferral comment unchanged. |
@@ -322,20 +322,20 @@ This session did re-read public `https://jetnity.com/` and found `data-dpl-id=dp
 
 **Immediate ungated V1 implementation candidates: NONE.**
 
-R1 required a real framework assessment, not a copied NONE. The assessment is below. The nine-vulnerability patch is not executable now. `next@16.3.7` is the wrong package for that patch.
+R1 required a real framework assessment, not a copied NONE. R2 keeps that conclusion and corrects the version wording. The nine-vulnerability patch is not executable now. Published `next@16.3.7` is a bugfix backport. Installing it would not complete the nine-vulnerability release.
 
 ### Framework security assessment
 
-1. **Confirmed version exposure.** `package.json` pins `next` and `eslint-config-next` at `16.3.3`. That pin is below the published ImageResponse patch line `16.3.6` (2026-09-22T16:19:00Z) and below npm `latest` `16.3.7` (2026-09-29T09:04:19Z). React `19.2.8` sits inside the `next@16.3.7` peer range `^19.0.0`. eslint `9.39.5` and TypeScript `5.9.3` satisfy `eslint-config-next@16.3.7` peers (`eslint >=9`, `typescript >=3.3.1`). `eslint-config-next@16.3.7` is published. Compatibility of `16.3.8` cannot be checked. That version is not in the registry.
-2. **ImageResponse applicability.** GHSA-vcvr-r3jv-pc5j affects `next` `>=16.2.0 <16.3.6` and is patched in `16.3.6`. The vulnerable behavior is the Node.js `ImageResponse` path in `next/og` when attacker-controlled values are passed into SVG content, attributes, or styles. This repository has **0** matches for `next/og` and **0** matches for `ImageResponse`. The advisory’s own condition for a reachable RCE is absent. This report does not claim that RCE is exploitable in Jetnity. The version range still contains the pin.
-3. **September advisories.** Comment `5900828960` and review `5359714624` correctly required this check and correctly quoted the 23 September plan, which named `16.3.7` for nine vulnerabilities (1 critical, 2 high, 5 medium, 1 low). The same official post, `https://nextjs.org/blog/upcoming-nextjs-security-release-september-2026`, re-read in this R1 session, now says: `16.3.7` was published as a bugfix and does not include the security fixes planned for 30 September 2026. Those fixes are now expected in `16.3.8` and `15.5.27`, together with the full advisories. The GitHub release `v16.3.7` describes a turbo-tasks bugfix backport. `npm view next@16.3.8` returns **404**. Affected-version conditions for the nine vulnerabilities are not public.
-4. **Resulting decision.** A bump to `16.3.7` would install a bugfix, leave the nine-vulnerability release unapplied, and clear only an ImageResponse line whose call site is absent. That is not the security patch R1 asked this preflight to judge. The security patch is not executable because the package is not published.
+1. **Confirmed version exposure.** `package.json` pins `next` and `eslint-config-next` at `16.3.3`. npm `latest` in this review is published `16.3.7` (2026-09-29T09:04:19Z). GitHub release `v16.3.7` was published 2026-09-29T08:54:51Z. React `19.2.8` sits inside the `next@16.3.7` peer range `^19.0.0`. eslint `9.39.5` and TypeScript `5.9.3` satisfy `eslint-config-next@16.3.7` peers (`eslint >=9`, `typescript >=3.3.1`). `eslint-config-next@16.3.7` is published. Those peer facts describe the published bugfix package. They are not a decision to install it.
+2. **ImageResponse applicability, kept separate.** GHSA-vcvr-r3jv-pc5j affects `next` `>=16.2.0 <16.3.6` and is patched in `16.3.6` (2026-09-22T16:19:00Z). The vulnerable behavior is the Node.js `ImageResponse` path in `next/og` when attacker-controlled values are passed into SVG content, attributes, or styles. This repository has **0** matches for `next/og` and **0** matches for `ImageResponse`. The advisory’s own condition for a reachable RCE is absent. This report does not claim that RCE is exploitable in Jetnity. The version range still contains the pin. This assessment does not decide the nine-vulnerability release.
+3. **September nine-vulnerability release.** Comment `5900828960` and review `5359714624` correctly required this check. Independently established facts: the retrievable 23 September announcement still names the planned security release as `16.3.7` / `15.5.27` for nine vulnerabilities (1 critical, 2 high, 5 medium, 1 low); GitHub release `v16.3.7` is published and its body is a bug-fix backport, not that security package; npm exposes `16.3.7` as the latest stable version available in this review. The nine-vulnerability security release and its full advisories are not independently verified as published. An R1 session read of `https://nextjs.org/blog/upcoming-nextjs-security-release-september-2026` observed later page text that named `16.3.8` and `15.5.27`. The main-chat Technical Lead could not independently reproduce that later page text, and the review available to the Technical Lead found no `v16.3.8` GitHub release. That page observation is an agent-observed claim. It is not canonical vendor truth and it is not the selected target version.
+4. **Resulting decision.** The nine-vulnerability maintenance slice becomes executable when the vendor-published security release and the full advisories are independently retrievable. The exact patched version is then selected from those advisories. Until that evidence exists, the slice is not executable. A bump to published `16.3.7` would install the bugfix backport and would not complete the nine-vulnerability release. ImageResponse non-use stays a separate fact.
 
 The other launch items stay `GATED`. None of them is a dispatch.
 
 | # | Title | Class | Why it is not dispatch |
 | --- | --- | --- | --- |
-| 1 | September Next.js security bump | Not executable yet | Expected package `next@16.3.8` is not published. `16.3.7` is a bugfix and is the wrong target. ImageResponse has no Jetnity call site. |
+| 1 | September Next.js security bump | Not executable yet | The vendor security release and full advisories are not independently verified as published. Published `16.3.7` is a bugfix backport and is not that package. ImageResponse non-use is a separate fact. |
 | 2 | KAYAK reply, then flight commercial truth | `GATED` | #395 has no newer comment. Outgoing questions are paused. A reply still requires Technical-Lead review and a Product-Owner gate before signup, terms, credentials, spend or an adapter. |
 | 3 | Sherpa follow-up or Official Entry truth | `GATED` | A reply exists and the Product Owner paused outgoing questions. The alternatives note selects nothing. Do not invent visa or transit rules. |
 | 4 | Finish #626 populated producer acceptance | `GATED` | Temporary operator permission is not established. The privileged role/fixture operation is blocked and must not be retried or routed around. Three events and authenticated populated erasure are not started. This is not a new feature slice. |
@@ -346,7 +346,7 @@ Also gated, and not promoted: retention and consent persistence, backup/restore 
 Explicitly not candidates, and not part of any later framework slice:
 
 - A dependency edit inside PR #632.
-- A bump to `16.3.7` or to canary in place of the unpublished security release.
+- A bump to published `16.3.7`, or to canary, in place of the advisory-selected security release.
 - A claim that the ImageResponse RCE is reachable.
 - An ACL/RLS rewrite driven only by the WARN list in comment `5900885296`.
 - Another flight, hotel or activity engine.
@@ -359,19 +359,19 @@ Explicitly not candidates, and not part of any later framework slice:
 - Historical drafts #52, #50, #40, #39 and #28.
 - A workaround, delegation, or owner-run replacement for the blocked #626 role operation.
 
-### Smallest later slice, only after the package exists
+### Smallest later slice, only after independent advisory retrieval
 
-When npm publishes the September security release, currently expected as `next@16.3.8`, and the accompanying advisories name the affected versions, the smallest bounded slice is:
+The next framework maintenance slice becomes executable when the vendor-published security release and the full advisories are independently retrievable. The exact patched version is selected from those advisories. The smallest bounded slice is then:
 
-- bump `next` and `eslint-config-next` together to that published security version;
+- bump `next` and `eslint-config-next` together to that advisory-selected version;
 - refresh the lockfile only as far as that bump requires;
 - pass the existing typecheck, lint, test, build, and Auth CI gates.
 
-Non-scope for that later slice: application features, #626, provider work, Production Supabase, RLS/ACL edits, CSP/`ACAO`, indexing, launch, a new vendor, and any claim that the unused ImageResponse path was exploitable. If the published advisories show every affected condition is absent from Jetnity, the Technical Lead re-decides before implementation. This PR does not start that slice.
+A bump to published `16.3.7` is not a stand-in for that release. Non-scope for that later slice: application features, #626, provider work, Production Supabase, RLS/ACL edits, CSP/`ACAO`, indexing, launch, a new vendor, and any claim that the unused ImageResponse path was exploitable. If the published advisories show every affected condition is absent from Jetnity, the Technical Lead re-decides before implementation. This PR does not start that slice.
 
 ### Exact first next step when a gate or evidence changes
 
-The first framework step becomes executable when `next@16.3.8`, or the version the published advisories actually name, is on npm. Until that publish, there is no framework maintenance slice to dispatch.
+The first framework step becomes executable when the vendor-published security release and the full advisories are independently retrievable, and the exact patched version has been selected from those advisories. Until that evidence exists, there is no framework maintenance slice to dispatch.
 
 The provider and #626 gates are unchanged:
 
@@ -389,7 +389,7 @@ Do not manufacture a V1 implementation because Cursor is available.
 | P0 | No live flight, hotel or activity truth | External, then Product Owner | Core commercial journey cannot be real. KAYAK is still sent. Questions are paused. |
 | P0 | No contracted Official Truth | Product Owner pause, then external IATA | Sherpa replied and is not selected. Hard truth must stay unknown. |
 | P0 | Public launch / indexing not approved | Product Owner | Production deploy is not launch |
-| P1 | Next.js pin `16.3.3` is below the published `16.3.6` line and the unpublished September line | Vendor publish | `16.3.7` is a bugfix. `16.3.8` is not on npm. ImageResponse has no call site. Not an executable slice until the security version is published. |
+| P1 | Next.js pin `16.3.3` while the announced nine-vulnerability release is not independently verified as published | Vendor publish and advisory retrieval | Published `16.3.7` is a bugfix backport. The exact patched version is selected later from the advisories. ImageResponse has no call site and is a separate assessment. Not an executable slice until those advisories are independently retrievable. |
 | P1 | Finding 5.2 / Gate G still open | Product Owner | Development producer is active on the attributed post-#630 receipt and is not Production ingestion. |
 | P1 | #626 populated erasure not run | Tool-safety block | Not a code defect and not a permitted retry |
 | P1 | No alerting vendor | Product Owner | Detection half of incidents unmet |
@@ -415,7 +415,7 @@ Do not manufacture a V1 implementation because Cursor is available.
 - No claim that GitHub has zero security advisories.
 - No percentage-complete claim.
 - Public root HTML carries `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. The full HTML was not hashed against the Git tree.
-- `next@16.3.7` was inspected as a published bugfix. It was not installed. `next@16.3.8` returned npm 404 during this R1 read.
+- Published `next@16.3.7` was inspected as a bugfix backport. It was not installed. The nine-vulnerability release and full advisories are not independently verified as published. The agent-observed page text that named `16.3.8` is recorded in §8 and is not canonical vendor truth.
 - `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-29.md` still describes Draft #630 as the open writer. It is outside this task allowlist and was not rewritten. The pointer correction in `JETNITY_START_HERE.md` and `docs/ACTIVE_WORK_STATUS.md` is the current writer map.
 - `next-env.d.ts` local drift is not part of this delivery.
 - This report does not preclaim CI, Vercel, Technical-Lead PASS, Ready or Merge for the new branch head.

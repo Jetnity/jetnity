@@ -1,7 +1,7 @@
 # Jetnity V1 Release Readiness Preflight 3 — HANDOFF
 
 Stand: 30. September 2026
-Status: **R1 CORRECTION / STOP FOR FULL MAIN-CHAT TECHNICAL-LEAD RE-REVIEW**
+Status: **R2 CORRECTION / STOP FOR FULL MAIN-CHAT TECHNICAL-LEAD RE-REVIEW**
 
 ## Who this is for
 
@@ -23,11 +23,11 @@ Then re-fetch live `main`, open PRs, open issues, #626, #294, #395, #585, Action
 
 Docs/evidence only, on Draft PR #632, against the same A–O dimensions as Preflight 2.
 
-Reviewed head `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51` is **not accepted**. Review `5359714624` is CHANGES REQUIRED. This file is the R1 correction. The re-review head is the branch tip after the R1 commit.
+Reviewed head `d1589bc74f3c08be5c5e912d64b2a5310bd1629a` is **not accepted**. R2 CHANGES REQUIRED applies to that head. Review `5359714624` on `e21a876b4f3b6a0b7f1a1a76a3e2be06efbeee51` remains the earlier CHANGES REQUIRED. This file is the R2 correction. The re-review head is the branch tip after the R2 commit.
 
 **Immediate ungated V1 implementation candidates: NONE.**
 
-The R1 framework check is the reason, not a copied Preflight 2 sentence. `next@16.3.7` is a published bugfix. The official post now expects the nine-vulnerability release in unpublished `next@16.3.8`. npm returned 404 for `16.3.8` in this session. ImageResponse / `next/og` has no repository use. Do not bump dependencies in #632.
+The framework check is the reason, not a copied Preflight 2 sentence. Published `next@16.3.7` is a bugfix backport and is not evidenced as the nine-vulnerability package. That package and its full advisories are not independently verified as published. The next framework slice waits for an independently retrievable vendor security release and those advisories, then selects the exact patched version from them. ImageResponse / `next/og` has no repository use. That fact is separate. Do not bump dependencies in #632.
 
 This is not a launch PASS. #626 stays **OPEN**. Finding 5.2 and Release Gate G stay open. No provider is selected. Sherpa outgoing questions stay paused. TL comment `5900885296` and review `5359714624` supply the current Production advisor, erasure-function, and Development producer receipts. This session did not execute those hosted reads. This session did re-read public root HTML `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`.
 
@@ -56,12 +56,12 @@ Changed paths must stay inside:
 1. Whether the A–O classification matches the fresh evidence, including the Sherpa pause and the still-open #626 blocker.
 2. Whether any quoted GitHub, CI, Vercel or public-HTTP fact has gone stale since the read window.
 3. Whether the attributed Production and producer receipts in comment `5900885296` and review `5359714624` are enough. This session’s Management API **401** does not override them and is not a personal re-execution.
-4. Whether NONE remains correct because `next@16.3.8` is unpublished and `16.3.7` is a bugfix. Do not dispatch a writer while that decision remains NONE.
+4. Whether NONE remains correct because the vendor security release and full advisories are not independently verified as published, and because published `16.3.7` is a bugfix backport. Do not dispatch a writer while that decision remains NONE. An agent-observed page claim that named `16.3.8` is not canonical vendor truth.
 5. Do not treat review `5359458734` as authorization to finish #626. The privileged role/fixture operation stays blocked.
 
 ## Exact first next step when a gate changes
 
-When npm publishes the September security release, currently expected as `next@16.3.8`, the first framework step is a later bounded bump of `next` and `eslint-config-next` to that published version, plus the existing CI gates. Non-scope: no #632 dependency edit, no `16.3.7` stand-in, no ImageResponse exploit claim, no #626, provider, RLS, header, or launch work. If the published advisories show Jetnity is outside every affected condition, the Technical Lead re-decides before that slice starts.
+The first framework step becomes executable when the vendor-published security release and the full advisories are independently retrievable. The exact patched version is then selected from those advisories. The later bounded slice bumps `next` and `eslint-config-next` together to that version, plus the existing CI gates. Non-scope: no #632 dependency edit, no `16.3.7` stand-in, no ImageResponse exploit claim, no #626, provider, RLS, header, or launch work. If the published advisories show Jetnity is outside every affected condition, the Technical Lead re-decides before that slice starts.
 
 If the Product Owner releases the outgoing-question pause, the first provider step is a Technical-Lead review of the already-received Sherpa reply and every linked term. That review does not authorize sending, signup, credentials, spend or an adapter.
 
@@ -104,3 +104,11 @@ Changed paths in the R1 commit stay inside:
 - `docs/ACTIVE_WORK_STATUS.md`
 
 No dependency file changes. CI, Vercel Preview and Technical-Lead PASS for the R1 head are not claimed.
+
+R2 re-fetch, before the R2 commit: `origin/main` remained `60148274765f2143722b2742607ee3cf03730bcb`. Merge-base was that SHA. The branch was 3 ahead / 0 behind at `d1589bc74f3c08be5c5e912d64b2a5310bd1629a`. The R2 re-review head is the branch tip after the R2 commit.
+
+On the R2 diff, `git diff --check` reported no whitespace errors and `node scripts/operating-mode-guard.mjs` exited 0 (`operating-mode guard: PASS`). The dirty `next-env.d.ts` worktree file stays uncommitted.
+
+Changed paths in the R2 commit stay inside the same five-file allowlist. The task file receives the R2 addendum only.
+
+No dependency file changes. CI, Vercel Preview and Technical-Lead PASS for the R2 head are not claimed.

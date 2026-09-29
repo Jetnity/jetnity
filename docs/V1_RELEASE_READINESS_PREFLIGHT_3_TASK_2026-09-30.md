@@ -167,3 +167,18 @@ R1 requires the same writer and the same session to:
 6. Stop on the new exact head for a full Technical-Lead re-review.
 
 No `package.json` or lockfile edit belongs in this PR.
+
+## 13. R2 review-scope addendum
+
+Head-bound review: R2 CHANGES REQUIRED on exact head `d1589bc74f3c08be5c5e912d64b2a5310bd1629a`. Same writer, Generation 1, same session `bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2`. This addendum does not loosen scope, the allowlist, or the candidate rule. It does not authorize a dependency change in this PR.
+
+R2 requires:
+
+1. Do not canonically assert `16.3.8` as independently verified vendor truth. An agent-observed vendor-page claim may be labeled as such when the Technical Lead could not independently reproduce it.
+2. State the durable trigger: the next framework maintenance slice becomes executable when the vendor-published security release and the full advisories are independently retrievable, and then the exact patched version is selected from those advisories.
+3. Keep published `16.3.7` as bugfix-only evidence. Do not propose a `16.3.7` bump to simulate the nine-vulnerability release.
+4. Keep the ImageResponse assessment separate: patched in `16.3.6`; this repository has 0 `next/og` and 0 `ImageResponse` call sites; do not claim that RCE is reachable.
+5. Make the live-facts table internally consistent. Public alias binding is the R1 public read of `data-dpl-id=dpl_DEqXrqyw6QxJKiZkk6WqhJq6TBRm`. Development producer health and Production isolation are the current attributed Technical-Lead evidence in review `5359714624` and comment `5900885296`. The Management API 401 remains an access limitation, not the latest producer truth.
+6. Stop on the new exact head for a full Technical-Lead re-review.
+
+No `package.json` or lockfile edit belongs in this PR.
