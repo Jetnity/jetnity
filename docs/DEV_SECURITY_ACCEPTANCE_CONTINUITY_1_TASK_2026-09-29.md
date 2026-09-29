@@ -122,3 +122,11 @@ No checker, CI, workflow, dependency, application or policy behavior change. No 
 Validate the complete diff, exact path allowlist, whitespace, current state versus historical receipts, public-data hygiene, the relevant Auth expectation tests and normal existing repository checks. CI/Auth comparison and automatic Vercel deployment remain required fresh exact-head gates. Update the report to distinguish the original delivery from this correction and point readers to #630 for subsequent TL/post-merge closure; do not preclaim PASS or merge.
 
 Before handoff fetch `origin/main` and report new exact head, merge-base, ahead/behind, changed files, actual validation results/limitations and the same session/model evidence. Do not mark Ready. Do not merge. Do not start a follow-up slice. STOP for independent main-chat Technical-Lead review.
+
+## 10. R1 implementation note
+
+This note does not change section 9.
+
+- Same session https://cursor.com/agents/bc-bb32b1dd-327b-48c7-be4f-36750d37de75, `originalModelName=grok-4.7-high-fast`, Generation 1.
+- `5b48c62c73956b47aa344e732dbda866764110f8` is this task text. `8d21b1ecac04eb21fcbef5929404ba75339b29d1` is the reviewed head. The review head is the later correction commit on this branch.
+- Delivery evidence for the correction is section 0 of `docs/DEV_SECURITY_ACCEPTANCE_CONTINUITY_1_REPORT_2026-09-29.md`. No TL PASS.

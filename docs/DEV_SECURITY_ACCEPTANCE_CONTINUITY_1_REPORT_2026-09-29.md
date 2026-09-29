@@ -12,7 +12,35 @@ Logical agent: **Jetnity Development acceptance continuity 1**, Generation 1
 Session: https://cursor.com/agents/bc-bb32b1dd-327b-48c7-be4f-36750d37de75
 `originalModelName`: `grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. No UI rename. Recorded from this run before editing.
 
-Status: **DELIVERED ON THE BRANCH / NO TL PASS / DRAFT / #626 REMAINS OPEN**
+Status: **R1 CORRECTION DELIVERED ON THE BRANCH / NO TL PASS / DRAFT / #626 REMAINS OPEN**
+
+## 0. R1 correction — repository redirect expectation
+
+Same writer, Generation 1, same session. This section is the current correction. Sections 1–10 below are the v1.0 documentation delivery, including its then-current checks. `8d21b1ecac04eb21fcbef5929404ba75339b29d1` is the reviewed head, not the review head after this correction.
+
+R1 CHANGES REQUIRED: https://github.com/Jetnity/jetnity/pull/630#issuecomment-5900016686. CI run `36634068616`, Auth job `109630307692`, compared 55 values and 243 keys and reported one mismatch: `uri_allow_list`. The repository expected an empty list. The branch already had the one saved callback. Typecheck, Lint, tests, hygiene and the production build in that run succeeded. This correction does not claim a new CI result.
+
+Repository expectation only:
+
+- `supabase/config.toml` `additional_redirect_urls` is the one persisted value from #626 readback [5893640399](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5893640399), authorized in [5893108838](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5893108838). One literal backslash before `?`. `site_url` stays `http://localhost:3000`.
+- `lib/supabase/auth-erwartung.test.ts` checks that TOML parsing and the existing API mapping keep that single entry. Empty-list mapping stays covered by a synthetic `[]` fixture. The checker in `lib/supabase/auth-erwartung.ts` is unchanged.
+- `docs/AUTH.md` no longer states that the current Development allowlist is empty. The earlier empty-list observation stays labeled historical. Production remains the separate #581 record.
+
+No checker, CI, workflow, application runtime, live Auth apply, Preview redeploy, Production change, account/role/MFA/database mutation, or new registration. #626 stays **OPEN / BLOCKED** on privileged fixture preparation.
+
+Closure for a later chat: independent main-chat Technical Lead review of Draft PR #630 at the branch tip that contains this correction. Until a closure comment on #630 names a merge SHA, fetch live `main` and do not treat this branch as merged. The automatic Preview of #630 is not the isolated #626 acceptance Preview `dpl_HatmCkzhDDbbdVCGMkoCMmjmPCcu` at `80bccb5abb7d56479b65c548e15edde852bec51f`.
+
+### R1 checks in this session
+
+| Check | Result |
+| --- | --- |
+| `lib/supabase/auth-erwartung.test.ts` and `lib/supabase/config-toml.test.ts` | 56 pass, 0 fail |
+| `check:operating-mode` | PASS |
+| `git diff --check` | Pass on the staged R1 diff |
+| Live `auth:pruefen`, Auth apply, Preview redeploy, database and account reads | Not run |
+| `origin/main` fetched before handoff | `94f2747137e2a788c7120f27dc1f23cde12cbcf1` |
+
+The exact R1 review head is the branch tip that contains this section. Read it live. A new head needs a new Technical-Lead review. Fresh CI and Vercel on that head are not claimed here.
 
 ## 1. What this report is
 
@@ -91,7 +119,9 @@ Use this sequence only. It contains no workaround command, replacement SQL or pe
 
 A later tooling-support review is only an escalation option for the Technical Lead. This report does not send that contact, promise a fix, or authorize a bypass. The blocked operation stays blocked.
 
-## 8. Checks in this session
+## 8. Checks in the v1.0 delivery
+
+These rows belong to delivery head `8d21b1ecac04eb21fcbef5929404ba75339b29d1`. They are not the R1 validation. The R1 checks are recorded with the correction commit. The task-seed Auth failure below is the earlier job; R1 answers the later exact-head mismatch in run `36634068616` and does not preclaim that run's successor.
 
 | Check | Result |
 | --- | --- |
@@ -106,13 +136,15 @@ A later tooling-support review is only an escalation option for the Technical Le
 | #630 Preview / hosted tests / Supabase / mail | Not used |
 | `git diff --check` | Pass on the staged delivery diff. |
 | `check:operating-mode` | PASS (`node scripts/operating-mode-guard.mjs`). |
-| Task-seed CI | Job `109627457693`, Auth configuration against `config.toml`, was already failing on `39f96019` before this delivery. This slice does not change Auth configuration and does not claim that job. CI on the delivery head is a later gate. |
+| Task-seed CI | Job `109627457693`, Auth configuration against `config.toml`, was already failing on `39f96019` before the v1.0 delivery. The v1.0 commit did not change Auth configuration. The later exact-head failure is run `36634068616`. |
 
 The exact review head is the branch tip that contains this report. Read it live after the delivery commit. A new head needs a new Technical-Lead review.
 
-## 9. Self-review
+## 9. Self-review of the v1.0 delivery
 
-- Changed files stay inside the five-file allowlist. No code, SQL, workflow, credential, Auth, role, RLS or deployment file is in the diff.
+This list describes `8d21b1ec` only. The R1 diff adds the redirect expectation files named in section 0.
+
+- The v1.0 files stayed inside the five-file allowlist. That commit had no code, SQL, workflow, credential, Auth, role, RLS or deployment file.
 - Current headlines now say #628 is merged and #626 populated erasure is blocked. Historical #628 paragraphs still contain their original "hosted apply not run" sentences, under an explicit historical label.
 - D1 and D2-MFA stay accepted only inside the attribution in section 2. AAL2 is not recorded as a permanent session. The blocked role is not recorded as granted.
 - Sherpa pause remains binding. KAYAK and IATA stay at their last recorded repository comments.
@@ -121,4 +153,4 @@ The exact review head is the branch tip that contains this report. Read it live 
 
 ## 10. Handoff
 
-Independent main-chat Technical-Lead review of the exact branch tip. Stay Draft until that review. Cursor does not mark Ready and does not merge.
+The v1.0 handoff was review of `8d21b1ec`. That review returned CHANGES REQUIRED. The current handoff is section 0: main-chat Technical Lead review of the R1 branch tip on Draft PR #630. Cursor does not mark Ready and does not merge.
