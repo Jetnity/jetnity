@@ -102,3 +102,23 @@ This addendum does not change sections 1–7.
 - Tool field `originalModelName=grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. No UI rename.
 - Later public comments read before writing: #626 `5899271083` (no newer acceptance evidence; this docs repair selected) and #294 `5889155160` (the provider-question pause remains; no provider selected).
 - Delivery evidence is `docs/DEV_SECURITY_ACCEPTANCE_CONTINUITY_1_REPORT_2026-09-29.md`. The header status above remains the task-seed statement. No TL PASS.
+
+## 9. Review correction v1.1 — 30 September 2026
+
+The Product Owner explicitly authorized continuation of #630 / #629 only, using the same logical writer, Generation 1 and session recorded above. This section supersedes ONLY the five-file/configuration/test prohibition where needed for the following repository-only correction. Sections 1–8 remain the historical v1.0 task and delivery evidence; all other non-scope and privacy boundaries remain binding. Normal main-chat Technical Lead retains final PASS / Ready / merge authority.
+
+R1 CHANGES REQUIRED: https://github.com/Jetnity/jetnity/pull/630#issuecomment-5900016686 on exact head `8d21b1ecac04eb21fcbef5929404ba75339b29d1`, baseline main `94f2747137e2a788c7120f27dc1f23cde12cbcf1`. CI run `36634068616` failed only Auth comparison (`uri_allow_list`); Typecheck/Lint/tests/hygiene/build passed.
+
+Correct the Development repository expectation for the ONE already authorized and saved redirect from #626 approval 5893108838 and readback 5893640399. Exact persisted value, with one literal backslash before the question mark:
+
+```text
+https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\?next=%2Freisen
+```
+
+Additional allowed files: `supabase/config.toml`, `lib/supabase/auth-erwartung.test.ts`, `docs/AUTH.md`. The original five files may receive minimal truthful review/continuity updates. Preserve the existing Site URL and all other config values. Confirm that TOML parsing and the existing API mapping preserve the exact single entry and literal backslash. Keep empty-list mapping coverage with an explicit synthetic fixture. Correct directly stale claims that Development is local-only or that its allowlist remains empty; retain dated historical observations as history.
+
+No checker, CI, workflow, dependency, application or policy behavior change. No live configuration apply, `auth:anwenden`, Preview reconfiguration/redeployment, Production setting, new redirect, account/role/MFA/DB mutation, new registration/MFA test, or workaround for denied roles. #626 remains OPEN/BLOCKED on privileged fixture preparation. Do not call the docs PR Preview the isolated #626 acceptance Preview.
+
+Validate the complete diff, exact path allowlist, whitespace, current state versus historical receipts, public-data hygiene, the relevant Auth expectation tests and normal existing repository checks. CI/Auth comparison and automatic Vercel deployment remain required fresh exact-head gates. Update the report to distinguish the original delivery from this correction and point readers to #630 for subsequent TL/post-merge closure; do not preclaim PASS or merge.
+
+Before handoff fetch `origin/main` and report new exact head, merge-base, ahead/behind, changed files, actual validation results/limitations and the same session/model evidence. Do not mark Ready. Do not merge. Do not start a follow-up slice. STOP for independent main-chat Technical-Lead review.
