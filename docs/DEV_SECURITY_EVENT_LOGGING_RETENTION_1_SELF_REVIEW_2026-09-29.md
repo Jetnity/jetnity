@@ -11,6 +11,7 @@ This note is the writer's review. It is not an independent Technical-Lead PASS.
 - Job-name collision raises and does not call `cron.schedule`.
 - Direct event and origin writes by anon, authenticated, and service_role origin insert are denied in the local proof. Existing service_role event insert still succeeds and does not move quota.
 - Operator AAL2 insert/update/delete emit the fixed payload. No-op and zero-row updates emit nothing. Null-actor service_role blocklist writes stay unaudited.
+- R2 activation identity is `tgfoid` in `jetnity_internal`, empty `tgattr`, and the exact deparsed whole-row update definition. The earlier unqualified-name and `IS DISTINCT FROM` substring check is not that contract. Local PostgreSQL 17 rejects a shadow-schema function, `WHEN (OLD.ip IS DISTINCT FROM NEW.ip)`, `UPDATE OF ip`, and a second trigger with the same name. After restore, a reason-only update emits one event and the repeated write emits none.
 - Injected failure and outer rollback leave no reservation.
 - Two sessions at 999: one commit, one quota error, `used = 1000`, and the loser waited on `transactionid` / `Lock`.
 - Multi-row overflow at 999 stays 999.
@@ -28,7 +29,7 @@ This note is the writer's review. It is not an independent Technical-Lead PASS.
 1. Hosted Development apply, a real pg_cron worker run, and Production were not performed. Activation SQL accepts any succeeded `cron.job_run_details` row that matches the job. A superuser can insert that row. The local proof does insert a fixture with `return_message = LOCAL_FIXTURE_NOT_HOSTED_NATIVE`. That is not hosted native evidence.
 2. Local pg_cron is 1.6.2. The Technical Lead's hosted read was 1.6.4. No 1.6 SQL delta was found in the local extension file. The binary is still not the hosted binary.
 3. The local erasure proof simulates `ereignisseLoeschen` as `service_role` DELETE and simulates Auth deletion as `DELETE FROM auth.users`. The harness has no GoTrue. The Edge Function's two calls are separate transactions. Coherence is each database transaction plus the origin cascade on `auth.users` delete.
-4. `service_role` can still insert look-alike `security_events` rows. A superuser `DROP TRIGGER` bypasses admission. Both are disclosed privileged uncovered cases.
+4. `service_role` can still insert look-alike `security_events` rows. A superuser can still replace the body of the accepted function OID, or rewrite triggers after a passing activation check. The pre-activation check does not claim immunity to that later rewrite.
 5. R1 executed cleanup against account-style deletion on one held event row: both committed and `used` matched origins. A second pair locked the higher event id first and then ran cleanup, which locks ids in ascending order. One transaction aborted with `deadlock detected`. The runner retried only that aborted statement. After the retry, owned rows were gone and `used` matched origins. The SQL still does not catch `40P01`. Other deadlock shapes can still abort and must be retried the same way, not treated as success.
 6. Exact 7-day equality was tested with one-minute margins around `clock_timestamp() - interval '7 days'`, not a frozen clock. The predicate is `<=`.
 7. If the hosted installer cannot see every `cron.job` row or cannot reference `auth.users`, apply must stop. This package does not grant those rights.

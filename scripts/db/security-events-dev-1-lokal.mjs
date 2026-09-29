@@ -515,6 +515,149 @@ CREATE TRIGGER security_event_dev_v1_blocked_ins_del
     misbound.stderr.slice(0, 300),
   )
 
+  psqlSql(`
+CREATE SCHEMA jetnity_test_shadow;
+CREATE FUNCTION jetnity_test_shadow.security_event_dev_on_blocked_ips()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$ BEGIN RETURN NULL; END $$;
+DROP TRIGGER security_event_dev_v1_blocked_ins_del ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_ins_del
+  AFTER INSERT OR DELETE ON public.blocked_ips
+  FOR EACH ROW
+  EXECUTE FUNCTION jetnity_test_shadow.security_event_dev_on_blocked_ips();
+`)
+  const shadow = psqlCapture(operatorSql('20-activate.sql'))
+  const shadowFault = readback().trigger_fault
+  psqlSql(`
+DROP TRIGGER security_event_dev_v1_blocked_ins_del ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_ins_del
+  AFTER INSERT OR DELETE ON public.blocked_ips
+  FOR EACH ROW
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+DROP SCHEMA jetnity_test_shadow CASCADE;
+`)
+  const shadowRestored = psqlCapture(operatorSql('20-activate.sql'))
+  bewerte(
+    'shadow-schema function with the same name does not pass activation',
+    gruppe,
+    shadow.code !== 0 &&
+      /function:security_event_dev_v1_blocked_ins_del/.test(shadow.stderr) &&
+      String(shadowFault).startsWith('function:') &&
+      shadowRestored.code === 0 &&
+      readback().trigger_fault == null,
+    shadow.stderr.slice(0, 300),
+  )
+
+  psqlSql(`
+DROP TRIGGER security_event_dev_v1_blocked_upd ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_upd
+  AFTER UPDATE ON public.blocked_ips
+  FOR EACH ROW
+  WHEN (OLD.ip IS DISTINCT FROM NEW.ip)
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+`)
+  const narrowWhen = psqlCapture(operatorSql('20-activate.sql'))
+  psqlSql(`
+DROP TRIGGER security_event_dev_v1_blocked_upd ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_upd
+  AFTER UPDATE OF ip ON public.blocked_ips
+  FOR EACH ROW
+  WHEN (OLD IS DISTINCT FROM NEW)
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+`)
+  const updateOf = psqlCapture(operatorSql('20-activate.sql'))
+  psqlSql(`
+DROP TRIGGER security_event_dev_v1_blocked_upd ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_upd
+  AFTER UPDATE ON public.blocked_ips
+  FOR EACH ROW
+  WHEN (OLD IS DISTINCT FROM NEW)
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+`)
+  const updateRestored = psqlCapture(operatorSql('20-activate.sql'))
+  bewerte(
+    'column WHEN predicate does not pass activation',
+    gruppe,
+    narrowWhen.code !== 0 && /predicate:security_event_dev_v1_blocked_upd/.test(narrowWhen.stderr),
+    narrowWhen.stderr.slice(0, 300),
+  )
+  bewerte(
+    'column-restricted UPDATE does not pass activation',
+    gruppe,
+    updateOf.code !== 0 &&
+      /columns:security_event_dev_v1_blocked_upd/.test(updateOf.stderr) &&
+      updateRestored.code === 0 &&
+      readback().trigger_fault == null,
+    updateOf.stderr.slice(0, 300),
+  )
+
+  psqlSql(`
+CREATE SCHEMA jetnity_test_shadow;
+CREATE TABLE jetnity_test_shadow.duplicate_name (id integer);
+CREATE TRIGGER security_event_dev_v1_blocked_ins_del
+  AFTER INSERT ON jetnity_test_shadow.duplicate_name
+  FOR EACH ROW
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+`)
+  const ambiguous = psqlCapture(operatorSql('20-activate.sql'))
+  psqlSql(`DROP SCHEMA jetnity_test_shadow CASCADE;`)
+  const ambiguousRestored = psqlCapture(operatorSql('20-activate.sql'))
+  bewerte(
+    'duplicate trigger name does not pass activation',
+    gruppe,
+    ambiguous.code !== 0 &&
+      /ambiguous:security_event_dev_v1_blocked_ins_del/.test(ambiguous.stderr) &&
+      ambiguousRestored.code === 0 &&
+      readback().trigger_fault == null,
+    ambiguous.stderr.slice(0, 300),
+  )
+
+  const reasonJwt = claims({ uid: OPERATOR, rolle: 'authenticated', aal: 'aal2' })
+  const reasonOnly = jsonZeile(psqlFile(`
+begin;
+select set_config('role', 'authenticated', true);
+select set_config('request.jwt.claims', $c$${reasonJwt}$c$, true);
+insert into public.blocked_ips (ip, reason) values ('192.0.2.199', 'before-reason');
+update public.blocked_ips set reason = 'after-reason-only' where ip = '192.0.2.199';
+update public.blocked_ips set reason = 'after-reason-only' where ip = '192.0.2.199';
+reset role;
+select set_config('request.jwt.claims', '', true);
+select jsonb_build_object(
+  'updates', (
+    select count(*) from public.security_events
+     where user_id = '${OPERATOR}'
+       and type = 'admin_blocklist_add'
+       and extra = '{"op":"UPDATE","result":"ok","surface":"blocked_ips"}'::jsonb
+  ),
+  'owned', (
+    select count(*) from public.security_events
+     where user_id = '${OPERATOR}'
+       and type like 'admin_blocklist_%'
+  ),
+  'leaked', (
+    select count(*) from public.security_events
+     where user_id = '${OPERATOR}'
+       and type like 'admin_blocklist_%'
+       and (
+         extra::text like '%reason%'
+         or coalesce(metadata::text, '') like '%reason%'
+         or ip is not null
+       )
+  )
+);
+rollback;
+`))
+  bewerte(
+    'restored whole-row trigger emits one reason-only update and ignores the repeated write',
+    gruppe,
+    Number(reasonOnly.updates) === 1 &&
+      Number(reasonOnly.owned) === 2 &&
+      Number(reasonOnly.leaked) === 0 &&
+      readback().trigger_fault == null,
+    JSON.stringify(reasonOnly),
+  )
+
   psqlSql(`GRANT USAGE ON SCHEMA jetnity_internal TO authenticated;`)
   const privileged = psqlCapture(operatorSql('20-activate.sql'))
   psqlSql(`REVOKE USAGE ON SCHEMA jetnity_internal FROM authenticated;`)
@@ -1747,6 +1890,11 @@ async function main() {
     'operator readback reports recovered manual cleanup',
     'disabled trigger does not pass activation',
     'misbound trigger does not pass activation',
+    'shadow-schema function with the same name does not pass activation',
+    'column WHEN predicate does not pass activation',
+    'column-restricted UPDATE does not pass activation',
+    'duplicate trigger name does not pass activation',
+    'restored whole-row trigger emits one reason-only update and ignores the repeated write',
     'privilege drift does not pass activation',
     'cleanup and account erasure overlap on one event row and finish coherent',
     'opposite event locks abort one transaction and the retry preserves quota',

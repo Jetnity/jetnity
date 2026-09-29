@@ -17,7 +17,7 @@ Read, in order:
 4. `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_SELF_REVIEW_2026-09-29.md`
 5. `docs/evidence/dev-security-event-logging-retention-1/README.md` and `local-execution.json`
 
-Re-fetch `origin/main` before review. At the R1 correction, `origin/main` was still `e785cd00b090042ac6622383bceebd7f6ddfed88`. The previous review head `ebc6bbbdd48c65c9f1b642ea273aafe19a91ca2c` is not the head to re-review. R1 review `5350889502` is the change list this correction answers. The exact review head is the pushed tip.
+Re-fetch `origin/main` before review. At the R2 correction, `origin/main` was still `e785cd00b090042ac6622383bceebd7f6ddfed88`. The previous review head `51ad3a384f626505e5973ca69f1894b187a41bc6` is not the head to re-review. R2 review `5351648702` is the change list this correction answers. The R1 name-and-keyword trigger check was not exact. The exact review head is the pushed tip.
 
 ## Writer boundary
 
@@ -29,7 +29,7 @@ Same logical session only for an immediate review fix on this same PR. A new sli
 
 | Check | Result |
 | --- | --- |
-| Local retention proof | 58/58 on PostgreSQL 16.15 and 58/58 on PostgreSQL 17.11. Acceptance map has no NOT_RUN row. Hosted Development, native scheduled run, and Production NOT RUN. |
+| Local retention proof | 63/63 on PostgreSQL 16.15 and 63/63 on PostgreSQL 17.11. Acceptance map has no NOT_RUN row. Shadow-schema function, column `WHEN`, `UPDATE OF`, and a duplicate trigger name fail closed. A restored reason-only update emits one event. Hosted Development, native scheduled run, and Production NOT RUN. |
 | #494 regression | 67/67. Harness unchanged. |
 | npm test | 4048/4048. |
 | typecheck | pass |

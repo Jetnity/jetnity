@@ -6,7 +6,7 @@
   "postgresql_major": "17",
   "postgresql_17": "LOCAL_SYNTHETIC_EXECUTION",
   "database": "jetnity_security_events_dev_lokal",
-  "passed": 58,
+  "passed": 63,
   "failed": 0,
   "not_run": 0,
   "acceptance": [
@@ -36,6 +36,26 @@
     },
     {
       "name": "misbound trigger does not pass activation",
+      "status": "pass"
+    },
+    {
+      "name": "shadow-schema function with the same name does not pass activation",
+      "status": "pass"
+    },
+    {
+      "name": "column WHEN predicate does not pass activation",
+      "status": "pass"
+    },
+    {
+      "name": "column-restricted UPDATE does not pass activation",
+      "status": "pass"
+    },
+    {
+      "name": "duplicate trigger name does not pass activation",
+      "status": "pass"
+    },
+    {
+      "name": "restored whole-row trigger emits one reason-only update and ignores the repeated write",
       "status": "pass"
     },
     {
@@ -86,7 +106,7 @@
       "name": "job-name collision aborts dormant install and leaves no control table",
       "gruppe": "scheduler",
       "ok": true,
-      "detail": "psql:<stdin>:1036: ERROR:  security_event dev cron job name collision\nCONTEXT:  PL/pgSQL function inline_code_block line 29 at RAISE\n"
+      "detail": "psql:<stdin>:1094: ERROR:  security_event dev cron job name collision\nCONTEXT:  PL/pgSQL function inline_code_block line 29 at RAISE\n"
     },
     {
       "name": "dormant install and safe re-run leave triggers detached and health unknown",
@@ -153,6 +173,36 @@
       "gruppe": "activation",
       "ok": true,
       "detail": "psql:<stdin>:15: ERROR:  security_event dev trigger contract timing:security_event_dev_v1_blocked_ins_del\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_activate() line 52 at RAISE\n"
+    },
+    {
+      "name": "shadow-schema function with the same name does not pass activation",
+      "gruppe": "activation",
+      "ok": true,
+      "detail": "psql:<stdin>:15: ERROR:  security_event dev trigger contract function:security_event_dev_v1_blocked_ins_del\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_activate() line 52 at RAISE\n"
+    },
+    {
+      "name": "column WHEN predicate does not pass activation",
+      "gruppe": "activation",
+      "ok": true,
+      "detail": "psql:<stdin>:15: ERROR:  security_event dev trigger contract predicate:security_event_dev_v1_blocked_upd\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_activate() line 52 at RAISE\n"
+    },
+    {
+      "name": "column-restricted UPDATE does not pass activation",
+      "gruppe": "activation",
+      "ok": true,
+      "detail": "psql:<stdin>:15: ERROR:  security_event dev trigger contract columns:security_event_dev_v1_blocked_upd\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_activate() line 52 at RAISE\n"
+    },
+    {
+      "name": "duplicate trigger name does not pass activation",
+      "gruppe": "activation",
+      "ok": true,
+      "detail": "psql:<stdin>:15: ERROR:  security_event dev trigger contract ambiguous:security_event_dev_v1_blocked_ins_del\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_activate() line 52 at RAISE\n"
+    },
+    {
+      "name": "restored whole-row trigger emits one reason-only update and ignores the repeated write",
+      "gruppe": "activation",
+      "ok": true,
+      "detail": "{\"owned\":2,\"leaked\":0,\"updates\":1}"
     },
     {
       "name": "privilege drift does not pass activation",
@@ -296,7 +346,7 @@
       "name": "mutation waits with erasure, then Auth deletion clears the event committed in that interval",
       "gruppe": "lifecycle",
       "ok": true,
-      "detail": "{\"waits\":[{\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\",\"application_name\":\"race-erasure\"},{\"wait_event\":\"PgSleep\",\"wait_event_type\":\"Timeout\",\"application_name\":\"race-mutation\"}],\"codes\":{\"mutation\":0,\"erasure\":0},\"stderr\":{\"mutation\":\"\",\"erasure\":\"\"},\"zwischenUsed\":1,\"neuerNochDa\":\"t\",\"alterEvent\":\"d9113454-1746-421f-864f-18abcc3830f8\",\"actorWeg\":\"0\",\"lookalike\":1}"
+      "detail": "{\"waits\":[{\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\",\"application_name\":\"race-erasure\"},{\"wait_event\":\"PgSleep\",\"wait_event_type\":\"Timeout\",\"application_name\":\"race-mutation\"}],\"codes\":{\"mutation\":0,\"erasure\":0},\"stderr\":{\"mutation\":\"\",\"erasure\":\"\"},\"zwischenUsed\":1,\"neuerNochDa\":\"t\",\"alterEvent\":\"cf73314b-ddf5-4bd8-85e3-ad60b97f551f\",\"actorWeg\":\"0\",\"lookalike\":1}"
     },
     {
       "name": "cleanup removes only expired provenance rows and rollback restores quota",
@@ -320,7 +370,7 @@
       "name": "operator readback reports stale cleanup health",
       "gruppe": "readback",
       "ok": true,
-      "detail": "{\"health\":\"stale\",\"age\":10800.026515}"
+      "detail": "{\"health\":\"stale\",\"age\":10800.029389}"
     },
     {
       "name": "stale cleanup health fails closed for a new audited write",
@@ -386,7 +436,7 @@
       "name": "opposite event locks abort one transaction and the retry preserves quota",
       "gruppe": "r1",
       "ok": true,
-      "detail": "{\"ids\":2,\"codes\":{\"high\":3,\"cleanup\":0},\"stderr\":{\"high\":\"psql:<stdin>:6: ERROR:  deadlock detected\\nDETAIL:  Process 44290 waits for ShareLock on transaction 960; blocked by process 44294.\\nProcess 44294 waits for ShareLock on transaction 959; blocked by process 44290.\\nHINT:  See server log for query details.\\nCONTEXT:  while deleting tuple (76,18) in relati\",\"cleanup\":\"\"},\"retry\":0,\"used\":0,\"origins\":0}"
+      "detail": "{\"ids\":2,\"codes\":{\"high\":3,\"cleanup\":0},\"stderr\":{\"high\":\"psql:<stdin>:6: ERROR:  deadlock detected\\nDETAIL:  Process 55732 waits for ShareLock on transaction 1737; blocked by process 55735.\\nProcess 55735 waits for ShareLock on transaction 1736; blocked by process 55732.\\nHINT:  See server log for query details.\\nCONTEXT:  while deleting tuple (27,3) in relat\",\"cleanup\":\"\"},\"retry\":0,\"used\":0,\"origins\":0}"
     },
     {
       "name": "late admission waits with auth deletion and the cascade clears the new event",

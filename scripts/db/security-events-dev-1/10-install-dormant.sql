@@ -589,30 +589,75 @@ DECLARE
   spec record;
   trig record;
   seen integer := 0;
+  name_count integer;
+  fn_count integer;
+  fn_oid oid;
   predicate text;
 BEGIN
   FOR spec IN
     SELECT *
       FROM (
         VALUES
-          ('security_event_dev_v1_blocked_ins_del'::text, 'public'::text, 'blocked_ips'::text, 13::smallint, 'security_event_dev_on_blocked_ips'::text, false),
-          ('security_event_dev_v1_blocked_upd', 'public', 'blocked_ips', 17::smallint, 'security_event_dev_on_blocked_ips', true),
-          ('security_event_dev_v1_event_delete_begin', 'public', 'security_events', 10::smallint, 'security_event_dev_event_delete_begin', false),
-          ('security_event_dev_v1_event_delete_account', 'public', 'security_events', 8::smallint, 'security_event_dev_event_delete_account', false),
-          ('security_event_dev_v1_origin_delete', 'jetnity_internal', 'security_event_producer_origin', 9::smallint, 'security_event_dev_on_origin_delete', false)
-      ) AS expected(tgname, nspname, relname, tgtype, proname, needs_when)
+          (
+            'security_event_dev_v1_blocked_ins_del'::text,
+            'public'::text,
+            'blocked_ips'::text,
+            13::smallint,
+            'security_event_dev_on_blocked_ips'::text,
+            NULL::text
+          ),
+          (
+            'security_event_dev_v1_blocked_upd',
+            'public',
+            'blocked_ips',
+            17::smallint,
+            'security_event_dev_on_blocked_ips',
+            'CREATE TRIGGER security_event_dev_v1_blocked_upd AFTER UPDATE ON public.blocked_ips FOR EACH ROW WHEN (old.* IS DISTINCT FROM new.*) EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips()'
+          ),
+          (
+            'security_event_dev_v1_event_delete_begin',
+            'public',
+            'security_events',
+            10::smallint,
+            'security_event_dev_event_delete_begin',
+            NULL::text
+          ),
+          (
+            'security_event_dev_v1_event_delete_account',
+            'public',
+            'security_events',
+            8::smallint,
+            'security_event_dev_event_delete_account',
+            NULL::text
+          ),
+          (
+            'security_event_dev_v1_origin_delete',
+            'jetnity_internal',
+            'security_event_producer_origin',
+            9::smallint,
+            'security_event_dev_on_origin_delete',
+            NULL::text
+          )
+      ) AS expected(tgname, nspname, relname, tgtype, proname, expected_def)
   LOOP
-    SELECT t.oid, t.tgenabled, t.tgtype, t.tgqual, n.nspname, c.relname, p.proname
+    SELECT count(*)
+      INTO name_count
+      FROM pg_catalog.pg_trigger t
+     WHERE NOT t.tgisinternal
+       AND t.tgname = spec.tgname;
+    IF name_count = 0 THEN
+      CONTINUE;
+    END IF;
+    IF name_count > 1 THEN
+      RETURN 'ambiguous:' || spec.tgname;
+    END IF;
+    SELECT t.oid, t.tgfoid, t.tgenabled, t.tgtype, t.tgattr, t.tgqual, n.nspname, c.relname
       INTO trig
       FROM pg_catalog.pg_trigger t
       JOIN pg_catalog.pg_class c ON c.oid = t.tgrelid
       JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-      JOIN pg_catalog.pg_proc p ON p.oid = t.tgfoid
      WHERE NOT t.tgisinternal
        AND t.tgname = spec.tgname;
-    IF NOT FOUND THEN
-      CONTINUE;
-    END IF;
     seen := seen + 1;
     IF trig.tgenabled IS DISTINCT FROM 'O' THEN
       RETURN 'disabled:' || spec.tgname;
@@ -620,15 +665,28 @@ BEGIN
     IF trig.nspname IS DISTINCT FROM spec.nspname OR trig.relname IS DISTINCT FROM spec.relname THEN
       RETURN 'relation:' || spec.tgname;
     END IF;
-    IF trig.proname IS DISTINCT FROM spec.proname THEN
+    SELECT count(*), min(p.oid)
+      INTO fn_count, fn_oid
+      FROM pg_catalog.pg_proc p
+      JOIN pg_catalog.pg_namespace fn_ns ON fn_ns.oid = p.pronamespace
+     WHERE fn_ns.nspname = 'jetnity_internal'
+       AND p.proname = spec.proname
+       AND pg_catalog.pg_get_function_identity_arguments(p.oid) = '';
+    IF fn_count IS DISTINCT FROM 1 THEN
+      RETURN 'ambiguous-function:' || spec.proname;
+    END IF;
+    IF trig.tgfoid IS DISTINCT FROM fn_oid THEN
       RETURN 'function:' || spec.tgname;
     END IF;
     IF trig.tgtype IS DISTINCT FROM spec.tgtype THEN
       RETURN 'timing:' || spec.tgname;
     END IF;
-    IF spec.needs_when THEN
+    IF pg_catalog.cardinality(trig.tgattr::smallint[]) IS DISTINCT FROM 0 THEN
+      RETURN 'columns:' || spec.tgname;
+    END IF;
+    IF spec.expected_def IS NOT NULL THEN
       predicate := pg_catalog.pg_get_triggerdef(trig.oid, true);
-      IF trig.tgqual IS NULL OR predicate NOT LIKE '%IS DISTINCT FROM%' THEN
+      IF predicate IS DISTINCT FROM spec.expected_def THEN
         RETURN 'predicate:' || spec.tgname;
       END IF;
     ELSIF trig.tgqual IS NOT NULL THEN

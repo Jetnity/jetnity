@@ -24,15 +24,15 @@ SHA256 of the files on this delivery. Recompute on the exact head before any hos
 
 | File | SHA256 |
 | --- | --- |
-| `scripts/db/security-events-dev-1/10-install-dormant.sql` | `0289d11eaefce82e4ce2cba31d360ff7341eb6520b8002cf8cdcf1cb4f7c88f2` |
+| `scripts/db/security-events-dev-1/10-install-dormant.sql` | `7ff14588b537b414ba207bffebf27c5b2ae9ce7c31136cdfcd70cf05f143fa34` |
 | `scripts/db/security-events-dev-1/20-activate.sql` | `371e7f11aca8eca54df14459e792dacdb9a6b1a45287ee87d0f912ecdcf98a84` |
 | `scripts/db/security-events-dev-1/30-readback.sql` | `3b5a2485b44d7385f068ac562a50ba390868539400a13116e9a50d827d798a80` |
 | `scripts/db/security-events-dev-1/40-rollback.sql` | `827d1c98bca4e5d641f4f6840321987a5ac50d0f49e12c3216e90c9cab8bafcf` |
 | `scripts/db/security-events-dev-1/50-repair-quota.sql` | `47622ec05db14e9b9b9d8f950ccd7e0eddd135275352c6503d7df7293f6976f2` |
 | `scripts/db/security-events-dev-1/60-cleanup-manual.sql` | `9cdbce4aff1477088870fe2825744aea4b177035ac687474b71b5aa323c35048` |
-| `scripts/db/security-events-dev-1-lokal.mjs` | `df3b33348c212d3c4c4d8d82b03b1eff43afe6902adb8b9a2d34f04913c2b68d` |
+| `scripts/db/security-events-dev-1-lokal.mjs` | `4add92801576a3bb0e575786f71f240814e4bd9de79e1a24bf578f9d7b03ccc5` |
 
-R1 replaced the earlier checksums. The reviewed head `ebc6bbbdd48c65c9f1b642ea273aafe19a91ca2c` is not this package. Recompute before any hosted statement.
+R2 replaced the R1 checksums for the install SQL and the local runner. The reviewed head `51ad3a384f626505e5973ca69f1894b187a41bc6` is not this package. Recompute before any hosted statement.
 
 ## Ordered hosted actions
 
@@ -41,7 +41,7 @@ Run as the pg_cron owner, on the confirmed `develop` target only, one file per t
 1. Confirm identity in the control plane. Record the ref, branch name `develop`, PostgreSQL version, `TimeZone`, `cron.timezone`, `cron.database_name`, pg_cron version, and that the job name is absent or identical. The dated pre-dispatch read was pg_cron 1.6.4 and 0 jobs. Re-read it. Do not reuse that timestamp as fresh proof.
 2. Apply `10-install-dormant.sql`. Read back with `30-readback.sql`. Expect `state = dormant`, `enabled = false`, `trigger_fault = absent`, `catalog_fault` null, health `unknown`, quota `used = 0`, and one job with schedule `0 * * * *`. The job command must be exactly `SET lock_timeout = '4s'; SET statement_timeout = '30s'; SELECT jetnity_internal.security_event_dev_cleanup('scheduled')`. That prefix is the execution budget. A function-local `statement_timeout` is not. Blocklist writes must still succeed and stay unaudited. The readback uses `date_part`, not `pg_catalog.extract(... FROM ...)`.
 3. Wait for the pg_cron worker. Do not shorten `0 * * * *`. After a real succeeded run whose `end_time` is inside 2 hours, read back again. `last_success_kind` must be `scheduled` because the job command passes that argument. Health must be `healthy`.
-4. Only then apply `20-activate.sql`. Read back. Expect `state = active`, `enabled = true`, `trigger_fault` null, `catalog_fault` null, and five enabled triggers bound to the relations and functions in the design. A disabled or mis-bound trigger must fail this step. Do not treat a name count as success.
+4. Only then apply `20-activate.sql`. Read back. Expect `state = active`, `enabled = true`, `trigger_fault` null, `catalog_fault` null, and five enabled triggers whose `tgfoid` is the `jetnity_internal` function, whose `tgattr` is empty, and whose update trigger deparses to whole-row `WHEN (old.* IS DISTINCT FROM new.*)`. A disabled trigger, a same-named function in another schema, a column `WHEN`, an `UPDATE OF` list, or a duplicate trigger name must fail this step. A name or keyword match is not success.
 5. Exercise one synthetic operator blocklist insert and confirm one provenance row, `used = 1`, type `admin_blocklist_add`, null `ip` and `metadata`. Remove that synthetic row through the normal source DELETE or through scoped rollback. Do not use a traveller account.
 
 `60-cleanup-manual.sql` is an operator recovery tool. It stamps `manual`. It does not satisfy step 3.
