@@ -21,10 +21,18 @@
 --   2. security_event_dev_control FOR UPDATE
 --   3. provenance event rows in event_id order (cleanup / rollback)
 --   4. security_event_producer_quota FOR UPDATE
--- Account-erasure DELETE on security_events is an existing statement we do
--- not reorder. Its triggers lock quota only after that statement has locked
--- event rows. Overlapping event-row scans can still deadlock; the database
--- aborts one transaction and this package does not catch or swallow 40P01.
+-- Rollback locks the owned event rows before it updates quota. Account-erasure
+-- DELETE cannot be reordered. It locks event rows, then the delete trigger
+-- locks quota. Opposite event-row scan order can still deadlock (40P01).
+-- This package does not catch that error. The aborted transaction rolls back
+-- fully. The caller retries that statement. A caught deadlock is not success.
+--
+-- statement_timeout on a function does not arm a deadline for the caller
+-- statement that is already running. Operator files and the cron command SET
+-- lock_timeout and statement_timeout before the function call. Trigger
+-- functions still SET lock_timeout, which is read when they take a lock.
+-- The caller's own statement_timeout remains the execution bound for a
+-- blocklist statement. This package does not claim a second one.
 --
 -- Quota writes on deletion happen only in the AFTER DELETE statement trigger
 -- on security_events (set used to the remaining origin count). Cleanup,
@@ -69,7 +77,7 @@ LANGUAGE sql
 IMMUTABLE
 PARALLEL SAFE
 SET search_path = ''
-AS $$ SELECT 'select jetnity_internal.security_event_dev_cleanup(''scheduled'')'::text $$;
+AS $$ SELECT 'SET lock_timeout = ''4s''; SET statement_timeout = ''30s''; SELECT jetnity_internal.security_event_dev_cleanup(''scheduled'')'::text $$;
 
 CREATE OR REPLACE FUNCTION jetnity_internal.security_event_dev_retention()
 RETURNS interval
@@ -136,7 +144,7 @@ CREATE TABLE IF NOT EXISTS jetnity_internal.security_event_dev_control (
   CONSTRAINT security_event_dev_control_job_name_check
     CHECK (job_name = 'jetnity-security-events-dev-cleanup-v1'),
   CONSTRAINT security_event_dev_control_job_command_check
-    CHECK (job_command = 'select jetnity_internal.security_event_dev_cleanup(''scheduled'')'),
+    CHECK (job_command = 'SET lock_timeout = ''4s''; SET statement_timeout = ''30s''; SELECT jetnity_internal.security_event_dev_cleanup(''scheduled'')'),
   CONSTRAINT security_event_dev_control_history_check
     CHECK (history_retention = interval '7 days'),
   CONSTRAINT security_event_dev_control_health_check
@@ -237,7 +245,6 @@ LANGUAGE plpgsql
 VOLATILE
 SECURITY DEFINER
 SET search_path = ''
-SET statement_timeout = '5s'
 AS $$
 DECLARE
   success_at timestamptz;
@@ -297,7 +304,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '30s'
 AS $$
 DECLARE
   remaining integer;
@@ -330,7 +336,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '30s'
 AS $$
 BEGIN
   -- Event-delete cascades reach this trigger while the event statement is
@@ -352,7 +357,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '15s'
 AS $$
 DECLARE
   actor uuid;
@@ -498,7 +502,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '30s'
 AS $$
 DECLARE
   cutoff timestamptz;
@@ -553,7 +556,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '15s'
 AS $$
 DECLARE
   remaining integer;
@@ -576,13 +578,184 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION jetnity_internal.security_event_dev_trigger_fault()
+RETURNS text
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  spec record;
+  trig record;
+  seen integer := 0;
+  predicate text;
+BEGIN
+  FOR spec IN
+    SELECT *
+      FROM (
+        VALUES
+          ('security_event_dev_v1_blocked_ins_del'::text, 'public'::text, 'blocked_ips'::text, 13::smallint, 'security_event_dev_on_blocked_ips'::text, false),
+          ('security_event_dev_v1_blocked_upd', 'public', 'blocked_ips', 17::smallint, 'security_event_dev_on_blocked_ips', true),
+          ('security_event_dev_v1_event_delete_begin', 'public', 'security_events', 10::smallint, 'security_event_dev_event_delete_begin', false),
+          ('security_event_dev_v1_event_delete_account', 'public', 'security_events', 8::smallint, 'security_event_dev_event_delete_account', false),
+          ('security_event_dev_v1_origin_delete', 'jetnity_internal', 'security_event_producer_origin', 9::smallint, 'security_event_dev_on_origin_delete', false)
+      ) AS expected(tgname, nspname, relname, tgtype, proname, needs_when)
+  LOOP
+    SELECT t.oid, t.tgenabled, t.tgtype, t.tgqual, n.nspname, c.relname, p.proname
+      INTO trig
+      FROM pg_catalog.pg_trigger t
+      JOIN pg_catalog.pg_class c ON c.oid = t.tgrelid
+      JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+      JOIN pg_catalog.pg_proc p ON p.oid = t.tgfoid
+     WHERE NOT t.tgisinternal
+       AND t.tgname = spec.tgname;
+    IF NOT FOUND THEN
+      CONTINUE;
+    END IF;
+    seen := seen + 1;
+    IF trig.tgenabled IS DISTINCT FROM 'O' THEN
+      RETURN 'disabled:' || spec.tgname;
+    END IF;
+    IF trig.nspname IS DISTINCT FROM spec.nspname OR trig.relname IS DISTINCT FROM spec.relname THEN
+      RETURN 'relation:' || spec.tgname;
+    END IF;
+    IF trig.proname IS DISTINCT FROM spec.proname THEN
+      RETURN 'function:' || spec.tgname;
+    END IF;
+    IF trig.tgtype IS DISTINCT FROM spec.tgtype THEN
+      RETURN 'timing:' || spec.tgname;
+    END IF;
+    IF spec.needs_when THEN
+      predicate := pg_catalog.pg_get_triggerdef(trig.oid, true);
+      IF trig.tgqual IS NULL OR predicate NOT LIKE '%IS DISTINCT FROM%' THEN
+        RETURN 'predicate:' || spec.tgname;
+      END IF;
+    ELSIF trig.tgqual IS NOT NULL THEN
+      RETURN 'predicate:' || spec.tgname;
+    END IF;
+  END LOOP;
+
+  IF seen = 0 THEN
+    IF EXISTS (
+      SELECT 1
+        FROM pg_catalog.pg_trigger t
+       WHERE NOT t.tgisinternal
+         AND t.tgname LIKE 'security_event_dev_v1_%'
+    ) THEN
+      RETURN 'unexpected';
+    END IF;
+    RETURN 'absent';
+  END IF;
+  IF seen <> 5 OR EXISTS (
+    SELECT 1
+      FROM pg_catalog.pg_trigger t
+     WHERE NOT t.tgisinternal
+       AND t.tgname LIKE 'security_event_dev_v1_%'
+       AND t.tgname NOT IN (
+         'security_event_dev_v1_blocked_ins_del',
+         'security_event_dev_v1_blocked_upd',
+         'security_event_dev_v1_event_delete_begin',
+         'security_event_dev_v1_event_delete_account',
+         'security_event_dev_v1_origin_delete'
+       )
+  ) THEN
+    RETURN 'unexpected';
+  END IF;
+  RETURN NULL;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION jetnity_internal.security_event_dev_catalog_fault()
+RETURNS text
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  rel record;
+  role_name text;
+  priv text;
+BEGIN
+  FOR rel IN
+    SELECT n.nspname, c.relname, c.relrowsecurity, c.relforcerowsecurity, c.relowner
+      FROM pg_catalog.pg_class c
+      JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+     WHERE (n.nspname, c.relname) IN (
+       ('jetnity_internal', 'security_event_dev_control'),
+       ('jetnity_internal', 'security_event_producer_quota'),
+       ('jetnity_internal', 'security_event_producer_origin')
+     )
+  LOOP
+    IF rel.relrowsecurity IS NOT TRUE THEN
+      RETURN 'rls:' || rel.relname;
+    END IF;
+    IF rel.relforcerowsecurity IS TRUE THEN
+      RETURN 'force-rls:' || rel.relname;
+    END IF;
+    IF rel.relowner IS DISTINCT FROM (
+      SELECT r.oid FROM pg_catalog.pg_roles r WHERE r.rolname = current_user
+    ) THEN
+      RETURN 'owner:' || rel.relname;
+    END IF;
+    IF EXISTS (
+      SELECT 1
+        FROM pg_catalog.pg_policy pol
+        JOIN pg_catalog.pg_class c ON c.oid = pol.polrelid
+        JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+       WHERE n.nspname = rel.nspname
+         AND c.relname = rel.relname
+    ) THEN
+      RETURN 'policy:' || rel.relname;
+    END IF;
+    FOREACH role_name IN ARRAY ARRAY['anon', 'authenticated', 'service_role']
+    LOOP
+      FOREACH priv IN ARRAY ARRAY['SELECT', 'INSERT', 'UPDATE', 'DELETE']
+      LOOP
+        IF pg_catalog.has_table_privilege(
+          role_name,
+          pg_catalog.format('%I.%I', rel.nspname, rel.relname),
+          priv
+        ) THEN
+          RETURN 'grant:' || rel.relname;
+        END IF;
+      END LOOP;
+    END LOOP;
+  END LOOP;
+
+  IF (
+    SELECT count(*)
+      FROM pg_catalog.pg_class c
+      JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+     WHERE (n.nspname, c.relname) IN (
+       ('jetnity_internal', 'security_event_dev_control'),
+       ('jetnity_internal', 'security_event_producer_quota'),
+       ('jetnity_internal', 'security_event_producer_origin')
+     )
+  ) <> 3 THEN
+    RETURN 'missing-relation';
+  END IF;
+
+  FOREACH role_name IN ARRAY ARRAY['public', 'anon', 'authenticated', 'service_role']
+  LOOP
+    IF pg_catalog.has_function_privilege(role_name, 'jetnity_internal.security_event_dev_cleanup(text)', 'EXECUTE')
+       OR pg_catalog.has_function_privilege(role_name, 'jetnity_internal.security_event_dev_activate()', 'EXECUTE')
+       OR pg_catalog.has_function_privilege(role_name, 'jetnity_internal.security_event_dev_prepare_rollback()', 'EXECUTE')
+       OR pg_catalog.has_schema_privilege(role_name, 'jetnity_internal', 'USAGE') THEN
+      RETURN 'privilege:' || role_name;
+    END IF;
+  END LOOP;
+  RETURN NULL;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION jetnity_internal.security_event_dev_activate()
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '30s'
 AS $$
 DECLARE
   producer_state text;
@@ -591,7 +764,8 @@ DECLARE
   quota_used integer;
   quota_cap integer;
   retained bigint;
-  trigger_count integer;
+  trigger_fault text;
+  catalog_fault text;
   native_ok boolean;
   cron_zone text;
 BEGIN
@@ -621,26 +795,19 @@ BEGIN
       USING ERRCODE = 'P0001';
   END IF;
 
-  SELECT count(*)
-    INTO trigger_count
-    FROM pg_catalog.pg_trigger t
-    JOIN pg_catalog.pg_class c ON c.oid = t.tgrelid
-    JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-   WHERE NOT t.tgisinternal
-     AND t.tgname IN (
-       'security_event_dev_v1_blocked_ins_del',
-       'security_event_dev_v1_blocked_upd',
-       'security_event_dev_v1_event_delete_begin',
-       'security_event_dev_v1_event_delete_account',
-       'security_event_dev_v1_origin_delete'
-     );
+  catalog_fault := jetnity_internal.security_event_dev_catalog_fault();
+  IF catalog_fault IS NOT NULL THEN
+    RAISE EXCEPTION 'security_event dev catalog contract %', catalog_fault
+      USING ERRCODE = 'P0001';
+  END IF;
 
-  IF producer_state = 'active' AND trigger_count = 5 THEN
+  trigger_fault := jetnity_internal.security_event_dev_trigger_fault();
+  IF producer_state = 'active' AND trigger_fault IS NULL THEN
     NULL;
-  ELSIF producer_state = 'dormant' AND trigger_count = 0 THEN
+  ELSIF producer_state = 'dormant' AND trigger_fault = 'absent' THEN
     NULL;
   ELSE
-    RAISE EXCEPTION 'security_event dev producer is half-configured'
+    RAISE EXCEPTION 'security_event dev trigger contract %', COALESCE(trigger_fault, 'state')
       USING ERRCODE = 'P0001';
   END IF;
 
@@ -691,7 +858,7 @@ BEGIN
       USING ERRCODE = 'P0001';
   END IF;
 
-  IF trigger_count = 0 THEN
+  IF producer_state = 'dormant' THEN
     CREATE TRIGGER security_event_dev_v1_blocked_ins_del
       AFTER INSERT OR DELETE ON public.blocked_ips
       FOR EACH ROW
@@ -717,6 +884,11 @@ BEGIN
       AFTER DELETE ON jetnity_internal.security_event_producer_origin
       FOR EACH ROW
       EXECUTE FUNCTION jetnity_internal.security_event_dev_on_origin_delete();
+    trigger_fault := jetnity_internal.security_event_dev_trigger_fault();
+    IF trigger_fault IS NOT NULL THEN
+      RAISE EXCEPTION 'security_event dev trigger contract %', trigger_fault
+        USING ERRCODE = 'P0001';
+    END IF;
   END IF;
 
   UPDATE jetnity_internal.security_event_dev_control
@@ -735,7 +907,6 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 SET lock_timeout = '4s'
-SET statement_timeout = '30s'
 AS $$
 DECLARE
   job_row record;
@@ -745,9 +916,6 @@ BEGIN
   UPDATE jetnity_internal.security_event_dev_control
      SET state = 'dormant'
    WHERE id = 'dev_v1';
-  UPDATE jetnity_internal.security_event_producer_quota
-     SET enabled = false
-   WHERE id = 'tracked_producer';
 
   PERFORM e.id
     FROM public.security_events e
@@ -758,6 +926,10 @@ BEGIN
   DELETE FROM public.security_events e
    USING jetnity_internal.security_event_producer_origin o
    WHERE e.id = o.event_id;
+
+  UPDATE jetnity_internal.security_event_producer_quota
+     SET enabled = false
+   WHERE id = 'tracked_producer';
 
   IF EXISTS (SELECT 1 FROM jetnity_internal.security_event_producer_origin) THEN
     RAISE EXCEPTION 'security_event dev rollback left provenance rows'
@@ -815,6 +987,8 @@ REVOKE ALL ON FUNCTION jetnity_internal.security_event_dev_cleanup(text) FROM PU
 REVOKE ALL ON FUNCTION jetnity_internal.security_event_dev_repair_quota() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION jetnity_internal.security_event_dev_activate() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION jetnity_internal.security_event_dev_prepare_rollback() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION jetnity_internal.security_event_dev_trigger_fault() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION jetnity_internal.security_event_dev_catalog_fault() FROM PUBLIC, anon, authenticated, service_role;
 
 -- Scheduling is part of dormant install so a later native run can exist
 -- before any producer trigger is attached. Same-name cron.schedule replaces
@@ -866,22 +1040,18 @@ $schedule$;
 DO $dormant$
 DECLARE
   producer_state text;
-  trigger_count integer;
+  trigger_fault text;
 BEGIN
   SELECT c.state
     INTO producer_state
     FROM jetnity_internal.security_event_dev_control c
    WHERE c.id = 'dev_v1';
-  SELECT count(*)
-    INTO trigger_count
-    FROM pg_catalog.pg_trigger t
-   WHERE NOT t.tgisinternal
-     AND t.tgname LIKE 'security_event_dev_v1_%';
-  IF producer_state = 'dormant' AND trigger_count > 0 THEN
+  trigger_fault := jetnity_internal.security_event_dev_trigger_fault();
+  IF producer_state = 'dormant' AND trigger_fault IS DISTINCT FROM 'absent' THEN
     RAISE EXCEPTION 'security_event dev dormant install found producer triggers'
       USING ERRCODE = 'P0001';
   END IF;
-  IF producer_state = 'active' AND trigger_count <> 5 THEN
+  IF producer_state = 'active' AND trigger_fault IS NOT NULL THEN
     RAISE EXCEPTION 'security_event dev re-run found a half-configured producer'
       USING ERRCODE = 'P0001';
   END IF;

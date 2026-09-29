@@ -11,12 +11,21 @@ const OPERATOR = '11111111-1111-4111-8111-111111111111'
 const MODERATOR = '22222222-2222-4222-8222-222222222222'
 const TRAVELLER = '33333333-3333-4333-8333-333333333333'
 const OTHER = '44444444-4444-4444-8444-444444444444'
+const majorArg = process.argv.find((arg) => arg.startsWith('--pg-major='))
+const PG_MAJOR = majorArg ? majorArg.slice('--pg-major='.length) : '16'
+if (!/^[0-9]+$/.test(PG_MAJOR)) {
+  throw new Error('Refusing a non-local PostgreSQL major.')
+}
 const DB = 'jetnity_security_events_dev_lokal'
 const CAP = 1000
 const ROOT = new URL('../..', import.meta.url).pathname
 const DIR = join(ROOT, 'scripts/db/security-events-dev-1')
 const BOOTSTRAP = join(ROOT, 'scripts/db/security-events-producer-contract-lokal-bootstrap.sql')
-const EVIDENCE = join(ROOT, 'docs/evidence/dev-security-event-logging-retention-1/local-execution.json')
+const EVIDENCE = join(
+  ROOT,
+  'docs/evidence/dev-security-event-logging-retention-1',
+  PG_MAJOR === '16' ? 'local-execution.json' : `local-execution-pg${PG_MAJOR}.json`,
+)
 
 const REMOTE_OVERRIDE_KEYS = [
   'JETNITY_ALLOW_REMOTE_DB',
@@ -59,8 +68,15 @@ function sichereUmgebung() {
   }
 }
 
+function clusterPort() {
+  const conf = readFileSync(`/etc/postgresql/${PG_MAJOR}/main/postgresql.conf`, 'utf8')
+  const match = conf.match(/^port\s*=\s*(\d+)/m)
+  if (!match) throw new Error(`No local port for PostgreSQL ${PG_MAJOR}.`)
+  return match[1]
+}
+
 function psqlArgs(datenbank, extra = []) {
-  return ['-u', 'postgres', 'psql', '-v', 'ON_ERROR_STOP=1', '-d', datenbank, ...extra]
+  return ['-u', 'postgres', 'psql', '-p', clusterPort(), '-v', 'ON_ERROR_STOP=1', '-d', datenbank, ...extra]
 }
 
 function psqlSql(sql, datenbank = DB) {
@@ -172,6 +188,14 @@ function mussErlauben(name, gruppe, opts) {
   return ergebnis
 }
 
+function operatorSql(name) {
+  return readFileSync(join(DIR, name), 'utf8')
+}
+
+function readback() {
+  return jsonZeile(psqlFile(operatorSql('30-readback.sql')))
+}
+
 function stand() {
   return jsonZeile(psqlFile(`
 select jsonb_build_object(
@@ -203,7 +227,7 @@ delete from public.security_events e
 
 function starteCluster() {
   try {
-    execFileSync('sudo', ['pg_ctlcluster', '16', 'main', 'start'], { stdio: 'pipe' })
+    execFileSync('sudo', ['pg_ctlcluster', PG_MAJOR, 'main', 'start'], { stdio: 'pipe' })
   } catch (fehler) {
     const text = `${fehler.stdout || ''}${fehler.stderr || ''}${fehler.message || ''}`
     if (!/already running/i.test(text)) throw fehler
@@ -348,11 +372,25 @@ function installiere() {
   }
   const erneut = psqlCapture(readFileSync(join(DIR, '10-install-dormant.sql'), 'utf8'))
   const nach = stand()
+  const rb = readback()
   bewerte(
     'dormant install and safe re-run leave triggers detached and health unknown',
     'install',
     erneut.code === 0 && nach.state === 'dormant' && Number(nach.triggers) === 0 && nach.health === 'unknown' && nach.enabled === false,
     JSON.stringify(nach),
+  )
+  bewerte(
+    'operator readback reports dormant install',
+    'readback',
+    rb.control?.state === 'dormant' &&
+      rb.health === 'unknown' &&
+      rb.trigger_fault === 'absent' &&
+      rb.catalog_fault == null &&
+      Number(rb.producer_triggers) === 0 &&
+      Number(rb.timezone_offset_seconds) === 0 &&
+      rb.quota?.enabled === false &&
+      rb.control?.last_success_age_seconds == null,
+    JSON.stringify(rb),
   )
 }
 
@@ -416,11 +454,79 @@ select j.jobid, 0, current_database(), current_user, j.command, 'succeeded',
   )
   const erneut = psqlCapture(readFileSync(join(DIR, '20-activate.sql'), 'utf8'))
   const nachErneut = stand()
+  const rb = readback()
   bewerte(
     'activation re-run stays at five triggers',
     gruppe,
-    erneut.code === 0 && Number(nachErneut.triggers) === 5,
+    erneut.code === 0 && Number(nachErneut.triggers) === 5 && rb.trigger_fault == null,
     erneut.stderr.slice(0, 300),
+  )
+  bewerte(
+    'operator readback reports healthy active contract',
+    'readback',
+    datei.code === 0 &&
+      rb.control?.state === 'active' &&
+      rb.health === 'healthy' &&
+      rb.control?.last_success_kind === 'scheduled' &&
+      rb.trigger_fault == null &&
+      rb.catalog_fault == null &&
+      Number(rb.producer_triggers) === 5 &&
+      rb.quota?.enabled === true &&
+      String(rb.job?.command ?? '').includes('SET statement_timeout'),
+    JSON.stringify({ health: rb.health, fault: rb.trigger_fault, kind: rb.control?.last_success_kind }),
+  )
+
+  psqlSql(`ALTER TABLE public.blocked_ips DISABLE TRIGGER security_event_dev_v1_blocked_ins_del;`)
+  const disabled = psqlCapture(operatorSql('20-activate.sql'))
+  const disabledFault = readback().trigger_fault
+  psqlSql(`ALTER TABLE public.blocked_ips ENABLE TRIGGER security_event_dev_v1_blocked_ins_del;`)
+  const enabledAgain = psqlCapture(operatorSql('20-activate.sql'))
+  bewerte(
+    'disabled trigger does not pass activation',
+    gruppe,
+    disabled.code !== 0 &&
+      /disabled:security_event_dev_v1_blocked_ins_del/.test(disabled.stderr) &&
+      String(disabledFault).startsWith('disabled:') &&
+      enabledAgain.code === 0 &&
+      readback().trigger_fault == null,
+    disabled.stderr.slice(0, 300),
+  )
+
+  psqlSql(`
+DROP TRIGGER security_event_dev_v1_blocked_ins_del ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_ins_del
+  BEFORE INSERT ON public.blocked_ips
+  FOR EACH ROW
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+`)
+  const misbound = psqlCapture(operatorSql('20-activate.sql'))
+  psqlSql(`
+DROP TRIGGER security_event_dev_v1_blocked_ins_del ON public.blocked_ips;
+CREATE TRIGGER security_event_dev_v1_blocked_ins_del
+  AFTER INSERT OR DELETE ON public.blocked_ips
+  FOR EACH ROW
+  EXECUTE FUNCTION jetnity_internal.security_event_dev_on_blocked_ips();
+`)
+  const restored = psqlCapture(operatorSql('20-activate.sql'))
+  bewerte(
+    'misbound trigger does not pass activation',
+    gruppe,
+    misbound.code !== 0 && /timing:security_event_dev_v1_blocked_ins_del/.test(misbound.stderr) && restored.code === 0 && readback().trigger_fault == null,
+    misbound.stderr.slice(0, 300),
+  )
+
+  psqlSql(`GRANT USAGE ON SCHEMA jetnity_internal TO authenticated;`)
+  const privileged = psqlCapture(operatorSql('20-activate.sql'))
+  psqlSql(`REVOKE USAGE ON SCHEMA jetnity_internal FROM authenticated;`)
+  const privilegeRestored = psqlCapture(operatorSql('20-activate.sql'))
+  bewerte(
+    'privilege drift does not pass activation',
+    gruppe,
+    privileged.code !== 0 &&
+      /privilege:authenticated/.test(privileged.stderr) &&
+      privilegeRestored.code === 0 &&
+      readback().catalog_fault == null,
+    privileged.stderr.slice(0, 300),
   )
 }
 
@@ -1040,6 +1146,13 @@ update jetnity_internal.security_event_dev_control
        last_success_kind = 'scheduled'
  where id = 'dev_v1';
 `)
+  const staleRb = readback()
+  bewerte(
+    'operator readback reports stale cleanup health',
+    'readback',
+    staleRb.health === 'stale' && staleRb.control?.state === 'active' && staleRb.trigger_fault == null,
+    JSON.stringify({ health: staleRb.health, age: staleRb.control?.last_success_age_seconds }),
+  )
   const stale = festgeschrieben({
     rolle: 'authenticated',
     uid: OTHER,
@@ -1054,11 +1167,18 @@ update jetnity_internal.security_event_dev_control
     aal: 'aal2',
     sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.80', 'recovered')`,
   })
+  const recoveredRb = readback()
   bewerte(
     'manual cleanup restores writes without being native evidence',
     gruppe,
     repairCleanup.code === 0 && nachRepair.arbeit?.ok === true && stand().kind === 'manual',
     stand().kind,
+  )
+  bewerte(
+    'operator readback reports recovered manual cleanup',
+    'readback',
+    recoveredRb.health === 'healthy' && recoveredRb.control?.last_success_kind === 'manual' && recoveredRb.trigger_fault == null,
+    JSON.stringify({ health: recoveredRb.health, kind: recoveredRb.control?.last_success_kind }),
   )
 
   psqlSql(`
@@ -1067,6 +1187,13 @@ select j.jobid, current_database(), current_user, j.command, 'failed', 'fresh-fa
        clock_timestamp(), clock_timestamp()
   from cron.job j where j.jobname = 'jetnity-security-events-dev-cleanup-v1';
 `)
+  const failingRb = readback()
+  bewerte(
+    'operator readback reports failing cleanup health',
+    'readback',
+    failingRb.health === 'failing',
+    JSON.stringify({ health: failingRb.health }),
+  )
   const failing = festgeschrieben({
     rolle: 'authenticated',
     uid: OTHER,
@@ -1133,9 +1260,370 @@ select j.jobid, current_database(), current_user, j.command, 'failed', 'fresh-fa
     JSON.stringify({ erasure: erasureBeiCap.arbeit, used: nachCap.used }),
   )
 
+}
+
+async function aktivitaet(namen) {
+  const liste = namen.map((name) => `'${name}'`).join(', ')
+  return jsonZeile(psqlFile(`
+select coalesce(jsonb_agg(jsonb_build_object(
+  'application_name', application_name,
+  'wait_event_type', wait_event_type,
+  'wait_event', wait_event,
+  'state', state
+) order by application_name), '[]'::jsonb)
+  from pg_stat_activity
+ where application_name in (${liste});
+`))
+}
+
+async function pruefeR1() {
+  const gruppe = 'r1'
+  festgeschrieben({
+    rolle: 'authenticated',
+    uid: OPERATOR,
+    aal: 'aal2',
+    sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.140', 'overlap')`,
+  })
+  psqlSql(`
+update public.security_events e
+   set created_at = pg_catalog.clock_timestamp() - interval '8 days'
+  from jetnity_internal.security_event_producer_origin o
+ where o.event_id = e.id
+   and e.user_id = '${OPERATOR}';
+`)
+  const lookalikeVorOverlap = Number(stand().lookalike)
+  const hold = spawnPsql(`
+set application_name = 'r1-hold';
+begin;
+select e.id
+  from public.security_events e
+  join jetnity_internal.security_event_producer_origin o on o.event_id = e.id
+ where e.user_id = '${OPERATOR}'
+ order by e.id
+ limit 1
+ for update;
+select pg_sleep(1.8);
+commit;
+`)
+  await sleep(350)
+  const cleanupWait = spawnPsql(`
+set application_name = 'r1-cleanup';
+begin;
+set local lock_timeout = '4s';
+set local statement_timeout = '30s';
+select jetnity_internal.security_event_dev_cleanup('manual');
+commit;
+`)
+  const erasureWait = spawnPsql(`
+set application_name = 'r1-erasure';
+begin;
+set local lock_timeout = '4s';
+set local statement_timeout = '30s';
+set role service_role;
+delete from public.security_events where user_id = '${OPERATOR}';
+commit;
+`)
+  await sleep(400)
+  const overlapWaits = await aktivitaet(['r1-hold', 'r1-cleanup', 'r1-erasure'])
+  const [holdErgebnis, cleanupErgebnis, erasureErgebnis] = await Promise.all([hold, cleanupWait, erasureWait])
+  const nachOverlap = stand()
+  bewerte(
+    'cleanup and account erasure overlap on one event row and finish coherent',
+    gruppe,
+    holdErgebnis.code === 0 &&
+      cleanupErgebnis.code === 0 &&
+      erasureErgebnis.code === 0 &&
+      (overlapWaits ?? []).some((row) => row.wait_event_type === 'Lock') &&
+      Number(nachOverlap.used) === Number(nachOverlap.origins) &&
+      Number(nachOverlap.lookalike) === lookalikeVorOverlap &&
+      psqlAt(`select count(*) from public.security_events where user_id = '${OPERATOR}'`) === '0',
+    JSON.stringify({
+      overlapWaits,
+      codes: { hold: holdErgebnis.code, cleanup: cleanupErgebnis.code, erasure: erasureErgebnis.code },
+      stderr: {
+        cleanup: cleanupErgebnis.stderr.slice(0, 220),
+        erasure: erasureErgebnis.stderr.slice(0, 220),
+      },
+      used: nachOverlap.used,
+      origins: nachOverlap.origins,
+    }),
+  )
+
+  festgeschrieben({
+    rolle: 'authenticated',
+    uid: OPERATOR,
+    aal: 'aal2',
+    sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.141', 'low'), ('192.0.2.142', 'high')`,
+  })
+  psqlSql(`
+update public.security_events e
+   set created_at = pg_catalog.clock_timestamp() - interval '8 days'
+  from jetnity_internal.security_event_producer_origin o
+ where o.event_id = e.id
+   and e.user_id = '${OPERATOR}';
+`)
+  const ids = psqlAt(`
+select coalesce(string_agg(e.id::text, ',' order by e.id), '')
+  from public.security_events e
+  join jetnity_internal.security_event_producer_origin o on o.event_id = e.id
+ where e.user_id = '${OPERATOR}'
+`).split(',').filter(Boolean)
+  const highId = ids[ids.length - 1]
+  const lookalikeVorDeadlock = Number(stand().lookalike)
+  const highLock = spawnPsql(`
+set application_name = 'r1-high';
+begin;
+select id from public.security_events where id = '${highId}' for update;
+select pg_sleep(1.8);
+delete from public.security_events where user_id = '${OPERATOR}';
+commit;
+`)
+  await sleep(350)
+  const cleanupDeadlock = spawnPsql(`
+set application_name = 'r1-cleanup-deadlock';
+begin;
+set local lock_timeout = '4s';
+set local statement_timeout = '30s';
+select jetnity_internal.security_event_dev_cleanup('manual');
+commit;
+`)
+  const [highErgebnis, deadlockErgebnis] = await Promise.all([highLock, cleanupDeadlock])
+  const abgebrochen = [highErgebnis, deadlockErgebnis].filter((row) => row.code !== 0)
+  const wiederholt = []
+  for (const row of abgebrochen) {
+    const erneut = await spawnPsql(row === highErgebnis
+      ? `begin; set role service_role; delete from public.security_events where user_id = '${OPERATOR}'; commit;`
+      : `begin; set local lock_timeout = '4s'; set local statement_timeout = '30s'; select jetnity_internal.security_event_dev_cleanup('manual'); commit;`)
+    wiederholt.push(erneut)
+  }
+  const nachDeadlock = stand()
+  bewerte(
+    'opposite event locks abort one transaction and the retry preserves quota',
+    gruppe,
+    ids.length >= 2 &&
+      abgebrochen.length === 1 &&
+      /deadlock detected/i.test(abgebrochen[0].stderr) &&
+      wiederholt.length === 1 &&
+      wiederholt[0].code === 0 &&
+      Number(nachDeadlock.used) === Number(nachDeadlock.origins) &&
+      Number(nachDeadlock.lookalike) === lookalikeVorDeadlock &&
+      psqlAt(`select count(*) from public.security_events e join jetnity_internal.security_event_producer_origin o on o.event_id = e.id where e.user_id = '${OPERATOR}'`) === '0',
+    JSON.stringify({
+      ids: ids.length,
+      codes: { high: highErgebnis.code, cleanup: deadlockErgebnis.code },
+      stderr: { high: highErgebnis.stderr.slice(0, 300), cleanup: deadlockErgebnis.stderr.slice(0, 300) },
+      retry: wiederholt[0]?.code,
+      used: nachDeadlock.used,
+      origins: nachDeadlock.origins,
+    }),
+  )
+
+  const admit = spawnPsql(`
+set application_name = 'r1-admit';
+begin;
+select set_config('role', 'authenticated', true);
+select set_config('request.jwt.claims', $c$${claims({ uid: OPERATOR, aal: 'aal2' })}$c$, true);
+insert into public.blocked_ips (ip, reason) values ('192.0.2.161', 'late');
+select pg_sleep(1.6);
+commit;
+`)
+  await sleep(350)
+  const authDel = spawnPsql(`
+set application_name = 'r1-auth';
+begin;
+delete from auth.users where id = '${OPERATOR}';
+commit;
+`)
+  await sleep(300)
+  const authWaits = await aktivitaet(['r1-admit', 'r1-auth'])
+  const [admitErgebnis, authErgebnis] = await Promise.all([admit, authDel])
+  const nachAuth = stand()
+  bewerte(
+    'late admission waits with auth deletion and the cascade clears the new event',
+    gruppe,
+    admitErgebnis.code === 0 &&
+      authErgebnis.code === 0 &&
+      (authWaits ?? []).some((row) => row.application_name === 'r1-auth' && row.wait_event_type === 'Lock') &&
+      psqlAt(`select count(*) from public.security_events where user_id = '${OPERATOR}'`) === '0' &&
+      Number(nachAuth.used) === Number(nachAuth.origins) &&
+      Number(nachAuth.lookalike) === lookalikeVorDeadlock,
+    JSON.stringify({
+      authWaits,
+      codes: { admit: admitErgebnis.code, auth: authErgebnis.code },
+      stderr: { admit: admitErgebnis.stderr.slice(0, 220), auth: authErgebnis.stderr.slice(0, 220) },
+      used: nachAuth.used,
+    }),
+  )
+  psqlSql(`insert into auth.users (id) values ('${OPERATOR}') on conflict do nothing;`)
+
+  festgeschrieben({
+    rolle: 'authenticated',
+    uid: OTHER,
+    aal: 'aal2',
+    sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.170', 'slow')`,
+  })
+  psqlSql(`
+update public.security_events e
+   set created_at = pg_catalog.clock_timestamp() - interval '8 days'
+  from jetnity_internal.security_event_producer_origin o
+ where o.event_id = e.id
+   and e.user_id = '${OTHER}'
+   and e.extra->>'op' is not null;
+create function jetnity_test.delay_delete()
+returns trigger
+language plpgsql
+as $$
+begin
+  perform pg_sleep(2);
+  return null;
+end
+$$;
+create trigger delay_delete
+  before delete on public.security_events
+  for each row
+  execute function jetnity_test.delay_delete();
+`)
+  const vorTimeout = stand()
+  const timeout = psqlCapture(`
+begin;
+set local lock_timeout = '4s';
+set local statement_timeout = '400ms';
+select jetnity_internal.security_event_dev_cleanup('manual');
+commit;
+`)
+  const nachTimeout = stand()
+  bewerte(
+    'outer statement timeout cancels cleanup and rolls the reservation back',
+    gruppe,
+    timeout.code !== 0 &&
+      /statement timeout/i.test(timeout.stderr) &&
+      Number(nachTimeout.used) === Number(vorTimeout.used) &&
+      Number(nachTimeout.tracked) === Number(vorTimeout.tracked) &&
+      Number(nachTimeout.origins) === Number(vorTimeout.origins),
+    JSON.stringify({ stderr: timeout.stderr.slice(0, 300), vorTimeout, nachTimeout }),
+  )
+  psqlSql(`
+drop trigger delay_delete on public.security_events;
+drop function jetnity_test.delay_delete();
+`)
+  const shippedCleanup = psqlCapture(operatorSql('60-cleanup-manual.sql'))
+  const cronBefehl = psqlAt(`select jetnity_internal.security_event_dev_job_command()`)
+  const cronLauf = psqlCapture(cronBefehl)
+  const nachShipped = stand()
+  bewerte(
+    'shipped cleanup file and cron command run after the timeout proof',
+    gruppe,
+    shippedCleanup.code === 0 &&
+      cronLauf.code === 0 &&
+      cronBefehl.startsWith('SET lock_timeout') &&
+      cronBefehl.includes("SET statement_timeout = '30s'") &&
+      Number(nachShipped.used) === Number(nachShipped.origins) &&
+      Number(nachShipped.tracked) < Number(vorTimeout.tracked),
+    JSON.stringify({ cronBefehl, cronStderr: cronLauf.stderr.slice(0, 200), used: nachShipped.used, tracked: nachShipped.tracked }),
+  )
+
+  const controlProbe = psqlCapture(`
+begin;
+delete from jetnity_internal.security_event_dev_control where id = 'dev_v1';
+do $probe$
+begin
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claims', $c$${claims({ uid: OTHER, aal: 'aal2' })}$c$, true);
+  insert into public.blocked_ips (ip, reason) values ('192.0.2.190', 'no-control');
+  raise exception 'write unexpectedly succeeded';
+exception
+  when others then
+    if sqlerrm not like '%control missing%' then
+      raise;
+    end if;
+end
+$probe$;
+select jetnity_internal.security_event_dev_cleanup('manual');
+rollback;
+`)
+  const nachControl = stand()
+  bewerte(
+    'missing control fails a new write and the cleanup transaction rolls back',
+    gruppe,
+    controlProbe.code === 0 &&
+      nachControl.state === 'active' &&
+      Number(nachControl.used) === Number(nachShipped.used),
+    JSON.stringify({ stderr: controlProbe.stderr.slice(0, 300), state: nachControl.state, used: nachControl.used }),
+  )
+
+  festgeschrieben({
+    rolle: 'authenticated',
+    uid: OTHER,
+    aal: 'aal2',
+    sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.191', 'quota-row')`,
+  })
+  const vorQuota = stand()
+  const quotaProbe = psqlFile(`
+begin;
+delete from jetnity_internal.security_event_producer_quota where id = 'tracked_producer';
+do $probe$
+begin
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claims', $c$${claims({ uid: OTHER, aal: 'aal2' })}$c$, true);
+  insert into public.blocked_ips (ip, reason) values ('192.0.2.192', 'no-quota');
+  raise exception 'write unexpectedly succeeded';
+exception
+  when others then
+    if sqlerrm not like '%quota missing%' then
+      raise;
+    end if;
+end
+$probe$;
+delete from public.security_events e
+ using jetnity_internal.security_event_producer_origin o
+ where o.event_id = e.id
+   and e.user_id = '${OTHER}';
+select jsonb_build_object(
+  'quota', exists(select 1 from jetnity_internal.security_event_producer_quota where id = 'tracked_producer'),
+  'origins', (select count(*) from jetnity_internal.security_event_producer_origin)
+);
+rollback;
+`)
+  const quotaJson = jsonZeile(quotaProbe)
+  const nachQuota = stand()
+  bewerte(
+    'missing quota fails a new write and account-style delete still runs inside the rolled-back transaction',
+    gruppe,
+    quotaJson.quota === false &&
+      Number(quotaJson.origins) < Number(vorQuota.origins) &&
+      Number(nachQuota.used) === Number(vorQuota.used) &&
+      Number(nachQuota.origins) === Number(vorQuota.origins) &&
+      Number(nachQuota.lookalike) === Number(vorQuota.lookalike),
+    JSON.stringify({ quotaJson, vorQuota, nachQuota }),
+  )
+
+  festgeschrieben({
+    rolle: 'authenticated',
+    uid: OTHER,
+    aal: 'aal2',
+    sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.193', 'owned-a'), ('192.0.2.194', 'owned-b')`,
+  })
   const andereJob = psqlAt(`select count(*) from cron.job where jobname = 'jetnity-other-local-fixture'`)
   const legacyVorher = psqlAt(`select count(*) from public.security_events where type = 'login_failed'`)
-  const rollback = psqlCapture(readFileSync(join(DIR, '40-rollback.sql'), 'utf8'))
+  const lookalikeVorher = psqlAt(`select count(*) from public.security_events where type = 'admin_blocklist_add' and user_id is null`)
+  const ownedVorher = Number(stand().tracked)
+  const rollbackHold = spawnPsql(`
+set application_name = 'r1-rollback-hold';
+begin;
+select e.id
+  from public.security_events e
+  join jetnity_internal.security_event_producer_origin o on o.event_id = e.id
+ order by e.id
+ limit 1
+ for update;
+select pg_sleep(1.4);
+commit;
+`)
+  await sleep(300)
+  const rollback = spawnPsql(`set application_name = 'r1-rollback';\n${operatorSql('40-rollback.sql')}`)
+  await sleep(250)
+  const rollbackWaits = await aktivitaet(['r1-rollback-hold', 'r1-rollback'])
+  const [rollbackHoldErgebnis, rollbackErgebnis] = await Promise.all([rollbackHold, rollback])
   const nachRollback = jsonZeile(psqlFile(`
 select jsonb_build_object(
   'schema', exists(select 1 from pg_namespace where nspname = 'jetnity_internal'),
@@ -1144,7 +1632,7 @@ select jsonb_build_object(
   'other_job', (select count(*) from cron.job where jobname = 'jetnity-other-local-fixture'),
   'legacy', (select count(*) from public.security_events where type = 'login_failed'),
   'lookalike', (select count(*) from public.security_events where type = 'admin_blocklist_add' and user_id is null),
-  'blocked', (select count(*) from public.blocked_ips)
+  'owned', (select count(*) from public.security_events where user_id = '${OTHER}' and type = 'admin_blocklist_add')
 );
 `))
   const wieder = festgeschrieben({
@@ -1152,21 +1640,31 @@ select jsonb_build_object(
     uid: OTHER,
     aal: 'aal2',
     sql: `insert into public.blocked_ips (ip, reason) values ('192.0.2.90', 'baseline')`,
-    inspektion: `select count(*) as events from public.security_events where user_id = '${OTHER}'`,
+    inspektion: `select count(*) as events from public.security_events where user_id = '${OTHER}' and type like 'admin_blocklist%'`,
   })
   bewerte(
-    'scoped rollback restores unaudited blocklist writes and keeps legacy rows and the other job',
+    'populated rollback removes owned events and keeps legacy look-alike and the other job',
     gruppe,
-    rollback.code === 0 &&
+    ownedVorher >= 2 &&
+      rollbackHoldErgebnis.code === 0 &&
+      rollbackErgebnis.code === 0 &&
+      (rollbackWaits ?? []).some((row) => row.application_name === 'r1-rollback' && row.wait_event_type === 'Lock') &&
       nachRollback.schema === false &&
       Number(nachRollback.triggers) === 0 &&
       Number(nachRollback.own_job) === 0 &&
       Number(nachRollback.other_job) === Number(andereJob) &&
       Number(nachRollback.legacy) === Number(legacyVorher) &&
-      Number(nachRollback.lookalike) === 1 &&
+      Number(nachRollback.lookalike) === Number(lookalikeVorher) &&
+      Number(nachRollback.owned) === 0 &&
       wieder.arbeit?.ok === true &&
       Number(wieder.inspektion?.events) === 0,
-    JSON.stringify({ rollback: rollback.stderr.slice(0, 400), nachRollback, wieder: wieder.inspektion }),
+    JSON.stringify({
+      ownedVorher,
+      rollbackWaits,
+      codes: { hold: rollbackHoldErgebnis.code, rollback: rollbackErgebnis.code },
+      stderr: rollbackErgebnis.stderr.slice(0, 400),
+      nachRollback,
+    }),
   )
 }
 
@@ -1229,6 +1727,7 @@ async function main() {
     await pruefeLockTimeoutUndReihenfolge()
     await pruefeErasureUndCleanup()
     pruefeGesundheitUndRollback()
+    await pruefeR1()
   } finally {
     try {
       if (psqlAt(`select 1 from pg_database where datname = '${DB}'`, 'postgres') === '1') {
@@ -1240,14 +1739,41 @@ async function main() {
   }
 
   const fehler = ergebnisse.filter((eintrag) => !eintrag.ok)
+  const pflicht = [
+    'operator readback reports dormant install',
+    'operator readback reports healthy active contract',
+    'operator readback reports failing cleanup health',
+    'operator readback reports stale cleanup health',
+    'operator readback reports recovered manual cleanup',
+    'disabled trigger does not pass activation',
+    'misbound trigger does not pass activation',
+    'privilege drift does not pass activation',
+    'cleanup and account erasure overlap on one event row and finish coherent',
+    'opposite event locks abort one transaction and the retry preserves quota',
+    'late admission waits with auth deletion and the cascade clears the new event',
+    'outer statement timeout cancels cleanup and rolls the reservation back',
+    'shipped cleanup file and cron command run after the timeout proof',
+    'missing control fails a new write and the cleanup transaction rolls back',
+    'missing quota fails a new write and account-style delete still runs inside the rolled-back transaction',
+    'populated rollback removes owned events and keeps legacy look-alike and the other job',
+  ]
+  const acceptance = pflicht.map((name) => {
+    const row = ergebnisse.find((eintrag) => eintrag.name === name)
+    if (!row) return { name, status: 'NOT_RUN' }
+    return { name, status: row.ok ? 'pass' : 'fail' }
+  })
   const bericht = {
     classification: 'LOCAL_SYNTHETIC_EXECUTION',
     hosted_development: 'NOT_RUN',
     native_scheduled: 'NOT_RUN',
     production: 'NOT_RUN',
+    postgresql_major: PG_MAJOR,
+    postgresql_17: PG_MAJOR === '17' ? 'LOCAL_SYNTHETIC_EXECUTION' : 'NOT_RUN',
     database: DB,
     passed: ergebnisse.length - fehler.length,
     failed: fehler.length,
+    not_run: acceptance.filter((eintrag) => eintrag.status === 'NOT_RUN').length,
+    acceptance,
     results: ergebnisse,
   }
   mkdirSync(join(ROOT, 'docs/evidence/dev-security-event-logging-retention-1'), { recursive: true })

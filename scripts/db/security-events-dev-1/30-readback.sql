@@ -1,10 +1,14 @@
 -- Read-only catalog and health readback.
 -- Do not add user, IP, token, or payload rows to this statement.
 -- A caller-supplied database name is not project identity.
+-- The timeout is set before the readback statement. date_part is an ordinary
+-- function call; pg_catalog.extract(epoch FROM ...) is not valid SQL.
 
+BEGIN;
+SET LOCAL statement_timeout = '5s';
 SELECT pg_catalog.jsonb_build_object(
   'database_timezone', pg_catalog.current_setting('TimeZone'),
-  'timezone_offset_seconds', extract(timezone from pg_catalog.now()),
+  'timezone_offset_seconds', pg_catalog.date_part('timezone', pg_catalog.now()),
   'cron_timezone', pg_catalog.current_setting('cron.timezone', true),
   'pg_cron', (
     SELECT extversion
@@ -22,7 +26,7 @@ SELECT pg_catalog.jsonb_build_object(
       'last_success_age_seconds',
         CASE
           WHEN c.last_success_at IS NULL THEN NULL
-          ELSE pg_catalog.extract(epoch FROM (pg_catalog.clock_timestamp() - c.last_success_at))
+          ELSE pg_catalog.date_part('epoch', pg_catalog.clock_timestamp() - c.last_success_at)
         END
     )
     FROM jetnity_internal.security_event_dev_control c
@@ -46,6 +50,8 @@ SELECT pg_catalog.jsonb_build_object(
     WHERE j.jobname = jetnity_internal.security_event_dev_job_name()
     LIMIT 1
   ),
+  'trigger_fault', jetnity_internal.security_event_dev_trigger_fault(),
+  'catalog_fault', jetnity_internal.security_event_dev_catalog_fault(),
   'producer_triggers', (
     SELECT count(*)
       FROM pg_catalog.pg_trigger t
@@ -62,3 +68,4 @@ SELECT pg_catalog.jsonb_build_object(
     'service_role', 'jetnity_internal.security_event_producer_origin', 'INSERT'
   )
 );
+COMMIT;

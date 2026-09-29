@@ -1,7 +1,15 @@
 # Development Security Event Logging and Retention 1 — Status
 
 Date: 29 September 2026
-Status: **LOCAL PACKAGE DELIVERED / DRAFT PR #628 / HOSTED APPLY NOT RUN / NOT A PASS**
+Status: **R1 CORRECTIONS DELIVERED / DRAFT PR #628 / HOSTED APPLY NOT RUN / NOT A PASS**
+
+Reviewed head `ebc6bbbdd48c65c9f1b642ea273aafe19a91ca2c` is superseded for review. Technical-Lead R1 `5350889502` required F1–F4. This correction:
+
+- `30-readback.sql` uses `date_part`. The local proof executes that file for dormant, healthy, stale, failing, and recovered states.
+- Cleanup, account erasure, Auth cascade, and populated rollback were run on two sessions. A forced opposite event-row lock produced `deadlock detected`; the aborted statement was retried and quota matched origins.
+- Activation checks enabled state, relation, function, timing, and the update predicate. Disabled, mis-bound, and privilege-drift fixtures fail closed.
+- Operator files and the cron command set `statement_timeout` before the call. A 400ms outer timeout cancelled a slow cleanup and rolled it back. Function-local `statement_timeout` is not the budget.
+- The same proof passed 58/58 on local PostgreSQL 16.15 and 17.11. Hosted 17.6 was not used.
 
 ## Identity
 
@@ -36,10 +44,11 @@ The SQL/operator package, localhost runner, CI guard, design, runbook, and local
 
 PostgreSQL 16.15, `postgresql-16-cron` 1.6.2. Hosted pre-dispatch read was pg_cron 1.6.4. The 1.6 SQL file reports no SQL change; the binaries are not the same.
 
-- `node scripts/db/security-events-dev-1-lokal.mjs`: 43/43 on the files hashed in the runbook.
-- `node scripts/db/security-events-producer-contract-lokal.mjs`: 67/67, unchanged #494 harness.
-- `npm test`: 4048 passed, 0 failed, after the runner ownership fix.
-- `npm run typecheck`, `npm run lint` (0 errors, existing warnings), `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode`, `check:setup`, and `npm run build`: passed in this session. Setup warned that no `.env` / `.env.local` is present. No remote `db:*` command was run.
+- `node scripts/db/security-events-dev-1-lokal.mjs`: 58/58 on PostgreSQL 16.15, acceptance `not_run` 0.
+- `node scripts/db/security-events-dev-1-lokal.mjs --pg-major=17`: 58/58 on PostgreSQL 17.11 / pg_cron 1.6.8.
+- `node scripts/db/security-events-producer-contract-lokal.mjs`: 67/67. The #494 harness was not modified.
+- `npm test`: 4048 passed, 0 failed.
+- `npm run typecheck`, `npm run lint` (0 errors, 145 existing warnings), `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode`, `check:setup`, and `npm run build`: passed on this correction. Setup warned that no `.env` / `.env.local` is present. No remote `db:*` command was run.
 
 ## Next step
 

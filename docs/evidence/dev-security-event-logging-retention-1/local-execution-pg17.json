@@ -3,8 +3,8 @@
   "hosted_development": "NOT_RUN",
   "native_scheduled": "NOT_RUN",
   "production": "NOT_RUN",
-  "postgresql_major": "16",
-  "postgresql_17": "NOT_RUN",
+  "postgresql_major": "17",
+  "postgresql_17": "LOCAL_SYNTHETIC_EXECUTION",
   "database": "jetnity_security_events_dev_lokal",
   "passed": 58,
   "failed": 0,
@@ -272,7 +272,7 @@
       "name": "two sessions at C-1 cannot commit C+1; one waits and fails",
       "gruppe": "concurrency",
       "ok": true,
-      "detail": "{\"versuch\":1,\"waitGesehen\":true,\"codes\":{\"a\":0,\"b\":3},\"used\":1000,\"blocked\":1000,\"activity\":[{\"state\":\"active\",\"wait_event\":\"PgSleep\",\"wait_event_type\":\"Timeout\",\"application_name\":\"producer-a\"},{\"state\":\"active\",\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\",\"application_name\":\"producer-b\"}],\"quotaLocks\":[{\"mode\":\"RowShareLock\",\"granted\":true,\"relation\":\"security_event_producer_quota\",\"application_name\":\"producer-a\"},{\"mode\":\"RowExclusiveLock\",\"granted\":true,\"relation\":\"security_event_producer_quota\",\"application_name\":\"producer-a\"}],\"stderr\":{\"a\":\"\",\"b\":\"psql:<stdin>:7: ERROR:  security_event dev quota exceeded\\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_on_blocked_ips() line 120 at RAISE\"}}"
+      "detail": "{\"versuch\":2,\"waitGesehen\":true,\"codes\":{\"a\":0,\"b\":3},\"used\":1000,\"blocked\":1000,\"activity\":[{\"state\":\"active\",\"wait_event\":\"PgSleep\",\"wait_event_type\":\"Timeout\",\"application_name\":\"producer-a\"},{\"state\":\"active\",\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\",\"application_name\":\"producer-b\"}],\"quotaLocks\":[{\"mode\":\"RowShareLock\",\"granted\":true,\"relation\":\"security_event_producer_quota\",\"application_name\":\"producer-a\"},{\"mode\":\"RowExclusiveLock\",\"granted\":true,\"relation\":\"security_event_producer_quota\",\"application_name\":\"producer-a\"}],\"stderr\":{\"a\":\"\",\"b\":\"psql:<stdin>:7: ERROR:  security_event dev quota exceeded\\nCONTEXT:  PL/pgSQL function jetnity_internal.security_event_dev_on_blocked_ips() line 120 at RAISE\"}}"
     },
     {
       "name": "the losing concurrent insert is absent",
@@ -284,7 +284,7 @@
       "name": "admission lock_timeout aborts the waiter and keeps the prior reservation",
       "gruppe": "locks",
       "ok": true,
-      "detail": "{\"stderr\":\"psql:<stdin>:6: ERROR:  canceling statement due to lock timeout\\nCONTEXT:  while locking tuple (28,51) in relation \\\"security_event_producer_quota\\\"\\nSQL statement \\\"SELECT q.used, q.cap, q.enabled\\n                                                  FROM jetnity_internal.security_event_producer_quota q\\n   \",\"warten\":{\"waiter\":[{\"state\":\"active\",\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\"}]},\"used\":1,\"vorhanden\":\"f\"}"
+      "detail": "{\"stderr\":\"psql:<stdin>:6: ERROR:  canceling statement due to lock timeout\\nCONTEXT:  while locking tuple (42,51) in relation \\\"security_event_producer_quota\\\"\\nSQL statement \\\"SELECT q.used, q.cap, q.enabled\\n                                                  FROM jetnity_internal.security_event_producer_quota q\\n   \",\"warten\":{\"waiter\":[{\"state\":\"active\",\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\"}]},\"used\":1,\"vorhanden\":\"f\"}"
     },
     {
       "name": "account-style event delete removes mixed rows once and leaves the Auth user for the later step",
@@ -296,7 +296,7 @@
       "name": "mutation waits with erasure, then Auth deletion clears the event committed in that interval",
       "gruppe": "lifecycle",
       "ok": true,
-      "detail": "{\"waits\":[{\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\",\"application_name\":\"race-erasure\"},{\"wait_event\":\"PgSleep\",\"wait_event_type\":\"Timeout\",\"application_name\":\"race-mutation\"}],\"codes\":{\"mutation\":0,\"erasure\":0},\"stderr\":{\"mutation\":\"\",\"erasure\":\"\"},\"zwischenUsed\":1,\"neuerNochDa\":\"t\",\"alterEvent\":\"f532dfd7-df3b-48a0-96fd-dba8e5371b70\",\"actorWeg\":\"0\",\"lookalike\":1}"
+      "detail": "{\"waits\":[{\"wait_event\":\"transactionid\",\"wait_event_type\":\"Lock\",\"application_name\":\"race-erasure\"},{\"wait_event\":\"PgSleep\",\"wait_event_type\":\"Timeout\",\"application_name\":\"race-mutation\"}],\"codes\":{\"mutation\":0,\"erasure\":0},\"stderr\":{\"mutation\":\"\",\"erasure\":\"\"},\"zwischenUsed\":1,\"neuerNochDa\":\"t\",\"alterEvent\":\"d9113454-1746-421f-864f-18abcc3830f8\",\"actorWeg\":\"0\",\"lookalike\":1}"
     },
     {
       "name": "cleanup removes only expired provenance rows and rollback restores quota",
@@ -320,7 +320,7 @@
       "name": "operator readback reports stale cleanup health",
       "gruppe": "readback",
       "ok": true,
-      "detail": "{\"health\":\"stale\",\"age\":10800.027286}"
+      "detail": "{\"health\":\"stale\",\"age\":10800.026515}"
     },
     {
       "name": "stale cleanup health fails closed for a new audited write",
@@ -386,7 +386,7 @@
       "name": "opposite event locks abort one transaction and the retry preserves quota",
       "gruppe": "r1",
       "ok": true,
-      "detail": "{\"ids\":2,\"codes\":{\"high\":3,\"cleanup\":0},\"stderr\":{\"high\":\"psql:<stdin>:6: ERROR:  deadlock detected\\nDETAIL:  Process 43294 waits for ShareLock on transaction 2377; blocked by process 43297.\\nProcess 43297 waits for ShareLock on transaction 2376; blocked by process 43294.\\nHINT:  See server log for query details.\\nCONTEXT:  while deleting tuple (1,3) in relati\",\"cleanup\":\"\"},\"retry\":0,\"used\":0,\"origins\":0}"
+      "detail": "{\"ids\":2,\"codes\":{\"high\":3,\"cleanup\":0},\"stderr\":{\"high\":\"psql:<stdin>:6: ERROR:  deadlock detected\\nDETAIL:  Process 44290 waits for ShareLock on transaction 960; blocked by process 44294.\\nProcess 44294 waits for ShareLock on transaction 959; blocked by process 44290.\\nHINT:  See server log for query details.\\nCONTEXT:  while deleting tuple (76,18) in relati\",\"cleanup\":\"\"},\"retry\":0,\"used\":0,\"origins\":0}"
     },
     {
       "name": "late admission waits with auth deletion and the cascade clears the new event",

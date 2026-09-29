@@ -9,9 +9,13 @@
 -- unrelated cron jobs stay in place.
 
 BEGIN;
+SET LOCAL lock_timeout = '4s';
+SET LOCAL statement_timeout = '30s';
 
 SELECT jetnity_internal.security_event_dev_prepare_rollback();
 
+DROP FUNCTION IF EXISTS jetnity_internal.security_event_dev_catalog_fault();
+DROP FUNCTION IF EXISTS jetnity_internal.security_event_dev_trigger_fault();
 DROP FUNCTION IF EXISTS jetnity_internal.security_event_dev_prepare_rollback();
 DROP FUNCTION IF EXISTS jetnity_internal.security_event_dev_activate();
 DROP FUNCTION IF EXISTS jetnity_internal.security_event_dev_repair_quota();

@@ -17,7 +17,7 @@ Read, in order:
 4. `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_SELF_REVIEW_2026-09-29.md`
 5. `docs/evidence/dev-security-event-logging-retention-1/README.md` and `local-execution.json`
 
-Re-fetch `origin/main` before review. At this handoff, `origin/main` was `e785cd00b090042ac6622383bceebd7f6ddfed88` and this branch was based on that commit. A later main advance invalidates a casual ahead/behind note. The exact review head is the pushed tip, not the task seed `6c314815a33446a3ba7d27474394ccd5b5fc3084`.
+Re-fetch `origin/main` before review. At the R1 correction, `origin/main` was still `e785cd00b090042ac6622383bceebd7f6ddfed88`. The previous review head `ebc6bbbdd48c65c9f1b642ea273aafe19a91ca2c` is not the head to re-review. R1 review `5350889502` is the change list this correction answers. The exact review head is the pushed tip.
 
 ## Writer boundary
 
@@ -29,9 +29,9 @@ Same logical session only for an immediate review fix on this same PR. A new sli
 
 | Check | Result |
 | --- | --- |
-| Local retention proof | 43/43. Hosted Development, native scheduled run, and Production NOT RUN. |
-| #494 regression | 67/67 on `jetnity_security_events_producer_lokal`. Harness unchanged. |
-| npm test | 4048/4048 after the runner ownership fix. |
+| Local retention proof | 58/58 on PostgreSQL 16.15 and 58/58 on PostgreSQL 17.11. Acceptance map has no NOT_RUN row. Hosted Development, native scheduled run, and Production NOT RUN. |
+| #494 regression | 67/67. Harness unchanged. |
+| npm test | 4048/4048. |
 | typecheck | pass |
 | lint | pass, 0 errors, 145 existing warnings |
 | check:dead / exports / deps / api-schutz / schema-bezug / operating-mode | pass |

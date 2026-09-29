@@ -8,8 +8,8 @@ Status: **NORMAL / PREFLIGHT 2 REMAINS THE RELEASE BOUNDARY / DEVELOPMENT SECURI
 - Product Owner approval: https://github.com/Jetnity/jetnity/issues/626#issuecomment-5887161416. This opens the already-presented Development stage only. Other reserved gates stay closed.
 - Draft [PR #628](https://github.com/Jetnity/jetnity/pull/628), branch `feat/dev-security-event-logging-retention-1`. Implementation issue #627 may close with the PR. Parent #626 stays open until hosted Development acceptance.
 - Logical agent: **Jetnity development security event logging retention 1**, Generation 1. Session https://cursor.com/agents/bc-b1f79b09-d5cb-4f74-97a5-50bb9a4ee7ab. `originalModelName=grok-4.7-high-fast`. No UI rename.
-- Baseline at dispatch and at this persist's `origin/main` fetch: `e785cd00b090042ac6622383bceebd7f6ddfed88`. Re-fetch before review. The task seed `6c314815a33446a3ba7d27474394ccd5b5fc3084` is not the review head.
-- Local synthetic proof only. Hosted Development, native scheduled run, and Production `qscbgcdmivbbnzrcyegn` were not touched. Finding 5.2 and Release Gate G remain partial.
+- Baseline at dispatch and at the R1 fetch of `origin/main`: `e785cd00b090042ac6622383bceebd7f6ddfed88`. Re-fetch before review. The task seed `6c314815` and the R1 reviewed head `ebc6bbbd` are not the review head.
+- R1 `5350889502` F1–F4 are corrected locally: readback syntax, exact operator-file execution, concurrent cleanup/erasure/Auth cascade, populated rollback, trigger contract, and outer statement timeout. Local PostgreSQL 17.11 passed the same proof. Hosted Development, native scheduled run, and Production `qscbgcdmivbbnzrcyegn` were not touched. Finding 5.2 and Release Gate G remain partial.
 - Canonical files: `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_{TASK,DESIGN,RUNBOOK,STATUS,HANDOFF,SELF_REVIEW}_2026-09-29.md` and `docs/evidence/dev-security-event-logging-retention-1/`.
 - Cursor does not Ready, merge, apply the runbook, or start a follow-up. Next step is independent main-chat Technical-Lead review.
 

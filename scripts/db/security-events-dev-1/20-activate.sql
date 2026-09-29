@@ -10,5 +10,7 @@
 -- Cursor does not execute this file on a hosted database.
 
 BEGIN;
+SET LOCAL lock_timeout = '4s';
+SET LOCAL statement_timeout = '30s';
 SELECT jetnity_internal.security_event_dev_activate();
 COMMIT;
