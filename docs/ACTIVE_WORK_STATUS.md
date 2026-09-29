@@ -1,9 +1,22 @@
 # Jetnity – Active Work Status
 
 Stand: 29. September 2026
-Status: **NORMAL / PREFLIGHT 2 CLOSURE IS THE CURRENT RELEASE BOUNDARY / NO UNGATED V1 IMPLEMENTATION / THIS CONTINUITY PR IS THE ONLY DOCS WRITER WHILE OPEN**
+Status: **NORMAL / PREFLIGHT 2 REMAINS THE RELEASE BOUNDARY / DEVELOPMENT SECURITY-EVENT RETENTION 1 IS THE CURRENT WRITER / HOSTED APPLY NOT RUN**
 
-## 0. Current work boundary — accepted Preflight 2
+## 0-current. Development security event logging retention 1
+
+- Product Owner approval: https://github.com/Jetnity/jetnity/issues/626#issuecomment-5887161416. This opens the already-presented Development stage only. Other reserved gates stay closed.
+- Draft [PR #628](https://github.com/Jetnity/jetnity/pull/628), branch `feat/dev-security-event-logging-retention-1`. Implementation issue #627 may close with the PR. Parent #626 stays open until hosted Development acceptance.
+- Logical agent: **Jetnity development security event logging retention 1**, Generation 1. Session https://cursor.com/agents/bc-b1f79b09-d5cb-4f74-97a5-50bb9a4ee7ab. `originalModelName=grok-4.7-high-fast`. No UI rename.
+- Baseline at dispatch and at the R2 fetch of `origin/main`: `e785cd00b090042ac6622383bceebd7f6ddfed88`. Re-fetch before review. The task seed `6c314815`, the R1 reviewed head `ebc6bbbd`, and the R2 reviewed head `51ad3a38` are not the review head.
+- R2 `5351648702` corrects the remaining R1-F3 gap. Activation now requires the schema-qualified function OID, an empty `tgattr`, and the exact whole-row update deparse. The earlier name-and-keyword check was not exact. Local PostgreSQL 16.15 and 17.11 each passed 63/63, including the three wrong-wiring fixtures. Hosted Development, native scheduled run, and Production `qscbgcdmivbbnzrcyegn` were not touched. Finding 5.2 and Release Gate G remain partial.
+- Product Owner comment https://github.com/Jetnity/jetnity/issues/294#issuecomment-5888940598 pauses further provider questions. This correction did not contact a provider.
+- Canonical files: `docs/DEV_SECURITY_EVENT_LOGGING_RETENTION_1_{TASK,DESIGN,RUNBOOK,STATUS,HANDOFF,SELF_REVIEW}_2026-09-29.md` and `docs/evidence/dev-security-event-logging-retention-1/`.
+- Cursor does not Ready, merge, apply the runbook, or start a follow-up. Next step is independent main-chat Technical-Lead review.
+
+The Preflight 2 block below is the historical release-boundary persist. Its "no runtime writer" sentence was true when written. This section does not rewrite that history.
+
+## 0. Historical work boundary — accepted Preflight 2
 
 - Canonical release boundary: accepted V1 Release Readiness Preflight 2. Closure: `docs/V1_RELEASE_READINESS_PREFLIGHT_2_CLOSURE_2026-09-29.md`. Checkpoint: `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-09-29.md`.
 - Live `main` at this reconstruction: `a9a8898ca2362b2ef86ccb1817a62eaa439c2d30` (Merge #622). Re-fetch before treating any later SHA as current.
