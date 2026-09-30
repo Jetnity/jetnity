@@ -12,9 +12,11 @@ Status: **R1 APPLIED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 - Draft PR: #644
 - Issue: #643
 - Integrated main and merge-base: `c1eae921a37db1d1f661af4b5d58139d3dc752ec`
-- Ahead/behind after this persist: **8 ahead / 0 behind**
+- Ahead/behind after this CI note: **9 ahead / 0 behind**
 - R1 review answered: `5368008966` on `c7e6e7d654cf2e6c89dccc5ce3d5e30d9a7cc9ee`
-- Review head: branch tip after this persist. Run `git rev-parse HEAD`. Older CI on `fd2dfe26` and `c7e6e7d6` does not cover it.
+- Implementation and evidence head: `9c8518c56801ba12dc0b3a08ef27b8775a00f34b`
+- On that SHA: CI `36734924583` SUCCESS, Auth job `109954010008` SUCCESS, Typecheck/Lint/Build job `109954010432` SUCCESS, Vercel SUCCESS (`https://vercel.com/jetnity-e1b93c82/jetnity-app/AyBuLXGpNuc4jDahWcjJaea79rGL`). Preview HTML was not read because the alias redirects to Vercel SSO.
+- Review head: branch tip after this CI note. Run `git rev-parse HEAD`. The `9c8518c5` CI does not by itself prove a later tip.
 
 ## Read next
 

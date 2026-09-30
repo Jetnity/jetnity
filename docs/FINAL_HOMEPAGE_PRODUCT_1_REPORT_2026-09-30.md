@@ -8,7 +8,7 @@ Draft PR: #644
 Branch: `feat/final-homepage-product-1`  
 Original baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`  
 Integrated main and merge-base: `c1eae921a37db1d1f661af4b5d58139d3dc752ec`  
-Ahead/behind vs that main, after this persist: **8 ahead / 0 behind**  
+Ahead/behind vs that main, after this CI note: **9 ahead / 0 behind**  
 Reviewed head this R1 answers: `c7e6e7d654cf2e6c89dccc5ce3d5e30d9a7cc9ee`  
 Review: Technical-Lead R1 `5368008966`  
 Agent: Jetnity final homepage product 1, Generation 1  
@@ -90,7 +90,7 @@ The slash difference between the link tag and JSON-LD is the existing `kanonisch
 | `check:schema-bezug` | pass; pre-existing LOCAL/UNAPPLIED account-counts RPC note, not this slice |
 | `check:operating-mode` | pass |
 | Production audit `AUDIT_BROWSER=1 AUDIT_TEXT_200=1` against `next start` on `127.0.0.1:3456` | PASS. Report `docs/evidence/final-homepage-product-1/r1-audit.json` |
-| Earlier CI `36729992149` and `36730441721` | invalidated by this new head. Re-read CI and Vercel on the tip after push. |
+| Exact-head CI, Auth and Vercel on `9c8518c56801ba12dc0b3a08ef27b8775a00f34b` | CI `36734924583` SUCCESS. Auth job `109954010008` SUCCESS. Typecheck, Lint & Build job `109954010432` SUCCESS. Vercel SUCCESS, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/AyBuLXGpNuc4jDahWcjJaea79rGL`. Preview HTML was not read: the alias still redirects to Vercel SSO. A docs note after that SHA needs its own re-read. |
 
 ## 6. Visual evidence
 
@@ -135,7 +135,7 @@ No new route, secret, provider call, payment or schema. The homepage stays stati
 | Finding | Result |
 | --- | --- |
 | R1-F1 global status file | `docs/ACTIVE_WORK_STATUS.md` matches current main. This slice no longer claims that pointer. |
-| R1-F2 integrate main | Merge of `c1eae921a37db1d1f661af4b5d58139d3dc752ec` is in this branch. Merge-base is that commit. Ahead/behind after this persist: 8 / 0. Trip Workspace files were not hand-edited. |
+| R1-F2 integrate main | Merge of `c1eae921a37db1d1f661af4b5d58139d3dc752ec` is in this branch. Merge-base is that commit. Ahead/behind after this CI note: 9 / 0. Trip Workspace files were not hand-edited. |
 | R1-F3 product window | The sample shows Übersicht, Reiseplan, Organisieren, Vorbereitung, Jetzt wichtig, and the next step **Eigenes Ziel bestätigen**. The sample stays Produktvorschau. |
 | R1-F4 production runtime | The after pass is the production server. Console errors fail the audit. This pass has none, and no unexpected origin. |
 | R1-F5 200% hero | Critical hero words stay whole at 360×800 with a 32px root. The page does not scroll sideways. |
@@ -146,7 +146,7 @@ No new route, secret, provider call, payment or schema. The homepage stays stati
 - Canonical slash form differs between the HTML link and JSON-LD, as described above. Indexing stays closed.
 - Screen reader and physical-phone proof are not in this session.
 - At 200% text, long words outside the hero may break inside the word so the page does not overflow. The hero eyebrow, H1 and definition do not.
-- Exact-head CI, Auth and Vercel must be read on the tip after push. Older green runs do not cover this head. Preview HTML may still be behind Vercel SSO. Green CI is not a Technical-Lead PASS.
+- CI `36734924583`, Auth and Vercel are SUCCESS on `9c8518c56801ba12dc0b3a08ef27b8775a00f34b`. Preview HTML was not read because the alias redirects to Vercel SSO. A later docs-only tip needs its own re-read. Green CI is not a Technical-Lead PASS.
 
 ## 11. Next step
 
