@@ -10,7 +10,7 @@ Status: **DELIVERED FOR INDEPENDENT TECHNICAL-LEAD REVIEW — NOT A PASS — DRA
 - `originalModelName=grok-4.7-high-fast`. Not Auto.
 - Issue #668. Draft PR #669. Branch `feat/planning-entry-premium-experience-7`.
 - Baseline `main@2530020dbc6797b17d64c064ca5474cf90804272`. Re-fetched in this session; `origin/main` was still that SHA. No integration was required.
-- Runtime audit head: `be627ffaea252f07f00ded033c8a9796f38da183`. The evidence commit after that head does not change runtime files.
+- Runtime audit head: `be627ffaea252f07f00ded033c8a9796f38da183`. External CI, Auth, and Vercel were read on the evidence head `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`, which adds evidence and docs only.
 
 ## 2. What changed
 
