@@ -75,7 +75,7 @@ No signed-in browser proof was fabricated.
 | Before evidence | `docs/evidence/final-homepage-premium-experience-2/before/` from the same production-like runtime, before the presentation edit. |
 | Account browser | Not run. No credentials. |
 
-Fresh GitHub CI, Auth and Vercel on the delivery head are not claimed in this section. A green local build is not that gate.
+On implementation head `2d1f2adeb344fc5670a1afacff9994e541b28063`, GitHub CI run `36744022118` completed SUCCESS. Auth job `109985480302` SUCCESS. Typecheck/Lint/Build job `109985480834` SUCCESS. Vercel check SUCCESS for deployment `9CcpYfj9Q6mVJb1BbjseYhj4qfLW`. Preview HTML was not read. A later docs-only note does not inherit that run; read CI on the branch tip.
 
 ## 6. Boundaries held
 

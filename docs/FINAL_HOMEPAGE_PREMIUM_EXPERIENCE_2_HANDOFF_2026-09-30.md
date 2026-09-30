@@ -14,7 +14,9 @@ Status: **PRESENTATION DELIVERED / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
 - Baseline and merge-base before this delivery: `5ed4a9e3abb5a2920cee21359f5efb703a090a72`
 - Task seed, not the review head: `633c03ba36d5db2ae7991d6887752d71c6f4113a`
 
-Review the branch tip that contains this handoff. Run `git rev-parse HEAD`. Do not review the task seed. This handoff does not claim CI, Vercel, Technical-Lead PASS, Ready or Merge.
+Review the branch tip that contains this handoff. Run `git rev-parse HEAD`. Do not review the task seed.
+
+Implementation head `2d1f2adeb344fc5670a1afacff9994e541b28063` has CI run `36744022118` SUCCESS, Auth job `109985480302` SUCCESS, Typecheck/Lint/Build job `109985480834` SUCCESS, and Vercel deployment `9CcpYfj9Q6mVJb1BbjseYhj4qfLW` SUCCESS. That run does not prove a later tip. This handoff does not claim Technical-Lead PASS, Ready or Merge.
 
 ## Read next
 
