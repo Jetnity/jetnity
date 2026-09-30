@@ -377,12 +377,12 @@ async function abfangen(page, netz) {
   })
 }
 
-async function auditOeffnen(page, reise, such = '?ansicht=plan') {
+async function auditOeffnen(page, reise, such = '?ansicht=plan', warten = '[data-plan-premium="4"]') {
   await page.addInitScript((wert) => {
     sessionStorage.setItem('jetnity:ui-audit:workspace', JSON.stringify(wert))
   }, nutzlast(reise))
   await page.goto(`${BASIS}/ui-audit/trip-workspace${such}`, { waitUntil: 'load', timeout: 60_000 })
-  await page.waitForSelector('[data-plan-premium="4"]', { timeout: 30_000 })
+  await page.waitForSelector(warten, { timeout: 30_000 })
 }
 
 async function stand(page) {
@@ -509,7 +509,7 @@ try {
   async function bedienen(viewport, prefix) {
     const lauf = await kontext(viewport)
     try {
-      await auditOeffnen(lauf.page, LANGE_REISE, '?spur=bleibt')
+      await auditOeffnen(lauf.page, LANGE_REISE, '?spur=bleibt', '[data-workspace-identity] h1')
       await lauf.page.getByRole('button', { name: 'Reiseplan', exact: true }).click()
       await lauf.page.waitForFunction(() => location.search.includes('ansicht=plan') && location.search.includes('spur=bleibt'))
       const plan = await stand(lauf.page)
@@ -559,8 +559,9 @@ try {
       await lauf.page.locator('#plan-tag-kontext form').waitFor()
       await lauf.page.getByLabel('Ort oder Aktivität').fill('   ')
       await lauf.page.getByRole('button', { name: 'Speichern', exact: true }).click()
-      await lauf.page.getByRole('alert').waitFor()
-      merke((await lauf.page.getByRole('alert').innerText()).includes('Ein Titel ist nötig'), `${prefix}: Validierung`)
+      const meldung = lauf.page.locator('#plan-tag-kontext [role="alert"]')
+      await meldung.waitFor()
+      merke((await meldung.innerText()).includes('Ein Titel ist nötig'), `${prefix}: Validierung`)
       await lauf.page.getByRole('button', { name: 'Abbrechen', exact: true }).click()
       await lauf.page.waitForFunction(() => !document.querySelector('#plan-tag-kontext form'))
       await bild(lauf.page, `${prefix}_formular_zu`)

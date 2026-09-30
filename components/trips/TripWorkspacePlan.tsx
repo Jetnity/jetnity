@@ -249,10 +249,10 @@ export default function TripWorkspacePlan({
   const tagesFelder = tag && (
     <>
       {formularOffen && (
-        <form onSubmit={anlegen} className="mt-3 rounded-2xl border border-line-200 bg-white p-4">
-          <fieldset className="min-w-0">
+        <form onSubmit={anlegen} className="mt-3 min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-3">
+          <fieldset className="min-w-0 max-w-full">
             <legend className="text-xs font-medium text-ink-900">Art</legend>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex w-full min-w-0 flex-wrap gap-2">
               {TRIP_ITEM_KINDS.map((option) => {
                 const Symbol = ART_SYMBOL[option]
                 const gewaehlt = art === option
@@ -263,7 +263,7 @@ export default function TripWorkspacePlan({
                     aria-pressed={gewaehlt}
                     onClick={() => setArt(option)}
                     className={cn(
-                      'inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition',
+                      'inline-flex min-h-11 min-w-0 max-w-full items-center gap-2 break-words rounded-full border px-3.5 text-left text-sm font-medium transition',
                       fokusRing,
                       gewaehlt
                         ? 'border-brand-800 bg-brand-800 text-white'
@@ -312,12 +312,12 @@ export default function TripWorkspacePlan({
               className="w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
             />
           </label>
-          <div className="mt-3 flex justify-end gap-2">
+          <div className="mt-3 flex w-full min-w-0 flex-wrap justify-end gap-2">
             <button
               type="button"
               onClick={zurueck}
               className={cn(
-                'inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-ink-800 transition hover:bg-white',
+                'inline-flex min-h-11 max-w-full items-center rounded-full px-4 text-sm font-medium text-ink-800 transition hover:bg-white',
                 fokusRing,
               )}
             >
@@ -326,7 +326,7 @@ export default function TripWorkspacePlan({
             <button
               type="submit"
               disabled={laeuft}
-              className="inline-flex min-h-11 items-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-60 motion-reduce:transition-none"
+              className="inline-flex min-h-11 max-w-full items-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-60 motion-reduce:transition-none"
             >
               {laeuft ? 'Speichern …' : 'Speichern'}
             </button>
@@ -368,7 +368,7 @@ export default function TripWorkspacePlan({
       data-plan-premium="4"
       data-plan-kompakt={kompakt ? 'ja' : 'nein'}
       className={cn(
-        'min-w-0 rounded-[24px] border border-line-200 bg-white p-4 shadow-[0_12px_32px_rgba(15,46,42,0.06)]',
+        'min-w-0 max-w-full rounded-[24px] border border-line-200 bg-white p-3 shadow-[0_12px_32px_rgba(15,46,42,0.06)] sm:p-4',
         eingebettet ? 'mt-1' : 'mt-5',
       )}
     >
@@ -384,7 +384,7 @@ export default function TripWorkspacePlan({
       ) : (
         <>
           {tag ? (
-            <div className="mt-4 min-w-0 rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
+            <div className="mt-4 min-w-0 max-w-full rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
           {navigator ? (
             <div data-plan-navigator="schritt" className="flex min-w-0 items-center gap-2">
               <button
@@ -424,6 +424,35 @@ export default function TripWorkspacePlan({
               </button>
             </div>
           ) : null}
+              <div className="mt-3 grid min-w-0 gap-3 md:hidden">
+                {timeline.etappen.map((etappe) =>
+                  etappe.tage.length === 0 ? null : (
+                    <div key={`streifen-${etappe.stageId ?? 'ohne'}`} data-timeline-etappe={etappe.stageId ?? 'ohne'} className="min-w-0">
+                      <p className="text-xs text-brand-800"><strong className="font-semibold">{etappe.name}</strong></p>
+                      <p className="mt-0.5 text-xs text-ink-700">
+                        {etappe.istNutzerziel
+                          ? etappenZeitraumAnzeigen(etappe.arrivalDate, etappe.departureDate) ??
+                            'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
+                          : 'Tage ohne festgelegten Aufenthalt'}
+                      </p>
+                      <div
+                        data-plan-tag-streifen
+                        className="mt-2 flex max-w-full min-w-0 snap-x gap-2 overflow-x-auto overscroll-x-contain"
+                      >
+                        {etappe.tage.map((eintrag) => (
+                          <TagWahl
+                            key={`streifen-${eintrag.id}`}
+                            eintrag={eintrag}
+                            gewaehlt={timeline.gewaehlterTagId === eintrag.id}
+                            onWaehlen={() => onTagWechseln(eintrag.id)}
+                            streifen
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
               <div
                 id="plan-tag-kontext"
                 data-plan-tag-kontext
@@ -435,7 +464,7 @@ export default function TripWorkspacePlan({
             </div>
           ) : null}
 
-          <ol className="mt-4 grid min-w-0 gap-4">
+          <ol className="mt-4 hidden min-w-0 gap-4 md:grid">
             {timeline.etappen.map((etappe) => {
               const ersterTag = ersterTagDerEtappe(timeline.etappen, etappe.stageId)
               const etappeAktiv = etappe.tage.some((eintrag) => eintrag.id === timeline.gewaehlterTagId)
@@ -466,25 +495,10 @@ export default function TripWorkspacePlan({
                     </span>
                   </button>
                   {etappe.tage.length > 0 && (
-                    <>
-                      <div
-                        data-plan-tag-streifen
-                        className="mt-2 flex max-w-full min-w-0 snap-x gap-2 overflow-x-auto overscroll-x-contain pb-1 md:hidden"
-                      >
-                        {etappe.tage.map((eintrag) => (
-                          <TagWahl
-                            key={`streifen-${eintrag.id}`}
-                            eintrag={eintrag}
-                            gewaehlt={timeline.gewaehlterTagId === eintrag.id}
-                            onWaehlen={() => onTagWechseln(eintrag.id)}
-                            streifen
-                          />
-                        ))}
-                      </div>
-                      <div
-                        data-plan-raster
-                        className="mt-2 hidden md:grid md:grid-cols-4 lg:grid-cols-7 min-w-0 gap-2"
-                      >
+                    <div
+                      data-plan-raster
+                      className="mt-2 hidden md:grid md:grid-cols-4 lg:grid-cols-7 min-w-0 gap-2"
+                    >
                         {etappe.tage.map((eintrag) => (
                           <TagWahl
                             key={`raster-${eintrag.id}`}
@@ -493,8 +507,7 @@ export default function TripWorkspacePlan({
                             onWaehlen={() => onTagWechseln(eintrag.id)}
                           />
                         ))}
-                      </div>
-                    </>
+                    </div>
                   )}
                 </li>
               )
