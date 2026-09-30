@@ -66,7 +66,16 @@ Merge of `1930e61a0a409b83bd18b99e21939a89f73bbbd6` was clean. No file overlappe
 
 ## Remote observation
 
-Read on `4e46b318b1d42d98df74007bd88fa17d90dad76d`, before this main integration. That observation does not approve the integration head.
+Read on the integration tip `bc7017f756eed45a6b81cd1f773884b7a74dd4f1`. This observation does not approve a later commit.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36792746037` | SUCCESS |
+| Auth-Konfiguration gegen config.toml | SUCCESS |
+| Typecheck, Lint & Build | SUCCESS |
+| Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/5QvQyWozkFxSFdKMPJCKw9QufbZy` |
+
+Combined commit status success. Draft #665 stayed open. The branch is 0 behind `origin/main` `1930e61a`. The earlier SUCCESS on `4e46b318` does not approve this head.
 
 | Check | Result |
 | --- | --- |

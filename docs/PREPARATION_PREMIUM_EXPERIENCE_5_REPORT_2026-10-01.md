@@ -60,7 +60,7 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
 ## 3b. Main integration
 
-`8f8c508c` merges exact main `1930e61a0a409b83bd18b99e21939a89f73bbbd6`. The merge was clean. Vorbereitung files were not touched by #669, and the R1 layout remains. `/planen` files from #669 are present as merged. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After the merge, `npm test` was 4112 pass / 0 fail. Exact-head CI, Auth and Vercel for the integration tip are not yet recorded.
+`8f8c508c` merges exact main `1930e61a0a409b83bd18b99e21939a89f73bbbd6`. The merge was clean. Vorbereitung files were not touched by #669, and the R1 layout remains. `/planen` files from #669 are present as merged. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After the merge, `npm test` was 4112 pass / 0 fail. Exact-head observation for `bc7017f756eed45a6b81cd1f773884b7a74dd4f1`: Actions `36792746037` SUCCESS (Auth-Konfiguration gegen config.toml, and Typecheck, Lint & Build). Vercel SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/5QvQyWozkFxSFdKMPJCKw9QufbZy`. That observation does not approve a later commit and is not a Technical-Lead PASS.
 
 ## 4. Boundaries
 
