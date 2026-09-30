@@ -249,6 +249,16 @@ function messenQuelle() {
     const plan = document.querySelector('[data-plan-premium]')
     const navigator = document.querySelector('[data-plan-navigator]')
     const zaehler = document.querySelector('[data-plan-tag-zaehler]')
+    const datum = document.querySelector('[data-plan-tag-datum]')
+    const zeilen = (el) => {
+      if (!sichtbar(el)) return 0
+      const stil = getComputedStyle(el)
+      const schrift = Number.parseFloat(stil.fontSize) || 16
+      const linie = Number.parseFloat(stil.lineHeight)
+      const hoeheDerZeile = Number.isFinite(linie) ? linie : schrift * 1.25
+      return Math.ceil(el.getBoundingClientRect().height / hoeheDerZeile)
+    }
+    const chipKnoepfe = [...document.querySelectorAll('[data-plan-tag-streifen] [data-timeline-tag]')].filter(sichtbar)
     const vorher = document.querySelector('[data-plan-tag-vorher]')
     const naechster = document.querySelector('[data-plan-tag-naechster]')
     const hoehe = (el) => sichtbar(el) ? Math.round(el.getBoundingClientRect().height) : 0
@@ -289,6 +299,11 @@ function messenQuelle() {
       kante,
       navigatorSichtbar: sichtbar(navigator),
       zaehler: text(zaehler),
+      zaehlerZeilen: zeilen(zaehler),
+      datumZeilen: zeilen(datum),
+      zaehlerNowrap: zaehler ? getComputedStyle(zaehler).whiteSpace === 'nowrap' : false,
+      chipMinBreite: chipKnoepfe.length ? Math.min(...chipKnoepfe.map((el) => Math.round(el.getBoundingClientRect().width))) : 0,
+      chipZeilen: chipKnoepfe.length ? Math.max(...chipKnoepfe.slice(0, 8).map((el) => zeilen(el.querySelector('strong')))) : 0,
       navigatorText: text(navigator),
       vorherHoehe: hoehe(vorher),
       vorherBreite: breite(vorher),
@@ -420,6 +435,10 @@ function pruefeLage(name, messung, breite, optionen = {}) {
     merke(messung.streifen.length > 0, `${name}: Telefonstreifen fehlt`)
     merke(messung.streifen.every((reihe) => reihe.spanne <= 12), `${name}: Streifen bricht um ${JSON.stringify(messung.streifen)}`)
     merke(messung.aktuellImStreifen, `${name}: aktiver Tag ausserhalb des Streifens`)
+    merke(messung.zaehlerZeilen === 1 && messung.datumZeilen === 1, `${name}: Navigator bricht in ${messung.zaehlerZeilen}/${messung.datumZeilen} Zeilen`)
+    merke(messung.zaehlerNowrap === true, `${name}: Zähler darf nicht zeichenweise umbrechen`)
+    merke(messung.chipZeilen === 1, `${name}: Tageschip bricht in ${messung.chipZeilen} Zeilen`)
+    merke(messung.chipMinBreite >= 44, `${name}: Tageschip ${messung.chipMinBreite}px`)
   } else {
     merke(messung.streifen.length === 0, `${name}: Rasterbreite zeigt den Telefonstreifen`)
     merke(messung.raster.length > 0 && messung.raster.every((feld) => feld.spalten === spalten), `${name}: Spalten ${JSON.stringify(messung.raster)} erwartet ${spalten}`)
@@ -429,6 +448,7 @@ function pruefeLage(name, messung, breite, optionen = {}) {
   if (!optionen.text200) merke(messung.leerHoehe === 0 || messung.leerHoehe <= 96, `${name}: leerer Tag zu hoch ${messung.leerHoehe}`)
   if (optionen.text200) {
     merke(messung.htmlFont === '32px', `${name}: 200% Schrift ist ${messung.htmlFont}`)
+    merke(messung.chipMinBreite >= 88, `${name}: Tageschip bei 200% nur ${messung.chipMinBreite}px`)
     merke(messung.eingaben.length > 0 && messung.eingaben.every((feld) => feld.px >= 16), `${name}: Eingabe unter 16px ${JSON.stringify(messung.eingaben)}`)
     merke(messung.leerHoehe === 0 || messung.leerHoehe <= 160, `${name}: leerer Tag bei 200% ${messung.leerHoehe}`)
   }

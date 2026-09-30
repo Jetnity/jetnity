@@ -386,42 +386,44 @@ export default function TripWorkspacePlan({
           {tag ? (
             <div className="mt-4 min-w-0 max-w-full rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
           {navigator ? (
-            <div data-plan-navigator="schritt" className="flex min-w-0 items-center gap-2">
-              <button
-                type="button"
-                data-plan-tag-vorher
-                aria-label="Vorheriger Tag"
-                disabled={!navigator.vorherId || laeuft}
-                onClick={() => navigator.vorherId && onTagWechseln(navigator.vorherId)}
-                className={cn(
-                  'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
-                  fokusRing,
-                )}
-              >
-                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <div className="min-w-0 flex-1 text-center">
-                <p data-plan-tag-zaehler className="text-sm font-semibold text-brand-800">
+            <div data-plan-navigator="schritt" className="flex min-w-0 flex-col gap-3">
+              <div className="min-w-0 overflow-x-auto">
+                <p data-plan-tag-zaehler className="whitespace-nowrap text-sm font-semibold text-brand-800">
                   {navigator.text}
                 </p>
-                <p className="mt-0.5 hyphens-auto break-words text-xs leading-5 text-ink-700">
+                <p data-plan-tag-datum className="mt-0.5 whitespace-nowrap text-xs leading-5 text-ink-700">
                   {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
                   {etappeDesTags ? ` · ${etappeDesTags.name}` : ''}
                 </p>
               </div>
-              <button
-                type="button"
-                data-plan-tag-naechster
-                aria-label="Nächster Tag"
-                disabled={!navigator.naechsterId || laeuft}
-                onClick={() => navigator.naechsterId && onTagWechseln(navigator.naechsterId)}
-                className={cn(
-                  'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
-                  fokusRing,
-                )}
-              >
-                <ChevronRight className="h-5 w-5" aria-hidden="true" />
-              </button>
+              <div className="flex items-center justify-between gap-3 md:justify-center">
+                <button
+                  type="button"
+                  data-plan-tag-vorher
+                  aria-label="Vorheriger Tag"
+                  disabled={!navigator.vorherId || laeuft}
+                  onClick={() => navigator.vorherId && onTagWechseln(navigator.vorherId)}
+                  className={cn(
+                    'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
+                    fokusRing,
+                  )}
+                >
+                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  data-plan-tag-naechster
+                  aria-label="Nächster Tag"
+                  disabled={!navigator.naechsterId || laeuft}
+                  onClick={() => navigator.naechsterId && onTagWechseln(navigator.naechsterId)}
+                  className={cn(
+                    'inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 transition hover:border-line-500 disabled:pointer-events-none disabled:opacity-40',
+                    fokusRing,
+                  )}
+                >
+                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
             </div>
           ) : null}
               <div className="mt-3 grid min-w-0 gap-3 md:hidden">
@@ -557,18 +559,18 @@ function TagWahl({
       data-timeline-tag={eintrag.id}
       onClick={onWaehlen}
       className={cn(
-        'inline-flex min-h-11 min-w-0 flex-col justify-center rounded-2xl border px-3 py-2 text-left transition',
+        'inline-flex min-h-11 flex-col justify-center rounded-2xl border px-3 py-2 text-left transition',
         fokusRing,
-        streifen ? 'min-w-[4.75rem] shrink-0 snap-start' : 'w-full',
+        streifen ? 'w-max shrink-0 snap-start' : 'w-full min-w-0',
         gewaehlt
           ? 'border-brand-800 bg-brand-800 text-white'
           : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
       )}
     >
-      <strong className="block text-sm font-semibold">
+      <strong className={cn('block text-sm font-semibold', streifen && 'whitespace-nowrap')}>
         {eintrag.title ?? `Tag ${eintrag.dayIndex}`}
       </strong>
-      <span className={cn('mt-0.5 block text-xs', gewaehlt ? 'text-white/80' : 'text-ink-700')}>
+      <span className={cn('mt-0.5 block text-xs', streifen && 'whitespace-nowrap', gewaehlt ? 'text-white/80' : 'text-ink-700')}>
         {eintrag.dayDate ? chipDatum.format(alsDatum(eintrag.dayDate)) : 'Ohne Datum'}
         {eintrag.items.length > 0 ? ` · ${eintrag.items.length}` : ''}
       </span>
