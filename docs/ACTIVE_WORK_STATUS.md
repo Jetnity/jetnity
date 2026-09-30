@@ -1,9 +1,20 @@
 # Jetnity – Active Work Status
 
-Stand: 30. September 2026
-Status: **NORMAL / #649 AND #651 CLOSED / CURRENT MAIN b5534340b0535402ffbe223f3687744e465c11b9 / PREMIUM HOMEPAGE AND OFFICIAL LOGO LIVE TOGETHER / INDEXING FAIL-CLOSED / TRIP WORKSPACE FOUR-MODE IA INTEGRATED / DRAFT #653 IS THE ONLY NEW BOUNDED WRITER / #626 OPEN AND BLOCKED / NO RUNTIME FOLLOW-UP SELECTED BY THIS DOCS SLICE / NOT A LAUNCH PASS**
+Stand: 1. Oktober 2026
+Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 IN PROGRESS ON DRAFT #669 / GATES NOT YET RECORDED IN THIS BLOCK / NOT A LAUNCH PASS / NOT READY / NOT MERGED**
 
-## 0-current. Post-Homepage/Logo continuity — no runtime follow-up selected
+## 0-current. Planning Entry premium experience 7
+
+- Binding task: `docs/PLANNING_ENTRY_PREMIUM_EXPERIENCE_7_TASK_2026-10-01.md`. Issue #668. Draft [PR #669](https://github.com/Jetnity/jetnity/pull/669), branch `feat/planning-entry-premium-experience-7`.
+- Baseline at dispatch: `main@2530020dbc6797b17d64c064ca5474cf90804272`. This session fetched `origin/main` and it was still that SHA. Re-fetch before review.
+- Logical agent **Jetnity Planning Entry premium experience 7**, Generation 1. Session https://cursor.com/agents/bc-02875182-8c02-42e9-8ec9-2eb2b9d3a621. `originalModelName=grok-4.7-high-fast`. Not Auto.
+- Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
+- Scope is `/planen` creation-entry presentation only. Trip Workspace runtime, Reisevorbereitung, Organisieren, navbar, footer, favicon, homepage and package files stay untouched.
+- Implementation in this branch groups the manual planner, clarifies both creation paths, and keeps the model, preview, validation, create-gate, handoff, canonical/robots and persistence contracts. Exact-head tests, build, browser audit, CI, Auth and Vercel are **not yet recorded** in this block.
+- Cursor does not Ready or merge and does not start a follow-up slice. Stop remains an independent Technical-Lead code, visual, mobile and interaction review.
+- #626 remains **OPEN / BLOCKED**. Do not retry it from this slice.
+
+## 0-historical. Post-Homepage/Logo continuity — superseded as the current pointer
 
 - Current pointer: `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-09-30.md`, then `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_REPORT_2026-09-30.md`. Issue #652. Draft [PR #653](https://github.com/Jetnity/jetnity/pull/653), branch `docs/post-homepage-logo-continuity-reconciliation-1`. This branch is not current `main`. Do not invent a merge SHA for #653.
 - Logical agent **Jetnity post-Homepage/Logo continuity reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-e1991970-36f6-46c7-9e5d-6c385c8e70ef. `originalModelName=grok-4.7-high-fast`. Not Auto.

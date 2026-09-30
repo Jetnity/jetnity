@@ -201,14 +201,19 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
     <div className="grid min-w-0 max-w-full gap-6">
       <form
         onSubmit={erzeugen}
-        className="min-w-0 max-w-full rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
+        className="min-w-0 max-w-full rounded-[28px] border border-black/5 border-t-[3px] border-t-citrus-400 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
-        <span className="inline-flex items-center gap-2 rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
-          <Sparkles className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
-          {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
-        </span>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-2 rounded-full bg-brand-800 px-3 py-1 text-xs font-semibold text-white">
+            <Sparkles className="h-3.5 w-3.5 text-citrus-300" aria-hidden="true" />
+            Intelligente Planung
+          </span>
+          <span className="inline-flex max-w-full break-words rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
+            {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
+          </span>
+        </div>
 
-        <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
+        <h1 className="mt-4 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
           Beginnen wir mit deiner Reise.
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">
@@ -224,11 +229,14 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
             rows={4}
             maxLength={VORSCHLAG_GRENZEN.freitextMaximum}
             placeholder={BEISPIELE[0]}
-            className="w-full min-w-0 resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+            className="w-full min-w-0 max-w-full resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
           />
         </label>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <p className="mt-4 max-w-full break-words text-xs leading-5 text-ink-700">
+          Kurzbeispiele. Sie füllen nur das Feld und starten keine Planung.
+        </p>
+        <div className="mt-2 flex min-w-0 flex-wrap gap-2">
           {BEISPIELE.map((beispiel, stelle) => (
             <button
               key={beispiel}
@@ -263,7 +271,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
           <button
             type="submit"
             disabled={laeuft}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 motion-reduce:transition-none motion-reduce:hover:translate-y-0 disabled:pointer-events-none disabled:opacity-60"
           >
             {plant ? 'Entwurf entsteht …' : 'Entwurf erstellen'}
             {!plant && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
