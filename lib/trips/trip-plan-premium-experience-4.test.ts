@@ -3,8 +3,10 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
 import {
+  PLAN_TAG_DESKTOP_AB_PX,
   PLAN_TAG_SPALTEN_DESKTOP,
   PLAN_TAG_SPALTEN_TABLET,
+  PLAN_TAG_TABLET_AB_PX,
   planTagNavigator,
   planTagSpalten,
   planTageFolgen,
@@ -22,12 +24,14 @@ function tage(anzahl: number): PlanTagRef[] {
 }
 
 test('lange Reisen bleiben ein Navigator oder ein begrenztes Raster', () => {
+  assert.equal(PLAN_TAG_TABLET_AB_PX, 768)
+  assert.equal(PLAN_TAG_DESKTOP_AB_PX, 1024)
   assert.equal(planTagSpalten(360), 'navigator')
   assert.equal(planTagSpalten(390), 'navigator')
-  assert.equal(planTagSpalten(767), 'navigator')
-  assert.equal(planTagSpalten(768), PLAN_TAG_SPALTEN_TABLET)
-  assert.equal(planTagSpalten(1023), PLAN_TAG_SPALTEN_TABLET)
-  assert.equal(planTagSpalten(1024), PLAN_TAG_SPALTEN_DESKTOP)
+  assert.equal(planTagSpalten(PLAN_TAG_TABLET_AB_PX - 1), 'navigator')
+  assert.equal(planTagSpalten(PLAN_TAG_TABLET_AB_PX), PLAN_TAG_SPALTEN_TABLET)
+  assert.equal(planTagSpalten(PLAN_TAG_DESKTOP_AB_PX - 1), PLAN_TAG_SPALTEN_TABLET)
+  assert.equal(planTagSpalten(PLAN_TAG_DESKTOP_AB_PX), PLAN_TAG_SPALTEN_DESKTOP)
   assert.equal(planTagSpalten(1440), PLAN_TAG_SPALTEN_DESKTOP)
   assert.equal(planTagSpalten(1920), PLAN_TAG_SPALTEN_DESKTOP)
   assert.equal(planTagSpalten(2560), PLAN_TAG_SPALTEN_DESKTOP)
