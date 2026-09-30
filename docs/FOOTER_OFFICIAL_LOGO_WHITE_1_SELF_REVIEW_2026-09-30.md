@@ -21,7 +21,8 @@ Session: https://cursor.com/agents/bc-1bca3163-eb77-42b8-972c-a77099fe4416
 
 ## What I did not prove
 
-- GitHub Actions and Vercel Preview for the commit that contains this self-review. Those belong to the branch tip after push.
+- Preview HTML. Deployment `6768184652` is success on `aefac42c64cab34617e53b741284adf762f2f9f7`, and the alias returned HTTP 302 to Vercel SSO.
+- CI for the docs commit that records that gate. `aefac42c` itself is CI run `36765426846` **SUCCESS**.
 - A signed-in navbar.
 - Physical device, operating-system text zoom, or a screen reader.
 - A browser that disables CSS filters. In that case the dark wordmark would again have poor contrast on the dark footer. The Product Owner required the filter instead of a second asset.

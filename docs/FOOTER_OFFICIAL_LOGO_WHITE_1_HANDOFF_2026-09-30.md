@@ -24,7 +24,8 @@ Do not treat `docs/ACTIVE_WORK_STATUS.md` as updated by this slice. The task for
 - Favicon and app icons keep the hashes in `lib/layout/footer-official-logo-white-1.test.ts`.
 - PR #655 still must not own `components/layout/Footer.tsx`. At this handoff its diff against `main@8571db776bb58042a8107e341052a36cbbe9a50c` was only its task file. Re-fetch before review.
 - Local production audit PASS is in `docs/evidence/footer-official-logo-white-1/`.
-- Exact-head CI and Vercel belong to the branch tip. If this handoff commit is not the tip, re-read the tip. Do not reuse a status from `55afaffb` as the final gate.
+- Evidence head `aefac42c64cab34617e53b741284adf762f2f9f7`: CI run `36765426846` **SUCCESS** (Auth configuration and Typecheck, Lint & Build). Vercel Preview deployment `6768184652` **success**. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/7kDmcbnFshcZsQRxdC8APNJXATLq`. No review threads. The preview alias redirected to Vercel SSO, so preview HTML was not read here.
+- The commit that records those IDs is newer than `aefac42c`. Re-read the branch tip and its own CI. Do not reuse `55afaffb`.
 
 ## Do not continue
 

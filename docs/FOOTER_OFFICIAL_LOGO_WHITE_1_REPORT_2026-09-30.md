@@ -75,7 +75,21 @@ No database, RLS, Auth logic, provider, payment, dependency or indexing change. 
 
 ## 5. Exact-head CI / Vercel
 
-Not yet observed for the commit that contains this report. Do not treat implementation head `55afaffb` as the review head once this file is on the branch. The reviewer uses the branch tip. Cursor does not Ready and does not merge.
+Observed on evidence head `aefac42c64cab34617e53b741284adf762f2f9f7`, which contains the implementation, the local audit and the first report.
+
+| Gate | Result |
+| --- | --- |
+| CI run `36765426846` | **SUCCESS** on that SHA |
+| Auth-Konfiguration gegen config.toml | **SUCCESS** |
+| Typecheck, Lint & Build | **SUCCESS** |
+| GitHub Preview deployment `6768184652` | **success**, description “Deployment has completed” |
+| Vercel commit status | **SUCCESS**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/7kDmcbnFshcZsQRxdC8APNJXATLq` |
+| Vercel comment | Ready, 0 unresolved toolbar threads |
+| GitHub review threads | none |
+
+The preview alias `https://jetnity-app-git-fix-footer-official-log-71d4f4-jetnity-e1b93c82.vercel.app/` returned HTTP 302 to Vercel SSO from this environment. Preview HTML was not read. The visual proof remains the local production audit above.
+
+This section was written after that head. The commit that adds it is a newer tip. Its own CI is a separate gate. Do not treat `55afaffb` as the review head. Cursor does not Ready and does not merge.
 
 ## 6. Residual
 
