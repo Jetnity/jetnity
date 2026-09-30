@@ -25,7 +25,10 @@ import {
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
 import {
+  ABDECKUNG_LUFT_PX,
   AKTIVE_DOMAIN_WEIT_AB_PX,
+  abdeckungsKante,
+  type AbdeckungsBand,
   domainAnordnung,
   domainRasterKlasse,
 } from '@/lib/trips/cross-device-interaction-1'
@@ -91,13 +94,66 @@ function weiteAnsichtLesen() {
   return window.matchMedia(`(min-width: ${AKTIVE_DOMAIN_WEIT_AB_PX}px)`).matches
 }
 
-function arbeitsflaecheZeigen(el: HTMLElement) {
+function bandVon(el: Element | null): AbdeckungsBand | null {
+  if (!(el instanceof HTMLElement)) return null
+  const stil = getComputedStyle(el)
+  if (stil.position !== 'sticky' && stil.position !== 'fixed') return null
+  if (stil.display === 'none' || stil.visibility === 'hidden') return null
   const rand = el.getBoundingClientRect()
-  if (rand.height <= 0) return
-  const schneidet = rand.top < window.innerHeight - 48 && rand.bottom > 72
-  if (schneidet) return
-  const oben = rand.top + window.scrollY
-  window.scrollTo({ top: Math.max(0, oben - 96), behavior: 'instant' })
+  if (rand.height <= 0 || rand.width <= 0) return null
+  return { top: rand.top, bottom: rand.bottom, height: rand.height }
+}
+
+/** Site-Header plus die kompakte Rückkehrleiste, wenn sie an der Kopfkante klebt. */
+function abdeckungUnten(): number {
+  const baender = [bandVon(document.querySelector('header')), bandVon(document.querySelector('nav[aria-label="Reise"]'))].filter(
+    (band): band is AbdeckungsBand => band != null,
+  )
+  return abdeckungsKante(baender)
+}
+
+function zielHeading(el: HTMLElement): HTMLElement {
+  if (el.matches('h1, h2, h3')) return el
+  const heading = el.querySelector('h1, h2, h3')
+  return heading instanceof HTMLElement ? heading : el
+}
+
+/**
+ * Dokumentposition der Identität: die Überschrift und, wenn sie direkt darüber
+ * steht, die Domain-Zeile davor. So bleibt „Flüge“ mit „Verbindungen für diese Reise“ sichtbar.
+ */
+function identitaetsDokumentOben(el: HTMLElement): number {
+  const ziel = zielHeading(el)
+  const zielRand = ziel.getBoundingClientRect()
+  let oben = zielRand.top
+  const davor = ziel.previousElementSibling
+  if (davor instanceof HTMLElement) {
+    const rand = davor.getBoundingClientRect()
+    if (rand.height > 0 && rand.width > 0 && rand.bottom <= oben + ABDECKUNG_LUFT_PX) oben = rand.top
+  }
+  return oben + window.scrollY
+}
+
+function identitaetLiegtFrei(el: HTMLElement, kante: number): boolean {
+  const frei = kante + ABDECKUNG_LUFT_PX
+  const heading = zielHeading(el).getBoundingClientRect()
+  if (heading.height <= 0) return true
+  const identitaetOben = identitaetsDokumentOben(el) - window.scrollY
+  return identitaetOben >= frei - 1 && heading.top < window.innerHeight - 48 && heading.bottom > frei
+}
+
+function arbeitsflaecheZeigen(el: HTMLElement) {
+  if (zielHeading(el).getBoundingClientRect().height <= 0) return
+  const ersteKante = abdeckungUnten()
+  if (!identitaetLiegtFrei(el, ersteKante)) {
+    const oben = identitaetsDokumentOben(el)
+    window.scrollTo({ top: Math.max(0, oben - (ersteKante + ABDECKUNG_LUFT_PX)), behavior: 'instant' })
+  }
+  const zweiteKante = abdeckungUnten()
+  if (Math.abs(zweiteKante - ersteKante) > 0.5 && !identitaetLiegtFrei(el, zweiteKante)) {
+    const oben = identitaetsDokumentOben(el)
+    window.scrollTo({ top: Math.max(0, oben - (zweiteKante + ABDECKUNG_LUFT_PX)), behavior: 'instant' })
+  }
 }
 
 function sichtbareSuchflaeche(wurzel: ParentNode | null) {

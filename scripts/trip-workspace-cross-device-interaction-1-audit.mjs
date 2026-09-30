@@ -270,12 +270,58 @@ async function messen(page, extra = {}) {
     const detailHuelle = document.querySelector('[data-arbeitsbereich="detail"]')
     const uebersicht = document.querySelector('[data-arbeitsbereich="uebersicht"]')
     const detailHeading = detail?.querySelector('h2') ?? null
+    const detailEyebrow =
+      detailHeading?.previousElementSibling instanceof HTMLElement ? detailHeading.previousElementSibling : null
     const suchNamen = ['flugsuche', 'hotelsuche', 'aktivitaeten', 'mobilitaet']
     const sichtbareArbeit = suchNamen
       .map((name) => document.querySelector(`[data-arbeitsbereich="${name}"]`))
       .find((el) => el instanceof HTMLElement && !el.hidden && el.getClientRects().length > 0)
     const arbeitHeading = sichtbareArbeit?.querySelector('h2') ?? null
+    const arbeitEyebrow =
+      arbeitHeading?.previousElementSibling instanceof HTMLElement ? arbeitHeading.previousElementSibling : null
     const erstesFeld = sichtbareArbeit?.querySelector('input:not([type="hidden"]), select, textarea') ?? null
+    const header = document.querySelector('header')
+    const rueckkehr = document.querySelector('nav[aria-label="Reise"]')
+    const abdeckungsBand = (el) => {
+      if (!(el instanceof HTMLElement)) return null
+      const stil = getComputedStyle(el)
+      if (stil.position !== 'sticky' && stil.position !== 'fixed') return null
+      const rand = el.getBoundingClientRect()
+      if (rand.height <= 0 || rand.width <= 0) return null
+      return { top: rand.top, bottom: rand.bottom, height: rand.height }
+    }
+    const baender = [abdeckungsBand(header), abdeckungsBand(rueckkehr)].filter(Boolean)
+    baender.sort((a, b) => a.top - b.top)
+    let abdeckungUnten = 0
+    for (const band of baender) {
+      if (band.top > abdeckungUnten + 1) break
+      abdeckungUnten = Math.max(abdeckungUnten, band.bottom)
+    }
+    const headingBox = arbeitHeading instanceof HTMLElement ? arbeitHeading.getBoundingClientRect() : null
+    const eyebrowBox = arbeitEyebrow instanceof HTMLElement ? arbeitEyebrow.getBoundingClientRect() : null
+    const feldBox = erstesFeld instanceof HTMLElement ? erstesFeld.getBoundingClientRect() : null
+    const identitaetOben = eyebrowBox && headingBox && eyebrowBox.bottom <= headingBox.top + 8 ? eyebrowBox.top : headingBox?.top
+    const identitaetUnterAbdeckung = Boolean(
+      headingBox &&
+        identitaetOben != null &&
+        identitaetOben >= abdeckungUnten - 1 &&
+        headingBox.bottom > abdeckungUnten &&
+        headingBox.top < window.innerHeight &&
+        (!feldBox || feldBox.top >= headingBox.top - 1),
+    )
+    const detailHeadingBox = detailHeading instanceof HTMLElement ? detailHeading.getBoundingClientRect() : null
+    const detailEyebrowBox = detailEyebrow instanceof HTMLElement ? detailEyebrow.getBoundingClientRect() : null
+    const detailOben =
+      detailEyebrowBox && detailHeadingBox && detailEyebrowBox.bottom <= detailHeadingBox.top + 8
+        ? detailEyebrowBox.top
+        : detailHeadingBox?.top
+    const detailIdentitaetUnterAbdeckung = Boolean(
+      detailHeadingBox &&
+        detailOben != null &&
+        detailOben >= abdeckungUnten - 1 &&
+        detailHeadingBox.bottom > abdeckungUnten &&
+        detailHeadingBox.top < window.innerHeight,
+    )
     const grid = document.querySelector('[data-workspace-split]')
     const gridStil = grid ? getComputedStyle(grid) : null
     const aktiv = document.activeElement
@@ -325,11 +371,18 @@ async function messen(page, extra = {}) {
         : null,
       detail: detailBox,
       detailHeading: rechteck(detailHeading),
+      detailEyebrow: rechteck(detailEyebrow),
+      detailIdentitaetUnterAbdeckung,
       uebersicht: rechteck(uebersicht),
       arbeit: arbeitBox,
       arbeitName: sichtbareArbeit?.getAttribute('data-arbeitsbereich') ?? null,
       arbeitHeading: rechteck(arbeitHeading),
+      arbeitEyebrow: rechteck(arbeitEyebrow),
       erstesFeld: rechteck(erstesFeld),
+      header: rechteck(header),
+      rueckkehr: rechteck(rueckkehr),
+      abdeckungUnten: Math.round(abdeckungUnten),
+      identitaetUnterAbdeckung,
       bereiche: ['detail', 'fluege', 'unterkunft', 'flugsuche', 'hotelsuche', 'aktivitaeten', 'mobilitaet'].map(bereich),
       arbeitImDetailKontext,
       arbeitUnterDemSplit,

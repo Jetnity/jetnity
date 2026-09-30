@@ -55,6 +55,35 @@ export function domainAnordnungFuerBreite(breite: number, detailOffen: boolean):
   })
 }
 
+/**
+ * Luft unter der gemessenen Chrom-Kante.
+ * Sie ersetzt nicht die Höhe der Leiste. Die Kante selbst kommt aus der Messung.
+ */
+export const ABDECKUNG_LUFT_PX = 8
+
+export type AbdeckungsBand = {
+  top: number
+  bottom: number
+  height: number
+}
+
+/**
+ * Unterkante der oberen festen oder klebenden Leisten.
+ * Ein Band zählt nur, wenn es die bisherige Kante berührt.
+ * Eine Leiste weiter unten auf der Seite bleibt aussen vor.
+ */
+export function abdeckungsKante(baender: AbdeckungsBand[]): number {
+  const sortiert = baender
+    .filter((band) => band.height > 0 && band.bottom > band.top)
+    .sort((a, b) => a.top - b.top || a.bottom - b.bottom)
+  let kante = 0
+  for (const band of sortiert) {
+    if (band.top > kante + 1) break
+    kante = Math.max(kante, band.bottom)
+  }
+  return kante
+}
+
 /** Anteil der rechten Spalte. Einspaltig hat keine zweite Spalte. */
 export function arbeitsflaecheAnteil(klasse: string | undefined): number | null {
   if (!klasse) return null

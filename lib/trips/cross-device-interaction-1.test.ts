@@ -4,6 +4,7 @@ import test from 'node:test'
 
 import {
   ARBEITSFELD_SPALTEN_KLASSE,
+  abdeckungsKante,
   arbeitsflaecheAnteil,
   domainAnordnung,
   domainAnordnungFuerBreite,
@@ -56,6 +57,31 @@ test('Gast und Konto hängen dieselbe Workspace-Hülle ein', () => {
     assert.match(datei, /aktivitaetensuche=/)
     assert.match(datei, /mobilitaetssuche=/)
   }
+})
+
+test('die obere Abdeckung folgt den gemessenen Leisten und nicht einer festen Kopfhöhe', () => {
+  assert.equal(
+    abdeckungsKante([
+      { top: 0, bottom: 72, height: 72 },
+      { top: 72, bottom: 134, height: 62 },
+    ]),
+    134,
+  )
+  assert.equal(abdeckungsKante([{ top: 0, bottom: 88, height: 88 }]), 88)
+  assert.equal(
+    abdeckungsKante([
+      { top: 0, bottom: 72, height: 72 },
+      { top: 420, bottom: 482, height: 62 },
+    ]),
+    72,
+  )
+  assert.equal(abdeckungsKante([]), 0)
+
+  const quelle = readFileSync('components/trips/TripWorkspace.tsx', 'utf8')
+  assert.match(quelle, /abdeckungsKante/)
+  assert.match(quelle, /nav\[aria-label="Reise"\]/)
+  assert.equal(quelle.includes('oben - 96'), false)
+  assert.equal(quelle.includes('rand.bottom > 72'), false)
 })
 
 test('Suche sitzt im aktiven Bereich und startet nicht mit dem blossen Öffnen', () => {

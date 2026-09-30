@@ -178,3 +178,17 @@ Required model: **Grok 4.7 High Fast**, not Auto.
 Cursor remains Draft. Cursor does not Ready, merge, contact providers or start a follow-up slice.
 
 STOP for independent main-chat Technical-Lead **code + visual + interaction** review.
+
+## 9. R1 addendum — 30 September 2026
+
+Technical Lead review of exact head `b09957c6ae39f84a7eb557dde48313a57af73dd9` returned CHANGES REQUIRED. This addendum does not rewrite the original allowlist. It records the one scope extension the Technical Lead approved from that review forward.
+
+`lib/trips/cross-device-interaction-1.ts` was outside the original write allowlist. The Technical Lead now explicitly permits keeping this helper as the single scope extension, because the shared layout and occlusion policy lives there and the tests can import it without the client workspace tree.
+
+No other new path is authorized by this addendum.
+
+R1 also requires, inside the already allowed workspace seam:
+
+- compact explicit search must show the sticky return together with a clear domain or search identity, using the measured sticky occlusion rather than a fixed 72px or 96px offset;
+- `docs/ACTIVE_WORK_STATUS.md` returns to current main and this slice does not own that global pointer;
+- integrate `main@ea6253d603e57cd19395cef951faabc75cb8ab3a` without editing the Account/World work from #640.
