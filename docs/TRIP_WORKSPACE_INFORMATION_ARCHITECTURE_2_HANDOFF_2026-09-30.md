@@ -22,7 +22,8 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Task seed: `711ea1a0392d2a97f3d5ec00536abecb4cb32923`
 - R1 reviewed head: `50f15bbf9de6af07a31e96f23b675d817fc952b4` — CHANGES REQUIRED, not a PASS
 - R1 runtime head measured by the after pass: `5456e3324d9802e8cd726cc92f1db9144802759f`
-- Merge-base with `origin/main`: `91ab08bb9163444fcbce4a5303c1522c5ad5498c`. Re-fetch the tip before review. CI and Preview on `50f15bbf` do not approve this head.
+- Docs tip whose remote checks were read below: `f3d52935fa5a296207ce653261e70881e98fcd1d`. It differs from the audited runtime by this handoff’s evidence note and by removal of an unused eslint comment. That comment does not render.
+- Merge-base with `origin/main`: `91ab08bb9163444fcbce4a5303c1522c5ad5498c`. At the `f3d52935` read the branch was 6 ahead and 0 behind. Re-fetch the tip before review. CI and Preview on `50f15bbf` do not approve a later head.
 - `docs/ACTIVE_WORK_STATUS.md` matches that main. This slice does not own it. R1-F1 reverted the earlier edit.
 
 ## Changed files against main
@@ -64,7 +65,20 @@ Docs and evidence. `docs/ACTIVE_WORK_STATUS.md` is not in the diff against main.
 
 ## Remote observation
 
-The green CI and Preview on `50f15bbf` and `cb666be2` belong to the rejected R1 head. They are not a gate for `5456e332` or the tip. Re-read Actions, Auth and Vercel on the fetched tip. This session records that read in the next note only after the tip exists. It is not a Technical-Lead PASS.
+Read on 30 September 2026 for exact head `f3d52935fa5a296207ce653261e70881e98fcd1d`. This is an observation, not a Technical-Lead PASS.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36730779035` | success |
+| Auth-Konfiguration gegen config.toml, job `109939490902` | pass, 28s |
+| Typecheck, Lint & Build, job `109939491496` | pass, 1m52s |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/9aPyLrxLTG96oBL3rGaf1vQy6tv9 |
+| Preview deployment `6762278387` | success, https://jetnity-6z8za8dc7-jetnity-e1b93c82.vercel.app |
+
+The green CI and Preview on `50f15bbf` (`36727357286`, deployment `6761597457`) and on `cb666be2` (`36726836194`, deployment `6761504763`) belong to older heads. Actions `36730134555` is the green run for runtime `5456e332`, not for `f3d52935`. None of those approve a later commit.
+
+This handoff update is a later docs-only commit. It does not change runtime. Its own Actions, Auth and Vercel are the review head’s gate and are not copied into this file, because writing them would move the head again. Read them on Draft PR #642. They are not a Technical-Lead PASS.
 
 ## Not done by Cursor
 

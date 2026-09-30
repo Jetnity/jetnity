@@ -105,7 +105,7 @@ The HTML sent by the server cannot read `window`. It contains the pending status
 
 `check:schema-bezug` still prints the existing local/unapplied `admin_account_counts_v1` note and exits 0. This slice did not touch that path.
 
-Those local checks are not the remote gate. CI and Preview on `50f15bbf` were green and are invalidated by this head. The handoff records the observation for the new tip after it is pushed. That observation is not a Technical-Lead PASS.
+Those local checks are not the remote gate. CI and Preview on `50f15bbf` were green and are invalidated by later heads. The handoff records the read of Actions `36730779035`, Auth job `109939490902`, Typecheck job `109939491496`, and Preview deployment `6762278387` on `f3d52935`. That observation is not a Technical-Lead PASS. A later docs-only note does not inherit it.
 
 ## 6. Boundaries held
 

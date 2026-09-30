@@ -34,4 +34,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, CI, Auth, Vercel Preview, Production, a signed-in account browser pass, a physical device, or a follow-up slice.
+Ready, merge, a Technical-Lead PASS, Production, a signed-in account browser pass, a physical device, or a follow-up slice. The handoff records the Actions, Auth and Preview read for `f3d52935` as an observation only. A later docs note does not inherit that gate.
