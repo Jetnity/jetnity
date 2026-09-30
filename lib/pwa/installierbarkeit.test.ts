@@ -9,10 +9,9 @@ import manifest from '@/app/manifest'
 
 const ROOT = process.cwd()
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
-const MARKEN_GRUEN = { r: 0x15, g: 0x3a, b: 0x33 }
-const MARKEN_LIME = { r: 0xdf, g: 0xf4, b: 0x7a }
+const FLAECHE = { r: 0xf5, g: 0xf4, b: 0xee }
+const SIGNET_CROP = { left: 36, top: 18, width: 123, height: 86 }
 const MASKABLE_SICHERER_RADIUS_ANTEIL = 0.4
-const FARBDISTANZ_MARKENPIXEL = 40
 
 type PngPixel = { r: number; g: number; b: number; a: number }
 
@@ -110,6 +109,11 @@ function farbdistanz(pixel: PngPixel, farbe: { r: number; g: number; b: number }
   return Math.hypot(pixel.r - farbe.r, pixel.g - farbe.g, pixel.b - farbe.b)
 }
 
+function istSignetPixel(pixel: PngPixel) {
+  if (pixel.a < 16) return false
+  return farbdistanz(pixel, FLAECHE) > 8
+}
+
 function markenGeometrie(bild: PngBild) {
   const mitteX = (bild.breite - 1) / 2
   const mitteY = (bild.hoehe - 1) / 2
@@ -117,25 +121,24 @@ function markenGeometrie(bild: PngBild) {
   let markenpixel = 0
   let ausserhalb = 0
   let maxRadius = 0
-  let lime = 0
-  let weiss = 0
+  let dunkelgruen = 0
+  let route = 0
 
   for (let y = 0; y < bild.hoehe; y++) {
     for (let x = 0; x < bild.breite; x++) {
       const pixel = bild.pixel[y * bild.breite + x]
-      if (pixel.a < 16) continue
-      if (farbdistanz(pixel, MARKEN_GRUEN) <= FARBDISTANZ_MARKENPIXEL) continue
+      if (!istSignetPixel(pixel)) continue
 
       markenpixel += 1
       const radius = Math.hypot(x - mitteX, y - mitteY)
       if (radius > maxRadius) maxRadius = radius
       if (radius > sichererRadius) ausserhalb += 1
-      if (farbdistanz(pixel, MARKEN_LIME) <= 24) lime += 1
-      if (pixel.r > 240 && pixel.g > 240 && pixel.b > 240) weiss += 1
+      if (pixel.r <= 48 && pixel.g >= 24 && pixel.g <= 130 && pixel.b <= 96) dunkelgruen += 1
+      if (pixel.g >= 140 && pixel.g > pixel.r + 20 && pixel.g > pixel.b + 30) route += 1
     }
   }
 
-  return { markenpixel, ausserhalb, maxRadius, sichererRadius, lime, weiss }
+  return { markenpixel, ausserhalb, maxRadius, sichererRadius, dunkelgruen, route }
 }
 
 function ecken(bild: PngBild) {
@@ -184,7 +187,7 @@ describe('PWA-1: installierbare, datensparsame App-Shell', () => {
     }
   })
 
-  test('Maskable-Icon ist ein eigenständiges opakes, padded Asset mit Marke in der Safe Zone', () => {
+  test('Maskable-Icon ist ein eigenständiges opakes, padded Asset mit dem offiziellen Signet in der Safe Zone', () => {
     const beliebig = pngLesen(join(ROOT, 'public/icons/jetnity-512.png'))
     const maskable = pngLesen(join(ROOT, 'public/icons/jetnity-512-maskable.png'))
 
@@ -197,21 +200,86 @@ describe('PWA-1: installierbare, datensparsame App-Shell', () => {
     assert.ok(maskable.pixel.every((pixel) => pixel.a === 255))
 
     for (const ecke of ecken(maskable)) {
-      assert.deepEqual(ecke, { r: MARKEN_GRUEN.r, g: MARKEN_GRUEN.g, b: MARKEN_GRUEN.b, a: 255 })
+      assert.deepEqual(ecke, { r: FLAECHE.r, g: FLAECHE.g, b: FLAECHE.b, a: 255 })
     }
 
     const geometrie = markenGeometrie(maskable)
     const beliebigeGeometrie = markenGeometrie(beliebig)
 
-    assert.ok(geometrie.markenpixel > 1000, 'maskable muss die Jetnity-Marke enthalten')
-    assert.ok(geometrie.lime > 100, 'maskable muss das bestehende Lime-Karo erhalten')
-    assert.ok(geometrie.weiss > 100, 'maskable muss den bestehenden weissen Akzent erhalten')
-    assert.equal(geometrie.ausserhalb, 0, 'Markenpixel dürfen den zentrierten 40%-Radius nicht verlassen')
+    assert.ok(geometrie.markenpixel > 1000, 'maskable muss das offizielle Signet enthalten')
+    assert.ok(geometrie.dunkelgruen > 1000, 'maskable muss das dunkle Signetgrün enthalten')
+    assert.ok(geometrie.route > 100, 'maskable muss die helle Route des Signets enthalten')
+    assert.equal(geometrie.ausserhalb, 0, 'Signetpixel dürfen den zentrierten 40%-Radius nicht verlassen')
     assert.ok(geometrie.maxRadius < geometrie.sichererRadius)
     assert.ok(
       geometrie.maxRadius < beliebigeGeometrie.maxRadius,
       'maskable muss gegenüber dem any-Icon bewusst stärker gepolstert sein',
     )
+  })
+
+  test('das kanonische Signet ist der linke Logoausschnitt und enthält die Wortmarke nicht', () => {
+    assert.equal(existsSync(join(ROOT, 'app/icon.svg')), false)
+    assert.equal(existsSync(join(ROOT, 'app/icon.png')), true)
+
+    const logo = pngLesen(join(ROOT, 'public/brand/jetnity-logo.png'))
+    const signet = pngLesen(join(ROOT, 'public/brand/jetnity-signet.png'))
+    assert.equal(logo.breite, 384)
+    assert.equal(logo.hoehe, 128)
+    assert.equal(logo.farbtyp, 6)
+    assert.equal(signet.breite, SIGNET_CROP.width)
+    assert.equal(signet.hoehe, SIGNET_CROP.height)
+    assert.equal(signet.farbtyp, 6)
+
+    let abweichung = 0
+    for (let y = 0; y < SIGNET_CROP.height; y++) {
+      for (let x = 0; x < SIGNET_CROP.width; x++) {
+        const ausSignet = signet.pixel[y * signet.breite + x]
+        const ausLogo = logo.pixel[(y + SIGNET_CROP.top) * logo.breite + (x + SIGNET_CROP.left)]
+        if (
+          ausSignet.r !== ausLogo.r
+          || ausSignet.g !== ausLogo.g
+          || ausSignet.b !== ausLogo.b
+          || ausSignet.a !== ausLogo.a
+        ) abweichung += 1
+      }
+    }
+    assert.equal(abweichung, 0)
+
+    for (let y = 0; y < logo.hoehe; y++) {
+      for (const x of [159, 160]) {
+        assert.ok(logo.pixel[y * logo.breite + x].a < 16, `Spalte ${x} trennt Signet und Wortmarke`)
+      }
+    }
+
+    let wortmarke = 0
+    for (let y = 0; y < logo.hoehe; y++) {
+      for (let x = 161; x < logo.breite; x++) {
+        if (logo.pixel[y * logo.breite + x].a >= 16) wortmarke += 1
+      }
+    }
+    assert.ok(wortmarke > 1000, 'die Wortmarke bleibt im kanonischen Logo, ausserhalb des Signets')
+  })
+
+  test('Favicon und quadratische App-Icons nutzen die helle Jetnity-Fläche', () => {
+    const icon = pngLesen(join(ROOT, 'app/icon.png'))
+    assert.equal(icon.breite, 48)
+    assert.equal(icon.hoehe, 48)
+    assert.equal(icon.farbtyp, 6)
+
+    for (const datei of [
+      'app/icon.png',
+      'app/apple-icon.png',
+      'public/icons/jetnity-192.png',
+      'public/icons/jetnity-512.png',
+    ]) {
+      const bild = pngLesen(join(ROOT, datei))
+      for (const ecke of ecken(bild)) {
+        assert.deepEqual(ecke, { r: FLAECHE.r, g: FLAECHE.g, b: FLAECHE.b, a: 255 })
+      }
+      const geometrie = markenGeometrie(bild)
+      assert.ok(geometrie.dunkelgruen > 50, datei)
+      assert.ok(geometrie.route > 20, datei)
+    }
   })
 
   test('PWA-1 führt weder Service Worker noch Offline-Persistenz ein', () => {
