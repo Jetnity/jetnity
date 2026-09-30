@@ -15,11 +15,11 @@ describe('Next-16-S2 Framework-Vertrag', () => {
     devDependencies: Record<string, string>
   }
 
-  test('Framework-Linie ist Next 16.3.3 plus kompatible 19.2/ESLint/TS-Linie', () => {
-    assert.equal(pkg.dependencies.next, '16.3.3')
+  test('Framework-Linie ist Next 16.3.8 plus kompatible 19.2/ESLint/TS-Linie', () => {
+    assert.equal(pkg.dependencies.next, '16.3.8')
     assert.equal(pkg.dependencies.react, '19.2.8')
     assert.equal(pkg.dependencies['react-dom'], '19.2.8')
-    assert.equal(pkg.devDependencies['eslint-config-next'], '16.3.3')
+    assert.equal(pkg.devDependencies['eslint-config-next'], '16.3.8')
     assert.equal(pkg.devDependencies.eslint, '9.39.5')
     assert.match(pkg.devDependencies.typescript, /^5\./)
     assert.match(pkg.devDependencies['@types/react'], /^19\.2\./)
