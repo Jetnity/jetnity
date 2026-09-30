@@ -719,7 +719,7 @@ export default function TripWorkspace({
   }, [modus, modusBereit, detailOffen])
 
   return (
-    <main className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
+    <main data-workspace-premium="3" className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
       <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
@@ -798,7 +798,7 @@ export default function TripWorkspace({
           ) : null}
 
           {modusBereit && modus.ansicht === 'plan' ? (
-            <section aria-labelledby="workspace-plan-titel" className="mt-5 min-w-0" data-workspace-modus="plan">
+            <section aria-labelledby="workspace-plan-titel" className="mt-4 min-w-0" data-workspace-modus="plan">
               <h2
                 id="workspace-plan-titel"
                 tabIndex={-1}
@@ -812,7 +812,7 @@ export default function TripWorkspace({
           ) : null}
 
           {domainNavSichtbar ? (
-            <section aria-labelledby="workspace-organisieren-titel" className="mt-5 min-w-0" data-workspace-modus="organisieren">
+            <section aria-labelledby="workspace-organisieren-titel" className="mt-4 min-w-0" data-workspace-modus="organisieren">
               <h2
                 id="workspace-organisieren-titel"
                 tabIndex={-1}
@@ -837,7 +837,7 @@ export default function TripWorkspace({
           {modusBereit && modus.ansicht === 'vorbereitung' ? (
             <section
               aria-labelledby="workspace-vorbereitung-titel"
-              className="mt-5 grid min-w-0 gap-4"
+              className="mt-4 grid min-w-0 gap-4"
               data-workspace-modus="vorbereitung"
             >
               <h2

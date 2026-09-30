@@ -58,11 +58,11 @@ function zieleSindEchtLeer(ziele: readonly DestinationEssentialZiel[]): boolean 
 function ZielKopf({ ziel, datumAbstand }: { ziel: DestinationEssentialZiel; datumAbstand: string }) {
   return (
     <>
-      <h4 className="min-w-0 break-words text-sm font-semibold text-brand-800">
+      <h4 className="min-w-0 hyphens-auto break-words text-base font-semibold tracking-[-0.02em] text-brand-800">
         <ZielName name={ziel.name} countryLabel={ziel.countryLabel} />
       </h4>
       {ziel.zeitraumText ? (
-        <p className={`${datumAbstand} text-xs leading-5 text-ink-800`}>{ziel.zeitraumText}</p>
+        <p className={`${datumAbstand} text-xs leading-5 text-ink-700`}>{ziel.zeitraumText}</p>
       ) : null}
     </>
   )
@@ -135,7 +135,11 @@ export default function TripWorkspaceDestinationEssentials({
       data-destination-essentials="ein"
       data-destination-search="nein"
       data-destination-essentials-dichte={kompaktLeer ? 'kompakt' : 'voll'}
-      className="min-w-0 rounded-2xl border border-line-200 bg-white px-4 py-4"
+      className={
+        kompaktLeer || !essentials.hatZiele
+          ? 'min-w-0 rounded-[24px] border border-line-200 bg-white px-4 py-3'
+          : 'min-w-0 rounded-[24px] border border-line-200 bg-white px-4 py-4'
+      }
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Wichtig für deine Ziele</p>
       <h3 id="reiseziele-essentials-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
@@ -151,11 +155,11 @@ export default function TripWorkspaceDestinationEssentials({
           >
             {essentials.leerText} für Einreise, Sicherheit und Reisezeit.
           </p>
-          <ol className="mt-3 grid min-w-0 gap-2">
+          <ol className="mt-3 grid min-w-0 border-t border-line-100">
             {essentials.ziele.map((ziel) => (
               <li
                 key={ziel.stageId}
-                className="min-w-0"
+                className="min-w-0 border-b border-line-100 py-2.5 last:border-b-0"
                 data-destination-stage={ziel.stageId}
                 data-destination-country={ziel.countryCode ?? 'none'}
                 data-destination-entry={ziel.einreise.lage}
