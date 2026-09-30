@@ -1,8 +1,26 @@
 # Jetnity – Handoff und nächste Schritte
 
-## Aktueller Stand: Post-Trip/Homepage Continuity, 30. September 2026
+## Aktueller Stand: Post-Homepage/Logo Continuity, 30. September 2026
 
 Dieser Block ist der aktuelle Einstieg. Die Absätze darunter bleiben historische Lieferzeitpunkte.
+
+Machine mode is `NORMAL`. Current `main` is `b5534340b0535402ffbe223f3687744e465c11b9` (Merge #651). Post-merge push CI `36758986306` is **SUCCESS**. Vercel Production `dpl_5yh4KNcckHse86VmHQtSx3ggLDwf` is **READY** on that SHA. Public `https://jetnity.com/` returned that deployment id on 30 September 2026, with H1 **Deine ganze Reise. Intelligent an einem Ort.**, canonical `https://jetnity.com/`, one JSON-LD script containing Organization, WebSite and SoftwareApplication, the four modes **Übersicht / Reiseplan / Organisieren / Vorbereitung**, `Produktvorschau`, four references to `/brand/jetnity-logo.png`, and `noindex, nofollow`. Public `https://jetnity.com/brand/jetnity-logo.png` returned HTTP 200 `image/png`. Public `robots.txt` remains `Disallow: /`. The premium homepage and the official logo are live together. Indexing and launch stay fail-closed.
+
+#649 / #648 is closed. Accepted head `e076f20839c8e793a748299729a930f547dba33d`. FINAL PASS review `5369643181` (`COMMENTED` in the GitHub review API). Merge `7f2dcdbc211d32a0affa323fba822521535e7bb9`. Post-merge CI `36750865483` **SUCCESS**. Then-current Production inspector `dpl_71bRNF7Rm2MkvyJaU3JQiBQyzfuY` is not live Production after #651. Issue #648 has no later closure comment. Search/AI/entity/truth architecture from that accepted homepage remains on the live page.
+
+#651 / #650 is closed and post-merge verified. Accepted head `bdbbd0286296a0d87c3718d5d06865051626df0c`. FINAL PASS review `5370352311` (`COMMENTED` in the GitHub review API). Closure `5917424313`.
+
+No active runtime or product writer exists after that closure. While Draft [PR #653](https://github.com/Jetnity/jetnity/pull/653) is open, the only new bounded writer is **Jetnity post-Homepage/Logo continuity reconciliation 1**, Generation 1, on `docs/post-homepage-logo-continuity-reconciliation-1`. Session https://cursor.com/agents/bc-e1991970-36f6-46c7-9e5d-6c385c8e70ef. `originalModelName=grok-4.7-high-fast`. This branch is not current `main`. Do not invent its merge SHA.
+
+#626 stays **OPEN / BLOCKED**. Latest re-read comment `5908548520`. No workaround. KAYAK and IATA remain waiting (`5908413693`, `5908419844`). Sherpa remains response received / outgoing follow-up paused. #585 stays deferred. [PR #647](https://github.com/Jetnity/jetnity/pull/647) later merged at `5ed4a9e3abb5a2920cee21359f5efb703a090a72` and is not an open writer.
+
+Read `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-09-30.md`, then the report. After this Draft closes, run a fresh Binding Slice Precheck before any runtime slice. Cursor does not Ready or merge. No follow-up slice from this writer.
+
+Later sections that name an older `main`, including the Post-Trip/Homepage block and the 22 September runtime pin, are dated pins. Preflight 3 remains the last accepted A–O release-readiness map and is not the current writer pointer.
+
+## Historischer Stand: Post-Trip/Homepage Continuity, 30. September 2026
+
+Dieser Block war der aktuelle Einstieg, als er geschrieben wurde. #647 ist später bei `5ed4a9e3abb5a2920cee21359f5efb703a090a72` gemergt. Der Satz über den offenen Draft #647 war zu dem Zeitpunkt wahr. Der Block oben ist der aktuelle Einstieg.
 
 Machine mode is `NORMAL`. Current `main` is `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8` (Merge #644). Post-merge push CI `36736124249` is **SUCCESS**. Vercel Production `dpl_7cgh1NSnBHGuRNJPXmY6CS87WDDz` is **READY** on that SHA. Public `https://jetnity.com/` returned that deployment id on 30 September 2026, with H1 **Deine ganze Reise. Intelligent an einem Ort.**, the four modes **Übersicht / Reiseplan / Organisieren / Vorbereitung**, `Produktvorschau`, JSON-LD, and `noindex, nofollow`. Public `robots.txt` remains `Disallow: /`. The final homepage is live. Indexing and launch stay fail-closed.
 
