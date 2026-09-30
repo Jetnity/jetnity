@@ -12,8 +12,8 @@ export function HomeWerkzeuge() {
         {HOMEPAGE_UEBERSCHRIFTEN.werkzeuge}
       </h2>
       <p className="mt-4 max-w-2xl text-base leading-7 text-ink-800">
-        Flug, Unterkunft, Aktivitäten, Mobilität und Tagesplan gehören zu derselben Reise. Du hältst sie
-        nicht in fünf getrennten Tools nebeneinander.
+        Flug, Unterkunft, Aktivitäten, Mobilität und der Reiseplan gehören zu derselben Reise. Du hältst
+        sie nicht in fünf getrennten Tools nebeneinander.
       </p>
       <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {HOMEPAGE_WERKZEUGE.map((werkzeug) => (

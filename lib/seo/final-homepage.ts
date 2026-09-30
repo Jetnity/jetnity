@@ -35,7 +35,8 @@ export type HomepageFaehigkeit = {
 }
 
 /**
- * Inventar gegen main@91ab08bb9163444fcbce4a5303c1522c5ad5498c.
+ * Inventar gegen main@c1eae921a37db1d1f661af4b5d58139d3dc752ec
+ * nach dem akzeptierten Trip Workspace mit vier Arbeitsbereichen.
  * LIVE darf als verfügbar stehen. PARTIAL bleibt eng. PLANNED ist gekennzeichnet.
  * Unsicheres wurde herabgestuft.
  */
@@ -57,8 +58,8 @@ export const HOMEPAGE_FAEHIGKEITEN = [
   {
     id: 'reisebereich',
     stand: 'LIVE',
-    titel: 'Eine Reise mit Übersicht und Tagesbezug',
-    text: 'Übersicht, Tagesbezug und die Bereiche Flüge, Unterkunft, Aktivitäten und Mobilität gehören zu derselben Reise.',
+    titel: 'Vier Bereiche einer Reise',
+    text: 'Übersicht, Reiseplan, Organisieren und Vorbereitung gehören zu derselben Reise. Anbieterpreise und amtliche Ergebnisse sind darin nicht live.',
     kennzeichnung: 'Heute nutzbar',
   },
   {
@@ -117,8 +118,8 @@ export const HOMEPAGE_UEBERSCHRIFTEN = {
 
 export const HOMEPAGE_WERKZEUGE = [
   {
-    titel: 'Route und Tagesplan',
-    text: 'Bestätigte Ziele werden zu einer Reise mit Tagesbezug.',
+    titel: 'Reiseplan',
+    text: 'Bestätigte Ziele werden zu einer Reise mit Tagen und Reihenfolge.',
     kennzeichnung: 'Heute nutzbar',
   },
   {
@@ -154,7 +155,7 @@ export const HOMEPAGE_SCHRITTE = [
   },
   {
     titel: 'Organisieren',
-    text: 'Route, Tagesplan, Flüge, Unterkunft und weitere Bereiche bleiben an derselben Reise. Live-Angebote sind in Vorbereitung.',
+    text: 'Übersicht, Reiseplan, Organisieren und Vorbereitung bleiben an derselben Reise. Live-Angebote sind in Vorbereitung.',
   },
   {
     titel: 'Begleiten lassen',
@@ -182,15 +183,31 @@ export const HOMEPAGE_PRODUKTFENSTER = {
   titel: 'Lissabon und Porto',
   meta: '8 Tage · beispielhafter Entwurf',
   jetztWichtig: 'Die Unterkunft in Porto ist noch offen.',
-  hinweis: 'Beispiel aus einem Reiseplan. Kein Preis und keine Verfügbarkeit.',
+  hinweis: 'Beispiel aus einem Reiseplan. Kein Preis, keine Verfügbarkeit und keine amtliche Auskunft.',
   naechsterSchritt: 'Eigenes Ziel bestätigen',
-  zeilen: [
-    { label: 'Route', wert: 'Lissabon, dann Porto', kennzeichnung: 'Produktvorschau' },
-    { label: 'Tagesplan', wert: 'Noch ein Entwurf', kennzeichnung: 'Produktvorschau' },
-    { label: 'Flüge', wert: 'Keine Angebote', kennzeichnung: 'In Vorbereitung' },
-    { label: 'Unterkunft', wert: 'Offen, ohne Angebote', kennzeichnung: 'In Vorbereitung' },
-    { label: 'Aktivitäten', wert: 'Noch nicht belegt', kennzeichnung: 'In Vorbereitung' },
-    { label: 'Mobilität', wert: 'Noch nicht belegt', kennzeichnung: 'In Vorbereitung' },
+  modiHinweis:
+    'Diese vier Bereiche gibt es in einer echten Reise. Die Beispielreise selbst bleibt eine Produktvorschau.',
+  modi: [
+    {
+      titel: 'Übersicht',
+      text: 'Was jetzt wichtig ist, und was in dieser Reise noch offen ist.',
+      kennzeichnung: 'Heute nutzbar',
+    },
+    {
+      titel: 'Reiseplan',
+      text: 'Tage und Reihenfolge. Hier nur als Beispiel, ohne automatische Umsetzung.',
+      kennzeichnung: 'Heute nutzbar',
+    },
+    {
+      titel: 'Organisieren',
+      text: 'Flüge, Unterkunft, Aktivitäten und Mobilität. Ohne Anbieterpreise.',
+      kennzeichnung: 'Heute nutzbar',
+    },
+    {
+      titel: 'Vorbereitung',
+      text: 'Offene Vorbereitung aus bekannten Angaben. Keine amtliche Auskunft.',
+      kennzeichnung: 'Heute nutzbar',
+    },
   ],
 } as const
 

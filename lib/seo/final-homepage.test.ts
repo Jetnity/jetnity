@@ -92,6 +92,18 @@ describe('final homepage product 1 – Wahrheit und Entity', () => {
     assert.equal(/\d+\s*(CHF|EUR|€|\$)/.test(roh), false)
     assert.equal(HOMEPAGE_PRODUKTFENSTER.kennzeichnung, 'Produktvorschau')
     assert.match(HOMEPAGE_PRODUKTFENSTER.hinweis, /Kein Preis/)
+    assert.match(HOMEPAGE_PRODUKTFENSTER.hinweis, /keine amtliche Auskunft/)
+    assert.deepEqual(
+      HOMEPAGE_PRODUKTFENSTER.modi.map((modus) => modus.titel),
+      ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'],
+    )
+    for (const modus of HOMEPAGE_PRODUKTFENSTER.modi) {
+      assert.equal(modus.kennzeichnung, 'Heute nutzbar')
+    }
+    const reisebereich = HOMEPAGE_FAEHIGKEITEN.find((eintrag) => eintrag.id === 'reisebereich')
+    assert.equal(reisebereich?.stand, 'LIVE')
+    assert.match(reisebereich?.text ?? '', /Übersicht, Reiseplan, Organisieren und Vorbereitung/)
+    assert.match(reisebereich?.text ?? '', /nicht live/)
   })
 
   test('die Pflichtstory bleibt wörtlich', () => {

@@ -51,7 +51,7 @@ const inspirationsziele = INSPIRATION_ZIELE.map((ziel) => ({
 
 export default function HomePage() {
   return (
-    <main className="break-words bg-surface-75 pb-[env(safe-area-inset-bottom)] text-brand-800">
+    <main className="hyphens-auto bg-surface-75 pb-[env(safe-area-inset-bottom)] text-brand-800">
       <HomeHero />
       <HomeWerkzeuge />
       <HomeProduktfenster />

@@ -47,6 +47,11 @@ braucht('In Vorbereitung', 'geplante Fähigkeit')
 braucht('Kommt später', 'geplante Fähigkeit')
 braucht('Produktvorschau', 'Vorschau')
 braucht('Heute nutzbar', 'live Fähigkeit')
+braucht('Übersicht', 'Arbeitsbereich Übersicht')
+braucht('Reiseplan', 'Arbeitsbereich Reiseplan')
+braucht('Organisieren', 'Arbeitsbereich Organisieren')
+braucht('Vorbereitung', 'Arbeitsbereich Vorbereitung')
+braucht('Jetzt wichtig', 'Jetzt wichtig')
 braucht('id="entdecken"', 'Navbar-Anker Entdecken')
 braucht("id={faehigkeit.id === 'jetnity-pro' ? 'pro' : undefined}", 'Navbar-Anker Pro')
 braucht('GastCreateLink', 'bestehender Create-Einstieg')
@@ -97,13 +102,22 @@ if (process.env.AUDIT_BROWSER === '1') {
     { name: '1920x1080', width: 1920, height: 1080 },
   ]
   const browser = await chromium.launch({ headless: true })
+  const erlaubteHerkunft = new URL(basis).origin
   const laeufe = []
-  for (const vp of viewports) {
+  const text200 = process.env.AUDIT_TEXT_200 === '1'
+  const durchlaeufe = text200
+    ? [...viewports, { name: 'text-200-360x800', width: 360, height: 800, text200: true }]
+    : viewports
+  for (const vp of durchlaeufe) {
     const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } })
     const konsole = []
+    const seitenfehler = []
     const herkuenfte = new Set()
     page.on('console', (msg) => {
       if (msg.type() === 'error') konsole.push(msg.text())
+    })
+    page.on('pageerror', (err) => {
+      seitenfehler.push(err.message)
     })
     page.on('request', (req) => {
       try {
@@ -112,6 +126,13 @@ if (process.env.AUDIT_BROWSER === '1') {
         /* ungültige URL */
       }
     })
+    if (vp.text200) {
+      await page.addInitScript(() => {
+        const stil = document.createElement('style')
+        stil.textContent = 'html { font-size: 32px !important; }'
+        document.documentElement.appendChild(stil)
+      })
+    }
     const antwort = await page.goto(`${basis}/`, { waitUntil: 'networkidle', timeout: 60000 })
     const dom = await page.evaluate(() => {
       const doc = document.documentElement
@@ -119,6 +140,30 @@ if (process.env.AUDIT_BROWSER === '1') {
       const kasten = form?.getBoundingClientRect()
       const graph = document.querySelector('script[type="application/ld+json"]')?.textContent ?? ''
       const robots = document.querySelector('meta[name="robots"]')?.getAttribute('content')
+      const input = document.querySelector('#travel-idea')
+      const knopf = document.querySelector('form button[type="submit"]')
+      function gebrocheneWoerter(selektor) {
+        const el = document.querySelector(selektor)
+        if (!el) return ['fehlt']
+        const gebrochen = []
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+        let knoten = walker.nextNode()
+        while (knoten) {
+          const wert = knoten.textContent ?? ''
+          const muster = /\S+/g
+          let treffer = muster.exec(wert)
+          while (treffer) {
+            const range = document.createRange()
+            range.setStart(knoten, treffer.index)
+            range.setEnd(knoten, treffer.index + treffer[0].length)
+            if (range.getClientRects().length > 1) gebrochen.push(treffer[0])
+            treffer = muster.exec(wert)
+          }
+          knoten = walker.nextNode()
+        }
+        return gebrochen
+      }
+      const text = document.body.innerText
       return {
         overflow: doc.scrollWidth > doc.clientWidth + 1,
         scrollWidth: doc.scrollWidth,
@@ -127,19 +172,31 @@ if (process.env.AUDIT_BROWSER === '1') {
         title: document.title,
         canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
         robots,
-        definition: document.body.innerText.includes(
-          'Jetnity ist eine Reiseplanungs- und Reisebegleitungsplattform.',
-        ),
+        definition: text.includes('Jetnity ist eine Reiseplanungs- und Reisebegleitungsplattform.'),
+        modi: ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'].every((name) => text.includes(name)),
+        produktvorschau: text.includes('Produktvorschau'),
         formSichtbar: Boolean(kasten && kasten.top < window.innerHeight && kasten.bottom > 80),
         formBottom: kasten ? Math.round(kasten.bottom) : null,
-        cta: document.body.innerText.includes('Reise starten'),
+        eingabePx: input ? Number.parseFloat(getComputedStyle(input).fontSize) : 0,
+        knopfPx: knopf ? knopf.getBoundingClientRect().height : 0,
+        gebrochenH1: gebrocheneWoerter('h1'),
+        gebrochenAugenbraue: gebrocheneWoerter('section[aria-labelledby="start-titel"] p'),
+        cta: text.includes('Reise starten'),
         graph,
       }
     })
     if (dom.h1 !== 'Deine ganze Reise. Intelligent an einem Ort.') fehler.push(`${vp.name}: H1`)
     if (!dom.definition) fehler.push(`${vp.name}: Definition fehlt`)
-    if (!dom.formSichtbar) fehler.push(`${vp.name}: Formular nicht im ersten Viewport`)
+    if (!vp.text200 && !dom.formSichtbar) fehler.push(`${vp.name}: Formular nicht im ersten Viewport`)
+    if (!dom.modi) fehler.push(`${vp.name}: Arbeitsbereiche fehlen`)
+    if (!dom.produktvorschau) fehler.push(`${vp.name}: Produktvorschau fehlt`)
     if (dom.overflow) fehler.push(`${vp.name}: horizontaler Overflow ${dom.scrollWidth}/${dom.clientWidth}`)
+    if (dom.eingabePx < 16) fehler.push(`${vp.name}: Eingabe ${dom.eingabePx}px`)
+    if (dom.knopfPx < 44) fehler.push(`${vp.name}: Knopf ${dom.knopfPx}px`)
+    if (dom.gebrochenH1.length) fehler.push(`${vp.name}: H1 mitten im Wort ${dom.gebrochenH1.join(', ')}`)
+    if (dom.gebrochenAugenbraue.length) {
+      fehler.push(`${vp.name}: Augenbraue mitten im Wort ${dom.gebrochenAugenbraue.join(', ')}`)
+    }
     if (dom.canonical !== 'https://jetnity.com/' && dom.canonical !== 'https://jetnity.com') {
       fehler.push(`${vp.name}: Canonical ${dom.canonical}`)
     }
@@ -149,6 +206,11 @@ if (process.env.AUDIT_BROWSER === '1') {
     if (dom.robots && /index/i.test(dom.robots) && !/noindex/i.test(dom.robots)) {
       fehler.push(`${vp.name}: robots erlaubt Index ${dom.robots}`)
     }
+    if (konsole.length) fehler.push(`${vp.name}: Konsole ${konsole.join(' | ')}`)
+    if (seitenfehler.length) fehler.push(`${vp.name}: Laufzeit ${seitenfehler.join(' | ')}`)
+    for (const herkunft of herkuenfte) {
+      if (herkunft !== erlaubteHerkunft) fehler.push(`${vp.name}: unerwartete Herkunft ${herkunft}`)
+    }
     await page.screenshot({ path: join(evidenz, `first-${vp.name}.png`) })
     await page.screenshot({ path: join(evidenz, `full-${vp.name}.png`), fullPage: true })
     laeufe.push({
@@ -156,6 +218,7 @@ if (process.env.AUDIT_BROWSER === '1') {
       status: antwort?.status() ?? null,
       dom,
       konsole,
+      seitenfehler,
       herkuenfte: [...herkuenfte],
     })
     await page.close()
