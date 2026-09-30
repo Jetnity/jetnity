@@ -25,6 +25,14 @@ const VIEWPORTS = [
   { name: '1024x768', width: 1024, height: 768, hasTouch: false },
   { name: '1440x900', width: 1440, height: 900, hasTouch: false },
   { name: '1920x1080', width: 1920, height: 1080, hasTouch: false },
+  { name: '320x568', width: 320, height: 568, hasTouch: true },
+  { name: '375x812', width: 375, height: 812, hasTouch: true },
+  { name: '412x915', width: 412, height: 915, hasTouch: true },
+  { name: '430x932', width: 430, height: 932, hasTouch: true },
+  { name: '820x1180', width: 820, height: 1180, hasTouch: true },
+  { name: '1280x800', width: 1280, height: 800, hasTouch: false },
+  { name: '1728x1117', width: 1728, height: 1117, hasTouch: false },
+  { name: '844x390', width: 844, height: 390, hasTouch: true },
 ]
 
 const JETZT = '2026-09-30T09:00:00.000Z'
@@ -628,6 +636,35 @@ try {
       }
       await lauf.context.close()
     }
+  }
+
+  for (const zoom of [1.25, 1.5]) {
+    const name = `zoom_${Math.round(zoom * 100)}_1440x900`
+    const lauf = await kontext(VIEWPORTS[4])
+    try {
+      await auditOeffnen(lauf.page, LANGE_REISE)
+      await lauf.page.evaluate((wert) => {
+        document.documentElement.style.zoom = String(wert)
+      }, zoom)
+      await lauf.page.waitForTimeout(200)
+      const messung = await stand(lauf.page)
+      const screenshot = await bild(lauf.page, name, true)
+      schritte.push({ name, ...messung, netz: lauf.netz.length, screenshot })
+      merke(messung.horizontalOverflow === false, `${name}: horizontaler Überlauf ${messung.scrollWidth}/${messung.clientWidth}`)
+      merke(messung.navigatorSichtbar, `${name}: Navigator fehlt`)
+      merke(messung.aktuelle === 1, `${name}: sichtbare aktive Tage ${messung.aktuelle}`)
+      merke(messung.raster.length > 0 && messung.raster.every((feld) => feld.spalten === 7 && feld.spalten <= 7), `${name}: Spalten ${JSON.stringify(messung.raster)}`)
+      merke(messung.zaehler === 'Tag 1 von 32', `${name}: ${messung.zaehler}`)
+      merke(lauf.netz.length === 0, `${name}: Netzwerk`)
+    } catch (error) {
+      fehler.push(`${name}: ${error instanceof Error ? error.message : String(error)}`)
+      try {
+        await bild(lauf.page, `error_${name}`)
+      } catch {
+        // bereits erfasst
+      }
+    }
+    await lauf.context.close()
   }
 } finally {
   await browser.close()
