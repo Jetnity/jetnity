@@ -141,9 +141,11 @@ for (const vp of viewports) {
             }
           : null,
       htmlFont: getComputedStyle(document.documentElement).fontSize,
+      h1: document.querySelector('h1')?.textContent?.replace(/\s+/g, ' ').trim() ?? '',
     }
   })
 
+  await page.screenshot({ path: join(evidenz, `page-top-${vp.name}.png`) })
   await page.locator('header').screenshot({ path: join(evidenz, `navbar-${vp.name}.png`) })
   if (await page.locator('header img').count()) {
     await page.locator('header img').screenshot({ path: join(evidenz, `navbar-logo-${vp.name}.png`) })
@@ -187,6 +189,9 @@ for (const vp of viewports) {
 
   if (phase === 'after') {
     if (status !== 200) fehler.push(`${vp.name}: Status ${status}`)
+    if (messung.h1 !== 'Deine ganze Reise. Intelligent an einem Ort.') {
+      fehler.push(`${vp.name}: Startseite ist nicht die integrierte Homepage (${messung.h1})`)
+    }
     if (messung.scrollWidth > messung.clientWidth + 1) {
       fehler.push(`${vp.name}: horizontaler Overflow ${messung.scrollWidth} > ${messung.clientWidth}`)
     }
@@ -253,6 +258,7 @@ const bericht = {
   stand: new Date().toISOString(),
   phase,
   basis,
+  main: process.env.AUDIT_MAIN || null,
   fehler,
   ergebnis: fehler.length === 0 ? 'PASS' : 'FAIL',
   laeufe,

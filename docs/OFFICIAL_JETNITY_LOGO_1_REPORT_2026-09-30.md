@@ -36,7 +36,7 @@ Session, navigation, sign-out, focus ring, mobile disclosure and `GastCreateLink
 
 PR #649 was open at the start on `feat/final-homepage-premium-experience-2` @ `e076f20839c8e793a748299729a930f547dba33d`. Its 66 files did not include `PublicNavbar.tsx` or `Footer.tsx`.
 
-Before this report, #649 had merged. Re-fetch of `origin/main` is `7f2dcdbc211d32a0affa323fba822521535e7bb9`. `git diff 5ed4a9e3 origin/main -- components/layout/PublicNavbar.tsx components/layout/Footer.tsx` is empty. This branch merged that main. No collision stop.
+Before this report, #649 had merged. A live re-fetch in this same session still shows `origin/main` at `7f2dcdbc211d32a0affa323fba822521535e7bb9`. Merge-base of this branch and that main is that exact SHA. The branch is 0 behind. `git diff 5ed4a9e3 origin/main -- components/layout/PublicNavbar.tsx components/layout/Footer.tsx` is empty. This branch already contains that main. No homepage runtime path was edited while integrating. No collision stop.
 
 This slice does not edit `app/(public)/page.tsx`, `components/home/**`, `lib/seo/final-homepage.ts`, or `lib/auth/oeffentliche-navigation.ts`. It does not edit `docs/ACTIVE_WORK_STATUS.md`. The task forbids global current-state docs.
 
@@ -46,7 +46,7 @@ Directory: `docs/evidence/official-jetnity-logo-1/`
 
 Before: `next dev` on `http://localhost:3000`, placeholder components from `cedacff3`, captured `2026-09-30` before the render commit. Dev chunks are blocked on `127.0.0.1`, so the audit used `localhost`. This is the placeholder record, not the production server.
 
-After: `npm run build` then `next start` on `http://127.0.0.1:3456`. Final pass `2026-09-30T17:38:41.102Z` is the production build of this tree after the #649 merge and the tablet size fix. Result: **PASS**. No console errors, no page errors, no foreign origins, no horizontal overflow.
+After: `npm run build` then `next start` on `http://127.0.0.1:3456`, serving the integrated premium homepage. The refreshed pass records `main` `7f2dcdbc211d32a0affa323fba822521535e7bb9` and requires the visible H1 **Deine ganze Reise. Intelligent an einem Ort.** `page-top-*.png` shows the logo on that page. Result: **PASS**. No console errors, no page errors, no foreign origins, no horizontal overflow.
 
 | Viewport | Header | Navbar logo | Home-link height | Footer link |
 | --- | --- | --- | --- | --- |

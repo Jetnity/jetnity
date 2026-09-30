@@ -22,7 +22,9 @@ Do not treat `docs/ACTIVE_WORK_STATUS.md` as updated by this slice. The task for
 - The only brand behavior is `components/layout/PublicNavbar.tsx` and `components/layout/Footer.tsx`, plus the already committed `public/brand/jetnity-logo.png`.
 - Blob SHA remains `bfcbb46da7e87d5ef03e7e6457b06957df12359f`.
 - #649 did not edit the navbar or footer. This branch merged `origin/main` after that merge. There was no collision to stop for.
-- Exact-head gate already read for `4a0df6d402c4c9ca45129633a2a0480d9b723d50`: CI run `36753124511` success (Typecheck, Lint & Build and Auth-Konfiguration). Vercel status success, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FTz5j1sqbDfTCkQiKcNmcwkbJVFr`. No review threads. If the tip is newer than `4a0df6d4`, that CI is not the tip gate.
+- Live re-fetch: `origin/main` is still `7f2dcdbc211d32a0affa323fba822521535e7bb9`. Merge-base is that SHA. Behind count is 0. Homepage runtime files were not edited.
+- Integrated-page evidence is `docs/evidence/official-jetnity-logo-1/after/`, including `page-top-*.png` and H1 **Deine ganze Reise. Intelligent an einem Ort.**
+- CI on `37ae8965` / run `36753813167` passed before this evidence refresh. It is not the gate for a newer tip. Re-read CI, Auth and Vercel on the branch tip.
 
 ## Do not continue
 

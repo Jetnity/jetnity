@@ -1,7 +1,8 @@
 {
-  "stand": "2026-09-30T17:38:41.102Z",
+  "stand": "2026-09-30T17:51:20.715Z",
   "phase": "after",
   "basis": "http://127.0.0.1:3456",
+  "main": "7f2dcdbc211d32a0affa323fba822521535e7bb9",
   "fehler": [],
   "ergebnis": "PASS",
   "laeufe": [
@@ -92,7 +93,8 @@
           "expanded": "false",
           "label": "Menü öffnen"
         },
-        "htmlFont": "16px"
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": {
         "hidden": false,
@@ -193,7 +195,8 @@
           "expanded": "false",
           "label": "Menü öffnen"
         },
-        "htmlFont": "16px"
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": {
         "hidden": false,
@@ -282,7 +285,8 @@
           "href": "/"
         },
         "menu": null,
-        "htmlFont": "16px"
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": null,
       "konsole": [],
@@ -364,7 +368,8 @@
           "href": "/"
         },
         "menu": null,
-        "htmlFont": "16px"
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": null,
       "konsole": [],
@@ -446,7 +451,8 @@
           "href": "/"
         },
         "menu": null,
-        "htmlFont": "16px"
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": null,
       "konsole": [],
@@ -528,7 +534,8 @@
           "href": "/"
         },
         "menu": null,
-        "htmlFont": "16px"
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": null,
       "konsole": [],
@@ -622,7 +629,8 @@
           "expanded": "false",
           "label": "Menü öffnen"
         },
-        "htmlFont": "32px"
+        "htmlFont": "32px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": {
         "hidden": false,
@@ -711,7 +719,8 @@
           "href": "/"
         },
         "menu": null,
-        "htmlFont": "32px"
+        "htmlFont": "32px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort."
       },
       "menuOffen": null,
       "konsole": [],
