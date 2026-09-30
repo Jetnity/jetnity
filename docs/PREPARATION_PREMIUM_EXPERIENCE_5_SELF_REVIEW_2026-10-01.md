@@ -35,4 +35,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Remote CI, Auth and Preview belong to the pushed tip and are not inferred from the local PASS.
+Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Remote CI on `0c76df11` was later read as SUCCESS for Actions `36787942339` and the Vercel deployment. That read is not this self-review and does not approve a later commit.

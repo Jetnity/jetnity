@@ -57,6 +57,19 @@ Docs and evidence:
 | Does import still confirm? | Interaction clicks “In diese Reise übernehmen: Alex Beispiel”, waits for the copy confirmation, then Abbrechen |
 | Any provider call on first paint or during the proof? | Every recorded `netz` is 0 |
 
+## Remote observation
+
+Read on the then-current tip `0c76df11b9b2a3513c1bae057011177cdfe53d91`. This observation does not approve a later commit.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36787942339` | SUCCESS |
+| Auth-Konfiguration gegen config.toml | SUCCESS |
+| Typecheck, Lint & Build | SUCCESS |
+| Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/AWJNXSkyBSZqDYJA75Drz395qeQf` |
+
+Combined commit status `success`. Draft #665 stayed open. No review threads were part of this read.
+
 ## Stop
 
-Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required. Exact-head CI, Auth and Vercel on the pushed tip are observations, not this review.
+Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required. The table above is an observation of `0c76df11`, not a Technical-Lead PASS.

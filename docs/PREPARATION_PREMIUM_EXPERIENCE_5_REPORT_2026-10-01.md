@@ -59,4 +59,4 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
 No database migration. No new API. No new cost. No secret. No production config. No navbar, footer, favicon or homepage edit. No follow-up slice.
 
-Exact-head GitHub CI, Auth and Vercel are read after the push. They are not inferred from this local PASS.
+Exact-head GitHub observation for `0c76df11b9b2a3513c1bae057011177cdfe53d91`, Actions `36787942339`: Auth-Konfiguration SUCCESS, Typecheck, Lint & Build SUCCESS, Vercel SUCCESS at `https://vercel.com/jetnity-e1b93c82/jetnity-app/AWJNXSkyBSZqDYJA75Drz395qeQf`. Combined status success. That observation does not approve a later commit and is not a Technical-Lead PASS.
