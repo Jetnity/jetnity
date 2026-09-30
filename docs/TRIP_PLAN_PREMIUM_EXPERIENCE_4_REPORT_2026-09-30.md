@@ -90,7 +90,20 @@ Matrix re-run `2026-09-30T22:33:50.508Z`. JSON sha `fa493ee5c8e2c859bb5ada3c6a1c
 
 ## 6. Exact-head remote
 
-Not read yet for the tip that contains the device-matrix audit. Checks on an earlier head, including any Building or Ready comment from the seed push, do not approve this delivery.
+Read on 30 September 2026 for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. That commit records the device-matrix audit. It does not change Reiseplan runtime. This is an observation, not a Technical-Lead PASS. The branch was 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272` when fetched before the audit. A later docs commit that only records this paragraph does not inherit the checks below.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36786320959` | success, head `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2` |
+| Auth-Konfiguration gegen config.toml, job `110128463008` | success |
+| Typecheck, Lint & Build, job `110128462902` | success |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/S1mo1G85U8kcYfz8jt2ESr7wNPdX |
+| Preview deployment | success, `6771642993`, https://jetnity-6mtnrgivm-jetnity-e1b93c82.vercel.app |
+| GitHub review threads | none |
+| GitHub reviews | none |
+
+Checks on earlier heads, including the seed Vercel comment, do not approve `fe11f75e`.
 
 ## 6. Not claimed
 
