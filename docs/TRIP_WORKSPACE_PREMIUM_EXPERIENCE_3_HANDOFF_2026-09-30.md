@@ -72,7 +72,7 @@ Docs and evidence:
 | Vercel Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` | READY |
 | Review threads | none |
 
-The phone-mode commit and this evidence were not on that remote head. Exact-head Actions, Auth and Preview for the evidence tip are written into the report only after they are read.
+The phone-mode commit and the evidence re-run are local, tip `cd8ce5c54be212f9daca6ac9ba4172b805d01c5c` at the time of the failed push. `git-receive-pack` returned 401 because the managed GitHub token is expired. The remote branch is still `b8a026db`. Do not treat `36770631331` or `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` as approval of `3a1be4b7` or `cd8ce5c5`.
 
 ## Stop
 

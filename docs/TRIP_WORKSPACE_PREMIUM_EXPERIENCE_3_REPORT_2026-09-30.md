@@ -83,7 +83,9 @@ Re-read before this delivery:
 
 ## 6. Exact-head remote for this delivery
 
-Not filled until the evidence commit is on `origin` and its Actions run, Auth job and Vercel Preview are terminal. This section is updated only with ids that were actually read.
+Local evidence commit: `cd8ce5c54be212f9daca6ac9ba4172b805d01c5c`. It is 0 behind `origin/main` and was not on `origin` when this section was written.
+
+`git push` of this commit was rejected with HTTP 401 on `git-receive-pack`. The managed GitHub token’s `exp` claim is in the past. `git ls-remote` still shows `feat/trip-workspace-premium-experience-3` at `b8a026db1872133ee7fe9287ad85a93962085135`. Actions, Auth and Vercel Preview for `cd8ce5c5` therefore do not exist. The contents API also returned 403 on an earlier write attempt, so that path cannot carry the commit either.
 
 ## 7. Not claimed
 
