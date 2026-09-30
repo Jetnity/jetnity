@@ -20,6 +20,7 @@ import { mobilitySucheStartetAutomatisch } from '@/lib/mobility/suche-ausloeser'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import { MOBILITY_MODES, type MobilityMode, type Trip, type TripItem } from '@/types/trips'
 
@@ -371,7 +372,7 @@ function ManuelleVerbindung({
       </p>
 
       <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid gap-1 text-sm font-medium text-brand-800">
             Art
             <select
@@ -403,7 +404,7 @@ function ManuelleVerbindung({
           </label>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid gap-1 text-sm font-medium text-brand-800">
             Von
             <input
@@ -426,7 +427,7 @@ function ManuelleVerbindung({
           </label>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid gap-1 text-sm font-medium text-brand-800">
             Abfahrt
             <input
@@ -447,7 +448,7 @@ function ManuelleVerbindung({
           </label>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid gap-1 text-sm font-medium text-brand-800">
             Ankunft
             <input

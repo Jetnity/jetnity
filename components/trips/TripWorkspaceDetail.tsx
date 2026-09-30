@@ -29,7 +29,7 @@ export default function TripWorkspaceDetail({
   item: ItemDetailAbleitung | null
   kompakt: boolean
   onSchliessen: () => void
-  onSuche: () => void
+  onSuche: (vonTastatur?: boolean) => void
   fokusRef: RefObject<HTMLButtonElement | null>
 }) {
   const offen = auswahl.art !== 'keine'
@@ -110,7 +110,7 @@ export default function TripWorkspaceDetail({
       {sucheAnbietbar && sucheDomain && !sucheOffen ? (
         <button
           type="button"
-          onClick={onSuche}
+          onClick={(ereignis) => onSuche(ereignis.detail === 0)}
           className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
         >
           {DETAIL_SUCHE_BEZEICHNUNG[sucheDomain]}
