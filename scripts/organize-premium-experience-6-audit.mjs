@@ -132,7 +132,7 @@ function messenQuelle() {
         if (rand.top < kopfRand.bottom - 1) return false
         if (rand.top < 0 || rand.bottom > window.innerHeight + 1) return false
         const x = Math.min(window.innerWidth - 2, Math.max(2, rand.left + Math.min(24, rand.width / 2)))
-        const y = rand.top + 3
+        const y = rand.top + rand.height / 2
         if (y >= window.innerHeight) return false
         const treffer = document.elementFromPoint(x, y)
         return treffer === knopf || (treffer instanceof Node && knopf.contains(treffer))
@@ -222,6 +222,21 @@ async function stand(page) {
 }
 
 async function warteAufFreieRueckkehr(page) {
+  await page.evaluate(() => {
+    const nav = document.querySelector('nav[aria-label="Reise"]')
+    const kopf = document.querySelector('header')?.getBoundingClientRect()
+    const knopf = nav?.querySelector('button')?.getBoundingClientRect()
+    if (!nav || !kopf || !knopf) return
+    const sichtbar =
+      knopf.height >= 44 &&
+      knopf.width >= 44 &&
+      knopf.top >= kopf.bottom - 1 &&
+      knopf.top >= 0 &&
+      knopf.bottom <= window.innerHeight + 1
+    if (sichtbar) return
+    const dokumentOben = nav.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top: Math.max(0, dokumentOben - kopf.bottom), behavior: 'instant' })
+  })
   await page.waitForFunction(() => {
     const kopf = document.querySelector('header')?.getBoundingClientRect()
     const knopf = document.querySelector('nav[aria-label="Reise"] button')?.getBoundingClientRect()

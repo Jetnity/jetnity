@@ -17,14 +17,15 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Session: https://cursor.com/agents/bc-c0cf7301-3a42-4fb8-a8db-6522a435926f
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-- Runtime commit: `0dcaa7665c4382064365ace3ee9cbb5801511eee`
-- Device-matrix audit: PASS `2026-09-30T22:33:48.739Z`, JSON sha `1397b243d24b31d8112caa9abe73eb4f0f726f67`, 40 steps
-- Exact-head CI on `482600b3253e069da626e228c5cfb2afb345e373`: run `36786482038` success. Typecheck, Lint & Build job `110128985596`, completed `2026-09-30T22:38:57Z`. Auth job `110128985135`, completed `2026-09-30T22:36:22Z`. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/CwehY9Z2rH36qYZckCM295BfbnUE`. Preview `https://jetnity-app-git-feat-organize-premium-e-e055c9-jetnity-e1b93c82.vercel.app`. Vercel comment `5920624720` updated `2026-09-30T22:36:21Z`.
-- Earlier gate on `1397b243d24b31d8112caa9abe73eb4f0f726f67`: run `36785724060` success. That result stays with that commit.
-- Product Owner device addendum: PR comment `5920703563`. Covered in the 40-step audit. No second information architecture.
-- `origin/main` re-read in this session: `2530020dbc6797b17d64c064ca5474cf90804272`, branch 0 behind
+- R1 review: `5372823906` on `49ae3a16d1c8f9aaec96bdbdd243b5d7778b4319`
+- Runtime commit: `f5f228f2be26c0413d7977116b1abbf50e6c4124`
+- Device-matrix audit: PASS `2026-09-30T23:07:52.367Z`, JSON sha `f5f228f2be26c0413d7977116b1abbf50e6c4124`, 40 steps, `rueckkehrFrei` true for compact flight detail and 200% text
+- Local gates on that runtime: `npm test` 4108 pass, typecheck pass, lint exit 0 with existing warnings, production build Next.js 16.3.8 / 25 pages, hygiene checks pass
+- `docs/ACTIVE_WORK_STATUS.md` matches `origin/main`. This slice does not own that file.
+- `origin/main` re-read after the fix: `2530020dbc6797b17d64c064ca5474cf90804272`, branch 0 behind
+- CI, Auth and Vercel on `f5f228f2` and on the evidence commit after it are not yet the review gate. Re-read them on the exact tip.
 
-Re-fetch the tip before review. `482600b3` carries the device-matrix evidence and a green CI, Auth and Vercel gate. A later docs-only readback of that gate needs its own CI before it is the review head. Organisieren behavior stays on runtime `0dcaa766`.
+Re-fetch the tip before review. The R1 runtime measures the public header and keeps compact Back below it. Earlier CI on `49ae3a16` belongs to that commit.
 
 ## Do not treat as accepted
 

@@ -57,13 +57,13 @@ The Product Owner device addendum on PR #667, comment `5920703563`, is included:
 
 | Gate | Result |
 | --- | --- |
-| `npm test` | 4107 pass, 0 fail |
+| `npm test` | 4108 pass, 0 fail |
 | `npm run typecheck` | pass |
 | `npm run lint` | exit 0. Existing warnings remain, including `react-hooks/set-state-in-effect` in hotel and activity search. No new error. |
 | `npm run build` | pass, Next.js 16.3.8, 25 static pages. Setup check warns that no `.env` / `.env.local` exists. |
 | `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode` | pass |
 | `check:schema-bezug` | exit 0. Existing note: local/unapplied `admin_account_counts_v1`. Not part of this slice. |
-| Organize audit | PASS, `2026-09-30T22:33:48.739Z`, JSON sha `1397b243`, 40 steps including the device addendum |
+| Organize audit | PASS, `2026-09-30T23:07:52.367Z`, JSON sha `f5f228f2`, 40 steps. Compact Back stays below the measured header, including 200% text. |
 
 `origin/main` at delivery was still `2530020dbc6797b17d64c064ca5474cf90804272`. This branch was 0 behind. No main integration was required.
 
@@ -78,7 +78,17 @@ Exact-head CI on `482600b3253e069da626e228c5cfb2afb345e373`, run `36786482038`, 
 
 The prior tip `1397b243d24b31d8112caa9abe73eb4f0f726f67` also succeeded: run `36785724060`, Typecheck job `110126534819` completed `2026-09-30T22:31:04Z`, Auth job `110126535130` completed `2026-09-30T22:28:29Z`, Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/W83cnK1bneCNnM8TQkD2rxCr5TBi`. That gate stays on that commit.
 
-PR #667 stayed draft. `482600b3` is audit evidence and the CI readback for `1397b243`. It does not change the Organisieren runtime. A later docs-only readback of the `482600b3` gate needs its own CI before it is the review head.
+PR #667 stayed draft. Local gates and the R1 audit were read on runtime `f5f228f2be26c0413d7977116b1abbf50e6c4124`. The CI table above is the earlier `482600b3` gate and stays with that commit. CI on `f5f228f2` and on the evidence commit after it still has to be re-read.
+
+## 3b. R1 corrections
+
+Technical-Lead review `5372823906` on exact head `49ae3a16d1c8f9aaec96bdbdd243b5d7778b4319`.
+
+The compact Back bar now follows the rendered public header. Before the first measurement it uses `calc(var(--jet-header-h) + env(safe-area-inset-top))`. After measurement it uses the header's bottom edge. That edge already includes the header's own safe-area padding. The resting token `--jet-header-h` stays 73px in `styles/globals.css`; at 200% text the measured header in this audit was 121px, and the Back control sat below it with a hittable center. Focus return, the 44px target, and the Back action are unchanged. `TripWorkspace.tsx` and the mode/header components were not edited.
+
+`docs/ACTIVE_WORK_STATUS.md` is restored to `origin/main`. This slice keeps its report, handoff, self-review, and evidence only.
+
+`origin/main` re-fetched after the fix: `2530020dbc6797b17d64c064ca5474cf90804272`. This branch was 0 behind.
 
 ## 4. Parallel safety
 

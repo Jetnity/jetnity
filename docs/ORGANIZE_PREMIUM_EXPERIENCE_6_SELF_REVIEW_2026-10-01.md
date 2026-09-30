@@ -13,12 +13,13 @@ Checked against `docs/ORGANIZE_PREMIUM_EXPERIENCE_6_TASK_2026-10-01.md`.
 - Repeated lage wording is dropped only when the same clause is already visible. Coverage sentences, “kein Pflichtpunkt”, flight-covered notes and the explicit-search sentence stay.
 - Opening a domain did not call a provider. Flight search mounted without a request. `POST /api/flights/search` happened on “Flüge suchen”. Hotel, activity and mobility requests happened only on their existing explicit actions.
 - Forms gained groups only. Payloads in `FlugSuche`, `MobilitaetBereich` and `MietwagenBereich` were not edited.
-- The device addendum in PR comment `5920703563` was measured: 320, 360, 375, 390, 412, 430, landscape 844×390, 768, 820, 1024, 1280, 1440, 1728, 1920, 200% at 360, zoom 125% and 150% at 1440, and reduced motion. No horizontal overflow. Workspace touch targets were at least 44px.
+- The device addendum in PR comment `5920703563` was measured again after R1: 320, 360, 375, 390, 412, 430, landscape 844×390, 768, 820, 1024, 1280, 1440, 1728, 1920, 200% at 360, zoom 125% and 150% at 1440, and reduced motion. No horizontal overflow. Compact Back stayed below the measured public header, including 200% text. Workspace touch targets were at least 44px.
+- R1-F2: `docs/ACTIVE_WORK_STATUS.md` matches `origin/main`.
 
 ## Not claimed
 
 - Independent review
-- CI on a tip newer than `482600b3`. That SHA is success: run `36786482038`, Auth job `110128985135`, Vercel inspector `CwehY9Z2rH36qYZckCM295BfbnUE`. The earlier success on `1397b243` stays with that commit.
+- CI, Auth and Vercel on `f5f228f2` and on any evidence commit after it. Those results have to be re-read on the exact tip. The earlier success on `49ae3a16` stays with that commit.
 - Physical device
 - Signed-in workspace
 - Sticky rail. It would need the parent scroll-offset measurement, which is outside this slice.
