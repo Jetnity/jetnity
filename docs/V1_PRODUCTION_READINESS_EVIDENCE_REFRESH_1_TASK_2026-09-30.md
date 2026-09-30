@@ -81,3 +81,18 @@ No Ready, no merge, no follow-up slice.
 Record actual Cursor session URL and `originalModelName`. Required model: Grok 4.7 High Fast, not Auto.
 
 STOP for independent main-chat TL review.
+
+## Execution record
+
+Recorded before editing, from this run’s identity tool:
+
+- Session URL: https://cursor.com/agents/bc-4f78b5a4-3f6f-435f-840b-0ba48581cfe6
+- `originalModelName`: `grok-4.7-high-fast`
+- Required model Grok 4.7 High Fast was available. Not Auto. Editing was allowed to continue.
+
+Logical agent: **Jetnity V1 production readiness evidence refresh 1**, Generation 1.
+Draft PR: #636.
+Live `origin/main` at that reconstruction: `b42d1ce1ee52fcb02a58acd269b10c121f906213`.
+Branch tip before the delivery commit: `d1e5fac63d54bd58359c950f0196dae84186bc1f` (this task seed only).
+
+The delivery files are the report and the handoff named above. This record does not change the task objective or the hard boundaries.
