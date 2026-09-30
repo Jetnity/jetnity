@@ -80,7 +80,7 @@ A local `next-env.d.ts` path rewrite was present in the worktree before editing.
 | Changed paths | The task allowlist only. See the manifest below. |
 | Ahead / behind before this delivery commit | `origin/main...HEAD` was `0` behind / `1` ahead. Merge-base `b5534340b0535402ffbe223f3687744e465c11b9`. The ahead commit was the task seed `ac9f1eb27c1723ac457c95da5da14c7bfc36b0bb`. |
 
-The review head is the branch tip that contains this report. Do not review `ac9f1eb27c1723ac457c95da5da14c7bfc36b0bb`. Re-fetch `main` before review. A new head invalidates this measurement. Fresh GitHub Actions and Vercel on this delivery head are not claimed in this section. The existing Preview on the task seed is not a review gate for the delivery head.
+The review head is the branch tip. Do not review `ac9f1eb27c1723ac457c95da5da14c7bfc36b0bb`. Re-fetch `main` before review. A new head invalidates this measurement. Section 5 was written before the delivery commit. Section 7 records what was observed after that commit. The existing Preview on the task seed is not a review gate.
 
 ## 6. Changed-file manifest at delivery
 
@@ -96,7 +96,24 @@ Against `origin/main` `b5534340b0535402ffbe223f3687744e465c11b9`, after the deli
 
 No other path is intended.
 
-## 7. Stop
+## 7. Post-push exact head
+
+Re-fetched `origin/main` after delivery commit `957230e299d7fdcfd482688548cc35ec01669e66` was pushed.
+
+| Item | Value |
+| --- | --- |
+| Delivery commit | `957230e299d7fdcfd482688548cc35ec01669e66` |
+| `origin/main` | `b5534340b0535402ffbe223f3687744e465c11b9` |
+| Merge-base | `b5534340b0535402ffbe223f3687744e465c11b9` |
+| Ahead / behind at that delivery commit | `0` behind / `2` ahead |
+| Exact-head CI on `957230e2` | `36760936474` **SUCCESS**. Pull-request event. Auth configuration and Typecheck, Lint & Build both passed. |
+| Vercel on `957230e2` | Commit status **success**, “Deployment has completed”. Target `https://vercel.com/jetnity-e1b93c82/jetnity-app/3hwAfwmUgGe8XKQ4TMEZmQHxuiaV`. No runtime acceptance is claimed. |
+
+Commits ahead of `main` at that measurement: `ac9f1eb2` task seed, then `957230e2` delivery. This section is a later commit on `957230e2`. If that later commit is the branch tip and `origin/main` is still the SHA above, the tip is `0` behind / `3` ahead. Read the tip live. Do not review the task seed. Do not treat Actions or Vercel on `957230e2` as the gate for the tip.
+
+Changed-file manifest against `main` remains the seven paths in section 6.
+
+## 8. Stop
 
 STOP for independent main-chat Technical-Lead review.
 

@@ -44,7 +44,8 @@ Old dated paragraphs were not rewritten into post-#651 history. Current status l
 - Production readiness is GitHub deployment `6767103412` state `success`, the Vercel commit status on `b5534340b0535402ffbe223f3687744e465c11b9`, plus the public `data-dpl-id`. The Vercel dashboard was not opened. No extra alias inventory beyond `jetnity.com` serving that id is claimed.
 - The public HTML still shows one H1, canonical `https://jetnity.com/`, one JSON-LD script with Organization, WebSite and SoftwareApplication, and a native `details` disclosure. This session did not re-run the #649 browser matrix or Trip Workspace runtime tests.
 - #626 was not retried. Provider mailboxes were not read. Repository comments were re-read.
-- This Draft's CI and Vercel Preview on the task seed are not acceptance evidence for the delivery head.
+- The task-seed Preview is not acceptance evidence.
+- After push, delivery commit `957230e299d7fdcfd482688548cc35ec01669e66` had CI `36760936474` **SUCCESS** and a Vercel commit status of success. A later commit records that observation. Actions on `957230e2` are not the gate for the later tip.
 - No Ready. No merge. No follow-up slice. PR stays Draft.
 
 ## Checks on this delivery tree
@@ -54,7 +55,7 @@ Both checks were run before the delivery commit:
 - `git diff --check`: pass
 - `node scripts/operating-mode-guard.mjs`: PASS
 
-No production build was run. This slice claims no runtime acceptance. Fresh GitHub Actions and Vercel on the delivery head are not yet evidence.
+No production build was run in this workspace. This slice claims no runtime acceptance. CI `36760936474` on `957230e2` is recorded after that push. The later tip needs its own exact-head Actions read.
 
 ## Residual risk
 

@@ -51,9 +51,19 @@ Taken after `git fetch origin main` and before the delivery commit that adds thi
 | Ahead / behind | `0` behind / `1` ahead |
 | Ahead commit | task seed `ac9f1eb27c1723ac457c95da5da14c7bfc36b0bb` |
 
-The review head is the branch tip that contains this handoff. Do not review the task seed. Re-fetch `main` again before review. This session does not preclaim CI, Vercel, Technical-Lead PASS, Ready or Merge for #653.
+The review head is the branch tip. Do not review the task seed. Re-fetch `main` again before review. This session does not preclaim Technical-Lead PASS, Ready or Merge for #653.
 
-After this delivery commit is pushed, and if `origin/main` is still the SHA above, the tip is `0` behind / `2` ahead. Read the tip live.
+Post-push re-fetch after delivery commit `957230e299d7fdcfd482688548cc35ec01669e66`:
+
+| Item | Value |
+| --- | --- |
+| `origin/main` | `b5534340b0535402ffbe223f3687744e465c11b9` |
+| Merge-base | `b5534340b0535402ffbe223f3687744e465c11b9` |
+| Ahead / behind at `957230e2` | `0` behind / `2` ahead |
+| CI on `957230e2` | `36760936474` **SUCCESS** |
+| Vercel on `957230e2` | commit status success, target `https://vercel.com/jetnity-e1b93c82/jetnity-app/3hwAfwmUgGe8XKQ4TMEZmQHxuiaV` |
+
+This paragraph is a later commit on that delivery commit. If it is the branch tip and `main` is unchanged, the tip is `0` behind / `3` ahead. Read the tip live. Actions and Vercel on `957230e2` are not the tip gate. No runtime acceptance is claimed from the Preview.
 
 ## Stop
 
