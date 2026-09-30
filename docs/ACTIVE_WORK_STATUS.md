@@ -1,28 +1,9 @@
 # Jetnity – Active Work Status
 
 Stand: 30. September 2026
-Status: **NORMAL / FINAL HOMEPAGE PRODUCT 1 IMPLEMENTED ON DRAFT PR #644 / STOP FOR INDEPENDENT TL CODE + COPY + TRUTH + VISUAL + SEARCH/AI REVIEW / NO READY / NO MERGE / NOT A LAUNCH PASS**
+Status: **NORMAL / PREFLIGHT 3 ACCEPTED CURRENT RELEASE-READINESS REASSESSMENT / #632 MERGED AND POST-MERGE VERIFIED / NO ACTIVE RUNTIME OR PRODUCT WRITER / #626 OPEN AND BLOCKED / NO UNGATED V1 IMPLEMENTATION / NOT A LAUNCH PASS**
 
-## 0-current. Final homepage product 1
-
-- Draft [PR #644](https://github.com/Jetnity/jetnity/pull/644), branch `feat/final-homepage-product-1`, issue #643.
-- Logical agent: **Jetnity final homepage product 1**, Generation 1.
-- Session: https://cursor.com/agents/bc-051f68b2-ac7c-4bbc-9055-e63466e955a2
-- `originalModelName=grok-4.7-high-fast`. Not Auto.
-- Baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`.
-- Binding spec: `docs/FINAL_HOMEPAGE_PRODUCT_SPEC_2026-09-30.md`.
-- Task: `docs/FINAL_HOMEPAGE_PRODUCT_1_TASK_2026-09-30.md`.
-- Report: `docs/FINAL_HOMEPAGE_PRODUCT_1_REPORT_2026-09-30.md`.
-- Handoff: `docs/FINAL_HOMEPAGE_PRODUCT_1_HANDOFF_2026-09-30.md`.
-- Self-review is not a Technical-Lead PASS. Cursor does not Ready or merge and does not start a follow-up slice.
-- Public indexing remains fail-closed. Built `robots.txt` is `Disallow: /`. Homepage HTML robots is `noindex, nofollow`.
-- Trip Workspace files owned by PR #642 were not edited.
-- Product head `fd2dfe2650930f9ec9dcda5f864017f542445c78`: CI `36729992149` SUCCESS, including Auth and Typecheck/Lint/Build. Vercel status SUCCESS. Preview HTML was not read because the alias redirects to Vercel SSO.
-- Exact next step: independent main-chat Technical-Lead review of code, copy, truth, visual and search/AI on the exact branch tip. Re-read `git rev-parse HEAD` before review. The CI above belongs to `fd2dfe26` unless the tip is still that SHA. Local gates and green CI are not that review.
-
-The Preflight 3 block below was the current writer map before this homepage slice. Its “no active product writer” sentence was true when written.
-
-## 0-historical. Accepted Preflight 3 — no active runtime or product writer at that persist
+## 0-current. Accepted Preflight 3 — no active runtime or product writer
 
 - Current pointer: `docs/POST_PREFLIGHT_3_CONTINUITY_CLEANUP_1_HANDOFF_2026-09-30.md`, then `docs/V1_RELEASE_READINESS_PREFLIGHT_3_REPORT_2026-09-30.md` and `docs/V1_RELEASE_READINESS_PREFLIGHT_3_HANDOFF_2026-09-30.md`. The report and handoff keep their delivery-time Draft wording. Closure receipt [5901241670](https://github.com/Jetnity/jetnity/pull/632#issuecomment-5901241670) is the post-merge successor. Do not edit those delivery files to pretend they were written after the merge.
 - [PR #632](https://github.com/Jetnity/jetnity/pull/632) is **MERGED / POST-MERGE VERIFIED / CLOSED**. Issue #631 is **CLOSED**. Accepted head `a494ddc3717e0b5c5b601d44ef026fe02b4d6fdb`. Technical-Lead FINAL PASS review `5359844130`. Merge and current `main` at this reconstruction: `949eced2d2bbd3c10054a7c8e0357a8211df4f6b`. Post-merge CI `36646933749` **SUCCESS** on that SHA. Re-fetch before treating any later SHA as current. Do not redispatch session `bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2`.
