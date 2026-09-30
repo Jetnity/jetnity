@@ -1,21 +1,9 @@
 # Jetnity – Active Work Status
 
 Stand: 30. September 2026
-Status: **NORMAL / DRAFT #642 TRIP WORKSPACE INFORMATION ARCHITECTURE 2 IN REVIEW / PREFLIGHT 3 ACCEPTED / #632 MERGED / #626 OPEN AND BLOCKED / NOT A LAUNCH PASS**
+Status: **NORMAL / PREFLIGHT 3 ACCEPTED CURRENT RELEASE-READINESS REASSESSMENT / #632 MERGED AND POST-MERGE VERIFIED / NO ACTIVE RUNTIME OR PRODUCT WRITER / #626 OPEN AND BLOCKED / NO UNGATED V1 IMPLEMENTATION / NOT A LAUNCH PASS**
 
-## 0-current. Trip Workspace information architecture 2 — Draft #642
-
-- Current writer while Draft [PR #642](https://github.com/Jetnity/jetnity/pull/642) is open: **Jetnity Trip Workspace information architecture 2**, Generation 1. Session https://cursor.com/agents/bc-d6c61c03-c9c0-45f4-8764-4fb9ff4b34bf. `originalModelName=grok-4.7-high-fast`. Not Auto.
-- Issue #641. Branch `feat/trip-workspace-task-modes-2`. Baseline `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`. Task seed `711ea1a0`. Audited runtime head `bc718c68ac498d8ba6ed9d6d83bfca0172aa715d`. The docs/evidence commit on top of that head does not change workspace components. Re-fetch the branch tip before review. Any new head invalidates these gates.
-- Binding task: `docs/TRIP_WORKSPACE_INFORMATION_ARCHITECTURE_2_TASK_2026-09-30.md`. Report, self-review and handoff use the same date stem. Evidence: `docs/evidence/trip-workspace-information-architecture-2/`.
-- One Trip Workspace shell, four URL-backed modes: Übersicht, Reiseplan, Organisieren, Vorbereitung. Domains stay under Organisieren. No provider call, no truth/persistence change, no dependency, no #626, no Ready, no merge.
-- Local gates on `bc718c68`: focused tests 42/42, `npm test` 4072/4072, typecheck pass, lint 0 errors / 149 existing warnings, production build pass, hygiene checks pass. Browser matrix 7 viewports plus the assistant audit route: 0 errors, 0 provider/model requests.
-- Remote observation after evidence commit `cb666be2`, recorded in the handoff: GitHub Actions `36726836194` passed, and Vercel Preview deployment `6761504763` completed. That observation is not a Technical-Lead PASS. Re-read CI on any later head.
-- Cursor does not Ready or merge and does not start a follow-up slice. Next step is independent main-chat Technical-Lead code, IA, visual and interaction review.
-
-The Preflight 3 block below was the current continuity statement before this slice. Its “no active product writer” sentence was true at that persist. It is not the writer while Draft #642 is open.
-
-## 0-historical. Accepted Preflight 3 — no active runtime or product writer
+## 0-current. Accepted Preflight 3 — no active runtime or product writer
 
 - Current pointer: `docs/POST_PREFLIGHT_3_CONTINUITY_CLEANUP_1_HANDOFF_2026-09-30.md`, then `docs/V1_RELEASE_READINESS_PREFLIGHT_3_REPORT_2026-09-30.md` and `docs/V1_RELEASE_READINESS_PREFLIGHT_3_HANDOFF_2026-09-30.md`. The report and handoff keep their delivery-time Draft wording. Closure receipt [5901241670](https://github.com/Jetnity/jetnity/pull/632#issuecomment-5901241670) is the post-merge successor. Do not edit those delivery files to pretend they were written after the merge.
 - [PR #632](https://github.com/Jetnity/jetnity/pull/632) is **MERGED / POST-MERGE VERIFIED / CLOSED**. Issue #631 is **CLOSED**. Accepted head `a494ddc3717e0b5c5b601d44ef026fe02b4d6fdb`. Technical-Lead FINAL PASS review `5359844130`. Merge and current `main` at this reconstruction: `949eced2d2bbd3c10054a7c8e0357a8211df4f6b`. Post-merge CI `36646933749` **SUCCESS** on that SHA. Re-fetch before treating any later SHA as current. Do not redispatch session `bc-bc5cfa85-7a5c-4208-9aee-ba9c0256d2e2`.

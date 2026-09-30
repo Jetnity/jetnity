@@ -356,8 +356,9 @@ export default function TripWorkspace({
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
   const detailOffen =
-    (modus.ansicht === 'organisieren' && modus.bereich != null && bereinigt.art === 'gap') ||
-    (modus.ansicht === 'plan' && bereinigt.art === 'item')
+    modusBereit &&
+    ((modus.ansicht === 'organisieren' && modus.bereich != null && bereinigt.art === 'gap') ||
+      (modus.ansicht === 'plan' && bereinigt.art === 'item'))
   const gewaehlterPunktId = bereinigt.art === 'item' ? bereinigt.itemId : undefined
 
   React.useEffect(() => {
@@ -512,7 +513,7 @@ export default function TripWorkspace({
     modusSetzen({ ansicht, bereich: null, urlAnpassen: false }, 'push')
   }
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const anwenden = (art: 'mount' | 'pop') => {
       const params = new URLSearchParams(window.location.search)
       const gelesen = modusAusQuery(params)
@@ -532,6 +533,7 @@ export default function TripWorkspace({
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
     // Die History-Lesung hängt nur an der ersten Montage und an popstate.
+    // Sie läuft vor dem ersten Paint, damit kein falscher Modus sichtbar wird.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -580,7 +582,7 @@ export default function TripWorkspace({
   const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
   const aktiveDomain = detailDomainVon(bereinigt, reise, ungeplantePunkte)
   const detailVerborgen = !detailOffen
-  const domainNavSichtbar = modus.ansicht === 'organisieren' && !(kompakt && detailOffen)
+  const domainNavSichtbar = modusBereit && modus.ansicht === 'organisieren' && !(kompakt && detailOffen)
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
   const reisezeit = <ReisezeitHinweise reise={reise} evaluations={seasonalEvaluations} />
@@ -758,7 +760,18 @@ export default function TripWorkspace({
             {aenderungFeld}
             {begleiterFeld}
           </div>
-        ) : null}
+        ) : (
+          <div
+            data-workspace-modus-ausstehend=""
+            role="status"
+            aria-live="polite"
+            aria-busy="true"
+            inert
+            className="mt-6 text-sm leading-6 text-ink-800"
+          >
+            Die Reiseansicht wird vorbereitet.
+          </div>
+        )}
 
         {kompakt && detailOffen ? (
           <div

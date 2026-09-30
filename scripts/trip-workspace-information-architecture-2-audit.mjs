@@ -805,6 +805,178 @@ async function lauf(browser, viewport) {
   return { viewport: viewport.name, schritte, fehler, netz }
 }
 
+async function modusBeobachten(page) {
+  await page.addInitScript(() => {
+    const protokoll = []
+    window.__jetnityErsteSicht = protokoll
+    const lese = () => {
+      const ansichtEl = document.querySelector('[data-workspace-ansicht]')
+      const ausstehend = document.querySelector('[data-workspace-modus-ausstehend]')
+      const uebersicht = document.querySelector('[data-arbeitsbereich="uebersicht"]')
+      const sichtbar = (el) => {
+        if (!(el instanceof HTMLElement)) return false
+        if (el.hidden || el.closest('[hidden]')) return false
+        const rand = el.getBoundingClientRect()
+        return rand.width > 0 && rand.height > 0
+      }
+      const eintrag = {
+        ansicht: ansichtEl ? ansichtEl.getAttribute('data-workspace-ansicht') : null,
+        bereich: ansichtEl ? ansichtEl.getAttribute('data-workspace-bereich') || '' : null,
+        ausstehend: Boolean(ausstehend),
+        uebersicht: sichtbar(uebersicht),
+      }
+      const letzter = protokoll[protokoll.length - 1]
+      if (
+        letzter &&
+        letzter.ansicht === eintrag.ansicht &&
+        letzter.bereich === eintrag.bereich &&
+        letzter.ausstehend === eintrag.ausstehend &&
+        letzter.uebersicht === eintrag.uebersicht
+      ) {
+        return
+      }
+      protokoll.push(eintrag)
+    }
+    const start = () => {
+      try {
+        const beobachter = new MutationObserver(lese)
+        beobachter.observe(document.documentElement, { subtree: true, childList: true, attributes: true })
+        lese()
+      } catch (error) {
+        window.__jetnityErsteSichtFehler = String(error)
+      }
+    }
+    if (document.documentElement) start()
+    else document.addEventListener('DOMContentLoaded', start)
+  })
+}
+
+function ersteSichtPruefen(protokoll, ansicht, bereich) {
+  const mitAnsicht = (protokoll || []).filter((eintrag) => eintrag.ansicht)
+  const erste = mitAnsicht[0] || null
+  const fremd = mitAnsicht.some((eintrag) => eintrag.ansicht !== ansicht || (eintrag.bereich || '') !== bereich)
+  const uebersichtVorDemZiel = ansicht !== 'uebersicht' && (protokoll || []).some((eintrag) => eintrag.uebersicht)
+  return {
+    erste,
+    fremd,
+    uebersichtVorDemZiel,
+    protokoll: protokoll || [],
+  }
+}
+
+async function laufErsteSicht(browser) {
+  const faelle = [
+    { viewport: '360x800', width: 360, height: 800, hasTouch: true, name: 'plan', such: '?ansicht=plan', ansicht: 'plan', bereich: '' },
+    { viewport: '360x800', width: 360, height: 800, hasTouch: true, name: 'uebersicht', such: '', ansicht: 'uebersicht', bereich: '' },
+    { viewport: '390x844', width: 390, height: 844, hasTouch: true, name: 'vorbereitung', such: '?ansicht=vorbereitung', ansicht: 'vorbereitung', bereich: '' },
+    {
+      viewport: '390x844',
+      width: 390,
+      height: 844,
+      hasTouch: true,
+      name: 'unterkunft',
+      such: '?ansicht=organisieren&bereich=unterkunft',
+      ansicht: 'organisieren',
+      bereich: 'unterkunft',
+    },
+    { viewport: '768x1024', width: 768, height: 1024, hasTouch: true, name: 'plan', such: '?ansicht=plan', ansicht: 'plan', bereich: '' },
+    {
+      viewport: '1440x900',
+      width: 1440,
+      height: 900,
+      hasTouch: false,
+      name: 'invalid',
+      such: '?ansicht=unbekannt&bereich=fluege&spur=bleibt',
+      ansicht: 'uebersicht',
+      bereich: '',
+    },
+    {
+      viewport: '1440x900',
+      width: 1440,
+      height: 900,
+      hasTouch: false,
+      name: 'fluege',
+      such: '?ansicht=organisieren&bereich=fluege',
+      ansicht: 'organisieren',
+      bereich: 'fluege',
+    },
+  ]
+  const ergebnisse = []
+  const fehler = []
+  let letzter = null
+  for (const fall of faelle) {
+    if (!letzter || letzter.viewport !== fall.viewport) {
+      if (letzter) await letzter.ctx.close()
+      const ctx = await browser.newContext({
+        viewport: { width: fall.width, height: fall.height },
+        hasTouch: fall.hasTouch,
+        deviceScaleFactor: 1,
+      })
+      const page = await ctx.newPage()
+      const netz = []
+      await abfangen(page, netz)
+      await modusBeobachten(page)
+      await page.addInitScript(
+        ({ schluessel, reise }) => {
+          window.localStorage.setItem(schluessel, JSON.stringify(reise))
+        },
+        { schluessel: SCHLUESSEL, reise: LUECKE },
+      )
+      letzter = { viewport: fall.viewport, ctx, page, netz }
+    }
+    const { page, netz } = letzter
+    const vorher = netz.length
+    try {
+      await page.goto(`${BASIS}/reisen/${LUECKE.id}${fall.such}`, { waitUntil: 'load', timeout: 60_000 })
+      await page.reload({ waitUntil: 'load', timeout: 60_000 })
+      await page.waitForSelector('[data-workspace-ansicht]', { timeout: 20_000 })
+      const gelesen = await page.evaluate(() => ({
+        protokoll: window.__jetnityErsteSicht || [],
+        fehler: window.__jetnityErsteSichtFehler || null,
+        ansicht: document.querySelector('[data-workspace-ansicht]')?.getAttribute('data-workspace-ansicht') ?? null,
+      }))
+      const pruefung = ersteSichtPruefen(gelesen.protokoll, fall.ansicht, fall.bereich)
+      const href = await page.evaluate(() => window.location.pathname + window.location.search)
+      const screenshot = await speichern(page, `erste-sicht-${fall.name}_${fall.viewport}`)
+      const stand = {
+        viewport: fall.viewport,
+        name: fall.name,
+        such: fall.such,
+        href,
+        screenshot,
+        erste: pruefung.erste,
+        fremd: pruefung.fremd,
+        uebersichtVorDemZiel: pruefung.uebersichtVorDemZiel,
+        protokoll: pruefung.protokoll,
+        scriptFehler: gelesen.fehler,
+        domAnsicht: gelesen.ansicht,
+        netz: netz.length - vorher,
+      }
+      ergebnisse.push(stand)
+      if (!pruefung.erste || pruefung.fremd || pruefung.uebersichtVorDemZiel || stand.netz !== 0) {
+        throw new Error(
+          `${fall.viewport} ${fall.name}: erste=${JSON.stringify(pruefung.erste)} fremd=${pruefung.fremd} uebersicht=${pruefung.uebersichtVorDemZiel} netz=${stand.netz} dom=${gelesen.ansicht} script=${gelesen.fehler} len=${gelesen.protokoll.length}`,
+        )
+      }
+      if (fall.name === 'invalid') {
+        const url = new URL(page.url())
+        if (url.searchParams.get('ansicht') != null || url.searchParams.get('bereich') != null || url.searchParams.get('spur') !== 'bleibt') {
+          throw new Error(`invalid bleibt nicht geschlossen: ${url.search}`)
+        }
+      }
+    } catch (error) {
+      fehler.push(String(error && error.stack ? error.stack : error))
+      try {
+        await speichern(page, `error_erste-sicht-${fall.name}_${fall.viewport}`)
+      } catch {
+        // optional
+      }
+    }
+  }
+  if (letzter) await letzter.ctx.close()
+  return { viewport: 'erste-sicht', schritte: ergebnisse, fehler, netz: [] }
+}
+
 async function main() {
   mkdirSync(join(EVIDENZ, 'screens', PHASE), { recursive: true })
   const server = await serverStarten()
@@ -821,6 +993,7 @@ async function main() {
       laeufe.push(await lauf(browser, viewport))
     }
     if (PHASE === 'after' && !nur?.length) laeufe.push(await laufAssistant(browser))
+    if (PHASE === 'after' && (!nur?.length || nur.includes('erste-sicht'))) laeufe.push(await laufErsteSicht(browser))
   } finally {
     await browser.close()
     try {
