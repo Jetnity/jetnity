@@ -58,8 +58,7 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
       assert.match(link, /width=\{384\}/)
       assert.match(link, /height=\{128\}/)
       assert.match(link, /unoptimized/)
-      assert.match(link, /h-\[48px\] w-auto/)
-      assert.match(link, /width: 'auto', height: '48px'/)
+      assert.match(link, /width: 'auto'/)
       assert.equal(link.includes('<img'), false)
       assert.equal(/invert|brightness-|hue-rotate|saturate-|sepia|grayscale|mix-blend/.test(link), false)
       assert.equal(link.includes('rotate-45'), false)
@@ -71,6 +70,7 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
   test('die Leiste lädt das Logo sofort und färbt es nicht auf eine Fläche um', () => {
     const link = markenlink(navbar)
     assert.match(link, /priority/)
+    assert.match(link, /h-\[48px\] w-auto md:h-\[32px\] lg:h-\[48px\]/)
     assert.equal(link.includes('bg-white'), false)
     assert.match(navbar, /min-h-\[72px\]/)
     assert.match(navbar, /FOKUS_RING/)
@@ -78,6 +78,8 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
 
   test('der Footer legt das dunkle Wortzeichen auf eine helle Fläche', () => {
     const link = markenlink(footer)
+    assert.match(link, /h-\[48px\] w-auto/)
+    assert.match(link, /height: '48px'/)
     assert.match(link, /bg-white/)
     assert.match(link, /rounded-xl/)
     assert.match(link, /min-h-11/)

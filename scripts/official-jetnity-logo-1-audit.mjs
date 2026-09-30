@@ -57,7 +57,19 @@ for (const vp of viewports) {
       /* ungültige URL */
     }
   })
-  const antwort = await page.goto(`${basis}/`, { waitUntil: 'networkidle', timeout: 60000 })
+  const antwort = await page.goto(`${basis}/`, { waitUntil: 'load', timeout: 60000 })
+  await page.locator('header a[aria-label="Jetnity Startseite"]').waitFor()
+  await page.evaluate(async () => {
+    await document.fonts.ready
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(null))))
+  })
+  if (phase === 'after') {
+    await page.waitForFunction(() => {
+      const img = document.querySelector('header img')
+      return Boolean(img && img.complete && img.naturalWidth === 384)
+    })
+    await page.waitForTimeout(300)
+  }
   if (vp.text200) {
     await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
     await page.evaluate(
@@ -145,7 +157,10 @@ for (const vp of viewports) {
   let menuOffen = null
   if (vp.width < 768) {
     await page.locator('button[aria-controls="oeffentliche-mobile-navigation"]').click()
-    await page.locator('#oeffentliche-mobile-navigation').waitFor({ state: 'visible' })
+    await page.waitForFunction(() => {
+      const nav = document.querySelector('#oeffentliche-mobile-navigation')
+      return Boolean(nav) && !nav.hasAttribute('hidden')
+    })
     menuOffen = await page.evaluate(() => {
       const nav = document.querySelector('#oeffentliche-mobile-navigation')
       const box = nav?.getBoundingClientRect()
@@ -188,7 +203,10 @@ for (const vp of viewports) {
       if (bild.naturalWidth !== 384 || bild.naturalHeight !== 128) {
         fehler.push(`${vp.name}: ${ort}-natural ${bild.naturalWidth}x${bild.naturalHeight}`)
       }
-      if (!nahe(bild.height, 48, 1) || !nahe(bild.width, 144, 1.5)) {
+      const tablet = ort === 'Navbar' && vp.width >= 768 && vp.width < 1024
+      const zielHoehe = tablet ? 32 : 48
+      const zielBreite = tablet ? 96 : 144
+      if (!nahe(bild.height, zielHoehe, 1) || !nahe(bild.width, zielBreite, 1.5)) {
         fehler.push(`${vp.name}: ${ort}-rendered ${bild.width.toFixed(2)}x${bild.height.toFixed(2)}`)
       }
       if (bild.filter !== 'none') fehler.push(`${vp.name}: ${ort}-filter ${bild.filter}`)
@@ -206,6 +224,9 @@ for (const vp of viewports) {
     }
     if (messung.header && messung.header.height < 72) {
       fehler.push(`${vp.name}: Header ${messung.header.height} unter 72`)
+    }
+    if (!vp.text200 && messung.header && messung.header.height > 80) {
+      fehler.push(`${vp.name}: Header ${messung.header.height} verlässt die 72px-Zeile`)
     }
     if (vp.width < 768) {
       if (!messung.menu) fehler.push(`${vp.name}: Menüknopf fehlt`)

@@ -151,11 +151,12 @@ export default function PublicNavbar() {
           href="/"
           aria-label="Jetnity Startseite"
           className={cn(
-            '-mx-2 inline-flex min-h-11 shrink-0 items-center px-2',
+            '-mx-2 inline-flex min-h-11 shrink-0 items-center px-2 md:px-1 lg:px-2',
             FOKUS_RING,
           )}
         >
           {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
+          {/* 32px nur zwischen md und lg: dort sitzen Navigation und Sitzung in derselben 72px-Zeile. */}
           <Image
             src="/brand/jetnity-logo.png"
             alt=""
@@ -163,9 +164,9 @@ export default function PublicNavbar() {
             height={128}
             priority
             unoptimized
-            sizes="144px"
-            className="h-[48px] w-auto"
-            style={{ width: 'auto', height: '48px' }}
+            sizes="(min-width: 1024px) 144px, (min-width: 768px) 96px, 144px"
+            className="h-[48px] w-auto md:h-[32px] lg:h-[48px]"
+            style={{ width: 'auto' }}
           />
         </Link>
 
