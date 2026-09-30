@@ -315,6 +315,15 @@ async function messen(page, extra = {}) {
       detailEyebrowBox && detailHeadingBox && detailEyebrowBox.bottom <= detailHeadingBox.top + 8
         ? detailEyebrowBox.top
         : detailHeadingBox?.top
+    const zurueckKnoepfe = [...document.querySelectorAll('button')].filter((el) => {
+      if (!(el instanceof HTMLElement)) return false
+      if (el.hidden || el.closest('[hidden]')) return false
+      const rand = el.getBoundingClientRect()
+      if (rand.width <= 0 || rand.height <= 0) return false
+      return (el.innerText || '').includes('Zurück zur Reise')
+    })
+    const zurueckInDetail = zurueckKnoepfe.filter((el) => el.closest('[data-workspace-detail]')).length
+    const zurueckSticky = zurueckKnoepfe.filter((el) => el.closest('nav[aria-label="Reise"]')).length
     const detailIdentitaetUnterAbdeckung = Boolean(
       detailHeadingBox &&
         detailOben != null &&
@@ -373,6 +382,9 @@ async function messen(page, extra = {}) {
       detailHeading: rechteck(detailHeading),
       detailEyebrow: rechteck(detailEyebrow),
       detailIdentitaetUnterAbdeckung,
+      zurueckAnzahl: zurueckKnoepfe.length,
+      zurueckInDetail,
+      zurueckSticky,
       uebersicht: rechteck(uebersicht),
       arbeit: arbeitBox,
       arbeitName: sichtbareArbeit?.getAttribute('data-arbeitsbereich') ?? null,
@@ -393,9 +405,12 @@ async function messen(page, extra = {}) {
 }
 
 async function schliessen(page) {
-  const zurueck = page.locator('[data-workspace-detail] button', { hasText: 'Zurück zur Reise' })
-  if (await zurueck.count()) {
-    await zurueck.first().click()
+  const inKarte = page.locator('[data-workspace-detail] button', { hasText: 'Zurück zur Reise' })
+  const sticky = page.locator('nav[aria-label="Reise"] button', { hasText: 'Zurück zur Reise' })
+  if (await inKarte.count()) {
+    await inKarte.first().click()
+  } else if (await sticky.count()) {
+    await sticky.first().click()
   } else {
     await page.keyboard.press('Escape')
   }

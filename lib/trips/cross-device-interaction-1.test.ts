@@ -84,6 +84,16 @@ test('die obere Abdeckung folgt den gemessenen Leisten und nicht einer festen Ko
   assert.equal(quelle.includes('rand.bottom > 72'), false)
 })
 
+test('kompakt hat nur die sticky Rückkehr, die weite Fläche behält die Karten-Rückkehr', () => {
+  const detail = readFileSync('components/trips/TripWorkspaceDetail.tsx', 'utf8')
+  const workspace = readFileSync('components/trips/TripWorkspace.tsx', 'utf8')
+  const navigation = readFileSync('components/trips/TripWorkspaceNavigation.tsx', 'utf8')
+  assert.match(detail, /!kompakt \? \([\s\S]*Zurück zur Reise/)
+  assert.match(workspace, /TripWorkspaceNavigation sichtbar=\{kompakt && detailOffen\}/)
+  assert.match(workspace, /kompakt \? zurueckRef\.current : detailFokusRef\.current/)
+  assert.match(navigation, /Zurück zur Reise/)
+})
+
 test('Suche sitzt im aktiven Bereich und startet nicht mit dem blossen Öffnen', () => {
   const quelle = readFileSync('components/trips/TripWorkspace.tsx', 'utf8')
   const split = quelle.indexOf('data-workspace-split')

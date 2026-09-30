@@ -59,17 +59,19 @@ export default function TripWorkspaceDetail({
         kompakt ? 'mt-4' : 'mt-5',
       )}
     >
-      <button
-        ref={fokusRef}
-        type="button"
-        onClick={onSchliessen}
-        className="inline-flex min-h-11 scroll-mt-32 items-center gap-2 rounded-full px-2 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        Zurück zur Reise
-      </button>
+      {!kompakt ? (
+        <button
+          ref={fokusRef}
+          type="button"
+          onClick={onSchliessen}
+          className="inline-flex min-h-11 scroll-mt-32 items-center gap-2 rounded-full px-2 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          Zurück zur Reise
+        </button>
+      ) : null}
 
-      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+      <p className={cn('text-xs font-semibold uppercase tracking-[0.16em] text-brand-600', kompakt ? 'mt-0' : 'mt-3')}>
         {auswahl.art === 'item' ? 'Punkt' : gap ? gapEyebrowText(gap) : 'Bereich'}
       </p>
       <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto">

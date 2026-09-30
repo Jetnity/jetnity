@@ -187,6 +187,12 @@ Technical Lead review of exact head `b09957c6ae39f84a7eb557dde48313a57af73dd9` r
 
 No other new path is authorized by this addendum.
 
+## 10. R2 addendum — 30 September 2026
+
+Technical Lead review of exact head `4df85181e683bcdb9b010e7f86d113876b0a117d` accepted R1 and required one further correction inside the same seam.
+
+On compact layout the sticky `TripWorkspaceNavigation` is the only “Zurück zur Reise” control. The in-card control in `TripWorkspaceDetail` stays on desktop, where that sticky bar is not mounted. Escape, focus restoration, measured occlusion, and explicit search stay as in R1. No new runtime path.
+
 R1 also requires, inside the already allowed workspace seam:
 
 - compact explicit search must show the sticky return together with a clear domain or search identity, using the measured sticky occlusion rather than a fixed 72px or 96px offset;
