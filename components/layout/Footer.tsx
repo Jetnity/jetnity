@@ -31,10 +31,10 @@ export default function Footer() {
           <div className="max-w-md">
             <Link
               href="/"
-              className="-mx-2 inline-flex min-h-11 items-center rounded-xl bg-white px-3 py-1.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+              className="-mx-2 inline-flex min-h-11 items-center px-3 py-1.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
               aria-label="Jetnity Startseite"
             >
-              {/* Das Wortzeichen ist dunkelgrün. Es bleibt unverändert und liegt deshalb auf einer hellen Fläche. */}
+              {/* Dasselbe offizielle PNG. Nur diese Footer-Darstellung wird reinweiß; Geometrie und Asset bleiben. */}
               <Image
                 src="/brand/jetnity-logo.png"
                 alt=""
@@ -42,7 +42,7 @@ export default function Footer() {
                 height={128}
                 unoptimized
                 sizes="144px"
-                className="h-[48px] w-auto"
+                className="h-[48px] w-auto brightness-0 invert"
                 style={{ width: 'auto', height: '48px' }}
               />
             </Link>
