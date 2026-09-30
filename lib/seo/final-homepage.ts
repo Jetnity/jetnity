@@ -185,6 +185,10 @@ export const HOMEPAGE_PRODUKTFENSTER = {
   jetztWichtig: 'Die Unterkunft in Porto ist noch offen.',
   hinweis: 'Beispiel aus einem Reiseplan. Kein Preis, keine Verfügbarkeit und keine amtliche Auskunft.',
   naechsterSchritt: 'Eigenes Ziel bestätigen',
+  route: [
+    { ort: 'Lissabon', text: 'Ort der Beispielroute.' },
+    { ort: 'Porto', text: 'Ort der Beispielroute. Unterkunft noch offen.' },
+  ],
   modiHinweis:
     'Diese vier Bereiche gibt es in einer echten Reise. Die Beispielreise selbst bleibt eine Produktvorschau.',
   modi: [
@@ -210,6 +214,18 @@ export const HOMEPAGE_PRODUKTFENSTER = {
     },
   ],
 } as const
+
+/** Sichtbare Statusgruppen in der Reihenfolge, in der der Stand zuerst belegt ist. Keine neue Wahrheit. */
+export function homepageFaehigkeitenGruppiert() {
+  const reihenfolge: HomepageKennzeichnung[] = []
+  for (const eintrag of HOMEPAGE_FAEHIGKEITEN) {
+    if (!reihenfolge.includes(eintrag.kennzeichnung)) reihenfolge.push(eintrag.kennzeichnung)
+  }
+  return reihenfolge.map((kennzeichnung) => ({
+    kennzeichnung,
+    eintraege: HOMEPAGE_FAEHIGKEITEN.filter((eintrag) => eintrag.kennzeichnung === kennzeichnung),
+  }))
+}
 
 export const HOMEPAGE_VERTRAUEN = [
   'Jetnity trifft keine wichtige Reiseentscheidung still für dich.',
