@@ -113,7 +113,7 @@ async function serverStarten() {
     umgebung.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTAwMDAwMDAsImV4cCI6MjAwMDAwMDAwMH0.audit'
   umgebung.NEXT_PUBLIC_APP_URL = BASIS
-  const kind = spawn('npm', ['run', 'dev', '--', '-p', PORT, '-H', '127.0.0.1'], {
+  const kind = spawn('npx', ['next', 'start', '-p', PORT, '-H', '127.0.0.1'], {
     env: umgebung,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
