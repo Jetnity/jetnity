@@ -93,7 +93,7 @@ The Vercel bot comment on that SHA says Ready and `DEPLOYED`. This session did n
 
 ## 6. Residuals for the Technical Lead
 
-- The external gates above belong to `fa3c9be5`. Re-read them if the branch tip moves.
+- The external gates above belong to `fa3c9be5`. Re-read them if the branch tip moves. This receipt is not on that tip: `git push` returned HTTP 401 and the GitHub contents API returned 403. PR #669 was re-read as Draft at head `fa3c9be5`.
 - The side panel still contains the pre-existing line “Später begleiten dich Live-Hinweise und wichtige Erinnerungen.” This slice did not rewrite that future-tense sentence. If live hints are not yet a user promise, a later copy pass should soften it.
 - `html` scroll-padding and the section `scroll-mt` both offset the focused manual region, so it lands lower than a single header height. The heading stays below the sticky header. Tightening that landing is separate from this contract.
 - The audit is headless Chromium, not a physical phone.

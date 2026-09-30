@@ -14,7 +14,7 @@ Status: **AUTHOR SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 - It is not an independent Technical-Lead review.
 - It is not a physical-device pass.
 - It did not sign in, so the account badge and account storage line were not seen in a browser.
-- GitHub CI, Auth, and Vercel were later read as success on `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`. That read is not a Technical-Lead PASS, and the preview was not opened again in a browser.
+- GitHub CI, Auth, and Vercel were later read as success on `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`. That read is not a Technical-Lead PASS, and the preview was not opened again in a browser. Publishing this sentence failed: `git push` returned HTTP 401 and the contents API returned 403, so the GitHub head stayed `fa3c9be5`.
 - The pre-existing “Live-Hinweise” sentence in the desktop guide was left as it was.
 
 ## Verdict
