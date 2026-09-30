@@ -11,6 +11,7 @@ import { ArrowRightLeft, Loader2 } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
+import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { mobilitySucheFehlerAntwort, mobilitySucheVomClient } from '@/lib/mobility/client-anfrage'
 import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
 import { MOBILITY_MODE_BEZEICHNUNG } from '@/lib/mobility/domain'
@@ -22,6 +23,13 @@ import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
+import {
+  ORGANISIEREN_EINGABE_KLASSE,
+  ORGANISIEREN_FLAECHE_KLASSE,
+  ORGANISIEREN_PRIMAR_KLASSE,
+  ORGANISIEREN_TEXTAREA_KLASSE,
+} from '@/lib/trips/organize-premium-experience-6'
+import { cn } from '@/lib/utils'
 import { MOBILITY_MODES, type MobilityMode, type Trip, type TripItem } from '@/types/trips'
 
 const UNTERBEREICHE = ['verbindungen', 'mietwagen'] as const
@@ -174,7 +182,8 @@ export default function MobilitaetBereich({
       <div hidden={unterbereich !== 'verbindungen'} className={unterbereich === 'verbindungen' ? 'grid gap-6' : 'hidden'}>
       <section
         aria-label="Deine Verbindungen"
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+        data-organisieren-flaeche="bestand"
+        className={ORGANISIEREN_FLAECHE_KLASSE}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -269,15 +278,17 @@ export default function MobilitaetBereich({
 
       <section
         aria-label="Mobilitätssuche"
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+        data-organisieren-flaeche="suche"
+        className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
       >
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Suche</p>
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
           Bahn, Bus, Fähre und Transfer
         </h2>
         {sucht ? (
           <p className="mt-5 flex min-h-[4.5rem] items-center gap-2 text-sm leading-6 text-ink-800">
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
             Verbindungen werden geprüft …
           </p>
         ) : (
@@ -290,7 +301,7 @@ export default function MobilitaetBereich({
           type="button"
           onClick={sucheStarten}
           disabled={sucht}
-          className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+          className={cn(ORGANISIEREN_PRIMAR_KLASSE, 'mt-4')}
         >
           {sucht ? 'Wird geprüft …' : 'Verbindungen prüfen'}
         </button>
@@ -361,7 +372,8 @@ function ManuelleVerbindung({
   return (
     <section
       aria-label="Manuelle Verbindung"
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      data-organisieren-flaeche="manuell"
+      className={ORGANISIEREN_FLAECHE_KLASSE}
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Manuell</p>
       <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
@@ -372,129 +384,136 @@ function ManuelleVerbindung({
       </p>
 
       <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Art
-            <select
-              value={mode}
-              onChange={(ereignis) => setMode(ereignis.target.value as MobilityMode)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-sm text-ink-900"
-            >
-              {MODI.map((wert) => (
-                <option key={wert} value={wert}>
-                  {MOBILITY_MODE_BEZEICHNUNG[wert]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Tag
-            <select
-              value={dayId}
-              onChange={(ereignis) => setDayId(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-sm text-ink-900"
-            >
-              <option value="">Noch nicht eingeplant</option>
-              {reise.days.map((tag) => (
-                <option key={tag.id} value={tag.id}>
-                  {tag.title || (tag.dayDate ? datumKurz(tag.dayDate) : `Tag ${tag.dayIndex}`)}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Einordnung">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Art
+              <select
+                value={mode}
+                onChange={(ereignis) => setMode(ereignis.target.value as MobilityMode)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                {MODI.map((wert) => (
+                  <option key={wert} value={wert}>
+                    {MOBILITY_MODE_BEZEICHNUNG[wert]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Tag
+              <select
+                value={dayId}
+                onChange={(ereignis) => setDayId(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                <option value="">Noch nicht eingeplant</option>
+                {reise.days.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.title || (tag.dayDate ? datumKurz(tag.dayDate) : `Tag ${tag.dayIndex}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Von
-            <input
-              value={originName}
-              onChange={(ereignis) => setOriginName(ereignis.target.value)}
-              required
-              maxLength={120}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Nach
-            <input
-              value={destinationName}
-              onChange={(ereignis) => setDestinationName(ereignis.target.value)}
-              required
-              maxLength={120}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Route">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Von
+              <input
+                value={originName}
+                onChange={(ereignis) => setOriginName(ereignis.target.value)}
+                required
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Nach
+              <input
+                value={destinationName}
+                onChange={(ereignis) => setDestinationName(ereignis.target.value)}
+                required
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Abfahrt
-            <input
-              type="date"
-              value={startsOn}
-              onChange={(ereignis) => setStartsOn(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Uhrzeit
-            <input
-              type="time"
-              value={startsAt}
-              onChange={(ereignis) => setStartsAt(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Abfahrt">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Abfahrt
+              <input
+                type="date"
+                value={startsOn}
+                onChange={(ereignis) => setStartsOn(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Uhrzeit
+              <input
+                type="time"
+                value={startsAt}
+                onChange={(ereignis) => setStartsAt(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Ankunft
-            <input
-              type="date"
-              value={endsOn}
-              onChange={(ereignis) => setEndsOn(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Uhrzeit
-            <input
-              type="time"
-              value={endsAt}
-              onChange={(ereignis) => setEndsAt(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Ankunft">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Ankunft
+              <input
+                type="date"
+                value={endsOn}
+                onChange={(ereignis) => setEndsOn(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Uhrzeit
+              <input
+                type="time"
+                value={endsAt}
+                onChange={(ereignis) => setEndsAt(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <label className="grid gap-1 text-sm font-medium text-brand-800">
-          Verbindungsnummer, falls bekannt
-          <input
-            value={connectionRef}
-            onChange={(ereignis) => setConnectionRef(ereignis.target.value)}
-            maxLength={40}
-            className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-          />
-        </label>
+        <OrganisierenFeldgruppe titel="Angaben">
+          <div className="grid min-w-0 gap-3">
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Verbindungsnummer, falls bekannt
+              <input
+                value={connectionRef}
+                onChange={(ereignis) => setConnectionRef(ereignis.target.value)}
+                maxLength={40}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Notiz
+              <textarea
+                value={note}
+                onChange={(ereignis) => setNote(ereignis.target.value)}
+                maxLength={500}
+                rows={2}
+                className={ORGANISIEREN_TEXTAREA_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <label className="grid gap-1 text-sm font-medium text-brand-800">
-          Notiz
-          <textarea
-            value={note}
-            onChange={(ereignis) => setNote(ereignis.target.value)}
-            maxLength={500}
-            rows={2}
-            className="rounded-2xl border border-line-200 bg-white px-3 py-2 text-base text-ink-900 sm:text-sm"
-          />
-        </label>
-
-        <button
-          type="submit"
-          disabled={laeuft}
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
-        >
+        <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
           {laeuft ? 'Wird gespeichert …' : 'Verbindung speichern'}
         </button>
       </form>

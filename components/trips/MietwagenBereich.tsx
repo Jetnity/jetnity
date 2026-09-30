@@ -9,7 +9,6 @@
 import * as React from 'react'
 import { Car } from 'lucide-react'
 
-import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import { mietwagenBestand, mietwagenDetails } from '@/lib/rental-cars/bestand'
 import {
   TRANSMISSION_BEZEICHNUNG,
@@ -18,7 +17,16 @@ import {
 import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-cars/manuell-start'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
+import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
+import {
+  ORGANISIEREN_EINGABE_KLASSE,
+  ORGANISIEREN_FLAECHE_KLASSE,
+  ORGANISIEREN_PRIMAR_KLASSE,
+  ORGANISIEREN_TEXTAREA_KLASSE,
+} from '@/lib/trips/organize-premium-experience-6'
 import {
   TRANSMISSIONS,
   VEHICLE_CLASSES,
@@ -56,7 +64,8 @@ export default function MietwagenBereich({
     <div className="grid gap-6">
       <section
         aria-label="Dein Mietwagen"
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+        data-organisieren-flaeche="bestand"
+        className={ORGANISIEREN_FLAECHE_KLASSE}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -118,8 +127,10 @@ export default function MietwagenBereich({
 
       <section
         aria-label="Mietwagensuche"
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+        data-organisieren-flaeche="suche"
+        className={`${ORGANISIEREN_FLAECHE_KLASSE} relative overflow-hidden`}
       >
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Suche</p>
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
           Mietwagenangebote
@@ -206,7 +217,8 @@ function ManuellerMietwagen({
   return (
     <section
       aria-label="Manueller Mietwagen"
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      data-organisieren-flaeche="manuell"
+      className={ORGANISIEREN_FLAECHE_KLASSE}
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Manuell</p>
       <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
@@ -219,132 +231,139 @@ function ManuellerMietwagen({
       </p>
 
       <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Abholung
-            <input
-              value={pickupName}
-              onChange={(ereignis) => setPickupName(ereignis.target.value)}
-              placeholder={hinweise.pickupName}
-              required
-              maxLength={120}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Rückgabe
-            <input
-              value={dropoffName}
-              onChange={(ereignis) => setDropoffName(ereignis.target.value)}
-              placeholder={hinweise.dropoffName}
-              required
-              maxLength={120}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Orte">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Abholung
+              <input
+                value={pickupName}
+                onChange={(ereignis) => setPickupName(ereignis.target.value)}
+                placeholder={hinweise.pickupName}
+                required
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Rückgabe
+              <input
+                value={dropoffName}
+                onChange={(ereignis) => setDropoffName(ereignis.target.value)}
+                placeholder={hinweise.dropoffName}
+                required
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className="grid gap-2 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Abholdatum
-            <input
-              type="date"
-              value={pickupOn}
-              onChange={(ereignis) => setPickupOn(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Uhrzeit
-            <input
-              type="time"
-              value={pickupAt}
-              onChange={(ereignis) => setPickupAt(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Abholung">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Abholdatum
+              <input
+                type="date"
+                value={pickupOn}
+                onChange={(ereignis) => setPickupOn(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Uhrzeit
+              <input
+                type="time"
+                value={pickupAt}
+                onChange={(ereignis) => setPickupAt(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className="grid gap-2 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Rückgabedatum
-            <input
-              type="date"
-              value={dropoffOn}
-              onChange={(ereignis) => setDropoffOn(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Uhrzeit
-            <input
-              type="time"
-              value={dropoffAt}
-              onChange={(ereignis) => setDropoffAt(ereignis.target.value)}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-            />
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Rückgabe">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Rückgabedatum
+              <input
+                type="date"
+                value={dropoffOn}
+                onChange={(ereignis) => setDropoffOn(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Uhrzeit
+              <input
+                type="time"
+                value={dropoffAt}
+                onChange={(ereignis) => setDropoffAt(ereignis.target.value)}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <div className="grid gap-2 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Fahrzeugklasse, falls bekannt
-            <select
-              value={vehicleClass}
-              onChange={(ereignis) => setVehicleClass(ereignis.target.value as VehicleClass | '')}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-sm text-ink-900"
-            >
-              <option value="">Unbekannt</option>
-              {VEHICLE_CLASSES.map((wert) => (
-                <option key={wert} value={wert}>
-                  {VEHICLE_CLASS_BEZEICHNUNG[wert]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-brand-800">
-            Getriebe, falls bekannt
-            <select
-              value={transmission}
-              onChange={(ereignis) => setTransmission(ereignis.target.value as Transmission | '')}
-              className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-sm text-ink-900"
-            >
-              <option value="">Unbekannt</option>
-              {TRANSMISSIONS.map((wert) => (
-                <option key={wert} value={wert}>
-                  {TRANSMISSION_BEZEICHNUNG[wert]}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+        <OrganisierenFeldgruppe titel="Fahrzeug">
+          <div className={ARBEITSFELD_SPALTEN_KLASSE}>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Fahrzeugklasse, falls bekannt
+              <select
+                value={vehicleClass}
+                onChange={(ereignis) => setVehicleClass(ereignis.target.value as VehicleClass | '')}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                <option value="">Unbekannt</option>
+                {VEHICLE_CLASSES.map((wert) => (
+                  <option key={wert} value={wert}>
+                    {VEHICLE_CLASS_BEZEICHNUNG[wert]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Getriebe, falls bekannt
+              <select
+                value={transmission}
+                onChange={(ereignis) => setTransmission(ereignis.target.value as Transmission | '')}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              >
+                <option value="">Unbekannt</option>
+                {TRANSMISSIONS.map((wert) => (
+                  <option key={wert} value={wert}>
+                    {TRANSMISSION_BEZEICHNUNG[wert]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <label className="grid gap-1 text-sm font-medium text-brand-800">
-          Vermieter, falls bekannt
-          <input
-            value={rentalSupplier}
-            onChange={(ereignis) => setRentalSupplier(ereignis.target.value)}
-            maxLength={120}
-            className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
-          />
-        </label>
+        <OrganisierenFeldgruppe titel="Angaben">
+          <div className="grid min-w-0 gap-3">
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Vermieter, falls bekannt
+              <input
+                value={rentalSupplier}
+                onChange={(ereignis) => setRentalSupplier(ereignis.target.value)}
+                maxLength={120}
+                className={ORGANISIEREN_EINGABE_KLASSE}
+              />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
+              Notiz
+              <textarea
+                value={note}
+                onChange={(ereignis) => setNote(ereignis.target.value)}
+                maxLength={500}
+                rows={2}
+                className={ORGANISIEREN_TEXTAREA_KLASSE}
+              />
+            </label>
+          </div>
+        </OrganisierenFeldgruppe>
 
-        <label className="grid gap-1 text-sm font-medium text-brand-800">
-          Notiz
-          <textarea
-            value={note}
-            onChange={(ereignis) => setNote(ereignis.target.value)}
-            maxLength={500}
-            rows={2}
-            className="rounded-2xl border border-line-200 bg-white px-3 py-2 text-base text-ink-900 sm:text-sm"
-          />
-        </label>
-
-        <button
-          type="submit"
-          disabled={laeuft}
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
-        >
+        <button type="submit" disabled={laeuft} className={ORGANISIEREN_PRIMAR_KLASSE}>
           {laeuft ? 'Wird gespeichert …' : 'Mietwagen speichern'}
         </button>
       </form>
