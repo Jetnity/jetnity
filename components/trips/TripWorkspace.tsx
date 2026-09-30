@@ -534,7 +534,6 @@ export default function TripWorkspace({
     return () => window.removeEventListener('popstate', onPop)
     // Die History-Lesung hängt nur an der ersten Montage und an popstate.
     // Sie läuft vor dem ersten Paint, damit kein falscher Modus sichtbar wird.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const aenderungOeffnen = () => {

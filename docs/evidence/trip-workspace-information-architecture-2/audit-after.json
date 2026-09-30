@@ -1,11 +1,20 @@
 {
   "phase": "after",
-  "sha": "bc718c68ac498d8ba6ed9d6d83bfca0172aa715d",
+  "sha": "5456e3324d9802e8cd726cc92f1db9144802759f",
   "workingTree": "dirty",
   "dirtyPaths": [
-    "?? docs/evidence/trip-workspace-information-architecture-2/"
+    "M AGENTS.md",
+    "M docs/evidence/trip-workspace-information-architecture-2/audit-after.json",
+    "M next-env.d.ts",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-fluege_1440x900.png",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-invalid_1440x900.png",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-plan_360x800.png",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-plan_768x1024.png",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-uebersicht_360x800.png",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-unterkunft_390x844.png",
+    "?? docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-vorbereitung_390x844.png"
   ],
-  "capturedAt": "2026-09-30T14:04:41.522Z",
+  "capturedAt": "2026-09-30T14:35:41.592Z",
   "browser": "google-chrome/playwright",
   "origin": "http://127.0.0.1:3017",
   "server": "reused-existing-dev",
@@ -3062,7 +3071,7 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 355,
+          "scrollY": 488,
           "scrollHeight": 2944,
           "clientWidth": 360,
           "scrollWidth": 360,
@@ -3080,11 +3089,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Deine Reise auf einen Blick",
-            "top": 402,
+            "top": 269,
             "left": 12,
             "width": 336,
             "height": 28,
-            "bottom": 430,
+            "bottom": 297,
             "right": 348,
             "docTop": 757,
             "intersectsViewport": true,
@@ -3093,13 +3102,13 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 120,
+            "top": 72,
             "left": 12,
             "width": 336,
             "height": 96,
-            "bottom": 216,
+            "bottom": 168,
             "right": 348,
-            "docTop": 475,
+            "docTop": 560,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -3143,11 +3152,11 @@
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-            "top": 382,
+            "top": 249,
             "left": 12,
             "width": 336,
             "height": 1131,
-            "bottom": 1512,
+            "bottom": 1379,
             "right": 348,
             "docTop": 737,
             "intersectsViewport": true,
@@ -3176,12 +3185,12 @@
             "height": 73,
             "bottom": 73,
             "right": 360,
-            "docTop": 355,
+            "docTop": 488,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "rueckkehr": null,
-          "abdeckungUnten": 73,
+          "abdeckungUnten": 168,
           "identitaetUnterAbdeckung": false,
           "bereiche": [
             {
@@ -3191,11 +3200,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-                "top": 382,
+                "top": 249,
                 "left": 12,
                 "width": 336,
                 "height": 1131,
-                "bottom": 1512,
+                "bottom": 1379,
                 "right": 348,
                 "docTop": 737,
                 "intersectsViewport": true,
@@ -3215,7 +3224,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 355,
+                "docTop": 488,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3233,7 +3242,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 355,
+                "docTop": 488,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3251,7 +3260,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 355,
+                "docTop": 488,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3269,7 +3278,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 355,
+                "docTop": 488,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3299,7 +3308,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 355,
+                "docTop": 488,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3321,7 +3330,7 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 253,
+          "scrollY": 318,
           "scrollHeight": 2541,
           "clientWidth": 360,
           "scrollWidth": 360,
@@ -3339,11 +3348,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Reiseplan",
-            "top": 484,
+            "top": 419,
             "left": 12,
             "width": 336,
             "height": 28,
-            "bottom": 512,
+            "bottom": 447,
             "right": 348,
             "docTop": 737,
             "intersectsViewport": true,
@@ -3352,11 +3361,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 222,
+            "top": 157,
             "left": 12,
             "width": 336,
             "height": 96,
-            "bottom": 318,
+            "bottom": 253,
             "right": 348,
             "docTop": 475,
             "intersectsViewport": true,
@@ -3403,11 +3412,11 @@
           "plan": {
             "tag": "SECTION",
             "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
-            "top": 516,
+            "top": 451,
             "left": 12,
             "width": 336,
             "height": 695,
-            "bottom": 1211,
+            "bottom": 1146,
             "right": 348,
             "docTop": 769,
             "intersectsViewport": true,
@@ -3435,7 +3444,7 @@
             "height": 73,
             "bottom": 73,
             "right": 360,
-            "docTop": 253,
+            "docTop": 318,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -3462,7 +3471,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 253,
+                "docTop": 318,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3480,7 +3489,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 253,
+                "docTop": 318,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3498,7 +3507,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 253,
+                "docTop": 318,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3516,7 +3525,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 253,
+                "docTop": 318,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3546,7 +3555,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 253,
+                "docTop": 318,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -3568,7 +3577,7 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 200,
+          "scrollY": 229,
           "scrollHeight": 2493,
           "clientWidth": 360,
           "scrollWidth": 360,
@@ -3586,11 +3595,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Reiseplan",
-            "top": 537,
+            "top": 508,
             "left": 12,
             "width": 336,
             "height": 28,
-            "bottom": 565,
+            "bottom": 536,
             "right": 348,
             "docTop": 737,
             "intersectsViewport": true,
@@ -3599,11 +3608,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 275,
+            "top": 246,
             "left": 12,
             "width": 336,
             "height": 96,
-            "bottom": 371,
+            "bottom": 342,
             "right": 348,
             "docTop": 475,
             "intersectsViewport": true,
@@ -3650,11 +3659,11 @@
           "plan": {
             "tag": "SECTION",
             "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
-            "top": 569,
+            "top": 540,
             "left": 12,
             "width": 336,
             "height": 695,
-            "bottom": 1264,
+            "bottom": 1235,
             "right": 348,
             "docTop": 769,
             "intersectsViewport": true,
@@ -3682,7 +3691,7 @@
             "height": 73,
             "bottom": 73,
             "right": 360,
-            "docTop": 200,
+            "docTop": 229,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -3709,7 +3718,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 200,
+                "docTop": 229,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -8175,7 +8184,7 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 407,
+          "scrollY": 571,
           "scrollHeight": 2920,
           "clientWidth": 390,
           "scrollWidth": 390,
@@ -8193,11 +8202,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Deine Reise auf einen Blick",
-            "top": 350,
+            "top": 186,
             "left": 12,
             "width": 366,
             "height": 28,
-            "bottom": 378,
+            "bottom": 214,
             "right": 378,
             "docTop": 757,
             "intersectsViewport": true,
@@ -8206,13 +8215,13 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 72,
+            "top": 50,
             "left": 12,
             "width": 366,
             "height": 96,
-            "bottom": 168,
+            "bottom": 146,
             "right": 378,
-            "docTop": 479,
+            "docTop": 621,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -8256,11 +8265,11 @@
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-            "top": 330,
+            "top": 166,
             "left": 12,
             "width": 366,
             "height": 1131,
-            "bottom": 1460,
+            "bottom": 1296,
             "right": 378,
             "docTop": 737,
             "intersectsViewport": true,
@@ -8269,6 +8278,265 @@
           "plan": null,
           "planInUebersicht": false,
           "planVolleBreite": false,
+          "vorbereitung": null,
+          "vorbereitungInUebersicht": false,
+          "sicherheitSichtbar": false,
+          "saisonSichtbar": false,
+          "aendernSichtbar": true,
+          "begleiterSichtbar": false,
+          "arbeit": null,
+          "arbeitName": null,
+          "arbeitHeading": null,
+          "arbeitEyebrow": null,
+          "erstesFeld": null,
+          "header": {
+            "tag": "HEADER",
+            "text": "Jetnity",
+            "top": 0,
+            "left": 0,
+            "width": 390,
+            "height": 73,
+            "bottom": 73,
+            "right": 390,
+            "docTop": 571,
+            "intersectsViewport": true,
+            "fullyInViewport": true
+          },
+          "rueckkehr": null,
+          "abdeckungUnten": 146,
+          "identitaetUnterAbdeckung": false,
+          "bereiche": [
+            {
+              "name": "uebersicht",
+              "mounted": true,
+              "visible": true,
+              "box": {
+                "tag": "DIV",
+                "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
+                "top": 166,
+                "left": 12,
+                "width": 366,
+                "height": 1131,
+                "bottom": 1296,
+                "right": 378,
+                "docTop": 737,
+                "intersectsViewport": true,
+                "fullyInViewport": false
+              }
+            },
+            {
+              "name": "detail",
+              "mounted": true,
+              "visible": false,
+              "box": {
+                "tag": "DIV",
+                "text": "",
+                "top": 0,
+                "left": 0,
+                "width": 0,
+                "height": 0,
+                "bottom": 0,
+                "right": 0,
+                "docTop": 571,
+                "intersectsViewport": false,
+                "fullyInViewport": false
+              }
+            },
+            {
+              "name": "fluege",
+              "mounted": true,
+              "visible": false,
+              "box": {
+                "tag": "DIV",
+                "text": "Deine FlügeBestand und StatusNoch kein Flug ausgewähltZürich → Ubud · 12. Okt.Noch offenUbud → Singapur · 19. Okt.Noch offenSingapur → Zürich · 22. Okt.Noch off",
+                "top": 0,
+                "left": 0,
+                "width": 0,
+                "height": 0,
+                "bottom": 0,
+                "right": 0,
+                "docTop": 571,
+                "intersectsViewport": false,
+                "fullyInViewport": false
+              }
+            },
+            {
+              "name": "unterkunft",
+              "mounted": true,
+              "visible": false,
+              "box": {
+                "tag": "DIV",
+                "text": "Deine UnterkunftNächte-Abdeckung0 von 7 Nächten abgedeckt12. Okt. – 16. Okt. · Ubud4 Nächte fehlenNoch offen19. Okt. – 22. Okt. · Singapur3 Nächte fehlenNoch of",
+                "top": 0,
+                "left": 0,
+                "width": 0,
+                "height": 0,
+                "bottom": 0,
+                "right": 0,
+                "docTop": 571,
+                "intersectsViewport": false,
+                "fullyInViewport": false
+              }
+            },
+            {
+              "name": "flugsuche",
+              "mounted": true,
+              "visible": false,
+              "box": {
+                "tag": "DIV",
+                "text": "FlügeVerbindungen für diese ReiseVonNachHinflugRückflug, optionalKabineEconomyPremium EconomyBusinessFirstZwischenlandungenAlle VerbindungenNur DirektflügeHöchs",
+                "top": 0,
+                "left": 0,
+                "width": 0,
+                "height": 0,
+                "bottom": 0,
+                "right": 0,
+                "docTop": 571,
+                "intersectsViewport": false,
+                "fullyInViewport": false
+              }
+            },
+            {
+              "name": "hotelsuche",
+              "mounted": false,
+              "visible": false,
+              "box": null
+            },
+            {
+              "name": "aktivitaeten",
+              "mounted": false,
+              "visible": false,
+              "box": null
+            },
+            {
+              "name": "mobilitaet",
+              "mounted": true,
+              "visible": false,
+              "box": {
+                "tag": "DIV",
+                "text": "VerbindungenMietwagenDeine VerbindungenBestand und StatusNoch keine Verbindung geplantZürich → Ubud · 12. Okt.Noch offenUbud → Singapur · 19. Okt.Noch offenSing",
+                "top": 0,
+                "left": 0,
+                "width": 0,
+                "height": 0,
+                "bottom": 0,
+                "right": 0,
+                "docTop": 571,
+                "intersectsViewport": false,
+                "fullyInViewport": false
+              }
+            }
+          ],
+          "arbeitImDetailKontext": false,
+          "arbeitUnterDemSplit": false,
+          "toteFlaeche": false,
+          "anordnung": "einspaltig",
+          "step": "history-back-overview",
+          "keyboard": true,
+          "netz": 0
+        },
+        {
+          "name": "history-forward-plan",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/history-forward-plan_390x844.png",
+          "href": "/reisen/trip-information-architecture-2?ansicht=plan",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "scrollY": 407,
+          "scrollHeight": 2493,
+          "clientWidth": 390,
+          "scrollWidth": 390,
+          "horizontalOverflow": false,
+          "activeElement": {
+            "tag": "H2",
+            "text": "Reiseplan",
+            "type": null,
+            "current": null
+          },
+          "grid": {
+            "display": "block",
+            "template": "none"
+          },
+          "modusHeading": {
+            "tag": "H2",
+            "text": "Reiseplan",
+            "top": 330,
+            "left": 12,
+            "width": 366,
+            "height": 28,
+            "bottom": 358,
+            "right": 378,
+            "docTop": 737,
+            "intersectsViewport": true,
+            "fullyInViewport": true
+          },
+          "modusNav": {
+            "tag": "NAV",
+            "text": "Übersicht Reiseplan Organisieren Vorbereitung",
+            "top": 72,
+            "left": 12,
+            "width": 366,
+            "height": 96,
+            "bottom": 168,
+            "right": 378,
+            "docTop": 479,
+            "intersectsViewport": true,
+            "fullyInViewport": true
+          },
+          "modusKnoepfe": [
+            {
+              "text": "Übersicht",
+              "current": null,
+              "height": 44,
+              "width": 102
+            },
+            {
+              "text": "Reiseplan",
+              "current": "page",
+              "height": 44,
+              "width": 100
+            },
+            {
+              "text": "Organisieren",
+              "current": null,
+              "height": 44,
+              "width": 125
+            },
+            {
+              "text": "Vorbereitung",
+              "current": null,
+              "height": 44,
+              "width": 127
+            }
+          ],
+          "domainNav": null,
+          "domainKnoepfe": [],
+          "ansicht": "plan",
+          "bereich": "",
+          "detail": null,
+          "detailHeading": null,
+          "detailEyebrow": null,
+          "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
+          "uebersicht": null,
+          "plan": {
+            "tag": "SECTION",
+            "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
+            "top": 362,
+            "left": 12,
+            "width": 366,
+            "height": 671,
+            "bottom": 1033,
+            "right": 378,
+            "docTop": 769,
+            "intersectsViewport": true,
+            "fullyInViewport": false
+          },
+          "planInUebersicht": false,
+          "planVolleBreite": true,
           "vorbereitung": null,
           "vorbereitungInUebersicht": false,
           "sicherheitSichtbar": false,
@@ -8299,21 +8567,9 @@
           "bereiche": [
             {
               "name": "uebersicht",
-              "mounted": true,
-              "visible": true,
-              "box": {
-                "tag": "DIV",
-                "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-                "top": 330,
-                "left": 12,
-                "width": 366,
-                "height": 1131,
-                "bottom": 1460,
-                "right": 378,
-                "docTop": 737,
-                "intersectsViewport": true,
-                "fullyInViewport": false
-              }
+              "mounted": false,
+              "visible": false,
+              "box": null
             },
             {
               "name": "detail",
@@ -8413,253 +8669,6 @@
                 "bottom": 0,
                 "right": 0,
                 "docTop": 407,
-                "intersectsViewport": false,
-                "fullyInViewport": false
-              }
-            }
-          ],
-          "arbeitImDetailKontext": false,
-          "arbeitUnterDemSplit": false,
-          "toteFlaeche": false,
-          "anordnung": "einspaltig",
-          "step": "history-back-overview",
-          "keyboard": true,
-          "netz": 0
-        },
-        {
-          "name": "history-forward-plan",
-          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/history-forward-plan_390x844.png",
-          "href": "/reisen/trip-information-architecture-2?ansicht=plan",
-          "viewport": {
-            "width": 390,
-            "height": 844
-          },
-          "scrollY": 256,
-          "scrollHeight": 2493,
-          "clientWidth": 390,
-          "scrollWidth": 390,
-          "horizontalOverflow": false,
-          "activeElement": {
-            "tag": "H2",
-            "text": "Reiseplan",
-            "type": null,
-            "current": null
-          },
-          "grid": {
-            "display": "block",
-            "template": "none"
-          },
-          "modusHeading": {
-            "tag": "H2",
-            "text": "Reiseplan",
-            "top": 481,
-            "left": 12,
-            "width": 366,
-            "height": 28,
-            "bottom": 509,
-            "right": 378,
-            "docTop": 737,
-            "intersectsViewport": true,
-            "fullyInViewport": true
-          },
-          "modusNav": {
-            "tag": "NAV",
-            "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 219,
-            "left": 12,
-            "width": 366,
-            "height": 96,
-            "bottom": 315,
-            "right": 378,
-            "docTop": 475,
-            "intersectsViewport": true,
-            "fullyInViewport": true
-          },
-          "modusKnoepfe": [
-            {
-              "text": "Übersicht",
-              "current": null,
-              "height": 44,
-              "width": 102
-            },
-            {
-              "text": "Reiseplan",
-              "current": "page",
-              "height": 44,
-              "width": 100
-            },
-            {
-              "text": "Organisieren",
-              "current": null,
-              "height": 44,
-              "width": 125
-            },
-            {
-              "text": "Vorbereitung",
-              "current": null,
-              "height": 44,
-              "width": 127
-            }
-          ],
-          "domainNav": null,
-          "domainKnoepfe": [],
-          "ansicht": "plan",
-          "bereich": "",
-          "detail": null,
-          "detailHeading": null,
-          "detailEyebrow": null,
-          "detailIdentitaetUnterAbdeckung": false,
-          "zurueckAnzahl": 0,
-          "zurueckInDetail": 0,
-          "zurueckSticky": 0,
-          "uebersicht": null,
-          "plan": {
-            "tag": "SECTION",
-            "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
-            "top": 513,
-            "left": 12,
-            "width": 366,
-            "height": 671,
-            "bottom": 1184,
-            "right": 378,
-            "docTop": 769,
-            "intersectsViewport": true,
-            "fullyInViewport": false
-          },
-          "planInUebersicht": false,
-          "planVolleBreite": true,
-          "vorbereitung": null,
-          "vorbereitungInUebersicht": false,
-          "sicherheitSichtbar": false,
-          "saisonSichtbar": false,
-          "aendernSichtbar": true,
-          "begleiterSichtbar": false,
-          "arbeit": null,
-          "arbeitName": null,
-          "arbeitHeading": null,
-          "arbeitEyebrow": null,
-          "erstesFeld": null,
-          "header": {
-            "tag": "HEADER",
-            "text": "Jetnity",
-            "top": 0,
-            "left": 0,
-            "width": 390,
-            "height": 73,
-            "bottom": 73,
-            "right": 390,
-            "docTop": 256,
-            "intersectsViewport": true,
-            "fullyInViewport": true
-          },
-          "rueckkehr": null,
-          "abdeckungUnten": 73,
-          "identitaetUnterAbdeckung": false,
-          "bereiche": [
-            {
-              "name": "uebersicht",
-              "mounted": false,
-              "visible": false,
-              "box": null
-            },
-            {
-              "name": "detail",
-              "mounted": true,
-              "visible": false,
-              "box": {
-                "tag": "DIV",
-                "text": "",
-                "top": 0,
-                "left": 0,
-                "width": 0,
-                "height": 0,
-                "bottom": 0,
-                "right": 0,
-                "docTop": 256,
-                "intersectsViewport": false,
-                "fullyInViewport": false
-              }
-            },
-            {
-              "name": "fluege",
-              "mounted": true,
-              "visible": false,
-              "box": {
-                "tag": "DIV",
-                "text": "Deine FlügeBestand und StatusNoch kein Flug ausgewähltZürich → Ubud · 12. Okt.Noch offenUbud → Singapur · 19. Okt.Noch offenSingapur → Zürich · 22. Okt.Noch off",
-                "top": 0,
-                "left": 0,
-                "width": 0,
-                "height": 0,
-                "bottom": 0,
-                "right": 0,
-                "docTop": 256,
-                "intersectsViewport": false,
-                "fullyInViewport": false
-              }
-            },
-            {
-              "name": "unterkunft",
-              "mounted": true,
-              "visible": false,
-              "box": {
-                "tag": "DIV",
-                "text": "Deine UnterkunftNächte-Abdeckung0 von 7 Nächten abgedeckt12. Okt. – 16. Okt. · Ubud4 Nächte fehlenNoch offen19. Okt. – 22. Okt. · Singapur3 Nächte fehlenNoch of",
-                "top": 0,
-                "left": 0,
-                "width": 0,
-                "height": 0,
-                "bottom": 0,
-                "right": 0,
-                "docTop": 256,
-                "intersectsViewport": false,
-                "fullyInViewport": false
-              }
-            },
-            {
-              "name": "flugsuche",
-              "mounted": true,
-              "visible": false,
-              "box": {
-                "tag": "DIV",
-                "text": "FlügeVerbindungen für diese ReiseVonNachHinflugRückflug, optionalKabineEconomyPremium EconomyBusinessFirstZwischenlandungenAlle VerbindungenNur DirektflügeHöchs",
-                "top": 0,
-                "left": 0,
-                "width": 0,
-                "height": 0,
-                "bottom": 0,
-                "right": 0,
-                "docTop": 256,
-                "intersectsViewport": false,
-                "fullyInViewport": false
-              }
-            },
-            {
-              "name": "hotelsuche",
-              "mounted": false,
-              "visible": false,
-              "box": null
-            },
-            {
-              "name": "aktivitaeten",
-              "mounted": false,
-              "visible": false,
-              "box": null
-            },
-            {
-              "name": "mobilitaet",
-              "mounted": true,
-              "visible": false,
-              "box": {
-                "tag": "DIV",
-                "text": "VerbindungenMietwagenDeine VerbindungenBestand und StatusNoch keine Verbindung geplantZürich → Ubud · 12. Okt.Noch offenUbud → Singapur · 19. Okt.Noch offenSing",
-                "top": 0,
-                "left": 0,
-                "width": 0,
-                "height": 0,
-                "bottom": 0,
-                "right": 0,
-                "docTop": 256,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -8681,7 +8690,7 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 176,
+          "scrollY": 195,
           "scrollHeight": 2445,
           "clientWidth": 390,
           "scrollWidth": 390,
@@ -8699,11 +8708,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Reiseplan",
-            "top": 561,
+            "top": 542,
             "left": 12,
             "width": 366,
             "height": 28,
-            "bottom": 589,
+            "bottom": 570,
             "right": 378,
             "docTop": 737,
             "intersectsViewport": true,
@@ -8712,11 +8721,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 299,
+            "top": 280,
             "left": 12,
             "width": 366,
             "height": 96,
-            "bottom": 395,
+            "bottom": 376,
             "right": 378,
             "docTop": 475,
             "intersectsViewport": true,
@@ -8763,11 +8772,11 @@
           "plan": {
             "tag": "SECTION",
             "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
-            "top": 593,
+            "top": 574,
             "left": 12,
             "width": 366,
             "height": 671,
-            "bottom": 1264,
+            "bottom": 1245,
             "right": 378,
             "docTop": 769,
             "intersectsViewport": true,
@@ -8795,7 +8804,7 @@
             "height": 73,
             "bottom": 73,
             "right": 390,
-            "docTop": 176,
+            "docTop": 195,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -8822,7 +8831,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 176,
+                "docTop": 195,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -9537,7 +9546,7 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 555,
+          "scrollY": 549,
           "scrollHeight": 2920,
           "clientWidth": 390,
           "scrollWidth": 390,
@@ -9555,11 +9564,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Deine Reise auf einen Blick",
-            "top": 202,
+            "top": 208,
             "left": 12,
             "width": 366,
             "height": 28,
-            "bottom": 230,
+            "bottom": 236,
             "right": 378,
             "docTop": 757,
             "intersectsViewport": true,
@@ -9568,11 +9577,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 66,
+            "top": 72,
             "left": 12,
             "width": 366,
             "height": 96,
-            "bottom": 162,
+            "bottom": 168,
             "right": 378,
             "docTop": 621,
             "intersectsViewport": true,
@@ -9618,11 +9627,11 @@
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-            "top": 182,
+            "top": 188,
             "left": 12,
             "width": 366,
             "height": 1131,
-            "bottom": 1312,
+            "bottom": 1318,
             "right": 378,
             "docTop": 737,
             "intersectsViewport": true,
@@ -9651,12 +9660,12 @@
             "height": 73,
             "bottom": 73,
             "right": 390,
-            "docTop": 555,
+            "docTop": 549,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "rueckkehr": null,
-          "abdeckungUnten": 162,
+          "abdeckungUnten": 168,
           "identitaetUnterAbdeckung": false,
           "bereiche": [
             {
@@ -9666,11 +9675,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-                "top": 182,
+                "top": 188,
                 "left": 12,
                 "width": 366,
                 "height": 1131,
-                "bottom": 1312,
+                "bottom": 1318,
                 "right": 378,
                 "docTop": 737,
                 "intersectsViewport": true,
@@ -9690,7 +9699,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 555,
+                "docTop": 549,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -10357,7 +10366,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 768,
@@ -13547,7 +13556,7 @@
             "width": 768,
             "height": 1024
           },
-          "scrollY": 285,
+          "scrollY": 220,
           "scrollHeight": 2409,
           "clientWidth": 768,
           "scrollWidth": 768,
@@ -13565,11 +13574,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Reiseplan",
-            "top": 360,
+            "top": 425,
             "left": 24,
             "width": 720,
             "height": 28,
-            "bottom": 388,
+            "bottom": 453,
             "right": 744,
             "docTop": 645,
             "intersectsViewport": true,
@@ -13578,11 +13587,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 210,
+            "top": 275,
             "left": 24,
             "width": 720,
             "height": 44,
-            "bottom": 254,
+            "bottom": 319,
             "right": 744,
             "docTop": 495,
             "intersectsViewport": true,
@@ -13629,11 +13638,11 @@
           "plan": {
             "tag": "SECTION",
             "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
-            "top": 392,
+            "top": 457,
             "left": 24,
             "width": 720,
             "height": 671,
-            "bottom": 1063,
+            "bottom": 1128,
             "right": 744,
             "docTop": 677,
             "intersectsViewport": true,
@@ -13661,7 +13670,7 @@
             "height": 113,
             "bottom": 113,
             "right": 768,
-            "docTop": 285,
+            "docTop": 220,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -13688,7 +13697,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 285,
+                "docTop": 220,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -13706,7 +13715,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 285,
+                "docTop": 220,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -13724,7 +13733,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 285,
+                "docTop": 220,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -13742,7 +13751,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 285,
+                "docTop": 220,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -13772,7 +13781,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 285,
+                "docTop": 220,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -13901,7 +13910,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 768,
@@ -14112,7 +14121,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 768,
@@ -14229,7 +14238,7 @@
             "height": 1024
           },
           "scrollY": 0,
-          "scrollHeight": 2764,
+          "scrollHeight": 2724,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -14246,26 +14255,26 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Deine Reise auf einen Blick",
-            "top": 665,
+            "top": 625,
             "left": 24,
             "width": 720,
             "height": 28,
-            "bottom": 693,
+            "bottom": 653,
             "right": 744,
-            "docTop": 665,
+            "docTop": 625,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 495,
+            "top": 455,
             "left": 24,
             "width": 720,
             "height": 44,
-            "bottom": 539,
+            "bottom": 499,
             "right": 744,
-            "docTop": 495,
+            "docTop": 455,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -14309,13 +14318,13 @@
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-            "top": 645,
+            "top": 605,
             "left": 24,
             "width": 720,
             "height": 1107,
-            "bottom": 1751,
+            "bottom": 1711,
             "right": 744,
-            "docTop": 645,
+            "docTop": 605,
             "intersectsViewport": true,
             "fullyInViewport": false
           },
@@ -14335,19 +14344,19 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Anmelden Reise fortsetzen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
             "top": 0,
             "left": 0,
             "width": 768,
-            "height": 113,
-            "bottom": 113,
+            "height": 73,
+            "bottom": 73,
             "right": 768,
             "docTop": 0,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "rueckkehr": null,
-          "abdeckungUnten": 113,
+          "abdeckungUnten": 73,
           "identitaetUnterAbdeckung": false,
           "bereiche": [
             {
@@ -14357,13 +14366,13 @@
               "box": {
                 "tag": "DIV",
                 "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-                "top": 645,
+                "top": 605,
                 "left": 24,
                 "width": 720,
                 "height": 1107,
-                "bottom": 1751,
+                "bottom": 1711,
                 "right": 744,
-                "docTop": 645,
+                "docTop": 605,
                 "intersectsViewport": true,
                 "fullyInViewport": false
               }
@@ -18660,7 +18669,7 @@
             "width": 1024,
             "height": 768
           },
-          "scrollY": 574,
+          "scrollY": 493,
           "scrollHeight": 2362,
           "clientWidth": 1024,
           "scrollWidth": 1024,
@@ -18678,11 +18687,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Deine Reise auf einen Blick",
-            "top": 184,
+            "top": 265,
             "left": 24,
             "width": 976,
             "height": 28,
-            "bottom": 212,
+            "bottom": 293,
             "right": 1000,
             "docTop": 758,
             "intersectsViewport": true,
@@ -18691,13 +18700,13 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 72,
+            "top": 95,
             "left": 24,
             "width": 976,
             "height": 44,
-            "bottom": 116,
+            "bottom": 139,
             "right": 1000,
-            "docTop": 646,
+            "docTop": 588,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -18741,11 +18750,11 @@
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-            "top": 164,
+            "top": 245,
             "left": 24,
             "width": 976,
             "height": 1107,
-            "bottom": 1271,
+            "bottom": 1352,
             "right": 1000,
             "docTop": 738,
             "intersectsViewport": true,
@@ -18774,12 +18783,12 @@
             "height": 73,
             "bottom": 73,
             "right": 1024,
-            "docTop": 574,
+            "docTop": 493,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "rueckkehr": null,
-          "abdeckungUnten": 116,
+          "abdeckungUnten": 73,
           "identitaetUnterAbdeckung": false,
           "bereiche": [
             {
@@ -18789,11 +18798,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-                "top": 164,
+                "top": 245,
                 "left": 24,
                 "width": 976,
                 "height": 1107,
-                "bottom": 1271,
+                "bottom": 1352,
                 "right": 1000,
                 "docTop": 738,
                 "intersectsViewport": true,
@@ -18813,7 +18822,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 574,
+                "docTop": 493,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -18831,7 +18840,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 574,
+                "docTop": 493,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -18849,7 +18858,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 574,
+                "docTop": 493,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -18867,7 +18876,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 574,
+                "docTop": 493,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -18897,7 +18906,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 574,
+                "docTop": 493,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -19533,7 +19542,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
             "top": 0,
             "left": 0,
             "width": 1024,
@@ -19744,7 +19753,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Anmelden Reise fortsetzen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 1024,
@@ -24316,7 +24325,7 @@
             "width": 1280,
             "height": 800
           },
-          "scrollY": 299,
+          "scrollY": 268,
           "scrollHeight": 1832,
           "clientWidth": 1280,
           "scrollWidth": 1280,
@@ -24334,11 +24343,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Reiseplan",
-            "top": 357,
+            "top": 388,
             "left": 24,
             "width": 1232,
             "height": 28,
-            "bottom": 385,
+            "bottom": 416,
             "right": 1256,
             "docTop": 656,
             "intersectsViewport": true,
@@ -24347,11 +24356,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 207,
+            "top": 238,
             "left": 24,
             "width": 1232,
             "height": 44,
-            "bottom": 251,
+            "bottom": 282,
             "right": 1256,
             "docTop": 506,
             "intersectsViewport": true,
@@ -24398,11 +24407,11 @@
           "plan": {
             "tag": "SECTION",
             "text": "TAGESPLAN 0 Punkte geplant Ubud 12. Okt. – 16. Okt. Tag 1 12. Okt. Tag 2 13. Okt. Singapur 19. Okt. – 22. Okt. Tag 3 19. Okt. TAG 1 Montag, 12. Oktober 2026 Pun",
-            "top": 389,
+            "top": 420,
             "left": 24,
             "width": 1232,
             "height": 627,
-            "bottom": 1016,
+            "bottom": 1047,
             "right": 1256,
             "docTop": 688,
             "intersectsViewport": true,
@@ -24430,7 +24439,7 @@
             "height": 73,
             "bottom": 73,
             "right": 1280,
-            "docTop": 299,
+            "docTop": 268,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -24457,7 +24466,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 299,
+                "docTop": 268,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -24475,7 +24484,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 299,
+                "docTop": 268,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -24493,7 +24502,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 299,
+                "docTop": 268,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -24511,7 +24520,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 299,
+                "docTop": 268,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -24541,7 +24550,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 299,
+                "docTop": 268,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -24670,7 +24679,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
             "top": 0,
             "left": 0,
             "width": 1280,
@@ -24930,7 +24939,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 1280,
@@ -25141,7 +25150,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 1280,
@@ -29454,7 +29463,7 @@
             "width": 1440,
             "height": 900
           },
-          "scrollY": 343,
+          "scrollY": 414,
           "scrollHeight": 2280,
           "clientWidth": 1440,
           "scrollWidth": 1440,
@@ -29472,11 +29481,11 @@
           "modusHeading": {
             "tag": "H2",
             "text": "Deine Reise auf einen Blick",
-            "top": 333,
+            "top": 262,
             "left": 104,
             "width": 1232,
             "height": 28,
-            "bottom": 361,
+            "bottom": 290,
             "right": 1336,
             "docTop": 676,
             "intersectsViewport": true,
@@ -29485,11 +29494,11 @@
           "modusNav": {
             "tag": "NAV",
             "text": "Übersicht Reiseplan Organisieren Vorbereitung",
-            "top": 163,
+            "top": 92,
             "left": 104,
             "width": 1232,
             "height": 44,
-            "bottom": 207,
+            "bottom": 136,
             "right": 1336,
             "docTop": 506,
             "intersectsViewport": true,
@@ -29535,11 +29544,11 @@
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-            "top": 313,
+            "top": 242,
             "left": 104,
             "width": 1232,
             "height": 1107,
-            "bottom": 1420,
+            "bottom": 1349,
             "right": 1336,
             "docTop": 656,
             "intersectsViewport": true,
@@ -29568,7 +29577,7 @@
             "height": 73,
             "bottom": 73,
             "right": 1440,
-            "docTop": 343,
+            "docTop": 414,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
@@ -29583,11 +29592,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noch offen known_gap Un",
-                "top": 313,
+                "top": 242,
                 "left": 104,
                 "width": 1232,
                 "height": 1107,
-                "bottom": 1420,
+                "bottom": 1349,
                 "right": 1336,
                 "docTop": 656,
                 "intersectsViewport": true,
@@ -29607,7 +29616,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 343,
+                "docTop": 414,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -29625,7 +29634,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 343,
+                "docTop": 414,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -29643,7 +29652,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 343,
+                "docTop": 414,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -29661,7 +29670,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 343,
+                "docTop": 414,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -29691,7 +29700,7 @@
                 "height": 0,
                 "bottom": 0,
                 "right": 0,
-                "docTop": 343,
+                "docTop": 414,
                 "intersectsViewport": false,
                 "fullyInViewport": false
               }
@@ -31661,7 +31670,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Anmelden Reise fortsetzen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 1920,
@@ -37361,6 +37370,237 @@
           "toteFlaeche": false,
           "anordnung": "einspaltig",
           "step": "assistant-escape",
+          "netz": 0
+        }
+      ],
+      "fehler": [],
+      "netz": []
+    },
+    {
+      "viewport": "erste-sicht",
+      "schritte": [
+        {
+          "viewport": "360x800",
+          "name": "plan",
+          "such": "?ansicht=plan",
+          "href": "/reisen/trip-information-architecture-2?ansicht=plan",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-plan_360x800.png",
+          "erste": {
+            "ansicht": "plan",
+            "bereich": "",
+            "ausstehend": false,
+            "uebersicht": false
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "plan",
+              "bereich": "",
+              "ausstehend": false,
+              "uebersicht": false
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "plan",
+          "netz": 0
+        },
+        {
+          "viewport": "360x800",
+          "name": "uebersicht",
+          "such": "",
+          "href": "/reisen/trip-information-architecture-2",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-uebersicht_360x800.png",
+          "erste": {
+            "ansicht": "uebersicht",
+            "bereich": "",
+            "ausstehend": false,
+            "uebersicht": true
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "uebersicht",
+              "bereich": "",
+              "ausstehend": false,
+              "uebersicht": true
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "uebersicht",
+          "netz": 0
+        },
+        {
+          "viewport": "390x844",
+          "name": "vorbereitung",
+          "such": "?ansicht=vorbereitung",
+          "href": "/reisen/trip-information-architecture-2?ansicht=vorbereitung",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-vorbereitung_390x844.png",
+          "erste": {
+            "ansicht": "vorbereitung",
+            "bereich": "",
+            "ausstehend": false,
+            "uebersicht": false
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "vorbereitung",
+              "bereich": "",
+              "ausstehend": false,
+              "uebersicht": false
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "vorbereitung",
+          "netz": 0
+        },
+        {
+          "viewport": "390x844",
+          "name": "unterkunft",
+          "such": "?ansicht=organisieren&bereich=unterkunft",
+          "href": "/reisen/trip-information-architecture-2?ansicht=organisieren&bereich=unterkunft",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-unterkunft_390x844.png",
+          "erste": {
+            "ansicht": "organisieren",
+            "bereich": "unterkunft",
+            "ausstehend": false,
+            "uebersicht": false
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "organisieren",
+              "bereich": "unterkunft",
+              "ausstehend": false,
+              "uebersicht": false
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "organisieren",
+          "netz": 0
+        },
+        {
+          "viewport": "768x1024",
+          "name": "plan",
+          "such": "?ansicht=plan",
+          "href": "/reisen/trip-information-architecture-2?ansicht=plan",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-plan_768x1024.png",
+          "erste": {
+            "ansicht": "plan",
+            "bereich": "",
+            "ausstehend": false,
+            "uebersicht": false
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "plan",
+              "bereich": "",
+              "ausstehend": false,
+              "uebersicht": false
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "plan",
+          "netz": 0
+        },
+        {
+          "viewport": "1440x900",
+          "name": "invalid",
+          "such": "?ansicht=unbekannt&bereich=fluege&spur=bleibt",
+          "href": "/reisen/trip-information-architecture-2?spur=bleibt",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-invalid_1440x900.png",
+          "erste": {
+            "ansicht": "uebersicht",
+            "bereich": "",
+            "ausstehend": false,
+            "uebersicht": true
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "uebersicht",
+              "bereich": "",
+              "ausstehend": false,
+              "uebersicht": true
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "uebersicht",
+          "netz": 0
+        },
+        {
+          "viewport": "1440x900",
+          "name": "fluege",
+          "such": "?ansicht=organisieren&bereich=fluege",
+          "href": "/reisen/trip-information-architecture-2?ansicht=organisieren&bereich=fluege",
+          "screenshot": "/workspace/docs/evidence/trip-workspace-information-architecture-2/screens/after/erste-sicht-fluege_1440x900.png",
+          "erste": {
+            "ansicht": "organisieren",
+            "bereich": "fluege",
+            "ausstehend": false,
+            "uebersicht": false
+          },
+          "fremd": false,
+          "uebersichtVorDemZiel": false,
+          "protokoll": [
+            {
+              "ansicht": null,
+              "bereich": null,
+              "ausstehend": false,
+              "uebersicht": false
+            },
+            {
+              "ansicht": "organisieren",
+              "bereich": "fluege",
+              "ausstehend": false,
+              "uebersicht": false
+            }
+          ],
+          "scriptFehler": null,
+          "domAnsicht": "organisieren",
           "netz": 0
         }
       ],

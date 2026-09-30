@@ -3,7 +3,8 @@
 Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
-Runtime head reviewed: `bc718c68ac498d8ba6ed9d6d83bfca0172aa715d`
+R1 runtime head: `5456e3324d9802e8cd726cc92f1db9144802759f`
+Reviewed and rejected head: `50f15bbf9de6af07a31e96f23b675d817fc952b4`
 Session: https://cursor.com/agents/bc-d6c61c03-c9c0-45f4-8764-4fb9ff4b34bf
 `originalModelName`: `grok-4.7-high-fast`
 
@@ -20,7 +21,8 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Limits a reviewer should see
 
-- The mode body waits until the mount effect has read the URL. The first paint is the trip header without a mode section. Server render does not read `window`, so a deep link is correct on the next client paint rather than in the HTML.
+- R1-F1 is reverted: `docs/ACTIVE_WORK_STATUS.md` matches `main@91ab08bb`. This slice does not write that pointer.
+- R1-F2: the task body stays a non-interactive pending status until `useLayoutEffect` has read the URL. The first recorded `data-workspace-ansicht` on reload is the URL mode. The server HTML still cannot know the query, so it contains that pending status rather than a task. After hydration the correction happens before paint.
 - Closing a domain pushes `?ansicht=organisieren` without `bereich`. Search-open state and the selected plan item are not in the URL. Back from a search therefore returns to the domain rail, which matches the accepted Escape behavior, and a reload does not reopen the search.
 - Übersicht at 360×800 is still 2896px tall. The remaining height is the dashboard the task asked to keep: attention, essentials, coverage and preferences. Plan and preparation are no longer in that scroll.
 - Keyboard Back to Übersicht left `scrollY` around 414 because the mode heading is scrolled under the sticky chrome. The heading received focus. The page does not jump to zero.
@@ -28,7 +30,7 @@ This is the implementing agent’s review. It does not replace an independent ma
 - Jetzt wichtig on this fixture is domain gaps only. The browser pass therefore opened Vorbereitung from the mode control after proving the flight-gap attention route. The official/readiness branch in `onAttention` sends `ziel === 'reise'` to Vorbereitung and was not separately clicked.
 - The guest trip page has no Reisebegleiter control. Assistant open/close/focus was measured on `/ui-audit/trip-workspace` with the audit flag, the same `TripWorkspace`, and an intercepted assistant route.
 - `MietwagenBereich` still uses its existing `sm:grid-cols-2`. It is outside this allowlist and was not edited.
-- The after JSON records a dirty evidence directory because that directory was untracked at capture. The docs commit that adds it does not change the workspace components. Review `bc718c68` for the runtime and the branch tip for the evidence.
+- The after JSON for R1 is bound to `5456e332`. A later docs commit does not change the task-mode behavior. The tip may also drop an unused eslint comment in that layout effect; that comment does not render.
 
 ## Not claimed
 

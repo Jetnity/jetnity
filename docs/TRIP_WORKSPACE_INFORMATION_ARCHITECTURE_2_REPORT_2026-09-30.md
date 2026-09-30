@@ -8,7 +8,8 @@ Draft PR: #642
 Branch: `feat/trip-workspace-task-modes-2`
 Baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`
 Task seed: `711ea1a0` (docs only; the rendered baseline was this component tree)
-Audited runtime head: `bc718c68ac498d8ba6ed9d6d83bfca0172aa715d`
+Audited runtime head: `5456e3324d9802e8cd726cc92f1db9144802759f`
+R1 reviewed head: `50f15bbf9de6af07a31e96f23b675d817fc952b4`
 Agent: **Jetnity Trip Workspace information architecture 2**, Generation 1
 Session: https://cursor.com/agents/bc-d6c61c03-c9c0-45f4-8764-4fb9ff4b34bf
 `originalModelName`: `grok-4.7-high-fast`
@@ -69,20 +70,42 @@ Back from a compact domain, and Escape on desktop, land on `?ansicht=organisiere
 
 The guest route has no assistant control. Guest and account still mount the same `TripWorkspace`.
 
+## 4b. R1 — first visible mode
+
+Technical-Lead review of `50f15bbf` required two changes.
+
+`docs/ACTIVE_WORK_STATUS.md` is back to `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`. This slice does not own that global pointer.
+
+The URL is applied in `useLayoutEffect`, before the browser paints the task. Until that read finishes, the task body is one non-interactive status: `role="status"`, `aria-busy="true"`, `inert`, and the sentence “Die Reiseansicht wird vorbereitet.” Übersicht, Reiseplan, Organisieren and Vorbereitung are not mounted in that status. A direct or reloaded address therefore cannot show another task first. An empty address still resolves to Übersicht. An invalid query still resolves to Übersicht and keeps unrelated parameters. History still uses `pushState` / `popstate`, not a Next.js navigation.
+
+The after JSON records `erste-sicht` at `2026-09-30T14:35:41.592Z` on `5456e332`. A mutation observer runs before page scripts. On each reload the first `data-workspace-ansicht` is the URL mode, no other mode appears, and the Übersicht section is absent unless that mode is Übersicht. Network stays empty.
+
+| Viewport | Reload | First visible mode |
+| --- | --- | --- |
+| 360×800 | `?ansicht=plan` | plan |
+| 360×800 | no query | Übersicht |
+| 390×844 | `?ansicht=vorbereitung` | Vorbereitung |
+| 390×844 | `?ansicht=organisieren&bereich=unterkunft` | Organisieren / Unterkunft |
+| 768×1024 | `?ansicht=plan` | plan |
+| 1440×900 | `?ansicht=unbekannt&bereich=fluege&spur=bleibt` | Übersicht, address `?spur=bleibt` |
+| 1440×900 | `?ansicht=organisieren&bereich=fluege` | Organisieren / Flüge |
+
+The HTML sent by the server cannot read `window`. It contains the pending status, not a task. After hydration the layout effect selects the URL mode before paint.
+
 ## 5. Gates run here
 
 | Check | Result |
 | --- | --- |
 | focused workspace-mode, cross-device, preference and assistant surface tests | 42/42 pass |
-| `npm test` | 4072/4072 pass, on `bc718c68` |
+| `npm test` | 4072/4072 pass, on the R1 source |
 | `npm run typecheck` | pass |
-| `npm run lint` | 0 errors, 149 warnings, none in the files this slice added or edited |
+| `npm run lint` | 0 errors, 149 warnings. The layout read is one existing set-state warning. No unused directive |
 | `npm run build` | pass, Next.js 16.3.3 |
 | `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode` | pass |
 
 `check:schema-bezug` still prints the existing local/unapplied `admin_account_counts_v1` note and exits 0. This slice did not touch that path.
 
-Local checks above are not the remote gate. After `cb666be2` was pushed, GitHub Actions `36726836194` passed Auth and Typecheck, Lint & Build, and Vercel reported the Preview deployment `6761504763` complete. The handoff records the URLs. That observation is not a Technical-Lead PASS, and it does not approve a later head. The earlier Vercel comment on #642 belongs to the docs seed.
+Those local checks are not the remote gate. CI and Preview on `50f15bbf` were green and are invalidated by this head. The handoff records the observation for the new tip after it is pushed. That observation is not a Technical-Lead PASS.
 
 ## 6. Boundaries held
 
