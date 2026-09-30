@@ -16,8 +16,9 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Agent: **Jetnity Preparation premium experience 5**, Generation 1
 - Session: https://cursor.com/agents/bc-37a6cdc4-88dd-4132-8c15-08cda875f94a
 - `originalModelName`: `grok-4.7-high-fast`
-- Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-- Fetched `origin/main` is still that SHA. This branch is 0 behind.
+- Original baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
+- Integrated live main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6` (merge #669, `/planen` premium creation flow)
+- Integration commit: `8f8c508c` merges that exact main. `git rev-list --left-right --count origin/main...HEAD` is `0` behind.
 - Runtime and audit: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
 - Audit: `2026-09-30T23:23:24.064Z`, JSON sha `fda7a6685a0bf8cb150ee490079a7cdad7658de3`, PASS
 - R1 on `db42f6db571574896551b75905904d4ec07f709a`: 200% layout and the shared status-file collision
@@ -59,9 +60,13 @@ Docs and evidence:
 | Does import still confirm? | Interaction clicks “In diese Reise übernehmen: Alex Beispiel”, waits for the copy confirmation, then Abbrechen |
 | Any provider call on first paint or during the proof? | Every recorded `netz` is 0 |
 
+## Main integration
+
+Merge of `1930e61a0a409b83bd18b99e21939a89f73bbbd6` was clean. No file overlapped the Vorbereitung diff. The R1 layout in `Reisevorbereitung.tsx` and `RegistryReiseUebernahme.tsx` is unchanged. The #669 `/planen` files arrived as merged on main. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After the merge, `npm test` was 4112 pass / 0 fail.
+
 ## Remote observation
 
-Read on `4e46b318b1d42d98df74007bd88fa17d90dad76d`. That commit contains the R1 layout (`fda7a668`) plus the audit and the previous report text. This observation does not approve a later commit.
+Read on `4e46b318b1d42d98df74007bd88fa17d90dad76d`, before this main integration. That observation does not approve the integration head.
 
 | Check | Result |
 | --- | --- |

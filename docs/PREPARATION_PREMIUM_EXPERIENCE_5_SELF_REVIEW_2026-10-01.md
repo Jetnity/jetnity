@@ -4,7 +4,7 @@ Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
 Runtime: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
-Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`, 0 behind
+Integrated main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6`, 0 behind. Original baseline `2530020dbc6797b17d64c064ca5474cf90804272`.
 Audit: `2026-09-30T23:23:24.064Z`, JSON sha `fda7a6685a0bf8cb150ee490079a7cdad7658de3`, PASS
 R1 corrected from `db42f6db571574896551b75905904d4ec07f709a`
 Session: https://cursor.com/agents/bc-37a6cdc4-88dd-4132-8c15-08cda875f94a
@@ -37,4 +37,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Exact-head CI on `4e46b318` was later read as SUCCESS for Actions `36790909835`, Auth, Typecheck, Lint & Build, and the Vercel deployment `A9ssh22GqeAJkvELRn6srNuA7MqE`. That read is not this self-review and does not approve a later commit.
+Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Main `1930e61a` is merged and the R1 layout is unchanged. Exact-head CI on `4e46b318` does not approve the integration head.

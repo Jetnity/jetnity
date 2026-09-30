@@ -6,8 +6,8 @@ Status: **IMPLEMENTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TL
 Issue: #664
 Draft PR: #665
 Branch: `feat/preparation-premium-experience-5`
-Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-Fetched `origin/main`: same SHA, this branch 0 behind
+Original baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
+Integrated main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6` (#669 `/planen`). This branch is 0 behind that main.
 Runtime commit: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
 R1 review head that this corrects: `db42f6db571574896551b75905904d4ec07f709a`
 Agent: **Jetnity Preparation premium experience 5**, Generation 1
@@ -58,8 +58,12 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 - `check:schema-bezug` exit 0, existing note: local/unapplied `admin_account_counts_v1`
 - `check:setup:ci` warning only: no `.env`
 
+## 3b. Main integration
+
+`8f8c508c` merges exact main `1930e61a0a409b83bd18b99e21939a89f73bbbd6`. The merge was clean. Vorbereitung files were not touched by #669, and the R1 layout remains. `/planen` files from #669 are present as merged. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After the merge, `npm test` was 4112 pass / 0 fail. Exact-head CI, Auth and Vercel for the integration tip are not yet recorded.
+
 ## 4. Boundaries
 
 No database migration. No new API. No new cost. No secret. No production config. No navbar, footer, favicon or homepage edit. No follow-up slice.
 
-Exact-head observation for `4e46b318b1d42d98df74007bd88fa17d90dad76d`, the tip that contains the R1 layout, the audit, and this report’s previous text. Actions `36790909835`: Auth-Konfiguration gegen config.toml SUCCESS, Typecheck, Lint & Build SUCCESS. Vercel SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/A9ssh22GqeAJkvELRn6srNuA7MqE`. Combined commit status success. Draft #665 stayed open. Older runs on `0c76df11` and `db42f6db` do not approve this head. This observation is not a Technical-Lead PASS and does not approve a later commit.
+Earlier exact-head observation for `4e46b318b1d42d98df74007bd88fa17d90dad76d`: Actions `36790909835` SUCCESS (Auth and Typecheck, Lint & Build), Vercel SUCCESS at `https://vercel.com/jetnity-e1b93c82/jetnity-app/A9ssh22GqeAJkvELRn6srNuA7MqE`. That observation does not approve the main-integration head. This report is not a Technical-Lead PASS.
