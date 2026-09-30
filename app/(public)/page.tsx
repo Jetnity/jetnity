@@ -59,7 +59,7 @@ export default function HomePage() {
       <HomeUnterschied />
       <HomeInspiration ziele={inspirationsziele} />
       <HomeVertrauen />
-      <section className="px-3 pb-16 pt-8 sm:px-5 sm:pb-24" aria-labelledby="abschluss-titel">
+      <section className="px-3 pb-16 pt-4 sm:px-5 sm:pb-24 sm:pt-8" aria-labelledby="abschluss-titel">
         <div className="mx-auto max-w-[1450px] rounded-[28px] bg-brand-800 px-5 py-10 text-white sm:rounded-[36px] sm:px-12 sm:py-14">
           <h2
             id="abschluss-titel"

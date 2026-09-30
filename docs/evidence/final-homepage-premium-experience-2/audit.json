@@ -1,0 +1,229 @@
+{
+  "stand": "2026-09-30T16:19:27.625Z",
+  "dateien": [
+    "app/(public)/page.tsx",
+    "lib/seo/final-homepage.ts",
+    "components/home/HomeHero.tsx",
+    "components/home/HomeWerkzeuge.tsx",
+    "components/home/HomeProduktfenster.tsx",
+    "components/home/HomeBegleitung.tsx",
+    "components/home/HomeUnterschied.tsx",
+    "components/home/HomeInspiration.tsx",
+    "components/home/HomeVertrauen.tsx"
+  ],
+  "fehler": [],
+  "ergebnis": "PASS",
+  "serverHtml": {
+    "details": true,
+    "summary": true,
+    "faehigkeiten": [
+      {
+        "id": "ziel-bestaetigen",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "mehrere-ziele",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "reisebereich",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "offene-schritte",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "live-angebote",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "amtliche-auskuenfte",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "routenfolgen",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "gemeinsam-planen",
+        "text": true,
+        "titel": true
+      },
+      {
+        "id": "jetnity-pro",
+        "text": true,
+        "titel": true
+      }
+    ],
+    "canonical": true,
+    "noindex": true,
+    "anmelden": false,
+    "abmelden": false
+  },
+  "text200": {
+    "overflow": false,
+    "h1": "Deine ganze Reise. Intelligent an einem Ort."
+  },
+  "reducedMotion": {
+    "transition": "1e-06s"
+  },
+  "ankerPro": {
+    "hash": "#pro",
+    "offen": true,
+    "vorhanden": true,
+    "imBlick": true
+  },
+  "fokus": [
+    {
+      "tag": "A",
+      "text": "Zum Inhalt",
+      "ring": true
+    },
+    {
+      "tag": "A",
+      "text": "Jetnity",
+      "ring": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Menü öffnen",
+      "ring": true
+    },
+    {
+      "tag": "INPUT",
+      "text": "",
+      "ring": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Reise planen",
+      "ring": true
+    },
+    {
+      "tag": "A",
+      "text": "Eigenes Ziel bestätigen",
+      "ring": true
+    },
+    {
+      "tag": "A",
+      "text": "IndonesienBali",
+      "ring": true
+    },
+    {
+      "tag": "A",
+      "text": "PortugalLissabon",
+      "ring": true
+    }
+  ],
+  "navbarMobil": {
+    "anmelden": true,
+    "abmelden": false,
+    "konto": false
+  },
+  "navbarDesktop": {
+    "anmelden": true,
+    "abmelden": false,
+    "konto": false
+  },
+  "browser": [
+    {
+      "name": "360x800",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "390x844",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "768x1024",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1024x768",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1280x800",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1440x900",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    },
+    {
+      "name": "1920x1080",
+      "status": 200,
+      "overflow": false,
+      "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+      "canonical": "https://jetnity.com",
+      "robots": "noindex, nofollow",
+      "konsole": [],
+      "seitenfehler": [],
+      "herkuenfte": [
+        "http://127.0.0.1:3456"
+      ]
+    }
+  ]
+}

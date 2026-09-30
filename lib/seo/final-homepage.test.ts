@@ -20,6 +20,7 @@ import {
   finalHomepageJsonLd,
   finalHomepageMetadaten,
   finalHomepageSeitenUrl,
+  homepageFaehigkeitenGruppiert,
 } from '@/lib/seo/final-homepage'
 import { KANONISCHE_PUBLIC_ORIGIN, kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 
@@ -97,6 +98,11 @@ describe('final homepage product 1 – Wahrheit und Entity', () => {
       HOMEPAGE_PRODUKTFENSTER.modi.map((modus) => modus.titel),
       ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'],
     )
+    assert.deepEqual(
+      HOMEPAGE_PRODUKTFENSTER.route.map((halt) => halt.ort),
+      ['Lissabon', 'Porto'],
+    )
+    assert.match(HOMEPAGE_PRODUKTFENSTER.route[1]?.text ?? '', /Unterkunft noch offen/)
     for (const modus of HOMEPAGE_PRODUKTFENSTER.modi) {
       assert.equal(modus.kennzeichnung, 'Heute nutzbar')
     }
@@ -159,5 +165,22 @@ describe('final homepage product 1 – Seite bleibt am bestehenden Einstieg', ()
     assert.match(vertrauen, /id=\{faehigkeit\.id === 'jetnity-pro' \? 'pro' : undefined\}/)
     assert.match(vertrauen, /HOMEPAGE_FAEHIGKEITEN/)
     assert.match(inspiration, /id="entdecken"/)
+  })
+
+  test('der vollständige Fähigkeitswortlaut bleibt in einem nativen Disclosure', () => {
+    const vertrauen = quelle('../../components/home/HomeVertrauen.tsx')
+    const werkzeuge = quelle('../../components/home/HomeWerkzeuge.tsx')
+    assert.match(vertrauen, /<details/)
+    assert.match(vertrauen, /<summary/)
+    assert.equal(vertrauen.includes('sr-only'), false)
+    assert.equal(vertrauen.includes('display:none'), false)
+    assert.equal(werkzeuge.includes('lg:grid-cols-3'), false)
+    const gruppen = homepageFaehigkeitenGruppiert()
+    const gesehen = gruppen.flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.id))
+    assert.deepEqual(gesehen, HOMEPAGE_FAEHIGKEITEN.map((eintrag) => eintrag.id))
+    assert.deepEqual(
+      gruppen.map((gruppe) => gruppe.kennzeichnung),
+      ['Heute nutzbar', 'Soweit Daten vorliegen', 'In Vorbereitung', 'Produktvorschau', 'Kommt später'],
+    )
   })
 })
