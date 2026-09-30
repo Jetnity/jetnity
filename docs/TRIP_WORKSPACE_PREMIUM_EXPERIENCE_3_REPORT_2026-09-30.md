@@ -74,7 +74,11 @@ Re-read before this delivery:
 - #659 changed files are icon, favicon, brand and its own docs/tests. No `components/trips/TripWorkspace*` path.
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited.
 
-## 5. Not claimed
+## 5. Push
+
+The audited runtime and this report are committed locally. `git push` was rejected with HTTP 401 on `git-receive-pack`. A contents-API update of the same mode-navigation file returned 403. The remote branch remains `b8a026db1872133ee7fe9287ad85a93962085135`. Exact-head Actions, Auth and Vercel Preview could not be read for this runtime.
+
+## 6. Not claimed
 
 No physical device. No signed-in account shell beyond the audit route and the guest local trip. No Production, provider, payment, Auth or schema change. Remote Actions, Auth and Vercel Preview are recorded only after they exist for the pushed tip. A later docs commit does not inherit an older green check.
 

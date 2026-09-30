@@ -63,7 +63,12 @@ Docs and evidence:
 
 ## Remote observation
 
-Not filled in this file until the pushed tip has a completed Actions run, Auth job and Vercel Preview. Local gates are in the report. Green checks on `b8a026db` do not approve `3a1be4b7` or a later docs tip.
+Local commits after the last successful push:
+
+- runtime `3a1be4b706495a89746e1f970c4568c90ae22a45`
+- evidence docs `e1f19841050d32396e3ad02b7702c28d4c9a938c`
+
+`git push` to `origin` was rejected with HTTP 401 on `git-receive-pack`. The GitHub contents API returned 403 for the same update. `git ls-remote` still shows the branch at `b8a026db1872133ee7fe9287ad85a93962085135`. Fetch of `main` still works. Actions, Auth and Vercel Preview have therefore not run for `3a1be4b7` or `e1f19841`. Green checks on `b8a026db` do not approve this runtime.
 
 ## Stop
 
