@@ -1,7 +1,19 @@
 # Jetnity – Active Work Status
 
 Stand: 30. September 2026
-Status: **NORMAL / PREFLIGHT 3 ACCEPTED CURRENT RELEASE-READINESS REASSESSMENT / #632 MERGED AND POST-MERGE VERIFIED / NO ACTIVE RUNTIME OR PRODUCT WRITER / #626 OPEN AND BLOCKED / NO UNGATED V1 IMPLEMENTATION / NOT A LAUNCH PASS**
+Status: **NORMAL / TRIP WORKSPACE CROSS-DEVICE INTERACTION 1 IN DRAFT REVIEW / NO READY / NO MERGE / NOT A LAUNCH PASS**
+
+## 0-current. Trip Workspace cross-device interaction 1
+
+- Draft [PR #638](https://github.com/Jetnity/jetnity/pull/638), issue #637, branch `fix/trip-workspace-cross-device-interaction-1`.
+- Logical agent: **Jetnity Trip Workspace cross-device interaction 1**, Generation 1. Session https://cursor.com/agents/bc-5a2210fe-59cf-44e2-8994-2217e427ff58. `originalModelName=grok-4.7-high-fast`.
+- Baseline `main@20bf11b0cf24460cf01d9dfe487b89bbfe555191`. After-pass product commit `2fc4d8a739759d67b7d6ac619109673a90a9cba1`. A later evidence commit does not change that product tree. Re-fetch the branch tip before review.
+- Canonical files: `docs/TRIP_WORKSPACE_CROSS_DEVICE_INTERACTION_1_{REPORT,HANDOFF,SELF_REVIEW}_2026-09-30.md` and `docs/evidence/trip-workspace-cross-device-interaction-1/`.
+- Local gates on the repair commit: typecheck pass, lint 0 errors, `npm test` 4055/4055, production build pass. CI, Auth and Vercel Preview are the pushed-head record, not this paragraph.
+- No provider activation, no schema or Auth change, no #626, no Ready, no merge, no follow-up slice.
+- Next step: independent main-chat Technical Lead code, visual and interaction review of the exact pushed head.
+
+The Preflight 3 block below was the current map before this writer. It stays as that snapshot.
 
 ## 0-current. Accepted Preflight 3 — no active runtime or product writer
 
