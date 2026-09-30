@@ -1,0 +1,489 @@
+{
+  "stand": "2026-09-30T19:22:36.519Z",
+  "basis": "http://127.0.0.1:3456",
+  "main": "55afaffbf05f915cee4a3f94d611f33909937a93",
+  "fehler": [],
+  "ergebnis": "PASS",
+  "laeufe": [
+    {
+      "name": "360x800",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "footer": {
+          "width": 360,
+          "height": 881,
+          "top": 8514.40625,
+          "left": 0,
+          "right": 360,
+          "bottom": 9395.40625,
+          "background": "rgb(15, 48, 42)",
+          "filter": "none"
+        },
+        "footImg": {
+          "width": 144,
+          "height": 48,
+          "top": 8576.40625,
+          "left": 24,
+          "right": 168,
+          "bottom": 8624.40625,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "brightness(0) invert(1)",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "gefiltert": {
+            "deckend": 7407,
+            "weiss": 7407,
+            "dunkel": 0
+          },
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "footLink": {
+          "width": 168,
+          "height": 60,
+          "top": 8570.40625,
+          "left": 12,
+          "right": 180,
+          "bottom": 8630.40625,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite",
+          "href": "/"
+        },
+        "navImg": {
+          "width": 144,
+          "height": 48,
+          "top": 12,
+          "left": 20,
+          "right": 164,
+          "bottom": 60,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "navLink": {
+          "width": 160,
+          "height": 48,
+          "top": 12,
+          "left": 12,
+          "right": 172,
+          "bottom": 60,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite"
+        }
+      },
+      "fokus": {
+        "aktiv": true,
+        "sichtbar": true,
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "390x844",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "footer": {
+          "width": 390,
+          "height": 857,
+          "top": 8391.390625,
+          "left": 0,
+          "right": 390,
+          "bottom": 9248.390625,
+          "background": "rgb(15, 48, 42)",
+          "filter": "none"
+        },
+        "footImg": {
+          "width": 144,
+          "height": 48,
+          "top": 8453.390625,
+          "left": 24,
+          "right": 168,
+          "bottom": 8501.390625,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "brightness(0) invert(1)",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "gefiltert": {
+            "deckend": 7407,
+            "weiss": 7407,
+            "dunkel": 0
+          },
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "footLink": {
+          "width": 168,
+          "height": 60,
+          "top": 8447.390625,
+          "left": 12,
+          "right": 180,
+          "bottom": 8507.390625,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite",
+          "href": "/"
+        },
+        "navImg": {
+          "width": 144,
+          "height": 48,
+          "top": 12,
+          "left": 20,
+          "right": 164,
+          "bottom": 60,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "navLink": {
+          "width": 160,
+          "height": 48,
+          "top": 12,
+          "left": 12,
+          "right": 172,
+          "bottom": 60,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite"
+        }
+      },
+      "fokus": {
+        "aktiv": true,
+        "sichtbar": true,
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "1440x900",
+      "text200": false,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "htmlFont": "16px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "footer": {
+          "width": 1440,
+          "height": 413,
+          "top": 5475.75,
+          "left": 0,
+          "right": 1440,
+          "bottom": 5888.75,
+          "background": "rgb(15, 48, 42)",
+          "filter": "none"
+        },
+        "footImg": {
+          "width": 144,
+          "height": 48,
+          "top": 5545.75,
+          "left": 116,
+          "right": 260,
+          "bottom": 5593.75,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "brightness(0) invert(1)",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "gefiltert": {
+            "deckend": 7407,
+            "weiss": 7407,
+            "dunkel": 0
+          },
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "footLink": {
+          "width": 168,
+          "height": 60,
+          "top": 5539.75,
+          "left": 104,
+          "right": 272,
+          "bottom": 5599.75,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite",
+          "href": "/"
+        },
+        "navImg": {
+          "width": 144,
+          "height": 48,
+          "top": 12,
+          "left": 112,
+          "right": 256,
+          "bottom": 60,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "navLink": {
+          "width": 160,
+          "height": 48,
+          "top": 12,
+          "left": 104,
+          "right": 264,
+          "bottom": 60,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite"
+        }
+      },
+      "fokus": {
+        "aktiv": true,
+        "sichtbar": true,
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "text-200-360x800",
+      "text200": true,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 360,
+        "clientWidth": 360,
+        "htmlFont": "32px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "footer": {
+          "width": 360,
+          "height": 1926,
+          "top": 29080.8125,
+          "left": 0,
+          "right": 360,
+          "bottom": 31006.8125,
+          "background": "rgb(15, 48, 42)",
+          "filter": "none"
+        },
+        "footImg": {
+          "width": 144,
+          "height": 48,
+          "top": 29212.8125,
+          "left": 48,
+          "right": 192,
+          "bottom": 29260.8125,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "brightness(0) invert(1)",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "gefiltert": {
+            "deckend": 7407,
+            "weiss": 7407,
+            "dunkel": 0
+          },
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "footLink": {
+          "width": 192,
+          "height": 88,
+          "top": 29192.8125,
+          "left": 24,
+          "right": 216,
+          "bottom": 29280.8125,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite",
+          "href": "/"
+        },
+        "navImg": {
+          "width": 144,
+          "height": 48,
+          "top": 36,
+          "left": 40,
+          "right": 184,
+          "bottom": 84,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "navLink": {
+          "width": 176,
+          "height": 88,
+          "top": 16,
+          "left": 24,
+          "right": 200,
+          "bottom": 104,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite"
+        }
+      },
+      "fokus": {
+        "aktiv": true,
+        "sichtbar": true,
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    },
+    {
+      "name": "text-200-1440x900",
+      "text200": true,
+      "status": 200,
+      "messung": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "htmlFont": "32px",
+        "h1": "Deine ganze Reise. Intelligent an einem Ort.",
+        "footer": {
+          "width": 1440,
+          "height": 841,
+          "top": 13333.5,
+          "left": 0,
+          "right": 1440,
+          "bottom": 14174.5,
+          "background": "rgb(15, 48, 42)",
+          "filter": "none"
+        },
+        "footImg": {
+          "width": 144,
+          "height": 48,
+          "top": 13481.5,
+          "left": 72,
+          "right": 216,
+          "bottom": 13529.5,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "brightness(0) invert(1)",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "gefiltert": {
+            "deckend": 7407,
+            "weiss": 7407,
+            "dunkel": 0
+          },
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "footLink": {
+          "width": 192,
+          "height": 88,
+          "top": 13461.5,
+          "left": 48,
+          "right": 240,
+          "bottom": 13549.5,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite",
+          "href": "/"
+        },
+        "navImg": {
+          "width": 144,
+          "height": 48,
+          "top": 36,
+          "left": 64,
+          "right": 208,
+          "bottom": 84,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "alt": "",
+          "src": "http://127.0.0.1:3456/brand/jetnity-logo.png",
+          "naturalWidth": 384,
+          "naturalHeight": 128,
+          "ungefiltert": {
+            "deckend": 7407,
+            "weiss": 0,
+            "dunkel": 7050
+          }
+        },
+        "navLink": {
+          "width": 176,
+          "height": 88,
+          "top": 16,
+          "left": 48,
+          "right": 224,
+          "bottom": 104,
+          "background": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "label": "Jetnity Startseite"
+        }
+      },
+      "fokus": {
+        "aktiv": true,
+        "sichtbar": true,
+        "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(255, 255, 255, 0.25) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid"
+      },
+      "konsole": [],
+      "seitenfehler": [],
+      "fremd": []
+    }
+  ]
+}
