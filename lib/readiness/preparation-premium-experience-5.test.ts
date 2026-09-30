@@ -136,6 +136,8 @@ describe('Preparation premium experience 5', () => {
     assert.equal(ui.includes('dokumentAblaufGegenReise'), true)
     assert.equal(ui.includes('DOKUMENT_LEBENSZYKLUS_COPY.reiseHinweis'), true)
     assert.equal(ui.includes('Einreise & Reisevorbereitung'), true)
+    assert.equal(ui.includes('[&_.grid:not(.grid-cols-2)]:grid-cols-1'), true)
+    assert.equal(ui.includes('[&_legend]:[overflow-wrap:anywhere]'), true)
     assert.equal(ui.includes('evaluations[0]'), false)
     assert.equal(ui.includes('documents[0]'), false)
     assert.equal(ui.includes('citizenships[0]'), false)

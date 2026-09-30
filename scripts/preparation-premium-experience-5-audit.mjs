@@ -492,9 +492,14 @@ try {
     const zu = await messen(page)
     merke(zu.detailHidden === true, 'Schliessen lässt das Detail offen')
     const fokus = page.getByRole('button', { name: 'Vorbereitung öffnen', exact: true })
-    await fokus.focus()
-    const ring = await fokus.evaluate((el) => getComputedStyle(el).boxShadow)
-    merke(ring !== 'none', 'Fokusring fehlt')
+    await fokus.evaluate((el) => {
+      if (el instanceof HTMLElement) el.focus({ focusVisible: true })
+    })
+    const ring = await fokus.evaluate((el) => {
+      const stil = getComputedStyle(el)
+      return { boxShadow: stil.boxShadow, outline: stil.outline, outlineOffset: stil.outlineOffset }
+    })
+    merke(ring.boxShadow !== 'none' || (ring.outline && ring.outline !== 'none' && !ring.outline.startsWith('0px')), `Fokusring fehlt ${JSON.stringify(ring)}`)
     const motion = await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     merke(motion, 'Reduced Motion nicht aktiv')
     merke(netz.length === 0, `Interaktion hat einen Aufruf ausgelöst ${netz.length}`)
@@ -550,6 +555,29 @@ try {
     await bild(textPage, 'text200_360x800')
     schritte.push({ name: 'text200_360x800', netz: textNetz.length, formular, ...stand })
     merke(stand.htmlFont === '32px', `200% Schrift ist ${stand.htmlFont}`)
+    if (stand.horizontalOverflow) {
+      const ursache = await textPage.evaluate(() => {
+        const breite = document.documentElement.clientWidth
+        return [...document.querySelectorAll('body *')]
+          .filter((el) => el instanceof HTMLElement && el.getBoundingClientRect().right > breite + 1)
+          .map((el) => {
+            const rect = el.getBoundingClientRect()
+            return {
+              tag: el.tagName,
+              type: el.getAttribute('type'),
+              id: el.id,
+              className: String(el.className).slice(0, 120),
+              text: (el.innerText || el.getAttribute('placeholder') || '').replace(/\s+/g, ' ').trim().slice(0, 60),
+              right: Math.round(rect.right),
+              width: Math.round(rect.width),
+              children: el.children.length,
+            }
+          })
+          .sort((a, b) => a.children - b.children || b.width - a.width)
+          .slice(0, 12)
+      })
+      fehler.push(`200% Ursache ${JSON.stringify(ursache)}`)
+    }
     merke(stand.horizontalOverflow === false, `200% Überlauf ${stand.scrollWidth}/${stand.clientWidth}`)
     const klein = stand.controls.filter((control) => ['BUTTON', 'A', 'SUMMARY'].includes(control.tag) && control.height > 0 && control.height < 44)
     merke(klein.length === 0, `200% Kontrollen unter 44px ${JSON.stringify(klein.slice(0, 6))}`)

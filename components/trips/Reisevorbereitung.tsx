@@ -184,7 +184,7 @@ export default function Reisevorbereitung({
       data-preparation-premium={PREPARATION_PREMIUM_EXPERIENCE}
       className="min-w-0 rounded-2xl border border-line-200 bg-white px-4 py-4"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Einreise & Reisevorbereitung</p>
+      <p className="break-words text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Einreise & Reisevorbereitung</p>
       <h3 id="reisevorbereitung-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
         Was diese Reise offiziell und persönlich braucht
       </h3>
@@ -221,13 +221,21 @@ export default function Reisevorbereitung({
         <ChevronDown className={cn('h-4 w-4', offen && 'rotate-180')} aria-hidden="true" />
       </button>
 
-      <div id="reisevorbereitung-detail" hidden={!offen} className={offen ? 'mt-4 grid min-w-0 gap-3' : 'hidden'}>
+      <div
+        id="reisevorbereitung-detail"
+        hidden={!offen}
+        className={
+          offen
+            ? 'mt-4 grid min-w-0 grid-cols-1 gap-3 [&_.grid:not(.grid-cols-2)]:grid-cols-1 [&_button]:min-w-0 [&_button]:max-w-full [&_button]:whitespace-normal [&_button]:[overflow-wrap:anywhere] [&_a]:min-w-0 [&_a]:max-w-full [&_a]:whitespace-normal [&_a]:[overflow-wrap:anywhere] [&_legend]:max-w-full [&_legend]:whitespace-normal [&_legend]:[overflow-wrap:anywhere]'
+            : 'hidden'
+        }
+      >
         <nav aria-label="Bereiche der Vorbereitung" className="grid grid-cols-2 gap-2">
           {PREPARATION_BEREICHE.map((bereich) => (
             <a
               key={bereich.id}
               href={`#preparation-${bereich.id}`}
-              className="inline-flex min-h-11 items-center rounded-2xl border border-line-200 px-3 py-2 text-sm font-semibold leading-5 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              className="block min-h-11 min-w-0 break-words rounded-2xl border border-line-200 px-3 py-2 text-sm font-semibold leading-5 text-brand-800 [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             >
               {bereich.titel}
             </a>
@@ -417,7 +425,7 @@ function Bereich({
       data-preparation-section={id}
       className="group/bereich scroll-mt-28 min-w-0 rounded-2xl border border-line-200 bg-surface-25"
     >
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-3 py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 min-w-0 cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-3 py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
         <span className="min-w-0">
           <span className="block break-words text-sm font-semibold text-brand-800">{BEREICH_TITEL[id]}</span>
           <span className="mt-0.5 block break-words text-xs leading-5 text-ink-800">{hinweis}</span>
@@ -713,7 +721,7 @@ function ReisendenKarte({
   )
 
   return (
-    <article className="grid min-w-0 gap-2 rounded-2xl border border-line-200 bg-white px-3 py-3">
+    <article className="grid min-w-0 max-w-full gap-2 rounded-2xl border border-line-200 bg-white px-3 py-3">
       <ReisendenZusammenfassung slot={slot} tripStart={tripStart} tripEnd={tripEnd} />
       {onTravellerSetzen ? (
         <details className="group/traveller min-w-0">
@@ -722,7 +730,7 @@ function ReisendenKarte({
             <ChevronDown className="h-4 w-4 group-open/traveller:rotate-180" aria-hidden="true" />
           </summary>
           <form
-            className="mt-2 grid min-w-0 gap-2"
+            className="mt-2 grid min-w-0 max-w-full gap-2"
             onSubmit={async (event) => {
               event.preventDefault()
               onFehler('')
@@ -744,7 +752,7 @@ function ReisendenKarte({
               Offizielle Prüfung noch nicht verfügbar. Angaben werden nur erfasst, nicht bewertet.
               {slot.missingFacts.length === 0 ? ' Angaben erfasst.' : ' Für eine zuverlässige Prüfung fehlen Angaben.'}
             </p>
-            <fieldset className="grid gap-2">
+            <fieldset className="grid min-w-0 max-w-full gap-2">
               <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften</legend>
               {citizenships.map((code, index) => (
                 <div key={`cit-${index}`} className="grid min-w-0 gap-2">
@@ -784,7 +792,7 @@ function ReisendenKarte({
               ) : null}
             </fieldset>
             <LandFeld label="Wohnsitzland, falls relevant" value={residence} onChange={setResidence} />
-            <fieldset className="grid gap-2">
+            <fieldset className="grid min-w-0 max-w-full gap-2">
               <legend className="text-xs font-medium text-brand-800">Reisedokumente</legend>
               {documents.map((document, index) => (
                 <div key={document.clientRef || `doc-${index}`} className="grid gap-2 rounded-2xl bg-surface-25 px-3 py-3">
