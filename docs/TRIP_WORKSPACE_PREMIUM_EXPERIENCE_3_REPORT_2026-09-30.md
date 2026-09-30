@@ -8,7 +8,8 @@ Draft PR: #661
 Branch: `feat/trip-workspace-premium-experience-3`
 Baseline: `main@a2685812022258610e0cf34d926695b7067e55df`
 Integrated main: `1ea6ddd03a290683d3d787823621c535a611a90f` (#655 Next.js 16.3.8)
-Audited runtime head: `3a1be4b706495a89746e1f970c4568c90ae22a45`
+Phone-mode runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
+Evidence re-run while HEAD was: `50496df9250f4e0744b1336068ea01710d8a9ebf`
 Agent: **Jetnity Trip Workspace premium experience 3**, Generation 1
 Session: https://cursor.com/agents/bc-9dce6347-3fab-49a7-a9b8-ca3c988b2c44
 `originalModelName`: `grok-4.7-high-fast`
@@ -36,7 +37,9 @@ Presentation only. The accepted four-mode shell, URL contract, focus rules, lazy
 Production-like Chrome audit, `next start` on `http://127.0.0.1:3456`, `JETNITY_UI_AUDIT=1`. Provider and assistant routes intercepted. Synthetic trip only.
 
 Evidence: `docs/evidence/trip-workspace-premium-experience-3/audit.json`
-Captured `2026-09-30T20:29:46.897Z` at git `3a1be4b706495a89746e1f970c4568c90ae22a45`. Result **PASS**, `fehler` empty, 12 recorded viewport steps. Compact and wide interaction flows are enforced by the same run; a failure would be listed in `fehler`.
+Re-run `2026-09-30T20:35:52.974Z`. The JSON `sha` field is `50496df9250f4e0744b1336068ea01710d8a9ebf` because the script stamps `git rev-parse HEAD`. The production server was the Next.js 16.3.8 build of the phone-mode runtime `3a1be4b7`. Docs commits do not change that render. Result **PASS**, `fehler` empty, 12 recorded viewport steps. Compact and wide interaction flows are enforced by the same run; a failure would be listed in `fehler`.
+
+On `b8a026db` the mode bar was one scrolling row with a hidden scrollbar. At 360 and 390, Vorbereitung sat fully outside that bar. `3a1be4b7` is that defect fix and nothing else: a 2×2 segment below 640px.
 
 | Surface | Result |
 | --- | --- |
@@ -64,7 +67,7 @@ A pixel read of `overview_360x800.png` shows the word Vorbereitung as one ink ba
 | `npm run build` | pass, Next.js 16.3.8, 25 static pages. Setup check warns that no `.env` / `.env.local` exists. |
 | `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode` | pass |
 | `check:schema-bezug` | exit 0. Existing note: local/unapplied `admin_account_counts_v1`. Not part of this slice. |
-| Premium audit | PASS at `3a1be4b7` |
+| Premium audit | PASS, re-run `2026-09-30T20:35:52.974Z`, JSON sha `50496df9` |
 
 ## 4. Parallel safety
 
@@ -74,12 +77,16 @@ Re-read before this delivery:
 - #659 changed files are icon, favicon, brand and its own docs/tests. No `components/trips/TripWorkspace*` path.
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited.
 
-## 5. Push
+## 5. Earlier remote head
 
-The audited runtime and this report are committed locally. `git push` was rejected with HTTP 401 on `git-receive-pack`. A contents-API update of the same mode-navigation file returned 403. The remote branch remains `b8a026db1872133ee7fe9287ad85a93962085135`. Exact-head Actions, Auth and Vercel Preview could not be read for this runtime.
+`b8a026db1872133ee7fe9287ad85a93962085135` is 0 behind `main@1ea6ddd03a290683d3d787823621c535a611a90f`. GitHub Actions `36770631331` was SUCCESS and Vercel Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` was READY for that head. There were no GitHub or Vercel review threads. Those checks do not approve `3a1be4b7` or any later docs tip. An earlier push attempt of the phone-mode fix was rejected with HTTP 401; this record is the retry.
 
-## 6. Not claimed
+## 6. Exact-head remote for this delivery
 
-No physical device. No signed-in account shell beyond the audit route and the guest local trip. No Production, provider, payment, Auth or schema change. Remote Actions, Auth and Vercel Preview are recorded only after they exist for the pushed tip. A later docs commit does not inherit an older green check.
+Not filled until the evidence commit is on `origin` and its Actions run, Auth job and Vercel Preview are terminal. This section is updated only with ids that were actually read.
+
+## 7. Not claimed
+
+No physical device. No signed-in account shell beyond the audit route and the guest local trip. No Production, provider, payment, Auth or schema change. A later docs commit does not inherit an older green check.
 
 Cursor does not mark Ready and does not merge.

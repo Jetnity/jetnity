@@ -18,10 +18,11 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@a2685812022258610e0cf34d926695b7067e55df`
 - Integrated main: `1ea6ddd03a290683d3d787823621c535a611a90f`
-- Audited runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
+- Phone-mode runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
+- Evidence re-run stamped while HEAD was `50496df9250f4e0744b1336068ea01710d8a9ebf` at `2026-09-30T20:35:52.974Z`
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` are not owned by this slice and were not edited.
 
-Re-fetch the tip before review. The audit JSON is bound to `3a1be4b7`. A docs commit on top of that runtime does not change the rendered cockpit. CI and Preview on an older head do not approve a later one.
+Re-fetch the tip before review. The rendered cockpit is the `3a1be4b7` phone bar. The JSON `sha` is the git HEAD at audit time, which was docs on top of that runtime. CI `36770631331` and Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` belong to `b8a026db` only.
 
 ## Changed files against main
 
@@ -58,17 +59,20 @@ Docs and evidence:
 | Is the desktop bar still one segment? | `screens/overview_1440x900.png`. From 768px the track is one row |
 | Are the domains one trip? | Phone column in the 360 shot; `teileSpalten` becomes two tracks from 768 |
 | Does opening Flüge search by itself? | `screens/compact_fluege.png` then `compact_flug-suchen.png`. Audit requires search unmounted until “Flug suchen”, and zero provider calls |
-| Do Back, Forward, reload and invalid queries hold? | Compact and wide flows in the audit. `fehler` is empty on `3a1be4b7` |
+| Do Back, Forward, reload and invalid queries hold? | Compact and wide flows in the audit. `fehler` is empty on the `2026-09-30T20:35:52.974Z` re-run |
 | Did #659 collide? | Its file list is icons, brand, favicon docs and `lib/pwa/installierbarkeit.test.ts`. No Trip Workspace path |
 
 ## Remote observation
 
-Local commits after the last successful push:
+`b8a026db` checks, already read by the Technical Lead and not re-used as approval for a later head:
 
-- runtime `3a1be4b706495a89746e1f970c4568c90ae22a45`
-- evidence docs `e1f19841050d32396e3ad02b7702c28d4c9a938c`
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36770631331` | SUCCESS |
+| Vercel Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` | READY |
+| Review threads | none |
 
-`git push` to `origin` was rejected with HTTP 401 on `git-receive-pack`. The GitHub contents API returned 403 for the same update. `git ls-remote` still shows the branch at `b8a026db1872133ee7fe9287ad85a93962085135`. Fetch of `main` still works. Actions, Auth and Vercel Preview have therefore not run for `3a1be4b7` or `e1f19841`. Green checks on `b8a026db` do not approve this runtime.
+The phone-mode commit and this evidence were not on that remote head. Exact-head Actions, Auth and Preview for the evidence tip are written into the report only after they are read.
 
 ## Stop
 

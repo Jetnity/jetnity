@@ -3,7 +3,8 @@
 Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
-Audited runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
+Phone-mode runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
+Evidence re-run: `2026-09-30T20:35:52.974Z`, JSON sha `50496df9250f4e0744b1336068ea01710d8a9ebf`
 Session: https://cursor.com/agents/bc-9dce6347-3fab-49a7-a9b8-ca3c988b2c44
 `originalModelName`: `grok-4.7-high-fast`
 
