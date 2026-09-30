@@ -4,7 +4,7 @@ Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
 Audited runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
-Device-matrix audit: `2026-09-30T22:33:50.508Z`, JSON sha `fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13`, PASS, 26 steps, 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272`
+R1 audit: `2026-09-30T23:11:36.924Z`, JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`, PASS, 26 steps, 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272`
 Session: https://cursor.com/agents/bc-057a244a-5a54-43b2-8c6f-182dcc32598e
 `originalModelName`: `grok-4.7-high-fast`
 
@@ -27,7 +27,9 @@ This is the implementing agent’s review. It does not replace an independent ma
 - On a phone, both stage strips are in the selected-day panel. They scroll sideways. They do not wrap. A 21-day strip is still a long sideways scroll. The navigator is the primary control.
 - The 4- and 7-column grids are below the selected-day panel, so the index is not in the first phone viewport. From 768px it is the day index under the working day.
 - A landscape phone at 844×390 is wider than the 768px phone rule, so it uses the 4-column grid. The navigator and `Tag X von Y` stay. The product truth does not change.
-- At 200% text the form chips can wrap a long German label. The page `scrollWidth` stayed 360. A chip inside a horizontal strip may extend past the viewport and stay clipped by that strip.
+- R1 on `967be7d8` was right: avoiding overflow was not enough. The counter had been squeezed between two 44px buttons and wrapped character by character at 200%. It is now its own line.
+- At 200% the counter and date can be slightly wider than the panel. They scroll sideways as one line. They do not break inside a word.
+- Phone day chips no longer shrink to the longest syllable. The strip scrolls. Grid chips from 768px can still wrap at spaces inside a column.
 - The audit route is the synthetic account-shaped shell. A signed-in browser pass and a physical phone were not run.
 - `eslint .` exits 0 with 148 existing warnings. This slice does not add one in `TripWorkspacePlan.tsx`.
 - `check:schema-bezug` still prints the existing local/unapplied `admin_account_counts_v1` note and exits 0.

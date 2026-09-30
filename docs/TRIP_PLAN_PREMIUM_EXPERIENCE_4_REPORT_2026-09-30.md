@@ -1,14 +1,15 @@
 # Jetnity Trip Plan Premium Experience 4 — Report
 
 Stand: 30 September 2026
-Status: **IMPLEMENTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TL REVIEW**
+Status: **R1 CORRECTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TL REVIEW**
 
 Issue: #662
 Draft PR: #663
 Branch: `feat/trip-plan-premium-experience-4`
 Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
 `origin/main` re-fetched in this session: still `2530020dbc6797b17d64c064ca5474cf90804272`. This branch is 0 behind that main.
-Audited runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
+R1 runtime: `f64b27f3d1a6c8a65267db3f113c7e489b888a56`
+Earlier runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
 Agent: **Jetnity Trip Plan premium experience 4**, Generation 1
 Session: https://cursor.com/agents/bc-057a244a-5a54-43b2-8c6f-182dcc32598e
 `originalModelName`: `grok-4.7-high-fast`
@@ -26,7 +27,8 @@ Presentation of Reiseplan only. `timelineAbleiten`, day order, stage assignment,
 - The selected day, its heading, `Punkt hinzufügen`, the form, the empty line, and the items share one panel. The day grid sits under that panel as the index.
 - An empty day is one line: `Noch nichts an diesem Tag.`
 - Items stay in stored order and read as a timeline. A clock is shown only when `startsAt` exists. Flight price keeps the existing amount and `zum Auswahlzeitpunkt`. No status, route, booking, or score was added.
-- At 200% text the add form uses tighter padding, wrapping actions, and chips that can break inside the 360px page.
+- At 200% text the add form uses tighter padding and wrapping actions so the page does not overflow.
+- R1, exact head `967be7d8`: the counter no longer sits between the previous and next buttons. `Tag X von Y` and the selected date/stage are each one `nowrap` line. If a line is wider than the panel, that line scrolls. It does not break into single characters. Phone day chips use `nowrap` and `w-max` inside the horizontal strip. Previous and next stay at least 44px, at the edges on a phone and centered from 768px.
 
 `TripWorkspace.tsx` was not edited. The selected day remains component state. Reload, Back, and Forward still return to the canonical first day. That is the existing contract, not a new URL day parameter.
 
@@ -44,7 +46,7 @@ First PASS `2026-09-30T22:27:59.148Z` on runtime `01aaa9ab`. The device-matrix r
 | 360×800 and 390×844 | navigator, `Tag 1 von 32`, no page overflow, no raster, two one-row strips (21 and 11 days, row span 0), empty day 24px, zero provider calls |
 | 768×1024 | two 4-column grids, no phone strip |
 | 1024×768, 1440×900, 1920×1080 | two 7-column grids, no phone strip |
-| 200% at 360 | root font 32px, form open, no page overflow, inputs at least 16px, empty day 96px |
+| 200% at 360 | root font 32px, form open, no page overflow, inputs at least 16px, counter and date each one line, day chips one label line and at least 88px wide |
 | Reduced motion at 390 | reduced motion active, `scroll-behavior: auto` |
 | Shapes 1, 7, 14, 21 | `Tag 1 von N` at 390 and 1440; a one-day trip disables both ends |
 | Day 16 | titles `Tsukiji Outer Market`, `Freier Nachmittag`, `Flug nach Osaka`; times `09:00` and `18:40` only; price truth present |
@@ -86,11 +88,15 @@ Presentation rule, same product truth:
 
 125% and 150% are CSS `zoom` on `documentElement` at 1440×900. The root font stays 16px. The grids stay at 7 columns and the page does not overflow.
 
-Matrix re-run `2026-09-30T22:33:50.508Z`. JSON sha `fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13`. Result **PASS**, `fehler` empty, `konsole` empty, 26 recorded steps. That commit adds the audit script only. Runtime remains `01aaa9ab`. A later docs commit does not change the measured page.
+The earlier matrix at `fa493ee5` passed overflow only. Technical-Lead R1 on `967be7d8` rejected that 200% navigator as unreadable.
+
+R1 re-run `2026-09-30T23:11:36.924Z`. JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`. Result **PASS**, `fehler` empty, `konsole` empty, 26 steps. The audit now fails if the counter or date wraps, or if a phone day chip label wraps or is under 44px. At 200% a chip must also be at least 88px wide. A direct measure on the 360/200% navigator showed `Tag 1 von 2` at 212×40 and `Do., 01. Okt. · Kyoto` at 212×40, both `nowrap`. The page `scrollWidth` stayed 360.
 
 ## 6. Exact-head remote
 
-Read on 30 September 2026 for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. That commit records the device-matrix audit. It does not change Reiseplan runtime. This is an observation, not a Technical-Lead PASS. The branch was 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272` when fetched before the audit. A later docs commit that only records this paragraph does not inherit the checks below.
+Not read yet for `f64b27f3`. Checks on `967be7d8`, `fe11f75e`, and the seed Vercel comment do not approve the R1 runtime. `origin/main` was fetched again before this record and is still `2530020dbc6797b17d64c064ca5474cf90804272`.
+
+Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`, kept so the earlier observation is not mistaken for this head:
 
 | Check | Result |
 | --- | --- |

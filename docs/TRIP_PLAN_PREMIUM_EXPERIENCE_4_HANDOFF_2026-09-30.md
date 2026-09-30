@@ -18,9 +18,10 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
 - `origin/main` re-fetched this session: same SHA, 0 behind
-- Audited runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
-- First audit: `2026-09-30T22:27:59.148Z`, JSON sha `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`, PASS
-- Device-matrix audit: `2026-09-30T22:33:50.508Z`, JSON sha `fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13`, PASS, `fehler` empty, 26 steps
+- R1 runtime: `f64b27f3d1a6c8a65267db3f113c7e489b888a56`
+- R1 audit: `2026-09-30T23:11:36.924Z`, JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`, PASS, `fehler` empty, 26 steps
+- Earlier runtime `01aaa9ab` and matrix `fa493ee5` do not answer the R1 readability review
+- Technical-Lead R1: review on exact head `967be7d8d4fb571c25f66b59aafb6d10b7b682a5`
 - Product Owner device addendum: PR comment `5920702000`
 - Technical Lead parallel-safety note: PR comment `5920594564`. `TripWorkspace.tsx` was not edited.
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` are not owned by this slice and were not edited.
@@ -53,7 +54,7 @@ Docs and evidence:
 | Does a 32-day phone trip avoid a wrapping day wall? | `screens/plan_360x800.png`. JSON: no raster, two strips, row span 0 |
 | Is 768 a 4-column bridge and desktop at most 7? | `screens/plan_768x1024.png`, `screens/plan_1440x900.png`. JSON rasters are 4, then 7 at 1024, 1440 and 1920 |
 | Do three items read in stored order, with time only when present? | `screens/phone_tag16.png`. Audit requires the three titles and times `09:00\|18:40` |
-| Does 200% text overflow a 360px page with the form open? | `screens/text200_360x800.png`. JSON: `horizontalOverflow` false, font `32px` |
+| Is 200% text readable, not only free of overflow? | `screens/text200_360x800.png`. Counter and date are one `nowrap` line each. Phone chips do not wrap their label. |
 | Do previous/next, direct selection, form, delete, detail, and history hold? | Same audit run. `fehler` is empty on the matrix re-run recorded below |
 | Does the Product Owner matrix hold? | 320, 375, 412, 430, 820, 1280, 1728, landscape 844×390, zoom 125% and 150%. See the matrix line below |
 
@@ -63,7 +64,9 @@ Persisting the selected day in the URL would survive reload. That would change t
 
 ## Remote observation
 
-Read for exact head `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. Actions `36786320959` success. Auth job `110128463008` success. Typecheck, Lint & Build job `110128462902` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/S1mo1G85U8kcYfz8jt2ESr7wNPdX`. Preview deployment `6771642993` success. No GitHub review threads. This observation does not approve a later commit.
+Not read yet for `f64b27f3`. The read below does not approve the R1 runtime.
+
+Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. Actions `36786320959` success. Auth job `110128463008` success. Typecheck, Lint & Build job `110128462902` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/S1mo1G85U8kcYfz8jt2ESr7wNPdX`. Preview deployment `6771642993` success. No GitHub review threads on that head.
 
 ## Stop
 
