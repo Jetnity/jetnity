@@ -16,10 +16,10 @@ import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
 type Status = { art: 'erfolg' | 'fehler'; text: string } | null
 
 const hauptAktion =
-  'inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60'
+  'flex min-h-[44px] w-full max-w-full min-w-0 items-center justify-center break-words rounded-full bg-brand-800 px-[16px] text-center text-sm font-semibold text-white hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60'
 
 const nebenAktion =
-  'inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60'
+  'flex min-h-[44px] w-full max-w-full min-w-0 items-center justify-center break-words rounded-full border border-line-200 bg-white px-[16px] text-center text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60'
 
 export default function RegistryReiseUebernahme({
   problem,
@@ -50,7 +50,7 @@ export default function RegistryReiseUebernahme({
   }
 
   return (
-    <section aria-labelledby="registry-reise-uebernahme-titel" className="rounded-2xl border border-line-200 bg-surface-25 px-3 py-3">
+    <section aria-labelledby="registry-reise-uebernahme-titel" className="w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-surface-25 px-[12px] py-3">
       <h5 id="registry-reise-uebernahme-titel" className="text-sm font-semibold text-brand-800">
         {REGISTRY_TRIP_COPY.titel}
       </h5>
@@ -100,7 +100,7 @@ export default function RegistryReiseUebernahme({
           <p className="mt-1 text-xs leading-5 text-ink-800">{REGISTRY_TRIP_COPY.leerText}</p>
           <Link
             href="/account/travellers"
-            className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            className="mt-2 flex min-h-[44px] w-full min-w-0 items-center break-words text-sm font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
           >
             {REGISTRY_TRIP_COPY.leerLink}
           </Link>
@@ -115,7 +115,7 @@ export default function RegistryReiseUebernahme({
           {travellers.map((traveller) => {
             const bestaetigt = bestaetigungId === traveller.id
             return (
-              <li key={traveller.id} className="min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2">
+              <li key={traveller.id} className="grid w-full min-w-0 grid-cols-1 gap-2 rounded-xl border border-line-200 bg-white px-[12px] py-2">
                 <p className="break-words text-sm font-semibold text-brand-800">
                   {registryTripAnzeigeName(traveller.label)}
                 </p>
@@ -154,7 +154,7 @@ export default function RegistryReiseUebernahme({
                     </dd>
                   </div>
                 </dl>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="grid w-full min-w-0 grid-cols-1 gap-2">
                   {bestaetigt ? (
                     <>
                       <button

@@ -182,9 +182,9 @@ export default function Reisevorbereitung({
     <section
       aria-labelledby="reisevorbereitung-titel"
       data-preparation-premium={PREPARATION_PREMIUM_EXPERIENCE}
-      className="min-w-0 rounded-2xl border border-line-200 bg-white px-4 py-4"
+      className="w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-white px-[12px] py-4"
     >
-      <p className="break-words text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Einreise & Reisevorbereitung</p>
+      <p className="break-words text-xs font-semibold uppercase tracking-[0.08em] text-brand-600">Einreise & Reisevorbereitung</p>
       <h3 id="reisevorbereitung-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
         Was diese Reise offiziell und persönlich braucht
       </h3>
@@ -197,7 +197,7 @@ export default function Reisevorbereitung({
         <Zahl label="Nicht relevant" wert={sichtbareZusammenfassung.skipped} />
       </dl>
 
-      <p className="mt-3 rounded-xl bg-surface-25 px-3 py-2 text-xs leading-5 text-ink-800" role="status">
+      <p className="mt-3 rounded-xl bg-surface-25 px-[12px] py-2 text-xs leading-5 text-ink-800" role="status">
         {uebersichtStatus}. {PREPARATION_DISCLAIMER}
       </p>
 
@@ -215,7 +215,7 @@ export default function Reisevorbereitung({
         aria-expanded={offen}
         aria-controls="reisevorbereitung-detail"
         onClick={() => setOffen((wert) => !wert)}
-        className="mt-3 inline-flex min-h-11 w-full items-center justify-between rounded-full border border-line-200 px-4 text-sm font-semibold text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        className="mt-3 inline-flex min-h-[44px] w-full items-center justify-between gap-[12px] rounded-full border border-line-200 px-[16px] text-left text-sm font-semibold break-words text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
       >
         {offen ? 'Vorbereitung schliessen' : 'Vorbereitung öffnen'}
         <ChevronDown className={cn('h-4 w-4', offen && 'rotate-180')} aria-hidden="true" />
@@ -226,16 +226,16 @@ export default function Reisevorbereitung({
         hidden={!offen}
         className={
           offen
-            ? 'mt-4 grid min-w-0 grid-cols-1 gap-3 [&_.grid:not(.grid-cols-2)]:grid-cols-1 [&_button]:min-w-0 [&_button]:max-w-full [&_button]:whitespace-normal [&_button]:[overflow-wrap:anywhere] [&_a]:min-w-0 [&_a]:max-w-full [&_a]:whitespace-normal [&_a]:[overflow-wrap:anywhere] [&_legend]:max-w-full [&_legend]:whitespace-normal [&_legend]:[overflow-wrap:anywhere]'
+            ? 'mt-4 grid w-full min-w-0 max-w-full grid-cols-1 gap-3'
             : 'hidden'
         }
       >
-        <nav aria-label="Bereiche der Vorbereitung" className="grid grid-cols-2 gap-2">
+        <nav aria-label="Bereiche der Vorbereitung" className="grid w-full grid-cols-1 gap-2">
           {PREPARATION_BEREICHE.map((bereich) => (
             <a
               key={bereich.id}
               href={`#preparation-${bereich.id}`}
-              className="block min-h-11 min-w-0 break-words rounded-2xl border border-line-200 px-3 py-2 text-sm font-semibold leading-5 text-brand-800 [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              className="block min-h-[44px] w-full min-w-0 break-words rounded-2xl border border-line-200 px-[12px] py-[10px] text-sm font-semibold leading-5 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             >
               {bereich.titel}
             </a>
@@ -350,14 +350,14 @@ export default function Reisevorbereitung({
                   value={titel}
                   onChange={(event) => setTitel(event.target.value)}
                   maxLength={80}
-                  className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   placeholder="z. B. Reiseadapter einpacken"
                 />
               </label>
               <p className="text-xs leading-5 text-ink-800">{SENSITIVE_HINWEIS}</p>
               <button
                 type="submit"
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full bg-brand-800 px-[16px] text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
               >
                 Punkt hinzufügen
               </button>
@@ -425,14 +425,14 @@ function Bereich({
       data-preparation-section={id}
       className="group/bereich scroll-mt-28 min-w-0 rounded-2xl border border-line-200 bg-surface-25"
     >
-      <summary className="flex min-h-11 min-w-0 cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-3 py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
-        <span className="min-w-0">
-          <span className="block break-words text-sm font-semibold text-brand-800">{BEREICH_TITEL[id]}</span>
+      <summary className="flex min-h-[44px] w-full min-w-0 cursor-pointer list-none items-center justify-between gap-[8px] rounded-2xl px-[12px] py-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
+        <span className="min-w-0 flex-1">
+          <span className="block break-words text-sm font-semibold leading-5 text-brand-800">{BEREICH_TITEL[id]}</span>
           <span className="mt-0.5 block break-words text-xs leading-5 text-ink-800">{hinweis}</span>
         </span>
         <ChevronDown className="h-4 w-4 shrink-0 text-brand-800 group-open/bereich:rotate-180" aria-hidden="true" />
       </summary>
-      <div className="grid min-w-0 gap-3 border-t border-line-200 px-3 py-3">{children}</div>
+      <div className="grid w-full min-w-0 grid-cols-1 gap-3 border-t border-line-200 px-[8px] py-3">{children}</div>
     </details>
   )
 }
@@ -448,7 +448,7 @@ function OfficialZeile({
   return (
     <li
       className={cn(
-        'min-w-0 rounded-2xl border border-line-200 bg-white px-3 py-3',
+        'min-w-0 rounded-2xl border border-line-200 bg-white px-[12px] py-3',
         eintrag.kompakt && 'py-2',
       )}
       data-official-requirement-type={eintrag.requirementType ?? undefined}
@@ -490,14 +490,14 @@ function OfficialZeile({
           ) : null}
           <p className="mt-1 break-words text-xs leading-5 text-ink-800">{eintrag.freshnessText}</p>
           {eintrag.aktionen.length > 0 ? (
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 grid w-full grid-cols-1 gap-2">
               {eintrag.aktionen.map((aktion) => (
                 <a
                   key={`${aktion.href}:${aktion.label}`}
                   href={aktion.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className="flex min-h-[44px] w-full min-w-0 items-center break-words text-sm font-semibold leading-5 text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                 >
                   {aktion.label}
                 </a>
@@ -543,12 +543,12 @@ function Vorbereitungspunkt({
 }) {
   return (
     <li
-      className="min-w-0 rounded-2xl border border-line-200 bg-white px-3 py-3"
+      className="grid w-full min-w-0 grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3"
       data-readiness-kind={item.kind}
       data-readiness-status={item.userStatus}
       data-readiness-currentness={item.currentness}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex min-w-0 items-start gap-[12px]">
         <StandSymbol status={item.userStatus} currentness={item.currentness} />
         <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-semibold text-brand-800">
@@ -558,49 +558,49 @@ function Vorbereitungspunkt({
               ? ` · ${slots.find((slot) => slot.clientRef === item.travellerClientRef)?.label ?? item.travellerClientRef}`
               : ''}
           </p>
-          <p className="mt-0.5 text-xs leading-5 text-ink-800">
+          <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
             {nutzerstandText(item.userStatus, item.currentness)}
             {' · '}
             {officialStatusText(item.official.status)}
           </p>
-          {onSetzen && item.currentness !== 'not_applicable' && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              <StatusKnopf aktiv={item.userStatus === 'open' && item.currentness === 'current'} onClick={() => setzen(item, 'open')}>
-                Offen
-              </StatusKnopf>
-              <StatusKnopf aktiv={item.userStatus === 'done' && item.currentness === 'current'} onClick={() => setzen(item, 'done')}>
-                Erledigt
-              </StatusKnopf>
-              <StatusKnopf
-                aktiv={item.userStatus === 'skipped' && item.currentness === 'current'}
-                onClick={() => setzen(item, 'skipped')}
-              >
-                Nicht relevant
-              </StatusKnopf>
-              {item.kind === 'preparation' && onEntfernen && (
-                <button
-                  type="button"
-                  className="min-h-11 rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                  onClick={async () => {
-                    setMeldung('')
-                    const fehler = await onEntfernen(item.clientRef)
-                    if (fehler) setMeldung(fehler)
-                  }}
-                >
-                  Entfernen
-                </button>
-              )}
-            </div>
-          )}
         </div>
       </div>
+      {onSetzen && item.currentness !== 'not_applicable' && (
+        <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+          <StatusKnopf aktiv={item.userStatus === 'open' && item.currentness === 'current'} onClick={() => setzen(item, 'open')}>
+            Offen
+          </StatusKnopf>
+          <StatusKnopf aktiv={item.userStatus === 'done' && item.currentness === 'current'} onClick={() => setzen(item, 'done')}>
+            Erledigt
+          </StatusKnopf>
+          <StatusKnopf
+            aktiv={item.userStatus === 'skipped' && item.currentness === 'current'}
+            onClick={() => setzen(item, 'skipped')}
+          >
+            Nicht relevant
+          </StatusKnopf>
+          {item.kind === 'preparation' && onEntfernen && (
+            <button
+              type="button"
+              className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full px-[12px] text-center text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto"
+              onClick={async () => {
+                setMeldung('')
+                const fehler = await onEntfernen(item.clientRef)
+                if (fehler) setMeldung(fehler)
+              }}
+            >
+              Entfernen
+            </button>
+          )}
+        </div>
+      )}
     </li>
   )
 }
 
 function Zahl({ label, wert }: { label: string; wert: number }) {
   return (
-    <div className="min-w-0 rounded-xl bg-surface-25 px-3 py-2">
+    <div className="min-w-0 rounded-xl bg-surface-25 px-[12px] py-2">
       <dt className="text-xs text-ink-800">{label}</dt>
       <dd className="text-base font-semibold text-brand-800">{wert}</dd>
     </div>
@@ -616,7 +616,7 @@ function StandSymbol({
 }) {
   if (currentness === 'stale') {
     return (
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-75 text-brand-800">
+      <span className="flex size-[40px] shrink-0 items-center justify-center rounded-xl bg-surface-75 text-brand-800">
         <RotateCcw className="h-4 w-4" aria-hidden="true" />
         <span className="sr-only">Erneut prüfen</span>
       </span>
@@ -624,14 +624,14 @@ function StandSymbol({
   }
   if (status === 'done' && currentness === 'current') {
     return (
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-100 text-brand-700">
+      <span className="flex size-[40px] shrink-0 items-center justify-center rounded-xl bg-surface-100 text-brand-700">
         <Check className="h-4 w-4" aria-hidden="true" />
         <span className="sr-only">Von dir erledigt</span>
       </span>
     )
   }
   return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-25 text-ink-800">
+    <span className="flex size-[40px] shrink-0 items-center justify-center rounded-xl bg-surface-25 text-ink-800">
       <AlertCircle className="h-4 w-4" aria-hidden="true" />
       <span className="sr-only">{nutzerstandText(status, currentness)}</span>
     </span>
@@ -721,16 +721,16 @@ function ReisendenKarte({
   )
 
   return (
-    <article className="grid min-w-0 max-w-full gap-2 rounded-2xl border border-line-200 bg-white px-3 py-3">
+    <article className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 rounded-2xl border border-line-200 bg-white px-[12px] py-3">
       <ReisendenZusammenfassung slot={slot} tripStart={tripStart} tripEnd={tripEnd} />
       {onTravellerSetzen ? (
-        <details className="group/traveller min-w-0">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-full px-1 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
+        <details className="group/traveller w-full min-w-0">
+          <summary className="flex min-h-[44px] w-full cursor-pointer list-none items-center justify-between gap-[8px] rounded-full px-1 text-sm font-semibold break-words text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
             Angaben bearbeiten
             <ChevronDown className="h-4 w-4 group-open/traveller:rotate-180" aria-hidden="true" />
           </summary>
           <form
-            className="mt-2 grid min-w-0 max-w-full gap-2"
+            className="mt-2 grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&_.grid]:w-full [&_.grid]:min-w-0 [&_.grid]:max-w-full [&_.grid]:grid-cols-1"
             onSubmit={async (event) => {
               event.preventDefault()
               onFehler('')
@@ -752,7 +752,7 @@ function ReisendenKarte({
               Offizielle Prüfung noch nicht verfügbar. Angaben werden nur erfasst, nicht bewertet.
               {slot.missingFacts.length === 0 ? ' Angaben erfasst.' : ' Für eine zuverlässige Prüfung fehlen Angaben.'}
             </p>
-            <fieldset className="grid min-w-0 max-w-full gap-2">
+            <fieldset className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2">
               <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften</legend>
               {citizenships.map((code, index) => (
                 <div key={`cit-${index}`} className="grid min-w-0 gap-2">
@@ -769,7 +769,7 @@ function ReisendenKarte({
                   {citizenships.length > 1 ? (
                     <button
                       type="button"
-                      className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                      className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                       onClick={() => {
                         const naechste = citizenships.filter((_, i) => i !== index)
                         setCitizenships(naechste)
@@ -784,7 +784,7 @@ function ReisendenKarte({
               {citizenships.length < 8 ? (
                 <button
                   type="button"
-                  className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   onClick={() => setCitizenships([...citizenships, ''])}
                 >
                   Weitere Staatsbürgerschaft
@@ -792,10 +792,10 @@ function ReisendenKarte({
               ) : null}
             </fieldset>
             <LandFeld label="Wohnsitzland, falls relevant" value={residence} onChange={setResidence} />
-            <fieldset className="grid min-w-0 max-w-full gap-2">
+            <fieldset className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2">
               <legend className="text-xs font-medium text-brand-800">Reisedokumente</legend>
               {documents.map((document, index) => (
-                <div key={document.clientRef || `doc-${index}`} className="grid gap-2 rounded-2xl bg-surface-25 px-3 py-3">
+                <div key={document.clientRef || `doc-${index}`} className="grid w-full min-w-0 gap-2 rounded-2xl bg-surface-25 px-[12px] py-3">
                   <label className="grid gap-1 text-xs font-medium text-brand-800">
                     Dokument {index + 1}
                     <select
@@ -808,7 +808,7 @@ function ReisendenKarte({
                         }
                         setDocuments(naechste)
                       }}
-                      className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                      className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                     >
                       <option value="">Noch nicht angegeben</option>
                       <option value="passport">Reisepass</option>
@@ -836,7 +836,7 @@ function ReisendenKarte({
                             naechste[index] = { ...document, expiresOn: event.target.value }
                             setDocuments(naechste)
                           }}
-                          className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                          className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                         />
                       </label>
                       <DokumentReiseAblaufHinweis
@@ -857,7 +857,7 @@ function ReisendenKarte({
                               }
                               setDocuments(naechste)
                             }}
-                            className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                            className="min-h-[44px] w-full min-w-0 rounded-2xl border border-line-200 px-[12px] text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                           >
                             <option value="">Noch nicht zugeordnet</option>
                             {[...new Set(citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code)))].map(
@@ -875,7 +875,7 @@ function ReisendenKarte({
                   {documents.length > 1 ? (
                     <button
                       type="button"
-                      className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                      className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                       onClick={() => setDocuments(documents.filter((_, i) => i !== index))}
                     >
                       Dokument entfernen
@@ -886,7 +886,7 @@ function ReisendenKarte({
               {documents.length < 12 ? (
                 <button
                   type="button"
-                  className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className="min-h-[44px] justify-self-start rounded-full px-[12px] text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   onClick={() =>
                     setDocuments([
                       ...documents,
@@ -905,17 +905,17 @@ function ReisendenKarte({
               ) : null}
             </fieldset>
             <p className="text-xs leading-5 text-ink-800">{SENSITIVE_HINWEIS}</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid w-full grid-cols-1 gap-2">
               <button
                 type="submit"
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full bg-brand-800 px-[16px] text-center text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
               >
                 Angaben speichern
               </button>
               {slot.persisted && onTravellerEntfernen && (
                 <button
                   type="button"
-                  className="min-h-11 rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className="min-h-[44px] rounded-full px-[12px] text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   onClick={async () => {
                     onFehler('')
                     const fehler = await onTravellerEntfernen(slot.clientRef)
@@ -972,7 +972,7 @@ function StatusKnopf({
       aria-pressed={aktiv}
       onClick={onClick}
       className={cn(
-        'inline-flex min-h-11 items-center rounded-full px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+        'flex min-h-[44px] w-full min-w-0 items-center justify-center break-words rounded-full px-[12px] text-center text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:inline-flex sm:w-auto',
         aktiv ? 'bg-brand-800 text-white' : 'border border-line-200 text-brand-800',
       )}
     >

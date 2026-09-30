@@ -20,12 +20,20 @@ const SPEICHER = 'jetnity:ui-audit:workspace'
 const JETZT = '2026-10-01T09:00:00.000Z'
 
 const VIEWPORTS = [
-  { name: '360x800', width: 360, height: 800, hasTouch: true },
-  { name: '390x844', width: 390, height: 844, hasTouch: true },
-  { name: '768x1024', width: 768, height: 1024, hasTouch: true },
+  { name: '320x568', width: 320, height: 568, hasTouch: true, vollbild: true },
+  { name: '360x800', width: 360, height: 800, hasTouch: true, vollbild: true },
+  { name: '375x812', width: 375, height: 812, hasTouch: true },
+  { name: '390x844', width: 390, height: 844, hasTouch: true, vollbild: true },
+  { name: '412x915', width: 412, height: 915, hasTouch: true },
+  { name: '430x932', width: 430, height: 932, hasTouch: true },
+  { name: 'landscape_844x390', width: 844, height: 390, hasTouch: true, vollbild: true },
+  { name: '768x1024', width: 768, height: 1024, hasTouch: true, vollbild: true },
+  { name: '820x1180', width: 820, height: 1180, hasTouch: true },
   { name: '1024x768', width: 1024, height: 768, hasTouch: false },
-  { name: '1440x900', width: 1440, height: 900, hasTouch: false },
-  { name: '1920x1080', width: 1920, height: 1080, hasTouch: false },
+  { name: '1280x800', width: 1280, height: 800, hasTouch: false },
+  { name: '1440x900', width: 1440, height: 900, hasTouch: false, vollbild: true },
+  { name: '1728x1117', width: 1728, height: 1117, hasTouch: false },
+  { name: '1920x1080', width: 1920, height: 1080, hasTouch: false, vollbild: true },
 ]
 
 function etappe(teil) {
@@ -379,6 +387,24 @@ async function messen(page) {
       horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth,
+      sektionsBreite: Math.round(wurzel?.getBoundingClientRect().width ?? 0),
+      elternBreite: Math.round(wurzel?.parentElement?.getBoundingClientRect().width ?? 0),
+      schmaleSpalten: wurzel
+        ? [...wurzel.querySelectorAll('p, a, button, legend, summary, h3, h4, h5, label, li')]
+            .filter((el) => el instanceof HTMLElement && el.getClientRects().length > 0 && !el.closest('.sr-only') && (el.innerText || '').trim().length > 24)
+            .filter((el) => {
+              const box = el.getBoundingClientRect()
+              const schrift = Number.parseFloat(getComputedStyle(el).fontSize) || 16
+              const grenze = (wurzel.getBoundingClientRect().width || 0) * 0.55
+              return box.width > 0 && box.width < grenze && box.height > schrift * 3
+            })
+            .slice(0, 4)
+            .map((el) => ({
+              tag: el.tagName,
+              text: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 48),
+              width: Math.round(el.getBoundingClientRect().width),
+            }))
+        : [],
       premium: wurzel?.getAttribute('data-preparation-premium') ?? null,
       detailHidden: detail ? detail.hidden || detail.classList.contains('hidden') : null,
       disclaimer: Boolean(wurzel && text(wurzel).includes('Ein Häkchen ist keine offizielle Visa- oder Einreisebestätigung')),
@@ -393,9 +419,9 @@ async function messen(page) {
   })
 }
 
-async function bild(page, name) {
+async function bild(page, name, vollbild = true) {
   const datei = join(EVIDENZ, 'screens', `${name}.png`)
-  await page.screenshot({ path: datei, fullPage: true })
+  await page.screenshot({ path: datei, fullPage: vollbild })
   return datei
 }
 
@@ -422,10 +448,15 @@ try {
       await page.getByRole('button', { name: 'Vorbereitung öffnen', exact: true }).click()
       await page.locator('#preparation-tickets-buchungen').waitFor()
       const offen = await messen(page)
-      await bild(page, `open_${name}`)
+      await bild(page, `open_${name}`, viewport.vollbild === true)
       schritte.push({ name: `open_${name}`, netz: netz.length, ...offen })
       merke(offen.premium === '5', `${name}: Marker fehlt`)
       merke(offen.horizontalOverflow === false, `${name}: horizontaler Überlauf ${offen.scrollWidth}/${offen.clientWidth}`)
+      merke(
+        offen.sektionsBreite >= offen.elternBreite - 4,
+        `${name}: Sektion nutzt die Breite nicht ${offen.sektionsBreite}/${offen.elternBreite}`,
+      )
+      merke(offen.schmaleSpalten.length === 0, `${name}: schmale Textspalte ${JSON.stringify(offen.schmaleSpalten)}`)
       merke(offen.detailHidden === false, `${name}: Detail bleibt zu`)
       merke(offen.bereiche.filter((bereich) => bereich.open).length >= 4, `${name}: Bereiche nicht offen ${JSON.stringify(offen.bereiche)}`)
       merke(offen.zusammen.includes('Schweiz') && offen.zusammen.includes('Serbien'), `${name}: Staatsbürgerschaften ${offen.zusammen}`)
@@ -555,26 +586,34 @@ try {
     await bild(textPage, 'text200_360x800')
     schritte.push({ name: 'text200_360x800', netz: textNetz.length, formular, ...stand })
     merke(stand.htmlFont === '32px', `200% Schrift ist ${stand.htmlFont}`)
+    merke(
+      stand.sektionsBreite >= stand.elternBreite - 4,
+      `200% Sektion nutzt die Breite nicht ${stand.sektionsBreite}/${stand.elternBreite}`,
+    )
+    merke(stand.schmaleSpalten.length === 0, `200% schmale Textspalte ${JSON.stringify(stand.schmaleSpalten)}`)
     if (stand.horizontalOverflow) {
       const ursache = await textPage.evaluate(() => {
         const breite = document.documentElement.clientWidth
-        return [...document.querySelectorAll('body *')]
+        const sichtbar = [...document.querySelectorAll('body *')]
+          .filter((el) => el instanceof HTMLElement && !el.closest('.sr-only') && el.scrollWidth > el.clientWidth + 8)
+          .map((el) => ({
+            tag: el.tagName,
+            className: String(el.className).replace(/\s+/g, ' ').slice(0, 90),
+            text: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 40),
+            delta: el.scrollWidth - el.clientWidth,
+            right: Math.round(el.getBoundingClientRect().right),
+          }))
+          .sort((a, b) => b.delta - a.delta)
+          .slice(0, 8)
+        const ausserhalb = [...document.querySelectorAll('body *')]
           .filter((el) => el instanceof HTMLElement && el.getBoundingClientRect().right > breite + 1)
-          .map((el) => {
-            const rect = el.getBoundingClientRect()
-            return {
-              tag: el.tagName,
-              type: el.getAttribute('type'),
-              id: el.id,
-              className: String(el.className).slice(0, 120),
-              text: (el.innerText || el.getAttribute('placeholder') || '').replace(/\s+/g, ' ').trim().slice(0, 60),
-              right: Math.round(rect.right),
-              width: Math.round(rect.width),
-              children: el.children.length,
-            }
-          })
-          .sort((a, b) => a.children - b.children || b.width - a.width)
-          .slice(0, 12)
+          .slice(0, 6)
+          .map((el) => ({
+            tag: el.tagName,
+            className: String(el.className).slice(0, 80),
+            right: Math.round(el.getBoundingClientRect().right),
+          }))
+        return { sichtbar, ausserhalb }
       })
       fehler.push(`200% Ursache ${JSON.stringify(ursache)}`)
     }
@@ -591,6 +630,34 @@ try {
     }
   }
   await textContext.close()
+
+  for (const zoom of [
+    { name: 'zoom125_1440x900', schrift: '125%' },
+    { name: 'zoom150_1440x900', schrift: '150%' },
+  ]) {
+    const zoomContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, hasTouch: false, deviceScaleFactor: 1 })
+    const zoomPage = await zoomContext.newPage()
+    const zoomNetz = []
+    await abfangen(zoomPage, zoomNetz)
+    try {
+      await oeffnen(zoomPage)
+      await zoomPage.evaluate((schrift) => {
+        document.documentElement.style.fontSize = schrift
+      }, zoom.schrift)
+      await vorbereitung(zoomPage)
+      await zoomPage.getByRole('button', { name: 'Vorbereitung öffnen', exact: true }).click()
+      const stand = await messen(zoomPage)
+      await bild(zoomPage, zoom.name, true)
+      schritte.push({ name: zoom.name, netz: zoomNetz.length, ...stand })
+      merke(stand.horizontalOverflow === false, `${zoom.name}: Überlauf ${stand.scrollWidth}/${stand.clientWidth}`)
+      merke(stand.sektionsBreite >= stand.elternBreite - 4, `${zoom.name}: Sektion ${stand.sektionsBreite}/${stand.elternBreite}`)
+      merke(stand.schmaleSpalten.length === 0, `${zoom.name}: schmale Textspalte ${JSON.stringify(stand.schmaleSpalten)}`)
+      merke(zoomNetz.length === 0, `${zoom.name}: Netzwerk ${zoomNetz.length}`)
+    } catch (error) {
+      fehler.push(`${zoom.name}: ${error instanceof Error ? error.message : String(error)}`)
+    }
+    await zoomContext.close()
+  }
 } finally {
   await browser.close()
 }
