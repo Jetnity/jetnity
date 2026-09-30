@@ -1,12 +1,16 @@
 # Jetnity Final Homepage Product 1 — REPORT
 
 Stand: 30. September 2026  
-Status: **IMPLEMENTED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **R1 APPLIED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 Issue: #643  
 Draft PR: #644  
 Branch: `feat/final-homepage-product-1`  
-Baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`  
+Original baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`  
+Integrated main and merge-base: `c1eae921a37db1d1f661af4b5d58139d3dc752ec`  
+Ahead/behind vs that main, after this persist: **8 ahead / 0 behind**  
+Reviewed head this R1 answers: `c7e6e7d654cf2e6c89dccc5ce3d5e30d9a7cc9ee`  
+Review: Technical-Lead R1 `5368008966`  
 Agent: Jetnity final homepage product 1, Generation 1  
 Session: https://cursor.com/agents/bc-051f68b2-ac7c-4bbc-9055-e63466e955a2  
 `originalModelName=grok-4.7-high-fast`
@@ -22,7 +26,7 @@ The public homepage at `/` now tells the Product-Owner-approved final story, wit
 1. Hero H1: **Deine ganze Reise. Intelligent an einem Ort.**
 2. The existing confirmed-place trip entry (`StartzielForm`) is in the first screen.
 3. **Eine Reise statt fünf getrennte Tools.**
-4. A synthetic product window labelled **Produktvorschau**, without prices or availability.
+4. A synthetic product window labelled **Produktvorschau**, showing the live modes **Übersicht / Reiseplan / Organisieren / Vorbereitung**, without prices, availability or official results.
 5. **So begleitet Jetnity deine Reise.**
 6. **Warum Jetnity anders ist.**
 7. Inspiration still hands off through `zielHref` and the existing place IDs.
@@ -34,13 +38,13 @@ Page-local metadata, canonical, Open Graph, Twitter and a JSON-LD `@graph` of `O
 
 ## 2. Capability inventory
 
-Canonical data: `HOMEPAGE_FAEHIGKEITEN` in `lib/seo/final-homepage.ts`, judged against baseline main, not against unmerged Trip Workspace PR #642.
+Canonical data: `HOMEPAGE_FAEHIGKEITEN` in `lib/seo/final-homepage.ts`, rechecked against integrated `main@c1eae921a37db1d1f661af4b5d58139d3dc752ec` after accepted #642. Trip Workspace runtime was not edited.
 
 | Claim | Stand | Visible label |
 | --- | --- | --- |
 | Confirm a place and start a draft without an account | LIVE | Heute nutzbar |
 | Several confirmed places stay one ordered route | LIVE | Heute nutzbar |
-| One trip workspace with overview and day context | LIVE | Heute nutzbar |
+| Four modes of one trip: Übersicht, Reiseplan, Organisieren, Vorbereitung | LIVE | Heute nutzbar |
 | Open steps from data already on the trip | PARTIAL | Soweit Daten vorliegen |
 | Provider prices and availability | PLANNED | In Vorbereitung |
 | Official entry and safety results | PLANNED | In Vorbereitung |
@@ -48,7 +52,7 @@ Canonical data: `HOMEPAGE_FAEHIGKEITEN` in `lib/seo/final-homepage.ts`, judged a
 | Planning together | PLANNED | Kommt später |
 | Jetnity Pro, live alerts, offline, document reminders | PLANNED | Kommt später |
 
-Flight, stay, activity and mobility areas exist on the trip. The homepage does not call them live offers. Uncertain provider and official-truth behaviour was downgraded.
+Übersicht holds what is important now. Reiseplan holds days and order. Organisieren holds flights, stay, activities and mobility without live offers. Vorbereitung holds open preparation from known trip data and does not show an official result. The sample trip in the product window stays **Produktvorschau**.
 
 ## 3. Preserved entry
 
@@ -75,7 +79,7 @@ The slash difference between the link tag and JSON-LD is the existing `kanonisch
 | Check | Result |
 | --- | --- |
 | `lib/seo/final-homepage.test.ts` plus route-entry, create-entry and metadata tests | pass, included in the full run |
-| `npm test` | 4074 pass / 0 fail |
+| `npm test` on the R1 tree | 4081 pass / 0 fail |
 | `npx tsc -p tsconfig.json --noEmit` | pass |
 | ESLint on owned homepage files | pass |
 | `npm run build` | pass, Next.js 16.3.3, `/` static |
@@ -85,25 +89,24 @@ The slash difference between the link tag and JSON-LD is the existing `kanonisch
 | `check:api-schutz` | pass |
 | `check:schema-bezug` | pass; pre-existing LOCAL/UNAPPLIED account-counts RPC note, not this slice |
 | `check:operating-mode` | pass |
-| `node scripts/final-homepage-product-1-audit.mjs` with browser | PASS |
-| Auth configuration, GitHub CI, Vercel status on `fd2dfe2650930f9ec9dcda5f864017f542445c78` | CI `36729992149` SUCCESS. Auth job SUCCESS. Typecheck, Lint & Build SUCCESS. Vercel status SUCCESS, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8jHnbpTKqrf1mHodH5jBMbCLDmHg`. Preview HTML was not read: the alias redirects to Vercel SSO. |
+| Production audit `AUDIT_BROWSER=1 AUDIT_TEXT_200=1` against `next start` on `127.0.0.1:3456` | PASS. Report `docs/evidence/final-homepage-product-1/r1-audit.json` |
+| Earlier CI `36729992149` and `36730441721` | invalidated by this new head. Re-read CI and Vercel on the tip after push. |
 
 ## 6. Visual evidence
 
-`docs/evidence/final-homepage-product-1/before/` and `after/` hold first-screen and full-page captures for 360×800, 390×844, 768×1024, 1024×768, 1280×800, 1440×900 and 1920×1080. `audit.json` records overflow, canonical, robots, JSON-LD and network origin.
+The dev-server captures in `before/` and `after/` stay as the first-pass record, including the 200% shot that split hero words. They are not the R1 proof.
 
-Mobile-first, measured on the dev server:
+R1 proof is a production server (`next build` then `next start` on `127.0.0.1:3456`):
 
-- 360×800: form bottom at 563px, inside the 800px viewport, no horizontal overflow.
-- 390×844: form bottom at 535px, no horizontal overflow.
-- Input `#travel-idea` computed font size 16px.
-- Hero primary control and menu button are at least 44px.
-- Keyboard from the top reaches skip link, logo, menu, the place field, **Reise planen**, then the preview link and inspiration cards. Focus outline is visible.
-- `#pro` lands on Jetnity Pro / Kommt später. `#entdecken` remains the inspiration section.
-- Bali inspiration opens `/planen?zielId=geonames%3A1650535` plus the existing idea.
-- 200% root font on 360×800: no horizontal overflow after `break-words` on `main`. The form is below the first screen because the text itself is taller than 800px. That is recorded, not hidden.
-- Network origins during the audit: `http://127.0.0.1:3000` only.
-- Dev console 403s on some `/_next/static/chunks/*` files and the HMR websocket were already present on the before capture. They are not a new homepage claim. The production build compiled the page.
+- Captures: `docs/evidence/final-homepage-product-1/r1-after/`
+- Machine report: `docs/evidence/final-homepage-product-1/r1-audit.json`
+- Every viewport returned HTTP 200, `noindex, nofollow`, canonical `https://jetnity.com`, zero console errors, zero page errors, and network origin only `http://127.0.0.1:3456`.
+- 360×800: form bottom 536px, inside the first screen. Input 16px. Submit control 48px. No horizontal overflow.
+- 390×844: form bottom 537px. Same input and control sizes. No horizontal overflow.
+- 768, 1024, 1280, 1440 and 1920: form in the first screen, no horizontal overflow.
+- 200% root font on 360×800: scroll width 360. Eyebrow words, including `Zusammenhang`, and H1 words, including `Intelligent`, each occupy one line box. The supporting sentence no longer uses the unbreakable compound `Reisebegleitungsplattform`; the same sentence is the JSON-LD description. The form sits below the first screen (bottom 1529px). That is accepted. Input computes to 32px and the submit control to 96px.
+- Keyboard from the top reaches the skip link, then `#travel-idea`, then **Reise planen**.
+- `robots.txt` remains `User-Agent: *` / `Disallow: /`.
 
 No physical device was used.
 
@@ -117,23 +120,34 @@ Changed or added:
 - `lib/seo/final-homepage.test.ts`
 - `scripts/final-homepage-product-1-audit.mjs`
 - this report, the handoff, the self-review, the task record
-- `docs/ACTIVE_WORK_STATUS.md`
 - `docs/evidence/final-homepage-product-1/**`
 
-Not changed: Trip Workspace runtime, `StartzielForm` truth, providers, Supabase, Auth, payments, dependencies, robots, indexing gate, tracking, legal copy, i18n routing.
+`docs/ACTIVE_WORK_STATUS.md` was restored to `main@c1eae921a37db1d1f661af4b5d58139d3dc752ec` and is not part of the remaining homepage diff.
+
+Not changed by this slice's own edits: Trip Workspace runtime (it arrived only through the merge of accepted #642), `StartzielForm` truth, providers, Supabase, Auth, payments, dependencies, robots, indexing gate, tracking, legal copy, i18n routing.
 
 ## 8. Security, cost, database
 
 No new route, secret, provider call, payment or schema. The homepage stays static. Guest create behaviour is unchanged. No new ongoing cost.
 
-## 9. Risks
+## 9. R1 response
 
-- A visitor can still open flight, stay, activity and mobility areas inside a trip. Those areas are not live offer engines. The homepage says so. The workspace itself is outside this slice.
-- Dev-server chunk 403s were not root-caused here. They predate the copy change and the production build succeeded.
-- Canonical slash form differs between the HTML link and JSON-LD, as described above.
+| Finding | Result |
+| --- | --- |
+| R1-F1 global status file | `docs/ACTIVE_WORK_STATUS.md` matches current main. This slice no longer claims that pointer. |
+| R1-F2 integrate main | Merge of `c1eae921a37db1d1f661af4b5d58139d3dc752ec` is in this branch. Merge-base is that commit. Ahead/behind after this persist: 8 / 0. Trip Workspace files were not hand-edited. |
+| R1-F3 product window | The sample shows Übersicht, Reiseplan, Organisieren, Vorbereitung, Jetzt wichtig, and the next step **Eigenes Ziel bestätigen**. The sample stays Produktvorschau. |
+| R1-F4 production runtime | The after pass is the production server. Console errors fail the audit. This pass has none, and no unexpected origin. |
+| R1-F5 200% hero | Critical hero words stay whole at 360×800 with a 32px root. The page does not scroll sideways. |
+
+## 10. Risks
+
+- Organisieren and Vorbereitung are live views. Provider prices and official results inside them are not live. The homepage says so.
+- Canonical slash form differs between the HTML link and JSON-LD, as described above. Indexing stays closed.
 - Screen reader and physical-phone proof are not in this session.
-- CI `36729992149` is SUCCESS on product head `fd2dfe2650930f9ec9dcda5f864017f542445c78`. A later docs-only tip needs its own re-read. Preview HTML was not read because the alias redirects to Vercel SSO. The Vercel status on that product head was SUCCESS. Green CI is not a Technical-Lead PASS.
+- At 200% text, long words outside the hero may break inside the word so the page does not overflow. The hero eyebrow, H1 and definition do not.
+- Exact-head CI, Auth and Vercel must be read on the tip after push. Older green runs do not cover this head. Preview HTML may still be behind Vercel SSO. Green CI is not a Technical-Lead PASS.
 
-## 10. Next step
+## 11. Next step
 
-Independent main-chat Technical-Lead review of code, copy, truth, visual and search/AI on the exact head. No Ready, no merge, no follow-up slice from this agent.
+Independent main-chat Technical-Lead re-review of code, copy, truth, visual and search/AI on the exact head. No Ready, no merge, no follow-up slice from this agent.

@@ -126,14 +126,16 @@ if (process.env.AUDIT_BROWSER === '1') {
         /* ungültige URL */
       }
     })
-    if (vp.text200) {
-      await page.addInitScript(() => {
-        const stil = document.createElement('style')
-        stil.textContent = 'html { font-size: 32px !important; }'
-        document.documentElement.appendChild(stil)
-      })
-    }
     const antwort = await page.goto(`${basis}/`, { waitUntil: 'networkidle', timeout: 60000 })
+    if (vp.text200) {
+      await page.addStyleTag({ content: 'html { font-size: 32px !important; }' })
+      await page.evaluate(
+        () =>
+          new Promise((resolve) => {
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)))
+          }),
+      )
+    }
     const dom = await page.evaluate(() => {
       const doc = document.documentElement
       const form = document.querySelector('form')
@@ -172,7 +174,9 @@ if (process.env.AUDIT_BROWSER === '1') {
         title: document.title,
         canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
         robots,
-        definition: text.includes('Jetnity ist eine Reiseplanungs- und Reisebegleitungsplattform.'),
+        definition: text.includes(
+          'Jetnity plant und begleitet deine Reise an einem Ort.',
+        ),
         modi: ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'].every((name) => text.includes(name)),
         produktvorschau: text.includes('Produktvorschau'),
         formSichtbar: Boolean(kasten && kasten.top < window.innerHeight && kasten.bottom > 80),
@@ -181,6 +185,26 @@ if (process.env.AUDIT_BROWSER === '1') {
         knopfPx: knopf ? knopf.getBoundingClientRect().height : 0,
         gebrochenH1: gebrocheneWoerter('h1'),
         gebrochenAugenbraue: gebrocheneWoerter('section[aria-labelledby="start-titel"] p'),
+        gebrochenDefinition: [...document.querySelectorAll('section[aria-labelledby="start-titel"] p')]
+          .filter((el) => (el.textContent ?? '').includes('Jetnity plant'))
+          .flatMap((el) => {
+            const gebrochen = []
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+            let knoten = walker.nextNode()
+            while (knoten) {
+              const muster = /\S+/g
+              let treffer = muster.exec(knoten.textContent ?? '')
+              while (treffer) {
+                const range = document.createRange()
+                range.setStart(knoten, treffer.index)
+                range.setEnd(knoten, treffer.index + treffer[0].length)
+                if (range.getClientRects().length > 1) gebrochen.push(treffer[0])
+                treffer = muster.exec(knoten.textContent ?? '')
+              }
+              knoten = walker.nextNode()
+            }
+            return gebrochen
+          }),
         cta: text.includes('Reise starten'),
         graph,
       }
@@ -196,6 +220,9 @@ if (process.env.AUDIT_BROWSER === '1') {
     if (dom.gebrochenH1.length) fehler.push(`${vp.name}: H1 mitten im Wort ${dom.gebrochenH1.join(', ')}`)
     if (dom.gebrochenAugenbraue.length) {
       fehler.push(`${vp.name}: Augenbraue mitten im Wort ${dom.gebrochenAugenbraue.join(', ')}`)
+    }
+    if (dom.gebrochenDefinition?.length) {
+      fehler.push(`${vp.name}: Definition mitten im Wort ${dom.gebrochenDefinition.join(', ')}`)
     }
     if (dom.canonical !== 'https://jetnity.com/' && dom.canonical !== 'https://jetnity.com') {
       fehler.push(`${vp.name}: Canonical ${dom.canonical}`)

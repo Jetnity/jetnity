@@ -1,7 +1,7 @@
 # Jetnity Final Homepage Product 1 — TASK
 
 Stand: 30 September 2026
-Status: **IMPLEMENTED ON DRAFT PR #644 / STOP FOR INDEPENDENT TL REVIEW / NO PUBLIC-INDEXING AUTHORITY**
+Status: **R1 APPLIED ON DRAFT PR #644 / STOP FOR INDEPENDENT TL RE-REVIEW / NO PUBLIC-INDEXING AUTHORITY**
 
 Issue: #643  
 Branch: `feat/final-homepage-product-1`  
@@ -163,4 +163,6 @@ STOP for independent main-chat TL **code + copy + truth + visual + search/AI** r
 
 Generation 1 implemented the visible homepage on this branch. Session: https://cursor.com/agents/bc-051f68b2-ac7c-4bbc-9055-e63466e955a2. `originalModelName=grok-4.7-high-fast`.
 
-Canonical inventory: `HOMEPAGE_FAEHIGKEITEN` in `lib/seo/final-homepage.ts`. Report: `docs/FINAL_HOMEPAGE_PRODUCT_1_REPORT_2026-09-30.md`. The review head is the branch tip after the persist. Re-read `git rev-parse HEAD`. This record is not a Technical-Lead PASS.
+Canonical inventory: `HOMEPAGE_FAEHIGKEITEN` in `lib/seo/final-homepage.ts`. Report: `docs/FINAL_HOMEPAGE_PRODUCT_1_REPORT_2026-09-30.md`.
+
+R1 `5368008966` is applied on this same session. `docs/ACTIVE_WORK_STATUS.md` matches integrated main `c1eae921a37db1d1f661af4b5d58139d3dc752ec`. That commit is the merge-base. The product window names Übersicht, Reiseplan, Organisieren and Vorbereitung. The R1 browser proof is the production audit in `docs/evidence/final-homepage-product-1/r1-audit.json`. The review head is the branch tip after this persist. Re-read `git rev-parse HEAD`. This record is not a Technical-Lead PASS.

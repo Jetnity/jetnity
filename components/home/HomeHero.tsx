@@ -8,12 +8,12 @@ export function HomeHero() {
     <section className="px-3 pt-3 sm:px-5" aria-labelledby="start-titel">
       <div className="mx-auto grid max-w-[1450px] items-stretch rounded-[28px] bg-brand-800 text-white shadow-[0_24px_70px_rgba(15,46,42,0.16)] lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:rounded-[36px]">
         <div className="min-w-0 px-5 py-6 sm:px-10 sm:py-12 lg:px-12 lg:py-14">
-          <p className="hyphens-manual text-[min(0.75rem,3.4vw)] font-semibold uppercase tracking-[0.12em] text-citrus-400 sm:text-xs sm:tracking-[0.18em]">
+          <p className="hyphens-manual text-[min(0.75rem,3.4vw)] font-semibold uppercase tracking-[0.12em] text-citrus-400 [overflow-wrap:normal] sm:text-xs sm:tracking-[0.18em]">
             Eine Reise. Ein Zusammenhang.
           </p>
           <h1
             id="start-titel"
-            className="mt-3 max-w-3xl hyphens-manual text-[min(2rem,8.8vw)] font-semibold leading-[1.08] tracking-[-0.04em] text-balance text-white sm:text-5xl sm:tracking-[-0.045em] lg:text-[3.5rem]"
+            className="mt-3 max-w-3xl hyphens-manual text-[min(2rem,8.8vw)] font-semibold leading-[1.08] tracking-[-0.04em] text-balance text-white [overflow-wrap:normal] sm:text-5xl sm:tracking-[-0.045em] lg:text-[3.5rem]"
           >
             {FINAL_HOMEPAGE_H1}
           </h1>

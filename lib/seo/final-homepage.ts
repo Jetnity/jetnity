@@ -10,7 +10,7 @@ export const FINAL_HOMEPAGE_H1 = 'Deine ganze Reise. Intelligent an einem Ort.'
 
 /** Sichtbare Definition. Dieselbe Zeichenkette steht in JSON-LD. */
 export const FINAL_HOMEPAGE_DEFINITION =
-  'Jetnity ist eine Reiseplanungs- und Reisebegleitungsplattform. Route, Planung und offene Schritte bleiben in einer Reise. Was nicht belegt ist, bleibt offen.'
+  'Jetnity plant und begleitet deine Reise an einem Ort. Route, Planung und offene Schritte bleiben zusammen. Was nicht belegt ist, bleibt offen.'
 
 export const FINAL_HOMEPAGE_DESCRIPTION = FINAL_HOMEPAGE_DEFINITION
 
