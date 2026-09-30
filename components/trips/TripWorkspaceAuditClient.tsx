@@ -12,9 +12,11 @@ import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import Reisebegleiter from '@/components/trips/Reisebegleiter'
+import RegistryReiseUebernahme from '@/components/trips/RegistryReiseUebernahme'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Begleiterauskunft } from '@/lib/reisebegleiter/erzeugen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
+import type { RegistryTripAnzeige } from '@/lib/traveller/account-registry-trip'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import type { Arbeitsbereich } from '@/lib/trips/arbeitsbereich'
@@ -42,6 +44,13 @@ type AuditNutzlast = {
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
   seasonalEvaluations?: SeasonalEvaluation[]
+  /** Nur für den Vorbereitungs-Audit. Bestehende Audits lassen das weg. */
+  mitReadiness?: boolean
+  registry?: {
+    problem: { status: 500 | 503; message: string } | null
+    travellers: RegistryTripAnzeige[] | null
+    voll?: boolean
+  } | null
 }
 
 export default function TripWorkspaceAuditClient() {
@@ -94,6 +103,19 @@ export default function TripWorkspaceAuditClient() {
       onPunktEntfernen={async () => null}
       onBuchungsstatus={async () => null}
       onTravellerSetzen={async () => null}
+      onTravellerEntfernen={daten.mitReadiness ? async () => null : undefined}
+      onReadinessSetzen={daten.mitReadiness ? async () => null : undefined}
+      onReadinessEntfernen={daten.mitReadiness ? async () => null : undefined}
+      registryUebernahme={
+        daten.registry ? (
+          <RegistryReiseUebernahme
+            problem={daten.registry.problem}
+            travellers={daten.registry.travellers}
+            voll={daten.registry.voll === true}
+            onUebernehmen={async () => null}
+          />
+        ) : null
+      }
       hinweis={
         daten.gastHinweis ? (
           <p className="mt-5 rounded-2xl border border-line-200 bg-white px-4 py-3 text-sm leading-6 text-ink-800">

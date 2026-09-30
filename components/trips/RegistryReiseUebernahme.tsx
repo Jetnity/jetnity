@@ -5,6 +5,7 @@ import { AlertCircle, Users } from 'lucide-react'
 import { useState, useTransition } from 'react'
 
 import type { Problem } from '@/lib/api/datenbank-lesen'
+import { landAnzeigeText } from '@/lib/country/darstellung'
 import { REGISTRY_DOKUMENT_TYP_LABEL } from '@/lib/traveller/account-registry-copy'
 import {
   registryTripAnzeigeName,
@@ -114,34 +115,45 @@ export default function RegistryReiseUebernahme({
           {travellers.map((traveller) => {
             const bestaetigt = bestaetigungId === traveller.id
             return (
-              <li key={traveller.id} className="rounded-xl border border-line-200 bg-white px-3 py-3">
-                <p className="text-sm font-semibold text-brand-800">
+              <li key={traveller.id} className="min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2">
+                <p className="break-words text-sm font-semibold text-brand-800">
                   {registryTripAnzeigeName(traveller.label)}
                 </p>
-                <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                  {traveller.residenceCountryCode
-                    ? `${REGISTRY_TRIP_COPY.wohnsitz}: ${traveller.residenceCountryCode}`
-                    : REGISTRY_TRIP_COPY.wohnsitzLeer}
-                </p>
-                <p className="mt-1 text-xs leading-5 text-ink-800">
-                  {REGISTRY_TRIP_COPY.staatsbuergerschaften}:{' '}
-                  {traveller.citizenshipCountryCodes.length === 0
-                    ? 'keine hinterlegt'
-                    : traveller.citizenshipCountryCodes.join(', ')}
-                </p>
-                <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                  {REGISTRY_TRIP_COPY.dokumente}:{' '}
-                  {traveller.documents.length === 0
-                    ? 'keine hinterlegt'
-                    : traveller.documents
-                        .map(
-                          (dokument) =>
-                            `${REGISTRY_DOKUMENT_TYP_LABEL[dokument.documentType]}${
-                              dokument.issuingCountryCode ? ` · ${dokument.issuingCountryCode}` : ''
-                            }`,
-                        )
-                        .join('; ')}
-                </p>
+                <dl className="mt-1 grid gap-0.5 text-xs leading-5 text-ink-800">
+                  <div className="min-w-0 break-words">
+                    {traveller.residenceCountryCode ? (
+                      <>
+                        <dt className="inline font-medium">{REGISTRY_TRIP_COPY.wohnsitz}: </dt>
+                        <dd className="inline">{landAnzeigeText(traveller.residenceCountryCode)}</dd>
+                      </>
+                    ) : (
+                      <dd>{REGISTRY_TRIP_COPY.wohnsitzLeer}</dd>
+                    )}
+                  </div>
+                  <div className="min-w-0 break-words">
+                    <dt className="inline font-medium">{REGISTRY_TRIP_COPY.staatsbuergerschaften}: </dt>
+                    <dd className="inline">
+                      {traveller.citizenshipCountryCodes.length === 0
+                        ? 'keine hinterlegt'
+                        : traveller.citizenshipCountryCodes.map((code) => landAnzeigeText(code)).join(', ')}
+                    </dd>
+                  </div>
+                  <div className="min-w-0 break-words">
+                    <dt className="inline font-medium">{REGISTRY_TRIP_COPY.dokumente}: </dt>
+                    <dd className="inline">
+                      {traveller.documents.length === 0
+                        ? 'keine hinterlegt'
+                        : traveller.documents
+                            .map(
+                              (dokument) =>
+                                `${REGISTRY_DOKUMENT_TYP_LABEL[dokument.documentType]}${
+                                  dokument.issuingCountryCode ? ` · ${landAnzeigeText(dokument.issuingCountryCode)}` : ''
+                                }`,
+                            )
+                            .join('; ')}
+                    </dd>
+                  </div>
+                </dl>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {bestaetigt ? (
                     <>
