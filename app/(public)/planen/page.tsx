@@ -24,6 +24,8 @@ import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/requ
 import { createServerComponentClient } from '@/lib/supabase/server'
 import PlanenCreateGate from '@/components/trips/PlanenCreateGate'
 import {
+  PlanenIdeeZeiger,
+  PlanenIdeeZiel,
   PlanenManuellZeiger,
   PlanenManuellZiel,
 } from '@/components/trips/PlanenEinstiegNavigation'
@@ -129,30 +131,35 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
   })
 
   return (
-    <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto grid w-full max-w-6xl gap-10">
+    <main className="min-h-screen bg-surface-75 pb-[max(2.5rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-8 sm:pb-[max(3.5rem,env(safe-area-inset-bottom))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] sm:pt-12">
+      <div className="mx-auto grid w-full min-w-0 max-w-6xl gap-8 sm:gap-10">
         <PlanenCreateGate angemeldet={angemeldet}>
           {handoffFehler ? (
             <RouteZielHandoffFehler meldung={handoffFehler} />
           ) : (
             <>
-              <div className="grid gap-3">
+              <div className="grid min-w-0 gap-4">
                 <PlanenManuellZeiger />
-                <Reiseidee
-                  angemeldet={angemeldet}
-                  initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
-                />
+                <PlanenIdeeZiel>
+                  <Reiseidee
+                    angemeldet={angemeldet}
+                    initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
+                  />
+                </PlanenIdeeZiel>
               </div>
 
-              <div className="flex items-center gap-4">
-                <span className="h-px flex-1 bg-line-200" />
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-700">
+              <div className="flex min-w-0 items-center gap-4">
+                <span className="h-px min-w-4 flex-1 bg-line-200" />
+                <span className="min-w-0 max-w-[70%] shrink break-words text-center text-xs font-semibold uppercase tracking-[0.14em] text-ink-700">
                   Oder Schritt für Schritt
                 </span>
-                <span className="h-px flex-1 bg-line-200" />
+                <span className="h-px min-w-4 flex-1 bg-line-200" />
               </div>
 
               <PlanenManuellZiel>
+                <div className="mb-4 min-w-0">
+                  <PlanenIdeeZeiger />
+                </div>
                 <TripPlanner
                   angemeldet={angemeldet}
                   initialDestination={vor.destination}
