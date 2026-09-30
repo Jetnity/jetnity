@@ -8,6 +8,7 @@ import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
 import {
   MEHRERE_REISENDE_HINWEIS,
   READINESS_ART_BEZEICHNUNG,
+  READINESS_GRUPPE,
   READINESS_GRUPPE_TITEL,
   SENSITIVE_HINWEIS,
   nutzerstandText,
@@ -316,7 +317,7 @@ export default function Reisevorbereitung({
         {persoenlich.weitere.length > 0 ? (
           <section className="grid gap-3" data-preparation-section="weitere">
             {(['einreise', 'dokumente', 'versicherung', 'bestaetigung', 'sonstiges'] as const).map((gruppe) => {
-              const gruppeItems = persoenlich.weitere.filter((item) => item.kind && READINESS_GRUPPE_VON(item) === gruppe)
+              const gruppeItems = persoenlich.weitere.filter((item) => READINESS_GRUPPE[item.kind] === gruppe)
               if (gruppeItems.length === 0) return null
               return (
                 <div key={gruppe} className="grid gap-2">
@@ -366,14 +367,6 @@ export default function Reisevorbereitung({
       )}
     </section>
   )
-}
-
-function READINESS_GRUPPE_VON(item: ReadinessViewItem): keyof typeof READINESS_GRUPPE_TITEL {
-  if (item.kind === 'entry_check' || item.kind === 'visa_check') return 'einreise'
-  if (item.kind === 'travel_document_check') return 'dokumente'
-  if (item.kind === 'insurance_check') return 'versicherung'
-  if (item.kind === 'ticket_confirmation_check' || item.kind === 'booking_confirmation_check') return 'bestaetigung'
-  return 'sonstiges'
 }
 
 function punkteHinweis(items: readonly ReadinessViewItem[]): string {
