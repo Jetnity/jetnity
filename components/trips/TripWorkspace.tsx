@@ -24,6 +24,14 @@ import {
   bereichDarstellungKlasse,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
+import {
+  ABDECKUNG_LUFT_PX,
+  AKTIVE_DOMAIN_WEIT_AB_PX,
+  abdeckungsKante,
+  type AbdeckungsBand,
+  domainAnordnung,
+  domainRasterKlasse,
+} from '@/lib/trips/cross-device-interaction-1'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import type { AttentionAktion } from '@/lib/trips/attention'
 import { attentionAbleiten } from '@/lib/trips/attention'
@@ -74,6 +82,87 @@ function kompakteAnsichtAbonnieren(melden: () => void) {
 
 function kompakteAnsichtLesen() {
   return !window.matchMedia(`(min-width: ${ARBEITSBEREICH_DESKTOP_AB_PX}px)`).matches
+}
+
+function weiteAnsichtAbonnieren(melden: () => void) {
+  const mq = window.matchMedia(`(min-width: ${AKTIVE_DOMAIN_WEIT_AB_PX}px)`)
+  mq.addEventListener('change', melden)
+  return () => mq.removeEventListener('change', melden)
+}
+
+function weiteAnsichtLesen() {
+  return window.matchMedia(`(min-width: ${AKTIVE_DOMAIN_WEIT_AB_PX}px)`).matches
+}
+
+function bandVon(el: Element | null): AbdeckungsBand | null {
+  if (!(el instanceof HTMLElement)) return null
+  const stil = getComputedStyle(el)
+  if (stil.position !== 'sticky' && stil.position !== 'fixed') return null
+  if (stil.display === 'none' || stil.visibility === 'hidden') return null
+  const rand = el.getBoundingClientRect()
+  if (rand.height <= 0 || rand.width <= 0) return null
+  return { top: rand.top, bottom: rand.bottom, height: rand.height }
+}
+
+/** Site-Header plus die kompakte Rückkehrleiste, wenn sie an der Kopfkante klebt. */
+function abdeckungUnten(): number {
+  const baender = [bandVon(document.querySelector('header')), bandVon(document.querySelector('nav[aria-label="Reise"]'))].filter(
+    (band): band is AbdeckungsBand => band != null,
+  )
+  return abdeckungsKante(baender)
+}
+
+function zielHeading(el: HTMLElement): HTMLElement {
+  if (el.matches('h1, h2, h3')) return el
+  const heading = el.querySelector('h1, h2, h3')
+  return heading instanceof HTMLElement ? heading : el
+}
+
+/**
+ * Dokumentposition der Identität: die Überschrift und, wenn sie direkt darüber
+ * steht, die Domain-Zeile davor. So bleibt „Flüge“ mit „Verbindungen für diese Reise“ sichtbar.
+ */
+function identitaetsDokumentOben(el: HTMLElement): number {
+  const ziel = zielHeading(el)
+  const zielRand = ziel.getBoundingClientRect()
+  let oben = zielRand.top
+  const davor = ziel.previousElementSibling
+  if (davor instanceof HTMLElement) {
+    const rand = davor.getBoundingClientRect()
+    if (rand.height > 0 && rand.width > 0 && rand.bottom <= oben + ABDECKUNG_LUFT_PX) oben = rand.top
+  }
+  return oben + window.scrollY
+}
+
+function identitaetLiegtFrei(el: HTMLElement, kante: number): boolean {
+  const frei = kante + ABDECKUNG_LUFT_PX
+  const heading = zielHeading(el).getBoundingClientRect()
+  if (heading.height <= 0) return true
+  const identitaetOben = identitaetsDokumentOben(el) - window.scrollY
+  return identitaetOben >= frei - 1 && heading.top < window.innerHeight - 48 && heading.bottom > frei
+}
+
+function arbeitsflaecheZeigen(el: HTMLElement) {
+  if (zielHeading(el).getBoundingClientRect().height <= 0) return
+  const ersteKante = abdeckungUnten()
+  if (!identitaetLiegtFrei(el, ersteKante)) {
+    const oben = identitaetsDokumentOben(el)
+    window.scrollTo({ top: Math.max(0, oben - (ersteKante + ABDECKUNG_LUFT_PX)), behavior: 'instant' })
+  }
+  const zweiteKante = abdeckungUnten()
+  if (Math.abs(zweiteKante - ersteKante) > 0.5 && !identitaetLiegtFrei(el, zweiteKante)) {
+    const oben = identitaetsDokumentOben(el)
+    window.scrollTo({ top: Math.max(0, oben - (zweiteKante + ABDECKUNG_LUFT_PX)), behavior: 'instant' })
+  }
+}
+
+function sichtbareSuchflaeche(wurzel: ParentNode | null) {
+  if (!wurzel) return null
+  for (const name of ['flugsuche', 'hotelsuche', 'aktivitaeten']) {
+    const el = wurzel.querySelector(`[data-arbeitsbereich="${name}"]`)
+    if (el instanceof HTMLElement && !el.hidden) return el
+  }
+  return null
 }
 
 type TripWorkspaceProps = {
@@ -200,6 +289,7 @@ export default function TripWorkspace({
     kompakteAnsichtLesen,
     () => true,
   )
+  const weit = React.useSyncExternalStore(weiteAnsichtAbonnieren, weiteAnsichtLesen, () => false)
 
   const [auswahl, setAuswahl] = React.useState<WorkspaceDetailAuswahl>(() =>
     detailAuswahlAusBereich(anfangsBereich),
@@ -226,6 +316,9 @@ export default function TripWorkspace({
   const vorherOffenRef = React.useRef(false)
   const vorherKompaktRef = React.useRef(kompakt)
   const detailAnkerRef = React.useRef<HTMLDivElement | null>(null)
+  const arbeitRef = React.useRef<HTMLDivElement | null>(null)
+  const sucheTastaturRef = React.useRef(false)
+  const vorherSucheRef = React.useRef(false)
   const oeffnungsArbeitRef = React.useRef<{ rahmen: number; timeout: number } | null>(null)
 
   const oeffnungsArbeitBeenden = () => {
@@ -239,7 +332,7 @@ export default function TripWorkspace({
   const scrollDetailInSicht = (el: HTMLElement | null) => {
     if (!el) return
     const oben = el.getBoundingClientRect().top + window.scrollY
-    window.scrollTo({ top: Math.max(0, oben - 72), behavior: 'auto' })
+    window.scrollTo({ top: Math.max(0, oben - 72), behavior: 'instant' })
   }
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
@@ -291,6 +384,12 @@ export default function TripWorkspace({
           }
         }, 0)
         oeffnungsArbeitRef.current = { rahmen, timeout }
+      } else {
+        const rahmen = window.requestAnimationFrame(() => {
+          const heading = document.querySelector('[data-workspace-detail] h2')
+          if (heading instanceof HTMLElement) arbeitsflaecheZeigen(heading)
+        })
+        oeffnungsArbeitRef.current = { rahmen, timeout: 0 }
       }
     }
 
@@ -323,7 +422,8 @@ export default function TripWorkspace({
     setAuswahl(leereDetailAuswahl())
   }
 
-  const sucheAusdruecklich = () => {
+  const sucheAusdruecklich = (vonTastatur = false) => {
+    sucheTastaturRef.current = vonTastatur
     setAuswahl((bisher) => sucheOeffnen(bisher))
     setSucheBesucht((bisher) =>
       besuchteDomainsErweitern(bisher, detailDomainVon(bereinigt, reise, ungeplantePunkte)),
@@ -463,6 +563,44 @@ export default function TripWorkspace({
   const aktivitaetenSucheBereit = sucheSollMounten('aktivitaeten', bereinigt, sucheBesucht, reise, ungeplantePunkte)
 
   const sucheSichtbar = sucheIstOffen(bereinigt)
+  const anordnung = domainAnordnung({ kompakt, detailOffen, weit })
+  const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
+
+  React.useEffect(() => {
+    if (!detailOffen) return
+    const zu = (ereignis: KeyboardEvent) => {
+      if (ereignis.key !== 'Escape' || ereignis.defaultPrevented) return
+      const ziel = ereignis.target
+      if (ziel instanceof Element && ziel.closest('#reise-aenderung, #reisebegleiter')) return
+      ereignis.preventDefault()
+      schliessen()
+    }
+    window.addEventListener('keydown', zu)
+    return () => window.removeEventListener('keydown', zu)
+  }, [detailOffen])
+
+  const detailSchluessel =
+    bereinigt.art === 'item' ? bereinigt.itemId : bereinigt.art === 'gap' ? bereinigt.domain : ''
+
+  React.useEffect(() => {
+    if (!detailSchluessel) return
+    const heading = document.querySelector('[data-workspace-detail] h2')
+    if (heading instanceof HTMLElement) arbeitsflaecheZeigen(heading)
+  }, [detailSchluessel])
+
+  React.useLayoutEffect(() => {
+    const oeffnetSuche = sucheSichtbar && !vorherSucheRef.current
+    vorherSucheRef.current = sucheSichtbar
+    if (!oeffnetSuche) return
+    const tastatur = sucheTastaturRef.current
+    sucheTastaturRef.current = false
+    const flaeche = sichtbareSuchflaeche(arbeitRef.current)
+    const heading = flaeche?.querySelector('h2')
+    if (heading instanceof HTMLElement) arbeitsflaecheZeigen(heading)
+    if (!tastatur || !flaeche) return
+    const feld = flaeche.querySelector<HTMLElement>('input:not([type="hidden"]), select, textarea')
+    feld?.focus({ preventScroll: true })
+  }, [sucheSichtbar])
 
   return (
     <main className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
@@ -496,11 +634,7 @@ export default function TripWorkspace({
 
         <TripWorkspaceNavigation sichtbar={kompakt && detailOffen} onZurueck={schliessen} zurueckRef={zurueckRef} />
 
-        <div
-          className={
-            !kompakt && detailOffen ? 'lg:grid lg:grid-cols-2 lg:items-start lg:gap-6' : undefined
-          }
-        >
+        <div className={rasterKlasse} data-workspace-split={anordnung}>
           <FlaecheHuelle name="uebersicht" verborgen={uebersichtVerborgen}>
             <TripWorkspaceUebersicht
               reise={reise}
@@ -525,17 +659,20 @@ export default function TripWorkspace({
             />
           </FlaecheHuelle>
 
-          <FlaecheHuelle
-            name="detail"
-            verborgen={detailVerborgen}
-            sichtbarKlasse="min-w-0 scroll-mt-[calc(72px+3.75rem)]"
+          <div
+            data-workspace-active-domain={detailOffen ? (aktiveDomain ?? 'offen') : 'aus'}
+            data-workspace-anordnung={anordnung}
+            className="min-w-0"
+            onKeyDown={(ereignis) => {
+              if (ereignis.key !== 'Escape' || !detailOffen) return
+              ereignis.stopPropagation()
+              schliessen()
+            }}
           >
-            <div
-              onKeyDown={(ereignis) => {
-                if (ereignis.key !== 'Escape' || !detailOffen) return
-                ereignis.stopPropagation()
-                schliessen()
-              }}
+            <FlaecheHuelle
+              name="detail"
+              verborgen={detailVerborgen}
+              sichtbarKlasse="min-w-0 scroll-mt-[calc(72px+3.75rem)]"
             >
               {detailOffen ? (
                 <TripWorkspaceDetail
@@ -548,15 +685,18 @@ export default function TripWorkspace({
                   fokusRef={detailFokusRef}
                 />
               ) : null}
-            </div>
-          </FlaecheHuelle>
-        </div>
-
-        {flugBestandBereit && (
+            </FlaecheHuelle>
+            <div
+              ref={arbeitRef}
+              data-workspace-arbeit={detailOffen ? 'ein' : 'aus'}
+              hidden={!detailOffen}
+              className={detailOffen ? 'mt-4 grid min-w-0 gap-4' : undefined}
+            >
+              {flugBestandBereit && (
           <FlaecheHuelle
             name="fluege"
             verborgen={!detailOffen || aktiveDomain !== 'fluege'}
-            sichtbarKlasse="mt-4 grid gap-6"
+            sichtbarKlasse="grid gap-6"
           >
             <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
           </FlaecheHuelle>
@@ -565,7 +705,7 @@ export default function TripWorkspace({
           <FlaecheHuelle
             name="unterkunft"
             verborgen={!detailOffen || aktiveDomain !== 'unterkunft'}
-            sichtbarKlasse="mt-4 grid gap-6"
+            sichtbarKlasse="grid gap-6"
           >
             <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
           </FlaecheHuelle>
@@ -574,7 +714,7 @@ export default function TripWorkspace({
           <FlaecheHuelle
             name="mobilitaet"
             verborgen={!detailOffen || aktiveDomain !== 'mobilitaet'}
-            sichtbarKlasse="mt-4"
+            sichtbarKlasse="min-w-0"
           >
             {mobilitaetssuche}
           </FlaecheHuelle>
@@ -583,7 +723,7 @@ export default function TripWorkspace({
           <FlaecheHuelle
             name="flugsuche"
             verborgen={!detailOffen || aktiveDomain !== 'fluege' || !sucheSichtbar}
-            sichtbarKlasse="mt-4"
+            sichtbarKlasse="min-w-0"
           >
             {flugsuche}
           </FlaecheHuelle>
@@ -592,7 +732,7 @@ export default function TripWorkspace({
           <FlaecheHuelle
             name="hotelsuche"
             verborgen={!detailOffen || aktiveDomain !== 'unterkunft' || !sucheSichtbar}
-            sichtbarKlasse="mt-4"
+            sichtbarKlasse="min-w-0"
           >
             {hotelsuche}
           </FlaecheHuelle>
@@ -601,11 +741,14 @@ export default function TripWorkspace({
           <FlaecheHuelle
             name="aktivitaeten"
             verborgen={!detailOffen || aktiveDomain !== 'aktivitaeten' || !sucheSichtbar}
-            sichtbarKlasse="mt-4"
+            sichtbarKlasse="min-w-0"
           >
             {aktivitaeten}
           </FlaecheHuelle>
         )}
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   )

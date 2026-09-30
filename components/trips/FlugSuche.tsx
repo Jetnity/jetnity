@@ -18,6 +18,7 @@ import {
   type FlughafenAuswahl,
 } from '@/lib/airports/auswahl'
 import FlugKarte from '@/components/trips/FlugKarte'
+import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
 
@@ -154,7 +155,7 @@ export default function FlugSuche({
       </div>
 
       <form onSubmit={suchen} className="mt-5 grid gap-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
             Von
             <FlughafenSuche
@@ -185,7 +186,7 @@ export default function FlugSuche({
           </label>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
             Hinflug
             <input
@@ -210,7 +211,7 @@ export default function FlugSuche({
           </label>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className={ARBEITSFELD_SPALTEN_KLASSE}>
           <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
             Kabine
             <select
