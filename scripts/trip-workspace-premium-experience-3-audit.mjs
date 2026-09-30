@@ -300,7 +300,8 @@ async function laufViewport(viewport, extra = {}) {
     merke(zuerst.premium === '3', `${name}: premium marker fehlt`)
     merke(zuerst.horizontalOverflow === false, `${name}: horizontaler Überlauf ${zuerst.scrollWidth}/${zuerst.clientWidth}`)
     merke(zuerst.titel.includes('Zürich nach Bali'), `${name}: Titel fehlt`)
-    merke(zuerst.fakten.includes('Zeitraum') && zuerst.fakten.includes('Reisende') && zuerst.fakten.includes('Budget'), `${name}: Fakten ${zuerst.fakten.join(',')}`)
+    const fakten = zuerst.fakten.map((fakt) => fakt.toLowerCase())
+    merke(fakten.includes('zeitraum') && fakten.includes('reisende') && fakten.includes('budget'), `${name}: Fakten ${zuerst.fakten.join(',')}`)
     merke(zuerst.knoepfe.length === 4, `${name}: Modi ${zuerst.knoepfe.length}`)
     merke(zuerst.knoepfe.every((knopf) => knopf.height >= 44 && knopf.nowrap), `${name}: Modusziel oder Umbruch`)
     merke(zuerst.knoepfe.filter((knopf) => knopf.current === 'page').length === 1, `${name}: kein eindeutiger Modus`)
@@ -315,6 +316,9 @@ async function laufViewport(viewport, extra = {}) {
     if (viewport.width < 640) {
       merke(zuerst.teileSpalten?.startsWith('1') || !zuerst.teileSpalten?.includes(' '), `${name}: Telefon soll eine Spalte sein ${zuerst.teileSpalten}`)
       merke(zuerst.aenderungMounted === false, `${name}: Reise ändern ist auf dem Telefon nicht faul`)
+      if (!extra.text200) {
+        merke(zuerst.knoepfe.every((knopf) => knopf.inScroller), `${name}: ein Modus liegt ausserhalb der Telefonleiste ${zuerst.knoepfe.map((knopf) => `${knopf.text}:${knopf.inScroller}`).join(',')}`)
+      }
     }
     if (viewport.width >= 640) {
       merke(Boolean(zuerst.teileSpalten && zuerst.teileSpalten.split(' ').length >= 2), `${name}: Bereiche nicht verbunden nebeneinander ${zuerst.teileSpalten}`)

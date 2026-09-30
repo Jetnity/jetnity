@@ -60,6 +60,8 @@ test('die Modusleiste bleibt ein Segment mit den vier Bezeichnungen', () => {
   assert.match(nav, /data-workspace-mode-scroller/)
   assert.match(nav, /overflow-x-auto/)
   assert.match(nav, /whitespace-nowrap/)
+  assert.match(nav, /grid-cols-2/)
+  assert.match(nav, /sm:flex/)
   assert.match(nav, /min-h-11/)
   assert.match(nav, /modusScrollerZiel/)
   assert.equal(nav.includes('overflow-x-hidden'), false)
