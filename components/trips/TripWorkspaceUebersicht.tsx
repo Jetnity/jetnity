@@ -1,6 +1,6 @@
 'use client'
 
-import type { ComponentType, ReactNode, RefObject } from 'react'
+import type { ComponentType, RefObject } from 'react'
 import { ArrowRightLeft, BedDouble, Compass, Plane, Sparkles } from 'lucide-react'
 
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
@@ -32,47 +32,78 @@ const LAGE_FARBE: Record<AbdeckungLage, string> = {
   unbestimmt: 'bg-surface-50 text-ink-800',
 }
 
+export function TripWorkspaceAktionen({
+  aenderungOffen,
+  begleiterOffen,
+  begleiterVorhanden,
+  onAenderung,
+  onBegleiter,
+  aenderungKnopfRef,
+  begleiterKnopfRef,
+}: {
+  aenderungOffen: boolean
+  begleiterOffen: boolean
+  /** Ohne Assistant-Fläche gibt es auch keinen Knopf dafür. */
+  begleiterVorhanden: boolean
+  onAenderung: () => void
+  onBegleiter: () => void
+  aenderungKnopfRef: RefObject<HTMLButtonElement | null>
+  begleiterKnopfRef: RefObject<HTMLButtonElement | null>
+}) {
+  return (
+    <div className="mt-4 grid max-w-full gap-3">
+      <div className="flex max-w-full flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="min-w-0 text-sm leading-6 text-ink-800">
+          Zeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.
+        </p>
+        <button
+          ref={aenderungKnopfRef}
+          type="button"
+          aria-expanded={aenderungOffen}
+          aria-controls="reise-aenderung"
+          onClick={onAenderung}
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        >
+          {aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}
+        </button>
+      </div>
+      {begleiterVorhanden ? (
+        <div className="flex max-w-full flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="min-w-0 text-sm leading-6 text-ink-800">
+            Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und
+            ändert nichts.
+          </p>
+          <button
+            ref={begleiterKnopfRef}
+            type="button"
+            aria-expanded={begleiterOffen}
+            aria-controls="reisebegleiter"
+            onClick={onBegleiter}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-800 px-4 text-sm font-semibold text-brand-800 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+          >
+            <Compass className="h-4 w-4" aria-hidden="true" />
+            {begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export default function TripWorkspaceUebersicht({
   reise,
   uebersicht,
   attention,
   destinationEssentials,
-  aenderungOffen,
-  begleiterOffen,
-  begleiterVorhanden,
   onLuecke,
   onAttention,
-  onAenderung,
-  onBegleiter,
-  aenderungKnopfRef,
-  begleiterKnopfRef,
-  plan,
-  aenderungFeld,
-  begleiterFeld,
-  vorbereitung,
-  sicherheit,
-  reisezeit,
 }: {
   reise: Trip
   uebersicht: UebersichtAbleitung
   attention: AttentionAbleitung
   destinationEssentials: DestinationEssentialsAbleitung
-  aenderungOffen: boolean
-  begleiterOffen: boolean
-  /** Ohne Assistant-Fläche gibt es auch keinen Knopf dafür. */
-  begleiterVorhanden: boolean
   onLuecke: (domain: DetailDomain) => void
   onAttention: (aktion: AttentionAktion) => void
-  onAenderung: () => void
-  onBegleiter: () => void
-  aenderungKnopfRef: RefObject<HTMLButtonElement | null>
-  begleiterKnopfRef: RefObject<HTMLButtonElement | null>
-  plan?: ReactNode
-  aenderungFeld?: ReactNode
-  begleiterFeld?: ReactNode
-  vorbereitung?: ReactNode
-  sicherheit?: ReactNode
-  reisezeit?: ReactNode
 }) {
   const praeferenzen = workspacePraeferenzSicht(reise)
 
@@ -80,7 +111,12 @@ export default function TripWorkspaceUebersicht({
     <section aria-label="Reiseübersicht" className="mt-5 grid min-w-0 gap-4">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Übersicht</p>
-        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
+        <h2
+          id="workspace-uebersicht-titel"
+          tabIndex={-1}
+          data-workspace-modus-heading
+          className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+        >
           Deine Reise auf einen Blick
         </h2>
         <p className="mt-1 text-sm leading-6 text-ink-800">{uebersicht.fortschrittText}</p>
@@ -121,54 +157,6 @@ export default function TripWorkspaceUebersicht({
           )
         })}
       </ul>
-
-      {plan}
-
-      {sicherheit}
-
-      {reisezeit}
-
-      {vorbereitung}
-
-      <div className="flex flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="min-w-0 text-sm leading-6 text-ink-800">
-          Zeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.
-        </p>
-        <button
-          ref={aenderungKnopfRef}
-          type="button"
-          aria-expanded={aenderungOffen}
-          aria-controls="reise-aenderung"
-          onClick={onAenderung}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-        >
-          {aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}
-        </button>
-      </div>
-
-      {aenderungFeld}
-
-      {begleiterVorhanden ? (
-        <div className="flex flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="min-w-0 text-sm leading-6 text-ink-800">
-            Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und
-            ändert nichts.
-          </p>
-          <button
-            ref={begleiterKnopfRef}
-            type="button"
-            aria-expanded={begleiterOffen}
-            aria-controls="reisebegleiter"
-            onClick={onBegleiter}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-800 px-4 text-sm font-semibold text-brand-800 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-          >
-            <Compass className="h-4 w-4" aria-hidden="true" />
-            {begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}
-          </button>
-        </div>
-      ) : null}
-
-      {begleiterFeld}
 
       {workspacePraeferenzHatInhalt(praeferenzen) ? (
         <div className="grid gap-3">
