@@ -116,6 +116,7 @@ async function serverStarten() {
   const kind = spawn('npx', ['next', 'start', '-p', PORT, '-H', '127.0.0.1'], {
     env: umgebung,
     stdio: ['ignore', 'pipe', 'pipe'],
+    detached: true,
   })
   const start = Date.now()
   while (Date.now() - start < 120_000) {
@@ -217,6 +218,7 @@ async function messen(page) {
     for (const el of document.querySelectorAll('body *')) {
       const rect = el.getBoundingClientRect()
       if (rect.width < 1 || rect.height < 1) continue
+      if (rect.right <= 1 && rect.left < 0) continue
       if (rect.right > client + 1 || rect.left < -1) {
         const stil = getComputedStyle(el)
         if (stil.position === 'fixed') continue
@@ -379,6 +381,11 @@ async function metadatenseite(browser, pfad) {
   const page = await context.newPage()
   await leerSpeicher(page)
   const antwort = await page.goto(`${BASIS}${pfad}`, { waitUntil: 'domcontentloaded' })
+  if (pfad.includes('zielIds=')) {
+    await page.getByRole('heading', { name: 'Diese Route konnte nicht übernommen werden.' }).waitFor({ timeout: 20_000 })
+  } else {
+    await page.getByRole('heading', { name: 'Beginnen wir mit deiner Reise.' }).waitFor({ timeout: 20_000 })
+  }
   const canonical = await page.locator('link[rel="canonical"]').getAttribute('href').catch(() => null)
   const robots = await page.locator('meta[name="robots"]').getAttribute('content').catch(() => null)
   const titel = await page.title()
@@ -451,40 +458,57 @@ function bewerten(szenen, fluss, meta, gate) {
   if (!prefill?.robots?.includes('noindex')) fehler.push(`prefill robots ${prefill?.robots}`)
   if (prefill?.idee !== 'Sieben Tage Lissabon') fehler.push(`prefill idea ${prefill?.idee}`)
   if (prefill?.ziel !== 'Lissabon') fehler.push(`prefill destination ${prefill?.ziel}`)
-  if (!konflikt?.text?.includes('vermischt') && !konflikt?.text?.includes('Route')) {
+  if (!konflikt?.text?.includes('Diese Route konnte nicht übernommen werden.')) {
     fehler.push('handoff conflict not visible')
   }
+  if (!konflikt?.text?.includes('vermischt')) fehler.push('handoff conflict message missing')
   if (!gate.hatBestehendeReise || !gate.hatFortsetzen || gate.hatFormular !== 0) {
     fehler.push(`guest gate ${JSON.stringify(gate)}`)
   }
   return fehler
 }
 
+function serverStoppen(server) {
+  if (!server?.kind || server.kind.killed) return
+  try {
+    process.kill(-server.kind.pid, 'SIGTERM')
+  } catch {
+    server.kind.kill()
+  }
+}
+
 mkdirSync(join(EVIDENZ, 'screens'), { recursive: true })
 const server = await serverStarten()
-const browser = await chromium.launch({ headless: true })
-const shots = new Set(['320x568', '390x844', '768x1024', '1024x768', '1280x800', '1920x1080', 'landscape-844x390'])
-const szenen = []
-for (const viewport of VIEWPORTS) {
-  szenen.push(await seite(browser, viewport, { shot: shots.has(viewport.name) }))
+let browser
+let szenen = []
+let fluss
+let meta
+let gate
+try {
+  browser = await chromium.launch({ headless: true })
+  const shots = new Set(['320x568', '390x844', '768x1024', '1024x768', '1280x800', '1920x1080', 'landscape-844x390'])
+  for (const viewport of VIEWPORTS) {
+    szenen.push(await seite(browser, viewport, { shot: shots.has(viewport.name) }))
+  }
+  const phone360 = VIEWPORTS.find((viewport) => viewport.name === '360x800')
+  szenen.push(await seite(browser, phone360, { fontPx: 32, suffix: '-text-200', shot: true }))
+  const desktop = VIEWPORTS.find((viewport) => viewport.name === '1440x900')
+  szenen.push(await seite(browser, desktop, { zoom: 1.25, suffix: '-zoom-125', shot: true }))
+  szenen.push(await seite(browser, desktop, { zoom: 1.5, suffix: '-zoom-150', shot: true }))
+  fluss = await interaktion(browser)
+  meta = [
+    await metadatenseite(browser, '/planen'),
+    await metadatenseite(
+      browser,
+      `/planen?idee=${encodeURIComponent('Sieben Tage Lissabon')}&ziel=${encodeURIComponent('Lissabon')}`,
+    ),
+    await metadatenseite(browser, '/planen?zielIds=geonames:2988507&zielId=geonames:3169070'),
+  ]
+  gate = await gastGate(browser)
+} finally {
+  if (browser) await browser.close()
+  serverStoppen(server)
 }
-const phone360 = VIEWPORTS.find((viewport) => viewport.name === '360x800')
-szenen.push(await seite(browser, phone360, { fontPx: 32, suffix: '-text-200', shot: true }))
-const desktop = VIEWPORTS.find((viewport) => viewport.name === '1440x900')
-szenen.push(await seite(browser, desktop, { zoom: 1.25, suffix: '-zoom-125', shot: true }))
-szenen.push(await seite(browser, desktop, { zoom: 1.5, suffix: '-zoom-150', shot: true }))
-const fluss = await interaktion(browser)
-const meta = [
-  await metadatenseite(browser, '/planen'),
-  await metadatenseite(
-    browser,
-    `/planen?idee=${encodeURIComponent('Sieben Tage Lissabon')}&ziel=${encodeURIComponent('Lissabon')}`,
-  ),
-  await metadatenseite(browser, '/planen?zielIds=geonames:2988507&zielId=geonames:3169070'),
-]
-const gate = await gastGate(browser)
-await browser.close()
-if (server.kind) server.kind.kill()
 
 const fehler = bewerten(szenen, fluss, meta, gate)
 const bericht = {
