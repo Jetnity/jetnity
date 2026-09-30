@@ -73,7 +73,9 @@ Docs and evidence:
 | Vercel Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` | READY |
 | Review threads | none |
 
-`9039a2e4` merges `main@c9bc71f4` and keeps the workspace work. The audit JSON is bound to that merge. A docs commit on top only records this integration. Do not treat `36770631331` or `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` as approval of `9039a2e4` or a later tip. An earlier push failed with HTTP 401 while the credential was expired.
+Read for exact head `cc02ee2a990df0e974506bd678bf9932d78d7980`. Actions `36776847116` success. Auth job `110096800091` success. Typecheck, Lint & Build job `110096799809` success. Vercel status success, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/C13nd5m51R2YLRLQ6xkgdT3asrig`, Preview Ready. No GitHub review threads. Vercel toolbar unresolved count 0.
+
+`9039a2e4` is the audited merge of `main@c9bc71f4`. `cc02ee2a` records that audit. This observation does not approve a later commit. Checks on `b8a026db` do not approve `cc02ee2a`.
 
 ## Stop
 

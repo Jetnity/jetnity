@@ -84,7 +84,20 @@ Re-read before this delivery:
 
 ## 6. Exact-head remote for this delivery
 
-The integrated audit head is `9039a2e48818c0f998bb0cc99b042afeeddc429c`. An earlier push was rejected with HTTP 401 while the managed credential was expired. The credential had time remaining when this integration was prepared. Actions, Auth and Vercel Preview for the pushed tip are written here only after they are read. Checks on `b8a026db` do not approve this head.
+Read on 30 September 2026 for exact head `cc02ee2a990df0e974506bd678bf9932d78d7980`. This is an observation, not a Technical-Lead PASS. The branch was 0 behind `main@c9bc71f450f445d0e6991d5d32bc01ffe9060f86`.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36776847116` | success, combined status `success` |
+| Auth-Konfiguration gegen config.toml, job `110096800091` | success |
+| Typecheck, Lint & Build, job `110096799809` | success |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/C13nd5m51R2YLRLQ6xkgdT3asrig |
+| Preview | Ready, https://jetnity-app-git-feat-trip-workspace-pre-ff554d-jetnity-e1b93c82.vercel.app |
+| GitHub review threads | none |
+| Vercel toolbar threads | 0 unresolved |
+
+The production audit JSON is bound to merge `9039a2e4`, which is the parent runtime of this docs tip. Checks on `b8a026db` (`36770631331`, `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt`) do not approve `cc02ee2a`. A later docs note does not inherit this gate.
 
 ## 7. Not claimed
 
