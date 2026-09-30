@@ -18,7 +18,7 @@ Checked against `docs/ORGANIZE_PREMIUM_EXPERIENCE_6_TASK_2026-10-01.md`.
 ## Not claimed
 
 - Independent review
-- CI on a tip newer than `1397b243`. That SHA is success: run `36785724060`, Auth job `110126535130`, Vercel inspector `W83cnK1bneCNnM8TQkD2rxCr5TBi`.
+- CI on a tip newer than `482600b3`. That SHA is success: run `36786482038`, Auth job `110128985135`, Vercel inspector `CwehY9Z2rH36qYZckCM295BfbnUE`. The earlier success on `1397b243` stays with that commit.
 - Physical device
 - Signed-in workspace
 - Sticky rail. It would need the parent scroll-offset measurement, which is outside this slice.

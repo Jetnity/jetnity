@@ -67,16 +67,18 @@ The Product Owner device addendum on PR #667, comment `5920703563`, is included:
 
 `origin/main` at delivery was still `2530020dbc6797b17d64c064ca5474cf90804272`. This branch was 0 behind. No main integration was required.
 
-Exact-head CI on `1397b243d24b31d8112caa9abe73eb4f0f726f67`, run `36785724060`, re-read in this session:
+Exact-head CI on `482600b3253e069da626e228c5cfb2afb345e373`, run `36786482038`, re-read in this session:
 
 | Check | Result |
 | --- | --- |
-| CI / Typecheck, Lint & Build | success, job `110126534819`, completed `2026-09-30T22:31:04Z` |
-| CI / Auth-Konfiguration gegen config.toml | success, job `110126535130`, completed `2026-09-30T22:28:29Z` |
-| Vercel | success, “Deployment has completed”, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/W83cnK1bneCNnM8TQkD2rxCr5TBi` |
-| Preview | `https://jetnity-app-git-feat-organize-premium-e-e055c9-jetnity-e1b93c82.vercel.app`, comment `5920624720` updated `2026-09-30T22:28:28Z` |
+| CI / Typecheck, Lint & Build | success, job `110128985596`, completed `2026-09-30T22:38:57Z` |
+| CI / Auth-Konfiguration gegen config.toml | success, job `110128985135`, completed `2026-09-30T22:36:22Z` |
+| Vercel | success, “Deployment has completed”, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/CwehY9Z2rH36qYZckCM295BfbnUE` |
+| Preview | `https://jetnity-app-git-feat-organize-premium-e-e055c9-jetnity-e1b93c82.vercel.app`, comment `5920624720` updated `2026-09-30T22:36:21Z` |
 
-PR #667 stayed draft. This evidence commit is audit and documentation. It does not change the Organisieren runtime. Re-read CI on the tip after it.
+The prior tip `1397b243d24b31d8112caa9abe73eb4f0f726f67` also succeeded: run `36785724060`, Typecheck job `110126534819` completed `2026-09-30T22:31:04Z`, Auth job `110126535130` completed `2026-09-30T22:28:29Z`, Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/W83cnK1bneCNnM8TQkD2rxCr5TBi`. That gate stays on that commit.
+
+PR #667 stayed draft. `482600b3` is audit evidence and the CI readback for `1397b243`. It does not change the Organisieren runtime. A later docs-only readback of the `482600b3` gate needs its own CI before it is the review head.
 
 ## 4. Parallel safety
 
