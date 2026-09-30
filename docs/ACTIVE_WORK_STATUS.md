@@ -1,9 +1,22 @@
 # Jetnity – Active Work Status
 
 Stand: 30. September 2026
-Status: **NORMAL / #649 AND #651 CLOSED / CURRENT MAIN b5534340b0535402ffbe223f3687744e465c11b9 / PREMIUM HOMEPAGE AND OFFICIAL LOGO LIVE TOGETHER / INDEXING FAIL-CLOSED / TRIP WORKSPACE FOUR-MODE IA INTEGRATED / DRAFT #653 IS THE ONLY NEW BOUNDED WRITER / #626 OPEN AND BLOCKED / NO RUNTIME FOLLOW-UP SELECTED BY THIS DOCS SLICE / NOT A LAUNCH PASS**
+Status: **NORMAL / PREPARATION PREMIUM EXPERIENCE 5 DRAFT #665 / RUNTIME HEAD 4df9e289 / AUDIT PASS / 0 BEHIND main@2530020 / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TL REVIEW**
 
-## 0-current. Post-Homepage/Logo continuity — no runtime follow-up selected
+## 0-current. Preparation premium experience 5 — stop for Technical Lead review
+
+- Current pointer: `docs/PREPARATION_PREMIUM_EXPERIENCE_5_HANDOFF_2026-10-01.md`, then `docs/PREPARATION_PREMIUM_EXPERIENCE_5_REPORT_2026-10-01.md` and `docs/PREPARATION_PREMIUM_EXPERIENCE_5_SELF_REVIEW_2026-10-01.md`. Issue #664. Draft [PR #665](https://github.com/Jetnity/jetnity/pull/665), branch `feat/preparation-premium-experience-5`.
+- Logical agent **Jetnity Preparation premium experience 5**, Generation 1. Session https://cursor.com/agents/bc-37a6cdc4-88dd-4132-8c15-08cda875f94a. `originalModelName=grok-4.7-high-fast`. Not Auto.
+- Baseline and fetched `origin/main`: `2530020dbc6797b17d64c064ca5474cf90804272`. This branch is 0 behind that main. Machine mode: `NORMAL`.
+- Runtime commit audited in production-like Chrome: `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`. Evidence `docs/evidence/preparation-premium-experience-5/audit.json` at `2026-09-30T22:46:30.852Z`, result **PASS**, `fehler` empty. That JSON `sha` is the runtime commit. A later docs commit does not change the preparation runtime and does not replace that stamp.
+- Presentation only: four preparation sections, compact traveller and registry cards, explicit edit disclosure, fail-closed official rows kept, no new provider or model call. Trip Workspace shell files owned by parallel work were not edited.
+- Local gates on that tree: `npm test` 4105 pass / 0 fail; `next build` pass (Next.js 16.3.8, TypeScript inside the build); `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode` pass; `check:schema-bezug` exit 0 with the existing local/unapplied `admin_account_counts_v1` note; `check:setup:ci` warning only, no `.env`. Exact-head GitHub CI, Auth and Vercel belong to the pushed tip and are not a Technical-Lead PASS.
+- Cursor does not Ready or merge and does not start a follow-up slice. Stop for independent Technical-Lead code, visual, mobile and truth review.
+- #626 remains **OPEN / BLOCKED**. This slice does not touch it. Special Product-Owner gates stay closed.
+
+The Post-Homepage/Logo section below is the historical continuity snapshot that was already on this branch. It is not the current writer.
+
+## 0-historical. Post-Homepage/Logo continuity — superseded as the current pointer
 
 - Current pointer: `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-09-30.md`, then `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_REPORT_2026-09-30.md`. Issue #652. Draft [PR #653](https://github.com/Jetnity/jetnity/pull/653), branch `docs/post-homepage-logo-continuity-reconciliation-1`. This branch is not current `main`. Do not invent a merge SHA for #653.
 - Logical agent **Jetnity post-Homepage/Logo continuity reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-e1991970-36f6-46c7-9e5d-6c385c8e70ef. `originalModelName=grok-4.7-high-fast`. Not Auto.

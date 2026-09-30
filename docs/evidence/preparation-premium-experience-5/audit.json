@@ -1,0 +1,419 @@
+{
+  "sha": "4df9e289857a4b7fa1a5ccdcd656aa561c624fef",
+  "basis": "http://127.0.0.1:3456",
+  "stand": "2026-09-30T22:46:30.852Z",
+  "ergebnis": "PASS",
+  "fehler": [],
+  "schritte": [
+    {
+      "name": "open_360x800",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "16px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 1441
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 845
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 437
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 529
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    },
+    {
+      "name": "open_390x844",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "16px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 1341
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 825
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 437
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 457
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    },
+    {
+      "name": "open_768x1024",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "16px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 997
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 569
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 333
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 365
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    },
+    {
+      "name": "open_1024x768",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "16px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 937
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 569
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 333
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 365
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    },
+    {
+      "name": "open_1440x900",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "16px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 937
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 569
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 333
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 365
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    },
+    {
+      "name": "open_1920x1080",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "16px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 937
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 569
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 333
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 365
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    },
+    {
+      "name": "interaction_390",
+      "href": null,
+      "htmlFont": null,
+      "horizontalOverflow": null,
+      "premium": null,
+      "bereiche": null,
+      "zeilen": null,
+      "netz": 0,
+      "history": "http://127.0.0.1:3456/ui-audit/trip-workspace?ansicht=vorbereitung"
+    },
+    {
+      "name": "text200_360x800",
+      "href": "/ui-audit/trip-workspace?ansicht=vorbereitung",
+      "htmlFont": "32px",
+      "horizontalOverflow": false,
+      "premium": "5",
+      "bereiche": [
+        {
+          "id": "reisende-dokumente",
+          "open": true,
+          "height": 14345
+        },
+        {
+          "id": "offizielle-anforderungen",
+          "open": true,
+          "height": 3697
+        },
+        {
+          "id": "tickets-buchungen",
+          "open": true,
+          "height": 3115
+        },
+        {
+          "id": "eigene-vorbereitung",
+          "open": true,
+          "height": 2851
+        }
+      ],
+      "zeilen": [
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung derzeit ni"
+        },
+        {
+          "result": "unknown",
+          "freshness": "provider_unavailable",
+          "status": "unavailable",
+          "type": null,
+          "kompakt": "true",
+          "text": "Einreiseanforderungen noch nicht prüfbar Reisende 2 · Reisepass · 🇩🇪 Deutschland · Staatsbürgerschaft 🇩🇪 Deutschland · Reiseziel 🇮🇩 Indonesien Automatische Einreiseprüfung de"
+        },
+        {
+          "result": "not_required",
+          "freshness": "current",
+          "status": "current",
+          "type": "visa",
+          "kompakt": null,
+          "text": "Visum · Visumfreie Einreise Reisende 1 · Reisepass · 🇨🇭 Schweiz · Staatsbürgerschaft 🇨🇭 Schweiz · Reiseziel 🇮🇩 Indonesien Nicht erforderlich Stelle Auditbehörde Jetnity-Prüfu"
+        }
+      ],
+      "netz": 0,
+      "history": null
+    }
+  ]
+}
