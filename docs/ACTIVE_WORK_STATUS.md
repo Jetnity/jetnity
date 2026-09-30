@@ -17,7 +17,8 @@ Status: **NORMAL / FINAL HOMEPAGE PRODUCT 1 IMPLEMENTED ON DRAFT PR #644 / STOP 
 - Self-review is not a Technical-Lead PASS. Cursor does not Ready or merge and does not start a follow-up slice.
 - Public indexing remains fail-closed. Built `robots.txt` is `Disallow: /`. Homepage HTML robots is `noindex, nofollow`.
 - Trip Workspace files owned by PR #642 were not edited.
-- Exact next step: independent main-chat Technical-Lead review of code, copy, truth, visual and search/AI on the exact branch tip. Re-read `git rev-parse HEAD` before review. Local gates in the report are not that review.
+- Product head `fd2dfe2650930f9ec9dcda5f864017f542445c78`: CI `36729992149` SUCCESS, including Auth and Typecheck/Lint/Build. Vercel status SUCCESS. Preview HTML was not read because the alias redirects to Vercel SSO.
+- Exact next step: independent main-chat Technical-Lead review of code, copy, truth, visual and search/AI on the exact branch tip. Re-read `git rev-parse HEAD` before review. The CI above belongs to `fd2dfe26` unless the tip is still that SHA. Local gates and green CI are not that review.
 
 The Preflight 3 block below was the current writer map before this homepage slice. Its “no active product writer” sentence was true when written.
 

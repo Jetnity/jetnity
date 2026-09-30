@@ -86,7 +86,7 @@ The slash difference between the link tag and JSON-LD is the existing `kanonisch
 | `check:schema-bezug` | pass; pre-existing LOCAL/UNAPPLIED account-counts RPC note, not this slice |
 | `check:operating-mode` | pass |
 | `node scripts/final-homepage-product-1-audit.mjs` with browser | PASS |
-| Auth configuration, GitHub CI, Vercel Preview | not yet on this head; read them after push |
+| Auth configuration, GitHub CI, Vercel status on `fd2dfe2650930f9ec9dcda5f864017f542445c78` | CI `36729992149` SUCCESS. Auth job SUCCESS. Typecheck, Lint & Build SUCCESS. Vercel status SUCCESS, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8jHnbpTKqrf1mHodH5jBMbCLDmHg`. Preview HTML was not read: the alias redirects to Vercel SSO. |
 
 ## 6. Visual evidence
 
@@ -132,7 +132,7 @@ No new route, secret, provider call, payment or schema. The homepage stays stati
 - Dev-server chunk 403s were not root-caused here. They predate the copy change and the production build succeeded.
 - Canonical slash form differs between the HTML link and JSON-LD, as described above.
 - Screen reader and physical-phone proof are not in this session.
-- Exact-head CI, Auth and Vercel Preview must be read on the pushed tip. They are not claimed here.
+- CI `36729992149` is SUCCESS on product head `fd2dfe2650930f9ec9dcda5f864017f542445c78`. A later docs-only tip needs its own re-read. Preview HTML was not read because the alias redirects to Vercel SSO. The Vercel status on that product head was SUCCESS. Green CI is not a Technical-Lead PASS.
 
 ## 10. Next step
 

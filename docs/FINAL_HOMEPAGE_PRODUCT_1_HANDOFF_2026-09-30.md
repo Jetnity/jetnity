@@ -12,7 +12,9 @@ Status: **STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
 - Draft PR: #644
 - Issue: #643
 - Baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`
-- Review head: branch tip after this persist. Run `git rev-parse HEAD`. Do not review an older local gate as if it were that tip.
+- Product head with the homepage, evidence and this report's first text: `fd2dfe2650930f9ec9dcda5f864017f542445c78`.
+- On that SHA: CI `36729992149` SUCCESS, including Auth and Typecheck/Lint/Build. Vercel status SUCCESS. Preview HTML was not read because the alias redirects to Vercel SSO.
+- Review head: branch tip after the CI note. Run `git rev-parse HEAD`. Do not treat the `fd2dfe26` CI as proof of a later tip.
 
 ## Read next
 
