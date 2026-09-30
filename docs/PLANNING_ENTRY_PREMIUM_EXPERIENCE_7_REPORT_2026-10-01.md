@@ -1,7 +1,7 @@
 # Planning Entry Premium Experience 7 — Report
 
 Stand: 1 October 2026
-Status: **R1-F1 APPLIED — ACTIVE_WORK_STATUS RESTORED — NEW EXACT-HEAD GATES PENDING — NOT A PASS — DRAFT — NOT MERGED**
+Status: **R1-F1 APPLIED — GATES SUCCESS ON 1aa7db37 — NOT A PASS — DRAFT — NOT MERGED**
 
 ## 1. Identity
 
@@ -95,9 +95,24 @@ The Vercel bot comment on that SHA says Ready and `DEPLOYED`. This session did n
 
 Technical-Lead review on `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84` required every #669 change in `docs/ACTIVE_WORK_STATUS.md` to be reverted. The file now matches `main@2530020dbc6797b17d64c064ca5474cf90804272`. Fetched `origin/main` is that SHA, and this branch is 0 behind. Slice task, report, handoff, self-review, status and evidence stay. Runtime files are unchanged. The `fa3c9be5` CI, Auth and Vercel results above are historical and do not gate the correction head.
 
+R1 correction head `1aa7db3700dbb78ad02d63d6c311f2caae109396`, read while PR #669 was still Draft:
+
+| Gate | Result |
+| --- | --- |
+| Actions run `36789526779` | success |
+| Auth-Konfiguration gegen config.toml, job `110138880160` | success, completed `2026-09-30T23:09:19Z` |
+| Typecheck, Lint & Build, job `110138880621` | success, completed `2026-09-30T23:11:37Z` |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | `https://vercel.com/jetnity-e1b93c82/jetnity-app/HbcgWfW9FCnPCBSjtsCf7UWZSSsj` |
+| Vercel preview alias | `https://jetnity-app-git-feat-planning-entry-pre-dd05c8-jetnity-e1b93c82.vercel.app` |
+| Vercel comment | updated `2026-09-30T23:09:10Z`, Ready |
+| Vercel Preview Comments check `110139002827` | success |
+
+This session did not open that preview in a browser. A docs receipt after `1aa7db37` does not change the restore or the runtime.
+
 ## 6. Residuals for the Technical Lead
 
-- New GitHub CI, Auth and exact-head Vercel Preview READY on the R1 correction head are still to be recorded. Re-read them on that head.
+- The external gates above belong to `1aa7db37`. Re-read them if the branch tip moves.
 - The side panel still contains the pre-existing line “Später begleiten dich Live-Hinweise und wichtige Erinnerungen.” This slice did not rewrite that future-tense sentence. If live hints are not yet a user promise, a later copy pass should soften it.
 - `html` scroll-padding and the section `scroll-mt` both offset the focused manual region, so it lands lower than a single header height. The heading stays below the sticky header. Tightening that landing is separate from this contract.
 - The audit is headless Chromium, not a physical phone.

@@ -14,7 +14,7 @@ Status: **AUTHOR SELF-REVIEW — NOT A TECHNICAL-LEAD PASS**
 - It is not an independent Technical-Lead review.
 - It is not a physical-device pass.
 - It did not sign in, so the account badge and account storage line were not seen in a browser.
-- GitHub CI, Auth, and Vercel were success on invalidated head `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`. R1-F1 removes every #669 edit from `docs/ACTIVE_WORK_STATUS.md`. The new correction head needs its own CI, Auth and Vercel Preview. That read is not a Technical-Lead PASS.
+- R1-F1 removes every #669 edit from `docs/ACTIVE_WORK_STATUS.md`. CI, Auth, and Vercel were later read as success on correction head `1aa7db3700dbb78ad02d63d6c311f2caae109396`. That read is not a Technical-Lead PASS, and the preview was not opened again in a browser.
 - The pre-existing “Live-Hinweise” sentence in the desktop guide was left as it was.
 
 ## Verdict
