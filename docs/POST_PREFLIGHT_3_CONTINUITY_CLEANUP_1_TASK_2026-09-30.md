@@ -73,3 +73,14 @@ Before handoff:
 - record actual Cursor session URL and `originalModelName`
 
 STOP for independent main-chat Technical-Lead review.
+
+## Session evidence addendum
+
+Recorded before editing. This addendum does not change scope, allowlist, gates or the closure truth above.
+
+- Session URL: https://cursor.com/agents/bc-3317864b-7a78-4160-bdcd-5377b456a62f
+- Session id: `bc-3317864b-7a78-4160-bdcd-5377b456a62f`
+- `originalModelName`: `grok-4.7-high-fast`
+- Required model **Grok 4.7 High Fast** was available. No Auto substitution. Editing was allowed to proceed.
+- Live `main` at reconstruction matched the dispatch baseline `949eced2d2bbd3c10054a7c8e0357a8211df4f6b` (`Merge #632`).
+- PR #632 remained merged. Accepted head `a494ddc3717e0b5c5b601d44ef026fe02b4d6fdb` is the second parent of that merge. Issue #631 was closed. Issue #626 was open and `reopened`.
