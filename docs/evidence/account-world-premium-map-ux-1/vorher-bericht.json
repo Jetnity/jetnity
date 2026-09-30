@@ -1,0 +1,2318 @@
+{
+  "marke": "vorher",
+  "herkuenfte": [
+    "http://127.0.0.1:3481"
+  ],
+  "fremdeHerkuenfte": [],
+  "formen": [
+    "doppelring",
+    "ring",
+    "ring-gestrichelt"
+  ],
+  "befunde": [
+    {
+      "breite": "360x800",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 360,
+      "fenster": 360,
+      "kartenBreite": 268,
+      "kartenHoehe": 106,
+      "seitenInhaltBreite": 328,
+      "verhaeltnis": 0.744,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 156,
+            "g": 183,
+            "b": 173
+          },
+          "japan": {
+            "r": 151,
+            "g": 186,
+            "b": 176
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 340,
+          "japan": 1225,
+          "brasilien": 96,
+          "portugal": 761
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 53,
+          "portugalBrasilien": 53,
+          "landJapan": 53
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "360x800",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 360,
+      "fenster": 360,
+      "kartenBreite": 268,
+      "kartenHoehe": 106,
+      "seitenInhaltBreite": 328,
+      "verhaeltnis": 0.744,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 151,
+            "g": 186,
+            "b": 176
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 337,
+          "japan": 1225,
+          "brasilien": 96,
+          "portugal": 7363
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 53
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "360x800",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 360,
+      "fenster": 360,
+      "kartenBreite": 268,
+      "kartenHoehe": 106,
+      "seitenInhaltBreite": 328,
+      "verhaeltnis": 0.744,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 186,
+            "g": 210,
+            "b": 202
+          },
+          "portugal": {
+            "r": 255,
+            "g": 255,
+            "b": 229
+          },
+          "japan": {
+            "r": 255,
+            "g": 255,
+            "b": 229
+          },
+          "brasilien": {
+            "r": 99,
+            "g": 129,
+            "b": 122
+          }
+        },
+        "varianz": {
+          "land": 3402,
+          "japan": 6191,
+          "brasilien": 2965,
+          "portugal": 6191
+        },
+        "abstand": {
+          "ozeanLand": 54,
+          "landPortugal": 87,
+          "portugalBrasilien": 227,
+          "landJapan": 87
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "360x800",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 360,
+      "fenster": 360,
+      "kartenBreite": 268,
+      "kartenHoehe": 106,
+      "seitenInhaltBreite": 328,
+      "verhaeltnis": 0.744,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 151,
+            "g": 186,
+            "b": 176
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 337,
+          "japan": 1225,
+          "brasilien": 96,
+          "portugal": 7363
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 53
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "360x800",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 360,
+      "fenster": 360,
+      "kartenBreite": 268,
+      "kartenHoehe": 106,
+      "seitenInhaltBreite": 328,
+      "verhaeltnis": 0.744,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 156,
+            "g": 183,
+            "b": 173
+          },
+          "japan": {
+            "r": 151,
+            "g": 186,
+            "b": 176
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 340,
+          "japan": 1225,
+          "brasilien": 96,
+          "portugal": 761
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 53,
+          "portugalBrasilien": 53,
+          "landJapan": 53
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "390x844",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 390,
+      "fenster": 390,
+      "kartenBreite": 298,
+      "kartenHoehe": 118,
+      "seitenInhaltBreite": 358,
+      "verhaeltnis": 0.764,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 166,
+            "g": 194,
+            "b": 186
+          },
+          "japan": {
+            "r": 116,
+            "g": 160,
+            "b": 150
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 390,
+          "japan": 1406,
+          "brasilien": 96,
+          "portugal": 870
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 34,
+          "portugalBrasilien": 34,
+          "landJapan": 104
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "390x844",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 390,
+      "fenster": 390,
+      "kartenBreite": 298,
+      "kartenHoehe": 118,
+      "seitenInhaltBreite": 358,
+      "verhaeltnis": 0.764,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 116,
+            "g": 160,
+            "b": 150
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 390,
+          "japan": 1406,
+          "brasilien": 96,
+          "portugal": 7022
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 104
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "390x844",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 390,
+      "fenster": 390,
+      "kartenBreite": 298,
+      "kartenHoehe": 118,
+      "seitenInhaltBreite": 358,
+      "verhaeltnis": 0.764,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 240,
+            "g": 211,
+            "b": 159
+          },
+          "japan": {
+            "r": 240,
+            "g": 255,
+            "b": 248
+          },
+          "brasilien": {
+            "r": 112,
+            "g": 142,
+            "b": 135
+          }
+        },
+        "varianz": {
+          "land": 2973,
+          "japan": 5956,
+          "brasilien": 1520,
+          "portugal": 7194
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 69,
+          "portugalBrasilien": 147,
+          "landJapan": 81
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "390x844",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 390,
+      "fenster": 390,
+      "kartenBreite": 298,
+      "kartenHoehe": 118,
+      "seitenInhaltBreite": 358,
+      "verhaeltnis": 0.764,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 116,
+            "g": 160,
+            "b": 150
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 390,
+          "japan": 1406,
+          "brasilien": 96,
+          "portugal": 7022
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 104
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "390x844",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 390,
+      "fenster": 390,
+      "kartenBreite": 298,
+      "kartenHoehe": 118,
+      "seitenInhaltBreite": 358,
+      "verhaeltnis": 0.764,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 166,
+            "g": 194,
+            "b": 186
+          },
+          "japan": {
+            "r": 116,
+            "g": 160,
+            "b": 150
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 390,
+          "japan": 1406,
+          "brasilien": 96,
+          "portugal": 870
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 34,
+          "portugalBrasilien": 34,
+          "landJapan": 104
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 768,
+      "fenster": 768,
+      "kartenBreite": 636,
+      "kartenHoehe": 251,
+      "seitenInhaltBreite": 720,
+      "verhaeltnis": 0.828,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 100,
+          "japan": 658,
+          "brasilien": 0,
+          "portugal": 363
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 768,
+      "fenster": 768,
+      "kartenBreite": 636,
+      "kartenHoehe": 251,
+      "seitenInhaltBreite": 720,
+      "verhaeltnis": 0.828,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 100,
+          "japan": 658,
+          "brasilien": 0,
+          "portugal": 7835
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 768,
+      "fenster": 768,
+      "kartenBreite": 636,
+      "kartenHoehe": 251,
+      "seitenInhaltBreite": 720,
+      "verhaeltnis": 0.828,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 247,
+            "g": 248,
+            "b": 229
+          },
+          "japan": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "brasilien": {
+            "r": 112,
+            "g": 142,
+            "b": 135
+          }
+        },
+        "varianz": {
+          "land": 100,
+          "japan": 6730,
+          "brasilien": 238,
+          "portugal": 3867
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 73,
+          "portugalBrasilien": 196,
+          "landJapan": 274
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 768,
+      "fenster": 768,
+      "kartenBreite": 636,
+      "kartenHoehe": 251,
+      "seitenInhaltBreite": 720,
+      "verhaeltnis": 0.828,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 96,
+          "japan": 658,
+          "brasilien": 0,
+          "portugal": 7835
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "768x1024",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 768,
+      "fenster": 768,
+      "kartenBreite": 636,
+      "kartenHoehe": 251,
+      "seitenInhaltBreite": 720,
+      "verhaeltnis": 0.828,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 222,
+            "g": 236,
+            "b": 230
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 96,
+          "japan": 658,
+          "brasilien": 0,
+          "portugal": 367
+        },
+        "abstand": {
+          "ozeanLand": 49,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1024x768",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 1024,
+      "fenster": 1024,
+      "kartenBreite": 892,
+      "kartenHoehe": 352,
+      "seitenInhaltBreite": 976,
+      "verhaeltnis": 0.871,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 25,
+          "japan": 831,
+          "brasilien": 0,
+          "portugal": 426
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1024x768",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 1024,
+      "fenster": 1024,
+      "kartenBreite": 892,
+      "kartenHoehe": 352,
+      "seitenInhaltBreite": 976,
+      "verhaeltnis": 0.871,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 25,
+          "japan": 831,
+          "brasilien": 0,
+          "portugal": 6829
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1024x768",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 1024,
+      "fenster": 1024,
+      "kartenBreite": 892,
+      "kartenHoehe": 352,
+      "seitenInhaltBreite": 976,
+      "verhaeltnis": 0.871,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 57,
+            "g": 64,
+            "b": 51
+          },
+          "japan": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "brasilien": {
+            "r": 112,
+            "g": 142,
+            "b": 135
+          }
+        },
+        "varianz": {
+          "land": 25,
+          "japan": 6652,
+          "brasilien": 212,
+          "portugal": 7517
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 250,
+          "portugalBrasilien": 127,
+          "landJapan": 274
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "1024x768",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 1024,
+      "fenster": 1024,
+      "kartenBreite": 892,
+      "kartenHoehe": 352,
+      "seitenInhaltBreite": 976,
+      "verhaeltnis": 0.871,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 25,
+          "japan": 820,
+          "brasilien": 0,
+          "portugal": 6827
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1024x768",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 1024,
+      "fenster": 1024,
+      "kartenBreite": 892,
+      "kartenHoehe": 352,
+      "seitenInhaltBreite": 976,
+      "verhaeltnis": 0.871,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 25,
+          "japan": 820,
+          "brasilien": 0,
+          "portugal": 422
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1280x800",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 1280,
+      "fenster": 1280,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.834,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 810,
+          "brasilien": 0,
+          "portugal": 524
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1280x800",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 1280,
+      "fenster": 1280,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.834,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 810,
+          "brasilien": 0,
+          "portugal": 6652
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1280x800",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 1280,
+      "fenster": 1280,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.834,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "brasilien": {
+            "r": 112,
+            "g": 142,
+            "b": 135
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 7374,
+          "brasilien": 200,
+          "portugal": 6885
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 150,
+          "landJapan": 274
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "1280x800",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 1280,
+      "fenster": 1280,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.834,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 782,
+          "brasilien": 0,
+          "portugal": 6652
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1280x800",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 1280,
+      "fenster": 1280,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.834,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 782,
+          "brasilien": 0,
+          "portugal": 518
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 1440,
+      "fenster": 1440,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.742,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 810,
+          "brasilien": 0,
+          "portugal": 524
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 1440,
+      "fenster": 1440,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.742,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 810,
+          "brasilien": 0,
+          "portugal": 6652
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 1440,
+      "fenster": 1440,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.742,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "brasilien": {
+            "r": 112,
+            "g": 142,
+            "b": 135
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 7374,
+          "brasilien": 200,
+          "portugal": 6885
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 150,
+          "landJapan": 274
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 1440,
+      "fenster": 1440,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.742,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 782,
+          "brasilien": 0,
+          "portugal": 6652
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1440x900",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 1440,
+      "fenster": 1440,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.742,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 782,
+          "brasilien": 0,
+          "portugal": 518
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "leer",
+      "overflow": 0,
+      "seitenBreite": 1920,
+      "fenster": 1920,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.556,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 810,
+          "brasilien": 0,
+          "portugal": 524
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "geplant",
+      "overflow": 0,
+      "seitenBreite": 1920,
+      "fenster": 1920,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.556,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 810,
+          "brasilien": 0,
+          "portugal": 6651
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "welt",
+      "overflow": 0,
+      "seitenBreite": 1920,
+      "fenster": 1920,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.556,
+      "marker": 6,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "São Paulo, Geplant",
+      "flaechen": [
+        "BR:beides:flaeche",
+        "IT:besucht:flaeche",
+        "JP:geplant:flaeche",
+        "PT:beides:flaeche",
+        "HK:beides:doppelring",
+        "MT:geplant:ring-gestrichelt",
+        "SG:besucht:ring"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "brasilien": {
+            "r": 112,
+            "g": 142,
+            "b": 135
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 7374,
+          "brasilien": 200,
+          "portugal": 6885
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 150,
+          "landJapan": 274
+        }
+      },
+      "auswahl": {
+        "marker": "place:geonames:3448439",
+        "ort": "São Paulo\n🇧🇷 Brasilien\nBrasilien\nEntwurf · 2.–20. Nov. 2027"
+      },
+      "fokus": {
+        "boxShadow": "rgb(237, 248, 243) 0px 0px 0px 2px, rgb(29, 113, 94) 0px 0px 0px 4px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+        "outline": "solid 2px",
+        "kante": 44
+      },
+      "konsole": []
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "besuch-fehler",
+      "overflow": 0,
+      "seitenBreite": 1920,
+      "fenster": 1920,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.556,
+      "marker": 1,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "Lissabon, Geplant",
+      "flaechen": [
+        "PT:geplant:flaeche"
+      ],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 21,
+            "g": 58,
+            "b": 51
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 782,
+          "brasilien": 0,
+          "portugal": 6652
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 274,
+          "portugalBrasilien": 274,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    },
+    {
+      "breite": "1920x1080",
+      "zustand": "fehler",
+      "overflow": 0,
+      "seitenBreite": 1920,
+      "fenster": 1920,
+      "kartenBreite": 1068,
+      "kartenHoehe": 421,
+      "seitenInhaltBreite": 1152,
+      "verhaeltnis": 0.556,
+      "marker": 0,
+      "kleinsteBedienflaeche": 44,
+      "kleinsteBedienflaecheText": "INPUT",
+      "flaechen": [],
+      "herkunftSichtbar": true,
+      "besuchtHinweisSichtbar": true,
+      "titel": "Deine Welt",
+      "proben": {
+        "farben": {
+          "ozean": {
+            "r": 223,
+            "g": 237,
+            "b": 231
+          },
+          "land": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "portugal": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "japan": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          },
+          "brasilien": {
+            "r": 188,
+            "g": 212,
+            "b": 204
+          }
+        },
+        "varianz": {
+          "land": 35,
+          "japan": 782,
+          "brasilien": 0,
+          "portugal": 518
+        },
+        "abstand": {
+          "ozeanLand": 51,
+          "landPortugal": 0,
+          "portugalBrasilien": 0,
+          "landJapan": 0
+        }
+      },
+      "auswahl": null,
+      "fokus": null,
+      "konsole": []
+    }
+  ],
+  "ok": true
+}
