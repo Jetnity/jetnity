@@ -78,14 +78,28 @@ The lint warning in `PublicNavbar.tsx` at the pathname effect that closes the mo
 
 No database, RLS, Auth logic, provider, payment, dependency or indexing change.
 
-## 5. Not proven
+## 5. Exact-head CI, Auth and Vercel
+
+Read after push, on `4a0df6d402c4c9ca45129633a2a0480d9b723d50`, run `36753124511`:
+
+| Check | Result |
+| --- | --- |
+| Typecheck, Lint & Build | success, job `110016502148`, completed `2026-09-30T17:43:11Z` |
+| Auth-Konfiguration gegen config.toml | success, job `110016502417`, completed `2026-09-30T17:41:50Z` |
+| Vercel commit status | success, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FTz5j1sqbDfTCkQiKcNmcwkbJVFr` |
+
+Review threads on #651 at that read: none. Reviews: none. The PR was still Draft.
+
+A later docs commit that only records this paragraph is not `4a0df6d4`. Re-read CI on the branch tip before treating a newer SHA as the gate.
+
+## 6. Not proven
 
 - Physical device, VoiceOver or TalkBack.
 - A signed-in account in the browser.
-- Exact-head GitHub CI, Auth configuration check and Vercel are recorded in the handoff only after the pushed head exists. A local build is not that gate.
+- Preview HTML behind the Vercel inspector. The status says the deployment completed. This session did not browse the preview alias.
 - Favicon, apple touch icon and PWA manifest. They still use the previous mark. This task forbids that work.
 
-## 6. Recommendation
+## 7. Recommendation
 
 Leave favicon and manifest icons for a later Product-Owner-authorized slice. Do not start it from this PR.
 

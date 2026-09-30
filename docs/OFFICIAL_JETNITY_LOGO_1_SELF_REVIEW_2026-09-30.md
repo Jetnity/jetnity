@@ -24,7 +24,7 @@ Session: https://cursor.com/agents/bc-2eacb5a8-6476-4b48-bec0-9b73bd96a656
 
 - A signed-in navbar. The browser pass saw guest `Anmelden` only.
 - Physical device or screen reader.
-- GitHub CI, Auth check and Vercel on the final pushed head. Those are not claimed here until a later read of that exact head.
+- Preview HTML. CI run `36753124511` on `4a0df6d4` is success for Typecheck/Lint/Build and Auth. Vercel reports the deployment completed. I did not open the preview alias. A docs-only commit after that SHA is a new head.
 - That 32px is the Product Owner's preferred tablet size. It is the size that keeps the existing 72px row.
 
 ## Judgement
