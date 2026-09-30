@@ -14,7 +14,12 @@ import {
   weltMusterId,
 } from '@/components/account/WeltZustaende'
 import type { WeltBesuchtAnsicht } from '@/lib/account/welt-ansicht'
-import { weltOhneFlaecheHinweis, type WeltLaenderAbleitung } from '@/lib/account/welt-laender'
+import {
+  WELT_ZUSTAND_TEXT,
+  weltOhneFlaecheHinweis,
+  type WeltLaenderAbleitung,
+  type WeltLandZustand,
+} from '@/lib/account/welt-laender'
 import {
   WORLD_MAP_OHNE_KOORDINATEN_TEXT,
   WORLD_MAP_OHNE_LAND_TEXT,
@@ -96,24 +101,24 @@ function MarkerPunkt({ gewaehlt, anzahl }: { gewaehlt: boolean; anzahl: number |
       <span
         className={
           gewaehlt
-            ? 'absolute h-9 w-9 rounded-full bg-citrus-400/55 ring-1 ring-brand-800/25'
-            : 'absolute h-6 w-6 rounded-full bg-brand-800/0 transition-colors group-hover:bg-brand-800/15 motion-reduce:transition-none'
+            ? 'absolute h-11 w-11 rounded-full bg-citrus-400/55 ring-2 ring-citrus-400 shadow-[0_0_0_4px_rgba(15,48,42,0.28)]'
+            : 'absolute h-8 w-8 rounded-full bg-white/0 ring-2 ring-transparent transition-colors motion-safe:group-hover:bg-white/75 motion-safe:group-hover:ring-citrus-400 motion-reduce:transition-none'
         }
       />
       {anzahl === null ? (
         <span
           className={
             gewaehlt
-              ? 'relative block h-4 w-4 rounded-full bg-brand-900 ring-[3px] ring-citrus-400 shadow-[0_2px_6px_rgba(15,46,42,0.45)]'
-              : 'relative block h-3 w-3 rounded-full bg-brand-800 ring-2 ring-white shadow-[0_1px_4px_rgba(15,46,42,0.4)]'
+              ? 'relative block h-[18px] w-[18px] rounded-full bg-brand-900 ring-[3px] ring-citrus-400 shadow-[0_2px_8px_rgba(15,46,42,0.55)]'
+              : 'relative block h-3.5 w-3.5 rounded-full bg-brand-900 ring-2 ring-white shadow-[0_1px_5px_rgba(15,46,42,0.55)] motion-safe:transition-transform motion-safe:group-hover:scale-125 motion-reduce:transform-none motion-reduce:transition-none'
           }
         />
       ) : (
         <span
-          className={`relative flex h-[18px] w-[18px] items-center justify-center rounded-full text-[10px] font-semibold leading-none shadow-[0_1px_4px_rgba(15,46,42,0.4)] ${
+          className={`relative flex h-[18px] w-[18px] items-center justify-center rounded-full text-[10px] font-semibold leading-none shadow-[0_1px_5px_rgba(15,46,42,0.55)] ${
             gewaehlt
               ? 'bg-brand-900 text-citrus-400 ring-[3px] ring-citrus-400'
-              : 'bg-brand-800 text-white ring-2 ring-white'
+              : 'bg-brand-900 text-white ring-2 ring-white'
           }`}
         >
           {anzahl}
@@ -135,7 +140,7 @@ function MarkerBeschriftung({
   return (
     <span
       aria-hidden="true"
-      className={`pointer-events-none absolute max-w-[11rem] truncate rounded-full bg-brand-800 px-2 py-1 text-[11px] font-semibold leading-none text-white shadow-[0_4px_12px_rgba(15,46,42,0.25)] ${
+      className={`pointer-events-none absolute z-10 max-w-[11rem] truncate rounded-full bg-brand-900 px-2.5 py-1.5 text-[11px] font-semibold leading-none text-white shadow-[0_8px_18px_rgba(15,46,42,0.35)] ring-2 ring-citrus-400 ${
         unten ? 'top-full mt-1' : 'bottom-full mb-1'
       } ${BESCHRIFTUNG_AUSRICHTUNG[ausrichtung]}`}
     >
@@ -261,12 +266,15 @@ function OrtZeile({
   gewaehlt,
   imRahmen,
   onWaehlen,
+  anker = true,
 }: {
   ort: WorldMapOrt
   geplantLabel: string
   gewaehlt: boolean
   imRahmen: boolean
   onWaehlen: (schluessel: string) => void
+  /** Nur die Liste trägt die Anker-Id. Die Atlaskarte daneben wiederholt sie nicht. */
+  anker?: boolean
 }) {
   const reisen = weltOrtReiseAnzeigen(ort.reisen)
   const aufKarte = ort.geplottet && imRahmen
@@ -277,12 +285,12 @@ function OrtZeile({
     : WORLD_MAP_OHNE_KOORDINATEN_TEXT
 
   return (
-    <li id={weltOrtDomId(ort.schluessel)} className="flex min-w-0">
+    <li id={anker ? weltOrtDomId(ort.schluessel) : undefined} className="flex min-w-0">
       <article
         data-world-map-ort-gewaehlt={gewaehlt ? 'ja' : 'nein'}
         className={
           gewaehlt
-            ? 'flex w-full min-w-0 flex-col rounded-2xl border border-brand-600 bg-surface-50 p-3 shadow-[0_2px_10px_rgba(15,46,42,0.07)]'
+            ? 'flex w-full min-w-0 flex-col rounded-2xl border border-brand-700 bg-white p-3 shadow-[inset_4px_0_0_0_rgb(223_244_122),0_10px_28px_rgba(15,46,42,0.08)]'
             : 'flex w-full min-w-0 flex-col rounded-2xl border border-line-200 bg-surface-0 p-3'
         }
       >
@@ -351,6 +359,45 @@ function OrtZeile({
   )
 }
 
+const ZUSTAND_REIHENFOLGE: readonly WeltLandZustand[] = ['besucht', 'geplant', 'beides']
+
+function AtlasHinweis({
+  lage,
+  leerText,
+  fehlerText,
+}: {
+  lage: 'fehler' | 'leer' | 'geplant'
+  leerText: string
+  fehlerText: string
+}) {
+  const hinweis =
+    lage === 'fehler'
+      ? fehlerText
+      : lage === 'leer'
+        ? leerText
+        : 'Wähle einen Ort auf der Karte. Die zugehörige Reise erscheint hier.'
+
+  return (
+    <div className="flex h-full min-h-11 items-center rounded-[22px] border border-line-200 bg-surface-50 px-4 py-3">
+      <p className="text-sm leading-6 text-ink-800">{hinweis}</p>
+    </div>
+  )
+}
+
+/** Dieselbe Zustandsprache wie die Flächen, neben der Karte, nicht statt ihrer. */
+function AtlasLegende() {
+  return (
+    <ul className="grid h-full content-center gap-1 rounded-[22px] border border-line-200 bg-surface-50 px-3 py-2 sm:grid-cols-3 lg:grid-cols-1">
+      {ZUSTAND_REIHENFOLGE.map((zustand) => (
+        <li key={zustand} className="flex min-h-11 items-center gap-2">
+          <WeltZustandProbe zustand={zustand} />
+          <span className="text-sm leading-5 text-brand-800">{WELT_ZUSTAND_TEXT[zustand]}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export default function AccountWeltKarte({
   welt,
   besucht,
@@ -381,10 +428,17 @@ export default function AccountWeltKarte({
     return gruppe && gruppe.orte.length > 1 ? gruppe : null
   }, [ansicht.gruppen, offeneGruppe])
 
+  const gewaehlterOrt = useMemo(
+    () => welt.orte.find((ort) => ort.schluessel === gewaehlt) ?? null,
+    [gewaehlt, welt.orte],
+  )
+
   const waehlen = useCallback((schluessel: string) => {
     setGewaehlt(schluessel)
     setOffeneGruppe(null)
-    const ziel = document.getElementById(weltOrtDomId(schluessel))
+    const kontext = document.querySelector('[data-world-map-kontext]')
+    const liste = document.getElementById(weltOrtDomId(schluessel))
+    const ziel = window.innerWidth >= 1024 ? liste : (kontext ?? liste)
     ziel?.scrollIntoView({
       block: 'nearest',
       behavior: reduzierteBewegung() ? 'auto' : 'smooth',
@@ -398,7 +452,7 @@ export default function AccountWeltKarte({
       data-world-map-lage={welt.lage}
       data-world-map-visited={besucht.lage}
       data-world-map-search="nein"
-      className="mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-8"
+      className="relative mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_22px_60px_rgba(15,46,42,0.08)] sm:p-8 lg:left-1/2 lg:w-[min(90rem,calc(100vw-4rem))] lg:-translate-x-1/2"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
         Deine Reisen im Überblick
@@ -454,9 +508,11 @@ export default function AccountWeltKarte({
 
       {/* Die Karte bleibt auch dann stehen, wenn eine der beiden Seiten nicht
           gelesen werden konnte. Sie zeigt dann weniger, aber nichts Falsches. */}
-      <div className="mt-5 flex flex-col gap-4">
-        <div className="min-w-0">
-          <div className="relative rounded-[22px] border border-line-200 bg-surface-50 p-2">
+      <div className="mt-5 min-w-0">
+          <div
+            data-world-map-rahmen="ein"
+            className="relative rounded-[22px] bg-brand-900 p-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_18px_40px_rgba(15,46,42,0.16)]"
+          >
             {/* Nur die Kartenfläche wird beschnitten. Die Marker-Ebene bleibt
                 frei, damit ein Punkt am Kartenrand seine volle Trefferfläche
                 behält; der Innenabstand der Karte trägt den Überhang. */}
@@ -476,18 +532,31 @@ export default function AccountWeltKarte({
                   }. ${WELT_KARTE_ZUSTAND_BESCHREIBUNG}`}
                 </desc>
                 <WeltMusterDefs id={musterBasis} />
-                {/* Reine Grundkarte: eine Ebene Wasser, eine Ebene Land mit
-                    Küstenlinie, darüber die Zustandsflächen der Länder, dann
-                    Binnenseen, dann die Grenzen und das Gradnetz. Die
-                    Reihenfolge ist die Aussage: Grenzen liegen über jeder
-                    Füllung und bleiben deshalb in jedem Zustand lesbar. */}
+                <defs>
+                  <radialGradient id={`${musterBasis}-vignette`} cx="50%" cy="46%" r="78%">
+                    <stop offset="62%" stopColor="#0f302a" stopOpacity="0" />
+                    <stop offset="100%" stopColor="#0a1412" stopOpacity="0.72" />
+                  </radialGradient>
+                </defs>
+                {/* Reine Grundkarte: tiefes Wasser, warmes neutrales Land,
+                    darüber die Zustandsflächen, dann Binnenseen in derselben
+                    Wasserfarbe, dann Grenzen und ein zurückgenommenes Gradnetz.
+                    Grenzen liegen über jeder Füllung und bleiben lesbar. */}
                 <g aria-hidden="true">
                   <rect
                     x={WORLD_MAP_RAHMEN_VIEWBOX.x}
                     y={WORLD_MAP_RAHMEN_VIEWBOX.y}
                     width={WORLD_MAP_RAHMEN_VIEWBOX.width}
                     height={WORLD_MAP_RAHMEN_VIEWBOX.height}
-                    className="fill-surface-100"
+                    data-world-map-ozean="ein"
+                    className="fill-brand-900"
+                  />
+                  <rect
+                    x={WORLD_MAP_RAHMEN_VIEWBOX.x}
+                    y={WORLD_MAP_RAHMEN_VIEWBOX.y}
+                    width={WORLD_MAP_RAHMEN_VIEWBOX.width}
+                    height={WORLD_MAP_RAHMEN_VIEWBOX.height}
+                    fill={`url(#${musterBasis}-vignette)`}
                   />
                   {/* Die Strichstärken skalieren bewusst nicht mit der Karte.
                       Eine in Projektionsgrad gemessene Küstenlinie wäre auf
@@ -497,8 +566,9 @@ export default function AccountWeltKarte({
                   <path
                     d={LAND_PFAD}
                     fillRule="evenodd"
-                    className="fill-brand-700/20 stroke-brand-700/60 [vector-effect:non-scaling-stroke]"
-                    strokeWidth="0.75"
+                    data-world-map-land="ein"
+                    className="fill-surface-75 stroke-brand-800/80 [vector-effect:non-scaling-stroke]"
+                    strokeWidth="1"
                     strokeLinejoin="round"
                   />
                 </g>
@@ -507,15 +577,15 @@ export default function AccountWeltKarte({
                   <path
                     d={SEE_PFAD}
                     fillRule="evenodd"
-                    className="fill-surface-100 stroke-brand-700/35 [vector-effect:non-scaling-stroke]"
-                    strokeWidth="0.5"
+                    className="fill-brand-900 stroke-brand-800/55 [vector-effect:non-scaling-stroke]"
+                    strokeWidth="0.6"
                     strokeLinejoin="round"
                   />
                   <path
                     d={GRENZ_PFAD}
                     fill="none"
-                    className="stroke-brand-800/45 [vector-effect:non-scaling-stroke]"
-                    strokeWidth="0.5"
+                    className="stroke-brand-900/65 [vector-effect:non-scaling-stroke]"
+                    strokeWidth="0.7"
                     strokeLinejoin="round"
                     strokeLinecap="round"
                   />
@@ -526,7 +596,7 @@ export default function AccountWeltKarte({
                       y1={linie.y1}
                       x2={linie.x2}
                       y2={linie.y2}
-                      className="stroke-brand-800/[0.07] [vector-effect:non-scaling-stroke]"
+                      className="stroke-surface-0/20 [vector-effect:non-scaling-stroke]"
                       strokeWidth="0.5"
                     />
                   ))}
@@ -567,27 +637,51 @@ export default function AccountWeltKarte({
               onWaehlen={waehlen}
             />
           ) : null}
-          {/* Dieselbe Aussage wie die Farben, in Worten. Sie steht direkt
-              unter der Karte, nicht in einem ausklappbaren Nebenzweig. */}
-          <WeltLaenderListe flaechen={laender.flaechen} />
-          {ohneFlaeche ? (
-            <p className="mt-2 text-xs leading-5 text-ink-650">{ohneFlaeche}</p>
-          ) : null}
-          <p className="mt-2 text-xs leading-5 text-ink-650">
-            {welt.lage === 'leer' ? welt.leerText : welt.laenderText}
-            {ansicht.rahmenHinweis ? ` ${ansicht.rahmenHinweis}` : ''}
-          </p>
-          {besucht.ohneLandHinweis ? (
-            <p className="mt-1 text-xs leading-5 text-ink-650">{besucht.ohneLandHinweis}</p>
-          ) : null}
-          {/* Kartenherkunft und Grenz-Vorbehalt stehen sichtbar an der Karte,
-              nicht nur in der Dokumentation: gezeichnete Grenzen sind
-              Orientierung, keine Aussage Jetnitys über Hoheit. */}
-          <p className="mt-1 text-xs leading-5 text-ink-650">{WORLD_MAP_GRUNDKARTE_HINWEIS}</p>
         </div>
 
-        {welt.lage === 'leer' || welt.lage === 'fehler' ? null : (
-          <ol className="grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
+          <aside data-world-map-kontext={gewaehlterOrt ? 'ort' : 'ruhe'} className="min-w-0">
+            {gewaehlterOrt ? (
+              <OrtZeile
+                ort={gewaehlterOrt}
+                geplantLabel={welt.geplantLabel}
+                gewaehlt
+                imRahmen={imRahmen.has(gewaehlterOrt.schluessel)}
+                onWaehlen={waehlen}
+                anker={false}
+              />
+            ) : (
+              <AtlasHinweis lage={welt.lage} leerText={welt.leerText} fehlerText={welt.fehlerText} />
+            )}
+          </aside>
+          <AtlasLegende />
+        </div>
+        {/* Dieselbe Aussage wie die Farben, in Worten. Sie steht direkt
+            unter der Karte, nicht in einem ausklappbaren Nebenzweig. */}
+        <WeltLaenderListe flaechen={laender.flaechen} />
+
+      <div data-world-map-herkunft="ein" className="mt-4 space-y-1 border-t border-line-100 pt-3">
+        {ohneFlaeche ? <p className="text-xs leading-5 text-ink-650">{ohneFlaeche}</p> : null}
+        {welt.lage === 'leer' && !ansicht.rahmenHinweis ? null : (
+          <p className="text-xs leading-5 text-ink-650">
+            {welt.lage === 'leer' ? null : welt.laenderText}
+            {ansicht.rahmenHinweis ? ` ${ansicht.rahmenHinweis}` : ''}
+          </p>
+        )}
+        {besucht.ohneLandHinweis ? (
+          <p className="text-xs leading-5 text-ink-650">{besucht.ohneLandHinweis}</p>
+        ) : null}
+        {/* Kartenherkunft und Grenz-Vorbehalt bleiben sichtbar, stehen aber
+            nicht mehr in Konkurrenz zur Karte. */}
+        <p className="text-xs leading-5 text-ink-650">{WORLD_MAP_GRUNDKARTE_HINWEIS}</p>
+      </div>
+
+      {welt.lage === 'leer' || welt.lage === 'fehler' ? null : (
+        <div className="mt-6 border-t border-line-100 pt-5">
+          <h3 className="text-sm font-semibold tracking-[-0.02em] text-brand-800">
+            {welt.geplantLabel}
+          </h3>
+          <ol className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {welt.orte.map((ort) => (
               <OrtZeile
                 key={ort.schluessel}
@@ -599,8 +693,8 @@ export default function AccountWeltKarte({
               />
             ))}
           </ol>
-        )}
-      </div>
+        </div>
+      )}
 
       <p className="mt-4 border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
         {besucht.text}
