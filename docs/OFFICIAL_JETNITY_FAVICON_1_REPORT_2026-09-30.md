@@ -1,113 +1,89 @@
 # Jetnity Official Favicon 1 — Report
 
 Stand: 30 September 2026
-Status: **IMPLEMENTED / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TL REVIEW**
+Status: **R1 CORRECTION / DRAFT / NOT READY / NOT MERGED / STOP FOR INDEPENDENT TL REVIEW**
 
 Issue: #658
 Draft PR: #659
 Branch: `brand/official-jetnity-favicon-1`
-Baseline at dispatch: `main@8571db776bb58042a8107e341052a36cbbe9a50c`
-Integrated `main` in this session: `a2685812022258610e0cf34d926695b7067e55df` (Merge #657)
+Reviewed head: `2e309a4248778e757db84f398700eee843d7683c`
+Review: Technical-Lead R1 `5371422991`
+Integrated `main`: `1ea6ddd03a290683d3d787823621c535a611a90f` (Merge #655, Next.js 16.3.8)
 Agent: **Jetnity official favicon 1**, Generation 1
 Session: https://cursor.com/agents/bc-b8063b84-3b6a-41f2-a519-d0bdd4328a2d
 `originalModelName`: `grok-4.7-high-fast`
 
-Required model Grok 4.7 High Fast was available. No Auto substitution. No second session.
+## 1. R1-F1 — crop
 
-## 1. What changed
+The first crop was a rectangle from x 36 to 158. That rectangle included the stylized signet and the separate bold J of the wordmark. R1 rejected it.
 
-The placeholder favicon family is replaced by the left signet of `public/brand/jetnity-logo.png`.
+The corrected extract copies only the 8-connected component of source pixels with alpha ≥ 1 whose box is the leftmost large component:
 
-The canonical logo file is unchanged. Blob SHA remains `bfcbb46da7e87d5ef03e7e6457b06957df12359f`. Navbar and footer still reference that full logo. This slice does not redraw the signet.
+- Box: left 34, top 16, width 103, height 90.
+- 2713 source pixels, copied unchanged.
+- 213 opaque wordmark pixels sit inside that box, on the hook of the bold J. They are left transparent.
+- The bold J and the rest of the wordmark are a different component and are not copied.
 
-Extraction, recorded in `docs/evidence/official-jetnity-favicon-1/extraction.json`:
+`public/brand/jetnity-logo.png` is unchanged. Blob SHA remains `bfcbb46da7e87d5ef03e7e6457b06957df12359f`. The signet file blob is `2db7371f3514618059c90389376c69feee16fb5d`.
 
-- Opaque bounds of the left component: x 36–158, y 18–103.
-- Crop: left 36, top 18, width 123, height 86.
-- Columns 159 and 160 are fully transparent. The wordmark starts at x 161.
-- `public/brand/jetnity-signet.png` is those source pixels with no resampling. Blob SHA `a2f91e16b2b21d910de534c6e72a8124fd821ac2`.
-
-Square icons use the existing surface `#f5f4ee`, Lanczos3, and a content width of 84% of the canvas. A sigma-0.5 sharpen trial did not separate the pins and was not applied. Maskable content is scaled to a 0.36 radius budget so the signet stays inside the 40% safe-zone radius and is more padded than the 512 any-icon.
+Square icons still use `#f5f4ee`, Lanczos3, and 84% content width. No sharpening. Maskable stays inside the 40% radius and is more padded than the 512 any-icon. Measured maskable max radius 168 against a safe radius of 204.8.
 
 | File | Size | PNG color type | Blob SHA |
 | --- | --- | --- | --- |
-| `app/icon.png` | 48×48 | 6 RGBA | `93902bdacac943091ee6e0f7c3e12cf90a4aa04d` |
-| `app/apple-icon.png` | 180×180 | 6 RGBA | `23afd15e5e7c29cb9b3289612867abdb5298c994` |
-| `public/icons/jetnity-192.png` | 192×192 | 6 RGBA | `a08d34b69328ab6958dd1040f8cd2a18cff2d301` |
-| `public/icons/jetnity-512.png` | 512×512 | 6 RGBA | `ca5a9440e492b422eefd29185f571d76d8054d80` |
-| `public/icons/jetnity-512-maskable.png` | 512×512 | 2 RGB | `eff07c1a18753f8c611d681bd8c1f271fd4adb54` |
+| `app/icon.png` | 48×48 | 6 RGBA | `31b8daea2c365c0f49aad87dd7dae17b5dc351e6` |
+| `app/apple-icon.png` | 180×180 | 6 RGBA | `9f7996483f0a75d856415d3242224ee4094455f7` |
+| `public/icons/jetnity-192.png` | 192×192 | 6 RGBA | `db5a89ed626b10e84753cf1db4ff3cf13ad17ed4` |
+| `public/icons/jetnity-512.png` | 512×512 | 6 RGBA | `4c28d164da7deec818153f0702290e70b20205bc` |
+| `public/icons/jetnity-512-maskable.png` | 512×512 | 2 RGB | `2c61669ead572382f1fb518bca32ea0b78cc13ef` |
 
-`app/icon.svg` is removed. `app/manifest.ts` is unchanged. Paths remain `/icons/jetnity-192.png`, `/icons/jetnity-512.png`, and `/icons/jetnity-512-maskable.png`.
+`app/manifest.ts` is unchanged. `app/icon.svg` stays deleted.
 
-At 16px and 24px, which are Lanczos3 downsamples of the 48px icon, the J and the route remain. The two pins are not separately crisp at 16px. That is the real geometry at that size. It was not simplified.
+The focused test now rebuilds the same component and requires every signet pixel to match that component. Opaque wordmark pixels inside the box must be absent. A transparent gap after a wide rectangle is no longer the proof.
 
-## 2. Parallel safety
+## 2. R1-F2 — main
 
-PR #655 still owns the Next.js security upgrade. Its changed paths are package files, its own test/audit/docs, and `lib/next/framework-bump-contract.test.ts`. It does not edit the icon family. No collision stop.
-
-PR #657 merged as `a2685812` while this slice was open. Its diff does not edit icon asset paths. It does pin the old placeholder bytes in `lib/layout/footer-official-logo-white-1.test.ts`, including `app/icon.svg`. After the merge that pin failed on the deleted SVG. This slice updates only that pin to the new signet bytes. `Footer.tsx` was not edited here. It arrived with the merge. The footer still uses `/brand/jetnity-logo.png` with `brightness-0 invert`.
-
-This slice does not edit `docs/ACTIVE_WORK_STATUS.md`.
+`origin/main` `1ea6ddd03a290683d3d787823621c535a611a90f` is merged. Behind count is 0. `next` and `eslint-config-next` are `16.3.8`. `package.json` and `package-lock.json` match that main. `Footer.tsx` and `PublicNavbar.tsx` were not edited. The footer remains the merged white full logo.
 
 ## 3. Evidence
 
-Directory: `docs/evidence/official-jetnity-favicon-1/`
+`docs/evidence/official-jetnity-favicon-1/`
 
-- `extraction-bounds.png` marks the crop on the canonical logo.
-- `signet-4x.png` is the extracted signet, nearest-neighbor, on `#f5f4ee`.
-- `micro-16.png` through `micro-64.png` and both contact sheets.
-- `family-preview.png` shows the five square icons. The maskable icon is the smaller one.
-- `04`–`08` are browser captures of the icon routes and the tab favicon on local `next start` at `http://127.0.0.1:3456`.
-- `01`–`03` were captured before the main merge and still show the earlier footer chip.
-- `09`–`11` were captured after the merge. Navbar is the full-color logo. Footer is the full white logo on the dark footer, with no white chip. No horizontal overflow at 1440 or 390.
+- `signet-4x.png` and `micro-contact-light.png` / `micro-contact-dark.png` are the corrected crop.
+- `12-icon-r1.webp` is `/icon.png` on local `next start` after the Next.js 16.3.8 rebuild.
+- `13-tab-favicon-r1.webp` is the browser tab.
+- `14-navbar-r1.webp` and `15-footer-r1.webp` show the full logo in the navbar and the white full logo in the footer.
 
-Local production HTML includes:
+Local production HTML, Next.js 16.3.8:
 
-- `<link rel="icon" href="/icon.png?…" sizes="48x48" type="image/png">`
-- `<link rel="apple-touch-icon" href="/apple-icon.png?…" sizes="180x180" type="image/png">`
+- icon link sizes 48×48
+- apple touch sizes 180×180
 - four `/brand/jetnity-logo.png` references
-- no `icon.svg`
-- no `/brand/jetnity-signet.png` in the page
-- H1 **Deine ganze Reise. Intelligent an einem Ort.**
+- `brightness-0 invert` still present
 - `noindex`
+- `/icon.svg` returns 404
 
-Route checks on that server: `/icon.png`, `/apple-icon.png`, `/manifest.webmanifest`, the three PWA icons, `/brand/jetnity-logo.png`, and `/brand/jetnity-signet.png` returned HTTP 200. `/icon.svg` returned 404. The manifest JSON still names the three PWA paths. Served PNG dimensions and color types match the table above.
+At 16px the route and J form remain. The pins are not separately crisp. The geometry was not simplified.
 
 ## 4. Gates run here
 
 | Gate | Result |
 | --- | --- |
-| Focused PWA, logo, and footer tests before the pin update | 16 pass, 1 fail: the merged #657 pin still expected `app/icon.svg` |
-| Same tests after the pin update | 17 pass, 0 fail |
-| `npx eslint` on the touched tests and the render script | exit 0 |
-| `npm run build` before the main merge | pass, `/icon.png` and `/apple-icon.png` in the route table |
-| `npm run build` after the main merge | pass |
+| Focused PWA, logo, footer, and Next 16.3.8 tests | 25 pass, 0 fail |
+| `npx eslint` on the touched tests and render script | exit 0 |
+| `npm run build` after `npm ci` | pass, banner `Next.js 16.3.8` |
 
-No database, RLS, Auth logic, provider, payment, dependency, or indexing change. `sharp` was already installed through Next.js. It is not a new package dependency.
+No new dependency. No Auth, provider, payment, or indexing change.
 
 ## 5. Exact-head CI, Auth and Vercel
 
-Gated head `a908ddab5353e0563c7d96bff41c584a57082039`. Merge-base with `origin/main` at the read was `a2685812022258610e0cf34d926695b7067e55df`. Behind count was 0. Review threads on #659: none.
-
-Run `36769103780`: https://github.com/Jetnity/jetnity/actions/runs/36769103780
-
-| Check | Result |
-| --- | --- |
-| Typecheck, Lint & Build | success, job `110070642237`, completed `2026-09-30T19:59:21Z` |
-| Auth-Konfiguration gegen config.toml | success, job `110070642442`, completed `2026-09-30T19:56:48Z` |
-| Vercel commit status | success, description "Deployment has completed", inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/2tg2TxfAtDXu49ohRcgVNrDyj3Yc` |
-| GitHub Preview deployment `6768799793` | success on that SHA, environment Preview |
-
-The deployment URL responded with Vercel SSO, so this session did not read preview HTML. The local production server remains the HTML proof.
-
-A docs commit that only records this section is not `a908ddab`. Re-read CI on the branch tip before treating a newer SHA as the gate.
+The R1 head is not `2e309a42`. That head's green CI does not gate this correction. Re-read CI on the branch tip after the correction push.
 
 ## 6. Not proven
 
-- Physical device, VoiceOver, or TalkBack.
+- Physical device or screen reader.
+- Preview HTML. The previous alias was behind Vercel SSO.
 - A signed-in navbar.
-- That 16px pins would survive a further simplification. They were left as the downsampled signet.
 
 ## 7. Recommendation
 
-Stop for an independent main-chat Technical-Lead review of the signet crop, the micro sizes, and the metadata routes. The PR stays Draft. Cursor does not Ready or merge. No follow-up slice.
+Stop for an independent Technical-Lead review of the corrected crop. The PR stays Draft. Cursor does not Ready or merge. No follow-up slice.

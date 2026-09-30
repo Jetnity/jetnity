@@ -14,18 +14,18 @@ Logical agent: **Jetnity official favicon 1**, Generation 1
 3. `docs/OFFICIAL_JETNITY_FAVICON_1_SELF_REVIEW_2026-09-30.md`
 4. `docs/evidence/official-jetnity-favicon-1/extraction.json`
 
-Do not treat `docs/ACTIVE_WORK_STATUS.md` as updated by this slice. Re-fetch `main` and PR #659 before review. Dispatch baseline `8571db77` is not current `main`. This branch merged `origin/main` at `a2685812022258610e0cf34d926695b7067e55df` (Merge #657).
+Do not treat `docs/ACTIVE_WORK_STATUS.md` as updated by this slice. Re-fetch `main` and PR #659 before review. R1 review `5371422991` rejected the crop on `2e309a42`. Current integrated main is `1ea6ddd03a290683d3d787823621c535a611a90f`.
 
 ## What the next reviewer checks
 
 - Draft PR #659 stays Draft. Cursor did not Ready and did not merge.
-- The signet file matches logo pixels at left 36, top 18, size 123×86. Columns 159–160 of the logo are empty. The wordmark starts at x 161.
+- The signet is the leftmost large 8-connected component, box left 34, top 16, 103×90. The bold J is not copied. 213 opaque wordmark pixels inside that box stay transparent.
 - `app/icon.svg` is gone. `app/icon.png` is 48×48 RGBA. Apple is 180×180 RGBA. PWA icons are 192, 512 RGBA, and 512 RGB maskable.
 - Manifest paths are unchanged.
 - Navbar and footer still use `/brand/jetnity-logo.png`. Footer whiteness comes from merged #657, not from an edit in this slice.
 - The only edit to a #657 file is the icon byte pin in `lib/layout/footer-official-logo-white-1.test.ts`.
 - #655 does not own these icon paths.
-- Exact-head gate recorded for `a908ddab5353e0563c7d96bff41c584a57082039`: CI run `36769103780` success (Typecheck, Lint & Build and Auth-Konfiguration). Vercel status success, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/2tg2TxfAtDXu49ohRcgVNrDyj3Yc`. GitHub Preview deployment `6768799793` success. No review threads. Preview HTML was behind Vercel SSO. If the tip is newer, re-read that tip.
+- Exact-head CI for `2e309a42` does not gate the R1 crop. Re-read CI, Auth, and Vercel on the correction tip.
 
 ## Do not continue
 

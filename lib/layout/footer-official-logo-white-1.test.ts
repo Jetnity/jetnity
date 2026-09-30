@@ -54,12 +54,12 @@ describe('Footer Official Logo White 1', () => {
 
   test('Favicon und App-Icons bleiben das offizielle Signet', () => {
     const icons = [
-      ['app/icon.png', '93902bdacac943091ee6e0f7c3e12cf90a4aa04d'],
-      ['app/apple-icon.png', '23afd15e5e7c29cb9b3289612867abdb5298c994'],
-      ['public/icons/jetnity-192.png', 'a08d34b69328ab6958dd1040f8cd2a18cff2d301'],
-      ['public/icons/jetnity-512.png', 'ca5a9440e492b422eefd29185f571d76d8054d80'],
-      ['public/icons/jetnity-512-maskable.png', 'eff07c1a18753f8c611d681bd8c1f271fd4adb54'],
-      ['public/brand/jetnity-signet.png', 'a2f91e16b2b21d910de534c6e72a8124fd821ac2'],
+      ['app/icon.png', '31b8daea2c365c0f49aad87dd7dae17b5dc351e6'],
+      ['app/apple-icon.png', '9f7996483f0a75d856415d3242224ee4094455f7'],
+      ['public/icons/jetnity-192.png', 'db5a89ed626b10e84753cf1db4ff3cf13ad17ed4'],
+      ['public/icons/jetnity-512.png', '4c28d164da7deec818153f0702290e70b20205bc'],
+      ['public/icons/jetnity-512-maskable.png', '2c61669ead572382f1fb518bca32ea0b78cc13ef'],
+      ['public/brand/jetnity-signet.png', '2db7371f3514618059c90389376c69feee16fb5d'],
     ] as const
     for (const [pfad, sha] of icons) {
       assert.equal(gitBlobSha1(readFileSync(join(wurzel, pfad))), sha, pfad)

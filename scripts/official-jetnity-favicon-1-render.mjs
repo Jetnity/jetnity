@@ -1,6 +1,7 @@
 // scripts/official-jetnity-favicon-1-render.mjs
 //
-// Extracts the left signet from the canonical logo and builds the icon family.
+// Copies the stylized left signet from the canonical logo and builds the icon family.
+// The bold typographic J is a separate component and is not copied.
 // Crop and proportional Lanczos3 scale only. No redraw, no sharpen.
 //
 // Run: node scripts/official-jetnity-favicon-1-render.mjs
@@ -14,23 +15,103 @@ import sharp from 'sharp'
 const wurzel = join(dirname(fileURLToPath(import.meta.url)), '..')
 const logoPfad = join(wurzel, 'public/brand/jetnity-logo.png')
 
-export const SIGNET_CROP = { left: 36, top: 18, width: 123, height: 86 }
 export const FLAECHE = { r: 0xf5, g: 0xf4, b: 0xee, alpha: 1 }
 const FUELLUNG = 0.84
+const NACHBARN = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]
 
-const signetPng = await sharp(logoPfad).extract(SIGNET_CROP).png({ compressionLevel: 9 }).toBuffer()
+function signetAusLogo(data, breite, hoehe, kanaele) {
+  const gesehen = new Int32Array(breite * hoehe)
+  gesehen.fill(-1)
+  const teile = []
+  let nummer = 0
+
+  for (let y = 0; y < hoehe; y++) {
+    for (let x = 0; x < breite; x++) {
+      const start = y * breite + x
+      if (data[(start * kanaele) + 3] < 1 || gesehen[start] !== -1) continue
+      const warteschlange = [[x, y]]
+      gesehen[start] = nummer
+      let anzahl = 0
+      let minX = x
+      let maxX = x
+      let minY = y
+      let maxY = y
+      while (warteschlange.length > 0) {
+        const [cx, cy] = warteschlange.pop()
+        anzahl += 1
+        if (cx < minX) minX = cx
+        if (cx > maxX) maxX = cx
+        if (cy < minY) minY = cy
+        if (cy > maxY) maxY = cy
+        for (const [dx, dy] of NACHBARN) {
+          const nx = cx + dx
+          const ny = cy + dy
+          if (nx < 0 || ny < 0 || nx >= breite || ny >= hoehe) continue
+          const ziel = ny * breite + nx
+          if (data[(ziel * kanaele) + 3] < 1 || gesehen[ziel] !== -1) continue
+          gesehen[ziel] = nummer
+          warteschlange.push([nx, ny])
+        }
+      }
+      teile.push({ nummer, anzahl, minX, maxX, minY, maxY })
+      nummer += 1
+    }
+  }
+
+  const signet = teile
+    .filter((teil) => teil.anzahl > 1000 && teil.minX < 80 && teil.maxX < 150)
+    .sort((a, b) => a.minX - b.minX)[0]
+  if (!signet) throw new Error('Signet-Komponente fehlt')
+
+  const zielBreite = signet.maxX - signet.minX + 1
+  const zielHoehe = signet.maxY - signet.minY + 1
+  const roh = Buffer.alloc(zielBreite * zielHoehe * 4)
+  let wortmarkeImRahmen = 0
+  for (let y = signet.minY; y <= signet.maxY; y++) {
+    for (let x = signet.minX; x <= signet.maxX; x++) {
+      const ziel = ((y - signet.minY) * zielBreite + (x - signet.minX)) * 4
+      const quelle = (y * breite + x) * kanaele
+      if (gesehen[y * breite + x] === signet.nummer) {
+        roh[ziel] = data[quelle]
+        roh[ziel + 1] = data[quelle + 1]
+        roh[ziel + 2] = data[quelle + 2]
+        roh[ziel + 3] = data[quelle + 3]
+      } else if (data[quelle + 3] >= 16) {
+        wortmarkeImRahmen += 1
+      }
+    }
+  }
+
+  return {
+    roh,
+    breite: zielBreite,
+    hoehe: zielHoehe,
+    left: signet.minX,
+    top: signet.minY,
+    pixel: signet.anzahl,
+    wortmarkeImRahmen,
+  }
+}
+
+const logoRoh = await sharp(logoPfad).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+const signetTeil = signetAusLogo(logoRoh.data, logoRoh.info.width, logoRoh.info.height, logoRoh.info.channels)
+const SIGNET_BOX = { left: signetTeil.left, top: signetTeil.top, width: signetTeil.breite, height: signetTeil.hoehe }
+const signetPng = await sharp(signetTeil.roh, {
+  raw: { width: signetTeil.breite, height: signetTeil.hoehe, channels: 4 },
+}).png({ compressionLevel: 9 }).toBuffer()
+console.log('signet', SIGNET_BOX, 'pixels', signetTeil.pixel, 'excluded wordmark in box', signetTeil.wortmarkeImRahmen)
 
 function inhaltBreite(groesse) {
   return Math.round(groesse * FUELLUNG)
 }
 
 function maskableInhaltBreite(groesse) {
-  const halbDiagonaleProBreite = Math.hypot(0.5, SIGNET_CROP.height / SIGNET_CROP.width / 2)
+  const halbDiagonaleProBreite = Math.hypot(0.5, SIGNET_BOX.height / SIGNET_BOX.width / 2)
   return Math.floor((groesse * 0.36) / halbDiagonaleProBreite)
 }
 
 async function komponieren(groesse, zielBreite, { alpha }) {
-  const zielHoehe = Math.max(1, Math.round(zielBreite * (SIGNET_CROP.height / SIGNET_CROP.width)))
+  const zielHoehe = Math.max(1, Math.round(zielBreite * (SIGNET_BOX.height / SIGNET_BOX.width)))
   if (zielBreite >= groesse || zielHoehe >= groesse) {
     throw new Error(`Signet ${zielBreite}×${zielHoehe} passt nicht in ${groesse}`)
   }
@@ -130,12 +211,12 @@ const logoZoom = await sharp(logoPfad)
   .png()
   .toBuffer()
 const rahmen = Buffer.from(
-  `<svg width="768" height="256"><rect x="${SIGNET_CROP.left * 2}" y="${SIGNET_CROP.top * 2}" width="${SIGNET_CROP.width * 2}" height="${SIGNET_CROP.height * 2}" fill="none" stroke="#9a3b32" stroke-width="2"/></svg>`,
+  `<svg width="768" height="256"><rect x="${SIGNET_BOX.left * 2}" y="${SIGNET_BOX.top * 2}" width="${SIGNET_BOX.width * 2}" height="${SIGNET_BOX.height * 2}" fill="none" stroke="#9a3b32" stroke-width="2"/></svg>`,
 )
 await sharp(logoZoom).composite([{ input: rahmen }]).png().toFile(join(evidenz, 'extraction-bounds.png'))
 
 await sharp(signetPng)
-  .resize(SIGNET_CROP.width * 4, SIGNET_CROP.height * 4, { kernel: 'nearest' })
+  .resize(SIGNET_BOX.width * 4, SIGNET_BOX.height * 4, { kernel: 'nearest' })
   .flatten({ background: '#f5f4ee' })
   .png()
   .toFile(join(evidenz, 'signet-4x.png'))
@@ -173,10 +254,10 @@ writeFileSync(
   JSON.stringify(
     {
       source: 'public/brand/jetnity-logo.png',
-      crop: SIGNET_CROP,
-      gapColumns: [159, 160],
-      wordmarkStartsAtX: 161,
-      method: 'opaque-pixel bounding box of the left component; two fully transparent columns separate it from the wordmark; pixels copied with no resampling',
+      crop: SIGNET_BOX,
+      pixels: signetTeil.pixel,
+      wordmarkPixelsInsideBoxExcluded: signetTeil.wortmarkeImRahmen,
+      method: '8-connected component of pixels with alpha >= 1; the leftmost large component is the stylized signet; the separate bold J and the rest of the wordmark are not copied, including where the J hook overlaps the signet box',
       squareSurface: '#f5f4ee',
       resampling: 'lanczos3',
       sharpening: 'not applied; a sigma 0.5 trial did not separate the pins and was rejected to avoid fringe',

@@ -10,8 +10,11 @@ import manifest from '@/app/manifest'
 const ROOT = process.cwd()
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
 const FLAECHE = { r: 0xf5, g: 0xf4, b: 0xee }
-const SIGNET_CROP = { left: 36, top: 18, width: 123, height: 86 }
 const MASKABLE_SICHERER_RADIUS_ANTEIL = 0.4
+const SIGNET_NACHBARN = [
+  [1, 0], [-1, 0], [0, 1], [0, -1],
+  [1, 1], [1, -1], [-1, 1], [-1, -1],
+] as const
 
 type PngPixel = { r: number; g: number; b: number; a: number }
 
@@ -141,6 +144,50 @@ function markenGeometrie(bild: PngBild) {
   return { markenpixel, ausserhalb, maxRadius, sichererRadius, dunkelgruen, route }
 }
 
+function logoKomponenten(bild: PngBild) {
+  const gesehen = new Int32Array(bild.breite * bild.hoehe)
+  gesehen.fill(-1)
+  const teile: { nummer: number; anzahl: number; minX: number; maxX: number; minY: number; maxY: number }[] = []
+  let nummer = 0
+
+  for (let y = 0; y < bild.hoehe; y++) {
+    for (let x = 0; x < bild.breite; x++) {
+      const start = y * bild.breite + x
+      if (bild.pixel[start].a < 1 || gesehen[start] !== -1) continue
+      const warteschlange: [number, number][] = [[x, y]]
+      gesehen[start] = nummer
+      let anzahl = 0
+      let minX = x
+      let maxX = x
+      let minY = y
+      let maxY = y
+      while (warteschlange.length > 0) {
+        const aktuell = warteschlange.pop()
+        if (!aktuell) break
+        const [cx, cy] = aktuell
+        anzahl += 1
+        if (cx < minX) minX = cx
+        if (cx > maxX) maxX = cx
+        if (cy < minY) minY = cy
+        if (cy > maxY) maxY = cy
+        for (const [dx, dy] of SIGNET_NACHBARN) {
+          const nx = cx + dx
+          const ny = cy + dy
+          if (nx < 0 || ny < 0 || nx >= bild.breite || ny >= bild.hoehe) continue
+          const ziel = ny * bild.breite + nx
+          if (bild.pixel[ziel].a < 1 || gesehen[ziel] !== -1) continue
+          gesehen[ziel] = nummer
+          warteschlange.push([nx, ny])
+        }
+      }
+      teile.push({ nummer, anzahl, minX, maxX, minY, maxY })
+      nummer += 1
+    }
+  }
+
+  return { gesehen, teile }
+}
+
 function ecken(bild: PngBild) {
   const { breite, hoehe, pixel } = bild
   return [
@@ -217,7 +264,7 @@ describe('PWA-1: installierbare, datensparsame App-Shell', () => {
     )
   })
 
-  test('das kanonische Signet ist der linke Logoausschnitt und enthält die Wortmarke nicht', () => {
+  test('das Signet kopiert nur die stilisierte Komponente und keine Wortmarken-Typografie', () => {
     assert.equal(existsSync(join(ROOT, 'app/icon.svg')), false)
     assert.equal(existsSync(join(ROOT, 'app/icon.png')), true)
 
@@ -226,38 +273,47 @@ describe('PWA-1: installierbare, datensparsame App-Shell', () => {
     assert.equal(logo.breite, 384)
     assert.equal(logo.hoehe, 128)
     assert.equal(logo.farbtyp, 6)
-    assert.equal(signet.breite, SIGNET_CROP.width)
-    assert.equal(signet.hoehe, SIGNET_CROP.height)
     assert.equal(signet.farbtyp, 6)
 
+    const { gesehen, teile } = logoKomponenten(logo)
+    const marke = teile
+      .filter((teil) => teil.anzahl > 1000 && teil.minX < 80 && teil.maxX < 150)
+      .sort((a, b) => a.minX - b.minX)[0]
+    assert.ok(marke, 'die stilisierte Signet-Komponente fehlt')
+    assert.equal(signet.breite, marke.maxX - marke.minX + 1)
+    assert.equal(signet.hoehe, marke.maxY - marke.minY + 1)
+
     let abweichung = 0
-    for (let y = 0; y < SIGNET_CROP.height; y++) {
-      for (let x = 0; x < SIGNET_CROP.width; x++) {
+    let ausgeschlosseneTypografie = 0
+    for (let y = 0; y < signet.hoehe; y++) {
+      for (let x = 0; x < signet.breite; x++) {
+        const logoX = x + marke.minX
+        const logoY = y + marke.minY
+        const ausLogo = logo.pixel[logoY * logo.breite + logoX]
         const ausSignet = signet.pixel[y * signet.breite + x]
-        const ausLogo = logo.pixel[(y + SIGNET_CROP.top) * logo.breite + (x + SIGNET_CROP.left)]
-        if (
-          ausSignet.r !== ausLogo.r
-          || ausSignet.g !== ausLogo.g
-          || ausSignet.b !== ausLogo.b
-          || ausSignet.a !== ausLogo.a
-        ) abweichung += 1
+        const gehoertZumSignet = gesehen[logoY * logo.breite + logoX] === marke.nummer
+        if (gehoertZumSignet) {
+          if (ausSignet.r !== ausLogo.r || ausSignet.g !== ausLogo.g || ausSignet.b !== ausLogo.b || ausSignet.a !== ausLogo.a) {
+            abweichung += 1
+          }
+        } else {
+          if (ausSignet.a !== 0) abweichung += 1
+          if (ausLogo.a >= 16) ausgeschlosseneTypografie += 1
+        }
       }
     }
     assert.equal(abweichung, 0)
-
-    for (let y = 0; y < logo.hoehe; y++) {
-      for (const x of [159, 160]) {
-        assert.ok(logo.pixel[y * logo.breite + x].a < 16, `Spalte ${x} trennt Signet und Wortmarke`)
-      }
-    }
+    assert.ok(ausgeschlosseneTypografie > 100, 'der Haken des fetten J liegt im Rahmen und darf nicht mitkopiert werden')
 
     let wortmarke = 0
-    for (let y = 0; y < logo.hoehe; y++) {
-      for (let x = 161; x < logo.breite; x++) {
-        if (logo.pixel[y * logo.breite + x].a >= 16) wortmarke += 1
-      }
+    for (let i = 0; i < logo.pixel.length; i++) {
+      if (logo.pixel[i].a >= 16 && gesehen[i] !== marke.nummer) wortmarke += 1
     }
-    assert.ok(wortmarke > 1000, 'die Wortmarke bleibt im kanonischen Logo, ausserhalb des Signets')
+    assert.ok(wortmarke > 1000, 'die Wortmarke bleibt im kanonischen Logo')
+
+    const geometrie = markenGeometrie(signet)
+    assert.ok(geometrie.dunkelgruen > 100)
+    assert.ok(geometrie.route > 20)
   })
 
   test('Favicon und quadratische App-Icons nutzen die helle Jetnity-Fläche', () => {

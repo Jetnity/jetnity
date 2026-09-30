@@ -1,17 +1,14 @@
 {
   "source": "public/brand/jetnity-logo.png",
   "crop": {
-    "left": 36,
-    "top": 18,
-    "width": 123,
-    "height": 86
+    "left": 34,
+    "top": 16,
+    "width": 103,
+    "height": 90
   },
-  "gapColumns": [
-    159,
-    160
-  ],
-  "wordmarkStartsAtX": 161,
-  "method": "opaque-pixel bounding box of the left component; two fully transparent columns separate it from the wordmark; pixels copied with no resampling",
+  "pixels": 2713,
+  "wordmarkPixelsInsideBoxExcluded": 213,
+  "method": "8-connected component of pixels with alpha >= 1; the leftmost large component is the stylized signet; the separate bold J and the rest of the wordmark are not copied, including where the J hook overlaps the signet box",
   "squareSurface": "#f5f4ee",
   "resampling": "lanczos3",
   "sharpening": "not applied; a sigma 0.5 trial did not separate the pins and was rejected to avoid fringe",
