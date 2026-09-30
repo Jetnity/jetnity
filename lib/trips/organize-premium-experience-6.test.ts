@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
 import {
   ORGANISIEREN_EINGABE_KLASSE,
+  ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK,
   detailStatusfolge,
   klauselnOhneWiederholung,
+  organisierenRueckkehrAbstand,
 } from '@/lib/trips/organize-premium-experience-6'
 
 test('dieselbe Klausel erscheint nur einmal', () => {
@@ -81,6 +84,24 @@ test('Flugabdeckung und Optional bleiben eigene Fakten', () => {
   assert.equal(optional.eyebrow, 'Optional')
   assert.equal(optional.hinweis, 'kein Pflichtpunkt')
   assert.equal(optional.zustand, '1 Aktivität geplant')
+})
+
+test('kompakte Rückkehr folgt der gemessenen Kopfkante und sonst dem Kopfvertrag', () => {
+  assert.equal(
+    ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK,
+    'calc(var(--jet-header-h) + env(safe-area-inset-top))',
+  )
+  assert.equal(organisierenRueckkehrAbstand(null), ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK)
+  assert.equal(organisierenRueckkehrAbstand(0), ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK)
+  assert.equal(organisierenRueckkehrAbstand(Number.NaN), ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK)
+  assert.equal(organisierenRueckkehrAbstand(120.2), '121px')
+
+  const navigation = readFileSync('components/trips/TripWorkspaceNavigation.tsx', 'utf8')
+  assert.match(navigation, /organisierenRueckkehrAbstand/)
+  assert.match(navigation, /ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK/)
+  assert.match(navigation, /min-h-11/)
+  assert.match(navigation, /Zurück zur Reise/)
+  assert.equal(navigation.includes('72px'), false)
 })
 
 test('kompakte Eingaben bleiben auf Touch mindestens 16px', () => {

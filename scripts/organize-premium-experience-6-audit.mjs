@@ -122,6 +122,21 @@ function messenQuelle() {
         inReise: Boolean(el.closest('nav[aria-label="Reise"]')),
         height: Math.round(el.getBoundingClientRect().height),
       })),
+      rueckkehrFrei: (() => {
+        const kopf = document.querySelector('header')
+        const knopf = zurueck.find((el) => el.closest('nav[aria-label="Reise"]'))
+        if (!(kopf instanceof HTMLElement) || !(knopf instanceof HTMLElement)) return null
+        const kopfRand = kopf.getBoundingClientRect()
+        const rand = knopf.getBoundingClientRect()
+        if (rand.height < 44 || rand.width < 44) return false
+        if (rand.top < kopfRand.bottom - 1) return false
+        if (rand.top < 0 || rand.bottom > window.innerHeight + 1) return false
+        const x = Math.min(window.innerWidth - 2, Math.max(2, rand.left + Math.min(24, rand.width / 2)))
+        const y = rand.top + 3
+        if (y >= window.innerHeight) return false
+        const treffer = document.elementFromPoint(x, y)
+        return treffer === knopf || (treffer instanceof Node && knopf.contains(treffer))
+      })(),
       horizontalOverflow: doc.scrollWidth > doc.clientWidth + 1,
       scrollWidth: doc.scrollWidth,
       clientWidth: doc.clientWidth,
@@ -206,6 +221,22 @@ async function stand(page) {
   return page.evaluate(`(${messenQuelle()})()`)
 }
 
+async function warteAufFreieRueckkehr(page) {
+  await page.waitForFunction(() => {
+    const kopf = document.querySelector('header')?.getBoundingClientRect()
+    const knopf = document.querySelector('nav[aria-label="Reise"] button')?.getBoundingClientRect()
+    return Boolean(
+      kopf &&
+        knopf &&
+        knopf.height >= 44 &&
+        knopf.width >= 44 &&
+        knopf.top >= kopf.bottom - 1 &&
+        knopf.top >= 0 &&
+        knopf.bottom <= window.innerHeight + 1,
+    )
+  })
+}
+
 async function bild(page, name) {
   const datei = join(EVIDENZ, 'screens', `${name}.png`)
   await page.screenshot({ path: datei, fullPage: false })
@@ -246,6 +277,7 @@ try {
       merke(netz.length === 0, `${viewport.name}: Netzwerk vor dem Bereich`)
       const kompakt = viewport.width < 1024
       await domaene(page, 'Flüge')
+      if (viewport.width < 1024) await warteAufFreieRueckkehr(page)
       const flug = await stand(page)
       await bild(page, `fluege_${viewport.name}`)
       schritte.push({ name: `fluege_${viewport.name}`, ...flug, netz: netzArten(netz) })
@@ -262,6 +294,7 @@ try {
         merke(flug.split === 'einspaltig', `${viewport.name}: Split ${flug.split}`)
         merke(flug.zurueck.some((eintrag) => eintrag.inReise && eintrag.height >= 44), `${viewport.name}: sticky Zurück`)
         merke(flug.zurueck.every((eintrag) => !eintrag.inDetail), `${viewport.name}: Zurück auch in der Karte`)
+        merke(flug.rueckkehrFrei === true, `${viewport.name}: Zurück liegt unter dem Kopf oder ausserhalb`)
       } else {
         merke(flug.rail, `${viewport.name}: Leiste neben dem Detail fehlt`)
         merke(flug.split !== 'einspaltig', `${viewport.name}: Desktop bleibt einspaltig ${flug.split}`)
@@ -314,13 +347,17 @@ try {
       const vorherSuche = netz.length
       await page.getByRole('button', { name: 'Flug suchen', exact: true }).click()
       await page.waitForSelector('[data-arbeitsbereich="flugsuche"]')
+      if (kompakt) await warteAufFreieRueckkehr(page)
       const suche = await stand(page)
       await bild(page, `${prefix}_flug-suchen`)
       schritte.push({ name: `${prefix}_flug-suchen`, ...suche, netz: netzArten(netz) })
       merke(suche.flugSichtbar && suche.detailSuche === 'ein', `${prefix}: ausdrückliche Flugsuche`)
       merke(netz.length === vorherSuche, `${prefix}: Öffnen der Flugsuche ruft einen Anbieter`)
       merke(suche.flaechen.includes('suche'), `${prefix}: Suchfläche fehlt`)
-      if (kompakt) merke(suche.inputs.every((feld) => feld.px >= 16), `${prefix}: Eingabe unter 16px`)
+      if (kompakt) {
+        merke(suche.inputs.every((feld) => feld.px >= 16), `${prefix}: Eingabe unter 16px`)
+        merke(suche.rueckkehrFrei === true, `${prefix}: Zurück liegt unter dem Kopf oder ausserhalb`)
+      }
       merke(suche.horizontalOverflow === false, `${prefix}: Überlauf in der Flugsuche`)
 
       const vorherSubmit = netz.length
@@ -491,12 +528,15 @@ try {
     await textPage.evaluate(() => {
       document.documentElement.style.fontSize = '200%'
     })
+    await warteAufFreieRueckkehr(textPage)
     await textPage.getByRole('button', { name: 'Flug suchen', exact: true }).click()
+    await warteAufFreieRueckkehr(textPage)
     await textPage.waitForSelector('[data-arbeitsbereich="flugsuche"]')
     const textStand = await stand(textPage)
     await bild(textPage, 'text200_360_flug-suchen')
     schritte.push({ name: 'text200_360_flug-suchen', ...textStand, netz: netzArten(textNetz) })
     merke(textStand.htmlFont === '32px', `200%: Schrift ${textStand.htmlFont}`)
+    merke(textStand.rueckkehrFrei === true, '200%: Zurück liegt unter dem Kopf oder ausserhalb')
     merke(textStand.horizontalOverflow === false, `200%: Überlauf ${textStand.scrollWidth}/${textStand.clientWidth}`)
     merke(textStand.inputs.every((feld) => feld.px >= 16), '200%: Eingabe unter 16px')
     merke(textNetz.every((eintrag) => !eintrag.url.includes('/api/flights/search')), '200%: Flugsuche ohne Submit')
@@ -527,6 +567,7 @@ const bericht = {
     flaechen: eintrag.flaechen,
     horizontalOverflow: eintrag.horizontalOverflow,
     htmlFont: eintrag.htmlFont,
+    rueckkehrFrei: eintrag.rueckkehrFrei ?? null,
     netz: eintrag.netz,
     screenshot: eintrag.screenshot,
   })),

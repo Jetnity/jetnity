@@ -22,6 +22,23 @@ export const ORGANISIEREN_PRIMAR_KLASSE =
 export const ORGANISIEREN_RUECKKEHR_KLASSE =
   'inline-flex min-h-11 shrink-0 scroll-mt-32 items-center gap-1.5 self-start rounded-full px-2 text-xs font-medium text-ink-700 transition hover:bg-surface-50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-600/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
 
+/** Resting public-header contract, before the rendered header is measured. */
+export const ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK =
+  'calc(var(--jet-header-h) + env(safe-area-inset-top))'
+
+/**
+ * Sticky offset for the compact Back bar.
+ * `--jet-header-h` is the resting height. Larger text grows the public header
+ * past that token. The measured bottom already includes the header's own
+ * safe-area padding, so safe-area is not added a second time.
+ */
+export function organisierenRueckkehrAbstand(kopfUntenPx: number | null): string {
+  if (kopfUntenPx == null || !Number.isFinite(kopfUntenPx) || kopfUntenPx <= 0) {
+    return ORGANISIEREN_RUECKKEHR_ABSTAND_FALLBACK
+  }
+  return `${Math.ceil(kopfUntenPx)}px`
+}
+
 function schluessel(wert: string): string {
   return wert.trim().toLocaleLowerCase('de-CH').replace(/\s+/g, ' ')
 }
