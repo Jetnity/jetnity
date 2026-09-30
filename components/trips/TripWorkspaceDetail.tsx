@@ -54,10 +54,7 @@ export default function TripWorkspaceDetail({
       data-gap-pflicht={gap ? (gap.istPflichtLuecke ? 'ja' : 'nein') : undefined}
       data-item-kind={item?.kind}
       data-item-ungeplant={item ? (item.ungeplant ? 'ja' : 'nein') : undefined}
-      className={cn(
-        'min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)]',
-        kompakt ? 'mt-4' : 'mt-5',
-      )}
+      className="mt-4 min-w-0 rounded-[24px] border border-line-200 bg-white p-4 shadow-[0_12px_32px_rgba(15,46,42,0.06)]"
     >
       {!kompakt ? (
         <button

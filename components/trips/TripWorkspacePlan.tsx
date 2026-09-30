@@ -287,12 +287,12 @@ export default function TripWorkspacePlan({
       aria-label="Tagesplan"
       data-tagesplan-modul="ein"
       className={cn(
-        'min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)]',
+        'min-w-0 rounded-[24px] border border-line-200 bg-white p-4 shadow-[0_12px_32px_rgba(15,46,42,0.06)]',
         eingebettet ? 'mt-1' : 'mt-5',
       )}
     >
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Tagesplan</p>
         <p className="mt-1 text-sm text-ink-900">{timeline.planText}</p>
       </div>
 

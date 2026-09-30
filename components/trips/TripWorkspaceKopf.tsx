@@ -1,15 +1,43 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { CalendarDays, MapPin, ShieldCheck, Users, WalletCards } from 'lucide-react'
 
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
+import { cn } from '@/lib/utils'
 import type { Trip, TripSource } from '@/types/trips'
 
 function betrag(wert: number | null, waehrung: string) {
   if (wert === null) return 'Noch offen'
   return betragLesbar(wert, waehrung)
+}
+
+function Fakt({
+  symbol: Symbol,
+  label,
+  wert,
+  kompakt,
+}: {
+  symbol: ComponentType<{ className?: string }>
+  label: string
+  wert: string
+  kompakt: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'flex min-w-0 items-center gap-2.5 py-2.5',
+        kompakt ? 'sm:flex-1 sm:px-4 sm:py-3 sm:first:pl-0' : 'flex-1 px-4 py-3 first:pl-0',
+      )}
+    >
+      <Symbol className="h-4 w-4 shrink-0 text-citrus-400" aria-hidden="true" />
+      <div className="min-w-0">
+        <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-white/50">{label}</dt>
+        <dd className="break-words text-sm font-semibold leading-5 text-white">{wert}</dd>
+      </div>
+    </div>
+  )
 }
 
 export default function TripWorkspaceKopf({
@@ -27,71 +55,60 @@ export default function TripWorkspaceKopf({
 }) {
   const gast = quelle === 'guest'
 
-  if (kompakt) {
-    return (
-      <section className="mt-3 rounded-[24px] bg-brand-800 px-4 py-3 text-white shadow-[0_18px_50px_rgba(15,46,42,0.14)] sm:px-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-ink-300">
-            <ShieldCheck className="h-3 w-3" aria-hidden="true" />
+  return (
+    <section
+      data-workspace-identity
+      className={cn(
+        'overflow-hidden bg-brand-800 text-white shadow-[0_16px_40px_rgba(15,46,42,0.12)]',
+        kompakt ? 'mt-3 rounded-[28px]' : 'mt-4 rounded-[32px] xl:mt-5',
+      )}
+    >
+      <div className={cn(kompakt ? 'px-4 py-4' : 'px-6 py-6 xl:px-8 xl:py-7')}>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-white/70">
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-citrus-400" aria-hidden="true" />
             {gast ? 'Nur auf diesem Gerät' : 'Im Konto gespeichert'}
           </span>
-          <span className="text-[11px] text-white/55">{uebersicht.lageText}</span>
+          <span className="text-[11px] text-white/50">{uebersicht.lageText}</span>
         </div>
-        <h1 className="mt-2 hyphens-auto break-words text-2xl font-semibold tracking-[-0.04em]">
+        <h1
+          className={cn(
+            'mt-2 hyphens-auto break-words font-semibold tracking-[-0.045em] text-balance',
+            kompakt ? 'text-[1.75rem] leading-[1.12]' : 'mt-3 text-4xl leading-[1.05] xl:text-5xl',
+          )}
+        >
           {uebersicht.titel}
         </h1>
-        <p className="mt-1 flex min-w-0 items-start gap-2 text-sm text-white/70">
-          <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        <p className="mt-2 flex min-w-0 items-start gap-2 text-sm leading-6 text-white/75">
+          <MapPin className="mt-1 h-4 w-4 shrink-0 text-citrus-400" aria-hidden="true" />
           <span className="min-w-0 hyphens-auto break-words">{uebersicht.orte}</span>
         </p>
-        <p className="mt-1 text-xs leading-5 text-white/70">
-          <span>{uebersicht.zeitraum}</span>
-          <span aria-hidden="true"> · </span>
-          <span>{uebersicht.personen.text}</span>
-        </p>
-        {kopfzeile && <div className="mt-2 border-t border-white/10 pt-2">{kopfzeile}</div>}
-      </section>
-    )
-  }
-
-  return (
-    <section className="mt-4 rounded-[30px] bg-brand-800 text-white shadow-[0_24px_70px_rgba(15,46,42,0.16)] xl:mt-5">
-      <div className="grid grid-cols-1 gap-4 p-5 sm:p-6 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end xl:gap-7 xl:p-8">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-ink-300">
-              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              {gast ? 'Nur auf diesem Gerät' : 'In deinem Konto gespeichert'}
-            </span>
-            <span className="text-xs text-white/55">{uebersicht.lageText}</span>
-          </div>
-          <h1 className="mt-3 hyphens-auto break-words text-3xl font-semibold tracking-[-0.04em] xl:mt-5 xl:text-5xl">
-            {uebersicht.titel}
-          </h1>
-          <p className="mt-2 flex min-w-0 items-start gap-2 text-sm text-white/65">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span className="min-w-0 hyphens-auto break-words">{uebersicht.orte}</span>
-          </p>
-        </div>
-        <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3">
-            <CalendarDays className="h-4 w-4 text-ink-400" aria-hidden="true" />
-            <strong className="mt-2 block text-sm">{uebersicht.zeitraum}</strong>
-            <span className="text-xs text-white/55">{uebersicht.lageText}</span>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3">
-            <Users className="h-4 w-4 text-ink-400" aria-hidden="true" />
-            <strong className="mt-2 block text-sm">{uebersicht.personen.anzahl}</strong>
-            <span className="text-xs text-white/55">{uebersicht.personen.text}</span>
-          </div>
-          <div className="col-span-2 rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3 sm:col-span-1">
-            <WalletCards className="h-4 w-4 text-ink-400" aria-hidden="true" />
-            <strong className="mt-2 block text-sm">{betrag(reise.budgetAmount, reise.currency)}</strong>
-            <span className="text-xs text-white/55">Budget</span>
-          </div>
-        </div>
+        <dl
+          className={cn(
+            'mt-3 border-t border-white/10',
+            kompakt ? 'sm:flex sm:divide-x sm:divide-white/10' : 'flex divide-x divide-white/10',
+          )}
+        >
+          <Fakt symbol={CalendarDays} label="Zeitraum" wert={uebersicht.zeitraum} kompakt={kompakt} />
+          <Fakt symbol={Users} label="Reisende" wert={uebersicht.personen.text} kompakt={kompakt} />
+          <Fakt
+            symbol={WalletCards}
+            label="Budget"
+            wert={betrag(reise.budgetAmount, reise.currency)}
+            kompakt={kompakt}
+          />
+        </dl>
       </div>
-      {kopfzeile && <div className="border-t border-white/10 px-5 py-3 sm:px-6 xl:px-8 xl:py-4">{kopfzeile}</div>}
+      {kopfzeile ? (
+        <div
+          className={cn(
+            'border-t border-white/10',
+            kompakt ? 'px-4 py-2' : 'px-6 py-3 xl:px-8',
+          )}
+        >
+          {kopfzeile}
+        </div>
+      ) : null}
     </section>
   )
 }
