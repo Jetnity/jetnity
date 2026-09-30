@@ -4,7 +4,7 @@ Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
 Audited runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
-Audit: `2026-09-30T22:27:59.148Z`, JSON sha `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`, PASS, 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272`
+Device-matrix audit: `2026-09-30T22:33:50.508Z`, JSON sha `fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13`, PASS, 26 steps, 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272`
 Session: https://cursor.com/agents/bc-057a244a-5a54-43b2-8c6f-182dcc32598e
 `originalModelName`: `grok-4.7-high-fast`
 
@@ -26,6 +26,7 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 - On a phone, both stage strips are in the selected-day panel. They scroll sideways. They do not wrap. A 21-day strip is still a long sideways scroll. The navigator is the primary control.
 - The 4- and 7-column grids are below the selected-day panel, so the index is not in the first phone viewport. From 768px it is the day index under the working day.
+- A landscape phone at 844×390 is wider than the 768px phone rule, so it uses the 4-column grid. The navigator and `Tag X von Y` stay. The product truth does not change.
 - At 200% text the form chips can wrap a long German label. The page `scrollWidth` stayed 360. A chip inside a horizontal strip may extend past the viewport and stay clipped by that strip.
 - The audit route is the synthetic account-shaped shell. A signed-in browser pass and a physical phone were not run.
 - `eslint .` exits 0 with 148 existing warnings. This slice does not add one in `TripWorkspacePlan.tsx`.

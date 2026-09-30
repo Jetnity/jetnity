@@ -35,7 +35,9 @@ Presentation of Reiseplan only. `timelineAbleiten`, day order, stage assignment,
 Production-like Chrome, `next start` on `http://127.0.0.1:3456`, `JETNITY_UI_AUDIT=1`. Provider and assistant routes intercepted. Synthetic trip only.
 
 Evidence: `docs/evidence/trip-plan-premium-experience-4/audit.json`
-Re-run `2026-09-30T22:27:59.148Z` after `01aaa9ab`. The server was a fresh Next.js 16.3.8 production build of that tree. Result **PASS**, `fehler` empty, `konsole` empty, 16 recorded viewport steps. Phone 360, phone 390, tablet 768, and desktop 1440 interaction flows are enforced by the same run. A failure would be listed in `fehler`.
+The Product Owner device addendum on PR #663, comment `5920702000`, is included. The Technical Lead parallel-safety note `5920594564` is respected: `TripWorkspace.tsx` was not edited.
+
+First PASS `2026-09-30T22:27:59.148Z` on runtime `01aaa9ab`. The device-matrix re-run is recorded in section 5 after the audit script commit. The server was a fresh Next.js 16.3.8 production build of `01aaa9ab`. Phone 360, phone 390, tablet 768, and desktop 1440 interaction flows stay in the same script. A failure is listed in `fehler`.
 
 | Surface | Result |
 | --- | --- |
@@ -74,9 +76,21 @@ Re-run `2026-09-30T22:27:59.148Z` after `01aaa9ab`. The server was a fresh Next.
 
 `origin/main` was fetched before this record and is still the baseline. No integration commit was required. `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited. They are not owned by this slice.
 
-## 5. Exact-head remote
+## 5. Device matrix
 
-Not read yet for `01aaa9ab`. A docs commit after this report does not inherit an older Vercel comment. The Building comment on the seed push does not approve this head.
+Presentation rule, same product truth:
+
+- Below 768px: navigator and one-row stage strips. This covers 320, 360, 375, 390, 412 and 430.
+- 768px to 1023px: 4-column stage grids. This covers 768, 820, and a landscape phone at 844×390.
+- From 1024px: at most 7 columns. This covers 1024, 1280, 1440, 1728 and 1920.
+
+125% and 150% are CSS `zoom` on `documentElement` at 1440×900. The root font stays 16px. The grids stay at 7 columns and the page does not overflow.
+
+Matrix re-run `2026-09-30T22:33:50.508Z`. JSON sha `fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13`. Result **PASS**, `fehler` empty, `konsole` empty, 26 recorded steps. That commit adds the audit script only. Runtime remains `01aaa9ab`. A later docs commit does not change the measured page.
+
+## 6. Exact-head remote
+
+Not read yet for the tip that contains the device-matrix audit. Checks on an earlier head, including any Building or Ready comment from the seed push, do not approve this delivery.
 
 ## 6. Not claimed
 

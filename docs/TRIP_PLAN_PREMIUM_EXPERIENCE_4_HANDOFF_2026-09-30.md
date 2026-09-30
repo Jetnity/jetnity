@@ -19,7 +19,10 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
 - `origin/main` re-fetched this session: same SHA, 0 behind
 - Audited runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
-- Audit: `2026-09-30T22:27:59.148Z`, JSON sha `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`, PASS, `fehler` empty
+- First audit: `2026-09-30T22:27:59.148Z`, JSON sha `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`, PASS
+- Device-matrix audit: `2026-09-30T22:33:50.508Z`, JSON sha `fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13`, PASS, `fehler` empty, 26 steps
+- Product Owner device addendum: PR comment `5920702000`
+- Technical Lead parallel-safety note: PR comment `5920594564`. `TripWorkspace.tsx` was not edited.
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` are not owned by this slice and were not edited.
 
 Re-fetch the tip before review. A docs commit that only records this audit does not change Reiseplan runtime. It also does not inherit checks from an earlier head.
@@ -51,7 +54,8 @@ Docs and evidence:
 | Is 768 a 4-column bridge and desktop at most 7? | `screens/plan_768x1024.png`, `screens/plan_1440x900.png`. JSON rasters are 4, then 7 at 1024, 1440 and 1920 |
 | Do three items read in stored order, with time only when present? | `screens/phone_tag16.png`. Audit requires the three titles and times `09:00\|18:40` |
 | Does 200% text overflow a 360px page with the form open? | `screens/text200_360x800.png`. JSON: `horizontalOverflow` false, font `32px` |
-| Do previous/next, direct selection, form, delete, detail, and history hold? | Same audit run. `fehler` is empty on `2026-09-30T22:27:59.148Z` |
+| Do previous/next, direct selection, form, delete, detail, and history hold? | Same audit run. `fehler` is empty on the matrix re-run recorded below |
+| Does the Product Owner matrix hold? | 320, 375, 412, 430, 820, 1280, 1728, landscape 844×390, zoom 125% and 150%. See the matrix line below |
 
 ## Recommendation, not a new slice
 

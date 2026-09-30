@@ -1,7 +1,7 @@
 {
-  "sha": "01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907",
+  "sha": "fa493ee5c8e2c859bb5ada3c6a1c38556b16ae13",
   "basis": "http://127.0.0.1:3456",
-  "stand": "2026-09-30T22:27:59.148Z",
+  "stand": "2026-09-30T22:33:50.508Z",
   "ergebnis": "PASS",
   "fehler": [],
   "konsole": [],
@@ -137,6 +137,182 @@
       "aktuellTag": "day-1",
       "netz": 0,
       "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_1920x1080.png"
+    },
+    {
+      "name": "320x568",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [],
+      "streifen": [
+        {
+          "anzahl": 21,
+          "spanne": 0
+        },
+        {
+          "anzahl": 11,
+          "spanne": 0
+        }
+      ],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_320x568.png"
+    },
+    {
+      "name": "375x812",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [],
+      "streifen": [
+        {
+          "anzahl": 21,
+          "spanne": 0
+        },
+        {
+          "anzahl": 11,
+          "spanne": 0
+        }
+      ],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_375x812.png"
+    },
+    {
+      "name": "412x915",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [],
+      "streifen": [
+        {
+          "anzahl": 21,
+          "spanne": 0
+        },
+        {
+          "anzahl": 11,
+          "spanne": 0
+        }
+      ],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_412x915.png"
+    },
+    {
+      "name": "430x932",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [],
+      "streifen": [
+        {
+          "anzahl": 21,
+          "spanne": 0
+        },
+        {
+          "anzahl": 11,
+          "spanne": 0
+        }
+      ],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_430x932.png"
+    },
+    {
+      "name": "820x1180",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [
+        {
+          "spalten": 4,
+          "tage": 21
+        },
+        {
+          "spalten": 4,
+          "tage": 11
+        }
+      ],
+      "streifen": [],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_820x1180.png"
+    },
+    {
+      "name": "1280x800",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [
+        {
+          "spalten": 7,
+          "tage": 21
+        },
+        {
+          "spalten": 7,
+          "tage": 11
+        }
+      ],
+      "streifen": [],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_1280x800.png"
+    },
+    {
+      "name": "1728x1117",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [
+        {
+          "spalten": 7,
+          "tage": 21
+        },
+        {
+          "spalten": 7,
+          "tage": 11
+        }
+      ],
+      "streifen": [],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_1728x1117.png"
+    },
+    {
+      "name": "844x390",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [
+        {
+          "spalten": 4,
+          "tage": 21
+        },
+        {
+          "spalten": 4,
+          "tage": 11
+        }
+      ],
+      "streifen": [],
+      "leerHoehe": 24,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/plan_844x390.png"
     },
     {
       "name": "text200_360x800",
@@ -324,6 +500,50 @@
       "aktuellTag": "day-1",
       "netz": 0,
       "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/form_21_1440x900.png"
+    },
+    {
+      "name": "zoom_125_1440x900",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [
+        {
+          "spalten": 7,
+          "tage": 21
+        },
+        {
+          "spalten": 7,
+          "tage": 11
+        }
+      ],
+      "streifen": [],
+      "leerHoehe": 30,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/zoom_125_1440x900.png"
+    },
+    {
+      "name": "zoom_150_1440x900",
+      "ansicht": "plan",
+      "zaehler": "Tag 1 von 32",
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "raster": [
+        {
+          "spalten": 7,
+          "tage": 21
+        },
+        {
+          "spalten": 7,
+          "tage": 11
+        }
+      ],
+      "streifen": [],
+      "leerHoehe": 36,
+      "aktuellTag": "day-1",
+      "netz": 0,
+      "screenshot": "/workspace/docs/evidence/trip-plan-premium-experience-4/screens/zoom_150_1440x900.png"
     }
   ]
 }
