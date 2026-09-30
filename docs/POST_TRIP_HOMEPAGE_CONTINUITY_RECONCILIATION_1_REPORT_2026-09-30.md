@@ -94,7 +94,22 @@ Against `origin/main` `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8`, after the deli
 
 No other path is intended.
 
-## 7. Stop
+## 7. Post-push exact head
+
+Re-fetched `origin/main` after delivery commit `ebe7ec64a97870f83625a755783a0ee851964280` was pushed.
+
+| Item | Value |
+| --- | --- |
+| Delivery commit | `ebe7ec64a97870f83625a755783a0ee851964280` |
+| `origin/main` | `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8` |
+| Merge-base | `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8` |
+| Ahead / behind at that delivery commit | `0` behind / `2` ahead |
+
+Commits ahead of `main` at that measurement: `db5f1622` task seed, then `ebe7ec64` delivery. This section is a later commit on `ebe7ec64`. If that later commit is the branch tip and `origin/main` is still the SHA above, the tip is `0` behind / `3` ahead. Read the tip live. Do not review the task seed. Do not treat Actions on `ebe7ec64` as the gate for the tip.
+
+Changed-file manifest against `main` remains the seven paths in section 6.
+
+## 8. Stop
 
 STOP for independent main-chat Technical-Lead review.
 

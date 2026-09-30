@@ -52,6 +52,16 @@ Taken after `git fetch origin main` and before the delivery commit that adds thi
 
 The review head is the branch tip that contains this handoff. Do not review the task seed. Re-fetch `main` again before review. This session does not preclaim CI, Vercel, Technical-Lead PASS, Ready or Merge for #647.
 
+Post-push re-fetch after delivery commit `ebe7ec64a97870f83625a755783a0ee851964280`:
+
+| Item | Value |
+| --- | --- |
+| `origin/main` | `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8` |
+| Merge-base | `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8` |
+| Ahead / behind at `ebe7ec64` | `0` behind / `2` ahead |
+
+This paragraph is a later commit on that delivery commit. If it is the branch tip and `main` is unchanged, the tip is `0` behind / `3` ahead. Read the tip live. Actions on `ebe7ec64` are not the tip gate.
+
 ## Stop
 
 STOP for independent main-chat Technical-Lead review.
