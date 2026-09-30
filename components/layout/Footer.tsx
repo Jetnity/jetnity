@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, Mail } from 'lucide-react'
 
@@ -30,14 +31,20 @@ export default function Footer() {
           <div className="max-w-md">
             <Link
               href="/"
-              className="-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
+              className="-mx-2 inline-flex min-h-11 items-center rounded-xl bg-white px-3 py-1.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/25"
               aria-label="Jetnity Startseite"
             >
-              <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
-                <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-citrus-400" />
-                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-white" />
-              </span>
-              <span className="text-xl font-bold tracking-[-0.04em]">Jetnity</span>
+              {/* Das Wortzeichen ist dunkelgrün. Es bleibt unverändert und liegt deshalb auf einer hellen Fläche. */}
+              <Image
+                src="/brand/jetnity-logo.png"
+                alt=""
+                width={384}
+                height={128}
+                unoptimized
+                sizes="144px"
+                className="h-[48px] w-auto"
+                style={{ width: 'auto', height: '48px' }}
+              />
             </Link>
             <p className="mt-5 text-sm leading-6 text-white/65">
               Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.
