@@ -54,6 +54,17 @@ Taken after `git fetch origin main` and before the delivery commit that adds thi
 
 The review head is the branch tip that contains this handoff. Do not review the task seed. Re-fetch `main` again before review. This session does not preclaim CI, Vercel Preview, Technical-Lead PASS, Ready, or Merge for #636.
 
+Post-push re-fetch after delivery commit `67cd1a5ec645b572ecc5a4508f9872ff34e10f7d`:
+
+| Item | Value |
+| --- | --- |
+| `origin/main` | `b42d1ce1ee52fcb02a58acd269b10c121f906213` |
+| Merge-base | `b42d1ce1ee52fcb02a58acd269b10c121f906213` |
+| Ahead / behind at `67cd1a5e` | `0` behind / `2` ahead |
+| Commits ahead at that SHA | `d1e5fac6` task seed, then `67cd1a5e` delivery |
+
+This paragraph is a later commit on that delivery commit. If it is the branch tip and `origin/main` is still the SHA above, the tip is `0` behind / `3` ahead. Read the tip live. Do not review the task seed.
+
 Changed paths must stay inside:
 
 - `docs/V1_PRODUCTION_READINESS_EVIDENCE_REFRESH_1_TASK_2026-09-30.md`

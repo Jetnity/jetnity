@@ -45,7 +45,9 @@ Fetched `origin/main` before writing.
 | Issue #635 | OPEN |
 | Issue #626 | OPEN / `reopened`, `updated_at` 2026-09-29T22:52:55Z. Not operated on. |
 
-The review head is the branch tip that contains this report. Do not review the task seed. Re-fetch `main` before review. A new head invalidates this measurement. The post-push exact head is in the handoff after the mandatory re-fetch.
+The review head is the branch tip that contains this report. Do not review the task seed. Re-fetch `main` before review. A new head invalidates this measurement.
+
+Post-push re-fetch after delivery commit `67cd1a5ec645b572ecc5a4508f9872ff34e10f7d`: `origin/main` was still `b42d1ce1ee52fcb02a58acd269b10c121f906213`, merge-base was that SHA, and that delivery commit was `0` behind / `2` ahead. This sentence is a later commit. If it is the tip and `main` is unchanged, the tip is `0` behind / `3` ahead. Read the tip live.
 
 Dirty worktree file `next-env.d.ts` was already modified before editing. It is not part of this change.
 
