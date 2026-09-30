@@ -77,7 +77,20 @@ A local `next-env.d.ts` path rewrite was present in the worktree before editing.
 
 The review head is the branch tip that contains this report. Do not review `70241206e71c3c7e0a781f36111f16acc61e8fcc`. Re-fetch `main` before review. A new head invalidates this measurement.
 
-## 6. Stop
+## 6. Post-push exact head
+
+Re-fetched `origin/main` after the delivery commit was pushed.
+
+| Item | Value |
+| --- | --- |
+| Delivery commit | `40c24e8524c55955fac3a04a0397e31fddb38a6b` |
+| `origin/main` | `949eced2d2bbd3c10054a7c8e0357a8211df4f6b` |
+| Merge-base | `949eced2d2bbd3c10054a7c8e0357a8211df4f6b` |
+| Ahead / behind at that delivery commit | `0` behind / `2` ahead |
+
+Commits ahead of `main` at that measurement: `70241206` task seed, then `40c24e85` delivery. This section is a later commit on `40c24e85`. If that later commit is the branch tip and `origin/main` is still the SHA above, the tip is `0` behind / `3` ahead. Read the tip live. Do not review the task seed.
+
+## 7. Stop
 
 STOP for independent main-chat Technical-Lead review.
 

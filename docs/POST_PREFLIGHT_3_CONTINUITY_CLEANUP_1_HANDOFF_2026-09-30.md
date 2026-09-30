@@ -52,6 +52,16 @@ Taken after `git fetch origin main` and before the delivery commit that adds thi
 
 The review head is the branch tip that contains this handoff. Do not review the task seed. Re-fetch `main` again before review. This session does not preclaim CI, Vercel, Technical-Lead PASS, Ready or Merge for #634.
 
+Post-push re-fetch after delivery commit `40c24e8524c55955fac3a04a0397e31fddb38a6b`:
+
+| Item | Value |
+| --- | --- |
+| `origin/main` | `949eced2d2bbd3c10054a7c8e0357a8211df4f6b` |
+| Merge-base | `949eced2d2bbd3c10054a7c8e0357a8211df4f6b` |
+| Ahead / behind at `40c24e85` | `0` behind / `2` ahead |
+
+This paragraph is a later commit on that delivery commit. If it is the branch tip and `main` is unchanged, the tip is `0` behind / `3` ahead. Read the tip live.
+
 `git diff --check` passed. `node scripts/operating-mode-guard.mjs` passed. Changed paths are the task allowlist only.
 
 ## Stop
