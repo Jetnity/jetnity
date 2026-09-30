@@ -4,7 +4,8 @@ Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
 Audited runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
-R1 audit: `2026-09-30T23:11:36.924Z`, JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`, PASS, 26 steps, 0 behind `main@2530020dbc6797b17d64c064ca5474cf90804272`
+Integrated audit: `2026-09-30T23:46:04.664Z`, JSON sha `1ec3db4e480cc7040b86e7a125895a41a6f28639`, PASS, 26 steps, 0 behind `main@1930e61a0a409b83bd18b99e21939a89f73bbbd6`
+R1 runtime inside that merge: `f64b27f3d1a6c8a65267db3f113c7e489b888a56`
 Session: https://cursor.com/agents/bc-057a244a-5a54-43b2-8c6f-182dcc32598e
 `originalModelName`: `grok-4.7-high-fast`
 

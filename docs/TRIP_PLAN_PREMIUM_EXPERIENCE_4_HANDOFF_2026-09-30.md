@@ -17,9 +17,12 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Session: https://cursor.com/agents/bc-057a244a-5a54-43b2-8c6f-182dcc32598e
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-- `origin/main` re-fetched this session: same SHA, 0 behind
-- R1 runtime: `f64b27f3d1a6c8a65267db3f113c7e489b888a56`
-- R1 audit: `2026-09-30T23:11:36.924Z`, JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`, PASS, `fehler` empty, 26 steps
+- Integrated main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6` (#669 `/planen`)
+- Integration commit: `1ec3db4e480cc7040b86e7a125895a41a6f28639`
+- After that merge this branch is 0 behind `origin/main`
+- R1 runtime remains `f64b27f3d1a6c8a65267db3f113c7e489b888a56`. The merge did not edit `TripWorkspacePlan.tsx`
+- Integrated audit: `2026-09-30T23:46:04.664Z`, JSON sha `1ec3db4e480cc7040b86e7a125895a41a6f28639`, PASS, `fehler` empty, 26 steps
+- Earlier R1 audit `2026-09-30T23:11:36.924Z` on `f64b27f3` does not approve the integrated head
 - Earlier runtime `01aaa9ab` and matrix `fa493ee5` do not answer the R1 readability review
 - Technical-Lead R1: review on exact head `967be7d8d4fb571c25f66b59aafb6d10b7b682a5`
 - Product Owner device addendum: PR comment `5920702000`
@@ -64,7 +67,9 @@ Persisting the selected day in the URL would survive reload. That would change t
 
 ## Remote observation
 
-Read for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. Actions `36789940392` success. Auth job `110140214309` success. Typecheck, Lint & Build job `110140214020` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/971JJQz7W2y4xdNb8udG4FmLucK3`. Preview deployment `6772206034` success. The PR stayed Draft. This observation does not approve a later commit.
+Not read yet for the integrated head. Checks on `9655a32a` and `6564e708` do not approve `1ec3db4e` or a later docs tip.
+
+Historical read for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. Actions `36789940392` success. Auth job `110140214309` success. Typecheck, Lint & Build job `110140214020` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/971JJQz7W2y4xdNb8udG4FmLucK3`. Preview deployment `6772206034` success. The PR stayed Draft. This observation does not approve a later commit.
 
 Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. It does not approve `9655a32a`. Actions `36786320959` success. Auth job `110128463008` success. Typecheck, Lint & Build job `110128462902` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/S1mo1G85U8kcYfz8jt2ESr7wNPdX`. Preview deployment `6771642993` success. No GitHub review threads on that head.
 

@@ -7,8 +7,10 @@ Issue: #662
 Draft PR: #663
 Branch: `feat/trip-plan-premium-experience-4`
 Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-`origin/main` re-fetched in this session: still `2530020dbc6797b17d64c064ca5474cf90804272`. This branch is 0 behind that main.
-R1 runtime: `f64b27f3d1a6c8a65267db3f113c7e489b888a56`
+`origin/main` was fetched again and is `1930e61a0a409b83bd18b99e21939a89f73bbbd6`. This branch merged that main and is 0 behind it. The merge brought `/planen` only. `TripWorkspacePlan.tsx` was not in the merge diff from main.
+Integrated main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6` (#669 `/planen`)
+Integration commit: `1ec3db4e480cc7040b86e7a125895a41a6f28639` (0 behind that main)
+R1 runtime: `f64b27f3d1a6c8a65267db3f113c7e489b888a56` (unchanged by the merge)
 Earlier runtime: `01aaa9ab9c20b6e05e9ebf1d4aedb440b1ae3907`
 Agent: **Jetnity Trip Plan premium experience 4**, Generation 1
 Session: https://cursor.com/agents/bc-057a244a-5a54-43b2-8c6f-182dcc32598e
@@ -62,7 +64,7 @@ First PASS `2026-09-30T22:27:59.148Z` on runtime `01aaa9ab`. The device-matrix r
 | Gate | Result |
 | --- | --- |
 | Focused helper and source contract | 6 pass, 0 fail |
-| `npm test` | 4107 pass, 0 fail |
+| `npm test` | 4114 pass, 0 fail, including the merged `/planen` tests and the Reiseplan helper |
 | `npm run typecheck` | pass |
 | `npm run lint` | exit 0, 148 warnings, 0 errors. `TripWorkspacePlan.tsx` has no warning. The day-change form reset is render-time, so the earlier `set-state-in-effect` warning on that reset is gone. |
 | `npm run build` | pass, Next.js 16.3.8 |
@@ -76,7 +78,7 @@ First PASS `2026-09-30T22:27:59.148Z` on runtime `01aaa9ab`. The device-matrix r
 
 ## 4. Parallel safety
 
-`origin/main` was fetched before this record and is still the baseline. No integration commit was required. `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited. They are not owned by this slice.
+`origin/main` was fetched again at `1930e61a0a409b83bd18b99e21939a89f73bbbd6` and merged as `1ec3db4e480cc7040b86e7a125895a41a6f28639`. The branch is 0 behind that main. The merge diff from main is `/planen` and its docs, tests, and evidence. It does not edit `TripWorkspacePlan.tsx`. This slice did not edit `/planen`. `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited.
 
 ## 5. Device matrix
 
@@ -90,11 +92,15 @@ Presentation rule, same product truth:
 
 The earlier matrix at `fa493ee5` passed overflow only. Technical-Lead R1 on `967be7d8` rejected that 200% navigator as unreadable.
 
-R1 re-run `2026-09-30T23:11:36.924Z`. JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`. Result **PASS**, `fehler` empty, `konsole` empty, 26 steps. The audit now fails if the counter or date wraps, or if a phone day chip label wraps or is under 44px. At 200% a chip must also be at least 88px wide. A direct measure on the 360/200% navigator showed `Tag 1 von 2` at 212×40 and `Do., 01. Okt. · Kyoto` at 212×40, both `nowrap`. The page `scrollWidth` stayed 360.
+R1 re-run `2026-09-30T23:11:36.924Z`. JSON sha `f64b27f3d1a6c8a65267db3f113c7e489b888a56`. Result **PASS**, `fehler` empty, 26 steps.
+
+Integrated re-run `2026-09-30T23:46:04.664Z` on a fresh production build of merge `1ec3db4e480cc7040b86e7a125895a41a6f28639`. JSON sha is that merge. Result **PASS**, `fehler` empty, `konsole` empty, 26 steps. The audit still fails if the counter or date wraps, or if a phone day chip label wraps or is under 44px. At 200% a chip must also be at least 88px wide. That re-run does not replace an independent Technical-Lead review.
 
 ## 6. Exact-head remote
 
-Read on 30 September 2026 for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. That commit records the R1 audit of runtime `f64b27f3`. It does not change the navigator again. This is an observation, not a Technical-Lead PASS. Checks on `967be7d8`, `fe11f75e`, and the seed Vercel comment do not approve it. `origin/main` was fetched again before this record and is still `2530020dbc6797b17d64c064ca5474cf90804272`.
+Not read yet for merge `1ec3db4e` or the docs tip that records it. Checks on `9655a32a`, `6564e708`, and the seed Vercel comment do not approve the integrated head.
+
+Historical read on 30 September 2026 for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. That commit records the R1 audit of runtime `f64b27f3`. It does not change the navigator again. This is an observation, not a Technical-Lead PASS.
 
 | Check | Result |
 | --- | --- |
