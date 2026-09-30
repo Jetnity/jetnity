@@ -64,9 +64,9 @@ Persisting the selected day in the URL would survive reload. That would change t
 
 ## Remote observation
 
-Not read yet for `f64b27f3`. The read below does not approve the R1 runtime.
+Read for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. Actions `36789940392` success. Auth job `110140214309` success. Typecheck, Lint & Build job `110140214020` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/971JJQz7W2y4xdNb8udG4FmLucK3`. Preview deployment `6772206034` success. The PR stayed Draft. This observation does not approve a later commit.
 
-Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. Actions `36786320959` success. Auth job `110128463008` success. Typecheck, Lint & Build job `110128462902` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/S1mo1G85U8kcYfz8jt2ESr7wNPdX`. Preview deployment `6771642993` success. No GitHub review threads on that head.
+Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. It does not approve `9655a32a`. Actions `36786320959` success. Auth job `110128463008` success. Typecheck, Lint & Build job `110128462902` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/S1mo1G85U8kcYfz8jt2ESr7wNPdX`. Preview deployment `6771642993` success. No GitHub review threads on that head.
 
 ## Stop
 

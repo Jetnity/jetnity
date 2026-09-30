@@ -94,9 +94,20 @@ R1 re-run `2026-09-30T23:11:36.924Z`. JSON sha `f64b27f3d1a6c8a65267db3f113c7e48
 
 ## 6. Exact-head remote
 
-Not read yet for `f64b27f3`. Checks on `967be7d8`, `fe11f75e`, and the seed Vercel comment do not approve the R1 runtime. `origin/main` was fetched again before this record and is still `2530020dbc6797b17d64c064ca5474cf90804272`.
+Read on 30 September 2026 for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. That commit records the R1 audit of runtime `f64b27f3`. It does not change the navigator again. This is an observation, not a Technical-Lead PASS. Checks on `967be7d8`, `fe11f75e`, and the seed Vercel comment do not approve it. `origin/main` was fetched again before this record and is still `2530020dbc6797b17d64c064ca5474cf90804272`.
 
-Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`, kept so the earlier observation is not mistaken for this head:
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36789940392` | success, head `9655a32a1d5bcd6cfde8474ccff92adc81444e9d` |
+| Auth-Konfiguration gegen config.toml, job `110140214309` | success |
+| Typecheck, Lint & Build, job `110140214020` | success |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/971JJQz7W2y4xdNb8udG4FmLucK3 |
+| Preview deployment | success, `6772206034`, https://jetnity-hosjh4f1n-jetnity-e1b93c82.vercel.app |
+
+A later sentence that only records this table does not inherit these checks.
+
+Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`. It does not approve `9655a32a`:
 
 | Check | Result |
 | --- | --- |
@@ -111,7 +122,7 @@ Historical read for `fe11f75e85b6a2c2b0c090aff2fc30471e01d5f2`, kept so the earl
 
 Checks on earlier heads, including the seed Vercel comment, do not approve `fe11f75e`.
 
-## 6. Not claimed
+## 7. Not claimed
 
 No physical device. No signed-in account shell beyond the audit route. No Production, provider, payment, Auth, schema, package, navbar, footer, favicon, or homepage change. Items are not reordered by clock. The selected day is not stored in the URL.
 
