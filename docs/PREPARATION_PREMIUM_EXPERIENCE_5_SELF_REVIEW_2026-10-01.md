@@ -3,9 +3,10 @@
 Stand: 30 September 2026
 Status: **AUTHOR SELF-REVIEW / NOT A TECHNICAL-LEAD PASS**
 
-Runtime: `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`
+Runtime: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
 Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`, 0 behind
-Audit: `2026-09-30T22:46:30.852Z`, JSON sha `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`, PASS
+Audit: `2026-09-30T23:23:24.064Z`, JSON sha `fda7a6685a0bf8cb150ee490079a7cdad7658de3`, PASS
+R1 corrected from `db42f6db571574896551b75905904d4ec07f709a`
 Session: https://cursor.com/agents/bc-37a6cdc4-88dd-4132-8c15-08cda875f94a
 `originalModelName`: `grok-4.7-high-fast`
 
@@ -27,7 +28,8 @@ This is the implementing agent’s review. It does not replace an independent ma
 ## Limits a reviewer should see
 
 - The shared country control stays `text-sm`. At 200% that is 28px. The 16px / 32px rule in this audit applies to the preparation-owned document select, date input and personal-preparation field. The country control was not restyled.
-- At 200% the open editor is very tall. The page does not scroll horizontally. Long labels wrap, including “Staatsbürgerschaften” and “In diese Reise übernehmen”.
+- R1-F1: 200% text no longer uses `overflow-wrap: anywhere`. The preparation section fills the shell. Status icons are 40px, horizontal padding is 12px, and status controls sit on their own full-width row. The open editor is tall because the text is large. The page does not scroll horizontally.
+- R1-F2: `docs/ACTIVE_WORK_STATUS.md` matches `main`. This self-review does not write a current-writer block there.
 - The proof uses the audit route with a synthetic session trip. It is not a signed-in account session and not a physical phone.
 - `eslint .` exits 0 with 149 existing warnings and 0 errors. None were introduced as errors on the preparation files.
 - `check:schema-bezug` still prints the existing local/unapplied `admin_account_counts_v1` note and exits 0.
@@ -35,4 +37,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Remote CI on `0c76df11` was later read as SUCCESS for Actions `36787942339` and the Vercel deployment. That read is not this self-review and does not approve a later commit.
+Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Exact-head CI, Auth and Vercel for this R1 tip are still open. Older green runs do not approve it.

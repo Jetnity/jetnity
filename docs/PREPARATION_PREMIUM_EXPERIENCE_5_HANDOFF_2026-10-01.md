@@ -18,9 +18,10 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
 - Fetched `origin/main` is still that SHA. This branch is 0 behind.
-- Runtime and audit: `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`
-- Audit: `2026-09-30T22:46:30.852Z`, JSON sha `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`, PASS
-- `docs/ACTIVE_WORK_STATUS.md` current block points here.
+- Runtime and audit: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
+- Audit: `2026-09-30T23:23:24.064Z`, JSON sha `fda7a6685a0bf8cb150ee490079a7cdad7658de3`, PASS
+- R1 on `db42f6db571574896551b75905904d4ec07f709a`: 200% layout and the shared status-file collision
+- `docs/ACTIVE_WORK_STATUS.md` matches `main`. This slice must not edit it. Central continuity stays with the later reconciliation.
 
 Re-fetch the tip before review. The audit sha is the runtime commit. A docs commit after it does not change the preparation UI.
 
@@ -43,15 +44,16 @@ Docs and evidence:
 - `docs/PREPARATION_PREMIUM_EXPERIENCE_5_REPORT_2026-10-01.md`
 - `docs/PREPARATION_PREMIUM_EXPERIENCE_5_HANDOFF_2026-10-01.md`
 - `docs/PREPARATION_PREMIUM_EXPERIENCE_5_SELF_REVIEW_2026-10-01.md`
-- `docs/ACTIVE_WORK_STATUS.md`
 - `docs/evidence/preparation-premium-experience-5/`
+
+`docs/ACTIVE_WORK_STATUS.md` is not a #665 file. The R1 revert restored the `main` copy.
 
 ## Look first
 
 | Question | Where |
 | --- | --- |
 | Are the four sections on a phone? | `screens/open_360x800.png`, `screens/open_390x844.png`. JSON: four `open: true` |
-| Does 200% overflow the page? | `screens/text200_360x800.png`. JSON: `horizontalOverflow` false, `htmlFont` `32px` |
+| Does 200% use the shell width without a character column? | `screens/text200_360x800.png`. JSON: `horizontalOverflow` false, `htmlFont` `32px`, section width equals the parent shell |
 | Do both citizenships stay visible before edit? | Audit requires Schweiz and Serbien in the closed traveller summary |
 | Is the current official row separate from placeholders? | JSON `zeilen`: two `kompakt: true`, one `freshness: current` with “Nicht erforderlich” |
 | Does import still confirm? | Interaction clicks “In diese Reise übernehmen: Alex Beispiel”, waits for the copy confirmation, then Abbrechen |
@@ -59,17 +61,8 @@ Docs and evidence:
 
 ## Remote observation
 
-Read on the then-current tip `0c76df11b9b2a3513c1bae057011177cdfe53d91`. This observation does not approve a later commit.
-
-| Check | Result |
-| --- | --- |
-| GitHub Actions `36787942339` | SUCCESS |
-| Auth-Konfiguration gegen config.toml | SUCCESS |
-| Typecheck, Lint & Build | SUCCESS |
-| Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/AWJNXSkyBSZqDYJA75Drz395qeQf` |
-
-Combined commit status `success`. Draft #665 stayed open. No review threads were part of this read.
+Not yet recorded for `fda7a668` or the docs tip that carries this handoff. Older SUCCESS runs on `0c76df11` (Actions `36787942339`) and `db42f6db` do not approve this head.
 
 ## Stop
 
-Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required. The table above is an observation of `0c76df11`, not a Technical-Lead PASS.
+Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required after exact-head CI, Auth and Vercel are green on the R1 tip. This handoff is not a Technical-Lead PASS.

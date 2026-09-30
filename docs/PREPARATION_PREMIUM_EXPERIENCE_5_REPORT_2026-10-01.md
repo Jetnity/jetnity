@@ -8,7 +8,8 @@ Draft PR: #665
 Branch: `feat/preparation-premium-experience-5`
 Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
 Fetched `origin/main`: same SHA, this branch 0 behind
-Runtime commit: `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`
+Runtime commit: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
+R1 review head that this corrects: `db42f6db571574896551b75905904d4ec07f709a`
 Agent: **Jetnity Preparation premium experience 5**, Generation 1
 Session: https://cursor.com/agents/bc-37a6cdc4-88dd-4132-8c15-08cda875f94a
 `originalModelName`: `grok-4.7-high-fast`
@@ -27,7 +28,8 @@ Presentation only. Readiness, traveller and official truth stay in the existing 
 - Saved-traveller import cards list residence, every citizenship and every document. “In diese Reise übernehmen” still asks for an explicit copy and can be cancelled.
 - Identical pure placeholders share one visible status line. Each official row stays in the list. Current rows keep result, timing, authority, freshness and the action link.
 - Tickets/bookings and personal preparation keep Offen / Erledigt / Nicht relevant, Entfernen, and “Punkt hinzufügen”.
-- At 200% text the preparation detail uses one shrinkable column, except the two-column jump list. Buttons and legends wrap instead of widening the page. The shared country control is unchanged.
+- At 200% text the preparation section fills the workspace shell. Jump links, traveller summaries, official rows, status controls and form fields are full-width blocks. Labels wrap on spaces. Horizontal padding and status icons stay pixel-sized so 200% text does not squeeze the column. `overflow-wrap: anywhere` is not used. The shared country control is unchanged.
+- Technical-Lead R1-F2: every #665 edit to `docs/ACTIVE_WORK_STATUS.md` is reverted. That file matches `main`. This slice keeps only its report, handoff, self-review and evidence.
 
 `TripWorkspace.tsx`, `TripWorkspacePlan.tsx`, `TripWorkspaceDetail.tsx`, `TripWorkspaceDomainNavigation.tsx` and domain search components were not edited.
 
@@ -36,13 +38,14 @@ Presentation only. Readiness, traveller and official truth stay in the existing 
 Production-like Chrome, `next start` on `http://127.0.0.1:3456`, `JETNITY_UI_AUDIT=1`. Provider, assistant and readiness routes intercepted. Synthetic trip only.
 
 Evidence: `docs/evidence/preparation-premium-experience-5/audit.json`
-Run `2026-09-30T22:46:30.852Z`. JSON `sha` is `4df9e289857a4b7fa1a5ccdcd656aa561c624fef`. Result **PASS**, `fehler` empty.
+Run `2026-09-30T23:23:24.064Z`. JSON `sha` is `fda7a6685a0bf8cb150ee490079a7cdad7658de3`. Result **PASS**, `fehler` empty. The section width matches its parent shell at every step, including desktop widths capped by `max-w-7xl`.
 
 | Step | Overflow | Notes |
 | --- | --- | --- |
-| open 360×800, 390×844, 768×1024, 1024×768, 1440×900, 1920×1080 | false | Four sections open. Both Schweiz and Serbien in the summary. Two compact placeholder rows plus one current visa row “Nicht erforderlich”. Registry card present. Controls at least 44px. Network 0 |
+| open 320×568, 360×800, 375×812, 390×844, 412×915, 430×932, landscape 844×390, 768×1024, 820×1180, 1024×768, 1280×800, 1440×900, 1728×1117, 1920×1080 | false | Four sections open. Both Schweiz and Serbien in the summary. Two compact placeholder rows plus one current visa row “Nicht erforderlich”. Registry card present. Controls at least 44px. Network 0 |
 | interaction 390, reduced motion | n/a | Edit disclosure, binding options Schweiz and Serbien, status, personal add, import confirm then cancel, close, focus ring, reload, Back, Forward. Network 0 |
-| 200% at 360×800 | false | Root font 32px. Owned document controls at least 32px. Network 0 |
+| 200% at 360×800 | false | Root font 32px. Section fills the shell. Owned document controls at least 32px. Network 0 |
+| zoom 125% and 150% at 1440×900 | false | Section fills the shell. Network 0 |
 
 Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
@@ -59,4 +62,4 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
 No database migration. No new API. No new cost. No secret. No production config. No navbar, footer, favicon or homepage edit. No follow-up slice.
 
-Exact-head GitHub observation for `0c76df11b9b2a3513c1bae057011177cdfe53d91`, Actions `36787942339`: Auth-Konfiguration SUCCESS, Typecheck, Lint & Build SUCCESS, Vercel SUCCESS at `https://vercel.com/jetnity-e1b93c82/jetnity-app/AWJNXSkyBSZqDYJA75Drz395qeQf`. Combined status success. That observation does not approve a later commit and is not a Technical-Lead PASS.
+Older heads `0c76df11` and `db42f6db` had green Actions and Vercel. Those runs do not approve `fda7a668` or any later commit. Exact-head CI, Auth and Vercel for the R1 tip are not recorded in this commit. They are required before an independent Technical-Lead review can close R1. This report is not a Technical-Lead PASS.
