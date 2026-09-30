@@ -18,12 +18,14 @@ Session: https://cursor.com/agents/bc-b8063b84-3b6a-41f2-a519-d0bdd4328a2d
 - #655's file list does not include the icon family.
 - Focused tests after the pin update: 17 pass. Both production builds passed. Browser checks on `127.0.0.1:3456` showed the full logo in the navbar, the white full logo in the footer after the merge, signet-only icons, and no horizontal overflow at 1440 or 390.
 - Global current-state docs were left untouched.
+- After the push, head `a908ddab` had CI run `36769103780` success for Typecheck, Lint & Build and Auth. Vercel status success. GitHub Preview deployment `6768799793` success. Review threads: none. The preview alias returned SSO, so I did not read its HTML.
 
 ## What I did not prove
 
 - A signed-in navbar.
 - A physical device.
-- Exact-head CI, Auth, and Vercel Preview. Those are read after the push. A docs commit that records them is a new head.
+- Preview HTML. Deployment `6768799793` is success, and the alias returned Vercel SSO.
+- CI on the docs commit that records section 5. The numbered gate is `a908ddab` / run `36769103780`. A newer tip needs its own read.
 
 ## Judgement
 

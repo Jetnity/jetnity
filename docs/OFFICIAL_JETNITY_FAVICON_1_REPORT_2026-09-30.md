@@ -87,7 +87,20 @@ No database, RLS, Auth logic, provider, payment, dependency, or indexing change.
 
 ## 5. Exact-head CI, Auth and Vercel
 
-Not yet recorded in this file. The next commit that adds the run ids is a new head. Re-read CI on the branch tip before treating an older SHA as the gate.
+Gated head `a908ddab5353e0563c7d96bff41c584a57082039`. Merge-base with `origin/main` at the read was `a2685812022258610e0cf34d926695b7067e55df`. Behind count was 0. Review threads on #659: none.
+
+Run `36769103780`: https://github.com/Jetnity/jetnity/actions/runs/36769103780
+
+| Check | Result |
+| --- | --- |
+| Typecheck, Lint & Build | success, job `110070642237`, completed `2026-09-30T19:59:21Z` |
+| Auth-Konfiguration gegen config.toml | success, job `110070642442`, completed `2026-09-30T19:56:48Z` |
+| Vercel commit status | success, description "Deployment has completed", inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/2tg2TxfAtDXu49ohRcgVNrDyj3Yc` |
+| GitHub Preview deployment `6768799793` | success on that SHA, environment Preview |
+
+The deployment URL responded with Vercel SSO, so this session did not read preview HTML. The local production server remains the HTML proof.
+
+A docs commit that only records this section is not `a908ddab`. Re-read CI on the branch tip before treating a newer SHA as the gate.
 
 ## 6. Not proven
 

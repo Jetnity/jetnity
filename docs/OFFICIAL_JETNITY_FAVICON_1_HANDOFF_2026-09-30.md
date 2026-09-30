@@ -25,7 +25,7 @@ Do not treat `docs/ACTIVE_WORK_STATUS.md` as updated by this slice. Re-fetch `ma
 - Navbar and footer still use `/brand/jetnity-logo.png`. Footer whiteness comes from merged #657, not from an edit in this slice.
 - The only edit to a #657 file is the icon byte pin in `lib/layout/footer-official-logo-white-1.test.ts`.
 - #655 does not own these icon paths.
-- Exact-head CI, Auth, and Vercel Preview must be read on the branch tip. Section 5 of the report starts without a run id.
+- Exact-head gate recorded for `a908ddab5353e0563c7d96bff41c584a57082039`: CI run `36769103780` success (Typecheck, Lint & Build and Auth-Konfiguration). Vercel status success, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/2tg2TxfAtDXu49ohRcgVNrDyj3Yc`. GitHub Preview deployment `6768799793` success. No review threads. Preview HTML was behind Vercel SSO. If the tip is newer, re-read that tip.
 
 ## Do not continue
 
