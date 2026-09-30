@@ -1,7 +1,9 @@
 // lib/layout/footer-official-logo-white-1.test.ts
 //
 // Der dunkle Footer zeigt das bestehende offizielle PNG reinweiß.
-// Navbar, Asset, Favicon und App-Icons bleiben unverändert.
+// Navbar und das kanonische Logo-Asset bleiben unverändert.
+// Die Icon-Familie ist seit dem offiziellen Signet ersetzt; dieser Pin
+// sperrt die neuen Bytes, nicht mehr den Platzhalter.
 
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
@@ -50,13 +52,14 @@ describe('Footer Official Logo White 1', () => {
     assert.equal(link.includes('bg-white'), false)
   })
 
-  test('Favicon und App-Icons bleiben bytegenau', () => {
+  test('Favicon und App-Icons bleiben das offizielle Signet', () => {
     const icons = [
-      ['app/icon.svg', 'c16821657b3a086e3f3ac827f10e4e567b79eb02'],
-      ['app/apple-icon.png', '9c450179bcb1e8fdf5497eb12a3715c64ca1d2e7'],
-      ['public/icons/jetnity-192.png', '04f453425aeaca21d4a00560ff47c851a13ff65b'],
-      ['public/icons/jetnity-512.png', 'ffb7ed0baf587bca70e11ada2b218b8c7d82d90f'],
-      ['public/icons/jetnity-512-maskable.png', 'cc485a9109c92c42668bd07c6a03358b982b194b'],
+      ['app/icon.png', '93902bdacac943091ee6e0f7c3e12cf90a4aa04d'],
+      ['app/apple-icon.png', '23afd15e5e7c29cb9b3289612867abdb5298c994'],
+      ['public/icons/jetnity-192.png', 'a08d34b69328ab6958dd1040f8cd2a18cff2d301'],
+      ['public/icons/jetnity-512.png', 'ca5a9440e492b422eefd29185f571d76d8054d80'],
+      ['public/icons/jetnity-512-maskable.png', 'eff07c1a18753f8c611d681bd8c1f271fd4adb54'],
+      ['public/brand/jetnity-signet.png', 'a2f91e16b2b21d910de534c6e72a8124fd821ac2'],
     ] as const
     for (const [pfad, sha] of icons) {
       assert.equal(gitBlobSha1(readFileSync(join(wurzel, pfad))), sha, pfad)
