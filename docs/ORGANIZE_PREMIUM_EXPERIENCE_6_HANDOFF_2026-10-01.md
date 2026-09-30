@@ -18,14 +18,15 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
 - R1 review: `5372823906` on `49ae3a16d1c8f9aaec96bdbdd243b5d7778b4319`
-- Runtime commit: `f5f228f2be26c0413d7977116b1abbf50e6c4124`
-- Device-matrix audit: PASS `2026-09-30T23:07:52.367Z`, JSON sha `f5f228f2be26c0413d7977116b1abbf50e6c4124`, 40 steps, `rueckkehrFrei` true for compact flight detail and 200% text
-- Local gates on that runtime: `npm test` 4108 pass, typecheck pass, lint exit 0 with existing warnings, production build Next.js 16.3.8 / 25 pages, hygiene checks pass
-- `docs/ACTIVE_WORK_STATUS.md` matches `origin/main`. This slice does not own that file.
-- `origin/main` re-read after the fix: `2530020dbc6797b17d64c064ca5474cf90804272`, branch 0 behind
-- CI, Auth and Vercel on `f5f228f2` and on the evidence commit after it are not yet the review gate. Re-read them on the exact tip.
+- R1 runtime: `f5f228f2be26c0413d7977116b1abbf50e6c4124`. Unchanged by the main integration.
+- Integrated main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6` (Merge #669). Local merge `177f5b15`. Branch is 0 behind that main.
+- `/planen` files match that main: `app/(public)/planen/page.tsx`, `PlanenEinstiegNavigation.tsx`, `Reiseidee.tsx`, `TripPlanner.tsx`.
+- Device-matrix audit: PASS `2026-09-30T23:07:52.367Z`, JSON sha `f5f228f2be26c0413d7977116b1abbf50e6c4124`, 40 steps, `rueckkehrFrei` true for compact flight detail and 200% text. The main merge does not change that Organisieren runtime.
+- Local gates after the merge: `npm test` 4115 pass, typecheck pass, lint exit 0 with existing warnings, production build Next.js 16.3.8 / 25 pages, hygiene checks pass.
+- `docs/ACTIVE_WORK_STATUS.md` was not edited in this integration.
+- CI, Auth and Vercel on the pushed integration tip still have to be re-read. The green gate on `2cb78056` stays with that commit.
 
-Re-fetch the tip before review. The R1 runtime measures the public header and keeps compact Back below it. Earlier CI on `49ae3a16` belongs to that commit.
+Re-fetch the tip before review. This head contains live main `1930e61` and the R1 compact Back measurement.
 
 ## Do not treat as accepted
 

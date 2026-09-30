@@ -88,7 +88,9 @@ The compact Back bar now follows the rendered public header. Before the first me
 
 `docs/ACTIVE_WORK_STATUS.md` is restored to `origin/main`. This slice keeps its report, handoff, self-review, and evidence only.
 
-`origin/main` re-fetched after the fix: `2530020dbc6797b17d64c064ca5474cf90804272`. This branch was 0 behind.
+`origin/main` re-fetched for the live-main update: `1930e61a0a409b83bd18b99e21939a89f73bbbd6`, Merge #669. Local merge `177f5b15`. This branch is 0 behind that main. The `/planen` page, `PlanenEinstiegNavigation.tsx`, `Reiseidee.tsx` and `TripPlanner.tsx` match that main. `TripWorkspaceNavigation.tsx` still matches the R1 runtime `f5f228f2`. `docs/ACTIVE_WORK_STATUS.md` was not edited.
+
+Local gates after that merge: `npm test` 4115 pass, typecheck pass, lint exit 0 with the existing warnings, production build Next.js 16.3.8 / 25 pages, hygiene checks pass. The Organisieren device audit remains the PASS on `f5f228f2` because this merge does not change that runtime. CI on the pushed integration tip still has to be re-read. The green gate on `2cb78056` stays with that commit.
 
 ## 4. Parallel safety
 
