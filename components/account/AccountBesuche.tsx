@@ -134,7 +134,10 @@ export default function AccountBesuche({
 
       <AccountWeltKarte welt={welt} besucht={besucht} laender={laender} />
 
-      <section aria-labelledby="account-besuche-liste" className="mt-8">
+      <section
+        aria-labelledby="account-besuche-liste"
+        className="mt-14 border-t border-line-200 pt-10"
+      >
         <h2
           id="account-besuche-liste"
           className="text-xl font-semibold tracking-[-0.03em] text-brand-800"

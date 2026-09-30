@@ -40,9 +40,9 @@ const MIT_SCHRAFFUR: Readonly<Record<WeltLandZustand, boolean>> = {
 
 /** Umrisse der Länder, die einen Zustand tragen. */
 const UMRISS: Readonly<Record<WeltLandZustand, string>> = {
-  besucht: 'stroke-brand-900/75',
-  geplant: 'stroke-brand-800/60',
-  beides: 'stroke-brand-900/85',
+  besucht: 'stroke-brand-900/90',
+  geplant: 'stroke-brand-800/75',
+  beides: 'stroke-brand-900',
 }
 
 export function weltMusterId(basis: string): string {
@@ -63,7 +63,7 @@ export function WeltMusterDefs({ id }: { id: string }) {
         patternUnits="userSpaceOnUse"
         patternTransform="rotate(45)"
       >
-        <line x1="0" y1="0" x2="0" y2="4" className="stroke-brand-900/55" strokeWidth="1.3" />
+        <line x1="0" y1="0" x2="0" y2="4" className="stroke-brand-900/80" strokeWidth="1.7" />
       </pattern>
     </defs>
   )
@@ -129,18 +129,21 @@ export function WeltPunktMarken({ flaechen }: { flaechen: readonly WeltLandFlaec
           className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${lage.links}%`, top: `${lage.oben}%` }}
         >
-          <span
-            className={`block h-8 w-8 rounded-full border-[3px] ${MARKE_RAND[flaeche.zustand]} ${
-              flaeche.zustand === 'geplant' ? 'border-dashed' : 'border-solid'
-            }`}
-          />
           {flaeche.zustand === 'beides' ? (
             <span
-              className={`absolute left-1/2 top-1/2 block h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed ${
+              className={`absolute left-1/2 top-1/2 block h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed bg-surface-0/85 shadow-[0_0_0_2px_rgb(251_252_249)] ${
                 MARKE_RAND[flaeche.zustand]
               }`}
             />
           ) : null}
+          <span className="relative block h-8 w-8">
+            <span className="absolute inset-[3px] rounded-full bg-surface-0 shadow-[0_1px_4px_rgba(15,46,42,0.45)]" />
+            <span
+              className={`relative block h-8 w-8 rounded-full border-[3px] ${MARKE_RAND[flaeche.zustand]} ${
+                flaeche.zustand === 'geplant' ? 'border-dashed' : 'border-solid'
+              }`}
+            />
+          </span>
         </span>
       ))}
     </>
@@ -191,7 +194,7 @@ export function WeltFuellungen({
           d={flaeche.pfad}
           fill="none"
           className={`${UMRISS[flaeche.zustand]} [vector-effect:non-scaling-stroke]`}
-          strokeWidth="1"
+          strokeWidth="1.25"
           strokeLinejoin="round"
         />
       ))}
@@ -228,7 +231,7 @@ export function WeltZustandProbe({
             patternUnits="userSpaceOnUse"
             patternTransform="rotate(45)"
           >
-            <line x1="0" y1="0" x2="0" y2="4" className="stroke-brand-900/55" strokeWidth="1.6" />
+            <line x1="0" y1="0" x2="0" y2="4" className="stroke-brand-900/80" strokeWidth="1.8" />
           </pattern>
         </defs>
         {alsPunkt ? (
