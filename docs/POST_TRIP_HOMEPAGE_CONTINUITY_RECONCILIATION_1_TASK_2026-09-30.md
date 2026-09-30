@@ -136,3 +136,14 @@ Remain Draft.
 Do not mark Ready.
 Do not merge.
 STOP for independent main-chat Technical-Lead review.
+
+## 10. Execution identity recorded before editing
+
+Recorded from this run before the continuity edits:
+
+- Session: https://cursor.com/agents/bc-5ac8a797-2e4f-4dab-9e94-283f79026824
+- `originalModelName`: `grok-4.7-high-fast`
+- Required model was available. Editing proceeded.
+- Delivery evidence: `docs/POST_TRIP_HOMEPAGE_CONTINUITY_RECONCILIATION_1_REPORT_2026-09-30.md`
+
+This section does not change sections 1–9. The task seed commit remains `db5f1622288e1a60e855a0b6fc7d6946b5c5482d`. The review head is the later branch tip.

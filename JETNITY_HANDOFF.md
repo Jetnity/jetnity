@@ -1,5 +1,23 @@
 # Jetnity – Handoff und nächste Schritte
 
+## Aktueller Stand: Post-Trip/Homepage Continuity, 30. September 2026
+
+Dieser Block ist der aktuelle Einstieg. Die Absätze darunter bleiben historische Lieferzeitpunkte.
+
+Machine mode is `NORMAL`. Current `main` is `e59d204ff40961aaa03fddbf06d63d0f1fc20cc8` (Merge #644). Post-merge push CI `36736124249` is **SUCCESS**. Vercel Production `dpl_7cgh1NSnBHGuRNJPXmY6CS87WDDz` is **READY** on that SHA. Public `https://jetnity.com/` returned that deployment id on 30 September 2026, with H1 **Deine ganze Reise. Intelligent an einem Ort.**, the four modes **Übersicht / Reiseplan / Organisieren / Vorbereitung**, `Produktvorschau`, JSON-LD, and `noindex, nofollow`. Public `robots.txt` remains `Disallow: /`. The final homepage is live. Indexing and launch stay fail-closed.
+
+#642 / #641 is closed. Accepted head `fd2dab1ae962904ce7b4875a128417692f44bbfb`. FINAL PASS review `5367949643`. Merge `c1eae921a37db1d1f661af4b5d58139d3dc752ec`. Closure `5913833256`. Trip Workspace four-mode IA is integrated.
+
+#644 / #643 is closed. Accepted head `4da31b9b52f9b71f52272179b4a07d60b6e25c59`. FINAL PASS review `5368332024`. Closure `5914399970`.
+
+No active runtime or product writer exists after that closure. While Draft [PR #647](https://github.com/Jetnity/jetnity/pull/647) is open, the only new bounded writer is **Jetnity post-Trip/Homepage continuity reconciliation 1**, Generation 1, on `docs/post-trip-homepage-continuity-reconciliation-1`. Session https://cursor.com/agents/bc-5ac8a797-2e4f-4dab-9e94-283f79026824. `originalModelName=grok-4.7-high-fast`. This branch is not current `main`. Do not invent its merge SHA.
+
+#626 stays **OPEN / BLOCKED**. Latest re-read comment `5908548520`. No workaround. KAYAK and IATA remain waiting (`5908413693`, `5908419844`). Sherpa remains response received / outgoing follow-up paused. #585 stays deferred. [Issue #645](https://github.com/Jetnity/jetnity/issues/645) is transition history, latest update `5914404408`, not an open product writer.
+
+Read `docs/POST_TRIP_HOMEPAGE_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-09-30.md`, then the report. After this Draft closes, run a fresh Binding Slice Precheck before any runtime slice. Cursor does not Ready or merge. No follow-up slice from this writer.
+
+Later sections that name an older `main`, including the 22 September runtime pin, are dated pins. Preflight 3 remains the last accepted A–O release-readiness map and is not the current writer pointer.
+
 ## Lieferzeitpunkt-Snapshot: Admin F reconciliation, 28. September 2026
 
 [PR #606](https://github.com/Jetnity/jetnity/pull/606) war beim Schreiben dieses Absatzes ein Draft im unabhängigen Technical-Lead-Review. Das ist kein dauerhafter Writer-Status und kein Vorgriff auf PASS, Merge oder ein Deployment nach dem Merge.
