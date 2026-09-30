@@ -61,8 +61,17 @@ Docs and evidence:
 
 ## Remote observation
 
-Not yet recorded for `fda7a668` or the docs tip that carries this handoff. Older SUCCESS runs on `0c76df11` (Actions `36787942339`) and `db42f6db` do not approve this head.
+Read on `4e46b318b1d42d98df74007bd88fa17d90dad76d`. That commit contains the R1 layout (`fda7a668`) plus the audit and the previous report text. This observation does not approve a later commit.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36790909835` | SUCCESS |
+| Auth-Konfiguration gegen config.toml | SUCCESS |
+| Typecheck, Lint & Build | SUCCESS |
+| Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/A9ssh22GqeAJkvELRn6srNuA7MqE` |
+
+Combined commit status `success`. Draft #665 stayed open. Older SUCCESS runs on `0c76df11` and `db42f6db` do not approve this head.
 
 ## Stop
 
-Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required after exact-head CI, Auth and Vercel are green on the R1 tip. This handoff is not a Technical-Lead PASS.
+Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required. The table above is an observation of `4e46b318`, not a Technical-Lead PASS.

@@ -62,4 +62,4 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
 No database migration. No new API. No new cost. No secret. No production config. No navbar, footer, favicon or homepage edit. No follow-up slice.
 
-Older heads `0c76df11` and `db42f6db` had green Actions and Vercel. Those runs do not approve `fda7a668` or any later commit. Exact-head CI, Auth and Vercel for the R1 tip are not recorded in this commit. They are required before an independent Technical-Lead review can close R1. This report is not a Technical-Lead PASS.
+Exact-head observation for `4e46b318b1d42d98df74007bd88fa17d90dad76d`, the tip that contains the R1 layout, the audit, and this report’s previous text. Actions `36790909835`: Auth-Konfiguration gegen config.toml SUCCESS, Typecheck, Lint & Build SUCCESS. Vercel SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/A9ssh22GqeAJkvELRn6srNuA7MqE`. Combined commit status success. Draft #665 stayed open. Older runs on `0c76df11` and `db42f6db` do not approve this head. This observation is not a Technical-Lead PASS and does not approve a later commit.

@@ -37,4 +37,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Exact-head CI, Auth and Vercel for this R1 tip are still open. Older green runs do not approve it.
+Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Exact-head CI on `4e46b318` was later read as SUCCESS for Actions `36790909835`, Auth, Typecheck, Lint & Build, and the Vercel deployment `A9ssh22GqeAJkvELRn6srNuA7MqE`. That read is not this self-review and does not approve a later commit.
