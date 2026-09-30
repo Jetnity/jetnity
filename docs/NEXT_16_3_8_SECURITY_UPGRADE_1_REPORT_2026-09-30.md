@@ -138,4 +138,8 @@ Evidence: `docs/evidence/next-16-3-8-security-upgrade-1/browser-regression.json`
 
 ## 7. Boundaries held
 
-No Supabase, Auth, RLS, provider, payment, PrivacyBee, tracking, indexing, Production config, or feature edit. No #626 work. No app or component runtime edit. No follow-up slice. Draft remains Draft. Exact-head GitHub CI and Vercel Preview are recorded in the handoff after the pushed head is known.
+No Supabase, Auth, RLS, provider, payment, PrivacyBee, tracking, indexing, Production config, or feature edit. No #626 work. No app or component runtime edit. No follow-up slice. Draft remains Draft.
+
+## 8. Main integration
+
+#657 merged while this branch was open. Live main is `a2685812022258610e0cf34d926695b7067e55df`. This branch merged that main and is 0 behind. `Footer.tsx` matches main, including `brightness-0 invert` on the official footer logo. The pre-integration head `03e4f537` had green CI and a completed Vercel deployment; it is superseded. Post-integration local gates and a rebuilt production server passed. The delivery head is the pushed tip.

@@ -24,6 +24,10 @@ This is an author self-review. It is not an independent Technical-Lead PASS. It 
 | Is "not affected" claimed only because one search was empty? | No. Route tree, config, and call sites were inspected. The image advisory stays config-exposed. |
 | Did GitHub's `16.3.?` redaction get rewritten as a precise range I did not see? | No. The literal `?` is preserved. The 16.3.8 release notes and compare commits are separate evidence. |
 
+## Main integration
+
+#657 landed on main during CI of `03e4f537`. That head's CI was green and is now superseded. The branch merged `a2685812` and is 0 behind. Footer was not edited; the white footer class remains `brightness-0 invert`. Local gates were rerun after the merge and passed, including the three new footer tests (4095 pass).
+
 ## Residual risk
 
 - The Azure image pathname remains `/**` with no in-repo `next/image` caller. Removing it would collide with the sanitation closure invariant and was not proven necessary for the vendor patch.

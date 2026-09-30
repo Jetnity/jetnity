@@ -1,7 +1,7 @@
 # Jetnity Next.js 16.3.8 Security Upgrade 1 — HANDOFF
 
 Stand: 30 September 2026
-Status: **DRAFT IMPLEMENTATION COMPLETE / EXACT-HEAD CI AND PREVIEW PENDING THE PUSHED TIP / NOT READY / NOT MERGED**
+Status: **DRAFT / MAIN a2685812 INTEGRATED / DELIVERY HEAD CI STILL REQUIRED / NOT READY / NOT MERGED**
 
 ## Identity
 
@@ -17,7 +17,21 @@ Status: **DRAFT IMPLEMENTATION COMPLETE / EXACT-HEAD CI AND PREVIEW PENDING THE 
 - Merge-base with current `origin/main`: `8571db776bb58042a8107e341052a36cbbe9a50c`
 - Ahead/behind at reconstruction: 1 ahead, 0 behind, before this implementation commit
 
-The branch tip after the final push is the exact head. This file cannot contain the Actions run id of its own commit. Re-read GitHub Actions and the Vercel status for `git rev-parse HEAD` before any Technical-Lead decision. Cursor does not set Ready and does not merge.
+Cursor does not set Ready and does not merge.
+
+## Main moved during the slice
+
+While `03e4f537` was in CI, #657 merged. Live main became `a2685812022258610e0cf34d926695b7067e55df`. The Technical Lead required this same branch to integrate that main, reach 0 behind, and rebind the gates. Footer presentation was not edited.
+
+- Integration: merge of `origin/main`, not a rebase and not a footer change.
+- Behind after integration: **0**.
+- `git diff origin/main -- components/layout/Footer.tsx` is empty.
+- Superseded head `03e4f5374fa0d1aeba3573132c81905ebe75ffea` had GitHub Actions run `36766954394` **success**, including Auth and Typecheck/Lint/Build, plus Vercel commit status success. That SHA is not the delivery head.
+- Evidence: `docs/evidence/next-16-3-8-security-upgrade-1/post-main-integration.json`.
+
+Post-integration local gates passed again, including `npm test` 4095/4095 and `next build` on 16.3.8. A rebuilt `next start` on port 3011 still shows the homepage H1, `noindex, nofollow`, canonical `https://jetnity.com`, disallow-all `robots.txt`, and the footer logo class `brightness-0 invert` rendered white.
+
+The delivery head is the branch tip after this integration note is pushed. Re-read Actions and Vercel for that tip. This file does not invent that run id.
 
 ## What landed
 
