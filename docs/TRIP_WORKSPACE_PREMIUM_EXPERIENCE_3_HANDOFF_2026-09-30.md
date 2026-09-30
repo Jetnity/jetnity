@@ -17,12 +17,13 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Session: https://cursor.com/agents/bc-9dce6347-3fab-49a7-a9b8-ca3c988b2c44
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@a2685812022258610e0cf34d926695b7067e55df`
-- Integrated main: `1ea6ddd03a290683d3d787823621c535a611a90f`
+- Integrated main: `c9bc71f450f445d0e6991d5d32bc01ffe9060f86`
+- Integration commit: `9039a2e48818c0f998bb0cc99b042afeeddc429c`, 0 behind that main
 - Phone-mode runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
-- Evidence re-run stamped while HEAD was `50496df9250f4e0744b1336068ea01710d8a9ebf` at `2026-09-30T20:35:52.974Z`
+- Integrated audit: `2026-09-30T20:59:36.756Z`, JSON sha `9039a2e48818c0f998bb0cc99b042afeeddc429c`, PASS
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` are not owned by this slice and were not edited.
 
-Re-fetch the tip before review. The rendered cockpit is the `3a1be4b7` phone bar. The JSON `sha` is the git HEAD at audit time, which was docs on top of that runtime. CI `36770631331` and Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` belong to `b8a026db` only.
+Re-fetch the tip before review. The rendered cockpit is still the `3a1be4b7` phone bar. The favicon merge does not change it. CI `36770631331` and Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` belong to `b8a026db` only.
 
 ## Changed files against main
 
@@ -59,8 +60,8 @@ Docs and evidence:
 | Is the desktop bar still one segment? | `screens/overview_1440x900.png`. From 768px the track is one row |
 | Are the domains one trip? | Phone column in the 360 shot; `teileSpalten` becomes two tracks from 768 |
 | Does opening Flüge search by itself? | `screens/compact_fluege.png` then `compact_flug-suchen.png`. Audit requires search unmounted until “Flug suchen”, and zero provider calls |
-| Do Back, Forward, reload and invalid queries hold? | Compact and wide flows in the audit. `fehler` is empty on the `2026-09-30T20:35:52.974Z` re-run |
-| Did #659 collide? | Its file list is icons, brand, favicon docs and `lib/pwa/installierbarkeit.test.ts`. No Trip Workspace path |
+| Do Back, Forward, reload and invalid queries hold? | Compact and wide flows in the audit. `fehler` is empty on the `2026-09-30T20:59:36.756Z` re-run |
+| Did #659 collide? | Merged as `c9bc71f4`. The integration diff is icon, brand, favicon docs and tests. No Trip Workspace path |
 
 ## Remote observation
 
@@ -72,7 +73,7 @@ Docs and evidence:
 | Vercel Preview `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` | READY |
 | Review threads | none |
 
-The phone-mode commit and the evidence re-run are local, tip `cd8ce5c54be212f9daca6ac9ba4172b805d01c5c` at the time of the failed push. `git-receive-pack` returned 401 because the managed GitHub token is expired. The remote branch is still `b8a026db`. Do not treat `36770631331` or `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` as approval of `3a1be4b7` or `cd8ce5c5`.
+`9039a2e4` merges `main@c9bc71f4` and keeps the workspace work. The audit JSON is bound to that merge. A docs commit on top only records this integration. Do not treat `36770631331` or `dpl_26CJthTRJ8KcikVTWw8SfJXQ4Qtt` as approval of `9039a2e4` or a later tip. An earlier push failed with HTTP 401 while the credential was expired.
 
 ## Stop
 

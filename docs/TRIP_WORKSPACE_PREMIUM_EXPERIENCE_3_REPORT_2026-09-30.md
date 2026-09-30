@@ -7,9 +7,9 @@ Issue: #660
 Draft PR: #661
 Branch: `feat/trip-workspace-premium-experience-3`
 Baseline: `main@a2685812022258610e0cf34d926695b7067e55df`
-Integrated main: `1ea6ddd03a290683d3d787823621c535a611a90f` (#655 Next.js 16.3.8)
+Integrated main: `c9bc71f450f445d0e6991d5d32bc01ffe9060f86` (#659 official favicon, includes #655 Next.js 16.3.8)
+Integration commit: `9039a2e48818c0f998bb0cc99b042afeeddc429c` (0 behind `origin/main`)
 Phone-mode runtime: `3a1be4b706495a89746e1f970c4568c90ae22a45`
-Evidence re-run while HEAD was: `50496df9250f4e0744b1336068ea01710d8a9ebf`
 Agent: **Jetnity Trip Workspace premium experience 3**, Generation 1
 Session: https://cursor.com/agents/bc-9dce6347-3fab-49a7-a9b8-ca3c988b2c44
 `originalModelName`: `grok-4.7-high-fast`
@@ -37,7 +37,7 @@ Presentation only. The accepted four-mode shell, URL contract, focus rules, lazy
 Production-like Chrome audit, `next start` on `http://127.0.0.1:3456`, `JETNITY_UI_AUDIT=1`. Provider and assistant routes intercepted. Synthetic trip only.
 
 Evidence: `docs/evidence/trip-workspace-premium-experience-3/audit.json`
-Re-run `2026-09-30T20:35:52.974Z`. The JSON `sha` field is `50496df9250f4e0744b1336068ea01710d8a9ebf` because the script stamps `git rev-parse HEAD`. The production server was the Next.js 16.3.8 build of the phone-mode runtime `3a1be4b7`. Docs commits do not change that render. Result **PASS**, `fehler` empty, 12 recorded viewport steps. Compact and wide interaction flows are enforced by the same run; a failure would be listed in `fehler`.
+Re-run after the main integration, `2026-09-30T20:59:36.756Z`. The JSON `sha` field is `9039a2e48818c0f998bb0cc99b042afeeddc429c` because the script stamps `git rev-parse HEAD`. That commit is the merge of `main@c9bc71f4` and does not change Trip Workspace runtime. The production server was a fresh Next.js 16.3.8 build of that tree. Result **PASS**, `fehler` empty, 12 recorded viewport steps. Compact and wide interaction flows are enforced by the same run; a failure would be listed in `fehler`.
 
 On `b8a026db` the mode bar was one scrolling row with a hidden scrollbar. At 360 and 390, Vorbereitung sat fully outside that bar. `3a1be4b7` is that defect fix and nothing else: a 2×2 segment below 640px.
 
@@ -67,14 +67,15 @@ A pixel read of `overview_360x800.png` shows the word Vorbereitung as one ink ba
 | `npm run build` | pass, Next.js 16.3.8, 25 static pages. Setup check warns that no `.env` / `.env.local` exists. |
 | `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode` | pass |
 | `check:schema-bezug` | exit 0. Existing note: local/unapplied `admin_account_counts_v1`. Not part of this slice. |
-| Premium audit | PASS, re-run `2026-09-30T20:35:52.974Z`, JSON sha `50496df9` |
+| `npm run build` after integrating `c9bc71f4` | pass, Next.js 16.3.8. Route table shows `icon.png`. |
+| Premium audit | PASS, `2026-09-30T20:59:36.756Z`, JSON sha `9039a2e4` |
 
 ## 4. Parallel safety
 
 Re-read before this delivery:
 
-- #655 is merged at `1ea6ddd03a290683d3d787823621c535a611a90f`. This branch contains that main and is 0 behind `origin/main`.
-- #659 changed files are icon, favicon, brand and its own docs/tests. No `components/trips/TripWorkspace*` path.
+- #655 is in main at `1ea6ddd03a290683d3d787823621c535a611a90f`. Next.js stays 16.3.8.
+- #659 is merged at `c9bc71f450f445d0e6991d5d32bc01ffe9060f86`. This branch merged that main and is 0 behind. The merge brought icon, favicon, and brand files only. No Trip Workspace path was edited in the merge.
 - `docs/ACTIVE_WORK_STATUS.md` and `JETNITY_START_HERE.md` were not edited.
 
 ## 5. Earlier remote head
@@ -83,9 +84,7 @@ Re-read before this delivery:
 
 ## 6. Exact-head remote for this delivery
 
-Local evidence commit: `cd8ce5c54be212f9daca6ac9ba4172b805d01c5c`. It is 0 behind `origin/main` and was not on `origin` when this section was written.
-
-`git push` of this commit was rejected with HTTP 401 on `git-receive-pack`. The managed GitHub token’s `exp` claim is in the past. `git ls-remote` still shows `feat/trip-workspace-premium-experience-3` at `b8a026db1872133ee7fe9287ad85a93962085135`. Actions, Auth and Vercel Preview for `cd8ce5c5` therefore do not exist. The contents API also returned 403 on an earlier write attempt, so that path cannot carry the commit either.
+The integrated audit head is `9039a2e48818c0f998bb0cc99b042afeeddc429c`. An earlier push was rejected with HTTP 401 while the managed credential was expired. The credential had time remaining when this integration was prepared. Actions, Auth and Vercel Preview for the pushed tip are written here only after they are read. Checks on `b8a026db` do not approve this head.
 
 ## 7. Not claimed
 
