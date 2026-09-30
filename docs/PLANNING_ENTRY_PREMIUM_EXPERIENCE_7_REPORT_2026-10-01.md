@@ -75,9 +75,25 @@ Evidence: `docs/evidence/planning-entry-premium-experience-7/`.
 
 No schema, Auth, Supabase, payment, package, tracking, legal rewrite, indexing change, or new model call. #626 was not touched. Cursor does not Ready or merge and does not start a follow-up slice.
 
+## 5b. Exact-head CI, Auth, and Vercel
+
+Read after the evidence push, on `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`. Combined commit status **success**. PR #669 was still Draft.
+
+| Gate | Result |
+| --- | --- |
+| Actions run `36787355819` | success |
+| Auth-Konfiguration gegen config.toml, job `110131852466` | success, completed `2026-09-30T22:45:39Z` |
+| Typecheck, Lint & Build, job `110131852662` | success, completed `2026-09-30T22:47:35Z` |
+| Vercel commit status | success, “Deployment has completed”, updated `2026-09-30T22:45:33Z` |
+| Vercel inspector | `https://vercel.com/jetnity-e1b93c82/jetnity-app/8AgZPAcv9eEFXmJuiHkLBPf4T42R` |
+| Vercel preview alias | `https://jetnity-app-git-feat-planning-entry-pre-dd05c8-jetnity-e1b93c82.vercel.app` |
+| Vercel Preview Comments check `110131970435` | success |
+
+The Vercel bot comment on that SHA says Ready and `DEPLOYED`. This session did not open the preview in a browser after that comment. A docs-only receipt after `fa3c9be5` is not a new runtime gate.
+
 ## 6. Residuals for the Technical Lead
 
-- GitHub CI, Auth configuration, and Vercel on the pushed evidence head are not in this report yet. They are the remaining exact-head external gates.
+- The external gates above belong to `fa3c9be5`. Re-read them if the branch tip moves.
 - The side panel still contains the pre-existing line “Später begleiten dich Live-Hinweise und wichtige Erinnerungen.” This slice did not rewrite that future-tense sentence. If live hints are not yet a user promise, a later copy pass should soften it.
 - `html` scroll-padding and the section `scroll-mt` both offset the focused manual region, so it lands lower than a single header height. The heading stays below the sticky header. Tightening that landing is separate from this contract.
 - The audit is headless Chromium, not a physical phone.

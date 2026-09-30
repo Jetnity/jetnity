@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 1. Oktober 2026
-Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 DELIVERED FOR TL REVIEW ON DRAFT #669 / LOCAL GATES AND BROWSER AUDIT PASS / CI AUTH VERCEL NOT YET RECORDED ON THE EVIDENCE HEAD / NOT A LAUNCH PASS / NOT READY / NOT MERGED**
+Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 EXACT-HEAD CI AUTH VERCEL SUCCESS ON fa3c9be5 / DRAFT #669 / NOT A LAUNCH PASS / NOT READY / NOT MERGED**
 
 ## 0-current. Planning Entry premium experience 7
 
@@ -12,7 +12,7 @@ Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 DELIVERED FOR TL REVIEW O
 - Scope is `/planen` creation-entry presentation only. Trip Workspace runtime, Reisevorbereitung, Organisieren, navbar, footer, favicon, homepage and package files were not edited.
 - Runtime audit head `be627ffaea252f07f00ded033c8a9796f38da183`. Local `npm test` 4108/4108, typecheck, lint with 0 errors, hygiene checks, and production build passed. Browser audit `bestanden: true` against `next start` with the model kill switch forced off. Evidence: `docs/evidence/planning-entry-premium-experience-7/`.
 - Canonical stayed `https://jetnity.com/planen`. This local production process is fail-closed `noindex, nofollow` on the base page because no indexing environment is configured. That is not a robots edit.
-- GitHub CI, Auth configuration, and Vercel on the pushed evidence head are **not yet recorded**. Do not treat local gates as those external gates.
+- Exact head `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`: GitHub Actions run `36787355819` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110131852466` **SUCCESS**. Typecheck, Lint & Build job `110131852662` **SUCCESS**. Vercel commit status **success**, description “Deployment has completed”, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8AgZPAcv9eEFXmJuiHkLBPf4T42R`, preview `https://jetnity-app-git-feat-planning-entry-pre-dd05c8-jetnity-e1b93c82.vercel.app`, Vercel comment updated `2026-09-30T22:45:33Z` with Ready / `DEPLOYED`. This session did not re-open that preview in a browser. A later docs-only receipt is not this gate.
 - Cursor does not Ready or merge and does not start a follow-up slice. Next step is independent Technical-Lead code, visual, mobile and interaction review.
 - #626 remains **OPEN / BLOCKED**. Do not retry it from this slice.
 
