@@ -31,7 +31,6 @@ import {
   Cloud,
   MapPin,
   ShieldCheck,
-  Sparkles,
   Users,
   WalletCards,
   X,
@@ -100,7 +99,7 @@ type TripPlannerProps = {
  * Steuerelements, was auf schmalen Geraeten das Layout sprengt.
  */
 const fieldClass =
-  'h-12 w-full min-w-0 rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base ' +
+  'h-12 w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base ' +
   'outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10'
 
 const fieldIconClass =
@@ -116,6 +115,28 @@ const fieldIconClass =
  */
 const feldReflowClass =
   'grid-cols-[minmax(0,1fr)] [&_label]:min-w-0 [&_label]:max-w-full [&_label]:break-words [&_label>span]:inline-block'
+
+function Planungsgruppe({
+  id,
+  titel,
+  children,
+}: {
+  id: string
+  titel: string
+  children: React.ReactNode
+}) {
+  return (
+    <section aria-labelledby={id} className="grid min-w-0 max-w-full gap-4">
+      <h3
+        id={id}
+        className="min-w-0 max-w-full break-words border-b border-line-200 pb-2 text-base font-semibold tracking-[-0.02em] text-brand-900"
+      >
+        {titel}
+      </h3>
+      {children}
+    </section>
+  )
+}
 
 function heuteIso() {
   const jetzt = new Date()
@@ -434,26 +455,35 @@ export default function TripPlanner({
   }
 
   return (
-    <div className="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid w-full min-w-0 grid-cols-1 items-start gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
       <form
         noValidate
         onSubmit={absenden}
         className="min-w-0 max-w-full rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
-        <div className="mb-8">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
-            <Sparkles className="h-3.5 w-3.5" />
-            {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
-          </span>
-          <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-3xl">
+        <div className="mb-8 min-w-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <span className="inline-flex max-w-full break-words rounded-full border border-line-200 bg-surface-0 px-3 py-1 text-xs font-semibold text-brand-800">
+              Selbst ausfüllen
+            </span>
+            <span className="inline-flex max-w-full break-words rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
+              {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
+            </span>
+          </div>
+          <h2 className="mt-4 max-w-full break-words text-2xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-3xl">
             Deine Reise Schritt für Schritt.
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">
             Ein paar Angaben genügen. Du kannst jeden Teil später gemeinsam mit deinen Mitreisenden verfeinern.
           </p>
+          <p className="mt-4 max-w-full break-words rounded-2xl border border-line-200 bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800 xl:hidden">
+            Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.
+          </p>
         </div>
 
-        <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-8">
+          <Planungsgruppe id="planen-gruppe-route" titel="Route & Ziele">
+            <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="grid gap-3">
             <Feld
               id="feld-ziel"
@@ -618,8 +648,12 @@ export default function TripPlanner({
                   : 'Zuerst das Reiseziel wählen. Weitere Ziele sind optional.'}
               </p>
             </div>
-          </div>
+            </div>
+            </div>
+          </Planungsgruppe>
 
+          <Planungsgruppe id="planen-gruppe-zeitraum" titel="Zeitraum">
+            <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
           <Feld
             id="feld-start"
             label="Abreise"
@@ -677,7 +711,11 @@ export default function TripPlanner({
               className={cn(fieldClass, feldfehler.endDate && FELD_FEHLER_RAHMEN)}
             />
           </Feld>
+            </div>
+          </Planungsgruppe>
 
+          <Planungsgruppe id="planen-gruppe-reisende" titel="Reisende & Budget">
+            <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
           <Feld
             id="feld-reisende"
             label="Reisende"
@@ -739,9 +777,11 @@ export default function TripPlanner({
               className={cn(fieldClass, feldfehler.budget && FELD_FEHLER_RAHMEN)}
             />
           </Feld>
-        </div>
+            </div>
+          </Planungsgruppe>
 
-        <label className="mt-7 grid min-w-0 gap-2 text-sm font-medium text-brand-800">
+          <Planungsgruppe id="planen-gruppe-wuensche" titel="Wünsche">
+        <label className="grid min-w-0 max-w-full gap-2 break-words text-sm font-medium text-brand-800">
           Was ist dir bei dieser Reise besonders wichtig?
           <textarea
             value={travelWish}
@@ -749,9 +789,11 @@ export default function TripPlanner({
             rows={4}
             maxLength={GRENZEN.reisewunsch}
             placeholder="Zum Beispiel: lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer."
-            className="w-full min-w-0 resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+            className="w-full min-w-0 max-w-full resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
           />
         </label>
+          </Planungsgruppe>
+        </div>
 
         <FormularZusammenfassung
           sichtbar={Object.keys(feldfehler).length > 0}
@@ -795,7 +837,7 @@ export default function TripPlanner({
           <button
             type="submit"
             disabled={laeuft}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 motion-reduce:transition-none motion-reduce:hover:translate-y-0 disabled:pointer-events-none disabled:opacity-60"
           >
             {laeuft ? 'Reise wird erstellt …' : 'Reise erstellen'}
             {!laeuft && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
@@ -803,7 +845,7 @@ export default function TripPlanner({
         </div>
       </form>
 
-      <aside className="h-fit rounded-[28px] bg-brand-800 p-6 text-white lg:sticky lg:top-28">
+      <aside className="hidden h-fit min-w-0 max-w-full rounded-[28px] bg-brand-800 p-6 text-white xl:sticky xl:top-[calc(var(--jet-header-h)+env(safe-area-inset-top)+1rem)] xl:block xl:max-h-[calc(100dvh-var(--jet-header-h)-env(safe-area-inset-top)-2rem)] xl:overflow-y-auto">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-400">So geht es weiter</p>
         <ol className="mt-6 space-y-6">
           {[
@@ -823,11 +865,14 @@ export default function TripPlanner({
           ))}
         </ol>
         <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-          <p className="text-xs leading-5 text-white/70">
-            {angemeldet
-              ? 'Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.'
-              : 'Ohne Konto lässt sich eine Reise planen. Für mehrere gespeicherte Reisen und den Zugriff von jedem Gerät genügt eine Registrierung.'}
+          <p className="text-xs leading-5 text-white/75">
+            Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.
           </p>
+          {angemeldet ? null : (
+            <p className="mt-2 text-xs leading-5 text-white/70">
+              Ohne Konto lässt sich eine Reise planen. Für mehrere gespeicherte Reisen und den Zugriff von jedem Gerät genügt eine Registrierung.
+            </p>
+          )}
         </div>
       </aside>
     </div>
