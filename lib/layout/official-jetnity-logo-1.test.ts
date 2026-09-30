@@ -2,6 +2,7 @@
 //
 // Das offizielle Logo ersetzt nur die Marke in Leiste und Footer.
 // Sitzung, Navigation und das kanonische Asset bleiben unverändert.
+// Die Footer-Darstellung ist seit Footer Official Logo White 1 reinweiß und ohne Chip.
 
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
@@ -60,7 +61,12 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
       assert.match(link, /unoptimized/)
       assert.match(link, /width: 'auto'/)
       assert.equal(link.includes('<img'), false)
-      assert.equal(/invert|brightness-|hue-rotate|saturate-|sepia|grayscale|mix-blend/.test(link), false)
+      if (name === 'Navbar') {
+        assert.equal(/invert|brightness-|hue-rotate|saturate-|sepia|grayscale|mix-blend/.test(link), false)
+      } else {
+        assert.match(link, /brightness-0 invert/)
+        assert.equal(/hue-rotate|saturate-|sepia|grayscale|mix-blend/.test(link), false)
+      }
       assert.equal(link.includes('rotate-45'), false)
       assert.equal(link.includes('bg-citrus-400'), false)
       assert.equal(link.includes('>Jetnity<'), false)
@@ -76,15 +82,18 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
     assert.match(navbar, /FOKUS_RING/)
   })
 
-  test('der Footer legt das dunkle Wortzeichen auf eine helle Fläche', () => {
+  test('der Footer zeigt das offizielle Wortzeichen reinweiß ohne helle Fläche', () => {
     const link = markenlink(footer)
     assert.match(link, /h-\[48px\] w-auto/)
     assert.match(link, /height: '48px'/)
-    assert.match(link, /bg-white/)
-    assert.match(link, /rounded-xl/)
+    assert.match(link, /brightness-0 invert/)
+    assert.equal(link.includes('bg-white'), false)
+    assert.equal(link.includes('rounded-xl'), false)
     assert.match(link, /min-h-11/)
+    assert.match(link, /src="\/brand\/jetnity-logo\.png"/)
     assert.equal(link.includes('priority'), false)
     assert.match(footer, /focus-visible:ring-white\/25/)
+    assert.match(footer, /aria-label="Jetnity Startseite"/)
   })
 })
 
