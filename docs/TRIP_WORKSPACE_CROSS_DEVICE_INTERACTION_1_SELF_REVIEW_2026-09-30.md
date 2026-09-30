@@ -10,7 +10,9 @@ The change is the shared workspace seam plus the field-width rule in flight sear
 ## Checks
 
 - The reproduced baseline is the seed component: search sat after the desktop grid.
-- The R1 after pass is bound to `3264a2ef18f81c84c5d059eabc178e2b2358f263`.
+- The R2 after pass is bound to `01f89e5f647533b251b0d39fe6a2e260fefca9ab`.
+- On every open compact step there is one sticky back control and no in-card back control. On every open desktop step the in-card control is the only one.
+- Flight search identity on 360/390 is unchanged: eyebrow at 142, heading at 162. Desktop 1440 still shows the search heading at 754 with the detail title in view.
 - Merge-base with main is `ea6253d603e57cd19395cef951faabc75cb8ab3a`. The branch was 0 behind after the integration.
 - `docs/ACTIVE_WORK_STATUS.md` matches current main.
 - The helper file remains only because R1 explicitly allows that one path. The task addendum says it was outside the original allowlist.
@@ -19,7 +21,7 @@ The change is the shared workspace seam plus the field-width rule in flight sear
 - Mouse does not focus the search field. Keyboard does.
 - Escape closes and restores the invoking control.
 - No horizontal overflow on the required viewports.
-- Local typecheck, lint, full tests, build and the listed hygiene checks passed. Lint still reports 145 pre-existing warnings and 0 errors.
+- Local typecheck, lint, full tests (4065/4065), build and the listed hygiene checks passed on the R2 tree. Lint still reports 145 pre-existing warnings and 0 errors.
 
 ## Limits
 

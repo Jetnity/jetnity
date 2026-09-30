@@ -1,9 +1,9 @@
 {
   "phase": "after",
-  "sha": "3264a2ef18f81c84c5d059eabc178e2b2358f263",
+  "sha": "01f89e5f647533b251b0d39fe6a2e260fefca9ab",
   "workingTree": "clean",
   "dirtyPaths": [],
-  "capturedAt": "2026-09-30T11:42:49.862Z",
+  "capturedAt": "2026-09-30T12:08:50.259Z",
   "browser": "chromium/playwright",
   "origin": "http://localhost:3000",
   "server": "reused-existing-dev",
@@ -39,6 +39,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -140,7 +143,7 @@
             "height": 800
           },
           "scrollY": 387,
-          "scrollHeight": 2421,
+          "scrollHeight": 2365,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -155,12 +158,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
             "top": 163,
             "left": 12,
             "width": 336,
-            "height": 318,
-            "bottom": 481,
+            "height": 262,
+            "bottom": 425,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -168,11 +171,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 302,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -180,16 +183,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 302,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -240,12 +246,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
                 "top": 163,
                 "left": 12,
                 "width": 336,
-                "height": 318,
-                "bottom": 481,
+                "height": 262,
+                "bottom": 425,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -258,11 +264,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 497,
+                "top": 441,
                 "left": 12,
                 "width": 336,
                 "height": 460,
-                "bottom": 957,
+                "bottom": 901,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -312,8 +318,8 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 1179,
-          "scrollHeight": 3031,
+          "scrollY": 1123,
+          "scrollHeight": 2975,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -328,11 +334,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": -629,
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+            "top": -573,
             "left": 12,
             "width": 336,
-            "height": 258,
+            "height": 202,
             "bottom": -371,
             "right": 348,
             "intersectsViewport": false,
@@ -363,6 +369,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -457,11 +466,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": -629,
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+                "top": -573,
                 "left": 12,
                 "width": 336,
-                "height": 258,
+                "height": 202,
                 "bottom": -371,
                 "right": 348,
                 "intersectsViewport": false,
@@ -540,7 +549,7 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 970,
+          "scrollY": 914,
           "scrollHeight": 4285,
           "clientWidth": 360,
           "scrollWidth": 360,
@@ -558,14 +567,17 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
-            "top": -491,
+            "top": -435,
             "left": 12,
             "width": 336,
             "height": 2730,
-            "bottom": 2238,
+            "bottom": 2294,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -680,8 +692,8 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 395,
-          "scrollHeight": 2421,
+          "scrollY": 405,
+          "scrollHeight": 2365,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -696,12 +708,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": 155,
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
+            "top": 145,
             "left": 12,
             "width": 336,
-            "height": 318,
-            "bottom": 473,
+            "height": 262,
+            "bottom": 407,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -709,11 +721,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 248,
+            "top": 182,
             "left": 29,
             "width": 302,
             "height": 28,
-            "bottom": 276,
+            "bottom": 210,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -721,16 +733,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 228,
+            "top": 162,
             "left": 29,
             "width": 302,
             "height": 16,
-            "bottom": 244,
+            "bottom": 178,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -763,16 +778,16 @@
           "rueckkehr": {
             "tag": "NAV",
             "text": "Zurück zur Reise",
-            "top": 77,
+            "top": 72,
             "left": 0,
             "width": 360,
             "height": 62,
-            "bottom": 139,
+            "bottom": 134,
             "right": 360,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
-          "abdeckungUnten": 73,
+          "abdeckungUnten": 134,
           "identitaetUnterAbdeckung": false,
           "bereiche": [
             {
@@ -781,12 +796,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": 155,
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
+                "top": 145,
                 "left": 12,
                 "width": 336,
-                "height": 318,
-                "bottom": 473,
+                "height": 262,
+                "bottom": 407,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -799,11 +814,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 489,
+                "top": 423,
                 "left": 12,
                 "width": 336,
                 "height": 460,
-                "bottom": 949,
+                "bottom": 883,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -864,8 +879,8 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 1179,
-          "scrollHeight": 3031,
+          "scrollY": 1123,
+          "scrollHeight": 2975,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -880,11 +895,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": -629,
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+            "top": -573,
             "left": 12,
             "width": 336,
-            "height": 258,
+            "height": 202,
             "bottom": -371,
             "right": 348,
             "intersectsViewport": false,
@@ -915,6 +930,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -1009,11 +1027,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": -629,
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+                "top": -573,
                 "left": 12,
                 "width": 336,
-                "height": 258,
+                "height": 202,
                 "bottom": -371,
                 "right": 348,
                 "intersectsViewport": false,
@@ -1092,8 +1110,8 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 1089,
-          "scrollHeight": 3059,
+          "scrollY": 1033,
+          "scrollHeight": 3003,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -1108,11 +1126,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausd",
-            "top": -539,
+            "text": "NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+            "top": -483,
             "left": 12,
             "width": 336,
-            "height": 258,
+            "height": 202,
             "bottom": -281,
             "right": 348,
             "intersectsViewport": false,
@@ -1143,6 +1161,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -1226,11 +1247,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausd",
-                "top": -539,
+                "text": "NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+                "top": -483,
                 "left": 12,
                 "width": 336,
-                "height": 258,
+                "height": 202,
                 "bottom": -281,
                 "right": 348,
                 "intersectsViewport": false,
@@ -1332,7 +1353,7 @@
             "height": 800
           },
           "scrollY": 387,
-          "scrollHeight": 2367,
+          "scrollHeight": 2311,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -1347,12 +1368,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche st",
+            "text": "OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche startet erst, wenn ",
             "top": 163,
             "left": 12,
             "width": 336,
-            "height": 258,
-            "bottom": 421,
+            "height": 202,
+            "bottom": 365,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1360,11 +1381,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Aktivitäten",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 302,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1372,16 +1393,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "OPTIONAL",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 302,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -1397,11 +1421,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "AKTIVITÄTEN Passend zum Reisetag Ubud · 12. Okt. Reisetag 12. Okt. 13. Okt. 19. Okt. An diesem Tag ist noch nichts eingeplant. Jetnity erfin",
-            "top": 437,
+            "top": 381,
             "left": 12,
             "width": 336,
             "height": 466,
-            "bottom": 903,
+            "bottom": 847,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -1410,11 +1434,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Passend zum Reisetag",
-            "top": 478,
+            "top": 422,
             "left": 33,
             "width": 209,
             "height": 28,
-            "bottom": 506,
+            "bottom": 450,
             "right": 242,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1422,11 +1446,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "AKTIVITÄTEN",
-            "top": 458,
+            "top": 402,
             "left": 33,
             "width": 209,
             "height": 16,
-            "bottom": 474,
+            "bottom": 418,
             "right": 242,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1465,12 +1489,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche st",
+                "text": "OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche startet erst, wenn ",
                 "top": 163,
                 "left": 12,
                 "width": 336,
-                "height": 258,
-                "bottom": 421,
+                "height": 202,
+                "bottom": 365,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -1551,11 +1575,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "AKTIVITÄTEN Passend zum Reisetag Ubud · 12. Okt. Reisetag 12. Okt. 13. Okt. 19. Okt. An diesem Tag ist noch nichts eingeplant. Jetnity erfin",
-                "top": 437,
+                "top": 381,
                 "left": 12,
                 "width": 336,
                 "height": 466,
-                "bottom": 903,
+                "bottom": 847,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -1582,7 +1606,7 @@
             "height": 800
           },
           "scrollY": 387,
-          "scrollHeight": 3895,
+          "scrollHeight": 3839,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -1597,12 +1621,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtba",
+            "text": "NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Such",
             "top": 163,
             "left": 12,
             "width": 336,
-            "height": 282,
-            "bottom": 445,
+            "height": 226,
+            "bottom": 389,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1610,11 +1634,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Mobilität",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 302,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1622,16 +1646,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 302,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -1647,11 +1674,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "Verbindungen Mietwagen DEINE VERBINDUNGEN Bestand und Status Noch keine Verbindung geplant Zürich → Ubud · 12. Okt. Noch offen Ubud → Singap",
-            "top": 461,
+            "top": 405,
             "left": 12,
             "width": 336,
             "height": 1970,
-            "bottom": 2431,
+            "bottom": 2375,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -1660,11 +1687,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Bestand und Status",
-            "top": 570,
+            "top": 514,
             "left": 33,
             "width": 208,
             "height": 28,
-            "bottom": 598,
+            "bottom": 542,
             "right": 241,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1672,11 +1699,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "DEINE VERBINDUNGEN",
-            "top": 550,
+            "top": 494,
             "left": 33,
             "width": 208,
             "height": 16,
-            "bottom": 566,
+            "bottom": 510,
             "right": 241,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1684,11 +1711,11 @@
           "erstesFeld": {
             "tag": "SELECT",
             "text": "Bahn Bus Fähre Transfer",
-            "top": 1568,
+            "top": 1512,
             "left": 33,
             "width": 294,
             "height": 44,
-            "bottom": 1612,
+            "bottom": 1556,
             "right": 327,
             "intersectsViewport": false,
             "fullyInViewport": false
@@ -1726,12 +1753,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtba",
+                "text": "NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Such",
                 "top": 163,
                 "left": 12,
                 "width": 336,
-                "height": 282,
-                "bottom": 445,
+                "height": 226,
+                "bottom": 389,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -1829,11 +1856,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "Verbindungen Mietwagen DEINE VERBINDUNGEN Bestand und Status Noch keine Verbindung geplant Zürich → Ubud · 12. Okt. Noch offen Ubud → Singap",
-                "top": 461,
+                "top": 405,
                 "left": 12,
                 "width": 336,
                 "height": 1970,
-                "bottom": 2431,
+                "bottom": 2375,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -1854,7 +1881,7 @@
             "height": 800
           },
           "scrollY": 387,
-          "scrollHeight": 2521,
+          "scrollHeight": 2465,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -1869,12 +1896,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
+            "text": "PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
             "top": 163,
             "left": 12,
             "width": 336,
-            "height": 314,
-            "bottom": 477,
+            "height": 258,
+            "bottom": 421,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1882,11 +1909,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "ZRH–DPS",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 302,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -1894,16 +1921,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "PUNKT",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 302,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 331,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen Blick1 nur teilweise geplant · 2 noch offen · 1 noch unklar1 Punkt geplantJetzt wichtigWas jetzt Aufmerksamke",
@@ -1954,12 +1984,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
+                "text": "PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
                 "top": 163,
                 "left": 12,
                 "width": 336,
-                "height": 314,
-                "bottom": 477,
+                "height": 258,
+                "bottom": 421,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -1972,11 +2002,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Zürich → Ubud · 12. Okt. Ausgewählt Als gebucht m",
-                "top": 493,
+                "top": 437,
                 "left": 12,
                 "width": 336,
                 "height": 564,
-                "bottom": 1057,
+                "bottom": 1001,
                 "right": 348,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -2026,8 +2056,8 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 1307,
-          "scrollHeight": 3159,
+          "scrollY": 1251,
+          "scrollHeight": 3103,
           "clientWidth": 360,
           "scrollWidth": 360,
           "horizontalOverflow": false,
@@ -2042,11 +2072,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhanden",
-            "top": -757,
+            "text": "TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhandene Einträge prüfen",
+            "top": -701,
             "left": 12,
             "width": 336,
-            "height": 282,
+            "height": 226,
             "bottom": -475,
             "right": 348,
             "intersectsViewport": false,
@@ -2077,6 +2107,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen Blick1 nur teilweise geplant · 2 noch offen · 1 noch unklar1 Punkt geplantJetzt wichtigWas jetzt Aufmerksamke",
@@ -2171,11 +2204,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhanden",
-                "top": -757,
+                "text": "TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhandene Einträge prüfen",
+                "top": -701,
                 "left": 12,
                 "width": 336,
-                "height": 282,
+                "height": 226,
                 "bottom": -475,
                 "right": 348,
                 "intersectsViewport": false,
@@ -2254,7 +2287,7 @@
             "width": 360,
             "height": 800
           },
-          "scrollY": 1104,
+          "scrollY": 1164,
           "scrollHeight": 4059,
           "clientWidth": 360,
           "scrollWidth": 360,
@@ -2272,14 +2305,17 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
-            "top": -625,
+            "top": -685,
             "left": 12,
             "width": 336,
             "height": 2504,
-            "bottom": 1878,
+            "bottom": 1818,
             "right": 348,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -2399,7 +2435,7 @@
             "text": "Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen",
             "type": "button"
           },
-          "scrollY": 1104
+          "scrollY": 1164
         }
       ],
       "fehler": []
@@ -2432,6 +2468,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -2533,7 +2572,7 @@
             "height": 844
           },
           "scrollY": 387,
-          "scrollHeight": 2397,
+          "scrollHeight": 2341,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -2548,12 +2587,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
             "top": 163,
             "left": 12,
             "width": 366,
-            "height": 318,
-            "bottom": 481,
+            "height": 262,
+            "bottom": 425,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -2561,11 +2600,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 332,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -2573,16 +2612,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 332,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -2633,12 +2675,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
                 "top": 163,
                 "left": 12,
                 "width": 366,
-                "height": 318,
-                "bottom": 481,
+                "height": 262,
+                "bottom": 425,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -2651,11 +2693,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 497,
+                "top": 441,
                 "left": 12,
                 "width": 366,
                 "height": 460,
-                "bottom": 957,
+                "bottom": 901,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -2705,8 +2747,8 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 1179,
-          "scrollHeight": 2975,
+          "scrollY": 1123,
+          "scrollHeight": 2919,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -2721,11 +2763,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": -629,
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+            "top": -573,
             "left": 12,
             "width": 366,
-            "height": 258,
+            "height": 202,
             "bottom": -371,
             "right": 378,
             "intersectsViewport": false,
@@ -2756,6 +2798,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -2850,11 +2895,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": -629,
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+                "top": -573,
                 "left": 12,
                 "width": 366,
-                "height": 258,
+                "height": 202,
                 "bottom": -371,
                 "right": 378,
                 "intersectsViewport": false,
@@ -2933,7 +2978,7 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 1010,
+          "scrollY": 914,
           "scrollHeight": 4217,
           "clientWidth": 390,
           "scrollWidth": 390,
@@ -2951,14 +2996,17 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
-            "top": -531,
+            "top": -435,
             "left": 12,
             "width": 366,
             "height": 2686,
-            "bottom": 2154,
+            "bottom": 2250,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -3074,7 +3122,7 @@
             "height": 844
           },
           "scrollY": 405,
-          "scrollHeight": 2397,
+          "scrollHeight": 2341,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -3089,12 +3137,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
             "top": 145,
             "left": 12,
             "width": 366,
-            "height": 318,
-            "bottom": 463,
+            "height": 262,
+            "bottom": 407,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -3102,11 +3150,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 238,
+            "top": 182,
             "left": 29,
             "width": 332,
             "height": 28,
-            "bottom": 266,
+            "bottom": 210,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -3114,16 +3162,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 218,
+            "top": 162,
             "left": 29,
             "width": 332,
             "height": 16,
-            "bottom": 234,
+            "bottom": 178,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -3174,12 +3225,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
                 "top": 145,
                 "left": 12,
                 "width": 366,
-                "height": 318,
-                "bottom": 463,
+                "height": 262,
+                "bottom": 407,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -3192,11 +3243,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 479,
+                "top": 423,
                 "left": 12,
                 "width": 366,
                 "height": 460,
-                "bottom": 939,
+                "bottom": 883,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -3257,8 +3308,8 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 1179,
-          "scrollHeight": 2975,
+          "scrollY": 1123,
+          "scrollHeight": 2919,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -3273,11 +3324,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": -629,
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+            "top": -573,
             "left": 12,
             "width": 366,
-            "height": 258,
+            "height": 202,
             "bottom": -371,
             "right": 378,
             "intersectsViewport": false,
@@ -3308,6 +3359,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -3402,11 +3456,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": -629,
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+                "top": -573,
                 "left": 12,
                 "width": 366,
-                "height": 258,
+                "height": 202,
                 "bottom": -371,
                 "right": 378,
                 "intersectsViewport": false,
@@ -3485,8 +3539,8 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 1089,
-          "scrollHeight": 2987,
+          "scrollY": 1033,
+          "scrollHeight": 2931,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -3501,11 +3555,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausd",
-            "top": -539,
+            "text": "NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+            "top": -483,
             "left": 12,
             "width": 366,
-            "height": 258,
+            "height": 202,
             "bottom": -281,
             "right": 378,
             "intersectsViewport": false,
@@ -3536,6 +3590,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -3619,11 +3676,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausd",
-                "top": -539,
+                "text": "NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
+                "top": -483,
                 "left": 12,
                 "width": 366,
-                "height": 258,
+                "height": 202,
                 "bottom": -281,
                 "right": 378,
                 "intersectsViewport": false,
@@ -3725,7 +3782,7 @@
             "height": 844
           },
           "scrollY": 387,
-          "scrollHeight": 2327,
+          "scrollHeight": 2271,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -3740,12 +3797,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche st",
+            "text": "OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche startet erst, wenn ",
             "top": 163,
             "left": 12,
             "width": 366,
-            "height": 258,
-            "bottom": 421,
+            "height": 202,
+            "bottom": 365,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -3753,11 +3810,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Aktivitäten",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 332,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -3765,16 +3822,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "OPTIONAL",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 332,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -3790,24 +3850,24 @@
           "arbeit": {
             "tag": "DIV",
             "text": "AKTIVITÄTEN Passend zum Reisetag Ubud · 12. Okt. Reisetag 12. Okt. 13. Okt. 19. Okt. An diesem Tag ist noch nichts eingeplant. Jetnity erfin",
-            "top": 437,
+            "top": 381,
             "left": 12,
             "width": 366,
             "height": 450,
-            "bottom": 887,
+            "bottom": 831,
             "right": 378,
             "intersectsViewport": true,
-            "fullyInViewport": false
+            "fullyInViewport": true
           },
           "arbeitName": "aktivitaeten",
           "arbeitHeading": {
             "tag": "H2",
             "text": "Passend zum Reisetag",
-            "top": 478,
+            "top": 422,
             "left": 33,
             "width": 209,
             "height": 28,
-            "bottom": 506,
+            "bottom": 450,
             "right": 242,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -3815,11 +3875,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "AKTIVITÄTEN",
-            "top": 458,
+            "top": 402,
             "left": 33,
             "width": 209,
             "height": 16,
-            "bottom": 474,
+            "bottom": 418,
             "right": 242,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -3858,12 +3918,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche st",
+                "text": "OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche startet erst, wenn ",
                 "top": 163,
                 "left": 12,
                 "width": 366,
-                "height": 258,
-                "bottom": 421,
+                "height": 202,
+                "bottom": 365,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -3944,14 +4004,14 @@
               "box": {
                 "tag": "DIV",
                 "text": "AKTIVITÄTEN Passend zum Reisetag Ubud · 12. Okt. Reisetag 12. Okt. 13. Okt. 19. Okt. An diesem Tag ist noch nichts eingeplant. Jetnity erfin",
-                "top": 437,
+                "top": 381,
                 "left": 12,
                 "width": 366,
                 "height": 450,
-                "bottom": 887,
+                "bottom": 831,
                 "right": 378,
                 "intersectsViewport": true,
-                "fullyInViewport": false
+                "fullyInViewport": true
               }
             },
             {
@@ -3975,7 +4035,7 @@
             "height": 844
           },
           "scrollY": 387,
-          "scrollHeight": 3843,
+          "scrollHeight": 3787,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -3990,12 +4050,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtba",
+            "text": "NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Such",
             "top": 163,
             "left": 12,
             "width": 366,
-            "height": 282,
-            "bottom": 445,
+            "height": 226,
+            "bottom": 389,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4003,11 +4063,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Mobilität",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 332,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4015,16 +4075,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 332,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -4040,11 +4103,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "Verbindungen Mietwagen DEINE VERBINDUNGEN Bestand und Status Noch keine Verbindung geplant Zürich → Ubud · 12. Okt. Noch offen Ubud → Singap",
-            "top": 461,
+            "top": 405,
             "left": 12,
             "width": 366,
             "height": 1942,
-            "bottom": 2403,
+            "bottom": 2347,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -4053,11 +4116,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Bestand und Status",
-            "top": 570,
+            "top": 514,
             "left": 33,
             "width": 208,
             "height": 28,
-            "bottom": 598,
+            "bottom": 542,
             "right": 241,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4065,11 +4128,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "DEINE VERBINDUNGEN",
-            "top": 550,
+            "top": 494,
             "left": 33,
             "width": 208,
             "height": 16,
-            "bottom": 566,
+            "bottom": 510,
             "right": 241,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4077,11 +4140,11 @@
           "erstesFeld": {
             "tag": "SELECT",
             "text": "Bahn Bus Fähre Transfer",
-            "top": 1540,
+            "top": 1484,
             "left": 33,
             "width": 324,
             "height": 44,
-            "bottom": 1584,
+            "bottom": 1528,
             "right": 357,
             "intersectsViewport": false,
             "fullyInViewport": false
@@ -4119,12 +4182,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtba",
+                "text": "NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Such",
                 "top": 163,
                 "left": 12,
                 "width": 366,
-                "height": 282,
-                "bottom": 445,
+                "height": 226,
+                "bottom": 389,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -4222,11 +4285,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "Verbindungen Mietwagen DEINE VERBINDUNGEN Bestand und Status Noch keine Verbindung geplant Zürich → Ubud · 12. Okt. Noch offen Ubud → Singap",
-                "top": 461,
+                "top": 405,
                 "left": 12,
                 "width": 366,
                 "height": 1942,
-                "bottom": 2403,
+                "bottom": 2347,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -4247,7 +4310,7 @@
             "height": 844
           },
           "scrollY": 387,
-          "scrollHeight": 2457,
+          "scrollHeight": 2401,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -4262,12 +4325,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
+            "text": "PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
             "top": 163,
             "left": 12,
             "width": 366,
-            "height": 314,
-            "bottom": 477,
+            "height": 258,
+            "bottom": 421,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4275,11 +4338,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "ZRH–DPS",
-            "top": 256,
+            "top": 200,
             "left": 29,
             "width": 332,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4287,16 +4350,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "PUNKT",
-            "top": 236,
+            "top": 180,
             "left": 29,
             "width": 332,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 361,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen Blick1 nur teilweise geplant · 2 noch offen · 1 noch unklar1 Punkt geplantJetzt wichtigWas jetzt Aufmerksamke",
@@ -4347,12 +4413,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
+                "text": "PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
                 "top": 163,
                 "left": 12,
                 "width": 366,
-                "height": 314,
-                "bottom": 477,
+                "height": 258,
+                "bottom": 421,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -4365,11 +4431,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Zürich → Ubud · 12. Okt. Ausgewählt Als gebucht m",
-                "top": 493,
+                "top": 437,
                 "left": 12,
                 "width": 366,
                 "height": 524,
-                "bottom": 1017,
+                "bottom": 961,
                 "right": 378,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -4419,8 +4485,8 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 1267,
-          "scrollHeight": 3063,
+          "scrollY": 1211,
+          "scrollHeight": 3007,
           "clientWidth": 390,
           "scrollWidth": 390,
           "horizontalOverflow": false,
@@ -4435,11 +4501,11 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhanden",
-            "top": -717,
+            "text": "TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhandene Einträge prüfen",
+            "top": -661,
             "left": 12,
             "width": 366,
-            "height": 282,
+            "height": 226,
             "bottom": -435,
             "right": 378,
             "intersectsViewport": false,
@@ -4470,6 +4536,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen Blick1 nur teilweise geplant · 2 noch offen · 1 noch unklar1 Punkt geplantJetzt wichtigWas jetzt Aufmerksamke",
@@ -4564,11 +4633,11 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhanden",
-                "top": -717,
+                "text": "TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhandene Einträge prüfen",
+                "top": -661,
                 "left": 12,
                 "width": 366,
-                "height": 282,
+                "height": 226,
                 "bottom": -435,
                 "right": 378,
                 "intersectsViewport": false,
@@ -4647,7 +4716,7 @@
             "width": 390,
             "height": 844
           },
-          "scrollY": 1100,
+          "scrollY": 1140,
           "scrollHeight": 3991,
           "clientWidth": 390,
           "scrollWidth": 390,
@@ -4665,14 +4734,17 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
-            "top": -621,
+            "top": -661,
             "left": 12,
             "width": 366,
             "height": 2460,
-            "bottom": 1838,
+            "bottom": 1798,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -4792,7 +4864,7 @@
             "text": "Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen",
             "type": "button"
           },
-          "scrollY": 1100
+          "scrollY": 1140
         }
       ],
       "fehler": []
@@ -4825,6 +4897,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -4926,7 +5001,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 2325,
+          "scrollHeight": 2269,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -4941,12 +5016,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 294,
-            "bottom": 457,
+            "height": 238,
+            "bottom": 401,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4954,11 +5029,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -4966,16 +5041,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -5026,12 +5104,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 294,
-                "bottom": 457,
+                "height": 238,
+                "bottom": 401,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5044,11 +5122,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 473,
+                "top": 417,
                 "left": 24,
                 "width": 720,
                 "height": 384,
-                "bottom": 857,
+                "bottom": 801,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5099,7 +5177,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 2689,
+          "scrollHeight": 2633,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -5114,12 +5192,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 234,
-            "bottom": 397,
+            "height": 178,
+            "bottom": 341,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5127,11 +5205,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5139,16 +5217,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -5164,11 +5245,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "FLÜGE Verbindungen für diese Reise Von Nach Hinflug Rückflug, optional Kabine Economy Premium Economy Business First Zwischenlandungen Alle ",
-            "top": 813,
+            "top": 757,
             "left": 24,
             "width": 720,
             "height": 408,
-            "bottom": 1221,
+            "bottom": 1165,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -5177,11 +5258,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Verbindungen für diese Reise",
-            "top": 862,
+            "top": 806,
             "left": 53,
             "width": 331,
             "height": 32,
-            "bottom": 894,
+            "bottom": 838,
             "right": 384,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5189,11 +5270,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "FLÜGE",
-            "top": 842,
+            "top": 786,
             "left": 53,
             "width": 331,
             "height": 16,
-            "bottom": 858,
+            "bottom": 802,
             "right": 384,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5201,11 +5282,11 @@
           "erstesFeld": {
             "tag": "INPUT",
             "text": "",
-            "top": 936,
+            "top": 880,
             "left": 53,
             "width": 325,
             "height": 44,
-            "bottom": 980,
+            "bottom": 924,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5243,12 +5324,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 234,
-                "bottom": 397,
+                "height": 178,
+                "bottom": 341,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5261,11 +5342,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 413,
+                "top": 357,
                 "left": 24,
                 "width": 720,
                 "height": 384,
-                "bottom": 797,
+                "bottom": 741,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5284,11 +5365,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "FLÜGE Verbindungen für diese Reise Von Nach Hinflug Rückflug, optional Kabine Economy Premium Economy Business First Zwischenlandungen Alle ",
-                "top": 813,
+                "top": 757,
                 "left": 24,
                 "width": 720,
                 "height": 408,
-                "bottom": 1221,
+                "bottom": 1165,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -5344,6 +5425,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -5467,7 +5551,7 @@
             "height": 1024
           },
           "scrollY": 419,
-          "scrollHeight": 2325,
+          "scrollHeight": 2269,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -5482,12 +5566,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
             "top": 151,
             "left": 24,
             "width": 720,
-            "height": 294,
-            "bottom": 445,
+            "height": 238,
+            "bottom": 389,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5495,11 +5579,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 244,
+            "top": 188,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 272,
+            "bottom": 216,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5507,16 +5591,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 224,
+            "top": 168,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 240,
+            "bottom": 184,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -5567,12 +5654,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen. Flug suchen",
                 "top": 151,
                 "left": 24,
                 "width": 720,
-                "height": 294,
-                "bottom": 445,
+                "height": 238,
+                "bottom": 389,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5585,11 +5672,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 461,
+                "top": 405,
                 "left": 24,
                 "width": 720,
                 "height": 384,
-                "bottom": 845,
+                "bottom": 789,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5651,7 +5738,7 @@
             "height": 1024
           },
           "scrollY": 420,
-          "scrollHeight": 2689,
+          "scrollHeight": 2633,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -5666,12 +5753,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+            "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
             "top": 150,
             "left": 24,
             "width": 720,
-            "height": 234,
-            "bottom": 384,
+            "height": 178,
+            "bottom": 328,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5679,11 +5766,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 243,
+            "top": 187,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 271,
+            "bottom": 215,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5691,16 +5778,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 223,
+            "top": 167,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 239,
+            "bottom": 183,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -5716,11 +5806,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "FLÜGE Verbindungen für diese Reise Von Nach Hinflug Rückflug, optional Kabine Economy Premium Economy Business First Zwischenlandungen Alle ",
-            "top": 800,
+            "top": 744,
             "left": 24,
             "width": 720,
             "height": 408,
-            "bottom": 1208,
+            "bottom": 1152,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -5729,11 +5819,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Verbindungen für diese Reise",
-            "top": 849,
+            "top": 793,
             "left": 53,
             "width": 331,
             "height": 32,
-            "bottom": 881,
+            "bottom": 825,
             "right": 384,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5741,11 +5831,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "FLÜGE",
-            "top": 829,
+            "top": 773,
             "left": 53,
             "width": 331,
             "height": 16,
-            "bottom": 845,
+            "bottom": 789,
             "right": 384,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5753,11 +5843,11 @@
           "erstesFeld": {
             "tag": "INPUT",
             "text": "",
-            "top": 923,
+            "top": 867,
             "left": 53,
             "width": 325,
             "height": 44,
-            "bottom": 967,
+            "bottom": 911,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5795,12 +5885,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
+                "text": "NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
                 "top": 150,
                 "left": 24,
                 "width": 720,
-                "height": 234,
-                "bottom": 384,
+                "height": 178,
+                "bottom": 328,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5813,11 +5903,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 400,
+                "top": 344,
                 "left": 24,
                 "width": 720,
                 "height": 384,
-                "bottom": 784,
+                "bottom": 728,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -5836,11 +5926,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "FLÜGE Verbindungen für diese Reise Von Nach Hinflug Rückflug, optional Kabine Economy Premium Economy Business First Zwischenlandungen Alle ",
-                "top": 800,
+                "top": 744,
                 "left": 24,
                 "width": 720,
                 "height": 408,
-                "bottom": 1208,
+                "bottom": 1152,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -5879,7 +5969,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 2875,
+          "scrollHeight": 2819,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -5894,12 +5984,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausd",
+            "text": "NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 234,
-            "bottom": 397,
+            "height": 178,
+            "bottom": 341,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5907,11 +5997,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Unterkunft",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5919,16 +6009,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -5944,11 +6037,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "UNTERKUNFT Ubud 12. Okt. – 16. Okt. · 4 Nächte Für Ubud fehlen noch belastbare Orts- oder Koordinatendaten. Jetnity rät deshalb keine feiner",
-            "top": 731,
+            "top": 675,
             "left": 24,
             "width": 720,
             "height": 676,
-            "bottom": 1407,
+            "bottom": 1351,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -5957,11 +6050,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Ubud",
-            "top": 780,
+            "top": 724,
             "left": 53,
             "width": 185,
             "height": 32,
-            "bottom": 812,
+            "bottom": 756,
             "right": 238,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -5969,11 +6062,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "UNTERKUNFT",
-            "top": 760,
+            "top": 704,
             "left": 53,
             "width": 185,
             "height": 16,
-            "bottom": 776,
+            "bottom": 720,
             "right": 238,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6012,12 +6105,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausd",
+                "text": "NOCH OFFEN Unterkunft Noch keine Unterkunft ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öffnen.",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 234,
-                "bottom": 397,
+                "height": 178,
+                "bottom": 341,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6047,11 +6140,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE UNTERKUNFT Nächte-Abdeckung 0 von 7 Nächten abgedeckt 12. Okt. – 16. Okt. · Ubud 4 Nächte fehlen Noch offen 19. Okt. – 22. Okt. · Sing",
-                "top": 413,
+                "top": 357,
                 "left": 24,
                 "width": 720,
                 "height": 302,
-                "bottom": 715,
+                "bottom": 659,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6081,11 +6174,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "UNTERKUNFT Ubud 12. Okt. – 16. Okt. · 4 Nächte Für Ubud fehlen noch belastbare Orts- oder Koordinatendaten. Jetnity rät deshalb keine feiner",
-                "top": 731,
+                "top": 675,
                 "left": 24,
                 "width": 720,
                 "height": 676,
-                "bottom": 1407,
+                "bottom": 1351,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -6118,7 +6211,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 2327,
+          "scrollHeight": 2271,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -6133,12 +6226,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche st",
+            "text": "OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche startet erst, wenn ",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 234,
-            "bottom": 397,
+            "height": 178,
+            "bottom": 341,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6146,11 +6239,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Aktivitäten",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6158,16 +6251,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "OPTIONAL",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -6183,11 +6279,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "AKTIVITÄTEN Passend zum Reisetag Ubud · 12. Okt. Reisetag 12. Okt. 13. Okt. 19. Okt. An diesem Tag ist noch nichts eingeplant. Jetnity erfin",
-            "top": 413,
+            "top": 357,
             "left": 24,
             "width": 720,
             "height": 446,
-            "bottom": 859,
+            "bottom": 803,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6196,11 +6292,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Passend zum Reisetag",
-            "top": 462,
+            "top": 406,
             "left": 53,
             "width": 251,
             "height": 32,
-            "bottom": 494,
+            "bottom": 438,
             "right": 304,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6208,11 +6304,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "AKTIVITÄTEN",
-            "top": 442,
+            "top": 386,
             "left": 53,
             "width": 251,
             "height": 16,
-            "bottom": 458,
+            "bottom": 402,
             "right": 304,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6251,12 +6347,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche st",
+                "text": "OPTIONAL Aktivitäten Noch keine Aktivität geplant Noch offen · kein Pflichtpunkt Aktivitäten sind freiwillig. Eine Suche startet erst, wenn ",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 234,
-                "bottom": 397,
+                "height": 178,
+                "bottom": 341,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6337,11 +6433,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "AKTIVITÄTEN Passend zum Reisetag Ubud · 12. Okt. Reisetag 12. Okt. 13. Okt. 19. Okt. An diesem Tag ist noch nichts eingeplant. Jetnity erfin",
-                "top": 413,
+                "top": 357,
                 "left": 24,
                 "width": 720,
                 "height": 446,
-                "bottom": 859,
+                "bottom": 803,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6368,7 +6464,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 3387,
+          "scrollHeight": 3331,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -6383,12 +6479,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtba",
+            "text": "NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Such",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 258,
-            "bottom": 421,
+            "height": 202,
+            "bottom": 365,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6396,11 +6492,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Mobilität",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6408,16 +6504,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen BlickNoch nichts ausgewählt0 Punkte geplantJetzt wichtigWas jetzt Aufmerksamkeit brauchtFlugstrecke noch offe",
@@ -6433,11 +6532,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "Verbindungen Mietwagen DEINE VERBINDUNGEN Bestand und Status Noch keine Verbindung geplant Zürich → Ubud · 12. Okt. Noch offen Ubud → Singap",
-            "top": 437,
+            "top": 381,
             "left": 24,
             "width": 720,
             "height": 1482,
-            "bottom": 1919,
+            "bottom": 1863,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -6446,11 +6545,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Bestand und Status",
-            "top": 554,
+            "top": 498,
             "left": 53,
             "width": 221,
             "height": 32,
-            "bottom": 586,
+            "bottom": 530,
             "right": 274,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6458,11 +6557,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "DEINE VERBINDUNGEN",
-            "top": 534,
+            "top": 478,
             "left": 53,
             "width": 221,
             "height": 16,
-            "bottom": 550,
+            "bottom": 494,
             "right": 274,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6470,11 +6569,11 @@
           "erstesFeld": {
             "tag": "SELECT",
             "text": "Bahn Bus Fähre Transfer",
-            "top": 1376,
+            "top": 1320,
             "left": 53,
             "width": 325,
             "height": 44,
-            "bottom": 1420,
+            "bottom": 1364,
             "right": 378,
             "intersectsViewport": false,
             "fullyInViewport": false
@@ -6512,12 +6611,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtba",
+                "text": "NOCH OFFEN Mobilität Noch keine Verbindung geplant Noch offen Vorhandene Verbindungen und manuelle Einträge bleiben sichtbar. Eine Live-Such",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 258,
-                "bottom": 421,
+                "height": 202,
+                "bottom": 365,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6615,11 +6714,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "Verbindungen Mietwagen DEINE VERBINDUNGEN Bestand und Status Noch keine Verbindung geplant Zürich → Ubud · 12. Okt. Noch offen Ubud → Singap",
-                "top": 437,
+                "top": 381,
                 "left": 24,
                 "width": 720,
                 "height": 1482,
-                "bottom": 1919,
+                "bottom": 1863,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -6640,7 +6739,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 2321,
+          "scrollHeight": 2265,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -6655,12 +6754,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
+            "text": "PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 290,
-            "bottom": 453,
+            "height": 234,
+            "bottom": 397,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6668,11 +6767,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "ZRH–DPS",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6680,16 +6779,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "PUNKT",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen Blick1 nur teilweise geplant · 2 noch offen · 1 noch unklar1 Punkt geplantJetzt wichtigWas jetzt Aufmerksamke",
@@ -6740,12 +6842,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
+                "text": "PUNKT ZRH–DPS Flug Ausgewählt Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot. Flug suchen",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 290,
-                "bottom": 453,
+                "height": 234,
+                "bottom": 397,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6758,11 +6860,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Zürich → Ubud · 12. Okt. Ausgewählt Als gebucht m",
-                "top": 469,
+                "top": 413,
                 "left": 24,
                 "width": 720,
                 "height": 384,
-                "bottom": 853,
+                "bottom": 797,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6813,7 +6915,7 @@
             "height": 1024
           },
           "scrollY": 407,
-          "scrollHeight": 2689,
+          "scrollHeight": 2633,
           "clientWidth": 768,
           "scrollWidth": 768,
           "horizontalOverflow": false,
@@ -6828,12 +6930,12 @@
           },
           "detail": {
             "tag": "SECTION",
-            "text": "Zurück zur Reise TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhanden",
+            "text": "TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhandene Einträge prüfen",
             "top": 163,
             "left": 24,
             "width": 720,
-            "height": 234,
-            "bottom": 397,
+            "height": 178,
+            "bottom": 341,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6841,11 +6943,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 256,
+            "top": 200,
             "left": 41,
             "width": 686,
             "height": 28,
-            "bottom": 284,
+            "bottom": 228,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6853,16 +6955,19 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "TEILWEISE OFFEN",
-            "top": 236,
+            "top": 180,
             "left": 41,
             "width": 686,
             "height": 16,
-            "bottom": 252,
+            "bottom": 196,
             "right": 727,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 1,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜbersichtDeine Reise auf einen Blick1 nur teilweise geplant · 2 noch offen · 1 noch unklar1 Punkt geplantJetzt wichtigWas jetzt Aufmerksamke",
@@ -6878,11 +6983,11 @@
           "arbeit": {
             "tag": "DIV",
             "text": "FLÜGE Verbindungen für diese Reise Von Nach Hinflug Rückflug, optional Kabine Economy Premium Economy Business First Zwischenlandungen Alle ",
-            "top": 813,
+            "top": 757,
             "left": 24,
             "width": 720,
             "height": 408,
-            "bottom": 1221,
+            "bottom": 1165,
             "right": 744,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -6891,11 +6996,11 @@
           "arbeitHeading": {
             "tag": "H2",
             "text": "Verbindungen für diese Reise",
-            "top": 862,
+            "top": 806,
             "left": 53,
             "width": 331,
             "height": 32,
-            "bottom": 894,
+            "bottom": 838,
             "right": 384,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6903,11 +7008,11 @@
           "arbeitEyebrow": {
             "tag": "P",
             "text": "FLÜGE",
-            "top": 842,
+            "top": 786,
             "left": 53,
             "width": 331,
             "height": 16,
-            "bottom": 858,
+            "bottom": 802,
             "right": 384,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6915,11 +7020,11 @@
           "erstesFeld": {
             "tag": "INPUT",
             "text": "",
-            "top": 936,
+            "top": 880,
             "left": 53,
             "width": 325,
             "height": 44,
-            "bottom": 980,
+            "bottom": 924,
             "right": 378,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -6957,12 +7062,12 @@
               "visible": true,
               "box": {
                 "tag": "DIV",
-                "text": "Zurück zur Reise TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhanden",
+                "text": "TEILWEISE OFFEN Flüge Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Nur teilweise geplant Du kannst vorhandene Einträge prüfen",
                 "top": 163,
                 "left": 24,
                 "width": 720,
-                "height": 234,
-                "bottom": 397,
+                "height": 178,
+                "bottom": 341,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6975,11 +7080,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Hinflug ausgewählt · Ubud → Singapur offen · Rückflug offen Zürich → Ubud · 12. Okt. Ausgewählt Als gebucht m",
-                "top": 413,
+                "top": 357,
                 "left": 24,
                 "width": 720,
                 "height": 384,
-                "bottom": 797,
+                "bottom": 741,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -6998,11 +7103,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "FLÜGE Verbindungen für diese Reise Von Nach Hinflug Rückflug, optional Kabine Economy Premium Economy Business First Zwischenlandungen Alle ",
-                "top": 813,
+                "top": 757,
                 "left": 24,
                 "width": 720,
                 "height": 408,
-                "bottom": 1221,
+                "bottom": 1165,
                 "right": 744,
                 "intersectsViewport": true,
                 "fullyInViewport": false
@@ -7058,6 +7163,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -7218,6 +7326,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -7237,7 +7348,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 1024,
@@ -7369,6 +7480,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -7531,6 +7645,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -7697,7 +7814,7 @@
             "width": 1024,
             "height": 768
           },
-          "scrollY": 1021,
+          "scrollY": 981,
           "scrollHeight": 3447,
           "clientWidth": 1024,
           "scrollWidth": 1024,
@@ -7715,14 +7832,17 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
-            "top": -429,
+            "top": -389,
             "left": 24,
             "width": 976,
             "height": 2338,
-            "bottom": 1909,
+            "bottom": 1949,
             "right": 1000,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -7888,6 +8008,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -8061,6 +8184,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -8278,6 +8404,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -8506,6 +8635,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -8745,6 +8877,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -9006,6 +9141,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -9168,6 +9306,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -9352,6 +9493,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -9512,6 +9656,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -9663,6 +9810,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -9825,6 +9975,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -10009,6 +10162,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -10131,7 +10287,7 @@
             "width": 1280,
             "height": 800
           },
-          "scrollY": 437,
+          "scrollY": 447,
           "scrollHeight": 3437,
           "clientWidth": 1280,
           "scrollWidth": 1280,
@@ -10148,11 +10304,11 @@
           "detail": {
             "tag": "SECTION",
             "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": 73,
+            "top": 63,
             "left": 604,
             "width": 652,
             "height": 294,
-            "bottom": 367,
+            "bottom": 357,
             "right": 1256,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -10160,11 +10316,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 166,
+            "top": 156,
             "left": 621,
             "width": 618,
             "height": 28,
-            "bottom": 194,
+            "bottom": 184,
             "right": 1239,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -10172,24 +10328,27 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 146,
+            "top": 136,
             "left": 621,
             "width": 618,
             "height": 16,
-            "bottom": 162,
+            "bottom": 152,
             "right": 1239,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
-            "top": 53,
+            "top": 43,
             "left": 24,
             "width": 556,
             "height": 2430,
-            "bottom": 2483,
+            "bottom": 2473,
             "right": 580,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -10222,11 +10381,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": 73,
+                "top": 63,
                 "left": 604,
                 "width": 652,
                 "height": 294,
-                "bottom": 367,
+                "bottom": 357,
                 "right": 1256,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -10239,11 +10398,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 383,
+                "top": 373,
                 "left": 604,
                 "width": 652,
                 "height": 384,
-                "bottom": 767,
+                "bottom": 757,
                 "right": 1256,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -10355,6 +10514,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -10572,6 +10734,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -10800,6 +10965,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -11039,6 +11207,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -11300,6 +11471,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -11462,6 +11636,9 @@
             "fullyInViewport": false
           },
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -11646,6 +11823,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -11806,6 +11986,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -11825,7 +12008,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
             "top": 0,
             "left": 0,
             "width": 1440,
@@ -11957,6 +12140,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -12119,6 +12305,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -12303,6 +12492,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -12425,7 +12617,7 @@
             "width": 1440,
             "height": 900
           },
-          "scrollY": 447,
+          "scrollY": 437,
           "scrollHeight": 3437,
           "clientWidth": 1440,
           "scrollWidth": 1440,
@@ -12442,11 +12634,11 @@
           "detail": {
             "tag": "SECTION",
             "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": 63,
+            "top": 73,
             "left": 684,
             "width": 652,
             "height": 294,
-            "bottom": 357,
+            "bottom": 367,
             "right": 1336,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -12454,11 +12646,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 156,
+            "top": 166,
             "left": 701,
             "width": 618,
             "height": 28,
-            "bottom": 184,
+            "bottom": 194,
             "right": 1319,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -12466,24 +12658,27 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 136,
+            "top": 146,
             "left": 701,
             "width": 618,
             "height": 16,
-            "bottom": 152,
+            "bottom": 162,
             "right": 1319,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
-            "top": 43,
+            "top": 53,
             "left": 104,
             "width": 556,
             "height": 2430,
-            "bottom": 2473,
+            "bottom": 2483,
             "right": 660,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -12516,11 +12711,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": 63,
+                "top": 73,
                 "left": 684,
                 "width": 652,
                 "height": 294,
-                "bottom": 357,
+                "bottom": 367,
                 "right": 1336,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -12533,11 +12728,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 373,
+                "top": 383,
                 "left": 684,
                 "width": 652,
                 "height": 384,
-                "bottom": 757,
+                "bottom": 767,
                 "right": 1336,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -12649,6 +12844,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -12866,6 +13064,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -13094,6 +13295,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -13333,6 +13537,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -13594,6 +13801,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -13756,6 +13966,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -13940,6 +14153,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -14100,6 +14316,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -14119,7 +14338,7 @@
           "erstesFeld": null,
           "header": {
             "tag": "HEADER",
-            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise fortsetzen",
+            "text": "Jetnity Entdecken Meine Reisen Jetnity Pro Reise planen",
             "top": 0,
             "left": 0,
             "width": 1920,
@@ -14251,6 +14470,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -14413,6 +14635,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -14597,6 +14822,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -14719,7 +14947,7 @@
             "width": 1920,
             "height": 1080
           },
-          "scrollY": 437,
+          "scrollY": 428,
           "scrollHeight": 3437,
           "clientWidth": 1920,
           "scrollWidth": 1920,
@@ -14736,11 +14964,11 @@
           "detail": {
             "tag": "SECTION",
             "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-            "top": 73,
+            "top": 82,
             "left": 924,
             "width": 652,
             "height": 294,
-            "bottom": 367,
+            "bottom": 376,
             "right": 1576,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -14748,11 +14976,11 @@
           "detailHeading": {
             "tag": "H2",
             "text": "Flüge",
-            "top": 166,
+            "top": 175,
             "left": 941,
             "width": 618,
             "height": 28,
-            "bottom": 194,
+            "bottom": 203,
             "right": 1559,
             "intersectsViewport": true,
             "fullyInViewport": true
@@ -14760,24 +14988,27 @@
           "detailEyebrow": {
             "tag": "P",
             "text": "NOCH OFFEN",
-            "top": 146,
+            "top": 155,
             "left": 941,
             "width": 618,
             "height": 16,
-            "bottom": 162,
+            "bottom": 171,
             "right": 1559,
             "intersectsViewport": true,
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
-            "top": 53,
+            "top": 62,
             "left": 344,
             "width": 556,
             "height": 2430,
-            "bottom": 2483,
+            "bottom": 2492,
             "right": 900,
             "intersectsViewport": true,
             "fullyInViewport": false
@@ -14810,11 +15041,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "Zurück zur Reise NOCH OFFEN Flüge Noch kein Flug ausgewählt Noch offen Du kannst vorhandene Einträge prüfen oder eine Suche ausdrücklich öff",
-                "top": 73,
+                "top": 82,
                 "left": 924,
                 "width": 652,
                 "height": 294,
-                "bottom": 367,
+                "bottom": 376,
                 "right": 1576,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -14827,11 +15058,11 @@
               "box": {
                 "tag": "DIV",
                 "text": "DEINE FLÜGE Bestand und Status Noch kein Flug ausgewählt Zürich → Ubud · 12. Okt. Noch offen Ubud → Singapur · 19. Okt. Noch offen Singapur ",
-                "top": 383,
+                "top": 392,
                 "left": 924,
                 "width": 652,
                 "height": 384,
-                "bottom": 767,
+                "bottom": 776,
                 "right": 1576,
                 "intersectsViewport": true,
                 "fullyInViewport": true
@@ -14943,6 +15174,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -15160,6 +15394,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -15388,6 +15625,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -15627,6 +15867,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick Noch nichts ausgewählt 0 Punkte geplant JETZT WICHTIG Was jetzt Aufmerksamkeit braucht Flugstrecke noc",
@@ -15888,6 +16131,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -16050,6 +16296,9 @@
             "fullyInViewport": true
           },
           "detailIdentitaetUnterAbdeckung": true,
+          "zurueckAnzahl": 1,
+          "zurueckInDetail": 1,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",
@@ -16234,6 +16483,9 @@
           "detailHeading": null,
           "detailEyebrow": null,
           "detailIdentitaetUnterAbdeckung": false,
+          "zurueckAnzahl": 0,
+          "zurueckInDetail": 0,
+          "zurueckSticky": 0,
           "uebersicht": {
             "tag": "DIV",
             "text": "ÜBERSICHT Deine Reise auf einen Blick 1 nur teilweise geplant · 2 noch offen · 1 noch unklar 1 Punkt geplant JETZT WICHTIG Was jetzt Aufmerk",

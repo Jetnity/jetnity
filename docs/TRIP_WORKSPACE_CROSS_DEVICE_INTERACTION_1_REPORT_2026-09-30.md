@@ -9,7 +9,8 @@ Branch: `fix/trip-workspace-cross-device-interaction-1`
 Baseline: `main@20bf11b0cf24460cf01d9dfe487b89bbfe555191`
 Rejected head: `b09957c6ae39f84a7eb557dde48313a57af73dd9`
 Integrated main: `ea6253d603e57cd19395cef951faabc75cb8ab3a` (merge-base, 0 behind)
-Product head measured for the R1 after pass: `3264a2ef18f81c84c5d059eabc178e2b2358f263`
+R1 product head: `3264a2ef18f81c84c5d059eabc178e2b2358f263`
+R2 product head measured for the after pass: `01f89e5f647533b251b0d39fe6a2e260fefca9ab`
 Agent: **Jetnity Trip Workspace cross-device interaction 1**, Generation 1
 Session: https://cursor.com/agents/bc-5a2210fe-59cf-44e2-8994-2217e427ff58
 `originalModelName`: `grok-4.7-high-fast`
@@ -37,11 +38,12 @@ One arrangement, shared by every domain:
 - Escape closes the domain and restores the invoking control. Reveal scrolling uses `behavior: 'instant'` so the global smooth-scroll rule cannot leave the correction half-finished.
 - Opening a gap still does not mount or run search. Search stays behind the explicit control.
 - R1: the reveal target is the domain eyebrow plus the heading. The scroll offset is the measured bottom of the sticky header and, when it touches that header, the compact return bar, plus 8px of clearance. It is not a fixed 72px or 96px guess. A second measurement runs after the first scroll, because the return bar can pin only once the page moves.
+- R2: below 1024px the sticky return bar is the only “Zurück zur Reise” control. The in-card control remains from 1024px up, where that bar is not mounted. Escape and focus restoration are unchanged.
 
 ## 4. After measurements
 
 After JSON: `docs/evidence/trip-workspace-cross-device-interaction-1/audit-after.json`
-R1 product SHA `3264a2ef18f81c84c5d059eabc178e2b2358f263`, captured `2026-09-30T11:42:49.862Z`. Dirty set was empty at capture. Chromium via Playwright. Synthetic guest trip. Provider routes intercepted with an unavailable payload. No live provider call.
+R2 product SHA `01f89e5f647533b251b0d39fe6a2e260fefca9ab`, captured `2026-09-30T12:08:50.259Z`. Dirty set was empty at capture. Chromium via Playwright. Synthetic guest trip. Provider routes intercepted with an unavailable payload. No live provider call.
 
 The earlier after file on `2fc4d8a7` is replaced by this pass. Baseline evidence stays historical.
 
@@ -67,8 +69,8 @@ At 1440×900 and 1920×1080 the detail title stays in view together with the sea
 
 | Check | Result |
 | --- | --- |
-| focused detail / workspace / interaction tests | 68/68 pass |
-| `npm test` | 4064/4064 pass |
+| focused detail / workspace / interaction tests | 69/69 pass |
+| `npm test` | 4065/4065 pass |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors, 145 existing warnings |
 | `npm run build` | pass |
