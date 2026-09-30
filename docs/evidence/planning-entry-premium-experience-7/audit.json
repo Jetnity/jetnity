@@ -1,0 +1,639 @@
+{
+  "head": "be627ffaea252f07f00ded033c8a9796f38da183",
+  "dirty": [
+    "?? docs/evidence/planning-entry-premium-experience-7/"
+  ],
+  "modellAktivErzwungenAus": true,
+  "szenen": [
+    {
+      "name": "320x568",
+      "overflow": 0,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "360x800",
+      "overflow": 0,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "375x812",
+      "overflow": 0,
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "390x844",
+      "overflow": 0,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "412x915",
+      "overflow": 0,
+      "scrollWidth": 412,
+      "clientWidth": 412,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "430x932",
+      "overflow": 0,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "768x1024",
+      "overflow": 0,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "820x1180",
+      "overflow": 0,
+      "scrollWidth": 820,
+      "clientWidth": 820,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "1024x768",
+      "overflow": 0,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "1280x800",
+      "overflow": 0,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "block",
+      "asidePosition": "sticky",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "1440x900",
+      "overflow": 0,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "block",
+      "asidePosition": "sticky",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "1728x1117",
+      "overflow": 0,
+      "scrollWidth": 1728,
+      "clientWidth": 1728,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "block",
+      "asidePosition": "sticky",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "1920x1080",
+      "overflow": 0,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "block",
+      "asidePosition": "sticky",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "landscape-844x390",
+      "overflow": 0,
+      "scrollWidth": 844,
+      "clientWidth": 844,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "landscape-812x375",
+      "overflow": 0,
+      "scrollWidth": 812,
+      "clientWidth": 812,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "360x800-text-200",
+      "overflow": 0,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "none",
+      "asidePosition": "static",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 32
+    },
+    {
+      "name": "1440x900-zoom-125",
+      "overflow": 0,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "block",
+      "asidePosition": "sticky",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    },
+    {
+      "name": "1440x900-zoom-150",
+      "overflow": 0,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "gruppen": [
+        {
+          "name": "Route & Ziele",
+          "vorhanden": true
+        },
+        {
+          "name": "Zeitraum",
+          "vorhanden": true
+        },
+        {
+          "name": "Reisende & Budget",
+          "vorhanden": true
+        },
+        {
+          "name": "Wünsche",
+          "vorhanden": true
+        }
+      ],
+      "asideDisplay": "block",
+      "asidePosition": "sticky",
+      "h1": "Beginnen wir mit deiner Reise.",
+      "schreiben": 0,
+      "klein": [],
+      "ueber": [],
+      "inputMinFont": 16
+    }
+  ],
+  "fluss": {
+    "nachBeispiel": "7 Tage Thailand ab Zürich, zwei Personen, maximal CHF 3’000, Strand, gutes Essen und nicht zu stressig.",
+    "schreibtNachBeispiel": 0,
+    "vorschauVorSubmit": 0,
+    "historyVor": 2,
+    "nachManuell": {
+      "hash": "#manuell-planen",
+      "aktiv": "manuell-planen",
+      "history": 2
+    },
+    "nachIdee": {
+      "hash": "#reise-beschreiben",
+      "aktiv": "reise-beschreiben"
+    },
+    "schreibtNachNavigation": 0,
+    "validierung": {
+      "aktiv": "feld-ziel",
+      "alert": "Bitte wähle ein Reiseziel aus der Liste."
+    },
+    "schreibtNachManuell": 0,
+    "vorTausch": "Japan",
+    "nachTausch": "Rom",
+    "extraNachTausch": "Japan",
+    "extrasNachEntfernen": 0,
+    "schreibtNachReorder": 0,
+    "nachEntwurf": {
+      "vorschau": 0,
+      "meldung": "Die intelligente Planung ist in dieser Umgebung noch nicht freigegeben. Deine Reise lässt sich unverändert über das Formular planen.",
+      "schreiben": 1
+    },
+    "blockiert": [],
+    "ortssuche": 2
+  },
+  "meta": [
+    {
+      "pfad": "/planen",
+      "status": 200,
+      "canonical": "https://jetnity.com/planen",
+      "robots": "noindex, nofollow",
+      "titel": "Reise planen – Jetnity",
+      "text": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen\n\nZWEI WEGE, EINE REISE\n\nIn eigenen Worten\nZuerst. Entwurf vor dem Speichern.\nSchritt für Schritt planen\nVollständig, ohne intelligente Planung.\nIntelligente Planung\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so, wie du sie einem Freund erzählen würdest. Jetnity macht daraus einen Entwurf mit Etappen und Tagesstruktur – und zeigt ihn dir, bevor etwas gespeichert wird.\n\nDeine Reise in eigenen Worten\n\nKurzbeispiele. Sie füllen nur das Feld und starten keine Planung.\n\nThailand\nPortugal\nSüdtirol\n\nDer Entwurf wird dir zuerst gezeigt. Gespeichert wird nichts ohne deine Freigabe.\n\nEntwurf erstellen\nODER SCH",
+      "idee": "",
+      "ziel": ""
+    },
+    {
+      "pfad": "/planen?idee=Sieben%20Tage%20Lissabon&ziel=Lissabon",
+      "status": 200,
+      "canonical": "https://jetnity.com/planen",
+      "robots": "noindex, nofollow",
+      "titel": "Reise planen – Jetnity",
+      "text": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nReise planen\n\nZWEI WEGE, EINE REISE\n\nIn eigenen Worten\nZuerst. Entwurf vor dem Speichern.\nSchritt für Schritt planen\nVollständig, ohne intelligente Planung.\nIntelligente Planung\nPrivater Reiseentwurf\nBeginnen wir mit deiner Reise.\n\nBeschreibe sie so, wie du sie einem Freund erzählen würdest. Jetnity macht daraus einen Entwurf mit Etappen und Tagesstruktur – und zeigt ihn dir, bevor etwas gespeichert wird.\n\nDeine Reise in eigenen Worten\n\nKurzbeispiele. Sie füllen nur das Feld und starten keine Planung.\n\nThailand\nPortugal\nSüdtirol\n\nDer Entwurf wird dir zuerst gezeigt. Gespeichert wird nichts ohne deine Freigabe.\n\nEntwurf erstellen\nODER SCHRITT FÜR ",
+      "idee": "Sieben Tage Lissabon",
+      "ziel": "Lissabon"
+    },
+    {
+      "pfad": "/planen?zielIds=geonames:2988507&zielId=geonames:3169070",
+      "status": 200,
+      "canonical": "https://jetnity.com/planen",
+      "robots": "noindex, nofollow",
+      "titel": "Reise planen – Jetnity",
+      "text": "Zum Inhalt\nEntdecken\nMeine Reisen\nJetnity Pro\nAnmelden\nReise planen\nDiese Route konnte nicht übernommen werden.\n\nDiese Routenangabe vermischt einzelne und mehrere Ziele. Bitte starte die Auswahl neu.\n\nZur Startseite\n\nDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.\n\ninfo@jetnity.ch\nPRODUKT\nReise planen\nMeine Reisen\nEntdecken\nJetnity Pro\nJETNITY\nDatenschutzerklärung\nNutzungsbedingungen / AGB\nImpressum\nAnmelden\n\n© 2026 Jetnity. Alle Rechte vorbehalten.\n\nOrtsdaten: GeoNames (CC BY 4.0)",
+      "idee": "",
+      "ziel": ""
+    }
+  ],
+  "gate": {
+    "hatBestehendeReise": true,
+    "hatFortsetzen": true,
+    "hatFormular": 0
+  },
+  "fehler": [],
+  "bestanden": true
+}

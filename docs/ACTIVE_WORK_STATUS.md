@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 1. Oktober 2026
-Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 IN PROGRESS ON DRAFT #669 / GATES NOT YET RECORDED IN THIS BLOCK / NOT A LAUNCH PASS / NOT READY / NOT MERGED**
+Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 DELIVERED FOR TL REVIEW ON DRAFT #669 / LOCAL GATES AND BROWSER AUDIT PASS / CI AUTH VERCEL NOT YET RECORDED ON THE EVIDENCE HEAD / NOT A LAUNCH PASS / NOT READY / NOT MERGED**
 
 ## 0-current. Planning Entry premium experience 7
 
@@ -9,9 +9,11 @@ Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 IN PROGRESS ON DRAFT #669
 - Baseline at dispatch: `main@2530020dbc6797b17d64c064ca5474cf90804272`. This session fetched `origin/main` and it was still that SHA. Re-fetch before review.
 - Logical agent **Jetnity Planning Entry premium experience 7**, Generation 1. Session https://cursor.com/agents/bc-02875182-8c02-42e9-8ec9-2eb2b9d3a621. `originalModelName=grok-4.7-high-fast`. Not Auto.
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- Scope is `/planen` creation-entry presentation only. Trip Workspace runtime, Reisevorbereitung, Organisieren, navbar, footer, favicon, homepage and package files stay untouched.
-- Implementation in this branch groups the manual planner, clarifies both creation paths, and keeps the model, preview, validation, create-gate, handoff, canonical/robots and persistence contracts. Exact-head tests, build, browser audit, CI, Auth and Vercel are **not yet recorded** in this block.
-- Cursor does not Ready or merge and does not start a follow-up slice. Stop remains an independent Technical-Lead code, visual, mobile and interaction review.
+- Scope is `/planen` creation-entry presentation only. Trip Workspace runtime, Reisevorbereitung, Organisieren, navbar, footer, favicon, homepage and package files were not edited.
+- Runtime audit head `be627ffaea252f07f00ded033c8a9796f38da183`. Local `npm test` 4108/4108, typecheck, lint with 0 errors, hygiene checks, and production build passed. Browser audit `bestanden: true` against `next start` with the model kill switch forced off. Evidence: `docs/evidence/planning-entry-premium-experience-7/`.
+- Canonical stayed `https://jetnity.com/planen`. This local production process is fail-closed `noindex, nofollow` on the base page because no indexing environment is configured. That is not a robots edit.
+- GitHub CI, Auth configuration, and Vercel on the pushed evidence head are **not yet recorded**. Do not treat local gates as those external gates.
+- Cursor does not Ready or merge and does not start a follow-up slice. Next step is independent Technical-Lead code, visual, mobile and interaction review.
 - #626 remains **OPEN / BLOCKED**. Do not retry it from this slice.
 
 ## 0-historical. Post-Homepage/Logo continuity — superseded as the current pointer
