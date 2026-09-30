@@ -22,11 +22,11 @@ Betriebsmodus beim Start: `NORMAL`. Diese Arbeit ist ein freigegebenes, begrenzt
 
 ## Exakter Kopf
 
-Merge-Base gegen `origin/main`: `20bf11b0cf24460cf01d9dfe487b89bbfe555191`. Vor dem Implementierungs-Commit lag der Branch 1 Commit vor `main` und 0 dahinter. Der Implementierungs-Commit und der Branch-Kopf nach dem Dokumentations-Nachzug stehen unten und werden vom Nachzug-Commit eingesetzt.
+Merge-Base gegen `origin/main`: `20bf11b0cf24460cf01d9dfe487b89bbfe555191`.
 
-- Implementierungs-Commit: `PENDING_CODE_HEAD`
-- Branch-Kopf: `PENDING_BRANCH_HEAD`
-- ahead/behind gegen `origin/main`: `PENDING_AHEAD` / `PENDING_BEHIND`
+- Gate-Head, Code und Evidenz: `2bd613aedf50673c173f94e3f47d5be5fb8e6a90`
+- Dieser Nachzug ändert nur dieses Handoff. `git diff 2bd613aedf50673c173f94e3f47d5be5fb8e6a90 HEAD -- components lib scripts` muss leer sein.
+- Nach dem Nachzug: 3 Commits vor `origin/main`, 0 dahinter. Der Review-Kopf ist der Branch-Tip.
 
 ## Geänderte Dateien
 
