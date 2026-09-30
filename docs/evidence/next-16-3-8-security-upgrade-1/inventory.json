@@ -1,0 +1,68 @@
+{
+  "slice": "next-16-3-8-security-upgrade-1",
+  "pins": {
+    "next": "16.3.8",
+    "eslintConfigNext": "16.3.8",
+    "react": "19.2.8",
+    "reactDom": "19.2.8"
+  },
+  "deployment": {
+    "vercelJson": true,
+    "pagesRouter": false,
+    "outputStandalone": false,
+    "cacheComponents": false,
+    "experimentalUseCache": false
+  },
+  "remotePatterns": [
+    {
+      "protocol": "https",
+      "hostname": "oaidalleapiprodscus.blob.core.windows.net",
+      "pathname": "/**",
+      "hostnameControl": "fixed-literal",
+      "dnsAssumption": "Microsoft Azure Blob DNS for the OpenAI DALL-E production account. Not an attacker-chosen host.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    },
+    {
+      "protocol": "https",
+      "hostname": "build-time NEXT_PUBLIC_SUPABASE_URL hostname, fallback example.supabase.co",
+      "pathname": "/storage/v1/object/public/**",
+      "hostnameControl": "fixed-at-build-from-public-env",
+      "dnsAssumption": "Operator-controlled Supabase project host. Not request-controlled.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    },
+    {
+      "protocol": "https",
+      "hostname": "jetnity.ai",
+      "pathname": "/static/avatars/**",
+      "hostnameControl": "fixed-literal",
+      "dnsAssumption": "First-party product domain. Not an attacker-chosen host.",
+      "callSites": [],
+      "runtimeImageUrlUsesHost": false,
+      "configChanged": false
+    }
+  ],
+  "inventory": {
+    "nextImageImports": [
+      "components/home/HomeHero.tsx",
+      "components/home/HomeInspiration.tsx",
+      "components/layout/Footer.tsx",
+      "components/layout/PublicNavbar.tsx"
+    ],
+    "nextOgImports": [],
+    "imageResponse": [],
+    "dynamicParams": [],
+    "generateStaticParams": [],
+    "useCacheDirectives": [],
+    "draftModeCalls": [],
+    "metadataImageRoutes": [],
+    "catchAllRoutes": [],
+    "dynamicSegments": [
+      "app/(public)/reisen/[tripId]"
+    ]
+  },
+  "failures": []
+}

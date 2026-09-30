@@ -1,0 +1,79 @@
+{
+  "classification": "expected-next-security-release-movement",
+  "directDependencyChanges": {
+    "next": [
+      "16.3.3",
+      "16.3.8"
+    ],
+    "eslint-config-next": [
+      "16.3.3",
+      "16.3.8"
+    ]
+  },
+  "unrelatedDirectDependencyChanges": [],
+  "packagePathChanges": [
+    {
+      "path": "node_modules/@next/env",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/eslint-plugin-next",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-darwin-arm64",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-darwin-x64",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-linux-arm64-gnu",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-linux-arm64-musl",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-linux-x64-gnu",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-linux-x64-musl",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-win32-arm64-msvc",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/@next/swc-win32-x64-msvc",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/eslint-config-next",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    },
+    {
+      "path": "node_modules/next",
+      "from": "16.3.3",
+      "to": "16.3.8"
+    }
+  ],
+  "addedPackagePaths": [],
+  "removedPackagePaths": [],
+  "note": "Every changed lockfile package path is next, eslint-config-next, or a matching @next/env, @next/eslint-plugin-next, or @next/swc platform package. No React, TypeScript, ESLint, Supabase, Playwright, or UI library movement."
+}
