@@ -64,12 +64,21 @@ import ReiseSicherheit from '@/components/trips/ReiseSicherheit'
 import ReisezeitHinweise from '@/components/trips/ReisezeitHinweise'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import TripWorkspaceDomainNavigation from '@/components/trips/TripWorkspaceDomainNavigation'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
+import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
-import TripWorkspaceUebersicht from '@/components/trips/TripWorkspaceUebersicht'
+import TripWorkspaceUebersicht, { TripWorkspaceAktionen } from '@/components/trips/TripWorkspaceUebersicht'
 import TripWorkspaceDetail from '@/components/trips/TripWorkspaceDetail'
+import {
+  modusAusAnfangsBereich,
+  modusAusQuery,
+  modusUrl,
+  type WorkspaceAnsicht,
+  type WorkspaceModus,
+} from '@/lib/trips/workspace-mode'
 import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
@@ -106,7 +115,11 @@ function bandVon(el: Element | null): AbdeckungsBand | null {
 
 /** Site-Header plus die kompakte Rückkehrleiste, wenn sie an der Kopfkante klebt. */
 function abdeckungUnten(): number {
-  const baender = [bandVon(document.querySelector('header')), bandVon(document.querySelector('nav[aria-label="Reise"]'))].filter(
+  const baender = [
+    bandVon(document.querySelector('header')),
+    bandVon(document.querySelector('[data-workspace-mode-nav]')),
+    bandVon(document.querySelector('nav[aria-label="Reise"]')),
+  ].filter(
     (band): band is AbdeckungsBand => band != null,
   )
   return abdeckungsKante(baender)
@@ -291,6 +304,11 @@ export default function TripWorkspace({
   )
   const weit = React.useSyncExternalStore(weiteAnsichtAbonnieren, weiteAnsichtLesen, () => false)
 
+  const [modus, setModus] = React.useState<WorkspaceModus>(() => modusAusAnfangsBereich(anfangsBereich))
+  const [modusBereit, setModusBereit] = React.useState(false)
+  const modusTastaturRef = React.useRef(false)
+  const vorherModusRef = React.useRef(modus)
+  const letzterBereichRef = React.useRef(modus.bereich)
   const [auswahl, setAuswahl] = React.useState<WorkspaceDetailAuswahl>(() =>
     detailAuswahlAusBereich(anfangsBereich),
   )
@@ -337,7 +355,9 @@ export default function TripWorkspace({
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
-  const detailOffen = bereinigt.art !== 'keine'
+  const detailOffen =
+    (modus.ansicht === 'organisieren' && modus.bereich != null && bereinigt.art === 'gap') ||
+    (modus.ansicht === 'plan' && bereinigt.art === 'item')
   const gewaehlterPunktId = bereinigt.art === 'item' ? bereinigt.itemId : undefined
 
   React.useEffect(() => {
@@ -353,13 +373,23 @@ export default function TripWorkspace({
   }, [kompakt])
 
   React.useLayoutEffect(() => {
+    if (!modusBereit) return
     const oeffnet = detailOffen && !vorherOffenRef.current
     const schliesst = !detailOffen && vorherOffenRef.current
     const sichtwechsel = detailOffen && vorherKompaktRef.current !== kompakt
 
     if (schliesst) {
       oeffnungsArbeitBeenden()
-      letzterAusloeserRef.current?.focus?.()
+      const ausloeser = letzterAusloeserRef.current
+      if (ausloeser?.isConnected) {
+        ausloeser.focus()
+      } else {
+        const bereich = letzterBereichRef.current
+        const knopf = bereich
+          ? document.querySelector(`[data-workspace-domain-nav] button[data-bereich="${bereich}"]`)
+          : null
+        if (knopf instanceof HTMLElement) knopf.focus()
+      }
     }
 
     if (oeffnet || sichtwechsel) {
@@ -395,20 +425,53 @@ export default function TripWorkspace({
 
     vorherOffenRef.current = detailOffen
     vorherKompaktRef.current = kompakt
+    letzterBereichRef.current = modus.bereich
     return () => {
       oeffnungsArbeitBeenden()
     }
-  }, [detailOffen, kompakt])
+  }, [detailOffen, kompakt, modus.bereich, modusBereit])
 
   const merkeAusloeser = () => {
     const aktiv = document.activeElement
     letzterAusloeserRef.current = aktiv instanceof HTMLElement ? aktiv : null
   }
 
+  const auswahlAusModus = (naechster: Pick<WorkspaceModus, 'ansicht' | 'bereich'>): WorkspaceDetailAuswahl => {
+    if (naechster.ansicht === 'organisieren' && naechster.bereich) return gapAuswahl(naechster.bereich)
+    return leereDetailAuswahl()
+  }
+
+  const historieSchreiben = (naechster: Pick<WorkspaceModus, 'ansicht' | 'bereich'>, art: 'push' | 'replace') => {
+    const url = modusUrl(window.location.href, naechster)
+    const jetzt = `${window.location.pathname}${window.location.search}${window.location.hash}`
+    if (url === jetzt) return
+    const stand = { jetnityWorkspaceModus: true }
+    if (art === 'push') window.history.pushState(stand, '', url)
+    else window.history.replaceState(stand, '', url)
+  }
+
+  const modusSetzen = (
+    naechster: WorkspaceModus,
+    art: 'push' | 'replace',
+    optionen?: { auswahl?: 'sync' | 'unverändert' },
+  ) => {
+    const gleich = modus.ansicht === naechster.ansicht && modus.bereich === naechster.bereich
+    if (!gleich) setModus({ ...naechster, urlAnpassen: false })
+    if (optionen?.auswahl !== 'unverändert') {
+      setAuswahl(auswahlAusModus(naechster))
+      if (naechster.bereich) {
+        setBestandBesucht((bisher) => besuchteDomainsErweitern(bisher, naechster.bereich))
+      }
+    }
+    historieSchreiben(naechster, art)
+  }
+
   const oeffneGap = (domain: DetailDomain, signalId?: string) => {
     merkeAusloeser()
+    modusTastaturRef.current = false
     setAuswahl(gapAuswahl(domain, signalId))
     setBestandBesucht((bisher) => besuchteDomainsErweitern(bisher, domain))
+    modusSetzen({ ansicht: 'organisieren', bereich: domain, urlAnpassen: false }, 'push', { auswahl: 'unverändert' })
   }
 
   const oeffneItem = (itemId: string) => {
@@ -420,6 +483,9 @@ export default function TripWorkspace({
 
   const schliessen = () => {
     setAuswahl(leereDetailAuswahl())
+    if (modus.ansicht === 'organisieren' && modus.bereich) {
+      modusSetzen({ ansicht: 'organisieren', bereich: null, urlAnpassen: false }, 'push', { auswahl: 'unverändert' })
+    }
   }
 
   const sucheAusdruecklich = (vonTastatur = false) => {
@@ -433,12 +499,41 @@ export default function TripWorkspace({
   const onAttention = (aktion: AttentionAktion) => {
     const ziel = attentionAktionAlsDetail(aktion)
     if (ziel === 'reise') {
-      schliessen()
-      document.getElementById('reisevorbereitung-titel')?.scrollIntoView({ block: 'start' })
+      modusTastaturRef.current = false
+      setAuswahl(leereDetailAuswahl())
+      modusSetzen({ ansicht: 'vorbereitung', bereich: null, urlAnpassen: false }, 'push')
       return
     }
     if (ziel && ziel.art === 'gap') oeffneGap(ziel.domain, ziel.signalId)
   }
+
+  const onModus = (ansicht: WorkspaceAnsicht, tastatur: boolean) => {
+    modusTastaturRef.current = tastatur
+    modusSetzen({ ansicht, bereich: null, urlAnpassen: false }, 'push')
+  }
+
+  React.useEffect(() => {
+    const anwenden = (art: 'mount' | 'pop') => {
+      const params = new URLSearchParams(window.location.search)
+      const gelesen = modusAusQuery(params)
+      const besitzt = params.has('ansicht') || params.has('bereich')
+      if (art === 'mount' && !besitzt && !gelesen.urlAnpassen) return
+      if (art === 'pop') modusTastaturRef.current = true
+      setModus({ ansicht: gelesen.ansicht, bereich: gelesen.bereich, urlAnpassen: false })
+      setAuswahl(auswahlAusModus(gelesen))
+      if (gelesen.bereich) {
+        setBestandBesucht((bisher) => besuchteDomainsErweitern(bisher, gelesen.bereich))
+      }
+      if (gelesen.urlAnpassen) historieSchreiben(gelesen, 'replace')
+    }
+    anwenden('mount')
+    setModusBereit(true)
+    const onPop = () => anwenden('pop')
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+    // Die History-Lesung hängt nur an der ersten Montage und an popstate.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const aenderungOeffnen = () => {
     const naechster = !aenderungOffen
@@ -484,8 +579,8 @@ export default function TripWorkspace({
   const gap = bereinigt.art === 'gap' ? gapDetailAbleiten(reise, ungeplantePunkte, bereinigt.domain) : null
   const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
   const aktiveDomain = detailDomainVon(bereinigt, reise, ungeplantePunkte)
-  const uebersichtVerborgen = kompakt && detailOffen
   const detailVerborgen = !detailOffen
+  const domainNavSichtbar = modus.ansicht === 'organisieren' && !(kompakt && detailOffen)
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
   const reisezeit = <ReisezeitHinweise reise={reise} evaluations={seasonalEvaluations} />
@@ -563,7 +658,11 @@ export default function TripWorkspace({
   const aktivitaetenSucheBereit = sucheSollMounten('aktivitaeten', bereinigt, sucheBesucht, reise, ungeplantePunkte)
 
   const sucheSichtbar = sucheIstOffen(bereinigt)
-  const anordnung = domainAnordnung({ kompakt, detailOffen, weit })
+  const anordnung = domainAnordnung({
+    kompakt,
+    detailOffen: modus.ansicht === 'organisieren' && modus.bereich != null && detailOffen,
+    weit,
+  })
   const rasterKlasse = domainRasterKlasse(anordnung, sucheSichtbar)
 
   React.useEffect(() => {
@@ -602,6 +701,22 @@ export default function TripWorkspace({
     feld?.focus({ preventScroll: true })
   }, [sucheSichtbar])
 
+  React.useLayoutEffect(() => {
+    if (!modusBereit) return
+    const vorher = vorherModusRef.current
+    const geaendert = vorher.ansicht !== modus.ansicht || vorher.bereich !== modus.bereich
+    vorherModusRef.current = modus
+    if (!geaendert) return
+    const tastatur = modusTastaturRef.current
+    modusTastaturRef.current = false
+    if (modus.ansicht === 'organisieren' && modus.bereich) return
+    if (modus.ansicht === 'plan' && detailOffen) return
+    const heading = document.querySelector('[data-workspace-modus-heading]')
+    if (!(heading instanceof HTMLElement)) return
+    arbeitsflaecheZeigen(heading)
+    if (tastatur) heading.focus({ preventScroll: true })
+  }, [modus, modusBereit, detailOffen])
+
   return (
     <main className="min-h-screen bg-surface-75 pb-20 [overflow-anchor:none]">
       <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
@@ -623,6 +738,28 @@ export default function TripWorkspace({
           kopfzeile={kopfzeile}
         />
 
+        {modusBereit ? (
+          <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
+            <TripWorkspaceModeNavigation
+              ansicht={modus.ansicht}
+              kompakt={kompakt}
+              detailOffen={detailOffen}
+              onWechsel={onModus}
+            />
+            <TripWorkspaceAktionen
+              aenderungOffen={aenderungOffen}
+              begleiterOffen={begleiterOffen}
+              begleiterVorhanden={begleiter != null}
+              onAenderung={aenderungOeffnen}
+              onBegleiter={begleiterOeffnen}
+              aenderungKnopfRef={aenderungKnopfRef}
+              begleiterKnopfRef={begleiterKnopfRef}
+            />
+            {aenderungFeld}
+            {begleiterFeld}
+          </div>
+        ) : null}
+
         {kompakt && detailOffen ? (
           <div
             ref={detailAnkerRef}
@@ -635,34 +772,82 @@ export default function TripWorkspace({
         <TripWorkspaceNavigation sichtbar={kompakt && detailOffen} onZurueck={schliessen} zurueckRef={zurueckRef} />
 
         <div className={rasterKlasse} data-workspace-split={anordnung}>
-          <FlaecheHuelle name="uebersicht" verborgen={uebersichtVerborgen}>
-            <TripWorkspaceUebersicht
-              reise={reise}
-              uebersicht={uebersicht}
-              attention={attention}
-              destinationEssentials={destinationEssentials}
-              aenderungOffen={aenderungOffen}
-              begleiterOffen={begleiterOffen}
-              begleiterVorhanden={begleiter != null}
-              onLuecke={oeffneGap}
-              onAttention={onAttention}
-              onAenderung={aenderungOeffnen}
-              onBegleiter={begleiterOeffnen}
-              aenderungKnopfRef={aenderungKnopfRef}
-              begleiterKnopfRef={begleiterKnopfRef}
-              plan={plan}
-              aenderungFeld={aenderungFeld}
-              begleiterFeld={begleiterFeld}
-              vorbereitung={vorbereitung}
-              sicherheit={sicherheit}
-              reisezeit={reisezeit}
-            />
-          </FlaecheHuelle>
+          {modusBereit && modus.ansicht === 'uebersicht' ? (
+            <FlaecheHuelle name="uebersicht" verborgen={false}>
+              <TripWorkspaceUebersicht
+                reise={reise}
+                uebersicht={uebersicht}
+                attention={attention}
+                destinationEssentials={destinationEssentials}
+                onLuecke={oeffneGap}
+                onAttention={onAttention}
+              />
+            </FlaecheHuelle>
+          ) : null}
+
+          {modusBereit && modus.ansicht === 'plan' ? (
+            <section aria-labelledby="workspace-plan-titel" className="mt-5 min-w-0" data-workspace-modus="plan">
+              <h2
+                id="workspace-plan-titel"
+                tabIndex={-1}
+                data-workspace-modus-heading
+                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+              >
+                Reiseplan
+              </h2>
+              {plan}
+            </section>
+          ) : null}
+
+          {domainNavSichtbar ? (
+            <section aria-labelledby="workspace-organisieren-titel" className="mt-5 min-w-0" data-workspace-modus="organisieren">
+              <h2
+                id="workspace-organisieren-titel"
+                tabIndex={-1}
+                data-workspace-modus-heading
+                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+              >
+                Organisieren
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-ink-800">
+                Wähle einen Bereich. Eine Suche startet erst, wenn du sie ausdrücklich öffnest.
+              </p>
+              <div className="mt-4">
+                <TripWorkspaceDomainNavigation
+                  abdeckungen={uebersicht.abdeckungen}
+                  aktiv={modus.bereich}
+                  onWaehlen={(domain) => oeffneGap(domain)}
+                />
+              </div>
+            </section>
+          ) : null}
+
+          {modusBereit && modus.ansicht === 'vorbereitung' ? (
+            <section
+              aria-labelledby="workspace-vorbereitung-titel"
+              className="mt-5 grid min-w-0 gap-4"
+              data-workspace-modus="vorbereitung"
+            >
+              <h2
+                id="workspace-vorbereitung-titel"
+                tabIndex={-1}
+                data-workspace-modus-heading
+                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+              >
+                Vorbereitung
+              </h2>
+              {sicherheit}
+              {reisezeit}
+              {vorbereitung}
+            </section>
+          ) : null}
 
           <div
             data-workspace-active-domain={detailOffen ? (aktiveDomain ?? 'offen') : 'aus'}
             data-workspace-anordnung={anordnung}
+            hidden={!detailOffen}
             className="min-w-0"
+            ref={(el) => setzeInert(el, !detailOffen)}
             onKeyDown={(ereignis) => {
               if (ereignis.key !== 'Escape' || !detailOffen) return
               ereignis.stopPropagation()
