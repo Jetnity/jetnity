@@ -21,8 +21,8 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Baseline: `main@91ab08bb9163444fcbce4a5303c1522c5ad5498c`
 - Task seed: `711ea1a0392d2a97f3d5ec00536abecb4cb32923`
 - Audited runtime head: `bc718c68ac498d8ba6ed9d6d83bfca0172aa715d`
-- Merge-base with `origin/main` at the runtime commit: `91ab08bb9163444fcbce4a5303c1522c5ad5498c`, 0 behind, 2 ahead
-- This handoff lives in the docs/evidence commit whose parent is that runtime head. Re-fetch the branch tip before review. That tip does not change workspace components. CI and Preview must match the tip. Any new head invalidates the previous gates.
+- Merge-base with `origin/main` at the runtime commit: `91ab08bb9163444fcbce4a5303c1522c5ad5498c`, 0 behind, 2 ahead. The evidence commit is 3 ahead. The remote-observation note is one docs commit after that.
+- Evidence commit `cb666be2a01bca394624e0e98c11af0045ddb434` sits on the runtime head. The note after it does not change workspace components. Re-fetch the branch tip before review. CI and Preview must match that tip. Any new head invalidates the previous gates.
 - `docs/ACTIVE_WORK_STATUS.md` on this branch names this writer while Draft #642 is open. The previous “no active product writer” sentence stays as the historical Preflight 3 persist.
 
 ## Changed files against main
@@ -41,7 +41,7 @@ Docs seed, already in `711ea1a0`:
 
 - `docs/TRIP_WORKSPACE_INFORMATION_ARCHITECTURE_2_TASK_2026-09-30.md`
 
-Docs and evidence, this commit only:
+Docs and evidence, in `cb666be2`. The following note only updates the report, this handoff and `docs/ACTIVE_WORK_STATUS.md`:
 
 - `docs/TRIP_WORKSPACE_INFORMATION_ARCHITECTURE_2_REPORT_2026-09-30.md`
 - `docs/TRIP_WORKSPACE_INFORMATION_ARCHITECTURE_2_SELF_REVIEW_2026-09-30.md`
@@ -61,6 +61,15 @@ Docs and evidence, this commit only:
 | Did a mode change call a provider? | Every after `netz` list is empty, including `flug-suchen` |
 | Does history restore? | `history-fluege`, `history-back-overview`, `history-forward-plan`, `reload-plan`, `deeplink-unterkunft`, `invalid-query` |
 | Do #638 compact rules still hold? | 360 `flug-suchen`: return bottom 134, eyebrow 142, heading 162, `zurueckAnzahl` 1, `zurueckSticky` 1, `zurueckInDetail` 0 |
+
+## Remote observation
+
+Read after `cb666be2a01bca394624e0e98c11af0045ddb434` was pushed. This is not a Technical-Lead PASS. A later head needs its own read.
+
+- GitHub Actions `36726836194`: Auth-Konfiguration gegen config.toml pass; Typecheck, Lint & Build pass in 3m2s.
+- Vercel commit status success, “Deployment has completed”. Inspector: https://vercel.com/jetnity-e1b93c82/jetnity-app/RKPbLLotFWDmpHD8MrLTQcnWYjr8
+- Preview deployment `6761504763` success: https://jetnity-h65f07jtd-jetnity-e1b93c82.vercel.app
+- This browser session did not open that Preview.
 
 ## Not done by Cursor
 

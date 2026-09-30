@@ -82,7 +82,7 @@ The guest route has no assistant control. Guest and account still mount the same
 
 `check:schema-bezug` still prints the existing local/unapplied `admin_account_counts_v1` note and exits 0. This slice did not touch that path.
 
-CI, Auth configuration and Vercel Preview are not claimed from this local run. The Vercel comment already on #642 belongs to the docs seed, not to `bc718c68`.
+Local checks above are not the remote gate. After `cb666be2` was pushed, GitHub Actions `36726836194` passed Auth and Typecheck, Lint & Build, and Vercel reported the Preview deployment `6761504763` complete. The handoff records the URLs. That observation is not a Technical-Lead PASS, and it does not approve a later head. The earlier Vercel comment on #642 belongs to the docs seed.
 
 ## 6. Boundaries held
 
