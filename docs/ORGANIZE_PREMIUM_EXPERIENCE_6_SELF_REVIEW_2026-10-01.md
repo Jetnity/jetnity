@@ -13,12 +13,12 @@ Checked against `docs/ORGANIZE_PREMIUM_EXPERIENCE_6_TASK_2026-10-01.md`.
 - Repeated lage wording is dropped only when the same clause is already visible. Coverage sentences, “kein Pflichtpunkt”, flight-covered notes and the explicit-search sentence stay.
 - Opening a domain did not call a provider. Flight search mounted without a request. `POST /api/flights/search` happened on “Flüge suchen”. Hotel, activity and mobility requests happened only on their existing explicit actions.
 - Forms gained groups only. Payloads in `FlugSuche`, `MobilitaetBereich` and `MietwagenBereich` were not edited.
-- 360, 390, 768x1024, 1024x768, 1440x900, 1920x1080 and 200% at 360 had no horizontal overflow in the audit.
+- The device addendum in PR comment `5920703563` was measured: 320, 360, 375, 390, 412, 430, landscape 844×390, 768, 820, 1024, 1280, 1440, 1728, 1920, 200% at 360, zoom 125% and 150% at 1440, and reduced motion. No horizontal overflow. Workspace touch targets were at least 44px.
 
 ## Not claimed
 
 - Independent review
-- Exact-head CI, Auth or Vercel on the tip after the evidence commit
+- CI on a tip newer than `1397b243`. That SHA is success: run `36785724060`, Auth job `110126535130`, Vercel inspector `W83cnK1bneCNnM8TQkD2rxCr5TBi`.
 - Physical device
 - Signed-in workspace
 - Sticky rail. It would need the parent scroll-offset measurement, which is outside this slice.

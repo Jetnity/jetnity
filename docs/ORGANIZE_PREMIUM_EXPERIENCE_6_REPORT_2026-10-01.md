@@ -34,7 +34,9 @@ The rail is not sticky. `TripWorkspace` measures sticky header, mode nav and the
 Production-like Chrome audit, `next start` on `http://127.0.0.1:3456`, `JETNITY_UI_AUDIT=1`. Provider routes intercepted. Synthetic trip only. Not a signed-in account and not a physical device.
 
 Evidence: `docs/evidence/organize-premium-experience-6/audit.json`
-PASS at `2026-09-30T22:26:21.435Z`. The JSON `sha` is `0dcaa7665c4382064365ace3ee9cbb5801511eee` because the script stamps `git rev-parse HEAD`. That commit is the Organisieren runtime. The later evidence commit adjusts the audit so 16px is required on compact and 200% text, not on a fine desktop pointer, and does not change the workspace runtime.
+PASS at `2026-09-30T22:33:48.739Z`, 40 steps. The JSON `sha` is `1397b243d24b31d8112caa9abe73eb4f0f726f67` because the script stamps `git rev-parse HEAD`. That SHA is the docs tip that was current during the run. The Organisieren runtime is `0dcaa7665c4382064365ace3ee9cbb5801511eee`. This matrix run does not change that runtime.
+
+The Product Owner device addendum on PR #667, comment `5920703563`, is included: 320×568, 360×800, 375×812, 390×844, 412×915, 430×932, phone landscape 844×390, 768×1024, 820×1180, 1024×768, 1280×800, 1440×900, 1728×1117, 1920×1080, 200% text at 360, CSS zoom 125% and 150% at 1440, and reduced motion at 390. No page overflow. Touch targets inside the workspace were at least 44px. Compact inputs stayed at least 16px. Reduced motion had no running animation and no provider call.
 
 | Check | Result |
 | --- | --- |
@@ -61,11 +63,20 @@ PASS at `2026-09-30T22:26:21.435Z`. The JSON `sha` is `0dcaa7665c4382064365ace3e
 | `npm run build` | pass, Next.js 16.3.8, 25 static pages. Setup check warns that no `.env` / `.env.local` exists. |
 | `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:operating-mode` | pass |
 | `check:schema-bezug` | exit 0. Existing note: local/unapplied `admin_account_counts_v1`. Not part of this slice. |
-| Organize audit | PASS, `2026-09-30T22:26:21.435Z`, JSON sha `0dcaa766` |
+| Organize audit | PASS, `2026-09-30T22:33:48.739Z`, JSON sha `1397b243`, 40 steps including the device addendum |
 
 `origin/main` at delivery was still `2530020dbc6797b17d64c064ca5474cf90804272`. This branch was 0 behind. No main integration was required.
 
-Exact-head CI, Auth and Vercel Preview belong to the pushed tip. They are not claimed here until this session re-reads them.
+Exact-head CI on `1397b243d24b31d8112caa9abe73eb4f0f726f67`, run `36785724060`, re-read in this session:
+
+| Check | Result |
+| --- | --- |
+| CI / Typecheck, Lint & Build | success, job `110126534819`, completed `2026-09-30T22:31:04Z` |
+| CI / Auth-Konfiguration gegen config.toml | success, job `110126535130`, completed `2026-09-30T22:28:29Z` |
+| Vercel | success, “Deployment has completed”, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/W83cnK1bneCNnM8TQkD2rxCr5TBi` |
+| Preview | `https://jetnity-app-git-feat-organize-premium-e-e055c9-jetnity-e1b93c82.vercel.app`, comment `5920624720` updated `2026-09-30T22:28:28Z` |
+
+PR #667 stayed draft. This evidence commit is audit and documentation. It does not change the Organisieren runtime. Re-read CI on the tip after it.
 
 ## 4. Parallel safety
 

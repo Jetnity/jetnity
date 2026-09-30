@@ -17,11 +17,13 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Session: https://cursor.com/agents/bc-c0cf7301-3a42-4fb8-a8db-6522a435926f
 - `originalModelName`: `grok-4.7-high-fast`
 - Baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-- Runtime commit audited: `0dcaa7665c4382064365ace3ee9cbb5801511eee`
-- Audit: PASS `2026-09-30T22:26:21.435Z`, JSON sha `0dcaa7665c4382064365ace3ee9cbb5801511eee`
+- Runtime commit: `0dcaa7665c4382064365ace3ee9cbb5801511eee`
+- Device-matrix audit: PASS `2026-09-30T22:33:48.739Z`, JSON sha `1397b243d24b31d8112caa9abe73eb4f0f726f67`, 40 steps
+- Exact-head CI on `1397b243d24b31d8112caa9abe73eb4f0f726f67`: run `36785724060` success. Typecheck, Lint & Build job `110126534819`. Auth job `110126535130`. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/W83cnK1bneCNnM8TQkD2rxCr5TBi`. Preview `https://jetnity-app-git-feat-organize-premium-e-e055c9-jetnity-e1b93c82.vercel.app`.
+- Product Owner device addendum: PR comment `5920703563`. Covered in the 40-step audit. No second information architecture.
 - `origin/main` re-read in this session: `2530020dbc6797b17d64c064ca5474cf90804272`, branch 0 behind
 
-Re-fetch the tip before review. The evidence commit after `0dcaa766` records the audit and docs. It does not change Organisieren behavior. Exact-head CI, Auth and Vercel are a Technical-Lead gate on the tip, not on `0dcaa766` alone if the tip has moved.
+Re-fetch the tip before review. The commit after `1397b243` records the device matrix and this CI readback. It does not change Organisieren behavior. CI on `1397b243` is not the gate for a later tip.
 
 ## Do not treat as accepted
 

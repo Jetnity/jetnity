@@ -15,11 +15,19 @@ const SHA = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim()
 const NETZ_MUSTER = /\/api\/(flights|hotels|activities|mobility|rental-cars)\b/
 
 const VIEWPORTS = [
+  { name: '320x568', width: 320, height: 568, hasTouch: true },
   { name: '360x800', width: 360, height: 800, hasTouch: true },
+  { name: '375x812', width: 375, height: 812, hasTouch: true },
   { name: '390x844', width: 390, height: 844, hasTouch: true },
+  { name: '412x915', width: 412, height: 915, hasTouch: true },
+  { name: '430x932', width: 430, height: 932, hasTouch: true },
+  { name: 'landscape-844x390', width: 844, height: 390, hasTouch: true },
   { name: '768x1024', width: 768, height: 1024, hasTouch: true },
+  { name: '820x1180', width: 820, height: 1180, hasTouch: true },
   { name: '1024x768', width: 1024, height: 768, hasTouch: false },
+  { name: '1280x800', width: 1280, height: 800, hasTouch: false },
   { name: '1440x900', width: 1440, height: 900, hasTouch: false },
+  { name: '1728x1117', width: 1728, height: 1117, hasTouch: false },
   { name: '1920x1080', width: 1920, height: 1080, hasTouch: false },
 ]
 
@@ -122,7 +130,12 @@ function messenQuelle() {
       inputs: [...document.querySelectorAll('input, textarea, select')].filter(sichtbar).map((el) => ({
         px: Number.parseFloat(getComputedStyle(el).fontSize),
       })),
-      ziele: [...document.querySelectorAll('button, a, input, select, textarea')].filter(sichtbar).map((el) => Math.round(el.getBoundingClientRect().height)).filter((hoehe) => hoehe > 0 && hoehe < 44),
+      ziele: [...document.querySelectorAll('main button, main a, main input, main select, main textarea')].filter(sichtbar).map((el) => {
+        const r = el.getBoundingClientRect()
+        return { text: text(el).slice(0, 40), height: Math.round(r.height), width: Math.round(r.width) }
+      }).filter((eintrag) => eintrag.height > 0 && (eintrag.height < 44 || eintrag.width < 44)),
+      motion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      animationen: [...document.querySelectorAll('*')].filter(sichtbar).map((el) => getComputedStyle(el).animationName).filter((name) => name && name !== 'none'),
     }
   }`
 }
@@ -241,6 +254,9 @@ try {
       merke(flug.flugSichtbar === false, `${viewport.name}: Flugsuche sichtbar ohne Aktion`)
       merke(netz.length === 0, `${viewport.name}: Anbieter beim Öffnen`)
       merke(flug.horizontalOverflow === false, `${viewport.name}: Überlauf im Flugdetail`)
+      if (viewport.hasTouch) {
+        merke(flug.ziele.length === 0, `${viewport.name}: Ziel unter 44px ${flug.ziele.map((eintrag) => `${eintrag.text}:${eintrag.width}x${eintrag.height}`).join(',')}`)
+      }
       if (kompakt) {
         merke(flug.rail === false, `${viewport.name}: Telefon zeigt die Leiste neben dem Detail`)
         merke(flug.split === 'einspaltig', `${viewport.name}: Split ${flug.split}`)
@@ -397,8 +413,69 @@ try {
     await context.close()
   }
 
-  await ablauf(VIEWPORTS[1], 'compact')
-  await ablauf(VIEWPORTS[4], 'wide')
+  await ablauf(VIEWPORTS.find((eintrag) => eintrag.name === '390x844'), 'compact')
+  await ablauf(VIEWPORTS.find((eintrag) => eintrag.name === '1440x900'), 'wide')
+
+  const reduziert = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    deviceScaleFactor: 1,
+    reducedMotion: 'reduce',
+  })
+  const reduziertPage = await reduziert.newPage()
+  const reduziertNetz = []
+  await abfangen(reduziertPage, reduziertNetz)
+  try {
+    await auditOeffnen(reduziertPage, '?ansicht=organisieren&bereich=fluege')
+    await reduziertPage.waitForFunction(() => document.querySelector('[data-detail-domain="fluege"]'))
+    const bewegung = await stand(reduziertPage)
+    await bild(reduziertPage, 'reduced-motion_390')
+    schritte.push({ name: 'reduced-motion_390', ...bewegung, netz: netzArten(reduziertNetz) })
+    merke(bewegung.motion === true, 'reduced motion nicht aktiv')
+    merke((bewegung.animationen ?? []).length === 0, `Animation ${bewegung.animationen?.join(',')}`)
+    merke(reduziertNetz.length === 0, 'reduced motion sucht')
+  } catch (error) {
+    fehler.push(`reduced-motion: ${error instanceof Error ? error.message : String(error)}`)
+    try {
+      await bild(reduziertPage, 'error_reduced-motion')
+    } catch {
+      // bereits erfasst
+    }
+  }
+  await reduziert.close()
+
+  for (const zoom of [1.25, 1.5]) {
+    const zoomContext = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      deviceScaleFactor: 1,
+    })
+    const zoomPage = await zoomContext.newPage()
+    const zoomNetz = []
+    await abfangen(zoomPage, zoomNetz)
+    const name = `zoom${Math.round(zoom * 100)}_1440`
+    try {
+      await auditOeffnen(zoomPage, '?ansicht=organisieren&bereich=fluege')
+      await zoomPage.waitForFunction(() => document.querySelector('[data-detail-domain="fluege"]'))
+      await zoomPage.evaluate((faktor) => {
+        document.documentElement.style.zoom = String(faktor)
+      }, zoom)
+      await zoomPage.waitForTimeout(200)
+      const zoomStand = await stand(zoomPage)
+      await bild(zoomPage, name)
+      schritte.push({ name, ...zoomStand, netz: netzArten(zoomNetz) })
+      merke(zoomStand.horizontalOverflow === false, `${name}: Überlauf ${zoomStand.scrollWidth}/${zoomStand.clientWidth}`)
+      merke(zoomStand.detailDomain === 'fluege' && zoomStand.detailSuche === 'aus', `${name}: Flugdetail`)
+      merke(zoomNetz.length === 0, `${name}: Netzwerk`)
+    } catch (error) {
+      fehler.push(`${name}: ${error instanceof Error ? error.message : String(error)}`)
+      try {
+        await bild(zoomPage, `error_${name}`)
+      } catch {
+        // bereits erfasst
+      }
+    }
+    await zoomContext.close()
+  }
 
   const textContext = await browser.newContext({
     viewport: { width: 360, height: 800 },

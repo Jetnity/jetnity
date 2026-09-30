@@ -1,10 +1,33 @@
 {
-  "sha": "0dcaa7665c4382064365ace3ee9cbb5801511eee",
+  "sha": "1397b243d24b31d8112caa9abe73eb4f0f726f67",
   "basis": "http://127.0.0.1:3456",
-  "stand": "2026-09-30T22:26:21.435Z",
+  "stand": "2026-09-30T22:33:48.739Z",
   "ergebnis": "PASS",
   "fehler": [],
   "schritte": [
+    {
+      "name": "rail_320x568",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_320x568",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
     {
       "name": "rail_360x800",
       "split": "einspaltig",
@@ -17,6 +40,29 @@
     },
     {
       "name": "fluege_360x800",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_375x812",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_375x812",
       "split": "einspaltig",
       "detailDomain": "fluege",
       "detailSuche": "aus",
@@ -52,6 +98,75 @@
       "netz": []
     },
     {
+      "name": "rail_412x915",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_412x915",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_430x932",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_430x932",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_landscape-844x390",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_landscape-844x390",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
       "name": "rail_768x1024",
       "split": "einspaltig",
       "detailDomain": null,
@@ -63,6 +178,29 @@
     },
     {
       "name": "fluege_768x1024",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_820x1180",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_820x1180",
       "split": "einspaltig",
       "detailDomain": "fluege",
       "detailSuche": "aus",
@@ -98,6 +236,29 @@
       "netz": []
     },
     {
+      "name": "rail_1280x800",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_1280x800",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
       "name": "rail_1440x900",
       "split": "einspaltig",
       "detailDomain": null,
@@ -109,6 +270,29 @@
     },
     {
       "name": "fluege_1440x900",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_1728x1117",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_1728x1117",
       "split": "geteilt-weit",
       "detailDomain": "fluege",
       "detailSuche": "aus",
@@ -250,6 +434,45 @@
         "POST http://127.0.0.1:3456/api/hotels/search",
         "POST http://127.0.0.1:3456/api/activities/search"
       ]
+    },
+    {
+      "name": "reduced-motion_390",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "zoom125_1440",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "zoom150_1440",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
     },
     {
       "name": "text200_360_flug-suchen",
