@@ -67,7 +67,9 @@ Persisting the selected day in the URL would survive reload. That would change t
 
 ## Remote observation
 
-Not read yet for the integrated head. Checks on `9655a32a` and `6564e708` do not approve `1ec3db4e` or a later docs tip.
+Read for `e1b5a8fb5431148e205bb87ad72a72e3177f95b9`. Actions `36792863340` success. Auth job `110149899876` success. Typecheck, Lint & Build job `110149899576` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/49tDcx3bVR9hhT3J1MjBkj6ekKH1`. Preview deployment `6772663814` success. The branch was 0 behind `main@1930e61a`. The PR stayed Draft. This observation does not approve a later commit.
+
+Checks on `9655a32a` and `6564e708` do not approve this integrated head.
 
 Historical read for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. Actions `36789940392` success. Auth job `110140214309` success. Typecheck, Lint & Build job `110140214020` success. Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/971JJQz7W2y4xdNb8udG4FmLucK3`. Preview deployment `6772206034` success. The PR stayed Draft. This observation does not approve a later commit.
 

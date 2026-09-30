@@ -98,9 +98,21 @@ Integrated re-run `2026-09-30T23:46:04.664Z` on a fresh production build of merg
 
 ## 6. Exact-head remote
 
-Not read yet for merge `1ec3db4e` or the docs tip that records it. Checks on `9655a32a`, `6564e708`, and the seed Vercel comment do not approve the integrated head.
+Read on 30 September 2026 for `e1b5a8fb5431148e205bb87ad72a72e3177f95b9`. That tip contains the integrated audit whose JSON sha is merge `1ec3db4e480cc7040b86e7a125895a41a6f28639`. The branch was 0 behind `main@1930e61a0a409b83bd18b99e21939a89f73bbbd6`. This is an observation, not a Technical-Lead PASS. Checks on `9655a32a`, `6564e708`, and the seed Vercel comment do not approve it.
 
-Historical read on 30 September 2026 for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. That commit records the R1 audit of runtime `f64b27f3`. It does not change the navigator again. This is an observation, not a Technical-Lead PASS.
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36792863340` | success, head `e1b5a8fb5431148e205bb87ad72a72e3177f95b9` |
+| Auth-Konfiguration gegen config.toml, job `110149899876` | success |
+| Typecheck, Lint & Build, job `110149899576` | success |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/49tDcx3bVR9hhT3J1MjBkj6ekKH1 |
+| Preview deployment | success, `6772663814`, https://jetnity-q9vj5sy1d-jetnity-e1b93c82.vercel.app |
+| Draft | PR #663 stayed Draft |
+
+A later docs sentence does not inherit these checks.
+
+Historical read on 30 September 2026 for `9655a32a1d5bcd6cfde8474ccff92adc81444e9d`. It does not approve `e1b5a8fb`. That commit records the R1 audit of runtime `f64b27f3`. It does not change the navigator again. This is an observation, not a Technical-Lead PASS.
 
 | Check | Result |
 | --- | --- |
