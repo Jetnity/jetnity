@@ -25,7 +25,7 @@ Do not treat `docs/ACTIVE_WORK_STATUS.md` as updated by this slice. Re-fetch `ma
 - Navbar and footer still use `/brand/jetnity-logo.png`. Footer whiteness comes from merged #657, not from an edit in this slice.
 - The only edit to a #657 file is the icon byte pin in `lib/layout/footer-official-logo-white-1.test.ts`.
 - #655 does not own these icon paths.
-- Exact-head CI for `2e309a42` does not gate the R1 crop. Re-read CI, Auth, and Vercel on the correction tip.
+- Exact-head CI for the corrected assets is run `36771991010` on `44457fc7c1d24c9c13421c272bff54509ab87485`: Typecheck, Lint & Build job `110080410488` success, Auth job `110080410932` success, Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/Ei3m6V2s44dvcS6UXJWN1m16ktfi`, Preview deployment `6769316242` success. The green CI on `2e309a42` does not gate this crop. The docs commit that records this gate is a newer head and needs its own read.
 
 ## Do not continue
 

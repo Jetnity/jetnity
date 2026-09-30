@@ -76,13 +76,27 @@ No new dependency. No Auth, provider, payment, or indexing change.
 
 ## 5. Exact-head CI, Auth and Vercel
 
-The R1 head is not `2e309a42`. That head's green CI does not gate this correction. Re-read CI on the branch tip after the correction push.
+The corrected icon family is on `44457fc7c1d24c9c13421c272bff54509ab87485`. That commit is 0 behind `main` `1ea6ddd03a290683d3d787823621c535a611a90f`. The green CI on `2e309a42` does not gate this crop.
+
+| Gate | Result |
+| --- | --- |
+| CI run `36771991010` | success, head `44457fc7` |
+| Typecheck, Lint & Build job `110080410488` | success, completed 2026-09-30T20:23:46Z |
+| Auth job `110080410932` | success, completed 2026-09-30T20:21:41Z |
+| Vercel commit status | success, “Deployment has completed” |
+| Vercel inspector | https://vercel.com/jetnity-e1b93c82/jetnity-app/Ei3m6V2s44dvcS6UXJWN1m16ktfi |
+| GitHub Preview deployment `6769316242` | success |
+| Preview target | https://jetnity-by5vfpqoy-jetnity-e1b93c82.vercel.app |
+| PR #659 | OPEN, Draft, no review threads |
+
+This section is written after that gate. The commit that records it is a newer head. Its own CI, Auth, and Vercel status must be read before that newer head is treated as the gated tip. Preview HTML was not read.
 
 ## 6. Not proven
 
 - Physical device or screen reader.
-- Preview HTML. The previous alias was behind Vercel SSO.
+- Preview HTML. Deployment `6769316242` is success. The alias was not read.
 - A signed-in navbar.
+- CI on the docs commit that records this section.
 
 ## 7. Recommendation
 

@@ -10,24 +10,23 @@ Session: https://cursor.com/agents/bc-b8063b84-3b6a-41f2-a519-d0bdd4328a2d
 
 ## What I checked
 
-- Required model was `grok-4.7-high-fast` before editing. Generation 1. No substitution.
-- The canonical logo hash is unchanged. The signet PNG matches the crop pixel for pixel. The two gap columns contain no opaque pixels.
-- Square icons use `#f5f4ee` and Lanczos3. I tried a mild sharpen and did not keep it.
-- Maskable is opaque RGB, distinct from the 512 any-icon, and its signet pixels stay inside the 40% radius. Measured max radius was 163.8 against a safe radius of 204.8, and less than the any-icon radius of 232.9.
-- `app/manifest.ts` was not edited. Local production HTML points at `/icon.png` sizes 48×48 and `/apple-icon.png` sizes 180×180.
-- The old PWA test required the placeholder lime diamond, white dot, and brand-green corners. Those assertions cannot describe this signet. I replaced them with surface, dark-green, route, and safe-zone checks. Manifest, dimensions, color types, no service worker, and the robots boundary stay.
-- #657 merged during this slice and pinned the placeholder icon bytes. I updated that pin only. I did not edit `Footer.tsx`.
-- #655's file list does not include the icon family.
-- Focused tests after the pin update: 17 pass. Both production builds passed. Browser checks on `127.0.0.1:3456` showed the full logo in the navbar, the white full logo in the footer after the merge, signet-only icons, and no horizontal overflow at 1440 or 390.
+- Required model was `grok-4.7-high-fast`. Generation 1. No substitution.
+- The canonical logo hash is unchanged. The signet copies only the leftmost large 8-connected component: box left 34, top 16, 103×90, 2713 source pixels. 213 opaque wordmark pixels inside that box stay transparent. The bold J is a different component and is not copied.
+- Square icons use `#f5f4ee` and Lanczos3. Sharpening was not applied.
+- Maskable is opaque RGB, distinct from the 512 any-icon. Measured max radius is 168 against a safe radius of 204.8, and less than the any-icon radius of 260.5.
+- `app/manifest.ts`, `Footer.tsx`, and `PublicNavbar.tsx` were not edited. Local production HTML on Next.js 16.3.8 points at `/icon.png` sizes 48×48 and `/apple-icon.png` sizes 180×180. The footer still uses `brightness-0 invert` on the full logo.
+- The PWA test requires component membership and excluded typography pixels, plus cream corners, dark-green, route, and the maskable safe zone.
+- The only #657-file edit is the icon byte pin. #655 files were not edited. `next` stays `16.3.8`.
+- Focused tests: 25 pass. Production build banner: `Next.js 16.3.8`. Browser checks showed the signet without a separate bold J, the full-color navbar wordmark, and the white footer wordmark.
 - Global current-state docs were left untouched.
-- After the push, head `a908ddab` had CI run `36769103780` success for Typecheck, Lint & Build and Auth. Vercel status success. GitHub Preview deployment `6768799793` success. Review threads: none. The preview alias returned SSO, so I did not read its HTML.
+- Exact-head gate for the corrected assets: CI run `36771991010` on `44457fc7`, Typecheck job `110080410488` success, Auth job `110080410932` success, Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/Ei3m6V2s44dvcS6UXJWN1m16ktfi`, Preview deployment `6769316242` success. Behind `main` `1ea6ddd`: 0. Review threads: none. Preview HTML was not read.
 
 ## What I did not prove
 
 - A signed-in navbar.
 - A physical device.
-- Preview HTML. Deployment `6768799793` is success, and the alias returned Vercel SSO.
-- CI on the docs commit that records section 5. The numbered gate is `a908ddab` / run `36769103780`. A newer tip needs its own read.
+- Preview HTML. Deployment `6769316242` is success. The alias was not read.
+- CI on the docs commit that records section 5. The numbered asset gate is `44457fc7` / run `36771991010`. The recording commit needs its own read.
 
 ## Judgement
 
