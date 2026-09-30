@@ -1,0 +1,269 @@
+{
+  "sha": "0dcaa7665c4382064365ace3ee9cbb5801511eee",
+  "basis": "http://127.0.0.1:3456",
+  "stand": "2026-09-30T22:26:21.435Z",
+  "ergebnis": "PASS",
+  "fehler": [],
+  "schritte": [
+    {
+      "name": "rail_360x800",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_360x800",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_390x844",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_390x844",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_768x1024",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_768x1024",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_1024x768",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_1024x768",
+      "split": "geteilt-schmal",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_1440x900",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_1440x900",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "rail_1920x1080",
+      "split": "einspaltig",
+      "detailDomain": null,
+      "detailSuche": null,
+      "flaechen": [],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "fluege_1920x1080",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "aus",
+      "flaechen": [
+        "status",
+        "bestand"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "compact_flug-suchen",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "bestand",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "compact_flug-submit",
+      "netz": [
+        "POST http://127.0.0.1:3456/api/flights/search"
+      ]
+    },
+    {
+      "name": "compact_unterkunft-suche",
+      "split": "einspaltig",
+      "detailDomain": "unterkunft",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "bestand",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": [
+        "POST http://127.0.0.1:3456/api/flights/search",
+        "POST http://127.0.0.1:3456/api/hotels/search"
+      ]
+    },
+    {
+      "name": "compact_aktivitaeten-suche",
+      "split": "einspaltig",
+      "detailDomain": "aktivitaeten",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": [
+        "POST http://127.0.0.1:3456/api/flights/search",
+        "POST http://127.0.0.1:3456/api/hotels/search",
+        "POST http://127.0.0.1:3456/api/activities/search"
+      ]
+    },
+    {
+      "name": "wide_flug-suchen",
+      "split": "geteilt-weit",
+      "detailDomain": "fluege",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "bestand",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": []
+    },
+    {
+      "name": "wide_flug-submit",
+      "netz": [
+        "POST http://127.0.0.1:3456/api/flights/search"
+      ]
+    },
+    {
+      "name": "wide_unterkunft-suche",
+      "split": "geteilt-weit",
+      "detailDomain": "unterkunft",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "bestand",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": [
+        "POST http://127.0.0.1:3456/api/flights/search",
+        "POST http://127.0.0.1:3456/api/hotels/search"
+      ]
+    },
+    {
+      "name": "wide_aktivitaeten-suche",
+      "split": "geteilt-weit",
+      "detailDomain": "aktivitaeten",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "16px",
+      "netz": [
+        "POST http://127.0.0.1:3456/api/flights/search",
+        "POST http://127.0.0.1:3456/api/hotels/search",
+        "POST http://127.0.0.1:3456/api/activities/search"
+      ]
+    },
+    {
+      "name": "text200_360_flug-suchen",
+      "split": "einspaltig",
+      "detailDomain": "fluege",
+      "detailSuche": "ein",
+      "flaechen": [
+        "status",
+        "bestand",
+        "suche"
+      ],
+      "horizontalOverflow": false,
+      "htmlFont": "32px",
+      "netz": []
+    }
+  ]
+}

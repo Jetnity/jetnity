@@ -1,9 +1,21 @@
 # Jetnity – Active Work Status
 
 Stand: 30. September 2026
-Status: **NORMAL / #649 AND #651 CLOSED / CURRENT MAIN b5534340b0535402ffbe223f3687744e465c11b9 / PREMIUM HOMEPAGE AND OFFICIAL LOGO LIVE TOGETHER / INDEXING FAIL-CLOSED / TRIP WORKSPACE FOUR-MODE IA INTEGRATED / DRAFT #653 IS THE ONLY NEW BOUNDED WRITER / #626 OPEN AND BLOCKED / NO RUNTIME FOLLOW-UP SELECTED BY THIS DOCS SLICE / NOT A LAUNCH PASS**
+Status: **NORMAL / ORGANIZE PREMIUM EXPERIENCE 6 IN DRAFT / PR #667 / NOT READY / NOT MERGED / #626 OPEN AND BLOCKED / NOT A LAUNCH PASS**
 
-## 0-current. Post-Homepage/Logo continuity — no runtime follow-up selected
+## 0-current. Organize premium experience 6
+
+- Current pointer: `docs/ORGANIZE_PREMIUM_EXPERIENCE_6_HANDOFF_2026-10-01.md`, then `docs/ORGANIZE_PREMIUM_EXPERIENCE_6_REPORT_2026-10-01.md`. Issue #666. Draft [PR #667](https://github.com/Jetnity/jetnity/pull/667), branch `feat/organize-premium-experience-6`.
+- Logical agent **Jetnity Organize premium experience 6**, Generation 1. Session https://cursor.com/agents/bc-c0cf7301-3a42-4fb8-a8db-6522a435926f. `originalModelName=grok-4.7-high-fast`. Not Auto.
+- Baseline `main@2530020dbc6797b17d64c064ca5474cf90804272`. This session re-fetched `origin/main` at that same SHA. The branch was 0 behind. No main integration.
+- Runtime audited: `0dcaa7665c4382064365ace3ee9cbb5801511eee`. Local audit PASS `2026-09-30T22:26:21.435Z`. Evidence `docs/evidence/organize-premium-experience-6/`. Local `npm test` 4107 pass. Typecheck, lint, build and hygiene checks passed on that runtime. Exact-head CI, Auth and Vercel on the pushed tip are not claimed in this block until re-read.
+- Presentation only. No parent `TripWorkspace.tsx` edit. No plan or preparation file edit. No provider, schema, Auth, package or Production change.
+- Next step: independent Technical-Lead code, visual, mobile and interaction review of the exact tip. Cursor does not Ready, merge, or start a follow-up slice.
+- #626 remains **OPEN / BLOCKED**. This slice did not touch it.
+
+The Post-Homepage/Logo section below is the historical continuity snapshot from before this writer. It is not the current writer.
+
+## 0-historical. Post-Homepage/Logo continuity — superseded as the current pointer
 
 - Current pointer: `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-09-30.md`, then `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_REPORT_2026-09-30.md`. Issue #652. Draft [PR #653](https://github.com/Jetnity/jetnity/pull/653), branch `docs/post-homepage-logo-continuity-reconciliation-1`. This branch is not current `main`. Do not invent a merge SHA for #653.
 - Logical agent **Jetnity post-Homepage/Logo continuity reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-e1991970-36f6-46c7-9e5d-6c385c8e70ef. `originalModelName=grok-4.7-high-fast`. Not Auto.

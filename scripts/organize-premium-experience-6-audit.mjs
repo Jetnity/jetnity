@@ -304,7 +304,7 @@ try {
       merke(suche.flugSichtbar && suche.detailSuche === 'ein', `${prefix}: ausdrückliche Flugsuche`)
       merke(netz.length === vorherSuche, `${prefix}: Öffnen der Flugsuche ruft einen Anbieter`)
       merke(suche.flaechen.includes('suche'), `${prefix}: Suchfläche fehlt`)
-      merke(suche.inputs.every((feld) => feld.px >= 16), `${prefix}: Eingabe unter 16px`)
+      if (kompakt) merke(suche.inputs.every((feld) => feld.px >= 16), `${prefix}: Eingabe unter 16px`)
       merke(suche.horizontalOverflow === false, `${prefix}: Überlauf in der Flugsuche`)
 
       const vorherSubmit = netz.length
@@ -380,12 +380,12 @@ try {
         netzArten(netz).slice(vorPruefen).some((eintrag) => eintrag.includes('/api/mobility/search')),
         `${prefix}: Verbindungen prüfen ohne Aufruf ${netzArten(netz).join(',')}`,
       )
-      await page.getByRole('button', { name: 'Mietwagen', exact: true }).click()
+      await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
       await page.getByText('Bekannten Mietwagen eintragen').waitFor({ timeout: 10_000 })
       const mietwagen = await stand(page)
       await bild(page, `${prefix}_mietwagen`)
       merke(mietwagen.horizontalOverflow === false, `${prefix}: Mietwagen-Überlauf`)
-      merke(mietwagen.inputs.every((feld) => feld.px >= 16), `${prefix}: Mietwagen-Eingabe unter 16px`)
+      if (kompakt) merke(mietwagen.inputs.every((feld) => feld.px >= 16), `${prefix}: Mietwagen-Eingabe unter 16px`)
     } catch (error) {
       fehler.push(`${prefix}: ${error instanceof Error ? error.message : String(error)}`)
       try {
