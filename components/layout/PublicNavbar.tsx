@@ -38,6 +38,7 @@
 // darf nicht als beendete Sitzung erscheinen (`standAusSitzung`).
 
 import * as React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useFormStatus } from 'react-dom'
@@ -150,15 +151,22 @@ export default function PublicNavbar() {
           href="/"
           aria-label="Jetnity Startseite"
           className={cn(
-            '-mx-2 inline-flex min-h-11 shrink-0 items-center gap-2.5 px-2 text-brand-800',
+            '-mx-2 inline-flex min-h-11 shrink-0 items-center px-2',
             FOKUS_RING,
           )}
         >
-          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-800 shadow-sm">
-            <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-citrus-400" />
-            <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-white" />
-          </span>
-          <span className="text-lg font-bold tracking-[-0.04em]">Jetnity</span>
+          {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
+          <Image
+            src="/brand/jetnity-logo.png"
+            alt=""
+            width={384}
+            height={128}
+            priority
+            unoptimized
+            sizes="144px"
+            className="h-[48px] w-auto"
+            style={{ width: 'auto', height: '48px' }}
+          />
         </Link>
 
         <nav className="hidden min-w-0 flex-wrap items-center gap-1 md:flex" aria-label="Hauptnavigation">
