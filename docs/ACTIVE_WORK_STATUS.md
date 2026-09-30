@@ -1,23 +1,9 @@
 # Jetnity – Active Work Status
 
-Stand: 1. Oktober 2026
-Status: **NORMAL / PLANNING ENTRY PREMIUM EXPERIENCE 7 EXACT-HEAD CI AUTH VERCEL SUCCESS ON fa3c9be5 / DRAFT #669 / NOT A LAUNCH PASS / NOT READY / NOT MERGED**
+Stand: 30. September 2026
+Status: **NORMAL / #649 AND #651 CLOSED / CURRENT MAIN b5534340b0535402ffbe223f3687744e465c11b9 / PREMIUM HOMEPAGE AND OFFICIAL LOGO LIVE TOGETHER / INDEXING FAIL-CLOSED / TRIP WORKSPACE FOUR-MODE IA INTEGRATED / DRAFT #653 IS THE ONLY NEW BOUNDED WRITER / #626 OPEN AND BLOCKED / NO RUNTIME FOLLOW-UP SELECTED BY THIS DOCS SLICE / NOT A LAUNCH PASS**
 
-## 0-current. Planning Entry premium experience 7
-
-- Binding task: `docs/PLANNING_ENTRY_PREMIUM_EXPERIENCE_7_TASK_2026-10-01.md`. Issue #668. Draft [PR #669](https://github.com/Jetnity/jetnity/pull/669), branch `feat/planning-entry-premium-experience-7`.
-- Baseline at dispatch: `main@2530020dbc6797b17d64c064ca5474cf90804272`. This session fetched `origin/main` and it was still that SHA. Re-fetch before review.
-- Logical agent **Jetnity Planning Entry premium experience 7**, Generation 1. Session https://cursor.com/agents/bc-02875182-8c02-42e9-8ec9-2eb2b9d3a621. `originalModelName=grok-4.7-high-fast`. Not Auto.
-- Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- Scope is `/planen` creation-entry presentation only. Trip Workspace runtime, Reisevorbereitung, Organisieren, navbar, footer, favicon, homepage and package files were not edited.
-- Runtime audit head `be627ffaea252f07f00ded033c8a9796f38da183`. Local `npm test` 4108/4108, typecheck, lint with 0 errors, hygiene checks, and production build passed. Browser audit `bestanden: true` against `next start` with the model kill switch forced off. Evidence: `docs/evidence/planning-entry-premium-experience-7/`.
-- Canonical stayed `https://jetnity.com/planen`. This local production process is fail-closed `noindex, nofollow` on the base page because no indexing environment is configured. That is not a robots edit.
-- Exact head `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`: GitHub Actions run `36787355819` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110131852466` **SUCCESS**. Typecheck, Lint & Build job `110131852662` **SUCCESS**. Vercel commit status **success**, description “Deployment has completed”, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8AgZPAcv9eEFXmJuiHkLBPf4T42R`, preview `https://jetnity-app-git-feat-planning-entry-pre-dd05c8-jetnity-e1b93c82.vercel.app`, Vercel comment updated `2026-09-30T22:45:33Z` with Ready / `DEPLOYED`. This session did not re-open that preview in a browser. A later docs-only receipt is not this gate.
-- That receipt is **not on the remote**. `git push` returned HTTP 401. The GitHub contents API returned 403. A re-read of PR #669 still showed head `fa3c9be5`, Draft, not merged. Review that SHA.
-- Cursor does not Ready or merge and does not start a follow-up slice. Next step is independent Technical-Lead code, visual, mobile and interaction review.
-- #626 remains **OPEN / BLOCKED**. Do not retry it from this slice.
-
-## 0-historical. Post-Homepage/Logo continuity — superseded as the current pointer
+## 0-current. Post-Homepage/Logo continuity — no runtime follow-up selected
 
 - Current pointer: `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_HANDOFF_2026-09-30.md`, then `docs/POST_HOMEPAGE_LOGO_CONTINUITY_RECONCILIATION_1_REPORT_2026-09-30.md`. Issue #652. Draft [PR #653](https://github.com/Jetnity/jetnity/pull/653), branch `docs/post-homepage-logo-continuity-reconciliation-1`. This branch is not current `main`. Do not invent a merge SHA for #653.
 - Logical agent **Jetnity post-Homepage/Logo continuity reconciliation 1**, Generation 1. Session https://cursor.com/agents/bc-e1991970-36f6-46c7-9e5d-6c385c8e70ef. `originalModelName=grok-4.7-high-fast`. Not Auto.

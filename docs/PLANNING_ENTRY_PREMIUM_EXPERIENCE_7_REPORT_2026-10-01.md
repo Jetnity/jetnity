@@ -1,7 +1,7 @@
 # Planning Entry Premium Experience 7 — Report
 
 Stand: 1 October 2026
-Status: **DELIVERED FOR INDEPENDENT TECHNICAL-LEAD REVIEW — NOT A PASS — DRAFT — NOT MERGED**
+Status: **R1-F1 APPLIED — ACTIVE_WORK_STATUS RESTORED — NEW EXACT-HEAD GATES PENDING — NOT A PASS — DRAFT — NOT MERGED**
 
 ## 1. Identity
 
@@ -91,9 +91,13 @@ Read after the evidence push, on `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84`. Com
 
 The Vercel bot comment on that SHA says Ready and `DEPLOYED`. This session did not open the preview in a browser after that comment. A docs-only receipt after `fa3c9be5` is not a new runtime gate.
 
+## 5c. R1-F1 — global continuity collision
+
+Technical-Lead review on `fa3c9be531bab70ff5fdef1aeab342e09ce5bb84` required every #669 change in `docs/ACTIVE_WORK_STATUS.md` to be reverted. The file now matches `main@2530020dbc6797b17d64c064ca5474cf90804272`. Fetched `origin/main` is that SHA, and this branch is 0 behind. Slice task, report, handoff, self-review, status and evidence stay. Runtime files are unchanged. The `fa3c9be5` CI, Auth and Vercel results above are historical and do not gate the correction head.
+
 ## 6. Residuals for the Technical Lead
 
-- The external gates above belong to `fa3c9be5`. Re-read them if the branch tip moves. This receipt is not on that tip: `git push` returned HTTP 401 and the GitHub contents API returned 403. PR #669 was re-read as Draft at head `fa3c9be5`.
+- New GitHub CI, Auth and exact-head Vercel Preview READY on the R1 correction head are still to be recorded. Re-read them on that head.
 - The side panel still contains the pre-existing line “Später begleiten dich Live-Hinweise und wichtige Erinnerungen.” This slice did not rewrite that future-tense sentence. If live hints are not yet a user promise, a later copy pass should soften it.
 - `html` scroll-padding and the section `scroll-mt` both offset the focused manual region, so it lands lower than a single header height. The heading stays below the sticky header. Tightening that landing is separate from this contract.
 - The audit is headless Chromium, not a physical phone.
