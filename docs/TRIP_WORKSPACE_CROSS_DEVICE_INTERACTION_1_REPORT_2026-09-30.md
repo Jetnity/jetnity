@@ -7,7 +7,9 @@ Issue: #637
 Draft PR: #638
 Branch: `fix/trip-workspace-cross-device-interaction-1`
 Baseline: `main@20bf11b0cf24460cf01d9dfe487b89bbfe555191`
-Product head measured for the after pass: `2fc4d8a739759d67b7d6ac619109673a90a9cba1`
+Rejected head: `b09957c6ae39f84a7eb557dde48313a57af73dd9`
+Integrated main: `ea6253d603e57cd19395cef951faabc75cb8ab3a` (merge-base, 0 behind)
+Product head measured for the R1 after pass: `3264a2ef18f81c84c5d059eabc178e2b2358f263`
 Agent: **Jetnity Trip Workspace cross-device interaction 1**, Generation 1
 Session: https://cursor.com/agents/bc-5a2210fe-59cf-44e2-8994-2217e427ff58
 `originalModelName`: `grok-4.7-high-fast`
@@ -34,36 +36,39 @@ One arrangement, shared by every domain:
 - A mouse click does not move focus into the search field. Keyboard activation focuses the first field.
 - Escape closes the domain and restores the invoking control. Reveal scrolling uses `behavior: 'instant'` so the global smooth-scroll rule cannot leave the correction half-finished.
 - Opening a gap still does not mount or run search. Search stays behind the explicit control.
+- R1: the reveal target is the domain eyebrow plus the heading. The scroll offset is the measured bottom of the sticky header and, when it touches that header, the compact return bar, plus 8px of clearance. It is not a fixed 72px or 96px guess. A second measurement runs after the first scroll, because the return bar can pin only once the page moves.
 
 ## 4. After measurements
 
 After JSON: `docs/evidence/trip-workspace-cross-device-interaction-1/audit-after.json`
-Product SHA `2fc4d8a739759d67b7d6ac619109673a90a9cba1`, captured `2026-09-30T11:05:53.243Z`. Dirty set was only the evidence directory. Chromium via Playwright. Synthetic guest trip. Provider routes intercepted with an unavailable payload. No live provider call.
+R1 product SHA `3264a2ef18f81c84c5d059eabc178e2b2358f263`, captured `2026-09-30T11:42:49.862Z`. Dirty set was empty at capture. Chromium via Playwright. Synthetic guest trip. Provider routes intercepted with an unavailable payload. No live provider call.
 
-`Jetzt wichtig` → `Flug suchen`, search heading:
+The earlier after file on `2fc4d8a7` is replaced by this pass. Baseline evidence stays historical.
 
-| Viewport | Baseline top / in view / below split | After top / in view / in column / below split |
+`Jetzt wichtig` → `Flug suchen`. On 360 and 390 the sticky return ends at y=134. The domain line `Flüge` starts at y=142 and the heading `Verbindungen für diese Reise` at y=162, both in view, with the first field below the heading.
+
+| Viewport | Baseline heading top / in view / below split | R1 heading top / eyebrow top / identity below chrome / in column / below split |
 | --- | --- | --- |
-| 360×800 | 954 / no / yes | 96 / yes / yes / no |
-| 390×844 | 954 / no / yes | 96 / yes / yes / no |
-| 768×1024 | 862 / yes / yes | 862 / yes / yes / no |
-| 1024×768 | 2974 / no / yes | 96 / yes / yes / no |
-| 1280×800 | 2902 / no / yes | 96 / yes / yes / no |
-| 1440×900 | 2902 / no / yes | 754 / yes / yes / no |
-| 1920×1080 | 2902 / no / yes | 754 / yes / yes / no |
+| 360×800 | 954 / no / yes | 162 / 142 / yes / yes / no |
+| 390×844 | 954 / no / yes | 162 / 142 / yes / yes / no |
+| 768×1024 | 862 / yes / yes | 862 / 842 / yes / yes / no |
+| 1024×768 | 2974 / no / yes | 101 / 81 / yes / yes / no |
+| 1280×800 | 2902 / no / yes | 101 / 81 / yes / yes / no |
+| 1440×900 | 2902 / no / yes | 754 / 734 / yes / yes / no |
+| 1920×1080 | 2902 / no / yes | 754 / 734 / yes / yes / no |
 
 No measured step had horizontal overflow.
 
-Also green on the after pass: accommodation, activities and mobility headings intersect the viewport; item-detail headings intersect on every required viewport; keyboard search focuses an input; Escape closes the domain and returns focus to the invoking control; mouse search leaves focus on `body` after the button unmounts.
+Accommodation, activities and mobility keep a visible domain or work heading below the measured chrome. Item-detail headings intersect on every required viewport. Keyboard search focuses an input. Escape closes the domain and returns focus to the invoking control. Mouse search leaves focus on `body`.
 
-At 1440×900 and 1920×1080 the detail title stays in view together with the search heading. At 1024×768 and 1280×800 the search heading is brought to the top of the viewport because the column is taller than the screen. The surface is still the right column. On 360 and 390 the sticky return stays; the in-card detail title scrolls off because the existing flight list sits between that title and the search heading.
+At 1440×900 and 1920×1080 the detail title stays in view together with the search heading. At 1024×768 and 1280×800 the search heading sits just under the site header because the column is taller than the screen. The surface remains the right column. On 360 and 390 the sticky return and the search identity share the viewport. The in-card detail title does not, because the existing flight list sits between that title and the search heading.
 
 ## 5. Gates run here
 
 | Check | Result |
 | --- | --- |
-| focused detail / workspace / interaction tests | 67/67 pass |
-| `npm test` | 4055/4055 pass |
+| focused detail / workspace / interaction tests | 68/68 pass |
+| `npm test` | 4064/4064 pass |
 | `npm run typecheck` | pass |
 | `npm run lint` | 0 errors, 145 existing warnings |
 | `npm run build` | pass |
