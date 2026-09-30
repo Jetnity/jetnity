@@ -24,7 +24,7 @@ Session: https://cursor.com/agents/bc-2eacb5a8-6476-4b48-bec0-9b73bd96a656
 
 - A signed-in navbar. The browser pass saw guest `Anmelden` only.
 - Physical device or screen reader.
-- Preview HTML. `37ae8965` / run `36753813167` passed before the integrated-page evidence refresh. The evidence commit needs its own exact-head CI, Auth and Vercel read. I did not open a Vercel preview alias.
+- Preview HTML. Evidence head `c3c51ae5` / run `36754432140` is success for Typecheck/Lint/Build, Auth and the Vercel deployment status. I did not open the preview alias. A docs commit after that SHA is a new head.
 - That 32px is the Product Owner's preferred tablet size. It is the size that keeps the existing 72px row.
 
 ## Judgement

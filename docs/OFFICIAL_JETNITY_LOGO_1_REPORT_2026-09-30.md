@@ -80,17 +80,17 @@ No database, RLS, Auth logic, provider, payment, dependency or indexing change.
 
 ## 5. Exact-head CI, Auth and Vercel
 
-Read after push, on `4a0df6d402c4c9ca45129633a2a0480d9b723d50`, run `36753124511`:
+Integrated evidence head `c3c51ae5612976da71759b7bd4276ed1b44af02d`, run `36754432140`:
 
 | Check | Result |
 | --- | --- |
-| Typecheck, Lint & Build | success, job `110016502148`, completed `2026-09-30T17:43:11Z` |
-| Auth-Konfiguration gegen config.toml | success, job `110016502417`, completed `2026-09-30T17:41:50Z` |
-| Vercel commit status | success, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FTz5j1sqbDfTCkQiKcNmcwkbJVFr` |
+| Typecheck, Lint & Build | success, job `110020949635`, completed `2026-09-30T17:54:55Z` |
+| Auth-Konfiguration gegen config.toml | success, job `110020949294`, completed `2026-09-30T17:52:34Z` |
+| Vercel commit status | success, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FwU6z7Y41VcVde3hNJXsrxdSJLU4` |
 
-Review threads on #651 at that read: none. Reviews: none. The PR was still Draft.
+Merge-base at that head is `7f2dcdbc211d32a0affa323fba822521535e7bb9`. Behind count was 0. Review threads on #651: none. The PR stayed Draft.
 
-A later docs commit that only records this paragraph is not `4a0df6d4`. Re-read CI on the branch tip before treating a newer SHA as the gate.
+An earlier integrated tip `37ae8965` / run `36753813167` also passed, before the page-top evidence refresh. A docs commit that only records this paragraph is not `c3c51ae5`. Re-read CI on the branch tip before treating a newer SHA as the gate.
 
 ## 6. Not proven
 
