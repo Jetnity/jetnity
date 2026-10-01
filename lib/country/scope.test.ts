@@ -27,6 +27,7 @@ const SLICE = [
   'components/country/LandFeld.tsx',
   'components/account/AccountReisende.tsx',
   'components/account/AccountReisendeKarte.tsx',
+  'lib/traveller/account-travellers-premium-registry-ux-1.ts',
   'components/trips/Reisevorbereitung.tsx',
 ]
 

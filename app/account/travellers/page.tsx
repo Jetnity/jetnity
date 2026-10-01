@@ -19,8 +19,8 @@ export default async function AccountReisendeSeite() {
   const { zeilen, problem } = await registryLaden()
 
   return (
-    <main className="px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-3xl">
+    <main className="px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full min-w-0 max-w-6xl">
         <AccountReisende problem={problem} travellers={zeilen} />
       </div>
     </main>
