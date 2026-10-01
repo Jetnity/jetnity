@@ -29,6 +29,7 @@ import {
   QrCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SICHERHEIT_EINGABE_16, SICHERHEIT_ZIEL_44 } from "@/lib/auth/account-security-premium-ux-1";
 import {
   securityFehlerAusUnbekannt,
   securityFehlerEinordnen,
@@ -392,19 +393,20 @@ export default function SecurityMFA({
   });
 
   return (
-    <div className="space-y-10">
-      <Card>
-        <CardHeader withDivider>
+    <div className="space-y-4">
+      <div className={cn("grid grid-cols-1 gap-4", factorId ? "" : "lg:grid-cols-2 lg:items-start")}>
+      <Card id="account-totp" className={cn("scroll-mt-24", factorId && "lg:col-span-2")}>
+        <CardHeader withDivider className="p-4">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" aria-hidden="true" />
             <CardTitle as="h2">Authenticator-App (TOTP)</CardTitle>
           </div>
           <CardDescription>
-            Scanne den QR-Code mit einer Authenticator-App und gib den 6-stelligen Code ein.
+            Eine Authenticator-App erzeugt den zweiten Code. Der QR-Code erscheint erst, wenn du die Einrichtung startest.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="pt-4">
+        <CardContent className="p-4 pt-3">
           <p
             data-security-lage={totpLage}
             className="mb-4 text-sm text-ink-700"
@@ -419,7 +421,7 @@ export default function SecurityMFA({
               variant="outline"
               onClick={() => void refreshFactors()}
               disabled={aktionenGesperrt}
-              className="mb-4 min-h-11"
+              className={`${SICHERHEIT_ZIEL_44} mb-4 min-h-11`}
             >
               Erneut laden
             </Button>
@@ -435,9 +437,9 @@ export default function SecurityMFA({
                   return (
                     <li
                       key={faktor.id}
-                      className="flex items-center justify-between gap-3 rounded-lg bg-background p-2 border"
+                      className="flex flex-col items-stretch gap-3 rounded-lg border bg-background p-3 sm:flex-row sm:items-center sm:justify-between"
                     >
-                      <div className="text-sm">
+                      <div className="min-w-0 text-sm">
                         <div className="font-medium">{name}</div>
                         <div className="text-muted-foreground">
                           {[
@@ -453,7 +455,7 @@ export default function SecurityMFA({
                       <Button
                         variant="destructive"
                         size="sm"
-                        className="min-h-11"
+                        className={`${SICHERHEIT_ZIEL_44} min-h-11 w-full sm:w-auto`}
                         onClick={() => void handleRemove(faktor.id, faktor.status)}
                         disabled={aktionenGesperrt}
                       >
@@ -510,12 +512,13 @@ export default function SecurityMFA({
                     onChange={(e) =>
                       setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                     }
-                    className="h-11 min-h-11 max-w-[160px] text-center tracking-widest text-lg"
+                    className="h-11 min-h-11 max-w-[160px] text-center tracking-widest"
+                    inputClassName={`${SICHERHEIT_EINGABE_16} text-lg pointer-fine:text-lg`}
                   />
                   <Button
                     onClick={() => void handleVerify()}
                     disabled={aktionenGesperrt || code.length !== 6}
-                    className="min-h-11"
+                    className={`${SICHERHEIT_ZIEL_44} min-h-11`}
                   >
                     Bestätigen
                   </Button>
@@ -525,7 +528,7 @@ export default function SecurityMFA({
               <Button
                 type="button"
                 variant="ghost"
-                className="min-h-11"
+                className={`${SICHERHEIT_ZIEL_44} min-h-11`}
                 disabled={aktionenGesperrt}
                 onClick={() => void handleRemove(factorId, "unverified")}
               >
@@ -533,58 +536,56 @@ export default function SecurityMFA({
               </Button>
             </div>
           ) : darfTotpEinrichten(totpLage) ? (
-            <Button onClick={() => void handleEnroll()} disabled={aktionenGesperrt} className="w-full min-h-11">
+            <Button
+              onClick={() => void handleEnroll()}
+              disabled={aktionenGesperrt}
+              variant={totpFactors.length > 0 ? "outline" : "default"}
+              className={cn(SICHERHEIT_ZIEL_44, "min-h-11", totpFactors.length > 0 ? "w-full sm:w-auto" : "w-full")}
+            >
               {!loading && !stepUpBeschaeftigt ? "Authenticator-App einrichten" : "Bitte warten…"}
             </Button>
           ) : null}
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader withDivider>
-          <div className="flex items-center gap-2">
-            <KeyRound className="h-5 w-5" aria-hidden="true" />
-            <CardTitle as="h2">Passkeys</CardTitle>
-          </div>
-          <CardDescription>
-            Passkeys richten sich nach der Server-Konfiguration, nicht nach dem Browser allein.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent className="pt-4">
-          <div
-            data-passkey-lage={aktuellePasskeyLage}
-            className="rounded-xl border bg-muted/30 p-3 text-sm"
-            role="status"
-          >
-            <span className="inline-flex items-start gap-2">
-              {aktuellePasskeyLage === "empty" ? (
-                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-700" aria-hidden="true" />
-              ) : (
-                <AlertTriangle className="mt-0.5 h-4 w-4 text-amber-700" aria-hidden="true" />
-              )}
-              <span>
-                <span className="font-medium">
-                  {aktuellePasskeyLage === "unsupported"
-                    ? "Nicht unterstützt"
-                    : aktuellePasskeyLage === "unavailable"
-                      ? "Nicht verfügbar"
-                      : "Noch nicht eingerichtet"}
-                  .{" "}
-                </span>
-                {PASSKEY_LAGE_TEXTE[aktuellePasskeyLage]}
-                {browserHinweis ? ` ${browserHinweis}` : null}
-              </span>
-            </span>
-          </div>
-
-          {darfPasskeyHinzufuegen(aktuellePasskeyLage) ? (
-            <p className="mt-4 text-sm text-ink-700">
-              Das Hinzufügen eines Passkeys ist in dieser Umgebung noch nicht angebunden.
-            </p>
-          ) : null}
-        </CardContent>
-      </Card>
+      <section
+        id="account-passkeys"
+        aria-labelledby="account-passkeys-title"
+        data-passkey-lage={aktuellePasskeyLage}
+        className={cn(
+          "scroll-mt-24 rounded-2xl border border-black/5 bg-white",
+          aktuellePasskeyLage === "unsupported" ? "p-4" : "p-5",
+          factorId && "lg:col-span-2",
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <KeyRound className="h-5 w-5" aria-hidden="true" />
+          <h2 id="account-passkeys-title" className="text-lg font-semibold tracking-tight text-brand-800">
+            Passkeys
+          </h2>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-ink-700">
+          Passkeys richten sich nach der Server-Konfiguration, nicht nach dem Browser allein.
+        </p>
+        <p role="status" className="mt-3 text-sm leading-6 text-ink-700">
+          <span className="font-medium">
+            {aktuellePasskeyLage === "unsupported"
+              ? "Nicht unterstützt"
+              : aktuellePasskeyLage === "unavailable"
+                ? "Nicht verfügbar"
+                : "Noch nicht eingerichtet"}
+            .{" "}
+          </span>
+          {PASSKEY_LAGE_TEXTE[aktuellePasskeyLage]}
+          {browserHinweis ? ` ${browserHinweis}` : null}
+        </p>
+        {darfPasskeyHinzufuegen(aktuellePasskeyLage) ? (
+          <p className="mt-3 text-sm leading-6 text-ink-700">
+            Das Hinzufügen eines Passkeys ist in dieser Umgebung noch nicht angebunden.
+          </p>
+        ) : null}
+      </section>
+      </div>
 
       {mfaStepUpDialogOffen(stepUp) ? (
         <SecurityMfaStepUp

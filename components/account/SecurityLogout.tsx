@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { SICHERHEIT_ZIEL_44 } from "@/lib/auth/account-security-premium-ux-1";
 import {
   LOGOUT_AKTIONEN,
   LOGOUT_ANFANG,
@@ -38,9 +39,16 @@ function lokalenAuthVerlassen() {
 export default function SecurityLogout() {
   const [zustand, setZustand] = React.useState<LogoutZustand>(LOGOUT_ANFANG);
   const statusFeld = React.useRef<HTMLDivElement>(null);
+  const [optionenOffen, setOptionenOffen] = React.useState(false);
   const beschaeftigt = logoutIstBeschaeftigt(zustand);
   const startbar = darfLogoutStarten(zustand);
   const status = logoutStatusText(zustand);
+  const optionenSichtbar = optionenOffen || zustand.lage !== "idle" || zustand.bestaetigungFuer !== null;
+
+  function optionenSchliessen() {
+    if (zustand.lage !== "idle" || zustand.bestaetigungFuer !== null) return;
+    setOptionenOffen(false);
+  }
 
   React.useEffect(() => {
     if (zustand.lage === "success" || zustand.lage === "error" || zustand.lage === "unavailable") {
@@ -67,8 +75,8 @@ export default function SecurityLogout() {
   }
 
   return (
-    <Card id="account-abmelden" data-logout-lage={zustand.lage} data-logout-scope={zustand.scope ?? ""}>
-      <CardHeader withDivider>
+    <Card id="account-abmelden" data-logout-lage={zustand.lage} data-logout-scope={zustand.scope ?? ""} className="scroll-mt-24">
+      <CardHeader withDivider className="p-4">
         <div className="flex items-center gap-2">
           <LogOut className="h-5 w-5" aria-hidden="true" />
           <CardTitle as="h2">Abmelden</CardTitle>
@@ -79,19 +87,24 @@ export default function SecurityLogout() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4 pt-4">
+      <CardContent className="space-y-4 p-4 pt-3">
         <div
           ref={statusFeld}
           tabIndex={-1}
           role={zustand.lage === "error" || zustand.lage === "unavailable" ? "alert" : "status"}
           aria-live={zustand.lage === "error" || zustand.lage === "unavailable" ? "assertive" : "polite"}
           className={cn(
-            "rounded-xl border p-3 text-sm outline-none",
-            zustand.lage === "error" || zustand.lage === "unsupported" || zustand.lage === "unavailable"
-              ? "border-red-200 bg-red-50 text-red-800"
-              : zustand.lage === "success"
-                ? "border-green-200 bg-green-50 text-green-800"
-                : "border-black/5 bg-muted/30 text-ink-700",
+            "text-sm outline-none",
+            optionenSichtbar
+              ? cn(
+                  "rounded-xl border p-3",
+                  zustand.lage === "error" || zustand.lage === "unsupported" || zustand.lage === "unavailable"
+                    ? "border-red-200 bg-red-50 text-red-800"
+                    : zustand.lage === "success"
+                      ? "border-green-200 bg-green-50 text-green-800"
+                      : "border-black/5 bg-muted/30 text-ink-700",
+                )
+              : "sr-only",
           )}
         >
           <span className="inline-flex items-start gap-2">
@@ -103,6 +116,19 @@ export default function SecurityLogout() {
             <span>{status}</span>
           </span>
         </div>
+
+        {optionenSichtbar ? null : (
+          <Button
+            type="button"
+            variant="outline"
+            className={`${SICHERHEIT_ZIEL_44} min-h-11 w-full sm:w-auto`}
+            aria-expanded={false}
+            aria-controls="account-logout-optionen"
+            onClick={() => setOptionenOffen(true)}
+          >
+            Abmeldeoptionen
+          </Button>
+        )}
 
         {zustand.bestaetigungFuer === "global" ? (
           <div
@@ -120,7 +146,7 @@ export default function SecurityLogout() {
               <Button
                 type="button"
                 variant="destructive"
-                className="min-h-11 w-full sm:w-auto"
+                className={`${SICHERHEIT_ZIEL_44} min-h-11 w-full sm:w-auto`}
                 onClick={() => void ausfuehren("global")}
                 disabled={beschaeftigt}
               >
@@ -129,7 +155,7 @@ export default function SecurityLogout() {
               <Button
                 type="button"
                 variant="ghost"
-                className="min-h-11 w-full sm:w-auto"
+                className={`${SICHERHEIT_ZIEL_44} min-h-11 w-full sm:w-auto`}
                 onClick={() => setZustand((aktuell) => logoutWeiter(aktuell, { typ: "brich_bestaetigung" }))}
                 disabled={beschaeftigt}
               >
@@ -139,7 +165,8 @@ export default function SecurityLogout() {
           </div>
         ) : null}
 
-        <ul className="space-y-3">
+        {optionenSichtbar ? (
+        <ul id="account-logout-optionen" className="space-y-3">
           {LOGOUT_SCOPES.map((scope) => {
             const aktion = LOGOUT_AKTIONEN[scope];
             const hinweisId = `account-logout-${scope}-hint`;
@@ -149,17 +176,22 @@ export default function SecurityLogout() {
                 key={scope}
                 className={cn(
                   "rounded-2xl border p-4",
-                  aktion.gefaehrlich ? "border-red-200 bg-red-50/60" : "border-black/5 bg-white",
+                  scope === "local" && "border-brand-800/20 bg-white",
+                  scope === "others" && "border-black/5 bg-surface-50",
+                  aktion.gefaehrlich && "border-red-200 bg-red-50/70",
                 )}
               >
-                <p className="text-sm font-medium text-brand-800">{aktion.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-700">
+                  {scope === "local" ? "Diese Sitzung" : scope === "others" ? "Andere Sitzungen" : "Hohes Risiko"}
+                </p>
+                <p className="mt-1 text-sm font-medium text-brand-800">{aktion.label}</p>
                 <p id={hinweisId} className="mt-1 text-sm leading-6 text-ink-700">
                   {aktion.beschreibung}
                 </p>
                 <Button
                   type="button"
                   variant={aktion.gefaehrlich ? "destructive" : "outline"}
-                  className="mt-3 min-h-11 w-full sm:w-auto"
+                  className={`${SICHERHEIT_ZIEL_44} mt-3 min-h-11 w-full sm:w-auto`}
                   onClick={() => void ausfuehren(scope)}
                   disabled={beschaeftigt || !startbar}
                   aria-describedby={hinweisId}
@@ -171,6 +203,19 @@ export default function SecurityLogout() {
             );
           })}
         </ul>
+        ) : null}
+        {optionenSichtbar && zustand.lage === "idle" && zustand.bestaetigungFuer === null ? (
+          <Button
+            type="button"
+            variant="ghost"
+            className={`${SICHERHEIT_ZIEL_44} min-h-11 w-full sm:w-auto`}
+            aria-expanded={true}
+            aria-controls="account-logout-optionen"
+            onClick={optionenSchliessen}
+          >
+            Optionen schließen
+          </Button>
+        ) : null}
       </CardContent>
     </Card>
   );

@@ -9,6 +9,7 @@ import { AlertTriangle, MonitorSmartphone } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { SICHERHEIT_ZIEL_44 } from "@/lib/auth/account-security-premium-ux-1";
 import {
   ANDERE_SITZUNGEN_TEXT,
   SITZUNG_ABMELDEN_ANKER,
@@ -90,8 +91,9 @@ export default function SecuritySitzung() {
       id="account-sitzung"
       data-sitzung-lage={zustand.lage}
       data-andere-sitzungen={zustand.andere}
+      className="scroll-mt-24"
     >
-      <CardHeader withDivider>
+      <CardHeader withDivider className="p-4">
         <div className="flex items-center gap-2">
           <MonitorSmartphone className="h-5 w-5" aria-hidden="true" />
           <CardTitle as="h2">Diese Sitzung</CardTitle>
@@ -102,7 +104,7 @@ export default function SecuritySitzung() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4 pt-4">
+      <CardContent className="space-y-4 p-4 pt-3">
         <div
           ref={statusFeld}
           tabIndex={-1}
@@ -110,10 +112,15 @@ export default function SecuritySitzung() {
           aria-live={zustand.lage === "error" || zustand.lage === "unavailable" ? "assertive" : "polite"}
           aria-busy={beschaeftigt}
           className={cn(
-            "rounded-xl border p-3 text-sm outline-none",
-            zustand.lage === "error" || zustand.lage === "unsupported" || zustand.lage === "unavailable"
-              ? "border-red-200 bg-red-50 text-red-800"
-              : "border-black/5 bg-muted/30 text-ink-700",
+            "text-sm outline-none",
+            zustand.lage === "current"
+              ? "sr-only"
+              : cn(
+                  "rounded-xl border p-3",
+                  zustand.lage === "error" || zustand.lage === "unsupported" || zustand.lage === "unavailable"
+                    ? "border-red-200 bg-red-50 text-red-800"
+                    : "border-black/5 bg-muted/30 text-ink-700",
+                ),
           )}
         >
           <span className="inline-flex items-start gap-2">
@@ -125,7 +132,7 @@ export default function SecuritySitzung() {
         </div>
 
         {zustand.lage === "current" && zustand.aktuelle ? (
-          <dl className="space-y-3">
+          <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <dt className="text-sm font-medium text-brand-800">Aktuelle Sitzung</dt>
               <dd className="mt-1 text-sm leading-6 text-ink-700">Aktiv in diesem Browser.</dd>
@@ -137,13 +144,13 @@ export default function SecuritySitzung() {
               </div>
             ) : null}
             {zugangscodeText ? (
-              <div>
+              <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-brand-800">Zugangscode</dt>
                 <dd className="mt-1 text-sm leading-6 text-ink-700">{zugangscodeText}</dd>
               </div>
             ) : null}
             {zustand.lokal ? (
-              <div>
+              <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-brand-800">Lokaler Hinweis</dt>
                 <dd className="mt-1 text-sm leading-6 text-ink-700">{zustand.lokal.text}</dd>
               </div>
@@ -158,7 +165,7 @@ export default function SecuritySitzung() {
           <p className="mt-1 text-sm leading-6 text-ink-700">{ANDERE_SITZUNGEN_TEXT}</p>
           <a
             href={`#${SITZUNG_ABMELDEN_ANKER}`}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 underline-offset-4 hover:underline"
+            className={`${SICHERHEIT_ZIEL_44} mt-3 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
           >
             Zur Aktion „Andere Geräte abmelden“
           </a>

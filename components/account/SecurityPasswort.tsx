@@ -20,6 +20,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { AlertTriangle, CheckCircle2, Eye, EyeOff, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SICHERHEIT_EINGABE_16, SICHERHEIT_ZIEL_44, SICHERHEIT_ZIEL_44_QUADRAT } from "@/lib/auth/account-security-premium-ux-1";
 import {
   PASSWORT_AENDERUNG_ANFANG,
   darfAenderungSenden,
@@ -68,6 +69,7 @@ export default function SecurityPasswort() {
   const [felder, setFelder] = React.useState(leereFelder);
   const [zeigePasswort, setZeigePasswort] = React.useState(false);
   const [zeigeWiederholung, setZeigeWiederholung] = React.useState(false);
+  const [geoeffnet, setGeoeffnet] = React.useState(false);
   const nonceFeld = React.useRef<HTMLInputElement>(null);
   const statusFeld = React.useRef<HTMLDivElement>(null);
 
@@ -95,6 +97,7 @@ export default function SecurityPasswort() {
   const beschaeftigt = passwortAenderungIstBeschaeftigt(zustand);
   const formularSichtbar = darfPasswortFormularZeigen(zustand);
   const status = passwortAenderungStatusText(zustand);
+  const detailsSichtbar = geoeffnet || zustand.schritt !== "idle";
   const staerke = passwortStaerke(felder.passwort);
 
   async function codeAnfordern() {
@@ -136,8 +139,8 @@ export default function SecurityPasswort() {
   }
 
   return (
-    <Card data-password-lage={zustand.schritt}>
-      <CardHeader withDivider>
+    <Card id="account-passwort" data-password-lage={zustand.schritt} data-password-offen={detailsSichtbar ? "ja" : "nein"} className="scroll-mt-24">
+      <CardHeader withDivider className="p-4">
         <div className="flex items-center gap-2">
           <Lock className="h-5 w-5" aria-hidden="true" />
           <CardTitle as="h2">Passwort</CardTitle>
@@ -148,7 +151,14 @@ export default function SecurityPasswort() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4 pt-4">
+      <CardContent className="space-y-4 p-4 pt-3">
+        {detailsSichtbar ? null : (
+          <Button type="button" onClick={() => setGeoeffnet(true)} className={`${SICHERHEIT_ZIEL_44} w-full sm:w-auto`} aria-expanded={false} aria-controls="account-password-flow">
+            Passwort ändern
+          </Button>
+        )}
+        {detailsSichtbar ? (
+        <div id="account-password-flow" className="space-y-4">
         <div
           ref={statusFeld}
           tabIndex={-1}
@@ -178,7 +188,7 @@ export default function SecurityPasswort() {
             type="button"
             onClick={() => void codeAnfordern()}
             disabled={beschaeftigt || !darfReauthStarten(zustand)}
-            className="min-h-11 w-full"
+            className={`${SICHERHEIT_ZIEL_44} w-full`}
           >
             {zustand.schritt === "requesting_code" ? "Code wird gesendet…" : "Bestätigungscode senden"}
           </Button>
@@ -204,6 +214,7 @@ export default function SecurityPasswort() {
                 aria-describedby="account-password-nonce-hint"
                 aria-invalid={zustand.fehler?.code.startsWith("nonce_") ? true : undefined}
                 className="min-h-11"
+                inputClassName={SICHERHEIT_EINGABE_16}
               />
             </div>
 
@@ -224,13 +235,15 @@ export default function SecurityPasswort() {
                   aria-invalid={
                     felder.passwort.length > 0 && !erfuelltRichtlinie(felder.passwort) ? true : undefined
                   }
-                  className="min-h-11 pr-10"
+                  className="min-h-11 pr-14"
+                  inputClassName={SICHERHEIT_EINGABE_16}
+                  revealable={false}
                 />
                 <button
                   type="button"
                   onClick={() => setZeigePasswort((wert) => !wert)}
                   aria-label={zeigePasswort ? "Neues Passwort verbergen" : "Neues Passwort anzeigen"}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                  className={`${SICHERHEIT_ZIEL_44_QUADRAT} absolute right-1 top-1/2 -translate-y-1/2 rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 >
                   {zeigePasswort ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -268,7 +281,9 @@ export default function SecurityPasswort() {
                       ? true
                       : undefined
                   }
-                  className="min-h-11 pr-10"
+                  className="min-h-11 pr-14"
+                  inputClassName={SICHERHEIT_EINGABE_16}
+                  revealable={false}
                 />
                 <button
                   type="button"
@@ -278,7 +293,7 @@ export default function SecurityPasswort() {
                       ? "Passwortbestätigung verbergen"
                       : "Passwortbestätigung anzeigen"
                   }
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                  className={`${SICHERHEIT_ZIEL_44_QUADRAT} absolute right-1 top-1/2 -translate-y-1/2 rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 >
                   {zeigeWiederholung ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -286,7 +301,7 @@ export default function SecurityPasswort() {
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button type="submit" disabled={beschaeftigt} className="min-h-11 flex-1">
+              <Button type="submit" disabled={beschaeftigt} className={`${SICHERHEIT_ZIEL_44} flex-1`}>
                 {zustand.schritt === "updating" ? "Passwort wird geändert…" : "Passwort speichern"}
               </Button>
               <Button
@@ -294,12 +309,14 @@ export default function SecurityPasswort() {
                 variant="ghost"
                 onClick={abbrechen}
                 disabled={beschaeftigt}
-                className="min-h-11"
+                className={SICHERHEIT_ZIEL_44}
               >
                 Abbrechen
               </Button>
             </div>
           </form>
+        ) : null}
+        </div>
         ) : null}
       </CardContent>
     </Card>
