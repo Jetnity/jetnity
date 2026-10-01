@@ -385,9 +385,15 @@ function AtlasHinweis({
 }
 
 /** Dieselbe Zustandsprache wie die Flächen, neben der Karte, nicht statt ihrer. */
-function AtlasLegende() {
+function AtlasLegende({ kompakt = false }: { kompakt?: boolean }) {
   return (
-    <ul className="grid h-full content-center gap-1 rounded-[22px] border border-line-200 bg-surface-50 px-3 py-2 sm:grid-cols-3 lg:grid-cols-1">
+    <ul
+      className={
+        kompakt
+          ? 'flex flex-wrap content-center gap-x-4 gap-y-1 rounded-[22px] border border-line-200 bg-surface-50 px-3 py-2'
+          : 'grid h-full content-center gap-1 rounded-[22px] border border-line-200 bg-surface-50 px-3 py-2 sm:grid-cols-3 lg:grid-cols-1'
+      }
+    >
       {ZUSTAND_REIHENFOLGE.map((zustand) => (
         <li key={zustand} className="flex min-h-11 items-center gap-2">
           <WeltZustandProbe zustand={zustand} />
@@ -402,14 +408,22 @@ export default function AccountWeltKarte({
   welt,
   besucht,
   laender,
-  aktion,
+  aktion = null,
+  darstellung = 'atlas',
 }: {
   welt: WorldMapAbleitung
   besucht: WeltBesuchtAnsicht
   laender: WeltLaenderAbleitung
-  /** Einstieg in die Besuchsverwaltung. Fehlt auf der Seite, die sie selbst ist. */
+  /** Einstieg in die volle Weltseite. Fehlt auf der Seite, die sie selbst ist. */
   aktion?: { href: Route; text: string } | null
+  /**
+   * `atlas` bleibt die volle Erfahrung unter /account/welt.
+   * `uebersicht` ist die kompakte Vorschau auf der Kontoübersicht:
+   * dieselbe Kartenwahrheit, ohne Länderchips und ohne die volle Ortsliste.
+   */
+  darstellung?: 'atlas' | 'uebersicht'
 }) {
+  const istAtlas = darstellung === 'atlas'
   const [gewaehlt, setGewaehlt] = useState<string | null>(null)
   const [offeneGruppe, setOffeneGruppe] = useState<string | null>(null)
   const musterBasis = useId()
@@ -438,7 +452,9 @@ export default function AccountWeltKarte({
     setOffeneGruppe(null)
     const kontext = document.querySelector('[data-world-map-kontext]')
     const liste = document.getElementById(weltOrtDomId(schluessel))
-    const ziel = window.innerWidth >= 1024 ? liste : (kontext ?? liste)
+    // Auf dem Atlas zeigt die Ortsliste denselben Ort. Die Übersicht hat diese
+    // Liste nicht; dann bleibt der Kontext direkt unter der Karte das Ziel.
+    const ziel = liste && window.innerWidth >= 1024 ? liste : (kontext ?? liste)
     ziel?.scrollIntoView({
       block: 'nearest',
       behavior: reduzierteBewegung() ? 'auto' : 'smooth',
@@ -449,10 +465,15 @@ export default function AccountWeltKarte({
     <section
       aria-labelledby="account-welt-titel"
       data-world-map="ein"
+      data-world-map-darstellung={darstellung}
       data-world-map-lage={welt.lage}
       data-world-map-visited={besucht.lage}
       data-world-map-search="nein"
-      className="relative mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_22px_60px_rgba(15,46,42,0.08)] sm:p-8 lg:left-1/2 lg:w-[min(90rem,calc(100vw-4rem))] lg:-translate-x-1/2"
+      className={`relative mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_22px_60px_rgba(15,46,42,0.08)] sm:p-8 ${
+        istAtlas
+          ? 'lg:left-1/2 lg:w-[min(90rem,calc(100vw-4rem))] lg:-translate-x-1/2'
+          : ''
+      }`}
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
         Deine Reisen im Überblick
@@ -477,7 +498,7 @@ export default function AccountWeltKarte({
         )}
       </ul>
 
-      {aktion ? (
+      {aktion && istAtlas ? (
         <p className="mt-3">
           <Link
             href={aktion.href}
@@ -639,7 +660,13 @@ export default function AccountWeltKarte({
           ) : null}
         </div>
 
-        <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
+        <div
+          className={
+            istAtlas
+              ? 'mt-4 grid items-stretch gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]'
+              : 'mt-4 grid gap-3'
+          }
+        >
           <aside data-world-map-kontext={gewaehlterOrt ? 'ort' : 'ruhe'} className="min-w-0">
             {gewaehlterOrt ? (
               <OrtZeile
@@ -654,11 +681,26 @@ export default function AccountWeltKarte({
               <AtlasHinweis lage={welt.lage} leerText={welt.leerText} fehlerText={welt.fehlerText} />
             )}
           </aside>
-          <AtlasLegende />
+          <AtlasLegende kompakt={!istAtlas} />
         </div>
-        {/* Dieselbe Aussage wie die Farben, in Worten. Sie steht direkt
-            unter der Karte, nicht in einem ausklappbaren Nebenzweig. */}
-        <WeltLaenderListe flaechen={laender.flaechen} />
+        {aktion && !istAtlas ? (
+          <div className="mt-5 flex flex-col gap-3 border-t border-line-100 pt-5 lg:flex-row lg:items-center lg:justify-between">
+            <p className="min-w-0 max-w-xl text-sm leading-6 text-ink-800">
+              Die Länder und alle geplanten Orte stehen vollständig auf der Seite Deine Welt. Diese
+              Übersicht wiederholt die Listen nicht.
+            </p>
+            <Link
+              href={aktion.href}
+              className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 lg:w-auto"
+            >
+              {aktion.text}
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        ) : null}
+        {/* Dieselbe Aussage wie die Farben, in Worten. Auf der Kontoübersicht
+            bleibt sie der vollen Weltseite vorbehalten, einen Klick entfernt. */}
+        {istAtlas ? <WeltLaenderListe flaechen={laender.flaechen} /> : null}
 
       <div data-world-map-herkunft="ein" className="mt-4 space-y-1 border-t border-line-100 pt-3">
         {ohneFlaeche ? <p className="text-xs leading-5 text-ink-650">{ohneFlaeche}</p> : null}
@@ -676,8 +718,8 @@ export default function AccountWeltKarte({
         <p className="text-xs leading-5 text-ink-650">{WORLD_MAP_GRUNDKARTE_HINWEIS}</p>
       </div>
 
-      {welt.lage === 'leer' || welt.lage === 'fehler' ? null : (
-        <div className="mt-6 border-t border-line-100 pt-5">
+      {istAtlas && welt.lage !== 'leer' && welt.lage !== 'fehler' ? (
+        <div className="mt-6 border-t border-line-100 pt-5" data-world-map-orte="liste">
           <h3 className="text-sm font-semibold tracking-[-0.02em] text-brand-800">
             {welt.geplantLabel}
           </h3>
@@ -694,7 +736,7 @@ export default function AccountWeltKarte({
             ))}
           </ol>
         </div>
-      )}
+      ) : null}
 
       <p className="mt-4 border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
         {besucht.text}
