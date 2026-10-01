@@ -45,7 +45,7 @@ Old dated paragraphs were not rewritten into post-#665 history. Current status l
 - The product sentences are the merged PR titles and the #665 FINAL PASS review, not a new capability test. They do not authorize fake prices, availability, provider truth or official entry truth.
 - #626 was not retried. Provider mailboxes were not read. Repository comments were re-read. No newer material comment exists on #626, #395, #294 or #585.
 - The task-seed Preview is not acceptance evidence.
-- Exact-head CI and Vercel for the delivery commit are not known in this writing. A later commit records them. Actions on `main` are not the gate for that tip.
+- After push, delivery commit `4e306bb6badee30989708714e83c0f8c58134d7c` had CI `36804238078` **SUCCESS** and a Vercel Preview status of success, deployment `6774428355`. A later commit records that observation. Actions on `4e306bb6` are not the gate for the later tip. Actions on `main` are not the gate for this branch.
 - No Ready. No merge. No follow-up slice. PR stays Draft.
 
 ## Checks on this delivery tree

@@ -52,7 +52,17 @@ Taken after `git fetch origin main` and before the delivery commit that adds thi
 
 The review head is the branch tip. Do not review the task seed. Re-fetch `main` again before review. This session does not preclaim Technical-Lead PASS, Ready or Merge for #671.
 
-Post-push CI and Vercel for the delivery commit are recorded in a later commit on this branch. The task-seed Preview is not a review gate. Post-merge CI `36797445609` is the gate for `main`, not for this branch tip.
+Post-push re-fetch after delivery commit `4e306bb6badee30989708714e83c0f8c58134d7c`:
+
+| Item | Value |
+| --- | --- |
+| `origin/main` | `63af11cda231b26ada4717d29b78fc7f9ab4d828` |
+| Merge-base | `63af11cda231b26ada4717d29b78fc7f9ab4d828` |
+| Ahead / behind at `4e306bb6` | `0` behind / `2` ahead |
+| CI on `4e306bb6` | `36804238078` **SUCCESS**. Auth job `110184957256`. Typecheck, Lint & Build job `110184957343`. |
+| Vercel on `4e306bb6` | Commit status success. Preview deployment `6774428355` success. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/EvWLxJVreTPuXdQe94vVJhUyV1yL`. |
+
+This paragraph is a later commit on that delivery commit. If it is the branch tip and `main` is unchanged, the tip is `0` behind / `3` ahead. Read the tip live. Actions and Vercel on `4e306bb6` are not the tip gate. The task-seed Preview is not a review gate. Post-merge CI `36797445609` gates `main`, not this branch. No runtime acceptance is claimed from the Preview.
 
 ## Stop
 

@@ -116,7 +116,20 @@ No other path is intended.
 
 ## 7. Post-push exact head
 
-Not yet observed in this writing. The delivery commit that adds this report is the first measurement target. A later commit on this branch records that commit's GitHub CI/Auth and Vercel Preview status. Do not treat the task-seed Preview, and do not treat post-merge CI `36797445609`, as the gate for the branch tip.
+Re-fetched `origin/main` after delivery commit `4e306bb6badee30989708714e83c0f8c58134d7c` was pushed.
+
+| Item | Value |
+| --- | --- |
+| Delivery commit | `4e306bb6badee30989708714e83c0f8c58134d7c` |
+| `origin/main` | `63af11cda231b26ada4717d29b78fc7f9ab4d828` |
+| Merge-base | `63af11cda231b26ada4717d29b78fc7f9ab4d828` |
+| Ahead / behind at that delivery commit | `0` behind / `2` ahead |
+| Exact-head CI on `4e306bb6` | `36804238078` **SUCCESS**. Pull-request event. Auth job `110184957256` and Typecheck, Lint & Build job `110184957343` both passed. |
+| Vercel on `4e306bb6` | Commit status **success**, “Deployment has completed”. Target `https://vercel.com/jetnity-e1b93c82/jetnity-app/EvWLxJVreTPuXdQe94vVJhUyV1yL`. GitHub deployment `6774428355` environment **Preview**, status **success**. Target `https://jetnity-iru6qp9w1-jetnity-e1b93c82.vercel.app`. Vercel Preview Comments check `110185065283` **success**. No runtime acceptance is claimed. |
+
+Commits ahead of `main` at that measurement: `0ad21ddb` task seed, then `4e306bb6` delivery. This section is a later commit on `4e306bb6`. If that later commit is the branch tip and `origin/main` is still the SHA above, the tip is `0` behind / `3` ahead. Read the tip live. Do not review the task seed. Do not treat Actions or Vercel on `4e306bb6` as the gate for the tip. Do not treat post-merge CI `36797445609` as the gate for this branch.
+
+Changed-file manifest against `main` remains the seven paths in section 6.
 
 ## 8. Stop
 
