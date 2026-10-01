@@ -84,6 +84,10 @@ describe('Official Truth candidate batch validator', () => {
     assert.equal(text.includes('RESEARCH_ONLY'), true)
     assert.equal(text.includes('NOT_APPROVED_FOR_DATABASE_IMPORT'), true)
     assert.equal(text.includes('REGEL_EVIDENCE_QUALITAETEN'), true)
+    assert.equal(text.includes("'ordinary_passport'"), true)
+    assert.equal(text.includes('TRAVELLER_DOCUMENT_TYPES'), false)
+    assert.equal(text.includes("ordinary_passport' ? 'passport'"), false)
+    assert.equal((TRAVELLER_DOCUMENT_TYPES as readonly string[]).includes('ordinary_passport'), false)
     assert.deepEqual(REGEL_EVIDENCE_QUALITAETEN, [
       'explicit_primary_statement',
       'composed_from_multiple_primary_sources',
@@ -104,6 +108,7 @@ describe('Official Truth candidate batch validator', () => {
     assert.equal(ergebnis.databaseImportStatus, 'NOT_APPROVED_FOR_DATABASE_IMPORT')
     assert.equal(ergebnis.citizenshipCountryCode, 'AA')
     assert.equal(ergebnis.documentType, 'passport')
+    assert.equal(ergebnis.destinations[0]?.officialSourceUrl, QUELLE)
     assert.equal(ergebnis.destinations.length, 1)
     assert.equal(ergebnis.destinations[0]?.promotion, 'not_performed')
     assert.equal(ergebnis.destinations[0]?.truthDisposition, 'review_only')
@@ -139,7 +144,8 @@ describe('Official Truth candidate batch validator', () => {
 
   test('explizite und zusammengesetzte Quellen haben die kanonische Mindestzahl', () => {
     const ohne = pruefen(charge({}, [eintrag({ officialSourceUrl: null })]))
-    assert.equal(hat(ohne, 'insufficient_official_sources', 'destinations[0].officialSourceUrl'), true)
+    assert.equal(hat(ohne, 'primary_official_source_required', 'destinations[0].officialSourceUrl'), true)
+    assert.equal(ohne.ok, false)
 
     const eine = pruefen(
       charge({}, [eintrag({ evidenceQuality: 'composed_from_multiple_primary_sources', officialSourceUrl: QUELLE })]),
@@ -157,6 +163,7 @@ describe('Official Truth candidate batch validator', () => {
     )
     assert.equal(zwei.ok, true)
     if (zwei.ok) {
+      assert.equal(zwei.destinations[0]?.officialSourceUrl, QUELLE)
       assert.deepEqual(zwei.destinations[0]?.supportingOfficialSourceUrls, [QUELLE, ZWEITE])
       assert.equal(zwei.destinations[0]?.truthDisposition, 'review_only')
       assert.equal(zwei.destinations[0]?.promotion, 'not_performed')
@@ -174,13 +181,21 @@ describe('Official Truth candidate batch validator', () => {
     assert.equal(hat(doppelt, 'duplicate_official_source', 'destinations[0].additionalOfficialSourceUrl[0]'), true)
 
     const nurZusatz = pruefen(charge({}, [eintrag({ officialSourceUrl: null, additionalOfficialSourceUrl: [ZWEITE] })]))
-    assert.equal(nurZusatz.ok, true)
-    if (nurZusatz.ok) assert.deepEqual(nurZusatz.destinations[0]?.supportingOfficialSourceUrls, [ZWEITE])
+    assert.equal(nurZusatz.ok, false)
+    assert.equal(hat(nurZusatz, 'primary_official_source_required', 'destinations[0].officialSourceUrl'), true)
+    assert.equal(JSON.stringify(nurZusatz).includes(ZWEITE), false)
+
+    const altOhnePrimaer = pruefen(
+      charge({}, [eintrag({ evidenceQuality: 'stale_primary_evidence', officialSourceUrl: null, additionalOfficialSourceUrl: [ZWEITE] })]),
+    )
+    assert.equal(hat(altOhnePrimaer, 'primary_official_source_required', 'destinations[0].officialSourceUrl'), true)
   })
 
   test('ein Aktionslink stützt keine Quelle und wird nicht umgeschrieben', () => {
     const nurAktion = pruefen(charge({}, [eintrag({ officialSourceUrl: null, officialActionLink: AKTION })]))
-    assert.equal(hat(nurAktion, 'insufficient_official_sources'), true)
+    assert.equal(nurAktion.ok, false)
+    assert.equal(hat(nurAktion, 'primary_official_source_required', 'destinations[0].officialSourceUrl'), true)
+    assert.equal(JSON.stringify(nurAktion).includes(AKTION), false)
 
     const zusammengesetzt = pruefen(
       charge({}, [
@@ -221,8 +236,18 @@ describe('Official Truth candidate batch validator', () => {
     assert.equal(erlaubt.ok, true)
     if (erlaubt.ok) assert.equal(erlaubt.destinations[0]?.supportingOfficialSourceUrls[0], 'https://gov.example/entry?lang=en')
 
+    const verweis = pruefen(charge({}, [eintrag({ officialSourceUrl: 'https://gov.example/entry?ref=toc' })]))
+    assert.equal(verweis.ok, true)
+
     const ohneStrich = pruefen(charge({}, [eintrag({ officialSourceUrl: 'https://gov.example/entry?utm=1' })]))
     assert.equal(ohneStrich.ok, true)
+
+    const geheimTracker = 'click-secret-should-not-echo'
+    for (const name of ['gclid', 'dclid', 'fbclid', 'msclkid', 'gbraid', 'wbraid', 'mc_cid', 'mc_eid', 'GCLID', 'Mc_Eid']) {
+      const tracker = pruefen(charge({}, [eintrag({ officialSourceUrl: `https://gov.example/entry?${name}=${geheimTracker}` })]))
+      assert.equal(hat(tracker, 'tracking_parameter', 'destinations[0].officialSourceUrl'), true, name)
+      assert.equal(JSON.stringify(tracker).includes(geheimTracker), false, name)
+    }
   })
 
   test('retrievedAt nutzt nur die injizierte UTC-Uhr', () => {
@@ -351,7 +376,7 @@ describe('Official Truth candidate batch validator', () => {
     assert.equal(hat(aktuell, 'stale_as_current_forbidden', 'destinations[0].current'), true)
 
     const ohneQuelle = pruefen(charge({}, [eintrag({ evidenceQuality: 'stale_primary_evidence', officialSourceUrl: null })]))
-    assert.equal(hat(ohneQuelle, 'insufficient_official_sources'), true)
+    assert.equal(hat(ohneQuelle, 'primary_official_source_required', 'destinations[0].officialSourceUrl'), true)
   })
 
   test('persönliche Schlüssel scheitern ohne Wert-Echo', () => {
@@ -415,8 +440,22 @@ describe('Official Truth candidate batch validator', () => {
 
     const unbekannt = pruefen(charge({ documentType: 'unknown' }))
     assert.equal(hat(unbekannt, 'document_type_not_explicit', 'documentType'), true)
+    const ohneDokument = charge()
+    delete ohneDokument.documentType
+    const fehlt = pruefen(ohneDokument)
+    assert.equal(hat(fehlt, 'document_type_required', 'documentType'), true)
     const personalausweis = pruefen(charge({ documentType: 'national_id' }))
     assert.equal(personalausweis.ok, true)
+    if (personalausweis.ok) assert.equal(personalausweis.documentType, 'national_id')
+
+    const forschung = pruefen(charge({ documentType: 'ordinary_passport' }))
+    assert.equal(forschung.ok, true)
+    if (forschung.ok) {
+      assert.equal(forschung.documentType, 'ordinary_passport')
+      assert.equal(JSON.stringify(forschung).includes('"documentType":"passport"'), false)
+    }
+    const umgeschrieben = pruefen(charge({ documentType: 'Ordinary_Passport' }))
+    assert.equal(hat(umgeschrieben, 'invalid_document_type', 'documentType'), true)
   })
 
   test('mehrere Ziele bleiben in der gegebenen Reihenfolge und die Eingabe bleibt unverändert', () => {

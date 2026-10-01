@@ -10,7 +10,6 @@
 import { landescodeLesen } from '@/lib/readiness/domain'
 import { checkedAtLesen } from '@/lib/readiness/official'
 import { REGEL_EVIDENCE_QUALITAETEN, type RegelEvidenceQualitaet } from '@/lib/readiness/rule-claims'
-import { TRAVELLER_DOCUMENT_TYPES, type TravellerDocumentType } from '@/types/trips'
 
 export const KANDIDATEN_CHARGE_FORSCHUNG = 'RESEARCH_ONLY' as const
 export const KANDIDATEN_CHARGE_DATENBANK = 'NOT_APPROVED_FOR_DATABASE_IMPORT' as const
@@ -41,10 +40,19 @@ const EINTRAG_SCHLUESSEL = [
   'validUntil',
 ] as const
 
-const EXPLIZITES_DOKUMENT = ['passport', 'national_id'] as const
-type ExplizitesDokument = (typeof EXPLIZITES_DOKUMENT)[number]
+/**
+ * Forschungs-Dokumentarten. Das ist keine Reise-Enum und keine Umschreibung.
+ * `ordinary_passport` bleibt `ordinary_passport`.
+ * `passport` und `national_id` sind weitere explizite Forschungswerte, kein Default.
+ */
+const FORSCHUNGS_DOKUMENT = ['ordinary_passport', 'passport', 'national_id'] as const
+type ForschungsDokument = (typeof FORSCHUNGS_DOKUMENT)[number]
 
 const BELEGTE_QUALITAET = ['explicit_primary_statement', 'composed_from_multiple_primary_sources'] as const
+const PRIMAER_PFLICHT = ['explicit_primary_statement', 'composed_from_multiple_primary_sources', 'stale_primary_evidence'] as const
+
+/** Reine Tracking-Namen. `lang` und `ref` gehören nicht dazu. */
+const TRACKING_NAMEN = new Set(['gclid', 'dclid', 'fbclid', 'msclkid', 'gbraid', 'wbraid', 'mc_cid', 'mc_eid'])
 
 /**
  * Persönliche Schlüssel, die eine globale Forschungs-Charge nicht tragen darf.
@@ -156,6 +164,7 @@ export type KandidatenChargeFehler =
   | 'field_required'
   | 'invalid_evidence_quality'
   | 'insufficient_official_sources'
+  | 'primary_official_source_required'
   | 'duplicate_official_source'
   | 'official_sources_limit'
   | 'invalid_url'
@@ -178,6 +187,7 @@ export type KandidatenChargeBefund = {
 export type KandidatenChargeEintrag = {
   destinationCountryCode: string
   evidenceQuality: RegelEvidenceQualitaet
+  officialSourceUrl: string | null
   supportingOfficialSourceUrls: readonly string[]
   officialActionLink: string | null
   retrievedAt: string | null
@@ -192,7 +202,7 @@ export type KandidatenChargeErfolg = {
   researchStatus: typeof KANDIDATEN_CHARGE_FORSCHUNG
   databaseImportStatus: typeof KANDIDATEN_CHARGE_DATENBANK
   citizenshipCountryCode: string
-  documentType: ExplizitesDokument
+  documentType: ForschungsDokument
   destinations: readonly KandidatenChargeEintrag[]
   findings: readonly []
 }
@@ -311,9 +321,15 @@ type UrlLesen =
  * Absolute HTTPS-URL ohne Umschreiben.
  * `quelleUrlLesen` kanonisiert über `URL.toString()` und würde die geschriebene
  * Autorität verändern. Hier bleibt die Eingabe stehen oder sie scheitert.
- * Ein Query-Name mit Präfix `utm_` scheitert. Eine weitere Tracking-Liste ist
- * in den Official-Truth-Forschungskonventionen nicht dokumentiert.
+ * Ein Query-Name mit Präfix `utm_` scheitert, ebenso die reinen Tracking-Namen
+ * `gclid`, `dclid`, `fbclid`, `msclkid`, `gbraid`, `wbraid`, `mc_cid` und `mc_eid`.
+ * Sie werden nicht entfernt. `lang` und `ref` bleiben erlaubt.
  */
+function trackingName(name: string): boolean {
+  const klein = name.toLowerCase()
+  return klein.startsWith('utm_') || TRACKING_NAMEN.has(klein)
+}
+
 function urlLesen(wert: unknown): UrlLesen {
   if (typeof wert !== 'string') return { ok: false, reason: 'invalid_url' }
   if (wert.length < URL_MIN || wert.length > URL_MAX) return { ok: false, reason: 'invalid_url' }
@@ -329,7 +345,7 @@ function urlLesen(wert: unknown): UrlLesen {
   const host = gelesen.hostname
   if (!host || host === 'localhost' || host.endsWith('.local')) return { ok: false, reason: 'invalid_url' }
   for (const name of gelesen.searchParams.keys()) {
-    if (name.toLowerCase().startsWith('utm_')) return { ok: false, reason: 'tracking_parameter' }
+    if (trackingName(name)) return { ok: false, reason: 'tracking_parameter' }
   }
   return { ok: true, url: wert }
 }
@@ -371,8 +387,12 @@ function qualitaetLesen(wert: unknown): RegelEvidenceQualitaet | null {
     : null
 }
 
-function dokumentLesen(wert: unknown): ExplizitesDokument | null {
-  return typeof wert === 'string' && (EXPLIZITES_DOKUMENT as readonly string[]).includes(wert) ? (wert as ExplizitesDokument) : null
+function dokumentLesen(wert: unknown): ForschungsDokument | null {
+  return typeof wert === 'string' && (FORSCHUNGS_DOKUMENT as readonly string[]).includes(wert) ? (wert as ForschungsDokument) : null
+}
+
+function primaerPflicht(qualitaet: RegelEvidenceQualitaet): boolean {
+  return (PRIMAER_PFLICHT as readonly string[]).includes(qualitaet)
 }
 
 function belegt(qualitaet: RegelEvidenceQualitaet): boolean {
@@ -522,7 +542,14 @@ function eintragLesen(
 
   const ziel = 'destinationCountryCode' in satz ? land(satz.destinationCountryCode, `${path}.destinationCountryCode`, 'invalid_country_code', bericht) : null
   const amt = 'officialActionLink' in satz ? urlFeld(satz.officialActionLink, `${path}.officialActionLink`, true, bericht) : undefined
-  const primaer = 'officialSourceUrl' in satz ? urlFeld(satz.officialSourceUrl, `${path}.officialSourceUrl`, true, bericht) : undefined
+  let primaer: string | null | undefined
+  if (!('officialSourceUrl' in satz)) primaer = undefined
+  else if (satz.officialSourceUrl === null) {
+    if (qualitaet && primaerPflicht(qualitaet)) {
+      bericht.melden('primary_official_source_required', `${path}.officialSourceUrl`)
+      primaer = undefined
+    } else primaer = null
+  } else primaer = urlFeld(satz.officialSourceUrl, `${path}.officialSourceUrl`, false, bericht)
 
   const zusaetzlich: string[] = []
   let zusaetzlichBrauchbar = false
@@ -552,9 +579,16 @@ function eintragLesen(
     }
     gesehen.add(url)
   }
+  const weitere = typeof primaer === 'string' ? zusaetzlich.filter((url) => url !== primaer) : []
   if (quellen.length > QUELLEN_MAX) bericht.melden('official_sources_limit', `${path}.officialSourceUrl`)
-  if (qualitaet && quellen.length < mindestQuellen(qualitaet) && (primaer !== undefined || zusaetzlichBrauchbar)) {
-    bericht.melden('insufficient_official_sources', `${path}.officialSourceUrl`)
+  if (
+    qualitaet === 'composed_from_multiple_primary_sources' &&
+    typeof primaer === 'string' &&
+    zusaetzlichBrauchbar &&
+    !zusaetzlichFehler &&
+    weitere.length < 1
+  ) {
+    bericht.melden('insufficient_official_sources', `${path}.additionalOfficialSourceUrl`)
   }
 
   let abgerufen: string | null | undefined
@@ -580,6 +614,8 @@ function eintragLesen(
     !qualitaet ||
     !ziel ||
     primaer === undefined ||
+    (primaerPflicht(qualitaet) && typeof primaer !== 'string') ||
+    (qualitaet === 'composed_from_multiple_primary_sources' && weitere.length < 1) ||
     !zusaetzlichBrauchbar ||
     zusaetzlichFehler ||
     amt === undefined ||
@@ -600,6 +636,7 @@ function eintragLesen(
   return {
     destinationCountryCode: ziel,
     evidenceQuality: qualitaet,
+    officialSourceUrl: primaer,
     supportingOfficialSourceUrls: quellen,
     officialActionLink: amt,
     retrievedAt: abgerufen,
@@ -650,9 +687,9 @@ export function kandidatenChargeValidieren(eingabe: unknown, uhr: KandidatenChar
     : null
   if (!('citizenshipCountryCode' in satz)) bericht.melden('citizenship_required', 'citizenshipCountryCode')
 
-  let dokument: ExplizitesDokument | null = null
+  let dokument: ForschungsDokument | null = null
   if (!('documentType' in satz)) bericht.melden('document_type_required', 'documentType')
-  else if (satz.documentType === 'unknown' && (TRAVELLER_DOCUMENT_TYPES as readonly TravellerDocumentType[]).includes('unknown')) {
+  else if (satz.documentType === 'unknown') {
     bericht.melden('document_type_not_explicit', 'documentType')
   } else {
     dokument = dokumentLesen(satz.documentType)

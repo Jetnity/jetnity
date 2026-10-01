@@ -46,11 +46,11 @@ No remote Supabase command was run. No migration file was added. No canonical Of
 ## Boundary choices a reviewer should see
 
 1. Envelope field names are new. The task fixed the status values, not the key names, and this repository has no CH batch to copy. Changing the names later is a contract change.
-2. `stale_primary_evidence` requires one supporting official URL. The task stated cardinality only for explicit and composed quality. Stale evidence with no source is rejected so it cannot look like a sourced primary statement.
+2. `explicit_primary_statement`, `composed_from_multiple_primary_sources` and `stale_primary_evidence` require a non-null `officialSourceUrl`. Composed quality also requires one distinct additional URL. A null primary is not repaired from `additionalOfficialSourceUrl` or from `officialActionLink`. `research_gap` may still omit the primary URL.
 3. `unresolved_conflict` has no minimum URL count. It cannot be marked resolved, and it cannot be promoted. A conflict with zero sources still needs `retrievedAt`, because every non-gap entry is evidence-bearing.
 4. `validFrom` and `validUntil` do not reuse `gültigkeitszeitLesen`. That reader also accepts an instant. This slice accepts a date or `null` only.
 5. URLs are not canonicalized. `quelleUrlLesen` would replace the written string. Fail-closed keeps the original `https://` string or rejects it. Uppercase `HTTPS://` fails because rewriting the scheme would change the input.
-6. The only rejected tracking prefix is `utm_`. A growth audit names `gclid` as an attribution parameter that was not implemented. It is not an Official Truth research convention, so this slice does not invent that denylist. A later documented convention can add exact names.
+6. R1-F3 rejects `utm_*` and the exact names `gclid`, `dclid`, `fbclid`, `msclkid`, `gbraid`, `wbraid`, `mc_cid` and `mc_eid`, compared case-insensitively. `lang` and `ref` stay. Tracking parameters are rejected, not stripped.
 7. `accepted` is a forbidden claim in addition to the task's approved / import-ready / Official Truth / database-import list. A package must not describe itself as already accepted Evidence. `NOT_APPROVED_FOR_DATABASE_IMPORT` does not match, because the check is the whole normalized token.
 8. The personal-key set includes the task's scan, image, face, fingerprint, vaccination and traveller-name variants, and the existing evidence denylist (`tripId`, `phone`, `givenName`, `familyName`, `diagnosis`). The evidence set is not exported. A new key added only in `evidence.ts` is not picked up automatically.
 9. Technical caps are 32 destinations, 8 supporting URLs, depth 8 and 64 list items. Eight matches `REGEL_SUPPORT_MAX`. These caps are not legal limits.
@@ -82,6 +82,12 @@ Recorded on the working tree before this commit. `origin/main` is `a3af1fea1e2cd
 ## Exact-head gates
 
 The head after this commit is the branch tip. Its GitHub CI, Auth job and Vercel Preview are the gate. They are not written here in advance. Do not copy a baseline run from `a3af1fea`.
+
+## R1
+
+Review `5386065012` on `cfab04d8` is closed in this working tree by the three findings only. `ordinary_passport` round-trips. A missing or `unknown` document type fails. `Ordinary_Passport` is not case-folded. Explicit, composed and stale entries with a null primary fail `primary_official_source_required` and do not echo the additional URL or the action link. Composed support with only the action link still fails `insufficient_official_sources`. Each named tracker fails without echoing its value.
+
+Main is integrated at `12d0e24b4268b878695f5b67c04cf34588166c51`. The six #702 files match `origin/main`. Focused tests 13/13. `npm test` 4272/4272. Typecheck, lint, build and hygiene passed on this tree before the R1 commit. The first-head counts above are historical.
 
 ## Stop
 

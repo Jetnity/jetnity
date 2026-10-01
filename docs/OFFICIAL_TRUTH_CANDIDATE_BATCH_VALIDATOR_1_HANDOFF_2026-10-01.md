@@ -26,8 +26,9 @@ Read first:
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- `git fetch origin main` in this session moved the local `origin/main` pin from the stale snapshot `a659bd9080c66908a69fb3602214ee395a3e85e8` to `a3af1fea1e2cdcb461c9d65a913d653dfe467ce8`.
-- Merge-base with that pin is the same SHA. The branch was 0 behind. Re-fetch before treating any later SHA as current.
+- The first delivery was 0 behind `a3af1fea1e2cdcb461c9d65a913d653dfe467ce8`.
+- R1 integrates `main@12d0e24b4268b878695f5b67c04cf34588166c51` (#702). Those research-request files were not edited. Re-fetch before treating any later SHA as current.
+- `documentType: ordinary_passport` is preserved. Explicit, composed and stale entries need a non-null `officialSourceUrl`. Composed entries also need a distinct additional URL. `utm_*` and `gclid`, `dclid`, `fbclid`, `msclkid`, `gbraid`, `wbraid`, `mc_cid`, `mc_eid` fail closed.
 - Parallel lane B. Do not edit the Research Request lane, the store writer, the source catalog, schema, global continuity or Supabase files from this slice.
 
 ## Trust rule for the next reader
