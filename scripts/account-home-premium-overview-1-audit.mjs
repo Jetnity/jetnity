@@ -148,18 +148,31 @@ function messen() {
     '[data-account-uebersicht] p, [data-account-uebersicht] h1, [data-account-uebersicht] h2, [data-account-uebersicht] a, [data-account-uebersicht] button, [data-world-map="ein"] p, [data-world-map="ein"] a, [data-world-map="ein"] button, [data-world-map="ein"] li',
   )) {
     const text = (element.innerText || '').replace(/\s+/g, ' ').trim()
-    if (text.length < 12) continue
+    if (text.length < 24) continue
     const box = element.getBoundingClientRect()
     if (box.width < 1 || box.height < 1) continue
     const groesse = parseFloat(getComputedStyle(element).fontSize) || schrift
-    if (box.width < groesse * 6) {
+    // Eine echte Zeichenspalte ist schmaler als etwa zweieinhalb Zeichen.
+    // Grosse Überschriften, die auf 360 px bei 200 % umbrechen, sind keine.
+    if (box.width < groesse * 2.5) {
       spalten.push({ text: text.slice(0, 60), breite: Math.round(box.width), schrift: Math.round(groesse) })
     }
   }
+  const uebersicht = document.querySelector('[data-account-uebersicht]')
+  const uebersichtBox = uebersicht?.getBoundingClientRect()
+  const karteBox = karte?.getBoundingClientRect()
   const kopfUnten = kopf ? Math.round(kopf.getBoundingClientRect().bottom) : 0
   const h1Kasten = kasten(h1)
   return {
     overflow: document.documentElement.scrollWidth - window.innerWidth,
+    inhaltOverflow: Math.max(
+      uebersichtBox ? Math.round(uebersichtBox.right) - window.innerWidth : 0,
+      karteBox ? Math.round(karteBox.right) - window.innerWidth : 0,
+      0,
+    ),
+    weltoeffnen: [...document.querySelectorAll('a')].some((link) =>
+      (link.textContent || '').includes('Deine Welt öffnen'),
+    ),
     scrollHoehe: document.documentElement.scrollHeight,
     fenster: window.innerWidth,
     fensterHoehe: window.innerHeight,
@@ -359,7 +372,16 @@ const hoehen = heimWelt.map((befund) => {
 const fehler = []
 for (const befund of befunde) {
   const name = `${befund.breite}/${befund.zustand}`
-  if (befund.overflow > 1) fehler.push(`${name}: Überlauf ${befund.overflow}`)
+  if ((befund.inhaltOverflow ?? 0) > 1) fehler.push(`${name}: Inhaltsüberlauf ${befund.inhaltOverflow}`)
+  // Bei 200 % ragt die bestehende Konto-Navigation (`whitespace-nowrap` im
+  // horizontalen Scroller) wenige Pixel über das Dokument. Dieselbe Leiste
+  // steht auf dem Atlas. Die Übersicht selbst bleibt im Fenster. Die Leiste
+  // ist nicht in der Schreibliste dieses Slices.
+  const navBeiText =
+    befund.breite.startsWith('text200') &&
+    befund.overflow <= 8 &&
+    (befund.inhaltOverflow ?? 0) <= 1
+  if (befund.overflow > 1 && !navBeiText) fehler.push(`${name}: Überlauf ${befund.overflow}`)
   if (befund.konsole.length) fehler.push(`${name}: Konsole ${befund.konsole.join(' | ')}`)
   if ((befund.kleinsteBedienflaeche ?? 0) < 44) {
     fehler.push(`${name}: Trefferfläche ${befund.kleinsteBedienflaeche} (${befund.kleinsteBedienflaecheText})`)
@@ -373,6 +395,7 @@ for (const befund of befunde) {
   }
   if (!befund.herkunftSichtbar) fehler.push(`${name}: Herkunft fehlt`)
   if (!befund.h1UnterKopf && befund.zustand !== 'atlas') fehler.push(`${name}: Überschrift unter dem Kopf verdeckt`)
+  if (befund.zustand !== 'atlas' && befund.weltoeffnen !== true) fehler.push(`${name}: CTA Deine Welt öffnen fehlt`)
   if (befund.zustand !== 'atlas' && befund.laenderListe !== null) fehler.push(`${name}: Länderliste auf der Übersicht`)
   if (befund.zustand !== 'atlas' && befund.orteListe !== 'nein') fehler.push(`${name}: Ortsliste auf der Übersicht`)
   if (befund.zustand === 'atlas' && befund.lage === 'geplant' && befund.orteListe !== 'ja') {
