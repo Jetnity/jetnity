@@ -7,10 +7,10 @@
 'use client'
 
 import * as React from 'react'
-import { Trash2 } from 'lucide-react'
+import { Eye, EyeOff, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { SICHERHEIT_EINGABE_16, SICHERHEIT_ZIEL_44, SICHERHEIT_ZIEL_44_QUADRAT } from '@/lib/auth/account-security-premium-ux-1'
 import {
   KONTOLOESCHUNG_ANFANG,
   kontoloeschungAnstossen,
@@ -111,6 +111,8 @@ function portBauen(): KontoloeschungPort {
 
 export default function KontoLoeschen() {
   const [zustand, setZustand] = React.useState<KontoloeschungZustand>(KONTOLOESCHUNG_ANFANG)
+  const [formularOffen, setFormularOffen] = React.useState(false)
+  const [zeigePasswort, setZeigePasswort] = React.useState(false)
   const [bestaetigung, setBestaetigung] = React.useState('')
   const [passwort, setPasswort] = React.useState('')
   const [code, setCode] = React.useState('')
@@ -120,6 +122,20 @@ export default function KontoLoeschen() {
   const beschaeftigt = kontoloeschungIstBeschaeftigt(zustand)
   const gesperrt = kontoloeschungSendenGesperrt(zustand, bestaetigung, passwort, code)
   const status = kontoloeschungStatusText(zustand)
+  // Nur Darstellung. Die Zustandsmaschine bleibt unberührt, solange die Phase
+  // noch `bereit` ist. Nach dem Start gibt es kein Schließen.
+  const formularSichtbar = zustand.phase !== 'nicht_unterstuetzt' && (formularOffen || zustand.phase !== 'bereit')
+  const vorbereitenSichtbar = zustand.phase === 'bereit' && !formularOffen
+  const schliessenSichtbar = zustand.phase === 'bereit' && formularOffen
+
+  function vorbereitungSchliessen() {
+    if (zustand.phase !== 'bereit') return
+    setBestaetigung('')
+    setPasswort('')
+    setCode('')
+    setZeigePasswort(false)
+    setFormularOffen(false)
+  }
 
   React.useEffect(() => {
     if (zustand.phase === 'mfa') codeRef.current?.focus()
@@ -157,7 +173,8 @@ export default function KontoLoeschen() {
     <section
       aria-labelledby="konto-loeschen-titel"
       data-kontoloeschung-phase={zustand.phase}
-      className="rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)]"
+      data-kontoloeschung-formular={formularSichtbar ? 'offen' : 'zu'}
+      className="scroll-mt-24 rounded-[26px] border border-red-200 bg-red-50/50 p-4 sm:p-5"
     >
       <div className="flex items-start gap-4">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-800">
@@ -176,22 +193,35 @@ export default function KontoLoeschen() {
           </p>
           <a
             href="/api/account/export"
-            className="mt-4 inline-flex min-h-11 items-center rounded-2xl border border-brand-800 px-4 text-sm font-semibold text-brand-800 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            className={`${SICHERHEIT_ZIEL_44} mt-4 inline-flex items-center rounded-2xl border border-brand-800 px-4 text-sm font-semibold text-brand-800 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
           >
             Daten zuerst exportieren
           </a>
 
+          {vorbereitenSichtbar ? (
+            <Button
+              type="button"
+              variant="outline"
+              className={`${SICHERHEIT_ZIEL_44} mt-4 border-red-700 text-red-900 hover:bg-red-100`}
+              aria-expanded={false}
+              aria-controls="konto-loeschen-formular"
+              onClick={() => setFormularOffen(true)}
+            >
+              Kontolöschung vorbereiten
+            </Button>
+          ) : null}
+
           {zustand.phase === 'nicht_unterstuetzt' ? (
             <p className="mt-4 text-sm leading-6 text-ink-700">{status}</p>
-          ) : (
-            <form className="mt-6 space-y-4" onSubmit={absenden}>
+          ) : formularSichtbar ? (
+            <form id="konto-loeschen-formular" className="mt-6 space-y-4" onSubmit={absenden}>
               <div>
                 <label htmlFor="konto-loeschen-bestaetigung" className="text-sm font-medium text-brand-800">
                   Gib KONTO LÖSCHEN ein, um fortzufahren
                 </label>
                 <input
                   id="konto-loeschen-bestaetigung"
-                  className="mt-2 min-h-11 w-full rounded-2xl border border-black/10 bg-white px-4 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className={`mt-2 min-h-11 w-full rounded-2xl border border-black/10 bg-white px-4 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${SICHERHEIT_EINGABE_16}`}
                   value={bestaetigung}
                   autoComplete="off"
                   spellCheck={false}
@@ -210,7 +240,7 @@ export default function KontoLoeschen() {
                   <input
                     ref={codeRef}
                     id="konto-loeschen-code"
-                    className="mt-2 min-h-11 w-full rounded-2xl border border-black/10 bg-white px-4 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                    className={`mt-2 min-h-11 w-full rounded-2xl border border-black/10 bg-white px-4 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${SICHERHEIT_EINGABE_16}`}
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     value={code}
@@ -220,29 +250,56 @@ export default function KontoLoeschen() {
                   />
                 </div>
               ) : (
-                <Input
-                  id="konto-loeschen-passwort"
-                  type="password"
-                  revealable
-                  label="Aktuelles Passwort"
-                  autoComplete="current-password"
-                  value={passwort}
-                  disabled={beschaeftigt || zustand.phase === 'fertig'}
-                  onChange={(ereignis) => setPasswort(ereignis.target.value)}
-                />
+                <div>
+                  <label htmlFor="konto-loeschen-passwort" className="text-sm font-medium text-brand-800">
+                    Aktuelles Passwort
+                  </label>
+                  <div className="relative mt-2">
+                    <input
+                      id="konto-loeschen-passwort"
+                      type={zeigePasswort ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      value={passwort}
+                      disabled={beschaeftigt || zustand.phase === 'fertig'}
+                      onChange={(ereignis) => setPasswort(ereignis.target.value)}
+                      className={`min-h-11 w-full rounded-2xl border border-black/10 bg-white px-4 pr-14 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-60 ${SICHERHEIT_EINGABE_16}`}
+                    />
+                    <button
+                      type="button"
+                      className={`${SICHERHEIT_ZIEL_44_QUADRAT} absolute right-1 top-1/2 -translate-y-1/2 rounded-xl text-brand-800 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
+                      aria-label={zeigePasswort ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                      onClick={() => setZeigePasswort((wert) => !wert)}
+                    >
+                      {zeigePasswort ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                    </button>
+                  </div>
+                </div>
               )}
 
-              <Button
-                type="submit"
-                variant="destructive"
-                disabled={gesperrt}
-                isLoading={beschaeftigt}
-                loadingText="Konto wird gelöscht"
-              >
-                Konto endgültig löschen
-              </Button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  disabled={gesperrt}
+                  isLoading={beschaeftigt}
+                  loadingText="Konto wird gelöscht"
+                  className={SICHERHEIT_ZIEL_44}
+                >
+                  Konto endgültig löschen
+                </Button>
+                {schliessenSichtbar ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className={SICHERHEIT_ZIEL_44}
+                    onClick={vorbereitungSchliessen}
+                  >
+                    Vorbereitung schließen
+                  </Button>
+                ) : null}
+              </div>
             </form>
-          )}
+          ) : null}
 
           <div
             ref={statusRef}
