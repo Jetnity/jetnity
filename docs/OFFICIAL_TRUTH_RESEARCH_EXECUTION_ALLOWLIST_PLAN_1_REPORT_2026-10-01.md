@@ -12,6 +12,14 @@ Session: https://cursor.com/agents/bc-157efd04-cbc8-4fe1-8475-13d1efdb5edb
 
 This report is the author record. It is not a Technical-Lead PASS, not Ready, and not a merge.
 
+## R1 correction
+
+Technical-Lead R1 `5386675895` on `a390cd9fe357841ed035858a0eb63dbcc7caefe3` accepted the plan and required R1-F1 only.
+
+A registered hostname and a blocked hostname now fail the whole plan when they overlap in either direction. `gov.example` with blocked `blocked.gov.example` is `blocked_invalid`. `sub.gov.example` with blocked `gov.example` is `blocked_invalid`. An unrelated blocked hostname leaves that source plan intact. A sibling hostname on the same row is not kept. The plan emits no wildcard, path, or query.
+
+`main@0842f9854a1362e9fc71dfe22f0c49617c122e65` (#709) is integrated and unchanged. The retrieved-material receipt is not this slice.
+
 ## Result
 
 `officialTruthRechercheAusfuehrungsplan` in `lib/readiness/official-truth-research-execution-plan.ts` answers one question: for this exact research request, which already-registered `official_authority` hostnames may be named before any fetch?
@@ -50,17 +58,19 @@ One call is one regulatory cell: one explicit credential option, or no document,
 
 ## Validation
 
-Local gates below were run on `bd87a593d4ba9107d5f6aeedd987448dcba6661f` before this docs commit. `git fetch origin main` in this session resolved the stale snapshot to `e32c60e9f9d2bdc9db42c80eba6721e59e5120df`. Merge-base is that SHA. That head was 0 behind and 3 ahead. Re-fetch before treating any later SHA as current.
+The first delivery gates were on `bd87a593d4ba9107d5f6aeedd987448dcba6661f` against `main@e32c60e9f9d2bdc9db42c80eba6721e59e5120df`: focused tests 10/10, `npm test` 4294 pass / 0 fail. Those numbers are not the R1 gate.
+
+R1 gates below were run on `d2680c57a7e989122fbf3f5cdad31a43be304a6a` after the #709 merge and before this docs commit. `git fetch origin main` resolved `origin/main` to `0842f9854a1362e9fc71dfe22f0c49617c122e65`. Merge-base is that SHA. That head was 0 behind. Re-fetch before treating any later SHA as current.
 
 | Check | Result |
 | --- | --- |
 | `git diff --check` | pass |
 | operating-mode guard | PASS |
 | `lib/readiness/official-truth-research-execution-plan.test.ts` | 10/10 pass |
-| `npm test` | 4294 pass / 0 fail, 748 suites |
+| `npm test` | 4309 pass / 0 fail, 749 suites |
 | `npm run typecheck` | pass |
-| eslint on the two new files | pass, no warnings |
-| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the new files |
+| eslint on the two slice files | pass, no warnings |
+| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the slice files |
 | `npm run build` | pass |
 | `check:dead` | 0 orphans |
 | `check:exports` | 0 unused exports |
@@ -72,4 +82,4 @@ PostgreSQL 16.15 was installed in this VM so the existing store proofs could run
 
 ## Exact-head gates
 
-GitHub CI, the Auth job and Vercel Preview for the pushed tip are not properties of this prose. They are read after the push. Do not copy a baseline run id from `e32c60e9`.
+GitHub CI, the Auth job and Vercel Preview for the pushed tip are not properties of this prose. They are read after the push. Do not copy a run id from `a390cd9f` or from `0842f985`.

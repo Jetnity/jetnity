@@ -4,7 +4,8 @@ Date: 1 October 2026
 Issue: #706
 Draft PR: #708
 Branch: `feat/official-truth-research-execution-allowlist-plan-1`
-Baseline: `main@e32c60e9f9d2bdc9db42c80eba6721e59e5120df`
+Baseline at dispatch: `main@e32c60e9f9d2bdc9db42c80eba6721e59e5120df`
+Integrated main for R1: `main@0842f9854a1362e9fc71dfe22f0c49617c122e65`
 
 Logical agent: **Jetnity Official Truth research execution allowlist plan 1**, Generation 1
 Session: https://cursor.com/agents/bc-157efd04-cbc8-4fe1-8475-13d1efdb5edb
@@ -12,7 +13,7 @@ Session: https://cursor.com/agents/bc-157efd04-cbc8-4fe1-8475-13d1efdb5edb
 
 ## Current state
 
-The branch adds a pure pre-fetch allowlist plan for an existing Official Truth research request. It is a Draft. It is not Ready and not merged.
+The branch adds a pure pre-fetch allowlist plan for an existing Official Truth research request. Technical-Lead R1 `5386675895` on `a390cd9f` required R1-F1. This tip fails the plan when a blocked hostname sits above or below a registered hostname, and it does not trim the row. It is a Draft. It is not Ready and not merged.
 
 Read first:
 
@@ -26,9 +27,10 @@ Read first:
 ## Session facts
 
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
-- `git fetch origin main` in this session moved the local `origin/main` pin from the stale snapshot `0e62a532831e0711aad3bde645b239edea674705` to `e32c60e9f9d2bdc9db42c80eba6721e59e5120df`.
-- Merge-base with that pin is that SHA. The gate head `bd87a593d4ba9107d5f6aeedd987448dcba6661f` was 0 behind and 3 ahead. Re-fetch before treating any later SHA as current.
-- The review head is the branch tip after the lane-docs commit. Local gates in the report were run on `bd87a593` before that docs commit. The docs commit does not change runtime behaviour.
+- `git fetch origin main` for R1 resolved `origin/main` to `0842f9854a1362e9fc71dfe22f0c49617c122e65` (#709). That merge is preserved unchanged.
+- The R1 gate head `d2680c57a7e989122fbf3f5cdad31a43be304a6a` was 0 behind that pin. Re-fetch before treating any later SHA as current.
+- The review head is the branch tip after the R1 docs commit. Local gates in the report were run on `d2680c57` before that docs commit. The docs commit does not change runtime behaviour.
+- The earlier delivery head `a390cd9f` is the R1 review head, not the correction gate.
 
 ## Trust rule for the next reader
 
@@ -36,7 +38,7 @@ This function only names eligible official source IDs and the hostnames already 
 
 `blocked_invalid` is not the same outcome. A tampered request, a tampered registry row, or a blocked hostname fails the plan. Do not rewrite that into "no source" and do not trim the allowlist down to the hostnames that still look safe.
 
-A later research executor, if a versioned task creates one, must call this function for a #702 request. Calling `quellenRouten` directly would keep licensed providers that match the same coverage. Calling #705 alone would return source IDs without the hostname allowlist and without this registry re-check. This output has no URL. A registered hostname is that exact hostname, not permission to fetch every name under it, and not permission to invent a path or a query.
+A later research executor, if a versioned task creates one, must call this function for a #702 request. Calling `quellenRouten` directly would keep licensed providers that match the same coverage. Calling #705 alone would return source IDs without the hostname allowlist and without this registry re-check. This output has no URL. A registered hostname is that exact hostname. If a blocked hostname is nested under it, the plan is already `blocked_invalid`. Do not trim the row, and do not invent a wildcard, a path, or a query.
 
 One call is one canonical cell. Another credential option is another request. Fact kind and research reason stay on the plan and do not select a source. `requirementsProviderAus()` stays `null`.
 
@@ -57,4 +59,4 @@ The pushed tip is the review head. Its GitHub CI, Auth job and Vercel Preview ar
 
 No Ready. No merge. No Supabase apply. No import. No browser or model research adapter. No follow-up slice.
 
-**STOP for independent Technical-Lead review of the exact branch tip.**
+**STOP for independent Technical-Lead R2 review of the exact branch tip.**

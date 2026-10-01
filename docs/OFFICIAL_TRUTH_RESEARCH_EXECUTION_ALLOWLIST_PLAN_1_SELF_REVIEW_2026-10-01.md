@@ -11,6 +11,14 @@ Session: https://cursor.com/agents/bc-157efd04-cbc8-4fe1-8475-13d1efdb5edb
 
 This is the author self-review. It is not a Technical-Lead PASS.
 
+## R1-F1
+
+R1 `5386675895` on `a390cd9f` accepted the rest of the plan. The gap was one direction: a blocked child such as `blocked.gov.example` did not fail a parent allowlist of `gov.example`.
+
+The correction compares the two normalized hostnames both ways. Either nesting fails the whole source plan. The sibling hostname on that row is not emitted. No wildcard is created. `sub.gov.example` under blocked `gov.example` still fails. `other.example` blocked beside `gov.example` still allows `gov.example` only.
+
+#709 at `0842f9854a1362e9fc71dfe22f0c49617c122e65` is merged and was not edited.
+
 ## Scope check
 
 The diff against `e32c60e9f9d2bdc9db42c80eba6721e59e5120df` is the task seed plus:
@@ -31,7 +39,7 @@ No remote Supabase command was run. No migration file was added. `official-truth
 - Two official IDs come back in alphabetical order when the descriptor list is reversed. Their hostnames stay with the matching source.
 - The same coverage on a licensed provider alone returns `no_eligible_official_source`. The provider ID and hostname are not in the plan.
 - A mixed registry returns the official plan and drops the licensed ID and hostname.
-- An exact blocked hostname, a hostname under a blocked name, a non-normalized hostname, a duplicated source id, a repeated hostname, an empty hostname list, an unreadable block list, and a descriptor whose publisher no longer matches the registry each return `blocked_invalid` and do not echo the hostname.
+- An exact blocked hostname, a hostname under a blocked name, a blocked child under a registered parent, a non-normalized hostname, a duplicated source id, a repeated hostname, an empty hostname list, an unreadable block list, and a descriptor whose publisher no longer matches the registry each return `blocked_invalid` and do not echo the hostname. `gov.example` plus `other.example` with blocked `blocked.gov.example` does not keep `other.example`. Blocked `other.example` beside `gov.example` still returns `gov.example` only.
 - Several registered hostnames are emitted sorted, including when the hand-built row listed them in another order. The input row is not rewritten.
 - A destination swapped under the old rule-scope key is `scope_mismatch`. A changed request key or evidence class is `invalid_request`. A raw traveller object that also carries a source-id list is blocked and does not copy the person or the id. A canonical URL on the scope is blocked and not copied. The request, registry, and descriptor JSON are unchanged.
 - A `canonicalUrl` hung on the descriptor is not copied. The plan still has only the registry hostname.
@@ -44,7 +52,7 @@ No remote Supabase command was run. No migration file was added. `official-truth
 2. There is no input for a pre-built #705 decision. The only call is `officialTruthRechercheQuellenRouten(anfrage, registry, deskriptoren)`.
 3. Hostnames come from the registry row whose `sourceId` matches once. The descriptor is not a second domain list. A URL field on that descriptor is ignored.
 4. One bad hostname fails the whole plan. A blocked name is not omitted from an otherwise `ready` list. An empty list is not `ready`.
-5. A hostname under a blocked registry name is blocked. The comparison is exact host or a longer name that ends with `.<blocked>`. Emitting `border.example` does not grant `www.border.example` unless that second name is itself on the registry row.
+5. A registered hostname and a blocked hostname fail the plan when either name is nested under the other. Emitting `gov.example` does not leave `blocked.gov.example` reachable through this allowlist. The row is not trimmed. An unrelated blocked name stays out of the plan and does not remove the source.
 6. Source order and hostname order are alphabetical. That is not a preference, a default source, or a passport ranking.
 7. `ready` and `no_eligible_official_source` carry the #705 request identity. `blocked_invalid` carries only status and reason, so a tampered value is not echoed. `no_eligible_official_source` has no `sources` field.
 8. An unreadable block list fails even when #705 would have said there is no eligible source. A block list that cannot be checked must not look like a clean no-source answer.
@@ -58,14 +66,14 @@ No remote Supabase command was run. No migration file was added. `official-truth
 
 ## Local validation
 
-Recorded on `bd87a593d4ba9107d5f6aeedd987448dcba6661f` before this docs commit. `origin/main` is `e32c60e9f9d2bdc9db42c80eba6721e59e5120df`. Merge-base is that SHA. The branch was 0 behind and 3 ahead.
+R1 gates recorded on `d2680c57a7e989122fbf3f5cdad31a43be304a6a` before this docs commit. `origin/main` is `0842f9854a1362e9fc71dfe22f0c49617c122e65`. Merge-base is that SHA. The branch was 0 behind. The first delivery gates on `bd87a593` are historical.
 
 - `git diff --check`: pass.
 - `node scripts/operating-mode-guard.mjs`: PASS.
 - `lib/readiness/official-truth-research-execution-plan.test.ts`: 10/10 pass.
-- `npm test`: 4294 pass / 0 fail. 748 suites. PostgreSQL 16.15 is present at `/usr/lib/postgresql/16/bin`. The store test files were not changed. No remote database was contacted.
+- `npm test`: 4309 pass / 0 fail. 749 suites. PostgreSQL 16.15 is present at `/usr/lib/postgresql/16/bin`. The store and retrieved-material test files were not changed by this correction. No remote database was contacted.
 - `npm run typecheck`: pass.
-- `npx eslint` on the two new files: pass, no warnings.
+- `npx eslint` on the two slice files: pass, no warnings.
 - `npm run lint`: 0 errors, 148 pre-existing warnings.
 - `npm run build`: pass.
 - `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`: pass.
@@ -74,4 +82,4 @@ Recorded on `bd87a593d4ba9107d5f6aeedd987448dcba6661f` before this docs commit. 
 
 ## Exact-head gates
 
-The pushed tip is the review head. GitHub CI, the Auth job and Vercel Preview belong to that tip. They are not copied from `e32c60e9` or from `bd87a593`.
+The pushed tip is the R2 review head. GitHub CI, the Auth job and Vercel Preview belong to that tip. They are not copied from `a390cd9f` or from `0842f985`.
