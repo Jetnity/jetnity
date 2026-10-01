@@ -1,8 +1,8 @@
 # Official Truth Source/Evidence Architecture
 
 Date: 1 October 2026
-Status: **contract foundation merged in #673 / private evidence schema is on Draft PR #675 / Development history version `20261001121258` matches the repository file / Production not applied / no provider activation**
-Decision: ADR-0216, ADR-0217
+Status: **source/evidence contract merged in #673 / private evidence schema merged in #675 at `main@140fdfb9fb066ca9d23c295719cb2e770ae63fd7` / Development history `20261001121258` with three empty private tables / Production has no Official-Evidence table / rule-claim contract is Draft PR #677 / no provider activation**
+Decision: ADR-0216, ADR-0217, ADR-0218
 Product-Owner source: Issue #294 comment `5928669189`
 Task: `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_FOUNDATION_1_TASK_2026-10-01.md`
 
@@ -135,6 +135,24 @@ No evidence row exists because of this migration. No store adapter exists. `requ
 
 A later refresh may use existing `pg_cron`, a queue or another bounded worker only after a separate architecture and operations slice. This schema does not install or use `pgmq`.
 
-## 9. Next step
+## 9. Schema state after #675
 
-Not a dispatched slice. The next action is independent Technical-Lead review of the repository identity head. Development already has this schema. Cursor does not apply it again. Production remains a Product-Owner gate. This is not an adapter or provider slice.
+#675 merged at `main@140fdfb9fb066ca9d23c295719cb2e770ae63fd7`. Development has migration `20261001121258_official_truth_private_evidence_store_schema_1` and the three private tables. Those tables have zero rows. Production has no Official-Evidence migration and no Official-Evidence table. This document does not apply SQL. A second Development apply is not allowed.
+
+## 10. Rule claims
+
+Draft PR #677 adds the source-neutral rule-claim contract in `lib/readiness/rule-claims.ts`. ADR-0218. It sits between an accepted `EvidenceVersion` and the existing engine. It does not wire the engine.
+
+The rule scope drops only `sourceId` from a validated evidence scope. The key is `rule-scope:v1:` plus SHA-256. `evidence-key:v2:` is unchanged. Citizenship order does not change the key. Two sources with the same regulatory scope share it. The cell still carries the full citizenship set and one credential option. The issuing country is not citizenship. There is no preferred passport.
+
+Evidence support is a sorted unique list of at most eight `versionId` values. Every supporting version must resolve to that same rule scope. `explicit_primary_statement` and `composed_from_multiple_primary_sources` are primary Official Truth: every supporting version must be `sourceClass === 'official_authority'`. Explicit quality needs at least one such version. Composed quality needs at least two such versions and two distinct official `sourceId` values. A licensed provider, two licensed providers, or a mix of official and licensed support fails closed with `primary_source_required`. This slice does not add a provider-truth quality. `stale_primary_evidence`, `unresolved_conflict` and `research_gap` cannot become an accepted claim. A research gap has a null proposal and never becomes `not_required`.
+
+`regelKandidatAkzeptieren` does not read the candidate proposal. The accepted fact is built only from the separate `trustedRuleFact` plus evidence versions that pass `akzeptierteEvidenceLesen`. There is no second constructor.
+
+`OFFICIAL_REQUIREMENT_TYPES` is unchanged. Research labels are not requirement types. Structured fact kinds are `requirement_effect`, `visa_options`, `stay_limit`, `passport_validity`, `blank_passport_pages`, `transit_conditions`, `official_actions` and `temporal_rule`. Duration units are not converted. A valid-on-entry passport rule does not store zero months. Unknown transit fields stay null. Official actions resolve through the Source Registry to `official_authority` only. Temporal rules use `temporalRuleLesen`.
+
+This rule-claim slice has no database migration, no Candidate-Evidence import and no CH research batch. Development evidence tables stay empty. There is no runtime provider or engine integration. The next persistence change, if the Technical Lead selects one, is a separate Development-only slice. Production remains a Product-Owner gate. This section does not start that slice.
+
+## 11. Next step
+
+The current writer is Draft PR #677. The next action is independent Technical-Lead review of its exact head. Cursor does not Ready, merge, apply SQL, import evidence or start a follow-up.
