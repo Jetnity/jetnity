@@ -25,9 +25,9 @@ Betriebsmodus beim Start: `NORMAL`. Diese Arbeit ist ein freigegebenes, begrenzt
 Merge-Base gegen `origin/main`: `9c494110196a2877f6eba3babe7cf5ae7c00acf1`.
 
 - Komponenten und fokussierte Tests: `15d466a3c7d70867cc223ec8c67cc62dd5c581f6`
-- Der Review-Kopf ist der Branch-Tip nach Evidenz und diesem Handoff.
-- Vor dem Tip: 2 Commits vor `origin/main`, 0 dahinter. Nach dem Evidenz-Commit entsprechend weiter voraus, 0 dahinter.
-- `git diff 15d466a3c7d70867cc223ec8c67cc62dd5c581f6 HEAD -- components` muss leer sein. Der Nachzug nach dem Evidenz-Commit darf nur dieses Handoff um den Tip-SHA ergänzen.
+- Evidenz, Audit und Bericht: `b277268f2663fc9d5a17392b9426de4a26bf474d`
+- Dieser Nachzug ändert nur dieses Handoff. `git diff b277268f2663fc9d5a17392b9426de4a26bf474d HEAD -- components lib scripts docs/evidence` muss leer sein.
+- Der Review-Kopf ist der Branch-Tip. `git diff 15d466a3c7d70867cc223ec8c67cc62dd5c581f6 HEAD -- components` muss leer sein.
 
 ## Geänderte Dateien
 
