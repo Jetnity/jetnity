@@ -66,7 +66,18 @@ Merge of `133c47da00930c0ae0d18bac7c494aca3adbe36e` was clean. No file overlappe
 
 ## Remote observation
 
-The observation below is for `935719b8`, before #667 merged to main. It does not approve `5ad2d107` or a later tip. Exact-head CI for the #667 integration is still open.
+Read on `5a1a55ada1e4cfb1719accd5bfa7ad2bf2bfadfd`. This observation does not approve a later commit.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36796220259` | SUCCESS |
+| Auth-Konfiguration gegen config.toml | SUCCESS |
+| Typecheck, Lint & Build | SUCCESS |
+| Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/HL7NFJPwsFi4JwFT2E1q95kNedwL` |
+
+Combined commit status success. Draft #665 stayed open. At the time of this read the branch was 0 behind `origin/main` `133c47da`.
+
+The older observation below is for `935719b8` only. It does not approve this head.
 
 | Check | Result |
 | --- | --- |
@@ -99,4 +110,4 @@ Combined commit status `success`. Draft #665 stayed open. Older SUCCESS runs on 
 
 ## Stop
 
-Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead code, visual, mobile and truth review is required after exact-head CI on the #667 integration tip. Older tables do not approve that tip. This handoff is not a Technical-Lead PASS.
+Draft. No Ready. No merge. No follow-up slice. Independent Technical-Lead review is required. The current observation is `5a1a55ad`. Older tables do not approve a later commit. This handoff is not a Technical-Lead PASS.

@@ -37,4 +37,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Main `133c47da` is merged. The R1 layout is unchanged. #669, #663, and #667 arrived from main and were not edited further. Exact-head CI on `935719b8` does not approve this integration head.
+Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Main `133c47da` is merged. The R1 layout is unchanged. #669, #663, and #667 arrived from main and were not edited further. Exact-head CI on `5a1a55ad` was later read as SUCCESS for Actions `36796220259`, Auth, Typecheck, Lint & Build, and Vercel `HL7NFJPwsFi4JwFT2E1q95kNedwL`. That read does not approve a later commit.
