@@ -12,7 +12,9 @@ Logical agent: **Jetnity Official Truth accepted Rule Claim persistence schema 1
 Session: https://cursor.com/agents/bc-2a2f9c56-970f-4445-a26b-191272ae7dd4
 `originalModelName`: `grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. Recorded from this run before editing.
 
-Status: **REPOSITORY SCHEMA DELIVERED / NOT APPLIED / DRAFT / NO TL PASS / NO READY / NO MERGE**
+Status at #679 delivery: **REPOSITORY SCHEMA DELIVERED / NOT YET APPLIED WHEN THIS REPORT WAS FIRST WRITTEN**
+
+Later identity status: canonical repository and Development history version `20261001151048`. Applied exactly once. Original local CLI version `20261001140356` is historical. See section 9. #679 later merged. This report is not a Technical-Lead PASS for #681.
 
 ## 1. Baseline reconstruction
 
@@ -27,7 +29,7 @@ Re-verified in this session before editing:
 | Latest ADR on that main | ADR-0218. ADR-0219 was free and is used here. |
 | Open pull requests | Draft #679 is this writer. Historical drafts #52, #50, #40, #39 and #28 are not current writers. |
 | Issue #678 | OPEN |
-| Supabase CLI on PATH | not present. Official binary `2.48.3` was downloaded outside the repository. `supabase migration new official_truth_accepted_rule_claim_persistence_schema_1` created `supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. The timestamp was not typed by hand. The CLI also reported that `2.119.0` exists. This slice did not upgrade it after the file existed. |
+| Supabase CLI on PATH | not present. Official binary `2.48.3` was downloaded outside the repository. `supabase migration new official_truth_accepted_rule_claim_persistence_schema_1` created `supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. That timestamp is the original local CLI identity only. It was not typed by hand. The canonical reconciled repository and Development history version is `20261001151048`. The CLI also reported that `2.119.0` exists. This slice did not upgrade it after the file existed. See section 9. |
 
 Stated by the binding task and **not re-proven by a remote query in this session**:
 
@@ -112,9 +114,11 @@ This is not the Development server. The task states Development is PostgreSQL 17
 
 ## 6. Changed-file manifest
 
+This list is the #679 delivery manifest. The path below is the original local CLI filename. After identity reconciliation the canonical repository path is `supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`. See section 9.
+
 Allowlist only:
 
-- `supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`
+- `supabase/migrations/20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql` — original local CLI filename at #679 delivery. Canonical reconciled path: `supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`.
 - `lib/readiness/rule-claim-store-schema.test.ts`
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
@@ -164,3 +168,15 @@ Recorded before the R1 push:
 - No RequirementsProvider or engine wiring.
 - No UI, cron, queue, indexing, launch or #626 work.
 - Draft only. Cursor does not Ready or merge.
+
+## 9. Later identity reconciliation — 1 October 2026
+
+This section is not part of the original #679 delivery above. Issue #680 / Draft PR #681 reconciles the repository filename with the Development history version.
+
+The Technical Lead applied the accepted SQL once. Supabase recorded that apply as `20261001151048_official_truth_accepted_rule_claim_persistence_schema_1`. That version was not typed by hand. The repository file created earlier by `supabase migration new` was `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`.
+
+`git mv` renamed that one file to `supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`. SHA-256 before and after the rename is `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`. The SQL bytes did not change. There is still one matching migration file. The static test already requires that single `*_official_truth_accepted_rule_claim_persistence_schema_1.sql` name, so its expectations were not edited.
+
+Cursor did not apply the migration again, did not repair remote history, and did not touch Production. No second remote apply is required or allowed. No source, evidence, claim or research row was imported.
+
+The reconciliation report is `docs/OFFICIAL_TRUTH_RULE_CLAIM_MIGRATION_ID_RECONCILIATION_REPORT_2026-10-01.md`. Exact-head GitHub CI, Auth and Vercel Preview belong to the pushed reconciliation tip. This section does not embed that run id.

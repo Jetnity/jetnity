@@ -600,3 +600,7 @@ Do not apply migration remotely.
 Do not import any research.
 
 **STOP for independent Technical-Lead exact-head review.**
+
+## 17. Later migration identity — 1 October 2026
+
+This note does not reopen the schema slice. Issue #680 reconciled the repository filename after the one Development apply. The original local CLI version `20261001140356` is historical. The canonical repository file and Development history version are `20261001151048_official_truth_accepted_rule_claim_persistence_schema_1`. The SQL bytes are unchanged. Do not apply the migration again. Production remains untouched.
