@@ -62,7 +62,15 @@ Read in this session on the working tree before the implementation push. A later
 
 ## Exact-head gates
 
-Not yet read. The push that follows this file is the head to gate. Do not copy a gate from #675 or from the task seed `2710c1f7`.
+Read in this session for `3d774ebda798b5ee72ff5bb72df4ba2f89062683` only:
+
+- GitHub CI run `36866487394` **SUCCESS**, event `pull_request`
+- Auth job `110383120020` **SUCCESS**
+- Typecheck, Lint & Build job `110383120312` **SUCCESS**
+- Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/4SYkZJherF1CSEDds3aLYxFxEbWi`
+- GitHub Preview deployment `6785062708` **success**, target `https://jetnity-jb5lqp9zj-jetnity-e1b93c82.vercel.app`, direct GET HTTP 302 to Vercel SSO
+
+The commit that writes these facts is a newer head. Those gates do not cover it. Do not copy a gate from #675 or from the task seed `2710c1f7`.
 
 ## Stop
 

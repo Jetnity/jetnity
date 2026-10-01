@@ -52,6 +52,10 @@ Keep the existing requirement taxonomy. Do not add `visa_exemption`, `electronic
 
 The next persistence change, if the Technical Lead selects one after this Draft is accepted, should be a separate Development-only slice. It must store accepted claims from the trusted fact plus accepted evidence versions, and it must not promote a candidate proposal because the proposal parsed. Production stays a Product-Owner gate. This handoff does not authorize that slice.
 
+## Exact head already gated
+
+Read in this session for `3d774ebda798b5ee72ff5bb72df4ba2f89062683` only: GitHub CI `36866487394` **SUCCESS** (`pull_request`), Auth job `110383120020` **SUCCESS**, Typecheck, Lint & Build job `110383120312` **SUCCESS**, Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/4SYkZJherF1CSEDds3aLYxFxEbWi` **success**, Preview deployment `6785062708` **success** at `https://jetnity-jb5lqp9zj-jetnity-e1b93c82.vercel.app` (direct GET HTTP 302 to Vercel SSO). The commit that records this paragraph is newer. Re-read CI for the branch tip. Do not reuse the task-seed run `36864246324`.
+
 ## Stop
 
 Cursor does not Ready or merge.
