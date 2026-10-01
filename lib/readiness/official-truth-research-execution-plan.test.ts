@@ -293,6 +293,19 @@ describe('Official Truth research execution allowlist plan', () => {
     assert.deepEqual(doppeltPlan, { status: 'blocked_invalid', reason: 'invalid_source_plan' })
     assert.equal(text(doppeltPlan).includes('gov.example'), false)
 
+    const wiederholteDomain = { ...amtlich, domains: ['gov.example', 'gov.example'] }
+    const wiederholtePlan = officialTruthRechercheAusfuehrungsplan(request, { sources: [wiederholteDomain], blockedDomains: [] }, [
+      { source: wiederholteDomain, coverage: abdeckung() },
+    ])
+    assert.deepEqual(wiederholtePlan, { status: 'blocked_invalid', reason: 'invalid_source_plan' })
+    assert.equal(text(wiederholtePlan).includes('gov.example'), false)
+
+    const leereDomain = { ...amtlich, domains: [] }
+    const leererPlan = officialTruthRechercheAusfuehrungsplan(request, { sources: [leereDomain], blockedDomains: [] }, [
+      { source: leereDomain, coverage: abdeckung() },
+    ])
+    assert.deepEqual(leererPlan, { status: 'blocked_invalid', reason: 'invalid_source_plan' })
+
     const liste = registry([amt('example-border-authority', ['gov.example'])])
     const listeTamper = {
       sources: liste.sources,
