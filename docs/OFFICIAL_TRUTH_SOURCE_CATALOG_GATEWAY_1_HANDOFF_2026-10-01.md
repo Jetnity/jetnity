@@ -5,7 +5,7 @@ Issue: #684
 Draft PR: #686
 Branch: `feat/official-truth-source-catalog-gateway-1`
 Original baseline: `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`
-Integrated main: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
+Integrated main: `main@98c9099bee1715f741e4aec87c2c386e9e5344ad`
 
 Logical agent: **Jetnity Official Truth source catalog gateway 1**, Generation 1
 Session: https://cursor.com/agents/bc-b1db9c5e-3aa7-442a-8ccf-7421a1ac8257
@@ -15,7 +15,9 @@ Session: https://cursor.com/agents/bc-b1db9c5e-3aa7-442a-8ccf-7421a1ac8257
 
 The repository contains a dormant source-catalog gateway. Technical-Lead R3 applied that SQL exactly once to Development under history version `20261001193748`. This lane does not apply it again. Production was not changed. Merge remains held. There is no merge PASS.
 
-Technical-Lead R1 review `5384194385` accepted catalog code and schema on `1f27a61f998f35cb2d17a574a56c92ae04977ea5`. The only required change was base freshness. This branch now contains `main@ed5350e702f2b6b248cf49ae366420cf1b49039a` through merge `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. #687 is preserved. The catalog implementation is unchanged from the accepted head. The branch is 0 behind that main.
+Technical-Lead R1 review `5384194385` accepted catalog code and schema on `1f27a61f998f35cb2d17a574a56c92ae04977ea5`. The only required change was base freshness. This branch contains `main@ed5350e702f2b6b248cf49ae366420cf1b49039a` through merge `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. #687 is preserved. The catalog implementation is unchanged from the accepted head.
+
+After the R3 filename commit `89143d9d`, current main had moved to `main@98c9099bee1715f741e4aec87c2c386e9e5344ad` (#689). Merge `dc2359142003a408c3a02677c84fa39e183199ab` contains that main. #689 is preserved. The catalog migration bytes are unchanged. The branch is 0 behind that main.
 
 Server module:
 
@@ -40,7 +42,7 @@ Read first:
 ## Session facts
 
 - Machine mode: `NORMAL`. `.jetnity/operating-mode.json` was not edited.
-- The original binding baseline is `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`. Technical-Lead R1 required integration of `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. That main is contained. At merge `66852a16` the branch was 0 behind and 3 ahead of that main: the task commit, the catalog commit, and the merge. This documentation commit is a fourth commit ahead of that same main. Do not rebase again unless the Technical Lead assigns a newer main.
+- The original binding baseline is `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`. Technical-Lead R1 required integration of `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. That main is contained. R3 then required the branch to stay 0 behind current main. Current main is `main@98c9099bee1715f741e4aec87c2c386e9e5344ad`, merged in `dc2359142003a408c3a02677c84fa39e183199ab`. Do not rebase again unless the Technical Lead assigns a newer main.
 - Local proof: throwaway PostgreSQL 16.15, dropped after the test. Development was not queried. Production was not contacted.
 - Local validation of accepted head `1f27a61f`, historical for that head:
   - focused catalog tests: 4 pass / 0 fail
@@ -60,6 +62,15 @@ Read first:
   - `npm run build`: pass, Next.js 16.3.8, 25 static pages
   - dead-code 0, unused exports 0, unused packages 0, API protection PASS, operating-mode guard PASS, `git diff --check` pass
   - `check:schema-bezug` still lists the same three LOCAL/UNAPPLIED RPCs, including `official_truth_source_catalog_v1`
+- Re-validation after the R3 rename and merge `dc235914`, recorded before the documentation commit on top of that merge:
+  - focused catalog tests: 4 pass / 0 fail
+  - schema-reference tests: 4 pass / 0 fail
+  - `npm test`: 4216 pass / 0 fail
+  - `npm run typecheck`: pass
+  - `npm run lint`: 0 errors, 148 warnings
+  - `npm run build`: pass, Next.js 16.3.8, 25 static pages
+  - dead-code 0, unused exports 0, unused packages 0, API protection PASS, operating-mode guard PASS, `git diff --check` pass
+  - `check:schema-bezug` pins `official_truth_source_catalog_v1` to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`
 - `db:rechte`, `db:rls`, `db:sicherheit`, and `auth:pruefen` were not run locally. They talk to live Development. GitHub CI may still run `auth:pruefen`. That is not an apply of this migration.
 - Exact-head GitHub CI, Auth, and Vercel Preview belong to the pushed tip. This file does not embed a run id, because writing one after the run would create a newer head. Read the checks on the tip SHA.
 

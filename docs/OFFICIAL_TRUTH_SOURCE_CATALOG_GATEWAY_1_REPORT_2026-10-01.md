@@ -5,7 +5,7 @@ Issue: #684
 Draft PR: #686
 Branch: `feat/official-truth-source-catalog-gateway-1`
 Original baseline: `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`
-Integrated main: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
+Integrated main: `main@98c9099bee1715f741e4aec87c2c386e9e5344ad`
 
 Logical agent: **Jetnity Official Truth source catalog gateway 1**, Generation 1
 Session: https://cursor.com/agents/bc-b1db9c5e-3aa7-442a-8ccf-7421a1ac8257
@@ -53,14 +53,18 @@ The migration inserts zero catalog rows. It does not change `supabase/config.tom
 
 Review `5384194385` on exact head `1f27a61f998f35cb2d17a574a56c92ae04977ea5` accepted the catalog code and schema. There was no catalog behavior finding.
 
-#687 then merged, so that head was behind `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. This branch merged that main in `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. The freshness and gap-policy files match `origin/main`. The catalog server, its test, the migration, and the schema-reference registration are unchanged from `1f27a61f`. The migration SHA-256 is still `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. After the merge, `origin/main` is an ancestor of this branch and the branch is 0 behind.
+#687 then merged, so that head was behind `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. This branch merged that main in `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. The freshness and gap-policy files match that main. The catalog server, its test, the migration, and the schema-reference registration are unchanged from `1f27a61f`. The migration SHA-256 is still `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`.
 
-Re-validation of that integrated tree, before this documentation commit: focused catalog tests 4/4, schema-reference tests 4/4, `npm test` 4203/4203, typecheck pass, lint 0 errors and 148 warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS, and `check:schema-bezug` still printing the same three LOCAL/UNAPPLIED RPCs. This documentation commit does not change catalog or freshness code. Exact-head CI belongs to the pushed tip.
+Current main then moved to `main@98c9099bee1715f741e4aec87c2c386e9e5344ad` (#689). Merge `dc2359142003a408c3a02677c84fa39e183199ab` contains it. #687 and #689 stay intact. The catalog SQL bytes stay `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. After that merge, `origin/main` is an ancestor of this branch and the branch is 0 behind.
+
+Re-validation of that tree, before this documentation commit: focused catalog tests 4/4, schema-reference tests 4/4, `npm test` 4216/4216, typecheck pass, lint 0 errors and 148 warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS, and `check:schema-bezug` pinning `official_truth_source_catalog_v1` to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. This documentation commit does not change catalog code. Exact-head CI belongs to the pushed tip.
+
+Earlier re-validation of the `ed5350e7` tree, before documentation commit `d829b2ba`: focused catalog tests 4/4, schema-reference tests 4/4, `npm test` 4203/4203, typecheck pass, lint 0 errors and 148 warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS, and `check:schema-bezug` still printing the same three LOCAL/UNAPPLIED RPCs. That commit did not change catalog or freshness code.
 
 ## What was not done
 
 - Cursor did not run a remote `supabase` push, repair, reset, or apply.
-- Development and Production were not queried and were not modified.
+- Cursor did not query Development or Production and did not modify either database. Technical-Lead R3 had already applied this SQL once to Development.
 - No real government or provider row, and no CH Candidate Evidence import.
 - No OpenAI, web, Sherpa, Timatic, or other provider call.
 - No change to `source-registry.ts`, `requirementsProviderAus()`, UI, routes, `types/supabase.ts`, or `.jetnity/operating-mode.json`.

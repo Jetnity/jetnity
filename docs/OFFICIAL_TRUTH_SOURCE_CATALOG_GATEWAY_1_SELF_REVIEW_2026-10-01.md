@@ -63,7 +63,11 @@ The integrated tree was validated again before the documentation commit that rec
 
 ## R3 identity
 
-Technical-Lead R3 review `5384562361` is a repository filename reconciliation only. Development already contains `public.official_truth_source_catalog_v1` once under history version `20261001193748`. The canonical repository path is that version. The original CLI filename `20261001182728` is historical. SHA-256 before and after `git mv` is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. This correction does not apply the migration again, does not repair history, and does not write a source row. The branch remains 0 behind `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. #687 is unchanged.
+Technical-Lead R3 review `5384562361` is a repository filename reconciliation only. Development already contains `public.official_truth_source_catalog_v1` once under history version `20261001193748`. The canonical repository path is that version. The original CLI filename `20261001182728` is historical. SHA-256 before and after `git mv` is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. This correction does not apply the migration again, does not repair history, and does not write a source row. #687 is unchanged.
+
+Current main at reconciliation time is `main@98c9099bee1715f741e4aec87c2c386e9e5344ad`. Merge `dc2359142003a408c3a02677c84fa39e183199ab` contains #689 without editing the catalog SQL. The branch is 0 behind that main.
+
+Re-validation before the documentation commit on that merge: catalog tests 4/4, schema-reference tests 4/4, `npm test` 4216/4216, typecheck pass, lint 0 errors and 148 warnings, build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS. `check:schema-bezug` pins the catalog RPC to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. This self-review still is not an independent Technical-Lead PASS.
 
 ## Not claimed
 
