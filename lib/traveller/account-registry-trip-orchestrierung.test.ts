@@ -95,6 +95,7 @@ function kontext(teil: {
   registry?: RegistryTripRegistryLesung
   write?: { ok: true } | { ok: false; meldung: string }
   party?: TripTraveller[]
+  travellers?: number
 }): {
   aufrufe: {
     reiseLesen: string[]
@@ -119,7 +120,10 @@ function kontext(teil: {
         return (
           teil.reise ?? {
             problem: null,
-            reise: { party: teil.party ?? [BESTEHEND] },
+            reise: {
+              party: teil.party ?? [BESTEHEND],
+              travellers: teil.travellers ?? PARTY_GRENZEN.slots,
+            },
           }
         )
       },
@@ -146,6 +150,8 @@ describe('AP-7-S4 Write-/Auth-Orchestrierung', () => {
     assert.match(aktion, /reiseLaden/)
     assert.match(aktion, /registryMitClientLaden/)
     assert.match(aktion, /partySchreiben\(supabase, tripId/)
+    assert.match(aktion, /travellers: reise\.travellers/)
+    assert.match(aktion, /revalidatePath\(`\/reisen\/\$\{ergebnis\.tripId\}`\)/)
     assert.equal(aktion.includes('createServiceRole'), false)
   })
 
@@ -252,6 +258,56 @@ describe('AP-7-S4 Write-/Auth-Orchestrierung', () => {
     assert.notEqual(ergebnis.meldung, REGISTRY_TRIP_COPY.erfolg)
     assert.equal(lauf.aufrufe.partySchreiben.length, 1)
     assert.equal(ergebnis.geschriebenesParty?.length, 1)
+  })
+
+  test('belegte Kopfzahl stoppt vor Registry-Lesen und Write, auch unter dem 20er-Deckel', async () => {
+    const belegt = [1, 2, 3].map((index) => ({
+      ...BESTEHEND,
+      id: `dddddddd-eeee-4fff-8aaa-${String(index).padStart(12, '0')}`,
+      clientRef: `aaaaaaaa-bbbb-4ccc-8ddd-${String(index).padStart(12, '0')}`,
+      label: `Person ${index}`,
+      createdAt: `2026-08-0${index}T11:00:00.000Z`,
+    }))
+    const lauf = kontext({ party: belegt, travellers: 3 })
+    const ergebnis = await registryTripUebernahmeOrchestrieren(lauf.orchestrierung)
+    assert.equal(ergebnis.ok, false)
+    assert.equal(ergebnis.meldung, REGISTRY_TRIP_COPY.limit)
+    assert.deepEqual(lauf.aufrufe.reiseLesen, [TRIP_ID])
+    assert.deepEqual(lauf.aufrufe.registryLesen, [])
+    assert.deepEqual(lauf.aufrufe.partySchreiben, [])
+    assert.equal(ergebnis.geschriebenesParty, null)
+  })
+
+  test('ein einzelner belegter Platz bei Kopfzahl 1 ist voll, obwohl Party-Länge 1 unter 20 liegt', async () => {
+    const lauf = kontext({
+      party: [{ ...BESTEHEND, clientRef: 'aaaaaaaa-bbbb-4ccc-8ddd-000000000001', label: 'Sasa' }],
+      travellers: 1,
+    })
+    const ergebnis = await registryTripUebernahmeOrchestrieren(lauf.orchestrierung)
+    assert.equal(ergebnis.ok, false)
+    assert.equal(ergebnis.meldung, REGISTRY_TRIP_COPY.limit)
+    assert.deepEqual(lauf.aufrufe.registryLesen, [])
+    assert.deepEqual(lauf.aufrufe.partySchreiben, [])
+  })
+
+  test('freier Kopfzahl-Platz erlaubt die Übernahme und schreibt bestehende Snapshots nicht um', async () => {
+    const bestehend = {
+      ...BESTEHEND,
+      clientRef: 'aaaaaaaa-bbbb-4ccc-8ddd-00000000000a',
+      label: 'Sasa',
+    }
+    const lauf = kontext({ party: [bestehend], travellers: 3 })
+    const ergebnis = await registryTripUebernahmeOrchestrieren(lauf.orchestrierung)
+    assert.equal(ergebnis.ok, true)
+    assert.equal(lauf.aufrufe.registryLesen.length, 1)
+    const party = lauf.aufrufe.partySchreiben[0]?.party
+    assert.ok(party)
+    assert.equal(party.length, 1)
+    assert.equal(party.some((item) => item.clientRef === bestehend.clientRef), false)
+    assert.equal(party.some((item) => item.label === 'Sasa' && item.clientRef === bestehend.clientRef), false)
+    assert.equal(party[0]?.label, 'Sasa')
+    assert.notEqual(party[0]?.clientRef, bestehend.clientRef)
+    assert.notEqual(party[0]?.clientRef, PERSON_REF)
   })
 
   test('Übernahme schreibt nur den neuen Snapshot und ersetzt bestehende Reisende nicht', async () => {
