@@ -28,7 +28,8 @@ Read first:
 - Product-Owner strategy approval re-read here: https://github.com/Jetnity/jetnity/issues/294#issuecomment-5928669189
 - Machine mode: `NORMAL`
 - This branch started 1 commit ahead of `origin/main` and 0 behind. That commit is the task seed `2ed4a84d0466fe294ba9a9c02b98336d04b1c817`.
-- Remote CI, Auth and Vercel Preview for the delivery head are not inherited from `main` or from any parent PR. Record them only for the exact head that was observed.
+- Delivery head `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1`: GitHub CI run `36845062197` **SUCCESS**. Typecheck, Lint & Build job `110313108894` **SUCCESS**. Auth job `110313108531` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/HsYpkxb9hDhEWHu7JCGKyJJgRD1K`. GitHub Preview deployment `6781261272` **success**, target `https://jetnity-rh4u11362-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read.
+- The commit that records those gates is a later head. It is not gated by run `36845062197`. Do not treat `main` or a parent PR as this head's gate.
 
 ## Stop
 

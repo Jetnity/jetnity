@@ -48,7 +48,9 @@ Local checks run in this session before the delivery commit:
 - `npm run build`: pass
 - `git diff --check` and `node scripts/operating-mode-guard.mjs`: pass
 
-`auth:pruefen` was not run locally. This environment has no Supabase auth secrets. Exact-head GitHub CI, the Auth job and Vercel Preview are not claimed here. A green parent or `main` gate is not a gate for this head.
+`auth:pruefen` was not run locally. This environment has no Supabase auth secrets.
+
+Observed after push, only for `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1`: CI run `36845062197` **SUCCESS**, including Auth job `110313108531` and Typecheck, Lint & Build job `110313108894`. Vercel commit status **success**. GitHub Preview deployment `6781261272` **success**. The preview host redirected to Vercel SSO, so `data-dpl-id` was not read. The commit that writes this paragraph is a new head and is not covered by that run. A green parent or `main` gate is not a gate for either head.
 
 No browser verification applies. This slice has no UI.
 

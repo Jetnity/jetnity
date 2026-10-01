@@ -84,8 +84,11 @@ Allowlist only:
 | `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` | pass |
 | `npm run check:setup:ci` | pass with the existing warning that no `.env` / `.env.local` is present in this environment |
 | `npm run build` | pass. Next.js 16.3.8 compiled and generated 25 static pages. |
-| Local `auth:pruefen` | not run. This environment has no Supabase auth secrets. The GitHub Auth job is the record, and only for the exact head that ran it. |
-| Exact-head GitHub CI, Auth job, Vercel Preview | **not observed yet**. Parent and main gates do not apply to this head. |
+| Local `auth:pruefen` | not run. This environment has no Supabase auth secrets. |
+| Exact-head GitHub CI on `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1` | **SUCCESS**. Run `36845062197`, event `pull_request`. Typecheck, Lint & Build job `110313108894` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110313108531` **SUCCESS**. |
+| Vercel Preview on that same SHA | GitHub commit status context `Vercel` **success** at `2026-10-01T09:48:32Z`. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/HsYpkxb9hDhEWHu7JCGKyJJgRD1K`. GitHub deployment `6781261272`, environment **Preview**, state **success**, target `https://jetnity-rh4u11362-jetnity-e1b93c82.vercel.app`. A direct GET of that host returned HTTP 302 to Vercel SSO, so this session did not read public HTML or `data-dpl-id`. |
+
+These remote gates belong only to `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1`. The commit that records them is a new head. It does not inherit this CI, Auth job or Preview. Parent and `main` gates do not apply.
 
 ## 5. Things not touched
 
