@@ -24,9 +24,8 @@ import {
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 
 /**
- * Einziger Gateway-Name. Als Konstante, nicht als String-Literal im rpc()-Aufruf:
- * die generierten Typen kennen die Funktion erst nach einem späteren Apply, und
- * types/supabase.ts liegt ausserhalb dieses Slices.
+ * Derselbe Name wie das String-Literal im rpc()-Aufruf. Der Aufruf selbst bleibt
+ * literal, damit check:schema-bezug ihn sieht. Die Konstante ist kein zweiter Weg.
  */
 export const OFFICIAL_TRUTH_STORE_ACCEPTED_V1 = 'official_truth_store_accepted_v1'
 
@@ -61,13 +60,6 @@ export type OfficialTruthStoreErgebnis =
       ruleScopeKey: string
     }
   | { ok: false; reason: string }
-
-type StoreRpcClient = {
-  rpc(
-    fn: string,
-    args: { payload: Record<string, unknown> },
-  ): PromiseLike<{ data: unknown; error: { message: string } | null }>
-}
 
 function scopeSpalten(scope: EvidenceAtom): Record<string, unknown> {
   const citizenship = scope.citizenship
@@ -218,15 +210,10 @@ function dienstTransport(env: Record<string, string | undefined>): OfficialTruth
   const erzeugt = createClient(url, geheim, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   })
-  const client: StoreRpcClient = {
-    rpc(fn, args) {
-      return erzeugt.rpc(fn, args)
-    },
-  }
 
   return {
     async aufrufen(payload) {
-      const { data, error } = await client.rpc(OFFICIAL_TRUTH_STORE_ACCEPTED_V1, {
+      const { data, error } = await erzeugt.rpc('official_truth_store_accepted_v1', {
         payload: { ...payload },
       })
       if (error) return { ok: false }

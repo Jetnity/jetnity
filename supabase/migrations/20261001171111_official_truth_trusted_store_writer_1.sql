@@ -105,6 +105,11 @@ begin
     neu_previous_version_id := body ->> 'previous_version_id';
     neu_lifecycle := body ->> 'lifecycle';
     neu_validation_state := body ->> 'validation_state';
+    if neu_lifecycle is distinct from 'accepted'
+      or neu_validation_state is distinct from 'valid' then
+      raise exception 'official truth store evidence is not accepted'
+        using errcode = '22023';
+    end if;
     neu_source_id := body ->> 'source_id';
     neu_canonical_url := body ->> 'canonical_url';
     neu_retrieved_at := body ->> 'retrieved_at';

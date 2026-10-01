@@ -281,8 +281,8 @@ describe('trusted Official Truth accepted-store writer', () => {
     assert.match(text, /persistSession: false/)
     assert.match(text, /detectSessionInUrl: false/)
     assert.match(text, /autoRefreshToken: false/)
-    assert.match(text, /rpc\(OFFICIAL_TRUTH_STORE_ACCEPTED_V1/)
-    assert.equal(text.includes(`.rpc('${OFFICIAL_TRUTH_STORE_ACCEPTED_V1}'`), false)
+    assert.equal(text.includes(`.rpc('${OFFICIAL_TRUTH_STORE_ACCEPTED_V1}'`), true)
+    assert.equal((text.match(/rpc\(OFFICIAL_TRUTH_STORE_ACCEPTED_V1/g) ?? []).length, 0)
     assert.equal(text.includes('retry'), false)
     assert.equal((text.match(/transport\.aufrufen\(/g) ?? []).length, 2)
     assert.equal(requirementsProviderAus(), null)
@@ -588,6 +588,15 @@ describe('trusted Official Truth accepted-store writer', () => {
     assert.equal((sql.match(/\bsecurity\s+definer\b/gi) ?? []).length, 1)
     assert.match(sql, /create function public\.official_truth_store_accepted_v1\(payload jsonb\)/i)
     assert.match(sql, /set search_path = ''/i)
+    const evidenceZweig = koerper[1].slice(0, koerper[1].indexOf("operation is distinct from 'accepted_rule_claim'"))
+    const ablehnung = evidenceZweig.indexOf('official truth store evidence is not accepted')
+    const duplikat = evidenceZweig.indexOf('exact_match := exists')
+    const einfuegen = evidenceZweig.search(/insert\s+into\s+private\.official_evidence_versions/i)
+    assert.ok(ablehnung > 0)
+    assert.ok(duplikat > ablehnung)
+    assert.ok(einfuegen > ablehnung)
+    assert.match(evidenceZweig, /neu_lifecycle is distinct from 'accepted'/)
+    assert.match(evidenceZweig, /neu_validation_state is distinct from 'valid'/)
     assert.doesNotMatch(sql, /\bcreate\s+or\s+replace\s+function\b/i)
     assert.equal((sql.match(/\bcreate\s+function\b/gi) ?? []).length, 1)
     assert.doesNotMatch(ohneKoerper, /\binsert\s+into\b/i)
@@ -883,6 +892,16 @@ describe('throwaway PostgreSQL proof for the trusted store gateway', () => {
       assert.equal(erste.ok, true)
       if (!erste.ok || erste.operation !== 'accepted_evidence') return
       assert.equal(cluster.aufruf('select count(*) from private.official_sources'), '4')
+      assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), '1')
+      const vorKandidat = cluster.aufruf(`select ${summe}`)
+      const nichtAkzeptiert = structuredClone(evidencePayloads[0]) as {
+        evidence: { lifecycle: string; validation_state: string }
+      }
+      nichtAkzeptiert.evidence.lifecycle = 'candidate'
+      nichtAkzeptiert.evidence.validation_state = 'pending'
+      const kandidatFehler = cluster.scheitert(`select ${payloadTag(nichtAkzeptiert)}`, 'service_role')
+      assert.match(kandidatFehler, /evidence is not accepted/i)
+      assert.equal(cluster.aufruf(`select ${summe}`), vorKandidat)
       assert.equal(cluster.aufruf('select count(*) from private.official_evidence_versions'), '1')
       assert.equal(
         cluster.aufruf(`select rule_scope_key || '|' || lifecycle || '|' || validation_state from private.official_evidence_versions`),

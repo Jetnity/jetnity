@@ -48,14 +48,20 @@ const FROM_RE = /\.from\(\s*['"`]([\w.]+)['"`]/g
 const RPC_RE = /\.rpc\(\s*['"`]([\w.]+)['"`]/g
 
 /**
- * One reviewed LOCAL/UNAPPLIED public wrapper. Not a live generated-schema
- * claim and not a generic unknown-RPC exemption.
+ * Reviewed LOCAL/UNAPPLIED public wrappers. Not a live generated-schema claim
+ * and not a generic unknown-RPC exemption. Each name is allowed only from its
+ * sourcePath and only while its sqlPath still contains that name.
  */
 export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
   Object.freeze({
     name: 'admin_account_counts_v1',
     sourcePath: 'lib/admin/account-counts-delivery/reader.ts',
     sqlPath: 'scripts/db/admin-account-counts-delivery-1-rpc.sql',
+  }),
+  Object.freeze({
+    name: 'official_truth_store_accepted_v1',
+    sourcePath: 'lib/readiness/official-truth-store-server.ts',
+    sqlPath: 'supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql',
   }),
 ])
 
