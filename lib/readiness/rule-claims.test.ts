@@ -79,6 +79,12 @@ function registry(): QuellenRegistry {
       publisherName: 'Example Licensed Publisher',
       domains: ['provider.example'],
     },
+    {
+      sourceId: 'example-other-provider',
+      sourceClass: 'licensed_evidence_provider',
+      publisherName: 'Example Other Publisher',
+      domains: ['other-provider.example'],
+    },
   ])
   assert.equal(ergebnis.ok, true)
   if (!ergebnis.ok) throw new Error('registry')
@@ -312,6 +318,64 @@ describe('Official Truth rule claims', () => {
       fakt,
     )
     assert.deepEqual(gleichQuelle, { ok: false, reason: 'same_source_composition' })
+  })
+
+  test('primäre Qualität ist nur Behörden-Evidence', () => {
+    const basis = registry()
+    const behoerde = version(basis, 'example-border-authority', 'gov.example', 'behoerde')
+    const zweite = version(
+      basis,
+      'example-interior-authority',
+      'interior.example',
+      'zweite behoerde',
+      atom({ sourceId: 'example-interior-authority' }),
+    )
+    const anbieter = version(
+      basis,
+      'example-licensed-provider',
+      'provider.example',
+      'anbieter',
+      atom({ sourceId: 'example-licensed-provider' }),
+    )
+    const anderer = version(
+      basis,
+      'example-other-provider',
+      'other-provider.example',
+      'zweiter anbieter',
+      atom({ sourceId: 'example-other-provider' }),
+    )
+    const fakt = { kind: 'requirement_effect', effect: 'not_required', visaMode: 'visa_exempt' }
+    const explizit = annehmen(basis, behoerde.scope, 'requirement_effect', 'explicit_primary_statement', [behoerde], fakt)
+    assert.equal(explizit.ok, true)
+    const einAnbieter = annehmen(basis, anbieter.scope, 'requirement_effect', 'explicit_primary_statement', [anbieter], fakt)
+    assert.deepEqual(einAnbieter, { ok: false, reason: 'primary_source_required' })
+    const zweiBehoerden = annehmen(
+      basis,
+      behoerde.scope,
+      'requirement_effect',
+      'composed_from_multiple_primary_sources',
+      [behoerde, zweite],
+      fakt,
+    )
+    assert.equal(zweiBehoerden.ok, true)
+    const zweiAnbieter = annehmen(
+      basis,
+      anbieter.scope,
+      'requirement_effect',
+      'composed_from_multiple_primary_sources',
+      [anbieter, anderer],
+      fakt,
+    )
+    assert.deepEqual(zweiAnbieter, { ok: false, reason: 'primary_source_required' })
+    const gemischt = annehmen(
+      basis,
+      behoerde.scope,
+      'requirement_effect',
+      'composed_from_multiple_primary_sources',
+      [behoerde, anbieter],
+      fakt,
+    )
+    assert.deepEqual(gemischt, { ok: false, reason: 'primary_source_required' })
   })
 
   test('stale, Konflikt und Forschungslücke werden nicht angenommen', () => {

@@ -23,7 +23,7 @@ The pure rule-claim contract is in `lib/readiness/rule-claims.ts`. A candidate p
 - Source-neutral scope and key `rule-scope:v1:` plus SHA-256. `sourceId` is the only excluded evidence-scope field. `evidence-key:v2:` is unchanged.
 - Support is a sorted unique list of at most eight `ev1_` version ids. Scope mismatch fails closed.
 - Qualities: `explicit_primary_statement`, `composed_from_multiple_primary_sources`, `stale_primary_evidence`, `unresolved_conflict`, `research_gap`.
-- Only explicit and composed quality can be accepted. Composed quality needs two versions and two `sourceId` values. A research gap has a null proposal and cannot become `not_required`.
+- Only explicit and composed quality can be accepted, and only from `official_authority` evidence. Explicit needs one such version. Composed needs two such versions and two distinct official `sourceId` values. A licensed provider or a mixed set fails with `primary_source_required`. No provider quality is added. A research gap has a null proposal and cannot become `not_required`.
 - Fact kinds: `requirement_effect`, `visa_options`, `stay_limit`, `passport_validity`, `blank_passport_pages`, `transit_conditions`, `official_actions`, `temporal_rule`.
 - Visa consistency reuses `visaResultUndModusWidersprechen`. Temporal rules reuse `temporalRuleLesen`. Official actions resolve through the Source Registry and require `official_authority`.
 - Duration safety bounds are technical, not legal truth: days 3660, months 120, years 10. Units are not converted. Transit duration is capped at 20160 minutes. Blank pages are integers 1..10.
@@ -47,29 +47,23 @@ The pure rule-claim contract is in `lib/readiness/rule-claims.ts`. A candidate p
 
 ## Validation
 
-Local checks before the implementation push, on this working tree:
+Re-read on the R1-F1 correction working tree before this commit. `origin/main` remains `140fdfb9fb066ca9d23c295719cb2e770ae63fd7`. The branch is 0 behind.
 
 | Check | Result |
 | --- | --- |
 | `git diff --check` | pass |
 | operating-mode guard | PASS |
-| `lib/readiness/rule-claims.test.ts` | 17/17 pass |
-| `npm test` | 4158 pass / 0 fail |
+| `lib/readiness/rule-claims.test.ts` | 18/18 pass, including the R1-F1 authority regressions |
+| `npm test` | 4159 pass / 0 fail, 729 suites |
 | `npm run typecheck` | pass |
-| `npm run lint` | pass, 0 errors, 148 pre-existing warnings, none in the new files |
-| `npm run check:setup:ci` | pass, existing missing-`.env` warning |
-| `npm run build` | pass, Next.js 16.3.8, 25 static pages |
-| hygiene | `check:dead`, `check:exports`, `check:deps`, `check:api-schutz` pass. `check:schema-bezug` pass and still notes LOCAL/UNAPPLIED `admin_account_counts_v1` |
+| eslint on the two rule-claim files | pass, no warnings |
+| full-repo lint and production build | exact-head GitHub CI for this tip, not copied from `3d774ebd` or `09b9692b` |
 
-Exact-head gates read in this session for `3d774ebda798b5ee72ff5bb72df4ba2f89062683` only:
+## R1-F1
 
-- GitHub CI run `36866487394` **SUCCESS**, event `pull_request`
-- Auth job `110383120020` **SUCCESS**
-- Typecheck, Lint & Build job `110383120312` **SUCCESS**
-- Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/4SYkZJherF1CSEDds3aLYxFxEbWi`
-- GitHub Preview deployment `6785062708` **success**, target `https://jetnity-jb5lqp9zj-jetnity-e1b93c82.vercel.app`, direct GET HTTP 302 to Vercel SSO
+Technical-Lead review `5379808338` on `09b9692b9afbf619b552459008c080cf3ef52920` is CHANGES REQUIRED. Primary qualities accepted licensed providers as Official Truth. The correction requires `sourceClass === 'official_authority'` on every support for `explicit_primary_statement` and `composed_from_multiple_primary_sources`. Licensed-only and mixed support fail closed with `primary_source_required`. Same-source composed failure and the proposal-versus-trusted-fact regression stay. No new provider quality.
 
-The commit that writes these ids is a newer head. Those gates do not cover it.
+Parent CI `36866487394` belongs to `3d774ebd` and is not the gate for this correction. `09b9692b` had no exact-head GitHub CI run. The gate is CI, Auth and Vercel on the correction tip after this push.
 
 ## Stop
 

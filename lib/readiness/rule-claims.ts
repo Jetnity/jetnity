@@ -262,6 +262,7 @@ export type RegelClaimFehler =
   | 'research_gap_proposal_forbidden'
   | 'insufficient_support'
   | 'same_source_composition'
+  | 'primary_source_required'
   | 'evidence_not_accepted'
   | 'support_mismatch'
   | 'invalid_fact'
@@ -860,6 +861,9 @@ export function regelKandidatAkzeptieren(eingabe: unknown): RegelAnnahmeErgebnis
     const scope = regelScopeAusEvidenceScope(version.scope)
     if (!scope.ok || scope.key !== entwurf.key) return { ok: false, reason: 'scope_mismatch' }
     quellen.add(version.sourceId)
+  }
+  if (vertraut.some((version) => version.sourceClass !== 'official_authority')) {
+    return { ok: false, reason: 'primary_source_required' }
   }
   if (entwurf.evidenceQuality === 'explicit_primary_statement' && vertraut.length < 1) {
     return { ok: false, reason: 'insufficient_support' }

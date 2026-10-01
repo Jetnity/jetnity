@@ -52,9 +52,11 @@ Keep the existing requirement taxonomy. Do not add `visa_exemption`, `electronic
 
 The next persistence change, if the Technical Lead selects one after this Draft is accepted, should be a separate Development-only slice. It must store accepted claims from the trusted fact plus accepted evidence versions, and it must not promote a candidate proposal because the proposal parsed. Production stays a Product-Owner gate. This handoff does not authorize that slice.
 
-## Exact head already gated
+## R1-F1
 
-Read in this session for `3d774ebda798b5ee72ff5bb72df4ba2f89062683` only: GitHub CI `36866487394` **SUCCESS** (`pull_request`), Auth job `110383120020` **SUCCESS**, Typecheck, Lint & Build job `110383120312` **SUCCESS**, Vercel inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/4SYkZJherF1CSEDds3aLYxFxEbWi` **success**, Preview deployment `6785062708` **success** at `https://jetnity-jb5lqp9zj-jetnity-e1b93c82.vercel.app` (direct GET HTTP 302 to Vercel SSO). The commit that records this paragraph is newer. Re-read CI for the branch tip. Do not reuse the task-seed run `36864246324`.
+Review `5379808338` on `09b9692b9afbf619b552459008c080cf3ef52920` is CHANGES REQUIRED. Primary Official Truth now requires `official_authority` on every supporting EvidenceVersion. `primary_source_required` rejects one licensed provider, two licensed providers, and a mix. The self-review no longer lists the missing class check as an accepted residual. No provider quality was added.
+
+`09b9692b` had no exact-head GitHub CI. Run `36866487394` is the parent implementation head `3d774ebd` and does not gate the correction. Re-read CI, Auth and Vercel on the correction tip.
 
 ## Stop
 
