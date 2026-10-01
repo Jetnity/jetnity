@@ -443,6 +443,7 @@ try {
       karten: text.karten,
       button: text.button,
     })
+    assertNeu(!text.ueberlauf, '200% Text: Dokument läuft horizontal über', befunde)
     assertNeu(!text.verwaltungUeberlauf && !text.kopfUeberlauf, '200% Text: Verwaltung läuft horizontal über', befunde)
     assertNeu(text.karten === 12, '200% Text verliert die Aufklappung', befunde)
     await seite.locator('#account-besuche-liste').scrollIntoViewIfNeeded()
@@ -465,6 +466,7 @@ try {
         clientBreite: gezoomt.clientBreite,
         karten: gezoomt.karten,
       })
+      assertNeu(!gezoomt.ueberlauf, `Zoom ${zoom}: Dokument läuft horizontal über`, befunde)
       assertNeu(
         !gezoomt.verwaltungUeberlauf && !gezoomt.kopfUeberlauf,
         `Zoom ${zoom}: Verwaltung läuft horizontal über`,
