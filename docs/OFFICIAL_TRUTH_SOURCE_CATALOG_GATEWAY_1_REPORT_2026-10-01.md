@@ -1,0 +1,94 @@
+# Official Truth Source Catalog Gateway 1 — Report
+
+Date: 1 October 2026
+Issue: #684
+Draft PR: #686
+Branch: `feat/official-truth-source-catalog-gateway-1`
+Original baseline: `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`
+Integrated main: `main@98c9099bee1715f741e4aec87c2c386e9e5344ad`
+
+Logical agent: **Jetnity Official Truth source catalog gateway 1**, Generation 1
+Session: https://cursor.com/agents/bc-b1db9c5e-3aa7-442a-8ccf-7421a1ac8257
+`originalModelName`: `grok-4.7-high-fast`. Not Auto.
+
+## What this slice does
+
+A dormant server-only gateway reads and registers the private Official Truth source catalog. `lib/readiness/source-registry.ts` stays the only trust rule. Every returned registry is built with `quellenRegistryErstellen`. The database path is one transactional function, `public.official_truth_source_catalog_v1(jsonb)`.
+
+The module is not imported by a route, the Source Router, Copilot, a cron, a queue, or `requirementsProviderAus()`. That function stays `null`.
+
+## Chosen transport behavior
+
+- Operations are only `read_registry` and `register_source`. Any other operation raises `22023`.
+- `quellenKatalogLesen` maps the gateway rows through `quellenRegistryErstellen`. Domain order and source order in the response do not change the registry. `blockedDomains` stays empty because this schema has no blocked-domain table.
+- `quelleRegistrieren` accepts exactly one `QuellenEingabe`. `quellenRegistryErstellen([eingabe])` runs before any RPC. An invalid id, class, publisher, authority, or domain does not reach the gateway.
+- A new source is combined with the catalog already read and checked again with `quellenRegistryErstellen`. Cross-source overlap returns the canonical `overlapping_domains` and does not call `register_source`.
+- An existing source id with the same class, publisher, authority, and complete normalized domain set is sent to the gateway. The function returns `idempotent` and does not write. `registered_at` stays the first value.
+- The same source id with any other field or domain set returns `conflicting_duplicate` from the server without a write call. A direct `service_role` call raises `23505`, `conflicting official source`.
+- The public server sends the normalized source from `quellenRegistryErstellen`: trimmed names, `authorityName: null` for a licensed provider, and sorted unique domains. Raw SQL does not trim. A raw licensed authority or an official source without an authority raises `22023` and writes nothing.
+- Parent and child hostnames on one new source are stored. `quellenRegistryErstellen` allows that pair. The same pair across two sources is rejected. A single-label host such as `example` is `invalid_domain` in the canonical normalizer, so it is not a parent domain.
+- `register_source` inserts the source, then each domain. Overlap with another source raises `23505`, `overlapping official source domain`, after earlier inserts in the same function. There is no exception handler. The local proof showed `ok.example` absent and the new source absent after `border.gov.example` overlapped a stored `gov.example`.
+- A catalog that already violates `quellenRegistryErstellen` — the schema itself still allows a cross-source parent/child written outside this gateway — makes both read and further registration return `catalog_failed`. This function does not repair or remove those rows.
+- `register_source` takes `SHARE ROW EXCLUSIVE` on both catalog tables before the existence check. The local proof is one session.
+
+## Security posture
+
+- One `SECURITY DEFINER` function. Empty `search_path`. Body references are schema-qualified, except the SQL-standard `coalesce` keyword, for the same PostgreSQL 16.15 reason recorded on the accepted-store writer.
+- `REVOKE EXECUTE` from `public`, `anon`, `authenticated`, and `service_role`, then `GRANT EXECUTE` only to `service_role`.
+- No table grant. No policy. The private catalog tables stay as migration `20261001121258` left them.
+- `anon` and `authenticated` cannot execute the function. `service_role` cannot insert into `private.official_sources` and cannot select `private.official_source_domains`.
+- `information_schema.routine_privileges` also shows `EXECUTE` for the function owner. That is the owner default. The only Data-API grant in this migration is `service_role`.
+- The server module imports `server-only`, disables session persistence, token refresh, and URL session detection, and reads `SUPABASE_SERVICE_ROLE_KEY`. A `NEXT_PUBLIC_` service key is not used. Missing credentials return `catalog_not_configured` and do not call the RPC. Failures return `catalog_failed` without the database message or the key.
+- The runtime call is the literal `.rpc('official_truth_source_catalog_v1', ...)` in `lib/readiness/official-truth-source-catalog-server.ts`. `LOCAL_UNAPPLIED_RPCS` pins that name to this file and to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. This is not a generic dynamic-RPC exemption. `types/supabase.ts` is unchanged.
+
+## Migration identity
+
+Supabase CLI `2.48.3`, downloaded outside the repository, created `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql` via `supabase migration new official_truth_source_catalog_gateway_1`. The timestamp was not typed by hand. The CLI reported that `2.119.0` exists. This slice did not upgrade it and did not recreate the file. SHA-256 of the SQL bytes is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. Gitignored `supabase/.temp/cli-latest` was removed and is not part of the commit.
+
+Technical-Lead R3 review `5384562361` applied that SQL exactly once to Development. Supabase recorded history version `20261001193748_official_truth_source_catalog_gateway_1`. `git mv` renamed the repository file to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. SHA-256 before and after the rename is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. The SQL bytes did not change. This correction does not apply, repair, reset, rebase, or push Supabase, and it writes no Official Truth rows.
+
+The migration inserts zero catalog rows. It does not change `supabase/config.toml`.
+
+## Technical-Lead R1 — base freshness only
+
+Review `5384194385` on exact head `1f27a61f998f35cb2d17a574a56c92ae04977ea5` accepted the catalog code and schema. There was no catalog behavior finding.
+
+#687 then merged, so that head was behind `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. This branch merged that main in `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. The freshness and gap-policy files match that main. The catalog server, its test, the migration, and the schema-reference registration are unchanged from `1f27a61f`. The migration SHA-256 is still `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`.
+
+Current main then moved to `main@98c9099bee1715f741e4aec87c2c386e9e5344ad` (#689). Merge `dc2359142003a408c3a02677c84fa39e183199ab` contains it. #687 and #689 stay intact. The catalog SQL bytes stay `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. After that merge, `origin/main` is an ancestor of this branch and the branch is 0 behind.
+
+Re-validation of that tree, before this documentation commit: focused catalog tests 4/4, schema-reference tests 4/4, `npm test` 4216/4216, typecheck pass, lint 0 errors and 148 warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS, and `check:schema-bezug` pinning `official_truth_source_catalog_v1` to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. This documentation commit does not change catalog code. Exact-head CI belongs to the pushed tip.
+
+Earlier re-validation of the `ed5350e7` tree, before documentation commit `d829b2ba`: focused catalog tests 4/4, schema-reference tests 4/4, `npm test` 4203/4203, typecheck pass, lint 0 errors and 148 warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS, and `check:schema-bezug` still printing the same three LOCAL/UNAPPLIED RPCs. That commit did not change catalog or freshness code.
+
+## What was not done
+
+- Cursor did not run a remote `supabase` push, repair, reset, or apply.
+- Cursor did not query Development or Production and did not modify either database. Technical-Lead R3 had already applied this SQL once to Development.
+- No real government or provider row, and no CH Candidate Evidence import.
+- No OpenAI, web, Sherpa, Timatic, or other provider call.
+- No change to `source-registry.ts`, `requirementsProviderAus()`, UI, routes, `types/supabase.ts`, or `.jetnity/operating-mode.json`.
+- No edit to global continuity files. Parallel lane ownership stays with the lane-local report, handoff, and self-review.
+- No Ready, no merge, and no follow-up slice.
+
+## Local proof
+
+Throwaway PostgreSQL 16.15 at `/usr/lib/postgresql/16/bin`. The cluster listened only on a private Unix socket, used local trust, and was dropped in `finally`. Prior Official Truth tasks state that Development is PostgreSQL 17.6. This session did not query Development. The versions are not the same.
+
+Sources in the proof are synthetic `*.example` hosts only.
+
+- Focused catalog tests: 4 pass / 0 fail, including the throwaway cluster.
+- Schema-reference tests: 4 pass / 0 fail. The allowlist is exactly `admin_account_counts_v1`, `official_truth_store_accepted_v1`, and `official_truth_source_catalog_v1`.
+- `npm test`: 4182 pass / 0 fail.
+- `npm run typecheck`: pass.
+- `npm run lint`: 0 errors, 148 warnings. None are in this lane's files.
+- `npm run build`: pass. Next.js 16.3.8. 25 static pages. `check:setup` warned that no `.env` file is present in this checkout. The build still exited 0.
+- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and the operating-mode guard passed. `git diff --check` passed.
+
+`check:schema-bezug` reads `git ls-files`. After the new server file was indexed it printed LOCAL/UNAPPLIED for `admin_account_counts_v1`, `official_truth_source_catalog_v1`, and `official_truth_store_accepted_v1`. After the R3 rename the catalog registration points at `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. Exact-head CI is not claimed in this file.
+
+## Recommendation
+
+Keep this migration free of real catalog rows. A real source still needs its own evidence-backed slice and a Technical Lead decision. Do not add `UPDATE` or `DELETE` here to repair a catalog that was written around the gateway. Fail closed is the current behavior.
+
+Traveller context does not apply. This gateway stores a reusable source catalog. It does not choose a citizenship, a travel document, or a residence.
