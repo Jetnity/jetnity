@@ -78,6 +78,8 @@ describe('AP-7-S4 UI-/Scope-Vertrag', () => {
     assert.match(REGISTRY_TRIP_COPY.hinweis, /Kopie nur für diese Reise/)
     assert.equal(seite.includes('registryTravellerInReiseUebernehmen'), false)
     assert.equal(konto.includes('registryTravellerInReiseUebernehmen'), true)
+    assert.equal(konto.includes('registryTripUebernahmeGesperrt(reise)'), true)
+    assert.equal(konto.includes('router.refresh()'), true)
     assert.equal(gast.includes('registryTravellerInReiseUebernehmen'), false)
     assert.equal(gast.includes('RegistryReiseUebernahme'), false)
     assert.match(seite, /if \(!data\.user \|\| !istKontoKennung\(tripId\)\)/)
