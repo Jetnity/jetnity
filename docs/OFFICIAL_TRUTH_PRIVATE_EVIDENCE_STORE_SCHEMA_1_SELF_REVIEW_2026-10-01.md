@@ -51,8 +51,16 @@ Read in this session for `5a537ddb7107eef49779273b4556c38c25cfe679` only:
 
 The commit that writes these facts is a newer head. Those gates do not cover it.
 
+## R1-F1
+
+Review `5378817724` on `55c7956301c692ee52b8f47be0964fc9ab046c53` found that a `CHECK` expression of `NULL` passes. I added `IS NOT NULL` before the value test in the option, required-residence and `travel_date` branches of the same migration. I did not require `related_citizenship_country_code`. Null there remains unlinked.
+
+Static test `mode checks fail closed when a required child is null` is in `lib/readiness/evidence-store-schema.test.ts`. The file is 8/8. Throwaway PostgreSQL 16.15 rejected the four null cases with `23514` and the named check, accepted the unlinked relation and the not_applicable-null children, and was dropped. No remote database command was run.
+
+CI and Preview for `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover this correction.
+
 ## Stop
 
 No Ready. No merge. No remote apply. No follow-up slice.
 
-**STOP for independent Technical-Lead exact-head review.**
+**STOP for independent Technical-Lead re-review of the R1 correction head.**

@@ -264,6 +264,41 @@ describe('private Official Evidence store schema', () => {
     assert.doesNotMatch(sql, /ist_katalogland/i)
   })
 
+  test('mode checks fail closed when a required child is null', () => {
+    const credential = extractParen(sql, 'constraint official_evidence_versions_credential_option check')
+    const optionAt = credential.toLowerCase().indexOf("credential_option_mode = 'option'")
+    assert.ok(optionAt > 0)
+    const option = credential.slice(optionAt)
+    const credentialAbsent = credential.slice(0, optionAt)
+    assert.match(option, /document_type is not null\s+and\s+document_type in \(/i)
+    assert.match(option, /issuing_country_code is not null\s+and\s+issuing_country_code ~/i)
+    assert.match(option, /related_citizenship_country_code is null\s+or\s*\(/i)
+    assert.match(credentialAbsent, /document_type is null/i)
+    assert.match(credentialAbsent, /issuing_country_code is null/i)
+    assert.match(credentialAbsent, /related_citizenship_country_code is null/i)
+    assert.doesNotMatch(credentialAbsent, /document_type is not null/i)
+    assert.doesNotMatch(credentialAbsent, /issuing_country_code is not null/i)
+
+    const residence = extractParen(sql, 'constraint official_evidence_versions_residence check')
+    const requiredAt = residence.toLowerCase().indexOf("residence_mode = 'required'")
+    assert.ok(requiredAt > 0)
+    assert.match(
+      residence.slice(requiredAt),
+      /residence_country_code is not null\s+and\s+residence_country_code ~/i,
+    )
+    const residenceAbsent = residence.slice(0, requiredAt)
+    assert.match(residenceAbsent, /residence_country_code is null/i)
+    assert.doesNotMatch(residenceAbsent, /residence_country_code is not null/i)
+
+    const scope = extractParen(sql, 'constraint official_evidence_versions_validity_scope check')
+    const travelAt = scope.toLowerCase().indexOf("validity_mode = 'travel_date'")
+    assert.ok(travelAt > 0)
+    assert.match(scope.slice(travelAt), /travel_date is not null\s+and\s+travel_date ~/i)
+    const scopeAbsent = scope.slice(0, travelAt)
+    assert.match(scopeAbsent, /travel_date is null/i)
+    assert.doesNotMatch(scopeAbsent, /travel_date is not null/i)
+  })
+
   test('date-only and instant validity stay lossless text', () => {
     const versions = extractParen(sql, 'create table private.official_evidence_versions')
     assert.match(versions, /\bvalid_from text\b/i)

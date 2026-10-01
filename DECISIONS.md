@@ -5736,6 +5736,8 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Konsequenzen:** Die Auswertung einer konkreten Reise bleibt compute-on-read. Die Repository-Migration ist noch keine Datenbank. Eine spätere Server-Grenze muss Quellenzeilen entweder einfrieren oder die Behördenidentität auf der Version mitschreiben; dieser Slice kopiert sie nicht, weil ein zweites beschreibbares Feld ohne Trigger auseinanderlaufen kann. SQL beweist keine DNS-Zugehörigkeit und keine überlappenden Parent-/Child-Hostnamen. Ein Selbstbezug der Version verhindert keine Schleife, wenn ein späterer privilegierter Schreiber zwei Zeilen gegeneinander setzt. Diesen Folgeslice startet die Entscheidung nicht.
 
+**Nachtrag 1. Oktober 2026, R1-F1:** Ein PostgreSQL-`CHECK` lässt einen Ausdruck durch, der `NULL` ergibt. Die Modus-Zweige für Credential-Option, erforderlichen Wohnsitz und `travel_date` prüfen das jeweils nötige Kind deshalb zuerst mit `IS NOT NULL` und erst danach den Wert. `related_citizenship_country_code = NULL` bleibt der gewollte unverbundene Zustand und wird nicht verlangt. `not_applicable` verlangt weiterhin, dass die zugehörigen Kinder `NULL` sind. Die Korrektur steht in derselben Migration. Sie ist nicht remote angewendet.
+
 ---
 
 ## Offene Widersprüche

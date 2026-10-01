@@ -300,7 +300,9 @@ create table private.official_evidence_versions (
     )
     or (
       credential_option_mode = 'option'
+      and document_type is not null
       and document_type in ('passport', 'national_id', 'unknown')
+      and issuing_country_code is not null
       and issuing_country_code ~ '^[A-Z]{2}$'
       and (
         related_citizenship_country_code is null
@@ -319,6 +321,7 @@ create table private.official_evidence_versions (
     )
     or (
       residence_mode = 'required'
+      and residence_country_code is not null
       and residence_country_code ~ '^[A-Z]{2}$'
     )
   ),
@@ -349,6 +352,7 @@ create table private.official_evidence_versions (
     )
     or (
       validity_mode = 'travel_date'
+      and travel_date is not null
       and travel_date ~ '^\d{4}-\d{2}-\d{2}$'
       and private.official_evidence_validity_instant(travel_date) is not null
     )

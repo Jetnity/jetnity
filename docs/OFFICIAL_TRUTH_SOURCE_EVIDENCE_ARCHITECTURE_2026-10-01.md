@@ -118,7 +118,7 @@ Tables, all in the unexposed schema `private`:
 - `official_source_domains` — normalized hostname, unique per domain
 - `official_evidence_versions` — the version and the typed scope from `lib/readiness/evidence.ts`
 
-`private.official_evidence_validity_instant(text)` is a comparison helper. It is not `SECURITY DEFINER`, not granted, and not an RPC. Date-only `valid_from` / `valid_until` stay text. The helper treats a date-only value as UTC midnight only while comparing. `retrieved_at` stays the UTC instant string from the TypeScript contract. `version_id` is stored as `ev1_` plus 32 hex characters and is not recomputed from a reformatted timestamp.
+A PostgreSQL `CHECK` passes when its expression is `NULL`, so the option, required-residence and `travel_date` branches test the required child with `IS NOT NULL` before the value check. `related_citizenship_country_code` null remains the unlinked state. `not_applicable` still requires its child fields to stay null. `private.official_evidence_validity_instant(text)` is a comparison helper. It is not `SECURITY DEFINER`, not granted, and not an RPC. Date-only `valid_from` / `valid_until` stay text. The helper treats a date-only value as UTC midnight only while comparing. `retrieved_at` stays the UTC instant string from the TypeScript contract. `version_id` is stored as `ev1_` plus 32 hex characters and is not recomputed from a reformatted timestamp.
 
 Security boundary of this migration:
 

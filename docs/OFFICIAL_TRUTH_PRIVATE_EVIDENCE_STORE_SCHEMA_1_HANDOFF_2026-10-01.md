@@ -12,7 +12,11 @@ Session: https://cursor.com/agents/bc-7ddd81cb-1513-4ecc-9745-08a611b1b06b
 
 ## Current state
 
-The repository migration for the private Official Evidence store is on this Draft branch. It has not been applied to Development or Production. There are no evidence rows, no store adapter and no provider activation.
+Technical-Lead review `5378817724` on `55c7956301c692ee52b8f47be0964fc9ab046c53` is **CHANGES REQUIRED**, finding R1-F1.
+
+R1-F1 is corrected in the same migration file. PostgreSQL lets a `CHECK` pass when the expression is `NULL`. The option, required-residence and `travel_date` branches now test the required child with `IS NOT NULL` before the value check. `related_citizenship_country_code = NULL` stays the unlinked state. `not_applicable` still requires its child fields to be null.
+
+The repository migration has not been applied to Development or Production. There are no real evidence rows, no store adapter and no provider activation.
 
 Migration file, created by `supabase migration new` with CLI `2.48.3`:
 
@@ -38,6 +42,8 @@ Read first:
 - `npm test` after removing gitignored `supabase/.temp/cli-latest`: **4140 pass / 0 fail**
 - Implementation head `5a537ddb7107eef49779273b4556c38c25cfe679`: GitHub CI run `36855719623` **SUCCESS**. Typecheck, Lint & Build job `110347618104` **SUCCESS**. Auth job `110347617833` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/BKSExJ7Cp1i3zPPeHwRR2SVySfGF`. GitHub Preview deployment `6783105853` **success**, target `https://jetnity-nyhb0pcnx-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read.
 - The commit that records those gates is a newer head. It does not inherit run `36855719623`, Auth job `110347617833`, Typecheck job `110347618104`, or Preview deployment `6783105853`. Do not treat `main` or a parent PR as this head's gate.
+- R1 review head `55c7956301c692ee52b8f47be0964fc9ab046c53` had its own green CI. That CI does not cover the R1 correction. The correction's exact-head CI, Auth job and Vercel Preview are recorded only after that head is pushed, and a later recording commit does not inherit them.
+- R1 local proof: static schema test **8/8**. Throwaway PostgreSQL 16.15 rejected option-null document type, option-null issuing country, required-residence-null country, and travel-date-null date, each with `23514` on the matching check. Unlinked related citizenship and not_applicable-with-null-children were accepted. The throwaway database was dropped.
 
 ## Stop
 
@@ -45,7 +51,7 @@ Stay Draft.
 
 Cursor does not Ready, merge, apply this migration to Development or Production, call OpenAI or the web, activate a provider, contact Sherpa/IATA/KAYAK, continue #626, change indexing or launch, or start a follow-up slice.
 
-**STOP for independent Technical-Lead exact-head review.**
+**STOP for independent Technical-Lead re-review of the R1 correction head.**
 
 ## Proposal only — not selected
 

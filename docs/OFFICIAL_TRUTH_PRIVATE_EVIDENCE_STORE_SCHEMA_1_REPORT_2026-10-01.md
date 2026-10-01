@@ -78,7 +78,44 @@ Allowlist only:
 `docs/OFFICIAL_TRUTH_PRIVATE_EVIDENCE_STORE_SCHEMA_1_TASK_2026-10-01.md` is the unchanged binding task from the seed commit.
 `docs/ACTIVE_WORK_STATUS.md` is outside the allowlist and was not edited. This report and the handoff are the continuity record for the slice.
 
-## 5. Validations
+## 5. R1-F1 — mode checks fail closed on SQL NULL
+
+Technical-Lead review `5378817724` on exact head `55c7956301c692ee52b8f47be0964fc9ab046c53` is **CHANGES REQUIRED**.
+
+PostgreSQL accepts a `CHECK` expression that evaluates to `NULL`. The option, required-residence and `travel_date` branches compared a null child and therefore did not reject it.
+
+The same migration file now requires, before the value check:
+
+- `credential_option_mode = 'option'` => `document_type is not null` and `issuing_country_code is not null`
+- `residence_mode = 'required'` => `residence_country_code is not null`
+- `validity_mode = 'travel_date'` => `travel_date is not null`
+
+`related_citizenship_country_code = NULL` stays valid. That null is the unlinked state. `not_applicable` still requires the matching child fields to be null.
+
+Static regression: `lib/readiness/evidence-store-schema.test.ts`, test `mode checks fail closed when a required child is null`. The file is **8/8 pass**.
+
+Throwaway PostgreSQL 16.15, database `jetnity_evidence_r1_proof`, `TimeZone = Europe/Zurich`, migration applied, then dropped. Not Development. Not Production. Synthetic rows only:
+
+| Case | Result |
+| --- | --- |
+| option, document and issuer set, related citizenship null | accepted |
+| not_applicable credential, residence and validity, child fields null | accepted |
+| option plus related citizenship in the set, required residence `CH`, travel date `2026-10-01` | accepted |
+| option and `document_type` null | rejected, `23514`, `official_evidence_versions_credential_option` |
+| option and `issuing_country_code` null | rejected, `23514`, `official_evidence_versions_credential_option` |
+| required residence and `residence_country_code` null | rejected, `23514`, `official_evidence_versions_residence` |
+| `travel_date` mode and `travel_date` null | rejected, `23514`, `official_evidence_versions_validity_scope` |
+| not_applicable credential with a document type | rejected, `official_evidence_versions_credential_option` |
+| not_applicable residence with a country | rejected, `official_evidence_versions_residence` |
+| not_applicable validity with a date | rejected, `official_evidence_versions_validity_scope` |
+
+Three synthetic versions remained after the rejected attempts. The database was then dropped. No remote migration command was run.
+
+R1 local checks on this working tree, before the correction head existed: `git diff --check` pass, operating-mode guard pass, schema test **8/8**, `npm test` **4141 pass / 0 fail**, `npm run typecheck` pass, `npm run lint` pass with 0 errors and 148 existing warnings, hygiene checks pass (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` still notes the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`, `check:setup:ci` pass with the existing missing-`.env` warning), `npm run build` pass on Next.js 16.3.8 with 25 static pages. Branch was 0 behind `main@0d6ff1846fe49ba614174c62b542373fc5454667`. The exact-head GitHub/Vercel gates for the correction commit are not inherited from section 6.
+
+Gates recorded below for `5a537ddb7107eef49779273b4556c38c25cfe679` and for review head `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover the R1 correction head.
+
+## 6. Validations before R1
 
 | Check | Result |
 | --- | --- |
@@ -122,7 +159,7 @@ Local PostgreSQL proof, with `TimeZone = Europe/Zurich`:
 
 Those inserts existed only in the throwaway database and were dropped with it.
 
-## 6. Things not touched
+## 7. Things not touched
 
 - Development and Production database data
 - `requirementsProviderAus()`, the Official Truth engine, and `lib/readiness/official.ts`
@@ -133,7 +170,7 @@ Those inserts existed only in the throwaway database and were dropped with it.
 - Production env, indexing, launch, #626, PrivacyBee
 - personal passport, MRZ, scan, biometric, date of birth, health record, user/trip/traveller ids
 
-## 7. Residuals
+## 8. Residuals
 
 - SQL does not prove DNS ownership or that `example.com` and `www.example.com` collide.
 - The canonical URL check rejects obvious non-HTTPS, userinfo, localhost and `.local` forms. It is not a second implementation of `quelleUrlLesen`.
@@ -143,8 +180,8 @@ Those inserts existed only in the throwaway database and were dropped with it.
 - Source class and authority live only on `official_sources`. A later privileged update of that row would change the identity seen by existing versions. This slice does not copy those fields onto the version, because a second writable copy would drift without a trigger.
 - Local PostgreSQL 16.15 is not evidence of the Development major version.
 
-## 8. Exact next step — proposal only
+## 9. Exact next step — proposal only
 
 Do not dispatch from this slice.
 
-Independent Technical-Lead review of this Draft is the next action. After an exact-head PASS, the Technical Lead may apply this one migration to Development and run readback plus security and performance advisors. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.
+Independent Technical-Lead re-review of the R1 correction head is the next action. Gates for `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover that head. After an exact-head PASS, the Technical Lead may apply this one migration to Development and run readback plus security and performance advisors. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.
