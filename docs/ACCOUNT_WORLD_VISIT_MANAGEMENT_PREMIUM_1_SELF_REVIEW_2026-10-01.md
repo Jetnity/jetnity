@@ -4,8 +4,9 @@ Stand: 1. Oktober 2026
 
 Dies ist die Prüfung des umsetzenden Agenten. Sie ist **kein** unabhängiger Technical-Lead-PASS, kein Ready und kein Merge.
 
-Geprüfter Code: `6e1a7879`
+Geprüfter Code: `583c08e43f3ab73e50911f3f43cb9f9a3c0eb880`
 Technical-Lead R1: `5385238373`
+Technical-Lead R2: `5385398142`
 Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c4
 `originalModelName`: `grok-4.7-high-fast`
 
@@ -18,7 +19,7 @@ Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c4
 - Widerruf zeigt zuerst die Frage, dann „Ja, widerrufen“ und „Abbrechen“.
 - Leer und Fehler sind verschiedene Sätze. Im Fehler fehlt die Hinzufügen-Aktion.
 - Ziele unter 44 px: keine in der Verwaltung. Schriften unter 640 px: 16 px.
-- Konsole leer. 4242 Tests, Typecheck, Lint ohne neue Fehler, Hygiene inklusive 0 Exporte ohne Aufrufer, Build und 137 visuelle Messungen ohne Befund.
+- Konsole leer. 4245 Tests nach dem Merge von #699, Typecheck, Lint ohne neue Fehler, Hygiene inklusive 0 Exporte ohne Aufrufer, Build und 137 visuelle Messungen ohne Befund. Zoom 1,25 und 1,5 sowie 200 % Text bleiben bei Dokumentüberlauf 0.
 - R1-F1: bei 1440×900 ist der Dokumentüberlauf unter CSS-Zoom 1,25 und 1,5 jetzt 0. 200 % Text bei 360×800 bleibt 0. Die Atlasbreite ist weiterhin bis 90rem und zentriert. Kein globales Verstecken von Überlauf.
 - Der rote CI-Lauf `36915104158` auf `ddc52b6c` betraf genau `besuchVerwaltungSuchtext`. Die Funktion ist privat und wird von der lokalen Suche aufgerufen.
 

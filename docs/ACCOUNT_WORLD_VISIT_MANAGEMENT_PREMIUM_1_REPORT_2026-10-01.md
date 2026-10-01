@@ -14,7 +14,7 @@ Cursor-Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c
 Generation: 1
 Logical agent: Jetnity Account world visit management premium UX 1
 
-Der exakte Branch-Kopf steht im Handoff. Der geprüfte Code nach R1 und dem Merge von `main@08928f43` ist `6e1a7879`.
+Der exakte Branch-Kopf steht im Handoff. Der geprüfte Code nach R2 und dem Merge von `main@ccbec9f2` ist `583c08e43f3ab73e50911f3f43cb9f9a3c0eb880`. R2 `5385398142` akzeptiert den Zoom-Fix. #699 bleibt unverändert. Die erneute Matrix auf diesem Kopf hält 200 % Text und Zoom 1,25/1,5 bei Dokumentüberlauf 0.
 
 CI `36915104158` auf `ddc52b6c` scheiterte nur an dem unbenutzten Export `besuchVerwaltungSuchtext`. Der Export ist entfernt. `check:exports` auf dem neuen Kopf meldet 0. #695 ist per Merge erhalten, ohne Besuchskarte und ohne `AccountWeltKarte.tsx`.
 
