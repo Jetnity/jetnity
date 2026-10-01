@@ -9,23 +9,25 @@ This is the author self-review. It is not an independent Technical-Lead PASS. Cu
 
 ## Scope check
 
-Changed paths are the task allowlist only:
+Changed paths are the original task allowlist plus the two files Technical-Lead R1 explicitly added:
 
 - `lib/readiness/official-truth-store-server.ts`
 - `lib/readiness/official-truth-store-server.test.ts`
 - `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`
+- `scripts/db/verwendung.mjs` (R1-F1 only)
+- `lib/admin/account-counts-delivery/schema-reference.test.ts` (R1-F1 only)
 - `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_REPORT_2026-10-01.md`
 - `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_HANDOFF_2026-10-01.md`
 - `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_SELF_REVIEW_2026-10-01.md`
 - `ARCHITECTURE.md`
-- `DECISIONS.md` (ADR-0220 and the ADR-0219 writer Nachtrag)
+- `DECISIONS.md` (ADR-0220 and the ADR-0219 writer Nachtrag, plus the R1 Nachtrag)
 - `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_ARCHITECTURE_2026-10-01.md`
 - `JETNITY_START_HERE.md` current pointer only
 - `docs/ACTIVE_WORK_STATUS.md` current pointer only
 
-`docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_TASK_2026-10-01.md` was not rewritten. `next-env.d.ts` is a dirty checkout file and is not part of this slice.
+`docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_TASK_2026-10-01.md` was not rewritten.
 
-`evidence.ts`, `rule-claims.ts`, `engine.ts`, `official.ts`, provider code, UI, `types/supabase.ts`, `scripts/db/verwendung.mjs` and `.jetnity/operating-mode.json` are unchanged.
+`evidence.ts`, `rule-claims.ts`, `engine.ts`, `official.ts`, provider code, UI, `types/supabase.ts` and `.jetnity/operating-mode.json` are unchanged.
 
 ## Contract
 
@@ -38,6 +40,8 @@ Changed paths are the task allowlist only:
 ## Gateway
 
 - One function, one `SECURITY DEFINER`, empty `search_path`, no `CREATE OR REPLACE`, no catalog insert, no `UPDATE`/`DELETE`, no table grant, no policy.
+- `accepted_evidence` raises `22023` before duplicate handling when `lifecycle` is not `accepted` or `validation_state` is not `valid`. A direct `service_role` payload of `candidate` / `pending` changes no row count. The stored row remains `accepted` / `valid`. SQL still does not recompute `rule_scope_key` or support-count truth.
+- The runtime call is the literal `.rpc('official_truth_store_accepted_v1', ...)`. `LOCAL_UNAPPLIED_RPCS` lists exactly `admin_account_counts_v1` and this function. The schema-reference tests still fail unknown names, a wrong source path, and missing SQL.
 - Idempotent exact duplicate and fail-closed conflict are both proven on the throwaway cluster, including a later `accepted_at` that does not overwrite the first.
 - Licensed evidence can be stored. A claim that cites it fails `official_rule_claim_support_source_class` even when the fact JSON contains `source_class: official_authority`. The decoy is ignored. No licensed support row remains.
 - Empty visa options hit the existing fact-payload trigger through `SET CONSTRAINTS … IMMEDIATE`. Counts do not change.
@@ -46,7 +50,7 @@ Changed paths are the task allowlist only:
 
 ## Disclosed limits
 
-1. Schema scanner gap. The RPC name is a constant because `types/supabase.ts` and `scripts/db/verwendung.mjs` are outside the allowlist. `check:schema-bezug` does not list `official_truth_store_accepted_v1`. This does not add a string-literal bypass and does not change the scanner. Generated types will not know the function until a later apply.
+1. Generated types. `types/supabase.ts` is still unchanged, so `official_truth_store_accepted_v1` is LOCAL/UNAPPLIED until a later apply. `check:schema-bezug` names it from `lib/readiness/official-truth-store-server.ts` and the writer migration. The first head hid the call behind a constant. Review `5383176732` rejected that. The registration is this one RPC, not a dynamic-name exemption.
 2. `COALESCE` keyword. Schema-qualified `pg_catalog.coalesce` does not resolve the jsonb and text-array overloads used here on PostgreSQL 16.15. The keyword form is used only for jsonb aggregates. It does not depend on `search_path`.
 3. Owner `EXECUTE`. `information_schema.routine_privileges` includes the function owner. The migration's only Data-API `GRANT EXECUTE` is `service_role`. `anon`, `authenticated` and `public` are revoked and proven denied.
 4. Version gap. Local proof is PostgreSQL 16.15. The task states Development is 17.6. This session did not re-query Development. A Development apply is not done and is not authorized for Cursor.

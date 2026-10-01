@@ -26,6 +26,7 @@ The writer is not connected to `requirementsProviderAus()`, the Source Router, C
 - An official action looks up `source_class` from `official_sources` by `action_source_id`. A missing source raises `23503`. A licensed class then fails the existing check.
 - If the number of inserted support rows differs from the number of requested support ids, the function raises `23503` with `support evidence version is not stored for this rule scope`.
 - SQL does not add a support-count or distinct-source acceptance rule. Those stay in `regelKandidatAkzeptieren`. An empty support list remains possible for a hand-built RPC payload. The public TypeScript functions do not produce one.
+- `accepted_evidence` rejects before duplicate handling and before insert unless `lifecycle` is `accepted` and `validation_state` is `valid`. The error is `22023`, `official truth store evidence is not accepted`. A direct `service_role` call with `candidate` / `pending` leaves every Official Truth row count unchanged. The already stored accepted row stays `accepted` / `valid`. This is a transport invariant of the operation named `accepted_evidence`. SQL does not recompute `rule_scope_key` and does not decide support-count truth.
 - The nine existing deferred fact-payload constraint triggers are set `IMMEDIATE` before the function returns. The existing trigger stays `SECURITY INVOKER`. It is not altered to `SECURITY DEFINER` and it is not disabled. The local proof showed an empty `visa_options` payload raise `accepted rule claim … has no persisted visa_options fact payload`, with claim, fact and support counts unchanged. Successful `service_role` calls committed, so that local cluster did not re-run the trigger as `service_role` after the function returned.
 
 ## Security posture
@@ -37,11 +38,19 @@ The writer is not connected to `requirementsProviderAus()`, the Source Router, C
 - PostgreSQL also shows `EXECUTE` for the function owner in `information_schema.routine_privileges`. That is the owner default. The local proof allows that owner row and rejects `anon`, `authenticated` and `public`. The only explicit Data-API grant in the migration is `service_role`.
 - The server module imports `server-only`, disables session persistence, token refresh and URL session detection, and reads `SUPABASE_SERVICE_ROLE_KEY`. A `NEXT_PUBLIC_` service key is not used. Missing credentials return `store_not_configured` and do not call the RPC. Failures return `store_failed` without the database message or the key.
 
-## `coalesce` and the schema scanner
+## `coalesce`
 
 `pg_catalog.coalesce(jsonb, jsonb)` and `pg_catalog.coalesce(text[], text[])` do not resolve in PostgreSQL 16.15 when the call is schema-qualified inside this function. JSONB aggregates use the SQL keyword `coalesce`, which is parsed as `COALESCE` and does not consult `search_path`. Text arrays use `array_agg(...)::text[]` and assign `'{}'` when the aggregate is null.
 
-`scripts/db/verwendung.mjs` flags a string-literal `.rpc('name')` unless that name is in `types/supabase.ts` or `LOCAL_UNAPPLIED_RPCS`. Both files are outside this allowlist. The writer calls `client.rpc(OFFICIAL_TRUTH_STORE_ACCEPTED_V1, { payload })`. The scanner therefore does not see this new function. That is recorded here. The scanner is unchanged for every other RPC. No string-literal `.rpc('official_truth_store_accepted_v1')` was added.
+## Technical-Lead R1
+
+Review `5383176732` on exact head `7eff82b7bc3fee950dc85f4525e6f57b152f1c13` is **CHANGES REQUIRED**. That head's CI, Auth and Vercel Preview are historical for the corrected tip.
+
+R1-F1. The first head called `client.rpc(OFFICIAL_TRUTH_STORE_ACCEPTED_V1, ...)`. `check:schema-bezug` only sees a string-literal `.rpc('name')`, so the new function was invisible. The correction calls `.rpc('official_truth_store_accepted_v1', ...)` from `lib/readiness/official-truth-store-server.ts`. `LOCAL_UNAPPLIED_RPCS` in `scripts/db/verwendung.mjs` now contains exactly two reviewed entries: the existing `admin_account_counts_v1` wrapper, and `official_truth_store_accepted_v1` with source `lib/readiness/official-truth-store-server.ts` and SQL `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`. `check:schema-bezug` classifies this RPC as LOCAL/UNAPPLIED. An unknown name, a call from another file, and a missing SQL file still fail. This is not a generic dynamic-RPC exemption. `types/supabase.ts` is unchanged. The constant `OFFICIAL_TRUTH_STORE_ACCEPTED_V1` remains the same string. It is not the call.
+
+R1-F2. The evidence table still allows `candidate | accepted | conflicted | superseded` and `pending | valid | rejected`. The accepted-store operation now rejects any other pair before duplicate handling, as described above. The claim path is unchanged. The claim table already stores only accepted claims.
+
+The Technical Lead expanded the allowlist only for `scripts/db/verwendung.mjs` and `lib/admin/account-counts-delivery/schema-reference.test.ts`.
 
 ## What was not done
 
@@ -57,6 +66,6 @@ Throwaway PostgreSQL 16.15 at `/usr/lib/postgresql/16/bin`. The cluster listened
 
 Sources in the proof are synthetic `*.example` hosts only. The migration inserts zero rows. The proof inserts four synthetic sources as the cluster superuser, then drives the gateway as `service_role`.
 
-The focused writer test file passed, 7/7, including visa-option and 17-airport idempotent replay, a composed claim on a separate destination, empty-option rollback, missing-support rollback, and rejection of a licensed support whose fact carried a decoy `source_class`.
+The focused writer test file passed, 7/7, including the `candidate` / `pending` rejection with unchanged counts, visa-option and 17-airport idempotent replay, a composed claim on a separate destination, empty-option rollback, missing-support rollback, and rejection of a licensed support whose fact carried a decoy `source_class`. The schema-reference tests passed, 4/4, and require exactly those two LOCAL/UNAPPLIED registrations.
 
-`npm test` passed 4178/4178. Typecheck passed. Lint reported 0 errors and 148 pre-existing warnings. The production build passed on Next.js 16.3.8 with 25 static pages. Exact-head CI is not claimed in this file.
+Corrected-tip local validation: `npm test` 4178/4178, typecheck pass, lint 0 errors and 148 pre-existing warnings, production build pass on Next.js 16.3.8 with 25 static pages, and `check:schema-bezug` printing LOCAL/UNAPPLIED for `official_truth_store_accepted_v1`. Exact-head CI is not claimed in this file. The numbers on `7eff82b7` belong to the reviewed head and are not this tip.

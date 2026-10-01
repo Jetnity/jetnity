@@ -9,7 +9,8 @@ Status: **NORMAL / DRAFT #683 IS THE CURRENT WRITER / OFFICIAL TRUTH TRUSTED ACC
 - Logical agent **Jetnity Official Truth trusted accepted-store writer 1**, Generation 1. Session https://cursor.com/agents/bc-9f6575c9-7aa3-4b97-b0a4-4ff4db26f877. `originalModelName=grok-4.7-high-fast`. Not Auto.
 - Machine mode: `NORMAL`. This slice does not edit `.jetnity/operating-mode.json`.
 - Baseline: `main@7c3dc2835622355d3dd8f5fb9efa4b3e63899b9e`. Re-fetch before treating a later SHA as current. The post-premium pin `63af11cda231b26ada4717d29b78fc7f9ab4d828` and Draft #671 are not the live writer.
-- The writer is dormant. It stores only Evidence accepted by `evidenceKandidatAkzeptieren` and Rule Claims returned by `regelKandidatAkzeptieren`, through one server-only RPC. No direct `private.official_*` grant. No import. No source-catalog seed. `requirementsProviderAus()` stays `null`.
+- The writer is dormant. It stores only Evidence accepted by `evidenceKandidatAkzeptieren` and Rule Claims returned by `regelKandidatAkzeptieren`, through one server-only RPC. `accepted_evidence` persists only lifecycle `accepted` and validation `valid`. `check:schema-bezug` lists `official_truth_store_accepted_v1` as LOCAL/UNAPPLIED. No direct `private.official_*` grant. No import. No source-catalog seed. `requirementsProviderAus()` stays `null`.
+- Technical-Lead R1 review `5383176732` on `7eff82b7bc3fee950dc85f4525e6f57b152f1c13` is corrected on this tip. That head's CI, Auth and Vercel Preview are historical. The next review is independent and exact-head.
 - Migration `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql` is repository-only. Development is not written. Production is not touched.
 - Exact-head GitHub CI, Auth and Vercel Preview belong to the pushed tip. This status does not embed a run id.
 - Cursor does not Ready or merge and does not start a follow-up slice.
