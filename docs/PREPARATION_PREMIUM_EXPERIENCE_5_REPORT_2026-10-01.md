@@ -7,7 +7,7 @@ Issue: #664
 Draft PR: #665
 Branch: `feat/preparation-premium-experience-5`
 Original baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-Integrated main: `85d730993148b058a2dd3acd19947c025bdcf7f7` (#663 Reiseplan, which already contains #669 `/planen`). This branch is 0 behind that main.
+Integrated main: `133c47da00930c0ae0d18bac7c494aca3adbe36e` (#667 Organisieren, which already contains #663 Reiseplan and #669 `/planen`). This branch is 0 behind that main.
 Runtime commit: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
 R1 review head that this corrects: `db42f6db571574896551b75905904d4ec07f709a`
 Agent: **Jetnity Preparation premium experience 5**, Generation 1
@@ -60,7 +60,7 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
 ## 3b. Main integration
 
-`a289f36a` merges exact main `85d730993148b058a2dd3acd19947c025bdcf7f7`. The merge was clean. No Vorbereitung file overlapped #663. The R1 layout remains. The merged #669 `/planen` files and the merged #663 Reiseplan files are present as they are on main. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After this merge, `npm test` was 4118 pass / 0 fail. Exact-head observation for `935719b8969e51da38c63999d14432751b48eb85`: Actions `36795378505` SUCCESS (Auth-Konfiguration gegen config.toml, and Typecheck, Lint & Build). Vercel SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FpLEzgYTh6xDTdDWq2Y5bEhVgNpr`. That observation does not approve a later commit and is not a Technical-Lead PASS.
+`5ad2d107` merges exact main `133c47da00930c0ae0d18bac7c494aca3adbe36e`. The merge was clean. No Vorbereitung file overlapped #667. The R1 layout remains. #669 `/planen`, #663 Reiseplan, and #667 Organisieren are present as merged on main and were not edited further. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After this merge, `npm test` was 4125 pass / 0 fail. Exact-head CI, Auth and Vercel for this tip are not yet recorded. The earlier observation of `935719b8` (Actions `36795378505`, Vercel `FpLEzgYTh6xDTdDWq2Y5bEhVgNpr`) does not approve this head and is not a Technical-Lead PASS.
 
 ## 4. Boundaries
 
