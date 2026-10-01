@@ -5674,6 +5674,42 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 ---
 
+## ADR-0216 – Official Truth: erste Source- und Evidence-Schicht, keine zweite Engine
+
+**Datum:** 1. Oktober 2026
+**Status:** Implementiert auf Draft-Branch `feat/official-truth-source-foundation-1`, Draft PR #673. Kein Ready, kein Merge, kein PASS. Binding: `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_FOUNDATION_1_TASK_2026-10-01.md`, Issue #672. Product-Owner-Freigabe der Quellenstrategie: Issue #294, Kommentar `5928669189`.
+
+**Entscheidung:**
+
+1. Die bestehende Requirements-/Official-Truth-Engine bleibt die einzige Auswertung. Es entsteht keine zweite Engine, kein Sherpa-Klon und kein Timatic-Adapter.
+2. Hinter der bestehenden Provider-Grenze gibt es drei reine Verträge: eine Source Registry, einen Source Router und eine versionierbare Evidence-Hülle. `requirementsProviderAus()` bleibt `null`.
+3. Quellenklassen bleiben getrennt. `official_authority` trägt einen Behördennamen. `licensed_evidence_provider` trägt einen Anbieternamen und keinen Authority-Namen.
+4. Modellausgabe kann höchstens Kandidatenevidence werden. Sie setzt nicht `required`, `not_required`, `conditional`, `optionEligibility`, `optionMandate` oder einen vertrauenswürdigen `visaMode`.
+5. Der Suchschlüssel ist nicht personenbezogen. Mehrere Staatsbürgerschaften und Dokumentoptionen bleiben getrennte Zellen. Ziel und Transit bleiben getrennte Felder. Wohnsitz ist eine explizite Dimension, kein stiller Default. Fehlender relevanter Kontext scheitert geschlossen.
+6. Ein anderer Inhaltshash erzeugt eine andere Version. Das ist kein behaupteter Regelwechsel. Konflikt überschreibt akzeptierte Evidence nicht.
+7. Globale, nicht personenbezogene Evidence darf später persistiert werden. Diese Entscheidung legt keine Tabelle an, ändert kein Schema und speichert keine Reisendenentscheidung als universelle Wahrheit. Traveller-spezifische `OfficialEvaluation` bleibt aus aktuellem Kontext abgeleitet.
+8. Kein Provider wird kontaktiert, aktiviert oder bezahlt. Kein echter Behördenkatalog wird angelegt. OpenAI, Web und Supabase werden in diesem Slice nicht aufgerufen.
+
+**Kontext:** Jetnity soll Entry Requirements nicht auf Sherpa oder IATA Timatic warten lassen. Die historische Laufzeitaussage „OfficialEvaluation ist compute-on-read / keine Official-Tabelle“ bleibt für die Auswertung wahr. Sie wird nur in der vom Product Owner begrenzten Hinsicht ergänzt: wiederverwendbare globale Quellversionen dürfen später persistiert werden. Der erste Schritt ist der Vertrag, nicht die Datenbank.
+
+**Alternativen:** Weiter auf Sherpa oder Timatic warten. Eine zweite Wahrheitsengine bauen. In diesem Slice bereits eine Supabase-Tabelle anlegen. Einen lizenzierten Anbieter als Behörde etikettieren. Fehlende Abdeckung als `not_required` behandeln.
+
+**Begründung:** Eine zweite Engine würde die eine Official Truth spalten. Eine Tabelle vor dem Vertrag würde Personen- und Globaldaten vermischen können. Ein Anbietername ist keine Behörde. `not_required` ohne Quelle wäre eine erfundene Freigabe.
+
+**Konsequenzen:** Die Laufzeit der Engine und `lib/readiness/official.ts` bleiben unverändert. Es gibt keinen Store und keine Migration. Ein späterer Persistence-Slice braucht ein eigenes Schema-Review und bleibt vor Production ein Product-Owner-Gate. Timatic und Sherpa können später optionale Adapter werden. Dieser ADR startet diesen Folgeslice nicht.
+
+**Nachtrag 1. Oktober 2026, Technical-Lead R1 auf `59d43f4ccc2e4434401596f0b7b4b7c8162719d8`:** Der erste Vertrag auf diesem Head hat Staatsbürgerschaften mit Dokumenten gekreuzt und den Hash aus Modelltext gebildet. Das ist vor einem Merge korrigiert, ohne den Slice zu erweitern.
+
+1. Eine Evidence-Zelle ist eine explizite Credential-Option, nicht ein Kreuzprodukt. Jede Zelle trägt die volle Staatsbürgerschaftsmenge. `relatedCitizenshipCountryCode` ist nur gesetzt, wenn die Document↔Citizenship-Beziehung geliefert wurde. Das Ausstellerland erzeugt diese Beziehung nicht. Ein unverbundenes Dokument bleibt `unlinked`. Der Suchschlüssel ist `evidence-key:v2:`. Unter v1 wurde nichts persistiert.
+2. Staatsbürgerschaft, Wohnsitz und Dokument haben die Abdeckungsmodi `independent`, `exact` und `not_applicable`. `independent` deckt jede Ausprägung, ohne die Welt aufzuzählen. Eine leere Exact-Liste ist ein ungültiger Deskriptor und kein Wildcard. Exact-Staatsbürgerschaft trifft die explizite bezogene Staatsbürgerschaft der Option. Ziel und Transit bleiben getrennte Länderlisten.
+3. `sourceContentHash` ist SHA-256 des von Jetnity normalisierten `sourceSnapshot`. `extractionNote` und die Felder `content`, `contentHash`, `sourceContentHash` setzen diesen Fingerabdruck nicht. Ein anderer Quellentext ist eine andere Version und bleibt `ruleChange: 'not_asserted'`. Dieser Slice ruft dafür kein Netz auf.
+
+**Nachtrag 1. Oktober 2026, Technical-Lead R2 auf `9480739db5f3743aaf40987a87e2135bcc48ef82`:** Der R1-Fingerabdruck las `sourceSnapshot` noch aus demselben Objekt wie die Modellausgabe. Das schliesst die Vertrauensgrenze nicht. `evidenceKandidatAusModell` nimmt das Modell und `EvidenceQuellenmaterial` getrennt entgegen. Der Fingerabdruck wird nur aus `material.sourceSnapshot` berechnet. Ein Modellobjekt mit `sourceSnapshot`, `content`, `contentHash` oder `sourceContentHash` wird abgelehnt und kann den Hash nicht setzen. Die R1-Credential- und Abdeckungsregeln bleiben unverändert.
+
+**Nachtrag 1. Oktober 2026, Technical-Lead R3 auf `23179348da1b842a19851dc656f37ad4ccae3fd6`:** URL und Abrufzeit waren noch Modellfelder. Sie gehören in dieselbe Retrieval-Hülle wie der Quellentext. `EvidenceQuellenmaterial` trägt `canonicalUrl`, `retrievedAt` und `sourceSnapshot`. Das Modellobjekt darf diese drei Felder sowie `content`, `contentHash` und `sourceContentHash` nicht setzen. Die gespeicherte URL und die Abrufzeit kommen nur aus der Hülle, nach der bestehenden Registry-, HTTPS- und Source-Id-Prüfung. Die R1- und R2-Regeln bleiben unverändert.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
