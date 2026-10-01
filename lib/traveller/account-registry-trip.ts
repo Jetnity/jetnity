@@ -4,7 +4,7 @@
 // Wiederverwendet den S1-Vertrag. Erzeugt frische trip-eigene Identitäten.
 // Keine Registry-ID-Wiederverwendung, kein Default-/First-Item-Credential.
 
-import { PARTY_GRENZEN } from '@/lib/readiness/party'
+import { PARTY_GRENZEN, partyVon, travellerSlots } from '@/lib/readiness/party'
 import { travellerAlsPayload } from '@/lib/readiness/reisende'
 import {
   accountRegistryTravellerLesen,
@@ -14,7 +14,7 @@ import {
   type TripSnapshotMaterialisierung,
 } from '@/lib/traveller/account-registry'
 import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
-import type { TravellerDocumentType, TripTraveller } from '@/types/trips'
+import type { TravellerDocumentType, Trip, TripTraveller } from '@/types/trips'
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -124,6 +124,19 @@ export function registryTripLimitErreicht(anzahl: number, limit = PARTY_GRENZEN.
   return anzahl >= limit
 }
 
+/** True, wenn jeder anwendbare Kopfzahl-Platz schon einen persistierten Traveller trägt. */
+export function registryTripKopfzahlErreicht(reise: Pick<Trip, 'travellers' | 'party'>): boolean {
+  return !travellerSlots(reise).some((slot) => slot.applicable && !slot.persisted)
+}
+
+/**
+ * Import sperren, bevor ein weiterer Snapshot nur noch nicht anwendbar würde.
+ * Kopfzahl zuerst, absolutes Party-Limit bleibt ein eigener harter Deckel.
+ */
+export function registryTripUebernahmeGesperrt(reise: Pick<Trip, 'travellers' | 'party'>): boolean {
+  return registryTripKopfzahlErreicht(reise) || registryTripLimitErreicht(partyVon(reise).length)
+}
+
 export function tripSnapshotMaterialisierungErzeugen(
   registry: AccountRegistryTraveller,
   kontext: RegistryTripSnapshotKontext,
@@ -194,7 +207,10 @@ export type RegistryTripPartyPayload = ReturnType<typeof travellerAlsPayload>
 
 export type RegistryTripReiseLesung =
   | { readonly problem: { readonly status: 500 | 503 }; readonly reise: null }
-  | { readonly problem: null; readonly reise: { readonly party: readonly TripTraveller[] } | null }
+  | {
+      readonly problem: null
+      readonly reise: { readonly party: readonly TripTraveller[]; readonly travellers: number } | null
+    }
 
 export type RegistryTripRegistryLesung =
   | { readonly problem: { readonly status: 500 | 503 }; readonly zeilen: null }
@@ -287,7 +303,12 @@ export async function registryTripUebernahmeOrchestrieren(
   }
 
   const bestehende = [...reiseLesung.reise.party]
-  if (registryTripLimitErreicht(bestehende.length)) {
+  if (
+    registryTripUebernahmeGesperrt({
+      travellers: reiseLesung.reise.travellers,
+      party: bestehende,
+    })
+  ) {
     return orchestrierungAbgelehnt(REGISTRY_TRIP_COPY.limit, {
       tripId: geprueft.tripId,
       reiseLesen: 1,
