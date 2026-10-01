@@ -5740,6 +5740,34 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Nachtrag 1. Oktober 2026, R2:** Der Technical Lead hat die angenommene SQL auf Development angewendet. Supabase hat dafür die History-Version `20261001121258_official_truth_private_evidence_store_schema_1` vergeben. Diese Version ist nicht von Hand erfunden. Die Repository-Datei heißt jetzt genauso. `git mv` hat sie von `20261001111642_official_truth_private_evidence_store_schema_1.sql` umbenannt. Die SQL-Bytes sind unverändert, SHA-256 `2e4a715c7270e90e936e753232d191b0bcb2ce3ad455099ef9e812b182d50524`. Cursor hat die Migration nicht erneut angewendet und Production nicht angefasst. Eine zweite Remote-Anwendung ist nicht nötig und nicht erlaubt.
 
+**Nachtrag 1. Oktober 2026, Merge:** #675 ist als `main@140fdfb9fb066ca9d23c295719cb2e770ae63fd7` gemergt. Development trägt die History-Version und drei leere private Tabellen. Production trägt sie nicht. ADR-0218 setzt darauf den Regel-Claim-Vertrag, ohne eine weitere Migration.
+
+---
+
+## ADR-0218 – Official Truth: quellenneutrale Rule Claims, kein zweiter Fakt aus dem Modell
+
+**Datum:** 1. Oktober 2026
+**Status:** Implementiert auf Draft-Branch `feat/official-truth-rule-claims-foundation-1`, Draft PR #677. Kein Ready, kein Merge, kein PASS. Binding: `docs/OFFICIAL_TRUTH_RULE_CLAIMS_FOUNDATION_1_TASK_2026-10-01.md`, Issue #676. Eltern: ADR-0216, ADR-0217. Product-Owner-Freigabe der Quellenstrategie: Issue #294, Kommentar `5928669189`.
+
+**Entscheidung:**
+
+1. Zwischen akzeptierter `EvidenceVersion` und der bestehenden Requirements-/Official-Truth-Engine liegt ein reiner, quellenneutraler Regelvertrag. Es entsteht keine zweite Engine und kein Adapter. `requirementsProviderAus()` bleibt `null`.
+2. Der Regelraum ist der bestehende Evidence-Raum ohne `sourceId`. Der Schlüssel heißt `rule-scope:v1:` plus SHA-256. `evidence-key:v2:` bleibt unverändert. Zwei Quellen mit demselben regulatorischen Raum teilen den Regel-Schlüssel. Die Eingabereihenfolge ändert ihn nicht.
+3. Ein Claim verweist nur über sortierte, eindeutige `versionId`-Werte auf Evidence, höchstens acht. Alle Stützen müssen denselben Regelraum haben. Ein abweichender Raum scheitert geschlossen.
+4. Die Evidence-Qualität ist Provenienz, keine Gleichwertigkeit. `explicit_primary_statement` braucht mindestens eine akzeptierte Version. `composed_from_multiple_primary_sources` braucht mindestens zwei akzeptierte Versionen von mindestens zwei `sourceId`. `stale_primary_evidence`, `unresolved_conflict` und `research_gap` werden nicht angenommen. Eine Forschungslücke hat keinen Vorschlag und erzeugt nie `not_required`.
+5. Der Forschungskanal darf einen geformten Vorschlag tragen. Die Annahme erhält einen getrennten `trustedRuleFact`. Der akzeptierte Fakt wird nur daraus und aus den akzeptierten EvidenceVersions gebaut. `regelKandidatAkzeptieren` liest den Vorschlag nicht. Es gibt keinen Konstruktor, der diese Prüfung umgeht.
+6. `OFFICIAL_REQUIREMENT_TYPES` bleibt unverändert. Forschungsnamen wie `visa_exemption`, `arrival_form` oder `transit_240h` werden keine Anforderungstypen. Visa-Ausprägungen bleiben `visaMode` am Typ `visa`. eTA bleibt `electronic_travel_authorization`. Einreiseformulare bleiben `entry_form`. Transitvarianten bleiben `transit` plus strukturierte Bedingungen.
+7. Acht Faktarten reichen für diesen Vertrag: `requirement_effect`, `visa_options`, `stay_limit`, `passport_validity`, `blank_passport_pages`, `transit_conditions`, `official_actions`, `temporal_rule`. Dauergrenzen sind technische Safety-Bounds, keine rechtliche Wahrheit, und rechnen Tage, Monate und Jahre nicht um. Passgültigkeit ohne Dauer speichert kein `0`. Unbekannte Transitfelder bleiben `null`. Amtshandlungen lösen über die Source Registry auf eine `official_authority` auf; ein lizenzierter Anbieter wird keine Amtsaktion. Zeitregeln gehen durch `temporalRuleLesen`.
+8. Dieser Slice legt keine Tabelle an, importiert keine Candidate Evidence und keine CH-Forschungsbatches, ruft kein Modell und kein Netz auf und ändert die Auswertung nicht.
+
+**Kontext:** ADR-0216 und ADR-0217 tragen Quelle und Evidence. Die normalisierte Regel, die mehrere offizielle Quellen stützen können, fehlte. Der Product Owner erlaubt globale, nicht personenbezogene Versionen. Ein Modelltext darf daraus nicht automatisch Official Truth werden. Development hat die drei privaten Evidence-Tabellen und null Zeilen. Production hat sie nicht.
+
+**Alternativen:** Den Vorschlag annehmen, sobald er die Formprüfung besteht. Neue Requirement-Typen für eVisa, Aufenthalt und Transitvarianten. Den Regel-Schlüssel weiter an `sourceId` binden. In diesem Slice bereits Claim-Tabellen anlegen oder die Engine anschließen.
+
+**Begründung:** Eine Formprüfung ist keine Validierung. Dieselbe Regel bei zwei Behörden braucht einen Schlüssel ohne Quellenidentität, sonst entsteht pro Quelle eine zweite Wahrheit. Neue Requirement-Typen würden die eine Taxonomie spalten. Eine Tabelle vor dem Vertrag würde Kandidaten und akzeptierte Fakten vermischen können.
+
+**Konsequenzen:** Die Engine, `lib/readiness/official.ts` und `lib/readiness/evidence.ts` bleiben unverändert. Es gibt keine Migration und keinen Laufzeit-Store für Claims. Eine spätere Persistenz ist ein eigener Development-Slice und vor Production ein Product-Owner-Gate. Dieser ADR startet ihn nicht. Unsicherheit bleibt das Fehlen eines akzeptierten Claims, nicht ein akzeptierter Effekt `unknown`. `visaMode: unknown` am Typ `visa` ist nur der bestehende Sentinel und kein Kanal. `passport_validity`, `blank_passport_pages`, `transit_conditions` und `visa_options` binden an ihren Requirement-Typ. Aufenthalt und Zeitregel tun das nicht, weil sie keine eigenen Requirement-Typen sind.
+
 ---
 
 ## Offene Widersprüche
