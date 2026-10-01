@@ -17,8 +17,8 @@ For: ChatGPT / Technical Lead. An older head does not approve a later head.
 - Session: https://cursor.com/agents/bc-37a6cdc4-88dd-4132-8c15-08cda875f94a
 - `originalModelName`: `grok-4.7-high-fast`
 - Original baseline: `main@2530020dbc6797b17d64c064ca5474cf90804272`
-- Integrated live main: `1930e61a0a409b83bd18b99e21939a89f73bbbd6` (merge #669, `/planen` premium creation flow)
-- Integration commit: `8f8c508c` merges that exact main. `git rev-list --left-right --count origin/main...HEAD` is `0` behind.
+- Integrated live main: `85d730993148b058a2dd3acd19947c025bdcf7f7` (#663 Reiseplan, already containing #669 `/planen`)
+- Integration commit: `a289f36a` merges that exact main. `git rev-list --left-right --count origin/main...HEAD` is `0` behind.
 - Runtime and audit: `fda7a6685a0bf8cb150ee490079a7cdad7658de3`
 - Audit: `2026-09-30T23:23:24.064Z`, JSON sha `fda7a6685a0bf8cb150ee490079a7cdad7658de3`, PASS
 - R1 on `db42f6db571574896551b75905904d4ec07f709a`: 200% layout and the shared status-file collision
@@ -62,11 +62,11 @@ Docs and evidence:
 
 ## Main integration
 
-Merge of `1930e61a0a409b83bd18b99e21939a89f73bbbd6` was clean. No file overlapped the Vorbereitung diff. The R1 layout in `Reisevorbereitung.tsx` and `RegistryReiseUebernahme.tsx` is unchanged. The #669 `/planen` files arrived as merged on main. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After the merge, `npm test` was 4112 pass / 0 fail.
+Merge of `85d730993148b058a2dd3acd19947c025bdcf7f7` was clean. No file overlapped the Vorbereitung diff. The R1 layout in `Reisevorbereitung.tsx` and `RegistryReiseUebernahme.tsx` is unchanged. #669 `/planen` and #663 Reiseplan arrived as merged on main. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After the merge, `npm test` was 4118 pass / 0 fail.
 
 ## Remote observation
 
-Read on the integration tip `bc7017f756eed45a6b81cd1f773884b7a74dd4f1`. This observation does not approve a later commit.
+The observation below is for `bc7017f7`, before the #663 main integration. It does not approve `a289f36a` or a later tip. Exact-head CI for the #663 integration is still open.
 
 | Check | Result |
 | --- | --- |
@@ -75,7 +75,7 @@ Read on the integration tip `bc7017f756eed45a6b81cd1f773884b7a74dd4f1`. This obs
 | Typecheck, Lint & Build | SUCCESS |
 | Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/5QvQyWozkFxSFdKMPJCKw9QufbZy` |
 
-Combined commit status success. Draft #665 stayed open. The branch is 0 behind `origin/main` `1930e61a`. The earlier SUCCESS on `4e46b318` does not approve this head.
+Combined commit status success on `bc7017f7` only. That head was 0 behind `1930e61a`. It is not the current tip.
 
 | Check | Result |
 | --- | --- |
