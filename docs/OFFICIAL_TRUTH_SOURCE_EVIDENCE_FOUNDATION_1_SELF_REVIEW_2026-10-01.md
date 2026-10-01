@@ -39,7 +39,9 @@ This is an author self-review. It is not an independent Technical-Lead PASS.
 
 ## Validation honesty
 
-Local checks for the R2 trust-boundary correction, run before that commit: targeted source-foundation tests 8/8, typecheck pass, lint 0 errors and 148 pre-existing warnings, `npm test` 4133 pass, hygiene checks pass, setup check pass with the existing missing-`.env` warning, production build pass, `git diff --check` and the operating-mode guard pass. `auth:pruefen` was not run locally. Exact-head CI, Auth and Vercel for the R2 head are not observed in this self-review. CI `36848362225` and Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby` belong only to `9480739db5f3743aaf40987a87e2135bcc48ef82`.
+Local checks for the R2 trust-boundary correction, run before that commit: targeted source-foundation tests 8/8, typecheck pass, lint 0 errors and 148 pre-existing warnings, `npm test` 4133 pass, hygiene checks pass, setup check pass with the existing missing-`.env` warning, production build pass, `git diff --check` and the operating-mode guard pass. `auth:pruefen` was not run locally.
+
+Observed after push, only for `fc0f0fcf22524f330da427307a56fbe4e47f3a66`: CI run `36849847761` **SUCCESS**, including Auth job `110328634650` and Typecheck, Lint & Build job `110328634234`. Vercel commit status **success**. GitHub Preview deployment `6782078960` **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8CUS12ymfr5ebumJFVnkHBmeypCn`. The preview host redirected to Vercel SSO, so `data-dpl-id` was not read. The commit that writes this paragraph is a new head and is not covered by that run. CI `36848362225` and Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby` belong only to `9480739db5f3743aaf40987a87e2135bcc48ef82`.
 
 Local checks for the earlier R1 correction, run before that correction commit:
 
