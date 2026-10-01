@@ -1,12 +1,14 @@
 // app/account/settings/page.tsx
 //
-// Einstellungen: Sicherheit, vorhandener JSON-Export und die V1-Kontolöschung.
+// Einstellungen: kompakter Hub. Sicherheit, vorhandener JSON-Export und die
+// V1-Kontolöschung. Die Löschoberfläche bleibt hinter derselben Umgebungsschranke.
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Download, Shield } from 'lucide-react'
 
 import KontoLoeschen from '@/components/account/KontoLoeschen'
+import { SICHERHEIT_ZIEL_44 } from '@/lib/auth/account-security-premium-ux-1'
 import { loeschUmgebungErlaubt } from '@/lib/account/kontoloeschung-vertrag'
 
 export const metadata: Metadata = {
@@ -19,25 +21,28 @@ export default function AccountEinstellungenSeite() {
   // Sichtbarkeit kommt aus der konfigurierten Supabase-Projekt-URL, nicht aus
   // dem Host der Anfrage. Exaktes Production-HTTPS ist eine erlaubte Umgebung.
   const loeschungAngeboten = loeschUmgebungErlaubt(process.env.NEXT_PUBLIC_SUPABASE_URL)
+  const loeschBereich = loeschungAngeboten ? <KontoLoeschen /> : null
   return (
-    <main className="px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Konto</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
-          Einstellungen
-        </h1>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
-          Hier verwaltest du die vorhandenen Kontoeinstellungen. Weitere Bereiche folgen, sobald sie
-          fachlich bereit sind.
-        </p>
+    <main data-einstellungen-hub="" className="px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-5xl">
+        <header className="max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Konto</p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-4xl">
+            Einstellungen
+          </h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">
+            Hier verwaltest du die vorhandenen Kontoeinstellungen. Weitere Bereiche folgen, sobald sie
+            fachlich bereit sind.
+          </p>
+        </header>
 
-        <div className="mt-10 space-y-6">
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Link
             href="/account/security"
-            className="flex min-h-[5.5rem] items-start gap-4 rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_60px_rgba(15,46,42,0.11)]"
+            className="flex min-h-11 items-start gap-4 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_60px_rgba(15,46,42,0.11)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
           >
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-600">
-              <Shield className="h-5 w-5" />
+              <Shield className="h-5 w-5" aria-hidden="true" />
             </span>
             <span className="min-w-0">
               <span className="block text-lg font-semibold tracking-[-0.03em] text-brand-800">Sicherheit</span>
@@ -50,7 +55,7 @@ export default function AccountEinstellungenSeite() {
 
           <section
             aria-labelledby="account-datenexport-title"
-            className="rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)]"
+            className="rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)]"
           >
             <div className="flex items-start gap-4">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-600">
@@ -74,16 +79,21 @@ export default function AccountEinstellungenSeite() {
                 </p>
                 <a
                   href="/api/account/export"
-                  className="mt-4 inline-flex min-h-11 items-center rounded-2xl bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  className={`${SICHERHEIT_ZIEL_44} mt-4 inline-flex items-center rounded-2xl bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
                 >
                   Konto- und Reisedaten als JSON herunterladen
                 </a>
               </div>
             </div>
           </section>
-
-          {loeschungAngeboten ? <KontoLoeschen /> : null}
         </div>
+
+        {loeschBereich ? (
+          <div className="mt-8 border-t border-red-200 pt-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-red-800">Gefahrenbereich</p>
+            <div className="mt-3">{loeschBereich}</div>
+          </div>
+        ) : null}
       </div>
     </main>
   )
