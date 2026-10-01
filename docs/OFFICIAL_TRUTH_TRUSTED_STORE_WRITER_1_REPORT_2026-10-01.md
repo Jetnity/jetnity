@@ -46,16 +46,22 @@ The writer is not connected to `requirementsProviderAus()`, the Source Router, C
 
 Review `5383176732` on exact head `7eff82b7bc3fee950dc85f4525e6f57b152f1c13` is **CHANGES REQUIRED**. That head's CI, Auth and Vercel Preview are historical for the corrected tip.
 
-R1-F1. The first head called `client.rpc(OFFICIAL_TRUTH_STORE_ACCEPTED_V1, ...)`. `check:schema-bezug` only sees a string-literal `.rpc('name')`, so the new function was invisible. The correction calls `.rpc('official_truth_store_accepted_v1', ...)` from `lib/readiness/official-truth-store-server.ts`. `LOCAL_UNAPPLIED_RPCS` in `scripts/db/verwendung.mjs` now contains exactly two reviewed entries: the existing `admin_account_counts_v1` wrapper, and `official_truth_store_accepted_v1` with source `lib/readiness/official-truth-store-server.ts` and SQL `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`. `check:schema-bezug` classifies this RPC as LOCAL/UNAPPLIED. An unknown name, a call from another file, and a missing SQL file still fail. This is not a generic dynamic-RPC exemption. `types/supabase.ts` is unchanged. The constant `OFFICIAL_TRUTH_STORE_ACCEPTED_V1` remains the same string. It is not the call.
+R1-F1. The first head called `client.rpc(OFFICIAL_TRUTH_STORE_ACCEPTED_V1, ...)`. `check:schema-bezug` only sees a string-literal `.rpc('name')`, so the new function was invisible. The correction calls `.rpc('official_truth_store_accepted_v1', ...)` from `lib/readiness/official-truth-store-server.ts`. `LOCAL_UNAPPLIED_RPCS` in `scripts/db/verwendung.mjs` now contains exactly two reviewed entries: the existing `admin_account_counts_v1` wrapper, and `official_truth_store_accepted_v1` with source `lib/readiness/official-truth-store-server.ts` and SQL `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`. The path at the R1 head was the original CLI filename `20261001171111_official_truth_trusted_store_writer_1.sql`. `check:schema-bezug` classifies this RPC as LOCAL/UNAPPLIED. An unknown name, a call from another file, and a missing SQL file still fail. This is not a generic dynamic-RPC exemption. `types/supabase.ts` is unchanged. The constant `OFFICIAL_TRUTH_STORE_ACCEPTED_V1` remains the same string. It is not the call.
 
 R1-F2. The evidence table still allows `candidate | accepted | conflicted | superseded` and `pending | valid | rejected`. The accepted-store operation now rejects any other pair before duplicate handling, as described above. The claim path is unchanged. The claim table already stores only accepted claims.
 
 The Technical Lead expanded the allowlist only for `scripts/db/verwendung.mjs` and `lib/admin/account-counts-delivery/schema-reference.test.ts`.
 
+## Technical-Lead R3 — migration identity only
+
+Review `5383450871`. Exact head `0f4490ab2335ac1142d7ba683fe91764bcdd6d99` had already passed code and schema review. The Technical Lead applied that SQL exactly once to Development on PostgreSQL 17.6. Supabase recorded the history version `20261001180549_official_truth_trusted_store_writer_1`.
+
+The repository file created by `supabase migration new` was `20261001171111_official_truth_trusted_store_writer_1.sql`. `git mv` renamed it to `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`. SHA-256 before and after the rename is `8b9a47f42ac9d2fcef62775a8a824c2e79abc86f583ebeea5a5ece56f7a93df4`. The SQL bytes did not change. This correction does not apply, repair, reset, rebase, or push Supabase, and it writes no Official Truth rows.
+
 ## What was not done
 
-- No remote `supabase` push, repair, reset or apply.
-- Development was not written. Production `qscbgcdmivbbnzrcyegn` was not touched.
+- Cursor did not run a remote `supabase` push, repair, reset, or second apply.
+- Production `qscbgcdmivbbnzrcyegn` was not touched.
 - No Candidate Evidence import, no CH batch, no real source-catalog row.
 - No OpenAI, web, Sherpa, Timatic or KAYAK call.
 - No change to `evidence.ts`, `rule-claims.ts`, `engine.ts`, `official.ts`, provider code, UI, `types/supabase.ts` or `.jetnity/operating-mode.json`.

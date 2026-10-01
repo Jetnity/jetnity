@@ -13,7 +13,7 @@ Changed paths are the original task allowlist plus the two files Technical-Lead 
 
 - `lib/readiness/official-truth-store-server.ts`
 - `lib/readiness/official-truth-store-server.test.ts`
-- `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`
+- `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql` (`git mv` from the original CLI filename `20261001171111_official_truth_trusted_store_writer_1.sql`; SQL bytes unchanged, SHA-256 `8b9a47f42ac9d2fcef62775a8a824c2e79abc86f583ebeea5a5ece56f7a93df4`)
 - `scripts/db/verwendung.mjs` (R1-F1 only)
 - `lib/admin/account-counts-delivery/schema-reference.test.ts` (R1-F1 only)
 - `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_REPORT_2026-10-01.md`
@@ -58,6 +58,10 @@ Changed paths are the original task allowlist plus the two files Technical-Lead 
 6. `rule_scope_key` is still not recomputed from the typed columns inside SQL.
 7. `SET CONSTRAINTS IMMEDIATE` was proven on the local superuser-owned function. It was not proven on Supabase's migration owner. If a later Development apply shows the deferred trigger firing again as `service_role`, the fix has to stay inside this one function. Do not convert the existing trigger to `SECURITY DEFINER`.
 
+## Identity
+
+Technical-Lead R3 review `5383450871` is a repository filename reconciliation only. Development already contains `public.official_truth_store_accepted_v1` once under history version `20261001180549`. The canonical repository path is that version. The original CLI filename `20261001171111` is historical. This self-review does not apply the migration again.
+
 ## Not claimed
 
-No Ready. No merge. No Development write. No Production mutation. No import. No provider activation. No follow-up slice. Exact-head CI and Vercel Preview are properties of the pushed tip, not of this self-review text.
+No Ready. No merge. No second Development apply. No Production mutation. No import. No provider activation. No follow-up slice. Exact-head CI and Vercel Preview are properties of the pushed tip, not of this self-review text.

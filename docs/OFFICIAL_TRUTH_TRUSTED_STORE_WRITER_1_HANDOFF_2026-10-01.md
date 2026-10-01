@@ -12,20 +12,20 @@ Session: https://cursor.com/agents/bc-9f6575c9-7aa3-4b97-b0a4-4ff4db26f877
 
 ## Current state
 
-The repository contains a dormant accepted-store writer. It is not applied to Development or Production. There is no Technical-Lead PASS.
+The repository contains a dormant accepted-store writer. The Technical Lead applied it exactly once to Development as history version `20261001180549`. Production is untouched. Merge remains held. There is no merge PASS.
 
 Technical-Lead R1 review `5383176732` is **CHANGES REQUIRED** on `7eff82b7bc3fee950dc85f4525e6f57b152f1c13`. That head's CI `36900295291`, Auth `110497479353`, Typecheck/Lint/Tests/Build `110497479627` and Vercel Preview `dpl_2i6juhsXg1ei6UgF4W3HVSJ8bWG5` are historical. The correction on this tip is only R1-F1 and R1-F2:
 
 - the server calls `.rpc('official_truth_store_accepted_v1', ...)`;
-- `LOCAL_UNAPPLIED_RPCS` registers that name from `lib/readiness/official-truth-store-server.ts` to `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`;
+- `LOCAL_UNAPPLIED_RPCS` registers that name from `lib/readiness/official-truth-store-server.ts` to `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`;
 - `check:schema-bezug` classifies it LOCAL/UNAPPLIED beside the existing `admin_account_counts_v1` entry;
 - `accepted_evidence` rejects unless `lifecycle` is `accepted` and `validation_state` is `valid`, before duplicate handling.
 
-Migration file, created by Supabase CLI `2.48.3` through `supabase migration new official_truth_trusted_store_writer_1`:
+Canonical repository file, matching the one Development history version:
 
-`supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`
+`supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`
 
-The timestamp was not typed by hand. The CLI warned that `2.119.0` exists. The file was not recreated with a newer CLI. The CLI was not used to push, repair, reset or apply a remote migration. It wrote gitignored `supabase/.temp/cli-latest`. That file was removed and is not part of the commit.
+The original local CLI filename, from Supabase CLI `2.48.3` through `supabase migration new official_truth_trusted_store_writer_1`, was `20261001171111_official_truth_trusted_store_writer_1.sql`. That timestamp was not typed by hand. Technical-Lead R3 review `5383450871` recorded the one successful Development apply as `20261001180549`. `git mv` changed only the repository filename. SHA-256 before and after is `8b9a47f42ac9d2fcef62775a8a824c2e79abc86f583ebeea5a5ece56f7a93df4`. The SQL bytes are unchanged. This correction does not apply, repair, reset, or push Supabase. A second apply is forbidden. The CLI warned that `2.119.0` exists. The file was not recreated with a newer CLI. It wrote gitignored `supabase/.temp/cli-latest` at creation time. That file was removed and is not part of the commit.
 
 Server module:
 
@@ -54,8 +54,9 @@ Live `main` at the start of this slice is the baseline above. Older continuity t
   - `npm run lint`: 0 errors, 148 warnings. None are in the R1 files
   - `npm run build`: pass. Next.js 16.3.8. 25 static pages
   - operating-mode guard PASS, dead-code 0, unused exports 0, unused packages 0, API protection PASS, `git diff --check` pass
-  - `check:schema-bezug` prints LOCAL/UNAPPLIED for `admin_account_counts_v1` and for `official_truth_store_accepted_v1` from `lib/readiness/official-truth-store-server.ts` to `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`
+  - `check:schema-bezug` on `0f4490ab` printed LOCAL/UNAPPLIED for `admin_account_counts_v1` and for `official_truth_store_accepted_v1` from `lib/readiness/official-truth-store-server.ts` to the original CLI path `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`. After R3 the same registration points at `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`.
 - The same command totals on `7eff82b7` are the reviewed head. They are historical. A silent miss of the store RPC was the R1-F1 defect.
+- R3 identity correction, recorded before the push of the rename: SHA-256 before and after `git mv` is `8b9a47f42ac9d2fcef62775a8a824c2e79abc86f583ebeea5a5ece56f7a93df4`. Focused writer test 7/7. Schema-reference tests 4/4. `npm test` 4178/4178. Typecheck pass. Lint 0 errors and 148 warnings. Build pass on Next.js 16.3.8 with 25 static pages. Hygiene PASS. `check:schema-bezug` prints LOCAL/UNAPPLIED for `official_truth_store_accepted_v1` pointing at `supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql`.
 - `db:rechte`, `db:rls`, `db:sicherheit` and `auth:pruefen` were not run locally. They talk to live Development. GitHub CI still runs `auth:pruefen`. That is not an apply of this migration.
 - Exact-head GitHub CI, Auth and Vercel Preview belong to the pushed tip. This file does not embed a run id, because writing one after the run would create a newer head. Read the checks on the tip SHA. Do not treat a parent SHA or `main` as this head's gate.
 
@@ -71,7 +72,7 @@ Command results recorded for the tip are in the delivery summary that accompanie
 - Support and action source class come from stored rows.
 - The fact-payload trigger remains. This function sets the nine existing constraint triggers immediate before return. Do not add a second `SECURITY DEFINER` and do not disable the trigger.
 - No direct grant on `private.official_*`.
-- Do not import Candidate Evidence or CH research. Do not seed a real source catalog. Do not call `requirementsProviderAus()` into activity. Do not apply this migration remotely from Cursor.
+- Do not import Candidate Evidence or CH research. Do not seed a real source catalog. Do not call `requirementsProviderAus()` into activity. Do not apply, repair, reset, or push this migration. Development already has it once as `20261001180549`.
 
 ## Stop
 
