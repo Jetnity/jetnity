@@ -702,7 +702,7 @@ export default function AccountWeltKarte({
             bleibt sie der vollen Weltseite vorbehalten, einen Klick entfernt. */}
         {istAtlas ? <WeltLaenderListe flaechen={laender.flaechen} /> : null}
 
-      <div data-world-map-herkunft="ein" className="mt-4 space-y-1 border-t border-line-100 pt-3">
+      <div data-world-map-herkunft="ein" className="mt-4 min-w-0 space-y-1 break-words border-t border-line-100 pt-3">
         {ohneFlaeche ? <p className="text-xs leading-5 text-ink-650">{ohneFlaeche}</p> : null}
         {welt.lage === 'leer' && !ansicht.rahmenHinweis ? null : (
           <p className="text-xs leading-5 text-ink-650">
@@ -738,7 +738,7 @@ export default function AccountWeltKarte({
         </div>
       ) : null}
 
-      <p className="mt-4 border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
+      <p className="mt-4 break-words border-t border-line-100 pt-3 text-xs leading-5 text-ink-650">
         {besucht.text}
       </p>
     </section>

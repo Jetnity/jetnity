@@ -82,6 +82,17 @@ test('nächste Reise und Buchungseinstieg bleiben, ohne erfundene Zahlen', () =>
   }
 })
 
+test('lange Herkunfts- und Buchungswörter brechen, statt das Dokument zu weiten', () => {
+  const herkunft = karte.indexOf('data-world-map-herkunft="ein"')
+  const herkunftZeile = karte.slice(herkunft, karte.indexOf('>', herkunft))
+  assert.match(herkunftZeile, /min-w-0/)
+  assert.match(herkunftZeile, /break-words/)
+  const besuchtAbsatz = karte.slice(karte.lastIndexOf('{besucht.text}') - 200, karte.lastIndexOf('{besucht.text}'))
+  assert.match(besuchtAbsatz, /break-words/)
+  const hinweis = uebersicht.indexOf('BUCHUNGEN_COPY.einstiegHinweis')
+  assert.match(uebersicht.slice(Math.max(0, hinweis - 180), hinweis), /break-words/)
+})
+
 test('leer und Fehler bleiben getrennte Aussagen', () => {
   assert.match(uebersicht, /role="alert"/)
   assert.match(uebersicht, /data-account-naechste="fehler"/)

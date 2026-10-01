@@ -342,6 +342,18 @@ try {
   befunde.push({ breite: 'text200-360x800', zustand: 'welt', ...textMessung, auswahl: null, fokus: null, konsole: text.konsole })
   await text.seite.close()
 
+  const textAtlas = await oeffnen(textViewport, '/ui-audit/account?zustand=welt&ansicht=besuche', { schrift: '200%' })
+  const textAtlasMessung = await textAtlas.seite.evaluate(messen)
+  befunde.push({
+    breite: 'text200-360x800',
+    zustand: 'atlas',
+    ...textAtlasMessung,
+    auswahl: null,
+    fokus: null,
+    konsole: textAtlas.konsole,
+  })
+  await textAtlas.seite.close()
+
   for (const zoom of [1.25, 1.5]) {
     const name = `zoom${Math.round(zoom * 100)}-1440x900`
     const lauf = await oeffnen({ width: 1440, height: 900 }, '/ui-audit/account?zustand=welt', { zoom })
@@ -373,15 +385,9 @@ const fehler = []
 for (const befund of befunde) {
   const name = `${befund.breite}/${befund.zustand}`
   if ((befund.inhaltOverflow ?? 0) > 1) fehler.push(`${name}: Inhaltsüberlauf ${befund.inhaltOverflow}`)
-  // Bei 200 % ragt die bestehende Konto-Navigation (`whitespace-nowrap` im
-  // horizontalen Scroller) wenige Pixel über das Dokument. Dieselbe Leiste
-  // steht auf dem Atlas. Die Übersicht selbst bleibt im Fenster. Die Leiste
-  // ist nicht in der Schreibliste dieses Slices.
-  const navBeiText =
-    befund.breite.startsWith('text200') &&
-    befund.overflow <= 8 &&
-    (befund.inhaltOverflow ?? 0) <= 1
-  if (befund.overflow > 1 && !navBeiText) fehler.push(`${name}: Überlauf ${befund.overflow}`)
+  // Dokumentüberlauf ist auch bei 200 % Schrift null. Die Konto-Leiste scrollt
+  // in sich; ein langes Wort in der Kartenherkunft darf das Dokument nicht weiten.
+  if (befund.overflow > 0) fehler.push(`${name}: Überlauf ${befund.overflow}`)
   if (befund.konsole.length) fehler.push(`${name}: Konsole ${befund.konsole.join(' | ')}`)
   if ((befund.kleinsteBedienflaeche ?? 0) < 44) {
     fehler.push(`${name}: Trefferfläche ${befund.kleinsteBedienflaeche} (${befund.kleinsteBedienflaecheText})`)

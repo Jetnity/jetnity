@@ -55,7 +55,7 @@ function BuchungenEinstieg() {
         <h2 className="mt-3 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
           {BUCHUNGEN_COPY.seitenTitel}
         </h2>
-        <p className="mt-3 text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.einstiegHinweis}</p>
+        <p className="mt-3 break-words text-sm leading-6 text-ink-700">{BUCHUNGEN_COPY.einstiegHinweis}</p>
       </div>
       <Link
         href="/account/bookings"
