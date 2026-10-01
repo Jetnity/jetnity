@@ -2144,21 +2144,21 @@
     },
     {
       "zustand": "zoom1.25-1440x900",
-      "seiteHoehe": 3802,
-      "ueberlauf": true,
+      "seiteHoehe": 3660,
+      "ueberlauf": false,
       "verwaltungUeberlauf": false,
       "kopfUeberlauf": false,
-      "scrollBreite": 1580,
+      "scrollBreite": 1440,
       "clientBreite": 1440,
       "karten": 12
     },
     {
       "zustand": "zoom1.5-1440x900",
-      "seiteHoehe": 4869,
-      "ueberlauf": true,
+      "seiteHoehe": 4615,
+      "ueberlauf": false,
       "verwaltungUeberlauf": false,
       "kopfUeberlauf": false,
-      "scrollBreite": 1752,
+      "scrollBreite": 1440,
       "clientBreite": 1440,
       "karten": 12
     },

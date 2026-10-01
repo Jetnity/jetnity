@@ -7,7 +7,8 @@ Issue: #692
 Draft PR: #693
 Branch: `fix/account-world-visit-management-premium-1`
 Baseline des Tasks: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
-Merge-Base gegen `origin/main`: `a659bd9080c66908a69fb3602214ee395a3e85e8`
+Merge-Base gegen `origin/main`: `08928f43197489e0ca4d2161f56c75037b077d08`
+Technical-Lead R1: `5385238373`
 Task: `docs/ACCOUNT_WORLD_VISIT_MANAGEMENT_PREMIUM_1_TASK_2026-10-01.md`
 Bericht: `docs/ACCOUNT_WORLD_VISIT_MANAGEMENT_PREMIUM_1_REPORT_2026-10-01.md`
 Self-Review: `docs/ACCOUNT_WORLD_VISIT_MANAGEMENT_PREMIUM_1_SELF_REVIEW_2026-10-01.md`
@@ -22,11 +23,11 @@ Betriebsmodus beim Start: `NORMAL`. Diese Arbeit ist ein freigegebenes, begrenzt
 
 ## Exakter Kopf
 
-Der Code, den die Gates und der visuelle Audit nach dem letzten Main-Merge gelaufen sind, ist `d9ad81ea920fe3197085343aab12e34f8394e742`.
+Der Code, den die Gates und der visuelle Audit nach R1 gelaufen sind, ist `6e1a7879`.
 
-Die Evidenz und diese Dokumente liegen auf dem Branch-Tip. `git diff d9ad81ea920fe3197085343aab12e34f8394e742 HEAD -- app components lib scripts` muss leer sein.
+Die Evidenz und diese Dokumente liegen auf dem Branch-Tip. `git diff 6e1a7879 HEAD -- app components lib scripts` muss leer sein.
 
-Der Review-Kopf ist der Branch-Tip. Gegen `origin/main` ist der Branch 0 hinter main. Integriert nur durch Merge von main: #686, #689, #691 und #695.
+Der Review-Kopf ist der Branch-Tip. Gegen `origin/main` ist der Branch 0 hinter main. Integriert nur durch Merge von main: #686, #689, #691, #695 und #697.
 
 ## Geänderte Dateien dieser Lane
 
@@ -38,20 +39,23 @@ Der Review-Kopf ist der Branch-Tip. Gegen `origin/main` ist der Branch 0 hinter 
 - `lib/account/account-world-visit-management-premium-1.ts`
 - `lib/account/account-world-visit-management-premium-1-fixture.ts`
 - `lib/account/account-world-visit-management-premium-1.test.ts`
+- `components/account/AccountWeltKarte.tsx` nur für die Atlasbreite in R1
+- `lib/account/account-world-premium-map-ux-1.test.ts`
+- `lib/account/account-home-premium-overview-1.test.ts` nur die gesuchte Breitenklasse
 - `scripts/account-world-visit-management-premium-1-audit.mjs`
 - `docs/evidence/account-world-visit-management-premium-1/`
 - der Task, dieser Handoff, der Bericht, das Self-Review
 
-Nicht angefasst: `AccountWeltKarte.tsx`, `AccountUebersicht.tsx`, `AccountAuditClient.tsx`, `AccountNavigation.tsx`, Weltkarten-Wahrheit, Projektion, Besuchspersistenz, Besuch-Aktionen, Supabase, Auth, Trip Workspace, Design-Tokens, `package.json`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`. #686, #689, #691 und #695 kamen nur durch den Merge von main. Die Dichte von 40 Ereignissen ist `?dichte=40` auf der bestehenden Audit-Route, nicht eine Änderung von `AccountAuditClient.tsx`.
+Nicht angefasst: `AccountUebersicht.tsx`, `AccountAuditClient.tsx`, `AccountNavigation.tsx`, Weltkarten-Wahrheit, Projektion, Marker, Besuchspersistenz, Besuch-Aktionen, Supabase, Auth, Trip Workspace, Design-Tokens, `package.json`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`. #686, #689, #691, #695 und #697 kamen nur durch den Merge von main. Die Dichte von 40 Ereignissen ist `?dichte=40` auf der bestehenden Audit-Route, nicht eine Änderung von `AccountAuditClient.tsx`.
 
 ## Prüfung
 
 CI `36915104158` auf dem Zwischenkopf `ddc52b6c` ist an **Exporte ohne Aufrufer** rot geworden: `besuchVerwaltungSuchtext` war exportiert und hatte keinen Aufrufer ausserhalb der Datei. Die Funktion ist seit `4bb907e8` privat und wird nur von `besucheLokalFiltern` benutzt. Auth auf demselben alten Lauf war grün. Der Zwischenkopf ist nicht der Review-Kopf.
 
-Am Arbeitsbaum, der `d9ad81ea` entspricht, nach Merge von `main@a659bd90`:
+Am Arbeitsbaum, der `6e1a7879` entspricht, nach Merge von `main@08928f43` und dem R1-Fix:
 
 - `git diff --check`: sauber
-- `npm test`: 4238 bestanden, 0 fehlgeschlagen
+- `npm test`: 4242 bestanden, 0 fehlgeschlagen
 - `npm run typecheck`: bestanden
 - `npm run lint`: 0 Fehler, 148 bestehende Warnungen
 - `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: bestanden. `check:exports` meldet 0 Exporte ohne Aufrufer. `check:schema-bezug` meldet weiter die schon bekannten LOCAL/UNAPPLIED-RPCs anderer Lanes und beendet sich mit Erfolg.
@@ -71,6 +75,12 @@ Am Arbeitsbaum, der `d9ad81ea` entspricht, nach Merge von `main@a659bd90`:
 
 Vorher lag das Formular 8176 px (390) bzw. 4164 px (768/1440/1920) unter „Bestätigte Besuche“. „Besuch hinzufügen“ steht in der ersten Ansicht, Höhe 44 px.
 
+## R1-F1
+
+Die volle Atlasbreite bleibt `min(90rem, Dokumentbreite − 4rem)`, zentriert, nur ab `lg`, nur für `darstellung="atlas"`. Die Breite kommt aus `100cqw`, nicht aus einer Viewport-Einheit. Der Container ist das Dokument, und nur solange der Atlas im Baum steht. Kein `overflow-x: hidden`. Projektion, Marker, Wahrheit, Auswahl und Tastatur sind unverändert.
+
+Auf `6e1a7879`, 1440×900, CSS-Zoom: 1,25 und 1,5 haben `scrollWidth` 1440 und `clientWidth` 1440. 200 % Text bei 360×800 hat Dokumentüberlauf 0. Die normalen Breiten 320 bis 1920 haben Dokumentüberlauf 0 und weiter 12 Karten. Die Seitenhöhen der Verwaltung sind unverändert.
+
 ## Nächster Schritt
 
-Unabhängiges Technical-Lead-Review von Code, Bild, Mobile und Bedienung am exakten Branch-Kopf. Cursor setzt nicht Ready und mergt nicht. Kein Folge-Slice aus diesem Lauf.
+Unabhängiges Technical-Lead-R2 von Code, Bild, Mobile und Bedienung am exakten Branch-Kopf. Cursor setzt nicht Ready und mergt nicht. Kein Folge-Slice aus diesem Lauf.

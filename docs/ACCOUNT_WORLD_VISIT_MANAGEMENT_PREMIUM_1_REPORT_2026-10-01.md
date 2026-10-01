@@ -14,7 +14,7 @@ Cursor-Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c
 Generation: 1
 Logical agent: Jetnity Account world visit management premium UX 1
 
-Der exakte Branch-Kopf steht im Handoff. Der geprüfte Code nach dem Merge von `main@a659bd90` ist `d9ad81ea920fe3197085343aab12e34f8394e742`.
+Der exakte Branch-Kopf steht im Handoff. Der geprüfte Code nach R1 und dem Merge von `main@08928f43` ist `6e1a7879`.
 
 CI `36915104158` auf `ddc52b6c` scheiterte nur an dem unbenutzten Export `besuchVerwaltungSuchtext`. Der Export ist entfernt. `check:exports` auf dem neuen Kopf meldet 0. #695 ist per Merge erhalten, ohne Besuchskarte und ohne `AccountWeltKarte.tsx`.
 
@@ -74,7 +74,7 @@ Weitere Zustände auf jeder Breite der Matrix: Bearbeiten lässt 12 Karten stehe
 
 200 % Text bei 360×800: 12 Karten, Verwaltung und Kopf ohne horizontalen Überlauf, Dokumentüberlauf 0. Seitenhöhe 14723, weil die Schrift doppelt ist.
 
-CSS-Zoom 1,25 und 1,5 auf 1440×900 vergrößert das Dokument, weil der Atlas `100vw` ausbricht. Verwaltung und Kopf bleiben innerhalb der Fläche. Ein echter schmalerer Viewport, 1152×720 und 960×600, hat keinen Dokumentüberlauf und weiter 12 Karten. `AccountWeltKarte.tsx` bleibt unangetastet.
+R1-F1: CSS-Zoom 1,25 und 1,5 auf 1440×900 haben Dokumentüberlauf 0 (`scrollWidth` 1440). Der Atlas bleibt bis 90rem breit und zentriert. Seine Breite folgt `100cqw` der Dokumentbreite. 200 % Text bei 360×800 hat Dokumentüberlauf 0. Ein echter schmalerer Viewport, 1152×720 und 960×600, hat keinen Dokumentüberlauf und weiter 12 Karten.
 
 Das 7er-Welt-Fixture wird kürzer, ohne Ereignisse zu verstecken, weil 7 unter der Schwelle 12 liegt: 390×844 von 6289 auf 5447, 768×1024 von 4730 auf 4116, 1440×900 von 4124 auf 3375, 1920×1080 von 4150 auf 3401.
 
