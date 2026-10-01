@@ -1,0 +1,825 @@
+{
+  "marke": "vorher",
+  "sha": "7e317870489a7ea25a225ef2fc497d55846a8f3f",
+  "basis": "http://127.0.0.1:3000",
+  "gemessenAm": "2026-10-01T19:37:39.160Z",
+  "befunde": [
+    {
+      "viewport": "320x568",
+      "zustand": "po",
+      "hoehe": 2378,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 288
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 288
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "360x800",
+      "zustand": "po",
+      "hoehe": 2378,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 328
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 328
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "390x844",
+      "zustand": "po",
+      "hoehe": 2354,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 358
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 358
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "412x915",
+      "zustand": "po",
+      "hoehe": 2354,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 380
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 380
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "430x932",
+      "zustand": "po",
+      "hoehe": 2354,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 398
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 398
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "768x1024",
+      "zustand": "po",
+      "hoehe": 1967,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 352
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 352
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "820x1180",
+      "zustand": "po",
+      "hoehe": 2123,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 378
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 378
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1024x768",
+      "zustand": "po",
+      "hoehe": 1531,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 480
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 480
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1280x800",
+      "zustand": "po",
+      "hoehe": 1531,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 373
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 373
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1440x900",
+      "zustand": "po",
+      "hoehe": 1531,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 373
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 373
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1728x1117",
+      "zustand": "po",
+      "hoehe": 1664,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 373
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 373
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1920x1080",
+      "zustand": "po",
+      "hoehe": 1627,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 373
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 373
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "844x390",
+      "zustand": "po",
+      "hoehe": 1927,
+      "suchePx": 14,
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Anmelden",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 390
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 300,
+          "w": 390
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "360x800-text-200",
+      "zustand": "po",
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "hoehe": 5567,
+      "suchePx": 28,
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 836,
+          "w": 296
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 700,
+          "w": 296
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "textProbe": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise planenEntdeckenMeine ReisenJetnity ProAnmeldenReise planenÜbersichtReisenDeine WeltReisendeEinstellungenDein JetnityMeine ReisenDeine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.Neue ReiseReise suchenAktivKeine aktive Reise.KommendGeplantLissabon im OktoberLissabon · Sintra · ab Zürich22. Okt. 2026 – 29. Okt. 20262 Personen8 Tage · 6 PunkteArchivierenGebuchtKyoto im NovemberKyoto · ab Genf18. Nov. 2026 – 28. Nov. ",
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatSucheLeer": false,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1440x900-zoom-1.25",
+      "zustand": "po",
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Anmelden",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "hoehe": 1912,
+      "suchePx": 14,
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 374,
+          "w": 447
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 374,
+          "w": 447
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "textProbe": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise planenEntdeckenMeine ReisenJetnity ProAnmeldenReise planenÜbersichtReisenDeine WeltReisendeEinstellungenDein JetnityMeine ReisenDeine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.Neue ReiseReise suchenAktivKeine aktive Reise.KommendGeplantLissabon im OktoberLissabon · Sintra · ab Zürich22. Okt. 2026 – 29. Okt. 20262 Personen8 Tage · 6 PunkteArchivierenGebuchtKyoto im NovemberKyoto · ab Genf18. Nov. 2026 – 28. Nov. ",
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatSucheLeer": false,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "1440x900-zoom-1.5",
+      "zustand": "po",
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Entdecken",
+        "verdeckt: Meine Reisen",
+        "verdeckt: Jetnity Pro",
+        "verdeckt: Anmelden",
+        "verdeckt: Reise planen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen"
+      ],
+      "hoehe": 2293,
+      "suchePx": 14,
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 448,
+          "w": 440
+        },
+        {
+          "titel": "Kyoto im November",
+          "h": 448,
+          "w": 440
+        }
+      ],
+      "aktionen": [
+        "Archivieren",
+        "Archivieren"
+      ],
+      "textProbe": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise planenEntdeckenMeine ReisenJetnity ProAnmeldenReise planenÜbersichtReisenDeine WeltReisendeEinstellungenDein JetnityMeine ReisenDeine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.Neue ReiseReise suchenAktivKeine aktive Reise.KommendGeplantLissabon im OktoberLissabon · Sintra · ab Zürich22. Okt. 2026 – 29. Okt. 20262 Personen8 Tage · 6 PunkteArchivierenGebuchtKyoto im NovemberKyoto · ab Genf18. Nov. 2026 – 28. Nov. ",
+      "hatKommend": true,
+      "hatAktivLeer": true,
+      "hatVergangenLeer": true,
+      "hatOhneDatumLeer": true,
+      "hatSucheLeer": false,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "390x844",
+      "zustand": "suche-treffer",
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "hoehe": 1835,
+      "suchePx": 14,
+      "karten": [
+        {
+          "titel": "Lissabon im Oktober",
+          "h": 300,
+          "w": 358
+        }
+      ],
+      "aktionen": [
+        "Archivieren"
+      ],
+      "textProbe": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise planenEntdeckenMeine ReisenJetnity ProAnmeldenReise planenÜbersichtReisenDeine WeltReisendeEinstellungenDein JetnityMeine ReisenDeine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.Neue ReiseReise suchenKommendGeplantLissabon im OktoberLissabon · Sintra · ab Zürich22. Okt. 2026 – 29. Okt. 20262 Personen8 Tage · 6 PunkteArchivierenDeine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent beglei",
+      "hatKommend": true,
+      "hatAktivLeer": false,
+      "hatVergangenLeer": false,
+      "hatOhneDatumLeer": false,
+      "hatSucheLeer": false,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "390x844",
+      "zustand": "suche-leer",
+      "fehler": [
+        "verdeckt: Jetnity Startseite",
+        "verdeckt: Menü öffnen",
+        "verdeckt: Übersicht",
+        "verdeckt: Reisen",
+        "verdeckt: Deine Welt",
+        "verdeckt: Reisende",
+        "verdeckt: Einstellungen",
+        "Suche 14px"
+      ],
+      "hoehe": 1835,
+      "suchePx": 14,
+      "karten": [],
+      "aktionen": [],
+      "textProbe": "Zum InhaltEntdeckenMeine ReisenJetnity ProAnmeldenReise planenEntdeckenMeine ReisenJetnity ProAnmeldenReise planenÜbersichtReisenDeine WeltReisendeEinstellungenDein JetnityMeine ReisenDeine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.Neue ReiseReise suchenKeine Reise passt zur Suche.Deine ganze Reise – persönlich geplant, übersichtlich organisiert und intelligent begleitet.info@jetnity.chProduktReise planenMeine ReisenEntdeckenJetnity ProJetnityDatenschutzerklärungNutz",
+      "hatKommend": false,
+      "hatAktivLeer": false,
+      "hatVergangenLeer": false,
+      "hatOhneDatumLeer": false,
+      "hatSucheLeer": true,
+      "hatGrenze": false,
+      "hatKontoLeer": false,
+      "hatFehler": false,
+      "hatNeueReise": true,
+      "leiste": [],
+      "abschnitte": [],
+      "konsole": []
+    },
+    {
+      "viewport": "390x844",
+      "zustand": "fokus",
+      "fokus": {
+        "name": "GeplantLissabon im OktoberLissabon · Sintra · ab Zürich22. O",
+        "imLink": true,
+        "istLink": true,
+        "hatSchatten": true
+      },
+      "fehler": [],
+      "hoehe": null
+    }
+  ],
+  "poHoehe": {
+    "320x568": 2378,
+    "360x800": 2378,
+    "390x844": 2354,
+    "412x915": 2354,
+    "430x932": 2354,
+    "768x1024": 1967,
+    "820x1180": 2123,
+    "1024x768": 1531,
+    "1280x800": 1531,
+    "1440x900": 1531,
+    "1728x1117": 1664,
+    "1920x1080": 1627,
+    "844x390": 1927,
+    "360x800-text-200": 5567,
+    "1440x900-zoom-1.25": 1912,
+    "1440x900-zoom-1.5": 2293
+  },
+  "fehlerZahl": 166
+}
