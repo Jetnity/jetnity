@@ -41,7 +41,7 @@ export default function KontoReiseArchivAktion({ reise }: { reise: TripSummary }
 
   if (archiviert && !previous) {
     return (
-      <p className="px-1 text-sm leading-6 text-ink-700">
+      <p className="text-sm leading-6 text-ink-700">
         Diese Reise lässt sich nicht automatisch wiederherstellen, weil der frühere Status nicht
         belegt ist.
       </p>
@@ -49,12 +49,13 @@ export default function KontoReiseArchivAktion({ reise }: { reise: TripSummary }
   }
 
   return (
-    <div className="px-1">
+    <div>
       <button
         type="button"
+        data-reisen-aktion={archiviert ? 'wiederherstellen' : 'archivieren'}
         disabled={laeuft}
         onClick={() => void ausfuehren(archiviert ? 'wiederherstellen' : 'archivieren')}
-        className="inline-flex min-h-11 items-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 disabled:cursor-wait disabled:opacity-60"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line-300 bg-white px-4 text-sm font-semibold text-brand-800 transition-colors hover:border-brand-600 hover:text-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/25 disabled:cursor-wait disabled:opacity-60"
       >
         {archiviert ? 'Wiederherstellen' : 'Archivieren'}
       </button>
