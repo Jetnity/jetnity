@@ -231,7 +231,6 @@ async function messen(page) {
       fehler.push(`horizontaler Overflow ${document.documentElement.scrollWidth}>${breite}`)
     }
     const nav = document.querySelector('nav[aria-label="Konto"]')
-    const leiste = document.querySelector('header, nav.sticky, nav[class*="sticky"]')
     const h1 = document.querySelector('main h1')
     if (!h1) fehler.push('H1 fehlt')
     if (nav && h1) {
