@@ -24,7 +24,7 @@ export type HubLeiste = {
   schwerpunkt: boolean
 }
 
-export const MEINE_REISEN_HAUPT = 'min-h-screen bg-surface-75 px-4 py-8 sm:px-6 sm:py-10'
+export const MEINE_REISEN_HAUPT = 'bg-surface-75 px-4 py-8 sm:px-6 sm:py-10'
 export const MEINE_REISEN_INNEN = 'mx-auto min-w-0 max-w-6xl'
 export const MEINE_REISEN_KOPF =
   'mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'
