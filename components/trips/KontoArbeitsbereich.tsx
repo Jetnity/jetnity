@@ -30,11 +30,10 @@ import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { rentalCarManuellInReiseAnlegen } from '@/lib/rental-cars/aktionen'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { readinessEntfernen, readinessSetzen } from '@/lib/readiness/aktionen'
-import { PARTY_GRENZEN, partyVon } from '@/lib/readiness/party'
 import { registryTravellerInReiseUebernehmen, travellerEntfernen, travellerSetzen } from '@/lib/readiness/reisende-aktionen'
 import type { Problem } from '@/lib/api/datenbank-lesen'
 import type { RegistryTripAnzeige } from '@/lib/traveller/account-registry-trip'
-import { registryTripLimitErreicht } from '@/lib/traveller/account-registry-trip'
+import { registryTripUebernahmeGesperrt } from '@/lib/traveller/account-registry-trip'
 import RegistryReiseUebernahme from '@/components/trips/RegistryReiseUebernahme'
 import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
@@ -129,7 +128,7 @@ export default function KontoArbeitsbereich({
           <RegistryReiseUebernahme
             problem={registry.problem}
             travellers={registry.travellers}
-            voll={registryTripLimitErreicht(partyVon(reise).length, PARTY_GRENZEN.slots)}
+            voll={registryTripUebernahmeGesperrt(reise)}
             onUebernehmen={async (registryTravellerId) => {
               const ergebnis = await registryTravellerInReiseUebernehmen({
                 tripId: reise.id,
