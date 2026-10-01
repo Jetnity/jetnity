@@ -13,7 +13,7 @@ Session: https://cursor.com/agents/bc-b1db9c5e-3aa7-442a-8ccf-7421a1ac8257
 
 ## Current state
 
-The repository contains a dormant source-catalog gateway. It has not been applied to Development or Production. Merge remains held. There is no merge PASS.
+The repository contains a dormant source-catalog gateway. Technical-Lead R3 applied that SQL exactly once to Development under history version `20261001193748`. This lane does not apply it again. Production was not changed. Merge remains held. There is no merge PASS.
 
 Technical-Lead R1 review `5384194385` accepted catalog code and schema on `1f27a61f998f35cb2d17a574a56c92ae04977ea5`. The only required change was base freshness. This branch now contains `main@ed5350e702f2b6b248cf49ae366420cf1b49039a` through merge `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. #687 is preserved. The catalog implementation is unchanged from the accepted head. The branch is 0 behind that main.
 
@@ -21,11 +21,11 @@ Server module:
 
 `lib/readiness/official-truth-source-catalog-server.ts`
 
-Migration, created by Supabase CLI `2.48.3` and not renamed:
+Canonical repository migration, matching the one Development history version:
 
-`supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`
+`supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`
 
-SHA-256: `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`
+The original CLI file was `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`. Technical-Lead R3 review `5384562361` applied that SQL exactly once. `git mv` changed only the filename. SHA-256 before and after is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. Do not apply it again.
 
 Read first:
 
@@ -50,7 +50,7 @@ Read first:
   - `npm run lint`: 0 errors, 148 warnings, none in this lane
   - `npm run build`: pass, Next.js 16.3.8, 25 static pages
   - dead-code 0, unused exports 0, unused packages 0, API protection PASS, operating-mode guard PASS, `git diff --check` pass
-  - `check:schema-bezug`, after the new server file was indexed: LOCAL/UNAPPLIED for `official_truth_source_catalog_v1` from `lib/readiness/official-truth-source-catalog-server.ts` to `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`, beside the two existing registrations
+  - `check:schema-bezug`, after the new server file was indexed: LOCAL/UNAPPLIED for `official_truth_source_catalog_v1`, beside the two existing registrations. The R3 path is `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`.
 - Re-validation after merging `main@ed5350e7`, recorded before the documentation commit on top of `66852a16`:
   - focused catalog tests: 4 pass / 0 fail
   - schema-reference tests: 4 pass / 0 fail
@@ -83,7 +83,7 @@ Read first:
 
 - `admin_account_counts_v1`
 - `official_truth_store_accepted_v1`
-- `official_truth_source_catalog_v1` from `lib/readiness/official-truth-source-catalog-server.ts` to `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`
+- `official_truth_source_catalog_v1` from `lib/readiness/official-truth-source-catalog-server.ts` to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`
 
 The call site is the string literal `.rpc('official_truth_source_catalog_v1', ...)`. The exported constant is not the call. An unknown name, a call from another file, and a missing SQL file still fail.
 

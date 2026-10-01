@@ -39,11 +39,13 @@ The module is not imported by a route, the Source Router, Copilot, a cron, a que
 - `anon` and `authenticated` cannot execute the function. `service_role` cannot insert into `private.official_sources` and cannot select `private.official_source_domains`.
 - `information_schema.routine_privileges` also shows `EXECUTE` for the function owner. That is the owner default. The only Data-API grant in this migration is `service_role`.
 - The server module imports `server-only`, disables session persistence, token refresh, and URL session detection, and reads `SUPABASE_SERVICE_ROLE_KEY`. A `NEXT_PUBLIC_` service key is not used. Missing credentials return `catalog_not_configured` and do not call the RPC. Failures return `catalog_failed` without the database message or the key.
-- The runtime call is the literal `.rpc('official_truth_source_catalog_v1', ...)` in `lib/readiness/official-truth-source-catalog-server.ts`. `LOCAL_UNAPPLIED_RPCS` pins that name to this file and to `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`. This is not a generic dynamic-RPC exemption. `types/supabase.ts` is unchanged.
+- The runtime call is the literal `.rpc('official_truth_source_catalog_v1', ...)` in `lib/readiness/official-truth-source-catalog-server.ts`. `LOCAL_UNAPPLIED_RPCS` pins that name to this file and to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. This is not a generic dynamic-RPC exemption. `types/supabase.ts` is unchanged.
 
 ## Migration identity
 
-Supabase CLI `2.48.3`, downloaded outside the repository, created `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql` via `supabase migration new official_truth_source_catalog_gateway_1`. The timestamp was not typed by hand. The CLI reported that `2.119.0` exists. This slice did not upgrade it and did not recreate the file. SHA-256 of the SQL file is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. Gitignored `supabase/.temp/cli-latest` was removed and is not part of the commit.
+Supabase CLI `2.48.3`, downloaded outside the repository, created `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql` via `supabase migration new official_truth_source_catalog_gateway_1`. The timestamp was not typed by hand. The CLI reported that `2.119.0` exists. This slice did not upgrade it and did not recreate the file. SHA-256 of the SQL bytes is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. Gitignored `supabase/.temp/cli-latest` was removed and is not part of the commit.
+
+Technical-Lead R3 review `5384562361` applied that SQL exactly once to Development. Supabase recorded history version `20261001193748_official_truth_source_catalog_gateway_1`. `git mv` renamed the repository file to `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. SHA-256 before and after the rename is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. The SQL bytes did not change. This correction does not apply, repair, reset, rebase, or push Supabase, and it writes no Official Truth rows.
 
 The migration inserts zero catalog rows. It does not change `supabase/config.toml`.
 
@@ -79,7 +81,7 @@ Sources in the proof are synthetic `*.example` hosts only.
 - `npm run build`: pass. Next.js 16.3.8. 25 static pages. `check:setup` warned that no `.env` file is present in this checkout. The build still exited 0.
 - `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, and the operating-mode guard passed. `git diff --check` passed.
 
-`check:schema-bezug` reads `git ls-files`. After the new server file was indexed it printed LOCAL/UNAPPLIED for `admin_account_counts_v1`, `official_truth_source_catalog_v1` from `lib/readiness/official-truth-source-catalog-server.ts` to `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`, and `official_truth_store_accepted_v1`. Exact-head CI is not claimed in this file.
+`check:schema-bezug` reads `git ls-files`. After the new server file was indexed it printed LOCAL/UNAPPLIED for `admin_account_counts_v1`, `official_truth_source_catalog_v1`, and `official_truth_store_accepted_v1`. After the R3 rename the catalog registration points at `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql`. Exact-head CI is not claimed in this file.
 
 ## Recommendation
 

@@ -13,7 +13,7 @@ Changed paths are the task allowlist:
 
 - `lib/readiness/official-truth-source-catalog-server.ts`
 - `lib/readiness/official-truth-source-catalog-server.test.ts`
-- `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql`
+- `supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql` (`git mv` from `20261001182728_official_truth_source_catalog_gateway_1.sql`; SQL bytes unchanged, SHA-256 `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`)
 - `scripts/db/verwendung.mjs`
 - `lib/admin/account-counts-delivery/schema-reference.test.ts`
 - `docs/OFFICIAL_TRUTH_SOURCE_CATALOG_GATEWAY_1_REPORT_2026-10-01.md`
@@ -60,6 +60,10 @@ Technical-Lead R1 review `5384194385` found no catalog code or schema defect on 
 ## Base re-gate
 
 The integrated tree was validated again before the documentation commit that records it. `npm test` is 4203/4203. Typecheck, lint, build, hygiene, and `check:schema-bezug` passed. Catalog behavior was not edited to make those checks pass. The branch is 0 behind the assigned main. This self-review still is not an independent Technical-Lead PASS.
+
+## R3 identity
+
+Technical-Lead R3 review `5384562361` is a repository filename reconciliation only. Development already contains `public.official_truth_source_catalog_v1` once under history version `20261001193748`. The canonical repository path is that version. The original CLI filename `20261001182728` is historical. SHA-256 before and after `git mv` is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. This correction does not apply the migration again, does not repair history, and does not write a source row. The branch remains 0 behind `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. #687 is unchanged.
 
 ## Not claimed
 
