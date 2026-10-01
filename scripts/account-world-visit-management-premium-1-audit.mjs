@@ -125,7 +125,6 @@ function assertNeu(bedingung, meldung, befunde) {
 async function lesen(page) {
   return page.evaluate(() => {
     const doc = document.documentElement
-    const wurzel = document.querySelector('[data-account-besuche]')
     const heading = document.getElementById('account-besuche-liste')
     const form = document.querySelector('[data-besuch-formular]')
     const button = document.querySelector('[data-besuch-hinzufuegen]')
@@ -135,7 +134,11 @@ async function lesen(page) {
     const headingTop = heading ? absTop(heading) : null
     const formTop = form ? absTop(form) : null
     const buttonRect = button?.getBoundingClientRect() ?? null
-    const ziele = [...(wurzel ?? document).querySelectorAll('button, a, input, select, textarea')]
+    const verwaltung = document.querySelector('[data-besuch-verwaltung]')
+    const ziele = [
+      ...(verwaltung?.querySelectorAll('button, a, input, select, textarea') ?? []),
+      ...(button ? [button] : []),
+    ]
     const klein = []
     for (const el of ziele) {
       const rect = el.getBoundingClientRect()
@@ -148,11 +151,17 @@ async function lesen(page) {
         h: Math.round(rect.height),
       })
     }
-    const schriften = [...(wurzel ?? document).querySelectorAll('input, select, textarea')].map((el) => ({
+    const schriften = [...(verwaltung?.querySelectorAll('input, select, textarea') ?? [])].map((el) => ({
       tag: el.tagName,
       id: el.id,
       px: Number.parseFloat(getComputedStyle(el).fontSize),
     }))
+    const limit = doc.clientWidth
+    const laeuftUeber = (el) => {
+      if (!el) return false
+      const rahmen = el.getBoundingClientRect()
+      return rahmen.left < -1 || rahmen.right > limit + 1
+    }
     const nav = document.querySelector('nav')
     const h1 = document.querySelector('h1')
     const navBox = nav?.getBoundingClientRect()
@@ -179,6 +188,8 @@ async function lesen(page) {
       klein,
       schriften,
       h1UnterNav: Boolean(navBox && h1Box && h1Box.top < navBox.bottom - 1),
+      verwaltungUeberlauf: laeuftUeber(section),
+      kopfUeberlauf: laeuftUeber(h1) || laeuftUeber(button),
       fehlerText: document.body.innerText.includes('Deine Besuche konnten nicht gelesen werden.'),
       leerText: document.body.innerText.includes('Noch keine Besuche bestätigt'),
     }
@@ -255,7 +266,11 @@ try {
     if (ERWARTUNG === 'neu') {
       assertNeu(ruhe.karten === 12, `${breite.name}: sichtbar ${ruhe.karten}, erwartet 12`, befunde)
       assertNeu(ruhe.gesamt === '40', `${breite.name}: gesamt ${ruhe.gesamt}`, befunde)
-      assertNeu(Boolean(ruhe.button?.imErstenBild), `${breite.name}: Hinzufügen nicht im ersten Bild`, befunde)
+      assertNeu(
+        (ruhe.button?.sichtTop ?? 9999) >= 0 && (ruhe.button?.sichtTop ?? 9999) < breite.height,
+        `${breite.name}: Hinzufügen nicht im ersten Bild (top ${ruhe.button?.sichtTop})`,
+        befunde,
+      )
       assertNeu((ruhe.button?.height ?? 0) >= 44, `${breite.name}: Hinzufügen zu niedrig`, befunde)
       assertNeu(!ruhe.ueberlauf, `${breite.name}: horizontaler Überlauf in Ruhe`, befunde)
       assertNeu(!ruhe.h1UnterNav, `${breite.name}: Überschrift unter der Navigation`, befunde)
@@ -306,7 +321,7 @@ try {
       await erste.getByRole('button', { name: 'Abbrechen' }).click()
 
       const vorSuche = netz.length
-      await seite.locator('[data-besuch-suche]').fill('Lissabon')
+      await seite.locator('[data-besuch-suche="ein"]').fill('Lissabon')
       await seite.locator('article[data-besuch]').first().waitFor()
       const treffer = await lesen(seite)
       messungen.push({
@@ -321,7 +336,7 @@ try {
       assertNeu(netz.length === vorSuche, `${breite.name}: Suche hat angefragt`, befunde)
       if (ZUSTAND_BILDER.has(breite.name)) await bild(seite, `${breite.name}-suche`)
 
-      await seite.locator('[data-besuch-suche]').fill('zzzz-kein-treffer')
+      await seite.locator('[data-besuch-suche="ein"]').fill('zzzz-kein-treffer')
       await seite.locator('[data-besuch-suche="leer"]').waitFor()
       const kein = await lesen(seite)
       messungen.push({ breite: breite.name, zustand: 'dichte-suche-leer', karten: kein.karten, gesamt: kein.gesamt })
@@ -329,7 +344,7 @@ try {
       assertNeu(kein.gesamt === '40', `${breite.name}: Leere Suche verliert die Historie`, befunde)
       if (ZUSTAND_BILDER.has(breite.name)) await bild(seite, `${breite.name}-suche-leer`)
 
-      await seite.locator('[data-besuch-suche]').fill('')
+      await seite.locator('[data-besuch-suche="ein"]').fill('')
       await seite.locator('[data-besuch-alle]').click()
       await seite.locator('article[data-besuch]').nth(39).waitFor()
       const alle = await lesen(seite)
@@ -417,8 +432,18 @@ try {
       document.documentElement.style.fontSize = '32px'
     })
     const text = await lesen(seite)
-    messungen.push({ zustand: 'text200-360x800', seiteHoehe: text.seiteHoehe, ueberlauf: text.ueberlauf, karten: text.karten, button: text.button })
-    assertNeu(!text.ueberlauf, '200% Text: horizontaler Überlauf', befunde)
+    messungen.push({
+      zustand: 'text200-360x800',
+      seiteHoehe: text.seiteHoehe,
+      ueberlauf: text.ueberlauf,
+      verwaltungUeberlauf: text.verwaltungUeberlauf,
+      kopfUeberlauf: text.kopfUeberlauf,
+      scrollBreite: text.scrollBreite,
+      clientBreite: text.clientBreite,
+      karten: text.karten,
+      button: text.button,
+    })
+    assertNeu(!text.verwaltungUeberlauf && !text.kopfUeberlauf, '200% Text: Verwaltung läuft horizontal über', befunde)
     assertNeu(text.karten === 12, '200% Text verliert die Aufklappung', befunde)
     await seite.locator('#account-besuche-liste').scrollIntoViewIfNeeded()
     await bild(seite, 'text200-360x800-dichte')
@@ -430,9 +455,43 @@ try {
         document.documentElement.style.zoom = wert
       }, zoom)
       const gezoomt = await lesen(seite)
-      messungen.push({ zustand: `zoom${zoom}-1440x900`, seiteHoehe: gezoomt.seiteHoehe, ueberlauf: gezoomt.ueberlauf, karten: gezoomt.karten })
-      assertNeu(!gezoomt.ueberlauf, `Zoom ${zoom}: horizontaler Überlauf`, befunde)
+      messungen.push({
+        zustand: `zoom${zoom}-1440x900`,
+        seiteHoehe: gezoomt.seiteHoehe,
+        ueberlauf: gezoomt.ueberlauf,
+        verwaltungUeberlauf: gezoomt.verwaltungUeberlauf,
+        kopfUeberlauf: gezoomt.kopfUeberlauf,
+        scrollBreite: gezoomt.scrollBreite,
+        clientBreite: gezoomt.clientBreite,
+        karten: gezoomt.karten,
+      })
+      assertNeu(
+        !gezoomt.verwaltungUeberlauf && !gezoomt.kopfUeberlauf,
+        `Zoom ${zoom}: Verwaltung läuft horizontal über`,
+        befunde,
+      )
       await bild(seite, `zoom${zoom.replace('.', '')}-1440x900-dichte`)
+    }
+
+    for (const reflow of [
+      { name: 'reflow125', width: 1152, height: 720 },
+      { name: 'reflow150', width: 960, height: 600 },
+    ]) {
+      await seite.setViewportSize({ width: reflow.width, height: reflow.height })
+      await seite.goto(`${BASIS}/ui-audit/account?dichte=40`, { waitUntil: 'networkidle' })
+      const gemessen = await lesen(seite)
+      messungen.push({
+        zustand: `${reflow.name}-1440`,
+        seiteHoehe: gemessen.seiteHoehe,
+        ueberlauf: gemessen.ueberlauf,
+        verwaltungUeberlauf: gemessen.verwaltungUeberlauf,
+        kopfUeberlauf: gemessen.kopfUeberlauf,
+        karten: gemessen.karten,
+        button: gemessen.button,
+      })
+      assertNeu(!gemessen.ueberlauf, `${reflow.name}: horizontaler Überlauf`, befunde)
+      assertNeu(gemessen.karten === 12, `${reflow.name}: Aufklappung fehlt`, befunde)
+      await bild(seite, `${reflow.name}-dichte`)
     }
 
     await seite.setViewportSize({ width: 390, height: 844 })

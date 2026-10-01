@@ -32,7 +32,7 @@ export function besuchSuchtrefferText(treffer: number, gesamt: number): string {
 }
 
 /** Anzeigetext, über den die lokale Suche läuft. Keine zweite Wahrheit. */
-export function besuchVerwaltungSuchtext(zeile: BesuchVerwaltungZeile): string {
+function besuchVerwaltungSuchtext(zeile: BesuchVerwaltungZeile): string {
   return [zeile.titel, zeile.landLabel, zeile.zeitText, zeile.wiederholungText]
     .filter((teil): teil is string => typeof teil === 'string' && teil.trim().length > 0)
     .join(' ')
