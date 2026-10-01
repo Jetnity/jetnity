@@ -349,6 +349,12 @@ describe('Official Truth retrieved material candidate evidence', () => {
       reason: 'invalid_context',
     })
     assert.equal(JSON.stringify(bauen(eingabe, { extractionNote: `${geheim}${'x'.repeat(240)}` })).includes(geheim), false)
+    assert.deepEqual(bauen(eingabe, { validFrom: undefined }), { status: 'blocked', reason: 'invalid_extraction' })
+    assert.deepEqual(bauen(eingabe, { validUntil: 1, extractionNote: geheim }), {
+      status: 'blocked',
+      reason: 'invalid_extraction',
+    })
+    assert.equal(JSON.stringify(bauen(eingabe, { validUntil: 1, extractionNote: geheim })).includes(geheim), false)
   })
 
   test('sourceId und Scope kommen aus Anfrage und Beleg, nicht aus der Extraktion oder einem zweiten sourceId', () => {

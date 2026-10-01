@@ -146,7 +146,7 @@ function baumPruefen(wert: unknown, tiefe: number, vorfahren: object[], fund: Fu
 }
 
 function textOderNull(wert: unknown): string | null | undefined {
-  if (wert == null) return null
+  if (wert === null) return null
   if (typeof wert === 'string') return wert
   return undefined
 }
