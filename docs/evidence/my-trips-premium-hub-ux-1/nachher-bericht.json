@@ -1,8 +1,8 @@
 {
   "marke": "nachher",
-  "sha": "7e317870489a7ea25a225ef2fc497d55846a8f3f",
-  "basis": "http://127.0.0.1:3000",
-  "gemessenAm": "2026-10-01T19:46:10.501Z",
+  "sha": "463ea8ab5d519a98f06f12ac3762f6af5a61daad",
+  "basis": "http://127.0.0.1:3491",
+  "gemessenAm": "2026-10-01T19:55:13.198Z",
   "befunde": [
     {
       "viewport": "320x568",
@@ -128,7 +128,7 @@
     {
       "viewport": "320x568",
       "zustand": "archiv",
-      "hoehe": 2406,
+      "hoehe": 2442,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -207,7 +207,7 @@
     {
       "viewport": "320x568",
       "zustand": "fehler",
-      "hoehe": 1547,
+      "hoehe": 1525,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -488,7 +488,7 @@
     {
       "viewport": "360x800",
       "zustand": "po",
-      "hoehe": 2064,
+      "hoehe": 2100,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -668,7 +668,7 @@
     {
       "viewport": "360x800",
       "zustand": "leer",
-      "hoehe": 1779,
+      "hoehe": 1633,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -688,7 +688,7 @@
     {
       "viewport": "360x800",
       "zustand": "fehler",
-      "hoehe": 1779,
+      "hoehe": 1501,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -1149,7 +1149,7 @@
     {
       "viewport": "390x844",
       "zustand": "leer",
-      "hoehe": 1799,
+      "hoehe": 1609,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -1169,7 +1169,7 @@
     {
       "viewport": "390x844",
       "zustand": "fehler",
-      "hoehe": 1799,
+      "hoehe": 1513,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -1630,7 +1630,7 @@
     {
       "viewport": "412x915",
       "zustand": "leer",
-      "hoehe": 1870,
+      "hoehe": 1609,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -1650,7 +1650,7 @@
     {
       "viewport": "412x915",
       "zustand": "fehler",
-      "hoehe": 1870,
+      "hoehe": 1477,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -2111,7 +2111,7 @@
     {
       "viewport": "430x932",
       "zustand": "leer",
-      "hoehe": 1887,
+      "hoehe": 1609,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -2131,7 +2131,7 @@
     {
       "viewport": "430x932",
       "zustand": "fehler",
-      "hoehe": 1887,
+      "hoehe": 1477,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -2412,7 +2412,7 @@
     {
       "viewport": "768x1024",
       "zustand": "po",
-      "hoehe": 1967,
+      "hoehe": 1627,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -2533,7 +2533,7 @@
     {
       "viewport": "768x1024",
       "zustand": "archiv",
-      "hoehe": 1967,
+      "hoehe": 1944,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -2592,7 +2592,7 @@
     {
       "viewport": "768x1024",
       "zustand": "leer",
-      "hoehe": 1967,
+      "hoehe": 1496,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -2612,7 +2612,7 @@
     {
       "viewport": "768x1024",
       "zustand": "fehler",
-      "hoehe": 1967,
+      "hoehe": 1496,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -2893,7 +2893,7 @@
     {
       "viewport": "820x1180",
       "zustand": "po",
-      "hoehe": 2123,
+      "hoehe": 1627,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -2946,7 +2946,7 @@
     {
       "viewport": "820x1180",
       "zustand": "gemischt",
-      "hoehe": 2427,
+      "hoehe": 2463,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -3014,7 +3014,7 @@
     {
       "viewport": "820x1180",
       "zustand": "archiv",
-      "hoehe": 2123,
+      "hoehe": 1944,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -3073,7 +3073,7 @@
     {
       "viewport": "820x1180",
       "zustand": "leer",
-      "hoehe": 2123,
+      "hoehe": 1590,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -3093,7 +3093,7 @@
     {
       "viewport": "820x1180",
       "zustand": "fehler",
-      "hoehe": 2123,
+      "hoehe": 1590,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -3374,7 +3374,7 @@
     {
       "viewport": "1024x768",
       "zustand": "po",
-      "hoehe": 1315,
+      "hoehe": 1207,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -3554,7 +3554,7 @@
     {
       "viewport": "1024x768",
       "zustand": "leer",
-      "hoehe": 1315,
+      "hoehe": 1081,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -3574,7 +3574,7 @@
     {
       "viewport": "1024x768",
       "zustand": "fehler",
-      "hoehe": 1315,
+      "hoehe": 977,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -3855,7 +3855,7 @@
     {
       "viewport": "1280x800",
       "zustand": "po",
-      "hoehe": 1347,
+      "hoehe": 1207,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -4035,7 +4035,7 @@
     {
       "viewport": "1280x800",
       "zustand": "leer",
-      "hoehe": 1347,
+      "hoehe": 1081,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -4055,7 +4055,7 @@
     {
       "viewport": "1280x800",
       "zustand": "fehler",
-      "hoehe": 1347,
+      "hoehe": 977,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -4336,7 +4336,7 @@
     {
       "viewport": "1440x900",
       "zustand": "po",
-      "hoehe": 1447,
+      "hoehe": 1207,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -4516,7 +4516,7 @@
     {
       "viewport": "1440x900",
       "zustand": "leer",
-      "hoehe": 1447,
+      "hoehe": 1081,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -4536,7 +4536,7 @@
     {
       "viewport": "1440x900",
       "zustand": "fehler",
-      "hoehe": 1447,
+      "hoehe": 1026,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -4817,7 +4817,7 @@
     {
       "viewport": "1728x1117",
       "zustand": "po",
-      "hoehe": 1664,
+      "hoehe": 1207,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -4938,7 +4938,7 @@
     {
       "viewport": "1728x1117",
       "zustand": "archiv",
-      "hoehe": 1664,
+      "hoehe": 1500,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -4997,7 +4997,7 @@
     {
       "viewport": "1728x1117",
       "zustand": "leer",
-      "hoehe": 1664,
+      "hoehe": 1156,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -5017,7 +5017,7 @@
     {
       "viewport": "1728x1117",
       "zustand": "fehler",
-      "hoehe": 1664,
+      "hoehe": 1156,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -5298,7 +5298,7 @@
     {
       "viewport": "1920x1080",
       "zustand": "po",
-      "hoehe": 1627,
+      "hoehe": 1207,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -5419,7 +5419,7 @@
     {
       "viewport": "1920x1080",
       "zustand": "archiv",
-      "hoehe": 1627,
+      "hoehe": 1500,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -5478,7 +5478,7 @@
     {
       "viewport": "1920x1080",
       "zustand": "leer",
-      "hoehe": 1627,
+      "hoehe": 1134,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -5498,7 +5498,7 @@
     {
       "viewport": "1920x1080",
       "zustand": "fehler",
-      "hoehe": 1627,
+      "hoehe": 1134,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -6316,7 +6316,7 @@
       "viewport": "1440x900-zoom-1.25",
       "zustand": "po",
       "fehler": [],
-      "hoehe": 1809,
+      "hoehe": 1506,
       "suchePx": 16,
       "karten": [
         {
@@ -6371,7 +6371,7 @@
       "viewport": "1440x900-zoom-1.5",
       "zustand": "po",
       "fehler": [],
-      "hoehe": 2169,
+      "hoehe": 1842,
       "suchePx": 16,
       "karten": [
         {
@@ -6426,7 +6426,7 @@
       "viewport": "390x844",
       "zustand": "suche-treffer",
       "fehler": [],
-      "hoehe": 1835,
+      "hoehe": 1723,
       "suchePx": 16,
       "karten": [
         {
@@ -6463,7 +6463,7 @@
       "viewport": "390x844",
       "zustand": "suche-leer",
       "fehler": [],
-      "hoehe": 1835,
+      "hoehe": 1436,
       "suchePx": 16,
       "karten": [],
       "aktionen": [],
@@ -6496,21 +6496,21 @@
   ],
   "poHoehe": {
     "320x568": 2064,
-    "360x800": 2064,
+    "360x800": 2100,
     "390x844": 2040,
     "412x915": 2040,
     "430x932": 2040,
-    "768x1024": 1967,
-    "820x1180": 2123,
-    "1024x768": 1315,
-    "1280x800": 1347,
-    "1440x900": 1447,
-    "1728x1117": 1664,
-    "1920x1080": 1627,
+    "768x1024": 1627,
+    "820x1180": 1627,
+    "1024x768": 1207,
+    "1280x800": 1207,
+    "1440x900": 1207,
+    "1728x1117": 1207,
+    "1920x1080": 1207,
     "844x390": 1627,
     "360x800-text-200": 5366,
-    "1440x900-zoom-1.25": 1809,
-    "1440x900-zoom-1.5": 2169
+    "1440x900-zoom-1.25": 1506,
+    "1440x900-zoom-1.5": 1842
   },
   "fehlerZahl": 0
 }
