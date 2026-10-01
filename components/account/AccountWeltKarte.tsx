@@ -471,10 +471,18 @@ export default function AccountWeltKarte({
       data-world-map-search="nein"
       className={`relative mt-8 rounded-[30px] border border-black/5 bg-white p-5 shadow-[0_22px_60px_rgba(15,46,42,0.08)] sm:p-8 ${
         istAtlas
-          ? 'lg:left-1/2 lg:w-[min(90rem,calc(100vw-4rem))] lg:-translate-x-1/2'
+          ? 'lg:left-1/2 lg:w-[min(90rem,calc(100cqw-4rem))] lg:-translate-x-1/2'
           : ''
       }`}
     >
+      {/* Eine Viewport-Breite wächst unter CSS-Zoom über die Seite hinaus.
+          100cqw folgt der Dokumentbreite, sobald dieser Atlas im Baum steht.
+          Deckel und Zentrierung bleiben min(90rem, Breite − 4rem). */}
+      {istAtlas ? (
+        <style>
+          {`@media (min-width: 1024px) { html:has([data-world-map-darstellung="atlas"]) { container-type: inline-size; } }`}
+        </style>
+      ) : null}
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
         Deine Reisen im Überblick
       </p>

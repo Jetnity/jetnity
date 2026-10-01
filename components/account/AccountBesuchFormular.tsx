@@ -10,7 +10,7 @@
 // Die Zeitangabe darf leer bleiben, und zwar jedes Feld einzeln. „Irgendwann
 // 2004“ ist eine gültige Erinnerung; ein erfundener 1. Januar wäre es nicht.
 
-import { useId, useState, type FormEvent } from 'react'
+import { useId, useState, type FormEvent, type Ref } from 'react'
 
 import LandFeld from '@/components/country/LandFeld'
 import OrtSuche from '@/components/places/OrtSuche'
@@ -50,7 +50,7 @@ const MONATE = [
 ] as const
 
 const feldKlasse =
-  'min-h-11 w-full rounded-2xl border border-line-200 bg-white px-3 text-sm text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600'
+  'min-h-11 w-full rounded-2xl border border-line-200 bg-white px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:text-sm'
 
 function zahlOderNull(wert: string): number | null {
   const getrimmt = wert.trim()
@@ -78,6 +78,8 @@ export default function AccountBesuchFormular({
   onAbsenden,
   onAbbrechen,
   laeuft,
+  ortRef,
+  zeitNebeneinander = true,
 }: {
   titel: string
   aktionText: string
@@ -86,6 +88,9 @@ export default function AccountBesuchFormular({
   onAbsenden: () => void
   onAbbrechen?: () => void
   laeuft: boolean
+  ortRef?: Ref<HTMLInputElement>
+  /** Volle Breite darf Jahr, Monat und Tag nebeneinander legen. In einer Karte bleiben sie gestapelt. */
+  zeitNebeneinander?: boolean
 }) {
   const basisId = useId()
   const [jahrMaximum] = useState(() => new Date().getUTCFullYear())
@@ -99,11 +104,11 @@ export default function AccountBesuchFormular({
     <form
       onSubmit={absenden}
       data-besuch-formular="ein"
-      className="rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-6"
+      className="rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-5"
     >
       <h2 className="text-lg font-semibold tracking-[-0.03em] text-brand-800">{titel}</h2>
 
-      <div className="mt-4 grid min-w-0 gap-4">
+      <div className="mt-3 grid min-w-0 gap-3 [&_input]:text-base [&_select]:text-base sm:[&_input]:text-sm sm:[&_select]:text-sm">
         <div className="grid min-w-0 gap-1">
           <label htmlFor={`${basisId}-ort`} className="text-sm font-medium text-brand-800">
             {BESUCHE_COPY.ortLabel}
@@ -116,6 +121,7 @@ export default function AccountBesuchFormular({
             placeholder={BESUCHE_COPY.ortPlatzhalter}
             inputClassName={feldKlasse}
             describedBy={`${basisId}-ort-hinweis`}
+            inputRef={ortRef}
             disabled={laeuft}
             onChange={(auswahl) => onWert({ ...wert, ort: auswahl })}
           />
@@ -139,7 +145,7 @@ export default function AccountBesuchFormular({
         <fieldset className="grid min-w-0 gap-2 border-0 p-0">
           <legend className="text-sm font-medium text-brand-800">{BESUCHE_COPY.zeitTitel}</legend>
           <p className="text-xs leading-5 text-ink-700">{BESUCHE_COPY.zeitHinweis}</p>
-          <div className="grid min-w-0 gap-3 sm:grid-cols-3">
+          <div className={zeitNebeneinander ? 'grid min-w-0 gap-3 sm:grid-cols-3' : 'grid min-w-0 gap-3'}>
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
               {BESUCHE_COPY.jahrLabel}
               <input
@@ -194,7 +200,7 @@ export default function AccountBesuchFormular({
         <button
           type="submit"
           disabled={laeuft}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:opacity-60"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 disabled:opacity-60"
         >
           {aktionText}
         </button>
@@ -203,7 +209,7 @@ export default function AccountBesuchFormular({
             type="button"
             onClick={onAbbrechen}
             disabled={laeuft}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 disabled:opacity-60"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-60"
           >
             {BESUCHE_COPY.abbrechen}
           </button>

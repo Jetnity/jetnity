@@ -37,7 +37,7 @@ test('die Übersicht lässt Länderchips und die volle Ortsliste weg, der Atlas 
 })
 
 test('der Atlasausbruch gilt nur für die volle Darstellung', () => {
-  const breite = karte.indexOf('lg:w-[min(90rem,calc(100vw-4rem))]')
+  const breite = karte.indexOf('lg:w-[min(90rem,calc(100cqw-4rem))]')
   const davor = karte.slice(Math.max(0, breite - 80), breite)
   assert.match(davor, /istAtlas/)
   assert.match(karte, /lg:left-1\/2/)

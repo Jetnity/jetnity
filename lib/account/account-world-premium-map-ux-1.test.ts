@@ -52,9 +52,13 @@ test('die Auswahl sitzt in der Atlaskante und nicht nur in der Ortsliste', () =>
 
 test('weite Desktops nutzen die Breite, schmale nicht per Ausbruch', () => {
   assert.match(karte, /lg:left-1\/2/)
-  assert.match(karte, /lg:w-\[min\(90rem,calc\(100vw-4rem\)\)\]/)
+  assert.match(karte, /lg:w-\[min\(90rem,calc\(100cqw-4rem\)\)\]/)
   assert.match(karte, /lg:-translate-x-1\/2/)
+  assert.match(karte, /html:has\(\[data-world-map-darstellung="atlas"\]\) \{ container-type: inline-size; \}/)
+  assert.equal(karte.includes('100vw'), false)
   assert.equal(karte.includes('w-screen'), false)
+  assert.equal(karte.includes('overflow-x-hidden'), false)
+  assert.equal(karte.includes('overflow-x:hidden'), false)
 })
 
 test('Herkunft, Grenzvorbehalt und Besuchsatz bleiben sichtbar', () => {
