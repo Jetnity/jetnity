@@ -456,7 +456,10 @@ describe('Account-Graph-Read – ausgeführte injizierbare Verbraucher', () => {
         // Dieselbe Abbildung wie registryTravellerInReiseUebernehmen.
         if (lesung.problem) return { problem: lesung.problem, reise: null }
         const reise = lesung.zeilen[0] ?? null
-        return { problem: null, reise: reise ? { party: partyVon(reise) } : null }
+        return {
+          problem: null,
+          reise: reise ? { party: partyVon(reise), travellers: reise.travellers } : null,
+        }
       },
       registryLesen: async () => {
         aufrufe.registryLesen += 1

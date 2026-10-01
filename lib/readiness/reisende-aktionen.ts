@@ -133,7 +133,10 @@ export async function registryTravellerInReiseUebernehmen(eingabe: unknown): Pro
       const geladen = await reiseLaden(tripId)
       if (geladen.problem) return { problem: geladen.problem, reise: null }
       const reise = geladen.zeilen[0] ?? null
-      return { problem: null, reise: reise ? { party: partyVon(reise) } : null }
+      return {
+        problem: null,
+        reise: reise ? { party: partyVon(reise), travellers: reise.travellers } : null,
+      }
     },
     registryLesen: (id) => registryMitClientLaden(supabase, { id }),
     partySchreiben: (tripId, party) => partySchreiben(supabase, tripId, [...party]),

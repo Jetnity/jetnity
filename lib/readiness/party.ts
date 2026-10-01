@@ -1,6 +1,11 @@
 // lib/readiness/party.ts
 //
 // Reisenden-Slots aus Anzahl + gespeichertem Kontext.
+// `Trip.travellers` ist die Anzahl anwendbarer Plätze.
+// Ein exaktes `traveller:N` innerhalb der Kopfzahl bleibt in seinem Platz.
+// Kanonische `traveller:N` ausserhalb der Kopfzahl bleiben nicht anwendbar.
+// Nur nicht-kanonische Trip-Snapshots füllen leere Plätze, in stabiler
+// Reihenfolge createdAt, dann clientRef, und behalten ihre eigene clientRef.
 // Bekannte Fakten nicht erneut verlangen.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
@@ -40,20 +45,63 @@ export function partyLimitUeberschritten(
   return bestehend.size + neu > limit
 }
 
+/** Codepoint-Ordnung. Unabhängig von Array-Reihenfolge und Locale. */
+function travellerReihenfolge(links: TripTraveller, rechts: TripTraveller): number {
+  if (links.createdAt < rechts.createdAt) return -1
+  if (links.createdAt > rechts.createdAt) return 1
+  if (links.clientRef < rechts.clientRef) return -1
+  if (links.clientRef > rechts.clientRef) return 1
+  return 0
+}
+
+/** Kanonische Platz-Identität, wie der Slot-Index sie schreibt: `traveller:1`, nicht `traveller:01`. */
+function kanonischePlatznummer(clientRef: string): number | null {
+  const treffer = /^traveller:([1-9][0-9]*)$/.exec(clientRef)
+  if (!treffer) return null
+  const nummer = Number(treffer[1])
+  return Number.isSafeInteger(nummer) ? nummer : null
+}
+
 export function travellerSlots(reise: Pick<Trip, 'travellers' | 'party'>): TravellerSlot[] {
   const gespeichert = partyVon(reise)
   const nachRef = new Map(gespeichert.map((eintrag) => [eintrag.clientRef, eintrag]))
   const anzahl = Math.min(Math.max(reise.travellers, 1), PARTY_GRENZEN.slots)
-  const slots: TravellerSlot[] = []
+  const kanonisch = new Map<number, TripTraveller>()
 
   for (let i = 1; i <= anzahl; i += 1) {
     const clientRef = `traveller:${i}`
-    const traveller = nachRef.get(clientRef) ?? null
-    slots.push(slotAus(clientRef, `Reisende ${i}`, traveller, true))
+    const traveller = nachRef.get(clientRef)
+    if (!traveller) continue
+    kanonisch.set(i, traveller)
     nachRef.delete(clientRef)
   }
 
-  for (const extra of nachRef.values()) {
+  const rest = [...nachRef.values()]
+  const fuellbar = rest
+    .filter((eintrag) => kanonischePlatznummer(eintrag.clientRef) === null)
+    .sort(travellerReihenfolge)
+  const ausserhalb = rest
+    .filter((eintrag) => kanonischePlatznummer(eintrag.clientRef) !== null)
+    .sort(travellerReihenfolge)
+  let restIndex = 0
+  const slots: TravellerSlot[] = []
+
+  for (let i = 1; i <= anzahl; i += 1) {
+    const fest = kanonisch.get(i)
+    if (fest) {
+      slots.push(slotAus(`traveller:${i}`, `Reisende ${i}`, fest, true))
+      continue
+    }
+    const naechster = fuellbar[restIndex]
+    if (naechster) {
+      restIndex += 1
+      slots.push(slotAus(naechster.clientRef, `Reisende ${i}`, naechster, true))
+      continue
+    }
+    slots.push(slotAus(`traveller:${i}`, `Reisende ${i}`, null, true))
+  }
+
+  for (const extra of [...fuellbar.slice(restIndex), ...ausserhalb]) {
     slots.push(slotAus(extra.clientRef, extra.label ?? extra.clientRef, extra, false))
   }
 
