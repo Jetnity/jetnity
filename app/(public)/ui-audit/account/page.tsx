@@ -7,6 +7,7 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import AccountAuditClient from '@/components/account/AccountAuditClient'
+import AccountBesuchVerwaltungDichte from '@/components/account/AccountBesuchVerwaltungDichte'
 import { weltGeometrieFuer } from '@/lib/account/welt-geometrie'
 import { uiAuditSeiteAktiv } from '@/lib/ui-audit/freigabe'
 
@@ -42,6 +43,15 @@ export default async function AccountAuditSeite({
   const einzeln = (name: string) => {
     const wert = parameter[name]
     return typeof wert === 'string' ? wert : null
+  }
+
+  // Dichte der Verwaltung, ohne die Fixture in AccountAuditClient zu ändern.
+  if (einzeln('dichte') === '40') {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-surface-75" />}>
+        <AccountBesuchVerwaltungDichte geometrie={weltGeometrieFuer(AUDIT_LAENDER)} />
+      </Suspense>
+    )
   }
 
   return (

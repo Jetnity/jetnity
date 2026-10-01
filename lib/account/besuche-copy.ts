@@ -19,6 +19,12 @@ export const BESUCHE_COPY = {
 
   anlegenTitel: 'Besuchten Ort hinzufügen',
   anlegenAktion: 'Besuch bestätigen',
+  hinzufuegenAktion: 'Besuch hinzufügen',
+  sucheLabel: 'Besuche durchsuchen',
+  suchePlatzhalter: 'Ort, Land oder Zeitpunkt',
+  sucheLeer: 'Kein bestätigter Besuch passt zu dieser Suche.',
+  weitereAnzeigen: 'Weitere anzeigen',
+  alleAnzeigen: 'Alle anzeigen',
   aendernTitel: 'Besuch bearbeiten',
   aendernAktion: 'Änderung speichern',
   abbrechen: 'Abbrechen',
