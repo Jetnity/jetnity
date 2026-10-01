@@ -5706,6 +5706,8 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Nachtrag 1. Oktober 2026, Technical-Lead R2 auf `9480739db5f3743aaf40987a87e2135bcc48ef82`:** Der R1-Fingerabdruck las `sourceSnapshot` noch aus demselben Objekt wie die Modellausgabe. Das schliesst die Vertrauensgrenze nicht. `evidenceKandidatAusModell` nimmt das Modell und `EvidenceQuellenmaterial` getrennt entgegen. Der Fingerabdruck wird nur aus `material.sourceSnapshot` berechnet. Ein Modellobjekt mit `sourceSnapshot`, `content`, `contentHash` oder `sourceContentHash` wird abgelehnt und kann den Hash nicht setzen. Die R1-Credential- und Abdeckungsregeln bleiben unverändert.
 
+**Nachtrag 1. Oktober 2026, Technical-Lead R3 auf `23179348da1b842a19851dc656f37ad4ccae3fd6`:** URL und Abrufzeit waren noch Modellfelder. Sie gehören in dieselbe Retrieval-Hülle wie der Quellentext. `EvidenceQuellenmaterial` trägt `canonicalUrl`, `retrievedAt` und `sourceSnapshot`. Das Modellobjekt darf diese drei Felder sowie `content`, `contentHash` und `sourceContentHash` nicht setzen. Die gespeicherte URL und die Abrufzeit kommen nur aus der Hülle, nach der bestehenden Registry-, HTTPS- und Source-Id-Prüfung. Die R1- und R2-Regeln bleiben unverändert.
+
 ---
 
 ## Offene Widersprüche

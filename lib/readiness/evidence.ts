@@ -68,12 +68,15 @@ const ENTSCHEIDUNGS_FELDER = [
 ] as const
 
 const FINGERPRINT_OVERRIDE = ['sourceSnapshot', 'content', 'contentHash', 'sourceContentHash'] as const
+const PROVENIENZ_OVERRIDE = ['canonicalUrl', 'retrievedAt'] as const
 
 /**
- * Quellentext aus der Retrieval-Grenze. Diese Hülle wird nicht vom Modell gebaut.
- * Nur `sourceSnapshot` fliesst in den Fingerabdruck.
+ * Retrieval-Hülle. Sie wird nicht vom Modell gebaut.
+ * URL, Abrufzeit und Quellentext kommen nur von hier.
  */
 export type EvidenceQuellenmaterial = {
+  canonicalUrl: string
+  retrievedAt: string
   sourceSnapshot: string
 }
 
@@ -81,6 +84,7 @@ export type EvidenceRahmenFehler =
   | 'personal_identifier_forbidden'
   | 'model_decision_forbidden'
   | 'source_fingerprint_override_forbidden'
+  | 'provenance_override_forbidden'
   | 'invalid_context'
   | 'missing_relevant_context'
   | 'scope_too_wide'
@@ -240,6 +244,10 @@ function entscheidungsfelder(wert: unknown): string[] {
 
 function fingerprintOverride(wert: unknown): string[] {
   return schluesselSammeln(wert, FINGERPRINT_OVERRIDE)
+}
+
+function provenienzOverride(wert: unknown): string[] {
+  return schluesselSammeln(wert, PROVENIENZ_OVERRIDE)
 }
 
 function reisedatumLesen(wert: unknown): string | null {
@@ -608,8 +616,8 @@ function quellePasst(quelle: RegistrierteQuelle, evidence: Pick<EvidenceVersion,
 
 /**
  * Modellausgabe wird höchstens ein Kandidat.
- * Der Quellentext kommt nur aus `material`. Das Modellobjekt darf
- * Snapshot und Hash weder liefern noch überschreiben.
+ * URL, Abrufzeit und Quellentext kommen nur aus `material`.
+ * Das Modellobjekt darf diese Retrieval-Fakten weder liefern noch überschreiben.
  * Entscheidungsfelder werden nicht übernommen und nicht in Official Truth übersetzt.
  */
 export function evidenceKandidatAusModell(
@@ -620,19 +628,22 @@ export function evidenceKandidatAusModell(
   if (personenkennung(modell)) return { ok: false, reason: 'personal_identifier_forbidden' }
   const felder = entscheidungsfelder(modell)
   if (felder.length > 0) return { ok: false, reason: 'model_decision_forbidden', fields: felder }
+  const provenienz = provenienzOverride(modell)
+  if (provenienz.length > 0) return { ok: false, reason: 'provenance_override_forbidden', fields: provenienz }
   const override = fingerprintOverride(modell)
   if (override.length > 0) return { ok: false, reason: 'source_fingerprint_override_forbidden', fields: override }
-  const snapshot = material && typeof material === 'object' && !Array.isArray(material) ? material.sourceSnapshot : null
+  const hülle = material && typeof material === 'object' && !Array.isArray(material) ? material : null
+  const snapshot = hülle ? hülle.sourceSnapshot : null
   const sourceContentHash = typeof snapshot === 'string' ? evidenceQuellenFingerprint(snapshot) : null
-  if (!sourceContentHash) return { ok: false, reason: 'invalid_source_snapshot' }
+  if (!sourceContentHash || !hülle) return { ok: false, reason: 'invalid_source_snapshot' }
   const satz = datensatz(modell)
   if (!satz) return { ok: false, reason: 'invalid_context' }
   const schluessel = evidenceSuchschluessel(satz.scope ?? satz)
   if (!schluessel.ok) return schluessel
-  const url = quellenUrlAufloesen(registry, satz.canonicalUrl)
+  const url = quellenUrlAufloesen(registry, hülle.canonicalUrl)
   if (!url.ok) return url
   if (url.source.sourceId !== schluessel.scope.sourceId) return { ok: false, reason: 'source_mismatch' }
-  const retrievedAt = checkedAtLesen(satz.retrievedAt)
+  const retrievedAt = checkedAtLesen(hülle.retrievedAt)
   if (!retrievedAt) return { ok: false, reason: 'invalid_retrieval_time' }
   const fenster = gueltigkeitsfenster(satz)
   if (!fenster.ok) return fenster

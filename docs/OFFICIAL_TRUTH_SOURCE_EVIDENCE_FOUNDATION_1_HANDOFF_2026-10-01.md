@@ -12,7 +12,9 @@ Session: https://cursor.com/agents/bc-2084780a-4e8d-4334-a56a-6bfba1a65f72
 
 ## Current state
 
-The source registry, source router and versionable evidence contract are on this Draft branch. Technical-Lead R2 review `5378061792` required the trusted source snapshot to be a separate argument from the model candidate. That split is in `evidenceKandidatAusModell(modell, material, registry)`. R1 credential options and coverage modes stay as corrected. The R2 correction head is `fc0f0fcf22524f330da427307a56fbe4e47f3a66`. GitHub CI run `36849847761` **SUCCESS**. Typecheck, Lint & Build job `110328634234` **SUCCESS**. Auth job `110328634650` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8CUS12ymfr5ebumJFVnkHBmeypCn`. GitHub Preview deployment `6782078960` **success**, target `https://jetnity-4tjvezsda-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read. The earlier head `9480739db5f3743aaf40987a87e2135bcc48ef82` had CI `36848362225` and Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby`. Those do not gate `fc0f0fcf`. The commit that records the R2 gates is a later head and is not gated by run `36849847761`.
+The source registry, source router and versionable evidence contract are on this Draft branch. Technical-Lead R3 review `5378219037` moved `canonicalUrl` and `retrievedAt` into the same trusted retrieval envelope as `sourceSnapshot`. The model object cannot set those retrieval facts. R1 credential options, coverage modes and the R2 source-hash split stay. The R3 head's own CI is not the run on `23179348da1b842a19851dc656f37ad4ccae3fd6` (CI `36850293350`, Auth job `110330075014`, Typecheck/Lint/Build job `110330075378`, Vercel Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj`).
+
+The R2 correction head was `fc0f0fcf22524f330da427307a56fbe4e47f3a66`. GitHub CI run `36849847761` **SUCCESS**. Typecheck, Lint & Build job `110328634234` **SUCCESS**. Auth job `110328634650` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8CUS12ymfr5ebumJFVnkHBmeypCn`. GitHub Preview deployment `6782078960` **success**, target `https://jetnity-4tjvezsda-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read. The earlier head `9480739db5f3743aaf40987a87e2135bcc48ef82` had CI `36848362225` and Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby`. Those do not gate `fc0f0fcf`. The commit that records the R2 gates is a later head and is not gated by run `36849847761`.
 
 The R1 correction head was `276ef7265f1d2989e204462955e7eae54d7401e9`. GitHub CI run `36847770063` **SUCCESS**. Typecheck, Lint & Build job `110321922165` **SUCCESS**. Auth job `110321922436` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/EU6DJ5VZdkqKJeJg4CR4t24joLFp`. GitHub Preview deployment `6781726297` **success**, target `https://jetnity-ndyoim48t-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read. The reviewed head was `59d43f4ccc2e4434401596f0b7b4b7c8162719d8`. That head's CI `36845583718`, Auth job `110314809182` and Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` do not gate the correction head. The commit that records the correction gates is a later head and is not gated by run `36847770063`.
 
@@ -42,7 +44,7 @@ Stay Draft.
 
 Cursor does not Ready, merge, mutate Supabase, call OpenAI or the web, activate a provider, contact Sherpa/IATA/KAYAK, continue #626, change indexing or launch, or start a follow-up slice.
 
-**STOP for independent Technical-Lead re-review of the R2 trust-boundary head.**
+**STOP for independent Technical-Lead final review of the R3 provenance head.**
 
 ## Proposal only — not selected
 

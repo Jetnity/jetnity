@@ -120,10 +120,17 @@ function rahmen(teil?: Record<string, unknown>) {
 
 function modellEingabe(scope: Record<string, unknown> = atom(), extractionNote?: string) {
   return {
-    canonicalUrl: QUELLE,
-    retrievedAt: ABGERUFEN,
     extractionNote,
     scope,
+  }
+}
+
+function material(teil?: Partial<{ canonicalUrl: string; retrievedAt: string; sourceSnapshot: string }>) {
+  return {
+    canonicalUrl: QUELLE,
+    retrievedAt: ABGERUFEN,
+    sourceSnapshot: SNAPSHOT,
+    ...teil,
   }
 }
 
@@ -133,7 +140,7 @@ function kandidat(
   scope: Record<string, unknown> = atom(),
   extractionNote?: string,
 ) {
-  return evidenceKandidatAusModell(modellEingabe(scope, extractionNote), { sourceSnapshot }, basis)
+  return evidenceKandidatAusModell(modellEingabe(scope, extractionNote), material({ sourceSnapshot }), basis)
 }
 
 function angenommen(
@@ -240,22 +247,14 @@ describe('Official Truth source/evidence foundation', () => {
     })
 
     const httpKandidat = evidenceKandidatAusModell(
-      {
-        canonicalUrl: 'http://gov.example/rules',
-        retrievedAt: ABGERUFEN,
-        scope: atom(),
-      },
-      { sourceSnapshot: SNAPSHOT },
+      modellEingabe(),
+      material({ canonicalUrl: 'http://gov.example/rules' }),
       basis,
     )
     assert.deepEqual(httpKandidat, { ok: false, reason: 'insecure_scheme' })
     const credentialKandidat = evidenceKandidatAusModell(
-      {
-        canonicalUrl: 'https://user:pass@gov.example/rules',
-        retrievedAt: ABGERUFEN,
-        scope: atom(),
-      },
-      { sourceSnapshot: SNAPSHOT },
+      modellEingabe(),
+      material({ canonicalUrl: 'https://user:pass@gov.example/rules' }),
       basis,
     )
     assert.deepEqual(credentialKandidat, { ok: false, reason: 'credentials' })
@@ -284,12 +283,11 @@ describe('Official Truth source/evidence foundation', () => {
     for (const feld of ['result', 'visaMode', 'optionEligibility', 'optionMandate'] as const) {
       const abgelehnt = evidenceKandidatAusModell(
         {
-          canonicalUrl: 'https://gov.example/rules',
-          retrievedAt: ABGERUFEN,
+          extractionNote: undefined,
           scope: atom(),
           [feld]: feld === 'result' ? 'not_required' : 'visa_exempt',
         },
-        { sourceSnapshot: SNAPSHOT },
+        material(),
         basis,
       )
       assert.equal(abgelehnt.ok, false)
@@ -458,7 +456,7 @@ describe('Official Truth source/evidence foundation', () => {
           ...modellEingabe(atom(), 'model tries to define the hash'),
           [feld]: feld === 'content' || feld === 'sourceSnapshot' ? 'different model prose' : 'a'.repeat(64),
         },
-        { sourceSnapshot: 'official page line\nunchanged' },
+        material({ sourceSnapshot: 'official page line\nunchanged' }),
         basis,
       )
       assert.equal(abgelehnt.ok, false)
@@ -467,15 +465,51 @@ describe('Official Truth source/evidence foundation', () => {
       assert.equal(JSON.stringify(abgelehnt).includes(vertrauenshash ?? 'missing'), false)
     }
 
-    const leer = evidenceKandidatAusModell(modellEingabe(), { sourceSnapshot: '' }, basis)
+    for (const feld of ['canonicalUrl', 'retrievedAt'] as const) {
+      const abgelehnt = evidenceKandidatAusModell(
+        {
+          ...modellEingabe(),
+          [feld]: feld === 'canonicalUrl' ? 'https://provider.example/other' : '2020-01-01T00:00:00.000Z',
+        },
+        material(),
+        basis,
+      )
+      assert.equal(abgelehnt.ok, false)
+      if (abgelehnt.ok) return
+      assert.equal(abgelehnt.reason, 'provenance_override_forbidden')
+    }
+
+    const gebunden = kandidat(basis)
+    assert.equal(gebunden.ok, true)
+    if (!gebunden.ok) return
+    const aufgeloest = quellenUrlAufloesen(basis, QUELLE)
+    assert.equal(aufgeloest.ok, true)
+    if (!aufgeloest.ok) return
+    assert.equal(gebunden.evidence.canonicalUrl, aufgeloest.canonicalUrl)
+    assert.equal(gebunden.evidence.retrievedAt, ABGERUFEN)
+    assert.notEqual(gebunden.evidence.canonicalUrl, 'https://provider.example/other')
+
+    const unregistriert = evidenceKandidatAusModell(modellEingabe(), material({ canonicalUrl: 'https://evil.example/rules' }), basis)
+    assert.deepEqual(unregistriert, { ok: false, reason: 'unregistered_domain' })
+    const fremdeQuelle = evidenceKandidatAusModell(
+      modellEingabe(),
+      material({ canonicalUrl: 'https://provider.example/rules' }),
+      basis,
+    )
+    assert.deepEqual(fremdeQuelle, { ok: false, reason: 'source_mismatch' })
+
+    const leer = evidenceKandidatAusModell(modellEingabe(), material({ sourceSnapshot: '' }), basis)
     assert.deepEqual(leer, { ok: false, reason: 'invalid_source_snapshot' })
 
     const funktionsText = readFileSync(join(process.cwd(), 'lib/readiness/evidence.ts'), 'utf8')
     const anfang = funktionsText.indexOf('export function evidenceKandidatAusModell')
     const ende = funktionsText.indexOf('export function evidenceKandidatAkzeptieren')
     const funktion = funktionsText.slice(anfang, ende)
-    assert.match(funktion, /material\.sourceSnapshot/)
-    assert.doesNotMatch(funktion, /satz\.sourceSnapshot|modell\.sourceSnapshot|eingabe\.sourceSnapshot/)
+    assert.match(funktion, /hülle\.sourceSnapshot/)
+    assert.match(funktion, /hülle\.canonicalUrl/)
+    assert.match(funktion, /hülle\.retrievedAt/)
+    assert.doesNotMatch(funktion, /satz\.(sourceSnapshot|canonicalUrl|retrievedAt)/)
+    assert.doesNotMatch(funktion, /modell\.(sourceSnapshot|canonicalUrl|retrievedAt)/)
   })
 
   test('ein Konflikt überschreibt akzeptierte Evidence nicht', () => {

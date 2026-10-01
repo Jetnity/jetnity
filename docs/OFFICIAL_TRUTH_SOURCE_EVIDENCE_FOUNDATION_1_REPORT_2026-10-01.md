@@ -12,7 +12,7 @@ Logical agent: **Jetnity Official Truth source foundation 1**, Generation 1
 Session: https://cursor.com/agents/bc-2084780a-4e8d-4334-a56a-6bfba1a65f72
 `originalModelName`: `grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. Recorded from this run before editing.
 
-Status: **R2 TRUST-BOUNDARY CORRECTION DELIVERED / DRAFT / NO TL PASS / NO READY / NO MERGE**
+Status: **R3 PROVENANCE CORRECTION DELIVERED / DRAFT / NO TL PASS / NO READY / NO MERGE**
 
 ## 1. Baseline reconstruction
 
@@ -59,7 +59,9 @@ Technical-Lead review `5377801054` required three contract corrections on exact 
 
 Technical-Lead review `5378061792` required one further trust-boundary correction on exact head `9480739db5f3743aaf40987a87e2135bcc48ef82`. `evidenceKandidatAusModell` now takes the model object and `EvidenceQuellenmaterial` as separate arguments. The fingerprint is computed only from `material.sourceSnapshot`. A model object that contains `sourceSnapshot`, `content`, `contentHash` or `sourceContentHash` is rejected. R1 credential options and coverage modes are unchanged.
 
-The gates below for `3d1b7aed`, `59d43f4c` and `9480739d` do not apply to this R2 head. Technical-Lead R2 read CI `36848362225` SUCCESS and Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby` READY on `9480739db5f3743aaf40987a87e2135bcc48ef82` only.
+Technical-Lead review `5378219037` required the retrieved URL and retrieval timestamp to move into that same trusted envelope, on exact head `23179348da1b842a19851dc656f37ad4ccae3fd6`. `EvidenceQuellenmaterial` now carries `canonicalUrl`, `retrievedAt` and `sourceSnapshot`. The model object cannot set those fields or `content`, `contentHash` or `sourceContentHash`. The stored URL and timestamp come only from the trusted envelope after registry, HTTPS and source-id checks. R1 and R2 behavior otherwise stays.
+
+The gates below for `3d1b7aed`, `59d43f4c`, `9480739d`, `fc0f0fcf` and `23179348` do not apply to this R3 head. Technical-Lead R3 read CI `36850293350` SUCCESS, Auth job `110330075014` SUCCESS, Typecheck/Lint/Build job `110330075378` SUCCESS and Vercel Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj` READY on `23179348da1b842a19851dc656f37ad4ccae3fd6` only.
 
 Residence is an explicit key dimension (`not_applicable` or one country code). The existing traveller input already has a single residence country. The key does not store a person. Omitting the dimension would let residence-dependent and residence-independent evidence share a key.
 
@@ -120,7 +122,7 @@ No evidence table exists because of this slice. A later store still needs its ow
 
 Do not dispatch from this slice.
 
-Independent Technical-Lead re-review of the R1 correction head on Draft #673 is the next action. After a PASS, a separate design slice could specify a Development-only private evidence store. That proposal is not selected here. Cursor does not Ready, merge, or start it.
+Independent Technical-Lead final review of the R3 provenance correction on Draft #673 is the next action. After a PASS, a separate design slice could specify a Development-only private evidence store. That proposal is not selected here. Cursor does not Ready, merge, or start it.
 
 ## 8. R1 correction validation
 
@@ -165,3 +167,21 @@ Local checks for the R2 correction, recorded before its push:
 | Vercel Preview on that same SHA | GitHub commit status context `Vercel` **success** at `2026-10-01T10:33:38Z`. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/8CUS12ymfr5ebumJFVnkHBmeypCn`. GitHub deployment `6782078960`, environment **Preview**, state **success**, target `https://jetnity-4tjvezsda-jetnity-e1b93c82.vercel.app`. A direct GET of that host returned HTTP 302 to Vercel SSO, so this session did not read public HTML or `data-dpl-id`. |
 
 These remote gates belong only to `fc0f0fcf22524f330da427307a56fbe4e47f3a66`. The commit that records them is a new head. It does not inherit this CI, Auth job or Preview. Do not reuse CI `36848362225` or Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby` from `9480739db5f3743aaf40987a87e2135bcc48ef82`. Parent and `main` gates do not apply.
+
+## 10. R3 provenance validation
+
+Local checks for the R3 correction, recorded before its push:
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| `node scripts/operating-mode-guard.mjs` | pass |
+| Targeted `lib/readiness/source-foundation.test.ts` | **8/8 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors. 148 existing warnings, none in the changed readiness files. |
+| `npm test` | **4133 pass / 0 fail** |
+| `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` | pass. Schema check still notes the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`. |
+| `npm run check:setup:ci` | pass, with the existing missing-`.env` warning |
+| `npm run build` | pass. Next.js 16.3.8 compiled and generated 25 static pages. |
+| Local `auth:pruefen` | not run. This environment has no Supabase auth secrets. |
+| Exact-head GitHub CI / Auth / Vercel on the R3 head | not observed yet. Do not reuse CI `36850293350`, Auth job `110330075014`, Typecheck/Lint/Build job `110330075378`, or Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj`. |
