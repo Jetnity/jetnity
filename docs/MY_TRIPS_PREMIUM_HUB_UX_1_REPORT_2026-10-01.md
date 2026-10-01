@@ -10,13 +10,14 @@ Session: https://cursor.com/agents/bc-da4e6583-e231-4ffd-b545-a7cece411714
 
 ## Head
 
-- Measured code head: `463ea8ab5d519a98f06f12ac3762f6af5a61daad`
-- Merge-base with `origin/main`: `98c9099bee1715f741e4aec87c2c386e9e5344ad` (Merge #689)
-- At measurement: 4 ahead / 0 behind that main
+- Re-gate code head: `83216b8e1883e8a79d89aea6441bedebb09889f1`
+- Merge-base with `origin/main`: `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` (Merge #691)
+- At the re-gate measurement: 6 ahead / 0 behind that main
 - Baseline named in the task: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
-- Integrated main commits are the #689 registry preparation-slot files. This slice did not edit them.
+- Preserved without edits: #686 Source Catalog, #689 Registry→Preparation, #691 Account-home premium overview. `git diff origin/main` on those paths is empty.
+- Hub behavior is the Technical-Lead-accepted presentation. This re-gate integrates main only.
 
-The evidence commit that adds this report is the pushed tip. It does not change the measured UI.
+The evidence commit that refreshes this report does not change the measured UI. Exact-head CI, Auth and Vercel are the gates on the pushed tip.
 
 ## What changed
 
@@ -51,17 +52,19 @@ Same harness, two upcoming trips, every other normal group empty. Heights are `d
 | 1440×900 at 125% zoom | 1912 | 1506 | −406 |
 | 1440×900 at 150% zoom | 2293 | 1842 | −451 |
 
-360×800 moved by 36px between two production runs. The other phone widths stayed on the −314px line. Before was measured with `next dev`; after with `next start` on `463ea8ab`.
+The first production matrix on `463ea8ab` recorded 360×800 at 2100. The re-gate on `83216b8e` (`next start`, `fehlerZahl` 0) measured that viewport at 2064, on the same −314px line as the other phones. Before remains the `next dev` capture. A few non-PO states moved by 36px between production runs (archiv 320×568 2442→2406, fehler 390×844 1513→1477, gemischt 768×1024 2427→2463, gemischt 820×1180 2463→2427). PO heights at every other viewport match the table.
 
 ## Gates
 
-- `npm test`: 4219 pass / 0 fail. The first run failed one throwaway PostgreSQL proof because `initdb` was absent. PostgreSQL 16 was installed locally and the full suite then passed.
+Re-run on the integrated head, before this evidence commit:
+
+- `npm test`: 4231 pass / 0 fail
 - `npm run typecheck`: pass
-- `npm run lint`: pass
+- `npm run lint`: pass (0 errors)
 - `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, `check:operating-mode`: pass
 - `git diff --check`: pass
 - `npm run build`: pass
-- Production visual matrix on `http://127.0.0.1:3491`: `fehlerZahl` 0 across the required viewports and states. Evidence: `docs/evidence/my-trips-premium-hub-ux-1/`.
+- Production visual matrix on `http://127.0.0.1:3491`: `fehlerZahl` 0 across the required viewports and states. Evidence: `docs/evidence/my-trips-premium-hub-ux-1/nachher-bericht.json` (`sha` `83216b8e1883e8a79d89aea6441bedebb09889f1`).
 
 The matrix checked overflow, 44px targets on compact widths, 16px search text, archive outside the trip link, keyboard focus on the trip link, search match and no-match, empty account, read error, and the 200-row notice. No hub request to flight, hotel, activity or readiness APIs.
 
@@ -69,4 +72,4 @@ The matrix checked overflow, 44px targets on compact widths, 16px search text, a
 
 No DB, Auth, provider, Production or indexing change. The audit route stays fail-closed in Production. Cursor does not Ready or merge and does not start a follow-up.
 
-Next step: independent Technical-Lead review of the exact pushed tip, including code, the cross-device matrix and the archive control.
+Next step: independent final Technical-Lead review of the exact pushed tip after exact-head CI, Auth and Vercel. No behavior correction was requested. Cursor does not Ready or merge.

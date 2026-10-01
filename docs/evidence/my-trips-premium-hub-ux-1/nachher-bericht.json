@@ -1,8 +1,8 @@
 {
   "marke": "nachher",
-  "sha": "463ea8ab5d519a98f06f12ac3762f6af5a61daad",
+  "sha": "83216b8e1883e8a79d89aea6441bedebb09889f1",
   "basis": "http://127.0.0.1:3491",
-  "gemessenAm": "2026-10-01T19:55:13.198Z",
+  "gemessenAm": "2026-10-01T20:17:47.708Z",
   "befunde": [
     {
       "viewport": "320x568",
@@ -128,7 +128,7 @@
     {
       "viewport": "320x568",
       "zustand": "archiv",
-      "hoehe": 2442,
+      "hoehe": 2406,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -488,7 +488,7 @@
     {
       "viewport": "360x800",
       "zustand": "po",
-      "hoehe": 2100,
+      "hoehe": 2064,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -1169,7 +1169,7 @@
     {
       "viewport": "390x844",
       "zustand": "fehler",
-      "hoehe": 1513,
+      "hoehe": 1477,
       "suchePx": null,
       "fehler": [],
       "karten": [],
@@ -2465,7 +2465,7 @@
     {
       "viewport": "768x1024",
       "zustand": "gemischt",
-      "hoehe": 2427,
+      "hoehe": 2463,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -2946,7 +2946,7 @@
     {
       "viewport": "820x1180",
       "zustand": "gemischt",
-      "hoehe": 2463,
+      "hoehe": 2427,
       "suchePx": 16,
       "fehler": [],
       "karten": [
@@ -6496,7 +6496,7 @@
   ],
   "poHoehe": {
     "320x568": 2064,
-    "360x800": 2100,
+    "360x800": 2064,
     "390x844": 2040,
     "412x915": 2040,
     "430x932": 2040,
