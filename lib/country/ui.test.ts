@@ -15,6 +15,7 @@ const CONTROL = 'components/country/LandFeld.tsx'
 const ACCOUNT = [
   'components/account/AccountReisende.tsx',
   'components/account/AccountReisendeKarte.tsx',
+  'lib/traveller/account-travellers-premium-registry-ux-1.ts',
 ]
 const TRIP = 'components/trips/Reisevorbereitung.tsx'
 
