@@ -155,13 +155,13 @@ The #677 contract slice has no database migration of its own, no Candidate-Evide
 
 ## 11. Historical next step for the contract slice
 
-At contract delivery, Draft PR #677 was the writer and the next action was independent Technical-Lead review. That review completed and #677 merged. The sentence is historical. The persistence schema is section 12. The current writer is section 13.
+At contract delivery, Draft PR #677 was the writer and the next action was independent Technical-Lead review. That review completed and #677 merged. The sentence is historical. The persistence schema is section 12. Section 13 is the historical identity step. The current writer is section 14.
 
 ## 12. Accepted Rule Claim persistence — repository schema only
 
 The canonical repository migration is `supabase/migrations/20261001151048_official_truth_accepted_rule_claim_persistence_schema_1.sql`. ADR-0219. That version is the Development history version from the one Technical-Lead apply. It was not invented by hand. The original local CLI file was `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql`. `git mv` changed only the filename. The SQL bytes are unchanged, SHA-256 `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`. Cursor does not apply the file again. Production is not applied.
 
-The migration stores only an already accepted Rule Claim. It does not store a candidate, a model proposal, `research_gap`, `unresolved_conflict`, or stale candidate facts as accepted truth. `regelKandidatAkzeptieren()` remains the acceptance function. There is still no runtime writer and no store adapter. `requirementsProviderAus()` stays `null`.
+The migration stores only an already accepted Rule Claim. It does not store a candidate, a model proposal, `research_gap`, `unresolved_conflict`, or stale candidate facts as accepted truth. `regelKandidatAkzeptieren()` remains the acceptance function. This schema slice itself added no runtime writer. The trusted writer is section 14. `requirementsProviderAus()` stays `null`.
 
 `private.official_evidence_versions` gains `rule_scope_key`. SQL does not compute it and does not prove that it matches the typed scope columns. The source-specific `evidence-key:v2:` lookup key is unchanged. `private.official_rule_claims.claim_id` is a generated bigint identity. It is persistence identity, not Product Truth. One current accepted fact is allowed per rule scope key and fact kind. Eight typed fact tables hold the accepted fact. There is no unrestricted JSONB fact blob.
 
@@ -173,8 +173,16 @@ A present `transit_airport_codes` list has no finite maximum. `private.official_
 
 No Candidate Evidence is imported. No CH research batch is imported. No seed row is inserted. The schema slice itself did not apply SQL. The Technical Lead later applied that same SQL once to Development. The repository filename now matches that history version. A second Development apply is not allowed. Production is not authorized.
 
-## 13. Next step
+## 13. Historical next step for the identity reconciliation
 
 At persistence delivery, Draft PR #679 was the writer. That review completed and #679 merged at `main@0fa5f7f0255ade1d7a9e9307cd275019ac9e8506`. The sentence that named #679 as the current writer is historical.
 
-The current writer is Draft PR #681, Issue #680: repository migration-identity reconciliation only. The next action is independent Technical-Lead review of its exact head. Cursor does not Ready, merge, apply SQL again, import evidence, or start a follow-up.
+Draft PR #681, Issue #680, reconciled the repository migration identity. That work is on the baseline of this writer, `main@7c3dc2835622355d3dd8f5fb9efa4b3e63899b9e`. The sentence that named #681 as the current writer is historical. The current writer is section 14.
+
+## 14. Trusted accepted-store writer
+
+Draft PR #683, Issue #682, is the current writer. ADR-0220. The repository migration is `supabase/migrations/20261001171111_official_truth_trusted_store_writer_1.sql`. The timestamp came from `supabase migration new`. It was not typed by hand. Cursor has not applied it to Development or Production.
+
+`lib/readiness/official-truth-store-server.ts` is server-only. Evidence is stored only after `evidenceKandidatAkzeptieren` and `regelScopeAusEvidenceScope`. A Rule Claim is stored only from the object returned by `regelKandidatAkzeptieren()`. The gateway is `public.official_truth_store_accepted_v1`. It is one `SECURITY DEFINER` function with an empty `search_path`. It is transport, not a second acceptance engine. Exact duplicates do not write again. Conflicts do not update stored truth. Support and official-action source class come from stored rows. The existing deferred fact-payload trigger stays in force. No direct grant is added on `private.official_*`. `EXECUTE` among Data-API roles belongs only to `service_role`.
+
+`requirementsProviderAus()` stays `null`. No Candidate Evidence is imported. No real source catalog row is inserted. No provider, model or web call is added. The next action is independent Technical-Lead review of the exact head. Cursor does not Ready, merge, apply the migration, or start a follow-up.

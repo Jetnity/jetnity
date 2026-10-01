@@ -5803,6 +5803,32 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Nachtrag 1. Oktober 2026, Migrationsidentität:** Der Technical Lead hat die angenommene SQL genau einmal auf Development angewendet. Supabase hat dafür die History-Version `20261001151048_official_truth_accepted_rule_claim_persistence_schema_1` vergeben. Diese Version ist nicht von Hand erfunden. Die Repository-Datei heißt jetzt genauso. `git mv` hat sie von `20261001140356_official_truth_accepted_rule_claim_persistence_schema_1.sql` umbenannt. Die SQL-Bytes sind unverändert, SHA-256 `d5a5d759c98c6b2875baedbd6c90e4752b9bca1e5d852d1d1dd734d413b807bf`. Cursor hat die Migration nicht erneut angewendet, die Remote-History nicht repariert und Production nicht angefasst. Eine zweite Remote-Anwendung ist nicht nötig und nicht erlaubt. Issue #680, Draft PR #681.
 
+**Nachtrag 1. Oktober 2026, vertrauenswürdiger Schreiber:** Punkt 1 und Punkt 10 beschreiben den Schema-Slice. Sie sind nicht mehr die lebende Aussage, dass es keinen Store-Adapter und keine `SECURITY DEFINER`-Funktion gibt. ADR-0220 legt genau eine Transport-Funktion `public.official_truth_store_accepted_v1` an. Sie entscheidet keine Regel. Die Annahme bleibt `evidenceKandidatAkzeptieren` und `regelKandidatAkzeptieren`. Direkte Tabellenrechte auf `private.official_*` bleiben entzogen.
+
+---
+
+## ADR-0220 – Vertrauenswürdiger Schreiber für akzeptierte Official Truth
+
+**Datum:** 1. Oktober 2026
+**Status:** Repository-Migration und ruhender Server-Schreiber. Nicht auf Development angewendet. Nicht auf Production angewendet. Kein Technical-Lead-PASS. Draft PR #683, Issue #682. Binding: `docs/OFFICIAL_TRUTH_TRUSTED_STORE_WRITER_1_TASK_2026-10-01.md`. Eltern: ADR-0216, ADR-0217, ADR-0218, ADR-0219.
+
+**Entscheidung:**
+
+1. Der erste Schreiber speichert nur, was die bestehenden Funktionen schon angenommen haben. `akzeptierteEvidenceSpeichern` ruft `evidenceKandidatAkzeptieren` und danach `regelScopeAusEvidenceScope`. `akzeptierteRegelClaimSpeichern` ruft `regelKandidatAkzeptieren` und speichert nur den zurückgegebenen `AkzeptierteRegelClaim`. Ein bereits akzeptiert aussehendes Objekt ist kein zweiter Schreibweg. Ein Vorschlag wird nicht kopiert.
+2. Der Schreibweg ist `public.official_truth_store_accepted_v1(jsonb)`. Eine Funktion, keine Überladung, `security definer`, `search_path` leer. Sie kennt genau `accepted_evidence` und `accepted_rule_claim`. Jede andere Operation wird abgelehnt. Sie ist Transport. Sie ist kein zweites Official-Truth-Programm.
+3. Ein exaktes Duplikat ist ein Idempotenz-No-Op. Es gibt kein `UPDATE` und kein `DELETE`. Ein abweichendes Duplikat derselben Evidence-Version oder desselben `(rule_scope_key, fact_kind)` schlägt mit `23505` fehl. `accepted_at` ist nur Audit und gehört nicht zum Claim-Vergleich. Der erste Zeitpunkt bleibt stehen.
+4. Die Quellenklasse einer Stütze und einer Amtshandlung kommt aus der schon gespeicherten Zeile, nicht aus einem Feld des Aufrufers. Eine fehlende Stütze für denselben `rule_scope_key` schlägt fehl und schreibt nichts. Die bestehende aufgeschobene Faktprüfung bleibt. Die Funktion setzt diese neun Constraint-Trigger vor der Rückgabe auf `immediate`, damit der vorhandene `security invoker` Trigger als Eigentümer der Funktion läuft. Der Trigger wird nicht auf `security definer` geändert und nicht abgeschaltet.
+5. Die Migration fügt keine Zeile ein und vergibt keine Tabellenrechte. `EXECUTE` wird `public`, `anon`, `authenticated` und `service_role` entzogen und nur `service_role` wieder gegeben. Der TypeScript-Schreiber ist `server-only`, liest `SUPABASE_SERVICE_ROLE_KEY` nur serverseitig und ruft den RPC nur nach erfolgreicher Annahme auf. Fehlende Zugangsdaten sind `store_not_configured`. `requirementsProviderAus()` bleibt `null`.
+6. Diese Entscheidung importiert keine Candidate Evidence, keinen CH-Batch und keinen echten Quellenkatalog. Sie ändert `evidence.ts`, `rule-claims.ts` und die Engine nicht. Development-Apply bleibt beim Technical Lead nach exaktem PASS. Production bleibt ein Product-Owner-Gate.
+
+**Kontext:** ADR-0219 hat die Tabellen ohne Schreibweg gelassen, weil `service_role` RLS umgeht und deshalb keine direkten Tabellenrechte bekommen darf. Die Data API kann `private` nicht schreiben. Der Product Owner hat die Quellenstrategie freigegeben und den nächsten Engineering-Schritt als vertrauenswürdigen serverseitigen Schreiber beschrieben (Issue #294, `5928669189`, `5935531376`, `5935581800`).
+
+**Alternativen:** Direkte `GRANT`s auf `private.official_*` für `service_role`. Den Fakt-Trigger auf `security definer` umstellen. Eine zweite Annahme in SQL für Stützenzahl und verschiedene Quellen. Den RPC-Namen als String-Literal in `rpc('official_truth_store_accepted_v1')` zu schreiben und dafür `types/supabase.ts` oder den Schema-Scanner zu ändern. Die Migration aus Cursor heraus auf Development anzuwenden.
+
+**Begründung:** Ein Tabellen-Grant würde die Grenze aus ADR-0217 und ADR-0219 öffnen. Ein zweiter Definer am alten Trigger wäre eine zweite privilegierte Funktion. Die Stützenzahl bleibt bei `regelKandidatAkzeptieren`, sonst entsteht ein zweites Annahmeprogramm. `types/supabase.ts` und `scripts/db/verwendung.mjs` liegen ausserhalb dieses Slices. Der Aufruf benutzt deshalb die Konstante `OFFICIAL_TRUTH_STORE_ACCEPTED_V1`. Das ist im Self-Review offengelegt und ändert den Scanner für andere RPCs nicht. Der Development-Apply bleibt eine eigene Handlung des Technical Lead.
+
+**Konsequenzen:** SQL lässt eine leere Stützenliste weiter zu. Der öffentliche TypeScript-Weg erzeugt sie nicht, weil die Annahme sie ablehnt. SQL beweist weiter nicht, dass `rule_scope_key` zu den Scope-Spalten passt. `pg_catalog.coalesce` löst unter leerem `search_path` in PostgreSQL 16.15 keine `jsonb`- oder `text[]`-Überladung auf. JSONB-Aggregate benutzen das SQL-Schlüsselwort `coalesce`. Text-Arrays werden nach `array_agg` geprüft und bei Null auf `'{}'` gesetzt. Das Schlüsselwort ist kein Suchpfad-Treffer. Lokal geprüft wurde PostgreSQL 16.15. Development ist nach dem Auftrag 17.6. Das ist nicht dasselbe. Die generierten Supabase-Typen kennen die Funktion erst nach einem späteren Apply. Der Schema-Scanner sieht kein String-Literal `.rpc('official_truth_store_accepted_v1')`. Diese ADR startet keinen Import, keine Provider-Aktivierung und keinen Production-Apply.
+
 ---
 
 ## Offene Widersprüche
