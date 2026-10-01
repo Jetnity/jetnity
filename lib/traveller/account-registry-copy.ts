@@ -67,6 +67,17 @@ export const REGISTRY_COPY = {
   erfolgCitizenshipEntfernt: 'Die Staatsbürgerschaft wurde entfernt. Zugeordnete Dokumente behalten ihre übrigen Angaben.',
   erfolgDokument: 'Die Dokument-Metadaten wurden gespeichert.',
   erfolgDokumentEntfernt: 'Die Dokument-Metadaten wurden entfernt.',
+  reisendenHinzufuegen: 'Reisenden hinzufügen',
+  verwalten: 'Verwalten',
+  verwaltungSchliessen: 'Schließen',
+  kompaktKeineStaatsbuergerschaft: 'Keine Staatsbürgerschaft hinterlegt',
+  kompaktStaatsbuergerschaftEinzahl: 'Staatsbürgerschaft',
+  kompaktStaatsbuergerschaftMehrzahl: 'Staatsbürgerschaften',
+  kompaktKeineDokumente: 'Keine Dokument-Metadaten',
+  kompaktDokumentEinzahl: 'Reisedokument',
+  kompaktDokumentMehrzahl: 'Reisedokumente',
+  kompaktAblaufHinweisEinzahl: 'Ablaufhinweis',
+  kompaktAblaufHinweisMehrzahl: 'Ablaufhinweise',
 } as const
 
 export const REGISTRY_DOKUMENT_TYP_LABEL = {

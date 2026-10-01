@@ -31,6 +31,7 @@ const UI_QUELLEN = [
   'app/account/travellers/loading.tsx',
   'components/account/AccountReisende.tsx',
   'components/account/AccountReisendeKarte.tsx',
+  'lib/traveller/account-travellers-premium-registry-ux-1.ts',
 ]
 
 const RUNTIME_QUELLEN = [
@@ -103,11 +104,13 @@ describe('Account-Registry UI-/Scope-Vertrag', () => {
     assert.equal(registryTravellerAnzeigeName(null), REGISTRY_COPY.ohneBezeichnung)
 
     const karte = quelle('components/account/AccountReisendeKarte.tsx')
+    const darstellung = `${karte}\n${quelle('lib/traveller/account-travellers-premium-registry-ux-1.ts')}`
     assert.equal(karte.includes('citizenships[0]'), false)
     assert.equal(karte.includes('documents[0]'), false)
     assert.equal(karte.includes('REGISTRY_COPY.dokumentTypPlatzhalter'), true)
     assert.equal(karte.includes('REGISTRY_COPY.dokumentKeineZuordnung'), true)
-    assert.equal(karte.includes('dokumentAblaufGegenReferenztag'), true)
+    assert.equal(darstellung.includes('dokumentAblaufGegenReferenztag'), true)
+    assert.equal(karte.includes('ablaufText'), true)
     assert.equal(karte.includes('gültig bis'), false)
     assert.equal(karte.includes('ISO-2'), false)
     assert.equal(karte.includes('LandFeld'), true)
