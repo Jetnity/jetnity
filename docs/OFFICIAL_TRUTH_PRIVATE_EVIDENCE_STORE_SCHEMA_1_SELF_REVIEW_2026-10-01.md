@@ -69,8 +69,12 @@ Read in this session for correction head `3b99d57581f362076dcbdf618f62d451c87f20
 
 The commit that writes these facts is a newer head. Those gates do not cover it.
 
+## R2 identity
+
+Review `5379062494` required the repository filename to match the Development migration history version created by the Technical Lead apply: `20261001121258_official_truth_private_evidence_store_schema_1`. I did not invent that timestamp. `git mv` renamed the one file. SHA-256 before and after is `2e4a715c7270e90e936e753232d191b0bcb2ce3ad455099ef9e812b182d50524`. The SQL was not edited. The static test already accepts exactly one `*_official_truth_private_evidence_store_schema_1.sql`, so I did not change its expectations. I did not run a remote Supabase command for this correction.
+
 ## Stop
 
-No Ready. No merge. No remote apply. No follow-up slice.
+No Ready. No merge. No second remote apply. No follow-up slice.
 
-**STOP for independent Technical-Lead re-review of the R1 correction head.**
+**STOP for independent Technical-Lead review of the R2 identity head.**

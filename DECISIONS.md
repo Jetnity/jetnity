@@ -5715,7 +5715,7 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 ## ADR-0217 – Official Evidence liegt in einem privaten, nicht exponierten Schema
 
 **Datum:** 1. Oktober 2026
-**Status:** Repository-Migration auf Draft-Branch `feat/official-truth-private-evidence-store-schema-1`, Draft PR #675. Nicht auf Development angewendet. Nicht auf Production angewendet. Kein Ready, kein Merge, kein PASS. Binding: `docs/OFFICIAL_TRUTH_PRIVATE_EVIDENCE_STORE_SCHEMA_1_TASK_2026-10-01.md`, Issue #674. Vertrag: ADR-0216.
+**Status:** Repository-Datei `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql` auf Draft-Branch `feat/official-truth-private-evidence-store-schema-1`, Draft PR #675. Diese Version ist die Development-History des Technical-Lead-Apply. Production ist nicht angewendet. Kein Ready, kein Merge. Binding: `docs/OFFICIAL_TRUTH_PRIVATE_EVIDENCE_STORE_SCHEMA_1_TASK_2026-10-01.md`, Issue #674. Vertrag: ADR-0216.
 
 **Entscheidung:**
 
@@ -5737,6 +5737,8 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 **Konsequenzen:** Die Auswertung einer konkreten Reise bleibt compute-on-read. Die Repository-Migration ist noch keine Datenbank. Eine spätere Server-Grenze muss Quellenzeilen entweder einfrieren oder die Behördenidentität auf der Version mitschreiben; dieser Slice kopiert sie nicht, weil ein zweites beschreibbares Feld ohne Trigger auseinanderlaufen kann. SQL beweist keine DNS-Zugehörigkeit und keine überlappenden Parent-/Child-Hostnamen. Ein Selbstbezug der Version verhindert keine Schleife, wenn ein späterer privilegierter Schreiber zwei Zeilen gegeneinander setzt. Diesen Folgeslice startet die Entscheidung nicht.
 
 **Nachtrag 1. Oktober 2026, R1-F1:** Ein PostgreSQL-`CHECK` lässt einen Ausdruck durch, der `NULL` ergibt. Die Modus-Zweige für Credential-Option, erforderlichen Wohnsitz und `travel_date` prüfen das jeweils nötige Kind deshalb zuerst mit `IS NOT NULL` und erst danach den Wert. `related_citizenship_country_code = NULL` bleibt der gewollte unverbundene Zustand und wird nicht verlangt. `not_applicable` verlangt weiterhin, dass die zugehörigen Kinder `NULL` sind. Die Korrektur steht in derselben Migration. Sie ist nicht remote angewendet.
+
+**Nachtrag 1. Oktober 2026, R2:** Der Technical Lead hat die angenommene SQL auf Development angewendet. Supabase hat dafür die History-Version `20261001121258_official_truth_private_evidence_store_schema_1` vergeben. Diese Version ist nicht von Hand erfunden. Die Repository-Datei heißt jetzt genauso. `git mv` hat sie von `20261001111642_official_truth_private_evidence_store_schema_1.sql` umbenannt. Die SQL-Bytes sind unverändert, SHA-256 `2e4a715c7270e90e936e753232d191b0bcb2ce3ad455099ef9e812b182d50524`. Cursor hat die Migration nicht erneut angewendet und Production nicht angefasst. Eine zweite Remote-Anwendung ist nicht nötig und nicht erlaubt.
 
 ---
 

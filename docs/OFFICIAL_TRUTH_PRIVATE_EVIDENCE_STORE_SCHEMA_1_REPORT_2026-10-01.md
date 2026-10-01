@@ -66,7 +66,7 @@ There is no `SECURITY DEFINER` function, no public RPC, no trigger, no cron, no 
 
 Allowlist only:
 
-- `supabase/migrations/20261001111642_official_truth_private_evidence_store_schema_1.sql`
+- `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql`
 - `lib/readiness/evidence-store-schema.test.ts`
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
@@ -186,8 +186,18 @@ Those inserts existed only in the throwaway database and were dropped with it.
 - Source class and authority live only on `official_sources`. A later privileged update of that row would change the identity seen by existing versions. This slice does not copy those fields onto the version, because a second writable copy would drift without a trigger.
 - Local PostgreSQL 16.15 is not evidence of the Development major version.
 
-## 9. Exact next step — proposal only
+## 9. R2 — repository version matches the Development history version
+
+Technical-Lead review `5379062494` is **CHANGES REQUIRED** after the Development-only apply.
+
+The Technical Lead applied the accepted SQL. Supabase recorded that apply as `20261001121258_official_truth_private_evidence_store_schema_1`. That version was not typed by hand in this session. The repository file created earlier by `supabase migration new` was `20261001111642_official_truth_private_evidence_store_schema_1.sql`.
+
+`git mv` renamed that one file to `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql`. SHA-256 before and after the rename is `2e4a715c7270e90e936e753232d191b0bcb2ce3ad455099ef9e812b182d50524`. The SQL bytes did not change. There is still one matching migration file. The static test already requires that single `*_official_truth_private_evidence_store_schema_1.sql` name, so its expectations were not edited.
+
+Cursor did not apply the migration again, did not repair remote history, and did not touch Production. Development already has the schema. No second remote apply is required or allowed.
+
+## 10. Exact next step — proposal only
 
 Do not dispatch from this slice.
 
-Independent Technical-Lead re-review is the next action. The R1 correction that those gates cover is `3b99d57581f362076dcbdf618f62d451c87f2067`. The commit that records the gates is a newer head and does not inherit them. Gates for `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover the correction. After an exact-head PASS, the Technical Lead may apply this one migration to Development and run readback plus security and performance advisors. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.
+Independent Technical-Lead review of the R2 identity head is the next action. Gates for `6952d6e44a1a73fee7e0ad07d33811059b7686ee` do not cover that head. Development already has this schema. Do not apply it again. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.

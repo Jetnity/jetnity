@@ -1,7 +1,7 @@
 # Official Truth Source/Evidence Architecture
 
 Date: 1 October 2026
-Status: **contract foundation merged in #673 / private evidence schema is a repository migration on Draft PR #675 / not applied to Development or Production / no provider activation**
+Status: **contract foundation merged in #673 / private evidence schema is on Draft PR #675 / Development history version `20261001121258` matches the repository file / Production not applied / no provider activation**
 Decision: ADR-0216, ADR-0217
 Product-Owner source: Issue #294 comment `5928669189`
 Task: `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_FOUNDATION_1_TASK_2026-10-01.md`
@@ -110,7 +110,7 @@ Timatic and Sherpa remain optional future adapters. They are not activated, cont
 
 ## 8. Private evidence store — repository schema only
 
-Supabase remains the intended evidence store. Draft PR #675 adds one repository migration and does not apply it.
+Supabase remains the intended evidence store. Draft PR #675 has one repository migration, `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql`. That version is the Development history version from the Technical Lead apply. It was not invented by hand. The SQL bytes are the same as the earlier `20261001111642` file. Cursor does not apply it again. Production is not applied.
 
 Tables, all in the unexposed schema `private`:
 
@@ -131,10 +131,10 @@ Security boundary of this migration:
 
 The migration does not prove DNS ownership, parent/child hostname overlap, geopolitical validity of an ISO-2 code, or that a version chain is acyclic under a later privileged update. A source row can exist before its first domain row. Source class and authority stay on `official_sources` so the version does not carry a second writable copy. A later adapter must freeze those source fields or snapshot them. This schema slice does not add that writer.
 
-No evidence row exists because of this migration. No store adapter exists. `requirementsProviderAus()` stays `null`. Development application is Technical-Lead-only after an exact-head PASS, followed by readback and security/performance advisors. Production remains a separate Product-Owner gate.
+No evidence row exists because of this migration. No store adapter exists. `requirementsProviderAus()` stays `null`. Development already has this schema under `20261001121258`. A second apply is not allowed. Production remains a separate Product-Owner gate.
 
 A later refresh may use existing `pg_cron`, a queue or another bounded worker only after a separate architecture and operations slice. This schema does not install or use `pgmq`.
 
 ## 9. Next step
 
-Not a dispatched slice. The next action is independent Technical-Lead review of Draft PR #675. After a PASS, the Technical Lead may apply this migration to Development only. That is not a Cursor action, not a Production migration, and not an adapter or provider slice.
+Not a dispatched slice. The next action is independent Technical-Lead review of the repository identity head. Development already has this schema. Cursor does not apply it again. Production remains a Product-Owner gate. This is not an adapter or provider slice.
