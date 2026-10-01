@@ -38,4 +38,6 @@ R1 acceptance still holds. Merging `main@d7c26688` did not change Reisende behav
 
 The full local suite now has two `initdb` ENOENT failures. The new one is the source-catalog PostgreSQL proof that came in with #686. It is the same missing binary, not a registry defect.
 
+Merging `main@a659bd90` (#695) also left Reisende behaviour unchanged. The My Trips files were not edited. The visual matrix again reported 1947 / 892 / 0 at 390×844. Local tests are 4233 pass / 2 fail, still only the two `initdb` ENOENT proofs.
+
 No follow-up slice is opened from this review.

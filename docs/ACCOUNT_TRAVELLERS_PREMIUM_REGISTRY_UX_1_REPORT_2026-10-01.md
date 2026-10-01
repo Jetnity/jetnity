@@ -6,9 +6,10 @@ Draft PR: #697
 Branch: `fix/account-travellers-premium-registry-ux-1`
 Baseline at dispatch: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
 Integrated main at R1: `98c9099bee1715f741e4aec87c2c386e9e5344ad` (#689)
-Final integration: `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` (merged #686 and #691; #689 already inside)
-Merge commit: `a3dc862587a09ee6d07e4d817acbda449c30f5d9`
-Merge-base with that main: the same SHA. This branch is 0 behind it. The merge was `ort` with no conflicts and no registry presentation edits.
+Earlier integration: `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` (merged #686 and #691; #689 already inside), merge commit `a3dc862587a09ee6d07e4d817acbda449c30f5d9`
+Final integration: `a659bd9080c66908a69fb3602214ee395a3e85e8` (merged #695 My Trips hub)
+Merge commit: `ccb1348b585d8db08a20c845470e153c3d4652ba`
+Merge-base with that main: the same SHA. This branch is 0 behind it. The merge was `ort` with no conflicts. #695 files were not edited. No registry presentation edits.
 
 Logical agent: **Jetnity Account travellers premium registry UX 1**, Generation 1
 Session: https://cursor.com/agents/bc-633ab0dd-da04-4405-bec7-0aa94806aba1
@@ -55,6 +56,18 @@ Technical Lead accepted the code and UX at `63086a3b` and held only for base fre
 - `npm run build`: success on the integrated tree, including the production TypeScript pass.
 - `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: exit 0. The schema check still prints LOCAL/UNAPPLIED for `admin_account_counts_v1`, `official_truth_store_accepted_v1`, and now `official_truth_source_catalog_v1` from the merged #686 migration. This slice did not add them.
 - Visual matrix on production `next start` after this build: exit 0. 390×844 remains 1947 / 892 / 0. Structured viewport and interaction metrics match the accepted matrix: 0 forms on first paint, add action above the first card, one management panel, equal-citizenship text, exact expiry sentence, delete confirmation, empty new citizenship and document defaults, edited document id `33333333-3333-4333-8333-333333333331`, inputs 16px, buttons at least 44px, no registry overflow, no console errors.
+
+Exact-head GitHub CI on `869530d3` was green for that earlier tip (`36920829770`: Typecheck, Lint & Build and Auth; Vercel deployment `cPfStbjpQsCS1LnoPWmT9gBc2UJJ`). That tip is no longer the review head.
+
+## Re-gate after main `a659bd90`
+
+Technical Lead asked to integrate merged #695. This re-gate changes no Reisende behaviour. #695 stays as merged.
+
+- `npm test`: 4233 pass / 2 fail. The same two `initdb` ENOENT proofs remain: trusted store and source catalog. The My Trips tests that arrived with #695 passed. This is not a registry regression.
+- `npm run lint`: exit 0. 0 errors, 148 existing warnings.
+- `npm run build`: success on the integrated tree.
+- Hygiene checks exit 0, with the same three LOCAL/UNAPPLIED schema notes.
+- Visual matrix exit 0. 390×844 remains 1947 / 892 / 0. Interaction metrics match the accepted matrix, including 0 first-paint forms, one management panel, and no console errors.
 
 Exact-head GitHub CI, Auth and Vercel belong to the pushed tip after this evidence commit. No further commit follows that CI run.
 

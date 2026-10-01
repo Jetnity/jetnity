@@ -14,11 +14,11 @@ Session: https://cursor.com/agents/bc-633ab0dd-da04-4405-bec7-0aa94806aba1
 
 Technical Lead R1 accepted `63086a3b3fd658c98cadb83693ab9a49be89dacf`. No behaviour correction was requested. The hold was base freshness after #691.
 
-Integrated `origin/main` `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` (merged #686 Source Catalog and #691 Account-home premium overview; #689 Registry→Preparation was already in the previous base). Merge commit: `a3dc862587a09ee6d07e4d817acbda449c30f5d9`. Strategy `ort`, no conflicts. Merge-base is that main SHA. The branch is 0 behind it.
+Integrated `origin/main` `a659bd9080c66908a69fb3602214ee395a3e85e8` (merged #695 My Trips hub). Merge commit: `ccb1348b585d8db08a20c845470e153c3d4652ba`. Strategy `ort`, no conflicts. Merge-base is that main SHA. The branch is 0 behind it. #695 files were not edited.
 
-Registry presentation files were not edited in the merge. #686, #689 and #691 stay intact.
+Earlier base `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` remains inside that main, so #686, #689 and #691 stay intact. Registry presentation files were not edited.
 
-The review head is the branch tip after the commit that records this re-gate. Read that SHA from the branch. Do not review `63086a3b` or `main`. No further commit follows the exact-head CI run on that tip.
+The review head is the branch tip after the commit that records this #695 re-gate. Read that SHA from the branch. Do not review `869530d3` or `main`. No further commit follows the exact-head CI run on that tip.
 
 Stay Draft. Do not Ready. Do not merge. Do not start a follow-up slice.
 
@@ -47,7 +47,7 @@ Read first:
 
 Chromium against `next start` and the audit fixture route. Not a signed-in account. Not a physical device. No Supabase mutation. No Production mutation.
 
-Local re-gate on the integrated tree: `npm test` 4226 pass / 2 fail. Both failures are `initdb` ENOENT. One is `lib/readiness/official-truth-store-server.test.ts`. The other is `lib/readiness/official-truth-source-catalog-server.test.ts` from merged #686. This VM has no PostgreSQL 16 binary. Lint exit 0. Build success. Hygiene checks exit 0. Visual matrix exit 0 with the same 390×844 figures 1947 / 892 / 0.
+Local re-gate after #695: `npm test` 4233 pass / 2 fail. Both failures are the same `initdb` ENOENT proofs. Lint exit 0. Build success. Hygiene checks exit 0. Visual matrix exit 0 with the same 390×844 figures 1947 / 892 / 0.
 
 Exact-head GitHub CI, Auth and Vercel belong to the pushed review tip. This file does not embed a run id.
 
