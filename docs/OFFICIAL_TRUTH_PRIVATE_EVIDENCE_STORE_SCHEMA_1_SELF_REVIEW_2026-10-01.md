@@ -59,6 +59,16 @@ Static test `mode checks fail closed when a required child is null` is in `lib/r
 
 CI and Preview for `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover this correction.
 
+Read in this session for correction head `3b99d57581f362076dcbdf618f62d451c87f2067` only:
+
+- GitHub CI run `36858435155` **SUCCESS**, event `pull_request`
+- Auth job `110356425778` **SUCCESS**
+- Typecheck, Lint & Build job `110356426704` **SUCCESS**
+- Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/De1DAXtqgL8oG5BJjMFpg5zj2sKD`
+- GitHub Preview deployment `6783588278` **success**, target `https://jetnity-pdmt06zdx-jetnity-e1b93c82.vercel.app`, direct GET HTTP 302 to Vercel SSO
+
+The commit that writes these facts is a newer head. Those gates do not cover it.
+
 ## Stop
 
 No Ready. No merge. No remote apply. No follow-up slice.

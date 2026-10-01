@@ -111,7 +111,13 @@ Throwaway PostgreSQL 16.15, database `jetnity_evidence_r1_proof`, `TimeZone = Eu
 
 Three synthetic versions remained after the rejected attempts. The database was then dropped. No remote migration command was run.
 
-R1 local checks on this working tree, before the correction head existed: `git diff --check` pass, operating-mode guard pass, schema test **8/8**, `npm test` **4141 pass / 0 fail**, `npm run typecheck` pass, `npm run lint` pass with 0 errors and 148 existing warnings, hygiene checks pass (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` still notes the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`, `check:setup:ci` pass with the existing missing-`.env` warning), `npm run build` pass on Next.js 16.3.8 with 25 static pages. Branch was 0 behind `main@0d6ff1846fe49ba614174c62b542373fc5454667`. The exact-head GitHub/Vercel gates for the correction commit are not inherited from section 6.
+R1 local checks on the correction working tree: `git diff --check` pass, operating-mode guard pass, schema test **8/8**, `npm test` **4141 pass / 0 fail**, `npm run typecheck` pass, `npm run lint` pass with 0 errors and 148 existing warnings, hygiene checks pass (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` still notes the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`, `check:setup:ci` pass with the existing missing-`.env` warning), `npm run build` pass on Next.js 16.3.8 with 25 static pages. Branch was 0 behind `main@0d6ff1846fe49ba614174c62b542373fc5454667`.
+
+Exact-head GitHub CI on correction head `3b99d57581f362076dcbdf618f62d451c87f2067`: **SUCCESS**. Run `36858435155`, event `pull_request`, https://github.com/Jetnity/jetnity/actions/runs/36858435155. Typecheck, Lint & Build job `110356426704` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110356425778` **SUCCESS**.
+
+Vercel Preview on that same SHA: GitHub commit status context `Vercel` **success** at `2026-10-01T11:56:08Z`. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/De1DAXtqgL8oG5BJjMFpg5zj2sKD`. GitHub deployment `6783588278`, environment **Preview**, state **success**, target `https://jetnity-pdmt06zdx-jetnity-e1b93c82.vercel.app`. A direct GET of that host returned HTTP 302 to Vercel SSO, so this session did not read public HTML or `data-dpl-id`.
+
+These remote gates belong only to `3b99d57581f362076dcbdf618f62d451c87f2067`. The commit that records them is a newer head. It does not inherit this CI, Auth job or Preview. Section 6 and review head `55c7956301c692ee52b8f47be0964fc9ab046c53` do not apply to it.
 
 Gates recorded below for `5a537ddb7107eef49779273b4556c38c25cfe679` and for review head `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover the R1 correction head.
 
@@ -184,4 +190,4 @@ Those inserts existed only in the throwaway database and were dropped with it.
 
 Do not dispatch from this slice.
 
-Independent Technical-Lead re-review of the R1 correction head is the next action. Gates for `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover that head. After an exact-head PASS, the Technical Lead may apply this one migration to Development and run readback plus security and performance advisors. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.
+Independent Technical-Lead re-review is the next action. The R1 correction that those gates cover is `3b99d57581f362076dcbdf618f62d451c87f2067`. The commit that records the gates is a newer head and does not inherit them. Gates for `55c7956301c692ee52b8f47be0964fc9ab046c53` do not cover the correction. After an exact-head PASS, the Technical Lead may apply this one migration to Development and run readback plus security and performance advisors. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.
