@@ -184,4 +184,7 @@ Local checks for the R3 correction, recorded before its push:
 | `npm run check:setup:ci` | pass, with the existing missing-`.env` warning |
 | `npm run build` | pass. Next.js 16.3.8 compiled and generated 25 static pages. |
 | Local `auth:pruefen` | not run. This environment has no Supabase auth secrets. |
-| Exact-head GitHub CI / Auth / Vercel on the R3 head | not observed yet. Do not reuse CI `36850293350`, Auth job `110330075014`, Typecheck/Lint/Build job `110330075378`, or Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj`. |
+| Exact-head GitHub CI on `016c8f4c16186d8c5e41a741dc02e0f5faa281c3` | **SUCCESS**. Run `36851531240`, event `pull_request`, https://github.com/Jetnity/jetnity/actions/runs/36851531240. Typecheck, Lint & Build job `110334071737` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110334071581` **SUCCESS**. |
+| Vercel Preview on that same SHA | GitHub commit status context `Vercel` **success** at `2026-10-01T10:50:03Z`. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/6o8bsHPmraMemy76XjKfdi7h3rzu`. GitHub deployment `6782369161`, environment **Preview**, state **success**, target `https://jetnity-rf0ke6kbq-jetnity-e1b93c82.vercel.app`. A direct GET of that host returned HTTP 302 to Vercel SSO, so this session did not read public HTML or `data-dpl-id`. |
+
+These remote gates belong only to `016c8f4c16186d8c5e41a741dc02e0f5faa281c3`. The commit that records them is a new head. It does not inherit this CI, Auth job or Preview. Do not reuse CI `36850293350`, Auth job `110330075014`, Typecheck/Lint/Build job `110330075378`, or Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj` from `23179348da1b842a19851dc656f37ad4ccae3fd6`. Parent and `main` gates do not apply.

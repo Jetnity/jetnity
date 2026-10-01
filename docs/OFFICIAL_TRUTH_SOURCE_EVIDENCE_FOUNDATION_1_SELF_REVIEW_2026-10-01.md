@@ -39,7 +39,9 @@ This is an author self-review. It is not an independent Technical-Lead PASS.
 
 ## Validation honesty
 
-Local checks for the R3 provenance correction, run before that commit, are listed in report section 10. Exact-head CI, Auth and Vercel for the R3 head are not observed here. CI `36850293350`, Auth job `110330075014`, Typecheck/Lint/Build job `110330075378` and Vercel Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj` belong only to `23179348da1b842a19851dc656f37ad4ccae3fd6`.
+Local checks for the R3 provenance correction, run before that commit, are listed in report section 10.
+
+Observed after push, only for `016c8f4c16186d8c5e41a741dc02e0f5faa281c3`: CI run `36851531240` **SUCCESS**, including Auth job `110334071581` and Typecheck, Lint & Build job `110334071737`. Vercel commit status **success**. GitHub Preview deployment `6782369161` **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/6o8bsHPmraMemy76XjKfdi7h3rzu`. The preview host redirected to Vercel SSO, so `data-dpl-id` was not read. The commit that writes this paragraph is a new head and is not covered by that run. CI `36850293350`, Auth job `110330075014`, Typecheck/Lint/Build job `110330075378` and Vercel Preview `dpl_6kC8h3kBQnJLkShpF3AsL73znYjj` belong only to `23179348da1b842a19851dc656f37ad4ccae3fd6`.
 
 Local checks for the R2 trust-boundary correction, run before that commit: targeted source-foundation tests 8/8, typecheck pass, lint 0 errors and 148 pre-existing warnings, `npm test` 4133 pass, hygiene checks pass, setup check pass with the existing missing-`.env` warning, production build pass, `git diff --check` and the operating-mode guard pass. `auth:pruefen` was not run locally.
 
