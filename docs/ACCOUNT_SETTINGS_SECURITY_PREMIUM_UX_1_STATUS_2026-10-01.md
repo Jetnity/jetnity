@@ -7,8 +7,8 @@ Status: **MAIN RE-GATE LOCAL GREEN — DRAFT — NOT A PASS**
 - Issue #698. Draft PR #699. Branch `fix/account-settings-security-premium-ux-1`.
 - Baseline `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`.
 - Accepted UX head `29123132a69ca93c4e3b58b3b9a83bea64dda25c`. No behavior correction was requested.
-- Current main integrated: `a659bd9080c66908a69fb3602214ee395a3e85e8` (Merge #695). Integration commit `d72325e248402465daa92d6d122dbf4116172a43`.
-- #695 is an ancestor and was not edited. Earlier ancestors remain: #686 `a2885fc7`, #689 `98c9099b`, #691 `d7c26688`.
+- Current main integrated: `08928f43197489e0ca4d2161f56c75037b077d08` (Merge #697). Integration commit `0835fba3840cb40feec29e8aa7eca858570fa3de`.
+- #697 is an ancestor and was not edited. Earlier ancestors remain: #686 `a2885fc7`, #689 `98c9099b`, #691 `d7c26688`, #695 `a659bd90`.
 - Settings/security runtime files are unchanged from `29123132`. This note updates only lane status and the repeated visual evidence.
 - No Ready. No merge. No follow-up slice.
 
@@ -37,6 +37,20 @@ Same harness, `next start`, synthetic session. `haupt` is the `<main>` scroll he
 Settings first paint: password and confirmation inputs 1 → 0. Security first paint: nonce field hidden, confirmation-code button hidden, TOTP enroll calls 0, passkeys `unsupported`, session `current`. Idle security still makes the existing 3 auth reads (password session, current session, factor list). Opening the password summary adds no POST.
 
 Full matrix, 0 problems: 320×568, 360×800, 390×844, 412×915, 430×932, 768×1024, 820×1180, 1024×768, 1280×800, 1440×900, 1728×1117, 1920×1080, 844×390, 200% text at 360×800, desktop zoom 125% and 150%. Checked: no horizontal overflow, no nav overlap, targets ≥44px, compact inputs ≥16px, deletion open, password open, TOTP empty, TOTP enroll, security error. Enroll response contains no `otpauth`. Evidence: `docs/evidence/account-settings-security-premium-ux-1/`.
+
+## Main re-gate on `08928f43`
+
+Repeated after integrating merged #697. Presentation files did not change. Branch is 0 behind that main.
+
+- `npm test`: 4238/4238 pass.
+- `npm run typecheck`: pass.
+- `npx eslint .`: 0 errors, 148 warnings. The pre-existing `SecurityMFA` effect warning remains. It was not changed.
+- `npm run build`: pass.
+- `git diff --check`: pass.
+- Full visual matrix again, 35 findings, 0 problems. `<main>` height is unchanged: settings 390×844 = 1327, settings 1440×900 = 853, security 390×844 = 2342, security 1440×900 = 1463. Credential inputs stay hidden. Passkeys stay `unsupported`. Idle enroll stays 0.
+- Evidence: `docs/evidence/account-settings-security-premium-ux-1/nachher-main-08928f43.json`.
+
+CI, Auth, and Vercel run on the branch tip that contains this re-gate note. They are not rewritten by a later commit.
 
 ## Main re-gate on `a659bd90`
 
@@ -93,4 +107,4 @@ CI, Auth, and Vercel run on the branch tip that contains this re-gate note. They
 
 ## Next step
 
-FINAL Technical-Lead review of the branch tip after the `a659bd90` re-gate. Stay Draft. Do not Ready. Do not merge. Do not start a follow-up.
+FINAL Technical-Lead review of the branch tip after the `08928f43` re-gate. Stay Draft. Do not Ready. Do not merge. Do not start a follow-up.
