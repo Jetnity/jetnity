@@ -4,7 +4,7 @@ Stand: 1. Oktober 2026
 
 Dies ist die Prüfung des umsetzenden Agenten. Sie ist **kein** unabhängiger Technical-Lead-PASS, kein Ready und kein Merge.
 
-Geprüfter Code: `4bb907e829d0130ac365b49561d22e750cbada37`
+Geprüfter Code: `d9ad81ea920fe3197085343aab12e34f8394e742`
 Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c4
 `originalModelName`: `grok-4.7-high-fast`
 
@@ -17,7 +17,8 @@ Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c4
 - Widerruf zeigt zuerst die Frage, dann „Ja, widerrufen“ und „Abbrechen“.
 - Leer und Fehler sind verschiedene Sätze. Im Fehler fehlt die Hinzufügen-Aktion.
 - Ziele unter 44 px: keine in der Verwaltung. Schriften unter 640 px: 16 px.
-- Konsole leer. 4231 Tests, Typecheck, Lint ohne neue Fehler, Hygiene, Build und 137 visuelle Messungen ohne Befund.
+- Konsole leer. 4238 Tests, Typecheck, Lint ohne neue Fehler, Hygiene inklusive 0 Exporte ohne Aufrufer, Build und 137 visuelle Messungen ohne Befund.
+- Der rote CI-Lauf `36915104158` auf `ddc52b6c` betraf genau `besuchVerwaltungSuchtext`. Die Funktion ist privat und wird von der lokalen Suche aufgerufen. Das ist der ganze Fix, kein Kartenumbau.
 
 ## Was ein unabhängiges Review noch ansehen sollte
 

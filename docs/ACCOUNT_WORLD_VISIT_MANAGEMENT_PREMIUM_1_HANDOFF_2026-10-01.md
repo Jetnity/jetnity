@@ -7,7 +7,7 @@ Issue: #692
 Draft PR: #693
 Branch: `fix/account-world-visit-management-premium-1`
 Baseline des Tasks: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
-Merge-Base gegen `origin/main`: `d7c266886ae20c1cc5a7413ab87cb1a85171cc27`
+Merge-Base gegen `origin/main`: `a659bd9080c66908a69fb3602214ee395a3e85e8`
 Task: `docs/ACCOUNT_WORLD_VISIT_MANAGEMENT_PREMIUM_1_TASK_2026-10-01.md`
 Bericht: `docs/ACCOUNT_WORLD_VISIT_MANAGEMENT_PREMIUM_1_REPORT_2026-10-01.md`
 Self-Review: `docs/ACCOUNT_WORLD_VISIT_MANAGEMENT_PREMIUM_1_SELF_REVIEW_2026-10-01.md`
@@ -22,11 +22,11 @@ Betriebsmodus beim Start: `NORMAL`. Diese Arbeit ist ein freigegebenes, begrenzt
 
 ## Exakter Kopf
 
-Der Code, den die Gates und der visuelle Audit gelaufen sind, ist `4bb907e829d0130ac365b49561d22e750cbada37`.
+Der Code, den die Gates und der visuelle Audit nach dem letzten Main-Merge gelaufen sind, ist `d9ad81ea920fe3197085343aab12e34f8394e742`.
 
-Die Evidenz und diese Dokumente liegen auf dem Branch-Tip. `git diff 4bb907e829d0130ac365b49561d22e750cbada37 HEAD -- app components lib scripts` muss leer sein.
+Die Evidenz und diese Dokumente liegen auf dem Branch-Tip. `git diff d9ad81ea920fe3197085343aab12e34f8394e742 HEAD -- app components lib scripts` muss leer sein.
 
-Der Review-Kopf ist der Branch-Tip. Gegen `origin/main` ist der Branch 0 hinter main. Integriert sind #689, #686 und #691 nur durch Merge von main.
+Der Review-Kopf ist der Branch-Tip. Gegen `origin/main` ist der Branch 0 hinter main. Integriert nur durch Merge von main: #686, #689, #691 und #695.
 
 ## Geänderte Dateien dieser Lane
 
@@ -42,19 +42,21 @@ Der Review-Kopf ist der Branch-Tip. Gegen `origin/main` ist der Branch 0 hinter 
 - `docs/evidence/account-world-visit-management-premium-1/`
 - der Task, dieser Handoff, der Bericht, das Self-Review
 
-Nicht angefasst: `AccountWeltKarte.tsx`, `AccountUebersicht.tsx`, `AccountAuditClient.tsx`, `AccountNavigation.tsx`, Weltkarten-Wahrheit, Projektion, Besuchspersistenz, Besuch-Aktionen, Supabase, Auth, Trip Workspace, Design-Tokens, `package.json`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`. #686, #689 und #691 kamen nur durch den Merge von main. Die Dichte von 40 Ereignissen ist `?dichte=40` auf der bestehenden Audit-Route, nicht eine Änderung von `AccountAuditClient.tsx`.
+Nicht angefasst: `AccountWeltKarte.tsx`, `AccountUebersicht.tsx`, `AccountAuditClient.tsx`, `AccountNavigation.tsx`, Weltkarten-Wahrheit, Projektion, Besuchspersistenz, Besuch-Aktionen, Supabase, Auth, Trip Workspace, Design-Tokens, `package.json`, `ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`. #686, #689, #691 und #695 kamen nur durch den Merge von main. Die Dichte von 40 Ereignissen ist `?dichte=40` auf der bestehenden Audit-Route, nicht eine Änderung von `AccountAuditClient.tsx`.
 
 ## Prüfung
 
-Am Arbeitsbaum, der `4bb907e8` entspricht:
+CI `36915104158` auf dem Zwischenkopf `ddc52b6c` ist an **Exporte ohne Aufrufer** rot geworden: `besuchVerwaltungSuchtext` war exportiert und hatte keinen Aufrufer ausserhalb der Datei. Die Funktion ist seit `4bb907e8` privat und wird nur von `besucheLokalFiltern` benutzt. Auth auf demselben alten Lauf war grün. Der Zwischenkopf ist nicht der Review-Kopf.
+
+Am Arbeitsbaum, der `d9ad81ea` entspricht, nach Merge von `main@a659bd90`:
 
 - `git diff --check`: sauber
-- `npm test`: 4231 bestanden, 0 fehlgeschlagen
+- `npm test`: 4238 bestanden, 0 fehlgeschlagen
 - `npm run typecheck`: bestanden
 - `npm run lint`: 0 Fehler, 148 bestehende Warnungen
-- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: bestanden. `check:schema-bezug` meldet weiter die schon bekannten LOCAL/UNAPPLIED-RPCs anderer Lanes und beendet sich mit Erfolg.
+- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: bestanden. `check:exports` meldet 0 Exporte ohne Aufrufer. `check:schema-bezug` meldet weiter die schon bekannten LOCAL/UNAPPLIED-RPCs anderer Lanes und beendet sich mit Erfolg.
 - `npm run build`: bestanden
-- visueller Audit: 137 Messungen, 0 Befunde, leere Konsole, kein neuer Request aus Suche oder Formularöffnung
+- visueller Audit: 137 Messungen, 0 Befunde, leere Konsole, kein neuer Request aus Suche oder Formularöffnung. Die Höhen unten sind auf diesem Kopf erneut gemessen und unverändert.
 
 ## Gemessene Höhe
 

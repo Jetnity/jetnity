@@ -14,7 +14,9 @@ Cursor-Session: https://cursor.com/agents/bc-809e6d21-da18-4e7d-992f-31eff656e0c
 Generation: 1
 Logical agent: Jetnity Account world visit management premium UX 1
 
-Der exakte Branch-Kopf steht im Handoff. Der geprüfte Code ist `4bb907e829d0130ac365b49561d22e750cbada37`.
+Der exakte Branch-Kopf steht im Handoff. Der geprüfte Code nach dem Merge von `main@a659bd90` ist `d9ad81ea920fe3197085343aab12e34f8394e742`.
+
+CI `36915104158` auf `ddc52b6c` scheiterte nur an dem unbenutzten Export `besuchVerwaltungSuchtext`. Der Export ist entfernt. `check:exports` auf dem neuen Kopf meldet 0. #695 ist per Merge erhalten, ohne Besuchskarte und ohne `AccountWeltKarte.tsx`.
 
 ## Entscheidung
 
