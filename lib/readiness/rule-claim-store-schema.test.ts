@@ -9,6 +9,11 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
+import {
+  evidenceKandidatAkzeptieren,
+  evidenceKandidatAusModell,
+  type EvidenceVersion,
+} from '@/lib/readiness/evidence'
 import { OFFICIAL_ACTION_PURPOSES, OFFICIAL_VISA_MODES } from '@/lib/readiness/official'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 import {
@@ -17,7 +22,11 @@ import {
   REGEL_FAKT_ARTEN,
   REGEL_SCOPE_PRAEFIX,
   REGEL_TRANSIT_MINUTEN_MAX,
+  regelKandidatAkzeptieren,
+  regelKandidatErstellen,
+  type RegelTransitPfad,
 } from '@/lib/readiness/rule-claims'
+import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 import {
   OFFICIAL_TEMPORAL_ANCHORS,
   OFFICIAL_TEMPORAL_DUE_SEMANTICS,
@@ -31,6 +40,43 @@ const ROOT = process.cwd()
 const MIGRATION_DIR = join(ROOT, 'supabase/migrations')
 const MIGRATION_SUFFIX = '_official_truth_accepted_rule_claim_persistence_schema_1.sql'
 const API_ROLES = ['public', 'anon', 'authenticated', 'service_role'] as const
+
+const INTEGRITY_FUNCTIONS = [
+  'private.official_rule_claim_transit_airports_ok(text[])',
+  'private.official_rule_claim_fact_payload_present(bigint, text)',
+  'private.official_rule_claim_require_fact_payload()',
+] as const
+
+const FACT_TABLES = [
+  'official_rule_claim_requirement_effect',
+  'official_rule_claim_visa_options',
+  'official_rule_claim_stay_limit',
+  'official_rule_claim_passport_validity',
+  'official_rule_claim_blank_pages',
+  'official_rule_claim_transit_paths',
+  'official_rule_claim_actions',
+  'official_rule_claim_temporal_rule',
+] as const
+
+const SIEBZEHN_FLUGHAFEN = [
+  'AAA',
+  'AAB',
+  'AAC',
+  'AAD',
+  'AAE',
+  'AAF',
+  'AAG',
+  'AAH',
+  'AAI',
+  'AAJ',
+  'AAK',
+  'AAL',
+  'AAM',
+  'AAN',
+  'AAO',
+  'AAP',
+  'AAQ',
+] as const
 
 const CLAIM_TABLES = [
   'official_rule_claims',
@@ -130,6 +176,21 @@ function quotedIn(body: string, column: string): string[] {
   return [...match[1].matchAll(/'([^']+)'/g)].map((item) => item[1])
 }
 
+function constraintTail(sql: string, name: string): string {
+  const at = sql.toLowerCase().indexOf(name.toLowerCase())
+  assert.ok(at >= 0, name)
+  const next = sql.toLowerCase().indexOf('\n  constraint ', at + name.length)
+  return sql.slice(at, next > at ? next : at + name.length)
+}
+
+function functionText(sql: string, name: string): string {
+  const at = sql.toLowerCase().indexOf(`create function ${name}`.toLowerCase())
+  assert.ok(at >= 0, name)
+  const end = sql.indexOf('$$;', at)
+  assert.ok(end > at, name)
+  return sql.slice(at, end)
+}
+
 function annehmbareQualitaet(): string[] {
   const source = readFileSync(join(ROOT, 'lib/readiness/rule-claims.ts'), 'utf8')
   const match = source.match(/const ANNEHMBARE_QUALITAET = \[([\s\S]*?)\] as const/)
@@ -144,14 +205,14 @@ describe('accepted rule claim persistence schema', () => {
   test('one repository migration and no runtime side channel', () => {
     const creates = [
       ...sql.matchAll(
-        /\bcreate\s+(?:or\s+replace\s+)?(?:unique\s+)?(schema|table|function|index|trigger|policy|extension|view|type|role|sequence|publication)\b/gi,
+        /\bcreate\s+(?:or\s+replace\s+)?(?:unique\s+|constraint\s+)?(schema|table|function|index|trigger|policy|extension|view|type|role|sequence|publication)\b/gi,
       ),
     ].map((match) => match[1].toLowerCase())
     const count = (kind: string) => creates.filter((item) => item === kind).length
     assert.equal(count('table'), CLAIM_TABLES.length)
     assert.equal(count('schema'), 0)
-    assert.equal(count('function'), 0)
-    assert.equal(count('trigger'), 0)
+    assert.equal(count('function'), INTEGRITY_FUNCTIONS.length)
+    assert.equal(count('trigger'), 1 + FACT_TABLES.length)
     assert.equal(count('policy'), 0)
     assert.equal(count('extension'), 0)
     assert.equal(count('view'), 0)
@@ -398,11 +459,11 @@ describe('accepted rule claim persistence schema', () => {
     assert.match(sql, /departure_mode in \('air', 'land', 'sea'\)/i)
     assert.match(sql, new RegExp(`max_transit_duration_minutes between 1 and ${REGEL_TRANSIT_MINUTEN_MAX}\\b`))
     assert.equal(REGEL_TRANSIT_MINUTEN_MAX, 14 * 24 * 60)
-    assert.match(sql, /cardinality\(transit_airport_codes\) between 1 and 16/i)
-    assert.equal(
-      sql.includes("transit_airport_codes::text ~ '^\\{[A-Z]{3}(,[A-Z]{3}){0,15}\\}$'"),
-      true,
-    )
+    assert.doesNotMatch(sql, /between 1 and 16/i)
+    assert.equal(sql.includes('{0,15}'), false)
+    const airports = extractParen(sql, 'constraint official_rule_claim_transit_paths_airports check')
+    assert.match(airports, /transit_airport_codes is null/i)
+    assert.match(airports, /private\.official_rule_claim_transit_airports_ok\(transit_airport_codes\)/i)
     assert.match(
       extractParen(sql, 'constraint official_rule_claim_transit_paths_some_condition check'),
       /crosses_border_control is not null[\s\S]*onward_ticket_required is not null/i,
@@ -439,5 +500,213 @@ describe('accepted rule claim persistence schema', () => {
     assert.match(extractParen(sql, 'constraint official_rule_claim_temporal_rule_some_group check'), /available_from_anchor is not null/i)
     assert.match(extractParen(sql, 'constraint official_rule_claim_temporal_rule_same_anchor check'), /when 'before' then -available_from_offset_minutes/i)
     assert.equal(OFFICIAL_TEMPORAL_OFFSET_MAX_MINUTES, 2 * 365 * 24 * 60)
+  })
+
+  test('airport helper has no finite maximum and keeps canonical IATA order', () => {
+    const helper = functionText(sql, 'private.official_rule_claim_transit_airports_ok(codes text[])')
+    assert.match(helper, /language sql/i)
+    assert.match(helper, /immutable/i)
+    assert.match(helper, /security invoker/i)
+    assert.match(helper, /set search_path = pg_catalog/i)
+    assert.match(helper, /cardinality\(codes\) >= 1/i)
+    assert.match(helper, /code ~ '\^\[A-Z\]\{3\}\$'/i)
+    assert.match(helper, /item\.code > item\.previous/i)
+    assert.doesNotMatch(helper, /between 1 and \d+/i)
+    assert.doesNotMatch(helper, /\{0,\d+\}/)
+    for (const role of API_ROLES) {
+      assert.match(
+        sql,
+        new RegExp(`revoke all on function private\\.official_rule_claim_transit_airports_ok\\(text\\[\\]\\) from ${role}\\b`, 'i'),
+      )
+    }
+  })
+
+  test('deferred fact payload trigger requires one matching row and does not count supports', () => {
+    const present = functionText(sql, 'private.official_rule_claim_fact_payload_present(claim bigint, kind text)')
+    assert.match(present, /language sql/i)
+    assert.match(present, /stable/i)
+    assert.match(present, /security invoker/i)
+    assert.match(present, /set search_path = pg_catalog/i)
+    assert.deepEqual(
+      [...present.matchAll(/when '([^']+)'/g)].map((item) => item[1]),
+      [...REGEL_FAKT_ARTEN],
+    )
+    for (const table of FACT_TABLES) {
+      assert.match(present, new RegExp(`from private\\.${table} where claim_id = claim`, 'i'))
+    }
+    assert.doesNotMatch(present, /official_rule_claim_support/i)
+    assert.doesNotMatch(present, /\bcount\s*\(/i)
+
+    const trigger = functionText(sql, 'private.official_rule_claim_require_fact_payload()')
+    assert.match(trigger, /language plpgsql/i)
+    assert.match(trigger, /security invoker/i)
+    assert.match(trigger, /set search_path = pg_catalog/i)
+    assert.match(trigger, /private\.official_rule_claim_fact_payload_present\(candidate, kind\)/i)
+    assert.match(trigger, /no persisted % fact payload/i)
+    assert.match(trigger, /errcode = '23514'/i)
+    assert.doesNotMatch(trigger, /official_rule_claim_support/i)
+    assert.doesNotMatch(trigger, /\bcount\s*\(/i)
+
+    assert.match(
+      sql,
+      /create constraint trigger official_rule_claims_fact_payload\s+after insert or update on private\.official_rule_claims\s+deferrable initially deferred\s+for each row\s+execute function private\.official_rule_claim_require_fact_payload\(\)/i,
+    )
+    for (const table of FACT_TABLES) {
+      assert.match(
+        sql,
+        new RegExp(
+          `create constraint trigger ${table}_fact_payload\\s+after insert or update or delete on private\\.${table}\\s+deferrable initially deferred\\s+for each row\\s+execute function private\\.official_rule_claim_require_fact_payload\\(\\)`,
+          'i',
+        ),
+      )
+      const foreignKey = constraintTail(sql, `constraint ${table}_fk`)
+      assert.match(foreignKey, /deferrable initially deferred/i)
+    }
+    assert.doesNotMatch(constraintTail(sql, 'constraint official_rule_claim_support_claim_fk'), /deferrable/i)
+
+    for (const signature of INTEGRITY_FUNCTIONS) {
+      for (const role of API_ROLES) {
+        assert.match(sql, new RegExp(`revoke all on function ${signature.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} from ${role}\\b`, 'i'))
+      }
+    }
+    assert.doesNotMatch(sql, /\bsecurity\s+definer\b/i)
+    assert.doesNotMatch(sql, /\bgrant\b/i)
+  })
+})
+
+const ABGERUFEN = '2026-10-01T12:00:00.000Z'
+
+function registry(): QuellenRegistry {
+  const ergebnis = quellenRegistryErstellen([
+    {
+      sourceId: 'example-border-authority',
+      sourceClass: 'official_authority',
+      publisherName: 'Example Border Authority',
+      authorityName: 'Example Border Authority',
+      domains: ['gov.example'],
+    },
+  ])
+  assert.equal(ergebnis.ok, true)
+  if (!ergebnis.ok) throw new Error('registry')
+  return ergebnis.registry
+}
+
+function atom(teil?: Record<string, unknown>) {
+  return {
+    sourceId: 'example-border-authority',
+    destinationCountryCode: 'JP',
+    transitCountryCode: null,
+    citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
+    credentialOption: {
+      mode: 'option',
+      documentType: 'passport',
+      issuingCountryCode: 'CH',
+      relatedCitizenshipCountryCode: 'CH',
+    },
+    residence: { mode: 'not_applicable' },
+    requirementType: 'transit',
+    validity: { mode: 'travel_date', travelDate: '2026-10-01' },
+    ...teil,
+  }
+}
+
+function version(basis: QuellenRegistry): EvidenceVersion {
+  const erzeugt = evidenceKandidatAusModell(
+    { scope: atom() },
+    {
+      canonicalUrl: 'https://www.gov.example/rules/transit',
+      retrievedAt: ABGERUFEN,
+      sourceSnapshot: 'siebzehn flughaefen',
+    },
+    basis,
+  )
+  assert.equal(erzeugt.ok, true)
+  if (!erzeugt.ok) throw new Error('kandidat')
+  const akzeptiert = evidenceKandidatAkzeptieren(erzeugt.evidence, basis)
+  assert.equal(akzeptiert.ok, true)
+  if (!akzeptiert.ok) throw new Error('akzeptanz')
+  return akzeptiert.evidence
+}
+
+function leerPfad(codes: readonly string[] | null): RegelTransitPfad {
+  return {
+    crossesBorderControl: null,
+    leavesTransitArea: null,
+    transitAirportCodes: codes,
+    maxTransitDurationMinutes: null,
+    arrivalMode: null,
+    departureMode: null,
+    thirdCountryRequired: null,
+    sameFlightRequired: null,
+    onwardTicketRequired: null,
+  }
+}
+
+describe('canonical transit airport acceptance', () => {
+  test('seventeen sorted IATA codes are accepted and a malformed code is rejected', () => {
+    const basis = registry()
+    const belegt = version(basis)
+    const kandidat = regelKandidatErstellen(
+      {
+        scope: belegt.scope,
+        factKind: 'transit_conditions',
+        evidenceQuality: 'explicit_primary_statement',
+        supportVersionIds: [belegt.versionId],
+        proposal: null,
+      },
+      basis,
+    )
+    assert.equal(kandidat.ok, true)
+    if (!kandidat.ok) return
+
+    const akzeptiert = regelKandidatAkzeptieren({
+      kandidat: kandidat.kandidat,
+      trustedRuleFact: {
+        kind: 'transit_conditions',
+        paths: [leerPfad(SIEBZEHN_FLUGHAFEN)],
+      },
+      evidenceVersions: [belegt],
+      registry: basis,
+    })
+    assert.equal(akzeptiert.ok, true)
+    if (!akzeptiert.ok || akzeptiert.claim.fact.kind !== 'transit_conditions') return
+    assert.deepEqual(akzeptiert.claim.fact.paths[0]?.transitAirportCodes, [...SIEBZEHN_FLUGHAFEN])
+
+    const unsortiert = regelKandidatAkzeptieren({
+      kandidat: kandidat.kandidat,
+      trustedRuleFact: {
+        kind: 'transit_conditions',
+        paths: [leerPfad([...SIEBZEHN_FLUGHAFEN].reverse())],
+      },
+      evidenceVersions: [belegt],
+      registry: basis,
+    })
+    assert.equal(unsortiert.ok, true)
+    if (!unsortiert.ok || unsortiert.claim.fact.kind !== 'transit_conditions') return
+    assert.deepEqual(unsortiert.claim.fact.paths[0]?.transitAirportCodes, [...SIEBZEHN_FLUGHAFEN])
+
+    const doppelt = regelKandidatAkzeptieren({
+      kandidat: kandidat.kandidat,
+      trustedRuleFact: {
+        kind: 'transit_conditions',
+        paths: [leerPfad([SIEBZEHN_FLUGHAFEN[16], ...SIEBZEHN_FLUGHAFEN])],
+      },
+      evidenceVersions: [belegt],
+      registry: basis,
+    })
+    assert.equal(doppelt.ok, true)
+    if (!doppelt.ok || doppelt.claim.fact.kind !== 'transit_conditions') return
+    assert.deepEqual(doppelt.claim.fact.paths[0]?.transitAirportCodes, [...SIEBZEHN_FLUGHAFEN])
+
+    const fehlerhaft = regelKandidatAkzeptieren({
+      kandidat: kandidat.kandidat,
+      trustedRuleFact: {
+        kind: 'transit_conditions',
+        paths: [leerPfad(['aaa'])],
+      },
+      evidenceVersions: [belegt],
+      registry: basis,
+    })
+    assert.deepEqual(fehlerhaft, { ok: false, reason: 'invalid_fact' })
   })
 })

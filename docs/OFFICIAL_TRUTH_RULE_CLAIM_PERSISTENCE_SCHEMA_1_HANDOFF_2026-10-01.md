@@ -38,8 +38,8 @@ Read first:
 - Issue #678 is OPEN.
 - The Supabase CLI was not on PATH. The official `2.48.3` binary was used only to create the empty migration file. It was not used to push, repair, reset or apply a remote migration. Gitignored `supabase/.temp/cli-latest` was removed after the CLI wrote it.
 - Local proof used throwaway PostgreSQL 16.15 and was dropped. Development and Production were not contacted. Development is stated as PostgreSQL 17.6 by the task and was not re-queried.
-- Static schema test: **9/9 pass**.
-- `npm test`: **4168 pass / 0 fail**.
+- Static schema test: **12/12 pass**.
+- `npm test`: **4171 pass / 0 fail**.
 - `npm run typecheck`: pass.
 - `npm run lint`: 0 errors, 148 pre-existing warnings. None are in the new schema test.
 - Hygiene: operating-mode guard PASS, API protection PASS, schema reference PASS with the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`, dead-code 0, unused exports 0, unused packages 0, `git diff --check` pass.
@@ -50,9 +50,9 @@ Read first:
 
 ## Writer boundary the next slice must keep
 
-The later trusted writer calls `regelKandidatAkzeptieren()` and persists only the returned `AkzeptierteRegelClaim`. It derives `rule_scope_key` in TypeScript. It writes the matching fact rows and the support rows. SQL will reject a licensed provider, a candidate evidence version, a bad duration, and a wrong fact kind. SQL will not reject an empty support list, a missing fact row, or a key that does not match the typed columns.
+The later trusted writer calls `regelKandidatAkzeptieren()` and persists only the returned `AkzeptierteRegelClaim`. It derives `rule_scope_key` in TypeScript. It writes the matching fact rows and the support rows. SQL will reject a licensed provider, a candidate evidence version, a bad duration, a wrong fact kind, a claim with no matching fact payload, and a non-canonical airport list. SQL will not reject an empty support list or a key that does not match the typed columns.
 
-Airport cardinality 1..16 is enforced in SQL and is not currently enforced by `flughaefenLesen`. Do not edit the TypeScript contract inside this slice. The writer must respect the database bound until a later slice aligns the reader.
+Airport lists have no finite maximum. A present list must be non-empty, IATA-shaped, sorted and unique. `flughaefenLesen` still canonicalizes a valid list. Persist that canonical list. Do not edit the TypeScript contract inside this slice.
 
 ## Stop
 

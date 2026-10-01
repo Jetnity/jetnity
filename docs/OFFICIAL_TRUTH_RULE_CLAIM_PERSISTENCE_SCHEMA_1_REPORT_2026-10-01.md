@@ -79,16 +79,16 @@ These stay with the later trusted writer, which must call `regelKandidatAkzeptie
 
 - minimum support count
 - distinct official `source_id` count for composed quality
-- a non-empty visa-option, transit-path or official-action set
-- a fact row existing for every claim row
 - equality between `rule_scope_key` and the typed scope columns
 - host-to-source resolution of an official-action href
 
-There is no trigger and no counting function. The href check is a canonical HTTPS shape only.
+There is no trigger and no counting function for support count or distinct sources. The href check is a canonical HTTPS shape only.
 
 `unique (rule_scope_key, fact_kind)` means this table is the current accepted fact, not a history of replacements. A later supersession model would be a new decision.
 
-Airport codes are limited to 1..16 sorted unique IATA-shaped values because the binding task requires that bound. `flughaefenLesen` in `lib/readiness/rule-claims.ts` does not currently cap the count. This slice does not edit that contract. A later writer must stay inside the database bound, or a later slice must align the TypeScript reader. The database does not prove that an airport exists.
+Technical-Lead review R1 corrected two earlier residuals. A present airport list has no finite maximum. `private.official_rule_claim_transit_airports_ok` requires it to be non-empty, IATA-shaped, strictly sorted and unique. The database does not prove that an airport exists. `lib/readiness/rule-claims.ts` was not edited. `flughaefenLesen` still canonicalizes duplicates and unsorted input and still rejects a malformed code. Persistence stores the canonical list.
+
+Every accepted claim must have at least one matching fact row at commit. A deferred constraint trigger enforces that. Scalar kinds keep their one-row primary key. `visa_options`, `transit_conditions` and `official_actions` require at least one row. Deleting the last matching fact row while the claim remains fails at commit. The fact-table foreign keys to the claim are deferred, so claim and fact can be inserted in either order in one transaction. The trigger does not reimplement acceptance.
 
 ## 4. Security boundary
 
@@ -96,7 +96,7 @@ Airport codes are limited to 1..16 sorted unique IATA-shaped values because the 
 
 RLS is enabled and forced on all ten new tables. There is no policy. On Supabase, `service_role` bypasses RLS, so the migration also revokes that role on every new table. The revoke is the control for `service_role`. RLS without a policy is the control for roles that do not bypass RLS.
 
-There is no `SECURITY DEFINER` function, no public RPC, no trigger, no cron, no queue and no HTTP call. No new column stores a user, account, trip, traveller, passport number, MRZ, biometric, date of birth, name, email, phone or health record. Health and vaccination requirement types remain regulatory metadata.
+There is no `SECURITY DEFINER` function, no public RPC, no cron, no queue and no HTTP call. Three private `security invoker` functions exist: the immutable airport helper, the stable fact-payload predicate, and the deferred constraint-trigger function. Each sets `search_path = pg_catalog`. `EXECUTE` is revoked from `PUBLIC`, `anon`, `authenticated` and `service_role`. Nine constraint triggers are `deferrable initially deferred`. No new column stores a user, account, trip, traveller, passport number, MRZ, biometric, date of birth, name, email, phone or health record. Health and vaccination requirement types remain regulatory metadata.
 
 ## 5. Local proof
 
@@ -105,6 +105,8 @@ Throwaway PostgreSQL 16.15 accepted both the existing evidence migration and thi
 It rejected, with the expected SQLSTATE: candidate lifecycle, `research_gap`, a second accepted fact for the same scope and kind, visa options on `passport_validity`, a null document type, a required residence without a country, a travel-date mode without a date, a related citizenship outside the set, effect `unknown`, `required` plus `visa_exempt`, `not_required` plus `visa_on_arrival`, a non-visa effect with a visa mode, visa option `unknown`, ordinal 5, a duplicate visa mode, a stay row with no duration, 3661 days, a same-unit rolling window that is not greater, a duration on `valid_on_entry`, blank pages 0 and 11, 20161 transit minutes, a transit path with no condition, unsorted airport codes, support of candidate evidence, a licensed support class, a licensed source forced to `official_authority`, a licensed action source, an empty temporal rule, a non-zero `at` offset, an impossible same-anchor window, an evidence lifecycle change while a support row exists, and a fact row whose kind does not match the claim.
 
 Ten claim tables had forced RLS, zero policies, and no grant to `anon`, `authenticated`, `service_role` or `PUBLIC`. The database was dropped. Development and Production were not contacted.
+
+The R1 correction was proved again on throwaway PostgreSQL 16.15 and then dropped. The same canonical 17-code list accepted by `regelKandidatAkzeptieren` was stored as a transit path. A 40-code sorted list was also accepted. Unsorted, duplicate, malformed and empty airport arrays were rejected. A claim with no fact row failed at the deferred check for `requirement_effect`, `visa_options`, `transit_conditions` and `official_actions`. Each of the eight fact kinds committed with a matching payload. A second scalar fact row still failed the primary key. Deleting one of two visa options committed. Deleting the last visa option, and deleting the only scalar fact row, failed while the claim remained. Inserting the claim and then the fact succeeded. Inserting the fact and then the claim, with the foreign key deferred, also succeeded. Catalog readback showed the airport helper `immutable`, the payload predicate `stable`, the trigger function `volatile`, all three `security invoker` with `search_path=pg_catalog`, and all nine fact triggers `deferrable` and `initially deferred`. `PUBLIC`, `anon`, `authenticated` and `service_role` had no `EXECUTE` on the three functions.
 
 This is not the Development server. The task states Development is PostgreSQL 17.6. Local 16.15 does not replace the Technical-Lead apply or the advisor readback.
 
@@ -132,8 +134,8 @@ Recorded in this session before the push:
 
 | Check | Result |
 | --- | --- |
-| `lib/readiness/rule-claim-store-schema.test.ts` | 9/9 pass |
-| `npm test` | 4168 pass / 0 fail |
+| `lib/readiness/rule-claim-store-schema.test.ts` | 12/12 pass |
+| `npm test` | 4171 pass / 0 fail |
 | `npm run typecheck` | pass (`next typegen` and `tsc --noEmit`) |
 | `npm run lint` | 0 errors, 148 warnings. The warnings are pre-existing. The new schema test is not among them. |
 | `npm run check:operating-mode` | PASS |
