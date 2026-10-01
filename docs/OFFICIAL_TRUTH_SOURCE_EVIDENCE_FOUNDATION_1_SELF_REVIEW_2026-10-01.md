@@ -52,7 +52,9 @@ Local checks for the R1 correction, run before the correction commit:
 
 `auth:pruefen` was not run locally. This environment has no Supabase auth secrets.
 
-Earlier remote gates stay historical. `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1` had CI `36845062197`. Technical-Lead R1 read CI `36845583718`, Auth job `110314809182` and Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` on `59d43f4ccc2e4434401596f0b7b4b7c8162719d8` only. None of those apply to the correction head. This self-review does not claim a GitHub CI, Auth job or Vercel Preview for the correction head. A green parent or `main` gate is not a gate for it.
+Observed after push, only for `276ef7265f1d2989e204462955e7eae54d7401e9`: CI run `36847770063` **SUCCESS**, including Auth job `110321922436` and Typecheck, Lint & Build job `110321922165`. Vercel commit status **success**. GitHub Preview deployment `6781726297` **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/EU6DJ5VZdkqKJeJg4CR4t24joLFp`. The preview host redirected to Vercel SSO, so `data-dpl-id` was not read. The commit that writes this paragraph is a new head and is not covered by that run.
+
+Earlier remote gates stay historical. `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1` had CI `36845062197`. Technical-Lead R1 read CI `36845583718`, Auth job `110314809182` and Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` on `59d43f4ccc2e4434401596f0b7b4b7c8162719d8` only. None of those apply to the correction head or to the commit that records it. A green parent or `main` gate is not a gate for either head.
 
 No browser verification applies. This slice has no UI.
 
