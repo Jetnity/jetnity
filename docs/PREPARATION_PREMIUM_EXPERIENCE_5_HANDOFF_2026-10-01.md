@@ -66,7 +66,18 @@ Merge of `85d730993148b058a2dd3acd19947c025bdcf7f7` was clean. No file overlappe
 
 ## Remote observation
 
-The observation below is for `bc7017f7`, before the #663 main integration. It does not approve `a289f36a` or a later tip. Exact-head CI for the #663 integration is still open.
+Read on the #663 integration tip `935719b8969e51da38c63999d14432751b48eb85`. This observation does not approve a later commit.
+
+| Check | Result |
+| --- | --- |
+| GitHub Actions `36795378505` | SUCCESS |
+| Auth-Konfiguration gegen config.toml | SUCCESS |
+| Typecheck, Lint & Build | SUCCESS |
+| Vercel | SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FpLEzgYTh6xDTdDWq2Y5bEhVgNpr` |
+
+Combined commit status success. Draft #665 stayed open. The branch is 0 behind `origin/main` `85d73099`. The earlier SUCCESS on `bc7017f7` does not approve this head.
+
+The older observation below is for `bc7017f7` only.
 
 | Check | Result |
 | --- | --- |

@@ -60,7 +60,7 @@ Screens: `docs/evidence/preparation-premium-experience-5/screens/`.
 
 ## 3b. Main integration
 
-`a289f36a` merges exact main `85d730993148b058a2dd3acd19947c025bdcf7f7`. The merge was clean. No Vorbereitung file overlapped #663. The R1 layout remains. The merged #669 `/planen` files and the merged #663 Reiseplan files are present as they are on main. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After this merge, `npm test` was 4118 pass / 0 fail. Exact-head CI, Auth and Vercel for this integration tip are not yet recorded. The earlier observation of `bc7017f7` (Actions `36792746037`, Vercel `5QvQyWozkFxSFdKMPJCKw9QufbZy`) does not approve this head and is not a Technical-Lead PASS.
+`a289f36a` merges exact main `85d730993148b058a2dd3acd19947c025bdcf7f7`. The merge was clean. No Vorbereitung file overlapped #663. The R1 layout remains. The merged #669 `/planen` files and the merged #663 Reiseplan files are present as they are on main. `docs/ACTIVE_WORK_STATUS.md` still matches `main`. After this merge, `npm test` was 4118 pass / 0 fail. Exact-head observation for `935719b8969e51da38c63999d14432751b48eb85`: Actions `36795378505` SUCCESS (Auth-Konfiguration gegen config.toml, and Typecheck, Lint & Build). Vercel SUCCESS, deployment completed, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/FpLEzgYTh6xDTdDWq2Y5bEhVgNpr`. That observation does not approve a later commit and is not a Technical-Lead PASS.
 
 ## 4. Boundaries
 

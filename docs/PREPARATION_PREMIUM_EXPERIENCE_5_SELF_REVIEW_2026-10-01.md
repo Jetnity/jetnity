@@ -37,4 +37,4 @@ This is the implementing agent’s review. It does not replace an independent ma
 
 ## Not claimed
 
-Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Main `85d73099` is merged. The R1 layout, #669 `/planen`, and #663 Reiseplan are unchanged by this slice. Exact-head CI on `bc7017f7` does not approve this integration head.
+Ready, merge, a Technical-Lead PASS, Production, a physical device, or a follow-up slice. Main `85d73099` is merged. The R1 layout, #669 `/planen`, and #663 Reiseplan are unchanged by this slice. Exact-head CI on `935719b8` was later read as SUCCESS for Actions `36795378505`, Auth, Typecheck, Lint & Build, and Vercel `FpLEzgYTh6xDTdDWq2Y5bEhVgNpr`. That read does not approve a later commit.
