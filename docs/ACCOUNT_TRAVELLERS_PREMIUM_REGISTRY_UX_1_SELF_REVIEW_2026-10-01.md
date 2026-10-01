@@ -32,4 +32,10 @@ At 200% text on 360×800 the title and explanation consume the first viewport, s
 
 The previous 200% full-page screenshot of the old layout did not encode (empty file, removed). Its measurements remain in `vorher.json`.
 
+## Integration re-gate
+
+R1 acceptance still holds. Merging `main@d7c26688` did not change Reisende behaviour. The rebuilt visual matrix kept the same structured metrics, including 0 first-paint forms and the 390×844 page height of 1947.
+
+The full local suite now has two `initdb` ENOENT failures. The new one is the source-catalog PostgreSQL proof that came in with #686. It is the same missing binary, not a registry defect.
+
 No follow-up slice is opened from this review.

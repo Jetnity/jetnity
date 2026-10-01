@@ -12,10 +12,13 @@ Session: https://cursor.com/agents/bc-633ab0dd-da04-4405-bec7-0aa94806aba1
 
 ## Current state
 
-Integrated `origin/main` `98c9099bee1715f741e4aec87c2c386e9e5344ad` (merge #689). Merge-base is that SHA. The branch was 0 behind after the merge. Re-fetch before treating a later SHA as current. Do not rebase again unless the Technical Lead assigns it.
+Technical Lead R1 accepted `63086a3b3fd658c98cadb83693ab9a49be89dacf`. No behaviour correction was requested. The hold was base freshness after #691.
 
-Parent tip before the evidence-report commit: `be0f13e420dee125bcae4de48c093fb2966d37d3`.
-The review head is the branch tip after the commit that adds this handoff and the refreshed `nachher` matrix. Read that SHA from the branch. Do not review the task seed `50f3eebb` or `main`.
+Integrated `origin/main` `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` (merged #686 Source Catalog and #691 Account-home premium overview; #689 Registry→Preparation was already in the previous base). Merge commit: `a3dc862587a09ee6d07e4d817acbda449c30f5d9`. Strategy `ort`, no conflicts. Merge-base is that main SHA. The branch is 0 behind it.
+
+Registry presentation files were not edited in the merge. #686, #689 and #691 stay intact.
+
+The review head is the branch tip after the commit that records this re-gate. Read that SHA from the branch. Do not review `63086a3b` or `main`. No further commit follows the exact-head CI run on that tip.
 
 Stay Draft. Do not Ready. Do not merge. Do not start a follow-up slice.
 
@@ -44,7 +47,9 @@ Read first:
 
 Chromium against `next start` and the audit fixture route. Not a signed-in account. Not a physical device. No Supabase mutation. No Production mutation.
 
-Local `npm test`: 4215 pass / 1 fail. The failure is the pre-existing `initdb` ENOENT in `lib/readiness/official-truth-store-server.test.ts`. Exact-head GitHub CI, Auth and Vercel Preview belong to the pushed tip. This file does not embed a run id.
+Local re-gate on the integrated tree: `npm test` 4226 pass / 2 fail. Both failures are `initdb` ENOENT. One is `lib/readiness/official-truth-store-server.test.ts`. The other is `lib/readiness/official-truth-source-catalog-server.test.ts` from merged #686. This VM has no PostgreSQL 16 binary. Lint exit 0. Build success. Hygiene checks exit 0. Visual matrix exit 0 with the same 390×844 figures 1947 / 892 / 0.
+
+Exact-head GitHub CI, Auth and Vercel belong to the pushed review tip. This file does not embed a run id.
 
 ## Stop
 
