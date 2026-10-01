@@ -1,14 +1,16 @@
 # Account Settings + Security Premium UX 1 — Status
 
 Stand: 1 October 2026
-Status: **IMPLEMENTED — LOCAL GATES GREEN — DRAFT — NOT A PASS**
+Status: **MAIN RE-GATE LOCAL GREEN — DRAFT — NOT A PASS**
 
 - Writer: Generation 1, https://cursor.com/agents/bc-fbd188d3-8292-41f1-9c5c-61bb385fbc0f, `originalModelName=grok-4.7-high-fast`.
 - Issue #698. Draft PR #699. Branch `fix/account-settings-security-premium-ux-1`.
 - Baseline `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`.
-- Integrated `origin/main@98c9099bee1715f741e4aec87c2c386e9e5344ad` (merge-base). Branch was 0 behind that main at the evidence commit.
-- UX commit `f957e96b`. Main integration `9dfde756`. Evidence commit `b29f1ff973ad21143f6a839c50d41fde3dbccd71`.
-- Exact review head is the branch tip. `git diff b29f1ff973ad21143f6a839c50d41fde3dbccd71 HEAD` is only this status pin. Merge-base `98c9099bee1715f741e4aec87c2c386e9e5344ad`, 0 behind that main. No Ready. No merge. No follow-up slice.
+- Accepted UX head `29123132a69ca93c4e3b58b3b9a83bea64dda25c`. No behavior correction was requested.
+- Current main integrated: `d7c266886ae20c1cc5a7413ab87cb1a85171cc27` (Merge #691). Integration commit `efbda38bd13530c691a4f4eb05480282d96ccb56`.
+- Ancestors preserved: #686 `a2885fc7`, #689 `98c9099b`, #691 `d7c26688`. Branch is 0 behind that main.
+- Settings/security runtime files are unchanged from `29123132`. This re-gate commit updates only this lane status and the repeated visual evidence.
+- No Ready. No merge. No follow-up slice.
 
 ## Outcome
 
@@ -36,15 +38,29 @@ Settings first paint: password and confirmation inputs 1 → 0. Security first p
 
 Full matrix, 0 problems: 320×568, 360×800, 390×844, 412×915, 430×932, 768×1024, 820×1180, 1024×768, 1280×800, 1440×900, 1728×1117, 1920×1080, 844×390, 200% text at 360×800, desktop zoom 125% and 150%. Checked: no horizontal overflow, no nav overlap, targets ≥44px, compact inputs ≥16px, deletion open, password open, TOTP empty, TOTP enroll, security error. Enroll response contains no `otpauth`. Evidence: `docs/evidence/account-settings-security-premium-ux-1/`.
 
-## Gates
+## Main re-gate on `d7c26688`
+
+Repeated after integrating #686, #689, and #691. Presentation files did not change.
+
+- `npm test`: 4227/4227 pass.
+- `npm run typecheck`: pass.
+- `npx eslint .`: 0 errors, 148 warnings. The pre-existing `SecurityMFA` effect warning remains. It was not changed.
+- `npm run build`: pass.
+- `git diff --check`: pass.
+- Full visual matrix again, 35 findings, 0 problems. `<main>` height is unchanged: settings 390×844 = 1327, settings 1440×900 = 853, security 390×844 = 2342, security 1440×900 = 1463. Credential inputs stay hidden. Passkeys stay `unsupported`. Idle enroll stays 0.
+- Evidence: `docs/evidence/account-settings-security-premium-ux-1/nachher-main-d7c26688.json`.
+
+CI, Auth, and Vercel run on the branch tip that contains this re-gate note. They are not rewritten by a later commit.
+
+## Earlier gates on `29123132`
 
 - Focused contract tests for this slice plus AP-5 S1–S5, gate0, account delete, and data export: pass.
 - `npm test`: 4215/4215 pass after PostgreSQL 16 binaries were present. The first run in this environment failed one test, `lib/readiness/official-truth-store-server.test.ts`, with `spawnSync /usr/lib/postgresql/16/bin/initdb ENOENT`. That test is from main, not this slice. After installing PostgreSQL 16 it passed, and the full suite was rerun green.
 - `npm run typecheck`: pass.
-- `npx eslint .`: 0 errors, 148 warnings. The only warning in a file this slice touched is the pre-existing `setState` in `SecurityMFA` browser-capability effect. It was not changed.
+- `npx eslint .`: 0 errors, 148 warnings.
 - `npm run build`: pass. Route `/ui-audit/account-settings-security` is dynamic and 404 unless `JETNITY_UI_AUDIT` is set and `VERCEL_ENV` is not production.
 - `git diff --check`: pass.
-- No DB, RLS, Auth config, package, or Production change. `docs/ACTIVE_WORK_STATUS.md` was not edited.
+- No DB, RLS, Auth config, package, or Production change from this lane. `docs/ACTIVE_WORK_STATUS.md` was not edited. The source-catalog migration arrived only through the main merge.
 
 ## Changed files
 
@@ -63,4 +79,4 @@ Full matrix, 0 problems: 320×568, 360×800, 390×844, 412×915, 430×932, 768×
 
 ## Next step
 
-Independent Technical-Lead review of this exact head. Stay Draft. Do not Ready. Do not merge. Do not start a follow-up.
+FINAL Technical-Lead review of the branch tip after this main re-gate. Stay Draft. Do not Ready. Do not merge. Do not start a follow-up.
