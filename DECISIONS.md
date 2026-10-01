@@ -5708,6 +5708,38 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Nachtrag 1. Oktober 2026, Technical-Lead R3 auf `23179348da1b842a19851dc656f37ad4ccae3fd6`:** URL und Abrufzeit waren noch Modellfelder. Sie gehören in dieselbe Retrieval-Hülle wie der Quellentext. `EvidenceQuellenmaterial` trägt `canonicalUrl`, `retrievedAt` und `sourceSnapshot`. Das Modellobjekt darf diese drei Felder sowie `content`, `contentHash` und `sourceContentHash` nicht setzen. Die gespeicherte URL und die Abrufzeit kommen nur aus der Hülle, nach der bestehenden Registry-, HTTPS- und Source-Id-Prüfung. Die R1- und R2-Regeln bleiben unverändert.
 
+**Nachtrag 1. Oktober 2026, Schema-Slice:** ADR-0217 legt die Repository-Migration für den globalen Evidence-Store an. ADR-0216 bleibt der Vertragsentscheid. Die Migration ist nicht auf Development und nicht auf Production angewendet. Es gibt weiterhin keinen Laufzeit-Store und keinen Adapter.
+
+---
+
+## ADR-0217 – Official Evidence liegt in einem privaten, nicht exponierten Schema
+
+**Datum:** 1. Oktober 2026
+**Status:** Repository-Datei `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql` auf Draft-Branch `feat/official-truth-private-evidence-store-schema-1`, Draft PR #675. Diese Version ist die Development-History des Technical-Lead-Apply. Production ist nicht angewendet. Kein Ready, kein Merge. Binding: `docs/OFFICIAL_TRUTH_PRIVATE_EVIDENCE_STORE_SCHEMA_1_TASK_2026-10-01.md`, Issue #674. Vertrag: ADR-0216.
+
+**Entscheidung:**
+
+1. Globale, nicht personenbezogene Official Evidence bekommt drei Tabellen in `private`: `official_sources`, `official_source_domains`, `official_evidence_versions`. Das Schema ist nicht Teil der Data API.
+2. `PUBLIC`, `anon`, `authenticated` und `service_role` erhalten keine Rechte auf Schema, Tabellen oder die Vergleichsfunktion. Es gibt keine Public-RPC, keine `SECURITY DEFINER`-Funktion, keinen Trigger, keinen Cron und keine Queue.
+3. RLS wird eingeschaltet und erzwungen. Es gibt keine Policy. Die Zeilen haben keinen Nutzer als Eigentümer. Das ist Absicht. `service_role` umgeht RLS; der Entzug des Tabellenrechts ist deshalb die wirksame Grenze für diese Rolle.
+4. `valid_from` und `valid_until` sind Text. Ein Datum `YYYY-MM-DD` bleibt ein Datum. Ein UTC-Zeitstempel bleibt ein Zeitstempel. Die Funktion `private.official_evidence_validity_instant(text)` vergleicht nur. Sie schreibt die Spalte nicht um.
+5. `retrieved_at` ist der Abrufzeitpunkt als UTC-Text der TypeScript-Form. `version_id` wird gespeichert und nicht aus einem neu formatierten Zeitstempel berechnet.
+6. Staatsbürgerschaft, Credential-Option, Ausstellerland, bezogene Staatsbürgerschaft, Wohnsitz, Ziel und Transit sind eigene Spalten. Das Ausstellerland wird nicht in die bezogene Staatsbürgerschaft kopiert. Null bei der Beziehung bleibt unverbunden. Eine gesetzte Beziehung muss in der gespeicherten Staatsbürgerschaftsmenge liegen.
+7. Die Taxonomie der Checks folgt `OFFICIAL_REQUIREMENT_TYPES`, `TRAVELLER_DOCUMENT_TYPES`, `EVIDENCE_LIFECYCLES`, `EVIDENCE_VALIDATION_STATES` und den Quellenklassen. Ein ISO-2-Check prüft nur die Form.
+8. Diese Migration enthält keine Quell- und keine Evidence-Zeile. `requirementsProviderAus()` bleibt `null`. Ein Store-Adapter ist ein späterer Slice.
+
+**Kontext:** ADR-0216 hat den Vertrag ohne Tabelle entschieden. Der Product Owner hat globale, nicht personenbezogene Versionen erlaubt. Supabase-Tabellen, die der Browser nicht lesen soll, gehören in ein nicht exponiertes Schema. Rechte entscheiden über die Data API. RLS entscheidet erst danach über Zeilen.
+
+**Alternativen:** Tabellen in `public` mit RLS und ohne Browser-Grant. Ein `jsonb`-Scope. `valid_from` als `timestamptz`, wodurch ein reines Datum zu Mitternacht würde. Eine `SECURITY DEFINER`-RPC in diesem Slice. Ein Seed echter Behörden-Domains. Die Migration aus Cursor heraus auf Development anwenden.
+
+**Begründung:** Ein öffentliches Schema wäre nur durch Rechte und RLS versteckt und bliebe ein Browser-API-Kandidat. Ein JSON-Blob würde die getrennten Reisedimensionen wieder zu einer zweiten, undurchsichtigen Wahrheit machen. Ein Datum ist kein Zeitpunkt. Eine RPC oder ein Seed würde diesen Schema-Slice zur Laufzeit machen. Development-Apply bleibt beim Technical Lead nach exaktem PASS. Production bleibt ein Product-Owner-Gate.
+
+**Konsequenzen:** Die Auswertung einer konkreten Reise bleibt compute-on-read. Die Repository-Migration ist noch keine Datenbank. Eine spätere Server-Grenze muss Quellenzeilen entweder einfrieren oder die Behördenidentität auf der Version mitschreiben; dieser Slice kopiert sie nicht, weil ein zweites beschreibbares Feld ohne Trigger auseinanderlaufen kann. SQL beweist keine DNS-Zugehörigkeit und keine überlappenden Parent-/Child-Hostnamen. Ein Selbstbezug der Version verhindert keine Schleife, wenn ein späterer privilegierter Schreiber zwei Zeilen gegeneinander setzt. Diesen Folgeslice startet die Entscheidung nicht.
+
+**Nachtrag 1. Oktober 2026, R1-F1:** Ein PostgreSQL-`CHECK` lässt einen Ausdruck durch, der `NULL` ergibt. Die Modus-Zweige für Credential-Option, erforderlichen Wohnsitz und `travel_date` prüfen das jeweils nötige Kind deshalb zuerst mit `IS NOT NULL` und erst danach den Wert. `related_citizenship_country_code = NULL` bleibt der gewollte unverbundene Zustand und wird nicht verlangt. `not_applicable` verlangt weiterhin, dass die zugehörigen Kinder `NULL` sind. Die Korrektur steht in derselben Migration. Sie ist nicht remote angewendet.
+
+**Nachtrag 1. Oktober 2026, R2:** Der Technical Lead hat die angenommene SQL auf Development angewendet. Supabase hat dafür die History-Version `20261001121258_official_truth_private_evidence_store_schema_1` vergeben. Diese Version ist nicht von Hand erfunden. Die Repository-Datei heißt jetzt genauso. `git mv` hat sie von `20261001111642_official_truth_private_evidence_store_schema_1.sql` umbenannt. Die SQL-Bytes sind unverändert, SHA-256 `2e4a715c7270e90e936e753232d191b0bcb2ce3ad455099ef9e812b182d50524`. Cursor hat die Migration nicht erneut angewendet und Production nicht angefasst. Eine zweite Remote-Anwendung ist nicht nötig und nicht erlaubt.
+
 ---
 
 ## Offene Widersprüche

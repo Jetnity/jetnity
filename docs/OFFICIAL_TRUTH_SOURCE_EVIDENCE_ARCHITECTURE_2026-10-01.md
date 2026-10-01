@@ -1,8 +1,8 @@
 # Official Truth Source/Evidence Architecture
 
 Date: 1 October 2026
-Status: **contract foundation only / Draft PR #673 / no persistence / no provider activation**
-Decision: ADR-0216
+Status: **contract foundation merged in #673 / private evidence schema is on Draft PR #675 / Development history version `20261001121258` matches the repository file / Production not applied / no provider activation**
+Decision: ADR-0216, ADR-0217
 Product-Owner source: Issue #294 comment `5928669189`
 Task: `docs/OFFICIAL_TRUTH_SOURCE_EVIDENCE_FOUNDATION_1_TASK_2026-10-01.md`
 
@@ -41,7 +41,7 @@ Product-Owner comment `5928669189` approves a narrower future change only:
 
 No passport number, MRZ, scan, biometric, date of birth, health record, user id, account id, trip id or `travellerClientRef` belongs in the global evidence contract.
 
-This slice does not implement storage. `OfficialEvidenceStore` is a port type with no implementation and no in-memory production store.
+The foundation slice did not implement storage. `OfficialEvidenceStore` remains a port type with no runtime implementation. ADR-0217 adds the repository schema only. It does not add an adapter, and Cursor does not apply the migration.
 
 ## 4. Source classes
 
@@ -108,21 +108,33 @@ A future OpenAI research adapter may receive a Jetnity domain allowlist, discove
 
 Timatic and Sherpa remain optional future adapters. They are not activated, contacted or represented as official authorities here.
 
-## 8. Later Supabase target — not implemented
+## 8. Private evidence store — repository schema only
 
-Supabase is the intended long-term evidence store. This slice performs no migration, DDL, RLS, grant, function, trigger, cron, queue or extension change.
+Supabase remains the intended evidence store. Draft PR #675 has one repository migration, `supabase/migrations/20261001121258_official_truth_private_evidence_store_schema_1.sql`. That version is the Development history version from the Technical Lead apply. It was not invented by hand. The SQL bytes are the same as the earlier `20261001111642` file. Cursor does not apply it again. Production is not applied.
 
-Preferred later shape, still undecided in detail:
+Tables, all in the unexposed schema `private`:
 
-- server-only or private-schema evidence tables
-- no browser access to global evidence writes
-- no client or service-role secret exposure
-- a later schema slice must decide the read path, grants, RLS or private schema, and the migration strategy on its own reading of current Supabase docs
-- a later Development-only migration must run security and performance advisors and an exact readback before any Production proposal
-- Production remains a separate Product-Owner gate
+- `official_sources` — `source_id`, source class, publisher, and authority name only for `official_authority`
+- `official_source_domains` — normalized hostname, unique per domain
+- `official_evidence_versions` — the version and the typed scope from `lib/readiness/evidence.ts`
 
-A later refresh may use existing `pg_cron`, a queue or another bounded worker only after a separate architecture and operations slice. This task does not choose or install `pgmq`.
+A PostgreSQL `CHECK` passes when its expression is `NULL`, so the option, required-residence and `travel_date` branches test the required child with `IS NOT NULL` before the value check. `related_citizenship_country_code` null remains the unlinked state. `not_applicable` still requires its child fields to stay null. `private.official_evidence_validity_instant(text)` is a comparison helper. It is not `SECURITY DEFINER`, not granted, and not an RPC. Date-only `valid_from` / `valid_until` stay text. The helper treats a date-only value as UTC midnight only while comparing. `retrieved_at` stays the UTC instant string from the TypeScript contract. `version_id` is stored as `ev1_` plus 32 hex characters and is not recomputed from a reformatted timestamp.
 
-## 9. Proposed next step
+Security boundary of this migration:
 
-Not a dispatched slice. The next useful step is a separately reviewed design for a Development-only private evidence store. It should not include Production DDL, provider activation, a real government catalog, or an engine behavior change.
+- `private` is not added to the Data API schemas (`public`, `graphql_public`)
+- `PUBLIC`, `anon`, `authenticated` and `service_role` are revoked on the schema, the tables and the helper
+- RLS is enabled and forced, with no policy and no user-ownership predicate
+- no trigger, cron, queue, extension, webhook, HTTP call or seed row
+
+`service_role` bypasses RLS on Supabase. The revoke is the control for that role. RLS without a policy is the control for roles that do not bypass RLS.
+
+The migration does not prove DNS ownership, parent/child hostname overlap, geopolitical validity of an ISO-2 code, or that a version chain is acyclic under a later privileged update. A source row can exist before its first domain row. Source class and authority stay on `official_sources` so the version does not carry a second writable copy. A later adapter must freeze those source fields or snapshot them. This schema slice does not add that writer.
+
+No evidence row exists because of this migration. No store adapter exists. `requirementsProviderAus()` stays `null`. Development already has this schema under `20261001121258`. A second apply is not allowed. Production remains a separate Product-Owner gate.
+
+A later refresh may use existing `pg_cron`, a queue or another bounded worker only after a separate architecture and operations slice. This schema does not install or use `pgmq`.
+
+## 9. Next step
+
+Not a dispatched slice. The next action is independent Technical-Lead review of the repository identity head. Development already has this schema. Cursor does not apply it again. Production remains a Product-Owner gate. This is not an adapter or provider slice.
