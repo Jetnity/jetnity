@@ -2,8 +2,9 @@
 //
 // Reisenden-Slots aus Anzahl + gespeichertem Kontext.
 // `Trip.travellers` ist die Anzahl anwendbarer Plätze.
-// Ein exaktes `traveller:N` bleibt in seinem Platz.
-// Andere persistierte Trip-Snapshots füllen leere Plätze in stabiler
+// Ein exaktes `traveller:N` innerhalb der Kopfzahl bleibt in seinem Platz.
+// Kanonische `traveller:N` ausserhalb der Kopfzahl bleiben nicht anwendbar.
+// Nur nicht-kanonische Trip-Snapshots füllen leere Plätze, in stabiler
 // Reihenfolge createdAt, dann clientRef, und behalten ihre eigene clientRef.
 // Bekannte Fakten nicht erneut verlangen.
 
@@ -53,6 +54,14 @@ function travellerReihenfolge(links: TripTraveller, rechts: TripTraveller): numb
   return 0
 }
 
+/** Kanonische Platz-Identität, wie der Slot-Index sie schreibt: `traveller:1`, nicht `traveller:01`. */
+function kanonischePlatznummer(clientRef: string): number | null {
+  const treffer = /^traveller:([1-9][0-9]*)$/.exec(clientRef)
+  if (!treffer) return null
+  const nummer = Number(treffer[1])
+  return Number.isSafeInteger(nummer) ? nummer : null
+}
+
 export function travellerSlots(reise: Pick<Trip, 'travellers' | 'party'>): TravellerSlot[] {
   const gespeichert = partyVon(reise)
   const nachRef = new Map(gespeichert.map((eintrag) => [eintrag.clientRef, eintrag]))
@@ -67,7 +76,13 @@ export function travellerSlots(reise: Pick<Trip, 'travellers' | 'party'>): Trave
     nachRef.delete(clientRef)
   }
 
-  const rest = [...nachRef.values()].sort(travellerReihenfolge)
+  const rest = [...nachRef.values()]
+  const fuellbar = rest
+    .filter((eintrag) => kanonischePlatznummer(eintrag.clientRef) === null)
+    .sort(travellerReihenfolge)
+  const ausserhalb = rest
+    .filter((eintrag) => kanonischePlatznummer(eintrag.clientRef) !== null)
+    .sort(travellerReihenfolge)
   let restIndex = 0
   const slots: TravellerSlot[] = []
 
@@ -77,7 +92,7 @@ export function travellerSlots(reise: Pick<Trip, 'travellers' | 'party'>): Trave
       slots.push(slotAus(`traveller:${i}`, `Reisende ${i}`, fest, true))
       continue
     }
-    const naechster = rest[restIndex]
+    const naechster = fuellbar[restIndex]
     if (naechster) {
       restIndex += 1
       slots.push(slotAus(naechster.clientRef, `Reisende ${i}`, naechster, true))
@@ -86,7 +101,7 @@ export function travellerSlots(reise: Pick<Trip, 'travellers' | 'party'>): Trave
     slots.push(slotAus(`traveller:${i}`, `Reisende ${i}`, null, true))
   }
 
-  for (const extra of rest.slice(restIndex)) {
+  for (const extra of [...fuellbar.slice(restIndex), ...ausserhalb]) {
     slots.push(slotAus(extra.clientRef, extra.label ?? extra.clientRef, extra, false))
   }
 

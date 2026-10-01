@@ -154,15 +154,35 @@ describe('anwendbare Traveller-Plätze', () => {
     assert.equal(anwendbare.some((slot) => slot.clientRef === REF_EXTRA), false)
   })
 
-  test('traveller:4 bei Kopfzahl 3 ist kein kanonischer Platz und behält seine Ref', () => {
-    const slots = anwendbar({
-      travellers: 3,
-      party: [person({ clientRef: 'traveller:4', createdAt: '2026-08-01T00:00:00.000Z', label: null })],
+  test('kanonisches traveller:4 ausserhalb der Kopfzahl bleibt nicht anwendbar', () => {
+    const ausserhalb = person({
+      clientRef: 'traveller:4',
+      createdAt: '2026-08-01T00:00:00.000Z',
+      label: null,
+      countryCode: 'DE',
     })
-    assert.equal(slots[0]?.clientRef, 'traveller:4')
-    assert.equal(slots[0]?.label, 'Reisende 1')
+    const snapshot = person({ clientRef: REF_B, createdAt: '2026-08-03T00:00:00.000Z', countryCode: 'CH' })
+    const slots = travellerSlots({ travellers: 3, party: [ausserhalb, snapshot] })
+    assert.equal(slots.filter((slot) => slot.applicable).length, 3)
+    assert.equal(slots[0]?.clientRef, REF_B)
+    assert.equal(slots[0]?.applicable, true)
+    assert.equal(slots[1]?.clientRef, 'traveller:2')
     assert.equal(slots[1]?.persisted, false)
+    assert.equal(slots[1]?.label, 'Reisende 2')
+    assert.equal(slots[2]?.clientRef, 'traveller:3')
     assert.equal(slots[2]?.persisted, false)
+    assert.equal(slots[3]?.clientRef, 'traveller:4')
+    assert.equal(slots[3]?.applicable, false)
+    assert.equal(slots[3]?.label, 'traveller:4')
+    assert.equal(registryTripKopfzahlErreicht({ travellers: 3, party: [ausserhalb] }), false)
+    assert.equal(registryTripUebernahmeGesperrt({ travellers: 3, party: [ausserhalb] }), false)
+    assert.equal(
+      registryTripKopfzahlErreicht({
+        travellers: 3,
+        party: [ausserhalb, person({ clientRef: 'traveller:5', createdAt: '2026-08-02T00:00:00.000Z' }), person({ clientRef: 'traveller:6', createdAt: '2026-08-02T00:00:00.000Z' })],
+      }),
+      false,
+    )
   })
 
   test('gleiches Label führt nicht zusammen und überschreibt niemanden', () => {
