@@ -9,6 +9,7 @@ import { routeFactsFuerPunkt } from '@/lib/route/ableitung'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import { flugAbdeckung, type FlugAbschnitt } from '@/lib/trips/flug-abdeckung'
+import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import type { Trip, TripItem } from '@/types/trips'
 
 function abschnittTitel(abschnitt: FlugAbschnitt): string {
@@ -41,7 +42,8 @@ export default function FlugBestand({
   return (
     <section
       aria-label="Deine Flüge"
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      data-organisieren-flaeche="bestand"
+      className={ORGANISIEREN_FLAECHE_KLASSE}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

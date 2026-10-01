@@ -7,6 +7,7 @@ import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { zeitraumKurz } from '@/lib/trips/datum-anzeige'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
+import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import type { Trip, TripItem } from '@/types/trips'
 
 export default function UnterkunftBestand({
@@ -39,7 +40,8 @@ export default function UnterkunftBestand({
   return (
     <section
       aria-label="Deine Unterkunft"
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      data-organisieren-flaeche="bestand"
+      className={ORGANISIEREN_FLAECHE_KLASSE}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
