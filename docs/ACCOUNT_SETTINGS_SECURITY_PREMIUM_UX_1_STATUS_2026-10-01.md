@@ -7,7 +7,8 @@ Status: **IMPLEMENTED — LOCAL GATES GREEN — DRAFT — NOT A PASS**
 - Issue #698. Draft PR #699. Branch `fix/account-settings-security-premium-ux-1`.
 - Baseline `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`.
 - Integrated `origin/main@98c9099bee1715f741e4aec87c2c386e9e5344ad` (merge-base). Branch was 0 behind that main at the evidence commit.
-- UX commit `f957e96b`. Main integration `9dfde756`. This status file is committed with the evidence. The branch tip after that commit is the exact head for review. No Ready. No merge. No follow-up slice.
+- UX commit `f957e96b`. Main integration `9dfde756`. Evidence commit `b29f1ff973ad21143f6a839c50d41fde3dbccd71`.
+- Exact review head is the branch tip. `git diff b29f1ff973ad21143f6a839c50d41fde3dbccd71 HEAD` is only this status pin. Merge-base `98c9099bee1715f741e4aec87c2c386e9e5344ad`, 0 behind that main. No Ready. No merge. No follow-up slice.
 
 ## Outcome
 
