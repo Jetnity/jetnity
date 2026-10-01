@@ -56,39 +56,51 @@ Domains are normalized hostnames. Schemes, userinfo, ports and paths are rejecte
 
 ## 5. Router
 
-Input is reusable regulatory context, not a user identity. Personal identifier keys fail closed.
+Input is reusable regulatory context, not a user identity. Personal identifier keys fail closed. There is one cell per explicit credential option. Each cell carries the full citizenship set. `relatedCitizenshipCountryCode` is set only when that document↔citizenship relation was supplied. The issuing country is not citizenship. An unlinked document stays unlinked. Citizenships are not crossed with documents.
+
+Coverage dimensions for citizenship, residence and documents use an explicit mode:
+
+| Mode | Meaning |
+| --- | --- |
+| `independent` | The source may be used for any value of that dimension, including `not_applicable`, without listing the world. |
+| `exact` | The source matches only the declared non-empty list. An empty list is an invalid descriptor, not a wildcard. |
+| `not_applicable` | The source matches only when that atom dimension is `not_applicable`. |
+
+Exact citizenship matches the option's explicit `relatedCitizenshipCountryCode`. A CH-only source can cover a dual national's CH-linked passport and still leave the RS-linked passport uncovered. An unlinked document does not match an exact citizenship list. If the cell has no credential option, exact citizenship matches only when the citizenship set is a non-empty subset of the declared list.
+
+Exact documents match document type and issuing country. Destination and transit stay separate country lists. An empty destination list is transit-only. An empty transit list is destination-only. A descriptor with neither is invalid. Missing coverage stays `unknown` / `no_eligible_source` and is never `not_required`.
 
 Output is a plan:
 
 - `officialResult` is always `unknown`
 - `evaluation` is always `not_performed`
-- each citizenship and each document option is its own cell
-- destination coverage does not satisfy transit coverage
 - source order is alphabetical stability, not a preference
 
-Partial coverage stays partial. The covered citizenship is not treated as the traveller's only citizenship.
+Partial coverage stays partial. The covered credential option is not treated as the traveller's only option.
 
 ## 6. Evidence versions and the lookup key
 
-An evidence version carries provenance, lifecycle (`candidate`, `accepted`, `conflicted`, `superseded`), validation state, validity window, content hash and an optional `previousVersionId`. It is not a free-form truth blob and has no official result fields.
+An evidence version carries provenance, lifecycle (`candidate`, `accepted`, `conflicted`, `superseded`), validation state, validity window, `sourceContentHash` and an optional `previousVersionId`. It is not a free-form truth blob and has no official result fields.
 
-`evidenceKandidatAusModell` always creates a `candidate` / `pending` version or rejects the input. Model fields `result`, `required`, `not_required`, `conditional`, `optionEligibility`, `optionMandate` and `visaMode` are rejected. They are not copied onto the candidate.
+`sourceContentHash` is SHA-256 of source text normalized by Jetnity (`\r\n` and `\r` become `\n`). The input is `sourceSnapshot`, a non-model retrieval boundary. This slice does not fetch that text. Model prose, `extractionNote`, and the fields `content`, `contentHash` and `sourceContentHash` cannot set or replace the fingerprint. Supplying those fields is rejected before hashing.
 
-`evidenceKandidatAkzeptieren` is the only promotion to `accepted` / `valid`. It re-checks registry identity, HTTPS URL, retrieval timestamp, hash and the recomputed lookup key. `akzeptierteEvidenceLesen` returns null for a candidate.
+`evidenceKandidatAusModell` always creates a `candidate` / `pending` version or rejects the input. Model fields `result`, `required`, `not_required`, `conditional`, `optionEligibility`, `optionMandate` and `visaMode` are rejected. They are not copied onto the candidate. `extractionNote` is stored beside the version and is not part of the hash or `versionId`.
 
-A changed content hash creates a different `versionId`. `evidenceVersionenVergleichen` reports `contentChanged` and always `ruleChange: 'not_asserted'`. An unchanged hash can short-circuit later analysis. `evidenceKonfliktHalten` keeps the existing accepted version, sets `overwritten: false`, and does not silently replace it.
+`evidenceKandidatAkzeptieren` is the only promotion to `accepted` / `valid`. It re-checks registry identity, HTTPS URL, retrieval timestamp, source fingerprint and the recomputed lookup key. `akzeptierteEvidenceLesen` returns null for a candidate.
 
-The lookup key is `evidence-key:v1:` plus SHA-256 of a canonical JSON scope. Array order of citizenships and document options does not change the key set. The key can contain only non-personal regulatory context:
+A changed source fingerprint creates a different `versionId`. `evidenceVersionenVergleichen` reports `contentChanged` and always `ruleChange: 'not_asserted'`. An unchanged fingerprint can short-circuit later analysis. Same source text with different extraction wording does not. `evidenceKonfliktHalten` keeps the existing accepted version, sets `overwritten: false`, and does not silently replace it.
+
+The lookup key is `evidence-key:v2:` plus SHA-256 of canonical JSON scope version 2. Nothing was persisted under v1. Input order of citizenships and credential options does not change the key set. The key can contain only non-personal regulatory context:
 
 - source id
 - destination country and transit country as distinct fields
-- one citizenship country when the rule depends on citizenship
-- document type and issuing country when the rule depends on the document
+- the full citizenship set when citizenship applies
+- one credential option: document type, issuing country, and either an explicit related citizenship or `unlinked`
 - residence country when the rule depends on residence
 - requirement type
 - travel date when the validity scope needs it
 
-Residence is explicit (`not_applicable` or `required` plus a country code) because an entry rule can depend on residence without that fact being a personal identifier. Missing residence, citizenship, document or validity mode fails closed instead of inventing a universal key that drops the dimension. The key does not contain user, account, trip or traveller ids, document numbers, MRZ, biometrics, date of birth, health records or free-text personal data.
+Residence is explicit (`not_applicable` or `required` plus a country code) because an entry rule can depend on residence without that fact being a personal identifier. Missing residence, citizenship, credential relation or validity mode fails closed. A missing `relatedCitizenshipCountryCode` key fails closed. Explicit null stays unlinked and is not copied from the issuing country. A related code outside the declared citizenship set is invalid. The key does not contain user, account, trip or traveller ids, document numbers, MRZ, biometrics, date of birth, health records or free-text personal data.
 
 ## 7. Model and provider boundary
 

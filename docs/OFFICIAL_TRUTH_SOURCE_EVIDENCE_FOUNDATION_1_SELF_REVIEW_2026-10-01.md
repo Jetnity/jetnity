@@ -29,7 +29,9 @@ This is an author self-review. It is not an independent Technical-Lead PASS.
 ## Contract choices the reviewer should see
 
 - Subdomain matching is dot-bounded. `www.gov.example` matches registered `gov.example`. `notgov.example` does not. This is an allowlist suffix, not a fetched certificate check.
-- Citizenships and document options expand to one cell and one lookup key each. Sort order is stability, not a preferred passport.
+- R1 removes the citizenship × document product. One cell is one explicit credential option and carries the full citizenship set. `relatedCitizenshipCountryCode` is present only when supplied. Explicit null stays `unlinked`. Issuing country is not copied into that relation. Sort order is stability, not a preferred passport. Lookup keys are `evidence-key:v2:`.
+- Coverage modes are `independent`, `exact` and `not_applicable`. Empty exact lists are invalid descriptors. Exact citizenship matches the option relation, so a CH-only source does not cover an RS-linked passport. Destination and transit lists stay separate.
+- `sourceContentHash` is SHA-256 of Jetnity-normalized `sourceSnapshot`. Different `extractionNote` text does not change it. Fields `content`, `contentHash` and `sourceContentHash` on model input are rejected. A changed snapshot stays `ruleChange: 'not_asserted'`.
 - Residence is explicit even though the task's example key list does not name it. A missing residence mode fails closed. A required residence is a country code, not a person. This follows the traveller-context rule that residence can change entry evidence.
 - A changed hash changes `versionId` and sets `ruleChange: 'not_asserted'`. Conflict copies the accepted version and does not overwrite it. `previousVersionId` stays null unless a later explicit supersession exists. This slice has no supersession function, so versions are not auto-linked.
 - Model decision fields are rejected anywhere in the input object. The candidate never carries them.
@@ -37,20 +39,20 @@ This is an author self-review. It is not an independent Technical-Lead PASS.
 
 ## Validation honesty
 
-Local checks run in this session before the delivery commit:
+Local checks for the R1 correction, run before the correction commit:
 
 - targeted source-foundation tests: 8/8 pass
 - `npm run typecheck`: pass
-- `npm run lint`: pass, 0 errors; 148 pre-existing warnings, none in the new files
+- `npm run lint`: pass, 0 errors; 148 pre-existing warnings, none in the changed readiness files
 - `npm test`: 4133 pass, 0 fail
 - hygiene checks `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: pass
 - `npm run check:setup:ci`: pass, with the existing missing-`.env` warning
-- `npm run build`: pass
+- `npm run build`: pass, 25 static pages
 - `git diff --check` and `node scripts/operating-mode-guard.mjs`: pass
 
 `auth:pruefen` was not run locally. This environment has no Supabase auth secrets.
 
-Observed after push, only for `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1`: CI run `36845062197` **SUCCESS**, including Auth job `110313108531` and Typecheck, Lint & Build job `110313108894`. Vercel commit status **success**. GitHub Preview deployment `6781261272` **success**. The preview host redirected to Vercel SSO, so `data-dpl-id` was not read. The commit that writes this paragraph is a new head and is not covered by that run. A green parent or `main` gate is not a gate for either head.
+Earlier remote gates stay historical. `3d1b7aed5d165a1391f3e34a0a5da0fb2b3369a1` had CI `36845062197`. Technical-Lead R1 read CI `36845583718`, Auth job `110314809182` and Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` on `59d43f4ccc2e4434401596f0b7b4b7c8162719d8` only. None of those apply to the correction head. This self-review does not claim a GitHub CI, Auth job or Vercel Preview for the correction head. A green parent or `main` gate is not a gate for it.
 
 No browser verification applies. This slice has no UI.
 

@@ -12,7 +12,7 @@ Logical agent: **Jetnity Official Truth source foundation 1**, Generation 1
 Session: https://cursor.com/agents/bc-2084780a-4e8d-4334-a56a-6bfba1a65f72
 `originalModelName`: `grok-4.7-high-fast` (Grok 4.7 High Fast). Not Auto. Recorded from this run before editing.
 
-Status: **CONTRACT FOUNDATION DELIVERED / DRAFT / NO TL PASS / NO READY / NO MERGE**
+Status: **R1 CORRECTION DELIVERED / DRAFT / NO TL PASS / NO READY / NO MERGE**
 
 ## 1. Baseline reconstruction
 
@@ -49,7 +49,15 @@ The Product-Owner decision supersedes that statement only for a future global, n
 - source router that plans eligible sources and never emits `not_required`
 - versioned evidence envelope, deterministic lookup key, candidate versus accepted boundary
 
-It does not add a second engine, a store, a migration, a catalog of real government domains, or a Timatic/Sherpa adapter. OpenAI is not called. Model output cannot set an official decision. A changed content hash is a new version and is not asserted as a changed rule. Conflict does not overwrite accepted evidence.
+It does not add a second engine, a store, a migration, a catalog of real government domains, or a Timatic/Sherpa adapter. OpenAI is not called. Model output cannot set an official decision. A changed source-content fingerprint is a new version and is not asserted as a changed rule. Conflict does not overwrite accepted evidence.
+
+Technical-Lead review `5377801054` required three contract corrections on exact head `59d43f4ccc2e4434401596f0b7b4b7c8162719d8`. This correction head applies only those:
+
+1. One cell per explicit credential option. The full citizenship set stays on every cell. `relatedCitizenshipCountryCode` is explicit or null. Issuing country does not become citizenship. There is no citizenship × document product.
+2. Citizenship, residence and document coverage use `independent`, `exact` or `not_applicable`. An empty exact list is an invalid descriptor. A destination authority can be independent of citizenship, document and residence without enumerating them. Destination and transit stay separate.
+3. `sourceContentHash` is computed from normalized `sourceSnapshot`. `extractionNote` and model fields `content`, `contentHash` and `sourceContentHash` cannot set it. The lookup key version is `evidence-key:v2:`.
+
+The gates below for `3d1b7aed` and the later Technical-Lead reading of `59d43f4c` do not apply to this correction head.
 
 Residence is an explicit key dimension (`not_applicable` or one country code). The existing traveller input already has a single residence country. The key does not store a person. Omitting the dimension would let residence-dependent and residence-independent evidence share a key.
 
@@ -110,4 +118,24 @@ No evidence table exists because of this slice. A later store still needs its ow
 
 Do not dispatch from this slice.
 
-Independent Technical-Lead exact-head review of Draft #673 is the next action. After a PASS, a separate design slice could specify a Development-only private evidence store. That proposal is not selected here. Cursor does not Ready, merge, or start it.
+Independent Technical-Lead re-review of the R1 correction head on Draft #673 is the next action. After a PASS, a separate design slice could specify a Development-only private evidence store. That proposal is not selected here. Cursor does not Ready, merge, or start it.
+
+## 8. R1 correction validation
+
+Local checks for the correction, recorded before its push:
+
+| Check | Result |
+| --- | --- |
+| `git diff --check` | pass |
+| `node scripts/operating-mode-guard.mjs` | pass |
+| Targeted `lib/readiness/source-foundation.test.ts` | **8/8 pass** |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors. 148 existing warnings, none in the changed readiness files. |
+| `npm test` | **4133 pass / 0 fail** |
+| `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` | pass. Schema check still notes the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`. |
+| `npm run check:setup:ci` | pass, with the existing missing-`.env` warning |
+| `npm run build` | pass. Next.js 16.3.8 compiled and generated 25 static pages. |
+| Local `auth:pruefen` | not run. This environment has no Supabase auth secrets. |
+| Exact-head GitHub CI / Auth / Vercel on the correction head | not observed yet. Do not reuse `36845062197`, `36845583718`, or Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ`. |
+
+Technical-Lead R1 independently read these gates on `59d43f4ccc2e4434401596f0b7b4b7c8162719d8` only: CI `36845583718` SUCCESS, Auth job `110314809182` SUCCESS, Typecheck/Lint/Build job `110314809725` SUCCESS, Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` READY. They became invalid when the correction was pushed.

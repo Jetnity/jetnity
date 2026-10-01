@@ -6,7 +6,7 @@
 // Die Requirements-/Official-Truth-Engine bleibt die einzige Auswertung.
 
 import { sha256Hex } from '@/lib/readiness/digest'
-import { landescodeLesen } from '@/lib/readiness/domain'
+import { TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
 import { checkedAtLesen, gültigkeitszeitLesen } from '@/lib/readiness/official'
 import {
   quellenUrlAufloesen,
@@ -23,11 +23,10 @@ export type EvidenceLifecycle = (typeof EVIDENCE_LIFECYCLES)[number]
 export const EVIDENCE_VALIDATION_STATES = ['pending', 'valid', 'rejected'] as const
 export type EvidenceValidationState = (typeof EVIDENCE_VALIDATION_STATES)[number]
 
-const SUCHSCHLUESSEL_VERSION = 'evidence-key:v1:'
+const SUCHSCHLUESSEL_VERSION = 'evidence-key:v2:'
 const VERSION_PREFIX = 'ev1_'
 const INHALT_MAX = 65_536
 const NOTIZ_MAX = 240
-const KOMBINATION_MAX = 96
 
 const PERSONEN_SCHLUESSEL = new Set([
   'userId',
@@ -68,20 +67,34 @@ const ENTSCHEIDUNGS_FELDER = [
   'visaMode',
 ] as const
 
+const FINGERPRINT_OVERRIDE = ['content', 'contentHash', 'sourceContentHash'] as const
+
 export type EvidenceRahmenFehler =
   | 'personal_identifier_forbidden'
   | 'model_decision_forbidden'
+  | 'source_fingerprint_override_forbidden'
   | 'invalid_context'
   | 'missing_relevant_context'
   | 'scope_too_wide'
+  | 'invalid_source_snapshot'
 
-export type StaatsbuergerschaftsAtom =
+export type CitizenshipScope =
   | { mode: 'not_applicable' }
-  | { mode: 'required'; countryCode: string }
+  | { mode: 'required'; countryCodes: readonly string[] }
 
-export type DokumentAtom =
+/**
+ * Eine Credential-Option. Die Staatsbürgerschaftsmenge bleibt am Scope.
+ * `relatedCitizenshipCountryCode` ist nur gesetzt, wenn die Beziehung
+ * explizit geliefert wurde. Das Ausstellerland ist keine Staatsbürgerschaft.
+ */
+export type CredentialOptionAtom =
   | { mode: 'not_applicable' }
-  | { mode: 'required'; documentType: TravellerDocumentType; issuingCountryCode: string }
+  | {
+      mode: 'option'
+      documentType: TravellerDocumentType
+      issuingCountryCode: string
+      relatedCitizenshipCountryCode: string | null
+    }
 
 export type WohnsitzAtom =
   | { mode: 'not_applicable' }
@@ -91,12 +104,12 @@ export type GueltigkeitsAtom =
   | { mode: 'not_applicable' }
   | { mode: 'travel_date'; travelDate: string }
 
-/** Eine wiederverwendbare, nicht-personenbezogene Evidence-Zelle. */
+/** Eine wiederverwendbare, nicht-personenbezogene Evidence-Zelle. Kein Kreuzprodukt. */
 export type EvidenceAtom = {
   destinationCountryCode: string | null
   transitCountryCode: string | null
-  citizenship: StaatsbuergerschaftsAtom
-  document: DokumentAtom
+  citizenship: CitizenshipScope
+  credentialOption: CredentialOptionAtom
   residence: WohnsitzAtom
   requirementType: OfficialRequirementType
   validity: GueltigkeitsAtom
@@ -117,7 +130,8 @@ export type EvidenceVersion = {
   publisherName: string
   canonicalUrl: string
   retrievedAt: string
-  contentHash: string
+  /** Fingerabdruck des normalisierten Quellentexts. Nicht die Modellformulierung. */
+  sourceContentHash: string
   validFrom: string | null
   validUntil: string | null
   scope: EvidenceScope
@@ -194,17 +208,30 @@ function personenkennung(wert: unknown, tiefe = 0): boolean {
   )
 }
 
-function entscheidungsfelder(wert: unknown, tiefe = 0, gesehen = new Set<string>()): string[] {
+function schluesselSammeln(
+  wert: unknown,
+  namen: readonly string[],
+  tiefe = 0,
+  gesehen = new Set<string>(),
+): string[] {
   if (tiefe > 6 || !wert || typeof wert !== 'object') return [...gesehen]
   if (Array.isArray(wert)) {
-    for (const eintrag of wert) entscheidungsfelder(eintrag, tiefe + 1, gesehen)
+    for (const eintrag of wert) schluesselSammeln(eintrag, namen, tiefe + 1, gesehen)
     return [...gesehen]
   }
   for (const [schluessel, kind] of Object.entries(wert as Record<string, unknown>)) {
-    if ((ENTSCHEIDUNGS_FELDER as readonly string[]).includes(schluessel)) gesehen.add(schluessel)
-    entscheidungsfelder(kind, tiefe + 1, gesehen)
+    if (namen.includes(schluessel)) gesehen.add(schluessel)
+    schluesselSammeln(kind, namen, tiefe + 1, gesehen)
   }
   return [...gesehen]
+}
+
+function entscheidungsfelder(wert: unknown): string[] {
+  return schluesselSammeln(wert, ENTSCHEIDUNGS_FELDER)
+}
+
+function fingerprintOverride(wert: unknown): string[] {
+  return schluesselSammeln(wert, FINGERPRINT_OVERRIDE)
 }
 
 function reisedatumLesen(wert: unknown): string | null {
@@ -231,34 +258,57 @@ function landOderNull(wert: unknown): { ok: true; code: string | null } | Rahmen
   return { ok: true, code }
 }
 
-function staatsbuergerschaftAtom(wert: unknown): { ok: true; atom: StaatsbuergerschaftsAtom } | RahmenFehler {
+function citizenshipScope(wert: unknown): { ok: true; scope: CitizenshipScope } | RahmenFehler {
   const satz = datensatz(wert)
   if (!satz || (satz.mode !== 'not_applicable' && satz.mode !== 'required')) {
     return { ok: false, reason: 'missing_relevant_context' }
   }
-  if (satz.mode === 'not_applicable') return { ok: true, atom: { mode: 'not_applicable' } }
-  const code = landescodeLesen(satz.countryCode)
-  if (!code) return { ok: false, reason: 'invalid_context' }
-  return { ok: true, atom: { mode: 'required', countryCode: code } }
+  if (satz.mode === 'not_applicable') return { ok: true, scope: { mode: 'not_applicable' } }
+  const codes = laenderListe(satz.countryCodes)
+  if (!codes.ok) return codes
+  if (codes.codes.length > TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller) {
+    return { ok: false, reason: 'scope_too_wide' }
+  }
+  return { ok: true, scope: { mode: 'required', countryCodes: codes.codes } }
 }
 
-function dokumentAtom(wert: unknown): { ok: true; atom: DokumentAtom } | RahmenFehler {
+function bezogeneStaatsbuergerschaft(
+  wert: Record<string, unknown>,
+  citizenship: CitizenshipScope,
+): { ok: true; related: string | null } | RahmenFehler {
+  if (!('relatedCitizenshipCountryCode' in wert)) return { ok: false, reason: 'missing_relevant_context' }
+  if (wert.relatedCitizenshipCountryCode == null) return { ok: true, related: null }
+  const related = landescodeLesen(wert.relatedCitizenshipCountryCode)
+  if (!related) return { ok: false, reason: 'invalid_context' }
+  if (citizenship.mode !== 'required' || !citizenship.countryCodes.includes(related)) {
+    return { ok: false, reason: 'invalid_context' }
+  }
+  return { ok: true, related }
+}
+
+function credentialOptionAtom(
+  wert: unknown,
+  citizenship: CitizenshipScope,
+): { ok: true; option: CredentialOptionAtom } | RahmenFehler {
   const satz = datensatz(wert)
-  if (!satz || (satz.mode !== 'not_applicable' && satz.mode !== 'required')) {
+  if (!satz || (satz.mode !== 'not_applicable' && satz.mode !== 'option')) {
     return { ok: false, reason: 'missing_relevant_context' }
   }
-  if (satz.mode === 'not_applicable') return { ok: true, atom: { mode: 'not_applicable' } }
+  if (satz.mode === 'not_applicable') return { ok: true, option: { mode: 'not_applicable' } }
   if (typeof satz.documentType !== 'string' || !(TRAVELLER_DOCUMENT_TYPES as readonly string[]).includes(satz.documentType)) {
     return { ok: false, reason: 'invalid_context' }
   }
   const issuing = landescodeLesen(satz.issuingCountryCode)
   if (!issuing) return { ok: false, reason: 'missing_relevant_context' }
+  const related = bezogeneStaatsbuergerschaft(satz, citizenship)
+  if (!related.ok) return related
   return {
     ok: true,
-    atom: {
-      mode: 'required',
+    option: {
+      mode: 'option',
       documentType: satz.documentType as TravellerDocumentType,
       issuingCountryCode: issuing,
+      relatedCitizenshipCountryCode: related.related,
     },
   }
 }
@@ -293,57 +343,44 @@ function anforderungLesen(wert: unknown): { ok: true; requirementType: OfficialR
 }
 
 function atomeAus(satz: Record<string, unknown>): { ok: true; atom: EvidenceAtom } | RahmenFehler {
-  if (!('destinationCountryCode' in satz) || !('transitCountryCode' in satz)) {
-    return { ok: false, reason: 'missing_relevant_context' }
-  }
-  const destination = landOderNull(satz.destinationCountryCode)
-  if (!destination.ok) return destination
-  const transit = landOderNull(satz.transitCountryCode)
-  if (!transit.ok) return transit
-  if (!destination.code && !transit.code) return { ok: false, reason: 'missing_relevant_context' }
-  if (!('citizenship' in satz) || !('document' in satz) || !('residence' in satz) || !('validity' in satz)) {
-    return { ok: false, reason: 'missing_relevant_context' }
-  }
-  const citizenship = staatsbuergerschaftAtom(satz.citizenship)
-  if (!citizenship.ok) return citizenship
-  const document = dokumentAtom(satz.document)
-  if (!document.ok) return document
-  const residence = wohnsitzAtom(satz.residence)
-  if (!residence.ok) return residence
-  const requirement = anforderungLesen(satz.requirementType)
-  if (!requirement.ok) return requirement
-  const validity = gueltigkeitAtom(satz.validity)
-  if (!validity.ok) return validity
+  const rahmen = rahmenFelder(satz)
+  if (!rahmen.ok) return rahmen
+  if (!('credentialOption' in satz)) return { ok: false, reason: 'missing_relevant_context' }
+  const option = credentialOptionAtom(satz.credentialOption, rahmen.citizenship)
+  if (!option.ok) return option
   return {
     ok: true,
     atom: {
-      destinationCountryCode: destination.code,
-      transitCountryCode: transit.code,
-      citizenship: citizenship.atom,
-      document: document.atom,
-      residence: residence.atom,
-      requirementType: requirement.requirementType,
-      validity: validity.atom,
+      destinationCountryCode: rahmen.destination,
+      transitCountryCode: rahmen.transit,
+      citizenship: rahmen.citizenship,
+      credentialOption: option.option,
+      residence: rahmen.residence,
+      requirementType: rahmen.requirementType,
+      validity: rahmen.validity,
     },
   }
 }
 
 function kanonisch(scope: EvidenceScope): string {
-  const citizenshipCountryCode = scope.citizenship.mode === 'required' ? scope.citizenship.countryCode : null
-  const documentType = scope.document.mode === 'required' ? scope.document.documentType : null
-  const issuingCountryCode = scope.document.mode === 'required' ? scope.document.issuingCountryCode : null
+  const citizenshipCountryCodes = scope.citizenship.mode === 'required' ? scope.citizenship.countryCodes : []
+  const option = scope.credentialOption
+  const relation =
+    option.mode === 'not_applicable' ? 'not_applicable' : option.relatedCitizenshipCountryCode ? 'explicit' : 'unlinked'
   const residenceCountryCode = scope.residence.mode === 'required' ? scope.residence.countryCode : null
   const travelDate = scope.validity.mode === 'travel_date' ? scope.validity.travelDate : null
   return JSON.stringify({
-    v: 1,
+    v: 2,
     sourceId: scope.sourceId,
     destinationCountryCode: scope.destinationCountryCode,
     transitCountryCode: scope.transitCountryCode,
     citizenshipMode: scope.citizenship.mode,
-    citizenshipCountryCode,
-    documentMode: scope.document.mode,
-    documentType,
-    issuingCountryCode,
+    citizenshipCountryCodes,
+    credentialOptionMode: option.mode,
+    documentType: option.mode === 'option' ? option.documentType : null,
+    issuingCountryCode: option.mode === 'option' ? option.issuingCountryCode : null,
+    relatedCitizenshipCountryCode: option.mode === 'option' ? option.relatedCitizenshipCountryCode : null,
+    relation,
     residenceMode: scope.residence.mode,
     residenceCountryCode,
     requirementType: scope.requirementType,
@@ -375,30 +412,96 @@ function laenderListe(wert: unknown): { ok: true; codes: string[] } | RahmenFehl
   return { ok: true, codes }
 }
 
-function dokumentOptionen(wert: unknown): { ok: true; options: { documentType: TravellerDocumentType; issuingCountryCode: string }[] } | RahmenFehler {
-  if (!Array.isArray(wert) || wert.length === 0) return { ok: false, reason: 'missing_relevant_context' }
-  const options: { documentType: TravellerDocumentType; issuingCountryCode: string }[] = []
-  for (const eintrag of wert) {
+function credentialOptionen(
+  wert: unknown,
+  citizenship: CitizenshipScope,
+): { ok: true; options: CredentialOptionAtom[] } | RahmenFehler {
+  const satz = datensatz(wert)
+  if (!satz || (satz.mode !== 'not_applicable' && satz.mode !== 'required')) {
+    return { ok: false, reason: 'missing_relevant_context' }
+  }
+  if (satz.mode === 'not_applicable') return { ok: true, options: [{ mode: 'not_applicable' }] }
+  if (!Array.isArray(satz.options) || satz.options.length === 0) {
+    return { ok: false, reason: 'missing_relevant_context' }
+  }
+  if (satz.options.length > TRAVELLER_CONTEXT_GRENZEN.documentsJeTraveller) {
+    return { ok: false, reason: 'scope_too_wide' }
+  }
+  const options: Extract<CredentialOptionAtom, { mode: 'option' }>[] = []
+  for (const eintrag of satz.options) {
     const basis = datensatz(eintrag)
     if (!basis) return { ok: false, reason: 'invalid_context' }
-    const atom = dokumentAtom({ ...basis, mode: 'required' })
+    const atom = credentialOptionAtom({ ...basis, mode: 'option' }, citizenship)
     if (!atom.ok) return atom
-    if (atom.atom.mode !== 'required') return { ok: false, reason: 'invalid_context' }
-    const documentType = atom.atom.documentType
-    const issuingCountryCode = atom.atom.issuingCountryCode
-    const schon = options.some((option) => option.documentType === documentType && option.issuingCountryCode === issuingCountryCode)
-    if (!schon) options.push({ documentType, issuingCountryCode })
+    if (atom.option.mode !== 'option') return { ok: false, reason: 'invalid_context' }
+    const option = atom.option
+    const schon = options.some(
+      (vorhanden) =>
+        vorhanden.documentType === option.documentType &&
+        vorhanden.issuingCountryCode === option.issuingCountryCode &&
+        vorhanden.relatedCitizenshipCountryCode === option.relatedCitizenshipCountryCode,
+    )
+    if (!schon) options.push(option)
   }
   options.sort((links, rechts) => {
-    const a = `${links.documentType}:${links.issuingCountryCode}`
-    const b = `${rechts.documentType}:${rechts.issuingCountryCode}`
+    const a = `${links.documentType}:${links.issuingCountryCode}:${links.relatedCitizenshipCountryCode ?? ''}`
+    const b = `${rechts.documentType}:${rechts.issuingCountryCode}:${rechts.relatedCitizenshipCountryCode ?? ''}`
     return a < b ? -1 : a > b ? 1 : 0
   })
   return { ok: true, options }
 }
 
-export function evidenceInhaltHash(inhalt: string): string {
-  return sha256Hex(inhalt)
+/**
+ * Fingerabdruck eines von Jetnity normalisierten Quellentexts.
+ * Die Funktion kennt keine Modellformulierung. Zeilenenden werden
+ * vereinheitlicht; der Text selbst wird nicht gekürzt.
+ */
+export function evidenceQuellenFingerprint(snapshot: string): string | null {
+  if (typeof snapshot !== 'string' || snapshot.length === 0 || snapshot.length > INHALT_MAX) return null
+  const normalisiert = snapshot.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+  if (!normalisiert) return null
+  return sha256Hex(normalisiert)
+}
+
+function rahmenFelder(satz: Record<string, unknown>):
+  | {
+      ok: true
+      destination: string | null
+      transit: string | null
+      citizenship: CitizenshipScope
+      residence: WohnsitzAtom
+      requirementType: OfficialRequirementType
+      validity: GueltigkeitsAtom
+    }
+  | RahmenFehler {
+  if (!('destinationCountryCode' in satz) || !('transitCountryCode' in satz)) {
+    return { ok: false, reason: 'missing_relevant_context' }
+  }
+  const destination = landOderNull(satz.destinationCountryCode)
+  if (!destination.ok) return destination
+  const transit = landOderNull(satz.transitCountryCode)
+  if (!transit.ok) return transit
+  if (!destination.code && !transit.code) return { ok: false, reason: 'missing_relevant_context' }
+  if (!('citizenship' in satz) || !('residence' in satz) || !('validity' in satz)) {
+    return { ok: false, reason: 'missing_relevant_context' }
+  }
+  const citizenship = citizenshipScope(satz.citizenship)
+  if (!citizenship.ok) return citizenship
+  const residence = wohnsitzAtom(satz.residence)
+  if (!residence.ok) return residence
+  const requirement = anforderungLesen(satz.requirementType)
+  if (!requirement.ok) return requirement
+  const validity = gueltigkeitAtom(satz.validity)
+  if (!validity.ok) return validity
+  return {
+    ok: true,
+    destination: destination.code,
+    transit: transit.code,
+    citizenship: citizenship.scope,
+    residence: residence.atom,
+    requirementType: requirement.requirementType,
+    validity: validity.atom,
+  }
 }
 
 export function evidenceSuchschluessel(eingabe: unknown): EvidenceSuchschluessel {
@@ -416,8 +519,9 @@ export function evidenceSuchschluessel(eingabe: unknown): EvidenceSuchschluessel
 }
 
 /**
- * Eine Schlüsselmenge je Staatsbürgerschaft und Dokumentoption.
- * Die Eingabereihenfolge ist bedeutungslos. Keine Option wird auf die erste reduziert.
+ * Eine Zelle je expliziter Credential-Option.
+ * Jede Zelle trägt die volle Staatsbürgerschaftsmenge.
+ * Die Eingabereihenfolge ist bedeutungslos. Es gibt kein Kreuzprodukt.
  */
 export function evidenceSuchschluesselListe(eingabe: unknown): EvidenceSuchschluesselListe {
   if (personenkennung(eingabe)) return { ok: false, reason: 'personal_identifier_forbidden' }
@@ -443,68 +547,21 @@ export function evidenceKombinationen(
   if (personenkennung(eingabe)) return { ok: false, reason: 'personal_identifier_forbidden' }
   const satz = datensatz(eingabe)
   if (!satz) return { ok: false, reason: 'invalid_context' }
-  if (!('destinationCountryCode' in satz) || !('transitCountryCode' in satz)) {
-    return { ok: false, reason: 'missing_relevant_context' }
-  }
-  const destination = landOderNull(satz.destinationCountryCode)
-  if (!destination.ok) return destination
-  const transit = landOderNull(satz.transitCountryCode)
-  if (!transit.ok) return transit
-  if (!destination.code && !transit.code) return { ok: false, reason: 'missing_relevant_context' }
-  if (!('citizenship' in satz) || !('documents' in satz) || !('residence' in satz) || !('validity' in satz)) {
-    return { ok: false, reason: 'missing_relevant_context' }
-  }
+  if (!('credentialOptions' in satz)) return { ok: false, reason: 'missing_relevant_context' }
+  const rahmen = rahmenFelder(satz)
+  if (!rahmen.ok) return rahmen
+  const options = credentialOptionen(satz.credentialOptions, rahmen.citizenship)
+  if (!options.ok) return options
 
-  const citizenshipSatz = datensatz(satz.citizenship)
-  if (!citizenshipSatz || (citizenshipSatz.mode !== 'not_applicable' && citizenshipSatz.mode !== 'required')) {
-    return { ok: false, reason: 'missing_relevant_context' }
-  }
-  const citizenships: StaatsbuergerschaftsAtom[] =
-    citizenshipSatz.mode === 'not_applicable'
-      ? [{ mode: 'not_applicable' }]
-      : []
-  if (citizenshipSatz.mode === 'required') {
-    const codes = laenderListe(citizenshipSatz.countryCodes)
-    if (!codes.ok) return codes
-    for (const countryCode of codes.codes) citizenships.push({ mode: 'required', countryCode })
-  }
-
-  const dokumentSatz = datensatz(satz.documents)
-  if (!dokumentSatz || (dokumentSatz.mode !== 'not_applicable' && dokumentSatz.mode !== 'required')) {
-    return { ok: false, reason: 'missing_relevant_context' }
-  }
-  const documents: DokumentAtom[] = dokumentSatz.mode === 'not_applicable' ? [{ mode: 'not_applicable' }] : []
-  if (dokumentSatz.mode === 'required') {
-    const options = dokumentOptionen(dokumentSatz.options)
-    if (!options.ok) return options
-    for (const option of options.options) documents.push({ mode: 'required', ...option })
-  }
-
-  const residence = wohnsitzAtom(satz.residence)
-  if (!residence.ok) return residence
-  const requirement = anforderungLesen(satz.requirementType)
-  if (!requirement.ok) return requirement
-  const validity = gueltigkeitAtom(satz.validity)
-  if (!validity.ok) return validity
-
-  if (citizenships.length * documents.length > KOMBINATION_MAX) {
-    return { ok: false, reason: 'scope_too_wide' }
-  }
-
-  const atoms: EvidenceAtom[] = []
-  for (const citizenship of citizenships) {
-    for (const document of documents) {
-      atoms.push({
-        destinationCountryCode: destination.code,
-        transitCountryCode: transit.code,
-        citizenship,
-        document,
-        residence: residence.atom,
-        requirementType: requirement.requirementType,
-        validity: validity.atom,
-      })
-    }
-  }
+  const atoms: EvidenceAtom[] = options.options.map((credentialOption) => ({
+    destinationCountryCode: rahmen.destination,
+    transitCountryCode: rahmen.transit,
+    citizenship: rahmen.citizenship,
+    credentialOption,
+    residence: rahmen.residence,
+    requirementType: rahmen.requirementType,
+    validity: rahmen.validity,
+  }))
   return { ok: true, atoms }
 }
 
@@ -528,8 +585,8 @@ function gueltigkeitsfenster(satz: Record<string, unknown>): { ok: true; validFr
   return { ok: true, validFrom, validUntil }
 }
 
-function versionIdFuer(sourceId: string, canonicalUrl: string, contentHash: string, retrievedAt: string): string {
-  return `${VERSION_PREFIX}${sha256Hex([sourceId, canonicalUrl, contentHash, retrievedAt].join('|')).slice(0, 32)}`
+function versionIdFuer(sourceId: string, canonicalUrl: string, sourceContentHash: string, retrievedAt: string): string {
+  return `${VERSION_PREFIX}${sha256Hex([sourceId, canonicalUrl, sourceContentHash, retrievedAt].join('|')).slice(0, 32)}`
 }
 
 function quellePasst(quelle: RegistrierteQuelle, evidence: Pick<EvidenceVersion, 'sourceId' | 'sourceClass' | 'authorityName' | 'publisherName'>): boolean {
@@ -549,6 +606,8 @@ export function evidenceKandidatAusModell(eingabe: unknown, registry: QuellenReg
   if (personenkennung(eingabe)) return { ok: false, reason: 'personal_identifier_forbidden' }
   const felder = entscheidungsfelder(eingabe)
   if (felder.length > 0) return { ok: false, reason: 'model_decision_forbidden', fields: felder }
+  const override = fingerprintOverride(eingabe)
+  if (override.length > 0) return { ok: false, reason: 'source_fingerprint_override_forbidden', fields: override }
   const satz = datensatz(eingabe)
   if (!satz) return { ok: false, reason: 'invalid_context' }
   const schluessel = evidenceSuchschluessel(satz.scope ?? satz)
@@ -558,10 +617,9 @@ export function evidenceKandidatAusModell(eingabe: unknown, registry: QuellenReg
   if (url.source.sourceId !== schluessel.scope.sourceId) return { ok: false, reason: 'source_mismatch' }
   const retrievedAt = checkedAtLesen(satz.retrievedAt)
   if (!retrievedAt) return { ok: false, reason: 'invalid_retrieval_time' }
-  if (typeof satz.content !== 'string' || satz.content.length === 0 || satz.content.length > INHALT_MAX) {
-    return { ok: false, reason: 'invalid_context' }
-  }
-  const contentHash = evidenceInhaltHash(satz.content)
+  if (typeof satz.sourceSnapshot !== 'string') return { ok: false, reason: 'invalid_source_snapshot' }
+  const sourceContentHash = evidenceQuellenFingerprint(satz.sourceSnapshot)
+  if (!sourceContentHash) return { ok: false, reason: 'invalid_source_snapshot' }
   const fenster = gueltigkeitsfenster(satz)
   if (!fenster.ok) return fenster
   const note = notizLesen(satz.extractionNote)
@@ -573,7 +631,7 @@ export function evidenceKandidatAusModell(eingabe: unknown, registry: QuellenReg
     return { ok: false, reason: 'authority_required' }
   }
   const evidence: EvidenceVersion = {
-    versionId: versionIdFuer(url.source.sourceId, url.canonicalUrl, contentHash, retrievedAt),
+    versionId: versionIdFuer(url.source.sourceId, url.canonicalUrl, sourceContentHash, retrievedAt),
     previousVersionId: null,
     lifecycle: 'candidate',
     validationState: 'pending',
@@ -583,7 +641,7 @@ export function evidenceKandidatAusModell(eingabe: unknown, registry: QuellenReg
     publisherName: url.source.publisherName,
     canonicalUrl: url.canonicalUrl,
     retrievedAt,
-    contentHash,
+    sourceContentHash,
     validFrom: fenster.validFrom,
     validUntil: fenster.validUntil,
     scope: schluessel.scope,
@@ -612,7 +670,7 @@ export function evidenceKandidatAkzeptieren(
   }
   if (!quellePasst(url.source, kandidat)) return { ok: false, reason: 'source_mismatch' }
   if (!checkedAtLesen(kandidat.retrievedAt)) return { ok: false, reason: 'invalid_retrieval_time' }
-  if (!hashLesen(kandidat.contentHash)) return { ok: false, reason: 'invalid_hash' }
+  if (!hashLesen(kandidat.sourceContentHash)) return { ok: false, reason: 'invalid_hash' }
   const fenster = gueltigkeitsfenster({ validFrom: kandidat.validFrom, validUntil: kandidat.validUntil })
   if (!fenster.ok) return fenster
   const erneut = evidenceSuchschluessel(kandidat.scope)
@@ -639,7 +697,7 @@ export function akzeptierteEvidenceLesen(version: EvidenceVersion, registry: Que
   if (entscheidungsfelder(version).length > 0) return null
   const url = quellenUrlAufloesen(registry, version.canonicalUrl)
   if (!url.ok || !quellePasst(url.source, version)) return null
-  if (!checkedAtLesen(version.retrievedAt) || !hashLesen(version.contentHash)) return null
+  if (!checkedAtLesen(version.retrievedAt) || !hashLesen(version.sourceContentHash)) return null
   const erneut = evidenceSuchschluessel(version.scope)
   if (!erneut.ok || erneut.key !== version.lookupKey) return null
   if (version.sourceClass === 'licensed_evidence_provider' && version.authorityName !== null) return null
@@ -648,11 +706,11 @@ export function akzeptierteEvidenceLesen(version: EvidenceVersion, registry: Que
 }
 
 export function evidenceVersionenVergleichen(
-  vorher: { contentHash: unknown },
-  nachher: { contentHash: unknown },
+  vorher: { sourceContentHash: unknown },
+  nachher: { sourceContentHash: unknown },
 ): EvidenceVersionsVergleich {
-  const links = hashLesen(vorher.contentHash)
-  const rechts = hashLesen(nachher.contentHash)
+  const links = hashLesen(vorher.sourceContentHash)
+  const rechts = hashLesen(nachher.sourceContentHash)
   if (!links || !rechts) return { ok: false, reason: 'invalid_hash' }
   const contentChanged = links !== rechts
   return {
@@ -682,7 +740,7 @@ export function evidenceKonfliktHalten(bestehend: EvidenceVersion, eingehend: Ev
     ok: true,
     overwritten: false,
     kept: structuredClone(bestehend),
-    situation: bestehend.contentHash === eingehend.contentHash ? 'unchanged_content' : 'conflict_preserved',
+    situation: bestehend.sourceContentHash === eingehend.sourceContentHash ? 'unchanged_content' : 'conflict_preserved',
     ruleChange: 'not_asserted',
   }
 }

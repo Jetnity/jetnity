@@ -5698,6 +5698,12 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 
 **Konsequenzen:** Die Laufzeit der Engine und `lib/readiness/official.ts` bleiben unverändert. Es gibt keinen Store und keine Migration. Ein späterer Persistence-Slice braucht ein eigenes Schema-Review und bleibt vor Production ein Product-Owner-Gate. Timatic und Sherpa können später optionale Adapter werden. Dieser ADR startet diesen Folgeslice nicht.
 
+**Nachtrag 1. Oktober 2026, Technical-Lead R1 auf `59d43f4ccc2e4434401596f0b7b4b7c8162719d8`:** Der erste Vertrag auf diesem Head hat Staatsbürgerschaften mit Dokumenten gekreuzt und den Hash aus Modelltext gebildet. Das ist vor einem Merge korrigiert, ohne den Slice zu erweitern.
+
+1. Eine Evidence-Zelle ist eine explizite Credential-Option, nicht ein Kreuzprodukt. Jede Zelle trägt die volle Staatsbürgerschaftsmenge. `relatedCitizenshipCountryCode` ist nur gesetzt, wenn die Document↔Citizenship-Beziehung geliefert wurde. Das Ausstellerland erzeugt diese Beziehung nicht. Ein unverbundenes Dokument bleibt `unlinked`. Der Suchschlüssel ist `evidence-key:v2:`. Unter v1 wurde nichts persistiert.
+2. Staatsbürgerschaft, Wohnsitz und Dokument haben die Abdeckungsmodi `independent`, `exact` und `not_applicable`. `independent` deckt jede Ausprägung, ohne die Welt aufzuzählen. Eine leere Exact-Liste ist ein ungültiger Deskriptor und kein Wildcard. Exact-Staatsbürgerschaft trifft die explizite bezogene Staatsbürgerschaft der Option. Ziel und Transit bleiben getrennte Länderlisten.
+3. `sourceContentHash` ist SHA-256 des von Jetnity normalisierten `sourceSnapshot`. `extractionNote` und die Felder `content`, `contentHash`, `sourceContentHash` setzen diesen Fingerabdruck nicht. Ein anderer Quellentext ist eine andere Version und bleibt `ruleChange: 'not_asserted'`. Dieser Slice ruft dafür kein Netz auf.
+
 ---
 
 ## Offene Widersprüche

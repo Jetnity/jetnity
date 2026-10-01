@@ -12,10 +12,10 @@ import {
   EVIDENCE_LIFECYCLES,
   EVIDENCE_VALIDATION_STATES,
   akzeptierteEvidenceLesen,
-  evidenceInhaltHash,
   evidenceKandidatAkzeptieren,
   evidenceKandidatAusModell,
   evidenceKonfliktHalten,
+  evidenceQuellenFingerprint,
   evidenceSuchschluessel,
   evidenceSuchschluesselListe,
   evidenceVersionenVergleichen,
@@ -34,6 +34,8 @@ import {
 import { quellenRouten, type QuellenAbdeckung, type QuellenDeskriptor } from '@/lib/readiness/source-router'
 
 const ABGERUFEN = '2026-10-01T12:00:00.000Z'
+const QUELLE = 'https://www.gov.example/rules/visa'
+const SNAPSHOT = 'synthetic official page alpha'
 
 function registry(): QuellenRegistry {
   const ergebnis = quellenRegistryErstellen([
@@ -67,9 +69,9 @@ function abdeckung(teil?: Partial<QuellenAbdeckung>): QuellenAbdeckung {
     destinationCountryCodes: ['JP'],
     transitCountryCodes: [],
     requirementTypes: ['visa'],
-    citizenshipCountryCodes: ['CH', 'RS'],
-    residenceCountryCodes: [],
-    documents: [],
+    citizenship: { mode: 'independent' },
+    residence: { mode: 'independent' },
+    documents: { mode: 'independent' },
     ...teil,
   }
 }
@@ -78,13 +80,21 @@ function deskriptor(basis: QuellenRegistry, sourceId: string, coverage: QuellenA
   return { source: quelle(basis, sourceId), coverage }
 }
 
+function option(issuingCountryCode: string, relatedCitizenshipCountryCode: string | null) {
+  return {
+    documentType: 'passport',
+    issuingCountryCode,
+    relatedCitizenshipCountryCode,
+  }
+}
+
 function atom(teil?: Record<string, unknown>) {
   return {
     sourceId: 'example-border-authority',
     destinationCountryCode: 'JP',
     transitCountryCode: null,
-    citizenship: { mode: 'required', countryCode: 'CH' },
-    document: { mode: 'required', documentType: 'passport', issuingCountryCode: 'CH' },
+    citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
+    credentialOption: { mode: 'option', ...option('CH', 'CH') },
     residence: { mode: 'not_applicable' },
     requirementType: 'visa',
     validity: { mode: 'travel_date', travelDate: '2026-10-01' },
@@ -97,12 +107,9 @@ function rahmen(teil?: Record<string, unknown>) {
     destinationCountryCode: 'JP',
     transitCountryCode: null,
     citizenship: { mode: 'required', countryCodes: ['RS', 'CH'] },
-    documents: {
+    credentialOptions: {
       mode: 'required',
-      options: [
-        { documentType: 'passport', issuingCountryCode: 'RS' },
-        { documentType: 'passport', issuingCountryCode: 'CH' },
-      ],
+      options: [option('CH', 'CH'), option('RS', 'RS')],
     },
     residence: { mode: 'not_applicable' },
     requirementType: 'visa',
@@ -111,26 +118,55 @@ function rahmen(teil?: Record<string, unknown>) {
   }
 }
 
-function kandidat(basis: QuellenRegistry, content = 'synthetic rule text alpha', scope: Record<string, unknown> = atom()) {
+function kandidat(
+  basis: QuellenRegistry,
+  sourceSnapshot = SNAPSHOT,
+  scope: Record<string, unknown> = atom(),
+  extractionNote?: string,
+) {
   return evidenceKandidatAusModell(
     {
-      canonicalUrl: 'https://www.gov.example/rules/visa',
+      canonicalUrl: QUELLE,
       retrievedAt: ABGERUFEN,
-      content,
+      sourceSnapshot,
+      extractionNote,
       scope,
     },
     basis,
   )
 }
 
-function angenommen(basis: QuellenRegistry, content = 'synthetic rule text alpha', scope?: Record<string, unknown>): EvidenceVersion {
-  const erzeugt = kandidat(basis, content, scope)
+function angenommen(
+  basis: QuellenRegistry,
+  sourceSnapshot = SNAPSHOT,
+  scope?: Record<string, unknown>,
+  extractionNote?: string,
+): EvidenceVersion {
+  const erzeugt = kandidat(basis, sourceSnapshot, scope, extractionNote)
   assert.equal(erzeugt.ok, true)
   if (!erzeugt.ok) throw new Error('kandidat')
   const akzeptiert = evidenceKandidatAkzeptieren(erzeugt.evidence, basis)
   assert.equal(akzeptiert.ok, true)
   if (!akzeptiert.ok) throw new Error('akzeptanz')
   return akzeptiert.evidence
+}
+
+function paare(entries: readonly { canonical: string }[]) {
+  return entries
+    .map((eintrag) => {
+      const kanonisch = JSON.parse(eintrag.canonical) as {
+        citizenshipCountryCodes: string[]
+        issuingCountryCode: string | null
+        relatedCitizenshipCountryCode: string | null
+        relation: string
+      }
+      return {
+        citizenships: kanonisch.citizenshipCountryCodes.join(','),
+        pair: `${kanonisch.relatedCitizenshipCountryCode ?? 'unlinked'}:${kanonisch.issuingCountryCode}`,
+        relation: kanonisch.relation,
+      }
+    })
+    .sort((links, rechts) => (links.pair < rechts.pair ? -1 : links.pair > rechts.pair ? 1 : 0))
 }
 
 describe('Official Truth source/evidence foundation', () => {
@@ -207,7 +243,7 @@ describe('Official Truth source/evidence foundation', () => {
       {
         canonicalUrl: 'http://gov.example/rules',
         retrievedAt: ABGERUFEN,
-        content: 'synthetic rule text',
+        sourceSnapshot: SNAPSHOT,
         scope: atom(),
       },
       basis,
@@ -217,7 +253,7 @@ describe('Official Truth source/evidence foundation', () => {
       {
         canonicalUrl: 'https://user:pass@gov.example/rules',
         retrievedAt: ABGERUFEN,
-        content: 'synthetic rule text',
+        sourceSnapshot: SNAPSHOT,
         scope: atom(),
       },
       basis,
@@ -250,7 +286,7 @@ describe('Official Truth source/evidence foundation', () => {
         {
           canonicalUrl: 'https://gov.example/rules',
           retrievedAt: ABGERUFEN,
-          content: 'synthetic rule text',
+          sourceSnapshot: SNAPSHOT,
           scope: atom(),
           [feld]: feld === 'result' ? 'not_required' : 'visa_exempt',
         },
@@ -262,17 +298,14 @@ describe('Official Truth source/evidence foundation', () => {
     }
   })
 
-  test('der Suchschlüssel ist reihenfolgenstabil, optionstreu und ohne Personenkennung', () => {
+  test('Credential-Optionen bleiben relationsscharf und reihenfolgenstabil', () => {
     const hin = evidenceSuchschluesselListe({ ...rahmen(), sourceId: 'example-border-authority' })
     const her = evidenceSuchschluesselListe({
       ...rahmen({
         citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
-        documents: {
+        credentialOptions: {
           mode: 'required',
-          options: [
-            { documentType: 'passport', issuingCountryCode: 'CH' },
-            { documentType: 'passport', issuingCountryCode: 'RS' },
-          ],
+          options: [option('RS', 'RS'), option('CH', 'CH')],
         },
       }),
       sourceId: 'example-border-authority',
@@ -280,35 +313,85 @@ describe('Official Truth source/evidence foundation', () => {
     assert.equal(hin.ok, true)
     assert.equal(her.ok, true)
     if (!hin.ok || !her.ok) return
-    assert.equal(hin.entries.length, 4)
+    assert.equal(hin.entries.length, 2)
     assert.deepEqual(
       hin.entries.map((eintrag) => eintrag.key),
       her.entries.map((eintrag) => eintrag.key),
     )
-    const staatsangehoerigkeiten = hin.entries.map((eintrag) => {
-      const kanonisch = JSON.parse(eintrag.canonical) as { citizenshipCountryCode: string; issuingCountryCode: string }
-      return `${kanonisch.citizenshipCountryCode}:${kanonisch.issuingCountryCode}`
-    })
-    assert.deepEqual(staatsangehoerigkeiten.sort(), ['CH:CH', 'CH:RS', 'RS:CH', 'RS:RS'])
+    assert.deepEqual(paare(hin.entries), [
+      { citizenships: 'CH,RS', pair: 'CH:CH', relation: 'explicit' },
+      { citizenships: 'CH,RS', pair: 'RS:RS', relation: 'explicit' },
+    ])
+    assert.equal(
+      paare(hin.entries).some((eintrag) => eintrag.pair === 'CH:RS' || eintrag.pair === 'RS:CH'),
+      false,
+    )
 
-    const nurErste = evidenceSuchschluesselListe({
+    const unlinked = evidenceSuchschluessel(
+      atom({
+        credentialOption: { mode: 'option', ...option('CH', null) },
+      }),
+    )
+    const linked = evidenceSuchschluessel(atom())
+    assert.equal(unlinked.ok && linked.ok, true)
+    if (!unlinked.ok || !linked.ok) return
+    assert.notEqual(unlinked.key, linked.key)
+    const unlinkedKanonisch = JSON.parse(unlinked.canonical) as {
+      issuingCountryCode: string
+      relatedCitizenshipCountryCode: string | null
+      relation: string
+    }
+    assert.equal(unlinkedKanonisch.issuingCountryCode, 'CH')
+    assert.equal(unlinkedKanonisch.relatedCitizenshipCountryCode, null)
+    assert.equal(unlinkedKanonisch.relation, 'unlinked')
+
+    const ohneRelation = evidenceSuchschluessel(
+      atom({
+        credentialOption: { mode: 'option', documentType: 'passport', issuingCountryCode: 'CH' },
+      }),
+    )
+    assert.equal(ohneRelation.ok, false)
+    if (ohneRelation.ok) return
+    assert.equal(ohneRelation.reason, 'missing_relevant_context')
+
+    const ausstellerAlsStaatsbuergerschaft = evidenceSuchschluesselListe({
       ...rahmen({
-        citizenship: { mode: 'required', countryCodes: ['RS'] },
-        documents: { mode: 'required', options: [{ documentType: 'passport', issuingCountryCode: 'RS' }] },
+        credentialOptions: { mode: 'required', options: [option('CH', null)] },
       }),
       sourceId: 'example-border-authority',
     })
-    assert.equal(nurErste.ok, true)
-    if (!nurErste.ok) return
-    assert.equal(nurErste.entries.length, 1)
-    assert.notDeepEqual(
-      hin.entries.map((eintrag) => eintrag.key),
-      nurErste.entries.map((eintrag) => eintrag.key),
+    assert.equal(ausstellerAlsStaatsbuergerschaft.ok, true)
+    if (!ausstellerAlsStaatsbuergerschaft.ok) return
+    assert.deepEqual(paare(ausstellerAlsStaatsbuergerschaft.entries), [
+      { citizenships: 'CH,RS', pair: 'unlinked:CH', relation: 'unlinked' },
+    ])
+
+    const zuVieleStaaten = evidenceSuchschluesselListe({
+      ...rahmen({ citizenship: { mode: 'required', countryCodes: ['CH', 'RS', 'DE', 'AT', 'IT', 'FR', 'ES', 'NL', 'BE'] } }),
+      sourceId: 'example-border-authority',
+    })
+    assert.equal(zuVieleStaaten.ok, false)
+    if (zuVieleStaaten.ok) return
+    assert.equal(zuVieleStaaten.reason, 'scope_too_wide')
+
+    const doppelt = evidenceSuchschluesselListe({
+      ...rahmen({
+        credentialOptions: { mode: 'required', options: [option('CH', 'CH'), option('CH', 'CH')] },
+      }),
+      sourceId: 'example-border-authority',
+    })
+    assert.equal(doppelt.ok, true)
+    if (!doppelt.ok) return
+    assert.equal(doppelt.entries.length, 1)
+
+    const fremdeRelation = evidenceSuchschluessel(
+      atom({
+        credentialOption: { mode: 'option', ...option('CH', 'DE') },
+      }),
     )
-    assert.equal(
-      hin.entries.some((eintrag) => eintrag.key === nurErste.entries[0]?.key),
-      true,
-    )
+    assert.equal(fremdeRelation.ok, false)
+    if (fremdeRelation.ok) return
+    assert.equal(fremdeRelation.reason, 'invalid_context')
 
     const verboten = evidenceSuchschluesselListe({
       ...rahmen(),
@@ -341,36 +424,66 @@ describe('Official Truth source/evidence foundation', () => {
     assert.equal(wohnsitzFehlt.reason, 'missing_relevant_context')
   })
 
-  test('ein geänderter Hash ist eine neue Version und kein behaupteter Regelwechsel', () => {
+  test('derselbe Quellentext bleibt derselbe Fingerabdruck, auch wenn die Extraktion anders formuliert', () => {
     const basis = registry()
-    const erste = angenommen(basis, 'synthetic rule text alpha')
-    const zweite = angenommen(basis, 'synthetic rule text beta')
-    assert.notEqual(erste.contentHash, zweite.contentHash)
-    assert.equal(erste.contentHash, evidenceInhaltHash('synthetic rule text alpha'))
-    assert.notEqual(erste.versionId, zweite.versionId)
+    const erste = angenommen(basis, 'official page line\r\nunchanged', undefined, 'model wording alpha')
+    const zweite = angenommen(basis, 'official page line\nunchanged', undefined, 'model wording beta')
+    assert.equal(erste.sourceContentHash, zweite.sourceContentHash)
+    assert.equal(erste.sourceContentHash, evidenceQuellenFingerprint('official page line\nunchanged'))
+    assert.notEqual(erste.extractionNote, zweite.extractionNote)
+    assert.equal(erste.versionId, zweite.versionId)
     assert.equal(erste.previousVersionId, null)
-    assert.equal(zweite.previousVersionId, null)
-
-    const abstand = evidenceVersionenVergleichen(erste, zweite)
-    assert.deepEqual(abstand, {
-      ok: true,
-      contentChanged: true,
-      ruleChange: 'not_asserted',
-      laterAnalysisShortCircuit: false,
-    })
-    const gleich = evidenceVersionenVergleichen(erste, { contentHash: erste.contentHash })
-    assert.deepEqual(gleich, {
+    assert.deepEqual(evidenceVersionenVergleichen(erste, zweite), {
       ok: true,
       contentChanged: false,
       ruleChange: 'not_asserted',
       laterAnalysisShortCircuit: true,
     })
+
+    const geaendert = angenommen(basis, 'official page line\nchanged', undefined, 'model wording alpha')
+    assert.notEqual(erste.sourceContentHash, geaendert.sourceContentHash)
+    assert.notEqual(erste.versionId, geaendert.versionId)
+    assert.equal(geaendert.previousVersionId, null)
+    assert.deepEqual(evidenceVersionenVergleichen(erste, geaendert), {
+      ok: true,
+      contentChanged: true,
+      ruleChange: 'not_asserted',
+      laterAnalysisShortCircuit: false,
+    })
+
+    for (const feld of ['content', 'contentHash', 'sourceContentHash'] as const) {
+      const abgelehnt = evidenceKandidatAusModell(
+        {
+          canonicalUrl: QUELLE,
+          retrievedAt: ABGERUFEN,
+          sourceSnapshot: 'official page line\nunchanged',
+          extractionNote: 'model tries to define the hash',
+          scope: atom(),
+          [feld]: feld === 'content' ? 'different model prose' : 'a'.repeat(64),
+        },
+        basis,
+      )
+      assert.equal(abgelehnt.ok, false)
+      if (abgelehnt.ok) return
+      assert.equal(abgelehnt.reason, 'source_fingerprint_override_forbidden')
+    }
+
+    const leer = evidenceKandidatAusModell(
+      {
+        canonicalUrl: QUELLE,
+        retrievedAt: ABGERUFEN,
+        sourceSnapshot: '',
+        scope: atom(),
+      },
+      basis,
+    )
+    assert.deepEqual(leer, { ok: false, reason: 'invalid_source_snapshot' })
   })
 
   test('ein Konflikt überschreibt akzeptierte Evidence nicht', () => {
     const basis = registry()
-    const erste = angenommen(basis, 'synthetic rule text alpha')
-    const zweite = angenommen(basis, 'synthetic rule text beta')
+    const erste = angenommen(basis, 'official page alpha')
+    const zweite = angenommen(basis, 'official page beta')
     const vorher = structuredClone(erste)
     const konflikt = evidenceKonfliktHalten(erste, zweite)
     assert.deepEqual(erste, vorher)
@@ -380,12 +493,12 @@ describe('Official Truth source/evidence foundation', () => {
     assert.equal(konflikt.situation, 'conflict_preserved')
     assert.equal(konflikt.ruleChange, 'not_asserted')
     assert.equal(konflikt.kept.lifecycle, 'accepted')
-    assert.equal(konflikt.kept.contentHash, erste.contentHash)
-    assert.notEqual(konflikt.kept.contentHash, zweite.contentHash)
+    assert.equal(konflikt.kept.sourceContentHash, erste.sourceContentHash)
+    assert.notEqual(konflikt.kept.sourceContentHash, zweite.sourceContentHash)
     assert.equal(konflikt.kept.versionId, erste.versionId)
   })
 
-  test('ohne Quellenabdeckung bleibt der Pfad unbekannt und wird nie not_required', () => {
+  test('Quellenabdeckung unterscheidet independent, exact und Ziel von Transit', () => {
     const eingabe = rahmen()
     const plan = quellenRouten(leereQuellenRegistry(), [], eingabe)
     assert.equal(plan.status, 'no_eligible_source')
@@ -393,108 +506,131 @@ describe('Official Truth source/evidence foundation', () => {
     assert.equal(plan.evaluation, 'not_performed')
     assert.equal(plan.reason, 'no_source_coverage')
     assert.equal(plan.coverage, 'none')
-    assert.equal(plan.cells.length, 4)
+    assert.equal(plan.cells.length, 2)
     assert.equal(plan.cells.every((zelle) => zelle.status === 'no_eligible_source'), true)
     assert.equal(JSON.stringify(plan).includes('not_required'), false)
 
     const basis = registry()
-    const nurSchweiz = quellenRouten(
-      basis,
-      [deskriptor(basis, 'example-border-authority', abdeckung({ citizenshipCountryCodes: ['CH'] }))],
-      rahmen({
-        documents: { mode: 'not_applicable' },
-      }),
-    )
-    assert.equal(nurSchweiz.officialResult, 'unknown')
-    assert.equal(nurSchweiz.coverage, 'partial')
+    const unabhaengig = quellenRouten(basis, [deskriptor(basis, 'example-border-authority', abdeckung())], eingabe)
+    assert.equal(unabhaengig.officialResult, 'unknown')
+    assert.equal(unabhaengig.coverage, 'complete')
+    assert.equal(unabhaengig.cells.length, 2)
+    assert.equal(unabhaengig.cells.every((zelle) => zelle.status === 'eligible_sources'), true)
     assert.deepEqual(
-      nurSchweiz.cells.map((zelle) => ({
-        citizenship: zelle.atom.citizenship.mode === 'required' ? zelle.atom.citizenship.countryCode : null,
-        status: zelle.status,
-      })),
-      [
-        { citizenship: 'CH', status: 'eligible_sources' },
-        { citizenship: 'RS', status: 'no_eligible_source' },
-      ],
-    )
-    const umgekehrt = quellenRouten(
-      basis,
-      [deskriptor(basis, 'example-border-authority', abdeckung({ citizenshipCountryCodes: ['CH'] }))],
-      rahmen({
-        citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
-        documents: { mode: 'not_applicable' },
-      }),
-    )
-    assert.deepEqual(
-      nurSchweiz.cells.map((zelle) => zelle.sourceIds),
-      umgekehrt.cells.map((zelle) => zelle.sourceIds),
+      unabhaengig.cells.map((zelle) =>
+        zelle.atom.credentialOption.mode === 'option' ? zelle.atom.credentialOption.relatedCitizenshipCountryCode : null,
+      ),
+      ['CH', 'RS'],
     )
 
-    const dokumente = quellenRouten(
+    const nurSchweiz = quellenRouten(
       basis,
       [
         deskriptor(
           basis,
           'example-border-authority',
-          abdeckung({
-            citizenshipCountryCodes: [],
-            documents: [{ documentType: 'passport', issuingCountryCode: 'CH' }],
-          }),
+          abdeckung({ citizenship: { mode: 'exact', countryCodes: ['CH'] } }),
         ),
       ],
-      rahmen({ citizenship: { mode: 'not_applicable' } }),
+      eingabe,
     )
-    assert.equal(dokumente.cells.length, 2)
-    const dokumentStatus = dokumente.cells.map((zelle) => ({
-      issuing: zelle.atom.document.mode === 'required' ? zelle.atom.document.issuingCountryCode : null,
-      status: zelle.status,
-    }))
-    assert.deepEqual(dokumentStatus, [
-      { issuing: 'CH', status: 'eligible_sources' },
-      { issuing: 'RS', status: 'no_eligible_source' },
-    ])
+    assert.equal(nurSchweiz.officialResult, 'unknown')
+    assert.equal(nurSchweiz.coverage, 'partial')
+    assert.equal(JSON.stringify(nurSchweiz).includes('not_required'), false)
+    assert.deepEqual(
+      nurSchweiz.cells.map((zelle) => ({
+        related: zelle.atom.credentialOption.mode === 'option' ? zelle.atom.credentialOption.relatedCitizenshipCountryCode : null,
+        status: zelle.status,
+      })),
+      [
+        { related: 'CH', status: 'eligible_sources' },
+        { related: 'RS', status: 'no_eligible_source' },
+      ],
+    )
 
-    const zielAbdeckung = abdeckung({ citizenshipCountryCodes: [], documents: [] })
-    const ziel = quellenRouten(
-      basis,
-      [deskriptor(basis, 'example-border-authority', zielAbdeckung)],
-      rahmen({
-        destinationCountryCode: 'JP',
-        transitCountryCode: null,
-        citizenship: { mode: 'not_applicable' },
-        documents: { mode: 'not_applicable' },
-      }),
-    )
-    const transit = quellenRouten(
-      basis,
-      [deskriptor(basis, 'example-border-authority', zielAbdeckung)],
-      rahmen({
-        destinationCountryCode: null,
-        transitCountryCode: 'JP',
-        citizenship: { mode: 'not_applicable' },
-        documents: { mode: 'not_applicable' },
-      }),
-    )
-    assert.equal(ziel.status, 'eligible_sources')
-    assert.equal(transit.status, 'no_eligible_source')
-    assert.equal(transit.officialResult, 'unknown')
-    assert.equal(JSON.stringify(transit).includes('not_required'), false)
-
-    const anbieter = quellenRouten(
+    const teilmenge = quellenRouten(
       basis,
       [
         deskriptor(
           basis,
-          'example-licensed-provider',
-          abdeckung({
-            citizenshipCountryCodes: [],
-            documents: [],
-          }),
+          'example-border-authority',
+          abdeckung({ citizenship: { mode: 'exact', countryCodes: ['CH', 'RS'] } }),
         ),
       ],
       rahmen({
+        citizenship: { mode: 'required', countryCodes: ['CH'] },
+        credentialOptions: { mode: 'not_applicable' },
+      }),
+    )
+    assert.equal(teilmenge.cells.length, 1)
+    assert.equal(teilmenge.cells[0]?.status, 'eligible_sources')
+    const keineTeilmenge = quellenRouten(
+      basis,
+      [
+        deskriptor(
+          basis,
+          'example-border-authority',
+          abdeckung({ citizenship: { mode: 'exact', countryCodes: ['CH'] } }),
+        ),
+      ],
+      rahmen({
+        citizenship: { mode: 'required', countryCodes: ['CH', 'RS'] },
+        credentialOptions: { mode: 'not_applicable' },
+      }),
+    )
+    assert.equal(keineTeilmenge.cells[0]?.status, 'no_eligible_source')
+
+    const unlinked = quellenRouten(
+      basis,
+      [
+        deskriptor(
+          basis,
+          'example-border-authority',
+          abdeckung({ citizenship: { mode: 'exact', countryCodes: ['CH'] } }),
+        ),
+      ],
+      rahmen({
+        credentialOptions: { mode: 'required', options: [option('CH', null)] },
+      }),
+    )
+    assert.equal(unlinked.cells.length, 1)
+    assert.equal(unlinked.cells[0]?.status, 'no_eligible_source')
+
+    const leerExact = quellenRouten(
+      basis,
+      [
+        deskriptor(
+          basis,
+          'example-border-authority',
+          abdeckung({ citizenship: { mode: 'exact', countryCodes: [] } }),
+        ),
+      ],
+      eingabe,
+    )
+    assert.equal(leerExact.reason, 'invalid_descriptor')
+    assert.equal(leerExact.cells.length, 0)
+
+    const zielAbdeckung = abdeckung()
+    const transitAbdeckung = abdeckung({ destinationCountryCodes: [], transitCountryCodes: ['JP'] })
+    const transitEingabe = rahmen({ destinationCountryCode: null, transitCountryCode: 'JP' })
+    const ziel = quellenRouten(basis, [deskriptor(basis, 'example-border-authority', zielAbdeckung)], eingabe)
+    const transitAufZiel = quellenRouten(basis, [deskriptor(basis, 'example-border-authority', zielAbdeckung)], transitEingabe)
+    const transit = quellenRouten(basis, [deskriptor(basis, 'example-border-authority', transitAbdeckung)], transitEingabe)
+    const zielAufTransit = quellenRouten(basis, [deskriptor(basis, 'example-border-authority', transitAbdeckung)], eingabe)
+    assert.equal(ziel.status, 'eligible_sources')
+    assert.equal(transitAufZiel.status, 'no_eligible_source')
+    assert.equal(transit.status, 'eligible_sources')
+    assert.equal(zielAufTransit.status, 'no_eligible_source')
+    assert.equal(transit.officialResult, 'unknown')
+    assert.equal(zielAufTransit.officialResult, 'unknown')
+    assert.equal(JSON.stringify(transitAufZiel).includes('not_required'), false)
+
+    const anbieter = quellenRouten(
+      basis,
+      [deskriptor(basis, 'example-licensed-provider', abdeckung())],
+      rahmen({
         citizenship: { mode: 'not_applicable' },
-        documents: { mode: 'not_applicable' },
+        credentialOptions: { mode: 'not_applicable' },
       }),
     )
     assert.equal(anbieter.sources[0]?.source.sourceClass, 'licensed_evidence_provider')
