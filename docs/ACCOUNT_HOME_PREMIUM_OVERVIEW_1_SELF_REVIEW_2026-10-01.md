@@ -24,12 +24,15 @@ Geprüft gegen den Task:
 - Nächste Reise, Status und Buchungslink bleiben. Keine erfundene Buchungszahl, kein Preis, kein Provider.
 - Leer und Fehler bleiben getrennte Zweige.
 - Keine neue Netzwerkherkunft. Die Audit-Anfragen bleiben auf `127.0.0.1`.
-- Keine Datei von #686, #687 oder #689.
+- Keine Datei von #686, #687 oder #689 ausser durch den Merge von `origin/main`, der beide bereits gemergten Slices erhält.
+- R1: Dokumentüberlauf bei 360×800 / 200 % Text ist 0, auf Übersicht und Atlas. Die Ursache war das nicht umbrechende Wort in der Kartenherkunft, nicht die Konto-Leiste.
+- `AccountNavigation.tsx` ist unverändert. Die erlaubte Schreiböffnung wurde nicht gebraucht, weil eine Änderung dort den Überlauf nicht entfernt.
+- Branch ist 0 hinter `origin/main@98c9099bee1715f741e4aec87c2c386e9e5344ad`.
 
 ## Was ich nicht als bestanden ausgebe
 
 - Kein Real-Device-Test.
-- Die 6 px Dokumentüberlauf bei 200 % Text gehören der bestehenden Konto-Navigation, nicht der Übersicht. Ich habe `AccountNavigation.tsx` deshalb nicht geändert. Ein späterer, eigener Slice kann den Scroller bei grosser Schrift enger fassen, wenn der Technical Lead das will.
+- Bei 320×568 und 200 % Text bleibt ein Footer-Überlauf von etwa 40 px. Diese Kombination ist nicht das R1-Gate. Der Footer liegt ausserhalb der Schreibliste.
 - Der Buchungseinstieg sagt bewusst nicht, ob Buchungen existieren. Dafür wäre ein weiterer Lesezugriff nötig. Der Task verbietet erfundene Zahlen und neue Daten.
 
 ## Empfehlung

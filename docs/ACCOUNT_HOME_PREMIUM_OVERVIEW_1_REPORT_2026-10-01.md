@@ -53,7 +53,7 @@ Seitenhöhe der Übersicht gegen den vollen Atlas, Zustand `welt`, `scrollHeight
 
 Auf der Übersicht ist `data-world-map-darstellung="uebersicht"`, die Länderliste fehlt, die Ortsliste fehlt. Auf dem Atlas ist die Darstellung `atlas`, die Länderliste hat im Fixture 7 Einträge, die Ortsliste ist da.
 
-Zusätzlich grün: Zoom 125 % und 150 % bei 1440×900, Überlauf 0, kleinste Fläche 55 px bzw. 66 px. 200 % Text bei 360×800: Übersichtskasten bleibt im Fenster (`inhaltOverflow` 0), keine Zeichenspalte, kleinste Fläche 88 px, CTA vorhanden.
+Zusätzlich grün: Zoom 125 % und 150 % bei 1440×900, Überlauf 0, kleinste Fläche 55 px bzw. 66 px. 200 % Text bei 360×800, Übersicht und Atlas: `documentElement.scrollWidth - innerWidth` ist 0, `inhaltOverflow` 0, keine Zeichenspalte, kleinste Fläche 88 px. Auf der Übersicht ist der CTA vorhanden. Normale Schrift 320–430 px: Dokumentüberlauf 0.
 
 ## Zustände
 
@@ -66,9 +66,19 @@ Zusätzlich grün: Zoom 125 % und 150 % bei 1440×900, Überlauf 0, kleinste Fl�
 | voller Atlas | `zustand=welt&ansicht=besuche` |
 | Marker und Gruppe | Klick im Zustand `welt` |
 
-## Grenze, die nicht angefasst wurde
+## R1 — Dokumentüberlauf
 
-Bei 200 % Text und 360×800 ist `documentElement.scrollWidth` 6 px grösser als das Fenster. Der Übersichtskasten endet bei 328 px. Dieselbe 6 px entstehen auf der Atlas-Seite. Sie kommen von der bestehenden Konto-Navigation: `whitespace-nowrap` in einem horizontalen Scroller. `AccountNavigation.tsx` ist in diesem Slice nicht schreibbar. Die Übersicht selbst läuft nicht über.
+Technical-Lead R1 `5384586025` verlangte Dokumentüberlauf 0 bei 360×800 und 200 % Text, plus Integration von `origin/main`.
+
+Gemessen am alten Kopf: die Konto-Leiste bleibt 360 px breit (`scrollWidth` 360). Ihre Einträge ragen nur innerhalb des eigenen Scrollers. `documentElement.scrollWidth` ist 366, weil das Wort „Sonderverwaltungsregion“ in der Kartenherkunft bei 32 px Schrift nicht umbricht. Dieselbe Zeile steht auf dem Atlas. Die Leiste auszublenden lässt die 6 px stehen.
+
+Der Fix sitzt deshalb in `AccountWeltKarte`: Herkunft und der Besuchssatz nutzen `break-words`. Der Buchungshinweis auf der Übersicht ebenfalls, damit „Partnerbestätigung“ die Karte nicht aufweitet. `AccountNavigation.tsx` bleibt unverändert: einzeilige Leiste, alle fünf Beschriftungen, aktives Ziel, Auto-Scroll, mindestens 44 px, Safe Area. Kein `overflow-x: hidden` auf der Seite.
+
+Nach dem Fix: Übersicht und Atlas bei 360×800 / 200 % Text haben Dokumentüberlauf 0.
+
+`origin/main` `98c9099bee1715f741e4aec87c2c386e9e5344ad` ist integriert. Der Branch ist 0 hinter main. #687 und #689 bleiben erhalten.
+
+Beobachtung ausserhalb dieses R1: bei 320×568 und 200 % Text weitet der gemeinsame Footer das Dokument noch um etwa 40 px. Die geforderte Kombination 360×800 / 200 % und die normalen Breiten 320–430 sind 0. Der Footer ist nicht in der Schreibliste.
 
 ## Grenzen der Prüfung
 
