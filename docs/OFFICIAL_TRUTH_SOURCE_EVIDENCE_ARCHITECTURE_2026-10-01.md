@@ -82,9 +82,9 @@ Partial coverage stays partial. The covered credential option is not treated as 
 
 An evidence version carries provenance, lifecycle (`candidate`, `accepted`, `conflicted`, `superseded`), validation state, validity window, `sourceContentHash` and an optional `previousVersionId`. It is not a free-form truth blob and has no official result fields.
 
-`sourceContentHash` is SHA-256 of source text normalized by Jetnity (`\r\n` and `\r` become `\n`). The input is `sourceSnapshot`, a non-model retrieval boundary. This slice does not fetch that text. Model prose, `extractionNote`, and the fields `content`, `contentHash` and `sourceContentHash` cannot set or replace the fingerprint. Supplying those fields is rejected before hashing.
+`sourceContentHash` is SHA-256 of source text normalized by Jetnity (`\r\n` and `\r` become `\n`). The text is `EvidenceQuellenmaterial.sourceSnapshot`, a separate retrieval argument. This slice does not fetch that text. `evidenceKandidatAusModell(modell, material, registry)` reads the snapshot only from `material`. The model object cannot contain `sourceSnapshot`, `content`, `contentHash` or `sourceContentHash`. Those keys are rejected before hashing. `extractionNote` stays on the model side and is not part of the hash or `versionId`.
 
-`evidenceKandidatAusModell` always creates a `candidate` / `pending` version or rejects the input. Model fields `result`, `required`, `not_required`, `conditional`, `optionEligibility`, `optionMandate` and `visaMode` are rejected. They are not copied onto the candidate. `extractionNote` is stored beside the version and is not part of the hash or `versionId`.
+`evidenceKandidatAusModell` always creates a `candidate` / `pending` version or rejects the input. Model fields `result`, `required`, `not_required`, `conditional`, `optionEligibility`, `optionMandate` and `visaMode` are rejected. They are not copied onto the candidate.
 
 `evidenceKandidatAkzeptieren` is the only promotion to `accepted` / `valid`. It re-checks registry identity, HTTPS URL, retrieval timestamp, source fingerprint and the recomputed lookup key. `akzeptierteEvidenceLesen` returns null for a candidate.
 

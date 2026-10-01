@@ -67,7 +67,15 @@ const ENTSCHEIDUNGS_FELDER = [
   'visaMode',
 ] as const
 
-const FINGERPRINT_OVERRIDE = ['content', 'contentHash', 'sourceContentHash'] as const
+const FINGERPRINT_OVERRIDE = ['sourceSnapshot', 'content', 'contentHash', 'sourceContentHash'] as const
+
+/**
+ * Quellentext aus der Retrieval-Grenze. Diese Hülle wird nicht vom Modell gebaut.
+ * Nur `sourceSnapshot` fliesst in den Fingerabdruck.
+ */
+export type EvidenceQuellenmaterial = {
+  sourceSnapshot: string
+}
 
 export type EvidenceRahmenFehler =
   | 'personal_identifier_forbidden'
@@ -600,15 +608,24 @@ function quellePasst(quelle: RegistrierteQuelle, evidence: Pick<EvidenceVersion,
 
 /**
  * Modellausgabe wird höchstens ein Kandidat.
+ * Der Quellentext kommt nur aus `material`. Das Modellobjekt darf
+ * Snapshot und Hash weder liefern noch überschreiben.
  * Entscheidungsfelder werden nicht übernommen und nicht in Official Truth übersetzt.
  */
-export function evidenceKandidatAusModell(eingabe: unknown, registry: QuellenRegistry): EvidenceKandidatErgebnis {
-  if (personenkennung(eingabe)) return { ok: false, reason: 'personal_identifier_forbidden' }
-  const felder = entscheidungsfelder(eingabe)
+export function evidenceKandidatAusModell(
+  modell: unknown,
+  material: EvidenceQuellenmaterial,
+  registry: QuellenRegistry,
+): EvidenceKandidatErgebnis {
+  if (personenkennung(modell)) return { ok: false, reason: 'personal_identifier_forbidden' }
+  const felder = entscheidungsfelder(modell)
   if (felder.length > 0) return { ok: false, reason: 'model_decision_forbidden', fields: felder }
-  const override = fingerprintOverride(eingabe)
+  const override = fingerprintOverride(modell)
   if (override.length > 0) return { ok: false, reason: 'source_fingerprint_override_forbidden', fields: override }
-  const satz = datensatz(eingabe)
+  const snapshot = material && typeof material === 'object' && !Array.isArray(material) ? material.sourceSnapshot : null
+  const sourceContentHash = typeof snapshot === 'string' ? evidenceQuellenFingerprint(snapshot) : null
+  if (!sourceContentHash) return { ok: false, reason: 'invalid_source_snapshot' }
+  const satz = datensatz(modell)
   if (!satz) return { ok: false, reason: 'invalid_context' }
   const schluessel = evidenceSuchschluessel(satz.scope ?? satz)
   if (!schluessel.ok) return schluessel
@@ -617,9 +634,6 @@ export function evidenceKandidatAusModell(eingabe: unknown, registry: QuellenReg
   if (url.source.sourceId !== schluessel.scope.sourceId) return { ok: false, reason: 'source_mismatch' }
   const retrievedAt = checkedAtLesen(satz.retrievedAt)
   if (!retrievedAt) return { ok: false, reason: 'invalid_retrieval_time' }
-  if (typeof satz.sourceSnapshot !== 'string') return { ok: false, reason: 'invalid_source_snapshot' }
-  const sourceContentHash = evidenceQuellenFingerprint(satz.sourceSnapshot)
-  if (!sourceContentHash) return { ok: false, reason: 'invalid_source_snapshot' }
   const fenster = gueltigkeitsfenster(satz)
   if (!fenster.ok) return fenster
   const note = notizLesen(satz.extractionNote)

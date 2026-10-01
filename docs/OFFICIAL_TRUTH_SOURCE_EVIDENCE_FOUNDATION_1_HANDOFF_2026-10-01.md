@@ -12,7 +12,9 @@ Session: https://cursor.com/agents/bc-2084780a-4e8d-4334-a56a-6bfba1a65f72
 
 ## Current state
 
-The source registry, source router and versionable evidence contract are on this Draft branch, including the Technical-Lead R1 correction from review `5377801054`. The correction head is `276ef7265f1d2989e204462955e7eae54d7401e9`. GitHub CI run `36847770063` **SUCCESS**. Typecheck, Lint & Build job `110321922165` **SUCCESS**. Auth job `110321922436` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/EU6DJ5VZdkqKJeJg4CR4t24joLFp`. GitHub Preview deployment `6781726297` **success**, target `https://jetnity-ndyoim48t-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read. The reviewed head was `59d43f4ccc2e4434401596f0b7b4b7c8162719d8`. That head's CI `36845583718`, Auth job `110314809182` and Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` do not gate the correction head. The commit that records the correction gates is a later head and is not gated by run `36847770063`.
+The source registry, source router and versionable evidence contract are on this Draft branch. Technical-Lead R2 review `5378061792` required the trusted source snapshot to be a separate argument from the model candidate. That split is in `evidenceKandidatAusModell(modell, material, registry)`. R1 credential options and coverage modes stay as corrected. The R2 head's own CI is not the earlier run on `9480739db5f3743aaf40987a87e2135bcc48ef82` (CI `36848362225`, Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby`).
+
+The R1 correction head was `276ef7265f1d2989e204462955e7eae54d7401e9`. GitHub CI run `36847770063` **SUCCESS**. Typecheck, Lint & Build job `110321922165` **SUCCESS**. Auth job `110321922436` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/EU6DJ5VZdkqKJeJg4CR4t24joLFp`. GitHub Preview deployment `6781726297` **success**, target `https://jetnity-ndyoim48t-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read. The reviewed head was `59d43f4ccc2e4434401596f0b7b4b7c8162719d8`. That head's CI `36845583718`, Auth job `110314809182` and Vercel Preview `dpl_7xsiZ8x62WCCTnbz462chMLJYMqQ` do not gate the correction head. The commit that records the correction gates is a later head and is not gated by run `36847770063`.
 
 The correction keeps one cell per explicit credential option, explicit `independent` / `exact` / `not_applicable` coverage, and a Jetnity source-snapshot fingerprint separate from model extraction text. The existing Requirements / Official-Truth engine is unchanged. `requirementsProviderAus()` returns `null`. There is no database mutation, no network call, no real government catalog and no Timatic/Sherpa adapter.
 
@@ -40,7 +42,7 @@ Stay Draft.
 
 Cursor does not Ready, merge, mutate Supabase, call OpenAI or the web, activate a provider, contact Sherpa/IATA/KAYAK, continue #626, change indexing or launch, or start a follow-up slice.
 
-**STOP for independent Technical-Lead re-review of the R1 correction head.**
+**STOP for independent Technical-Lead re-review of the R2 trust-boundary head.**
 
 ## Proposal only — not selected
 

@@ -5704,6 +5704,8 @@ Die Lehre für vergleichbare Wahrheitsschranken: Solange eine Wahrheitsaussage i
 2. Staatsbürgerschaft, Wohnsitz und Dokument haben die Abdeckungsmodi `independent`, `exact` und `not_applicable`. `independent` deckt jede Ausprägung, ohne die Welt aufzuzählen. Eine leere Exact-Liste ist ein ungültiger Deskriptor und kein Wildcard. Exact-Staatsbürgerschaft trifft die explizite bezogene Staatsbürgerschaft der Option. Ziel und Transit bleiben getrennte Länderlisten.
 3. `sourceContentHash` ist SHA-256 des von Jetnity normalisierten `sourceSnapshot`. `extractionNote` und die Felder `content`, `contentHash`, `sourceContentHash` setzen diesen Fingerabdruck nicht. Ein anderer Quellentext ist eine andere Version und bleibt `ruleChange: 'not_asserted'`. Dieser Slice ruft dafür kein Netz auf.
 
+**Nachtrag 1. Oktober 2026, Technical-Lead R2 auf `9480739db5f3743aaf40987a87e2135bcc48ef82`:** Der R1-Fingerabdruck las `sourceSnapshot` noch aus demselben Objekt wie die Modellausgabe. Das schliesst die Vertrauensgrenze nicht. `evidenceKandidatAusModell` nimmt das Modell und `EvidenceQuellenmaterial` getrennt entgegen. Der Fingerabdruck wird nur aus `material.sourceSnapshot` berechnet. Ein Modellobjekt mit `sourceSnapshot`, `content`, `contentHash` oder `sourceContentHash` wird abgelehnt und kann den Hash nicht setzen. Die R1-Credential- und Abdeckungsregeln bleiben unverändert.
+
 ---
 
 ## Offene Widersprüche

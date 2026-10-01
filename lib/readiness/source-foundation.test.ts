@@ -118,22 +118,22 @@ function rahmen(teil?: Record<string, unknown>) {
   }
 }
 
+function modellEingabe(scope: Record<string, unknown> = atom(), extractionNote?: string) {
+  return {
+    canonicalUrl: QUELLE,
+    retrievedAt: ABGERUFEN,
+    extractionNote,
+    scope,
+  }
+}
+
 function kandidat(
   basis: QuellenRegistry,
   sourceSnapshot = SNAPSHOT,
   scope: Record<string, unknown> = atom(),
   extractionNote?: string,
 ) {
-  return evidenceKandidatAusModell(
-    {
-      canonicalUrl: QUELLE,
-      retrievedAt: ABGERUFEN,
-      sourceSnapshot,
-      extractionNote,
-      scope,
-    },
-    basis,
-  )
+  return evidenceKandidatAusModell(modellEingabe(scope, extractionNote), { sourceSnapshot }, basis)
 }
 
 function angenommen(
@@ -243,9 +243,9 @@ describe('Official Truth source/evidence foundation', () => {
       {
         canonicalUrl: 'http://gov.example/rules',
         retrievedAt: ABGERUFEN,
-        sourceSnapshot: SNAPSHOT,
         scope: atom(),
       },
+      { sourceSnapshot: SNAPSHOT },
       basis,
     )
     assert.deepEqual(httpKandidat, { ok: false, reason: 'insecure_scheme' })
@@ -253,9 +253,9 @@ describe('Official Truth source/evidence foundation', () => {
       {
         canonicalUrl: 'https://user:pass@gov.example/rules',
         retrievedAt: ABGERUFEN,
-        sourceSnapshot: SNAPSHOT,
         scope: atom(),
       },
+      { sourceSnapshot: SNAPSHOT },
       basis,
     )
     assert.deepEqual(credentialKandidat, { ok: false, reason: 'credentials' })
@@ -286,10 +286,10 @@ describe('Official Truth source/evidence foundation', () => {
         {
           canonicalUrl: 'https://gov.example/rules',
           retrievedAt: ABGERUFEN,
-          sourceSnapshot: SNAPSHOT,
           scope: atom(),
           [feld]: feld === 'result' ? 'not_required' : 'visa_exempt',
         },
+        { sourceSnapshot: SNAPSHOT },
         basis,
       )
       assert.equal(abgelehnt.ok, false)
@@ -451,33 +451,31 @@ describe('Official Truth source/evidence foundation', () => {
       laterAnalysisShortCircuit: false,
     })
 
-    for (const feld of ['content', 'contentHash', 'sourceContentHash'] as const) {
+    const vertrauenshash = evidenceQuellenFingerprint('official page line\nunchanged')
+    for (const feld of ['sourceSnapshot', 'content', 'contentHash', 'sourceContentHash'] as const) {
       const abgelehnt = evidenceKandidatAusModell(
         {
-          canonicalUrl: QUELLE,
-          retrievedAt: ABGERUFEN,
-          sourceSnapshot: 'official page line\nunchanged',
-          extractionNote: 'model tries to define the hash',
-          scope: atom(),
-          [feld]: feld === 'content' ? 'different model prose' : 'a'.repeat(64),
+          ...modellEingabe(atom(), 'model tries to define the hash'),
+          [feld]: feld === 'content' || feld === 'sourceSnapshot' ? 'different model prose' : 'a'.repeat(64),
         },
+        { sourceSnapshot: 'official page line\nunchanged' },
         basis,
       )
       assert.equal(abgelehnt.ok, false)
       if (abgelehnt.ok) return
       assert.equal(abgelehnt.reason, 'source_fingerprint_override_forbidden')
+      assert.equal(JSON.stringify(abgelehnt).includes(vertrauenshash ?? 'missing'), false)
     }
 
-    const leer = evidenceKandidatAusModell(
-      {
-        canonicalUrl: QUELLE,
-        retrievedAt: ABGERUFEN,
-        sourceSnapshot: '',
-        scope: atom(),
-      },
-      basis,
-    )
+    const leer = evidenceKandidatAusModell(modellEingabe(), { sourceSnapshot: '' }, basis)
     assert.deepEqual(leer, { ok: false, reason: 'invalid_source_snapshot' })
+
+    const funktionsText = readFileSync(join(process.cwd(), 'lib/readiness/evidence.ts'), 'utf8')
+    const anfang = funktionsText.indexOf('export function evidenceKandidatAusModell')
+    const ende = funktionsText.indexOf('export function evidenceKandidatAkzeptieren')
+    const funktion = funktionsText.slice(anfang, ende)
+    assert.match(funktion, /material\.sourceSnapshot/)
+    assert.doesNotMatch(funktion, /satz\.sourceSnapshot|modell\.sourceSnapshot|eingabe\.sourceSnapshot/)
   })
 
   test('ein Konflikt überschreibt akzeptierte Evidence nicht', () => {

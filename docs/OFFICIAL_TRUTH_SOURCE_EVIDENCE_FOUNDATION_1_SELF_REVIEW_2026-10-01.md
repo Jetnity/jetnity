@@ -31,7 +31,7 @@ This is an author self-review. It is not an independent Technical-Lead PASS.
 - Subdomain matching is dot-bounded. `www.gov.example` matches registered `gov.example`. `notgov.example` does not. This is an allowlist suffix, not a fetched certificate check.
 - R1 removes the citizenship × document product. One cell is one explicit credential option and carries the full citizenship set. `relatedCitizenshipCountryCode` is present only when supplied. Explicit null stays `unlinked`. Issuing country is not copied into that relation. Sort order is stability, not a preferred passport. Lookup keys are `evidence-key:v2:`.
 - Coverage modes are `independent`, `exact` and `not_applicable`. Empty exact lists are invalid descriptors. Exact citizenship matches the option relation, so a CH-only source does not cover an RS-linked passport. Destination and transit lists stay separate.
-- `sourceContentHash` is SHA-256 of Jetnity-normalized `sourceSnapshot`. Different `extractionNote` text does not change it. Fields `content`, `contentHash` and `sourceContentHash` on model input are rejected. A changed snapshot stays `ruleChange: 'not_asserted'`.
+- `sourceContentHash` is SHA-256 of Jetnity-normalized `material.sourceSnapshot`. The model argument cannot carry `sourceSnapshot`, `content`, `contentHash` or `sourceContentHash`. Different `extractionNote` text does not change the hash. A changed trusted snapshot stays `ruleChange: 'not_asserted'`. R1 credential and coverage behavior is unchanged.
 - Residence is explicit even though the task's example key list does not name it. A missing residence mode fails closed. A required residence is a country code, not a person. This follows the traveller-context rule that residence can change entry evidence.
 - A changed hash changes `versionId` and sets `ruleChange: 'not_asserted'`. Conflict copies the accepted version and does not overwrite it. `previousVersionId` stays null unless a later explicit supersession exists. This slice has no supersession function, so versions are not auto-linked.
 - Model decision fields are rejected anywhere in the input object. The candidate never carries them.
@@ -39,7 +39,9 @@ This is an author self-review. It is not an independent Technical-Lead PASS.
 
 ## Validation honesty
 
-Local checks for the R1 correction, run before the correction commit:
+Local checks for the R2 trust-boundary correction, run before that commit: targeted source-foundation tests 8/8, typecheck pass, lint 0 errors and 148 pre-existing warnings, `npm test` 4133 pass, hygiene checks pass, setup check pass with the existing missing-`.env` warning, production build pass, `git diff --check` and the operating-mode guard pass. `auth:pruefen` was not run locally. Exact-head CI, Auth and Vercel for the R2 head are not observed in this self-review. CI `36848362225` and Vercel Preview `dpl_FWpJT4DGHg11jmMuvTxi8rup9gby` belong only to `9480739db5f3743aaf40987a87e2135bcc48ef82`.
+
+Local checks for the earlier R1 correction, run before that correction commit:
 
 - targeted source-foundation tests: 8/8 pass
 - `npm run typecheck`: pass
