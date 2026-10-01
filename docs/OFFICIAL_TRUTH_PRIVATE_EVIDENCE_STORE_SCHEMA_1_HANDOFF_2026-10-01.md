@@ -36,7 +36,8 @@ Read first:
 - The Supabase CLI was not on PATH. The official `2.48.3` binary was used only to create the empty migration file. It was not used to push, repair or apply a remote migration.
 - Local proof used throwaway PostgreSQL 16.15 and was dropped. Development and Production were not contacted.
 - `npm test` after removing gitignored `supabase/.temp/cli-latest`: **4140 pass / 0 fail**
-- Exact-head GitHub CI and Vercel Preview are not in this commit. They are recorded after this head is pushed. The commit that records them is a newer head and does not inherit the run.
+- Implementation head `5a537ddb7107eef49779273b4556c38c25cfe679`: GitHub CI run `36855719623` **SUCCESS**. Typecheck, Lint & Build job `110347618104` **SUCCESS**. Auth job `110347617833` **SUCCESS**. Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/BKSExJ7Cp1i3zPPeHwRR2SVySfGF`. GitHub Preview deployment `6783105853` **success**, target `https://jetnity-nyhb0pcnx-jetnity-e1b93c82.vercel.app`. That host returned HTTP 302 to Vercel SSO, so public HTML was not read.
+- The commit that records those gates is a newer head. It does not inherit run `36855719623`, Auth job `110347617833`, Typecheck job `110347618104`, or Preview deployment `6783105853`. Do not treat `main` or a parent PR as this head's gate.
 
 ## Stop
 

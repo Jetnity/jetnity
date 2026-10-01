@@ -39,6 +39,18 @@ No remote Supabase command was run. The migration was applied only to a local th
 5. Local PostgreSQL 16.15 does not prove the Development server version. Development application and the advisor readback remain Technical-Lead work after PASS.
 6. `db:rechte`, `db:rls`, `db:sicherheit` and `auth:pruefen` were not run. Running them would talk to the live Development database. This slice does not do that.
 
+## Exact-head gates read after the implementation push
+
+Read in this session for `5a537ddb7107eef49779273b4556c38c25cfe679` only:
+
+- GitHub CI run `36855719623` **SUCCESS**, event `pull_request`
+- Auth job `110347617833` **SUCCESS**
+- Typecheck, Lint & Build job `110347618104` **SUCCESS**
+- Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/BKSExJ7Cp1i3zPPeHwRR2SVySfGF`
+- GitHub Preview deployment `6783105853` **success**, target `https://jetnity-nyhb0pcnx-jetnity-e1b93c82.vercel.app`, direct GET HTTP 302 to Vercel SSO
+
+The commit that writes these facts is a newer head. Those gates do not cover it.
+
 ## Stop
 
 No Ready. No merge. No remote apply. No follow-up slice.

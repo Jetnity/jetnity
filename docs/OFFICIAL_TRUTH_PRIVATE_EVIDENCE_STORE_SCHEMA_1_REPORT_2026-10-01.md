@@ -93,7 +93,10 @@ Allowlist only:
 | `npm run build` | pass. Next.js 16.3.8 compiled and generated 25 static pages. |
 | Local PostgreSQL | PostgreSQL 16.15, throwaway database only. Final migration file applied. Database dropped afterward. Not Development. Not Production. |
 | `db:rechte`, `db:rls`, `db:sicherheit`, `auth:pruefen` | not run. They target the live Development database. This slice must not apply or exercise the migration there. |
-| Exact-head GitHub CI / Vercel Preview | not yet observed for the commit that contains this report. Recorded after push. That recording commit is a newer head and does not inherit the earlier run. |
+| Exact-head GitHub CI on `5a537ddb7107eef49779273b4556c38c25cfe679` | **SUCCESS**. Run `36855719623`, event `pull_request`, https://github.com/Jetnity/jetnity/actions/runs/36855719623. Typecheck, Lint & Build job `110347618104` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110347617833` **SUCCESS**. |
+| Vercel Preview on that same SHA | GitHub commit status context `Vercel` **success** at `2026-10-01T11:30:18Z`. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/BKSExJ7Cp1i3zPPeHwRR2SVySfGF`. GitHub deployment `6783105853`, environment **Preview**, state **success**, target `https://jetnity-nyhb0pcnx-jetnity-e1b93c82.vercel.app`. A direct GET of that host returned HTTP 302 to Vercel SSO, so this session did not read public HTML or `data-dpl-id`. |
+
+These remote gates belong only to `5a537ddb7107eef49779273b4556c38c25cfe679`. The commit that records them is a new head. It does not inherit this CI, Auth job or Preview. Parent and `main` gates do not apply.
 
 The first `npm test` in this session was 4139 pass / 1 fail. The failure was `supabase/.temp/cli-latest`, created by the Supabase CLI and already listed as a removed sanitation candidate. The path is gitignored. It was deleted. The rerun was 4140 pass / 0 fail. The temp file is not part of the commit.
 
