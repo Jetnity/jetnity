@@ -25,6 +25,9 @@ const WRAPPER_NAME = ['admin', 'account', 'counts', 'v1'].join('_')
 const STORE_SOURCE = 'lib/readiness/official-truth-store-server.ts'
 const STORE_SQL = 'supabase/migrations/20261001180549_official_truth_trusted_store_writer_1.sql'
 const STORE_RPC = ['official', 'truth', 'store', 'accepted', 'v1'].join('_')
+const CATALOG_SOURCE = 'lib/readiness/official-truth-source-catalog-server.ts'
+const CATALOG_SQL = 'supabase/migrations/20261001193748_official_truth_source_catalog_gateway_1.sql'
+const CATALOG_RPC = ['official', 'truth', 'source', 'catalog', 'v1'].join('_')
 const UNKNOWN_TABLE = ['missing', 'table'].join('_')
 const UNKNOWN_RPC = ['totally', 'unknown', 'rpc'].join('_')
 
@@ -50,7 +53,7 @@ function pruefeMit(files: Record<string, string>, sqlFiles: Record<string, strin
 }
 
 describe('schema-reference LOCAL/UNAPPLIED classification', () => {
-  test('registers exactly the two reviewed local RPCs', () => {
+  test('registers exactly the reviewed local RPCs', () => {
     assert.deepEqual(
       LOCAL_UNAPPLIED_RPCS.map((regel) => ({
         name: regel.name,
@@ -68,6 +71,11 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sourcePath: STORE_SOURCE,
           sqlPath: STORE_SQL,
         },
+        {
+          name: CATALOG_RPC,
+          sourcePath: CATALOG_SOURCE,
+          sqlPath: CATALOG_SQL,
+        },
       ],
     )
 
@@ -75,23 +83,26 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
       {
         [READER]: rpcCall(WRAPPER_NAME),
         [STORE_SOURCE]: rpcCall(STORE_RPC),
+        [CATALOG_SOURCE]: rpcCall(CATALOG_RPC),
       },
       {
         [SQL]: `create function public.${WRAPPER_NAME}()`,
         [STORE_SQL]: `create function public.${STORE_RPC}(payload jsonb)`,
+        [CATALOG_SQL]: `create function public.${CATALOG_RPC}(payload jsonb)`,
       },
     )
     assert.equal(result.befunde.length, 0)
-    assert.equal(result.lokaleUnapplied.length, 2)
+    assert.equal(result.lokaleUnapplied.length, 3)
     assert.deepEqual(
       result.lokaleUnapplied.map((eintrag) => eintrag.name),
-      [WRAPPER_NAME, STORE_RPC],
+      [WRAPPER_NAME, CATALOG_RPC, STORE_RPC],
     )
     for (const eintrag of result.lokaleUnapplied) {
       assert.equal(eintrag.classification, 'LOCAL/UNAPPLIED')
     }
     assert.equal(result.bekannteFunktionen.has(WRAPPER_NAME), false)
     assert.equal(result.bekannteFunktionen.has(STORE_RPC), false)
+    assert.equal(result.bekannteFunktionen.has(CATALOG_RPC), false)
   })
 
   test('unknown RPC names and unknown tables stay fail-closed', () => {
@@ -127,6 +138,16 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
     )
     assert.equal(store.befunde.some((befund) => befund.name === STORE_RPC), true)
     assert.equal(store.befunde.find((befund) => befund.name === STORE_RPC)?.grund, 'wrong-source')
+
+    const catalog = pruefeMit(
+      {
+        [CATALOG_SOURCE]: rpcCall(CATALOG_RPC),
+        'lib/other.ts': rpcCall(CATALOG_RPC),
+      },
+      { [CATALOG_SQL]: `create function public.${CATALOG_RPC}(payload jsonb)` },
+    )
+    assert.equal(catalog.befunde.some((befund) => befund.name === CATALOG_RPC), true)
+    assert.equal(catalog.befunde.find((befund) => befund.name === CATALOG_RPC)?.grund, 'wrong-source')
   })
 
   test('missing local SQL fails the registered wrapper', () => {
@@ -139,5 +160,10 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
     assert.equal(store.lokaleUnapplied.length, 0)
     assert.equal(store.befunde.some((befund) => befund.name === STORE_RPC), true)
     assert.equal(store.befunde.find((befund) => befund.name === STORE_RPC)?.grund, 'missing-sql')
+
+    const catalog = pruefeMit({ [CATALOG_SOURCE]: rpcCall(CATALOG_RPC) }, {})
+    assert.equal(catalog.lokaleUnapplied.length, 0)
+    assert.equal(catalog.befunde.some((befund) => befund.name === CATALOG_RPC), true)
+    assert.equal(catalog.befunde.find((befund) => befund.name === CATALOG_RPC)?.grund, 'missing-sql')
   })
 })
