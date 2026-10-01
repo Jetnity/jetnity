@@ -196,8 +196,14 @@ The Technical Lead applied the accepted SQL. Supabase recorded that apply as `20
 
 Cursor did not apply the migration again, did not repair remote history, and did not touch Production. Development already has the schema. No second remote apply is required or allowed.
 
+Exact-head GitHub CI on identity head `fab9d9d16522dc03f5fa86a21ef2962c71748463`: **SUCCESS**. Run `36860729134`, event `pull_request`, https://github.com/Jetnity/jetnity/actions/runs/36860729134. Typecheck, Lint & Build job `110363992056` **SUCCESS**. Auth-Konfiguration gegen config.toml job `110363991796` **SUCCESS**.
+
+Vercel Preview on that same SHA: GitHub commit status context `Vercel` **success** at `2026-10-01T12:17:36Z`. Inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/G4AgvpUSApyf7wn9BUUCZCDo9vFr`. GitHub deployment `6784006355`, environment **Preview**, state **success**, target `https://jetnity-2ou63d0wz-jetnity-e1b93c82.vercel.app`. A direct GET of that host returned HTTP 302 to Vercel SSO, so this session did not read public HTML or `data-dpl-id`.
+
+These remote gates belong only to `fab9d9d16522dc03f5fa86a21ef2962c71748463`. The commit that records them is a newer head. It does not inherit this CI, Auth job or Preview. Gates for `6952d6e44a1a73fee7e0ad07d33811059b7686ee` do not cover this head.
+
 ## 10. Exact next step — proposal only
 
 Do not dispatch from this slice.
 
-Independent Technical-Lead review of the R2 identity head is the next action. Gates for `6952d6e44a1a73fee7e0ad07d33811059b7686ee` do not cover that head. Development already has this schema. Do not apply it again. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.
+Independent Technical-Lead review of the R2 identity head is the next action. The identity commit those gates cover is `fab9d9d16522dc03f5fa86a21ef2962c71748463`. The commit that records the gates is a newer head and does not inherit them. Gates for `6952d6e44a1a73fee7e0ad07d33811059b7686ee` do not cover the identity head. Development already has this schema. Do not apply it again. Production remains a Product-Owner gate. A server-only store adapter is a separate slice. Cursor does not Ready, merge, apply the migration, or start that slice.

@@ -73,6 +73,16 @@ The commit that writes these facts is a newer head. Those gates do not cover it.
 
 Review `5379062494` required the repository filename to match the Development migration history version created by the Technical Lead apply: `20261001121258_official_truth_private_evidence_store_schema_1`. I did not invent that timestamp. `git mv` renamed the one file. SHA-256 before and after is `2e4a715c7270e90e936e753232d191b0bcb2ce3ad455099ef9e812b182d50524`. The SQL was not edited. The static test already accepts exactly one `*_official_truth_private_evidence_store_schema_1.sql`, so I did not change its expectations. I did not run a remote Supabase command for this correction.
 
+Read in this session for identity head `fab9d9d16522dc03f5fa86a21ef2962c71748463` only:
+
+- GitHub CI run `36860729134` **SUCCESS**, event `pull_request`
+- Auth job `110363991796` **SUCCESS**
+- Typecheck, Lint & Build job `110363992056` **SUCCESS**
+- Vercel commit status **success**, inspector `https://vercel.com/jetnity-e1b93c82/jetnity-app/G4AgvpUSApyf7wn9BUUCZCDo9vFr`
+- GitHub Preview deployment `6784006355` **success**, target `https://jetnity-2ou63d0wz-jetnity-e1b93c82.vercel.app`, direct GET HTTP 302 to Vercel SSO
+
+The commit that writes these facts is a newer head. Those gates do not cover it.
+
 ## Stop
 
 No Ready. No merge. No second remote apply. No follow-up slice.
