@@ -1,0 +1,46 @@
+# Official Truth Private Evidence Store Schema 1 — Self-Review
+
+Date: 1 October 2026
+Issue: #674
+Draft PR: #675
+Branch: `feat/official-truth-private-evidence-store-schema-1`
+
+Logical agent: **Jetnity Official Truth private evidence store schema 1**, Generation 1
+Session: https://cursor.com/agents/bc-7ddd81cb-1513-4ecc-9745-08a611b1b06b
+`originalModelName`: `grok-4.7-high-fast`. Not Auto.
+
+This is the author self-review. It is not a Technical-Lead PASS.
+
+## Scope check
+
+The diff stays inside the task allowlist. The binding task file is unchanged. `docs/ACTIVE_WORK_STATUS.md` was not edited, because the allowlist forbids it. Continuity for this slice is the report and this handoff pair.
+
+No remote Supabase command was run. The migration was applied only to a local throwaway PostgreSQL 16.15 database, which was then dropped.
+
+## What I checked
+
+- The migration filename came from `supabase migration new`, CLI `2.48.3`, after the binary was downloaded outside the repo. I did not invent the timestamp.
+- The CLI warned that `2.119.0` is newer. I did not recreate the file with a newer CLI, because that would mint a second timestamp.
+- The same CLI wrote gitignored `supabase/.temp/cli-latest`. The sanitation test correctly failed while that file existed. I deleted the temp directory. The clean `npm test` was 4140 pass / 0 fail. The temp file is not committed.
+- Static test `lib/readiness/evidence-store-schema.test.ts`: 7/7.
+- `git diff --check` and the operating-mode guard passed.
+- Typecheck passed. Lint passed with 0 errors and 148 pre-existing warnings, none in the new test.
+- Hygiene checks passed. `check:schema-bezug` still reports the pre-existing LOCAL/UNAPPLIED RPC `admin_account_counts_v1`.
+- Setup check passed with the existing missing-`.env` warning.
+- Production build passed on Next.js 16.3.8 and generated 25 static pages.
+- Local SQL covered the date-only versus instant distinction, class/authority consistency, domain shape, citizenship ordering, the unlinked relation, forced RLS, and the `anon` revoke.
+
+## Findings I am not calling done
+
+1. `service_role` bypasses RLS. The migration revokes it. A later grant to that role would expose the table to a bypass role even with no policy. The next adapter must treat that grant as a security decision, not as a convenience.
+2. Source class and authority are not snapshotted onto the evidence version. That avoids a second writable truth. It also means a later privileged update of `official_sources` would rewrite history. The adapter slice should freeze those columns or snapshot them under a reviewed write path.
+3. Parent and child hostnames are not rejected. DNS ownership is not proved. The URL check is narrower than `quelleUrlLesen`.
+4. A source may be inserted before any domain row. A version chain is not proved acyclic under a later update. Both would need a trigger or a writer, and this task forbids triggers.
+5. Local PostgreSQL 16.15 does not prove the Development server version. Development application and the advisor readback remain Technical-Lead work after PASS.
+6. `db:rechte`, `db:rls`, `db:sicherheit` and `auth:pruefen` were not run. Running them would talk to the live Development database. This slice does not do that.
+
+## Stop
+
+No Ready. No merge. No remote apply. No follow-up slice.
+
+**STOP for independent Technical-Lead exact-head review.**
