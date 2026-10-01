@@ -22,7 +22,9 @@ Changed paths are the task allowlist:
 
 `docs/OFFICIAL_TRUTH_SOURCE_CATALOG_GATEWAY_1_TASK_2026-10-01.md` was not rewritten.
 
-`source-registry.ts`, provider code, UI, routes, `types/supabase.ts`, `.jetnity/operating-mode.json`, and global continuity files are unchanged. The freshness lane was not edited.
+`source-registry.ts`, provider code, UI, routes, `types/supabase.ts`, `.jetnity/operating-mode.json`, and global continuity files are unchanged by this lane.
+
+Technical-Lead R1 review `5384194385` found no catalog code or schema defect on `1f27a61f998f35cb2d17a574a56c92ae04977ea5`. The later commit `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c` merges `main@ed5350e702f2b6b248cf49ae366420cf1b49039a` and preserves #687. Relative to that main, the freshness files have no diff. Relative to `1f27a61f`, the catalog server, test, migration, and schema-reference registration have no diff. The migration SHA-256 is unchanged.
 
 ## Contract
 
@@ -54,6 +56,10 @@ Changed paths are the task allowlist:
 7. The table lock was not proven with two concurrent sessions.
 8. `catalog_failed` covers both a transport failure and a stored catalog that the canonical builder rejects. The database text is not returned. The service key is not returned.
 9. Global continuity files were left untouched because this lane must not edit them. The lane handoff is the continuity record for the next reader.
+
+## Base re-gate
+
+The integrated tree was validated again before the documentation commit that records it. `npm test` is 4203/4203. Typecheck, lint, build, hygiene, and `check:schema-bezug` passed. Catalog behavior was not edited to make those checks pass. The branch is 0 behind the assigned main. This self-review still is not an independent Technical-Lead PASS.
 
 ## Not claimed
 

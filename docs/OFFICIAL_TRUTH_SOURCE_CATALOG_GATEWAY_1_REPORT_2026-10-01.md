@@ -4,7 +4,8 @@ Date: 1 October 2026
 Issue: #684
 Draft PR: #686
 Branch: `feat/official-truth-source-catalog-gateway-1`
-Baseline: `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`
+Original baseline: `main@9c494110196a2877f6eba3babe7cf5ae7c00acf1`
+Integrated main: `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`
 
 Logical agent: **Jetnity Official Truth source catalog gateway 1**, Generation 1
 Session: https://cursor.com/agents/bc-b1db9c5e-3aa7-442a-8ccf-7421a1ac8257
@@ -45,6 +46,14 @@ The module is not imported by a route, the Source Router, Copilot, a cron, a que
 Supabase CLI `2.48.3`, downloaded outside the repository, created `supabase/migrations/20261001182728_official_truth_source_catalog_gateway_1.sql` via `supabase migration new official_truth_source_catalog_gateway_1`. The timestamp was not typed by hand. The CLI reported that `2.119.0` exists. This slice did not upgrade it and did not recreate the file. SHA-256 of the SQL file is `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. Gitignored `supabase/.temp/cli-latest` was removed and is not part of the commit.
 
 The migration inserts zero catalog rows. It does not change `supabase/config.toml`.
+
+## Technical-Lead R1 — base freshness only
+
+Review `5384194385` on exact head `1f27a61f998f35cb2d17a574a56c92ae04977ea5` accepted the catalog code and schema. There was no catalog behavior finding.
+
+#687 then merged, so that head was behind `main@ed5350e702f2b6b248cf49ae366420cf1b49039a`. This branch merged that main in `66852a163a5a7638f5dd48e8bb0fd0787f69bc3c`. The freshness and gap-policy files match `origin/main`. The catalog server, its test, the migration, and the schema-reference registration are unchanged from `1f27a61f`. The migration SHA-256 is still `78e17e41f987fbedb8d56d15021730eef76af0b3477bc03061165745f4fc2124`. After the merge, `origin/main` is an ancestor of this branch and the branch is 0 behind.
+
+Re-validation of that integrated tree, before this documentation commit: focused catalog tests 4/4, schema-reference tests 4/4, `npm test` 4203/4203, typecheck pass, lint 0 errors and 148 warnings, production build pass on Next.js 16.3.8 with 25 static pages, hygiene PASS, and `check:schema-bezug` still printing the same three LOCAL/UNAPPLIED RPCs. This documentation commit does not change catalog or freshness code. Exact-head CI belongs to the pushed tip.
 
 ## What was not done
 
