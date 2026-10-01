@@ -4,8 +4,8 @@ import { REGISTRY_COPY } from '@/lib/traveller/account-registry-copy'
 
 export default function AccountReisendeLaden() {
   return (
-    <main className="px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mx-auto max-w-3xl">
+    <main className="px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full min-w-0 max-w-6xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
           {REGISTRY_COPY.seitenEyebrow}
         </p>

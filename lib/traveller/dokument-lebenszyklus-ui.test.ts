@@ -21,6 +21,7 @@ function quelle(relativ: string): string {
 
 const UI_QUELLEN = [
   'components/account/AccountReisendeKarte.tsx',
+  'lib/traveller/account-travellers-premium-registry-ux-1.ts',
   'lib/traveller/dokument-lebenszyklus-copy.ts',
   'lib/traveller/dokument-lebenszyklus.ts',
 ]
@@ -72,9 +73,11 @@ describe('TA-DL1 UI-/Copy-Vertrag', () => {
 
   test('Account-Karte zeigt Ablaufstatus pro Dokument und nicht nur farblich', () => {
     const karte = quelle('components/account/AccountReisendeKarte.tsx')
+    const helfer = quelle('lib/traveller/account-travellers-premium-registry-ux-1.ts')
     assert.equal(karte.includes('documents[0]'), false)
-    assert.equal(karte.includes('dokumentAblaufGegenReferenztag'), true)
-    assert.equal(karte.includes('dokumentKontoAblaufText'), true)
+    assert.equal(helfer.includes('dokumentAblaufGegenReferenztag'), true)
+    assert.equal(helfer.includes('dokumentKontoAblaufText'), true)
+    assert.equal(karte.includes('ablaufText'), true)
     assert.equal(karte.includes('role="status"'), true)
     assert.equal(karte.includes('heutigesDatum'), true)
     assert.equal(karte.includes('useSyncExternalStore'), true)
@@ -97,6 +100,7 @@ describe('TA-DL1 UI-/Copy-Vertrag', () => {
     const runtime = [
       'lib/traveller/dokument-lebenszyklus.ts',
       'components/account/AccountReisendeKarte.tsx',
+      'lib/traveller/account-travellers-premium-registry-ux-1.ts',
       'components/trips/Reisevorbereitung.tsx',
     ]
       .map((pfad) => quelle(pfad))
